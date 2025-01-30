@@ -7,24 +7,28 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
   }
 
   try {
     const { question } = await req.json();
+    console.log('Received question:', question);
 
-    // Create a Supabase client with the Auth context of the function
+    // Create a Supabase client
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
     );
 
+    // Get the OpenAI API key from environment variables
     const openaiApiKey = Deno.env.get('OPENAI_API_KEY');
     if (!openaiApiKey) {
       throw new Error('OpenAI API key not found');
     }
 
+    console.log('Sending request to OpenAI');
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -49,7 +53,7 @@ serve(async (req) => {
     });
 
     const data = await response.json();
-    console.log('OpenAI response:', data);
+    console.log('Received response from OpenAI');
 
     return new Response(
       JSON.stringify({ response: data.choices[0].message.content }),
