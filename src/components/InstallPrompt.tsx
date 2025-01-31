@@ -8,6 +8,7 @@ export const InstallPrompt = () => {
 
   useEffect(() => {
     const handler = (e: Event) => {
+      console.log('beforeinstallprompt event fired');
       // Prevent Chrome 67 and earlier from automatically showing the prompt
       e.preventDefault();
       // Stash the event so it can be triggered later
@@ -19,6 +20,7 @@ export const InstallPrompt = () => {
 
     // Check if app is already installed
     if (window.matchMedia('(display-mode: standalone)').matches) {
+      console.log('App is already installed');
       setShowInstallButton(false);
     }
 
