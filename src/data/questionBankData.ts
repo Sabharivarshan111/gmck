@@ -8,6 +8,7 @@ import { peripheralNervousSystemData } from './topics/peripheralNervousSystem';
 import { hormonesData } from './topics/hormones';
 import { gastrointestinalSystemData } from './topics/gastrointestinalSystem';
 import { antiMicrobialDrugsData } from './topics/antiMicrobialDrugs';
+import { neoplasticDrugsData } from './topics/neoplasticDrugs';
 
 export const QUESTION_BANK_DATA = {
   "pharmacology": {
@@ -22,7 +23,8 @@ export const QUESTION_BANK_DATA = {
           "central-nervous-system": centralNervousSystemData,
           "cardiovascular-system": cardiovascularSystemData,
           "respiratory-system": respiratorySystemData,
-          "autacoids": autacoidsData
+          "autacoids": autacoidsData,
+          "neoplastic-drugs": neoplasticDrugsData
         }
       },
       "paper-2": {
