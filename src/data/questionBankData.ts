@@ -23,8 +23,7 @@ export const QUESTION_BANK_DATA = {
           "central-nervous-system": centralNervousSystemData,
           "cardiovascular-system": cardiovascularSystemData,
           "respiratory-system": respiratorySystemData,
-          "autacoids": autacoidsData,
-          "neoplastic-drugs": neoplasticDrugsData
+          "autacoids": autacoidsData
         }
       },
       "paper-2": {
@@ -32,7 +31,8 @@ export const QUESTION_BANK_DATA = {
         subtopics: {
           "hormones": hormonesData,
           "gastrointestinal-system": gastrointestinalSystemData,
-          "anti-microbial-drugs": antiMicrobialDrugsData
+          "anti-microbial-drugs": antiMicrobialDrugsData,
+          "neoplastic-drugs": neoplasticDrugsData
         }
       }
     }
