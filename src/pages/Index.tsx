@@ -1,7 +1,13 @@
 import QuestionBank from "@/components/QuestionBank";
+import { InstallPrompt } from "@/components/InstallPrompt";
 
 const Index = () => {
-  return <QuestionBank />;
+  return (
+    <>
+      <InstallPrompt />
+      <QuestionBank />
+    </>
+  );
 };
 
 export default Index;
