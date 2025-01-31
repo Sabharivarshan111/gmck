@@ -9,6 +9,7 @@ import { hormonesData } from './topics/hormones';
 import { gastrointestinalSystemData } from './topics/gastrointestinalSystem';
 import { antiMicrobialDrugsData } from './topics/antiMicrobialDrugs';
 import { neoplasticDrugsData } from './topics/neoplasticDrugs';
+import { miscellaneousDrugsData } from './topics/miscellaneousDrugs';
 
 export const QUESTION_BANK_DATA = {
   "pharmacology": {
@@ -32,7 +33,8 @@ export const QUESTION_BANK_DATA = {
           "hormones": hormonesData,
           "gastrointestinal-system": gastrointestinalSystemData,
           "anti-microbial-drugs": antiMicrobialDrugsData,
-          "neoplastic-drugs": neoplasticDrugsData
+          "neoplastic-drugs": neoplasticDrugsData,
+          "miscellaneous-drugs": miscellaneousDrugsData
         }
       }
     }
