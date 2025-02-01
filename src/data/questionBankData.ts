@@ -10,6 +10,7 @@ import { gastrointestinalSystemData } from './topics/gastrointestinalSystem';
 import { antiMicrobialDrugsData } from './topics/antiMicrobialDrugs';
 import { neoplasticDrugsData } from './topics/neoplasticDrugs';
 import { miscellaneousDrugsData } from './topics/miscellaneousDrugs';
+import { pathologyData } from './topics/pathology';
 
 export const QUESTION_BANK_DATA = {
   "pharmacology": {
@@ -36,6 +37,19 @@ export const QUESTION_BANK_DATA = {
           "neoplastic-drugs": neoplasticDrugsData,
           "miscellaneous-drugs": miscellaneousDrugsData
         }
+      }
+    }
+  },
+  "pathology": {
+    name: "Pathology",
+    subtopics: {
+      "paper-1": {
+        name: "Paper 1",
+        subtopics: {}
+      },
+      "paper-2": {
+        name: "Paper 2",
+        subtopics: {}
       }
     }
   }
