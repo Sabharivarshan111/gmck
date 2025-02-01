@@ -49,19 +49,17 @@ const QuestionBank = () => {
   }, []);
 
   const handlers = useSwipeable({
-    onSwipedLeft: () => console.log("Swiped left - can be used for next topic"),
-    onSwipedRight: () => console.log("Swiped right - can be used for previous topic"),
+    onSwipedLeft: () => console.log("Swiped left"),
+    onSwipedRight: () => console.log("Swiped right"),
     trackMouse: true
   });
 
-  console.log("QuestionBank data:", QUESTION_BANK_DATA);
-
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-900 dark:to-gray-800">
-      <div className="flex-1 space-y-4 p-4 pt-6 max-w-4xl mx-auto" {...handlers}>
-        <div className="flex items-center justify-between space-y-2 mb-8">
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight bg-gradient-to-r from-blue-600 to-indigo-600 text-transparent bg-clip-text animate-fade-in">
-            MBBS Question Bank
+    <div className="min-h-screen bg-black">
+      <div className="flex-1 p-4 pt-6 max-w-4xl mx-auto" {...handlers}>
+        <div className="flex items-center justify-between mb-8">
+          <h2 className="text-2xl md:text-4xl font-bold tracking-tight text-white animate-fade-in">
+            MBBS QBANK-ACEV
           </h2>
         </div>
         <div className="grid gap-4">
