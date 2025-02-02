@@ -18,8 +18,11 @@ self.addEventListener('install', (event) => {
       })
       .catch(error => {
         console.error('Service Worker: Cache Failed:', error);
+        throw error; // Re-throw to ensure installation fails on error
       })
   );
+  // Force waiting Service Worker to become active
+  self.skipWaiting();
 });
 
 // Fetch event handler
@@ -33,13 +36,12 @@ self.addEventListener('fetch', (event) => {
           return response;
         }
         console.log('Service Worker: Not Found in Cache', event.request.url);
-        return fetch(event.request);
-      })
-      .catch(error => {
-        console.error('Service Worker: Fetch Failed:', error);
-        return new Response('Network error happened', {
-          status: 404,
-          headers: { 'Content-Type': 'text/plain' },
+        return fetch(event.request).catch(error => {
+          console.error('Service Worker: Fetch Failed:', error);
+          return new Response('Network error happened', {
+            status: 404,
+            headers: { 'Content-Type': 'text/plain' },
+          });
         });
       })
   );
@@ -58,6 +60,9 @@ self.addEventListener('activate', (event) => {
           }
         })
       );
+    }).then(() => {
+      // Take control of all clients as soon as it activates
+      return clients.claim();
     })
   );
 });
