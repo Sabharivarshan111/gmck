@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Timer, Pause, Play, RotateCcw, Water } from 'lucide-react';
+import { Timer, Pause, Play, RotateCcw, Droplet } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { toast } from './ui/use-toast';
@@ -130,7 +130,7 @@ const PomodoroTimer = () => {
             onClick={incrementWater}
             className="h-8 w-8 rounded-full border-white text-white hover:bg-white hover:text-black relative"
           >
-            <Water className="h-4 w-4" />
+            <Droplet className="h-4 w-4" />
             {waterCount > 0 && (
               <span className="absolute -top-1 -right-1 bg-white text-black text-xs rounded-full w-4 h-4 flex items-center justify-center">
                 {waterCount}
