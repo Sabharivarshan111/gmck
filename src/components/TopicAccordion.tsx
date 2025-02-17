@@ -14,19 +14,21 @@ interface TopicAccordionProps {
   topicKey: string;
   topic: Topic;
   questionType: "essay" | "short-note";
+  onTopicChange?: (topicKey: string) => void;
 }
 
-const TopicAccordion = ({ topicKey, topic, questionType }: TopicAccordionProps) => {
+const TopicAccordion = ({ topicKey, topic, questionType, onTopicChange }: TopicAccordionProps) => {
   return (
     <AccordionItem 
       value={topicKey} 
       key={topicKey}
       className="animate-fade-in transition-all duration-300"
+      onValueChange={(value) => onTopicChange?.(value)}
     >
       <AccordionTrigger className="px-4 hover:bg-white/50 dark:hover:bg-gray-800/50 rounded-lg transition-all duration-200">
         <div className="flex items-center space-x-3">
           <Book className="h-6 w-6 text-blue-600 dark:text-blue-400" />
-          <h3 className="text-xl md:text-2xl font-semibold">{topic.name}</h3>
+          <h3 className="text-xl font-semibold">{topic.name}</h3>
         </div>
       </AccordionTrigger>
       <AccordionContent>

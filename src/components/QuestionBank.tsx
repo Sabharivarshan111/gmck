@@ -40,7 +40,8 @@ export interface Topic {
 
 const QuestionBank = () => {
   const [isMobile, setIsMobile] = useState(false);
-  const [activeTab, setActiveTab] = useState("essay");
+  const [activeEssayTopic, setActiveEssayTopic] = useState("");
+  const [activeShortNoteTopic, setActiveShortNoteTopic] = useState("");
 
   useEffect(() => {
     const checkMobile = () => {
@@ -59,50 +60,50 @@ const QuestionBank = () => {
 
   return (
     <div className="min-h-screen bg-black">
-      <div className="flex-1 p-4 pt-6 max-w-4xl mx-auto" {...handlers}>
+      <div className="p-4 pt-6" {...handlers}>
         <div className="flex items-center justify-between mb-8">
-          <h2 className="text-2xl md:text-4xl font-bold tracking-tight text-white animate-fade-in">
+          <h2 className="text-2xl md:text-4xl font-bold tracking-tight text-white">
             MBBS QBANK-ACEV
           </h2>
         </div>
-        <Tabs defaultValue="essay" className="w-full" onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-2 mb-4">
-            <TabsTrigger value="essay">Essays</TabsTrigger>
-            <TabsTrigger value="short-note">Short Notes</TabsTrigger>
-          </TabsList>
-          <TabsContent value="essay">
-            <div className="grid gap-4">
-              <ScrollArea className="h-[calc(100vh-200px)]">
-                <div className="pr-4">
-                  {Object.entries(QUESTION_BANK_DATA).map(([topicKey, topic]) => (
-                    <TopicAccordion 
-                      key={topicKey}
-                      topicKey={topicKey}
-                      topic={topic as Topic}
-                      questionType="essay"
-                    />
-                  ))}
-                </div>
-              </ScrollArea>
-            </div>
-          </TabsContent>
-          <TabsContent value="short-note">
-            <div className="grid gap-4">
-              <ScrollArea className="h-[calc(100vh-200px)]">
-                <div className="pr-4">
-                  {Object.entries(QUESTION_BANK_DATA).map(([topicKey, topic]) => (
-                    <TopicAccordion 
-                      key={topicKey}
-                      topicKey={topicKey}
-                      topic={topic as Topic}
-                      questionType="short-note"
-                    />
-                  ))}
-                </div>
-              </ScrollArea>
-            </div>
-          </TabsContent>
-        </Tabs>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Essays Section */}
+          <div className="bg-gray-950 rounded-lg p-4">
+            <h3 className="text-xl font-semibold text-white mb-4">Essays</h3>
+            <ScrollArea className="h-[calc(100vh-200px)]">
+              <div className="pr-4">
+                {Object.entries(QUESTION_BANK_DATA).map(([topicKey, topic]) => (
+                  <TopicAccordion 
+                    key={topicKey}
+                    topicKey={topicKey}
+                    topic={topic as Topic}
+                    questionType="essay"
+                    onTopicChange={setActiveEssayTopic}
+                  />
+                ))}
+              </div>
+            </ScrollArea>
+          </div>
+
+          {/* Short Notes Section */}
+          <div className="bg-gray-950 rounded-lg p-4">
+            <h3 className="text-xl font-semibold text-white mb-4">Short Notes</h3>
+            <ScrollArea className="h-[calc(100vh-200px)]">
+              <div className="pr-4">
+                {Object.entries(QUESTION_BANK_DATA).map(([topicKey, topic]) => (
+                  <TopicAccordion 
+                    key={topicKey}
+                    topicKey={topicKey}
+                    topic={topic as Topic}
+                    questionType="short-note"
+                    onTopicChange={setActiveShortNoteTopic}
+                  />
+                ))}
+              </div>
+            </ScrollArea>
+          </div>
+        </div>
       </div>
     </div>
   );
