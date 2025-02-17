@@ -75,7 +75,7 @@ const PomodoroTimer = () => {
   };
 
   return (
-    <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-black border border-white rounded-full px-6 py-3 shadow-lg min-w-[280px] z-50">
+    <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-black border border-white rounded-full px-6 py-3 shadow-lg min-w-[280px] z-[9999]">
       <div className="flex items-center justify-between gap-4">
         <Timer className="w-5 h-5 text-white" />
         
