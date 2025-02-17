@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useSwipeable } from "react-swipeable";
 import { QUESTION_BANK_DATA } from "@/data/questionBankData";
 import TopicAccordion from "./TopicAccordion";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export interface Question {
   question: string;
@@ -60,7 +61,7 @@ const QuestionBank = () => {
     <div className="min-h-screen bg-black">
       <div className="flex-1 p-4 pt-6 max-w-4xl mx-auto" {...handlers}>
         <div className="flex items-center justify-between mb-8">
-          <h2 className="text-2xl md:text-4xl font-bold tracking-tight text-white">
+          <h2 className="text-2xl md:text-4xl font-bold tracking-tight text-white animate-fade-in">
             MBBS QBANK-ACEV
           </h2>
         </div>
