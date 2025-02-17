@@ -1,12 +1,12 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { Loader2 } from "lucide-react";
 
 // Initialize Google Gemini AI
-const genAI = new GoogleGenerativeAI("YOUR_API_KEY"); // Replace with your API key
+const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY || ""); 
 
 interface QuestionCardProps {
   question: string;
@@ -28,8 +28,7 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
     const DOUBLE_TAP_DELAY = 300;
 
     if (now - lastTap < DOUBLE_TAP_DELAY) {
-      // Double tap detected
-      if (!aiResponse && !loading) {
+      if (!aiResponse && !loading && genAI) {
         await generateAIResponse();
       }
     }
@@ -38,6 +37,8 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
   };
 
   const generateAIResponse = async () => {
+    if (!genAI) return;
+    
     try {
       setLoading(true);
       const model = genAI.getGenerativeModel({ model: "gemini-pro" });
