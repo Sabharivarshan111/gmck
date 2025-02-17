@@ -1,9 +1,11 @@
+
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Accordion } from "@/components/ui/accordion";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useEffect, useState } from "react";
 import { useSwipeable } from "react-swipeable";
 import { QUESTION_BANK_DATA } from "@/data/questionBankData";
 import TopicAccordion from "./TopicAccordion";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export interface Question {
   question: string;
@@ -38,6 +40,7 @@ export interface Topic {
 
 const QuestionBank = () => {
   const [isMobile, setIsMobile] = useState(false);
+  const [activeTab, setActiveTab] = useState("essay");
 
   useEffect(() => {
     const checkMobile = () => {
@@ -62,17 +65,44 @@ const QuestionBank = () => {
             MBBS QBANK-ACEV
           </h2>
         </div>
-        <div className="grid gap-4">
-          <Accordion type="single" collapsible className="w-full">
-            {Object.entries(QUESTION_BANK_DATA).map(([topicKey, topic]) => (
-              <TopicAccordion 
-                key={topicKey}
-                topicKey={topicKey}
-                topic={topic as Topic}
-              />
-            ))}
-          </Accordion>
-        </div>
+        <Tabs defaultValue="essay" className="w-full" onValueChange={setActiveTab}>
+          <TabsList className="grid w-full grid-cols-2 mb-4">
+            <TabsTrigger value="essay">Essays</TabsTrigger>
+            <TabsTrigger value="short-note">Short Notes</TabsTrigger>
+          </TabsList>
+          <TabsContent value="essay">
+            <div className="grid gap-4">
+              <ScrollArea className="h-[calc(100vh-200px)]">
+                <div className="pr-4">
+                  {Object.entries(QUESTION_BANK_DATA).map(([topicKey, topic]) => (
+                    <TopicAccordion 
+                      key={topicKey}
+                      topicKey={topicKey}
+                      topic={topic as Topic}
+                      questionType="essay"
+                    />
+                  ))}
+                </div>
+              </ScrollArea>
+            </div>
+          </TabsContent>
+          <TabsContent value="short-note">
+            <div className="grid gap-4">
+              <ScrollArea className="h-[calc(100vh-200px)]">
+                <div className="pr-4">
+                  {Object.entries(QUESTION_BANK_DATA).map(([topicKey, topic]) => (
+                    <TopicAccordion 
+                      key={topicKey}
+                      topicKey={topicKey}
+                      topic={topic as Topic}
+                      questionType="short-note"
+                    />
+                  ))}
+                </div>
+              </ScrollArea>
+            </div>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );

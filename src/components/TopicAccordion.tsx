@@ -1,3 +1,4 @@
+
 import { Book } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
@@ -12,9 +13,10 @@ import { Topic } from "./QuestionBank";
 interface TopicAccordionProps {
   topicKey: string;
   topic: Topic;
+  questionType: "essay" | "short-note";
 }
 
-const TopicAccordion = ({ topicKey, topic }: TopicAccordionProps) => {
+const TopicAccordion = ({ topicKey, topic, questionType }: TopicAccordionProps) => {
   return (
     <AccordionItem 
       value={topicKey} 
@@ -35,6 +37,7 @@ const TopicAccordion = ({ topicKey, topic }: TopicAccordionProps) => {
                 key={subtopicKey}
                 subtopicKey={subtopicKey}
                 subtopic={subtopic}
+                questionType={questionType}
               />
             ))}
           </Accordion>
