@@ -16,6 +16,25 @@ interface SubtopicAccordionProps {
 }
 
 const SubtopicAccordion = ({ subtopicKey, subtopic }: SubtopicAccordionProps) => {
+  const getQuestions = (type: "essay" | "short-note") => {
+    const questions: { sectionName: string; questions: string[] }[] = [];
+    
+    Object.entries(subtopic.subtopics).forEach(([_, content]) => {
+      const questionType = content.subtopics[type];
+      if (questionType) {
+        questions.push({
+          sectionName: content.name,
+          questions: questionType.questions
+        });
+      }
+    });
+    
+    return questions;
+  };
+
+  const essayQuestions = getQuestions("essay");
+  const shortNoteQuestions = getQuestions("short-note");
+
   return (
     <AccordionItem 
       value={subtopicKey}
@@ -36,25 +55,20 @@ const SubtopicAccordion = ({ subtopicKey, subtopic }: SubtopicAccordionProps) =>
               <h5 className="text-lg font-semibold text-white">Essays</h5>
             </div>
             <ScrollArea className="h-[400px]">
-              {Object.entries(subtopic.subtopics).map(([typeKey, type]) => {
-                const essayContent = type.subtopics.essay;
-                if (!essayContent) return null;
-                
-                return (
-                  <div key={typeKey} className="space-y-4">
-                    <h6 className="text-sm font-medium text-gray-400">
-                      {type.name}
-                    </h6>
-                    {essayContent.questions.map((question, index) => (
-                      <QuestionCard
-                        key={index}
-                        question={question}
-                        index={index}
-                      />
-                    ))}
-                  </div>
-                );
-              })}
+              {essayQuestions.map((section, sectionIndex) => (
+                <div key={sectionIndex} className="space-y-4 mb-6">
+                  <h6 className="text-sm font-medium text-gray-400">
+                    {section.sectionName}
+                  </h6>
+                  {section.questions.map((question, index) => (
+                    <QuestionCard
+                      key={`${sectionIndex}-${index}`}
+                      question={question}
+                      index={index}
+                    />
+                  ))}
+                </div>
+              ))}
             </ScrollArea>
           </div>
 
@@ -65,25 +79,20 @@ const SubtopicAccordion = ({ subtopicKey, subtopic }: SubtopicAccordionProps) =>
               <h5 className="text-lg font-semibold text-white">Short Notes</h5>
             </div>
             <ScrollArea className="h-[400px]">
-              {Object.entries(subtopic.subtopics).map(([typeKey, type]) => {
-                const shortNoteContent = type.subtopics["short-note"];
-                if (!shortNoteContent) return null;
-
-                return (
-                  <div key={typeKey} className="space-y-4">
-                    <h6 className="text-sm font-medium text-gray-400">
-                      {type.name}
-                    </h6>
-                    {shortNoteContent.questions.map((question, index) => (
-                      <QuestionCard
-                        key={index}
-                        question={question}
-                        index={index}
-                      />
-                    ))}
-                  </div>
-                );
-              })}
+              {shortNoteQuestions.map((section, sectionIndex) => (
+                <div key={sectionIndex} className="space-y-4 mb-6">
+                  <h6 className="text-sm font-medium text-gray-400">
+                    {section.sectionName}
+                  </h6>
+                  {section.questions.map((question, index) => (
+                    <QuestionCard
+                      key={`${sectionIndex}-${index}`}
+                      question={question}
+                      index={index}
+                    />
+                  ))}
+                </div>
+              ))}
             </ScrollArea>
           </div>
         </div>
