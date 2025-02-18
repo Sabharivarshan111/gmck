@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import { Timer, Pause, Play, RotateCcw, Droplet } from 'lucide-react';
+import { Timer, Pause, Play, RotateCcw } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { toast } from './ui/use-toast';
@@ -10,8 +9,7 @@ const PomodoroTimer = () => {
   const [seconds, setSeconds] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [inputMinutes, setInputMinutes] = useState('25');
-  const [waterCount, setWaterCount] = useState(0);
+  const [inputMinutes, setInputMinutes] = useState(25);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -43,46 +41,33 @@ const PomodoroTimer = () => {
 
   const resetTimer = () => {
     setIsRunning(false);
-    setMinutes(parseInt(inputMinutes) || 25);
+    setMinutes(inputMinutes);
     setSeconds(0);
   };
 
   const handleMinutesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    if (value === '' || (!isNaN(parseInt(value)) && parseInt(value) >= 0 && parseInt(value) <= 99)) {
+    const value = parseInt(e.target.value);
+    if (!isNaN(value) && value >= 0 && value <= 99) {
       setInputMinutes(value);
     }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const newMinutes = parseInt(inputMinutes) || 25;
-    setMinutes(newMinutes);
-    setInputMinutes(String(newMinutes));
+    setMinutes(inputMinutes);
     setSeconds(0);
     setIsEditing(false);
   };
 
-  const incrementWater = () => {
-    setWaterCount(prev => {
-      const newCount = prev + 1;
-      toast({
-        title: "Water intake tracked!",
-        description: `You've had ${newCount} bottle${newCount === 1 ? '' : 's'} of water today.`,
-      });
-      return newCount;
-    });
-  };
-
   return (
-    <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-black border border-white rounded-full px-6 py-3 shadow-lg min-w-[280px] z-[9999]">
+    <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-black border border-white rounded-full px-6 py-3 shadow-lg min-w-[280px] z-50">
       <div className="flex items-center justify-between gap-4">
         <Timer className="w-5 h-5 text-white" />
         
         {isEditing ? (
           <form onSubmit={handleSubmit} className="flex items-center gap-2">
             <Input
-              type="text"
+              type="number"
               value={inputMinutes}
               onChange={handleMinutesChange}
               className="w-16 h-8 text-center bg-transparent text-white border-white"
@@ -90,9 +75,9 @@ const PomodoroTimer = () => {
               max="99"
             />
             <Button 
-              type="submit"
               variant="outline" 
               size="sm"
+              onClick={() => setIsEditing(false)}
               className="h-8 text-white border-white hover:bg-white hover:text-black"
             >
               Set
@@ -123,19 +108,6 @@ const PomodoroTimer = () => {
             className="h-8 w-8 rounded-full border-white text-white hover:bg-white hover:text-black"
           >
             <RotateCcw className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={incrementWater}
-            className="h-8 w-8 rounded-full border-white text-white hover:bg-white hover:text-black relative"
-          >
-            <Droplet className="h-4 w-4" />
-            {waterCount > 0 && (
-              <span className="absolute -top-1 -right-1 bg-white text-black text-xs rounded-full w-4 h-4 flex items-center justify-center">
-                {waterCount}
-              </span>
-            )}
           </Button>
         </div>
       </div>
