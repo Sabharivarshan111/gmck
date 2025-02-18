@@ -1,3 +1,4 @@
+
 import { Book } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
@@ -12,13 +13,13 @@ import { Topic } from "./QuestionBank";
 interface TopicAccordionProps {
   topicKey: string;
   topic: Topic;
+  displayType: "essay" | "short-note";
 }
 
-const TopicAccordion = ({ topicKey, topic }: TopicAccordionProps) => {
+const TopicAccordion = ({ topicKey, topic, displayType }: TopicAccordionProps) => {
   return (
     <AccordionItem 
-      value={topicKey} 
-      key={topicKey}
+      value={topicKey}
       className="animate-fade-in transition-all duration-300"
     >
       <AccordionTrigger className="px-4 hover:bg-white/50 dark:hover:bg-gray-800/50 rounded-lg transition-all duration-200">
@@ -35,6 +36,7 @@ const TopicAccordion = ({ topicKey, topic }: TopicAccordionProps) => {
                 key={subtopicKey}
                 subtopicKey={subtopicKey}
                 subtopic={subtopic}
+                displayType={displayType}
               />
             ))}
           </Accordion>

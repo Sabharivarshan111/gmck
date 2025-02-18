@@ -1,3 +1,4 @@
+
 import { BookOpen } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
@@ -12,11 +13,10 @@ import { SubTopic } from "./QuestionBank";
 interface SubtopicAccordionProps {
   subtopicKey: string;
   subtopic: SubTopic;
+  displayType: "essay" | "short-note";
 }
 
-const SubtopicAccordion = ({ subtopicKey, subtopic }: SubtopicAccordionProps) => {
-  console.log("SubtopicAccordion rendering with subtopic:", subtopic); // Debug log
-
+const SubtopicAccordion = ({ subtopicKey, subtopic, displayType }: SubtopicAccordionProps) => {
   return (
     <AccordionItem 
       value={subtopicKey}
@@ -36,6 +36,7 @@ const SubtopicAccordion = ({ subtopicKey, subtopic }: SubtopicAccordionProps) =>
                 key={typeKey}
                 typeKey={typeKey}
                 type={type}
+                displayType={displayType}
               />
             ))}
           </Accordion>
