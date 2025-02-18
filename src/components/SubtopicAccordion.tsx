@@ -1,5 +1,5 @@
 
-import { BookOpen } from "lucide-react";
+import { BookOpen, BookText } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Accordion,
@@ -7,16 +7,15 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import TypeAccordion from "./TypeAccordion";
+import QuestionCard from "./QuestionCard";
 import { SubTopic } from "./QuestionBank";
 
 interface SubtopicAccordionProps {
   subtopicKey: string;
   subtopic: SubTopic;
-  displayType: "essay" | "short-note";
 }
 
-const SubtopicAccordion = ({ subtopicKey, subtopic, displayType }: SubtopicAccordionProps) => {
+const SubtopicAccordion = ({ subtopicKey, subtopic }: SubtopicAccordionProps) => {
   return (
     <AccordionItem 
       value={subtopicKey}
@@ -29,18 +28,65 @@ const SubtopicAccordion = ({ subtopicKey, subtopic, displayType }: SubtopicAccor
         </div>
       </AccordionTrigger>
       <AccordionContent>
-        <ScrollArea className="h-full px-4">
-          <Accordion type="single" collapsible className="w-full">
-            {Object.entries(subtopic.subtopics).map(([typeKey, type]) => (
-              <TypeAccordion 
-                key={typeKey}
-                typeKey={typeKey}
-                type={type}
-                displayType={displayType}
-              />
-            ))}
-          </Accordion>
-        </ScrollArea>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 px-4">
+          {/* Essays Column */}
+          <div className="bg-gray-900/50 rounded-lg p-4">
+            <div className="flex items-center gap-2 mb-4">
+              <BookOpen className="h-5 w-5 text-blue-400" />
+              <h5 className="text-lg font-semibold text-white">Essays</h5>
+            </div>
+            <ScrollArea className="h-[400px]">
+              {Object.entries(subtopic.subtopics).map(([typeKey, type]) => {
+                const essayContent = type.subtopics.essay;
+                if (!essayContent) return null;
+                
+                return (
+                  <div key={typeKey} className="space-y-4">
+                    <h6 className="text-sm font-medium text-gray-400">
+                      {type.name}
+                    </h6>
+                    {essayContent.questions.map((question, index) => (
+                      <QuestionCard
+                        key={index}
+                        question={question}
+                        index={index}
+                      />
+                    ))}
+                  </div>
+                );
+              })}
+            </ScrollArea>
+          </div>
+
+          {/* Short Notes Column */}
+          <div className="bg-gray-900/50 rounded-lg p-4">
+            <div className="flex items-center gap-2 mb-4">
+              <BookText className="h-5 w-5 text-blue-400" />
+              <h5 className="text-lg font-semibold text-white">Short Notes</h5>
+            </div>
+            <ScrollArea className="h-[400px]">
+              {Object.entries(subtopic.subtopics).map(([typeKey, type]) => {
+                const shortNoteContent = type.subtopics["short-note"];
+                if (!shortNoteContent) return null;
+
+                return (
+                  <div key={typeKey} className="space-y-4">
+                    <h6 className="text-sm font-medium text-gray-400">
+                      {type.name}
+                    </h6>
+                    {shortNoteContent.questions.map((question, index) => (
+                      <QuestionCard
+                        key={index}
+                        question={question}
+                        index={index}
+                      />
+                    ))}
+                  </div>
+                );
+              })}
+            </ScrollArea>
+          </div>
+        </div>
       </AccordionContent>
     </AccordionItem>
   );

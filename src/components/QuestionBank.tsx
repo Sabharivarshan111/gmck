@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import { useSwipeable } from "react-swipeable";
 import { QUESTION_BANK_DATA } from "@/data/questionBankData";
 import TopicAccordion from "./TopicAccordion";
-import { BookOpen, BookText } from "lucide-react";
 
 export interface Question {
   question: string;
@@ -65,46 +64,18 @@ const QuestionBank = () => {
           </h2>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Essays Column */}
-          <div className="bg-gray-950 rounded-lg p-4">
-            <div className="flex items-center gap-2 mb-4">
-              <BookOpen className="h-6 w-6 text-blue-400" />
-              <h3 className="text-xl font-bold text-white">Essays</h3>
-            </div>
-            <ScrollArea className="h-[calc(100vh-200px)]">
-              <Accordion type="single" collapsible className="w-full">
-                {Object.entries(QUESTION_BANK_DATA).map(([topicKey, topic]) => (
-                  <TopicAccordion 
-                    key={topicKey}
-                    topicKey={topicKey}
-                    topic={topic as Topic}
-                    displayType="essay"
-                  />
-                ))}
-              </Accordion>
-            </ScrollArea>
-          </div>
-
-          {/* Short Notes Column */}
-          <div className="bg-gray-950 rounded-lg p-4">
-            <div className="flex items-center gap-2 mb-4">
-              <BookText className="h-6 w-6 text-blue-400" />
-              <h3 className="text-xl font-bold text-white">Short Notes</h3>
-            </div>
-            <ScrollArea className="h-[calc(100vh-200px)]">
-              <Accordion type="single" collapsible className="w-full">
-                {Object.entries(QUESTION_BANK_DATA).map(([topicKey, topic]) => (
-                  <TopicAccordion 
-                    key={topicKey}
-                    topicKey={topicKey}
-                    topic={topic as Topic}
-                    displayType="short-note"
-                  />
-                ))}
-              </Accordion>
-            </ScrollArea>
-          </div>
+        <div className="bg-gray-950 rounded-lg p-4">
+          <ScrollArea className="h-[calc(100vh-200px)]">
+            <Accordion type="single" collapsible className="w-full">
+              {Object.entries(QUESTION_BANK_DATA).map(([topicKey, topic]) => (
+                <TopicAccordion 
+                  key={topicKey}
+                  topicKey={topicKey}
+                  topic={topic as Topic}
+                />
+              ))}
+            </Accordion>
+          </ScrollArea>
         </div>
       </div>
     </div>

@@ -13,10 +13,9 @@ import { Topic } from "./QuestionBank";
 interface TopicAccordionProps {
   topicKey: string;
   topic: Topic;
-  displayType: "essay" | "short-note";
 }
 
-const TopicAccordion = ({ topicKey, topic, displayType }: TopicAccordionProps) => {
+const TopicAccordion = ({ topicKey, topic }: TopicAccordionProps) => {
   return (
     <AccordionItem 
       value={topicKey}
@@ -36,7 +35,6 @@ const TopicAccordion = ({ topicKey, topic, displayType }: TopicAccordionProps) =
                 key={subtopicKey}
                 subtopicKey={subtopicKey}
                 subtopic={subtopic}
-                displayType={displayType}
               />
             ))}
           </Accordion>
