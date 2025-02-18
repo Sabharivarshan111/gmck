@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/accordion";
 import QuestionCard from "./QuestionCard";
 import { SubTopic } from "./QuestionBank";
+import { useState } from "react";
 
 interface SubtopicAccordionProps {
   subtopicKey: string;
@@ -16,6 +17,8 @@ interface SubtopicAccordionProps {
 }
 
 const SubtopicAccordion = ({ subtopicKey, subtopic }: SubtopicAccordionProps) => {
+  const [activeSection, setActiveSection] = useState<"essay" | "short-note" | null>(null);
+
   const getQuestions = (type: "essay" | "short-note") => {
     const questions: { sectionName: string; questions: string[] }[] = [];
     
@@ -49,51 +52,65 @@ const SubtopicAccordion = ({ subtopicKey, subtopic }: SubtopicAccordionProps) =>
       <AccordionContent>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 px-4">
           {/* Essays Column */}
-          <div className="bg-gray-900/50 rounded-lg p-4">
+          <div 
+            className={`bg-gray-900/50 rounded-lg p-4 cursor-pointer transition-all duration-200 hover:bg-gray-800/50 ${
+              activeSection === 'essay' ? 'ring-2 ring-blue-500' : ''
+            }`}
+            onClick={() => setActiveSection(activeSection === 'essay' ? null : 'essay')}
+          >
             <div className="flex items-center gap-2 mb-4">
               <BookOpen className="h-5 w-5 text-blue-400" />
               <h5 className="text-lg font-semibold text-white">Essays</h5>
             </div>
-            <ScrollArea className="h-[400px]">
-              {essayQuestions.map((section, sectionIndex) => (
-                <div key={sectionIndex} className="space-y-4 mb-6">
-                  <h6 className="text-sm font-medium text-gray-400">
-                    {section.sectionName}
-                  </h6>
-                  {section.questions.map((question, index) => (
-                    <QuestionCard
-                      key={`${sectionIndex}-${index}`}
-                      question={question}
-                      index={index}
-                    />
-                  ))}
-                </div>
-              ))}
-            </ScrollArea>
+            {activeSection === 'essay' && (
+              <ScrollArea className="h-[400px]">
+                {essayQuestions.map((section, sectionIndex) => (
+                  <div key={sectionIndex} className="space-y-4 mb-6">
+                    <h6 className="text-sm font-medium text-gray-400">
+                      {section.sectionName}
+                    </h6>
+                    {section.questions.map((question, index) => (
+                      <QuestionCard
+                        key={`${sectionIndex}-${index}`}
+                        question={question}
+                        index={index}
+                      />
+                    ))}
+                  </div>
+                ))}
+              </ScrollArea>
+            )}
           </div>
 
           {/* Short Notes Column */}
-          <div className="bg-gray-900/50 rounded-lg p-4">
+          <div 
+            className={`bg-gray-900/50 rounded-lg p-4 cursor-pointer transition-all duration-200 hover:bg-gray-800/50 ${
+              activeSection === 'short-note' ? 'ring-2 ring-blue-500' : ''
+            }`}
+            onClick={() => setActiveSection(activeSection === 'short-note' ? null : 'short-note')}
+          >
             <div className="flex items-center gap-2 mb-4">
               <BookText className="h-5 w-5 text-blue-400" />
               <h5 className="text-lg font-semibold text-white">Short Notes</h5>
             </div>
-            <ScrollArea className="h-[400px]">
-              {shortNoteQuestions.map((section, sectionIndex) => (
-                <div key={sectionIndex} className="space-y-4 mb-6">
-                  <h6 className="text-sm font-medium text-gray-400">
-                    {section.sectionName}
-                  </h6>
-                  {section.questions.map((question, index) => (
-                    <QuestionCard
-                      key={`${sectionIndex}-${index}`}
-                      question={question}
-                      index={index}
-                    />
-                  ))}
-                </div>
-              ))}
-            </ScrollArea>
+            {activeSection === 'short-note' && (
+              <ScrollArea className="h-[400px]">
+                {shortNoteQuestions.map((section, sectionIndex) => (
+                  <div key={sectionIndex} className="space-y-4 mb-6">
+                    <h6 className="text-sm font-medium text-gray-400">
+                      {section.sectionName}
+                    </h6>
+                    {section.questions.map((question, index) => (
+                      <QuestionCard
+                        key={`${sectionIndex}-${index}`}
+                        question={question}
+                        index={index}
+                      />
+                    ))}
+                  </div>
+                ))}
+              </ScrollArea>
+            )}
           </div>
         </div>
       </AccordionContent>
