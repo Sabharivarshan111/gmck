@@ -50,20 +50,20 @@ const SubtopicAccordion = ({ subtopicKey, subtopic }: SubtopicAccordionProps) =>
         </div>
       </AccordionTrigger>
       <AccordionContent>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 px-4">
-          {/* Essays Column */}
+        <div className="flex flex-col space-y-4 px-4">
+          {/* Essays Section */}
           <div 
             className={`bg-gray-900/50 rounded-lg p-4 cursor-pointer transition-all duration-200 hover:bg-gray-800/50 ${
               activeSection === 'essay' ? 'ring-2 ring-blue-500' : ''
             }`}
             onClick={() => setActiveSection(activeSection === 'essay' ? null : 'essay')}
           >
-            <div className="flex items-center gap-2 mb-4">
+            <div className="flex items-center gap-2">
               <BookOpen className="h-5 w-5 text-blue-400" />
               <h5 className="text-lg font-semibold text-white">Essays</h5>
             </div>
             {activeSection === 'essay' && (
-              <ScrollArea className="h-[400px]">
+              <ScrollArea className="h-[400px] mt-4">
                 {essayQuestions.map((section, sectionIndex) => (
                   <div key={sectionIndex} className="space-y-4 mb-6">
                     <h6 className="text-sm font-medium text-gray-400">
@@ -82,19 +82,19 @@ const SubtopicAccordion = ({ subtopicKey, subtopic }: SubtopicAccordionProps) =>
             )}
           </div>
 
-          {/* Short Notes Column */}
+          {/* Short Notes Section */}
           <div 
             className={`bg-gray-900/50 rounded-lg p-4 cursor-pointer transition-all duration-200 hover:bg-gray-800/50 ${
               activeSection === 'short-note' ? 'ring-2 ring-blue-500' : ''
             }`}
             onClick={() => setActiveSection(activeSection === 'short-note' ? null : 'short-note')}
           >
-            <div className="flex items-center gap-2 mb-4">
+            <div className="flex items-center gap-2">
               <BookText className="h-5 w-5 text-blue-400" />
               <h5 className="text-lg font-semibold text-white">Short Notes</h5>
             </div>
             {activeSection === 'short-note' && (
-              <ScrollArea className="h-[400px]">
+              <ScrollArea className="h-[400px] mt-4">
                 {shortNoteQuestions.map((section, sectionIndex) => (
                   <div key={sectionIndex} className="space-y-4 mb-6">
                     <h6 className="text-sm font-medium text-gray-400">
