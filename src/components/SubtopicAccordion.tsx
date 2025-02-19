@@ -50,8 +50,8 @@ const SubtopicAccordion = ({ subtopicKey, subtopic }: SubtopicAccordionProps) =>
         </div>
       </AccordionTrigger>
       <AccordionContent>
-        <div className="flex flex-col space-y-4 px-4">
-          {/* Essays Section */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 px-4">
+          {/* Essays Column */}
           <div 
             className={`bg-gray-900/50 rounded-lg p-4 cursor-pointer transition-all duration-200 hover:bg-gray-800/50 ${
               activeSection === 'essay' ? 'ring-2 ring-blue-500' : ''
@@ -82,7 +82,7 @@ const SubtopicAccordion = ({ subtopicKey, subtopic }: SubtopicAccordionProps) =>
             )}
           </div>
 
-          {/* Short Notes Section */}
+          {/* Short Notes Column */}
           <div 
             className={`bg-gray-900/50 rounded-lg p-4 cursor-pointer transition-all duration-200 hover:bg-gray-800/50 ${
               activeSection === 'short-note' ? 'ring-2 ring-blue-500' : ''
