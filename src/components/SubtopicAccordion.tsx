@@ -2,7 +2,6 @@
 import { BookOpen, BookText } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
-  Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
