@@ -18,9 +18,8 @@ export interface QuestionType {
 
 export interface SubTopicContent {
   name: string;
-  subtopics: {
-    [key: string]: QuestionType;
-  };
+  essay?: QuestionType;
+  "short-note"?: QuestionType;
 }
 
 export interface SubTopic {
