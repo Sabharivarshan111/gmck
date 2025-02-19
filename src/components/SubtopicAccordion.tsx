@@ -41,7 +41,7 @@ const SubtopicAccordion = ({ subtopicKey, subtopic }: SubtopicAccordionProps) =>
         </div>
       </AccordionTrigger>
       <AccordionContent>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 px-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 px-4 py-2">
           {/* Essays Column */}
           {subtopic.essay && (
             <div 
@@ -52,9 +52,9 @@ const SubtopicAccordion = ({ subtopicKey, subtopic }: SubtopicAccordionProps) =>
             >
               <div className="flex items-center gap-2">
                 <BookOpen className="h-5 w-5 text-blue-400" />
-                <h5 className="text-lg font-semibold text-white">Essays</h5>
+                <h5 className="text-lg font-semibold text-white">{subtopic.essay.name}</h5>
               </div>
-              {activeSection === 'essay' && (
+              {activeSection === 'essay' && subtopic.essay.questions && subtopic.essay.questions.length > 0 && (
                 <ScrollArea className="h-[400px] mt-4">
                   {subtopic.essay.questions.map((question, index) => (
                     <QuestionCard
@@ -78,9 +78,11 @@ const SubtopicAccordion = ({ subtopicKey, subtopic }: SubtopicAccordionProps) =>
             >
               <div className="flex items-center gap-2">
                 <BookText className="h-5 w-5 text-blue-400" />
-                <h5 className="text-lg font-semibold text-white">Short Notes</h5>
+                <h5 className="text-lg font-semibold text-white">
+                  {subtopic["short-note"].name}
+                </h5>
               </div>
-              {activeSection === 'short-note' && (
+              {activeSection === 'short-note' && subtopic["short-note"].questions && subtopic["short-note"].questions.length > 0 && (
                 <ScrollArea className="h-[400px] mt-4">
                   {subtopic["short-note"].questions.map((question, index) => (
                     <QuestionCard
