@@ -41,59 +41,83 @@ const SubtopicAccordion = ({ subtopicKey, subtopic }: SubtopicAccordionProps) =>
         </div>
       </AccordionTrigger>
       <AccordionContent>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 px-4 py-2">
-          {/* Essays Column */}
+        <div className="flex flex-col space-y-2 px-4 py-2">
+          {/* Essays Section */}
           {subtopic.essay && (
-            <div 
-              className={`bg-gray-900/50 rounded-lg p-4 cursor-pointer transition-all duration-200 hover:bg-gray-800/50 ${
-                activeSection === 'essay' ? 'ring-2 ring-blue-500' : ''
-              }`}
-              onClick={() => setActiveSection(activeSection === 'essay' ? null : 'essay')}
+            <button
+              onClick={() => setActiveSection(activeSection === "essay" ? null : "essay")}
+              className={`w-full text-left p-4 rounded-lg transition-all duration-200 
+                ${activeSection === "essay" 
+                  ? "bg-blue-500/20 ring-2 ring-blue-500" 
+                  : "bg-gray-900/50 hover:bg-gray-800/50"}`}
             >
-              <div className="flex items-center gap-2">
-                <BookOpen className="h-5 w-5 text-blue-400" />
-                <h5 className="text-lg font-semibold text-white">{subtopic.essay.name}</h5>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <BookOpen className="h-5 w-5 text-blue-400" />
+                  <h5 className="text-lg font-semibold text-white">
+                    {subtopic.essay.name}
+                  </h5>
+                </div>
+                <span className="text-sm text-gray-400">
+                  {subtopic.essay.questions.length} questions
+                </span>
               </div>
-              {activeSection === 'essay' && subtopic.essay.questions && subtopic.essay.questions.length > 0 && (
-                <ScrollArea className="h-[400px] mt-4">
-                  {subtopic.essay.questions.map((question, index) => (
-                    <QuestionCard
-                      key={index}
-                      question={question}
-                      index={index}
-                    />
-                  ))}
-                </ScrollArea>
+              
+              {activeSection === "essay" && (
+                <div className="mt-4">
+                  <ScrollArea className="h-[400px]">
+                    <div className="space-y-2">
+                      {subtopic.essay.questions.map((question, index) => (
+                        <QuestionCard
+                          key={index}
+                          question={question}
+                          index={index}
+                        />
+                      ))}
+                    </div>
+                  </ScrollArea>
+                </div>
               )}
-            </div>
+            </button>
           )}
 
-          {/* Short Notes Column */}
+          {/* Short Notes Section */}
           {subtopic["short-note"] && (
-            <div 
-              className={`bg-gray-900/50 rounded-lg p-4 cursor-pointer transition-all duration-200 hover:bg-gray-800/50 ${
-                activeSection === 'short-note' ? 'ring-2 ring-blue-500' : ''
-              }`}
-              onClick={() => setActiveSection(activeSection === 'short-note' ? null : 'short-note')}
+            <button
+              onClick={() => setActiveSection(activeSection === "short-note" ? null : "short-note")}
+              className={`w-full text-left p-4 rounded-lg transition-all duration-200 
+                ${activeSection === "short-note" 
+                  ? "bg-blue-500/20 ring-2 ring-blue-500" 
+                  : "bg-gray-900/50 hover:bg-gray-800/50"}`}
             >
-              <div className="flex items-center gap-2">
-                <BookText className="h-5 w-5 text-blue-400" />
-                <h5 className="text-lg font-semibold text-white">
-                  {subtopic["short-note"].name}
-                </h5>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <BookText className="h-5 w-5 text-blue-400" />
+                  <h5 className="text-lg font-semibold text-white">
+                    {subtopic["short-note"].name}
+                  </h5>
+                </div>
+                <span className="text-sm text-gray-400">
+                  {subtopic["short-note"].questions.length} questions
+                </span>
               </div>
-              {activeSection === 'short-note' && subtopic["short-note"].questions && subtopic["short-note"].questions.length > 0 && (
-                <ScrollArea className="h-[400px] mt-4">
-                  {subtopic["short-note"].questions.map((question, index) => (
-                    <QuestionCard
-                      key={index}
-                      question={question}
-                      index={index}
-                    />
-                  ))}
-                </ScrollArea>
+              
+              {activeSection === "short-note" && (
+                <div className="mt-4">
+                  <ScrollArea className="h-[400px]">
+                    <div className="space-y-2">
+                      {subtopic["short-note"].questions.map((question, index) => (
+                        <QuestionCard
+                          key={index}
+                          question={question}
+                          index={index}
+                        />
+                      ))}
+                    </div>
+                  </ScrollArea>
+                </div>
               )}
-            </div>
+            </button>
           )}
         </div>
       </AccordionContent>
