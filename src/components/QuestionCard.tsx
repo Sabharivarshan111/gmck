@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -20,7 +21,7 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
           <div className="flex-shrink-0 mt-1">
             <Checkbox
               checked={isCompleted}
-              onCheckedChange={(checked) => setIsCompleted(checked as boolean)}
+              onCheckedChange={(checked) => setIsCompleted(!!checked)}
               className="h-5 w-5 border-gray-600"
             />
           </div>
