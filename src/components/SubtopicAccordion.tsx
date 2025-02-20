@@ -1,44 +1,23 @@
 
 import { BookOpen, BookText } from "lucide-react";
-import {
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 import QuestionCard from "./QuestionCard";
+import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
-interface SubtopicProps {
-  name: string;
-  essay?: {
-    name: string;
-    questions: string[];
-  };
-  "short-note"?: {
-    name: string;
-    questions: string[];
-  };
-}
-
-interface SubtopicAccordionProps {
-  subtopicKey: string;
-  subtopic: SubtopicProps;
-}
-
-const SubtopicAccordion = ({ subtopicKey, subtopic }: SubtopicAccordionProps) => {
+const SubtopicAccordion = ({ subtopicKey, subtopic }) => {
   return (
-    <AccordionItem value={subtopicKey}>
-      <AccordionTrigger className="hover:bg-gray-800/50 rounded-lg px-4">
+    <div className="mb-6 border-l-2 border-gray-800 pl-4">
+      <div className="mb-4">
         <div className="flex items-center space-x-3">
           <BookOpen className="h-5 w-5 text-indigo-400" />
-          <h4 className="text-lg font-medium">{subtopic.name}</h4>
+          <h4 className="text-lg font-medium text-white">{subtopic.name}</h4>
         </div>
-      </AccordionTrigger>
-      <AccordionContent>
-        <div className="space-y-4 p-4">
-          {/* Essays Section */}
-          {subtopic.essay && (
-            <div className="rounded-lg bg-gray-900/50 p-4">
+      </div>
+
+      <div className="space-y-6">
+        {subtopic.essay && (
+          <Card className="bg-gray-900 border-gray-800">
+            <div className="p-4">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <BookOpen className="h-5 w-5 text-blue-400" />
@@ -51,7 +30,7 @@ const SubtopicAccordion = ({ subtopicKey, subtopic }: SubtopicAccordionProps) =>
                 </span>
               </div>
               <ScrollArea className="h-[300px]">
-                <div className="space-y-3">
+                <div className="space-y-3 pr-4">
                   {subtopic.essay.questions.map((question, index) => (
                     <QuestionCard
                       key={index}
@@ -62,11 +41,12 @@ const SubtopicAccordion = ({ subtopicKey, subtopic }: SubtopicAccordionProps) =>
                 </div>
               </ScrollArea>
             </div>
-          )}
+          </Card>
+        )}
 
-          {/* Short Notes Section */}
-          {subtopic["short-note"] && (
-            <div className="rounded-lg bg-gray-900/50 p-4">
+        {subtopic["short-note"] && (
+          <Card className="bg-gray-900 border-gray-800">
+            <div className="p-4">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <BookText className="h-5 w-5 text-blue-400" />
@@ -79,7 +59,7 @@ const SubtopicAccordion = ({ subtopicKey, subtopic }: SubtopicAccordionProps) =>
                 </span>
               </div>
               <ScrollArea className="h-[300px]">
-                <div className="space-y-3">
+                <div className="space-y-3 pr-4">
                   {subtopic["short-note"].questions.map((question, index) => (
                     <QuestionCard
                       key={index}
@@ -90,10 +70,10 @@ const SubtopicAccordion = ({ subtopicKey, subtopic }: SubtopicAccordionProps) =>
                 </div>
               </ScrollArea>
             </div>
-          )}
-        </div>
-      </AccordionContent>
-    </AccordionItem>
+          </Card>
+        )}
+      </div>
+    </div>
   );
 };
 

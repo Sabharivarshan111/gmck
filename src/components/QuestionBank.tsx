@@ -4,36 +4,6 @@ import { Accordion } from "@/components/ui/accordion";
 import { QUESTION_BANK_DATA } from "@/data/questionBankData";
 import TopicAccordion from "./TopicAccordion";
 
-export interface Question {
-  question: string;
-  index: number;
-}
-
-export interface QuestionType {
-  name: string;
-  questions: string[];
-}
-
-export interface SubTopicContent {
-  name: string;
-  essay?: QuestionType;
-  "short-note"?: QuestionType;
-}
-
-export interface SubTopic {
-  name: string;
-  subtopics: {
-    [key: string]: SubTopicContent;
-  };
-}
-
-export interface Topic {
-  name: string;
-  subtopics: {
-    [key: string]: SubTopic;
-  };
-}
-
 const QuestionBank = () => {
   return (
     <div className="min-h-screen bg-black">
@@ -51,7 +21,7 @@ const QuestionBank = () => {
                 <TopicAccordion 
                   key={topicKey}
                   topicKey={topicKey}
-                  topic={topic as Topic}
+                  topic={topic}
                 />
               ))}
             </Accordion>

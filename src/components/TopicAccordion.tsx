@@ -1,5 +1,5 @@
 
-import { Book, FileText } from "lucide-react";
+import { Book } from "lucide-react";
 import {
   AccordionContent,
   AccordionItem,
@@ -7,14 +7,8 @@ import {
 } from "@/components/ui/accordion";
 import { Accordion } from "@/components/ui/accordion";
 import SubtopicAccordion from "./SubtopicAccordion";
-import { Topic } from "./QuestionBank";
 
-interface TopicAccordionProps {
-  topicKey: string;
-  topic: Topic;
-}
-
-const TopicAccordion = ({ topicKey, topic }: TopicAccordionProps) => {
+const TopicAccordion = ({ topicKey, topic }) => {
   return (
     <AccordionItem value={topicKey}>
       <AccordionTrigger className="px-4 hover:bg-gray-800/50 rounded-lg">
@@ -25,26 +19,21 @@ const TopicAccordion = ({ topicKey, topic }: TopicAccordionProps) => {
       </AccordionTrigger>
       <AccordionContent>
         <div className="pl-4">
-          <Accordion type="single" collapsible>
+          <Accordion type="multiple">
             {Object.entries(topic.subtopics).map(([paperKey, paper]) => (
               <AccordionItem key={paperKey} value={paperKey}>
                 <AccordionTrigger className="px-4 hover:bg-gray-800/50 rounded-lg">
-                  <div className="flex items-center space-x-3">
-                    <FileText className="h-5 w-5 text-indigo-400" />
-                    <h4 className="text-lg font-medium">{paper.name}</h4>
-                  </div>
+                  <h4 className="text-lg font-medium">{paper.name}</h4>
                 </AccordionTrigger>
                 <AccordionContent>
                   <div className="pl-4">
-                    <Accordion type="single" collapsible>
-                      {Object.entries(paper.subtopics).map(([subtopicKey, subtopic]) => (
-                        <SubtopicAccordion 
-                          key={subtopicKey}
-                          subtopicKey={subtopicKey}
-                          subtopic={subtopic}
-                        />
-                      ))}
-                    </Accordion>
+                    {Object.entries(paper.subtopics).map(([subtopicKey, subtopic]) => (
+                      <SubtopicAccordion 
+                        key={subtopicKey}
+                        subtopicKey={subtopicKey}
+                        subtopic={subtopic}
+                      />
+                    ))}
                   </div>
                 </AccordionContent>
               </AccordionItem>
