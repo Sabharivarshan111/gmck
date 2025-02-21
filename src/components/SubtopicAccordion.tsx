@@ -1,39 +1,45 @@
-
 import { BookOpen } from "lucide-react";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { type SubTopicContent } from "./QuestionBank";
 import TypeAccordion from "./TypeAccordion";
+import { SubTopic } from "./QuestionBank";
 
 interface SubtopicAccordionProps {
   subtopicKey: string;
-  subtopic: SubTopicContent;
+  subtopic: SubTopic;
 }
 
 const SubtopicAccordion = ({ subtopicKey, subtopic }: SubtopicAccordionProps) => {
+  console.log("SubtopicAccordion rendering with subtopic:", subtopic); // Debug log
+
   return (
-    <AccordionItem value={subtopicKey} className="border-b border-gray-800">
-      <AccordionTrigger className="px-4 hover:bg-gray-800/50 rounded-lg">
+    <AccordionItem 
+      value={subtopicKey}
+      className="animate-fade-in transition-all duration-300"
+    >
+      <AccordionTrigger className="hover:bg-white/50 dark:hover:bg-gray-800/50 rounded-lg px-4">
         <div className="flex items-center space-x-3">
-          <BookOpen className="h-5 w-5 text-indigo-400" />
-          <span className="text-lg font-medium text-white">{subtopic.name}</span>
+          <BookOpen className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
+          <h4 className="text-lg md:text-xl font-medium">{subtopic.name}</h4>
         </div>
       </AccordionTrigger>
       <AccordionContent>
-        <div className="pl-4">
-          <Accordion type="single" collapsible className="space-y-4">
-            {subtopic.essay && (
-              <TypeAccordion type={subtopic.essay} typeKey="essay" />
-            )}
-            {subtopic["short-note"] && (
-              <TypeAccordion type={subtopic["short-note"]} typeKey="short-note" />
-            )}
+        <ScrollArea className="h-full px-4">
+          <Accordion type="single" collapsible className="w-full">
+            {Object.entries(subtopic.subtopics).map(([typeKey, type]) => (
+              <TypeAccordion 
+                key={typeKey}
+                typeKey={typeKey}
+                type={type}
+              />
+            ))}
           </Accordion>
-        </div>
+        </ScrollArea>
       </AccordionContent>
     </AccordionItem>
   );
