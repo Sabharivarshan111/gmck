@@ -27,7 +27,7 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
             />
           </div>
           <div className="flex-1">
-            <p className="text-sm text-gray-300">{questionText}</p>
+            <p className="text-sm text-gray-300 whitespace-pre-wrap">{questionText}</p>
             {pageNumbers && (
               <p className="text-xs text-gray-500 mt-2">
                 Page: {pageNumbers}
