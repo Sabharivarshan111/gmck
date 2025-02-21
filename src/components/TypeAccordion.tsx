@@ -1,48 +1,43 @@
-import { FileText } from "lucide-react";
+
+import { BookText } from "lucide-react";
 import {
+  Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { type QuestionType } from "./QuestionBank";
 import QuestionCard from "./QuestionCard";
-import { SubTopicContent } from "./QuestionBank";
 
 interface TypeAccordionProps {
-  typeKey: string;
-  type: SubTopicContent;
+  type: QuestionType;
+  typeKey: "essay" | "short-note";
 }
 
-const TypeAccordion = ({ typeKey, type }: TypeAccordionProps) => {
-  console.log("TypeAccordion rendering with type:", type); // Debug log
-
+const TypeAccordion = ({ type, typeKey }: TypeAccordionProps) => {
   return (
-    <AccordionItem 
-      value={typeKey}
-      className="animate-fade-in transition-all duration-300"
-    >
-      <AccordionTrigger className="hover:bg-white/50 dark:hover:bg-gray-800/50 rounded-lg px-4">
+    <AccordionItem value={typeKey} className="border-b border-gray-800">
+      <AccordionTrigger className="px-4 hover:bg-gray-800/50 rounded-lg">
         <div className="flex items-center space-x-3">
-          <FileText className="h-4 w-4 text-indigo-500 dark:text-indigo-300" />
-          <h5 className="text-lg font-medium">{type.name}</h5>
+          <BookText className="h-5 w-5 text-blue-400" />
+          <span className="text-lg font-medium text-white">
+            {type.name}
+          </span>
         </div>
       </AccordionTrigger>
       <AccordionContent>
-        <div className="space-y-4 px-4">
-          {Object.entries(type.subtopics).map(([questionTypeKey, questionType]) => (
-            <div key={questionTypeKey}>
-              <h6 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
-                {questionType.name}
-              </h6>
-              {questionType.questions.map((question, index) => (
-                <QuestionCard
-                  key={index}
-                  question={question}
-                  index={index}
-                />
-              ))}
-            </div>
-          ))}
-        </div>
+        <ScrollArea className="h-[400px]">
+          <div className="space-y-3 p-4">
+            {type.questions.map((question, index) => (
+              <QuestionCard
+                key={`${typeKey}-${index}`}
+                question={question}
+                index={index}
+              />
+            ))}
+          </div>
+        </ScrollArea>
       </AccordionContent>
     </AccordionItem>
   );
