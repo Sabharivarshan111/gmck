@@ -4,11 +4,6 @@ import { Accordion } from "@/components/ui/accordion";
 import { QUESTION_BANK_DATA } from "@/data/questionBankData";
 import TopicAccordion from "./TopicAccordion";
 
-export interface Question {
-  question: string;
-  index: number;
-}
-
 export interface QuestionType {
   name: string;
   questions: string[];

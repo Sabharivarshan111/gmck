@@ -1,7 +1,6 @@
 
 import { BookText } from "lucide-react";
 import {
-  Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
