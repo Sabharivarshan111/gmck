@@ -15,27 +15,29 @@ serve(async (req) => {
 
   try {
     const { prompt } = await req.json();
+    console.log("Received prompt:", prompt);
     
     // Get API key from environment variable
     const apiKey = Deno.env.get('GEMINI_API_KEY');
     if (!apiKey) {
-      throw new Error('GEMINI_API_KEY is not set');
+      console.error('GEMINI_API_KEY is not set');
+      throw new Error('API key not configured');
     }
 
+    console.log("API key found, initializing Gemini...");
+    
     // Initialize Gemini AI
     const genAI = new GoogleGenerativeAI(apiKey);
-    
-    // Use gemini-pro model
     const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
-    console.log("Generating response for prompt:", prompt);
-
+    console.log("Generating content...");
+    
     // Generate content
     const result = await model.generateContent(prompt);
     const response = await result.response;
     const text = response.text();
 
-    console.log("Successfully generated response");
+    console.log("Response generated successfully");
     
     return new Response(
       JSON.stringify({ 
@@ -51,11 +53,14 @@ serve(async (req) => {
     );
 
   } catch (error) {
-    console.error("Error in ask-gemini function:", error);
+    console.error('Error in ask-gemini function:', error.message);
+    
+    // Return a more detailed error response
     return new Response(
       JSON.stringify({ 
         error: error.message,
-        status: 'error'
+        status: 'error',
+        details: 'An error occurred while processing your request'
       }),
       { 
         status: 500,
