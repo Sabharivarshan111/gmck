@@ -6,12 +6,18 @@ import { AiChat } from "@/components/AiChat";
 
 const Index = () => {
   return (
-    <>
+    <div className="container mx-auto px-4">
       <InstallPrompt />
-      <QuestionBank />
-      <PomodoroTimer />
-      <AiChat />
-    </>
+      <div className="grid gap-8 grid-cols-1 lg:grid-cols-2">
+        <div className="space-y-8">
+          <QuestionBank />
+          <PomodoroTimer />
+        </div>
+        <div>
+          <AiChat />
+        </div>
+      </div>
+    </div>
   );
 };
 
