@@ -1,5 +1,9 @@
+
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Accordion } from "@/components/ui/accordion";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSwipeable } from "react-swipeable";
 import { QUESTION_BANK_DATA } from "@/data/questionBankData";
@@ -37,6 +41,7 @@ export interface Topic {
 }
 
 const QuestionBank = () => {
+  const [searchQuery, setSearchQuery] = useState("");
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -56,23 +61,62 @@ const QuestionBank = () => {
 
   return (
     <div className="min-h-screen bg-black">
-      <div className="flex-1 p-4 pt-6 max-w-4xl mx-auto" {...handlers}>
-        <div className="flex items-center justify-between mb-8">
-          <h2 className="text-2xl md:text-4xl font-bold tracking-tight text-white animate-fade-in">
-            MBBS QBANK-ACEV
-          </h2>
-        </div>
-        <div className="grid gap-4">
-          <Accordion type="single" collapsible className="w-full">
-            {Object.entries(QUESTION_BANK_DATA).map(([topicKey, topic]) => (
-              <TopicAccordion 
-                key={topicKey}
-                topicKey={topicKey}
-                topic={topic as Topic}
-              />
-            ))}
-          </Accordion>
-        </div>
+      <div className="flex-1 p-4 max-w-4xl mx-auto space-y-4" {...handlers}>
+        <Tabs defaultValue="essay" className="w-full">
+          <TabsList className="w-full grid grid-cols-2 h-12 bg-gray-950 rounded-lg mb-4">
+            <TabsTrigger 
+              value="essay" 
+              className="text-lg font-medium data-[state=active]:text-white data-[state=active]:bg-transparent data-[state=active]:after:content-[''] data-[state=active]:after:absolute data-[state=active]:after:left-0 data-[state=active]:after:right-0 data-[state=active]:after:bottom-0 data-[state=active]:after:h-0.5 data-[state=active]:after:bg-white relative"
+            >
+              Essay
+            </TabsTrigger>
+            <TabsTrigger 
+              value="short-notes"
+              className="text-lg font-medium data-[state=active]:text-white data-[state=active]:bg-transparent data-[state=active]:after:content-[''] data-[state=active]:after:absolute data-[state=active]:after:left-0 data-[state=active]:after:right-0 data-[state=active]:after:bottom-0 data-[state=active]:after:h-0.5 data-[state=active]:after:bg-white relative"
+            >
+              Short notes
+            </TabsTrigger>
+          </TabsList>
+
+          <div className="relative mb-6">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+            <Input
+              type="text"
+              placeholder="Search questions here"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full bg-gray-800/50 border-none pl-10 h-12 rounded-full text-gray-300 placeholder:text-gray-400"
+            />
+          </div>
+
+          <TabsContent value="essay" className="mt-0">
+            <div className="grid gap-4">
+              <Accordion type="single" collapsible className="w-full">
+                {Object.entries(QUESTION_BANK_DATA).map(([topicKey, topic]) => (
+                  <TopicAccordion 
+                    key={topicKey}
+                    topicKey={topicKey}
+                    topic={topic as Topic}
+                  />
+                ))}
+              </Accordion>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="short-notes" className="mt-0">
+            <div className="grid gap-4">
+              <Accordion type="single" collapsible className="w-full">
+                {Object.entries(QUESTION_BANK_DATA).map(([topicKey, topic]) => (
+                  <TopicAccordion 
+                    key={topicKey}
+                    topicKey={topicKey}
+                    topic={topic as Topic}
+                  />
+                ))}
+              </Accordion>
+            </div>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
