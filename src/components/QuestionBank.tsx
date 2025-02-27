@@ -43,6 +43,7 @@ export interface Topic {
 const QuestionBank = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isMobile, setIsMobile] = useState(false);
+  const [activeTab, setActiveTab] = useState("essay");
 
   useEffect(() => {
     const checkMobile = () => {
@@ -59,10 +60,77 @@ const QuestionBank = () => {
     trackMouse: true
   });
 
+  const filterQuestions = (topic: Topic, type: "essay" | "short-notes"): Topic => {
+    const filteredSubtopics: { [key: string]: SubTopic } = {};
+
+    Object.entries(topic.subtopics).forEach(([subtopicKey, subtopic]) => {
+      const filteredInnerSubtopics: { [key: string]: SubTopicContent } = {};
+
+      Object.entries(subtopic.subtopics).forEach(([innerKey, innerSubtopic]) => {
+        const filteredContent: { [key: string]: QuestionType } = {};
+
+        // Only include the relevant question type (essay or short-note)
+        Object.entries(innerSubtopic.subtopics).forEach(([typeKey, questions]) => {
+          if (typeKey === (type === "essay" ? "essay" : "short-note")) {
+            if (!searchQuery || questions.questions.some(q => 
+              q.toLowerCase().includes(searchQuery.toLowerCase())
+            )) {
+              const filteredQuestions = searchQuery
+                ? questions.questions.filter(q => 
+                    q.toLowerCase().includes(searchQuery.toLowerCase())
+                  )
+                : questions.questions;
+
+              if (filteredQuestions.length > 0) {
+                filteredContent[typeKey] = {
+                  ...questions,
+                  questions: filteredQuestions
+                };
+              }
+            }
+          }
+        });
+
+        if (Object.keys(filteredContent).length > 0) {
+          filteredInnerSubtopics[innerKey] = {
+            ...innerSubtopic,
+            subtopics: filteredContent
+          };
+        }
+      });
+
+      if (Object.keys(filteredInnerSubtopics).length > 0) {
+        filteredSubtopics[subtopicKey] = {
+          ...subtopic,
+          subtopics: filteredInnerSubtopics
+        };
+      }
+    });
+
+    return {
+      ...topic,
+      subtopics: filteredSubtopics
+    };
+  };
+
+  const getFilteredData = (type: "essay" | "short-notes") => {
+    return Object.entries(QUESTION_BANK_DATA).reduce((acc, [key, topic]) => {
+      const filteredTopic = filterQuestions(topic as Topic, type);
+      if (Object.keys(filteredTopic.subtopics).length > 0) {
+        acc[key] = filteredTopic;
+      }
+      return acc;
+    }, {} as { [key: string]: Topic });
+  };
+
   return (
     <div className="min-h-screen bg-black">
       <div className="flex-1 p-4 max-w-4xl mx-auto space-y-4" {...handlers}>
-        <Tabs defaultValue="essay" className="w-full">
+        <Tabs 
+          defaultValue="essay" 
+          className="w-full"
+          onValueChange={(value) => setActiveTab(value as "essay" | "short-notes")}
+        >
           <TabsList className="w-full grid grid-cols-2 h-12 bg-gray-950 rounded-lg mb-4">
             <TabsTrigger 
               value="essay" 
@@ -92,7 +160,7 @@ const QuestionBank = () => {
           <TabsContent value="essay" className="mt-0">
             <div className="grid gap-4">
               <Accordion type="single" collapsible className="w-full">
-                {Object.entries(QUESTION_BANK_DATA).map(([topicKey, topic]) => (
+                {Object.entries(getFilteredData("essay")).map(([topicKey, topic]) => (
                   <TopicAccordion 
                     key={topicKey}
                     topicKey={topicKey}
@@ -106,7 +174,7 @@ const QuestionBank = () => {
           <TabsContent value="short-notes" className="mt-0">
             <div className="grid gap-4">
               <Accordion type="single" collapsible className="w-full">
-                {Object.entries(QUESTION_BANK_DATA).map(([topicKey, topic]) => (
+                {Object.entries(getFilteredData("short-notes")).map(([topicKey, topic]) => (
                   <TopicAccordion 
                     key={topicKey}
                     topicKey={topicKey}
