@@ -69,24 +69,23 @@ const QuestionBank = () => {
       Object.entries(subtopic.subtopics).forEach(([innerKey, innerSubtopic]) => {
         const filteredContent: { [key: string]: QuestionType } = {};
 
-        // Only include the relevant question type (essay or short-note)
         Object.entries(innerSubtopic.subtopics).forEach(([typeKey, questions]) => {
           if (typeKey === (type === "essay" ? "essay" : "short-note")) {
-            if (!searchQuery || questions.questions.some(q => 
-              q.toLowerCase().includes(searchQuery.toLowerCase())
-            )) {
-              const filteredQuestions = searchQuery
-                ? questions.questions.filter(q => 
-                    q.toLowerCase().includes(searchQuery.toLowerCase())
-                  )
-                : questions.questions;
+            let shouldInclude = true;
+            let filteredQuestions = questions.questions;
 
-              if (filteredQuestions.length > 0) {
-                filteredContent[typeKey] = {
-                  ...questions,
-                  questions: filteredQuestions
-                };
-              }
+            if (searchQuery) {
+              filteredQuestions = questions.questions.filter(q => 
+                q.toLowerCase().includes(searchQuery.toLowerCase())
+              );
+              shouldInclude = filteredQuestions.length > 0;
+            }
+
+            if (shouldInclude) {
+              filteredContent[typeKey] = {
+                ...questions,
+                questions: filteredQuestions
+              };
             }
           }
         });
@@ -109,6 +108,7 @@ const QuestionBank = () => {
 
     return {
       ...topic,
+      name: topic.name,
       subtopics: filteredSubtopics
     };
   };
@@ -157,33 +157,35 @@ const QuestionBank = () => {
             />
           </div>
 
-          <TabsContent value="essay" className="mt-0">
-            <div className="grid gap-4">
-              <Accordion type="single" collapsible className="w-full">
-                {Object.entries(getFilteredData("essay")).map(([topicKey, topic]) => (
-                  <TopicAccordion 
-                    key={topicKey}
-                    topicKey={topicKey}
-                    topic={topic as Topic}
-                  />
-                ))}
-              </Accordion>
-            </div>
-          </TabsContent>
+          <ScrollArea className="h-[calc(100vh-12rem)]">
+            <TabsContent value="essay" className="mt-0">
+              <div className="grid gap-4">
+                <Accordion type="single" collapsible className="w-full">
+                  {Object.entries(getFilteredData("essay")).map(([topicKey, topic]) => (
+                    <TopicAccordion 
+                      key={topicKey}
+                      topicKey={topicKey}
+                      topic={topic as Topic}
+                    />
+                  ))}
+                </Accordion>
+              </div>
+            </TabsContent>
 
-          <TabsContent value="short-notes" className="mt-0">
-            <div className="grid gap-4">
-              <Accordion type="single" collapsible className="w-full">
-                {Object.entries(getFilteredData("short-notes")).map(([topicKey, topic]) => (
-                  <TopicAccordion 
-                    key={topicKey}
-                    topicKey={topicKey}
-                    topic={topic as Topic}
-                  />
-                ))}
-              </Accordion>
-            </div>
-          </TabsContent>
+            <TabsContent value="short-notes" className="mt-0">
+              <div className="grid gap-4">
+                <Accordion type="single" collapsible className="w-full">
+                  {Object.entries(getFilteredData("short-notes")).map(([topicKey, topic]) => (
+                    <TopicAccordion 
+                      key={topicKey}
+                      topicKey={topicKey}
+                      topic={topic as Topic}
+                    />
+                  ))}
+                </Accordion>
+              </div>
+            </TabsContent>
+          </ScrollArea>
         </Tabs>
       </div>
     </div>

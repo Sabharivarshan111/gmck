@@ -1,3 +1,4 @@
+
 import { Book } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
@@ -28,7 +29,7 @@ const TopicAccordion = ({ topicKey, topic }: TopicAccordionProps) => {
         </div>
       </AccordionTrigger>
       <AccordionContent>
-        <ScrollArea className="h-full px-4">
+        <div className="px-4">
           <Accordion type="single" collapsible className="w-full">
             {Object.entries(topic.subtopics).map(([subtopicKey, subtopic]) => (
               <SubtopicAccordion 
@@ -38,7 +39,7 @@ const TopicAccordion = ({ topicKey, topic }: TopicAccordionProps) => {
               />
             ))}
           </Accordion>
-        </ScrollArea>
+        </div>
       </AccordionContent>
     </AccordionItem>
   );
