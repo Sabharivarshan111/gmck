@@ -6,15 +6,25 @@ import { AiChat } from "@/components/AiChat";
 
 const Index = () => {
   return (
-    <div className="container mx-auto px-4">
+    <div className="min-h-screen bg-black">
       <InstallPrompt />
-      <div className="grid gap-8 grid-cols-1 lg:grid-cols-2">
-        <div className="space-y-8">
-          <QuestionBank />
-          <PomodoroTimer />
-        </div>
-        <div>
-          <AiChat />
+      <div className="container mx-auto px-4 py-8">
+        <div className="grid gap-8 grid-cols-1 lg:grid-cols-[2fr,1fr] animate-fade-in">
+          <div className="space-y-8">
+            <div className="group">
+              <h1 className="text-4xl font-bold mb-8 text-white tracking-tight">
+                ACEV
+                <span className="text-gray-500 ml-2 text-lg">Medical Education</span>
+              </h1>
+              <QuestionBank />
+            </div>
+            <div className="transition-all duration-300 hover:scale-[1.02]">
+              <PomodoroTimer />
+            </div>
+          </div>
+          <div className="lg:sticky lg:top-8 lg:h-[calc(100vh-4rem)]">
+            <AiChat />
+          </div>
         </div>
       </div>
     </div>

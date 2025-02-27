@@ -4,8 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
-import { Loader2 } from "lucide-react";
+import { Loader2, Send } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { motion, AnimatePresence } from "framer-motion";
 
 export const AiChat = () => {
   const [prompt, setPrompt] = useState("");
@@ -50,19 +51,24 @@ export const AiChat = () => {
   };
 
   return (
-    <div className="w-full max-w-3xl mx-auto p-4 space-y-4">
-      <Card>
+    <motion.div 
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.3 }}
+      className="w-full space-y-4"
+    >
+      <Card className="backdrop-blur-sm bg-gray-950/50 border-gray-800">
         <CardContent className="p-4">
           <form onSubmit={handleSubmit} className="space-y-4">
             <Textarea
               placeholder="Ask any medical question..."
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
-              className="min-h-[100px]"
+              className="min-h-[100px] bg-gray-900 border-gray-800 focus:ring-gray-700"
             />
             <Button 
               type="submit" 
-              className="w-full"
+              className="w-full bg-white text-black hover:bg-gray-200 transition-colors duration-200"
               disabled={isLoading}
             >
               {isLoading ? (
@@ -71,25 +77,37 @@ export const AiChat = () => {
                   Generating...
                 </>
               ) : (
-                'Ask AI'
+                <>
+                  <Send className="mr-2 h-4 w-4" />
+                  Ask AI
+                </>
               )}
             </Button>
           </form>
         </CardContent>
       </Card>
 
-      {response && (
-        <Card>
-          <CardContent className="p-4">
-            <div className="prose dark:prose-invert">
-              <h3 className="text-lg font-semibold mb-2">AI Response:</h3>
-              <div className="whitespace-pre-wrap text-sm">
-                {response}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-    </div>
+      <AnimatePresence>
+        {response && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+          >
+            <Card className="backdrop-blur-sm bg-gray-950/50 border-gray-800">
+              <CardContent className="p-4">
+                <div className="prose dark:prose-invert max-w-none">
+                  <h3 className="text-lg font-semibold mb-2 text-white">AI Response:</h3>
+                  <div className="whitespace-pre-wrap text-sm text-gray-300">
+                    {response}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   );
 };
