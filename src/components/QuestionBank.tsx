@@ -60,67 +60,81 @@ const QuestionBank = () => {
     trackMouse: true
   });
 
-  const filterQuestions = (topic: Topic, type: "essay" | "short-notes"): Topic => {
+  const searchInQuestions = (questions: string[], query: string): string[] => {
+    if (!query) return questions;
+    return questions.filter(question => 
+      question.toLowerCase().includes(query.toLowerCase())
+    );
+  };
+
+  const filterQuestions = (topic: Topic, type: "essay" | "short-notes"): Topic | null => {
+    let hasContent = false;
     const filteredSubtopics: { [key: string]: SubTopic } = {};
 
-    Object.entries(topic.subtopics).forEach(([subtopicKey, subtopic]) => {
+    for (const [subtopicKey, subtopic] of Object.entries(topic.subtopics)) {
       const filteredInnerSubtopics: { [key: string]: SubTopicContent } = {};
+      let hasSubtopicContent = false;
 
-      Object.entries(subtopic.subtopics).forEach(([innerKey, innerSubtopic]) => {
+      for (const [innerKey, innerSubtopic] of Object.entries(subtopic.subtopics)) {
         const filteredContent: { [key: string]: QuestionType } = {};
+        let hasInnerContent = false;
 
-        Object.entries(innerSubtopic.subtopics).forEach(([typeKey, questions]) => {
+        for (const [typeKey, questions] of Object.entries(innerSubtopic.subtopics)) {
+          // Check if this is the correct type (essay or short-note)
           if (typeKey === (type === "essay" ? "essay" : "short-note")) {
-            let shouldInclude = true;
-            let filteredQuestions = questions.questions;
-
-            if (searchQuery) {
-              filteredQuestions = questions.questions.filter(q => 
-                q.toLowerCase().includes(searchQuery.toLowerCase())
-              );
-              shouldInclude = filteredQuestions.length > 0;
-            }
-
-            if (shouldInclude) {
+            const filteredQuestions = searchInQuestions(questions.questions, searchQuery);
+            
+            if (filteredQuestions.length > 0) {
               filteredContent[typeKey] = {
-                ...questions,
+                name: questions.name,
                 questions: filteredQuestions
               };
+              hasInnerContent = true;
+              hasSubtopicContent = true;
+              hasContent = true;
             }
           }
-        });
+        }
 
-        if (Object.keys(filteredContent).length > 0) {
+        if (hasInnerContent) {
           filteredInnerSubtopics[innerKey] = {
-            ...innerSubtopic,
+            name: innerSubtopic.name,
             subtopics: filteredContent
           };
         }
-      });
+      }
 
-      if (Object.keys(filteredInnerSubtopics).length > 0) {
+      if (hasSubtopicContent) {
         filteredSubtopics[subtopicKey] = {
-          ...subtopic,
+          name: subtopic.name,
           subtopics: filteredInnerSubtopics
         };
       }
-    });
+    }
 
-    return {
-      ...topic,
+    return hasContent ? {
       name: topic.name,
       subtopics: filteredSubtopics
-    };
+    } : null;
   };
 
   const getFilteredData = (type: "essay" | "short-notes") => {
-    return Object.entries(QUESTION_BANK_DATA).reduce((acc, [key, topic]) => {
+    const filteredData: { [key: string]: Topic } = {};
+    
+    for (const [key, topic] of Object.entries(QUESTION_BANK_DATA)) {
       const filteredTopic = filterQuestions(topic as Topic, type);
-      if (Object.keys(filteredTopic.subtopics).length > 0) {
-        acc[key] = filteredTopic;
+      if (filteredTopic) {
+        filteredData[key] = filteredTopic;
       }
-      return acc;
-    }, {} as { [key: string]: Topic });
+    }
+    
+    return filteredData;
+  };
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    console.log("Searching for:", value); // Debug log
+    setSearchQuery(value);
   };
 
   return (
@@ -152,7 +166,7 @@ const QuestionBank = () => {
               type="text"
               placeholder="Search questions here"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={handleSearch}
               className="w-full bg-gray-800/50 border-none pl-10 h-12 rounded-full text-gray-300 placeholder:text-gray-400"
             />
           </div>
