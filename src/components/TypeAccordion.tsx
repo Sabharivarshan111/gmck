@@ -1,3 +1,4 @@
+
 import { FileText } from "lucide-react";
 import {
   AccordionContent,
@@ -10,11 +11,10 @@ import { SubTopicContent } from "./QuestionBank";
 interface TypeAccordionProps {
   typeKey: string;
   type: SubTopicContent;
+  isExpanded?: boolean;
 }
 
-const TypeAccordion = ({ typeKey, type }: TypeAccordionProps) => {
-  console.log("TypeAccordion rendering with type:", type); // Debug log
-
+const TypeAccordion = ({ typeKey, type, isExpanded = false }: TypeAccordionProps) => {
   return (
     <AccordionItem 
       value={typeKey}

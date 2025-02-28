@@ -13,9 +13,10 @@ import { Topic } from "./QuestionBank";
 interface TopicAccordionProps {
   topicKey: string;
   topic: Topic;
+  isExpanded?: boolean;
 }
 
-const TopicAccordion = ({ topicKey, topic }: TopicAccordionProps) => {
+const TopicAccordion = ({ topicKey, topic, isExpanded = false }: TopicAccordionProps) => {
   return (
     <AccordionItem 
       value={topicKey} 
@@ -30,12 +31,13 @@ const TopicAccordion = ({ topicKey, topic }: TopicAccordionProps) => {
       </AccordionTrigger>
       <AccordionContent>
         <div className="px-4">
-          <Accordion type="single" collapsible className="w-full">
+          <Accordion type="multiple" defaultValue={isExpanded ? Object.keys(topic.subtopics) : []} className="w-full">
             {Object.entries(topic.subtopics).map(([subtopicKey, subtopic]) => (
               <SubtopicAccordion 
                 key={subtopicKey}
                 subtopicKey={subtopicKey}
                 subtopic={subtopic}
+                isExpanded={isExpanded}
               />
             ))}
           </Accordion>

@@ -44,6 +44,7 @@ const QuestionBank = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isMobile, setIsMobile] = useState(false);
   const [activeTab, setActiveTab] = useState("essay");
+  const [expandedItems, setExpandedItems] = useState<string[]>([]);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -54,6 +55,17 @@ const QuestionBank = () => {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
+  // Auto-expand all items when searching
+  useEffect(() => {
+    if (searchQuery.trim() !== "") {
+      // Get all topic keys
+      const topicKeys = Object.keys(QUESTION_BANK_DATA);
+      setExpandedItems(topicKeys);
+    } else {
+      setExpandedItems([]);
+    }
+  }, [searchQuery]);
+
   const handlers = useSwipeable({
     onSwipedLeft: () => console.log("Swiped left"),
     onSwipedRight: () => console.log("Swiped right"),
@@ -61,7 +73,7 @@ const QuestionBank = () => {
   });
 
   const searchInQuestions = (questions: string[], query: string): string[] => {
-    if (!query) return questions;
+    if (!query.trim()) return questions;
     return questions.filter(question => 
       question.toLowerCase().includes(query.toLowerCase())
     );
@@ -174,12 +186,18 @@ const QuestionBank = () => {
           <ScrollArea className="h-[calc(100vh-12rem)]">
             <TabsContent value="essay" className="mt-0">
               <div className="grid gap-4">
-                <Accordion type="single" collapsible className="w-full">
+                <Accordion 
+                  type="multiple" 
+                  value={expandedItems}
+                  onValueChange={setExpandedItems}
+                  className="w-full"
+                >
                   {Object.entries(getFilteredData("essay")).map(([topicKey, topic]) => (
                     <TopicAccordion 
                       key={topicKey}
                       topicKey={topicKey}
                       topic={topic as Topic}
+                      isExpanded={searchQuery.trim() !== ""}
                     />
                   ))}
                 </Accordion>
@@ -188,12 +206,18 @@ const QuestionBank = () => {
 
             <TabsContent value="short-notes" className="mt-0">
               <div className="grid gap-4">
-                <Accordion type="single" collapsible className="w-full">
+                <Accordion 
+                  type="multiple"
+                  value={expandedItems}
+                  onValueChange={setExpandedItems}
+                  className="w-full"
+                >
                   {Object.entries(getFilteredData("short-notes")).map(([topicKey, topic]) => (
                     <TopicAccordion 
                       key={topicKey}
                       topicKey={topicKey}
                       topic={topic as Topic}
+                      isExpanded={searchQuery.trim() !== ""}
                     />
                   ))}
                 </Accordion>

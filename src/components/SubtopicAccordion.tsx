@@ -1,3 +1,4 @@
+
 import { BookOpen } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
@@ -12,11 +13,10 @@ import { SubTopic } from "./QuestionBank";
 interface SubtopicAccordionProps {
   subtopicKey: string;
   subtopic: SubTopic;
+  isExpanded?: boolean;
 }
 
-const SubtopicAccordion = ({ subtopicKey, subtopic }: SubtopicAccordionProps) => {
-  console.log("SubtopicAccordion rendering with subtopic:", subtopic); // Debug log
-
+const SubtopicAccordion = ({ subtopicKey, subtopic, isExpanded = false }: SubtopicAccordionProps) => {
   return (
     <AccordionItem 
       value={subtopicKey}
@@ -30,12 +30,13 @@ const SubtopicAccordion = ({ subtopicKey, subtopic }: SubtopicAccordionProps) =>
       </AccordionTrigger>
       <AccordionContent>
         <ScrollArea className="h-full px-4">
-          <Accordion type="single" collapsible className="w-full">
+          <Accordion type="multiple" defaultValue={isExpanded ? Object.keys(subtopic.subtopics) : []} className="w-full">
             {Object.entries(subtopic.subtopics).map(([typeKey, type]) => (
               <TypeAccordion 
                 key={typeKey}
                 typeKey={typeKey}
                 type={type}
+                isExpanded={isExpanded}
               />
             ))}
           </Accordion>
