@@ -3,8 +3,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Accordion } from "@/components/ui/accordion";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Search } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Search, AlertTriangle } from "lucide-react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { useSwipeable } from "react-swipeable";
 import { QUESTION_BANK_DATA } from "@/data/questionBankData";
 import TopicAccordion from "./TopicAccordion";
@@ -45,7 +45,9 @@ const QuestionBank = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [activeTab, setActiveTab] = useState("essay");
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
+  const [hasSearchResults, setHasSearchResults] = useState(true);
 
+  // Check if mobile
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth <= 768);
@@ -55,46 +57,52 @@ const QuestionBank = () => {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  // Auto-expand all items when searching
-  useEffect(() => {
-    if (searchQuery.trim() !== "") {
-      // Get all topic keys
-      const topicKeys = Object.keys(QUESTION_BANK_DATA);
-      setExpandedItems(topicKeys);
-    } else {
-      setExpandedItems([]);
-    }
-  }, [searchQuery]);
-
+  // Swipe handlers
   const handlers = useSwipeable({
-    onSwipedLeft: () => console.log("Swiped left"),
-    onSwipedRight: () => console.log("Swiped right"),
+    onSwipedLeft: () => {
+      if (activeTab === "essay") {
+        setActiveTab("short-notes");
+      }
+    },
+    onSwipedRight: () => {
+      if (activeTab === "short-notes") {
+        setActiveTab("essay");
+      }
+    },
     trackMouse: true
   });
 
-  const searchInQuestions = (questions: string[], query: string): string[] => {
+  // Search in questions
+  const searchInQuestions = useCallback((questions: string[], query: string): string[] => {
     if (!query.trim()) return questions;
+    const lowerQuery = query.toLowerCase();
     return questions.filter(question => 
-      question.toLowerCase().includes(query.toLowerCase())
+      question.toLowerCase().includes(lowerQuery)
     );
-  };
+  }, []);
 
-  const filterQuestions = (topic: Topic, type: "essay" | "short-notes"): Topic | null => {
+  // Filter questions based on search query and type
+  const filterQuestions = useCallback((topic: Topic, type: "essay" | "short-notes", query: string): Topic | null => {
+    if (!query.trim()) return topic;
+    
     let hasContent = false;
     const filteredSubtopics: { [key: string]: SubTopic } = {};
 
+    // Iterate through first level subtopics
     for (const [subtopicKey, subtopic] of Object.entries(topic.subtopics)) {
       const filteredInnerSubtopics: { [key: string]: SubTopicContent } = {};
       let hasSubtopicContent = false;
 
+      // Iterate through second level subtopics
       for (const [innerKey, innerSubtopic] of Object.entries(subtopic.subtopics)) {
         const filteredContent: { [key: string]: QuestionType } = {};
         let hasInnerContent = false;
 
+        // Iterate through question types (essay or short-note)
         for (const [typeKey, questions] of Object.entries(innerSubtopic.subtopics)) {
           // Check if this is the correct type (essay or short-note)
           if (typeKey === (type === "essay" ? "essay" : "short-note")) {
-            const filteredQuestions = searchInQuestions(questions.questions, searchQuery);
+            const filteredQuestions = searchInQuestions(questions.questions, query);
             
             if (filteredQuestions.length > 0) {
               filteredContent[typeKey] = {
@@ -128,32 +136,60 @@ const QuestionBank = () => {
       name: topic.name,
       subtopics: filteredSubtopics
     } : null;
-  };
+  }, [searchInQuestions]);
 
-  const getFilteredData = (type: "essay" | "short-notes") => {
+  // Get filtered data based on type and search query
+  const getFilteredData = useCallback((type: "essay" | "short-notes", query: string) => {
     const filteredData: { [key: string]: Topic } = {};
+    let hasResults = false;
     
     for (const [key, topic] of Object.entries(QUESTION_BANK_DATA)) {
-      const filteredTopic = filterQuestions(topic as Topic, type);
+      const filteredTopic = filterQuestions(topic as Topic, type, query);
       if (filteredTopic) {
         filteredData[key] = filteredTopic;
+        hasResults = true;
       }
     }
     
+    setHasSearchResults(hasResults || !query.trim());
     return filteredData;
-  };
+  }, [filterQuestions]);
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Handle search input change
+  const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    console.log("Searching for:", value); // Debug log
+    console.log("Searching for:", value);
     setSearchQuery(value);
-  };
+  }, []);
+
+  // Auto-expand topics when searching
+  useEffect(() => {
+    if (searchQuery.trim() !== "") {
+      // Get all topic keys
+      const topicKeys = Object.keys(QUESTION_BANK_DATA);
+      setExpandedItems(topicKeys);
+    } else {
+      setExpandedItems([]);
+    }
+  }, [searchQuery]);
+
+  // Memoize filtered data to prevent unnecessary re-calculations
+  const essayFilteredData = useMemo(() => 
+    getFilteredData("essay", searchQuery), 
+    [getFilteredData, searchQuery]
+  );
+  
+  const shortNotesFilteredData = useMemo(() => 
+    getFilteredData("short-notes", searchQuery), 
+    [getFilteredData, searchQuery]
+  );
 
   return (
     <div className="min-h-screen bg-black">
       <div className="flex-1 p-4 max-w-4xl mx-auto space-y-4" {...handlers}>
         <Tabs 
           defaultValue="essay" 
+          value={activeTab}
           className="w-full"
           onValueChange={(value) => setActiveTab(value as "essay" | "short-notes")}
         >
@@ -184,6 +220,13 @@ const QuestionBank = () => {
           </div>
 
           <ScrollArea className="h-[calc(100vh-12rem)]">
+            {!hasSearchResults && searchQuery.trim() !== "" && (
+              <div className="flex flex-col items-center justify-center py-8 text-gray-400">
+                <AlertTriangle className="h-8 w-8 mb-2" />
+                <p>No results found for "{searchQuery}"</p>
+              </div>
+            )}
+            
             <TabsContent value="essay" className="mt-0">
               <div className="grid gap-4">
                 <Accordion 
@@ -192,7 +235,7 @@ const QuestionBank = () => {
                   onValueChange={setExpandedItems}
                   className="w-full"
                 >
-                  {Object.entries(getFilteredData("essay")).map(([topicKey, topic]) => (
+                  {Object.entries(essayFilteredData).map(([topicKey, topic]) => (
                     <TopicAccordion 
                       key={topicKey}
                       topicKey={topicKey}
@@ -212,7 +255,7 @@ const QuestionBank = () => {
                   onValueChange={setExpandedItems}
                   className="w-full"
                 >
-                  {Object.entries(getFilteredData("short-notes")).map(([topicKey, topic]) => (
+                  {Object.entries(shortNotesFilteredData).map(([topicKey, topic]) => (
                     <TopicAccordion 
                       key={topicKey}
                       topicKey={topicKey}

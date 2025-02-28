@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Timer, Pause, Play, RotateCcw, Droplets } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -16,72 +16,84 @@ const PomodoroTimer = () => {
   const [totalTime, setTotalTime] = useState(25 * 60); // Total time in seconds
   const [remainingTime, setRemainingTime] = useState(25 * 60); // Remaining time in seconds
 
+  // Recalculate remaining time when minutes/seconds change
   useEffect(() => {
-    let interval: NodeJS.Timeout;
+    setRemainingTime(minutes * 60 + seconds);
+  }, [minutes, seconds]);
 
+  // Timer logic
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout | null = null;
+    
     if (isRunning) {
-      interval = setInterval(() => {
-        if (seconds > 0) {
-          setSeconds(seconds - 1);
-          setRemainingTime(prev => prev - 1);
-        } else if (minutes > 0) {
-          setMinutes(minutes - 1);
-          setSeconds(59);
-          setRemainingTime(prev => prev - 1);
-        } else {
-          clearInterval(interval);
-          setIsRunning(false);
-          toast({
-            title: "Time's up!",
-            description: "Your Pomodoro session has ended.",
-          });
-        }
+      intervalId = setInterval(() => {
+        setRemainingTime(prev => {
+          if (prev <= 1) {
+            // Timer finished
+            clearInterval(intervalId as NodeJS.Timeout);
+            setIsRunning(false);
+            setMinutes(0);
+            setSeconds(0);
+            toast({
+              title: "Time's up!",
+              description: "Your Pomodoro session has ended.",
+            });
+            return 0;
+          }
+          
+          const newRemaining = prev - 1;
+          setMinutes(Math.floor(newRemaining / 60));
+          setSeconds(newRemaining % 60);
+          return newRemaining;
+        });
       }, 1000);
     }
+    
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [isRunning]);
 
-    return () => clearInterval(interval);
-  }, [isRunning, minutes, seconds]);
+  const toggleTimer = useCallback(() => {
+    setIsRunning(prev => !prev);
+  }, []);
 
-  const toggleTimer = () => {
-    setIsRunning(!isRunning);
-  };
-
-  const resetTimer = () => {
+  const resetTimer = useCallback(() => {
     setIsRunning(false);
     setMinutes(inputMinutes);
     setSeconds(0);
     setTotalTime(inputMinutes * 60);
     setRemainingTime(inputMinutes * 60);
-  };
+  }, [inputMinutes]);
 
-  const handleMinutesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleMinutesChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value);
     if (!isNaN(value) && value >= 0 && value <= 99) {
       setInputMinutes(value);
     }
-  };
+  }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault();
     setMinutes(inputMinutes);
     setSeconds(0);
     setTotalTime(inputMinutes * 60);
     setRemainingTime(inputMinutes * 60);
     setIsEditing(false);
-  };
+  }, [inputMinutes]);
 
-  const drinkWater = () => {
+  const drinkWater = useCallback(() => {
     setWaterCount(prev => prev + 1);
     toast({
       title: "Water break!",
       description: `You've had ${waterCount + 1} glasses of water today. Stay hydrated!`,
     });
-  };
+  }, [waterCount]);
 
-  const progressPercentage = (remainingTime / totalTime) * 100;
+  const progressPercentage = Math.max(0, Math.min(100, (remainingTime / totalTime) * 100));
 
   return (
-    <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-black border border-white rounded-xl px-6 py-3 shadow-lg min-w-[320px] z-50">
+    <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-black border border-white rounded-full px-8 py-3 shadow-lg min-w-[300px] z-50 animate-fade-in">
       <div className="space-y-2">
         <div className="flex items-center justify-between gap-4">
           <Timer className="w-5 h-5 text-white" />
@@ -100,7 +112,7 @@ const PomodoroTimer = () => {
                 variant="outline" 
                 size="sm"
                 onClick={() => setIsEditing(false)}
-                className="h-8 text-white border-white hover:bg-white hover:text-black"
+                className="h-8 text-white border-white hover:bg-white hover:text-black rounded-full"
               >
                 Set
               </Button>
@@ -142,11 +154,11 @@ const PomodoroTimer = () => {
           </div>
         </div>
         
-        <div className="w-full">
+        <div className="w-full px-2">
           <Progress value={progressPercentage} className="h-1.5 bg-gray-800" indicatorClassName="bg-white" />
         </div>
         
-        <div className="flex justify-between items-center text-xs text-gray-400">
+        <div className="flex justify-between items-center text-xs text-gray-400 px-2">
           <div>Session: {inputMinutes} min</div>
           <div>Water: {waterCount} glasses</div>
         </div>

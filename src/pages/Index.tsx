@@ -18,15 +18,13 @@ const Index = () => {
               </h1>
               <QuestionBank />
             </div>
-            <div className="transition-all duration-300 hover:scale-[1.02]">
-              <PomodoroTimer />
-            </div>
           </div>
           <div className="lg:sticky lg:top-8 lg:h-[calc(100vh-4rem)]">
             <AiChat />
           </div>
         </div>
       </div>
+      <PomodoroTimer />
     </div>
   );
 };
