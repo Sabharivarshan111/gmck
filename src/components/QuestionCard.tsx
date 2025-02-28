@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { motion } from "framer-motion";
@@ -10,7 +10,23 @@ interface QuestionCardProps {
 }
 
 const QuestionCard = ({ question, index }: QuestionCardProps) => {
+  // Generate a unique ID for this question based on its content
+  const questionId = `question-${btoa(question).substring(0, 24)}`;
   const [isCompleted, setIsCompleted] = useState(false);
+  
+  // Load saved state from localStorage on component mount
+  useEffect(() => {
+    const savedState = localStorage.getItem(questionId);
+    if (savedState !== null) {
+      setIsCompleted(savedState === 'true');
+    }
+  }, [questionId]);
+  
+  // Save to localStorage when state changes
+  const handleCheckedChange = (checked: boolean) => {
+    setIsCompleted(checked);
+    localStorage.setItem(questionId, checked.toString());
+  };
   
   return (
     <motion.div
@@ -26,7 +42,7 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
             <div className="flex-shrink-0 mt-1">
               <Checkbox
                 checked={isCompleted}
-                onCheckedChange={(checked) => setIsCompleted(checked as boolean)}
+                onCheckedChange={(checked) => handleCheckedChange(checked as boolean)}
                 className="h-5 w-5 border-gray-600 data-[state=checked]:border-gray-400"
               />
             </div>
