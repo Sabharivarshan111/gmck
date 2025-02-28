@@ -24,6 +24,7 @@ const Index = () => {
           </div>
         </div>
       </div>
+      {/* Position the PomodoroTimer outside of any container that might have a white background */}
       <PomodoroTimer />
     </div>
   );
