@@ -10,8 +10,18 @@ interface QuestionCardProps {
 }
 
 const QuestionCard = ({ question, index }: QuestionCardProps) => {
-  // Generate a unique ID for this question based on its content
-  const questionId = `question-${btoa(question).substring(0, 24)}`;
+  // Generate a unique ID for this question using a hash function instead of btoa
+  const generateQuestionId = (text: string) => {
+    let hash = 0;
+    for (let i = 0; i < text.length; i++) {
+      const char = text.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // Convert to 32bit integer
+    }
+    return `question-${Math.abs(hash)}`;
+  };
+  
+  const questionId = generateQuestionId(question);
   const [isCompleted, setIsCompleted] = useState(false);
   const [showAnimation, setShowAnimation] = useState(false);
   
@@ -63,7 +73,7 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
             </div>
             <div className="flex-shrink-0 ml-2">
               <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gray-800 text-gray-300 text-sm">
-                1
+                {index + 1}
               </span>
             </div>
           </div>

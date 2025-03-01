@@ -47,6 +47,12 @@ const QuestionBank = () => {
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
   const [hasSearchResults, setHasSearchResults] = useState(true);
   const [isSearching, setIsSearching] = useState(false);
+  const [isRendered, setIsRendered] = useState(false);
+
+  // Set isRendered to true after component mounts
+  useEffect(() => {
+    setIsRendered(true);
+  }, []);
 
   // Check if mobile
   useEffect(() => {
@@ -168,7 +174,9 @@ const QuestionBank = () => {
   // Handle search input change
   const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
+    console.log("Search value:", value); // Debug log
     setSearchQuery(value);
+    
     // Ensure we're not treating empty searches as "no results"
     if (!value.trim()) {
       setHasSearchResults(true);
@@ -203,8 +211,17 @@ const QuestionBank = () => {
                              Object.keys(essayFilteredData).length > 0 || 
                              Object.keys(shortNotesFilteredData).length > 0;
   
+  // If not yet rendered, show a placeholder to prevent flash of blank screen
+  if (!isRendered) {
+    return (
+      <div className="bg-black h-full min-h-[600px] flex items-center justify-center">
+        <div className="animate-pulse text-gray-500">Loading...</div>
+      </div>
+    );
+  }
+  
   return (
-    <div className="bg-black">
+    <div className="bg-black h-full min-h-[600px]">
       <div className="flex-1 p-4 max-w-4xl mx-auto space-y-4" {...handlers}>
         <Tabs 
           defaultValue="essay" 
@@ -238,7 +255,7 @@ const QuestionBank = () => {
             />
           </div>
 
-          <ScrollArea className="h-[calc(100vh-12rem)] min-h-[400px]">
+          <ScrollArea className="h-[calc(100vh-12rem)] min-h-[500px]">
             {!hasSearchResults && searchQuery.trim() !== "" && (
               <div className="flex flex-col items-center justify-center py-8 text-gray-400">
                 <AlertTriangle className="h-8 w-8 mb-2" />
@@ -246,7 +263,7 @@ const QuestionBank = () => {
               </div>
             )}
             
-            <TabsContent value="essay" className="mt-0 min-h-[400px] bg-black">
+            <TabsContent value="essay" className="mt-0 min-h-[500px] bg-black">
               {hasContentToDisplay ? (
                 <div className="grid gap-4">
                   <Accordion 
@@ -266,13 +283,13 @@ const QuestionBank = () => {
                   </Accordion>
                 </div>
               ) : (
-                <div className="flex flex-col items-center justify-center py-8 text-gray-400 min-h-[400px]">
+                <div className="flex flex-col items-center justify-center py-8 text-gray-400 min-h-[500px] bg-black">
                   <p>No content available</p>
                 </div>
               )}
             </TabsContent>
 
-            <TabsContent value="short-notes" className="mt-0 min-h-[400px] bg-black">
+            <TabsContent value="short-notes" className="mt-0 min-h-[500px] bg-black">
               {hasContentToDisplay ? (
                 <div className="grid gap-4">
                   <Accordion 
@@ -292,7 +309,7 @@ const QuestionBank = () => {
                   </Accordion>
                 </div>
               ) : (
-                <div className="flex flex-col items-center justify-center py-8 text-gray-400 min-h-[400px]">
+                <div className="flex flex-col items-center justify-center py-8 text-gray-400 min-h-[500px] bg-black">
                   <p>No content available</p>
                 </div>
               )}
