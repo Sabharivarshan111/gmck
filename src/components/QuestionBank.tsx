@@ -46,6 +46,7 @@ const QuestionBank = () => {
   const [activeTab, setActiveTab] = useState("essay");
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
   const [hasSearchResults, setHasSearchResults] = useState(true);
+  const [isSearching, setIsSearching] = useState(false);
 
   // Check if mobile
   useEffect(() => {
@@ -143,6 +144,15 @@ const QuestionBank = () => {
     const filteredData: { [key: string]: Topic } = {};
     let hasResults = false;
     
+    // If no search query, return the original data
+    if (!query.trim()) {
+      setHasSearchResults(true);
+      setIsSearching(false);
+      return QUESTION_BANK_DATA;
+    }
+    
+    setIsSearching(true);
+    
     for (const [key, topic] of Object.entries(QUESTION_BANK_DATA)) {
       const filteredTopic = filterQuestions(topic as Topic, type, query);
       if (filteredTopic) {
@@ -151,7 +161,7 @@ const QuestionBank = () => {
       }
     }
     
-    setHasSearchResults(hasResults || !query.trim());
+    setHasSearchResults(hasResults);
     return filteredData;
   }, [filterQuestions]);
 
@@ -184,6 +194,11 @@ const QuestionBank = () => {
     [getFilteredData, searchQuery]
   );
 
+  // Ensure we always have content to display
+  const hasContentToDisplay = Object.keys(essayFilteredData).length > 0 || 
+                             Object.keys(shortNotesFilteredData).length > 0 ||
+                             !isSearching;
+  
   return (
     <div className="bg-black">
       <div className="flex-1 p-4 max-w-4xl mx-auto space-y-4" {...handlers}>
@@ -219,7 +234,7 @@ const QuestionBank = () => {
             />
           </div>
 
-          <ScrollArea className="h-[calc(100vh-12rem)]">
+          <ScrollArea className="h-[calc(100vh-12rem)] min-h-[400px]">
             {!hasSearchResults && searchQuery.trim() !== "" && (
               <div className="flex flex-col items-center justify-center py-8 text-gray-400">
                 <AlertTriangle className="h-8 w-8 mb-2" />
@@ -227,44 +242,56 @@ const QuestionBank = () => {
               </div>
             )}
             
-            <TabsContent value="essay" className="mt-0">
-              <div className="grid gap-4">
-                <Accordion 
-                  type="multiple" 
-                  value={expandedItems}
-                  onValueChange={setExpandedItems}
-                  className="w-full"
-                >
-                  {Object.entries(essayFilteredData).map(([topicKey, topic]) => (
-                    <TopicAccordion 
-                      key={topicKey}
-                      topicKey={topicKey}
-                      topic={topic as Topic}
-                      isExpanded={searchQuery.trim() !== ""}
-                    />
-                  ))}
-                </Accordion>
-              </div>
+            <TabsContent value="essay" className="mt-0 min-h-[200px]">
+              {hasContentToDisplay ? (
+                <div className="grid gap-4">
+                  <Accordion 
+                    type="multiple" 
+                    value={expandedItems}
+                    onValueChange={setExpandedItems}
+                    className="w-full"
+                  >
+                    {Object.entries(essayFilteredData).map(([topicKey, topic]) => (
+                      <TopicAccordion 
+                        key={topicKey}
+                        topicKey={topicKey}
+                        topic={topic as Topic}
+                        isExpanded={searchQuery.trim() !== ""}
+                      />
+                    ))}
+                  </Accordion>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center py-8 text-gray-400 min-h-[200px]">
+                  <p>No content available</p>
+                </div>
+              )}
             </TabsContent>
 
-            <TabsContent value="short-notes" className="mt-0">
-              <div className="grid gap-4">
-                <Accordion 
-                  type="multiple"
-                  value={expandedItems}
-                  onValueChange={setExpandedItems}
-                  className="w-full"
-                >
-                  {Object.entries(shortNotesFilteredData).map(([topicKey, topic]) => (
-                    <TopicAccordion 
-                      key={topicKey}
-                      topicKey={topicKey}
-                      topic={topic as Topic}
-                      isExpanded={searchQuery.trim() !== ""}
-                    />
-                  ))}
-                </Accordion>
-              </div>
+            <TabsContent value="short-notes" className="mt-0 min-h-[200px]">
+              {hasContentToDisplay ? (
+                <div className="grid gap-4">
+                  <Accordion 
+                    type="multiple"
+                    value={expandedItems}
+                    onValueChange={setExpandedItems}
+                    className="w-full"
+                  >
+                    {Object.entries(shortNotesFilteredData).map(([topicKey, topic]) => (
+                      <TopicAccordion 
+                        key={topicKey}
+                        topicKey={topicKey}
+                        topic={topic as Topic}
+                        isExpanded={searchQuery.trim() !== ""}
+                      />
+                    ))}
+                  </Accordion>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center py-8 text-gray-400 min-h-[200px]">
+                  <p>No content available</p>
+                </div>
+              )}
             </TabsContent>
           </ScrollArea>
         </Tabs>
