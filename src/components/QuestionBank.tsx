@@ -168,8 +168,12 @@ const QuestionBank = () => {
   // Handle search input change
   const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    console.log("Searching for:", value);
     setSearchQuery(value);
+    // Ensure we're not treating empty searches as "no results"
+    if (!value.trim()) {
+      setHasSearchResults(true);
+      setIsSearching(false);
+    }
   }, []);
 
   // Auto-expand topics when searching
@@ -195,9 +199,9 @@ const QuestionBank = () => {
   );
 
   // Ensure we always have content to display
-  const hasContentToDisplay = Object.keys(essayFilteredData).length > 0 || 
-                             Object.keys(shortNotesFilteredData).length > 0 ||
-                             !isSearching;
+  const hasContentToDisplay = !isSearching || 
+                             Object.keys(essayFilteredData).length > 0 || 
+                             Object.keys(shortNotesFilteredData).length > 0;
   
   return (
     <div className="bg-black">
@@ -242,7 +246,7 @@ const QuestionBank = () => {
               </div>
             )}
             
-            <TabsContent value="essay" className="mt-0 min-h-[200px]">
+            <TabsContent value="essay" className="mt-0 min-h-[400px] bg-black">
               {hasContentToDisplay ? (
                 <div className="grid gap-4">
                   <Accordion 
@@ -262,13 +266,13 @@ const QuestionBank = () => {
                   </Accordion>
                 </div>
               ) : (
-                <div className="flex flex-col items-center justify-center py-8 text-gray-400 min-h-[200px]">
+                <div className="flex flex-col items-center justify-center py-8 text-gray-400 min-h-[400px]">
                   <p>No content available</p>
                 </div>
               )}
             </TabsContent>
 
-            <TabsContent value="short-notes" className="mt-0 min-h-[200px]">
+            <TabsContent value="short-notes" className="mt-0 min-h-[400px] bg-black">
               {hasContentToDisplay ? (
                 <div className="grid gap-4">
                   <Accordion 
@@ -288,7 +292,7 @@ const QuestionBank = () => {
                   </Accordion>
                 </div>
               ) : (
-                <div className="flex flex-col items-center justify-center py-8 text-gray-400 min-h-[200px]">
+                <div className="flex flex-col items-center justify-center py-8 text-gray-400 min-h-[400px]">
                   <p>No content available</p>
                 </div>
               )}

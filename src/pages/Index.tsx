@@ -1,7 +1,6 @@
 
 import QuestionBank from "@/components/QuestionBank";
 import { InstallPrompt } from "@/components/InstallPrompt";
-import PomodoroTimer from "@/components/PomodoroTimer";
 import { AiChat } from "@/components/AiChat";
 
 const Index = () => {
@@ -24,8 +23,6 @@ const Index = () => {
           </div>
         </div>
       </div>
-      {/* Position the PomodoroTimer outside of any container that might have a white background */}
-      <PomodoroTimer />
     </div>
   );
 };
