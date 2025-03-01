@@ -12,9 +12,10 @@ interface TypeAccordionProps {
   typeKey: string;
   type: SubTopicContent;
   isExpanded?: boolean;
+  activeTab: "essay" | "short-notes";
 }
 
-const TypeAccordion = ({ typeKey, type, isExpanded = false }: TypeAccordionProps) => {
+const TypeAccordion = ({ typeKey, type, isExpanded = false, activeTab }: TypeAccordionProps) => {
   return (
     <AccordionItem 
       value={typeKey}
@@ -28,20 +29,29 @@ const TypeAccordion = ({ typeKey, type, isExpanded = false }: TypeAccordionProps
       </AccordionTrigger>
       <AccordionContent>
         <div className="space-y-4 px-4">
-          {Object.entries(type.subtopics).map(([questionTypeKey, questionType]) => (
-            <div key={questionTypeKey}>
-              <h6 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
-                {questionType.name}
-              </h6>
-              {questionType.questions.map((question, index) => (
-                <QuestionCard
-                  key={index}
-                  question={question}
-                  index={index}
-                />
-              ))}
-            </div>
-          ))}
+          {Object.entries(type.subtopics).map(([questionTypeKey, questionType]) => {
+            // Only render if the questionTypeKey matches the activeTab
+            const shouldRender = 
+              (activeTab === "essay" && questionTypeKey === "essay") || 
+              (activeTab === "short-notes" && questionTypeKey === "short-note");
+            
+            if (!shouldRender) return null;
+            
+            return (
+              <div key={questionTypeKey}>
+                <h6 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
+                  {questionType.name}
+                </h6>
+                {questionType.questions.map((question, index) => (
+                  <QuestionCard
+                    key={index}
+                    question={question}
+                    index={index}
+                  />
+                ))}
+              </div>
+            );
+          })}
         </div>
       </AccordionContent>
     </AccordionItem>

@@ -14,9 +14,10 @@ interface SubtopicAccordionProps {
   subtopicKey: string;
   subtopic: SubTopic;
   isExpanded?: boolean;
+  activeTab: "essay" | "short-notes";
 }
 
-const SubtopicAccordion = ({ subtopicKey, subtopic, isExpanded = false }: SubtopicAccordionProps) => {
+const SubtopicAccordion = ({ subtopicKey, subtopic, isExpanded = false, activeTab }: SubtopicAccordionProps) => {
   return (
     <AccordionItem 
       value={subtopicKey}
@@ -37,6 +38,7 @@ const SubtopicAccordion = ({ subtopicKey, subtopic, isExpanded = false }: Subtop
                 typeKey={typeKey}
                 type={type}
                 isExpanded={isExpanded}
+                activeTab={activeTab}
               />
             ))}
           </Accordion>

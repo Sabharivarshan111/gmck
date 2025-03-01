@@ -14,9 +14,10 @@ interface TopicAccordionProps {
   topicKey: string;
   topic: Topic;
   isExpanded?: boolean;
+  activeTab: "essay" | "short-notes";
 }
 
-const TopicAccordion = ({ topicKey, topic, isExpanded = false }: TopicAccordionProps) => {
+const TopicAccordion = ({ topicKey, topic, isExpanded = false, activeTab }: TopicAccordionProps) => {
   return (
     <AccordionItem 
       value={topicKey} 
@@ -38,6 +39,7 @@ const TopicAccordion = ({ topicKey, topic, isExpanded = false }: TopicAccordionP
                 subtopicKey={subtopicKey}
                 subtopic={subtopic}
                 isExpanded={isExpanded}
+                activeTab={activeTab}
               />
             ))}
           </Accordion>

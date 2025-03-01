@@ -1,4 +1,3 @@
-
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Accordion } from "@/components/ui/accordion";
 import { Input } from "@/components/ui/input";
@@ -49,12 +48,10 @@ const QuestionBank = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [isRendered, setIsRendered] = useState(false);
 
-  // Set isRendered to true after component mounts
   useEffect(() => {
     setIsRendered(true);
   }, []);
 
-  // Check if mobile
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth <= 768);
@@ -64,7 +61,6 @@ const QuestionBank = () => {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  // Swipe handlers
   const handlers = useSwipeable({
     onSwipedLeft: () => {
       if (activeTab === "essay") {
@@ -79,7 +75,6 @@ const QuestionBank = () => {
     trackMouse: true
   });
 
-  // Search in questions
   const searchInQuestions = useCallback((questions: string[], query: string): string[] => {
     if (!query.trim()) return questions;
     const lowerQuery = query.toLowerCase();
@@ -88,26 +83,21 @@ const QuestionBank = () => {
     );
   }, []);
 
-  // Filter questions based on search query and type
   const filterQuestions = useCallback((topic: Topic, type: "essay" | "short-notes", query: string): Topic | null => {
     if (!query.trim()) return topic;
     
     let hasContent = false;
     const filteredSubtopics: { [key: string]: SubTopic } = {};
 
-    // Iterate through first level subtopics
     for (const [subtopicKey, subtopic] of Object.entries(topic.subtopics)) {
       const filteredInnerSubtopics: { [key: string]: SubTopicContent } = {};
       let hasSubtopicContent = false;
 
-      // Iterate through second level subtopics
       for (const [innerKey, innerSubtopic] of Object.entries(subtopic.subtopics)) {
         const filteredContent: { [key: string]: QuestionType } = {};
         let hasInnerContent = false;
 
-        // Iterate through question types (essay or short-note)
         for (const [typeKey, questions] of Object.entries(innerSubtopic.subtopics)) {
-          // Check if this is the correct type (essay or short-note)
           if (typeKey === (type === "essay" ? "essay" : "short-note")) {
             const filteredQuestions = searchInQuestions(questions.questions, query);
             
@@ -145,12 +135,10 @@ const QuestionBank = () => {
     } : null;
   }, [searchInQuestions]);
 
-  // Get filtered data based on type and search query
   const getFilteredData = useCallback((type: "essay" | "short-notes", query: string) => {
     const filteredData: { [key: string]: Topic } = {};
     let hasResults = false;
     
-    // If no search query, return the original data
     if (!query.trim()) {
       setHasSearchResults(true);
       setIsSearching(false);
@@ -171,23 +159,19 @@ const QuestionBank = () => {
     return filteredData;
   }, [filterQuestions]);
 
-  // Handle search input change
   const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    console.log("Search value:", value); // Debug log
+    console.log("Search value:", value);
     setSearchQuery(value);
     
-    // Ensure we're not treating empty searches as "no results"
     if (!value.trim()) {
       setHasSearchResults(true);
       setIsSearching(false);
     }
   }, []);
 
-  // Auto-expand topics when searching
   useEffect(() => {
     if (searchQuery.trim() !== "") {
-      // Get all topic keys
       const topicKeys = Object.keys(QUESTION_BANK_DATA);
       setExpandedItems(topicKeys);
     } else {
@@ -195,7 +179,6 @@ const QuestionBank = () => {
     }
   }, [searchQuery]);
 
-  // Memoize filtered data to prevent unnecessary re-calculations
   const essayFilteredData = useMemo(() => 
     getFilteredData("essay", searchQuery), 
     [getFilteredData, searchQuery]
@@ -206,12 +189,10 @@ const QuestionBank = () => {
     [getFilteredData, searchQuery]
   );
 
-  // Ensure we always have content to display
   const hasContentToDisplay = !isSearching || 
                              Object.keys(essayFilteredData).length > 0 || 
                              Object.keys(shortNotesFilteredData).length > 0;
-  
-  // If not yet rendered, show a placeholder to prevent flash of blank screen
+
   if (!isRendered) {
     return (
       <div className="bg-black h-full min-h-[600px] flex items-center justify-center">
@@ -219,7 +200,7 @@ const QuestionBank = () => {
       </div>
     );
   }
-  
+
   return (
     <div className="bg-black h-full min-h-[600px]">
       <div className="flex-1 p-4 max-w-4xl mx-auto space-y-4" {...handlers}>
@@ -278,6 +259,7 @@ const QuestionBank = () => {
                         topicKey={topicKey}
                         topic={topic as Topic}
                         isExpanded={searchQuery.trim() !== ""}
+                        activeTab="essay"
                       />
                     ))}
                   </Accordion>
@@ -304,6 +286,7 @@ const QuestionBank = () => {
                         topicKey={topicKey}
                         topic={topic as Topic}
                         isExpanded={searchQuery.trim() !== ""}
+                        activeTab="short-notes"
                       />
                     ))}
                   </Accordion>
