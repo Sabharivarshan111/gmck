@@ -185,7 +185,7 @@ const QuestionBank = () => {
   );
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="bg-black">
       <div className="flex-1 p-4 max-w-4xl mx-auto space-y-4" {...handlers}>
         <Tabs 
           defaultValue="essay" 
