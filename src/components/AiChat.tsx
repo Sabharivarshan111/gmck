@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
-import { Loader2, Send, RefreshCw, RotateCcw, Copy } from "lucide-react";
+import { Loader2, Send, RefreshCw, RotateCcw, Copy, AlertTriangle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -21,6 +21,7 @@ export const AiChat = () => {
   const [prompt, setPrompt] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -61,6 +62,7 @@ export const AiChat = () => {
       return;
     }
 
+    setError(null);
     const userMessage: ChatMessage = {
       id: crypto.randomUUID(),
       role: 'user',
@@ -77,7 +79,15 @@ export const AiChat = () => {
         body: { prompt: prompt.trim() }
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Supabase function error:", error);
+        throw new Error(error.message || "Error communicating with AI service");
+      }
+
+      if (data?.error) {
+        console.error("AI service error:", data.error);
+        throw new Error(data.error || "Error generating response");
+      }
 
       if (data?.response) {
         const assistantMessage: ChatMessage = {
@@ -92,12 +102,15 @@ export const AiChat = () => {
         toast({
           title: "Response generated successfully",
         });
+      } else {
+        throw new Error("No response received from AI");
       }
     } catch (error) {
       console.error('Error:', error);
+      setError(error.message || "Error generating response");
       toast({
         title: "Error generating response",
-        description: "Please try again later",
+        description: error.message || "Please try again later",
         variant: "destructive",
       });
     } finally {
@@ -107,6 +120,7 @@ export const AiChat = () => {
 
   const handleClearChat = () => {
     setMessages([]);
+    setError(null);
     localStorage.removeItem("aiChatMessages");
     toast({
       title: "Chat history cleared",
@@ -145,7 +159,7 @@ export const AiChat = () => {
       <Card className="backdrop-blur-sm bg-gray-950/70 border-gray-800 flex flex-col h-full">
         <CardHeader className="px-4 py-3 border-b border-gray-800">
           <CardTitle className="text-lg flex items-center justify-between text-white">
-            <span>Medical AI Assistant (Powered by Gemini)</span>
+            <span>Medical AI Assistant (Powered by Gemini 1.5)</span>
             {messages.length > 0 && (
               <Button 
                 variant="ghost" 
@@ -173,7 +187,7 @@ export const AiChat = () => {
                     <RefreshCw className="h-8 w-8 mx-auto opacity-50" />
                   </div>
                   <p>Ask any medical question to get started</p>
-                  <p className="text-sm mt-2">Now powered by Google Gemini AI!</p>
+                  <p className="text-sm mt-2">Now powered by Google Gemini 1.5 AI!</p>
                 </motion.div>
               ) : (
                 messages.map((message) => (
@@ -210,6 +224,23 @@ export const AiChat = () => {
                     </div>
                   </motion.div>
                 ))
+              )}
+
+              {error && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-red-900/30 border border-red-500/50 text-red-100 rounded-lg p-4 flex items-start space-x-3"
+                >
+                  <AlertTriangle className="h-5 w-5 text-red-400 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-medium mb-1">Error connecting to Gemini</p>
+                    <p className="text-sm opacity-90">{error}</p>
+                    <p className="text-sm mt-2 opacity-80">
+                      Please make sure the GEMINI_API_KEY is correctly set in Supabase Edge Function Secrets.
+                    </p>
+                  </div>
+                </motion.div>
               )}
             </AnimatePresence>
             <div ref={messagesEndRef} />

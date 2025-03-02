@@ -1,6 +1,6 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { GoogleGenerativeAI } from "https://esm.sh/@google/generative-ai@0.1.3";
+import { GoogleGenerativeAI } from "https://esm.sh/@google/generative-ai@0.2.0";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -26,11 +26,12 @@ serve(async (req) => {
 
     console.log("API key found, initializing Gemini...");
     
-    // Initialize Gemini AI
+    // Initialize Gemini AI with the latest version
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+    // Use the latest model identifier
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
 
-    console.log("Generating content...");
+    console.log("Generating content with model: gemini-1.5-pro");
     
     // Generate content
     const result = await model.generateContent(prompt);
