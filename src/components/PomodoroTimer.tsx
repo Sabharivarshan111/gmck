@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Timer, Pause, Play, RotateCcw, Droplets } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -11,16 +11,17 @@ const PomodoroTimer = () => {
   const [seconds, setSeconds] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [inputMinutes, setInputMinutes] = useState(25);
+  const [inputValue, setInputValue] = useState('25');
   const [waterCount, setWaterCount] = useState(0);
   const [totalTime, setTotalTime] = useState(25 * 60); // Total time in seconds
   const [remainingTime, setRemainingTime] = useState(25 * 60); // Remaining time in seconds
+  const inputRef = useRef<HTMLInputElement>(null);
 
   // Recalculate remaining time when minutes/seconds change
   useEffect(() => {
     setRemainingTime(minutes * 60 + seconds);
   }, [minutes, seconds]);
-
+  
   // Timer logic
   useEffect(() => {
     let intervalId: NodeJS.Timeout | null = null;
@@ -53,6 +54,14 @@ const PomodoroTimer = () => {
       if (intervalId) clearInterval(intervalId);
     };
   }, [isRunning]);
+  
+  // Focus input when editing starts
+  useEffect(() => {
+    if (isEditing && inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  }, [isEditing]);
 
   const toggleTimer = useCallback(() => {
     setIsRunning(prev => !prev);
@@ -60,27 +69,53 @@ const PomodoroTimer = () => {
 
   const resetTimer = useCallback(() => {
     setIsRunning(false);
-    setMinutes(inputMinutes);
+    const mins = parseInt(inputValue, 10) || 25;
+    setMinutes(mins);
     setSeconds(0);
-    setTotalTime(inputMinutes * 60);
-    setRemainingTime(inputMinutes * 60);
-  }, [inputMinutes]);
+    setTotalTime(mins * 60);
+    setRemainingTime(mins * 60);
+  }, [inputValue]);
 
-  const handleMinutesChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(e.target.value);
-    if (!isNaN(value) && value >= 0 && value <= 99) {
-      setInputMinutes(value);
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // Allow empty string or numbers
+    if (value === '' || /^\d+$/.test(value)) {
+      setInputValue(value);
     }
   }, []);
 
-  const handleSubmit = useCallback((e: React.FormEvent) => {
-    e.preventDefault();
-    setMinutes(inputMinutes);
+  const handleSubmit = useCallback((e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    
+    // Default to 25 if empty or invalid
+    const newMinutes = inputValue === '' ? 25 : parseInt(inputValue, 10);
+    
+    // Validate min/max values
+    const validMinutes = Math.min(Math.max(1, newMinutes), 99);
+    
+    setMinutes(validMinutes);
     setSeconds(0);
-    setTotalTime(inputMinutes * 60);
-    setRemainingTime(inputMinutes * 60);
+    setTotalTime(validMinutes * 60);
+    setRemainingTime(validMinutes * 60);
+    setInputValue(validMinutes.toString());
     setIsEditing(false);
-  }, [inputMinutes]);
+  }, [inputValue]);
+
+  const startEditing = useCallback(() => {
+    if (!isRunning) {
+      setIsEditing(true);
+      setInputValue(minutes.toString());
+    }
+  }, [isRunning, minutes]);
+
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSubmit();
+    } else if (e.key === 'Escape') {
+      setIsEditing(false);
+      setInputValue(minutes.toString());
+    }
+  }, [handleSubmit, minutes]);
 
   const drinkWater = useCallback(() => {
     setWaterCount(prev => prev + 1);
@@ -101,17 +136,20 @@ const PomodoroTimer = () => {
           {isEditing ? (
             <form onSubmit={handleSubmit} className="flex items-center gap-2">
               <Input
-                type="number"
-                value={inputMinutes}
-                onChange={handleMinutesChange}
-                className="w-16 h-8 text-center bg-transparent text-white border-white"
-                min="1"
-                max="99"
+                ref={inputRef}
+                type="text"
+                value={inputValue}
+                onChange={handleInputChange}
+                onKeyDown={handleKeyDown}
+                onBlur={handleSubmit}
+                className="w-16 h-8 text-center bg-transparent text-white border-white focus:ring-2 focus:ring-white"
+                maxLength={2}
+                aria-label="Set minutes"
               />
               <Button 
+                type="submit"
                 variant="outline" 
                 size="sm"
-                onClick={() => setIsEditing(false)}
                 className="h-8 text-white border-white hover:bg-white hover:text-black rounded-full"
               >
                 Set
@@ -120,7 +158,7 @@ const PomodoroTimer = () => {
           ) : (
             <div 
               className="text-2xl font-mono text-white cursor-pointer"
-              onClick={() => setIsEditing(true)}
+              onClick={startEditing}
             >
               {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
             </div>
@@ -132,6 +170,7 @@ const PomodoroTimer = () => {
               size="icon"
               onClick={toggleTimer}
               className="h-8 w-8 rounded-full border-white text-white hover:bg-white hover:text-black"
+              aria-label={isRunning ? "Pause timer" : "Start timer"}
             >
               {isRunning ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
             </Button>
@@ -140,6 +179,7 @@ const PomodoroTimer = () => {
               size="icon"
               onClick={resetTimer}
               className="h-8 w-8 rounded-full border-white text-white hover:bg-white hover:text-black"
+              aria-label="Reset timer"
             >
               <RotateCcw className="h-4 w-4" />
             </Button>
@@ -148,6 +188,7 @@ const PomodoroTimer = () => {
               size="icon"
               onClick={drinkWater}
               className="h-8 w-8 rounded-full border-blue-500 bg-blue-500/20 text-blue-500 hover:bg-blue-500 hover:text-white"
+              aria-label="Track water intake"
             >
               <Droplets className="h-4 w-4" />
             </Button>
@@ -159,7 +200,7 @@ const PomodoroTimer = () => {
         </div>
         
         <div className="flex justify-between items-center text-xs text-gray-400 px-2">
-          <div>Session: {inputMinutes} min</div>
+          <div>Session: {inputValue} min</div>
           <div>Water: {waterCount} glasses</div>
         </div>
       </div>
