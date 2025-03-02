@@ -73,7 +73,7 @@ export const AiChat = () => {
     setIsLoading(true);
 
     try {
-      const { data, error } = await supabase.functions.invoke('ask-ai', {
+      const { data, error } = await supabase.functions.invoke('ask-gemini', {
         body: { prompt: prompt.trim() }
       });
 
@@ -145,7 +145,7 @@ export const AiChat = () => {
       <Card className="backdrop-blur-sm bg-gray-950/70 border-gray-800 flex flex-col h-full">
         <CardHeader className="px-4 py-3 border-b border-gray-800">
           <CardTitle className="text-lg flex items-center justify-between text-white">
-            <span>Medical AI Assistant</span>
+            <span>Medical AI Assistant (Powered by Gemini)</span>
             {messages.length > 0 && (
               <Button 
                 variant="ghost" 
@@ -173,7 +173,7 @@ export const AiChat = () => {
                     <RefreshCw className="h-8 w-8 mx-auto opacity-50" />
                   </div>
                   <p>Ask any medical question to get started</p>
-                  <p className="text-sm mt-2">Example: "What are the symptoms of type 2 diabetes?"</p>
+                  <p className="text-sm mt-2">Now powered by Google Gemini AI!</p>
                 </motion.div>
               ) : (
                 messages.map((message) => (
@@ -192,7 +192,7 @@ export const AiChat = () => {
                   >
                     <div className="flex justify-between items-start mb-1">
                       <p className="text-xs font-medium text-gray-400">
-                        {message.role === 'user' ? 'You' : 'AI Assistant'}
+                        {message.role === 'user' ? 'You' : 'Gemini AI'}
                       </p>
                       {message.role === 'assistant' && (
                         <Button
