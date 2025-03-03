@@ -10,7 +10,7 @@ const Index = () => {
       <InstallPrompt />
       <div className="container mx-auto px-4 py-6">
         <div className="grid gap-8 grid-cols-1 lg:grid-cols-[2fr,1fr] animate-fade-in">
-          <div className="space-y-8 mb-16"> {/* Added bottom margin to make space for the timer */}
+          <div className="space-y-8 mb-16">
             <div className="group">
               <h1 className="text-4xl font-bold mb-8 text-white tracking-tight">
                 ACEV

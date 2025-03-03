@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -30,25 +29,8 @@ export const AiChat = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Load previous messages from localStorage
-  useEffect(() => {
-    const savedMessages = localStorage.getItem("aiChatMessages");
-    if (savedMessages) {
-      try {
-        const parsedMessages = JSON.parse(savedMessages);
-        setMessages(parsedMessages);
-      } catch (error) {
-        console.error("Failed to parse saved messages:", error);
-      }
-    }
-  }, []);
-
-  // Save messages to localStorage when they change
-  useEffect(() => {
-    if (messages.length > 0) {
-      localStorage.setItem("aiChatMessages", JSON.stringify(messages));
-    }
-  }, [messages]);
+  // Instead of loading from localStorage, we'll initialize with empty messages
+  // This ensures chat history is cleared on page refresh/reload
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -153,10 +135,10 @@ export const AiChat = () => {
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.3 }}
-      className="w-full h-full flex flex-col mt-0" // Removed margin-top
+      className="w-full h-full flex flex-col mt-[-1cm]"
     >
-      <Card className="backdrop-blur-sm bg-gray-950/70 border-gray-800 flex flex-col h-[420px]"> {/* Reduced height further */}
-        <CardHeader className="px-4 py-2 border-b border-gray-800"> {/* Reduced padding */}
+      <Card className="backdrop-blur-sm bg-gray-950/70 border-gray-800 flex flex-col h-[210px]">
+        <CardHeader className="px-4 py-2 border-b border-gray-800">
           <CardTitle className="text-lg flex items-center justify-between text-white">
             <span>Medical Assistant</span>
             {messages.length > 0 && (
@@ -180,10 +162,10 @@ export const AiChat = () => {
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="text-center text-gray-500 py-6" // Reduced padding
+                  className="text-center text-gray-500 py-6"
                 >
                   <div className="mb-2">
-                    <RefreshCw className="h-7 w-7 mx-auto opacity-50" /> {/* Slightly smaller icon */}
+                    <RefreshCw className="h-7 w-7 mx-auto opacity-50" />
                   </div>
                   <p>Ask me any medical question!</p>
                   <p className="text-sm mt-1">I'm ACEV, your personal medical assistant</p>
@@ -241,12 +223,12 @@ export const AiChat = () => {
                   adjustTextareaHeight();
                 }}
                 onKeyDown={handleKeyDown}
-                className="min-h-[36px] max-h-[80px] bg-gray-900 border-gray-700 focus:ring-gray-600 resize-none text-sm flex-grow" // Reduced min and max height
+                className="min-h-[36px] max-h-[80px] bg-gray-900 border-gray-700 focus:ring-gray-600 resize-none text-sm flex-grow"
                 disabled={isLoading}
               />
               <Button 
                 type="submit" 
-                className="bg-white text-black hover:bg-gray-200 transition-colors duration-200 h-9 w-9 p-0 flex items-center justify-center" // Smaller button
+                className="bg-white text-black hover:bg-gray-200 transition-colors duration-200 h-9 w-9 p-0 flex items-center justify-center"
                 disabled={isLoading}
               >
                 {isLoading ? (
