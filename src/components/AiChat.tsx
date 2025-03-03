@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -24,10 +25,12 @@ export const AiChat = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
+  // Scroll to bottom when messages change
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  // Load previous messages from localStorage
   useEffect(() => {
     const savedMessages = localStorage.getItem("aiChatMessages");
     if (savedMessages) {
@@ -40,6 +43,7 @@ export const AiChat = () => {
     }
   }, []);
 
+  // Save messages to localStorage when they change
   useEffect(() => {
     if (messages.length > 0) {
       localStorage.setItem("aiChatMessages", JSON.stringify(messages));
@@ -149,10 +153,10 @@ export const AiChat = () => {
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.3 }}
-      className="w-full h-full flex flex-col"
+      className="w-full h-full flex flex-col mt-8" // Added margin-top to move it up
     >
-      <Card className="backdrop-blur-sm bg-gray-950/70 border-gray-800 flex flex-col h-[450px]">
-        <CardHeader className="px-4 py-2 border-b border-gray-800">
+      <Card className="backdrop-blur-sm bg-gray-950/70 border-gray-800 flex flex-col h-[500px]"> {/* Reduced height */}
+        <CardHeader className="px-4 py-3 border-b border-gray-800">
           <CardTitle className="text-lg flex items-center justify-between text-white">
             <span>Medical Assistant</span>
             {messages.length > 0 && (
@@ -160,9 +164,9 @@ export const AiChat = () => {
                 variant="ghost" 
                 size="sm" 
                 onClick={handleClearChat}
-                className="h-7 px-2 text-gray-400 hover:text-white"
+                className="h-8 px-2 text-gray-400 hover:text-white"
               >
-                <RotateCcw className="h-3 w-3 mr-1" />
+                <RotateCcw className="h-4 w-4 mr-1" />
                 Clear
               </Button>
             )}
@@ -170,19 +174,19 @@ export const AiChat = () => {
         </CardHeader>
         
         <CardContent className="p-0 flex-grow overflow-hidden flex flex-col">
-          <div className="flex-grow overflow-y-auto p-3 space-y-3">
+          <div className="flex-grow overflow-y-auto p-4 space-y-4">
             <AnimatePresence initial={false}>
               {messages.length === 0 ? (
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="text-center text-gray-500 py-6"
+                  className="text-center text-gray-500 py-8"
                 >
                   <div className="mb-2">
-                    <RefreshCw className="h-7 w-7 mx-auto opacity-50" />
+                    <RefreshCw className="h-8 w-8 mx-auto opacity-50" />
                   </div>
                   <p>Ask me any medical question!</p>
-                  <p className="text-sm mt-1">I'm ACEV, your personal medical assistant</p>
+                  <p className="text-sm mt-2">I'm ACEV, your personal medical assistant</p>
                 </motion.div>
               ) : (
                 messages.map((message) => (
@@ -193,10 +197,10 @@ export const AiChat = () => {
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.3 }}
                     className={cn(
-                      "rounded-lg p-2",
+                      "rounded-lg p-3",
                       message.role === 'user' 
-                        ? "bg-gray-800/50 text-white ml-3" 
-                        : "bg-gray-900/50 text-gray-100 mr-3 border-l-2 border-white/20"
+                        ? "bg-gray-800/50 text-white ml-4" 
+                        : "bg-gray-900/50 text-gray-100 mr-4 border-l-2 border-white/20"
                     )}
                   >
                     <div className="flex justify-between items-start mb-1">
@@ -207,14 +211,14 @@ export const AiChat = () => {
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="h-5 w-5 p-0 text-gray-400 hover:text-white"
+                          className="h-6 w-6 p-0 text-gray-400 hover:text-white"
                           onClick={() => handleCopyResponse(message.content)}
                         >
-                          <Copy className="h-3 w-3" />
+                          <Copy className="h-3.5 w-3.5" />
                         </Button>
                       )}
                     </div>
-                    <div className="whitespace-pre-wrap text-xs">
+                    <div className="whitespace-pre-wrap text-sm">
                       {message.content}
                     </div>
                   </motion.div>
@@ -225,7 +229,7 @@ export const AiChat = () => {
           </div>
         </CardContent>
         
-        <CardFooter className="p-2 pt-1 border-t border-gray-800">
+        <CardFooter className="p-3 pt-2 border-t border-gray-800">
           <form onSubmit={handleSubmit} className="w-full">
             <div className="flex gap-2">
               <Textarea
@@ -237,12 +241,12 @@ export const AiChat = () => {
                   adjustTextareaHeight();
                 }}
                 onKeyDown={handleKeyDown}
-                className="min-h-[36px] max-h-[80px] bg-gray-900 border-gray-700 focus:ring-gray-600 resize-none text-xs flex-grow"
+                className="min-h-[40px] max-h-[100px] bg-gray-900 border-gray-700 focus:ring-gray-600 resize-none text-sm flex-grow"
                 disabled={isLoading}
               />
               <Button 
                 type="submit" 
-                className="bg-white text-black hover:bg-gray-200 transition-colors duration-200 h-9 w-9 p-0 flex items-center justify-center"
+                className="bg-white text-black hover:bg-gray-200 transition-colors duration-200 h-10 w-10 p-0 flex items-center justify-center"
                 disabled={isLoading}
               >
                 {isLoading ? (

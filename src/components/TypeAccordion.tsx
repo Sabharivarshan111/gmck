@@ -1,43 +1,57 @@
 
-import React from "react";
-import { AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import QuestionCardEnhanced from "./QuestionCardEnhanced";
-import { Question } from "./QuestionBank";
+import { FileText } from "lucide-react";
+import {
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import QuestionCard from "./QuestionCard";
+import { SubTopicContent } from "./QuestionBank";
 
 interface TypeAccordionProps {
-  activeTabType: string;
-  type: string;
-  questionType: {
-    name: string;
-    questions: string[];
-  };
+  typeKey: string;
+  type: SubTopicContent;
+  isExpanded?: boolean;
+  activeTab: "essay" | "short-notes";
 }
 
-const TypeAccordion: React.FC<TypeAccordionProps> = ({ activeTabType, type, questionType }) => {
-  if (
-    (activeTabType === "essay" && type !== "essay") ||
-    (activeTabType === "short-notes" && type !== "short-note")
-  ) {
-    return null;
-  }
-
+const TypeAccordion = ({ typeKey, type, isExpanded = false, activeTab }: TypeAccordionProps) => {
   return (
-    <AccordionItem value={type} className="border border-gray-800 rounded-md mb-3">
-      <AccordionTrigger className="p-3 font-normal text-gray-200 hover:text-white">
-        {questionType.name}
-        <span className="text-xs text-gray-400 font-normal ml-2">
-          ({questionType.questions.length})
-        </span>
+    <AccordionItem 
+      value={typeKey}
+      className="animate-fade-in transition-all duration-300"
+    >
+      <AccordionTrigger className="hover:bg-white/50 dark:hover:bg-gray-800/50 rounded-lg px-4">
+        <div className="flex items-center space-x-3">
+          <FileText className="h-4 w-4 text-indigo-500 dark:text-indigo-300" />
+          <h5 className="text-lg font-medium">{type.name}</h5>
+        </div>
       </AccordionTrigger>
-      <AccordionContent className="p-3">
-        <div className="flex flex-col gap-1">
-          {questionType.questions.map((question, index) => (
-            <QuestionCardEnhanced
-              key={`${type}-${index}`}
-              question={question}
-              index={index}
-            />
-          ))}
+      <AccordionContent>
+        <div className="space-y-4 px-4">
+          {Object.entries(type.subtopics).map(([questionTypeKey, questionType]) => {
+            // Only render if the questionTypeKey matches the activeTab
+            const shouldRender = 
+              (activeTab === "essay" && questionTypeKey === "essay") || 
+              (activeTab === "short-notes" && questionTypeKey === "short-note");
+            
+            if (!shouldRender) return null;
+            
+            return (
+              <div key={questionTypeKey}>
+                <h6 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
+                  {questionType.name}
+                </h6>
+                {questionType.questions.map((question, index) => (
+                  <QuestionCard
+                    key={index}
+                    question={question}
+                    index={index}
+                  />
+                ))}
+              </div>
+            );
+          })}
         </div>
       </AccordionContent>
     </AccordionItem>
