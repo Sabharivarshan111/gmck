@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Timer, Pause, Play, RotateCcw, Droplets } from 'lucide-react';
 import { Button } from './ui/button';
@@ -17,12 +16,10 @@ const PomodoroTimer = () => {
   const [remainingTime, setRemainingTime] = useState(25 * 60); // Remaining time in seconds
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Recalculate remaining time when minutes/seconds change
   useEffect(() => {
     setRemainingTime(minutes * 60 + seconds);
   }, [minutes, seconds]);
   
-  // Timer logic
   useEffect(() => {
     let intervalId: NodeJS.Timeout | null = null;
     
@@ -30,7 +27,6 @@ const PomodoroTimer = () => {
       intervalId = setInterval(() => {
         setRemainingTime(prev => {
           if (prev <= 1) {
-            // Timer finished
             clearInterval(intervalId as NodeJS.Timeout);
             setIsRunning(false);
             setMinutes(0);
@@ -55,7 +51,6 @@ const PomodoroTimer = () => {
     };
   }, [isRunning]);
   
-  // Focus input when editing starts
   useEffect(() => {
     if (isEditing && inputRef.current) {
       inputRef.current.focus();
@@ -78,7 +73,6 @@ const PomodoroTimer = () => {
 
   const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    // Allow empty string or numbers
     if (value === '' || /^\d+$/.test(value)) {
       setInputValue(value);
     }
@@ -87,10 +81,7 @@ const PomodoroTimer = () => {
   const handleSubmit = useCallback((e?: React.FormEvent) => {
     if (e) e.preventDefault();
     
-    // Default to 25 if empty or invalid
     const newMinutes = inputValue === '' ? 25 : parseInt(inputValue, 10);
-    
-    // Validate min/max values
     const validMinutes = Math.min(Math.max(1, newMinutes), 99);
     
     setMinutes(validMinutes);
@@ -128,7 +119,7 @@ const PomodoroTimer = () => {
   const progressPercentage = Math.max(0, Math.min(100, (remainingTime / totalTime) * 100));
 
   return (
-    <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-black border border-white rounded-full px-8 py-3 shadow-lg min-w-[300px] z-50 animate-fade-in">
+    <div className="fixed bottom-24 left-1/2 transform -translate-x-1/2 bg-black border border-white rounded-full px-8 py-3 shadow-lg min-w-[300px] z-50 animate-fade-in">
       <div className="space-y-2">
         <div className="flex items-center justify-between gap-4">
           <Timer className="w-5 h-5 text-white" />

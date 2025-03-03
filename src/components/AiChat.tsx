@@ -4,11 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
-import { Loader2, Send, RefreshCw, RotateCcw, Copy, AlertTriangle } from "lucide-react";
+import { Loader2, Send, RefreshCw, RotateCcw, Copy } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { Separator } from "@/components/ui/separator";
 
 interface ChatMessage {
   id: string;
@@ -154,12 +153,12 @@ export const AiChat = () => {
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.3 }}
-      className="w-full h-full flex flex-col"
+      className="w-full h-full flex flex-col mt-8" // Added margin-top to move it up
     >
-      <Card className="backdrop-blur-sm bg-gray-950/70 border-gray-800 flex flex-col h-full">
+      <Card className="backdrop-blur-sm bg-gray-950/70 border-gray-800 flex flex-col h-[500px]"> {/* Reduced height */}
         <CardHeader className="px-4 py-3 border-b border-gray-800">
           <CardTitle className="text-lg flex items-center justify-between text-white">
-            <span>Medical AI Assistant (Powered by Gemini 1.5)</span>
+            <span>Medical Assistant</span>
             {messages.length > 0 && (
               <Button 
                 variant="ghost" 
@@ -186,8 +185,8 @@ export const AiChat = () => {
                   <div className="mb-2">
                     <RefreshCw className="h-8 w-8 mx-auto opacity-50" />
                   </div>
-                  <p>Ask any medical question to get started</p>
-                  <p className="text-sm mt-2">Now powered by Google Gemini 1.5 AI!</p>
+                  <p>Ask me any medical question!</p>
+                  <p className="text-sm mt-2">I'm ACEV, your personal medical assistant</p>
                 </motion.div>
               ) : (
                 messages.map((message) => (
@@ -206,7 +205,7 @@ export const AiChat = () => {
                   >
                     <div className="flex justify-between items-start mb-1">
                       <p className="text-xs font-medium text-gray-400">
-                        {message.role === 'user' ? 'You' : 'Gemini AI'}
+                        {message.role === 'user' ? 'You' : 'ACEV'}
                       </p>
                       {message.role === 'assistant' && (
                         <Button
@@ -225,59 +224,38 @@ export const AiChat = () => {
                   </motion.div>
                 ))
               )}
-
-              {error && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="bg-red-900/30 border border-red-500/50 text-red-100 rounded-lg p-4 flex items-start space-x-3"
-                >
-                  <AlertTriangle className="h-5 w-5 text-red-400 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <p className="font-medium mb-1">Error connecting to Gemini</p>
-                    <p className="text-sm opacity-90">{error}</p>
-                    <p className="text-sm mt-2 opacity-80">
-                      Please make sure the GEMINI_API_KEY is correctly set in Supabase Edge Function Secrets.
-                    </p>
-                  </div>
-                </motion.div>
-              )}
             </AnimatePresence>
             <div ref={messagesEndRef} />
           </div>
         </CardContent>
         
-        <CardFooter className="p-4 pt-2 border-t border-gray-800">
-          <form onSubmit={handleSubmit} className="w-full space-y-2">
-            <Textarea
-              ref={textareaRef}
-              placeholder="Ask any medical question..."
-              value={prompt}
-              onChange={(e) => {
-                setPrompt(e.target.value);
-                adjustTextareaHeight();
-              }}
-              onKeyDown={handleKeyDown}
-              className="min-h-[60px] max-h-[200px] bg-gray-900 border-gray-700 focus:ring-gray-600 resize-none"
-              disabled={isLoading}
-            />
-            <Button 
-              type="submit" 
-              className="w-full bg-white text-black hover:bg-gray-200 transition-colors duration-200"
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Processing...
-                </>
-              ) : (
-                <>
-                  <Send className="mr-2 h-4 w-4" />
-                  Send Message
-                </>
-              )}
-            </Button>
+        <CardFooter className="p-3 pt-2 border-t border-gray-800">
+          <form onSubmit={handleSubmit} className="w-full">
+            <div className="flex gap-2">
+              <Textarea
+                ref={textareaRef}
+                placeholder="Ask a medical question..."
+                value={prompt}
+                onChange={(e) => {
+                  setPrompt(e.target.value);
+                  adjustTextareaHeight();
+                }}
+                onKeyDown={handleKeyDown}
+                className="min-h-[40px] max-h-[100px] bg-gray-900 border-gray-700 focus:ring-gray-600 resize-none text-sm flex-grow"
+                disabled={isLoading}
+              />
+              <Button 
+                type="submit" 
+                className="bg-white text-black hover:bg-gray-200 transition-colors duration-200 h-10 w-10 p-0 flex items-center justify-center"
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Send className="h-4 w-4" />
+                )}
+              </Button>
+            </div>
           </form>
         </CardFooter>
       </Card>
