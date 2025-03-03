@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Timer, Pause, Play, RotateCcw, Droplets } from 'lucide-react';
 import { Button } from './ui/button';
@@ -119,7 +120,7 @@ const PomodoroTimer = () => {
   const progressPercentage = Math.max(0, Math.min(100, (remainingTime / totalTime) * 100));
 
   return (
-    <div className="fixed bottom-24 left-1/2 transform -translate-x-1/2 bg-black border border-white rounded-full px-8 py-3 shadow-lg min-w-[300px] z-50 animate-fade-in">
+    <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-black border border-white rounded-full px-8 py-3 shadow-lg min-w-[300px] z-50 animate-fade-in">
       <div className="space-y-2">
         <div className="flex items-center justify-between gap-4">
           <Timer className="w-5 h-5 text-white" />

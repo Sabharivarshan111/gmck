@@ -1,10 +1,8 @@
 
 import React, { useState } from 'react';
 import { Card, CardContent } from './ui/card';
-import { Button } from './ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { AiChat } from './AiChat';
-import { Separator } from './ui/separator';
 import { Info } from 'lucide-react';
 
 interface AiQuestionTabProps {
@@ -13,7 +11,7 @@ interface AiQuestionTabProps {
 
 export const AiQuestionTab: React.FC<AiQuestionTabProps> = ({ question }) => {
   return (
-    <Card className="mt-3 border-gray-800 bg-gray-950/70 backdrop-blur-sm">
+    <Card className="mt-2 mb-6 border-gray-800 bg-gray-950/70 backdrop-blur-sm">
       <CardContent className="p-4">
         <Tabs defaultValue="question">
           <TabsList className="grid w-full grid-cols-2 mb-4">
@@ -28,8 +26,10 @@ export const AiQuestionTab: React.FC<AiQuestionTabProps> = ({ question }) => {
             </div>
           </TabsContent>
           
-          <TabsContent value="askAi">
-            <AiChat />
+          <TabsContent value="askAi" className="max-h-[350px] overflow-y-auto">
+            <div className="p-2 bg-gray-900/50 rounded-md">
+              <AiChat />
+            </div>
           </TabsContent>
         </Tabs>
       </CardContent>

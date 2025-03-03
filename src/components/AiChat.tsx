@@ -153,10 +153,10 @@ export const AiChat = () => {
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.3 }}
-      className="w-full h-full flex flex-col mt-8" // Added margin-top to move it up
+      className="w-full h-full flex flex-col mt-0" // Removed margin-top
     >
-      <Card className="backdrop-blur-sm bg-gray-950/70 border-gray-800 flex flex-col h-[500px]"> {/* Reduced height */}
-        <CardHeader className="px-4 py-3 border-b border-gray-800">
+      <Card className="backdrop-blur-sm bg-gray-950/70 border-gray-800 flex flex-col h-[420px]"> {/* Reduced height further */}
+        <CardHeader className="px-4 py-2 border-b border-gray-800"> {/* Reduced padding */}
           <CardTitle className="text-lg flex items-center justify-between text-white">
             <span>Medical Assistant</span>
             {messages.length > 0 && (
@@ -180,13 +180,13 @@ export const AiChat = () => {
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="text-center text-gray-500 py-8"
+                  className="text-center text-gray-500 py-6" // Reduced padding
                 >
                   <div className="mb-2">
-                    <RefreshCw className="h-8 w-8 mx-auto opacity-50" />
+                    <RefreshCw className="h-7 w-7 mx-auto opacity-50" /> {/* Slightly smaller icon */}
                   </div>
                   <p>Ask me any medical question!</p>
-                  <p className="text-sm mt-2">I'm ACEV, your personal medical assistant</p>
+                  <p className="text-sm mt-1">I'm ACEV, your personal medical assistant</p>
                 </motion.div>
               ) : (
                 messages.map((message) => (
@@ -241,12 +241,12 @@ export const AiChat = () => {
                   adjustTextareaHeight();
                 }}
                 onKeyDown={handleKeyDown}
-                className="min-h-[40px] max-h-[100px] bg-gray-900 border-gray-700 focus:ring-gray-600 resize-none text-sm flex-grow"
+                className="min-h-[36px] max-h-[80px] bg-gray-900 border-gray-700 focus:ring-gray-600 resize-none text-sm flex-grow" // Reduced min and max height
                 disabled={isLoading}
               />
               <Button 
                 type="submit" 
-                className="bg-white text-black hover:bg-gray-200 transition-colors duration-200 h-10 w-10 p-0 flex items-center justify-center"
+                className="bg-white text-black hover:bg-gray-200 transition-colors duration-200 h-9 w-9 p-0 flex items-center justify-center" // Smaller button
                 disabled={isLoading}
               >
                 {isLoading ? (

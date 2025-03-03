@@ -6,11 +6,11 @@ import PomodoroTimer from "@/components/PomodoroTimer";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-black overflow-x-hidden">
       <InstallPrompt />
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-6">
         <div className="grid gap-8 grid-cols-1 lg:grid-cols-[2fr,1fr] animate-fade-in">
-          <div className="space-y-8">
+          <div className="space-y-8 mb-16"> {/* Added bottom margin to make space for the timer */}
             <div className="group">
               <h1 className="text-4xl font-bold mb-8 text-white tracking-tight">
                 ACEV
@@ -19,7 +19,7 @@ const Index = () => {
               <QuestionBank />
             </div>
           </div>
-          <div className="lg:sticky lg:top-8 lg:h-[calc(100vh-4rem)] overflow-hidden flex flex-col">
+          <div className="lg:sticky lg:top-4 lg:h-[calc(100vh-4rem)] overflow-hidden flex flex-col">
             <AiChat />
           </div>
         </div>
