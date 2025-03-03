@@ -19,7 +19,7 @@ const Index = () => {
               <QuestionBank />
             </div>
           </div>
-          <div className="lg:sticky lg:top-8 lg:h-[calc(100vh-4rem)] overflow-hidden flex flex-col">
+          <div className="lg:sticky lg:top-8 lg:h-[calc(100vh-8rem)] overflow-hidden flex flex-col mt-[-2cm]">
             <AiChat />
           </div>
         </div>
