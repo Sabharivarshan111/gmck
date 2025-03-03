@@ -7,6 +7,7 @@ import { useEffect, useState, useCallback, useMemo } from "react";
 import { useSwipeable } from "react-swipeable";
 import { QUESTION_BANK_DATA } from "@/data/questionBankData";
 import TopicAccordion from "./TopicAccordion";
+import QuestionCardEnhanced from "./QuestionCardEnhanced";
 
 export interface Question {
   question: string;
