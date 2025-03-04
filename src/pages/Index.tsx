@@ -9,18 +9,24 @@ const Index = () => {
     <div className="min-h-screen bg-black overflow-x-hidden">
       <InstallPrompt />
       <div className="container mx-auto px-4 py-6">
-        <div className="grid gap-8 grid-cols-1 lg:grid-cols-[2fr,1fr] animate-fade-in">
-          <div className="space-y-8 mb-16">
+        <div className="flex flex-col items-center animate-fade-in">
+          <div className="w-full mb-8">
             <div className="group">
               <h1 className="text-4xl font-bold mb-8 text-white tracking-tight">
                 ACEV
                 <span className="text-gray-500 ml-2 text-lg">Medical Education</span>
               </h1>
-              <QuestionBank />
             </div>
           </div>
-          <div className="lg:sticky lg:top-4 lg:h-[calc(100vh-4rem)] overflow-hidden flex flex-col">
-            <AiChat />
+          
+          <div className="grid gap-8 grid-cols-1 lg:grid-cols-[1fr,1fr] w-full">
+            <div className="space-y-8">
+              <QuestionBank />
+            </div>
+            
+            <div className="lg:h-[calc(100vh-8rem)] overflow-hidden flex flex-col">
+              <AiChat />
+            </div>
           </div>
         </div>
       </div>

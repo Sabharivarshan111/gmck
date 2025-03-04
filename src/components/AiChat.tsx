@@ -36,9 +36,9 @@ export const AiChat = ({ initialQuestion }: AiChatProps = {}) => {
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.3 }}
-      className="w-full h-full flex flex-col mt-[-1cm]"
+      className="w-full h-full flex flex-col"
     >
-      <Card className="backdrop-blur-sm bg-gray-950/70 border-gray-800 flex flex-col h-[105px]">
+      <Card className="backdrop-blur-sm bg-gray-950/70 border-gray-800 flex flex-col h-[600px] shadow-xl">
         <CardHeader className="px-4 py-2 border-b border-gray-800">
           <CardTitle className="text-lg flex items-center justify-between text-white">
             <span>Medical Assistant</span>
