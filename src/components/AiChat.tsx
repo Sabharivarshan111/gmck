@@ -9,7 +9,11 @@ import { EmptyChatState } from "./chat/EmptyChatState";
 import { ChatInput } from "./chat/ChatInput";
 import { useAiChat } from "@/hooks/use-ai-chat";
 
-export const AiChat = () => {
+interface AiChatProps {
+  initialQuestion?: string;
+}
+
+export const AiChat = ({ initialQuestion }: AiChatProps = {}) => {
   const { 
     prompt, 
     setPrompt, 
@@ -18,7 +22,7 @@ export const AiChat = () => {
     handleSubmit, 
     handleClearChat, 
     handleCopyResponse 
-  } = useAiChat();
+  } = useAiChat({ initialQuestion });
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -34,7 +38,7 @@ export const AiChat = () => {
       transition={{ duration: 0.3 }}
       className="w-full h-full flex flex-col mt-[-1cm]"
     >
-      <Card className="backdrop-blur-sm bg-gray-950/70 border-gray-800 flex flex-col h-[210px]">
+      <Card className="backdrop-blur-sm bg-gray-950/70 border-gray-800 flex flex-col h-[105px]">
         <CardHeader className="px-4 py-2 border-b border-gray-800">
           <CardTitle className="text-lg flex items-center justify-between text-white">
             <span>Medical Assistant</span>

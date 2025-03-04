@@ -1,20 +1,44 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { ChatMessage } from "@/models/ChatMessage";
 
-export const useAiChat = () => {
-  const [prompt, setPrompt] = useState("");
+interface UseAiChatProps {
+  initialQuestion?: string;
+}
+
+export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
+  const [prompt, setPrompt] = useState(initialQuestion || "");
   const [isLoading, setIsLoading] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // This useEffect will trigger the AI to answer the initialQuestion automatically
+  useEffect(() => {
+    if (initialQuestion && initialQuestion.trim().length > 0) {
+      handleSubmitQuestion(initialQuestion);
+    }
+    // We only want this to run once when the component mounts with an initialQuestion
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Clear messages on page refresh/reload
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      localStorage.removeItem("aiChatMessages");
+    };
     
-    if (!prompt.trim()) {
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
+
+  const handleSubmitQuestion = async (questionText: string) => {
+    if (!questionText.trim()) {
       toast({
         title: "Please enter a question",
         variant: "destructive",
@@ -26,7 +50,7 @@ export const useAiChat = () => {
     const userMessage: ChatMessage = {
       id: crypto.randomUUID(),
       role: 'user',
-      content: prompt.trim(),
+      content: questionText.trim(),
       timestamp: new Date(),
     };
 
@@ -35,13 +59,13 @@ export const useAiChat = () => {
     setIsLoading(true);
 
     try {
-      const { data, error } = await supabase.functions.invoke('ask-gemini', {
-        body: { prompt: prompt.trim() }
+      const { data, error: supabaseError } = await supabase.functions.invoke('ask-gemini', {
+        body: { prompt: questionText.trim() }
       });
 
-      if (error) {
-        console.error("Supabase function error:", error);
-        throw new Error(error.message || "Error communicating with AI service");
+      if (supabaseError) {
+        console.error("Supabase function error:", supabaseError);
+        throw new Error(supabaseError.message || "Error communicating with AI service");
       }
 
       if (data?.error) {
@@ -65,17 +89,31 @@ export const useAiChat = () => {
       } else {
         throw new Error("No response received from AI");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error:', error);
-      setError(error.message || "Error generating response");
+      const errorMessage = error.message || "Error generating response";
+      setError(errorMessage);
+      
+      // Create a more user-friendly error message for the toast
+      const userFriendlyError = errorMessage.includes("API key") 
+        ? "There's an issue with the AI service configuration."
+        : errorMessage.includes("network") 
+          ? "Network error. Please check your connection."
+          : "Error generating response. Please try again later.";
+      
       toast({
-        title: "Error generating response",
-        description: error.message || "Please try again later",
+        title: "Error",
+        description: userFriendlyError,
         variant: "destructive",
       });
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await handleSubmitQuestion(prompt);
   };
 
   const handleClearChat = () => {
@@ -101,6 +139,7 @@ export const useAiChat = () => {
     messages,
     error,
     handleSubmit,
+    handleSubmitQuestion,
     handleClearChat,
     handleCopyResponse
   };
