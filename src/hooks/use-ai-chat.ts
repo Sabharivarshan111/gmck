@@ -38,7 +38,7 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
   }, []);
 
   const handleSubmitQuestion = async (questionText: string) => {
-    if (!questionText.trim()) {
+    if (!questionText || !questionText.trim()) {
       toast({
         title: "Please enter a question",
         variant: "destructive",
@@ -59,6 +59,11 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
     setIsLoading(true);
 
     try {
+      // Check network connection before making request
+      if (!navigator.onLine) {
+        throw new Error("You're offline. Please check your internet connection.");
+      }
+
       const { data, error: supabaseError } = await supabase.functions.invoke('ask-gemini', {
         body: { prompt: questionText.trim() }
       });
@@ -73,22 +78,22 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
         throw new Error(data.error || "Error generating response");
       }
 
-      if (data?.response) {
-        const assistantMessage: ChatMessage = {
-          id: crypto.randomUUID(),
-          role: 'assistant',
-          content: data.response,
-          timestamp: new Date(),
-        };
-        
-        setMessages((prev) => [...prev, assistantMessage]);
-        
-        toast({
-          title: "Response generated successfully",
-        });
-      } else {
+      if (!data || data.response === undefined) {
         throw new Error("No response received from AI");
       }
+
+      const assistantMessage: ChatMessage = {
+        id: crypto.randomUUID(),
+        role: 'assistant',
+        content: data.response,
+        timestamp: new Date(),
+      };
+      
+      setMessages((prev) => [...prev, assistantMessage]);
+      
+      toast({
+        title: "Response generated successfully",
+      });
     } catch (error: any) {
       console.error('Error:', error);
       const errorMessage = error.message || "Error generating response";
@@ -97,9 +102,11 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
       // Create a more user-friendly error message for the toast
       const userFriendlyError = errorMessage.includes("API key") 
         ? "There's an issue with the AI service configuration."
-        : errorMessage.includes("network") 
+        : errorMessage.includes("network") || errorMessage.includes("offline")
           ? "Network error. Please check your connection."
-          : "Error generating response. Please try again later.";
+          : errorMessage.includes("timeout") || errorMessage.includes("timed out")
+            ? "Request timed out. The service might be busy, please try again."
+            : "Error generating response. Please try again later.";
       
       toast({
         title: "Error",

@@ -19,12 +19,12 @@ const Index = () => {
             </div>
           </div>
           
-          <div className="grid gap-8 grid-cols-1 lg:grid-cols-[1fr,1fr] w-full">
+          <div className="grid gap-8 grid-cols-1 lg:grid-cols-[1fr,1fr] w-full mb-20">
             <div className="space-y-8">
               <QuestionBank />
             </div>
             
-            <div className="lg:h-[calc(100vh-8rem)] overflow-hidden flex flex-col">
+            <div className="lg:h-[calc(100vh-12rem)] overflow-hidden flex flex-col">
               <AiChat />
             </div>
           </div>
