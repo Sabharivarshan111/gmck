@@ -36,9 +36,8 @@ export const AiChat = ({ initialQuestion }: AiChatProps = {}) => {
   useEffect(() => {
     // Check if there's a stored auto question/answer from a page refresh
     const storedQuestion = sessionStorage.getItem('autoQuestion');
-    const storedAnswer = sessionStorage.getItem('autoAnswer');
     
-    if (storedQuestion && storedAnswer) {
+    if (storedQuestion) {
       // Use setTimeout to allow the component to fully mount
       setTimeout(() => {
         handleSubmitQuestion(storedQuestion);

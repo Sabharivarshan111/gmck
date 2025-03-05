@@ -24,6 +24,28 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Load messages from localStorage on mount
+  useEffect(() => {
+    try {
+      const savedMessages = localStorage.getItem("aiChatMessages");
+      if (savedMessages) {
+        const parsedMessages = JSON.parse(savedMessages);
+        if (Array.isArray(parsedMessages)) {
+          setMessages(parsedMessages);
+        }
+      }
+    } catch (e) {
+      console.error("Error loading saved messages:", e);
+    }
+  }, []);
+
+  // Save messages to localStorage when they change
+  useEffect(() => {
+    if (messages.length > 0) {
+      localStorage.setItem("aiChatMessages", JSON.stringify(messages));
+    }
+  }, [messages]);
+
   // Clear messages on page refresh/reload
   useEffect(() => {
     const handleBeforeUnload = () => {

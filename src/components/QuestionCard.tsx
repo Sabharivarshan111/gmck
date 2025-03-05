@@ -1,11 +1,9 @@
-
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { motion, AnimatePresence } from "framer-motion";
-import { useTripleTap } from "@/hooks/use-triple-tap";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "@/components/ui/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 
 interface QuestionCardProps {
   question: string;
@@ -28,6 +26,12 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
   const [isCompleted, setIsCompleted] = useState(false);
   const [showAnimation, setShowAnimation] = useState(false);
   const [isLoadingAI, setIsLoadingAI] = useState(false);
+  const { toast } = useToast();
+  
+  // Touch tracking for triple tap detection
+  const touchCount = useRef(0);
+  const lastTouchTime = useRef(0);
+  const touchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   
   // Load saved state from localStorage on component mount
   useEffect(() => {
@@ -75,7 +79,7 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
       }
       
       // Store the question and answer in sessionStorage for the AI chat to use
-      sessionStorage.setItem('autoQuestion', cleanQuestion);
+      sessionStorage.setItem('autoQuestion', `Triple-tapped: ${cleanQuestion}`);
       sessionStorage.setItem('autoAnswer', data.response);
       
       // Notify user that the answer is ready
@@ -86,11 +90,11 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
       
       // Dispatch a custom event that the AiChat component will listen for
       const event = new CustomEvent('ai-triple-tap-answer', { 
-        detail: { question: cleanQuestion, answer: data.response } 
+        detail: { question: `Triple-tapped: ${cleanQuestion}`, answer: data.response } 
       });
       window.dispatchEvent(event);
       
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error getting AI answer:", error);
       toast({
         title: "Error",
@@ -102,8 +106,45 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
     }
   };
   
-  // Use the triple tap hook
-  const cardRef = useTripleTap(handleTripleTap);
+  // Handle touch events for triple tap detection
+  const handleTouch = () => {
+    const now = Date.now();
+    const TOUCH_TIMEOUT = 500; // milliseconds
+    
+    // Clear any existing timeout
+    if (touchTimeoutRef.current) {
+      clearTimeout(touchTimeoutRef.current);
+    }
+    
+    // If it's been too long since the last touch, reset the count
+    if (now - lastTouchTime.current > TOUCH_TIMEOUT) {
+      touchCount.current = 1;
+    } else {
+      // Otherwise increment the count
+      touchCount.current += 1;
+    }
+    
+    // Update the last touch time
+    lastTouchTime.current = now;
+    
+    // Set a timeout to reset the count
+    touchTimeoutRef.current = setTimeout(() => {
+      // If we've registered 3 taps, trigger the action
+      if (touchCount.current === 3) {
+        handleTripleTap();
+      }
+      touchCount.current = 0;
+    }, TOUCH_TIMEOUT);
+  };
+  
+  // Cleanup touch timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (touchTimeoutRef.current) {
+        clearTimeout(touchTimeoutRef.current);
+      }
+    };
+  }, []);
   
   return (
     <motion.div
@@ -111,12 +152,12 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: index * 0.1 }}
       className="relative"
-      ref={cardRef}
     >
       <Card 
         className={`bg-gray-900/50 border-gray-800/50 hover:bg-gray-900/70 transition-all duration-300 mb-2 relative overflow-hidden ${
           showAnimation ? 'ring-2 ring-blue-400/50' : ''
         }`}
+        onClick={handleTouch}
       >
         <CardContent className="p-4">
           <div className="flex items-start gap-4">
@@ -138,6 +179,9 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
                   Getting answer...
                 </p>
               )}
+              <p className="text-xs text-gray-400 mt-1">
+                Triple tap to get AI explanation
+              </p>
             </div>
             <div className="flex-shrink-0 ml-2">
               <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gray-800 text-gray-300 text-sm">

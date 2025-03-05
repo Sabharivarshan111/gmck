@@ -11,6 +11,33 @@ interface ChatMessageItemProps {
 }
 
 export const ChatMessageItem = ({ message, onCopy }: ChatMessageItemProps) => {
+  // Helper to style and format code blocks in AI responses
+  const formatContent = (content: string) => {
+    if (message.role !== 'assistant') return content;
+    
+    // Check if content contains markdown code blocks
+    if (content.includes('```')) {
+      const parts = content.split(/(```(?:.*?\n)?.*?```)/gs);
+      
+      return parts.map((part, index) => {
+        if (part.startsWith('```') && part.endsWith('```')) {
+          // Extract the code without the backticks
+          const codeContent = part.replace(/```(?:.*?\n)?(.*)```/s, '$1').trim();
+          
+          return (
+            <pre key={index} className="bg-gray-800 p-3 rounded-md my-2 overflow-x-auto">
+              <code className="text-gray-100 text-xs">{codeContent}</code>
+            </pre>
+          );
+        }
+        
+        return <span key={index}>{part}</span>;
+      });
+    }
+    
+    return content;
+  };
+
   return (
     <motion.div
       key={message.id}
@@ -41,7 +68,7 @@ export const ChatMessageItem = ({ message, onCopy }: ChatMessageItemProps) => {
         )}
       </div>
       <div className="whitespace-pre-wrap text-sm">
-        {message.content}
+        {formatContent(message.content)}
       </div>
       {message.role === 'user' && message.content.includes("Triple-tapped:") && (
         <div className="mt-1 text-xs text-blue-400">
