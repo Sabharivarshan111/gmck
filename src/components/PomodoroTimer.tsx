@@ -13,6 +13,7 @@ const PomodoroTimer = () => {
     isRunning,
     isEditing,
     inputValue,
+    setInputValue,  // Added this line to receive the setter from the hook
     waterCount,
     progressPercentage,
     totalTime,
@@ -38,7 +39,7 @@ const PomodoroTimer = () => {
             minutes={minutes}
             seconds={seconds}
             inputValue={inputValue}
-            setInputValue={setInputValue}
+            setInputValue={setInputValue}  // Pass the setter to TimerDisplay
             startEditing={startEditing}
             handleInputChange={handleInputChange}
             handleKeyDown={handleKeyDown}

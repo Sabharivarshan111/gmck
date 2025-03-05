@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { toast } from '@/components/ui/use-toast';
 
@@ -113,6 +112,7 @@ export function usePomodoroTimer(initialMinutes: number = 25) {
     isRunning,
     isEditing,
     inputValue,
+    setInputValue,
     waterCount,
     totalTime,
     remainingTime,
