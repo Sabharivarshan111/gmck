@@ -11,11 +11,11 @@ interface ChatMessageItemProps {
 }
 
 export const ChatMessageItem = ({ message, onCopy }: ChatMessageItemProps) => {
-  // Helper to style and format code blocks in AI responses
+  // Helper to style and format code blocks and markdown in AI responses
   const formatContent = (content: string) => {
     if (message.role !== 'assistant') return content;
     
-    // Check if content contains markdown code blocks
+    // Check for and format code blocks
     if (content.includes('```')) {
       const parts = content.split(/(```(?:.*?\n)?.*?```)/gs);
       
@@ -29,6 +29,39 @@ export const ChatMessageItem = ({ message, onCopy }: ChatMessageItemProps) => {
               <code className="text-gray-100 text-xs">{codeContent}</code>
             </pre>
           );
+        }
+        
+        // Format markdown links
+        if (part.includes('[') && part.includes(']') && part.includes('(') && part.includes(')')) {
+          const linkFormatted = part.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, text, url) => {
+            return `<a href="${url}" target="_blank" class="text-blue-400 underline">${text}</a>`;
+          });
+          
+          return <span key={index} dangerouslySetInnerHTML={{ __html: linkFormatted }} />;
+        }
+        
+        // Format bullet lists
+        if (part.includes('\n- ')) {
+          const bulletPoints = part.split('\n- ');
+          return (
+            <div key={index} className="space-y-1 my-2">
+              {bulletPoints[0]}
+              <ul className="list-disc list-inside pl-2">
+                {bulletPoints.slice(1).map((point, i) => (
+                  <li key={i} className="ml-2">{point}</li>
+                ))}
+              </ul>
+            </div>
+          );
+        }
+        
+        // Check for bold text with ** or __
+        if (part.includes('**') || part.includes('__')) {
+          const boldFormatted = part
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+            .replace(/__(.*?)__/g, '<strong>$1</strong>');
+          
+          return <span key={index} dangerouslySetInnerHTML={{ __html: boldFormatted }} />;
         }
         
         return <span key={index}>{part}</span>;

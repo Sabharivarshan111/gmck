@@ -1,3 +1,4 @@
+
 export const autonomicNervousSystemData = {
   name: "Autonomic Nervous System",
   subtopics: {
@@ -15,10 +16,10 @@ export const autonomicNervousSystemData = {
     "short-note": {
       name: "Short Note",
       questions: [
-        "Beta-Blockers ****** (Aug 22;Sep 21;Aug 12;Aug 09;Feb 09;Aug 08;Mar 02;Jan 93) (Pg.No: 160)\n- Therapeutic uses, Contraindications\n- Indications, Contraindications, Extra-Cardiac Uses\n- Adverse Effects",
+        "Beta-Blockers ********** (Aug 22;Sep 21;Feb 18;Aug 15;Aug 14;Aug 12;Aug 09;Feb 09;Aug 08;Mar 02;Jan 93) (Pg.No: 160)\n- Therapeutic uses, Contraindications\n- Indications, Contraindications, Extra-Cardiac Uses\n- Adverse Effects",
         "Anti-Glaucoma Drugs ***** (Aug 18;Aug 16;Aug 13;Feb 11;Feb 09) (Pg.No: 153)",
         "Management of Organo Phosphorus Poisoning ***** (Feb 23;Dec 19;Feb 17;Feb 15;Aug 10;Aug 08) (Pg.No: 122)\n- Cholinesterase Reactivators",
-        "Alpha Adrenergic Blockers **** (Aug 18;Aug 16;Feb 12;Aug 10;Feb 09;Oct 02) (Pg.No: 153)\n- Therapeutic Uses",
+        "Alpha Adrenergic Blockers **** (Aug 18;Aug 16;Feb 12;Aug 10) (Pg.No: 153)\n- Therapeutic Uses",
         "Drugs for Glaucoma **** (Feb 10;Feb 05;Oct 02;Oct 96) (Pg.No: 165)",
         "Timolol *** (Feb 18;Aug 09;Dec 90) (Pg.No: 167)\n- Rationale for use in the treatment of Glaucoma",
         "Atropine ** (Jul 23;Feb 14) (Pg.No: 124)\n- Pharmacological action, Uses, Substitutes",
