@@ -3,6 +3,9 @@ import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTripleTap } from "@/hooks/use-triple-tap";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/components/ui/use-toast";
 
 interface QuestionCardProps {
   question: string;
@@ -24,6 +27,7 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
   const questionId = generateQuestionId(question);
   const [isCompleted, setIsCompleted] = useState(false);
   const [showAnimation, setShowAnimation] = useState(false);
+  const [isLoadingAI, setIsLoadingAI] = useState(false);
   
   // Load saved state from localStorage on component mount
   useEffect(() => {
@@ -43,12 +47,71 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
     setTimeout(() => setShowAnimation(false), 800); // Animation lasts less than 1 second
   };
   
+  // Handle triple tap to ask Gemini about this question
+  const handleTripleTap = async () => {
+    try {
+      // Clean up the question text
+      const cleanQuestion = question.replace(/\(Pg\.No: [^)]+\)/, '').trim();
+      
+      // Show loading toast
+      toast({
+        title: "Asking ACEV...",
+        description: "Getting an answer for this question",
+      });
+      
+      setIsLoadingAI(true);
+      
+      // Call the ask-gemini Supabase function
+      const { data, error } = await supabase.functions.invoke('ask-gemini', {
+        body: { prompt: cleanQuestion }
+      });
+      
+      if (error) {
+        throw new Error(error.message || "Failed to get answer");
+      }
+      
+      if (!data || !data.response) {
+        throw new Error("No response received");
+      }
+      
+      // Store the question and answer in sessionStorage for the AI chat to use
+      sessionStorage.setItem('autoQuestion', cleanQuestion);
+      sessionStorage.setItem('autoAnswer', data.response);
+      
+      // Notify user that the answer is ready
+      toast({
+        title: "Answer ready!",
+        description: "Check the AI chat panel for your answer",
+      });
+      
+      // Dispatch a custom event that the AiChat component will listen for
+      const event = new CustomEvent('ai-triple-tap-answer', { 
+        detail: { question: cleanQuestion, answer: data.response } 
+      });
+      window.dispatchEvent(event);
+      
+    } catch (error) {
+      console.error("Error getting AI answer:", error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to get answer",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoadingAI(false);
+    }
+  };
+  
+  // Use the triple tap hook
+  const cardRef = useTripleTap(handleTripleTap);
+  
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: index * 0.1 }}
       className="relative"
+      ref={cardRef}
     >
       <Card 
         className={`bg-gray-900/50 border-gray-800/50 hover:bg-gray-900/70 transition-all duration-300 mb-2 relative overflow-hidden ${
@@ -70,6 +133,11 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
               }`}>
                 {question.replace(/\(Pg\.No: [^)]+\)/, '')}
               </p>
+              {isLoadingAI && (
+                <p className="text-xs text-blue-400 mt-1 animate-pulse">
+                  Getting answer...
+                </p>
+              )}
             </div>
             <div className="flex-shrink-0 ml-2">
               <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gray-800 text-gray-300 text-sm">

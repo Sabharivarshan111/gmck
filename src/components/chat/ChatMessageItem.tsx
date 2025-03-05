@@ -43,6 +43,11 @@ export const ChatMessageItem = ({ message, onCopy }: ChatMessageItemProps) => {
       <div className="whitespace-pre-wrap text-sm">
         {message.content}
       </div>
+      {message.role === 'user' && message.content.includes("Triple-tapped:") && (
+        <div className="mt-1 text-xs text-blue-400">
+          Question from triple-tap interaction
+        </div>
+      )}
     </motion.div>
   );
 };

@@ -21,7 +21,8 @@ export const AiChat = ({ initialQuestion }: AiChatProps = {}) => {
     messages, 
     handleSubmit, 
     handleClearChat, 
-    handleCopyResponse 
+    handleCopyResponse,
+    handleSubmitQuestion
   } = useAiChat({ initialQuestion });
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -30,6 +31,38 @@ export const AiChat = ({ initialQuestion }: AiChatProps = {}) => {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+  
+  // Listen for triple tap events
+  useEffect(() => {
+    // Check if there's a stored auto question/answer from a page refresh
+    const storedQuestion = sessionStorage.getItem('autoQuestion');
+    const storedAnswer = sessionStorage.getItem('autoAnswer');
+    
+    if (storedQuestion && storedAnswer) {
+      // Use setTimeout to allow the component to fully mount
+      setTimeout(() => {
+        handleSubmitQuestion(storedQuestion);
+        // Clear the storage after using it
+        sessionStorage.removeItem('autoQuestion');
+        sessionStorage.removeItem('autoAnswer');
+      }, 500);
+    }
+    
+    // Add event listener for triple tap events
+    const handleTripleTapAnswer = (event: Event) => {
+      const customEvent = event as CustomEvent;
+      if (customEvent.detail && customEvent.detail.question) {
+        handleSubmitQuestion(customEvent.detail.question);
+      }
+    };
+    
+    window.addEventListener('ai-triple-tap-answer', handleTripleTapAnswer);
+    
+    // Clean up
+    return () => {
+      window.removeEventListener('ai-triple-tap-answer', handleTripleTapAnswer);
+    };
+  }, [handleSubmitQuestion]);
 
   return (
     <motion.div 

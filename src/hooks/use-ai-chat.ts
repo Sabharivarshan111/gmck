@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { ChatMessage } from "@/models/ChatMessage";
@@ -37,7 +37,7 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
     };
   }, []);
 
-  const handleSubmitQuestion = async (questionText: string) => {
+  const handleSubmitQuestion = useCallback(async (questionText: string) => {
     if (!questionText || !questionText.trim()) {
       toast({
         title: "Please enter a question",
@@ -116,7 +116,7 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [toast]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
