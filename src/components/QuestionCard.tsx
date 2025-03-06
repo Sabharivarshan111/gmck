@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -32,6 +33,14 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
   const touchCount = useRef(0);
   const lastTouchTime = useRef(0);
   const touchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  
+  // Extract asterisk count from the question
+  const getAsteriskCount = (text: string) => {
+    const asteriskMatch = text.match(/\*+/);
+    return asteriskMatch ? asteriskMatch[0].length : 0;
+  };
+  
+  const asteriskCount = getAsteriskCount(question);
   
   // Load saved state from localStorage on component mount
   useEffect(() => {
@@ -185,7 +194,7 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
             </div>
             <div className="flex-shrink-0 ml-2">
               <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gray-800 text-gray-300 text-sm">
-                {index + 1}
+                {asteriskCount > 0 ? asteriskCount : index + 1}
               </span>
             </div>
           </div>
