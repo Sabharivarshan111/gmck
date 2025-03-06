@@ -40,7 +40,21 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
     return asteriskMatch ? asteriskMatch[0].length : 0;
   };
   
+  // Extract exam date count from the question when no asterisks
+  const getExamDateCount = (text: string) => {
+    // Match exam dates pattern like "(Feb 22;Feb 11;Aug 06;Dec 90)"
+    const datePattern = /\(([^)]*(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[^)]*)\)/;
+    const dateMatch = text.match(datePattern);
+    
+    if (dateMatch && dateMatch[1]) {
+      // Count the number of dates by splitting on semicolons
+      return dateMatch[1].split(';').length;
+    }
+    return 0;
+  };
+  
   const asteriskCount = getAsteriskCount(question);
+  const examDateCount = asteriskCount === 0 ? getExamDateCount(question) : 0;
   
   // Load saved state from localStorage on component mount
   useEffect(() => {
@@ -194,7 +208,7 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
             </div>
             <div className="flex-shrink-0 ml-2">
               <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gray-800 text-gray-300 text-sm">
-                {asteriskCount > 0 ? asteriskCount : index + 1}
+                {asteriskCount > 0 ? asteriskCount : examDateCount > 0 ? examDateCount : index + 1}
               </span>
             </div>
           </div>
