@@ -1,4 +1,3 @@
-
 export const pathologyData = {
   name: "Pathology",
   subtopics: {
@@ -128,42 +127,81 @@ export const pathologyData = {
             }
           }
         },
-        "immunology": {
-          name: "Immunology",
+        "neoplasia": {
+          name: "Neoplasia",
           subtopics: {
             "essay": {
               name: "Essay",
               questions: [
-                "Amyloidosis ********** (Aug 22;Aug 22;Nov 20;Aug 20;Aug 15;Aug 14;Aug 13;Aug 12;Feb 11;Feb 10;Aug 09;Feb 08;Aug 05;Aug 04;Apr 00;Apr 95) (Pg.No: 259) - Pathogenesis, Primary Amyloidosis, Stains Used And Staining Characteristics, Effect On Various Organs",
-                "Acquired Immunodeficiency Syndrome (AIDS) ********* (Feb 23;Feb 20;Aug 16;Feb 14;Feb 12;Feb 11;Feb 10;Aug 07;Nov 94) (Pg.No: 247) - Etiology, Routes of Transmission, Pathogenesis, Clinical Features, Major and Minor Signs, Laboratory Diagnosis, Opportunistic Infections",
-                "Hypersensitivity Reactions ***** (Feb 23;Feb 22;Aug 17;Feb 12;Feb 09) (Pg.No: 204) - Immune complex (Type 3) Hypersensitivity reaction",
-                "Systemic Lupus Erythematosus (SLE) (Jul 23) (Pg.No: 221)"
+                "Neoplasia *** (Sep 21;Aug 18;Aug 15) (Pg.No: 323;Pg.No: 306;Pg.No: 268) - Define Neoplasia, Pathogenesis of Radiation Carcinogenesis - Define Neoplasia, Molecular Basis of Cancer - Oncogenesis and Their Mode of Activation - Define Neoplasms, Features of Anaplasia, Invasion and Metastasis",
+                "Carcinogenesis (Aug 12) (Pg.No: 320) - Physical, Chemical & Biological Carcinogenesis, Molecular Basis of Cancer",
+                "Carcinogenic Agents (Aug 10) (Pg.No: 321) - Various Carcinogenic Agents, Classify Chemical Carcinogens, Steps in Chemical Carcinogenesis",
+                "Metastasis (Jul 08) (Pg.No: 273) - Define Metastasis, Different Pathways of Spread",
+                "Oncogenic Viruses (Aug 09) (Pg.No: 324) - Mention Oncogenic Viruses, Oncogenesis by Human Papilloma Virus"
               ]
             },
             "short-note": {
               name: "Short Note",
               questions: [
-                "Antibody Mediated (Type 2) Hypersensitivity ***** (Aug 18;Feb 14;Feb 11;Mar 02;Nov 95) (Pg.No: 209)",
-                "Phagocytosis ***** (Feb 14;Feb 10;Aug 05;Apr 99;Apr 92) (Pg.No: 209)",
-                "Morphology of Transplant Rejection Reactions **** (Aug 22;Sep 21;Feb 21;Oct 00) (Pg.No: 235)",
-                "Type 1 (Immediate) Hypersensitivity reaction **** (Nov 20;Aug 20;Feb 19;Aug 10) (Pg.No: 205)",
-                "Anaphylaxis *** (Mar 22;Feb 13;Feb 10) (Pg.No: 208)",
-                "Cytokines *** (Feb 20;Apr 01;Nov 94) (Pg.No: 199)",
-                "Lupus Erythematosus (LE) Phenomenon *** (Aug 15;Feb 08;Apr 92) (Pg.No: 221)",
-                "Mechanism of Autoimmune Diseases *** (Feb 23;Feb 18;Aug 09) (Pg.No: 218)",
-                "Renal Changes in SLE *** (Jul 23;Aug 14;Feb 11) (Pg.No: 225)",
-                "Arthus reaction ** (Feb 15;Aug 12) (Pg.No: 212)",
-                "Cell Mediated (Type 4) Hypersensitivity Reaction ** (Feb 23;Dec 91) (Pg.No: 212)",
-                "Graft vs Host Disease ** (Aug 22;Aug 19) (Pg.No: 239)",
-                "Anti-Nuclear Antibodies (Oct 03) (Pg.No: 221)",
-                "Hyper IgM Syndrome (Feb 11) (Pg.No: 244)",
-                "Major Histocompatibility Complex (MHC) (or) Human Leukocyte Antigens (HLA) (Oct 03) (Pg.No: 198)",
-                "Mast Cells (Feb 09) (Pg.No: 206)",
-                "Natural Killer (NK) cells (Apr 01) (Pg.No: 192)",
-                "Primary Immunodeficiency Syndromes (Oct 00) (Pg.No: 240)",
-                "T-Lymphocyte (Aug 04) (Pg.No: 194)"
+                "Chemical Carcinogenesis **** (Feb 23;Feb 23;Nov 20;Feb 18) (Pg.No: 321)",
+                "Tumour Markers **** (Aug 22;Aug 18;Feb 17;Aug 09) (Pg.No: 335)",
+                "Difference Between Benign and Malignant Tumor *** (Feb 23;Aug 16;Aug 09) (Pg.No: 276)",
+                "Paraneoplastic Syndromes *** (Aug 22;Feb 14;Aug 10) (Pg.No: 328)",
+                "Dysplasia ** (Aug 18;Apr 95) (Pg.No: 272)",
+                "Epstein-Barr Virus ** (Aug 20;Aug 14) (Pg.No: 325)",
+                "Fine Needle Aspiration Cytology (FNAC) ** (Aug 09;Aug 08) (Pg.No: 331)",
+                "Growth Factors ** (Sep 21;Feb 15) (Pg.No: 286)",
+                "Lab Diagonosis of Cancer ** (Feb 19;Feb 09) (Pg.No: 331)",
+                "Metastasis ** (Aug 19;Feb 11) (Pg.No: 273)",
+                "Oncogenic Viruses ** (Feb 13;Aug 08) (Pg.No: 323)",
+                "Tumour Suppressor Genes ** (Feb 14;Feb 10) (Pg.No: 291)",
+                "Automatic Tissue Processor (Feb 09)",
+                "Carcinogens (Jul 23) (Pg.No: 323) - Types, Microbial Carcinogens",
+                "Carcinoma In Situ (Pg.No: 272)",
+                "Difference Between Differentiation and Anaplasia (Feb 12) (Pg.No: 270)",
+                "Grading and Staging of Tumors (Feb 09) (Pg.No: 330)",
+                "Hamartoma (Aug 11) (Pg.No: 269)",
+                "Molecular Basis of Cancer (Aug 11) (Pg.No: 281)",
+                "P53 (Aug 14) (Pg.No: 294)",
+                "Tumour Antigen (Feb 13) (Pg.No: 309)",
+                "Warburg Effect (Feb 12) (Pg.No: 299)"
               ]
             }
+          }
+        },
+        "immunology": {
+          "essay": {
+            name: "Essay",
+            questions: [
+              "Amyloidosis ********** (Aug 22;Aug 22;Nov 20;Aug 20;Aug 15;Aug 14;Aug 13;Aug 12;Feb 11;Feb 10;Aug 09;Feb 08;Aug 05;Aug 04;Apr 00;Apr 95) (Pg.No: 259) - Pathogenesis, Primary Amyloidosis, Stains Used And Staining Characteristics, Effect On Various Organs",
+              "Acquired Immunodeficiency Syndrome (AIDS) ********* (Feb 23;Feb 20;Aug 16;Feb 14;Feb 12;Feb 11;Feb 10;Aug 07;Nov 94) (Pg.No: 247) - Etiology, Routes of Transmission, Pathogenesis, Clinical Features, Major and Minor Signs, Laboratory Diagnosis, Opportunistic Infections",
+              "Hypersensitivity Reactions ***** (Feb 23;Feb 22;Aug 17;Feb 12;Feb 09) (Pg.No: 204) - Immune complex (Type 3) Hypersensitivity reaction",
+              "Systemic Lupus Erythematosus (SLE) (Jul 23) (Pg.No: 221)"
+            ]
+          },
+          "short-note": {
+            name: "Short Note",
+            questions: [
+              "Antibody Mediated (Type 2) Hypersensitivity ***** (Aug 18;Feb 14;Feb 11;Mar 02;Nov 95) (Pg.No: 209)",
+              "Phagocytosis ***** (Feb 14;Feb 10;Aug 05;Apr 99;Apr 92) (Pg.No: 209)",
+              "Morphology of Transplant Rejection Reactions **** (Aug 22;Sep 21;Feb 21;Oct 00) (Pg.No: 235)",
+              "Type 1 (Immediate) Hypersensitivity reaction **** (Nov 20;Aug 20;Feb 19;Aug 10) (Pg.No: 205)",
+              "Anaphylaxis *** (Mar 22;Feb 13;Feb 10) (Pg.No: 208)",
+              "Cytokines *** (Feb 20;Apr 01;Nov 94) (Pg.No: 199)",
+              "Lupus Erythematosus (LE) Phenomenon *** (Aug 15;Feb 08;Apr 92) (Pg.No: 221)",
+              "Mechanism of Autoimmune Diseases *** (Feb 23;Feb 18;Aug 09) (Pg.No: 218)",
+              "Renal Changes in SLE *** (Jul 23;Aug 14;Feb 11) (Pg.No: 225)",
+              "Arthus reaction ** (Feb 15;Aug 12) (Pg.No: 212)",
+              "Cell Mediated (Type 4) Hypersensitivity Reaction ** (Feb 23;Dec 91) (Pg.No: 212)",
+              "Graft vs Host Disease ** (Aug 22;Aug 19) (Pg.No: 239)",
+              "Anti-Nuclear Antibodies (Oct 03) (Pg.No: 221)",
+              "Hyper IgM Syndrome (Feb 11) (Pg.No: 244)",
+              "Major Histocompatibility Complex (MHC) (or) Human Leukocyte Antigens (HLA) (Oct 03) (Pg.No: 198)",
+              "Mast Cells (Feb 09) (Pg.No: 206)",
+              "Natural Killer (NK) cells (Apr 01) (Pg.No: 192)",
+              "Primary Immunodeficiency Syndromes (Oct 00) (Pg.No: 240)",
+              "T-Lymphocyte (Aug 04) (Pg.No: 194)"
+            ]
           }
         }
       }
