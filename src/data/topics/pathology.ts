@@ -9,6 +9,7 @@ import { immunologyData } from "./pathology/immunology";
 import { infectiousDiseasesData } from "./pathology/infectiousDiseases";
 import { environmentalNutritionalDisordersData } from "./pathology/environmentalNutritionalDisorders";
 import { infancyChildhoodDiseasesData } from "./pathology/infancyChildhoodDiseases";
+import { redBloodCellsData } from "./pathology/redBloodCells";
 import { pathologyPaper2Data } from "./pathology/paper2";
 
 export const pathologyData = {
@@ -26,7 +27,8 @@ export const pathologyData = {
         "immunology": immunologyData,
         "infectious-diseases": infectiousDiseasesData,
         "environmental-nutritional-disorders": environmentalNutritionalDisordersData,
-        "infancy-childhood-diseases": infancyChildhoodDiseasesData
+        "infancy-childhood-diseases": infancyChildhoodDiseasesData,
+        "red-blood-cells": redBloodCellsData
       }
     },
     "paper-2": pathologyPaper2Data
