@@ -1,5 +1,5 @@
 
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { RotateCcw } from "lucide-react";
@@ -26,11 +26,19 @@ export const AiChat = ({ initialQuestion }: AiChatProps = {}) => {
   } = useAiChat({ initialQuestion });
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [isFirstLoad, setIsFirstLoad] = useState(true);
 
-  // Scroll to bottom when messages change
+  // Scroll to bottom when messages change, but not on first load
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+    if (!isFirstLoad && messages.length > 0) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages, isFirstLoad]);
+  
+  // Mark first load as complete after initial render
+  useEffect(() => {
+    setIsFirstLoad(false);
+  }, []);
   
   // Listen for triple tap events
   useEffect(() => {

@@ -1,10 +1,16 @@
 
+import { useEffect } from "react";
 import QuestionBank from "@/components/QuestionBank";
 import { InstallPrompt } from "@/components/InstallPrompt";
 import { AiChat } from "@/components/AiChat";
 import PomodoroTimer from "@/components/PomodoroTimer";
 
 const Index = () => {
+  // Ensure the page starts at the top when loaded
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <div className="min-h-screen bg-black overflow-x-hidden">
       <InstallPrompt />
