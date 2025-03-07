@@ -1,3 +1,4 @@
+
 export const microbiologyPaper1Data = {
   name: "Paper 1",
   subtopics: {
@@ -178,66 +179,6 @@ export const microbiologyPaper1Data = {
             "High Level Disinfection (Feb 17) (Pg.No: 226)",
             "Moist Heat Sterilization (Aug 13) (Pg.No: 222)",
             "Testing of Disinfectant (Nov 01) (Pg.No: 229)"
-          ]
-        }
-      }
-    },
-    "skin-soft-tissues-musculoskeletal-system-infections": {
-      name: "Skin, Soft tissues and Musculoskeletal System Infections",
-      subtopics: {
-        "essay": {
-          name: "Essay",
-          questions: [
-            "Herpes Virus ******* (Aug 15;Aug 14;Aug 08;Aug 06;Aug 04;Apr 01;Apr 95) (Pg.No: 459;AP3-Pg.No: 550)",
-            "Bacillus anthracis *** (Aug 07;Mar 02;Oct 00) (Pg.No: 449;AP3-Pg.No: 539)",
-            "Gas Gangrene *** (Feb 23;Mar 22;Aug 07) (Pg.No: 439;AP3-Pg.No: 529)",
-            "Streptococci *** (Nov 01;Apr 01;Dec 91) (Pg.No: 431;AP3-Pg.No: 520)"
-          ]
-        },
-        "short-note": {
-          name: "Short Note",
-          questions: [
-            "Cutaneous Larva Migrans ********** (Jul 23;Feb 23;Feb 19;Aug 15;Feb 14;Feb 10;Feb 08;Aug 04;Nov 01;Apr 01) (Pg.No: 476;AP3-Pg.No: 572)",
-            "Dermatophytes ********** (Feb 23;Feb 23;Aug 18;Feb 17;Aug 13;Feb 12;Aug 10;Aug 09;Aug 08;Feb 08;Feb 07;Feb 05;Aug 04;Mar 02;Apr 01) (Pg.No: 479;AP3-Pg.No: 575)",
-            "Mycetoma ********** (Feb 23;Feb 20;Aug 14;Aug 09;Aug 08;Aug 07;Feb 07;Feb 05;Aug 04;Apr 98;Oct 97;Jan 93;Dec 91;Oct 90) (Pg.No: 481;AP3- Pg.No: 578)",
-            "Mucocutaneous Candidiasis ******* (Aug 22;Feb 22;Feb 18;Feb 16;Aug 09;Feb 09;Oct 03) (Pg.No: 483;AP3-Pg.No: 583)",
-            "Malignant Pustule ****** (Sep 21;Feb 12;Feb 10;Aug 04;Mar 02;Apr 01) (Pg.No: 449;AP3-Pg.No: 540)",
-            "Sporotrichosis ****** (Jul 23;Aug 14;Aug 08;Apr 04;Oct 03;Apr 97) (Pg.No: 482;AP3-Pg.No: 580)",
-            "Toxins and Virulence Factors of Streptococci ****** (Feb 23;Feb 19;Aug 17;Feb 11;Oct 03;Apr 01) (Pg.No: 431;AP3-Pg.No: 521)",
-            "Varicella Zoster Virus Infection (or) Herpes Zoster ****** (Aug 22;Feb 18;Aug 13;Feb 12;Aug 09;Feb 09) (Pg.No: 463;AP3-Pg.No: 554)",
-            "Gas Gangrene ***** (Feb 23;Aug 19;Aug 09;Oct 03;Apr 00) (Pg.No: 439;AP3- Pg.No: 529)",
-            "Nagler's Reaction ***** (Feb 22;Feb 10;Feb 09;Aug 04;Oct 97) (Pg.No: 440;AP3-Pg.No: 531)",
-            "Superficial Mycoses ***** (Dec 23;Feb 15;Feb 13;Feb 11;Feb 10) (Pg.No: 478;AP3-Pg.No: 574)",
-            "Rhinosporidiosis **** (Nov 20;Aug 11;Feb 10;Nov 01) (Pg.No: 483;AP3-Pg.No: 582)",
-            "Virulence Factors of Staphylococci **** (Aug 16;Feb 12;Aug 04;Oct 97) (Pg.No: 422;AP3-Pg.No: 511)",
-            "Actinomycosis *** (Aug 19;Feb 19;Feb 14) (Pg.No: 452;AP3-Pg.No: 542)",
-            "Cyclops (Dracunculiasis) *** (Aug 22;Mar 02;Nov 95) (Pg.No: 476;AP3- Pg.No: 569)",
-            "Measles *** (Feb 23;Feb 14;Aug 11) (Pg.No: 468;AP3-Pg.No: 559)",
-            "Methicillin Resistant Staphylococcus aureus (MRSA) *** (Mar 22;Feb 07;Apr 98) (Pg.No: 428;AP3-Pg.No: 517)",
-            "MMR Vaccine *** (Aug 05;Oct 03;Nov 93) (Pg.No: 470;AP3-Pg.No: 561)",
-            "Non-Suppurative Complications of Streptococci *** (Aug 12;Aug 08;Mar 02) (Pg.No: 433;AP3-Pg.No: 523)",
-            "Trichinellosis *** (Aug 12;Feb 11;Apr 00) (Pg.No: 476;AP3-Pg.No: 570)",
-            "Bacillus anthracis ** (Aug 07;Mar 02) (Pg.No: 449;AP3-Pg.No: 539)",
-            "Ectothrix and Endothrix Infection of Hair ** (Aug 12;Aug 11) (Pg.No: 479;AP3- Pg.No: 576)",
-            "McFadyean's Reaction ** (Feb 14;Aug 09) (Pg.No: 451;AP3-Pg.No: 541)",
-            "Non-Venereal Treponematoses ** (Aug 18;Feb 06) (Pg.No: 455;AP3-Pg.No: 545)",
-            "Tzanck Smear ** (Nov 20;Feb 19) (Pg.No: 462;AP3-Pg.No: 553)",
-            "Chromoblastomycosis (Aug 18) (Pg.No: 482;AP3-Pg.No: 581)",
-            "Classification of Streptococci (Jul 23) (Pg.No: 430;AP3-Pg.No: 520)",
-            "Dracunculus Medinensis (Aug 13) (Pg.No: 476;AP3-Pg.No: 569)",
-            "Group B Streptococci (Feb 13) (Pg.No: 435;AP3-Pg.No: 525)",
-            "Group D Streptococci (Oct 00) (Pg.No: 435;AP3-Pg.No: 526)",
-            "Herpes Simplex Virus (Aug 17) (Pg.No: 460;AP3-Pg.No: 551)",
-            "Koplik's Spots (Feb 10) (Pg.No: 469;AP3-Pg.No: 560)",
-            "Lab Diagnosis of Streptococcus pyogens (Feb 15) (Pg.No: 433;AP3-Pg.No: 524)",
-            "Lepromin Test (Aug 09) (Pg.No: 448;AP3-Pg.No: 538)",
-            "Loa Loa (Aug 19) (Pg.No: 475;AP3-Pg.No: 567)",
-            "Nocardia (Feb 09) (Pg.No: 453;AP3-Pg.No: 544)",
-            "Special Characters of Staphylococcus aureus (Aug 13) (Pg.No: 422;AP3- Pg.No: 517)",
-            "Subcutaneous Mycoses (Aug 10) (Pg.No: 481;AP3-Pg.No: 578)",
-            "Tinea Versicolor (Aug 14) (Pg.No: 478;AP3-Pg.No: 574)",
-            "Toxic Shock Syndrome (Jul 23) (Pg.No: 423;AP3-Pg.No: 512)",
-            "Toxins of Clostridium perfringens (Aug 11) (Pg.No: 438;AP3-Pg.No: 529)"
           ]
         }
       }
