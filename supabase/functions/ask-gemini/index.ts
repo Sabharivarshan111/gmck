@@ -7,29 +7,57 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-// Simple rate limiting mechanism
+// Enhanced rate limiting mechanism with backoff
 const rateLimitMap = new Map();
 const RATE_LIMIT_WINDOW = 60000; // 1 minute in milliseconds
 const MAX_REQUESTS_PER_WINDOW = 5; // Max requests per minute
 
-// Function to check if the request is rate limited
-function isRateLimited(clientId: string): boolean {
+// Function to check if the request is rate limited with exponential backoff
+function isRateLimited(clientId: string): { limited: boolean; retryAfter?: number } {
   const now = Date.now();
-  const clientRequests = rateLimitMap.get(clientId) || [];
+  const clientData = rateLimitMap.get(clientId) || { 
+    requests: [],
+    consecutiveHits: 0,
+    backoffUntil: 0
+  };
+  
+  // Check if in backoff period
+  if (clientData.backoffUntil > now) {
+    return { limited: true, retryAfter: Math.ceil((clientData.backoffUntil - now) / 1000) };
+  }
   
   // Remove timestamps older than the window
-  const recentRequests = clientRequests.filter(timestamp => now - timestamp < RATE_LIMIT_WINDOW);
+  const recentRequests = clientData.requests.filter(timestamp => now - timestamp < RATE_LIMIT_WINDOW);
   
   // Check if too many requests in the window
   const isLimited = recentRequests.length >= MAX_REQUESTS_PER_WINDOW;
   
-  // Update the map with the new timestamp
-  if (!isLimited) {
+  if (isLimited) {
+    // Increase consecutive hits and calculate backoff
+    clientData.consecutiveHits++;
+    const backoffSeconds = Math.min(30, Math.pow(2, clientData.consecutiveHits - 1)); // Exponential backoff, max 30 seconds
+    clientData.backoffUntil = now + (backoffSeconds * 1000);
+    
+    // Update the map with current state
+    clientData.requests = recentRequests;
+    rateLimitMap.set(clientId, clientData);
+    
+    return { limited: true, retryAfter: backoffSeconds };
+  } else {
+    // Reset consecutive hits on successful non-limited request
+    if (recentRequests.length === 0) {
+      clientData.consecutiveHits = 0;
+    }
+    
+    // Add the new timestamp
     recentRequests.push(now);
-    rateLimitMap.set(clientId, recentRequests);
+    
+    // Update the map
+    clientData.requests = recentRequests;
+    rateLimitMap.set(clientId, clientData);
+    
+    return { limited: false };
   }
-  
-  return isLimited;
 }
 
 // Function to extract key concepts from a pathology question
@@ -99,7 +127,20 @@ function isPathologyTopic(question: string): boolean {
     question.toLowerCase().includes(keyword.toLowerCase()));
 }
 
+// Add logging with timestamp
+function logWithTimestamp(message: string, data?: any) {
+  const timestamp = new Date().toISOString();
+  console.log(`[${timestamp}] ${message}`);
+  if (data) {
+    console.log(data);
+  }
+}
+
 serve(async (req) => {
+  const requestId = crypto.randomUUID().substring(0, 8);
+  const startTime = Date.now();
+  logWithTimestamp(`[${requestId}] Request received`);
+  
   // Handle CORS preflight request
   if (req.method === "OPTIONS") {
     return new Response(null, {
@@ -112,13 +153,15 @@ serve(async (req) => {
   // For demo, using a placeholder - in production use a real client identifier
   const clientId = req.headers.get('x-forwarded-for') || 'anonymous';
   
-  // Check rate limiting
-  if (isRateLimited(clientId)) {
-    console.log(`Rate limited client: ${clientId}`);
+  // Check rate limiting with enhanced logic
+  const rateLimitResult = isRateLimited(clientId);
+  if (rateLimitResult.limited) {
+    logWithTimestamp(`[${requestId}] Rate limited client: ${clientId}, retry after: ${rateLimitResult.retryAfter}s`);
     return new Response(
       JSON.stringify({ 
-        error: 'Rate limit exceeded. Please try again later.',
-        isRateLimit: true
+        error: `Rate limit exceeded. Please try again in ${rateLimitResult.retryAfter} seconds.`,
+        isRateLimit: true,
+        retryAfter: rateLimitResult.retryAfter
       }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -132,7 +175,7 @@ serve(async (req) => {
     try {
       reqData = await req.json();
     } catch (parseError) {
-      console.error('Error parsing request:', parseError);
+      logWithTimestamp(`[${requestId}] Error parsing request:`, parseError);
       return new Response(
         JSON.stringify({ error: 'Invalid request format' }),
         { 
@@ -145,7 +188,7 @@ serve(async (req) => {
     const { prompt } = reqData || {};
     
     if (!prompt) {
-      console.error('Missing prompt in request');
+      logWithTimestamp(`[${requestId}] Missing prompt in request`);
       return new Response(
         JSON.stringify({ error: 'Prompt is required' }),
         { 
@@ -155,12 +198,12 @@ serve(async (req) => {
       );
     }
     
-    console.log("Received prompt:", prompt);
+    logWithTimestamp(`[${requestId}] Processing prompt: ${prompt.substring(0, 50)}...`);
     
     const apiKey = Deno.env.get("GEMINI_API_KEY");
 
     if (!apiKey) {
-      console.error("GEMINI_API_KEY not set in environment variables");
+      logWithTimestamp(`[${requestId}] GEMINI_API_KEY not set in environment variables`);
       return new Response(
         JSON.stringify({ error: "API key configuration error" }),
         {
@@ -188,7 +231,7 @@ serve(async (req) => {
     
     // Extract key topics from the question if it's a pathology question
     const keyTopics = isPathologyQuestion ? extractKeyTopics(actualQuestion) : [];
-    console.log("Extracted key topics:", keyTopics);
+    logWithTimestamp(`[${requestId}] Extracted key topics:`, keyTopics);
     
     // Create a more specific system prompt for triple-tapped medical questions
     let systemPrompt = "";
@@ -236,28 +279,43 @@ serve(async (req) => {
         Format your response with clear sections and bullet points where appropriate. Be detailed and specific.`;
       }
       
-      console.log("Processing triple-tapped question:", actualQuestion);
-      console.log("Is pathology question:", isPathologyQuestion);
+      logWithTimestamp(`[${requestId}] Processing triple-tapped question: ${actualQuestion}`);
+      logWithTimestamp(`[${requestId}] Is pathology question: ${isPathologyQuestion}`);
     } else {
       // For regular chat questions, use a more conversational approach
       systemPrompt = "You are ACEV, a helpful and knowledgeable medical assistant. Provide concise, accurate medical information. For medical emergencies, always advise seeking immediate professional help. Your responses should be compassionate, clear, and based on established medical knowledge. Never mention that you're powered by Gemini.";
     }
     
-    console.log("Using system prompt:", systemPrompt);
+    logWithTimestamp(`[${requestId}] Using system prompt type: ${isTripleTapQuestion ? (isPathologyQuestion ? "Pathology" : "Medical") : "Conversational"}`);
     
     try {
-      const result = await model.generateContent({
+      // Add a timeout mechanism for the model generation
+      const timeoutMs = 15000; // 15 seconds timeout
+      
+      const modelPromise = model.generateContent({
         contents: [
           { role: "user", parts: [{ text: systemPrompt }] },
           { role: "model", parts: [{ text: "I understand. I'll act as ACEV, a medical assistant providing helpful, accurate information while prioritizing patient safety." }] },
           { role: "user", parts: [{ text: isTripleTapQuestion ? actualQuestion : prompt }] }
         ]
       });
-
+      
+      // Set up timeout
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => {
+          reject(new Error(`Request timed out after ${timeoutMs}ms`));
+        }, timeoutMs);
+      });
+      
+      // Race the model response against the timeout
+      const result = await Promise.race([modelPromise, timeoutPromise]) as any;
+      
       const response = result.response;
       const text = response.text();
       
-      console.log("AI response generated successfully");
+      const endTime = Date.now();
+      const duration = endTime - startTime;
+      logWithTimestamp(`[${requestId}] AI response generated successfully in ${duration}ms`);
 
       return new Response(
         JSON.stringify({ response: text }),
@@ -267,15 +325,33 @@ serve(async (req) => {
         }
       );
     } catch (modelError) {
-      console.error("AI Model Error:", modelError);
+      const endTime = Date.now();
+      const duration = endTime - startTime;
+      logWithTimestamp(`[${requestId}] AI Model Error after ${duration}ms:`, modelError);
       
       // Check for rate limiting error with Gemini
       if (modelError.message && modelError.message.includes("429")) {
-        console.log("Rate limit hit with Gemini API");
+        logWithTimestamp(`[${requestId}] Rate limit hit with Gemini API`);
         return new Response(
           JSON.stringify({ 
             error: "Our AI service is experiencing high demand. Please try again in a moment.",
-            isRateLimit: true
+            isRateLimit: true,
+            retryAfter: 30 // Suggest client wait 30 seconds
+          }),
+          {
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+            status: 200,
+          }
+        );
+      }
+      
+      // Check for timeout error
+      if (modelError.message && modelError.message.includes("timed out")) {
+        logWithTimestamp(`[${requestId}] Request to Gemini API timed out`);
+        return new Response(
+          JSON.stringify({ 
+            error: "Request timed out. The AI service took too long to respond.",
+            details: modelError.message
           }),
           {
             headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -296,7 +372,9 @@ serve(async (req) => {
       );
     }
   } catch (error) {
-    console.error("Error:", error);
+    const endTime = Date.now();
+    const duration = endTime - startTime;
+    logWithTimestamp(`[${requestId}] Unhandled error after ${duration}ms:`, error);
     return new Response(
       JSON.stringify({ 
         error: error.message || "An error occurred while processing your request",

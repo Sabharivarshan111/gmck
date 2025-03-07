@@ -2,7 +2,7 @@
 import { useRef, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { RotateCcw, AlertCircle } from "lucide-react";
+import { RotateCcw, AlertCircle, Clock } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChatMessageItem } from "./chat/ChatMessageItem";
 import { EmptyChatState } from "./chat/EmptyChatState";
@@ -21,6 +21,7 @@ export const AiChat = ({ initialQuestion }: AiChatProps = {}) => {
     messages, 
     setMessages,
     isRateLimited,
+    queueStats,
     handleSubmit, 
     handleClearChat, 
     handleCopyResponse,
@@ -126,6 +127,22 @@ export const AiChat = ({ initialQuestion }: AiChatProps = {}) => {
                 </div>
               </div>
             )}
+            
+            {/* Display queue status if items are queued */}
+            {queueStats.isQueueActive && !isRateLimited && (
+              <div className="bg-blue-900/30 border border-blue-800 rounded-md p-3 flex items-start animate-pulse">
+                <Clock className="h-5 w-5 text-blue-500 mr-2 mt-0.5 flex-shrink-0" />
+                <div>
+                  <p className="text-sm text-blue-300">
+                    Request{queueStats.queueLength > 1 ? 's' : ''} queued ({queueStats.queueLength})
+                  </p>
+                  <p className="text-xs text-blue-400/70 mt-1">
+                    Estimated wait: ~{queueStats.estimatedWaitTime} seconds
+                  </p>
+                </div>
+              </div>
+            )}
+            
             <AnimatePresence initial={false}>
               {messages.length === 0 ? (
                 <EmptyChatState />
@@ -149,7 +166,7 @@ export const AiChat = ({ initialQuestion }: AiChatProps = {}) => {
             setPrompt={setPrompt}
             onSubmit={handleSubmit}
             isLoading={isLoading}
-            isDisabled={isRateLimited}
+            isDisabled={isRateLimited && queueStats.queueLength >= 10} // Disable if rate limited AND queue is full
           />
         </CardFooter>
       </Card>
