@@ -59,8 +59,44 @@ function extractKeyTopics(question: string): string[] {
       extractedTopics.push(name);
     }
   }
+
+  // Extract specific disease names from the question (common pathology conditions)
+  const pathologyConditions = [
+    "Chronic Myeloid Leukemia", "CML", "Acute Leukemia", "Multiple Myeloma",
+    "Hodgkin Lymphoma", "Non-Hodgkin Lymphoma", "Sickle Cell Anemia",
+    "Thalassemia", "Iron Deficiency Anemia", "Megaloblastic Anemia",
+    "Hemophilia", "Thrombocytopenia", "Carcinoma", "Sarcoma", "Melanoma",
+    "Pneumonia", "Tuberculosis", "Emphysema", "Asthma", "Cirrhosis",
+    "Hepatitis", "Pancreatitis", "Gastritis", "Peptic Ulcer", "Ulcerative Colitis",
+    "Crohn Disease", "Glomerulonephritis", "Pyelonephritis", "Alzheimer Disease",
+    "Parkinson Disease", "Multiple Sclerosis", "Myocardial Infarction",
+    "Atherosclerosis", "Hypertension", "Rheumatic Heart Disease",
+    "Diabetes Mellitus", "Thyroiditis", "Graves Disease", "Addison Disease",
+    "Cushing Syndrome", "Osteoarthritis", "Rheumatoid Arthritis", "Osteoporosis",
+    "Osteomyelitis", "Basal Cell Carcinoma", "Squamous Cell Carcinoma"
+  ];
+  
+  for (const condition of pathologyConditions) {
+    if (question.toLowerCase().includes(condition.toLowerCase()) && 
+        !extractedTopics.includes(condition)) {
+      extractedTopics.push(condition);
+    }
+  }
   
   return extractedTopics;
+}
+
+// Function to determine if a question is a pathology topic
+function isPathologyTopic(question: string): boolean {
+  const pathologyKeywords = [
+    "pathology", "histology", "morphology", "histopathology", "cytology",
+    "neoplasm", "tumor", "carcinoma", "sarcoma", "leukemia", "lymphoma",
+    "inflammation", "infarct", "necrosis", "apoptosis", "metaplasia",
+    "dysplasia", "hyperplasia", "atrophy", "hypertrophy", "paper 1", "paper 2"
+  ];
+  
+  return pathologyKeywords.some(keyword => 
+    question.toLowerCase().includes(keyword.toLowerCase()));
 }
 
 serve(async (req) => {
@@ -144,10 +180,11 @@ serve(async (req) => {
     // Extract the actual question content without the "Triple-tapped:" prefix
     const actualQuestion = isTripleTapQuestion ? prompt.replace("Triple-tapped:", "").trim() : prompt;
     
-    // Check if the question is from pathology paper 1 or 2
-    const isPathologyQuestion = actualQuestion.toLowerCase().includes("pathology") || 
-                             actualQuestion.toLowerCase().includes("paper 1") || 
-                             actualQuestion.toLowerCase().includes("paper 2");
+    // Check if the question is from pathology
+    const isPathologyQuestion = isPathologyTopic(actualQuestion) || 
+                               actualQuestion.toLowerCase().includes("pathology") || 
+                               actualQuestion.toLowerCase().includes("paper 1") || 
+                               actualQuestion.toLowerCase().includes("paper 2");
     
     // Extract key topics from the question if it's a pathology question
     const keyTopics = isPathologyQuestion ? extractKeyTopics(actualQuestion) : [];
@@ -180,7 +217,9 @@ serve(async (req) => {
         
         For specific entities like "Philadelphia chromosome" or genetic markers, provide detailed descriptions of their mechanism, significance, and clinical relevance.
         
-        Format your response with clear sections using bold headings and bullet points for key information. Be precise and detailed while maintaining readability.`;
+        Format your response with clear sections using bold headings and bullet points for key information. Be precise and detailed while maintaining readability.
+        
+        IMPORTANT: Always include detailed information about the TREATMENT OPTIONS, even if not explicitly asked. Medical students need to know the current therapeutic approaches from first-line to advanced options.`;
       } else {
         // General medical system prompt for non-pathology questions
         systemPrompt = `You are ACEV, a highly specialized medical AI assistant focused on providing detailed medical explanations. 
