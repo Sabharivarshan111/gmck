@@ -7,6 +7,7 @@ import { liverGallbladderPancreasData } from "./liverGallbladderPancreas";
 import { kidneyData } from "./kidney";
 import { maleGenitalTractData } from "./maleGenitalTract";
 import { femaleGenitalTractData } from "./femaleGenitalTract";
+import { breastData } from "./breast";
 
 export const pathologyPaper2Data = {
   name: "Paper 2",
@@ -18,6 +19,7 @@ export const pathologyPaper2Data = {
     "liver-gallbladder-pancreas": liverGallbladderPancreasData,
     "kidney": kidneyData,
     "male-genital-tract": maleGenitalTractData,
-    "female-genital-tract": femaleGenitalTractData
+    "female-genital-tract": femaleGenitalTractData,
+    "breast": breastData
   }
 };
