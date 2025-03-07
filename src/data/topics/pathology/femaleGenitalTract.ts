@@ -2,13 +2,18 @@
 export const femaleGenitalTractData = {
   name: "Female Genital Tract",
   subtopics: {
-    "essay": {
-      name: "Essay",
-      questions: []
-    },
-    "short-note": {
-      name: "Short Note",
-      questions: []
+    "female-genital-disorders": {
+      name: "Female Genital Disorders",
+      subtopics: {
+        "essay": {
+          name: "Essay",
+          questions: []
+        },
+        "short-note": {
+          name: "Short Note",
+          questions: []
+        }
+      }
     }
   }
 };
