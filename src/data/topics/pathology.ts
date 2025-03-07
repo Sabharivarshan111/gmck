@@ -11,6 +11,7 @@ import { environmentalNutritionalDisordersData } from "./pathology/environmental
 import { infancyChildhoodDiseasesData } from "./pathology/infancyChildhoodDiseases";
 import { redBloodCellsData } from "./pathology/redBloodCells";
 import { whiteBloodCellsData } from "./pathology/whiteBloodCells";
+import { plateletsData } from "./pathology/platelets";
 import { pathologyPaper2Data } from "./pathology/paper2";
 
 export const pathologyData = {
@@ -30,7 +31,8 @@ export const pathologyData = {
         "environmental-nutritional-disorders": environmentalNutritionalDisordersData,
         "infancy-childhood-diseases": infancyChildhoodDiseasesData,
         "red-blood-cells": redBloodCellsData,
-        "white-blood-cells": whiteBloodCellsData
+        "white-blood-cells": whiteBloodCellsData,
+        "platelets": plateletsData
       }
     },
     "paper-2": pathologyPaper2Data
