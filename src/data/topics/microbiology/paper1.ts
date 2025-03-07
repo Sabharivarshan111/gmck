@@ -156,29 +156,6 @@ export const microbiologyPaper1Data = {
           ]
         }
       }
-    },
-    "systematic-bacteriology": {
-      name: "Systematic Bacteriology",
-      subtopics: {
-        "essay": {
-          name: "Essay",
-          questions: [
-            "Discuss the pathogenesis, laboratory diagnosis, and prevention of tuberculosis",
-            "Describe the morphology, virulence factors, and diseases caused by Staphylococcus aureus",
-            "Explain the epidemiology, pathogenesis, and laboratory diagnosis of cholera"
-          ]
-        },
-        "short-note": {
-          name: "Short Note",
-          questions: [
-            "Streptococcus pneumoniae",
-            "Corynebacterium diphtheriae",
-            "Salmonella typhi",
-            "Neisseria meningitidis",
-            "Clostridium tetani"
-          ]
-        }
-      }
     }
   }
 };
