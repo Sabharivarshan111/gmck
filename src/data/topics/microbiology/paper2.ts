@@ -212,8 +212,8 @@ export const microbiologyPaper2Data = {
         }
       }
     },
-    "central-nervous-system-infections": {
-      name: "Central Nervous System Infections",
+    "genito-urinary-sexually-transmitted-infections": {
+      name: "Genito-Urinary and Sexually Transmitted Infections",
       subtopics: {
         "essay": {
           name: "Essay",
