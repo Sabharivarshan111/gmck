@@ -14,7 +14,7 @@ const Index = () => {
             <div className="group">
               <h1 className="text-4xl font-bold mb-8 text-white tracking-tight">
                 ACEV
-                <span className="text-gray-500 ml-2 text-lg">Medical Education</span>
+                <span className="text-gray-500 ml-2 text-lg">MBBS QBANK WITH AI</span>
               </h1>
             </div>
           </div>
