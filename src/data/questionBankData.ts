@@ -1,3 +1,4 @@
+
 import { pharmacologyData } from './topics/pharmacology';
 import { autonomicNervousSystemData } from './topics/autonomicNervousSystem';
 import { centralNervousSystemData } from './topics/centralNervousSystem';
@@ -11,6 +12,7 @@ import { antiMicrobialDrugsData } from './topics/antiMicrobialDrugs';
 import { neoplasticDrugsData } from './topics/neoplasticDrugs';
 import { miscellaneousDrugsData } from './topics/miscellaneousDrugs';
 import { pathologyData } from './topics/pathology';
+import { microbiologyData } from './topics/microbiology';
 
 export const QUESTION_BANK_DATA = {
   "pharmacology": {
@@ -40,5 +42,6 @@ export const QUESTION_BANK_DATA = {
       }
     }
   },
-  "pathology": pathologyData
+  "pathology": pathologyData,
+  "microbiology": microbiologyData
 };
