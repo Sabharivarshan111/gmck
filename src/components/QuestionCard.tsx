@@ -94,36 +94,62 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
       
       console.log("Sending triple-tapped question to Supabase function:", contextualQuestion);
       
-      const { data, error } = await supabase.functions.invoke('ask-gemini', {
-        body: { prompt: `Triple-tapped: ${contextualQuestion}` }
-      });
-      
-      console.log("Response received:", data ? "Data received" : "No data", error ? "Error received" : "No error");
-      
-      if (error) {
-        console.error("Supabase function error:", error);
-        throw new Error(error.message || "Failed to get answer");
+      try {
+        const { data, error } = await supabase.functions.invoke('ask-gemini', {
+          body: { prompt: `Triple-tapped: ${contextualQuestion}` }
+        });
+        
+        console.log("Response received:", data ? "Data received" : "No data", error ? "Error received" : "No error");
+        
+        if (error) {
+          console.error("Supabase function error:", error);
+          throw new Error(error.message || "Failed to get answer");
+        }
+        
+        if (!data) {
+          console.error("No data received from AI service");
+          throw new Error("No response received");
+        }
+        
+        if (data.error) {
+          console.error("AI service error:", data.error);
+          throw new Error(data.error || "Error getting answer");
+        }
+        
+        if (!data.response) {
+          console.error("Empty response received");
+          throw new Error("Empty response received");
+        }
+        
+        toast({
+          title: "Answer ready!",
+          description: "Check the AI chat panel for your answer",
+        });
+        
+        const event = new CustomEvent('ai-triple-tap-answer', { 
+          detail: { question: `Triple-tapped: ${contextualQuestion}`, answer: data.response } 
+        });
+        window.dispatchEvent(event);
+      } catch (apiError) {
+        console.error("API request error:", apiError);
+        
+        // Still create an event to show something in the chat
+        toast({
+          title: "Error getting answer",
+          description: "See the chat for details",
+          variant: "destructive"
+        });
+        
+        const errorEvent = new CustomEvent('ai-triple-tap-answer', { 
+          detail: { 
+            question: `Triple-tapped: ${contextualQuestion}`, 
+            answer: "I'm sorry, I couldn't generate an answer for this question at the moment. Please try again later." 
+          } 
+        });
+        window.dispatchEvent(errorEvent);
+        
+        throw apiError; // Re-throw to be caught by outer catch
       }
-      
-      if (!data || data.error) {
-        console.error("AI service error:", data?.error || "No data received");
-        throw new Error(data?.error || "No response received");
-      }
-      
-      if (!data.response) {
-        console.error("Empty response received");
-        throw new Error("Empty response received");
-      }
-      
-      toast({
-        title: "Answer ready!",
-        description: "Check the AI chat panel for your answer",
-      });
-      
-      const event = new CustomEvent('ai-triple-tap-answer', { 
-        detail: { question: `Triple-tapped: ${contextualQuestion}`, answer: data.response } 
-      });
-      window.dispatchEvent(event);
       
     } catch (error: any) {
       console.error("Error getting AI answer:", error);

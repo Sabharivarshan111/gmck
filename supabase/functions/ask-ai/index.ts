@@ -22,13 +22,26 @@ serve(async (req) => {
         JSON.stringify({ error: 'API key configuration error' }),
         { 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 500 
+          status: 200 // Changed from 500 to 200 to avoid non-2xx error
         }
       );
     }
 
-    const reqData = await req.json().catch(() => ({}));
-    const { prompt } = reqData;
+    let reqData;
+    try {
+      reqData = await req.json();
+    } catch (parseError) {
+      console.error('Error parsing request:', parseError);
+      return new Response(
+        JSON.stringify({ error: 'Invalid request format' }),
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 200 // Changed from 400 to 200
+        }
+      );
+    }
+    
+    const { prompt } = reqData || {};
     
     if (!prompt) {
       console.error('Missing prompt in request');
@@ -36,60 +49,70 @@ serve(async (req) => {
         JSON.stringify({ error: 'Prompt is required' }),
         { 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 400 
+          status: 200 // Changed from 400 to 200
         }
       );
     }
 
     console.log(`Processing prompt: ${prompt.substring(0, 50)}...`);
 
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${OPENAI_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        messages: [
-          {
-            role: 'system',
-            content: 'You are a helpful medical AI assistant. Provide accurate, relevant information about medical topics. Always include proper disclaimers when giving medical advice.'
-          },
-          {
-            role: 'user',
-            content: prompt
-          }
-        ],
-        temperature: 0.7,
-        max_tokens: 1000,
-      }),
-    });
+    try {
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${OPENAI_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'gpt-4o-mini',
+          messages: [
+            {
+              role: 'system',
+              content: 'You are a helpful medical AI assistant. Provide accurate, relevant information about medical topics. Always include proper disclaimers when giving medical advice.'
+            },
+            {
+              role: 'user',
+              content: prompt
+            }
+          ],
+          temperature: 0.7,
+          max_tokens: 1000,
+        }),
+      });
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({ error: { message: 'Unknown OpenAI error' } }));
-      console.error('OpenAI API error:', errorData);
+      const data = await response.json();
+      
+      if (!response.ok) {
+        console.error('OpenAI API error:', data.error || 'Unknown error');
+        return new Response(
+          JSON.stringify({ error: `OpenAI API error: ${data.error?.message || 'Unknown error'}` }),
+          { 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            status: 200 // Changed from 502 to 200
+          }
+        );
+      }
+
+      const aiResponse = data.choices[0].message.content;
+      console.log(`AI response generated successfully (${aiResponse.length} chars)`);
+      
       return new Response(
-        JSON.stringify({ error: `OpenAI API error: ${errorData.error?.message || 'Unknown error'}` }),
+        JSON.stringify({ response: aiResponse }),
         { 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 502 
+          status: 200
+        }
+      );
+    } catch (apiError) {
+      console.error('Error calling OpenAI API:', apiError);
+      return new Response(
+        JSON.stringify({ error: 'Error communicating with AI service' }),
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 200 // Changed from 502 to 200
         }
       );
     }
-
-    const data = await response.json();
-    const aiResponse = data.choices[0].message.content;
-
-    console.log(`AI response generated successfully (${aiResponse.length} chars)`);
-    
-    return new Response(
-      JSON.stringify({ response: aiResponse }),
-      { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 200 
-      }
-    );
   } catch (error) {
     console.error('Error in ask-ai function:', error);
     
@@ -99,7 +122,7 @@ serve(async (req) => {
       }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 500 
+        status: 200 // Changed from 500 to 200
       }
     );
   }

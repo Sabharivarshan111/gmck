@@ -119,6 +119,17 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
       const errorMessage = error.message || "Error generating response";
       setError(errorMessage);
       
+      // Create a more user-friendly error message for the chat
+      const assistantErrorMessage: ChatMessage = {
+        id: crypto.randomUUID(),
+        role: 'assistant',
+        content: "I'm sorry, I'm having trouble processing your request right now. Please try again later or check your connection.",
+        timestamp: new Date(),
+        isError: true
+      };
+      
+      setMessages((prev) => [...prev, assistantErrorMessage]);
+      
       // Create a more user-friendly error message for the toast
       const userFriendlyError = errorMessage.includes("API key") 
         ? "There's an issue with the AI service configuration."

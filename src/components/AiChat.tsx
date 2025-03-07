@@ -46,7 +46,33 @@ export const AiChat = ({ initialQuestion }: AiChatProps = {}) => {
     const handleTripleTapAnswer = (event: Event) => {
       const customEvent = event as CustomEvent;
       if (customEvent.detail && customEvent.detail.question) {
-        handleSubmitQuestion(customEvent.detail.question);
+        const question = customEvent.detail.question;
+        
+        // If the answer was already fetched and passed in the event, use it directly
+        // instead of making another request
+        if (customEvent.detail.answer) {
+          const userMessage = {
+            id: crypto.randomUUID(),
+            role: 'user' as const,
+            content: question,
+            timestamp: new Date(),
+          };
+          
+          const assistantMessage = {
+            id: crypto.randomUUID(),
+            role: 'assistant' as const,
+            content: customEvent.detail.answer,
+            timestamp: new Date(),
+            isError: customEvent.detail.answer.includes("I'm sorry, I couldn't generate")
+          };
+          
+          // Add both messages to the chat
+          setPrompt("");
+          setMessages(prev => [...prev, userMessage, assistantMessage]);
+        } else {
+          // If no answer was provided, call the AI service
+          handleSubmitQuestion(question);
+        }
       }
     };
     
@@ -56,7 +82,7 @@ export const AiChat = ({ initialQuestion }: AiChatProps = {}) => {
     return () => {
       window.removeEventListener('ai-triple-tap-answer', handleTripleTapAnswer);
     };
-  }, [handleSubmitQuestion]);
+  }, [handleSubmitQuestion, setMessages, setPrompt]);
 
   return (
     <motion.div 

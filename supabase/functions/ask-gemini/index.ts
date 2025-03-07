@@ -17,8 +17,21 @@ serve(async (req) => {
   }
 
   try {
-    const reqData = await req.json().catch(() => ({}));
-    const { prompt } = reqData;
+    let reqData;
+    try {
+      reqData = await req.json();
+    } catch (parseError) {
+      console.error('Error parsing request:', parseError);
+      return new Response(
+        JSON.stringify({ error: 'Invalid request format' }),
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 200 // Return 200 instead of error status
+        }
+      );
+    }
+    
+    const { prompt } = reqData || {};
     
     if (!prompt) {
       console.error('Missing prompt in request');
@@ -26,7 +39,7 @@ serve(async (req) => {
         JSON.stringify({ error: 'Prompt is required' }),
         { 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 400 
+          status: 200 // Return 200 instead of 400
         }
       );
     }
@@ -41,7 +54,7 @@ serve(async (req) => {
         JSON.stringify({ error: "API key configuration error" }),
         {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
-          status: 500,
+          status: 200, // Return 200 instead of 500
         }
       );
     }
@@ -129,7 +142,7 @@ serve(async (req) => {
         }),
         {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
-          status: 502,
+          status: 200, // Return 200 instead of 502
         }
       );
     }
@@ -142,7 +155,7 @@ serve(async (req) => {
       }),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 500,
+        status: 200, // Return 200 instead of 500
       }
     );
   }
