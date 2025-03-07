@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -12,7 +11,6 @@ interface QuestionCardProps {
 }
 
 const QuestionCard = ({ question, index }: QuestionCardProps) => {
-  // Generate a unique ID for this question using a hash function instead of btoa
   const generateQuestionId = (text: string) => {
     let hash = 0;
     for (let i = 0; i < text.length; i++) {
@@ -29,25 +27,20 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
   const [isLoadingAI, setIsLoadingAI] = useState(false);
   const { toast } = useToast();
   
-  // Touch tracking for triple tap detection
   const touchCount = useRef(0);
   const lastTouchTime = useRef(0);
   const touchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   
-  // Extract asterisk count from the question
   const getAsteriskCount = (text: string) => {
     const asteriskMatch = text.match(/\*+/);
     return asteriskMatch ? asteriskMatch[0].length : 0;
   };
   
-  // Extract exam date count from the question when no asterisks
   const getExamDateCount = (text: string) => {
-    // Match exam dates pattern like "(Feb 22;Feb 11;Aug 06;Dec 90)"
     const datePattern = /\(([^)]*(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[^)]*)\)/;
     const dateMatch = text.match(datePattern);
     
     if (dateMatch && dateMatch[1]) {
-      // Count the number of dates by splitting on semicolons
       return dateMatch[1].split(';').length;
     }
     return 0;
@@ -56,7 +49,6 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
   const asteriskCount = getAsteriskCount(question);
   const examDateCount = asteriskCount === 0 ? getExamDateCount(question) : 0;
   
-  // Load saved state from localStorage on component mount
   useEffect(() => {
     const savedState = localStorage.getItem(questionId);
     if (savedState !== null) {
@@ -64,42 +56,32 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
     }
   }, [questionId]);
   
-  // Save to localStorage when state changes
   const handleCheckedChange = (checked: boolean) => {
     setIsCompleted(checked);
     localStorage.setItem(questionId, checked.toString());
     
-    // Trigger animation
     setShowAnimation(true);
-    setTimeout(() => setShowAnimation(false), 800); // Animation lasts less than 1 second
+    setTimeout(() => setShowAnimation(false), 800);
   };
   
-  // Handle triple tap to ask Gemini about this question
   const handleTripleTap = async () => {
     try {
-      // Clean up the question text - remove asterisks and page numbers for better AI response
       let cleanQuestion = question
-        .replace(/\*+/g, '')  // Remove asterisks
-        .replace(/\(Pg\.No: [^)]+\)/, '')  // Remove page numbers
-        .replace(/\([^)]*(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[^)]*\)/, '') // Remove exam dates
+        .replace(/\*+/g, '')
+        .replace(/\(Pg\.No: [^)]+\)/, '')
+        .replace(/\([^)]*(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[^)]*\)/, '')
         .trim();
       
-      // Remove the question number prefix if it exists (like "1. " at the beginning)
       cleanQuestion = cleanQuestion.replace(/^\d+\.\s*/, '');
       
-      // Get the current URL path to determine if we're in pathology section
       const currentPath = window.location.pathname;
-      
-      // Check if the question is from pathology section
       const isPathologyQuestion = currentPath.includes('pathology');
       
-      // Add context about the subject area to help the AI provide better responses
       let contextualQuestion = cleanQuestion;
       if (isPathologyQuestion) {
         contextualQuestion = `Pathology question: ${cleanQuestion}`;
       }
       
-      // Show loading toast
       toast({
         title: "Asking ACEV...",
         description: "Getting an answer for this question",
@@ -107,7 +89,6 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
       
       setIsLoadingAI(true);
       
-      // Call the ask-gemini Supabase function
       const { data, error } = await supabase.functions.invoke('ask-gemini', {
         body: { prompt: `Triple-tapped: ${contextualQuestion}` }
       });
@@ -120,17 +101,11 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
         throw new Error("No response received");
       }
       
-      // Store the question and answer in sessionStorage for the AI chat to use
-      sessionStorage.setItem('autoQuestion', `Triple-tapped: ${contextualQuestion}`);
-      sessionStorage.setItem('autoAnswer', data.response);
-      
-      // Notify user that the answer is ready
       toast({
         title: "Answer ready!",
         description: "Check the AI chat panel for your answer",
       });
       
-      // Dispatch a custom event that the AiChat component will listen for
       const event = new CustomEvent('ai-triple-tap-answer', { 
         detail: { question: `Triple-tapped: ${contextualQuestion}`, answer: data.response } 
       });
@@ -148,30 +123,23 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
     }
   };
   
-  // Handle touch events for triple tap detection
   const handleTouch = () => {
     const now = Date.now();
-    const TOUCH_TIMEOUT = 500; // milliseconds
+    const TOUCH_TIMEOUT = 500;
     
-    // Clear any existing timeout
     if (touchTimeoutRef.current) {
       clearTimeout(touchTimeoutRef.current);
     }
     
-    // If it's been too long since the last touch, reset the count
     if (now - lastTouchTime.current > TOUCH_TIMEOUT) {
       touchCount.current = 1;
     } else {
-      // Otherwise increment the count
       touchCount.current += 1;
     }
     
-    // Update the last touch time
     lastTouchTime.current = now;
     
-    // Set a timeout to reset the count
     touchTimeoutRef.current = setTimeout(() => {
-      // If we've registered 3 taps, trigger the action
       if (touchCount.current === 3) {
         handleTripleTap();
       }
@@ -179,7 +147,6 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
     }, TOUCH_TIMEOUT);
   };
   
-  // Cleanup touch timeout on unmount
   useEffect(() => {
     return () => {
       if (touchTimeoutRef.current) {
@@ -234,19 +201,17 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
         </CardContent>
       </Card>
       
-      {/* Snow/Sparkle Animation */}
       <AnimatePresence>
         {showAnimation && (
           <>
-            {/* Create multiple particles for snow/sparkle effect */}
             {[...Array(15)].map((_, i) => (
               <motion.div
                 key={i}
                 initial={{ 
                   opacity: 1,
                   scale: 0,
-                  x: Math.random() * 100 - 50, // Random horizontal position
-                  y: Math.random() * 100 - 50  // Random vertical position
+                  x: Math.random() * 100 - 50,
+                  y: Math.random() * 100 - 50
                 }}
                 animate={{ 
                   opacity: 0,
@@ -260,7 +225,6 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
               />
             ))}
             
-            {/* Overlay glow effect */}
             <motion.div
               initial={{ opacity: 0.5 }}
               animate={{ opacity: 0 }}

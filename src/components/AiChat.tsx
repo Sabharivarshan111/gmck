@@ -34,19 +34,6 @@ export const AiChat = ({ initialQuestion }: AiChatProps = {}) => {
   
   // Listen for triple tap events
   useEffect(() => {
-    // Check if there's a stored auto question/answer from a page refresh
-    const storedQuestion = sessionStorage.getItem('autoQuestion');
-    
-    if (storedQuestion) {
-      // Use setTimeout to allow the component to fully mount
-      setTimeout(() => {
-        handleSubmitQuestion(storedQuestion);
-        // Clear the storage after using it
-        sessionStorage.removeItem('autoQuestion');
-        sessionStorage.removeItem('autoAnswer');
-      }, 500);
-    }
-    
     // Add event listener for triple tap events
     const handleTripleTapAnswer = (event: Event) => {
       const customEvent = event as CustomEvent;

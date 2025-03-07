@@ -24,10 +24,10 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Load messages from localStorage on mount
+  // Load messages from sessionStorage (not localStorage) on mount
   useEffect(() => {
     try {
-      const savedMessages = localStorage.getItem("aiChatMessages");
+      const savedMessages = sessionStorage.getItem("aiChatMessages");
       if (savedMessages) {
         const parsedMessages = JSON.parse(savedMessages);
         if (Array.isArray(parsedMessages)) {
@@ -39,25 +39,15 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
     }
   }, []);
 
-  // Save messages to localStorage when they change
+  // Save messages to sessionStorage (not localStorage) when they change
   useEffect(() => {
     if (messages.length > 0) {
-      localStorage.setItem("aiChatMessages", JSON.stringify(messages));
+      sessionStorage.setItem("aiChatMessages", JSON.stringify(messages));
+    } else {
+      // Clear sessionStorage when messages are empty
+      sessionStorage.removeItem("aiChatMessages");
     }
   }, [messages]);
-
-  // Clear messages on page refresh/reload
-  useEffect(() => {
-    const handleBeforeUnload = () => {
-      localStorage.removeItem("aiChatMessages");
-    };
-    
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
-  }, []);
 
   const handleSubmitQuestion = useCallback(async (questionText: string) => {
     if (!questionText || !questionText.trim()) {
@@ -148,7 +138,7 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
   const handleClearChat = () => {
     setMessages([]);
     setError(null);
-    localStorage.removeItem("aiChatMessages");
+    sessionStorage.removeItem("aiChatMessages");
     toast({
       title: "Chat history cleared",
     });
