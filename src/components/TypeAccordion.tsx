@@ -5,7 +5,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import QuestionCard from "./QuestionCard";
+import QuestionSection from "./QuestionSection";
 import { SubTopicContent } from "./QuestionBank";
 
 interface TypeAccordionProps {
@@ -29,30 +29,10 @@ const TypeAccordion = ({ typeKey, type, isExpanded = false, activeTab }: TypeAcc
       </AccordionTrigger>
       <AccordionContent>
         <div className="space-y-4 px-4">
-          {Object.entries(type.subtopics).map(([questionTypeKey, questionType]) => {
-            // Only render if the questionTypeKey matches the activeTab
-            // Make sure to handle both 'short-note' and 'short-notes' cases
-            const shouldRender = 
-              (activeTab === "essay" && questionTypeKey === "essay") || 
-              (activeTab === "short-notes" && (questionTypeKey === "short-note" || questionTypeKey === "short-notes"));
-            
-            if (!shouldRender) return null;
-            
-            return (
-              <div key={questionTypeKey}>
-                <h6 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
-                  {questionType.name}
-                </h6>
-                {questionType.questions.map((question, index) => (
-                  <QuestionCard
-                    key={index}
-                    question={question}
-                    index={index}
-                  />
-                ))}
-              </div>
-            );
-          })}
+          <QuestionSection 
+            subtopics={type.subtopics} 
+            activeTab={activeTab} 
+          />
         </div>
       </AccordionContent>
     </AccordionItem>

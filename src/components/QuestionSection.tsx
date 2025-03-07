@@ -1,0 +1,42 @@
+
+import { QuestionType } from "./QuestionBank";
+import QuestionCard from "./QuestionCard";
+
+interface QuestionSectionProps {
+  subtopics: {
+    [key: string]: QuestionType;
+  };
+  activeTab: "essay" | "short-notes";
+}
+
+const QuestionSection = ({ subtopics, activeTab }: QuestionSectionProps) => {
+  return (
+    <>
+      {Object.entries(subtopics).map(([questionTypeKey, questionType]) => {
+        // Check if we should render this question type based on the active tab
+        const shouldRender = 
+          (activeTab === "essay" && questionTypeKey === "essay") || 
+          (activeTab === "short-notes" && (questionTypeKey === "short-note" || questionTypeKey === "short-notes"));
+        
+        if (!shouldRender) return null;
+        
+        return (
+          <div key={questionTypeKey}>
+            <h6 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
+              {questionType.name}
+            </h6>
+            {questionType.questions.map((question, index) => (
+              <QuestionCard
+                key={index}
+                question={question}
+                index={index}
+              />
+            ))}
+          </div>
+        );
+      })}
+    </>
+  );
+};
+
+export default QuestionSection;

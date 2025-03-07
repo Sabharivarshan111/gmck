@@ -9,7 +9,7 @@ export const skinData = {
           name: "Essay",
           questions: []
         },
-        "short-note": {
+        "short-notes": {
           name: "Short Notes",
           questions: [
             "1. Basal Cell Carcinoma ***** (Feb 23;Feb 18;Aug 13;Feb 12;Feb 08) (Pg.No: 1147)",
