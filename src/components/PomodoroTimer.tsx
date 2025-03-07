@@ -13,7 +13,7 @@ const PomodoroTimer = () => {
     isRunning,
     isEditing,
     inputValue,
-    setInputValue,  // Added this line to receive the setter from the hook
+    setInputValue,
     waterCount,
     progressPercentage,
     totalTime,
@@ -28,7 +28,7 @@ const PomodoroTimer = () => {
   } = usePomodoroTimer();
 
   return (
-    <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-black border border-white rounded-full px-8 py-3 shadow-lg min-w-[300px] z-50 animate-fade-in">
+    <div className="fixed bottom-10 left-1/2 transform -translate-x-1/2 bg-black border border-white rounded-full px-8 py-3 shadow-lg min-w-[300px] z-50 animate-fade-in">
       <div className="space-y-2">
         <div className="flex items-center justify-between gap-4">
           <Timer className="w-5 h-5 text-white" />
@@ -39,7 +39,7 @@ const PomodoroTimer = () => {
             minutes={minutes}
             seconds={seconds}
             inputValue={inputValue}
-            setInputValue={setInputValue}  // Pass the setter to TimerDisplay
+            setInputValue={setInputValue}
             startEditing={startEditing}
             handleInputChange={handleInputChange}
             handleKeyDown={handleKeyDown}

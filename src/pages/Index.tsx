@@ -19,7 +19,7 @@ const Index = () => {
             </div>
           </div>
           
-          <div className="grid gap-8 grid-cols-1 lg:grid-cols-[1fr,1fr] w-full mb-20">
+          <div className="grid gap-8 grid-cols-1 lg:grid-cols-[1fr,1fr] w-full mb-28">
             <div className="space-y-8">
               <QuestionBank />
             </div>
