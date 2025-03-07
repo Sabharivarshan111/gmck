@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -37,11 +38,11 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
   };
   
   const getExamDateCount = (text: string) => {
-    const datePattern = /\(([^)]*(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[^)]*)\)/;
+    const datePattern = /\(((?:[^()]*?(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[^()]*?;)*(?:[^()]*?(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[^()]*?))\)/;
     const dateMatch = text.match(datePattern);
     
     if (dateMatch && dateMatch[1]) {
-      return dateMatch[1].split(';').length;
+      return (dateMatch[1].match(/;/g) || []).length + 1;
     }
     return 0;
   };
