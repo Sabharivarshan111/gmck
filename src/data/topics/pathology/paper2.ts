@@ -9,6 +9,7 @@ import { maleGenitalTractData } from "./maleGenitalTract";
 import { femaleGenitalTractData } from "./femaleGenitalTract";
 import { breastData } from "./breast";
 import { endocrinologyData } from "./endocrinology";
+import { skinData } from "./skin";
 
 export const pathologyPaper2Data = {
   name: "Paper 2",
@@ -22,6 +23,7 @@ export const pathologyPaper2Data = {
     "male-genital-tract": maleGenitalTractData,
     "female-genital-tract": femaleGenitalTractData,
     "breast": breastData,
-    "endocrinology": endocrinologyData
+    "endocrinology": endocrinologyData,
+    "skin": skinData
   }
 };
