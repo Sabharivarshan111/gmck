@@ -19,6 +19,7 @@ export const AiChat = ({ initialQuestion }: AiChatProps = {}) => {
     setPrompt, 
     isLoading, 
     messages, 
+    setMessages,
     handleSubmit, 
     handleClearChat, 
     handleCopyResponse,

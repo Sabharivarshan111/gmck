@@ -7,6 +7,31 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// Simple rate limiting mechanism
+const rateLimitMap = new Map();
+const RATE_LIMIT_WINDOW = 60000; // 1 minute in milliseconds
+const MAX_REQUESTS_PER_WINDOW = 5; // Max requests per minute
+
+// Function to check if the request is rate limited
+function isRateLimited(clientId: string): boolean {
+  const now = Date.now();
+  const clientRequests = rateLimitMap.get(clientId) || [];
+  
+  // Remove timestamps older than the window
+  const recentRequests = clientRequests.filter(timestamp => now - timestamp < RATE_LIMIT_WINDOW);
+  
+  // Check if too many requests in the window
+  const isLimited = recentRequests.length >= MAX_REQUESTS_PER_WINDOW;
+  
+  // Update the map with the new timestamp
+  if (!isLimited) {
+    recentRequests.push(now);
+    rateLimitMap.set(clientId, recentRequests);
+  }
+  
+  return isLimited;
+}
+
 serve(async (req) => {
   // Handle CORS preflight request
   if (req.method === "OPTIONS") {
@@ -14,6 +39,25 @@ serve(async (req) => {
       headers: corsHeaders,
       status: 204,
     });
+  }
+
+  // Get client IP or some identifier for rate limiting
+  // For demo, using a placeholder - in production use a real client identifier
+  const clientId = req.headers.get('x-forwarded-for') || 'anonymous';
+  
+  // Check rate limiting
+  if (isRateLimited(clientId)) {
+    console.log(`Rate limited client: ${clientId}`);
+    return new Response(
+      JSON.stringify({ 
+        error: 'Rate limit exceeded. Please try again later.',
+        isRateLimit: true
+      }),
+      { 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200
+      }
+    );
   }
 
   try {
@@ -26,7 +70,7 @@ serve(async (req) => {
         JSON.stringify({ error: 'Invalid request format' }),
         { 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 200 // Return 200 instead of error status
+          status: 200
         }
       );
     }
@@ -39,7 +83,7 @@ serve(async (req) => {
         JSON.stringify({ error: 'Prompt is required' }),
         { 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 200 // Return 200 instead of 400
+          status: 200
         }
       );
     }
@@ -54,7 +98,7 @@ serve(async (req) => {
         JSON.stringify({ error: "API key configuration error" }),
         {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
-          status: 200, // Return 200 instead of 500
+          status: 200,
         }
       );
     }
@@ -135,6 +179,22 @@ serve(async (req) => {
       );
     } catch (modelError) {
       console.error("AI Model Error:", modelError);
+      
+      // Check for rate limiting error with Gemini
+      if (modelError.message && modelError.message.includes("429")) {
+        console.log("Rate limit hit with Gemini API");
+        return new Response(
+          JSON.stringify({ 
+            error: "Our AI service is experiencing high demand. Please try again in a moment.",
+            isRateLimit: true
+          }),
+          {
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+            status: 200,
+          }
+        );
+      }
+      
       return new Response(
         JSON.stringify({ 
           error: "Failed to generate response from AI model", 
@@ -142,7 +202,7 @@ serve(async (req) => {
         }),
         {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
-          status: 200, // Return 200 instead of 502
+          status: 200,
         }
       );
     }
@@ -155,7 +215,7 @@ serve(async (req) => {
       }),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 200, // Return 200 instead of 500
+        status: 200,
       }
     );
   }

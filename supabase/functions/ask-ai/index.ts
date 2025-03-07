@@ -7,10 +7,54 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Simple rate limiting mechanism
+const rateLimitMap = new Map();
+const RATE_LIMIT_WINDOW = 60000; // 1 minute in milliseconds
+const MAX_REQUESTS_PER_WINDOW = 5; // Max requests per minute
+
+// Function to check if the request is rate limited
+function isRateLimited(clientId: string): boolean {
+  const now = Date.now();
+  const clientRequests = rateLimitMap.get(clientId) || [];
+  
+  // Remove timestamps older than the window
+  const recentRequests = clientRequests.filter(timestamp => now - timestamp < RATE_LIMIT_WINDOW);
+  
+  // Check if too many requests in the window
+  const isLimited = recentRequests.length >= MAX_REQUESTS_PER_WINDOW;
+  
+  // Update the map with the new timestamp
+  if (!isLimited) {
+    recentRequests.push(now);
+    rateLimitMap.set(clientId, recentRequests);
+  }
+  
+  return isLimited;
+}
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders, status: 204 });
+  }
+
+  // Get client IP or some identifier for rate limiting
+  // For demo, using a placeholder - in production use a real client identifier
+  const clientId = req.headers.get('x-forwarded-for') || 'anonymous';
+  
+  // Check rate limiting
+  if (isRateLimited(clientId)) {
+    console.log(`Rate limited client: ${clientId}`);
+    return new Response(
+      JSON.stringify({ 
+        error: 'Rate limit exceeded. Please try again later.',
+        isRateLimit: true
+      }),
+      { 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200 // We're still returning 200 to avoid issues with client
+      }
+    );
   }
 
   try {
@@ -22,7 +66,7 @@ serve(async (req) => {
         JSON.stringify({ error: 'API key configuration error' }),
         { 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 200 // Changed from 500 to 200 to avoid non-2xx error
+          status: 200
         }
       );
     }
@@ -36,7 +80,7 @@ serve(async (req) => {
         JSON.stringify({ error: 'Invalid request format' }),
         { 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 200 // Changed from 400 to 200
+          status: 200
         }
       );
     }
@@ -49,7 +93,7 @@ serve(async (req) => {
         JSON.stringify({ error: 'Prompt is required' }),
         { 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 200 // Changed from 400 to 200
+          status: 200
         }
       );
     }
@@ -84,11 +128,27 @@ serve(async (req) => {
       
       if (!response.ok) {
         console.error('OpenAI API error:', data.error || 'Unknown error');
+        
+        // Handle rate limiting specifically
+        if (response.status === 429) {
+          console.log('Rate limit hit with OpenAI API');
+          return new Response(
+            JSON.stringify({ 
+              error: 'Our AI service is experiencing high demand. Please try again in a moment.',
+              isRateLimit: true
+            }),
+            { 
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+              status: 200
+            }
+          );
+        }
+        
         return new Response(
           JSON.stringify({ error: `OpenAI API error: ${data.error?.message || 'Unknown error'}` }),
           { 
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-            status: 200 // Changed from 502 to 200
+            status: 200
           }
         );
       }
@@ -109,7 +169,7 @@ serve(async (req) => {
         JSON.stringify({ error: 'Error communicating with AI service' }),
         { 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 200 // Changed from 502 to 200
+          status: 200
         }
       );
     }
@@ -122,7 +182,7 @@ serve(async (req) => {
       }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 200 // Changed from 500 to 200
+        status: 200
       }
     );
   }

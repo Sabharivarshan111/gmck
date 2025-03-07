@@ -13,6 +13,7 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
   const { toast } = useToast();
 
   // This useEffect will trigger the AI to answer the initialQuestion automatically
@@ -95,6 +96,12 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
 
       if (data.error) {
         console.error("AI service error:", data.error);
+        
+        // Check if this is a rate limit error
+        if (data.isRateLimit) {
+          throw new Error("Rate limit exceeded. Please try again in a few moments.");
+        }
+        
         throw new Error(data.error || "Error generating response");
       }
 
@@ -107,6 +114,7 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
         role: 'assistant',
         content: data.response,
         timestamp: new Date(),
+        isError: false
       };
       
       setMessages((prev) => [...prev, assistantMessage]);
@@ -114,16 +122,34 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
       toast({
         title: "Response generated successfully",
       });
+      
+      // Reset retry count on successful response
+      setRetryCount(0);
     } catch (error: any) {
       console.error('Error:', error);
       const errorMessage = error.message || "Error generating response";
       setError(errorMessage);
       
       // Create a more user-friendly error message for the chat
+      let userFriendlyErrorMessage = "I'm sorry, I'm having trouble processing your request right now. Please try again later or check your connection.";
+      
+      // Special handling for rate limit errors
+      if (errorMessage.includes("Rate limit") || errorMessage.includes("429")) {
+        userFriendlyErrorMessage = "I'm currently handling too many requests. Please wait a moment and try again.";
+        
+        // Increment retry count for rate limit errors
+        setRetryCount(prev => prev + 1);
+        
+        // If multiple rate limit errors occur, provide more specific guidance
+        if (retryCount >= 2) {
+          userFriendlyErrorMessage = "It seems our AI service is very busy right now. Please try again in a few minutes, or try asking a different question.";
+        }
+      }
+      
       const assistantErrorMessage: ChatMessage = {
         id: crypto.randomUUID(),
         role: 'assistant',
-        content: "I'm sorry, I'm having trouble processing your request right now. Please try again later or check your connection.",
+        content: userFriendlyErrorMessage,
         timestamp: new Date(),
         isError: true
       };
@@ -131,23 +157,25 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
       setMessages((prev) => [...prev, assistantErrorMessage]);
       
       // Create a more user-friendly error message for the toast
-      const userFriendlyError = errorMessage.includes("API key") 
+      const toastErrorMessage = errorMessage.includes("API key") 
         ? "There's an issue with the AI service configuration."
-        : errorMessage.includes("network") || errorMessage.includes("offline")
-          ? "Network error. Please check your connection."
-          : errorMessage.includes("timeout") || errorMessage.includes("timed out")
-            ? "Request timed out. The service might be busy, please try again."
-            : "Error generating response. Please try again later.";
+        : errorMessage.includes("Rate limit") || errorMessage.includes("429")
+          ? "AI service is busy. Please try again in a moment."
+          : errorMessage.includes("network") || errorMessage.includes("offline")
+            ? "Network error. Please check your connection."
+            : errorMessage.includes("timeout") || errorMessage.includes("timed out")
+              ? "Request timed out. The service might be busy, please try again."
+              : "Error generating response. Please try again later.";
       
       toast({
         title: "Error",
-        description: userFriendlyError,
+        description: toastErrorMessage,
         variant: "destructive",
       });
     } finally {
       setIsLoading(false);
     }
-  }, [toast]);
+  }, [toast, retryCount]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -175,6 +203,7 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
     setPrompt,
     isLoading,
     messages,
+    setMessages,
     error,
     handleSubmit,
     handleSubmitQuestion,
