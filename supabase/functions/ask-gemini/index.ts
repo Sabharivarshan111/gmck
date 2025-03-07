@@ -32,6 +32,37 @@ function isRateLimited(clientId: string): boolean {
   return isLimited;
 }
 
+// Function to extract key concepts from a pathology question
+function extractKeyTopics(question: string): string[] {
+  // List of important pathology concepts to look for
+  const keyPathologyConcepts = [
+    "Philadelphia chromosome", "BCR-ABL", "translocation", "tyrosine kinase", 
+    "myeloproliferative", "leukemia", "lymphoma", "metastasis", "neoplasia",
+    "oncogene", "tumor suppressor", "apoptosis", "angiogenesis", "grading", "staging",
+    "differentiation", "mutation", "chromosomal abnormality", "fusion gene",
+    "histopathology", "immunohistochemistry", "molecular markers", "cytogenetics"
+  ];
+  
+  const extractedTopics = [];
+  
+  // Check if any key concepts are in the question
+  for (const concept of keyPathologyConcepts) {
+    if (question.toLowerCase().includes(concept.toLowerCase())) {
+      extractedTopics.push(concept);
+    }
+  }
+  
+  // Find disease-specific names (often capitalized terms)
+  const possibleDiseaseNames = question.match(/[A-Z][a-z]+([\s-][A-Z][a-z]+)*/g) || [];
+  for (const name of possibleDiseaseNames) {
+    if (name.length > 3 && !extractedTopics.includes(name)) {
+      extractedTopics.push(name);
+    }
+  }
+  
+  return extractedTopics;
+}
+
 serve(async (req) => {
   // Handle CORS preflight request
   if (req.method === "OPTIONS") {
@@ -110,38 +141,57 @@ serve(async (req) => {
     // Check if the prompt contains "Triple-tapped:" which indicates it came from triple tap action
     const isTripleTapQuestion = prompt.includes("Triple-tapped:");
     
+    // Extract the actual question content without the "Triple-tapped:" prefix
+    const actualQuestion = isTripleTapQuestion ? prompt.replace("Triple-tapped:", "").trim() : prompt;
+    
     // Check if the question is from pathology paper 1 or 2
-    const isPathologyQuestion = prompt.toLowerCase().includes("pathology") || 
-                              prompt.toLowerCase().includes("paper 1") || 
-                              prompt.toLowerCase().includes("paper 2");
+    const isPathologyQuestion = actualQuestion.toLowerCase().includes("pathology") || 
+                             actualQuestion.toLowerCase().includes("paper 1") || 
+                             actualQuestion.toLowerCase().includes("paper 2");
+    
+    // Extract key topics from the question if it's a pathology question
+    const keyTopics = isPathologyQuestion ? extractKeyTopics(actualQuestion) : [];
+    console.log("Extracted key topics:", keyTopics);
     
     // Create a more specific system prompt for triple-tapped medical questions
     let systemPrompt = "";
     
     if (isTripleTapQuestion) {
-      // Extract the actual question content without the "Triple-tapped:" prefix
-      const actualQuestion = prompt.replace("Triple-tapped:", "").trim();
-      
       if (isPathologyQuestion) {
-        // Specialized prompt for pathology questions referencing Robbins Pathology book
-        systemPrompt = `You are ACEV, a highly specialized medical AI assistant focused on providing detailed pathology explanations. 
+        // Enhanced specialized prompt for pathology questions with key topics
+        let topicList = keyTopics.length > 0 ? 
+          `Important concepts to address: ${keyTopics.join(", ")}` : 
+          "Identify and address key pathology concepts in the question";
+          
+        systemPrompt = `You are ACEV, a highly specialized medical AI assistant focused on providing detailed pathology explanations for medical students. 
         A student has specifically asked about "${actualQuestion}". 
-        Please provide a comprehensive yet concise explanation of this pathology topic, based primarily on the Robbins Pathology textbook, covering:
-        - Definition and key characteristics
-        - Clinical significance and relevance
-        - Pathophysiology or mechanism
-        - Pathological findings (gross and microscopic if applicable)
-        - Important facts for medical exams
+        ${topicList}
         
-        Format your response with clear sections and bullet points where appropriate. Be detailed and specific, drawing information specifically from Robbins Pathology textbook as your primary source.`;
+        Please provide a comprehensive yet structured explanation of this pathology topic, based primarily on the Robbins Pathology textbook, covering:
+        
+        1. DEFINITION: Start with a clear, concise definition
+        2. EPIDEMIOLOGY: Brief demographic information if relevant
+        3. ETIOLOGY & PATHOGENESIS: The cause and detailed molecular/genetic mechanisms
+        4. MORPHOLOGY: Key gross and microscopic findings with specific details
+        5. CLINICAL FEATURES: Typical presentation and progression
+        6. DIAGNOSTIC WORKUP: Key tests and findings
+        7. TREATMENT OPTIONS: Current therapeutic approaches from first-line to advanced options
+        8. PROGNOSIS: Expected outcome with and without treatment
+        
+        For specific entities like "Philadelphia chromosome" or genetic markers, provide detailed descriptions of their mechanism, significance, and clinical relevance.
+        
+        Format your response with clear sections using bold headings and bullet points for key information. Be precise and detailed while maintaining readability.`;
       } else {
         // General medical system prompt for non-pathology questions
         systemPrompt = `You are ACEV, a highly specialized medical AI assistant focused on providing detailed medical explanations. 
         A student has specifically asked about "${actualQuestion}". 
+        
         Please provide a comprehensive yet concise explanation of this medical topic, covering:
         - Definition and key characteristics
         - Clinical significance and relevance
         - Pathophysiology or mechanism (if applicable)
+        - Diagnostic approach
+        - Treatment options and management
         - Important facts for medical exams
         
         Format your response with clear sections and bullet points where appropriate. Be detailed and specific.`;
@@ -161,7 +211,7 @@ serve(async (req) => {
         contents: [
           { role: "user", parts: [{ text: systemPrompt }] },
           { role: "model", parts: [{ text: "I understand. I'll act as ACEV, a medical assistant providing helpful, accurate information while prioritizing patient safety." }] },
-          { role: "user", parts: [{ text: isTripleTapQuestion ? prompt.replace("Triple-tapped:", "").trim() : prompt }] }
+          { role: "user", parts: [{ text: isTripleTapQuestion ? actualQuestion : prompt }] }
         ]
       });
 
