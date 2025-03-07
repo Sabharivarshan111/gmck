@@ -6,6 +6,7 @@ import { gastrointestinalSystemData } from "./gastrointestinalSystem";
 import { liverGallbladderPancreasData } from "./liverGallbladderPancreas";
 import { kidneyData } from "./kidney";
 import { maleGenitalTractData } from "./maleGenitalTract";
+import { femaleGenitalTractData } from "./femaleGenitalTract";
 
 export const pathologyPaper2Data = {
   name: "Paper 2",
@@ -16,6 +17,7 @@ export const pathologyPaper2Data = {
     "gastrointestinal-system": gastrointestinalSystemData,
     "liver-gallbladder-pancreas": liverGallbladderPancreasData,
     "kidney": kidneyData,
-    "male-genital-tract": maleGenitalTractData
+    "male-genital-tract": maleGenitalTractData,
+    "female-genital-tract": femaleGenitalTractData
   }
 };
