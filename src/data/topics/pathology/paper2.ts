@@ -5,6 +5,7 @@ import { bloodVesselsData } from "./bloodVessels";
 import { gastrointestinalSystemData } from "./gastrointestinalSystem";
 import { liverGallbladderPancreasData } from "./liverGallbladderPancreas";
 import { kidneyData } from "./kidney";
+import { maleGenitalTractData } from "./maleGenitalTract";
 
 export const pathologyPaper2Data = {
   name: "Paper 2",
@@ -14,6 +15,7 @@ export const pathologyPaper2Data = {
     "blood-vessels": bloodVesselsData,
     "gastrointestinal-system": gastrointestinalSystemData,
     "liver-gallbladder-pancreas": liverGallbladderPancreasData,
-    "kidney": kidneyData
+    "kidney": kidneyData,
+    "male-genital-tract": maleGenitalTractData
   }
 };
