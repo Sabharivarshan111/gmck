@@ -1,4 +1,3 @@
-
 export const microbiologyPaper1Data = {
   name: "Paper 1",
   subtopics: {
@@ -153,6 +152,32 @@ export const microbiologyPaper1Data = {
             "Precipitation Reaction (Aug 15) (Pg.No: 138;AP3-Pg.No: 153)",
             "Structure and Function of B-Cell (Aug 16) (Pg.No: 171;AP3-Pg.No: 174)",
             "Superantigens (Aug 10) (Pg.No: 127)"
+          ]
+        }
+      }
+    },
+    "hospital-infection-control": {
+      name: "Hospital Infection Control",
+      subtopics: {
+        "essay": {
+          name: "Essay",
+          questions: [
+            "Sterilization **** (Aug 14;Feb 11;Aug 09;Aug 08) (Pg.No: 222;AP3-Pg.No: 253)",
+            "Disinfection (Aug 12) (Pg.No: 220;Pg.No: 226)"
+          ]
+        },
+        "short-note": {
+          name: "Short Note",
+          questions: [
+            "Cold Sterilization ****** (Jul 23;Feb 20;Feb 19;Feb 15;Feb 09;Feb 08) (Pg.No: 223)",
+            "Heat Sterilization ***** (Feb 23;Feb 22;Aug 18;Aug 15;Apr 97) (Pg.No: 222)",
+            "Hot Air Oven **** (Feb 10;Feb 09;Feb 08;Aug 05) (Pg.No: 225)",
+            "Gas Sterilization *** (Aug 22;Feb 20;Feb 18) (Pg.No: 223)",
+            "Nosocomial Infections ** (Aug 10;Oct 03) (Pg.No: 203;AP3-Pg.No: 241)",
+            "Chemical Disinfectants (Aug 16) (Pg.No: 226)",
+            "High Level Disinfection (Feb 17) (Pg.No: 226)",
+            "Moist Heat Sterilization (Aug 13) (Pg.No: 222)",
+            "Testing of Disinfectant (Nov 01) (Pg.No: 229)"
           ]
         }
       }
