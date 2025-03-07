@@ -31,9 +31,10 @@ const TypeAccordion = ({ typeKey, type, isExpanded = false, activeTab }: TypeAcc
         <div className="space-y-4 px-4">
           {Object.entries(type.subtopics).map(([questionTypeKey, questionType]) => {
             // Only render if the questionTypeKey matches the activeTab
+            // Make sure to handle both 'short-note' and 'short-notes' cases
             const shouldRender = 
               (activeTab === "essay" && questionTypeKey === "essay") || 
-              (activeTab === "short-notes" && questionTypeKey === "short-note");
+              (activeTab === "short-notes" && (questionTypeKey === "short-note" || questionTypeKey === "short-notes"));
             
             if (!shouldRender) return null;
             
