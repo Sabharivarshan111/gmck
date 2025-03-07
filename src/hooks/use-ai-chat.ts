@@ -14,7 +14,45 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
+  const [isRateLimited, setIsRateLimited] = useState(false);
+  const [rateLimitTimeout, setRateLimitTimeout] = useState<NodeJS.Timeout | null>(null);
   const { toast } = useToast();
+
+  // Clear rate limit after 30 seconds
+  const clearRateLimit = useCallback(() => {
+    setIsRateLimited(false);
+    if (rateLimitTimeout) {
+      clearTimeout(rateLimitTimeout);
+      setRateLimitTimeout(null);
+    }
+  }, [rateLimitTimeout]);
+
+  // Set rate limit with automatic clearing after 30 seconds
+  const setRateLimit = useCallback(() => {
+    setIsRateLimited(true);
+    
+    // Clear any existing timeout
+    if (rateLimitTimeout) {
+      clearTimeout(rateLimitTimeout);
+    }
+    
+    // Set new timeout to clear rate limit after 30 seconds
+    const timeout = setTimeout(() => {
+      setIsRateLimited(false);
+      setRateLimitTimeout(null);
+    }, 30000);
+    
+    setRateLimitTimeout(timeout);
+  }, [rateLimitTimeout]);
+
+  // Cleanup timeouts on unmount
+  useEffect(() => {
+    return () => {
+      if (rateLimitTimeout) {
+        clearTimeout(rateLimitTimeout);
+      }
+    };
+  }, [rateLimitTimeout]);
 
   // This useEffect will trigger the AI to answer the initialQuestion automatically
   useEffect(() => {
@@ -54,6 +92,16 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
     if (!questionText || !questionText.trim()) {
       toast({
         title: "Please enter a question",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Don't allow new requests if rate limited
+    if (isRateLimited) {
+      toast({
+        title: "Rate limit active",
+        description: "Please wait before sending another message",
         variant: "destructive",
       });
       return;
@@ -99,6 +147,7 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
         
         // Check if this is a rate limit error
         if (data.isRateLimit) {
+          setRateLimit();
           throw new Error("Rate limit exceeded. Please try again in a few moments.");
         }
         
@@ -137,6 +186,9 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
       if (errorMessage.includes("Rate limit") || errorMessage.includes("429")) {
         userFriendlyErrorMessage = "I'm currently handling too many requests. Please wait a moment and try again.";
         
+        // Set rate limit UI state
+        setRateLimit();
+        
         // Increment retry count for rate limit errors
         setRetryCount(prev => prev + 1);
         
@@ -160,7 +212,7 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
       const toastErrorMessage = errorMessage.includes("API key") 
         ? "There's an issue with the AI service configuration."
         : errorMessage.includes("Rate limit") || errorMessage.includes("429")
-          ? "AI service is busy. Please try again in a moment."
+          ? "AI service is busy. Please wait 30 seconds before trying again."
           : errorMessage.includes("network") || errorMessage.includes("offline")
             ? "Network error. Please check your connection."
             : errorMessage.includes("timeout") || errorMessage.includes("timed out")
@@ -175,7 +227,7 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
     } finally {
       setIsLoading(false);
     }
-  }, [toast, retryCount]);
+  }, [toast, retryCount, isRateLimited, setRateLimit]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -185,6 +237,7 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
   const handleClearChat = () => {
     setMessages([]);
     setError(null);
+    clearRateLimit();
     sessionStorage.removeItem("aiChatMessages");
     toast({
       title: "Chat history cleared",
@@ -205,6 +258,7 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
     messages,
     setMessages,
     error,
+    isRateLimited,
     handleSubmit,
     handleSubmitQuestion,
     handleClearChat,

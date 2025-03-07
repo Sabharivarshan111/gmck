@@ -2,7 +2,7 @@
 import { useRef, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { RotateCcw } from "lucide-react";
+import { RotateCcw, AlertCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChatMessageItem } from "./chat/ChatMessageItem";
 import { EmptyChatState } from "./chat/EmptyChatState";
@@ -20,6 +20,7 @@ export const AiChat = ({ initialQuestion }: AiChatProps = {}) => {
     isLoading, 
     messages, 
     setMessages,
+    isRateLimited,
     handleSubmit, 
     handleClearChat, 
     handleCopyResponse,
@@ -112,6 +113,19 @@ export const AiChat = ({ initialQuestion }: AiChatProps = {}) => {
         
         <CardContent className="p-0 flex-grow overflow-hidden flex flex-col">
           <div className="flex-grow overflow-y-auto p-4 space-y-4">
+            {isRateLimited && (
+              <div className="bg-amber-900/30 border border-amber-800 rounded-md p-3 flex items-start">
+                <AlertCircle className="h-5 w-5 text-amber-500 mr-2 mt-0.5 flex-shrink-0" />
+                <div>
+                  <p className="text-sm text-amber-300">
+                    Too many requests. Please wait a moment before trying again.
+                  </p>
+                  <p className="text-xs text-amber-400/70 mt-1">
+                    The AI service is currently experiencing high demand.
+                  </p>
+                </div>
+              </div>
+            )}
             <AnimatePresence initial={false}>
               {messages.length === 0 ? (
                 <EmptyChatState />
@@ -135,6 +149,7 @@ export const AiChat = ({ initialQuestion }: AiChatProps = {}) => {
             setPrompt={setPrompt}
             onSubmit={handleSubmit}
             isLoading={isLoading}
+            isDisabled={isRateLimited}
           />
         </CardFooter>
       </Card>

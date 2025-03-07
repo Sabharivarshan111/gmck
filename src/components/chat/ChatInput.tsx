@@ -9,9 +9,10 @@ interface ChatInputProps {
   setPrompt: (value: string) => void;
   onSubmit: (e: React.FormEvent) => void;
   isLoading: boolean;
+  isDisabled?: boolean;
 }
 
-export const ChatInput = ({ prompt, setPrompt, onSubmit, isLoading }: ChatInputProps) => {
+export const ChatInput = ({ prompt, setPrompt, onSubmit, isLoading, isDisabled }: ChatInputProps) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -34,20 +35,20 @@ export const ChatInput = ({ prompt, setPrompt, onSubmit, isLoading }: ChatInputP
       <div className="flex gap-2">
         <Textarea
           ref={textareaRef}
-          placeholder="Ask a medical question..."
+          placeholder={isDisabled ? "Please wait before sending another message..." : "Ask a medical question..."}
           value={prompt}
           onChange={(e) => {
             setPrompt(e.target.value);
             adjustTextareaHeight();
           }}
           onKeyDown={handleKeyDown}
-          className="min-h-[36px] max-h-[80px] bg-gray-900 border-gray-700 focus:ring-gray-600 resize-none text-sm flex-grow"
-          disabled={isLoading}
+          className={`min-h-[36px] max-h-[80px] bg-gray-900 border-gray-700 focus:ring-gray-600 resize-none text-sm flex-grow ${isDisabled ? 'opacity-60' : ''}`}
+          disabled={isLoading || isDisabled}
         />
         <Button 
           type="submit" 
           className="bg-white text-black hover:bg-gray-200 transition-colors duration-200 h-9 w-9 p-0 flex items-center justify-center"
-          disabled={isLoading}
+          disabled={isLoading || isDisabled}
         >
           {isLoading ? (
             <Loader2 className="h-4 w-4 animate-spin" />

@@ -26,11 +26,13 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
   const [isCompleted, setIsCompleted] = useState(false);
   const [showAnimation, setShowAnimation] = useState(false);
   const [isLoadingAI, setIsLoadingAI] = useState(false);
+  const [isRateLimited, setIsRateLimited] = useState(false);
   const { toast } = useToast();
   
   const touchCount = useRef(0);
   const lastTouchTime = useRef(0);
   const touchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const rateLimitTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   
   const getAsteriskCount = (text: string) => {
     const asteriskMatch = text.match(/\*+/);
@@ -59,6 +61,18 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
     }
   }, [questionId]);
   
+  // Clear rate limit and timeouts on unmount
+  useEffect(() => {
+    return () => {
+      if (touchTimeoutRef.current) {
+        clearTimeout(touchTimeoutRef.current);
+      }
+      if (rateLimitTimeoutRef.current) {
+        clearTimeout(rateLimitTimeoutRef.current);
+      }
+    };
+  }, []);
+  
   const handleCheckedChange = (checked: boolean) => {
     setIsCompleted(checked);
     localStorage.setItem(questionId, checked.toString());
@@ -68,6 +82,18 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
   };
   
   const handleTripleTap = async () => {
+    // Don't proceed if already loading or rate limited
+    if (isLoadingAI || isRateLimited) {
+      if (isRateLimited) {
+        toast({
+          title: "Please wait",
+          description: "Please wait before requesting another explanation",
+          variant: "destructive",
+        });
+      }
+      return;
+    }
+    
     try {
       let cleanQuestion = question
         .replace(/\*+/g, '')
@@ -113,6 +139,25 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
         
         if (data.error) {
           console.error("AI service error:", data.error);
+          
+          // Handle rate limiting specifically
+          if (data.isRateLimit) {
+            setIsRateLimited(true);
+            
+            // Clear any existing timeout
+            if (rateLimitTimeoutRef.current) {
+              clearTimeout(rateLimitTimeoutRef.current);
+            }
+            
+            // Set timeout to clear rate limit after 30 seconds
+            rateLimitTimeoutRef.current = setTimeout(() => {
+              setIsRateLimited(false);
+              rateLimitTimeoutRef.current = null;
+            }, 30000);
+            
+            throw new Error("Rate limit exceeded. Please try again in 30 seconds.");
+          }
+          
           throw new Error(data.error || "Error getting answer");
         }
         
@@ -130,34 +175,43 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
           detail: { question: `Triple-tapped: ${contextualQuestion}`, answer: data.response } 
         });
         window.dispatchEvent(event);
-      } catch (apiError) {
+      } catch (apiError: any) {
         console.error("API request error:", apiError);
         
         // Still create an event to show something in the chat
         toast({
           title: "Error getting answer",
-          description: "See the chat for details",
+          description: apiError.message.includes("Rate limit") 
+            ? "Rate limit reached. Please wait 30 seconds before trying again."
+            : "See the chat for details",
           variant: "destructive"
         });
         
-        const errorEvent = new CustomEvent('ai-triple-tap-answer', { 
-          detail: { 
-            question: `Triple-tapped: ${contextualQuestion}`, 
-            answer: "I'm sorry, I couldn't generate an answer for this question at the moment. Please try again later." 
-          } 
-        });
-        window.dispatchEvent(errorEvent);
+        // Only show the error in the chat if it's not a rate limit error
+        // (since we already show a rate limit warning in the UI)
+        if (!apiError.message.includes("Rate limit")) {
+          const errorEvent = new CustomEvent('ai-triple-tap-answer', { 
+            detail: { 
+              question: `Triple-tapped: ${contextualQuestion}`, 
+              answer: "I'm sorry, I couldn't generate an answer for this question at the moment. Please try again later." 
+            } 
+          });
+          window.dispatchEvent(errorEvent);
+        }
         
         throw apiError; // Re-throw to be caught by outer catch
       }
       
     } catch (error: any) {
       console.error("Error getting AI answer:", error);
-      toast({
-        title: "Error",
-        description: error.message || "Failed to get answer",
-        variant: "destructive",
-      });
+      
+      if (!error.message.includes("Rate limit")) {
+        toast({
+          title: "Error",
+          description: error.message || "Failed to get answer",
+          variant: "destructive",
+        });
+      }
     } finally {
       setIsLoadingAI(false);
     }
@@ -186,15 +240,7 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
       touchCount.current = 0;
     }, TOUCH_TIMEOUT);
   };
-  
-  useEffect(() => {
-    return () => {
-      if (touchTimeoutRef.current) {
-        clearTimeout(touchTimeoutRef.current);
-      }
-    };
-  }, []);
-  
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -228,9 +274,15 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
                   Getting answer...
                 </p>
               )}
-              <p className="text-xs text-gray-400 mt-1">
-                Triple tap to get AI explanation
-              </p>
+              {isRateLimited ? (
+                <p className="text-xs text-amber-400 mt-1">
+                  Rate limit reached. Please wait before trying again.
+                </p>
+              ) : (
+                <p className="text-xs text-gray-400 mt-1">
+                  Triple tap to get AI explanation
+                </p>
+              )}
             </div>
             <div className="flex-shrink-0 ml-2">
               <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gray-800 text-gray-300 text-sm">
