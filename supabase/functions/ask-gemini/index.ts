@@ -17,14 +17,28 @@ serve(async (req) => {
   }
 
   try {
-    const { prompt } = await req.json();
+    const reqData = await req.json().catch(() => ({}));
+    const { prompt } = reqData;
+    
+    if (!prompt) {
+      console.error('Missing prompt in request');
+      return new Response(
+        JSON.stringify({ error: 'Prompt is required' }),
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 400 
+        }
+      );
+    }
+    
     console.log("Received prompt:", prompt);
     
     const apiKey = Deno.env.get("GEMINI_API_KEY");
 
     if (!apiKey) {
+      console.error("GEMINI_API_KEY not set in environment variables");
       return new Response(
-        JSON.stringify({ error: "GEMINI_API_KEY not set in environment variables" }),
+        JSON.stringify({ error: "API key configuration error" }),
         {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
           status: 500,
@@ -85,30 +99,47 @@ serve(async (req) => {
     
     console.log("Using system prompt:", systemPrompt);
     
-    const result = await model.generateContent({
-      contents: [
-        { role: "user", parts: [{ text: systemPrompt }] },
-        { role: "model", parts: [{ text: "I understand. I'll act as ACEV, a medical assistant providing helpful, accurate information while prioritizing patient safety." }] },
-        { role: "user", parts: [{ text: isTripleTapQuestion ? prompt.replace("Triple-tapped:", "").trim() : prompt }] }
-      ]
-    });
+    try {
+      const result = await model.generateContent({
+        contents: [
+          { role: "user", parts: [{ text: systemPrompt }] },
+          { role: "model", parts: [{ text: "I understand. I'll act as ACEV, a medical assistant providing helpful, accurate information while prioritizing patient safety." }] },
+          { role: "user", parts: [{ text: isTripleTapQuestion ? prompt.replace("Triple-tapped:", "").trim() : prompt }] }
+        ]
+      });
 
-    const response = result.response;
-    const text = response.text();
-    
-    console.log("AI response generated successfully");
+      const response = result.response;
+      const text = response.text();
+      
+      console.log("AI response generated successfully");
 
-    return new Response(
-      JSON.stringify({ response: text }),
-      {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 200,
-      }
-    );
+      return new Response(
+        JSON.stringify({ response: text }),
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 200,
+        }
+      );
+    } catch (modelError) {
+      console.error("AI Model Error:", modelError);
+      return new Response(
+        JSON.stringify({ 
+          error: "Failed to generate response from AI model", 
+          details: modelError.message 
+        }),
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 502,
+        }
+      );
+    }
   } catch (error) {
     console.error("Error:", error);
     return new Response(
-      JSON.stringify({ error: error.message || "An error occurred while processing your request" }),
+      JSON.stringify({ 
+        error: error.message || "An error occurred while processing your request",
+        details: error.stack
+      }),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 500,

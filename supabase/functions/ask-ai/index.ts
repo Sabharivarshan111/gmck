@@ -10,20 +10,35 @@ const corsHeaders = {
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: corsHeaders, status: 204 });
   }
 
   try {
     const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY');
     
     if (!OPENAI_API_KEY) {
-      throw new Error('OPENAI_API_KEY is not set in Supabase secrets');
+      console.error('OPENAI_API_KEY is not set in Supabase secrets');
+      return new Response(
+        JSON.stringify({ error: 'API key configuration error' }),
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 500 
+        }
+      );
     }
 
-    const { prompt } = await req.json();
+    const reqData = await req.json().catch(() => ({}));
+    const { prompt } = reqData;
     
     if (!prompt) {
-      throw new Error('Prompt is required');
+      console.error('Missing prompt in request');
+      return new Response(
+        JSON.stringify({ error: 'Prompt is required' }),
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 400 
+        }
+      );
     }
 
     console.log(`Processing prompt: ${prompt.substring(0, 50)}...`);
@@ -52,9 +67,15 @@ serve(async (req) => {
     });
 
     if (!response.ok) {
-      const error = await response.json();
-      console.error('OpenAI API error:', error);
-      throw new Error(`OpenAI API error: ${error.error?.message || 'Unknown error'}`);
+      const errorData = await response.json().catch(() => ({ error: { message: 'Unknown OpenAI error' } }));
+      console.error('OpenAI API error:', errorData);
+      return new Response(
+        JSON.stringify({ error: `OpenAI API error: ${errorData.error?.message || 'Unknown error'}` }),
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 502 
+        }
+      );
     }
 
     const data = await response.json();

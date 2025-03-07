@@ -76,22 +76,30 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
         throw new Error("You're offline. Please check your internet connection.");
       }
 
+      console.log("Calling Supabase function with prompt:", questionText.trim().substring(0, 50) + "...");
+      
       const { data, error: supabaseError } = await supabase.functions.invoke('ask-gemini', {
         body: { prompt: questionText.trim() }
       });
+
+      console.log("Response from function:", data ? "data received" : "no data", supabaseError ? "error received" : "no error");
 
       if (supabaseError) {
         console.error("Supabase function error:", supabaseError);
         throw new Error(supabaseError.message || "Error communicating with AI service");
       }
 
-      if (data?.error) {
+      if (!data) {
+        throw new Error("No response received from AI service");
+      }
+
+      if (data.error) {
         console.error("AI service error:", data.error);
         throw new Error(data.error || "Error generating response");
       }
 
-      if (!data || data.response === undefined) {
-        throw new Error("No response received from AI");
+      if (data.response === undefined) {
+        throw new Error("Empty response received from AI");
       }
 
       const assistantMessage: ChatMessage = {

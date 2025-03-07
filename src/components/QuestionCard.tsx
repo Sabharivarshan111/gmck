@@ -42,7 +42,9 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
     const dateMatch = text.match(datePattern);
     
     if (dateMatch && dateMatch[1]) {
-      return (dateMatch[1].match(/;/g) || []).length + 1;
+      // Count the number of semicolons and add 1 to get the total number of dates
+      const semicolonCount = (dateMatch[1].match(/;/g) || []).length;
+      return semicolonCount + 1;
     }
     return 0;
   };
@@ -90,16 +92,27 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
       
       setIsLoadingAI(true);
       
+      console.log("Sending triple-tapped question to Supabase function:", contextualQuestion);
+      
       const { data, error } = await supabase.functions.invoke('ask-gemini', {
         body: { prompt: `Triple-tapped: ${contextualQuestion}` }
       });
       
+      console.log("Response received:", data ? "Data received" : "No data", error ? "Error received" : "No error");
+      
       if (error) {
+        console.error("Supabase function error:", error);
         throw new Error(error.message || "Failed to get answer");
       }
       
-      if (!data || !data.response) {
-        throw new Error("No response received");
+      if (!data || data.error) {
+        console.error("AI service error:", data?.error || "No data received");
+        throw new Error(data?.error || "No response received");
+      }
+      
+      if (!data.response) {
+        console.error("Empty response received");
+        throw new Error("Empty response received");
       }
       
       toast({
