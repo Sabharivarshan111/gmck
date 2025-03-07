@@ -87,6 +87,18 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
       // Remove the question number prefix if it exists (like "1. " at the beginning)
       cleanQuestion = cleanQuestion.replace(/^\d+\.\s*/, '');
       
+      // Get the current URL path to determine if we're in pathology section
+      const currentPath = window.location.pathname;
+      
+      // Check if the question is from pathology section
+      const isPathologyQuestion = currentPath.includes('pathology');
+      
+      // Add context about the subject area to help the AI provide better responses
+      let contextualQuestion = cleanQuestion;
+      if (isPathologyQuestion) {
+        contextualQuestion = `Pathology question: ${cleanQuestion}`;
+      }
+      
       // Show loading toast
       toast({
         title: "Asking ACEV...",
@@ -97,7 +109,7 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
       
       // Call the ask-gemini Supabase function
       const { data, error } = await supabase.functions.invoke('ask-gemini', {
-        body: { prompt: `Triple-tapped: ${cleanQuestion}` }
+        body: { prompt: `Triple-tapped: ${contextualQuestion}` }
       });
       
       if (error) {
@@ -109,7 +121,7 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
       }
       
       // Store the question and answer in sessionStorage for the AI chat to use
-      sessionStorage.setItem('autoQuestion', `Triple-tapped: ${cleanQuestion}`);
+      sessionStorage.setItem('autoQuestion', `Triple-tapped: ${contextualQuestion}`);
       sessionStorage.setItem('autoAnswer', data.response);
       
       // Notify user that the answer is ready
@@ -120,7 +132,7 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
       
       // Dispatch a custom event that the AiChat component will listen for
       const event = new CustomEvent('ai-triple-tap-answer', { 
-        detail: { question: `Triple-tapped: ${cleanQuestion}`, answer: data.response } 
+        detail: { question: `Triple-tapped: ${contextualQuestion}`, answer: data.response } 
       });
       window.dispatchEvent(event);
       

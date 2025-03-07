@@ -39,6 +39,11 @@ serve(async (req) => {
     // Check if the prompt contains "Triple-tapped:" which indicates it came from triple tap action
     const isTripleTapQuestion = prompt.includes("Triple-tapped:");
     
+    // Check if the question is from pathology paper 1 or 2
+    const isPathologyQuestion = prompt.toLowerCase().includes("pathology") || 
+                              prompt.toLowerCase().includes("paper 1") || 
+                              prompt.toLowerCase().includes("paper 2");
+    
     // Create a more specific system prompt for triple-tapped medical questions
     let systemPrompt = "";
     
@@ -46,17 +51,33 @@ serve(async (req) => {
       // Extract the actual question content without the "Triple-tapped:" prefix
       const actualQuestion = prompt.replace("Triple-tapped:", "").trim();
       
-      systemPrompt = `You are ACEV, a highly specialized medical AI assistant focused on providing detailed medical explanations. 
-      A student has specifically asked about "${actualQuestion}". 
-      Please provide a comprehensive yet concise explanation of this medical topic, covering:
-      - Definition and key characteristics
-      - Clinical significance and relevance
-      - Pathophysiology or mechanism (if applicable)
-      - Important facts for medical exams
-      
-      Format your response with clear sections and bullet points where appropriate. Be detailed and specific.`;
+      if (isPathologyQuestion) {
+        // Specialized prompt for pathology questions referencing Robbins Pathology book
+        systemPrompt = `You are ACEV, a highly specialized medical AI assistant focused on providing detailed pathology explanations. 
+        A student has specifically asked about "${actualQuestion}". 
+        Please provide a comprehensive yet concise explanation of this pathology topic, based primarily on the Robbins Pathology textbook, covering:
+        - Definition and key characteristics
+        - Clinical significance and relevance
+        - Pathophysiology or mechanism
+        - Pathological findings (gross and microscopic if applicable)
+        - Important facts for medical exams
+        
+        Format your response with clear sections and bullet points where appropriate. Be detailed and specific, drawing information specifically from Robbins Pathology textbook as your primary source.`;
+      } else {
+        // General medical system prompt for non-pathology questions
+        systemPrompt = `You are ACEV, a highly specialized medical AI assistant focused on providing detailed medical explanations. 
+        A student has specifically asked about "${actualQuestion}". 
+        Please provide a comprehensive yet concise explanation of this medical topic, covering:
+        - Definition and key characteristics
+        - Clinical significance and relevance
+        - Pathophysiology or mechanism (if applicable)
+        - Important facts for medical exams
+        
+        Format your response with clear sections and bullet points where appropriate. Be detailed and specific.`;
+      }
       
       console.log("Processing triple-tapped question:", actualQuestion);
+      console.log("Is pathology question:", isPathologyQuestion);
     } else {
       // For regular chat questions, use a more conversational approach
       systemPrompt = "You are ACEV, a helpful and knowledgeable medical assistant. Provide concise, accurate medical information. For medical emergencies, always advise seeking immediate professional help. Your responses should be compassionate, clear, and based on established medical knowledge. Never mention that you're powered by Gemini.";
