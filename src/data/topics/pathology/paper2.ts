@@ -10,6 +10,8 @@ import { femaleGenitalTractData } from "./femaleGenitalTract";
 import { breastData } from "./breast";
 import { endocrinologyData } from "./endocrinology";
 import { skinData } from "./skin";
+import { bonesJointsSoftTissueData } from "./bonesJointsSoftTissue";
+import { cnsPathologyData } from "./centralNervousSystem";
 
 export const pathologyPaper2Data = {
   name: "Paper 2",
@@ -24,6 +26,8 @@ export const pathologyPaper2Data = {
     "female-genital-tract": femaleGenitalTractData,
     "breast": breastData,
     "endocrinology": endocrinologyData,
-    "skin": skinData
+    "skin": skinData,
+    "bones-joints-soft-tissue": bonesJointsSoftTissueData,
+    "central-nervous-system": cnsPathologyData
   }
 };
