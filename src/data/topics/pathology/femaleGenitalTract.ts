@@ -8,39 +8,37 @@ export const femaleGenitalTractData = {
         "essay": {
           name: "Essay",
           questions: [
-            "Ovarian Tumors **** (Feb 22;Feb 14;Feb 12;Aug 10) (Pg.No: 1015)\n- Classification, Histogenesis\nProbable Cases:\n- A 55-year-old female presented with a complaint of progressive increase in abdominal size and occasional pain. On examination an ill defined intra abdominal mass was found. Hormonal assay was within normal limits.",
-            "Cervical Cancer *** (Aug 18;Aug 15;Feb 08) (Pg.No: 1001)\n- Etiopathogensis, Types, Presentation",
-            "Endometrial Carcinoma (Aug 05) (Pg.No: 995)\n- Risk factors, Types, Grading, Staging"
+            "Carcinoma Cervix ** (Feb 19;Feb 09) (Pg.No: 1019)\n- Etiopathogenesis, Molecular and Morphological changes",
+            "Premalignant Lesions of Cervix (Feb 16) (Pg.No: 1018)\n- CIN, Cytology of Cervical Dysplasia, Bethesda System"
           ]
         },
         "short-note": {
           name: "Short Note",
           questions: [
-            "Hydatidiform Mole ********** (Aug 19;Sep 21;Mar 22;Feb 11;Aug 09;Oct 03;Nov 01;Apr 01;Nov 95;Apr 95) (Pg.No: 1024)",
-            "Premalignant Lesions of Cervix ***** (Mar 22;Feb 20;Feb 13;Feb 06;Apr 95) (Pg.No: 1003)\n- CIN (Cervical Intraepithelial Neoplasia) - Bethesda System of Classification",
-            "Teratoma **** (Mar 22;Feb 16;Feb 13;Feb 06) (Pg.No: 1020)\n- Define, Classification, Features, Complications",
-            "Endometriosis *** (Aug 17;Aug 16;Nov 01) (Pg.No: 984)",
-            "Endometrial Hyperplasia *** (Sep 21;Feb 16;Feb 05) (Pg.No: 993)\n- Different types of endometrial hyperplasia based on cytologic and architectural changes",
-            "Pre-Eclampsia *** (Jul 23;Aug 16;Aug 08) (Pg.No: 1026)",
-            "Choriocarcinoma ** (Aug 14;Oct 00) (Pg.No: 1025)\n- Etiopathogensis\n- Diagnosis",
-            "Ectopic Pregnancy ** (Feb 18;Aug 05) (Pg.No: 986)",
-            "Endometrial Carcinoma ** (Feb 19;Feb 10) (Pg.No: 995)",
-            "Gestational Trophoblastic Disease ** (Jul 23;Feb 22) (Pg.No: 1024)",
-            "Ovarian Serous Cystadenocarcinoma ** (Mar 22;Feb 09) (Pg.No: 1018)\n- Pathogenesis\n- Morphology",
-            "Adenomyosis (Feb 18) (Pg.No: 985)",
-            "Benign Epithelial Tumors of Ovary (Feb 08) (Pg.No: 1016)",
-            "Bilateral Tubo - Ovarian masses (Feb 10) (Pg.No: 985)",
-            "CIN (Feb 12) (Pg.No: 1003)",
-            "Clear Cell Carcinoma (Feb 22) (Pg.No: 996)",
-            "Dysgerminoma (Aug 20) (Pg.No: 1020)",
-            "Dysmenorrhoea (Aug 20)",
-            "Epithelial Ovarian Neoplasms (Oct 97) (Pg.No: 1016)",
-            "Fibroid Uterus (Feb 23) (Pg.No: 990)",
-            "Granulosa Cell Tumor (Feb 17) (Pg.No: 1022)",
-            "Krukenberg Tumor (Aug 18) (Pg.No: 1019)",
-            "Neoplasms of Fallopian Tube (Aug 15) (Pg.No: 985)",
-            "Salpingitis (Feb 11) (Pg.No: 985)",
-            "Screening for Cervical Carcinoma (Dec 23)"
+            "Endometriosis ******** (Feb 12;Feb 10;Feb 08;Aug 06;Feb 06;Apr 00;Apr 96;Apr 95) (Pg.No: 1007)",
+            "Pap Smear ******* (Aug 22;Jul 23;Feb 19;Aug 18;Nov 20;Aug 11;Aug 06) (Pg.No: 1018)",
+            "Molar Pregnancy ****** (Jul 23;Aug 15;Aug 13;Feb 10;Aug 09;Feb 09;Feb 05) (Pg.No: 1030)",
+            "Gestational Trophoblastic Diseases ***** (Aug 16;Aug 11;Feb 11;Feb 10;Aug 09) (Pg.No: 1029)",
+            "Carcinoma Cervix ***** (Aug 22;Jul 23;Aug 12;Aug 10;Oct 00) (Pg.No: 1022)",
+            "Bethesda System **** (Dec 23;Aug 22;Feb 14;Aug 13) (Pg.No: 1020)",
+            "Ovarian Tumours **** (Aug 19;Aug 18;Feb 06;Oct 97) (Pg.No: 1038)",
+            "Dysplasia of Cervix *** (Aug 17;Feb 08;Nov 93) (Pg.No: 1018)",
+            "Choriocarcinoma ** (Feb 23;Nov 94) (Pg.No: 1032)",
+            "Teratoma ** (Feb 16;Nov 01) (Pg.No: 1035)",
+            "Benign Diseases of Cervix (Feb 17) (Pg.No: 1017)",
+            "Cystadenomas of Ovary (Pg.No: 1034)",
+            "Decidual Reaction (Aug 13) (Pg.No: 1027)",
+            "Dysfunctional Uterine Bleeding (Jul 23) (Pg.No: 1006)",
+            "Early Pregnancy Loss (Pg.No: 1027)",
+            "Endometrial Carcinoma (Aug 12) (Pg.No: 1011)\n- Risk Factors, Types, Molecular and morphological changes",
+            "Epithelial Ovarian Tumours (Aug 13)",
+            "Fallopian Tube Pathology (Feb 17) (Pg.No: 1042)",
+            "Gestational Trophoblast Tumours (Jul 23) (Pg.No: 1029)",
+            "Krukenberg Tumour (Feb 18) (Pg.No: 1040)",
+            "Leiomyomata (Feb 17) (Pg.No: 1009)",
+            "Premalignant Lesions of Endometrium (Pg.No: 1010)",
+            "Sertoli Leydig Cell Tumor (Feb 14) (Pg.No: 1037)",
+            "Trophoblastic Hyperplasia (Feb 15) (Pg.No: 1030)"
           ]
         }
       }

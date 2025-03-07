@@ -6,13 +6,13 @@ export const breastData = {
       name: "Breast Disorders",
       subtopics: {
         "essay": {
-          name: "Essay",
+          name: "Essay Questions",
           questions: [
             "Breast Carcinoma ******** (Jul 23;Aug 22;Mar 22;Feb 18;Feb 12;Aug 07;Apr 95;Jan 91) (Pg.No: 1046)\n- Pathogenesis, Classification, Morphology, Prognostic and Predictive factors, Staging and Spread\nProbable Cases:\n- A 44 year old nulliparous women presented with hard, fixed non tender mass of about 6x4x4 cm in the upper quadrant of right breast with axillary lymphadenopathy. FNAC revealed cluster of pleomorphic cells."
           ]
         },
         "short-note": {
-          name: "Short Note",
+          name: "Short Notes",
           questions: [
             "Phyllodes Tumor (or) Cystosarcoma Phylloides ******** (Aug 19;Feb 14;Aug 12;Aug 11;Aug 09;Aug 06;Jan 05;Nov 01) (Pg.No: 1062)\nProbable Cases:\n- A 60 year old female presented with complaints of a unilateral breast lump on right side, which suddenly increased in size for the past few days. On histology, Leaf-like Architecture was seen.",
             "Paget's Disease of Breast *** (Sep 21;Mar 02;Apr 99) (Pg.No: 1053)",

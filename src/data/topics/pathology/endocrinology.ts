@@ -6,7 +6,7 @@ export const endocrinologyData = {
       name: "Endocrine Disorders",
       subtopics: {
         "essay": {
-          name: "Essay",
+          name: "Essay Questions",
           questions: [
             "Papillary Carcinoma of Thyroid *** (Aug 22;Sep 21;Aug 11) (Pg.No: 1086)\n- Classify Thyroid Neoplasms, Pathogenesis of Malignant Thyroid Neoplasm, Morphology of Papillary Carcinoma of Thyroid",
             "Diabetes Mellitus ** (Feb 15;Aug 08) (Pg.No: 1097)\n- Etiopathogenesis, Complications\n- Definition, Types, Pathophysiology, Morphology, Complications",
@@ -14,7 +14,7 @@ export const endocrinologyData = {
           ]
         },
         "short-note": {
-          name: "Short Note",
+          name: "Short Notes",
           questions: [
             "Hashimoto's Thyroiditis ********** (Aug 17;Feb 14;Aug 12;Aug 09;Feb 08;Oct 03;Apr 01;Oct 00;Apr 99;Apr 97;Nov 94;Nov 93;Jan 91) (Pg.No: 1078)\n- Pathogenesis, Morphology, Clinical Features",
             "Pheochromocytoma ******* (Aug 18;Aug 13;Aug 11;Feb 10;Aug 09;Feb 09;Feb 05) (Pg.No: 1127)",
