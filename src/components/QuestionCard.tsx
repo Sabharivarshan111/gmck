@@ -77,8 +77,15 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
   // Handle triple tap to ask Gemini about this question
   const handleTripleTap = async () => {
     try {
-      // Clean up the question text
-      const cleanQuestion = question.replace(/\(Pg\.No: [^)]+\)/, '').trim();
+      // Clean up the question text - remove asterisks and page numbers for better AI response
+      let cleanQuestion = question
+        .replace(/\*+/g, '')  // Remove asterisks
+        .replace(/\(Pg\.No: [^)]+\)/, '')  // Remove page numbers
+        .replace(/\([^)]*(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[^)]*\)/, '') // Remove exam dates
+        .trim();
+      
+      // Remove the question number prefix if it exists (like "1. " at the beginning)
+      cleanQuestion = cleanQuestion.replace(/^\d+\.\s*/, '');
       
       // Show loading toast
       toast({
@@ -90,7 +97,7 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
       
       // Call the ask-gemini Supabase function
       const { data, error } = await supabase.functions.invoke('ask-gemini', {
-        body: { prompt: cleanQuestion }
+        body: { prompt: `Triple-tapped: ${cleanQuestion}` }
       });
       
       if (error) {
