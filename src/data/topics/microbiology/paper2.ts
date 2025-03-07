@@ -64,6 +64,47 @@ export const microbiologyPaper2Data = {
           ]
         }
       }
+    },
+    "respiratory-tract-infections": {
+      name: "Respiratory Tract Infections",
+      subtopics: {
+        "essay": {
+          name: "Essay",
+          questions: [
+            "Tuberculosis ***** (Feb 07;Aug 05;Aug 04;Nov 01;Nov 94) (Pg.No: 515;AP3- Pg.No: 623)\n- Classify Mycobacteria, Pathogenesis, Lab Diagnosis",
+            "COVID-19 Infection ** (Aug 22;Mar 22) (Pg.No: 552;AP3-Pg.No: 662)\n- List of other Organisms causing Interstitial Pneumonia, Structure of the Organism, COVID-19 Vaccine\n- Transmission, Pathogenesis, Clinical Manifestations, Microbiological and Non-Microbiological Investigations, Prevention and Control\nProbable Cases:\n- A 55 years old male patient was admitted in ICU were with fever, cough with expectoration, fatigue and sore throat. There is H/O loss of smell and taste. The contact history with fever patient before 5 days is also elucidated.\n- A 65 year old male patient admitted in the hospital with history of fever, sore throat, head ache, body pain and loss of taste and smell. Symptomatic treatment was given. After 2 days, he developed difficulty in breathing, his oxygen saturation was <90 %. Blood investigations like CRP, D-dimer and IL-6 were elevated. CT Chest shows ground glass opacities. Patient was treated with high flow oxygen, steroid, antibiotics and antiviral agents.",
+            "Diphtheria (or) Corynebacterium diphtheriae (Nov 93) (Pg.No: 492;AP3- Pg.No: 599)\n- Morphology, Culture Characters, Lab Diagnosis",
+            "Influenza (or) Swine Flu (Feb 10) (Pg.No: 543;AP3-Pg.No: 648)\n- Morphology, Pathogenesis, Lab Diagnosis",
+            "Pertussis (or) Whooping Cough (or) Bordetella Pertussis (Aug 11) (Pg.No: 530;AP3-Pg.No: 638)\n- Etiology, Pathogenesis, Lab Diagnosis"
+          ]
+        },
+        "short-note": {
+          name: "Short Note",
+          questions: [
+            "Diphtheria (or) Corynebacterium diphtheriae ********* (Jul 23;Feb 22;Aug 10;Aug 09;Aug 08;Aug 05;Oct 03;Apr 00;Apr 92) (Pg.No: 492;AP3-Pg.No: 599)\n- Pathogenesis, Lab Diagnosis\n- Elek's Gel Precipitation Test\n- Test for Toxin produced by C. diphtheriae\nProbable Cases:\n- A 5 year old child had High Grade Fever, Pain in the Throat with Difficulty in Swallowing. On examination the child was Toxic, White Patch was found on the throat which bleeds on touch. Immunization status not known.",
+            "Tuberculosis ******** (Jul 23;Aug 22;Sep 21;Feb 18;Aug 15;Aug 13;Aug 10;Feb 09;Feb 06;Aug 04;Mar 02) (Pg.No: 515;AP3-Pg.No: 623)\n- NTEP, Culture Media for Tuberculosis, Mantoux test, BCG\n- Lab Diagnosis\n- RNTCP",
+            "Atypical Mycobacteria (or) Non-Tuberculous Mycobacteria (NTM) ******* (Sep 21;Feb 14;Feb 10;Aug 09;Aug 08;Apr 01;Apr 99) (Pg.No: 527;AP3- Pg.No: 636)",
+            "Antigenic Shift and Antigenic Drift ***** (Pg.No: 541;AP3-Pg.No: 649)",
+            "Aspergillosis (or) Aspergilloma **** (Mar 23;Aug 22;Feb 06;Apr 92) (Pg.No: 565;AP3-Pg.No: 681)\n- Pathogenesis, Clinical Features, Laboratory Diagnosis",
+            "Infectious Mononucleosis **** (Jul 23;Nov 20;Aug 09;Aug 04) (Pg.No: 557;AP3-Pg.No: 672)\n- Paul Bunnell Test",
+            "Influenza (or) Swine-Flu **** (Feb 19;Aug 14;Feb 10;Nov 98) (Pg.No: 543;AP3-Pg.No: 648)\n- Specimen Collection, Transport, Lab Diagnosis\n- Diagnosis of H1N1, Prophylaxis against H1N1",
+            "Quellung Reaction (or) Neufeld Reaction *** (Pg.No: 502;AP3-Pg.No: 608)",
+            "COVID-19 ** (Mar 23;Aug 22) (Pg.No: 552;AP3-Pg.No: 662)\n- Structure of SARS CoV-2",
+            "Melioidosis ** (Mar 22;Feb 13) (Pg.No: 536;AP3-Pg.No: 644)\n- Clinical Features, Lab Diagnosis",
+            "Oriental Lung Fluke (or) Paragonimus westermani ** (Feb 08;Aug 05) (Pg.No: 561;AP3-Pg.No: 676)",
+            "Pertussis (or) Whooping Cough (or) Bordetella pertussis ** (Mar 23;Feb 18) (Pg.No: 530;AP3-Pg.No: 638)\n- Prophylaxis",
+            "Pneumocystis Pneumonia (or) Pneumocystis jirovecii ** (Jul 23;Feb 13) (Pg.No: 563;AP3-Pg.No: 679)",
+            "Zygomycosis (or) Mucormycosis ** (Feb 23;Aug 17) (Pg.No: 564;AP3-Pg.No: 680)",
+            "Extra-Pulmonary Tuberculosis (Pg.No: 517;AP3-Pg.No: 625)",
+            "Legionellosis (Feb 13) (Pg.No: 513;AP3-Pg.No: 621)",
+            "Mumps (Oct 00) (Pg.No: 548;AP3-Pg.No: 656)",
+            "Mycoplasma (Feb 09) (Pg.No: 510;AP3-Pg.No: 618)\n- Lab Diagnosis",
+            "Pseudomonas Infection (Feb 20) (Pg.No: 534;AP3-Pg.No: 642)",
+            "Pulmonary Anthrax (Jul 23) (Pg.No: 508;AP3-Pg.No: 616)",
+            "Rhino Virus Infection (Feb 15) (Pg.No: 559;AP3-Pg.No: 675)"
+          ]
+        }
+      }
     }
   }
 };
