@@ -5,10 +5,6 @@ export const skinData = {
     "skin-disorders": {
       name: "Skin Disorders",
       subtopics: {
-        "essay": {
-          name: "Essay",
-          questions: []
-        },
         "short-note": {
           name: "Short Note",
           questions: [
