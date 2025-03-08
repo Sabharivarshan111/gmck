@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -239,18 +238,6 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
       }
       
       throw apiError; // Re-throw to be caught by outer catch
-    }
-      
-    } catch (error: any) {
-      console.error("Error getting AI answer:", error);
-      
-      if (!error.message.includes("Rate limit")) {
-        toast({
-          title: "Error",
-          description: error.message || "Failed to get answer",
-          variant: "destructive",
-        });
-      }
     } finally {
       setIsLoadingAI(false);
     }
