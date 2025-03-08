@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/components/ui/toast";
 
 interface QuestionCardProps {
   question: string;
@@ -33,6 +33,7 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
   const lastTouchTime = useRef(0);
   const touchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const rateLimitTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const requestTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   
   const getAsteriskCount = (text: string) => {
     const asteriskMatch = text.match(/\*+/);
@@ -61,7 +62,7 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
     }
   }, [questionId]);
   
-  // Clear rate limit and timeouts on unmount
+  // Clear all timeouts on unmount
   useEffect(() => {
     return () => {
       if (touchTimeoutRef.current) {
@@ -69,6 +70,9 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
       }
       if (rateLimitTimeoutRef.current) {
         clearTimeout(rateLimitTimeoutRef.current);
+      }
+      if (requestTimeoutRef.current) {
+        clearTimeout(requestTimeoutRef.current);
       }
     };
   }, []);
@@ -120,87 +124,122 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
       
       console.log("Sending triple-tapped question to Supabase function:", contextualQuestion);
       
-      try {
-        const { data, error } = await supabase.functions.invoke('ask-gemini', {
-          body: { prompt: `Triple-tapped: ${contextualQuestion}` }
-        });
+      // Set a client-side timeout for the entire operation - safeguard against stalled requests
+      if (requestTimeoutRef.current) {
+        clearTimeout(requestTimeoutRef.current);
+      }
+      
+      // Client-side timeout as a backup
+      const timeoutPromise = new Promise<{data: null, error: Error}>((resolve) => {
+        requestTimeoutRef.current = setTimeout(() => {
+          resolve({
+            data: null,
+            error: new Error("Request took too long to complete. The AI service might be busy.")
+          });
+        }, 35000); // 35 second client-side timeout (slightly longer than the server timeout)
+      });
+      
+      // Actual API request
+      const apiPromise = supabase.functions.invoke('ask-gemini', {
+        body: { prompt: `Triple-tapped: ${contextualQuestion}` }
+      });
+      
+      // Race between the API call and the timeout
+      const { data, error } = await Promise.race([apiPromise, timeoutPromise]);
+      
+      // Clear the timeout if the API responded in time
+      if (requestTimeoutRef.current) {
+        clearTimeout(requestTimeoutRef.current);
+        requestTimeoutRef.current = null;
+      }
         
-        console.log("Response received:", data ? "Data received" : "No data", error ? "Error received" : "No error");
+      console.log("Response received:", data ? "Data received" : "No data", error ? "Error received" : "No error");
+      
+      if (error) {
+        console.error("Error or timeout:", error);
+        throw new Error(error.message || "Failed to get answer");
+      }
+      
+      if (!data) {
+        console.error("No data received from AI service");
+        throw new Error("No response received");
+      }
+      
+      if (data.error) {
+        console.error("AI service error:", data.error);
         
-        if (error) {
-          console.error("Supabase function error:", error);
-          throw new Error(error.message || "Failed to get answer");
-        }
-        
-        if (!data) {
-          console.error("No data received from AI service");
-          throw new Error("No response received");
-        }
-        
-        if (data.error) {
-          console.error("AI service error:", data.error);
+        // Handle rate limiting specifically
+        if (data.isRateLimit) {
+          setIsRateLimited(true);
           
-          // Handle rate limiting specifically
-          if (data.isRateLimit) {
-            setIsRateLimited(true);
-            
-            // Clear any existing timeout
-            if (rateLimitTimeoutRef.current) {
-              clearTimeout(rateLimitTimeoutRef.current);
-            }
-            
-            // Set timeout to clear rate limit after 30 seconds
-            rateLimitTimeoutRef.current = setTimeout(() => {
-              setIsRateLimited(false);
-              rateLimitTimeoutRef.current = null;
-            }, 30000);
-            
-            throw new Error("Rate limit exceeded. Please try again in 30 seconds.");
+          // Clear any existing timeout
+          if (rateLimitTimeoutRef.current) {
+            clearTimeout(rateLimitTimeoutRef.current);
           }
           
-          throw new Error(data.error || "Error getting answer");
+          // Set timeout to clear rate limit after 30 seconds
+          rateLimitTimeoutRef.current = setTimeout(() => {
+            setIsRateLimited(false);
+            rateLimitTimeoutRef.current = null;
+          }, 30000);
+          
+          throw new Error("Rate limit exceeded. Please try again in 30 seconds.");
         }
         
-        if (!data.response) {
-          console.error("Empty response received");
-          throw new Error("Empty response received");
-        }
-        
-        toast({
-          title: "Answer ready!",
-          description: "Check the AI chat panel for your answer",
-        });
-        
-        const event = new CustomEvent('ai-triple-tap-answer', { 
-          detail: { question: `Triple-tapped: ${contextualQuestion}`, answer: data.response } 
-        });
-        window.dispatchEvent(event);
-      } catch (apiError: any) {
-        console.error("API request error:", apiError);
-        
-        // Still create an event to show something in the chat
-        toast({
-          title: "Error getting answer",
-          description: apiError.message.includes("Rate limit") 
-            ? "Rate limit reached. Please wait 30 seconds before trying again."
-            : "See the chat for details",
-          variant: "destructive"
-        });
-        
-        // Only show the error in the chat if it's not a rate limit error
-        // (since we already show a rate limit warning in the UI)
-        if (!apiError.message.includes("Rate limit")) {
-          const errorEvent = new CustomEvent('ai-triple-tap-answer', { 
-            detail: { 
-              question: `Triple-tapped: ${contextualQuestion}`, 
-              answer: "I'm sorry, I couldn't generate an answer for this question at the moment. Please try again later." 
-            } 
-          });
-          window.dispatchEvent(errorEvent);
-        }
-        
-        throw apiError; // Re-throw to be caught by outer catch
+        throw new Error(data.error || "Error getting answer");
       }
+      
+      if (!data.response) {
+        console.error("Empty response received");
+        throw new Error("Empty response received");
+      }
+      
+      toast({
+        title: "Answer ready!",
+        description: "Check the AI chat panel for your answer",
+      });
+      
+      const event = new CustomEvent('ai-triple-tap-answer', { 
+        detail: { question: `Triple-tapped: ${contextualQuestion}`, answer: data.response } 
+      });
+      window.dispatchEvent(event);
+    } catch (apiError: any) {
+      console.error("API request error:", apiError);
+      
+      // Still create an event to show something in the chat
+      toast({
+        title: "Error getting answer",
+        description: apiError.message.includes("Rate limit") 
+          ? "Rate limit reached. Please wait 30 seconds before trying again."
+          : apiError.message.includes("took too long") || apiError.message.includes("timed out")
+            ? "The AI service is taking too long to respond. Please try a simpler question or try again later."
+            : "See the chat for details",
+        variant: "destructive"
+      });
+      
+      // Show a helpful error message in the chat for timeouts
+      if (apiError.message.includes("took too long") || apiError.message.includes("timed out")) {
+        const errorEvent = new CustomEvent('ai-triple-tap-answer', { 
+          detail: { 
+            question: `Triple-tapped: ${contextualQuestion}`, 
+            answer: "I'm sorry, but your question is taking longer than expected to process. This could be because it's complex or the AI service is busy. Try asking a more specific question or try again in a few moments." 
+          } 
+        });
+        window.dispatchEvent(errorEvent);
+      }
+      // Only show non-rate limit errors in the chat
+      else if (!apiError.message.includes("Rate limit")) {
+        const errorEvent = new CustomEvent('ai-triple-tap-answer', { 
+          detail: { 
+            question: `Triple-tapped: ${contextualQuestion}`, 
+            answer: "I'm sorry, I couldn't generate an answer for this question at the moment. Please try again later." 
+          } 
+        });
+        window.dispatchEvent(errorEvent);
+      }
+      
+      throw apiError; // Re-throw to be caught by outer catch
+    }
       
     } catch (error: any) {
       console.error("Error getting AI answer:", error);
@@ -271,7 +310,7 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
               </p>
               {isLoadingAI && (
                 <p className="text-xs text-blue-400 mt-1 animate-pulse">
-                  Getting answer...
+                  Getting answer... (may take up to 30 seconds)
                 </p>
               )}
               {isRateLimited ? (

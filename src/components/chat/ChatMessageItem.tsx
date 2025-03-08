@@ -55,13 +55,30 @@ export const ChatMessageItem = ({ message, onCopy }: ChatMessageItemProps) => {
           );
         }
         
+        // Format headings for better readability (especially in medical/pathology answers)
+        if (part.includes('\n## ') || part.includes('\n# ')) {
+          const headingFormatted = part
+            .replace(/\n## (.*?)(?:\n|$)/g, '\n<h3 class="text-lg font-bold mt-3 mb-1 text-blue-300">$1</h3>\n')
+            .replace(/\n# (.*?)(?:\n|$)/g, '\n<h2 class="text-xl font-bold mt-4 mb-2 text-blue-200">$1</h2>\n');
+          
+          return <span key={index} dangerouslySetInnerHTML={{ __html: headingFormatted }} />;
+        }
+        
         // Check for bold text with ** or __
         if (part.includes('**') || part.includes('__')) {
           const boldFormatted = part
-            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-            .replace(/__(.*?)__/g, '<strong>$1</strong>');
+            .replace(/\*\*(.*?)\*\*/g, '<strong class="text-white">$1</strong>')
+            .replace(/__(.*?)__/g, '<strong class="text-white">$1</strong>');
           
           return <span key={index} dangerouslySetInnerHTML={{ __html: boldFormatted }} />;
+        }
+        
+        // Handle numbered lists
+        if (/\n\d+\.\s/.test(part)) {
+          const listFormatted = part.replace(/\n(\d+)\.\s(.*?)(?=\n\d+\.\s|\n\n|$)/g, 
+            '\n<div class="flex gap-2 my-1"><span class="font-bold">$1.</span><span>$2</span></div>');
+          
+          return <span key={index} dangerouslySetInnerHTML={{ __html: listFormatted }} />;
         }
         
         return <span key={index}>{part}</span>;

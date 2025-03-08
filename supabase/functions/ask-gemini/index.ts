@@ -150,7 +150,6 @@ serve(async (req) => {
   }
 
   // Get client IP or some identifier for rate limiting
-  // For demo, using a placeholder - in production use a real client identifier
   const clientId = req.headers.get('x-forwarded-for') || 'anonymous';
   
   // Check rate limiting with enhanced logic
@@ -289,15 +288,23 @@ serve(async (req) => {
     logWithTimestamp(`[${requestId}] Using system prompt type: ${isTripleTapQuestion ? (isPathologyQuestion ? "Pathology" : "Medical") : "Conversational"}`);
     
     try {
-      // Add a timeout mechanism for the model generation
-      const timeoutMs = 15000; // 15 seconds timeout
+      // Increased timeout for Gemini requests - this is the key change to fix timeouts
+      const timeoutMs = 30000; // Increased from 15000 to 30000 (30 seconds timeout)
       
+      // Create model content with more concise instructions to reduce response time
       const modelPromise = model.generateContent({
         contents: [
           { role: "user", parts: [{ text: systemPrompt }] },
           { role: "model", parts: [{ text: "I understand. I'll act as ACEV, a medical assistant providing helpful, accurate information while prioritizing patient safety." }] },
           { role: "user", parts: [{ text: isTripleTapQuestion ? actualQuestion : prompt }] }
-        ]
+        ],
+        // Add generation config to potentially speed up responses
+        generationConfig: {
+          temperature: 0.7,
+          topP: 0.8,
+          topK: 40,
+          maxOutputTokens: 1000, // Limit token output to prevent overly long responses
+        }
       });
       
       // Set up timeout
@@ -345,13 +352,13 @@ serve(async (req) => {
         );
       }
       
-      // Check for timeout error
+      // Improved timeout error handling with more user-friendly message
       if (modelError.message && modelError.message.includes("timed out")) {
         logWithTimestamp(`[${requestId}] Request to Gemini API timed out`);
         return new Response(
           JSON.stringify({ 
-            error: "Request timed out. The AI service took too long to respond.",
-            details: modelError.message
+            error: "The AI service is taking longer than expected. Your question might be complex - try asking a more focused question or try again later.",
+            details: "AI processing timeout"
           }),
           {
             headers: { ...corsHeaders, "Content-Type": "application/json" },
