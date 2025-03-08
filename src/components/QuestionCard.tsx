@@ -1,9 +1,10 @@
+
 import { useState, useEffect, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/components/ui/toast";
+import { useToast } from "@/hooks/use-toast";
 
 interface QuestionCardProps {
   question: string;
@@ -236,8 +237,6 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
         });
         window.dispatchEvent(errorEvent);
       }
-      
-      throw apiError; // Re-throw to be caught by outer catch
     } finally {
       setIsLoadingAI(false);
     }
