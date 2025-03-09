@@ -7,11 +7,7 @@ import SearchBar from "./question-bank/SearchBar";
 import NoResultsMessage from "./question-bank/NoResultsMessage";
 import QuestionBankContent from "./question-bank/QuestionBankContent";
 
-export interface Question {
-  question: string;
-  index: number;
-}
-
+// Define nested interfaces to match the actual data structure
 export interface QuestionType {
   name: string;
   questions: string[];
@@ -20,22 +16,26 @@ export interface QuestionType {
 export interface SubTopicContent {
   name: string;
   subtopics: {
-    [key: string]: QuestionType;
+    [key: string]: QuestionType | { name: string; questions: any[] };
   };
 }
 
 export interface SubTopic {
   name: string;
   subtopics: {
-    [key: string]: SubTopicContent;
+    [key: string]: SubTopicContent | any;
   };
 }
 
 export interface Topic {
   name: string;
   subtopics: {
-    [key: string]: SubTopic;
+    [key: string]: SubTopic | any;
   };
+}
+
+export interface QuestionBankData {
+  [key: string]: Topic;
 }
 
 const QuestionBank = () => {

@@ -1,13 +1,13 @@
 
 import { Accordion } from "@/components/ui/accordion";
 import TopicAccordion from "@/components/TopicAccordion";
-import { Topic } from "@/components/QuestionBank";
+import { QuestionBankData } from "@/components/QuestionBank";
 import NoContentMessage from "./NoContentMessage";
 
 interface QuestionBankContentProps {
   activeTab: "essay" | "short-notes";
   hasContentToDisplay: boolean;
-  filteredData: { [key: string]: Topic };
+  filteredData: QuestionBankData;
   expandedItems: string[];
   searchQuery: string;
 }

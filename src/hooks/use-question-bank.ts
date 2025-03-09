@@ -1,7 +1,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { QUESTION_BANK_DATA } from "@/data/questionBankData";
-import { Topic } from "@/components/QuestionBank";
+import { Topic, QuestionBankData } from "@/components/QuestionBank";
 
 export const useQuestionBank = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -33,42 +33,52 @@ export const useQuestionBank = () => {
     );
   }, []);
 
+  // This function has been modified to handle the complex nested structure
   const filterQuestions = useCallback((topic: Topic, type: "essay" | "short-notes", query: string): Topic | null => {
     if (!query.trim()) return topic;
     
     let hasContent = false;
     const filteredSubtopics: { [key: string]: any } = {};
 
+    // Process each first level subtopic (e.g. "paper-1", "paper-2")
     for (const [subtopicKey, subtopic] of Object.entries(topic.subtopics)) {
       const filteredInnerSubtopics: { [key: string]: any } = {};
       let hasSubtopicContent = false;
 
+      // Process each second level subtopic (e.g. "general-pharmacology", "autacoids")
       for (const [innerKey, innerSubtopic] of Object.entries(subtopic.subtopics)) {
-        const filteredContent: { [key: string]: any } = {};
-        let hasInnerContent = false;
+        // Try to handle the case where we have a nested structure
+        if (innerSubtopic.subtopics) {
+          const filteredContent: { [key: string]: any } = {};
+          let hasInnerContent = false;
 
-        for (const [typeKey, questions] of Object.entries(innerSubtopic.subtopics)) {
-          if (typeKey === "essay" && type === "essay" || 
-              (typeKey === "short-note" || typeKey === "short-notes") && type === "short-notes") {
-            const filteredQuestions = searchInQuestions(questions.questions, query);
-            
-            if (filteredQuestions.length > 0) {
-              filteredContent[typeKey] = {
-                name: questions.name,
-                questions: filteredQuestions
-              };
-              hasInnerContent = true;
-              hasSubtopicContent = true;
-              hasContent = true;
+          // Look for "essay" or "short-notes" or "short-note" keys
+          for (const [typeKey, questions] of Object.entries(innerSubtopic.subtopics)) {
+            // Match the tab type with the data structure keys
+            if ((typeKey === "essay" && type === "essay") || 
+                ((typeKey === "short-note" || typeKey === "short-notes") && type === "short-notes")) {
+              if (questions.questions) {
+                const filteredQuestions = searchInQuestions(questions.questions, query);
+                
+                if (filteredQuestions.length > 0) {
+                  filteredContent[typeKey] = {
+                    name: questions.name,
+                    questions: filteredQuestions
+                  };
+                  hasInnerContent = true;
+                  hasSubtopicContent = true;
+                  hasContent = true;
+                }
+              }
             }
           }
-        }
 
-        if (hasInnerContent) {
-          filteredInnerSubtopics[innerKey] = {
-            name: innerSubtopic.name,
-            subtopics: filteredContent
-          };
+          if (hasInnerContent) {
+            filteredInnerSubtopics[innerKey] = {
+              name: innerSubtopic.name,
+              subtopics: filteredContent
+            };
+          }
         }
       }
 
@@ -86,20 +96,21 @@ export const useQuestionBank = () => {
     } : null;
   }, [searchInQuestions]);
 
-  const getFilteredData = useCallback((type: "essay" | "short-notes", query: string) => {
-    const filteredData: { [key: string]: Topic } = {};
+  // Modified to use as unknown to handle the complex structure
+  const getFilteredData = useCallback((type: "essay" | "short-notes", query: string): QuestionBankData => {
+    const filteredData: QuestionBankData = {};
     let hasResults = false;
     
     if (!query.trim()) {
       setHasSearchResults(true);
       setIsSearching(false);
-      return QUESTION_BANK_DATA as { [key: string]: Topic };
+      return QUESTION_BANK_DATA as unknown as QuestionBankData;
     }
     
     setIsSearching(true);
     
     for (const [key, topic] of Object.entries(QUESTION_BANK_DATA)) {
-      const filteredTopic = filterQuestions(topic as Topic, type, query);
+      const filteredTopic = filterQuestions(topic as unknown as Topic, type, query);
       if (filteredTopic) {
         filteredData[key] = filteredTopic;
         hasResults = true;
