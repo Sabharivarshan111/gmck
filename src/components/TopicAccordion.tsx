@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/accordion";
 import SubtopicAccordion from "./SubtopicAccordion";
 import { Topic } from "./QuestionBank";
+import { useState, useEffect } from "react";
 
 interface TopicAccordionProps {
   topicKey: string;
@@ -17,6 +18,22 @@ interface TopicAccordionProps {
 }
 
 const TopicAccordion = ({ topicKey, topic, isExpanded = false, activeTab }: TopicAccordionProps) => {
+  const subtopicKeys = Object.keys(topic.subtopics);
+  const [localExpandedItems, setLocalExpandedItems] = useState<string[]>(
+    isExpanded ? subtopicKeys : []
+  );
+
+  useEffect(() => {
+    if (isExpanded) {
+      setLocalExpandedItems(subtopicKeys);
+    }
+  }, [isExpanded, subtopicKeys]);
+
+  const handleAccordionValueChange = (value: string[]) => {
+    setLocalExpandedItems(value);
+    console.log("Topic expanded items:", value);
+  };
+
   return (
     <AccordionItem 
       value={topicKey} 
@@ -31,7 +48,12 @@ const TopicAccordion = ({ topicKey, topic, isExpanded = false, activeTab }: Topi
       </AccordionTrigger>
       <AccordionContent>
         <div className="px-4">
-          <Accordion type="multiple" defaultValue={isExpanded ? Object.keys(topic.subtopics) : []} className="w-full">
+          <Accordion 
+            type="multiple" 
+            value={localExpandedItems}
+            onValueChange={handleAccordionValueChange} 
+            className="w-full"
+          >
             {Object.entries(topic.subtopics).map(([subtopicKey, subtopic]) => (
               <SubtopicAccordion 
                 key={subtopicKey}

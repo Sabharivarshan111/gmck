@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/accordion";
 import TypeAccordion from "./TypeAccordion";
 import { SubTopic } from "./QuestionBank";
+import { useState, useEffect } from "react";
 
 interface SubtopicAccordionProps {
   subtopicKey: string;
@@ -18,6 +19,22 @@ interface SubtopicAccordionProps {
 }
 
 const SubtopicAccordion = ({ subtopicKey, subtopic, isExpanded = false, activeTab }: SubtopicAccordionProps) => {
+  const typeKeys = Object.keys(subtopic.subtopics);
+  const [localExpandedItems, setLocalExpandedItems] = useState<string[]>(
+    isExpanded ? typeKeys : []
+  );
+
+  useEffect(() => {
+    if (isExpanded) {
+      setLocalExpandedItems(typeKeys);
+    }
+  }, [isExpanded, typeKeys]);
+
+  const handleAccordionValueChange = (value: string[]) => {
+    setLocalExpandedItems(value);
+    console.log("Subtopic expanded items:", value);
+  };
+
   return (
     <AccordionItem 
       value={subtopicKey}
@@ -31,7 +48,12 @@ const SubtopicAccordion = ({ subtopicKey, subtopic, isExpanded = false, activeTa
       </AccordionTrigger>
       <AccordionContent>
         <ScrollArea className="h-full px-4">
-          <Accordion type="multiple" defaultValue={isExpanded ? Object.keys(subtopic.subtopics) : []} className="w-full">
+          <Accordion 
+            type="multiple" 
+            value={localExpandedItems}
+            onValueChange={handleAccordionValueChange}
+            className="w-full"
+          >
             {Object.entries(subtopic.subtopics).map(([typeKey, type]) => (
               <TypeAccordion 
                 key={typeKey}

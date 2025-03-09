@@ -3,6 +3,7 @@ import { Accordion } from "@/components/ui/accordion";
 import TopicAccordion from "@/components/TopicAccordion";
 import { QuestionBankData } from "@/components/QuestionBank";
 import NoContentMessage from "./NoContentMessage";
+import { useState, useEffect } from "react";
 
 interface QuestionBankContentProps {
   activeTab: "essay" | "short-notes";
@@ -19,15 +20,31 @@ const QuestionBankContent = ({
   expandedItems,
   searchQuery
 }: QuestionBankContentProps) => {
+  const [localExpandedItems, setLocalExpandedItems] = useState<string[]>(expandedItems);
+
+  // Update local state when prop changes
+  useEffect(() => {
+    setLocalExpandedItems(expandedItems);
+  }, [expandedItems]);
+
   if (!hasContentToDisplay) {
     return <NoContentMessage />;
   }
+
+  // Handle accordion item value change
+  const handleAccordionValueChange = (value: string[]) => {
+    setLocalExpandedItems(value);
+  };
+
+  console.log("Expanded items:", localExpandedItems);
+  console.log("Filtered data keys:", Object.keys(filteredData));
 
   return (
     <div className="grid gap-4">
       <Accordion 
         type="multiple" 
-        value={expandedItems}
+        value={localExpandedItems}
+        onValueChange={handleAccordionValueChange}
         className="w-full text-gray-800 dark:text-gray-200"
       >
         {Object.entries(filteredData).map(([topicKey, topic]) => (

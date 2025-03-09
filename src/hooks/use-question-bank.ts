@@ -48,7 +48,7 @@ export const useQuestionBank = () => {
       // Process each second level subtopic (e.g. "general-pharmacology", "autacoids")
       for (const [innerKey, innerSubtopic] of Object.entries(subtopic.subtopics)) {
         // Try to handle the case where we have a nested structure
-        if (innerSubtopic.subtopics) {
+        if (innerSubtopic && typeof innerSubtopic === 'object' && 'subtopics' in innerSubtopic) {
           const filteredContent: { [key: string]: any } = {};
           let hasInnerContent = false;
 
@@ -57,7 +57,7 @@ export const useQuestionBank = () => {
             // Match the tab type with the data structure keys
             if ((typeKey === "essay" && type === "essay") || 
                 ((typeKey === "short-note" || typeKey === "short-notes") && type === "short-notes")) {
-              if (questions.questions) {
+              if (questions && typeof questions === 'object' && 'questions' in questions) {
                 const filteredQuestions = searchInQuestions(questions.questions, query);
                 
                 if (filteredQuestions.length > 0) {
@@ -96,7 +96,6 @@ export const useQuestionBank = () => {
     } : null;
   }, [searchInQuestions]);
 
-  // Modified to use as unknown to handle the complex structure
   const getFilteredData = useCallback((type: "essay" | "short-notes", query: string): QuestionBankData => {
     const filteredData: QuestionBankData = {};
     let hasResults = false;
