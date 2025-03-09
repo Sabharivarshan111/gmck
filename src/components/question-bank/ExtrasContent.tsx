@@ -6,7 +6,7 @@ interface ExtrasContentProps {
   driveLink?: string;
 }
 
-const ExtrasContent = ({ driveLink = "https://drive.google.com" }: ExtrasContentProps) => {
+const ExtrasContent = ({ driveLink = "https://drive.google.com/drive/folders/1PQScCjyHiVg9n9efebVovaJLcNAR5KSZ" }: ExtrasContentProps) => {
   const handleOpenDrive = () => {
     window.open(driveLink, "_blank", "noopener,noreferrer");
   };

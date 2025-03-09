@@ -79,7 +79,7 @@ const QuestionBank = () => {
     );
   }
 
-  const googleDriveLink = "https://drive.google.com";
+  const googleDriveLink = "https://drive.google.com/drive/folders/1PQScCjyHiVg9n9efebVovaJLcNAR5KSZ";
 
   return (
     <div className="bg-white dark:bg-black h-full min-h-[600px]">
