@@ -37,8 +37,8 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
         }`}
         onClick={handleTouch}
       >
-        <CardContent className="p-3">
-          <div className="flex gap-3">
+        <CardContent className="p-2 sm:p-3">
+          <div className="flex gap-2 items-start">
             <div className="flex-shrink-0 pt-1">
               <Checkbox
                 checked={isCompleted}
@@ -47,8 +47,8 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
               />
             </div>
             
-            <div className="flex-grow">
-              <p className={`text-base font-medium break-words ${
+            <div className="flex-grow pr-2">
+              <p className={`text-sm sm:text-base font-medium break-words ${
                 isCompleted ? 'text-gray-500' : 'text-gray-200'
               }`}>
                 {cleanedQuestionText}
@@ -72,7 +72,7 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
             </div>
             
             <div className="flex-shrink-0">
-              <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-gray-800 text-gray-300 text-sm">
+              <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-gray-800 text-gray-300 text-xs">
                 {displayNumber}
               </span>
             </div>

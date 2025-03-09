@@ -37,7 +37,7 @@ const QuestionBankContent = ({
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full max-w-full px-1">
       <Accordion 
         type="multiple" 
         value={localExpandedItems}
