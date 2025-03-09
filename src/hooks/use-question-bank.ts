@@ -34,66 +34,73 @@ export const useQuestionBank = () => {
   }, []);
 
   // This function has been modified to handle the complex nested structure
-  const filterQuestions = useCallback((topic: Topic, type: "essay" | "short-notes", query: string): Topic | null => {
-    if (!query.trim()) return topic;
+  const filterQuestions = useCallback((topic: any, type: "essay" | "short-notes", query: string): Topic | null => {
+    if (!query.trim()) return topic as Topic;
     
     let hasContent = false;
     const filteredSubtopics: { [key: string]: any } = {};
 
     // Process each first level subtopic (e.g. "paper-1", "paper-2")
-    for (const [subtopicKey, subtopic] of Object.entries(topic.subtopics)) {
+    for (const [subtopicKey, subtopic] of Object.entries(topic.subtopics || {})) {
       const filteredInnerSubtopics: { [key: string]: any } = {};
       let hasSubtopicContent = false;
 
-      // Process each second level subtopic (e.g. "general-pharmacology", "autacoids")
-      for (const [innerKey, innerSubtopic] of Object.entries(subtopic.subtopics)) {
-        // Try to handle the case where we have a nested structure
-        if (innerSubtopic && typeof innerSubtopic === 'object' && 'subtopics' in innerSubtopic) {
-          const filteredContent: { [key: string]: any } = {};
-          let hasInnerContent = false;
+      // Safely access properties with type checking
+      if (subtopic && typeof subtopic === 'object' && 'subtopics' in subtopic) {
+        const subtopicObj = subtopic as { name: string; subtopics: Record<string, any> };
 
-          // Look for "essay" or "short-notes" or "short-note" keys
-          for (const [typeKey, questions] of Object.entries(innerSubtopic.subtopics)) {
-            // Match the tab type with the data structure keys
-            if ((typeKey === "essay" && type === "essay") || 
-                ((typeKey === "short-note" || typeKey === "short-notes") && type === "short-notes")) {
-              if (questions && typeof questions === 'object' && 'questions' in questions) {
-                const filteredQuestions = searchInQuestions(questions.questions, query);
-                
-                if (filteredQuestions.length > 0) {
-                  filteredContent[typeKey] = {
-                    name: questions.name,
-                    questions: filteredQuestions
-                  };
-                  hasInnerContent = true;
-                  hasSubtopicContent = true;
-                  hasContent = true;
+        // Process each second level subtopic (e.g. "general-pharmacology", "autacoids")
+        for (const [innerKey, innerSubtopic] of Object.entries(subtopicObj.subtopics || {})) {
+          // Try to handle the case where we have a nested structure
+          if (innerSubtopic && typeof innerSubtopic === 'object' && 'subtopics' in innerSubtopic) {
+            const innerSubtopicObj = innerSubtopic as { name: string; subtopics: Record<string, any> };
+            const filteredContent: { [key: string]: any } = {};
+            let hasInnerContent = false;
+
+            // Look for "essay" or "short-notes" or "short-note" keys
+            for (const [typeKey, questions] of Object.entries(innerSubtopicObj.subtopics || {})) {
+              // Match the tab type with the data structure keys
+              if ((typeKey === "essay" && type === "essay") || 
+                  ((typeKey === "short-note" || typeKey === "short-notes") && type === "short-notes")) {
+                if (questions && typeof questions === 'object' && 'questions' in questions) {
+                  const questionsObj = questions as { name: string; questions: string[] };
+                  const filteredQuestions = searchInQuestions(questionsObj.questions, query);
+                  
+                  if (filteredQuestions.length > 0) {
+                    filteredContent[typeKey] = {
+                      name: questionsObj.name,
+                      questions: filteredQuestions
+                    };
+                    hasInnerContent = true;
+                    hasSubtopicContent = true;
+                    hasContent = true;
+                  }
                 }
               }
             }
-          }
 
-          if (hasInnerContent) {
-            filteredInnerSubtopics[innerKey] = {
-              name: innerSubtopic.name,
-              subtopics: filteredContent
-            };
+            if (hasInnerContent) {
+              filteredInnerSubtopics[innerKey] = {
+                name: innerSubtopicObj.name,
+                subtopics: filteredContent
+              };
+            }
           }
         }
-      }
 
-      if (hasSubtopicContent) {
-        filteredSubtopics[subtopicKey] = {
-          name: subtopic.name,
-          subtopics: filteredInnerSubtopics
-        };
+        if (hasSubtopicContent) {
+          filteredSubtopics[subtopicKey] = {
+            name: subtopicObj.name,
+            subtopics: filteredInnerSubtopics
+          };
+        }
       }
     }
 
     return hasContent ? {
       name: topic.name,
       subtopics: filteredSubtopics
-    } : null;
+    } as Topic : null;
   }, [searchInQuestions]);
 
   const getFilteredData = useCallback((type: "essay" | "short-notes", query: string): QuestionBankData => {
@@ -109,7 +116,7 @@ export const useQuestionBank = () => {
     setIsSearching(true);
     
     for (const [key, topic] of Object.entries(QUESTION_BANK_DATA)) {
-      const filteredTopic = filterQuestions(topic as unknown as Topic, type, query);
+      const filteredTopic = filterQuestions(topic, type, query);
       if (filteredTopic) {
         filteredData[key] = filteredTopic;
         hasResults = true;
