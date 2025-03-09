@@ -37,8 +37,8 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
         }`}
         onClick={handleTouch}
       >
-        <CardContent className="p-1.5 sm:p-2 h-full">
-          <div className="flex gap-1.5 items-start h-full">
+        <CardContent className="p-2 h-full">
+          <div className="flex gap-2 items-start h-full">
             <div className="flex-shrink-0 pt-0.5">
               <Checkbox
                 checked={isCompleted}
@@ -47,31 +47,31 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
               />
             </div>
             
-            <div className="flex-grow pr-1 min-w-0">
-              <p className={`text-xs sm:text-sm font-medium break-words line-clamp-3 ${
+            <div className="flex-grow min-w-0">
+              <p className={`text-xs sm:text-sm font-medium break-words ${
                 isCompleted ? 'text-gray-500' : 'text-gray-200'
               }`}>
                 {cleanedQuestionText}
               </p>
               
               {isLoadingAI && (
-                <p className="text-xs text-blue-400 mt-0.5 animate-pulse">
+                <p className="text-xs text-blue-400 mt-1 animate-pulse">
                   Getting answer...
                 </p>
               )}
               
               {isRateLimited ? (
-                <p className="text-[10px] text-amber-400 mt-0.5">
+                <p className="text-[10px] text-amber-400 mt-1">
                   Rate limited
                 </p>
               ) : (
-                <p className="text-[10px] text-gray-400 mt-0.5">
+                <p className="text-[10px] text-gray-400 mt-1">
                   Triple tap for AI
                 </p>
               )}
             </div>
             
-            <div className="flex-shrink-0">
+            <div className="flex-shrink-0 ml-1">
               <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-gray-800 text-gray-300 text-[10px]">
                 {displayNumber}
               </span>
