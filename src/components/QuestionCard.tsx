@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -40,6 +39,12 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
     return asteriskMatch ? asteriskMatch[0].length : 0;
   };
   
+  const hasExamDate = (text: string) => {
+    // Check for pattern like (Feb 14;Aug 13;Feb 12)
+    const datePattern = /\((?:[^()]*?(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[^()]*?)\)/;
+    return datePattern.test(text);
+  };
+  
   const getExamDateCount = (text: string) => {
     // Check for pattern like (Feb 14;Aug 13;Feb 12)
     const datePattern = /\(((?:[^()]*?(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[^()]*?;)*(?:[^()]*?(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[^()]*?))\)/;
@@ -60,27 +65,14 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
   const asteriskCount = getAsteriskCount(question);
   const examDateCount = asteriskCount === 0 ? getExamDateCount(question) : 0;
   
-  // If there's no asterisk count and no exam date count, display the index + 1
-  // Explicitly check both conditions to ensure we're getting proper numbering
+  // KEY FIX: If there are asterisks, use that count
+  // If there are exam dates but no asterisks, use that count
+  // Otherwise, ALWAYS use index + 1
   const displayNumber = asteriskCount > 0 ? 
     asteriskCount : 
-    examDateCount > 0 ? 
+    hasExamDate(question) ? 
       examDateCount : 
       index + 1;
-  
-  // Debugging to verify counts
-  useEffect(() => {
-    if (displayNumber > index + 1 && asteriskCount === 0 && examDateCount === 0) {
-      console.log("Incorrect numbering detected:", {
-        question,
-        index,
-        displayNumber,
-        asteriskCount,
-        examDateCount,
-        hasPageNo: hasPageNumber(question)
-      });
-    }
-  }, [question, index, displayNumber, asteriskCount, examDateCount]);
   
   useEffect(() => {
     const savedState = localStorage.getItem(questionId);

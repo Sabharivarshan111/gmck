@@ -69,7 +69,7 @@ export const AiChat = ({ initialQuestion }: AiChatProps = {}) => {
             isError: customEvent.detail.answer.includes("I'm sorry, I couldn't generate")
           };
           
-          // Add both messages to the chat
+          // Add both messages to the chat but don't save triple-tapped messages to localStorage
           setPrompt("");
           setMessages(prev => [...prev, userMessage, assistantMessage]);
         } else {

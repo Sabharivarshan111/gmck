@@ -211,14 +211,18 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Load messages from sessionStorage (not localStorage) on mount
+  // Load messages from localStorage on mount ONLY for regular chat messages, not triple-tapped ones
   useEffect(() => {
     try {
-      const savedMessages = sessionStorage.getItem("aiChatMessages");
+      const savedMessages = localStorage.getItem("aiChatMessages");
       if (savedMessages) {
         const parsedMessages = JSON.parse(savedMessages);
         if (Array.isArray(parsedMessages)) {
-          setMessages(parsedMessages);
+          // Filter out any triple-tapped messages
+          const filteredMessages = parsedMessages.filter(msg => {
+            return !(msg.role === 'user' && msg.content.includes('Triple-tapped:'));
+          });
+          setMessages(filteredMessages);
         }
       }
     } catch (e) {
@@ -226,13 +230,23 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
     }
   }, []);
 
-  // Save messages to sessionStorage (not localStorage) when they change
+  // Save messages to localStorage when they change
   useEffect(() => {
     if (messages.length > 0) {
-      sessionStorage.setItem("aiChatMessages", JSON.stringify(messages));
+      // Filter out triple-tapped messages before saving
+      const messagesToSave = messages.filter(msg => {
+        return !(msg.role === 'user' && msg.content.includes('Triple-tapped:'));
+      });
+      
+      if (messagesToSave.length > 0) {
+        localStorage.setItem("aiChatMessages", JSON.stringify(messagesToSave));
+      } else {
+        // Clear localStorage when no regular messages remain
+        localStorage.removeItem("aiChatMessages");
+      }
     } else {
-      // Clear sessionStorage when messages are empty
-      sessionStorage.removeItem("aiChatMessages");
+      // Clear localStorage when messages are empty
+      localStorage.removeItem("aiChatMessages");
     }
   }, [messages]);
 
@@ -370,7 +384,7 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
     clearRateLimit();
     // Also clear the request queue
     requestQueue.current = [];
-    sessionStorage.removeItem("aiChatMessages");
+    localStorage.removeItem("aiChatMessages");
     toast({
       title: "Chat history cleared",
     });
