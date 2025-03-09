@@ -15,6 +15,7 @@ interface TimerDisplayProps {
   handleKeyDown: (e: React.KeyboardEvent) => void;
   handleSubmit: (e?: React.FormEvent) => void;
   inputRef: React.RefObject<HTMLInputElement>;
+  theme: "dark" | "light";
 }
 
 export const TimerDisplay: React.FC<TimerDisplayProps> = ({
@@ -29,6 +30,7 @@ export const TimerDisplay: React.FC<TimerDisplayProps> = ({
   handleKeyDown,
   handleSubmit,
   inputRef,
+  theme
 }) => {
   return (
     <>
@@ -41,7 +43,11 @@ export const TimerDisplay: React.FC<TimerDisplayProps> = ({
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
             onBlur={handleSubmit}
-            className="w-16 h-8 text-center bg-transparent text-white border-white focus:ring-2 focus:ring-white"
+            className={`w-16 h-8 text-center bg-transparent ${
+              theme === "dark" 
+                ? "text-white border-white focus:ring-2 focus:ring-white" 
+                : "text-gray-900 border-gray-900 focus:ring-2 focus:ring-gray-900"
+            }`}
             maxLength={2}
             aria-label="Set minutes"
           />
@@ -49,14 +55,20 @@ export const TimerDisplay: React.FC<TimerDisplayProps> = ({
             type="submit"
             variant="outline" 
             size="sm"
-            className="h-8 text-white border-white hover:bg-white hover:text-black rounded-full"
+            className={`h-8 ${
+              theme === "dark" 
+                ? "text-white border-white hover:bg-white hover:text-black" 
+                : "text-gray-900 border-gray-900 hover:bg-gray-900 hover:text-white"
+            } rounded-full`}
           >
             Set
           </Button>
         </form>
       ) : (
         <div 
-          className="text-2xl font-mono text-white cursor-pointer"
+          className={`text-2xl font-mono ${
+            theme === "dark" ? "text-white" : "text-gray-900"
+          } cursor-pointer`}
           onClick={startEditing}
         >
           {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}

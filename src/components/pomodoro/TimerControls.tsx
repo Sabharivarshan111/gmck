@@ -2,7 +2,7 @@
 import React from 'react';
 import { Pause, Play, RotateCcw, Droplets } from 'lucide-react';
 import { Button } from '../ui/button';
-import { toast } from '../ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 
 interface TimerControlsProps {
   isRunning: boolean;
@@ -10,6 +10,7 @@ interface TimerControlsProps {
   resetTimer: () => void;
   waterCount: number;
   setWaterCount: React.Dispatch<React.SetStateAction<number>>;
+  theme: "dark" | "light";
 }
 
 export const TimerControls: React.FC<TimerControlsProps> = ({
@@ -18,7 +19,10 @@ export const TimerControls: React.FC<TimerControlsProps> = ({
   resetTimer,
   waterCount,
   setWaterCount,
+  theme
 }) => {
+  const { toast } = useToast();
+
   const drinkWater = () => {
     setWaterCount(prev => prev + 1);
     toast({
@@ -33,7 +37,11 @@ export const TimerControls: React.FC<TimerControlsProps> = ({
         variant="outline"
         size="icon"
         onClick={toggleTimer}
-        className="h-8 w-8 rounded-full border-white text-white hover:bg-white hover:text-black"
+        className={`h-8 w-8 rounded-full ${
+          theme === "dark"
+            ? "border-white text-white hover:bg-white hover:text-black"
+            : "border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white"
+        }`}
         aria-label={isRunning ? "Pause timer" : "Start timer"}
       >
         {isRunning ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
@@ -42,7 +50,11 @@ export const TimerControls: React.FC<TimerControlsProps> = ({
         variant="outline"
         size="icon"
         onClick={resetTimer}
-        className="h-8 w-8 rounded-full border-white text-white hover:bg-white hover:text-black"
+        className={`h-8 w-8 rounded-full ${
+          theme === "dark"
+            ? "border-white text-white hover:bg-white hover:text-black"
+            : "border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white"
+        }`}
         aria-label="Reset timer"
       >
         <RotateCcw className="h-4 w-4" />

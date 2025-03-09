@@ -5,8 +5,11 @@ import { InstallPrompt } from "@/components/InstallPrompt";
 import { AiChat } from "@/components/AiChat";
 import PomodoroTimer from "@/components/PomodoroTimer";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
+import { useTheme } from "@/components/theme/ThemeProvider";
 
 const Index = () => {
+  const { theme } = useTheme();
+  
   // Ensure the page starts at the top when loaded
   useEffect(() => {
     window.scrollTo(0, 0);

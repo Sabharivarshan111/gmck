@@ -14,8 +14,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>(() => {
     // Check if a theme was previously selected and saved in localStorage
     const savedTheme = localStorage.getItem("theme") as Theme;
-    // Default to 'dark' theme if nothing is saved
-    return savedTheme || "dark";
+    if (savedTheme && (savedTheme === "dark" || savedTheme === "light")) {
+      return savedTheme;
+    }
+    // Default to 'dark' theme if nothing is saved or invalid
+    return "dark";
   });
 
   useEffect(() => {

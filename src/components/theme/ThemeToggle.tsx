@@ -33,7 +33,11 @@ export function ThemeToggle() {
         <Button 
           variant="outline" 
           size="icon"
-          className="w-9 h-9 rounded-full bg-gray-800/60 border border-gray-700/60 hover:bg-gray-700/60"
+          className={`w-9 h-9 rounded-full ${
+            theme === "dark" 
+              ? "bg-gray-800/60 border border-gray-700/60 hover:bg-gray-700/60" 
+              : "bg-white border border-gray-200 hover:bg-gray-100"
+          }`}
         >
           {theme === "dark" ? (
             <Moon className="h-4 w-4 text-white" />
