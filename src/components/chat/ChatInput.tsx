@@ -3,6 +3,7 @@ import { useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Send, Loader2 } from "lucide-react";
+import { useTheme } from "@/components/theme/ThemeProvider";
 
 interface ChatInputProps {
   prompt: string;
@@ -14,6 +15,7 @@ interface ChatInputProps {
 
 export const ChatInput = ({ prompt, setPrompt, onSubmit, isLoading, isDisabled }: ChatInputProps) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const { theme } = useTheme();
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -42,12 +44,20 @@ export const ChatInput = ({ prompt, setPrompt, onSubmit, isLoading, isDisabled }
             adjustTextareaHeight();
           }}
           onKeyDown={handleKeyDown}
-          className={`min-h-[36px] max-h-[80px] bg-gray-900 border-gray-700 focus:ring-gray-600 resize-none text-sm flex-grow ${isDisabled ? 'opacity-60' : ''}`}
+          className={`min-h-[36px] max-h-[80px] resize-none text-sm flex-grow ${
+            theme === "dark" 
+              ? "bg-gray-900 border-gray-700 focus:ring-gray-600 text-white" 
+              : "bg-gray-100 border-gray-300 focus:ring-gray-400 text-gray-900"
+          } ${isDisabled ? 'opacity-60' : ''}`}
           disabled={isLoading || isDisabled}
         />
         <Button 
           type="submit" 
-          className="bg-white text-black hover:bg-gray-200 transition-colors duration-200 h-9 w-9 p-0 flex items-center justify-center"
+          className={`${
+            theme === "dark"
+              ? "bg-white text-black hover:bg-gray-200"
+              : "bg-gray-900 text-white hover:bg-gray-800"
+          } transition-colors duration-200 h-9 w-9 p-0 flex items-center justify-center`}
           disabled={isLoading || isDisabled}
         >
           {isLoading ? (
