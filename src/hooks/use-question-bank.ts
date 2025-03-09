@@ -6,7 +6,7 @@ import { Topic } from "@/components/QuestionBank";
 export const useQuestionBank = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isMobile, setIsMobile] = useState(false);
-  const [activeTab, setActiveTab] = useState("essay");
+  const [activeTab, setActiveTab] = useState<"essay" | "short-notes">("essay");
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
   const [hasSearchResults, setHasSearchResults] = useState(true);
   const [isSearching, setIsSearching] = useState(false);
@@ -48,7 +48,8 @@ export const useQuestionBank = () => {
         let hasInnerContent = false;
 
         for (const [typeKey, questions] of Object.entries(innerSubtopic.subtopics)) {
-          if (typeKey === (type === "essay" ? "essay" : "short-note" || "short-notes")) {
+          if (typeKey === "essay" && type === "essay" || 
+              (typeKey === "short-note" || typeKey === "short-notes") && type === "short-notes") {
             const filteredQuestions = searchInQuestions(questions.questions, query);
             
             if (filteredQuestions.length > 0) {
@@ -92,7 +93,7 @@ export const useQuestionBank = () => {
     if (!query.trim()) {
       setHasSearchResults(true);
       setIsSearching(false);
-      return QUESTION_BANK_DATA;
+      return QUESTION_BANK_DATA as { [key: string]: Topic };
     }
     
     setIsSearching(true);

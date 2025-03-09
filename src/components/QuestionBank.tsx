@@ -69,14 +69,14 @@ const QuestionBank = () => {
 
   if (!isRendered) {
     return (
-      <div className="bg-black dark:bg-black h-full min-h-[600px] flex items-center justify-center">
+      <div className="bg-white dark:bg-black h-full min-h-[600px] flex items-center justify-center">
         <div className="animate-pulse text-gray-500">Loading...</div>
       </div>
     );
   }
 
   return (
-    <div className="bg-background dark:bg-black h-full min-h-[600px]">
+    <div className="bg-white dark:bg-black h-full min-h-[600px]">
       <div className="flex-1 p-4 max-w-4xl mx-auto space-y-4" {...handlers}>
         <Tabs 
           defaultValue="essay" 
@@ -87,13 +87,13 @@ const QuestionBank = () => {
           <TabsList className="w-full grid grid-cols-2 h-12 bg-gray-100 dark:bg-gray-950 rounded-lg mb-4">
             <TabsTrigger 
               value="essay" 
-              className="text-lg font-medium data-[state=active]:text-foreground dark:data-[state=active]:text-white data-[state=active]:bg-transparent data-[state=active]:after:content-[''] data-[state=active]:after:absolute data-[state=active]:after:left-0 data-[state=active]:after:right-0 data-[state=active]:after:bottom-0 data-[state=active]:after:h-0.5 data-[state=active]:after:bg-foreground dark:data-[state=active]:after:bg-white relative"
+              className="text-lg font-medium text-gray-700 dark:text-gray-400 data-[state=active]:text-black dark:data-[state=active]:text-white data-[state=active]:bg-transparent data-[state=active]:after:content-[''] data-[state=active]:after:absolute data-[state=active]:after:left-0 data-[state=active]:after:right-0 data-[state=active]:after:bottom-0 data-[state=active]:after:h-0.5 data-[state=active]:after:bg-black dark:data-[state=active]:after:bg-white relative"
             >
               Essay
             </TabsTrigger>
             <TabsTrigger 
               value="short-notes"
-              className="text-lg font-medium data-[state=active]:text-foreground dark:data-[state=active]:text-white data-[state=active]:bg-transparent data-[state=active]:after:content-[''] data-[state=active]:after:absolute data-[state=active]:after:left-0 data-[state=active]:after:right-0 data-[state=active]:after:bottom-0 data-[state=active]:after:h-0.5 data-[state=active]:after:bg-foreground dark:data-[state=active]:after:bg-white relative"
+              className="text-lg font-medium text-gray-700 dark:text-gray-400 data-[state=active]:text-black dark:data-[state=active]:text-white data-[state=active]:bg-transparent data-[state=active]:after:content-[''] data-[state=active]:after:absolute data-[state=active]:after:left-0 data-[state=active]:after:right-0 data-[state=active]:after:bottom-0 data-[state=active]:after:h-0.5 data-[state=active]:after:bg-black dark:data-[state=active]:after:bg-white relative"
             >
               Short notes
             </TabsTrigger>

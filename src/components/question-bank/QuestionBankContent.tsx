@@ -28,13 +28,13 @@ const QuestionBankContent = ({
       <Accordion 
         type="multiple" 
         value={expandedItems}
-        className="w-full"
+        className="w-full text-gray-800 dark:text-gray-200"
       >
         {Object.entries(filteredData).map(([topicKey, topic]) => (
           <TopicAccordion 
             key={topicKey}
             topicKey={topicKey}
-            topic={topic as Topic}
+            topic={topic}
             isExpanded={searchQuery.trim() !== ""}
             activeTab={activeTab}
           />

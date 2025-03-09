@@ -1,6 +1,5 @@
 
 import { Book } from "lucide-react";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Accordion,
   AccordionContent,
@@ -22,9 +21,9 @@ const TopicAccordion = ({ topicKey, topic, isExpanded = false, activeTab }: Topi
     <AccordionItem 
       value={topicKey} 
       key={topicKey}
-      className="animate-fade-in transition-all duration-300"
+      className="animate-fade-in transition-all duration-300 text-gray-800 dark:text-gray-200"
     >
-      <AccordionTrigger className="px-4 hover:bg-white/50 dark:hover:bg-gray-800/50 rounded-lg transition-all duration-200">
+      <AccordionTrigger className="px-4 hover:bg-gray-100 dark:hover:bg-gray-800/50 rounded-lg transition-all duration-200">
         <div className="flex items-center space-x-3">
           <Book className="h-6 w-6 text-blue-600 dark:text-blue-400" />
           <h3 className="text-xl md:text-2xl font-semibold">{topic.name}</h3>
