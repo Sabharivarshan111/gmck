@@ -211,44 +211,13 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Load messages from localStorage on mount ONLY for regular chat messages, not triple-tapped ones
+  // Clear localStorage on component mount to ensure chat history doesn't persist across refreshes
   useEffect(() => {
-    try {
-      const savedMessages = localStorage.getItem("aiChatMessages");
-      if (savedMessages) {
-        const parsedMessages = JSON.parse(savedMessages);
-        if (Array.isArray(parsedMessages)) {
-          // Filter out any triple-tapped messages
-          const filteredMessages = parsedMessages.filter(msg => {
-            return !(msg.role === 'user' && msg.content.includes('Triple-tapped:'));
-          });
-          setMessages(filteredMessages);
-        }
-      }
-    } catch (e) {
-      console.error("Error loading saved messages:", e);
-    }
+    localStorage.removeItem("aiChatMessages");
   }, []);
 
-  // Save messages to localStorage when they change
-  useEffect(() => {
-    if (messages.length > 0) {
-      // Filter out triple-tapped messages before saving
-      const messagesToSave = messages.filter(msg => {
-        return !(msg.role === 'user' && msg.content.includes('Triple-tapped:'));
-      });
-      
-      if (messagesToSave.length > 0) {
-        localStorage.setItem("aiChatMessages", JSON.stringify(messagesToSave));
-      } else {
-        // Clear localStorage when no regular messages remain
-        localStorage.removeItem("aiChatMessages");
-      }
-    } else {
-      // Clear localStorage when messages are empty
-      localStorage.removeItem("aiChatMessages");
-    }
-  }, [messages]);
+  // We're intentionally removing these localStorage saving functions
+  // No need to save messages to localStorage anymore
 
   const handleSubmitQuestion = useCallback(async (questionText: string) => {
     if (!questionText || !questionText.trim()) {
@@ -384,7 +353,7 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
     clearRateLimit();
     // Also clear the request queue
     requestQueue.current = [];
-    localStorage.removeItem("aiChatMessages");
+    // No need to clear localStorage since we're not using it anymore
     toast({
       title: "Chat history cleared",
     });
