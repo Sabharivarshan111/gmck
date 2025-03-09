@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -282,13 +283,13 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
       className="relative"
     >
       <Card 
-        className={`bg-gray-900/50 border-gray-800/50 hover:bg-gray-900/70 transition-all duration-300 mb-2 relative overflow-hidden ${
+        className={`bg-gray-900/50 border-gray-800/50 hover:bg-gray-900/70 transition-all duration-300 mb-3 relative overflow-hidden ${
           showAnimation ? 'ring-2 ring-blue-400/50' : ''
         }`}
         onClick={handleTouch}
       >
-        <CardContent className="p-4">
-          <div className="flex items-start gap-2">
+        <CardContent className="p-5">
+          <div className="flex items-start gap-3">
             <div className="flex-shrink-0 mt-1">
               <Checkbox
                 checked={isCompleted}
@@ -298,31 +299,31 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
             </div>
             
             <div className="flex-1 min-w-0">
-              <p className={`text-base font-medium ${
+              <p className={`text-lg font-medium ${
                 isCompleted ? 'text-gray-500' : 'text-gray-200'
               }`}>
                 {cleanQuestionText}
               </p>
               
               {isLoadingAI && (
-                <p className="text-xs text-blue-400 mt-1 animate-pulse">
+                <p className="text-sm text-blue-400 mt-2 animate-pulse">
                   Getting answer... (may take up to 30 seconds)
                 </p>
               )}
               
               {isRateLimited ? (
-                <p className="text-xs text-amber-400 mt-1">
+                <p className="text-sm text-amber-400 mt-2">
                   Rate limit reached. Please wait before trying again.
                 </p>
               ) : (
-                <p className="text-xs text-gray-400 mt-1">
+                <p className="text-sm text-gray-400 mt-2">
                   Triple tap to get AI explanation
                 </p>
               )}
             </div>
             
             <div className="flex-shrink-0 ml-2">
-              <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gray-800 text-gray-300 text-sm">
+              <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gray-800 text-gray-300 text-base">
                 {displayNumber}
               </span>
             </div>

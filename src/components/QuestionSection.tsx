@@ -22,10 +22,10 @@ const QuestionSection = ({ subtopics, activeTab }: QuestionSectionProps) => {
         
         return (
           <div key={questionTypeKey} className="w-full">
-            <h6 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
+            <h6 className="text-base font-medium text-gray-600 dark:text-gray-400 mb-3">
               {questionType.name}
             </h6>
-            <div className="space-y-2 max-w-full">
+            <div className="space-y-4 max-w-full">
               {questionType.questions.map((question, index) => (
                 <QuestionCard
                   key={index}

@@ -36,9 +36,6 @@ const QuestionBankContent = ({
     setLocalExpandedItems(value);
   };
 
-  console.log("Expanded items:", localExpandedItems);
-  console.log("Filtered data keys:", Object.keys(filteredData));
-
   return (
     <div className="grid gap-4">
       <Accordion 
