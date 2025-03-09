@@ -41,21 +41,46 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
   };
   
   const getExamDateCount = (text: string) => {
+    // Check for pattern like (Feb 14;Aug 13;Feb 12)
     const datePattern = /\(((?:[^()]*?(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[^()]*?;)*(?:[^()]*?(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[^()]*?))\)/;
     const dateMatch = text.match(datePattern);
     
     if (dateMatch && dateMatch[1]) {
+      // Count the number of dates by counting semicolons + 1
       const semicolonCount = (dateMatch[1].match(/;/g) || []).length;
       return semicolonCount + 1;
     }
     return 0;
   };
   
+  const hasPageNumber = (text: string) => {
+    return text.includes("(Pg.No:");
+  };
+  
   const asteriskCount = getAsteriskCount(question);
   const examDateCount = asteriskCount === 0 ? getExamDateCount(question) : 0;
   
   // If there's no asterisk count and no exam date count, display the index + 1
-  const displayNumber = asteriskCount > 0 ? asteriskCount : examDateCount > 0 ? examDateCount : index + 1;
+  // Explicitly check both conditions to ensure we're getting proper numbering
+  const displayNumber = asteriskCount > 0 ? 
+    asteriskCount : 
+    examDateCount > 0 ? 
+      examDateCount : 
+      index + 1;
+  
+  // Debugging to verify counts
+  useEffect(() => {
+    if (displayNumber > index + 1 && asteriskCount === 0 && examDateCount === 0) {
+      console.log("Incorrect numbering detected:", {
+        question,
+        index,
+        displayNumber,
+        asteriskCount,
+        examDateCount,
+        hasPageNo: hasPageNumber(question)
+      });
+    }
+  }, [question, index, displayNumber, asteriskCount, examDateCount]);
   
   useEffect(() => {
     const savedState = localStorage.getItem(questionId);
