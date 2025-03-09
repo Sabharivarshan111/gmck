@@ -37,13 +37,13 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
         }`}
         onClick={handleTouch}
       >
-        <CardContent className="p-3 h-full">
-          <div className="flex gap-2.5 items-start h-full">
+        <CardContent className="p-4 sm:p-5 h-full">
+          <div className="flex gap-3 items-start h-full">
             <div className="flex-shrink-0 pt-0.5">
               <Checkbox
                 checked={isCompleted}
                 onCheckedChange={(checked) => handleCheckedChange(checked as boolean)}
-                className="h-3.5 w-3.5 border-gray-600 data-[state=checked]:border-gray-400"
+                className="h-4 w-4 border-gray-600 data-[state=checked]:border-gray-400"
               />
             </div>
             
@@ -55,24 +55,24 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
               </p>
               
               {isLoadingAI && (
-                <p className="text-xs sm:text-sm text-blue-400 mt-1 animate-pulse">
+                <p className="text-xs sm:text-sm text-blue-400 mt-2 animate-pulse">
                   Getting answer...
                 </p>
               )}
               
               {isRateLimited ? (
-                <p className="text-[11px] sm:text-xs text-amber-400 mt-1">
+                <p className="text-[11px] sm:text-xs text-amber-400 mt-2">
                   Rate limited
                 </p>
               ) : (
-                <p className="text-[11px] sm:text-xs text-gray-400 mt-1">
+                <p className="text-[11px] sm:text-xs text-gray-400 mt-2">
                   Triple tap for AI
                 </p>
               )}
             </div>
             
-            <div className="flex-shrink-0 ml-1">
-              <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-gray-800 text-gray-300 text-[11px] sm:text-xs">
+            <div className="flex-shrink-0 ml-2">
+              <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-gray-800 text-gray-300 text-[11px] sm:text-xs">
                 {displayNumber}
               </span>
             </div>
