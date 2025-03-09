@@ -22,7 +22,7 @@ const QuestionSection = ({ subtopics, activeTab }: QuestionSectionProps) => {
         
         return (
           <div key={questionTypeKey} className="w-full">
-            <h6 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
+            <h6 className="text-base font-medium text-gray-600 dark:text-gray-400 mb-3">
               {questionType.name}
             </h6>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
