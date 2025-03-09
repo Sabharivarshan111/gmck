@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -45,7 +44,6 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
     const dateMatch = text.match(datePattern);
     
     if (dateMatch && dateMatch[1]) {
-      // Count the number of semicolons and add 1 to get the total number of dates
       const semicolonCount = (dateMatch[1].match(/;/g) || []).length;
       return semicolonCount + 1;
     }
@@ -62,7 +60,6 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
     }
   }, [questionId]);
   
-  // Clear all timeouts on unmount
   useEffect(() => {
     return () => {
       if (touchTimeoutRef.current) {
@@ -86,7 +83,6 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
   };
   
   const handleTripleTap = async () => {
-    // Don't proceed if already loading or rate limited
     if (isLoadingAI || isRateLimited) {
       if (isRateLimited) {
         toast({
@@ -98,8 +94,11 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
       return;
     }
     
+    let cleanQuestion = "";
+    let contextualQuestion = "";
+    
     try {
-      let cleanQuestion = question
+      cleanQuestion = question
         .replace(/\*+/g, '')
         .replace(/\(Pg\.No: [^)]+\)/, '')
         .replace(/\([^)]*(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[^)]*\)/, '')
@@ -110,7 +109,7 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
       const currentPath = window.location.pathname;
       const isPathologyQuestion = currentPath.includes('pathology');
       
-      let contextualQuestion = cleanQuestion;
+      contextualQuestion = cleanQuestion;
       if (isPathologyQuestion) {
         contextualQuestion = `Pathology question: ${cleanQuestion}`;
       }
@@ -124,35 +123,30 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
       
       console.log("Sending triple-tapped question to Supabase function:", contextualQuestion);
       
-      // Set a client-side timeout for the entire operation - safeguard against stalled requests
       if (requestTimeoutRef.current) {
         clearTimeout(requestTimeoutRef.current);
       }
       
-      // Client-side timeout as a backup
       const timeoutPromise = new Promise<{data: null, error: Error}>((resolve) => {
         requestTimeoutRef.current = setTimeout(() => {
           resolve({
             data: null,
             error: new Error("Request took too long to complete. The AI service might be busy.")
           });
-        }, 35000); // 35 second client-side timeout (slightly longer than the server timeout)
+        }, 35000);
       });
       
-      // Actual API request
       const apiPromise = supabase.functions.invoke('ask-gemini', {
         body: { prompt: `Triple-tapped: ${contextualQuestion}` }
       });
       
-      // Race between the API call and the timeout
       const { data, error } = await Promise.race([apiPromise, timeoutPromise]);
       
-      // Clear the timeout if the API responded in time
       if (requestTimeoutRef.current) {
         clearTimeout(requestTimeoutRef.current);
         requestTimeoutRef.current = null;
       }
-        
+      
       console.log("Response received:", data ? "Data received" : "No data", error ? "Error received" : "No error");
       
       if (error) {
@@ -168,16 +162,13 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
       if (data.error) {
         console.error("AI service error:", data.error);
         
-        // Handle rate limiting specifically
         if (data.isRateLimit) {
           setIsRateLimited(true);
           
-          // Clear any existing timeout
           if (rateLimitTimeoutRef.current) {
             clearTimeout(rateLimitTimeoutRef.current);
           }
           
-          // Set timeout to clear rate limit after 30 seconds
           rateLimitTimeoutRef.current = setTimeout(() => {
             setIsRateLimited(false);
             rateLimitTimeoutRef.current = null;
@@ -206,7 +197,6 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
     } catch (apiError: any) {
       console.error("API request error:", apiError);
       
-      // Still create an event to show something in the chat
       toast({
         title: "Error getting answer",
         description: apiError.message.includes("Rate limit") 
@@ -217,7 +207,6 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
         variant: "destructive"
       });
       
-      // Show a helpful error message in the chat for timeouts
       if (apiError.message.includes("took too long") || apiError.message.includes("timed out")) {
         const errorEvent = new CustomEvent('ai-triple-tap-answer', { 
           detail: { 
@@ -227,7 +216,6 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
         });
         window.dispatchEvent(errorEvent);
       }
-      // Only show non-rate limit errors in the chat
       else if (!apiError.message.includes("Rate limit")) {
         const errorEvent = new CustomEvent('ai-triple-tap-answer', { 
           detail: { 
