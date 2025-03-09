@@ -40,18 +40,15 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
   };
   
   const hasExamDate = (text: string) => {
-    // Check for pattern like (Feb 14;Aug 13;Feb 12)
     const datePattern = /\((?:[^()]*?(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[^()]*?)\)/;
     return datePattern.test(text);
   };
   
   const getExamDateCount = (text: string) => {
-    // Check for pattern like (Feb 14;Aug 13;Feb 12)
     const datePattern = /\(((?:[^()]*?(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[^()]*?;)*(?:[^()]*?(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[^()]*?))\)/;
     const dateMatch = text.match(datePattern);
     
     if (dateMatch && dateMatch[1]) {
-      // Count the number of dates by counting semicolons + 1
       const semicolonCount = (dateMatch[1].match(/;/g) || []).length;
       return semicolonCount + 1;
     }
@@ -298,7 +295,7 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
             </div>
             
             <div className="flex-1 min-w-0">
-              <p className={`text-base font-medium ${
+              <p className={`text-base font-medium break-words pr-2 ${
                 isCompleted ? 'text-gray-500' : 'text-gray-200'
               }`}>
                 {cleanQuestionText}
@@ -321,7 +318,7 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
               )}
             </div>
             
-            <div className="flex-shrink-0 ml-2">
+            <div className="flex-shrink-0">
               <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gray-800 text-gray-300 text-sm">
                 {displayNumber}
               </span>
