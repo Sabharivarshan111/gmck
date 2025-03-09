@@ -32,47 +32,47 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
       className="relative w-full h-full"
     >
       <Card 
-        className={`bg-gray-900/50 border-gray-800/50 hover:bg-gray-900/70 transition-all duration-300 h-full ${
+        className={`bg-gray-900/50 border-gray-800/50 hover:bg-gray-900/70 transition-all duration-300 h-full min-h-[120px] ${
           showAnimation ? 'ring-2 ring-blue-400/50' : ''
         }`}
         onClick={handleTouch}
       >
-        <CardContent className="p-4 sm:p-5 h-full">
-          <div className="flex gap-3 items-start h-full">
-            <div className="flex-shrink-0 pt-0.5">
+        <CardContent className="p-5 sm:p-6 h-full">
+          <div className="flex gap-4 items-start h-full">
+            <div className="flex-shrink-0 pt-1">
               <Checkbox
                 checked={isCompleted}
                 onCheckedChange={(checked) => handleCheckedChange(checked as boolean)}
-                className="h-4 w-4 border-gray-600 data-[state=checked]:border-gray-400"
+                className="h-5 w-5 border-gray-600 data-[state=checked]:border-gray-400"
               />
             </div>
             
             <div className="flex-grow min-w-0">
-              <p className={`text-sm sm:text-base font-medium break-words ${
+              <p className={`text-base sm:text-lg font-medium break-words leading-relaxed ${
                 isCompleted ? 'text-gray-500' : 'text-gray-200'
               }`}>
                 {cleanedQuestionText}
               </p>
               
               {isLoadingAI && (
-                <p className="text-xs sm:text-sm text-blue-400 mt-2 animate-pulse">
+                <p className="text-sm sm:text-base text-blue-400 mt-3 animate-pulse">
                   Getting answer...
                 </p>
               )}
               
               {isRateLimited ? (
-                <p className="text-[11px] sm:text-xs text-amber-400 mt-2">
+                <p className="text-xs sm:text-sm text-amber-400 mt-3">
                   Rate limited
                 </p>
               ) : (
-                <p className="text-[11px] sm:text-xs text-gray-400 mt-2">
+                <p className="text-xs sm:text-sm text-gray-400 mt-3">
                   Triple tap for AI
                 </p>
               )}
             </div>
             
             <div className="flex-shrink-0 ml-2">
-              <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-gray-800 text-gray-300 text-[11px] sm:text-xs">
+              <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gray-800 text-gray-300 text-sm sm:text-base font-medium">
                 {displayNumber}
               </span>
             </div>

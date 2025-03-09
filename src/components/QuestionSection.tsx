@@ -21,11 +21,11 @@ const QuestionSection = ({ subtopics, activeTab }: QuestionSectionProps) => {
         if (!shouldRender) return null;
         
         return (
-          <div key={questionTypeKey} className="w-full mb-6">
-            <h6 className="text-base font-medium text-gray-600 dark:text-gray-400 mb-4">
+          <div key={questionTypeKey} className="w-full mb-8">
+            <h6 className="text-lg font-medium text-gray-600 dark:text-gray-400 mb-5 px-2">
               {questionType.name}
             </h6>
-            <div className="grid grid-cols-1 gap-5 w-full">
+            <div className="grid grid-cols-1 gap-6 w-full">
               {questionType.questions.map((question, index) => (
                 <QuestionCard
                   key={index}
