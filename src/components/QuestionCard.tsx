@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -52,6 +53,9 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
   
   const asteriskCount = getAsteriskCount(question);
   const examDateCount = asteriskCount === 0 ? getExamDateCount(question) : 0;
+  
+  // If there's no asterisk count and no exam date count, display the index + 1
+  const displayNumber = asteriskCount > 0 ? asteriskCount : examDateCount > 0 ? examDateCount : index + 1;
   
   useEffect(() => {
     const savedState = localStorage.getItem(questionId);
@@ -299,7 +303,7 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
             </div>
             <div className="flex-shrink-0 ml-2">
               <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gray-800 text-gray-300 text-sm">
-                {asteriskCount > 0 ? asteriskCount : examDateCount > 0 ? examDateCount : index + 1}
+                {displayNumber}
               </span>
             </div>
           </div>
