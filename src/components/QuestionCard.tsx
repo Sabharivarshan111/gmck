@@ -275,6 +275,9 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
 
   const cleanQuestionText = question.replace(/\(Pg\.No: [^)]+\)/, '');
 
+  // Check if we have a double-digit number
+  const isDoubleDigit = displayNumber >= 10;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -323,7 +326,7 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
             </div>
             
             <div className="flex-shrink-0 ml-2">
-              <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gray-800 text-gray-300 text-base">
+              <span className={`inline-flex items-center justify-center ${isDoubleDigit ? 'w-12 h-12' : 'w-10 h-10'} rounded-full bg-gray-800 text-gray-300 text-base`}>
                 {displayNumber}
               </span>
             </div>
