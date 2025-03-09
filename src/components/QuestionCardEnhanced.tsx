@@ -12,16 +12,18 @@ interface QuestionCardEnhancedProps {
 const QuestionCardEnhanced: React.FC<QuestionCardEnhancedProps> = ({ question, index }) => {
   const [showAiTab, setShowAiTab] = useState(false);
   
-  const handleTripleTap = useTripleTap(() => {
-    setShowAiTab(prevState => !prevState);
-    if (!showAiTab) {
-      // Add a small delay to ensure smooth transition
-      setTimeout(() => {
-        document.getElementById(`question-${index}`)?.scrollIntoView({ 
-          behavior: 'smooth',
-          block: 'center'
-        });
-      }, 100);
+  const { handleTouch } = useTripleTap({
+    onTripleTap: () => {
+      setShowAiTab(prevState => !prevState);
+      if (!showAiTab) {
+        // Add a small delay to ensure smooth transition
+        setTimeout(() => {
+          document.getElementById(`question-${index}`)?.scrollIntoView({ 
+            behavior: 'smooth',
+            block: 'center'
+          });
+        }, 100);
+      }
     }
   });
 
@@ -29,7 +31,7 @@ const QuestionCardEnhanced: React.FC<QuestionCardEnhancedProps> = ({ question, i
     <div id={`question-${index}`}>
       <Card 
         className="mb-2 border-gray-800 hover:border-gray-700 transition-colors cursor-pointer" 
-        onClick={handleTripleTap}
+        onClick={handleTouch}
       >
         <CardContent className="p-3 text-left text-sm">
           <p className="whitespace-pre-wrap">{index + 1}. {question}</p>

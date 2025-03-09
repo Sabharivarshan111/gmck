@@ -19,7 +19,7 @@ export const useTripleTap = ({ onTripleTap, timeout = 500 }: UseTripleTapOptions
     };
   }, []);
   
-  const handleTouch = () => {
+  const handleTouch = (e?: React.MouseEvent | React.TouchEvent) => {
     const now = Date.now();
     
     if (touchTimeoutRef.current) {
