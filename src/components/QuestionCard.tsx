@@ -37,8 +37,8 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
         }`}
         onClick={handleTouch}
       >
-        <CardContent className="p-2 h-full">
-          <div className="flex gap-2 items-start h-full">
+        <CardContent className="p-3 h-full">
+          <div className="flex gap-2.5 items-start h-full">
             <div className="flex-shrink-0 pt-0.5">
               <Checkbox
                 checked={isCompleted}
