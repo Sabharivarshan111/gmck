@@ -21,17 +21,19 @@ const QuestionSection = ({ subtopics, activeTab }: QuestionSectionProps) => {
         if (!shouldRender) return null;
         
         return (
-          <div key={questionTypeKey}>
+          <div key={questionTypeKey} className="w-full">
             <h6 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
               {questionType.name}
             </h6>
-            {questionType.questions.map((question, index) => (
-              <QuestionCard
-                key={index}
-                question={question}
-                index={index}
-              />
-            ))}
+            <div className="space-y-2 max-w-full">
+              {questionType.questions.map((question, index) => (
+                <QuestionCard
+                  key={index}
+                  question={question}
+                  index={index}
+                />
+              ))}
+            </div>
           </div>
         );
       })}

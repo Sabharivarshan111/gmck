@@ -65,7 +65,6 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
   const asteriskCount = getAsteriskCount(question);
   const examDateCount = asteriskCount === 0 ? getExamDateCount(question) : 0;
   
-  // UPDATED FIX: Display "1" for questions without asterisks or exam dates
   const displayNumber = asteriskCount > 0 ? 
     asteriskCount : 
     hasExamDate(question) ? 
@@ -273,6 +272,8 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
     }, TOUCH_TIMEOUT);
   };
 
+  const cleanQuestionText = question.replace(/\(Pg\.No: [^)]+\)/, '');
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -287,7 +288,7 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
         onClick={handleTouch}
       >
         <CardContent className="p-4">
-          <div className="flex items-start gap-4">
+          <div className="flex items-start gap-2">
             <div className="flex-shrink-0 mt-1">
               <Checkbox
                 checked={isCompleted}
@@ -295,17 +296,20 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
                 className="h-5 w-5 border-gray-600 data-[state=checked]:border-gray-400"
               />
             </div>
-            <div className="flex-1">
-              <p className={`text-base font-medium whitespace-pre-wrap ${
+            
+            <div className="flex-1 min-w-0">
+              <p className={`text-base font-medium ${
                 isCompleted ? 'text-gray-500' : 'text-gray-200'
               }`}>
-                {question.replace(/\(Pg\.No: [^)]+\)/, '')}
+                {cleanQuestionText}
               </p>
+              
               {isLoadingAI && (
                 <p className="text-xs text-blue-400 mt-1 animate-pulse">
                   Getting answer... (may take up to 30 seconds)
                 </p>
               )}
+              
               {isRateLimited ? (
                 <p className="text-xs text-amber-400 mt-1">
                   Rate limit reached. Please wait before trying again.
@@ -316,6 +320,7 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
                 </p>
               )}
             </div>
+            
             <div className="flex-shrink-0 ml-2">
               <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gray-800 text-gray-300 text-sm">
                 {displayNumber}
