@@ -6,7 +6,7 @@ import { Topic, QuestionBankData } from "@/components/QuestionBank";
 export const useQuestionBank = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isMobile, setIsMobile] = useState(false);
-  const [activeTab, setActiveTab] = useState<"essay" | "short-notes">("essay");
+  const [activeTab, setActiveTab] = useState<"extras" | "essay" | "short-notes">("essay");
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
   const [hasSearchResults, setHasSearchResults] = useState(true);
   const [isSearching, setIsSearching] = useState(false);
