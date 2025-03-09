@@ -29,26 +29,26 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: index * 0.1 }}
-      className="relative"
+      className="relative w-full"
     >
       <Card 
-        className={`bg-gray-900/50 border-gray-800/50 hover:bg-gray-900/70 transition-all duration-300 mb-2 relative overflow-hidden ${
+        className={`bg-gray-900/50 border-gray-800/50 hover:bg-gray-900/70 transition-all duration-300 mb-2 relative overflow-hidden w-full ${
           showAnimation ? 'ring-2 ring-blue-400/50' : ''
         }`}
         onClick={handleTouch}
       >
-        <CardContent className="p-4">
-          <div className="flex items-start gap-2">
-            <div className="flex-shrink-0 mt-1">
+        <CardContent className="p-3">
+          <div className="flex gap-3">
+            <div className="flex-shrink-0 pt-1">
               <Checkbox
                 checked={isCompleted}
                 onCheckedChange={(checked) => handleCheckedChange(checked as boolean)}
-                className="h-5 w-5 border-gray-600 data-[state=checked]:border-gray-400"
+                className="h-4 w-4 border-gray-600 data-[state=checked]:border-gray-400"
               />
             </div>
             
-            <div className="flex-1 min-w-0">
-              <p className={`text-base font-medium break-words pr-2 ${
+            <div className="flex-grow">
+              <p className={`text-base font-medium break-words ${
                 isCompleted ? 'text-gray-500' : 'text-gray-200'
               }`}>
                 {cleanedQuestionText}
@@ -72,7 +72,7 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
             </div>
             
             <div className="flex-shrink-0">
-              <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gray-800 text-gray-300 text-sm">
+              <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-gray-800 text-gray-300 text-sm">
                 {displayNumber}
               </span>
             </div>
