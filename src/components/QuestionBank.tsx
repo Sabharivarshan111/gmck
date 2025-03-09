@@ -1,12 +1,11 @@
+
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Accordion } from "@/components/ui/accordion";
-import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Search, AlertTriangle } from "lucide-react";
-import { useEffect, useState, useCallback, useMemo } from "react";
 import { useSwipeable } from "react-swipeable";
-import { QUESTION_BANK_DATA } from "@/data/questionBankData";
-import TopicAccordion from "./TopicAccordion";
+import { useQuestionBank } from "@/hooks/use-question-bank";
+import SearchBar from "./question-bank/SearchBar";
+import NoResultsMessage from "./question-bank/NoResultsMessage";
+import QuestionBankContent from "./question-bank/QuestionBankContent";
 
 export interface Question {
   question: string;
@@ -40,26 +39,19 @@ export interface Topic {
 }
 
 const QuestionBank = () => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [isMobile, setIsMobile] = useState(false);
-  const [activeTab, setActiveTab] = useState("essay");
-  const [expandedItems, setExpandedItems] = useState<string[]>([]);
-  const [hasSearchResults, setHasSearchResults] = useState(true);
-  const [isSearching, setIsSearching] = useState(false);
-  const [isRendered, setIsRendered] = useState(false);
-
-  useEffect(() => {
-    setIsRendered(true);
-  }, []);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
+  const {
+    searchQuery,
+    activeTab,
+    expandedItems,
+    hasSearchResults,
+    isRendered,
+    essayFilteredData,
+    shortNotesFilteredData,
+    hasContentToDisplay,
+    setActiveTab,
+    setExpandedItems,
+    handleSearch
+  } = useQuestionBank();
 
   const handlers = useSwipeable({
     onSwipedLeft: () => {
@@ -75,134 +67,16 @@ const QuestionBank = () => {
     trackMouse: true
   });
 
-  const searchInQuestions = useCallback((questions: string[], query: string): string[] => {
-    if (!query.trim()) return questions;
-    const lowerQuery = query.toLowerCase();
-    return questions.filter(question => 
-      question.toLowerCase().includes(lowerQuery)
-    );
-  }, []);
-
-  const filterQuestions = useCallback((topic: Topic, type: "essay" | "short-notes", query: string): Topic | null => {
-    if (!query.trim()) return topic;
-    
-    let hasContent = false;
-    const filteredSubtopics: { [key: string]: SubTopic } = {};
-
-    for (const [subtopicKey, subtopic] of Object.entries(topic.subtopics)) {
-      const filteredInnerSubtopics: { [key: string]: SubTopicContent } = {};
-      let hasSubtopicContent = false;
-
-      for (const [innerKey, innerSubtopic] of Object.entries(subtopic.subtopics)) {
-        const filteredContent: { [key: string]: QuestionType } = {};
-        let hasInnerContent = false;
-
-        for (const [typeKey, questions] of Object.entries(innerSubtopic.subtopics)) {
-          if (typeKey === (type === "essay" ? "essay" : "short-note")) {
-            const filteredQuestions = searchInQuestions(questions.questions, query);
-            
-            if (filteredQuestions.length > 0) {
-              filteredContent[typeKey] = {
-                name: questions.name,
-                questions: filteredQuestions
-              };
-              hasInnerContent = true;
-              hasSubtopicContent = true;
-              hasContent = true;
-            }
-          }
-        }
-
-        if (hasInnerContent) {
-          filteredInnerSubtopics[innerKey] = {
-            name: innerSubtopic.name,
-            subtopics: filteredContent
-          };
-        }
-      }
-
-      if (hasSubtopicContent) {
-        filteredSubtopics[subtopicKey] = {
-          name: subtopic.name,
-          subtopics: filteredInnerSubtopics
-        };
-      }
-    }
-
-    return hasContent ? {
-      name: topic.name,
-      subtopics: filteredSubtopics
-    } : null;
-  }, [searchInQuestions]);
-
-  const getFilteredData = useCallback((type: "essay" | "short-notes", query: string) => {
-    const filteredData: { [key: string]: Topic } = {};
-    let hasResults = false;
-    
-    if (!query.trim()) {
-      setHasSearchResults(true);
-      setIsSearching(false);
-      return QUESTION_BANK_DATA;
-    }
-    
-    setIsSearching(true);
-    
-    for (const [key, topic] of Object.entries(QUESTION_BANK_DATA)) {
-      const filteredTopic = filterQuestions(topic as Topic, type, query);
-      if (filteredTopic) {
-        filteredData[key] = filteredTopic;
-        hasResults = true;
-      }
-    }
-    
-    setHasSearchResults(hasResults);
-    return filteredData;
-  }, [filterQuestions]);
-
-  const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    console.log("Search value:", value);
-    setSearchQuery(value);
-    
-    if (!value.trim()) {
-      setHasSearchResults(true);
-      setIsSearching(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (searchQuery.trim() !== "") {
-      const topicKeys = Object.keys(QUESTION_BANK_DATA);
-      setExpandedItems(topicKeys);
-    } else {
-      setExpandedItems([]);
-    }
-  }, [searchQuery]);
-
-  const essayFilteredData = useMemo(() => 
-    getFilteredData("essay", searchQuery), 
-    [getFilteredData, searchQuery]
-  );
-  
-  const shortNotesFilteredData = useMemo(() => 
-    getFilteredData("short-notes", searchQuery), 
-    [getFilteredData, searchQuery]
-  );
-
-  const hasContentToDisplay = !isSearching || 
-                             Object.keys(essayFilteredData).length > 0 || 
-                             Object.keys(shortNotesFilteredData).length > 0;
-
   if (!isRendered) {
     return (
-      <div className="bg-black h-full min-h-[600px] flex items-center justify-center">
+      <div className="bg-black dark:bg-black h-full min-h-[600px] flex items-center justify-center">
         <div className="animate-pulse text-gray-500">Loading...</div>
       </div>
     );
   }
 
   return (
-    <div className="bg-black h-full min-h-[600px]">
+    <div className="bg-background dark:bg-black h-full min-h-[600px]">
       <div className="flex-1 p-4 max-w-4xl mx-auto space-y-4" {...handlers}>
         <Tabs 
           defaultValue="essay" 
@@ -210,92 +84,49 @@ const QuestionBank = () => {
           className="w-full"
           onValueChange={(value) => setActiveTab(value as "essay" | "short-notes")}
         >
-          <TabsList className="w-full grid grid-cols-2 h-12 bg-gray-950 rounded-lg mb-4">
+          <TabsList className="w-full grid grid-cols-2 h-12 bg-gray-100 dark:bg-gray-950 rounded-lg mb-4">
             <TabsTrigger 
               value="essay" 
-              className="text-lg font-medium data-[state=active]:text-white data-[state=active]:bg-transparent data-[state=active]:after:content-[''] data-[state=active]:after:absolute data-[state=active]:after:left-0 data-[state=active]:after:right-0 data-[state=active]:after:bottom-0 data-[state=active]:after:h-0.5 data-[state=active]:after:bg-white relative"
+              className="text-lg font-medium data-[state=active]:text-foreground dark:data-[state=active]:text-white data-[state=active]:bg-transparent data-[state=active]:after:content-[''] data-[state=active]:after:absolute data-[state=active]:after:left-0 data-[state=active]:after:right-0 data-[state=active]:after:bottom-0 data-[state=active]:after:h-0.5 data-[state=active]:after:bg-foreground dark:data-[state=active]:after:bg-white relative"
             >
               Essay
             </TabsTrigger>
             <TabsTrigger 
               value="short-notes"
-              className="text-lg font-medium data-[state=active]:text-white data-[state=active]:bg-transparent data-[state=active]:after:content-[''] data-[state=active]:after:absolute data-[state=active]:after:left-0 data-[state=active]:after:right-0 data-[state=active]:after:bottom-0 data-[state=active]:after:h-0.5 data-[state=active]:after:bg-white relative"
+              className="text-lg font-medium data-[state=active]:text-foreground dark:data-[state=active]:text-white data-[state=active]:bg-transparent data-[state=active]:after:content-[''] data-[state=active]:after:absolute data-[state=active]:after:left-0 data-[state=active]:after:right-0 data-[state=active]:after:bottom-0 data-[state=active]:after:h-0.5 data-[state=active]:after:bg-foreground dark:data-[state=active]:after:bg-white relative"
             >
               Short notes
             </TabsTrigger>
           </TabsList>
 
-          <div className="relative mb-6">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-            <Input
-              type="text"
-              placeholder="Search questions here"
-              value={searchQuery}
-              onChange={handleSearch}
-              className="w-full bg-gray-800/50 border-none pl-10 h-12 rounded-full text-gray-300 placeholder:text-gray-400"
-            />
-          </div>
+          <SearchBar 
+            searchQuery={searchQuery}
+            handleSearch={handleSearch}
+          />
 
           <ScrollArea className="h-[calc(100vh-12rem)] min-h-[500px]">
             {!hasSearchResults && searchQuery.trim() !== "" && (
-              <div className="flex flex-col items-center justify-center py-8 text-gray-400">
-                <AlertTriangle className="h-8 w-8 mb-2" />
-                <p>No results found for "{searchQuery}"</p>
-              </div>
+              <NoResultsMessage searchQuery={searchQuery} />
             )}
             
-            <TabsContent value="essay" className="mt-0 min-h-[500px] bg-black">
-              {hasContentToDisplay ? (
-                <div className="grid gap-4">
-                  <Accordion 
-                    type="multiple" 
-                    value={expandedItems}
-                    onValueChange={setExpandedItems}
-                    className="w-full"
-                  >
-                    {Object.entries(essayFilteredData).map(([topicKey, topic]) => (
-                      <TopicAccordion 
-                        key={topicKey}
-                        topicKey={topicKey}
-                        topic={topic as Topic}
-                        isExpanded={searchQuery.trim() !== ""}
-                        activeTab="essay"
-                      />
-                    ))}
-                  </Accordion>
-                </div>
-              ) : (
-                <div className="flex flex-col items-center justify-center py-8 text-gray-400 min-h-[500px] bg-black">
-                  <p>No content available</p>
-                </div>
-              )}
+            <TabsContent value="essay" className="mt-0 min-h-[500px] bg-transparent">
+              <QuestionBankContent
+                activeTab="essay"
+                hasContentToDisplay={hasContentToDisplay}
+                filteredData={essayFilteredData}
+                expandedItems={expandedItems}
+                searchQuery={searchQuery}
+              />
             </TabsContent>
 
-            <TabsContent value="short-notes" className="mt-0 min-h-[500px] bg-black">
-              {hasContentToDisplay ? (
-                <div className="grid gap-4">
-                  <Accordion 
-                    type="multiple"
-                    value={expandedItems}
-                    onValueChange={setExpandedItems}
-                    className="w-full"
-                  >
-                    {Object.entries(shortNotesFilteredData).map(([topicKey, topic]) => (
-                      <TopicAccordion 
-                        key={topicKey}
-                        topicKey={topicKey}
-                        topic={topic as Topic}
-                        isExpanded={searchQuery.trim() !== ""}
-                        activeTab="short-notes"
-                      />
-                    ))}
-                  </Accordion>
-                </div>
-              ) : (
-                <div className="flex flex-col items-center justify-center py-8 text-gray-400 min-h-[500px] bg-black">
-                  <p>No content available</p>
-                </div>
-              )}
+            <TabsContent value="short-notes" className="mt-0 min-h-[500px] bg-transparent">
+              <QuestionBankContent
+                activeTab="short-notes"
+                hasContentToDisplay={hasContentToDisplay}
+                filteredData={shortNotesFilteredData}
+                expandedItems={expandedItems}
+                searchQuery={searchQuery}
+              />
             </TabsContent>
           </ScrollArea>
         </Tabs>
