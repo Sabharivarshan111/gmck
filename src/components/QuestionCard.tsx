@@ -65,14 +65,12 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
   const asteriskCount = getAsteriskCount(question);
   const examDateCount = asteriskCount === 0 ? getExamDateCount(question) : 0;
   
-  // KEY FIX: If there are asterisks, use that count
-  // If there are exam dates but no asterisks, use that count
-  // Otherwise, ALWAYS use index + 1
+  // UPDATED FIX: Display "1" for questions without asterisks or exam dates
   const displayNumber = asteriskCount > 0 ? 
     asteriskCount : 
     hasExamDate(question) ? 
       examDateCount : 
-      index + 1;
+      1;  // Always show "1" for regular questions
   
   useEffect(() => {
     const savedState = localStorage.getItem(questionId);
