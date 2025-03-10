@@ -1,17 +1,18 @@
-
 import { useState, useEffect, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { McqOption } from "./QuestionBank";
 
 interface QuestionCardProps {
   question: string;
   index: number;
+  options?: McqOption[];
 }
 
-const QuestionCard = ({ question, index }: QuestionCardProps) => {
+const QuestionCard = ({ question, index, options }: QuestionCardProps) => {
   const generateQuestionId = (text: string) => {
     let hash = 0;
     for (let i = 0; i < text.length; i++) {
@@ -41,18 +42,15 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
   };
   
   const hasExamDate = (text: string) => {
-    // Check for pattern like (Feb 14;Aug 13;Feb 12)
     const datePattern = /\((?:[^()]*?(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[^()]*?)\)/;
     return datePattern.test(text);
   };
   
   const getExamDateCount = (text: string) => {
-    // Check for pattern like (Feb 14;Aug 13;Feb 12)
     const datePattern = /\(((?:[^()]*?(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[^()]*?;)*(?:[^()]*?(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[^()]*?))\)/;
     const dateMatch = text.match(datePattern);
     
     if (dateMatch && dateMatch[1]) {
-      // Count the number of dates by counting semicolons + 1
       const semicolonCount = (dateMatch[1].match(/;/g) || []).length;
       return semicolonCount + 1;
     }
@@ -307,6 +305,26 @@ const QuestionCard = ({ question, index }: QuestionCardProps) => {
               }`}>
                 {cleanQuestionText}
               </p>
+              
+              {options && options.length > 0 && (
+                <div className="mt-3 space-y-2">
+                  {options.map((option, optIndex) => (
+                    <div 
+                      key={optIndex} 
+                      className={`p-2 rounded-md ${
+                        option.isCorrect ? 'bg-green-900/30 border border-green-500/30' : 'bg-gray-800/40'
+                      }`}
+                    >
+                      <p className={`text-sm ${option.isCorrect ? 'text-green-300' : 'text-gray-300'}`}>
+                        {String.fromCharCode(97 + optIndex)}. {option.text}
+                        {option.isCorrect && (
+                          <span className="ml-2 text-xs text-green-400">✓ Correct</span>
+                        )}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
               
               {isLoadingAI && (
                 <p className="text-sm text-blue-400 mt-2 animate-pulse">

@@ -15,7 +15,7 @@ interface SubtopicAccordionProps {
   subtopicKey: string;
   subtopic: SubTopic;
   isExpanded?: boolean;
-  activeTab: "essay" | "short-notes";
+  activeTab: "essay" | "short-notes" | "mcqs";
 }
 
 const SubtopicAccordion = ({ subtopicKey, subtopic, isExpanded = false, activeTab }: SubtopicAccordionProps) => {
