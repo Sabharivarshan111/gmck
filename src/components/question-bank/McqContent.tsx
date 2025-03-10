@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
@@ -427,6 +428,413 @@ const McqContent = () => {
           { text: "Pseudomonas", isCorrect: false }
         ],
         explanation: "The phenylalanine deaminase (PDA) test is used to identify Proteus species. These bacteria can deaminate phenylalanine to phenylpyruvic acid, which produces a green color when ferric chloride is added, allowing differentiation from other Enterobacteriaceae."
+      }
+    ]
+  };
+
+  // Systematic bacteriology content for 2nd year
+  const systematicBacteriologyMcqs: McqData = {
+    name: "Chapter 3: Systematic bacteriology",
+    questions: [
+      {
+        question: "Phenotypic classification refers to classification based on:",
+        options: [
+          { text: "Direct analysis of genes in microbes", isCorrect: false },
+          { text: "Chromosomal and extrachromosomal DNA analysis of microbes", isCorrect: false },
+          { text: "Expressed characteristics of microorganisms", isCorrect: true },
+          { text: "Nucleotide sequencing of microbes", isCorrect: false }
+        ],
+        explanation: "Phenotypic classification is based on observable characteristics that are expressed by microorganisms, such as morphology, staining properties, biochemical reactions, and growth requirements."
+      },
+      {
+        question: "Incubation period refers to the time duration:",
+        options: [
+          { text: "Between entry of pathogen and exit of pathogen in body", isCorrect: false },
+          { text: "Between entry of pathogen in vector and entry in host", isCorrect: false },
+          { text: "Between entry of pathogen and manifestation of symptoms or signs in host", isCorrect: true },
+          { text: "Between entry of pathogen and its detection in host", isCorrect: false }
+        ],
+        explanation: "The incubation period is the time interval between the initial infection with a pathogen and the appearance of the first clinical signs or symptoms of disease. This varies widely among different infectious diseases."
+      },
+      {
+        question: "Which of the following is not a gram-positive coccus?",
+        options: [
+          { text: "Pneumococcus", isCorrect: false },
+          { text: "Meningococcus", isCorrect: true },
+          { text: "Enterococcus", isCorrect: false },
+          { text: "Staphylococcus", isCorrect: false }
+        ],
+        explanation: "Meningococcus (Neisseria meningitidis) is a gram-negative diplococci. The other options - Pneumococcus (Streptococcus pneumoniae), Enterococcus, and Staphylococcus - are all gram-positive cocci."
+      },
+      {
+        question: "Normal microbial flora are also called:",
+        options: [
+          { text: "Resident flora", isCorrect: false },
+          { text: "Commensal flora", isCorrect: false },
+          { text: "Transient flora", isCorrect: false },
+          { text: "All of these", isCorrect: true }
+        ],
+        explanation: "Normal microbial flora can be called resident flora (permanently colonizing the body), commensal flora (living in mutual non-harmful relationship), or transient flora (temporarily present). All these terms are used to describe the normal microbiota."
+      },
+      {
+        question: "All the following are constituents of normal flora EXCEPT:",
+        options: [
+          { text: "Gram-positive bacteria", isCorrect: false },
+          { text: "Gram-negative bacteria", isCorrect: false },
+          { text: "Yeast", isCorrect: true },
+          { text: "Viruses", isCorrect: false }
+        ],
+        explanation: "Yeast is not typically considered a constituent of normal microbial flora. While some yeasts like Candida may colonize certain body sites in small numbers, they are generally not considered part of the normal flora. Gram-positive bacteria, gram-negative bacteria, and certain viruses are normal constituents of the human microbiome."
+      },
+      {
+        question: "The major components of the intestinal flora constitute:",
+        options: [
+          { text: "Coliform bacteria", isCorrect: false },
+          { text: "Clostridium species", isCorrect: true },
+          { text: "Yeast", isCorrect: false },
+          { text: "Enterococcus species", isCorrect: false }
+        ],
+        explanation: "Clostridium species are major components of the intestinal flora, particularly in the colon. Anaerobic bacteria, including Bacteroides, Clostridium, and other anaerobes, outnumber aerobic bacteria in the intestine by 1000:1."
+      },
+      {
+        question: "Sterile body sites include all the following EXCEPT:",
+        options: [
+          { text: "CNS", isCorrect: false },
+          { text: "Nasopharynx", isCorrect: true },
+          { text: "Lungs", isCorrect: false },
+          { text: "Liver", isCorrect: false }
+        ],
+        explanation: "The nasopharynx is not a sterile body site; it is heavily colonized with normal flora. The CNS (cerebrospinal fluid, brain), deeper lung tissue, and liver are normally sterile sites in healthy individuals."
+      },
+      {
+        question: "Normal flora of skin includes all the following EXCEPT:",
+        options: [
+          { text: "α-streptococci", isCorrect: false },
+          { text: "Staphylococci", isCorrect: false },
+          { text: "Candida", isCorrect: false },
+          { text: "Lactobacilli", isCorrect: true }
+        ],
+        explanation: "Lactobacilli are not typical residents of skin flora. They are more commonly found in the vaginal flora and gastrointestinal tract. Skin flora primarily consists of staphylococci (especially S. epidermidis), α-streptococci, corynebacteria, and occasionally small numbers of Candida."
+      },
+      {
+        question: "The relationship between a host and the normal flora wherein both co-exist is called:",
+        options: [
+          { text: "Symbiosis", isCorrect: true },
+          { text: "Commensalism", isCorrect: false },
+          { text: "Parasitism", isCorrect: false },
+          { text: "Opportunistic infection", isCorrect: false }
+        ],
+        explanation: "Symbiosis refers to a close and long-term biological interaction between two different biological organisms. In the context of normal flora, it describes the mutually beneficial relationship between the host and the microorganisms."
+      },
+      {
+        question: "Normal flora in the human body, when administered in adequate amounts, confer a health benefit to the host. These organisms are known as:",
+        options: [
+          { text: "Probiotics", isCorrect: true },
+          { text: "Gnotobiotic", isCorrect: false },
+          { text: "Symbiotics", isCorrect: false },
+          { text: "Prebiotics", isCorrect: false }
+        ],
+        explanation: "Probiotics are live microorganisms that, when administered in adequate amounts, confer a health benefit on the host. They are often derived from normal flora and are used therapeutically to restore balance to the microbiome."
+      },
+      {
+        question: "Most common probiotics include:",
+        options: [
+          { text: "Fusobacterium and Lactobacillus", isCorrect: false },
+          { text: "Bacteroides and Fusobacterium", isCorrect: false },
+          { text: "Lactobacillus and Bifidobacterium", isCorrect: true },
+          { text: "Bifidobacterium and Propionibacterium", isCorrect: false }
+        ],
+        explanation: "Lactobacillus and Bifidobacterium species are the most commonly used probiotics. They are found naturally in fermented foods and are part of the normal human gastrointestinal and vaginal flora."
+      },
+      {
+        question: "Disturbance to the normal flora can be caused by:",
+        options: [
+          { text: "Prolonged antibiotic therapy", isCorrect: false },
+          { text: "Alternation of pH in the mucosa", isCorrect: false },
+          { text: "Immunosuppressive therapy", isCorrect: false },
+          { text: "All of these", isCorrect: true }
+        ],
+        explanation: "Normal flora can be disturbed by multiple factors, including prolonged antibiotic therapy (which kills beneficial bacteria), alteration of mucosal pH (which changes the environment), and immunosuppressive therapy (which alters host defenses)."
+      },
+      {
+        question: "Which of the following statements is NOT TRUE?",
+        options: [
+          { text: "Normal flora cause confusion in the laboratory diagnosis", isCorrect: false },
+          { text: "Clindamycin administration helps in the multiplication of normal flora", isCorrect: true },
+          { text: "Probiotics are used in treating antibiotic-associated colitis", isCorrect: false },
+          { text: "Fecal transplantation is attempted for irritable bowel syndrome", isCorrect: false }
+        ],
+        explanation: "Clindamycin administration does NOT help in the multiplication of normal flora. On the contrary, it is known to disrupt normal intestinal flora and is associated with antibiotic-associated colitis caused by Clostridium difficile overgrowth."
+      },
+      {
+        question: "Microorganisms that fail to grow in the presence of as low as 0.03% O2 are called:",
+        options: [
+          { text: "Aerotolerant", isCorrect: false },
+          { text: "Obligate anaerobes", isCorrect: true },
+          { text: "Facultative anaerobes", isCorrect: false },
+          { text: "Facultative aerobes", isCorrect: false }
+        ],
+        explanation: "Obligate anaerobes cannot tolerate even low levels of oxygen (as low as 0.03%) and die when exposed to oxygen. They lack the enzymes necessary to detoxify oxygen and its reactive intermediates."
+      },
+      {
+        question: "The FALSE statement about anaerobic cocci is:",
+        options: [
+          { text: "They are always pathogenic", isCorrect: true },
+          { text: "They are generally sensitive to penicillin", isCorrect: false },
+          { text: "They are normal inhabitants of the vagina, intestine and mouth", isCorrect: false },
+          { text: "They occur as cocci in pairs, groups and chains", isCorrect: false }
+        ],
+        explanation: "Anaerobic cocci are NOT always pathogenic. Many are part of the normal flora in the vagina, intestine, and mouth, and only cause disease under certain conditions, such as tissue injury or compromised host defenses."
+      },
+      {
+        question: "The most commonly isolated anaerobe from clinical specimens is:",
+        options: [
+          { text: "Fusobacterium", isCorrect: false },
+          { text: "Lactobacillus", isCorrect: false },
+          { text: "Bacteroides", isCorrect: true },
+          { text: "Prevotella", isCorrect: false }
+        ],
+        explanation: "Bacteroides species, particularly Bacteroides fragilis, are the most commonly isolated anaerobes from clinical specimens. They are particularly associated with intra-abdominal infections and abscesses."
+      },
+      {
+        question: "Usually, pus from anaerobic infections is putrid, with a nauseating odour. An exception to this is infection with:",
+        options: [
+          { text: "Bacteroids fragilis", isCorrect: true },
+          { text: "Prevotella", isCorrect: false },
+          { text: "Porphyromonas", isCorrect: false },
+          { text: "Fusobacterium", isCorrect: false }
+        ],
+        explanation: "Bacteroides fragilis infections typically do not produce foul-smelling pus, unlike other anaerobic infections. This is due to differences in metabolic end products compared to other anaerobes."
+      },
+      {
+        question: "The predominant flora in the human GIT is anaerobic. The number of anaerobic bacteria in the colon is:",
+        options: [
+          { text: "10,000/g", isCorrect: false },
+          { text: "105/g", isCorrect: false },
+          { text: "107/g", isCorrect: false },
+          { text: "1011/g", isCorrect: true }
+        ],
+        explanation: "The colon contains an extremely high density of bacteria, with anaerobes reaching concentrations of approximately 10^11 (100 billion) organisms per gram of feces. This is one of the highest concentrations of microbes found anywhere in nature."
+      },
+      {
+        question: "Most enteric bacilli are motile. The one which is non-motile is:",
+        options: [
+          { text: "Salmonella", isCorrect: false },
+          { text: "E. coli", isCorrect: false },
+          { text: "Klebsiella", isCorrect: true },
+          { text: "Proteus", isCorrect: false }
+        ],
+        explanation: "Klebsiella species are non-motile enteric bacilli. They lack flagella, which are the structures that provide motility to many other Enterobacteriaceae, such as Salmonella, E. coli, and Proteus."
+      },
+      {
+        question: "The always pathogenic Enterobacteriaceae is:",
+        options: [
+          { text: "E. coli", isCorrect: false },
+          { text: "Klebsiella", isCorrect: false },
+          { text: "Shigella", isCorrect: true },
+          { text: "Yersinia", isCorrect: false }
+        ],
+        explanation: "Shigella species are always considered pathogenic; they are not found as part of normal human flora. In contrast, E. coli and Klebsiella can be part of normal intestinal flora, and only certain strains or serotypes are pathogenic."
+      },
+      {
+        question: "Serotyping or antigenic typing of E. coli is based on:",
+        options: [
+          { text: "Somatic antigen O", isCorrect: false },
+          { text: "Flagellar antigen H", isCorrect: false },
+          { text: "Capsular antigen K", isCorrect: false },
+          { text: "All of these", isCorrect: true }
+        ],
+        explanation: "Serotyping of E. coli is based on all three antigens: the somatic O antigen (lipopolysaccharide), the flagellar H antigen, and the capsular K antigen. The combination of these antigens defines specific serotypes, which may be associated with particular virulence properties."
+      },
+      {
+        question: "The following are TRUE about the somatic antigen (antigen O) of E. coli EXCEPT:",
+        options: [
+          { text: "It is a lipopolysaccharide", isCorrect: false },
+          { text: "It is heat-stable", isCorrect: false },
+          { text: "It is associated with virulence", isCorrect: false },
+          { text: "'Early' groups are pathogenic", isCorrect: true }
+        ],
+        explanation: "The statement that 'Early' O groups are pathogenic is incorrect. Pathogenicity in E. coli is not determined by whether an O antigen was discovered early or late, but rather by specific serotypes associated with virulence factors. The O antigen is indeed a lipopolysaccharide, is heat-stable, and is associated with virulence."
+      },
+      {
+        question: "The commonest culture media used for Leptospira is:",
+        options: [
+          { text: "Korthof's", isCorrect: false },
+          { text: "Fletcher's", isCorrect: false },
+          { text: "Stuart's", isCorrect: false },
+          { text: "EMJH", isCorrect: true }
+        ],
+        explanation: "EMJH (Ellinghausen-McCullough-Johnson-Harris) medium is the most commonly used culture medium for Leptospira species. It contains long-chain fatty acids as a carbon source and bovine serum albumin to detoxify fatty acids."
+      },
+      {
+        question: "Clostridium perfringens has the shape of a:",
+        options: [
+          { text: "Spindle", isCorrect: false },
+          { text: "Club", isCorrect: true },
+          { text: "Tennis racket", isCorrect: false },
+          { text: "Drumstick", isCorrect: false }
+        ],
+        explanation: "Clostridium perfringens cells have a club-shaped appearance, with a wider end where the spore may form. This distinguishes it from other Clostridium species, which may have different characteristic shapes."
+      },
+      {
+        question: "Epidemic relapsing fever is caused by:",
+        options: [
+          { text: "Borrelia recurrentis", isCorrect: true },
+          { text: "B. burgdorferi", isCorrect: false },
+          { text: "B. duttonii", isCorrect: false },
+          { text: "B. vincentii", isCorrect: false }
+        ],
+        explanation: "Borrelia recurrentis is the causative agent of epidemic (louse-borne) relapsing fever. It is transmitted by the body louse Pediculus humanus corporis and has historically caused large outbreaks in crowded conditions with poor hygiene."
+      },
+      {
+        question: "The vector for endemic relapsing fever is:",
+        options: [
+          { text: "Pediculus humanus corporis", isCorrect: false },
+          { text: "Pediculus humanus capitus", isCorrect: false },
+          { text: "Ornithodoros ticks", isCorrect: true },
+          { text: "Ixodes ticks", isCorrect: false }
+        ],
+        explanation: "Endemic (tick-borne) relapsing fever is transmitted by soft-bodied ticks of the genus Ornithodoros. Different Borrelia species cause endemic relapsing fever in different geographical regions, each associated with a specific Ornithodoros tick species."
+      },
+      {
+        question: "Migrating skin lesions in Lyme's disease are called:",
+        options: [
+          { text: "Erythema marginatum", isCorrect: false },
+          { text: "Erythema migrans", isCorrect: true },
+          { text: "Erythema nodosum", isCorrect: false },
+          { text: "Erythema toxicum", isCorrect: false }
+        ],
+        explanation: "Erythema migrans is the characteristic skin lesion of early Lyme disease. It appears as an expanding red ring-like or bull's-eye pattern at the site of the tick bite, often with central clearing."
+      },
+      {
+        question: "Motility of borreliae is described as:",
+        options: [
+          { text: "Darting", isCorrect: false },
+          { text: "Tumbling", isCorrect: false },
+          { text: "Lashing", isCorrect: true },
+          { text: "Twitching", isCorrect: false }
+        ],
+        explanation: "Borreliae exhibit a characteristic lashing motility due to their axial filaments (endoflagella). This can be observed under dark-field or phase-contrast microscopy and helps in their identification."
+      },
+      {
+        question: "Bannwarth syndrome is seen in association with:",
+        options: [
+          { text: "Lyme disease", isCorrect: true },
+          { text: "Weil's disease", isCorrect: false },
+          { text: "Endemic relapsing fever", isCorrect: false },
+          { text: "Epidemic relapsing fever", isCorrect: false }
+        ],
+        explanation: "Bannwarth syndrome (lymphocytic meningoradiculitis) is a neurological manifestation of Lyme disease in the early disseminated phase. It is characterized by painful radiculopathy, cranial nerve palsies (especially facial palsy), and lymphocytic pleocytosis in cerebrospinal fluid."
+      },
+      {
+        question: "Bifidobacterium is a:",
+        options: [
+          { text: "Prebiotic", isCorrect: false },
+          { text: "Probiotic", isCorrect: true },
+          { text: "Parabiotic", isCorrect: false },
+          { text: "Postbiotic", isCorrect: false }
+        ],
+        explanation: "Bifidobacterium is a genus of probiotic bacteria. These gram-positive, non-motile, often branched anaerobic bacteria are natural inhabitants of the gastrointestinal tract and are commonly used in probiotic supplements and fermented dairy products."
+      },
+      {
+        question: "Which of the following samples for bacterial culture MUST be collected in a sterile container?",
+        options: [
+          { text: "Stool", isCorrect: false },
+          { text: "Rectal swab", isCorrect: false },
+          { text: "Pleural fluid", isCorrect: true },
+          { text: "All of the above", isCorrect: false }
+        ],
+        explanation: "Pleural fluid must be collected in a sterile container because it comes from a normally sterile site. Any bacteria isolated from pleural fluid are likely to be significant pathogens. Stool and rectal swabs are not from sterile sites and do not require the same level of sterility in collection."
+      },
+      {
+        question: "A lumbar puncture was performed at night in a patient suspected of having acute pyogenic meningitis. The CSF sample for culture will have to wait till morning when the lab opens. Where should the sample be stored overnight for best results?",
+        options: [
+          { text: "In the freezer", isCorrect: false },
+          { text: "In the fridge", isCorrect: false },
+          { text: "At -20°C", isCorrect: false },
+          { text: "In an incubator at 37°C", isCorrect: true }
+        ],
+        explanation: "For suspected acute pyogenic meningitis, the CSF sample should be kept at 37°C (in an incubator) if processing is delayed. This maintains the viability of fastidious organisms like Neisseria meningitidis and Streptococcus pneumoniae, which may not survive refrigeration or freezing."
+      },
+      {
+        question: "A blood sample was collected from a patient admitted in the fever ward for the NS1 and IgM dengue test. However, when the specimen arrived in the microbiology lab, it was found that the patient's complete residential address and contact number were not mentioned in the requisition slip. This pertains to an error in the:",
+        options: [
+          { text: "Pre-analytical phase", isCorrect: true },
+          { text: "Analytical phase", isCorrect: false },
+          { text: "Post-analytical phase", isCorrect: false },
+          { text: "None of the above", isCorrect: false }
+        ],
+        explanation: "Incomplete patient information on the requisition form is an error in the pre-analytical phase of laboratory testing. The pre-analytical phase includes all steps from test ordering to sample processing, before the actual analysis begins."
+      },
+      {
+        question: "HEPA refers to:",
+        options: [
+          { text: "Highly effective particulate air", isCorrect: false },
+          { text: "High efficiency particulate air", isCorrect: true },
+          { text: "Highly effective partition air", isCorrect: false },
+          { text: "High efficiency part aircycle", isCorrect: false }
+        ],
+        explanation: "HEPA stands for High Efficiency Particulate Air. HEPA filters are used in biological safety cabinets, clean rooms, and other applications requiring high-level air filtration to remove particles, including microorganisms, from the air."
+      },
+      {
+        question: "Which of the following is false regarding sample collection from a patient?",
+        options: [
+          { text: "Informed consent must be taken before sample collection", isCorrect: false },
+          { text: "Material with due consent must be used for what it is intended, and not for any other purpose", isCorrect: true },
+          { text: "Results can be shared with family members", isCorrect: false },
+          { text: "Patient privacy must be ensured while collecting samples", isCorrect: false }
+        ],
+        explanation: "The statement 'Material with due consent must be used for what it is intended, and not for any other purpose' is not entirely true. With proper ethical approval and consent, samples may sometimes be used for research or quality assurance purposes beyond the initial clinical testing."
+      },
+      {
+        question: "The vector for epidemic typhus is:",
+        options: [
+          { text: "Rat flea", isCorrect: false },
+          { text: "Mite", isCorrect: false },
+          { text: "Louse", isCorrect: true },
+          { text: "Tick", isCorrect: false }
+        ],
+        explanation: "Epidemic typhus (caused by Rickettsia prowazekii) is transmitted by the human body louse, Pediculus humanus corporis. It has historically caused large outbreaks in crowded conditions with poor hygiene, such as during wars and famines."
+      },
+      {
+        question: "Which of the following is FALSE about rickettsiae:",
+        options: [
+          { text: "Do not possess peptidoglycan cell wall", isCorrect: true },
+          { text: "Have metabolic enzymes", isCorrect: false },
+          { text: "Reproduce by binary fission", isCorrect: false },
+          { text: "Possess both RNA and DNA", isCorrect: false }
+        ],
+        explanation: "The statement 'Rickettsiae do not possess peptidoglycan cell wall' is false. Rickettsiae do have a peptidoglycan cell wall similar to gram-negative bacteria, though it is often thin. They have metabolic enzymes, reproduce by binary fission, and possess both RNA and DNA, like other bacteria."
+      },
+      {
+        question: "Disease that does NOT occur in the typhus fever group is:",
+        options: [
+          { text: "Epidemic typhus", isCorrect: false },
+          { text: "Endemic typhus", isCorrect: false },
+          { text: "Q fever", isCorrect: true },
+          { text: "Brill-Zinser disease", isCorrect: false }
+        ],
+        explanation: "Q fever, caused by Coxiella burnetii, is not classified in the typhus group of rickettsial diseases. It belongs to the spotted fever group. Epidemic typhus, endemic (murine) typhus, and Brill-Zinser disease (recrudescent epidemic typhus) are all part of the typhus group."
+      },
+      {
+        question: "Griffith typing of streptococci is based on:",
+        options: [
+          { text: "Carbohydrate C antigen", isCorrect: false },
+          { text: "M proteins", isCorrect: true },
+          { text: "Hemolysis on blood agar", isCorrect: false },
+          { text: "Oxygen requirement during culture", isCorrect: false }
+        ],
+        explanation: "Griffith typing of streptococci is based on the M protein antigen. The M protein is a major virulence factor of Streptococcus pyogenes (Group A Streptococcus) and serves as the basis for the serological classification system developed by Rebecca Lancefield."
+      },
+      {
+        question: "Which of the following is NOT a gram-positive bacillus?",
+        options: [
+          { text: "Staphylococcus", isCorrect: true },
+          { text: "Corynebacterium", isCorrect: false },
+          { text: "Bacillus", isCorrect: false },
+          { text: "Clostridium", isCorrect: false }
+        ],
+        explanation: "Staphylococcus is not a gram-positive bacillus; it is a gram-positive coccus that typically appears in grape-like clusters. Corynebacterium, Bacillus, and Clostridium are all gram-positive bacilli (rod-shaped bacteria)."
       }
     ]
   };
@@ -866,6 +1274,87 @@ const McqContent = () => {
                         </div>
                       </AccordionContent>
                     </AccordionItem>
+
+                    <AccordionItem value="chapter3">
+                      <AccordionTrigger className="hover:bg-gray-100 dark:hover:bg-gray-800/50 rounded-lg px-4">
+                        <div className="flex items-center space-x-3">
+                          <TestTube className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                          <h4 className="text-lg font-medium">{systematicBacteriologyMcqs.name}</h4>
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="px-4 pt-4">
+                        <div className="space-y-8">
+                          {systematicBacteriologyMcqs.questions.map((question, qIndex) => (
+                            <div key={qIndex} className="bg-white dark:bg-gray-900 shadow-sm border dark:border-gray-800 rounded-lg p-6">
+                              <div className="space-y-6">
+                                <h3 className="text-lg font-medium leading-relaxed break-words">
+                                  {qIndex + 1}. {question.question}
+                                </h3>
+                                
+                                <div className="space-y-3">
+                                  {question.options.map((option, oIndex) => (
+                                    <div 
+                                      key={oIndex} 
+                                      className={`flex items-start space-x-3 p-3 rounded-md cursor-pointer
+                                        ${selectedAnswers[`3_${qIndex}`] === oIndex ? 'bg-blue-50 dark:bg-blue-900/20' : 'hover:bg-gray-50 dark:hover:bg-gray-800/50'}
+                                        ${showResults[`3_${qIndex}`] && option.isCorrect ? 'bg-green-50 dark:bg-green-900/20' : ''}
+                                        ${showResults[`3_${qIndex}`] && selectedAnswers[`3_${qIndex}`] === oIndex && !option.isCorrect ? 'bg-red-50 dark:bg-red-900/20' : ''}
+                                      `}
+                                      onClick={() => !showResults[`3_${qIndex}`] && handleSelectOption(`3_${qIndex}`, oIndex)}
+                                    >
+                                      <div className="flex h-6 w-6 min-w-6 mt-0.5">
+                                        {showResults[`3_${qIndex}`] ? (
+                                          option.isCorrect ? (
+                                            <CheckCircle className="h-5 w-5 text-green-500" />
+                                          ) : selectedAnswers[`3_${qIndex}`] === oIndex ? (
+                                            <XCircle className="h-5 w-5 text-red-500" />
+                                          ) : (
+                                            <div className="h-5 w-5 rounded-full border-2 border-gray-300 dark:border-gray-600" />
+                                          )
+                                        ) : (
+                                          <Checkbox 
+                                            checked={selectedAnswers[`3_${qIndex}`] === oIndex}
+                                            className="rounded-full"
+                                            onCheckedChange={() => handleSelectOption(`3_${qIndex}`, oIndex)}
+                                          />
+                                        )}
+                                      </div>
+                                      <div className="text-base break-words leading-relaxed">{option.text}</div>
+                                    </div>
+                                  ))}
+                                </div>
+                                
+                                {showResults[`3_${qIndex}`] && question.explanation && (
+                                  <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-md">
+                                    <h4 className="font-medium mb-2">Explanation:</h4>
+                                    <p className="break-words leading-relaxed">{question.explanation}</p>
+                                  </div>
+                                )}
+                                
+                                <div className="flex space-x-4 pt-2">
+                                  {!showResults[`3_${qIndex}`] ? (
+                                    <Button 
+                                      onClick={() => handleCheckAnswer(`3_${qIndex}`)}
+                                      disabled={selectedAnswers[`3_${qIndex}`] === undefined}
+                                      className="bg-blue-600 hover:bg-blue-700"
+                                    >
+                                      Check Answer
+                                    </Button>
+                                  ) : (
+                                    <Button 
+                                      onClick={() => handleReset(`3_${qIndex}`)}
+                                      variant="outline"
+                                    >
+                                      Try Again
+                                    </Button>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
                   </Accordion>
                 </AccordionContent>
               </AccordionItem>
@@ -878,3 +1367,4 @@ const McqContent = () => {
 };
 
 export default McqContent;
+
