@@ -49,6 +49,94 @@ const McqContent = () => {
           }
         ],
         explanation: "Koch's fourth postulate states that the bacterium must be re-isolated from lesions produced in experimental animals. The option stating it 'need not be re-isolated' is incorrect, making it the exception."
+      },
+      {
+        question: "Which of the following organisms does not follow Koch's postulates?",
+        options: [
+          { 
+            text: "Mycobacterium leprae", 
+            isCorrect: true 
+          },
+          { 
+            text: "Escherichia coli", 
+            isCorrect: false 
+          },
+          { 
+            text: "Klebsiella species", 
+            isCorrect: false 
+          },
+          { 
+            text: "Staphylococcus aureus", 
+            isCorrect: false 
+          }
+        ],
+        explanation: "Mycobacterium leprae, the causative agent of leprosy, cannot be cultured in artificial media and has limited growth in animal models, making it impossible to fulfill Koch's postulates completely."
+      },
+      {
+        question: "Stanley B. Prusiner was awarded the Nobel prize for his discovery of:",
+        options: [
+          { 
+            text: "Prions", 
+            isCorrect: true 
+          },
+          { 
+            text: "Cell-mediated immunity", 
+            isCorrect: false 
+          },
+          { 
+            text: "Smallpox vaccine", 
+            isCorrect: false 
+          },
+          { 
+            text: "Penicillin", 
+            isCorrect: false 
+          }
+        ],
+        explanation: "Stanley B. Prusiner received the Nobel Prize in Physiology or Medicine in 1997 for his discovery of prions, a new biological principle of infection involving proteins that can fold abnormally and cause neurodegenerative diseases."
+      },
+      {
+        question: "The first scientist to have observed bacteria using a single lens microscope is:",
+        options: [
+          { 
+            text: "Edward Jenner", 
+            isCorrect: false 
+          },
+          { 
+            text: "Antonie van Leeuwenhoek", 
+            isCorrect: true 
+          },
+          { 
+            text: "Alexander Fleming", 
+            isCorrect: false 
+          },
+          { 
+            text: "Louis Pasteur", 
+            isCorrect: false 
+          }
+        ],
+        explanation: "Antonie van Leeuwenhoek was the first to observe and describe single-celled organisms (which he called 'animalcules') using simple microscopes of his own design in the 1670s."
+      },
+      {
+        question: "Who is the father of antiseptic surgery?",
+        options: [
+          { 
+            text: "Robert Koch", 
+            isCorrect: false 
+          },
+          { 
+            text: "Paul Ehrlich", 
+            isCorrect: false 
+          },
+          { 
+            text: "Joseph Lister", 
+            isCorrect: true 
+          },
+          { 
+            text: "Alexander Fleming", 
+            isCorrect: false 
+          }
+        ],
+        explanation: "Joseph Lister introduced the concept of sterile surgery by using carbolic acid as an antiseptic agent to sterilize surgical instruments and wound dressings, dramatically reducing post-surgical infections."
       }
     ]
   };

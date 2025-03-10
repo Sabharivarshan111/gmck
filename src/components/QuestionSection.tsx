@@ -1,12 +1,12 @@
 
-import { QuestionType } from "./QuestionBank";
+import { QuestionType, McqType } from "./QuestionBank";
 import QuestionCard from "./QuestionCard";
 
 interface QuestionSectionProps {
   subtopics: {
-    [key: string]: QuestionType;
+    [key: string]: QuestionType | McqType | { name: string; questions: any[] };
   };
-  activeTab: "essay" | "short-notes";
+  activeTab: "essay" | "short-notes" | "mcqs";
 }
 
 const QuestionSection = ({ subtopics, activeTab }: QuestionSectionProps) => {
@@ -16,17 +16,26 @@ const QuestionSection = ({ subtopics, activeTab }: QuestionSectionProps) => {
         // Check if we should render this question type based on the active tab
         const shouldRender = 
           (activeTab === "essay" && questionTypeKey === "essay") || 
-          (activeTab === "short-notes" && (questionTypeKey === "short-note" || questionTypeKey === "short-notes"));
+          (activeTab === "short-notes" && (questionTypeKey === "short-note" || questionTypeKey === "short-notes")) ||
+          (activeTab === "mcqs" && questionTypeKey === "mcqs");
         
         if (!shouldRender) return null;
+        
+        // Handle both regular question types and MCQ question types
+        if (activeTab === "mcqs") {
+          return null; // MCQs are handled by MCQContent component
+        }
+        
+        // For essay and short notes questions
+        const typedQuestionType = questionType as QuestionType;
         
         return (
           <div key={questionTypeKey} className="w-full">
             <h6 className="text-base font-medium text-gray-600 dark:text-gray-400 mb-3">
-              {questionType.name}
+              {typedQuestionType.name}
             </h6>
             <div className="space-y-4 max-w-full">
-              {questionType.questions.map((question, index) => (
+              {typedQuestionType.questions.map((question, index) => (
                 <QuestionCard
                   key={index}
                   question={question}
