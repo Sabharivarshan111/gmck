@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { QUESTION_BANK_DATA } from "@/data/questionBankData";
 import { Topic, QuestionBankData } from "@/components/QuestionBank";
@@ -6,7 +5,7 @@ import { Topic, QuestionBankData } from "@/components/QuestionBank";
 export const useQuestionBank = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isMobile, setIsMobile] = useState(false);
-  const [activeTab, setActiveTab] = useState<"extras" | "essay" | "short-notes">("essay");
+  const [activeTab, setActiveTab] = useState<"extras" | "mcqs" | "essay" | "short-notes">("essay");
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
   const [hasSearchResults, setHasSearchResults] = useState(true);
   const [isSearching, setIsSearching] = useState(false);
@@ -33,33 +32,26 @@ export const useQuestionBank = () => {
     );
   }, []);
 
-  // This function has been modified to handle the complex nested structure
   const filterQuestions = useCallback((topic: any, type: "essay" | "short-notes", query: string): Topic | null => {
     if (!query.trim()) return topic as Topic;
     
     let hasContent = false;
     const filteredSubtopics: { [key: string]: any } = {};
 
-    // Process each first level subtopic (e.g. "paper-1", "paper-2")
     for (const [subtopicKey, subtopic] of Object.entries(topic.subtopics || {})) {
       const filteredInnerSubtopics: { [key: string]: any } = {};
       let hasSubtopicContent = false;
 
-      // Safely access properties with type checking
       if (subtopic && typeof subtopic === 'object' && 'subtopics' in subtopic) {
         const subtopicObj = subtopic as { name: string; subtopics: Record<string, any> };
 
-        // Process each second level subtopic (e.g. "general-pharmacology", "autacoids")
         for (const [innerKey, innerSubtopic] of Object.entries(subtopicObj.subtopics || {})) {
-          // Try to handle the case where we have a nested structure
           if (innerSubtopic && typeof innerSubtopic === 'object' && 'subtopics' in innerSubtopic) {
             const innerSubtopicObj = innerSubtopic as { name: string; subtopics: Record<string, any> };
             const filteredContent: { [key: string]: any } = {};
             let hasInnerContent = false;
 
-            // Look for "essay" or "short-notes" or "short-note" keys
             for (const [typeKey, questions] of Object.entries(innerSubtopicObj.subtopics || {})) {
-              // Match the tab type with the data structure keys
               if ((typeKey === "essay" && type === "essay") || 
                   ((typeKey === "short-note" || typeKey === "short-notes") && type === "short-notes")) {
                 if (questions && typeof questions === 'object' && 'questions' in questions) {
