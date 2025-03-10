@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
@@ -337,7 +336,7 @@ const McqContent = () => {
         explanation: "L-forms of bacteria are not always stable. They can be unstable and revert to their normal form when the environmental stress (like exposure to penicillin) is removed. They are cell wall-deficient bacteria named after the Lister Institute in London."
       },
       {
-        question: "All the following statements are TRUE about bacterial spores EXCEPT that:",
+        question: "All the following statements are TRUE about bacterial spores EXCEPT that they:",
         options: [
           { text: "They are a method of reproduction", isCorrect: true },
           { text: "They are resistant to desiccation", isCorrect: false },
@@ -459,26 +458,26 @@ const McqContent = () => {
     ]
   };
 
-  const handleSelectOption = (questionIndex: number, optionIndex: number) => {
+  const handleSelectOption = (questionKey: string, optionIndex: number) => {
     setSelectedAnswers({
       ...selectedAnswers,
-      [questionIndex]: optionIndex
+      [questionKey]: optionIndex
     });
   };
 
-  const handleCheckAnswer = (questionIndex: number) => {
+  const handleCheckAnswer = (questionKey: string) => {
     setShowResults({
       ...showResults,
-      [questionIndex]: true
+      [questionKey]: true
     });
   };
 
-  const handleReset = (questionIndex: number) => {
+  const handleReset = (questionKey: string) => {
     const updatedAnswers = { ...selectedAnswers };
-    delete updatedAnswers[questionIndex];
+    delete updatedAnswers[questionKey];
     
     const updatedResults = { ...showResults };
-    delete updatedResults[questionIndex];
+    delete updatedResults[questionKey];
     
     setSelectedAnswers(updatedAnswers);
     setShowResults(updatedResults);
