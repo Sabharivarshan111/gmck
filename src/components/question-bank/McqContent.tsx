@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
@@ -518,7 +517,7 @@ const McqContent = () => {
                           {microbiologyMcqs.questions.map((question, qIndex) => (
                             <div key={qIndex} className="bg-white dark:bg-gray-900 shadow-sm border dark:border-gray-800 rounded-lg p-6">
                               <div className="space-y-6">
-                                <h3 className="text-lg font-medium">
+                                <h3 className="text-lg font-medium leading-relaxed break-words">
                                   {qIndex + 1}. {question.question}
                                 </h3>
                                 
@@ -527,53 +526,53 @@ const McqContent = () => {
                                     <div 
                                       key={oIndex} 
                                       className={`flex items-start space-x-3 p-3 rounded-md cursor-pointer
-                                        ${selectedAnswers[`2_1_${qIndex}`] === oIndex ? 'bg-blue-50 dark:bg-blue-900/20' : 'hover:bg-gray-50 dark:hover:bg-gray-800/50'}
-                                        ${showResults[`2_1_${qIndex}`] && option.isCorrect ? 'bg-green-50 dark:bg-green-900/20' : ''}
-                                        ${showResults[`2_1_${qIndex}`] && selectedAnswers[`2_1_${qIndex}`] === oIndex && !option.isCorrect ? 'bg-red-50 dark:bg-red-900/20' : ''}
+                                        ${selectedAnswers[`1_${qIndex}`] === oIndex ? 'bg-blue-50 dark:bg-blue-900/20' : 'hover:bg-gray-50 dark:hover:bg-gray-800/50'}
+                                        ${showResults[`1_${qIndex}`] && option.isCorrect ? 'bg-green-50 dark:bg-green-900/20' : ''}
+                                        ${showResults[`1_${qIndex}`] && selectedAnswers[`1_${qIndex}`] === oIndex && !option.isCorrect ? 'bg-red-50 dark:bg-red-900/20' : ''}
                                       `}
-                                      onClick={() => !showResults[`2_1_${qIndex}`] && handleSelectOption(`2_1_${qIndex}`, oIndex)}
+                                      onClick={() => !showResults[`1_${qIndex}`] && handleSelectOption(`1_${qIndex}`, oIndex)}
                                     >
-                                      <div className="flex h-6 w-6 mt-0.5">
-                                        {showResults[`2_1_${qIndex}`] ? (
+                                      <div className="flex h-6 w-6 min-w-6 mt-0.5">
+                                        {showResults[`1_${qIndex}`] ? (
                                           option.isCorrect ? (
                                             <CheckCircle className="h-5 w-5 text-green-500" />
-                                          ) : selectedAnswers[`2_1_${qIndex}`] === oIndex ? (
+                                          ) : selectedAnswers[`1_${qIndex}`] === oIndex ? (
                                             <XCircle className="h-5 w-5 text-red-500" />
                                           ) : (
                                             <div className="h-5 w-5 rounded-full border-2 border-gray-300 dark:border-gray-600" />
                                           )
                                         ) : (
                                           <Checkbox 
-                                            checked={selectedAnswers[`2_1_${qIndex}`] === oIndex}
+                                            checked={selectedAnswers[`1_${qIndex}`] === oIndex}
                                             className="rounded-full"
-                                            onCheckedChange={() => handleSelectOption(`2_1_${qIndex}`, oIndex)}
+                                            onCheckedChange={() => handleSelectOption(`1_${qIndex}`, oIndex)}
                                           />
                                         )}
                                       </div>
-                                      <div className="text-base">{option.text}</div>
+                                      <div className="text-base break-words leading-relaxed">{option.text}</div>
                                     </div>
                                   ))}
                                 </div>
                                 
-                                {showResults[`2_1_${qIndex}`] && question.explanation && (
+                                {showResults[`1_${qIndex}`] && question.explanation && (
                                   <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-md">
                                     <h4 className="font-medium mb-2">Explanation:</h4>
-                                    <p>{question.explanation}</p>
+                                    <p className="break-words leading-relaxed">{question.explanation}</p>
                                   </div>
                                 )}
                                 
                                 <div className="flex space-x-4 pt-2">
-                                  {!showResults[`2_1_${qIndex}`] ? (
+                                  {!showResults[`1_${qIndex}`] ? (
                                     <Button 
-                                      onClick={() => handleCheckAnswer(`2_1_${qIndex}`)}
-                                      disabled={selectedAnswers[`2_1_${qIndex}`] === undefined}
+                                      onClick={() => handleCheckAnswer(`1_${qIndex}`)}
+                                      disabled={selectedAnswers[`1_${qIndex}`] === undefined}
                                       className="bg-blue-600 hover:bg-blue-700"
                                     >
                                       Check Answer
                                     </Button>
                                   ) : (
                                     <Button 
-                                      onClick={() => handleReset(`2_1_${qIndex}`)}
+                                      onClick={() => handleReset(`1_${qIndex}`)}
                                       variant="outline"
                                     >
                                       Try Again
@@ -599,7 +598,7 @@ const McqContent = () => {
                           {bacteriologyMcqs.questions.map((question, qIndex) => (
                             <div key={qIndex} className="bg-white dark:bg-gray-900 shadow-sm border dark:border-gray-800 rounded-lg p-6">
                               <div className="space-y-6">
-                                <h3 className="text-lg font-medium">
+                                <h3 className="text-lg font-medium leading-relaxed break-words">
                                   {qIndex + 1}. {question.question}
                                 </h3>
                                 
@@ -608,53 +607,53 @@ const McqContent = () => {
                                     <div 
                                       key={oIndex} 
                                       className={`flex items-start space-x-3 p-3 rounded-md cursor-pointer
-                                        ${selectedAnswers[`2_2_${qIndex}`] === oIndex ? 'bg-blue-50 dark:bg-blue-900/20' : 'hover:bg-gray-50 dark:hover:bg-gray-800/50'}
-                                        ${showResults[`2_2_${qIndex}`] && option.isCorrect ? 'bg-green-50 dark:bg-green-900/20' : ''}
-                                        ${showResults[`2_2_${qIndex}`] && selectedAnswers[`2_2_${qIndex}`] === oIndex && !option.isCorrect ? 'bg-red-50 dark:bg-red-900/20' : ''}
+                                        ${selectedAnswers[`2_${qIndex}`] === oIndex ? 'bg-blue-50 dark:bg-blue-900/20' : 'hover:bg-gray-50 dark:hover:bg-gray-800/50'}
+                                        ${showResults[`2_${qIndex}`] && option.isCorrect ? 'bg-green-50 dark:bg-green-900/20' : ''}
+                                        ${showResults[`2_${qIndex}`] && selectedAnswers[`2_${qIndex}`] === oIndex && !option.isCorrect ? 'bg-red-50 dark:bg-red-900/20' : ''}
                                       `}
-                                      onClick={() => !showResults[`2_2_${qIndex}`] && handleSelectOption(`2_2_${qIndex}`, oIndex)}
+                                      onClick={() => !showResults[`2_${qIndex}`] && handleSelectOption(`2_${qIndex}`, oIndex)}
                                     >
-                                      <div className="flex h-6 w-6 mt-0.5">
-                                        {showResults[`2_2_${qIndex}`] ? (
+                                      <div className="flex h-6 w-6 min-w-6 mt-0.5">
+                                        {showResults[`2_${qIndex}`] ? (
                                           option.isCorrect ? (
                                             <CheckCircle className="h-5 w-5 text-green-500" />
-                                          ) : selectedAnswers[`2_2_${qIndex}`] === oIndex ? (
+                                          ) : selectedAnswers[`2_${qIndex}`] === oIndex ? (
                                             <XCircle className="h-5 w-5 text-red-500" />
                                           ) : (
                                             <div className="h-5 w-5 rounded-full border-2 border-gray-300 dark:border-gray-600" />
                                           )
                                         ) : (
                                           <Checkbox 
-                                            checked={selectedAnswers[`2_2_${qIndex}`] === oIndex}
+                                            checked={selectedAnswers[`2_${qIndex}`] === oIndex}
                                             className="rounded-full"
-                                            onCheckedChange={() => handleSelectOption(`2_2_${qIndex}`, oIndex)}
+                                            onCheckedChange={() => handleSelectOption(`2_${qIndex}`, oIndex)}
                                           />
                                         )}
                                       </div>
-                                      <div className="text-base">{option.text}</div>
+                                      <div className="text-base break-words leading-relaxed">{option.text}</div>
                                     </div>
                                   ))}
                                 </div>
                                 
-                                {showResults[`2_2_${qIndex}`] && question.explanation && (
+                                {showResults[`2_${qIndex}`] && question.explanation && (
                                   <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-md">
                                     <h4 className="font-medium mb-2">Explanation:</h4>
-                                    <p>{question.explanation}</p>
+                                    <p className="break-words leading-relaxed">{question.explanation}</p>
                                   </div>
                                 )}
                                 
                                 <div className="flex space-x-4 pt-2">
-                                  {!showResults[`2_2_${qIndex}`] ? (
+                                  {!showResults[`2_${qIndex}`] ? (
                                     <Button 
-                                      onClick={() => handleCheckAnswer(`2_2_${qIndex}`)}
-                                      disabled={selectedAnswers[`2_2_${qIndex}`] === undefined}
+                                      onClick={() => handleCheckAnswer(`2_${qIndex}`)}
+                                      disabled={selectedAnswers[`2_${qIndex}`] === undefined}
                                       className="bg-blue-600 hover:bg-blue-700"
                                     >
                                       Check Answer
                                     </Button>
                                   ) : (
                                     <Button 
-                                      onClick={() => handleReset(`2_2_${qIndex}`)}
+                                      onClick={() => handleReset(`2_${qIndex}`)}
                                       variant="outline"
                                     >
                                       Try Again
