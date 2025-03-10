@@ -14,7 +14,7 @@ interface TopicAccordionProps {
   topicKey: string;
   topic: Topic;
   isExpanded?: boolean;
-  activeTab: "essay" | "short-notes" | "mcqs";
+  activeTab: "essay" | "short-notes";
 }
 
 const TopicAccordion = ({ topicKey, topic, isExpanded = false, activeTab }: TopicAccordionProps) => {

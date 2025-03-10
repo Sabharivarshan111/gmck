@@ -6,7 +6,7 @@ import NoContentMessage from "./NoContentMessage";
 import { useState, useEffect } from "react";
 
 interface QuestionBankContentProps {
-  activeTab: "essay" | "short-notes" | "mcqs";
+  activeTab: "essay" | "short-notes";
   hasContentToDisplay: boolean;
   filteredData: QuestionBankData;
   expandedItems: string[];
