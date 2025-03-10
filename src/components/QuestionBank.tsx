@@ -1,15 +1,17 @@
 
-import React, { useState } from "react";
-import { Accordion } from "@/components/ui/accordion";
-import TopicAccordion from "./TopicAccordion";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useSwipeable } from "react-swipeable";
+import { useQuestionBank } from "@/hooks/use-question-bank";
 import SearchBar from "./question-bank/SearchBar";
 import NoResultsMessage from "./question-bank/NoResultsMessage";
-import { useQuestionBank } from "@/hooks/use-question-bank";
-import { QUESTION_BANK_DATA } from "@/data/questionBankData";
+import QuestionBankContent from "./question-bank/QuestionBankContent";
+import ExtrasContent from "./question-bank/ExtrasContent";
+import McqContent from "./question-bank/McqContent";
 
-export interface Question {
-  question: string;
+export interface QuestionType {
+  name: string;
+  questions: string[];
 }
 
 export interface McqOption {
@@ -17,13 +19,9 @@ export interface McqOption {
   isCorrect: boolean;
 }
 
-export interface McqQuestion extends Question {
+export interface McqQuestion {
+  question: string;
   options: McqOption[];
-}
-
-export interface QuestionType {
-  name: string;
-  questions: Question[];
 }
 
 export interface McqType {
@@ -31,122 +29,164 @@ export interface McqType {
   questions: McqQuestion[];
 }
 
-export interface Chapter {
-  [key: string]: {
-    name: string;
-    questions: Question[];
-  };
-}
-
-export interface Type {
+export interface SubTopicContent {
   name: string;
-  subtopics?: {
-    [key: string]: QuestionType | McqType;
+  subtopics: {
+    [key: string]: QuestionType | McqType | { name: string; questions: any[] };
   };
-  questions?: Question[] | McqQuestion[];
 }
 
 export interface SubTopic {
   name: string;
   subtopics: {
-    [key: string]: Type;
+    [key: string]: SubTopicContent | any;
   };
 }
 
 export interface Topic {
   name: string;
   subtopics: {
-    [key: string]: SubTopic;
+    [key: string]: SubTopic | any;
   };
 }
 
-export interface Subject {
-  name: string;
-  subtopics: {
-    [key: string]: Topic;
-  };
+export interface QuestionBankData {
+  [key: string]: Topic;
 }
 
 const QuestionBank = () => {
-  const { 
-    searchResults, 
-    searchTerm, 
-    setSearchTerm, 
-    activeTab, 
-    setActiveTab, 
-    expandedAccordionItems,
-    setExpandedAccordionItems
+  const {
+    searchQuery,
+    activeTab,
+    expandedItems,
+    hasSearchResults,
+    isRendered,
+    essayFilteredData,
+    shortNotesFilteredData,
+    hasContentToDisplay,
+    setActiveTab,
+    setExpandedItems,
+    handleSearch
   } = useQuestionBank();
-  
-  const questionBankData = QUESTION_BANK_DATA as {
-    [key: string]: Subject;
-  };
-  
-  const hasSearchResults = searchResults && 
-    Object.keys(searchResults).length > 0 && 
-    Object.values(searchResults).some(subject => 
-      Object.keys(subject.subtopics).length > 0
+
+  const handlers = useSwipeable({
+    onSwipedLeft: () => {
+      if (activeTab === "extras") {
+        setActiveTab("mcqs");
+      } else if (activeTab === "mcqs") {
+        setActiveTab("essay");
+      } else if (activeTab === "essay") {
+        setActiveTab("short-notes");
+      }
+    },
+    onSwipedRight: () => {
+      if (activeTab === "short-notes") {
+        setActiveTab("essay");
+      } else if (activeTab === "essay") {
+        setActiveTab("mcqs");
+      } else if (activeTab === "mcqs") {
+        setActiveTab("extras");
+      }
+    },
+    trackMouse: true
+  });
+
+  if (!isRendered) {
+    return (
+      <div className="bg-white dark:bg-black h-full min-h-[600px] flex items-center justify-center">
+        <div className="animate-pulse text-gray-500">Loading...</div>
+      </div>
     );
-  
-  const resetSearch = () => {
-    setSearchTerm("");
-    setExpandedAccordionItems([]);
-  };
+  }
+
+  const googleDriveLink = "https://drive.google.com/drive/folders/1PQScCjyHiVg9n9efebVovaJLcNAR5KSZ";
 
   return (
-    <div className="w-full max-w-6xl mx-auto py-4 px-4 md:px-0">
-      <div className="mb-6">
-        <SearchBar 
-          searchTerm={searchTerm} 
-          setSearchTerm={setSearchTerm} 
-          resetSearch={resetSearch}
-        />
-      </div>
-      
-      <Tabs defaultValue="essay" value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="mb-4">
-          <TabsTrigger value="essay">Essay</TabsTrigger>
-          <TabsTrigger value="short-notes">Short Notes</TabsTrigger>
-          <TabsTrigger value="mcqs">MCQs</TabsTrigger>
-        </TabsList>
+    <div className="bg-white dark:bg-black h-full min-h-[600px]">
+      <div className="flex-1 p-4 max-w-4xl mx-auto space-y-4" {...handlers}>
+        {/* Extras Tab as a separate section above the main tabs */}
+        <div className="w-full mb-4">
+          <button 
+            onClick={() => setActiveTab("extras")}
+            className={`w-full py-3 text-lg font-medium rounded-lg ${
+              activeTab === "extras" 
+                ? "bg-blue-600 text-white" 
+                : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+            } transition-colors`}
+          >
+            Extras-Agam notes
+          </button>
+        </div>
         
-        <TabsContent value={activeTab} className="mt-0">
-          {searchTerm && !hasSearchResults ? (
-            <NoResultsMessage resetSearch={resetSearch} />
-          ) : (
-            <Accordion 
-              type="multiple" 
-              value={expandedAccordionItems}
-              onValueChange={setExpandedAccordionItems}
-              className="w-full space-y-4"
+        <Tabs 
+          defaultValue="mcqs" 
+          value={activeTab}
+          className="w-full"
+          onValueChange={(value) => setActiveTab(value as "extras" | "mcqs" | "essay" | "short-notes")}
+        >
+          <TabsList className="w-full grid grid-cols-3 h-12 bg-gray-100 dark:bg-gray-950 rounded-lg mb-4">
+            <TabsTrigger 
+              value="mcqs" 
+              className="text-lg font-medium text-gray-700 dark:text-gray-400 data-[state=active]:text-black dark:data-[state=active]:text-white data-[state=active]:bg-transparent data-[state=active]:after:content-[''] data-[state=active]:after:absolute data-[state=active]:after:left-0 data-[state=active]:after:right-0 data-[state=active]:after:bottom-0 data-[state=active]:after:h-0.5 data-[state=active]:after:bg-black dark:data-[state=active]:after:bg-white relative"
             >
-              {Object.entries(searchTerm ? searchResults : questionBankData).map(([subjectKey, subject]) => (
-                <React.Fragment key={subjectKey}>
-                  {Object.keys(subject.subtopics).length > 0 && (
-                    <Accordion 
-                      type="multiple" 
-                      className="border rounded-lg shadow-sm p-4 space-y-4"
-                    >
-                      <h2 className="text-2xl md:text-3xl font-bold mb-4 text-gray-900 dark:text-gray-50">
-                        {subject.name}
-                      </h2>
-                      
-                      {Object.entries(subject.subtopics).map(([topicKey, topic]) => (
-                        <TopicAccordion 
-                          key={topicKey}
-                          topicKey={topicKey}
-                          topic={topic}
-                          activeTab={activeTab as "essay" | "short-notes" | "mcqs"}
-                        />
-                      ))}
-                    </Accordion>
-                  )}
-                </React.Fragment>
-              ))}
-            </Accordion>
+              MCQs
+            </TabsTrigger>
+            <TabsTrigger 
+              value="essay" 
+              className="text-lg font-medium text-gray-700 dark:text-gray-400 data-[state=active]:text-black dark:data-[state=active]:text-white data-[state=active]:bg-transparent data-[state=active]:after:content-[''] data-[state=active]:after:absolute data-[state=active]:after:left-0 data-[state=active]:after:right-0 data-[state=active]:after:bottom-0 data-[state=active]:after:h-0.5 data-[state=active]:after:bg-black dark:data-[state=active]:after:bg-white relative"
+            >
+              Essay
+            </TabsTrigger>
+            <TabsTrigger 
+              value="short-notes"
+              className="text-lg font-medium text-gray-700 dark:text-gray-400 data-[state=active]:text-black dark:data-[state=active]:text-white data-[state=active]:bg-transparent data-[state=active]:after:content-[''] data-[state=active]:after:absolute data-[state=active]:after:left-0 data-[state=active]:after:right-0 data-[state=active]:after:bottom-0 data-[state=active]:after:h-0.5 data-[state=active]:after:bg-black dark:data-[state=active]:after:bg-white relative"
+            >
+              Short notes
+            </TabsTrigger>
+          </TabsList>
+
+          {activeTab !== "extras" && (
+            <SearchBar 
+              searchQuery={searchQuery}
+              handleSearch={handleSearch}
+            />
           )}
-        </TabsContent>
-      </Tabs>
+
+          <ScrollArea className="h-[calc(100vh-12rem)] min-h-[500px]">
+            {!hasSearchResults && searchQuery.trim() !== "" && (
+              <NoResultsMessage searchQuery={searchQuery} />
+            )}
+            
+            <TabsContent value="extras" className="mt-0 min-h-[500px] bg-transparent">
+              <ExtrasContent driveLink={googleDriveLink} />
+            </TabsContent>
+            
+            <TabsContent value="mcqs" className="mt-0 min-h-[500px] bg-transparent">
+              <McqContent />
+            </TabsContent>
+            
+            <TabsContent value="essay" className="mt-0 min-h-[500px] bg-transparent">
+              <QuestionBankContent
+                activeTab="essay"
+                hasContentToDisplay={hasContentToDisplay}
+                filteredData={essayFilteredData}
+                expandedItems={expandedItems}
+                searchQuery={searchQuery}
+              />
+            </TabsContent>
+
+            <TabsContent value="short-notes" className="mt-0 min-h-[500px] bg-transparent">
+              <QuestionBankContent
+                activeTab="short-notes"
+                hasContentToDisplay={hasContentToDisplay}
+                filteredData={shortNotesFilteredData}
+                expandedItems={expandedItems}
+                searchQuery={searchQuery}
+              />
+            </TabsContent>
+          </ScrollArea>
+        </Tabs>
+      </div>
     </div>
   );
 };
