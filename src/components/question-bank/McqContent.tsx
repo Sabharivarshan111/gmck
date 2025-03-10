@@ -137,6 +137,116 @@ const McqContent = () => {
           }
         ],
         explanation: "Joseph Lister introduced the concept of sterile surgery by using carbolic acid as an antiseptic agent to sterilize surgical instruments and wound dressings, dramatically reducing post-surgical infections."
+      },
+      {
+        question: "All of the following are contributions of Louis Pasteur EXCEPT:",
+        options: [
+          { 
+            text: "The introduction of sterilisation techniques", 
+            isCorrect: false 
+          },
+          { 
+            text: "The discovery of the vaccine for hydrophobia", 
+            isCorrect: false 
+          },
+          { 
+            text: "The introduction of antiseptic techniques in surgery", 
+            isCorrect: true 
+          },
+          { 
+            text: "The discovery of the principles of fermentation", 
+            isCorrect: false 
+          }
+        ],
+        explanation: "The introduction of antiseptic techniques in surgery was a contribution of Joseph Lister, not Louis Pasteur. Pasteur's major contributions include sterilization techniques, vaccines (including rabies/hydrophobia), and principles of fermentation."
+      },
+      {
+        question: "The smallpox vaccine was discovered by:",
+        options: [
+          { 
+            text: "Edward Jenner", 
+            isCorrect: true 
+          },
+          { 
+            text: "Joseph Lister", 
+            isCorrect: false 
+          },
+          { 
+            text: "Niels Jerne", 
+            isCorrect: false 
+          },
+          { 
+            text: "Paul Ehrlich", 
+            isCorrect: false 
+          }
+        ],
+        explanation: "Edward Jenner developed the smallpox vaccine in 1796. He observed that milkmaids who had contracted cowpox were immune to smallpox, leading to his development of the first vaccine."
+      },
+      {
+        question: "Who is credited with the discovery of the electron microscope?",
+        options: [
+          { 
+            text: "Antonie V Leeuwenhoek", 
+            isCorrect: false 
+          },
+          { 
+            text: "Ernst Ruska", 
+            isCorrect: true 
+          },
+          { 
+            text: "Niels Jerne", 
+            isCorrect: false 
+          },
+          { 
+            text: "Frank Burnet", 
+            isCorrect: false 
+          }
+        ],
+        explanation: "Ernst Ruska developed the first electron microscope in 1931, for which he was awarded the Nobel Prize in Physics in 1986. The electron microscope uses beams of electrons instead of light, allowing for much higher magnification and resolution."
+      },
+      {
+        question: "The first whole-genome sequence of a microbe was published in 1995. Which organism's genome was the first to be published in 1995?",
+        options: [
+          { 
+            text: "H. influenzae", 
+            isCorrect: true 
+          },
+          { 
+            text: "Staphylococcus aureus", 
+            isCorrect: false 
+          },
+          { 
+            text: "Streptococcus pyogenes", 
+            isCorrect: false 
+          },
+          { 
+            text: "Escherichia coli", 
+            isCorrect: false 
+          }
+        ],
+        explanation: "Haemophilus influenzae was the first free-living organism to have its complete genome sequenced, published in 1995 by Craig Venter and his team at The Institute for Genomic Research (TIGR)."
+      },
+      {
+        question: "Which of the following bacteria was discovered by Robert Koch?",
+        options: [
+          { 
+            text: "Mycobacterium leprae", 
+            isCorrect: false 
+          },
+          { 
+            text: "Vibrio cholerae", 
+            isCorrect: true 
+          },
+          { 
+            text: "Treponemes", 
+            isCorrect: false 
+          },
+          { 
+            text: "Clostridium tetani", 
+            isCorrect: false 
+          }
+        ],
+        explanation: "Robert Koch discovered Vibrio cholerae, the causative agent of cholera, in 1883. He also discovered the tuberculosis bacterium (Mycobacterium tuberculosis) in 1882, but not Mycobacterium leprae."
       }
     ]
   };

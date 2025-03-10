@@ -21,30 +21,34 @@ const QuestionSection = ({ subtopics, activeTab }: QuestionSectionProps) => {
         
         if (!shouldRender) return null;
         
-        // Handle both regular question types and MCQ question types
+        // Handle MCQ question types separately - they're managed by MCQContent component
         if (activeTab === "mcqs") {
-          return null; // MCQs are handled by MCQContent component
+          return null;
         }
         
         // For essay and short notes questions
-        const typedQuestionType = questionType as QuestionType;
-        
-        return (
-          <div key={questionTypeKey} className="w-full">
-            <h6 className="text-base font-medium text-gray-600 dark:text-gray-400 mb-3">
-              {typedQuestionType.name}
-            </h6>
-            <div className="space-y-4 max-w-full">
-              {typedQuestionType.questions.map((question, index) => (
-                <QuestionCard
-                  key={index}
-                  question={question}
-                  index={index}
-                />
-              ))}
+        if (questionType && typeof questionType === 'object' && 'questions' in questionType) {
+          const typedQuestionType = questionType as QuestionType;
+          
+          return (
+            <div key={questionTypeKey} className="w-full">
+              <h6 className="text-base font-medium text-gray-600 dark:text-gray-400 mb-3">
+                {typedQuestionType.name}
+              </h6>
+              <div className="space-y-4 max-w-full">
+                {typedQuestionType.questions.map((question, index) => (
+                  <QuestionCard
+                    key={index}
+                    question={question}
+                    index={index}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
-        );
+          );
+        }
+        
+        return null;
       })}
     </>
   );
