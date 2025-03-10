@@ -276,6 +276,877 @@ export const microbiologyPaper1Data = {
           ]
         }
       }
+    },
+    "systematic-bacteriology": {
+      name: "Chapter 3: Systematic bacteriology",
+      subtopics: {
+        "mcq": {
+          name: "MCQs",
+          questions: [
+            {
+              question: "1. Phenotypic classification refers to classification based on:",
+              options: [
+                "a) Direct analysis of genes in microbes",
+                "b) Chromosomal and extrachromosomal DNA analysis of microbes.",
+                "c) Expressed characteristics of microorganisms.",
+                "d) Nucleotide sequencing of microbes"
+              ],
+              correctAnswer: "c) Expressed characteristics of microorganisms."
+            },
+            {
+              question: "2. Incubation period refers to the time duration",
+              options: [
+                "a) Between entry of pathogen and exit of pathogen in body",
+                "b) Between entry of pathogen in vector and entry in host",
+                "c) Between entry of pathogen and manifestation of symptoms or signs in host",
+                "d) Between entry of pathogen and its detection in host"
+              ],
+              correctAnswer: "c) Between entry of pathogen and manifestation of symptoms or signs in host"
+            },
+            {
+              question: "3. Which of the following is not a gram-positive coccus?",
+              options: [
+                "a) Pneumococcus",
+                "b) Meningococcus",
+                "c) Enterococcus",
+                "d) Staphylococcus"
+              ],
+              correctAnswer: "b) Meningococcus"
+            },
+            {
+              question: "4. Normal microbial flora are also called:",
+              options: [
+                "a) Resident flora",
+                "b) Commensal flora",
+                "c) Transient flora",
+                "d) All of these"
+              ],
+              correctAnswer: "d) All of these"
+            },
+            {
+              question: "5. All the following are constituents of normal flora EXCEPT:",
+              options: [
+                "a) Gram-positive bacteria",
+                "b) Gram-negative bacteria",
+                "c) Yeast",
+                "d) Viruses"
+              ],
+              correctAnswer: "c) Yeast"
+            },
+            {
+              question: "6. The major components of the intestinal flora constitute:",
+              options: [
+                "a) Coliform bacteria",
+                "b) Clostridium species",
+                "c) Yeast",
+                "d) Enterococcus species"
+              ],
+              correctAnswer: "b) Clostridium species"
+            },
+            {
+              question: "7. Sterile body sites include all the following EXCEPT:",
+              options: [
+                "a) CNS",
+                "b) Nasopharynx",
+                "c) Lungs",
+                "d) Liver"
+              ],
+              correctAnswer: "b) Nasopharynx"
+            },
+            {
+              question: "8. Normal flora of skin includes all the following EXCEPT:",
+              options: [
+                "a) α-streptococci",
+                "b) Staphylococci",
+                "c) Candida",
+                "d) Lactobacilli"
+              ],
+              correctAnswer: "d) Lactobacilli"
+            },
+            {
+              question: "9. The relationship between a host and the normal flora wherein both co-exist is called:",
+              options: [
+                "a) Symbiosis",
+                "b) Commensalism",
+                "c) Parasitism",
+                "d) Opportunistic infection"
+              ],
+              correctAnswer: "a) Symbiosis"
+            },
+            {
+              question: "10. Normal flora in the human body, when administered in adequate amounts, confer a health benefit to the host. These organisms are known as:",
+              options: [
+                "a) Probiotics",
+                "b) Gnotobiotic",
+                "c) Symbiotics",
+                "d) Prebiotics"
+              ],
+              correctAnswer: "a) Probiotics"
+            },
+            {
+              question: "11. Most common probiotics include:",
+              options: [
+                "a) Fusobacterium and Lactobacillus",
+                "b) Bacteroides and Fusobacterium",
+                "c) Lactobacillus and Bifidobacterium",
+                "d) Bifidobacterium and Propionibacterium"
+              ],
+              correctAnswer: "c) Lactobacillus and Bifidobacterium"
+            },
+            {
+              question: "12. Disturbance to the normal flora can be caused by:",
+              options: [
+                "a) Prolonged antibiotic therapy",
+                "b) Alternation of pH in the mucosa",
+                "c) Immunosuppressive therapy",
+                "d) All of these"
+              ],
+              correctAnswer: "d) All of these"
+            },
+            {
+              question: "13. Which of the following statements is NOT TRUE?",
+              options: [
+                "a) Normal flora cause confusion in the laboratory diagnosis",
+                "b) Clindamycin administration helps in the multiplication of normal flora",
+                "c) Probiotics are used in treating antibiotic-associated colitis",
+                "d) Fecal transplantation is attempted for irritable bowel syndrome"
+              ],
+              correctAnswer: "b) Clindamycin administration helps in the multiplication of normal flora"
+            },
+            {
+              question: "14. Microorganisms that fail to grow in the presence of as low as 0.03% O2 are called:",
+              options: [
+                "a) Aerotolerant",
+                "b) Obligate anaerobes",
+                "c) Facultative anaerobes",
+                "d) Facultative aerobes"
+              ],
+              correctAnswer: "b) Obligate anaerobes"
+            },
+            {
+              question: "15. The FALSE statement about anaerobic cocci is:",
+              options: [
+                "a) They are always pathogenic",
+                "b) They are generally sensitive to penicillin",
+                "c) They are normal inhabitants of the vagina, intestine and mouth",
+                "d) They occur as cocci in pairs, groups and chains"
+              ],
+              correctAnswer: "a) They are always pathogenic"
+            },
+            {
+              question: "16. The most commonly isolated anaerobe from clinical specimens is:",
+              options: [
+                "a) Fusobacterium",
+                "b) Lactobacillus",
+                "c) Bacteroides",
+                "d) Prevotella"
+              ],
+              correctAnswer: "c) Bacteroides"
+            },
+            {
+              question: "17. Usually, pus from anaerobic infections is putrid, with a nauseating odour. An exception to this is infection with:",
+              options: [
+                "a) Bacteroids fragilis",
+                "b) Prevotella",
+                "c) Porphyromonas",
+                "d) Fusobacterium"
+              ],
+              correctAnswer: "a) Bacteroids fragilis"
+            },
+            {
+              question: "18. The predominant flora in the human GIT is anaerobic. The number of anaerobic bacteria in the colon is:",
+              options: [
+                "a) 10,000/g",
+                "b) 105/g",
+                "c) 107/g",
+                "d) 1011/g"
+              ],
+              correctAnswer: "d) 1011/g"
+            },
+            {
+              question: "19. Most enteric bacilli are motile. The one which is non-motile is:",
+              options: [
+                "a) Salmonella",
+                "b) E. coli",
+                "c) Klebsiella",
+                "d) Proteus"
+              ],
+              correctAnswer: "c) Klebsiella"
+            },
+            {
+              question: "20. The always pathogenic Enterobacteriaceae is:",
+              options: [
+                "a) E. coli",
+                "b) Klebsiella",
+                "c) Shigella",
+                "d) Yersinia"
+              ],
+              correctAnswer: "c) Shigella"
+            },
+            {
+              question: "21. Serotyping or antigenic typing of E. coli is based on:",
+              options: [
+                "a) Somatic antigen O",
+                "b) Flagellar antigen H",
+                "c) Capsular antigen K",
+                "d) All of these"
+              ],
+              correctAnswer: "d) All of these"
+            },
+            {
+              question: "22. The following are TRUE about the somatic antigen (antigen O) of E. coli EXCEPT:",
+              options: [
+                "a) It is a lipopolysaccharide",
+                "b) It is heat-stable",
+                "c) It is associated with virulence",
+                "d) 'Early' groups are pathogenic"
+              ],
+              correctAnswer: "d) 'Early' groups are pathogenic"
+            },
+            {
+              question: "23. The commonest culture media used for Leptospira is:",
+              options: [
+                "a) Korthof's",
+                "b) Fletcher's",
+                "c) Stuart's",
+                "d) EMJH"
+              ],
+              correctAnswer: "d) EMJH"
+            },
+            {
+              question: "24. Clostridium perfringens has the shape of a:",
+              options: [
+                "a) Spindle",
+                "b) Club",
+                "c) Tennis racket",
+                "d) Drumstick"
+              ],
+              correctAnswer: "b) Club"
+            },
+            {
+              question: "25. Epidemic relapsing fever is caused by:",
+              options: [
+                "a) Borrelia recurrentis",
+                "b) B. burgdorferi",
+                "c) B. duttonii",
+                "d) B. vincentii"
+              ],
+              correctAnswer: "a) Borrelia recurrentis"
+            },
+            {
+              question: "26. The vector for endemic relapsing fever is:",
+              options: [
+                "a) Pediculus humanus corporis",
+                "b) Pediculus humanus capitus",
+                "c) Ornithodoros ticks",
+                "d) Ixodes ticks"
+              ],
+              correctAnswer: "c) Ornithodoros ticks"
+            },
+            {
+              question: "27. Migrating skin lesions in Lyme's disease are called:",
+              options: [
+                "a) Erythema marginatum",
+                "b) Erythema migrans",
+                "c) Erythema nodosum",
+                "d) Erythema toxicum"
+              ],
+              correctAnswer: "b) Erythema migrans"
+            },
+            {
+              question: "28. Motility of borreliae is described as:",
+              options: [
+                "a) Darting",
+                "b) Tumbling",
+                "c) Lashing",
+                "d) Twitching"
+              ],
+              correctAnswer: "c) Lashing"
+            },
+            {
+              question: "29. Bannwarth syndrome is seen in association with:",
+              options: [
+                "a) Lyme disease",
+                "b) Weil's disease",
+                "c) Endemic relapsing fever",
+                "d) Epidemic relapsing fever"
+              ],
+              correctAnswer: "a) Lyme disease"
+            },
+            {
+              question: "30. Bifidobacterium is a:",
+              options: [
+                "a) Prebiotic",
+                "b) Probiotic",
+                "c) Parabiotic",
+                "d) Postbiotic"
+              ],
+              correctAnswer: "b) Probiotic"
+            },
+            {
+              question: "31. Which of the following samples for bacterial culture MUST be collected in a sterile container?",
+              options: [
+                "a) Stool",
+                "b) Rectal swab",
+                "c) Pleural fluid",
+                "d) All of the above"
+              ],
+              correctAnswer: "c) Pleural fluid"
+            },
+            {
+              question: "32. A lumbar puncture was performed at night in a patient suspected of having acute pyogenic meningitis. The CSF sample for culture will have to wait till morning when the lab opens. Where should the sample be stored overnight for best results?",
+              options: [
+                "a) In the freezer",
+                "b) In the fridge",
+                "c) At -20°C",
+                "d) In an incubator at 37°C."
+              ],
+              correctAnswer: "d) In an incubator at 37°C."
+            },
+            {
+              question: "33. A blood sample was collected from a patient admitted in the fever ward for the NS1 and IgM dengue test. However, when the specimen arrived in the microbiology lab, it was found that the patient's complete residential address and contact number were not mentioned in the requisition slip. This pertains to an error in the:",
+              options: [
+                "a) Pre-analytical phase",
+                "b) Analytical phase",
+                "c) Post-analytical phase",
+                "d) None of the above"
+              ],
+              correctAnswer: "a) Pre-analytical phase"
+            },
+            {
+              question: "34. HEPA refers to",
+              options: [
+                "a) Highly effective particulate air",
+                "b) High efficiency particulate air",
+                "c) Highly effective partition air",
+                "d) High efficiency part aircycle"
+              ],
+              correctAnswer: "b) High efficiency particulate air"
+            },
+            {
+              question: "35. Which of the following is false regarding sample collection from a patient?",
+              options: [
+                "a) Informed consent must be taken before sample collection.",
+                "b) Material with due consent must be used for what it is intended, and not for any other purpose.",
+                "c) Results can be shared with family members",
+                "d) Patient privacy must be ensured while collecting samples"
+              ],
+              correctAnswer: "c) Results can be shared with family members"
+            },
+            {
+              question: "36. The vector for epidemic typhus is",
+              options: [
+                "a) Rat flea",
+                "b) Mite",
+                "c) Louse",
+                "d) Tick"
+              ],
+              correctAnswer: "c) Louse"
+            },
+            {
+              question: "37. Which of the following is FALSE about rickettsiae:",
+              options: [
+                "a) Do not possess peptidoglycan cell wall",
+                "b) Have metabolic enzymes",
+                "c) Reproduce by binary fission",
+                "d) Possess both RNA and DNA"
+              ],
+              correctAnswer: "a) Do not possess peptidoglycan cell wall"
+            },
+            {
+              question: "38. Disease that does NOT occur in the typhus fever group is:",
+              options: [
+                "a) Epidemic typhus",
+                "b) Endemic typhus",
+                "c) Q fever",
+                "d) Brill-Zinser disease"
+              ],
+              correctAnswer: "c) Q fever"
+            },
+            {
+              question: "39. Griffith typing of streptococci is based on:",
+              options: [
+                "a) Carbohydrate C antigen",
+                "b) M proteins",
+                "c) Hemolysis on blood agar",
+                "d) Oxygen requirement during culture."
+              ],
+              correctAnswer: "b) M proteins"
+            },
+            {
+              question: "40. Which of the following is NOT a gram-positive bacillus?",
+              options: [
+                "a) Staphylococcus",
+                "b) Corynebacterium",
+                "c) Bacillus",
+                "d) Clostridium"
+              ],
+              correctAnswer: "a) Staphylococcus"
+            }
+          ]
+        }
+      }
+    },
+    "basic-concepts-bacteriology": {
+      name: "Chapter 4: Basic concepts of bacteriology",
+      subtopics: {
+        "mcq": {
+          name: "MCQs",
+          questions: [
+            {
+              question: "1. Prolonged storage of viruses can be done by:",
+              options: [
+                "a) Storage at -70°C",
+                "b) Freeze-drying",
+                "c) Lyophilisation",
+                "d) Both (b) and (c)"
+              ],
+              correctAnswer: "d) Both (b) and (c)"
+            },
+            {
+              question: "2. The following virus CANNOT withstand freeze-drying:",
+              options: [
+                "a) Varicella",
+                "b) Rabies virus",
+                "c) Poliovirus",
+                "d) CMV"
+              ],
+              correctAnswer: "c) Poliovirus"
+            },
+            {
+              question: "3. Viruses are inactivated by:",
+              options: [
+                "a) Chlorination",
+                "b) Acidic pH",
+                "c) Ionising radiation",
+                "d) Organic iodine compounds"
+              ],
+              correctAnswer: "c) Ionising radiation"
+            },
+            {
+              question: "4. Which of the following is a receptor-destroying enzyme?",
+              options: [
+                "a) Neuraminidase",
+                "b) Transcriptase c",
+                "c) Reverse transcriptase",
+                "d) Hemagglutinin"
+              ],
+              correctAnswer: "a) Neuraminidase"
+            },
+            {
+              question: "5. Elution is the characteristic feature of which one of the following virus groups?",
+              options: [
+                "a) Poliovirus",
+                "b) Arbovirus",
+                "c) Myxovirus",
+                "d) Poxvirus"
+              ],
+              correctAnswer: "c) Myxovirus"
+            },
+            {
+              question: "6. The von Magnus phenomenon refers to:",
+              options: [
+                "a) Incomplete virus assembly",
+                "b) Eclipse phase",
+                "c) Elution",
+                "d) Abortive infection"
+              ],
+              correctAnswer: "a) Incomplete virus assembly"
+            },
+            {
+              question: "7. Pock-forming viruses belong to which of the following groups?",
+              options: [
+                "a) Influenza",
+                "b) Vaccinia",
+                "c) Yellow fever",
+                "d) Paramyxo"
+              ],
+              correctAnswer: "b) Vaccinia"
+            },
+            {
+              question: "8. Cytoplasmic vacuolation is the characteristic feature of:",
+              options: [
+                "a) Herpes virus",
+                "b) SV40 virus",
+                "c) Influenza virus",
+                "d) Parainfluenza virus"
+              ],
+              correctAnswer: "b) SV40 virus"
+            },
+            {
+              question: "9. Hemadsorption test uses RBCs of:",
+              options: [
+                "a) Sheep",
+                "b) Mouse",
+                "c) Guinea pig",
+                "d) Hamster"
+              ],
+              correctAnswer: "c) Guinea pig"
+            },
+            {
+              question: "10. RBCs used for the estimation of viral hemagglutination titre are taken from:",
+              options: [
+                "a) Chicken",
+                "b) Sheep",
+                "c) Rabbits",
+                "d) Male mice"
+              ],
+              correctAnswer: "a) Chicken"
+            },
+            {
+              question: "11. When the genome of a virus is covered by the entire capsid of the other virus it is called:",
+              options: [
+                "a) Stable variation",
+                "b) Transcapsidation",
+                "c) Complementation",
+                "d) Interference"
+              ],
+              correctAnswer: "b) Transcapsidation"
+            },
+            {
+              question: "12. Which of the following is a single-stranded DNA virus?",
+              options: [
+                "a) Pox",
+                "b) Papova",
+                "c) Paramyxo",
+                "d) Parvo"
+              ],
+              correctAnswer: "d) Parvo"
+            },
+            {
+              question: "13. Which of the following groups of viruses belongs to the Picornaviridae family?",
+              options: [
+                "a) HAV, Polio, Echo",
+                "b) Denso, Polio, Rhino",
+                "c) Rhino, Nairo, Lassa",
+                "d) Rubi, Coxsackie, Echo"
+              ],
+              correctAnswer: "a) HAV, Polio, Echo"
+            },
+            {
+              question: "14. The process of viral uncoating is favoured by:",
+              options: [
+                "a) RDE enzyme",
+                "b) Neuraminidase",
+                "c) Transcriptase",
+                "d) Lysosomes"
+              ],
+              correctAnswer: "d) Lysosomes"
+            },
+            {
+              question: "15. Which of the following is FALSE regarding inclusion bodies?",
+              options: [
+                "a) They are crystalline aggregates of virions",
+                "b) They represent degenerative changes produced by viral infections",
+                "c) They can be demonstrated under an electron microscope",
+                "d) They can be acidophilic or basophilic"
+              ],
+              correctAnswer: "c) They can be demonstrated under an electron microscope"
+            },
+            {
+              question: "16. Bollinger bodies are associated with which of the following diseases?",
+              options: [
+                "a) Fowl pox",
+                "b) Rabies",
+                "c) Polio",
+                "d) Measles"
+              ],
+              correctAnswer: "a) Fowl pox"
+            },
+            {
+              question: "17. Which of the following inclusion bodies is intracytoplasmic?",
+              options: [
+                "a) Bollinger",
+                "b) Negri",
+                "c) Cowdry type A",
+                "d) Cowdry type B"
+              ],
+              correctAnswer: "b) Negri"
+            },
+            {
+              question: "18. Guarnieri bodies are seen in which viral infection?",
+              options: [
+                "a) Rabies",
+                "b) Polio",
+                "c) Vaccinia",
+                "d) Herpes"
+              ],
+              correctAnswer: "c) Vaccinia"
+            },
+            {
+              question: "19. Which of the following viruses is inactivated by gastric pH?",
+              options: [
+                "a) Poliovirus",
+                "b) Hepatitis virus",
+                "c) Rotavirus",
+                "d) Rhinovirus"
+              ],
+              correctAnswer: "d) Rhinovirus"
+            },
+            {
+              question: "20. Enveloped viruses are inactivated by:",
+              options: [
+                "a) Gastric pH",
+                "b) Bile",
+                "c) Saliva",
+                "d) Tears"
+              ],
+              correctAnswer: "b) Bile"
+            },
+            {
+              question: "21. The mode of infection in murine mammary tumour virus is:",
+              options: [
+                "a) Congenital",
+                "b) Sexual",
+                "c) Insect bite",
+                "d) Breast milk"
+              ],
+              correctAnswer: "d) Breast milk"
+            },
+            {
+              question: "22. The common route of entry for all the following viruses is through the alimentary tract EXCEPT in:",
+              options: [
+                "a) Adenoviruses",
+                "b) Reoviruses",
+                "c) Hepatitis C virus",
+                "d) Poliovirus"
+              ],
+              correctAnswer: "c) Hepatitis C virus"
+            },
+            {
+              question: "23. The important initial response of a human body to a viral infection is:",
+              options: [
+                "a) B cell stimulation",
+                "b) Antibody production",
+                "c) Interferon production",
+                "d) T cell stimulation"
+              ],
+              correctAnswer: "c) Interferon production"
+            },
+            {
+              question: "24. Seller's stain is used for the demonstration of which of the following viruses?",
+              options: [
+                "a) CMV",
+                "b) Rabies virus",
+                "c) Measles virus",
+                "d) Herpes virus"
+              ],
+              correctAnswer: "b) Rabies virus"
+            },
+            {
+              question: "25. Which of the following agents was developed as an antiparasitic but is presently used as an antiviral?",
+              options: [
+                "a) Amantadine",
+                "b) Acyclovir",
+                "c) Suramine",
+                "d) Virazole"
+              ],
+              correctAnswer: "c) Suramine"
+            },
+            {
+              question: "26. All of the following viruses produce lesions at the site of entry EXCEPT:",
+              options: [
+                "a) Orf virus",
+                "b) Vaccinia virus",
+                "c) Papillomavirus",
+                "d) Adenovirus"
+              ],
+              correctAnswer: "d) Adenovirus"
+            },
+            {
+              question: "27. Fever blisters or herpes febrilis are seen in all of the following infections EXCEPT:",
+              options: [
+                "a) Pneumococcal infection",
+                "b) Herpes",
+                "c) Malaria",
+                "d) Influenza"
+              ],
+              correctAnswer: "b) Herpes"
+            },
+            {
+              question: "28. HBV vaccine is an example of which type of vaccine?",
+              options: [
+                "a) Live",
+                "b) Killed",
+                "c) Live-attenuated",
+                "d) Cloned subunit"
+              ],
+              correctAnswer: "d) Cloned subunit"
+            },
+            {
+              question: "29. The type of vaccine used against Japanese encephalitis is:",
+              options: [
+                "a) Killed",
+                "b) Live-attenuated",
+                "c) Live",
+                "d) Subunit"
+              ],
+              correctAnswer: "a) Killed"
+            },
+            {
+              question: "30. Which of the following is FALSE regarding bacteriophages?",
+              options: [
+                "a) They have no role in genetic manipulations",
+                "b) They confer certain properties to bacteria",
+                "c) They are used for bacterial typing",
+                "d) They control the total number of bacteria in natural environments"
+              ],
+              correctAnswer: "a) They have no role in genetic manipulations"
+            },
+            {
+              question: "31. Phage typing is NOT useful for:",
+              options: [
+                "a) Tracing the carrier during an epidemic",
+                "b) Identification of bacteria",
+                "c) Differentiating classical V. cholera from the El Tor type",
+                "d) Pathogenicity testing"
+              ],
+              correctAnswer: "d) Pathogenicity testing"
+            },
+            {
+              question: "32. The process of transmission of genes between bacteria through bacteriophages is called:",
+              options: [
+                "a) Transduction",
+                "b) Eclipse",
+                "c) Conjugation",
+                "d) Transformation"
+              ],
+              correctAnswer: "a) Transduction"
+            },
+            {
+              question: "33. Which of the following event/s occur/s in the temperate cycle of a bacteriophage life cycle?",
+              options: [
+                "a) Intracellular multiplication",
+                "b) Intracellular multiplication and host cell death",
+                "c) Multiplication, incorporation into host DNA and cell death",
+                "d) Incorporation in host DNA and no harm to host cell"
+              ],
+              correctAnswer: "d) Incorporation in host DNA and no harm to host cell"
+            },
+            {
+              question: "34. The interval between the entry of phage into the cell and appearance of the first infectious intracellular phage particle is called:",
+              options: [
+                "a) Latent period",
+                "b) Eclipse phase",
+                "c) Rise period",
+                "d) Burst phase"
+              ],
+              correctAnswer: "b) Eclipse phase"
+            },
+            {
+              question: "35. Beta prophage is associated with:",
+              options: [
+                "a) E. coli",
+                "b) Classical vibrios",
+                "c) El Tor vibrios",
+                "d) C. diphtheriae"
+              ],
+              correctAnswer: "d) C. diphtheriae"
+            },
+            {
+              question: "36. Superinfection immunity is seen in the case of:",
+              options: [
+                "a) MRSA",
+                "b) El Tor vibrios",
+                "c) Bacteriophage",
+                "d) E. coli"
+              ],
+              correctAnswer: "c) Bacteriophage"
+            },
+            {
+              question: "37. The highest dilution of the phage preparation that produces confluent lysis is called:",
+              options: [
+                "a) Routine test dose",
+                "b) Prophage beta",
+                "c) Eclipse phase",
+                "d) Latent phase"
+              ],
+              correctAnswer: "a) Routine test dose"
+            },
+            {
+              question: "38. Which of the following is TRUE about lysogenisation?",
+              options: [
+                "a) Inhibits bacterial multiplication",
+                "b) Abolishes toxigenicity of bacteria",
+                "c) Does not interfere with bacterial metabolism",
+                "d) Interferes with bacterial motility"
+              ],
+              correctAnswer: "c) Does not interfere with bacterial metabolism"
+            },
+            {
+              question: "39. Bacteriophages CANNOT be used for:",
+              options: [
+                "a) Tracing the disease carrier",
+                "b) Identification of bacteria",
+                "c) Prophylaxis of bacterial infections",
+                "d) Differentiating classical V. cholera from the El Tor type"
+              ],
+              correctAnswer: "c) Prophylaxis of bacterial infections"
+            },
+            {
+              question: "40. Yolk sac inoculation technique is used for cultivation of:",
+              options: [
+                "a) Influenza virus",
+                "b) Smallpox virus",
+                "c) Chlamydia",
+                "d) Mycoplasma"
+              ],
+              correctAnswer: "c) Chlamydia"
+            },
+            {
+              question: "41. Which of the following is an example of primary cell lines?",
+              options: [
+                "a) HeLa",
+                "b) HEp-2",
+                "c) KB",
+                "d) Monkey kidney"
+              ],
+              correctAnswer: "d) Monkey kidney"
+            },
+            {
+              question: "42. Which continuous cell line is now permitted to be used for vaccine production?",
+              options: [
+                "a) Vero cell lines",
+                "b) HeLa",
+                "c) HEp-2",
+                "d) KB"
+              ],
+              correctAnswer: "a) Vero cell lines"
+            },
+            {
+              question: "43. Which virus results in syncytium formation in cell lines?",
+              options: [
+                "a) Adenovirus",
+                "b) Herpesvirus",
+                "c) Enterovirus",
+                "d) Measles virus"
+              ],
+              correctAnswer: "d) Measles virus"
+            },
+            {
+              question: "44. The hemagglutination inhibition test is used to detect and assay which virus?",
+              options: [
+                "a) Influenza virus",
+                "b) Herpes virus",
+                "c) Enterovirus",
+                "d) Rubella virus"
+              ],
+              correctAnswer: "a) Influenza virus"
+            },
+            {
+              question: "45. Warthin–Finkeldey cell is an",
+              options: [
+                "a) Acidophilic intracytoplasmic and intranuclear inclusion body seen in measles",
+                "b) Eosinophilic intracytoplasmic and intranuclear inclusion body seen in rabies",
+                "c) Eosinophilic intracytoplasmic and intranuclear inclusion body seen in measles",
+                "d) Acidophilic intracytoplasmic and intranuclear inclusion body seen in vaccinia"
+              ],
+              correctAnswer: "c) Eosinophilic intracytoplasmic and intranuclear inclusion body seen in measles"
+            }
+          ]
+        }
+      }
     }
   }
 };
+
