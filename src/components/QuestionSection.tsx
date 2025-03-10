@@ -17,12 +17,12 @@ const QuestionSection = ({ subtopics, activeTab }: QuestionSectionProps) => {
         const shouldRender = 
           (activeTab === "essay" && questionTypeKey === "essay") || 
           (activeTab === "short-notes" && (questionTypeKey === "short-note" || questionTypeKey === "short-notes")) ||
-          (activeTab === "mcqs" && questionTypeKey === "mcqs");
+          (activeTab === "mcqs" && (questionTypeKey === "mcqs" || questionTypeKey === "chapter5"));
         
         if (!shouldRender) return null;
         
         // Handle MCQ question types separately - they're managed by MCQContent component
-        if (activeTab === "mcqs") {
+        if (activeTab === "mcqs" && questionTypeKey === "mcqs") {
           return null;
         }
         
