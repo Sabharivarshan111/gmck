@@ -370,7 +370,7 @@ const systematicBacteriologyMcqs = {
 };
 
 // Define the MCQ questions for Chapter 4: Basic concepts of bacteriology
-const bacteriologyConceptsMcqs = {
+const basicBacteriologyConceptsMcqs = {
   name: "Chapter 4: Basic concepts of bacteriology",
   questions: [
     {
@@ -793,7 +793,7 @@ export const microbiologyData = {
           name: "MCQs",
           subtopics: {
             "chapter-3-systematic-bacteriology": systematicBacteriologyMcqs,
-            "chapter-4-basic-concepts": bacteriologyConceptsMcqs
+            "chapter-4-basic-concepts-of-bacteriology": basicBacteriologyConceptsMcqs
           }
         }
       }
