@@ -1,6 +1,7 @@
 
 import { QuestionType, McqType } from "./QuestionBank";
 import QuestionCard from "./QuestionCard";
+import { Fragment } from "react";
 
 interface QuestionSectionProps {
   subtopics: {
@@ -10,21 +11,21 @@ interface QuestionSectionProps {
 }
 
 const QuestionSection = ({ subtopics, activeTab }: QuestionSectionProps) => {
+  // For the MCQs tab, we don't want to render MCQs in this component
+  // as they are handled by the MCQContent component
+  if (activeTab === "mcqs") {
+    return null;
+  }
+
   return (
     <>
       {Object.entries(subtopics).map(([questionTypeKey, questionType]) => {
         // Check if we should render this question type based on the active tab
         const shouldRender = 
           (activeTab === "essay" && questionTypeKey === "essay") || 
-          (activeTab === "short-notes" && (questionTypeKey === "short-note" || questionTypeKey === "short-notes")) ||
-          (activeTab === "mcqs" && questionTypeKey === "mcqs");
+          (activeTab === "short-notes" && (questionTypeKey === "short-note" || questionTypeKey === "short-notes"));
         
         if (!shouldRender) return null;
-        
-        // Handle MCQ question types separately - they're managed by MCQContent component
-        if (activeTab === "mcqs") {
-          return null;
-        }
         
         // For essay and short notes questions
         if (questionType && typeof questionType === 'object' && 'questions' in questionType) {
