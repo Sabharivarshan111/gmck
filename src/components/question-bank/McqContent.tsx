@@ -227,6 +227,206 @@ const McqContent = () => {
           { text: "Shigella", isCorrect: false }
         ],
         explanation: "Stuart's transport medium is specifically designed for the transport of clinical specimens containing Neisseria gonorrhoeae (gonococci). It maintains the viability of these delicate organisms during transport to the laboratory."
+      },
+      {
+        question: "Robertson's cooked meat medium is used to grow:",
+        options: [
+          { text: "Anaerobes", isCorrect: true },
+          { text: "Viruses", isCorrect: false },
+          { text: "Yeasts", isCorrect: false },
+          { text: "Aerobes", isCorrect: false }
+        ],
+        explanation: "Robertson's cooked meat medium is an enrichment medium specifically designed for the cultivation of anaerobic bacteria, especially Clostridium species. The meat particles provide a reducing environment that favors anaerobic growth."
+      },
+      {
+        question: "Agar-agar is used in microbiological media for:",
+        options: [
+          { text: "Nutritive value", isCorrect: false },
+          { text: "Solidifying media", isCorrect: true },
+          { text: "Carbon source", isCorrect: false },
+          { text: "All of these", isCorrect: false }
+        ],
+        explanation: "Agar-agar is a polysaccharide extracted from certain red algae. In microbiology, it is primarily used as a solidifying agent for culture media. It has no nutritive value for most microorganisms and remains solid at typical incubation temperatures."
+      },
+      {
+        question: "Which of the following selective media is used to isolate M. tuberculosis?",
+        options: [
+          { text: "Deoxycholate citrate medium", isCorrect: false },
+          { text: "Thayer-Martin medium", isCorrect: false },
+          { text: "Lowenstein-Jensen medium", isCorrect: true },
+          { text: "Potassium tellurite blood agar", isCorrect: false }
+        ],
+        explanation: "Lowenstein-Jensen medium is a selective medium used for the isolation and cultivation of Mycobacterium tuberculosis. It contains malachite green that inhibits other bacteria while allowing mycobacteria to grow."
+      },
+      {
+        question: "Cysteine lactose electrolyte deficient medium is an example of:",
+        options: [
+          { text: "Enriched medium", isCorrect: false },
+          { text: "Differential medium", isCorrect: true },
+          { text: "Transport medium", isCorrect: false },
+          { text: "Basal medium", isCorrect: false }
+        ],
+        explanation: "Cysteine Lactose Electrolyte Deficient (CLED) medium is a differential medium primarily used for urinary tract pathogens. It differentiates between lactose-fermenting and non-lactose-fermenting bacteria based on color changes."
+      },
+      {
+        question: "Which of the following require chocolate agar to grow:",
+        options: [
+          { text: "Neisseria meningitidis", isCorrect: true },
+          { text: "E. coli", isCorrect: false },
+          { text: "Salmonella typhi", isCorrect: false },
+          { text: "Mycoplasma pneumoniae", isCorrect: false }
+        ],
+        explanation: "Neisseria meningitidis, a fastidious organism, requires chocolate agar for growth. Chocolate agar contains hemoglobin and other growth factors from heated blood that support the growth of fastidious bacteria."
+      },
+      {
+        question: "McIntosh and Filde's anaerobic jar is used for the isolation of:",
+        options: [
+          { text: "Clostridium tetani", isCorrect: true },
+          { text: "Pseudomonas aeruginosa", isCorrect: false },
+          { text: "Nocardia asteroides", isCorrect: false },
+          { text: "None of these", isCorrect: false }
+        ],
+        explanation: "McIntosh and Filde's anaerobic jar is used for creating anaerobic conditions for the cultivation of strict anaerobes like Clostridium tetani. It works by removing oxygen and generating anaerobic conditions inside a sealed jar."
+      },
+      {
+        question: "Lawn culture method is used for:",
+        options: [
+          { text: "Antibiotic sensitivity testing", isCorrect: false },
+          { text: "Bacteriophage typing", isCorrect: false },
+          { text: "Obtaining bacterial growth in large quantities for the preparation of bacterial antigens", isCorrect: false },
+          { text: "All of the above", isCorrect: true }
+        ],
+        explanation: "The lawn culture method produces a uniform, confluent growth of bacteria across the entire surface of the medium. It is used for antibiotic sensitivity testing, bacteriophage typing, and obtaining large quantities of bacterial growth for antigen preparation."
+      },
+      {
+        question: "Which of the following culture methods can be used to determine the number of bacteria/mL of liquid broth?",
+        options: [
+          { text: "Lawn culture", isCorrect: false },
+          { text: "Pour plate culture", isCorrect: true },
+          { text: "Stab culture", isCorrect: false },
+          { text: "Streak culture", isCorrect: false }
+        ],
+        explanation: "Pour plate culture method is used for quantifying viable bacteria in a liquid sample. Diluted samples are mixed with molten agar and allowed to solidify. Individual bacterial cells form distinct colonies that can be counted to determine the original concentration."
+      },
+      {
+        question: "Craigie's tube culture method is used to:",
+        options: [
+          { text: "Separate bacteria with different optimum temperatures", isCorrect: false },
+          { text: "Separate motile from non-motile bacteria", isCorrect: true },
+          { text: "Separate pathogens from specimens with normal flora", isCorrect: false },
+          { text: "Separate vegetative from spore-producing bacteria", isCorrect: false }
+        ],
+        explanation: "Craigie's tube method employs a tube within a tube setup. The inner tube contains media and has openings at the bottom. Only motile bacteria can swim up through these openings, providing a way to separate motile from non-motile bacteria."
+      },
+      {
+        question: "The growth of bacteria in liquid culture medium is indicated by the presence of:",
+        options: [
+          { text: "Turbidity", isCorrect: false },
+          { text: "Sediment", isCorrect: false },
+          { text: "Surface pellicle", isCorrect: false },
+          { text: "All of these", isCorrect: true }
+        ],
+        explanation: "Bacterial growth in liquid media can be detected by various signs including turbidity (cloudiness), formation of sediment at the bottom, or development of a surface pellicle (film) on top. Different bacteria may show different growth patterns."
+      },
+      {
+        question: "Triple sugar iron medium contains all the following sugars EXCEPT:",
+        options: [
+          { text: "Glucose", isCorrect: false },
+          { text: "Sucrose", isCorrect: false },
+          { text: "Lactose", isCorrect: false },
+          { text: "Maltose", isCorrect: true }
+        ],
+        explanation: "Triple Sugar Iron (TSI) agar contains three sugars: glucose (0.1%), lactose (1%), and sucrose (1%). It does not contain maltose. TSI is used to differentiate enteric bacteria based on their ability to ferment these sugars and produce hydrogen sulfide."
+      },
+      {
+        question: "Lecithinase production on egg yolk agar is a characteristic feature of:",
+        options: [
+          { text: "Clostridium botulinum", isCorrect: false },
+          { text: "Clostridium tetani", isCorrect: false },
+          { text: "Clostridium perfringens", isCorrect: true },
+          { text: "Clostridium difficile", isCorrect: false }
+        ],
+        explanation: "Clostridium perfringens produces lecithinase (alpha toxin), which breaks down lecithin in egg yolk, forming an opaque zone around bacterial colonies on egg yolk agar. This test helps identify C. perfringens from other clostridia."
+      },
+      {
+        question: "An example of an anaerobic transport medium is:",
+        options: [
+          { text: "Cary-Blair medium", isCorrect: false },
+          { text: "Crystal violet medium", isCorrect: false },
+          { text: "Pike's medium", isCorrect: false },
+          { text: "Robertson cooked meat medium", isCorrect: true }
+        ],
+        explanation: "Robertson's cooked meat medium serves as an excellent anaerobic transport medium. The meat particles create a reducing environment that maintains anaerobic conditions, preserving the viability of strict anaerobes during transport."
+      },
+      {
+        question: "Routine blood agar for anaerobic culture contains:",
+        options: [
+          { text: "Penicillin", isCorrect: false },
+          { text: "Neomycin", isCorrect: true },
+          { text: "Oxacillin", isCorrect: false },
+          { text: "Clindamycin", isCorrect: false }
+        ],
+        explanation: "Blood agar for anaerobic culture often contains neomycin as a selective agent. Neomycin inhibits most aerobic and facultative anaerobic bacteria while allowing the growth of strict anaerobes, helping in their isolation."
+      },
+      {
+        question: "The principle of bacterial identification in matrix-assisted laser desorption/ionization-time of flight (MALDI-TOF) mass spectrometry is:",
+        options: [
+          { text: "Analysis of unique bacterial protein composition", isCorrect: true },
+          { text: "Formation of complex between the probe and target DNA", isCorrect: false },
+          { text: "Amplification of target nucleic acid", isCorrect: false },
+          { text: "Nucleic acid sequence-based amplification", isCorrect: false }
+        ],
+        explanation: "MALDI-TOF mass spectrometry identifies bacteria by analyzing their unique protein composition, particularly ribosomal proteins. It creates a protein spectrum that serves as a fingerprint for bacterial identification when compared to a database."
+      },
+      {
+        question: "What is TRUE regarding the MALDI-TOF technique?",
+        options: [
+          { text: "Rapid technique", isCorrect: false },
+          { text: "Requires culture of the organism", isCorrect: true },
+          { text: "Targets the cell wall component", isCorrect: false },
+          { text: "Less specific", isCorrect: false }
+        ],
+        explanation: "MALDI-TOF requires a pure culture of the organism for accurate identification. While it is a rapid technique that primarily targets proteins (not specifically cell wall components) and is highly specific, the correct answer is that it requires culture of the organism."
+      },
+      {
+        question: "All the following are TRUE of conventional microbiological techniques EXCEPT:",
+        options: [
+          { text: "Labour intensive", isCorrect: false },
+          { text: "Less expensive", isCorrect: false },
+          { text: "Greater turn-around time", isCorrect: false },
+          { text: "Do not require expertise", isCorrect: true }
+        ],
+        explanation: "Conventional microbiological techniques DO require significant expertise. They are labor-intensive, generally less expensive than molecular methods, and have longer turn-around times, but they definitely require skilled technicians with specific training."
+      },
+      {
+        question: "The following substances can be added to produce an anaerobic environment EXCEPT:",
+        options: [
+          { text: "Ascorbic acid", isCorrect: false },
+          { text: "Glutathione", isCorrect: false },
+          { text: "Glycerol", isCorrect: true },
+          { text: "Cysteine", isCorrect: false }
+        ],
+        explanation: "Glycerol is not used to create anaerobic conditions. Ascorbic acid, glutathione, and cysteine are reducing agents that can help create and maintain anaerobic conditions by removing oxygen from the environment."
+      },
+      {
+        question: "The medium that does NOT support the growth of clostridia is:",
+        options: [
+          { text: "Brain–heart infusion broth", isCorrect: true },
+          { text: "Thioglycolate broth", isCorrect: false },
+          { text: "Litmus milk medium", isCorrect: false },
+          { text: "Robertson's cooked meat broth", isCorrect: false }
+        ],
+        explanation: "While Brain-heart infusion (BHI) broth can support the growth of many microorganisms, it is not specifically designed for clostridia and lacks the reducing environment needed for optimal growth of strict anaerobes. The other media listed are more suitable for clostridia cultivation."
+      },
+      {
+        question: "The phenyl deaminase test is used to identify which of the following?",
+        options: [
+          { text: "Shigella", isCorrect: false },
+          { text: "Salmonella", isCorrect: false },
+          { text: "Proteus", isCorrect: true },
+          { text: "Pseudomonas", isCorrect: false }
+        ],
+        explanation: "The phenylalanine deaminase (PDA) test is used to identify Proteus species. These bacteria can deaminate phenylalanine to phenylpyruvic acid, which produces a green color when ferric chloride is added, allowing differentiation from other Enterobacteriaceae."
       }
     ]
   };
