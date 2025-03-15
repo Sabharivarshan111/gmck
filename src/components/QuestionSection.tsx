@@ -1,7 +1,6 @@
 
 import { QuestionType } from "./QuestionBank";
 import QuestionCard from "./QuestionCard";
-import { Fragment } from "react";
 
 interface QuestionSectionProps {
   subtopics: {
