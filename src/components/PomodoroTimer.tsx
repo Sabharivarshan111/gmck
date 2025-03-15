@@ -1,14 +1,16 @@
 
-import React from 'react';
-import { Timer } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Timer, X } from 'lucide-react';
 import { usePomodoroTimer } from '@/hooks/use-pomodoro-timer';
 import { TimerControls } from './pomodoro/TimerControls';
 import { TimerDisplay } from './pomodoro/TimerDisplay';
 import { TimerProgress } from './pomodoro/TimerProgress';
 import { useTheme } from './theme/ThemeProvider';
+import { Button } from './ui/button';
 
 const PomodoroTimer = () => {
   const { theme } = useTheme();
+  const [isVisible, setIsVisible] = useState(true);
   const {
     minutes,
     seconds,
@@ -28,6 +30,41 @@ const PomodoroTimer = () => {
     startEditing,
     handleKeyDown
   } = usePomodoroTimer();
+
+  // Load visibility preference from localStorage on component mount
+  useEffect(() => {
+    const savedVisibility = localStorage.getItem('pomodoroVisible');
+    if (savedVisibility !== null) {
+      setIsVisible(savedVisibility === 'true');
+    }
+  }, []);
+
+  // Save visibility preference to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('pomodoroVisible', isVisible.toString());
+  }, [isVisible]);
+
+  const toggleVisibility = () => {
+    setIsVisible(prev => !prev);
+  };
+
+  if (!isVisible) {
+    return (
+      <Button
+        onClick={toggleVisibility}
+        className={`fixed bottom-10 left-1/2 transform -translate-x-1/2 rounded-full p-2 shadow-lg z-50 animate-fade-in ${
+          theme === "dark"
+            ? "bg-black border border-white text-white hover:bg-gray-900"
+            : "bg-white border border-gray-300 text-gray-900 hover:bg-gray-100"
+        }`}
+        size="icon"
+        variant="outline"
+        aria-label="Show Pomodoro Timer"
+      >
+        <Timer className="w-5 h-5" />
+      </Button>
+    );
+  }
 
   return (
     <div className={`fixed bottom-10 left-1/2 transform -translate-x-1/2 ${
@@ -54,14 +91,30 @@ const PomodoroTimer = () => {
             theme={theme}
           />
 
-          <TimerControls 
-            isRunning={isRunning}
-            toggleTimer={toggleTimer}
-            resetTimer={resetTimer}
-            waterCount={waterCount}
-            setWaterCount={setWaterCount}
-            theme={theme}
-          />
+          <div className="flex items-center gap-2">
+            <TimerControls 
+              isRunning={isRunning}
+              toggleTimer={toggleTimer}
+              resetTimer={resetTimer}
+              waterCount={waterCount}
+              setWaterCount={setWaterCount}
+              theme={theme}
+            />
+            
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={toggleVisibility}
+              className={`h-8 w-8 rounded-full ${
+                theme === "dark"
+                  ? "border-white text-white hover:bg-white hover:text-black"
+                  : "border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white"
+              }`}
+              aria-label="Hide Pomodoro Timer"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
         
         <TimerProgress 
