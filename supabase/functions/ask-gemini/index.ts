@@ -214,7 +214,8 @@ serve(async (req) => {
 
     // Create a client instance
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+    // Update the model to use Gemini 2.0 Flash instead of Gemini 1.5 Pro
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
     // Check if the prompt contains "Triple-tapped:" which indicates it came from triple tap action
     const isTripleTapQuestion = prompt.includes("Triple-tapped:");
@@ -289,7 +290,7 @@ serve(async (req) => {
     
     try {
       // Increased timeout for Gemini requests - this is the key change to fix timeouts
-      const timeoutMs = 30000; // Increased from 15000 to 30000 (30 seconds timeout)
+      const timeoutMs = 30000; // 30 seconds timeout
       
       // Create model content with more concise instructions to reduce response time
       const modelPromise = model.generateContent({
