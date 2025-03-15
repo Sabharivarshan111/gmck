@@ -27,15 +27,25 @@ export function FontSizeToggle() {
     if (savedFontSize) {
       setFontSize(Number(savedFontSize));
       applyFontSize(Number(savedFontSize));
+    } else {
+      // If no saved font size, apply the default
+      applyFontSize(DEFAULT_FONT_SIZE);
     }
   }, []);
 
   const applyFontSize = (size: number) => {
-    document.documentElement.style.setProperty('--base-font-size', `${size}px`);
+    document.documentElement.style.fontSize = `${size}px`;
     
-    // Adjust card paddings based on font size
-    const paddingScale = size / DEFAULT_FONT_SIZE;
-    document.documentElement.style.setProperty('--card-padding', `${Math.max(8, 12 * paddingScale)}px ${Math.max(12, 16 * paddingScale)}px`);
+    // Apply font size to specific elements
+    const questionCards = document.querySelectorAll('.question-card');
+    questionCards.forEach(card => {
+      const cardElement = card as HTMLElement;
+      cardElement.style.fontSize = `${size * 0.875}px`; // 0.875 is roughly equivalent to text-sm
+      
+      // Adjust padding based on font size
+      const paddingScale = size / DEFAULT_FONT_SIZE;
+      cardElement.style.padding = `${Math.max(8, 12 * paddingScale)}px ${Math.max(12, 16 * paddingScale)}px`;
+    });
     
     // Save to local storage
     localStorage.setItem(FONT_SIZE_STORAGE_KEY, size.toString());
