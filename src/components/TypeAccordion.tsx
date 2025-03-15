@@ -12,7 +12,7 @@ interface TypeAccordionProps {
   typeKey: string;
   type: SubTopicContent;
   isExpanded?: boolean;
-  activeTab: "essay" | "short-notes" | "mcqs";
+  activeTab: "essay" | "short-notes";
 }
 
 const TypeAccordion = ({ typeKey, type, isExpanded = false, activeTab }: TypeAccordionProps) => {

@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { QUESTION_BANK_DATA } from "@/data/questionBankData";
 import { Topic, QuestionBankData } from "@/components/QuestionBank";
@@ -5,7 +6,7 @@ import { Topic, QuestionBankData } from "@/components/QuestionBank";
 export const useQuestionBank = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isMobile, setIsMobile] = useState(false);
-  const [activeTab, setActiveTab] = useState<"extras" | "mcqs" | "essay" | "short-notes">("essay");
+  const [activeTab, setActiveTab] = useState<"extras" | "essay" | "short-notes">("essay");
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
   const [hasSearchResults, setHasSearchResults] = useState(true);
   const [isSearching, setIsSearching] = useState(false);

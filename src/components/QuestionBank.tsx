@@ -7,32 +7,16 @@ import SearchBar from "./question-bank/SearchBar";
 import NoResultsMessage from "./question-bank/NoResultsMessage";
 import QuestionBankContent from "./question-bank/QuestionBankContent";
 import ExtrasContent from "./question-bank/ExtrasContent";
-import McqContent from "./question-bank/McqContent";
 
 export interface QuestionType {
   name: string;
   questions: string[];
 }
 
-export interface McqOption {
-  text: string;
-  isCorrect: boolean;
-}
-
-export interface McqQuestion {
-  question: string;
-  options: McqOption[];
-}
-
-export interface McqType {
-  name: string;
-  questions: McqQuestion[];
-}
-
 export interface SubTopicContent {
   name: string;
   subtopics: {
-    [key: string]: QuestionType | McqType | { name: string; questions: any[] };
+    [key: string]: QuestionType | { name: string; questions: any[] };
   };
 }
 
@@ -72,8 +56,6 @@ const QuestionBank = () => {
   const handlers = useSwipeable({
     onSwipedLeft: () => {
       if (activeTab === "extras") {
-        setActiveTab("mcqs");
-      } else if (activeTab === "mcqs") {
         setActiveTab("essay");
       } else if (activeTab === "essay") {
         setActiveTab("short-notes");
@@ -83,8 +65,6 @@ const QuestionBank = () => {
       if (activeTab === "short-notes") {
         setActiveTab("essay");
       } else if (activeTab === "essay") {
-        setActiveTab("mcqs");
-      } else if (activeTab === "mcqs") {
         setActiveTab("extras");
       }
     },
@@ -119,18 +99,12 @@ const QuestionBank = () => {
         </div>
         
         <Tabs 
-          defaultValue="mcqs" 
+          defaultValue="essay" 
           value={activeTab}
           className="w-full"
-          onValueChange={(value) => setActiveTab(value as "extras" | "mcqs" | "essay" | "short-notes")}
+          onValueChange={(value) => setActiveTab(value as "extras" | "essay" | "short-notes")}
         >
-          <TabsList className="w-full grid grid-cols-3 h-12 bg-gray-100 dark:bg-gray-950 rounded-lg mb-4">
-            <TabsTrigger 
-              value="mcqs" 
-              className="text-lg font-medium text-gray-700 dark:text-gray-400 data-[state=active]:text-black dark:data-[state=active]:text-white data-[state=active]:bg-transparent data-[state=active]:after:content-[''] data-[state=active]:after:absolute data-[state=active]:after:left-0 data-[state=active]:after:right-0 data-[state=active]:after:bottom-0 data-[state=active]:after:h-0.5 data-[state=active]:after:bg-black dark:data-[state=active]:after:bg-white relative"
-            >
-              MCQs
-            </TabsTrigger>
+          <TabsList className="w-full grid grid-cols-2 h-12 bg-gray-100 dark:bg-gray-950 rounded-lg mb-4">
             <TabsTrigger 
               value="essay" 
               className="text-lg font-medium text-gray-700 dark:text-gray-400 data-[state=active]:text-black dark:data-[state=active]:text-white data-[state=active]:bg-transparent data-[state=active]:after:content-[''] data-[state=active]:after:absolute data-[state=active]:after:left-0 data-[state=active]:after:right-0 data-[state=active]:after:bottom-0 data-[state=active]:after:h-0.5 data-[state=active]:after:bg-black dark:data-[state=active]:after:bg-white relative"
@@ -159,10 +133,6 @@ const QuestionBank = () => {
             
             <TabsContent value="extras" className="mt-0 min-h-[500px] bg-transparent">
               <ExtrasContent driveLink={googleDriveLink} />
-            </TabsContent>
-            
-            <TabsContent value="mcqs" className="mt-0 min-h-[500px] bg-transparent">
-              <McqContent />
             </TabsContent>
             
             <TabsContent value="essay" className="mt-0 min-h-[500px] bg-transparent">

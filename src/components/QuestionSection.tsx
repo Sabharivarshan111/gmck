@@ -1,22 +1,16 @@
 
-import { QuestionType, McqType } from "./QuestionBank";
+import { QuestionType } from "./QuestionBank";
 import QuestionCard from "./QuestionCard";
 import { Fragment } from "react";
 
 interface QuestionSectionProps {
   subtopics: {
-    [key: string]: QuestionType | McqType | { name: string; questions: any[] };
+    [key: string]: QuestionType | { name: string; questions: any[] };
   };
-  activeTab: "essay" | "short-notes" | "mcqs";
+  activeTab: "essay" | "short-notes";
 }
 
 const QuestionSection = ({ subtopics, activeTab }: QuestionSectionProps) => {
-  // For the MCQs tab, we don't want to render MCQs in this component
-  // as they are handled by the MCQContent component
-  if (activeTab === "mcqs") {
-    return null;
-  }
-
   return (
     <>
       {Object.entries(subtopics).map(([questionTypeKey, questionType]) => {
