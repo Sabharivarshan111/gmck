@@ -10,7 +10,12 @@ export const microbiologyData = {
     "paper-2": microbiologyPaper2Data,
     "mcqs": {
       name: "MCQs",
-      subtopics: microbiologyMcqsData
+      subtopics: {
+        "2nd-year": {
+          name: "2nd Year",
+          subtopics: microbiologyMcqsData
+        }
+      }
     }
   }
 };
