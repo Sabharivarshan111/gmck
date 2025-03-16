@@ -4,7 +4,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { useTripleTap } from '@/hooks/use-triple-tap';
-import { AiQuestionTab } from './AiQuestionTab';
 
 interface QuestionCardProps {
   question: string;
@@ -12,7 +11,6 @@ interface QuestionCardProps {
 }
 
 const QuestionCard: React.FC<QuestionCardProps> = ({ question, index }) => {
-  const [showAiTab, setShowAiTab] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
   const asteriskCount = countAsterisks(question);
   
@@ -44,15 +42,10 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, index }) => {
     // Dispatch the event
     window.dispatchEvent(event);
     
-    // Show the AI tab below the question
-    setShowAiTab(true);
-    
-    // Add a small delay to ensure smooth transition
+    // Add a small delay to ensure the chat section is in view
     setTimeout(() => {
-      document.getElementById(`question-${index}`)?.scrollIntoView({ 
-        behavior: 'smooth',
-        block: 'center'
-      });
+      const chatSection = document.querySelector('.ai-chat-section');
+      chatSection?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }, 100);
   });
   
@@ -66,33 +59,29 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, index }) => {
         className="mb-2 border-gray-800 hover:border-gray-700 transition-colors cursor-pointer question-card" 
         onClick={handleTripleTap}
       >
-        <CardContent className="p-3 text-left text-sm flex items-start gap-2">
-          <div className="flex items-center mt-0.5">
+        <CardContent className="p-3 text-left text-sm flex items-center justify-between">
+          <div className="flex items-center gap-2">
             <Checkbox 
               id={`checkbox-${index}`}
               checked={isCompleted}
               onCheckedChange={handleCheckboxChange}
               onClick={(e) => e.stopPropagation()} // Prevent triple tap when clicking the checkbox
-              className="mr-2"
+              className="mr-1"
             />
-            
-            {asteriskCount > 0 && (
-              <Badge 
-                variant="outline" 
-                className="rounded-full h-6 w-6 p-0 flex items-center justify-center bg-gray-800 text-white text-xs border-gray-700"
-                onClick={(e) => e.stopPropagation()} // Prevent triple tap when clicking the badge
-              >
-                {asteriskCount}
-              </Badge>
-            )}
+            <p className="whitespace-pre-wrap flex-1">{getCleanQuestionText(question)}</p>
           </div>
-          <p className="whitespace-pre-wrap flex-1">{getCleanQuestionText(question)}</p>
+          
+          {asteriskCount > 0 && (
+            <Badge 
+              variant="outline" 
+              className="rounded-full h-6 w-6 flex-shrink-0 p-0 flex items-center justify-center bg-gray-800 text-white text-xs border-gray-700"
+              onClick={(e) => e.stopPropagation()} // Prevent triple tap when clicking the badge
+            >
+              {asteriskCount}
+            </Badge>
+          )}
         </CardContent>
       </Card>
-      
-      {showAiTab && (
-        <AiQuestionTab question={getCleanQuestionText(question)} />
-      )}
     </div>
   );
 };

@@ -124,3 +124,13 @@ html {
 .question-card .badge {
   font-weight: 600;
 }
+
+/* Add a subtle flash effect when a question is triple-tapped */
+@keyframes flashQuestionCard {
+  0% { background-color: rgba(59, 130, 246, 0.2); }
+  100% { background-color: transparent; }
+}
+
+.flash-triple-tap {
+  animation: flashQuestionCard 0.5s ease-out;
+}
