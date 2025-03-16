@@ -60,10 +60,10 @@ const PomodoroTimer = () => {
           transition={{ duration: 0.3, ease: "easeInOut" }}
           className={`fixed bottom-10 left-1/2 transform -translate-x-1/2 ${
             theme === "dark" 
-              ? "bg-black border border-white/20" 
+              ? "bg-black border border-white" 
               : "bg-white border border-gray-300"
-            } rounded-full px-8 py-4 shadow-lg w-[80%] max-w-[400px] z-50 mx-auto flex justify-center`}>
-          <div className="w-full space-y-2">
+            } rounded-full px-8 py-3 shadow-lg min-w-[300px] z-50`}>
+          <div className="space-y-2">
             <div className="flex items-center justify-between gap-4">
               <Timer className={`w-5 h-5 ${theme === "dark" ? "text-white" : "text-gray-900"}`} />
               
@@ -98,9 +98,9 @@ const PomodoroTimer = () => {
                   onClick={toggleVisibility}
                   className={`h-8 w-8 rounded-full ${
                     theme === "dark"
-                      ? "border-white/70 text-white hover:bg-white/10 hover:text-white"
-                      : "border-gray-900 text-gray-900 hover:bg-gray-100 hover:text-black"
-                  } transition-all duration-300`}
+                      ? "border-white text-white hover:bg-white hover:text-black"
+                      : "border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white"
+                  } transition-colors duration-200`}
                   aria-label="Hide Pomodoro Timer"
                 >
                   <X className="h-4 w-4" />
@@ -122,14 +122,14 @@ const PomodoroTimer = () => {
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.8 }}
-          transition={{ duration: 0.3, ease: "easeOut" }}
+          transition={{ duration: 0.2, ease: "easeOut" }}
           className="fixed bottom-10 left-1/2 transform -translate-x-1/2 z-50"
         >
           <Button
             onClick={toggleVisibility}
-            className={`rounded-full p-3 shadow-lg transition-all duration-300 hover:scale-105 ${
+            className={`rounded-full p-2 shadow-lg transition-transform duration-200 hover:scale-105 ${
               theme === "dark"
-                ? "bg-black border border-white/30 text-white hover:bg-gray-900"
+                ? "bg-black border border-white text-white hover:bg-gray-900"
                 : "bg-white border border-gray-300 text-gray-900 hover:bg-gray-100"
             }`}
             size="icon"
