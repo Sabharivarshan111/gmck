@@ -104,3 +104,23 @@
     box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
   }
 }
+
+/* Add styles for question cards */
+.question-card {
+  transition: all 0.3s ease-in-out;
+}
+
+.question-card:active {
+  background-color: rgba(255, 255, 255, 0.05);
+  transform: scale(0.98);
+}
+
+/* Font size transitions */
+html {
+  transition: font-size 0.3s ease;
+}
+
+/* Styles for the asterisk count badges */
+.question-card .badge {
+  font-weight: 600;
+}

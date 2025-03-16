@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Card, CardContent } from './ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { AiChat } from './AiChat';
@@ -28,7 +28,7 @@ export const AiQuestionTab: React.FC<AiQuestionTabProps> = ({ question }) => {
           
           <TabsContent value="askAi" className="max-h-[350px] overflow-y-auto">
             <div className="p-2 bg-gray-900/50 rounded-md">
-              <AiChat />
+              <AiChat initialQuestion={question} />
             </div>
           </TabsContent>
         </Tabs>

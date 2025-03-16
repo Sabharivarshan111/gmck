@@ -45,37 +45,16 @@ export const AiChat = ({ initialQuestion }: AiChatProps = {}) => {
   
   // Listen for triple tap events
   useEffect(() => {
-    // Add event listener for triple tap events
     const handleTripleTapAnswer = (event: Event) => {
       const customEvent = event as CustomEvent;
       if (customEvent.detail && customEvent.detail.question) {
         const question = customEvent.detail.question;
         
-        // If the answer was already fetched and passed in the event, use it directly
-        // instead of making another request
-        if (customEvent.detail.answer) {
-          const userMessage = {
-            id: crypto.randomUUID(),
-            role: 'user' as const,
-            content: question,
-            timestamp: new Date(),
-          };
-          
-          const assistantMessage = {
-            id: crypto.randomUUID(),
-            role: 'assistant' as const,
-            content: customEvent.detail.answer,
-            timestamp: new Date(),
-            isError: customEvent.detail.answer.includes("I'm sorry, I couldn't generate")
-          };
-          
-          // Add both messages to the chat but don't save triple-tapped messages to localStorage
-          setPrompt("");
-          setMessages(prev => [...prev, userMessage, assistantMessage]);
-        } else {
-          // If no answer was provided, call the AI service
-          handleSubmitQuestion(question);
-        }
+        // Set the question text in the input field
+        setPrompt(question);
+        
+        // Submit the question automatically
+        handleSubmitQuestion(question);
       }
     };
     
@@ -85,7 +64,7 @@ export const AiChat = ({ initialQuestion }: AiChatProps = {}) => {
     return () => {
       window.removeEventListener('ai-triple-tap-answer', handleTripleTapAnswer);
     };
-  }, [handleSubmitQuestion, setMessages, setPrompt]);
+  }, [handleSubmitQuestion, setPrompt]);
 
   return (
     <motion.div 

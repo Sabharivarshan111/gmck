@@ -4,10 +4,20 @@ import { useRef, useCallback } from 'react';
 export const useTripleTap = (callback: () => void, tapDelay = 500) => {
   const tapCount = useRef(0);
   const lastTapTime = useRef(0);
+  const timeoutRef = useRef<number | null>(null);
+
+  const resetTapCount = () => {
+    tapCount.current = 0;
+  };
 
   const handleTap = useCallback(() => {
     const now = Date.now();
     const timeSinceLastTap = now - lastTapTime.current;
+    
+    // Clear any existing timeout
+    if (timeoutRef.current !== null) {
+      window.clearTimeout(timeoutRef.current);
+    }
     
     if (timeSinceLastTap > tapDelay) {
       // Too much time has passed, reset counter
@@ -23,7 +33,11 @@ export const useTripleTap = (callback: () => void, tapDelay = 500) => {
     if (tapCount.current === 3) {
       callback();
       tapCount.current = 0;
+      return;
     }
+    
+    // Set a timeout to reset the tap count after the delay
+    timeoutRef.current = window.setTimeout(resetTapCount, tapDelay);
   }, [callback, tapDelay]);
 
   return handleTap;
