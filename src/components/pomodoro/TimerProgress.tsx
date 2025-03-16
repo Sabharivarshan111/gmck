@@ -27,11 +27,13 @@ export const TimerProgress: React.FC<TimerProgressProps> = ({
         />
       </div>
       
-      <div className={`flex justify-between items-center text-xs ${
-        theme === "dark" ? "text-gray-400" : "text-gray-600"
-      } px-2`}>
-        <div>Session: {totalMinutes} min</div>
-        <div>Water: {waterCount} glasses</div>
+      <div className="flex justify-between items-center text-xs px-2 mt-1">
+        <div className={theme === "dark" ? "text-gray-400" : "text-gray-600"}>
+          Session: {totalMinutes} min
+        </div>
+        <div className={theme === "dark" ? "text-gray-400" : "text-gray-600"}>
+          Water: {waterCount} glasses
+        </div>
       </div>
     </>
   );

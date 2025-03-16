@@ -164,8 +164,9 @@ html {
 
 /* Smooth transitions for theme toggle and buttons */
 button {
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important; 
   will-change: transform, background-color, color;
+  backface-visibility: hidden;
 }
 
 /* Improved smooth scrolling */
@@ -177,4 +178,26 @@ html {
 .card, .dropdown-menu, .toast, .tooltip {
   transform: translateZ(0);
   will-change: transform;
+  backface-visibility: hidden;
+}
+
+/* Add smooth transition for pomodoro timer to prevent jitter */
+.pomodoro-timer {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-font-smoothing: antialiased;
+  will-change: opacity, transform;
+}
+
+/* Fix for animation jitter */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Improved animations for toggle elements */
+button[aria-label="Hide Pomodoro Timer"],
+button[aria-label="Show Pomodoro Timer"] {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-font-smoothing: antialiased;
 }
