@@ -10,6 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Type } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const MIN_FONT_SIZE = 12;
 const MAX_FONT_SIZE = 24;
@@ -34,6 +35,7 @@ export function FontSizeToggle() {
   }, []);
 
   const applyFontSize = (size: number) => {
+    // Apply with smooth transition
     document.documentElement.style.fontSize = `${size}px`;
     
     // Apply font size to specific elements
@@ -75,47 +77,58 @@ export function FontSizeToggle() {
         <Button 
           variant="outline" 
           size="icon"
-          className="w-9 h-9 rounded-full bg-white border border-gray-200 hover:bg-gray-100 dark:bg-gray-800/60 dark:border-gray-700/60 dark:hover:bg-gray-700/60"
+          className="w-9 h-9 rounded-full bg-white border border-gray-200 hover:bg-gray-100 dark:bg-gray-800/60 dark:border-gray-700/60 dark:hover:bg-gray-700/60 transition-all duration-200"
         >
           <Type className="h-4 w-4 text-gray-900 dark:text-white" />
           <span className="sr-only">Adjust font size</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="mt-2 w-64 p-4">
-        <div className="mb-4 text-sm font-medium">
-          Text Size: {fontSize}px
-        </div>
-        
-        <Slider 
-          value={[fontSize]} 
-          min={MIN_FONT_SIZE} 
-          max={MAX_FONT_SIZE} 
-          step={1}
-          onValueChange={handleFontSizeChange}
-          className="mb-6"
-        />
-        
-        <div className="grid grid-cols-3 gap-2">
-          <DropdownMenuItem 
-            onClick={() => handlePresetClick(14)}
-            className="flex justify-center"
-          >
-            Small
-          </DropdownMenuItem>
-          <DropdownMenuItem 
-            onClick={() => handlePresetClick(16)}
-            className="flex justify-center"
-          >
-            Medium
-          </DropdownMenuItem>
-          <DropdownMenuItem 
-            onClick={() => handlePresetClick(20)}
-            className="flex justify-center"
-          >
-            Large
-          </DropdownMenuItem>
-        </div>
-      </DropdownMenuContent>
+      <AnimatePresence>
+        {isOpen && (
+          <DropdownMenuContent align="end" className="mt-2 w-64 p-4" asChild>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: -5 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: -5 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+            >
+              <div className="mb-4 text-sm font-medium">
+                Text Size: {fontSize}px
+              </div>
+              
+              <Slider 
+                value={[fontSize]} 
+                min={MIN_FONT_SIZE} 
+                max={MAX_FONT_SIZE} 
+                step={1}
+                onValueChange={handleFontSizeChange}
+                className="mb-6"
+              />
+              
+              <div className="grid grid-cols-3 gap-2">
+                <DropdownMenuItem 
+                  onClick={() => handlePresetClick(14)}
+                  className="flex justify-center transition-colors duration-200"
+                >
+                  Small
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => handlePresetClick(16)}
+                  className="flex justify-center transition-colors duration-200"
+                >
+                  Medium
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => handlePresetClick(20)}
+                  className="flex justify-center transition-colors duration-200"
+                >
+                  Large
+                </DropdownMenuItem>
+              </div>
+            </motion.div>
+          </DropdownMenuContent>
+        )}
+      </AnimatePresence>
     </DropdownMenu>
   );
 }

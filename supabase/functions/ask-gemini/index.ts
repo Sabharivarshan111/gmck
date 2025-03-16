@@ -136,6 +136,16 @@ function logWithTimestamp(message: string, data?: any) {
   }
 }
 
+// Function to detect if this is an MCQ generation request
+function isMcqGenerationRequest(prompt: string): boolean {
+  return /generate\s+mcqs?|create\s+mcqs?|make\s+some\s+mcqs?|similar\s+questions/i.test(prompt);
+}
+
+// Function to detect if this is an explanation request
+function isExplanationRequest(prompt: string): boolean {
+  return /explain\s+this|explain\s+more|elaborate|clarify|don'?t\s+understand|detailed\s+explanation/i.test(prompt);
+}
+
 serve(async (req) => {
   const requestId = crypto.randomUUID().substring(0, 8);
   const startTime = Date.now();
@@ -223,6 +233,10 @@ serve(async (req) => {
     // Extract the actual question content without the "Triple-tapped:" prefix
     const actualQuestion = isTripleTapQuestion ? prompt.replace("Triple-tapped:", "").trim() : prompt;
     
+    // Detect request type
+    const isMcqRequest = isMcqGenerationRequest(actualQuestion);
+    const isDetailedExplanation = isExplanationRequest(actualQuestion);
+    
     // Check if the question is from pathology
     const isPathologyQuestion = isPathologyTopic(actualQuestion) || 
                                actualQuestion.toLowerCase().includes("pathology") || 
@@ -232,11 +246,34 @@ serve(async (req) => {
     // Extract key topics from the question if it's a pathology question
     const keyTopics = isPathologyQuestion ? extractKeyTopics(actualQuestion) : [];
     logWithTimestamp(`[${requestId}] Extracted key topics:`, keyTopics);
+    logWithTimestamp(`[${requestId}] Is MCQ request: ${isMcqRequest}, Is explanation request: ${isDetailedExplanation}`);
     
-    // Create a more specific system prompt for triple-tapped medical questions
+    // Create a more specific system prompt based on the request type
     let systemPrompt = "";
     
-    if (isTripleTapQuestion) {
+    if (isMcqRequest) {
+      // Enhanced prompt for MCQ generation
+      systemPrompt = `You are ACEV, a medical education AI specialized in creating high-quality multiple choice questions for medical students.
+
+A student has requested MCQs related to: "${actualQuestion}"
+
+Please generate 5 challenging multiple choice questions in the style of NEET PG or USMLE exams. Your questions should:
+
+1. Include 2-3 case-based scenarios that require clinical reasoning
+2. Test application of knowledge rather than simple recall
+3. Have 4 options (A, B, C, D) with one correct answer 
+4. Cover key concepts and important differentials
+5. Include a brief explanation for the correct answer
+
+Format each question as:
+Question 1: [Question text]
+A) [Option A]
+B) [Option B]
+C) [Option C]
+D) [Option D]
+Answer: [Correct option letter]
+Explanation: [Brief explanation of why the answer is correct]`;
+    } else if (isTripleTapQuestion || isDetailedExplanation) {
       if (isPathologyQuestion) {
         // Enhanced specialized prompt for pathology questions with key topics
         let topicList = keyTopics.length > 0 ? 
@@ -279,32 +316,32 @@ serve(async (req) => {
         Format your response with clear sections and bullet points where appropriate. Be detailed and specific.`;
       }
       
-      logWithTimestamp(`[${requestId}] Processing triple-tapped question: ${actualQuestion}`);
+      logWithTimestamp(`[${requestId}] Processing detailed explanation: ${actualQuestion}`);
       logWithTimestamp(`[${requestId}] Is pathology question: ${isPathologyQuestion}`);
     } else {
       // For regular chat questions, use a more conversational approach
       systemPrompt = "You are ACEV, a helpful and knowledgeable medical assistant. Provide concise, accurate medical information. For medical emergencies, always advise seeking immediate professional help. Your responses should be compassionate, clear, and based on established medical knowledge. Never mention that you're powered by Gemini.";
     }
     
-    logWithTimestamp(`[${requestId}] Using system prompt type: ${isTripleTapQuestion ? (isPathologyQuestion ? "Pathology" : "Medical") : "Conversational"}`);
+    logWithTimestamp(`[${requestId}] Using system prompt type: ${isMcqRequest ? "MCQ Generation" : (isTripleTapQuestion ? (isPathologyQuestion ? "Pathology" : "Medical") : "Conversational")}`);
     
     try {
-      // Increased timeout for Gemini requests - this is the key change to fix timeouts
+      // Increased timeout for Gemini requests
       const timeoutMs = 30000; // 30 seconds timeout
       
-      // Create model content with more concise instructions to reduce response time
+      // Create model content with appropriate instructions
       const modelPromise = model.generateContent({
         contents: [
           { role: "user", parts: [{ text: systemPrompt }] },
           { role: "model", parts: [{ text: "I understand. I'll act as ACEV, a medical assistant providing helpful, accurate information while prioritizing patient safety." }] },
           { role: "user", parts: [{ text: isTripleTapQuestion ? actualQuestion : prompt }] }
         ],
-        // Add generation config to potentially speed up responses
+        // Add generation config optimized for the request type
         generationConfig: {
-          temperature: 0.7,
+          temperature: isMcqRequest ? 0.8 : 0.7, // Slightly higher temperature for MCQs for more variety
           topP: 0.8,
           topK: 40,
-          maxOutputTokens: 1000, // Limit token output to prevent overly long responses
+          maxOutputTokens: isMcqRequest ? 1500 : 1000, // More tokens for MCQs
         }
       });
       

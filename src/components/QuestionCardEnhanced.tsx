@@ -79,11 +79,11 @@ const QuestionCardEnhanced: React.FC<QuestionCardEnhancedProps> = ({ question, i
                   {tapStatus === 'idle' ? (
                     "Triple tap to ask AI"
                   ) : (
-                    <span className="animate-pulse">Getting answer...</span>
+                    <span className="animate-blink">Getting answer...</span>
                   )}
                 </span>
               </div>
-              <p className="whitespace-pre-wrap">{index + 1}. {question}</p>
+              <p className="whitespace-pre-wrap">{question}</p>
             </div>
           </div>
           

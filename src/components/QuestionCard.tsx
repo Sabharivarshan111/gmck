@@ -78,7 +78,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, index }) => {
               className="mt-0.5 flex-shrink-0"
             />
             <div className="flex-1">
-              <div className="flex items-center mb-1">
+              <div className="flex items-start mb-1">
                 <span className="text-[10px] text-blue-500">
                   {tapStatus === 'idle' ? (
                     "Triple tap to ask AI"
