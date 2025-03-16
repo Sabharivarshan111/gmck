@@ -74,6 +74,42 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
     };
   }, [rateLimitTimeout]);
 
+  // Enhanced prompt for generating MCQs
+  const enhancePromptForMCQs = (originalPrompt: string): string => {
+    // Check if the prompt is asking for MCQs
+    const isMcqRequest = /create\s+mcqs?|generate\s+mcqs?|make\s+mcqs?/i.test(originalPrompt);
+    
+    if (isMcqRequest) {
+      // Get the last two messages to provide context
+      const recentMessages = messages.slice(-4);
+      const contextMessages = recentMessages
+        .filter(msg => msg.role === 'assistant')
+        .map(msg => msg.content)
+        .join("\n\n");
+      
+      // Construct an enhanced prompt with specific instructions
+      return `Based on the following context and the user's request to create MCQs, please generate 5 high-quality multiple choice questions in the style of NEET PG or USMLE exams. 
+      
+Each MCQ should have 4 options (A, B, C, D) with one correct answer clearly marked. Ensure questions are clinically relevant and test application of knowledge.
+
+Context from previous conversation: 
+${contextMessages}
+
+User request: ${originalPrompt}
+
+Format each question as:
+Question 1: [Question text]
+A) [Option A]
+B) [Option B]
+C) [Option C]
+D) [Option D]
+Answer: [Correct option letter]
+Explanation: [Brief explanation of why the answer is correct]`;
+    }
+    
+    return originalPrompt;
+  };
+
   // Process the request queue
   const processQueue = useCallback(async () => {
     // If already processing or queue is empty, return
@@ -184,9 +220,12 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
         return;
       }
       
+      // Enhance the prompt if it's asking for MCQs
+      const enhancedPrompt = enhancePromptForMCQs(question);
+      
       // Add the request to the queue
       requestQueue.current.push({
-        question,
+        question: enhancedPrompt,
         resolve,
         reject,
         timestamp: Date.now(),
@@ -200,7 +239,7 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
         processQueue();
       }
     });
-  }, [isRateLimited, processQueue]);
+  }, [isRateLimited, processQueue, messages]);
 
   // This useEffect will trigger the AI to answer the initialQuestion automatically
   useEffect(() => {
@@ -215,9 +254,6 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
   useEffect(() => {
     localStorage.removeItem("aiChatMessages");
   }, []);
-
-  // We're intentionally removing these localStorage saving functions
-  // No need to save messages to localStorage anymore
 
   const handleSubmitQuestion = useCallback(async (questionText: string) => {
     if (!questionText || !questionText.trim()) {
