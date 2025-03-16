@@ -74,25 +74,23 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
     };
   }, [rateLimitTimeout]);
 
-  // Enhanced prompt for generating MCQs or handling follow-up questions
-  const enhancePromptWithContext = (originalPrompt: string): string => {
-    // Get recent messages to provide context
-    const recentMessages = messages.slice(-4);
-    const contextMessages = recentMessages
-      .map(msg => `${msg.role}: ${msg.content}`)
-      .join("\n\n");
-    
+  // Enhanced prompt for generating MCQs
+  const enhancePromptForMCQs = (originalPrompt: string): string => {
     // Check if the prompt is asking for MCQs
     const isMcqRequest = /create\s+mcqs?|generate\s+mcqs?|make\s+mcqs?/i.test(originalPrompt);
     
-    // Check if this is a follow-up question or asking for detailed explanation
-    const isFollowUp = /explain\s+this|explain\s+more|i\s+(?:don't|cant|can't)\s+understand|more\s+details|elaborate|similar\s+questions/i.test(originalPrompt);
-    
     if (isMcqRequest) {
-      // Construct an enhanced prompt with specific instructions for MCQs
+      // Get the last two messages to provide context
+      const recentMessages = messages.slice(-4);
+      const contextMessages = recentMessages
+        .filter(msg => msg.role === 'assistant')
+        .map(msg => msg.content)
+        .join("\n\n");
+      
+      // Construct an enhanced prompt with specific instructions
       return `Based on the following context and the user's request to create MCQs, please generate 5 high-quality multiple choice questions in the style of NEET PG or USMLE exams. 
       
-Each MCQ should have 4 options (A, B, C, D) with one correct answer clearly marked. Ensure questions are clinically relevant and test application of knowledge. Include 2-3 case-based questions.
+Each MCQ should have 4 options (A, B, C, D) with one correct answer clearly marked. Ensure questions are clinically relevant and test application of knowledge.
 
 Context from previous conversation: 
 ${contextMessages}
@@ -107,22 +105,6 @@ C) [Option C]
 D) [Option D]
 Answer: [Correct option letter]
 Explanation: [Brief explanation of why the answer is correct]`;
-    } else if (isFollowUp) {
-      // Construct an enhanced prompt for follow-up questions with context
-      return `Based on our previous conversation, the user is asking for more information: "${originalPrompt}".
-
-Previous context:
-${contextMessages}
-
-Please provide a clear, detailed explanation addressing the user's follow-up question. If they're asking for similar questions, generate questions that test the same concepts but in different ways, including some case-based scenarios.`;
-    }
-    
-    // Add context for any question to maintain conversation flow
-    if (messages.length > 0) {
-      return `User's question: ${originalPrompt}
-
-Previous context (if relevant to answering the question):
-${contextMessages}`;
     }
     
     return originalPrompt;
@@ -238,8 +220,8 @@ ${contextMessages}`;
         return;
       }
       
-      // Enhance the prompt with context
-      const enhancedPrompt = enhancePromptWithContext(question);
+      // Enhance the prompt if it's asking for MCQs
+      const enhancedPrompt = enhancePromptForMCQs(question);
       
       // Add the request to the queue
       requestQueue.current.push({

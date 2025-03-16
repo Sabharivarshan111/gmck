@@ -73,14 +73,14 @@
   }
   body {
     @apply bg-background text-foreground;
-    transition: font-size 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: font-size 0.2s ease;
   }
 }
 
 @layer utilities {
   /* Add animation for fade in effect */
   .animate-fade-in {
-    animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: fadeIn 0.5s ease-in-out;
   }
   
   @keyframes fadeIn {
@@ -96,7 +96,7 @@
   
   /* Add animation for the pulse effect on triple tap */
   .pulse-on-tap {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.2s ease;
   }
   
   .pulse-on-tap:active {
@@ -106,24 +106,18 @@
   
   /* Animation for getting answer text */
   .animate-pulse {
-    animation: pulseFade 1.5s infinite cubic-bezier(0.4, 0, 0.6, 1);
+    animation: pulseFade 1.5s infinite ease-in-out;
   }
   
   @keyframes pulseFade {
     0%, 100% { opacity: 0.7; }
     50% { opacity: 1; }
   }
-  
-  /* Added smooth transitions for all interactive elements */
-  .transition-smooth {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
 }
 
 /* Add styles for question cards */
 .question-card {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  will-change: transform, background-color;
+  transition: all 0.3s ease-in-out;
 }
 
 .question-card:active {
@@ -133,13 +127,12 @@
 
 /* Font size transitions */
 html {
-  transition: font-size 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: font-size 0.3s ease;
 }
 
 /* Styles for the asterisk count badges */
 .question-card .badge {
   font-weight: 600;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Add a subtle flash effect when a question is triple-tapped */
@@ -149,32 +142,5 @@ html {
 }
 
 .flash-triple-tap {
-  animation: flashQuestionCard 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Blink animation for "Getting answer..." text */
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
-}
-
-.animate-blink {
-  animation: blink 1s infinite ease-in-out;
-}
-
-/* Smooth transitions for theme toggle and buttons */
-button {
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  will-change: transform, background-color, color;
-}
-
-/* Improved smooth scrolling */
-html {
-  scroll-behavior: smooth;
-}
-
-/* Prevent layout shifts during animations */
-.card, .dropdown-menu, .toast, .tooltip {
-  transform: translateZ(0);
-  will-change: transform;
+  animation: flashQuestionCard 0.5s ease-out;
 }

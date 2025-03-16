@@ -7,7 +7,6 @@ import { TimerDisplay } from './pomodoro/TimerDisplay';
 import { TimerProgress } from './pomodoro/TimerProgress';
 import { useTheme } from './theme/ThemeProvider';
 import { Button } from './ui/button';
-import { motion, AnimatePresence } from 'framer-motion';
 
 const PomodoroTimer = () => {
   const { theme } = useTheme();
@@ -49,98 +48,83 @@ const PomodoroTimer = () => {
     setIsVisible(prev => !prev);
   };
 
-  return (
-    <AnimatePresence mode="wait">
-      {isVisible ? (
-        <motion.div 
-          key="timer"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 20 }}
-          transition={{ duration: 0.3, ease: "easeInOut" }}
-          className={`fixed bottom-10 left-1/2 transform -translate-x-1/2 ${
-            theme === "dark" 
-              ? "bg-black border border-white" 
-              : "bg-white border border-gray-300"
-            } rounded-full px-8 py-3 shadow-lg min-w-[300px] z-50`}>
-          <div className="space-y-2">
-            <div className="flex items-center justify-between gap-4">
-              <Timer className={`w-5 h-5 ${theme === "dark" ? "text-white" : "text-gray-900"}`} />
-              
-              <TimerDisplay 
-                isEditing={isEditing}
-                isRunning={isRunning}
-                minutes={minutes}
-                seconds={seconds}
-                inputValue={inputValue}
-                setInputValue={setInputValue}
-                startEditing={startEditing}
-                handleInputChange={handleInputChange}
-                handleKeyDown={handleKeyDown}
-                handleSubmit={handleSubmit}
-                inputRef={inputRef}
-                theme={theme}
-              />
+  if (!isVisible) {
+    return (
+      <Button
+        onClick={toggleVisibility}
+        className={`fixed bottom-10 left-1/2 transform -translate-x-1/2 rounded-full p-2 shadow-lg z-50 animate-fade-in ${
+          theme === "dark"
+            ? "bg-black border border-white text-white hover:bg-gray-900"
+            : "bg-white border border-gray-300 text-gray-900 hover:bg-gray-100"
+        }`}
+        size="icon"
+        variant="outline"
+        aria-label="Show Pomodoro Timer"
+      >
+        <Timer className="w-5 h-5" />
+      </Button>
+    );
+  }
 
-              <div className="flex items-center gap-2">
-                <TimerControls 
-                  isRunning={isRunning}
-                  toggleTimer={toggleTimer}
-                  resetTimer={resetTimer}
-                  waterCount={waterCount}
-                  setWaterCount={setWaterCount}
-                  theme={theme}
-                />
-                
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={toggleVisibility}
-                  className={`h-8 w-8 rounded-full ${
-                    theme === "dark"
-                      ? "border-white text-white hover:bg-white hover:text-black"
-                      : "border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white"
-                  } transition-colors duration-200`}
-                  aria-label="Hide Pomodoro Timer"
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-            
-            <TimerProgress 
-              progressPercentage={progressPercentage}
-              totalTime={totalTime}
+  return (
+    <div className={`fixed bottom-10 left-1/2 transform -translate-x-1/2 ${
+      theme === "dark" 
+        ? "bg-black border border-white" 
+        : "bg-white border border-gray-300"
+      } rounded-full px-8 py-3 shadow-lg min-w-[300px] z-50 animate-fade-in`}>
+      <div className="space-y-2">
+        <div className="flex items-center justify-between gap-4">
+          <Timer className={`w-5 h-5 ${theme === "dark" ? "text-white" : "text-gray-900"}`} />
+          
+          <TimerDisplay 
+            isEditing={isEditing}
+            isRunning={isRunning}
+            minutes={minutes}
+            seconds={seconds}
+            inputValue={inputValue}
+            setInputValue={setInputValue}
+            startEditing={startEditing}
+            handleInputChange={handleInputChange}
+            handleKeyDown={handleKeyDown}
+            handleSubmit={handleSubmit}
+            inputRef={inputRef}
+            theme={theme}
+          />
+
+          <div className="flex items-center gap-2">
+            <TimerControls 
+              isRunning={isRunning}
+              toggleTimer={toggleTimer}
+              resetTimer={resetTimer}
               waterCount={waterCount}
+              setWaterCount={setWaterCount}
               theme={theme}
             />
+            
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={toggleVisibility}
+              className={`h-8 w-8 rounded-full ${
+                theme === "dark"
+                  ? "border-white text-white hover:bg-white hover:text-black"
+                  : "border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white"
+              }`}
+              aria-label="Hide Pomodoro Timer"
+            >
+              <X className="h-4 w-4" />
+            </Button>
           </div>
-        </motion.div>
-      ) : (
-        <motion.div
-          key="toggle-button"
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.8 }}
-          transition={{ duration: 0.2, ease: "easeOut" }}
-          className="fixed bottom-10 left-1/2 transform -translate-x-1/2 z-50"
-        >
-          <Button
-            onClick={toggleVisibility}
-            className={`rounded-full p-2 shadow-lg transition-transform duration-200 hover:scale-105 ${
-              theme === "dark"
-                ? "bg-black border border-white text-white hover:bg-gray-900"
-                : "bg-white border border-gray-300 text-gray-900 hover:bg-gray-100"
-            }`}
-            size="icon"
-            variant="outline"
-            aria-label="Show Pomodoro Timer"
-          >
-            <Timer className="w-5 h-5" />
-          </Button>
-        </motion.div>
-      )}
-    </AnimatePresence>
+        </div>
+        
+        <TimerProgress 
+          progressPercentage={progressPercentage}
+          totalTime={totalTime}
+          waterCount={waterCount}
+          theme={theme}
+        />
+      </div>
+    </div>
   );
 };
 
