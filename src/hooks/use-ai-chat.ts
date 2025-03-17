@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from "react";
 import { v4 as uuidv4 } from 'uuid';
 import { useToast } from "@/hooks/use-toast";
@@ -24,6 +25,22 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
     estimatedWaitTime: 0,
   });
   const { toast } = useToast();
+  
+  const handleError = (error: unknown) => {
+    console.error("AI Chat Error:", error);
+    setIsLoading(false);
+    
+    // Fix TypeScript error by properly checking if error.message exists and is a string
+    const errorMessage = error && typeof error === 'object' && 'message' in error && typeof error.message === 'string' 
+      ? error.message 
+      : "An unexpected error occurred. Please try again later.";
+    
+    toast({
+      title: "Error",
+      description: errorMessage,
+      variant: "destructive",
+    });
+  };
   
   // Load chat history from localStorage on component mount
   useEffect(() => {
@@ -53,7 +70,7 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
       id: uuidv4(),
       role: 'user',
       content: question,
-      createdAt: new Date(),
+      timestamp: new Date(),
     };
     
     setMessages(prevMessages => [...prevMessages, userMessage]);
@@ -88,7 +105,7 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
         id: uuidv4(),
         role: 'assistant',
         content: data.response,
-        createdAt: new Date(),
+        timestamp: new Date(),
       };
       
       setMessages(prevMessages => [...prevMessages, aiMessage]);
@@ -97,29 +114,13 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
     } finally {
       setIsLoading(false);
     }
-  }, [handleError, setMessages]);
+  }, []);
 
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     handleSubmitQuestion(prompt);
     setPrompt("");
   }, [prompt, handleSubmitQuestion, setPrompt]);
-  
-  const handleError = (error: unknown) => {
-    console.error("AI Chat Error:", error);
-    setIsLoading(false);
-    
-    // Fix TypeScript error by properly checking if error.message exists and is a string
-    const errorMessage = error && typeof error === 'object' && 'message' in error && typeof error.message === 'string' 
-      ? error.message 
-      : "An unexpected error occurred. Please try again later.";
-    
-    toast({
-      title: "Error",
-      description: errorMessage,
-      variant: "destructive",
-    });
-  };
 
   const handleClearChat = useCallback(() => {
     setMessages([]);
