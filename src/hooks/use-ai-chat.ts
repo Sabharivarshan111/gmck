@@ -507,7 +507,8 @@ ${deduplicatedShortNotes.map((q, i) => `${i+1}. ${q}`).join('\n')}
       }
     } catch (error: any) {
       console.error('Error:', error);
-      const errorMessage = error.message || "Error generating response";
+      // Fix the type error by ensuring errorMessage is always a string
+      const errorMessage = error && typeof error.message === 'string' ? error.message : "Error generating response";
       setError(errorMessage);
       
       // Create a more user-friendly error message for the chat
