@@ -10,7 +10,7 @@ interface TimerControlsProps {
   resetTimer: () => void;
   waterCount: number;
   setWaterCount: React.Dispatch<React.SetStateAction<number>>;
-  theme: "dark" | "light";
+  theme: "dark" | "light" | "blackpink";
 }
 
 export const TimerControls: React.FC<TimerControlsProps> = ({
@@ -31,17 +31,35 @@ export const TimerControls: React.FC<TimerControlsProps> = ({
     });
   };
 
+  // Helper function to get theme-specific button styles
+  const getButtonStyles = () => {
+    if (theme === "blackpink") {
+      return {
+        normal: "border-pink-500 text-pink-400 hover:bg-pink-500 hover:text-black",
+        water: "border-pink-500 bg-pink-500/20 text-pink-400 hover:bg-pink-500 hover:text-black"
+      };
+    } else if (theme === "dark") {
+      return {
+        normal: "border-white text-white hover:bg-white hover:text-black",
+        water: "border-blue-500 bg-blue-500/20 text-blue-500 hover:bg-blue-500 hover:text-white"
+      };
+    } else {
+      return {
+        normal: "border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white",
+        water: "border-blue-500 bg-blue-500/20 text-blue-500 hover:bg-blue-500 hover:text-white"
+      };
+    }
+  };
+
+  const styles = getButtonStyles();
+
   return (
     <div className="flex items-center gap-2">
       <Button
         variant="outline"
         size="icon"
         onClick={toggleTimer}
-        className={`h-8 w-8 rounded-full ${
-          theme === "dark"
-            ? "border-white text-white hover:bg-white hover:text-black"
-            : "border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white"
-        }`}
+        className={`h-8 w-8 rounded-full ${styles.normal}`}
         aria-label={isRunning ? "Pause timer" : "Start timer"}
       >
         {isRunning ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
@@ -50,11 +68,7 @@ export const TimerControls: React.FC<TimerControlsProps> = ({
         variant="outline"
         size="icon"
         onClick={resetTimer}
-        className={`h-8 w-8 rounded-full ${
-          theme === "dark"
-            ? "border-white text-white hover:bg-white hover:text-black"
-            : "border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white"
-        }`}
+        className={`h-8 w-8 rounded-full ${styles.normal}`}
         aria-label="Reset timer"
       >
         <RotateCcw className="h-4 w-4" />
@@ -63,7 +77,7 @@ export const TimerControls: React.FC<TimerControlsProps> = ({
         variant="outline"
         size="icon"
         onClick={drinkWater}
-        className="h-8 w-8 rounded-full border-blue-500 bg-blue-500/20 text-blue-500 hover:bg-blue-500 hover:text-white"
+        className={`h-8 w-8 rounded-full ${styles.water}`}
         aria-label="Track water intake"
       >
         <Droplets className="h-4 w-4" />

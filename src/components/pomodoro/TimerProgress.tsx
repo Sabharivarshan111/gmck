@@ -6,7 +6,7 @@ interface TimerProgressProps {
   progressPercentage: number;
   totalTime: number;
   waterCount: number;
-  theme: "dark" | "light";
+  theme: "dark" | "light" | "blackpink";
 }
 
 export const TimerProgress: React.FC<TimerProgressProps> = ({
@@ -17,19 +17,42 @@ export const TimerProgress: React.FC<TimerProgressProps> = ({
 }) => {
   const totalMinutes = Math.floor(totalTime / 60);
   
+  // Get theme-specific styles
+  const getProgressStyles = () => {
+    if (theme === "blackpink") {
+      return {
+        bg: "bg-black",
+        indicator: "bg-pink-500",
+        text: "text-pink-400"
+      };
+    } else if (theme === "dark") {
+      return {
+        bg: "bg-gray-800",
+        indicator: "bg-white",
+        text: "text-gray-400"
+      };
+    } else {
+      return {
+        bg: "bg-gray-200",
+        indicator: "bg-gray-900",
+        text: "text-gray-600"
+      };
+    }
+  };
+  
+  const styles = getProgressStyles();
+  
   return (
     <>
       <div className="w-full px-2">
         <Progress 
           value={progressPercentage} 
-          className={`h-1.5 ${theme === "dark" ? "bg-gray-800" : "bg-gray-200"}`} 
-          indicatorClassName={theme === "dark" ? "bg-white" : "bg-gray-900"} 
+          className={`h-1.5 ${styles.bg}`} 
+          indicatorClassName={styles.indicator} 
         />
       </div>
       
-      <div className={`flex justify-between items-center text-xs ${
-        theme === "dark" ? "text-gray-400" : "text-gray-600"
-      } px-2`}>
+      <div className={`flex justify-between items-center text-xs ${styles.text} px-2`}>
         <div>Session: {totalMinutes} min</div>
         <div>Water: {waterCount} glasses</div>
       </div>

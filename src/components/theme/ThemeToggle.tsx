@@ -8,9 +8,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
   DropdownMenuSeparator,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -51,7 +48,7 @@ export function ThemeToggle() {
                 ? "bg-gray-800/60 border border-gray-700/60 hover:bg-gray-700/60" 
                 : theme === "light"
                 ? "bg-white border border-gray-200 hover:bg-gray-100"
-                : "bg-black border border-[#D946EF]/60 hover:bg-gray-900/60"
+                : "bg-black border border-pink-500/60 hover:bg-black"
             }`}
           >
             {theme === "dark" ? (
@@ -59,7 +56,7 @@ export function ThemeToggle() {
             ) : theme === "light" ? (
               <Sun className="h-4 w-4 text-gray-900" />
             ) : (
-              <span className="h-4 w-4 flex items-center justify-center text-[#D946EF] font-bold">BP</span>
+              <span className="h-4 w-4 flex items-center justify-center text-pink-500 font-bold">BP</span>
             )}
             <span className="sr-only">Toggle theme</span>
           </Button>
@@ -83,9 +80,9 @@ export function ThemeToggle() {
           <DropdownMenuSeparator />
           <DropdownMenuItem
             onClick={() => handleThemeChange("blackpink")}
-            className={`flex items-center gap-2 ${theme === "blackpink" ? "bg-black text-[#D946EF]" : ""}`}
+            className={`flex items-center gap-2 ${theme === "blackpink" ? "bg-black text-pink-500" : ""}`}
           >
-            <span className="text-[#D946EF] font-bold text-sm">BP</span>
+            <span className="text-pink-500 font-bold text-sm">BP</span>
             <span>Black Pink</span>
           </DropdownMenuItem>
         </DropdownMenuContent>

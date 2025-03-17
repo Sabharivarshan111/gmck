@@ -63,16 +63,16 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// Add blackpink palette
+				// Enhanced blackpink palette with pure black backgrounds and pink text
 				blackpink: {
 					DEFAULT: '#000000',
-					foreground: '#D946EF',
+					foreground: '#FF5C8D',
 					muted: '#000000',
 					'muted-foreground': '#FFDEE2',
-					accent: '#0D0D0D',
+					accent: '#000000',
 					'accent-foreground': '#FF5C8D',
 					border: '#1A1A1A',
-					card: '#0D0D0D',
+					card: '#000000',
 					'card-foreground': '#FF5C8D',
 				}
 			},
