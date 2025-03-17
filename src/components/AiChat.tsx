@@ -2,7 +2,7 @@
 import { useRef, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { RotateCcw, AlertCircle, Clock, BookOpen } from "lucide-react";
+import { RotateCcw, AlertCircle, Clock } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChatMessageItem } from "./chat/ChatMessageItem";
 import { EmptyChatState } from "./chat/EmptyChatState";
@@ -66,19 +66,6 @@ export const AiChat = ({ initialQuestion }: AiChatProps = {}) => {
     };
   }, [handleSubmitQuestion, setPrompt]);
 
-  // Example questions for important topics
-  const suggestedQuestions = [
-    "Tell me important questions in Pharmacology",
-    "What are high yield topics in Pathology?",
-    "Frequently asked questions in Microbiology",
-    "Important essay questions in Respiratory System"
-  ];
-
-  const handleSuggestedQuestion = (question: string) => {
-    setPrompt(question);
-    handleSubmitQuestion(question);
-  };
-
   return (
     <motion.div 
       initial={{ opacity: 0, scale: 0.95 }}
@@ -137,27 +124,7 @@ export const AiChat = ({ initialQuestion }: AiChatProps = {}) => {
             
             <AnimatePresence initial={false}>
               {messages.length === 0 ? (
-                <>
-                  <EmptyChatState />
-                  <div className="mt-4">
-                    <p className="text-sm text-blue-400 mb-2 flex items-center">
-                      <BookOpen className="h-4 w-4 mr-1" /> Try asking about important questions:
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      {suggestedQuestions.map((question, index) => (
-                        <Button 
-                          key={index} 
-                          variant="outline" 
-                          size="sm" 
-                          className="text-xs bg-blue-900/30 border-blue-800 text-blue-300 hover:bg-blue-800/40"
-                          onClick={() => handleSuggestedQuestion(question)}
-                        >
-                          {question}
-                        </Button>
-                      ))}
-                    </div>
-                  </div>
-                </>
+                <EmptyChatState />
               ) : (
                 messages.map((message) => (
                   <ChatMessageItem 

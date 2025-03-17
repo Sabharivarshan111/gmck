@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -210,13 +211,8 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
         } catch (error: any) {
           console.error('Error processing request:', error);
           
-          // Fix the type error - ensure error.message is a string
-          const errorMessage = typeof error.message === 'string' 
-            ? error.message 
-            : "Unknown error occurred";
-          
           // For non-rate-limit errors or max retries reached, reject the promise
-          if (!errorMessage.includes("Rate limit") || nextRequest.retryCount >= MAX_RETRY_ATTEMPTS) {
+          if (!error.message.includes("Rate limit") || nextRequest.retryCount >= MAX_RETRY_ATTEMPTS) {
             nextRequest.reject(error);
           } else {
             // For rate-limit errors with retries left, requeue the request
@@ -333,7 +329,7 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
         // Otherwise, explore children
         if (obj.subtopics) {
           Object.entries(obj.subtopics).forEach(([key, value]) => {
-            // Add the name to the path to the topic
+            // Add the name to the path if available
             const newPath = path.slice();
             if (value && typeof value === 'object' && 'name' in value) {
               newPath.push(value.name);
@@ -465,55 +461,54 @@ ${deduplicatedShortNotes.map((q, i) => `${i+1}. ${q}`).join('\n')}
         });
       }
       
-      // Check if the question is about important questions in the question bank
-      const isAskingAboutImportantQuestions = /important questions|high yield|frequently asked|commonly asked|questions in|chapter|topic/i.test(questionText);
+      // Check if the question is asking for important questions from the question bank
+      const importantQuestionsText = extractQuestionsFromQuestionBank(questionText);
       
-      if (isAskingAboutImportantQuestions) {
-        // Extract questions from the question bank if possible
-        const questionsFromBank = extractQuestionsFromQuestionBank(questionText);
+      if (importantQuestionsText) {
+        // If we found matching questions in the question bank, use those instead of calling the AI
+        console.log("Using questions from question bank");
         
-        if (questionsFromBank) {
-          // If we found questions in our data, use them directly
-          const aiMessage: ChatMessage = {
-            id: crypto.randomUUID(),
-            role: 'assistant',
-            content: questionsFromBank,
-            timestamp: new Date(),
-          };
-          
-          setMessages((prev) => [...prev, aiMessage]);
-          setIsLoading(false);
-          return;
-        }
+        const assistantMessage: ChatMessage = {
+          id: crypto.randomUUID(),
+          role: 'assistant',
+          content: importantQuestionsText,
+          timestamp: new Date(),
+          isError: false
+        };
+        
+        setMessages((prev) => [...prev, assistantMessage]);
+        
+        toast({
+          title: "Questions retrieved from database",
+        });
+        
+        // Reset retry count on successful response
+        setRetryCount(0);
+      } else {
+        // Queue the request instead of sending it directly
+        const response = await queueRequest(questionText, isTripleTap);
+        
+        const assistantMessage: ChatMessage = {
+          id: crypto.randomUUID(),
+          role: 'assistant',
+          content: response,
+          timestamp: new Date(),
+          isError: false
+        };
+        
+        setMessages((prev) => [...prev, assistantMessage]);
+        
+        toast({
+          title: "Response generated successfully",
+        });
+        
+        // Reset retry count on successful response
+        setRetryCount(0);
       }
-      
-      // If not about questions or no matching questions found, proceed with regular AI request
-      console.log("Sending prompt to AI service:", formattedQuestion.substring(0, 50) + "...");
-      const response = await queueRequest(questionText, isTripleTap);
-        
-      const assistantMessage: ChatMessage = {
-        id: crypto.randomUUID(),
-        role: 'assistant',
-        content: response,
-        timestamp: new Date(),
-        isError: false
-      };
-      
-      setMessages((prev) => [...prev, assistantMessage]);
-      
-      toast({
-        title: "Response generated successfully",
-      });
-      
-      // Reset retry count on successful response
-      setRetryCount(0);
     } catch (error: any) {
-      console.error("Error sending message:", error);
-      
-      const errorMessage = typeof error.message === 'string' 
-        ? error.message 
-        : "An error occurred while processing your request";
-      
+      console.error('Error:', error);
+      // Fix the type error by ensuring errorMessage is always a string
+      const errorMessage = error && typeof error.message === 'string' ? error.message : "Error generating response";
       setError(errorMessage);
       
       // Create a more user-friendly error message for the chat
@@ -567,14 +562,7 @@ ${deduplicatedShortNotes.map((q, i) => `${i+1}. ${q}`).join('\n')}
     } finally {
       setIsLoading(false);
     }
-  }, [
-    toast, 
-    retryCount, 
-    isRateLimited, 
-    queueRequest, 
-    extractQuestionsFromQuestionBank,
-    setRateLimit
-  ]);
+  }, [toast, retryCount, isRateLimited, queueRequest, extractQuestionsFromQuestionBank, setRateLimit]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
