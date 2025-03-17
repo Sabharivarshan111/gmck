@@ -73,7 +73,7 @@
   }
   body {
     @apply bg-background text-foreground;
-    transition: font-size 0.2s ease;
+    transition: font-size 0.3s ease, background-color 0.3s ease;
   }
 }
 
@@ -113,6 +113,38 @@
     0%, 100% { opacity: 0.7; }
     50% { opacity: 1; }
   }
+  
+  /* Slide-in animation for pomodoro timer and other components */
+  .slide-in {
+    animation: slideIn 0.3s ease-out forwards;
+  }
+  
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Slide-out animation */
+  .slide-out {
+    animation: slideOut 0.3s ease-in forwards;
+  }
+  
+  @keyframes slideOut {
+    from {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+  }
 }
 
 /* Add styles for question cards */
@@ -143,4 +175,58 @@ html {
 
 .flash-triple-tap {
   animation: flashQuestionCard 0.5s ease-out;
+}
+
+/* Smooth transitions for all interactive elements */
+button, input, select, textarea, .card {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Improve smoothness for pomodoro timer and font size toggle animations */
+.pomodoro-container {
+  transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.font-size-toggle {
+  transition: transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1), opacity 0.3s ease;
+}
+
+/* Enhanced blinking animation for "Getting answer..." text */
+.animate-blink {
+  animation: blinkEffect 1.2s infinite ease-in-out;
+}
+
+@keyframes blinkEffect {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+/* Smooth scrolling for the entire page */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Tooltip animations */
+.tooltip {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.tooltip:hover {
+  opacity: 1;
+}
+
+/* Chat message animation refinements */
+.chat-message-appear {
+  animation: messageAppear 0.4s cubic-bezier(0.25, 0.1, 0.25, 1.4);
+}
+
+@keyframes messageAppear {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }

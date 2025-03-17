@@ -1,8 +1,8 @@
-
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { ChatMessage } from "@/models/ChatMessage";
+import { QUESTION_BANK_DATA } from "@/data/questionBankData";
 
 interface UseAiChatProps {
   initialQuestion?: string;
@@ -11,6 +11,8 @@ interface UseAiChatProps {
 // Queue system for handling requests
 interface QueuedRequest {
   question: string;
+  conversationHistory: ChatMessage[];
+  isTripleTap?: boolean;
   resolve: (value: any) => void;
   reject: (error: any) => void;
   timestamp: number;
@@ -74,40 +76,58 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
     };
   }, [rateLimitTimeout]);
 
-  // Enhanced prompt for generating MCQs
-  const enhancePromptForMCQs = (originalPrompt: string): string => {
-    // Check if the prompt is asking for MCQs
-    const isMcqRequest = /create\s+mcqs?|generate\s+mcqs?|make\s+mcqs?/i.test(originalPrompt);
+  // Enhanced prompt for generating MCQs or handling specialized requests
+  const enhancePromptForSpecializedRequests = (originalPrompt: string, conversationHistory: ChatMessage[]): {
+    enhancedPrompt: string,
+    isSpecializedRequest: boolean,
+    requestType: string
+  } => {
+    // Check if the prompt is asking for MCQs - updated to detect "10 MCQs"
+    const isMcqRequest = /create\s+(?:10|ten)\s+mcqs?|generate\s+(?:10|ten)\s+mcqs?|make\s+(?:10|ten)\s+mcqs?|ten\s+mcqs?|10\s+mcqs?/i.test(originalPrompt);
+    
+    // Check if asking for important questions in a subject
+    const isImportantQuestionsRequest = /important question|high yield|frequently asked|commonly asked|repeated questions/i.test(originalPrompt) &&
+                                    (/pharmacology|microbiology|pathology/i.test(originalPrompt) || 
+                                     /tomorrow|exam|test|study/i.test(originalPrompt));
+    
+    // Check if asking for clarification or doesn't understand something
+    const isRequestingClarification = /explain|clarify|elaborate|i don't understand|can't understand|more detail|explain again/i.test(originalPrompt);
+    
+    // Get the last few messages to provide context
+    const recentMessages = conversationHistory.slice(-6);
+    const contextMessages = recentMessages
+      .map(msg => `${msg.role === 'user' ? 'User' : 'Assistant'}: ${msg.content}`)
+      .join("\n\n");
     
     if (isMcqRequest) {
-      // Get the last two messages to provide context
-      const recentMessages = messages.slice(-4);
-      const contextMessages = recentMessages
-        .filter(msg => msg.role === 'assistant')
-        .map(msg => msg.content)
-        .join("\n\n");
-      
-      // Construct an enhanced prompt with specific instructions
-      return `Based on the following context and the user's request to create MCQs, please generate 5 high-quality multiple choice questions in the style of NEET PG or USMLE exams. 
-      
-Each MCQ should have 4 options (A, B, C, D) with one correct answer clearly marked. Ensure questions are clinically relevant and test application of knowledge.
-
-Context from previous conversation: 
-${contextMessages}
-
-User request: ${originalPrompt}
-
-Format each question as:
-Question 1: [Question text]
-A) [Option A]
-B) [Option B]
-C) [Option C]
-D) [Option D]
-Answer: [Correct option letter]
-Explanation: [Brief explanation of why the answer is correct]`;
+      // Construct an enhanced prompt for 10 MCQs
+      return {
+        enhancedPrompt: originalPrompt, // The edge function will handle this case
+        isSpecializedRequest: true,
+        requestType: 'mcq'
+      };
+    } else if (isImportantQuestionsRequest) {
+      // Construct an enhanced prompt for important questions by subject
+      return {
+        enhancedPrompt: originalPrompt, // The edge function will handle this case
+        isSpecializedRequest: true,
+        requestType: 'important-questions'
+      };
+    } else if (isRequestingClarification && contextMessages) {
+      // Keep original prompt but pass conversation context in the request
+      return {
+        enhancedPrompt: originalPrompt,
+        isSpecializedRequest: true,
+        requestType: 'clarification'
+      };
     }
     
-    return originalPrompt;
+    // No special handling needed
+    return {
+      enhancedPrompt: originalPrompt,
+      isSpecializedRequest: false,
+      requestType: 'standard'
+    };
   };
 
   // Process the request queue
@@ -140,12 +160,16 @@ Explanation: [Brief explanation of why the answer is correct]`;
           lastRequestTime.current = Date.now();
           
           const { data, error: supabaseError } = await supabase.functions.invoke('ask-gemini', {
-            body: { prompt: nextRequest.question }
+            body: { 
+              prompt: nextRequest.question,
+              conversationHistory: nextRequest.conversationHistory, // Pass conversation history
+              isTripleTap: nextRequest.isTripleTap || false // Indicate if this was from triple tap
+            }
           });
           
           // Handle the response
           if (supabaseError) {
-            console.error("Supabase function error:", supabaseError);
+            console.error("Supabase function error:", supababError);
             throw new Error(supabaseError.message || "Error communicating with AI service");
           }
           
@@ -212,7 +236,7 @@ Explanation: [Brief explanation of why the answer is correct]`;
   }, [isRateLimited, setRateLimit]);
   
   // Queue a new request and return a promise
-  const queueRequest = useCallback((question: string): Promise<string> => {
+  const queueRequest = useCallback((question: string, isTripleTap?: boolean): Promise<string> => {
     return new Promise((resolve, reject) => {
       // Check if queue is too full
       if (requestQueue.current.length >= MAX_QUEUE_SIZE) {
@@ -220,12 +244,19 @@ Explanation: [Brief explanation of why the answer is correct]`;
         return;
       }
       
-      // Enhance the prompt if it's asking for MCQs
-      const enhancedPrompt = enhancePromptForMCQs(question);
+      // Process the prompt with specialized handling
+      const { enhancedPrompt, isSpecializedRequest } = enhancePromptForSpecializedRequests(question, messages);
       
-      // Add the request to the queue
+      // For specialized requests, log the type
+      if (isSpecializedRequest) {
+        console.log(`Processing specialized request: ${isSpecializedRequest ? "Yes" : "No"}`);
+      }
+      
+      // Add the request to the queue with conversation history
       requestQueue.current.push({
         question: enhancedPrompt,
+        conversationHistory: messages, // Pass the current conversation history
+        isTripleTap: isTripleTap || false,
         resolve,
         reject,
         timestamp: Date.now(),
@@ -255,7 +286,129 @@ Explanation: [Brief explanation of why the answer is correct]`;
     localStorage.removeItem("aiChatMessages");
   }, []);
 
-  const handleSubmitQuestion = useCallback(async (questionText: string) => {
+  // Helper function to check if a query is about important questions in the question bank
+  const extractQuestionsFromQuestionBank = useCallback((query: string): string | null => {
+    // Extract subject and possibly topic from the query
+    const subjectMatch = /(?:tomorrow\s+|for\s+|about\s+)(\w+)/.exec(query);
+    if (!subjectMatch) return null;
+    
+    const subject = subjectMatch[1].toLowerCase();
+    
+    // Try to match subject to our data
+    const validSubjects = ["pharmacology", "pathology", "microbiology"];
+    const matchedSubject = validSubjects.find(s => subject.includes(s) || s.includes(subject));
+    
+    if (!matchedSubject) return null;
+    
+    // Format questions from the matched subject
+    try {
+      // Extract essay and short note questions
+      const data = QUESTION_BANK_DATA;
+      let essayQuestions: string[] = [];
+      let shortNoteQuestions: string[] = [];
+      
+      // Function to recursively extract questions
+      const extractQuestions = (obj: any, path: string[] = []) => {
+        // If this is a leaf node with questions
+        if (obj.questions && Array.isArray(obj.questions)) {
+          const topic = path.join(" > ");
+          obj.questions.forEach(q => {
+            if (typeof q === 'string') {
+              // Assume this section is from the currently active tab
+              if (path[0]?.toLowerCase().includes('essay')) {
+                essayQuestions.push(`${q} (${topic})`);
+              } else {
+                shortNoteQuestions.push(`${q} (${topic})`);
+              }
+            }
+          });
+          return;
+        }
+        
+        // Otherwise, explore children
+        if (obj.subtopics) {
+          Object.entries(obj.subtopics).forEach(([key, value]) => {
+            // Add the name to the path if available
+            const newPath = path.slice();
+            if (value && typeof value === 'object' && 'name' in value) {
+              newPath.push(value.name);
+            } else {
+              newPath.push(key);
+            }
+            extractQuestions(value, newPath);
+          });
+        }
+      };
+      
+      // Extract questions for the matched subject
+      if (data[matchedSubject]) {
+        extractQuestions(data[matchedSubject]);
+      }
+      
+      // Format the result
+      if (essayQuestions.length === 0 && shortNoteQuestions.length === 0) {
+        return null;
+      }
+      
+      // Count frequencies and add asterisks
+      const frequencyMap = new Map<string, number>();
+      
+      // Count duplicates in essay questions
+      essayQuestions.forEach(q => {
+        const baseQuestion = q.split('(')[0].trim();
+        frequencyMap.set(baseQuestion, (frequencyMap.get(baseQuestion) || 0) + 1);
+      });
+      
+      // Count duplicates in short note questions
+      shortNoteQuestions.forEach(q => {
+        const baseQuestion = q.split('(')[0].trim();
+        frequencyMap.set(baseQuestion, (frequencyMap.get(baseQuestion) || 0) + 1);
+      });
+      
+      // Deduplicate and format with asterisks
+      const deduplicatedEssay = Array.from(new Set(essayQuestions.map(q => q.split('(')[0].trim())))
+        .map(q => {
+          const count = frequencyMap.get(q) || 0;
+          const asterisks = count > 2 ? '***' : count > 1 ? '**' : '*';
+          return `${q} ${asterisks}`;
+        })
+        .sort((a, b) => {
+          // Sort by asterisk count (descending)
+          const aCount = (a.match(/\*/g) || []).length;
+          const bCount = (b.match(/\*/g) || []).length;
+          return bCount - aCount;
+        });
+      
+      const deduplicatedShortNotes = Array.from(new Set(shortNoteQuestions.map(q => q.split('(')[0].trim())))
+        .map(q => {
+          const count = frequencyMap.get(q) || 0;
+          const asterisks = count > 2 ? '***' : count > 1 ? '**' : '*';
+          return `${q} ${asterisks}`;
+        })
+        .sort((a, b) => {
+          // Sort by asterisk count (descending)
+          const aCount = (a.match(/\*/g) || []).length;
+          const bCount = (b.match(/\*/g) || []).length;
+          return bCount - aCount;
+        });
+      
+      // Format the final result
+      return `# Important Questions in ${matchedSubject.charAt(0).toUpperCase() + matchedSubject.slice(1)}
+
+## Essay Questions (in order of frequency)
+${deduplicatedEssay.map((q, i) => `${i+1}. ${q}`).join('\n')}
+
+## Short Notes Questions (in order of frequency)
+${deduplicatedShortNotes.map((q, i) => `${i+1}. ${q}`).join('\n')}
+
+*Note: More asterisks (***) indicate higher frequency questions that appear more often in exams.*`;
+    } catch (err) {
+      console.error("Error extracting questions from question bank:", err);
+      return null;
+    }
+  }, []);
+
+  const handleSubmitQuestion = useCallback(async (questionText: string, isTripleTap?: boolean) => {
     if (!questionText || !questionText.trim()) {
       toast({
         title: "Please enter a question",
@@ -275,10 +428,16 @@ Explanation: [Brief explanation of why the answer is correct]`;
     }
 
     setError(null);
+    
+    // Format for triple-tapped questions
+    const formattedQuestion = isTripleTap 
+      ? `Triple-tapped: ${questionText.trim()}`
+      : questionText.trim();
+      
     const userMessage: ChatMessage = {
       id: crypto.randomUUID(),
       role: 'user',
-      content: questionText.trim(),
+      content: formattedQuestion,
       timestamp: new Date(),
     };
 
@@ -292,7 +451,7 @@ Explanation: [Brief explanation of why the answer is correct]`;
         throw new Error("You're offline. Please check your internet connection.");
       }
 
-      console.log("Queuing prompt:", questionText.trim().substring(0, 50) + "...");
+      console.log("Queuing prompt:", formattedQuestion.substring(0, 50) + "...");
       
       if (isRateLimited) {
         toast({
@@ -301,25 +460,50 @@ Explanation: [Brief explanation of why the answer is correct]`;
         });
       }
       
-      // Queue the request instead of sending it directly
-      const response = await queueRequest(questionText.trim());
+      // Check if the question is asking for important questions from the question bank
+      const importantQuestionsText = extractQuestionsFromQuestionBank(questionText);
       
-      const assistantMessage: ChatMessage = {
-        id: crypto.randomUUID(),
-        role: 'assistant',
-        content: response,
-        timestamp: new Date(),
-        isError: false
-      };
-      
-      setMessages((prev) => [...prev, assistantMessage]);
-      
-      toast({
-        title: "Response generated successfully",
-      });
-      
-      // Reset retry count on successful response
-      setRetryCount(0);
+      if (importantQuestionsText) {
+        // If we found matching questions in the question bank, use those instead of calling the AI
+        console.log("Using questions from question bank");
+        
+        const assistantMessage: ChatMessage = {
+          id: crypto.randomUUID(),
+          role: 'assistant',
+          content: importantQuestionsText,
+          timestamp: new Date(),
+          isError: false
+        };
+        
+        setMessages((prev) => [...prev, assistantMessage]);
+        
+        toast({
+          title: "Questions retrieved from database",
+        });
+        
+        // Reset retry count on successful response
+        setRetryCount(0);
+      } else {
+        // Queue the request instead of sending it directly
+        const response = await queueRequest(questionText, isTripleTap);
+        
+        const assistantMessage: ChatMessage = {
+          id: crypto.randomUUID(),
+          role: 'assistant',
+          content: response,
+          timestamp: new Date(),
+          isError: false
+        };
+        
+        setMessages((prev) => [...prev, assistantMessage]);
+        
+        toast({
+          title: "Response generated successfully",
+        });
+        
+        // Reset retry count on successful response
+        setRetryCount(0);
+      }
     } catch (error: any) {
       console.error('Error:', error);
       const errorMessage = error.message || "Error generating response";
@@ -376,7 +560,7 @@ Explanation: [Brief explanation of why the answer is correct]`;
     } finally {
       setIsLoading(false);
     }
-  }, [toast, retryCount, isRateLimited, queueRequest, setRateLimit]);
+  }, [toast, retryCount, isRateLimited, queueRequest, extractQuestionsFromQuestionBank, setRateLimit]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

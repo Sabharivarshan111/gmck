@@ -36,7 +36,10 @@ const QuestionCardEnhanced: React.FC<QuestionCardEnhancedProps> = ({ question, i
     
     // Create a custom event to notify the AiChat component
     const event = new CustomEvent('ai-triple-tap-answer', {
-      detail: { question }
+      detail: { 
+        question,
+        isTripleTap: true // Add flag to indicate this is from a triple tap
+      }
     });
     
     // Dispatch the event
