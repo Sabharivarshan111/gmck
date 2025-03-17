@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -169,7 +170,7 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
           
           // Handle the response
           if (supabaseError) {
-            console.error("Supabase function error:", supababError);
+            console.error("Supabase function error:", supabaseError);
             throw new Error(supabaseError.message || "Error communicating with AI service");
           }
           
