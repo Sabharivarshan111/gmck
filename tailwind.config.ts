@@ -62,6 +62,18 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				// Add blackpink palette
+				blackpink: {
+					DEFAULT: '#000000',
+					foreground: '#D946EF',
+					muted: '#000000',
+					'muted-foreground': '#FFDEE2',
+					accent: '#0D0D0D',
+					'accent-foreground': '#FF5C8D',
+					border: '#1A1A1A',
+					card: '#0D0D0D',
+					'card-foreground': '#FF5C8D',
 				}
 			},
 			borderRadius: {
