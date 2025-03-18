@@ -76,6 +76,7 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
     
     setMessages(prevMessages => [...prevMessages, userMessage]);
     setIsLoading(true);
+    setPrompt(""); // Clear the input immediately when processing starts
     
     try {
       // Use Supabase edge function instead of /api/chat

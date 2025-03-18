@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -107,6 +108,12 @@
   }
   .blackpink input, .blackpink textarea {
     @apply bg-black text-pink-400 border-pink-500 placeholder-pink-400/50;
+  }
+  .blackpink .tabs-button {
+    @apply text-pink-400 !important;
+  }
+  .blackpink .font-toggle-button {
+    @apply text-pink-400 border-pink-500 !important;
   }
 }
 
@@ -247,4 +254,24 @@ html {
     opacity: 1;
     transform: translateY(0) scale(1);
   }
+}
+
+/* BlackPink theme overrides */
+.blackpink .tabs-list [data-state="active"] {
+  @apply text-pink-400 border-pink-400;
+}
+
+.blackpink .tabs-list button {
+  @apply text-pink-400 hover:text-pink-300;
+}
+
+/* Ensure all text in blackpink theme is pink */
+.blackpink h1, .blackpink h2, .blackpink h3, .blackpink h4, .blackpink p, 
+.blackpink span, .blackpink div, .blackpink a, .blackpink li {
+  @apply text-pink-400;
+}
+
+/* Make sure triple-tapped questions display correctly */
+.blackpink .ai-chat-section textarea {
+  @apply bg-black text-pink-400 border-pink-500;
 }

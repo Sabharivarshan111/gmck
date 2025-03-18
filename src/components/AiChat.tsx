@@ -8,12 +8,14 @@ import { ChatMessageItem } from "./chat/ChatMessageItem";
 import { EmptyChatState } from "./chat/EmptyChatState";
 import { ChatInput } from "./chat/ChatInput";
 import { useAiChat } from "@/hooks/use-ai-chat";
+import { useTheme } from "@/components/theme/ThemeProvider";
 
 interface AiChatProps {
   initialQuestion?: string;
 }
 
 export const AiChat = ({ initialQuestion }: AiChatProps = {}) => {
+  const { theme } = useTheme();
   const { 
     prompt, 
     setPrompt, 
@@ -71,10 +73,7 @@ export const AiChat = ({ initialQuestion }: AiChatProps = {}) => {
       if (customEvent.detail && customEvent.detail.question) {
         const question = customEvent.detail.question;
         
-        // Set the question text in the input field
-        setPrompt(question);
-        
-        // Submit the question automatically
+        // Don't set the question text in the input field, just submit directly
         handleSubmitQuestion(question);
       }
     };
@@ -85,7 +84,23 @@ export const AiChat = ({ initialQuestion }: AiChatProps = {}) => {
     return () => {
       window.removeEventListener('ai-triple-tap-answer', handleTripleTapAnswer);
     };
-  }, [handleSubmitQuestion, setPrompt]);
+  }, [handleSubmitQuestion]);
+
+  const cardClassName = theme === "blackpink" 
+    ? "backdrop-blur-sm bg-black/90 border-pink-500/30 flex flex-col h-[390px] shadow-xl" 
+    : "backdrop-blur-sm bg-gray-950/70 border-gray-800 flex flex-col h-[390px] shadow-xl";
+
+  const headerClassName = theme === "blackpink"
+    ? "px-4 py-2 border-b border-pink-500/30"
+    : "px-4 py-2 border-b border-gray-800";
+
+  const titleClassName = theme === "blackpink"
+    ? "text-lg flex items-center justify-between text-pink-400"
+    : "text-lg flex items-center justify-between text-white";
+
+  const clearButtonClassName = theme === "blackpink"
+    ? "h-8 px-2 text-pink-400 hover:text-pink-300 border-pink-500/50"
+    : "h-8 px-2 text-gray-400 hover:text-white";
 
   return (
     <motion.div 
@@ -94,16 +109,16 @@ export const AiChat = ({ initialQuestion }: AiChatProps = {}) => {
       transition={{ duration: 0.3 }}
       className="w-full h-full flex flex-col ai-chat-section"
     >
-      <Card className="backdrop-blur-sm bg-gray-950/70 border-gray-800 flex flex-col h-[390px] shadow-xl">
-        <CardHeader className="px-4 py-2 border-b border-gray-800">
-          <CardTitle className="text-lg flex items-center justify-between text-white">
+      <Card className={cardClassName}>
+        <CardHeader className={headerClassName}>
+          <CardTitle className={titleClassName}>
             <span>Medical Assistant</span>
             {messages.length > 0 && (
               <Button 
                 variant="ghost" 
                 size="sm" 
                 onClick={handleClearChat}
-                className="h-8 px-2 text-gray-400 hover:text-white"
+                className={clearButtonClassName}
               >
                 <RotateCcw className="h-4 w-4 mr-1" />
                 Clear
@@ -115,7 +130,10 @@ export const AiChat = ({ initialQuestion }: AiChatProps = {}) => {
         <CardContent className="p-0 flex-grow overflow-hidden flex flex-col">
           <div className="flex-grow overflow-y-auto p-4 space-y-4">
             {connectionError && (
-              <div className="bg-red-900/30 border border-red-800 rounded-md p-3 flex items-start">
+              <div className={theme === "blackpink" 
+                ? "bg-red-900/30 border border-red-800 rounded-md p-3 flex items-start"
+                : "bg-red-900/30 border border-red-800 rounded-md p-3 flex items-start"
+              }>
                 <WifiOff className="h-5 w-5 text-red-500 mr-2 mt-0.5 flex-shrink-0" />
                 <div>
                   <p className="text-sm text-red-300">
@@ -129,13 +147,16 @@ export const AiChat = ({ initialQuestion }: AiChatProps = {}) => {
             )}
             
             {isRateLimited && (
-              <div className="bg-amber-900/30 border border-amber-800 rounded-md p-3 flex items-start">
-                <AlertCircle className="h-5 w-5 text-amber-500 mr-2 mt-0.5 flex-shrink-0" />
+              <div className={theme === "blackpink" 
+                ? "bg-pink-900/30 border border-pink-800 rounded-md p-3 flex items-start"
+                : "bg-amber-900/30 border border-amber-800 rounded-md p-3 flex items-start"
+              }>
+                <AlertCircle className={`h-5 w-5 ${theme === "blackpink" ? "text-pink-500" : "text-amber-500"} mr-2 mt-0.5 flex-shrink-0`} />
                 <div>
-                  <p className="text-sm text-amber-300">
+                  <p className={`text-sm ${theme === "blackpink" ? "text-pink-300" : "text-amber-300"}`}>
                     Too many requests. Please wait a moment before trying again.
                   </p>
-                  <p className="text-xs text-amber-400/70 mt-1">
+                  <p className={`text-xs ${theme === "blackpink" ? "text-pink-400/70" : "text-amber-400/70"} mt-1`}>
                     The AI service is currently experiencing high demand.
                   </p>
                 </div>
@@ -144,13 +165,16 @@ export const AiChat = ({ initialQuestion }: AiChatProps = {}) => {
             
             {/* Display queue status if items are queued */}
             {queueStats.isQueueActive && !isRateLimited && (
-              <div className="bg-blue-900/30 border border-blue-800 rounded-md p-3 flex items-start animate-pulse">
-                <Clock className="h-5 w-5 text-blue-500 mr-2 mt-0.5 flex-shrink-0" />
+              <div className={theme === "blackpink"
+                ? "bg-pink-900/30 border border-pink-800 rounded-md p-3 flex items-start animate-pulse"
+                : "bg-blue-900/30 border border-blue-800 rounded-md p-3 flex items-start animate-pulse"
+              }>
+                <Clock className={`h-5 w-5 ${theme === "blackpink" ? "text-pink-500" : "text-blue-500"} mr-2 mt-0.5 flex-shrink-0`} />
                 <div>
-                  <p className="text-sm text-blue-300">
+                  <p className={`text-sm ${theme === "blackpink" ? "text-pink-300" : "text-blue-300"}`}>
                     Request{queueStats.queueLength > 1 ? 's' : ''} queued ({queueStats.queueLength})
                   </p>
-                  <p className="text-xs text-blue-400/70 mt-1">
+                  <p className={`text-xs ${theme === "blackpink" ? "text-pink-400/70" : "text-blue-400/70"} mt-1`}>
                     Estimated wait: ~{queueStats.estimatedWaitTime} seconds
                   </p>
                 </div>
@@ -174,7 +198,7 @@ export const AiChat = ({ initialQuestion }: AiChatProps = {}) => {
           </div>
         </CardContent>
         
-        <CardFooter className="p-3 pt-2 border-t border-gray-800">
+        <CardFooter className={theme === "blackpink" ? "p-3 pt-2 border-t border-pink-500/30" : "p-3 pt-2 border-t border-gray-800"}>
           <ChatInput
             prompt={prompt}
             setPrompt={setPrompt}
