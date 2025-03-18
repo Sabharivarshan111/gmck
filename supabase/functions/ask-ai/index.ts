@@ -124,10 +124,9 @@ serve(async (req) => {
         }),
       });
 
-      const data = await response.json();
-      
       if (!response.ok) {
-        console.error('OpenAI API error:', data.error || 'Unknown error');
+        const errorText = await response.text();
+        console.error('OpenAI API error:', errorText);
         
         // Handle rate limiting specifically
         if (response.status === 429) {
@@ -144,14 +143,26 @@ serve(async (req) => {
           );
         }
         
+        // Try to parse the error as JSON, but handle if it's not
+        let parsedError;
+        try {
+          parsedError = JSON.parse(errorText);
+        } catch (e) {
+          parsedError = { message: 'Unknown error format from OpenAI API' };
+        }
+        
         return new Response(
-          JSON.stringify({ error: `OpenAI API error: ${data.error?.message || 'Unknown error'}` }),
+          JSON.stringify({ 
+            error: `OpenAI API error: ${parsedError.error?.message || parsedError.message || 'Unknown error'}` 
+          }),
           { 
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
             status: 200
           }
         );
       }
+
+      const data = await response.json();
 
       const aiResponse = data.choices[0].message.content;
       console.log(`AI response generated successfully (${aiResponse.length} chars)`);

@@ -2,7 +2,7 @@
 import { useRef, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { RotateCcw, AlertCircle, Clock } from "lucide-react";
+import { RotateCcw, AlertCircle, Clock, WifiOff } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChatMessageItem } from "./chat/ChatMessageItem";
 import { EmptyChatState } from "./chat/EmptyChatState";
@@ -30,6 +30,7 @@ export const AiChat = ({ initialQuestion }: AiChatProps = {}) => {
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [isFirstLoad, setIsFirstLoad] = useState(true);
+  const [connectionError, setConnectionError] = useState(false);
 
   // Scroll to bottom when messages change, but not on first load
   useEffect(() => {
@@ -41,6 +42,26 @@ export const AiChat = ({ initialQuestion }: AiChatProps = {}) => {
   // Mark first load as complete after initial render
   useEffect(() => {
     setIsFirstLoad(false);
+  }, []);
+  
+  // Check connection status
+  useEffect(() => {
+    const checkConnection = () => {
+      setConnectionError(!navigator.onLine);
+    };
+    
+    // Add event listeners for online/offline status
+    window.addEventListener('online', () => setConnectionError(false));
+    window.addEventListener('offline', () => setConnectionError(true));
+    
+    // Check initially
+    checkConnection();
+    
+    // Clean up
+    return () => {
+      window.removeEventListener('online', () => setConnectionError(false));
+      window.removeEventListener('offline', () => setConnectionError(true));
+    };
   }, []);
   
   // Listen for triple tap events
@@ -93,6 +114,20 @@ export const AiChat = ({ initialQuestion }: AiChatProps = {}) => {
         
         <CardContent className="p-0 flex-grow overflow-hidden flex flex-col">
           <div className="flex-grow overflow-y-auto p-4 space-y-4">
+            {connectionError && (
+              <div className="bg-red-900/30 border border-red-800 rounded-md p-3 flex items-start">
+                <WifiOff className="h-5 w-5 text-red-500 mr-2 mt-0.5 flex-shrink-0" />
+                <div>
+                  <p className="text-sm text-red-300">
+                    You appear to be offline. Please check your internet connection.
+                  </p>
+                  <p className="text-xs text-red-400/70 mt-1">
+                    The AI chat requires an internet connection to function.
+                  </p>
+                </div>
+              </div>
+            )}
+            
             {isRateLimited && (
               <div className="bg-amber-900/30 border border-amber-800 rounded-md p-3 flex items-start">
                 <AlertCircle className="h-5 w-5 text-amber-500 mr-2 mt-0.5 flex-shrink-0" />
@@ -145,7 +180,7 @@ export const AiChat = ({ initialQuestion }: AiChatProps = {}) => {
             setPrompt={setPrompt}
             onSubmit={handleSubmit}
             isLoading={isLoading}
-            isDisabled={isRateLimited && queueStats.queueLength >= 10} // Disable if rate limited AND queue is full
+            isDisabled={(isRateLimited && queueStats.queueLength >= 10) || connectionError} // Disable if rate limited AND queue is full or offline
           />
         </CardFooter>
       </Card>

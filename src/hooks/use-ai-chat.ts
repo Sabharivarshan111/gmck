@@ -85,6 +85,12 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
         body: JSON.stringify({ prompt: question }),
       });
       
+      // Check for non-JSON responses first
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new Error('Server returned non-JSON response. The service might be unavailable.');
+      }
+      
       if (response.status === 429) {
         setIsRateLimited(true);
         setIsLoading(false);
@@ -96,6 +102,21 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
       }
       
       const data = await response.json();
+      
+      if (data.error) {
+        throw new Error(data.error);
+      }
+      
+      if (data.isRateLimit) {
+        setIsRateLimited(true);
+        setIsLoading(false);
+        toast({
+          title: "Rate limit reached",
+          description: data.error || "Please wait a moment before sending another message.",
+          variant: "destructive",
+        });
+        return;
+      }
       
       if (data.queueStats) {
         setQueueStats(data.queueStats);
@@ -109,12 +130,22 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
       };
       
       setMessages(prevMessages => [...prevMessages, aiMessage]);
-    } catch (error: any) {
+    } catch (error) {
       handleError(error);
+      
+      // Add a system message about the error
+      const errorMessage: ChatMessage = {
+        id: uuidv4(),
+        role: 'system',
+        content: "I'm sorry, but I encountered an error while processing your request. Please try again later.",
+        timestamp: new Date(),
+      };
+      
+      setMessages(prevMessages => [...prevMessages, errorMessage]);
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [toast]);
 
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
