@@ -191,6 +191,15 @@
   transform: scale(0.98);
 }
 
+.blackpink .question-card {
+  background-color: black !important;
+  border-color: #ec4899 !important;
+}
+
+.blackpink .question-card:active {
+  background-color: rgba(236, 72, 153, 0.1) !important;
+}
+
 html {
   transition: font-size 0.3s ease;
 }
@@ -297,4 +306,22 @@ html {
 /* Fix for SearchBar icon */
 .blackpink .search-icon {
   @apply text-pink-400;
+}
+
+/* Make sure MCQs display correctly in blackpink theme */
+.blackpink .mcq-question,
+.blackpink .mcq-options,
+.blackpink .mcq-answer,
+.blackpink .mcq-explanation {
+  @apply bg-black text-pink-400;
+}
+
+/* Fix dropdown items in blackpink theme */
+.blackpink .dropdown-item {
+  @apply bg-black text-pink-400 hover:bg-black/60;
+}
+
+/* Fix card backgrounds in blackpink theme */
+.blackpink .card {
+  @apply bg-black border-pink-500;
 }

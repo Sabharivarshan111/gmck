@@ -15,9 +15,6 @@ interface UseAiChatProps {
   initialQuestion?: string;
 }
 
-// Note: This hook now uses the ask-gemini Supabase function
-// The previous ask-ai function was replaced with a more advanced Gemini-based implementation
-// that supports features like MCQs generation, important questions identification, etc.
 export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
   const [prompt, setPrompt] = useState<string>(initialQuestion || "");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -91,13 +88,26 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
       // Check if this is a triple tap (special handling)
       const isTripleTap = question.startsWith("Triple-tapped:") || question.startsWith("triple-tapped:");
       
-      // Use Supabase edge function - Now using ask-gemini which supports all the advanced features
-      // Features supported: MCQs generation, important questions identification, etc.
+      // Check if the user is requesting MCQs
+      const isMCQRequest = /generate\s+(?:10|ten)\s+mcqs?|create\s+(?:10|ten)\s+mcqs?|make\s+(?:10|ten)\s+mcqs?|ten\s+mcqs?|10\s+mcqs?/i.test(question);
+      
+      // Check if the user is asking for important questions
+      const isImportantQuestionsRequest = /important question|important topics|high yield|frequently asked|commonly asked|repeated questions/i.test(question);
+      
+      // Check if the user is asking for clarification
+      const isNeedingClarification = /i don't understand|can't understand|explain|similar|more detail/i.test(question.toLowerCase());
+      
+      console.log("Request type:", { isTripleTap, isMCQRequest, isImportantQuestionsRequest, isNeedingClarification });
+      
+      // Use Supabase edge function - using ask-gemini which supports all the advanced features
       const { data, error } = await supabase.functions.invoke('ask-gemini', {
         body: { 
           prompt: question,
           conversationHistory,
-          isTripleTap
+          isTripleTap,
+          isMCQRequest,
+          isImportantQuestionsRequest,
+          isNeedingClarification
         },
       });
       

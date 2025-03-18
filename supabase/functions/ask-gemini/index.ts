@@ -1,3 +1,4 @@
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { GoogleGenerativeAI } from "npm:@google/generative-ai@0.2.0";
 
@@ -251,7 +252,14 @@ serve(async (req) => {
       );
     }
     
-    const { prompt, conversationHistory = [], isTripleTap = false } = reqData || {};
+    const { 
+      prompt, 
+      conversationHistory = [], 
+      isTripleTap = false,
+      isMCQRequest: explicitMCQRequest = false,
+      isImportantQuestionsRequest: explicitImportantQRequest = false,
+      isNeedingClarification = false
+    } = reqData || {};
     
     if (!prompt) {
       logWithTimestamp(`[${requestId}] Missing prompt in request`);
@@ -266,6 +274,7 @@ serve(async (req) => {
     
     logWithTimestamp(`[${requestId}] Processing prompt: ${prompt.substring(0, 50)}...`);
     logWithTimestamp(`[${requestId}] Conversation history length: ${conversationHistory.length}`);
+    logWithTimestamp(`[${requestId}] Request types: isTripleTap=${isTripleTap}, isMCQRequest=${explicitMCQRequest}, isImportantQuestionsRequest=${explicitImportantQRequest}, isNeedingClarification=${isNeedingClarification}`);
     
     const apiKey = Deno.env.get("GEMINI_API_KEY");
 
@@ -289,14 +298,15 @@ serve(async (req) => {
     const actualQuestion = isTripleTap ? prompt.replace(/Triple-tapped:|triple-tapped:/i, "").trim() : prompt;
     
     // Determine if we have a specialized request type
-    const isMCQsRequest = isMCQRequest(actualQuestion);
-    const isImportantQsRequest = isImportantQuestionsRequest(actualQuestion);
+    const isMCQsRequest = explicitMCQRequest || isMCQRequest(actualQuestion);
+    const isImportantQsRequest = explicitImportantQRequest || isImportantQuestionsRequest(actualQuestion);
     const isPathologyQuestion = isPathologyTopic(actualQuestion);
     const subjectInfo = extractSubjectAndTopic(actualQuestion);
     
     // For context-based questions, we need the conversation history
     const needsConversationContext = conversationHistory.length > 0 && 
-                                    (actualQuestion.toLowerCase().includes("i don't understand") || 
+                                    (isNeedingClarification || 
+                                     actualQuestion.toLowerCase().includes("i don't understand") || 
                                      actualQuestion.toLowerCase().includes("can't understand") ||
                                      actualQuestion.toLowerCase().includes("explain") ||
                                      actualQuestion.toLowerCase().includes("similar") ||

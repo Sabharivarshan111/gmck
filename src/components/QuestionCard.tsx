@@ -4,6 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { useTripleTap } from '@/hooks/use-triple-tap';
+import { useTheme } from '@/components/theme/ThemeProvider';
 
 interface QuestionCardProps {
   question: string;
@@ -14,6 +15,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, index }) => {
   const [isCompleted, setIsCompleted] = useState(false);
   const [tapStatus, setTapStatus] = useState<'idle' | 'processing'>('idle');
   const asteriskCount = countAsterisks(question);
+  const { theme } = useTheme();
   
   // Generate a unique ID for the question for localStorage
   const questionId = `question-${question.slice(0, 50).replace(/\s+/g, '-')}`;
@@ -62,10 +64,12 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, index }) => {
     setIsCompleted(checked);
   };
 
+  const cardBgClass = theme === "blackpink" ? "bg-black border-pink-500" : "border-gray-800 hover:border-gray-700";
+
   return (
     <div id={`question-${index}`}>
       <Card 
-        className="mb-2 border-gray-800 hover:border-gray-700 transition-colors cursor-pointer question-card" 
+        className={`mb-2 ${cardBgClass} transition-colors cursor-pointer question-card`}
         onClick={handleTripleTap}
       >
         <CardContent className="p-3 text-left text-sm flex items-start justify-between">
@@ -79,7 +83,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, index }) => {
             />
             <div className="flex-1">
               <div className="flex items-center mb-1">
-                <span className="text-[10px] text-blue-500">
+                <span className={`text-[10px] ${theme === "blackpink" ? "text-pink-400" : "text-blue-500"}`}>
                   {tapStatus === 'idle' ? (
                     "Triple tap to ask AI"
                   ) : (
@@ -87,14 +91,18 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, index }) => {
                   )}
                 </span>
               </div>
-              <p className="whitespace-pre-wrap">{getCleanQuestionText(question)}</p>
+              <p className={`whitespace-pre-wrap ${theme === "blackpink" ? "text-pink-400" : ""}`}>
+                {getCleanQuestionText(question)}
+              </p>
             </div>
           </div>
           
           {asteriskCount > 0 && (
             <Badge 
               variant="outline" 
-              className="rounded-full h-6 w-6 flex-shrink-0 p-0 flex items-center justify-center bg-gray-800 text-white text-xs border-gray-700 ml-2"
+              className={`rounded-full h-6 w-6 flex-shrink-0 p-0 flex items-center justify-center ${
+                theme === "blackpink" ? "bg-black text-pink-400 border-pink-500" : "bg-gray-800 text-white border-gray-700"
+              } ml-2 text-xs`}
               onClick={(e) => e.stopPropagation()} // Prevent triple tap when clicking the badge
             >
               {asteriskCount}

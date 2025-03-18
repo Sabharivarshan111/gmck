@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Moon, Sun, Plus } from "lucide-react";
+import { Moon, Sun } from "lucide-react";
 import { useTheme } from "./ThemeProvider";
 import {
   DropdownMenu,
