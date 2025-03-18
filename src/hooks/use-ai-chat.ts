@@ -15,6 +15,9 @@ interface UseAiChatProps {
   initialQuestion?: string;
 }
 
+// Note: This hook now uses the ask-gemini Supabase function
+// The previous ask-ai function was replaced with a more advanced Gemini-based implementation
+// that supports features like MCQs generation, important questions identification, etc.
 export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
   const [prompt, setPrompt] = useState<string>(initialQuestion || "");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -79,9 +82,23 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
     setPrompt(""); // Clear the input immediately when processing starts
     
     try {
-      // Use Supabase edge function instead of /api/chat
+      // Convert previous messages to history format for context
+      const conversationHistory = messages.slice(-6).map(msg => ({
+        role: msg.role,
+        content: msg.content
+      }));
+      
+      // Check if this is a triple tap (special handling)
+      const isTripleTap = question.startsWith("Triple-tapped:") || question.startsWith("triple-tapped:");
+      
+      // Use Supabase edge function - Now using ask-gemini which supports all the advanced features
+      // Features supported: MCQs generation, important questions identification, etc.
       const { data, error } = await supabase.functions.invoke('ask-gemini', {
-        body: { prompt: question },
+        body: { 
+          prompt: question,
+          conversationHistory,
+          isTripleTap
+        },
       });
       
       if (error) {
@@ -130,13 +147,12 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
     } finally {
       setIsLoading(false);
     }
-  }, [toast]);
+  }, [messages, toast]);
 
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     handleSubmitQuestion(prompt);
-    setPrompt("");
-  }, [prompt, handleSubmitQuestion, setPrompt]);
+  }, [prompt, handleSubmitQuestion]);
 
   const handleClearChat = useCallback(() => {
     setMessages([]);

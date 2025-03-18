@@ -267,11 +267,34 @@ html {
 
 /* Ensure all text in blackpink theme is pink */
 .blackpink h1, .blackpink h2, .blackpink h3, .blackpink h4, .blackpink p, 
-.blackpink span, .blackpink div, .blackpink a, .blackpink li {
+.blackpink span, .blackpink div, .blackpink a, .blackpink li, 
+.blackpink .tabs-button, .blackpink input::placeholder, 
+.blackpink .search-input, .blackpink .question-card {
   @apply text-pink-400;
+}
+
+/* Target SearchBar specifically */
+.blackpink input.search-input::placeholder {
+  @apply text-pink-400/50;
+}
+
+.blackpink input.search-input {
+  @apply bg-black border-pink-500 text-pink-400;
 }
 
 /* Make sure triple-tapped questions display correctly */
 .blackpink .ai-chat-section textarea {
   @apply bg-black text-pink-400 border-pink-500;
+}
+
+/* Fix for topic accordions */
+.blackpink .topic-accordion, 
+.blackpink .subtopic-accordion,
+.blackpink .type-accordion {
+  @apply text-pink-400;
+}
+
+/* Fix for SearchBar icon */
+.blackpink .search-icon {
+  @apply text-pink-400;
 }

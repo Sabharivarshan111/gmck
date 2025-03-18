@@ -67,15 +67,15 @@ export function ThemeToggle() {
             className={`flex items-center gap-2 ${theme === "dark" ? "bg-gray-700/60" : ""} ${theme === "blackpink" ? "text-pink-400 hover:bg-black/60" : ""}`}
           >
             <Moon className={`h-4 w-4 ${theme === "blackpink" ? "text-pink-400" : ""}`} />
-            <span>Dark</span>
-            {theme === "dark" && <span className="ml-auto text-xs">Default</span>}
+            <span className={theme === "blackpink" ? "text-pink-400" : ""}>Dark</span>
+            {theme === "dark" && <span className={`ml-auto text-xs ${theme === "blackpink" ? "text-pink-400" : ""}`}>Default</span>}
           </DropdownMenuItem>
           <DropdownMenuItem 
             onClick={() => handleThemeChange("light")}
             className={`flex items-center gap-2 ${theme === "light" ? "bg-gray-200/60" : ""} ${theme === "blackpink" ? "text-pink-400 hover:bg-black/60" : ""}`}
           >
             <Sun className={`h-4 w-4 ${theme === "blackpink" ? "text-pink-400" : ""}`} />
-            <span>Light</span>
+            <span className={theme === "blackpink" ? "text-pink-400" : ""}>Light</span>
           </DropdownMenuItem>
           <DropdownMenuSeparator className={theme === "blackpink" ? "bg-pink-500/30" : ""} />
           <DropdownMenuItem
