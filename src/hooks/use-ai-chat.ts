@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import { v4 as uuidv4 } from 'uuid';
 import { useToast } from "@/hooks/use-toast";
 import { ChatMessage } from "@/models/ChatMessage";
+import { supabase } from "@/integrations/supabase/client";
 
 interface QueueStats {
   isQueueActive: boolean;
@@ -77,34 +78,13 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
     setIsLoading(true);
     
     try {
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ prompt: question }),
+      // Use Supabase edge function instead of /api/chat
+      const { data, error } = await supabase.functions.invoke('ask-gemini', {
+        body: { prompt: question },
       });
       
-      // Check for non-JSON responses first
-      const contentType = response.headers.get('content-type');
-      if (!contentType || !contentType.includes('application/json')) {
-        throw new Error('Server returned non-JSON response. The service might be unavailable.');
-      }
-      
-      if (response.status === 429) {
-        setIsRateLimited(true);
-        setIsLoading(false);
-        return;
-      }
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      const data = await response.json();
-      
-      if (data.error) {
-        throw new Error(data.error);
+      if (error) {
+        throw new Error(`Error calling AI service: ${error.message}`);
       }
       
       if (data.isRateLimit) {
@@ -116,6 +96,10 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
           variant: "destructive",
         });
         return;
+      }
+      
+      if (data.error) {
+        throw new Error(data.error);
       }
       
       if (data.queueStats) {
