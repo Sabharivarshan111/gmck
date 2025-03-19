@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from "react";
 import { v4 as uuidv4 } from 'uuid';
 import { useToast } from "@/hooks/use-toast";
@@ -22,7 +21,7 @@ function getImportantQuestions(subject: string, topic?: string): string {
   const normalizedSubject = subject.toLowerCase().trim();
   
   // Find the subject in our question bank data
-  const subjectData = QUESTION_BANK_DATA[normalizedSubject];
+  const subjectData = QUESTION_BANK_DATA[normalizedSubject as keyof typeof QUESTION_BANK_DATA];
   if (!subjectData) {
     return `Could not find information about "${subject}" in our question bank. Please check the spelling or try a different subject.`;
   }
@@ -71,20 +70,23 @@ function getImportantQuestions(subject: string, topic?: string): string {
     };
     
     // Start processing from the subtopics of the subject
-    Object.values(data.subtopics).forEach(paper => {
-      if (topic) {
-        // If a specific topic is requested, only process that topic
-        Object.entries(paper.subtopics || {}).forEach(([key, subtopic]) => {
-          const subtopicName = (subtopic as any).name?.toLowerCase() || '';
-          if (key.includes(topic.toLowerCase()) || subtopicName.includes(topic.toLowerCase())) {
-            processSubtopics(subtopic);
-          }
-        });
-      } else {
-        // If no specific topic, process all subtopics
-        processSubtopics(paper);
-      }
-    });
+    if (data.subtopics) {
+      Object.values(data.subtopics).forEach(paper => {
+        if (topic && paper && typeof paper === 'object' && 'subtopics' in paper) {
+          // If a specific topic is requested, only process that topic
+          Object.entries((paper as any).subtopics || {}).forEach(([key, subtopic]) => {
+            const subtopicObj = subtopic as any;
+            const subtopicName = subtopicObj.name?.toLowerCase() || '';
+            if (key.includes(topic.toLowerCase()) || subtopicName.includes(topic.toLowerCase())) {
+              processSubtopics(subtopic);
+            }
+          });
+        } else if (paper && typeof paper === 'object') {
+          // If no specific topic, process all subtopics
+          processSubtopics(paper);
+        }
+      });
+    }
     
     return questions;
   };
