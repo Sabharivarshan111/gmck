@@ -4,6 +4,7 @@ import TopicAccordion from "@/components/TopicAccordion";
 import { QuestionBankData } from "@/components/QuestionBank";
 import NoContentMessage from "./NoContentMessage";
 import { useState, useEffect } from "react";
+import { useTheme } from "@/components/theme/ThemeProvider";
 
 interface QuestionBankContentProps {
   activeTab: "essay" | "short-notes";
@@ -21,6 +22,7 @@ const QuestionBankContent = ({
   searchQuery
 }: QuestionBankContentProps) => {
   const [localExpandedItems, setLocalExpandedItems] = useState<string[]>(expandedItems);
+  const { theme } = useTheme();
 
   // Update local state when prop changes
   useEffect(() => {
@@ -36,13 +38,17 @@ const QuestionBankContent = ({
     setLocalExpandedItems(value);
   };
 
+  const accordionClassName = `w-full text-gray-800 dark:text-gray-200 ${
+    theme === "blackpink" ? "question-bank-content" : ""
+  }`;
+
   return (
     <div className="grid gap-4">
       <Accordion 
         type="multiple" 
         value={localExpandedItems}
         onValueChange={handleAccordionValueChange}
-        className="w-full text-gray-800 dark:text-gray-200"
+        className={accordionClassName}
       >
         {Object.entries(filteredData).map(([topicKey, topic]) => (
           <TopicAccordion 

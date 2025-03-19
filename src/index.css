@@ -77,20 +77,20 @@
     --primary: 336 100% 70%;
     --primary-foreground: 0 0% 0%;
 
-    --secondary: 0 0% 5%;
+    --secondary: 0 0% 0%;
     --secondary-foreground: 336 100% 70%;
 
-    --muted: 0 0% 5%;
+    --muted: 0 0% 0%;
     --muted-foreground: 336 100% 60%;
 
-    --accent: 0 0% 5%;
+    --accent: 0 0% 0%;
     --accent-foreground: 336 100% 70%;
 
     --destructive: 0 100% 50%;
     --destructive-foreground: 336 100% 70%;
 
-    --border: 0 0% 10%;
-    --input: 0 0% 10%;
+    --border: 336 100% 50%;
+    --input: 0 0% 0%;
     --ring: 336 100% 70%;
   }
 }
@@ -104,7 +104,7 @@
     transition: font-size 0.3s ease, background-color 0.3s ease;
   }
   .blackpink button {
-    @apply text-pink-400 border-pink-500;
+    @apply text-pink-400 border-pink-500 bg-black;
   }
   .blackpink input, .blackpink textarea {
     @apply bg-black text-pink-400 border-pink-500 placeholder-pink-400/50;
@@ -267,11 +267,20 @@ html {
 
 /* BlackPink theme overrides */
 .blackpink .tabs-list [data-state="active"] {
-  @apply text-pink-400 border-pink-400;
+  @apply text-pink-400 border-pink-400 bg-black;
 }
 
 .blackpink .tabs-list button {
-  @apply text-pink-400 hover:text-pink-300;
+  @apply text-pink-400 hover:text-pink-300 bg-black;
+}
+
+/* BlackPink theme global overrides */
+.blackpink {
+  background-color: black !important;
+}
+
+.blackpink div, .blackpink section, .blackpink main, .blackpink aside {
+  background-color: black !important;
 }
 
 /* Ensure all text in blackpink theme is pink */
@@ -280,6 +289,11 @@ html {
 .blackpink .tabs-button, .blackpink input::placeholder, 
 .blackpink .search-input, .blackpink .question-card {
   @apply text-pink-400;
+}
+
+/* Target ScrollArea specifically */
+.blackpink .scroll-area-viewport {
+  @apply bg-black;
 }
 
 /* Target SearchBar specifically */
@@ -291,6 +305,19 @@ html {
   @apply bg-black border-pink-500 text-pink-400;
 }
 
+/* Accordion specific overrides */
+.blackpink .accordion-item {
+  @apply bg-black border-pink-500/30;
+}
+
+.blackpink .accordion-button {
+  @apply bg-black text-pink-400;
+}
+
+.blackpink .accordion-content {
+  @apply bg-black text-pink-400;
+}
+
 /* Make sure triple-tapped questions display correctly */
 .blackpink .ai-chat-section textarea {
   @apply bg-black text-pink-400 border-pink-500;
@@ -300,12 +327,29 @@ html {
 .blackpink .topic-accordion, 
 .blackpink .subtopic-accordion,
 .blackpink .type-accordion {
-  @apply text-pink-400;
+  @apply text-pink-400 bg-black;
+}
+
+.blackpink [data-radix-accordion-content] {
+  @apply bg-black;
 }
 
 /* Fix for SearchBar icon */
 .blackpink .search-icon {
   @apply text-pink-400;
+}
+
+/* Fix Tabs background */
+.blackpink [role="tablist"] {
+  @apply bg-black;
+}
+
+.blackpink [role="tab"] {
+  @apply bg-black text-pink-400 data-[state=active]:bg-black;
+}
+
+.blackpink [role="tabpanel"] {
+  @apply bg-black;
 }
 
 /* Make sure MCQs display correctly in blackpink theme */
@@ -324,4 +368,54 @@ html {
 /* Fix card backgrounds in blackpink theme */
 .blackpink .card {
   @apply bg-black border-pink-500;
+}
+
+/* Fix for the background in various parts of the UI */
+.blackpink .bg-white, 
+.blackpink .bg-card, 
+.blackpink .bg-background, 
+.blackpink .bg-secondary,
+.blackpink .bg-muted,
+.blackpink .bg-accent {
+  @apply bg-black !important;
+}
+
+/* Fix scrollbars for blackpink theme */
+.blackpink ::-webkit-scrollbar-track {
+  @apply bg-black;
+}
+
+.blackpink ::-webkit-scrollbar-thumb {
+  @apply bg-pink-500/50;
+}
+
+/* Fix pomodoro timer in blackpink theme */
+.blackpink .pomodoro-container {
+  @apply bg-black border-pink-500;
+}
+
+/* Fix question bank content */
+.blackpink .question-bank-content {
+  @apply bg-black;
+}
+
+/* Override for any elements with light backgrounds */
+.blackpink .bg-gray-100,
+.blackpink .bg-gray-200,
+.blackpink .bg-gray-300,
+.blackpink .hover\:bg-gray-100:hover,
+.blackpink .hover\:bg-gray-200:hover {
+  @apply bg-black hover:bg-black/60 !important;
+}
+
+/* Additional fixes for any remaining white backgrounds */
+.blackpink * {
+  background-color: transparent;
+}
+
+.blackpink *[class*="bg-white"],
+.blackpink *[class*="bg-gray"],
+.blackpink *[class*="bg-slate"],
+.blackpink *[class*="bg-zinc"] {
+  @apply bg-black !important;
 }
