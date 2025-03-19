@@ -64,7 +64,10 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, index }) => {
     setIsCompleted(checked);
   };
 
-  const cardBgClass = theme === "blackpink" ? "bg-black border-pink-500" : "border-gray-800 hover:border-gray-700";
+  // Update card styles for proper blackpink theme support
+  const cardBgClass = theme === "blackpink" 
+    ? "bg-black border-pink-500" 
+    : "bg-background border-gray-800 hover:border-gray-700";
 
   return (
     <div id={`question-${index}`}>

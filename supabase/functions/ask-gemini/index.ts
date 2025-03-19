@@ -196,7 +196,7 @@ function logWithTimestamp(message: string, data?: any) {
 
 // Helper function to check if a prompt is requesting MCQs
 function isMCQRequest(prompt: string): boolean {
-  return /generate\s+(?:10|ten)\s+mcqs?|create\s+(?:10|ten)\s+mcqs?|make\s+(?:10|ten)\s+mcqs?|ten\s+mcqs?|10\s+mcqs?/i.test(prompt);
+  return /generate\s+(?:10|ten)\s+mcqs?|create\s+(?:10|ten)\s+mcqs?|make\s+(?:10|ten)\s+mcqs?|ten\s+mcqs?|10\s+mcqs?|generate\s+mcqs?/i.test(prompt);
 }
 
 // Helper function to check if a prompt is asking for important questions
@@ -326,15 +326,16 @@ serve(async (req) => {
     if (isMCQsRequest) {
       systemPrompt = `You are ACEV, a highly specialized medical AI assistant. The user has requested you to generate 10 high-quality multiple choice questions (MCQs) in the style of NEET PG or USMLE exams.
 
-Please generate 10 MCQs based on ${needsConversationContext ? "the previous conversation context" : "the user's request"}. 
+Please generate EXACTLY 10 MCQs based on ${needsConversationContext ? "the previous conversation context" : "the user's request"}. 
 
 Each MCQ should:
 1. Be clinically relevant
 2. Test application of knowledge rather than mere recall
 3. Have 4 options (A, B, C, D) with one correct answer
-4. Include a brief explanation of why the correct answer is right and others are wrong
+4. Include a brief explanation immediately after each question's answer (not at the end of all questions)
 
-Format each question as:
+The MCQs should follow this exact format for each question:
+
 Question 1: [Question text]
 A) [Option A]
 B) [Option B]
@@ -343,7 +344,15 @@ D) [Option D]
 Answer: [Correct option letter]
 Explanation: [Brief explanation]
 
-Include a mix of case-based scenarios and direct knowledge questions. Ensure the questions are varied in difficulty and cover different aspects of the topic.`;
+Question 2: [Question text]
+...and so on.
+
+IMPORTANT:
+- Generate EXACTLY 5 case-based scenarios and 5 direct knowledge questions
+- Place the answer and explanation immediately after each question, not grouped at the end
+- Make the questions varied in difficulty and cover different aspects of the topic
+- Follow NEET PG/USMLE style format and complexity
+- Make sure all questions are accurate and properly formatted`;
 
       // Adjust generation parameters for MCQs
       generationConfig.temperature = 0.8; // More creative
@@ -424,7 +433,9 @@ Please carefully examine the conversation history and respond specifically to th
 
 If they are asking you to explain a specific concept or line from your previous answer, provide a more detailed and simplified explanation.
 
-If they are asking for similar questions or examples, provide additional questions that are similar to what was discussed before, including both case-based and knowledge-based questions.
+If they are asking for similar questions or examples, provide additional questions that are similar to what was discussed before, including both case-based and knowledge-based questions in the style of NEET PG/USMLE exams.
+
+If they explicitly ask for specific type of content (like "generate similar questions"), prioritize that request and deliver exactly what they've asked for.
 
 Keep your response focused, clear, and helpful. Use examples and analogies where appropriate to aid understanding.`;
 
