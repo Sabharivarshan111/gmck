@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -274,6 +273,11 @@ html {
   @apply text-pink-400 hover:text-pink-300 bg-black;
 }
 
+/* The theme toggle itself */
+.blackpink .font-toggle-button {
+  @apply text-pink-400 border-pink-500 !important;
+}
+
 /* BlackPink theme global overrides */
 .blackpink {
   background-color: black !important;
@@ -289,6 +293,53 @@ html {
 .blackpink .tabs-button, .blackpink input::placeholder, 
 .blackpink .search-input, .blackpink .question-card {
   @apply text-pink-400;
+}
+
+/* Fix for Tab triggers to keep text pink when active */
+.blackpink [role="tab"] {
+  @apply bg-black text-pink-400 !important;
+}
+
+.blackpink [role="tab"][data-state="active"] {
+  @apply bg-black text-pink-400 !important;
+}
+
+/* Specifically target the TabsTrigger in the QuestionBank */
+.blackpink .TabsTrigger[data-state="active"],
+.blackpink button[role="tab"][data-state="active"] {
+  @apply bg-black text-pink-400 !important;
+}
+
+/* Fix for accordion borders to be black instead of pink */
+.blackpink .accordion-item,
+.blackpink [data-radix-accordion-item],
+.blackpink [role="region"] {
+  @apply border-black !important;
+}
+
+/* Fix accordion dividers */
+.blackpink .AccordionItem,
+.blackpink [data-radix-accordion-item],
+.blackpink [role="region"] > div,
+.blackpink [role="region"] {
+  @apply border-b-black !important;
+  border-bottom-color: black !important;
+}
+
+/* Target AccordionItem border specifically */
+.blackpink [data-radix-accordion-item] {
+  border-bottom-color: black !important;
+  border-color: black !important;
+}
+
+/* Fix for TabsContent */
+.blackpink [role="tabpanel"] {
+  @apply bg-black;
+}
+
+/* Additional fixes for any remaining white backgrounds */
+.blackpink * {
+  background-color: transparent;
 }
 
 /* Target ScrollArea specifically */
@@ -341,14 +392,6 @@ html {
 
 /* Fix Tabs background */
 .blackpink [role="tablist"] {
-  @apply bg-black;
-}
-
-.blackpink [role="tab"] {
-  @apply bg-black text-pink-400 data-[state=active]:bg-black;
-}
-
-.blackpink [role="tabpanel"] {
   @apply bg-black;
 }
 
@@ -408,9 +451,25 @@ html {
   @apply bg-black hover:bg-black/60 !important;
 }
 
-/* Additional fixes for any remaining white backgrounds */
-.blackpink * {
-  background-color: transparent;
+/* Fix borders in accordion items to be black */
+.blackpink [data-radix-accordion-item],
+.blackpink .AccordionItem {
+  @apply border-b-0 !important;
+}
+
+/* Add specific style to fix accordion borders */
+.blackpink [data-radix-accordion-item]::after {
+  content: '';
+  display: block;
+  height: 1px;
+  background-color: black !important;
+  width: 100%;
+  margin-top: 4px;
+}
+
+/* Fix hover on accordion triggers */
+.blackpink [data-radix-accordion-trigger]:hover {
+  @apply bg-black/80 !important;
 }
 
 .blackpink *[class*="bg-white"],
@@ -418,4 +477,22 @@ html {
 .blackpink *[class*="bg-slate"],
 .blackpink *[class*="bg-zinc"] {
   @apply bg-black !important;
+}
+
+/* Override for Tabs specifically */
+.blackpink .CustomTabs [data-state="active"],
+.blackpink .TabsTrigger[data-state="active"],
+.blackpink [role="tab"][data-state="active"] {
+  @apply text-pink-400 !important;
+}
+
+/* Force borders in blackpink theme to be either transparent or black */
+.blackpink :not(.border-pink-500):not(.border-pink-400) {
+  border-color: transparent !important;
+}
+
+/* Target accordion borders specifically */
+.blackpink .AccordionItem,
+.blackpink [data-radix-accordion-item] {
+  border-bottom: none !important;
 }
