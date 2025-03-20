@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from "react";
 import { v4 as uuidv4 } from 'uuid';
 import { useToast } from "@/hooks/use-toast";
@@ -48,13 +47,19 @@ function getImportantQuestions(subject: string, topic?: string): string {
         if (!paper || typeof paper !== 'object' || !paper.subtopics) return;
         
         // Second level: topics like "general-microbiology", "immunology", etc.
-        Object.values(paper.subtopics).forEach((topicData: any) => {
+        Object.entries(paper.subtopics).forEach(([topicKey, topicData]: [string, any]) => {
           if (!topicData || typeof topicData !== 'object' || !topicData.subtopics) return;
           
           // Skip if a specific topic is requested and this isn't it
           if (topic && topicData.name) {
             const topicName = topicData.name.toLowerCase();
-            if (!topicName.includes(topic.toLowerCase())) return;
+            const searchTopic = topic.toLowerCase();
+            
+            // Improved topic matching logic: Don't just check contains, check for specific topic match
+            // For microbiology, be more strict about topic matching to avoid irrelevant topics
+            if (!topicName.includes(searchTopic) && !topicKey.includes(searchTopic)) {
+              return;
+            }
           }
           
           // Third level: essay, short-note, etc.
@@ -113,6 +118,8 @@ function getImportantQuestions(subject: string, topic?: string): string {
           Object.entries((paper as any).subtopics || {}).forEach(([key, subtopic]) => {
             const subtopicObj = subtopic as any;
             const subtopicName = subtopicObj.name?.toLowerCase() || '';
+            
+            // Improved topic matching logic
             if (key.includes(topic.toLowerCase()) || subtopicName.includes(topic.toLowerCase())) {
               processSubtopics(subtopic);
             }
@@ -135,17 +142,15 @@ function getImportantQuestions(subject: string, topic?: string): string {
   const sortedEssayQuestions = essayQuestions.sort((a, b) => b.count - a.count);
   const sortedShortNoteQuestions = shortNoteQuestions.sort((a, b) => b.count - a.count);
   
-  // Limit to most important questions (top 20 for each type)
-  const limitedEssayQuestions = sortedEssayQuestions.slice(0, 20);
-  const limitedShortNoteQuestions = sortedShortNoteQuestions.slice(0, 20);
+  // No longer limiting the number of questions - return all sorted by importance
   
   // Build the response
   let result = `# Important Questions for ${subject.toUpperCase()}${topic ? ` - ${topic.toUpperCase()}` : ''}\n\n`;
   
   // Add essay questions
   result += "## ESSAY QUESTIONS\n\n";
-  if (limitedEssayQuestions.length > 0) {
-    limitedEssayQuestions.forEach((q, i) => {
+  if (sortedEssayQuestions.length > 0) {
+    sortedEssayQuestions.forEach((q, i) => {
       const asterisks = q.count > 0 ? '*'.repeat(q.count) : '';
       result += `${i+1}. ${q.text}\n\n`;
     });
@@ -155,8 +160,8 @@ function getImportantQuestions(subject: string, topic?: string): string {
   
   // Add short note questions
   result += "## SHORT NOTE QUESTIONS\n\n";
-  if (limitedShortNoteQuestions.length > 0) {
-    limitedShortNoteQuestions.forEach((q, i) => {
+  if (sortedShortNoteQuestions.length > 0) {
+    sortedShortNoteQuestions.forEach((q, i) => {
       const asterisks = q.count > 0 ? '*'.repeat(q.count) : '';
       result += `${i+1}. ${q.text}\n\n`;
     });
@@ -202,11 +207,13 @@ function detectSubjectImportantQuestionsRequest(prompt: string): { isRequest: bo
   // If a subject is detected, try to extract any specific topic
   let topic: string | undefined;
   
-  // Simple topic extraction based on common patterns
+  // Enhanced topic extraction with more specific patterns
   const topicPatterns = [
     /(?:in|about|for|on|regarding)\s+([a-z\s-]+?)(?:\.|\?|$)/i,
     /([a-z\s-]+?)\s+(?:topic|section|chapter)/i,
-    /topic\s+(?:of|on|about)\s+([a-z\s-]+)/i
+    /topic\s+(?:of|on|about)\s+([a-z\s-]+)/i,
+    /(?:the|a)\s+([a-z\s-]+?)\s+(?:topic|section)/i,
+    /questions\s+(?:in|about|on)\s+([a-z\s-]+)/i,
   ];
   
   for (const pattern of topicPatterns) {
@@ -217,6 +224,8 @@ function detectSubjectImportantQuestionsRequest(prompt: string): { isRequest: bo
       if (topic.includes(detectedSubject)) {
         topic = topic.replace(detectedSubject, '').trim();
       }
+      // Remove common filler words
+      topic = topic.replace(/^(the|a|an)\s+/i, '').trim();
       break;
     }
   }

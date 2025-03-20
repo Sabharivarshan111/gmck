@@ -64,15 +64,26 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, index }) => {
     setIsCompleted(checked);
   };
 
-  // Update card styles for proper blackpink theme support
-  const cardBgClass = theme === "blackpink" 
-    ? "bg-black border-pink-500" 
-    : "bg-background border-gray-800 hover:border-gray-700";
+  // Enhanced card styling to ensure visibility in all themes
+  const getCardBgClass = () => {
+    if (theme === "blackpink") {
+      return "bg-black border-pink-500 border-2"; // Increase border width for visibility
+    }
+    return "bg-background border-gray-800 hover:border-gray-700";
+  };
+
+  // Enhanced text styling
+  const getTextClass = () => {
+    if (theme === "blackpink") {
+      return "text-pink-400";
+    }
+    return "";
+  };
 
   return (
     <div id={`question-${index}`}>
       <Card 
-        className={`mb-2 ${cardBgClass} transition-colors cursor-pointer question-card`}
+        className={`mb-2 ${getCardBgClass()} transition-colors cursor-pointer question-card`}
         onClick={handleTripleTap}
       >
         <CardContent className="p-3 text-left text-sm flex items-start justify-between">
@@ -82,7 +93,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, index }) => {
               checked={isCompleted}
               onCheckedChange={handleCheckboxChange}
               onClick={(e) => e.stopPropagation()} // Prevent triple tap when clicking the checkbox
-              className="mt-0.5 flex-shrink-0"
+              className={`mt-0.5 flex-shrink-0 ${theme === "blackpink" ? "checkbox-blackpink" : ""}`}
             />
             <div className="flex-1">
               <div className="flex items-center mb-1">
@@ -94,7 +105,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, index }) => {
                   )}
                 </span>
               </div>
-              <p className={`whitespace-pre-wrap ${theme === "blackpink" ? "text-pink-400" : ""}`}>
+              <p className={`whitespace-pre-wrap ${getTextClass()}`}>
                 {getCleanQuestionText(question)}
               </p>
             </div>
@@ -104,7 +115,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, index }) => {
             <Badge 
               variant="outline" 
               className={`rounded-full h-6 w-6 flex-shrink-0 p-0 flex items-center justify-center ${
-                theme === "blackpink" ? "bg-black text-pink-400 border-pink-500" : "bg-gray-800 text-white border-gray-700"
+                theme === "blackpink" ? "bg-black text-pink-400 border-pink-500 border" : "bg-gray-800 text-white border-gray-700"
               } ml-2 text-xs badge`}
               onClick={(e) => e.stopPropagation()} // Prevent triple tap when clicking the badge
             >
