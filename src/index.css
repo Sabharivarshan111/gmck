@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -116,70 +117,7 @@
   }
 }
 
-@layer utilities {
-  .animate-fade-in {
-    animation: fadeIn 0.5s ease-in-out;
-  }
-  
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  
-  .pulse-on-tap {
-    transition: all 0.2s ease;
-  }
-  
-  .pulse-on-tap:active {
-    transform: scale(0.98);
-    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
-  }
-  
-  .animate-pulse {
-    animation: pulseFade 1.5s infinite ease-in-out;
-  }
-  
-  @keyframes pulseFade {
-    0%, 100% { opacity: 0.7; }
-    50% { opacity: 1; }
-  }
-  
-  .slide-in {
-    animation: slideIn 0.3s ease-out forwards;
-  }
-  
-  @keyframes slideIn {
-    from {
-      opacity: 0;
-      transform: translateY(-10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  
-  .slide-out {
-    animation: slideOut 0.3s ease-in forwards;
-  }
-  
-  @keyframes slideOut {
-    from {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    to {
-      opacity: 0;
-      transform: translateY(-10px);
-    }
-  }
-}
+/* ... keep existing code (animation utilities) */
 
 .question-card {
   transition: all 0.3s ease-in-out;
@@ -199,70 +137,7 @@
   background-color: rgba(236, 72, 153, 0.1) !important;
 }
 
-html {
-  transition: font-size 0.3s ease;
-}
-
-.question-card .badge {
-  font-weight: 600;
-}
-
-@keyframes flashQuestionCard {
-  0% { background-color: rgba(59, 130, 246, 0.2); }
-  100% { background-color: transparent; }
-}
-
-.flash-triple-tap {
-  animation: flashQuestionCard 0.5s ease-out;
-}
-
-button, input, select, textarea, .card {
-  transition: all 0.2s ease-in-out;
-}
-
-.pomodoro-container {
-  transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
-}
-
-.font-size-toggle {
-  transition: transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1), opacity 0.3s ease;
-}
-
-.animate-blink {
-  animation: blinkEffect 1.2s infinite ease-in-out;
-}
-
-@keyframes blinkEffect {
-  0%, 100% { opacity: 0.6; }
-  50% { opacity: 1; }
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
-.tooltip {
-  transition: opacity 0.2s ease, transform 0.2s ease;
-}
-
-.tooltip:hover {
-  opacity: 1;
-}
-
-.chat-message-appear {
-  animation: messageAppear 0.4s cubic-bezier(0.25, 0.1, 0.25, 1.4);
-}
-
-@keyframes messageAppear {
-  from {
-    opacity: 0;
-    transform: translateY(8px) scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
+/* ... keep existing code (transition and animation utilities) */
 
 /* BlackPink theme overrides */
 .blackpink .tabs-list [data-state="active"] {
@@ -273,9 +148,13 @@ html {
   @apply text-pink-400 hover:text-pink-300 bg-black;
 }
 
-/* The theme toggle itself */
-.blackpink .font-toggle-button {
-  @apply text-pink-400 border-pink-500 !important;
+/* Fix for TabsTrigger active state in BlackPink theme */
+.blackpink .TabsTrigger[data-state="active"] {
+  @apply bg-black text-pink-400 !important;
+}
+
+.blackpink [role="tab"][data-state="active"] {
+  @apply bg-black text-pink-400 !important;
 }
 
 /* BlackPink theme global overrides */
@@ -293,6 +172,15 @@ html {
 .blackpink .tabs-button, .blackpink input::placeholder, 
 .blackpink .search-input, .blackpink .question-card {
   @apply text-pink-400;
+}
+
+/* Fix for checkbox in blackpink theme */
+.blackpink [data-state="checked"] {
+  @apply bg-pink-500 border-pink-400 !important;
+}
+
+.blackpink .checkbox {
+  @apply border-pink-500 !important;
 }
 
 /* Fix for Tab triggers to keep text pink when active */
@@ -317,7 +205,7 @@ html {
   @apply border-black !important;
 }
 
-/* Fix accordion dividers */
+/* Fix accordion dividers - ensure no pink lines in accordion */
 .blackpink .AccordionItem,
 .blackpink [data-radix-accordion-item],
 .blackpink [role="region"] > div,
@@ -495,4 +383,22 @@ html {
 .blackpink .AccordionItem,
 .blackpink [data-radix-accordion-item] {
   border-bottom: none !important;
+}
+
+/* Fix badge styling in blackpink theme */
+.blackpink .badge {
+  @apply text-pink-400 border-pink-500 bg-black !important;
+}
+
+/* Fix checkbox styling in blackpink theme */
+.blackpink [data-radix-checkbox-root] {
+  @apply border-pink-500 !important;
+}
+
+.blackpink [data-radix-checkbox-root][data-state="checked"] {
+  @apply bg-pink-500 !important;
+}
+
+.blackpink [data-radix-checkbox-root][data-state="checked"] svg {
+  @apply text-black !important;
 }

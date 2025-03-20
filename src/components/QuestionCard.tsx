@@ -105,7 +105,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, index }) => {
               variant="outline" 
               className={`rounded-full h-6 w-6 flex-shrink-0 p-0 flex items-center justify-center ${
                 theme === "blackpink" ? "bg-black text-pink-400 border-pink-500" : "bg-gray-800 text-white border-gray-700"
-              } ml-2 text-xs`}
+              } ml-2 text-xs badge`}
               onClick={(e) => e.stopPropagation()} // Prevent triple tap when clicking the badge
             >
               {asteriskCount}

@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from "react";
 import { v4 as uuidv4 } from 'uuid';
 import { useToast } from "@/hooks/use-toast";
@@ -40,6 +41,41 @@ function getImportantQuestions(subject: string, topic?: string): string {
   const processQuestionType = (data: any, questionType: 'essay' | 'short-note' | 'short-notes') => {
     const questions: {text: string, count: number}[] = [];
     
+    // Special handling for microbiology which has a different structure
+    if (normalizedSubject === 'microbiology') {
+      // First level: paper-1, paper-2
+      Object.values(data.subtopics).forEach((paper: any) => {
+        if (!paper || typeof paper !== 'object' || !paper.subtopics) return;
+        
+        // Second level: topics like "general-microbiology", "immunology", etc.
+        Object.values(paper.subtopics).forEach((topicData: any) => {
+          if (!topicData || typeof topicData !== 'object' || !topicData.subtopics) return;
+          
+          // Skip if a specific topic is requested and this isn't it
+          if (topic && topicData.name) {
+            const topicName = topicData.name.toLowerCase();
+            if (!topicName.includes(topic.toLowerCase())) return;
+          }
+          
+          // Third level: essay, short-note, etc.
+          if (topicData.subtopics[questionType] && 
+              topicData.subtopics[questionType].questions) {
+            const topicQuestions = extractQuestions(topicData.subtopics[questionType].questions);
+            questions.push(...topicQuestions);
+          } else if (questionType === 'short-notes' && 
+                    topicData.subtopics['short-note'] && 
+                    topicData.subtopics['short-note'].questions) {
+            // Handle "short-note" when "short-notes" is requested
+            const topicQuestions = extractQuestions(topicData.subtopics['short-note'].questions);
+            questions.push(...topicQuestions);
+          }
+        });
+      });
+      
+      return questions;
+    }
+    
+    // Original handling for pharmacology and pathology
     // Helper to navigate the nested structure
     const processSubtopics = (node: any) => {
       if (!node) return;
@@ -99,13 +135,17 @@ function getImportantQuestions(subject: string, topic?: string): string {
   const sortedEssayQuestions = essayQuestions.sort((a, b) => b.count - a.count);
   const sortedShortNoteQuestions = shortNoteQuestions.sort((a, b) => b.count - a.count);
   
+  // Limit to most important questions (top 20 for each type)
+  const limitedEssayQuestions = sortedEssayQuestions.slice(0, 20);
+  const limitedShortNoteQuestions = sortedShortNoteQuestions.slice(0, 20);
+  
   // Build the response
   let result = `# Important Questions for ${subject.toUpperCase()}${topic ? ` - ${topic.toUpperCase()}` : ''}\n\n`;
   
   // Add essay questions
   result += "## ESSAY QUESTIONS\n\n";
-  if (sortedEssayQuestions.length > 0) {
-    sortedEssayQuestions.forEach((q, i) => {
+  if (limitedEssayQuestions.length > 0) {
+    limitedEssayQuestions.forEach((q, i) => {
       const asterisks = q.count > 0 ? '*'.repeat(q.count) : '';
       result += `${i+1}. ${q.text}\n\n`;
     });
@@ -115,8 +155,8 @@ function getImportantQuestions(subject: string, topic?: string): string {
   
   // Add short note questions
   result += "## SHORT NOTE QUESTIONS\n\n";
-  if (sortedShortNoteQuestions.length > 0) {
-    sortedShortNoteQuestions.forEach((q, i) => {
+  if (limitedShortNoteQuestions.length > 0) {
+    limitedShortNoteQuestions.forEach((q, i) => {
       const asterisks = q.count > 0 ? '*'.repeat(q.count) : '';
       result += `${i+1}. ${q.text}\n\n`;
     });
