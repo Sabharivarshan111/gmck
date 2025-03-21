@@ -37,11 +37,40 @@ function getImportantQuestions(subject: string, topic?: string): string {
     // Direct match
     if (normalizedTopicName === normalizedSearchTopic) return true;
     
-    // Word boundary check - match whole words only
+    // For "infections" in microbiology, we need a more strict matching to avoid matching all topics
+    if (normalizedSubject === 'microbiology' && normalizedSearchTopic === 'infections') {
+      // Only match when "infectious diseases" or "infections" is the main topic
+      return normalizedTopicName === 'infectious-diseases' || 
+             normalizedTopicName === 'infections' ||
+             normalizedTopicName === 'infectious diseases';
+    }
+    
+    // Word boundary check - match whole words only, more strict for microbiology
     const wordsInTopicName = normalizedTopicName.split(/\s+|-/);
     const wordsInSearchTopic = normalizedSearchTopic.split(/\s+|-/);
     
-    // Check if all search words are in the topic name
+    // For microbiology, require an exact or near-exact match
+    if (normalizedSubject === 'microbiology') {
+      // Require the entire search topic to be found, not just parts
+      if (normalizedTopicName.includes(normalizedSearchTopic)) {
+        return true;
+      }
+      
+      // For multi-word topics, require a high match ratio (all words or all but one)
+      if (wordsInSearchTopic.length > 1) {
+        const matchCount = wordsInSearchTopic.filter(searchWord => 
+          wordsInTopicName.some(topicWord => topicWord === searchWord)
+        ).length;
+        
+        // At least 80% of words must match for multi-word topics
+        return matchCount >= Math.ceil(wordsInSearchTopic.length * 0.8);
+      }
+      
+      // For single-word topics in microbiology, be very strict to avoid false matches
+      return wordsInTopicName.some(word => word === normalizedSearchTopic);
+    }
+    
+    // For other subjects, use the original logic
     return wordsInSearchTopic.every(searchWord => 
       wordsInTopicName.some(topicWord => 
         topicWord === searchWord || topicWord.includes(searchWord)
@@ -78,7 +107,7 @@ function getImportantQuestions(subject: string, topic?: string): string {
             const topicName = topicData.name.toLowerCase();
             const searchTopic = topic.toLowerCase();
             
-            // Strict topic matching for microbiology
+            // Use the enhanced strict topic matching for microbiology
             if (!isTopicMatch(topicName, searchTopic) && !isTopicMatch(topicKey, searchTopic)) {
               return;
             }

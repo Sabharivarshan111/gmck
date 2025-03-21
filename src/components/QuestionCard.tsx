@@ -67,7 +67,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, index }) => {
   // Enhanced card styling to ensure visibility in all themes
   const getCardBgClass = () => {
     if (theme === "blackpink") {
-      return "bg-black border-pink-500 border-2 z-10"; // Added z-index and increased border width
+      return "bg-black border-pink-400 border-2 z-20"; // Increased z-index and border width, changed to baby pink
     }
     return "bg-background border-gray-800 hover:border-gray-700";
   };
@@ -88,13 +88,13 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, index }) => {
       >
         <CardContent className="p-3 text-left text-sm flex items-start justify-between">
           <div className="flex items-start gap-2">
-            <div className={`mt-0.5 flex-shrink-0 ${theme === "blackpink" ? "checkbox-wrapper-blackpink z-20" : ""}`}>
+            <div className={`mt-0.5 flex-shrink-0 ${theme === "blackpink" ? "checkbox-wrapper-blackpink z-30" : ""}`}>
               <Checkbox 
                 id={`checkbox-${index}`}
                 checked={isCompleted}
                 onCheckedChange={handleCheckboxChange}
                 onClick={(e) => e.stopPropagation()} // Prevent triple tap when clicking the checkbox
-                className={`${theme === "blackpink" ? "border-pink-500 checkbox-blackpink" : ""}`}
+                className={`${theme === "blackpink" ? "border-pink-400 border-2 checkbox-blackpink" : ""}`}
               />
             </div>
             <div className="flex-1">
@@ -117,7 +117,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, index }) => {
             <Badge 
               variant="outline" 
               className={`rounded-full h-6 w-6 flex-shrink-0 p-0 flex items-center justify-center ${
-                theme === "blackpink" ? "bg-black text-pink-400 border-pink-500 border-2 z-20" : "bg-gray-800 text-white border-gray-700"
+                theme === "blackpink" ? "bg-black text-pink-400 border-pink-400 border-2 z-30" : "bg-gray-800 text-white border-gray-700"
               } ml-2 text-xs badge`}
               onClick={(e) => e.stopPropagation()} // Prevent triple tap when clicking the badge
             >

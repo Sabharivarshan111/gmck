@@ -88,7 +88,7 @@
     --destructive: 0 100% 50%;
     --destructive-foreground: 336 100% 70%;
 
-    --border: 336 100% 50%;
+    --border: 336 100% 70%;
     --input: 0 0% 0%;
     --ring: 336 100% 70%;
   }
@@ -103,16 +103,16 @@
     transition: font-size 0.3s ease, background-color 0.3s ease;
   }
   .blackpink button {
-    @apply text-pink-400 border-pink-500 bg-black;
+    @apply text-pink-400 border-pink-400 bg-black;
   }
   .blackpink input, .blackpink textarea {
-    @apply bg-black text-pink-400 border-pink-500 placeholder-pink-400/50;
+    @apply bg-black text-pink-400 border-pink-400 placeholder-pink-400/50;
   }
   .blackpink .tabs-button {
     @apply text-pink-400 !important;
   }
   .blackpink .font-toggle-button {
-    @apply text-pink-400 border-pink-500 !important;
+    @apply text-pink-400 border-pink-400 !important;
   }
 }
 
@@ -160,8 +160,9 @@
 /* Important: Enhanced blackpink styles with stronger specificity */
 .blackpink .question-card {
   background-color: black !important;
-  border-color: #ec4899 !important;
+  border-color: #FFDEE2 !important;
   border-width: 2px !important;
+  z-index: 10 !important;
 }
 
 .blackpink .question-card:active {
@@ -171,14 +172,14 @@
 /* Fix for checkbox in blackpink theme - using increased specificity */
 .blackpink [data-radix-checkbox-root] {
   background-color: black !important;
-  border-color: #ec4899 !important;
+  border-color: #FFDEE2 !important;
   border-width: 2px !important;
   z-index: 20 !important;
 }
 
 .blackpink [data-radix-checkbox-root][data-state="checked"] {
-  background-color: #ec4899 !important;
-  border-color: #ec4899 !important;
+  background-color: #FFDEE2 !important;
+  border-color: #FFDEE2 !important;
 }
 
 .blackpink [data-radix-checkbox-root][data-state="checked"] svg {
@@ -188,16 +189,16 @@
 /* Checkbox wrapper to ensure visibility */
 .checkbox-wrapper-blackpink {
   position: relative;
-  z-index: 20;
+  z-index: 30 !important;
 }
 
 /* Fix badge styling in blackpink theme with higher specificity */
 .blackpink .badge {
-  color: #ec4899 !important;
-  border-color: #ec4899 !important;
+  color: #FFDEE2 !important;
+  border-color: #FFDEE2 !important;
   border-width: 2px !important;
   background-color: black !important;
-  z-index: 20 !important;
+  z-index: 30 !important;
   position: relative;
 }
 
@@ -311,7 +312,7 @@
 }
 
 .blackpink ::-webkit-scrollbar-thumb {
-  @apply bg-pink-500/50;
+  @apply bg-pink-400/50;
 }
 
 /* Fix pomodoro timer in blackpink theme */
@@ -396,4 +397,24 @@
 
 .blackpink [data-radix-checkbox-root][data-state="checked"] svg {
   @apply text-black !important;
+}
+
+/* Extra specific styles for checkbox and badge in blackpink theme */
+.blackpink [data-radix-checkbox-root] {
+  background-color: black !important;
+  border-color: #FFDEE2 !important;
+  border-width: 2px !important;
+  z-index: 30 !important;
+}
+
+.blackpink .question-card [data-radix-checkbox-root] {
+  border-color: #FFDEE2 !important;
+  border-width: 2px !important;
+}
+
+.blackpink .question-card .badge {
+  border-color: #FFDEE2 !important;
+  border-width: 2px !important;
+  color: #FFDEE2 !important;
+  z-index: 30 !important;
 }
