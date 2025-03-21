@@ -25,6 +25,29 @@ function getImportantQuestions(subject: string, topic?: string): string {
   if (!subjectData) {
     return `Could not find information about "${subject}" in our question bank. Please check the spelling or try a different subject.`;
   }
+
+  // Helper function to check if a topic matches the requested topic using word boundaries
+  const isTopicMatch = (topicName: string, searchTopic: string): boolean => {
+    if (!topicName || !searchTopic) return false;
+    
+    // Convert both to lowercase for case-insensitive comparison
+    const normalizedTopicName = topicName.toLowerCase().trim();
+    const normalizedSearchTopic = searchTopic.toLowerCase().trim();
+    
+    // Direct match
+    if (normalizedTopicName === normalizedSearchTopic) return true;
+    
+    // Word boundary check - match whole words only
+    const wordsInTopicName = normalizedTopicName.split(/\s+|-/);
+    const wordsInSearchTopic = normalizedSearchTopic.split(/\s+|-/);
+    
+    // Check if all search words are in the topic name
+    return wordsInSearchTopic.every(searchWord => 
+      wordsInTopicName.some(topicWord => 
+        topicWord === searchWord || topicWord.includes(searchWord)
+      )
+    );
+  };
   
   // Helper function to extract questions with their asterisk counts
   const extractQuestions = (questions: string[]): {text: string, count: number}[] => {
@@ -55,9 +78,8 @@ function getImportantQuestions(subject: string, topic?: string): string {
             const topicName = topicData.name.toLowerCase();
             const searchTopic = topic.toLowerCase();
             
-            // Improved topic matching logic: Don't just check contains, check for specific topic match
-            // For microbiology, be more strict about topic matching to avoid irrelevant topics
-            if (!topicName.includes(searchTopic) && !topicKey.includes(searchTopic)) {
+            // Strict topic matching for microbiology
+            if (!isTopicMatch(topicName, searchTopic) && !isTopicMatch(topicKey, searchTopic)) {
               return;
             }
           }
@@ -119,8 +141,8 @@ function getImportantQuestions(subject: string, topic?: string): string {
             const subtopicObj = subtopic as any;
             const subtopicName = subtopicObj.name?.toLowerCase() || '';
             
-            // Improved topic matching logic
-            if (key.includes(topic.toLowerCase()) || subtopicName.includes(topic.toLowerCase())) {
+            // Use the improved topic matching function
+            if (isTopicMatch(subtopicName, topic.toLowerCase()) || isTopicMatch(key, topic.toLowerCase())) {
               processSubtopics(subtopic);
             }
           });
@@ -141,8 +163,6 @@ function getImportantQuestions(subject: string, topic?: string): string {
   // Sort questions by their asterisk count (frequency)
   const sortedEssayQuestions = essayQuestions.sort((a, b) => b.count - a.count);
   const sortedShortNoteQuestions = shortNoteQuestions.sort((a, b) => b.count - a.count);
-  
-  // No longer limiting the number of questions - return all sorted by importance
   
   // Build the response
   let result = `# Important Questions for ${subject.toUpperCase()}${topic ? ` - ${topic.toUpperCase()}` : ''}\n\n`;

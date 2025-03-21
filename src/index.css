@@ -116,12 +116,40 @@
   }
 }
 
-/* ... keep existing code (animation utilities) */
+/* Animation utilities */
+@keyframes slide-up {
+  0% {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.slide-up {
+  animation: slide-up 0.3s ease-out forwards;
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.fade-in {
+  animation: fade-in 0.3s ease-out forwards;
+}
 
 /* Enhanced QuestionCard styles */
 .question-card {
   transition: all 0.3s ease-in-out;
   border-width: 1px;
+  position: relative;
 }
 
 .question-card:active {
@@ -140,34 +168,58 @@
   background-color: rgba(236, 72, 153, 0.1) !important;
 }
 
-/* Fix for checkbox in blackpink theme */
-.blackpink [data-state="checked"] {
-  @apply bg-pink-500 border-pink-400 !important;
-}
-
-.blackpink .checkbox {
-  @apply border-pink-500 !important;
-}
-
+/* Fix for checkbox in blackpink theme - using increased specificity */
 .blackpink [data-radix-checkbox-root] {
-  @apply border-pink-500 !important;
+  background-color: black !important;
+  border-color: #ec4899 !important;
+  border-width: 2px !important;
+  z-index: 20 !important;
 }
 
 .blackpink [data-radix-checkbox-root][data-state="checked"] {
-  @apply bg-pink-500 !important;
+  background-color: #ec4899 !important;
+  border-color: #ec4899 !important;
 }
 
 .blackpink [data-radix-checkbox-root][data-state="checked"] svg {
-  @apply text-black !important;
+  color: black !important;
 }
 
-/* Fix badge styling in blackpink theme */
+/* Checkbox wrapper to ensure visibility */
+.checkbox-wrapper-blackpink {
+  position: relative;
+  z-index: 20;
+}
+
+/* Fix badge styling in blackpink theme with higher specificity */
 .blackpink .badge {
-  @apply text-pink-400 border-pink-500 bg-black !important;
-  border-width: 1px !important;
+  color: #ec4899 !important;
+  border-color: #ec4899 !important;
+  border-width: 2px !important;
+  background-color: black !important;
+  z-index: 20 !important;
+  position: relative;
 }
 
-/* ... keep existing code (transition and animation utilities) */
+/* Transition and animation utilities */
+.transition-colors {
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-duration: 0.3s;
+  transition-timing-function: ease;
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
 
 /* BlackPink theme overrides */
 .blackpink .tabs-list [data-state="active"] {
