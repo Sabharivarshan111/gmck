@@ -103,16 +103,16 @@
     transition: font-size 0.3s ease, background-color 0.3s ease;
   }
   .blackpink button {
-    @apply text-pink-400 border-pink-400 bg-black;
+    @apply text-[#FFDEE2] border-[#FFDEE2] bg-black;
   }
   .blackpink input, .blackpink textarea {
-    @apply bg-black text-pink-400 border-pink-400 placeholder-pink-400/50;
+    @apply bg-black text-[#FFDEE2] border-[#FFDEE2] placeholder-[#FFDEE2]/50;
   }
   .blackpink .tabs-button {
-    @apply text-pink-400 !important;
+    @apply text-[#FFDEE2] !important;
   }
   .blackpink .font-toggle-button {
-    @apply text-pink-400 border-pink-400 !important;
+    @apply text-[#FFDEE2] border-[#FFDEE2] !important;
   }
 }
 
@@ -162,11 +162,12 @@
   background-color: black !important;
   border-color: #FFDEE2 !important;
   border-width: 2px !important;
-  z-index: 10 !important;
+  position: relative !important;
+  box-shadow: 0 0 8px rgba(255, 222, 226, 0.2) !important;
 }
 
 .blackpink .question-card:active {
-  background-color: rgba(236, 72, 153, 0.1) !important;
+  background-color: rgba(255, 222, 226, 0.05) !important;
 }
 
 /* Fix for checkbox in blackpink theme - using increased specificity */
@@ -174,7 +175,7 @@
   background-color: black !important;
   border-color: #FFDEE2 !important;
   border-width: 2px !important;
-  z-index: 20 !important;
+  position: relative !important;
 }
 
 .blackpink [data-radix-checkbox-root][data-state="checked"] {
@@ -186,20 +187,13 @@
   color: black !important;
 }
 
-/* Checkbox wrapper to ensure visibility */
-.checkbox-wrapper-blackpink {
-  position: relative;
-  z-index: 30 !important;
-}
-
 /* Fix badge styling in blackpink theme with higher specificity */
 .blackpink .badge {
   color: #FFDEE2 !important;
   border-color: #FFDEE2 !important;
   border-width: 2px !important;
   background-color: black !important;
-  z-index: 30 !important;
-  position: relative;
+  position: relative !important;
 }
 
 /* Transition and animation utilities */
@@ -417,4 +411,30 @@
   border-width: 2px !important;
   color: #FFDEE2 !important;
   z-index: 30 !important;
+}
+
+/* Additional fixes for blackpink theme */
+.blackpink [data-radix-checkbox-root]:focus {
+  box-shadow: 0 0 0 2px rgba(255, 222, 226, 0.5) !important;
+}
+
+.blackpink .badge {
+  background-color: transparent !important;
+}
+
+/* These help ensure the blackpink elements are always visible */
+.blackpink .question-card {
+  isolation: isolate !important;
+}
+
+.blackpink .question-card [data-radix-checkbox-root],
+.blackpink .question-card .badge {
+  isolation: isolate !important;
+  border-color: #FFDEE2 !important;
+  border-width: 2px !important;
+  color: #FFDEE2 !important;
+}
+
+.blackpink .question-card > * {
+  color: #FFDEE2 !important;
 }

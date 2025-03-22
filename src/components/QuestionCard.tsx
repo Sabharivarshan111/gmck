@@ -67,7 +67,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, index }) => {
   // Enhanced card styling to ensure visibility in all themes
   const getCardBgClass = () => {
     if (theme === "blackpink") {
-      return "bg-black border-pink-400 border-2 z-20"; // Increased z-index and border width, changed to baby pink
+      return "bg-black border-[#FFDEE2] border-2 shadow-[0_0_10px_rgba(255,222,226,0.2)]"; 
     }
     return "bg-background border-gray-800 hover:border-gray-700";
   };
@@ -75,7 +75,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, index }) => {
   // Enhanced text styling
   const getTextClass = () => {
     if (theme === "blackpink") {
-      return "text-pink-400";
+      return "text-[#FFDEE2]";
     }
     return "";
   };
@@ -88,18 +88,18 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, index }) => {
       >
         <CardContent className="p-3 text-left text-sm flex items-start justify-between">
           <div className="flex items-start gap-2">
-            <div className={`mt-0.5 flex-shrink-0 ${theme === "blackpink" ? "checkbox-wrapper-blackpink z-30" : ""}`}>
+            <div className={`mt-0.5 flex-shrink-0 relative ${theme === "blackpink" ? "z-30" : ""}`}>
               <Checkbox 
                 id={`checkbox-${index}`}
                 checked={isCompleted}
                 onCheckedChange={handleCheckboxChange}
                 onClick={(e) => e.stopPropagation()} // Prevent triple tap when clicking the checkbox
-                className={`${theme === "blackpink" ? "border-pink-400 border-2 checkbox-blackpink" : ""}`}
+                className={`${theme === "blackpink" ? "!border-[#FFDEE2] !border-2 !bg-black hover:!bg-black/80" : ""}`}
               />
             </div>
             <div className="flex-1">
               <div className="flex items-center mb-1">
-                <span className={`text-[10px] ${theme === "blackpink" ? "text-pink-400" : "text-blue-500"}`}>
+                <span className={`text-[10px] ${theme === "blackpink" ? "text-[#FFDEE2]" : "text-blue-500"}`}>
                   {tapStatus === 'idle' ? (
                     "Triple tap to ask AI"
                   ) : (
@@ -116,8 +116,8 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, index }) => {
           {asteriskCount > 0 && (
             <Badge 
               variant="outline" 
-              className={`rounded-full h-6 w-6 flex-shrink-0 p-0 flex items-center justify-center ${
-                theme === "blackpink" ? "bg-black text-pink-400 border-pink-400 border-2 z-30" : "bg-gray-800 text-white border-gray-700"
+              className={`rounded-full h-6 w-6 flex-shrink-0 p-0 flex items-center justify-center relative ${
+                theme === "blackpink" ? "!bg-black !text-[#FFDEE2] !border-[#FFDEE2] !border-2 z-30" : "bg-gray-800 text-white border-gray-700"
               } ml-2 text-xs badge`}
               onClick={(e) => e.stopPropagation()} // Prevent triple tap when clicking the badge
             >
@@ -147,7 +147,7 @@ function countAsterisks(question: string): number {
     return yearCount;
   }
   
-  // If no asterisks or years found, return 1 as default
+  // If no asterisks or years found, return a default value
   return 1;
 }
 
