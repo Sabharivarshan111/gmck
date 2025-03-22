@@ -24,10 +24,10 @@ const ExtrasContent = ({ driveLink = "https://drive.google.com/drive/folders/1PQ
   return (
     <div className={`flex flex-col items-center justify-center min-h-[400px] p-6 ${theme === "blackpink" ? "bg-black border border-pink-400/30" : "bg-gray-50 dark:bg-gray-900"} rounded-lg`}>
       <div className="text-center max-w-md space-y-6">
-        <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+        <h3 className={`text-2xl font-bold ${theme === "blackpink" ? "text-pink-400" : "text-gray-900 dark:text-white"} mb-2`}>
           Extras-Agam notes
         </h3>
-        <p className="text-gray-600 dark:text-gray-300 mb-6">
+        <p className={`${theme === "blackpink" ? "text-pink-300/80" : "text-gray-600 dark:text-gray-300"} mb-6`}>
           Access supplementary materials, lecture notes, and additional study resources in our Google Drive folder.
         </p>
         <Button 
