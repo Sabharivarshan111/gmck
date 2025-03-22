@@ -7,6 +7,7 @@ import SearchBar from "./question-bank/SearchBar";
 import NoResultsMessage from "./question-bank/NoResultsMessage";
 import QuestionBankContent from "./question-bank/QuestionBankContent";
 import ExtrasContent from "./question-bank/ExtrasContent";
+import { useTheme } from "@/components/theme/ThemeProvider";
 
 export interface QuestionType {
   name: string;
@@ -52,6 +53,8 @@ const QuestionBank = () => {
     setExpandedItems,
     handleSearch
   } = useQuestionBank();
+  
+  const { theme } = useTheme();
 
   const handlers = useSwipeable({
     onSwipedLeft: () => {
@@ -81,6 +84,17 @@ const QuestionBank = () => {
 
   const googleDriveLink = "https://drive.google.com/drive/folders/1PQScCjyHiVg9n9efebVovaJLcNAR5KSZ";
 
+  const getButtonClass = (tabName: string) => {
+    if (theme === "blackpink") {
+      return activeTab === tabName 
+        ? "bg-black text-pink-400 border border-pink-400 shadow-[0_0_10px_rgba(255,222,226,0.3)]" 
+        : "bg-black text-pink-400/70 border border-pink-400/30 hover:border-pink-400/50";
+    }
+    return activeTab === tabName 
+      ? "bg-blue-600 text-white" 
+      : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700";
+  };
+
   return (
     <div className="bg-white dark:bg-black h-full min-h-[600px]">
       <div className="flex-1 p-4 max-w-4xl mx-auto space-y-4" {...handlers}>
@@ -88,11 +102,7 @@ const QuestionBank = () => {
         <div className="w-full mb-4">
           <button 
             onClick={() => setActiveTab("extras")}
-            className={`w-full py-3 text-lg font-medium rounded-lg ${
-              activeTab === "extras" 
-                ? "bg-blue-600 text-white" 
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
-            } transition-colors`}
+            className={`w-full py-3 text-lg font-medium rounded-lg ${getButtonClass("extras")} transition-colors`}
           >
             Extras-Agam notes
           </button>
@@ -104,16 +114,20 @@ const QuestionBank = () => {
           className="w-full"
           onValueChange={(value) => setActiveTab(value as "extras" | "essay" | "short-notes")}
         >
-          <TabsList className="w-full grid grid-cols-2 h-12 bg-gray-100 dark:bg-gray-950 rounded-lg mb-4">
+          <TabsList className={`w-full grid grid-cols-2 h-12 ${theme === "blackpink" ? "bg-black border border-pink-400/30" : "bg-gray-100 dark:bg-gray-950"} rounded-lg mb-4`}>
             <TabsTrigger 
               value="essay" 
-              className="text-lg font-medium text-gray-700 dark:text-gray-400 data-[state=active]:text-black dark:data-[state=active]:text-white data-[state=active]:bg-transparent data-[state=active]:after:content-[''] data-[state=active]:after:absolute data-[state=active]:after:left-0 data-[state=active]:after:right-0 data-[state=active]:after:bottom-0 data-[state=active]:after:h-0.5 data-[state=active]:after:bg-black dark:data-[state=active]:after:bg-white relative"
+              className={`text-lg font-medium ${theme === "blackpink" 
+                ? "text-pink-400/70 data-[state=active]:text-pink-400" 
+                : "text-gray-700 dark:text-gray-400 data-[state=active]:text-black dark:data-[state=active]:text-white"} data-[state=active]:bg-transparent data-[state=active]:after:content-[''] data-[state=active]:after:absolute data-[state=active]:after:left-0 data-[state=active]:after:right-0 data-[state=active]:after:bottom-0 data-[state=active]:after:h-0.5 data-[state=active]:after:bg-black dark:data-[state=active]:after:bg-white relative`}
             >
               Essay
             </TabsTrigger>
             <TabsTrigger 
               value="short-notes"
-              className="text-lg font-medium text-gray-700 dark:text-gray-400 data-[state=active]:text-black dark:data-[state=active]:text-white data-[state=active]:bg-transparent data-[state=active]:after:content-[''] data-[state=active]:after:absolute data-[state=active]:after:left-0 data-[state=active]:after:right-0 data-[state=active]:after:bottom-0 data-[state=active]:after:h-0.5 data-[state=active]:after:bg-black dark:data-[state=active]:after:bg-white relative"
+              className={`text-lg font-medium ${theme === "blackpink" 
+                ? "text-pink-400/70 data-[state=active]:text-pink-400" 
+                : "text-gray-700 dark:text-gray-400 data-[state=active]:text-black dark:data-[state=active]:text-white"} data-[state=active]:bg-transparent data-[state=active]:after:content-[''] data-[state=active]:after:absolute data-[state=active]:after:left-0 data-[state=active]:after:right-0 data-[state=active]:after:bottom-0 data-[state=active]:after:h-0.5 data-[state=active]:after:bg-black dark:data-[state=active]:after:bg-white relative`}
             >
               Short notes
             </TabsTrigger>

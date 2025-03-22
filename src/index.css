@@ -255,27 +255,55 @@
 /* Fix for TabsTrigger active state in BlackPink theme */
 .blackpink .TabsTrigger[data-state="active"] {
   @apply bg-black text-pink-400 !important;
+  box-shadow: 0 0 10px rgba(255, 222, 226, 0.3) !important;
+  position: relative !important;
 }
 
 .blackpink [role="tab"][data-state="active"] {
   @apply bg-black text-pink-400 !important;
+  box-shadow: 0 0 10px rgba(255, 222, 226, 0.3) !important;
+  position: relative !important;
 }
 
-/* BlackPink theme global overrides */
-.blackpink {
-  background-color: black !important;
+.blackpink [role="tab"][data-state="active"]::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 10%;
+  right: 10%;
+  height: 2px;
+  background-color: #FFDEE2 !important;
+  box-shadow: 0 0 5px rgba(255, 222, 226, 0.5) !important;
 }
 
-.blackpink div, .blackpink section, .blackpink main, .blackpink aside {
-  background-color: black !important;
+/* Enhanced tab styling for blackpink theme */
+.blackpink [role="tablist"] {
+  @apply bg-black border border-pink-400/30 !important;
 }
 
-/* Ensure all text in blackpink theme is pink */
-.blackpink h1, .blackpink h2, .blackpink h3, .blackpink h4, .blackpink p, 
-.blackpink span, .blackpink div, .blackpink a, .blackpink li, 
-.blackpink .tabs-button, .blackpink input::placeholder, 
-.blackpink .search-input, .blackpink .question-card {
-  @apply text-pink-400;
+/* Extra styles for blackpink tabs to make selection more visible */
+.blackpink [role="tab"] {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.blackpink [role="tab"][data-state="active"] {
+  color: #FFDEE2 !important;
+  font-weight: 600 !important;
+}
+
+.blackpink [role="tab"]:not([data-state="active"]) {
+  color: rgba(255, 222, 226, 0.7) !important;
+}
+
+/* Additional styles for blackpink extras button */
+.blackpink button.bg-black.text-pink-400 {
+  position: relative;
+  z-index: 10;
+}
+
+.blackpink button.bg-black.text-pink-400:hover {
+  box-shadow: 0 0 15px rgba(255, 222, 226, 0.4) !important;
 }
 
 /* Fix for topic accordions */
