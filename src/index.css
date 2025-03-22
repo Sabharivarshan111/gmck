@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -104,21 +103,21 @@
     transition: font-size 0.3s ease, background-color 0.3s ease;
   }
   .blackpink button {
-    color: #FFDEE2;
-    border-color: #FFDEE2;
+    color: #FF5C8D;
+    border-color: #FF5C8D;
     background-color: #000000;
   }
   .blackpink input, .blackpink textarea {
     background-color: #000000;
-    color: #FFDEE2;
-    border-color: #FFDEE2;
+    color: #FF5C8D;
+    border-color: #FF5C8D;
   }
   .blackpink .tabs-button {
-    color: #FFDEE2 !important;
+    color: #FF5C8D !important;
   }
   .blackpink .font-toggle-button {
-    color: #FFDEE2 !important;
-    border-color: #FFDEE2 !important;
+    color: #FF5C8D !important;
+    border-color: #FF5C8D !important;
   }
 }
 
@@ -166,29 +165,29 @@
 /* Important: Enhanced blackpink styles with stronger specificity */
 .blackpink .question-card {
   background-color: black !important;
-  border-color: #FFDEE2 !important;
+  border-color: #FF5C8D !important;
   border-width: 2px !important;
   position: relative !important;
-  box-shadow: 0 0 8px rgba(255, 222, 226, 0.2) !important;
+  box-shadow: 0 0 8px rgba(255, 92, 141, 0.2) !important;
 }
 
 .blackpink .question-card:active {
-  background-color: rgba(255, 222, 226, 0.05) !important;
+  background-color: rgba(255, 92, 141, 0.05) !important;
 }
 
 /* Fix for checkbox in blackpink theme - using increased specificity and visibility improvements */
 .blackpink [data-radix-checkbox-root] {
   background-color: transparent !important;
-  border-color: #FFDEE2 !important;
+  border-color: #FF5C8D !important;
   border-width: 1px !important;
   position: relative !important;
   z-index: 40 !important;
-  box-shadow: 0 0 5px rgba(255, 222, 226, 0.5) !important;
+  box-shadow: 0 0 5px rgba(255, 92, 141, 0.5) !important;
 }
 
 .blackpink [data-radix-checkbox-root][data-state="checked"] {
-  background-color: #FFDEE2 !important;
-  border-color: #FFDEE2 !important;
+  background-color: #FF5C8D !important;
+  border-color: #FF5C8D !important;
 }
 
 .blackpink [data-radix-checkbox-root][data-state="checked"] svg {
@@ -197,35 +196,35 @@
 
 /* Fix badge styling in blackpink theme with higher specificity and improved visibility */
 .blackpink .badge {
-  color: #FFDEE2 !important;
-  border-color: #FFDEE2 !important;
+  color: #FF5C8D !important;
+  border-color: #FF5C8D !important;
   border-width: 1px !important;
   background-color: transparent !important;
   position: relative !important;
   z-index: 40 !important;
-  box-shadow: 0 0 5px rgba(255, 222, 226, 0.5) !important;
+  box-shadow: 0 0 5px rgba(255, 92, 141, 0.5) !important;
 }
 
 /* Enhanced AI chatbox styling for blackpink theme */
 .blackpink .ai-chat-section {
   background-color: black !important;
-  border-color: #FFDEE2 !important;
+  border-color: #FF5C8D !important;
   box-shadow: 0 0 8px rgba(255, 222, 226, 0.2) !important;
 }
 
 .blackpink .ai-chat-section * {
-  color: #FFDEE2 !important;
+  color: #FF5C8D !important;
 }
 
 .blackpink .ai-message {
   background-color: rgba(255, 222, 226, 0.05) !important;
-  border-color: #FFDEE2 !important;
+  border-color: #FF5C8D !important;
   box-shadow: 0 0 5px rgba(255, 222, 226, 0.3) !important;
 }
 
 .blackpink .user-message {
   background-color: rgba(0, 0, 0, 0.6) !important;
-  border-color: #FFDEE2 !important;
+  border-color: #FF5C8D !important;
   box-shadow: 0 0 5px rgba(255, 222, 226, 0.3) !important;
 }
 
@@ -268,14 +267,14 @@
 .blackpink .TabsTrigger[data-state="active"] {
   background-color: #000000 !important;
   color: #FF5C8D !important;
-  box-shadow: 0 0 10px rgba(255, 222, 226, 0.3) !important;
+  box-shadow: 0 0 10px rgba(255, 92, 141, 0.3) !important;
   position: relative !important;
 }
 
 .blackpink [role="tab"][data-state="active"] {
   background-color: #000000 !important;
   color: #FF5C8D !important;
-  box-shadow: 0 0 10px rgba(255, 222, 226, 0.3) !important;
+  box-shadow: 0 0 10px rgba(255, 92, 141, 0.3) !important;
   position: relative !important;
 }
 
@@ -286,8 +285,8 @@
   left: 10%;
   right: 10%;
   height: 2px;
-  background-color: #FFDEE2 !important;
-  box-shadow: 0 0 5px rgba(255, 222, 226, 0.5) !important;
+  background-color: #FF5C8D !important;
+  box-shadow: 0 0 5px rgba(255, 92, 141, 0.5) !important;
 }
 
 /* Enhanced tab styling for blackpink theme */
@@ -303,23 +302,25 @@
 }
 
 .blackpink [role="tab"][data-state="active"] {
-  color: #FFDEE2 !important;
+  color: #FF5C8D !important;
   font-weight: 600 !important;
 }
 
 .blackpink [role="tab"]:not([data-state="active"]) {
-  color: rgba(255, 222, 226, 0.7) !important;
+  color: rgba(255, 92, 141, 0.7) !important;
 }
 
 /* Additional styles for blackpink extras button */
-.blackpink button.text-pink-400 {
+.blackpink button.text-pink-400,
+.blackpink button.text-[#FF5C8D] {
   position: relative;
   z-index: 10;
   background-color: #000000;
 }
 
-.blackpink button.text-pink-400:hover {
-  box-shadow: 0 0 15px rgba(255, 222, 226, 0.4) !important;
+.blackpink button.text-pink-400:hover,
+.blackpink button.text-[#FF5C8D]:hover {
+  box-shadow: 0 0 15px rgba(255, 92, 141, 0.4) !important;
   background-color: rgba(0, 0, 0, 0.8);
 }
 

@@ -87,8 +87,8 @@ const QuestionBank = () => {
   const getExtraButtonClass = () => {
     if (theme === "blackpink") {
       return activeTab === "extras" 
-        ? "bg-black text-pink-400 border-2 border-pink-400 shadow-[0_0_10px_rgba(255,92,141,0.5)] font-semibold" 
-        : "bg-black text-pink-400/70 border border-pink-400/30 hover:border-pink-400/50";
+        ? "bg-black text-[#FF5C8D] border-2 border-[#FF5C8D] shadow-[0_0_10px_rgba(255,92,141,0.5)] font-semibold" 
+        : "bg-black text-[#FF5C8D]/70 border border-[#FF5C8D]/30 hover:border-[#FF5C8D]/50";
     }
     return activeTab === "extras" 
       ? "bg-blue-600 text-white" 
@@ -97,7 +97,7 @@ const QuestionBank = () => {
 
   const getTabsListClass = () => {
     if (theme === "blackpink") {
-      return "bg-black border border-pink-400/30";
+      return "bg-black border border-[#FF5C8D]/30";
     }
     return "bg-gray-100 dark:bg-gray-950";
   };
@@ -114,7 +114,7 @@ const QuestionBank = () => {
             {theme === "blackpink" && activeTab === "extras" && (
               <span className="relative">
                 Extras-Agam notes
-                <span className="absolute -bottom-1 left-1/4 right-1/4 h-0.5 bg-pink-400"></span>
+                <span className="absolute -bottom-1 left-1/4 right-1/4 h-0.5 bg-[#FF5C8D]"></span>
               </span>
             )}
             {!(theme === "blackpink" && activeTab === "extras") && "Extras-Agam notes"}
@@ -131,7 +131,7 @@ const QuestionBank = () => {
             <TabsTrigger 
               value="essay" 
               className={`text-lg font-medium ${theme === "blackpink" 
-                ? "text-pink-400/70 data-[state=active]:text-pink-400" 
+                ? "text-[#FF5C8D]/70 data-[state=active]:text-[#FF5C8D]" 
                 : "text-gray-700 dark:text-gray-400 data-[state=active]:text-black dark:data-[state=active]:text-white"}`}
             >
               Essay
@@ -139,7 +139,7 @@ const QuestionBank = () => {
             <TabsTrigger 
               value="short-notes"
               className={`text-lg font-medium ${theme === "blackpink" 
-                ? "text-pink-400/70 data-[state=active]:text-pink-400" 
+                ? "text-[#FF5C8D]/70 data-[state=active]:text-[#FF5C8D]" 
                 : "text-gray-700 dark:text-gray-400 data-[state=active]:text-black dark:data-[state=active]:text-white"}`}
             >
               Short notes
