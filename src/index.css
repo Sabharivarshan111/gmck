@@ -170,12 +170,14 @@
   background-color: rgba(255, 222, 226, 0.05) !important;
 }
 
-/* Fix for checkbox in blackpink theme - using increased specificity */
+/* Fix for checkbox in blackpink theme - using increased specificity and visibility improvements */
 .blackpink [data-radix-checkbox-root] {
-  background-color: black !important;
+  background-color: transparent !important;
   border-color: #FFDEE2 !important;
-  border-width: 2px !important;
+  border-width: 1px !important;
   position: relative !important;
+  z-index: 40 !important;
+  box-shadow: 0 0 5px rgba(255, 222, 226, 0.5) !important;
 }
 
 .blackpink [data-radix-checkbox-root][data-state="checked"] {
@@ -187,13 +189,38 @@
   color: black !important;
 }
 
-/* Fix badge styling in blackpink theme with higher specificity */
+/* Fix badge styling in blackpink theme with higher specificity and improved visibility */
 .blackpink .badge {
   color: #FFDEE2 !important;
   border-color: #FFDEE2 !important;
-  border-width: 2px !important;
-  background-color: black !important;
+  border-width: 1px !important;
+  background-color: transparent !important;
   position: relative !important;
+  z-index: 40 !important;
+  box-shadow: 0 0 5px rgba(255, 222, 226, 0.5) !important;
+}
+
+/* Enhanced AI chatbox styling for blackpink theme */
+.blackpink .ai-chat-section {
+  background-color: black !important;
+  border-color: #FFDEE2 !important;
+  box-shadow: 0 0 8px rgba(255, 222, 226, 0.2) !important;
+}
+
+.blackpink .ai-chat-section * {
+  color: #FFDEE2 !important;
+}
+
+.blackpink .ai-message {
+  background-color: rgba(255, 222, 226, 0.05) !important;
+  border-color: #FFDEE2 !important;
+  box-shadow: 0 0 5px rgba(255, 222, 226, 0.3) !important;
+}
+
+.blackpink .user-message {
+  background-color: rgba(0, 0, 0, 0.6) !important;
+  border-color: #FFDEE2 !important;
+  box-shadow: 0 0 5px rgba(255, 222, 226, 0.3) !important;
 }
 
 /* Transition and animation utilities */

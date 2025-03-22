@@ -80,6 +80,22 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, index }) => {
     return "";
   };
 
+  // Get checkbox styling based on theme
+  const getCheckboxClass = () => {
+    if (theme === "blackpink") {
+      return "!bg-transparent !border-[#FFDEE2] shadow-[0_0_5px_rgba(255,222,226,0.5)] relative z-40";
+    }
+    return "";
+  };
+
+  // Get badge styling based on theme
+  const getBadgeClass = () => {
+    if (theme === "blackpink") {
+      return "!bg-transparent !border-[#FFDEE2] !text-[#FFDEE2] shadow-[0_0_5px_rgba(255,222,226,0.5)] relative z-40";
+    }
+    return "bg-gray-800 text-white border-gray-700";
+  };
+
   return (
     <div id={`question-${index}`}>
       <Card 
@@ -88,13 +104,13 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, index }) => {
       >
         <CardContent className="p-3 text-left text-sm flex items-start justify-between">
           <div className="flex items-start gap-2">
-            <div className={`mt-0.5 flex-shrink-0 relative ${theme === "blackpink" ? "z-30" : ""}`}>
+            <div className="mt-0.5 flex-shrink-0 relative">
               <Checkbox 
                 id={`checkbox-${index}`}
                 checked={isCompleted}
                 onCheckedChange={handleCheckboxChange}
                 onClick={(e) => e.stopPropagation()} // Prevent triple tap when clicking the checkbox
-                className={`${theme === "blackpink" ? "!border-[#FFDEE2] !border-2 !bg-black hover:!bg-black/80" : ""}`}
+                className={getCheckboxClass()}
               />
             </div>
             <div className="flex-1">
@@ -116,9 +132,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, index }) => {
           {asteriskCount > 0 && (
             <Badge 
               variant="outline" 
-              className={`rounded-full h-6 w-6 flex-shrink-0 p-0 flex items-center justify-center relative ${
-                theme === "blackpink" ? "!bg-black !text-[#FFDEE2] !border-[#FFDEE2] !border-2 z-30" : "bg-gray-800 text-white border-gray-700"
-              } ml-2 text-xs badge`}
+              className={`rounded-full h-6 w-6 flex-shrink-0 p-0 flex items-center justify-center ${getBadgeClass()} ml-2 text-xs badge`}
               onClick={(e) => e.stopPropagation()} // Prevent triple tap when clicking the badge
             >
               {asteriskCount}
