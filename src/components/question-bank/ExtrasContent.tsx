@@ -16,7 +16,7 @@ const ExtrasContent = ({ driveLink = "https://drive.google.com/drive/folders/1PQ
 
   const getButtonClass = () => {
     if (theme === "blackpink") {
-      return "bg-black hover:bg-black/80 text-pink-400 border border-pink-400 shadow-[0_0_10px_rgba(255,222,226,0.3)]";
+      return "bg-transparent hover:bg-black/80 text-pink-400 border border-pink-400 shadow-[0_0_10px_rgba(255,92,141,0.3)]";
     }
     return "bg-blue-600 hover:bg-blue-700 text-white";
   };

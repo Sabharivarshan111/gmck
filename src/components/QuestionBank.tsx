@@ -84,15 +84,22 @@ const QuestionBank = () => {
 
   const googleDriveLink = "https://drive.google.com/drive/folders/1PQScCjyHiVg9n9efebVovaJLcNAR5KSZ";
 
-  const getButtonClass = (tabName: string) => {
+  const getExtraButtonClass = () => {
     if (theme === "blackpink") {
-      return activeTab === tabName 
-        ? "bg-black text-pink-400 border border-pink-400 shadow-[0_0_10px_rgba(255,222,226,0.3)]" 
+      return activeTab === "extras" 
+        ? "bg-black text-pink-400 border-2 border-pink-400 shadow-[0_0_10px_rgba(255,92,141,0.5)] font-semibold" 
         : "bg-black text-pink-400/70 border border-pink-400/30 hover:border-pink-400/50";
     }
-    return activeTab === tabName 
+    return activeTab === "extras" 
       ? "bg-blue-600 text-white" 
       : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700";
+  };
+
+  const getTabsListClass = () => {
+    if (theme === "blackpink") {
+      return "bg-black border border-pink-400/30";
+    }
+    return "bg-gray-100 dark:bg-gray-950";
   };
 
   return (
@@ -102,9 +109,15 @@ const QuestionBank = () => {
         <div className="w-full mb-4">
           <button 
             onClick={() => setActiveTab("extras")}
-            className={`w-full py-3 text-lg font-medium rounded-lg ${getButtonClass("extras")} transition-colors`}
+            className={`w-full py-3 text-lg font-medium rounded-lg ${getExtraButtonClass()} transition-colors`}
           >
-            Extras-Agam notes
+            {theme === "blackpink" && activeTab === "extras" && (
+              <span className="relative">
+                Extras-Agam notes
+                <span className="absolute -bottom-1 left-1/4 right-1/4 h-0.5 bg-pink-400"></span>
+              </span>
+            )}
+            {!(theme === "blackpink" && activeTab === "extras") && "Extras-Agam notes"}
           </button>
         </div>
         
@@ -114,12 +127,12 @@ const QuestionBank = () => {
           className="w-full"
           onValueChange={(value) => setActiveTab(value as "extras" | "essay" | "short-notes")}
         >
-          <TabsList className={`w-full grid grid-cols-2 h-12 ${theme === "blackpink" ? "bg-black border border-pink-400/30" : "bg-gray-100 dark:bg-gray-950"} rounded-lg mb-4`}>
+          <TabsList className={`w-full grid grid-cols-2 h-12 ${getTabsListClass()} rounded-lg mb-4`}>
             <TabsTrigger 
               value="essay" 
               className={`text-lg font-medium ${theme === "blackpink" 
                 ? "text-pink-400/70 data-[state=active]:text-pink-400" 
-                : "text-gray-700 dark:text-gray-400 data-[state=active]:text-black dark:data-[state=active]:text-white"} data-[state=active]:bg-transparent data-[state=active]:after:content-[''] data-[state=active]:after:absolute data-[state=active]:after:left-0 data-[state=active]:after:right-0 data-[state=active]:after:bottom-0 data-[state=active]:after:h-0.5 data-[state=active]:after:bg-black dark:data-[state=active]:after:bg-white relative`}
+                : "text-gray-700 dark:text-gray-400 data-[state=active]:text-black dark:data-[state=active]:text-white"}`}
             >
               Essay
             </TabsTrigger>
@@ -127,7 +140,7 @@ const QuestionBank = () => {
               value="short-notes"
               className={`text-lg font-medium ${theme === "blackpink" 
                 ? "text-pink-400/70 data-[state=active]:text-pink-400" 
-                : "text-gray-700 dark:text-gray-400 data-[state=active]:text-black dark:data-[state=active]:text-white"} data-[state=active]:bg-transparent data-[state=active]:after:content-[''] data-[state=active]:after:absolute data-[state=active]:after:left-0 data-[state=active]:after:right-0 data-[state=active]:after:bottom-0 data-[state=active]:after:h-0.5 data-[state=active]:after:bg-black dark:data-[state=active]:after:bg-white relative`}
+                : "text-gray-700 dark:text-gray-400 data-[state=active]:text-black dark:data-[state=active]:text-white"}`}
             >
               Short notes
             </TabsTrigger>

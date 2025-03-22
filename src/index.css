@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -103,16 +104,21 @@
     transition: font-size 0.3s ease, background-color 0.3s ease;
   }
   .blackpink button {
-    @apply text-[#FFDEE2] border-[#FFDEE2] bg-black;
+    color: #FFDEE2;
+    border-color: #FFDEE2;
+    background-color: #000000;
   }
   .blackpink input, .blackpink textarea {
-    @apply bg-black text-[#FFDEE2] border-[#FFDEE2] placeholder-[#FFDEE2]/50;
+    background-color: #000000;
+    color: #FFDEE2;
+    border-color: #FFDEE2;
   }
   .blackpink .tabs-button {
-    @apply text-[#FFDEE2] !important;
+    color: #FFDEE2 !important;
   }
   .blackpink .font-toggle-button {
-    @apply text-[#FFDEE2] border-[#FFDEE2] !important;
+    color: #FFDEE2 !important;
+    border-color: #FFDEE2 !important;
   }
 }
 
@@ -245,22 +251,30 @@
 
 /* BlackPink theme overrides */
 .blackpink .tabs-list [data-state="active"] {
-  @apply text-pink-400 border-pink-400 bg-black;
+  color: #FF5C8D;
+  border-color: #FF5C8D;
+  background-color: #000000;
 }
 
 .blackpink .tabs-list button {
-  @apply text-pink-400 hover:text-pink-300 bg-black;
+  color: #FF5C8D;
+  background-color: #000000;
+}
+.blackpink .tabs-list button:hover {
+  color: #FF8CAD;
 }
 
 /* Fix for TabsTrigger active state in BlackPink theme */
 .blackpink .TabsTrigger[data-state="active"] {
-  @apply bg-black text-pink-400 !important;
+  background-color: #000000 !important;
+  color: #FF5C8D !important;
   box-shadow: 0 0 10px rgba(255, 222, 226, 0.3) !important;
   position: relative !important;
 }
 
 .blackpink [role="tab"][data-state="active"] {
-  @apply bg-black text-pink-400 !important;
+  background-color: #000000 !important;
+  color: #FF5C8D !important;
   box-shadow: 0 0 10px rgba(255, 222, 226, 0.3) !important;
   position: relative !important;
 }
@@ -278,7 +292,8 @@
 
 /* Enhanced tab styling for blackpink theme */
 .blackpink [role="tablist"] {
-  @apply bg-black border border-pink-400/30 !important;
+  background-color: #000000 !important;
+  border: 1px solid rgba(255, 92, 141, 0.3) !important;
 }
 
 /* Extra styles for blackpink tabs to make selection more visible */
@@ -297,34 +312,37 @@
 }
 
 /* Additional styles for blackpink extras button */
-.blackpink button.bg-black.text-pink-400 {
+.blackpink button.text-pink-400 {
   position: relative;
   z-index: 10;
+  background-color: #000000;
 }
 
-.blackpink button.bg-black.text-pink-400:hover {
+.blackpink button.text-pink-400:hover {
   box-shadow: 0 0 15px rgba(255, 222, 226, 0.4) !important;
+  background-color: rgba(0, 0, 0, 0.8);
 }
 
 /* Fix for topic accordions */
 .blackpink .topic-accordion, 
 .blackpink .subtopic-accordion,
 .blackpink .type-accordion {
-  @apply text-pink-400 bg-black;
+  color: #FF5C8D;
+  background-color: #000000;
 }
 
 .blackpink [data-radix-accordion-content] {
-  @apply bg-black;
+  background-color: #000000;
 }
 
 /* Fix for SearchBar icon */
 .blackpink .search-icon {
-  @apply text-pink-400;
+  color: #FF5C8D;
 }
 
 /* Fix Tabs background */
 .blackpink [role="tablist"] {
-  @apply bg-black;
+  background-color: #000000;
 }
 
 /* Make sure MCQs display correctly in blackpink theme */
@@ -332,17 +350,23 @@
 .blackpink .mcq-options,
 .blackpink .mcq-answer,
 .blackpink .mcq-explanation {
-  @apply bg-black text-pink-400;
+  background-color: #000000;
+  color: #FF5C8D;
 }
 
 /* Fix dropdown items in blackpink theme */
 .blackpink .dropdown-item {
-  @apply bg-black text-pink-400 hover:bg-black/60;
+  background-color: #000000;
+  color: #FF5C8D;
+}
+.blackpink .dropdown-item:hover {
+  background-color: rgba(0, 0, 0, 0.6);
 }
 
 /* Fix card backgrounds in blackpink theme */
 .blackpink .card {
-  @apply bg-black border-pink-500;
+  background-color: #000000;
+  border-color: #FF5C8D;
 }
 
 /* Fix for the background in various parts of the UI */
@@ -352,26 +376,27 @@
 .blackpink .bg-secondary,
 .blackpink .bg-muted,
 .blackpink .bg-accent {
-  @apply bg-black !important;
+  background-color: #000000 !important;
 }
 
 /* Fix scrollbars for blackpink theme */
 .blackpink ::-webkit-scrollbar-track {
-  @apply bg-black;
+  background-color: #000000;
 }
 
 .blackpink ::-webkit-scrollbar-thumb {
-  @apply bg-pink-400/50;
+  background-color: rgba(255, 92, 141, 0.5);
 }
 
 /* Fix pomodoro timer in blackpink theme */
 .blackpink .pomodoro-container {
-  @apply bg-black border-pink-500;
+  background-color: #000000;
+  border-color: #FF5C8D;
 }
 
 /* Fix question bank content */
 .blackpink .question-bank-content {
-  @apply bg-black;
+  background-color: #000000;
 }
 
 /* Override for any elements with light backgrounds */
@@ -380,13 +405,17 @@
 .blackpink .bg-gray-300,
 .blackpink .hover\:bg-gray-100:hover,
 .blackpink .hover\:bg-gray-200:hover {
-  @apply bg-black hover:bg-black/60 !important;
+  background-color: #000000 !important;
+}
+.blackpink .hover\:bg-gray-100:hover,
+.blackpink .hover\:bg-gray-200:hover {
+  background-color: rgba(0, 0, 0, 0.6) !important;
 }
 
 /* Fix borders in accordion items to be black */
 .blackpink [data-radix-accordion-item],
 .blackpink .AccordionItem {
-  @apply border-b-0 !important;
+  border-bottom: 0 !important;
 }
 
 /* Add specific style to fix accordion borders */
@@ -394,28 +423,28 @@
   content: '';
   display: block;
   height: 1px;
-  background-color: black !important;
+  background-color: #000000 !important;
   width: 100%;
   margin-top: 4px;
 }
 
 /* Fix hover on accordion triggers */
 .blackpink [data-radix-accordion-trigger]:hover {
-  @apply bg-black/80 !important;
+  background-color: rgba(0, 0, 0, 0.8) !important;
 }
 
 .blackpink *[class*="bg-white"],
 .blackpink *[class*="bg-gray"],
 .blackpink *[class*="bg-slate"],
 .blackpink *[class*="bg-zinc"] {
-  @apply bg-black !important;
+  background-color: #000000 !important;
 }
 
 /* Override for Tabs specifically */
 .blackpink .CustomTabs [data-state="active"],
 .blackpink .TabsTrigger[data-state="active"],
 .blackpink [role="tab"][data-state="active"] {
-  @apply text-pink-400 !important;
+  color: #FF5C8D !important;
 }
 
 /* Force borders in blackpink theme to be either transparent or black */
@@ -431,26 +460,28 @@
 
 /* Fix badge styling in blackpink theme */
 .blackpink .badge {
-  @apply text-pink-400 border-pink-500 bg-black !important;
+  color: #FF5C8D !important;
+  border-color: #FF5C8D !important;
+  background-color: #000000 !important;
   border-width: 1px !important;
 }
 
 /* Fix checkbox styling in blackpink theme */
 .blackpink [data-radix-checkbox-root] {
-  @apply border-pink-500 !important;
+  border-color: #FF5C8D !important;
 }
 
 .blackpink [data-radix-checkbox-root][data-state="checked"] {
-  @apply bg-pink-500 !important;
+  background-color: #FF5C8D !important;
 }
 
 .blackpink [data-radix-checkbox-root][data-state="checked"] svg {
-  @apply text-black !important;
+  color: #000000 !important;
 }
 
 /* Extra specific styles for checkbox and badge in blackpink theme */
 .blackpink [data-radix-checkbox-root] {
-  background-color: black !important;
+  background-color: #000000 !important;
   border-color: #FFDEE2 !important;
   border-width: 2px !important;
   z-index: 30 !important;
