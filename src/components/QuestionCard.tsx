@@ -64,6 +64,10 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, index }) => {
     setIsCompleted(checked);
   };
 
+  const handleCheckboxClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // This is crucial - it prevents the parent card's triple-tap from firing
+  };
+
   // Enhanced card styling to ensure visibility in all themes
   const getCardBgClass = () => {
     if (theme === "blackpink") {
@@ -104,12 +108,14 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, index }) => {
       >
         <CardContent className="p-3 text-left text-sm flex items-start justify-between">
           <div className="flex items-start gap-2">
-            <div className="mt-0.5 flex-shrink-0 relative">
+            <div 
+              className="mt-0.5 flex-shrink-0 relative cursor-pointer"
+              onClick={handleCheckboxClick} // This stops event propagation
+            >
               <Checkbox 
                 id={`checkbox-${index}`}
                 checked={isCompleted}
                 onCheckedChange={handleCheckboxChange}
-                onClick={(e) => e.stopPropagation()} // Prevent triple tap when clicking the checkbox
                 className={getCheckboxClass()}
               />
             </div>

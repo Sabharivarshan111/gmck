@@ -35,8 +35,8 @@ export const TimerControls: React.FC<TimerControlsProps> = ({
   const getButtonStyles = () => {
     if (theme === "blackpink") {
       return {
-        normal: "border-pink-500 text-pink-400 hover:bg-pink-500 hover:text-black",
-        water: "border-pink-500 bg-pink-500/20 text-pink-400 hover:bg-pink-500 hover:text-black"
+        normal: "border-[#FF5C8D] text-[#FF5C8D] hover:bg-[#FF5C8D]/20 focus:bg-[#FF5C8D]/20 active:bg-[#FF5C8D]/20",
+        water: "border-[#FF5C8D] bg-[#FF5C8D]/20 text-[#FF5C8D] hover:bg-[#FF5C8D]/30 focus:bg-[#FF5C8D]/30 active:bg-[#FF5C8D]/30"
       };
     } else if (theme === "dark") {
       return {
@@ -58,7 +58,10 @@ export const TimerControls: React.FC<TimerControlsProps> = ({
       <Button
         variant="outline"
         size="icon"
-        onClick={toggleTimer}
+        onClick={(e) => {
+          e.stopPropagation();
+          toggleTimer();
+        }}
         className={`h-8 w-8 rounded-full ${styles.normal}`}
         aria-label={isRunning ? "Pause timer" : "Start timer"}
       >
@@ -67,7 +70,10 @@ export const TimerControls: React.FC<TimerControlsProps> = ({
       <Button
         variant="outline"
         size="icon"
-        onClick={resetTimer}
+        onClick={(e) => {
+          e.stopPropagation();
+          resetTimer();
+        }}
         className={`h-8 w-8 rounded-full ${styles.normal}`}
         aria-label="Reset timer"
       >
@@ -76,7 +82,10 @@ export const TimerControls: React.FC<TimerControlsProps> = ({
       <Button
         variant="outline"
         size="icon"
-        onClick={drinkWater}
+        onClick={(e) => {
+          e.stopPropagation();
+          drinkWater();
+        }}
         className={`h-8 w-8 rounded-full ${styles.water}`}
         aria-label="Track water intake"
       >
