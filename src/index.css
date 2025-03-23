@@ -183,7 +183,6 @@
   position: relative !important;
   z-index: 40 !important;
   box-shadow: 0 0 5px rgba(255, 92, 141, 0.5) !important;
-  cursor: pointer !important;
 }
 
 .blackpink [data-radix-checkbox-root][data-state="checked"] {
@@ -312,7 +311,8 @@
 }
 
 /* Additional styles for blackpink extras button */
-.blackpink button.text-pink-400 {
+.blackpink button.text-pink-400,
+.blackpink button.text-[#FF5C8D] {
   position: relative;
   z-index: 10;
   background-color: #000000;
@@ -477,34 +477,36 @@
 }
 
 .blackpink [data-radix-checkbox-root][data-state="checked"] svg {
-  color: black !important;
+  color: #000000 !important;
 }
 
 /* Extra specific styles for checkbox and badge in blackpink theme */
 .blackpink [data-radix-checkbox-root] {
-  background-color: black !important;
-  border-color: #FF5C8D !important;
+  background-color: #000000 !important;
+  border-color: #FFDEE2 !important;
   border-width: 2px !important;
   z-index: 30 !important;
-  pointer-events: all !important;
-  cursor: pointer !important;
 }
 
 .blackpink .question-card [data-radix-checkbox-root] {
-  border-color: #FF5C8D !important;
+  border-color: #FFDEE2 !important;
   border-width: 2px !important;
-  pointer-events: all !important;
+}
+
+.blackpink .question-card .badge {
+  border-color: #FFDEE2 !important;
+  border-width: 2px !important;
+  color: #FFDEE2 !important;
+  z-index: 30 !important;
 }
 
 /* Additional fixes for blackpink theme */
 .blackpink [data-radix-checkbox-root]:focus {
-  box-shadow: 0 0 0 2px rgba(255, 92, 141, 0.5) !important;
+  box-shadow: 0 0 0 2px rgba(255, 222, 226, 0.5) !important;
 }
 
-/* Ensure checkboxes are always interactive */
-[data-radix-checkbox-root] {
-  cursor: pointer !important;
-  pointer-events: all !important;
+.blackpink .badge {
+  background-color: transparent !important;
 }
 
 /* These help ensure the blackpink elements are always visible */
@@ -515,11 +517,11 @@
 .blackpink .question-card [data-radix-checkbox-root],
 .blackpink .question-card .badge {
   isolation: isolate !important;
-  border-color: #FF5C8D !important;
+  border-color: #FFDEE2 !important;
   border-width: 2px !important;
-  color: #FF5C8D !important;
+  color: #FFDEE2 !important;
 }
 
 .blackpink .question-card > * {
-  color: #FF5C8D !important;
+  color: #FFDEE2 !important;
 }

@@ -67,7 +67,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, index }) => {
   // Enhanced card styling to ensure visibility in all themes
   const getCardBgClass = () => {
     if (theme === "blackpink") {
-      return "bg-black border-[#FF5C8D] border-2 shadow-[0_0_10px_rgba(255,92,141,0.2)]"; 
+      return "bg-black border-[#FFDEE2] border-2 shadow-[0_0_10px_rgba(255,222,226,0.2)]"; 
     }
     return "bg-background border-gray-800 hover:border-gray-700";
   };
@@ -75,7 +75,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, index }) => {
   // Enhanced text styling
   const getTextClass = () => {
     if (theme === "blackpink") {
-      return "text-[#FF5C8D]";
+      return "text-[#FFDEE2]";
     }
     return "";
   };
@@ -83,7 +83,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, index }) => {
   // Get checkbox styling based on theme
   const getCheckboxClass = () => {
     if (theme === "blackpink") {
-      return "!bg-transparent !border-[#FF5C8D] shadow-[0_0_5px_rgba(255,92,141,0.5)] relative z-40";
+      return "!bg-transparent !border-[#FFDEE2] shadow-[0_0_5px_rgba(255,222,226,0.5)] relative z-40";
     }
     return "";
   };
@@ -91,7 +91,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, index }) => {
   // Get badge styling based on theme
   const getBadgeClass = () => {
     if (theme === "blackpink") {
-      return "!bg-transparent !border-[#FF5C8D] !text-[#FF5C8D] shadow-[0_0_5px_rgba(255,92,141,0.5)] relative z-40";
+      return "!bg-transparent !border-[#FFDEE2] !text-[#FFDEE2] shadow-[0_0_5px_rgba(255,222,226,0.5)] relative z-40";
     }
     return "bg-gray-800 text-white border-gray-700";
   };
@@ -104,17 +104,18 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, index }) => {
       >
         <CardContent className="p-3 text-left text-sm flex items-start justify-between">
           <div className="flex items-start gap-2">
-            <div className="mt-0.5 flex-shrink-0 relative" onClick={(e) => e.stopPropagation()}>
+            <div className="mt-0.5 flex-shrink-0 relative">
               <Checkbox 
                 id={`checkbox-${index}`}
                 checked={isCompleted}
                 onCheckedChange={handleCheckboxChange}
+                onClick={(e) => e.stopPropagation()} // Prevent triple tap when clicking the checkbox
                 className={getCheckboxClass()}
               />
             </div>
             <div className="flex-1">
               <div className="flex items-center mb-1">
-                <span className={`text-[10px] ${theme === "blackpink" ? "text-[#FF5C8D]" : "text-blue-500"}`}>
+                <span className={`text-[10px] ${theme === "blackpink" ? "text-[#FFDEE2]" : "text-blue-500"}`}>
                   {tapStatus === 'idle' ? (
                     "Triple tap to ask AI"
                   ) : (
