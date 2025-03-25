@@ -4,6 +4,7 @@ import { Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ChatMessage } from "@/models/ChatMessage";
+import { ReferencesSection } from "./ReferencesSection";
 
 interface ChatMessageItemProps {
   message: ChatMessage;
@@ -88,6 +89,11 @@ export const ChatMessageItem = ({ message, onCopy }: ChatMessageItemProps) => {
     return content;
   };
 
+  // Show references only if message is from assistant and it's not from a triple-tap interaction
+  const showReferences = message.role === 'assistant' && 
+    message.references?.length > 0 && 
+    !message.content.includes("Triple-tapped:");
+
   return (
     <motion.div
       key={message.id}
@@ -119,6 +125,11 @@ export const ChatMessageItem = ({ message, onCopy }: ChatMessageItemProps) => {
       </div>
       <div className="whitespace-pre-wrap text-sm">
         {formatContent(message.content)}
+        
+        {/* Display references section if present and not from triple-tap */}
+        {showReferences && (
+          <ReferencesSection references={message.references} />
+        )}
       </div>
       {message.role === 'user' && message.content.includes("Triple-tapped:") && (
         <div className="mt-1 text-xs text-blue-400">
