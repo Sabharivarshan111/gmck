@@ -1,3 +1,4 @@
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { GoogleGenerativeAI } from "npm:@google/generative-ai@0.2.0";
 
@@ -184,66 +185,6 @@ function extractSubjectAndTopic(prompt: string): { subject: string | null; topic
   return { subject: detectedSubject, topic: detectedTopic };
 }
 
-// Helper function to extract references from the generated content
-function extractReferences(text: string): { content: string, references: any[] } {
-  // Check if the text contains a references or sources section
-  const referencePatterns = [
-    /references?:\s*\n((?:.+\n)+)/i,
-    /sources?:\s*\n((?:.+\n)+)/i,
-    /bibliography:\s*\n((?:.+\n)+)/i,
-    /citation[s]?:\s*\n((?:.+\n)+)/i
-  ];
-  
-  let references: any[] = [];
-  let content = text;
-  
-  // Try to extract references using patterns
-  for (const pattern of referencePatterns) {
-    const match = text.match(pattern);
-    if (match && match[1]) {
-      // Found reference section
-      const referencesText = match[1].trim();
-      
-      // Remove the references section from the content
-      content = text.replace(pattern, '').trim();
-      
-      // Split reference entries (usually numbered or separated by newlines)
-      const entries = referencesText.split(/\n+|(?:\d+\.\s*)/g)
-        .filter(entry => entry.trim().length > 0);
-      
-      // Process each reference entry
-      references = entries.map(entry => {
-        // Try to extract components of the reference
-        const authors = entry.match(/([A-Za-z\s,\.]+)(?:,|\.|\s)/) || ["Unknown Authors"];
-        const title = entry.match(/[""]([^""]+)[""]/) || 
-                    entry.match(/['']([^'']+)['']/) || 
-                    entry.match(/["""]([^"""]+)["""]/) ||
-                    ["Untitled"];
-        
-        const year = entry.match(/\b(19|20)\d{2}\b/) || [""];
-        const journal = entry.match(/,\s*([^,]+?Journal[^,]+?),/) || 
-                       entry.match(/,\s*([^,]+?Proceedings[^,]+?),/) ||
-                       [""];
-        
-        // Look for URLs
-        const urlMatch = entry.match(/https?:\/\/[^\s]+/) || [""];
-        
-        return {
-          title: title[1] || title[0] || entry.substring(0, 50) + "...",
-          authors: authors[1] || authors[0] || "Various Authors",
-          year: year[0] || "N/A",
-          journal: journal[1] || journal[0] || undefined,
-          url: urlMatch[0] || undefined
-        };
-      });
-      
-      break;
-    }
-  }
-  
-  return { content, references };
-}
-
 // Add logging with timestamp
 function logWithTimestamp(message: string, data?: any) {
   const timestamp = new Date().toISOString();
@@ -378,7 +319,7 @@ serve(async (req) => {
       temperature: 0.7,
       topP: 0.8,
       topK: 40,
-      maxOutputTokens: 2000,
+      maxOutputTokens: 2000, // Increase for more detailed responses
     };
     
     // If requesting MCQs
@@ -504,11 +445,7 @@ Keep your response focused, clear, and helpful. Use examples and analogies where
     }
     // For regular chat questions
     else {
-      systemPrompt = `You are ACEV, a helpful and knowledgeable medical assistant. Provide concise, accurate medical information. 
-
-When answering medical questions, include 2-4 scientific references at the end of your response in a "References:" section. Format each reference with author(s), title, journal (if applicable), year, and URL when available.
-
-For medical emergencies, always advise seeking immediate professional help. Your responses should be compassionate, clear, and based on established medical knowledge. Never mention that you're powered by Gemini.`;
+      systemPrompt = "You are ACEV, a helpful and knowledgeable medical assistant. Provide concise, accurate medical information. For medical emergencies, always advise seeking immediate professional help. Your responses should be compassionate, clear, and based on established medical knowledge. Never mention that you're powered by Gemini.";
     }
     
     logWithTimestamp(`[${requestId}] Request type: ${isMCQsRequest ? "MCQs" : isImportantQsRequest ? "Important Questions" : isTripleTap ? "Triple-tap" : needsConversationContext ? "Contextual" : "Regular"}`, { 
@@ -565,25 +502,14 @@ For medical emergencies, always advise seeking immediate professional help. Your
       const result = await Promise.race([modelPromise, timeoutPromise]) as any;
       
       const response = result.response;
-      let text = response.text();
-      
-      // Check if this is a regular response (not triple-tapped) and extract references
-      let references = [];
-      if (!isTripleTap) {
-        const { content, references: extractedRefs } = extractReferences(text);
-        text = content; // Clean content without references section
-        references = extractedRefs;
-      }
+      const text = response.text();
       
       const endTime = Date.now();
       const duration = endTime - startTime;
       logWithTimestamp(`[${requestId}] AI response generated successfully in ${duration}ms`);
 
       return new Response(
-        JSON.stringify({ 
-          response: text,
-          references: references.length > 0 ? references : undefined
-        }),
+        JSON.stringify({ response: text }),
         {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
           status: 200,
