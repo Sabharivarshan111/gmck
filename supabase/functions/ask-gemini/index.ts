@@ -213,72 +213,27 @@ function extractReferences(text: string): { content: string, references: any[] }
       
       // Process each reference entry
       references = entries.map(entry => {
-        // Try to extract title first - it's often the most important part
-        let title = "Untitled";
+        // Try to extract components of the reference
+        const authors = entry.match(/([A-Za-z\s,\.]+)(?:,|\.|\s)/) || ["Unknown Authors"];
+        const title = entry.match(/[""]([^""]+)[""]/) || 
+                    entry.match(/['']([^'']+)['']/) || 
+                    entry.match(/["""]([^"""]+)["""]/) ||
+                    ["Untitled"];
         
-        // Try different title extraction methods
-        const titlePatterns = [
-          // Quoted titles
-          /"([^"]+)"/,
-          /"([^"]+)"/,
-          /'([^']+)'/,
-          // Title followed by period or comma before author or journal
-          /^([^,.]+)[.,]/,
-          // Capitalized phrases that could be titles (after numbers for numbered references)
-          /^\d+\.\s+([A-Z][^,.]+)[.,]/,
-          // Look for typical title patterns in medical papers
-          /(?:on|of|for|in)\s+([A-Z][^,.]+[a-z])[.,]/
-        ];
-        
-        for (const pattern of titlePatterns) {
-          const match = entry.match(pattern);
-          if (match && match[1] && match[1].length > 10) {
-            title = match[1].trim();
-            // If we found a title with a pattern that's likely to be accurate, break
-            break;
-          }
-        }
-        
-        // If no title was found with patterns, try more aggressive extraction
-        if (title === "Untitled") {
-          // For entries without a match, try to extract the beginning as a potential title
-          // Look for the first sentence or phrase up to a period or comma
-          const firstPartMatch = entry.match(/^([^,.]+(?:\s+[^,.]+){2,})[.,]/);
-          if (firstPartMatch && firstPartMatch[1] && firstPartMatch[1].length > 15) {
-            title = firstPartMatch[1].trim();
-          } else {
-            // If still no match, use the first N characters but ensure we don't cut words
-            const maxLength = 60;
-            title = entry.length > maxLength 
-              ? entry.substring(0, entry.substring(0, maxLength).lastIndexOf(' ')) + "..."
-              : entry;
-          }
-        }
-        
-        // Extract other components
-        const authorPattern = /([A-Z][a-z]+(?:,?\s+[A-Z]\.(?:\s+[A-Z]\.)?|\s+et al\.?))/;
-        const journalPattern = /(?:in|,)\s+([^,.]+(?:Journal|Transactions|Proceedings|Review)[^,.]*)/i;
-        const yearPattern = /\((\d{4})\)|\b(19|20)\d{2}\b/;
-        
-        // Extract the components
-        const authorMatch = entry.match(authorPattern);
-        const journalMatch = entry.match(journalPattern);
-        const yearMatch = entry.match(yearPattern);
-        
-        const authors = authorMatch ? authorMatch[1] : entry.includes('et al.') ? entry.split('et al.')[0] + 'et al.' : "Various Authors";
-        const journal = journalMatch ? journalMatch[1] : undefined;
-        const year = yearMatch ? yearMatch[1] || yearMatch[2] : "N/A";
+        const year = entry.match(/\b(19|20)\d{2}\b/) || [""];
+        const journal = entry.match(/,\s*([^,]+?Journal[^,]+?),/) || 
+                       entry.match(/,\s*([^,]+?Proceedings[^,]+?),/) ||
+                       [""];
         
         // Look for URLs
         const urlMatch = entry.match(/https?:\/\/[^\s]+/) || [""];
-        const url = urlMatch[0] || undefined;
         
         return {
-          title,
-          authors,
-          journal,
-          year,
-          url
+          title: title[1] || title[0] || entry.substring(0, 50) + "...",
+          authors: authors[1] || authors[0] || "Various Authors",
+          year: year[0] || "N/A",
+          journal: journal[1] || journal[0] || undefined,
+          url: urlMatch[0] || undefined
         };
       });
       
@@ -551,17 +506,7 @@ Keep your response focused, clear, and helpful. Use examples and analogies where
     else {
       systemPrompt = `You are ACEV, a helpful and knowledgeable medical assistant. Provide concise, accurate medical information. 
 
-When answering medical questions, include 2-4 scientific references at the end of your response in a "References:" section. Each reference MUST include a clear, descriptive title that reflects the content of the source (not "Untitled"). Format each reference with:
-1. Title: A descriptive title of the paper or source
-2. Authors: Author names (use "et al." for multiple authors)
-3. Journal: Journal name if applicable
-4. Year: Publication year
-5. URL: Link to the source if available
-
-Example reference format:
-"Clinical significance of shock in critical care settings"
-Nguyen et al., Critical Care (2022)
-https://clinmedjournals.org/
+When answering medical questions, include 2-4 scientific references at the end of your response in a "References:" section. Format each reference with author(s), title, journal (if applicable), year, and URL when available.
 
 For medical emergencies, always advise seeking immediate professional help. Your responses should be compassionate, clear, and based on established medical knowledge. Never mention that you're powered by Gemini.`;
     }
