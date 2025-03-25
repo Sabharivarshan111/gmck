@@ -89,6 +89,11 @@ export const ChatMessageItem = ({ message, onCopy }: ChatMessageItemProps) => {
     return content;
   };
 
+  // Remove any "References:" section from displayed content since we'll show it in the ReferencesSection component
+  const displayContent = message.role === 'assistant' && message.references && message.references.length > 0
+    ? message.content.replace(/references?:[\s\S]*$/i, '').trim()
+    : message.content;
+
   return (
     <motion.div
       key={message.id}
@@ -119,7 +124,7 @@ export const ChatMessageItem = ({ message, onCopy }: ChatMessageItemProps) => {
         )}
       </div>
       <div className="whitespace-pre-wrap text-sm">
-        {formatContent(message.content)}
+        {formatContent(displayContent)}
       </div>
       {message.role === 'user' && message.content.includes("Triple-tapped:") && (
         <div className="mt-1 text-xs text-blue-400">
