@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { GoogleGenerativeAI } from "npm:@google/generative-ai@0.2.0";
 
@@ -202,6 +201,94 @@ function isMCQRequest(prompt: string): boolean {
 // Helper function to check if a prompt is asking for important questions
 function isImportantQuestionsRequest(prompt: string): boolean {
   return /important question|important topics|high yield|frequently asked|commonly asked|repeated questions/i.test(prompt);
+}
+
+// Function to extract references from the text
+function extractReferences(text: string): Array<{title: string; authors: string; journal?: string; year: string; url?: string}> {
+  const references = [];
+  
+  // Check if the response contains a references section
+  const referencesMatch = text.match(/References:?\s*\n([\s\S]+)$/i) || 
+                         text.match(/Sources:?\s*\n([\s\S]+)$/i) ||
+                         text.match(/Citations:?\s*\n([\s\S]+)$/i);
+  
+  if (referencesMatch) {
+    const referencesText = referencesMatch[1];
+    
+    // Split by numbered references or bullet points
+    const referenceItems = referencesText.split(/\n\s*(?:\d+\.|\-|\*)\s+/);
+    
+    for (let item of referenceItems) {
+      item = item.trim();
+      if (!item) continue;
+      
+      // Try to extract structured information from each reference
+      const reference: {
+        title: string;
+        authors: string;
+        journal?: string;
+        year: string;
+        url?: string;
+      } = {
+        title: "Untitled Reference",
+        authors: "Unknown",
+        year: "n.d."
+      };
+      
+      // Extract URL if present
+      const urlMatch = item.match(/(https?:\/\/[^\s]+)/);
+      if (urlMatch) {
+        reference.url = urlMatch[1];
+        // Remove the URL from the item to make other parsing easier
+        item = item.replace(urlMatch[1], '').trim();
+      }
+      
+      // Extract title - usually the first part up to a period or comma
+      const titleMatch = item.match(/^([^\.,:]+)[\.,:]/);
+      if (titleMatch) {
+        reference.title = titleMatch[1].trim();
+        // Remove the title from the item to make other parsing easier
+        item = item.replace(titleMatch[0], '').trim();
+      } else {
+        // If no clear title pattern, try to extract a reasonable title
+        const potentialTitle = item.split(/[\.,:]/).shift() || '';
+        if (potentialTitle.length > 3) {
+          reference.title = potentialTitle.trim();
+          item = item.replace(potentialTitle, '').replace(/^[\.,:]/, '').trim();
+        }
+      }
+      
+      // Extract year
+      const yearMatch = item.match(/\b(19|20)\d{2}\b/);
+      if (yearMatch) {
+        reference.year = yearMatch[0];
+      }
+      
+      // Extract journal if present
+      const journalMatch = item.match(/([A-Z][A-Za-z\s]+Journal|[A-Z][A-Za-z\s]+Annals|[A-Z][A-Za-z\s]+Review)/);
+      if (journalMatch) {
+        reference.journal = journalMatch[1].trim();
+      }
+      
+      // Extract authors - anything remaining before the year or journal
+      let authorsText = item;
+      if (reference.journal) {
+        authorsText = item.split(reference.journal)[0].trim();
+      } else if (yearMatch) {
+        authorsText = item.split(yearMatch[0])[0].trim();
+      }
+      
+      if (authorsText) {
+        // Clean up authors text (remove trailing punctuation)
+        authorsText = authorsText.replace(/[,\.;]$/, '').trim();
+        reference.authors = authorsText || "Unknown";
+      }
+      
+      references.push(reference);
+    }
+  }
+  
+  return references;
 }
 
 serve(async (req) => {
@@ -504,12 +591,17 @@ Keep your response focused, clear, and helpful. Use examples and analogies where
       const response = result.response;
       const text = response.text();
       
+      const references = extractReferences(text);
+      
       const endTime = Date.now();
       const duration = endTime - startTime;
       logWithTimestamp(`[${requestId}] AI response generated successfully in ${duration}ms`);
 
       return new Response(
-        JSON.stringify({ response: text }),
+        JSON.stringify({ 
+          response: text,
+          references: references.length > 0 ? references : undefined
+        }),
         {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
           status: 200,
