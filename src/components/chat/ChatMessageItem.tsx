@@ -89,6 +89,11 @@ export const ChatMessageItem = ({ message, onCopy }: ChatMessageItemProps) => {
     return content;
   };
 
+  // Remove the "References:" section from the content if it exists
+  const cleanContent = message.role === 'assistant' && message.content.includes('References:') 
+    ? message.content.split('References:')[0].trim() 
+    : message.content;
+
   return (
     <motion.div
       key={message.id}
@@ -119,7 +124,7 @@ export const ChatMessageItem = ({ message, onCopy }: ChatMessageItemProps) => {
         )}
       </div>
       <div className="whitespace-pre-wrap text-sm">
-        {formatContent(message.content)}
+        {formatContent(cleanContent)}
       </div>
       {message.role === 'user' && message.content.includes("Triple-tapped:") && (
         <div className="mt-1 text-xs text-blue-400">
