@@ -80,7 +80,7 @@ export function ThemeToggle() {
           <DropdownMenuSeparator className={theme === "blackpink" ? "bg-[#FF5C8D]/30" : ""} />
           <DropdownMenuItem
             onClick={() => handleThemeChange("blackpink")}
-            className={`flex items-center gap-2 ${theme === "blackpink" ? "bg-black/60 text-[#FF5C8D] hover:bg-black/90" : ""}`}
+            className={`flex items-center gap-2 ${theme === "blackpink" ? "bg-black/60 text-[#FF5C8D]" : ""}`}
           >
             <span className={theme === "blackpink" ? "text-[#FF5C8D] font-bold text-sm" : "text-pink-500 font-bold text-sm"}>BP</span>
             <span className={theme === "blackpink" ? "text-[#FF5C8D]" : ""}>Black Pink</span>

@@ -434,7 +434,6 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
         role: 'assistant',
         content: data.response,
         timestamp: new Date(),
-        references: data.references // Include the references if any
       };
       
       setMessages(prevMessages => [...prevMessages, aiMessage]);
