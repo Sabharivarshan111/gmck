@@ -1,7 +1,8 @@
+
 import { useState, useEffect, useCallback } from "react";
 import { v4 as uuidv4 } from 'uuid';
 import { useToast } from "@/hooks/use-toast";
-import { ChatMessage } from "@/models/ChatMessage";
+import { ChatMessage, Reference } from "@/models/ChatMessage";
 import { supabase } from "@/integrations/supabase/client";
 import { QUESTION_BANK_DATA } from "@/data/questionBankData";
 
@@ -429,11 +430,13 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
         setQueueStats(data.queueStats);
       }
       
+      // Create the AI message, now properly handling references from the API response
       const aiMessage: ChatMessage = {
         id: uuidv4(),
         role: 'assistant',
         content: data.response,
         timestamp: new Date(),
+        references: data.references || [], // Include references from Gemini response
       };
       
       setMessages(prevMessages => [...prevMessages, aiMessage]);
