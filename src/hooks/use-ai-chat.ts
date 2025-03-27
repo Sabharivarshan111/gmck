@@ -439,6 +439,11 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
         references: data.references || [], // Include references from Gemini response
       };
       
+      // Log references to help with debugging
+      if (data.references && data.references.length > 0) {
+        console.log("References received:", data.references);
+      }
+      
       setMessages(prevMessages => [...prevMessages, aiMessage]);
     } catch (error) {
       handleError(error);

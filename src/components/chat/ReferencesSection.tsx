@@ -42,6 +42,23 @@ export const ReferencesSection: React.FC<ReferencesSectionProps> = ({ references
     blackpink: "text-[#FF5C8D] hover:text-[#FF8CAD]"
   };
 
+  // Verify all references have valid URLs, filter out any that don't
+  const validReferences = references.filter(ref => {
+    if (!ref.url) return false;
+    try {
+      // Basic URL validation
+      new URL(ref.url);
+      return true;
+    } catch (e) {
+      console.error("Invalid URL in reference:", ref);
+      return false;
+    }
+  });
+
+  if (validReferences.length === 0) {
+    return null;
+  }
+
   return (
     <div className="mt-4 mb-2 rounded-lg overflow-hidden shadow-sm">
       <Collapsible
@@ -58,12 +75,12 @@ export const ReferencesSection: React.FC<ReferencesSectionProps> = ({ references
             )}
             <span>Sources and related content</span>
           </div>
-          <span className="text-xs text-gray-500">{references.length} source{references.length > 1 ? 's' : ''}</span>
+          <span className="text-xs text-gray-500">{validReferences.length} source{validReferences.length > 1 ? 's' : ''}</span>
         </CollapsibleTrigger>
         
         <CollapsibleContent className={`p-3 ${contentStyles[theme]} border-t ${theme === 'blackpink' ? 'border-[#FF5C8D]/30' : theme === 'dark' ? 'border-gray-700' : 'border-gray-200'}`}>
           <ul className="space-y-2">
-            {references.map((reference, index) => (
+            {validReferences.map((reference, index) => (
               <li key={index} className="pl-2 border-l-2 border-opacity-50 border-blue-400">
                 <div className="flex flex-col">
                   <a

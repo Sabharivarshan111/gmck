@@ -269,8 +269,38 @@ function extractReferences(text: string): Array<{ title: string; url: string; au
         if (titleMatch) {
           const title = (titleMatch[1] || titleMatch[2]).trim();
           
-          // Create a dummy URL for medical resources
-          const dummyUrl = `https://medical-resources.org/reference/${encodeURIComponent(title)}`;
+          // Create a legitimate URL for medical resources instead of a dummy one
+          let dummyUrl;
+          
+          // Try to create a more legitimate fallback URL based on title content
+          if (title.toLowerCase().includes("pubmed") || title.toLowerCase().includes("ncbi")) {
+            dummyUrl = "https://pubmed.ncbi.nlm.nih.gov/";
+          } else if (title.toLowerCase().includes("uptodate") || title.toLowerCase().includes("up to date")) {
+            dummyUrl = "https://www.uptodate.com/";
+          } else if (title.toLowerCase().includes("medscape")) {
+            dummyUrl = "https://www.medscape.com/";
+          } else if (title.toLowerCase().includes("mayo")) {
+            dummyUrl = "https://www.mayoclinic.org/";
+          } else if (title.toLowerCase().includes("who") || title.toLowerCase().includes("world health")) {
+            dummyUrl = "https://www.who.int/";
+          } else if (title.toLowerCase().includes("cdc")) {
+            dummyUrl = "https://www.cdc.gov/";
+          } else if (title.toLowerCase().includes("jama") || title.toLowerCase().includes("journal")) {
+            dummyUrl = "https://jamanetwork.com/";
+          } else if (title.toLowerCase().includes("nejm")) {
+            dummyUrl = "https://www.nejm.org/";
+          } else if (title.toLowerCase().includes("guidelines")) {
+            dummyUrl = "https://www.guidelines.gov/";
+          } else if (title.toLowerCase().includes("lancet")) {
+            dummyUrl = "https://www.thelancet.com/";
+          } else if (title.toLowerCase().includes("bmj")) {
+            dummyUrl = "https://www.bmj.com/";
+          } else if (title.toLowerCase().includes("oxford") || title.toLowerCase().includes("handbook")) {
+            dummyUrl = "https://academic.oup.com/";
+          } else {
+            // Use PubMed as default fallback for medical content
+            dummyUrl = "https://pubmed.ncbi.nlm.nih.gov/?term=" + encodeURIComponent(title);
+          }
           
           // Try to extract author, year, journal
           let author, year, journal;
@@ -336,7 +366,7 @@ function extractReferences(text: string): Array<{ title: string; url: string; au
       const year = match[2];
       const title = `${author} (${year})`;
       
-      // Create a dummy URL for academic citations
+      // Create a more legitimate fallback URL for academic citations
       const dummyUrl = `https://scholar.google.com/scholar?q=${encodeURIComponent(author)}+${year}`;
       
       // Check if this reference is already added
@@ -708,115 +738,3 @@ ${referencesInstructions}`;
         const recentHistory = conversationHistory.slice(-10);
         
         logWithTimestamp(`[${requestId}] Including ${recentHistory.length} messages from conversation history`);
-        
-        for (const message of recentHistory) {
-          messages.push({ 
-            role: message.role === 'user' ? 'user' : 'model', 
-            parts: [{ text: message.content }] 
-          });
-        }
-      }
-      
-      // Add current user question
-      messages.push({ role: "user", parts: [{ text: actualQuestion }] });
-      
-      // Set up the model with conversation and config
-      const modelPromise = model.generateContent({
-        contents: messages,
-        generationConfig
-      });
-      
-      // Set up timeout
-      const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => {
-          reject(new Error(`Request timed out after ${timeoutMs}ms`));
-        }, timeoutMs);
-      });
-      
-      // Race the model response against the timeout
-      const result = await Promise.race([modelPromise, timeoutPromise]) as any;
-      
-      const response = result.response;
-      const rawText = response.text();
-      
-      // Process the response text to extract and clean up references
-      const { cleanedText, references } = processResponseText(rawText);
-      
-      const endTime = Date.now();
-      const duration = endTime - startTime;
-      logWithTimestamp(`[${requestId}] AI response generated successfully in ${duration}ms`);
-      logWithTimestamp(`[${requestId}] Extracted ${references.length} references`);
-
-      return new Response(
-        JSON.stringify({ 
-          response: cleanedText,
-          references: references
-        }),
-        {
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-          status: 200,
-        }
-      );
-    } catch (modelError) {
-      const endTime = Date.now();
-      const duration = endTime - startTime;
-      logWithTimestamp(`[${requestId}] AI Model Error after ${duration}ms:`, modelError);
-      
-      // Check for rate limiting error with Gemini
-      if (modelError.message && modelError.message.includes("429")) {
-        logWithTimestamp(`[${requestId}] Rate limit hit with Gemini API`);
-        return new Response(
-          JSON.stringify({ 
-            error: "Our AI service is experiencing high demand. Please try again in a moment.",
-            isRateLimit: true,
-            retryAfter: 30 // Suggest client wait 30 seconds
-          }),
-          {
-            headers: { ...corsHeaders, "Content-Type": "application/json" },
-            status: 200,
-          }
-        );
-      }
-      
-      // Improved timeout error handling with more user-friendly message
-      if (modelError.message && modelError.message.includes("timed out")) {
-        logWithTimestamp(`[${requestId}] Request to Gemini API timed out`);
-        return new Response(
-          JSON.stringify({ 
-            error: "The AI service is taking longer than expected. Your question might be complex - try asking a more focused question or try again later.",
-            details: "AI processing timeout"
-          }),
-          {
-            headers: { ...corsHeaders, "Content-Type": "application/json" },
-            status: 200,
-          }
-        );
-      }
-      
-      return new Response(
-        JSON.stringify({ 
-          error: "Failed to generate response from AI model", 
-          details: modelError.message 
-        }),
-        {
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-          status: 200,
-        }
-      );
-    }
-  } catch (error) {
-    const endTime = Date.now();
-    const duration = endTime - startTime;
-    logWithTimestamp(`[${requestId}] Unhandled error after ${duration}ms:`, error);
-    return new Response(
-      JSON.stringify({ 
-        error: error.message || "An error occurred while processing your request",
-        details: error.stack
-      }),
-      {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 200,
-      }
-    );
-  }
-});
