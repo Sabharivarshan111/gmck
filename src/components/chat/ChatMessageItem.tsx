@@ -4,6 +4,7 @@ import { Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ChatMessage } from "@/models/ChatMessage";
+import { ReferencesSection } from "./ReferencesSection";
 
 interface ChatMessageItemProps {
   message: ChatMessage;
@@ -124,6 +125,11 @@ export const ChatMessageItem = ({ message, onCopy }: ChatMessageItemProps) => {
         <div className="mt-1 text-xs text-blue-400">
           Question from triple-tap interaction
         </div>
+      )}
+      
+      {/* Add References Section only for assistant messages with references */}
+      {message.role === 'assistant' && message.references && message.references.length > 0 && (
+        <ReferencesSection references={message.references} />
       )}
     </motion.div>
   );

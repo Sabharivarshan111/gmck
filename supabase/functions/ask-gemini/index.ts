@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { GoogleGenerativeAI } from "npm:@google/generative-ai@0.2.0";
 
@@ -185,6 +184,208 @@ function extractSubjectAndTopic(prompt: string): { subject: string | null; topic
   return { subject: detectedSubject, topic: detectedTopic };
 }
 
+// Function to extract references from Gemini response
+function extractReferences(text: string): Array<{ title: string; url: string; author?: string; year?: string; journal?: string }> {
+  const references = [];
+  
+  // Look for References or Sources sections
+  const referencesSectionRegex = /(?:References|Sources|Further Reading|Citations):\s*(?:\n|$)([\s\S]*?)(?:$|(?:\n\n(?!-))|(?:\n(?=[A-Z][a-z]+:)))/i;
+  const referencesMatch = text.match(referencesSectionRegex);
+  
+  if (referencesMatch && referencesMatch[1]) {
+    // Extract the references section text
+    const referencesSection = referencesMatch[1].trim();
+    
+    // Remove the references section from the original response
+    text = text.replace(referencesSectionRegex, '');
+    
+    // Split by new lines for each reference
+    const referenceLines = referencesSection.split('\n').filter(line => line.trim());
+    
+    for (const line of referenceLines) {
+      // Try to extract URLs
+      const urlRegex = /(https?:\/\/[^\s]+)/g;
+      const urlMatch = line.match(urlRegex);
+      
+      if (urlMatch) {
+        // Extract title - assume everything before the URL is the title
+        let title = line.split(urlMatch[0])[0].trim();
+        
+        // Remove numbering (1., 2., etc.) from the beginning of the title
+        title = title.replace(/^\d+\.\s+/, '');
+        
+        // Remove markdown link formatting if present
+        title = title.replace(/\[(.*?)\]\(.*?\)/g, '$1');
+        
+        // If title ends with a colon or a dash, remove it
+        title = title.replace(/[:.-]$/, '').trim();
+        
+        // If title is empty, use the URL domain
+        if (!title) {
+          try {
+            const url = new URL(urlMatch[0]);
+            title = url.hostname.replace(/^www\./, '');
+          } catch {
+            title = "Reference link";
+          }
+        }
+        
+        // Extract author, year, journal if present
+        let author, year, journal;
+        
+        // Look for author patterns like "Author, A."
+        const authorRegex = /([A-Za-z\s]+,\s+[A-Z]\.(?:\s+[A-Z]\.)*)/;
+        const authorMatch = line.match(authorRegex);
+        if (authorMatch) {
+          author = authorMatch[1].trim();
+        }
+        
+        // Look for year patterns like (2023) or 2023
+        const yearRegex = /(?:\((\d{4})\))|(?:\s(\d{4})(?:\.|,|\s|$))/;
+        const yearMatch = line.match(yearRegex);
+        if (yearMatch) {
+          year = yearMatch[1] || yearMatch[2];
+        }
+        
+        // Look for journal names (italicized or followed by volume)
+        const journalRegex = /(?:_([^_]+)_)|(?:"([^"]+)")|(?:in\s+([A-Za-z\s]+)\s+\d+\(\d+\))/i;
+        const journalMatch = line.match(journalRegex);
+        if (journalMatch) {
+          journal = (journalMatch[1] || journalMatch[2] || journalMatch[3])?.trim();
+        }
+        
+        references.push({
+          title,
+          url: urlMatch[0],
+          ...(author && { author }),
+          ...(year && { year }),
+          ...(journal && { journal })
+        });
+      } else if (line.includes('"') || line.includes('"')) {
+        // Handle references without URLs but with titles in quotes
+        const titleRegex = /[""]([^""]+)[""]|['']([^'']+)['']/;
+        const titleMatch = line.match(titleRegex);
+        
+        if (titleMatch) {
+          const title = (titleMatch[1] || titleMatch[2]).trim();
+          
+          // Create a dummy URL for medical resources
+          const dummyUrl = `https://medical-resources.org/reference/${encodeURIComponent(title)}`;
+          
+          // Try to extract author, year, journal
+          let author, year, journal;
+          
+          // Look for author at the beginning of the line
+          const authorRegex = /^([A-Za-z\s.]+)(?=,|\s+et\s+al)/i;
+          const authorMatch = line.match(authorRegex);
+          if (authorMatch) {
+            author = authorMatch[1].trim();
+          }
+          
+          // Look for year
+          const yearRegex = /\((\d{4})\)|,\s+(\d{4})\b/;
+          const yearMatch = line.match(yearRegex);
+          if (yearMatch) {
+            year = yearMatch[1] || yearMatch[2];
+          }
+          
+          // Look for journal
+          const journalRegex = /(?:In|in)\s+([^,]+)|([A-Za-z\s]+\sJournal)/i;
+          const journalMatch = line.match(journalRegex);
+          if (journalMatch) {
+            journal = (journalMatch[1] || journalMatch[2])?.trim();
+          }
+          
+          references.push({
+            title,
+            url: dummyUrl,
+            ...(author && { author }),
+            ...(year && { year }),
+            ...(journal && { journal })
+          });
+        }
+      }
+    }
+  }
+  
+  // Look for inline citations with URLs
+  const urlRegex = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g;
+  let match;
+  while ((match = urlRegex.exec(text)) !== null) {
+    const title = match[1].trim();
+    const url = match[2];
+    
+    // Check if this reference is already added
+    const isDuplicate = references.some(ref => ref.url === url);
+    
+    if (!isDuplicate) {
+      references.push({
+        title,
+        url
+      });
+    }
+  }
+  
+  // Also look for standard citation patterns in the text (harvard style)
+  const citations = text.match(/\(([A-Za-z\s]+(?:et\s+al\.?)?,\s+\d{4}[a-z]?)\)/g) || [];
+  for (const citation of citations) {
+    // Extract name and year
+    const match = citation.match(/\(([A-Za-z\s]+(?:et\s+al\.?)?),\s+(\d{4}[a-z]?)\)/);
+    if (match) {
+      const author = match[1].trim();
+      const year = match[2];
+      const title = `${author} (${year})`;
+      
+      // Create a dummy URL for academic citations
+      const dummyUrl = `https://scholar.google.com/scholar?q=${encodeURIComponent(author)}+${year}`;
+      
+      // Check if this reference is already added
+      const isDuplicate = references.some(ref => 
+        (ref.author === author && ref.year === year) || ref.title === title
+      );
+      
+      if (!isDuplicate) {
+        references.push({
+          title,
+          url: dummyUrl,
+          author,
+          year
+        });
+      }
+    }
+  }
+  
+  // Add standard medical references if none found for medical topics
+  if (references.length === 0 && (
+      text.includes("pathology") || 
+      text.includes("diagnosis") || 
+      text.includes("treatment") || 
+      text.includes("symptoms") || 
+      text.includes("disease") ||
+      text.includes("medical")
+    )) {
+    
+    // Standard medical references
+    references.push({
+      title: "PubMed - National Library of Medicine",
+      url: "https://pubmed.ncbi.nlm.nih.gov/",
+      journal: "NLM Database"
+    });
+    
+    if (text.includes("pathology") || text.includes("histology")) {
+      references.push({
+        title: "Robbins & Cotran Pathologic Basis of Disease",
+        url: "https://www.elsevier.com/books/robbins-and-cotran-pathologic-basis-of-disease/kumar/978-0-323-53113-9",
+        author: "Kumar V, Abbas AK, Aster JC",
+        year: "2020",
+        journal: "Elsevier"
+      });
+    }
+  }
+  
+  return references;
+}
+
 // Add logging with timestamp
 function logWithTimestamp(message: string, data?: any) {
   const timestamp = new Date().toISOString();
@@ -202,6 +403,20 @@ function isMCQRequest(prompt: string): boolean {
 // Helper function to check if a prompt is asking for important questions
 function isImportantQuestionsRequest(prompt: string): boolean {
   return /important question|important topics|high yield|frequently asked|commonly asked|repeated questions/i.test(prompt);
+}
+
+// Process and clean up Gemini response text
+function processResponseText(text: string): { cleanedText: string; references: Array<any> } {
+  // Extract references from the text
+  const references = extractReferences(text);
+  
+  // Remove any "References:" or "Sources:" sections
+  let cleanedText = text.replace(/(?:References|Sources|Further Reading|Citations):\s*(?:\n|$)[\s\S]*?(?:$|(?:\n\n(?!-))|(?:\n(?=[A-Z][a-z]+:)))/gi, '');
+  
+  // Trim trailing whitespace and newlines
+  cleanedText = cleanedText.trim();
+  
+  return { cleanedText, references };
 }
 
 serve(async (req) => {
@@ -322,6 +537,14 @@ serve(async (req) => {
       maxOutputTokens: 2000, // Increase for more detailed responses
     };
     
+    // Add to all system prompts to include references and sources
+    const referencesInstructions = `
+    IMPORTANT: After providing your response, include a "References:" section with 2-5 relevant sources for the information. 
+    Format each reference with a title, URL (when possible), and author/year/journal when available.
+    For medical topics, cite reputable sources like academic journals, medical textbooks, or official health organizations.
+    If you don't have specific URLs, you can mention the reference name and authors without URLs.
+    `;
+    
     // If requesting MCQs
     if (isMCQsRequest) {
       systemPrompt = `You are ACEV, a highly specialized medical AI assistant. The user has requested you to generate 10 high-quality multiple choice questions (MCQs) in the style of NEET PG or USMLE exams.
@@ -352,7 +575,9 @@ IMPORTANT:
 - Place the answer and explanation immediately after each question, not grouped at the end
 - Make the questions varied in difficulty and cover different aspects of the topic
 - Follow NEET PG/USMLE style format and complexity
-- Make sure all questions are accurate and properly formatted`;
+- Make sure all questions are accurate and properly formatted
+
+${referencesInstructions}`;
 
       // Adjust generation parameters for MCQs
       generationConfig.temperature = 0.8; // More creative
@@ -376,7 +601,9 @@ For each question, include:
 - An indicator of how frequently it appears (*** for very frequent, ** for moderately frequent, * for occasionally asked)` : 
 `Please ask the user to specify which medical subject they are interested in (Pharmacology, Microbiology, or Pathology), and if possible, which specific topic within that subject. This will help me provide more targeted and relevant information.`}
 
-Make your response concise, well-structured, and easy to read. Focus on high-yield information that will be most valuable for exam preparation.`;
+Make your response concise, well-structured, and easy to read. Focus on high-yield information that will be most valuable for exam preparation.
+
+${referencesInstructions}`;
 
       // Adjust generation parameters for question lists
       generationConfig.temperature = 0.3; // More factual
@@ -408,7 +635,9 @@ Make your response concise, well-structured, and easy to read. Focus on high-yie
       
       Format your response with clear sections using bold headings and bullet points for key information. Be precise and detailed while maintaining readability.
       
-      IMPORTANT: Always include detailed information about the TREATMENT OPTIONS, even if not explicitly asked. Medical students need to know the current therapeutic approaches from first-line to advanced options.`;
+      IMPORTANT: Always include detailed information about the TREATMENT OPTIONS, even if not explicitly asked. Medical students need to know the current therapeutic approaches from first-line to advanced options.
+      
+      ${referencesInstructions}`;
     }
     // If triple-tapped for a non-pathology question
     else if (isTripleTap && !isPathologyQuestion) {
@@ -423,7 +652,9 @@ Make your response concise, well-structured, and easy to read. Focus on high-yie
       - Treatment options and management
       - Important facts for medical exams
       
-      Format your response with clear sections and bullet points where appropriate. Be detailed and specific.`;
+      Format your response with clear sections and bullet points where appropriate. Be detailed and specific.
+      
+      ${referencesInstructions}`;
     }
     // If the user is asking for clarification or following up on a previous response
     else if (needsConversationContext) {
@@ -437,7 +668,9 @@ If they are asking for similar questions or examples, provide additional questio
 
 If they explicitly ask for specific type of content (like "generate similar questions"), prioritize that request and deliver exactly what they've asked for.
 
-Keep your response focused, clear, and helpful. Use examples and analogies where appropriate to aid understanding.`;
+Keep your response focused, clear, and helpful. Use examples and analogies where appropriate to aid understanding.
+
+${referencesInstructions}`;
 
       // Adjust generation parameters for clarification
       generationConfig.temperature = 0.4; // More factual for explanations
@@ -445,7 +678,9 @@ Keep your response focused, clear, and helpful. Use examples and analogies where
     }
     // For regular chat questions
     else {
-      systemPrompt = "You are ACEV, a helpful and knowledgeable medical assistant. Provide concise, accurate medical information. For medical emergencies, always advise seeking immediate professional help. Your responses should be compassionate, clear, and based on established medical knowledge. Never mention that you're powered by Gemini.";
+      systemPrompt = `You are ACEV, a helpful and knowledgeable medical assistant. Provide concise, accurate medical information. For medical emergencies, always advise seeking immediate professional help. Your responses should be compassionate, clear, and based on established medical knowledge. Never mention that you're powered by Gemini.
+      
+      ${referencesInstructions}`;
     }
     
     logWithTimestamp(`[${requestId}] Request type: ${isMCQsRequest ? "MCQs" : isImportantQsRequest ? "Important Questions" : isTripleTap ? "Triple-tap" : needsConversationContext ? "Contextual" : "Regular"}`, { 
@@ -502,14 +737,21 @@ Keep your response focused, clear, and helpful. Use examples and analogies where
       const result = await Promise.race([modelPromise, timeoutPromise]) as any;
       
       const response = result.response;
-      const text = response.text();
+      const rawText = response.text();
+      
+      // Process the response text to extract and clean up references
+      const { cleanedText, references } = processResponseText(rawText);
       
       const endTime = Date.now();
       const duration = endTime - startTime;
       logWithTimestamp(`[${requestId}] AI response generated successfully in ${duration}ms`);
+      logWithTimestamp(`[${requestId}] Extracted ${references.length} references`);
 
       return new Response(
-        JSON.stringify({ response: text }),
+        JSON.stringify({ 
+          response: cleanedText,
+          references: references
+        }),
         {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
           status: 200,
