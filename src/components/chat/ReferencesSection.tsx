@@ -67,7 +67,7 @@ export const ReferencesSection: React.FC<ReferencesSectionProps> = ({ references
       return cleanedUrl;
     } catch (e) {
       // If there's any issue with the URL, fall back to a Google search for the title
-      return getSafeUrlForMedicalTopic(reference.title);
+      return getSafeUrlForMedicalTopic(url);
     }
   };
   
