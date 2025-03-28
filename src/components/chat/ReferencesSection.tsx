@@ -42,64 +42,88 @@ export const ReferencesSection: React.FC<ReferencesSectionProps> = ({ references
     blackpink: "text-[#FF5C8D] hover:text-[#FF8CAD]"
   };
 
-  // Function to verify URL is valid and accessible
-  const isValidUrl = (urlString: string): boolean => {
+  // Function to clean and validate URLs
+  const cleanAndValidateUrl = (url: string): string => {
+    // Remove any markdown formatting if present
+    let cleanedUrl = url.replace(/[\[\]()]/g, '');
+    
+    // Remove any trailing punctuation
+    cleanedUrl = cleanedUrl.replace(/[.,;:?!]$/, '');
+    
     try {
-      const url = new URL(urlString);
-      // Check if protocol is http or https
-      return url.protocol === 'http:' || url.protocol === 'https:';
+      // Check if the URL has a protocol, if not add https
+      if (!cleanedUrl.match(/^https?:\/\//i)) {
+        cleanedUrl = 'https://' + cleanedUrl;
+      }
+      
+      // Try to create a URL object to validate
+      const urlObj = new URL(cleanedUrl);
+      
+      // Ensure only http or https protocols
+      if (urlObj.protocol !== 'http:' && urlObj.protocol !== 'https:') {
+        throw new Error('Invalid protocol');
+      }
+      
+      return cleanedUrl;
     } catch (e) {
-      return false;
+      // If there's any issue with the URL, fall back to a Google search for the title
+      return getSafeUrlForMedicalTopic(reference.title);
+    }
+  };
+  
+  // Function to get safe fallback URLs for medical topics
+  const getSafeUrlForMedicalTopic = (title: string): string => {
+    const lowerTitle = title.toLowerCase();
+    
+    // Map to reliable medical websites based on content
+    if (lowerTitle.includes("pubmed") || lowerTitle.includes("ncbi")) {
+      return "https://pubmed.ncbi.nlm.nih.gov/";
+    } else if (lowerTitle.includes("uptodate") || lowerTitle.includes("up to date")) {
+      return "https://www.uptodate.com/";
+    } else if (lowerTitle.includes("medscape")) {
+      return "https://www.medscape.com/";
+    } else if (lowerTitle.includes("mayo")) {
+      return "https://www.mayoclinic.org/";
+    } else if (lowerTitle.includes("who") || lowerTitle.includes("world health")) {
+      return "https://www.who.int/";
+    } else if (lowerTitle.includes("cdc")) {
+      return "https://www.cdc.gov/";
+    } else if (lowerTitle.includes("nejm")) {
+      return "https://www.nejm.org/";
+    } else if (lowerTitle.includes("jama") || lowerTitle.includes("journal")) {
+      return "https://jamanetwork.com/";
+    } else if (lowerTitle.includes("bmj")) {
+      return "https://www.bmj.com/";
+    } else if (lowerTitle.includes("lancet")) {
+      return "https://www.thelancet.com/";
+    } else if (lowerTitle.includes("robbins") || lowerTitle.includes("pathology")) {
+      return "https://www.elsevier.com/books/robbins-and-cotran-pathologic-basis-of-disease/kumar/978-0-323-53113-9";
+    } else {
+      // Use Google Scholar as a safer general fallback
+      return `https://scholar.google.com/scholar?q=${encodeURIComponent(title)}`;
     }
   };
 
-  // Function to improve or fix URLs
-  const improveUrl = (reference: Reference): string => {
-    // If URL is valid, use it
-    if (reference.url && isValidUrl(reference.url)) {
-      return reference.url;
-    }
-
-    // Fallback to reliable medical resources based on context
-    if (reference.title) {
-      const title = reference.title.toLowerCase();
-      
-      // Determine the most appropriate reliable medical resource based on content
-      if (title.includes('pubmed') || title.includes('ncbi')) {
-        return 'https://pubmed.ncbi.nlm.nih.gov/';
-      } else if (title.includes('uptodate')) {
-        return 'https://www.uptodate.com/';
-      } else if (title.includes('mayo clinic') || title.includes('mayoclinic')) {
-        return 'https://www.mayoclinic.org/';
-      } else if (title.includes('who') || title.includes('world health')) {
-        return 'https://www.who.int/';
-      } else if (title.includes('cdc')) {
-        return 'https://www.cdc.gov/';
-      } else if (title.includes('nejm')) {
-        return 'https://www.nejm.org/';
-      } else if (title.includes('jama')) {
-        return 'https://jamanetwork.com/';
-      } else if (title.includes('bmj')) {
-        return 'https://www.bmj.com/';
-      } else if (title.includes('lancet')) {
-        return 'https://www.thelancet.com/';
-      } else if (title.includes('robbins') || title.includes('pathology')) {
-        return 'https://www.elsevier.com/books/robbins-and-cotran-pathologic-basis-of-disease/kumar/978-0-323-53113-9';
+  // Process references to ensure all have valid URLs
+  const validReferences = references.map(reference => {
+    let validatedUrl = reference.url;
+    
+    // Ensure the URL is valid and clean
+    try {
+      if (reference.url) {
+        validatedUrl = cleanAndValidateUrl(reference.url);
       } else {
-        // Use Google Scholar search for the title as a safer fallback
-        return `https://scholar.google.com/scholar?q=${encodeURIComponent(reference.title)}`;
+        validatedUrl = getSafeUrlForMedicalTopic(reference.title);
       }
+    } catch (e) {
+      validatedUrl = getSafeUrlForMedicalTopic(reference.title);
     }
     
-    // Default to PubMed as the safest medical resource
-    return 'https://pubmed.ncbi.nlm.nih.gov/';
-  };
-
-  // Verify all references have valid URLs and improve them if necessary
-  const validReferences = references.map(ref => ({
-    ...ref,
-    url: improveUrl(ref)
-  }));
+    return {
+      ...reference,
+      url: validatedUrl
+    };
+  });
 
   return (
     <div className="mt-4 mb-2 rounded-lg overflow-hidden shadow-sm">

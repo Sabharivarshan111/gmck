@@ -184,7 +184,7 @@ function extractSubjectAndTopic(prompt: string): { subject: string | null; topic
   return { subject: detectedSubject, topic: detectedTopic };
 }
 
-// Function to extract references from Gemini response
+// Improved function to extract references from Gemini response
 function extractReferences(text: string): Array<{ title: string; url: string; author?: string; year?: string; journal?: string }> {
   const references = [];
   
@@ -254,12 +254,25 @@ function extractReferences(text: string): Array<{ title: string; url: string; au
           journal = (journalMatch[1] || journalMatch[2] || journalMatch[3])?.trim();
         }
         
-        // Validate URL before adding to references
+        // Clean and validate URL before adding to references
+        let cleanedUrl = urlMatch[0];
+        
+        // Remove any trailing punctuation or parentheses from the URL
+        cleanedUrl = cleanedUrl.replace(/[.,;:?!)]+$/, '');
+        
+        // Validate the URL is properly formatted
         try {
-          new URL(urlMatch[0]);
+          // This will throw if URL is invalid
+          new URL(cleanedUrl);
+          
+          // Double check the protocol is http or https
+          if (!cleanedUrl.startsWith('http://') && !cleanedUrl.startsWith('https://')) {
+            cleanedUrl = 'https://' + cleanedUrl;
+          }
+          
           references.push({
             title,
-            url: urlMatch[0],
+            url: cleanedUrl,
             ...(author && { author }),
             ...(year && { year }),
             ...(journal && { journal })
@@ -325,7 +338,10 @@ function extractReferences(text: string): Array<{ title: string; url: string; au
   let match;
   while ((match = urlRegex.exec(text)) !== null) {
     const title = match[1].trim();
-    const url = match[2];
+    let url = match[2];
+    
+    // Clean the URL - remove trailing punctuation
+    url = url.replace(/[.,;:?!)]+$/, '');
     
     // Check if this reference is already added
     const isDuplicate = references.some(ref => ref.url === url);
@@ -333,7 +349,14 @@ function extractReferences(text: string): Array<{ title: string; url: string; au
     if (!isDuplicate) {
       // Validate URL before adding
       try {
+        // This will throw if URL is invalid
         new URL(url);
+        
+        // Ensure URL has proper protocol
+        if (!url.startsWith('http://') && !url.startsWith('https://')) {
+          url = 'https://' + url;
+        }
+        
         references.push({
           title,
           url
@@ -406,7 +429,28 @@ function extractReferences(text: string): Array<{ title: string; url: string; au
     }
   }
   
-  return references;
+  // Further validate all reference URLs to make sure they are correctly formatted
+  const validatedReferences = references.map(ref => {
+    try {
+      // Test URL validity and format
+      const urlObj = new URL(ref.url);
+      
+      // Ensure only http or https protocols
+      if (urlObj.protocol !== 'http:' && urlObj.protocol !== 'https:') {
+        throw new Error('Invalid protocol');
+      }
+      
+      return ref;
+    } catch (e) {
+      // If URL is invalid, replace with a safe alternative
+      return {
+        ...ref,
+        url: getSafeUrlForMedicalTopic(ref.title)
+      };
+    }
+  });
+  
+  return validatedReferences;
 }
 
 // New helper function for getting safe URLs for medical topics
@@ -600,9 +644,13 @@ serve(async (req) => {
     // Add to all system prompts to include references and sources
     const referencesInstructions = `
     IMPORTANT: After providing your response, include a "References:" section with 2-5 relevant sources for the information. 
-    Format each reference with a title, URL (when possible), and author/year/journal when available.
+    Format each reference with a title and a CORRECTLY FORMATTED full URL (starting with http:// or https://).
+    Example format:
+    References:
+    1. Mayo Clinic - Anemia: https://www.mayoclinic.org/diseases-conditions/anemia/symptoms-causes/syc-20351360
+    2. National Heart, Lung, and Blood Institute: https://www.nhlbi.nih.gov/health/anemia
+
     For medical topics, cite reputable sources like academic journals, medical textbooks, or official health organizations.
-    If you don't have specific URLs, you can mention the reference name and authors without URLs.
     `;
     
     // If requesting MCQs
@@ -768,3 +816,44 @@ ${referencesInstructions}`;
         const recentHistory = conversationHistory.slice(-10);
         
         logWithTimestamp(`[${requestId}] Including ${recentHistory.length} messages from conversation history`);
+
+        for (const message of recentHistory) {
+          messages.push({ role: "user", parts: [{ text: message.parts[0].text }] });
+        }
+      }
+      
+      // Send the messages to Gemini
+      const response = await model.generate(messages, { timeoutMs });
+      
+      // Extract cleaned text and references from the response
+      const { cleanedText, references } = processResponseText(response.text);
+      
+      // Return the cleaned text and references
+      return new Response(
+        JSON.stringify({ cleanedText, references }),
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 200
+        }
+      );
+    } catch (error) {
+      logWithTimestamp(`[${requestId}] Error generating response:`, error);
+      return new Response(
+        JSON.stringify({ error: 'Failed to generate response' }),
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 200
+        }
+      );
+    }
+  } catch (error) {
+    logWithTimestamp(`[${requestId}] Error processing request:`, error);
+    return new Response(
+      JSON.stringify({ error: 'Failed to process request' }),
+      { 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200
+      }
+    );
+  }
+});
