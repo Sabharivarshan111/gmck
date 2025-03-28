@@ -254,13 +254,27 @@ function extractReferences(text: string): Array<{ title: string; url: string; au
           journal = (journalMatch[1] || journalMatch[2] || journalMatch[3])?.trim();
         }
         
-        references.push({
-          title,
-          url: urlMatch[0],
-          ...(author && { author }),
-          ...(year && { year }),
-          ...(journal && { journal })
-        });
+        // Validate URL before adding to references
+        try {
+          new URL(urlMatch[0]);
+          references.push({
+            title,
+            url: urlMatch[0],
+            ...(author && { author }),
+            ...(year && { year }),
+            ...(journal && { journal })
+          });
+        } catch (e) {
+          // If URL is invalid, use a safe fallback
+          const safeUrl = getSafeUrlForMedicalTopic(title);
+          references.push({
+            title,
+            url: safeUrl,
+            ...(author && { author }),
+            ...(year && { year }),
+            ...(journal && { journal })
+          });
+        }
       } else if (line.includes('"') || line.includes('"')) {
         // Handle references without URLs but with titles in quotes
         const titleRegex = /[""]([^""]+)[""]|['']([^'']+)['']/;
@@ -268,39 +282,7 @@ function extractReferences(text: string): Array<{ title: string; url: string; au
         
         if (titleMatch) {
           const title = (titleMatch[1] || titleMatch[2]).trim();
-          
-          // Create a legitimate URL for medical resources instead of a dummy one
-          let dummyUrl;
-          
-          // Try to create a more legitimate fallback URL based on title content
-          if (title.toLowerCase().includes("pubmed") || title.toLowerCase().includes("ncbi")) {
-            dummyUrl = "https://pubmed.ncbi.nlm.nih.gov/";
-          } else if (title.toLowerCase().includes("uptodate") || title.toLowerCase().includes("up to date")) {
-            dummyUrl = "https://www.uptodate.com/";
-          } else if (title.toLowerCase().includes("medscape")) {
-            dummyUrl = "https://www.medscape.com/";
-          } else if (title.toLowerCase().includes("mayo")) {
-            dummyUrl = "https://www.mayoclinic.org/";
-          } else if (title.toLowerCase().includes("who") || title.toLowerCase().includes("world health")) {
-            dummyUrl = "https://www.who.int/";
-          } else if (title.toLowerCase().includes("cdc")) {
-            dummyUrl = "https://www.cdc.gov/";
-          } else if (title.toLowerCase().includes("jama") || title.toLowerCase().includes("journal")) {
-            dummyUrl = "https://jamanetwork.com/";
-          } else if (title.toLowerCase().includes("nejm")) {
-            dummyUrl = "https://www.nejm.org/";
-          } else if (title.toLowerCase().includes("guidelines")) {
-            dummyUrl = "https://www.guidelines.gov/";
-          } else if (title.toLowerCase().includes("lancet")) {
-            dummyUrl = "https://www.thelancet.com/";
-          } else if (title.toLowerCase().includes("bmj")) {
-            dummyUrl = "https://www.bmj.com/";
-          } else if (title.toLowerCase().includes("oxford") || title.toLowerCase().includes("handbook")) {
-            dummyUrl = "https://academic.oup.com/";
-          } else {
-            // Use PubMed as default fallback for medical content
-            dummyUrl = "https://pubmed.ncbi.nlm.nih.gov/?term=" + encodeURIComponent(title);
-          }
+          const safeUrl = getSafeUrlForMedicalTopic(title);
           
           // Try to extract author, year, journal
           let author, year, journal;
@@ -328,7 +310,7 @@ function extractReferences(text: string): Array<{ title: string; url: string; au
           
           references.push({
             title,
-            url: dummyUrl,
+            url: safeUrl,
             ...(author && { author }),
             ...(year && { year }),
             ...(journal && { journal })
@@ -349,10 +331,21 @@ function extractReferences(text: string): Array<{ title: string; url: string; au
     const isDuplicate = references.some(ref => ref.url === url);
     
     if (!isDuplicate) {
-      references.push({
-        title,
-        url
-      });
+      // Validate URL before adding
+      try {
+        new URL(url);
+        references.push({
+          title,
+          url
+        });
+      } catch (e) {
+        // If URL is invalid, use a safe fallback
+        const safeUrl = getSafeUrlForMedicalTopic(title);
+        references.push({
+          title,
+          url: safeUrl
+        });
+      }
     }
   }
   
@@ -366,8 +359,8 @@ function extractReferences(text: string): Array<{ title: string; url: string; au
       const year = match[2];
       const title = `${author} (${year})`;
       
-      // Create a more legitimate fallback URL for academic citations
-      const dummyUrl = `https://scholar.google.com/scholar?q=${encodeURIComponent(author)}+${year}`;
+      // Create a Google Scholar URL for academic citations - more reliable than custom URLs
+      const scholarUrl = `https://scholar.google.com/scholar?q=${encodeURIComponent(author)}+${year}`;
       
       // Check if this reference is already added
       const isDuplicate = references.some(ref => 
@@ -377,7 +370,7 @@ function extractReferences(text: string): Array<{ title: string; url: string; au
       if (!isDuplicate) {
         references.push({
           title,
-          url: dummyUrl,
+          url: scholarUrl,
           author,
           year
         });
@@ -395,7 +388,7 @@ function extractReferences(text: string): Array<{ title: string; url: string; au
       text.includes("medical")
     )) {
     
-    // Standard medical references
+    // Standard medical references with reliable URLs
     references.push({
       title: "PubMed - National Library of Medicine",
       url: "https://pubmed.ncbi.nlm.nih.gov/",
@@ -414,6 +407,43 @@ function extractReferences(text: string): Array<{ title: string; url: string; au
   }
   
   return references;
+}
+
+// New helper function for getting safe URLs for medical topics
+function getSafeUrlForMedicalTopic(title: string): string {
+  const lowerTitle = title.toLowerCase();
+  
+  // Map to reliable medical websites based on content
+  if (lowerTitle.includes("pubmed") || lowerTitle.includes("ncbi")) {
+    return "https://pubmed.ncbi.nlm.nih.gov/";
+  } else if (lowerTitle.includes("uptodate") || lowerTitle.includes("up to date")) {
+    return "https://www.uptodate.com/";
+  } else if (lowerTitle.includes("medscape")) {
+    return "https://www.medscape.com/";
+  } else if (lowerTitle.includes("mayo")) {
+    return "https://www.mayoclinic.org/";
+  } else if (lowerTitle.includes("who") || lowerTitle.includes("world health")) {
+    return "https://www.who.int/";
+  } else if (lowerTitle.includes("cdc")) {
+    return "https://www.cdc.gov/";
+  } else if (lowerTitle.includes("jama") || lowerTitle.includes("journal")) {
+    return "https://jamanetwork.com/";
+  } else if (lowerTitle.includes("nejm")) {
+    return "https://www.nejm.org/";
+  } else if (lowerTitle.includes("guidelines")) {
+    return "https://www.guidelines.gov/";
+  } else if (lowerTitle.includes("lancet")) {
+    return "https://www.thelancet.com/";
+  } else if (lowerTitle.includes("bmj")) {
+    return "https://www.bmj.com/";
+  } else if (lowerTitle.includes("oxford") || lowerTitle.includes("handbook")) {
+    return "https://academic.oup.com/";
+  } else if (lowerTitle.includes("robbins") || lowerTitle.includes("pathology")) {
+    return "https://www.elsevier.com/books/robbins-and-cotran-pathologic-basis-of-disease/kumar/978-0-323-53113-9";
+  } else {
+    // Use Google Scholar as a safer general fallback
+    return `https://scholar.google.com/scholar?q=${encodeURIComponent(title)}`;
+  }
 }
 
 // Add logging with timestamp

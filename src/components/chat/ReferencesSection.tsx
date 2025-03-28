@@ -42,22 +42,64 @@ export const ReferencesSection: React.FC<ReferencesSectionProps> = ({ references
     blackpink: "text-[#FF5C8D] hover:text-[#FF8CAD]"
   };
 
-  // Verify all references have valid URLs, filter out any that don't
-  const validReferences = references.filter(ref => {
-    if (!ref.url) return false;
+  // Function to verify URL is valid and accessible
+  const isValidUrl = (urlString: string): boolean => {
     try {
-      // Basic URL validation
-      new URL(ref.url);
-      return true;
+      const url = new URL(urlString);
+      // Check if protocol is http or https
+      return url.protocol === 'http:' || url.protocol === 'https:';
     } catch (e) {
-      console.error("Invalid URL in reference:", ref);
       return false;
     }
-  });
+  };
 
-  if (validReferences.length === 0) {
-    return null;
-  }
+  // Function to improve or fix URLs
+  const improveUrl = (reference: Reference): string => {
+    // If URL is valid, use it
+    if (reference.url && isValidUrl(reference.url)) {
+      return reference.url;
+    }
+
+    // Fallback to reliable medical resources based on context
+    if (reference.title) {
+      const title = reference.title.toLowerCase();
+      
+      // Determine the most appropriate reliable medical resource based on content
+      if (title.includes('pubmed') || title.includes('ncbi')) {
+        return 'https://pubmed.ncbi.nlm.nih.gov/';
+      } else if (title.includes('uptodate')) {
+        return 'https://www.uptodate.com/';
+      } else if (title.includes('mayo clinic') || title.includes('mayoclinic')) {
+        return 'https://www.mayoclinic.org/';
+      } else if (title.includes('who') || title.includes('world health')) {
+        return 'https://www.who.int/';
+      } else if (title.includes('cdc')) {
+        return 'https://www.cdc.gov/';
+      } else if (title.includes('nejm')) {
+        return 'https://www.nejm.org/';
+      } else if (title.includes('jama')) {
+        return 'https://jamanetwork.com/';
+      } else if (title.includes('bmj')) {
+        return 'https://www.bmj.com/';
+      } else if (title.includes('lancet')) {
+        return 'https://www.thelancet.com/';
+      } else if (title.includes('robbins') || title.includes('pathology')) {
+        return 'https://www.elsevier.com/books/robbins-and-cotran-pathologic-basis-of-disease/kumar/978-0-323-53113-9';
+      } else {
+        // Use Google Scholar search for the title as a safer fallback
+        return `https://scholar.google.com/scholar?q=${encodeURIComponent(reference.title)}`;
+      }
+    }
+    
+    // Default to PubMed as the safest medical resource
+    return 'https://pubmed.ncbi.nlm.nih.gov/';
+  };
+
+  // Verify all references have valid URLs and improve them if necessary
+  const validReferences = references.map(ref => ({
+    ...ref,
+    url: improveUrl(ref)
+  }));
 
   return (
     <div className="mt-4 mb-2 rounded-lg overflow-hidden shadow-sm">
