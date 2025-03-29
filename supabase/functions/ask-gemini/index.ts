@@ -612,7 +612,7 @@ serve(async (req) => {
     // Create a client instance
     const genAI = new GoogleGenerativeAI(apiKey);
     
-    // Use Gemini 2.0 Flash
+    // Use Gemini 2.0 Flash instead of Gemini Pro
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
     
     // Extract the actual question content without any prefix
@@ -846,7 +846,7 @@ ${referencesInstructions}`;
       
       logWithTimestamp(`[${requestId}] Sending request to Gemini with ${history.length} messages`);
       
-      // Start chat and get response
+      // Start chat and get response - Use gemini-1.5-flash
       const chat = model.startChat({
         safetySettings,
         history: history.slice(0, -1), // All but the last message

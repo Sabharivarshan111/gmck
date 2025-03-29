@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from "react";
 import { v4 as uuidv4 } from 'uuid';
 import { useToast } from "@/hooks/use-toast";
@@ -395,7 +396,7 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
       console.log("Request type:", { isTripleTap, isMCQRequest, isImportantQuestionsRequest, isNeedingClarification });
       
       try {
-        // Use Supabase edge function - using ask-gemini which supports all the advanced features
+        // Use Supabase edge function - using ask-gemini which now uses gemini-1.5-flash
         const { data, error } = await supabase.functions.invoke('ask-gemini', {
           body: { 
             prompt: question,
