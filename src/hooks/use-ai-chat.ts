@@ -408,8 +408,11 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
       });
       
       if (error) {
+        console.error("Supabase function error:", error);
         throw new Error(`Error calling AI service: ${error.message}`);
       }
+      
+      console.log("Response from Gemini:", data);
       
       if (data.isRateLimit) {
         setIsRateLimited(true);
@@ -423,6 +426,7 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
       }
       
       if (data.error) {
+        console.error("Gemini API error:", data.error);
         throw new Error(data.error);
       }
       
