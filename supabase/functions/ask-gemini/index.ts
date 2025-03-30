@@ -1,5 +1,5 @@
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { GoogleGenerativeAI } from "npm:@google/generative-ai@0.2.0";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -59,132 +59,16 @@ function isRateLimited(clientId: string): { limited: boolean; retryAfter?: numbe
   }
 }
 
-// Function to extract key concepts from a pathology question
-function extractKeyTopics(question: string): string[] {
-  const keyPathologyConcepts = [
-    "Philadelphia chromosome", "BCR-ABL", "translocation", "tyrosine kinase", 
-    "myeloproliferative", "leukemia", "lymphoma", "metastasis", "neoplasia",
-    "oncogene", "tumor suppressor", "apoptosis", "angiogenesis", "grading", "staging",
-    "differentiation", "mutation", "chromosomal abnormality", "fusion gene",
-    "histopathology", "immunohistochemistry", "molecular markers", "cytogenetics"
-  ];
-  
-  const extractedTopics = [];
-  
-  // Check if any key concepts are in the question
-  for (const concept of keyPathologyConcepts) {
-    if (question.toLowerCase().includes(concept.toLowerCase())) {
-      extractedTopics.push(concept);
-    }
+// Add logging with timestamp
+function logWithTimestamp(message: string, data?: any) {
+  const timestamp = new Date().toISOString();
+  console.log(`[${timestamp}] ${message}`);
+  if (data) {
+    console.log(data);
   }
-  
-  // Find disease-specific names (often capitalized terms)
-  const possibleDiseaseNames = question.match(/[A-Z][a-z]+([\s-][A-Z][a-z]+)*/g) || [];
-  for (const name of possibleDiseaseNames) {
-    if (name.length > 3 && !extractedTopics.includes(name)) {
-      extractedTopics.push(name);
-    }
-  }
-
-  // Extract specific disease names from the question (common pathology conditions)
-  const pathologyConditions = [
-    "Chronic Myeloid Leukemia", "CML", "Acute Leukemia", "Multiple Myeloma",
-    "Hodgkin Lymphoma", "Non-Hodgkin Lymphoma", "Sickle Cell Anemia",
-    "Thalassemia", "Iron Deficiency Anemia", "Megaloblastic Anemia",
-    "Hemophilia", "Thrombocytopenia", "Carcinoma", "Sarcoma", "Melanoma",
-    "Pneumonia", "Tuberculosis", "Emphysema", "Asthma", "Cirrhosis",
-    "Hepatitis", "Pancreatitis", "Gastritis", "Peptic Ulcer", "Ulcerative Colitis",
-    "Crohn Disease", "Glomerulonephritis", "Pyelonephritis", "Alzheimer Disease",
-    "Parkinson Disease", "Multiple Sclerosis", "Myocardial Infarction",
-    "Atherosclerosis", "Hypertension", "Rheumatic Heart Disease",
-    "Diabetes Mellitus", "Thyroiditis", "Graves Disease", "Addison Disease",
-    "Cushing Syndrome", "Osteoarthritis", "Rheumatoid Arthritis", "Osteoporosis",
-    "Osteomyelitis", "Basal Cell Carcinoma", "Squamous Cell Carcinoma"
-  ];
-  
-  for (const condition of pathologyConditions) {
-    if (question.toLowerCase().includes(condition.toLowerCase()) && 
-        !extractedTopics.includes(condition)) {
-      extractedTopics.push(condition);
-    }
-  }
-  
-  return extractedTopics;
 }
 
-// Function to determine if a question is a pathology topic
-function isPathologyTopic(question: string): boolean {
-  const pathologyKeywords = [
-    "pathology", "histology", "morphology", "histopathology", "cytology",
-    "neoplasm", "tumor", "carcinoma", "sarcoma", "leukemia", "lymphoma",
-    "inflammation", "infarct", "necrosis", "apoptosis", "metaplasia",
-    "dysplasia", "hyperplasia", "atrophy", "hypertrophy", "paper 1", "paper 2"
-  ];
-  
-  return pathologyKeywords.some(keyword => 
-    question.toLowerCase().includes(keyword.toLowerCase()));
-}
-
-// New function to determine the subject and topic from user input
-function extractSubjectAndTopic(prompt: string): { subject: string | null; topic: string | null } {
-  const text = prompt.toLowerCase();
-  
-  // Check for subjects
-  const subjects = [
-    { name: "pharmacology", aliases: ["pharma", "pharmacodynamics", "pharmacokinetics"] },
-    { name: "microbiology", aliases: ["micro", "bacteria", "virus", "fungi", "parasites"] },
-    { name: "pathology", aliases: ["patho", "histology", "cytology"] }
-  ];
-  
-  let detectedSubject = null;
-  let detectedTopic = null;
-  
-  // Try to detect subject
-  for (const subject of subjects) {
-    if (text.includes(subject.name) || subject.aliases.some(alias => text.includes(alias))) {
-      detectedSubject = subject.name;
-      break;
-    }
-  }
-  
-  // If we detected a subject, try to find a topic
-  if (detectedSubject) {
-    // Extract potential topics based on the detected subject
-    const topicPatterns = {
-      "pharmacology": [
-        "general", "peripheral nervous system", "autonomic nervous system", 
-        "central nervous system", "cardiovascular", "respiratory", "autacoids",
-        "hormones", "gastrointestinal", "anti-microbial", "neoplastic", "miscellaneous"
-      ],
-      "microbiology": [
-        "bacteria", "virus", "fungi", "parasites", "immunology", "sterilization",
-        "disinfection", "antibiotics", "vaccination"
-      ],
-      "pathology": [
-        "cell injury", "inflammation", "neoplasia", "hemodynamic", "genetic disorders",
-        "immunology", "infectious diseases", "environmental", "nutritional", 
-        "infancy", "childhood", "blood vessels", "heart", "hematopoietic", 
-        "respiratory", "kidney", "gastrointestinal", "liver", "pancreas", 
-        "male genital", "female genital", "breast", "endocrine", "skin", 
-        "bone", "joint", "soft tissue", "peripheral nerve", "central nervous system"
-      ]
-    };
-    
-    // Check if any topic is mentioned in the text
-    if (detectedSubject && topicPatterns[detectedSubject]) {
-      for (const topic of topicPatterns[detectedSubject]) {
-        if (text.includes(topic.toLowerCase())) {
-          detectedTopic = topic;
-          break;
-        }
-      }
-    }
-  }
-  
-  return { subject: detectedSubject, topic: detectedTopic };
-}
-
-// Improved function to extract references from Gemini response
+// Helper to extract references from response text
 function extractReferences(text: string): Array<{ title: string; url: string; author?: string; year?: string; journal?: string }> {
   const references = [];
   
@@ -230,30 +114,6 @@ function extractReferences(text: string): Array<{ title: string; url: string; au
           }
         }
         
-        // Extract author, year, journal if present
-        let author, year, journal;
-        
-        // Look for author patterns like "Author, A."
-        const authorRegex = /([A-Za-z\s]+,\s+[A-Z]\.(?:\s+[A-Z]\.)*)/;
-        const authorMatch = line.match(authorRegex);
-        if (authorMatch) {
-          author = authorMatch[1].trim();
-        }
-        
-        // Look for year patterns like (2023) or 2023
-        const yearRegex = /(?:\((\d{4})\))|(?:\s(\d{4})(?:\.|,|\s|$))/;
-        const yearMatch = line.match(yearRegex);
-        if (yearMatch) {
-          year = yearMatch[1] || yearMatch[2];
-        }
-        
-        // Look for journal names (italicized or followed by volume)
-        const journalRegex = /(?:_([^_]+)_)|(?:"([^"]+)")|(?:in\s+([A-Za-z\s]+)\s+\d+\(\d+\))/i;
-        const journalMatch = line.match(journalRegex);
-        if (journalMatch) {
-          journal = (journalMatch[1] || journalMatch[2] || journalMatch[3])?.trim();
-        }
-        
         // Clean and validate URL before adding to references
         let cleanedUrl = urlMatch[0];
         
@@ -272,244 +132,24 @@ function extractReferences(text: string): Array<{ title: string; url: string; au
           
           references.push({
             title,
-            url: cleanedUrl,
-            ...(author && { author }),
-            ...(year && { year }),
-            ...(journal && { journal })
+            url: cleanedUrl
           });
         } catch (e) {
           // If URL is invalid, use a safe fallback
-          const safeUrl = getSafeUrlForMedicalTopic(title);
+          const safeUrl = `https://www.google.com/search?q=${encodeURIComponent(title)}`;
           references.push({
             title,
-            url: safeUrl,
-            ...(author && { author }),
-            ...(year && { year }),
-            ...(journal && { journal })
-          });
-        }
-      } else if (line.includes('"') || line.includes('"')) {
-        // Handle references without URLs but with titles in quotes
-        const titleRegex = /[""]([^""]+)[""]|['']([^'']+)['']/;
-        const titleMatch = line.match(titleRegex);
-        
-        if (titleMatch) {
-          const title = (titleMatch[1] || titleMatch[2]).trim();
-          const safeUrl = getSafeUrlForMedicalTopic(title);
-          
-          // Try to extract author, year, journal
-          let author, year, journal;
-          
-          // Look for author at the beginning of the line
-          const authorRegex = /^([A-Za-z\s.]+)(?=,|\s+et\s+al)/i;
-          const authorMatch = line.match(authorRegex);
-          if (authorMatch) {
-            author = authorMatch[1].trim();
-          }
-          
-          // Look for year
-          const yearRegex = /\((\d{4})\)|,\s+(\d{4})\b/;
-          const yearMatch = line.match(yearRegex);
-          if (yearMatch) {
-            year = yearMatch[1] || yearMatch[2];
-          }
-          
-          // Look for journal
-          const journalRegex = /(?:In|in)\s+([^,]+)|([A-Za-z\s]+\sJournal)/i;
-          const journalMatch = line.match(journalRegex);
-          if (journalMatch) {
-            journal = (journalMatch[1] || journalMatch[2])?.trim();
-          }
-          
-          references.push({
-            title,
-            url: safeUrl,
-            ...(author && { author }),
-            ...(year && { year }),
-            ...(journal && { journal })
+            url: safeUrl
           });
         }
       }
     }
   }
   
-  // Look for inline citations with URLs
-  const urlRegex = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g;
-  let match;
-  while ((match = urlRegex.exec(text)) !== null) {
-    const title = match[1].trim();
-    let url = match[2];
-    
-    // Clean the URL - remove trailing punctuation
-    url = url.replace(/[.,;:?!)]+$/, '');
-    
-    // Check if this reference is already added
-    const isDuplicate = references.some(ref => ref.url === url);
-    
-    if (!isDuplicate) {
-      // Validate URL before adding
-      try {
-        // This will throw if URL is invalid
-        new URL(url);
-        
-        // Ensure URL has proper protocol
-        if (!url.startsWith('http://') && !url.startsWith('https://')) {
-          url = 'https://' + url;
-        }
-        
-        references.push({
-          title,
-          url
-        });
-      } catch (e) {
-        // If URL is invalid, use a safe fallback
-        const safeUrl = getSafeUrlForMedicalTopic(title);
-        references.push({
-          title,
-          url: safeUrl
-        });
-      }
-    }
-  }
-  
-  // Also look for standard citation patterns in the text (harvard style)
-  const citations = text.match(/\(([A-Za-z\s]+(?:et\s+al\.?)?,\s+\d{4}[a-z]?)\)/g) || [];
-  for (const citation of citations) {
-    // Extract name and year
-    const match = citation.match(/\(([A-Za-z\s]+(?:et\s+al\.?)?),\s+(\d{4}[a-z]?)\)/);
-    if (match) {
-      const author = match[1].trim();
-      const year = match[2];
-      const title = `${author} (${year})`;
-      
-      // Create a Google Scholar URL for academic citations - more reliable than custom URLs
-      const scholarUrl = `https://scholar.google.com/scholar?q=${encodeURIComponent(author)}+${year}`;
-      
-      // Check if this reference is already added
-      const isDuplicate = references.some(ref => 
-        (ref.author === author && ref.year === year) || ref.title === title
-      );
-      
-      if (!isDuplicate) {
-        references.push({
-          title,
-          url: scholarUrl,
-          author,
-          year
-        });
-      }
-    }
-  }
-  
-  // Add standard medical references if none found for medical topics
-  if (references.length === 0 && (
-      text.includes("pathology") || 
-      text.includes("diagnosis") || 
-      text.includes("treatment") || 
-      text.includes("symptoms") || 
-      text.includes("disease") ||
-      text.includes("medical")
-    )) {
-    
-    // Standard medical references with reliable URLs
-    references.push({
-      title: "PubMed - National Library of Medicine",
-      url: "https://pubmed.ncbi.nlm.nih.gov/",
-      journal: "NLM Database"
-    });
-    
-    if (text.includes("pathology") || text.includes("histology")) {
-      references.push({
-        title: "Robbins & Cotran Pathologic Basis of Disease",
-        url: "https://www.elsevier.com/books/robbins-and-cotran-pathologic-basis-of-disease/kumar/978-0-323-53113-9",
-        author: "Kumar V, Abbas AK, Aster JC",
-        year: "2020",
-        journal: "Elsevier"
-      });
-    }
-  }
-  
-  // Further validate all reference URLs to make sure they are correctly formatted
-  const validatedReferences = references.map(ref => {
-    try {
-      // Test URL validity and format
-      const urlObj = new URL(ref.url);
-      
-      // Ensure only http or https protocols
-      if (urlObj.protocol !== 'http:' && urlObj.protocol !== 'https:') {
-        throw new Error('Invalid protocol');
-      }
-      
-      return ref;
-    } catch (e) {
-      // If URL is invalid, replace with a safe alternative
-      return {
-        ...ref,
-        url: getSafeUrlForMedicalTopic(ref.title)
-      };
-    }
-  });
-  
-  return validatedReferences;
+  return references;
 }
 
-// New helper function for getting safe URLs for medical topics
-function getSafeUrlForMedicalTopic(title: string): string {
-  const lowerTitle = title.toLowerCase();
-  
-  // Map to reliable medical websites based on content
-  if (lowerTitle.includes("pubmed") || lowerTitle.includes("ncbi")) {
-    return "https://pubmed.ncbi.nlm.nih.gov/";
-  } else if (lowerTitle.includes("uptodate") || lowerTitle.includes("up to date")) {
-    return "https://www.uptodate.com/";
-  } else if (lowerTitle.includes("medscape")) {
-    return "https://www.medscape.com/";
-  } else if (lowerTitle.includes("mayo")) {
-    return "https://www.mayoclinic.org/";
-  } else if (lowerTitle.includes("who") || lowerTitle.includes("world health")) {
-    return "https://www.who.int/";
-  } else if (lowerTitle.includes("cdc")) {
-    return "https://www.cdc.gov/";
-  } else if (lowerTitle.includes("jama") || lowerTitle.includes("journal")) {
-    return "https://jamanetwork.com/";
-  } else if (lowerTitle.includes("nejm")) {
-    return "https://www.nejm.org/";
-  } else if (lowerTitle.includes("guidelines")) {
-    return "https://www.guidelines.gov/";
-  } else if (lowerTitle.includes("lancet")) {
-    return "https://www.thelancet.com/";
-  } else if (lowerTitle.includes("bmj")) {
-    return "https://www.bmj.com/";
-  } else if (lowerTitle.includes("oxford") || lowerTitle.includes("handbook")) {
-    return "https://academic.oup.com/";
-  } else if (lowerTitle.includes("robbins") || lowerTitle.includes("pathology")) {
-    return "https://www.elsevier.com/books/robbins-and-cotran-pathologic-basis-of-disease/kumar/978-0-323-53113-9";
-  } else {
-    // Use Google Scholar as a safer general fallback
-    return `https://scholar.google.com/scholar?q=${encodeURIComponent(title)}`;
-  }
-}
-
-// Add logging with timestamp
-function logWithTimestamp(message: string, data?: any) {
-  const timestamp = new Date().toISOString();
-  console.log(`[${timestamp}] ${message}`);
-  if (data) {
-    console.log(data);
-  }
-}
-
-// Helper function to check if a prompt is requesting MCQs
-function isMCQRequest(prompt: string): boolean {
-  return /generate\s+(?:10|ten)\s+mcqs?|create\s+(?:10|ten)\s+mcqs?|make\s+(?:10|ten)\s+mcqs?|ten\s+mcqs?|10\s+mcqs?|generate\s+mcqs?/i.test(prompt);
-}
-
-// Helper function to check if a prompt is asking for important questions
-function isImportantQuestionsRequest(prompt: string): boolean {
-  return /important question|important topics|high yield|frequently asked|commonly asked|repeated questions/i.test(prompt);
-}
-
-// Process and clean up Gemini response text
+// Process and clean up response text
 function processResponseText(text: string): { cleanedText: string; references: Array<any> } {
   // Extract references from the text
   const references = extractReferences(text);
@@ -608,248 +248,136 @@ serve(async (req) => {
       );
     }
 
-    // Create a client instance
-    const genAI = new GoogleGenerativeAI(apiKey);
-    // Use Gemini 2.0 Flash
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-
-    // Extract the actual question content without any prefix
-    const actualQuestion = isTripleTap ? prompt.replace(/Triple-tapped:|triple-tapped:/i, "").trim() : prompt;
-    
     // Determine if we have a specialized request type
-    const isMCQsRequest = explicitMCQRequest || isMCQRequest(actualQuestion);
-    const isImportantQsRequest = explicitImportantQRequest || isImportantQuestionsRequest(actualQuestion);
-    const isPathologyQuestion = isPathologyTopic(actualQuestion);
-    const subjectInfo = extractSubjectAndTopic(actualQuestion);
-    
-    // For context-based questions, we need the conversation history
+    const isMCQsRequest = explicitMCQRequest || /generate\s+(?:10|ten)\s+mcqs?|create\s+(?:10|ten)\s+mcqs?|make\s+(?:10|ten)\s+mcqs?|ten\s+mcqs?|10\s+mcqs?|generate\s+mcqs?/i.test(prompt);
+    const isImportantQsRequest = explicitImportantQRequest || /important question|important topics|high yield|frequently asked|commonly asked|repeated questions/i.test(prompt);
     const needsConversationContext = conversationHistory.length > 0 && 
-                                    (isNeedingClarification || 
-                                     actualQuestion.toLowerCase().includes("i don't understand") || 
-                                     actualQuestion.toLowerCase().includes("can't understand") ||
-                                     actualQuestion.toLowerCase().includes("explain") ||
-                                     actualQuestion.toLowerCase().includes("similar") ||
-                                     actualQuestion.toLowerCase().includes("generate") ||
-                                     actualQuestion.toLowerCase().includes("more detail"));
+                                     (isNeedingClarification || 
+                                      prompt.toLowerCase().includes("i don't understand") || 
+                                      prompt.toLowerCase().includes("can't understand") ||
+                                      prompt.toLowerCase().includes("explain") ||
+                                      prompt.toLowerCase().includes("similar") ||
+                                      prompt.toLowerCase().includes("generate") ||
+                                      prompt.toLowerCase().includes("more detail"));
     
     // Create a targeted system prompt based on the request type
     let systemPrompt = "";
-    let generationConfig = {
-      temperature: 0.7,
-      topP: 0.8,
-      topK: 40,
-      maxOutputTokens: 2000, // Increase for more detailed responses
-    };
+    const timeoutMs = 30000; // 30 seconds timeout
     
-    // Add to all system prompts to include references and sources
-    const referencesInstructions = `
-    IMPORTANT: After providing your response, include a "References:" section with 2-5 relevant sources for the information. 
-    Format each reference with a title and a CORRECTLY FORMATTED full URL (starting with http:// or https://).
-    Example format:
-    References:
-    1. Mayo Clinic - Anemia: https://www.mayoclinic.org/diseases-conditions/anemia/symptoms-causes/syc-20351360
-    2. National Heart, Lung, and Blood Institute: https://www.nhlbi.nih.gov/health/anemia
-
-    For medical topics, cite reputable sources like academic journals, medical textbooks, or official health organizations.
-    `;
+    // Default system prompt
+    systemPrompt = `You are ACEV, a helpful and knowledgeable medical assistant. Provide concise, accurate medical information. For medical emergencies, always advise seeking immediate professional help. Your responses should be compassionate, clear, and based on established medical knowledge.
     
-    // If requesting MCQs
-    if (isMCQsRequest) {
-      systemPrompt = `You are ACEV, a highly specialized medical AI assistant. The user has requested you to generate 10 high-quality multiple choice questions (MCQs) in the style of NEET PG or USMLE exams.
-
-Please generate EXACTLY 10 MCQs based on ${needsConversationContext ? "the previous conversation context" : "the user's request"}. 
-
-Each MCQ should:
-1. Be clinically relevant
-2. Test application of knowledge rather than mere recall
-3. Have 4 options (A, B, C, D) with one correct answer
-4. Include a brief explanation immediately after each question's answer (not at the end of all questions)
-
-The MCQs should follow this exact format for each question:
-
-Question 1: [Question text]
-A) [Option A]
-B) [Option B]
-C) [Option C]
-D) [Option D]
-Answer: [Correct option letter]
-Explanation: [Brief explanation]
-
-Question 2: [Question text]
-...and so on.
-
-IMPORTANT:
-- Generate EXACTLY 5 case-based scenarios and 5 direct knowledge questions
-- Place the answer and explanation immediately after each question, not grouped at the end
-- Make the questions varied in difficulty and cover different aspects of the topic
-- Follow NEET PG/USMLE style format and complexity
-- Make sure all questions are accurate and properly formatted
-
-${referencesInstructions}`;
-
-      // Adjust generation parameters for MCQs
-      generationConfig.temperature = 0.8; // More creative
-      generationConfig.maxOutputTokens = 4000; // Longer for 10 MCQs
-    }
-    // If asking for important questions by subject
-    else if (isImportantQsRequest) {
-      const { subject, topic } = subjectInfo;
-      
-      systemPrompt = `You are ACEV, a specialized medical AI assistant. The user is asking about important questions or high-yield topics for ${subject || "medical"} exams${topic ? ` specifically about ${topic}` : ""}.
-
-${subject ? 
-`Please provide a comprehensive list of the most important and frequently tested questions in ${subject}${topic ? ` on the topic of ${topic}` : ""} that appear in medical entrance exams like NEET PG and USMLE.
-
-Organize your response in this format:
-1. First list ESSAY-TYPE QUESTIONS (longer answer questions) in order of frequency/importance
-2. Then list SHORT NOTES QUESTIONS in order of frequency/importance
-
-For each question, include:
-- The question text
-- An indicator of how frequently it appears (*** for very frequent, ** for moderately frequent, * for occasionally asked)` : 
-`Please ask the user to specify which medical subject they are interested in (Pharmacology, Microbiology, or Pathology), and if possible, which specific topic within that subject. This will help me provide more targeted and relevant information.`}
-
-Make your response concise, well-structured, and easy to read. Focus on high-yield information that will be most valuable for exam preparation.
-
-${referencesInstructions}`;
-
-      // Adjust generation parameters for question lists
-      generationConfig.temperature = 0.3; // More factual
-      generationConfig.maxOutputTokens = 4000; // Longer for comprehensive lists
-    }
-    // If triple-tapped for a pathology question
-    else if (isTripleTap && isPathologyQuestion) {
-      const keyTopics = extractKeyTopics(actualQuestion);
-      let topicList = keyTopics.length > 0 ? 
-        `Important concepts to address: ${keyTopics.join(", ")}` : 
-        "Identify and address key pathology concepts in the question";
-        
-      systemPrompt = `You are ACEV, a highly specialized medical AI assistant focused on providing detailed pathology explanations for medical students. 
-      A student has specifically asked about "${actualQuestion}". 
-      ${topicList}
-      
-      Please provide a comprehensive yet structured explanation of this pathology topic, based primarily on the Robbins Pathology textbook, covering:
-      
-      1. DEFINITION: Start with a clear, concise definition
-      2. EPIDEMIOLOGY: Brief demographic information if relevant
-      3. ETIOLOGY & PATHOGENESIS: The cause and detailed molecular/genetic mechanisms
-      4. MORPHOLOGY: Key gross and microscopic findings with specific details
-      5. CLINICAL FEATURES: Typical presentation and progression
-      6. DIAGNOSTIC WORKUP: Key tests and findings
-      7. TREATMENT OPTIONS: Current therapeutic approaches from first-line to advanced options
-      8. PROGNOSIS: Expected outcome with and without treatment
-      
-      For specific entities like "Philadelphia chromosome" or genetic markers, provide detailed descriptions of their mechanism, significance, and clinical relevance.
-      
-      Format your response with clear sections using bold headings and bullet points for key information. Be precise and detailed while maintaining readability.
-      
-      IMPORTANT: Always include detailed information about the TREATMENT OPTIONS, even if not explicitly asked. Medical students need to know the current therapeutic approaches from first-line to advanced options.
-      
-      ${referencesInstructions}`;
-    }
-    // If triple-tapped for a non-pathology question
-    else if (isTripleTap && !isPathologyQuestion) {
-      systemPrompt = `You are ACEV, a highly specialized medical AI assistant focused on providing detailed medical explanations. 
-      A student has specifically asked about "${actualQuestion}". 
-      
-      Please provide a comprehensive yet concise explanation of this medical topic, covering:
-      - Definition and key characteristics
-      - Clinical significance and relevance
-      - Pathophysiology or mechanism (if applicable)
-      - Diagnostic approach
-      - Treatment options and management
-      - Important facts for medical exams
-      
-      Format your response with clear sections and bullet points where appropriate. Be detailed and specific.
-      
-      ${referencesInstructions}`;
-    }
-    // If the user is asking for clarification or following up on a previous response
-    else if (needsConversationContext) {
-      systemPrompt = `You are ACEV, a medical AI assistant. The user is asking for clarification or more information about something discussed in your previous conversation.
-
-Please carefully examine the conversation history and respond specifically to the user's question: "${actualQuestion}"
-
-If they are asking you to explain a specific concept or line from your previous answer, provide a more detailed and simplified explanation.
-
-If they are asking for similar questions or examples, provide additional questions that are similar to what was discussed before, including both case-based and knowledge-based questions in the style of NEET PG/USMLE exams.
-
-If they explicitly ask for specific type of content (like "generate similar questions"), prioritize that request and deliver exactly what they've asked for.
-
-Keep your response focused, clear, and helpful. Use examples and analogies where appropriate to aid understanding.
-
-${referencesInstructions}`;
-
-      // Adjust generation parameters for clarification
-      generationConfig.temperature = 0.4; // More factual for explanations
-      generationConfig.maxOutputTokens = 3000; // Medium length
-    }
-    // For regular chat questions
-    else {
-      systemPrompt = `You are ACEV, a helpful and knowledgeable medical assistant. Provide concise, accurate medical information. For medical emergencies, always advise seeking immediate professional help. Your responses should be compassionate, clear, and based on established medical knowledge. Never mention that you're powered by Gemini.
-      
-      ${referencesInstructions}`;
-    }
+    After providing your response, include a "References:" section with 2-5 relevant sources for the information.`;
     
-    logWithTimestamp(`[${requestId}] Request type: ${isMCQsRequest ? "MCQs" : isImportantQsRequest ? "Important Questions" : isTripleTap ? "Triple-tap" : needsConversationContext ? "Contextual" : "Regular"}`, { 
-      isMCQsRequest, 
-      isImportantQsRequest, 
-      isTripleTap, 
-      needsConversationContext, 
-      subjectInfo 
+    // Direct API call to Gemini 2.0 Flash
+    const response = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-goog-api-key": apiKey,
+      },
+      body: JSON.stringify({
+        contents: [
+          {
+            role: "user",
+            parts: [{ text: systemPrompt }]
+          },
+          {
+            role: "model",
+            parts: [{ text: "I understand. I'll act as ACEV, a medical assistant providing helpful, accurate information while prioritizing patient safety." }]
+          },
+          {
+            role: "user",
+            parts: [{ text: prompt }]
+          }
+        ],
+        generationConfig: {
+          temperature: 0.7,
+          topP: 0.95,
+          topK: 40,
+          maxOutputTokens: 4000,
+        },
+        safetySettings: [
+          {
+            category: "HARM_CATEGORY_HATE_SPEECH",
+            threshold: "BLOCK_MEDIUM_AND_ABOVE"
+          },
+          {
+            category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+            threshold: "BLOCK_MEDIUM_AND_ABOVE"
+          },
+          {
+            category: "HARM_CATEGORY_DANGEROUS_CONTENT",
+            threshold: "BLOCK_MEDIUM_AND_ABOVE"
+          },
+          {
+            category: "HARM_CATEGORY_HARASSMENT",
+            threshold: "BLOCK_MEDIUM_AND_ABOVE"
+          }
+        ]
+      }),
+      signal: AbortSignal.timeout(timeoutMs)
     });
-    
-    try {
-      // Increased timeout for Gemini requests
-      const timeoutMs = 30000; // 30 seconds timeout
-      
-      // Build conversation messages with history if needed
-      const messages = [];
-      
-      // Add system prompt
-      messages.push({ role: "user", parts: [{ text: systemPrompt }] });
-      messages.push({ role: "model", parts: [{ text: "I understand. I'll act as ACEV, a medical assistant providing helpful, accurate information while prioritizing patient safety." }] });
-      
-      // Add conversation history if needed for context
-      if (needsConversationContext && conversationHistory.length > 0) {
-        // Only include up to the last 10 messages to avoid context window issues
-        const recentHistory = conversationHistory.slice(-10);
-        
-        logWithTimestamp(`[${requestId}] Including ${recentHistory.length} messages from conversation history`);
 
-        for (const message of recentHistory) {
-          messages.push({ role: "user", parts: [{ text: message.parts[0].text }] });
-        }
-      }
-      
-      // Send the messages to Gemini
-      const response = await model.generate(messages, { timeoutMs });
-      
-      // Extract cleaned text and references from the response
-      const { cleanedText, references } = processResponseText(response.text);
-      
-      // Return the cleaned text and references
+    if (!response.ok) {
+      const errorData = await response.text();
+      logWithTimestamp(`[${requestId}] Gemini API error (${response.status}): ${errorData}`);
       return new Response(
-        JSON.stringify({ cleanedText, references }),
-        { 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 200
-        }
-      );
-    } catch (error) {
-      logWithTimestamp(`[${requestId}] Error generating response:`, error);
-      return new Response(
-        JSON.stringify({ error: 'Failed to generate response' }),
+        JSON.stringify({ 
+          error: `Error from Gemini API: ${response.status} ${response.statusText}`, 
+          details: errorData 
+        }),
         { 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
           status: 200
         }
       );
     }
+
+    const data = await response.json();
+    
+    if (!data.candidates || data.candidates.length === 0) {
+      logWithTimestamp(`[${requestId}] No candidates returned from Gemini`);
+      return new Response(
+        JSON.stringify({ error: "No response generated from Gemini" }),
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 200
+        }
+      );
+    }
+
+    // Extract the response text
+    const responseText = data.candidates[0].content.parts[0].text;
+    
+    // Process the response to extract references and clean the text
+    const { cleanedText, references } = processResponseText(responseText);
+    
+    logWithTimestamp(`[${requestId}] Successfully generated response (length: ${cleanedText.length})`);
+    if (references.length > 0) {
+      logWithTimestamp(`[${requestId}] Extracted ${references.length} references`);
+    }
+
+    // Return the response with references
+    return new Response(
+      JSON.stringify({ 
+        response: cleanedText,
+        references,
+        queueStats: {
+          isQueueActive: false,
+          queueLength: 0,
+          estimatedWaitTime: 0,
+        }
+      }),
+      { 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200
+      }
+    );
   } catch (error) {
     logWithTimestamp(`[${requestId}] Error processing request:`, error);
     return new Response(
-      JSON.stringify({ error: 'Failed to process request' }),
+      JSON.stringify({ error: 'Failed to process request: ' + error.message }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200

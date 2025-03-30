@@ -10,6 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Type } from "lucide-react";
+import { useTheme } from "./ThemeProvider";
 
 const MIN_FONT_SIZE = 12;
 const MAX_FONT_SIZE = 24;
@@ -19,6 +20,7 @@ const FONT_SIZE_STORAGE_KEY = "app-font-size";
 export function FontSizeToggle() {
   const [isOpen, setIsOpen] = useState(false);
   const [fontSize, setFontSize] = useState(DEFAULT_FONT_SIZE);
+  const { theme } = useTheme();
   const { toast } = useToast();
 
   useEffect(() => {
@@ -69,20 +71,32 @@ export function FontSizeToggle() {
     });
   };
 
+  const buttonStyle = theme === "blackpink" 
+    ? "bg-black border-[#FF5C8D]/30 hover:bg-black/80" 
+    : theme === "dark"
+      ? "bg-gray-800/60 border-gray-700/60 hover:bg-gray-700/60"
+      : "bg-white border-gray-200 hover:bg-gray-100";
+
+  const textStyle = theme === "blackpink" 
+    ? "text-[#FF5C8D]" 
+    : theme === "dark"
+      ? "text-white"
+      : "text-gray-900";
+
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
         <Button 
           variant="outline" 
           size="icon"
-          className="w-9 h-9 rounded-full bg-white border border-gray-200 hover:bg-gray-100 dark:bg-gray-800/60 dark:border-gray-700/60 dark:hover:bg-gray-700/60"
+          className={`w-9 h-9 rounded-full ${buttonStyle}`}
         >
-          <Type className="h-4 w-4 text-gray-900 dark:text-white" />
+          <Type className={`h-4 w-4 ${textStyle}`} />
           <span className="sr-only">Adjust font size</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="mt-2 w-64 p-4">
-        <div className="mb-4 text-sm font-medium">
+      <DropdownMenuContent align="end" className={`mt-2 w-64 p-4 ${theme === "blackpink" ? "bg-black border-[#FF5C8D]/30" : ""}`}>
+        <div className={`mb-4 text-sm font-medium ${theme === "blackpink" ? "text-[#FF5C8D]" : ""}`}>
           Text Size: {fontSize}px
         </div>
         
@@ -98,19 +112,19 @@ export function FontSizeToggle() {
         <div className="grid grid-cols-3 gap-2">
           <DropdownMenuItem 
             onClick={() => handlePresetClick(14)}
-            className="flex justify-center"
+            className={`flex justify-center ${theme === "blackpink" ? "text-[#FF5C8D] hover:bg-black/60" : ""}`}
           >
             Small
           </DropdownMenuItem>
           <DropdownMenuItem 
             onClick={() => handlePresetClick(16)}
-            className="flex justify-center"
+            className={`flex justify-center ${theme === "blackpink" ? "text-[#FF5C8D] hover:bg-black/60" : ""}`}
           >
             Medium
           </DropdownMenuItem>
           <DropdownMenuItem 
             onClick={() => handlePresetClick(20)}
-            className="flex justify-center"
+            className={`flex justify-center ${theme === "blackpink" ? "text-[#FF5C8D] hover:bg-black/60" : ""}`}
           >
             Large
           </DropdownMenuItem>
