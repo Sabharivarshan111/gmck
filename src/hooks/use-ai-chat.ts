@@ -1,8 +1,7 @@
-
 import { useState, useEffect, useCallback } from "react";
 import { v4 as uuidv4 } from 'uuid';
 import { useToast } from "@/hooks/use-toast";
-import { ChatMessage, Reference } from "@/models/ChatMessage";
+import { ChatMessage } from "@/models/ChatMessage";
 import { supabase } from "@/integrations/supabase/client";
 import { QUESTION_BANK_DATA } from "@/data/questionBankData";
 
@@ -408,11 +407,8 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
       });
       
       if (error) {
-        console.error("Supabase function error:", error);
         throw new Error(`Error calling AI service: ${error.message}`);
       }
-      
-      console.log("Response from Gemini:", data);
       
       if (data.isRateLimit) {
         setIsRateLimited(true);
@@ -426,7 +422,6 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
       }
       
       if (data.error) {
-        console.error("Gemini API error:", data.error);
         throw new Error(data.error);
       }
       
@@ -434,19 +429,12 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
         setQueueStats(data.queueStats);
       }
       
-      // Create the AI message, now properly handling references from the API response
       const aiMessage: ChatMessage = {
         id: uuidv4(),
         role: 'assistant',
         content: data.response,
         timestamp: new Date(),
-        references: data.references || [], // Include references from Gemini response
       };
-      
-      // Log references to help with debugging
-      if (data.references && data.references.length > 0) {
-        console.log("References received:", data.references);
-      }
       
       setMessages(prevMessages => [...prevMessages, aiMessage]);
     } catch (error) {

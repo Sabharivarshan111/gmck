@@ -32,29 +32,10 @@ export const ChatMessageItem = ({ message, onCopy }: ChatMessageItemProps) => {
           );
         }
         
-        // Format markdown links with proper validation
+        // Format markdown links
         if (part.includes('[') && part.includes(']') && part.includes('(') && part.includes(')')) {
-          // Replace markdown links with proper HTML links, ensuring URLs are valid
           const linkFormatted = part.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, text, url) => {
-            // Clean the URL from any trailing punctuation
-            const cleanUrl = url.replace(/[.,;:!?]+$/, '');
-            
-            // Ensure URL is properly formatted
-            let validUrl = cleanUrl;
-            try {
-              // Check if URL has protocol
-              if (!cleanUrl.match(/^https?:\/\//i)) {
-                validUrl = 'https://' + cleanUrl;
-              }
-              
-              // Test URL validity
-              new URL(validUrl);
-            } catch (e) {
-              // If invalid, use Google search as fallback
-              validUrl = `https://www.google.com/search?q=${encodeURIComponent(text)}`;
-            }
-            
-            return `<a href="${validUrl}" target="_blank" rel="noopener noreferrer" class="text-blue-400 underline">${text}</a>`;
+            return `<a href="${url}" target="_blank" class="text-blue-400 underline">${text}</a>`;
           });
           
           return <span key={index} dangerouslySetInnerHTML={{ __html: linkFormatted }} />;
