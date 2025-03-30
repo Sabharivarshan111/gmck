@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useState } from 'react';
 import { ChevronDown, ChevronUp, ExternalLink } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { useTheme } from '@/components/theme/ThemeProvider';
@@ -11,61 +12,6 @@ interface ReferencesSectionProps {
 export const ReferencesSection: React.FC<ReferencesSectionProps> = ({ references }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { theme } = useTheme();
-  const [processedReferences, setProcessedReferences] = useState<Array<Reference & { originalUrl?: string }>>([]);
-
-  useEffect(() => {
-    if (!references || references.length === 0) {
-      return;
-    }
-
-    // Process references and log transformations
-    const processed = references.map(reference => {
-      const originalUrl = reference.url;
-      let validatedUrl = reference.url;
-      
-      console.log('Processing reference:', {
-        title: reference.title,
-        originalUrl
-      });
-      
-      // Ensure the URL is valid and clean
-      try {
-        if (reference.url) {
-          validatedUrl = cleanAndValidateUrl(reference.url);
-          
-          // Log URL transformation
-          console.log('URL transformation:', {
-            title: reference.title,
-            originalUrl,
-            cleanedUrl: validatedUrl,
-            different: originalUrl !== validatedUrl
-          });
-        } else {
-          validatedUrl = getSafeUrlForMedicalTopic(reference.title);
-          console.log('Generated fallback URL:', {
-            title: reference.title,
-            fallbackUrl: validatedUrl
-          });
-        }
-      } catch (e) {
-        validatedUrl = getSafeUrlForMedicalTopic(reference.title);
-        console.log('Error processing URL:', {
-          title: reference.title,
-          originalUrl,
-          error: String(e),
-          fallbackUrl: validatedUrl
-        });
-      }
-      
-      return {
-        ...reference,
-        url: validatedUrl,
-        originalUrl
-      };
-    });
-    
-    setProcessedReferences(processed);
-  }, [references]);
 
   if (!references || references.length === 0) {
     return null;
@@ -98,41 +44,30 @@ export const ReferencesSection: React.FC<ReferencesSectionProps> = ({ references
 
   // Function to clean and validate URLs
   const cleanAndValidateUrl = (url: string): string => {
-    console.log('Cleaning URL:', url);
-    
     // Remove any markdown formatting if present
     let cleanedUrl = url.replace(/[\[\]()]/g, '');
-    console.log('After markdown cleaning:', cleanedUrl);
     
     // Remove any trailing punctuation
     cleanedUrl = cleanedUrl.replace(/[.,;:?!]$/, '');
-    console.log('After trailing punctuation removal:', cleanedUrl);
     
     try {
       // Check if the URL has a protocol, if not add https
       if (!cleanedUrl.match(/^https?:\/\//i)) {
         cleanedUrl = 'https://' + cleanedUrl;
-        console.log('Added https protocol:', cleanedUrl);
       }
       
       // Try to create a URL object to validate
       const urlObj = new URL(cleanedUrl);
-      console.log('Valid URL object created:', urlObj.href);
       
       // Ensure only http or https protocols
       if (urlObj.protocol !== 'http:' && urlObj.protocol !== 'https:') {
-        console.log('Invalid protocol detected:', urlObj.protocol);
         throw new Error('Invalid protocol');
       }
       
-      // Keep full URL path including query parameters and hash
-      return urlObj.href;
+      return cleanedUrl;
     } catch (e) {
       // If there's any issue with the URL, fall back to a Google search for the title
-      console.log('URL validation error:', String(e));
-      const fallbackUrl = getSafeUrlForMedicalTopic(url);
-      console.log('Using fallback URL:', fallbackUrl);
-      return fallbackUrl;
+      return getSafeUrlForMedicalTopic(url);
     }
   };
   
@@ -169,13 +104,26 @@ export const ReferencesSection: React.FC<ReferencesSectionProps> = ({ references
     }
   };
 
-  const handleLinkClick = (url: string, originalUrl: string | undefined, title: string) => {
-    console.log('Link clicked:', {
-      title,
-      originalUrl,
-      processedUrl: url
-    });
-  };
+  // Process references to ensure all have valid URLs
+  const validReferences = references.map(reference => {
+    let validatedUrl = reference.url;
+    
+    // Ensure the URL is valid and clean
+    try {
+      if (reference.url) {
+        validatedUrl = cleanAndValidateUrl(reference.url);
+      } else {
+        validatedUrl = getSafeUrlForMedicalTopic(reference.title);
+      }
+    } catch (e) {
+      validatedUrl = getSafeUrlForMedicalTopic(reference.title);
+    }
+    
+    return {
+      ...reference,
+      url: validatedUrl
+    };
+  });
 
   return (
     <div className="mt-4 mb-2 rounded-lg overflow-hidden shadow-sm">
@@ -193,12 +141,12 @@ export const ReferencesSection: React.FC<ReferencesSectionProps> = ({ references
             )}
             <span>Sources and related content</span>
           </div>
-          <span className="text-xs text-gray-500">{processedReferences.length} source{processedReferences.length > 1 ? 's' : ''}</span>
+          <span className="text-xs text-gray-500">{validReferences.length} source{validReferences.length > 1 ? 's' : ''}</span>
         </CollapsibleTrigger>
         
         <CollapsibleContent className={`p-3 ${contentStyles[theme]} border-t ${theme === 'blackpink' ? 'border-[#FF5C8D]/30' : theme === 'dark' ? 'border-gray-700' : 'border-gray-200'}`}>
           <ul className="space-y-2">
-            {processedReferences.map((reference, index) => (
+            {validReferences.map((reference, index) => (
               <li key={index} className="pl-2 border-l-2 border-opacity-50 border-blue-400">
                 <div className="flex flex-col">
                   <a
@@ -206,7 +154,6 @@ export const ReferencesSection: React.FC<ReferencesSectionProps> = ({ references
                     target="_blank"
                     rel="noopener noreferrer"
                     className={`${linkStyles[theme]} font-medium flex items-center hover:underline`}
-                    onClick={() => handleLinkClick(reference.url, reference.originalUrl, reference.title)}
                   >
                     {reference.title}
                     <ExternalLink className="h-3 w-3 ml-1 inline-block" />

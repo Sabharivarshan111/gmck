@@ -1,6 +1,5 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "npm:@google/generative-ai@0.2.0";
+import { GoogleGenerativeAI } from "npm:@google/generative-ai@0.2.0";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -126,7 +125,7 @@ function isPathologyTopic(question: string): boolean {
     question.toLowerCase().includes(keyword.toLowerCase()));
 }
 
-// Function to determine the subject and topic from user input
+// New function to determine the subject and topic from user input
 function extractSubjectAndTopic(prompt: string): { subject: string | null; topic: string | null } {
   const text = prompt.toLowerCase();
   
@@ -377,7 +376,7 @@ function extractReferences(text: string): Array<{ title: string; url: string; au
   const citations = text.match(/\(([A-Za-z\s]+(?:et\s+al\.?)?,\s+\d{4}[a-z]?)\)/g) || [];
   for (const citation of citations) {
     // Extract name and year
-    const match = citation.match(/\(([A-Za-z\s]+(?:et\s+al\.?)?,\s+(\d{4}[a-z]?))\)/);
+    const match = citation.match(/\(([A-Za-z\s]+(?:et\s+al\.?)?),\s+(\d{4}[a-z]?)\)/);
     if (match) {
       const author = match[1].trim();
       const year = match[2];
@@ -611,10 +610,9 @@ serve(async (req) => {
 
     // Create a client instance
     const genAI = new GoogleGenerativeAI(apiKey);
-    
-    // Use Gemini 2.0 Flash instead of Gemini Pro
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-    
+    // Use Gemini 2.0 Flash
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+
     // Extract the actual question content without any prefix
     const actualQuestion = isTripleTap ? prompt.replace(/Triple-tapped:|triple-tapped:/i, "").trim() : prompt;
     
@@ -636,6 +634,12 @@ serve(async (req) => {
     
     // Create a targeted system prompt based on the request type
     let systemPrompt = "";
+    let generationConfig = {
+      temperature: 0.7,
+      topP: 0.8,
+      topK: 40,
+      maxOutputTokens: 2000, // Increase for more detailed responses
+    };
     
     // Add to all system prompts to include references and sources
     const referencesInstructions = `
@@ -648,26 +652,6 @@ serve(async (req) => {
 
     For medical topics, cite reputable sources like academic journals, medical textbooks, or official health organizations.
     `;
-    
-    // Set safety settings to allow medical content
-    const safetySettings = [
-      {
-        category: HarmCategory.HARM_CATEGORY_HARASSMENT,
-        threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH,
-      },
-      {
-        category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
-        threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH,
-      },
-      {
-        category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
-        threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH,
-      },
-      {
-        category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
-        threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH,
-      },
-    ];
     
     // If requesting MCQs
     if (isMCQsRequest) {
@@ -702,6 +686,10 @@ IMPORTANT:
 - Make sure all questions are accurate and properly formatted
 
 ${referencesInstructions}`;
+
+      // Adjust generation parameters for MCQs
+      generationConfig.temperature = 0.8; // More creative
+      generationConfig.maxOutputTokens = 4000; // Longer for 10 MCQs
     }
     // If asking for important questions by subject
     else if (isImportantQsRequest) {
@@ -724,6 +712,10 @@ For each question, include:
 Make your response concise, well-structured, and easy to read. Focus on high-yield information that will be most valuable for exam preparation.
 
 ${referencesInstructions}`;
+
+      // Adjust generation parameters for question lists
+      generationConfig.temperature = 0.3; // More factual
+      generationConfig.maxOutputTokens = 4000; // Longer for comprehensive lists
     }
     // If triple-tapped for a pathology question
     else if (isTripleTap && isPathologyQuestion) {
@@ -787,6 +779,10 @@ If they explicitly ask for specific type of content (like "generate similar ques
 Keep your response focused, clear, and helpful. Use examples and analogies where appropriate to aid understanding.
 
 ${referencesInstructions}`;
+
+      // Adjust generation parameters for clarification
+      generationConfig.temperature = 0.4; // More factual for explanations
+      generationConfig.maxOutputTokens = 3000; // Medium length
     }
     // For regular chat questions
     else {
@@ -807,86 +803,43 @@ ${referencesInstructions}`;
       // Increased timeout for Gemini requests
       const timeoutMs = 30000; // 30 seconds timeout
       
-      // Convert conversation history to format Gemini expects
-      const history = [];
+      // Build conversation messages with history if needed
+      const messages = [];
       
-      // First, add the system prompt
-      history.push({
-        role: "user", 
-        parts: [{ text: systemPrompt }]
-      });
+      // Add system prompt
+      messages.push({ role: "user", parts: [{ text: systemPrompt }] });
+      messages.push({ role: "model", parts: [{ text: "I understand. I'll act as ACEV, a medical assistant providing helpful, accurate information while prioritizing patient safety." }] });
       
-      history.push({
-        role: "model", 
-        parts: [{ text: "I understand. I'll act as ACEV, a medical assistant providing helpful, accurate information while prioritizing patient safety." }]
-      });
-      
-      // Then add conversation history if needed
+      // Add conversation history if needed for context
       if (needsConversationContext && conversationHistory.length > 0) {
         // Only include up to the last 10 messages to avoid context window issues
-        const recentHistory = conversationHistory.slice(-8);
+        const recentHistory = conversationHistory.slice(-10);
         
         logWithTimestamp(`[${requestId}] Including ${recentHistory.length} messages from conversation history`);
-        
+
         for (const message of recentHistory) {
-          if (message.role && message.content) {
-            history.push({
-              role: message.role === "assistant" ? "model" : "user",
-              parts: [{ text: message.content }]
-            });
-          }
+          messages.push({ role: "user", parts: [{ text: message.parts[0].text }] });
         }
       }
       
-      // Add the current user question
-      history.push({
-        role: "user",
-        parts: [{ text: actualQuestion }]
-      });
+      // Send the messages to Gemini
+      const response = await model.generate(messages, { timeoutMs });
       
-      logWithTimestamp(`[${requestId}] Sending request to Gemini with ${history.length} messages`);
+      // Extract cleaned text and references from the response
+      const { cleanedText, references } = processResponseText(response.text);
       
-      // Start chat and get response - Use gemini-1.5-flash
-      const chat = model.startChat({
-        safetySettings,
-        history: history.slice(0, -1), // All but the last message
-      });
-      
-      const result = await chat.sendMessage(actualQuestion, { timeoutMs });
-      const response = result.response;
-      
-      if (!response || !response.text()) {
-        throw new Error("Empty response from Gemini");
-      }
-      
-      // Process the response text to extract references
-      const { cleanedText, references } = processResponseText(response.text());
-      
-      logWithTimestamp(`[${requestId}] Successfully generated response (length: ${cleanedText.length})`);
-      if (references.length > 0) {
-        logWithTimestamp(`[${requestId}] Extracted ${references.length} references`);
-      }
-      
-      // Return the response and references
+      // Return the cleaned text and references
       return new Response(
-        JSON.stringify({ 
-          response: cleanedText, 
-          references: references || []
-        }),
+        JSON.stringify({ cleanedText, references }),
         { 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
           status: 200
         }
       );
     } catch (error) {
-      const errorMessage = `Error: ${error.message || "Unknown error"}`;
       logWithTimestamp(`[${requestId}] Error generating response:`, error);
-      
       return new Response(
-        JSON.stringify({ 
-          error: errorMessage, 
-          errorDetails: String(error),
-        }),
+        JSON.stringify({ error: 'Failed to generate response' }),
         { 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
           status: 200
@@ -896,7 +849,7 @@ ${referencesInstructions}`;
   } catch (error) {
     logWithTimestamp(`[${requestId}] Error processing request:`, error);
     return new Response(
-      JSON.stringify({ error: 'Failed to process request: ' + String(error) }),
+      JSON.stringify({ error: 'Failed to process request' }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200
