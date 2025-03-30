@@ -1,10 +1,10 @@
 
 export interface Reference {
   title: string;
-  url: string;
-  author?: string;
-  year?: string;
+  authors: string;
   journal?: string;
+  year: string;
+  url?: string;
 }
 
 export interface ChatMessage {

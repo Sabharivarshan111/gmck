@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "npm:@google/generative-ai@0.2.0";
+import { GoogleGenerativeAI } from "npm:@google/generative-ai@0.2.0";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -125,7 +125,7 @@ function isPathologyTopic(question: string): boolean {
     question.toLowerCase().includes(keyword.toLowerCase()));
 }
 
-// Function to determine the subject and topic from user input
+// New function to determine the subject and topic from user input
 function extractSubjectAndTopic(prompt: string): { subject: string | null; topic: string | null } {
   const text = prompt.toLowerCase();
   
@@ -184,312 +184,6 @@ function extractSubjectAndTopic(prompt: string): { subject: string | null; topic
   return { subject: detectedSubject, topic: detectedTopic };
 }
 
-// Improved function to extract references from Gemini response
-function extractReferences(text: string): Array<{ title: string; url: string; author?: string; year?: string; journal?: string }> {
-  const references = [];
-  
-  // Look for References or Sources sections
-  const referencesSectionRegex = /(?:References|Sources|Further Reading|Citations):\s*(?:\n|$)([\s\S]*?)(?:$|(?:\n\n(?!-))|(?:\n(?=[A-Z][a-z]+:)))/i;
-  const referencesMatch = text.match(referencesSectionRegex);
-  
-  if (referencesMatch && referencesMatch[1]) {
-    // Extract the references section text
-    const referencesSection = referencesMatch[1].trim();
-    
-    // Remove the references section from the original response
-    text = text.replace(referencesSectionRegex, '');
-    
-    // Split by new lines for each reference
-    const referenceLines = referencesSection.split('\n').filter(line => line.trim());
-    
-    for (const line of referenceLines) {
-      // Try to extract URLs
-      const urlRegex = /(https?:\/\/[^\s]+)/g;
-      const urlMatch = line.match(urlRegex);
-      
-      if (urlMatch) {
-        // Extract title - assume everything before the URL is the title
-        let title = line.split(urlMatch[0])[0].trim();
-        
-        // Remove numbering (1., 2., etc.) from the beginning of the title
-        title = title.replace(/^\d+\.\s+/, '');
-        
-        // Remove markdown link formatting if present
-        title = title.replace(/\[(.*?)\]\(.*?\)/g, '$1');
-        
-        // If title ends with a colon or a dash, remove it
-        title = title.replace(/[:.-]$/, '').trim();
-        
-        // If title is empty, use the URL domain
-        if (!title) {
-          try {
-            const url = new URL(urlMatch[0]);
-            title = url.hostname.replace(/^www\./, '');
-          } catch {
-            title = "Reference link";
-          }
-        }
-        
-        // Extract author, year, journal if present
-        let author, year, journal;
-        
-        // Look for author patterns like "Author, A."
-        const authorRegex = /([A-Za-z\s]+,\s+[A-Z]\.(?:\s+[A-Z]\.)*)/;
-        const authorMatch = line.match(authorRegex);
-        if (authorMatch) {
-          author = authorMatch[1].trim();
-        }
-        
-        // Look for year patterns like (2023) or 2023
-        const yearRegex = /(?:\((\d{4})\))|(?:\s(\d{4})(?:\.|,|\s|$))/;
-        const yearMatch = line.match(yearRegex);
-        if (yearMatch) {
-          year = yearMatch[1] || yearMatch[2];
-        }
-        
-        // Look for journal names (italicized or followed by volume)
-        const journalRegex = /(?:_([^_]+)_)|(?:"([^"]+)")|(?:in\s+([A-Za-z\s]+)\s+\d+\(\d+\))/i;
-        const journalMatch = line.match(journalRegex);
-        if (journalMatch) {
-          journal = (journalMatch[1] || journalMatch[2] || journalMatch[3])?.trim();
-        }
-        
-        // Clean and validate URL before adding to references
-        let cleanedUrl = urlMatch[0];
-        
-        // Remove any trailing punctuation or parentheses from the URL
-        cleanedUrl = cleanedUrl.replace(/[.,;:?!)]+$/, '');
-        
-        // Validate the URL is properly formatted
-        try {
-          // This will throw if URL is invalid
-          new URL(cleanedUrl);
-          
-          // Double check the protocol is http or https
-          if (!cleanedUrl.startsWith('http://') && !cleanedUrl.startsWith('https://')) {
-            cleanedUrl = 'https://' + cleanedUrl;
-          }
-          
-          references.push({
-            title,
-            url: cleanedUrl,
-            ...(author && { author }),
-            ...(year && { year }),
-            ...(journal && { journal })
-          });
-        } catch (e) {
-          // If URL is invalid, use a safe fallback
-          const safeUrl = getSafeUrlForMedicalTopic(title);
-          references.push({
-            title,
-            url: safeUrl,
-            ...(author && { author }),
-            ...(year && { year }),
-            ...(journal && { journal })
-          });
-        }
-      } else if (line.includes('"') || line.includes('"')) {
-        // Handle references without URLs but with titles in quotes
-        const titleRegex = /[""]([^""]+)[""]|['']([^'']+)['']/;
-        const titleMatch = line.match(titleRegex);
-        
-        if (titleMatch) {
-          const title = (titleMatch[1] || titleMatch[2]).trim();
-          const safeUrl = getSafeUrlForMedicalTopic(title);
-          
-          // Try to extract author, year, journal
-          let author, year, journal;
-          
-          // Look for author at the beginning of the line
-          const authorRegex = /^([A-Za-z\s.]+)(?=,|\s+et\s+al)/i;
-          const authorMatch = line.match(authorRegex);
-          if (authorMatch) {
-            author = authorMatch[1].trim();
-          }
-          
-          // Look for year
-          const yearRegex = /\((\d{4})\)|,\s+(\d{4})\b/;
-          const yearMatch = line.match(yearRegex);
-          if (yearMatch) {
-            year = yearMatch[1] || yearMatch[2];
-          }
-          
-          // Look for journal
-          const journalRegex = /(?:In|in)\s+([^,]+)|([A-Za-z\s]+\sJournal)/i;
-          const journalMatch = line.match(journalRegex);
-          if (journalMatch) {
-            journal = (journalMatch[1] || journalMatch[2])?.trim();
-          }
-          
-          references.push({
-            title,
-            url: safeUrl,
-            ...(author && { author }),
-            ...(year && { year }),
-            ...(journal && { journal })
-          });
-        }
-      }
-    }
-  }
-  
-  // Look for inline citations with URLs
-  const urlRegex = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g;
-  let match;
-  while ((match = urlRegex.exec(text)) !== null) {
-    const title = match[1].trim();
-    let url = match[2];
-    
-    // Clean the URL - remove trailing punctuation
-    url = url.replace(/[.,;:?!)]+$/, '');
-    
-    // Check if this reference is already added
-    const isDuplicate = references.some(ref => ref.url === url);
-    
-    if (!isDuplicate) {
-      // Validate URL before adding
-      try {
-        // This will throw if URL is invalid
-        new URL(url);
-        
-        // Ensure URL has proper protocol
-        if (!url.startsWith('http://') && !url.startsWith('https://')) {
-          url = 'https://' + url;
-        }
-        
-        references.push({
-          title,
-          url
-        });
-      } catch (e) {
-        // If URL is invalid, use a safe fallback
-        const safeUrl = getSafeUrlForMedicalTopic(title);
-        references.push({
-          title,
-          url: safeUrl
-        });
-      }
-    }
-  }
-  
-  // Also look for standard citation patterns in the text (harvard style)
-  const citations = text.match(/\(([A-Za-z\s]+(?:et\s+al\.?)?,\s+\d{4}[a-z]?)\)/g) || [];
-  for (const citation of citations) {
-    // Extract name and year
-    const match = citation.match(/\(([A-Za-z\s]+(?:et\s+al\.?)?,\s+(\d{4}[a-z]?)\)/);
-    if (match) {
-      const author = match[1].trim();
-      const year = match[2];
-      const title = `${author} (${year})`;
-      
-      // Create a Google Scholar URL for academic citations - more reliable than custom URLs
-      const scholarUrl = `https://scholar.google.com/scholar?q=${encodeURIComponent(author)}+${year}`;
-      
-      // Check if this reference is already added
-      const isDuplicate = references.some(ref => 
-        (ref.author === author && ref.year === year) || ref.title === title
-      );
-      
-      if (!isDuplicate) {
-        references.push({
-          title,
-          url: scholarUrl,
-          author,
-          year
-        });
-      }
-    }
-  }
-  
-  // Add standard medical references if none found for medical topics
-  if (references.length === 0 && (
-      text.includes("pathology") || 
-      text.includes("diagnosis") || 
-      text.includes("treatment") || 
-      text.includes("symptoms") || 
-      text.includes("disease") ||
-      text.includes("medical")
-    )) {
-    
-    // Standard medical references with reliable URLs
-    references.push({
-      title: "PubMed - National Library of Medicine",
-      url: "https://pubmed.ncbi.nlm.nih.gov/",
-      journal: "NLM Database"
-    });
-    
-    if (text.includes("pathology") || text.includes("histology")) {
-      references.push({
-        title: "Robbins & Cotran Pathologic Basis of Disease",
-        url: "https://www.elsevier.com/books/robbins-and-cotran-pathologic-basis-of-disease/kumar/978-0-323-53113-9",
-        author: "Kumar V, Abbas AK, Aster JC",
-        year: "2020",
-        journal: "Elsevier"
-      });
-    }
-  }
-  
-  // Further validate all reference URLs to make sure they are correctly formatted
-  const validatedReferences = references.map(ref => {
-    try {
-      // Test URL validity and format
-      const urlObj = new URL(ref.url);
-      
-      // Ensure only http or https protocols
-      if (urlObj.protocol !== 'http:' && urlObj.protocol !== 'https:') {
-        throw new Error('Invalid protocol');
-      }
-      
-      return ref;
-    } catch (e) {
-      // If URL is invalid, replace with a safe alternative
-      return {
-        ...ref,
-        url: getSafeUrlForMedicalTopic(ref.title)
-      };
-    }
-  });
-  
-  return validatedReferences;
-}
-
-// New helper function for getting safe URLs for medical topics
-function getSafeUrlForMedicalTopic(title: string): string {
-  const lowerTitle = title.toLowerCase();
-  
-  // Map to reliable medical websites based on content
-  if (lowerTitle.includes("pubmed") || lowerTitle.includes("ncbi")) {
-    return "https://pubmed.ncbi.nlm.nih.gov/";
-  } else if (lowerTitle.includes("uptodate") || lowerTitle.includes("up to date")) {
-    return "https://www.uptodate.com/";
-  } else if (lowerTitle.includes("medscape")) {
-    return "https://www.medscape.com/";
-  } else if (lowerTitle.includes("mayo")) {
-    return "https://www.mayoclinic.org/";
-  } else if (lowerTitle.includes("who") || lowerTitle.includes("world health")) {
-    return "https://www.who.int/";
-  } else if (lowerTitle.includes("cdc")) {
-    return "https://www.cdc.gov/";
-  } else if (lowerTitle.includes("jama") || lowerTitle.includes("journal")) {
-    return "https://jamanetwork.com/";
-  } else if (lowerTitle.includes("nejm")) {
-    return "https://www.nejm.org/";
-  } else if (lowerTitle.includes("guidelines")) {
-    return "https://www.guidelines.gov/";
-  } else if (lowerTitle.includes("lancet")) {
-    return "https://www.thelancet.com/";
-  } else if (lowerTitle.includes("bmj")) {
-    return "https://www.bmj.com/";
-  } else if (lowerTitle.includes("oxford") || lowerTitle.includes("handbook")) {
-    return "https://academic.oup.com/";
-  } else if (lowerTitle.includes("robbins") || lowerTitle.includes("pathology")) {
-    return "https://www.elsevier.com/books/robbins-and-cotran-pathologic-basis-of-disease/kumar/978-0-323-53113-9";
-  } else {
-    // Use Google Scholar as a safer general fallback
-    return `https://scholar.google.com/scholar?q=${encodeURIComponent(title)}`;
-  }
-}
-
 // Add logging with timestamp
 function logWithTimestamp(message: string, data?: any) {
   const timestamp = new Date().toISOString();
@@ -509,18 +203,92 @@ function isImportantQuestionsRequest(prompt: string): boolean {
   return /important question|important topics|high yield|frequently asked|commonly asked|repeated questions/i.test(prompt);
 }
 
-// Process and clean up Gemini response text
-function processResponseText(text: string): { cleanedText: string; references: Array<any> } {
-  // Extract references from the text
-  const references = extractReferences(text);
+// Function to extract references from the text
+function extractReferences(text: string): Array<{title: string; authors: string; journal?: string; year: string; url?: string}> {
+  const references = [];
   
-  // Remove any "References:" or "Sources:" sections
-  let cleanedText = text.replace(/(?:References|Sources|Further Reading|Citations):\s*(?:\n|$)[\s\S]*?(?:$|(?:\n\n(?!-))|(?:\n(?=[A-Z][a-z]+:)))/gi, '');
+  // Check if the response contains a references section
+  const referencesMatch = text.match(/References:?\s*\n([\s\S]+)$/i) || 
+                         text.match(/Sources:?\s*\n([\s\S]+)$/i) ||
+                         text.match(/Citations:?\s*\n([\s\S]+)$/i);
   
-  // Trim trailing whitespace and newlines
-  cleanedText = cleanedText.trim();
+  if (referencesMatch) {
+    const referencesText = referencesMatch[1];
+    
+    // Split by numbered references or bullet points
+    const referenceItems = referencesText.split(/\n\s*(?:\d+\.|\-|\*)\s+/);
+    
+    for (let item of referenceItems) {
+      item = item.trim();
+      if (!item) continue;
+      
+      // Try to extract structured information from each reference
+      const reference: {
+        title: string;
+        authors: string;
+        journal?: string;
+        year: string;
+        url?: string;
+      } = {
+        title: "Untitled Reference",
+        authors: "Unknown",
+        year: "n.d."
+      };
+      
+      // Extract URL if present
+      const urlMatch = item.match(/(https?:\/\/[^\s]+)/);
+      if (urlMatch) {
+        reference.url = urlMatch[1];
+        // Remove the URL from the item to make other parsing easier
+        item = item.replace(urlMatch[1], '').trim();
+      }
+      
+      // Extract title - usually the first part up to a period or comma
+      const titleMatch = item.match(/^([^\.,:]+)[\.,:]/);
+      if (titleMatch) {
+        reference.title = titleMatch[1].trim();
+        // Remove the title from the item to make other parsing easier
+        item = item.replace(titleMatch[0], '').trim();
+      } else {
+        // If no clear title pattern, try to extract a reasonable title
+        const potentialTitle = item.split(/[\.,:]/).shift() || '';
+        if (potentialTitle.length > 3) {
+          reference.title = potentialTitle.trim();
+          item = item.replace(potentialTitle, '').replace(/^[\.,:]/, '').trim();
+        }
+      }
+      
+      // Extract year
+      const yearMatch = item.match(/\b(19|20)\d{2}\b/);
+      if (yearMatch) {
+        reference.year = yearMatch[0];
+      }
+      
+      // Extract journal if present
+      const journalMatch = item.match(/([A-Z][A-Za-z\s]+Journal|[A-Z][A-Za-z\s]+Annals|[A-Z][A-Za-z\s]+Review)/);
+      if (journalMatch) {
+        reference.journal = journalMatch[1].trim();
+      }
+      
+      // Extract authors - anything remaining before the year or journal
+      let authorsText = item;
+      if (reference.journal) {
+        authorsText = item.split(reference.journal)[0].trim();
+      } else if (yearMatch) {
+        authorsText = item.split(yearMatch[0])[0].trim();
+      }
+      
+      if (authorsText) {
+        // Clean up authors text (remove trailing punctuation)
+        authorsText = authorsText.replace(/[,\.;]$/, '').trim();
+        reference.authors = authorsText || "Unknown";
+      }
+      
+      references.push(reference);
+    }
+  }
   
-  return { cleanedText, references };
+  return references;
 }
 
 serve(async (req) => {
@@ -610,10 +378,9 @@ serve(async (req) => {
 
     // Create a client instance
     const genAI = new GoogleGenerativeAI(apiKey);
-    
-    // For Gemini 2.0 Flash, we need to use a different approach compared to the earlier code
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-    
+    // Use Gemini 2.0 Flash
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+
     // Extract the actual question content without any prefix
     const actualQuestion = isTripleTap ? prompt.replace(/Triple-tapped:|triple-tapped:/i, "").trim() : prompt;
     
@@ -635,38 +402,12 @@ serve(async (req) => {
     
     // Create a targeted system prompt based on the request type
     let systemPrompt = "";
-    
-    // Add to all system prompts to include references and sources
-    const referencesInstructions = `
-    IMPORTANT: After providing your response, include a "References:" section with 2-5 relevant sources for the information. 
-    Format each reference with a title and a CORRECTLY FORMATTED full URL (starting with http:// or https://).
-    Example format:
-    References:
-    1. Mayo Clinic - Anemia: https://www.mayoclinic.org/diseases-conditions/anemia/symptoms-causes/syc-20351360
-    2. National Heart, Lung, and Blood Institute: https://www.nhlbi.nih.gov/health/anemia
-
-    For medical topics, cite reputable sources like academic journals, medical textbooks, or official health organizations.
-    `;
-    
-    // Set safety settings to allow medical content
-    const safetySettings = [
-      {
-        category: HarmCategory.HARM_CATEGORY_HARASSMENT,
-        threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH,
-      },
-      {
-        category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
-        threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH,
-      },
-      {
-        category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
-        threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH,
-      },
-      {
-        category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
-        threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH,
-      },
-    ];
+    let generationConfig = {
+      temperature: 0.7,
+      topP: 0.8,
+      topK: 40,
+      maxOutputTokens: 2000, // Increase for more detailed responses
+    };
     
     // If requesting MCQs
     if (isMCQsRequest) {
@@ -698,9 +439,11 @@ IMPORTANT:
 - Place the answer and explanation immediately after each question, not grouped at the end
 - Make the questions varied in difficulty and cover different aspects of the topic
 - Follow NEET PG/USMLE style format and complexity
-- Make sure all questions are accurate and properly formatted
+- Make sure all questions are accurate and properly formatted`;
 
-${referencesInstructions}`;
+      // Adjust generation parameters for MCQs
+      generationConfig.temperature = 0.8; // More creative
+      generationConfig.maxOutputTokens = 4000; // Longer for 10 MCQs
     }
     // If asking for important questions by subject
     else if (isImportantQsRequest) {
@@ -720,9 +463,11 @@ For each question, include:
 - An indicator of how frequently it appears (*** for very frequent, ** for moderately frequent, * for occasionally asked)` : 
 `Please ask the user to specify which medical subject they are interested in (Pharmacology, Microbiology, or Pathology), and if possible, which specific topic within that subject. This will help me provide more targeted and relevant information.`}
 
-Make your response concise, well-structured, and easy to read. Focus on high-yield information that will be most valuable for exam preparation.
+Make your response concise, well-structured, and easy to read. Focus on high-yield information that will be most valuable for exam preparation.`;
 
-${referencesInstructions}`;
+      // Adjust generation parameters for question lists
+      generationConfig.temperature = 0.3; // More factual
+      generationConfig.maxOutputTokens = 4000; // Longer for comprehensive lists
     }
     // If triple-tapped for a pathology question
     else if (isTripleTap && isPathologyQuestion) {
@@ -750,9 +495,7 @@ ${referencesInstructions}`;
       
       Format your response with clear sections using bold headings and bullet points for key information. Be precise and detailed while maintaining readability.
       
-      IMPORTANT: Always include detailed information about the TREATMENT OPTIONS, even if not explicitly asked. Medical students need to know the current therapeutic approaches from first-line to advanced options.
-      
-      ${referencesInstructions}`;
+      IMPORTANT: Always include detailed information about the TREATMENT OPTIONS, even if not explicitly asked. Medical students need to know the current therapeutic approaches from first-line to advanced options.`;
     }
     // If triple-tapped for a non-pathology question
     else if (isTripleTap && !isPathologyQuestion) {
@@ -767,9 +510,7 @@ ${referencesInstructions}`;
       - Treatment options and management
       - Important facts for medical exams
       
-      Format your response with clear sections and bullet points where appropriate. Be detailed and specific.
-      
-      ${referencesInstructions}`;
+      Format your response with clear sections and bullet points where appropriate. Be detailed and specific.`;
     }
     // If the user is asking for clarification or following up on a previous response
     else if (needsConversationContext) {
@@ -783,15 +524,15 @@ If they are asking for similar questions or examples, provide additional questio
 
 If they explicitly ask for specific type of content (like "generate similar questions"), prioritize that request and deliver exactly what they've asked for.
 
-Keep your response focused, clear, and helpful. Use examples and analogies where appropriate to aid understanding.
+Keep your response focused, clear, and helpful. Use examples and analogies where appropriate to aid understanding.`;
 
-${referencesInstructions}`;
+      // Adjust generation parameters for clarification
+      generationConfig.temperature = 0.4; // More factual for explanations
+      generationConfig.maxOutputTokens = 3000; // Medium length
     }
     // For regular chat questions
     else {
-      systemPrompt = `You are ACEV, a helpful and knowledgeable medical assistant. Provide concise, accurate medical information. For medical emergencies, always advise seeking immediate professional help. Your responses should be compassionate, clear, and based on established medical knowledge. Never mention that you're powered by Gemini.
-      
-      ${referencesInstructions}`;
+      systemPrompt = "You are ACEV, a helpful and knowledgeable medical assistant. Provide concise, accurate medical information. For medical emergencies, always advise seeking immediate professional help. Your responses should be compassionate, clear, and based on established medical knowledge. Never mention that you're powered by Gemini. If you use medical information from textbooks or research papers, please include a list of sources or references at the end of your response in a section titled 'References:'.";
     }
     
     logWithTimestamp(`[${requestId}] Request type: ${isMCQsRequest ? "MCQs" : isImportantQsRequest ? "Important Questions" : isTripleTap ? "Triple-tap" : needsConversationContext ? "Contextual" : "Regular"}`, { 
@@ -806,99 +547,125 @@ ${referencesInstructions}`;
       // Increased timeout for Gemini requests
       const timeoutMs = 30000; // 30 seconds timeout
       
-      // Convert conversation history to format Gemini expects
-      const history = [];
+      // Build conversation messages with history if needed
+      const messages = [];
       
-      // First, add the system prompt
-      history.push({
-        role: "user", 
-        parts: [{ text: systemPrompt }]
-      });
+      // Add system prompt
+      messages.push({ role: "user", parts: [{ text: systemPrompt }] });
+      messages.push({ role: "model", parts: [{ text: "I understand. I'll act as ACEV, a medical assistant providing helpful, accurate information while prioritizing patient safety." }] });
       
-      history.push({
-        role: "model", 
-        parts: [{ text: "I understand. I'll act as ACEV, a medical assistant providing helpful, accurate information while prioritizing patient safety." }]
-      });
-      
-      // Then add conversation history if needed
+      // Add conversation history if needed for context
       if (needsConversationContext && conversationHistory.length > 0) {
         // Only include up to the last 10 messages to avoid context window issues
-        const recentHistory = conversationHistory.slice(-8);
+        const recentHistory = conversationHistory.slice(-10);
         
         logWithTimestamp(`[${requestId}] Including ${recentHistory.length} messages from conversation history`);
         
         for (const message of recentHistory) {
-          if (message.role && message.content) {
-            history.push({
-              role: message.role === "assistant" ? "model" : "user",
-              parts: [{ text: message.content }]
-            });
-          }
+          messages.push({ 
+            role: message.role === 'user' ? 'user' : 'model', 
+            parts: [{ text: message.content }] 
+          });
         }
       }
       
-      // Add the current user question
-      history.push({
-        role: "user",
-        parts: [{ text: actualQuestion }]
+      // Add current user question
+      messages.push({ role: "user", parts: [{ text: actualQuestion }] });
+      
+      // Set up the model with conversation and config
+      const modelPromise = model.generateContent({
+        contents: messages,
+        generationConfig
       });
       
-      logWithTimestamp(`[${requestId}] Sending request to Gemini with ${history.length} messages`);
-      
-      // Start chat and get response
-      const chat = model.startChat({
-        safetySettings,
-        history: history.slice(0, -1), // All but the last message
+      // Set up timeout
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => {
+          reject(new Error(`Request timed out after ${timeoutMs}ms`));
+        }, timeoutMs);
       });
       
-      const result = await chat.sendMessage(actualQuestion, { timeoutMs });
+      // Race the model response against the timeout
+      const result = await Promise.race([modelPromise, timeoutPromise]) as any;
+      
       const response = result.response;
+      const text = response.text();
       
-      if (!response || !response.text()) {
-        throw new Error("Empty response from Gemini");
-      }
+      const references = extractReferences(text);
       
-      // Process the response text to extract references
-      const { cleanedText, references } = processResponseText(response.text());
-      
-      logWithTimestamp(`[${requestId}] Successfully generated response (length: ${cleanedText.length})`);
-      if (references.length > 0) {
-        logWithTimestamp(`[${requestId}] Extracted ${references.length} references`);
-      }
-      
-      // Return the response and references
+      const endTime = Date.now();
+      const duration = endTime - startTime;
+      logWithTimestamp(`[${requestId}] AI response generated successfully in ${duration}ms`);
+
       return new Response(
         JSON.stringify({ 
-          response: cleanedText, 
-          references: references || []
+          response: text,
+          references: references.length > 0 ? references : undefined
         }),
-        { 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 200
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 200,
         }
       );
-    } catch (error) {
-      const errorMessage = `Error: ${error.message || "Unknown error"}`;
-      logWithTimestamp(`[${requestId}] Error generating response:`, error);
+    } catch (modelError) {
+      const endTime = Date.now();
+      const duration = endTime - startTime;
+      logWithTimestamp(`[${requestId}] AI Model Error after ${duration}ms:`, modelError);
+      
+      // Check for rate limiting error with Gemini
+      if (modelError.message && modelError.message.includes("429")) {
+        logWithTimestamp(`[${requestId}] Rate limit hit with Gemini API`);
+        return new Response(
+          JSON.stringify({ 
+            error: "Our AI service is experiencing high demand. Please try again in a moment.",
+            isRateLimit: true,
+            retryAfter: 30 // Suggest client wait 30 seconds
+          }),
+          {
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+            status: 200,
+          }
+        );
+      }
+      
+      // Improved timeout error handling with more user-friendly message
+      if (modelError.message && modelError.message.includes("timed out")) {
+        logWithTimestamp(`[${requestId}] Request to Gemini API timed out`);
+        return new Response(
+          JSON.stringify({ 
+            error: "The AI service is taking longer than expected. Your question might be complex - try asking a more focused question or try again later.",
+            details: "AI processing timeout"
+          }),
+          {
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+            status: 200,
+          }
+        );
+      }
       
       return new Response(
         JSON.stringify({ 
-          error: errorMessage, 
-          errorDetails: String(error),
+          error: "Failed to generate response from AI model", 
+          details: modelError.message 
         }),
-        { 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 200
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 200,
         }
       );
     }
   } catch (error) {
-    logWithTimestamp(`[${requestId}] Error processing request:`, error);
+    const endTime = Date.now();
+    const duration = endTime - startTime;
+    logWithTimestamp(`[${requestId}] Unhandled error after ${duration}ms:`, error);
     return new Response(
-      JSON.stringify({ error: 'Failed to process request: ' + String(error) }),
-      { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 200
+      JSON.stringify({ 
+        error: error.message || "An error occurred while processing your request",
+        details: error.stack
+      }),
+      {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 200,
       }
     );
   }

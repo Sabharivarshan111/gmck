@@ -32,29 +32,10 @@ export const ChatMessageItem = ({ message, onCopy }: ChatMessageItemProps) => {
           );
         }
         
-        // Format markdown links with proper validation
+        // Format markdown links
         if (part.includes('[') && part.includes(']') && part.includes('(') && part.includes(')')) {
-          // Replace markdown links with proper HTML links, ensuring URLs are valid
           const linkFormatted = part.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, text, url) => {
-            // Clean the URL from any trailing punctuation
-            const cleanUrl = url.replace(/[.,;:!?]+$/, '');
-            
-            // Ensure URL is properly formatted
-            let validUrl = cleanUrl;
-            try {
-              // Check if URL has protocol
-              if (!cleanUrl.match(/^https?:\/\//i)) {
-                validUrl = 'https://' + cleanUrl;
-              }
-              
-              // Test URL validity
-              new URL(validUrl);
-            } catch (e) {
-              // If invalid, use Google search as fallback
-              validUrl = `https://www.google.com/search?q=${encodeURIComponent(text)}`;
-            }
-            
-            return `<a href="${validUrl}" target="_blank" rel="noopener noreferrer" class="text-blue-400 underline">${text}</a>`;
+            return `<a href="${url}" target="_blank" class="text-blue-400 underline">${text}</a>`;
           });
           
           return <span key={index} dangerouslySetInnerHTML={{ __html: linkFormatted }} />;
@@ -108,6 +89,11 @@ export const ChatMessageItem = ({ message, onCopy }: ChatMessageItemProps) => {
     return content;
   };
 
+  // Remove the "References:" section from the content if it exists
+  const cleanContent = message.role === 'assistant' && message.content.includes('References:') 
+    ? message.content.split('References:')[0].trim() 
+    : message.content;
+
   return (
     <motion.div
       key={message.id}
@@ -138,7 +124,7 @@ export const ChatMessageItem = ({ message, onCopy }: ChatMessageItemProps) => {
         )}
       </div>
       <div className="whitespace-pre-wrap text-sm">
-        {formatContent(message.content)}
+        {formatContent(cleanContent)}
       </div>
       {message.role === 'user' && message.content.includes("Triple-tapped:") && (
         <div className="mt-1 text-xs text-blue-400">
@@ -146,8 +132,11 @@ export const ChatMessageItem = ({ message, onCopy }: ChatMessageItemProps) => {
         </div>
       )}
       
-      {/* Add References Section only for assistant messages with references */}
-      {message.role === 'assistant' && message.references && message.references.length > 0 && (
+      {/* Display references section if available and not triple-tapped */}
+      {message.role === 'assistant' && 
+       message.references && 
+       message.references.length > 0 && 
+       !message.content.includes("Triple-tapped:") && (
         <ReferencesSection references={message.references} />
       )}
     </motion.div>
