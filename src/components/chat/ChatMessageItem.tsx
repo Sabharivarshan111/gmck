@@ -36,8 +36,12 @@ export const ChatMessageItem = ({ message, onCopy }: ChatMessageItemProps) => {
         if (part.includes('[') && part.includes(']') && part.includes('(') && part.includes(')')) {
           // Replace markdown links with proper HTML links, ensuring URLs are valid
           const linkFormatted = part.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, text, url) => {
+            // Log the markdown link being processed
+            console.log('Processing markdown link:', { text, url });
+            
             // Clean the URL from any trailing punctuation
             const cleanUrl = url.replace(/[.,;:!?]+$/, '');
+            console.log('Cleaned URL:', cleanUrl);
             
             // Ensure URL is properly formatted
             let validUrl = cleanUrl;
@@ -45,13 +49,17 @@ export const ChatMessageItem = ({ message, onCopy }: ChatMessageItemProps) => {
               // Check if URL has protocol
               if (!cleanUrl.match(/^https?:\/\//i)) {
                 validUrl = 'https://' + cleanUrl;
+                console.log('Added https protocol:', validUrl);
               }
               
               // Test URL validity
               new URL(validUrl);
+              console.log('Valid URL created:', validUrl);
             } catch (e) {
               // If invalid, use Google search as fallback
+              console.log('URL validation failed:', String(e));
               validUrl = `https://www.google.com/search?q=${encodeURIComponent(text)}`;
+              console.log('Using fallback search URL:', validUrl);
             }
             
             return `<a href="${validUrl}" target="_blank" rel="noopener noreferrer" class="text-blue-400 underline">${text}</a>`;
@@ -108,6 +116,11 @@ export const ChatMessageItem = ({ message, onCopy }: ChatMessageItemProps) => {
     return content;
   };
 
+  // Log the references if they exist
+  if (message.role === 'assistant' && message.references && message.references.length > 0) {
+    console.log('Message has references:', message.references);
+  }
+
   return (
     <motion.div
       key={message.id}
@@ -153,3 +166,4 @@ export const ChatMessageItem = ({ message, onCopy }: ChatMessageItemProps) => {
     </motion.div>
   );
 };
+
