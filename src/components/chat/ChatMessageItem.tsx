@@ -1,4 +1,3 @@
-
 import { motion } from "framer-motion";
 import { Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -166,4 +165,3 @@ export const ChatMessageItem = ({ message, onCopy }: ChatMessageItemProps) => {
     </motion.div>
   );
 };
-
