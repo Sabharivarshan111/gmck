@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from "react";
 import { v4 as uuidv4 } from 'uuid';
 import { useToast } from "@/hooks/use-toast";
@@ -17,8 +18,6 @@ interface UseAiChatProps {
 
 // Function to get important questions from the question bank data without using API
 function getImportantQuestions(subject: string, topic?: string): string {
-  console.log(`Getting important questions for subject: ${subject}, topic: ${topic || 'all topics'}`);
-  
   // Normalize subject to match our data structure
   const normalizedSubject = subject.toLowerCase().trim();
   
@@ -36,65 +35,48 @@ function getImportantQuestions(subject: string, topic?: string): string {
     const normalizedTopicName = topicName.toLowerCase().trim();
     const normalizedSearchTopic = searchTopic.toLowerCase().trim();
     
-    console.log(`Comparing topic: "${normalizedTopicName}" with search: "${normalizedSearchTopic}"`);
-    
     // Direct match
-    if (normalizedTopicName === normalizedSearchTopic) {
-      console.log(`-> Direct match found`);
-      return true;
+    if (normalizedTopicName === normalizedSearchTopic) return true;
+    
+    // For "infections" in microbiology, we need a more strict matching to avoid matching all topics
+    if (normalizedSubject === 'microbiology' && normalizedSearchTopic === 'infections') {
+      // Only match when "infectious diseases" or "infections" is the main topic
+      return normalizedTopicName === 'infectious-diseases' || 
+             normalizedTopicName === 'infections' ||
+             normalizedTopicName === 'infectious diseases';
     }
     
-    // For stricter matching in pathology and microbiology
-    if (normalizedSubject === 'pathology' || normalizedSubject === 'microbiology') {
-      // Key phrases for pathology and microbiology need to be exact matches
-      if (normalizedTopicName === normalizedSearchTopic || 
-          normalizedTopicName.replace(/\s+/g, '-') === normalizedSearchTopic.replace(/\s+/g, '-') ||
-          normalizedTopicName.replace(/-/g, ' ') === normalizedSearchTopic.replace(/-/g, ' ')) {
-        console.log(`-> Exact match for ${normalizedSubject} topic`);
-        return true;
-      }
-      
-      // Check if search topic is in the name as a full word
-      const topicWords = normalizedTopicName.split(/\s+|-/);
-      const searchWords = normalizedSearchTopic.split(/\s+|-/);
-      
-      // For single word searches, be strict
-      if (searchWords.length === 1) {
-        const isContained = topicWords.includes(searchWords[0]);
-        if (isContained) console.log(`-> Single word match found in ${normalizedSubject} topic`);
-        return isContained;
-      }
-      
-      // For multi-word searches, require most words to match
-      const matchCount = searchWords.filter(searchWord => 
-        topicWords.includes(searchWord)
-      ).length;
-      
-      // At least 70% of words must match for multi-word topics
-      const matchRatio = matchCount / searchWords.length;
-      const isGoodMatch = matchRatio >= 0.7;
-      
-      if (isGoodMatch) console.log(`-> ${Math.round(matchRatio * 100)}% word match for ${normalizedSubject} topic`);
-      return isGoodMatch;
-    }
-    
-    // Less strict matching for other subjects
-    // Check if the search topic is contained in the topic name
-    if (normalizedTopicName.includes(normalizedSearchTopic)) {
-      console.log(`-> Substring match found`);
-      return true;
-    }
-    
-    // Check for word boundary matches
+    // Word boundary check - match whole words only, more strict for microbiology
     const wordsInTopicName = normalizedTopicName.split(/\s+|-/);
     const wordsInSearchTopic = normalizedSearchTopic.split(/\s+|-/);
     
-    const matchesAllWords = wordsInSearchTopic.every(searchWord => 
-      wordsInTopicName.some(topicWord => topicWord.includes(searchWord))
-    );
+    // For microbiology, require an exact or near-exact match
+    if (normalizedSubject === 'microbiology') {
+      // Require the entire search topic to be found, not just parts
+      if (normalizedTopicName.includes(normalizedSearchTopic)) {
+        return true;
+      }
+      
+      // For multi-word topics, require a high match ratio (all words or all but one)
+      if (wordsInSearchTopic.length > 1) {
+        const matchCount = wordsInSearchTopic.filter(searchWord => 
+          wordsInTopicName.some(topicWord => topicWord === searchWord)
+        ).length;
+        
+        // At least 80% of words must match for multi-word topics
+        return matchCount >= Math.ceil(wordsInSearchTopic.length * 0.8);
+      }
+      
+      // For single-word topics in microbiology, be very strict to avoid false matches
+      return wordsInTopicName.some(word => word === normalizedSearchTopic);
+    }
     
-    if (matchesAllWords) console.log(`-> Word boundary match found`);
-    return matchesAllWords;
+    // For other subjects, use the original logic
+    return wordsInSearchTopic.every(searchWord => 
+      wordsInTopicName.some(topicWord => 
+        topicWord === searchWord || topicWord.includes(searchWord)
+      )
+    );
   };
   
   // Helper function to extract questions with their asterisk counts
@@ -110,12 +92,9 @@ function getImportantQuestions(subject: string, topic?: string): string {
   // Function to process essay or short note questions from a subtopic
   const processQuestionType = (data: any, questionType: 'essay' | 'short-note' | 'short-notes') => {
     const questions: {text: string, count: number}[] = [];
-    const questionsAdded = new Set<string>(); // To track duplicate questions
     
     // Special handling for microbiology which has a different structure
     if (normalizedSubject === 'microbiology') {
-      console.log(`Processing microbiology structure for ${questionType} questions`);
-      
       // First level: paper-1, paper-2
       Object.values(data.subtopics).forEach((paper: any) => {
         if (!paper || typeof paper !== 'object' || !paper.subtopics) return;
@@ -124,32 +103,28 @@ function getImportantQuestions(subject: string, topic?: string): string {
         Object.entries(paper.subtopics).forEach(([topicKey, topicData]: [string, any]) => {
           if (!topicData || typeof topicData !== 'object' || !topicData.subtopics) return;
           
-          // If a specific topic is requested, check if this topic matches
-          const shouldIncludeTopic = !topic || isTopicMatch(topicData.name, topic) || isTopicMatch(topicKey, topic);
-          
-          console.log(`Topic: ${topicData.name || topicKey} - Include? ${shouldIncludeTopic}`);
-          
-          // Skip if a specific topic is requested and this doesn't match
-          if (topic && !shouldIncludeTopic) {
-            return;
+          // Skip if a specific topic is requested and this isn't it
+          if (topic && topicData.name) {
+            const topicName = topicData.name.toLowerCase();
+            const searchTopic = topic.toLowerCase();
+            
+            // Use the enhanced strict topic matching for microbiology
+            if (!isTopicMatch(topicName, searchTopic) && !isTopicMatch(topicKey, searchTopic)) {
+              return;
+            }
           }
           
           // Third level: essay, short-note, etc.
-          const targetQuestionType = questionType === 'short-notes' ? 'short-note' : questionType;
-          
-          if (topicData.subtopics[targetQuestionType] && 
-              topicData.subtopics[targetQuestionType].questions) {
-            
-            const topicQuestions = extractQuestions(topicData.subtopics[targetQuestionType].questions);
-            
-            // Add questions that aren't duplicates
-            topicQuestions.forEach(q => {
-              if (!questionsAdded.has(q.text)) {
-                questions.push(q);
-                questionsAdded.add(q.text);
-                console.log(`Added question from ${topicData.name || topicKey}: ${q.text.substring(0, 30)}...`);
-              }
-            });
+          if (topicData.subtopics[questionType] && 
+              topicData.subtopics[questionType].questions) {
+            const topicQuestions = extractQuestions(topicData.subtopics[questionType].questions);
+            questions.push(...topicQuestions);
+          } else if (questionType === 'short-notes' && 
+                    topicData.subtopics['short-note'] && 
+                    topicData.subtopics['short-note'].questions) {
+            // Handle "short-note" when "short-notes" is requested
+            const topicQuestions = extractQuestions(topicData.subtopics['short-note'].questions);
+            questions.push(...topicQuestions);
           }
         });
       });
@@ -158,60 +133,53 @@ function getImportantQuestions(subject: string, topic?: string): string {
     }
     
     // Original handling for pharmacology and pathology
-    console.log(`Processing ${normalizedSubject} structure for ${questionType} questions`);
-    
     // Helper to navigate the nested structure
-    const processSubtopics = (node: any, nodePath: string = "") => {
+    const processSubtopics = (node: any) => {
       if (!node) return;
       
-      // If a specific topic is requested, check if current node matches
-      const currentNodeName = node.name?.toLowerCase() || "";
-      const shouldProcessNode = !topic || isTopicMatch(currentNodeName, topic) || isTopicMatch(nodePath, topic);
-      
-      // Log to debug topic matching
-      if (topic && (node.name || nodePath)) {
-        console.log(`Node: ${node.name || nodePath} - Match with "${topic}"? ${shouldProcessNode}`);
-      }
-      
-      // Check if this node has the specific question type and matches topic filter
-      if (shouldProcessNode && node.subtopics) {
-        // Determine which question type to look for (handling short-note vs short-notes)
-        const targetQuestionType = questionType === 'short-notes' 
-          ? (node.subtopics['short-note'] ? 'short-note' : 'short-notes')
-          : questionType;
-          
-        if (node.subtopics[targetQuestionType] && node.subtopics[targetQuestionType].questions) {
-          const nodeQuestions = extractQuestions(node.subtopics[targetQuestionType].questions);
-          
-          // Add questions that aren't duplicates
-          nodeQuestions.forEach(q => {
-            if (!questionsAdded.has(q.text)) {
-              questions.push(q);
-              questionsAdded.add(q.text);
-              console.log(`Added question from ${node.name || nodePath}: ${q.text.substring(0, 30)}...`);
-            }
-          });
+      // Check if this node has the specific question type
+      if (node.subtopics && 
+          ((questionType === 'essay' && node.subtopics.essay) || 
+           (questionType === 'short-note' && (node.subtopics['short-note'] || node.subtopics['short-notes'])) ||
+           (questionType === 'short-notes' && (node.subtopics['short-note'] || node.subtopics['short-notes'])))) {
+        
+        const questionData = questionType === 'essay' ? 
+          node.subtopics.essay : 
+          (node.subtopics['short-note'] || node.subtopics['short-notes']);
+        
+        if (questionData && questionData.questions) {
+          questions.push(...extractQuestions(questionData.questions));
         }
       }
       
-      // Only recurse into subtopics if we don't have a topic match yet, or if this node matches the topic
-      if (!topic || shouldProcessNode) {
-        // Recursively process all subtopics
-        if (node.subtopics) {
-          Object.entries(node.subtopics).forEach(([key, subtopic]) => {
-            if (key !== 'essay' && key !== 'short-note' && key !== 'short-notes' && 
-                typeof subtopic === 'object' && subtopic !== null) {
-              processSubtopics(subtopic, nodePath ? `${nodePath}.${key}` : key);
-            }
-          });
-        }
+      // Recursively process all subtopics
+      if (node.subtopics) {
+        Object.values(node.subtopics).forEach(subtopic => {
+          if (typeof subtopic === 'object' && subtopic !== null) {
+            processSubtopics(subtopic);
+          }
+        });
       }
     };
     
     // Start processing from the subtopics of the subject
     if (data.subtopics) {
-      Object.entries(data.subtopics).forEach(([key, subtopic]) => {
-        processSubtopics(subtopic, key);
+      Object.values(data.subtopics).forEach(paper => {
+        if (topic && paper && typeof paper === 'object' && 'subtopics' in paper) {
+          // If a specific topic is requested, only process that topic
+          Object.entries((paper as any).subtopics || {}).forEach(([key, subtopic]) => {
+            const subtopicObj = subtopic as any;
+            const subtopicName = subtopicObj.name?.toLowerCase() || '';
+            
+            // Use the improved topic matching function
+            if (isTopicMatch(subtopicName, topic.toLowerCase()) || isTopicMatch(key, topic.toLowerCase())) {
+              processSubtopics(subtopic);
+            }
+          });
+        } else if (paper && typeof paper === 'object') {
+          // If no specific topic, process all subtopics
+          processSubtopics(paper);
+        }
       });
     }
     
@@ -221,8 +189,6 @@ function getImportantQuestions(subject: string, topic?: string): string {
   // Get all essay and short note questions
   const essayQuestions = processQuestionType(subjectData, 'essay');
   const shortNoteQuestions = processQuestionType(subjectData, 'short-note');
-  
-  console.log(`Found ${essayQuestions.length} essay questions and ${shortNoteQuestions.length} short note questions`);
   
   // Sort questions by their asterisk count (frequency)
   const sortedEssayQuestions = essayQuestions.sort((a, b) => b.count - a.count);
@@ -389,8 +355,6 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
       const importantQuestionsRequest = detectSubjectImportantQuestionsRequest(question);
       
       if (importantQuestionsRequest.isRequest && importantQuestionsRequest.subject) {
-        console.log(`Detected request for important questions in ${importantQuestionsRequest.subject}${importantQuestionsRequest.topic ? ` - ${importantQuestionsRequest.topic}` : ''}`);
-        
         // Handle locally without API call
         const response = getImportantQuestions(
           importantQuestionsRequest.subject, 
@@ -431,7 +395,7 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
       
       console.log("Request type:", { isTripleTap, isMCQRequest, isImportantQuestionsRequest, isNeedingClarification });
       
-      // Use Supabase edge function - ask-gemini now uses Gemini 2.0 Flash
+      // Use Supabase edge function - using ask-gemini which supports all the advanced features
       const { data, error } = await supabase.functions.invoke('ask-gemini', {
         body: { 
           prompt: question,
@@ -444,9 +408,11 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
       });
       
       if (error) {
-        console.error("Error calling ask-gemini edge function:", error);
+        console.error("Supabase function error:", error);
         throw new Error(`Error calling AI service: ${error.message}`);
       }
+      
+      console.log("Response from Gemini:", data);
       
       if (data.isRateLimit) {
         setIsRateLimited(true);
@@ -460,7 +426,7 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
       }
       
       if (data.error) {
-        console.error("Error from Gemini API:", data.error);
+        console.error("Gemini API error:", data.error);
         throw new Error(data.error);
       }
       
