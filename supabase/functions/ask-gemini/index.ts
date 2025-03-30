@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "npm:@google/generative-ai@0.2.0";
 
@@ -377,7 +376,7 @@ function extractReferences(text: string): Array<{ title: string; url: string; au
   const citations = text.match(/\(([A-Za-z\s]+(?:et\s+al\.?)?,\s+\d{4}[a-z]?)\)/g) || [];
   for (const citation of citations) {
     // Extract name and year
-    const match = citation.match(/\(([A-Za-z\s]+(?:et\s+al\.?)?,\s+(\d{4}[a-z]?))\)/);
+    const match = citation.match(/\(([A-Za-z\s]+(?:et\s+al\.?)?,\s+(\d{4}[a-z]?)\)/);
     if (match) {
       const author = match[1].trim();
       const year = match[2];
@@ -612,7 +611,7 @@ serve(async (req) => {
     // Create a client instance
     const genAI = new GoogleGenerativeAI(apiKey);
     
-    // Use Gemini 2.0 Flash
+    // For Gemini 2.0 Flash, we need to use a different approach compared to the earlier code
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
     
     // Extract the actual question content without any prefix

@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from "react";
 import { v4 as uuidv4 } from 'uuid';
 import { useToast } from "@/hooks/use-toast";
@@ -394,81 +395,60 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
       
       console.log("Request type:", { isTripleTap, isMCQRequest, isImportantQuestionsRequest, isNeedingClarification });
       
-      try {
-        // Use Supabase edge function - using ask-gemini which supports all the advanced features
-        const { data, error } = await supabase.functions.invoke('ask-gemini', {
-          body: { 
-            prompt: question,
-            conversationHistory,
-            isTripleTap,
-            isMCQRequest,
-            isImportantQuestionsRequest,
-            isNeedingClarification
-          },
-        });
-        
-        if (error) {
-          console.error("Supabase function error:", error);
-          throw new Error(`Error calling AI service: ${error.message}`);
-        }
-        
-        console.log("Response from Gemini:", data);
-        
-        if (data.isRateLimit) {
-          setIsRateLimited(true);
-          setIsLoading(false);
-          toast({
-            title: "Rate limit reached",
-            description: data.error || "Please wait a moment before sending another message.",
-            variant: "destructive",
-          });
-          return;
-        }
-        
-        if (data.error) {
-          console.error("Gemini API error:", data.error);
-          throw new Error(data.error);
-        }
-        
-        if (data.queueStats) {
-          setQueueStats(data.queueStats);
-        }
-        
-        // Create the AI message, now properly handling references from the API response
-        const aiMessage: ChatMessage = {
-          id: uuidv4(),
-          role: 'assistant',
-          content: data.response,
-          timestamp: new Date(),
-          references: data.references || [], // Include references from Gemini response
-        };
-        
-        // Log references to help with debugging
-        if (data.references && data.references.length > 0) {
-          console.log("References received:", data.references);
-        }
-        
-        setMessages(prevMessages => [...prevMessages, aiMessage]);
-      } catch (error) {
-        console.error("Error from Edge Function:", error);
-        
-        // Add a system message about the error
-        const errorMessage: ChatMessage = {
-          id: uuidv4(),
-          role: 'system',
-          content: "I'm sorry, but I encountered an error while processing your request. Please try again later.",
-          timestamp: new Date(),
-        };
-        
-        setMessages(prevMessages => [...prevMessages, errorMessage]);
-        
-        // Show a toast with the specific error
+      // Use Supabase edge function - using ask-gemini which supports all the advanced features
+      const { data, error } = await supabase.functions.invoke('ask-gemini', {
+        body: { 
+          prompt: question,
+          conversationHistory,
+          isTripleTap,
+          isMCQRequest,
+          isImportantQuestionsRequest,
+          isNeedingClarification
+        },
+      });
+      
+      if (error) {
+        console.error("Supabase function error:", error);
+        throw new Error(`Error calling AI service: ${error.message}`);
+      }
+      
+      console.log("Response from Gemini:", data);
+      
+      if (data.isRateLimit) {
+        setIsRateLimited(true);
+        setIsLoading(false);
         toast({
-          title: "Error calling AI service",
-          description: "Edge Function returned a non-2xx status code. Please try again later.",
+          title: "Rate limit reached",
+          description: data.error || "Please wait a moment before sending another message.",
           variant: "destructive",
         });
+        return;
       }
+      
+      if (data.error) {
+        console.error("Gemini API error:", data.error);
+        throw new Error(data.error);
+      }
+      
+      if (data.queueStats) {
+        setQueueStats(data.queueStats);
+      }
+      
+      // Create the AI message, now properly handling references from the API response
+      const aiMessage: ChatMessage = {
+        id: uuidv4(),
+        role: 'assistant',
+        content: data.response,
+        timestamp: new Date(),
+        references: data.references || [], // Include references from Gemini response
+      };
+      
+      // Log references to help with debugging
+      if (data.references && data.references.length > 0) {
+        console.log("References received:", data.references);
+      }
+      
+      setMessages(prevMessages => [...prevMessages, aiMessage]);
     } catch (error) {
       handleError(error);
       
