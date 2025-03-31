@@ -74,6 +74,18 @@ export default {
 					border: '#1A1A1A',
 					card: '#000000',
 					'card-foreground': '#FF5C8D',
+				},
+				// Retro terminal theme with dark blue background and red/cyan accents
+				retro: {
+					DEFAULT: '#1A1F2C',
+					foreground: '#ea384c',
+					muted: '#1A1F2C',
+					'muted-foreground': '#f97b86',
+					accent: '#1A1F2C',
+					'accent-foreground': '#1EAEDB',
+					border: '#221F26',
+					card: '#1A1F2C',
+					'card-foreground': '#ea384c',
 				}
 			},
 			borderRadius: {
@@ -97,11 +109,16 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'blink': {
+					'0%, 100%': { opacity: '1' },
+					'50%': { opacity: '0' }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'blink': 'blink 1s step-end infinite'
 			}
 		}
 	},
