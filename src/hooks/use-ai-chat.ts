@@ -26,7 +26,7 @@ function getImportantQuestions(subject: string, topic?: string): string {
     return `Could not find information about "${subject}" in our question bank. Please check the spelling or try a different subject.`;
   }
 
-  // Helper function to check if a topic matches the requested topic using word boundaries
+  // Helper function to check if a topic matches the requested topic
   const isTopicMatch = (topicName: string, searchTopic: string): boolean => {
     if (!topicName || !searchTopic) return false;
     
@@ -37,45 +37,9 @@ function getImportantQuestions(subject: string, topic?: string): string {
     // Direct match
     if (normalizedTopicName === normalizedSearchTopic) return true;
     
-    // For "infections" in microbiology, we need a more strict matching to avoid matching all topics
-    if (normalizedSubject === 'microbiology' && normalizedSearchTopic === 'infections') {
-      // Only match when "infectious diseases" or "infections" is the main topic
-      return normalizedTopicName === 'infectious-diseases' || 
-             normalizedTopicName === 'infections' ||
-             normalizedTopicName === 'infectious diseases';
-    }
-    
-    // Word boundary check - match whole words only, more strict for microbiology
-    const wordsInTopicName = normalizedTopicName.split(/\s+|-/);
-    const wordsInSearchTopic = normalizedSearchTopic.split(/\s+|-/);
-    
-    // For microbiology, require an exact or near-exact match
-    if (normalizedSubject === 'microbiology') {
-      // Require the entire search topic to be found, not just parts
-      if (normalizedTopicName.includes(normalizedSearchTopic)) {
-        return true;
-      }
-      
-      // For multi-word topics, require a high match ratio (all words or all but one)
-      if (wordsInSearchTopic.length > 1) {
-        const matchCount = wordsInSearchTopic.filter(searchWord => 
-          wordsInTopicName.some(topicWord => topicWord === searchWord)
-        ).length;
-        
-        // At least 80% of words must match for multi-word topics
-        return matchCount >= Math.ceil(wordsInSearchTopic.length * 0.8);
-      }
-      
-      // For single-word topics in microbiology, be very strict to avoid false matches
-      return wordsInTopicName.some(word => word === normalizedSearchTopic);
-    }
-    
-    // For other subjects, use the original logic
-    return wordsInSearchTopic.every(searchWord => 
-      wordsInTopicName.some(topicWord => 
-        topicWord === searchWord || topicWord.includes(searchWord)
-      )
-    );
+    // Word boundary check for more precise matching
+    return normalizedTopicName.includes(normalizedSearchTopic) || 
+           searchTopic.includes(normalizedTopicName);
   };
   
   // Helper function to extract questions with their asterisk counts
@@ -92,95 +56,73 @@ function getImportantQuestions(subject: string, topic?: string): string {
   const processQuestionType = (data: any, questionType: 'essay' | 'short-note' | 'short-notes') => {
     const questions: {text: string, count: number}[] = [];
     
-    // Special handling for microbiology which has a different structure
-    if (normalizedSubject === 'microbiology') {
-      // First level: paper-1, paper-2
-      Object.values(data.subtopics).forEach((paper: any) => {
-        if (!paper || typeof paper !== 'object' || !paper.subtopics) return;
+    // Special handling for pathology and different structure
+    if (normalizedSubject === 'pathology') {
+      // Find all pathology topics that match the search topic
+      Object.entries(data.subtopics).forEach(([topicKey, topicData]: [string, any]) => {
+        // Skip if a specific topic is requested and this isn't it
+        if (topic && !isTopicMatch(topicData.name, topic) && !isTopicMatch(topicKey, topic)) {
+          return;
+        }
         
-        // Second level: topics like "general-microbiology", "immunology", etc.
-        Object.entries(paper.subtopics).forEach(([topicKey, topicData]: [string, any]) => {
-          if (!topicData || typeof topicData !== 'object' || !topicData.subtopics) return;
+        // Check if this topic has the specific question type
+        if (topicData.subtopics && 
+            ((questionType === 'essay' && topicData.subtopics.essay) || 
+             (questionType === 'short-note' && topicData.subtopics['short-note']) || 
+             (questionType === 'short-notes' && topicData.subtopics['short-note']))) {
           
-          // Skip if a specific topic is requested and this isn't it
-          if (topic && topicData.name) {
-            const topicName = topicData.name.toLowerCase();
-            const searchTopic = topic.toLowerCase();
-            
-            // Use the enhanced strict topic matching for microbiology
-            if (!isTopicMatch(topicName, searchTopic) && !isTopicMatch(topicKey, searchTopic)) {
-              return;
-            }
-          }
+          const questionData = questionType === 'essay' ? 
+            topicData.subtopics.essay : 
+            topicData.subtopics['short-note'];
           
-          // Third level: essay, short-note, etc.
-          if (topicData.subtopics[questionType] && 
-              topicData.subtopics[questionType].questions) {
-            const topicQuestions = extractQuestions(topicData.subtopics[questionType].questions);
-            questions.push(...topicQuestions);
-          } else if (questionType === 'short-notes' && 
-                    topicData.subtopics['short-note'] && 
-                    topicData.subtopics['short-note'].questions) {
-            // Handle "short-note" when "short-notes" is requested
-            const topicQuestions = extractQuestions(topicData.subtopics['short-note'].questions);
-            questions.push(...topicQuestions);
+          if (questionData && questionData.questions) {
+            questions.push(...extractQuestions(questionData.questions));
           }
-        });
+        }
       });
       
       return questions;
     }
     
-    // Original handling for pharmacology and pathology
-    // Helper to navigate the nested structure
+    // Handling for pharmacology and microbiology
     const processSubtopics = (node: any) => {
       if (!node) return;
       
       // Check if this node has the specific question type
       if (node.subtopics && 
           ((questionType === 'essay' && node.subtopics.essay) || 
-           (questionType === 'short-note' && (node.subtopics['short-note'] || node.subtopics['short-notes'])) ||
-           (questionType === 'short-notes' && (node.subtopics['short-note'] || node.subtopics['short-notes'])))) {
+           (questionType === 'short-note' && node.subtopics['short-note']) || 
+           (questionType === 'short-notes' && node.subtopics['short-note']))) {
         
         const questionData = questionType === 'essay' ? 
           node.subtopics.essay : 
-          (node.subtopics['short-note'] || node.subtopics['short-notes']);
+          node.subtopics['short-note'];
         
         if (questionData && questionData.questions) {
           questions.push(...extractQuestions(questionData.questions));
         }
       }
       
+      // If this node has a name property, check if it matches the topic
+      if (topic && node.name && !isTopicMatch(node.name, topic)) {
+        return;
+      }
+      
       // Recursively process all subtopics
       if (node.subtopics) {
-        Object.values(node.subtopics).forEach(subtopic => {
+        Object.entries(node.subtopics).forEach(([key, subtopic]) => {
           if (typeof subtopic === 'object' && subtopic !== null) {
-            processSubtopics(subtopic);
+            // If a topic is specified, only process matching topics
+            if (!topic || isTopicMatch((subtopic as any).name || key, topic)) {
+              processSubtopics(subtopic);
+            }
           }
         });
       }
     };
     
-    // Start processing from the subtopics of the subject
-    if (data.subtopics) {
-      Object.values(data.subtopics).forEach(paper => {
-        if (topic && paper && typeof paper === 'object' && 'subtopics' in paper) {
-          // If a specific topic is requested, only process that topic
-          Object.entries((paper as any).subtopics || {}).forEach(([key, subtopic]) => {
-            const subtopicObj = subtopic as any;
-            const subtopicName = subtopicObj.name?.toLowerCase() || '';
-            
-            // Use the improved topic matching function
-            if (isTopicMatch(subtopicName, topic.toLowerCase()) || isTopicMatch(key, topic.toLowerCase())) {
-              processSubtopics(subtopic);
-            }
-          });
-        } else if (paper && typeof paper === 'object') {
-          // If no specific topic, process all subtopics
-          processSubtopics(paper);
-        }
-      });
-    }
+    // Start processing from the subject data
+    processSubtopics(data);
     
     return questions;
   };
@@ -200,8 +142,8 @@ function getImportantQuestions(subject: string, topic?: string): string {
   result += "## ESSAY QUESTIONS\n\n";
   if (sortedEssayQuestions.length > 0) {
     sortedEssayQuestions.forEach((q, i) => {
-      const asterisks = q.count > 0 ? '*'.repeat(q.count) : '';
-      result += `${i+1}. ${q.text}\n\n`;
+      const asterisks = q.count > 0 ? ' ' + '*'.repeat(q.count) : '';
+      result += `${i+1}. ${q.text.split('\n')[0]}${asterisks}\n\n`;
     });
   } else {
     result += "No essay questions found for this topic.\n\n";
@@ -211,8 +153,8 @@ function getImportantQuestions(subject: string, topic?: string): string {
   result += "## SHORT NOTE QUESTIONS\n\n";
   if (sortedShortNoteQuestions.length > 0) {
     sortedShortNoteQuestions.forEach((q, i) => {
-      const asterisks = q.count > 0 ? '*'.repeat(q.count) : '';
-      result += `${i+1}. ${q.text}\n\n`;
+      const asterisks = q.count > 0 ? ' ' + '*'.repeat(q.count) : '';
+      result += `${i+1}. ${q.text.split('\n')[0]}${asterisks}\n\n`;
     });
   } else {
     result += "No short note questions found for this topic.\n\n";
@@ -256,26 +198,30 @@ function detectSubjectImportantQuestionsRequest(prompt: string): { isRequest: bo
   // If a subject is detected, try to extract any specific topic
   let topic: string | undefined;
   
-  // Enhanced topic extraction with more specific patterns
-  const topicPatterns = [
-    /(?:in|about|for|on|regarding)\s+([a-z\s-]+?)(?:\.|\?|$)/i,
-    /([a-z\s-]+?)\s+(?:topic|section|chapter)/i,
-    /topic\s+(?:of|on|about)\s+([a-z\s-]+)/i,
-    /(?:the|a)\s+([a-z\s-]+?)\s+(?:topic|section)/i,
-    /questions\s+(?:in|about|on)\s+([a-z\s-]+)/i,
-  ];
+  // Extract topic from the prompt
+  const topicRegex = new RegExp(`${detectedSubject}\\s+(?:in|about|for|on|of|-)\\s+([\\w\\s-]+)`, 'i');
+  const match = lowerPrompt.match(topicRegex);
   
-  for (const pattern of topicPatterns) {
-    const match = lowerPrompt.match(pattern);
-    if (match && match[1] && match[1].length > 3) {
-      topic = match[1].trim();
-      // Don't include the subject name in the topic
-      if (topic.includes(detectedSubject)) {
-        topic = topic.replace(detectedSubject, '').trim();
+  if (match && match[1]) {
+    topic = match[1].trim();
+  } else {
+    // Try other patterns to extract topic
+    const words = lowerPrompt.split(/\s+/);
+    const subjectIndex = words.findIndex(word => 
+      word === detectedSubject || 
+      subjects.find(s => s.name === detectedSubject)?.aliases.includes(word)
+    );
+    
+    if (subjectIndex > -1 && words.length > subjectIndex + 1) {
+      // Look for standalone topics after the subject mention
+      const possibleTopics = ['neoplasia', 'inflammation', 'immunology', 'infectious', 'kidney', 'heart', 'shock', 'edema', 'gangrene'];
+      
+      for (const possibleTopic of possibleTopics) {
+        if (lowerPrompt.includes(possibleTopic)) {
+          topic = possibleTopic;
+          break;
+        }
       }
-      // Remove common filler words
-      topic = topic.replace(/^(the|a|an)\s+/i, '').trim();
-      break;
     }
   }
   
