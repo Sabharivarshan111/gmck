@@ -1,448 +1,461 @@
-import { useState, useEffect, useCallback } from "react";
-import { v4 as uuidv4 } from 'uuid';
-import { useToast } from "@/hooks/use-toast";
-import { ChatMessage } from "@/models/ChatMessage";
-import { supabase } from "@/integrations/supabase/client";
-import { QUESTION_BANK_DATA } from "@/data/questionBankData";
+import { useState, useCallback, useEffect } from "react";
+import { getRandomId } from "@/lib/utils";
+import { useLocalStorage } from "@/hooks/use-local-storage";
+import { useToast } from "@/components/ui/use-toast";
+import { useSettings } from "@/hooks/use-settings";
 
-interface QueueStats {
-  isQueueActive: boolean;
-  queueLength: number;
-  estimatedWaitTime: number;
+export interface ChatMessage {
+  id: string;
+  role: "user" | "assistant" | "system";
+  content: string;
+  timestamp: string;
+  references?: Array<{
+    title: string;
+    authors: string;
+    journal?: string;
+    year: string;
+    url?: string;
+  }>;
 }
 
-interface UseAiChatProps {
-  initialQuestion?: string;
+interface AIResponse {
+  response: string;
+  references?: Array<{
+    title: string;
+    authors: string;
+    journal?: string;
+    year: string;
+    url?: string;
+  }>;
+  error?: string;
+  isRateLimit?: boolean;
+  retryAfter?: number;
 }
 
-// Function to get important questions from the question bank data without using API
-function getImportantQuestions(subject: string, topic?: string): string {
-  // Normalize subject to match our data structure
-  const normalizedSubject = subject.toLowerCase().trim();
-  
-  // Find the subject in our question bank data
-  const subjectData = QUESTION_BANK_DATA[normalizedSubject as keyof typeof QUESTION_BANK_DATA];
-  if (!subjectData) {
-    return `Could not find information about "${subject}" in our question bank. Please check the spelling or try a different subject.`;
-  }
-
-  // Helper function to check if a topic matches the requested topic
-  const isTopicMatch = (topicName: string, searchTopic: string): boolean => {
-    if (!topicName || !searchTopic) return false;
-    
-    // Convert both to lowercase for case-insensitive comparison
-    const normalizedTopicName = topicName.toLowerCase().trim();
-    const normalizedSearchTopic = searchTopic.toLowerCase().trim();
-    
-    // Direct match
-    if (normalizedTopicName === normalizedSearchTopic) return true;
-    
-    // Word boundary check for more precise matching
-    return normalizedTopicName.includes(normalizedSearchTopic) || 
-           searchTopic.includes(normalizedTopicName);
-  };
-  
-  // Helper function to extract questions with their asterisk counts
-  const extractQuestions = (questions: string[]): {text: string, count: number}[] => {
-    return questions.map(question => {
-      // Extract the asterisk pattern if present
-      const asteriskMatch = question.match(/\*+/);
-      const count = asteriskMatch ? asteriskMatch[0].length : 0;
-      return { text: question, count };
-    });
-  };
-  
-  // Function to process essay or short note questions from a subtopic
-  const processQuestionType = (data: any, questionType: 'essay' | 'short-note' | 'short-notes') => {
-    const questions: {text: string, count: number}[] = [];
-    
-    // Special handling for pathology and different structure
-    if (normalizedSubject === 'pathology') {
-      // Find all pathology topics that match the search topic
-      Object.entries(data.subtopics).forEach(([topicKey, topicData]: [string, any]) => {
-        // Skip if a specific topic is requested and this isn't it
-        if (topic && !isTopicMatch(topicData.name, topic) && !isTopicMatch(topicKey, topic)) {
-          return;
-        }
-        
-        // Check if this topic has the specific question type
-        if (topicData.subtopics && 
-            ((questionType === 'essay' && topicData.subtopics.essay) || 
-             (questionType === 'short-note' && topicData.subtopics['short-note']) || 
-             (questionType === 'short-notes' && topicData.subtopics['short-note']))) {
-          
-          const questionData = questionType === 'essay' ? 
-            topicData.subtopics.essay : 
-            topicData.subtopics['short-note'];
-          
-          if (questionData && questionData.questions) {
-            questions.push(...extractQuestions(questionData.questions));
-          }
-        }
-      });
-      
-      return questions;
-    }
-    
-    // Handling for pharmacology and microbiology
-    const processSubtopics = (node: any) => {
-      if (!node) return;
-      
-      // Check if this node has the specific question type
-      if (node.subtopics && 
-          ((questionType === 'essay' && node.subtopics.essay) || 
-           (questionType === 'short-note' && node.subtopics['short-note']) || 
-           (questionType === 'short-notes' && node.subtopics['short-note']))) {
-        
-        const questionData = questionType === 'essay' ? 
-          node.subtopics.essay : 
-          node.subtopics['short-note'];
-        
-        if (questionData && questionData.questions) {
-          questions.push(...extractQuestions(questionData.questions));
-        }
-      }
-      
-      // If this node has a name property, check if it matches the topic
-      if (topic && node.name && !isTopicMatch(node.name, topic)) {
-        return;
-      }
-      
-      // Recursively process all subtopics
-      if (node.subtopics) {
-        Object.entries(node.subtopics).forEach(([key, subtopic]) => {
-          if (typeof subtopic === 'object' && subtopic !== null) {
-            // If a topic is specified, only process matching topics
-            if (!topic || isTopicMatch((subtopic as any).name || key, topic)) {
-              processSubtopics(subtopic);
-            }
-          }
-        });
-      }
-    };
-    
-    // Start processing from the subject data
-    processSubtopics(data);
-    
-    return questions;
-  };
-  
-  // Get all essay and short note questions
-  const essayQuestions = processQuestionType(subjectData, 'essay');
-  const shortNoteQuestions = processQuestionType(subjectData, 'short-note');
-  
-  // Sort questions by their asterisk count (frequency)
-  const sortedEssayQuestions = essayQuestions.sort((a, b) => b.count - a.count);
-  const sortedShortNoteQuestions = shortNoteQuestions.sort((a, b) => b.count - a.count);
-  
-  // Build the response
-  let result = `# Important Questions for ${subject.toUpperCase()}${topic ? ` - ${topic.toUpperCase()}` : ''}\n\n`;
-  
-  // Add essay questions
-  result += "## ESSAY QUESTIONS\n\n";
-  if (sortedEssayQuestions.length > 0) {
-    sortedEssayQuestions.forEach((q, i) => {
-      const asterisks = q.count > 0 ? ' ' + '*'.repeat(q.count) : '';
-      result += `${i+1}. ${q.text.split('\n')[0]}${asterisks}\n\n`;
-    });
-  } else {
-    result += "No essay questions found for this topic.\n\n";
-  }
-  
-  // Add short note questions
-  result += "## SHORT NOTE QUESTIONS\n\n";
-  if (sortedShortNoteQuestions.length > 0) {
-    sortedShortNoteQuestions.forEach((q, i) => {
-      const asterisks = q.count > 0 ? ' ' + '*'.repeat(q.count) : '';
-      result += `${i+1}. ${q.text.split('\n')[0]}${asterisks}\n\n`;
-    });
-  } else {
-    result += "No short note questions found for this topic.\n\n";
-  }
-  
-  return result;
-}
-
-// Helper to check if a prompt is requesting important questions about a subject
-function detectSubjectImportantQuestionsRequest(prompt: string): { isRequest: boolean, subject: string, topic?: string } {
-  const lowerPrompt = prompt.toLowerCase();
-  
-  // Check for "important questions" type requests
-  const isImportantQuestionsRequest = /important question|important topics|high yield|frequently asked|commonly asked|repeated questions/i.test(lowerPrompt);
-  
-  if (!isImportantQuestionsRequest) {
-    return { isRequest: false, subject: '' };
-  }
-  
-  // Look for subject mentions
-  const subjects = [
-    { name: "pharmacology", aliases: ["pharma", "pharmacodynamics", "pharmacokinetics"] },
-    { name: "microbiology", aliases: ["micro", "bacteria", "virus", "fungi", "parasites"] },
-    { name: "pathology", aliases: ["patho", "histology", "cytology"] }
-  ];
-  
-  let detectedSubject = '';
-  
-  // Try to detect subject
-  for (const subject of subjects) {
-    if (lowerPrompt.includes(subject.name) || subject.aliases.some(alias => lowerPrompt.includes(alias))) {
-      detectedSubject = subject.name;
-      break;
-    }
-  }
-  
-  if (!detectedSubject) {
-    return { isRequest: false, subject: '' };
-  }
-  
-  // If a subject is detected, try to extract any specific topic
-  let topic: string | undefined;
-  
-  // Extract topic from the prompt
-  const topicRegex = new RegExp(`${detectedSubject}\\s+(?:in|about|for|on|of|-)\\s+([\\w\\s-]+)`, 'i');
-  const match = lowerPrompt.match(topicRegex);
-  
-  if (match && match[1]) {
-    topic = match[1].trim();
-  } else {
-    // Try other patterns to extract topic
-    const words = lowerPrompt.split(/\s+/);
-    const subjectIndex = words.findIndex(word => 
-      word === detectedSubject || 
-      subjects.find(s => s.name === detectedSubject)?.aliases.includes(word)
-    );
-    
-    if (subjectIndex > -1 && words.length > subjectIndex + 1) {
-      // Look for standalone topics after the subject mention
-      const possibleTopics = ['neoplasia', 'inflammation', 'immunology', 'infectious', 'kidney', 'heart', 'shock', 'edema', 'gangrene'];
-      
-      for (const possibleTopic of possibleTopics) {
-        if (lowerPrompt.includes(possibleTopic)) {
-          topic = possibleTopic;
-          break;
-        }
-      }
-    }
-  }
-  
-  return { 
-    isRequest: true, 
-    subject: detectedSubject,
-    topic
-  };
-}
-
-export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
-  const [prompt, setPrompt] = useState<string>(initialQuestion || "");
+export const useAiChat = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isRateLimited, setIsRateLimited] = useState<boolean>(false);
-  const [queueStats, setQueueStats] = useState<QueueStats>({
-    isQueueActive: false,
-    queueLength: 0,
-    estimatedWaitTime: 0,
-  });
+  const [isLoading, setIsLoading] = useState(false);
+  const [currentConversation, setCurrentConversation] = useState<ChatMessage[]>([]);
+  const [conversationHistory, setConversationHistory] = useLocalStorage<ChatMessage[]>("conversation-history", []);
+  const [retryAfter, setRetryAfter] = useState<number | null>(null);
   const { toast } = useToast();
-  
-  const handleError = (error: unknown) => {
-    console.error("AI Chat Error:", error);
-    setIsLoading(false);
-    
-    // Fix TypeScript error by properly checking if error.message exists and is a string
-    const errorMessage = error && typeof error === 'object' && 'message' in error && typeof error.message === 'string' 
-      ? error.message 
-      : "An unexpected error occurred. Please try again later.";
-    
-    toast({
-      title: "Error",
-      description: errorMessage,
-      variant: "destructive",
-    });
-  };
-  
-  // Load chat history from localStorage on component mount
-  useEffect(() => {
-    try {
-      const storedMessages = localStorage.getItem('chatHistory');
-      if (storedMessages) {
-        setMessages(JSON.parse(storedMessages));
-      }
-    } catch (error) {
-      console.error("Error loading chat history from localStorage:", error);
-    }
-  }, []);
-  
-  // Save chat history to localStorage whenever messages change
-  useEffect(() => {
-    try {
-      localStorage.setItem('chatHistory', JSON.stringify(messages));
-    } catch (error) {
-      console.error("Error saving chat history to localStorage:", error);
-    }
-  }, [messages]);
+  const { settings } = useSettings();
 
-  const handleSubmitQuestion = useCallback(async (question: string) => {
-    if (!question.trim()) return;
-    
-    const userMessage: ChatMessage = {
-      id: uuidv4(),
-      role: 'user',
-      content: question,
-      timestamp: new Date(),
+  // Clear retry timer when component unmounts
+  useEffect(() => {
+    return () => {
+      if (retryAfter !== null) {
+        setRetryAfter(null);
+      }
     };
-    
-    setMessages(prevMessages => [...prevMessages, userMessage]);
-    setIsLoading(true);
-    setPrompt(""); // Clear the input immediately when processing starts
-    
-    try {
-      // First, check if this is a request for important questions that we can handle locally
-      const importantQuestionsRequest = detectSubjectImportantQuestionsRequest(question);
-      
-      if (importantQuestionsRequest.isRequest && importantQuestionsRequest.subject) {
-        // Handle locally without API call
-        const response = getImportantQuestions(
-          importantQuestionsRequest.subject, 
-          importantQuestionsRequest.topic
+  }, [retryAfter]);
+
+  // Countdown timer for rate limiting
+  useEffect(() => {
+    if (retryAfter === null || retryAfter <= 0) return;
+
+    const timer = setTimeout(() => {
+      setRetryAfter(prev => (prev !== null && prev > 0 ? prev - 1 : null));
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [retryAfter]);
+
+  // Function to fetch AI response from Supabase Edge Function
+  const fetchAIResponse = useCallback(
+    async (
+      prompt: string,
+      history: ChatMessage[]
+    ): Promise<AIResponse> => {
+      try {
+        // Prepare conversation history in the format expected by the API
+        const formattedHistory = history.map(msg => ({
+          role: msg.role,
+          content: msg.content
+        }));
+
+        // Detect if this is a triple-tap (user tapped the same message 3 times)
+        const isTripleTap = 
+          history.length >= 5 && 
+          history[history.length - 1].role === "assistant" &&
+          history[history.length - 2].role === "user" &&
+          history[history.length - 3].role === "assistant" &&
+          history[history.length - 4].role === "user" &&
+          prompt.toLowerCase() === history[history.length - 2].content.toLowerCase();
+
+        // Detect if this is an MCQ request
+        const isMCQRequest = 
+          prompt.toLowerCase().includes("mcq") || 
+          prompt.toLowerCase().includes("multiple choice") ||
+          prompt.toLowerCase().includes("generate questions") ||
+          prompt.toLowerCase().includes("create questions");
+
+        // Detect if this is a request for important questions
+        const isImportantQuestionsRequest = 
+          prompt.toLowerCase().includes("important questions") ||
+          prompt.toLowerCase().includes("important topics");
+
+        // Detect if this is a clarification request
+        const isNeedingClarification = 
+          prompt.toLowerCase().includes("i don't understand") ||
+          prompt.toLowerCase().includes("explain") ||
+          prompt.toLowerCase().includes("clarify") ||
+          prompt.toLowerCase().includes("what do you mean");
+
+        // If triple-tapped, add a prefix to the prompt
+        const finalPrompt = isTripleTap ? `Triple-tapped: ${prompt}` : prompt;
+
+        // Make the API request
+        const response = await fetch(
+          "https://pmtgeydtqypwrypshhsx.supabase.co/functions/v1/ask-gemini",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              prompt: finalPrompt,
+              conversationHistory: formattedHistory,
+              isTripleTap,
+              isMCQRequest,
+              isImportantQuestionsRequest,
+              isNeedingClarification
+            }),
+          }
         );
+
+        if (!response.ok) {
+          throw new Error(`API request failed with status ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (data.error) {
+          // Handle rate limiting
+          if (data.isRateLimit && data.retryAfter) {
+            setRetryAfter(data.retryAfter);
+            toast({
+              title: "Rate limit reached",
+              description: `Please wait ${data.retryAfter} seconds before trying again.`,
+              variant: "destructive",
+            });
+          }
+          throw new Error(data.error);
+        }
+
+        return data;
+      } catch (error) {
+        console.error("Error fetching AI response:", error);
+        return {
+          response: "Sorry, I encountered an error while processing your request. Please try again in a moment.",
+          error: error.message,
+        };
+      }
+    },
+    [toast]
+  );
+
+  const handleSendMessage = useCallback(
+    async (message: string) => {
+      if (!message.trim()) return;
+
+      // Start loading
+      setIsLoading(true);
+      
+      // Check if this is a request for important questions from the question bank
+      const isImportantQuestionsRequest = 
+        message.toLowerCase().includes("important questions") ||
+        message.toLowerCase().includes("important topics") ||
+        message.toLowerCase().includes("important essays") ||
+        message.toLowerCase().includes("important notes");
+
+      let topicMatch = null;
+      let subjectMatch = null;
+      
+      // Extract potential subject and topic from the message
+      if (isImportantQuestionsRequest) {
+        // Check for subject mentions (pathology, pharmacology, microbiology)
+        if (message.toLowerCase().includes("pathology")) {
+          subjectMatch = "pathology";
+        } else if (message.toLowerCase().includes("pharmacology")) {
+          subjectMatch = "pharmacology";
+        } else if (message.toLowerCase().includes("microbiology")) {
+          subjectMatch = "microbiology";
+        }
         
-        const aiMessage: ChatMessage = {
-          id: uuidv4(),
-          role: 'assistant',
-          content: response,
-          timestamp: new Date(),
+        // Check for topic mentions in the message by iterating through all topics
+        // For Pathology topics
+        const pathologyTopics = [
+          { key: "neoplasia", keywords: ["neoplasia", "neoplasm", "cancer", "tumor", "tumour"] },
+          { key: "cell-injury", keywords: ["cell injury", "cellular injury", "cell damage"] },
+          { key: "inflammation-repair", keywords: ["inflammation", "inflammatory", "repair", "healing"] },
+          { key: "hemodynamic-disorders", keywords: ["hemodynamic", "edema", "hyperemia", "congestion", "hemorrhage", "thrombosis", "embolism", "infarction", "shock"] },
+          { key: "genetic-disorders", keywords: ["genetic", "genetics", "chromosome", "mutation"] },
+          { key: "immunology", keywords: ["immunology", "immune", "immunity", "autoimmune"] },
+          { key: "infectious-diseases", keywords: ["infection", "infectious", "bacteria", "viral", "fungal", "parasite"] },
+          // Other pathology topics
+        ];
+        
+        // For Pharmacology topics
+        const pharmacologyTopics = [
+          { key: "central-nervous-system", keywords: ["cns", "central nervous system", "brain", "spinal cord"] },
+          { key: "autonomic-nervous-system", keywords: ["ans", "autonomic nervous system", "sympathetic", "parasympathetic"] },
+          { key: "cardiovascular-system", keywords: ["cvs", "cardiovascular", "heart", "blood vessel"] },
+          { key: "respiratory-system", keywords: ["respiratory", "lung", "breathing"] },
+          { key: "autacoids", keywords: ["autacoid", "histamine", "serotonin", "prostaglandin"] },
+          { key: "hormones", keywords: ["hormone", "endocrine", "thyroid", "insulin", "corticosteroids"] },
+          { key: "neoplastic-drugs", keywords: ["anticancer", "antineoplastic", "chemotherapy", "neoplastic"] },
+          { key: "gastrointestinal-system", keywords: ["gi", "gastrointestinal", "stomach", "intestine", "digestive"] },
+          { key: "anti-microbial-drugs", keywords: ["antimicrobial", "antibiotic", "antibacterial", "antifungal", "antiviral"] },
+          // Other pharmacology topics
+        ];
+        
+        // Combined topics array based on detected subject
+        let topicsToCheck = [];
+        if (subjectMatch === "pathology") {
+          topicsToCheck = pathologyTopics;
+        } else if (subjectMatch === "pharmacology") {
+          topicsToCheck = pharmacologyTopics;
+        } else {
+          // If no subject match, check all topics
+          topicsToCheck = [...pathologyTopics, ...pharmacologyTopics];
+        }
+        
+        // Find matching topic in message
+        for (const topic of topicsToCheck) {
+          const matched = topic.keywords.some(keyword => 
+            message.toLowerCase().includes(keyword.toLowerCase())
+          );
+          if (matched) {
+            topicMatch = topic.key;
+            // If we didn't match a subject but matched a topic, try to determine subject
+            if (!subjectMatch) {
+              if (pathologyTopics.find(t => t.key === topicMatch)) {
+                subjectMatch = "pathology";
+              } else if (pharmacologyTopics.find(t => t.key === topicMatch)) {
+                subjectMatch = "pharmacology";
+              }
+            }
+            break;
+          }
+        }
+
+        console.log("Search query:", { isImportantQuestionsRequest, subjectMatch, topicMatch });
+      }
+      
+      // Create a user message object and add to chat
+      const userMessageObj: ChatMessage = {
+        id: getRandomId(),
+        role: "user",
+        content: message,
+        timestamp: new Date().toISOString(),
+      };
+      
+      // Add the message to the chat
+      setMessages((prev) => [...prev, userMessageObj]);
+      
+      try {
+        if (isImportantQuestionsRequest && (subjectMatch || topicMatch)) {
+          // Get questions from question bank based on subject and topic
+          const essayQuestions: string[] = [];
+          const shortNoteQuestions: string[] = [];
+          
+          // Import QUESTION_BANK_DATA
+          const { QUESTION_BANK_DATA } = await import("@/data/questionBankData");
+          
+          // Helper function to traverse the question bank and find matching topics
+          const findQuestionsForTopic = (data: any, subject: string | null, topic: string | null) => {
+            if (!data) return;
+            
+            // First level: subjects
+            Object.entries(data).forEach(([subjectKey, subjectData]: [string, any]) => {
+              // Only process if subject matches or no subject specified
+              if (subject && subjectKey !== subject) return;
+              
+              // Second level: papers or topics
+              if (subjectData.subtopics) {
+                Object.entries(subjectData.subtopics).forEach(([paperKey, paperData]: [string, any]) => {
+                  // Check if this is a paper (paper-1, paper-2) or direct topic
+                  if (paperData.subtopics) {
+                    // This is a paper, go one level deeper to topics
+                    Object.entries(paperData.subtopics).forEach(([topicKey, topicData]: [string, any]) => {
+                      // Only process if topic matches or no topic specified
+                      if (topic && topicKey !== topic) return;
+                      
+                      // Process questions for this topic
+                      processQuestionsFromTopic(topicData);
+                    });
+                  } else {
+                    // This is directly a topic
+                    // Only process if topic matches or no topic specified
+                    if (topic && paperKey !== topic) return;
+                    
+                    // Process questions for this topic
+                    processQuestionsFromTopic(paperData);
+                  }
+                });
+              }
+            });
+          };
+          
+          // Helper function to extract questions from a topic
+          const processQuestionsFromTopic = (topicData: any) => {
+            if (!topicData || !topicData.subtopics) return;
+            
+            // Check for essay questions
+            if (topicData.subtopics.essay && topicData.subtopics.essay.questions) {
+              essayQuestions.push(...topicData.subtopics.essay.questions);
+            }
+            
+            // Check for short note questions (can be either "short-note" or "short-notes")
+            if (topicData.subtopics["short-note"] && topicData.subtopics["short-note"].questions) {
+              shortNoteQuestions.push(...topicData.subtopics["short-note"].questions);
+            }
+            if (topicData.subtopics["short-notes"] && topicData.subtopics["short-notes"].questions) {
+              shortNoteQuestions.push(...topicData.subtopics["short-notes"].questions);
+            }
+          };
+          
+          // Find questions
+          findQuestionsForTopic(QUESTION_BANK_DATA, subjectMatch, topicMatch);
+          
+          console.log("Found questions:", { 
+            essays: essayQuestions.length, 
+            shortNotes: shortNoteQuestions.length 
+          });
+          
+          // Construct response
+          let responseContent = "";
+          
+          if (essayQuestions.length === 0 && shortNoteQuestions.length === 0) {
+            // If no questions found, use the API
+            responseContent = await fetchAIResponse(message, conversationHistory);
+          } else {
+            // Format the questions into a nice response
+            responseContent = `# Important Questions on ${topicMatch ? topicMatch.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) : ''} ${subjectMatch ? '(' + subjectMatch.charAt(0).toUpperCase() + subjectMatch.slice(1) + ')' : ''}\n\n`;
+            
+            if (essayQuestions.length > 0) {
+              responseContent += "## Essay Questions\n\n";
+              essayQuestions.forEach((q, i) => {
+                // Clean up the question format - remove page numbers, etc.
+                let cleanQuestion = q.replace(/\(Pg\.No:[^)]+\)/g, '').trim();
+                // Extract frequency indicators (like *****)
+                const starMatch = cleanQuestion.match(/\*+/);
+                const frequency = starMatch ? starMatch[0].length : 0;
+                
+                // Remove the stars and add a frequency indicator if present
+                cleanQuestion = cleanQuestion.replace(/\*+/, '').trim();
+                
+                // Add a frequency indicator in text form
+                const frequencyText = frequency > 0 ? ` (High Frequency: ${frequency}/5)` : '';
+                
+                responseContent += `${i+1}. ${cleanQuestion}${frequencyText}\n\n`;
+              });
+            }
+            
+            if (shortNoteQuestions.length > 0) {
+              responseContent += "## Short Notes\n\n";
+              shortNoteQuestions.forEach((q, i) => {
+                // Clean up the question format - remove page numbers, etc.
+                let cleanQuestion = q.replace(/\(Pg\.No:[^)]+\)/g, '').trim();
+                // Extract frequency indicators (like *****)
+                const starMatch = cleanQuestion.match(/\*+/);
+                const frequency = starMatch ? starMatch[0].length : 0;
+                
+                // Remove the stars and add a frequency indicator if present
+                cleanQuestion = cleanQuestion.replace(/\*+/, '').trim();
+                
+                // Add a frequency indicator in text form
+                const frequencyText = frequency > 0 ? ` (High Frequency: ${frequency}/5)` : '';
+                
+                responseContent += `${i+1}. ${cleanQuestion}${frequencyText}\n\n`;
+              });
+            }
+            
+            responseContent += "\nThese questions are directly from your question bank. Focus on the high frequency questions for best results.";
+          }
+          
+          // Create the AI response message
+          const aiResponseMessage: ChatMessage = {
+            id: getRandomId(),
+            role: "assistant",
+            content: responseContent,
+            timestamp: new Date().toISOString(),
+          };
+          
+          // Add AI message to chat
+          setMessages((prev) => [...prev, aiResponseMessage]);
+          setCurrentConversation((prev) => [...prev, userMessageObj, aiResponseMessage]);
+          
+        } else {
+          // Regular AI response via API
+          const response = await fetchAIResponse(message, conversationHistory);
+          
+          // Create the AI response message
+          const aiResponseMessage: ChatMessage = {
+            id: getRandomId(),
+            role: "assistant",
+            content: response.response,
+            timestamp: new Date().toISOString(),
+            references: response.references,
+          };
+          
+          // Add AI message to chat
+          setMessages((prev) => [...prev, aiResponseMessage]);
+          setCurrentConversation((prev) => [...prev, userMessageObj, aiResponseMessage]);
+        }
+      } catch (error) {
+        console.error("Error in AI response:", error);
+        
+        // Create error message
+        const errorMessage: ChatMessage = {
+          id: getRandomId(),
+          role: "assistant",
+          content: "Sorry, I encountered an error while processing your request. Please try again in a moment.",
+          timestamp: new Date().toISOString(),
         };
         
-        setMessages(prevMessages => [...prevMessages, aiMessage]);
+        // Add error message to chat
+        setMessages((prev) => [...prev, errorMessage]);
+        setCurrentConversation((prev) => [...prev, userMessageObj, errorMessage]);
+      } finally {
+        // End loading
         setIsLoading(false);
-        return;
+        
+        // Scroll to bottom with animation
+        setTimeout(() => {
+          const chatContainer = document.querySelector(".chat-container");
+          if (chatContainer) {
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+          }
+        }, 100);
       }
-      
-      // If not a local request, proceed with API call
-      
-      // Convert previous messages to history format for context
-      const conversationHistory = messages.slice(-6).map(msg => ({
-        role: msg.role,
-        content: msg.content
-      }));
-      
-      // Check if this is a triple tap (special handling)
-      const isTripleTap = question.startsWith("Triple-tapped:") || question.startsWith("triple-tapped:");
-      
-      // Check if the user is requesting MCQs
-      const isMCQRequest = /generate\s+(?:10|ten)\s+mcqs?|create\s+(?:10|ten)\s+mcqs?|make\s+(?:10|ten)\s+mcqs?|ten\s+mcqs?|10\s+mcqs?|generate\s+mcqs?/i.test(question);
-      
-      // Check if the user is asking for important questions
-      const isImportantQuestionsRequest = /important question|important topics|high yield|frequently asked|commonly asked|repeated questions/i.test(question);
-      
-      // Check if the user is asking for clarification
-      const isNeedingClarification = /i don't understand|can't understand|explain|similar|more detail/i.test(question.toLowerCase());
-      
-      console.log("Request type:", { isTripleTap, isMCQRequest, isImportantQuestionsRequest, isNeedingClarification });
-      
-      // Use Supabase edge function - using ask-gemini which supports all the advanced features
-      const { data, error } = await supabase.functions.invoke('ask-gemini', {
-        body: { 
-          prompt: question,
-          conversationHistory,
-          isTripleTap,
-          isMCQRequest,
-          isImportantQuestionsRequest,
-          isNeedingClarification
-        },
-      });
-      
-      if (error) {
-        throw new Error(`Error calling AI service: ${error.message}`);
-      }
-      
-      if (data.isRateLimit) {
-        setIsRateLimited(true);
-        setIsLoading(false);
-        toast({
-          title: "Rate limit reached",
-          description: data.error || "Please wait a moment before sending another message.",
-          variant: "destructive",
-        });
-        return;
-      }
-      
-      if (data.error) {
-        throw new Error(data.error);
-      }
-      
-      if (data.queueStats) {
-        setQueueStats(data.queueStats);
-      }
-      
-      const aiMessage: ChatMessage = {
-        id: uuidv4(),
-        role: 'assistant',
-        content: data.response,
-        timestamp: new Date(),
-        references: data.references // Include the references if any
-      };
-      
-      setMessages(prevMessages => [...prevMessages, aiMessage]);
-    } catch (error) {
-      handleError(error);
-      
-      // Add a system message about the error
-      const errorMessage: ChatMessage = {
-        id: uuidv4(),
-        role: 'system',
-        content: "I'm sorry, but I encountered an error while processing your request. Please try again later.",
-        timestamp: new Date(),
-      };
-      
-      setMessages(prevMessages => [...prevMessages, errorMessage]);
-    } finally {
-      setIsLoading(false);
+    },
+    [conversationHistory]
+  );
+
+  const clearChat = useCallback(() => {
+    // Save current conversation to history before clearing
+    if (messages.length > 0) {
+      setConversationHistory(prev => [...prev, ...currentConversation]);
     }
-  }, [messages, toast]);
-
-  const handleSubmit = useCallback(async (e: React.FormEvent) => {
-    e.preventDefault();
-    handleSubmitQuestion(prompt);
-  }, [prompt, handleSubmitQuestion]);
-
-  const handleClearChat = useCallback(() => {
+    
+    // Clear current messages
     setMessages([]);
-    localStorage.removeItem('chatHistory');
-    toast({
-      title: "Chat cleared!",
-      description: "All messages have been cleared from the chat history.",
-    });
-  }, [toast]);
+    setCurrentConversation([]);
+  }, [messages, currentConversation, setConversationHistory]);
 
-  const handleCopyResponse = useCallback((content: string) => {
-    navigator.clipboard.writeText(content);
-    toast({
-      title: "Response copied!",
-      description: "The AI response has been copied to your clipboard.",
-    });
-  }, [toast]);
-
-  useEffect(() => {
-    if (isRateLimited) {
-      const timer = setTimeout(() => {
-        setIsRateLimited(false);
-      }, 60000); // Reset after 60 seconds
-      return () => clearTimeout(timer);
-    }
-  }, [isRateLimited]);
+  const clearHistory = useCallback(() => {
+    setConversationHistory([]);
+  }, [setConversationHistory]);
 
   return {
-    prompt,
-    setPrompt,
-    isLoading,
     messages,
-    setMessages,
-    isRateLimited,
-    queueStats,
-    handleSubmit,
-    handleClearChat,
-    handleCopyResponse,
-    handleSubmitQuestion
+    isLoading,
+    retryAfter,
+    handleSendMessage,
+    clearChat,
+    clearHistory,
+    conversationHistory,
   };
 };
