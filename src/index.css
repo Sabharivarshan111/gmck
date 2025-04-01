@@ -1,96 +1,100 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
+  /* Light theme */
   :root {
     --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
-
-    --card: 0 0% 98%;
-    --card-foreground: 0 0% 3.9%;
-
-    --popover: 0 0% 98%;
-    --popover-foreground: 0 0% 3.9%;
-
-    --primary: 0 0% 9%;
-    --primary-foreground: 0 0% 98%;
-
-    --secondary: 0 0% 92%;
-    --secondary-foreground: 0 0% 9%;
-
-    --muted: 0 0% 92%;
-    --muted-foreground: 0 0% 45.1%;
-
-    --accent: 0 0% 92%;
-    --accent-foreground: 0 0% 9%;
-
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-
-    --border: 0 0% 85%;
-    --input: 0 0% 85%;
-    --ring: 0 0% 9%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+    --radius: 0.5rem;
   }
 
+  /* Dark theme */
   .dark {
-    --background: 0 0% 0%;
-    --foreground: 0 0% 100%;
-
-    --card: 0 0% 3%;
-    --card-foreground: 0 0% 100%;
-
-    --popover: 0 0% 3%;
-    --popover-foreground: 0 0% 100%;
-
-    --primary: 0 0% 100%;
-    --primary-foreground: 0 0% 0%;
-
-    --secondary: 0 0% 10%;
-    --secondary-foreground: 0 0% 100%;
-
-    --muted: 0 0% 10%;
-    --muted-foreground: 0 0% 70%;
-
-    --accent: 0 0% 10%;
-    --accent-foreground: 0 0% 100%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 0 0% 20%;
-    --input: 0 0% 20%;
-    --ring: 0 0% 100%;
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
   }
 
+  /* Blackpink theme */
   .blackpink {
-    --background: 0 0% 0%;
-    --foreground: 336 100% 70%;
+    --background: 330 10% 5%;
+    --foreground: 330 10% 95%;
+    --card: 330 10% 5%;
+    --card-foreground: 330 10% 95%;
+    --popover: 330 10% 5%;
+    --popover-foreground: 330 10% 95%;
+    --primary: 325 90% 60%;
+    --primary-foreground: 330 10% 5%;
+    --secondary: 330 10% 10%;
+    --secondary-foreground: 330 10% 95%;
+    --muted: 330 10% 10%;
+    --muted-foreground: 330 10% 70%;
+    --accent: 325 90% 60%;
+    --accent-foreground: 330 10% 5%;
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 330 10% 95%;
+    --border: 325 90% 40%;
+    --input: 330 10% 10%;
+    --ring: 325 90% 60%;
+  }
 
-    --card: 0 0% 0%;
-    --card-foreground: 336 100% 70%;
-
-    --popover: 0 0% 0%;
-    --popover-foreground: 336 100% 70%;
-
-    --primary: 336 100% 70%;
-    --primary-foreground: 0 0% 0%;
-
-    --secondary: 0 0% 0%;
-    --secondary-foreground: 336 100% 70%;
-
-    --muted: 0 0% 0%;
-    --muted-foreground: 336 100% 60%;
-
-    --accent: 0 0% 0%;
-    --accent-foreground: 336 100% 70%;
-
-    --destructive: 0 100% 50%;
-    --destructive-foreground: 336 100% 70%;
-
-    --border: 336 100% 70%;
-    --input: 0 0% 0%;
-    --ring: 336 100% 70%;
+  /* Retro theme */
+  .retro {
+    --background: 210 65% 12%;
+    --foreground: 180 70% 85%;
+    --card: 210 65% 12%;
+    --card-foreground: 180 70% 85%;
+    --popover: 210 65% 12%;
+    --popover-foreground: 180 70% 85%;
+    --primary: 180 70% 50%;
+    --primary-foreground: 210 65% 12%;
+    --secondary: 210 65% 18%;
+    --secondary-foreground: 180 70% 85%;
+    --muted: 210 65% 18%;
+    --muted-foreground: 180 40% 70%;
+    --accent: 180 70% 50%;
+    --accent-foreground: 210 65% 12%;
+    --destructive: 0 80% 50%;
+    --destructive-foreground: 180 70% 85%;
+    --border: 180 70% 40%;
+    --input: 210 65% 18%;
+    --ring: 180 70% 50%;
   }
 }
 
@@ -100,428 +104,48 @@
   }
   body {
     @apply bg-background text-foreground;
-    transition: font-size 0.3s ease, background-color 0.3s ease;
-  }
-  .blackpink button {
-    color: #FF5C8D;
-    border-color: #FF5C8D;
-    background-color: #000000;
-  }
-  .blackpink input, .blackpink textarea {
-    background-color: #000000;
-    color: #FF5C8D;
-    border-color: #FF5C8D;
-  }
-  .blackpink .tabs-button {
-    color: #FF5C8D !important;
-  }
-  .blackpink .font-toggle-button {
-    color: #FF5C8D !important;
-    border-color: #FF5C8D !important;
   }
 }
 
-/* Animation utilities */
-@keyframes slide-up {
-  0% {
-    transform: translateY(20px);
-    opacity: 0;
-  }
-  100% {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-.slide-up {
-  animation: slide-up 0.3s ease-out forwards;
-}
-
-@keyframes fade-in {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-.fade-in {
-  animation: fade-in 0.3s ease-out forwards;
-}
-
-/* Enhanced QuestionCard styles */
-.question-card {
-  transition: all 0.3s ease-in-out;
-  border-width: 1px;
-  position: relative;
-}
-
-.question-card:active {
-  background-color: rgba(255, 255, 255, 0.05);
-  transform: scale(0.98);
-}
-
-/* Important: Enhanced blackpink styles with stronger specificity */
-.blackpink .question-card {
-  background-color: black !important;
-  border-color: #FF5C8D !important;
-  border-width: 2px !important;
-  position: relative !important;
-  box-shadow: 0 0 8px rgba(255, 92, 141, 0.2) !important;
-}
-
-.blackpink .question-card:active {
-  background-color: rgba(255, 92, 141, 0.05) !important;
-}
-
-/* Fix for checkbox in blackpink theme - using increased specificity and visibility improvements */
-.blackpink [data-radix-checkbox-root] {
-  background-color: transparent !important;
-  border-color: #FF5C8D !important;
-  border-width: 1px !important;
-  position: relative !important;
-  z-index: 40 !important;
-  box-shadow: 0 0 5px rgba(255, 92, 141, 0.5) !important;
-}
-
-.blackpink [data-radix-checkbox-root][data-state="checked"] {
-  background-color: #FF5C8D !important;
-  border-color: #FF5C8D !important;
-}
-
-.blackpink [data-radix-checkbox-root][data-state="checked"] svg {
-  color: black !important;
-}
-
-/* Fix badge styling in blackpink theme with higher specificity and improved visibility */
-.blackpink .badge {
-  color: #FF5C8D !important;
-  border-color: #FF5C8D !important;
-  border-width: 1px !important;
-  background-color: transparent !important;
-  position: relative !important;
-  z-index: 40 !important;
-  box-shadow: 0 0 5px rgba(255, 92, 141, 0.5) !important;
-}
-
-/* Enhanced AI chatbox styling for blackpink theme */
-.blackpink .ai-chat-section {
-  background-color: black !important;
-  border-color: #FF5C8D !important;
-  box-shadow: 0 0 8px rgba(255, 222, 226, 0.2) !important;
-}
-
-.blackpink .ai-chat-section * {
-  color: #FF5C8D !important;
-}
-
-.blackpink .ai-message {
-  background-color: rgba(255, 222, 226, 0.05) !important;
-  border-color: #FF5C8D !important;
-  box-shadow: 0 0 5px rgba(255, 222, 226, 0.3) !important;
-}
-
-.blackpink .user-message {
-  background-color: rgba(0, 0, 0, 0.6) !important;
-  border-color: #FF5C8D !important;
-  box-shadow: 0 0 5px rgba(255, 222, 226, 0.3) !important;
-}
-
-/* Transition and animation utilities */
-.transition-colors {
-  transition-property: background-color, border-color, color, fill, stroke;
-  transition-duration: 0.3s;
-  transition-timing-function: ease;
-}
-
-.animate-pulse {
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-}
-
-/* BlackPink theme overrides */
-.blackpink .tabs-list [data-state="active"] {
-  color: #FF5C8D;
-  border-color: #FF5C8D;
-  background-color: #000000;
-}
-
-.blackpink .tabs-list button {
-  color: #FF5C8D;
-  background-color: #000000;
-}
-.blackpink .tabs-list button:hover {
-  color: #FF8CAD;
-}
-
-/* Fix for TabsTrigger active state in BlackPink theme */
-.blackpink .TabsTrigger[data-state="active"] {
-  background-color: #000000 !important;
-  color: #FF5C8D !important;
-  box-shadow: 0 0 10px rgba(255, 92, 141, 0.3) !important;
-  position: relative !important;
-}
-
-.blackpink [role="tab"][data-state="active"] {
-  background-color: #000000 !important;
-  color: #FF5C8D !important;
-  box-shadow: 0 0 10px rgba(255, 92, 141, 0.3) !important;
-  position: relative !important;
-}
-
-.blackpink [role="tab"][data-state="active"]::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 10%;
-  right: 10%;
-  height: 2px;
-  background-color: #FF5C8D !important;
-  box-shadow: 0 0 5px rgba(255, 92, 141, 0.5) !important;
-}
-
-/* Enhanced tab styling for blackpink theme */
-.blackpink [role="tablist"] {
-  background-color: #000000 !important;
-  border: 1px solid rgba(255, 92, 141, 0.3) !important;
-}
-
-/* Extra styles for blackpink tabs to make selection more visible */
-.blackpink [role="tab"] {
-  position: relative;
-  transition: all 0.3s ease;
-}
-
-.blackpink [role="tab"][data-state="active"] {
-  color: #FF5C8D !important;
-  font-weight: 600 !important;
-}
-
-.blackpink [role="tab"]:not([data-state="active"]) {
-  color: rgba(255, 92, 141, 0.7) !important;
-}
-
-/* Additional styles for blackpink extras button */
-.blackpink button.text-pink-400,
-.blackpink button.text-[#FF5C8D] {
-  position: relative;
-  z-index: 10;
-  background-color: #000000;
-}
-
-.blackpink button.text-pink-400:hover,
-.blackpink button.text-[#FF5C8D]:hover {
-  box-shadow: 0 0 15px rgba(255, 92, 141, 0.4) !important;
-  background-color: rgba(0, 0, 0, 0.8);
-}
-
-/* Fix for topic accordions */
-.blackpink .topic-accordion, 
-.blackpink .subtopic-accordion,
-.blackpink .type-accordion {
-  color: #FF5C8D;
-  background-color: #000000;
-}
-
-.blackpink [data-radix-accordion-content] {
-  background-color: #000000;
-}
-
-/* Fix for SearchBar icon */
-.blackpink .search-icon {
-  color: #FF5C8D;
-}
-
-/* Fix Tabs background */
-.blackpink [role="tablist"] {
-  background-color: #000000;
-}
-
-/* Make sure MCQs display correctly in blackpink theme */
-.blackpink .mcq-question,
-.blackpink .mcq-options,
-.blackpink .mcq-answer,
-.blackpink .mcq-explanation {
-  background-color: #000000;
-  color: #FF5C8D;
-}
-
-/* Fix dropdown items in blackpink theme */
-.blackpink .dropdown-item {
-  background-color: #000000;
-  color: #FF5C8D;
-}
-.blackpink .dropdown-item:hover {
-  background-color: rgba(0, 0, 0, 0.6);
-}
-
-/* Fix card backgrounds in blackpink theme */
-.blackpink .card {
-  background-color: #000000;
-  border-color: #FF5C8D;
-}
-
-/* Fix for the background in various parts of the UI */
-.blackpink .bg-white, 
-.blackpink .bg-card, 
-.blackpink .bg-background, 
-.blackpink .bg-secondary,
-.blackpink .bg-muted,
-.blackpink .bg-accent {
-  background-color: #000000 !important;
-}
-
-/* Fix scrollbars for blackpink theme */
-.blackpink ::-webkit-scrollbar-track {
-  background-color: #000000;
-}
-
-.blackpink ::-webkit-scrollbar-thumb {
-  background-color: rgba(255, 92, 141, 0.5);
-}
-
-/* Fix pomodoro timer in blackpink theme */
-.blackpink .pomodoro-container {
-  background-color: #000000;
-  border-color: #FF5C8D;
-}
-
-/* Fix question bank content */
-.blackpink .question-bank-content {
-  background-color: #000000;
-}
-
-/* Override for any elements with light backgrounds */
-.blackpink .bg-gray-100,
-.blackpink .bg-gray-200,
-.blackpink .bg-gray-300,
-.blackpink .hover\:bg-gray-100:hover,
-.blackpink .hover\:bg-gray-200:hover {
-  background-color: #000000 !important;
-}
-.blackpink .hover\:bg-gray-100:hover,
-.blackpink .hover\:bg-gray-200:hover {
-  background-color: rgba(0, 0, 0, 0.6) !important;
-}
-
-/* Fix borders in accordion items to be black */
-.blackpink [data-radix-accordion-item],
-.blackpink .AccordionItem {
-  border-bottom: 0 !important;
-}
-
-/* Add specific style to fix accordion borders */
-.blackpink [data-radix-accordion-item]::after {
-  content: '';
+/* Add scan lines effect for retro theme */
+.retro::before {
+  content: "";
   display: block;
-  height: 1px;
-  background-color: #000000 !important;
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
-  margin-top: 4px;
+  height: 100%;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    rgba(0, 255, 255, 0.03) 1px,
+    transparent 2px
+  );
+  pointer-events: none;
+  z-index: 100;
 }
 
-/* Fix hover on accordion triggers */
-.blackpink [data-radix-accordion-trigger]:hover {
-  background-color: rgba(0, 0, 0, 0.8) !important;
+/* Retro theme specific styling */
+.retro .ai-chat-section {
+  font-family: 'Courier New', monospace;
 }
 
-.blackpink *[class*="bg-white"],
-.blackpink *[class*="bg-gray"],
-.blackpink *[class*="bg-slate"],
-.blackpink *[class*="bg-zinc"] {
-  background-color: #000000 !important;
+.retro button {
+  border-color: rgba(94, 234, 212, 0.5) !important;
 }
 
-/* Override for Tabs specifically */
-.blackpink .CustomTabs [data-state="active"],
-.blackpink .TabsTrigger[data-state="active"],
-.blackpink [role="tab"][data-state="active"] {
-  color: #FF5C8D !important;
+.retro input {
+  background-color: rgba(10, 25, 47, 0.8) !important;
+  border: 1px solid rgba(94, 234, 212, 0.3) !important;
+  color: rgb(94, 234, 212) !important;
 }
 
-/* Force borders in blackpink theme to be either transparent or black */
-.blackpink :not(.border-pink-500):not(.border-pink-400) {
-  border-color: transparent !important;
+.retro .chat-message {
+  background: rgba(17, 34, 64, 0.6) !important;
+  border: 1px solid rgba(94, 234, 212, 0.2) !important;
 }
 
-/* Target accordion borders specifically */
-.blackpink .AccordionItem,
-.blackpink [data-radix-accordion-item] {
-  border-bottom: none !important;
-}
-
-/* Fix badge styling in blackpink theme */
-.blackpink .badge {
-  color: #FF5C8D !important;
-  border-color: #FF5C8D !important;
-  background-color: #000000 !important;
-  border-width: 1px !important;
-}
-
-/* Fix checkbox styling in blackpink theme */
-.blackpink [data-radix-checkbox-root] {
-  border-color: #FF5C8D !important;
-}
-
-.blackpink [data-radix-checkbox-root][data-state="checked"] {
-  background-color: #FF5C8D !important;
-}
-
-.blackpink [data-radix-checkbox-root][data-state="checked"] svg {
-  color: #000000 !important;
-}
-
-/* Extra specific styles for checkbox and badge in blackpink theme */
-.blackpink [data-radix-checkbox-root] {
-  background-color: #000000 !important;
-  border-color: #FFDEE2 !important;
-  border-width: 2px !important;
-  z-index: 30 !important;
-}
-
-.blackpink .question-card [data-radix-checkbox-root] {
-  border-color: #FFDEE2 !important;
-  border-width: 2px !important;
-}
-
-.blackpink .question-card .badge {
-  border-color: #FFDEE2 !important;
-  border-width: 2px !important;
-  color: #FFDEE2 !important;
-  z-index: 30 !important;
-}
-
-/* Additional fixes for blackpink theme */
-.blackpink [data-radix-checkbox-root]:focus {
-  box-shadow: 0 0 0 2px rgba(255, 222, 226, 0.5) !important;
-}
-
-.blackpink .badge {
-  background-color: transparent !important;
-}
-
-/* These help ensure the blackpink elements are always visible */
-.blackpink .question-card {
-  isolation: isolate !important;
-}
-
-.blackpink .question-card [data-radix-checkbox-root],
-.blackpink .question-card .badge {
-  isolation: isolate !important;
-  border-color: #FFDEE2 !important;
-  border-width: 2px !important;
-  color: #FFDEE2 !important;
-}
-
-.blackpink .question-card > * {
-  color: #FFDEE2 !important;
+.retro .question-bank-content {
+  border-color: rgba(94, 234, 212, 0.3) !important;
 }

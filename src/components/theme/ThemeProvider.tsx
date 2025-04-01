@@ -1,7 +1,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react";
 
-type Theme = "dark" | "light" | "blackpink";
+export type Theme = "dark" | "light" | "blackpink" | "retro";
 
 type ThemeContextType = {
   theme: Theme;
@@ -14,7 +14,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>(() => {
     // Check if a theme was previously selected and saved in localStorage
     const savedTheme = localStorage.getItem("theme") as Theme | null;
-    if (savedTheme && (savedTheme === "dark" || savedTheme === "light" || savedTheme === "blackpink")) {
+    if (savedTheme && (savedTheme === "dark" || savedTheme === "light" || savedTheme === "blackpink" || savedTheme === "retro")) {
       return savedTheme;
     }
     // Default to 'dark' theme if nothing is saved or invalid
@@ -27,7 +27,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     
     // Apply theme class to document element
     const root = window.document.documentElement;
-    root.classList.remove("light", "dark", "blackpink");
+    root.classList.remove("light", "dark", "blackpink", "retro");
     root.classList.add(theme);
   }, [theme]);
 

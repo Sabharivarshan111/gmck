@@ -17,22 +17,21 @@ interface AiChatProps {
 export const AiChat = ({ initialQuestion }: AiChatProps = {}) => {
   const { theme } = useTheme();
   const { 
-    prompt, 
-    setPrompt, 
-    isLoading, 
     messages, 
-    setMessages,
-    isRateLimited,
-    queueStats,
-    handleSubmit, 
-    handleClearChat, 
-    handleCopyResponse,
-    handleSubmitQuestion
-  } = useAiChat({ initialQuestion });
+    isLoading, 
+    retryAfter,
+    handleSendMessage,
+    clearChat,
+    clearHistory,
+    conversationHistory
+  } = useAiChat();
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [isFirstLoad, setIsFirstLoad] = useState(true);
   const [connectionError, setConnectionError] = useState(false);
+  const [prompt, setPrompt] = useState("");
+  const [isRateLimited, setIsRateLimited] = useState(false);
+  const [queueStats, setQueueStats] = useState({ isQueueActive: false, queueLength: 0, estimatedWaitTime: 0 });
 
   // Scroll to bottom when messages change, but not on first load
   useEffect(() => {
@@ -45,6 +44,11 @@ export const AiChat = ({ initialQuestion }: AiChatProps = {}) => {
   useEffect(() => {
     setIsFirstLoad(false);
   }, []);
+
+  // Set rate-limited status based on retryAfter
+  useEffect(() => {
+    setIsRateLimited(retryAfter !== null && retryAfter > 0);
+  }, [retryAfter]);
   
   // Check connection status
   useEffect(() => {
@@ -72,8 +76,6 @@ export const AiChat = ({ initialQuestion }: AiChatProps = {}) => {
       const customEvent = event as CustomEvent;
       if (customEvent.detail && customEvent.detail.question) {
         const question = customEvent.detail.question;
-        
-        // Don't set the question text in the input field, just submit directly
         handleSubmitQuestion(question);
       }
     };
@@ -84,23 +86,62 @@ export const AiChat = ({ initialQuestion }: AiChatProps = {}) => {
     return () => {
       window.removeEventListener('ai-triple-tap-answer', handleTripleTapAnswer);
     };
-  }, [handleSubmitQuestion]);
+  }, []);
 
+  // Handle form submission
+  const handleSubmit = () => {
+    if (prompt.trim()) {
+      handleSendMessage(prompt);
+      setPrompt("");
+    }
+  };
+
+  // Handle direct question submission (from triple-tap)
+  const handleSubmitQuestion = (question: string) => {
+    handleSendMessage(question);
+  };
+
+  // Handle clearing chat
+  const handleClearChat = () => {
+    clearChat();
+  };
+
+  // Handle copying response
+  const handleCopyResponse = (content: string) => {
+    navigator.clipboard.writeText(content)
+      .then(() => {
+        // Show toast on successful copy
+        // Toast logic here if needed
+      })
+      .catch(err => {
+        console.error('Failed to copy text: ', err);
+      });
+  };
+
+  // Define theme-specific class names
   const cardClassName = theme === "blackpink" 
     ? "backdrop-blur-sm bg-black/90 border-pink-500/30 flex flex-col h-[390px] shadow-xl" 
-    : "backdrop-blur-sm bg-gray-950/70 border-gray-800 flex flex-col h-[390px] shadow-xl";
+    : theme === "retro"
+      ? "backdrop-blur-sm bg-navy-900/90 border-cyan-500/30 flex flex-col h-[390px] shadow-xl font-mono"
+      : "backdrop-blur-sm bg-gray-950/70 border-gray-800 flex flex-col h-[390px] shadow-xl";
 
   const headerClassName = theme === "blackpink"
     ? "px-4 py-2 border-b border-pink-500/30"
-    : "px-4 py-2 border-b border-gray-800";
+    : theme === "retro"
+      ? "px-4 py-2 border-b border-cyan-500/30"
+      : "px-4 py-2 border-b border-gray-800";
 
   const titleClassName = theme === "blackpink"
     ? "text-lg flex items-center justify-between text-pink-400"
-    : "text-lg flex items-center justify-between text-white";
+    : theme === "retro"
+      ? "text-lg flex items-center justify-between text-cyan-400"
+      : "text-lg flex items-center justify-between text-white";
 
   const clearButtonClassName = theme === "blackpink"
     ? "h-8 px-2 text-pink-400 hover:text-pink-300 border-pink-500/50"
-    : "h-8 px-2 text-gray-400 hover:text-white";
+    : theme === "retro"
+      ? "h-8 px-2 text-cyan-400 hover:text-cyan-300 border-cyan-500/50"
+      : "h-8 px-2 text-gray-400 hover:text-white";
 
   return (
     <motion.div 
@@ -132,7 +173,9 @@ export const AiChat = ({ initialQuestion }: AiChatProps = {}) => {
             {connectionError && (
               <div className={theme === "blackpink" 
                 ? "bg-red-900/30 border border-red-800 rounded-md p-3 flex items-start"
-                : "bg-red-900/30 border border-red-800 rounded-md p-3 flex items-start"
+                : theme === "retro"
+                  ? "bg-red-900/30 border border-red-800 rounded-md p-3 flex items-start font-mono"
+                  : "bg-red-900/30 border border-red-800 rounded-md p-3 flex items-start"
               }>
                 <WifiOff className="h-5 w-5 text-red-500 mr-2 mt-0.5 flex-shrink-0" />
                 <div>
@@ -149,14 +192,28 @@ export const AiChat = ({ initialQuestion }: AiChatProps = {}) => {
             {isRateLimited && (
               <div className={theme === "blackpink" 
                 ? "bg-pink-900/30 border border-pink-800 rounded-md p-3 flex items-start"
-                : "bg-amber-900/30 border border-amber-800 rounded-md p-3 flex items-start"
+                : theme === "retro"
+                  ? "bg-cyan-900/30 border border-cyan-800 rounded-md p-3 flex items-start font-mono"
+                  : "bg-amber-900/30 border border-amber-800 rounded-md p-3 flex items-start"
               }>
-                <AlertCircle className={`h-5 w-5 ${theme === "blackpink" ? "text-pink-500" : "text-amber-500"} mr-2 mt-0.5 flex-shrink-0`} />
+                <AlertCircle className={`h-5 w-5 ${
+                  theme === "blackpink" ? "text-pink-500" : 
+                  theme === "retro" ? "text-cyan-500" : 
+                  "text-amber-500"
+                } mr-2 mt-0.5 flex-shrink-0`} />
                 <div>
-                  <p className={`text-sm ${theme === "blackpink" ? "text-pink-300" : "text-amber-300"}`}>
+                  <p className={`text-sm ${
+                    theme === "blackpink" ? "text-pink-300" : 
+                    theme === "retro" ? "text-cyan-300" : 
+                    "text-amber-300"
+                  }`}>
                     Too many requests. Please wait a moment before trying again.
                   </p>
-                  <p className={`text-xs ${theme === "blackpink" ? "text-pink-400/70" : "text-amber-400/70"} mt-1`}>
+                  <p className={`text-xs ${
+                    theme === "blackpink" ? "text-pink-400/70" : 
+                    theme === "retro" ? "text-cyan-400/70" : 
+                    "text-amber-400/70"
+                  } mt-1`}>
                     The AI service is currently experiencing high demand.
                   </p>
                 </div>
@@ -167,14 +224,28 @@ export const AiChat = ({ initialQuestion }: AiChatProps = {}) => {
             {queueStats.isQueueActive && !isRateLimited && (
               <div className={theme === "blackpink"
                 ? "bg-pink-900/30 border border-pink-800 rounded-md p-3 flex items-start animate-pulse"
-                : "bg-blue-900/30 border border-blue-800 rounded-md p-3 flex items-start animate-pulse"
+                : theme === "retro"
+                  ? "bg-cyan-900/30 border border-cyan-800 rounded-md p-3 flex items-start animate-pulse font-mono"
+                  : "bg-blue-900/30 border border-blue-800 rounded-md p-3 flex items-start animate-pulse"
               }>
-                <Clock className={`h-5 w-5 ${theme === "blackpink" ? "text-pink-500" : "text-blue-500"} mr-2 mt-0.5 flex-shrink-0`} />
+                <Clock className={`h-5 w-5 ${
+                  theme === "blackpink" ? "text-pink-500" : 
+                  theme === "retro" ? "text-cyan-500" : 
+                  "text-blue-500"
+                } mr-2 mt-0.5 flex-shrink-0`} />
                 <div>
-                  <p className={`text-sm ${theme === "blackpink" ? "text-pink-300" : "text-blue-300"}`}>
+                  <p className={`text-sm ${
+                    theme === "blackpink" ? "text-pink-300" : 
+                    theme === "retro" ? "text-cyan-300" : 
+                    "text-blue-300"
+                  }`}>
                     Request{queueStats.queueLength > 1 ? 's' : ''} queued ({queueStats.queueLength})
                   </p>
-                  <p className={`text-xs ${theme === "blackpink" ? "text-pink-400/70" : "text-blue-400/70"} mt-1`}>
+                  <p className={`text-xs ${
+                    theme === "blackpink" ? "text-pink-400/70" : 
+                    theme === "retro" ? "text-cyan-400/70" : 
+                    "text-blue-400/70"
+                  } mt-1`}>
                     Estimated wait: ~{queueStats.estimatedWaitTime} seconds
                   </p>
                 </div>
@@ -198,7 +269,11 @@ export const AiChat = ({ initialQuestion }: AiChatProps = {}) => {
           </div>
         </CardContent>
         
-        <CardFooter className={theme === "blackpink" ? "p-3 pt-2 border-t border-pink-500/30" : "p-3 pt-2 border-t border-gray-800"}>
+        <CardFooter className={
+          theme === "blackpink" ? "p-3 pt-2 border-t border-pink-500/30" : 
+          theme === "retro" ? "p-3 pt-2 border-t border-cyan-500/30" : 
+          "p-3 pt-2 border-t border-gray-800"
+        }>
           <ChatInput
             prompt={prompt}
             setPrompt={setPrompt}
