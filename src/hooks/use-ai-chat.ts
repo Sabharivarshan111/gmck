@@ -3,20 +3,8 @@ import { getRandomId } from "@/lib/utils";
 import { useLocalStorage } from "@/hooks/use-local-storage";
 import { useToast } from "@/components/ui/use-toast";
 import { useSettings } from "@/hooks/use-settings";
-
-export interface ChatMessage {
-  id: string;
-  role: "user" | "assistant" | "system";
-  content: string;
-  timestamp: string;
-  references?: Array<{
-    title: string;
-    authors: string;
-    journal?: string;
-    year: string;
-    url?: string;
-  }>;
-}
+import { ChatMessage } from "@/models/ChatMessage";
+import { supabase } from "@/integrations/supabase/client";
 
 interface AIResponse {
   response: string;
@@ -102,44 +90,36 @@ export const useAiChat = () => {
           prompt.toLowerCase().includes("clarify") ||
           prompt.toLowerCase().includes("what do you mean");
 
-        // If triple-tapped, add a prefix to the prompt
-        const finalPrompt = isTripleTap ? `Triple-tapped: ${prompt}` : prompt;
-
-        // Make the API request
-        const response = await fetch(
-          "https://pmtgeydtqypwrypshhsx.supabase.co/functions/v1/ask-gemini",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              prompt: finalPrompt,
-              conversationHistory: formattedHistory,
-              isTripleTap,
-              isMCQRequest,
-              isImportantQuestionsRequest,
-              isNeedingClarification
-            }),
+        // Call the Supabase Edge Function instead of direct API
+        const { data, error } = await supabase.functions.invoke("ask-gemini", {
+          body: {
+            prompt,
+            conversationHistory: formattedHistory,
+            isTripleTap,
+            isMCQRequest,
+            isImportantQuestionsRequest,
+            isNeedingClarification
           }
-        );
+        });
 
-        if (!response.ok) {
-          throw new Error(`API request failed with status ${response.status}`);
+        if (error) {
+          console.error("Supabase function error:", error);
+          throw new Error(error.message);
         }
 
-        const data = await response.json();
+        // Handle rate limiting
+        if (data.isRateLimit && data.retryAfter) {
+          setRetryAfter(data.retryAfter);
+          toast({
+            title: "Rate limit reached",
+            description: `Please wait ${data.retryAfter} seconds before trying again.`,
+            variant: "destructive",
+          });
+          throw new Error(data.error);
+        }
 
+        // If there's an error message in the response
         if (data.error) {
-          // Handle rate limiting
-          if (data.isRateLimit && data.retryAfter) {
-            setRetryAfter(data.retryAfter);
-            toast({
-              title: "Rate limit reached",
-              description: `Please wait ${data.retryAfter} seconds before trying again.`,
-              variant: "destructive",
-            });
-          }
           throw new Error(data.error);
         }
 
@@ -431,7 +411,7 @@ export const useAiChat = () => {
         }, 100);
       }
     },
-    [conversationHistory]
+    [conversationHistory, fetchAIResponse]
   );
 
   const clearChat = useCallback(() => {
