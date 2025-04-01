@@ -4,8 +4,20 @@ import { getRandomId } from "@/lib/utils";
 import { useLocalStorage } from "@/hooks/use-local-storage";
 import { useToast } from "@/components/ui/use-toast";
 import { useSettings } from "@/hooks/use-settings";
-import { ChatMessage } from "@/models/ChatMessage";
-import { supabase } from "@/integrations/supabase/client";
+
+export interface ChatMessage {
+  id: string;
+  role: "user" | "assistant" | "system";
+  content: string;
+  timestamp: string;
+  references?: Array<{
+    title: string;
+    authors: string;
+    journal?: string;
+    year: string;
+    url?: string;
+  }>;
+}
 
 interface AIResponse {
   response: string;
@@ -91,41 +103,49 @@ export const useAiChat = () => {
           prompt.toLowerCase().includes("clarify") ||
           prompt.toLowerCase().includes("what do you mean");
 
-        // Call the Supabase Edge Function with proper error handling
-        const { data, error } = await supabase.functions.invoke("ask-gemini", {
-          body: {
-            prompt,
-            conversationHistory: formattedHistory,
-            isTripleTap,
-            isMCQRequest,
-            isImportantQuestionsRequest,
-            isNeedingClarification
+        // If triple-tapped, add a prefix to the prompt
+        const finalPrompt = isTripleTap ? `Triple-tapped: ${prompt}` : prompt;
+
+        // Make the API request
+        const response = await fetch(
+          "https://pmtgeydtqypwrypshhsx.supabase.co/functions/v1/ask-gemini",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              prompt: finalPrompt,
+              conversationHistory: formattedHistory,
+              isTripleTap,
+              isMCQRequest,
+              isImportantQuestionsRequest,
+              isNeedingClarification
+            }),
           }
-        });
+        );
 
-        if (error) {
-          console.error("Supabase function error:", error);
-          throw new Error(error.message);
+        if (!response.ok) {
+          throw new Error(`API request failed with status ${response.status}`);
         }
 
-        // Handle rate limiting
-        if (data.isRateLimit && data.retryAfter) {
-          setRetryAfter(data.retryAfter);
-          toast({
-            title: "Rate limit reached",
-            description: `Please wait ${data.retryAfter} seconds before trying again.`,
-            variant: "destructive",
-          });
-          throw new Error(data.error || "Rate limit reached");
-        }
+        const data = await response.json();
 
-        // If there's an error message in the response
         if (data.error) {
+          // Handle rate limiting
+          if (data.isRateLimit && data.retryAfter) {
+            setRetryAfter(data.retryAfter);
+            toast({
+              title: "Rate limit reached",
+              description: `Please wait ${data.retryAfter} seconds before trying again.`,
+              variant: "destructive",
+            });
+          }
           throw new Error(data.error);
         }
 
-        return data as AIResponse;
-      } catch (error: any) {
+        return data;
+      } catch (error) {
         console.error("Error fetching AI response:", error);
         return {
           response: "Sorry, I encountered an error while processing your request. Please try again in a moment.",
@@ -174,7 +194,24 @@ export const useAiChat = () => {
           { key: "genetic-disorders", keywords: ["genetic", "genetics", "chromosome", "mutation"] },
           { key: "immunology", keywords: ["immunology", "immune", "immunity", "autoimmune"] },
           { key: "infectious-diseases", keywords: ["infection", "infectious", "bacteria", "viral", "fungal", "parasite"] },
-          // Other pathology topics
+          { key: "environmental-nutritional-disorders", keywords: ["environmental", "nutritional", "nutrition", "vitamin", "mineral"] },
+          { key: "infancy-childhood-diseases", keywords: ["infancy", "childhood", "pediatric", "paediatric"] },
+          { key: "red-blood-cells", keywords: ["red blood cell", "rbc", "erythrocyte", "anemia", "anaemia"] },
+          { key: "white-blood-cells", keywords: ["white blood cell", "wbc", "leukocyte", "leukemia", "leukaemia"] },
+          { key: "platelets", keywords: ["platelet", "thrombocyte", "thrombocytopenia", "bleeding"] },
+          { key: "blood-vessels", keywords: ["blood vessel", "vascular", "artery", "vein", "capillary"] },
+          { key: "heart", keywords: ["heart", "cardiac", "myocardial", "pericardial", "endocardial"] },
+          { key: "respiratory-system", keywords: ["respiratory", "lung", "bronchial", "pulmonary"] },
+          { key: "gastrointestinal-system", keywords: ["gastrointestinal", "gi", "digestive", "stomach", "intestine", "bowel"] },
+          { key: "liver-gallbladder-pancreas", keywords: ["liver", "hepatic", "gallbladder", "biliary", "pancreas", "pancreatic"] },
+          { key: "kidney", keywords: ["kidney", "renal", "nephron", "glomerular"] },
+          { key: "male-genital-tract", keywords: ["male genital", "testis", "testes", "testicular", "prostate"] },
+          { key: "female-genital-tract", keywords: ["female genital", "ovary", "ovarian", "uterus", "uterine", "cervix", "cervical"] },
+          { key: "breast", keywords: ["breast", "mammary"] },
+          { key: "endocrinology", keywords: ["endocrine", "hormone", "thyroid", "adrenal", "pituitary"] },
+          { key: "skin", keywords: ["skin", "cutaneous", "dermal", "epidermal"] },
+          { key: "central-nervous-system", keywords: ["central nervous", "cns", "brain", "spinal", "neural"] },
+          { key: "bones-joints-soft-tissue", keywords: ["bone", "joint", "soft tissue", "skeletal", "muscular"] }
         ];
         
         // For Pharmacology topics
@@ -188,7 +225,14 @@ export const useAiChat = () => {
           { key: "neoplastic-drugs", keywords: ["anticancer", "antineoplastic", "chemotherapy", "neoplastic"] },
           { key: "gastrointestinal-system", keywords: ["gi", "gastrointestinal", "stomach", "intestine", "digestive"] },
           { key: "anti-microbial-drugs", keywords: ["antimicrobial", "antibiotic", "antibacterial", "antifungal", "antiviral"] },
-          // Other pharmacology topics
+          { key: "general-pharmacology", keywords: ["general", "pharmacokinetics", "pharmacodynamics", "receptor"] },
+          { key: "peripheral-nervous-system", keywords: ["peripheral nervous", "pns", "neuromuscular", "muscle relaxant"] },
+          { key: "miscellaneous-drugs", keywords: ["miscellaneous"] }
+        ];
+        
+        // For Microbiology topics (if needed in the future)
+        const microbiologyTopics = [
+          // Add microbiology topics when needed
         ];
         
         // Combined topics array based on detected subject
@@ -197,9 +241,11 @@ export const useAiChat = () => {
           topicsToCheck = pathologyTopics;
         } else if (subjectMatch === "pharmacology") {
           topicsToCheck = pharmacologyTopics;
+        } else if (subjectMatch === "microbiology") {
+          topicsToCheck = microbiologyTopics;
         } else {
           // If no subject match, check all topics
-          topicsToCheck = [...pathologyTopics, ...pharmacologyTopics];
+          topicsToCheck = [...pathologyTopics, ...pharmacologyTopics, ...microbiologyTopics];
         }
         
         // Find matching topic in message
@@ -215,6 +261,8 @@ export const useAiChat = () => {
                 subjectMatch = "pathology";
               } else if (pharmacologyTopics.find(t => t.key === topicMatch)) {
                 subjectMatch = "pharmacology";
+              } else if (microbiologyTopics.find(t => t.key === topicMatch)) {
+                subjectMatch = "microbiology";
               }
             }
             break;
@@ -244,34 +292,44 @@ export const useAiChat = () => {
           // Import QUESTION_BANK_DATA
           const { QUESTION_BANK_DATA } = await import("@/data/questionBankData");
           
+          console.log("QUESTION_BANK_DATA loaded:", !!QUESTION_BANK_DATA);
+          console.log("Subject match:", subjectMatch);
+          console.log("Topic match:", topicMatch);
+          
           // Helper function to traverse the question bank and find matching topics
           const findQuestionsForTopic = (data: any, subject: string | null, topic: string | null) => {
-            if (!data) return;
+            if (!data) {
+              console.log("No data provided to findQuestionsForTopic");
+              return;
+            }
             
             // First level: subjects
             Object.entries(data).forEach(([subjectKey, subjectData]: [string, any]) => {
+              console.log(`Checking subject: ${subjectKey} against: ${subject}`);
+              
               // Only process if subject matches or no subject specified
               if (subject && subjectKey !== subject) return;
               
               // Second level: papers or topics
-              if (subjectData.subtopics) {
+              if (subjectData && subjectData.subtopics) {
                 Object.entries(subjectData.subtopics).forEach(([paperKey, paperData]: [string, any]) => {
+                  console.log(`Checking paper/topic: ${paperKey} in subject: ${subjectKey}`);
+                  
                   // Check if this is a paper (paper-1, paper-2) or direct topic
-                  if (paperData.subtopics) {
+                  if (paperData && paperData.subtopics) {
                     // This is a paper, go one level deeper to topics
                     Object.entries(paperData.subtopics).forEach(([topicKey, topicData]: [string, any]) => {
+                      console.log(`Checking topic: ${topicKey} against: ${topic} in paper: ${paperKey}`);
+                      
                       // Only process if topic matches or no topic specified
                       if (topic && topicKey !== topic) return;
                       
                       // Process questions for this topic
                       processQuestionsFromTopic(topicData);
                     });
-                  } else {
-                    // This is directly a topic
-                    // Only process if topic matches or no topic specified
-                    if (topic && paperKey !== topic) return;
-                    
-                    // Process questions for this topic
+                  } else if (topic && paperKey === topic) {
+                    // This might be directly a topic that matches the search
+                    console.log(`Direct topic match found: ${paperKey}`);
                     processQuestionsFromTopic(paperData);
                   }
                 });
@@ -281,18 +339,31 @@ export const useAiChat = () => {
           
           // Helper function to extract questions from a topic
           const processQuestionsFromTopic = (topicData: any) => {
-            if (!topicData || !topicData.subtopics) return;
+            if (!topicData) {
+              console.log("No topic data provided to processQuestionsFromTopic");
+              return;
+            }
+            
+            console.log("Processing topic data:", topicData.name || "unnamed topic");
+            
+            if (!topicData.subtopics) {
+              console.log("No subtopics found in topic data");
+              return;
+            }
             
             // Check for essay questions
             if (topicData.subtopics.essay && topicData.subtopics.essay.questions) {
+              console.log(`Found ${topicData.subtopics.essay.questions.length} essay questions`);
               essayQuestions.push(...topicData.subtopics.essay.questions);
             }
             
             // Check for short note questions (can be either "short-note" or "short-notes")
             if (topicData.subtopics["short-note"] && topicData.subtopics["short-note"].questions) {
+              console.log(`Found ${topicData.subtopics["short-note"].questions.length} short-note questions`);
               shortNoteQuestions.push(...topicData.subtopics["short-note"].questions);
             }
             if (topicData.subtopics["short-notes"] && topicData.subtopics["short-notes"].questions) {
+              console.log(`Found ${topicData.subtopics["short-notes"].questions.length} short-notes questions`);
               shortNoteQuestions.push(...topicData.subtopics["short-notes"].questions);
             }
           };
@@ -310,14 +381,17 @@ export const useAiChat = () => {
           
           if (essayQuestions.length === 0 && shortNoteQuestions.length === 0) {
             // If no questions found, use the API
-            responseContent = await fetchAIResponse(message, conversationHistory);
+            const apiResponse = await fetchAIResponse(message, conversationHistory);
+            responseContent = apiResponse.response;
           } else {
             // Format the questions into a nice response
             responseContent = `# Important Questions on ${topicMatch ? topicMatch.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) : ''} ${subjectMatch ? '(' + subjectMatch.charAt(0).toUpperCase() + subjectMatch.slice(1) + ')' : ''}\n\n`;
             
             if (essayQuestions.length > 0) {
               responseContent += "## Essay Questions\n\n";
-              essayQuestions.forEach((q, i) => {
+              // Limit to 10 questions to avoid overwhelming responses
+              const limitedEssayQuestions = essayQuestions.slice(0, 10);
+              limitedEssayQuestions.forEach((q, i) => {
                 // Clean up the question format - remove page numbers, etc.
                 let cleanQuestion = q.replace(/\(Pg\.No:[^)]+\)/g, '').trim();
                 // Extract frequency indicators (like *****)
@@ -332,11 +406,18 @@ export const useAiChat = () => {
                 
                 responseContent += `${i+1}. ${cleanQuestion}${frequencyText}\n\n`;
               });
+              
+              // Add note if we've limited the questions
+              if (essayQuestions.length > 10) {
+                responseContent += `_Note: Showing 10 of ${essayQuestions.length} essay questions. Ask for more if needed._\n\n`;
+              }
             }
             
             if (shortNoteQuestions.length > 0) {
               responseContent += "## Short Notes\n\n";
-              shortNoteQuestions.forEach((q, i) => {
+              // Limit to 10 questions to avoid overwhelming responses
+              const limitedShortNotes = shortNoteQuestions.slice(0, 10);
+              limitedShortNotes.forEach((q, i) => {
                 // Clean up the question format - remove page numbers, etc.
                 let cleanQuestion = q.replace(/\(Pg\.No:[^)]+\)/g, '').trim();
                 // Extract frequency indicators (like *****)
@@ -351,6 +432,11 @@ export const useAiChat = () => {
                 
                 responseContent += `${i+1}. ${cleanQuestion}${frequencyText}\n\n`;
               });
+              
+              // Add note if we've limited the questions
+              if (shortNoteQuestions.length > 10) {
+                responseContent += `_Note: Showing 10 of ${shortNoteQuestions.length} short note questions. Ask for more if needed._\n\n`;
+              }
             }
             
             responseContent += "\nThese questions are directly from your question bank. Focus on the high frequency questions for best results.";
@@ -367,7 +453,6 @@ export const useAiChat = () => {
           // Add AI message to chat
           setMessages((prev) => [...prev, aiResponseMessage]);
           setCurrentConversation((prev) => [...prev, userMessageObj, aiResponseMessage]);
-          
         } else {
           // Regular AI response via API
           const response = await fetchAIResponse(message, conversationHistory);
@@ -385,7 +470,7 @@ export const useAiChat = () => {
           setMessages((prev) => [...prev, aiResponseMessage]);
           setCurrentConversation((prev) => [...prev, userMessageObj, aiResponseMessage]);
         }
-      } catch (error: any) {
+      } catch (error) {
         console.error("Error in AI response:", error);
         
         // Create error message

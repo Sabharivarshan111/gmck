@@ -11,6 +11,6 @@ export interface ChatMessage {
   id: string;
   role: 'user' | 'assistant' | 'system';
   content: string;
-  timestamp: Date | string;
+  timestamp: Date;
   references?: Reference[];
 }
