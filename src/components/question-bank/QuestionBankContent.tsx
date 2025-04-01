@@ -38,15 +38,9 @@ const QuestionBankContent = ({
     setLocalExpandedItems(value);
   };
 
-  const getAccordionClassNameByTheme = () => {
-    if (theme === "blackpink") {
-      return "w-full text-gray-800 dark:text-gray-200 question-bank-content";
-    } else if (theme === "retro") {
-      return "w-full text-[#ea384c] question-bank-content";
-    } else {
-      return "w-full text-gray-800 dark:text-gray-200";
-    }
-  };
+  const accordionClassName = `w-full text-gray-800 dark:text-gray-200 ${
+    theme === "blackpink" ? "question-bank-content" : ""
+  }`;
 
   return (
     <div className="grid gap-4">
@@ -54,7 +48,7 @@ const QuestionBankContent = ({
         type="multiple" 
         value={localExpandedItems}
         onValueChange={handleAccordionValueChange}
-        className={getAccordionClassNameByTheme()}
+        className={accordionClassName}
       >
         {Object.entries(filteredData).map(([topicKey, topic]) => (
           <TopicAccordion 

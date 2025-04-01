@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -93,36 +92,6 @@
     --input: 0 0% 0%;
     --ring: 336 100% 70%;
   }
-  
-  .retro {
-    --background: 225 20% 14%;
-    --foreground: 0 75% 57%;
-
-    --card: 225 20% 10%;
-    --card-foreground: 0 75% 57%;
-
-    --popover: 225 20% 10%;
-    --popover-foreground: 0 75% 57%;
-
-    --primary: 0 75% 57%;
-    --primary-foreground: 225 20% 14%;
-
-    --secondary: 225 20% 20%;
-    --secondary-foreground: 0 75% 57%;
-
-    --muted: 225 20% 20%;
-    --muted-foreground: 0 63% 70%;
-
-    --accent: 225 20% 20%;
-    --accent-foreground: 0 75% 57%;
-
-    --destructive: 0 75% 50%;
-    --destructive-foreground: 225 20% 14%;
-
-    --border: 0 75% 30%;
-    --input: 225 20% 20%;
-    --ring: 0 75% 57%;
-  }
 }
 
 @layer base {
@@ -149,84 +118,6 @@
   .blackpink .font-toggle-button {
     color: #FF5C8D !important;
     border-color: #FF5C8D !important;
-  }
-  
-  /* Retro theme styles */
-  .retro {
-    font-family: monospace;
-  }
-  
-  .retro button {
-    color: #ea384c;
-    border-color: #ea384c;
-    background-color: #1A1F2C;
-  }
-  
-  .retro input, .retro textarea {
-    background-color: #1A1F2C;
-    color: #ea384c;
-    border-color: #ea384c;
-    font-family: monospace;
-  }
-  
-  .retro .tabs-button {
-    color: #ea384c !important;
-  }
-  
-  .retro .font-toggle-button {
-    color: #ea384c !important;
-    border-color: #ea384c !important;
-  }
-  
-  .retro code {
-    background-color: #221F26;
-    color: #1EAEDB;
-    border: 1px solid rgba(30, 174, 219, 0.3);
-  }
-  
-  /* Terminal-like scrollbars for retro theme */
-  .retro ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-  }
-  
-  .retro ::-webkit-scrollbar-track {
-    background: #221F26;
-  }
-  
-  .retro ::-webkit-scrollbar-thumb {
-    background: #ea384c;
-  }
-  
-  /* Green text effect for some elements in retro theme */
-  .retro h1, .retro h2, .retro h3, .retro h4, .retro h5, .retro h6 {
-    color: #1EAEDB;
-    font-family: monospace;
-  }
-  
-  /* Terminal-like effects */
-  .retro .card {
-    border: 1px solid #ea384c;
-    box-shadow: 0 0 10px rgba(234, 56, 76, 0.3);
-  }
-  
-  /* Scan line effect for retro theme */
-  .retro::after {
-    content: "";
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    pointer-events: none;
-    background: repeating-linear-gradient(
-      0deg,
-      rgba(0, 0, 0, 0.1) 0px,
-      rgba(0, 0, 0, 0.1) 1px,
-      transparent 1px,
-      transparent 2px
-    );
-    z-index: 100;
   }
 }
 
@@ -284,25 +175,6 @@
   background-color: rgba(255, 92, 141, 0.05) !important;
 }
 
-/* Retro question cards */
-.retro .question-card {
-  background-color: #1A1F2C !important;
-  border-color: #ea384c !important;
-  border-width: 2px !important;
-  position: relative !important;
-  box-shadow: 0 0 8px rgba(234, 56, 76, 0.3) !important;
-  font-family: monospace !important;
-}
-
-.retro .question-card:active {
-  background-color: rgba(234, 56, 76, 0.1) !important;
-}
-
-.retro .question-card::before {
-  content: "> ";
-  color: #1EAEDB;
-}
-
 /* Fix for checkbox in blackpink theme - using increased specificity and visibility improvements */
 .blackpink [data-radix-checkbox-root] {
   background-color: transparent !important;
@@ -322,25 +194,6 @@
   color: black !important;
 }
 
-/* Fix checkbox for retro theme */
-.retro [data-radix-checkbox-root] {
-  background-color: #1A1F2C !important;
-  border-color: #ea384c !important;
-  border-width: 1px !important;
-  position: relative !important;
-  z-index: 40 !important;
-  box-shadow: 0 0 5px rgba(234, 56, 76, 0.5) !important;
-}
-
-.retro [data-radix-checkbox-root][data-state="checked"] {
-  background-color: #ea384c !important;
-  border-color: #ea384c !important;
-}
-
-.retro [data-radix-checkbox-root][data-state="checked"] svg {
-  color: #1A1F2C !important;
-}
-
 /* Fix badge styling in blackpink theme with higher specificity and improved visibility */
 .blackpink .badge {
   color: #FF5C8D !important;
@@ -350,18 +203,6 @@
   position: relative !important;
   z-index: 40 !important;
   box-shadow: 0 0 5px rgba(255, 92, 141, 0.5) !important;
-}
-
-/* Fix badge styling for retro theme */
-.retro .badge {
-  color: #1EAEDB !important;
-  border-color: #ea384c !important;
-  border-width: 1px !important;
-  background-color: #1A1F2C !important;
-  position: relative !important;
-  z-index: 40 !important;
-  box-shadow: 0 0 5px rgba(234, 56, 76, 0.5) !important;
-  font-family: monospace !important;
 }
 
 /* Enhanced AI chatbox styling for blackpink theme */
@@ -385,38 +226,6 @@
   background-color: rgba(0, 0, 0, 0.6) !important;
   border-color: #FF5C8D !important;
   box-shadow: 0 0 5px rgba(255, 222, 226, 0.3) !important;
-}
-
-/* Enhanced AI chatbox styling for retro theme */
-.retro .ai-chat-section {
-  background-color: #1A1F2C !important;
-  border-color: #ea384c !important;
-  box-shadow: 0 0 8px rgba(234, 56, 76, 0.3) !important;
-  font-family: monospace !important;
-}
-
-.retro .ai-message {
-  background-color: rgba(30, 174, 219, 0.05) !important;
-  border-color: #1EAEDB !important;
-  box-shadow: 0 0 5px rgba(30, 174, 219, 0.3) !important;
-  font-family: monospace !important;
-}
-
-.retro .user-message {
-  background-color: rgba(26, 31, 44, 0.6) !important;
-  border-color: #ea384c !important;
-  box-shadow: 0 0 5px rgba(234, 56, 76, 0.3) !important;
-  font-family: monospace !important;
-}
-
-.retro .user-message::before {
-  content: "> ";
-  color: #ea384c;
-}
-
-.retro .ai-message::before {
-  content: "$ ";
-  color: #1EAEDB;
 }
 
 /* Transition and animation utilities */
@@ -454,23 +263,6 @@
   color: #FF8CAD;
 }
 
-/* Retro theme tabs overrides */
-.retro .tabs-list [data-state="active"] {
-  color: #ea384c;
-  border-color: #ea384c;
-  background-color: #1A1F2C;
-}
-
-.retro .tabs-list button {
-  color: #ea384c;
-  background-color: #1A1F2C;
-  font-family: monospace;
-}
-
-.retro .tabs-list button:hover {
-  color: #f97b86;
-}
-
 /* Fix for TabsTrigger active state in BlackPink theme */
 .blackpink .TabsTrigger[data-state="active"] {
   background-color: #000000 !important;
@@ -486,23 +278,6 @@
   position: relative !important;
 }
 
-/* Fix for TabsTrigger active state in Retro theme */
-.retro .TabsTrigger[data-state="active"] {
-  background-color: #1A1F2C !important;
-  color: #1EAEDB !important;
-  box-shadow: 0 0 10px rgba(30, 174, 219, 0.3) !important;
-  position: relative !important;
-  font-family: monospace !important;
-}
-
-.retro [role="tab"][data-state="active"] {
-  background-color: #1A1F2C !important;
-  color: #1EAEDB !important;
-  box-shadow: 0 0 10px rgba(30, 174, 219, 0.3) !important;
-  position: relative !important;
-  font-family: monospace !important;
-}
-
 .blackpink [role="tab"][data-state="active"]::after {
   content: '';
   position: absolute;
@@ -514,28 +289,10 @@
   box-shadow: 0 0 5px rgba(255, 92, 141, 0.5) !important;
 }
 
-.retro [role="tab"][data-state="active"]::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 10%;
-  right: 10%;
-  height: 2px;
-  background-color: #1EAEDB !important;
-  box-shadow: 0 0 5px rgba(30, 174, 219, 0.5) !important;
-}
-
 /* Enhanced tab styling for blackpink theme */
 .blackpink [role="tablist"] {
   background-color: #000000 !important;
   border: 1px solid rgba(255, 92, 141, 0.3) !important;
-}
-
-/* Enhanced tab styling for retro theme */
-.retro [role="tablist"] {
-  background-color: #1A1F2C !important;
-  border: 1px solid rgba(234, 56, 76, 0.3) !important;
-  font-family: monospace !important;
 }
 
 /* Extra styles for blackpink tabs to make selection more visible */
@@ -553,22 +310,6 @@
   color: rgba(255, 92, 141, 0.7) !important;
 }
 
-/* Extra styles for retro tabs to make selection more visible */
-.retro [role="tab"] {
-  position: relative;
-  transition: all 0.3s ease;
-  font-family: monospace !important;
-}
-
-.retro [role="tab"][data-state="active"] {
-  color: #1EAEDB !important;
-  font-weight: 600 !important;
-}
-
-.retro [role="tab"]:not([data-state="active"]) {
-  color: rgba(234, 56, 76, 0.7) !important;
-}
-
 /* Additional styles for blackpink extras button */
 .blackpink button.text-pink-400,
 .blackpink button.text-[#FF5C8D] {
@@ -583,21 +324,6 @@
   background-color: rgba(0, 0, 0, 0.8);
 }
 
-/* Additional styles for retro extras button */
-.retro button.text-pink-400,
-.retro button.text-[#ea384c] {
-  position: relative;
-  z-index: 10;
-  background-color: #1A1F2C;
-  font-family: monospace !important;
-}
-
-.retro button.text-pink-400:hover,
-.retro button.text-[#ea384c]:hover {
-  box-shadow: 0 0 15px rgba(234, 56, 76, 0.4) !important;
-  background-color: rgba(26, 31, 44, 0.8);
-}
-
 /* Fix for topic accordions */
 .blackpink .topic-accordion, 
 .blackpink .subtopic-accordion,
@@ -606,20 +332,8 @@
   background-color: #000000;
 }
 
-.retro .topic-accordion, 
-.retro .subtopic-accordion,
-.retro .type-accordion {
-  color: #ea384c;
-  background-color: #1A1F2C;
-  font-family: monospace !important;
-}
-
 .blackpink [data-radix-accordion-content] {
   background-color: #000000;
-}
-
-.retro [data-radix-accordion-content] {
-  background-color: #1A1F2C;
 }
 
 /* Fix for SearchBar icon */
@@ -627,17 +341,9 @@
   color: #FF5C8D;
 }
 
-.retro .search-icon {
-  color: #ea384c;
-}
-
 /* Fix Tabs background */
 .blackpink [role="tablist"] {
   background-color: #000000;
-}
-
-.retro [role="tablist"] {
-  background-color: #1A1F2C;
 }
 
 /* Make sure MCQs display correctly in blackpink theme */
@@ -649,16 +355,6 @@
   color: #FF5C8D;
 }
 
-/* Make sure MCQs display correctly in retro theme */
-.retro .mcq-question,
-.retro .mcq-options,
-.retro .mcq-answer,
-.retro .mcq-explanation {
-  background-color: #1A1F2C;
-  color: #ea384c;
-  font-family: monospace !important;
-}
-
 /* Fix dropdown items in blackpink theme */
 .blackpink .dropdown-item {
   background-color: #000000;
@@ -668,27 +364,10 @@
   background-color: rgba(0, 0, 0, 0.6);
 }
 
-/* Fix dropdown items in retro theme */
-.retro .dropdown-item {
-  background-color: #1A1F2C;
-  color: #ea384c;
-  font-family: monospace !important;
-}
-.retro .dropdown-item:hover {
-  background-color: rgba(26, 31, 44, 0.6);
-}
-
 /* Fix card backgrounds in blackpink theme */
 .blackpink .card {
   background-color: #000000;
   border-color: #FF5C8D;
-}
-
-/* Fix card backgrounds in retro theme */
-.retro .card {
-  background-color: #1A1F2C;
-  border-color: #ea384c;
-  box-shadow: 0 0 10px rgba(234, 56, 76, 0.3);
 }
 
 /* Fix for the background in various parts of the UI */
@@ -701,16 +380,6 @@
   background-color: #000000 !important;
 }
 
-/* Fix for the background in various parts of the UI for retro theme */
-.retro .bg-white, 
-.retro .bg-card, 
-.retro .bg-background, 
-.retro .bg-secondary,
-.retro .bg-muted,
-.retro .bg-accent {
-  background-color: #1A1F2C !important;
-}
-
 /* Fix scrollbars for blackpink theme */
 .blackpink ::-webkit-scrollbar-track {
   background-color: #000000;
@@ -720,40 +389,15 @@
   background-color: rgba(255, 92, 141, 0.5);
 }
 
-/* Fix scrollbars for retro theme */
-.retro ::-webkit-scrollbar-track {
-  background-color: #1A1F2C;
-}
-
-.retro ::-webkit-scrollbar-thumb {
-  background-color: #ea384c;
-}
-
 /* Fix pomodoro timer in blackpink theme */
 .blackpink .pomodoro-container {
   background-color: #000000;
   border-color: #FF5C8D;
 }
 
-/* Fix pomodoro timer in retro theme */
-.retro .pomodoro-container {
-  background-color: #1A1F2C;
-  border-color: #ea384c;
-  font-family: monospace !important;
-}
-
-.retro .pomodoro-container * {
-  font-family: monospace !important;
-}
-
 /* Fix question bank content */
 .blackpink .question-bank-content {
   background-color: #000000;
-}
-
-.retro .question-bank-content {
-  background-color: #1A1F2C;
-  font-family: monospace !important;
 }
 
 /* Override for any elements with light backgrounds */
@@ -764,33 +408,14 @@
 .blackpink .hover\:bg-gray-200:hover {
   background-color: #000000 !important;
 }
-
-.retro .bg-gray-100,
-.retro .bg-gray-200,
-.retro .bg-gray-300,
-.retro .hover\:bg-gray-100:hover,
-.retro .hover\:bg-gray-200:hover {
-  background-color: #1A1F2C !important;
-}
-
 .blackpink .hover\:bg-gray-100:hover,
 .blackpink .hover\:bg-gray-200:hover {
   background-color: rgba(0, 0, 0, 0.6) !important;
 }
 
-.retro .hover\:bg-gray-100:hover,
-.retro .hover\:bg-gray-200:hover {
-  background-color: rgba(26, 31, 44, 0.6) !important;
-}
-
 /* Fix borders in accordion items to be black */
 .blackpink [data-radix-accordion-item],
 .blackpink .AccordionItem {
-  border-bottom: 0 !important;
-}
-
-.retro [data-radix-accordion-item],
-.retro .AccordionItem {
   border-bottom: 0 !important;
 }
 
@@ -804,22 +429,9 @@
   margin-top: 4px;
 }
 
-.retro [data-radix-accordion-item]::after {
-  content: '';
-  display: block;
-  height: 1px;
-  background-color: #1A1F2C !important;
-  width: 100%;
-  margin-top: 4px;
-}
-
 /* Fix hover on accordion triggers */
 .blackpink [data-radix-accordion-trigger]:hover {
   background-color: rgba(0, 0, 0, 0.8) !important;
-}
-
-.retro [data-radix-accordion-trigger]:hover {
-  background-color: rgba(26, 31, 44, 0.8) !important;
 }
 
 .blackpink *[class*="bg-white"],
@@ -829,13 +441,6 @@
   background-color: #000000 !important;
 }
 
-.retro *[class*="bg-white"],
-.retro *[class*="bg-gray"],
-.retro *[class*="bg-slate"],
-.retro *[class*="bg-zinc"] {
-  background-color: #1A1F2C !important;
-}
-
 /* Override for Tabs specifically */
 .blackpink .CustomTabs [data-state="active"],
 .blackpink .TabsTrigger[data-state="active"],
@@ -843,19 +448,8 @@
   color: #FF5C8D !important;
 }
 
-.retro .CustomTabs [data-state="active"],
-.retro .TabsTrigger[data-state="active"],
-.retro [role="tab"][data-state="active"] {
-  color: #1EAEDB !important;
-}
-
 /* Force borders in blackpink theme to be either transparent or black */
 .blackpink :not(.border-pink-500):not(.border-pink-400) {
-  border-color: transparent !important;
-}
-
-/* Force borders in retro theme */
-.retro :not(.border-[#ea384c]):not(.border-[#1EAEDB]) {
   border-color: transparent !important;
 }
 
@@ -865,26 +459,12 @@
   border-bottom: none !important;
 }
 
-.retro .AccordionItem,
-.retro [data-radix-accordion-item] {
-  border-bottom: none !important;
-}
-
 /* Fix badge styling in blackpink theme */
 .blackpink .badge {
   color: #FF5C8D !important;
   border-color: #FF5C8D !important;
   background-color: #000000 !important;
   border-width: 1px !important;
-}
-
-/* Fix badge styling in retro theme */
-.retro .badge {
-  color: #1EAEDB !important;
-  border-color: #ea384c !important;
-  background-color: #1A1F2C !important;
-  border-width: 1px !important;
-  font-family: monospace !important;
 }
 
 /* Fix checkbox styling in blackpink theme */
@@ -900,19 +480,6 @@
   color: #000000 !important;
 }
 
-/* Fix checkbox styling in retro theme */
-.retro [data-radix-checkbox-root] {
-  border-color: #ea384c !important;
-}
-
-.retro [data-radix-checkbox-root][data-state="checked"] {
-  background-color: #ea384c !important;
-}
-
-.retro [data-radix-checkbox-root][data-state="checked"] svg {
-  color: #1A1F2C !important;
-}
-
 /* Extra specific styles for checkbox and badge in blackpink theme */
 .blackpink [data-radix-checkbox-root] {
   background-color: #000000 !important;
@@ -921,20 +488,8 @@
   z-index: 30 !important;
 }
 
-.retro [data-radix-checkbox-root] {
-  background-color: #1A1F2C !important;
-  border-color: #ea384c !important;
-  border-width: 2px !important;
-  z-index: 30 !important;
-}
-
 .blackpink .question-card [data-radix-checkbox-root] {
   border-color: #FFDEE2 !important;
-  border-width: 2px !important;
-}
-
-.retro .question-card [data-radix-checkbox-root] {
-  border-color: #ea384c !important;
   border-width: 2px !important;
 }
 
@@ -945,38 +500,17 @@
   z-index: 30 !important;
 }
 
-.retro .question-card .badge {
-  border-color: #ea384c !important;
-  border-width: 2px !important;
-  color: #1EAEDB !important;
-  z-index: 30 !important;
-  font-family: monospace !important;
-}
-
 /* Additional fixes for blackpink theme */
 .blackpink [data-radix-checkbox-root]:focus {
   box-shadow: 0 0 0 2px rgba(255, 222, 226, 0.5) !important;
-}
-
-/* Additional fixes for retro theme */
-.retro [data-radix-checkbox-root]:focus {
-  box-shadow: 0 0 0 2px rgba(234, 56, 76, 0.5) !important;
 }
 
 .blackpink .badge {
   background-color: transparent !important;
 }
 
-.retro .badge {
-  background-color: #1A1F2C !important;
-}
-
 /* These help ensure the blackpink elements are always visible */
 .blackpink .question-card {
-  isolation: isolate !important;
-}
-
-.retro .question-card {
   isolation: isolate !important;
 }
 
@@ -988,67 +522,6 @@
   color: #FFDEE2 !important;
 }
 
-.retro .question-card [data-radix-checkbox-root],
-.retro .question-card .badge {
-  isolation: isolate !important;
-  border-color: #ea384c !important;
-  border-width: 2px !important;
-  color: #1EAEDB !important;
-  font-family: monospace !important;
-}
-
 .blackpink .question-card > * {
   color: #FFDEE2 !important;
-}
-
-.retro .question-card > * {
-  color: #ea384c !important;
-  font-family: monospace !important;
-}
-
-/* Terminal blinking cursor effect for retro theme */
-.retro .ai-message::after {
-  content: "_";
-  display: inline-block;
-  animation: blink 1s step-end infinite;
-}
-
-@keyframes blink {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0;
-  }
-}
-
-/* Add header and footer styling for retro theme */
-.retro h1 {
-  color: #1EAEDB;
-  text-shadow: 0 0 5px rgba(30, 174, 219, 0.5);
-  font-family: monospace;
-  font-weight: bold;
-  letter-spacing: 1px;
-}
-
-/* Add monospace font to all text in retro theme */
-.retro * {
-  font-family: monospace !important;
-}
-
-/* Add scan lines effect for retro theme background for stronger effect */
-.retro body::before {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  pointer-events: none;
-  background: linear-gradient(
-    transparent 50%,
-    rgba(0, 0, 0, 0.05) 50%
-  );
-  background-size: 100% 4px;
-  z-index: 999;
 }

@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { Moon, Sun, Terminal } from "lucide-react";
+import { Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/components/theme/ThemeProvider";
 import { FontSizeToggle } from "./FontSizeToggle";
@@ -23,8 +23,6 @@ export function ThemeToggle() {
       setTheme("light");
     } else if (theme === "light") {
       setTheme("blackpink");
-    } else if (theme === "blackpink") {
-      setTheme("retro");
     } else {
       setTheme("dark");
     }
@@ -39,8 +37,6 @@ export function ThemeToggle() {
         return "bg-gray-800 text-white border-gray-700 hover:bg-gray-700";
       case "blackpink":
         return "bg-black text-pink-500 border-pink-500/30 hover:bg-pink-950/30";
-      case "retro":
-        return "bg-[#1A1F2C] text-[#ea384c] border-[#ea384c]/30 hover:bg-[#221F26]/80";
       default:
         return "bg-white text-black border-gray-200 hover:bg-gray-100";
     }
@@ -71,7 +67,6 @@ export function ThemeToggle() {
             />
           </svg>
         )}
-        {theme === "retro" && <Terminal className="h-4 w-4" />}
         <span className="sr-only">Toggle theme</span>
       </Button>
     </div>
