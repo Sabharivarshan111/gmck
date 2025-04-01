@@ -8,51 +8,53 @@ export function JarvisInterface() {
   const [systemStatus, setSystemStatus] = useState("Initializing...");
   const [statusMessages, setStatusMessages] = useState<string[]>([]);
 
-  // Only show Jarvis interface in retro theme
-  if (theme !== "retro") {
-    return null;
-  }
-
   // Create rotating animation effect
   useEffect(() => {
+    if (theme !== "retro") return;
+    
     const rotationInterval = setInterval(() => {
       setRotation(prev => (prev + 1) % 360);
     }, 50);
 
     return () => clearInterval(rotationInterval);
-  }, []);
+  }, [theme]);
 
   // Simulate boot sequence
   useEffect(() => {
-    if (theme === "retro") {
-      setSystemStatus("Initializing...");
-      setStatusMessages([]);
+    if (theme !== "retro") return;
+    
+    setSystemStatus("Initializing...");
+    setStatusMessages([]);
 
-      const messages = [
-        "Booting J.A.R.V.I.S. OS v4.2.1...",
-        "Initializing neural interface...",
-        "Connecting to main server...",
-        "Scanning primary systems...",
-        "Calibrating quantum processors...",
-        "Checking security protocols...",
-        "Loading AI modules...",
-        "System operational."
-      ];
+    const messages = [
+      "Booting J.A.R.V.I.S. OS v4.2.1...",
+      "Initializing neural interface...",
+      "Connecting to main server...",
+      "Scanning primary systems...",
+      "Calibrating quantum processors...",
+      "Checking security protocols...",
+      "Loading AI modules...",
+      "System operational."
+    ];
 
-      let index = 0;
-      const messageInterval = setInterval(() => {
-        if (index < messages.length) {
-          setStatusMessages(prev => [...prev, messages[index]]);
-          index++;
-        } else {
-          setSystemStatus("Online");
-          clearInterval(messageInterval);
-        }
-      }, 800);
+    let index = 0;
+    const messageInterval = setInterval(() => {
+      if (index < messages.length) {
+        setStatusMessages(prev => [...prev, messages[index]]);
+        index++;
+      } else {
+        setSystemStatus("Online");
+        clearInterval(messageInterval);
+      }
+    }, 800);
 
-      return () => clearInterval(messageInterval);
-    }
+    return () => clearInterval(messageInterval);
   }, [theme]);
+
+  // Only render the interface if the theme is retro
+  if (theme !== "retro") {
+    return null;
+  }
 
   return (
     <div className="fixed top-0 left-0 w-full h-full pointer-events-none z-10">
