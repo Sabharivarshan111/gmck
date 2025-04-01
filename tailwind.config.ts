@@ -59,6 +59,13 @@ const config = {
           '800': '#112240',
           '700': '#1D2D50',
         },
+        orange: {
+          '300': '#FFB74D',
+          '400': '#FFA726', 
+          '500': '#FF9800',
+          '600': '#FB8C00',
+          '800': '#EF6C00',
+        },
         cyan: {
           '300': '#5EEAD4',
           '400': '#2DD4BF',
@@ -81,10 +88,20 @@ const config = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        "pulse": {
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: "0.5" },
+        },
+        "rotate": {
+          from: { transform: "rotate(0deg)" },
+          to: { transform: "rotate(360deg)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "pulse": "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+        "rotate": "rotate 10s linear infinite",
       },
     },
   },

@@ -77,24 +77,24 @@
   /* Retro theme */
   .retro {
     --background: 210 65% 12%;
-    --foreground: 180 70% 85%;
+    --foreground: 30 100% 60%;
     --card: 210 65% 12%;
-    --card-foreground: 180 70% 85%;
+    --card-foreground: 30 100% 60%;
     --popover: 210 65% 12%;
-    --popover-foreground: 180 70% 85%;
-    --primary: 180 70% 50%;
+    --popover-foreground: 30 100% 60%;
+    --primary: 30 100% 50%;
     --primary-foreground: 210 65% 12%;
     --secondary: 210 65% 18%;
-    --secondary-foreground: 180 70% 85%;
+    --secondary-foreground: 30 100% 60%;
     --muted: 210 65% 18%;
-    --muted-foreground: 180 40% 70%;
-    --accent: 180 70% 50%;
+    --muted-foreground: 30 70% 50%;
+    --accent: 30 100% 50%;
     --accent-foreground: 210 65% 12%;
     --destructive: 0 80% 50%;
-    --destructive-foreground: 180 70% 85%;
-    --border: 180 70% 40%;
+    --destructive-foreground: 30 100% 60%;
+    --border: 30 100% 40%;
     --input: 210 65% 18%;
-    --ring: 180 70% 50%;
+    --ring: 30 100% 50%;
   }
 }
 
@@ -119,7 +119,7 @@
   background: repeating-linear-gradient(
     to bottom,
     transparent 0px,
-    rgba(0, 255, 255, 0.03) 1px,
+    rgba(255, 120, 0, 0.03) 1px,
     transparent 2px
   );
   pointer-events: none;
@@ -129,23 +129,105 @@
 /* Retro theme specific styling */
 .retro .ai-chat-section {
   font-family: 'Courier New', monospace;
+  color: #FF8000;
 }
 
 .retro button {
-  border-color: rgba(94, 234, 212, 0.5) !important;
+  border-color: rgba(255, 128, 0, 0.5) !important;
 }
 
 .retro input {
   background-color: rgba(10, 25, 47, 0.8) !important;
-  border: 1px solid rgba(94, 234, 212, 0.3) !important;
-  color: rgb(94, 234, 212) !important;
+  border: 1px solid rgba(255, 128, 0, 0.3) !important;
+  color: rgb(255, 128, 0) !important;
 }
 
 .retro .chat-message {
   background: rgba(17, 34, 64, 0.6) !important;
-  border: 1px solid rgba(94, 234, 212, 0.2) !important;
+  border: 1px solid rgba(255, 128, 0, 0.2) !important;
 }
 
 .retro .question-bank-content {
-  border-color: rgba(94, 234, 212, 0.3) !important;
+  border-color: rgba(255, 128, 0, 0.3) !important;
+}
+
+/* Special effects for retro theme */
+.retro-scanlines {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    rgba(255, 128, 0, 0.03) 1px,
+    transparent 2px
+  );
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0.7;
+}
+
+.pulsing-core {
+  animation: pulse 2s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 128, 0, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(255, 128, 0, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 128, 0, 0);
+  }
+}
+
+.retro-console-text {
+  animation: typeBlinkRetro 1s step-end infinite;
+}
+
+@keyframes typeBlinkRetro {
+  50% {
+    border-color: rgba(255, 128, 0, 0.7);
+  }
+}
+
+/* HUD elements for retro theme */
+.retro-hud-corner {
+  border-width: 2px;
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  opacity: 0.7;
+}
+
+.retro-hud-top-left {
+  top: 20px;
+  left: 20px;
+  border-top: 2px solid #FF8000;
+  border-left: 2px solid #FF8000;
+}
+
+.retro-hud-top-right {
+  top: 20px;
+  right: 20px;
+  border-top: 2px solid #FF8000;
+  border-right: 2px solid #FF8000;
+}
+
+.retro-hud-bottom-left {
+  bottom: 20px;
+  left: 20px;
+  border-bottom: 2px solid #FF8000;
+  border-left: 2px solid #FF8000;
+}
+
+.retro-hud-bottom-right {
+  bottom: 20px;
+  right: 20px;
+  border-bottom: 2px solid #FF8000;
+  border-right: 2px solid #FF8000;
 }

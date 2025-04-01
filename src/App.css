@@ -105,3 +105,86 @@
   z-index: 50 !important;
   cursor: pointer !important;
 }
+
+/* Retro Theme Specific Fixes */
+.retro button:hover, 
+.retro button:active, 
+.retro button:focus {
+  background-color: transparent !important;
+  color: #FF9800 !important;
+}
+
+.retro button:hover svg, 
+.retro button:active svg, 
+.retro button:focus svg {
+  color: #FF9800 !important;
+}
+
+.retro .pomodoro-button {
+  border-color: #FF9800 !important;
+  color: #FF9800 !important;
+}
+
+.retro .pomodoro-button:hover,
+.retro .pomodoro-button:active,
+.retro .pomodoro-button:focus {
+  background-color: rgba(255, 152, 0, 0.2) !important;
+  color: #FF9800 !important;
+}
+
+/* Retro UI elements */
+.retro-glow {
+  box-shadow: 0 0 10px rgba(255, 152, 0, 0.5) !important;
+}
+
+.retro-terminal {
+  font-family: 'Courier New', monospace !important;
+  color: #FF9800 !important;
+  background-color: rgba(10, 25, 47, 0.8) !important;
+  border: 1px solid rgba(255, 152, 0, 0.3) !important;
+}
+
+.retro-grid {
+  background-image: linear-gradient(rgba(255, 152, 0, 0.1) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(255, 152, 0, 0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* Retro button with orange border */
+.retro-button {
+  border: 1px solid #FF9800 !important;
+  color: #FF9800 !important;
+  background-color: transparent !important;
+  font-family: 'Courier New', monospace !important;
+  text-transform: uppercase !important;
+}
+
+.retro-button:hover {
+  background-color: rgba(255, 152, 0, 0.1) !important;
+}
+
+/* Retro loading effect */
+@keyframes retro-loading {
+  0% { width: 0%; }
+  100% { width: 100%; }
+}
+
+.retro-loading-bar {
+  height: 2px;
+  background-color: #FF9800;
+  animation: retro-loading 2s linear infinite;
+}
+
+/* Rotating element animation */
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.retro-rotate {
+  animation: rotate 10s linear infinite;
+}
+
+.retro-rotate-reverse {
+  animation: rotate 8s linear infinite reverse;
+}
