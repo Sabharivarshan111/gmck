@@ -1,3 +1,4 @@
+
 import { useState, useCallback, useEffect } from "react";
 import { getRandomId } from "@/lib/utils";
 import { useLocalStorage } from "@/hooks/use-local-storage";
@@ -90,7 +91,7 @@ export const useAiChat = () => {
           prompt.toLowerCase().includes("clarify") ||
           prompt.toLowerCase().includes("what do you mean");
 
-        // Call the Supabase Edge Function instead of direct API
+        // Call the Supabase Edge Function with proper error handling
         const { data, error } = await supabase.functions.invoke("ask-gemini", {
           body: {
             prompt,
@@ -115,7 +116,7 @@ export const useAiChat = () => {
             description: `Please wait ${data.retryAfter} seconds before trying again.`,
             variant: "destructive",
           });
-          throw new Error(data.error);
+          throw new Error(data.error || "Rate limit reached");
         }
 
         // If there's an error message in the response
@@ -123,8 +124,8 @@ export const useAiChat = () => {
           throw new Error(data.error);
         }
 
-        return data;
-      } catch (error) {
+        return data as AIResponse;
+      } catch (error: any) {
         console.error("Error fetching AI response:", error);
         return {
           response: "Sorry, I encountered an error while processing your request. Please try again in a moment.",
@@ -384,7 +385,7 @@ export const useAiChat = () => {
           setMessages((prev) => [...prev, aiResponseMessage]);
           setCurrentConversation((prev) => [...prev, userMessageObj, aiResponseMessage]);
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error("Error in AI response:", error);
         
         // Create error message

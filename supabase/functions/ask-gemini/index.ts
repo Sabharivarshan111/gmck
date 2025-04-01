@@ -1,3 +1,4 @@
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { GoogleGenerativeAI } from "npm:@google/generative-ai@0.2.0";
 
@@ -196,7 +197,10 @@ serve(async (req) => {
     } catch (parseError) {
       logWithTimestamp(`[${requestId}] Error parsing request:`, parseError);
       return new Response(
-        JSON.stringify({ error: 'Invalid request format' }),
+        JSON.stringify({ 
+          response: 'Invalid request format. Please check your input and try again.',
+          error: 'Invalid request format'
+        }),
         { 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
           status: 200
@@ -216,7 +220,10 @@ serve(async (req) => {
     if (!prompt) {
       logWithTimestamp(`[${requestId}] Missing prompt in request`);
       return new Response(
-        JSON.stringify({ error: 'Prompt is required' }),
+        JSON.stringify({ 
+          response: 'Please enter a question or message to continue.',
+          error: 'Prompt is required'
+        }),
         { 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
           status: 200
@@ -233,7 +240,10 @@ serve(async (req) => {
     if (!apiKey) {
       logWithTimestamp(`[${requestId}] GEMINI_API_KEY not set in environment variables`);
       return new Response(
-        JSON.stringify({ error: "API key configuration error" }),
+        JSON.stringify({ 
+          response: "Sorry, the system is not configured properly. Please contact support.",
+          error: "API key configuration error"
+        }),
         {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
           status: 200,
@@ -389,7 +399,8 @@ IMPORTANT:
         logWithTimestamp(`[${requestId}] Rate limit hit with Gemini API`);
         return new Response(
           JSON.stringify({ 
-            error: "Our AI service is experiencing high demand. Please try again in a moment.",
+            response: "Our AI service is experiencing high demand. Please try again in a moment.",
+            error: "Rate limit exceeded with AI provider",
             isRateLimit: true,
             retryAfter: 30 // Suggest client wait 30 seconds
           }),
@@ -405,8 +416,8 @@ IMPORTANT:
         logWithTimestamp(`[${requestId}] Request to Gemini API timed out`);
         return new Response(
           JSON.stringify({ 
-            error: "The AI service is taking longer than expected. Your question might be complex - try asking a more focused question or try again later.",
-            details: "AI processing timeout"
+            response: "The AI service is taking longer than expected. Your question might be complex - try asking a more focused question or try again later.",
+            error: "AI processing timeout"
           }),
           {
             headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -417,6 +428,7 @@ IMPORTANT:
       
       return new Response(
         JSON.stringify({ 
+          response: "Sorry, I encountered a problem while thinking about your question. Please try again or ask something different.",
           error: "Failed to generate response from AI model", 
           details: modelError.message 
         }),
@@ -432,6 +444,7 @@ IMPORTANT:
     logWithTimestamp(`[${requestId}] Unhandled error after ${duration}ms:`, error);
     return new Response(
       JSON.stringify({ 
+        response: "Sorry, I'm having trouble processing your request right now. Please try again in a moment.",
         error: error.message || "An error occurred while processing your request",
         details: error.stack
       }),
