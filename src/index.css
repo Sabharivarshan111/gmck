@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -362,6 +363,21 @@
 }
 .blackpink .dropdown-item:hover {
   background-color: rgba(0, 0, 0, 0.6);
+}
+
+/* Fix for the dropdown menu in blackpink theme */
+.blackpink [data-radix-dropdown-menu-content] {
+  background-color: #000000 !important;
+  border: 1px solid #FF5C8D !important;
+}
+
+.blackpink [data-radix-dropdown-menu-item] {
+  color: #FF5C8D !important;
+}
+
+.blackpink [data-radix-dropdown-menu-item]:hover,
+.blackpink [data-radix-dropdown-menu-item]:focus {
+  background-color: rgba(255, 92, 141, 0.1) !important;
 }
 
 /* Fix card backgrounds in blackpink theme */
