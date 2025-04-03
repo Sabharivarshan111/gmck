@@ -20,6 +20,7 @@ export function getRandomId(): string {
  * @returns Normalized string
  */
 export function normalizeString(str: string): string {
+  if (!str) return '';
   return str.toLowerCase().trim().replace(/-/g, ' ');
 }
 
@@ -38,12 +39,24 @@ export function isStringMatch(str1: string, str2: string): boolean {
   // Direct match
   if (normalized1 === normalized2) return true;
   
-  // Partial match - only if strings are at least 4 characters long
-  if (normalized1.length >= 4 && normalized2.length >= 4) {
-    if (normalized1.includes(normalized2) || normalized2.includes(normalized1)) {
-      return true;
+  // Check if one string contains the other completely
+  if (normalized1.includes(normalized2) || normalized2.includes(normalized1)) {
+    return true;
+  }
+  
+  // Check for word match (useful for multi-word topics)
+  const words1 = normalized1.split(' ');
+  const words2 = normalized2.split(' ');
+  
+  // If both strings are multi-word and have at least one matching word
+  if (words1.length > 1 && words2.length > 1) {
+    for (const word1 of words1) {
+      if (word1.length > 3 && words2.some(word2 => word2.length > 3 && word1 === word2)) {
+        return true;
+      }
     }
   }
   
   return false;
 }
+

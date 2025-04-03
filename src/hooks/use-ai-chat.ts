@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from "react";
 import { v4 as uuidv4 } from 'uuid';
 import { useToast } from "@/hooks/use-toast";
@@ -27,8 +28,8 @@ function extractQuestions(questions: string[]): {text: string, count: number}[] 
 }
 
 // Function to get important questions from the question bank data without using API
-function getImportantQuestions(subject: string, topic?: string): string {
-  console.log(`Finding important questions for subject: "${subject}" and topic: "${topic}"`);
+function getImportantQuestions(subject: string, requestedTopic?: string): string {
+  console.log(`Finding important questions for subject: "${subject}" and topic: "${requestedTopic}"`);
   
   // Normalize subject to match our data structure
   const normalizedSubject = normalizeString(subject);
@@ -52,35 +53,104 @@ function getImportantQuestions(subject: string, topic?: string): string {
   }
 
   console.log(`Found subject data for "${subjectKey}"`);
-  
-  // Function to find a topic in the data structure
-  function findTopic(node: any, searchTopic: string, path: string[] = []): {node: any, path: string[]} | null {
-    if (!node || !searchTopic) return null;
+
+  // Recursively search for a topic in the nested data structure
+  function findTopicNode(node: any, searchTopic: string): { node: any, path: string[] } | null {
+    if (!node || !searchTopic || typeof node !== 'object') return null;
     
-    // Check if the current node name matches the topic
-    if (node.name && isStringMatch(node.name, searchTopic)) {
-      return { node, path };
+    const searchTopicNormalized = normalizeString(searchTopic);
+    console.log(`Searching for topic: "${searchTopicNormalized}"`);
+    
+    // Helper function to check if a node matches the search topic
+    function isNodeMatch(nodeName: string): boolean {
+      if (!nodeName) return false;
+      
+      const nodeNameNormalized = normalizeString(nodeName);
+      return isStringMatch(nodeNameNormalized, searchTopicNormalized);
     }
     
-    // If the node has subtopics, search in them
+    // Check if current node name matches
+    if (node.name && isNodeMatch(node.name)) {
+      console.log(`Found direct match with node name: "${node.name}"`);
+      return { node, path: [node.name] };
+    }
+    
+    // Check if any keys in subtopics match
     if (node.subtopics) {
-      for (const [key, subtopic] of Object.entries(node.subtopics)) {
-        // Check if the key matches the topic
-        if (isStringMatch(key, searchTopic)) {
-          return { node: subtopic, path: [...path, key] };
+      for (const key in node.subtopics) {
+        const keyNormalized = normalizeString(key);
+        
+        // Check if key itself matches topic name
+        if (isNodeMatch(key)) {
+          console.log(`Found match with subtopic key: "${key}"`);
+          const childNode = node.subtopics[key];
+          return { node: childNode, path: [key] };
         }
         
-        // Recursively search in the subtopic
-        const result = findTopic(subtopic, searchTopic, [...path, key]);
-        if (result) return result;
+        // Check if subtopic name matches
+        const subtopic = node.subtopics[key];
+        if (subtopic && subtopic.name && isNodeMatch(subtopic.name)) {
+          console.log(`Found match with subtopic name: "${subtopic.name}"`);
+          return { node: subtopic, path: [subtopic.name] };
+        }
+        
+        // Recursively search in this subtopic
+        if (subtopic) {
+          const result = findTopicNode(subtopic, searchTopic);
+          if (result) {
+            console.log(`Found match via recursion in: "${key}"`);
+            return { 
+              node: result.node, 
+              path: [key, ...result.path]
+            };
+          }
+        }
       }
+    }
+    
+    // Special case for known topics with non-obvious paths
+    const knownTopics: Record<string, { path: string[], subjectName: string }> = {
+      'neoplasia': { path: ['paper-1', 'neoplasia'], subjectName: 'pathology' },
+      'heart': { path: ['paper-2', 'heart'], subjectName: 'pathology' },
+      'skin': { path: ['paper-2', 'skin'], subjectName: 'pathology' },
+      'breast': { path: ['paper-2', 'breast'], subjectName: 'pathology' },
+      'kidney': { path: ['paper-2', 'kidney'], subjectName: 'pathology' },
+      'blood vessels': { path: ['paper-2', 'blood-vessels'], subjectName: 'pathology' },
+      'blood-vessels': { path: ['paper-2', 'blood-vessels'], subjectName: 'pathology' },
+      'respiratory': { path: ['paper-2', 'respiratory-system'], subjectName: 'pathology' },
+      'cns': { path: ['paper-2', 'central-nervous-system'], subjectName: 'pathology' },
+      'central nervous': { path: ['paper-2', 'central-nervous-system'], subjectName: 'pathology' },
+      'central nervous system': { path: ['paper-2', 'central-nervous-system'], subjectName: 'pathology' },
+      'platelets': { path: ['paper-1', 'platelets'], subjectName: 'pathology' },
+      'inflammation': { path: ['paper-1', 'inflammation-repair'], subjectName: 'pathology' },
+      'cell injury': { path: ['paper-1', 'cell-injury'], subjectName: 'pathology' }
+    };
+    
+    if (subjectKey === 'pathology' && knownTopics[searchTopicNormalized]) {
+      const topicInfo = knownTopics[searchTopicNormalized];
+      console.log(`Found match in known topics map: "${searchTopicNormalized}" -> ${topicInfo.path.join(' > ')}`);
+      
+      // Navigate to the node through the known path
+      let currentNode = node;
+      for (const pathSegment of topicInfo.path) {
+        if (currentNode.subtopics && currentNode.subtopics[pathSegment]) {
+          currentNode = currentNode.subtopics[pathSegment];
+        } else {
+          console.log(`Failed to follow known path at segment: "${pathSegment}"`);
+          return null;
+        }
+      }
+      
+      return { node: currentNode, path: topicInfo.path };
     }
     
     return null;
   }
-  
-  // Find all essay and short note questions in a node and its children
+
+  // Find all essay and short note questions in a node
   function collectQuestions(node: any): { essay: {text: string, count: number}[], shortNote: {text: string, count: number}[] } {
+    console.log("Collecting questions from node:", node?.name || "unnamed node");
+    
     const result = { 
       essay: [] as {text: string, count: number}[], 
       shortNote: [] as {text: string, count: number}[] 
@@ -88,62 +158,77 @@ function getImportantQuestions(subject: string, topic?: string): string {
     
     if (!node) return result;
     
-    // Function to check a node for questions
-    const checkNodeForQuestions = (currentNode: any) => {
+    // Function to check essay and short note questions at current level
+    function checkCurrentLevelQuestions(currentNode: any) {
       if (!currentNode || typeof currentNode !== 'object') return;
       
+      // Check for direct essay questions at this level
+      if (currentNode.subtopics && currentNode.subtopics.essay && 
+          currentNode.subtopics.essay.questions && 
+          Array.isArray(currentNode.subtopics.essay.questions)) {
+        console.log(`Found ${currentNode.subtopics.essay.questions.length} essay questions at this level`);
+        result.essay.push(...extractQuestions(currentNode.subtopics.essay.questions));
+      }
+      
+      // Check for short note questions (handles both formats: short-note and short-notes)
       if (currentNode.subtopics) {
-        // Check for direct essay questions
-        if (currentNode.subtopics.essay && 
-            currentNode.subtopics.essay.questions && 
-            Array.isArray(currentNode.subtopics.essay.questions)) {
-          result.essay.push(...extractQuestions(currentNode.subtopics.essay.questions));
-        }
-        
-        // Check for short note questions (handles both formats)
         if (currentNode.subtopics['short-note'] && 
             currentNode.subtopics['short-note'].questions && 
             Array.isArray(currentNode.subtopics['short-note'].questions)) {
+          console.log(`Found ${currentNode.subtopics['short-note'].questions.length} short-note questions`);
           result.shortNote.push(...extractQuestions(currentNode.subtopics['short-note'].questions));
         }
         
         if (currentNode.subtopics['short-notes'] && 
             currentNode.subtopics['short-notes'].questions && 
             Array.isArray(currentNode.subtopics['short-notes'].questions)) {
+          console.log(`Found ${currentNode.subtopics['short-notes'].questions.length} short-notes questions`);
           result.shortNote.push(...extractQuestions(currentNode.subtopics['short-notes'].questions));
         }
-        
-        // Recursively process all other subtopics
-        for (const [key, subtopic] of Object.entries(currentNode.subtopics)) {
-          if (key !== 'essay' && key !== 'short-note' && key !== 'short-notes') {
-            checkNodeForQuestions(subtopic);
-          }
+      }
+    }
+    
+    // Check this node for questions
+    checkCurrentLevelQuestions(node);
+    
+    // If we couldn't find questions directly, try looking in subtopics
+    if (result.essay.length === 0 && result.shortNote.length === 0 && node.subtopics) {
+      console.log("No questions found at current level, checking subtopics...");
+      
+      // Skip essay and short-note specific subtopics
+      for (const key in node.subtopics) {
+        if (key !== 'essay' && key !== 'short-note' && key !== 'short-notes') {
+          console.log(`Checking subtopic: ${key}`);
+          const subtopicQuestions = collectQuestions(node.subtopics[key]);
+          result.essay.push(...subtopicQuestions.essay);
+          result.shortNote.push(...subtopicQuestions.shortNote);
         }
       }
-    };
+    }
     
-    checkNodeForQuestions(node);
     return result;
   }
   
   let targetNode = foundSubject;
-  let topicPath: string[] = [subjectKey];
+  let targetPath: string[] = [subjectKey];
   
   // If a topic is specified, try to find it in the data structure
-  if (topic) {
-    const topicResult = findTopic(foundSubject, topic);
+  if (requestedTopic) {
+    console.log(`Looking for specific topic: "${requestedTopic}"`);
+    const topicResult = findTopicNode(foundSubject, requestedTopic);
+    
     if (topicResult) {
       targetNode = topicResult.node;
-      topicPath = topicResult.path;
-      console.log(`Found topic "${topic}" at path: ${topicPath.join(' > ')}`);
+      targetPath = [subjectKey, ...topicResult.path];
+      console.log(`Found topic "${requestedTopic}" at path: ${targetPath.join(' > ')}`);
     } else {
-      console.log(`Topic "${topic}" not found in subject "${subjectKey}"`);
+      console.log(`Topic "${requestedTopic}" not found in subject "${subjectKey}"`);
     }
   }
   
   // Collect all questions from the target node
   const allQuestions = collectQuestions(targetNode);
-  console.log(`Total questions found - Essay: ${allQuestions.essay.length}, Short Note: ${allQuestions.shortNote.length}`);
+  console.log(`Questions collected - Essay: ${allQuestions.essay.length}, Short Note: ${allQuestions.shortNote.length}`);
   
   // Sort questions by their asterisk count (frequency)
   const sortedEssayQuestions = allQuestions.essay.sort((a, b) => b.count - a.count);
@@ -153,9 +238,9 @@ function getImportantQuestions(subject: string, topic?: string): string {
   const displaySubject = subjectKey.charAt(0).toUpperCase() + subjectKey.slice(1);
   let displayTopic = "";
   
-  if (topic) {
+  if (requestedTopic) {
     // Use the last element of the path as the display topic if available
-    const topicNode = targetNode.name || (topicPath.length > 1 ? topicPath[topicPath.length - 1] : topic);
+    const topicNode = targetNode.name || (targetPath.length > 1 ? targetPath[targetPath.length - 1].replace(/-/g, ' ') : requestedTopic);
     displayTopic = topicNode.split(' ').map((word: string) => 
       word.charAt(0).toUpperCase() + word.slice(1)
     ).join(' ');
@@ -256,11 +341,11 @@ function detectSubjectImportantQuestionsRequest(prompt: string): { isRequest: bo
     return { isRequest: false, subject: '' };
   }
   
-  // Look for subject mentions
+  // Look for subject mentions - order matters, check most specific first
   const subjects = [
     { name: "pharmacology", aliases: ["pharma", "pharmacodynamics", "pharmacokinetics"] },
-    { name: "microbiology", aliases: ["micro", "bacteria", "virus", "fungi", "parasites"] },
-    { name: "pathology", aliases: ["patho", "histology", "cytology"] }
+    { name: "pathology", aliases: ["patho", "histology", "cytology"] },
+    { name: "microbiology", aliases: ["micro", "bacteria", "virus", "fungi", "parasites"] }
   ];
   
   let detectedSubject = '';
@@ -277,39 +362,56 @@ function detectSubjectImportantQuestionsRequest(prompt: string): { isRequest: bo
     return { isRequest: false, subject: '' };
   }
   
+  console.log(`Detected subject request for: ${detectedSubject}`);
+  
   // If a subject is detected, try to extract any specific topic
   let topic: string | undefined;
   
-  // Check for specific patterns that might indicate a topic
-  const patterns = [
-    // "in X" pattern
-    new RegExp(`${detectedSubject}\\s+(?:in|about|for|on|of|-)\\s+([\\w\\s-]+)`, 'i'),
-    // "X Y" pattern where Y is the topic
-    new RegExp(`${detectedSubject}\\s+([\\w\\s-]+)`, 'i')
+  // First check common pathology topics by name
+  const pathologyTopics = [
+    // Paper 1 topics
+    'neoplasia', 'inflammatory', 'inflammation', 'inflammation repair', 'cell injury', 'hemodynamic', 
+    'genetic disorders', 'immunology', 'infectious', 'environmental', 'nutritional', 'infancy', 'childhood',
+    'red blood cells', 'white blood cells', 'platelets',
+    
+    // Paper 2 topics
+    'respiratory', 'heart', 'blood vessel', 'blood vessels', 'gastrointestinal', 'liver', 'kidney',
+    'male genital', 'female genital', 'bones', 'joints', 'soft tissue', 'central nervous', 'cns', 
+    'breast', 'endocrinology', 'skin'
   ];
   
-  for (const pattern of patterns) {
-    const match = lowerPrompt.match(pattern);
-    if (match && match[1]) {
-      topic = match[1].trim();
-      break;
+  if (detectedSubject === 'pathology') {
+    for (const possibleTopic of pathologyTopics) {
+      if (lowerPrompt.includes(possibleTopic)) {
+        topic = possibleTopic;
+        console.log(`Detected pathology topic: ${topic}`);
+        break;
+      }
     }
   }
   
-  // Look for specific topics in the prompt
+  // If no topic was found through direct matching, try to extract it from context
   if (!topic) {
-    // Common topics to look for
-    const commonTopics = [
-      'neoplasia', 'inflammation', 'immunology', 'infectious', 'kidney', 'heart', 
-      'blood vessel', 'shock', 'edema', 'gangrene', 'cell injury', 'respiratory', 'gastrointestinal',
-      'liver', 'central nervous', 'cns', 'cardiovascular', 'cvs', 'platelets', 'skin',
-      'bone', 'autacoids', 'hormones', 'antibiotics', 'antimicrobial', 'breast', 'endocrinology'
+    // Try to extract topic using patterns like "X about Y" or "X in Y"
+    const patterns = [
+      new RegExp(`${detectedSubject}\\s+(?:in|about|for|on|of|-)\\s+([\\w\\s-]+)`, 'i'),
+      new RegExp(`${detectedSubject}\\s+([\\w\\s-]+)`, 'i'),
+      new RegExp(`([\\w\\s-]+)\\s+(?:in|about|for|on|of|-)\\s+${detectedSubject}`, 'i')
     ];
     
-    for (const possibleTopic of commonTopics) {
-      if (lowerPrompt.includes(possibleTopic)) {
-        topic = possibleTopic;
-        break;
+    for (const pattern of patterns) {
+      const match = lowerPrompt.match(pattern);
+      if (match && match[1]) {
+        // Avoid matching the subject itself or words like "important" or "questions"
+        const potentialTopic = match[1].trim();
+        if (
+          potentialTopic !== detectedSubject && 
+          !['important', 'questions', 'topics', 'high', 'yield', 'frequently', 'asked', 'commonly'].includes(potentialTopic)
+        ) {
+          topic = potentialTopic;
+          console.log(`Extracted topic using pattern: ${topic}`);
+          break;
+        }
       }
     }
   }
