@@ -137,4 +137,3 @@ export function isValidMedicalSourceUrl(url: string): boolean {
     return false;
   }
 }
-

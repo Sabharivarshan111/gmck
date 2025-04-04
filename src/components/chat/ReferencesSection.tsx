@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { ChevronDown, ChevronUp, FileText, ExternalLink, ExclamationTriangle } from "lucide-react";
+import { ChevronDown, ChevronUp, FileText, ExternalLink, AlertTriangle } from "lucide-react";
 import { Reference } from "@/models/ChatMessage";
 import { useTheme } from "@/components/theme/ThemeProvider";
 import { Button } from "@/components/ui/button";
@@ -142,7 +142,7 @@ export const ReferencesSection = ({ references }: ReferencesSectionProps) => {
                   
                   {reference.url && !isValidSource && (
                     <div className="mt-1 flex items-start text-xs text-amber-400/80">
-                      <ExclamationTriangle className="h-3 w-3 mr-1 flex-shrink-0 mt-0.5" />
+                      <AlertTriangle className="h-3 w-3 mr-1 flex-shrink-0 mt-0.5" />
                       <span>Non-medical source - use with caution</span>
                     </div>
                   )}
