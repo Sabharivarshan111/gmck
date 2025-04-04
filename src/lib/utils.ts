@@ -60,3 +60,81 @@ export function isStringMatch(str1: string, str2: string): boolean {
   return false;
 }
 
+/**
+ * Checks if a string contains medical-related keywords
+ * @param text The text to check for medical relevance
+ * @returns Boolean indicating if the text is medical-related
+ */
+export function isMedicalRelated(text: string): boolean {
+  if (!text) return false;
+  
+  const medicalKeywords = [
+    'medical', 'medicine', 'doctor', 'physician', 'healthcare', 'health',
+    'patient', 'hospital', 'clinic', 'diagnosis', 'treatment', 'therapy',
+    'disease', 'pathology', 'anatomy', 'physiology', 'pharmacology',
+    'surgery', 'cardiology', 'neurology', 'pediatrics', 'oncology',
+    'usmle', 'neet', 'mbbs', 'md', 'pg', 'residency', 'fellowship',
+    'symptoms', 'prescription', 'clinical', 'nursing', 'nurse',
+    'psychiatry', 'radiology', 'dental', 'dentist', 'microbiology',
+    'biochemistry', 'immunology', 'infection', 'virus', 'bacteria',
+    'syndrome', 'disorder', 'condition', 'anatomy', 'organ', 'tissue'
+  ];
+  
+  const normalized = normalizeString(text);
+  return medicalKeywords.some(keyword => normalized.includes(keyword));
+}
+
+/**
+ * Validates a URL to ensure it's properly formed and from a trusted medical source
+ * @param url The URL to validate
+ * @returns Boolean indicating if URL is valid and from a trusted source
+ */
+export function isValidMedicalSourceUrl(url: string): boolean {
+  if (!url) return false;
+  
+  try {
+    const urlObj = new URL(url);
+    
+    // Check if URL is properly formed
+    if (!urlObj.protocol || !urlObj.hostname) {
+      return false;
+    }
+    
+    // List of trusted medical domains
+    const trustedDomains = [
+      'pubmed.ncbi.nlm.nih.gov',
+      'ncbi.nlm.nih.gov',
+      'nlm.nih.gov',
+      'mayoclinic.org',
+      'clevelandclinic.org',
+      'medlineplus.gov',
+      'cdc.gov',
+      'who.int',
+      'nih.gov',
+      'nejm.org',
+      'jamanetwork.com',
+      'thelancet.com',
+      'bmj.com',
+      'acponline.org',
+      'heart.org',
+      'cancer.gov',
+      'cancer.org',
+      'diabetes.org',
+      'uptodate.com',
+      'medscape.com',
+      'webmd.com',
+      'healthline.com',
+      'medicalnewstoday.com',
+      'medicalschool.com'
+    ];
+    
+    // Check if hostname is a trusted domain or subdomain of a trusted domain
+    return trustedDomains.some(domain => 
+      urlObj.hostname === domain || urlObj.hostname.endsWith('.' + domain));
+    
+  } catch (e) {
+    // URL parsing failed
+    return false;
+  }
+}
+

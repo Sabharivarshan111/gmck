@@ -59,8 +59,54 @@ function isRateLimited(clientId: string): { limited: boolean; retryAfter?: numbe
   }
 }
 
-// Function to extract references from the text
-function extractReferences(text: string): Array<{title: string; authors: string; journal?: string; year: string; url?: string}> {
+// Function to validate a URL and check if it's from a trusted medical source
+function isValidUrl(url: string): boolean {
+  try {
+    new URL(url);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+function isTrustedMedicalDomain(url: string): boolean {
+  try {
+    const urlObj = new URL(url);
+    const trustedDomains = [
+      'pubmed.ncbi.nlm.nih.gov',
+      'ncbi.nlm.nih.gov',
+      'nlm.nih.gov',
+      'mayoclinic.org',
+      'clevelandclinic.org',
+      'medlineplus.gov',
+      'cdc.gov',
+      'who.int',
+      'nih.gov',
+      'nejm.org',
+      'jamanetwork.com',
+      'thelancet.com',
+      'bmj.com',
+      'acponline.org',
+      'heart.org',
+      'cancer.gov',
+      'cancer.org',
+      'diabetes.org',
+      'uptodate.com',
+      'medscape.com',
+      'webmd.com',
+      'healthline.com',
+      'medicalnewstoday.com'
+    ];
+    
+    return trustedDomains.some(domain => 
+      urlObj.hostname === domain || urlObj.hostname.endsWith('.' + domain));
+  } catch (e) {
+    return false;
+  }
+}
+
+// Enhanced function to extract references from the text with better parsing and validation
+function extractReferences(text: string): Array<{title: string; authors: string; journal?: string; year: string; url?: string; source?: string}> {
   const references = [];
   
   // Check if the response contains a references section
@@ -85,6 +131,7 @@ function extractReferences(text: string): Array<{title: string; authors: string;
         journal?: string;
         year: string;
         url?: string;
+        source?: string;
       } = {
         title: "Untitled Reference",
         authors: "Unknown",
@@ -92,15 +139,44 @@ function extractReferences(text: string): Array<{title: string; authors: string;
       };
       
       // Extract URL if present
-      const urlMatch = item.match(/(https?:\/\/[^\s]+)/);
+      const urlMatch = item.match(/(https?:\/\/[^\s\)]+)/);
       if (urlMatch) {
-        reference.url = urlMatch[1];
-        // Remove the URL from the item to make other parsing easier
-        item = item.replace(urlMatch[1], '').trim();
+        const potentialUrl = urlMatch[1].replace(/[,\.;"\)]+$/, ''); // Clean up potential trailing punctuation
+        if (isValidUrl(potentialUrl)) {
+          reference.url = potentialUrl;
+          
+          // Try to determine the source domain
+          try {
+            const urlObj = new URL(potentialUrl);
+            if (urlObj.hostname.includes('pubmed') || urlObj.hostname.includes('ncbi.nlm.nih.gov')) {
+              reference.source = 'PubMed';
+            } else if (urlObj.hostname.includes('mayoclinic')) {
+              reference.source = 'Mayo Clinic';
+            } else if (urlObj.hostname.includes('clevelandclinic')) {
+              reference.source = 'Cleveland Clinic';
+            } else if (urlObj.hostname.includes('medscape')) {
+              reference.source = 'Medscape';
+            } else if (urlObj.hostname.includes('who.int')) {
+              reference.source = 'WHO';
+            } else if (urlObj.hostname.includes('cdc.gov')) {
+              reference.source = 'CDC';
+            } else if (urlObj.hostname.includes('nih.gov')) {
+              reference.source = 'NIH';
+            } else {
+              reference.source = urlObj.hostname.replace('www.', '');
+            }
+          } catch (e) {
+            // URL parsing failed
+          }
+          
+          // Remove the URL from the item to make other parsing easier
+          item = item.replace(urlMatch[1], '').trim();
+        }
       }
       
       // Extract title - usually the first part up to a period or comma
-      const titleMatch = item.match(/^([^\.,:]+)[\.,:]/);
+      const titleMatch = item.match(/^"([^"]+)"/) ||  // Quoted title
+                        item.match(/^([^\.,:]+)[\.,:]/); // Up to first punctuation
       if (titleMatch) {
         reference.title = titleMatch[1].trim();
         // Remove the title from the item to make other parsing easier
@@ -121,7 +197,7 @@ function extractReferences(text: string): Array<{title: string; authors: string;
       }
       
       // Extract journal if present
-      const journalMatch = item.match(/([A-Z][A-Za-z\s]+Journal|[A-Z][A-Za-z\s]+Annals|[A-Z][A-Za-z\s]+Review)/);
+      const journalMatch = item.match(/([A-Z][A-Za-z\s]+Journal|[A-Z][A-Za-z\s]+Annals|[A-Z][A-Za-z\s]+Review|[A-Z][A-Za-z\s&;]+)/);
       if (journalMatch) {
         reference.journal = journalMatch[1].trim();
       }
@@ -140,11 +216,15 @@ function extractReferences(text: string): Array<{title: string; authors: string;
         reference.authors = authorsText || "Unknown";
       }
       
-      references.push(reference);
+      // Only add references with URLs if they have a valid title
+      if (reference.title !== "Untitled Reference") {
+        references.push(reference);
+      }
     }
   }
   
-  return references;
+  // Filter out references without valid URLs
+  return references.filter(ref => !ref.url || isValidUrl(ref.url));
 }
 
 // Add logging with timestamp
@@ -224,7 +304,22 @@ serve(async (req) => {
       );
     }
     
+    // Check if the prompt is medical-related
+    const isMedicalQuery = prompt.toLowerCase().includes('medical') || 
+                        prompt.toLowerCase().includes('medicine') ||
+                        prompt.toLowerCase().includes('doctor') ||
+                        prompt.toLowerCase().includes('disease') ||
+                        prompt.toLowerCase().includes('pathology') ||
+                        prompt.toLowerCase().includes('pharmacology') ||
+                        prompt.toLowerCase().includes('symptom') ||
+                        prompt.toLowerCase().includes('treatment') ||
+                        prompt.toLowerCase().includes('diagnosis') ||
+                        prompt.toLowerCase().includes('patient') ||
+                        prompt.toLowerCase().includes('hospital') ||
+                        prompt.toLowerCase().includes('clinic');
+    
     logWithTimestamp(`[${requestId}] Processing prompt: ${prompt.substring(0, 50)}...`);
+    logWithTimestamp(`[${requestId}] Is medical query: ${isMedicalQuery}`);
     logWithTimestamp(`[${requestId}] Conversation history length: ${conversationHistory.length}`);
     logWithTimestamp(`[${requestId}] Request types: isTripleTap=${isTripleTap}, isMCQRequest=${explicitMCQRequest}, isImportantQuestionsRequest=${explicitImportantQRequest}, isNeedingClarification=${isNeedingClarification}`);
     
@@ -308,12 +403,40 @@ IMPORTANT:
       generationConfig.temperature = 0.8; // More creative
       generationConfig.maxOutputTokens = 4000; // Longer for 10 MCQs
     }
-    // For regular chat questions
+    // For regular chat questions about medical topics
+    else if (isMedicalQuery) {
+      systemPrompt = `You are ACEV, a helpful and knowledgeable medical assistant. Provide concise, accurate medical information. For medical emergencies, always advise seeking immediate professional help. Your responses should be compassionate, clear, and based on established medical knowledge. Never mention that you're powered by Gemini.
+
+IMPORTANT: You MUST include reputable medical references and sources at the end of your response. 
+
+Your references MUST:
+1. Be from reputable medical sources like PubMed, NCBI, Mayo Clinic, Cleveland Clinic, WHO, CDC, NIH, or major medical journals
+2. Include full, working URLs that start with http:// or https://
+3. Be directly relevant to the specific medical topic being discussed
+4. Be formatted in a section called "References:" at the end of your response
+5. Include at least 3-5 references for each response
+
+Format each reference as follows:
+1. Author(s) (Year). Title. Journal/Source. URL
+
+For example:
+References:
+1. Smith J, et al. (2021). Recent advances in treating hypertension. Journal of Cardiology. https://pubmed.ncbi.nlm.nih.gov/example12345
+2. Mayo Clinic Staff. (2023). Hypertension. Mayo Clinic. https://www.mayoclinic.org/diseases-conditions/high-blood-pressure/symptoms-causes/syc-20373410
+3. Centers for Disease Control and Prevention. (2023). Facts about Hypertension. CDC. https://www.cdc.gov/bloodpressure/facts.htm
+
+Again, make sure all URLs are complete, correct, and from reputable medical sources.`;
+      
+      // Adjust for medical responses
+      generationConfig.temperature = 0.6; // Less creative, more factual
+      generationConfig.maxOutputTokens = 3000; // Longer to include references
+    }
+    // For regular chat questions (non-medical)
     else {
-      systemPrompt = "You are ACEV, a helpful and knowledgeable medical assistant. Provide concise, accurate medical information. For medical emergencies, always advise seeking immediate professional help. Your responses should be compassionate, clear, and based on established medical knowledge. Never mention that you're powered by Gemini. If you use medical information from textbooks or research papers, please include a list of sources or references at the end of your response in a section titled 'References:'.";
+      systemPrompt = "You are ACEV, a helpful and knowledgeable assistant. Provide concise, accurate information. Your responses should be compassionate, clear, and based on established knowledge. Never mention that you're powered by Gemini. If you use information from textbooks or research papers, please include a list of sources or references at the end of your response in a section titled 'References:'.";
     }
     
-    logWithTimestamp(`[${requestId}] Request type: ${isMCQsRequest ? "MCQs" : isImportantQsRequest ? "Important Questions" : isTripleTap ? "Triple-tap" : needsConversationContext ? "Contextual" : "Regular"}`);
+    logWithTimestamp(`[${requestId}] Request type: ${isMCQsRequest ? "MCQs" : isImportantQsRequest ? "Important Questions" : isTripleTap ? "Triple-tap" : isMedicalQuery ? "Medical Query" : needsConversationContext ? "Contextual" : "Regular"}`);
     
     try {
       // Increased timeout for Gemini requests
@@ -363,7 +486,24 @@ IMPORTANT:
       const response = result.response;
       const text = response.text();
       
+      // Extract and validate references
       const references = extractReferences(text);
+      
+      // Only for medical queries, validate the references if present
+      let validatedReferences = references;
+      if (isMedicalQuery && references.length > 0) {
+        validatedReferences = references
+          .filter(ref => !ref.url || isValidUrl(ref.url))
+          .map(ref => {
+            // Mark trusted sources
+            if (ref.url && isTrustedMedicalDomain(ref.url)) {
+              ref.source = ref.source || "Trusted Medical Source";
+            }
+            return ref;
+          });
+        
+        logWithTimestamp(`[${requestId}] Found ${references.length} references, ${validatedReferences.length} validated`);
+      }
       
       const endTime = Date.now();
       const duration = endTime - startTime;
@@ -372,7 +512,8 @@ IMPORTANT:
       return new Response(
         JSON.stringify({ 
           response: text,
-          references: references.length > 0 ? references : undefined
+          references: validatedReferences.length > 0 ? validatedReferences : undefined,
+          isMedicalQuery: isMedicalQuery
         }),
         {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
