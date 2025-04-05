@@ -46,7 +46,7 @@ const Index = () => {
       <PomodoroTimer />
       
       {/* Creator attribution */}
-      <div className="absolute bottom-4 right-4 text-sm text-muted-foreground">
+      <div className="absolute bottom-4 left-0 right-0 text-center text-sm text-muted-foreground">
         Created by{' '}
         <a 
           href="https://www.instagram.com/_varshan_king/" 
