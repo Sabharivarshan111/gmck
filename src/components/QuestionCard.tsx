@@ -20,6 +20,9 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, index }) => {
   // Generate a unique ID for the question for localStorage
   const questionId = `question-${question.slice(0, 50).replace(/\s+/g, '-')}`;
   
+  // Extract page number from the question
+  const pageNumber = extractPageNumber(question);
+  
   // Load completion status from localStorage on mount
   useEffect(() => {
     const savedStatus = localStorage.getItem(questionId);
@@ -100,6 +103,14 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, index }) => {
     return "bg-gray-800 text-white border-gray-700";
   };
 
+  // Get page number styling based on theme
+  const getPageNumberClass = () => {
+    if (theme === "blackpink") {
+      return "text-[#B3DEFF] ml-2";
+    }
+    return "text-blue-300 ml-2";
+  };
+
   return (
     <div id={`question-${index}`}>
       <Card 
@@ -123,7 +134,14 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, index }) => {
               <div className="flex items-center mb-1">
                 <span className={`text-[10px] ${theme === "blackpink" ? "text-[#FFDEE2]" : "text-blue-500"}`}>
                   {tapStatus === 'idle' ? (
-                    "Triple tap to ask AI"
+                    <span className="flex items-center">
+                      Triple tap to ask AI
+                      {pageNumber && (
+                        <span className={getPageNumberClass()}>
+                          Pg. {pageNumber}
+                        </span>
+                      )}
+                    </span>
                   ) : (
                     <span className="animate-pulse">Getting answer...</span>
                   )}
@@ -169,6 +187,16 @@ function countAsterisks(question: string): number {
   
   // If no asterisks or years found, return a default value
   return 1;
+}
+
+// Extract page number from the question text
+function extractPageNumber(question: string): string | null {
+  // Look for page number pattern like "(Pg.No: 123)" or "(Pg.No: 123;Pg.No: 456)"
+  const pageMatch = question.match(/\(Pg\.No:\s*(\d+)(?:;\s*Pg\.No:\s*\d+)*\)/);
+  if (pageMatch && pageMatch[1]) {
+    return pageMatch[1];
+  }
+  return null;
 }
 
 // Clean the question text for display and AI processing
