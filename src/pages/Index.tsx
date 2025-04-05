@@ -16,7 +16,7 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background overflow-x-hidden">
+    <div className="min-h-screen bg-background overflow-x-hidden relative">
       <InstallPrompt />
       <div className="container mx-auto px-4 py-6">
         <div className="flex flex-col items-center animate-fade-in">
@@ -44,6 +44,19 @@ const Index = () => {
         </div>
       </div>
       <PomodoroTimer />
+      
+      {/* Creator attribution */}
+      <div className="absolute bottom-4 right-4 text-sm text-muted-foreground">
+        Created by{' '}
+        <a 
+          href="https://www.instagram.com/_varshan_king/" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="hover:underline hover:text-primary transition-colors"
+        >
+          Sabharivarshan S
+        </a>
+      </div>
     </div>
   );
 };
