@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import QuestionBank from "@/components/QuestionBank";
 import { InstallPrompt } from "@/components/InstallPrompt";
@@ -10,7 +9,6 @@ import { useTheme } from "@/components/theme/ThemeProvider";
 const Index = () => {
   const { theme } = useTheme();
   
-  // Ensure the page starts at the top when loaded
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -45,14 +43,24 @@ const Index = () => {
       </div>
       <PomodoroTimer />
       
-      {/* Creator attribution */}
       <div className="absolute bottom-4 left-0 right-0 text-center text-sm text-muted-foreground">
         Created by{' '}
         <a 
           href="https://www.instagram.com/_varshan_king/" 
           target="_blank" 
           rel="noopener noreferrer"
-          className="hover:underline hover:text-primary transition-colors"
+          className="
+            transition-all duration-300 
+            hover:animate-pulse 
+            hover:text-primary 
+            hover:drop-shadow-[0_0_10px_rgba(255,92,141,0.5)] 
+            cursor-pointer 
+            px-2 py-1 
+            rounded-md 
+            border border-transparent 
+            hover:border-primary/30 
+            hover:bg-primary/10
+          "
         >
           Sabharivarshan S
         </a>
