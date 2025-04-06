@@ -108,11 +108,23 @@ export const useQuestionBank = () => {
     
     setIsSearching(true);
     
-    for (const [key, topic] of Object.entries(QUESTION_BANK_DATA)) {
-      const filteredTopic = filterQuestions(topic, type, query);
-      if (filteredTopic) {
-        filteredData[key] = filteredTopic;
-        hasResults = true;
+    // Process academic year level first
+    for (const [yearKey, yearData] of Object.entries(QUESTION_BANK_DATA)) {
+      const filteredYearData: any = { name: yearData.name, subtopics: {} };
+      let hasYearContent = false;
+      
+      // Process subjects within year
+      for (const [subjectKey, subject] of Object.entries(yearData.subtopics)) {
+        const filteredTopic = filterQuestions(subject, type, query);
+        if (filteredTopic) {
+          filteredYearData.subtopics[subjectKey] = filteredTopic;
+          hasYearContent = true;
+          hasResults = true;
+        }
+      }
+      
+      if (hasYearContent) {
+        filteredData[yearKey] = filteredYearData;
       }
     }
     
@@ -133,6 +145,7 @@ export const useQuestionBank = () => {
 
   useEffect(() => {
     if (searchQuery.trim() !== "") {
+      // Expand all academic year items when searching
       const topicKeys = Object.keys(QUESTION_BANK_DATA);
       setExpandedItems(topicKeys);
     } else {
