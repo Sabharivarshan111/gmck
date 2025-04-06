@@ -51,15 +51,16 @@ const Index = () => {
           rel="noopener noreferrer"
           className="
             transition-all duration-300 
-            hover:animate-pulse 
-            hover:text-primary 
-            hover:drop-shadow-[0_0_10px_rgba(255,92,141,0.5)] 
+            animate-pulse 
+            text-primary 
+            drop-shadow-[0_0_10px_rgba(255,92,141,0.5)] 
             cursor-pointer 
             px-2 py-1 
             rounded-md 
             border border-transparent 
-            hover:border-primary/30 
-            hover:bg-primary/10
+            border-primary/30 
+            bg-primary/10
+            hover:animate-none
           "
         >
           Sabharivarshan S
