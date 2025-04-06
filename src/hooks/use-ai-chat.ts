@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from "react";
 import { v4 as uuidv4 } from 'uuid';
 import { useToast } from "@/hooks/use-toast";
@@ -25,55 +26,6 @@ function extractQuestions(questions: string[]): {text: string, count: number}[] 
     return { text: question, count };
   });
 }
-
-// Enhanced topic maps for different subjects
-const TOPIC_MAPS: Record<string, Record<string, { path: string[], subjectName: string }>> = {
-  pathology: {
-    'neoplasia': { path: ['paper-1', 'neoplasia'], subjectName: 'pathology' },
-    'heart': { path: ['paper-2', 'heart'], subjectName: 'pathology' },
-    'skin': { path: ['paper-2', 'skin'], subjectName: 'pathology' },
-    'breast': { path: ['paper-2', 'breast'], subjectName: 'pathology' },
-    'kidney': { path: ['paper-2', 'kidney'], subjectName: 'pathology' },
-    'blood vessels': { path: ['paper-2', 'blood-vessels'], subjectName: 'pathology' },
-    'blood-vessels': { path: ['paper-2', 'blood-vessels'], subjectName: 'pathology' },
-    'respiratory': { path: ['paper-2', 'respiratory-system'], subjectName: 'pathology' },
-    'cns': { path: ['paper-2', 'central-nervous-system'], subjectName: 'pathology' },
-    'central nervous': { path: ['paper-2', 'central-nervous-system'], subjectName: 'pathology' },
-    'central nervous system': { path: ['paper-2', 'central-nervous-system'], subjectName: 'pathology' },
-    'platelets': { path: ['paper-1', 'platelets'], subjectName: 'pathology' },
-    'inflammation': { path: ['paper-1', 'inflammation-repair'], subjectName: 'pathology' },
-    'cell injury': { path: ['paper-1', 'cell-injury'], subjectName: 'pathology' }
-  },
-  pharmacology: {
-    'general pharmacology': { path: ['paper-1', 'general-pharmacology'], subjectName: 'pharmacology' },
-    'respiratory': { path: ['paper-1', 'respiratory-system'], subjectName: 'pharmacology' },
-    'respiratory system': { path: ['paper-1', 'respiratory-system'], subjectName: 'pharmacology' },
-    'autacoids': { path: ['paper-1', 'autacoids'], subjectName: 'pharmacology' },
-    'neoplastic drugs': { path: ['paper-2', 'neoplastic-drugs'], subjectName: 'pharmacology' },
-    'anticancer drugs': { path: ['paper-2', 'neoplastic-drugs'], subjectName: 'pharmacology' },
-    'miscellaneous drugs': { path: ['paper-2', 'miscellaneous-drugs'], subjectName: 'pharmacology' }
-  },
-  microbiology: {
-    'general microbiology': { path: ['paper-1', 'general-microbiology'], subjectName: 'microbiology' },
-    'immunology': { path: ['paper-1', 'immunology'], subjectName: 'microbiology' },
-    'systemic bacteriology': { path: ['paper-1', 'systemic-bacteriology'], subjectName: 'microbiology' },
-    'virology': { path: ['paper-1', 'virology'], subjectName: 'microbiology' },
-    'mycology': { path: ['paper-2', 'mycology'], subjectName: 'microbiology' },
-    'parasitology': { path: ['paper-2', 'parasitology'], subjectName: 'microbiology' },
-    'applied microbiology': { path: ['paper-2', 'applied-microbiology'], subjectName: 'microbiology' },
-    'bloodstream infections': { path: ['paper-1', 'systemic-bacteriology', 'bloodstream-infections'], subjectName: 'microbiology' },
-    'cardiovascular infections': { path: ['paper-1', 'systemic-bacteriology', 'bloodstream-infections'], subjectName: 'microbiology' },
-    'respiratory infections': { path: ['paper-1', 'systemic-bacteriology', 'respiratory-infections'], subjectName: 'microbiology' },
-    'meningitis': { path: ['paper-1', 'systemic-bacteriology', 'cns-infections'], subjectName: 'microbiology' },
-    'encephalitis': { path: ['paper-1', 'systemic-bacteriology', 'cns-infections'], subjectName: 'microbiology' },
-    'cns infections': { path: ['paper-1', 'systemic-bacteriology', 'cns-infections'], subjectName: 'microbiology' },
-    'gastrointestinal infections': { path: ['paper-1', 'systemic-bacteriology', 'gastrointestinal-infections'], subjectName: 'microbiology' },
-    'urinary tract infections': { path: ['paper-1', 'systemic-bacteriology', 'genitourinary-infections'], subjectName: 'microbiology' },
-    'uti': { path: ['paper-1', 'systemic-bacteriology', 'genitourinary-infections'], subjectName: 'microbiology' },
-    'sexually transmitted infections': { path: ['paper-1', 'systemic-bacteriology', 'genitourinary-infections'], subjectName: 'microbiology' },
-    'sti': { path: ['paper-1', 'systemic-bacteriology', 'genitourinary-infections'], subjectName: 'microbiology' }
-  }
-};
 
 // Function to get important questions from the question bank data without using API
 function getImportantQuestions(subject: string, requestedTopic?: string): string {
@@ -156,9 +108,26 @@ function getImportantQuestions(subject: string, requestedTopic?: string): string
       }
     }
     
-    // Special case for known topics with non-obvious paths using the enhanced TOPIC_MAPS
-    if (TOPIC_MAPS[subjectKey] && TOPIC_MAPS[subjectKey][searchTopicNormalized]) {
-      const topicInfo = TOPIC_MAPS[subjectKey][searchTopicNormalized];
+    // Special case for known topics with non-obvious paths
+    const knownTopics: Record<string, { path: string[], subjectName: string }> = {
+      'neoplasia': { path: ['paper-1', 'neoplasia'], subjectName: 'pathology' },
+      'heart': { path: ['paper-2', 'heart'], subjectName: 'pathology' },
+      'skin': { path: ['paper-2', 'skin'], subjectName: 'pathology' },
+      'breast': { path: ['paper-2', 'breast'], subjectName: 'pathology' },
+      'kidney': { path: ['paper-2', 'kidney'], subjectName: 'pathology' },
+      'blood vessels': { path: ['paper-2', 'blood-vessels'], subjectName: 'pathology' },
+      'blood-vessels': { path: ['paper-2', 'blood-vessels'], subjectName: 'pathology' },
+      'respiratory': { path: ['paper-2', 'respiratory-system'], subjectName: 'pathology' },
+      'cns': { path: ['paper-2', 'central-nervous-system'], subjectName: 'pathology' },
+      'central nervous': { path: ['paper-2', 'central-nervous-system'], subjectName: 'pathology' },
+      'central nervous system': { path: ['paper-2', 'central-nervous-system'], subjectName: 'pathology' },
+      'platelets': { path: ['paper-1', 'platelets'], subjectName: 'pathology' },
+      'inflammation': { path: ['paper-1', 'inflammation-repair'], subjectName: 'pathology' },
+      'cell injury': { path: ['paper-1', 'cell-injury'], subjectName: 'pathology' }
+    };
+    
+    if (subjectKey === 'pathology' && knownTopics[searchTopicNormalized]) {
+      const topicInfo = knownTopics[searchTopicNormalized];
       console.log(`Found match in known topics map: "${searchTopicNormalized}" -> ${topicInfo.path.join(' > ')}`);
       
       // Navigate to the node through the known path
@@ -361,7 +330,7 @@ function getImportantQuestions(subject: string, requestedTopic?: string): string
   return result;
 }
 
-// Enhanced helper to detect subject-specific topics in the request
+// Helper to check if a prompt is requesting important questions about a subject
 function detectSubjectImportantQuestionsRequest(prompt: string): { isRequest: boolean, subject: string, topic?: string } {
   const lowerPrompt = prompt.toLowerCase();
   
@@ -374,23 +343,9 @@ function detectSubjectImportantQuestionsRequest(prompt: string): { isRequest: bo
   
   // Look for subject mentions - order matters, check most specific first
   const subjects = [
-    { 
-      name: "pharmacology", 
-      aliases: ["pharma", "pharmacodynamics", "pharmacokinetics"],
-      topics: ["general pharmacology", "respiratory", "autacoids", "anticancer", "neoplastic drugs", "miscellaneous drugs"]
-    },
-    { 
-      name: "pathology", 
-      aliases: ["patho", "histology", "cytology"],
-      topics: ["neoplasia", "heart", "skin", "breast", "kidney", "blood vessels", "respiratory", "cns", "platelets", "inflammation", "cell injury"]
-    },
-    { 
-      name: "microbiology", 
-      aliases: ["micro", "bacteria", "virus", "fungi", "parasites"],
-      topics: ["general microbiology", "immunology", "systemic bacteriology", "virology", "mycology", "parasitology", 
-               "applied microbiology", "bloodstream infections", "cardiovascular infections", "respiratory infections", 
-               "meningitis", "encephalitis", "cns infections", "gastrointestinal infections", "urinary tract infections", "uti", "sti"]
-    }
+    { name: "pharmacology", aliases: ["pharma", "pharmacodynamics", "pharmacokinetics"] },
+    { name: "pathology", aliases: ["patho", "histology", "cytology"] },
+    { name: "microbiology", aliases: ["micro", "bacteria", "virus", "fungi", "parasites"] }
   ];
   
   let detectedSubject = '';
@@ -412,14 +367,24 @@ function detectSubjectImportantQuestionsRequest(prompt: string): { isRequest: bo
   // If a subject is detected, try to extract any specific topic
   let topic: string | undefined;
   
-  // Find the subject object from our list
-  const subjectObj = subjects.find(s => s.name === detectedSubject);
-  if (subjectObj) {
-    // Check for known topics specific to this subject
-    for (const possibleTopic of subjectObj.topics) {
+  // First check common pathology topics by name
+  const pathologyTopics = [
+    // Paper 1 topics
+    'neoplasia', 'inflammatory', 'inflammation', 'inflammation repair', 'cell injury', 'hemodynamic', 
+    'genetic disorders', 'immunology', 'infectious', 'environmental', 'nutritional', 'infancy', 'childhood',
+    'red blood cells', 'white blood cells', 'platelets',
+    
+    // Paper 2 topics
+    'respiratory', 'heart', 'blood vessel', 'blood vessels', 'gastrointestinal', 'liver', 'kidney',
+    'male genital', 'female genital', 'bones', 'joints', 'soft tissue', 'central nervous', 'cns', 
+    'breast', 'endocrinology', 'skin'
+  ];
+  
+  if (detectedSubject === 'pathology') {
+    for (const possibleTopic of pathologyTopics) {
       if (lowerPrompt.includes(possibleTopic)) {
         topic = possibleTopic;
-        console.log(`Detected ${detectedSubject} topic: ${topic}`);
+        console.log(`Detected pathology topic: ${topic}`);
         break;
       }
     }
