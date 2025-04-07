@@ -10,7 +10,7 @@ import { SubTopicContent } from "./QuestionBank";
 
 interface TypeAccordionProps {
   typeKey: string;
-  type: SubTopicContent | any;
+  type: SubTopicContent;
   isExpanded?: boolean;
   activeTab: "essay" | "short-notes";
 }
@@ -30,7 +30,7 @@ const TypeAccordion = ({ typeKey, type, isExpanded = false, activeTab }: TypeAcc
       <AccordionContent>
         <div className="space-y-4 px-4">
           <QuestionSection 
-            subtopics={type} 
+            subtopics={type.subtopics} 
             activeTab={activeTab} 
           />
         </div>

@@ -34,21 +34,16 @@ const TopicAccordion = ({ topicKey, topic, isExpanded = false, activeTab }: Topi
     console.log("Topic expanded items:", value);
   };
 
-  // Check if this is a year-level topic (containing subjects)
-  const isYearLevel = topicKey === "second-year" || topicKey === "third-year" || topicKey === "fourth-year";
-
   return (
     <AccordionItem 
       value={topicKey} 
       key={topicKey}
       className="animate-fade-in transition-all duration-300 text-gray-800 dark:text-gray-200"
     >
-      <AccordionTrigger 
-        className={`px-4 hover:bg-gray-100 dark:hover:bg-gray-800/50 rounded-lg transition-all duration-200 ${isYearLevel ? 'text-xl md:text-2xl font-bold' : ''}`}
-      >
+      <AccordionTrigger className="px-4 hover:bg-gray-100 dark:hover:bg-gray-800/50 rounded-lg transition-all duration-200">
         <div className="flex items-center space-x-3">
-          <Book className={`${isYearLevel ? 'h-7 w-7 text-purple-600 dark:text-purple-400' : 'h-6 w-6 text-blue-600 dark:text-blue-400'}`} />
-          <h3 className={`${isYearLevel ? 'text-2xl md:text-3xl' : 'text-xl md:text-2xl'} font-semibold`}>{topic.name}</h3>
+          <Book className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+          <h3 className="text-xl md:text-2xl font-semibold">{topic.name}</h3>
         </div>
       </AccordionTrigger>
       <AccordionContent>

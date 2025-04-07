@@ -39,15 +39,53 @@ export const useQuestionBank = () => {
     let hasContent = false;
     const filteredSubtopics: { [key: string]: any } = {};
 
-    // Process the academic year level structures 
     for (const [subtopicKey, subtopic] of Object.entries(topic.subtopics || {})) {
-      if (subtopic && typeof subtopic === 'object') {
-        // This handles both direct subtopics with questions and nested structures
-        const filteredTopic = processSubtopic(subtopic, type, query);
-        
-        if (filteredTopic) {
-          filteredSubtopics[subtopicKey] = filteredTopic;
-          hasContent = true;
+      const filteredInnerSubtopics: { [key: string]: any } = {};
+      let hasSubtopicContent = false;
+
+      if (subtopic && typeof subtopic === 'object' && 'subtopics' in subtopic) {
+        const subtopicObj = subtopic as { name: string; subtopics: Record<string, any> };
+
+        for (const [innerKey, innerSubtopic] of Object.entries(subtopicObj.subtopics || {})) {
+          if (innerSubtopic && typeof innerSubtopic === 'object' && 'subtopics' in innerSubtopic) {
+            const innerSubtopicObj = innerSubtopic as { name: string; subtopics: Record<string, any> };
+            const filteredContent: { [key: string]: any } = {};
+            let hasInnerContent = false;
+
+            for (const [typeKey, questions] of Object.entries(innerSubtopicObj.subtopics || {})) {
+              if ((typeKey === "essay" && type === "essay") || 
+                  ((typeKey === "short-note" || typeKey === "short-notes") && type === "short-notes")) {
+                if (questions && typeof questions === 'object' && 'questions' in questions) {
+                  const questionsObj = questions as { name: string; questions: string[] };
+                  const filteredQuestions = searchInQuestions(questionsObj.questions, query);
+                  
+                  if (filteredQuestions.length > 0) {
+                    filteredContent[typeKey] = {
+                      name: questionsObj.name,
+                      questions: filteredQuestions
+                    };
+                    hasInnerContent = true;
+                    hasSubtopicContent = true;
+                    hasContent = true;
+                  }
+                }
+              }
+            }
+
+            if (hasInnerContent) {
+              filteredInnerSubtopics[innerKey] = {
+                name: innerSubtopicObj.name,
+                subtopics: filteredContent
+              };
+            }
+          }
+        }
+
+        if (hasSubtopicContent) {
+          filteredSubtopics[subtopicKey] = {
+            name: subtopicObj.name,
+            subtopics: filteredInnerSubtopics
+          };
         }
       }
     }
@@ -56,86 +94,6 @@ export const useQuestionBank = () => {
       name: topic.name,
       subtopics: filteredSubtopics
     } as Topic : null;
-  }, [searchInQuestions]);
-
-  // Helper function to recursively process subtopics at any nesting level
-  const processSubtopic = useCallback((subtopic: any, type: "essay" | "short-notes", query: string): any => {
-    if (!subtopic || typeof subtopic !== 'object') return null;
-    
-    // Check if this object has a 'name' and 'subtopics'
-    if ('name' in subtopic && 'subtopics' in subtopic) {
-      const filteredSubtopics: { [key: string]: any } = {};
-      let hasContent = false;
-
-      // Process all subtopics
-      for (const [key, innerSubtopic] of Object.entries(subtopic.subtopics)) {
-        // Skip processing if the key is "essay" or "short-note"/"short-notes" as these are handled separately
-        if (key !== "essay" && key !== "short-note" && key !== "short-notes") {
-          // Recursive call for nested structures
-          const filteredInner = processSubtopic(innerSubtopic, type, query);
-          
-          if (filteredInner) {
-            filteredSubtopics[key] = filteredInner;
-            hasContent = true;
-          }
-        }
-      }
-
-      // Check if this level has direct questions matching the type
-      if (subtopic.subtopics.essay && type === 'essay') {
-        const questions = subtopic.subtopics.essay?.questions;
-        if (Array.isArray(questions)) {
-          const filteredQuestions = searchInQuestions(questions, query);
-          if (filteredQuestions.length > 0) {
-            filteredSubtopics.essay = {
-              name: subtopic.subtopics.essay.name,
-              questions: filteredQuestions
-            };
-            hasContent = true;
-          }
-        }
-      }
-
-      // Check for short notes questions - normalize the key name
-      const shortNotesKey = type === 'short-notes' ? 
-        (subtopic.subtopics['short-notes'] ? 'short-notes' : 
-         (subtopic.subtopics['short-note'] ? 'short-note' : null)) : null;
-      
-      if (shortNotesKey && shortNotesKey in subtopic.subtopics) {
-        const questions = subtopic.subtopics[shortNotesKey]?.questions;
-        if (Array.isArray(questions)) {
-          const filteredQuestions = searchInQuestions(questions, query);
-          if (filteredQuestions.length > 0) {
-            filteredSubtopics[shortNotesKey] = {
-              name: subtopic.subtopics[shortNotesKey].name,
-              questions: filteredQuestions
-            };
-            hasContent = true;
-          }
-        }
-      }
-
-      return hasContent ? {
-        name: subtopic.name,
-        subtopics: filteredSubtopics
-      } : null;
-    }
-    
-    // Check if this is a direct question container
-    if ('questions' in subtopic) {
-      const questions = subtopic.questions;
-      if (Array.isArray(questions)) {
-        const filteredQuestions = searchInQuestions(questions, query);
-        if (filteredQuestions.length > 0) {
-          return {
-            name: subtopic.name,
-            questions: filteredQuestions
-          };
-        }
-      }
-    }
-    
-    return null;
   }, [searchInQuestions]);
 
   const getFilteredData = useCallback((type: "essay" | "short-notes", query: string): QuestionBankData => {
@@ -150,23 +108,11 @@ export const useQuestionBank = () => {
     
     setIsSearching(true);
     
-    // Process academic year level first
-    for (const [yearKey, yearData] of Object.entries(QUESTION_BANK_DATA)) {
-      const filteredYearData: any = { name: yearData.name, subtopics: {} };
-      let hasYearContent = false;
-      
-      // Process subjects within year
-      for (const [subjectKey, subject] of Object.entries(yearData.subtopics)) {
-        const filteredTopic = filterQuestions(subject, type, query);
-        if (filteredTopic) {
-          filteredYearData.subtopics[subjectKey] = filteredTopic;
-          hasYearContent = true;
-          hasResults = true;
-        }
-      }
-      
-      if (hasYearContent) {
-        filteredData[yearKey] = filteredYearData;
+    for (const [key, topic] of Object.entries(QUESTION_BANK_DATA)) {
+      const filteredTopic = filterQuestions(topic, type, query);
+      if (filteredTopic) {
+        filteredData[key] = filteredTopic;
+        hasResults = true;
       }
     }
     
@@ -176,6 +122,7 @@ export const useQuestionBank = () => {
 
   const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
+    console.log("Search value:", value);
     setSearchQuery(value);
     
     if (!value.trim()) {
@@ -186,7 +133,6 @@ export const useQuestionBank = () => {
 
   useEffect(() => {
     if (searchQuery.trim() !== "") {
-      // Expand all academic year items when searching
       const topicKeys = Object.keys(QUESTION_BANK_DATA);
       setExpandedItems(topicKeys);
     } else {
