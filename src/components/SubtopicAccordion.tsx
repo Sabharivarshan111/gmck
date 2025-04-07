@@ -45,7 +45,7 @@ const SubtopicAccordion = ({ subtopicKey, subtopic, isExpanded = false, activeTa
     >
       <AccordionTrigger className={`hover:bg-gray-100 dark:hover:bg-gray-800/50 rounded-lg px-4 ${isMajorSubject ? 'font-semibold' : ''}`}>
         <div className="flex items-center space-x-3">
-          <BookOpen className={`h-5 w-5 ${isMajorSubject ? 'text-green-600 dark:text-green-400' : 'text-indigo-600 dark:text-indigo-400'}`} />
+          <BookOpen className={`h-5 w-5 ${isMajorSubject ? 'text-blue-600 dark:text-blue-400' : 'text-indigo-600 dark:text-indigo-400'}`} />
           <h4 className={`${isMajorSubject ? 'text-xl md:text-2xl' : 'text-lg md:text-xl'} font-medium`}>{subtopic.name}</h4>
         </div>
       </AccordionTrigger>
