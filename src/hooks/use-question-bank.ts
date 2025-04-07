@@ -69,17 +69,20 @@ export const useQuestionBank = () => {
 
       // Process all subtopics
       for (const [key, innerSubtopic] of Object.entries(subtopic.subtopics)) {
-        // Recursive call for nested structures
-        const filteredInner = processSubtopic(innerSubtopic, type, query);
-        
-        if (filteredInner) {
-          filteredSubtopics[key] = filteredInner;
-          hasContent = true;
+        // Skip processing if the key is "essay" or "short-note"/"short-notes" as these are handled separately
+        if (key !== "essay" && key !== "short-note" && key !== "short-notes") {
+          // Recursive call for nested structures
+          const filteredInner = processSubtopic(innerSubtopic, type, query);
+          
+          if (filteredInner) {
+            filteredSubtopics[key] = filteredInner;
+            hasContent = true;
+          }
         }
       }
 
       // Check if this level has direct questions matching the type
-      if ('essay' in subtopic.subtopics && type === 'essay') {
+      if (subtopic.subtopics.essay && type === 'essay') {
         const questions = subtopic.subtopics.essay?.questions;
         if (Array.isArray(questions)) {
           const filteredQuestions = searchInQuestions(questions, query);
@@ -93,9 +96,10 @@ export const useQuestionBank = () => {
         }
       }
 
-      // Check for short notes questions
+      // Check for short notes questions - normalize the key name
       const shortNotesKey = type === 'short-notes' ? 
-        (subtopic.subtopics['short-notes'] ? 'short-notes' : 'short-note') : null;
+        (subtopic.subtopics['short-notes'] ? 'short-notes' : 
+         (subtopic.subtopics['short-note'] ? 'short-note' : null)) : null;
       
       if (shortNotesKey && shortNotesKey in subtopic.subtopics) {
         const questions = subtopic.subtopics[shortNotesKey]?.questions;

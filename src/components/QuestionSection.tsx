@@ -10,6 +10,51 @@ interface QuestionSectionProps {
 }
 
 const QuestionSection = ({ subtopics, activeTab }: QuestionSectionProps) => {
+  // Look for essay or short-notes/short-note keys
+  const essayKey = "essay";
+  const shortNoteKeys = ["short-notes", "short-note"];
+  
+  // Function to render question type if it exists
+  const renderQuestionType = (key: string, questionType: QuestionType | any) => {
+    if (questionType && typeof questionType === 'object' && 'questions' in questionType) {
+      const typedQuestionType = questionType as QuestionType;
+      
+      return (
+        <div key={key} className="w-full">
+          <h6 className="text-base font-medium text-gray-600 dark:text-gray-400 mb-3">
+            {typedQuestionType.name}
+          </h6>
+          <div className="space-y-4 max-w-full">
+            {typedQuestionType.questions.map((question, index) => (
+              <QuestionCard
+                key={index}
+                question={question}
+                index={index}
+              />
+            ))}
+          </div>
+        </div>
+      );
+    }
+    
+    return null;
+  };
+
+  // Check if we should render based on activeTab
+  if (activeTab === "essay" && essayKey in subtopics) {
+    return renderQuestionType(essayKey, subtopics[essayKey]);
+  }
+  
+  if (activeTab === "short-notes") {
+    // Try both short-notes and short-note keys
+    for (const key of shortNoteKeys) {
+      if (key in subtopics) {
+        return renderQuestionType(key, subtopics[key]);
+      }
+    }
+  }
+  
+  // If we have neither or activeTab doesn't match, try to render any appropriate section
   return (
     <>
       {Object.entries(subtopics).map(([questionTypeKey, questionType]) => {
@@ -20,29 +65,7 @@ const QuestionSection = ({ subtopics, activeTab }: QuestionSectionProps) => {
         
         if (!shouldRender) return null;
         
-        // For essay and short notes questions
-        if (questionType && typeof questionType === 'object' && 'questions' in questionType) {
-          const typedQuestionType = questionType as QuestionType;
-          
-          return (
-            <div key={questionTypeKey} className="w-full">
-              <h6 className="text-base font-medium text-gray-600 dark:text-gray-400 mb-3">
-                {typedQuestionType.name}
-              </h6>
-              <div className="space-y-4 max-w-full">
-                {typedQuestionType.questions.map((question, index) => (
-                  <QuestionCard
-                    key={index}
-                    question={question}
-                    index={index}
-                  />
-                ))}
-              </div>
-            </div>
-          );
-        }
-        
-        return null;
+        return renderQuestionType(questionTypeKey, questionType);
       })}
     </>
   );
