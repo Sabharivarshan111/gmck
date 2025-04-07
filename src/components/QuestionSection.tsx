@@ -4,7 +4,7 @@ import QuestionCard from "./QuestionCard";
 
 interface QuestionSectionProps {
   subtopics: {
-    [key: string]: QuestionType | { name: string; questions: any[] };
+    [key: string]: QuestionType | { name: string; questions: any[] } | any;
   };
   activeTab: "essay" | "short-notes";
 }
@@ -14,7 +14,7 @@ const QuestionSection = ({ subtopics, activeTab }: QuestionSectionProps) => {
   const essayKey = "essay";
   const shortNoteKeys = ["short-notes", "short-note"];
   
-  // Function to render question type if it exists
+  // Function to render question section if it exists
   const renderQuestionType = (key: string, questionType: QuestionType | any) => {
     if (questionType && typeof questionType === 'object' && 'questions' in questionType) {
       const typedQuestionType = questionType as QuestionType;
@@ -40,13 +40,36 @@ const QuestionSection = ({ subtopics, activeTab }: QuestionSectionProps) => {
     return null;
   };
 
-  // Check if we should render based on activeTab
+  // Recursive function to find and render questions at any nesting level
+  const findAndRenderQuestions = (section: any, targetTab: string): JSX.Element | null => {
+    // Direct match (essay or short-notes at this level)
+    if (targetTab in section) {
+      return renderQuestionType(targetTab, section[targetTab]);
+    }
+    
+    // Check if "short-note" exists when looking for short-notes
+    if (targetTab === "short-notes" && "short-note" in section) {
+      return renderQuestionType("short-note", section["short-note"]);
+    }
+    
+    // If this level has subtopics, recursively search in them
+    if ('subtopics' in section) {
+      for (const key in section.subtopics) {
+        const result = findAndRenderQuestions(section.subtopics[key], targetTab);
+        if (result) return result;
+      }
+    }
+    
+    return null;
+  };
+
+  // If direct access works, use it
   if (activeTab === "essay" && essayKey in subtopics) {
     return renderQuestionType(essayKey, subtopics[essayKey]);
   }
   
   if (activeTab === "short-notes") {
-    // Try both short-notes and short-note keys
+    // Try both short-notes and short-note keys directly
     for (const key of shortNoteKeys) {
       if (key in subtopics) {
         return renderQuestionType(key, subtopics[key]);
@@ -54,18 +77,20 @@ const QuestionSection = ({ subtopics, activeTab }: QuestionSectionProps) => {
     }
   }
   
-  // If we have neither or activeTab doesn't match, try to render any appropriate section
+  // If direct access didn't work, try recursive search
+  const targetKey = activeTab === "essay" ? "essay" : "short-notes";
+  const result = findAndRenderQuestions(subtopics, targetKey);
+  if (result) return result;
+  
+  // If we still don't have a result, look through all keys at this level for possible matches
   return (
     <>
-      {Object.entries(subtopics).map(([questionTypeKey, questionType]) => {
-        // Check if we should render this question type based on the active tab
-        const shouldRender = 
-          (activeTab === "essay" && questionTypeKey === "essay") || 
-          (activeTab === "short-notes" && (questionTypeKey === "short-note" || questionTypeKey === "short-notes"));
-        
-        if (!shouldRender) return null;
-        
-        return renderQuestionType(questionTypeKey, questionType);
+      {Object.entries(subtopics).map(([key, section]) => {
+        if (key !== "name" && typeof section === "object") {
+          const nestedResult = findAndRenderQuestions(section, targetKey);
+          if (nestedResult) return nestedResult;
+        }
+        return null;
       })}
     </>
   );
