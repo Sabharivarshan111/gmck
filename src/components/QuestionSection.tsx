@@ -4,7 +4,7 @@ import QuestionCard from "./QuestionCard";
 
 interface QuestionSectionProps {
   subtopics: {
-    [key: string]: QuestionType | { name: string; questions: string[] };
+    [key: string]: QuestionType | { name: string; questions: any[] };
   };
   activeTab: "essay" | "short-notes";
 }
@@ -15,22 +15,22 @@ const QuestionSection = ({ subtopics, activeTab }: QuestionSectionProps) => {
       {Object.entries(subtopics).map(([questionTypeKey, questionType]) => {
         // Check if we should render this question type based on the active tab
         const shouldRender = 
-          (activeTab === "essay" && (questionTypeKey === "essay")) || 
+          (activeTab === "essay" && questionTypeKey === "essay") || 
           (activeTab === "short-notes" && (questionTypeKey === "short-note" || questionTypeKey === "short-notes"));
         
         if (!shouldRender) return null;
         
         // For essay and short notes questions
         if (questionType && typeof questionType === 'object' && 'questions' in questionType) {
-          const questions = (questionType as QuestionType).questions;
+          const typedQuestionType = questionType as QuestionType;
           
           return (
             <div key={questionTypeKey} className="w-full">
               <h6 className="text-base font-medium text-gray-600 dark:text-gray-400 mb-3">
-                {(questionType as QuestionType).name}
+                {typedQuestionType.name}
               </h6>
               <div className="space-y-4 max-w-full">
-                {questions.map((question, index) => (
+                {typedQuestionType.questions.map((question, index) => (
                   <QuestionCard
                     key={index}
                     question={question}
