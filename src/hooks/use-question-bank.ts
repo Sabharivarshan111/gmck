@@ -33,67 +33,65 @@ export const useQuestionBank = () => {
     );
   }, []);
 
-  const filterQuestions = useCallback((topic: any, type: "essay" | "short-notes", query: string): Topic | null => {
-    if (!query.trim()) return topic as Topic;
-    
-    let hasContent = false;
-    const filteredSubtopics: { [key: string]: any } = {};
+  // Updated recursive function to filter questions at any nesting level
+  const filterQuestions = useCallback((
+    topic: any, 
+    type: "essay" | "short-notes", 
+    query: string
+  ): any => {
+    if (!query.trim()) return topic;
 
-    for (const [subtopicKey, subtopic] of Object.entries(topic.subtopics || {})) {
-      const filteredInnerSubtopics: { [key: string]: any } = {};
-      let hasSubtopicContent = false;
+    // Helper function to search recursively through the nested structure
+    const searchRecursively = (obj: any): any => {
+      // Base case: if this object has a 'questions' array, filter it
+      if (obj && typeof obj === 'object' && 'questions' in obj) {
+        const filteredQuestions = searchInQuestions(obj.questions, query);
+        if (filteredQuestions.length > 0) {
+          return {
+            ...obj,
+            questions: filteredQuestions
+          };
+        }
+        return null;
+      }
 
-      if (subtopic && typeof subtopic === 'object' && 'subtopics' in subtopic) {
-        const subtopicObj = subtopic as { name: string; subtopics: Record<string, any> };
+      // If object has subtopics, recursively search through them
+      if (obj && typeof obj === 'object' && 'subtopics' in obj) {
+        const filteredSubtopics: { [key: string]: any } = {};
+        let hasContent = false;
 
-        for (const [innerKey, innerSubtopic] of Object.entries(subtopicObj.subtopics || {})) {
-          if (innerSubtopic && typeof innerSubtopic === 'object' && 'subtopics' in innerSubtopic) {
-            const innerSubtopicObj = innerSubtopic as { name: string; subtopics: Record<string, any> };
-            const filteredContent: { [key: string]: any } = {};
-            let hasInnerContent = false;
-
-            for (const [typeKey, questions] of Object.entries(innerSubtopicObj.subtopics || {})) {
-              if ((typeKey === "essay" && type === "essay") || 
-                  ((typeKey === "short-note" || typeKey === "short-notes") && type === "short-notes")) {
-                if (questions && typeof questions === 'object' && 'questions' in questions) {
-                  const questionsObj = questions as { name: string; questions: string[] };
-                  const filteredQuestions = searchInQuestions(questionsObj.questions, query);
-                  
-                  if (filteredQuestions.length > 0) {
-                    filteredContent[typeKey] = {
-                      name: questionsObj.name,
-                      questions: filteredQuestions
-                    };
-                    hasInnerContent = true;
-                    hasSubtopicContent = true;
-                    hasContent = true;
-                  }
-                }
-              }
+        for (const [key, subtopic] of Object.entries(obj.subtopics || {})) {
+          // Check if we should filter by type (essay or short-notes)
+          if ((key === "essay" && type === "essay") || 
+              ((key === "short-note" || key === "short-notes") && type === "short-notes")) {
+            const filteredContent = searchRecursively(subtopic);
+            if (filteredContent) {
+              filteredSubtopics[key] = filteredContent;
+              hasContent = true;
             }
-
-            if (hasInnerContent) {
-              filteredInnerSubtopics[innerKey] = {
-                name: innerSubtopicObj.name,
-                subtopics: filteredContent
-              };
+          } else {
+            // For other keys, continue recursive search
+            const filteredContent = searchRecursively(subtopic);
+            if (filteredContent) {
+              filteredSubtopics[key] = filteredContent;
+              hasContent = true;
             }
           }
         }
 
-        if (hasSubtopicContent) {
-          filteredSubtopics[subtopicKey] = {
-            name: subtopicObj.name,
-            subtopics: filteredInnerSubtopics
+        if (hasContent) {
+          return {
+            ...obj,
+            subtopics: filteredSubtopics
           };
         }
       }
-    }
 
-    return hasContent ? {
-      name: topic.name,
-      subtopics: filteredSubtopics
-    } as Topic : null;
+      return null;
+    };
+
+    const filteredTopic = searchRecursively(topic);
+    return filteredTopic;
   }, [searchInQuestions]);
 
   const getFilteredData = useCallback((type: "essay" | "short-notes", query: string): QuestionBankData => {

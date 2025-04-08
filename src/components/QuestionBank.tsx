@@ -17,7 +17,7 @@ export interface QuestionType {
 export interface SubTopicContent {
   name: string;
   subtopics: {
-    [key: string]: QuestionType | { name: string; questions: any[] };
+    [key: string]: QuestionType | { name: string; questions: string[] };
   };
 }
 

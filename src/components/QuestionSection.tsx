@@ -4,7 +4,7 @@ import QuestionCard from "./QuestionCard";
 
 interface QuestionSectionProps {
   subtopics: {
-    [key: string]: QuestionType | { name: string; questions: any[] };
+    [key: string]: QuestionType | { name: string; questions: string[] };
   };
   activeTab: "essay" | "short-notes";
 }
@@ -22,15 +22,15 @@ const QuestionSection = ({ subtopics, activeTab }: QuestionSectionProps) => {
         
         // For essay and short notes questions
         if (questionType && typeof questionType === 'object' && 'questions' in questionType) {
-          const typedQuestionType = questionType as QuestionType;
+          const questions = (questionType as QuestionType).questions;
           
           return (
             <div key={questionTypeKey} className="w-full">
               <h6 className="text-base font-medium text-gray-600 dark:text-gray-400 mb-3">
-                {typedQuestionType.name}
+                {(questionType as QuestionType).name}
               </h6>
               <div className="space-y-4 max-w-full">
-                {typedQuestionType.questions.map((question, index) => (
+                {questions.map((question, index) => (
                   <QuestionCard
                     key={index}
                     question={question}
