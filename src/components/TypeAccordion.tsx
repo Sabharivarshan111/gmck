@@ -30,7 +30,7 @@ const TypeAccordion = ({ typeKey, type, isExpanded = false, activeTab }: TypeAcc
       <AccordionContent>
         <div className="space-y-4 px-4">
           <QuestionSection 
-            subtopics={type.subtopics || {}} 
+            subtopics={type.subtopics} 
             activeTab={activeTab} 
           />
         </div>

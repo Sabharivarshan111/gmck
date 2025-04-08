@@ -19,7 +19,7 @@ interface SubtopicAccordionProps {
 }
 
 const SubtopicAccordion = ({ subtopicKey, subtopic, isExpanded = false, activeTab }: SubtopicAccordionProps) => {
-  const typeKeys = Object.keys(subtopic.subtopics || {});
+  const typeKeys = Object.keys(subtopic.subtopics);
   const [localExpandedItems, setLocalExpandedItems] = useState<string[]>(
     isExpanded ? typeKeys : []
   );
@@ -42,7 +42,7 @@ const SubtopicAccordion = ({ subtopicKey, subtopic, isExpanded = false, activeTa
     >
       <AccordionTrigger className="hover:bg-gray-100 dark:hover:bg-gray-800/50 rounded-lg px-4">
         <div className="flex items-center space-x-3">
-          <BookOpen className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+          <BookOpen className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
           <h4 className="text-lg md:text-xl font-medium">{subtopic.name}</h4>
         </div>
       </AccordionTrigger>
@@ -54,7 +54,7 @@ const SubtopicAccordion = ({ subtopicKey, subtopic, isExpanded = false, activeTa
             onValueChange={handleAccordionValueChange}
             className="w-full"
           >
-            {Object.entries(subtopic.subtopics || {}).map(([typeKey, type]) => (
+            {Object.entries(subtopic.subtopics).map(([typeKey, type]) => (
               <TypeAccordion 
                 key={typeKey}
                 typeKey={typeKey}

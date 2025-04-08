@@ -33,74 +33,68 @@ export const useQuestionBank = () => {
     );
   }, []);
 
-  // Recursive function to search for questions
-  const findQuestionsInTree = useCallback(
-    (node: any, type: "essay" | "short-notes", query: string): any => {
-      // Base case 1: If node is null or not an object
-      if (!node || typeof node !== 'object') return null;
-      
-      // Base case 2: We found a question array that matches our type
-      if ('questions' in node) {
-        const isEssayType = type === "essay" && node.name?.toLowerCase() === "essay";
-        const isShortNotesType = type === "short-notes" && 
-          (node.name?.toLowerCase() === "short notes" || 
-           node.name?.toLowerCase() === "short note" || 
-           node.name?.toLowerCase() === "short-notes");
-        
-        if (isEssayType || isShortNotesType) {
-          const filteredQuestions = searchInQuestions(node.questions, query);
-          if (filteredQuestions.length > 0) {
-            return {
-              ...node,
-              questions: filteredQuestions
-            };
-          }
-        }
-        return null;
-      }
-      
-      // Recursive case: Check subtopics
-      if ('subtopics' in node) {
-        const filteredSubtopics: Record<string, any> = {};
-        let hasMatchingContent = false;
-        
-        for (const [key, subtopic] of Object.entries(node.subtopics || {})) {
-          // Special case: direct match by key name
-          if ((type === "essay" && key === "essay") || 
-              (type === "short-notes" && (key === "short-note" || key === "short-notes"))) {
-            if (subtopic && 'questions' in subtopic) {
-              const filteredQuestions = searchInQuestions(subtopic.questions, query);
-              if (filteredQuestions.length > 0) {
-                filteredSubtopics[key] = {
-                  ...subtopic,
-                  questions: filteredQuestions
-                };
-                hasMatchingContent = true;
-                continue;
+  const filterQuestions = useCallback((topic: any, type: "essay" | "short-notes", query: string): Topic | null => {
+    if (!query.trim()) return topic as Topic;
+    
+    let hasContent = false;
+    const filteredSubtopics: { [key: string]: any } = {};
+
+    for (const [subtopicKey, subtopic] of Object.entries(topic.subtopics || {})) {
+      const filteredInnerSubtopics: { [key: string]: any } = {};
+      let hasSubtopicContent = false;
+
+      if (subtopic && typeof subtopic === 'object' && 'subtopics' in subtopic) {
+        const subtopicObj = subtopic as { name: string; subtopics: Record<string, any> };
+
+        for (const [innerKey, innerSubtopic] of Object.entries(subtopicObj.subtopics || {})) {
+          if (innerSubtopic && typeof innerSubtopic === 'object' && 'subtopics' in innerSubtopic) {
+            const innerSubtopicObj = innerSubtopic as { name: string; subtopics: Record<string, any> };
+            const filteredContent: { [key: string]: any } = {};
+            let hasInnerContent = false;
+
+            for (const [typeKey, questions] of Object.entries(innerSubtopicObj.subtopics || {})) {
+              if ((typeKey === "essay" && type === "essay") || 
+                  ((typeKey === "short-note" || typeKey === "short-notes") && type === "short-notes")) {
+                if (questions && typeof questions === 'object' && 'questions' in questions) {
+                  const questionsObj = questions as { name: string; questions: string[] };
+                  const filteredQuestions = searchInQuestions(questionsObj.questions, query);
+                  
+                  if (filteredQuestions.length > 0) {
+                    filteredContent[typeKey] = {
+                      name: questionsObj.name,
+                      questions: filteredQuestions
+                    };
+                    hasInnerContent = true;
+                    hasSubtopicContent = true;
+                    hasContent = true;
+                  }
+                }
               }
             }
-          }
-          
-          // Regular recursive search
-          const filteredSubtopic = findQuestionsInTree(subtopic, type, query);
-          if (filteredSubtopic) {
-            filteredSubtopics[key] = filteredSubtopic;
-            hasMatchingContent = true;
+
+            if (hasInnerContent) {
+              filteredInnerSubtopics[innerKey] = {
+                name: innerSubtopicObj.name,
+                subtopics: filteredContent
+              };
+            }
           }
         }
-        
-        if (hasMatchingContent) {
-          return {
-            ...node,
-            subtopics: filteredSubtopics
+
+        if (hasSubtopicContent) {
+          filteredSubtopics[subtopicKey] = {
+            name: subtopicObj.name,
+            subtopics: filteredInnerSubtopics
           };
         }
       }
-      
-      return null;
-    },
-    [searchInQuestions]
-  );
+    }
+
+    return hasContent ? {
+      name: topic.name,
+      subtopics: filteredSubtopics
+    } as Topic : null;
+  }, [searchInQuestions]);
 
   const getFilteredData = useCallback((type: "essay" | "short-notes", query: string): QuestionBankData => {
     const filteredData: QuestionBankData = {};
@@ -115,7 +109,7 @@ export const useQuestionBank = () => {
     setIsSearching(true);
     
     for (const [key, topic] of Object.entries(QUESTION_BANK_DATA)) {
-      const filteredTopic = findQuestionsInTree(topic, type, query);
+      const filteredTopic = filterQuestions(topic, type, query);
       if (filteredTopic) {
         filteredData[key] = filteredTopic;
         hasResults = true;
@@ -124,7 +118,7 @@ export const useQuestionBank = () => {
     
     setHasSearchResults(hasResults);
     return filteredData;
-  }, [findQuestionsInTree]);
+  }, [filterQuestions]);
 
   const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;

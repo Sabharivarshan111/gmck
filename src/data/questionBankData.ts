@@ -15,38 +15,33 @@ import { pathologyData } from './topics/pathology';
 import { microbiologyData } from './topics/microbiology';
 
 export const QUESTION_BANK_DATA = {
-  "second-year": {
-    name: "Second Year",
+  "pharmacology": {
+    name: "Pharmacology",
     subtopics: {
-      "pharmacology": {
-        name: "Pharmacology",
+      "paper-1": {
+        name: "Paper 1",
         subtopics: {
-          "paper-1": {
-            name: "Paper 1",
-            subtopics: {
-              "general-pharmacology": pharmacologyData.subtopics["general-pharmacology"],
-              "peripheral-nervous-system": peripheralNervousSystemData,
-              "autonomic-nervous-system": autonomicNervousSystemData,
-              "central-nervous-system": centralNervousSystemData,
-              "cardiovascular-system": cardiovascularSystemData,
-              "respiratory-system": respiratorySystemData,
-              "autacoids": autacoidsData
-            }
-          },
-          "paper-2": {
-            name: "Paper 2",
-            subtopics: {
-              "hormones": hormonesData,
-              "gastrointestinal-system": gastrointestinalSystemData,
-              "anti-microbial-drugs": antiMicrobialDrugsData,
-              "neoplastic-drugs": neoplasticDrugsData,
-              "miscellaneous-drugs": miscellaneousDrugsData
-            }
-          }
+          "general-pharmacology": pharmacologyData.subtopics["general-pharmacology"],
+          "peripheral-nervous-system": peripheralNervousSystemData,
+          "autonomic-nervous-system": autonomicNervousSystemData,
+          "central-nervous-system": centralNervousSystemData,
+          "cardiovascular-system": cardiovascularSystemData,
+          "respiratory-system": respiratorySystemData,
+          "autacoids": autacoidsData
         }
       },
-      "pathology": pathologyData,
-      "microbiology": microbiologyData
+      "paper-2": {
+        name: "Paper 2",
+        subtopics: {
+          "hormones": hormonesData,
+          "gastrointestinal-system": gastrointestinalSystemData,
+          "anti-microbial-drugs": antiMicrobialDrugsData,
+          "neoplastic-drugs": neoplasticDrugsData,
+          "miscellaneous-drugs": miscellaneousDrugsData
+        }
+      }
     }
-  }
+  },
+  "pathology": pathologyData,
+  "microbiology": microbiologyData
 };
