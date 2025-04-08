@@ -15,7 +15,7 @@ const QuestionSection = ({ subtopics, activeTab }: QuestionSectionProps) => {
       {Object.entries(subtopics).map(([questionTypeKey, questionType]) => {
         // Check if we should render this question type based on the active tab
         const shouldRender = 
-          (activeTab === "essay" && questionTypeKey === "essay") || 
+          (activeTab === "essay" && (questionTypeKey === "essay")) || 
           (activeTab === "short-notes" && (questionTypeKey === "short-note" || questionTypeKey === "short-notes"));
         
         if (!shouldRender) return null;
