@@ -1,15 +1,47 @@
 
 import { pharmacologyData } from './topics/pharmacology';
+import { autonomicNervousSystemData } from './topics/autonomicNervousSystem';
+import { centralNervousSystemData } from './topics/centralNervousSystem';
+import { cardiovascularSystemData } from './topics/cardiovascularSystem';
+import { respiratorySystemData } from './topics/respiratorySystem';
+import { autacoidsData } from './topics/autacoids';
+import { peripheralNervousSystemData } from './topics/peripheralNervousSystem';
+import { hormonesData } from './topics/hormones';
+import { gastrointestinalSystemData } from './topics/gastrointestinalSystem';
+import { antiMicrobialDrugsData } from './topics/antiMicrobialDrugs';
+import { neoplasticDrugsData } from './topics/neoplasticDrugs';
+import { miscellaneousDrugsData } from './topics/miscellaneousDrugs';
 import { pathologyData } from './topics/pathology';
 import { microbiologyData } from './topics/microbiology';
 
 export const QUESTION_BANK_DATA = {
-  "second-year": {
-    name: "Second Year",
+  "pharmacology": {
+    name: "Pharmacology",
     subtopics: {
-      "pharmacology": pharmacologyData,
-      "pathology": pathologyData,
-      "microbiology": microbiologyData
+      "paper-1": {
+        name: "Paper 1",
+        subtopics: {
+          "general-pharmacology": pharmacologyData.subtopics["general-pharmacology"],
+          "peripheral-nervous-system": peripheralNervousSystemData,
+          "autonomic-nervous-system": autonomicNervousSystemData,
+          "central-nervous-system": centralNervousSystemData,
+          "cardiovascular-system": cardiovascularSystemData,
+          "respiratory-system": respiratorySystemData,
+          "autacoids": autacoidsData
+        }
+      },
+      "paper-2": {
+        name: "Paper 2",
+        subtopics: {
+          "hormones": hormonesData,
+          "gastrointestinal-system": gastrointestinalSystemData,
+          "anti-microbial-drugs": antiMicrobialDrugsData,
+          "neoplastic-drugs": neoplasticDrugsData,
+          "miscellaneous-drugs": miscellaneousDrugsData
+        }
+      }
     }
-  }
+  },
+  "pathology": pathologyData,
+  "microbiology": microbiologyData
 };

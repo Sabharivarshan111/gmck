@@ -18,12 +18,7 @@ interface TopicAccordionProps {
 }
 
 const TopicAccordion = ({ topicKey, topic, isExpanded = false, activeTab }: TopicAccordionProps) => {
-  // Check if topic or topic.subtopics is undefined
-  if (!topic || !topic.subtopics) {
-    return null;
-  }
-  
-  const subtopicKeys = Object.keys(topic.subtopics || {});
+  const subtopicKeys = Object.keys(topic.subtopics);
   const [localExpandedItems, setLocalExpandedItems] = useState<string[]>(
     isExpanded ? subtopicKeys : []
   );
@@ -38,25 +33,6 @@ const TopicAccordion = ({ topicKey, topic, isExpanded = false, activeTab }: Topi
     setLocalExpandedItems(value);
     console.log("Topic expanded items:", value);
   };
-
-  // Check if this topic has questions for the active tab (directly or nested)
-  const hasQuestionsForTab = () => {
-    // If there are no subtopics, return false
-    if (!topic.subtopics || Object.keys(topic.subtopics).length === 0) {
-      return false;
-    }
-
-    return Object.values(topic.subtopics).some(subtopic => {
-      if (!subtopic || !subtopic.subtopics) return false;
-      
-      // Check if there is a path to essay or short-notes questions
-      return Object.keys(subtopic.subtopics).length > 0;
-    });
-  };
-
-  if (!hasQuestionsForTab()) {
-    return null;
-  }
 
   return (
     <AccordionItem 
@@ -78,7 +54,7 @@ const TopicAccordion = ({ topicKey, topic, isExpanded = false, activeTab }: Topi
             onValueChange={handleAccordionValueChange} 
             className="w-full"
           >
-            {Object.entries(topic.subtopics || {}).map(([subtopicKey, subtopic]) => (
+            {Object.entries(topic.subtopics).map(([subtopicKey, subtopic]) => (
               <SubtopicAccordion 
                 key={subtopicKey}
                 subtopicKey={subtopicKey}

@@ -16,26 +16,6 @@ interface TypeAccordionProps {
 }
 
 const TypeAccordion = ({ typeKey, type, isExpanded = false, activeTab }: TypeAccordionProps) => {
-  // Check if type is null or undefined
-  if (!type || !type.subtopics) return null;
-  
-  // Check if this type has essay or short-notes based on activeTab
-  const hasRelevantQuestions = () => {
-    if (!type.subtopics) return false;
-    
-    return Object.entries(type.subtopics).some(([key, subItem]) => {
-      if (subItem && typeof subItem === 'object' && 'questions' in subItem) {
-        if (activeTab === "essay" && key === "essay") return true;
-        if (activeTab === "short-notes" && (key === "short-note" || key === "short-notes")) return true;
-      }
-      return false;
-    });
-  };
-
-  if (!hasRelevantQuestions()) {
-    return null;
-  }
-
   return (
     <AccordionItem 
       value={typeKey}
