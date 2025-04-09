@@ -16,16 +16,17 @@ interface TypeAccordionProps {
 }
 
 const TypeAccordion = ({ typeKey, type, isExpanded = false, activeTab }: TypeAccordionProps) => {
+  // Check if type is null or undefined
+  if (!type || !type.subtopics) return null;
+  
   // Check if this type has essay or short-notes based on activeTab
   const hasRelevantQuestions = () => {
-    if (!type || !type.subtopics) return false;
-    
-    if (activeTab === "essay" && type.subtopics["essay"]) {
-      return true;
+    if (activeTab === "essay") {
+      return type.subtopics && type.subtopics["essay"];
     }
     
-    if (activeTab === "short-notes" && (type.subtopics["short-note"] || type.subtopics["short-notes"])) {
-      return true;
+    if (activeTab === "short-notes") {
+      return type.subtopics && (type.subtopics["short-note"] || type.subtopics["short-notes"]);
     }
     
     return false;

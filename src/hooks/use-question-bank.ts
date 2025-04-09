@@ -45,7 +45,7 @@ export const useQuestionBank = () => {
         const filteredQuestions = searchInQuestions(node.questions, query);
         if (filteredQuestions.length > 0) {
           return {
-            name: node.name,
+            ...node,
             questions: filteredQuestions
           };
         }

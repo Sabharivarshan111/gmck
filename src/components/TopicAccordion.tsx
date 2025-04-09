@@ -18,6 +18,11 @@ interface TopicAccordionProps {
 }
 
 const TopicAccordion = ({ topicKey, topic, isExpanded = false, activeTab }: TopicAccordionProps) => {
+  // Check if topic or topic.subtopics is undefined
+  if (!topic || !topic.subtopics) {
+    return null;
+  }
+  
   const subtopicKeys = Object.keys(topic.subtopics || {});
   const [localExpandedItems, setLocalExpandedItems] = useState<string[]>(
     isExpanded ? subtopicKeys : []

@@ -10,6 +10,11 @@ interface QuestionSectionProps {
 }
 
 const QuestionSection = ({ subtopics, activeTab }: QuestionSectionProps) => {
+  // Check if subtopics is null or undefined
+  if (!subtopics) {
+    return null;
+  }
+
   return (
     <>
       {Object.entries(subtopics).map(([questionTypeKey, questionType]) => {
@@ -18,10 +23,10 @@ const QuestionSection = ({ subtopics, activeTab }: QuestionSectionProps) => {
           (activeTab === "essay" && (questionTypeKey === "essay")) || 
           (activeTab === "short-notes" && (questionTypeKey === "short-note" || questionTypeKey === "short-notes"));
         
-        if (!shouldRender) return null;
+        if (!shouldRender || !questionType) return null;
         
         // For essay and short notes questions
-        if (questionType && typeof questionType === 'object' && 'questions' in questionType) {
+        if (typeof questionType === 'object' && 'questions' in questionType) {
           const typedQuestionType = questionType as { name: string; questions: string[] };
           
           return (
