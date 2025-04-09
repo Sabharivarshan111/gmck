@@ -21,15 +21,15 @@ const TypeAccordion = ({ typeKey, type, isExpanded = false, activeTab }: TypeAcc
   
   // Check if this type has essay or short-notes based on activeTab
   const hasRelevantQuestions = () => {
-    if (activeTab === "essay") {
-      return type.subtopics && type.subtopics["essay"];
-    }
+    if (!type.subtopics) return false;
     
-    if (activeTab === "short-notes") {
-      return type.subtopics && (type.subtopics["short-note"] || type.subtopics["short-notes"]);
-    }
-    
-    return false;
+    return Object.entries(type.subtopics).some(([key, subItem]) => {
+      if (subItem && typeof subItem === 'object' && 'questions' in subItem) {
+        if (activeTab === "essay" && key === "essay") return true;
+        if (activeTab === "short-notes" && (key === "short-note" || key === "short-notes")) return true;
+      }
+      return false;
+    });
   };
 
   if (!hasRelevantQuestions()) {

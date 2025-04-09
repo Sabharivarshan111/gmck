@@ -17,26 +17,31 @@ export interface QuestionType {
 export interface SubTopicContent {
   name: string;
   subtopics: {
-    [key: string]: QuestionType | { name: string; questions: any[] };
+    [key: string]: QuestionType | SubTopicContent;
   };
 }
 
 export interface SubTopic {
   name: string;
   subtopics: {
-    [key: string]: SubTopicContent | any;
+    [key: string]: SubTopicContent | QuestionType;
   };
 }
 
 export interface Topic {
   name: string;
   subtopics: {
-    [key: string]: SubTopic | any;
+    [key: string]: SubTopic;
   };
 }
 
 export interface QuestionBankData {
-  [key: string]: Topic;
+  [key: string]: {
+    name: string;
+    subtopics: {
+      [key: string]: Topic;
+    };
+  };
 }
 
 const QuestionBank = () => {

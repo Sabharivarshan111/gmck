@@ -11,7 +11,6 @@ import TypeAccordion from "./TypeAccordion";
 import { SubTopic } from "./QuestionBank";
 import { useState, useEffect } from "react";
 import QuestionSection from "./QuestionSection";
-import QuestionCard from "./QuestionCard";
 
 interface SubtopicAccordionProps {
   subtopicKey: string;
@@ -21,9 +20,21 @@ interface SubtopicAccordionProps {
 }
 
 const SubtopicAccordion = ({ subtopicKey, subtopic, isExpanded = false, activeTab }: SubtopicAccordionProps) => {
-  const hasNestedSubtopics = subtopic.subtopics && Object.keys(subtopic.subtopics).length > 0;
+  // Check if the subtopic is valid
+  if (!subtopic || !subtopic.subtopics) {
+    return null;
+  }
   
-  const typeKeys = hasNestedSubtopics ? Object.keys(subtopic.subtopics) : [];
+  const hasNestedSubtopics = subtopic.subtopics && Object.keys(subtopic.subtopics).filter(key => {
+    const item = subtopic.subtopics[key];
+    return item && typeof item === 'object' && 'subtopics' in item;
+  }).length > 0;
+  
+  // Get keys for items that have a 'subtopics' property (nested structure)
+  const typeKeys = hasNestedSubtopics ? Object.keys(subtopic.subtopics).filter(key => {
+    const item = subtopic.subtopics[key];
+    return item && typeof item === 'object' && 'subtopics' in item;
+  }) : [];
   
   const [localExpandedItems, setLocalExpandedItems] = useState<string[]>(
     isExpanded ? typeKeys : []
@@ -40,45 +51,54 @@ const SubtopicAccordion = ({ subtopicKey, subtopic, isExpanded = false, activeTa
     console.log("Subtopic expanded items:", value);
   };
 
-  // Check if this subtopic has direct essay or short-notes questions
+  // Check if this subtopic has direct questions for the active tab
   const hasDirectQuestions = () => {
     if (!subtopic.subtopics) return false;
     
-    const hasEssay = activeTab === "essay" && subtopic.subtopics["essay"];
-    const hasShortNotes = activeTab === "short-notes" && 
-      (subtopic.subtopics["short-note"] || subtopic.subtopics["short-notes"]);
-    
-    return hasEssay || hasShortNotes;
+    return Object.entries(subtopic.subtopics).some(([key, item]) => {
+      if (item && typeof item === 'object' && 'questions' in item) {
+        if (activeTab === "essay" && key === "essay") return true;
+        if (activeTab === "short-notes" && (key === "short-note" || key === "short-notes")) return true;
+      }
+      return false;
+    });
   };
 
+  // Check if this subtopic has questions for the active tab (directly or in nested subtopics)
   const hasQuestionsForTab = () => {
     if (hasDirectQuestions()) return true;
     if (!hasNestedSubtopics) return false;
     
-    return Object.values(subtopic.subtopics).some(subItem => {
-      if (!subItem || typeof subItem !== 'object') return false;
-
+    // Check nested subtopics
+    return Object.values(subtopic.subtopics).some(item => {
+      if (!item || typeof item !== 'object') return false;
+      
       // Direct question check
-      if ('questions' in subItem && Array.isArray(subItem.questions)) {
-        if (activeTab === "essay" && subItem.name === "Essay") return true;
-        if (activeTab === "short-notes" && (subItem.name === "Short Note" || subItem.name === "Short Notes")) return true;
+      if ('questions' in item && Array.isArray(item.questions)) {
+        if (activeTab === "essay" && item.name === "Essay") return true;
+        if (activeTab === "short-notes" && (item.name === "Short Note" || item.name === "Short Notes")) return true;
         return false;
       }
       
       // Nested subtopic check
-      if ('subtopics' in subItem) {
-        const nestedSubtopics = subItem.subtopics;
+      if ('subtopics' in item) {
+        const nestedSubtopics = (item as SubTopic).subtopics;
         if (!nestedSubtopics) return false;
         
-        return (activeTab === "essay" && nestedSubtopics["essay"]) || 
-               (activeTab === "short-notes" && (nestedSubtopics["short-note"] || nestedSubtopics["short-notes"]));
+        return Object.entries(nestedSubtopics).some(([key, subItem]) => {
+          if (subItem && typeof subItem === 'object' && 'questions' in subItem) {
+            if (activeTab === "essay" && key === "essay") return true;
+            if (activeTab === "short-notes" && (key === "short-note" || key === "short-notes")) return true;
+          }
+          return false;
+        });
       }
       
       return false;
     });
   };
 
-  if (!hasNestedSubtopics && !hasQuestionsForTab() && !hasDirectQuestions()) {
+  if (!hasQuestionsForTab()) {
     return null;
   }
 
@@ -102,21 +122,21 @@ const SubtopicAccordion = ({ subtopicKey, subtopic, isExpanded = false, activeTa
               onValueChange={handleAccordionValueChange}
               className="w-full"
             >
-              {Object.entries(subtopic.subtopics).map(([typeKey, type]) => {
-                // For regular question types (essay/short-notes)
-                if (type && 
-                    typeof type === 'object' && 
-                    'questions' in type && 
-                    Array.isArray(type.questions)) {
-                  if ((activeTab === "essay" && type.name === "Essay") ||
-                      (activeTab === "short-notes" && (type.name === "Short Note" || type.name === "Short Notes"))) {
+              {Object.entries(subtopic.subtopics).map(([typeKey, item]) => {
+                // Skip items that don't have nested structure or questions relevant to the active tab
+                if (!item || typeof item !== 'object') return null;
+
+                // Display direct questions in this level
+                if ('questions' in item && Array.isArray(item.questions)) {
+                  if ((activeTab === "essay" && item.name === "Essay") ||
+                      (activeTab === "short-notes" && (item.name === "Short Note" || item.name === "Short Notes"))) {
                     return (
                       <div key={typeKey} className="w-full mt-3 mb-6">
                         <h6 className="text-base font-medium text-gray-600 dark:text-gray-400 mb-3">
-                          {type.name}
+                          {item.name}
                         </h6>
                         <div className="space-y-4 max-w-full">
-                          {type.questions.map((question, index) => (
+                          {item.questions.map((question, index) => (
                             <QuestionCard
                               key={index}
                               question={question}
@@ -130,26 +150,27 @@ const SubtopicAccordion = ({ subtopicKey, subtopic, isExpanded = false, activeTa
                   return null;
                 }
                 
-                // For nested subtopics
-                return (
-                  <TypeAccordion 
-                    key={typeKey}
-                    typeKey={typeKey}
-                    type={type}
-                    isExpanded={isExpanded}
-                    activeTab={activeTab}
-                  />
-                );
+                // If it has subtopics, render TypeAccordion
+                if ('subtopics' in item) {
+                  return (
+                    <TypeAccordion 
+                      key={typeKey}
+                      typeKey={typeKey}
+                      type={item as any} // Cast to appropriate type
+                      isExpanded={isExpanded}
+                      activeTab={activeTab}
+                    />
+                  );
+                }
+                
+                return null;
               })}
             </Accordion>
           ) : (
             <div className="space-y-4">
               {/* Direct questions display */}
               <QuestionSection 
-                subtopics={{
-                  essay: subtopic.subtopics.essay,
-                  "short-note": subtopic.subtopics["short-note"] || subtopic.subtopics["short-notes"]
-                }} 
+                subtopics={subtopic.subtopics}
                 activeTab={activeTab} 
               />
             </div>
@@ -159,5 +180,8 @@ const SubtopicAccordion = ({ subtopicKey, subtopic, isExpanded = false, activeTa
     </AccordionItem>
   );
 };
+
+// Import QuestionCard component
+import QuestionCard from "./QuestionCard";
 
 export default SubtopicAccordion;

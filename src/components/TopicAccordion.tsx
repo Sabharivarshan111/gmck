@@ -39,6 +39,25 @@ const TopicAccordion = ({ topicKey, topic, isExpanded = false, activeTab }: Topi
     console.log("Topic expanded items:", value);
   };
 
+  // Check if this topic has questions for the active tab (directly or nested)
+  const hasQuestionsForTab = () => {
+    // If there are no subtopics, return false
+    if (!topic.subtopics || Object.keys(topic.subtopics).length === 0) {
+      return false;
+    }
+
+    return Object.values(topic.subtopics).some(subtopic => {
+      if (!subtopic || !subtopic.subtopics) return false;
+      
+      // Check if there is a path to essay or short-notes questions
+      return Object.keys(subtopic.subtopics).length > 0;
+    });
+  };
+
+  if (!hasQuestionsForTab()) {
+    return null;
+  }
+
   return (
     <AccordionItem 
       value={topicKey} 
