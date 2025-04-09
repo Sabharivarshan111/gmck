@@ -18,7 +18,7 @@ interface TopicAccordionProps {
 }
 
 const TopicAccordion = ({ topicKey, topic, isExpanded = false, activeTab }: TopicAccordionProps) => {
-  const subtopicKeys = Object.keys(topic.subtopics);
+  const subtopicKeys = Object.keys(topic.subtopics || {});
   const [localExpandedItems, setLocalExpandedItems] = useState<string[]>(
     isExpanded ? subtopicKeys : []
   );
@@ -54,7 +54,7 @@ const TopicAccordion = ({ topicKey, topic, isExpanded = false, activeTab }: Topi
             onValueChange={handleAccordionValueChange} 
             className="w-full"
           >
-            {Object.entries(topic.subtopics).map(([subtopicKey, subtopic]) => (
+            {Object.entries(topic.subtopics || {}).map(([subtopicKey, subtopic]) => (
               <SubtopicAccordion 
                 key={subtopicKey}
                 subtopicKey={subtopicKey}

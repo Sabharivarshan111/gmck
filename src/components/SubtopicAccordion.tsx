@@ -1,4 +1,3 @@
-
 import { BookOpen } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
@@ -19,7 +18,10 @@ interface SubtopicAccordionProps {
 }
 
 const SubtopicAccordion = ({ subtopicKey, subtopic, isExpanded = false, activeTab }: SubtopicAccordionProps) => {
-  const typeKeys = Object.keys(subtopic.subtopics);
+  const hasNestedSubtopics = subtopic.subtopics && Object.keys(subtopic.subtopics).length > 0;
+  
+  const typeKeys = hasNestedSubtopics ? Object.keys(subtopic.subtopics) : [];
+  
   const [localExpandedItems, setLocalExpandedItems] = useState<string[]>(
     isExpanded ? typeKeys : []
   );
@@ -35,6 +37,32 @@ const SubtopicAccordion = ({ subtopicKey, subtopic, isExpanded = false, activeTa
     console.log("Subtopic expanded items:", value);
   };
 
+  const hasQuestionsForTab = () => {
+    if (!hasNestedSubtopics) return false;
+    
+    if (activeTab === "essay" && subtopic.subtopics["essay"]) {
+      return true;
+    }
+    
+    if (activeTab === "short-notes" && (subtopic.subtopics["short-note"] || subtopic.subtopics["short-notes"])) {
+      return true;
+    }
+    
+    return Object.values(subtopic.subtopics).some(subItem => {
+      return (
+        subItem && 
+        typeof subItem === 'object' && 
+        'subtopics' in subItem &&
+        ((activeTab === "essay" && subItem.subtopics["essay"]) || 
+         (activeTab === "short-notes" && (subItem.subtopics["short-note"] || subItem.subtopics["short-notes"])))
+      );
+    });
+  };
+
+  if (!hasNestedSubtopics && !hasQuestionsForTab()) {
+    return null;
+  }
+
   return (
     <AccordionItem 
       value={subtopicKey}
@@ -48,22 +76,34 @@ const SubtopicAccordion = ({ subtopicKey, subtopic, isExpanded = false, activeTa
       </AccordionTrigger>
       <AccordionContent>
         <ScrollArea className="h-full px-4">
-          <Accordion 
-            type="multiple" 
-            value={localExpandedItems}
-            onValueChange={handleAccordionValueChange}
-            className="w-full"
-          >
-            {Object.entries(subtopic.subtopics).map(([typeKey, type]) => (
-              <TypeAccordion 
-                key={typeKey}
-                typeKey={typeKey}
-                type={type}
-                isExpanded={isExpanded}
-                activeTab={activeTab}
+          {hasNestedSubtopics ? (
+            <Accordion 
+              type="multiple" 
+              value={localExpandedItems}
+              onValueChange={handleAccordionValueChange}
+              className="w-full"
+            >
+              {Object.entries(subtopic.subtopics).map(([typeKey, type]) => (
+                <TypeAccordion 
+                  key={typeKey}
+                  typeKey={typeKey}
+                  type={type}
+                  isExpanded={isExpanded}
+                  activeTab={activeTab}
+                />
+              ))}
+            </Accordion>
+          ) : (
+            <div className="space-y-4">
+              <QuestionSection 
+                subtopics={{
+                  essay: subtopic.subtopics.essay,
+                  "short-note": subtopic.subtopics["short-note"] || subtopic.subtopics["short-notes"]
+                }} 
+                activeTab={activeTab} 
               />
-            ))}
-          </Accordion>
+            </div>
+          )}
         </ScrollArea>
       </AccordionContent>
     </AccordionItem>
