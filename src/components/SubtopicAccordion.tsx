@@ -54,15 +54,32 @@ const SubtopicAccordion = ({ subtopicKey, subtopic, isExpanded = false, activeTa
             onValueChange={handleAccordionValueChange}
             className="w-full"
           >
-            {Object.entries(subtopic.subtopics).map(([typeKey, type]) => (
-              <TypeAccordion 
-                key={typeKey}
-                typeKey={typeKey}
-                type={type}
-                isExpanded={isExpanded}
-                activeTab={activeTab}
-              />
-            ))}
+            {Object.entries(subtopic.subtopics).map(([typeKey, type]) => {
+              // Check if this is a nested subtopic (like in pathology paper-1)
+              if (type && typeof type === 'object' && 'subtopics' in type && 
+                  !('questions' in type.subtopics) && 
+                  !(type.subtopics.essay || type.subtopics["short-note"] || type.subtopics["short-notes"])) {
+                return (
+                  <SubtopicAccordion
+                    key={typeKey}
+                    subtopicKey={typeKey}
+                    subtopic={type as SubTopic}
+                    isExpanded={isExpanded}
+                    activeTab={activeTab}
+                  />
+                );
+              } else {
+                return (
+                  <TypeAccordion 
+                    key={typeKey}
+                    typeKey={typeKey}
+                    type={type}
+                    isExpanded={isExpanded}
+                    activeTab={activeTab}
+                  />
+                );
+              }
+            })}
           </Accordion>
         </ScrollArea>
       </AccordionContent>

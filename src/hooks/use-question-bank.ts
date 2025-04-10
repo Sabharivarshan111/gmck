@@ -44,7 +44,7 @@ export const useQuestionBank = () => {
     for (const [subtopicKey, subtopic] of Object.entries(topic.subtopics || {})) {
       // If it has own subtopics, recursively filter
       if (subtopic && typeof subtopic === 'object' && 'subtopics' in subtopic) {
-        const filteredSubtopic = filterQuestions(subtopic, type, query);
+        const filteredSubtopic = filterNestedTopic(subtopic as Topic, type, query);
         if (filteredSubtopic) {
           filteredSubtopics[subtopicKey] = filteredSubtopic;
           hasContent = true;
@@ -55,26 +55,27 @@ export const useQuestionBank = () => {
     return hasContent ? { ...topic, subtopics: filteredSubtopics } : null;
   }, []);
 
+  // Main function to filter questions based on search query
   const filterQuestions = useCallback((topic: any, type: "essay" | "short-notes", query: string): Topic | null => {
     if (!query.trim()) return topic as Topic;
     
     let hasContent = false;
     const filteredSubtopics: { [key: string]: any } = {};
 
+    // Process the subtopics (e.g., paper-1, paper-2)
     for (const [subtopicKey, subtopic] of Object.entries(topic.subtopics || {})) {
-      const filteredInnerSubtopics: { [key: string]: any } = {};
-      let hasSubtopicContent = false;
-
       if (subtopic && typeof subtopic === 'object' && 'subtopics' in subtopic) {
-        const subtopicObj = subtopic as { name: string; subtopics: Record<string, any> };
+        const nestedFilteredSubtopics: { [key: string]: any } = {};
+        let hasSubtopicContent = false;
 
-        for (const [innerKey, innerSubtopic] of Object.entries(subtopicObj.subtopics || {})) {
-          if (innerSubtopic && typeof innerSubtopic === 'object' && 'subtopics' in innerSubtopic) {
-            const innerSubtopicObj = innerSubtopic as { name: string; subtopics: Record<string, any> };
+        // Process the nested subtopics (e.g., general-pharmacology, respiratory-system)
+        for (const [nestedKey, nestedSubtopic] of Object.entries(subtopic.subtopics || {})) {
+          if (nestedSubtopic && typeof nestedSubtopic === 'object' && 'subtopics' in nestedSubtopic) {
             const filteredContent: { [key: string]: any } = {};
-            let hasInnerContent = false;
+            let hasNestedContent = false;
 
-            for (const [typeKey, questions] of Object.entries(innerSubtopicObj.subtopics || {})) {
+            // Check if it has essay or short-notes
+            for (const [typeKey, questions] of Object.entries(nestedSubtopic.subtopics || {})) {
               if ((typeKey === "essay" && type === "essay") || 
                   ((typeKey === "short-note" || typeKey === "short-notes") && type === "short-notes")) {
                 if (questions && typeof questions === 'object' && 'questions' in questions) {
@@ -86,7 +87,7 @@ export const useQuestionBank = () => {
                       name: questionsObj.name,
                       questions: filteredQuestions
                     };
-                    hasInnerContent = true;
+                    hasNestedContent = true;
                     hasSubtopicContent = true;
                     hasContent = true;
                   }
@@ -94,9 +95,9 @@ export const useQuestionBank = () => {
               }
             }
 
-            if (hasInnerContent) {
-              filteredInnerSubtopics[innerKey] = {
-                name: innerSubtopicObj.name,
+            if (hasNestedContent) {
+              nestedFilteredSubtopics[nestedKey] = {
+                name: (nestedSubtopic as any).name,
                 subtopics: filteredContent
               };
             }
@@ -105,8 +106,8 @@ export const useQuestionBank = () => {
 
         if (hasSubtopicContent) {
           filteredSubtopics[subtopicKey] = {
-            name: subtopicObj.name,
-            subtopics: filteredInnerSubtopics
+            name: (subtopic as any).name,
+            subtopics: nestedFilteredSubtopics
           };
         }
       }
@@ -132,7 +133,7 @@ export const useQuestionBank = () => {
     
     // Process the top-level categories (e.g., "second-year")
     for (const [key, topic] of Object.entries(QUESTION_BANK_DATA)) {
-      const filteredTopic = filterNestedTopic(topic, type, query);
+      const filteredTopic = filterQuestions(topic, type, query);
       if (filteredTopic) {
         filteredData[key] = filteredTopic;
         hasResults = true;
@@ -141,7 +142,7 @@ export const useQuestionBank = () => {
     
     setHasSearchResults(hasResults);
     return filteredData;
-  }, [filterNestedTopic]);
+  }, [filterQuestions]);
 
   const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
