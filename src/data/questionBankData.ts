@@ -14,34 +14,14 @@ import { miscellaneousDrugsData } from './topics/miscellaneousDrugs';
 import { pathologyData } from './topics/pathology';
 import { microbiologyData } from './topics/microbiology';
 
+// Create a structured hierarchy with Second Year as the main category
 export const QUESTION_BANK_DATA = {
-  "pharmacology": {
-    name: "Pharmacology",
+  "second-year": {
+    name: "Second Year",
     subtopics: {
-      "paper-1": {
-        name: "Paper 1",
-        subtopics: {
-          "general-pharmacology": pharmacologyData.subtopics["general-pharmacology"],
-          "peripheral-nervous-system": peripheralNervousSystemData,
-          "autonomic-nervous-system": autonomicNervousSystemData,
-          "central-nervous-system": centralNervousSystemData,
-          "cardiovascular-system": cardiovascularSystemData,
-          "respiratory-system": respiratorySystemData,
-          "autacoids": autacoidsData
-        }
-      },
-      "paper-2": {
-        name: "Paper 2",
-        subtopics: {
-          "hormones": hormonesData,
-          "gastrointestinal-system": gastrointestinalSystemData,
-          "anti-microbial-drugs": antiMicrobialDrugsData,
-          "neoplastic-drugs": neoplasticDrugsData,
-          "miscellaneous-drugs": miscellaneousDrugsData
-        }
-      }
+      "pharmacology": pharmacologyData,
+      "pathology": pathologyData,
+      "microbiology": microbiologyData
     }
-  },
-  "pathology": pathologyData,
-  "microbiology": microbiologyData
+  }
 };

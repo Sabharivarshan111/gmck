@@ -1,5 +1,5 @@
 
-import { Book } from "lucide-react";
+import { Book, GraduationCap } from "lucide-react";
 import {
   Accordion,
   AccordionContent,
@@ -34,6 +34,11 @@ const TopicAccordion = ({ topicKey, topic, isExpanded = false, activeTab }: Topi
     console.log("Topic expanded items:", value);
   };
 
+  // Use GraduationCap icon for Second Year, Book for others
+  const isSecondYear = topicKey === "second-year";
+  const IconComponent = isSecondYear ? GraduationCap : Book;
+  const iconClass = isSecondYear ? "text-blue-600 dark:text-blue-400" : "text-blue-600 dark:text-blue-400";
+
   return (
     <AccordionItem 
       value={topicKey} 
@@ -42,7 +47,7 @@ const TopicAccordion = ({ topicKey, topic, isExpanded = false, activeTab }: Topi
     >
       <AccordionTrigger className="px-4 hover:bg-gray-100 dark:hover:bg-gray-800/50 rounded-lg transition-all duration-200">
         <div className="flex items-center space-x-3">
-          <Book className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+          <IconComponent className={`h-6 w-6 ${iconClass}`} />
           <h3 className="text-xl md:text-2xl font-semibold">{topic.name}</h3>
         </div>
       </AccordionTrigger>

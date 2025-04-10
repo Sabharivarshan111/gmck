@@ -33,6 +33,28 @@ export const useQuestionBank = () => {
     );
   }, []);
 
+  // Recursive function to search through nested topics
+  const filterNestedTopic = useCallback((topic: Topic, type: "essay" | "short-notes", query: string): Topic | null => {
+    if (!query.trim()) return topic;
+    
+    let hasContent = false;
+    const filteredSubtopics: { [key: string]: any } = {};
+
+    // Process each subtopic in the current topic
+    for (const [subtopicKey, subtopic] of Object.entries(topic.subtopics || {})) {
+      // If it has own subtopics, recursively filter
+      if (subtopic && typeof subtopic === 'object' && 'subtopics' in subtopic) {
+        const filteredSubtopic = filterQuestions(subtopic, type, query);
+        if (filteredSubtopic) {
+          filteredSubtopics[subtopicKey] = filteredSubtopic;
+          hasContent = true;
+        }
+      }
+    }
+
+    return hasContent ? { ...topic, subtopics: filteredSubtopics } : null;
+  }, []);
+
   const filterQuestions = useCallback((topic: any, type: "essay" | "short-notes", query: string): Topic | null => {
     if (!query.trim()) return topic as Topic;
     
@@ -108,8 +130,9 @@ export const useQuestionBank = () => {
     
     setIsSearching(true);
     
+    // Process the top-level categories (e.g., "second-year")
     for (const [key, topic] of Object.entries(QUESTION_BANK_DATA)) {
-      const filteredTopic = filterQuestions(topic, type, query);
+      const filteredTopic = filterNestedTopic(topic, type, query);
       if (filteredTopic) {
         filteredData[key] = filteredTopic;
         hasResults = true;
@@ -118,7 +141,7 @@ export const useQuestionBank = () => {
     
     setHasSearchResults(hasResults);
     return filteredData;
-  }, [filterQuestions]);
+  }, [filterNestedTopic]);
 
   const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
