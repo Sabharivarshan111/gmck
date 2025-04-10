@@ -4,11 +4,13 @@ import { respiratorySystemData } from './pharmacology/respiratorySystem';
 import { autacoidsData } from './pharmacology/autacoids';
 import { cnsData } from './pharmacology/cns';
 import { cardiovascularSystemData } from './pharmacology/cardiovascularSystem';
-import { endocrineSystemData } from './pharmacology/endocrineSystem';
-import { chemotherapyData } from './pharmacology/chemotherapy';
 import { peripheralNervousSystemData } from './peripheralNervousSystem';
 import { autonomicNervousSystemData } from './autonomicNervousSystem';
 import { hormonesData } from './hormones';
+import { gastrointestinalSystemData } from './gastrointestinalSystem';
+import { antiMicrobialDrugsData } from './antiMicrobialDrugs';
+import { neoplasticDrugsData } from './neoplasticDrugs';
+import { miscellaneousDrugsData } from './miscellaneousDrugs';
 
 export const pharmacologyData = {
   name: "Pharmacology",
@@ -29,8 +31,10 @@ export const pharmacologyData = {
       name: "Paper 2",
       subtopics: {
         "hormones": hormonesData,
-        "endocrine-system": endocrineSystemData,
-        "chemotherapy": chemotherapyData
+        "gastrointestinal-system": gastrointestinalSystemData,
+        "anti-microbial-drugs": antiMicrobialDrugsData,
+        "neoplastic-drugs": neoplasticDrugsData,
+        "miscellaneous-drugs": miscellaneousDrugsData
       }
     }
   }
