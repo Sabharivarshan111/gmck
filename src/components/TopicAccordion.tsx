@@ -37,7 +37,7 @@ const TopicAccordion = ({ topicKey, topic, isExpanded = false, activeTab }: Topi
   // Use GraduationCap icon for Second Year, Book for others
   const isSecondYear = topicKey === "second-year";
   const IconComponent = isSecondYear ? GraduationCap : Book;
-  const iconClass = isSecondYear ? "text-blue-600 dark:text-blue-400" : "text-blue-600 dark:text-blue-400";
+  const iconClass = isSecondYear ? "text-blue-600 dark:text-blue-400" : "text-indigo-600 dark:text-indigo-400";
 
   return (
     <AccordionItem 
