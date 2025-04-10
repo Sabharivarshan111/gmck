@@ -6,9 +6,9 @@ import { cnsData } from './pharmacology/cns';
 import { cardiovascularSystemData } from './pharmacology/cardiovascularSystem';
 import { endocrineSystemData } from './pharmacology/endocrineSystem';
 import { chemotherapyData } from './pharmacology/chemotherapy';
-import { peripheralNervousSystemData } from './topics/peripheralNervousSystem';
-import { autonomicNervousSystemData } from './topics/autonomicNervousSystem';
-import { hormonesData } from './topics/hormones';
+import { peripheralNervousSystemData } from './peripheralNervousSystem';
+import { autonomicNervousSystemData } from './autonomicNervousSystem';
+import { hormonesData } from './hormones';
 
 export const pharmacologyData = {
   name: "Pharmacology",
