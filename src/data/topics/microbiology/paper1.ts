@@ -8,8 +8,15 @@ export const microbiologyPaper1Data = {
         essay: {
           name: "Essay",
           questions: [
-            "Structure and Classification of Bacteria ** (Feb 16;Feb 12) (Pg.No: 3)\n- Discuss in detail about the structure and classification of Bacteria\n- Add a note on cell wall synthesis",
-            "Sterilization and Disinfection ** (Aug 19;Feb 05) (Pg.No: 69)\n- Define sterilization\n- Enumerate and discuss physical methods of sterilization\n- Explain about the control of sterilization procedures",
+            "Immuno-prophylaxis of Viral Diseases (or) Viral Vaccines ** (Pg. 82)",
+            "Bacterial Cell Wall (Feb 09) (Pg. 14)",
+            "Morphology, Diagram, Functions of various appendages",
+            "Bacterial Growth Curve (Mar 22) (Pg. 19)",
+            "Factors affecting the growth of bacteria",
+            "Culture Media (Nov 20) (Pg. 27)",
+            "Types, Anaerobic culture media",
+            "Methods of Gene Transfer (Feb 18) (Pg. 44)",
+            "Physiology of Bacteria (Feb 13) (Pg. 19)"
           ]
         },
         "short-note": {
@@ -31,8 +38,13 @@ export const microbiologyPaper1Data = {
         essay: {
           name: "Essay",
           questions: [
-            "Hypersensitivity *** (Jul 23;Aug 15;Aug 12) (Pg.No: 128)\n- Types I, II, III, IV\n- Examples of each type",
-            "Vaccines ** (Aug 14;Feb 11) (Pg.No: 152)\n- Types of vaccines\n- Merits and demerits"
+            "Antigen Antibody Reaction (Pg.No: 136;AP3-Pg.No: 152) (4)",
+            "Anaphylaxis (Pg. 176) (1)",
+            "Antibody (Apr 01) (Pg. 129) (1)",
+            "Complement (Feb 16) (Pg. 146) (1)",
+            "Hypersensitivity Reactions (Aug 08) (Pg. 174) (1)",
+            "Immunity (Aug 05) (Pg. 119) (1)",
+            "Immunofluorescence (Aug 13) (Pg. 143) (1)"
           ]
         },
         "short-note": {
