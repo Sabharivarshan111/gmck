@@ -64,8 +64,8 @@ export const microbiologyPaper1Data = {
         essay: {
           name: "Essay",
           questions: [
-            "Hospital-acquired infections ** (Feb 18;Aug 10) (Pg.No: 170)\n- Definition, common types, prevention strategies",
-            "Biomedical waste management ** (Aug 16;Feb 13) (Pg.No: 175)\n- Categories, disposal methods, legislation"
+            "Sterilization (Pg.No: 222;AP3-Pg.No: 253) (4)",
+            "Disinfection (Aug 12) (Pg. 220) (1)"
           ]
         },
         "short-note": {
@@ -85,8 +85,10 @@ export const microbiologyPaper1Data = {
         essay: {
           name: "Essay",
           questions: [
-            "Skin and soft tissue infections ** (Aug 15;Feb 10) (Pg.No: 200)\n- Classification, etiology, laboratory diagnosis",
-            "Osteomyelitis ** (Feb 20;Aug 12) (Pg.No: 205)\n- Pathogenesis, laboratory diagnosis, treatment"
+            "Herpes Virus (Pg.No: 459;AP3-Pg.No: 550) (7)",
+            "Bacillus anthracis (Pg.No: 449;AP3-Pg.No: 539) (3)",
+            "Gas Gangrene (Pg.No: 439;AP3-Pg.No: 529) (3)",
+            "Streptococci (Pg.No: 431;AP3-Pg.No: 520) (3)"
           ]
         },
         "short-note": {
@@ -106,8 +108,7 @@ export const microbiologyPaper1Data = {
         essay: {
           name: "Essay",
           questions: [
-            "Zoonotic infections ** (Feb 16;Aug 08) (Pg.No: 350)\n- Classification, laboratory diagnosis, prevention",
-            "Rickettsial diseases ** (Aug 11;Feb 07) (Pg.No: 355)\n- Types, pathogenesis, laboratory diagnosis"
+            "Plague (Nov 95) (Pg.No: 671;AP3-Pg.No: 807) (1)"
           ]
         },
         "short-note": {

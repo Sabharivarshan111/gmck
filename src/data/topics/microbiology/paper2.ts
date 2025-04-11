@@ -2,6 +2,126 @@
 export const microbiologyPaper2Data = {
   name: "Paper 2",
   subtopics: {
+    "bloodstream-cardiovascular-infections": {
+      name: "Bloodstream and Cardiovascular Infections",
+      subtopics: {
+        essay: {
+          name: "Essay",
+          questions: [
+            "Infective Endocarditis (Pg.No: 300) (3)",
+            "Bacteremia and Sepsis (Pg.No: 307) (2)"
+          ]
+        },
+        "short-note": {
+          name: "Short Note",
+          questions: [
+            "Blood culture interpretation *** (Feb 23;Aug 16;Feb 13) (Pg.No: 295)",
+            "HACEK group of organisms ** (Sep 21;Feb 20) (Pg.No: 302)",
+            "Biomarkers in sepsis ** (Aug 19;Feb 10) (Pg.No: 308)"
+          ]
+        }
+      }
+    },
+    "respiratory-tract-infections": {
+      name: "Respiratory Tract Infections",
+      subtopics: {
+        essay: {
+          name: "Essay",
+          questions: [
+            "Tuberculosis *** (Feb 22;Aug 15;Feb 09) (Pg.No: 315)",
+            "Lower Respiratory Tract Infections ** (Aug 18;Feb 17) (Pg.No: 321)"
+          ]
+        },
+        "short-note": {
+          name: "Short Note",
+          questions: [
+            "Rapid diagnostic tests for TB **** (Jul 23;Mar 22;Feb 21;Aug 12) (Pg.No: 318)",
+            "Influenza *** (Aug 19;Feb 16;Feb 07) (Pg.No: 325)",
+            "Pertussis ** (Aug 14;Feb 11) (Pg.No: 329)"
+          ]
+        }
+      }
+    },
+    "gastrointestinal-infections": {
+      name: "Gastrointestinal Infections",
+      subtopics: {
+        essay: {
+          name: "Essay",
+          questions: [
+            "Diarrheal diseases *** (Feb 20;Aug 13;Feb 06) (Pg.No: 335)",
+            "Food poisoning ** (Aug 17;Feb 10) (Pg.No: 341)"
+          ]
+        },
+        "short-note": {
+          name: "Short Note",
+          questions: [
+            "Vibrio cholerae **** (Aug 22;Feb 18;Aug 09;Aug 05) (Pg.No: 338)",
+            "Clostridium difficile *** (Sep 21;Feb 14;Feb 08) (Pg.No: 344)",
+            "Hepatitis viruses *** (Feb 23;Aug 15;Feb 12) (Pg.No: 347)"
+          ]
+        }
+      }
+    },
+    "infections": {
+      name: "Infections",
+      subtopics: {
+        essay: {
+          name: "Essay",
+          questions: [
+            "Healthcare-associated infections ** (Mar 22;Aug 11) (Pg.No: 350)",
+            "Antimicrobial resistance ** (Aug 16;Feb 09) (Pg.No: 358)"
+          ]
+        },
+        "short-note": {
+          name: "Short Note",
+          questions: [
+            "Hand hygiene **** (Jul 23;Feb 22;Aug 14;Feb 07) (Pg.No: 354)",
+            "Environmental surveillance *** (Feb 20;Aug 12;Feb 05) (Pg.No: 356)",
+            "Multidrug-resistant organisms ** (Aug 19;Feb 11) (Pg.No: 361)"
+          ]
+        }
+      }
+    },
+    "genito-urinary-sexually-transmitted-infections": {
+      name: "Genito-Urinary and Sexually Transmitted Infections",
+      subtopics: {
+        essay: {
+          name: "Essay",
+          questions: [
+            "Urinary tract infections *** (Feb 21;Aug 13;Feb 06) (Pg.No: 366)",
+            "Sexually transmitted infections ** (Aug 18;Feb 10) (Pg.No: 372)"
+          ]
+        },
+        "short-note": {
+          name: "Short Note",
+          questions: [
+            "Syphilis **** (Feb 19;Aug 17;Feb 14;Aug 08) (Pg.No: 376)",
+            "HIV diagnostic testing *** (Aug 22;Mar 22;Feb 16) (Pg.No: 380)",
+            "Human papillomavirus ** (Sep 21;Aug 15) (Pg.No: 385)"
+          ]
+        }
+      }
+    },
+    "central-nervous-system-infections": {
+      name: "Central Nervous System Infections",
+      subtopics: {
+        essay: {
+          name: "Essay",
+          questions: [
+            "Meningitis *** (Feb 23;Aug 11;Feb 09) (Pg.No: 390)",
+            "Encephalitis ** (Aug 16;Feb 12) (Pg.No: 396)"
+          ]
+        },
+        "short-note": {
+          name: "Short Note",
+          questions: [
+            "CSF analysis **** (Feb 22;Aug 19;Feb 17;Aug 06) (Pg.No: 394)",
+            "Rabies *** (Jul 23;Aug 14;Feb 07) (Pg.No: 400)",
+            "Brain abscess ** (Feb 20;Aug 10) (Pg.No: 405)"
+          ]
+        }
+      }
+    },
     "mycology": {
       name: "Mycology",
       subtopics: {
