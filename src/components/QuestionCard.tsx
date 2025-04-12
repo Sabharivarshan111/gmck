@@ -154,6 +154,13 @@ function countAsterisks(question: string): number {
     return explicitAsterisks[0].replace(/[^*]/g, '').length;
   }
   
+  // Count asterisks that appear right after the question text
+  const asteriskPattern = /\s(\*+)\s/;
+  const asteriskMatch = question.match(asteriskPattern);
+  if (asteriskMatch && asteriskMatch[1]) {
+    return asteriskMatch[1].length;
+  }
+  
   // Count the number of exam dates in parentheses
   const datePattern = /\(((?:(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec|Jul)\s\d{2}(?:;)?)+)\)/;
   const dateMatch = question.match(datePattern);
@@ -178,14 +185,9 @@ function extractPageNumber(question: string): string | null {
 }
 
 function getCleanQuestionText(question: string): string {
+  // Don't remove any of the important details
+  // Just remove the numbering at the beginning if present
   let cleaned = question.replace(/^\d+\.\s/, '');
-  
-  // Remove asterisks and exam date patterns
-  cleaned = cleaned.replace(/\*+\s*\((?:(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec|Mar|Jul|Sep|Nov)\s\d{2}(?:;)?)+\)/, '');
-  
-  // Remove page number patterns
-  cleaned = cleaned.replace(/\s*\(Pg\.No:\s*\d+(?:;AP3-Pg\.No:\s*\d+)?\)/, '');
-  
   return cleaned;
 }
 
