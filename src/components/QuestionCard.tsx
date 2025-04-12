@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -147,23 +148,29 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, index }) => {
 };
 
 function countAsterisks(question: string): number {
-  const yearMatches = question.match(/\(([A-Za-z]{3}\s\d{2}(?:;[A-Za-z]{3}\s\d{2})*)\)/);
-  
-  if (yearMatches) {
-    const years = yearMatches[1].split(';');
-    return years.length;
+  // Count explicit asterisks in the format "****" at the beginning of the text
+  const explicitAsterisks = question.match(/\*+\s*\(/);
+  if (explicitAsterisks) {
+    return explicitAsterisks[0].replace(/[^*]/g, '').length;
   }
   
-  const asteriskMatch = question.match(/\*+/);
-  if (asteriskMatch) {
-    return asteriskMatch[0].length;
+  // Count the number of exam dates in parentheses
+  const datePattern = /\(((?:(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s\d{2}(?:;)?)+)\)/;
+  const dateMatch = question.match(datePattern);
+  
+  if (dateMatch && dateMatch[1]) {
+    // Count the number of dates by counting the semicolons and adding 1
+    const dates = dateMatch[1].split(';');
+    return dates.length;
   }
   
-  return 1;
+  // If no asterisks or dates found, return 0 or 1 based on your requirements
+  return question.includes('(') ? 1 : 0;
 }
 
 function extractPageNumber(question: string): string | null {
-  const pageMatch = question.match(/\(Pg\.No:\s*(\d+)(?:;\s*Pg\.No:\s*\d+)*\)/);
+  // Extract page number(s) from the format "Pg.No: X" or "Pg.No: X;Pg.No: Y"
+  const pageMatch = question.match(/\(Pg\.No:\s*(\d+)(?:;AP3-Pg\.No:\s*\d+)?\)/);
   if (pageMatch && pageMatch[1]) {
     return pageMatch[1];
   }
@@ -173,9 +180,11 @@ function extractPageNumber(question: string): string | null {
 function getCleanQuestionText(question: string): string {
   let cleaned = question.replace(/^\d+\.\s/, '');
   
-  cleaned = cleaned.replace(/\*+\s*\([A-Za-z]{3}\s\d{2}(?:;[A-Za-z]{3}\s\d{2})*\)(?:\s*\(Pg\.No:\s*\d+(?:;\s*Pg\.No:\s*\d+)*\))?/, '');
+  // Remove asterisks and exam date patterns
+  cleaned = cleaned.replace(/\*+\s*\((?:(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s\d{2}(?:;)?)+\)/, '');
   
-  cleaned = cleaned.replace(/\s*\(Pg\.No:\s*\d+(?:;\s*Pg\.No:\s*\d+)*\)/, '');
+  // Remove page number patterns
+  cleaned = cleaned.replace(/\s*\(Pg\.No:\s*\d+(?:;AP3-Pg\.No:\s*\d+)?\)/, '');
   
   return cleaned;
 }
