@@ -182,16 +182,33 @@ export const microbiologyPaper2Data = {
         essay: {
           name: "Essay",
           questions: [
-            "Healthcare-associated infections ** (Mar 22;Aug 11) (Pg.No: 350)",
-            "Antimicrobial resistance ** (Aug 16;Feb 09) (Pg.No: 358)"
+            "Hepatitis B Virus ********** (Jul 23;Aug 19;Feb 18;Feb 15;Aug 12;Aug 11;Aug 09;Aug 07;Aug 05;Apr 97;Apr 96) (Pg.No: 397;AP3-Pg.No: 478)\n- Morphology, Pathogenesis, Laboratory diagnosis\n- Name the viruses infecting the liver, Morphology, Pathogenesis, Lab diagnosis, Prophylaxis\n- Name the hepatotropic viruses, Pathogenesis, Laboratory diagnosis\n- Enumerate the viruses transmitted by blood transfusion, Hepatitis B virus, Prophylaxis\n- Morphology, Genomic structure, Epidemiology, Laboratory diagnosis\n- Enumerate viruses causing post-transfusion hepatitis, Morphology,\nPathogenesis, Laboratory diagnosis, Prophylaxis\n- Morphology, Pathogenesis, Lab diagnosis, Prophylaxis, Treatment",
+            "Echinococcus granulsosus ***** (Aug 08;Aug 05;Oct 03;Apr 00;Dec 90) (Pg.No: 410;AP3-Pg.No: 493)\n- Morphology, Life cycle, Pathogenesis, Laboratory diagnosis\n- Lifecycle, Pathogenicity, Laboratory diagnosis\n- Enumerate the cestodes infecting man, Lifecycle, Pathogenicity, Laboratory diagnosis\nProbable Cases:\n- 25 year old male presents with pain in the right hypochondrium and jaundice. Ultrasonography reveals water lily sign. Surgery was done to Remove the cyst. Histopathological examination of the cyst reveals 3 layers of cyst wall with brood capsules.",
+            "Extra Intestinal Amoebiasis (or) Amoebic Liver Abscess (Pg.No: 409;AP3-Pg.No: 489)\n- Pathogenesis, Clinical features, Complication, Laboratory diagnosis, Treatment, Prevention\nProbable Cases:\n- 45 year old male presents with fever, jaundice and pain in the right hypochondrium. He complains of dysentery and along with weight loss for the past 2 months. USG of the abdomen shows enlarged liver with peritonitis. Diagnostic Aspiration from the liver reveals anchovy sauce pus."
           ]
         },
         "short-note": {
           name: "Short Note",
           questions: [
-            "Hand hygiene **** (Jul 23;Feb 22;Aug 14;Feb 07) (Pg.No: 354)",
-            "Environmental surveillance *** (Feb 20;Aug 12;Feb 05) (Pg.No: 356)",
-            "Multidrug-resistant organisms ** (Aug 19;Feb 11) (Pg.No: 361)"
+            "Extra Intestinal Amoebiasis (or) Amoebic Liver Abscess ******** (Aug 22;Feb 18;Aug 14;Feb 13;Feb 12;Feb 10;Aug 07;Feb 06) (Pg.No: 409;AP3-Pg.No: 491)",
+            "Lab Diagnosis of Hepatitis B Virus Infection ******* (Feb 23;Mar 22;Feb 13;Feb 12;Aug 10;Aug 04;Oct 97) (Pg.No: 401;AP3-Pg.No: 482)\n- Viral markers of HBV infection\n- Hepatitis Markers",
+            "Larva Migrans ****** (Feb 23;Feb 19;Feb 10;Aug 04;Feb 04;Nov 01) (Pg.No: 440;AP3-Pg.No: 499)",
+            "Hydatid Cyst **** (Aug 16;Feb 13;Aug 06;Apr 98) (Pg.No: 410;AP3-Pg.No: 494)\n- Pathogenesis, Laboratory diagnosis",
+            "Echinococcus granulosus (or) Hydatid Disease*** (Feb 23;Feb 20;Feb 09) (Pg.No: 410;AP3-Pg.No: 493)\n- Life cycle\n- Cystic Echinococcus\n- Dog Tapeworm",
+            "Hepatitis Virus *** (Feb 14;Aug 13;Oct 97) (Pg.No: 395;AP3-Pg.No: 476)\n- Associated with Cirrhosis\n- Providing Chronic infection",
+            "Viral Oncogenes *** (Feb 20;Aug 12;Nov 98) (Pg.No: 669;AP3-Pg.No: 476)\n- Detail about Viral Oncogenes\n- Oncogenic RNA Viruses\n- Mechanism of Oncogenesis by HPV and HBV",
+            "Casoni's Test ** (Feb 14;Feb 10) (Pg.No: 412;AP3-Pg.No: 496)",
+            "Hepatitis B Virus ** (Aug 22;Feb 22) (Pg.No: 397;AP3-Pg.No: 478)\n- Various viral markers, Laboratory diagnosis, Prophylaxis\n- Detail about Hepatitis B Virus\nProbable Cases:\n- A 40-year-old male presented with history of loss of appetite, malaise and jaundice of 2 months duration. On examination, there was icterus, hepatomegaly and tenderness in the right hypochondriac region. He gave a history of blood transfusion in the past. On laboratory examination, he was found to be positive for HBsAg.",
+            "Hepatitis C ** (Aug 13;Feb 06) (Pg.No: 403;AP3-Pg.No: 484)\n- Laboratory Diagnosis\n- Detail about Hepatitis C",
+            "Prevention of Hepatitis B Virus Infection ** (Feb 20;Feb 16) (Pg.No: 402;AP3-Pg.No: 484)\n- Detail about Prevention\n- Hepatitis Vaccine",
+            "Visceral Larva Migrans ** (Feb 13;Aug 10) (Pg.No: 440;AP3-Pg.No: 499)",
+            "17D Vaccine (Pg.No: 408;AP3-Pg.No: 490)",
+            "Dane Particle (Feb 13) (Pg.No: 398;AP3-Pg.No: 479)",
+            "Delta Hepatitis Agent (or) Hepatitis Delta (D) Virus (Aug 08) (Pg.No: 405;AP3-Pg.No: 487)",
+            "Fasciola hepatica (Oct 98) (Pg.No: 413;AP3-Pg.No: 497)",
+            "Hepatitis A (Pg.No: 396;AP3-Pg.No: 477)",
+            "Hepatitis E (Oct 03) (Pg.No: 406;AP3-Pg.No: 488)",
+            "Yellow Fever (Nov 95) (Pg.No: 407;AP3-Pg.No: 489)"
           ]
         }
       }
