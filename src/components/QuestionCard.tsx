@@ -169,7 +169,7 @@ function countAsterisks(question: string): number {
 }
 
 function extractPageNumber(question: string): string | null {
-  // Extract page number(s) from the format "Pg.No: X" or "Pg.No: X;Pg.No: Y"
+  // Extract page number(s) from the format "Pg.No: X" or "Pg.No: X;AP3-Pg.No: Y"
   const pageMatch = question.match(/\(Pg\.No:\s*(\d+)(?:;AP3-Pg\.No:\s*\d+)?\)/);
   if (pageMatch && pageMatch[1]) {
     return pageMatch[1];
