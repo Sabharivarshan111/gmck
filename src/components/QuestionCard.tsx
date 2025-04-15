@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -148,21 +147,14 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, index }) => {
 };
 
 function countAsterisks(question: string): number {
-  // Count explicit asterisks in the format "****" at the beginning of the text
-  const explicitAsterisks = question.match(/\*+\s*\(/);
+  // Count explicit asterisks in the format "****" at the beginning or middle of the text
+  const explicitAsterisks = question.match(/\*+/);
   if (explicitAsterisks) {
-    return explicitAsterisks[0].replace(/[^*]/g, '').length;
-  }
-  
-  // Count asterisks that appear right after the question text
-  const asteriskPattern = /\s(\*+)\s/;
-  const asteriskMatch = question.match(asteriskPattern);
-  if (asteriskMatch && asteriskMatch[1]) {
-    return asteriskMatch[1].length;
+    return explicitAsterisks[0].length;
   }
   
   // Count the number of exam dates in parentheses
-  const datePattern = /\(((?:(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec|Jul)\s\d{2}(?:;)?)+)\)/;
+  const datePattern = /\(((?:(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec|Jul|Sep|Nov)\s\d{2}(?:;)?)+)\)/;
   const dateMatch = question.match(datePattern);
   
   if (dateMatch && dateMatch[1]) {
@@ -171,12 +163,12 @@ function countAsterisks(question: string): number {
     return dates.length;
   }
   
-  // If no asterisks or dates found, return 0 or 1 based on your requirements
-  return question.includes('(') ? 1 : 0;
+  // If no asterisks or dates found, return 0
+  return 0;
 }
 
 function extractPageNumber(question: string): string | null {
-  // Extract page number(s) from the format "Pg.No: X" or "Pg.No: X;AP3-Pg.No: Y"
+  // Extract page number from the format "Pg.No: X" or "Pg.No: X;AP3-Pg.No: Y"
   const pageMatch = question.match(/\(Pg\.No:\s*(\d+)(?:;AP3-Pg\.No:\s*\d+)?\)/);
   if (pageMatch && pageMatch[1]) {
     return pageMatch[1];

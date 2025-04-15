@@ -32,11 +32,9 @@ export const useQuestionBank = () => {
     );
   }, []);
 
-  // Recursive function to search through nested topics and subtopics
   const filterNestedContent = useCallback((content: any, type: "essay" | "short-notes", query: string): any | null => {
     if (!query.trim()) return content;
     
-    // If we have reached a type with questions
     if (content && typeof content === 'object' && 'questions' in content) {
       const questions = content.questions as string[];
       const filteredQuestions = searchInQuestions(questions, query);
@@ -50,13 +48,11 @@ export const useQuestionBank = () => {
       return null;
     }
     
-    // If we have subtopics, recursively filter them
     if (content && typeof content === 'object' && 'subtopics' in content) {
       const filteredSubtopics: { [key: string]: any } = {};
       let hasContent = false;
       
       for (const [key, subtopic] of Object.entries(content.subtopics || {})) {
-        // Check for essay or short-notes directly
         if ((key === "essay" && type === "essay") || 
             ((key === "short-note" || key === "short-notes") && type === "short-notes")) {
           const filteredType = filterNestedContent(subtopic, type, query);
@@ -65,7 +61,6 @@ export const useQuestionBank = () => {
             hasContent = true;
           }
         } 
-        // Otherwise recurse into the subtopic
         else {
           const filteredSubtopic = filterNestedContent(subtopic, type, query);
           if (filteredSubtopic) {
