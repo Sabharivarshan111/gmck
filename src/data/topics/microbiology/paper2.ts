@@ -219,16 +219,29 @@ export const microbiologyPaper2Data = {
         essay: {
           name: "Essay",
           questions: [
-            "Urinary tract infections *** (Feb 21;Aug 13;Feb 06) (Pg.No: 366)",
-            "Sexually transmitted infections ** (Aug 18;Feb 10) (Pg.No: 372)"
+            "Syphilis ***** (Feb 13;Aug 10;Feb 09;Aug 05;Oct 97) (Pg.No: 631;AP3-Pg.No: 756)\n- Laboratory Diagnosis, Other Bacteria causing STD\n- Pathogenesis, Laboratory Diagnosis, Other Bacteria causing STD\n- Classify Medically Important Spirochetes, Laboratory Diagnosis",
+            "Gonorrhoea (Mar 22) (Pg.No: 638;AP3-Pg.No: 764)\n- Pathogenesis, Clinical Features, Other Bacteria causing STD\nProbable Cases:\n- A 45 year old female has attended the Gynaec OP with c/o mucopurulent vaginal discharge for the past one week. In Gram staining of cervical swab, kidney shaped Gram negative cocci are seen.",
+            "Urinary Tract Infection (Mar 02) (Pg.No: 624;AP3-Pg.No: 745)\n- Etiology, Laboratory Diagnosis"
           ]
         },
         "short-note": {
           name: "Short Note",
           questions: [
-            "Syphilis **** (Feb 19;Aug 17;Feb 14;Aug 08) (Pg.No: 376)",
-            "HIV diagnostic testing *** (Aug 22;Mar 22;Feb 16) (Pg.No: 380)",
-            "Human papillomavirus ** (Sep 21;Aug 15) (Pg.No: 385)"
+            "Syphilis ******** (Aug 22;Feb 17;Aug 14;Aug 09;Mar 02;Apr 00;Apr 97;Nov 94) (Pg.No: 631;AP3-Pg.No: 756)\n- Laboratory Diagnosis\n- Advice\n- Laboratory Diagnosis of Secondary Syphilis\nProbable Cases:\n- A 35 year old male with c/o hard painless penile ulcers attends STD OP. Blood sample drawn and sent for VDRL test. The laboratory reports VDRL test as Reactive.",
+            "Trichomonas vaginalis ****** (Jul 23;Nov 20;Oct 03;Mar 02;Apr 97;Nov 95) (Pg.No: 646;AP3-Pg.No: 771)\n- Life cycle\n- Other causes of Vulvovaginitis",
+            "Urinary Tract Infection ***** (Aug 22;Feb 12;Feb 11;Aug 08;Nov 93) (Pg.No: 624;AP3-Pg.No: 745)\n- Laboratory Diagnosis\n- Etiology, Laboratory Diagnosis\nProbable Cases:\n- A 28 year old female was admitted with high grade fever, vomiting, flank pain with increased frequency of micturition for the past 3 days.",
+            "Non-gonococcal Urethritis **** (Aug 05;Aug 04;Mar 02;Nov 94) (Pg.No: 640;AP3-Pg.No: 766)",
+            "Anaerobic (or) Bacterial Vaginosis *** (Feb 13;Feb 07;Apr 00) (Pg.No: 646;AP3-Pg.No: 773)\n- Gardnerella vaginalis",
+            "Gonorrhoea *** (Aug 17;Aug 08;Apr 99) (Pg.No: 638;AP3-Pg.No: 764)\n- Laboratory Diagnosis",
+            "Significant Bacteriuria *** (Oct 00;Apr 95;Oct 90) (Pg.No: 624;AP3-Pg.No: 748)",
+            "Venereal Disease Research Laboratory (VDRL) Test *** (Aug 09;Apr 00;Nov 94) (Pg.No: 634;AP3-Pg.No: 760)",
+            "Frei Test ** (Oct 03;Apr 96) (Pg.No: 638;AP3-Pg.No: 763)",
+            "Chancroid (or) Soft Sore (Aug 19) (Pg.No: 636;AP3-Pg.No: 762)",
+            "Chlamydia trachomatis (Jul 23) (Pg.No: 640;AP3-Pg.No: 766) Probable Cases:\n- A 27 year old woman had developed mucopurulent discharge, followed by development of dysuria and urethral irritation. She had a history of multiple sexual partners. Microscopy of the urethral swab revealed sterile pyuria and presence of compact inclusion bodies which are later stained by Lugol's iodine.",
+            "Clean Catch Midstream Urine (Pg.No: 623;AP3-Pg.No: 747)",
+            "Enterobacteriaceae Causing UTI (Pg.No: 624;AP3-Pg.No: 749)",
+            "Enterococci Causing UTI (Pg.No: 626;AP3-Pg.No: 750)",
+            "Lymphogranuloma venereum (Feb 19) (Pg.No: 637;AP3-Pg.No: 763)"
           ]
         }
       }
