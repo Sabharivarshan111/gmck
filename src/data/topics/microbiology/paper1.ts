@@ -10,11 +10,8 @@ export const microbiologyPaper1Data = {
           questions: [
             "Immuno-prophylaxis of Viral Diseases (or) Viral Vaccines ** (Pg.No: 82)",
             "Bacterial Cell Wall (Feb 09) (Pg.No: 14)",
-            "Morphology, Diagram, Functions of various appendages",
             "Bacterial Growth Curve (Mar 22) (Pg.No: 19)",
-            "Factors affecting the growth of bacteria",
             "Culture Media (Nov 20) (Pg.No: 27)",
-            "Types, Anaerobic culture media",
             "Methods of Gene Transfer (Feb 18) (Pg.No: 44)",
             "Physiology of Bacteria (Feb 13) (Pg.No: 19)"
           ]
@@ -91,12 +88,12 @@ export const microbiologyPaper1Data = {
         essay: {
           name: "Essay",
           questions: [
-            "Antigen Antibody Reaction **** (Dec 23;Aug 10;Jun 08;Mar 02) (Pg.No: 136;AP3-Pg.No: 152) - Definition, Precipitation Reaction",
+            "Antigen Antibody Reaction **** (Dec 23;Aug 10;Jun 08;Mar 02) (Pg.No: 136;AP3-Pg.No: 152)",
             "Anaphylaxis (Pg.No: 176)",
-            "Antibody (Apr 01) (Pg.No: 129) - Definition, Antibody Synthesis in Human Immune System, Functions of Different Immunoglobulins",
-            "Complement (Feb 16) (Pg.No: 146) - Definition, Alternate C Pathway, Biological effects of Complement, Genetic deficiencies of Complement",
-            "Hypersensitivity Reactions (Aug 08) (Pg.No: 174) - Definition and Classification, Hypersensitivity Type 1",
-            "Immunity (Aug 05) (Pg.No: 119) - Types, Acquired Immunity",
+            "Antibody (Apr 01) (Pg.No: 129)",
+            "Complement (Feb 16) (Pg.No: 146)",
+            "Hypersensitivity Reactions (Aug 08) (Pg.No: 174)",
+            "Immunity (Aug 05) (Pg.No: 119)",
             "Immunofluorescence (Aug 13) (Pg.No: 143)"
           ]
         },
@@ -163,17 +160,22 @@ export const microbiologyPaper1Data = {
         essay: {
           name: "Essay",
           questions: [
-            "Sterilization (Pg.No: 222;AP3-Pg.No: 253) (4)",
-            "Disinfection (Aug 12) (Pg. 220) (1)"
+            "Sterilization **** (Aug 14;Feb 11;Aug 09;Aug 08) (Pg.No: 222;AP3-Pg.No: 253)",
+            "Disinfection (Aug 12) (Pg.No: 220;Pg.No: 226)"
           ]
         },
         "short-note": {
           name: "Short Note",
           questions: [
-            "Universal precautions **** (Jul 23;Feb 22;Aug 14;Feb 09) (Pg.No: 179)",
-            "Surgical site infections *** (Aug 19;Feb 15;Aug 07) (Pg.No: 183)",
-            "Hospital infection control committee ** (Feb 19;Feb 11) (Pg.No: 186)",
-            "Ventilator-associated pneumonia ** (Aug 17;Feb 08) (Pg.No: 189)"
+            "Cold Sterilization ****** (Jul 23;Feb 20;Feb 19;Feb 15;Feb 09;Feb 08) (Pg.No: 223)",
+            "Heat Sterilization ***** (Feb 23;Feb 22;Aug 18;Aug 15;Apr 97) (Pg.No: 222)",
+            "Hot Air Oven **** (Feb 10;Feb 09;Feb 08;Aug 05) (Pg.No: 225)",
+            "Gas Sterilization *** (Aug 22;Feb 20;Feb 18) (Pg.No: 223)",
+            "Nosocomial Infections ** (Aug 10;Oct 03) (Pg.No: 203;AP3-Pg.No: 241)",
+            "Chemical Disinfectants (Aug 16) (Pg.No: 226)",
+            "High Level Disinfection (Feb 17) (Pg.No: 226)",
+            "Moist Heat Sterilization (Aug 13) (Pg.No: 222)",
+            "Testing of Disinfectant (Nov 01) (Pg.No: 229)"
           ]
         }
       }
