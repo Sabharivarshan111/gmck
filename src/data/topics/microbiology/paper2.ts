@@ -1,4 +1,3 @@
-
 export const microbiologyPaper2Data = {
   name: "Paper 2",
   subtopics: {
@@ -252,16 +251,35 @@ export const microbiologyPaper2Data = {
         essay: {
           name: "Essay",
           questions: [
-            "Meningitis *** (Feb 23;Aug 11;Feb 09) (Pg.No: 390)",
-            "Encephalitis ** (Aug 16;Feb 12) (Pg.No: 396)"
+            "Pyogenic Meningitis (or) Acute Bacterial Meningitis ********* (Jul 23;Aug 22;Feb 12;Aug 08;Aug 06;Nov 98;Apr 95;Jan 93;Oct 90) (Pg.No: 574;AP3-Pg.No: 692)\n- List of organisms causing Pyogenic Meningitis, Clinical Manifestations, Laboratory Diagnosis, Treatment\n- Enumerate the Probable Causative Agents, Note on Pneumococcal Vaccine\n- List causes of Meningitis, Lab Diagnosis of Meningococcal Meningitis\n- List Bacterial causes of Meningitis, Morphology, Cultural Characters of N. meningitidis, CSF Analysis\nProbable Cases:\n- A 7 year old girl admitted with fever, headache, vomiting and neck rigidity. CSF showed elevated CSF pressure, Leukocytes predominantly neutrophils. Glucose < 40 mg/dl and protein > 45 mg/dl.",
+            "Poliomyelitis (or) Polio Virus ******** (Mar 23;Sep 21;Feb 17;Feb 12;Feb 10;Feb 08;Mar 02;Nov 01) (Pg.No: 591;AP3-Pg.No: 709)\n- Enumerate the organisms causing myelitis, Clinical Manifestations,\nLab Diagnosis, Prophylaxis\n- Classify Picornaviruses, Pathogenesis, Clinical Features, Lab Diagnosis, Prophylaxis\n- Classify Enteroviruses, Morphology, Pathogenesis, Lab Diagnosis, Prophylaxis\nProbable Cases:\n- A 5 year old male child admitted in ICU with c/o fever, headache and chills. His mother complained that child is not able to stand 5 days after the onset of fever. O/E there is flaccid paralysis of lower limbs and tripod sign is elucidated. On CSF analysis glucose level and protein level is normal. Microscopic examination of CSF show 25-40 lymphocytes per microlitre and no bacteria seen. Ziehl - Neelsen staining of CSF is negative for Acid Fast bacilli.",
+            "Rabies ***** (Feb 23;Feb 09;Aug 04;Apr 99;Apr 92) (Pg.No: 600;AP3-Pg.No: 718)\n- Morphology, Pathogenesis, Clinical Manifestations, Lab Diagnosis, Prophylaxis\n- Classify Rhabdovirus, Pathogenesis, Lab Diagnosis, Prophylaxis",
+            "Japanese (B) Encephalitis *** (Feb 06;Oct 03;Nov 93) (Pg.No: 598;AP3-Pg.No: 716)\n- Arboviruses in India, Aetiology of JE, Lab Diagnosis of JE",
+            "Tetanus (Aug 18) (Pg.No: 584;AP3-Pg.No: 702)\n- Aetiology, Pathogenesis, Lab Diagnosis, Prophylaxis",
+            "Toxoplasmosis (Feb 06) (Pg.No: 610;AP3-Pg.No: 731)\n- List Parasitic Zoonotic diseases, Life cycle, Pathogenesis, Lab Diagnosis of Toxoplasmosis"
           ]
         },
         "short-note": {
           name: "Short Note",
           questions: [
-            "CSF analysis **** (Feb 22;Aug 19;Feb 17;Aug 06) (Pg.No: 394)",
-            "Rabies *** (Jul 23;Aug 14;Feb 07) (Pg.No: 400)",
-            "Brain abscess ** (Feb 20;Aug 10) (Pg.No: 405)"
+            "Cryptococcal Meningitis (or) Cryptococcosis (or) Cryptococcus neoformans ********** (Jul 23;Feb 22;Feb 18;Aug 10;Aug 08;Aug 04;Oct 03;Apr 98;Apr 97;Nov 94;Apr 92) (Pg.No: 616;AP3-Pg.No: 739)",
+            "Neurocysticercosis (or) Cysticercus cellulosae ********** (Jul 23;Sep 21;Feb 16;Aug 14;Aug 11;Aug 10;Aug 05;Aug 04;Mar 02;Oct 98;Apr 97;Apr 92) (Pg.No: 613;AP3-Pg.No: 735)\n- Clinical Manifestations, Lab Diagnosis",
+            "Poliomyelitis (or) Polio Virus ********** (Aug 22;Feb 19;Aug 18;Feb 18;Aug 15;Aug 14;Aug 12;Aug 09;Aug 08;Feb 07;Feb 05;Oct 03;Oct 97;Apr 96;Nov 95) (Pg.No: 591;AP3-Pg.No: 709)\n- Prophylaxis\n- Lab Diagnosis\n- Sabin Vaccine",
+            "Rabies ********** (Jul 23;Aug 22;Sep 21;Feb 20;Aug 18;Feb 18;Feb 17;Aug 16;Feb 11;Feb 08;Aug 05;Feb 05;Apr 01;Apr 98;Apr 96) (Pg.No: 600;AP3-Pg.No: 718)\n- Vaccines Available, Laboratory Diagnosis\n- Prophylactic Measures used against Dog Bite, Negri Bodies\nProbable Cases:\n- A 25 year old Australian visited his local doctor complaining of difficulty in swallowing liquids, loss of appetite and restlessness. He had a travel history to India one month back and did mention being bitten by a street dog.\n- A 25 year old male visited the clinic of a local doctor with a history of dog bite.",
+            "Japanese (B) Encephalitis ******** (Feb 20;Aug 15;Feb 09;Aug 05;Aug 04;Apr 98;Jan 93;Oct 90) (Pg.No: 598;AP3-Pg.No: 716)",
+            "Tetanus ******* (Aug 22;Feb 15;Oct 03;Nov 98;Apr 96;Nov 94;Dec 91) (Pg.No: 584;AP3-Pg.No: 702)\n- Prophylaxis\n- Lab Diagnosis",
+            "Free-Living Amoebae ****** (Pg.No: 609;AP3-Pg.No: 727)",
+            "Primary Amoebic Meningoencephalitis ***** (Aug 11;Aug 08;Feb 07;Nov 01;Oct 98) (Pg.No: 609;AP3-Pg.No: 728)",
+            "Prion Disease ***** (Nov 20;Feb 20;Aug 19;Feb 12;Feb 10) (Pg.No: 606;AP3-Pg.No: 725)",
+            "Toxoplasmosis **** (Jul 23;Aug 17;Aug 14;Aug 10) (Pg.No: 610;AP3-Pg.No: 731)\n- Clinical Manifestations, Lab Diagnosis\n- Congenital Toxoplasmosis",
+            "Pyogenic Meningitis (or) Acute Bacterial Meningitis *** (Feb 09;Aug 05;Oct 97) (Pg.No: 574;AP3-Pg.No: 692)\n- Lab Diagnosis",
+            "Slow Viral Infections *** (Feb 13;Aug 04;Nov 98) (Pg.No: 605;AP3-Pg.No: 724)",
+            "Aseptic Meningitis (or) Coxsackieviruses ** (Oct 03;Nov 93) (Pg.No: 589;AP3-Pg.No: 707)",
+            "Subacute Sclerosing Panencephalitis ** (Feb 22;Feb 19) (Pg.No: 606;AP3-Pg.No: 724)",
+            "CSF Analysis (Aug 19) (Pg.No: 575;AP3-Pg.No: 693)",
+            "Granulomatous Amoebic Encephalitis (Mar 22) (Pg.No: 610;AP3-Pg.No: 729)",
+            "Listeriosis (Pg.No: 580;AP3-Pg.No: 698)",
+            "Tuberculous Meningitis (Pg.No: 581;AP3-Pg.No: 699)"
           ]
         }
       }
