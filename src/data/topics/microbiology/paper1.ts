@@ -246,16 +246,31 @@ export const microbiologyPaper1Data = {
         essay: {
           name: "Essay",
           questions: [
-            "Plague (Nov 95) (Pg.No: 671;AP3-Pg.No: 807) (1)"
+            "Plague (Nov 95) (Pg.No: 671;AP3-Pg.No: 807)\n- Morphology, Cultural Characters, Pathogenesis, Laboratory Diagnosis"
           ]
         },
         "short-note": {
           name: "Short Note",
           questions: [
-            "Leptospirosis **** (Jul 23;Sep 21;Aug 17;Feb 12) (Pg.No: 360)",
-            "Spirochetes *** (Feb 22;Aug 15;Feb 09) (Pg.No: 365)",
-            "Mycoplasma *** (Feb 20;Aug 14;Feb 05) (Pg.No: 368)",
-            "Chlamydia ** (Aug 18;Feb 13) (Pg.No: 370)"
+            "Otomycosis ****** (Feb 22;Nov 20;Feb 17;Aug 13;Feb 11;Feb 09) (Pg.No: 658;AP3-Pg.No: 791)",
+            "Zoonotic Bacterial Disease ****** (Aug 17;Aug 14;Feb 14;Aug 08;Apr 00;Apr 99) (Pg.No: 671;AP3-Pg.No: 807)",
+            "Plague **** (Mar 22;Feb 22;Aug 12;Nov 01) (Pg.No: 671;AP3-Pg.No: 807)",
+            "Oncogenic Viruses *** (Feb 16;Feb 14;Aug 12) (Pg.No: 665;AP3-Pg.No: 800)",
+            "Chlamydial Conjunctivitis ** (Jul 23;Aug 22) (Pg.No: 653;AP3-Pg.No: 781)",
+            "Congenital Rubella Syndrome ** (Jul 23;Feb 23) (Pg.No: 660;AP3-Pg.No: 794)",
+            "Epstein-Barr Virus (EBV) associated Malignancy ** (Aug 15;Feb 14) (Pg.No: 667;AP3-Pg.No: 802)",
+            "Parasites Infecting Eye ** (Feb 12;Aug 08) (Pg.No: 655;AP3-Pg.No: 786)",
+            "Zoonotic Parasitic Disease ** (Aug 19;Feb 06) (Pg.No: 671;AP3-Pg.No: 807)",
+            "Bubonic Plague (Mar 22) (Pg.No: 673;AP3-Pg.No: 809)",
+            "Congenital Infection (Mar 22) (Pg.No: 659;AP3-Pg.No: 793)",
+            "Congenital Syphilis (Mar 22) (Pg.No: 664;AP3-Pg.No: 799)",
+            "Congenital Toxoplasmosis (Aug 17) (Pg.No: 659;AP3-Pg.No: 793)",
+            "Congenital Viral Infections (Apr 01) (Pg.No: 660;AP3-Pg.No: 793)",
+            "Conjunctivitis (Aug 11) (Pg.No: 653;AP3-Pg.No: 779)",
+            "Keratoconjunctivitis (Aug 19) (Pg.No: 655;AP3-Pg.No: 782)",
+            "Mechanism of Viral Oncogenesis (Nov 98) (Pg.No: 665;AP3-Pg.No: 801)",
+            "Mycotic Keratitis (Aug 12) (Pg.No: 656;AP3-Pg.No: 789)",
+            "Ocular Fungal Infections (Jul 23) (Pg.No: 656;AP3-Pg.No: 788)"
           ]
         }
       }
