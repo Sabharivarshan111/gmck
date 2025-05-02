@@ -66,7 +66,7 @@ export const AiChat = ({ initialQuestion }: AiChatProps = {}) => {
     };
   }, []);
   
-  // Listen for triple tap events
+  // Listen for triple tap and double tap events
   useEffect(() => {
     const handleTripleTapAnswer = (event: Event) => {
       const customEvent = event as CustomEvent;
@@ -78,11 +78,27 @@ export const AiChat = ({ initialQuestion }: AiChatProps = {}) => {
       }
     };
     
+    // Add new handler for double tap MCQ events
+    const handleDoubleTapMcq = (event: Event) => {
+      const customEvent = event as CustomEvent;
+      if (customEvent.detail && customEvent.detail.question) {
+        const question = customEvent.detail.question;
+        
+        // Format the question to generate MCQs
+        const formattedQuestion = `Double-tapped: Generate 10 USMLE/NEET PG style MCQs on ${question}`;
+        
+        // Submit the MCQ request
+        handleSubmitQuestion(formattedQuestion);
+      }
+    };
+    
     window.addEventListener('ai-triple-tap-answer', handleTripleTapAnswer);
+    window.addEventListener('ai-double-tap-mcq', handleDoubleTapMcq);
     
     // Clean up
     return () => {
       window.removeEventListener('ai-triple-tap-answer', handleTripleTapAnswer);
+      window.removeEventListener('ai-double-tap-mcq', handleDoubleTapMcq);
     };
   }, [handleSubmitQuestion]);
 

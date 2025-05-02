@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from "react";
 import { v4 as uuidv4 } from 'uuid';
 import { useToast } from "@/hooks/use-toast";
@@ -557,8 +558,12 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
       // Check if this is a triple tap (special handling)
       const isTripleTap = question.startsWith("Triple-tapped:") || question.startsWith("triple-tapped:");
       
+      // Check if this is a double tap for MCQs
+      const isDoubleTap = question.startsWith("Double-tapped:") || question.startsWith("double-tapped:");
+      
       // Check if the user is requesting MCQs
-      const isMCQRequest = /generate\s+(?:10|ten)\s+mcqs?|create\s+(?:10|ten)\s+mcqs?|make\s+(?:10|ten)\s+mcqs?|ten\s+mcqs?|10\s+mcqs?|generate\s+mcqs?/i.test(question);
+      const isMCQRequest = isDoubleTap || 
+        /generate\s+(?:10|ten)\s+mcqs?|create\s+(?:10|ten)\s+mcqs?|make\s+(?:10|ten)\s+mcqs?|ten\s+mcqs?|10\s+mcqs?|generate\s+mcqs?/i.test(question);
       
       // Check if the user is asking for important questions
       const isImportantQuestionsRequest = /important question|important topics|high yield|frequently asked|commonly asked|repeated questions/i.test(question);
@@ -566,7 +571,7 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
       // Check if the user is asking for clarification
       const isNeedingClarification = /i don't understand|can't understand|explain|similar|more detail/i.test(question.toLowerCase());
       
-      console.log("Request type:", { isTripleTap, isMCQRequest, isImportantQuestionsRequest, isNeedingClarification });
+      console.log("Request type:", { isTripleTap, isDoubleTap, isMCQRequest, isImportantQuestionsRequest, isNeedingClarification });
       
       // Use Supabase edge function - using ask-gemini which supports all the advanced features
       const { data, error } = await supabase.functions.invoke('ask-gemini', {
@@ -574,6 +579,7 @@ export const useAiChat = ({ initialQuestion }: UseAiChatProps = {}) => {
           prompt: question,
           conversationHistory,
           isTripleTap,
+          isDoubleTap,
           isMCQRequest,
           isImportantQuestionsRequest,
           isNeedingClarification
