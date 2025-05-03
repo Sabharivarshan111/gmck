@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -122,6 +121,13 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, index }) => {
     return "text-blue-300 ml-2";
   };
 
+  const getMcqTextClass = () => {
+    if (theme === "blackpink") {
+      return "text-[#FFDEE2] text-[10px] italic font-semibold mt-2";
+    }
+    return "text-blue-500 text-[10px] italic font-semibold mt-2";
+  };
+
   return (
     <div id={`question-${index}`}>
       <Card 
@@ -145,14 +151,13 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, index }) => {
               <div className="flex items-center mb-1">
                 <span className={`text-[10px] ${theme === "blackpink" ? "text-[#FFDEE2]" : "text-blue-500"}`}>
                   {tapStatus === 'idle' && (
-                    <span className="flex items-center gap-3">
+                    <span className="flex items-center">
                       Triple tap to ask AI
                       {pageNumber && (
                         <span className={getPageNumberClass()}>
                           Pg. {pageNumber}
                         </span>
                       )}
-                      <span className="font-semibold">DOUBLE TAP FOR MCQS</span>
                     </span>
                   )}
                   {tapStatus === 'processing-answer' && (
@@ -166,6 +171,13 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, index }) => {
               <p className={`whitespace-pre-wrap ${getTextClass()}`}>
                 {getCleanQuestionText(question)}
               </p>
+              
+              {/* Added the "DOUBLE TAP FOR MCQS" text at the bottom */}
+              {tapStatus === 'idle' && (
+                <div className={getMcqTextClass()}>
+                  DOUBLE TAP FOR MCQS
+                </div>
+              )}
             </div>
           </div>
           
