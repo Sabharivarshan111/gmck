@@ -4,6 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { useTripleTap } from '@/hooks/use-triple-tap';
+import { useDoubleTap } from '@/hooks/use-double-tap';
 import { useTheme } from '@/components/theme/ThemeProvider';
 
 interface QuestionCardProps {
@@ -13,7 +14,7 @@ interface QuestionCardProps {
 
 const QuestionCard: React.FC<QuestionCardProps> = ({ question, index }) => {
   const [isCompleted, setIsCompleted] = useState(false);
-  const [tapStatus, setTapStatus] = useState<'idle' | 'processing'>('idle');
+  const [tapStatus, setTapStatus] = useState<'idle' | 'processing-answer' | 'processing-mcq'>('idle');
   const asteriskCount = countAsterisks(question);
   const { theme } = useTheme();
   
@@ -33,11 +34,36 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, index }) => {
   
   const handleTripleTap = useTripleTap(() => {
     const cleanedQuestion = getCleanQuestionText(question);
-    setTapStatus('processing');
+    setTapStatus('processing-answer');
     const event = new CustomEvent('ai-triple-tap-answer', {
       detail: { question: cleanedQuestion }
     });
     window.dispatchEvent(event);
+    setTimeout(() => {
+      const chatSection = document.querySelector('.ai-chat-section');
+      chatSection?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setTimeout(() => {
+        setTapStatus('idle');
+      }, 3000);
+    }, 100);
+  });
+  
+  // Add double-tap handler for MCQs
+  const handleDoubleTap = useDoubleTap(() => {
+    const cleanedQuestion = getCleanQuestionText(question);
+    setTapStatus('processing-mcq');
+    
+    // Create a custom event for MCQ generation
+    const event = new CustomEvent('ai-double-tap-mcq', {
+      detail: { 
+        question: cleanedQuestion,
+        isDoubleTap: true,
+        forMcq: true
+      }
+    });
+    
+    window.dispatchEvent(event);
+    
     setTimeout(() => {
       const chatSection = document.querySelector('.ai-chat-section');
       chatSection?.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -53,6 +79,12 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, index }) => {
 
   const handleCheckboxClick = (e: React.MouseEvent) => {
     e.stopPropagation();
+  };
+  
+  // Combined click handler for both triple and double tap
+  const handleCardClick = () => {
+    handleTripleTap();
+    handleDoubleTap();
   };
 
   const getCardBgClass = () => {
@@ -94,7 +126,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, index }) => {
     <div id={`question-${index}`}>
       <Card 
         className={`mb-2 ${getCardBgClass()} transition-colors cursor-pointer question-card relative`}
-        onClick={handleTripleTap}
+        onClick={handleCardClick}
       >
         <CardContent className="p-3 text-left text-sm flex items-start justify-between">
           <div className="flex items-start gap-2">
@@ -112,17 +144,22 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, index }) => {
             <div className="flex-1">
               <div className="flex items-center mb-1">
                 <span className={`text-[10px] ${theme === "blackpink" ? "text-[#FFDEE2]" : "text-blue-500"}`}>
-                  {tapStatus === 'idle' ? (
-                    <span className="flex items-center">
+                  {tapStatus === 'idle' && (
+                    <span className="flex items-center gap-3">
                       Triple tap to ask AI
                       {pageNumber && (
                         <span className={getPageNumberClass()}>
                           Pg. {pageNumber}
                         </span>
                       )}
+                      <span className="font-semibold">DOUBLE TAP FOR MCQS</span>
                     </span>
-                  ) : (
+                  )}
+                  {tapStatus === 'processing-answer' && (
                     <span className="animate-pulse">Getting answer...</span>
+                  )}
+                  {tapStatus === 'processing-mcq' && (
+                    <span className="animate-pulse">Generating MCQs...</span>
                   )}
                 </span>
               </div>

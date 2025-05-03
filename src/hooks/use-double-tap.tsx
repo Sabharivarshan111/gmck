@@ -1,7 +1,7 @@
 
 import { useRef, useCallback } from 'react';
 
-export const useDoubleTap = (callback: () => void, tapDelay = 500) => {
+export const useDoubleTap = (callback: () => void, tapDelay = 300) => {
   const tapCount = useRef(0);
   const lastTapTime = useRef(0);
   const timeoutRef = useRef<number | null>(null);
