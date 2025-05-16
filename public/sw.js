@@ -1,6 +1,5 @@
-
-const CACHE_NAME = 'mbbs-qb-v2';
-const APP_SHELL = [
+const CACHE_NAME = 'mbbs-qb-v1';
+const urlsToCache = [
   '/',
   '/index.html',
   '/manifest.json',
@@ -8,140 +7,62 @@ const APP_SHELL = [
   '/icon-512.png'
 ];
 
-const DATA_CACHE_NAME = 'mbbs-qb-data-v1';
-const DATA_FILES = [
-  '/src/data/questionBankData.ts',
-  '/src/data/topics/pharmacology.ts',
-  '/src/data/topics/pharmacology/autacoids.ts',
-  '/src/data/topics/pharmacology/cardiovascularSystem.ts',
-  '/src/data/topics/pharmacology/cns.ts',
-  '/src/data/topics/pharmacology/endocrineSystem.ts',
-  '/src/data/topics/pharmacology/generalPharmacology.ts',
-  '/src/data/topics/pharmacology/respiratorySystem.ts',
-  '/src/data/topics/pharmacology/chemotherapy.ts'
-];
-
-// Install event handler - cache app shell
+// Install event handler
 self.addEventListener('install', (event) => {
   console.log('Service Worker: Installing');
-  
-  // Force waiting Service Worker to become active
-  self.skipWaiting();
-  
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
-        console.log('Service Worker: Caching App Shell');
-        return cache.addAll(APP_SHELL);
+        console.log('Service Worker: Caching Files');
+        return cache.addAll(urlsToCache);
       })
       .catch(error => {
-        console.error('Service Worker: App Shell Cache Failed:', error);
-        throw error;
+        console.error('Service Worker: Cache Failed:', error);
+        throw error; // Re-throw to ensure installation fails on error
       })
   );
+  // Force waiting Service Worker to become active
+  self.skipWaiting();
 });
 
-// Activate event handler - clean up old caches
-self.addEventListener('activate', (event) => {
-  console.log('Service Worker: Activated');
-  
-  // Take control of all clients as soon as it activates
-  event.waitUntil(
-    Promise.all([
-      clients.claim(),
-      caches.keys().then((cacheNames) => {
-        return Promise.all(
-          cacheNames.map((cacheName) => {
-            if (
-              cacheName !== CACHE_NAME &&
-              cacheName !== DATA_CACHE_NAME
-            ) {
-              console.log('Service Worker: Clearing Old Cache', cacheName);
-              return caches.delete(cacheName);
-            }
-          })
-        );
-      })
-    ])
-  );
-});
-
-// Fetch event handler with improved caching strategy
+// Fetch event handler
 self.addEventListener('fetch', (event) => {
-  const { request } = event;
-  const url = new URL(request.url);
-  
-  // Skip cross-origin requests
-  if (url.origin !== self.location.origin) {
-    return;
-  }
-
-  // Data API requests
-  if (url.pathname.includes('/src/data/')) {
-    event.respondWith(
-      caches.open(DATA_CACHE_NAME).then((cache) => {
-        return fetch(request)
-          .then((response) => {
-            if (response.status === 200) {
-              cache.put(request, response.clone());
-            }
-            return response;
-          })
-          .catch(() => {
-            return cache.match(request);
-          });
-      })
-    );
-    return;
-  }
-
-  // App shell - Cache First strategy
+  console.log('Service Worker: Fetching', event.request.url);
   event.respondWith(
-    caches.match(request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
-
-      return fetch(request)
-        .then((response) => {
-          // Don't cache responses that aren't successful or are not GET requests
-          if (!response || response.status !== 200 || request.method !== 'GET') {
-            return response;
-          }
-
-          // Clone the response as it can only be consumed once
-          const responseToCache = response.clone();
-
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put(request, responseToCache);
-          });
-
+    caches.match(event.request)
+      .then((response) => {
+        if (response) {
+          console.log('Service Worker: Found in Cache', event.request.url);
           return response;
-        })
-        .catch((error) => {
+        }
+        console.log('Service Worker: Not Found in Cache', event.request.url);
+        return fetch(event.request).catch(error => {
           console.error('Service Worker: Fetch Failed:', error);
-          // Return a custom offline page if we have one
-          if (request.headers.get('accept').includes('text/html')) {
-            return caches.match('/');
-          }
-          
           return new Response('Network error happened', {
             status: 404,
             headers: { 'Content-Type': 'text/plain' },
           });
         });
-    })
+      })
   );
 });
 
-// Listen for messages from the client
-self.addEventListener('message', (event) => {
-  if (event.data && event.data.type === 'CACHE_DATA_FILES') {
-    event.waitUntil(
-      caches.open(DATA_CACHE_NAME).then((cache) => {
-        console.log('Service Worker: Caching Data Files');
-        return cache.addAll(DATA_FILES);
-      })
-    );
-  }
+// Activate event handler
+self.addEventListener('activate', (event) => {
+  console.log('Service Worker: Activated');
+  event.waitUntil(
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
+        cacheNames.map((cache) => {
+          if (cache !== CACHE_NAME) {
+            console.log('Service Worker: Clearing Old Cache');
+            return caches.delete(cache);
+          }
+        })
+      );
+    }).then(() => {
+      // Take control of all clients as soon as it activates
+      return clients.claim();
+    })
+  );
 });

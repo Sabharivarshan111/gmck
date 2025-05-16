@@ -4,7 +4,6 @@ import { Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/components/theme/ThemeProvider";
 import { FontSizeToggle } from "./FontSizeToggle";
-import { OfflineToggle } from "@/components/OfflineToggle";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -41,7 +40,6 @@ export function ThemeToggle() {
 
   return (
     <div className="flex items-center gap-2">
-      <OfflineToggle />
       <FontSizeToggle />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
