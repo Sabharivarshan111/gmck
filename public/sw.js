@@ -48,7 +48,7 @@ self.addEventListener('activate', (event) => {
   // Take control of all clients as soon as it activates
   event.waitUntil(
     Promise.all([
-      clients.claim(),
+      clients.claim(), // This is crucial - take control of all clients immediately
       caches.keys().then((cacheNames) => {
         return Promise.all(
           cacheNames.map((cacheName) => {
@@ -143,5 +143,14 @@ self.addEventListener('message', (event) => {
         return cache.addAll(DATA_FILES);
       })
     );
+  }
+
+  // Add a new message type to check if service worker is ready
+  if (event.data && event.data.type === 'IS_READY') {
+    // Respond to the client confirming the service worker is ready
+    event.ports[0].postMessage({ 
+      ready: true,
+      timestamp: new Date().getTime()
+    });
   }
 });
