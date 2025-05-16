@@ -11,7 +11,7 @@ export function OfflineIndicator() {
     isCheckingServiceWorker
   } = useOfflineMode();
 
-  // Show when service worker is being initialized
+  // Only show when there's something relevant to display
   if (isCheckingServiceWorker) {
     return (
       <div className="fixed bottom-20 left-1/2 transform -translate-x-1/2 py-1 px-3 rounded-full 
@@ -25,7 +25,7 @@ export function OfflineIndicator() {
     );
   }
 
-  // Only show other indicators when there's something to show
+  // Hide indicator when everything is normal and online
   if (!isOfflineMode && isOnline && (isServiceWorkerSupported && isServiceWorkerReady)) {
     return null;
   }
@@ -56,7 +56,7 @@ export function OfflineIndicator() {
   return (
     <div 
       className={`fixed bottom-20 left-1/2 transform -translate-x-1/2 py-1 px-3 rounded-full 
-        ${bgClass} shadow-lg flex items-center gap-1.5 text-xs font-medium animate-pulse z-50`}
+        ${bgClass} shadow-lg flex items-center gap-1.5 text-xs font-medium z-50`}
     >
       {icon}
       <span>{message}</span>

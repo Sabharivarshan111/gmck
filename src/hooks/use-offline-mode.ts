@@ -10,7 +10,7 @@ export function useOfflineMode() {
   const [downloadProgress, setDownloadProgress] = useState<number>(0);
   const [isServiceWorkerSupported, setIsServiceWorkerSupported] = useState<boolean>('serviceWorker' in navigator);
   const [isServiceWorkerReady, setIsServiceWorkerReady] = useState<boolean>(false);
-  const [isCheckingServiceWorker, setIsCheckingServiceWorker] = useState<boolean>(false);
+  const [isCheckingServiceWorker, setIsCheckingServiceWorker] = useState<boolean>(true);
   const [initializationAttempts, setInitializationAttempts] = useState<number>(0);
 
   // Monitor online status
@@ -27,11 +27,12 @@ export function useOfflineMode() {
     };
   }, []);
 
-  // Function to check service worker readiness
+  // This function does multiple checks to determine if the service worker is really ready
   const checkServiceWorkerReadiness = useCallback(async () => {
-    if (!isServiceWorkerSupported) return false;
-    
-    setIsCheckingServiceWorker(true);
+    if (!isServiceWorkerSupported) {
+      setIsCheckingServiceWorker(false);
+      return false;
+    }
     
     try {
       // First check: Is there a controller?
@@ -52,55 +53,76 @@ export function useOfflineMode() {
       
       console.log('[OfflineMode] Service worker is not controlling yet');
       
-      // If we have a registration, try communicating directly with the worker
+      // Third check: If we have a registration, try direct communication
       if ((window as any).swRegistration?.active) {
         console.log('[OfflineMode] Found active service worker, checking if ready');
         
-        // Create a message channel for communication
-        const messageChannel = new MessageChannel();
-        
-        // Promise for awaiting the response
-        const readinessPromise = new Promise<boolean>((resolve) => {
-          // Setup the message handler
-          messageChannel.port1.onmessage = (event) => {
-            if (event.data && event.data.ready) {
-              console.log('[OfflineMode] Service worker confirmed ready via message');
-              resolve(true);
-            } else {
-              resolve(false);
-            }
-          };
-          
-          // Set a timeout in case the service worker doesn't respond
-          setTimeout(() => {
-            console.log('[OfflineMode] Service worker readiness check timed out');
-            resolve(false);
-          }, 1000);
-        });
-        
-        // Send the ready check message
+        // Try to ping the service worker
         try {
+          if (navigator.serviceWorker.controller) {
+            navigator.serviceWorker.controller.postMessage({ type: 'PING' });
+            // If no error, we're likely good
+            window.swControllerReady = true;
+            setIsServiceWorkerReady(true);
+            setIsCheckingServiceWorker(false);
+            return true;
+          }
+          
+          // Create a proper message channel for two-way communication
+          const messageChannel = new MessageChannel();
+          
+          // Create a promise for the response
+          const readinessPromise = new Promise<boolean>((resolve) => {
+            messageChannel.port1.onmessage = (event) => {
+              if (event.data && event.data.ready) {
+                console.log('[OfflineMode] Service worker confirmed ready via message');
+                resolve(true);
+              } else {
+                resolve(false);
+              }
+            };
+            
+            // Set a timeout in case of no response
+            setTimeout(() => {
+              console.log('[OfflineMode] Service worker readiness check timed out');
+              resolve(false);
+            }, 1000);
+          });
+          
+          // Send the message through the channel
           (window as any).swRegistration.active.postMessage(
             { type: 'IS_READY' },
             [messageChannel.port2]
           );
           
-          // Wait for response or timeout
+          // Wait for the response or timeout
           const isReady = await readinessPromise;
           setIsServiceWorkerReady(isReady);
+          setIsCheckingServiceWorker(false);
           return isReady;
+          
         } catch (error) {
-          console.error('[OfflineMode] Error sending message to service worker:', error);
-          return false;
+          console.error('[OfflineMode] Error communicating with service worker:', error);
         }
       }
       
+      // Still no confirmation - check if service worker is at least registered
+      const swRegistration = await navigator.serviceWorker.getRegistration();
+      if (swRegistration?.active) {
+        console.log('[OfflineMode] Found registered active service worker');
+        // Not ideal but better than nothing - assume it will be ready soon
+        setIsServiceWorkerReady(true);
+        setIsCheckingServiceWorker(false);
+        return true;
+      }
+      
+      setIsCheckingServiceWorker(false);
       return false;
+      
     } catch (error) {
       console.error('[OfflineMode] Error checking service worker readiness:', error);
-      return false;
-    } finally {
       setIsCheckingServiceWorker(false);
+      return false;
     }
   }, [isServiceWorkerSupported]);
 
@@ -111,17 +133,20 @@ export function useOfflineMode() {
     const handleSwControlling = () => {
       console.log('[OfflineMode] Received sw-controlling event');
       setIsServiceWorkerReady(true);
+      setIsCheckingServiceWorker(false);
     };
     
     const handleSwError = (event: Event) => {
       const customEvent = event as CustomEvent;
       console.error('[OfflineMode] Service worker error:', customEvent.detail?.error);
       setIsServiceWorkerReady(false);
+      setIsCheckingServiceWorker(false);
     };
     
     const handleSwNotSupported = () => {
       console.log('[OfflineMode] Service worker not supported event received');
       setIsServiceWorkerSupported(false);
+      setIsCheckingServiceWorker(false);
     };
     
     // Add event listeners
@@ -130,9 +155,6 @@ export function useOfflineMode() {
     (window as any).swEvents.addEventListener('sw-error', handleSwError);
     (window as any).swEvents.addEventListener('sw-not-supported', handleSwNotSupported);
     
-    // Initial check
-    checkServiceWorkerReadiness();
-    
     return () => {
       // Remove event listeners
       (window as any).swEvents.removeEventListener('sw-controlling', handleSwControlling);
@@ -140,30 +162,33 @@ export function useOfflineMode() {
       (window as any).swEvents.removeEventListener('sw-error', handleSwError);
       (window as any).swEvents.removeEventListener('sw-not-supported', handleSwNotSupported);
     };
-  }, [isServiceWorkerSupported, checkServiceWorkerReadiness]);
+  }, [isServiceWorkerSupported]);
 
-  // Regularly check service worker status
+  // Initial check for service worker status
   useEffect(() => {
-    if (!isServiceWorkerSupported || isServiceWorkerReady) return;
-
-    // Check service worker readiness on initial load
+    // Immediately check service worker status on mount
     checkServiceWorkerReadiness();
+    
+    // Also check after a short delay in case the service worker takes time to initialize
+    const delayedCheckTimer = setTimeout(() => {
+      if (!isServiceWorkerReady) {
+        checkServiceWorkerReadiness();
+      }
+    }, 2000);
+    
+    return () => clearTimeout(delayedCheckTimer);
+  }, [checkServiceWorkerReadiness]);
+
+  // Regularly check service worker status until ready
+  useEffect(() => {
+    if (!isServiceWorkerSupported || isServiceWorkerReady || initializationAttempts >= 5) return;
 
     // Set up periodic checks for service worker status
     const intervalId = setInterval(() => {
-      if (isServiceWorkerReady) {
-        clearInterval(intervalId);
-      } else {
-        checkServiceWorkerReadiness();
-        setInitializationAttempts(prev => prev + 1);
-      }
-    }, 1000); // Check every second
+      setInitializationAttempts(prev => prev + 1);
+      checkServiceWorkerReadiness();
+    }, 2000); // Check every 2 seconds
     
-    // Stop checking after a reasonable number of attempts
-    if (initializationAttempts > 15) {
-      clearInterval(intervalId);
-    }
-
     return () => clearInterval(intervalId);
   }, [isServiceWorkerSupported, isServiceWorkerReady, checkServiceWorkerReadiness, initializationAttempts]);
 
@@ -186,7 +211,7 @@ export function useOfflineMode() {
     }
   }, [isOnline, isOfflineMode]);
 
-  // Wait for service worker to become ready with more robust checking
+  // More robust service worker waiting function
   const waitForServiceWorker = async (timeoutMs = 5000): Promise<boolean> => {
     if (isServiceWorkerReady) return true;
     if (!isServiceWorkerSupported) return false;
@@ -194,79 +219,84 @@ export function useOfflineMode() {
     setIsCheckingServiceWorker(true);
     console.log('[OfflineMode] Waiting for service worker to become ready');
     
-    // Try to register the service worker again if needed
-    if (!navigator.serviceWorker.controller && !(window as any).swRegistration) {
-      try {
-        console.log('[OfflineMode] Re-registering service worker');
-        const registration = await navigator.serviceWorker.register('/sw.js', {
-          scope: '/',
-          updateViaCache: 'none'
-        });
-        (window as any).swRegistration = registration;
-        
-        // Force it to activate immediately
-        if (registration.waiting) {
-          registration.waiting.postMessage({ type: 'SKIP_WAITING' });
-        }
-      } catch (error) {
-        console.error('[OfflineMode] Failed to register service worker during wait:', error);
-      }
-    }
-    
+    // Try to register the service worker if needed
     try {
-      const startTime = Date.now();
+      if (!navigator.serviceWorker.controller && !(window as any).swRegistration) {
+        console.log('[OfflineMode] Service worker not registered yet, registering now');
+        try {
+          const registration = await navigator.serviceWorker.register('/sw.js', {
+            scope: '/',
+            updateViaCache: 'none'
+          });
+          (window as any).swRegistration = registration;
+          
+          // Force activation
+          if (registration.waiting) {
+            registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+          }
+        } catch (error) {
+          console.error('[OfflineMode] Failed to register service worker during wait:', error);
+        }
+      }
       
-      // Create a promise that resolves when the sw-controlling event fires
-      const controlPromise = new Promise<boolean>(resolve => {
+      // Prompt existing service worker to claim clients
+      if ((window as any).swRegistration?.active) {
+        try {
+          (window as any).swRegistration.active.postMessage({ type: 'SKIP_WAITING' });
+        } catch (e) {
+          console.warn('[OfflineMode] Error sending skip waiting message:', e);
+        }
+      }
+      
+      // Set a timeout to resolve the waiting
+      const waitPromise = new Promise<boolean>(resolve => {
+        // Set up event listener for when service worker takes control
         const handleSwControlling = () => {
           console.log('[OfflineMode] Service worker took control during wait');
-          (window as any).swEvents.removeEventListener('sw-controlling', handleSwControlling);
           resolve(true);
         };
         
         (window as any).swEvents.addEventListener('sw-controlling', handleSwControlling);
         
-        // Cleanup after timeout
+        // Also check periodically
+        const checkInterval = setInterval(async () => {
+          const isReady = await checkServiceWorkerReadiness();
+          if (isReady) {
+            clearInterval(checkInterval);
+            resolve(true);
+          }
+        }, 500);
+        
+        // Timeout after specified duration
         setTimeout(() => {
+          clearInterval(checkInterval);
           (window as any).swEvents.removeEventListener('sw-controlling', handleSwControlling);
           resolve(false);
         }, timeoutMs);
       });
       
-      // Regularly check readiness while waiting for the event
-      while (Date.now() - startTime < timeoutMs) {
-        // Check if service worker is ready
-        const isReady = await checkServiceWorkerReadiness();
-        
-        if (isReady) {
-          setIsServiceWorkerReady(true);
-          setIsCheckingServiceWorker(false);
-          return true;
-        }
-        
-        // Wait a bit before checking again
-        await new Promise(resolve => setTimeout(resolve, 300));
+      // Wait for either the service worker to take control or the timeout
+      const result = await waitPromise;
+      
+      // One final check
+      if (!result) {
+        const finalCheck = await checkServiceWorkerReadiness();
+        setIsServiceWorkerReady(finalCheck);
+        setIsCheckingServiceWorker(false);
+        return finalCheck;
       }
       
-      // Check if the control event was triggered
-      const controlEventTriggered = await controlPromise;
-      if (controlEventTriggered) {
-        setIsServiceWorkerReady(true);
-        return true;
-      }
-      
-      // One final check before giving up
-      const finalCheck = await checkServiceWorkerReadiness();
-      setIsServiceWorkerReady(finalCheck);
-      return finalCheck;
+      setIsServiceWorkerReady(true);
+      setIsCheckingServiceWorker(false);
+      return true;
     } catch (error) {
       console.error('[OfflineMode] Error waiting for service worker:', error);
-      return false;
-    } finally {
       setIsCheckingServiceWorker(false);
+      return false;
     }
   };
 
+  // Enable offline mode with improved reliability
   const enableOfflineMode = async () => {
     if (!isServiceWorkerSupported) {
       toast({
@@ -278,7 +308,7 @@ export function useOfflineMode() {
       return;
     }
     
-    // Wait for service worker to be ready if needed
+    // Wait for service worker if needed
     if (!isServiceWorkerReady) {
       toast({
         title: "Preparing offline mode",
@@ -286,21 +316,13 @@ export function useOfflineMode() {
         duration: 3000,
       });
       
-      const ready = await waitForServiceWorker(10000); // Increase timeout to 10 seconds
+      const ready = await waitForServiceWorker(8000);
       
       if (!ready) {
-        // If service worker isn't ready but could be supported, show a different message
         if (isServiceWorkerSupported) {
           toast({
-            title: "Service worker initialization issue",
-            description: "Try refreshing the page before enabling offline mode.",
-            variant: "destructive",
-            duration: 5000,
-          });
-        } else {
-          toast({
-            title: "Offline mode not supported",
-            description: "Your browser doesn't support service workers.",
+            title: "Service worker initialization failed",
+            description: "Try refreshing the page and enabling offline mode again.",
             variant: "destructive",
             duration: 5000,
           });
@@ -309,31 +331,14 @@ export function useOfflineMode() {
       }
     }
     
-    // Listen for cache complete event
-    const cacheCompletePromise = new Promise<boolean>(resolve => {
-      const handleCacheComplete = () => {
-        console.log('[OfflineMode] Cache completed event received');
-        (window as any).swEvents.removeEventListener('sw-cache-complete', handleCacheComplete);
-        resolve(true);
-      };
-      
-      (window as any).swEvents.addEventListener('sw-cache-complete', handleCacheComplete);
-      
-      // Timeout after 10 seconds
-      setTimeout(() => {
-        (window as any).swEvents.removeEventListener('sw-cache-complete', handleCacheComplete);
-        resolve(false);
-      }, 10000);
-    });
-    
     try {
       setIsDownloading(true);
 
-      // Simulate download progress
+      // Setup progress simulation
       const progressInterval = setInterval(() => {
         setDownloadProgress((prev) => {
           const newProgress = prev + 5;
-          if (newProgress >= 95) { // Only go up to 95% with the simulation
+          if (newProgress >= 95) {
             clearInterval(progressInterval);
             return 95;
           }
@@ -341,37 +346,48 @@ export function useOfflineMode() {
         });
       }, 200);
 
-      // Cache data files if service worker controller is available
+      // Setup listener for cache complete event
+      const cacheCompletePromise = new Promise<boolean>(resolve => {
+        const handleCacheComplete = () => {
+          (window as any).swEvents.removeEventListener('sw-cache-complete', handleCacheComplete);
+          resolve(true);
+        };
+        
+        (window as any).swEvents.addEventListener('sw-cache-complete', handleCacheComplete);
+        
+        // Timeout after 10 seconds
+        setTimeout(() => {
+          (window as any).swEvents.removeEventListener('sw-cache-complete', handleCacheComplete);
+          resolve(false); // Resolve anyway, we'll proceed with best effort
+        }, 10000);
+      });
+
+      // Send cache request to service worker
       if (navigator.serviceWorker.controller) {
-        console.log('[OfflineMode] Sending cache request to service worker');
         navigator.serviceWorker.controller.postMessage({
           type: 'CACHE_DATA_FILES'
         });
         
-        // Wait for cache complete event or timeout
         await cacheCompletePromise;
       } else {
-        console.warn('[OfflineMode] No service worker controller available to cache data files');
-        // One more attempt to wait for controller
+        console.warn('[OfflineMode] No controller yet, trying once more');
+        
+        // Last attempt to get controller
         await waitForServiceWorker(3000);
         
         if (navigator.serviceWorker.controller) {
-          console.log('[OfflineMode] Controller now available, sending cache request');
           navigator.serviceWorker.controller.postMessage({
             type: 'CACHE_DATA_FILES'
           });
-          // Wait for cache completion
           await cacheCompletePromise;
-        } else {
-          console.error('[OfflineMode] Still no controller after waiting');
         }
       }
 
-      // Mark download as complete
+      // Finalize progress
       clearInterval(progressInterval);
       setDownloadProgress(100);
       
-      // Short delay before finalizing
+      // Enable offline mode after a brief delay
       setTimeout(() => {
         setIsDownloading(false);
         setIsOfflineMode(true);
@@ -383,7 +399,7 @@ export function useOfflineMode() {
         });
       }, 500);
     } catch (error) {
-      console.error('[OfflineMode] Failed to enable offline mode:', error);
+      console.error('[OfflineMode] Failed to cache data:', error);
       setIsDownloading(false);
       setDownloadProgress(0);
       
@@ -398,6 +414,7 @@ export function useOfflineMode() {
 
   const disableOfflineMode = () => {
     setIsOfflineMode(false);
+    setDownloadProgress(0);
     toast({
       title: "Offline mode disabled",
       description: "App will now fetch the latest data from the server.",
@@ -413,12 +430,14 @@ export function useOfflineMode() {
     }
   };
 
-  // This helps manually reload service worker if needed
+  // Function to manually reload the service worker
   const reloadServiceWorker = async () => {
     if (!isServiceWorkerSupported) return false;
     
+    setIsCheckingServiceWorker(true);
+    
     try {
-      // Try to register the service worker again
+      // Force service worker update
       if ((window as any).swRegistration) {
         await (window as any).swRegistration.update();
       } else {
@@ -429,10 +448,16 @@ export function useOfflineMode() {
         (window as any).swRegistration = registration;
       }
       
-      // Wait for it to become ready
+      // Skip waiting if there's a waiting worker
+      if ((window as any).swRegistration?.waiting) {
+        (window as any).swRegistration.waiting.postMessage({ type: 'SKIP_WAITING' });
+      }
+      
+      // Wait for it to be ready
       return await waitForServiceWorker(5000);
     } catch (error) {
       console.error('[OfflineMode] Failed to reload service worker:', error);
+      setIsCheckingServiceWorker(false);
       return false;
     }
   };

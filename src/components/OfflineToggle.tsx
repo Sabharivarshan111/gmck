@@ -30,7 +30,7 @@ export function OfflineToggle() {
     const timeoutId = setTimeout(() => {
       setRetryCount(prev => prev + 1);
       handleRetryServiceWorker();
-    }, 5000);
+    }, 3000);
     
     return () => clearTimeout(timeoutId);
   }, [isServiceWorkerSupported, isServiceWorkerReady, retryCount, isRetrying]);

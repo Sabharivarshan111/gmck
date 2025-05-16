@@ -147,6 +147,11 @@ self.addEventListener('fetch', (event) => {
 
 // Listen for messages from the client
 self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+    console.log('Service Worker: Skip waiting requested, becoming active');
+  }
+  
   if (event.data && event.data.type === 'CACHE_DATA_FILES') {
     event.waitUntil(
       caches.open(DATA_CACHE_NAME).then((cache) => {
