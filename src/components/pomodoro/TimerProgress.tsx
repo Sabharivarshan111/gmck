@@ -22,19 +22,16 @@ export const TimerProgress: React.FC<TimerProgressProps> = ({
     if (theme === "blackpink") {
       return {
         bg: "bg-black",
-        indicator: "bg-pink-500",
         text: "text-pink-400"
       };
     } else if (theme === "dark") {
       return {
         bg: "bg-gray-800",
-        indicator: "bg-white",
         text: "text-gray-400"
       };
     } else {
       return {
         bg: "bg-gray-200",
-        indicator: "bg-gray-900",
         text: "text-gray-600"
       };
     }
@@ -48,7 +45,6 @@ export const TimerProgress: React.FC<TimerProgressProps> = ({
         <Progress 
           value={progressPercentage} 
           className={`h-1.5 ${styles.bg}`} 
-          indicatorClassName={styles.indicator} 
         />
       </div>
       
