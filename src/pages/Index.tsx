@@ -1,3 +1,4 @@
+
 import { useEffect } from "react";
 import QuestionBank from "@/components/QuestionBank";
 import { InstallPrompt } from "@/components/InstallPrompt";
@@ -5,6 +6,7 @@ import { AiChat } from "@/components/AiChat";
 import PomodoroTimer from "@/components/PomodoroTimer";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { useTheme } from "@/components/theme/ThemeProvider";
+import { OfflineIndicator } from "@/components/OfflineIndicator";
 
 const Index = () => {
   const { theme } = useTheme();
@@ -16,6 +18,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background overflow-x-hidden relative">
       <InstallPrompt />
+      <OfflineIndicator />
       <div className="container mx-auto px-4 py-6">
         <div className="flex flex-col items-center animate-fade-in">
           <div className="w-full mb-8">
