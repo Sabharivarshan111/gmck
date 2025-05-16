@@ -1,17 +1,32 @@
 
 import { useOfflineMode } from "@/hooks/use-offline-mode";
-import { WifiOff, Wifi, AlertTriangle } from "lucide-react";
+import { WifiOff, Wifi, AlertTriangle, Loader } from "lucide-react";
 
 export function OfflineIndicator() {
   const { 
     isOfflineMode, 
     isOnline, 
-    isServiceWorkerSupported, 
-    isServiceWorkerReady 
+    isServiceWorkerSupported,
+    isServiceWorkerReady,
+    isCheckingServiceWorker
   } = useOfflineMode();
 
-  // Only show the indicator when there's something to show
-  if (!isOfflineMode && isOnline && (isServiceWorkerSupported || !isServiceWorkerReady)) {
+  // Show when service worker is being initialized
+  if (isCheckingServiceWorker) {
+    return (
+      <div className="fixed bottom-20 left-1/2 transform -translate-x-1/2 py-1 px-3 rounded-full 
+        bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 
+        border border-blue-200 dark:border-blue-800/50 
+        shadow-lg flex items-center gap-1.5 text-xs font-medium z-50"
+      >
+        <Loader className="h-3 w-3 animate-spin" />
+        <span>Initializing offline capabilities...</span>
+      </div>
+    );
+  }
+
+  // Only show other indicators when there's something to show
+  if (!isOfflineMode && isOnline && (isServiceWorkerSupported && isServiceWorkerReady)) {
     return null;
   }
 
@@ -32,6 +47,10 @@ export function OfflineIndicator() {
     bgClass = "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300 border border-yellow-200 dark:border-yellow-800/50";
     icon = <AlertTriangle className="h-3 w-3" />;
     message = "Offline mode not supported";
+  } else if (!isServiceWorkerReady) {
+    bgClass = "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300 border border-yellow-200 dark:border-yellow-800/50";
+    icon = <AlertTriangle className="h-3 w-3" />;
+    message = "Offline capabilities initializing";
   }
 
   return (

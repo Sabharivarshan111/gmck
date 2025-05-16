@@ -62,7 +62,18 @@ self.addEventListener('activate', (event) => {
           })
         );
       })
-    ])
+    ]).then(() => {
+      console.log('Service Worker: Claimed all clients and cleared old caches');
+      // This helps with debugging
+      self.clients.matchAll().then(clients => {
+        clients.forEach(client => {
+          client.postMessage({ 
+            type: 'SW_ACTIVATED', 
+            timestamp: new Date().getTime() 
+          });
+        });
+      });
+    })
   );
 });
 
@@ -140,7 +151,18 @@ self.addEventListener('message', (event) => {
     event.waitUntil(
       caches.open(DATA_CACHE_NAME).then((cache) => {
         console.log('Service Worker: Caching Data Files');
-        return cache.addAll(DATA_FILES);
+        return cache.addAll(DATA_FILES).then(() => {
+          // Notify clients that caching is complete
+          self.clients.matchAll().then(clients => {
+            clients.forEach(client => {
+              client.postMessage({ 
+                type: 'CACHE_COMPLETE', 
+                timestamp: new Date().getTime() 
+              });
+            });
+          });
+          return true;
+        });
       })
     );
   }
@@ -153,4 +175,28 @@ self.addEventListener('message', (event) => {
       timestamp: new Date().getTime()
     });
   }
+
+  // Add a ping/pong mechanism to check if service worker is alive
+  if (event.data && event.data.type === 'PING') {
+    const client = event.source;
+    if (client) {
+      client.postMessage({
+        type: 'PONG',
+        timestamp: new Date().getTime()
+      });
+    }
+  }
+});
+
+// Immediately notify when the service worker becomes controlling
+self.addEventListener('controllerchange', () => {
+  console.log('Service Worker: Controller changed');
+  self.clients.matchAll().then(clients => {
+    clients.forEach(client => {
+      client.postMessage({ 
+        type: 'CONTROLLER_CHANGE', 
+        timestamp: new Date().getTime() 
+      });
+    });
+  });
 });
