@@ -48,7 +48,7 @@ self.addEventListener('activate', (event) => {
   // Take control of all clients as soon as it activates
   event.waitUntil(
     Promise.all([
-      clients.claim(), // This is crucial - take control of all clients immediately
+      clients.claim(),
       caches.keys().then((cacheNames) => {
         return Promise.all(
           cacheNames.map((cacheName) => {
@@ -62,18 +62,7 @@ self.addEventListener('activate', (event) => {
           })
         );
       })
-    ]).then(() => {
-      console.log('Service Worker: Claimed all clients and cleared old caches');
-      // This helps with debugging
-      self.clients.matchAll().then(clients => {
-        clients.forEach(client => {
-          client.postMessage({ 
-            type: 'SW_ACTIVATED', 
-            timestamp: new Date().getTime() 
-          });
-        });
-      });
-    })
+    ])
   );
 });
 
@@ -147,61 +136,12 @@ self.addEventListener('fetch', (event) => {
 
 // Listen for messages from the client
 self.addEventListener('message', (event) => {
-  if (event.data && event.data.type === 'SKIP_WAITING') {
-    self.skipWaiting();
-    console.log('Service Worker: Skip waiting requested, becoming active');
-  }
-  
   if (event.data && event.data.type === 'CACHE_DATA_FILES') {
     event.waitUntil(
       caches.open(DATA_CACHE_NAME).then((cache) => {
         console.log('Service Worker: Caching Data Files');
-        return cache.addAll(DATA_FILES).then(() => {
-          // Notify clients that caching is complete
-          self.clients.matchAll().then(clients => {
-            clients.forEach(client => {
-              client.postMessage({ 
-                type: 'CACHE_COMPLETE', 
-                timestamp: new Date().getTime() 
-              });
-            });
-          });
-          return true;
-        });
+        return cache.addAll(DATA_FILES);
       })
     );
   }
-
-  // Add a new message type to check if service worker is ready
-  if (event.data && event.data.type === 'IS_READY') {
-    // Respond to the client confirming the service worker is ready
-    event.ports[0].postMessage({ 
-      ready: true,
-      timestamp: new Date().getTime()
-    });
-  }
-
-  // Add a ping/pong mechanism to check if service worker is alive
-  if (event.data && event.data.type === 'PING') {
-    const client = event.source;
-    if (client) {
-      client.postMessage({
-        type: 'PONG',
-        timestamp: new Date().getTime()
-      });
-    }
-  }
-});
-
-// Immediately notify when the service worker becomes controlling
-self.addEventListener('controllerchange', () => {
-  console.log('Service Worker: Controller changed');
-  self.clients.matchAll().then(clients => {
-    clients.forEach(client => {
-      client.postMessage({ 
-        type: 'CONTROLLER_CHANGE', 
-        timestamp: new Date().getTime() 
-      });
-    });
-  });
 });
