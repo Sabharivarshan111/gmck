@@ -1,10 +1,8 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
-import { useTripleTap } from '@/hooks/use-triple-tap';
-import { useDoubleTap } from '@/hooks/use-double-tap';
 
 interface QuestionCardEnhancedProps {
   question: string;
@@ -17,6 +15,11 @@ const QuestionCardEnhanced: React.FC<QuestionCardEnhancedProps> = ({ question, i
   
   // Generate a unique ID for the question for localStorage
   const questionId = `question-enhanced-${index}`;
+  
+  // Create refs to track tap counts and timing
+  const tapCount = useRef(0);
+  const lastTapTime = useRef(0);
+  const tapTimeoutRef = useRef<number | null>(null);
   
   // Load completion status from localStorage on mount
   useEffect(() => {
@@ -31,8 +34,56 @@ const QuestionCardEnhanced: React.FC<QuestionCardEnhancedProps> = ({ question, i
     localStorage.setItem(questionId, isCompleted.toString());
   }, [isCompleted, questionId]);
   
+  // Clean up timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (tapTimeoutRef.current !== null) {
+        window.clearTimeout(tapTimeoutRef.current);
+      }
+    };
+  }, []);
+  
+  const resetTapCount = () => {
+    tapCount.current = 0;
+  };
+  
+  // Single tap handler that determines whether to trigger double or triple tap
+  const handleTap = () => {
+    const now = Date.now();
+    const tapDelay = 500; // Using the same delay as in triple tap hook
+    const timeSinceLastTap = now - lastTapTime.current;
+    
+    // Clear any existing timeout
+    if (tapTimeoutRef.current !== null) {
+      window.clearTimeout(tapTimeoutRef.current);
+    }
+    
+    if (timeSinceLastTap > tapDelay) {
+      // Too much time has passed, reset counter
+      tapCount.current = 1;
+    } else {
+      // Increment tap count
+      tapCount.current += 1;
+    }
+    
+    lastTapTime.current = now;
+    
+    // Set a timeout to process the tap sequence after the delay
+    tapTimeoutRef.current = window.setTimeout(() => {
+      if (tapCount.current === 2) {
+        // Double tap detected - trigger MCQ generation
+        handleDoubleTapAction();
+      } else if (tapCount.current === 3) {
+        // Triple tap detected - trigger answer request
+        handleTripleTapAction();
+      }
+      // Reset for next sequence
+      resetTapCount();
+    }, tapDelay);
+  };
+  
   // Triple tap handler for getting answers
-  const handleTripleTap = useTripleTap(() => {
+  const handleTripleTapAction = () => {
     // Show processing animation
     setTapStatus('processing-answer');
     
@@ -57,10 +108,10 @@ const QuestionCardEnhanced: React.FC<QuestionCardEnhancedProps> = ({ question, i
         setTapStatus('idle');
       }, 3000);
     }, 100);
-  });
+  };
   
   // Double tap handler for MCQs
-  const handleDoubleTap = useDoubleTap(() => {
+  const handleDoubleTapAction = () => {
     // Show processing animation
     setTapStatus('processing-mcq');
     
@@ -86,12 +137,6 @@ const QuestionCardEnhanced: React.FC<QuestionCardEnhancedProps> = ({ question, i
         setTapStatus('idle');
       }, 3000);
     }, 100);
-  });
-  
-  const handleClick = (e: React.MouseEvent) => {
-    // Support both double and triple tap behaviors
-    handleDoubleTap();
-    handleTripleTap();
   };
   
   const handleCheckboxChange = (checked: boolean) => {
@@ -102,7 +147,7 @@ const QuestionCardEnhanced: React.FC<QuestionCardEnhancedProps> = ({ question, i
     <div id={`question-enhanced-${index}`}>
       <Card 
         className="mb-2 border-gray-800 hover:border-gray-700 transition-colors cursor-pointer question-card" 
-        onClick={handleClick}
+        onClick={handleTap}
       >
         <CardContent className="p-3 text-left text-sm flex items-start justify-between">
           <div className="flex items-start gap-2">

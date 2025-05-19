@@ -1,9 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
-import { useTripleTap } from '@/hooks/use-triple-tap';
-import { useDoubleTap } from '@/hooks/use-double-tap';
 import { useTheme } from '@/components/theme/ThemeProvider';
 
 interface QuestionCardProps {
@@ -16,6 +14,11 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, index }) => {
   const [tapStatus, setTapStatus] = useState<'idle' | 'processing-answer' | 'processing-mcq'>('idle');
   const asteriskCount = countAsterisks(question);
   const { theme } = useTheme();
+  
+  // Create refs to track tap counts and timing
+  const tapCount = useRef(0);
+  const lastTapTime = useRef(0);
+  const tapTimeoutRef = useRef<number | null>(null);
   
   const questionId = `question-${question.slice(0, 50).replace(/\s+/g, '-')}`;
   const pageNumber = extractPageNumber(question);
@@ -31,7 +34,56 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, index }) => {
     localStorage.setItem(questionId, isCompleted.toString());
   }, [isCompleted, questionId]);
   
-  const handleTripleTap = useTripleTap(() => {
+  // Clean up timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (tapTimeoutRef.current !== null) {
+        window.clearTimeout(tapTimeoutRef.current);
+      }
+    };
+  }, []);
+  
+  const resetTapCount = () => {
+    tapCount.current = 0;
+  };
+  
+  // Single tap handler that determines whether to trigger double or triple tap
+  const handleTap = () => {
+    const now = Date.now();
+    const tapDelay = 500; // Using the same delay as in triple tap hook
+    const timeSinceLastTap = now - lastTapTime.current;
+    
+    // Clear any existing timeout
+    if (tapTimeoutRef.current !== null) {
+      window.clearTimeout(tapTimeoutRef.current);
+    }
+    
+    if (timeSinceLastTap > tapDelay) {
+      // Too much time has passed, reset counter
+      tapCount.current = 1;
+    } else {
+      // Increment tap count
+      tapCount.current += 1;
+    }
+    
+    lastTapTime.current = now;
+    
+    // Set a timeout to process the tap sequence after the delay
+    tapTimeoutRef.current = window.setTimeout(() => {
+      if (tapCount.current === 2) {
+        // Double tap detected - trigger MCQ generation
+        handleDoubleTapAction();
+      } else if (tapCount.current === 3) {
+        // Triple tap detected - trigger answer request
+        handleTripleTapAction();
+      }
+      // Reset for next sequence
+      resetTapCount();
+    }, tapDelay);
+  };
+  
+  // The action to perform on triple tap
+  const handleTripleTapAction = () => {
     const cleanedQuestion = getCleanQuestionText(question);
     setTapStatus('processing-answer');
     const event = new CustomEvent('ai-triple-tap-answer', {
@@ -45,10 +97,10 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, index }) => {
         setTapStatus('idle');
       }, 3000);
     }, 100);
-  });
+  };
   
-  // Add double-tap handler for MCQs
-  const handleDoubleTap = useDoubleTap(() => {
+  // The action to perform on double tap
+  const handleDoubleTapAction = () => {
     const cleanedQuestion = getCleanQuestionText(question);
     setTapStatus('processing-mcq');
     
@@ -70,7 +122,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, index }) => {
         setTapStatus('idle');
       }, 3000);
     }, 100);
-  });
+  };
   
   const handleCheckboxChange = (checked: boolean) => {
     setIsCompleted(checked);
@@ -78,12 +130,6 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, index }) => {
 
   const handleCheckboxClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-  };
-  
-  // Combined click handler for both triple and double tap
-  const handleCardClick = () => {
-    handleTripleTap();
-    handleDoubleTap();
   };
 
   const getCardBgClass = () => {
@@ -132,7 +178,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, index }) => {
     <div id={`question-${index}`}>
       <Card 
         className={`mb-2 ${getCardBgClass()} transition-colors cursor-pointer question-card relative`}
-        onClick={handleCardClick}
+        onClick={handleTap}
       >
         <CardContent className="p-3 text-left text-sm flex items-start justify-between">
           <div className="flex items-start gap-2">
