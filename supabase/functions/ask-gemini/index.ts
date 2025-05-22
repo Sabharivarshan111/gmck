@@ -339,8 +339,8 @@ serve(async (req) => {
 
     // Create a client instance
     const genAI = new GoogleGenerativeAI(apiKey);
-    // Use Gemini 2.0 Flash
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+    // Use Gemini 2.5 Flash - Updated from 2.0 to 2.5
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
     // Extract the actual question content without any prefix
     const actualQuestion = isTripleTap ? prompt.replace(/Triple-tapped:|triple-tapped:/i, "").trim() : prompt;
