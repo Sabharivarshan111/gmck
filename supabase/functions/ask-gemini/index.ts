@@ -338,8 +338,8 @@ serve(async (req) => {
 
     // Create a client instance
     const genAI = new GoogleGenerativeAI(apiKey);
-    // Use gemini-pro model instead of gemini-2.5-flash which is not available
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+    // Use Gemini 2.5 Pro - this is the proper model name for the 2.5 series
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
 
     // Extract the actual question content without any prefix
     const actualQuestion = isTripleTap ? prompt.replace(/Triple-tapped:|triple-tapped:/i, "").trim() : prompt;
@@ -525,20 +525,24 @@ Again, make sure all URLs are complete, correct, and from reputable medical sour
       const duration = endTime - startTime;
       logWithTimestamp(`[${requestId}] AI Model Error after ${duration}ms:`, modelError);
       
-      // Check for rate limiting error with Gemini
-      if (modelError.message && modelError.message.includes("429")) {
-        logWithTimestamp(`[${requestId}] Rate limit hit with Gemini API`);
-        return new Response(
-          JSON.stringify({ 
-            error: "Our AI service is experiencing high demand. Please try again in a moment.",
-            isRateLimit: true,
-            retryAfter: 30 // Suggest client wait 30 seconds
-          }),
-          {
-            headers: { ...corsHeaders, "Content-Type": "application/json" },
-            status: 200,
-          }
-        );
+      // Enhanced error logging to capture more specific model errors
+      if (modelError.message) {
+        logWithTimestamp(`[${requestId}] Error message: ${modelError.message}`);
+        
+        // If there's a model not found error, log it specially
+        if (modelError.message.includes("not found") || modelError.message.includes("404")) {
+          logWithTimestamp(`[${requestId}] Model not found error. Attempted to use model: gemini-1.5-pro`);
+          return new Response(
+            JSON.stringify({ 
+              error: "The AI model is currently unavailable. Our team has been notified.",
+              details: "Model configuration error"
+            }),
+            {
+              headers: { ...corsHeaders, "Content-Type": "application/json" },
+              status: 200,
+            }
+          );
+        }
       }
       
       // Improved timeout error handling with more user-friendly message
