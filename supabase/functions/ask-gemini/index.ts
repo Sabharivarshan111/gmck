@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { GoogleGenerativeAI } from "npm:@google/generative-ai@0.2.0";
 
@@ -339,8 +338,8 @@ serve(async (req) => {
 
     // Create a client instance
     const genAI = new GoogleGenerativeAI(apiKey);
-    // Use Gemini 1.5 Flash - the correct model name
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    // Use Gemini 2.0 Flash - the correct model name
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-001" });
 
     // Extract the actual question content without any prefix
     const actualQuestion = isTripleTap ? prompt.replace(/Triple-tapped:|triple-tapped:/i, "").trim() : prompt;
@@ -532,7 +531,7 @@ Again, make sure all URLs are complete, correct, and from reputable medical sour
         
         // If there's a model not found error, log it specially
         if (modelError.message.includes("not found") || modelError.message.includes("404")) {
-          logWithTimestamp(`[${requestId}] Model not found error. Attempted to use model: gemini-1.5-flash`);
+          logWithTimestamp(`[${requestId}] Model not found error. Attempted to use model: gemini-2.0-flash-001`);
           return new Response(
             JSON.stringify({ 
               error: "The AI model is currently unavailable. Our team has been notified.",
