@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { GoogleGenerativeAI } from "npm:@google/generative-ai@0.2.0";
 
@@ -339,8 +338,8 @@ serve(async (req) => {
 
     // Create a client instance
     const genAI = new GoogleGenerativeAI(apiKey);
-    // Use Gemini 2.5 Flash - Updated from 2.0 to 2.5
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    // Use gemini-pro model instead of gemini-2.5-flash which is not available
+    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
     // Extract the actual question content without any prefix
     const actualQuestion = isTripleTap ? prompt.replace(/Triple-tapped:|triple-tapped:/i, "").trim() : prompt;
