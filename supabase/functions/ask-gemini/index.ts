@@ -1,3 +1,4 @@
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { GoogleGenerativeAI } from "npm:@google/generative-ai@0.2.0";
 
@@ -338,7 +339,7 @@ serve(async (req) => {
 
     // Create a client instance
     const genAI = new GoogleGenerativeAI(apiKey);
-    // Use Gemini 2.0 Flash - the correct model name
+    // Use Gemini 1.5 Flash - the correct model name
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     // Extract the actual question content without any prefix
