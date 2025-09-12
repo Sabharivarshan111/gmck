@@ -13,6 +13,8 @@ import { neoplasticDrugsData } from './topics/neoplasticDrugs';
 import { miscellaneousDrugsData } from './topics/miscellaneousDrugs';
 import { pathologyData } from './topics/pathology';
 import { microbiologyData } from './topics/microbiology';
+import { forensicMedicineData } from './topics/forensicMedicine';
+import { communityMedicineData } from './topics/communityMedicine';
 
 // Create a structured hierarchy with Second Year and Third Year as main categories
 export const QUESTION_BANK_DATA = {
@@ -27,11 +29,8 @@ export const QUESTION_BANK_DATA = {
   "third-year": {
     name: "Third Year",
     subtopics: {
-      // Placeholder for third year subjects - can be expanded later
-      "clinical-subjects": {
-        name: "Clinical Subjects",
-        subtopics: {}
-      }
+      "forensic-medicine": forensicMedicineData,
+      "community-medicine": communityMedicineData
     }
   }
 };
