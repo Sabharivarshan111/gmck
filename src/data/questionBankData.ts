@@ -14,7 +14,7 @@ import { miscellaneousDrugsData } from './topics/miscellaneousDrugs';
 import { pathologyData } from './topics/pathology';
 import { microbiologyData } from './topics/microbiology';
 
-// Create a structured hierarchy with Second Year as the main category
+// Create a structured hierarchy with Second Year and Third Year as main categories
 export const QUESTION_BANK_DATA = {
   "second-year": {
     name: "Second Year",
@@ -22,6 +22,16 @@ export const QUESTION_BANK_DATA = {
       "pharmacology": pharmacologyData,
       "pathology": pathologyData,
       "microbiology": microbiologyData
+    }
+  },
+  "third-year": {
+    name: "Third Year",
+    subtopics: {
+      // Placeholder for third year subjects - can be expanded later
+      "clinical-subjects": {
+        name: "Clinical Subjects",
+        subtopics: {}
+      }
     }
   }
 };
