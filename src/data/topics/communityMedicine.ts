@@ -4,38 +4,11 @@ export const communityMedicineData = {
     "paper-1": {
       name: "Paper 1",
       subtopics: {
-        "introduction-to-community-medicine": {
-          name: "Introduction to Community Medicine",
-          essay: [
-            "Definition and scope of community medicine",
-            "Concept of health and disease",
-            "Natural history of disease",
-            "Levels of prevention",
-            "Health promotion and health education"
-          ],
+        "man-and-medicine": {
+          name: "MAN & MEDICINE",
           "short-notes": [
-            "Definition of community medicine",
-            "Concept of health",
-            "Natural history of disease",
-            "Primary prevention",
-            "Health promotion"
-          ]
-        },
-        "epidemiology": {
-          name: "Epidemiology",
-          essay: [
-            "Principles of epidemiology",
-            "Descriptive epidemiology",
-            "Analytical epidemiology",
-            "Experimental epidemiology",
-            "Disease surveillance and outbreak investigation"
-          ],
-          "short-notes": [
-            "Principles of epidemiology",
-            "Descriptive epidemiology",
-            "Analytical epidemiology",
-            "Disease surveillance",
-            "Outbreak investigation"
+            "Changing concepts in public health (Feb 2009) * [Pg.no.8]",
+            "Health for all * [Pg.no.10]"
           ]
         }
       }
