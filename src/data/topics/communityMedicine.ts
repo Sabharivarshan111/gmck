@@ -6,10 +6,13 @@ export const communityMedicineData = {
       subtopics: {
         "man-and-medicine": {
           name: "MAN & MEDICINE",
-          "short-notes": [
-            "Changing concepts in public health (Feb 2009) * [Pg.no.8]",
-            "Health for all * [Pg.no.10]"
-          ]
+          "short-notes": {
+            name: "Short Notes",
+            questions: [
+              "Changing concepts in public health (Feb 2009) * [Pg.no.8]",
+              "Health for all * [Pg.no.10]"
+            ]
+          }
         }
       }
     },
