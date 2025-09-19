@@ -1,72 +1,21 @@
 export const forensicMedicineData = {
   name: "Forensic Medicine",
   subtopics: {
-    "introduction-to-forensic-medicine": {
-      name: "Introduction to Forensic Medicine",
-      essay: [
-        "Definition, scope and importance of forensic medicine",
-        "History of forensic medicine",
-        "Legal procedures and court proceedings",
-        "Expert witness and medical evidence",
-        "Medical negligence and malpractice"
-      ],
+    "legal-procedures": {
+      name: "Legal Procedures",
       "short-notes": [
-        "Definition of forensic medicine",
-        "Scope of forensic medicine",
-        "Expert witness",
-        "Medical negligence",
-        "Court proceedings"
-      ]
-    },
-    "thanatology": {
-      name: "Thanatology",
-      essay: [
-        "Definition and signs of death",
-        "Changes after death - early and late",
-        "Estimation of time since death",
-        "Autopsy procedure and techniques",
-        "Sudden natural death"
-      ],
-      "short-notes": [
-        "Signs of death",
-        "Rigor mortis",
-        "Livor mortis",
-        "Putrefaction",
-        "Autopsy procedure"
-      ]
-    },
-    "forensic-pathology": {
-      name: "Forensic Pathology",
-      essay: [
-        "Mechanical injuries - blunt force trauma",
-        "Sharp force injuries",
-        "Firearm injuries",
-        "Asphyxia and its types",
-        "Drowning and its medico-legal aspects"
-      ],
-      "short-notes": [
-        "Blunt force trauma",
-        "Sharp force injuries",
-        "Firearm injuries",
-        "Asphyxia",
-        "Drowning"
-      ]
-    },
-    "toxicology": {
-      name: "Toxicology",
-      essay: [
-        "General principles of toxicology",
-        "Alcohol poisoning",
-        "Drug abuse and addiction",
-        "Food poisoning",
-        "Industrial poisoning"
-      ],
-      "short-notes": [
-        "Principles of toxicology",
-        "Alcohol poisoning",
-        "Drug abuse",
-        "Food poisoning",
-        "Industrial poisoning"
+        "Subpoena (Aug 2008, Aug 2010, Aug 2011, Feb 2018) **** [Pg:7]",
+        "Inquest (Feb 2017, Feb 2020, Feb 2023) *** [Pg:5]",
+        "Dying declaration (Aug. 2008, Feb 2013) ** [Pg:8]",
+        "Documentary evidence (Aug. 2009, Feb 2015) ** [Pg:8]",
+        "Magistrate inquest (Aug. 2014) * [Pg:6]",
+        "Medical Etiquette (Feb 2011) * [Pg:1]",
+        "Police inquest (Feb 2010) * [Pg:5]",
+        "Session court (Aug. 2010) * [Pg:6]",
+        "Functions of Indian Medical Council (Feb 2019) * [Pg:18]",
+        "Euthanasia (Feb 2019) * [Pg:39]",
+        "Witnesses (Aug 2017) * [Pg:9]",
+        "Dying declaration (Aug 2019) * [Pg:8]"
       ]
     }
   }
