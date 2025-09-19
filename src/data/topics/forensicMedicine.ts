@@ -206,6 +206,22 @@ export const forensicMedicineData = {
           ]
         }
       }
+    },
+    "thermal-injuries": {
+      name: "THERMAL INJURIES",
+      subtopics: {
+        "short-notes": {
+          name: "Short Notes",
+          questions: [
+            "Rules of nine (Feb 2009, Aug 2014, Aug 2022) *** [Pg:245]",
+            "Pugilistic attitude (Aug. 2013, Aug 2020) ** [Pg:247]",
+            "Differentiate burns & scalds (Aug. 2009) * [Pg:244,252]",
+            "Scalds (Aug. 2008) * [Pg:252]",
+            "Arborescent markings (Feb 2013) * [Pg:257]",
+            "Difference between antermortem and postmortem burns injury (Sep 2021) * [Pg:252]"
+          ]
+        }
+      }
     }
   }
 };
