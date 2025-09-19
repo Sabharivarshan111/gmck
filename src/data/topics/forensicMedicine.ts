@@ -22,6 +22,39 @@ export const forensicMedicineData = {
           ]
         }
       }
+    },
+    "medical-law-ethics": {
+      name: "MEDICAL LAW & ETHICS",
+      subtopics: {
+        "essay": {
+          name: "Essay",
+          questions: [
+            "Define Medical negligence. Explain the various type of negligence with suitable examples. What precautions a doctor has to take to prevent a charge of negligence? (Aug. 2010) * [Pg:26]"
+          ]
+        },
+        "short-notes": {
+          name: "Short Notes",
+          questions: [
+            "Consent. (Aug 2013, Feb 2016, Aug 2016) *** [Pg:36]",
+            "Functions of Indian Medical Council (Feb 2010, Feb 2013) ** [Pg:18]",
+            "Privileged communication (Aug 2008, Aug 2010) ** [Pg:24]",
+            "Novus actus interveniens (Feb 2011, Sep 2021) ** [Pg:28]",
+            "Warning notice (Aug 2011, Feb 2022) ** [Pg:20]",
+            "Res ipsi loquitur (Feb 2011) * [Pg:28]",
+            "Therapeutic misadventures (Feb 2014) * [Pg:33]",
+            "Euthanasia (Feb 2009) * [Pg:39]",
+            "State Medical Council (Aug. 2008) * [Pg:19]",
+            "Professional misconduct (Aug. 2014) * [Pg:20]",
+            "Serious professional misconduct (Aug. 2010) * [Pg:20]",
+            "Informed consent (Aug 2009) * [Pg:36]",
+            "Composite negligence (Aug 2012) * [Pg:28]",
+            "The medical termination of pregnancy act 1971 (Feb 2018) * [Pg:312]",
+            "Vicarious liability (Aug 2019) * [Pg:34]",
+            "Privileged communication (Feb 2020) * [Pg:24]",
+            "Infamous conduct (Feb 2020) * [Pg:20]"
+          ]
+        }
+      }
     }
   }
 };
