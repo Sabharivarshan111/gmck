@@ -344,6 +344,33 @@ export const forensicMedicineData = {
           ]
         }
       }
+    },
+    "forensic-psychiatry": {
+      name: "FORENSIC PSYCHIATRY",
+      subtopics: {
+        "essay": {
+          name: "Essay",
+          questions: [
+            "Classify Insanity. What is delusion? Describe the various types of delusions? (Aug 2013) * [Pg:368]"
+          ]
+        },
+        "short-notes": {
+          name: "Short Notes",
+          questions: [
+            "Delusions? (Aug. 2009, Aug 2012, Feb 2013, Feb 2019) **** [Pg:368]",
+            "Impulse? (Feb 2009, Feb 2023) ** [Pg:369]",
+            "Age criminal responsibility? (Aug. 2009) * [Pg:376]",
+            "Hallucination? (Aug 2010) * [Pg:369]",
+            "Civil responsibility of insane person? (Aug 2015) * [Pg:375]",
+            "Mc Naughten's rule? (Aug. 2011) * [Pg:376]",
+            "Psychopathic personality? (Aug. 2013) * [Pg:370]",
+            "Hallucination (Aug 2017) * [Pg:369]",
+            "Testamentary capacity * [Pg:376]",
+            "A.L.I Test * [Pg:377]",
+            "Obsession * [Pg:369]"
+          ]
+        }
+      }
     }
   }
 };
