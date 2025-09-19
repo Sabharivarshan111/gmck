@@ -143,6 +143,34 @@ export const forensicMedicineData = {
           ]
         }
       }
+    },
+    "mechanical-injuries": {
+      name: "MECHANICAL INJURIES",
+      subtopics: {
+        "essay": {
+          name: "Essay",
+          questions: [
+            "Classify mechanical injuries, Write in detail on Abrasions? (Feb 2013) * [Pg:133,134,135,136,137]",
+            "Classify injuries, Differentiate antemortem wounds from postmortem wounds, discuss the cause of death from wounds (Feb 2009) * [Pg:133,137]",
+            "Enumerate the effects of bomb explosive injuries, what are the methods to identify mutilated bodies? (Aug 2015) * [Pg:93,182]",
+            "Define and classify injury. Describe the types and medico legal importance of Abrasions (Feb 2017) * [Pg:133,137]",
+            "Classify mechanical injuries, write in detail on abrasions and the difference between the ante-mortem and post-mortem abrasion (Aug 2022) * [Pg:133,134,135,136,137]"
+          ]
+        },
+        "short-notes": {
+          name: "Short Notes",
+          questions: [
+            "Fabricated wounds (Aug. 2009) * [Pg:158]",
+            "Difference between suicidal and homicidal cut throat wounds (Aug. 2012) * [Pg:148]",
+            "Defence wounds (Feb 2010) * [Pg:156,157,158]",
+            "Classification of laceration (Aug. 2013) * [Pg:142,143,144]",
+            "Laceration (Aug 2017) * [Pg:142,143,144,145]",
+            "Difference between entry and exit bullet wounds (Aug 2018) * [Pg:174]",
+            "Difference between Perforating and penetrating injuries (Feb 2022) * [Pg:153]",
+            "Age from wounds (Feb 2022) * [Pg:137]"
+          ]
+        }
+      }
     }
   }
 };
