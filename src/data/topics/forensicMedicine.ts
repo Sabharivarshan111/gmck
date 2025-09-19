@@ -171,6 +171,30 @@ export const forensicMedicineData = {
           ]
         }
       }
+    },
+    "regional-injuries": {
+      name: "REGIONAL INJURIES",
+      subtopics: {
+        "essay": {
+          name: "Essay",
+          questions: [
+            "Enumerate intracranial hemorrhages. Explain in detail about the extradural hemorrhage? (Aug. 2011) * [Pg:196,197]"
+          ]
+        },
+        "short-notes": {
+          name: "Short Notes",
+          questions: [
+            "Contre-coup injury (Aug 2011, Aug 2016, Aug 2020) *** [Pg:193]",
+            "Whiplash injury (Aug 2018, Feb 2023) ** [Pg:204,215]",
+            "Lucid interval in Head injuries (Feb 2010) * [Pg:197]",
+            "Sub Dural Hemorrhages (Feb 2015) * [Pg:197,198,199]",
+            "Intracranial hemorrhage (Feb 2017) * [Pg:196-202]",
+            "Types of intra-cranial hemorrhages (Aug 2019) * [Pg:196-202]",
+            "Pedestrian injuries * [Pg:212]",
+            "Comotio cordis , Cerebri *"
+          ]
+        }
+      }
     }
   }
 };
