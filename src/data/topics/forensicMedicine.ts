@@ -326,6 +326,24 @@ export const forensicMedicineData = {
           ]
         }
       }
+    },
+    "blood-stains-artefacts-fs-laboratory": {
+      name: "BLOOD STAINS, ARTEFACTS, FS LABORATORY",
+      subtopics: {
+        "short-notes": {
+          name: "Short Notes",
+          questions: [
+            "Test for blood stains (Aug. 2014) * [Pg:348]",
+            "Spectroscopic examination of blood stains (Feb 2018) * [Pg:349]",
+            "Therapeutic misadventure (Aug 2018) * [Pg:33]",
+            "Resuscitation artefacts (Feb 2019) * [Pg:359]",
+            "Disputed paternity * [Pg:353]",
+            "Locard's Principle * [Pg:365]",
+            "Polygraph * [Pg:366]",
+            "Truth serum * [Pg:367]"
+          ]
+        }
+      }
     }
   }
 };
