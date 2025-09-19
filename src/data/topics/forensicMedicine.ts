@@ -252,6 +252,27 @@ export const forensicMedicineData = {
           ]
         }
       }
+    },
+    "sterility-virginity-pregnancy-delivery": {
+      name: "STERILITY, VIRGINITY, PREGNANCY & DELIVERY",
+      subtopics: {
+        "essay": {
+          name: "Essay",
+          questions: [
+            "Define the definition and types of artificial insemination. Discuss the indication, biological, legal aspects, and precautions of artificial insemination? (Feb 2009) * [Pg:300]"
+          ]
+        },
+        "short-notes": {
+          name: "Short Notes",
+          questions: [
+            "Signs and symptoms of recent delivery in living (Feb 2011, Aug 2013, Feb 2015, Aug 2019, Aug 2022, Feb 2023) ****** [Pg:310]",
+            "Artificial insemination – Legal problems (Feb 2010,2013) ** [Pg:301]",
+            "Surrogate motherhood (Feb 2014) * [Pg:301]",
+            "Pseudocyesis (Aug. 2012) * [Pg:308]",
+            "Lochia and its medicolegal importance (Sep 2021) * [Pg:310]"
+          ]
+        }
+      }
     }
   }
 };
