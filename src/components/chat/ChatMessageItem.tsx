@@ -2,9 +2,11 @@
 import { motion } from "framer-motion";
 import { Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { cn, isValidMedicalSourceUrl } from "@/lib/utils";
 import { ChatMessage } from "@/models/ChatMessage";
 import { ReferencesSection } from "./ReferencesSection";
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 interface ChatMessageItemProps {
   message: ChatMessage;
@@ -12,81 +14,22 @@ interface ChatMessageItemProps {
 }
 
 export const ChatMessageItem = ({ message, onCopy }: ChatMessageItemProps) => {
-  // Helper to style and format code blocks and markdown in AI responses
-  const formatContent = (content: string) => {
-    if (message.role !== 'assistant') return content;
-    
-    // Check for and format code blocks
-    if (content.includes('```')) {
-      const parts = content.split(/(```(?:.*?\n)?.*?```)/gs);
-      
-      return parts.map((part, index) => {
-        if (part.startsWith('```') && part.endsWith('```')) {
-          // Extract the code without the backticks
-          const codeContent = part.replace(/```(?:.*?\n)?(.*)```/s, '$1').trim();
-          
-          return (
-            <pre key={index} className="bg-gray-800 p-3 rounded-md my-2 overflow-x-auto">
-              <code className="text-gray-100 text-xs">{codeContent}</code>
-            </pre>
-          );
-        }
-        
-        // Format markdown links
-        if (part.includes('[') && part.includes(']') && part.includes('(') && part.includes(')')) {
-          const linkFormatted = part.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, text, url) => {
-            return `<a href="${url}" target="_blank" class="text-blue-400 underline">${text}</a>`;
-          });
-          
-          return <span key={index} dangerouslySetInnerHTML={{ __html: linkFormatted }} />;
-        }
-        
-        // Format bullet lists
-        if (part.includes('\n- ')) {
-          const bulletPoints = part.split('\n- ');
-          return (
-            <div key={index} className="space-y-1 my-2">
-              {bulletPoints[0]}
-              <ul className="list-disc list-inside pl-2">
-                {bulletPoints.slice(1).map((point, i) => (
-                  <li key={i} className="ml-2">{point}</li>
-                ))}
-              </ul>
-            </div>
-          );
-        }
-        
-        // Format headings for better readability (especially in medical/pathology answers)
-        if (part.includes('\n## ') || part.includes('\n# ')) {
-          const headingFormatted = part
-            .replace(/\n## (.*?)(?:\n|$)/g, '\n<h3 class="text-lg font-bold mt-3 mb-1 text-blue-300">$1</h3>\n')
-            .replace(/\n# (.*?)(?:\n|$)/g, '\n<h2 class="text-xl font-bold mt-4 mb-2 text-blue-200">$1</h2>\n');
-          
-          return <span key={index} dangerouslySetInnerHTML={{ __html: headingFormatted }} />;
-        }
-        
-        // Check for bold text with ** or __
-        if (part.includes('**') || part.includes('__')) {
-          const boldFormatted = part
-            .replace(/\*\*(.*?)\*\*/g, '<strong class="text-white">$1</strong>')
-            .replace(/__(.*?)__/g, '<strong class="text-white">$1</strong>');
-          
-          return <span key={index} dangerouslySetInnerHTML={{ __html: boldFormatted }} />;
-        }
-        
-        // Handle numbered lists
-        if (/\n\d+\.\s/.test(part)) {
-          const listFormatted = part.replace(/\n(\d+)\.\s(.*?)(?=\n\d+\.\s|\n\n|$)/g, 
-            '\n<div class="flex gap-2 my-1"><span class="font-bold">$1.</span><span>$2</span></div>');
-          
-          return <span key={index} dangerouslySetInnerHTML={{ __html: listFormatted }} />;
-        }
-        
-        return <span key={index}>{part}</span>;
-      });
+  // Secure link renderer with validation
+  const linkRenderer = ({ href, children }: { href?: string; children: React.ReactNode }) => {
+    if (!href || !isValidMedicalSourceUrl(href)) {
+      return <span className="text-gray-400">{children}</span>;
     }
     
-    return content;
+    return (
+      <a 
+        href={href} 
+        target="_blank" 
+        rel="noopener noreferrer"
+        className="text-blue-400 underline hover:text-blue-300 transition-colors"
+      >
+        {children}
+      </a>
+    );
   };
 
   // Remove the "References:" section from the content if it exists
@@ -123,8 +66,58 @@ export const ChatMessageItem = ({ message, onCopy }: ChatMessageItemProps) => {
           </Button>
         )}
       </div>
-      <div className="whitespace-pre-wrap text-sm">
-        {formatContent(cleanContent)}
+      <div className="text-sm">
+        {message.role === 'assistant' ? (
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            components={{
+              a: linkRenderer,
+              code: ({ children, className }) => {
+                const isInline = !className;
+                return isInline ? (
+                  <code className="bg-gray-700 px-1 py-0.5 rounded text-xs text-gray-100">
+                    {children}
+                  </code>
+                ) : (
+                  <code className="text-gray-100 text-xs">{children}</code>
+                );
+              },
+              pre: ({ children }) => (
+                <pre className="bg-gray-800 p-3 rounded-md my-2 overflow-x-auto">
+                  {children}
+                </pre>
+              ),
+              h1: ({ children }) => (
+                <h1 className="text-xl font-bold mt-4 mb-2 text-blue-200">{children}</h1>
+              ),
+              h2: ({ children }) => (
+                <h2 className="text-lg font-bold mt-3 mb-1 text-blue-300">{children}</h2>
+              ),
+              h3: ({ children }) => (
+                <h3 className="text-base font-bold mt-2 mb-1 text-blue-400">{children}</h3>
+              ),
+              strong: ({ children }) => (
+                <strong className="text-white font-semibold">{children}</strong>
+              ),
+              ul: ({ children }) => (
+                <ul className="list-disc list-inside pl-2 my-2 space-y-1">{children}</ul>
+              ),
+              ol: ({ children }) => (
+                <ol className="list-decimal list-inside pl-2 my-2 space-y-1">{children}</ol>
+              ),
+              li: ({ children }) => (
+                <li className="ml-2">{children}</li>
+              ),
+              p: ({ children }) => (
+                <p className="my-1">{children}</p>
+              ),
+            }}
+          >
+            {cleanContent}
+          </ReactMarkdown>
+        ) : (
+          <div className="whitespace-pre-wrap">{cleanContent}</div>
+        )}
       </div>
       {message.role === 'user' && message.content.includes("Triple-tapped:") && (
         <div className="mt-1 text-xs text-blue-400">
