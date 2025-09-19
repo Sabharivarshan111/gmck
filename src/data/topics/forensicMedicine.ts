@@ -113,6 +113,36 @@ export const forensicMedicineData = {
           ]
         }
       }
+    },
+    "postmortem-changes": {
+      name: "POSTMORTEM CHANGES",
+      subtopics: {
+        "essay": {
+          name: "Essay",
+          questions: [
+            "Define Death. What are the Postmortem changes? What are methods of estimating the time since death? (Feb 2011, Feb 2016) ** [Pg:99,113]",
+            "Enumerate the parameters to determine the time of death. Discuss briefly about mummification and saponification (Feb 2022) * [Pg:113,126,127]",
+            "Define Death. Discuss the complications and Deaths from Anaesthesia and Surgery? (Aug. 2012) * [Pg:99,293]",
+            "Enumerate the changes that occurs in the body after death. Briefly describe Rigor mortis? (Aug. 2009) * [Pg:99,117]",
+            "What is post-mortem interval? Discuss in detail the various factors that are helpful in determining the post-mortem interval? (Feb 2014) * [Pg:130]"
+          ]
+        },
+        "short-notes": {
+          name: "Short Notes",
+          questions: [
+            "Rigor mortis (Feb 2009, Feb 2020, Feb 2023) *** [Pg:117]",
+            "Post-mortem hypostasis (Aug 2014, Feb 2017, Aug 2022) *** [Pg:114]",
+            "Changes in the eye after death (Aug 2012) * [Pg:112]",
+            "Suspended animation (Aug 2009) *",
+            "Algor mortis (Aug 2010) * [Pg:112]",
+            "Livor mortis (Feb 2013) * [Pg:112]",
+            "Cadaveric lividity (Aug 2013) * [Pg:112]",
+            "Pseudo bruisae (Aug 2012) *",
+            "Difference between postmortem hypostasis and bruisae (Aug 2011) * [Pg:141]",
+            "Adipocere (Aug 2011) * [Pg:126]"
+          ]
+        }
+      }
     }
   }
 };
