@@ -371,6 +371,68 @@ export const forensicMedicineData = {
           ]
         }
       }
+    },
+    "toxicology": {
+      name: "TOXICOLOGY",
+      subtopics: {
+        "essay": {
+          name: "Essay",
+          questions: [
+            "Enumerate the irrespirable gases. Discuss the pharmacological actions, signs and symptoms, diagnosis, treatment and post mortem appearance of Carbon Monoxide poisoning (Aug. 2012, Feb 2018) ** [Pg:473]",
+            "Describe the procedure of stomach wash with a neat labelled diagram. Add a note on antidotes (Aug 2008) * [Pg:391,392]",
+            "Describe the signs, symptoms and management in a case of Barbiturate poisoning with coma (Aug 2009) * [Pg:445]",
+            "Describe the Signs, symptoms, Treatment and Autopsy findings in a case of Chronic Lead poisoning (Feb 2013) * [Pg:412]",
+            "Define poison. What are the characters of ideal homicidal poisoning? Describe the duties of a doctor when a poisoning case was admitted in the casualty (Feb 2011) * [Pg:380,384,390]",
+            "Define poisoning. Write in detail about signs, symptoms and post mortem changes of arsenic poisoning (Aug. 2014) * [Pg:408]",
+            "Describe the signs, symptoms, treatment and autopsy findings in a case of Chronic mercury poisoning (Feb 2014) * [Pg:411]",
+            "Describe the signs, symptoms, treatment and autopsy findings in a case of Cyanide poisoning (Feb 2010) * [Pg:478]",
+            "Classify poison. Describe the signs, symptoms, complications, treatment and post mortem appearances of sulfuric acid. (Feb 2016) * [Pg:402]",
+            "Define Poisoning. Discuss in detail about signs, symptoms and postmortem changes of arsenic poisoning. Differentiate between arsenic poisoning and cholera. (Feb 2023) * [Pg:408]",
+            "Classify agricultural poisons. Write in detail about the treatment and post mortem findings in a case of organo phosphorous compound poisoning (Feb 2020) * [Pg:395]",
+            "Phenol poisoning * [Pg:405]",
+            "Insecticides * [Pg:395]",
+            "Drunkeness * [Pg:435]"
+          ]
+        },
+        "short-notes": {
+          name: "Short Notes",
+          questions: [
+            "Ideal Suicidal poisons? (Aug 2013, Feb 2014) ** [Pg:383]",
+            "Difference between Russell viper and cobra (Feb 2016, Aug 2022) ** [Pg:425]",
+            "Mushroom poisoning? (Feb 2011, Aug 2014) ** [Pg:486]",
+            "Antidotes (Feb 2017, Feb 2020) ** [Pg:392]",
+            "Viper snake bite? (Feb 2009, Sep 2021) ** [Pg:429]",
+            "Duties of medical practioners in a case of poisoning (Aug 2016, Sep 2021) ** [Pg:390]",
+            "Blood picture in chronic lead poisoning? (Aug. 2009) * [Pg:412]",
+            "Treatment of methyl alcohol poisoning? (Aug. 2009) * [Pg:441]",
+            "Signs and symptoms, treatment of cyanide poisoning? (Feb 2011) * [Pg:478]",
+            "Penicillamine? (Aug. 2014) * [Pg:394]",
+            "Treatment of OPC poisoning? (Aug. 2010) * [Pg:397]",
+            "Hydrargysism? (Aug. 2015) * [Pg:411]",
+            "Post mortem appearance of copper sulphate poisoning? (Aug. 2011) * [Pg:414]",
+            "Plant penicillin poisoning? (Aug. 2012) * [Pg:*]",
+            "Arbus precatorius? (Aug. 2014) * [Pg:421]",
+            "Ecobolics? (Feb 2014) * [Pg:313]",
+            "Spanish fly? (Aug. 2012) * [Pg:279]",
+            "Difference between poisonous and non-poisonous snake? (Aug 2008) * [Pg:426]",
+            "Ophitoxemia? (Feb 2014) * [Pg:427]",
+            "Difference between drug addiction and habituation? (Feb 2009) * [Pg:*]",
+            "War gases? (Feb 2011) * [Pg:476]",
+            "Hydrocyanic acid poisoning (Aug 2017) * [Pg:478]",
+            "Ideal homicidal poison (Aug 2018) * [Pg:383]",
+            "Arsenic poisoning (Aug 2018) * [Pg:408]",
+            "Plumbism (Aug 2019) * [Pg:412]",
+            "Carbolism (Feb 2022) * [Pg:405]",
+            "Methanol poisoning (Feb 2022) * [Pg:441]",
+            "Phytotoxin * [Pg:420]",
+            "Marihuana * [Pg:457]",
+            "Stupefying agents * [Pg:*]",
+            "Datura poisoning * [Pg:454]",
+            "Run amok * [Pg:457]",
+            "Consumer's Protection Act * [Pg:494]"
+          ]
+        }
+      }
     }
   }
 };
