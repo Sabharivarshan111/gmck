@@ -79,6 +79,25 @@ export const forensicMedicineData = {
           ]
         }
       }
+    },
+    "medicolegal-autopsy": {
+      name: "MEDICOLEGAL AUTOPSY",
+      subtopics: {
+        "short-notes": {
+          name: "Short Notes",
+          questions: [
+            "Air embolism – cause and autopsy findings? (Aug. 2011) * [Pg:80]",
+            "Psychological autopsy? (Aug. 2012) * [Pg:88]",
+            "Preservation of viscera for histopathological examination? (Feb 2010) * [Pg:91]",
+            "Virtual autopsy (Feb 2018) * [Pg:87]",
+            "Exhumation (Feb 2019) * [Pg:97]",
+            "Medicolegal autopsy * [Pg:75]",
+            "Undertaker's fracture * [Pg:80]",
+            "Method of examination of heart in autopsy * [Pg:81]",
+            "Types of incision and organ removal techniques *"
+          ]
+        }
+      }
     }
   }
 };
