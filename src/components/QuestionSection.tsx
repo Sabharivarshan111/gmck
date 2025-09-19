@@ -10,6 +10,7 @@ interface QuestionSectionProps {
 }
 
 const QuestionSection = ({ subtopics, activeTab }: QuestionSectionProps) => {
+  if (!subtopics || typeof subtopics !== 'object') return null;
   return (
     <>
       {Object.entries(subtopics).map(([questionTypeKey, questionType]) => {

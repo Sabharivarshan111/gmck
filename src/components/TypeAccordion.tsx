@@ -16,6 +16,10 @@ interface TypeAccordionProps {
 }
 
 const TypeAccordion = ({ typeKey, type, isExpanded = false, activeTab }: TypeAccordionProps) => {
+  const derivedSubtopics = (type as any)?.subtopics ?? {
+    ...(type as any)?.essay ? { essay: (type as any).essay } : {},
+    ...(((type as any)?.["short-notes"] || (type as any)?.["short-note"]) ? { "short-notes": (type as any)["short-notes"] || (type as any)["short-note"] } : {})
+  };
   return (
     <AccordionItem 
       value={typeKey}
@@ -30,7 +34,7 @@ const TypeAccordion = ({ typeKey, type, isExpanded = false, activeTab }: TypeAcc
       <AccordionContent>
         <div className="space-y-4 px-4">
           <QuestionSection 
-            subtopics={type.subtopics} 
+            subtopics={derivedSubtopics} 
             activeTab={activeTab} 
           />
         </div>
