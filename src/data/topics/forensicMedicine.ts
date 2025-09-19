@@ -55,6 +55,30 @@ export const forensicMedicineData = {
           ]
         }
       }
+    },
+    "identification": {
+      name: "IDENTIFICATION",
+      subtopics: {
+        "short-notes": {
+          name: "Short Notes",
+          questions: [
+            "Gustafson's method (Aug 2011, Feb 2013, Aug 2016) *** [Pg:50]",
+            "Dactylography (Feb 2009, Aug 2010) ** [Pg:62]",
+            "Corpus delicti (Feb 2010, Aug 2020) ** [Pg:41]",
+            "Dermatoglyphics (Feb 2014) * [Pg:62]",
+            "Intersex (Aug 2013) * [Pg:43]",
+            "Chieloscopy (Feb 2011) * [Pg:64]",
+            "Application of X-ray in FM (Aug 2008) * [Pg:66]",
+            "Gustafson's changes in teeth (Aug 2022) * [Pg:50]",
+            "Dactylography (Aug 2020) * [Pg:62]",
+            "Intersex (Feb 2022) * [Pg:43]",
+            "Hair * [Pg:69]",
+            "Gonadal dysgenesis * [Pg:43]",
+            "Rule of hasse * [Pg:61]",
+            "Tattoo marks * [Pg:67]"
+          ]
+        }
+      }
     }
   }
 };
