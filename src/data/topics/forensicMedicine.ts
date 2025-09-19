@@ -273,6 +273,35 @@ export const forensicMedicineData = {
           ]
         }
       }
+    },
+    "sexual-offences": {
+      name: "SEXUAL OFFENCES",
+      subtopics: {
+        "essay": {
+          name: "Essay",
+          questions: [
+            "Define Rape. Describe the procedure of examination of a victim of Rape. Add a note on materials to be collected for laboratory investigations? (Aug. 2010, Aug 2014) ** [Pg:320,323,328]"
+          ]
+        },
+        "short-notes": {
+          name: "Short Notes",
+          questions: [
+            "Sodomy (Aug 2008, Aug 2014) ** [Pg:332]",
+            "Molestation (Aug 2012) *",
+            "Indecent assault (Feb 2014) * [Pg:331]",
+            "Fetichism (Aug 2013) * [Pg:335]",
+            "Chemical examination of seminal fluids (Aug 2015) * [Pg:337]",
+            "Custodial rape * [Pg:320]",
+            "Section 375 of IPC * [Pg:320]",
+            "Genital examination in rape victim * [Pg:325]",
+            "Collection of evidence in rape cases * [Pg:324]",
+            "Sexual perversions * [Pg:334]",
+            "Masochism * [Pg:335]",
+            "Masturbation * [Pg:335]",
+            "Precipitin test * [Pg:338]"
+          ]
+        }
+      }
     }
   }
 };
