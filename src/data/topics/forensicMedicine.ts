@@ -195,6 +195,17 @@ export const forensicMedicineData = {
           ]
         }
       }
+    },
+    "medicolegal-aspects-of-wounds": {
+      name: "MEDICOLEGAL ASPECTS OF WOUNDS",
+      subtopics: {
+        "short-notes": {
+          name: "Short Notes",
+          questions: [
+            "Grievous hurt (Aug 2008, Aug 2010, Feb 2015, Aug 2018) **** [Pg:224]"
+          ]
+        }
+      }
     }
   }
 };
