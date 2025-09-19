@@ -222,6 +222,36 @@ export const forensicMedicineData = {
           ]
         }
       }
+    },
+    "mechanical-asphyxia": {
+      name: "MECHANICAL ASPHYXIA",
+      subtopics: {
+        "essay": {
+          name: "Essay",
+          questions: [
+            "Classify asphyxial deaths. Describe Postmortem findings in a case of Drowning? (Aug. 2013, Feb 2015) ** [Pg:101,285]",
+            "Define drowning. What are the types of drowning? Describe the postmortem features in a case of typical drowning? (Feb 2010) * [Pg:284]",
+            "Define drowning. Discuss in detail the types, pathophysiology and postmortem changes in drowning. Differentiate between ante mortem and postmortem drowning. (Aug 2018) * [Pg:284,285]",
+            "Define and classify Hanging. Explain about post mortem appearance of typical hanging? (Aug. 2011) * [Pg:261]",
+            "Classify mechanical asphyxial forms of death and difference between hanging and strangulation by ligature? (Aug 2008) * [Pg:261,272]",
+            "Define and classify asphyxia. Write in detail about the types and post mortem findings of hanging (Aug 2017) * [Pg:101,261]",
+            "Define asphyxia. Enumerate the types of hanging. Describe in detail the postmortem findings in case of hanging. (Aug 2019) * [Pg:101,261]",
+            "Classify violent asphyxia deaths. Discuss about the specific autopsy findings in death due to hanging. Enumerate the causes of death in death due to hanging. (Sep 2021) * [Pg:101,261]"
+          ]
+        },
+        "short-notes": {
+          name: "Short Notes",
+          questions: [
+            "Café coronary (Aug 2009, Feb 2011, Feb 2020) *** [Pg:282]",
+            "Traumatic asphyxia (Aug 2010, Aug 2013) ** [Pg:282]",
+            "Sexual Asphyxia (Feb 2009, Feb 2011) ** [Pg:292]",
+            "Diatoms test (Aug 2014, Feb 2018) ** [Pg:289]",
+            "Fracture of hyoid bone (Feb 2009) * [Pg:278]",
+            "Mugging (Aug 2012) * [Pg:279]",
+            "Drowning in the sea water (Feb 2016) * [Pg:285,287,288]"
+          ]
+        }
+      }
     }
   }
 };
