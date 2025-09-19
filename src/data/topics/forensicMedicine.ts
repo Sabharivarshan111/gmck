@@ -302,6 +302,30 @@ export const forensicMedicineData = {
           ]
         }
       }
+    },
+    "abortion-and-infant-deaths": {
+      name: "ABORTION AND INFANT DEATHS",
+      subtopics: {
+        "essay": {
+          name: "Essay",
+          questions: [
+            "Define and classify abortion. Write in detail about the diagnosis and evidence of criminal abortion in a dead. Add a note on medico legal importance of criminal abortion. (Feb 2019) * [Pg:313,316-318]"
+          ]
+        },
+        "short-notes": {
+          name: "Short Notes",
+          questions: [
+            "Medical termination of pregnancy (MTP act 1971) (Aug 2011, Aug 2020) ** [Pg:312,313]",
+            "Criminal abortion? (Feb 2010, Aug 2020) ** [Pg:312]",
+            "Complications of Criminal Abortion? (Feb 2013) * [Pg:316]",
+            "Hydrostatic test? (Feb 2009) * [Pg:341]",
+            "Shaken baby syndrome? (Aug. 2012) * [Pg:345]",
+            "Caffey's syndrome? (Feb 2014) * [Pg:345]",
+            "Battered baby syndrome (Feb 2019) * [Pg:345]",
+            "Difference between respired and un-respired lung in foetal autopsy (Sep 2021) * [Pg:340,341]"
+          ]
+        }
+      }
     }
   }
 };
