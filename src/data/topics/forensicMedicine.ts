@@ -98,6 +98,21 @@ export const forensicMedicineData = {
           ]
         }
       }
+    },
+    "death-and-its-causes": {
+      name: "DEATH AND ITS CAUSES",
+      subtopics: {
+        "short-notes": {
+          name: "Short Notes",
+          questions: [
+            "Obscure autopsy (Aug 2008, Feb 2011, Feb 2014, Aug 2022) **** [Pg:106]",
+            "Syncope (Feb 2010) * [Pg:104]",
+            "Rule of 12 (Feb 2016) *",
+            "Sudden death (Feb 2018) * [Pg:110]",
+            "Harvard criteria * [Pg:100]"
+          ]
+        }
+      }
     }
   }
 };
