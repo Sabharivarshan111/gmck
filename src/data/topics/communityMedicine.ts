@@ -597,6 +597,86 @@ export const communityMedicineData = {
               "26. Fertility indicators. * (Feb 2023) [Pg no 563]"
             ]
           }
+        },
+        "obstetrics-pediatrics-and-geriatrics": {
+          name: "OBSTETRICS, PEDIATRICS & GERIATRICS",
+          essay: {
+            name: "Essay",
+            questions: [
+              "1. Define infant mortality. Discuss the various factors affecting infant mortality and preventive measures to reduce the infant mortality ** (Aug 2008, Feb 2014) [pg no:646]",
+              "2. Briefly explain the common MCH indicators used. Define perinatal mortality. Describe the services to be strengthened to bring down this mortality. ** (Feb 2019, Feb 2021) [Pg no:635]",
+              "3. Enumerate the Causes, the factors affecting Infant mortality in India. Suggest the preventive and social measures to reduce infant mortality in India * (Aug 2012) [Pg no:648]",
+              "4. What is risk approach in MCH? Who are at risk pregnant women? Write preventive measures for maternal mortality. * (Feb 2009) [Pg no:638]",
+              "5. What are the indicators of maternal and child health care? Discuss in detail the Causes and prevention of perinatal mortality. * (Aug 2016) [Pg no:642]",
+              "6. Define Maternal Mortality Rate. Write in detail about the measures and Programs for reducing it. * (Feb 2015) [Pg no:635]",
+              "7. Describe the advantages of breast feeding. How can breast feeding be assessed? Add a note on Baby friendly Hospital initiative. * (Aug 2014) [Pg no:615]",
+              "8. Add details about the various aspects of school health services in India? * (Feb 2014) [pg no:658]",
+              "9. What are the medical causes and social factors influencing maternal mortality in India? Mention the preventive and social measures to reduce maternal mortality in India * (Aug 2013) [Pg no:639]",
+              "10. Describe in detail the nutritional problems in Public Health. Mention the services delivered by Integrated Child Development Services. * (Feb 2011) [Pg no:673,753]",
+              "11. List the common problems of the elderly. Write about the social security measures for the elderly in India. * (Feb 2016) [Pg:677]",
+              "12. Define term management. Discuss in detail about the various management methods and techniques * (Feb 2013) [Pg:]",
+              "13. Define maternal mortality. Discuss the causes of maternal mortality. * [Pg:635]",
+              "14. Discuss in detail about the various measures taken under national health mission to reduce the maternal mortality? * (Feb 2017) [Pg:640]",
+              "15. Discuss the causes and prevention of infant mortality in India. * (Feb 2018) [Pg:647]",
+              "16. Mention the objectives of the integrated child development services scheme. What are all the services provided by the Anganwadi worker for pre-school children and ante natal mothers in the Centre? * (Feb 2019) [Pg:673]",
+              "17. Mention the objectives of the antenatal care. What are all the clinical, laboratory and counseling services you will provide for ante natal mothers attending health facilities? * (Aug 2019) [Pg:599]",
+              "18. Define infant mortality. Discuss the various medical and social causes and measures taken by National Health Mission to reduce infant mortality? * (Feb 2022) [Pg:646]",
+              "19. List the various health problems of the school child. Discuss in detail about the objectives and aspects of School Health Services? * (Aug. 2022) [Pg:657]",
+              "20. What are the indicators of MCH care? Discuss in detail the factors affecting Infant Mortality * (Aug 2011) [Pg:635]",
+              "21. Role of multipurpose health care workers female in delivery of MCH service in rural area * [Pg:632]"
+            ]
+          },
+          "short-notes": {
+            name: "Short Notes",
+            questions: [
+              "1. Growth chart and uses ***** (Aug 2008, Aug 2011, Feb 2012, Aug 2015, Aug 2017) [Pg:623]",
+              "2. Child guidance clinic ** (Feb 2011, Feb 2013) [Pg:672]",
+              "3. Health problems of the aged ** (Aug 2011, Feb 2013) [Pg:677]",
+              "4. Factors affecting infant mortality ** (Feb 2013, Aug 2014) [Pg:648]",
+              "5. Juvenile Delinquency ** (Feb 2016, Feb 2017) [Pg:665]",
+              "6. Artificial feeding and Principles ** (Feb 2012, Aug 2017) [Pg:615]",
+              "7. for measuring maternal mortality * (Feb 2014) [Pg:635]",
+              "8. Causes and prevention of maternal deaths * (Feb 2011) [Pg:640]",
+              "9. Under 5 clinics * (Feb 2010) [Pg:651]",
+              "10. Package of services under ICDS (Integrated Child Development Services) * (Aug 2013) [Pg:673]",
+              "11. Road to health chart * (Aug 2010) [Pg:622]",
+              "12. Describe briefly the essential new-born care * (Aug 2010) [Pg:606]",
+              "13. Causes of perinatal mortality in India * (Feb 2012) [Pg:643]",
+              "14. Warning signs of pregnancy * (Aug 2008) [Pg:603]",
+              "15. Prenatal diagnosis * (Aug 2012) [Pg:599]",
+              "16. Causes for Low Birth weight * (Feb 2012) [Pg:611]",
+              "17. Role of teachers in school health services * (Feb 2011) [Pg:658]",
+              "18. Healthy Ageing * (Aug 2014) [Pg:678]",
+              "19. Factors affecting the fertility. * (Feb 2017) [Pg:562]",
+              "20. Information available in partogram and its uses in peripheral hospitals. * (Aug 2018)",
+              "21. Highlight the adolescent health care services under RMNCH+A programme. * (Aug 2018) [Pg:532]",
+              "22. Classify the health problems of the aged. * (Feb 2019) [Pg:677]",
+              "23. Diseases screened for children and new born under Rashtriya Bal Swathya Karyakram (RBSK)? * (Feb 2019) [Pg:529]",
+              "24. Differentiate between preterm and small for date babies and mention the social and biological causes for the same? * [Pg:612,613]",
+              "25. Define 'Partograph\". What are the applications of partograph? * (Feb 2020)",
+              "26. Initiatives under national program for health care of elderly. * (Feb 2021) [Pg:540]",
+              "27. Nutritional surveillance versus growth monitoring? * (Feb 2022) [Pg:765]",
+              "28. Mission Indradhanush? * (Feb 2022) [Pg:508]",
+              "29. Describe briefly the essential newborn care? * (Aug 2022) [Pg:608]",
+              "30. Explain Risk approach in maternal healthcare.? * (Feb 2023) [Pg:635]",
+              "31. Neonatal screening? * (Feb 2023) [Pg:611]",
+              "32. High risk pregnancy * [Pg:602]",
+              "33. High risk strategy *",
+              "34. Approaches for measuring maternal mortality * [Pg:636]",
+              "35. Write any two objectives of postnatal care * [Pg:606]",
+              "36. Breast feeding and its advantages * [Pg:615]",
+              "37. Baby friendly hospital initiative * [Pg:617]",
+              "38. Causes and prevention of maternal mortality * [Pg:639,640]",
+              "39. Maternal Mortality Rate * [Pg:635]",
+              "40. Indicators of maternal and child health services * [Pg:635]",
+              "41. Congenital malformations * [Pg:656]",
+              "42. Objectives of school health services/programme/healthful school environment * [Pg:658]",
+              "43. Health problem among school children * [Pg:657]",
+              "44. What are the preventive measures applicable for child labour * [Pg:669]",
+              "45. Integrated child development service scheme * [Pg:673]",
+              "46. Lifestyle and health * [Pg:678]"
+            ]
+          }
         }
       }
     }
