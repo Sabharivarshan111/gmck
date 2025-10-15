@@ -480,6 +480,23 @@ export const communityMedicineData = {
               "28. Evaluate Mid-day meal programme? * (Feb 2023) [Pg:776]"
             ]
           }
+        },
+        "genetics-and-health": {
+          name: "GENETICS & HEALTH",
+          "short-notes": {
+            name: "Short Notes",
+            questions: [
+              "1. Genetic counselling **** (Aug 2011, Aug 2014, Feb 2015, Feb 2022) [Pg 955]",
+              "2. Prevention of genetic disorders. ** (Aug 2017, Aug 2022) [Pg 954]",
+              "3. Chromosomal Abnormalities * (Feb 2013) [Pg 948]",
+              "4. Factors influence the gene frequencies in human population * (Aug 2013) [Pg 954]",
+              "5. Eugenics * (Aug 2010) [Pg 954]",
+              "6. Explain advantages and dangers of Genetic Engineering. * (Aug 2020) [Pg 947]",
+              "7. Turner's syndrome * [Pg:949]",
+              "8. Sex linked inheritance * [Pg:949]",
+              "9. In utero diagnosis * [Pg:955]"
+            ]
+          }
         }
       }
     }
