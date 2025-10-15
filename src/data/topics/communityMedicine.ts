@@ -750,6 +750,25 @@ export const communityMedicineData = {
               "11. Voluntary Health agency * [Pg:721]"
             ]
           }
+        },
+        "international-health": {
+          name: "INTERNATIONAL HEALTH",
+          "short-notes": {
+            name: "Short Notes",
+            questions: [
+              "1. UNICEF **** (Feb 2009, Feb 2011, Feb 2013, Aug 2013) [Pg no:1029]",
+              "2. Functions of WHO *** (Aug 2010, Aug 2012, Feb 2017) [Pg no:1027]",
+              "3. Indian Red Cross Society ** (Aug 2011, Feb 2023) [Pg no:1032]",
+              "4. Role of UNICEF in child health? * (Feb 2021) [Pg no:1029]",
+              "5. Health work of bilateral agencies * (Aug 2015) [Pg no:1030]",
+              "6. GOBI FFF. * (Aug 2017)",
+              "7. What are the functions of under-five clinics? * (Feb 2018)",
+              "8. Explain Swachh Bharat Mission? * (Feb 2018) [Pg no:550]",
+              "9. What are the functions of Indian Red Cross Society? * (Feb 2018) [Pg no:1032]",
+              "10. What are the international health regulations in use for disease control? * (Feb 2020)",
+              "11. Niti Ayog.? * (Feb 2023) [Pg no:1002]"
+            ]
+          }
         }
       }
     }
