@@ -497,6 +497,34 @@ export const communityMedicineData = {
               "9. In utero diagnosis * [Pg:955]"
             ]
           }
+        },
+        "medicine-and-social-science": {
+          name: "MEDICINE & SOCIAL SCIENCE",
+          essay: {
+            name: "Essay",
+            questions: [
+              "1. Discuss the cultural factors affecting health. * (Aug 2018) [Pg 801]",
+              "2. What is basic model of nuclear family? Discuss the various cultural factors in and disease. * (Feb 2013) [Pg 798,801]"
+            ]
+          },
+          "short-notes": {
+            name: "Short Notes",
+            questions: [
+              "1. Medical social worker ***** (Feb 2010, Aug 2011, Aug 2012, Feb 2017, Feb 2023) [Pg.817]",
+              "2. Role of family in health and disease *** (Feb 2011, Aug 2017, Aug 2022) [Pg.787]",
+              "3. Acculturation *** (Aug 2009, Feb 2010, Feb 2015) [Pg. 808]",
+              "4. Types of learning. ** (Feb 2016, Feb 2021) [Pg.792]",
+              "5. Social security for industrial workers. * (Feb 2017) [Pg.792]",
+              "6. What are the preventive measures applicable for child labour? * (Feb 2020) [Pg.799]",
+              "7. Cultural factors in health and disease * (Aug 2016) [Pg.801]",
+              "8. Défense mechanisms identified by psychologists. * (Feb 2014) [Pg.793]",
+              "9. What is consumer protection act? * (Aug 2010) [Pg.809]",
+              "10. Art of interview * (Feb 2015) [Pg.810]",
+              "11. Operational Research * (Aug 2013) [Pg.811]",
+              "12. Drug addiction * (Aug 2009) [Pg.812]",
+              "13. Enlist the rights of the Patient * (Aug 2014) [Pg.810]"
+            ]
+          }
         }
       }
     }
