@@ -721,6 +721,35 @@ export const communityMedicineData = {
               "7. Prevention of drug dependence and alcoholism * [Pg:965]"
             ]
           }
+        },
+        "health-care-of-community": {
+          name: "HEALTH CARE OF COMMUNITY",
+          essay: {
+            name: "Essay",
+            questions: [
+              "1. Discuss the various health care systems in India. *** (Aug 2012, Feb 2017, Aug 2022) [Pg:700]",
+              "2. Give the organogram of Health Care delivery in India. Discuss the Health Care services delivered at a Primary Health Centre. * (Aug 2015) [Pg:693]",
+              "3. Primary Health Care. Describe briefly the principles and elements of Primary Health Care. * (Aug 2010) [Pg:693]",
+              "4. Enumerate the functions of medical officer of primary health center? * (Feb 2020) [Pg:712]",
+              "5. Explain the role of health care worker (Male) in providing primary care and its monitoring * (Aug 2020) [Pg:713]"
+            ]
+          },
+          "short-notes": {
+            name: "Short Notes",
+            questions: [
+              "1. Principles of Primary health care *** (Feb 2010, Feb 2014, Feb 2017) [Pg:693]",
+              "2. Elements of primary health care ** (Aug 2011, Feb 2013) [Pg:693]",
+              "3. Millennium Development Goals ** (Feb 2009, Aug 2013) [Pg:695]",
+              "4. Health problem of urban dwellers * (Aug 2010) [Pg:697]",
+              "5. Describe the staff and services provided in a health sub-centre. * (Aug 2014) [Pg:700]",
+              "6. Function of primary health centre * (Aug 2013) [Pg:705]",
+              "7. Role and responsibility of ASHA * (Feb 2011) [Pg:700]",
+              "8. Hospital performance indicators. * (Feb 2019)",
+              "9. Define 'Primary health care'. * (Feb 2018) [Pg:693]",
+              "10. Job of MPHA female * [Pg:716]",
+              "11. Voluntary Health agency * [Pg:721]"
+            ]
+          }
         }
       }
     }
