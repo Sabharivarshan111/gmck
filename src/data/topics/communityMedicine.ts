@@ -254,6 +254,83 @@ export const communityMedicineData = {
               "2. Describe the various strategies used in national vector borne diseases control programme * (Feb 2020) [pg no 472]"
             ]
           }
+        },
+        "environment-and-health": {
+          name: "ENVIRONMENT & HEALTH",
+          essay: {
+            name: "Essay",
+            questions: [
+              "1. Air Pollution? Source of air pollution, strategies regarding the preventive measures of air pollution in our country ** (Aug 2008, Feb 2020) [Pg 859,860]",
+              "2. What is water pollution? Write in detail about water related diseases. * (Feb 2009) [Pg 837]",
+              "3. Define sewage. Enlist the various methods of disposal of sewage in unsewered areas. Discuss briefly about water seal latrine. * (Feb 2012) [Pg 888,884]",
+              "4. Explain the methods of refuse disposal. * (Feb 2013) [Pg 881]",
+              "5. Discuss in detail about the Integrated Vector control? * (Feb 2014) [Pg 320]",
+              "6. What are health hazards of improper solid waste disposal? Explain in detail the various methods of solid waste management. * (Aug 2016) [Pg 880,881]",
+              "7. List the water related diseases. How is water purified on a large scale? * (Feb 2017) [Pg 837,838]",
+              "8. Define refuse. Enumerate the health hazards due to solid wastes. Discuss the various sources, collection and methods of disposal of solid wastes. * (Feb 22) [Pg 880]",
+              "9. Mode of transmission – Arboviral disease? Arthropod control? * [Pg:894]"
+            ]
+          },
+          "short-notes": {
+            name: "Short Notes",
+            questions: [
+              "1. Swimming pool sanitation. *** (Aug 2014, Aug 2017, Feb 2022) [Pg 855]",
+              "2. Sanitation barrier ** (Feb, Aug 2010) [Pg 883]",
+              "3. Oxidation pond. ** (Feb 2016, Feb '23) [Pg 891]",
+              "4. Principles of chlorination ** (Feb 2015, Aug 2022) [Pg 841]",
+              "5. Surveillance of drinking water quality. ** (Aug 2015, Apr 2022) [Pg 852]",
+              "6. Discuss the sources and hazards of indoor air pollution ** (Aug2019, Sep 2021) [Pg 863]",
+              "7. Healthful school environment * (Aug 2008) [Pg 658]",
+              "8. Types of ventilation * (Feb 2009) [Pg 866]",
+              "9. Control of noise pollution. * (Aug 2009) [Pg 870]",
+              "10. Soakage pit * (Feb 2010) [Pg 836]",
+              "11. Refuse disposal methods in rural areas. * (Aug 2010) [Pg 881]",
+              "12. Methods of disposal of solid wastes. * (Feb 2011) [Pg 881]",
+              "13. Purification of water on large scale. * (Aug 2010) [Pg 838]",
+              "14. Causes and effects of global warming. * (Feb 2011) [Pg 875]",
+              "15. Integrated approach in vector control. * (Aug 2011) [Pg 320]",
+              "16. Hazards of environmental pollution * (Feb 2012)",
+              "17. Overcrowding * (Feb 2012) [Pg 879]",
+              "18. What are the sources of water pollution? How do they affect health? * (Aug 2012) [Pg 837]",
+              "19. Control of scabies. * (Aug 2013) [Pg 908]",
+              "20. Enlist the major air pollutants and describe measures to control it. * (Aug 2014) [Pg 860,865]",
+              "21. Discuss the effects of atmospheric pressure on health. * (Aug 2014) [Pg 873]",
+              "22. Non auditory effects of noise pollution * (Feb 2015) [Pg 869]",
+              "23. Health hazards of health care wastes. * (Aug 2017) [Pg 916]",
+              "24. Describe the design and working of a septic tank. * (Aug 2018) [Pg 886]",
+              "25. Enlist the minimum standards of housing in an urban area. * (Feb 2019) [Pg 878]",
+              "26. Describe the attributes of a sanitary well. * (Aug 2019) [Pg 836]",
+              "27. Enlist the principal methods of refuse disposal. Describe the method used in metropolitan cities and highlight the environmental hazards associated with it. * (Aug 2019) [Pg 881]",
+              "28. Enumerate the indicators of housing. * (Feb 2020) [Pg 879]",
+              "29. Discuss the small scale measures that can be practiced for making water potable. * (Nov 2020) [Pg 843]",
+              "30. Suitable measures of portable water supply to rural areas. *",
+              "31. Rapid sand filter feature. * [Pg:840]",
+              "32. Free residual chlorine. * [Pg:842]",
+              "33. Disinfection wells * [Pg:844]",
+              "34. Bacteriological standards of drinking water. * [Pg:849]",
+              "35. Hardness of water. * [Pg:853]",
+              "36. Defluoridation. * [Pg:854]",
+              "37. Comfort zones. * [Pg:859]",
+              "38. Indices of thermal comfort * [Pg:859]",
+              "39. Prevention, control, indicators of air pollution. * [Pg:865]",
+              "40. Heat stroke. * [Pg:874]",
+              "41. Green house effect and global warming. * [Pg:875]",
+              "42. Inter-relation between housing and health. * [Pg:878]",
+              "43. Housing standards. * [Pg:878]",
+              "44. Incineration * [Pg:881]",
+              "45. Composting * [Pg:882]",
+              "46. Sanitary methods of disposal of sewage in rural areas. *",
+              "47. Biochemical Oxygen Demand. * [Pg:889]",
+              "48. Secondary treatment of sewage. * [Pg:890]",
+              "49. Biological transmission of arthropod borne diseases. * [Pg:894]",
+              "50. Enumerate arthropods of medical importance and discuss integrated vector control. * [Pg:893]",
+              "51. Mosquito control measures. * [Pg:898]",
+              "52. Sandfly * [Pg:901]",
+              "53. Cyclops * [Pg:908]",
+              "54. Paris green * [Pg:911]",
+              "55. Anti-rodent measures. * [Pg:912]"
+            ]
+          }
         }
         }
         }
