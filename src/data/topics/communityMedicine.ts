@@ -706,6 +706,21 @@ export const communityMedicineData = {
               "5. Health hazards of healthcare waste? * (Feb 2023) [Pg 916]"
             ]
           }
+        },
+        "mental-health": {
+          name: "MENTAL HEALTH",
+          "short-notes": {
+            name: "Short Notes",
+            questions: [
+              "1. Crucial points in the life cycle of man *** (Aug 2009, Aug 2011, Aug 2012) [Pg:959]",
+              "2. Prevention of drug dependence ** (Aug 2013, Aug 2015) [Pg:965]",
+              "3. Warning signals of poor mental health * (Feb 2013) [Pg:958]",
+              "4. Causes of mental ill health * (Feb 2011) [Pg:959]",
+              "5. Factors associated with high risk for drug abuse * (Feb 2014) [Pg:965]",
+              "6. Comprehensive mental health action plan * [Pg:956]",
+              "7. Prevention of drug dependence and alcoholism * [Pg:965]"
+            ]
+          }
         }
       }
     }
