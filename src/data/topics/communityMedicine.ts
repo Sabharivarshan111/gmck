@@ -202,7 +202,42 @@ export const communityMedicineData = {
               "41. Leishmaniasis * [pg:351]",
               "42. Trachoma * [pg:356]"
             ]
+        },
+        "epidemiology-of-non-communicable-diseases": {
+          name: "EPIDEMIOLOGY OF NON-COMMUNICABLE DISEASES",
+          essay: {
+            name: "Essay",
+            questions: [
+              "1. Discuss in detail about the Multifactorial etiology of cancer? b. Add a note on the basic approach to the control of cancer? * (Feb 2014) [pg no 437]",
+              "2. Describe the epidemiology of Road Traffic Accidents in India. Add a note on the preventive measures. * (Aug 2014) [pg no 463]",
+              "3. Discuss the epidemiology and prevention of coronary heart disease. Discuss the contributions of national program for its prevention * (Feb 2019) [pg no 419]",
+              "4. Epidemiology and prevention of obesity. Add a note on assessment and hazards of obesity. * (Apr 2022) [pg no 451]",
+              "5. Describe the epidemiology of Hypertension. Write in detail about the control and preventive measures of Hypertension. * (Aug 2022) [pg no 425]"
+            ]
+          },
+          "short-notes": {
+            name: "Short Notes",
+            questions: [
+              "1. Primary and Secondary prevention of Rheumatic Heart disease. ** (Feb 2016, Feb 13) [pg no 433]",
+              "2. Environmental risk factors for cancers. ** (Aug 2011, Feb 2018) [pg no 437]",
+              "3. VISION 2020 ** (Feb 2016, Sep 2011) [pg no 459]",
+              "4. Describe cancer screening in detail. * (Feb 2020) [pg no 439]",
+              "5. Prevention of Rheumatic fever * (Aug 2011) [pg no 433]",
+              "6. Health problems due to industrialization. * (Aug 2011) [pg no 470]",
+              "7. Give details of the risk factors for hypertension. * (Aug 2012) [Pg no 427]",
+              "8. Explain the concept of avoidable blindness. Note on its prevention * (Aug 2012) [pg no 457]",
+              "9. Prevention of coronary heart disease. * (Aug 2016) [pg no 422]",
+              "10. Apply the levels of prevention and modes of intervention to diabetes mellitus. * (Feb 2017) [pg no 450,451]",
+              "11. Justify self care in diabetes mellitus. * (Feb 2023) [pg no 450]",
+              "12. Assessment of obesity. * (Aug 2017) [pg no 454]",
+              "13. Explain the rule of halves in epidemiology of hypertension and suggest methods to overcome it. * (Aug 2019) [pg no 426]",
+              "14. Discuss in detail the consequences of untreated Hypertension and its control as per the National Program of NPCDCS * (Nov 2020) [pg no 541]",
+              "15. Enumerate the measures to combat obesity. * (Feb 2023) [pg no 454]",
+              "16. Tracking BP * [pg:427]",
+              "17. Warning signs of cancer * [pg:438]"
+            ]
           }
+        }
         }
         }
         }
