@@ -1,3 +1,4 @@
+// Community Medicine Question Bank Data
 export const communityMedicineData = {
   name: "Community Medicine",
   subtopics: {
@@ -117,6 +118,7 @@ export const communityMedicineData = {
               "34. Incubation period * [pg.no.107]",
               "35. Open vial policy * [pg.no.121]"
             ]
+          }
         },
         "screening-for-disease": {
           name: "SCREENING FOR DISEASE",
@@ -131,6 +133,7 @@ export const communityMedicineData = {
               "6. Differentiate between screening test and a diagnostic test * (Feb 2018) [pg no 151]",
               "7. Discuss the advantages and limitations of using a test with HIGH SENSITIVITY as screening test with an example. * (Nov 2020)"
             ]
+          }
         },
         "epidemiology-of-communicable-diseases": {
           name: "EPIDEMIOLOGY OF COMMUNICABLE DISEASES",
@@ -202,6 +205,7 @@ export const communityMedicineData = {
               "41. Leishmaniasis * [pg:351]",
               "42. Trachoma * [pg:356]"
             ]
+          }
         },
         "epidemiology-of-non-communicable-diseases": {
           name: "EPIDEMIOLOGY OF NON-COMMUNICABLE DISEASES",
