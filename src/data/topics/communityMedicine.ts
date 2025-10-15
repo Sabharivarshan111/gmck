@@ -331,6 +331,42 @@ export const communityMedicineData = {
               "55. Anti-rodent measures. * [Pg:912]"
             ]
           }
+        },
+        "occupational-health": {
+          name: "OCCUPATIONAL HEALTH",
+          essay: {
+            name: "Essay",
+            questions: [
+              "1. Classify the various occupational diseases. Discuss the measures for prevention of occupational diseases. ** (Feb 2016, Feb 2023) [Pg 932,939]",
+              "2. Define Pneumoconiosis. Explain the various measures for prevention of occupational diseases. * (Aug 2010) [Pg 933,939]",
+              "3. Enlist the occupational pneumoconiosis. Describe the pathogenesis, clinical features and prevention of silicosis. * (Aug 2018) [Pg 933]",
+              "4. Classify occupational diseases. Epidemiology and prevention of pneumoconiosis. * (Feb 2022) [Pg 932,933]",
+              "5. Social security? Measures provided to factory workers? Benefits under ESI scheme. * [Pg:817,943]",
+              "6. Social security? Its measures for organised sectors. * [Pg:817]"
+            ]
+          },
+          "short-notes": {
+            name: "Short Notes",
+            questions: [
+              "1. Lead poisoning and its prevention. ***** (Aug 2009, Feb 2011, Aug 2014, Feb 2017, Aug 2022) [Pg 934,935]",
+              "2. Occupational cancers and prevention **** (Aug 2014, Aug 2017, Sep 2021, Apr 2022) [Pg 935]",
+              "3. Benefits of ESI Scheme *** (Feb 2010, Feb 2014, Feb 2018) [Pg 943]",
+              "4. Sickness Absenteeism ** (Feb 2012, Aug 2014) [Pg 937]",
+              "5. Occupational hazards of agricultural workers. ** (Aug 2013, Aug 2016) [Pg 936]",
+              "6. Occupational health * (Feb 2010) [Pg 930,945]",
+              "7. Describe respiratory diseases common among farmers with Causes, prevention and control. * (Aug 2012) [Pg 934]",
+              "8. Silicosis. * (Feb 2014) [Pg 933]",
+              "9. Discuss the effects and control of noise pollution * (Aug 2018) [Pg 870]",
+              "10. What are the health problems due to industrialization? * (Feb 2020) [Pg 937]",
+              "11. Maternity leave under the ESI act – Discuss eligibility, rationale and benefits. * (Nov 2020) [Pg 945]",
+              "12. What are the sources and effects of radiation? * (Feb 2023) [Pg 936]",
+              "13. Anthracosis * [Pg:933]",
+              "14. Bagassosis * [Pg:934]",
+              "15. Asbestosis * [Pg:934]",
+              "16. The factories act * [Pg:942]",
+              "17. Ergonomics * [Pg:930]"
+            ]
+          }
         }
         }
         }
