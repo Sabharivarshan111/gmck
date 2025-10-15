@@ -401,6 +401,24 @@ export const communityMedicineData = {
               "19. Census * (Aug 2022) [Pg no 968]"
             ]
           }
+        },
+        "2nd-paper-questions-in-1st-paper": {
+          name: "2ND PAPER QUESTIONS ASKED IN 1ST PAPER UNIVERSITY EXAM",
+          "short-notes": {
+            name: "Short Notes",
+            questions: [
+              "1. Barriers of communications * (Aug 2008)",
+              "2. Dietary goals. * (Aug 2008)",
+              "3. Mid day Meal Programme. * (Aug 2008)",
+              "4. Group discussion. * (Feb 2009)",
+              "5. Aflatoxins. * (Feb 2009)",
+              "6. Child guidance clinic * (Feb 2009)",
+              "7. Functions of world health organization. * (Aug 2009)",
+              "8. Approach to health education. * (Aug 2009)",
+              "9. Health Hazards of health-care waste. * (Aug 2013)",
+              "10. Types of health care delivery system in India * (Feb 2015)"
+            ]
+          }
         }
         }
         }
