@@ -525,6 +525,38 @@ export const communityMedicineData = {
               "13. Enlist the rights of the Patient * (Aug 2014) [Pg.810]"
             ]
           }
+        },
+        "communication-for-health-education": {
+          name: "COMMUNICATION FOR HEALTH EDUCATION",
+          essay: {
+            name: "Essay",
+            questions: [
+              "1. a) Define health education. Discuss in detail various principles of health education (Feb 2012) b) Discuss in details the principles of health education *** (Feb 2010, Aug 2010) [pg no 985]",
+              "2. a) Describe the methods of health education to groups of people (Group approach) (Aug 2013). b) Describe the methods of health education to groups of people with their merits and demerits ** (Feb 2015) [pg no 991]",
+              "3. Discuss the various methods in health communication. * (Aug. 2017) [pg no 983]",
+              "4. Define 'Motivation' in health education. Enumerate the methods used in individual approach and group approach of health education. * (Feb 2020) [pg no 984,991]",
+              "5. Define health education. Discuss various methods used in delivering health education? * (Feb 2021) [pg no 985]"
+            ]
+          },
+          "short-notes": {
+            name: "Short Notes",
+            questions: [
+              "1. Barriers of communication *** (Feb 2011, Aug 2012, Aug 2022) [pg no 984]",
+              "2. Behaviour change communication and its uses. ** (Feb 2019, Feb 2022)",
+              "3. Content of Health Education ** (Aug 2011, Aug 2019) [pg no 988]",
+              "4. Barriers of health education. * (Aug 2015) [pg no",
+              "5. Types of communication * (Feb 2013) [pg no 983]",
+              "6. Health education Vs Health propaganda * (Feb 2016) [pg no 987]",
+              "7. Models of Health Education * (Feb 2014) [pg no 987]",
+              "8. Principles of health education * (Aug 2016) [pg no 989]",
+              "9. Discuss 'workshop' as a method of education * (Aug 2014) [pg no 993]",
+              "10. Discuss qualitative and quantitative methods of health education * (Feb 2010) [pg no 985]",
+              "11. Mention four approaches to health education. * (Feb 2017) [pg no 986]",
+              "12. Approach to health education. * (Feb 2023) [pg no 986]",
+              "13. Group discussion * [Pg:992]",
+              "14. Roleplay and workshop * [Pg:993]"
+            ]
+          }
         }
       }
     }
