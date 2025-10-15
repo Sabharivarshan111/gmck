@@ -677,6 +677,16 @@ export const communityMedicineData = {
               "46. Lifestyle and health * [Pg:678]"
             ]
           }
+        },
+        "disaster-management": {
+          name: "DISASTER MANAGEMENT",
+          "short-notes": {
+            name: "Short Notes",
+            questions: [
+              "1. Disaster preparedness ** (Aug 2015, Aug 2016) [Pg 925]",
+              "2. Triage in disaster management ** (Aug 2014, Feb 2018) [Pg 923]"
+            ]
+          }
         }
       }
     }
