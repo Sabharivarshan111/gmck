@@ -769,6 +769,45 @@ export const communityMedicineData = {
               "11. Niti Ayog.? * (Feb 2023) [Pg no:1002]"
             ]
           }
+        },
+        "1st-paper-questions-in-2nd-paper": {
+          name: "1ST PAPER QUESTIONS ASKED IN 2ND PAPER",
+          essay: {
+            name: "Essay",
+            questions: [
+              "1. Describe the epidemiology and preventive measures of leprosy under National Leprosy Eradication Programme. * (Aug 2008)",
+              "2. Discuss in detail the reproductive and child health programme in India. * (Aug 2015)",
+              "3. Write in detail about National rural health mission * (Feb 2009)"
+            ]
+          },
+          "short-notes": {
+            name: "Short Notes",
+            questions: [
+              "1. Pulse Polio Programme * (Aug 2008)",
+              "2. Surveillance in Malaria. * (Aug 2008)",
+              "3. Asbestosis. * (Aug 2008)",
+              "4. BCG Vaccine. * (Aug 2008)",
+              "5. Preventable blindness * (Aug 2008)",
+              "6. Minimum needs Programme * (Feb 2009)",
+              "7. Anti rabies vaccines. * (Feb 2009)",
+              "8. Elimination of leprosy. * (Feb 2009)",
+              "9. Farmer's lung. * (Feb 2009)",
+              "10. Hazards of obesity. * (Feb 2009)",
+              "11. Risk factors for coronary Heart Disease * (Feb 2009)",
+              "12. Control of HIV/AIDS. * (Feb 2009)",
+              "13. Uses of Epidemiology * (Aug 2009)",
+              "14. Pathology in Leprosy. * (Aug 2009)",
+              "15. Diagnosis and prevention of swine flu * (Aug 2009)",
+              "16. Occupational cancers. * (Aug 2009)",
+              "17. Cyclops. * (Aug 2009)",
+              "18. Describe the National Immunization Schedule. * (Aug 2010)",
+              "19. Census * (Feb 2012)",
+              "20. Urban health * (Aug 2012)",
+              "21. Investigation of food poisoning * (Feb 2015)",
+              "22. Emporiatrics * (Feb 2010)",
+              "23. Soakage pits * (Aug 2009)"
+            ]
+          }
         }
       }
     }
