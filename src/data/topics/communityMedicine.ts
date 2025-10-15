@@ -237,6 +237,23 @@ export const communityMedicineData = {
               "17. Warning signs of cancer * [pg:438]"
             ]
           }
+        },
+        "health-programmes": {
+          name: "HEALTH PROGRAMMES [SDG & MDG]",
+          essay: {
+            name: "Essay",
+            questions: [
+              "1. What is National vector-borne disease control programme? Describe and discuss National Anti-Malarial Programme. * (Aug 2009) [pg no 472]",
+              "2. What are the objectives of Revised National Tuberculosis Control Programme? How are diagnosis, categorization and treatment of tuberculosis done according to RNTCP? * (Feb 2017) [pg no 485]"
+            ]
+          },
+          "short-notes": {
+            name: "Short Notes",
+            questions: [
+              "1. Vitamin A prophylaxis programme * (Feb 2009) [Pg no:756]",
+              "2. Describe the various strategies used in national vector borne diseases control programme * (Feb 2020) [pg no 472]"
+            ]
+          }
         }
         }
         }
