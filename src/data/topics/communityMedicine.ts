@@ -428,7 +428,60 @@ export const communityMedicineData = {
     },
     "paper-2": {
       name: "Paper 2",
-      subtopics: {}
+      subtopics: {
+        "nutrition-and-health": {
+          name: "NUTRITION AND HEALTH",
+          essay: {
+            name: "Essay",
+            questions: [
+              "1. Discuss in detail the causes, detrimental effects and various preventive Measures of nutritional anaemia. * (Feb 2012) [Pg:756]",
+              "2. Epidemiology and prevention of Nutritional anemia. Add a note Anaemia Mukt Bharat.? * (Feb 2022) [Pg:756,775]",
+              "3. Discuss in detail the problem of nutritional anemia, its causes, detrimental effects and intervention? * (Feb 2023) [Pg:756]",
+              "4. Describe in detail about assessment of nutritional status of community <5 yr. child)? * (Aug 2011) [Pg:762]",
+              "5. What is nutritional assessment? Write in detail how you would assess the Nutritional status of a community. * (Feb 2016) [Pg:762]",
+              "6. Describe in detail the various community nutrition programs in India. * (Aug 2016) [Pg:753]",
+              "7. Give an account of commonly occurring food toxicants in India and their prevention. * (Aug 2010) [Pg:771]",
+              "8. Define malnutrition, specify its problems. Describe the etiology and preventions and control measures for the same. * (Aug 2009) [Pg:754]",
+              "9. Mention the various health problems of the school child. Discuss in detail about the objectives and aspects of school health service. * (Aug 2017) [pg no.657]",
+              "10. What are the common causes for under five year mortality in India? How will you classify and treat diarrhea at the community level. Add a note on home available fluid. * (Aug 2018) [Pg no. 652, 263, 269]",
+              "11. What is the statutory body which regulates the food quality and safety in India? What is food fortification and common food fortification permitted? Add a note on food additives? * (Aug 2019) [Pg: 772, 773]"
+            ]
+          },
+          "short-notes": {
+            name: "Short Notes",
+            questions: [
+              "1. Iodine deficiency disorders control programs ** (Aug 2013, Feb 2015) [Pg:723]",
+              "2. Iodine deficiency disorders and its control. ** (Aug. 2017, Aug 2022) [Pg:758]",
+              "3. Endemic fluorosis ** (Aug 2011, Feb 2013) [Pg:758]",
+              "4. Food fortification ** (Feb 2012, Aug 2014) [Pg:773]",
+              "5. Health problems in urban slums ** (Feb 2010, Aug 2010)",
+              "6. Prevention and control of Lathyrism ** (Feb 2010, Feb 2012) [Pg:759]",
+              "7. Nutritional anemia * (Aug 2009) [Pg:756]",
+              "8. Lathyrism * (Feb 2010) [Pg:759]",
+              "9. Gomez' classification. * (Aug 2012)",
+              "10. Clinical manifestations of malnutrition * (Feb 2010) [Pg: 755]",
+              "11. Diet surveys * (Feb 2010) [Pg: 764]",
+              "12. Diabetic diet * (Aug 2010) [Pg:729]",
+              "13. Pasteurization milk * (Feb 2011) [Pg:769]",
+              "14. Factors affecting energy requirements * (Feb 2012) [pg no.748]",
+              "15. Prevention of Xerophthalmia * (Feb 2012) [pg no.756]",
+              "16. Epidemic Dropsy * (Aug 2016) [pg no.772]",
+              "17. Nutritional factors in cardiovascular disease. * (Feb 2017) [pg no.760]",
+              "18. Balanced diet. * (Feb 2017) [pg no.751]",
+              "19. Trans fatty acids. * (Aug. 2017) [pg no.758]",
+              "20. Enumerate the strategies of 'National Nutritional Policy'. * (Feb 2018)",
+              "21. Iodine Deficiency Disorders (IDD) with reference to pregnancy and infancy. * (Aug 2018) [pg no.739, 724]",
+              "22. Name water soluble vitamins and write about the deficiency manifestation of thiamine * (Aug. 2018) [pg no. 730, 733]",
+              "23. Prevention of Food Adulteration Act. * (Aug. 2017) [pg no. 773]",
+              "24. Explain the anemia control programme. * (Feb 2020) [pg no. 775]",
+              "25. Discuss about inclusion of WHOLE CEREALS in diet? * (Aug. 2020) [pg no 741]",
+              "26. Surveillance measures at ports for control of infectious disease. * (Aug 2020)",
+              "27. Food toxicants? * (Feb 2021) [Pg:771]",
+              "28. Evaluate Mid-day meal programme? * (Feb 2023) [Pg:776]"
+            ]
+          }
+        }
+      }
     }
   }
 };
