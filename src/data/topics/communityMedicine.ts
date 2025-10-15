@@ -117,7 +117,22 @@ export const communityMedicineData = {
               "34. Incubation period * [pg.no.107]",
               "35. Open vial policy * [pg.no.121]"
             ]
+        },
+        "screening-for-disease": {
+          name: "SCREENING FOR DISEASE",
+          "short-notes": {
+            name: "Short Notes",
+            questions: [
+              "1. Evaluation of a screening test *** (Aug 2016, Apr 2022, Feb 2023) [pg.no 155]",
+              "2. Sensitivity & specificity ** (Feb 2009, Aug 2022) [pg.no 155]",
+              "3. Prenatal Screening * (Aug 2008) [pg.no 605]",
+              "4. Criteria for screening disease * (Feb 2011) [pg.no 153]",
+              "5. Types of screening * (Feb 20102) [pg.no 153]",
+              "6. Differentiate between screening test and a diagnostic test * (Feb 2018) [pg no 151]",
+              "7. Discuss the advantages and limitations of using a test with HIGH SENSITIVITY as screening test with an example. * (Nov 2020)"
+            ]
           }
+        }
         }
       }
     },
