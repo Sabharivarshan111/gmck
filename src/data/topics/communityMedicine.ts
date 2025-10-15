@@ -131,7 +131,79 @@ export const communityMedicineData = {
               "6. Differentiate between screening test and a diagnostic test * (Feb 2018) [pg no 151]",
               "7. Discuss the advantages and limitations of using a test with HIGH SENSITIVITY as screening test with an example. * (Nov 2020)"
             ]
+        },
+        "epidemiology-of-communicable-diseases": {
+          name: "EPIDEMIOLOGY OF COMMUNICABLE DISEASES",
+          essay: {
+            name: "Essay",
+            questions: [
+              "1. Describe the epidemiology, control and prevention of Typhoid Fever ** (Aug 2013, Feb 2016) [Pg:276]",
+              "2. List the arboviral diseases. Explain the epidemiology, clinical features, control of Japanese encephalitis. ** (Aug 2010, Aug 2015) [pg:331]",
+              "3. Describe the epidemiology and prevention of pulmonary tuberculosis. Add a note on National Tuberculosis Elimination Program (NTEP): Objectives, strategies and newer initiatives. ** (Feb 2011, Sep 2021) [pg:207]",
+              "4. Describe in detail the classification of exposure, post-exposure prophylaxis and wound management of dog bite cases. Add a note on advantages of intra dermal administration of cell culture vaccines. ** (Aug 2011, Feb 2018) [pg:324]",
+              "5. Describe in detail the epidemiology, clinical features and diagnosis of dengue. ** (Aug 2019, Feb 2023) [pg.288]",
+              "6. Describe the epidemiology of Poliomyelitis in India. Explain the strategy for polio eradication in India. Add a Note on the use of monovalent and bivalent oral polio vaccines. Discuss on the measures taken to eradicate poliomyelitis globally. ** (Aug 2012, Aug 2018) [pg:240]",
+              "7. Discuss the epidemiology of dengue fever. Add a note on prevention and Control of dengue fever as per the strategy of NVBDC programme in India. * (Aug 2016) [pg:288]",
+              "8. Discuss the epidemiology of tetanus. * (Feb 2010) [pg.358]",
+              "9. Describe the various modes of transmission of communicable diseases. * (Feb 2013) [pg:102]",
+              "10. Describe the epidemiology of hook worm infection. Discuss its prevention and control measures. * (Aug 2014) [pg:285]",
+              "11. What are the common disabilities seen in a case of leprosy? Explain the various Disability limiting and rehabilitative measures in leprosy * (Feb 2015) [pg:375]",
+              "12. Discuss vertical transmission of HIV infection. What are the various modalities for prevention of vertical transmission of HIV under national AIDS control programme? * (Aug 2017) [pg:397]",
+              "13. Enumerate the arthropods of medical importance. Discuss briefly the mosquito control measures in urban area. * (Aug 2017) [pg:288,898]",
+              "14. Describe the diagnosis and management of a one year old child with acute respiratory infection as per the IMNCI guidelines. Enlist the vaccines that can be used in its prevention * (Aug 2019) [pg:188]",
+              "15. Discuss the occupations that have a higher risk of exposure to COVID disease. Explain the essential measures of prevention undertaken to protect them. * (Nov 2020) [pg:192]",
+              "16. Insect borne diseases? explain lymphatic filariasis, add a note on its control programme * [pg.no:350,479]",
+              "17. Epidemiology, prevention and control of hepatitis-B * [pg.no.251]"
+            ]
+          },
+          "short-notes": {
+            name: "Short Notes",
+            questions: [
+              "1. Scrub Typhus. ** (Aug 2013,2015) [pg:347]",
+              "2. Epidemiology and prevention of COVID 19 ** (Feb 2022, Aug 2022) [pg:192]",
+              "3. Natural history of measles. ** (Aug 2010, Aug2010) [pg:164]",
+              "4. Prevention of Neo-natal tetanus. ** (Aug 2009, Feb 2917) [pg:361]",
+              "5. Describe the control and prevention of yellow fever. ** (Aug 2014, Feb 2019) [pg:328]",
+              "6. Blocked flea * (Feb 2010) [pg:310]",
+              "7. Strategies for Polio eradication in India. * (Feb 2011) [pg:246]",
+              "8. Syndromic approach in sexually transmitted diseases. * (Feb 2011) [pg:381]",
+              "9. Congenital rubella syndrome. * (Aug 2011) [pg:169]",
+              "10. Current strategy of filaria control. * (Aug 2011) [pg:479]",
+              "11. Give the case definition of Acute Encephalitis Syndrome. How is it managed at PHC level? * (Aug 2012) [Pg:334]",
+              "12. Primary prevention of diarrhoeal diseases. * (Aug 2012) [pg:265]",
+              "13. Management of cases and carriers in diphtheria. * (Feb 2013) [pg:180]",
+              "14. Investigation of food poisoning. * (Feb 2013) [pg:282]",
+              "15. Control of Japanese Encephalitis. * (Feb 2013) [pg:332]",
+              "16. Agent and host factors in leprosy. * (Feb 2013) [pg:363]",
+              "17. Elimination of lymphatic filariasis * (Feb 2013) [pg:479]",
+              "18. Epidemiology of Leptospirosis. * (Aug 2013) [pg:338]",
+              "19. BCG Vaccination. * (Aug 2013) [pg:231]",
+              "20. Case finding methods in leprosy. * (Aug 2014) [pg:366]",
+              "21. Tertiary preventive measures for leprosy patients. * (Feb 2019) [pg:376]",
+              "22. Apply the levels of prevention for Leprosy. * (Feb 2023) [pg:369]",
+              "23. Vaccine associated paralytic polio * (Aug 2014) [pg:242]",
+              "24. Opportunistic infections in AIDS * (Feb 2015) [pg:398]",
+              "25. Intensified Pulse Polio Immunization. * (Aug 2015) [pg:247]",
+              "26. Epidemiology and Prevention of Ebola virus disease. * (Feb 2016) [pg:407]",
+              "27. Post exposure prophylaxis in prevention of human rabies * (Aug 2016) [Pg:325]",
+              "28. Guidelines for assessing dehydration and for oral rehydration therapy. * (Feb 2017) [pg:266]",
+              "29. Oral rehydration therapy. * (Feb 2023) [pg:266]",
+              "30. Name the vector of dengue. Describe its habits and control measures. * (Aug 2013) [pg:288]",
+              "31. Discuss the vector control methods of malaria. Add a note on its limitations. * (Feb 2019) [pg:307]",
+              "32. Discuss resurgence of diphtheria disease and its control. * (Nov 2020) [pg:180]",
+              "33. Amoebiasis – Discuss risk factors, consequences of infection and its control. * (Nov 2020) [pg:283]",
+              "34. Enumerate arthropods of medical importance and discuss integrated vector control. * (Sep 2021) [Pg:893]",
+              "35. How will you apply integrated vector control measures in village of 500 population? * (Feb 2023) [Pg: Refer]",
+              "36. Compare Herd immunity for Measles and Tetanus. * (Feb 2023) [Pg:110]",
+              "37. Post exposure prophylaxis in HIV. * (Feb 2023) [pg:405]",
+              "38. Measles vaccine. * [pg:166]",
+              "39. Pandemic influenza (swine flu) * [pg.174]",
+              "40. Acute flaccid paralysis * [pg:241]",
+              "41. Leishmaniasis * [pg:351]",
+              "42. Trachoma * [pg:356]"
+            ]
           }
+        }
         }
         }
       }
