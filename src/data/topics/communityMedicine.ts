@@ -367,6 +367,40 @@ export const communityMedicineData = {
               "17. Ergonomics * [Pg:930]"
             ]
           }
+        },
+        "health-information-and-medical-statistics": {
+          name: "HEALTH INFORMATION & MEDICAL STATISTICS",
+          essay: {
+            name: "Essay",
+            questions: [
+              "1. What is sampling? Explain random sampling methods with suitable examples. ** (Aug 2012, Aug 2015) [Pg no 977]",
+              "2. Define health information. Describe various source of health information. * [Pg no 967-971]"
+            ]
+          },
+          "short-notes": {
+            name: "Short Notes",
+            questions: [
+              "1. Chi-Square test **** (Aug 2009, Feb 2012,2014, Feb 2020) [Pg no 980]",
+              "2. sampling methods **** (Aug 2008, Feb 2011, Feb 2012, Feb 2023) [Pg no 978]",
+              "3. Population surveys ** (Aug 2013,2015) [Pg no 970]",
+              "4. Tests of significance. ** (Feb 2018, Feb 2022) [Pg no 978]",
+              "5. Enlist the probability sampling methods. Elaborate on any two methods. * (Feb 2019) [Pg no 977]",
+              "6. Standard deviation * (Feb 2009) [Pg no 976]",
+              "7. Histogram * (Feb 2010) [Pg no 973]",
+              "8. Sampling error. * (Aug 2010) [Pg no 978]",
+              "9. Presentation of statistical data. * (Feb 2011) [Pg no 927]",
+              "10. Medical record linkage * (Aug 2010) [Pg no 970]",
+              "11. Normal distribution * (Feb 2011) [Pg no 977]",
+              "12. Measures of central tendency. * (Feb 2013) [Pg no 975]",
+              "13. Population surveys as a source of health information * (Feb 2013) [Pg no 970]",
+              "14. Standard normal curve * (Aug 2014) [Pg no 977]",
+              "15. Measures of dispersion * (Feb 2015) [Pg no 976]",
+              "16. Sources of health information. * (Feb 2017) [Pg no 968]",
+              "17. Histogram. * (Aug 2017) [Pg no 973]",
+              "18. Correlation and regression. * (Sep 2021) [Pg no 980]",
+              "19. Census * (Aug 2022) [Pg no 968]"
+            ]
+          }
         }
         }
         }
