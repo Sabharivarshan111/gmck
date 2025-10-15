@@ -557,6 +557,46 @@ export const communityMedicineData = {
               "14. Roleplay and workshop * [Pg:993]"
             ]
           }
+        },
+        "demography-and-family-planning": {
+          name: "DEMOGRAPHY & FAMILY PLANNING",
+          essay: {
+            name: "Essay",
+            questions: [
+              "1. Analyze the challenges to adolescent health and the government action for facilitating health of adolescents. * (Aug 2020) [Pg no 532]"
+            ]
+          },
+          "short-notes": {
+            name: "Short Notes",
+            questions: [
+              "1. Demographic cycle, its stages and importance *** (Feb 2011, Feb 2013, Feb 2021) [Pg no 554]",
+              "2. Ideal candidate for IUD Insertion and it's mechanism of Action ** (Aug 2008, Aug 2014) [Pg no 572]",
+              "3. Post – Conceptional methods ** (Feb 2012, Aug 2012) [Pg no 579]",
+              "4. Define sex Ratio. Write the measures taken by the Government pertaining to this indicator. ** (Feb 2014, Aug 2014) [Pg no 558]",
+              "5. Natural family planning methods ** (Aug 2013, Feb 2017) [Pg no 582]",
+              "6. Pearl index ** (Feb 2010, Aug 2017) [Pg no 585]",
+              "7. Provisions under MTP Act 1971. ** (Aug 2017, Aug 2019) [Pg no 580]",
+              "8. National population policy 2000. * (Feb 2009) [Pg no 568]",
+              "9. Combined oral contraceptive pills * (Aug 2011) [Pg no 574]",
+              "10. Oral contraceptive pills * (Aug 2015) [Pg no 574]",
+              "11. Medical termination of pregnancy act * (Feb 2014) [Pg no 580]",
+              "12. Urbanization * (Aug 2008) [Pg no 559]",
+              "13. Factors contributing to the higher fertility in India. * (Feb 2014) [Pg no 562]",
+              "14. Small family Norm * (Feb 2016) [Pg no 567]",
+              "15. Couple Protection Rate * (Feb 2015) [Pg no 567]",
+              "16. No Scalpel Vasectomy * (Aug 2016) [Pg no 584]",
+              "17. Define joint family system in our society and mention its advantages and disadvantages related to health? * (Feb 2019) [Pg no 799]",
+              "18. Write any five fertility related statistics. * (Feb 2018) [Pg no 563]",
+              "19. Write in detail on injectable contraceptives and their contraindications. * (Feb 2018) [Pg no 577]",
+              "20. What are the functions of health worker female? * (Aug 2018) [Pg. no]",
+              "21. Highlight the adolescent health care services under RMNCH+A programme * (Aug 2018) [Pg no 522]",
+              "22. Stages of demographic cycle and its importance. * (Aug 2019) [Pg no 554]",
+              "23. What are the types of oral contraceptives used in public health? * (Feb 2020) [Pg no 574]",
+              "24. Community needs assessment approach. * (Feb 2022)",
+              "25. Factors contributing to high fertility in India. * (Aug 2022) [Pg no 562]",
+              "26. Fertility indicators. * (Feb 2023) [Pg no 563]"
+            ]
+          }
         }
       }
     }
