@@ -420,9 +420,6 @@ export const communityMedicineData = {
             ]
           }
         }
-        }
-        }
-        }
       }
     },
     "paper-2": {
