@@ -687,6 +687,25 @@ export const communityMedicineData = {
               "2. Triage in disaster management ** (Aug 2014, Feb 2018) [Pg 923]"
             ]
           }
+        },
+        "hospital-waste-management": {
+          name: "HOSPITAL WASTE MANAGEMENT",
+          essay: {
+            name: "Essay",
+            questions: [
+              "1. Health care waste-Hazards and methods of disposal? * [Pg:916]"
+            ]
+          },
+          "short-notes": {
+            name: "Short Notes",
+            questions: [
+              "1. Biomedical waste management * (Feb 2016) [Pg 919]",
+              "2. Safe injection practices * (Feb 2016)",
+              "3. Define the categories, colour coding and containers used in biomedical waste management? * (Feb 2020) [Pg 919]",
+              "4. Explain biomedical waste management of wastes associated with COVID disease.? * (Aug 2020) [Pg 920]",
+              "5. Health hazards of healthcare waste? * (Feb 2023) [Pg 916]"
+            ]
+          }
         }
       }
     }
