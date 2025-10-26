@@ -49,6 +49,37 @@ export const useQuestionBank = () => {
       return null;
     }
     
+    // Handle direct essay/short-notes keys (e.g., Community Medicine structure)
+    if (content && typeof content === 'object' && ('essay' in content || 'short-notes' in content || 'short-note' in content)) {
+      const result: any = { ...content };
+      let hasAny = false;
+      
+      if (type === "essay" && content.essay) {
+        const filteredEssay = filterNestedContent(content.essay, type, query);
+        if (filteredEssay) {
+          result.essay = filteredEssay;
+          hasAny = true;
+        } else {
+          delete result.essay;
+        }
+      }
+      
+      if (type === "short-notes") {
+        const key = 'short-notes' in content ? 'short-notes' : ('short-note' in content ? 'short-note' : null);
+        if (key && content[key]) {
+          const filteredSN = filterNestedContent(content[key], type, query);
+          if (filteredSN) {
+            result[key] = filteredSN;
+            hasAny = true;
+          } else {
+            delete result[key];
+          }
+        }
+      }
+      
+      return hasAny ? result : null;
+    }
+    
     if (content && typeof content === 'object' && 'subtopics' in content) {
       const filteredSubtopics: { [key: string]: any } = {};
       let hasContent = false;
