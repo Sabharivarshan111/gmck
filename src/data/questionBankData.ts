@@ -16,8 +16,12 @@ import { microbiologyData } from './topics/microbiology';
 import { forensicMedicineData } from './topics/forensicMedicine';
 import { communityMedicineData } from './topics/communityMedicine';
 
-// Create a structured hierarchy with Second Year and Third Year as main categories
+// Create a structured hierarchy with all four years as main categories
 export const QUESTION_BANK_DATA = {
+  "first-year": {
+    name: "First Year",
+    subtopics: {}
+  },
   "second-year": {
     name: "Second Year",
     subtopics: {
@@ -32,5 +36,9 @@ export const QUESTION_BANK_DATA = {
       "forensic-medicine": forensicMedicineData,
       "community-medicine": communityMedicineData
     }
+  },
+  "final-year": {
+    name: "Final Year",
+    subtopics: {}
   }
 };
