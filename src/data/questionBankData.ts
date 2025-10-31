@@ -20,12 +20,20 @@ import { obstetricsGynaecologyData } from './topics/obstetricsGynaecology';
 import { generalSurgeryData } from './topics/generalSurgery';
 import { orthopaedicsData } from './topics/orthopaedics';
 import { paediatricsData } from './topics/paediatrics';
+import { anatomyData } from './topics/anatomy';
+import { physiologyData } from './topics/physiology';
+import { biochemistryData } from './topics/biochemistry';
+
 
 // Create a structured hierarchy with all four years as main categories
 export const QUESTION_BANK_DATA = {
   "first-year": {
     name: "First Year",
-    subtopics: {}
+    subtopics: {
+      "anatomy": anatomyData,
+      "physiology": physiologyData,
+      "biochemistry": biochemistryData
+    }
   },
   "second-year": {
     name: "Second Year",
