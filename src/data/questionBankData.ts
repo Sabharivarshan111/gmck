@@ -15,6 +15,11 @@ import { pathologyData } from './topics/pathology';
 import { microbiologyData } from './topics/microbiology';
 import { forensicMedicineData } from './topics/forensicMedicine';
 import { communityMedicineData } from './topics/communityMedicine';
+import { generalMedicineData } from './topics/generalMedicine';
+import { obstetricsGynaecologyData } from './topics/obstetricsGynaecology';
+import { generalSurgeryData } from './topics/generalSurgery';
+import { orthopaedicsData } from './topics/orthopaedics';
+import { paediatricsData } from './topics/paediatrics';
 
 // Create a structured hierarchy with all four years as main categories
 export const QUESTION_BANK_DATA = {
@@ -39,6 +44,12 @@ export const QUESTION_BANK_DATA = {
   },
   "final-year": {
     name: "Final Year",
-    subtopics: {}
+    subtopics: {
+      "general-medicine": generalMedicineData,
+      "obstetrics-gynaecology": obstetricsGynaecologyData,
+      "general-surgery": generalSurgeryData,
+      "orthopaedics": orthopaedicsData,
+      "paediatrics": paediatricsData
+    }
   }
 };
