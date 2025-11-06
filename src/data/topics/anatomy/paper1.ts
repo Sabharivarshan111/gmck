@@ -293,6 +293,22 @@ export const anatomyPaper1 = {
           ]
         }
       }
+    },
+    "genetics": {
+      name: "GENETICS",
+      subtopics: {
+        "short-notes": {
+          name: "Short Notes",
+          questions: [
+            "Trisomy/ Down syndrome***",
+            "Turners syndrome***",
+            "Karyotyping*",
+            "Klinefelter's syndrome***",
+            "Mitosis",
+            "Meiosis"
+          ]
+        }
+      }
     }
   }
 };
