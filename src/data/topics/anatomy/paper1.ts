@@ -162,6 +162,62 @@ export const anatomyPaper1 = {
           ]
         }
       }
+    },
+    "lower-limb": {
+      name: "LOWER LIMB",
+      subtopics: {
+        "essay": {
+          name: "Essay",
+          questions: [
+            "Hip joint - types, bones forming, ligaments, relations, muscles producing movements, applied anatomy ****",
+            "Femoral triangle - boundaries, contents, femoral sheath, applied aspects***",
+            "Great Saphenous vein - Formation, course, relations, tributaries, perforators, termination, applied anatomy",
+            "Sciatic Nerve - Root value, formation, course, branches, relations, applied anatomy",
+            "Knee Joint - Type, bones forming, ligaments, relations, movements, applied anatomy",
+            "Arches of foot - Types, bones forming, structures, applied aspects"
+          ]
+        },
+        "short-notes": {
+          name: "Short Notes",
+          questions: [
+            "Modifications of deep fascia of thigh**",
+            "Femoral triangle **",
+            "Femoral sheath **",
+            "Adductor canal***",
+            "Structures under the cover of gluteus maximus *",
+            "Trendelenburg's sign**",
+            "Muscles of back of thigh **",
+            "Sciatic nerve **",
+            "Arterial anastomosis on back of thigh",
+            "Popliteal fossa. ****",
+            "Ligaments of hip joint **",
+            "Anastomosis around knee joint",
+            "Extensor retinaculum of leg",
+            "Peroneal retinaculum",
+            "Deep peroneal nerve",
+            "Ligaments and bursae of knee joint",
+            "Locking and unlocking of knee joint",
+            "Medical longitudinal arch",
+            "Ankle joint",
+            "Inversion and eversion of foot",
+            "Cutaneous supply of foot",
+            "Peroneal artery",
+            "Subtalar joint",
+            "Dorsalis pedis artery",
+            "Retinaculum in front of ankle",
+            "Freshers syndrome",
+            "Dorsum of foot",
+            "Musculocutaneous nerve of the leg",
+            "Superior and inferior extensor retinaculum",
+            "Plantar aponeurosis",
+            "Tibiofibular joint",
+            "Calcaneocuboid joint",
+            "Talocalcaneonavicular joint",
+            "Short saphenous vein",
+            "Perforating veins."
+          ]
+        }
+      }
     }
   }
 };
