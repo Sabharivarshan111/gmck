@@ -68,6 +68,41 @@ export const anatomyPaper1 = {
           ]
         }
       }
+    },
+    "histology": {
+      name: "HISTOLOGY",
+      subtopics: {
+        "short-notes": {
+          name: "Short Notes",
+          questions: [
+            "Microscopic structure of cartilages(All 3 types) ***",
+            "Microscopic structure of bone **",
+            "Microscopic structure of ganglion (sympathetic and spinal)*",
+            "Microscopic structure of liver and spleen ***",
+            "Microscopic structure of trachea**",
+            "Histology of palatine tonsil ***",
+            "Demilunes",
+            "Histology of skin **",
+            "Histology of submandibular gland",
+            "Histology of parotid gland",
+            "Microscopic structure of lung *",
+            "Microscopic structure of fundus of stomach",
+            "Microscopic structure of duodenum",
+            "Microscopic structure of appendix",
+            "Microscopic structure of kidney**",
+            "Histology of ureter",
+            "Microscopic structure of testes",
+            "Microscopic structure of ovary",
+            "Histology of hypophysis cerebri ***",
+            "Histology of thyroid and parathyroid **",
+            "Histology of suprarenal gland",
+            "Histology of cerebellum**",
+            "Histology of cerebral cortex",
+            "Histology of cornea**",
+            "Histology of retina**"
+          ]
+        }
+      }
     }
   }
 };
