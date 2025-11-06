@@ -7,12 +7,14 @@ import { useTheme } from '@/components/theme/ThemeProvider';
 interface QuestionCardProps {
   question: string;
   index: number;
+  isFirstYear?: boolean;
 }
 
-const QuestionCard: React.FC<QuestionCardProps> = ({ question, index }) => {
+const QuestionCard: React.FC<QuestionCardProps> = ({ question, index, isFirstYear }) => {
   const [isCompleted, setIsCompleted] = useState(false);
   const [tapStatus, setTapStatus] = useState<'idle' | 'processing-answer' | 'processing-mcq'>('idle');
   const asteriskCount = countAsterisks(question);
+  const displayCount = isFirstYear ? (asteriskCount === 0 ? 1 : asteriskCount) : asteriskCount;
   const { theme } = useTheme();
   
   // Create refs to track tap counts and timing
@@ -227,13 +229,13 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, index }) => {
             </div>
           </div>
           
-          {asteriskCount > 0 && (
+          {displayCount > 0 && (
             <Badge 
               variant="outline" 
               className={`rounded-full h-6 w-6 flex-shrink-0 p-0 flex items-center justify-center ${getBadgeClass()} ml-2 text-xs badge`}
               onClick={(e) => e.stopPropagation()}
             >
-              {asteriskCount}
+              {displayCount}
             </Badge>
           )}
         </CardContent>

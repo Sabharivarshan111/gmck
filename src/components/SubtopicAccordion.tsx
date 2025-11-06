@@ -16,9 +16,10 @@ interface SubtopicAccordionProps {
   subtopic: SubTopic;
   isExpanded?: boolean;
   activeTab: "essay" | "short-notes";
+  isFirstYear?: boolean;
 }
 
-const SubtopicAccordion = ({ subtopicKey, subtopic, isExpanded = false, activeTab }: SubtopicAccordionProps) => {
+const SubtopicAccordion = ({ subtopicKey, subtopic, isExpanded = false, activeTab, isFirstYear }: SubtopicAccordionProps) => {
   const typeKeys = Object.keys(subtopic.subtopics);
   const [localExpandedItems, setLocalExpandedItems] = useState<string[]>(
     isExpanded ? typeKeys : []
@@ -74,6 +75,7 @@ const SubtopicAccordion = ({ subtopicKey, subtopic, isExpanded = false, activeTa
                     subtopic={type as SubTopic}
                     isExpanded={isExpanded}
                     activeTab={activeTab}
+                    isFirstYear={isFirstYear}
                   />
                 );
               } else {
@@ -84,6 +86,7 @@ const SubtopicAccordion = ({ subtopicKey, subtopic, isExpanded = false, activeTa
                     type={type}
                     isExpanded={isExpanded}
                     activeTab={activeTab}
+                    isFirstYear={isFirstYear}
                   />
                 );
               }

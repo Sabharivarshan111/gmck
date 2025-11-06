@@ -66,6 +66,7 @@ const TopicAccordion = ({ topicKey, topic, isExpanded = false, activeTab }: Topi
                 subtopic={subtopic}
                 isExpanded={isExpanded}
                 activeTab={activeTab}
+                isFirstYear={topicKey === "first-year"}
               />
             ))}
           </Accordion>

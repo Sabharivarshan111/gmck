@@ -7,9 +7,10 @@ interface QuestionSectionProps {
     [key: string]: QuestionType | { name: string; questions: any[] };
   };
   activeTab: "essay" | "short-notes";
+  isFirstYear?: boolean;
 }
 
-const QuestionSection = ({ subtopics, activeTab }: QuestionSectionProps) => {
+const QuestionSection = ({ subtopics, activeTab, isFirstYear }: QuestionSectionProps) => {
   if (!subtopics || typeof subtopics !== 'object') return null;
   return (
     <>
@@ -36,6 +37,7 @@ const QuestionSection = ({ subtopics, activeTab }: QuestionSectionProps) => {
                     key={index}
                     question={question}
                     index={index}
+                    isFirstYear={isFirstYear}
                   />
                 ))}
               </div>
