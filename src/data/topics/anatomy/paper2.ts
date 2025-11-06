@@ -143,6 +143,54 @@ export const anatomyPaper2 = {
           ]
         }
       }
+    },
+    "brain-and-cranial-nerves": {
+      name: "BRAIN AND CRANIAL NERVES",
+      subtopics: {
+        "essay": {
+          name: "Essay",
+          questions: [
+            "Sulci, Gyri, Functional areas and blood supply of Superolateral surface of brain.",
+            "Sulci, Gyri, Functional areas and blood supply of medial surface of brain **",
+            "Classify White matter of Cerebral Hemisphere and explain.Add a note on internal capsule.",
+            "Blood supply of brain *",
+            "Nuclei, course, branches and clinical anatomy of Facial Nerve *****",
+            "Spinal cord and blood supply.",
+            "Cerebellum- external and internal features, blood supply, applied anatomy."
+          ]
+        },
+        "short-notes": {
+          name: "Short Notes",
+          questions: [
+            "Oculomotor nerve *",
+            "Trochlear Nerve **",
+            "Abducent Nerve ***",
+            "Hypoglossal Nerve **",
+            "Glossopharyngeal Nerve",
+            "T.S of Medulla at the level of sensory decussation *",
+            "T.S of Medulla at the level of Pyramidal decussation",
+            "T.S of Medulla at the level of Olivary Nucleus ***",
+            "T.S of Pons at the level of facial colliculus ***",
+            "T.S of upper pons **",
+            "T.S of midbrain at the level of superior colliculus ***",
+            "T.S of midbrain at the level of inferior colliculus ***",
+            "Cerebellar Peduncles ***",
+            "Floor of 4th Ventricle / Rhomboid Fossa ***",
+            "Third Ventricle ***",
+            "Lateral Ventricle ***",
+            "Base of Brain *",
+            "Caudate Nucleus ***",
+            "Corpus striatum *",
+            "Internal capsule in detail *****",
+            "Corpus callosum **",
+            "Circle of Willis ****",
+            "Sub arachnoid cisterns **",
+            "Spinal cord ****",
+            "Subarachnoid cisterns*",
+            "Wallenberg syndrome/ lateral medullary syndrome*"
+          ]
+        }
+      }
     }
   }
 };
