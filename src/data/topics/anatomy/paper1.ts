@@ -309,6 +309,55 @@ export const anatomyPaper1 = {
           ]
         }
       }
+    },
+    "thorax": {
+      name: "THORAX",
+      subtopics: {
+        "essay": {
+          name: "Essay",
+          questions: [
+            "Coronary circulation (blood supply of heart) - origin, course, distribution, branches, termination, anastomosis, clinical significance. *****",
+            "Interior of right atrium and correlate it with its development****",
+            "Lungs - external features, lobes and fissures, relations, hilum, blood supply, nerve supply, bronchopulmonary segments, applied. ****",
+            "Intercostal nerves - origin, unique features, classification. Typical intercostal nerve - course, relations, branches, applied. ***",
+            "Oesophagus - level of origin, course, constrictions, parts, relations, blood & nerve supply, histology, applied",
+            "Arch of aorta - extent, relations, branches, histology, applied.",
+            "Typical intercostal space**",
+            "Trachea - length, extent, relation, histology, development, applied aspects",
+            "Mediastinum - definition, divisions, a note on posterior mediastinum, applied anatomy",
+            "Pleura - parts, recesses, blood & nerve supply, surface marking, applied aspects",
+            "Gross anatomy of left ventricle and development"
+          ]
+        },
+        "short-notes": {
+          name: "Short Notes",
+          questions: [
+            "Bronchopulmonary segments****",
+            "Pleural recess***",
+            "Pericardial sinus",
+            "Typical intercostal nerve****",
+            "Internal thoracic artery",
+            "Azygos vein***",
+            "Hilum of lungs",
+            "Mediastinal surface of lungs****",
+            "Venous drainage of heart",
+            "Cardiac plexuses",
+            "Coronary sinus***",
+            "Thoracic duct**",
+            "SVC",
+            "Ligamentum arteriosum",
+            "Conducting system of heart",
+            "Posterior mediastinum***",
+            "Superior mediastinum",
+            "Interventricular septum",
+            "Pericardium",
+            "Cervical rib",
+            "Events at the level of sternal angle***",
+            "Interatrial septum",
+            "Left ventricle - internal features"
+          ]
+        }
+      }
     }
   }
 };
