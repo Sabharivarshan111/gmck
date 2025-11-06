@@ -218,6 +218,81 @@ export const anatomyPaper1 = {
           ]
         }
       }
+    },
+    "abdomen-and-pelvis": {
+      name: "ABDOMEN AND PELVIS",
+      subtopics: {
+        "essay": {
+          name: "Essay",
+          questions: [
+            "Inguinal canal - definition, boundaries, contents, applied anatomy. ***",
+            "Testis - external features, covering, structure, blood supply, lymphatic drainage, histology, development, applied anatomy**",
+            "Stomach - location, external features, presenting parts, relations, blood supply, lymphatic drainage, nerve supply, interior of stomach, histology, applied anatomy****",
+            "Extra hepatic biliary apparatus - parts, relations, blood supply, histology, applied anatomy**",
+            "Duodenum - location, parts, relations, interior of duodenum, blood supply, histology, applied anatomy *",
+            "Pancreas – location, presenting parts, relations, blood supply, duct system, histology, development, applied anatomy ***",
+            "Portal vein – formation, course, parts, relations, tributaries, sites of porto-caval anastomosis, applied anatomy*****",
+            "Urinary Bladder – Parts, Relations, Ligaments, Interior, Nerve supply, Blood supply, Histology, Applied anatomy ***",
+            "Male urethra – Parts, features in each part, Blood supply, Applied *",
+            "Uterus – Measurements, Position, Parts, relations, supports of uterus, Blood supply, Lymphatic drainage, microscopic anatomy, Applied aspects *****",
+            "Prostate – Parts, coverings, structures traversing, Lobes, zones, applied ***",
+            "Rectum - Relations, Mucosal folds, Blood supply, Nerve supply, Supports and Applied aspects *",
+            "Anal Canal – Extent, Relation, Interior features, Blood supply, applied **"
+          ]
+        },
+        "short-notes": {
+          name: "Short Notes",
+          questions: [
+            "Umbilicus",
+            "Rectus sheath",
+            "Inguinal ligament /Poupart's ligament *",
+            "Femoral sheath *",
+            "Femoral hernia",
+            "Inguinal hernia ***",
+            "Blood supply & lymphatic drainage of testes **",
+            "Descent of testes ***",
+            "Mesentery",
+            "Hepatic renal pouch of Morrison **",
+            "Lesser sac/ omental bursa ***",
+            "Recto uterine pouch of Douglas",
+            "Foramen epiploicum [of Winslow] ***",
+            "Stomach bed ****",
+            "Nerve supply of stomach",
+            "Blood supply & lymphatic drainage of stomach ****",
+            "Inferior (visceral) surface of liver",
+            "Ligaments of liver***",
+            "Gallbladder",
+            "Second part of duodenum ***",
+            "Blood supply of duodenum",
+            "Development of pancreas **",
+            "Porto-caval anastomosis ****",
+            "Meckel's diverticulum **",
+            "Vermiform appendix ***",
+            "Arterial supply of colon",
+            "Superior mesenteric artery **",
+            "Inferior mesenteric artery **",
+            "Kidney - Structure **",
+            "Kidney - Posterior relations *",
+            "Relations of ureter *",
+            "Openings of Diaphragm **",
+            "Ischio anal fossa and its clinical anatomy ***",
+            "Perineal Pouches and its contents (Superficial and deep) ****",
+            "Pudendal canal **",
+            "Pudendal Nerve ***",
+            "Internal pudendal artery *",
+            "Ligaments of bladder **",
+            "Supports of Uterus ***",
+            "Blood supply of rectum **",
+            "Internal Iliac Artery **",
+            "Lumbar Plexus **",
+            "Thoraco lumbar fascia",
+            "Coeliac trunk *",
+            "Coeliac plexus / solar plexus ***",
+            "Lumbar plexus",
+            "Psoas major"
+          ]
+        }
+      }
     }
   }
 };
