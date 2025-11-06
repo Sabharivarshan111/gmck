@@ -103,6 +103,65 @@ export const anatomyPaper1 = {
           ]
         }
       }
+    },
+    "upper-limb": {
+      name: "UPPER LIMB",
+      subtopics: {
+        "essay": {
+          name: "Essay",
+          questions: [
+            "Breast - Location, structure, relations, blood supply, lymphatic drainage, histology and applied anatomy. ***",
+            "Axilla - Boundaries and contents with relations. Axillary artery - formation, course, parts, relations, branches and applied anatomy. *",
+            "Brachial plexus - Formation, variation (pre and post fixed), branches and applied anatomy. ***",
+            "Shoulder joint - Type, articular surfaces, relations, ligaments, muscles producing movements and applied anatomy. **",
+            "Median nerve - Formation, course, parts, relations, branches and applied anatomy. **",
+            "Radial nerve - Formation, course, parts, relations, branches and applied anatomy. **",
+            "Ulnar nerve - Formation, course, parts, relations, branches and applied anatomy. *",
+            "Elbow joint - Type, articular surfaces, relations, ligaments, muscles producing movements and applied anatomy."
+          ]
+        },
+        "short-notes": {
+          name: "Short Notes",
+          questions: [
+            "Lower end of the humerus.",
+            "Lymphatic drainage of breast. ****",
+            "Clavipectoral fascia. **",
+            "Boundaries and content of axilla. *",
+            "Axillary artery. ***",
+            "Axillary lymph nodes. *",
+            "Formation, branches and clinical anatomy of brachial plexus /Erb's point. ***",
+            "Trapezius. *",
+            "Muscles of scapular region/deltoid.",
+            "Rotator cuff. ***",
+            "Inter muscular spaces. **",
+            "Axillary/ circumflex nerve. *",
+            "Anastomoses around the scapula. **",
+            "Cephalic vein. *",
+            "Biceps brachii. *",
+            "Brachial artery. **",
+            "Anastomoses around the Elbow Joint. *",
+            "Changes at the Level of Insertion of Coracobrachialis. *",
+            "Cubital fossa. **",
+            "Radial nerve in spiral groove.",
+            "Profunda brachii artery",
+            "Flexor Retinaculum. **",
+            "Intrinsic muscles of hand. *",
+            "Lumbricals of hand. *",
+            "Superficial Palmar Arch.**",
+            "Ulnar nerve in hand. *",
+            "Median nerve in hand. **",
+            "Carpal tunnel syndrome. ***",
+            "Cutaneous innervation of the hand. *",
+            "Palmar spaces/Midpalmar spaces /dorsal spaces in hand + clinical anatomy. **",
+            "Movements and muscle producing movements of the shoulder joint. *",
+            "Elbow joint. *",
+            "Superior radioulnar joint. *",
+            "Supination and pronation. ****",
+            "Wrist joint and muscle involved in movement of wrist joint. *",
+            "First carpometacarpal joint/ joint of thumb. *"
+          ]
+        }
+      }
     }
   }
 };
