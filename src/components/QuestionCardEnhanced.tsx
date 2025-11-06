@@ -12,6 +12,7 @@ interface QuestionCardEnhancedProps {
 const QuestionCardEnhanced: React.FC<QuestionCardEnhancedProps> = ({ question, index }) => {
   const [isCompleted, setIsCompleted] = useState(false);
   const [tapStatus, setTapStatus] = useState<'idle' | 'processing-answer' | 'processing-mcq'>('idle');
+  const asteriskCount = countAsterisks(question);
   
   // Generate a unique ID for the question for localStorage
   const questionId = `question-enhanced-${index}`;
@@ -177,17 +178,40 @@ const QuestionCardEnhanced: React.FC<QuestionCardEnhancedProps> = ({ question, i
             </div>
           </div>
           
-          <Badge 
-            variant="outline" 
-            className="rounded-full h-6 w-6 flex-shrink-0 p-0 flex items-center justify-center bg-gray-800 text-white text-xs border-gray-700 ml-2"
-            onClick={(e) => e.stopPropagation()} // Prevent tap events when clicking the badge
-          >
-            1
-          </Badge>
+          {asteriskCount > 0 && (
+            <Badge 
+              variant="outline" 
+              className="rounded-full h-6 w-6 flex-shrink-0 p-0 flex items-center justify-center bg-gray-800 text-white text-xs border-gray-700 ml-2"
+              onClick={(e) => e.stopPropagation()} // Prevent tap events when clicking the badge
+            >
+              {asteriskCount}
+            </Badge>
+          )}
         </CardContent>
       </Card>
     </div>
   );
 };
+
+function countAsterisks(question: string): number {
+  // Count explicit asterisks in the format "****" at the beginning or middle of the text
+  const explicitAsterisks = question.match(/\*+/);
+  if (explicitAsterisks) {
+    return explicitAsterisks[0].length;
+  }
+  
+  // Count the number of exam dates in parentheses
+  const datePattern = /\(((?:(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec|Jul|Sep|Nov)\s\d{2}(?:;)?)+)\)/;
+  const dateMatch = question.match(datePattern);
+  
+  if (dateMatch && dateMatch[1]) {
+    // Count the number of dates by counting the semicolons and adding 1
+    const dates = dateMatch[1].split(';');
+    return dates.length;
+  }
+  
+  // If no asterisks or dates found, return 0
+  return 0;
+}
 
 export default QuestionCardEnhanced;
