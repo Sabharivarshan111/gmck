@@ -139,6 +139,46 @@ export const biochemistryPaper2 = {
           ]
         }
       }
+    },
+    "molecular-biology": {
+      name: "MOLECULAR BIOLOGY",
+      subtopics: {
+        "essay": {
+          name: "Essay",
+          questions: [
+            "Protein synthesis / Translation – Steps , post translational modifications & inhibitors of protein synthesis",
+            "Polymerase chain reaction (PCR) – Steps & applications",
+            "DNA replication in detail with its inhibitors",
+            "Recombinant DNA technology – Different techniques & applications",
+            "Transcription. Note on Post transcriptional processing & inhibitors",
+            ".Describe the separation of serum proteins by paper electrophoresis.",
+            "Draw the pattern of electrophoresis in\na)Multiple myeloma\nb)Nephrotic syndrome"
+          ]
+        },
+        "short-notes": {
+          name: "Short Notes",
+          questions: [
+            "Post translational modifications with examples",
+            "Blotting techniques",
+            "Genetic code & its properties",
+            "DNA repair mechanisms",
+            "Mutation & its types",
+            "Post transcriptional processing",
+            "Reverse transcriptase",
+            "Plasmid",
+            "Gene therapy",
+            "Lac Operon",
+            "t- RNA structure",
+            "Restriction endonuclease & their uses",
+            "m- RNA structure",
+            "Hybridoma technology & its applications",
+            "Cloning & its types",
+            "Protein targeting and degradation",
+            "Wobble hypothesis",
+            "RFLP and its application & DNA library"
+          ]
+        }
+      }
     }
   }
 };
