@@ -252,6 +252,25 @@ export const biochemistryPaper1 = {
           ]
         }
       }
+    },
+    "nutrition": {
+      name: "NUTRITION",
+      subtopics: {
+        "short-notes": {
+          name: "Short Notes",
+          questions: [
+            "Respiratory quotient**",
+            "Dietary fibers ***",
+            "Essential amino acid**",
+            "BMR and affecting factors*",
+            "Nitrogen balance and affecting factors",
+            "Protein- energy malnutrition**",
+            "Obesity",
+            "Glycemic index***",
+            "Limiting amino acid **"
+          ]
+        }
+      }
     }
   }
 };
