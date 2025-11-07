@@ -312,6 +312,33 @@ export const biochemistryPaper2 = {
           ]
         }
       }
+    },
+    "miscellaneous-topics": {
+      name: "MISCELLANEOUS TOPICS IN BIOCHEMISTRY (CANCER, AIDS, CELL CYCLE & MOLECULAR METHODS)",
+      subtopics: {
+        "essay": {
+          name: "Essay",
+          questions: [
+            "Electrophoresis- definition, principle.",
+            "Draw Patterns of Electrophoresis in\na) Normal person\nb) Multiple myeloma\nc) Nephrotic syndrome\nd) Chronic infection\ne) Liver cirrhosis"
+          ]
+        },
+        "short-notes": {
+          name: "Short Notes",
+          questions: [
+            "Proto oncogene, oncogene- egs., Clinical significance (any 2)**",
+            "Tumor markers (AFP, PSA)**",
+            "Lab diagnosis of multiple myeloma**",
+            "ELISA**",
+            "Electrophoresis**",
+            "Chromatography**",
+            "Flame photometer*",
+            "Cell cycle*",
+            "Monoclonal antibody",
+            "AIDS and anti HIV drugs"
+          ]
+        }
+      }
     }
   }
 };
