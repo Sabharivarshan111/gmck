@@ -225,6 +225,26 @@ export const biochemistryPaper2 = {
           ]
         }
       }
+    },
+    "xenobiotics": {
+      name: "XENOBIOTICS",
+      subtopics: {
+        "essay": {
+          name: "Essay",
+          questions: [
+            "Define xenobiotics. What is detoxification? Explain the phases of detoxification in detail. **"
+          ]
+        },
+        "short-notes": {
+          name: "Short Notes",
+          questions: [
+            "Cytochrome P450 **",
+            "Phase 2 detoxification reactions / Conjugation reactions*",
+            "Alcohol metabolism",
+            "Glutathione"
+          ]
+        }
+      }
     }
   }
 };
