@@ -57,6 +57,43 @@ export const physiologyPaper1 = {
           ]
         }
       }
+    },
+    "nerve-muscle-physiology": {
+      name: "NERVE MUSCLE PHYSIOLOGY",
+      subtopics: {
+        "essay": {
+          name: "Essay",
+          questions: [
+            "Discuss the Molecular Mechanism of Muscle contraction. Add a note on Rigor mortis****",
+            "Write in detail the electron microscopic structure of skeletal muscle and the molecular mechanism of muscular contraction**",
+            "Neuromuscular junction –structure , mechanism, transmission and dysfunction****",
+            "Excitation - contraction coupling. Add note on muscle relaxation**",
+            "Explain the sliding filament hypothesis and outline the main events in the cross-bridge cycle.**"
+          ]
+        },
+        "short-notes": {
+          name: "Short Notes",
+          questions: [
+            "Structure and functions of Neuromuscular junction*",
+            "Draw a neat labelled diagram of Neuromuscular junction and explain the events in neuromuscular transmission*",
+            "Genesis of resting membrane potential*",
+            "Cells in fibrous tissue & their functions.*",
+            "Negative feedback mechanism with example*",
+            "Ultrastructure of skeletal muscle / Sarcomere **",
+            "Sarco tubular system ***",
+            "Muscle Tone and Factors responsible for it ***",
+            "Isometric and Isotonic contraction ***",
+            "Action Potential Curve *****",
+            "Simple muscle twitch *",
+            "Chronaxie and Rheobase",
+            "Classification of nerve fibres",
+            "Wallerian degeneration*",
+            "Properties of smooth muscle",
+            "Latch bridge mechanism *",
+            "Rigor mortis*"
+          ]
+        }
+      }
     }
   }
 };
