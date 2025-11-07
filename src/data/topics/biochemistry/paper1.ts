@@ -89,6 +89,26 @@ export const biochemistryPaper1 = {
           ]
         }
       }
+    },
+    "lipid-chemistry": {
+      name: "LIPID CHEMISTRY",
+      subtopics: {
+        "essay": {
+          name: "Essay",
+          questions: [
+            "Phosphatidylcholine or lecithin.***"
+          ]
+        },
+        "short-notes": {
+          name: "Short Notes",
+          questions: [
+            "PUFA and its clinical significance***",
+            "Unsaturated fatty acids*",
+            "Describe\na) saponification***\nb) Iodine number**\nc) Rancidity of fat*",
+            "Functions and clinical applications of lipids.*"
+          ]
+        }
+      }
     }
   }
 };
