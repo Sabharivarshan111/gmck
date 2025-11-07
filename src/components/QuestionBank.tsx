@@ -82,7 +82,7 @@ const QuestionBank = () => {
     );
   }
 
-  const googleDriveLink = "https://drive.google.com/drive/folders/1PQScCjyHiVg9n9efebVovaJLcNAR5KSZ";
+  const googleDriveLink = "https://drive.google.com/drive/folders/1FT6Tg6K4POa5jfet_twGk7iC3nH2yJdm";
 
   const getExtraButtonClass = () => {
     if (theme === "blackpink") {
@@ -113,11 +113,11 @@ const QuestionBank = () => {
           >
             {theme === "blackpink" && activeTab === "extras" && (
               <span className="relative">
-                Extras-Agam notes
+                MEDICOS ZONE study material
                 <span className="absolute -bottom-1 left-1/4 right-1/4 h-0.5 bg-[#FF5C8D]"></span>
               </span>
             )}
-            {!(theme === "blackpink" && activeTab === "extras") && "Extras-Agam notes"}
+            {!(theme === "blackpink" && activeTab === "extras") && "MEDICOS ZONE study material"}
           </button>
         </div>
         
