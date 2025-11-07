@@ -233,6 +233,25 @@ export const biochemistryPaper1 = {
           ]
         }
       }
+    },
+    "integration-of-metabolism": {
+      name: "INTEGRATION OF METABOLISM",
+      subtopics: {
+        "essay": {
+          name: "Essay",
+          questions: [
+            "Metabolic adaptations during starvation & fed state *",
+            "Integrated metabolism at Cellular and Organ level"
+          ]
+        },
+        "short-notes": {
+          name: "Short Notes",
+          questions: [
+            "Metabolic profile of brain , liver , adipose tissue",
+            "Metabolic changes during starvation\na) Short term starvation\nb) Long term starvation"
+          ]
+        }
+      }
     }
   }
 };
