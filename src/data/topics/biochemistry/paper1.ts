@@ -44,6 +44,51 @@ export const biochemistryPaper1 = {
           ]
         }
       }
+    },
+    "carbohydrate-metabolism": {
+      name: "CARBOHYDRATE METABOLISM",
+      subtopics: {
+        "essay": {
+          name: "Essay",
+          questions: [
+            "Glycolysis – definition, sequence of reaction, energetics, regulation***",
+            "TCA cycle – definition, sequence of reaction, energetics, regulation***",
+            "Gluconeogenesis – definition, sequence of reaction, energetics, regulation***",
+            "HMP shunt and its significance ***",
+            "Glycogen synthesis *",
+            "Glycogenolysis **",
+            "Digestion and absorption of carbohydrates **",
+            "Regulation of Blood glucose in fasting and fed states ***",
+            "Metabolic changes & complications in Diabetes Mellitus and the biochemical investigations of diabetes mellitus *",
+            "Glycogen storage disorders"
+          ]
+        },
+        "short-notes": {
+          name: "Short Notes",
+          questions: [
+            "Substrate level phosphorylation **",
+            "Rapoport Luebering Shunt ***",
+            "Fate of pyruvate ***",
+            "Lactose intolerance **",
+            "Oxidative decarboxylation of pyruvate ***",
+            "Anaplerotic Reactions ***",
+            "Cori's cycle and Cahill cycle ****",
+            "Von Gierke disease *****",
+            "Galactosemia *****",
+            "G-6-P-D deficiency ****",
+            "Uronic acid pathway *",
+            "OGTT ***",
+            "Significance of HMP shunt ***",
+            "Pompe disease **",
+            "Mc Ardle disease **",
+            "Essential pentosuria ***",
+            "Essential Fructosuria ***",
+            "Sorbitol Pathway **",
+            "Von- Gierke's disease",
+            "Fate of pyruvate"
+          ]
+        }
+      }
     }
   }
 };
