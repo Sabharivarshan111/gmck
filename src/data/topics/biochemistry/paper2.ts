@@ -110,6 +110,35 @@ export const biochemistryPaper2 = {
           ]
         }
       }
+    },
+    "nucleotide-metabolism": {
+      name: "NUCLEOTIDE METABOLISM",
+      subtopics: {
+        "essay": {
+          name: "Essay",
+          questions: [
+            "Describe the de novo synthesis of purine nucleotides. Add a note on its regulation**",
+            "Explain in detail the formation , fate of uric acid and abnormalities of urate metabolism",
+            "De Novo synthesis of pyrimidines and regulation",
+            "Uric Acid :\na) Reference range of serum uric acid\nb)Source of uric acid in the body\nc)Ultimate fate of uric acid\nd)Causes of abnormalities in levels of serum uric acid."
+          ]
+        },
+        "short-notes": {
+          name: "Short Notes",
+          questions: [
+            "Purine salvage pathway and its importance in body***",
+            "Gout***",
+            "Hyperuricemia***",
+            "Catabolism of purines and related disorder",
+            "Regulation of purine (or pyrimidine) de novo biosynthesis.",
+            "Catabolism of pyrimidine & disorders of pyrimidine metabolism",
+            "Formation of uric acid",
+            "Purine salvage pathway",
+            "Hyperuricemia",
+            "Regulation of pyrimidine synthesis."
+          ]
+        }
+      }
     }
   }
 };
