@@ -102,6 +102,53 @@ export const physiologyPaper2 = {
           ]
         }
       }
+    },
+    "central-nervous-system": {
+      name: "CENTRAL NERVOUS SYSTEM",
+      subtopics: {
+        "essay": {
+          name: "Essay",
+          questions: [
+            "Enumerate the descending tracts of the spinal cord. Describe in detail the pyramidal tract. Mention its function and effects of lesion at different levels***",
+            "Enumerate the nuclei of hypothalamus. Explain its connections and Functions***",
+            "Classify pains, what are the receptors for pain? Add a note on analgesic system in brain .Describe the dual pathway for pain in detail*",
+            "List the ascending tract of spinal cord and discuss the tracts of posterior column with diagram*",
+            "Describe the connections and functions of basal ganglia in detail. Explain the clinical disorders and physiological basis of management***",
+            "Name the functional lobes of cerebellum. Describe its structure , connections and functions. Mention the clinical features of cerebellar disease***",
+            "ARAS- Components , Functions and Significance .**",
+            "Referred Pain- Definition, Examples , Dermatome role , Projection theory , Facilitation theory *"
+          ]
+        },
+        "short-notes": {
+          name: "Short Notes",
+          questions: [
+            "Waves of EEG and clinical significance**",
+            "EEG changes during sleep *",
+            "REM and NREM sleep .",
+            "Role of hypothalamus in hunger and satiety in human beings**",
+            "Functions of thalamus***",
+            "Hypothalamic thermostat mechanism",
+            "Parkinson's disease**",
+            "Basal ganglia and its functions .**",
+            "Brown sequard syndrome***",
+            "Homunculus**",
+            "Saltatory conduction**",
+            "Describe the formation, circulation and functions of CSF**",
+            "Tracts of Goll and Burdach*",
+            "Blood Brain Barrier.",
+            "Spinocerebellar tract*",
+            "Degeneration & Regeneration of nerve fibres",
+            "List out the differences between UMN & LMN lesions .**",
+            "Gate control theory .",
+            "Types of Memory. Neural mechanism of memory.**",
+            "Role and function of the Limbic System.**",
+            "Neuromuscular Transmission*",
+            "Control of appetite.*",
+            "Synapse*",
+            "Stretch Reflex*"
+          ]
+        }
+      }
     }
   }
 };
