@@ -21,6 +21,29 @@ export const biochemistryPaper1 = {
           ]
         }
       }
+    },
+    "carbohydrate-chemistry": {
+      name: "CARBOHYDRATE CHEMISTRY",
+      subtopics: {
+        "essay": {
+          name: "Essay",
+          questions: [
+            "Mucopolysaccharides and genetic disorders associated with it ***",
+            "Isomerism in carbohydrates"
+          ]
+        },
+        "short-notes": {
+          name: "Short Notes",
+          questions: [
+            "Anomerism **",
+            "Mutarotation ***",
+            "Principles of Benedict's test ****",
+            "Glycosaminoglycans ***",
+            "Heteropolysaccharides **",
+            "Glycoproteins *"
+          ]
+        }
+      }
     }
   }
 };
