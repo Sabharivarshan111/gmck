@@ -5,6 +5,7 @@ import { AiChat } from "@/components/AiChat";
 import PomodoroTimer from "@/components/PomodoroTimer";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { useTheme } from "@/components/theme/ThemeProvider";
+import { Eye } from "lucide-react";
 
 const Index = () => {
   const { theme } = useTheme();
@@ -21,8 +22,9 @@ const Index = () => {
           <div className="w-full mb-8">
             <div className="flex justify-between items-center">
               <div className="group">
-                <h1 className="text-4xl font-bold mb-2 text-foreground tracking-tight">
-                  ACEV
+                <h1 className="text-4xl font-bold mb-2 text-foreground tracking-tight flex items-center gap-2">
+                  <Eye className="h-8 w-8" />
+                  ORBIT
                   <span className="text-muted-foreground ml-2 text-lg">MBBS QBANK WITH AI</span>
                 </h1>
               </div>
