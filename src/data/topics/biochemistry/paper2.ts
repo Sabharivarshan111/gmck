@@ -245,6 +245,31 @@ export const biochemistryPaper2 = {
           ]
         }
       }
+    },
+    "organ-function-tests": {
+      name: "ORGAN FUNCTION TESTS",
+      subtopics: {
+        "essay": {
+          name: "Essay",
+          questions: [
+            "Liver function tests and their diagnostic significance**",
+            "Renal function tests and their diagnostic significance*"
+          ]
+        },
+        "short-notes": {
+          name: "Short Notes",
+          questions: [
+            "Classify jaundice based on liver function tests *",
+            "Tests to assess synthetic functions of liver",
+            "Tests to assess renal tubular functions",
+            "Thyroid function tests",
+            "Proteinuria and its types",
+            "Creatinine clearance",
+            "Urinary findings in jaundice",
+            "Nephrotic syndrome"
+          ]
+        }
+      }
     }
   }
 };
