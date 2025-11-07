@@ -298,6 +298,20 @@ export const biochemistryPaper2 = {
           ]
         }
       }
+    },
+    "hormones": {
+      name: "HORMONES",
+      subtopics: {
+        "short-notes": {
+          name: "Short Notes",
+          questions: [
+            "Classification of hormones\na)based on their chemical nature\nb)based on their mode of action",
+            "Mechanism of action of Fat soluble hormones/steroid hormones",
+            "Mechanism of G protein coupled receptor (or) Mechanism of action of Water soluble hormones ***",
+            "Secondary messengers **"
+          ]
+        }
+      }
     }
   }
 };
