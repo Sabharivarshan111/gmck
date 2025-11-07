@@ -160,6 +160,42 @@ export const physiologyPaper1 = {
           ]
         }
       }
+    },
+    "endocrine-physiology": {
+      name: "ENDOCRINE PHYSIOLOGY",
+      subtopics: {
+        "essay": {
+          name: "Essay",
+          questions: [
+            "Glucose Homeostasis - Hormones involved and their effects.Add a note on diabetes hyperthyroidism)****",
+            "Thyroid",
+            "Calcium Homeostasis - role of calcium, hormones involved and their effects, osteoporosis)**",
+            "Adrenocortical hormones - physiological anatomy of adrenal cortex, hormone synthesis, functions of cortisol and aldosterone, disorders (Addison disease, Cushing syndrome, Conn syndrome)***",
+            "Growth hormone - secretion, effects, regulation, disorders (Acromegaly, Dwarfism, Gigantism)"
+          ]
+        },
+        "short-notes": {
+          name: "Short Notes",
+          questions: [
+            "Secondary messenger mechanisms",
+            "Classification of hormone receptors - 4 types (G Protein)*",
+            "Acromegaly",
+            "Dwarfism",
+            "Diabetes insipidus - Central, Nephrogenic",
+            "Milk Ejection reflex (Neurohormonal reflex)",
+            "Grave's disease",
+            "Hypothyroidism - Myxedema, Cretinism, Hashimoto's disease",
+            "Parathyroid hormone - function, regulation",
+            "Cortisol - functions",
+            "Cushing's syndrome",
+            "Pheochromocytoma",
+            "Insulin - mechanism of action, effects, note on somatomedin C",
+            "Addison disease, Addisonian crisis",
+            "SIADH",
+            "Adrenal medulla"
+          ]
+        }
+      }
     }
   }
 };
