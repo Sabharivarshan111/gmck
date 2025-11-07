@@ -133,6 +133,33 @@ export const physiologyPaper1 = {
           ]
         }
       }
+    },
+    "renal-physiology": {
+      name: "RENAL PHYSIOLOGY",
+      subtopics: {
+        "essay": {
+          name: "Essay",
+          questions: [
+            "Define GFR. Explain the factors regulating GFR and measurement of GFR.*****",
+            "Explain in detail about the countercurrent mechanism in concentration of urine.*****",
+            "Explain the factors influencing acidification of urine and mechanism of urine acidification.*****"
+          ]
+        },
+        "short-notes": {
+          name: "Short Notes",
+          questions: [
+            "Juxtaglomerular apparatus .**",
+            "Renin- Angiotensin system.****",
+            "Renal circulation.***",
+            "Tubuloglomerular feedback.***",
+            "Water diuresis vs osmotic diuresis.*",
+            "Diuretics.*",
+            "Micturition reflex.****",
+            "Cystometrogram and its significance.***",
+            "Non excretory functions of the kidney.**"
+          ]
+        }
+      }
     }
   }
 };
