@@ -196,6 +196,33 @@ export const physiologyPaper1 = {
           ]
         }
       }
+    },
+    "reproductive-system": {
+      name: "REPRODUCTIVE SYSTEM",
+      subtopics: {
+        "essay": {
+          name: "Essay",
+          questions: [
+            "Ovarian Changes in Menstrual Cycle****",
+            "Endometrial Changes in Menstrual Cycle****",
+            "Hormonal regulation of Menstrual Cycle****"
+          ]
+        },
+        "short-notes": {
+          name: "Short Notes",
+          questions: [
+            "Stages of Spermatogenesis****",
+            "Functions of Testosterone***",
+            "Blood testis Barrier**",
+            "Actions of Estrogen***",
+            "Ovulation***",
+            "Functions of Placenta***",
+            "Pregnancy tests*",
+            "Female Contraceptives****",
+            "Mechanism of Parturition"
+          ]
+        }
+      }
     }
   }
 };
