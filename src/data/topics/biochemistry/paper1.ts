@@ -176,6 +176,40 @@ export const biochemistryPaper1 = {
           ]
         }
       }
+    },
+    "vitamins": {
+      name: "VITAMINS",
+      subtopics: {
+        "essay": {
+          name: "Essay",
+          questions: [
+            "Chemistry,source,RDA, functions, deficiency manifestations of Vitamin A ***",
+            "Chemistry , synthesis,functions, deficiency manifestations and toxic manifestations of Vitamin D **",
+            "Chemistry, functions, deficiency manifestations of Vitamin B1 ***",
+            "Chemistry, functions, deficiency manifestations of Vitamin B12 **",
+            "Chemistry,RDA,source, functions, deficiency manifestations of Vitamin C ****",
+            "Chemistry, functions, deficiency manifestations of Vitamin Pyridoxine ***"
+          ]
+        },
+        "short-notes": {
+          name: "Short Notes",
+          questions: [
+            "Beriberi ***",
+            "Wernicke korsakoff syndrome **",
+            "Pellagra *****",
+            "Biochemical functions of Pyridoxine *****",
+            "Functions of Folic acid ****",
+            "Functions of Vitamin C ****",
+            "Wald's visual cycle ****",
+            "Hypervitaminosis A **",
+            "Deficiency manifestations of Vitamin A ****",
+            "Synthesis and functions of Vitamin D ***",
+            "Folate trap ****",
+            "Vitamin D toxicity (or) Hypervitaminosis D **",
+            "Rickets"
+          ]
+        }
+      }
     }
   }
 };
