@@ -94,6 +94,45 @@ export const physiologyPaper1 = {
           ]
         }
       }
+    },
+    "gastrointestinal-physiology": {
+      name: "GASTROINTESTINAL PHYSIOLOGY",
+      subtopics: {
+        "essay": {
+          name: "Essay",
+          questions: [
+            "Describe the mechanism of secretion of Hydrochloric acid in the stomach. What are the factors regulating acid secretion? Add a note on peptic ulcer.***",
+            "Composition function and regulation of pancreatic secretions***",
+            "Functions of liver and jaundice **",
+            "Phases of swallowing **",
+            "Describe the digestion and absorption of proteins in the digestive tract. Write a Note on Malabsorption.",
+            "Types of salivary glands. Composition, function, regulation of secretion of Saliva."
+          ]
+        },
+        "short-notes": {
+          name: "Short Notes",
+          questions: [
+            "Compositions and functions of saliva **",
+            "Stages of deglutition.",
+            "Functions of Stomach. Secretion of HCl in the stomach and its regulation. Composition and functions of Gastric juice.",
+            "Phases of gastric juice secretions **",
+            "Gastric emptying.",
+            "Mechanism and causes of vomiting ***",
+            "Composition and functions of bile ***",
+            "Differences b/w hepatic and gallbladder bile **",
+            "Exocrine pancreas. Composition and functions of pancreatic juice. *",
+            "Digestion and absorption of fat.",
+            "Succus entericus ***",
+            "Small intestinal movement ****",
+            "Functions of large intestine **",
+            "Describe the enteric and colonic movements. Discuss the role of the enteric nervous system.",
+            "Counter current blood flow in the villi.",
+            "Dietary fibres ***",
+            "Defecation reflex ***",
+            "Steatorrhea"
+          ]
+        }
+      }
     }
   }
 };
