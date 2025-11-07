@@ -179,6 +179,27 @@ export const biochemistryPaper2 = {
           ]
         }
       }
+    },
+    "maintenance-of-fluids-and-electrolytes": {
+      name: "MAINTENANCE OF FLUIDS AND ELECTROLYTES",
+      subtopics: {
+        "essay": {
+          name: "Essay",
+          questions: [
+            "Write in detail about sodium.*",
+            "Write in detail about potassium.*"
+          ]
+        },
+        "short-notes": {
+          name: "Short Notes",
+          questions: [
+            "Causes of hyper and hyponatremia*",
+            "Causes of hyper and hypokalemia*",
+            "Renin angiotensin system**",
+            "Assessment of fluid and electrolyte balance.**"
+          ]
+        }
+      }
     }
   }
 };
