@@ -147,6 +147,35 @@ export const biochemistryPaper1 = {
           ]
         }
       }
+    },
+    "enzymology": {
+      name: "ENZYMOLOGY",
+      subtopics: {
+        "essay": {
+          name: "Essay",
+          questions: [
+            "Enzymes - definition, factors affecting their activity and regulation. Write in detail about types of enzyme inhibition with examples ****\n(or)\nWhen blood is collected for glucose analysis, a container with fluoride is used. Fluoride irreversibly inhibits enolase and hence fluoride will stop the whole glycolysis.\ni. What are the factors affecting enzyme activity? Write in detail about types of enzyme inhibition with examples.\nii. How is the activity of an enzyme regulated?\niii. Give another example for irreversible inhibition.",
+            "Define enzyme. Write about IUBMB classification and add a note on the concept of active site. ***"
+          ]
+        },
+        "short-notes": {
+          name: "Short Notes",
+          questions: [
+            "Mechanism of enzyme action. (lock and key model, Hand in glove model, Fischer's Template theory and Kochland's Induced Fit Theory)***",
+            "Line weaver burk's plot***",
+            "Michaelis Menten Equation, Km value and its significance ***",
+            "Factors regulating enzyme action ***",
+            "Types of enzyme inhibition. What happens to Km and Vmax in each case? ****",
+            "Suicidal inhibition **",
+            "Allosteric inhibition ***",
+            "Allosteric enzymes *",
+            "Metalloenzymes and zymogens ***",
+            "Isoenzymes – Examples, diagnostic uses and their clinical significance ****",
+            "Isoenzymes in MI ****",
+            "LDH isoenzymes and their clinical importance **"
+          ]
+        }
+      }
     }
   }
 };
