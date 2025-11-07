@@ -149,6 +149,50 @@ export const physiologyPaper2 = {
           ]
         }
       }
+    },
+    "special-senses": {
+      name: "SPECIAL SENSES",
+      subtopics: {
+        "essay": {
+          name: "Essay",
+          questions: [
+            "Describe in detail the photochemical mechanism of vision and mechanism of dark adaptation*",
+            "Draw and explain the visual pathway . Discuss the effects of lesions at various levels along its courses***",
+            "Describe the various refractive errors of the eye. Explain the physiological basis of their connection*",
+            "With the help of a diagram,describe the auditory pathway. Add a note on conduction deafness*",
+            "Explain the mechanisms of hearing*",
+            "Middle ear and its functions.Explain transmission of sound waves & Mechanism of hearing"
+          ]
+        },
+        "short-notes": {
+          name: "Short Notes",
+          questions: [
+            "Aqueous humor**",
+            "Dark adaptation***",
+            "Draw the optic pathway. Depict the lesions at various levels.**",
+            "Pupillary light reflexes*",
+            "Mechanism of accommodation for near vision*",
+            "Color vision***",
+            "Refractory errors of the eyes***",
+            "Structure and functions of middle ear***",
+            "Cochlea",
+            "Organ of corti",
+            "Travelling wave theory",
+            "Discuss the phenomenon by which sound waves in air induce action potentials in the cochlear nerve.",
+            "Cochlear micro phonic potential**",
+            "Taste pathway with diagram***",
+            "Theories of hearing",
+            "Hearing defects",
+            "Theories of colour vision",
+            "Refractory errors of eye / Defects of image forming mechanism",
+            "Mechanism of Phototransduction",
+            "Mechanism of Gustatory transductio",
+            "Olfactory pathway and applied physiology",
+            "Taste pathway*",
+            "Otolith organ*"
+          ]
+        }
+      }
     }
   }
 };
