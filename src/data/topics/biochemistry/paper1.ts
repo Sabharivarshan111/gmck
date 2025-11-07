@@ -109,6 +109,44 @@ export const biochemistryPaper1 = {
           ]
         }
       }
+    },
+    "lipid-metabolism": {
+      name: "LIPID METABOLISM",
+      subtopics: {
+        "essay": {
+          name: "Essay",
+          questions: [
+            "Digestion and absorption of lipids.**",
+            "Beta oxidation of fatty acids***",
+            "Ketogenesis and ketosis***",
+            "Biosynthesis and regulation of Cholesterol.**",
+            "Cardiac biomarkers*\nA) Cardiac troponins\nB) Creatine kinase\nC) Myoglobin and LDH"
+          ]
+        },
+        "short-notes": {
+          name: "Short Notes",
+          questions: [
+            "Alpha and Omega oxidation**",
+            "Adipose tissue in well fed and fasting condition.**",
+            "White and brown adipose tissue*",
+            "Fatty liver**",
+            "Lipotropic factors**",
+            "Cholesterol structure***",
+            "Apo lipoprotein**",
+            "Chylomicrons**",
+            "VLDL***",
+            "LDL***",
+            "HDL/Reverse cholesterol transport**",
+            "a)Formation of bile acids*\nb ) functions of bile and bile salts*",
+            "Atherosclerosis***",
+            "Explain\na) Abetalipoproteinemia***\nb) Tangier disease***",
+            "Frederickson classification of hyperlipoproteinemia**",
+            "Prostaglandins **",
+            "Write about***\nA) Gaucher 's disease\nB) Niemann Pick disease\nC) Tay - Sachs disease",
+            "Source and fate of acetyl Co -A**"
+          ]
+        }
+      }
     }
   }
 };
