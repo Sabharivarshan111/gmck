@@ -69,6 +69,47 @@ export const biochemistryPaper2 = {
           ]
         }
       }
+    },
+    "protein-metabolism": {
+      name: "PROTEIN METABOLISM",
+      subtopics: {
+        "essay": {
+          name: "Essay",
+          questions: [
+            "Formation, transport and disposal of ammonia . **",
+            "Why is ammonia toxic to the body? What are the ways by which ammonia is disposed of in the body ? Add a note on hyperammonemia condition.**",
+            "Urea cycle- regulations, significance, disorder. What is the normal urea level and what are the causes of abnormal urea concentration? **",
+            "Metabolism of phenylalanine and disorder associated with it.****",
+            "Tyrosine metabolism and disorder associated with it.****",
+            "Tryptophan metabolism and disorder associated with it.***",
+            "Metabolism of glycine and it's disorder.***",
+            "Branched chain amino acid - metabolism and disorder.*",
+            "Metabolism of methionine and disorder associated with it. Explain transmethylation with any 5 examples"
+          ]
+        },
+        "short-notes": {
+          name: "Short Notes",
+          questions: [
+            "Digestion and absorption of proteins",
+            "Transamination reactions*",
+            "Transport of ammonia*",
+            "Urea cycle****",
+            "Compounds formed from Glycine***",
+            "Metabolism of creatine. Clinical relevance of serum creatinine levels",
+            "Disorders of phenylalanine and tyrosine (Each separate short notes) I) Phenylketonuria II) Alkaptonuria III) Tyrosinemia",
+            "Functions of tyrosine and compounds derived from tyrosine",
+            "Compounds derived from tryptophan",
+            "Carcinoid syndrome",
+            "Hartnup disease",
+            "Active forms of methionine and mention its functions",
+            "Homocystinuria",
+            "One carbon metabolism",
+            "Aminoacidurias",
+            "Polyamines",
+            "Formation of uric acid"
+          ]
+        }
+      }
     }
   }
 };
