@@ -210,6 +210,29 @@ export const biochemistryPaper1 = {
           ]
         }
       }
+    },
+    "bioenergetics": {
+      name: "BIOENERGETICS",
+      subtopics: {
+        "essay": {
+          name: "Essay",
+          questions: [
+            "Describe citric acid cycle in detail and its regulation. Justify why the TCA cycle is called an amphibolic cycle. **",
+            "Components, reactions and regulation of ETC. Describe the events and inhibition of oxidative phosphorylation.*",
+            "What is oxidative phosphorylation? Discuss the steps and mention its significance.",
+            "Describe the steps of the HMP shunt pathway. Mention its significance. How is it regulated?"
+          ]
+        },
+        "short-notes": {
+          name: "Short Notes",
+          questions: [
+            "Chemiosmotic theory ***",
+            "Components affecting ETC and Oxidative phosphorylation.",
+            "Inhibitors of ETC",
+            "Oxidative phosphorylation"
+          ]
+        }
+      }
     }
   }
 };
