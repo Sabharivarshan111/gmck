@@ -8,3 +8,5 @@ export const biochemistryData = {
     "paper-2": biochemistryPaper2
   }
 };
+
+console.log("Biochemistry Paper 1 data:", biochemistryPaper1);
