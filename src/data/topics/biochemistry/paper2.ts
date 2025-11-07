@@ -270,6 +270,34 @@ export const biochemistryPaper2 = {
           ]
         }
       }
+    },
+    "minerals": {
+      name: "MINERALS",
+      subtopics: {
+        "essay": {
+          name: "Essay",
+          questions: [
+            "Sources, RDA, biochemical functions, absorption & factors affecting it, deficiency manifestations & toxicity of Iron ****",
+            "Calcium – source, RDA, Absorption & factors affecting absorption, functions, regulation of blood calcium levels. ****"
+          ]
+        },
+        "short-notes": {
+          name: "Short Notes",
+          questions: [
+            "Factors regulating blood calcium levels ***",
+            "Calcium homeostasis & disorders ***",
+            "Fluorosis",
+            "Mucosal block theory ****",
+            "Functions of Calcium **",
+            "Menky's syndrome",
+            "Regulation of Serum Calcium ***",
+            "Wilson's Disease ***",
+            "Digestion, absorption and transport of iron ***",
+            "Potassium Homeostasis **",
+            "Functions of zinc **"
+          ]
+        }
+      }
     }
   }
 };
