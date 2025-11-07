@@ -35,6 +35,40 @@ export const biochemistryPaper2 = {
           ]
         }
       }
+    },
+    "chemistry-of-amino-acids-and-proteins": {
+      name: "CHEMISTRY OF AMINO ACIDS AND PROTEINS",
+      subtopics: {
+        "essay": {
+          name: "Essay",
+          questions: [
+            "Secondary structure of proteins***",
+            "Structural organisation of proteins**",
+            "Precipitation of proteins***",
+            "Classify amino acids based on structure and give examples. Add a short note on essential amino acids",
+            "Write about the general reactions of amino acids",
+            "Classification of proteins",
+            "Quantitative estimation of proteins*"
+          ]
+        },
+        "short-notes": {
+          name: "Short Notes",
+          questions: [
+            "Structure of collagen***",
+            "Isoelectric point and its significance ***",
+            "Denaturation of proteins***",
+            "Optical activity **",
+            "Motif **",
+            "Biuret method**",
+            "Conjugated proteins*",
+            "Significance of heat coagulation**",
+            "Precipitation by alkaloid reagents**",
+            "Isoelectric precipitation***",
+            "Kjeldahl's procedure",
+            "Proteomics"
+          ]
+        }
+      }
     }
   }
 };
