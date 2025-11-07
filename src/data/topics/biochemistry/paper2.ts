@@ -200,6 +200,31 @@ export const biochemistryPaper2 = {
           ]
         }
       }
+    },
+    "maintenance-of-ph-and-acid-base-disorders": {
+      name: "MAINTENANCE OF PH AND ACID BASE DISORDERS",
+      subtopics: {
+        "essay": {
+          name: "Essay",
+          questions: [
+            "Normal ph of blood and various mechanisms to regulate it***",
+            "Plasma and renal buffers in acid base homeostasis***",
+            "Disturbances in acid base balance"
+          ]
+        },
+        "short-notes": {
+          name: "Short Notes",
+          questions: [
+            "Role of lungs in acid base balance**",
+            "Renal regulation of acid base homeostasis ***",
+            "Anion gap, it's importance **",
+            "Metabolic acidosis***",
+            "Respiratory acidosis and its causes",
+            "Composition, action and factors affecting action of buffers.",
+            "Compensated metabolic acidosis."
+          ]
+        }
+      }
     }
   }
 };
