@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { Link } from "react-router-dom";
 import QuestionBank from "@/components/QuestionBank";
 import { InstallPrompt } from "@/components/InstallPrompt";
 import { AiChat } from "@/components/AiChat";
@@ -6,6 +7,7 @@ import PomodoroTimer from "@/components/PomodoroTimer";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { useTheme } from "@/components/theme/ThemeProvider";
 import { Eye } from "lucide-react";
+import { AdBanner } from "@/components/AdBanner";
 
 const Index = () => {
   const { theme } = useTheme();
@@ -32,6 +34,9 @@ const Index = () => {
             </div>
           </div>
           
+          {/* Header Ad Banner */}
+          <AdBanner adSlot="YOUR_AD_SLOT_1" adFormat="horizontal" className="w-full max-w-3xl" />
+          
           <div className="grid gap-8 grid-cols-1 lg:grid-cols-[1fr,1fr] w-full mb-28">
             <div className="space-y-8">
               <QuestionBank />
@@ -41,11 +46,19 @@ const Index = () => {
               <AiChat />
             </div>
           </div>
+          
+          {/* Footer Ad Banner */}
+          <AdBanner adSlot="YOUR_AD_SLOT_2" adFormat="horizontal" className="w-full max-w-3xl" />
         </div>
       </div>
       <PomodoroTimer />
       
       <div className="absolute bottom-4 left-0 right-0 text-center text-sm text-muted-foreground">
+        <div className="flex justify-center gap-4 mb-2">
+          <Link to="/privacy-policy" className="hover:text-primary transition-colors">Privacy Policy</Link>
+          <Link to="/terms-of-service" className="hover:text-primary transition-colors">Terms of Service</Link>
+          <Link to="/about" className="hover:text-primary transition-colors">About</Link>
+        </div>
         Created by{' '}
         <a 
           href="https://www.instagram.com/_varshan_king/" 
