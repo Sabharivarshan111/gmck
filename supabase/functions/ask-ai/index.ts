@@ -13,7 +13,7 @@ const requestSchema = z.object({
   prompt: z.string()
     .trim()
     .min(1, 'Prompt cannot be empty')
-    .max(4000, 'Prompt must be less than 4000 characters'),
+    .max(8000, 'Prompt must be less than 8000 characters'),
 });
 
 // Simple rate limiting mechanism
@@ -118,7 +118,7 @@ serve(async (req) => {
     
     // Check estimated token usage
     const estimatedTokenCount = estimateTokens(prompt);
-    if (estimatedTokenCount > 2000) {
+    if (estimatedTokenCount > 4000) {
       console.error('Prompt too large:', estimatedTokenCount, 'estimated tokens');
       return new Response(
         JSON.stringify({ error: 'Request too large. Please shorten your prompt.' }),

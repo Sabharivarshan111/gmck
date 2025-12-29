@@ -15,7 +15,7 @@ const requestSchema = z.object({
     .max(4000, 'Prompt must be less than 4000 characters'),
   conversationHistory: z.array(z.object({
     role: z.enum(['user', 'assistant', 'system']),
-    content: z.string().max(5000)
+    content: z.string().max(15000)
   })).max(20).optional(),
   isTripleTap: z.boolean().optional(),
   isMCQRequest: z.boolean().optional(),
@@ -340,7 +340,7 @@ serve(async (req) => {
         ['user', 'assistant', 'system'].includes(msg.role) &&
         typeof msg.content === 'string' &&
         msg.content.length > 0 &&
-        msg.content.length < 5000
+        msg.content.length <= 15000
       );
     
     // Check estimated token usage (prompt + conversation history)
@@ -348,7 +348,7 @@ serve(async (req) => {
       conversationHistory.reduce((sum, msg) => sum + msg.content.length, 0);
     const estimatedTokenCount = estimateTokens(totalContentLength.toString()) + Math.ceil(totalContentLength / 4);
     
-    if (estimatedTokenCount > 8000) {
+    if (estimatedTokenCount > 16000) {
       logWithTimestamp(`[${requestId}] Request too large:`, estimatedTokenCount, 'estimated tokens');
       return new Response(
         JSON.stringify({ error: 'Request too large. Please shorten your prompt or conversation.' }),
