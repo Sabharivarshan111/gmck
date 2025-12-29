@@ -1,10 +1,33 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { GoogleGenerativeAI } from "npm:@google/generative-ai@0.2.0";
+import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
+
+// Input validation schema
+const requestSchema = z.object({
+  prompt: z.string()
+    .trim()
+    .min(1, 'Prompt cannot be empty')
+    .max(4000, 'Prompt must be less than 4000 characters'),
+  conversationHistory: z.array(z.object({
+    role: z.enum(['user', 'assistant', 'system']),
+    content: z.string().max(5000)
+  })).max(20).optional(),
+  isTripleTap: z.boolean().optional(),
+  isMCQRequest: z.boolean().optional(),
+  isDoubleTap: z.boolean().optional(),
+  isImportantQuestionsRequest: z.boolean().optional(),
+  isNeedingClarification: z.boolean().optional()
+});
+
+// Estimate token count (roughly 1 token per 4 characters)
+function estimateTokens(text: string): number {
+  return Math.ceil(text.length / 4);
+}
 
 // Enhanced rate limiting mechanism with backoff
 const rateLimitMap = new Map();
@@ -284,19 +307,51 @@ serve(async (req) => {
       );
     }
     
+    // Validate input with zod schema
+    const validation = requestSchema.safeParse(reqData);
+    if (!validation.success) {
+      logWithTimestamp(`[${requestId}] Validation error:`, validation.error.issues);
+      return new Response(
+        JSON.stringify({ 
+          error: 'Invalid input: ' + validation.error.issues.map(i => i.message).join(', ')
+        }),
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 200
+        }
+      );
+    }
+    
     const { 
       prompt, 
-      conversationHistory = [], 
+      conversationHistory: rawConversationHistory = [], 
       isTripleTap = false,
       isMCQRequest: explicitMCQRequest = false,
       isImportantQuestionsRequest: explicitImportantQRequest = false,
       isNeedingClarification = false
-    } = reqData || {};
+    } = validation.data;
     
-    if (!prompt) {
-      logWithTimestamp(`[${requestId}] Missing prompt in request`);
+    // Sanitize conversation history
+    const conversationHistory = rawConversationHistory
+      .slice(-10) // Last 10 messages only
+      .filter(msg => 
+        msg && 
+        typeof msg === 'object' && 
+        ['user', 'assistant', 'system'].includes(msg.role) &&
+        typeof msg.content === 'string' &&
+        msg.content.length > 0 &&
+        msg.content.length < 5000
+      );
+    
+    // Check estimated token usage (prompt + conversation history)
+    const totalContentLength = prompt.length + 
+      conversationHistory.reduce((sum, msg) => sum + msg.content.length, 0);
+    const estimatedTokenCount = estimateTokens(totalContentLength.toString()) + Math.ceil(totalContentLength / 4);
+    
+    if (estimatedTokenCount > 8000) {
+      logWithTimestamp(`[${requestId}] Request too large:`, estimatedTokenCount, 'estimated tokens');
       return new Response(
-        JSON.stringify({ error: 'Prompt is required' }),
+        JSON.stringify({ error: 'Request too large. Please shorten your prompt or conversation.' }),
         { 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
           status: 200

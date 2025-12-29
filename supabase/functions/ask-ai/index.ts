@@ -1,11 +1,20 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
+import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
+
+// Input validation schema
+const requestSchema = z.object({
+  prompt: z.string()
+    .trim()
+    .min(1, 'Prompt cannot be empty')
+    .max(4000, 'Prompt must be less than 4000 characters'),
+});
 
 // Simple rate limiting mechanism
 const rateLimitMap = new Map();
@@ -30,6 +39,11 @@ function isRateLimited(clientId: string): boolean {
   }
   
   return isLimited;
+}
+
+// Estimate token count (roughly 1 token per 4 characters)
+function estimateTokens(text: string): number {
+  return Math.ceil(text.length / 4);
 }
 
 serve(async (req) => {
@@ -85,12 +99,29 @@ serve(async (req) => {
       );
     }
     
-    const { prompt } = reqData || {};
-    
-    if (!prompt) {
-      console.error('Missing prompt in request');
+    // Validate input with zod schema
+    const validation = requestSchema.safeParse(reqData);
+    if (!validation.success) {
+      console.error('Validation error:', validation.error.issues);
       return new Response(
-        JSON.stringify({ error: 'Prompt is required' }),
+        JSON.stringify({ 
+          error: 'Invalid input: ' + validation.error.issues.map(i => i.message).join(', ')
+        }),
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 200
+        }
+      );
+    }
+    
+    const { prompt } = validation.data;
+    
+    // Check estimated token usage
+    const estimatedTokenCount = estimateTokens(prompt);
+    if (estimatedTokenCount > 2000) {
+      console.error('Prompt too large:', estimatedTokenCount, 'estimated tokens');
+      return new Response(
+        JSON.stringify({ error: 'Request too large. Please shorten your prompt.' }),
         { 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
           status: 200
