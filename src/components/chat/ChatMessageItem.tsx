@@ -108,9 +108,28 @@ export const ChatMessageItem = ({ message, onCopy }: ChatMessageItemProps) => {
               li: ({ children }) => (
                 <li className="ml-2">{children}</li>
               ),
-              p: ({ children }) => (
-                <p className="my-1">{children}</p>
-              ),
+              p: ({ children }) => {
+                // Convert children to string to check for answer patterns
+                const childText = String(children);
+                
+                // Check if this paragraph contains the correct answer indicator
+                if (childText.includes('✓ Correct Answer') || childText.includes('Correct Answer:') || /^\*?\*?Answer:/i.test(childText)) {
+                  return (
+                    <p className="my-2 p-2 rounded-md bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-200 font-medium border-l-4 border-green-500">
+                      {children}
+                    </p>
+                  );
+                }
+                
+                // Check if this is an MCQ option line (A), B), C), D))
+                if (/^\*?\*?[A-D]\)/.test(childText)) {
+                  return (
+                    <p className="my-1 pl-2 py-0.5">{children}</p>
+                  );
+                }
+                
+                return <p className="my-1">{children}</p>;
+              },
             }}
           >
             {cleanContent}

@@ -432,27 +432,36 @@ Each MCQ should:
 1. Be clinically relevant
 2. Test application of knowledge rather than mere recall
 3. Have 4 options (A, B, C, D) with one correct answer
-4. Include a brief explanation immediately after each question's answer (not at the end of all questions)
+4. Include a brief explanation immediately after each question's answer
 
-The MCQs should follow this exact format for each question:
+CRITICAL FORMATTING RULES - YOU MUST FOLLOW EXACTLY:
 
-Question 1: [Question text]
-A) [Option A]
-B) [Option B]
-C) [Option C]
-D) [Option D]
-Answer: [Correct option letter]
-Explanation: [Brief explanation]
+**Question 1:** [Question text]
 
-Question 2: [Question text]
+**A)** [Option A]
+
+**B)** [Option B]
+
+**C)** [Option C]
+
+**D)** [Option D]
+
+**✓ Correct Answer: [Letter]** - [Brief explanation of why this is correct]
+
+---
+
+**Question 2:** [Question text]
 ...and so on.
 
-IMPORTANT:
+MANDATORY FORMATTING:
+- Each option (A, B, C, D) MUST be on its OWN SEPARATE LINE with a blank line between them
+- Use bold (**) for Question numbers, option letters, and the Answer line
+- Add a checkmark (✓) before "Correct Answer"
+- Add a horizontal rule (---) between each question
+- NEVER put multiple options on the same line
 - Generate EXACTLY 5 case-based scenarios and 5 direct knowledge questions
-- Place the answer and explanation immediately after each question, not grouped at the end
-- Make the questions varied in difficulty and cover different aspects of the topic
-- Follow NEET PG/USMLE style format and complexity
-- Make sure all questions are accurate and properly formatted`;
+- Place the answer and explanation immediately after each question
+- Follow NEET PG/USMLE style format and complexity`;
 
       // Adjust generation parameters for MCQs
       generationConfig.temperature = 0.8; // More creative
