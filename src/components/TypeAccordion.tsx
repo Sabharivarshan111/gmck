@@ -14,9 +14,10 @@ interface TypeAccordionProps {
   isExpanded?: boolean;
   activeTab: "essay" | "short-notes";
   isFirstYear?: boolean;
+  yearKey?: string;
 }
 
-const TypeAccordion = ({ typeKey, type, isExpanded = false, activeTab, isFirstYear }: TypeAccordionProps) => {
+const TypeAccordion = ({ typeKey, type, isExpanded = false, activeTab, isFirstYear, yearKey }: TypeAccordionProps) => {
   const derivedSubtopics = (type as any)?.subtopics ?? {
     ...(type as any)?.essay ? { essay: (type as any).essay } : {},
     ...(((type as any)?.["short-notes"] || (type as any)?.["short-note"]) ? { "short-notes": (type as any)["short-notes"] || (type as any)["short-note"] } : {})
@@ -38,6 +39,7 @@ const TypeAccordion = ({ typeKey, type, isExpanded = false, activeTab, isFirstYe
             subtopics={derivedSubtopics} 
             activeTab={activeTab}
             isFirstYear={isFirstYear}
+            yearKey={yearKey}
           />
         </div>
       </AccordionContent>

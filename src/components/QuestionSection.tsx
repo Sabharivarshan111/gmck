@@ -1,6 +1,7 @@
 
 import { QuestionType } from "./QuestionBank";
 import QuestionCard from "./QuestionCard";
+import { Info } from "lucide-react";
 
 interface QuestionSectionProps {
   subtopics: {
@@ -8,10 +9,33 @@ interface QuestionSectionProps {
   };
   activeTab: "essay" | "short-notes";
   isFirstYear?: boolean;
+  yearKey?: string;
 }
 
-const QuestionSection = ({ subtopics, activeTab, isFirstYear }: QuestionSectionProps) => {
+const QuestionSection = ({ subtopics, activeTab, isFirstYear, yearKey }: QuestionSectionProps) => {
   if (!subtopics || typeof subtopics !== 'object') return null;
+
+  // Check if we should show "No essays found" message
+  const isNonFinalYear = yearKey && yearKey !== "final-year";
+  const essayData = subtopics.essay as QuestionType | undefined;
+  const shortNotesData = (subtopics["short-notes"] || subtopics["short-note"]) as QuestionType | undefined;
+  
+  const hasEssays = essayData && 'questions' in essayData && essayData.questions.length > 0;
+  const hasShortNotes = shortNotesData && 'questions' in shortNotesData && shortNotesData.questions.length > 0;
+  
+  // Show message if: on essay tab, no essays, has short notes, and not final year
+  if (activeTab === "essay" && !hasEssays && hasShortNotes && isNonFinalYear) {
+    return (
+      <div className="flex items-start gap-3 p-4 rounded-lg bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800">
+        <Info className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
+        <div className="text-sm text-blue-700 dark:text-blue-300">
+          <p className="font-medium">No essays found for this subtopic.</p>
+          <p className="mt-1 text-blue-600 dark:text-blue-400">Please check the Short Notes tab for available questions.</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
       {Object.entries(subtopics).map(([questionTypeKey, questionType]) => {
