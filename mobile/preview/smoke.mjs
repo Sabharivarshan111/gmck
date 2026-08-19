@@ -431,6 +431,71 @@ await step('home blocks rearrange, and the order survives a reload', async () =>
   await tap('Finish rearranging');
 });
 
+await step('a block resizes with its grip, and the size survives a reload', async () => {
+  await open('screen=home');
+
+  /** The hero's drawn height. Resizing it is the whole point of the grip. */
+  const heroHeight = () =>
+    page.evaluate(() => {
+      const node = [...document.querySelectorAll('div')].find(el =>
+        el.textContent?.startsWith('Welcome to Orbit'),
+      );
+      return node ? Math.round(node.getBoundingClientRect().height) : 0;
+    });
+
+  /**
+   * Drag a grip by `dy`, in steps, because the responder reads movement — one
+   * jump from down to up is a tap that happens to end somewhere else.
+   */
+  const dragGrip = async (label, dy) => {
+    const box = await byLabel(label).boundingBox();
+    if (!box) {
+      throw new Error(`no resize grip for "${label}"`);
+    }
+    const x = box.x + box.width / 2;
+    const y = box.y + box.height / 2;
+    await page.mouse.move(x, y);
+    await page.mouse.down();
+    for (let i = 1; i <= 12; i += 1) {
+      await page.mouse.move(x, y + (dy * i) / 12);
+      await page.waitForTimeout(16);
+    }
+    await page.mouse.up();
+    await page.waitForTimeout(400);
+  };
+
+  await tap('Rearrange home screen');
+  const before = await heroHeight();
+
+  await dragGrip('Resize Welcome card', 70);
+  const grown = await heroHeight();
+  if (!(grown > before + 20)) {
+    throw new Error(`dragging the grip down grew the hero by only ${grown - before}px`);
+  }
+
+  await dragGrip('Resize Welcome card', -140);
+  const shrunk = await heroHeight();
+  if (!(shrunk < before - 20)) {
+    throw new Error(`dragging the grip up shrank the hero by only ${before - shrunk}px`);
+  }
+
+  await tap('Finish rearranging');
+  await open('screen=home');
+  const reloaded = await heroHeight();
+  if (Math.abs(reloaded - shrunk) > 24) {
+    throw new Error(`the block size did not survive a reload (${shrunk} \u2192 ${reloaded})`);
+  }
+
+  // Put it back, so the rest of the run sees the layout it expects.
+  await tap('Rearrange home screen');
+  await tap('Reset home layout');
+  await page.waitForTimeout(700);
+  if (Math.abs((await heroHeight()) - before) > 24) {
+    throw new Error('Reset did not put the hero back to its normal size');
+  }
+  await tap('Finish rearranging');
+});
+
 await step('a subject card can be dragged to another slot', async () => {
   await open('screen=home');
 

@@ -289,6 +289,37 @@ Two consequences worth knowing before touching it:
   It wraps the block's *content* only — wrapping the row would disable the
   reorder arrows, which are Touchables too.
 
+## Resizing a block is a zoom, and the grip must own its responder
+
+Each block carries a size of its own (`scales` in `hooks/useHomeOrder.ts`,
+0.75-1.3), dragged live from the grip on its bottom edge. The block is drawn
+by giving its content `1/scale` of the width and scaling it back up from the
+top-left, so everything inside grows together and no section has to know it is
+being resized. The wrapper's height is set to `natural * scale` by hand,
+because a transform changes nothing about layout — without it the blocks below
+would sit where they were while this one grew over them.
+
+Three things there are easy to undo by accident:
+
+- **The resize PanResponders are built once per order, and read the live
+  values through refs.** A drag writes a new scale on every frame; if the memo
+  that builds them depended on `scales` (or on an `onScale`/`scaleRange`
+  written inline in the JSX) they would be replaced mid-gesture, and the
+  replacement has never seen the grant that recorded where the finger started.
+  The symptom is a drag that moves the block one frame's worth and then stops.
+- **`gesture.dy` is divided by the block's *natural* height.** The drawn
+  height is `natural * scale`, so that divisor is exactly what keeps the grip
+  under the finger. A fixed divisor makes the hero crawl and the WhatsApp
+  strip bolt.
+- **The grip sits inside the row (`bottom: 0`), not hanging below it.** A
+  negative offset puts half the target in the gap that belongs to the *next*
+  block, whose responder claims it — dragging the hero's grip then resizes
+  nothing and reorders the quick actions instead.
+
+Below `COMPACT_BELOW` (0.9) blocks drop their secondary detail — the hero's
+body and credit, the quick actions' icons, the subject progress bars — rather
+than render it at a size nobody can read.
+
 ## A render error must never blank the app
 
 `mobile/src/components/ErrorBoundary.tsx` wraps everything in `App.tsx` —

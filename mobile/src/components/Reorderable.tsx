@@ -67,6 +67,17 @@ export interface ReorderableProps<Id extends string> {
   editing: boolean;
   /** Fired when a block is held long enough to mean "let me move this". */
   onRequestEdit: () => void;
+  /**
+   * How big each block is drawn, as a multiplier. Absent means fixed size.
+   */
+  scales?: Record<string, number>;
+  /**
+   * A block was dragged to a new size. `commit` is false while the finger is
+   * still down — the value is wanted on screen every frame, but storing it
+   * every frame is a write per pixel dragged.
+   */
+  onScale?: (id: Id, scale: number, commit: boolean) => void;
+  scaleRange?: { min: number; max: number };
   /** Fires while a block is held, so the page can stop scrolling under it. */
   onDragChange?: (dragging: boolean) => void;
   sections: Record<Id, React.ReactNode>;
@@ -79,6 +90,9 @@ export function Reorderable<Id extends string>({
   onOrderChange,
   editing,
   onRequestEdit,
+  scales,
+  onScale,
+  scaleRange,
   onDragChange,
   sections,
   labels,
@@ -96,6 +110,22 @@ export function Reorderable<Id extends string>({
   const HOLD_SLOP = 12;
 
   const heights = useRef(new Map<Id, number>()).current;
+  /** Each block's height *before* its zoom is applied. */
+  const naturals = useRef(new Map<Id, number>()).current;
+
+  /**
+   * The live scales, for the resize responders to read.
+   *
+   * They are built once per order — rebuilding them when a scale changes
+   * would replace the responder mid-drag, and a fresh one has never seen the
+   * grant that recorded where the finger started.
+   */
+  const scalesRef = useRef(scales);
+  scalesRef.current = scales;
+  const onScaleRef = useRef(onScale);
+  onScaleRef.current = onScale;
+  const scaleRangeRef = useRef(scaleRange);
+  scaleRangeRef.current = scaleRange;
   const holdTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const holdStart = useRef({ x: 0, y: 0 });
 
@@ -173,6 +203,67 @@ export function Reorderable<Id extends string>({
     },
     [onOrderChange, order, settle],
   );
+
+  /**
+   * The resize grips.
+   *
+   * Height rather than a corner drag: a block always spans the full width, so
+   * width is not a thing anyone can choose, and offering a diagonal handle
+   * would imply it is. Dragging down makes the block bigger.
+   *
+   * The scale moves with the finger — `commit` false — and is written to
+   * storage once, on release. Storing on every frame is a write per pixel
+   * dragged.
+   */
+  const resizable = onScale !== undefined;
+  const resizers = useMemo(() => {
+    const map = {} as Record<Id, ReturnType<typeof PanResponder.create>>;
+    if (!resizable) {
+      return map;
+    }
+    for (const id of rendered) {
+      let start = 1;
+      let latest = 1;
+      map[id] = PanResponder.create({
+        onStartShouldSetPanResponderCapture: () => editing,
+        onMoveShouldSetPanResponderCapture: () => editing,
+        onPanResponderGrant: () => {
+          start = scalesRef.current?.[id] ?? 1;
+          latest = start;
+          dragOwner.current = id;
+        },
+        onPanResponderMove: (_event, gesture) => {
+          // Divided by the block's own height, which is what keeps the grip
+          // under the finger: the drawn height is natural × scale, so a
+          // change of dy/natural grows the block by exactly the distance
+          // dragged. A fixed divisor would make the hero crawl and the
+          // WhatsApp strip bolt.
+          const natural = naturals.get(id) || heights.get(id) || 200;
+          const min = scaleRangeRef.current?.min ?? 0.75;
+          const max = scaleRangeRef.current?.max ?? 1.3;
+          latest = Math.min(max, Math.max(min, start + gesture.dy / natural));
+          onScaleRef.current?.(id, latest, false);
+        },
+        onPanResponderRelease: () => {
+          dragOwner.current = null;
+          // `latest`, not the `scales` prop: this responder is built once per
+          // order, so a value read from that prop is whatever it was when the
+          // gesture started — committing it would undo the whole drag.
+          onScaleRef.current?.(id, latest, true);
+        },
+        onPanResponderTerminate: () => {
+          dragOwner.current = null;
+          onScaleRef.current?.(id, latest, true);
+        },
+        onPanResponderTerminationRequest: () => false,
+      });
+    }
+    return map;
+    // Deliberately not rebuilt when a scale changes: a resize writes a new
+    // scale on every frame, and swapping a PanResponder mid-gesture hands the
+    // move events to an instance that never saw the grant. That is why the
+    // live values are read through refs above.
+  }, [editing, heights, naturals, rendered, resizable]);
 
   const responders = useMemo(() => {
     const map = {} as Record<Id, ReturnType<typeof PanResponder.create>>;
@@ -309,6 +400,7 @@ export function Reorderable<Id extends string>({
         const shift = valueFor(shifts, id);
         const lift = valueFor(lifts, id);
         const index = order.indexOf(id);
+        const zoom = scales?.[id] ?? 1;
         return (
           <Animated.View
             key={id}
@@ -371,10 +463,80 @@ export function Reorderable<Id extends string>({
                   Wrapping the row would disable the reorder arrows too — they
                   are Touchables like everything else, and they are the one
                   thing that has to keep working in this mode. */}
-              <ReorderLockContext.Provider value={editing}>
-                {sections[id]}
-              </ReorderLockContext.Provider>
+              {/*
+                Zoom, not a font-size pass.
+
+                A block is drawn at `scale` by giving it 1/scale of the width
+                and then scaling it back up from its top-left corner. The
+                content lays itself out at that wider size and the transform
+                brings it back, so everything inside grows together and no
+                section has to know it is being resized.
+
+                The wrapper's own height is the natural height times the
+                scale, because a transform changes nothing about layout — skip
+                that and the blocks below would sit exactly where they were
+                while this one visibly grew over them.
+              */}
+              <View
+                style={
+                  zoom === 1
+                    ? undefined
+                    : {
+                        height: (heights.get(id) ?? 0) > 0
+                          ? (naturals.get(id) ?? 0) * zoom
+                          : undefined,
+                        overflow: 'hidden',
+                      }
+                }>
+                <View
+                  onLayout={event => {
+                    // The height *before* scaling. Measured on the inner view
+                    // so it is the content's own size, not the zoomed box's.
+                    const next = event.nativeEvent.layout.height;
+                    if (naturals.get(id) !== next) {
+                      naturals.set(id, next);
+                      settle(order);
+                    }
+                  }}
+                  style={
+                    zoom === 1
+                      ? undefined
+                      : {
+                          width: `${100 / zoom}%`,
+                          transform: [{ scale: zoom }],
+                          transformOrigin: 'top left',
+                        }
+                  }>
+                  <ReorderLockContext.Provider value={editing}>
+                    {sections[id]}
+                  </ReorderLockContext.Provider>
+                </View>
+              </View>
             </Animated.View>
+
+            {editing && onScale ? (
+              <View
+                accessible
+                accessibilityRole="adjustable"
+                accessibilityLabel={`Resize ${labels[id]}`}
+                accessibilityValue={{
+                  min: 75,
+                  max: 130,
+                  now: Math.round((scales?.[id] ?? 1) * 100),
+                  text: `${Math.round((scales?.[id] ?? 1) * 100)} percent`,
+                }}
+                accessibilityActions={[{ name: 'increment' }, { name: 'decrement' }]}
+                onAccessibilityAction={event => {
+                  // A drag is not something a screen reader can perform, so
+                  // the same value is reachable in steps.
+                  const step = event.nativeEvent.actionName === 'increment' ? 0.05 : -0.05;
+                  onScale(id, (scales?.[id] ?? 1) + step, true);
+                }}
+                style={styles.resizeZone}
+                {...resizers[id]?.panHandlers}>
+                <View style={[styles.resizeGrip, { backgroundColor: colors.accent }]} />
+              </View>
+            ) : null}
 
             {editing ? (
               <View
@@ -388,6 +550,7 @@ export function Reorderable<Id extends string>({
                 <View style={styles.grip}>
                   <GripVertical size={16} color={colors.textMuted} />
                 </View>
+
                 <Touchable
                   onPress={() => move(id, -1)}
                   label={`Move ${labels[id]} up`}
@@ -448,6 +611,31 @@ const styles = StyleSheet.create({
   grip: {
     paddingHorizontal: 4,
     paddingVertical: 5,
+  },
+  resizeZone: {
+    position: 'absolute',
+    // Inside the row, not straddling its edge.
+    //
+    // It sat at -14 first, which put half the target in the gap *below* the
+    // block — and that gap belongs to the next block, whose own drag
+    // responder claimed the touch. Dragging the hero's grip reordered the
+    // quick actions instead of resizing anything, which looked like the
+    // resize doing nothing rather than the wrong view winning.
+    //
+    // The last 24dp of a block is its padding, so covering it costs nothing.
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 24,
+    zIndex: 3,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  resizeGrip: {
+    width: 44,
+    height: 4,
+    borderRadius: 2,
+    opacity: 0.9,
   },
   arrow: {
     // 28dp of pixels, 44dp of target: Touchable's default hit slop is what

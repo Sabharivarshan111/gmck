@@ -5,7 +5,13 @@ import { Touchable } from '@/components/Touchable';
 import { Sheet } from '@/components/Sheet';
 import { HoloCard } from '@/components/HoloCard';
 import { Reorderable } from '@/components/Reorderable';
-import { HOME_SECTION_LABEL, useHomeOrder } from '@/hooks/useHomeOrder';
+import {
+  COMPACT_BELOW,
+  HOME_SCALE_MAX,
+  HOME_SCALE_MIN,
+  HOME_SECTION_LABEL,
+  useHomeOrder,
+} from '@/hooks/useHomeOrder';
 import { SortableGrid } from '@/components/SortableGrid';
 import { useSubjectOrder } from '@/hooks/useSubjectOrder';
 import { SettingsSheet } from '@/components/SettingsSheet';
@@ -111,6 +117,12 @@ function themedGradient(
 
 /** One card's height, and its width as a fraction of the grid. */
 const SUBJECT_CARD_HEIGHT = 160;
+/**
+ * The compact card keeps the emoji, the name and the percentage — everything
+ * that identifies the subject and says how far along it is. What goes is the
+ * progress bar, which is the same number drawn a second way.
+ */
+const SUBJECT_CARD_COMPACT = 108;
 const SUBJECT_CARD_RATIO = 0.485;
 
 const WHATSAPP_LABEL: Record<YearKey, string> = {
@@ -120,10 +132,30 @@ const WHATSAPP_LABEL: Record<YearKey, string> = {
   'final-year': 'Final year',
 };
 
+/**
+ * Hoisted, because `Reorderable` builds one PanResponder per block and only
+ * rebuilds them when this changes — an object literal in the JSX would be a
+ * new one every render, which is a rebuild mid-drag.
+ */
+const HOME_SCALE_RANGE = { min: HOME_SCALE_MIN, max: HOME_SCALE_MAX };
+
 export default function HomeScreen() {
   const { colors, theme, textSize, setTextSize, custom, setCustom, preference, setPreference } =
     useTheme();
-  const { order, rendered, save, reset } = useHomeOrder();
+  const { order, rendered, scales, save, setScale, reset } = useHomeOrder();
+  /**
+   * Shrunk far enough that the block should shed its secondary detail rather
+   * than keep rendering it at a size nobody can read. Zooming out is the
+   * answer to "less of this", and past a point the honest response is fewer
+   * things rather than smaller ones.
+   */
+  const compact = useMemo(
+    () =>
+      Object.fromEntries(
+        Object.entries(scales).map(([key, value]) => [key, value < COMPACT_BELOW]),
+      ),
+    [scales],
+  );
   const [editing, setEditing] = useState(false);
   /**
    * Whether the settings sheet is open. Text size used to have its own circle
@@ -358,6 +390,9 @@ export default function HomeScreen() {
           onOrderChange={save}
           editing={editing}
           onRequestEdit={() => setEditing(true)}
+          scales={scales}
+          onScale={setScale}
+          scaleRange={HOME_SCALE_RANGE}
           onDragChange={setDragging}
           labels={HOME_SECTION_LABEL}
           sections={{
@@ -375,9 +410,16 @@ export default function HomeScreen() {
                   style={[styles.heroTitle, { color: colors.fuchsia }]}>
                   {hero.title}
                 </Text>
-                <Text style={[styles.heroBody, { color: colors.textMuted }]}>{hero.body}</Text>
+                {/* The sentence is the first thing to go: the headline is
+                    what carries the block, and three lines of encouragement is
+                    exactly the sort of thing someone shrinking their home
+                    screen wants back. */}
+                {compact.hero ? null : (
+                  <Text style={[styles.heroBody, { color: colors.textMuted }]}>{hero.body}</Text>
+                )}
               </Animated.View>
 
+              {compact.hero ? null : (
               <View style={[styles.credit, { borderColor: colors.border }]}>
                 <View>
                   <Text style={[styles.creditLabel, { color: colors.textMuted }]}>CREATED BY</Text>
@@ -385,6 +427,7 @@ export default function HomeScreen() {
                 </View>
                 <Flag size={16} color={colors.textMuted} />
               </View>
+              )}
 
               {/* Tappable, so the carousel is something the reader controls rather
                   than something that happens to them (SKILL §16 Agency). */}
@@ -421,6 +464,7 @@ export default function HomeScreen() {
                 label="Progress"
                 sub="Track your learning"
                 color={colors.primary}
+                compact={compact.quick}
                 onPress={() => goToTab('Progress')}
               />
               <QuickAction
@@ -428,6 +472,7 @@ export default function HomeScreen() {
                 label="Search"
                 sub="Find topics instantly"
                 color={colors.cyan}
+                compact={compact.quick}
                 onPress={() => navigation.navigate('BrowseHome', { focusSearch: true })}
               />
               <QuickAction
@@ -435,6 +480,7 @@ export default function HomeScreen() {
                 label="Timer"
                 sub="Focus with Pomodoro"
                 color={colors.emerald}
+                compact={compact.quick}
                 onPress={() => goToTab('Timer')}
               />
               <QuickAction
@@ -442,6 +488,7 @@ export default function HomeScreen() {
                 label="Ask AI"
                 sub="Get instant help"
                 color={colors.fuchsia}
+                compact={compact.quick}
                 onPress={() => goToTab('AskAI')}
               />
             </View>
@@ -469,9 +516,11 @@ export default function HomeScreen() {
                 <Text style={[styles.whatsappTitle, { color: colors.text }]}>
                   Join our WhatsApp community
                 </Text>
-                <Text style={[styles.whatsappSub, { color: colors.textMuted }]}>
-                  {WHATSAPP_LABEL[year]} materials, notes & updates
-                </Text>
+                      {compact.whatsapp ? null : (
+                  <Text style={[styles.whatsappSub, { color: colors.textMuted }]}>
+                    {WHATSAPP_LABEL[year]} materials, notes & updates
+                  </Text>
+                )}
               </View>
               <Text style={[styles.whatsappJoin, { color: colors.green }]}>Join</Text>
             </Touchable>
@@ -506,7 +555,7 @@ export default function HomeScreen() {
               onOrderChange={saveSubjectOrder}
               editing={editing}
               columns={2}
-              itemHeight={SUBJECT_CARD_HEIGHT}
+              itemHeight={compact.subjects ? SUBJECT_CARD_COMPACT : SUBJECT_CARD_HEIGHT}
               rowGap={12}
               widthRatio={SUBJECT_CARD_RATIO}
               style={styles.subjectGrid}
@@ -533,10 +582,15 @@ export default function HomeScreen() {
                       <Text style={[styles.subjectName, { color: colors.text }]}>
                         {subject.name.toUpperCase()}
                       </Text>
-                      <View
-                        style={[styles.subjectTrack, { backgroundColor: withAlpha('#000000', 0.4) }]}>
-                        <SubjectFill pct={subject.pct} color={colors.primary} />
-                      </View>
+                      {compact.subjects ? null : (
+                        <View
+                          style={[
+                            styles.subjectTrack,
+                            { backgroundColor: withAlpha('#000000', 0.4) },
+                          ]}>
+                          <SubjectFill pct={subject.pct} color={colors.primary} />
+                        </View>
+                      )}
                       <View style={styles.subjectMeta}>
                         <Text style={[styles.subjectPct, { color: colors.primary }]}>
                           {subject.pct}% Complete
@@ -579,7 +633,9 @@ export default function HomeScreen() {
                   <Text style={[styles.statValueSmall, { color: colors.text }]}>
                     {formatFocusTime(focusMinutes)}
                   </Text>
-                  <Text style={[styles.statHint, { color: colors.primary }]}>Keep going!</Text>
+                  {compact.stats ? null : (
+                    <Text style={[styles.statHint, { color: colors.primary }]}>Keep going!</Text>
+                  )}
                 </View>
               </View>
             </View>
@@ -748,12 +804,14 @@ function QuickAction({
   label,
   sub,
   color,
+  compact,
   onPress,
 }: {
   icon: React.ReactNode;
   label: string;
   sub: string;
   color: string;
+  compact?: boolean;
   onPress: () => void;
 }) {
   return (
@@ -767,8 +825,12 @@ function QuickAction({
       {/* The surface is a child rather than the Touchable's own style, so the
           specular rim can sit above the fill without wrapping the press
           target in an extra layout box. */}
-      <GlassSurface style={styles.quickAction} borderRadius={16}>
-      {icon}
+      <GlassSurface
+        style={compact ? styles.quickActionCompact : styles.quickAction}
+        borderRadius={16}>
+      {/* The icon goes, not the label. An unlabelled icon is a guess; a
+          label with no icon is still the thing you were looking for. */}
+      {compact ? null : icon}
       {/* No arrow. Four identical chevrons on four obviously-tappable cards is
           decoration that costs the label its width — "Progress" was rendering
           as "Prog…" to make room for it. */}
@@ -979,6 +1041,15 @@ const styles = StyleSheet.create({
   },
   quickActionTarget: {
     flex: 1,
+  },
+  quickActionCompact: {
+    flex: 1,
+    minHeight: 52,
+    borderRadius: 16,
+    paddingHorizontal: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
   },
   quickAction: {
     flex: 1,
