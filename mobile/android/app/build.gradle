@@ -196,6 +196,17 @@ android {
         // so `__DEV__` stays true and the test ad units are used. An APK we
         // install ourselves must never be able to serve us a live ad.
         internal {
+            // The React Native Gradle plugin fills in `usesCleartextTraffic`
+            // for the build types it knows about — debug and release — and a
+            // custom build type gets nothing, so the manifest merger fails
+            // with "requires a placeholder substitution but no value is
+            // provided". That is the same map CLAUDE.md rule 4 is about: it
+            // has to be an indexed put, because assigning the whole map would
+            // drop the redirect scheme set beside it.
+            //
+            // false, not true: this is a release-grade build and has no
+            // business allowing cleartext HTTP.
+            manifestPlaceholders["usesCleartextTraffic"] = false
             signingConfig signingConfigs.release
             // Off deliberately: this build exists to test behaviour, and a
             // ProGuard rule that is subtly wrong turns a real bug into an
@@ -220,6 +231,17 @@ android {
         // Ads are Google's test units, chosen in source rather than inherited
         // from the bundler's dev flag. See src/lib/adsMode.ts.
         preview {
+            // The React Native Gradle plugin fills in `usesCleartextTraffic`
+            // for the build types it knows about — debug and release — and a
+            // custom build type gets nothing, so the manifest merger fails
+            // with "requires a placeholder substitution but no value is
+            // provided". That is the same map CLAUDE.md rule 4 is about: it
+            // has to be an indexed put, because assigning the whole map would
+            // drop the redirect scheme set beside it.
+            //
+            // false, not true: this is a release-grade build and has no
+            // business allowing cleartext HTTP.
+            manifestPlaceholders["usesCleartextTraffic"] = false
             applicationIdSuffix ".debug"
             manifestPlaceholders["appAuthRedirectScheme"] = "com.aistudio.mbbsqbank.aycxvd.debug"
             signingConfig signingConfigs.debug
