@@ -1,5 +1,5 @@
-import React from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import React, { memo } from 'react';
+import { StyleSheet, View } from 'react-native';
 import { Text } from '@/components/Text';
 import { useTheme, withAlpha } from '@/theme';
 import type { NotesContent, Section } from '@/lib/handwrittenNotes';
@@ -7,8 +7,17 @@ import type { NotesContent, Section } from '@/lib/handwrittenNotes';
 /**
  * Renders the section vocabulary the notes edge function emits — the same ten
  * shapes handled by src/components/handwritten/HandwrittenNotesView.tsx.
+ *
+ * Memoized because the Notes screen re-renders on a timer while it generates.
+ *
+ * A big topic arrives in batches with a 25-second pace between them, and the
+ * countdown ticks the screen's state throughout. `content` does not change
+ * during those ticks, but without memo the whole section tree — tables,
+ * flowcharts, every bullet — was rebuilt on each one. That is the most
+ * expensive thing on screen re-rendering repeatedly on the cheap phones this
+ * app targets, for a number that changes in a label above it.
  */
-export function NotesContentView({ content }: { content: NotesContent }) {
+function NotesContentViewBase({ content }: { content: NotesContent }) {
   const { colors } = useTheme();
 
   return (
@@ -135,7 +144,14 @@ function SectionBody({ section }: { section: Section }) {
             </Text>
           </View>
           {rows.map((row, i) => (
-            <View key={i} style={[styles.compareRow, { borderBottomColor: colors.border }]}>
+            <View
+              key={i}
+              style={[
+                styles.compareRow,
+                // Same reasoning as the table: no rule under the final row.
+                i === rows.length - 1 ? styles.tableRowLast : null,
+                { borderBottomColor: colors.border },
+              ]}>
               <Text style={[styles.compareCell, styles.body, { color: colors.text }]}>
                 {String(row.left ?? '')}
               </Text>
@@ -148,38 +164,13 @@ function SectionBody({ section }: { section: Section }) {
       );
     }
 
-    case 'table': {
-      const columns = asStrings(p.columns);
-      const rows = Array.isArray(p.rows) ? (p.rows as unknown[]) : [];
+    case 'table':
       return (
-        // Tables can be wider than the screen, so they scroll on their own.
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <View>
-            <View style={[styles.tableRow, { borderBottomColor: colors.border }]}>
-              {columns.map(column => (
-                <Text
-                  key={column}
-                  style={[styles.tableCell, styles.tableHead, { color: colors.textMuted }]}>
-                  {column}
-                </Text>
-              ))}
-            </View>
-            {rows.map((row, i) => {
-              const cells = Array.isArray(row) ? row.map(String) : [String(row)];
-              return (
-                <View key={i} style={[styles.tableRow, { borderBottomColor: colors.border }]}>
-                  {cells.map((cell, j) => (
-                    <Text key={j} style={[styles.tableCell, styles.body, { color: colors.text }]}>
-                      {cell}
-                    </Text>
-                  ))}
-                </View>
-              );
-            })}
-          </View>
-        </ScrollView>
+        <TableSection
+          columns={asStrings(p.columns)}
+          rows={Array.isArray(p.rows) ? (p.rows as unknown[]) : []}
+        />
       );
-    }
 
     case 'flowchart':
       return (
@@ -235,6 +226,112 @@ function SectionBody({ section }: { section: Section }) {
         </Text>
       );
   }
+}
+
+/** Narrower than this and a cell like "12–24 h" starts wrapping mid-value. */
+const MIN_COLUMN_WIDTH = 88;
+
+/**
+ * A table that fits renders as a grid; one that does not renders as records.
+ *
+ * The version before this gave every column a fixed 140dp inside a horizontal
+ * ScrollView with the indicator switched off. On a 390dp phone the card is
+ * 326dp wide, so the four-column cardiac-markers table — "Marker / Rises /
+ * Peaks / Returns", a shape the notes function emits constantly — drew its
+ * fourth column past the card edge with nothing on screen to suggest it was
+ * there. "Returns: 7–10 days" is the single most examinable cell in that table
+ * and it was invisible unless you guessed to swipe a table sideways.
+ *
+ * Horizontal scrolling inside a vertically scrolling page is the wrong fix. It
+ * competes with the page's own gesture, hides content behind an affordance
+ * people miss, and makes comparing two rows require scrubbing back and forth.
+ * So when the columns cannot fit, the table stops being a table: each row
+ * becomes a small record with its first cell as the heading and the rest as
+ * label/value pairs. Every value is on screen, nothing scrolls sideways, and
+ * the reading order is the one a screen reader would use anyway.
+ *
+ * Which layout applies is decided from the measured width, not the screen size
+ * — the same table is a grid on a tablet and records on a cheap 5-inch phone,
+ * which is the point (apple-design: adapt to the container, don't make the
+ * person adapt to the content).
+ *
+ * Width arrives on the first layout pass, so the first render assumes the
+ * stacked case. That is the safe way round: stacked is always readable, so a
+ * frame of it before the grid appears costs nothing, whereas assuming a grid
+ * and then clipping is the bug being fixed.
+ */
+function TableSection({ columns, rows }: { columns: string[]; rows: unknown[] }) {
+  const { colors } = useTheme();
+  const [width, setWidth] = React.useState(0);
+
+  const count = Math.max(
+    columns.length,
+    ...rows.map(row => (Array.isArray(row) ? row.length : 1)),
+    1,
+  );
+  const asGrid = width > 0 && count * MIN_COLUMN_WIDTH <= width;
+
+  return (
+    <View onLayout={event => setWidth(event.nativeEvent.layout.width)}>
+      {asGrid ? (
+        <View>
+          {columns.length > 0 ? (
+            <View style={[styles.tableRow, { borderBottomColor: colors.border }]}>
+              {columns.map(column => (
+                <Text
+                  key={column}
+                  style={[styles.tableCell, styles.tableHead, { color: colors.textMuted }]}>
+                  {column}
+                </Text>
+              ))}
+            </View>
+          ) : null}
+          {rows.map((row, i) => (
+            <View
+              key={i}
+              style={[
+                styles.tableRow,
+                // No rule under the final row: it would fence the table off
+                // from the card it already sits inside.
+                i === rows.length - 1 ? styles.tableRowLast : null,
+                { borderBottomColor: colors.border },
+              ]}>
+              {(Array.isArray(row) ? row.map(String) : [String(row)]).map((cell, j) => (
+                <Text key={j} style={[styles.tableCell, styles.body, { color: colors.text }]}>
+                  {cell}
+                </Text>
+              ))}
+            </View>
+          ))}
+        </View>
+      ) : (
+        <View style={styles.records}>
+          {rows.map((row, i) => {
+            const cells = Array.isArray(row) ? row.map(String) : [String(row)];
+            const [head, ...rest] = cells;
+            return (
+              <View
+                key={i}
+                style={[
+                  styles.record,
+                  { backgroundColor: colors.cardElevated, borderColor: colors.border },
+                ]}>
+                <Text style={[styles.recordHead, { color: colors.text }]}>{head}</Text>
+                {rest.map((cell, j) => (
+                  <View key={j} style={styles.recordRow}>
+                    <Text style={[styles.recordLabel, { color: colors.textMuted }]}>
+                      {columns[j + 1] ?? ''}
+                    </Text>
+                    <Text style={[styles.body, styles.flex, { color: colors.text }]}>{cell}</Text>
+                  </View>
+                ))}
+              </View>
+            );
+          })}
+        </View>
+      )}
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -354,9 +451,37 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
     paddingVertical: 8,
   },
+  tableRowLast: {
+    borderBottomWidth: 0,
+  },
   tableCell: {
-    width: 140,
+    flex: 1,
     paddingRight: 12,
+  },
+  records: {
+    gap: 8,
+  },
+  record: {
+    borderRadius: 10,
+    borderWidth: StyleSheet.hairlineWidth,
+    padding: 10,
+    gap: 2,
+  },
+  recordHead: {
+    fontSize: 14,
+    fontWeight: '700',
+    marginBottom: 4,
+  },
+  recordRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 10,
+  },
+  recordLabel: {
+    width: 78,
+    fontSize: 12,
+    fontWeight: '600',
+    paddingTop: 2,
   },
   tableHead: {
     fontSize: 12,
@@ -378,3 +503,5 @@ const styles = StyleSheet.create({
     padding: 14,
   },
 });
+
+export const NotesContentView = memo(NotesContentViewBase);

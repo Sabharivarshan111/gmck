@@ -18,6 +18,26 @@ module.exports = [
   },
   ...compat.extends('@react-native'),
   {
+    // Node ESM tooling, not React Native. The RN preset's parser options do
+    // not allow top-level import/await, which this script legitimately uses.
+    files: ['**/*.mjs'],
+    languageOptions: {
+      sourceType: 'module',
+      ecmaVersion: 2022,
+      // Node globals: these scripts run under node, not React Native.
+      globals: {
+        Buffer: 'readonly',
+        process: 'readonly',
+        console: 'readonly',
+        // Runs inside page.evaluate, i.e. in the browser, not in node.
+        getComputedStyle: 'readonly',
+        document: 'readonly',
+        window: 'readonly',
+      },
+      parserOptions: { ecmaVersion: 2022, sourceType: 'module' },
+    },
+  },
+  {
     settings: {
       'import/resolver': {
         node: { paths: [path.resolve(__dirname, 'src')] },

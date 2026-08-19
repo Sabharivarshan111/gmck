@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import {
   FlatList,
-  Pressable,
   StyleSheet,
   View,
 } from 'react-native';
@@ -11,11 +10,16 @@ import { useNavigation, useRoute, type RouteProp } from '@react-navigation/nativ
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { ArrowLeft, ChevronRight, Search } from 'lucide-react-native';
+import { typeScale } from '@/theme/typography';
 import { useTheme } from '@/theme';
+import { LIST_TUNING } from '@/components/listTuning';
+import { Touchable } from '@/components/Touchable';
 import { EmptyState, Muted, SegmentedControl } from '@/components/ui';
 import { GradientText } from '@/components/GradientText';
 import { ThinBar } from '@/components/ProgressRing';
 import { QuestionRow } from '@/components/QuestionRow';
+import { FilterField } from '@/components/FilterField';
+import { getCleanQuestionText } from '@/lib/questionText';
 import {
   collectAllQuestions,
   collectQuestions,
@@ -31,11 +35,6 @@ import type { HomeStackParamList, RootTabParamList } from '@/navigation/types';
 
 type Nav = NativeStackNavigationProp<HomeStackParamList, 'BrowseNode'>;
 type Route = RouteProp<HomeStackParamList, 'BrowseNode'>;
-
-const TYPE_OPTIONS: { key: QuestionType; label: string }[] = [
-  { key: 'essay', label: 'Essays' },
-  { key: 'short-notes', label: 'Short Notes' },
-];
 
 /** "01", "02", … as shown in the numbered badges. */
 function ordinal(index: number): string {
@@ -59,6 +58,7 @@ export default function BrowseNodeScreen() {
   const { year, path, title } = route.params;
 
   const [type, setType] = useState<QuestionType>('essay');
+  const [query, setQuery] = useState('');
 
   useLayoutEffect(() => {
     navigation.setOptions({ headerShown: false });
@@ -75,6 +75,37 @@ export default function BrowseNodeScreen() {
   const node = useMemo(() => resolveNode(year, path), [year, path]);
   const children = useMemo(() => getTopicChildren(node), [node]);
   const questions = useMemo(() => findTypeQuestions(node, type), [node, type]);
+
+  /**
+   * Only worth showing above a list long enough to scroll.
+   *
+   * The largest topic in the bank holds 67 questions; plenty hold three. A
+   * field above three rows is chrome that costs a row of space and earns
+   * nothing, so it appears at the point where finding something by eye starts
+   * to lose to typing two letters.
+   */
+  const filterable = questions.length >= FILTER_THRESHOLD;
+
+  /**
+   * Pairs, not strings, because the number shown on each row is its position
+   * in the topic. Renumbering a filtered list 1..n would quietly tell the user
+   * that "question 2" is a different question depending on what they typed.
+   */
+  const visible = useMemo(() => {
+    const pairs = questions.map((question, index) => ({ question, index }));
+    const needle = query.trim().toLowerCase();
+    if (!filterable || !needle) {
+      return pairs;
+    }
+    // Matched against the cleaned text: the raw string carries importance
+    // stars, PYQ years and a page number, so a query would otherwise hit
+    // markers the user cannot see and is not looking for.
+    return pairs.filter(pair => getCleanQuestionText(pair.question).toLowerCase().includes(needle));
+  }, [questions, query, filterable]);
+
+  const filtering = filterable && query.trim().length > 0;
+  const essayCount = useMemo(() => findTypeQuestions(node, 'essay').length, [node]);
+  const shortNoteCount = useMemo(() => findTypeQuestions(node, 'short-notes').length, [node]);
 
   // A subject page listing exam papers looks different from a topic list.
   const isPaperLevel =
@@ -98,13 +129,15 @@ export default function BrowseNodeScreen() {
 
   const back = useCallback(() => navigation.goBack(), [navigation]);
 
-  const BackButton = (
-    <Pressable
+  const backControl = (
+    <Touchable
       onPress={back}
-      hitSlop={8}
+      label="Back"
+      hitSlop={12}
+      scaleTo={0.88}
       style={[styles.backButton, { backgroundColor: colors.card, borderColor: colors.border }]}>
       <ArrowLeft size={20} color={colors.text} />
-    </Pressable>
+    </Touchable>
   );
 
   if (!node) {
@@ -119,6 +152,7 @@ export default function BrowseNodeScreen() {
   if (isPaperLevel) {
     return (
       <FlatList
+        {...LIST_TUNING}
         style={{ backgroundColor: colors.background }}
         contentContainerStyle={[styles.listContent, { paddingTop: insets.top + 8 }]}
         data={children}
@@ -126,7 +160,7 @@ export default function BrowseNodeScreen() {
         ListHeaderComponent={
           <View style={styles.paperHeader}>
             <View style={styles.headerRow}>
-              {BackButton}
+              {backControl}
               <View
                 style={[
                   styles.avatar,
@@ -149,7 +183,12 @@ export default function BrowseNodeScreen() {
           return (
             <View
               style={[styles.paperCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
-              <Pressable onPress={() => openChild(item.key, item.name)} style={styles.paperTop}>
+              <Touchable
+                onPress={() => openChild(item.key, item.name)}
+                label={item.name}
+                scale={false}
+                dim
+                style={styles.paperTop}>
                 <View style={[styles.badge, { borderColor: colors.border }]}>
                   <Text style={[styles.badgeText, { color: colors.text }]}>{ordinal(index)}</Text>
                 </View>
@@ -158,7 +197,7 @@ export default function BrowseNodeScreen() {
                   <View style={[styles.titleRule, { backgroundColor: colors.text }]} />
                 </View>
                 <ChevronRight size={22} color={colors.textMuted} />
-              </Pressable>
+              </Touchable>
 
               {topics.length > 0 ? (
                 <Text style={[styles.paperTopics, { color: colors.textMuted }]}>
@@ -166,13 +205,16 @@ export default function BrowseNodeScreen() {
                 </Text>
               ) : null}
 
-              <Pressable
+              <Touchable
                 onPress={() => openChild(item.key, item.name)}
+                label={`Explore ${item.name} questions`}
+                scale={false}
+                dim
                 style={[styles.exploreRow, { borderTopColor: colors.border }]}>
                 <Search size={18} color={colors.text} />
                 <Text style={[styles.exploreText, { color: colors.text }]}>Explore Questions</Text>
                 <ChevronRight size={20} color={colors.textMuted} />
-              </Pressable>
+              </Touchable>
             </View>
           );
         }}
@@ -184,6 +226,7 @@ export default function BrowseNodeScreen() {
   if (children.length > 0) {
     return (
       <FlatList
+        {...LIST_TUNING}
         style={{ backgroundColor: colors.background }}
         contentContainerStyle={[styles.listContent, { paddingTop: insets.top + 8 }]}
         data={children}
@@ -191,7 +234,7 @@ export default function BrowseNodeScreen() {
         ListHeaderComponent={
           <View style={styles.topicHeader}>
             <View style={styles.headerRow}>
-              {BackButton}
+              {backControl}
               <View style={styles.topicTitleWrap}>
                 <Text style={[styles.kicker, { color: colors.textMuted }]}>
                   {children.length} TOPICS
@@ -207,15 +250,13 @@ export default function BrowseNodeScreen() {
           const done = countDone(all);
           const pct = all.length ? (done / all.length) * 100 : 0;
           return (
-            <Pressable
+            <Touchable
               onPress={() => openChild(item.key, item.name)}
-              style={({ pressed }) => [
+              label={`${item.name}, ${done} of ${all.length} questions done`}
+              scaleTo={0.985}
+              style={[
                 styles.topicCard,
-                {
-                  backgroundColor: colors.card,
-                  borderColor: colors.border,
-                  opacity: pressed ? 0.8 : 1,
-                },
+                { backgroundColor: colors.card, borderColor: colors.border },
               ]}>
               <View style={[styles.badge, { borderColor: colors.border }]}>
                 <Text style={[styles.badgeText, { color: colors.text }]}>{ordinal(index)}</Text>
@@ -230,7 +271,7 @@ export default function BrowseNodeScreen() {
                 </Text>
               </View>
               <ChevronRight size={22} color={colors.textMuted} />
-            </Pressable>
+            </Touchable>
           );
         }}
         ListFooterComponent={
@@ -254,19 +295,21 @@ export default function BrowseNodeScreen() {
 
   // ---- Questions -----------------------------------------------------------
   const doneHere = countDone(questions);
+
   return (
     <FlatList
+      {...LIST_TUNING}
       style={{ backgroundColor: colors.background }}
       contentContainerStyle={[styles.listContent, { paddingTop: insets.top + 8 }]}
-      data={questions}
-      keyExtractor={(item, index) => `${index}-${item.slice(0, 24)}`}
+      data={visible}
+      keyExtractor={item => `${item.index}-${item.question.slice(0, 24)}`}
       initialNumToRender={12}
       windowSize={10}
       removeClippedSubviews
       ListHeaderComponent={
         <View style={styles.questionHeader}>
           <View style={styles.headerRow}>
-            {BackButton}
+            {backControl}
             <View style={styles.topicTitleWrap}>
               <Text style={[styles.kicker, { color: colors.textMuted }]}>
                 {collectQuestions(node, type).length} QUESTIONS
@@ -275,7 +318,16 @@ export default function BrowseNodeScreen() {
             </View>
             <View style={styles.backSpacer} />
           </View>
-          <SegmentedControl options={TYPE_OPTIONS} value={type} onChange={setType} />
+          {/* Counts on the tabs, as the published app shows them: you can see
+              a topic has no essays before tapping into an empty list. */}
+          <SegmentedControl
+            options={[
+              { key: 'essay' as const, label: `Essays  ${essayCount}` },
+              { key: 'short-notes' as const, label: `Short Notes  ${shortNoteCount}` },
+            ]}
+            value={type}
+            onChange={setType}
+          />
           {questions.length > 0 ? (
             <View style={styles.questionStats}>
               <Muted>
@@ -286,20 +338,55 @@ export default function BrowseNodeScreen() {
               </View>
             </View>
           ) : null}
+
+          {filterable ? (
+            <View style={styles.filterWrap}>
+              <FilterField
+                value={query}
+                onChange={setQuery}
+                placeholder={`Filter ${questions.length} questions`}
+                label={`Filter questions in ${title}`}
+              />
+              {filtering ? (
+                // Announced, because the result of typing is a list changing
+                // somewhere below the keyboard where it cannot be seen.
+                <Text
+                  accessibilityLiveRegion="polite"
+                  style={[styles.filterCount, { color: colors.textMuted }]}>
+                  {visible.length} of {questions.length}
+                </Text>
+              ) : null}
+            </View>
+          ) : null}
         </View>
       }
       ListEmptyComponent={
-        <EmptyState
-          title={`No ${type === 'essay' ? 'essays' : 'short notes'} here`}
-          subtitle="Switch the tab above to see the other question type."
-        />
+        // An empty list because you filtered is a different situation from an
+        // empty list because the topic has none, and telling someone to switch
+        // tabs when they have simply mistyped is actively unhelpful.
+        filtering ? (
+          <EmptyState
+            title="No matches"
+            subtitle={`Nothing in ${title} matches "${query.trim()}".`}
+          />
+        ) : (
+          <EmptyState
+            title={`No ${type === 'essay' ? 'essays' : 'short notes'} here`}
+            subtitle="Switch the tab above to see the other question type."
+          />
+        )
       }
-      renderItem={({ item, index }) => (
-        <QuestionRow question={item} index={index} onAskAi={askAi} />
+      renderItem={({ item }) => (
+        // item.index, not the list position: the row's number is where the
+        // question sits in the topic, which does not change when filtered.
+        <QuestionRow question={item.question} index={item.index} onAskAi={askAi} />
       )}
     />
   );
 }
+
+/** Below this, scanning the list by eye beats typing. */
+const FILTER_THRESHOLD = 12;
 
 const styles = StyleSheet.create({
   container: {
@@ -383,6 +470,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   paperTitle: {
+    ...typeScale.title2,
     fontSize: 20,
     fontWeight: '700',
   },
@@ -435,6 +523,14 @@ const styles = StyleSheet.create({
   topicCount: {
     fontSize: 13,
     marginTop: 8,
+  },
+  filterWrap: {
+    marginTop: 12,
+    gap: 6,
+  },
+  filterCount: {
+    fontSize: 12,
+    fontWeight: '600',
   },
   questionStats: {
     marginTop: 12,

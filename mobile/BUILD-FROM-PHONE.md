@@ -26,6 +26,118 @@ shipping; it is painful for designing.
 
 ---
 
+## Expo Go cannot run this app
+
+Worth stating plainly, because the advice is everywhere online and it does not
+apply here. Expo Go is a pre-built container app. Its native code is fixed at
+the moment Expo compiles and ships it to the Play Store, and you cannot add to
+it from your project. It runs *your JavaScript* inside *their native binary*.
+
+Three separate blockers, any one of which is fatal:
+
+1. **This is bare React Native, not Expo.** There is no `expo` dependency, no
+   `app.config`, no `expo-modules-core`. There is nothing for Expo Go to open.
+2. **Two native modules Expo Go does not contain** —
+   `@react-native-google-signin/google-signin` and
+   `react-native-google-mobile-ads`. Sign-in and every ad path would throw at
+   the first call. Native code cannot be added to Expo Go from JS.
+3. **Version mismatch.** This app is React Native 0.87 / React 19.2.3. Each
+   Expo Go release embeds exactly one RN and React version, and the JS
+   engine, renderer and native modules have to match the bundle.
+
+What people mean when they say "Expo can run any app" is the **Expo Dev
+Client** — a build of the Expo Go shell that includes *your* native modules.
+That is real, but producing one is a full native Android build, the same build
+this repo already does in Actions. It would add an Expo migration and buy
+nothing.
+
+### Even if it could load, it would not help you
+
+This is the part that gets left out of the Reddit threads. Expo Go is a
+*client*. It does not contain your app — it fetches the JavaScript from
+somewhere at runtime, and that somewhere is a Metro dev server running on a
+computer on the same network (or a published EAS Update channel, which needs a
+build pipeline of its own).
+
+So on the "no computer" path this whole page is about, Expo Go has nothing to
+connect to. It would sit at "Development servers: none found". The thing people
+like about it — edit, save, see it in a second — is the dev server, not the app.
+
+And if you *do* have a computer, `npx react-native run-android` is strictly
+better than a dev client: same instant reload, and it runs the real app with
+its real native modules instead of a shimmed approximation.
+
+**The equivalent for this project is the debug APK below.** Install it once and
+it behaves like Expo Go in the way that matters: it has the dev menu (shake the
+phone), the error overlay, and it can connect to Metro for Fast Refresh if you
+ever plug into a computer.
+
+### Getting it: Actions → "Android debug APK" → Run workflow
+
+No secrets, no keystore, no computer. Download the artifact, unzip, tap the
+`.apk`, allow "install unknown apps" once.
+
+It installs as `com.aistudio.mbbsqbank.aycxvd.debug`, **alongside** your Play
+Store copy rather than replacing it, so you can compare the two side by side
+and your real progress is never at risk.
+
+Two things to expect:
+
+- **Google sign-in will fail** unless you add an Android OAuth client for
+  `...aycxvd.debug` with the debug keystore's SHA-1. Everything else — the
+  question bank, progress, timer, Ask AI, notes, the leaderboard via anonymous
+  auth — works normally. This is the intended trade for installing alongside
+  the real app rather than over it.
+- **Ads are Google's test units**, always, and cannot be otherwise in this
+  build. That is deliberate: clicking your own live ads is what gets an AdMob
+  account suspended.
+
+The APK carries its own JS bundle, so it opens with no computer attached. That
+bundle is built in dev mode (`--dev true`), which is what keeps `__DEV__` true
+and therefore keeps ads on test units — so it is unminified and carries its
+dev-time checks. **Do not judge scrolling smoothness or startup time from it.**
+For that, build a release APK; the release bundle is the one that ships.
+
+---
+
+## Checking Supabase is actually working
+
+`Actions` → **Supabase live check** → *Run workflow*. It hits the running
+project and prints a pass/fail table: anonymous sign-in, all seven RPCs, the
+RLS policies on `profiles`, `question_progress` and `premium_subscriptions`,
+the leaderboard columns the app reads by name, and `ask-gemini` — including
+the MCQ branch, where it parses the reply and reports how many questions came
+back renderable as cards. Tick *include_notes* to also test
+`generate-handwritten-notes`; it is slow and spends AI quota, so it is off by
+default.
+
+No secrets. It uses the anon key, which is a public client key already inside
+the APK and the web bundle. **Do not add a service-role key to that workflow**
+— that key bypasses RLS, and the point of the check is to prove RLS works.
+
+It writes, because the write paths cannot be tested otherwise. It signs in
+anonymously — exactly what the app does on a fresh install — and leaves one
+anonymous user and one profile row behind, the footprint of somebody
+installing the app and never opening it. Every question it marks done is
+marked undone before it finishes.
+
+### Why this is a workflow and not something Claude runs directly
+
+The environment Claude works in has a network allowlist, and the Supabase host
+is not on it. The gateway answers 403 to CONNECT and the client sees:
+
+> Host not in allowlist: pmtgeydtqypwrypshhsx.supabase.co. Add this host to
+> your network egress settings to allow access.
+
+That is fixable, but only from your side: the network policy is chosen per
+environment at claude.ai/code. Adding `pmtgeydtqypwrypshhsx.supabase.co` to
+that environment's allowed hosts lets Claude run the same checks directly,
+without the ten-minute round trip through Actions. See
+https://code.claude.com/docs/en/claude-code-on-the-web for where those
+settings live.
+
+---
+
 ## Before anything else: the signing key
 
 Your app is on Play as `com.aistudio.mbbsqbank.aycxvd`. An update must be

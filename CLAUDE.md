@@ -44,6 +44,22 @@ Do not "fix" these without reading the reasoning:
 6. **`versionCode` must increase on every Play upload.** 13 is already live; the
    repo carries 14.
 
+7. **Progress bars use `scaleX` + `transformOrigin: 'left'`, never an animated
+   `width`.** Width is a layout property: animating it forces layout, paint and
+   composite every frame, on the JS thread, for every bar on screen. `scaleX`
+   is a transform and composites on the GPU. This looks like an over-complicated
+   way to draw a bar; it is the difference between a smooth one and a stuttering
+   one on a cheap phone.
+
+8. **Nothing scales from 0.** The checkbox fill starts at `0.6`, the bottom
+   nav's blob and the Timer's selection ring at `0.9`. A `scale(0)` entrance
+   reads as materialising out of nowhere.
+
+9. **Every `Animated.timing` names an `easing` from `EASE`.** React Native's
+   default is `Easing.inOut(Easing.ease)` — an ease-in-out that starts slow,
+   delaying the exact moment the user is watching. Omitting `easing` is the bug,
+   not the default.
+
 ## The question bank is shared, not copied
 
 `src/data/` (~750 KB of pure TypeScript) is consumed by the native app through
@@ -52,6 +68,251 @@ a `@data` alias; `src/lib/profanity.ts` through `@shared`. Wired in
 `mobile/preview/vite.config.ts` — all four must agree.
 
 Never duplicate these files into `mobile/`. A second copy will drift.
+
+## `ask-gemini` is told the intent, it does not infer it
+
+`mobile/src/lib/askAi.ts` owns every request to that function, and nothing else
+should build one. The function picks its system prompt from **flags in the
+request body** — `isMCQRequest` selects the MCQ branch (3000 tokens, temp 0.6,
+strict formatting rules); without it you get "You are ACEV, a helpful and
+knowledgeable assistant" at 2000 tokens. Sending prose that *describes* wanting
+MCQs does nothing; `isMCQsRequest = explicitMCQRequest` and that is its only
+source.
+
+Two consequences that look like trivia and are not:
+
+- The `Triple-tapped:` / `Double-tapped:` prefixes are load-bearing markers,
+  and `displayText()` strips them before anything reaches a chat bubble.
+- The medical-vs-generic system prompt is chosen by **keyword match on the
+  prompt** (`index.ts` line 363: 'medical', 'disease', 'pathology', 'symptom',
+  'treatment', 'diagnosis'…). "Discuss the aetiology of jaundice" hits none of
+  them, so `tripleTapPrompt()` says "MBBS medical exam question" on purpose.
+  Reword it and the answer quietly comes from a general-purpose chatbot.
+
+MCQ responses come back as JSON inside markdown fences with a preamble, whatever
+the prompt demands. `parseMcqs()` takes the outermost bracket pair and drops any
+item without four options or with an out-of-range `correct`; a half-valid quiz
+teaches wrong answers, so the fallback is showing the prose instead.
+`npm run check:mcq` covers all of that.
+
+## `generate-handwritten-notes` rejects the whole request, not the bad item
+
+Its zod schema is `questions: z.array(z.string().max(1000)).min(1).max(400)`,
+and a violation is a **400 for the entire request**. One over-long question
+therefore breaks Notes for its whole topic, with no symptom anywhere else in the
+app — you have to open the one topic that is too big to see it.
+
+Three questions in the shipped bank are over (Pharmacology → CNS 1463 chars,
+Pathology → Heart 1477, General Medicine → Cardiology 1061). They are real
+multi-part essay questions with a "Probable Cases" list, not corrupt data, so
+`src/lib/notesLimits.ts` clamps on the way out instead.
+
+Clamp from the **head**: the importance stars and PYQ year markers are at the
+start of a question string, and the model reads them to fill `pyqYears`.
+Trimming the front to fit would empty the year badges instead.
+`npm run check:notes-limits` walks all 413 topic groups.
+
+## Cloud progress needs a profile, not just a session
+
+`record_questions_done` opens with `IF _year IS NULL THEN RETURN 0` — it reads
+the caller's `profiles.year`, so a push before that row exists returns 0 and
+reports **no error**.
+
+Anonymous sign-in happens inside `saveProfile` and nowhere else, so on a fresh
+install there is no session at launch and `App.tsx`'s `reconcileProgress()`
+legitimately does nothing. Something therefore has to run it *again* once the
+profile is saved, or everything ticked before onboarding stays on the device —
+it only self-heals on the next launch or the next visit to My Progress, which
+is why it went unnoticed. `useProfile.save` does that, gated on the returned
+cloud profile because that is the proof both the session and the row exist.
+
+`npm run check:sync` pins the ordering.
+
+## Themes: four presets, plus one the user builds
+
+`src/theme/presets.ts` holds the named themes (Dark, Light, Black Pink, Liquid
+Glass) and the quick presets for the editor; `src/theme/color.ts` holds the
+maths. A theme is **four colours** — background, text, accent, card — and
+`paletteFrom()` derives the other fourteen from them, because those are
+relationships rather than choices: `cardElevated` is the card lifted towards
+the text, `border` sits between card and text, `textMuted` is text faded
+towards the background, `primary`/`primaryText` are the inverse of the page.
+
+Two things a theme may never reach:
+
+- **Semantic colours.** `success`, `warning` and `danger` stay green, amber and
+  red in every theme. A tick that means "done" and a bar that means "wrong"
+  have to keep meaning that.
+- **`onAccent`.** Text on a filled accent is computed from the accent's
+  luminance, never hardcoded white — amber and cyan need black.
+
+Four free colours *can* produce unreadable text. That is a property of the
+feature, not a bug to design away: the editor makes the consequence visible
+(the preview is the whole app, and the contrast figure turns red below AA)
+rather than restricting the choice. What ships must still be right, so
+`npm run check:contrast` walks all eight built-in themes — through
+`paletteFrom`, so the derived colours are checked too, not just the four
+picked ones.
+
+`theme` (light/dark) is derived from whether the background is dark, not from
+which preset is selected. That is what keeps the status bar, the navigator and
+the moon/sun icon correct for a custom theme.
+
+## Liquid Glass is a material, not a palette
+
+`Material` in `src/theme/presets.ts` is a second axis alongside the four
+colours, because "translucent, lit from above, floating" cannot be expressed
+as a background hex. Only named presets carry one; a custom theme is always
+solid, since there is nothing in four picked colours that could say otherwise.
+
+`components/GlassSurface.tsx` is the only place that draws it. Three things do
+the work, in order of how much they matter: the **specular highlight** (a
+bright hairline on the top edge fading down — the most identifiable feature of
+Apple's material and the cheapest to draw correctly), **translucency** (a wash
+at partial alpha, so the page reads through), and **float** (soft shadow,
+larger radius).
+
+**No backdrop blur, and no faking it.** Real refraction needs a backdrop
+filter, which React Native has no equivalent for without `react-native-blur`
+or Skia. A lighter rectangle pretending to be a blur is what makes an
+imitation look cheap. If that dependency is ever added, GlassSurface is the
+one file that changes.
+
+## A wallpaper always carries a scrim
+
+`src/lib/wallpaper.ts` and `components/WallpaperBackground.tsx`. A photo has no
+contrast guarantee — the same white heading is perfect over a night sky and
+invisible over a beach — so the wash of theme background between the media and
+the content is part of the wallpaper, not a setting elsewhere. `MIN_DIM` is
+0.2 rather than 0: an unreadable app is not a preference.
+
+The scrim is drawn in `colors.background`, never black. A black scrim under a
+light theme would invert the relationship the palette was built on.
+
+Video is the most expensive thing this app can put on screen, on phones chosen
+for being cheap. It is muted, paused whenever the app is not in the foreground,
+and stopped entirely under reduced motion. The picker downscales to 1440x2880
+on the way in, because a 108MP photo as a background is tens of megabytes of
+bitmap held for the life of the app.
+
+`launchImageLibrary` needs **no permission**: Android's photo picker runs out
+of process and returns only the chosen item. Do not add `READ_MEDIA_IMAGES` —
+it would request the whole gallery to do a job that never needs it.
+
+The returned URI points into the app cache, which Android may evict. A load
+error clears the wallpaper and the plain theme shows through, so a missing file
+leaves a working screen rather than a black one.
+
+## Motion goes through `src/theme/motion.ts`
+
+Do not hand-roll an animation. The house springs, easing curves, duration scale,
+momentum projection and rubber-banding all live in `mobile/src/theme/motion.ts`,
+and the primitives that use them are:
+
+| Use | Component |
+|---|---|
+| Anything tappable | `components/Touchable.tsx` — press-down spring, hit slop, required a11y label |
+| Bottom sheets | `components/Sheet.tsx` — drag-to-dismiss with velocity handoff |
+| Either/or decisions | `components/Dialog.tsx` |
+| A value on a range | `components/Slider.tsx` — thumb glued to the finger, velocity handed to the spring, detents |
+| The subject cards | `components/HoloCard.tsx` — iridescent foil that drifts on its own, and stops when the screen is not focused |
+| Rearranging Home | `components/Reorderable.tsx` — hold a block to pick it up; order lives in `hooks/useHomeOrder.ts` |
+| Sorting the subject cards | `components/SortableGrid.tsx` — same rule, uniform tiles; order per year in `hooks/useSubjectOrder.ts` |
+| Back navigation | `components/BackButton.tsx` |
+| Long lists | spread `components/listTuning.ts` onto the `FlatList` |
+
+The rules those files obey come from the vendored skills in
+`.claude/skills/` — `apple-design` for the principles, `animate` and
+`review-animations/STANDARDS.md` for the exact curves, durations and the
+"never ship" list. **`.claude/skills/apple-design/README.md` is the index**: it
+maps each web technique to its React Native equivalent and records which ones
+were deliberately not taken (no backdrop blur, no haptics, no stagger) so nobody
+"fixes" them by accident.
+
+Question rows subscribe to **one question** (`useQuestionDone`), never to the
+store's global version. Using `useProgressVersion` in anything rendered per row
+makes one tick re-render every mounted row; `npm run check:fanout` fails if that
+regresses.
+
+Reduced motion is not optional. `useReducedMotion()` is wired into every
+primitive; new motion must handle it in the same commit, not as a follow-up.
+
+## Reordering Home moves transforms, never the tree
+
+`components/Reorderable.tsx` always renders the blocks in the order it was
+given at mount and expresses the current order as `translateY`. Committing a
+drop therefore changes nothing on screen. Re-rendering the children in the new
+order would repaint every block on the same frame the offsets are zeroed, and
+any disagreement between those two is a visible flash.
+
+Two consequences worth knowing before touching it:
+
+- **Blocks swap on the dragged block's leading edge crossing its neighbour's
+  midpoint**, not on its own centre reaching a slot. The blocks are wildly
+  different heights — the subject grid is most of a screen — and the centre
+  rule makes a tall block travel ~400dp to clear a 76dp banner.
+- **A card inside a block is draggable on its own**, so two draggables share
+  one finger. `dragOwner.ts` settles it: the card writes its name there on
+  touch-down, and the block declines to steal the gesture when it is already
+  spoken for. Capture runs parent-first, so without that the block wins every
+  time and no card can ever be picked up.
+- **`ReorderLock.tsx` is why holding a subject card does not open that
+  subject.** React Native has no gesture arbitration between parent and child
+  without react-native-gesture-handler, so the card is already the responder
+  when the hold is recognised. `Touchable` reads the lock and drops the press.
+  It wraps the block's *content* only — wrapping the row would disable the
+  reorder arrows, which are Touchables too.
+
+## A render error must never blank the app
+
+`mobile/src/components/ErrorBoundary.tsx` wraps everything in `App.tsx` —
+**outside** the providers, so it still catches when the thing that threw is a
+provider. It deliberately uses plain React Native components and literal
+colours: a fallback that depends on the code that just failed is not a
+fallback. Keep it that way.
+
+## Haptics are two calls, and both are earned
+
+`mobile/src/lib/haptics.ts` is the only thing in the app that vibrates:
+switching theme, and a focus session ending. Adding a third caller means
+clearing the same bar — a commit or a completion, never navigation or an
+ordinary tap. The `VIBRATE` permission in `AndroidManifest.xml` is what makes
+any of it work; without it every call is a silent no-op.
+
+## Design tokens
+
+`src/theme/tokens.ts` holds the spacing and radius scales; `typeScale` in
+`src/theme/typography.ts` holds the type ramp. Use them instead of raw numbers.
+A size written as a bare `fontSize` ships without the tracking and leading that
+belong to it, which is the whole reason the ramp exists.
+
+`src/theme/textScale.tsx` is the in-app text size. It multiplies the ramp and
+is applied centrally in `components/Text.tsx`, which takes a **zero-cost fast
+path when the size is exactly 1** — do not move that work anywhere it would run
+per row.
+
+It is a continuous multiplier from 0.9 to 1.15, set by a slider that resizes
+the app as it moves. Two things about those numbers:
+
+- **1.15 is a measured ceiling, not a round one.** What sets it is the bottom
+  bar: "My Progress" has to fit inside a fifth of the screen *and* inside the
+  selection pill. At 1.25 the label is wider than the pill; at 1.35 it wraps
+  and the bar breaks. Raising it means shortening that label first.
+- **`orbit:text-size` used to hold `default`/`large`/`larger`.** `parseTextSize`
+  still reads those as 1 / 1.08 / 1.15, because dropping them would silently
+  reset the setting for everyone who had changed it.
+
+The slider emits on the **step**, not on the frame. Every `Text` in the app
+subscribes to this value, so a callback per frame is a full-tree re-render per
+frame on exactly the phones that cannot afford one.
+
+## Accessibility is part of the component contract
+
+`Touchable` **requires** a `label`. That is deliberate — an unlabelled control
+is unusable with TalkBack, and making it a required prop is the only way that
+stays true as screens get added. Give lists one spoken sentence per row rather
+than four fragments, and keep every target at 44dp (use `hitSlop`, not padding
+that changes the design).
 
 ## Storage keys are shared with the web app
 
@@ -82,9 +343,27 @@ bugs have come from the two drifting.
 cd mobile
 npx tsc --noEmit                 # must be clean
 npx eslint .                     # 0 errors (warnings are inline-style noise)
+npm run check:fanout             # per-question subscriptions still isolated
+npm run check:sync               # progress reaches the cloud once a session exists
+npm run check:contrast           # every built-in theme stays readable
+npm run check:mcq                # MCQ response parsing + the ask-gemini markers
+npm run check:notes-limits       # every topic still fits the notes function's schema
+npm run check:smoke              # drives the real screens; 14 flows, 0 crashes
 npx react-native bundle --platform android --dev false \
   --entry-file index.js --bundle-output /tmp/b.js   # must succeed
 ```
 
+`check:smoke` selects controls by accessibility label, so a control it cannot
+find is one TalkBack cannot announce either. It needs the sandbox's Chromium and
+is not wired into CI.
+
+Screenshots:
+
+```sh
+cd mobile && node preview/shoot.mjs [outDir]   # writes one PNG per screen
+```
+
 There is no emulator in most sandboxes, so a green bundle is the strongest
-available signal. Do not claim device behaviour was verified when it was not.
+available signal. Do not claim device behaviour was verified when it was not —
+and note the preview harness is react-native-web, so it checks layout, not
+native rendering, gestures or animation timing.

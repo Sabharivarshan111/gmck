@@ -1,15 +1,14 @@
-import React, { useState } from 'react';
-import {
-  Modal,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  View,
-} from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { AccessibilityInfo, Animated, ScrollView, StyleSheet, View } from 'react-native';
 import { Text } from '@/components/Text';
+import { Touchable } from '@/components/Touchable';
+import { Sheet } from '@/components/Sheet';
+import { ProgressRing } from '@/components/ProgressRing';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Coffee, Pencil, Play, Pause, RotateCcw, SlidersHorizontal, Sparkles, Timer as TimerIcon, Users, X } from 'lucide-react-native';
+import { Coffee, Pencil, Play, Pause, RotateCcw, SlidersHorizontal, Sparkles, Timer as TimerIcon, Users } from 'lucide-react-native';
+import { typeScale } from '@/theme/typography';
 import { useTheme, withAlpha } from '@/theme';
+import { SPRING, springConfig, useReducedMotion } from '@/theme/motion';
 import { formatClock, PomodoroMode, usePomodoro } from '@/hooks/usePomodoro';
 import { formatFocusTime } from '@/lib/focusStats';
 
@@ -28,6 +27,48 @@ export default function TimerScreen() {
   const [settingsOpen, setSettingsOpen] = useState(false);
 
   const activeMode = MODES.find(m => m.key === timer.mode) ?? MODES[0];
+  // How much of this session is still to come, for the dial ring.
+  const remainingPercent =
+    timer.totalSeconds > 0 ? (timer.remaining / timer.totalSeconds) * 100 : 100;
+
+  /**
+   * Finishing a session is acknowledged, not just silently reset.
+   *
+   * The timer already vibrated on completion, but nothing on screen changed
+   * except the dial snapping back to full for the next mode — so the buzz had
+   * no visible partner, and finishing a 25-minute session felt like nothing had
+   * happened. One quick swell of the dial, fired from the same signal as the
+   * vibration so the two land together (SKILL §13 Causality + Harmony).
+   *
+   * This is the rare tier — a pomodoro ends every 25 minutes — which is exactly
+   * where a moment of delight is affordable (animate/SKILL.md frequency table).
+   * It plays once and stops; a looping celebration would be the wrong trade.
+   */
+  const reduceMotion = useReducedMotion();
+  const swell = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    if (timer.completionNonce === 0) {
+      return;
+    }
+    // Screen-reader users get the same information as the buzz.
+    AccessibilityInfo.announceForAccessibility(
+      `Session complete. Next up: ${
+        MODES.find(m => m.key === timer.mode)?.label ?? 'Focus'
+      }.`,
+    );
+    if (reduceMotion) {
+      return;
+    }
+    swell.setValue(0);
+    Animated.sequence([
+      Animated.spring(swell, { toValue: 1, ...springConfig(SPRING.momentum) }),
+      Animated.spring(swell, { toValue: 0, ...springConfig(SPRING.default) }),
+    ]).start();
+    // `mode` is read for the announcement only; re-running on a mode change
+    // would fire the flourish when the user switches tabs by hand.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [timer.completionNonce]);
 
   return (
     <ScrollView
@@ -39,11 +80,14 @@ export default function TimerScreen() {
           <Text style={[styles.title, { color: colors.text }]}>Focus Timer</Text>
           <Text style={[styles.subtitle, { color: colors.textMuted }]}>Deep work session</Text>
         </View>
-        <Pressable
+        <Touchable
           onPress={() => setSettingsOpen(true)}
+          label="Timer settings"
+          hint="Choose how long a focus session lasts"
+          scaleTo={0.9}
           style={[styles.iconCircle, { backgroundColor: colors.card, borderColor: colors.border }]}>
           <SlidersHorizontal size={18} color={colors.text} />
-        </Pressable>
+        </Touchable>
       </View>
 
       {/* Mode switcher */}
@@ -52,9 +96,13 @@ export default function TimerScreen() {
         {MODES.map(mode => {
           const active = mode.key === timer.mode;
           return (
-            <Pressable
+            <Touchable
               key={mode.key}
               onPress={() => timer.switchMode(mode.key)}
+              role="tab"
+              label={mode.label}
+              state={{ selected: active }}
+              scale={false}
               style={[styles.segmentItem, active && { backgroundColor: colors.primary }]}>
               <Text
                 style={[
@@ -63,54 +111,94 @@ export default function TimerScreen() {
                 ]}>
                 {mode.emoji} {mode.label}
               </Text>
-            </Pressable>
+            </Touchable>
           );
         })}
       </View>
 
       {/* Dial */}
-      <View style={styles.dialWrap}>
-        <View style={[styles.dial, { borderColor: colors.primary }]}>
-          <Text style={[styles.dialKicker, { color: colors.textMuted }]}>
-            {activeMode.emoji} {activeMode.label.toUpperCase()}
-          </Text>
-          <View style={styles.dialClockRow}>
-            <Text style={[styles.dialClock, { color: colors.text }]}>
-              {formatClock(timer.remaining)}
+      <Animated.View
+        style={[
+          styles.dialWrap,
+          {
+            transform: [
+              { scale: swell.interpolate({ inputRange: [0, 1], outputRange: [1, 1.04] }) },
+            ],
+          },
+        ]}>
+        {/* The published design's thick white ring, now carrying the session
+            state: it starts full and drains as time is spent. At rest it looks
+            exactly as it always has, so nothing about the identity changes —
+            it just stops being decoration.
+
+            The head dot is off, and the spring is off: on a value that already
+            moves every second, a travelling dot reads as a second clock hand
+            and a re-targeting spring never settles. */}
+        <ProgressRing
+          percent={remainingPercent}
+          size={260}
+          thickness={14}
+          from={colors.primary}
+          to={colors.primary}
+          showDot={false}
+          animate={false}
+          trackColor={withAlpha(colors.primary, 0.16)}>
+          <View style={styles.dial}>
+            <Text style={[styles.dialKicker, { color: colors.textMuted }]}>
+              {activeMode.emoji} {activeMode.label.toUpperCase()}
             </Text>
-            <Pressable onPress={() => setSettingsOpen(true)} hitSlop={10}>
-              <Pencil size={16} color={colors.textMuted} />
-            </Pressable>
+            <View style={styles.dialClockRow}>
+              <Text
+                accessibilityLiveRegion="none"
+                style={[styles.dialClock, { color: colors.text }]}>
+                {formatClock(timer.remaining)}
+              </Text>
+              <Touchable
+                onPress={() => setSettingsOpen(true)}
+                label="Set a custom focus length"
+                scaleTo={0.85}
+                hitSlop={14}>
+                <Pencil size={16} color={colors.textMuted} />
+              </Touchable>
+            </View>
+            <Text style={[styles.dialHint, { color: colors.textMuted }]}>
+              Tap the number to set custom time
+            </Text>
           </View>
-          <Text style={[styles.dialHint, { color: colors.textMuted }]}>
-            Tap the number to set custom time
-          </Text>
-        </View>
-      </View>
+        </ProgressRing>
+      </Animated.View>
 
       {/* Controls */}
       <View style={styles.controls}>
-        <Pressable
+        <Touchable
           onPress={timer.reset}
+          label="Reset timer"
+          scaleTo={0.9}
           style={[styles.sideButton, { borderColor: colors.border }]}>
           <RotateCcw size={20} color={colors.text} />
-        </Pressable>
+        </Touchable>
 
-        <Pressable
+        <Touchable
           onPress={timer.isRunning ? timer.pause : timer.start}
+          label={timer.isRunning ? 'Pause timer' : 'Start timer'}
+          // The primary control gets a deeper press than the rest — the amount
+          // of shrink is part of how important a button feels.
+          scaleTo={0.93}
           style={[styles.playButton, { backgroundColor: colors.primary }]}>
           {timer.isRunning ? (
             <Pause size={30} color={colors.primaryText} fill={colors.primaryText} />
           ) : (
             <Play size={30} color={colors.primaryText} fill={colors.primaryText} />
           )}
-        </Pressable>
+        </Touchable>
 
-        <Pressable
+        <Touchable
           onPress={() => timer.switchMode('short')}
+          label="Take a short break"
+          scaleTo={0.9}
           style={[styles.sideButton, { borderColor: colors.border }]}>
           <Coffee size={20} color={colors.text} />
-        </Pressable>
+        </Touchable>
       </View>
 
       {/* Presence */}
@@ -153,67 +241,47 @@ export default function TimerScreen() {
         </View>
       </View>
 
-      {/* Duration sheet */}
-      <Modal
+      <Sheet
         visible={settingsOpen}
-        transparent
-        animationType="slide"
-        onRequestClose={() => setSettingsOpen(false)}>
-        <Pressable
-          style={[styles.backdrop, { backgroundColor: withAlpha('#000000', 0.6) }]}
-          onPress={() => setSettingsOpen(false)}
-        />
-        <View
-          style={[
-            styles.sheet,
-            {
-              backgroundColor: colors.card,
-              borderColor: colors.border,
-              paddingBottom: insets.bottom + 20,
-            },
-          ]}>
-          <View style={styles.sheetHeader}>
-            <View>
-              <Text style={[styles.sheetTitle, { color: colors.text }]}>Focus length</Text>
-              <Text style={[styles.sheetSub, { color: colors.textMuted }]}>
-                Breaks: {timer.settings.shortMinutes}m short, {timer.settings.longMinutes}m long
-                every {timer.settings.longEvery} sessions
-              </Text>
-            </View>
-            <Pressable onPress={() => setSettingsOpen(false)} hitSlop={10}>
-              <X size={22} color={colors.text} />
-            </Pressable>
-          </View>
-          <View style={styles.durationGrid}>
-            {DURATION_CHOICES.map(minutes => {
-              const active = timer.settings.focusMinutes === minutes;
-              return (
-                <Pressable
-                  key={minutes}
-                  onPress={() => {
-                    timer.updateSettings({ focusMinutes: minutes });
-                    setSettingsOpen(false);
-                  }}
+        onClose={() => setSettingsOpen(false)}
+        title="Focus length">
+        <Text style={[styles.sheetSub, { color: colors.textMuted }]}>
+          Breaks: {timer.settings.shortMinutes}m short, {timer.settings.longMinutes}m long every{' '}
+          {timer.settings.longEvery} sessions
+        </Text>
+        <View style={styles.durationGrid}>
+          {DURATION_CHOICES.map(minutes => {
+            const active = timer.settings.focusMinutes === minutes;
+            return (
+              <Touchable
+                key={minutes}
+                onPress={() => {
+                  timer.updateSettings({ focusMinutes: minutes });
+                  setSettingsOpen(false);
+                }}
+                role="radio"
+                label={`${minutes} minutes`}
+                state={{ checked: active }}
+                scaleTo={0.94}
+                style={[
+                  styles.durationChip,
+                  {
+                    backgroundColor: active ? colors.primary : colors.cardElevated,
+                    borderColor: active ? colors.primary : colors.border,
+                  },
+                ]}>
+                <Text
                   style={[
-                    styles.durationChip,
-                    {
-                      backgroundColor: active ? colors.primary : colors.cardElevated,
-                      borderColor: active ? colors.primary : colors.border,
-                    },
+                    styles.durationText,
+                    { color: active ? colors.primaryText : colors.text },
                   ]}>
-                  <Text
-                    style={[
-                      styles.durationText,
-                      { color: active ? colors.primaryText : colors.text },
-                    ]}>
-                    {minutes}m
-                  </Text>
-                </Pressable>
-              );
-            })}
-          </View>
+                  {minutes}m
+                </Text>
+              </Touchable>
+            );
+          })}
         </View>
-      </Modal>
+      </Sheet>
     </ScrollView>
   );
 }
@@ -229,10 +297,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginBottom: 18,
   },
-  title: {
-    fontSize: 26,
-    fontWeight: '800',
-  },
+  title: typeScale.title1,
   subtitle: {
     fontSize: 14,
     marginTop: 2,
@@ -270,7 +335,6 @@ const styles = StyleSheet.create({
     height: 260,
     width: 260,
     borderRadius: 130,
-    borderWidth: 14,
     alignItems: 'center',
     justifyContent: 'center',
     // The soft halo around the ring in the design.
@@ -400,6 +464,7 @@ const styles = StyleSheet.create({
     marginBottom: 18,
   },
   sheetTitle: {
+    ...typeScale.title2,
     fontSize: 20,
     fontWeight: '800',
   },

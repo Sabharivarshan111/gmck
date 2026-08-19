@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { AppState, AppStateStatus, Vibration } from 'react-native';
+import { AppState, AppStateStatus } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { complete } from '@/lib/haptics';
+import { warn } from '@/lib/log';
 
 export type PomodoroMode = 'focus' | 'short' | 'long';
 
@@ -54,6 +56,13 @@ export function usePomodoro() {
   const [remaining, setRemaining] = useState(DEFAULT_SETTINGS.focusMinutes * 60);
   const [isRunning, setIsRunning] = useState(false);
   const [completedFocus, setCompletedFocus] = useState(0);
+  /**
+   * Bumped every time a session ends, so the screen can acknowledge it.
+   *
+   * A counter rather than a boolean: two sessions in a row have to be
+   * distinguishable, and a boolean that has to be reset invites a stuck flag.
+   */
+  const [completionNonce, setCompletionNonce] = useState(0);
   const [focusMinutesTotal, setFocusMinutesTotal] = useState(0);
   const [focusMinutesToday, setFocusMinutesToday] = useState(0);
 
@@ -123,7 +132,7 @@ export function usePomodoro() {
         setTotalSeconds(minutesFor('focus', active) * 60);
         setRemaining(minutesFor('focus', active) * 60);
       } catch (error) {
-        console.warn('pomodoro restore failed:', error);
+        warn('pomodoro restore failed:', error);
       }
     })();
     return () => {
@@ -135,7 +144,11 @@ export function usePomodoro() {
     setIsRunning(false);
     endsAtRef.current = null;
     AsyncStorage.removeItem(SESSION_KEY).catch(() => {});
-    Vibration.vibrate([0, 400, 200, 400]);
+    // Haptic and visual have to land together — feedback split across senses
+    // reads as two events rather than one (apple-design §13 Harmony). The
+    // screen's flourish keys off the same nonce set here.
+    complete();
+    setCompletionNonce(n => n + 1);
 
     setMode(current => {
       if (current !== 'focus') {
@@ -278,6 +291,7 @@ export function usePomodoro() {
     totalSeconds,
     isRunning,
     completedFocus,
+    completionNonce,
     focusMinutesTotal,
     focusMinutesToday,
     settings,

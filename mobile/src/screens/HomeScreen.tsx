@@ -1,13 +1,19 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import {
-  Linking,
-  Modal,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  View,
-} from 'react-native';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Animated, Linking, ScrollView, StyleSheet, View } from 'react-native';
 import { Text } from '@/components/Text';
+import { Touchable } from '@/components/Touchable';
+import { Sheet } from '@/components/Sheet';
+import { HoloCard } from '@/components/HoloCard';
+import { Reorderable } from '@/components/Reorderable';
+import { HOME_SECTION_LABEL, useHomeOrder } from '@/hooks/useHomeOrder';
+import { SortableGrid } from '@/components/SortableGrid';
+import { useSubjectOrder } from '@/hooks/useSubjectOrder';
+import { Slider } from '@/components/Slider';
+import { ThemeMenu, type Anchor } from '@/components/ThemeMenu';
+import { presetByKey } from '@/theme/presets';
+import { ThemeEditor } from '@/components/ThemeEditor';
+import { GlassSurface } from '@/components/GlassSurface';
+import { WallpaperBackground, useWallpaperText } from '@/components/WallpaperBackground';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -27,9 +33,18 @@ import {
   TrendingUp,
   Trophy,
   Type,
-  X,
 } from 'lucide-react-native';
 import { useTheme, withAlpha } from '@/theme';
+import { DURATION, EASE, useReducedMotion } from '@/theme/motion';
+import {
+  TEXT_SIZE_DEFAULT,
+  TEXT_SIZE_MAX,
+  TEXT_SIZE_MIN,
+  TEXT_SIZE_STEP,
+  formatTextSize,
+} from '@/theme/textScale';
+import { radius, space } from '@/theme/tokens';
+import { typeScale } from '@/theme/typography';
 import { GradientFill } from '@/components/Gradient';
 import {
   collectAllQuestions,
@@ -74,6 +89,10 @@ const SUBJECT_GRADIENT: Record<string, [string, string]> = {
 };
 const DEFAULT_GRADIENT: [string, string] = ['rgba(124,58,237,0.40)', 'rgba(88,28,135,0.60)'];
 
+/** One card's height, and its width as a fraction of the grid. */
+const SUBJECT_CARD_HEIGHT = 160;
+const SUBJECT_CARD_RATIO = 0.485;
+
 const WHATSAPP_LABEL: Record<YearKey, string> = {
   'first-year': '1st year',
   'second-year': '2nd year',
@@ -82,7 +101,16 @@ const WHATSAPP_LABEL: Record<YearKey, string> = {
 };
 
 export default function HomeScreen() {
-  const { colors, theme, toggleTheme } = useTheme();
+  const { colors, theme, textSize, setTextSize, custom, setCustom, setPreference } = useTheme();
+  const { order, rendered, save, reset } = useHomeOrder();
+  const [editing, setEditing] = useState(false);
+  const [dragging, setDragging] = useState(false);
+  /**
+   * Content drawn straight onto the background reads this rather than
+   * colors.text, because over a wallpaper the palette's guarantee no longer
+   * holds. Anything inside a card is on the card and keeps the palette.
+   */
+  const onWall = useWallpaperText();
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<Nav>();
   const countDone = useCountDone();
@@ -90,15 +118,53 @@ export default function HomeScreen() {
   const [slide, setSlide] = useState(0);
   const [focusMinutes, setFocusMinutes] = useState(0);
   const [yearPickerOpen, setYearPickerOpen] = useState(false);
+  const [textSizeOpen, setTextSizeOpen] = useState(false);
+  const [themeOpen, setThemeOpen] = useState(false);
+  const [editorOpen, setEditorOpen] = useState(false);
+  /**
+   * Where the menu hangs from.
+   *
+   * Measured on press rather than on layout: the header moves with the safe
+   * area and the scroll position, and a stale frame would leave the menu
+   * floating away from the button it belongs to.
+   */
+  const [anchor, setAnchor] = useState<Anchor | null>(null);
+  const themeButton = useRef<React.ComponentRef<typeof View>>(null);
 
   useEffect(() => {
     readFocusMinutes().then(setFocusMinutes);
   }, []);
 
+  const reduceMotion = useReducedMotion();
+  const heroFade = useRef(new Animated.Value(1)).current;
+
   useEffect(() => {
+    // A 6-second loop is a ~0.17 Hz oscillation, which is exactly the kind of
+    // slow repeating motion reduced-motion users ask to be spared (SKILL §14).
+    // The dots stay tappable, so nothing becomes unreachable — the carousel
+    // simply stops driving itself.
+    if (reduceMotion) {
+      return;
+    }
     const id = setInterval(() => setSlide(s => (s + 1) % HERO_SLIDES.length), 6000);
     return () => clearInterval(id);
-  }, []);
+  }, [reduceMotion]);
+
+  // Cross-fade between slides. A hard cut mid-sentence reads as a glitch; the
+  // fade is what tells you the text was replaced deliberately.
+  useEffect(() => {
+    if (reduceMotion) {
+      heroFade.setValue(1);
+      return;
+    }
+    heroFade.setValue(0);
+    Animated.timing(heroFade, {
+      toValue: 1,
+      duration: DURATION.base,
+      easing: EASE.out,
+      useNativeDriver: true,
+    }).start();
+  }, [slide, heroFade, reduceMotion]);
 
   const { yearKey: year, streak, setYear } = useProfile();
 
@@ -116,6 +182,17 @@ export default function HomeScreen() {
       }),
     [year, countDone],
   );
+
+  const subjectKeys = useMemo(() => subjects.map(subject => subject.key), [subjects]);
+  const subjectByKey = useMemo(
+    () => new Map(subjects.map(subject => [subject.key, subject])),
+    [subjects],
+  );
+  const {
+    order: subjectOrder,
+    rendered: subjectRender,
+    save: saveSubjectOrder,
+  } = useSubjectOrder(year, subjectKeys);
 
   const goToTab = useCallback(
     (tab: keyof RootTabParamList) => {
@@ -142,28 +219,72 @@ export default function HomeScreen() {
   const hero = HERO_SLIDES[slide];
 
   return (
-    <ScrollView
-      style={{ backgroundColor: colors.background }}
-      contentContainerStyle={[styles.content, { paddingTop: insets.top + 8 }]}
-      showsVerticalScrollIndicator={false}>
+    /**
+     * The wallpaper sits behind the scroll view, not inside it, so it stays
+     * put while the content moves over it — a background that scrolls with the
+     * page is a very tall image, not a wallpaper. The ScrollView goes
+     * transparent so the media shows through; the scrim inside
+     * WallpaperBackground is what keeps the text readable.
+     */
+    <WallpaperBackground>
+      <ScrollView
+        style={styles.transparent}
+        contentContainerStyle={[styles.content, { paddingTop: insets.top + 8 }]}
+        // A block being dragged must not also be scrolling the page under
+        // itself; the drag owns the vertical axis while it lasts.
+        scrollEnabled={!dragging}
+        showsVerticalScrollIndicator={false}>
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerLeft}>
-          <Pressable style={styles.iconButton} accessibilityLabel="Menu">
-            <Menu size={20} color={colors.text} />
-          </Pressable>
+          {/* The hamburger was a plain View: it looked pressable and did
+              nothing, which is the same bug the FONT SIZE control had.
+              Rearranging is normally entered by holding a block, but a hold
+              is not something a screen reader can offer, so this is the other
+              way in — and the way back out. */}
+          <Touchable
+            onPress={() => setEditing(value => !value)}
+            label={editing ? 'Finish rearranging' : 'Rearrange home screen'}
+            hint={
+              editing ? undefined : 'Or hold any block on this screen to start moving it'
+            }
+            state={{ expanded: editing }}
+            scaleTo={0.9}
+            style={styles.iconButton}>
+            {editing ? (
+              <Check size={20} color={colors.accent} />
+            ) : (
+              <Menu size={20} color={colors.text} />
+            )}
+          </Touchable>
           <View>
-            <Text style={[styles.brand, { color: colors.text }]}>ORBIT</Text>
+            <Text style={[styles.brand, { color: onWall }]}>ORBIT</Text>
             <Text style={[styles.tagline, { color: colors.textMuted }]}>
               Learn. Retain. Master.
             </Text>
           </View>
         </View>
         <View style={styles.headerRight}>
-          <RoundButton label="FONT SIZE">
-            <Type size={16} color={colors.text} />
-          </RoundButton>
-          <Pressable onPress={toggleTheme}>
+          <Touchable
+            onPress={() => setTextSizeOpen(true)}
+              label="Text size"
+            hint={`Currently ${formatTextSize(textSize)}`}
+            scaleTo={0.9}>
+            <RoundButton label="TEXT SIZE">
+              <Type size={16} color={colors.text} />
+            </RoundButton>
+          </Touchable>
+          <View ref={themeButton} collapsable={false}>
+          <Touchable
+            onPress={() => {
+              themeButton.current?.measureInWindow((x, y, width, height) => {
+                setAnchor({ top: y + height + 8, right: 16 });
+                setThemeOpen(true);
+              });
+            }}
+            label="Themes"
+            hint="Pick a theme or build your own"
+            scaleTo={0.9}>
             <RoundButton label="THEME">
               {theme === 'dark' ? (
                 <Moon size={16} color={colors.text} />
@@ -171,111 +292,332 @@ export default function HomeScreen() {
                 <Sun size={16} color={colors.text} />
               )}
             </RoundButton>
-          </Pressable>
-        </View>
-      </View>
-
-      {/* Hero card */}
-      <View
-        style={[
-          styles.hero,
-          { backgroundColor: colors.card, borderColor: withAlpha(colors.primary, 0.2) },
-        ]}>
-        <View
-          style={[styles.heroGlow, { backgroundColor: withAlpha(colors.fuchsia, 0.12) }]}
-          pointerEvents="none"
-        />
-        <Text style={[styles.heroKicker, { color: colors.textMuted }]}>Welcome to</Text>
-        <Text style={[styles.heroTitle, { color: colors.fuchsia }]}>{hero.title}</Text>
-        <Text style={[styles.heroBody, { color: colors.textMuted }]}>{hero.body}</Text>
-
-        <View style={[styles.credit, { borderColor: colors.border }]}>
-          <View>
-            <Text style={[styles.creditLabel, { color: colors.textMuted }]}>CREATED BY</Text>
-            <Text style={[styles.creditName, { color: colors.text }]}>Sabharivarshan S</Text>
+          </Touchable>
           </View>
-          <Flag size={16} color={colors.textMuted} />
         </View>
+      </View>
 
-        <View style={styles.dots}>
-          {HERO_SLIDES.map((_, index) => (
-            <View
-              key={index}
+        {editing ? (
+          <View
+            style={[
+              styles.editBanner,
+              { backgroundColor: withAlpha(colors.accent, 0.14), borderColor: colors.accent },
+            ]}>
+            <Text style={[styles.editBannerText, { color: colors.text }]}>
+              Drag a block, or use its arrows, to put Home in the order you want.
+            </Text>
+            <Touchable onPress={reset} label="Reset home layout" scaleTo={0.94}>
+              <Text style={[styles.editReset, { color: colors.textMuted }]}>Reset</Text>
+            </Touchable>
+            <Touchable onPress={() => setEditing(false)} label="Finish rearranging" scaleTo={0.94}>
+              <Text style={[styles.editReset, { color: colors.accent }]}>Done</Text>
+            </Touchable>
+          </View>
+        ) : null}
+
+        <Reorderable
+          rendered={rendered}
+          order={order}
+          onOrderChange={save}
+          editing={editing}
+          onRequestEdit={() => setEditing(true)}
+          onDragChange={setDragging}
+          labels={HOME_SECTION_LABEL}
+          sections={{
+            hero: (
+              <>
+            {/* Hero card */}
+            <GlassSurface style={styles.hero} borderRadius={20}>
+              <View
+                style={[styles.heroGlow, { backgroundColor: withAlpha(colors.fuchsia, 0.12) }]}
+                pointerEvents="none"
+              />
+              <Animated.View style={{ opacity: heroFade }}>
+                <Text
+                  accessibilityRole="header"
+                  style={[styles.heroTitle, { color: colors.fuchsia }]}>
+                  {hero.title}
+                </Text>
+                <Text style={[styles.heroBody, { color: colors.textMuted }]}>{hero.body}</Text>
+              </Animated.View>
+
+              <View style={[styles.credit, { borderColor: colors.border }]}>
+                <View>
+                  <Text style={[styles.creditLabel, { color: colors.textMuted }]}>CREATED BY</Text>
+                  <Text style={[styles.creditName, { color: colors.text }]}>Sabharivarshan S</Text>
+                </View>
+                <Flag size={16} color={colors.textMuted} />
+              </View>
+
+              {/* Tappable, so the carousel is something the reader controls rather
+                  than something that happens to them (SKILL §16 Agency). */}
+              <View style={styles.dots}>
+                {HERO_SLIDES.map((item, index) => (
+                  <Touchable
+                    key={item.title}
+                    onPress={() => setSlide(index)}
+                    label={item.title}
+                    role="tab"
+                    state={{ selected: index === slide }}
+                    hitSlop={12}
+                    scale={false}>
+                    <View
+                      style={[
+                        styles.dot,
+                        index === slide
+                          ? { width: 20, backgroundColor: colors.primary }
+                          : { width: 6, backgroundColor: colors.cardElevated },
+                      ]}
+                    />
+                  </Touchable>
+                ))}
+              </View>
+            </GlassSurface>
+              </>
+            ),
+            quick: (
+              <>
+            {/* Quick actions */}
+            <View style={styles.quickRow}>
+              <QuickAction
+                icon={<TrendingUp size={20} color={colors.primary} />}
+                label="Progress"
+                sub="Track your learning"
+                color={colors.primary}
+                onPress={() => goToTab('Progress')}
+              />
+              <QuickAction
+                icon={<Search size={20} color={colors.cyan} />}
+                label="Search"
+                sub="Find topics instantly"
+                color={colors.cyan}
+                onPress={() => navigation.navigate('BrowseHome', { focusSearch: true })}
+              />
+              <QuickAction
+                icon={<TimerIcon size={20} color={colors.emerald} />}
+                label="Timer"
+                sub="Focus with Pomodoro"
+                color={colors.emerald}
+                onPress={() => goToTab('Timer')}
+              />
+              <QuickAction
+                icon={<Sparkles size={20} color={colors.fuchsia} />}
+                label="Ask AI"
+                sub="Get instant help"
+                color={colors.fuchsia}
+                onPress={() => goToTab('AskAI')}
+              />
+            </View>
+              </>
+            ),
+            whatsapp: (
+              <>
+            {/* WhatsApp community */}
+            <Touchable
+              onPress={() => Linking.openURL('https://chat.whatsapp.com/').catch(() => {})}
+              label="Join our WhatsApp community"
+              hint="Opens WhatsApp"
+              scaleTo={0.985}
               style={[
-                styles.dot,
-                index === slide
-                  ? { width: 20, backgroundColor: colors.primary }
-                  : { width: 6, backgroundColor: colors.cardElevated },
-              ]}
+                styles.whatsapp,
+                {
+                  borderColor: withAlpha(colors.green, 0.3),
+                  backgroundColor: withAlpha(colors.green, 0.05),
+                },
+              ]}>
+              <View style={[styles.whatsappIcon, { backgroundColor: withAlpha(colors.green, 0.15) }]}>
+                <MessageCircle size={16} color={colors.green} />
+              </View>
+              <View style={styles.whatsappBody}>
+                <Text style={[styles.whatsappTitle, { color: colors.text }]}>
+                  Join our WhatsApp community
+                </Text>
+                <Text style={[styles.whatsappSub, { color: colors.textMuted }]}>
+                  {WHATSAPP_LABEL[year]} materials, notes & updates
+                </Text>
+              </View>
+              <Text style={[styles.whatsappJoin, { color: colors.green }]}>Join</Text>
+            </Touchable>
+              </>
+            ),
+            subjects: (
+              <>
+            {/* Your Subjects */}
+            <View style={styles.sectionHeader}>
+              <Text accessibilityRole="header" style={[styles.sectionTitle, { color: colors.text }]}>
+                Your Subjects
+              </Text>
+              <Touchable
+                onPress={() => setYearPickerOpen(open => !open)}
+                label="View all years"
+                hint="Opens the year picker"
+                state={{ expanded: yearPickerOpen }}
+                style={styles.viewAll}>
+                <Text style={[styles.viewAllText, { color: colors.primary }]}>View all</Text>
+                <ChevronRight size={16} color={colors.primary} />
+              </Touchable>
+            </View>
+            {/* The cards sort among themselves as well as travelling with
+                the block they are in — hold one and it lifts out of the grid.
+                Rendered until the stored order has been read, so the grid
+                does not appear in the default order and then rearrange
+                itself a frame later. */}
+            <SortableGrid
+              key={year}
+              rendered={subjectRender ?? subjects.map(subject => subject.key)}
+              order={subjectOrder}
+              onOrderChange={saveSubjectOrder}
+              editing={editing}
+              columns={2}
+              itemHeight={SUBJECT_CARD_HEIGHT}
+              rowGap={12}
+              widthRatio={SUBJECT_CARD_RATIO}
+              style={styles.subjectGrid}
+              renderItem={key => {
+                const subject = subjectByKey.get(key);
+                if (!subject) {
+                  return null;
+                }
+                return (
+                  <HoloCard
+                    index={subjects.indexOf(subject)}
+                    onPress={() => openSubject(subject.key, subject.name)}
+                    // One spoken sentence beats four fragments; TalkBack reads
+                    // the card as a whole, not as name / bar / percent / arrow.
+                    label={`${subject.name}, ${subject.pct}% complete`}
+                    from={subject.gradient[0]}
+                    to={subject.gradient[1]}
+                    borderColor={colors.border}
+                    borderRadius={16}
+                    style={styles.subjectTile}
+                    innerStyle={styles.subjectCard}>
+                    <Text style={styles.subjectEmoji}>{subject.icon}</Text>
+                    <View style={styles.subjectFooter}>
+                      <Text style={[styles.subjectName, { color: colors.text }]}>
+                        {subject.name.toUpperCase()}
+                      </Text>
+                      <View
+                        style={[styles.subjectTrack, { backgroundColor: withAlpha('#000000', 0.4) }]}>
+                        <SubjectFill pct={subject.pct} color={colors.primary} />
+                      </View>
+                      <View style={styles.subjectMeta}>
+                        <Text style={[styles.subjectPct, { color: colors.primary }]}>
+                          {subject.pct}% Complete
+                        </Text>
+                        <View
+                          style={[styles.subjectArrow, { backgroundColor: withAlpha('#000000', 0.4) }]}>
+                          <ArrowRight size={12} color={colors.text} />
+                        </View>
+                      </View>
+                    </View>
+                  </HoloCard>
+                );
+              }}
             />
-          ))}
-        </View>
-      </View>
+              </>
+            ),
+            stats: (
+              <>
+            {/* Stats */}
+            <View style={[styles.stats, { backgroundColor: colors.card, borderColor: colors.border }]}>
+              <View style={styles.stat}>
+                <View style={[styles.statIcon, { backgroundColor: withAlpha(colors.primary, 0.15) }]}>
+                  <Flame size={20} color={colors.primary} />
+                </View>
+                <View>
+                  <Text style={[styles.statLabel, { color: colors.textMuted }]}>Study Streak</Text>
+                  <Text style={[styles.statValue, { color: colors.text }]}>
+                    {streak}
+                    <Text style={[styles.statUnit, { color: colors.textMuted }]}> days 🔥</Text>
+                  </Text>
+                </View>
+              </View>
+              <View style={[styles.statDivider, { backgroundColor: colors.border }]} />
+              <View style={styles.stat}>
+                <View style={[styles.statIcon, { backgroundColor: withAlpha(colors.primary, 0.15) }]}>
+                  <Trophy size={20} color={colors.primary} />
+                </View>
+                <View>
+                  <Text style={[styles.statLabel, { color: colors.textMuted }]}>Total Study Time</Text>
+                  <Text style={[styles.statValueSmall, { color: colors.text }]}>
+                    {formatFocusTime(focusMinutes)}
+                  </Text>
+                  <Text style={[styles.statHint, { color: colors.primary }]}>Keep going!</Text>
+                </View>
+              </View>
+            </View>
+              </>
+            ),
+          }}
+        />
 
-      {/* Quick actions */}
-      <View style={styles.quickRow}>
-        <QuickAction
-          icon={<TrendingUp size={20} color={colors.primary} />}
-          label="Progress"
-          sub="Track your learning"
-          color={colors.primary}
-          onPress={() => goToTab('Progress')}
-        />
-        <QuickAction
-          icon={<Search size={20} color={colors.cyan} />}
-          label="Search"
-          sub="Find topics instantly"
-          color={colors.cyan}
-          onPress={() => navigation.navigate('BrowseHome', { focusSearch: true })}
-        />
-        <QuickAction
-          icon={<TimerIcon size={20} color={colors.emerald} />}
-          label="Timer"
-          sub="Focus with Pomodoro"
-          color={colors.emerald}
-          onPress={() => goToTab('Timer')}
-        />
-        <QuickAction
-          icon={<Sparkles size={20} color={colors.fuchsia} />}
-          label="Ask AI"
-          sub="Get instant help"
-          color={colors.fuchsia}
-          onPress={() => goToTab('AskAI')}
-        />
-      </View>
+        {/* Overlays. They render into their own layer, so their place in the
+            tree is arbitrary — what matters is that they are not inside a
+            block that can be dragged. */}
+      <ThemeMenu
+        visible={themeOpen}
+        anchor={anchor}
+        onClose={() => setThemeOpen(false)}
+        onCreate={() => setEditorOpen(true)}
+      />
 
-      {/* WhatsApp community */}
-      <Pressable
-        onPress={() => Linking.openURL('https://chat.whatsapp.com/').catch(() => {})}
-        style={[
-          styles.whatsapp,
-          {
-            borderColor: withAlpha(colors.green, 0.3),
-            backgroundColor: withAlpha(colors.green, 0.05),
-          },
-        ]}>
-        <View style={[styles.whatsappIcon, { backgroundColor: withAlpha(colors.green, 0.15) }]}>
-          <MessageCircle size={16} color={colors.green} />
-        </View>
-        <View style={styles.whatsappBody}>
-          <Text style={[styles.whatsappTitle, { color: colors.text }]}>
-            Join our WhatsApp community
+      <ThemeEditor
+        visible={editorOpen}
+        initial={custom ?? presetByKey('dark')!.palette!}
+        onClose={() => setEditorOpen(false)}
+        onApply={next => {
+          setCustom(next);
+          setPreference('custom');
+          setEditorOpen(false);
+        }}
+      />
+
+      <Sheet
+        visible={textSizeOpen}
+        onClose={() => setTextSizeOpen(false)}
+        title="Text size">
+        <Text style={[styles.sheetSub, { color: colors.textMuted }]} numberOfLines={2}>
+          Applies across the app. Your phone's own display size still works too.
+        </Text>
+
+        {/* The preview is the app's own text at the chosen size — the sample
+            is a question, because questions are what this size is for. The
+            box is a fixed height so the sheet cannot resize under the finger
+            that is dragging the slider. */}
+        <View
+          style={[
+            styles.textSizePreview,
+            { backgroundColor: colors.cardElevated, borderColor: colors.border },
+          ]}>
+          <Text style={[styles.textSizeSample, { color: colors.text }]} numberOfLines={3}>
+            Bilirubin is conjugated in the hepatocyte and excreted in bile.
           </Text>
-          <Text style={[styles.whatsappSub, { color: colors.textMuted }]}>
-            {WHATSAPP_LABEL[year]} materials, notes & updates
-          </Text>
         </View>
-        <Text style={[styles.whatsappJoin, { color: colors.green }]}>Join</Text>
-      </Pressable>
 
-      {/* Your Subjects */}
-      <View style={styles.sectionHeader}>
-        <Text style={[styles.sectionTitle, { color: colors.text }]}>Your Subjects</Text>
-        <Pressable onPress={() => setYearPickerOpen(open => !open)} style={styles.viewAll}>
-          <Text style={[styles.viewAllText, { color: colors.primary }]}>View all</Text>
-          <ChevronRight size={16} color={colors.primary} />
-        </Pressable>
-      </View>
+        <View style={styles.textSizeScale}>
+          <Text style={[styles.textSizeSmallA, { color: colors.textMuted }]}>A</Text>
+          <Text style={[styles.textSizeValue, { color: colors.text }]}>
+            {formatTextSize(textSize)}
+          </Text>
+          <Text style={[styles.textSizeLargeA, { color: colors.textMuted }]}>A</Text>
+        </View>
+
+        <View style={styles.textSizeSlider}>
+          <Slider
+            value={textSize}
+            min={TEXT_SIZE_MIN}
+            max={TEXT_SIZE_MAX}
+            step={TEXT_SIZE_STEP}
+            onChange={setTextSize}
+            label="Text size"
+            format={formatTextSize}
+            // The one value on the scale with a name is the one worth being
+            // able to get back to exactly.
+            detents={[TEXT_SIZE_DEFAULT]}
+            ticks={[TEXT_SIZE_MIN, TEXT_SIZE_DEFAULT, 1.08, TEXT_SIZE_MAX]}
+          />
+        </View>
+      </Sheet>
 
       <YearPickerSheet
         visible={yearPickerOpen}
@@ -289,77 +631,8 @@ export default function HomeScreen() {
           navigation.navigate('BrowseHome', { year: key });
         }}
       />
-
-      <View style={styles.subjectGrid}>
-        {subjects.map(subject => (
-          <Pressable
-            key={subject.key}
-            onPress={() => openSubject(subject.key, subject.name)}
-            style={({ pressed }) => [
-              styles.subjectCard,
-              { borderColor: colors.border, transform: [{ scale: pressed ? 0.98 : 1 }] },
-            ]}>
-            <GradientFill
-              from={subject.gradient[0]}
-              to={subject.gradient[1]}
-              borderRadius={16}
-            />
-            <Text style={styles.subjectEmoji}>{subject.icon}</Text>
-            <View style={styles.subjectFooter}>
-              <Text style={[styles.subjectName, { color: colors.text }]}>
-                {subject.name.toUpperCase()}
-              </Text>
-              <View style={[styles.subjectTrack, { backgroundColor: withAlpha('#000000', 0.4) }]}>
-                <View
-                  style={[
-                    styles.subjectFill,
-                    { width: `${subject.pct}%`, backgroundColor: colors.primary },
-                  ]}
-                />
-              </View>
-              <View style={styles.subjectMeta}>
-                <Text style={[styles.subjectPct, { color: colors.primary }]}>
-                  {subject.pct}% Complete
-                </Text>
-                <View
-                  style={[styles.subjectArrow, { backgroundColor: withAlpha('#000000', 0.4) }]}>
-                  <ArrowRight size={12} color={colors.text} />
-                </View>
-              </View>
-            </View>
-          </Pressable>
-        ))}
-      </View>
-
-      {/* Stats */}
-      <View style={[styles.stats, { backgroundColor: colors.card, borderColor: colors.border }]}>
-        <View style={styles.stat}>
-          <View style={[styles.statIcon, { backgroundColor: withAlpha(colors.primary, 0.15) }]}>
-            <Flame size={20} color={colors.primary} />
-          </View>
-          <View>
-            <Text style={[styles.statLabel, { color: colors.textMuted }]}>Study Streak</Text>
-            <Text style={[styles.statValue, { color: colors.text }]}>
-              {streak}
-              <Text style={[styles.statUnit, { color: colors.textMuted }]}> days 🔥</Text>
-            </Text>
-          </View>
-        </View>
-        <View style={[styles.statDivider, { backgroundColor: colors.border }]} />
-        <View style={styles.stat}>
-          <View style={[styles.statIcon, { backgroundColor: withAlpha(colors.primary, 0.15) }]}>
-            <Trophy size={20} color={colors.primary} />
-          </View>
-          <View>
-            <Text style={[styles.statLabel, { color: colors.textMuted }]}>Total Study Time</Text>
-            <Text style={[styles.statValueSmall, { color: colors.text }]}>
-              {formatFocusTime(focusMinutes)}
-            </Text>
-            <Text style={[styles.statHint, { color: colors.primary }]}>Keep going!</Text>
-          </View>
-        </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </WallpaperBackground>
   );
 }
 
@@ -376,7 +649,6 @@ function YearPickerSheet({
   onBrowse: (year: YearKey, makeDefault: boolean) => void;
 }) {
   const { colors } = useTheme();
-  const insets = useSafeAreaInsets();
   const [picked, setPicked] = useState<YearKey>(currentYear);
   const [makeDefault, setMakeDefault] = useState(false);
 
@@ -389,83 +661,72 @@ function YearPickerSheet({
   }, [visible, currentYear]);
 
   return (
-    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
-      <Pressable
-        style={[styles.backdrop, { backgroundColor: withAlpha('#000000', 0.7) }]}
-        onPress={onClose}
-      />
-      <View
-        style={[
-          styles.sheet,
-          {
-            backgroundColor: colors.card,
-            borderColor: colors.border,
-            paddingBottom: insets.bottom + 20,
-          },
-        ]}>
-        <View style={styles.sheetHeader}>
-          <View>
-            <Text style={[styles.sheetTitle, { color: colors.text }]}>Select Year</Text>
-            <Text style={[styles.sheetSub, { color: colors.textMuted }]}>
-              Choose the year you want to browse
-            </Text>
-          </View>
-          <Pressable onPress={onClose} hitSlop={10}>
-            <X size={22} color={colors.text} />
-          </Pressable>
-        </View>
+    <Sheet visible={visible} onClose={onClose} title="Select Year">
+      <Text style={[styles.sheetSub, { color: colors.textMuted }]}>
+        Choose the year you want to browse
+      </Text>
 
-        <View style={styles.sheetGrid}>
-          {YEAR_KEYS.map(key => {
-            const active = key === picked;
-            const isDefault = key === currentYear;
-            return (
-              <Pressable
-                key={key}
-                onPress={() => setPicked(key)}
-                style={[
-                  styles.sheetYear,
-                  {
-                    backgroundColor: colors.cardElevated,
-                    borderColor: active ? colors.text : colors.border,
-                    borderWidth: active ? 1.5 : StyleSheet.hairlineWidth,
-                  },
-                ]}>
-                <Text style={[styles.sheetYearName, { color: colors.text }]}>
-                  {YEAR_LABEL[key]}
+      <View style={styles.sheetGrid}>
+        {YEAR_KEYS.map(key => {
+          const active = key === picked;
+          const isDefault = key === currentYear;
+          return (
+            <Touchable
+              key={key}
+              onPress={() => setPicked(key)}
+              role="radio"
+              label={isDefault ? `${YEAR_LABEL[key]}, current default` : YEAR_LABEL[key]}
+              state={{ checked: active }}
+              scaleTo={0.97}
+              style={[
+                styles.sheetYear,
+                {
+                  backgroundColor: colors.cardElevated,
+                  borderColor: active ? colors.text : colors.border,
+                  borderWidth: active ? 1.5 : StyleSheet.hairlineWidth,
+                },
+              ]}>
+              <Text style={[styles.sheetYearName, { color: colors.text }]}>
+                {YEAR_LABEL[key]}
+              </Text>
+              {isDefault ? (
+                <Text style={[styles.sheetYearHint, { color: colors.textMuted }]}>
+                  Current default
                 </Text>
-                {isDefault ? (
-                  <Text style={[styles.sheetYearHint, { color: colors.textMuted }]}>
-                    Current default
-                  </Text>
-                ) : null}
-              </Pressable>
-            );
-          })}
-        </View>
-
-        <Pressable style={styles.checkRow} onPress={() => setMakeDefault(v => !v)}>
-          <View
-            style={[
-              styles.checkbox,
-              {
-                borderColor: makeDefault ? colors.primary : colors.border,
-                backgroundColor: makeDefault ? colors.primary : 'transparent',
-              },
-            ]}>
-            {makeDefault ? <Check size={14} color={colors.primaryText} strokeWidth={3} /> : null}
-          </View>
-          <Text style={[styles.checkLabel, { color: colors.text }]}>Set as my default year</Text>
-        </Pressable>
-
-        <Pressable
-          onPress={() => onBrowse(picked, makeDefault)}
-          style={({ pressed }) => [styles.browseButton, { opacity: pressed ? 0.9 : 1 }]}>
-          <GradientFill from="#FFFFFF" to={colors.fuchsia} borderRadius={14} />
-          <Text style={styles.browseText}>Browse {YEAR_LABEL[picked]}</Text>
-        </Pressable>
+              ) : null}
+            </Touchable>
+          );
+        })}
       </View>
-    </Modal>
+
+      <Touchable
+        style={styles.checkRow}
+        onPress={() => setMakeDefault(v => !v)}
+        role="checkbox"
+        label="Set as my default year"
+        state={{ checked: makeDefault }}
+        scale={false}>
+        <View
+          style={[
+            styles.checkbox,
+            {
+              borderColor: makeDefault ? colors.primary : colors.border,
+              backgroundColor: makeDefault ? colors.primary : 'transparent',
+            },
+          ]}>
+          {makeDefault ? <Check size={14} color={colors.primaryText} strokeWidth={3} /> : null}
+        </View>
+        <Text style={[styles.checkLabel, { color: colors.text }]}>Set as my default year</Text>
+      </Touchable>
+
+      <Touchable
+        onPress={() => onBrowse(picked, makeDefault)}
+        label={`Browse ${YEAR_LABEL[picked]}`}
+        style={styles.browseButton}>
+        <GradientFill from="#FFFFFF" to={colors.fuchsia} borderRadius={14} />
+        <Text style={styles.browseText}>Browse {YEAR_LABEL[picked]}</Text>
+      </Touchable>
+    </Sheet>
   );
 }
 
@@ -498,40 +759,125 @@ function QuickAction({
   color: string;
   onPress: () => void;
 }) {
-  const { colors } = useTheme();
   return (
-    <Pressable
+    <Touchable
       onPress={onPress}
-      style={({ pressed }) => [
-        styles.quickAction,
-        {
-          backgroundColor: colors.card,
-          borderColor: colors.border,
-          transform: [{ scale: pressed ? 0.97 : 1 }],
-        },
-      ]}>
+      label={label}
+      // The description survives here rather than on screen: TalkBack has room
+      // for it, a quarter of a 390dp row does not.
+      hint={sub}
+      style={styles.quickActionTarget}>
+      {/* The surface is a child rather than the Touchable's own style, so the
+          specular rim can sit above the fill without wrapping the press
+          target in an extra layout box. */}
+      <GlassSurface style={styles.quickAction} borderRadius={16}>
       {icon}
-      <View>
-        <Text style={[styles.quickLabel, { color }]}>{label}</Text>
-        <Text style={[styles.quickSub, { color: colors.textMuted }]} numberOfLines={2}>
-          {sub}
-        </Text>
-        <ArrowRight size={12} color={color} style={styles.quickArrow} />
-      </View>
-    </Pressable>
+      {/* No arrow. Four identical chevrons on four obviously-tappable cards is
+          decoration that costs the label its width — "Progress" was rendering
+          as "Prog…" to make room for it. */}
+      <Text style={[styles.quickLabel, { color }]} numberOfLines={1}>
+        {label}
+      </Text>
+      </GlassSurface>
+    </Touchable>
   );
 }
 
+/**
+ * The completion bar on a subject card. Split out so only this sliver
+ * re-renders when a question is ticked, rather than the whole grid.
+ *
+ * Squeezed with scaleX from the left edge rather than having its width
+ * animated: width is a layout property and would force layout+paint every
+ * frame, for every card in the grid, on the JS thread. See ui.tsx ProgressBar.
+ */
+const SubjectFill = React.memo(function SubjectFillBar({
+  pct,
+  color,
+}: {
+  pct: number;
+  color: string;
+}) {
+  const reduceMotion = useReducedMotion();
+  const scale = useRef(new Animated.Value(pct / 100)).current;
+  const firstRun = useRef(true);
+
+  useEffect(() => {
+    if (firstRun.current || reduceMotion) {
+      firstRun.current = false;
+      scale.setValue(pct / 100);
+      return;
+    }
+    Animated.timing(scale, {
+      toValue: pct / 100,
+      duration: DURATION.base,
+      easing: EASE.out,
+      useNativeDriver: true,
+    }).start();
+  }, [pct, reduceMotion, scale]);
+
+  return (
+    <Animated.View
+      style={[
+        styles.subjectFill,
+        {
+          backgroundColor: color,
+          transformOrigin: 'left',
+          transform: [{ scaleX: scale }],
+        },
+      ]}
+    />
+  );
+});
+
 const styles = StyleSheet.create({
+  transparent: {
+    backgroundColor: 'transparent',
+  },
+  textSizePreview: {
+    marginTop: space.lg,
+    padding: space.md,
+    borderRadius: radius.md,
+    borderWidth: StyleSheet.hairlineWidth,
+    // Fixed, not min: at 115% the sample is taller, and a box that grows
+    // while the slider is being dragged moves the slider.
+    height: 92,
+    justifyContent: 'center',
+  },
+  textSizeSample: {
+    ...typeScale.body,
+  },
+  textSizeScale: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    height: 30,
+    marginTop: space.md,
+  },
+  textSizeSmallA: {
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  textSizeLargeA: {
+    fontSize: 20,
+    fontWeight: '700',
+  },
+  textSizeValue: {
+    fontSize: 15,
+    fontWeight: '700',
+  },
+  textSizeSlider: {
+    marginBottom: space.md,
+  },
   content: {
-    paddingHorizontal: 16,
-    paddingBottom: 24,
+    paddingHorizontal: space.lg,
+    paddingBottom: space.xxl,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 20,
+    marginBottom: space.xl,
   },
   headerLeft: {
     flexDirection: 'row',
@@ -546,12 +892,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   brand: {
-    fontSize: 18,
-    fontWeight: '800',
-    letterSpacing: -0.3,
+    ...typeScale.title3,
+    // The wordmark is the one place tighter-than-ramp tracking is right: it is
+    // read as a shape, not as text.
+    letterSpacing: -0.4,
   },
   tagline: {
-    fontSize: 10,
+    ...typeScale.overline,
+    fontWeight: '500',
+    letterSpacing: 0.4,
     marginTop: 1,
   },
   headerRight: {
@@ -564,9 +913,11 @@ const styles = StyleSheet.create({
     gap: 3,
   },
   roundButtonLabel: {
-    fontSize: 7,
-    letterSpacing: 1,
-    fontWeight: '600',
+    // 7pt was below the legibility floor. 9 with generous tracking reads as a
+    // label rather than as dirt on the screen.
+    fontSize: 9,
+    letterSpacing: 0.8,
+    fontWeight: '700',
   },
   roundButton: {
     height: 40,
@@ -577,32 +928,26 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   hero: {
-    borderRadius: 16,
+    borderRadius: radius.xl,
     borderWidth: StyleSheet.hairlineWidth,
-    padding: 20,
+    padding: 18,
     overflow: 'hidden',
-    marginBottom: 20,
+    marginBottom: space.lg,
   },
   heroGlow: {
+    // Pushed mostly off the card so what shows is the soft shoulder of the
+    // circle, not a hard arc sliced by the corner radius.
     position: 'absolute',
-    right: -24,
-    top: -24,
-    height: 160,
-    width: 160,
-    borderRadius: 80,
+    right: -70,
+    top: -90,
+    height: 210,
+    width: 210,
+    borderRadius: 105,
   },
-  heroKicker: {
-    fontSize: 14,
-  },
-  heroTitle: {
-    fontSize: 26,
-    fontWeight: '800',
-    marginTop: 2,
-  },
+  heroTitle: typeScale.title1,
   heroBody: {
-    fontSize: 14,
-    lineHeight: 21,
-    marginTop: 12,
+    ...typeScale.callout,
+    marginTop: space.md,
   },
   credit: {
     alignSelf: 'flex-start',
@@ -613,15 +958,11 @@ const styles = StyleSheet.create({
     borderWidth: StyleSheet.hairlineWidth,
     paddingHorizontal: 12,
     paddingVertical: 8,
-    marginTop: 16,
+    marginTop: space.md,
   },
-  creditLabel: {
-    fontSize: 9,
-    letterSpacing: 1.5,
-    fontWeight: '600',
-  },
+  creditLabel: typeScale.overline,
   creditName: {
-    fontSize: 12,
+    ...typeScale.footnote,
     fontWeight: '700',
     marginTop: 2,
   },
@@ -636,25 +977,29 @@ const styles = StyleSheet.create({
   },
   quickRow: {
     flexDirection: 'row',
-    gap: 8,
-    marginBottom: 20,
+    gap: space.sm,
+    marginBottom: space.lg,
+  },
+  quickActionTarget: {
+    flex: 1,
   },
   quickAction: {
     flex: 1,
-    height: 120,
-    borderRadius: 16,
+    // Icon at the top, label at the bottom, nothing between them.
+    // Was a fixed 120 carrying a two-line description that truncated on every
+    // card. The descriptions said nothing the label did not — "Search / Find
+    // topics instantly" — so they moved to the accessibility hint and the card
+    // shrank to what it actually holds. minHeight, not height: fixed heights
+    // and growing text are the classic clipping pair.
+    minHeight: 84,
+    borderRadius: radius.lg,
     borderWidth: StyleSheet.hairlineWidth,
-    padding: 12,
+    padding: space.md,
     justifyContent: 'space-between',
   },
   quickLabel: {
-    fontSize: 13,
+    ...typeScale.footnote,
     fontWeight: '700',
-  },
-  quickSub: {
-    fontSize: 10,
-    lineHeight: 13,
-    marginTop: 1,
   },
   quickArrow: {
     marginTop: 4,
@@ -680,11 +1025,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   whatsappTitle: {
-    fontSize: 14,
+    ...typeScale.callout,
     fontWeight: '600',
   },
   whatsappSub: {
-    fontSize: 11,
+    ...typeScale.caption,
     marginTop: 2,
   },
   whatsappJoin: {
@@ -697,10 +1042,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginBottom: 12,
   },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-  },
+  sectionTitle: typeScale.title3,
   viewAll: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -731,7 +1073,7 @@ const styles = StyleSheet.create({
     fontWeight: '800',
   },
   sheetSub: {
-    fontSize: 14,
+    ...typeScale.callout,
     marginTop: 2,
   },
   sheetGrid: {
@@ -789,13 +1131,34 @@ const styles = StyleSheet.create({
   subjectGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 12,
+    // `space-between` rather than a gap. With `gap: 12` and `width: '48%'` the
+    // two columns came to 96% + 12dp, which on a 358dp content width left ~2dp
+    // dangling on the right — the grid was very slightly off-centre against
+    // every other block on the screen. `space-between` makes both outer edges
+    // flush by construction, so the column gutter is whatever is left over and
+    // the block is mirror-symmetric at any screen width.
+    justifyContent: 'space-between',
+    rowGap: 12,
+    marginBottom: space.lg,
+  },
+  // The tile's own box comes from SortableGrid; the card fills it.
+  subjectTile: {
+    width: '100%',
+    height: '100%',
+  },
+  subjectBox: {
+    // 48.5% x 2 = 97%, leaving a 3% gutter between the columns and nothing at
+    // the edges. Strict two columns; an odd last card stays half-width instead
+    // of stretching across.
+    //
+    // The box carries the layout and the tilt; the card inside it carries the
+    // surface. Splitting them keeps the 3D transform off the same view that
+    // has to clip its children.
+    width: '48.5%',
+    height: 160,
   },
   subjectCard: {
-    // Strict two-column grid, matching `grid-cols-2` on the web. An odd last
-    // card stays half-width instead of stretching.
-    width: '48%',
-    height: 160,
+    flex: 1,
     borderRadius: 16,
     borderWidth: StyleSheet.hairlineWidth,
     padding: 16,
@@ -813,8 +1176,11 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   subjectName: {
-    fontSize: 13,
+    ...typeScale.footnote,
     fontWeight: '700',
+    // Set in caps, which is exactly where letters need to be pushed apart to
+    // stay countable.
+    letterSpacing: 0.6,
   },
   subjectTrack: {
     height: 4,
@@ -824,6 +1190,8 @@ const styles = StyleSheet.create({
   },
   subjectFill: {
     height: '100%',
+    // Full width in layout; scaleX does the work.
+    width: '100%',
     borderRadius: 2,
   },
   subjectMeta: {
@@ -833,8 +1201,8 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
   subjectPct: {
-    fontSize: 11,
-    fontWeight: '500',
+    ...typeScale.caption,
+    fontWeight: '600',
   },
   subjectArrow: {
     height: 24,
@@ -850,6 +1218,28 @@ const styles = StyleSheet.create({
     borderWidth: StyleSheet.hairlineWidth,
     padding: 16,
     marginTop: 20,
+    // Every block owns the space that follows it, so the gaps travel with the
+    // block when the order changes instead of being redistributed. This one
+    // used to be last and needed none.
+    marginBottom: space.lg,
+  },
+  editBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: space.md,
+    borderRadius: radius.md,
+    borderWidth: StyleSheet.hairlineWidth,
+    paddingHorizontal: space.md,
+    paddingVertical: space.sm,
+    marginBottom: space.lg,
+  },
+  editBannerText: {
+    ...typeScale.caption,
+    flex: 1,
+  },
+  editReset: {
+    ...typeScale.footnote,
+    fontWeight: '700',
   },
   stat: {
     flex: 1,
@@ -869,12 +1259,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  statLabel: {
-    fontSize: 12,
-  },
+  statLabel: typeScale.caption,
   statValue: {
-    fontSize: 18,
-    fontWeight: '700',
+    ...typeScale.title3,
     marginTop: 1,
   },
   statValueSmall: {
