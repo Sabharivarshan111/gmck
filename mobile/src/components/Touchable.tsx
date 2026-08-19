@@ -12,6 +12,7 @@ import {
 import { SPRING, springTo, useReducedMotion } from '@/theme/motion';
 import { useReorderLocked } from '@/components/ReorderLock';
 import { tap as hapticTap } from '@/lib/haptics';
+import { playTap } from '@/lib/sound';
 
 /**
  * The app's press target.
@@ -129,6 +130,7 @@ export function Touchable({
     // being swallowed anyway.
     if (!locked) {
       hapticTap();
+      playTap();
     }
   }, [animateTo, locked]);
   const onPressOut = useCallback(() => animateTo(0), [animateTo]);

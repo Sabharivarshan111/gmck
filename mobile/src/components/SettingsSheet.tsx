@@ -17,6 +17,7 @@ import {
 } from '@/theme/textScale';
 import { setSetting, useSettings } from '@/lib/settings';
 import { tick } from '@/lib/haptics';
+import { soundAvailable } from '@/lib/sound';
 
 /**
  * Everything the user can change, in one place.
@@ -172,12 +173,26 @@ export function SettingsSheet({
           </Text>
         </View>
       ) : null}
-      <Switchable
-        label="Timer sound"
-        detail="A chime when a focus session ends"
-        value={settings.timerSound}
-        onChange={next => setSetting('timerSound', next)}
-      />
+      {/* Hidden rather than disabled when the build cannot play audio — the
+          preview harness, or any build where the native module did not
+          register. A switch that is present and does nothing is worse than an
+          absent one. */}
+      {soundAvailable ? (
+        <>
+          <Switchable
+            label="Tap sounds"
+            detail="A soft click when you press something"
+            value={settings.tapSound}
+            onChange={next => setSetting('tapSound', next)}
+          />
+          <Switchable
+            label="Timer sound"
+            detail="A chime when a focus session ends"
+            value={settings.timerSound}
+            onChange={next => setSetting('timerSound', next)}
+          />
+        </>
+      ) : null}
 
       <Text style={[styles.footnote, { color: withAlpha(colors.text, 0.45) }]}>
         Themes and wallpaper live behind the moon button, next door.

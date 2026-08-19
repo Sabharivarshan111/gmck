@@ -97,6 +97,7 @@ jobs:
           npm run check:sync
           npm run check:theme-from-image
           npm run check:glass
+          npm run check:sounds
 
       # Test ads are chosen in source now, not by the bundler's dev flag —
       # see mobile/src/lib/adsMode.ts. Overwriting it here is what lets this

@@ -308,6 +308,39 @@ moved in there; themes and wallpaper stay behind the moon button next to it.
 same reason `progress.ts` is: `Touchable` reads it on every press and there is
 a Touchable in every row of a five-hundred-row list.
 
+## The sounds are generated, and played by our own native module
+
+`mobile/scripts/make-sounds.py` synthesises `tap.wav` and `chime.wav` into
+`android/app/src/main/res/raw/`. Generated rather than sourced so they can be
+tuned to the app, and so nothing ships whose licence has to be traced later.
+`npm run check:sounds` regenerates them and fails if the committed files
+differ — editing a wav by hand would be reverted by the next generator run
+otherwise — then checks the acoustics: no DC offset, no discontinuity at
+either end, no clipping, and each of the chime's three notes dominating its
+neighbours.
+
+Two design rules are load-bearing rather than decorative. **Every envelope has
+an attack**: starting a waveform at full amplitude is a step discontinuity,
+which is an audible click on top of the intended sound. And **the tap sits
+high** — a phone speaker cannot reproduce 220Hz, so energy down there is
+wasted headroom.
+
+`SoundModule.kt` plays them on Android's **SoundPool**, which is what that API
+exists for: clips decoded once at startup and fired in single-digit
+milliseconds. The alternative was routing them through `react-native-video`,
+already a dependency — rejected because it would hold two ExoPlayer instances
+in memory for two clips totalling 130KB, and its start latency would land a
+tap sound after the finger had lifted. The module lives in the app rather than
+a node module, so it is registered by hand in `MainApplication.kt`.
+
+`src/lib/sound.ts` no-ops when the module is absent, which is the case in the
+preview harness. Settings hides the sound switches entirely then, rather than
+showing controls that do nothing.
+
+Tap sounds default **off** while haptics default on: a vibration is private, a
+sound is not, and an app that starts clicking out loud in a library the first
+time it is opened has made a decision that was not its to make.
+
 ## Haptics are two calls, and both are earned
 
 `mobile/src/lib/haptics.ts` is the only thing in the app that vibrates. There

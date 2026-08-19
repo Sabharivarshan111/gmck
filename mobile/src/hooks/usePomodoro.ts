@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { AppState, AppStateStatus } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { complete } from '@/lib/haptics';
+import { playChime } from '@/lib/sound';
 import { warn } from '@/lib/log';
 
 export type PomodoroMode = 'focus' | 'short' | 'long';
@@ -144,10 +145,12 @@ export function usePomodoro() {
     setIsRunning(false);
     endsAtRef.current = null;
     AsyncStorage.removeItem(SESSION_KEY).catch(() => {});
-    // Haptic and visual have to land together — feedback split across senses
-    // reads as two events rather than one (apple-design §13 Harmony). The
-    // screen's flourish keys off the same nonce set here.
+    // Haptic, sound and visual have to land together — feedback split across
+    // senses reads as several events rather than one (apple-design §13
+    // Harmony). The screen's flourish keys off the same nonce set here, and
+    // the chime is fired on the same tick rather than after an await.
     complete();
+    playChime();
     setCompletionNonce(n => n + 1);
 
     setMode(current => {

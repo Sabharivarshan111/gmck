@@ -26,6 +26,8 @@ export interface Settings {
    * tap and starts feeling like an alert.
    */
   hapticStrength: number;
+  /** Whether a press makes a sound. */
+  tapSound: boolean;
   /** Whether a finished focus session makes a sound. */
   timerSound: boolean;
 }
@@ -36,6 +38,10 @@ export const DEFAULT_SETTINGS: Settings = {
   // *where* it fires; this decides whether it fires at all.
   haptics: true,
   hapticStrength: 0.4,
+  // Off by default, unlike haptics. A vibration is private; a sound is not,
+  // and an app that starts clicking out loud in a library the first time it
+  // is opened has made a decision that was not its to make.
+  tapSound: false,
   timerSound: true,
 };
 
@@ -65,6 +71,8 @@ export async function hydrateSettings(): Promise<void> {
         typeof parsed.hapticStrength === 'number' && Number.isFinite(parsed.hapticStrength)
           ? Math.max(0, Math.min(1, parsed.hapticStrength))
           : DEFAULT_SETTINGS.hapticStrength,
+      tapSound:
+        typeof parsed.tapSound === 'boolean' ? parsed.tapSound : DEFAULT_SETTINGS.tapSound,
       timerSound:
         typeof parsed.timerSound === 'boolean' ? parsed.timerSound : DEFAULT_SETTINGS.timerSound,
     };

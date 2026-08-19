@@ -14,8 +14,9 @@ class MainApplication : Application(), ReactApplication {
       context = applicationContext,
       packageList =
         PackageList(this).packages.apply {
-          // Packages that cannot be autolinked yet can be added manually here, for example:
-          // add(MyReactNativePackage())
+          // Lives in this app rather than in a node module, so autolinking has
+          // nothing to find and it is registered by hand. See SoundModule.kt.
+          add(SoundPackage())
         },
     )
   }
