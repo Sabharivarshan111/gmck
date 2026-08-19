@@ -100,10 +100,28 @@ android {
     }
     signingConfigs {
         debug {
-            storeFile file('debug.keystore')
-            storePassword 'android'
-            keyAlias 'androiddebugkey'
-            keyPassword 'android'
+            // The standard Android debug key by default. Its SHA-1 is the
+            // same on every machine on earth and is not a secret — which is
+            // exactly why registering it against an OAuth client is a
+            // trade-off rather than a free win: anyone can build an app with
+            // this key. Acceptable for a `.debug` package that owns nothing.
+            //
+            // Set DEBUG_KEYSTORE_PATH to sign test builds with a real key
+            // instead — the upload key, so a test build carries the same
+            // certificate Google Sign-In is already registered against. The
+            // passwords come from the environment and never enter the repo.
+            def debugKeystore = System.getenv("DEBUG_KEYSTORE_PATH")
+            if (debugKeystore) {
+                storeFile file(debugKeystore)
+                storePassword System.getenv("DEBUG_STORE_PASSWORD")
+                keyAlias System.getenv("DEBUG_KEY_ALIAS") ?: "upload"
+                keyPassword System.getenv("DEBUG_KEY_PASSWORD")
+            } else {
+                storeFile file('debug.keystore')
+                storePassword 'android'
+                keyAlias 'androiddebugkey'
+                keyPassword 'android'
+            }
         }
         // The existing upload key. Passwords come from the environment so they
         // never land in version control:

@@ -162,11 +162,56 @@ jobs:
           node --version
           ./gradlew --version
 
+      # Sign the test build with the **upload key** when the repository has
+      # one, rather than the standard debug key.
+      #
+      # This reuses the secrets the release workflow already expects —
+      # ANDROID_KEYSTORE_BASE64 / ANDROID_STORE_PASSWORD / ANDROID_KEY_PASSWORD,
+      # alias `upload` — so there is nothing new to add if releases were ever
+      # set up. When they are absent the step is skipped and the build falls
+      # back to the debug key, which is why this cannot break anything.
+      #
+      # Why bother: Google Sign-In identifies an app by its signing
+      # certificate, so a test build signed with a throwaway key cannot sign
+      # in no matter what else is correct.
+      #
+      # The condition tests `env`, not `secrets`: the secrets context is not
+      # available in a step's `if`, and referencing it there silently
+      # evaluates to empty — the step would never run and nothing would say
+      # why. Mapping it into env first is the documented way round that.
+      - name: Sign the debug build with the upload key, if the repo has one
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        if: ${{ env.ANDROID_KEYSTORE_BASE64 != '' }}
+        run: |
+          set -euo pipefail
+          printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/debug-signing.jks"
+          echo "DEBUG_KEYSTORE_PATH=$RUNNER_TEMP/debug-signing.jks" >> "$GITHUB_ENV"
+          echo "Upload key found; the debug APK will be signed with it."
+
       - name: Build debug APK
+        env:
+          DEBUG_STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
+          DEBUG_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         working-directory: mobile/android
         # --stacktrace because the first line of an AGP failure is rarely the
         # useful one, and a re-run costs ten minutes.
         run: ./gradlew assembleDebug --no-daemon --stacktrace
+
+      # Google Sign-In identifies an app by **package name + signing
+      # certificate**, so this pair is what has to exist as an Android OAuth
+      # client in Google Cloud before sign-in works in this build. Printed on
+      # every run rather than written down somewhere, because it changes the
+      # moment the signing key does — and the symptom when it is wrong is a
+      # sign-in that fails with no useful message on the phone.
+      - name: Print what Google Sign-In has to be registered against
+        run: |
+          set -euo pipefail
+          SDK="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-/usr/local/lib/android/sdk}}"
+          APK=$(ls mobile/android/app/build/outputs/apk/debug/*.apk | head -1)
+          echo "package name: com.aistudio.mbbsqbank.aycxvd.debug"
+          "$SDK"/build-tools/37.0.0/apksigner verify --print-certs "$APK" \
+            | grep -iE "SHA-1|SHA-256" || echo "(apksigner could not read the APK)"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
