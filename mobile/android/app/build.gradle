@@ -18,10 +18,18 @@ react {
     // cliFile = file("../../node_modules/react-native/cli.js")
 
     /* Variants */
-    //   The list of variants to that are debuggable. For those we're going to
-    //   skip the bundling of the JS bundle and the assets. Default is "debug", "debugOptimized".
-    //   If you add flavors like lite, prod, etc. you'll have to list your debuggableVariants.
-    // debuggableVariants = ["liteDebug", "liteDebugOptimized", "prodDebug", "prodDebugOptimized"]
+    //   Variants the plugin will NOT bundle JS for, because it assumes they
+    //   load it from Metro over USB.
+    //
+    //   `internal` is listed here for a reason that is not obvious: the
+    //   plugin hardcodes `devEnabled = false` for every variant it bundles,
+    //   and `__DEV__ = false` is what switches src/lib/ads.ts from Google's
+    //   test ad units to the live ones. The internal build is meant to be
+    //   installed and used by us, so it must never serve a live ad. Opting
+    //   out of the plugin's bundling and doing it by hand with `--dev true`
+    //   is the only way to get a release-signed APK that still shows test
+    //   ads — see .github/workflows/android-internal.yml.
+    debuggableVariants = ["debug", "internal"]
 
     /* Bundling */
     //   A list containing the node command and its flags. Default is just 'node'.
@@ -162,6 +170,35 @@ android {
             // installed builds do not both claim the same scheme.
             manifestPlaceholders["appAuthRedirectScheme"] = "com.aistudio.mbbsqbank.aycxvd.debug"
             signingConfig signingConfigs.debug
+        }
+        // The build that is real in every way Google checks.
+        //
+        // It exists because Google Sign-In matches an app on **package name
+        // and signing certificate**, and the debug build deliberately fails
+        // both: it carries a `.debug` suffix so it can install beside the
+        // Play Store copy, and it is signed with a throwaway key. No amount
+        // of configuration makes sign-in work in that build.
+        //
+        // So this one keeps the real applicationId and the real upload key —
+        // and pays the price that comes with them: it has the same package
+        // name as the Play Store app but a different signature, so Android
+        // refuses to install it over the published copy. That one has to be
+        // uninstalled first. That is a real cost, and it is the reason this
+        // is a separate variant rather than a change to the debug build.
+        //
+        // What it does NOT take from a release build is live ads. The JS is
+        // bundled by hand with `--dev true` (see debuggableVariants above),
+        // so `__DEV__` stays true and the test ad units are used. An APK we
+        // install ourselves must never be able to serve us a live ad.
+        internal {
+            signingConfig signingConfigs.release
+            // Off deliberately: this build exists to test behaviour, and a
+            // ProGuard rule that is subtly wrong turns a real bug into an
+            // unreproducible one. The release build is where minification is
+            // exercised.
+            minifyEnabled false
+            debuggable false
+            matchingFallbacks = ["release"]
         }
         release {
             // Falls back to the debug key so `assembleRelease` still works
