@@ -17,23 +17,53 @@ S = 4  # supersample
 BLACK = (5, 5, 8, 255)
 WHITE = (255, 255, 255, 255)
 CYAN = (60, 214, 245, 255)
+# The disc behind the mark: near-black with a blue cast, not pure black.
+PLANET = (10, 10, 20, 255)
+# The shadow under the ball.
+SHADOW = (2, 2, 6, 255)
+
+
+# Geometry measured off the supplied artwork, then normalised to the icon
+# square. The square is the mark's bounding box (x 370..1065, y 205..1140 in
+# the source) enlarged 14% so nothing touches the edge, centred on the mark.
+#
+# The one number that had to be solved rather than read is the crest's radius.
+# Its ends have to land exactly on the big ring's shoulders — that meeting is
+# what makes the two arcs read as a single orbit instead of two stacked
+# shapes — so it comes from the source's chord and rise:
+#
+#     chord 450px, rise 165px  ->  r = (rise^2 + (chord/2)^2) / (2 * rise)
+#                              ->  r = 236px
+#
+# and the check is that at y=370 the crest is 225px wide and the big ring is
+# 220px wide. They meet. Getting this wrong is what made two earlier attempts
+# look like a keyhole.
+BIG_CY, BIG_R = 0.468, 0.3255
+CREST_CY, CREST_R = 0.2833, 0.2140
+CREST_FROM, CREST_TO = 199.0, 341.0
+BALL_CX, BALL_CY, BALL_R = 0.495, 0.664, 0.130
+HALO_CY, HALO_R = 0.722, 0.196
+PLANET_CY, PLANET_R = 0.470, 0.460
+LINE_W, HALO_W = 0.0394, 0.0516
 
 
 def draw_mark(size, inset=0.0, background=True):
     """
-    The symbol on a square canvas. `inset` shrinks it for adaptive icons.
+    The ORBIT mark.
 
-    Proportions read off the supplied artwork:
+    Drawn from the constants above rather than by eye. Two things that are not
+    obvious and are the difference between this and a rough likeness:
 
-      * The big ring is the anchor, sitting just below centre.
-      * Above it, the crest of a second circle — drawn as the top arc only,
-        with its centre *below* the crest so the ends sweep down towards the
-        big ring's shoulders. Placing that centre above the arc pushes the
-        crest off the canvas, which is what a first attempt did.
-      * The cyan body sits low inside the big ring, wrapped by its own white
-        ring. That ring is only slightly larger than the ball: make it much
-        larger and the mark reads as concentric circles — a target — instead
-        of a body in an orbit.
+      * The **ball overlaps its ring**. The ring's centre is lower than the
+        ball's (0.714 against 0.672), so white shows thickest below and the
+        ball reads as resting in front of it. Concentric reads as a target.
+      * There is a **dark rim** under the ball, the shadow that gives it depth
+        in the source. Without it the ball looks pasted on.
+
+    `background` is false for the adaptive-icon foreground, which must stay
+    transparent so the launcher's own plate shows through — including the
+    planet disc, which is part of the background layer conceptually even
+    though it is drawn here.
     """
     w = size * S
     img = Image.new("RGBA", (w, w), BLACK if background else (0, 0, 0, 0))
@@ -41,38 +71,38 @@ def draw_mark(size, inset=0.0, background=True):
     gd = ImageDraw.Draw(glow)
     d = ImageDraw.Draw(img)
 
-    scale = 1.0 - inset
-    cx = w / 2
-    stroke = max(2, int(w * 0.046 * scale))
+    k = 1.0 - inset
+    cx = w * 0.500
+    line = max(2, int(w * LINE_W * k))
 
-    r_big = w * 0.295 * scale
-    cy_big = w * 0.560
-
-    # Centre below the crest, so only the top sweeps into view.
-    r_crest = w * 0.225 * scale
-    cy_crest = w * 0.300
+    def disc(draw, cy_, r, fill, cx_=None):
+        x = cx if cx_ is None else cx_
+        draw.ellipse([x - r, cy_ - r, x + r, cy_ + r], fill=fill)
 
     def ring(draw, cy_, r, width, start=0, end=360):
         draw.arc([cx - r, cy_ - r, cx + r, cy_ + r], start, end, fill=WHITE, width=width)
 
-    for target in (gd, d):
-        ring(target, cy_crest, r_crest, stroke, 203, 337)
-        ring(target, cy_big, r_big, stroke)
+    def at(v):
+        """A fraction of the square, about its centre, shrunk by `inset`."""
+        return w * (0.5 + (v - 0.5) * k)
 
-    r_body = w * 0.112 * scale
-    cy_body = w * 0.655
-    r_halo = r_body * 1.34
-    for target in (gd, d):
-        ring(target, cy_body + r_body * 0.06, r_halo, max(2, int(stroke * 1.05)))
-    for target in (d, gd):
-        target.ellipse(
-            [cx - r_body, cy_body - r_body, cx + r_body, cy_body + r_body], fill=CYAN
-        )
+    if background:
+        disc(d, at(PLANET_CY), w * PLANET_R * k, PLANET)
 
-    glow = glow.filter(ImageFilter.GaussianBlur(w * 0.020))
-    out = Image.alpha_composite(
-        Image.new("RGBA", (w, w), BLACK if background else (0, 0, 0, 0)), glow
-    )
+    for target in (gd, d):
+        ring(target, at(CREST_CY), w * CREST_R * k, line, CREST_FROM, CREST_TO)
+        ring(target, at(BIG_CY), w * BIG_R * k, line)
+        ring(target, at(HALO_CY), w * HALO_R * k, max(2, int(w * HALO_W * k)))
+
+    ball_x = w * (0.5 + (BALL_CX - 0.5) * k)
+    r_ball = w * BALL_R * k
+    disc(d, at(BALL_CY) + r_ball * 0.10, r_ball * 1.09, SHADOW, cx_=ball_x)
+    disc(d, at(BALL_CY), r_ball, CYAN, cx_=ball_x)
+    disc(gd, at(BALL_CY), r_ball, CYAN, cx_=ball_x)
+
+    glow = glow.filter(ImageFilter.GaussianBlur(w * 0.017))
+    base = Image.new("RGBA", (w, w), BLACK if background else (0, 0, 0, 0))
+    out = Image.alpha_composite(base, glow)
     out = Image.alpha_composite(out, img)
     return out.resize((size, size), Image.LANCZOS)
 
@@ -92,7 +122,6 @@ DENSITIES = {"mdpi": 48, "hdpi": 72, "xhdpi": 96, "xxhdpi": 144, "xxxhdpi": 192}
 import os
 import sys
 
-# Default to the app's own res/ so this can be run with no arguments.
 root = sys.argv[1] if len(sys.argv) > 1 else os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
     '..', 'android', 'app', 'src', 'main', 'res',
