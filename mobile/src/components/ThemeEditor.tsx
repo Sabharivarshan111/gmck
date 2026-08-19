@@ -3,14 +3,22 @@ import { Animated, Modal, Pressable, ScrollView, StyleSheet, View } from 'react-
 import { Text } from '@/components/Text';
 import { Touchable } from '@/components/Touchable';
 import { ColorPicker } from '@/components/ColorPicker';
-import { Image as ImageIcon, Trash2, X } from 'lucide-react-native';
+import { Image as ImageIcon, Trash2, Wand2, X } from 'lucide-react-native';
 import { useTheme } from '@/theme';
 import { contrast } from '@/theme/color';
 import { paletteFrom, presetByKey, QUICK_PRESETS, type CustomPalette } from '@/theme/presets';
 import { DURATION, EASE, useReducedMotion } from '@/theme/motion';
 import { radius, space } from '@/theme/tokens';
 import { Image } from 'react-native';
-import { DEFAULT_DIM, MIN_DIM, pickWallpaper, solveWallpaper, type Wallpaper } from '@/lib/wallpaper';
+import {
+  DEFAULT_DIM,
+  MAX_WALLPAPER_BYTES,
+  MIN_DIM,
+  pickWallpaper,
+  solveWallpaper,
+  type Wallpaper,
+} from '@/lib/wallpaper';
+import { themeFromImage } from '@/lib/themeFromImage';
 import { getWallpaper, setWallpaper } from '@/hooks/useWallpaper';
 
 /**
@@ -63,6 +71,8 @@ export function ThemeEditor({
    */
   const [paper, setPaper] = useState<Wallpaper | null>(() => getWallpaper());
   const [editing, setEditing] = useState<keyof CustomPalette | null>(null);
+  /** Set when the picker returned something over the size limit. */
+  const [tooLarge, setTooLarge] = useState(false);
   const enter = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -71,6 +81,7 @@ export function ThemeEditor({
       setEditing(null);
       setDraft(initial);
       setPaper(getWallpaper());
+      setTooLarge(false);
       return;
     }
     if (reduceMotion) {
@@ -294,9 +305,19 @@ export function ThemeEditor({
               <Touchable
                 onPress={async () => {
                   const picked = await pickWallpaper();
-                  if (picked) {
-                    setPaper(picked);
+                  if (!picked) {
+                    return;
                   }
+                  if ('tooLarge' in picked) {
+                    setTooLarge(true);
+                    return;
+                  }
+                  setTooLarge(false);
+                  setPaper(picked.wallpaper);
+                  // Offered, not applied. The wallpaper was the request; the
+                  // theme is a second, larger change to the whole app, and
+                  // making it happen as a side effect of choosing a picture
+                  // would be a surprise rather than a feature.
                 }}
                 label="Choose a photo or video"
                 hint="Sets a wallpaper behind the home screen"
@@ -308,6 +329,31 @@ export function ThemeEditor({
                 </Text>
               </Touchable>
             )}
+
+            {tooLarge ? (
+              <Text style={[styles.paperNote, { color: colors.danger }]}>
+                That file is over {Math.round(MAX_WALLPAPER_BYTES / (1024 * 1024))}MB.
+                Pick a smaller one — something that size plays behind every screen.
+              </Text>
+            ) : null}
+
+            {/* Offered rather than applied automatically: choosing a picture
+                is one decision, recolouring the whole app is a bigger one,
+                and doing the second as a side effect of the first is a
+                surprise. Absent for video — there is no frame to read. */}
+            {paper?.palette ? (
+              <Touchable
+                onPress={() => setDraft(themeFromImage(paper.palette!))}
+                label="Match the theme to this wallpaper"
+                hint="Builds the four colours from the picture"
+                scaleTo={0.98}
+                style={[styles.paperPick, { borderColor: colors.accent }]}>
+                <Wand2 size={18} color={colors.accent} />
+                <Text style={[styles.paperPickText, { color: colors.text }]}>
+                  Match theme to this wallpaper
+                </Text>
+              </Touchable>
+            ) : null}
 
             {/* The preview is the app, drawn in the draft — including the
                 derived surfaces, so what is shown is what will actually
@@ -590,6 +636,11 @@ const styles = StyleSheet.create({
     borderWidth: StyleSheet.hairlineWidth,
     borderStyle: 'dashed',
     paddingHorizontal: space.md,
+  },
+  paperNote: {
+    fontSize: 12,
+    lineHeight: 17,
+    marginTop: space.sm,
   },
   paperPickText: {
     fontSize: 14,

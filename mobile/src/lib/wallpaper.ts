@@ -6,6 +6,7 @@ import { launchImageLibrary } from 'react-native-image-picker';
 import ImageColors from 'react-native-image-colors';
 import { warn } from '@/lib/log';
 import { readabilityFor } from '@/lib/wallpaperReadability';
+import type { ImagePalette } from '@/lib/themeFromImage';
 
 /**
  * A photo or video from the phone, shown behind the Home screen.
@@ -39,7 +40,26 @@ export interface Wallpaper {
    * decided"; set means the user overrode it and their choice stands.
    */
   textColor?: string;
+  /**
+   * The full set of colours the image yielded, kept so a theme can be built
+   * from it later without re-reading the file — and, more to the point,
+   * without the picture ever being uploaded anywhere. See themeFromImage.ts.
+   *
+   * Absent for video: there is no frame to sample without a native thumbnail
+   * API, which is a dependency this app does not carry.
+   */
+  palette?: ImagePalette;
 }
+
+/**
+ * Refuse anything larger than this.
+ *
+ * The picker already downscales images on the way in, so this is really about
+ * video, which it does not touch: a 200MB clip decoded behind every screen is
+ * not a wallpaper, it is a way to make a cheap phone unusable. 20MB is
+ * generous for a short loop and firmly the wrong side of "a whole film".
+ */
+export const MAX_WALLPAPER_BYTES = 20 * 1024 * 1024;
 
 const KEY = 'orbit:wallpaper';
 
@@ -118,7 +138,7 @@ export async function writeWallpaper(wallpaper: Wallpaper | null): Promise<void>
  * which needs a native thumbnail API this app does not have. Returns null, and
  * the caller falls back to a scrim heavy enough for an unknown picture.
  */
-async function sampleColor(uri: string, kind: 'image' | 'video'): Promise<string | null> {
+async function samplePalette(uri: string, kind: 'image' | 'video'): Promise<ImagePalette | null> {
   if (kind === 'video') {
     return null;
   }
@@ -128,10 +148,23 @@ async function sampleColor(uri: string, kind: 'image' | 'video'): Promise<string
       cache: false,
       quality: 'low',
     });
-    if (result.platform === 'android') {
-      return result.average ?? result.dominant ?? null;
+    if (result.platform !== 'android') {
+      return null;
     }
-    return null;
+    // Everything the sampler found, not just the average. The average is what
+    // the scrim solver needs; the vibrant and muted swatches are what a theme
+    // is built out of, and re-reading the file later to get them would mean
+    // holding a second copy of the bitmap for no reason.
+    return {
+      average: result.average,
+      dominant: result.dominant,
+      vibrant: result.vibrant,
+      darkVibrant: result.darkVibrant,
+      lightVibrant: result.lightVibrant,
+      darkMuted: result.darkMuted,
+      lightMuted: result.lightMuted,
+      muted: result.muted,
+    };
   } catch (error) {
     warn('wallpaper colour sampling failed:', error);
     return null;
@@ -150,7 +183,12 @@ async function sampleColor(uri: string, kind: 'image' | 'video'): Promise<string
  * to the gallery at all — asking for READ_MEDIA_IMAGES to do this would be
  * requesting far more than the feature needs.
  */
-export async function pickWallpaper(): Promise<Wallpaper | null> {
+export type PickResult =
+  | { wallpaper: Wallpaper }
+  | { tooLarge: true }
+  | null;
+
+export async function pickWallpaper(): Promise<PickResult> {
   try {
     const result = await launchImageLibrary({
       mediaType: 'mixed',
@@ -173,8 +211,21 @@ export async function pickWallpaper(): Promise<Wallpaper | null> {
     if (!asset?.uri) {
       return null;
     }
+    if (asset.fileSize && asset.fileSize > MAX_WALLPAPER_BYTES) {
+      warn(`wallpaper rejected: ${asset.fileSize} bytes exceeds the ${MAX_WALLPAPER_BYTES} limit`);
+      return { tooLarge: true };
+    }
     const kind = asset.type?.startsWith('video') ? 'video' : 'image';
-    return { uri: asset.uri, kind, dim: DEFAULT_DIM, media: (await sampleColor(asset.uri, kind)) ?? undefined };
+    const palette = (await samplePalette(asset.uri, kind)) ?? undefined;
+    return {
+      wallpaper: {
+        uri: asset.uri,
+        kind,
+        dim: DEFAULT_DIM,
+        media: palette?.average ?? palette?.dominant ?? undefined,
+        palette,
+      },
+    };
   } catch (error) {
     warn('wallpaper picker threw:', error);
     return null;

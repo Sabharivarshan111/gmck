@@ -95,6 +95,7 @@ jobs:
           npm run check:mcq
           npm run check:notes-limits
           npm run check:sync
+          npm run check:theme-from-image
 
       - name: Embed the JS bundle so the APK runs without Metro
         working-directory: mobile

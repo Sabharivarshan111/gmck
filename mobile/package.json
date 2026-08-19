@@ -17,7 +17,8 @@
     "check:sync": "node scripts/sync-order-check.mjs",
     "typecheck:preview": "tsc --noEmit -p preview/tsconfig.json",
     "check:contrast": "node scripts/contrast-check.mjs",
-    "check:readability": "node scripts/readability-check.mjs"
+    "check:readability": "node scripts/readability-check.mjs",
+    "check:theme-from-image": "node scripts/theme-from-image-check.mjs"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^3.1.1",
