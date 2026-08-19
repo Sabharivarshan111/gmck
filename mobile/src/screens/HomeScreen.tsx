@@ -565,8 +565,8 @@ export default function HomeScreen() {
         visible={editorOpen}
         initial={custom ?? presetByKey('dark')!.palette!}
         onClose={() => setEditorOpen(false)}
-        onApply={next => {
-          setCustom(next);
+        onApply={(next, glass) => {
+          setCustom(next, glass);
           setPreference('custom');
           setEditorOpen(false);
         }}

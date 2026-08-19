@@ -3,10 +3,17 @@ import { Animated, Modal, Pressable, ScrollView, StyleSheet, View } from 'react-
 import { Text } from '@/components/Text';
 import { Touchable } from '@/components/Touchable';
 import { ColorPicker } from '@/components/ColorPicker';
+import { Slider } from '@/components/Slider';
 import { Image as ImageIcon, Trash2, Wand2, X } from 'lucide-react-native';
 import { useTheme } from '@/theme';
 import { contrast } from '@/theme/color';
-import { paletteFrom, presetByKey, QUICK_PRESETS, type CustomPalette } from '@/theme/presets';
+import {
+  MAX_TRANSLUCENCY,
+  paletteFrom,
+  presetByKey,
+  QUICK_PRESETS,
+  type CustomPalette,
+} from '@/theme/presets';
 import { DURATION, EASE, useReducedMotion } from '@/theme/motion';
 import { radius, space } from '@/theme/tokens';
 import { Image } from 'react-native';
@@ -50,10 +57,11 @@ export function ThemeEditor({
 }: {
   visible: boolean;
   onClose: () => void;
-  onApply: (palette: CustomPalette) => void;
+  /** `glass` is how much the theme's surfaces let the wallpaper through. */
+  onApply: (palette: CustomPalette, glass: number) => void;
   initial: CustomPalette;
 }) {
-  const { colors } = useTheme();
+  const { colors, translucency } = useTheme();
   const reduceMotion = useReducedMotion();
   /**
    * Edited as a draft.
@@ -73,6 +81,12 @@ export function ThemeEditor({
   const [editing, setEditing] = useState<keyof CustomPalette | null>(null);
   /** Set when the picker returned something over the size limit. */
   const [tooLarge, setTooLarge] = useState(false);
+  /**
+   * Drafted like everything else here. Only meaningful while a wallpaper is
+   * set: translucency with nothing behind it is a lighter card with extra
+   * steps, so the control is not offered then.
+   */
+  const [glass, setGlass] = useState(translucency);
   const enter = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -82,6 +96,7 @@ export function ThemeEditor({
       setDraft(initial);
       setPaper(getWallpaper());
       setTooLarge(false);
+      setGlass(translucency);
       return;
     }
     if (reduceMotion) {
@@ -94,7 +109,7 @@ export function ThemeEditor({
       easing: EASE.out,
       useNativeDriver: true,
     }).start();
-  }, [visible, initial, reduceMotion, enter]);
+  }, [visible, initial, reduceMotion, enter, translucency]);
 
   const preview = paletteFrom(draft);
   const ratio = contrast(draft.text, draft.background);
@@ -355,6 +370,39 @@ export function ThemeEditor({
               </Touchable>
             ) : null}
 
+            {paper ? (
+              <View style={styles.glassBlock}>
+                <View style={styles.glassRow}>
+                  <Text style={[styles.paperPickText, { color: colors.text }]}>
+                    Glass
+                  </Text>
+                  <Text style={[styles.paperNote, { color: colors.textMuted }]}>
+                    {glass === 0 ? 'Off' : `${Math.round(glass * 100)}%`}
+                  </Text>
+                </View>
+                <Slider
+                  value={glass}
+                  min={0}
+                  max={MAX_TRANSLUCENCY}
+                  step={0.01}
+                  onChange={setGlass}
+                  label="Glass"
+                  format={value =>
+                    value === 0 ? 'Off' : `${Math.round(value * 100)} percent`
+                  }
+                  detents={[0]}
+                  ticks={[0, MAX_TRANSLUCENCY / 2, MAX_TRANSLUCENCY]}
+                />
+                <Text style={[styles.paperNote, { color: colors.textMuted }]}>
+                  Lets the wallpaper show through cards and bars. Text stays
+                  readable at any setting — the wallpaper's dimming already
+                  takes care of that — but past{' '}
+                  {Math.round(MAX_TRANSLUCENCY * 100)}% a card stops looking
+                  like a card, so that is where it ends.
+                </Text>
+              </View>
+            ) : null}
+
             {/* The preview is the app, drawn in the draft — including the
                 derived surfaces, so what is shown is what will actually
                 render, not the four colours that were picked. */}
@@ -414,7 +462,7 @@ export function ThemeEditor({
             <Touchable
               onPress={() => {
                 setWallpaper(paper);
-                onApply(draft);
+                onApply(draft, paper ? glass : 0);
               }}
               label="Apply Theme"
               scaleTo={0.97}
@@ -636,6 +684,14 @@ const styles = StyleSheet.create({
     borderWidth: StyleSheet.hairlineWidth,
     borderStyle: 'dashed',
     paddingHorizontal: space.md,
+  },
+  glassBlock: {
+    marginTop: space.md,
+  },
+  glassRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   paperNote: {
     fontSize: 12,

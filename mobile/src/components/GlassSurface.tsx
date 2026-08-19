@@ -72,8 +72,18 @@ export function GlassSurface({
       style={[
         styles.glass,
         {
-          // The wash, not the colour. Alpha is what lets the page read through.
-          backgroundColor: withAlpha(colors.card, elevated ? 0.78 : 0.62),
+          // The wash, not the colour. Alpha is what lets the page read
+          // through, and how much is now the theme's to say — a custom theme
+          // with a wallpaper behind it has something worth showing, which is
+          // the one thing four picked colours could never tell us.
+          //
+          // Elevated surfaces let less through rather than more: they are
+          // nearer the front, and a hierarchy where the top layer is the most
+          // see-through reads as a mistake.
+          backgroundColor: withAlpha(
+            colors.card,
+            1 - colors.translucency * (elevated ? 0.72 : 1),
+          ),
           // The border is the *unlit* part of the rim; the gradient below adds
           // the lit part. A single flat border would flatten it back out.
           borderColor: withAlpha('#FFFFFF', 0.55),

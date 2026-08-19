@@ -11,6 +11,7 @@ import { isDark } from '@/theme/color';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { requestDailyAd } from '@/lib/dailyAd';
 import { tick } from '@/lib/haptics';
+import { useWallpaper } from '@/hooks/useWallpaper';
 import {
   TEXT_SIZE_DEFAULT,
   TextScaleContext,
@@ -67,6 +68,11 @@ export interface Palette {
    * not care can ignore it and stay solid.
    */
   material: Material;
+  /**
+   * How much shows through a glass surface, 0–1, and 0 whenever the material
+   * is solid. Clamped in paletteFrom — see MAX_TRANSLUCENCY.
+   */
+  translucency: number;
 }
 
 /**
@@ -113,6 +119,7 @@ const DARK: Palette = {
   accent: '#E879F9',
   onAccent: '#000000',
   material: 'solid',
+  translucency: 0,
 };
 
 
@@ -131,7 +138,14 @@ interface ThemeContextValue {
   /** The saved My Theme, or null until one is created. */
   custom: CustomPalette | null;
   /** Save (or clear) My Theme. Saving does not switch to it. */
-  setCustom: (palette: CustomPalette | null) => void;
+  /**
+   * Applies a custom theme. `glass` is how much its surfaces let through —
+   * omitted keeps whatever is already set, which is what an edit that only
+   * touched the colours should do.
+   */
+  setCustom: (palette: CustomPalette | null, glass?: number) => void;
+  /** How much a custom theme's surfaces let through, 0–1. */
+  translucency: number;
 }
 
 const ThemeContext = createContext<ThemeContextValue>({
@@ -144,6 +158,7 @@ const ThemeContext = createContext<ThemeContextValue>({
   setTextSize: () => {},
   custom: null,
   setCustom: () => {},
+  translucency: 0,
 });
 
 export function ThemeProvider({
@@ -163,6 +178,12 @@ export function ThemeProvider({
   const [preference, setPreferenceState] = useState<ThemePreference>(initialPreference);
   const [textSize, setTextSizeState] = useState<TextSize>(TEXT_SIZE_DEFAULT);
   const [custom, setCustomState] = useState<CustomPalette | null>(null);
+  /**
+   * How much a custom theme's surfaces let through. Stored alongside the four
+   * colours rather than beside them, so one write keeps the theme whole and an
+   * older build — which reads only the four — simply ignores it.
+   */
+  const [translucency, setTranslucencyState] = useState(0);
 
   useEffect(() => {
     AsyncStorage.getItem(STORAGE_KEY)
@@ -179,9 +200,14 @@ export function ThemeProvider({
           return;
         }
         try {
-          const parsed = JSON.parse(value) as Partial<CustomPalette>;
+          const parsed = JSON.parse(value) as Partial<CustomPalette> & {
+            translucency?: unknown;
+          };
           if (parsed.background && parsed.text && parsed.accent && parsed.card) {
             setCustomState(parsed as CustomPalette);
+          }
+          if (typeof parsed.translucency === 'number' && Number.isFinite(parsed.translucency)) {
+            setTranslucencyState(parsed.translucency);
           }
         } catch {
           // A corrupt entry should not stop the app theming itself.
@@ -208,14 +234,29 @@ export function ThemeProvider({
     // an ad is not a trade anybody should be asked to make.
   }, []);
 
-  const setCustom = useCallback((next: CustomPalette | null) => {
-    setCustomState(next);
-    if (next) {
-      AsyncStorage.setItem(CUSTOM_KEY, JSON.stringify(next)).catch(() => {});
-    } else {
-      AsyncStorage.removeItem(CUSTOM_KEY).catch(() => {});
-    }
-  }, []);
+  const persistCustom = useCallback(
+    (palette: CustomPalette | null, glass: number) => {
+      if (palette) {
+        AsyncStorage.setItem(
+          CUSTOM_KEY,
+          JSON.stringify({ ...palette, translucency: glass }),
+        ).catch(() => {});
+      } else {
+        AsyncStorage.removeItem(CUSTOM_KEY).catch(() => {});
+      }
+    },
+    [],
+  );
+
+  const setCustom = useCallback(
+    (next: CustomPalette | null, glass?: number) => {
+      const value = glass ?? translucency;
+      setCustomState(next);
+      setTranslucencyState(next ? value : 0);
+      persistCustom(next, value);
+    },
+    [persistCustom, translucency],
+  );
 
   const setPreference = useCallback((next: ThemePreference) => {
     // One light tap on the commit. This lives here rather than on the header
@@ -262,16 +303,28 @@ export function ThemeProvider({
   }, [theme, setPreference]);
 
   /**
-   * A material belongs to a named preset, not to a set of colours, so a custom
-   * theme is always solid — there is nothing in four hex values that could say
-   * "and make it glass".
+   * A material used to belong only to a named preset, because there is nothing
+   * in four hex values that could say "and make it glass".
+   *
+   * A **wallpaper** can say it. Translucency is only worth anything when there
+   * is something behind the surface worth seeing, and a photo or video is
+   * exactly that — so a custom theme may now be glass, but only while a
+   * wallpaper is set. Remove the wallpaper and the surfaces go solid on their
+   * own rather than becoming translucent windows onto a flat colour, which is
+   * just a lighter card with extra steps.
    */
-  const material: Material =
-    (preference !== 'custom' && preference !== 'system'
-      ? presetByKey(preference)?.material
-      : undefined) ?? 'solid';
+  const hasWallpaper = useWallpaper() !== null;
+  const customGlass = preference === 'custom' && hasWallpaper && translucency > 0;
+  const material: Material = customGlass
+    ? 'glass'
+    : (preference !== 'custom' && preference !== 'system'
+        ? presetByKey(preference)?.material
+        : undefined) ?? 'solid';
 
-  const colors = useMemo<Palette>(() => paletteFrom(chosen, material), [chosen, material]);
+  const colors = useMemo<Palette>(
+    () => paletteFrom(chosen, material, customGlass ? translucency : undefined),
+    [chosen, material, customGlass, translucency],
+  );
 
   const value = useMemo(
     () => ({
@@ -284,8 +337,20 @@ export function ThemeProvider({
       setTextSize,
       custom,
       setCustom,
+      translucency,
     }),
-    [theme, colors, preference, setPreference, toggleTheme, textSize, setTextSize, custom, setCustom],
+    [
+      theme,
+      colors,
+      preference,
+      setPreference,
+      toggleTheme,
+      textSize,
+      setTextSize,
+      custom,
+      setCustom,
+      translucency,
+    ],
   );
 
   return (

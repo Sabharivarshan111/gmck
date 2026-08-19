@@ -156,7 +156,40 @@ const HUES_LIGHT = { cyan: '#0891B2', emerald: '#059669', green: '#16A34A', viol
  * from whichever base the chosen background is closer to. They are never
  * derived from the user's picks: a red that means "wrong" has to stay red.
  */
-export function paletteFrom(custom: CustomPalette, material: Material = 'solid') {
+/**
+ * How much of what is behind a surface shows through it, 0–1.
+ *
+ * A single number rather than a per-surface setting: translucency is a
+ * property of the *material* the app is made of, and surfaces made of
+ * different amounts of glass read as a mistake rather than a hierarchy.
+ * Elevated surfaces are derived from it, not chosen separately.
+ */
+export const DEFAULT_TRANSLUCENCY = 0.38;
+
+/**
+ * The most a surface may let through.
+ *
+ * Not a legibility limit, and it is worth being precise about that because the
+ * obvious guess is wrong: raising this does **not** cost text contrast. The
+ * wallpaper's scrim is solved against the theme background, so the more of the
+ * picture a surface lets through, the more of it has already been washed
+ * towards that background — the two cancel, and text holds AA even at 100%.
+ * scripts/glass-check.mjs sweeps the whole range and proves it.
+ *
+ * What does break, past roughly here, is the *surface*: its border and its
+ * lift dissolve into the picture and a card stops reading as a card. That is a
+ * judgement about form, and it is written down as one rather than dressed up
+ * as a measurement.
+ */
+export const MAX_TRANSLUCENCY = 0.55;
+
+export function paletteFrom(
+  custom: CustomPalette,
+  material: Material = 'solid',
+  translucency: number = material === 'glass' ? DEFAULT_TRANSLUCENCY : 0,
+  /** Skips the ceiling. Only scripts/glass-check.mjs passes this. */
+  unclamped = false,
+) {
   const dark = isDark(custom.background);
   const semantic = dark ? SEMANTIC_DARK : SEMANTIC_LIGHT;
   const hues = dark ? HUES_DARK : HUES_LIGHT;
@@ -177,6 +210,15 @@ export function paletteFrom(custom: CustomPalette, material: Material = 'solid')
     onAccent: onColor(custom.accent),
     ...semantic,
     material,
+    /**
+     * Clamped here rather than trusted from the caller, because this value
+     * arrives from a slider and from storage, and a stored 0.9 from some
+     * future version would otherwise quietly make the app unreadable.
+     */
+    translucency:
+      material === 'glass'
+        ? Math.max(0, unclamped ? translucency : Math.min(MAX_TRANSLUCENCY, translucency))
+        : 0,
   };
 }
 

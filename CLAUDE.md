@@ -165,6 +165,19 @@ colours, because "translucent, lit from above, floating" cannot be expressed
 as a background hex. Only named presets carry one; a custom theme is always
 solid, since there is nothing in four picked colours that could say otherwise.
 
+A **custom theme may now be glass too, but only while a wallpaper is set** —
+translucency needs something behind it worth seeing, and a photo is the one
+thing four picked colours could never supply. Remove the wallpaper and the
+surfaces go solid on their own. The strength is a slider, capped by
+`MAX_TRANSLUCENCY`.
+
+That cap is **not** about readability, and the obvious guess is wrong: the
+scrim is solved against the theme background, so the more of the picture a
+surface lets through, the more of it has already been washed towards that
+background. The two cancel and text holds AA at 100%; `npm run check:glass`
+sweeps the range and proves it. What breaks past the cap is the surface — its
+border and lift dissolve into the picture and a card stops reading as one.
+
 `components/GlassSurface.tsx` is the only place that draws it. Three things do
 the work, in order of how much they matter: the **specular highlight** (a
 bright hairline on the top edge fading down — the most identifiable feature of
