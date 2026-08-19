@@ -1,33 +1,29 @@
 # The app icon
 
-## What is there now
+It is the real ORBIT artwork, imported from `artwork/orbit-logo.png`.
 
-A **reproduction**, drawn by `scripts/make-icon.py` from measurements of the
-ORBIT artwork. It is close, not exact — the geometry was solved off the image
-(the crest's radius comes from its chord and rise so its ends land on the big
-ring's shoulders), but it is redrawn rather than copied.
-
-## Replacing it with the real file — one command
+## Regenerating it, or replacing the artwork
 
 ```sh
 cd mobile
-python3 scripts/import-icon.py path/to/orbit.png
+python3 scripts/import-icon.py artwork/orbit-logo.png
 ```
 
 Then set the plate colour behind the adaptive icon in
-`android/app/src/main/res/values/colors.xml` to the artwork's background,
-commit, and push. The next build carries it.
+`android/app/src/main/res/values/colors.xml` to the artwork's background.
 
-That script does four things that copying a PNG into the folders does not:
+The script does four things that copying a PNG into the mipmap folders does
+not:
 
-1. **Trims the empty margin** before scaling. Artwork usually carries generous
-   padding and Android adds its own — keep both and the icon lands on the home
-   screen visibly smaller than every other app's.
+1. **Trims the artwork's margin, then adds a measured one back.** Trimming to
+   the ink and stopping is the opposite mistake to leaving the original
+   padding: the icon then sits visibly *larger* than every other app's,
+   because nothing on a home screen has zero margin. `PAD` is 7% a side.
 2. **Drops the wordmark.** In a 48dp icon, "ORBIT MBBS QB" is about three
-   pixels tall and unreadable, while taking the room the symbol needs. Every
-   app does this with a lockup. `--keep-text` overrides it.
-3. **Pads to square rather than stretching.** A stretched logo is worse than a
-   wrong one.
+   pixels tall and unreadable while taking the room the symbol needs — which
+   is what every app does with a lockup. `--keep-text` overrides it.
+3. **Pads to square rather than stretching.** A stretched logo is worse than
+   a wrong one.
 4. **Writes the adaptive foreground** at 108dp with the art inside the 72dp
    safe zone, so a circular, squircle or teardrop mask cannot clip it.
 

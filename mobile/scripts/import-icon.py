@@ -9,9 +9,11 @@ reproduction and nothing more.
 
 What this does that dropping a PNG in by hand does not:
 
-  * **Trims the empty margin** before scaling. Artwork usually has generous
-    padding, and Android adds its own — keep both and the icon arrives on the
-    home screen noticeably smaller than every other app's.
+  * **Trims the empty margin, then adds a measured one back.** Artwork
+    usually carries generous padding; trimming to the ink and stopping there
+    is the opposite mistake, and the icon then sits visibly *larger* than
+    every other app's because nothing on the home screen has zero margin.
+    PAD is that margin, as a fraction of the square.
   * **Crops to the symbol** by default, dropping any wordmark below it. A
     lockup's text lands about three pixels tall in a 48dp icon while taking
     the room the symbol needs. Pass --keep-text to override.
@@ -60,6 +62,12 @@ def square(img, fill):
     return out
 
 
+# Breathing room around the trimmed art, as a fraction of the finished square
+# per side. Android's own launcher icons sit at roughly this, and matching it
+# is what makes an icon look like it belongs in the grid rather than shouting.
+PAD = 0.07
+
+
 def main():
     if len(sys.argv) < 2:
         print(__doc__)
@@ -80,6 +88,14 @@ def main():
             art = trim(art)
 
     art = square(art, background)
+
+    # The margin. Done after squaring so it is even on all four sides.
+    side = art.size[0]
+    padded_side = int(side / (1 - 2 * PAD))
+    padded = Image.new("RGBA", (padded_side, padded_side), background)
+    offset = (padded_side - side) // 2
+    padded.paste(art, (offset, offset), art)
+    art = padded
 
     root = os.path.abspath(RES)
     for name, px in DENSITIES.items():

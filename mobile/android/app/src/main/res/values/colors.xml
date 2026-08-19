@@ -5,5 +5,5 @@
       pure black so the mark does not disappear into a dark wallpaper on
       launchers that drop the plate's shadow.
     -->
-    <color name="ic_launcher_background">#050508</color>
+    <color name="ic_launcher_background">#000000</color>
 </resources>
