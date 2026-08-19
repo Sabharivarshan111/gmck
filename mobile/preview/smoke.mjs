@@ -308,8 +308,8 @@ await step('declining the ad prompt stops it re-asking on the next change', asyn
 });
 
 await step('text size slider resizes the app live, and snaps to 100%', async () => {
-  await tap('Text size');
-  await seesText('Applies across the app');
+  await tap('Settings');
+  await seesText('TEXT SIZE');
 
   // The sample in the sheet is real app text, so its computed size is the
   // check: a readout that says 115% while nothing grew is the bug worth
@@ -326,11 +326,12 @@ await step('text size slider resizes the app live, and snaps to 100%', async () 
       return node ? parseFloat(getComputedStyle(node).fontSize) : 0;
     });
   const readout = async () =>
+    // By testID, not by shape: the settings sheet has more than one
+    // percentage in it now, and "the last thing that looks like NN%" quietly
+    // became the haptic strength.
     page.evaluate(() => {
-      const nodes = [...document.querySelectorAll('div')].filter(el =>
-        /^\d+%$/.test(el.textContent ?? ''),
-      );
-      return nodes[nodes.length - 1]?.textContent ?? '';
+      const node = document.querySelector('[data-testid="text-size-value"]');
+      return node?.textContent ?? '';
     });
 
   const slider = page.locator('[role="slider"]').first();
@@ -354,15 +355,23 @@ await step('text size slider resizes the app live, and snaps to 100%', async () 
     throw new Error(`readout says ${await readout()} at the right-hand end, expected 115%`);
   }
 
+  // Re-measure. Committing 115% re-typesets the whole app including this
+  // sheet, so it is taller than it was and the slider has moved — using the
+  // position from before the first drag aims at empty space.
+  const box2 = await slider.boundingBox();
+  if (!box2) {
+    throw new Error('the slider vanished after the first drag');
+  }
+
   // Release a little short of the 100% tick: the detent is what makes the one
   // named value on the scale reachable exactly.
-  const defaultX = box.x + 14 + (box.width - 28) * ((1 - 0.9) / (1.15 - 0.9));
-  await page.mouse.move(box.x + box.width - 2, box.y + box.height / 2);
+  const defaultX = box2.x + 14 + (box2.width - 28) * ((1 - 0.9) / (1.15 - 0.9));
+  await page.mouse.move(box2.x + box2.width - 2, box2.y + box2.height / 2);
   await page.mouse.down();
   // Far enough past the tick to round to 101% on its own, close enough that
   // the detent should reel it in. Land it on 100% by luck and this asserts
   // nothing.
-  await page.mouse.move(defaultX + 14, box.y + box.height / 2, { steps: 8 });
+  await page.mouse.move(defaultX + 14, box2.y + box2.height / 2, { steps: 8 });
   await page.mouse.up();
   await page.waitForTimeout(500);
   if ((await readout()) !== '100%') {
@@ -372,7 +381,7 @@ await step('text size slider resizes the app live, and snaps to 100%', async () 
   await tap('Done');
   // The exit is a spring, not a fixed duration — give it room to settle.
   await page.waitForTimeout(1200);
-  if (await page.getByText('Applies across the app').first().isVisible().catch(() => false)) {
+  if (await page.getByText('Haptics').first().isVisible().catch(() => false)) {
     throw new Error('sheet did not dismiss');
   }
 });

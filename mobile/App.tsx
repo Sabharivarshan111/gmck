@@ -5,6 +5,7 @@ import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/
 import { ThemeProvider, useTheme } from '@/theme';
 import RootNavigator from '@/navigation/RootNavigator';
 import { hydrateProgress, reconcileProgress } from '@/lib/progress';
+import { hydrateSettings } from '@/lib/settings';
 import { hydrateProfile } from '@/hooks/useProfile';
 import { initializeAds } from '@/lib/ads';
 import { hydratePremium, usePremiumSync } from '@/lib/premium';
@@ -20,6 +21,7 @@ function Shell() {
   useEffect(() => {
     // Load saved completion state before the first counts render, then try a
     // best-effort cloud merge (a no-op when signed out or offline).
+    hydrateSettings().catch(() => {});
     hydrateProgress().then(() => {
       reconcileProgress().catch(() => {});
     });

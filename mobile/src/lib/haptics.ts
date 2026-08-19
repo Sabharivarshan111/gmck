@@ -1,4 +1,5 @@
 import { Platform, Vibration } from 'react-native';
+import { getSettings, HAPTIC_MAX_MS, HAPTIC_MIN_MS } from '@/lib/settings';
 
 /**
  * Haptics.
@@ -22,34 +23,58 @@ import { Platform, Vibration } from 'react-native';
  *
  * Anything new has to clear the same bar.
  *
- * ## Known limitation, stated plainly
+ * ## The switch
  *
  * Android has a system-wide "touch feedback" setting, and `Vibration.vibrate`
- * ignores it — it will fire even for someone who turned haptics off. Reading
- * that setting needs a native module, which is the thing this file exists to
- * avoid. So the mitigation is restraint: the pulses are as short as they can be
- * while still registering, and there are only two of them in the whole app.
- * If a user-facing "haptics off" switch is ever wanted, this is the one place
- * to gate.
+ * ignores it — reading that setting needs a native module, which is the thing
+ * this file exists to avoid. So the app carries its own switch, in Settings,
+ * and every function here is gated on it. That was always the right answer;
+ * it is now also the requested one.
+ *
+ * Strength is a **duration**, not an amplitude. The core API has no amplitude
+ * control, so "stronger" means "longer" — from a tick you half-notice to one
+ * you cannot miss.
  */
 
-/**
- * The shortest pulse that reliably registers as a tick rather than a buzz.
- * Below roughly 8ms many Android motors do not spin up at all; much above 20ms
- * and it stops feeling like a tap and starts feeling like an alert.
- */
-const TICK_MS = 10;
+/** Pulse length for the current strength setting. */
+function pulseMs(scale = 1): number {
+  const { hapticStrength } = getSettings();
+  const ms = HAPTIC_MIN_MS + (HAPTIC_MAX_MS - HAPTIC_MIN_MS) * hapticStrength;
+  return Math.max(1, Math.round(ms * scale));
+}
+
+function enabled(): boolean {
+  return Platform.OS === 'android' && getSettings().haptics;
+}
 
 /** Pattern for a finished session: two short pulses, not one long alarm. */
 const COMPLETE_PATTERN = [0, 180, 120, 180];
 
-/** A single light tap. For committing a deliberate choice. */
-export function tick(): void {
-  if (Platform.OS !== 'android') {
+/**
+ * The lightest touch, for an ordinary tap.
+ *
+ * Deliberately weaker than `tick`: this one fires on every press in the app,
+ * and feedback that is as loud as a commit is what trains people to stop
+ * noticing any of it.
+ */
+export function tap(): void {
+  if (!enabled()) {
     return;
   }
   try {
-    Vibration.vibrate(TICK_MS);
+    Vibration.vibrate(pulseMs(0.55));
+  } catch {
+    // Never let feedback break the action it is decorating.
+  }
+}
+
+/** A single light tap. For committing a deliberate choice. */
+export function tick(): void {
+  if (!enabled()) {
+    return;
+  }
+  try {
+    Vibration.vibrate(pulseMs());
   } catch {
     // Never let feedback break the action it is decorating.
   }
@@ -57,7 +82,7 @@ export function tick(): void {
 
 /** A finished focus session. Longer, because it fires with the screen away. */
 export function complete(): void {
-  if (Platform.OS !== 'android') {
+  if (!enabled()) {
     return;
   }
   try {

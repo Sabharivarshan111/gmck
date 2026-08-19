@@ -297,13 +297,34 @@ provider. It deliberately uses plain React Native components and literal
 colours: a fallback that depends on the code that just failed is not a
 fallback. Keep it that way.
 
+## Settings is one button, and it holds everything adjustable
+
+`components/SettingsSheet.tsx`, opened from the header. It exists because the
+header had grown a circle per preference, which does not scale — the next
+setting would have been a third circle and the one after a fourth. Text size
+moved in there; themes and wallpaper stay behind the moon button next to it.
+
+`lib/settings.ts` is a plain store with a listener set, not a context, for the
+same reason `progress.ts` is: `Touchable` reads it on every press and there is
+a Touchable in every row of a five-hundred-row list.
+
 ## Haptics are two calls, and both are earned
 
-`mobile/src/lib/haptics.ts` is the only thing in the app that vibrates:
-switching theme, and a focus session ending. Adding a third caller means
-clearing the same bar — a commit or a completion, never navigation or an
-ordinary tap. The `VIBRATE` permission in `AndroidManifest.xml` is what makes
-any of it work; without it every call is a silent no-op.
+`mobile/src/lib/haptics.ts` is the only thing in the app that vibrates. There
+are three calls now, and the third was asked for rather than earned: `tap()`
+fires on every press, from `Touchable`. It is deliberately the weakest of the
+three, because feedback as loud as a commit is what trains people to stop
+noticing any of it — and it is off in one tap from Settings.
+
+`tick()` (a commit) and `complete()` (a completion) keep the original bar. Any
+*fourth* caller has to clear it.
+
+Strength is a **duration**, not an amplitude: the core Vibration API has no
+amplitude control, so "stronger" means "longer". Saying otherwise in the UI
+would be a lie about what the slider does.
+
+The `VIBRATE` permission in `AndroidManifest.xml` is what makes any of it work;
+without it every call is a silent no-op.
 
 ## Design tokens
 

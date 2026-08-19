@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { SPRING, springTo, useReducedMotion } from '@/theme/motion';
 import { useReorderLocked } from '@/components/ReorderLock';
+import { tap as hapticTap } from '@/lib/haptics';
 
 /**
  * The app's press target.
@@ -119,7 +120,17 @@ export function Touchable({
     [pressed, reduceMotion],
   );
 
-  const onPressIn = useCallback(() => animateTo(1), [animateTo]);
+  const onPressIn = useCallback(() => {
+    animateTo(1);
+    // On press-down, alongside the scale — not on release. Feedback that
+    // arrives after the finger lifts is describing something the user already
+    // knows. Whether it fires at all is Settings' business (haptics.ts), and
+    // it is skipped while a screen is being rearranged, where the press is
+    // being swallowed anyway.
+    if (!locked) {
+      hapticTap();
+    }
+  }, [animateTo, locked]);
   const onPressOut = useCallback(() => animateTo(0), [animateTo]);
 
   const animatedStyle = useMemo(() => {

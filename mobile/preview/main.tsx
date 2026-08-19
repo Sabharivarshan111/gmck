@@ -12,6 +12,7 @@ import type { InitialState } from '@react-navigation/native';
 import { ThemeProvider, useTheme } from '@/theme';
 import RootNavigator from '@/navigation/RootNavigator';
 import { hydrateProgress } from '@/lib/progress';
+import { hydrateSettings } from '@/lib/settings';
 import { hydrateProfile } from '@/hooks/useProfile';
 import { DailyAdConsent } from '@/components/DailyAdConsent';
 import { hydratePremium } from '@/lib/premium';
@@ -179,6 +180,7 @@ function Shell() {
   const { theme, colors } = useTheme();
   React.useEffect(() => {
     hydrateProgress();
+      hydrateSettings().catch(() => {});
     hydrateProfile().catch(() => {});
     hydratePremium().catch(() => {});
     hydrateWallpaper().catch(() => {});

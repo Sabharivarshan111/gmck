@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+      The plate behind the adaptive icon's foreground. Near-black rather than
+      pure black so the mark does not disappear into a dark wallpaper on
+      launchers that drop the plate's shadow.
+    -->
+    <color name="ic_launcher_background">#050508</color>
+</resources>

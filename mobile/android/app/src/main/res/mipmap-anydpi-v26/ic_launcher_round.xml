@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Adaptive icon, for Android 8 and up.
+
+  Without this the launcher takes the legacy PNG and shrinks it inside a white
+  or grey plate, because it cannot know which part of the bitmap is safe to
+  mask — which is how a dark icon ends up as a small square floating in a light
+  circle. Foreground and background as separate layers let it mask to whatever
+  shape the phone uses, and gives the parallax on launchers that do it.
+
+  The foreground is drawn inside the 72dp safe zone of the 108dp canvas, so
+  nothing is clipped when the mask is a circle, a squircle or a teardrop.
+-->
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@color/ic_launcher_background" />
+    <foreground android:drawable="@mipmap/ic_launcher_foreground" />
+    <monochrome android:drawable="@mipmap/ic_launcher_foreground" />
+</adaptive-icon>

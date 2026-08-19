@@ -1,12 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import {
-  Animated,
-  Linking,
-  ScrollView,
-  StyleSheet,
-  Text as RNText,
-  View,
-} from 'react-native';
+import { Animated, Linking, ScrollView, StyleSheet, View } from 'react-native';
 import { Text } from '@/components/Text';
 import { Touchable } from '@/components/Touchable';
 import { Sheet } from '@/components/Sheet';
@@ -15,7 +8,7 @@ import { Reorderable } from '@/components/Reorderable';
 import { HOME_SECTION_LABEL, useHomeOrder } from '@/hooks/useHomeOrder';
 import { SortableGrid } from '@/components/SortableGrid';
 import { useSubjectOrder } from '@/hooks/useSubjectOrder';
-import { Slider } from '@/components/Slider';
+import { SettingsSheet } from '@/components/SettingsSheet';
 import { ThemeMenu, type Anchor } from '@/components/ThemeMenu';
 import { presetByKey } from '@/theme/presets';
 import { ThemeEditor } from '@/components/ThemeEditor';
@@ -39,18 +32,11 @@ import {
   Timer as TimerIcon,
   TrendingUp,
   Trophy,
-  Type,
+  SlidersHorizontal,
 } from 'lucide-react-native';
 import { useTheme, withAlpha } from '@/theme';
 import { mix } from '@/theme/color';
 import { DURATION, EASE, useReducedMotion } from '@/theme/motion';
-import {
-  TEXT_SIZE_DEFAULT,
-  TEXT_SIZE_MAX,
-  TEXT_SIZE_MIN,
-  TEXT_SIZE_STEP,
-  formatTextSize,
-} from '@/theme/textScale';
 import { radius, space } from '@/theme/tokens';
 import { typeScale } from '@/theme/typography';
 import { GradientFill } from '@/components/Gradient';
@@ -140,15 +126,11 @@ export default function HomeScreen() {
   const { order, rendered, save, reset } = useHomeOrder();
   const [editing, setEditing] = useState(false);
   /**
-   * The text size while the slider is being dragged.
-   *
-   * Kept local on purpose. The real value lives in the theme and every piece
-   * of text in the app subscribes to it, so writing it on every step of a drag
-   * re-renders the entire tree twenty-five times — which is exactly what the
-   * slider felt like. The preview below reads this instead, and the app is
-   * re-typeset once, when the finger lifts.
+   * Whether the settings sheet is open. Text size used to have its own circle
+   * in the header; a header that grows a button per preference is a toolbar
+   * waiting to happen, so it lives in Settings now with everything else.
    */
-  const [textSizeDraft, setTextSizeDraft] = useState(textSize);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const [dragging, setDragging] = useState(false);
   /**
    * Content drawn straight onto the background reads this rather than
@@ -163,7 +145,6 @@ export default function HomeScreen() {
   const [slide, setSlide] = useState(0);
   const [focusMinutes, setFocusMinutes] = useState(0);
   const [yearPickerOpen, setYearPickerOpen] = useState(false);
-  const [textSizeOpen, setTextSizeOpen] = useState(false);
   const [themeOpen, setThemeOpen] = useState(false);
   const [editorOpen, setEditorOpen] = useState(false);
   /**
@@ -322,15 +303,12 @@ export default function HomeScreen() {
         </View>
         <View style={styles.headerRight}>
           <Touchable
-            onPress={() => {
-              setTextSizeDraft(textSize);
-              setTextSizeOpen(true);
-            }}
-              label="Text size"
-            hint={`Currently ${formatTextSize(textSize)}`}
+            onPress={() => setSettingsOpen(true)}
+            label="Settings"
+            hint="Text size, haptics and sounds"
             scaleTo={0.9}>
-            <RoundButton label="TEXT SIZE">
-              <Type size={16} color={colors.text} />
+            <RoundButton label="SETTINGS">
+              <SlidersHorizontal size={16} color={colors.text} />
             </RoundButton>
           </Touchable>
           <View ref={themeButton} collapsable={false}>
@@ -631,61 +609,12 @@ export default function HomeScreen() {
         }}
       />
 
-      <Sheet
-        visible={textSizeOpen}
-        onClose={() => setTextSizeOpen(false)}
-        title="Text size">
-        <Text style={[styles.sheetSub, { color: colors.textMuted }]} numberOfLines={2}>
-          Applies across the app. Your phone's own display size still works too.
-        </Text>
-
-        {/* The preview is the app's own text at the chosen size — the sample
-            is a question, because questions are what this size is for. The
-            box is a fixed height so the sheet cannot resize under the finger
-            that is dragging the slider. */}
-        <View
-          style={[
-            styles.textSizePreview,
-            { backgroundColor: colors.cardElevated, borderColor: colors.border },
-          ]}>
-          {/* Sized from the draft directly, and with the plain React Native
-              Text rather than the app's — the app's would scale this again by
-              the *committed* value and show the wrong size mid-drag. */}
-          <RNText
-            style={[
-              styles.textSizeSample,
-              { color: colors.text, fontSize: Math.round(15 * textSizeDraft) },
-            ]}
-            numberOfLines={3}>
-            Bilirubin is conjugated in the hepatocyte and excreted in bile.
-          </RNText>
-        </View>
-
-        <View style={styles.textSizeScale}>
-          <Text style={[styles.textSizeSmallA, { color: colors.textMuted }]}>A</Text>
-          <Text style={[styles.textSizeValue, { color: colors.text }]}>
-            {formatTextSize(textSizeDraft)}
-          </Text>
-          <Text style={[styles.textSizeLargeA, { color: colors.textMuted }]}>A</Text>
-        </View>
-
-        <View style={styles.textSizeSlider}>
-          <Slider
-            value={textSizeDraft}
-            min={TEXT_SIZE_MIN}
-            max={TEXT_SIZE_MAX}
-            step={TEXT_SIZE_STEP}
-            onChange={setTextSizeDraft}
-            onCommit={setTextSize}
-            label="Text size"
-            format={formatTextSize}
-            // The one value on the scale with a name is the one worth being
-            // able to get back to exactly.
-            detents={[TEXT_SIZE_DEFAULT]}
-            ticks={[TEXT_SIZE_MIN, TEXT_SIZE_DEFAULT, 1.08, TEXT_SIZE_MAX]}
-          />
-        </View>
-      </Sheet>
+      <SettingsSheet
+        visible={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+        textSize={textSize}
+        onTextSizeChange={setTextSize}
+      />
 
       <YearPickerSheet
         visible={yearPickerOpen}
