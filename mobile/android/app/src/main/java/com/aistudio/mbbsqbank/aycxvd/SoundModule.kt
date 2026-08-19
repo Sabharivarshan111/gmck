@@ -3,8 +3,7 @@ package com.aistudio.mbbsqbank.aycxvd
 import android.media.AudioAttributes
 import android.media.SoundPool
 import com.facebook.react.bridge.ReactApplicationContext
-import com.facebook.react.bridge.ReactContextBaseJavaModule
-import com.facebook.react.bridge.ReactMethod
+import com.facebook.react.module.annotations.ReactModule
 
 /**
  * The app's sound effects, on Android's SoundPool.
@@ -25,11 +24,15 @@ import com.facebook.react.bridge.ReactMethod
  *
  * Everything here fails quietly. A device with no audio focus, a broken
  * decoder or a full stream pool is not a reason for a button to stop working.
+ *
+ * It extends NativeOrbitSoundSpec, which React Native's codegen generates from
+ * src/native/NativeOrbitSound.ts. That is not a style choice: the app runs the
+ * New Architecture, and a module that is not a TurboModule is never reachable
+ * from JavaScript there. See the spec file for the full reason.
  */
+@ReactModule(name = NativeOrbitSoundSpec.NAME)
 class SoundModule(reactContext: ReactApplicationContext) :
-  ReactContextBaseJavaModule(reactContext) {
-
-  override fun getName() = NAME
+  NativeOrbitSoundSpec(reactContext) {
 
   /**
    * USAGE_ASSISTANCE_SONIFICATION is the correct usage for UI feedback: it
@@ -77,8 +80,7 @@ class SoundModule(reactContext: ReactApplicationContext) :
    * @param name   "tap" or "chime"
    * @param volume 0..1
    */
-  @ReactMethod
-  fun play(name: String, volume: Double) {
+  override fun play(name: String, volume: Double) {
     val id = ids[name] ?: return
     val loaded = synchronized(ready) { ready.contains(id) }
     if (!loaded) {
@@ -99,9 +101,5 @@ class SoundModule(reactContext: ReactApplicationContext) :
     } catch (_: Throwable) {
       // Nothing useful to do if teardown fails.
     }
-  }
-
-  companion object {
-    const val NAME = "OrbitSound"
   }
 }

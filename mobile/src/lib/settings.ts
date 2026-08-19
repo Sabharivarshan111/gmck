@@ -38,10 +38,12 @@ export const DEFAULT_SETTINGS: Settings = {
   // *where* it fires; this decides whether it fires at all.
   haptics: true,
   hapticStrength: 0.4,
-  // Off by default, unlike haptics. A vibration is private; a sound is not,
-  // and an app that starts clicking out loud in a library the first time it
-  // is opened has made a decision that was not its to make.
-  tapSound: false,
+  // On by default, because it was asked for as "a sound effect every time the
+  // user clicks". The reservation is real — a vibration is private and a sound
+  // is not, and a phone that starts clicking in a lecture theatre is a bad
+  // first impression — which is why it is the first switch in Settings and
+  // takes one tap to silence, rather than something to go looking for.
+  tapSound: true,
   timerSound: true,
 };
 

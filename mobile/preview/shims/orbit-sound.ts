@@ -1,8 +1,8 @@
 /**
- * The preview harness is react-native-web, which has no NativeModules and no
- * SoundPool. `src/lib/sound.ts` already resolves to a no-op when the module is
- * absent, so nothing needs shimming — this file exists to say so, next to the
- * other shims, rather than leaving the next person to work out why sound is
- * the one native dependency without one.
+ * The preview harness is react-native-web, which has no TurboModuleRegistry
+ * and no SoundPool. `src/lib/sound.ts` already resolves to a no-op when the
+ * module is absent, so this stands in for the spec module and reports absent —
+ * without it, importing the real spec would reach for a
+ * `TurboModuleRegistry` react-native-web does not export.
  */
-export {};
+export default null;

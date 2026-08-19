@@ -160,3 +160,12 @@ export function normalizeHex(value: string): string {
 export function lit(base: string, label: string, amount = 0.22): string {
   return mix(base, isDark(label) ? '#FFFFFF' : '#000000', amount);
 }
+
+/** Tailwind-style colour with alpha, e.g. withAlpha('#22C55E', 0.15). */
+export function withAlpha(hex: string, alpha: number): string {
+  const value = hex.replace('#', '');
+  const r = parseInt(value.slice(0, 2), 16);
+  const g = parseInt(value.slice(2, 4), 16);
+  const b = parseInt(value.slice(4, 6), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}

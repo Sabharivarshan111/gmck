@@ -390,6 +390,61 @@ would be a lie about what the slider does.
 The `VIBRATE` permission in `AndroidManifest.xml` is what makes any of it work;
 without it every call is a silent no-op.
 
+## A native module must be a TurboModule, or it does not exist
+
+The app runs the **New Architecture** (`newArchEnabled=true`). Under it,
+`NativeModules.Whatever` finds nothing for a module registered the old way:
+`ReactPackageTurboModuleManagerDelegate` only reads packages that return
+modules from `createNativeModules` when the `useTurboModuleInterop` feature
+flag is on, and that flag is `false` in every stable React Native release
+(`ReactNativeFeatureFlagsDefaults`, Java and C++ alike).
+
+Sound shipped that way once. The Kotlin was correct, the WAVs were in the APK,
+the package was added in `MainApplication`, and `NativeModules.OrbitSound` was
+`undefined` on every device — so `soundAvailable` was false, Settings hid the
+sound switches, and nothing ever made a noise. No crash, no warning, nothing
+in a log.
+
+So a native module added to this app needs all four of:
+
+1. a spec in `mobile/src/native/Native<Name>.ts` using
+   `TurboModuleRegistry.get` — **not** `getEnforcing`, which turns a missing
+   module into a crash;
+2. `codegenConfig` in `mobile/package.json` pointing `jsSrcsDir` at that
+   folder, which is what makes Gradle generate `Native<Name>Spec` and its C++
+   binding;
+3. a Kotlin class extending that generated spec;
+4. a `BaseReactPackage` — not a plain `ReactPackage` — whose
+   `getReactModuleInfoProvider()` declares `isTurboModule = true`.
+
+`npm run check:native-sound` asserts all four and parses the spec through the
+real codegen, because none of tsc, eslint or the preview harness can see this
+(the harness is react-native-web, where the module is legitimately absent).
+
+## A custom theme colours the subject cards from its accent
+
+`src/theme/subjectCards.ts`. The named presets keep the six fixed gradients
+the published app shipped with; a custom theme replaces them, because an
+orange-and-cream theme with a wall of purple and teal cards under it looks
+like two apps stacked.
+
+The first version pulled the *built-in* hues 45% towards the accent, and that
+is too timid to read as a change at all: a violet card mixed 45% with orange
+is still a violet card, so on a warm theme five cards in six looked untouched
+and the feature read as broken. The hues are taken **from** the accent now —
+`CARD_TINTS` fans them out around it and steps the brightness.
+
+Three numbers hold that together, and `npm run check:subject-cards` pins all
+three across eight themes: no card more than 70° from the accent (further and
+it stops belonging to the theme), no two cards within 12° of each other (closer
+and Pathology and Pharmacology are the same card), and AA contrast for text on
+**both** gradient stops composited over the page — the stops are translucent,
+and the alpha is where a card quietly turns unreadable.
+
+The fan is narrow on purpose. Widening it is the obvious way to separate six
+cards and it is wrong: 100° from an orange accent is green, and one green card
+in a warm theme looks like a bug rather than a sixth colour.
+
 ## Design tokens
 
 `src/theme/tokens.ts` holds the spacing and radius scales; `typeScale` in
@@ -457,9 +512,11 @@ npx eslint .                     # 0 errors (warnings are inline-style noise)
 npm run check:fanout             # per-question subscriptions still isolated
 npm run check:sync               # progress reaches the cloud once a session exists
 npm run check:contrast           # every built-in theme stays readable
+npm run check:subject-cards      # custom themes recolour the cards, readably
+npm run check:native-sound       # the sound module is reachable under the New Arch
 npm run check:mcq                # MCQ response parsing + the ask-gemini markers
 npm run check:notes-limits       # every topic still fits the notes function's schema
-npm run check:smoke              # drives the real screens; 14 flows, 0 crashes
+npm run check:smoke              # drives the real screens; 18 flows, 0 crashes
 npx react-native bundle --platform android --dev false \
   --entry-file index.js --bundle-output /tmp/b.js   # must succeed
 ```

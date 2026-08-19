@@ -41,7 +41,7 @@ import {
   SlidersHorizontal,
 } from 'lucide-react-native';
 import { useTheme, withAlpha } from '@/theme';
-import { mix } from '@/theme/color';
+import { DEFAULT_GRADIENT, SUBJECT_GRADIENT, themedGradient } from '@/theme/subjectCards';
 import { DURATION, EASE, useReducedMotion } from '@/theme/motion';
 import { radius, space } from '@/theme/tokens';
 import { typeScale } from '@/theme/typography';
@@ -77,43 +77,6 @@ const HERO_SLIDES = [
     body: 'Handwritten notes, spaced revision, and progress rings — everything you need in one orbit.',
   },
 ];
-
-// Matches SUBJECT_GRADIENTS in src/components/shell/HomeTab.tsx.
-const SUBJECT_GRADIENT: Record<string, [string, string]> = {
-  anatomy: ['rgba(147,51,234,0.40)', 'rgba(49,46,129,0.60)'],
-  physiology: ['rgba(192,38,211,0.40)', 'rgba(88,28,135,0.60)'],
-  biochemistry: ['rgba(8,145,178,0.40)', 'rgba(30,58,138,0.60)'],
-  pharmacology: ['rgba(13,148,136,0.40)', 'rgba(22,78,99,0.60)'],
-  pathology: ['rgba(124,58,237,0.40)', 'rgba(88,28,135,0.60)'],
-  microbiology: ['rgba(5,150,105,0.40)', 'rgba(20,83,45,0.60)'],
-};
-const DEFAULT_GRADIENT: [string, string] = ['rgba(124,58,237,0.40)', 'rgba(88,28,135,0.60)'];
-
-/**
- * Subject-card gradients for a **custom** theme.
- *
- * The built-in gradients above are fixed hues chosen against the published
- * dark palette, and a theme built from someone's own four colours has nothing
- * to do with them — a pink-and-cream theme with a wall of purple and teal
- * cards underneath looks like two apps stacked.
- *
- * So a custom theme re-tints them. The variation between cards is kept,
- * because six identical cards is a worse answer than six off-brand ones: the
- * palette's own hue set is pulled towards the chosen accent, far enough to
- * belong to the theme and not so far that Pathology and Pharmacology stop
- * being telling apart at a glance.
- */
-function themedGradient(
-  colors: { cyan: string; emerald: string; fuchsia: string; green: string; violet: string; accent: string; background: string },
-  index: number,
-): [string, string] {
-  const hues = [colors.violet, colors.fuchsia, colors.cyan, colors.emerald, colors.green];
-  const hue = hues[index % hues.length];
-  return [
-    withAlpha(mix(hue, colors.accent, 0.45), 0.42),
-    withAlpha(mix(hue, colors.background, 0.45), 0.72),
-  ];
-}
 
 /** One card's height, and its width as a fraction of the grid. */
 const SUBJECT_CARD_HEIGHT = 160;

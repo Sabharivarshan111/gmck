@@ -19,6 +19,11 @@ export default defineConfig({
     alias: [
       { find: '@data', replacement: path.resolve(root, '..', 'src', 'data') },
       { find: '@shared', replacement: path.resolve(root, '..', 'src', 'lib') },
+      // Before the bare '@' alias below, which matches by prefix.
+      {
+        find: '@/native/NativeOrbitSound',
+        replacement: path.resolve(__dirname, 'shims', 'orbit-sound.ts'),
+      },
       { find: '@', replacement: path.resolve(root, 'src') },
       // lucide-react-native needs react-native-svg; the DOM build is equivalent
       // and exports the same icon names.

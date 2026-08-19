@@ -1,4 +1,4 @@
-import { NativeModules, Platform } from 'react-native';
+import OrbitSound from '@/native/NativeOrbitSound';
 import { getSettings } from '@/lib/settings';
 
 /**
@@ -11,21 +11,22 @@ import { getSettings } from '@/lib/settings';
  * Android's SoundPool: see SoundModule.kt for why that rather than an npm
  * audio library or the video player already in the project.
  *
+ * It is reached through `src/native/NativeOrbitSound.ts` — a TurboModule
+ * spec, not `NativeModules`. Under the New Architecture the latter finds
+ * nothing here: a module registered from a plain `ReactPackage` is skipped by
+ * the TurboModule manager unless a feature flag that ships `false` is turned
+ * on. That is why sound was silent on every device while the code looked
+ * correct; the spec file carries the full explanation.
+ *
  * **Every call is a no-op if the module is missing.** It is absent in the
- * preview harness, which is react-native-web, and it would be absent in any
- * build where the native side failed to register. A missing sound must never
- * take a button with it, so this resolves once, quietly, and stops asking.
+ * preview harness, which is react-native-web. A missing sound must never take
+ * a button with it, so this resolves once, quietly, and stops asking.
  */
 
-interface OrbitSound {
-  play(name: string, volume: number): void;
-}
-
-const native: OrbitSound | undefined =
-  Platform.OS === 'android' ? (NativeModules as { OrbitSound?: OrbitSound }).OrbitSound : undefined;
+const native = OrbitSound ?? undefined;
 
 /** Whether this build can actually make a noise. For Settings to be honest. */
-export const soundAvailable = native !== undefined;
+export const soundAvailable = native != null;
 
 /**
  * Quiet on purpose.

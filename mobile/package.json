@@ -17,10 +17,12 @@
     "check:sync": "node scripts/sync-order-check.mjs",
     "typecheck:preview": "tsc --noEmit -p preview/tsconfig.json",
     "check:contrast": "node scripts/contrast-check.mjs",
+    "check:subject-cards": "node scripts/subject-cards-check.mjs",
     "check:readability": "node scripts/readability-check.mjs",
     "check:theme-from-image": "node scripts/theme-from-image-check.mjs",
     "check:glass": "node scripts/glass-check.mjs",
-    "check:sounds": "python3 scripts/check-sounds.py"
+    "check:sounds": "python3 scripts/check-sounds.py",
+    "check:native-sound": "node scripts/native-sound-check.mjs"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^3.1.1",
@@ -71,5 +73,13 @@
   },
   "engines": {
     "node": ">= 22.11.0"
+  },
+  "codegenConfig": {
+    "name": "AppSpecs",
+    "type": "modules",
+    "jsSrcsDir": "src/native",
+    "android": {
+      "javaPackageName": "com.aistudio.mbbsqbank.aycxvd"
+    }
   }
 }
