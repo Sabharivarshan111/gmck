@@ -98,23 +98,20 @@ jobs:
           npm run check:theme-from-image
           npm run check:glass
 
-      - name: Embed the JS bundle so the APK runs without Metro
+      # Test ads are chosen in source now, not by the bundler's dev flag —
+      # see mobile/src/lib/adsMode.ts. Overwriting it here is what lets this
+      # build ship optimised, minified JavaScript and still be incapable of
+      # showing a live ad.
+      #
+      # There is no hand-rolled bundle step any more. The React Native Gradle
+      # plugin bundles `preview` itself, optimised, because that variant is
+      # deliberately absent from `debuggableVariants`. The old step existed to
+      # force `--dev true`, which is exactly what made every test build several
+      # times slower than the shipped app.
+      - name: Build with no ads at all
         working-directory: mobile
-        run: |
-          mkdir -p android/app/src/main/assets
-          npx react-native bundle \
-            --platform android \
-            --dev true \
-            --entry-file index.js \
-            --bundle-output android/app/src/main/assets/index.android.bundle \
-            --assets-dest android/app/src/main/res
+        run: printf 'export const ADS_ENABLED = false;\n' > src/lib/adsMode.ts
 
-      # New Architecture is on, so autolinked libraries (screens, svg, …) compile
-      # C++ and the build genuinely needs the NDK — this is not an Android app
-      # that can get away with the SDK alone. compileSdk 37, build-tools 37.0.0
-      # and NDK 27.1.12297006 are what android/build.gradle pins; none of them
-      # is guaranteed to be on the runner image, and Gradle's failure when one
-      # is missing names the component but not the fix.
       # Two runs died here, and both causes are worth writing down.
       #
       # API 37 is published with a **minor version**: the package is
@@ -191,14 +188,14 @@ jobs:
           echo "DEBUG_KEYSTORE_PATH=$RUNNER_TEMP/debug-signing.jks" >> "$GITHUB_ENV"
           echo "Upload key found; the debug APK will be signed with it."
 
-      - name: Build debug APK
+      - name: Build the preview APK
         env:
           DEBUG_STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
           DEBUG_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         working-directory: mobile/android
         # --stacktrace because the first line of an AGP failure is rarely the
         # useful one, and a re-run costs ten minutes.
-        run: ./gradlew assembleDebug --no-daemon --stacktrace
+        run: ./gradlew assemblePreview --no-daemon --stacktrace
 
       # Google Sign-In identifies an app by **package name + signing
       # certificate**, so this pair is what has to exist as an Android OAuth
@@ -210,7 +207,7 @@ jobs:
         run: |
           set -euo pipefail
           SDK="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-/usr/local/lib/android/sdk}}"
-          APK=$(ls mobile/android/app/build/outputs/apk/debug/*.apk | head -1)
+          APK=$(ls mobile/android/app/build/outputs/apk/preview/*.apk | head -1)
           echo "package name: com.aistudio.mbbsqbank.aycxvd.debug"
           "$SDK"/build-tools/37.0.0/apksigner verify --print-certs "$APK" \
             | grep -iE "SHA-1|SHA-256" || echo "(apksigner could not read the APK)"
@@ -219,7 +216,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: orbit-debug-apk
-          path: mobile/android/app/build/outputs/apk/debug/*.apk
+          path: mobile/android/app/build/outputs/apk/preview/*.apk
           if-no-files-found: error
 
       # An Actions *artifact* is a zip that only a signed-in user can fetch,
@@ -247,6 +244,6 @@ jobs:
             ads only, never live ones.
 
             Built from `${{ github.sha }}`.
-          files: mobile/android/app/build/outputs/apk/debug/*.apk
+          files: mobile/android/app/build/outputs/apk/preview/*.apk
           prerelease: true
           make_latest: false

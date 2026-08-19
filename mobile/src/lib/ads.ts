@@ -7,6 +7,7 @@ import mobileAds, {
   TestIds,
 } from 'react-native-google-mobile-ads';
 import { warn } from '@/lib/log';
+import { ADS_ENABLED } from '@/lib/adsMode';
 
 /**
  * AdMob wiring.
@@ -20,6 +21,9 @@ import { warn } from '@/lib/log';
  * meta-data, so it must not also be declared in AndroidManifest.xml.
  */
 
+// TestIds is still imported so a build with ads on but running from Metro
+// cannot hit a live unit — but in a build where ADS_ENABLED is false none of
+// this is reached at all, because every entry point returns first.
 const INTERSTITIAL_UNIT_ID = __DEV__
   ? TestIds.INTERSTITIAL
   : 'ca-app-pub-3177287525203129/7425202639';
@@ -44,7 +48,9 @@ let rewardedLoaded = false;
  * more than once; failures are swallowed so ads never block the app.
  */
 export async function initializeAds(): Promise<void> {
-  if (initialized) {
+  // The whole SDK, the consent form and every preload skipped in one line.
+  // This is the launch-time saving, not just the policy guard.
+  if (!ADS_ENABLED || initialized) {
     return;
   }
   initialized = true;
@@ -107,10 +113,16 @@ function preloadRewarded(): void {
 }
 
 export function isRewardedReady(): boolean {
+  if (!ADS_ENABLED) {
+    return false;
+  }
   return rewardedLoaded;
 }
 
 export function isInterstitialReady(): boolean {
+  if (!ADS_ENABLED) {
+    return false;
+  }
   return interstitialLoaded;
 }
 
@@ -120,6 +132,11 @@ export function isInterstitialReady(): boolean {
  * callers never have to gate on ad success.
  */
 export function showRewardedAd(): Promise<RewardedResult> {
+  // Reported as completed rather than failed: whatever the ad was gating is
+  // not something a build without ads should withhold.
+  if (!ADS_ENABLED) {
+    return Promise.resolve({ completed: true, amount: 0 });
+  }
   return new Promise(resolve => {
     if (!rewarded || !rewardedLoaded) {
       // Nothing loaded — take the chance to warm one up for next time.
@@ -163,6 +180,9 @@ export function showRewardedAd(): Promise<RewardedResult> {
 }
 
 export function showInterstitialAd(): void {
+  if (!ADS_ENABLED) {
+    return;
+  }
   if (!interstitial || !interstitialLoaded) {
     preloadInterstitial();
     return;

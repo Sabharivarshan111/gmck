@@ -27,6 +27,16 @@ export interface SliderProps {
   /** Every emitted value is rounded to this. */
   step: number;
   onChange: (value: number) => void;
+  /**
+   * Called once, when the finger lifts.
+   *
+   * For a value that is cheap to apply, `onChange` is enough. For one that is
+   * not — the in-app text size re-renders every piece of text in the app —
+   * the drag should feed a local preview through `onChange` and commit the
+   * real change here. Twenty-five full-tree re-renders during a drag is what
+   * a stuttering slider is made of.
+   */
+  onCommit?: (value: number) => void;
   /** Spoken by TalkBack. Required, like everywhere else in this app. */
   label: string;
   /** Turns the value into words: "108%", "12 minutes". Spoken and shown. */
@@ -72,6 +82,7 @@ export function Slider({
   max,
   step,
   onChange,
+  onCommit,
   label,
   format,
   detents,
@@ -201,6 +212,7 @@ export function Slider({
             emitted.current = settled;
             onChange(settled);
           }
+          onCommit?.(settled);
           const target = toX(settled);
           if (reduceMotion) {
             x.setValue(target);
@@ -214,7 +226,20 @@ export function Slider({
         },
         onPanResponderTerminationRequest: () => false,
       }),
-    [detents, emit, held, onChange, positionOf, range, reduceMotion, step, toX, travel, x],
+    [
+      detents,
+      emit,
+      held,
+      onChange,
+      onCommit,
+      positionOf,
+      range,
+      reduceMotion,
+      step,
+      toX,
+      travel,
+      x,
+    ],
   );
 
   const fill = travel > 0 ? Animated.divide(Animated.add(x, THUMB_SIZE / 2), width) : 0;
@@ -243,7 +268,11 @@ export function Slider({
         // TalkBack's adjustable role is swipe up / swipe down, and it is the
         // only way to move this control without a precise drag.
         const delta = event.nativeEvent.actionName === 'increment' ? step : -step;
-        onChange(Math.min(max, Math.max(min, Math.round((value + delta) / step) * step)));
+        const next = Math.min(max, Math.max(min, Math.round((value + delta) / step) * step));
+        onChange(next);
+        // A screen-reader adjustment has no "release", so it is its own
+        // commit — otherwise the value would move and never be applied.
+        onCommit?.(next);
       }}
       {...responder.panHandlers}>
       <View style={[styles.track, { backgroundColor: withAlpha(colors.text, 0.14) }]}>

@@ -168,6 +168,16 @@ export function HoloCard({
 
   return (
     <Animated.View
+      // Without this the tilt is not the cheap operation it looks like.
+      // Animating a transform only avoids a redraw when the view is already a
+      // texture; otherwise Android re-executes the whole subtree's draw list
+      // every frame — and this subtree contains two SVGs, one of them a
+      // repeating pattern fill. Six of those redrawing at 60fps is what made
+      // the Home screen stutter on a phone that should not stutter at all.
+      //
+      // Promoting the card to a hardware layer costs one texture per card and
+      // turns the tilt back into a matrix multiply.
+      renderToHardwareTextureAndroid={!reduceMotion}
       style={[style, tilt]}
       onLayout={(event: LayoutChangeEvent) => setWidth(event.nativeEvent.layout.width)}>
       <Touchable onPress={onPress} label={label} scaleTo={0.975} style={[innerStyle, { borderColor }]}>
@@ -200,7 +210,9 @@ export function HoloCard({
           <View
             pointerEvents="none"
             style={[StyleSheet.absoluteFill, { borderRadius, overflow: 'hidden' }]}>
-            <Animated.View style={[styles.sheen, sheenStyle]}>
+            <Animated.View
+              renderToHardwareTextureAndroid
+              style={[styles.sheen, sheenStyle]}>
               <Svg width="100%" height="100%">
                 <Defs>
                   <LinearGradient id={ids.sheen} x1="0" y1="0.25" x2="1" y2="0.75">

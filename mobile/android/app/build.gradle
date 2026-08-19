@@ -29,7 +29,12 @@ react {
     //   out of the plugin's bundling and doing it by hand with `--dev true`
     //   is the only way to get a release-signed APK that still shows test
     //   ads — see .github/workflows/android-internal.yml.
-    debuggableVariants = ["debug", "internal"]
+    //
+    // Only `debug`. `internal` and `preview` are deliberately NOT here: they
+    // want the plugin's own bundling, which is optimised and minified. Test
+    // ads no longer depend on the bundler's dev flag — src/lib/adsMode.ts owns
+    // that now — so a build can be fast and still be unable to show a live ad.
+    debuggableVariants = ["debug"]
 
     /* Bundling */
     //   A list containing the node command and its flags. Default is just 'node'.
@@ -198,6 +203,31 @@ android {
             // exercised.
             minifyEnabled false
             debuggable false
+            matchingFallbacks = ["release"]
+        }
+        // The test build to reach for by default.
+        //
+        // Release-grade in every way that costs speed — optimised native code,
+        // no development support, minified and optimised JavaScript — while
+        // still signed with the debug key and carrying the `.debug` suffix, so
+        // it needs no secrets and installs beside the Play Store copy.
+        //
+        // It exists because the plain debug APK is a bad way to judge this
+        // app. A debug build runs unoptimised native code with development
+        // support switched on, and the lag that gets reported from it is
+        // mostly that rather than anything in the app.
+        //
+        // Ads are Google's test units, chosen in source rather than inherited
+        // from the bundler's dev flag. See src/lib/adsMode.ts.
+        preview {
+            applicationIdSuffix ".debug"
+            manifestPlaceholders["appAuthRedirectScheme"] = "com.aistudio.mbbsqbank.aycxvd.debug"
+            signingConfig signingConfigs.debug
+            debuggable false
+            // Off for the same reason as `internal`: this build is for judging
+            // behaviour and speed, and a wrong ProGuard rule turns a real bug
+            // into an unreproducible one.
+            minifyEnabled false
             matchingFallbacks = ["release"]
         }
         release {

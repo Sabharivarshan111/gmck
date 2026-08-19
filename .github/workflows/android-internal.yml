@@ -70,20 +70,14 @@ jobs:
           npm run check:notes-limits
           npm run check:sync
 
-      # `--dev true` is the whole point — see the header. The plugin will not
-      # bundle this variant (debuggableVariants in app/build.gradle), so if
-      # this step is removed the APK ships with no JS at all and shows a red
-      # "Unable to load script" screen on launch.
-      - name: Embed the JS bundle, in dev mode so ads stay on test units
+      # Test ads come from source, not from the bundler's dev flag — see
+      # mobile/src/lib/adsMode.ts. The Gradle plugin bundles this variant
+      # itself, optimised and minified, which is why there is no hand-rolled
+      # bundle step: forcing `--dev true` to get test ads was what made every
+      # test build several times slower than the shipped app.
+      - name: Build with no ads at all
         working-directory: mobile
-        run: |
-          mkdir -p android/app/src/main/assets
-          npx react-native bundle \
-            --platform android \
-            --dev true \
-            --entry-file index.js \
-            --bundle-output android/app/src/main/assets/index.android.bundle \
-            --assets-dest android/app/src/main/res
+        run: printf 'export const ADS_ENABLED = false;\n' > src/lib/adsMode.ts
 
       - name: Install the SDK components the build pins
         run: |

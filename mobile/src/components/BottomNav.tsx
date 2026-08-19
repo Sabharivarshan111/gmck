@@ -190,6 +190,11 @@ export default function BottomNav({ state, navigation }: BottomTabBarProps) {
       {ready ? (
         <Animated.View
           pointerEvents="none"
+          // Same reason as HoloCard: the blob carries an SVG with two
+          // gradients, and a translating view that is not a texture redraws
+          // its subtree every frame. This one moves on every tab change, on
+          // every screen.
+          renderToHardwareTextureAndroid
           style={[
             styles.blob,
             {

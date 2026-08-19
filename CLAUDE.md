@@ -22,9 +22,22 @@ Do not "fix" these without reading the reasoning:
    published Play listing. Changing it publishes a *second app* instead of an
    update.
 
-2. **Debug builds use Google's test ad units** (`src/lib/ads.ts`). Serving live
-   ads to yourself during development is an AdMob policy violation that can get
-   the account suspended. The `__DEV__` ternary is intentional.
+2. **Test builds carry no ads at all.** Not live ones, and not Google's test
+   ones either — `src/lib/adsMode.ts` gates the whole thing, and when it is off
+   `ads.ts` never starts the SDK, never runs the consent flow and never loads a
+   unit. This is a standing instruction from the app's owner, and it is also
+   the faster answer: initialising AdMob and the UMP consent form is real work
+   at launch on a phone that has none to spare.
+
+   Serving live ads to yourself is an AdMob policy violation that can get the
+   account suspended, so the gate must never be keyed to something a build can
+   get wrong by accident. It is a committed constant that CI overwrites, not a
+   runtime guess.
+
+   It used to be keyed to `__DEV__`, which forced every installable test build
+   to ship development JavaScript to stay safe — several times slower than the
+   shipped app, and the cause of most lag anyone reported from one. Speed and
+   ads are separate decisions now.
 
 3. **`tabBar={props => <BottomNav {...props} />}` in `RootNavigator.tsx`** must
    stay an element, not a bare component reference. React Navigation invokes

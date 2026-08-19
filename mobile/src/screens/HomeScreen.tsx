@@ -1,5 +1,12 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Animated, Linking, ScrollView, StyleSheet, View } from 'react-native';
+import {
+  Animated,
+  Linking,
+  ScrollView,
+  StyleSheet,
+  Text as RNText,
+  View,
+} from 'react-native';
 import { Text } from '@/components/Text';
 import { Touchable } from '@/components/Touchable';
 import { Sheet } from '@/components/Sheet';
@@ -35,6 +42,7 @@ import {
   Type,
 } from 'lucide-react-native';
 import { useTheme, withAlpha } from '@/theme';
+import { mix } from '@/theme/color';
 import { DURATION, EASE, useReducedMotion } from '@/theme/motion';
 import {
   TEXT_SIZE_DEFAULT,
@@ -89,6 +97,32 @@ const SUBJECT_GRADIENT: Record<string, [string, string]> = {
 };
 const DEFAULT_GRADIENT: [string, string] = ['rgba(124,58,237,0.40)', 'rgba(88,28,135,0.60)'];
 
+/**
+ * Subject-card gradients for a **custom** theme.
+ *
+ * The built-in gradients above are fixed hues chosen against the published
+ * dark palette, and a theme built from someone's own four colours has nothing
+ * to do with them — a pink-and-cream theme with a wall of purple and teal
+ * cards underneath looks like two apps stacked.
+ *
+ * So a custom theme re-tints them. The variation between cards is kept,
+ * because six identical cards is a worse answer than six off-brand ones: the
+ * palette's own hue set is pulled towards the chosen accent, far enough to
+ * belong to the theme and not so far that Pathology and Pharmacology stop
+ * being telling apart at a glance.
+ */
+function themedGradient(
+  colors: { cyan: string; emerald: string; fuchsia: string; green: string; violet: string; accent: string; background: string },
+  index: number,
+): [string, string] {
+  const hues = [colors.violet, colors.fuchsia, colors.cyan, colors.emerald, colors.green];
+  const hue = hues[index % hues.length];
+  return [
+    withAlpha(mix(hue, colors.accent, 0.45), 0.42),
+    withAlpha(mix(hue, colors.background, 0.45), 0.72),
+  ];
+}
+
 /** One card's height, and its width as a fraction of the grid. */
 const SUBJECT_CARD_HEIGHT = 160;
 const SUBJECT_CARD_RATIO = 0.485;
@@ -101,9 +135,20 @@ const WHATSAPP_LABEL: Record<YearKey, string> = {
 };
 
 export default function HomeScreen() {
-  const { colors, theme, textSize, setTextSize, custom, setCustom, setPreference } = useTheme();
+  const { colors, theme, textSize, setTextSize, custom, setCustom, preference, setPreference } =
+    useTheme();
   const { order, rendered, save, reset } = useHomeOrder();
   const [editing, setEditing] = useState(false);
+  /**
+   * The text size while the slider is being dragged.
+   *
+   * Kept local on purpose. The real value lives in the theme and every piece
+   * of text in the app subscribes to it, so writing it on every step of a drag
+   * re-renders the entire tree twenty-five times — which is exactly what the
+   * slider felt like. The preview below reads this instead, and the app is
+   * re-typeset once, when the finger lifts.
+   */
+  const [textSizeDraft, setTextSizeDraft] = useState(textSize);
   const [dragging, setDragging] = useState(false);
   /**
    * Content drawn straight onto the background reads this rather than
@@ -188,6 +233,17 @@ export default function HomeScreen() {
     () => new Map(subjects.map(subject => [subject.key, subject])),
     [subjects],
   );
+  /**
+   * A custom theme colours its own cards; the named presets keep the
+   * gradients the published app shipped with.
+   */
+  const cardGradient = useCallback(
+    (subject: { key: string; gradient: [string, string] }): [string, string] =>
+      preference === 'custom'
+        ? themedGradient(colors, subjects.findIndex(item => item.key === subject.key))
+        : subject.gradient,
+    [preference, colors, subjects],
+  );
   const {
     order: subjectOrder,
     rendered: subjectRender,
@@ -266,7 +322,10 @@ export default function HomeScreen() {
         </View>
         <View style={styles.headerRight}>
           <Touchable
-            onPress={() => setTextSizeOpen(true)}
+            onPress={() => {
+              setTextSizeDraft(textSize);
+              setTextSizeOpen(true);
+            }}
               label="Text size"
             hint={`Currently ${formatTextSize(textSize)}`}
             scaleTo={0.9}>
@@ -485,8 +544,8 @@ export default function HomeScreen() {
                     // One spoken sentence beats four fragments; TalkBack reads
                     // the card as a whole, not as name / bar / percent / arrow.
                     label={`${subject.name}, ${subject.pct}% complete`}
-                    from={subject.gradient[0]}
-                    to={subject.gradient[1]}
+                    from={cardGradient(subject)[0]}
+                    to={cardGradient(subject)[1]}
                     borderColor={colors.border}
                     borderRadius={16}
                     style={styles.subjectTile}
@@ -589,26 +648,35 @@ export default function HomeScreen() {
             styles.textSizePreview,
             { backgroundColor: colors.cardElevated, borderColor: colors.border },
           ]}>
-          <Text style={[styles.textSizeSample, { color: colors.text }]} numberOfLines={3}>
+          {/* Sized from the draft directly, and with the plain React Native
+              Text rather than the app's — the app's would scale this again by
+              the *committed* value and show the wrong size mid-drag. */}
+          <RNText
+            style={[
+              styles.textSizeSample,
+              { color: colors.text, fontSize: Math.round(15 * textSizeDraft) },
+            ]}
+            numberOfLines={3}>
             Bilirubin is conjugated in the hepatocyte and excreted in bile.
-          </Text>
+          </RNText>
         </View>
 
         <View style={styles.textSizeScale}>
           <Text style={[styles.textSizeSmallA, { color: colors.textMuted }]}>A</Text>
           <Text style={[styles.textSizeValue, { color: colors.text }]}>
-            {formatTextSize(textSize)}
+            {formatTextSize(textSizeDraft)}
           </Text>
           <Text style={[styles.textSizeLargeA, { color: colors.textMuted }]}>A</Text>
         </View>
 
         <View style={styles.textSizeSlider}>
           <Slider
-            value={textSize}
+            value={textSizeDraft}
             min={TEXT_SIZE_MIN}
             max={TEXT_SIZE_MAX}
             step={TEXT_SIZE_STEP}
-            onChange={setTextSize}
+            onChange={setTextSizeDraft}
+            onCommit={setTextSize}
             label="Text size"
             format={formatTextSize}
             // The one value on the scale with a name is the one worth being

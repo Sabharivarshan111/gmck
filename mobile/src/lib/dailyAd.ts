@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { showRewardedAd } from './ads';
 import { isPremiumCached } from './premium';
+import { ADS_ENABLED } from '@/lib/adsMode';
 
 /**
  * Per-placement daily rewarded ads, ported from src/lib/daily-ad.ts.
@@ -125,6 +126,12 @@ export function subscribeDailyAd(listener: Listener): () => void {
  * plays after the user accepts.
  */
 export async function requestDailyAd(reason: DailyAdReason): Promise<void> {
+  // Nothing to ask about in a build with no ads — and the prompt itself is a
+  // dialog with a scrim, so leaving it in would put a modal in front of a
+  // build that has nothing to show behind it.
+  if (!ADS_ENABLED) {
+    return;
+  }
   // Paid ad-free users never see rewarded ads.
   if (walkthroughActive || isPremiumCached()) {
     return;
