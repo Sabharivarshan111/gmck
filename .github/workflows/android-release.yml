@@ -158,9 +158,8 @@ jobs:
             **Serves live ads**, unlike the debug and preview builds.
 
             Signed with the upload key whose SHA-1 is
-            `CE:EA:8A:41:BB:07:78:C4:78:26:D8:8F:CC:E0:2C:C9:EB:29:40:68`.
-            Play accepts it only once the upload-key reset for that
-            certificate has been approved.
+            `CE:EA:8A:41:BB:07:78:C4:78:26:D8:8F:CC:E0:2C:C9:EB:29:40:68`,
+            the certificate Play accepted in the upload key reset.
 
             Built from `${{ github.sha }}`.
           files: |

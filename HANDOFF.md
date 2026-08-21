@@ -48,23 +48,40 @@ The web app in the repo root is untouched and still live.
 
 ## 2. Blocking items — do these first
 
-### 2.1 Upload key reset (blocks all releases)
+### 2.1 Signing secrets are not in CI yet
 
-The original upload key belongs to **Google AI Studio**, not to the developer.
-The upload certificate is self-signed `CN=AI Studio, O=Google`, so there was
-never a keystore on the developer's machine. CI cannot sign a release until
-this is resolved.
-
-Play App Signing **is** enabled (deployment cert is Google's
-`CN=Android, O=Google Inc.`), so an upload key reset is possible and users are
+**The upload key reset is done.** The original upload key belonged to *Google
+AI Studio* (`CN=AI Studio, O=Google`), so no keystore ever existed on the
+developer's machine. A replacement was generated —
+`CN=Orbit MBBS, OU=Orbit MBBS QBank`, alias `upload`, SHA-1
+`CE:EA:8A:41:BB:07:78:C4:78:26:D8:8F:CC:E0:2C:C9:EB:29:40:68` — and **Play has
+accepted it**. Play App Signing stays enabled, so installed users are
 unaffected.
 
-**Status:** a replacement keystore was generated and handed to the developer
-(`upload-keystore.jks`, alias `upload`), along with `upload_certificate.pem`.
-Awaiting: developer submits the `.pem` via Play Console → Test and release →
-Setup → App signing → *Request upload key reset* (1–2 business days).
+What is still outstanding is only that the three repository secrets have not
+been set:
+
+| Secret | Value |
+|---|---|
+| `ANDROID_KEYSTORE_BASE64` | base64 of `upload-keystore.jks` |
+| `ANDROID_STORE_PASSWORD` | the keystore password |
+| `ANDROID_KEY_PASSWORD` | the same value — store and key passwords match |
+
+Until they exist, `android-release.yml` and `android-internal.yml` fail within
+a minute with an explicit error, and the debug build silently skips its
+"sign with the upload key" step, which is why Google Sign-In does not work in
+the debug APK.
+
+**An agent cannot set these.** The GitHub Actions secrets API is blocked by
+the agent proxy (`403: Access to this GitHub Actions path is not permitted
+through this proxy`), and the Android SDK cannot be installed in the sandbox
+either (`dl.google.com` is denied by the same gateway), so a release cannot be
+built locally as a workaround. A human has to paste them once, in
+Settings → Secrets and variables → Actions.
 
 The keystore and its password are **not in this repo** and must never be.
+Do not "solve" the CI problem by committing them or by base64-ing them into a
+workflow file.
 
 ### 2.2 Leaked OpenAI API key
 
