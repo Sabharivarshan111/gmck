@@ -1,8 +1,19 @@
 name: Android release build
 
-# Manual trigger, so it can be started from a phone: GitHub → Actions →
-# "Android release build" → Run workflow. Produces a signed .aab for Play and
-# a signed .apk for sideloading, downloadable from the run's Artifacts.
+# Produces a signed .aab to upload to Play, and a signed .apk for sideloading,
+# both published to a GitHub release so they can be fetched from a phone.
+#
+# This build serves **live ads**. That is the difference from the debug and
+# preview builds, which overwrite src/lib/adsMode.ts to disable AdMob entirely
+# — serving yourself live ads is an AdMob policy violation. Nothing here
+# touches that file, so ADS_ENABLED stays `!__DEV__`, which is true in a
+# release bundle. The "Confirm this build serves live ads" step below asserts
+# it rather than trusting it.
+#
+# Two triggers, and the push one is not a convenience: GitHub only offers
+# "Run workflow" for a workflow that exists on the repository's **default**
+# branch, and the dispatch API 404s otherwise. Until this branch is merged,
+# a push is the only way to start it.
 on:
   workflow_dispatch:
     inputs:
@@ -10,6 +21,13 @@ on:
         description: 'Also build an APK for direct install'
         type: boolean
         default: true
+  push:
+    branches:
+      - claude/native-app-sync
+
+permissions:
+  # The release step needs write; the default token is read-only.
+  contents: write
 
 jobs:
   build:
@@ -41,6 +59,37 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      # The same guards the debug build runs. A release is the one build where
+      # shipping a known-broken feature actually reaches people.
+      - name: Checks
+        run: |
+          npm run check:fanout
+          npm run check:mcq
+          npm run check:notes-limits
+          npm run check:notes-schema
+          npm run check:sync
+          npm run check:theme-from-image
+          npm run check:glass
+          npm run check:sounds
+          npm run check:native-sound
+          npm run check:subject-cards
+          npm run check:contrast
+
+      # The mirror image of the debug workflow's "Build with no ads at all".
+      # That one overwrites this file; this one refuses to build if anything
+      # has. A release that silently shipped with ads disabled would earn
+      # nothing and give no sign of it.
+      - name: Confirm this build serves live ads
+        run: |
+          set -euo pipefail
+          if grep -q 'ADS_ENABLED = false' src/lib/adsMode.ts; then
+            echo "::error::src/lib/adsMode.ts has ads hard-disabled. A release build must serve live ads."
+            exit 1
+          fi
+          grep -q 'ADS_ENABLED = !__DEV__' src/lib/adsMode.ts \
+            || { echo "::error::src/lib/adsMode.ts is not in its shipped form."; exit 1; }
+          echo "ads: live (ADS_ENABLED = !__DEV__, and a release bundle sets __DEV__ false)"
+
       - name: Restore the upload keystore
         # The keystore is stored as base64 in a repository secret. It never
         # exists in the repo, and is written outside the workspace so it cannot
@@ -63,7 +112,7 @@ jobs:
         working-directory: mobile/android
 
       - name: Build APK (for direct install)
-        if: ${{ inputs.build_apk }}
+        if: ${{ github.event_name == 'push' || inputs.build_apk }}
         env:
           KEYSTORE_PATH: ${{ runner.temp }}/my-upload-key.jks
           STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
@@ -84,9 +133,36 @@ jobs:
           if-no-files-found: error
 
       - name: Upload APK
-        if: ${{ inputs.build_apk }}
+        if: ${{ github.event_name == 'push' || inputs.build_apk }}
         uses: actions/upload-artifact@v4
         with:
           name: orbit-mbbs-apk
           path: mobile/android/app/build/outputs/apk/release/*.apk
           if-no-files-found: error
+
+      # Artifacts need a desktop browser and expire; a release asset can be
+      # downloaded from the phone that is going to install it.
+      - name: Publish the AAB and APK where a phone can reach them
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: release-${{ github.run_number }}
+          name: Release build ${{ github.run_number }}
+          prerelease: true
+          body: |
+            Signed release build of the Orbit MBBS native app.
+
+            - `app-release.aab` — upload this to Google Play.
+            - `app-release.apk` — install this directly to test the real thing.
+
+            Package `com.aistudio.mbbsqbank.aycxvd`, versionCode 14.
+            **Serves live ads**, unlike the debug and preview builds.
+
+            Signed with the upload key whose SHA-1 is
+            `CE:EA:8A:41:BB:07:78:C4:78:26:D8:8F:CC:E0:2C:C9:EB:29:40:68`.
+            Play accepts it only once the upload-key reset for that
+            certificate has been approved.
+
+            Built from `${{ github.sha }}`.
+          files: |
+            mobile/android/app/build/outputs/bundle/release/*.aab
+            mobile/android/app/build/outputs/apk/release/*.apk

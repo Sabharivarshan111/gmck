@@ -35,12 +35,26 @@ class SoundModule(reactContext: ReactApplicationContext) :
   NativeOrbitSoundSpec(reactContext) {
 
   /**
-   * USAGE_ASSISTANCE_SONIFICATION is the correct usage for UI feedback: it
-   * routes with the system's touch sounds and, importantly, ducks rather than
-   * interrupting whatever the user is listening to. Declaring this as media
-   * would pause their music for a 45ms click.
+   * Two pools, because the two sounds mean different things to the system.
+   *
+   * A SoundPool's AudioAttributes are fixed at construction, and the usage is
+   * what decides whether Android will let the sound out at all.
+   *
+   * - **Taps** are USAGE_ASSISTANCE_SONIFICATION. That routes with the
+   *   system's own touch sounds and ducks under whatever the user is
+   *   listening to rather than interrupting it — declaring a 45ms click as
+   *   media would pause their music. The consequence is that it goes to the
+   *   system stream, which Do Not Disturb and silent mode mute. That is
+   *   correct: a phone told to be quiet should be quiet, and it is the reason
+   *   a device sitting in DND makes no click no matter how healthy this code
+   *   is.
+   *
+   * - **The focus chime** is USAGE_ALARM. A session ending is an alarm the
+   *   user set themselves and is waiting for, and alarms are exempt from Do
+   *   Not Disturb by default. Filing it as sonification would have silenced
+   *   the one sound in the app someone is actually listening for.
    */
-  private val pool: SoundPool =
+  private val uiPool: SoundPool =
     SoundPool.Builder()
       // Four is enough for overlapping taps without reserving decoders that
       // spend the whole session idle.
@@ -53,24 +67,41 @@ class SoundModule(reactContext: ReactApplicationContext) :
       )
       .build()
 
+  private val alertPool: SoundPool =
+    SoundPool.Builder()
+      // One: a second chime on top of the first is not a thing that happens.
+      .setMaxStreams(1)
+      .setAudioAttributes(
+        AudioAttributes.Builder()
+          .setUsage(AudioAttributes.USAGE_ALARM)
+          .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+          .build()
+      )
+      .build()
+
+  private fun poolFor(name: String): SoundPool = if (name == CHIME) alertPool else uiPool
+
   private val ids = mutableMapOf<String, Int>()
   /** Ids that SoundPool has finished decoding. Playing one before it is ready
    *  is a silent no-op, so they are tracked rather than assumed. */
   private val ready = mutableSetOf<Int>()
 
   init {
-    pool.setOnLoadCompleteListener { _, sampleId, status ->
-      if (status == 0) {
-        synchronized(ready) { ready.add(sampleId) }
+    val onLoaded =
+      SoundPool.OnLoadCompleteListener { _, sampleId, status ->
+        if (status == 0) {
+          synchronized(ready) { ready.add(sampleId) }
+        }
       }
-    }
-    load("tap", R.raw.tap)
-    load("chime", R.raw.chime)
+    uiPool.setOnLoadCompleteListener(onLoaded)
+    alertPool.setOnLoadCompleteListener(onLoaded)
+    load(TAP, R.raw.tap)
+    load(CHIME, R.raw.chime)
   }
 
   private fun load(name: String, resId: Int) {
     try {
-      ids[name] = pool.load(reactApplicationContext, resId, 1)
+      ids[name] = poolFor(name).load(reactApplicationContext, resId, 1)
     } catch (_: Throwable) {
       // A clip that will not decode simply never plays.
     }
@@ -88,7 +119,7 @@ class SoundModule(reactContext: ReactApplicationContext) :
     }
     val level = volume.coerceIn(0.0, 1.0).toFloat()
     try {
-      pool.play(id, level, level, /* priority = */ 1, /* loop = */ 0, /* rate = */ 1f)
+      poolFor(name).play(id, level, level, /* priority = */ 1, /* loop = */ 0, /* rate = */ 1f)
     } catch (_: Throwable) {
       // Never let feedback break the action it is decorating.
     }
@@ -97,9 +128,15 @@ class SoundModule(reactContext: ReactApplicationContext) :
   override fun invalidate() {
     super.invalidate()
     try {
-      pool.release()
+      uiPool.release()
+      alertPool.release()
     } catch (_: Throwable) {
       // Nothing useful to do if teardown fails.
     }
+  }
+
+  companion object {
+    const val TAP = "tap"
+    const val CHIME = "chime"
   }
 }

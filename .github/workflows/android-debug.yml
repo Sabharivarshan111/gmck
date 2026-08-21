@@ -94,6 +94,7 @@ jobs:
           npm run check:fanout
           npm run check:mcq
           npm run check:notes-limits
+          npm run check:notes-schema
           npm run check:sync
           npm run check:theme-from-image
           npm run check:glass

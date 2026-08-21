@@ -336,7 +336,8 @@ export default function HomeScreen() {
               { backgroundColor: withAlpha(colors.accent, 0.14), borderColor: colors.accent },
             ]}>
             <Text style={[styles.editBannerText, { color: colors.text }]}>
-              Drag a block, or use its arrows, to put Home in the order you want.
+              Drag a block to reorder it. Drag the bar under a block, or use − and +, to
+              change its size.
             </Text>
             <Touchable onPress={reset} label="Reset home layout" scaleTo={0.94}>
               <Text style={[styles.editReset, { color: colors.textMuted }]}>Reset</Text>

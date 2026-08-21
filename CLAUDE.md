@@ -125,6 +125,73 @@ start of a question string, and the model reads them to fill `pyqYears`.
 Trimming the front to fit would empty the year badges instead.
 `npm run check:notes-limits` walks all 413 topic groups.
 
+## Notes render the edge function's shapes, not strings
+
+`generate-handwritten-notes` emits **objects** in every list section — a
+bullet is `{ label, description }`, a step is
+`{ title, description, keyTrigger? }`, a flowchart node is `{ label, detail }`,
+a comparison row is `{ label, left, right }`. Only `revision.items` is
+`string[]`.
+
+The native renderer originally ran every item through `String(item)`, which
+prints an object as the literal text `[object Object]`. It shipped because
+`preview/notesSample.ts` had been written with plain strings — a fixture that
+agreed with the bug, so the demo screen looked perfect while a third-year
+Community Medicine topic was unreadable on a phone. The model does sometimes
+return bare strings, which is why *some* topics were fine and there was no
+pattern to it.
+
+`NotesContentView` now reads named fields through `field()` and never
+stringifies an item. Two things it also does, both ported from the web app and
+both easy to drop again:
+
+- **`**bold**` is a highlight, not literal asterisks.** The model marks the
+  examinable word; `Inline` turns the pairs into a marked span.
+- **Per-section PYQ years are a count and chips** ("3× ASKED IN FEB 23 …"),
+  not a comma list. The count is the part being scanned for.
+
+`npm run check:notes-schema` pins the fixture, the renderer and the edge
+function's declared schema to each other.
+
+## A native module has to be a TurboModule
+
+The app runs the New Architecture, and under it a module registered from a
+plain `ReactPackage` is **never** reachable: the TurboModule manager only
+reads those packages when `useTurboModuleInterop` is on, and that flag is
+`false` in every stable React Native release. The sound module shipped that
+way and was silent on every device, with `NativeModules.OrbitSound` simply
+undefined and Settings hiding its switches as designed.
+
+The four pieces that make it work — `src/native/NativeOrbitSound.ts`,
+`codegenConfig` in `mobile/package.json`, `SoundModule` extending the
+generated `NativeOrbitSoundSpec`, and `SoundPackage` as a `BaseReactPackage`
+declaring `isTurboModule = true` — are asserted by
+`npm run check:native-sound`, which also parses the spec through the real
+codegen.
+
+Two things about audio that look like bugs and are the platform:
+
+- **Taps are USAGE_ASSISTANCE_SONIFICATION**, so silent mode and Do Not
+  Disturb mute them. That is correct, and it is the usual answer to "sound
+  does not work". Settings says so under the switch.
+- **The focus chime is USAGE_ALARM** on its own SoundPool, because a session
+  ending is an alarm the user set and alarms are exempt from DND.
+
+The module is registered with `needsEagerInit = true`: `SoundPool.load()` is
+asynchronous and playing an undecoded sample is a silent no-op, so a lazily
+built module is constructed *by* the first press and that press makes no
+sound.
+
+## Do not use `elevation` on a view with no background
+
+Android draws an elevation shadow from the view's outline, and a view with no
+background colour gets its outline from the bounds. The Timer's dial carried
+`elevation: 12` with `borderRadius: 130` to fake a halo, and the shadow came
+out as a straight-edged polygon inside the ring — invisible on the black
+theme, an octagon on every lighter one. There is no blur on this platform
+without another dependency, so the halo is gone rather than approximated;
+same rule `GlassSurface` follows.
+
 ## Cloud progress needs a profile, not just a session
 
 `record_questions_done` opens with `IF _year IS NULL THEN RETURN 0` — it reads

@@ -14,13 +14,24 @@ import type { NotesContent } from '@/lib/handwrittenNotes';
  * revision — plus the high-yield banner and the PYQ badges, so a regression in
  * any one of them shows up.
  *
+ * **The item shapes here are the edge function's, not the renderer's.** This
+ * file used to hold plain strings where the function emits objects — a bullet
+ * is `{ label, description }`, a step is `{ title, description, keyTrigger? }`,
+ * a flowchart node is `{ label, detail }` — and the renderer had been written
+ * to match the fixture rather than the contract. The result was a demo screen
+ * that looked perfect while real notes rendered the literal text
+ * `[object Object]` on a phone. A fixture that agrees with the code it is
+ * testing tests nothing; the shapes below are copied from the prompt schema in
+ * supabase/functions/generate-handwritten-notes/index.ts, and
+ * `npm run check:notes-schema` fails if they drift apart again.
+ *
  * The content is standard textbook material on myocardial infarction, matching
  * the first essay in Final Year → General Medicine → Cardiology. It is a
  * rendering fixture, not teaching material, and is never shown to a user.
  */
 export const SAMPLE_NOTES: NotesContent = {
   highYieldTip:
-    'Troponin is the most sensitive and specific marker. It rises at 3–4 hours, peaks at 24 hours and stays elevated for up to 10 days — so it is the marker of choice for late presentation.',
+    '**Troponin** is the most sensitive and specific marker. It rises at 3–4 hours, peaks at 24 hours and stays elevated for up to 10 days — so it is the marker of choice for late presentation.',
   pyqYears: ['2023', '2021', '2019', '2017'],
   sections: [
     {
@@ -33,11 +44,24 @@ export const SAMPLE_NOTES: NotesContent = {
     {
       type: 'bullets',
       title: 'Risk factors',
+      pyqYears: ['FEB 23', 'AUG 21', 'FEB 19'],
       payload: {
         items: [
-          'Modifiable — smoking, hypertension, diabetes mellitus, dyslipidaemia, obesity, sedentary lifestyle',
-          'Non-modifiable — age, male sex, family history of premature coronary artery disease',
-          'Smoking and diabetes carry the strongest attributable risk in the Indian population',
+          {
+            label: 'Modifiable',
+            description:
+              'Smoking, hypertension, diabetes mellitus, dyslipidaemia, obesity, sedentary lifestyle.',
+          },
+          {
+            label: 'Non-modifiable',
+            description:
+              'Age, male sex, family history of premature coronary artery disease.',
+          },
+          {
+            label: 'Strongest in India',
+            description:
+              '**Smoking** and **diabetes** carry the highest attributable risk in the Indian population.',
+          },
         ],
       },
     },
@@ -46,25 +70,46 @@ export const SAMPLE_NOTES: NotesContent = {
       title: 'Pathogenesis',
       payload: {
         steps: [
-          'Atherosclerotic plaque forms in a coronary artery',
-          'Plaque becomes unstable and its fibrous cap ruptures',
-          'Platelet adhesion and aggregation over the exposed core',
-          'Occlusive thrombus forms',
-          'Ischaemia → myocyte necrosis within 20–40 minutes',
+          {
+            label: 'Plaque formation',
+            detail: 'An atherosclerotic plaque builds up in a coronary artery.',
+          },
+          {
+            label: 'Rupture',
+            detail: 'The plaque becomes unstable and its fibrous cap tears.',
+          },
+          {
+            label: 'Platelet aggregation',
+            detail: 'Platelets adhere to and aggregate over the exposed lipid core.',
+          },
+          { label: 'Thrombosis', detail: 'An occlusive thrombus forms.' },
+          {
+            label: 'Necrosis',
+            detail: 'Ischaemia causes myocyte necrosis within 20–40 minutes.',
+          },
         ],
       },
     },
     {
       type: 'comparison',
       title: 'STEMI vs NSTEMI',
+      pyqYears: ['AUG 22', 'FEB 18'],
       payload: {
         left: 'STEMI',
         right: 'NSTEMI',
         rows: [
-          { left: 'Complete occlusion', right: 'Partial occlusion' },
-          { left: 'ST elevation, later Q waves', right: 'ST depression or T inversion' },
-          { left: 'Transmural necrosis', right: 'Subendocardial necrosis' },
-          { left: 'Immediate reperfusion', right: 'Risk-stratify, then angiography' },
+          { label: 'Occlusion', left: 'Complete', right: 'Partial' },
+          {
+            label: 'ECG',
+            left: 'ST elevation, later Q waves',
+            right: 'ST depression or T inversion',
+          },
+          { label: 'Depth', left: 'Transmural necrosis', right: 'Subendocardial necrosis' },
+          {
+            label: 'Management',
+            left: 'Immediate reperfusion',
+            right: 'Risk-stratify, then angiography',
+          },
         ],
       },
     },
@@ -87,12 +132,26 @@ export const SAMPLE_NOTES: NotesContent = {
       payload: {
         subtitle: 'Gross and microscopic changes with time',
         items: [
-          '0–12 h — no gross change; wavy fibres microscopically',
-          '12–24 h — pallor; contraction band necrosis, early neutrophils',
-          '1–3 days — yellow centre; dense neutrophilic infiltrate',
-          '3–7 days — hyperaemic border; macrophages clear necrotic myocytes',
-          '1–2 weeks — granulation tissue at the margins',
-          '>2 months — dense collagenous scar',
+          {
+            title: '0–12 hours',
+            details: ['No gross change', 'Wavy fibres microscopically'],
+          },
+          {
+            title: '12–24 hours',
+            tag: 'CLASSIC',
+            details: ['Pallor', 'Contraction band necrosis', 'Early neutrophils'],
+          },
+          {
+            title: '1–3 days',
+            details: ['Yellow centre', 'Dense neutrophilic infiltrate'],
+          },
+          {
+            title: '3–7 days',
+            tag: 'COMMON',
+            details: ['Hyperaemic border', 'Macrophages clear necrotic myocytes'],
+          },
+          { title: '1–2 weeks', details: ['Granulation tissue at the margins'] },
+          { title: 'Over 2 months', details: ['Dense collagenous scar'] },
         ],
       },
     },
@@ -101,12 +160,33 @@ export const SAMPLE_NOTES: NotesContent = {
       title: 'Immediate management',
       payload: {
         items: [
-          'Airway, breathing, circulation; continuous ECG monitoring and IV access',
-          'Aspirin 300 mg chewed, plus a second antiplatelet (clopidogrel or ticagrelor)',
-          'Sublingual nitrate for pain, morphine if pain persists',
-          'Oxygen only if saturation is below 90 per cent',
-          'Reperfusion — primary PCI within 90 minutes, or thrombolysis if PCI is unavailable',
-          'Start a beta blocker, statin and ACE inhibitor once stable',
+          {
+            title: 'Stabilise',
+            description: 'Airway, breathing, circulation; continuous ECG monitoring and IV access.',
+          },
+          {
+            title: 'Antiplatelets',
+            description:
+              'Aspirin 300 mg chewed, plus a second antiplatelet (clopidogrel or ticagrelor).',
+          },
+          {
+            title: 'Analgesia',
+            description: 'Sublingual nitrate for pain, morphine if pain persists.',
+          },
+          {
+            title: 'Oxygen',
+            description: 'Only if saturation is below 90 per cent.',
+            keyTrigger: 'SpO2 under 90%',
+          },
+          {
+            title: 'Reperfusion',
+            description: 'Primary PCI within 90 minutes, or thrombolysis if PCI is unavailable.',
+            keyTrigger: 'Door-to-balloon 90 minutes',
+          },
+          {
+            title: 'Secondary prevention',
+            description: 'Start a beta blocker, statin and ACE inhibitor once stable.',
+          },
         ],
       },
     },
@@ -115,11 +195,27 @@ export const SAMPLE_NOTES: NotesContent = {
       title: 'Complications',
       payload: {
         items: [
-          'Arrhythmias — ventricular fibrillation is the commonest cause of early death',
-          'Cardiogenic shock, acute left ventricular failure',
-          'Mechanical — papillary muscle rupture, ventricular septal rupture, free wall rupture',
-          'Dressler syndrome — autoimmune pericarditis weeks after the event',
-          'Ventricular aneurysm and mural thrombus',
+          {
+            label: 'Arrhythmias',
+            description: 'Ventricular fibrillation is the commonest cause of early death.',
+          },
+          {
+            label: 'Pump failure',
+            description: 'Cardiogenic shock and acute left ventricular failure.',
+          },
+          {
+            label: 'Mechanical',
+            description:
+              'Papillary muscle rupture, ventricular septal rupture, free wall rupture.',
+          },
+          {
+            label: 'Dressler syndrome',
+            description: 'Autoimmune pericarditis weeks after the event.',
+          },
+          {
+            label: 'Late',
+            description: 'Ventricular aneurysm and mural thrombus.',
+          },
         ],
       },
     },

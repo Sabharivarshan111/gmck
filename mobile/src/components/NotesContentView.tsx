@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, type StyleProp, type TextStyle } from 'react-native';
 import { Text } from '@/components/Text';
 import { useTheme, withAlpha } from '@/theme';
 import type { NotesContent, Section } from '@/lib/handwrittenNotes';
@@ -32,7 +32,7 @@ function NotesContentViewBase({ content }: { content: NotesContent }) {
             },
           ]}>
           <Text style={[styles.tipLabel, { color: colors.warning }]}>HIGH-YIELD</Text>
-          <Text style={[styles.tipText, { color: colors.text }]}>{content.highYieldTip}</Text>
+          <Inline text={content.highYieldTip} style={[styles.tipText, { color: colors.text }]} />
         </View>
       ) : null}
 
@@ -55,111 +55,332 @@ function NotesContentViewBase({ content }: { content: NotesContent }) {
   );
 }
 
+/**
+ * `**bold**` in the model's output, rendered as a highlight.
+ *
+ * The notes function emits Markdown emphasis inside otherwise plain strings,
+ * and the web app has always turned it into a marker-pen highlight. The native
+ * port printed the asterisks — so the one word in a sentence the model marked
+ * as the examinable one arrived looking like a typo.
+ *
+ * React Native nests Text, so this needs no library: split on the pairs and
+ * give the inner ones a background.
+ */
+function Inline({ text, style }: { text: string; style?: StyleProp<TextStyle> }) {
+  const { colors } = useTheme();
+  const parts = String(text ?? '').split(/(\*\*[^*]+\*\*)/g);
+  if (parts.length === 1) {
+    // The common case, and the one that must stay cheap: no marks, no extra
+    // Text nodes, no per-part array work.
+    return <Text style={style}>{text}</Text>;
+  }
+  return (
+    <Text style={style}>
+      {parts.map((part, i) =>
+        part.startsWith('**') && part.endsWith('**') && part.length > 4 ? (
+          <Text
+            key={i}
+            style={[styles.mark, { backgroundColor: withAlpha(colors.warning, 0.28), color: colors.text }]}>
+            {part.slice(2, -2)}
+          </Text>
+        ) : (
+          <Text key={i}>{part}</Text>
+        ),
+      )}
+    </Text>
+  );
+}
+
+/**
+ * "6× ASKED IN [FEB 23] [FEB 22] …" — the years a section has come up.
+ *
+ * This was a line of grey text reading "Asked: Feb 2012, Feb 2013". The count
+ * is the part a student scans for, and it was the part that had to be worked
+ * out by counting commas.
+ */
+function AskedRow({ years }: { years: string[] }) {
+  const { colors } = useTheme();
+  if (years.length === 0) {
+    return null;
+  }
+  return (
+    <View style={[styles.askedRow, { backgroundColor: colors.cardElevated, borderColor: colors.border }]}>
+      <View style={[styles.askedCount, { backgroundColor: withAlpha(colors.warning, 0.22) }]}>
+        <Text style={[styles.askedCountText, { color: colors.warning }]}>{years.length}× ASKED</Text>
+      </View>
+      <Text style={[styles.askedIn, { color: colors.textMuted }]}>IN</Text>
+      {years.map(year => (
+        <View key={year} style={[styles.yearChip, { backgroundColor: withAlpha(colors.text, 0.12) }]}>
+          <Text style={[styles.yearChipText, { color: colors.text }]}>{year.toUpperCase()}</Text>
+        </View>
+      ))}
+    </View>
+  );
+}
+
 function SectionBlock({ section }: { section: Section }) {
   const { colors } = useTheme();
+  /**
+   * Definitions and comparisons are marked in red, everything else in green.
+   *
+   * These are semantic, not decorative: red is "learn this exactly as written"
+   * and green is "this is the body of the answer". They stay red and green in
+   * every theme for the same reason success and danger do — a colour that
+   * means something cannot be reassigned by a palette.
+   */
+  const accent =
+    section.type === 'definition' || section.type === 'comparison'
+      ? colors.danger
+      : colors.success;
   return (
     <View style={[styles.section, { backgroundColor: colors.card, borderColor: colors.border }]}>
       <View style={styles.sectionHeader}>
+        <View style={[styles.sectionRule, { backgroundColor: accent }]} />
         {section.icon ? <Text style={styles.sectionIcon}>{section.icon}</Text> : null}
-        <Text style={[styles.sectionTitle, { color: colors.text }]}>{section.title}</Text>
+        <Text style={[styles.sectionTitle, styles.flex, { color: accent }]}>{section.title}</Text>
       </View>
-      {section.pyqYears && section.pyqYears.length > 0 ? (
-        <Text style={[styles.sectionYears, { color: colors.textMuted }]}>
-          Asked: {section.pyqYears.join(', ')}
-        </Text>
-      ) : null}
+      <AskedRow years={section.pyqYears ?? []} />
       <SectionBody section={section} />
+    </View>
+  );
+}
+
+/**
+ * One string out of a section item.
+ *
+ * The notes function's item shapes are **objects**, not strings: a bullet is
+ * `{ label, description }`, a step is `{ title, description, keyTrigger? }`, a
+ * flowchart node is `{ label, detail }`. The first version of this file ran
+ * every list through `String(item)`, which renders an object as the literal
+ * text `[object Object]` — which is exactly what a third-year Community
+ * Medicine topic showed instead of its content.
+ *
+ * It went unnoticed because the model does sometimes return plain strings, so
+ * some topics looked perfect and others were unreadable, with nothing in
+ * between to suggest the renderer was the problem rather than the answer.
+ *
+ * So: read the named field, fall back to a bare string, and never stringify
+ * an object.
+ */
+function field(item: unknown, ...names: string[]): string {
+  if (typeof item === 'string') {
+    return item;
+  }
+  if (item && typeof item === 'object') {
+    for (const name of names) {
+      const value = (item as Record<string, unknown>)[name];
+      if (typeof value === 'string' && value.length > 0) {
+        return value;
+      }
+      if (typeof value === 'number') {
+        return String(value);
+      }
+    }
+  }
+  return '';
+}
+
+/** The items of a list section, as a plain array whatever arrived. */
+function itemsOf(value: unknown): unknown[] {
+  return Array.isArray(value) ? value : [];
+}
+
+/** `details: string[]` on a morphology item, tolerating a single string. */
+function detailsOf(item: unknown): string[] {
+  if (!item || typeof item !== 'object') {
+    return [];
+  }
+  const value = (item as Record<string, unknown>).details;
+  if (Array.isArray(value)) {
+    return value.map(entry => field(entry, 'text', 'detail', 'description')).filter(Boolean);
+  }
+  return typeof value === 'string' ? [value] : [];
+}
+
+/** A CLASSIC / PATHOGNOMONIC / COMMON marker on a morphology item. */
+function TagChip({ tag }: { tag: string }) {
+  const { colors } = useTheme();
+  if (!tag) {
+    return null;
+  }
+  return (
+    <View style={[styles.tagChip, { backgroundColor: withAlpha(colors.warning, 0.16) }]}>
+      <Text style={[styles.tagText, { color: colors.warning }]}>{tag.toUpperCase()}</Text>
     </View>
   );
 }
 
 function SectionBody({ section }: { section: Section }) {
   const { colors } = useTheme();
-  const p = section.payload ?? {};
-  const asStrings = (value: unknown): string[] =>
-    Array.isArray(value) ? value.map(item => String(item)) : [];
+  // `?? section` because the model sometimes returns a section's fields at the
+  // top level rather than under `payload`. The web app has always allowed
+  // that; without it those sections render as nothing at all.
+  const p = (section.payload ?? (section as unknown as Record<string, unknown>) ?? {}) as Record<
+    string,
+    unknown
+  >;
 
   switch (section.type) {
     case 'definition':
       return (
         <View style={[styles.definition, { borderLeftColor: colors.fuchsia }]}>
-          <Text style={[styles.body, { color: colors.text }]}>{String(p.text ?? '')}</Text>
+          <Inline text={field(p, 'text')} style={[styles.body, { color: colors.text }]} />
         </View>
       );
 
     case 'text':
-      return <Text style={[styles.body, { color: colors.text }]}>{String(p.paragraph ?? '')}</Text>;
+      return <Inline text={field(p, 'paragraph')} style={[styles.body, { color: colors.text }]} />;
 
     case 'bullets':
       return (
         <View>
-          {asStrings(p.items).map((item, i) => (
-            <View key={i} style={styles.bulletRow}>
-              <Text style={[styles.bulletDot, { color: colors.fuchsia }]}>•</Text>
-              <Text style={[styles.body, styles.flex, { color: colors.text }]}>{item}</Text>
-            </View>
-          ))}
+          {itemsOf(p.items).map((item, i) => {
+            const label = field(item, 'label', 'title');
+            const description = field(item, 'description', 'text', 'detail');
+            return (
+              <View key={i} style={styles.bulletRow}>
+                <Text style={[styles.bulletDot, { color: colors.fuchsia }]}>•</Text>
+                <View style={styles.flex}>
+                  {label ? (
+                    <Text style={[styles.itemLabel, { color: colors.fuchsia }]}>{label}</Text>
+                  ) : null}
+                  {description ? (
+                    <Inline
+                      text={description}
+                      style={[
+                        styles.body,
+                        // Tightened only when it sits under a label, so a
+                        // bullet that is one sentence keeps its own rhythm.
+                        label ? styles.itemDescription : null,
+                        { color: label ? colors.textMuted : colors.text },
+                      ]}
+                    />
+                  ) : null}
+                </View>
+              </View>
+            );
+          })}
         </View>
       );
 
     case 'steps':
       return (
         <View>
-          {asStrings(p.items).map((item, i) => (
-            <View key={i} style={styles.bulletRow}>
-              <View style={[styles.stepNum, { backgroundColor: withAlpha(colors.fuchsia, 0.18) }]}>
-                <Text style={[styles.stepNumText, { color: colors.fuchsia }]}>{i + 1}</Text>
+          {itemsOf(p.items).map((item, i) => {
+            const title = field(item, 'title', 'label');
+            const description = field(item, 'description', 'text', 'detail');
+            const trigger = field(item, 'keyTrigger');
+            return (
+              <View key={i} style={styles.bulletRow}>
+                <View
+                  style={[styles.stepNum, { backgroundColor: withAlpha(colors.fuchsia, 0.18) }]}>
+                  <Text style={[styles.stepNumText, { color: colors.fuchsia }]}>{i + 1}</Text>
+                </View>
+                <View style={styles.flex}>
+                  {title ? (
+                    <Text style={[styles.stepTitle, { color: colors.textMuted }]}>
+                      {title.toUpperCase()}
+                    </Text>
+                  ) : null}
+                  {description ? (
+                    <Inline text={description} style={[styles.body, { color: colors.text }]} />
+                  ) : null}
+                  {trigger ? (
+                    <View
+                      style={[
+                        styles.trigger,
+                        {
+                          backgroundColor: withAlpha(colors.warning, 0.12),
+                          borderColor: withAlpha(colors.warning, 0.35),
+                        },
+                      ]}>
+                      <Text style={[styles.triggerText, { color: colors.warning }]}>
+                        Key trigger: {trigger}
+                      </Text>
+                    </View>
+                  ) : null}
+                </View>
               </View>
-              <Text style={[styles.body, styles.flex, { color: colors.text }]}>{item}</Text>
-            </View>
-          ))}
+            );
+          })}
         </View>
       );
 
-    case 'morphology':
+    case 'morphology': {
+      const subtitle = field(p, 'subtitle');
       return (
         <View>
-          {p.subtitle ? (
-            <Text style={[styles.subtitle, { color: colors.textMuted }]}>{String(p.subtitle)}</Text>
+          {subtitle ? (
+            <Text style={[styles.subtitle, { color: colors.cyan }]}>{subtitle}</Text>
           ) : null}
-          {asStrings(p.items).map((item, i) => (
-            <View key={i} style={styles.bulletRow}>
-              <Text style={[styles.bulletDot, { color: colors.cyan }]}>›</Text>
-              <Text style={[styles.body, styles.flex, { color: colors.text }]}>{item}</Text>
-            </View>
-          ))}
+          {itemsOf(p.items).map((item, i) => {
+            const details = detailsOf(item);
+            return (
+              <View key={i} style={styles.morphItem}>
+                <View style={styles.morphHead}>
+                  <Text style={[styles.itemLabel, styles.flex, { color: colors.text }]}>
+                    {field(item, 'title', 'label')}
+                  </Text>
+                  <TagChip tag={field(item, 'tag')} />
+                </View>
+                <View style={[styles.morphDetails, { borderLeftColor: colors.border }]}>
+                  {details.map((detail, j) => (
+                    <Inline
+                      key={j}
+                      text={`— ${detail}`}
+                      style={[styles.body, { color: colors.textMuted }]}
+                    />
+                  ))}
+                </View>
+              </View>
+            );
+          })}
         </View>
       );
+    }
 
     case 'comparison': {
-      const rows = Array.isArray(p.rows) ? (p.rows as Record<string, unknown>[]) : [];
+      const rows = itemsOf(p.rows);
       return (
         <View>
           <View style={[styles.compareHead, { borderBottomColor: colors.border }]}>
             <Text style={[styles.compareCell, styles.compareHeadText, { color: colors.cyan }]}>
-              {String(p.left ?? '')}
+              {field(p, 'left')}
             </Text>
             <Text style={[styles.compareCell, styles.compareHeadText, { color: colors.fuchsia }]}>
-              {String(p.right ?? '')}
+              {field(p, 'right')}
             </Text>
           </View>
-          {rows.map((row, i) => (
-            <View
-              key={i}
-              style={[
-                styles.compareRow,
-                // Same reasoning as the table: no rule under the final row.
-                i === rows.length - 1 ? styles.tableRowLast : null,
-                { borderBottomColor: colors.border },
-              ]}>
-              <Text style={[styles.compareCell, styles.body, { color: colors.text }]}>
-                {String(row.left ?? '')}
-              </Text>
-              <Text style={[styles.compareCell, styles.body, { color: colors.text }]}>
-                {String(row.right ?? '')}
-              </Text>
-            </View>
-          ))}
+          {rows.map((row, i) => {
+            const label = field(row, 'label');
+            return (
+              <View key={i}>
+                {/* The row label is what the two cells are being compared
+                    *on*. Dropping it, as this did, leaves two columns of
+                    facts with no stated axis. */}
+                {label ? (
+                  <Text style={[styles.compareLabel, { color: colors.textMuted }]}>
+                    {label.toUpperCase()}
+                  </Text>
+                ) : null}
+                <View
+                  style={[
+                    styles.compareRow,
+                    i === rows.length - 1 ? styles.tableRowLast : null,
+                    { borderBottomColor: colors.border },
+                  ]}>
+                  <Inline
+                    text={field(row, 'left')}
+                    style={[styles.compareCell, styles.body, { color: colors.text }]}
+                  />
+                  <Inline
+                    text={field(row, 'right')}
+                    style={[styles.compareCell, styles.body, { color: colors.text }]}
+                  />
+                </View>
+              </View>
+            );
+          })}
         </View>
       );
     }
@@ -167,22 +388,30 @@ function SectionBody({ section }: { section: Section }) {
     case 'table':
       return (
         <TableSection
-          columns={asStrings(p.columns)}
-          rows={Array.isArray(p.rows) ? (p.rows as unknown[]) : []}
+          columns={itemsOf(p.columns).map(column => field(column, 'label', 'title'))}
+          rows={itemsOf(p.rows)}
         />
       );
 
     case 'flowchart':
       return (
         <View>
-          {asStrings(p.steps).map((step, i, all) => (
+          {itemsOf(p.steps).map((step, i, all) => (
             <View key={i}>
               <View
                 style={[
                   styles.flowStep,
                   { backgroundColor: colors.cardElevated, borderColor: colors.border },
                 ]}>
-                <Text style={[styles.body, { color: colors.text }]}>{step}</Text>
+                <Text style={[styles.itemLabel, { color: colors.text }]}>
+                  {field(step, 'label', 'title')}
+                </Text>
+                {field(step, 'detail', 'description') ? (
+                  <Inline
+                    text={field(step, 'detail', 'description')}
+                    style={[styles.body, { color: colors.textMuted }]}
+                  />
+                ) : null}
               </View>
               {i < all.length - 1 ? (
                 <Text style={[styles.flowArrow, { color: colors.fuchsia }]}>↓</Text>
@@ -202,28 +431,30 @@ function SectionBody({ section }: { section: Section }) {
               borderColor: withAlpha(colors.success, 0.4),
             },
           ]}>
-          <Text style={[styles.body, { color: colors.text }]}>{String(p.text ?? '')}</Text>
+          <Inline text={field(p, 'text')} style={[styles.body, { color: colors.text }]} />
         </View>
       );
 
     case 'revision':
       return (
         <View>
-          {asStrings(p.items).map((item, i) => (
+          {itemsOf(p.items).map((item, i) => (
             <View key={i} style={styles.bulletRow}>
               <Text style={[styles.bulletDot, { color: colors.warning }]}>★</Text>
-              <Text style={[styles.body, styles.flex, { color: colors.text }]}>{item}</Text>
+              <Inline
+                text={field(item, 'text', 'label', 'title')}
+                style={[styles.body, styles.flex, { color: colors.text }]}
+              />
             </View>
           ))}
         </View>
       );
 
     default:
-      // Unknown section types still show their text rather than vanishing.
+      // Unknown section types still show their text rather than vanishing —
+      // but never as a stringified object.
       return (
-        <Text style={[styles.body, { color: colors.textMuted }]}>
-          {typeof p.text === 'string' ? p.text : JSON.stringify(p)}
-        </Text>
+        <Text style={[styles.body, { color: colors.textMuted }]}>{field(p, 'text', 'paragraph')}</Text>
       );
   }
 }
@@ -410,6 +641,112 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 8,
     marginBottom: 6,
+  },
+  // Raw sizes, like the rest of this file. It predates the type ramp and
+  // mixing the two here would put two different leadings on adjacent lines.
+  mark: {
+    fontWeight: '700',
+  },
+  sectionRule: {
+    width: 3,
+    alignSelf: 'stretch',
+    minHeight: 18,
+    borderRadius: 2,
+  },
+  askedRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+    gap: 6,
+    borderRadius: 8,
+    borderWidth: StyleSheet.hairlineWidth,
+    paddingHorizontal: 8,
+    paddingVertical: 7,
+    marginBottom: 10,
+  },
+  askedCount: {
+    paddingHorizontal: 7,
+    paddingVertical: 3,
+    borderRadius: 5,
+  },
+  askedCountText: {
+    fontSize: 9,
+    letterSpacing: 1.2,
+    fontWeight: '800',
+  },
+  askedIn: {
+    fontSize: 9,
+    letterSpacing: 1.2,
+    fontWeight: '700',
+  },
+  yearChip: {
+    paddingHorizontal: 7,
+    paddingVertical: 4,
+    borderRadius: 5,
+  },
+  yearChipText: {
+    fontSize: 9,
+    letterSpacing: 1,
+    fontWeight: '700',
+  },
+  itemLabel: {
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: '700',
+  },
+  itemDescription: {
+    marginTop: 2,
+  },
+  stepTitle: {
+    fontSize: 10,
+    letterSpacing: 1.2,
+    fontWeight: '700',
+    marginBottom: 2,
+  },
+  trigger: {
+    alignSelf: 'flex-start',
+    marginTop: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 999,
+    borderWidth: StyleSheet.hairlineWidth,
+  },
+  triggerText: {
+    fontSize: 11,
+    fontWeight: '600',
+  },
+  tagChip: {
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 6,
+  },
+  tagText: {
+    fontSize: 9,
+    letterSpacing: 1,
+    fontWeight: '700',
+  },
+  morphItem: {
+    marginBottom: 10,
+  },
+  morphHead: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginBottom: 4,
+  },
+  morphDetails: {
+    marginLeft: 8,
+    paddingLeft: 10,
+    borderLeftWidth: 2,
+    gap: 2,
+  },
+  compareLabel: {
+    fontSize: 10,
+    letterSpacing: 1.2,
+    fontWeight: '700',
+    textAlign: 'center',
+    marginTop: 10,
+    marginBottom: 4,
   },
   bulletDot: {
     fontSize: 15,

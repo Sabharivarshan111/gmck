@@ -6,7 +6,7 @@ import {
   View,
   type LayoutChangeEvent,
 } from 'react-native';
-import { ChevronDown, ChevronUp, GripVertical } from 'lucide-react-native';
+import { ChevronDown, ChevronUp, GripVertical, Minus, Plus } from 'lucide-react-native';
 import { Touchable } from '@/components/Touchable';
 import { ReorderLockContext } from '@/components/ReorderLock';
 import { dragOwner } from '@/components/dragOwner';
@@ -202,6 +202,17 @@ export function Reorderable<Id extends string>({
       settle(next);
     },
     [onOrderChange, order, settle],
+  );
+
+  /** One notch of size, for the +/- buttons and the a11y actions. */
+  const step = useCallback(
+    (id: Id, delta: number) => {
+      const min = scaleRangeRef.current?.min ?? 0.75;
+      const max = scaleRangeRef.current?.max ?? 1.3;
+      const next = (scalesRef.current?.[id] ?? 1) + delta;
+      onScaleRef.current?.(id, Math.min(max, Math.max(min, next)), true);
+    },
+    [onScaleRef, scaleRangeRef, scalesRef],
   );
 
   /**
@@ -529,8 +540,7 @@ export function Reorderable<Id extends string>({
                 onAccessibilityAction={event => {
                   // A drag is not something a screen reader can perform, so
                   // the same value is reachable in steps.
-                  const step = event.nativeEvent.actionName === 'increment' ? 0.05 : -0.05;
-                  onScale(id, (scales?.[id] ?? 1) + step, true);
+                  step(id, event.nativeEvent.actionName === 'increment' ? 0.05 : -0.05);
                 }}
                 style={styles.resizeZone}
                 {...resizers[id]?.panHandlers}>
@@ -575,6 +585,48 @@ export function Reorderable<Id extends string>({
                     }
                   />
                 </Touchable>
+
+                {/* Size, in steps, next to the arrows.
+                    The grip below the block is the good way to do this — it
+                    is continuous and the block follows your finger. But it is
+                    one 24dp strip competing with a scrolling page, and a
+                    control that is merely hard to hit is indistinguishable
+                    from one that does not work. These always land. */}
+                {onScale ? (
+                  <>
+                    <View style={[styles.divider, { backgroundColor: colors.border }]} />
+                    <Touchable
+                      onPress={() => step(id, -0.05)}
+                      label={`Make ${labels[id]} smaller`}
+                      disabled={(scales?.[id] ?? 1) <= (scaleRange?.min ?? 0.75) + 0.001}
+                      scaleTo={0.9}
+                      style={styles.arrow}>
+                      <Minus
+                        size={16}
+                        color={
+                          (scales?.[id] ?? 1) <= (scaleRange?.min ?? 0.75) + 0.001
+                            ? withAlpha(colors.text, 0.25)
+                            : colors.text
+                        }
+                      />
+                    </Touchable>
+                    <Touchable
+                      onPress={() => step(id, 0.05)}
+                      label={`Make ${labels[id]} bigger`}
+                      disabled={(scales?.[id] ?? 1) >= (scaleRange?.max ?? 1.3) - 0.001}
+                      scaleTo={0.9}
+                      style={styles.arrow}>
+                      <Plus
+                        size={16}
+                        color={
+                          (scales?.[id] ?? 1) >= (scaleRange?.max ?? 1.3) - 0.001
+                            ? withAlpha(colors.text, 0.25)
+                            : colors.text
+                        }
+                      />
+                    </Touchable>
+                  </>
+                ) : null}
               </View>
             ) : null}
           </Animated.View>
@@ -630,6 +682,11 @@ const styles = StyleSheet.create({
     zIndex: 3,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  divider: {
+    width: StyleSheet.hairlineWidth,
+    alignSelf: 'stretch',
+    marginVertical: 5,
   },
   resizeGrip: {
     width: 44,

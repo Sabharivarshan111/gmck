@@ -337,12 +337,19 @@ const styles = StyleSheet.create({
     borderRadius: 130,
     alignItems: 'center',
     justifyContent: 'center',
-    // The soft halo around the ring in the design.
-    elevation: 12,
-    shadowColor: '#FFFFFF',
-    shadowOpacity: 0.25,
-    shadowRadius: 24,
-    shadowOffset: { width: 0, height: 0 },
+    // No elevation here, and that is the fix rather than an omission.
+    //
+    // This carried `elevation: 12` to fake the soft halo in the design.
+    // Android draws an elevation shadow from the view's *outline*, and a view
+    // with no background colour gets its outline from the bounds — so a 130dp
+    // corner radius came out as a visible straight-edged polygon sitting
+    // inside the ring. On the black theme it hid against the page; on any
+    // lighter background it was an octagon on screen.
+    //
+    // Giving it a background would fix the outline and break something else:
+    // an opaque disc would punch a hole in a wallpaper. A real glow needs a
+    // blur this platform does not have without another dependency, so the
+    // honest answer is no glow — same rule GlassSurface follows.
   },
   dialKicker: {
     fontSize: 13,

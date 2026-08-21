@@ -185,6 +185,14 @@ export function SettingsSheet({
             value={settings.tapSound}
             onChange={next => setSetting('tapSound', next)}
           />
+          {/* Said here because otherwise it reads as a broken switch. Taps go
+              out on the system sound stream, which silent mode and Do Not
+              Disturb mute — the right behaviour, and impossible to guess from
+              a switch that is on and quiet. */}
+          <Text style={[styles.note, { color: withAlpha(colors.text, 0.5) }]}>
+            Clicks follow your phone: silent mode and Do Not Disturb mute them.
+            The timer chime is an alarm, so it still sounds.
+          </Text>
           <Switchable
             label="Timer sound"
             detail="A chime when a focus session ends"
@@ -271,5 +279,11 @@ const styles = StyleSheet.create({
     ...typeScale.caption,
     marginTop: space.lg,
     marginBottom: space.sm,
+  },
+  note: {
+    ...typeScale.caption,
+    marginTop: space.xs,
+    marginBottom: space.sm,
+    paddingHorizontal: space.xs,
   },
 });

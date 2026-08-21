@@ -68,6 +68,7 @@ jobs:
           npm run check:fanout
           npm run check:mcq
           npm run check:notes-limits
+          npm run check:notes-schema
           npm run check:sync
           npm run check:native-sound
           npm run check:subject-cards

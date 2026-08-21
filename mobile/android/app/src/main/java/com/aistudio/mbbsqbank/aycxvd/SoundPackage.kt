@@ -29,7 +29,12 @@ class SoundPackage : BaseReactPackage() {
           NativeOrbitSoundSpec.NAME,
           SoundModule::class.java.name,
           /* canOverrideExistingModule = */ false,
-          /* needsEagerInit = */ false,
+          // Eager, so the clips are decoded before the first tap rather than
+          // because of it. SoundPool.load() is asynchronous and playing a
+          // sample that has not finished decoding is a silent no-op — built
+          // lazily, the module is constructed *by* the first press and that
+          // press makes no sound.
+          /* needsEagerInit = */ true,
           /* isCxxModule = */ false,
           /* isTurboModule = */ true,
         )
