@@ -126,6 +126,8 @@ export function Reorderable<Id extends string>({
   onScaleRef.current = onScale;
   const scaleRangeRef = useRef(scaleRange);
   scaleRangeRef.current = scaleRange;
+  const onDragChangeRef = useRef(onDragChange);
+  onDragChangeRef.current = onDragChange;
   const holdTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const holdStart = useRef({ x: 0, y: 0 });
 
@@ -242,6 +244,22 @@ export function Reorderable<Id extends string>({
           start = scalesRef.current?.[id] ?? 1;
           latest = start;
           dragOwner.current = id;
+          /**
+           * Stop the page scrolling for the duration of the drag.
+           *
+           * This is the whole bug behind "resizing does nothing on my phone".
+           * Reordering did this and resizing did not, so a finger dragging the
+           * grip was competing with the ScrollView it sits inside — and the
+           * ScrollView wins. React Native says so out loud, in a warning that
+           * only appears under real touch events:
+           *
+           *   ScrollView doesn't take rejection well - scrolls anyway
+           *
+           * The page scrolled, the block did not resize, and nothing looked
+           * broken from the outside. Mouse-driven testing never reproduced it,
+           * which is why this survived three reports.
+           */
+          onDragChangeRef.current?.(true);
         },
         onPanResponderMove: (_event, gesture) => {
           // Divided by the block's own height, which is what keeps the grip
@@ -257,6 +275,7 @@ export function Reorderable<Id extends string>({
         },
         onPanResponderRelease: () => {
           dragOwner.current = null;
+          onDragChangeRef.current?.(false);
           // `latest`, not the `scales` prop: this responder is built once per
           // order, so a value read from that prop is whatever it was when the
           // gesture started — committing it would undo the whole drag.
@@ -264,6 +283,7 @@ export function Reorderable<Id extends string>({
         },
         onPanResponderTerminate: () => {
           dragOwner.current = null;
+          onDragChangeRef.current?.(false);
           onScaleRef.current?.(id, latest, true);
         },
         onPanResponderTerminationRequest: () => false,
@@ -274,7 +294,7 @@ export function Reorderable<Id extends string>({
     // scale on every frame, and swapping a PanResponder mid-gesture hands the
     // move events to an instance that never saw the grant. That is why the
     // live values are read through refs above.
-  }, [editing, heights, naturals, rendered, resizable]);
+  }, [editing, heights, naturals, onDragChangeRef, rendered, resizable]);
 
   const responders = useMemo(() => {
     const map = {} as Record<Id, ReturnType<typeof PanResponder.create>>;
@@ -674,11 +694,15 @@ const styles = StyleSheet.create({
     // quick actions instead of resizing anything, which looked like the
     // resize doing nothing rather than the wrong view winning.
     //
-    // The last 24dp of a block is its padding, so covering it costs nothing.
+    // 36dp, not 24. A thumb is about 45dp across and the page under this
+    // strip scrolls, so a target that a finger only half lands on reads as
+    // "resizing does not work" rather than "I missed". This is also why the
+    // block's control cluster carries − and + : the drag is the good
+    // interaction, and the buttons are the one that cannot be missed.
     bottom: 0,
     left: 0,
     right: 0,
-    height: 24,
+    height: 36,
     zIndex: 3,
     alignItems: 'center',
     justifyContent: 'center',
@@ -689,9 +713,9 @@ const styles = StyleSheet.create({
     marginVertical: 5,
   },
   resizeGrip: {
-    width: 44,
-    height: 4,
-    borderRadius: 2,
+    width: 56,
+    height: 5,
+    borderRadius: 3,
     opacity: 0.9,
   },
   arrow: {

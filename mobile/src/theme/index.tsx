@@ -146,6 +146,12 @@ interface ThemeContextValue {
   setCustom: (palette: CustomPalette | null, glass?: number) => void;
   /** How much a custom theme's surfaces let through, 0–1. */
   translucency: number;
+  /**
+   * Whether the stored theme has been read. False for the first frames of a
+   * cold start; the app holds its first paint until it is true so nothing is
+   * drawn in a theme the user did not choose.
+   */
+  hydrated: boolean;
 }
 
 const ThemeContext = createContext<ThemeContextValue>({
@@ -159,6 +165,7 @@ const ThemeContext = createContext<ThemeContextValue>({
   custom: null,
   setCustom: () => {},
   translucency: 0,
+  hydrated: true,
 });
 
 export function ThemeProvider({
@@ -185,45 +192,93 @@ export function ThemeProvider({
    */
   const [translucency, setTranslucencyState] = useState(0);
 
+  /**
+   * Whether the stored theme has been read yet.
+   *
+   * The app used to paint the default dark theme, then swap to the saved one a
+   * frame or two later — "it opens in dark and takes a moment to show my
+   * theme". Worse, the three settings were three separate reads, so they
+   * landed in three separate commits: a saved `custom` preference could arrive
+   * before the palette it points at, and `custom ?? dark` meant a flash of
+   * *dark* in between, on the way to a light theme.
+   *
+   * One read, one commit, and nothing renders until it lands.
+   */
+  const [hydrated, setHydrated] = useState(false);
+
   useEffect(() => {
-    AsyncStorage.getItem(STORAGE_KEY)
-      .then(value => {
-        const known: string[] = [...PRESETS.map(p => p.key), 'system', 'custom'];
-        if (value && known.includes(value)) {
-          setPreferenceState(value as ThemePreference);
-        }
-      })
-      .catch(() => {});
-    AsyncStorage.getItem(CUSTOM_KEY)
-      .then(value => {
-        if (!value) {
+    let alive = true;
+    // Promise.all rather than three separate `.then`s: the point is that the
+    // three values arrive together and are applied in one commit.
+    Promise.all([
+      AsyncStorage.getItem(STORAGE_KEY),
+      AsyncStorage.getItem(CUSTOM_KEY),
+      AsyncStorage.getItem(TEXT_SIZE_KEY),
+    ])
+      .then(([preferenceValue, customValue, textSizeValue]) => {
+        if (!alive) {
           return;
         }
-        try {
-          const parsed = JSON.parse(value) as Partial<CustomPalette> & {
-            translucency?: unknown;
-          };
-          if (parsed.background && parsed.text && parsed.accent && parsed.card) {
-            setCustomState(parsed as CustomPalette);
+
+        // Everything is computed first and set afterwards, so React commits
+        // one consistent theme rather than a sequence of half-applied ones.
+        const known: string[] = [...PRESETS.map(preset => preset.key), 'system', 'custom'];
+        let nextPreference: ThemePreference | null =
+          preferenceValue && known.includes(preferenceValue)
+            ? (preferenceValue as ThemePreference)
+            : null;
+        let nextCustom: CustomPalette | null = null;
+        let nextTranslucency: number | null = null;
+
+        if (customValue) {
+          try {
+            const parsed = JSON.parse(customValue) as Partial<CustomPalette> & {
+              translucency?: unknown;
+            };
+            if (parsed.background && parsed.text && parsed.accent && parsed.card) {
+              nextCustom = parsed as CustomPalette;
+            }
+            if (typeof parsed.translucency === 'number' && Number.isFinite(parsed.translucency)) {
+              nextTranslucency = parsed.translucency;
+            }
+          } catch {
+            // A corrupt entry should not stop the app theming itself.
           }
-          if (typeof parsed.translucency === 'number' && Number.isFinite(parsed.translucency)) {
-            setTranslucencyState(parsed.translucency);
-          }
-        } catch {
-          // A corrupt entry should not stop the app theming itself.
         }
-      })
-      .catch(() => {});
-    AsyncStorage.getItem(TEXT_SIZE_KEY)
-      .then(value => {
+
+        // A stored `custom` with no palette to resolve to would render as dark
+        // and look like the setting had been lost. Fall back before painting,
+        // not after.
+        if (nextPreference === 'custom' && !nextCustom) {
+          nextPreference = null;
+        }
+
+        if (nextCustom) {
+          setCustomState(nextCustom);
+        }
+        if (nextTranslucency !== null) {
+          setTranslucencyState(nextTranslucency);
+        }
+        if (nextPreference) {
+          setPreferenceState(nextPreference);
+        }
         // parseTextSize also understands what the three-preset version wrote,
         // so an update does not quietly reset the setting.
-        const parsed = parseTextSize(value);
-        if (parsed !== null) {
-          setTextSizeState(parsed);
+        const parsedTextSize = parseTextSize(textSizeValue);
+        if (parsedTextSize !== null) {
+          setTextSizeState(parsedTextSize);
         }
+        setHydrated(true);
       })
-      .catch(() => {});
+      .catch(() => {
+        // Unreadable storage is not a reason to show nothing for ever.
+        if (alive) {
+          setHydrated(true);
+        }
+      });
+    return () => {
+      alive = false;
+    };
   }, []);
 
   const setTextSize = useCallback((next: TextSize) => {
@@ -331,6 +386,7 @@ export function ThemeProvider({
       theme,
       colors,
       preference,
+      hydrated,
       setPreference,
       toggleTheme,
       textSize,
@@ -343,6 +399,7 @@ export function ThemeProvider({
       theme,
       colors,
       preference,
+      hydrated,
       setPreference,
       toggleTheme,
       textSize,

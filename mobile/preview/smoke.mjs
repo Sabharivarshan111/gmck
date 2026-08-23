@@ -48,8 +48,13 @@ const browser = await chromium.launch({
   executablePath: `/opt/pw-browsers/${chromeDir}/chrome-linux/chrome`,
   args: ['--no-sandbox'],
 });
-const context = await browser.newContext({ viewport: { width: 390, height: 844 } });
+// hasTouch, so the app sees a touch device rather than a mouse — the resize
+// step below dispatches real touch events and they need a context that accepts
+// them.
+const context = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true });
 const page = await context.newPage();
+/** For dispatching touch events the mouse API cannot produce. */
+const cdp = await context.newCDPSession(page);
 
 const crashes = [];
 page.on('pageerror', error => crashes.push(`uncaught: ${error.message}`));
@@ -444,8 +449,16 @@ await step('a block resizes with its grip, and the size survives a reload', asyn
     });
 
   /**
-   * Drag a grip by `dy`, in steps, because the responder reads movement — one
-   * jump from down to up is a tap that happens to end somewhere else.
+   * Drag a grip by `dy`, in steps, with **touch** events.
+   *
+   * Mouse events were what this used, and they are not the same test. A
+   * PanResponder can pass under mousedown/mousemove and still lose the gesture
+   * on a phone, where the strip is inside a scrolling page and a finger is
+   * competing with it — which is exactly the shape of "it works in the preview
+   * and not on my device". CDP dispatches the real thing.
+   *
+   * Stepped, because the responder reads movement: one jump from down to up is
+   * a tap that happens to end somewhere else.
    */
   const dragGrip = async (label, dy) => {
     const box = await byLabel(label).boundingBox();
@@ -454,13 +467,18 @@ await step('a block resizes with its grip, and the size survives a reload', asyn
     }
     const x = box.x + box.width / 2;
     const y = box.y + box.height / 2;
-    await page.mouse.move(x, y);
-    await page.mouse.down();
+    const send = (type, ty) =>
+      cdp.send('Input.dispatchTouchEvent', {
+        type,
+        touchPoints:
+          type === 'touchEnd' ? [] : [{ x, y: ty, radiusX: 12, radiusY: 12, force: 1 }],
+      });
+    await send('touchStart', y);
     for (let i = 1; i <= 12; i += 1) {
-      await page.mouse.move(x, y + (dy * i) / 12);
+      await send('touchMove', y + (dy * i) / 12);
       await page.waitForTimeout(16);
     }
-    await page.mouse.up();
+    await send('touchEnd', y + dy);
     await page.waitForTimeout(400);
   };
 

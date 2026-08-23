@@ -4,6 +4,23 @@
     <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="android:editTextBackground">@drawable/rn_edit_text_material</item>
+        <!--
+          The colour Android paints between the launcher icon and the first
+          React frame.
+
+          Left to the platform this is the DayNight default, which is white on
+          a phone in light mode. The app ships dark, so a user opening it saw a
+          white flash, then dark, then their own theme. The window background
+          is the only one of those three the JavaScript side cannot control,
+          because it is on screen before the bundle has loaded.
+
+          It matches the dark preset's background (#000000). A light-theme user
+          still gets one dark frame here, which is the lesser of the two: it is
+          the app's own colour rather than a blank white page, and the frames
+          after it are already correct because App.tsx holds its first paint
+          until the stored theme has been read.
+        -->
+        <item name="android:windowBackground">@color/orbit_window_background</item>
     </style>
 
 </resources>

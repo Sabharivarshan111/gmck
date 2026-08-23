@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { StatusBar } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { StatusBar, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { ThemeProvider, useTheme } from '@/theme';
@@ -9,12 +9,13 @@ import { hydrateSettings } from '@/lib/settings';
 import { hydrateProfile } from '@/hooks/useProfile';
 import { initializeAds } from '@/lib/ads';
 import { hydratePremium, usePremiumSync } from '@/lib/premium';
-import { hydrateWallpaper } from '@/hooks/useWallpaper';
+import { hydrateWallpaper, isWallpaperHydrated } from '@/hooks/useWallpaper';
 import { DailyAdConsent } from '@/components/DailyAdConsent';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 function Shell() {
-  const { theme, colors } = useTheme();
+  const { theme, colors, hydrated } = useTheme();
+  const [wallpaperHydrated, setWallpaperHydrated] = useState(isWallpaperHydrated());
   // Keeps the ad layer's synchronous premium check up to date.
   usePremiumSync();
 
@@ -28,11 +29,35 @@ function Shell() {
     // Profile, streak and XP; all cloud steps are best-effort.
     hydrateProfile().catch(() => {});
     // The chosen wallpaper, before the first paint of Home.
-    hydrateWallpaper().catch(() => {});
+    hydrateWallpaper()
+      .catch(() => {})
+      // Even a failed read has to release the first paint, or an unreadable
+      // entry is a permanently blank app.
+      .finally(() => setWallpaperHydrated(true));
     // Load the cached ad-free expiry before any ad decision is made, then
     // start the SDK and preload so the first ad has no wait.
     hydratePremium().then(() => initializeAds()).catch(() => {});
   }, []);
+
+  /**
+   * Nothing renders until the stored theme is known.
+   *
+   * Without this the app painted its default dark theme for the frames it took
+   * AsyncStorage to answer, then swapped — which a user reads as "it opens
+   * wrong and then corrects itself". Holding the first paint costs those same
+   * few milliseconds and shows one theme instead of two.
+   *
+   * The wallpaper is waited on for the same reason. Only the *record* is
+   * waited on, not the decoded photo: reading a path is quick and lets the
+   * image fade in over the right palette, whereas blocking on a decode would
+   * hold the whole app behind a 1440x2880 bitmap.
+   *
+   * The placeholder is painted in the resolved background rather than left
+   * transparent, so the gap is the app's own colour and not the window's.
+   */
+  if (!hydrated || !wallpaperHydrated) {
+    return <View style={{ flex: 1, backgroundColor: colors.background }} />;
+  }
 
   const navTheme = {
     ...(theme === 'dark' ? DarkTheme : DefaultTheme),
