@@ -97,3 +97,7 @@ android/app/src/main/res/drawable-*/
 android/app/src/main/res/raw/*
 !android/app/src/main/res/raw/tap.wav
 !android/app/src/main/res/raw/chime.wav
+!android/app/src/main/res/raw/tap_soft.wav
+!android/app/src/main/res/raw/tap_crisp.wav
+!android/app/src/main/res/raw/chime_bell.wav
+!android/app/src/main/res/raw/chime_soft.wav

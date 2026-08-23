@@ -79,7 +79,16 @@ class SoundModule(reactContext: ReactApplicationContext) :
       )
       .build()
 
-  private fun poolFor(name: String): SoundPool = if (name == CHIME) alertPool else uiPool
+  /**
+   * Which pool a clip belongs to, by name.
+   *
+   * `startsWith` rather than equality, because the presets are `chime_bell`,
+   * `chime_soft` and so on — a chime is a chime whichever one is chosen, and
+   * getting this wrong would send an alarm out on the stream Do Not Disturb
+   * mutes.
+   */
+  private fun poolFor(name: String): SoundPool =
+    if (name.startsWith(CHIME)) alertPool else uiPool
 
   private val ids = mutableMapOf<String, Int>()
   /** Ids that SoundPool has finished decoding. Playing one before it is ready
@@ -95,8 +104,15 @@ class SoundModule(reactContext: ReactApplicationContext) :
       }
     uiPool.setOnLoadCompleteListener(onLoaded)
     alertPool.setOnLoadCompleteListener(onLoaded)
+    // Every clip is decoded at startup rather than on first use. They total
+    // well under a megabyte, and a preset the user picks in Settings has to
+    // play the first time it is tried, not the second.
     load(TAP, R.raw.tap)
+    load("tap_soft", R.raw.tap_soft)
+    load("tap_crisp", R.raw.tap_crisp)
     load(CHIME, R.raw.chime)
+    load("chime_bell", R.raw.chime_bell)
+    load("chime_soft", R.raw.chime_soft)
   }
 
   private fun load(name: String, resId: Int) {

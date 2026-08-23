@@ -30,7 +30,34 @@ export interface Settings {
   tapSound: boolean;
   /** Whether a finished focus session makes a sound. */
   timerSound: boolean;
+  /** Which press sound. See TAP_PRESETS. */
+  tapPreset: string;
+  /** Which completion sound. See CHIME_PRESETS. */
+  chimePreset: string;
 }
+
+/**
+ * The clips that ship, and the names the native module knows them by.
+ *
+ * The `id` is the resource name — `mobile/scripts/make-sounds.py` writes
+ * `<id>.wav`, SoundModule loads it as `R.raw.<id>`, and sound.ts plays it by
+ * this same string. Adding one means touching all four, which is what
+ * `npm run check:sounds` verifies.
+ */
+export const TAP_PRESETS: { id: string; label: string; detail: string }[] = [
+  { id: 'tap', label: 'Click', detail: 'The default — short and bright' },
+  { id: 'tap_soft', label: 'Soft', detail: 'Lower and rounder' },
+  { id: 'tap_crisp', label: 'Crisp', detail: 'Dry and high, easier to hear in a pocket' },
+];
+
+export const CHIME_PRESETS: { id: string; label: string; detail: string }[] = [
+  { id: 'chime', label: 'Triad', detail: 'Three notes rising — the default' },
+  { id: 'chime_bell', label: 'Bell', detail: 'One struck note, carries further' },
+  { id: 'chime_soft', label: 'Soft', detail: 'Two quiet notes, for shared rooms' },
+];
+
+const TAP_IDS = TAP_PRESETS.map(preset => preset.id);
+const CHIME_IDS = CHIME_PRESETS.map(preset => preset.id);
 
 export const DEFAULT_SETTINGS: Settings = {
   // On by default because it was asked for. The bar the rest of the app holds
@@ -45,6 +72,8 @@ export const DEFAULT_SETTINGS: Settings = {
   // takes one tap to silence, rather than something to go looking for.
   tapSound: true,
   timerSound: true,
+  tapPreset: 'tap',
+  chimePreset: 'chime',
 };
 
 export const HAPTIC_MIN_MS = 6;
@@ -77,6 +106,17 @@ export async function hydrateSettings(): Promise<void> {
         typeof parsed.tapSound === 'boolean' ? parsed.tapSound : DEFAULT_SETTINGS.tapSound,
       timerSound:
         typeof parsed.timerSound === 'boolean' ? parsed.timerSound : DEFAULT_SETTINGS.timerSound,
+      // Validated against what actually ships: a preset removed in a later
+      // release must fall back to the default rather than name a clip the
+      // native side cannot load, which would be silence with no explanation.
+      tapPreset:
+        typeof parsed.tapPreset === 'string' && TAP_IDS.includes(parsed.tapPreset)
+          ? parsed.tapPreset
+          : DEFAULT_SETTINGS.tapPreset,
+      chimePreset:
+        typeof parsed.chimePreset === 'string' && CHIME_IDS.includes(parsed.chimePreset)
+          ? parsed.chimePreset
+          : DEFAULT_SETTINGS.chimePreset,
     };
     emit();
   } catch {

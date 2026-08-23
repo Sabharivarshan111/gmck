@@ -73,8 +73,8 @@ check(
   'src/lib/sound.ts does not import the TurboModule spec',
 );
 
-const kotlin = 'android/app/src/main/java/com/aistudio/mbbsqbank/aycxvd';
-const module = await read(`${kotlin}/SoundModule.kt`);
+const kotlin_dir = 'android/app/src/main/java/com/aistudio/mbbsqbank/aycxvd';
+const module = await read(`${kotlin_dir}/SoundModule.kt`);
 check(
   module.includes('NativeOrbitSoundSpec(reactContext)'),
   'SoundModule does not extend the generated NativeOrbitSoundSpec',
@@ -84,7 +84,7 @@ check(
   'SoundModule does not override the spec\'s play()',
 );
 
-const pack = await read(`${kotlin}/SoundPackage.kt`);
+const pack = await read(`${kotlin_dir}/SoundPackage.kt`);
 check(
   pack.includes('BaseReactPackage()'),
   'SoundPackage is not a BaseReactPackage — the TurboModule manager will never ask it for anything',
@@ -98,7 +98,7 @@ check(
   'SoundPackage does not declare the module as a TurboModule',
 );
 
-const application = await read(`${kotlin}/MainApplication.kt`);
+const application = await read(`${kotlin_dir}/MainApplication.kt`);
 check(application.includes('SoundPackage()'), 'MainApplication does not add SoundPackage');
 
 // The clips have to be in the APK, not merely on the author's disk: the RN
@@ -110,6 +110,36 @@ const tracked = execFileSync('git', ['ls-files', 'android/app/src/main/res/raw']
 });
 for (const clip of ['tap.wav', 'chime.wav']) {
   check(tracked.includes(clip), `${clip} is not tracked by git — it will not be in the APK`);
+}
+
+// The four places that list the clips must agree. A preset named in Settings
+// but not loaded in Kotlin is a menu entry that plays nothing, and there is no
+// error anywhere — SoundModule returns early on an unknown name, exactly as it
+// does for a clip that failed to decode.
+const generator = await read('scripts/make-sounds.py');
+const kotlin = await read(`${kotlin_dir}/SoundModule.kt`);
+const settingsSrc = await read('src/lib/settings.ts');
+if (generator && kotlin && settingsSrc) {
+  const generated = [...generator.matchAll(/'([a-z_]+)\.wav':/g)].map(match => match[1]);
+  check(generated.length >= 2, 'make-sounds.py renders fewer than two clips');
+  for (const clip of generated) {
+    check(
+      kotlin.includes(`R.raw.${clip}`),
+      `${clip}.wav is generated but SoundModule never loads R.raw.${clip} — choosing it would be silent`,
+    );
+    check(
+      tracked.includes(`${clip}.wav`),
+      `${clip}.wav is generated but not tracked by git — it will not be in the APK`,
+    );
+  }
+  const listed = [...settingsSrc.matchAll(/id: '([a-z_]+)'/g)].map(match => match[1]);
+  for (const preset of listed) {
+    check(
+      generated.includes(preset),
+      `Settings offers the preset "${preset}", which make-sounds.py does not produce`,
+    );
+  }
+  check(listed.length > 0, 'settings.ts lists no sound presets');
 }
 
 // And the spec has to actually produce a schema. This is the part that would

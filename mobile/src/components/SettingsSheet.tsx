@@ -15,9 +15,12 @@ import {
   TEXT_SIZE_DEFAULT,
   formatTextSize,
 } from '@/theme/textScale';
-import { setSetting, useSettings } from '@/lib/settings';
+import { setSetting, useSettings,
+  TAP_PRESETS,
+  CHIME_PRESETS,
+} from '@/lib/settings';
 import { tick } from '@/lib/haptics';
-import { soundAvailable } from '@/lib/sound';
+import { previewSound, soundAvailable } from '@/lib/sound';
 
 /**
  * Everything the user can change, in one place.
@@ -193,11 +196,24 @@ export function SettingsSheet({
             Clicks follow your phone: silent mode and Do Not Disturb mute them.
             The timer chime is an alarm, so it still sounds.
           </Text>
+          <SoundPicker
+            title="PRESS SOUND"
+            options={TAP_PRESETS}
+            selected={settings.tapPreset}
+            onSelect={id => setSetting('tapPreset', id)}
+          />
+
           <Switchable
             label="Timer sound"
             detail="A chime when a focus session ends"
             value={settings.timerSound}
             onChange={next => setSetting('timerSound', next)}
+          />
+          <SoundPicker
+            title="TIMER SOUND"
+            options={CHIME_PRESETS}
+            selected={settings.chimePreset}
+            onSelect={id => setSetting('chimePreset', id)}
           />
         </>
       ) : null}
@@ -209,7 +225,83 @@ export function SettingsSheet({
   );
 }
 
+/**
+ * A list of sounds you can hear before choosing.
+ *
+ * Selecting plays the clip — picking a sound from names alone is picking
+ * blind, and it also answers "is sound working at all" without making anyone
+ * hunt for a switch. `previewSound` deliberately ignores the on/off toggles
+ * so the options can be auditioned before the feature is turned on.
+ */
+function SoundPicker({
+  title,
+  options,
+  selected,
+  onSelect,
+}: {
+  title: string;
+  options: { id: string; label: string; detail: string }[];
+  selected: string;
+  onSelect: (id: string) => void;
+}) {
+  const { colors } = useTheme();
+  return (
+    <View style={styles.indent}>
+      <Text style={[styles.section, { color: colors.textMuted }]}>{title}</Text>
+      {options.map(option => {
+        const active = option.id === selected;
+        return (
+          <Touchable
+            key={option.id}
+            onPress={() => {
+              onSelect(option.id);
+              previewSound(option.id);
+            }}
+            role="radio"
+            state={{ checked: active }}
+            label={`${option.label}. ${option.detail}`}
+            scaleTo={0.98}
+            style={[
+              styles.preset,
+              {
+                borderColor: active ? colors.accent : colors.border,
+                backgroundColor: active ? withAlpha(colors.accent, 0.1) : 'transparent',
+              },
+            ]}>
+            <View style={styles.flex}>
+              <Text style={[styles.presetLabel, { color: active ? colors.accent : colors.text }]}>
+                {option.label}
+              </Text>
+              <Text style={[styles.presetDetail, { color: colors.textMuted }]}>
+                {option.detail}
+              </Text>
+            </View>
+          </Touchable>
+        );
+      })}
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
+  flex: { flex: 1 },
+  preset: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: radius.md,
+    borderWidth: StyleSheet.hairlineWidth,
+    paddingVertical: space.sm,
+    paddingHorizontal: space.md,
+    marginBottom: space.xs,
+    minHeight: 44,
+  },
+  presetLabel: {
+    ...typeScale.bodyStrong,
+  },
+  presetDetail: {
+    ...typeScale.caption,
+    marginTop: 2,
+  },
   section: {
     ...typeScale.overline,
     marginTop: space.lg,

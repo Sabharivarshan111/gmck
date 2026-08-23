@@ -109,6 +109,89 @@ def chime():
     return out
 
 
+def tap_soft():
+    """
+    A lower, rounder click — the same gesture heard through felt.
+
+    One partial and a slower decay. For people who find the default too
+    bright, which on a phone speaker it can be.
+    """
+    n = int(RATE * 0.05)
+    out = []
+    for i in range(n):
+        t = i / RATE
+        body = (
+            math.sin(2 * math.pi * 900 * t) * 0.7
+            + math.sin(2 * math.pi * 1800 * t) * 0.12 * math.exp(-t / 0.008)
+        )
+        out.append(body * envelope(i, n, attack_ms=2.5, decay=0.016))
+    return out
+
+
+def tap_crisp():
+    """
+    A dry, high tick, closer to a mechanical key than a tap on glass.
+
+    Short and noise-led. The one to pick when the phone is in a pocket and
+    the softer clicks are inaudible.
+    """
+    n = int(RATE * 0.032)
+    out = []
+    noise = 0.0
+    for i in range(n):
+        t = i / RATE
+        noise = (noise * 0.35) + math.sin(i * 12.9898) * math.sin(i * 78.233) * 0.65
+        body = (
+            math.sin(2 * math.pi * 2600 * t) * 0.5
+            + noise * 0.38 * math.exp(-t / 0.0025)
+        )
+        out.append(body * envelope(i, n, attack_ms=0.6, decay=0.007))
+    return out
+
+
+def chime_bell():
+    """
+    A single struck bell rather than a triad.
+
+    One note with inharmonic partials and a long tail — less musical than the
+    default, and easier to hear across a room.
+    """
+    freq = 1046.5  # C6
+    length = int(RATE * 1.9)
+    out = []
+    for i in range(length):
+        t = i / RATE
+        partials = (
+            math.sin(2 * math.pi * freq * t) * math.exp(-t / 0.8)
+            + math.sin(2 * math.pi * freq * 2.76 * t) * 0.3 * math.exp(-t / 0.2)
+            + math.sin(2 * math.pi * freq * 5.4 * t) * 0.11 * math.exp(-t / 0.09)
+        )
+        out.append(partials * envelope(i, length, attack_ms=3.0, decay=1e9))
+    return out
+
+
+def chime_soft():
+    """
+    Two notes, a fifth apart, quiet and slow.
+
+    For finishing a session somewhere a bell would be rude. Still rises, so
+    it still reads as "done".
+    """
+    notes = [(659.25, 0.0), (987.77, 0.22)]  # E5 -> B5
+    length = int(RATE * 1.6)
+    out = [0.0] * length
+    for freq, start in notes:
+        offset = int(RATE * start)
+        for i in range(length - offset):
+            t = i / RATE
+            partials = (
+                math.sin(2 * math.pi * freq * t) * math.exp(-t / 0.7)
+                + math.sin(2 * math.pi * freq * 2.0 * t) * 0.16 * math.exp(-t / 0.18)
+            )
+            out[offset + i] += partials * 0.75 * envelope(i, length - offset, attack_ms=8.0, decay=1e9)
+    return out
+
+
 import os
 import sys
 
@@ -119,7 +202,22 @@ RES = os.path.join(
 
 
 def render():
-    return {'tap.wav': tap(), 'chime.wav': chime()}
+    """
+    Every clip that ships.
+
+    The names are the contract: SoundModule loads each as R.raw.<name> and
+    src/lib/sound.ts plays them by the same string, so adding one here means
+    adding it in both of those and in the Settings picker. check:sounds
+    verifies each file is present and has the pitch it is supposed to.
+    """
+    return {
+        'tap.wav': tap(),
+        'tap_soft.wav': tap_soft(),
+        'tap_crisp.wav': tap_crisp(),
+        'chime.wav': chime(),
+        'chime_bell.wav': chime_bell(),
+        'chime_soft.wav': chime_soft(),
+    }
 
 
 def main():

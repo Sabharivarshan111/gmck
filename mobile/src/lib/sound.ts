@@ -38,18 +38,31 @@ export const soundAvailable = native != null;
 const TAP_VOLUME = 0.28;
 const CHIME_VOLUME = 0.85;
 
-/** A press. Gated on the tap-sound setting. */
+/** A press. Gated on the tap-sound setting, and plays the chosen preset. */
 export function playTap(): void {
-  if (!native || !getSettings().tapSound) {
+  const settings = getSettings();
+  if (!native || !settings.tapSound) {
     return;
   }
-  native.play('tap', TAP_VOLUME);
+  native.play(settings.tapPreset, TAP_VOLUME);
 }
 
 /** A finished focus session. Gated on the timer-sound setting. */
 export function playChime(): void {
-  if (!native || !getSettings().timerSound) {
+  const settings = getSettings();
+  if (!native || !settings.timerSound) {
     return;
   }
-  native.play('chime', CHIME_VOLUME);
+  native.play(settings.chimePreset, CHIME_VOLUME);
+}
+
+/**
+ * Play a clip by name, ignoring the on/off settings.
+ *
+ * For the Settings picker: choosing a sound has to make that sound, or you
+ * are picking from a list of words. It deliberately bypasses the toggles —
+ * you may want to hear the options before deciding to turn them on.
+ */
+export function previewSound(name: string): void {
+  native?.play(name, name.startsWith('chime') ? CHIME_VOLUME : TAP_VOLUME);
 }
