@@ -51,15 +51,42 @@ await server.listen();
 
 await fs.mkdir(outDir, { recursive: true });
 
-// The sandbox ships Chromium under a versioned directory; find it rather than
-// hardcoding a build number that will rot.
-const [chromeDir] = (await fs.readdir('/opt/pw-browsers'))
-  .filter(entry => entry.startsWith('chromium-'))
-  .sort()
-  .reverse();
+async function findChromiumExecutable() {
+  if (process.env.CHROME_PATH) {
+    return process.env.CHROME_PATH;
+  }
+  // Linux container path (Claude Code sandbox)
+  try {
+    const entries = await fs.readdir('/opt/pw-browsers');
+    const [chromeDir] = entries
+      .filter(entry => entry.startsWith('chromium-'))
+      .sort()
+      .reverse();
+    if (chromeDir) {
+      return `/opt/pw-browsers/${chromeDir}/chrome-linux/chrome`;
+    }
+  } catch {}
 
+  // macOS / Linux standard paths
+  const candidates = [
+    '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+    '/Applications/Chromium.app/Contents/MacOS/Chromium',
+    '/usr/bin/google-chrome',
+    '/usr/bin/chromium-browser',
+    '/usr/bin/chromium',
+  ];
+  for (const candidate of candidates) {
+    try {
+      await fs.access(candidate);
+      return candidate;
+    } catch {}
+  }
+  return undefined;
+}
+
+const executablePath = await findChromiumExecutable();
 const browser = await chromium.launch({
-  executablePath: `/opt/pw-browsers/${chromeDir}/chrome-linux/chrome`,
+  ...(executablePath ? { executablePath } : {}),
   args: ['--no-sandbox', '--font-render-hinting=none'],
 });
 const context = await browser.newContext({
