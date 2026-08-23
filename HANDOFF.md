@@ -46,6 +46,79 @@ The web app in the repo root is untouched and still live.
 
 ---
 
+## 1b. Continuing this work somewhere else
+
+The rules an agent must follow are in **`AGENTS.md`** (repo root, tool-agnostic
+— Antigravity, Cursor, Codex, Claude Code all read it) and the full reasoning
+is in **`CLAUDE.md`**. `GEMINI.md` is a pointer to `AGENTS.md`, not a second
+copy, because Antigravity merges the two and lets `GEMINI.md` win conflicts —
+so the only safe content there is content that cannot conflict.
+
+`CLAUDE.md` is ~32,000 characters and Antigravity caps a *rules* file at
+12,000. That is why `AGENTS.md` is a distilled subset rather than a copy: it
+carries what is expensive to get wrong in the first hour and points at the rest.
+
+### What does not travel
+
+- **`.claude/skills/`** — vendored design skills (`apple-design`, `animate`,
+  `review-animations/STANDARDS.md`). Claude Code loads these automatically;
+  other tools do not. They are the source of the motion rules, and
+  `.claude/skills/apple-design/README.md` records which techniques were
+  deliberately *not* taken. Open them by hand when touching animation.
+- **The signing key.** It exists only in GitHub Actions secrets and on the
+  developer's machine. A local release build needs its own copy of the `.jks` —
+  see below. It must never enter the repo.
+- **The GitHub Actions runner's toolchain.** Everything below has to be
+  installed locally.
+
+### Local toolchain the build pins
+
+| Thing | Version |
+|---|---|
+| JDK | 17 |
+| Node | >= 22.11.0 |
+| Android compileSdk / buildTools | 37 / `37.0.0` (the SDK package is `platforms;android-37.0` — `platforms;android-37` does not exist) |
+| targetSdk / minSdk | 36 / 24 |
+| NDK | `27.1.12297006` |
+| Gradle | 9.4.1, via the wrapper |
+
+New Architecture and Hermes are both on, so the build compiles C++ and needs
+the NDK and CMake — this is the slow part, ~15 minutes cold.
+
+```sh
+cd mobile
+npm ci --legacy-peer-deps
+npm start                 # Metro, in one terminal
+npm run android           # debug build onto a connected device
+```
+
+A release build locally, with your own copy of the keystore:
+
+```sh
+cd mobile/android
+KEYSTORE_PATH=/absolute/path/to/upload-keystore.jks \
+STORE_PASSWORD=… KEY_PASSWORD=… \
+  ./gradlew bundleRelease     # app-release.aab, for Play
+```
+
+The key alias is `upload`. Without `KEYSTORE_PATH` the release variant falls
+back to the debug key and the result is **not** publishable.
+
+### Things that are easy to trip over on a fresh machine
+
+- There is **no `google-services.json`** in the repo. Google Sign-In is
+  configured through the OAuth client ID in code plus the certificate SHA-1
+  registered in Google Cloud, not through that file. Do not add one
+  speculatively.
+- CI overwrites `mobile/src/lib/adsMode.ts` for test builds. A local build does
+  **not**, so a locally built release APK will serve **live ads**. Do not
+  install one on your own phone and browse the app.
+- `check:smoke` needs a Chromium binary and drives the react-native-web
+  preview. It checks layout and labels, never native rendering or gesture
+  timing.
+
+---
+
 ## 2. Blocking items — do these first
 
 ### 2.1 Signing secrets are not in CI yet

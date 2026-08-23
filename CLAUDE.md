@@ -1,7 +1,12 @@
 # Orbit MBBS — working notes
 
 Read `HANDOFF.md` first for current status and what is outstanding. This file
-is the short version: the rules that are easy to break by accident.
+is the long version: every rule, with the reasoning that makes it a rule.
+
+`AGENTS.md` is the same thing distilled to fit a 12,000-character rules file,
+for agents that read that convention (Antigravity, Cursor, Codex). **When a
+rule here changes, check whether `AGENTS.md` states it too** — a distilled copy
+that has gone stale is worse than no copy.
 
 ## Two apps, one repo
 
