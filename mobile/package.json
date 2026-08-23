@@ -24,6 +24,7 @@
     "check:theme-from-image": "node scripts/theme-from-image-check.mjs",
     "check:glass": "node scripts/glass-check.mjs",
     "check:sounds": "python3 scripts/check-sounds.py",
+    "check:android-res": "node scripts/android-res-check.mjs",
     "check:agent-docs": "node scripts/agent-docs-check.mjs",
     "check:payments": "node scripts/payments-check.mjs",
     "sync:agent-docs": "node scripts/sync-agent-docs.mjs",

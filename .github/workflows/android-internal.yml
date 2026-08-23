@@ -71,6 +71,7 @@ jobs:
           npm run check:notes-schema
           npm run check:sync
           npm run check:cloud-ids
+          npm run check:android-res
           npm run check:native-sound
           npm run check:subject-cards
           npm run check:agent-docs

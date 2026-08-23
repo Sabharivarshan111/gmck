@@ -1,5 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- The dark preset's background, from src/theme/presets.ts. Keep the two
-         in step: this is what the window shows before React can paint. -->
+    <!--
+      The plate behind the adaptive icon's foreground. Near-black rather than
+      pure black so the mark does not disappear into a dark wallpaper on
+      launchers that drop the plate's shadow.
+
+      Referenced by mipmap-anydpi-v26/ic_launcher.xml and ic_launcher_round.xml.
+      Deleting it does not fail the build where you can see it — it fails at
+      `processReleaseResources` with "resource color/ic_launcher_background not
+      found", which is what happened when this file was rewritten rather than
+      added to.
+    -->
+    <color name="ic_launcher_background">#000000</color>
+
+    <!--
+      What the window shows between the launcher icon and the first React
+      frame. Left to the platform this is the DayNight default, which is white
+      on a phone in light mode, so the app flashed white before it drew.
+
+      Matches the dark preset's background in mobile/src/theme/presets.ts; keep
+      the two in step.
+    -->
     <color name="orbit_window_background">#000000</color>
 </resources>

@@ -215,6 +215,14 @@ deleted from HEAD, but the key remains in the original repo's history.
 
 ### 2.4 Google Cloud OAuth SHA-1s
 
+**`mobile/OAUTH-SETUP.md` has the three clients to create, with the values.**
+The short version: Play App Signing means the certificate on a phone that
+installed from Play is Google's, not the upload key — so registering only the
+upload key gives sign-in that works in your test build and fails for every real
+user. Three Android clients are needed: production (SHA-1 from Play Console →
+App signing), internal (the upload key), and `.debug` (Android's standard debug
+key).
+
 Sign-in only works if Google Cloud has an Android OAuth client whose SHA-1
 matches the certificate that signed the running build.
 

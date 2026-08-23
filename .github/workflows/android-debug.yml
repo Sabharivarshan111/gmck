@@ -97,6 +97,7 @@ jobs:
           npm run check:notes-schema
           npm run check:sync
           npm run check:cloud-ids
+          npm run check:android-res
           npm run check:theme-from-image
           npm run check:glass
           npm run check:sounds
