@@ -24,6 +24,7 @@
     "check:glass": "node scripts/glass-check.mjs",
     "check:sounds": "python3 scripts/check-sounds.py",
     "check:agent-docs": "node scripts/agent-docs-check.mjs",
+    "sync:agent-docs": "node scripts/sync-agent-docs.mjs",
     "check:native-sound": "node scripts/native-sound-check.mjs"
   },
   "dependencies": {

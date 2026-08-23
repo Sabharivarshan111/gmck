@@ -103,6 +103,17 @@ for (const file of [...ruleFiles, 'GEMINI.md']) {
   }
 }
 
+// 6. Each tool's entry file must still list the other's material.
+const { execFileSync } = await import('node:child_process');
+try {
+  execFileSync('node', [path.join(root, 'mobile/scripts/sync-agent-docs.mjs'), '--check'], {
+    stdio: 'pipe',
+  });
+} catch (error) {
+  const detail = `${error.stdout ?? ''}`.trim().split('\n').filter(Boolean).slice(0, 3);
+  check(false, `the cross-tool indexes are stale — ${detail.join(' ')}`);
+}
+
 if (failures.length > 0) {
   for (const failure of failures) {
     process.stdout.write(`  FAIL  ${failure}\n`);
