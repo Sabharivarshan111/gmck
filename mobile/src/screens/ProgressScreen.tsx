@@ -44,6 +44,8 @@ import { useCountDone } from '@/hooks/useProgress';
 import { useProfile } from '@/hooks/useProfile';
 import { ProfileSheet } from '@/components/ProfileSheet';
 import { Leaderboard } from '@/components/Leaderboard';
+import { ProgressCalendarTab } from '@/components/ProgressCalendarTab';
+import { ProgressNotesTab } from '@/components/ProgressNotesTab';
 
 type Tab = 'stats' | 'calendar' | 'notes';
 
@@ -293,14 +295,10 @@ export default function ProgressScreen() {
         })}
       </View>
 
-      {tab !== 'stats' ? (
-        <View style={[styles.placeholder, { backgroundColor: colors.card, borderColor: colors.border }]}>
-          <Text style={[styles.placeholderText, { color: colors.textMuted }]}>
-            {tab === 'calendar'
-              ? 'The study calendar is not ported yet.'
-              : 'Saved notes are not ported yet.'}
-          </Text>
-        </View>
+      {tab === 'calendar' ? (
+        <ProgressCalendarTab userId={email} />
+      ) : tab === 'notes' ? (
+        <ProgressNotesTab userId={email} />
       ) : (
         <>
           {/* Year ring */}
@@ -651,16 +649,6 @@ const styles = StyleSheet.create({
   tabText: {
     fontSize: 15,
     fontWeight: '600',
-  },
-  placeholder: {
-    borderRadius: 16,
-    borderWidth: StyleSheet.hairlineWidth,
-    padding: 32,
-    alignItems: 'center',
-  },
-  placeholderText: {
-    fontSize: 14,
-    textAlign: 'center',
   },
   ringCard: {
     borderRadius: 16,

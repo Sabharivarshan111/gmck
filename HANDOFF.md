@@ -30,14 +30,13 @@ The web app in the repo root is untouched and still live.
 | Notes | year → subject → topic → **batched AI notes generation**, refine, regenerate |
 | Timer | wall-clock pomodoro, survives backgrounding, per-day + lifetime stats |
 | Ask AI | same `ask-gemini` edge function as web |
-| My Progress | profile, year ring, streak/level, rewards, heatmap, subjects, leaderboard |
+| My Progress | profile, year ring, streak/level, rewards, heatmap, subjects, leaderboard, **Calendar & Saved Notes tabs** |
 | Profile | name + year editor, doubles as first-run onboarding |
 | Auth | Google Sign-In → Supabase `signInWithIdToken`; anonymous otherwise |
 | Ads | AdMob interstitial + rewarded, web app's 3-bucket daily policy |
 
 ### Deliberately not done
 
-- **Calendar and saved-notes tabs** on My Progress — placeholders.
 - **react-native-webview** — omitted on purpose; the app renders natively.
 - **Play Integrity** — the console shows verdicts enabled, but the app never
   calls the API. Enabling it properly needs server-side verification in the
