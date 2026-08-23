@@ -23,6 +23,19 @@ Antigravity's 12,000-character cap, so it is deliberately the short version.
 `CLAUDE.md` for the full reasoning behind everything below. This file is the
 subset that is expensive to get wrong in the first hour.
 
+`.agents/rules/` holds the rest, split so each file fits the cap:
+
+| File | What |
+|---|---|
+| `.agents/rules/00-working-agreement.md` | how Claude Code and Antigravity share this repo without drifting |
+| `.agents/rules/10-motion.md` | animation rules, and what never ships |
+| `.agents/rules/20-interface.md` | theming, type, materials, accessibility, performance |
+
+Deep reference stays in `.claude/skills/` and is **pointed at, never copied** —
+`apple-design/README.md` is its index. `npm run check:agent-docs` (in
+`mobile/`) fails if a rules file goes over the cap, if `GEMINI.md` starts
+holding rules of its own, or if any path above stops resolving.
+
 ## The repo holds two apps
 
 | Path | What |
@@ -91,7 +104,7 @@ fixture, the renderer and the edge function's schema together.
 
 Its zod schema is `questions: z.array(z.string().max(1000)).min(1).max(400)`,
 and a violation is a **400 for the whole request**, breaking Notes for one
-topic with no symptom elsewhere. `src/lib/notesLimits.ts` clamps from the
+topic with no symptom elsewhere. `mobile/src/lib/notesLimits.ts` clamps from the
 *head*, because importance stars and PYQ years are at the start of a question.
 
 ## `ask-gemini` is told the intent, it does not infer it

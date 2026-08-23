@@ -72,6 +72,7 @@ jobs:
           npm run check:sync
           npm run check:native-sound
           npm run check:subject-cards
+          npm run check:agent-docs
 
       # Test ads come from source, not from the bundler's dev flag — see
       # mobile/src/lib/adsMode.ts. The Gradle plugin bundles this variant

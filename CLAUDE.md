@@ -4,9 +4,16 @@ Read `HANDOFF.md` first for current status and what is outstanding. This file
 is the long version: every rule, with the reasoning that makes it a rule.
 
 `AGENTS.md` is the same thing distilled to fit a 12,000-character rules file,
-for agents that read that convention (Antigravity, Cursor, Codex). **When a
-rule here changes, check whether `AGENTS.md` states it too** — a distilled copy
+for agents that read that convention (Antigravity, Cursor, Codex), and
+`.agents/rules/` carries the rest. **When a rule here changes, check whether
+`AGENTS.md` or a file in `.agents/rules/` states it too** — a distilled copy
 that has gone stale is worse than no copy.
+
+This repo is worked on from Claude Code *and* Antigravity, sometimes on the
+same day. `.agents/rules/00-working-agreement.md` is the contract between them:
+which tool reads which file, where a rule is allowed to live, and the fact that
+`HANDOFF.md` — not a chat history the other tool cannot see — is how work is
+handed over. `npm run check:agent-docs` enforces the mechanical parts.
 
 ## Two apps, one repo
 

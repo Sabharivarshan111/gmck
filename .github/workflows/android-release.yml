@@ -71,6 +71,7 @@ jobs:
           npm run check:theme-from-image
           npm run check:glass
           npm run check:sounds
+          npm run check:agent-docs
           npm run check:native-sound
           npm run check:subject-cards
           npm run check:contrast

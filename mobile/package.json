@@ -23,6 +23,7 @@
     "check:theme-from-image": "node scripts/theme-from-image-check.mjs",
     "check:glass": "node scripts/glass-check.mjs",
     "check:sounds": "python3 scripts/check-sounds.py",
+    "check:agent-docs": "node scripts/agent-docs-check.mjs",
     "check:native-sound": "node scripts/native-sound-check.mjs"
   },
   "dependencies": {
