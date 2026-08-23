@@ -36,9 +36,19 @@ react {
     // that now — so a build can be fast and still be unable to show a live ad.
     debuggableVariants = ["debug"]
 
+    /**
+     * Find the node executable in common locations for macOS/Linux.
+     */
+    def findNode = {
+        def commonPaths = ["/usr/local/bin/node", "/opt/homebrew/bin/node", "/usr/bin/node", "/bin/node"]
+        for (path in commonPaths) {
+            if (new File(path).exists()) return path
+        }
+        return "node"
+    }
+
     /* Bundling */
-    //   A list containing the node command and its flags. Default is just 'node'.
-    nodeExecutableAndArgs = ["/usr/local/bin/node"]
+    nodeExecutableAndArgs = [findNode()]
     //
     //   The command to run when bundling. By default is 'bundle'
     // bundleCommand = "ram-bundle"
