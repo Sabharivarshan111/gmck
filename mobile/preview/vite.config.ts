@@ -53,6 +53,10 @@ export default defineConfig({
         replacement: path.resolve(__dirname, 'shims', 'video.tsx'),
       },
       {
+        find: 'react-native-razorpay',
+        replacement: path.resolve(__dirname, 'shims', 'razorpay.ts'),
+      },
+      {
         find: 'react-native-google-mobile-ads',
         replacement: path.resolve(__dirname, 'shims', 'google-mobile-ads.ts'),
       },

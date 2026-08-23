@@ -31,12 +31,23 @@ export function Dialog({
   title,
   message,
   actions,
+  footer,
 }: {
   visible: boolean;
   onDismiss: () => void;
   title?: string;
   message?: string;
   actions: DialogAction[];
+  /**
+   * Rendered under the actions.
+   *
+   * For an offer that is related to the decision but is not one of its
+   * answers. The ad prompt uses it for "or remove ads for a month": making it
+   * a third button would put a payment next to "Not now" and "OK" as if it
+   * were the same kind of choice, and the one thing a dialog must not do is
+   * make a purchase look like a dismissal.
+   */
+  footer?: React.ReactNode;
 }) {
   const { colors } = useTheme();
   const reduceMotion = useReducedMotion();
@@ -131,6 +142,7 @@ export function Dialog({
             </Text>
           ) : null}
 
+          {footer ? <View style={styles.footer}>{footer}</View> : null}
           <View style={styles.actions}>
             {actions.map(action => {
               const isPrimary = (action.tone ?? 'primary') === 'primary';
@@ -190,6 +202,9 @@ const styles = StyleSheet.create({
   },
   message: {
     marginTop: 10,
+  },
+  footer: {
+    marginTop: 12,
   },
   actions: {
     flexDirection: 'row',

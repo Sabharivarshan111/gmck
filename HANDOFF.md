@@ -37,7 +37,6 @@ The web app in the repo root is untouched and still live.
 
 ### Deliberately not done
 
-- **Razorpay payments** — not ported. Web app has it (`supabase/functions/razorpay-*`).
 - **Calendar and saved-notes tabs** on My Progress — placeholders.
 - **react-native-webview** — omitted on purpose; the app renders natively.
 - **Play Integrity** — the console shows verdicts enabled, but the app never
@@ -186,7 +185,26 @@ The keystore and its password are **not in this repo** and must never be.
 Do not "solve" the CI problem by committing them or by base64-ing them into a
 workflow file.
 
-### 2.2 Leaked OpenAI API key
+### 2.2 Razorpay needs one real payment before it is trusted
+
+The ad-free purchase is implemented — `mobile/src/lib/razorpay.ts`, offered from
+the daily ad prompt — against the same two edge functions the web app uses, so
+a purchase made on either lands in the same `premium_subscriptions` row and
+extends the same expiry.
+
+What is verified: the bundle builds with `react-native-razorpay` linked, the
+preview shim rejects rather than faking a success, and `npm run check:payments`
+holds the price, the order and the signature check on the server.
+
+What is **not** verified: an actual payment. Nobody has put ₹50 through it. Do
+that once, on a device, in Razorpay test mode first, and confirm a row appears
+in `premium_subscriptions` with an `expires_at` a month out. Until then treat
+it as untested code that handles money.
+
+`RAZORPAY_KEY_ID` and `RAZORPAY_KEY_SECRET` must be set on the Supabase
+project, or `razorpay-create-order` returns 500.
+
+### 2.3 Leaked OpenAI API key
 
 GitHub push protection found a live **OpenAI API key** committed at
 `src/components/AIChatWindow.tsx:14` (commit `f50c8e8`). The file is already
@@ -196,7 +214,7 @@ deleted from HEAD, but the key remains in the original repo's history.
 - **Still present in `mbbsqbank-questor-ee7eadb9` history.**
 - **Action: revoke the key at platform.openai.com.** Not done as of writing.
 
-### 2.3 Google Cloud OAuth SHA-1s
+### 2.4 Google Cloud OAuth SHA-1s
 
 Sign-in only works if Google Cloud has an Android OAuth client whose SHA-1
 matches the certificate that signed the running build.

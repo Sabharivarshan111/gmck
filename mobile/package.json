@@ -24,6 +24,7 @@
     "check:glass": "node scripts/glass-check.mjs",
     "check:sounds": "python3 scripts/check-sounds.py",
     "check:agent-docs": "node scripts/agent-docs-check.mjs",
+    "check:payments": "node scripts/payments-check.mjs",
     "sync:agent-docs": "node scripts/sync-agent-docs.mjs",
     "check:native-sound": "node scripts/native-sound-check.mjs"
   },
@@ -42,6 +43,7 @@
     "react-native-google-mobile-ads": "^16.4.0",
     "react-native-image-colors": "^1.5.2",
     "react-native-image-picker": "^8.2.1",
+    "react-native-razorpay": "^3.0.0",
     "react-native-safe-area-context": "^5.5.2",
     "react-native-screens": "^4.27.0",
     "react-native-svg": "^15.15.5",
