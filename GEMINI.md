@@ -13,6 +13,12 @@ that already exists in `AGENTS.md`.
 
 ## Antigravity-specific notes
 
+- **The preview pane runs the wrong app by default.** Antigravity previews the
+  root project, whose `dev` script is the original Vite **web** app in `src/`.
+  The React Native app and every animation in it are in `mobile/`, behind
+  `npm run dev:mobile`. Previewing the root and concluding the animations are
+  missing is the expected outcome of previewing the root.
+
 - Rules files are capped at 12,000 characters. `AGENTS.md` is written to fit;
   `CLAUDE.md` (~32,000) is not a rules file and is meant to be opened and read,
   not loaded wholesale.

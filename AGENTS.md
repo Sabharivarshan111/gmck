@@ -1,5 +1,21 @@
 # Orbit MBBS — rules for any coding agent
 
+> **Running this in an IDE? `npm run dev` is the OLD WEB APP.**
+>
+> This repo holds two apps. The root `dev`, `build` and `preview` scripts —
+> the ones an IDE's Run button finds, because they are in the root
+> `package.json` — serve the original Vite web app in `src/`. The native
+> React Native app, with all of its animations, lives in `mobile/`.
+>
+> To see the native app in a browser:
+>
+> ```sh
+> npm run dev:mobile        # or: cd mobile && npm run preview
+> ```
+>
+> If you previewed this project and saw an app with none of the motion work in
+> it, that is why: you were looking at the web app.
+
 Cross-tool rules (Antigravity, Cursor, Codex, Claude Code). Kept under
 Antigravity's 12,000-character cap, so it is deliberately the short version.
 

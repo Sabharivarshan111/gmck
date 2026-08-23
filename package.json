@@ -5,10 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:mobile": "npm --prefix mobile run preview",
     "build": "vite build",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "preview:mobile": "npm --prefix mobile run preview"
   },
   "dependencies": {
     "@capacitor/app": "^8.1.0",

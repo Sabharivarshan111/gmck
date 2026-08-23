@@ -58,6 +58,36 @@ so the only safe content there is content that cannot conflict.
 12,000. That is why `AGENTS.md` is a distilled subset rather than a copy: it
 carries what is expensive to get wrong in the first hour and points at the rest.
 
+### Previewing the native app (read this before reporting "no animations")
+
+An IDE's Run/Preview button finds the **root** `package.json`, whose `dev` and
+`preview` scripts serve the original Vite **web** app in `src/`. That app has
+none of the native app's motion in it, so previewing the root and concluding
+the animations did not survive the migration is the expected result of
+previewing the root.
+
+```sh
+npm run dev:mobile        # the React Native app in a browser
+# identical to: cd mobile && npm run preview
+```
+
+Both scripts exist at the root now so the right one is findable from the same
+place as the wrong one.
+
+Measured in that preview, so it is not a guess: the bottom-nav blob produces
+13 distinct frames across a tab switch and a card press produces 9 across a
+press-in — both animating. `mobile/preview` is react-native-web, so it checks
+layout and motion timing in a browser, never native rendering.
+
+One warning in that preview is expected and harmless:
+
+    Animated: `useNativeDriver` is not supported because the native animated
+    module is missing. Falling back to JS-based animation.
+
+react-native-web has no native driver, so it runs the same animations on the
+JS thread. On a device they run on the native driver, which is the whole
+reason every animation in this app sets `useNativeDriver: true`.
+
 ### What does not travel
 
 - **`.claude/skills/`** — vendored design skills (`apple-design`, `animate`,
