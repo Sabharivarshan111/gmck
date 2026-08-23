@@ -68,6 +68,7 @@ jobs:
           npm run check:notes-limits
           npm run check:notes-schema
           npm run check:sync
+          npm run check:cloud-ids
           npm run check:theme-from-image
           npm run check:glass
           npm run check:sounds

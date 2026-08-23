@@ -13,6 +13,18 @@ export interface UserNote {
 
 const STORAGE_KEY = "orbit:user-notes:v1";
 
+/**
+ * Whether an id is one the database issued.
+ *
+ * `user_notes.id` is a `uuid` with a `gen_random_uuid()` default, so a note
+ * created here before it reached the cloud carries a local `note_…` id
+ * instead. Sending that to `.eq("id", …)` is not a harmless miss — Postgres
+ * rejects it as invalid input for a uuid — so cloud writes only go out with an
+ * id the cloud will recognise.
+ */
+const CLOUD_ID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const isCloudId = (id: string) => CLOUD_ID.test(id);
+
 export function useUserNotes(userId: string | null) {
   const [notes, setNotes] = useState<UserNote[]>([]);
   const [loading, setLoading] = useState(false);
@@ -81,15 +93,38 @@ export function useUserNotes(userId: string | null) {
     await saveLocal(next);
 
     if (userId) {
-      try {
-        await supabase.from("user_notes").insert({
+      // `.select().single()` is what stops the note having two identities —
+      // `note_…` here and a uuid in the database. Without it an edit updates
+      // nothing and a delete removes only the local copy, so the note comes
+      // back on the next refetch.
+      const { data, error } = await supabase
+        .from("user_notes")
+        .insert({
           user_id: userId,
           title: newNote.title,
           content: newNote.content,
-        });
-      } catch {
-        // Keep local
+        })
+        .select("id, created_at, updated_at")
+        .single();
+
+      // supabase-js returns errors rather than throwing, so the try/catch this
+      // replaces could never have fired.
+      if (!error && data?.id) {
+        const adopted = next.map(note =>
+          note.id === newId
+            ? {
+                ...note,
+                id: data.id as string,
+                created_at: (data.created_at as string) ?? note.created_at,
+                updated_at: (data.updated_at as string) ?? note.updated_at,
+              }
+            : note,
+        );
+        setNotes(adopted);
+        await saveLocal(adopted);
+        return adopted.find(note => note.id === data.id) ?? newNote;
       }
+      // Otherwise the note keeps its local id and stays on this device.
     }
     return newNote;
   };
@@ -99,12 +134,8 @@ export function useUserNotes(userId: string | null) {
     setNotes(next);
     await saveLocal(next);
 
-    if (userId) {
-      try {
-        await supabase.from("user_notes").update(patch).eq("id", id);
-      } catch {
-        // Keep local
-      }
+    if (userId && isCloudId(id)) {
+      await supabase.from("user_notes").update(patch).eq("id", id);
     }
   };
 
@@ -113,12 +144,8 @@ export function useUserNotes(userId: string | null) {
     setNotes(next);
     await saveLocal(next);
 
-    if (userId) {
-      try {
-        await supabase.from("user_notes").delete().eq("id", id);
-      } catch {
-        // Keep local
-      }
+    if (userId && isCloudId(id)) {
+      await supabase.from("user_notes").delete().eq("id", id);
     }
   };
 

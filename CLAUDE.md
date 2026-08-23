@@ -232,6 +232,31 @@ cloud profile because that is the proof both the session and the row exist.
 
 `npm run check:sync` pins the ordering.
 
+## A locally-created row must adopt its database id
+
+`calendar_events.id` and `user_notes.id` are `uuid` columns with a
+`gen_random_uuid()` default, so the database always mints its own. The hooks
+create a row locally first — that is how it exists at all offline — with a
+`cal_…` / `note_…` id, and must then **adopt** the real one via
+`.insert(...).select().single()`.
+
+Skip that and the row has two identities. Nothing looks wrong at the time; it
+goes wrong afterwards: `update` and `delete` filter on `.eq("id", "cal_17…")`,
+which matches nothing, so an edit is local-only and a **deleted event comes
+back on the next refetch**.
+
+Two things make it invisible:
+
+- **supabase-js returns errors, it does not throw them.** A `try/catch` around
+  a Supabase call never fires, so Postgres rejecting a non-uuid for a uuid
+  column is discarded along with everything else.
+- The preview has no signed-in session, so `check:smoke` never walks the cloud
+  path at all.
+
+`isCloudId()` gates every cloud update and delete, so a row that has not
+synced yet is never sent to the database under an id it would reject.
+`npm run check:cloud-ids` pins all of it.
+
 ## Themes: four presets, plus one the user builds
 
 `src/theme/presets.ts` holds the named themes (Dark, Light, Black Pink, Liquid
