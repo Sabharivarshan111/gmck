@@ -132,6 +132,18 @@ function SectionBlock({ section }: { section: Section }) {
     section.type === 'definition' || section.type === 'comparison'
       ? colors.danger
       : colors.success;
+  // A revision block is its own card — dashed, violet, with its own heading —
+  // so wrapping it in the standard card would frame it twice and title it
+  // twice. The web app does the same.
+  const isMnemonic = section.type === 'revision';
+  if (isMnemonic) {
+    return (
+      <View>
+        <AskedRow years={section.pyqYears ?? []} />
+        <SectionBody section={section} />
+      </View>
+    );
+  }
   return (
     <View style={[styles.section, { backgroundColor: colors.card, borderColor: colors.border }]}>
       <View style={styles.sectionHeader}>
@@ -436,11 +448,30 @@ function SectionBody({ section }: { section: Section }) {
       );
 
     case 'revision':
+      /**
+       * The dashed violet card, matching the web app.
+       *
+       * A revision section is not another list of facts — it is the handful of
+       * lines that must end up on the paper. Drawing it like every other
+       * bullet list is why it read as more of the same; the border and the
+       * heading are what make it findable when someone is skimming an hour
+       * before the exam.
+       */
       return (
-        <View>
+        <View
+          style={[
+            styles.mnemonic,
+            { borderColor: colors.violet, backgroundColor: withAlpha(colors.violet, 0.1) },
+          ]}>
+          <Text style={[styles.mnemonicLabel, { color: colors.violet }]}>
+            MNEMONIC — MUST-WRITE POINTS
+          </Text>
+          {section.title ? (
+            <Text style={[styles.mnemonicTitle, { color: colors.text }]}>{section.title}</Text>
+          ) : null}
           {itemsOf(p.items).map((item, i) => (
-            <View key={i} style={styles.bulletRow}>
-              <Text style={[styles.bulletDot, { color: colors.warning }]}>★</Text>
+            <View key={i} style={styles.mnemonicRow}>
+              <Text style={[styles.mnemonicNum, { color: colors.violet }]}>{i + 1}</Text>
               <Inline
                 text={field(item, 'text', 'label', 'title')}
                 style={[styles.body, styles.flex, { color: colors.text }]}
@@ -644,6 +675,33 @@ const styles = StyleSheet.create({
   },
   // Raw sizes, like the rest of this file. It predates the type ramp and
   // mixing the two here would put two different leadings on adjacent lines.
+  mnemonic: {
+    borderRadius: 14,
+    borderWidth: 2,
+    borderStyle: 'dashed',
+    padding: 14,
+  },
+  mnemonicLabel: {
+    fontSize: 9,
+    letterSpacing: 1.4,
+    fontWeight: '800',
+  },
+  mnemonicTitle: {
+    fontSize: 18,
+    fontWeight: '800',
+    marginTop: 4,
+    marginBottom: 6,
+  },
+  mnemonicRow: {
+    flexDirection: 'row',
+    gap: 10,
+    marginTop: 6,
+  },
+  mnemonicNum: {
+    fontSize: 13,
+    fontWeight: '800',
+    width: 16,
+  },
   mark: {
     fontWeight: '700',
   },
