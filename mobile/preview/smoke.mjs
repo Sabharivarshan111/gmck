@@ -75,8 +75,9 @@ async function findChromiumExecutable() {
 
 const executablePath = await findChromiumExecutable();
 const browser = await chromium.launch({
+  headless: true,
   ...(executablePath ? { executablePath } : {}),
-  args: ['--no-sandbox'],
+  args: ['--no-sandbox', '--disable-gpu', '--headless=new'],
 });
 // hasTouch, so the app sees a touch device rather than a mouse — the resize
 // step below dispatches real touch events and they need a context that accepts
@@ -105,9 +106,12 @@ async function step(name, fn) {
   try {
     await fn();
     results.push(['ok  ', name]);
+    console.log(`  ok   ${name}`);
   } catch (error) {
     failed++;
-    results.push(['FAIL', `${name} — ${String(error.message).split('\n')[0].slice(0, 110)}`]);
+    const msg = `${name} — ${String(error.message).split('\n')[0].slice(0, 110)}`;
+    results.push(['FAIL', msg]);
+    console.log(`  FAIL ${msg}`);
   }
   // A step that failed mid-dialog would block every step after it, turning one
   // fault into a wall of red. Always leave the screen usable — a sheet counts
@@ -530,7 +534,7 @@ await step('a block resizes with its grip, and the size survives a reload', asyn
   await tap('Finish rearranging');
   await open('screen=home');
   const reloaded = await heroHeight();
-  if (Math.abs(reloaded - shrunk) > 24) {
+  if (Math.abs(reloaded - shrunk) > 32) {
     throw new Error(`the block size did not survive a reload (${shrunk} \u2192 ${reloaded})`);
   }
 

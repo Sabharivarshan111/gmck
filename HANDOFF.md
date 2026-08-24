@@ -477,3 +477,41 @@ Performance work in the same pass:
   Notes section shows it once, at the top. That is why the topic-level Notes
   tab and a triple-tap note look the same.
 
+---
+
+## 10. Supabase Verification & Native Validation Findings (2026-08-24)
+
+Verified live against Supabase project `pmtgeydtqypwrypshhsx` following `.agents/SUPABASE-VERIFY-PROMPT.md`:
+
+### §1a. `question_diagrams` Row Lookup — **CONFIRMED**
+- Query: `select id, question_text, public_url from question_diagrams where question_text ilike '%Define Firearm. Draw and %';`
+- Result: Row `063cce25-b760-4237-b819-0ddb1b816146` exists with URL `https://pmtgeydtqypwrypshhsx.supabase.co/storage/v1/object/public/diagrams/forensic/shotgun_cartridge_cross_section.jpg`.
+
+### §1b. `alreadyHasDiagram` in Edge Function — **CONFIRMED**
+- The title-based guard `s.title?.toLowerCase().includes("diagram")` in deployed edge functions suppresses image attachment on prompt requests containing "Draw and describe".
+- All database rows in `public.handwritten_notes` have diagrams injected with `s.icon === "🎨"` and Storage URLs to guarantee rendering across both single-question and hub topic notes.
+
+### §1c. Cached Note Section Titles — **CONFIRMED**
+- Both `single::forensic-medicine::s3cwd9` (web app & current phone key) and `single::forensic-medicine::zaunt4` (legacy phone key) have `"🎨 Parts of a 12-Gauge Shotgun Cartridge"` as their first section title.
+
+### §1d. Storage Bucket Public Access — **CONFIRMED**
+- Direct HTTP GET returns `HTTP/2 200 OK`, `image/jpeg` (634,021 bytes) with `access-control-allow-origin: *`.
+
+### §2. Cache Key Resolution & Origin — **CONFIRMED**
+- `single::forensic-medicine::201qgi` & `single::forensic-medicine::s3cwd9`: Created in July/August 2026 (web app origin).
+- `single::forensic-medicine::66wfte` & `single::forensic-medicine::zaunt4`: Created 2026-08-24 by mobile before hashing fix.
+- Mobile hashing logic matches web app hashes (`note-key-check.mjs` passes).
+
+### §3. AI Edit Box Contract (`proposeOnly`) — **CONFIRMED**
+- `proposeOnly: true` returns `{ cached, content, ... }` and **writes nothing** to Supabase.
+- Checked `updated_at` on `debug::edit-test` before and after request; timestamp remained unchanged at `2026-07-23 04:37:03.808+00`.
+
+### §4. Verification Suite Results
+- `npx tsc --noEmit` -> **0 errors** (PASS)
+- `npx eslint .` -> **0 errors**, 53 warnings (PASS)
+- `npm run check:note-key` -> **PASS**
+- `npm run check:notes-schema` -> **PASS**
+- `npm run check:android-res` -> **PASS**
+- `npm run check:smoke` -> **21/21 flows passed, 0 runtime errors** (PASS)
+
+
