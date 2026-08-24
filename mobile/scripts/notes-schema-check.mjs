@@ -106,6 +106,43 @@ check(
   'the fixture has no **bold**, so the highlight path is untested',
 );
 
+// 2c. Prose carries pictures, so every run of prose has to be able to draw one.
+//
+// generate-handwritten-notes prepends the matched question_diagrams row as a
+// *definition* section whose text is `![alt](url)`, and the model drops the
+// same markdown into paragraphs, bullet descriptions and comparison cells. The
+// first attempt special-cased two section types, so a shotgun-cartridge
+// definition rendered the picture and everything else printed
+//
+//     ![Parts of a 12-Gauge Shotgun Cartridge](https://…supabase.co/storage/…
+//
+// at the reader. RichText is the single place that splits a run into text and
+// images; Inline is its private helper. Any <Inline> outside it is a run of
+// prose that would print the markdown instead of the diagram.
+check(
+  /function RichText\(/.test(rendererCode),
+  'NotesContentView has no RichText — image markdown in prose would print as raw text',
+);
+const inlineUses = [...rendererCode.matchAll(/<Inline\b/g)].length;
+const richTextBody = rendererCode.slice(
+  rendererCode.indexOf('function RichText('),
+  rendererCode.indexOf('function Inline('),
+);
+const inlineInsideRichText = [...richTextBody.matchAll(/<Inline\b/g)].length;
+check(
+  inlineUses === inlineInsideRichText,
+  `NotesContentView renders <Inline> directly in ${inlineUses - inlineInsideRichText} place(s) ` +
+    'outside RichText — that prose would print ![alt](url) instead of the diagram',
+);
+check(
+  !/imgMatch|cleanText/.test(rendererCode),
+  'NotesContentView is back to matching images per section type — only the first image survives, and only in the types that were special-cased',
+);
+check(
+  /!\[/.test(fixture) && /storage\/v1\/object\/public/.test(fixture),
+  'the fixture has no image markdown, so the diagram path in prose is untested',
+);
+
 // 3. The edge function still declares those shapes.
 const fn = await fs
   .readFile(path.join(root, '..', 'supabase/functions/generate-handwritten-notes/index.ts'), 'utf8')
@@ -120,6 +157,14 @@ if (fn) {
   declares('steps', '"items": [ { "title": string, "description": string, "keyTrigger"?: string } ]');
   declares('flowchart', '"steps": [ { "label": string, "detail": string } ]');
   declares('comparison', '"rows": [ { "label": string, "left": string, "right": string } ]');
+  check(
+    /attachDiagramToContent/.test(fn) && /question_diagrams/.test(fn),
+    'the edge function no longer attaches question_diagrams — notes would ship without their exam diagrams',
+  );
+  check(
+    /!\[[^\]]*\]\(\$\{/.test(fn),
+    'the edge function no longer emits the diagram as image markdown — RichText reads exactly that shape',
+  );
 }
 
 if (failures.length > 0) {

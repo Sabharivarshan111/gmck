@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { StyleSheet, View, type StyleProp, type TextStyle } from 'react-native';
+import { StyleSheet, View, type StyleProp, type TextStyle, type ViewStyle } from 'react-native';
 import { Text } from '@/components/Text';
 import { useTheme, withAlpha } from '@/theme';
 import { DiagramCard } from '@/components/DiagramCard';
@@ -33,7 +33,7 @@ function NotesContentViewBase({ content }: { content: NotesContent }) {
             },
           ]}>
           <Text style={[styles.tipLabel, { color: colors.warning }]}>HIGH-YIELD</Text>
-          <Inline text={content.highYieldTip} style={[styles.tipText, { color: colors.text }]} />
+          <RichText text={content.highYieldTip} style={[styles.tipText, { color: colors.text }]} />
         </View>
       ) : null}
 
@@ -67,6 +67,62 @@ function NotesContentViewBase({ content }: { content: NotesContent }) {
  * React Native nests Text, so this needs no library: split on the pairs and
  * give the inner ones a background.
  */
+/**
+ * Markdown images in note prose, anywhere they appear.
+ *
+ * The notes function embeds diagrams as `![alt](url)` pointing at the
+ * `diagrams` Supabase bucket, and it does not restrict itself to one place —
+ * a definition, a paragraph, a bullet's description, a step. Handling it per
+ * section type meant the two types that were special-cased rendered the
+ * picture and every other one printed the raw markdown at the reader, which
+ * is what a shotgun-cartridge definition looked like on a phone:
+ *
+ *     ![Parts of a 12-Gauge Shotgun Cartridge](https://…supabase.co/storage/…
+ *
+ * So it lives here instead, in the single function every piece of prose in a
+ * note already flows through. Text runs keep their `**bold**` highlighting;
+ * image runs become a DiagramCard; and both keep their original order rather
+ * than the image being hoisted to the top and the words swept up after it.
+ */
+const IMAGE_MARKDOWN = /!\[([^\]]*)\]\(\s*(\S+?)\s*\)/g;
+
+function RichText({
+  text,
+  style,
+  containerStyle,
+}: {
+  text: string;
+  style?: StyleProp<TextStyle>;
+  /** Layout for the box. Folded into the text when there is no image to box. */
+  containerStyle?: StyleProp<ViewStyle>;
+}) {
+  const value = String(text ?? '');
+  // The overwhelmingly common case: no image, no splitting, no extra views.
+  if (!value.includes('](')) {
+    return <Inline text={value} style={containerStyle ? [containerStyle, style] : style} />;
+  }
+
+  const parts: React.ReactNode[] = [];
+  let cursor = 0;
+  let match: RegExpExecArray | null;
+  IMAGE_MARKDOWN.lastIndex = 0;
+  while ((match = IMAGE_MARKDOWN.exec(value)) !== null) {
+    const before = value.slice(cursor, match.index).trim();
+    if (before) {
+      parts.push(<Inline key={`t${cursor}`} text={before} style={style} />);
+    }
+    parts.push(
+      <DiagramCard key={`i${match.index}`} imageUrl={match[2]} caption={match[1]} />,
+    );
+    cursor = match.index + match[0].length;
+  }
+  const rest = value.slice(cursor).trim();
+  if (rest) {
+    parts.push(<Inline key={`t${cursor}`} text={rest} style={style} />);
+  }
+  return <View style={[styles.richText, containerStyle]}>{parts}</View>;
+}
+
 function Inline({ text, style }: { text: string; style?: StyleProp<TextStyle> }) {
   const { colors } = useTheme();
   const parts = String(text ?? '').split(/(\*\*[^*]+\*\*)/g);
@@ -240,35 +296,15 @@ function SectionBody({ section }: { section: Section }) {
       return <DiagramCard imageUrl={url} title={section.title} caption={caption} />;
     }
 
-    case 'definition': {
-      const rawText = field(p, 'text');
-      const imgMatch = rawText.match(/(https:\/\/[^\s\)]+\.(?:jpg|jpeg|png|webp))/i) || rawText.match(/!\[.*?\]\((.*?)\)/);
-      const imgUrl = imgMatch ? (imgMatch[1] || imgMatch[0]) : null;
-      const cleanText = rawText.replace(/!\[.*?\]\(.*?\)/g, '').replace(/(https:\/\/[^\s\)]+\.(?:jpg|jpeg|png|webp))/gi, '').trim();
-
-      if (imgUrl) {
-        return <DiagramCard imageUrl={imgUrl} title={section.title} caption={cleanText} />;
-      }
-
+    case 'definition':
       return (
         <View style={[styles.definition, { borderLeftColor: colors.fuchsia }]}>
-          <Inline text={rawText} style={[styles.body, { color: colors.text }]} />
+          <RichText text={field(p, 'text')} style={[styles.body, { color: colors.text }]} />
         </View>
       );
-    }
 
-    case 'text': {
-      const rawText = field(p, 'paragraph');
-      const imgMatch = rawText.match(/(https:\/\/[^\s\)]+\.(?:jpg|jpeg|png|webp))/i) || rawText.match(/!\[.*?\]\((.*?)\)/);
-      const imgUrl = imgMatch ? (imgMatch[1] || imgMatch[0]) : null;
-      const cleanText = rawText.replace(/!\[.*?\]\(.*?\)/g, '').replace(/(https:\/\/[^\s\)]+\.(?:jpg|jpeg|png|webp))/gi, '').trim();
-
-      if (imgUrl) {
-        return <DiagramCard imageUrl={imgUrl} title={section.title} caption={cleanText} />;
-      }
-
-      return <Inline text={rawText} style={[styles.body, { color: colors.text }]} />;
-    }
+    case 'text':
+      return <RichText text={field(p, 'paragraph')} style={[styles.body, { color: colors.text }]} />;
 
     case 'bullets':
       return (
@@ -284,7 +320,7 @@ function SectionBody({ section }: { section: Section }) {
                     <Text style={[styles.itemLabel, { color: colors.fuchsia }]}>{label}</Text>
                   ) : null}
                   {description ? (
-                    <Inline
+                    <RichText
                       text={description}
                       style={[
                         styles.body,
@@ -322,7 +358,7 @@ function SectionBody({ section }: { section: Section }) {
                     </Text>
                   ) : null}
                   {description ? (
-                    <Inline text={description} style={[styles.body, { color: colors.text }]} />
+                    <RichText text={description} style={[styles.body, { color: colors.text }]} />
                   ) : null}
                   {trigger ? (
                     <View
@@ -364,7 +400,7 @@ function SectionBody({ section }: { section: Section }) {
                 </View>
                 <View style={[styles.morphDetails, { borderLeftColor: colors.border }]}>
                   {details.map((detail, j) => (
-                    <Inline
+                    <RichText
                       key={j}
                       text={`— ${detail}`}
                       style={[styles.body, { color: colors.textMuted }]}
@@ -408,13 +444,15 @@ function SectionBody({ section }: { section: Section }) {
                     i === rows.length - 1 ? styles.tableRowLast : null,
                     { borderBottomColor: colors.border },
                   ]}>
-                  <Inline
+                  <RichText
                     text={field(row, 'left')}
-                    style={[styles.compareCell, styles.body, { color: colors.text }]}
+                    containerStyle={styles.compareCell}
+                    style={[styles.body, { color: colors.text }]}
                   />
-                  <Inline
+                  <RichText
                     text={field(row, 'right')}
-                    style={[styles.compareCell, styles.body, { color: colors.text }]}
+                    containerStyle={styles.compareCell}
+                    style={[styles.body, { color: colors.text }]}
                   />
                 </View>
               </View>
@@ -446,7 +484,7 @@ function SectionBody({ section }: { section: Section }) {
                   {field(step, 'label', 'title')}
                 </Text>
                 {field(step, 'detail', 'description') ? (
-                  <Inline
+                  <RichText
                     text={field(step, 'detail', 'description')}
                     style={[styles.body, { color: colors.textMuted }]}
                   />
@@ -470,7 +508,7 @@ function SectionBody({ section }: { section: Section }) {
               borderColor: withAlpha(colors.success, 0.4),
             },
           ]}>
-          <Inline text={field(p, 'text')} style={[styles.body, { color: colors.text }]} />
+          <RichText text={field(p, 'text')} style={[styles.body, { color: colors.text }]} />
         </View>
       );
 
@@ -499,7 +537,7 @@ function SectionBody({ section }: { section: Section }) {
           {itemsOf(p.items).map((item, i) => (
             <View key={i} style={styles.mnemonicRow}>
               <Text style={[styles.mnemonicNum, { color: colors.violet }]}>{i + 1}</Text>
-              <Inline
+              <RichText
                 text={field(item, 'text', 'label', 'title')}
                 style={[styles.body, styles.flex, { color: colors.text }]}
               />
@@ -512,7 +550,10 @@ function SectionBody({ section }: { section: Section }) {
       // Unknown section types still show their text rather than vanishing —
       // but never as a stringified object.
       return (
-        <Text style={[styles.body, { color: colors.textMuted }]}>{field(p, 'text', 'paragraph')}</Text>
+        <RichText
+          text={field(p, 'text', 'paragraph')}
+          style={[styles.body, { color: colors.textMuted }]}
+        />
       );
   }
 }
@@ -626,6 +667,11 @@ function TableSection({ columns, rows }: { columns: string[]; rows: unknown[] })
 const styles = StyleSheet.create({
   root: {
     gap: 12,
+  },
+  richText: {
+    // Only ever wraps prose that turned out to contain a diagram, so the gap
+    // is the space between a sentence and the picture it introduces.
+    gap: 10,
   },
   flex: {
     flex: 1,

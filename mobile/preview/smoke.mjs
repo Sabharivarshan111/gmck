@@ -844,6 +844,28 @@ await step('notes screen renders its year picker', async () => {
   await seesText('SELECT YEAR');
 });
 
+/**
+ * The diagram the notes function attaches arrives as image markdown inside an
+ * ordinary prose payload, not as a 'diagram' section — so the only proof it
+ * renders is that the picture is on screen and the markdown is not. Before
+ * RichText, a note opened on a phone showed the reader
+ * `![Parts of a 12-Gauge Shotgun Cartridge](https://…supabase.co/storage/…`.
+ */
+await step('a diagram in prose renders as a picture, not as markdown', async () => {
+  await open('screen=notesdemo');
+  await seesText('High-Yield Visual Exam Diagram');
+  const raw = await page.getByText('](http', { exact: false }).count();
+  if (raw > 0) {
+    throw new Error('raw image markdown is visible in the rendered note');
+  }
+  // The card, not the bitmap: react-native-web only writes the URL into the DOM
+  // once the fetch succeeds, and the sandbox has no route to Supabase Storage.
+  // What is verifiable offline is that the markdown became a DiagramCard and
+  // the prose that followed it survived the split.
+  await byLabel('Enlarge diagram image').waitFor({ timeout: 6000 });
+  await seesText('High-Yield Continuous Visual Mnemonic');
+});
+
 await step('ask ai screen renders and accepts input', async () => {
   await open('screen=askai');
   const box = page.locator('textarea, input').first();

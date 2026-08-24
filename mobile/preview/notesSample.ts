@@ -35,6 +35,19 @@ export const SAMPLE_NOTES: NotesContent = {
   pyqYears: ['2023', '2021', '2019', '2017'],
   sections: [
     {
+      // Exactly what generate-handwritten-notes prepends when it finds a match
+      // in the question_diagrams table: a *definition* section whose text is
+      // image markdown followed by a caption. It is not a 'diagram' section,
+      // so the renderer only shows the picture if prose handles markdown —
+      // which is why this sits in the fixture rather than a diagram section.
+      type: 'definition',
+      title: 'High-Yield Visual Exam Diagram',
+      icon: '🎨',
+      payload: {
+        text: '![High-Yield Exam Diagram](https://pmtgeydtqypwrypshhsx.supabase.co/storage/v1/object/public/question-diagrams/sample-mi.png)\n\n💡 High-Yield Continuous Visual Mnemonic (Standard Textbook Grounded)',
+      },
+    },
+    {
       type: 'definition',
       title: 'Definition',
       payload: {
