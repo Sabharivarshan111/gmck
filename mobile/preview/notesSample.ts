@@ -44,7 +44,7 @@ export const SAMPLE_NOTES: NotesContent = {
       title: 'High-Yield Visual Exam Diagram',
       icon: '🎨',
       payload: {
-        text: '![High-Yield Exam Diagram](https://pmtgeydtqypwrypshhsx.supabase.co/storage/v1/object/public/question-diagrams/sample-mi.png)\n\n💡 High-Yield Continuous Visual Mnemonic (Standard Textbook Grounded)',
+        text: '![High-Yield Exam Diagram](https://pmtgeydtqypwrypshhsx.supabase.co/storage/v1/object/public/diagrams/community/sample-life-cycle.jpg)\n\n💡 High-Yield Continuous Visual Mnemonic (Standard Textbook Grounded)',
       },
     },
     {

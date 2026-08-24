@@ -275,6 +275,21 @@ the web app already uses, all present in `supabase/migrations`:
 
 Edge functions used: `ask-gemini`, `generate-handwritten-notes`.
 
+**Do not deploy `supabase/functions/generate-handwritten-notes/` from this
+repo.** The copy here is behind what is live, and pushing it is a downgrade,
+not a no-op:
+
+| | repo copy | deployed |
+|---|---|---|
+| textbooks | 2, bundled in `textbook.ts` (Park's, Vision Forensic) | 4, read at runtime from the private `textbooks` Storage bucket |
+| subjects grounded | Community Medicine, Forensic Medicine | those plus 2nd-year Pharmacology |
+
+`supabase functions deploy generate-handwritten-notes` would silently drop two
+books and the Storage loader, and the only symptom is that notes for the
+affected subjects get vaguer — nothing errors. Pull the deployed source down
+first (Lovable, or `supabase functions download`) and reconcile before
+deploying anything in that directory.
+
 **One setting to confirm:** Authentication → Providers → **Anonymous must be
 ON**. The app signs in anonymously so progress sync, streaks and the
 leaderboard work before a user signs in with Google. The web app relies on it
@@ -450,5 +465,15 @@ Performance work in the same pass:
 
 ### React Native Diagram Components
 - `mobile/src/components/DiagramCard.tsx`: Native diagram viewer with high-res image loading, theme-aware badge, and fullscreen tap-to-zoom Lightbox modal.
-- `mobile/src/components/NotesContentView.tsx`: Updated `SectionBody` to handle `diagram`, `definition`, and `text` sections containing Supabase diagram URLs.
+- `mobile/src/components/NotesContentView.tsx`: `RichText` splits **every** run
+  of model prose into text and image parts, so a diagram renders wherever the
+  markdown lands — paragraph, definition, bullet description, comparison cell,
+  flowchart detail, revision item. Handling it per section type was the first
+  attempt and it printed the raw `![alt](url)` at the reader everywhere it had
+  not been special-cased. `Inline` is now RichText's private helper;
+  `npm run check:notes-schema` fails if any `<Inline>` reappears outside it.
+- A multi-batch topic asks for the diagram once per batch, but `mergeNotes()`
+  folds sections by title, so the second and later copies are dropped and the
+  Notes section shows it once, at the top. That is why the topic-level Notes
+  tab and a triple-tap note look the same.
 
