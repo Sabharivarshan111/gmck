@@ -14,6 +14,7 @@ import {
   type NotesContent,
 } from '@/lib/handwrittenNotes';
 import { NotesAiEditBox } from '@/components/NotesAiEditBox';
+import { Dialog } from '@/components/Dialog';
 import { getCleanQuestionText } from '@/lib/questionText';
 import { useTheme, withAlpha } from '@/theme';
 import { typeScale } from '@/theme/typography';
@@ -56,6 +57,13 @@ export function SingleQuestionNote({
 
   // Closing mid-generation must not land a result on a closed reader.
   const runId = useRef(0);
+
+  /**
+   * Regenerating throws away whatever is on screen, and by the time the button
+   * is reachable that may include edits the reader accepted from the box below
+   * it. Cheap to confirm, expensive to undo — there is no undo.
+   */
+  const [confirmingRegen, setConfirmingRegen] = useState(false);
 
   const generate = useCallback(
     async (regenerate: boolean) => {
@@ -124,15 +132,17 @@ export function SingleQuestionNote({
             </Text>
           </View>
           <Touchable
-            label="Write this note again"
-            onPress={() => generate(true)}
-            disabled={loading}
+            label="Write this note again from the top"
+            onPress={() => setConfirmingRegen(true)}
+            disabled={loading || content == null}
             style={styles.close}
             hitSlop={12}
           >
             <RotateCw
               size={20}
-              color={loading ? colors.border : colors.textMuted}
+              color={
+                loading || content == null ? colors.border : colors.textMuted
+              }
             />
           </Touchable>
           <Touchable
@@ -182,8 +192,22 @@ export function SingleQuestionNote({
 
           {content ? <NotesContentView content={content} /> : null}
 
-          {/* Below the note, not above it: the note is what was asked for, and
-              the way to change it belongs after the thing being changed. */}
+          {/* Two ways to change the note, in order of how much they change:
+              write it again from scratch, or ask for one correction. Both sit
+              after the note, because they act on it. */}
+          {content ? (
+            <Touchable
+              label="Write this note again"
+              onPress={() => setConfirmingRegen(true)}
+              style={[styles.regen, { borderColor: colors.border }]}
+            >
+              <RotateCw size={15} color={colors.textMuted} />
+              <Text style={[typeScale.footnote, { color: colors.text }]}>
+                Write this note again
+              </Text>
+            </Touchable>
+          ) : null}
+
           {content && question ? (
             <NotesAiEditBox
               request={{ question, subjectKey, subjectName, yearLabel }}
@@ -192,6 +216,28 @@ export function SingleQuestionNote({
             />
           ) : null}
         </ScrollView>
+
+        <Dialog
+          visible={confirmingRegen}
+          onDismiss={() => setConfirmingRegen(false)}
+          title="Write this note again?"
+          message="This asks for a fresh note and discards the one you have, including anything you accepted from the AI edit box."
+          actions={[
+            {
+              label: 'Write it again',
+              tone: 'danger',
+              onPress: () => {
+                setConfirmingRegen(false);
+                generate(true);
+              },
+            },
+            {
+              label: 'Keep this one',
+              tone: 'secondary',
+              onPress: () => setConfirmingRegen(false),
+            },
+          ]}
+        />
       </View>
     </Modal>
   );
@@ -238,6 +284,17 @@ const styles = StyleSheet.create({
     borderWidth: StyleSheet.hairlineWidth,
     padding: 14,
     gap: 10,
+  },
+  regen: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    gap: 8,
+    borderRadius: 999,
+    borderWidth: StyleSheet.hairlineWidth,
+    paddingHorizontal: 14,
+    paddingVertical: 9,
+    marginTop: 18,
   },
   retry: {
     alignSelf: 'flex-start',
