@@ -410,7 +410,7 @@ Modify ONLY the relevant part(s) requested by the user. Preserve everything else
     async function attachDiagramToContent(rawContent: any) {
       if (!rawContent || !Array.isArray(rawContent.sections)) return rawContent;
       const alreadyHasDiagram = rawContent.sections.some((s: any) => 
-        s.title?.toLowerCase().includes("diagram") || s.icon === "🎨" || (typeof s.payload?.text === "string" && s.payload.text.includes("supabase.co/storage"))
+        s.icon === "🎨" || (typeof s.payload?.text === "string" && s.payload.text.includes("supabase.co/storage"))
       );
       if (alreadyHasDiagram) return rawContent;
 
@@ -421,6 +421,7 @@ Modify ONLY the relevant part(s) requested by the user. Preserve everything else
           const clean = cand.replace(/[0-9]+\./g, "").replace(/\(.*?\)/g, "").replace(/[*#]/g, "").trim();
           if (clean.length < 3) continue;
 
+          // 1. Exact prefix match
           const { data } = await admin
             .from("question_diagrams")
             .select("public_url, question_text")
@@ -432,6 +433,22 @@ Modify ONLY the relevant part(s) requested by the user. Preserve everything else
             foundUrl = data[0].public_url;
             break;
           }
+
+          // 2. Keyword fallback
+          const keywords = clean.split(/\s+/).filter(w => w.length > 4);
+          for (const kw of keywords.slice(0, 3)) {
+            const { data: kwData } = await admin
+              .from("question_diagrams")
+              .select("public_url, question_text")
+              .not("public_url", "is", null)
+              .ilike("question_text", `%${kw}%`)
+              .limit(1);
+            if (kwData && kwData.length > 0 && kwData[0].public_url) {
+              foundUrl = kwData[0].public_url;
+              break;
+            }
+          }
+          if (foundUrl) break;
         }
 
         if (foundUrl) {

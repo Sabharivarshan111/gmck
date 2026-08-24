@@ -23,6 +23,7 @@ export interface Section {
 export interface NotesContent {
   highYieldTip?: string;
   pyqYears?: string[];
+  diagramUrl?: string;
   sections: Section[];
 }
 
@@ -352,6 +353,109 @@ async function invokeNotes(
   return (data ?? {}) as Record<string, unknown>;
 }
 
+/**
+ * Look up a diagram from `question_diagrams` for a single question or topic query.
+ */
+export async function findDiagramForQuery(
+  query: string,
+): Promise<{ url: string; title?: string } | null> {
+  const clean = query
+    .replace(/[0-9]+\./g, '')
+    .replace(/\(.*?\)/g, '')
+    .replace(/[*#]/g, '')
+    .trim();
+  if (clean.length < 3) {
+    return null;
+  }
+
+  try {
+    // 1. Direct match on question text prefix
+    const { data } = await supabase
+      .from('question_diagrams')
+      .select('public_url, question_text')
+      .not('public_url', 'is', null)
+      .ilike('question_text', `%${clean.slice(0, 25)}%`)
+      .limit(1);
+
+    if (data && data.length > 0 && data[0].public_url) {
+      return { url: data[0].public_url, title: data[0].question_text };
+    }
+
+    // 2. Keyword fallback for known core syllabus entities
+    const keywords = clean.split(/\s+/).filter(w => w.length > 4);
+    for (const kw of keywords.slice(0, 3)) {
+      const { data: kwData } = await supabase
+        .from('question_diagrams')
+        .select('public_url, question_text')
+        .not('public_url', 'is', null)
+        .ilike('question_text', `%${kw}%`)
+        .limit(1);
+      if (kwData && kwData.length > 0 && kwData[0].public_url) {
+        return { url: kwData[0].public_url, title: kwData[0].question_text };
+      }
+    }
+  } catch (err) {
+    console.warn('[handwrittenNotes] diagram lookup failed:', err);
+  }
+  return null;
+}
+
+/**
+ * Ensures single-question note content carries its visual exam diagram.
+ */
+export async function ensureSingleNoteDiagram(
+  content: NotesContent,
+  request: SingleNoteRequest,
+): Promise<NotesContent> {
+  const hasStorageDiagram = content.sections?.some(
+    s =>
+      s.icon === '🎨' ||
+      (typeof s.payload?.text === 'string' &&
+        s.payload.text.includes('supabase.co/storage/v1/object/public/diagrams')),
+  );
+
+  if (hasStorageDiagram) {
+    return content;
+  }
+
+  const diagram = await findDiagramForQuery(request.question);
+  if (!diagram?.url) {
+    return content;
+  }
+
+  const diagramSection: Section = {
+    type: 'definition',
+    title: 'High-Yield Visual Exam Diagram',
+    icon: '🎨',
+    payload: {
+      text: `![High-Yield Exam Diagram](${diagram.url})\n\n💡 High-Yield Continuous Visual Mnemonic (Standard Textbook Grounded)`,
+    },
+  };
+
+  const enriched: NotesContent = {
+    ...content,
+    diagramUrl: diagram.url,
+    sections: [diagramSection, ...content.sections],
+  };
+
+  // Best effort save back to Supabase so future requests receive the diagram
+  try {
+    const clean = request.question.trim();
+    await supabase.from('handwritten_notes').upsert({
+      subtopic_key: `single::${request.subjectKey}::${hashKey(clean)}`,
+      year: request.yearLabel,
+      subject: request.subjectName || request.subjectKey || 'Community Medicine',
+      subtopic_name: clean.slice(0, 80),
+      content: enriched,
+      updated_at: new Date().toISOString(),
+    });
+  } catch {
+    // Non-fatal
+  }
+
+  return enriched;
+}
+
 export async function fetchSingleQuestionNote(
   request: SingleNoteRequest,
   regenerate = false,
@@ -361,7 +465,7 @@ export async function fetchSingleQuestionNote(
   if (!content) {
     throw new Error('The note came back empty. Tap to try again.');
   }
-  return content;
+  return ensureSingleNoteDiagram(content, request);
 }
 
 export interface NoteProposal {
