@@ -6,10 +6,6 @@ buildscript {
         targetSdkVersion = 36
         ndkVersion = "27.1.12297006"
         kotlinVersion = "2.2.0"
-        
-        // Provide these for libraries that might need them or use older names
-        compileSdk = 37
-        REACT_NATIVE_NODE_MODULES_DIR = "${rootDir}/../node_modules/react-native"
     }
     repositories {
         google()
@@ -19,6 +15,22 @@ buildscript {
         classpath("com.android.tools.build:gradle")
         classpath("com.facebook.react:react-native-gradle-plugin")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin")
+    }
+}
+
+// These are used by third-party libraries (e.g. react-native-screens, react-native-svg)
+// to resolve paths and SDK versions without needing to call 'node'.
+allprojects {
+    ext {
+        compileSdkVersion = 37
+        compileSdk = 37
+        targetSdkVersion = 36
+        targetSdk = 36
+        minSdkVersion = 24
+        minSdk = 24
+        buildToolsVersion = "37.0.0"
+        
+        REACT_NATIVE_NODE_MODULES_DIR = "${rootProject.projectDir}/../node_modules/react-native"
     }
 }
 

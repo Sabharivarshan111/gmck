@@ -407,6 +407,51 @@ Modify ONLY the relevant part(s) requested by the user. Preserve everything else
     // Gemini cost, every subsequent tap on the same question is instant and
     // never hits the free-tier quota. Only skip the cache read when the caller
     // explicitly asked to regenerate.
+    async function attachDiagramToContent(rawContent: any) {
+      if (!rawContent || !Array.isArray(rawContent.sections)) return rawContent;
+      const alreadyHasDiagram = rawContent.sections.some((s: any) => 
+        s.title?.toLowerCase().includes("diagram") || s.icon === "🎨" || (typeof s.payload?.text === "string" && s.payload.text.includes("supabase.co/storage"))
+      );
+      if (alreadyHasDiagram) return rawContent;
+
+      try {
+        const candidates = [subtopicName, ...(questions || [])].filter(Boolean);
+        let foundUrl: string | null = null;
+        for (const cand of candidates) {
+          const clean = cand.replace(/[0-9]+\./g, "").replace(/\(.*?\)/g, "").replace(/[*#]/g, "").trim();
+          if (clean.length < 3) continue;
+
+          const { data } = await admin
+            .from("question_diagrams")
+            .select("public_url, question_text")
+            .not("public_url", "is", null)
+            .ilike("question_text", `%${clean.slice(0, 25)}%`)
+            .limit(1);
+
+          if (data && data.length > 0 && data[0].public_url) {
+            foundUrl = data[0].public_url;
+            break;
+          }
+        }
+
+        if (foundUrl) {
+          const diagramSection = {
+            type: "definition",
+            title: "High-Yield Visual Exam Diagram",
+            icon: "🎨",
+            payload: {
+              text: `![High-Yield Exam Diagram](${foundUrl})\n\n💡 High-Yield Continuous Visual Mnemonic (Standard Textbook Grounded)`
+            }
+          };
+          rawContent.diagramUrl = foundUrl;
+          rawContent.sections = [diagramSection, ...rawContent.sections];
+        }
+      } catch (err) {
+        console.error("[attachDiagramToContent error]:", err);
+      }
+      return rawContent;
+    }
+
     if (idx === 0 && !regenerate) {
       const { data: cached } = await admin
         .from("handwritten_notes")
@@ -414,9 +459,10 @@ Modify ONLY the relevant part(s) requested by the user. Preserve everything else
         .eq("subtopic_key", subtopicKey)
         .maybeSingle();
       if (cached?.content) {
+        const enrichedContent = await attachDiagramToContent(cached.content);
         return new Response(JSON.stringify({
           cached: true,
-          content: cached.content,
+          content: enrichedContent,
           batchIndex: 0,
           totalBatches: 1,
           hasMore: false,
@@ -466,6 +512,8 @@ Follow the DEPTH rules from the system prompt strictly. Essays get multi-section
       throw new Error("Model returned invalid structure");
     }
 
+    const enrichedBatchContent = await attachDiagramToContent(batchContent);
+
     // Persist single-question notes so every future tap on the same question is
     // an instant cache hit and never re-hits the Gemini quota.
     if (singleMode && totalBatches === 1) {
@@ -473,7 +521,7 @@ Follow the DEPTH rules from the system prompt strictly. Essays get multi-section
         await admin.from("handwritten_notes").upsert({
           subtopic_key: subtopicKey,
           year, subject, subtopic_name: subtopicName,
-          content: batchContent,
+          content: enrichedBatchContent,
           updated_at: new Date().toISOString(),
         });
       } catch (e) {
@@ -484,7 +532,7 @@ Follow the DEPTH rules from the system prompt strictly. Essays get multi-section
     const hasMore = idx + 1 < totalBatches;
     return new Response(JSON.stringify({
       cached: false,
-      content: batchContent,
+      content: enrichedBatchContent,
       batchIndex: idx,
       totalBatches,
       hasMore,

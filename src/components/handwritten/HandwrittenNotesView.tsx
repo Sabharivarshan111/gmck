@@ -1,5 +1,6 @@
 import { Trophy, ChevronDown } from "lucide-react";
 import { useState } from "react";
+import ExamDiagramCard from "./ExamDiagramCard";
 
 /** ---------- Types ---------- */
 export interface NotesContent {
@@ -63,15 +64,39 @@ const SectionShell = ({
 };
 
 /** ---------- Section renderers ---------- */
-const DefinitionSection = ({ text }: { text: string }) => (
-  <div className="border-l-4 border-primary bg-muted/40 p-4 rounded-r-lg">
-    <p className="text-sm leading-relaxed">{text}</p>
-  </div>
-);
+const DefinitionSection = ({ text }: { text: string }) => {
+  const imgMatch = text.match(/(https:\/\/[^\s\)]+\.(?:jpg|jpeg|png|webp))/i) || text.match(/!\[.*?\]\((.*?)\)/);
+  const imgUrl = imgMatch ? (imgMatch[1] || imgMatch[0]) : null;
+  const cleanText = text.replace(/!\[.*?\]\(.*?\)/g, "").replace(/(https:\/\/[^\s\)]+\.(?:jpg|jpeg|png|webp))/gi, "").trim();
 
-const TextSection = ({ paragraph }: { paragraph: string }) => (
-  <p className="text-sm leading-relaxed">{paragraph}</p>
-);
+  return (
+    <div className="border-l-4 border-primary bg-muted/40 p-4 rounded-r-lg space-y-3">
+      {imgUrl && (
+        <div className="rounded-xl overflow-hidden shadow-md border border-border/60 bg-black/5 dark:bg-black/40 flex justify-center p-1">
+          <img src={imgUrl} alt="Exam Diagram" className="w-full max-h-96 object-contain rounded-lg" loading="lazy" />
+        </div>
+      )}
+      {cleanText && <p className="text-sm leading-relaxed">{cleanText}</p>}
+    </div>
+  );
+};
+
+const TextSection = ({ paragraph }: { paragraph: string }) => {
+  const imgMatch = paragraph.match(/(https:\/\/[^\s\)]+\.(?:jpg|jpeg|png|webp))/i) || paragraph.match(/!\[.*?\]\((.*?)\)/);
+  const imgUrl = imgMatch ? (imgMatch[1] || imgMatch[0]) : null;
+  const cleanText = paragraph.replace(/!\[.*?\]\(.*?\)/g, "").replace(/(https:\/\/[^\s\)]+\.(?:jpg|jpeg|png|webp))/gi, "").trim();
+
+  return (
+    <div className="space-y-2">
+      {imgUrl && (
+        <div className="rounded-xl overflow-hidden shadow-md border border-border/60 bg-black/5 dark:bg-black/40 flex justify-center p-1">
+          <img src={imgUrl} alt="Exam Diagram" className="w-full max-h-96 object-contain rounded-lg" loading="lazy" />
+        </div>
+      )}
+      {cleanText && <p className="text-sm leading-relaxed">{cleanText}</p>}
+    </div>
+  );
+};
 
 const BulletsSection = ({ items }: { items: { label: string; description: string }[] }) => (
   <div className="divide-y">
@@ -249,8 +274,8 @@ const RevisionSection = ({ items }: { items: string[] }) => (
 
 /** ---------- Main view ---------- */
 export default function HandwrittenNotesView({
-  subtopicName, content,
-}: { subtopicName: string; content: NotesContent }) {
+  subtopicName, content, subject,
+}: { subtopicName: string; content: NotesContent; subject?: string }) {
   return (
     <div className="space-y-4">
       {/* Header */}
@@ -263,6 +288,9 @@ export default function HandwrittenNotesView({
           </div>
         )}
       </div>
+
+      {/* High-Yield AI Exam Diagram */}
+      <ExamDiagramCard topicName={subtopicName} subject={subject} />
 
       {/* High-Yield Tip */}
       {content.highYieldTip && (

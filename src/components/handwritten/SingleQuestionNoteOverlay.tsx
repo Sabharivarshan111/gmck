@@ -131,7 +131,7 @@ export default function SingleQuestionNoteOverlay() {
           )}
           {content && !loading && (
             <div className="space-y-4">
-              <HandwrittenNotesView subtopicName={payload?.question || ""} content={content} />
+              <HandwrittenNotesView subtopicName={payload?.question || ""} content={content} subject={payload?.subject} />
               <NotesAiEditBox
                 compact
                 subtopicKey={`single::${payload!.subjectKey}::${hashKey(payload!.question)}`}

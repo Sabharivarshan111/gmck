@@ -4,13 +4,16 @@ plugins { id("com.facebook.react.settings") }
 def findNode() {
     def commonPaths = ["/usr/local/bin/node", "/opt/homebrew/bin/node", "/usr/bin/node", "/bin/node"]
     for (path in commonPaths) {
-        if (new File(path).exists()) return path
+        if (new java.io.File(path).exists()) return path
     }
     return "node"
 }
 
 def nodeCmd = findNode()
 def cliPath = "node_modules/@react-native-community/cli/build/bin.js"
+
+// Inform the user which node we're using
+println "React Native: using node at ${nodeCmd}"
 
 extensions.configure(com.facebook.react.ReactSettingsExtension){ ex -> 
     ex.autolinkLibrariesFromCommand([nodeCmd, cliPath, "config"]) 

@@ -42,7 +42,7 @@ react {
     def findNode = {
         def commonPaths = ["/usr/local/bin/node", "/opt/homebrew/bin/node", "/usr/bin/node", "/bin/node"]
         for (path in commonPaths) {
-            if (new File(path).exists()) return path
+            if (new java.io.File(path).exists()) return path
         }
         return "node"
     }

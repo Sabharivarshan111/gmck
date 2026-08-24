@@ -22,4 +22,5 @@
       the two in step.
     -->
     <color name="orbit_window_background">#000000</color>
+    <color name="ic_launcher_background">#000000</color>
 </resources>

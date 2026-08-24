@@ -2,6 +2,7 @@ import React, { memo } from 'react';
 import { StyleSheet, View, type StyleProp, type TextStyle } from 'react-native';
 import { Text } from '@/components/Text';
 import { useTheme, withAlpha } from '@/theme';
+import { DiagramCard } from '@/components/DiagramCard';
 import type { NotesContent, Section } from '@/lib/handwrittenNotes';
 
 /**
@@ -233,15 +234,41 @@ function SectionBody({ section }: { section: Section }) {
   >;
 
   switch (section.type) {
-    case 'definition':
+    case 'diagram': {
+      const url = field(p, 'imageUrl', 'url', 'text');
+      const caption = field(p, 'caption', 'description');
+      return <DiagramCard imageUrl={url} title={section.title} caption={caption} />;
+    }
+
+    case 'definition': {
+      const rawText = field(p, 'text');
+      const imgMatch = rawText.match(/(https:\/\/[^\s\)]+\.(?:jpg|jpeg|png|webp))/i) || rawText.match(/!\[.*?\]\((.*?)\)/);
+      const imgUrl = imgMatch ? (imgMatch[1] || imgMatch[0]) : null;
+      const cleanText = rawText.replace(/!\[.*?\]\(.*?\)/g, '').replace(/(https:\/\/[^\s\)]+\.(?:jpg|jpeg|png|webp))/gi, '').trim();
+
+      if (imgUrl) {
+        return <DiagramCard imageUrl={imgUrl} title={section.title} caption={cleanText} />;
+      }
+
       return (
         <View style={[styles.definition, { borderLeftColor: colors.fuchsia }]}>
-          <Inline text={field(p, 'text')} style={[styles.body, { color: colors.text }]} />
+          <Inline text={rawText} style={[styles.body, { color: colors.text }]} />
         </View>
       );
+    }
 
-    case 'text':
-      return <Inline text={field(p, 'paragraph')} style={[styles.body, { color: colors.text }]} />;
+    case 'text': {
+      const rawText = field(p, 'paragraph');
+      const imgMatch = rawText.match(/(https:\/\/[^\s\)]+\.(?:jpg|jpeg|png|webp))/i) || rawText.match(/!\[.*?\]\((.*?)\)/);
+      const imgUrl = imgMatch ? (imgMatch[1] || imgMatch[0]) : null;
+      const cleanText = rawText.replace(/!\[.*?\]\(.*?\)/g, '').replace(/(https:\/\/[^\s\)]+\.(?:jpg|jpeg|png|webp))/gi, '').trim();
+
+      if (imgUrl) {
+        return <DiagramCard imageUrl={imgUrl} title={section.title} caption={cleanText} />;
+      }
+
+      return <Inline text={rawText} style={[styles.body, { color: colors.text }]} />;
+    }
 
     case 'bullets':
       return (

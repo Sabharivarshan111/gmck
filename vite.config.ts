@@ -17,6 +17,9 @@ export default defineConfig(({ mode }) => ({
     mode === 'development' &&
     componentTagger(),
   ].filter(Boolean),
+  optimizeDeps: {
+    entries: ["index.html"],
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

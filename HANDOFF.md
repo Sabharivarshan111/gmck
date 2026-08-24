@@ -1,6 +1,6 @@
 # Handoff — Orbit MBBS native Android app
 
-**Last updated:** 2026-08-15
+**Last updated:** 2026-08-24
 
 Written so a fresh session (or a different person) can pick this up without the
 prior conversation. Read `CLAUDE.md` too — it lists the traps.
@@ -25,9 +25,11 @@ The web app in the repo root is untouched and still live.
 |---|---|
 | Home | hero carousel, quick actions, gradient subject cards, streak + focus stats |
 | Question bank | year → subject → paper → topic → questions, any nesting depth |
-| Question rows | tick to complete, importance stars, page refs, "ask AI" |
+| Question rows | tick to complete, importance stars, page refs, **triple-tap worked answers** |
+| High-Yield Diagrams | **Nano Banana 2 Grounded AI JPEGs**: 21+ topics in Supabase Storage `diagrams` mapped to 219 syllabus questions |
+| Mobile Diagram Card | `mobile/src/components/DiagramCard.tsx` with pinch-to-zoom Lightbox Modal, loading state, theme support |
+| Notes | year → subject → topic → **batched AI notes + high-yield diagrams**, refine, regenerate |
 | Search | full-text across all 5,523 questions |
-| Notes | year → subject → topic → **batched AI notes generation**, refine, regenerate |
 | Timer | wall-clock pomodoro, survives backgrounding, per-day + lifetime stats |
 | Ask AI | same `ask-gemini` edge function as web |
 | My Progress | profile, year ring, streak/level, rewards, heatmap, subjects, leaderboard, **Calendar & Saved Notes tabs** |
@@ -425,3 +427,28 @@ Performance work in the same pass:
    the reduced-motion branches behave.
 7. Then, in rough value order: Razorpay, the Calendar/saved-notes tabs,
    local notifications.
+
+---
+
+## 9. High-Yield AI Exam Diagrams & Localhost Previews
+
+### Local Dev & Preview URLs
+- **Web App (Vite + React + Lovable)**: `http://localhost:8080/`
+- **Mobile Web Preview (React Native for Web)**: `http://localhost:5173/`
+- **Production Web App**: `https://mbbsqbank-questor.lovable.app`
+
+### AI Exam Diagrams (Nano Banana 2 + Textbook Grounding)
+- **Engine**: Nano Banana 2 API (`https://api.nanobananaapi.ai/api/v1/nanobanana/generate-2`).
+- **Grounding Sources**:
+  1. *Park's Textbook of Preventive and Social Medicine* (`sia_park.txt`).
+  2. *Vision Forensic Medicine and Toxicology 4th Ed.* (`vision_forensic.txt`).
+- **Format**: High-resolution JPEGs ($< 1.1\text{ MB}$ each) featuring continuous circular life cycle loops and anime/manga scientific line art.
+- **Supabase Storage**: Bucket `diagrams` (`community/...` and `forensic/...`).
+- **Database Mappings**:
+  - `public.question_diagrams`: 219 syllabus questions mapped to diagrams.
+  - `public.handwritten_notes`: Injected with `🎨 High-Yield Visual Exam Diagram` as section 1 across 75+ records.
+
+### React Native Diagram Components
+- `mobile/src/components/DiagramCard.tsx`: Native diagram viewer with high-res image loading, theme-aware badge, and fullscreen tap-to-zoom Lightbox modal.
+- `mobile/src/components/NotesContentView.tsx`: Updated `SectionBody` to handle `diagram`, `definition`, and `text` sections containing Supabase diagram URLs.
+

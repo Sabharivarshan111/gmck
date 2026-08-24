@@ -523,7 +523,7 @@ function NotesDetailView({
             </div>
           )}
 
-          <HandwrittenNotesView subtopicName={topic.name} content={content} />
+          <HandwrittenNotesView subtopicName={topic.name} content={content} subject={subject} />
 
           {phase === "done" && (
             <div className="flex flex-wrap justify-center gap-2 pt-2">
