@@ -28,6 +28,7 @@
     "check:agent-docs": "node scripts/agent-docs-check.mjs",
     "check:payments": "node scripts/payments-check.mjs",
     "sync:agent-docs": "node scripts/sync-agent-docs.mjs",
+    "check:note-key": "node scripts/note-key-check.mjs",
     "check:native-sound": "node scripts/native-sound-check.mjs"
   },
   "dependencies": {

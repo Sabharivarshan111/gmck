@@ -30,6 +30,24 @@ export function extractPageNumber(question: string): string | null {
   return match && match[1] ? match[1] : null;
 }
 
+/**
+ * The question exactly as the web app sends it to generate-handwritten-notes.
+ *
+ * Only the leading "12. " is removed — the ★ markers and the "(June 2023)"
+ * year stay in. That looks careless next to getCleanQuestionText below, and it
+ * is load-bearing: the notes function keys its cache on
+ * `single::<subject>::<hash of this string>`, and the diagram pass wrote a
+ * High-Yield Visual Exam Diagram into 75+ of those rows. Strip one star here
+ * and the hash changes, every one of those rows is missed, and the phone pays
+ * Gemini to regenerate a note that arrives without the picture.
+ *
+ * So: this for anything the notes function will see, getCleanQuestionText for
+ * anything a person will see.
+ */
+export function noteQuestionText(question: string): string {
+  return question.replace(/^\d+\.\s/, '');
+}
+
 /** Body text with the trailing markers stripped, for display and for the AI. */
 export function getCleanQuestionText(question: string): string {
   return question
@@ -41,7 +59,9 @@ export function getCleanQuestionText(question: string): string {
 }
 
 /** Bucket used to colour the importance badge. */
-export function importanceLabel(stars: number): 'must-know' | 'important' | 'seen' | null {
+export function importanceLabel(
+  stars: number,
+): 'must-know' | 'important' | 'seen' | null {
   if (stars >= 5) {
     return 'must-know';
   }

@@ -12,6 +12,7 @@ import {
   extractPageNumber,
   getCleanQuestionText,
   importanceLabel,
+  noteQuestionText,
 } from '@/lib/questionText';
 import { useQuestionDone } from '@/hooks/useProgress';
 import { doubleTapPrompt, tripleTapPrompt } from '@/lib/askAi';
@@ -95,12 +96,14 @@ function QuestionRowBase({
   // intent flags the edge function needs. Hand-writing the prose here is what
   // previously sent MCQ requests down the generic-chatbot path.
   const askAnswer = useCallback(() => {
-    const clean = getCleanQuestionText(question);
     if (onNote) {
-      onNote(clean);
+      // noteQuestionText, not getCleanQuestionText: the notes function's cache
+      // key is a hash of this string, and the web app hashes the version that
+      // still has its stars and year on it.
+      onNote(noteQuestionText(question));
       return;
     }
-    onAskAi(tripleTapPrompt(clean));
+    onAskAi(tripleTapPrompt(getCleanQuestionText(question)));
   }, [onAskAi, onNote, question]);
 
   const askMcq = useCallback(() => {

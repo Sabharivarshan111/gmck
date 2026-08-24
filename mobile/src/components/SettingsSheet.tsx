@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text as RNText, View } from 'react-native';
 import { Text } from '@/components/Text';
 import { Touchable } from '@/components/Touchable';
@@ -15,12 +15,14 @@ import {
   TEXT_SIZE_DEFAULT,
   formatTextSize,
 } from '@/theme/textScale';
-import { setSetting, useSettings,
+import {
+  setSetting,
+  useSettings,
   TAP_PRESETS,
   CHIME_PRESETS,
 } from '@/lib/settings';
 import { tick } from '@/lib/haptics';
-import { previewSound, soundAvailable } from '@/lib/sound';
+import { previewSound, silencingReason, soundAvailable } from '@/lib/sound';
 
 /**
  * Everything the user can change, in one place.
@@ -61,10 +63,13 @@ function Switchable({
       hint={detail}
       state={{ checked: value }}
       scaleTo={0.985}
-      style={[styles.row, { borderColor: colors.border }]}>
+      style={[styles.row, { borderColor: colors.border }]}
+    >
       <View style={styles.rowText}>
         <Text style={[styles.rowLabel, { color: colors.text }]}>{label}</Text>
-        <Text style={[styles.rowDetail, { color: colors.textMuted }]}>{detail}</Text>
+        <Text style={[styles.rowDetail, { color: colors.textMuted }]}>
+          {detail}
+        </Text>
       </View>
       <View
         style={[
@@ -73,7 +78,8 @@ function Switchable({
             backgroundColor: value ? colors.accent : 'transparent',
             borderColor: value ? colors.accent : colors.border,
           },
-        ]}>
+        ]}
+      >
         {value ? <Check size={15} color={colors.onAccent} /> : null}
       </View>
     </Touchable>
@@ -93,6 +99,23 @@ export function SettingsSheet({
 }) {
   const { colors } = useTheme();
   const settings = useSettings();
+
+  /**
+   * Re-read every time the sheet opens.
+   *
+   * Do Not Disturb is toggled from the notification shade, so the answer can
+   * change while the app is in the background and there is no callback for
+   * either this or the ringer mode. Reading it on open is both the cheapest
+   * and the most accurate moment.
+   */
+  const [silenced, setSilenced] =
+    useState<ReturnType<typeof silencingReason>>('');
+  useEffect(() => {
+    if (visible) {
+      setSilenced(silencingReason());
+    }
+  }, [visible]);
+
   /**
    * Drafted while dragging. Writing the real text size on every step re-renders
    * every piece of text in the app — see the note in HomeScreen; the preview
@@ -107,23 +130,33 @@ export function SettingsSheet({
 
   return (
     <Sheet visible={visible} onClose={onClose} title="Settings">
-      <Text style={[styles.section, { color: colors.textMuted }]}>TEXT SIZE</Text>
+      <Text style={[styles.section, { color: colors.textMuted }]}>
+        TEXT SIZE
+      </Text>
       <View
         style={[
           styles.preview,
           { backgroundColor: colors.cardElevated, borderColor: colors.border },
-        ]}>
+        ]}
+      >
         {/* Sized from the draft with plain React Native Text, so it is not
             scaled a second time by the committed value mid-drag. */}
         <RNText
           numberOfLines={3}
-          style={[styles.sample, { color: colors.text, fontSize: Math.round(15 * sizeDraft) }]}>
+          style={[
+            styles.sample,
+            { color: colors.text, fontSize: Math.round(15 * sizeDraft) },
+          ]}
+        >
           Bilirubin is conjugated in the hepatocyte and excreted in bile.
         </RNText>
       </View>
       <View style={styles.scaleRow}>
         <Text style={[styles.smallA, { color: colors.textMuted }]}>A</Text>
-        <Text testID="text-size-value" style={[styles.value, { color: colors.text }]}>
+        <Text
+          testID="text-size-value"
+          style={[styles.value, { color: colors.text }]}
+        >
           {formatTextSize(sizeDraft)}
         </Text>
         <Text style={[styles.largeA, { color: colors.textMuted }]}>A</Text>
@@ -141,7 +174,9 @@ export function SettingsSheet({
         ticks={[TEXT_SIZE_MIN, TEXT_SIZE_DEFAULT, 1.08, TEXT_SIZE_MAX]}
       />
 
-      <Text style={[styles.section, { color: colors.textMuted }]}>FEEDBACK</Text>
+      <Text style={[styles.section, { color: colors.textMuted }]}>
+        FEEDBACK
+      </Text>
       <Switchable
         label="Haptics"
         detail="A short vibration when you tap"
@@ -151,7 +186,9 @@ export function SettingsSheet({
       {settings.haptics ? (
         <View style={styles.indent}>
           <View style={styles.scaleRow}>
-            <Text style={[styles.rowDetail, { color: colors.textMuted }]}>Strength</Text>
+            <Text style={[styles.rowDetail, { color: colors.textMuted }]}>
+              Strength
+            </Text>
             <Text style={[styles.value, { color: colors.text }]}>
               {Math.round(settings.hapticStrength * 100)}%
             </Text>
@@ -188,14 +225,44 @@ export function SettingsSheet({
             value={settings.tapSound}
             onChange={next => setSetting('tapSound', next)}
           />
-          {/* Said here because otherwise it reads as a broken switch. Taps go
-              out on the system sound stream, which silent mode and Do Not
-              Disturb mute — the right behaviour, and impossible to guess from
-              a switch that is on and quiet. */}
-          <Text style={[styles.note, { color: withAlpha(colors.text, 0.5) }]}>
-            Clicks follow your phone: silent mode and Do Not Disturb mute them.
-            The timer chime is an alarm, so it still sounds.
-          </Text>
+          {/* Otherwise this reads as a broken switch. Taps go out on the
+              system sound stream, which silent mode and Do Not Disturb mute —
+              the right behaviour, and impossible to guess from a switch that
+              is on and quiet. The generic sentence was already here and was
+              still being read past, so when the phone is *currently* muted it
+              says which setting is doing it instead. */}
+          {silenced ? (
+            <View
+              style={[
+                styles.silenced,
+                {
+                  backgroundColor: withAlpha(colors.warning, 0.12),
+                  borderColor: withAlpha(colors.warning, 0.4),
+                },
+              ]}
+            >
+              <Text style={[styles.silencedTitle, { color: colors.warning }]}>
+                {silenced === 'dnd'
+                  ? 'Do Not Disturb is on'
+                  : silenced === 'silent'
+                  ? 'Your phone is on silent'
+                  : 'Your phone is set to vibrate'}
+              </Text>
+              <Text
+                style={[styles.note, { color: withAlpha(colors.text, 0.75) }]}
+              >
+                Android is muting tap sounds right now — nothing here is broken.
+                Turn it off to hear them. The timer chime is an alarm, so it
+                still sounds either way; play one from Timer sound below to
+                check your volume.
+              </Text>
+            </View>
+          ) : (
+            <Text style={[styles.note, { color: withAlpha(colors.text, 0.5) }]}>
+              Clicks follow your phone: silent mode and Do Not Disturb mute
+              them. The timer chime is an alarm, so it still sounds.
+            </Text>
+          )}
           <SoundPicker
             title="PRESS SOUND"
             options={TAP_PRESETS}
@@ -265,11 +332,19 @@ function SoundPicker({
               styles.preset,
               {
                 borderColor: active ? colors.accent : colors.border,
-                backgroundColor: active ? withAlpha(colors.accent, 0.1) : 'transparent',
+                backgroundColor: active
+                  ? withAlpha(colors.accent, 0.1)
+                  : 'transparent',
               },
-            ]}>
+            ]}
+          >
             <View style={styles.flex}>
-              <Text style={[styles.presetLabel, { color: active ? colors.accent : colors.text }]}>
+              <Text
+                style={[
+                  styles.presetLabel,
+                  { color: active ? colors.accent : colors.text },
+                ]}
+              >
                 {option.label}
               </Text>
               <Text style={[styles.presetDetail, { color: colors.textMuted }]}>
@@ -371,6 +446,18 @@ const styles = StyleSheet.create({
     ...typeScale.caption,
     marginTop: space.lg,
     marginBottom: space.sm,
+  },
+  silenced: {
+    borderRadius: 12,
+    borderWidth: StyleSheet.hairlineWidth,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    marginTop: 4,
+    gap: 4,
+  },
+  silencedTitle: {
+    fontSize: 13,
+    fontWeight: '600',
   },
   note: {
     ...typeScale.caption,

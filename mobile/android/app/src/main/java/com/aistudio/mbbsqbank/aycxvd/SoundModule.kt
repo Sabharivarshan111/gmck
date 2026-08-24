@@ -1,6 +1,9 @@
 package com.aistudio.mbbsqbank.aycxvd
 
+import android.app.NotificationManager
+import android.content.Context
 import android.media.AudioAttributes
+import android.media.AudioManager
 import android.media.SoundPool
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.module.annotations.ReactModule
@@ -138,6 +141,42 @@ class SoundModule(reactContext: ReactApplicationContext) :
       poolFor(name).play(id, level, level, /* priority = */ 1, /* loop = */ 0, /* rate = */ 1f)
     } catch (_: Throwable) {
       // Never let feedback break the action it is decorating.
+    }
+  }
+
+  /**
+   * Why Android is muting tap sounds right now, or "" if it is not.
+   *
+   * There is no way to hear this from JavaScript and no callback for it, so
+   * the app asks each time Settings opens. Reading the interruption filter
+   * needs no permission — only *changing* it does.
+   *
+   * Order matters: Do Not Disturb is reported first because it is the one
+   * people forget is on, and it silences the ringer as a side effect, so
+   * checking the ringer first would report "silent" for a phone whose real
+   * state is DND.
+   */
+  override fun silencingReason(): String {
+    return try {
+      val notifications =
+        reactApplicationContext.getSystemService(Context.NOTIFICATION_SERVICE)
+          as? NotificationManager
+      val filter = notifications?.currentInterruptionFilter
+      if (filter != null && filter != NotificationManager.INTERRUPTION_FILTER_ALL &&
+        filter != NotificationManager.INTERRUPTION_FILTER_UNKNOWN
+      ) {
+        return "dnd"
+      }
+      val audio =
+        reactApplicationContext.getSystemService(Context.AUDIO_SERVICE) as? AudioManager
+      when (audio?.ringerMode) {
+        AudioManager.RINGER_MODE_SILENT -> "silent"
+        AudioManager.RINGER_MODE_VIBRATE -> "vibrate"
+        else -> ""
+      }
+    } catch (_: Throwable) {
+      // A phone that will not answer is not a phone that is muted.
+      ""
     }
   }
 

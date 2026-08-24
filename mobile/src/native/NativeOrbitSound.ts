@@ -26,6 +26,21 @@ export interface Spec extends TurboModule {
    * @param volume 0-1
    */
   play(name: string, volume: number): void;
+
+  /**
+   * Why Android is currently silencing tap sounds, or '' if it is not.
+   *
+   * `'dnd'` | `'silent'` | `'vibrate'` | `''`.
+   *
+   * Taps go out as USAGE_ASSISTANCE_SONIFICATION, which Do Not Disturb and
+   * the silent ringer mute — correct behaviour, and completely invisible from
+   * inside the app: the switch is on, the module is loaded, the clip is
+   * decoded, and nothing comes out. That is indistinguishable from a broken
+   * feature unless the app says which one it is, so it says.
+   *
+   * The focus chime is exempt because it goes out as USAGE_ALARM.
+   */
+  silencingReason(): string;
 }
 
 export default TurboModuleRegistry.get<Spec>('OrbitSound');

@@ -57,6 +57,34 @@ export function playChime(): void {
 }
 
 /**
+ * Why Android is muting tap sounds right now, or '' if it is not.
+ *
+ * Settings has always carried a sentence saying silent mode and Do Not
+ * Disturb mute clicks. It is true, it is in the right place, and it does not
+ * work: it reads as general small print, so a phone that is *currently* in Do
+ * Not Disturb still looks like an app whose sound is broken. Asking the OS and
+ * naming the actual state turns a paragraph people skim into a line about
+ * their phone, right now.
+ *
+ * Read on open rather than watched — there is no callback for either state,
+ * and Settings is the only place it is worth knowing.
+ */
+export function silencingReason(): 'dnd' | 'silent' | 'vibrate' | '' {
+  if (!native?.silencingReason) {
+    return '';
+  }
+  try {
+    const reason = native.silencingReason();
+    return reason === 'dnd' || reason === 'silent' || reason === 'vibrate'
+      ? reason
+      : '';
+  } catch {
+    // A module that will not answer is not a phone that is muted.
+    return '';
+  }
+}
+
+/**
  * Play a clip by name, ignoring the on/off settings.
  *
  * For the Settings picker: choosing a sound has to make that sound, or you
