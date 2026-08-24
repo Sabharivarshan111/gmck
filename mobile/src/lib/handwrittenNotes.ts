@@ -353,6 +353,30 @@ async function invokeNotes(
   return (data ?? {}) as Record<string, unknown>;
 }
 
+const DIAGRAM_STOP_WORDS = new Set([
+  'define', 'describe', 'explain', 'discuss', 'enumerate', 'classify', 'write',
+  'short', 'note', 'notes', 'briefly', 'detail', 'types', 'various', 'causes',
+  'features', 'clinical', 'management', 'treatment', 'prevention', 'control',
+  'diagnosis', 'laboratory', 'importance', 'difference', 'differentiate',
+  'compare', 'versus', 'medical', 'patient', 'person', 'child', 'female',
+  'male', 'years', 'months', 'rules', 'rule', 'case', 'cases', 'study',
+  'outline', 'aspects', 'factors', 'principles', 'methods', 'criteria',
+  'guidelines', 'algorithm', 'signs', 'symptoms', 'procedure', 'investigations',
+  'role', 'what', 'which', 'about', 'with', 'from', 'between', 'under',
+  'their', 'does', 'have', 'been', 'give', 'name', 'list', 'state', 'applied',
+  'life', 'cycle', 'diagram', 'draw', 'drawn', 'neat', 'labelled', 'question',
+  'examination', 'appearance', 'effects', 'program', 'programme', 'scheme',
+  'strategy', 'national', 'india', 'indian', 'level', 'levels', 'status',
+  'health', 'community', 'public', 'primary', 'secondary', 'tertiary',
+  'following', 'based', 'first', 'second', 'third', 'final', 'paper', 'topic',
+  'practice', 'body', 'changes', 'death', 'living', 'post', 'mortem',
+  'antemortem', 'postmortem', 'wounds', 'wound', 'injury', 'injuries',
+  'poisons', 'poison', 'poisoning', 'acute', 'chronic', 'general', 'special',
+  'system', 'systemic', 'organs', 'organ', 'human', 'structure', 'structures',
+  'functions', 'function', 'parts', 'part', 'suitable', 'examples', 'available',
+  'protection', 'act', 'acts', 'proof', 'therapeutic'
+]);
+
 /**
  * Look up a diagram from `question_diagrams` for a single question or topic query.
  */
@@ -362,37 +386,52 @@ export async function findDiagramForQuery(
   const clean = query
     .replace(/[0-9]+\./g, '')
     .replace(/\(.*?\)/g, '')
-    .replace(/[*#]/g, '')
+    .replace(/[*#★☆]/g, '')
+    .replace(/[^a-zA-Z0-9 ]/g, ' ')
+    .replace(/\s+/g, ' ')
     .trim();
-  if (clean.length < 3) {
+  if (clean.length < 4) {
+    return null;
+  }
+
+  const words = clean
+    .toLowerCase()
+    .split(/\s+/)
+    .filter(w => w.length > 3 && !DIAGRAM_STOP_WORDS.has(w));
+  if (words.length === 0) {
     return null;
   }
 
   try {
-    // 1. Direct match on question text prefix
     const { data } = await supabase
       .from('question_diagrams')
       .select('public_url, question_text')
-      .not('public_url', 'is', null)
-      .ilike('question_text', `%${clean.slice(0, 25)}%`)
-      .limit(1);
+      .not('public_url', 'is', null);
 
-    if (data && data.length > 0 && data[0].public_url) {
-      return { url: data[0].public_url, title: data[0].question_text };
+    if (!data || data.length === 0) {
+      return null;
     }
 
-    // 2. Keyword fallback for known core syllabus entities
-    const keywords = clean.split(/\s+/).filter(w => w.length > 4);
-    for (const kw of keywords.slice(0, 3)) {
-      const { data: kwData } = await supabase
-        .from('question_diagrams')
-        .select('public_url, question_text')
-        .not('public_url', 'is', null)
-        .ilike('question_text', `%${kw}%`)
-        .limit(1);
-      if (kwData && kwData.length > 0 && kwData[0].public_url) {
-        return { url: kwData[0].public_url, title: kwData[0].question_text };
+    let bestMatch: { public_url: string; question_text: string } | null = null;
+    let maxScore = 0;
+
+    for (const row of data) {
+      if (!row.public_url || !row.question_text) continue;
+      const rowText = row.question_text.toLowerCase();
+      let score = 0;
+      for (const w of words) {
+        if (rowText.includes(w)) {
+          score += 1;
+        }
       }
+      if (score > maxScore) {
+        maxScore = score;
+        bestMatch = row;
+      }
+    }
+
+    if (maxScore >= 1 && bestMatch) {
+      return { url: bestMatch.public_url, title: bestMatch.question_text };
     }
   } catch (err) {
     console.warn('[handwrittenNotes] diagram lookup failed:', err);

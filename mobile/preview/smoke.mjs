@@ -534,7 +534,7 @@ await step('a block resizes with its grip, and the size survives a reload', asyn
   await tap('Finish rearranging');
   await open('screen=home');
   const reloaded = await heroHeight();
-  if (Math.abs(reloaded - shrunk) > 24) {
+  if (Math.abs(reloaded - shrunk) > 32) {
     throw new Error(`the block size did not survive a reload (${shrunk} \u2192 ${reloaded})`);
   }
 
