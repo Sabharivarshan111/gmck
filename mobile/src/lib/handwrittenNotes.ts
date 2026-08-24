@@ -262,3 +262,76 @@ export async function applyNotesEdit(
   }
   return updated;
 }
+
+/**
+ * A handwritten note for **one** question.
+ *
+ * The web app's third-year triple tap does this (QuestionCard.tsx dispatches
+ * `orbit:single-note`, SingleQuestionNoteOverlay calls the function): third
+ * year is Community Medicine and Forensic Medicine, and those are the two
+ * subjects `generate-handwritten-notes` grounds in a real textbook — Sia and
+ * Vision, bundled into the function itself. Sending the question to
+ * `ask-gemini` instead, as the native app did, gets a general-purpose answer
+ * from a model that has never seen either book.
+ *
+ * `singleMode` is what makes the function treat one question as an essay
+ * rather than a batch item, so the depth matches what the exam asks for.
+ *
+ * **The key has to match the web app's character for character.** It is
+ * `single::<subjectKey>::<hash>`, the hash is that app's own string hash, and
+ * `subtopicName` is the first 80 characters — because the rows those keys
+ * point at are not empty. The diagram pass wrote a
+ * `🎨 High-Yield Visual Exam Diagram` section into 75+ existing
+ * `handwritten_notes` rows, so a key that matches returns a note with its
+ * picture already in it, instantly and for free. A key that is merely
+ * *similar* misses every one of them, regenerates, and spends quota to arrive
+ * somewhere worse.
+ */
+export async function fetchSingleQuestionNote(
+  question: string,
+  subjectKey: string,
+  subjectName: string,
+  yearLabel: string,
+  regenerate = false,
+): Promise<NotesContent> {
+  const clean = question.trim();
+  const { data, error } = await supabase.functions.invoke('generate-handwritten-notes', {
+    body: {
+      subtopicKey: `single::${subjectKey}::${hashKey(clean)}`,
+      year: yearLabel,
+      subject: subjectName || subjectKey || 'Community Medicine',
+      subtopicName: clean.slice(0, 80),
+      questions: clampQuestions([clean]),
+      singleMode: true,
+      regenerate,
+    },
+  });
+  if (error) {
+    throw await unwrapError(error);
+  }
+  if (data?.error) {
+    throw new Error(String(data.error));
+  }
+  const content = (data as { content?: NotesContent })?.content;
+  if (!content) {
+    throw new Error('The note came back empty. Tap to try again.');
+  }
+  return content;
+}
+
+/**
+ * A stable short key for one question.
+ *
+ * Same algorithm as the web app's overlay (`SingleQuestionNoteOverlay.tsx`),
+ * so a question noted in the browser and the same question noted on the phone
+ * land on one cached row rather than generating twice. Left shift by 5 minus
+ * itself, forced back to int32 each step — change any of that and the two
+ * apps stop sharing a cache silently.
+ */
+function hashKey(value: string): string {
+  let hash = 0;
+  for (let i = 0; i < value.length; i += 1) {
+    hash = ((hash << 5) - hash + value.charCodeAt(i)) | 0;
+  }
+  return Math.abs(hash).toString(36);
+}

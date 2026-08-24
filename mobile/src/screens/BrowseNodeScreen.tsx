@@ -1,12 +1,18 @@
-import React, { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react';
-import {
-  FlatList,
-  StyleSheet,
-  View,
-} from 'react-native';
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useState,
+} from 'react';
+import { FlatList, StyleSheet, View } from 'react-native';
 import { Text } from '@/components/Text';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useNavigation, useRoute, type RouteProp } from '@react-navigation/native';
+import {
+  useNavigation,
+  useRoute,
+  type RouteProp,
+} from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { ArrowLeft, ChevronRight, Search } from 'lucide-react-native';
@@ -25,10 +31,13 @@ import {
   collectQuestions,
   findTypeQuestions,
   getTopicChildren,
+  getSubjects,
   SUBJECT_ICON,
+  YEAR_LABEL,
   type QuestionType,
   resolveNode,
 } from '@/lib/questionBank';
+import { SingleQuestionNote } from '@/components/SingleQuestionNote';
 import { useCountDone } from '@/hooks/useProgress';
 import { requestDailyAd } from '@/lib/dailyAd';
 import type { HomeStackParamList, RootTabParamList } from '@/navigation/types';
@@ -100,16 +109,26 @@ export default function BrowseNodeScreen() {
     // Matched against the cleaned text: the raw string carries importance
     // stars, PYQ years and a page number, so a query would otherwise hit
     // markers the user cannot see and is not looking for.
-    return pairs.filter(pair => getCleanQuestionText(pair.question).toLowerCase().includes(needle));
+    return pairs.filter(pair =>
+      getCleanQuestionText(pair.question).toLowerCase().includes(needle),
+    );
   }, [questions, query, filterable]);
 
   const filtering = filterable && query.trim().length > 0;
-  const essayCount = useMemo(() => findTypeQuestions(node, 'essay').length, [node]);
-  const shortNoteCount = useMemo(() => findTypeQuestions(node, 'short-notes').length, [node]);
+  const essayCount = useMemo(
+    () => findTypeQuestions(node, 'essay').length,
+    [node],
+  );
+  const shortNoteCount = useMemo(
+    () => findTypeQuestions(node, 'short-notes').length,
+    [node],
+  );
 
   // A subject page listing exam papers looks different from a topic list.
   const isPaperLevel =
-    path.length === 1 && children.length > 0 && children.every(c => /^paper-\d+$/.test(c.key));
+    path.length === 1 &&
+    children.length > 0 &&
+    children.every(c => /^paper-\d+$/.test(c.key));
 
   const askAi = useCallback(
     (question: string) => {
@@ -120,9 +139,44 @@ export default function BrowseNodeScreen() {
     [navigation],
   );
 
+  /**
+   * Third year is Community Medicine and Forensic Medicine, and those are the
+   * two subjects generate-handwritten-notes has a textbook for — which is
+   * exactly why the web app gates its handwritten triple tap on the same year
+   * and sends everything else to Ask AI. `subject` is the first path segment:
+   * the key under the year's `subtopics`, the same value the web app passes.
+   */
+  const subjectKey = path[0] ?? '';
+  const subjectName = useMemo(
+    () => getSubjects(year).find(s => s.key === subjectKey)?.name ?? subjectKey,
+    [year, subjectKey],
+  );
+  const notesAvailable = year === 'third-year' && subjectKey !== '';
+  const [notedQuestion, setNotedQuestion] = useState<string | null>(null);
+  const openNote = useCallback(
+    (question: string) => setNotedQuestion(question),
+    [],
+  );
+  const closeNote = useCallback(() => setNotedQuestion(null), []);
+  const onNote = notesAvailable ? openNote : undefined;
+
+  const noteReader = (
+    <SingleQuestionNote
+      question={notedQuestion}
+      subjectKey={subjectKey}
+      subjectName={subjectName}
+      yearLabel={YEAR_LABEL[year]}
+      onClose={closeNote}
+    />
+  );
+
   const openChild = useCallback(
     (key: string, name: string) => {
-      navigation.push('BrowseNode', { year, path: [...path, key], title: name });
+      navigation.push('BrowseNode', {
+        year,
+        path: [...path, key],
+        title: name,
+      });
     },
     [navigation, year, path],
   );
@@ -135,7 +189,11 @@ export default function BrowseNodeScreen() {
       label="Back"
       hitSlop={12}
       scaleTo={0.88}
-      style={[styles.backButton, { backgroundColor: colors.card, borderColor: colors.border }]}>
+      style={[
+        styles.backButton,
+        { backgroundColor: colors.card, borderColor: colors.border },
+      ]}
+    >
       <ArrowLeft size={20} color={colors.text} />
     </Touchable>
   );
@@ -154,7 +212,10 @@ export default function BrowseNodeScreen() {
       <FlatList
         {...LIST_TUNING}
         style={{ backgroundColor: colors.background }}
-        contentContainerStyle={[styles.listContent, { paddingTop: insets.top + 8 }]}
+        contentContainerStyle={[
+          styles.listContent,
+          { paddingTop: insets.top + 8 },
+        ]}
         data={children}
         keyExtractor={item => item.key}
         ListHeaderComponent={
@@ -165,8 +226,11 @@ export default function BrowseNodeScreen() {
                 style={[
                   styles.avatar,
                   { backgroundColor: colors.card, borderColor: colors.border },
-                ]}>
-                <Text style={styles.avatarEmoji}>{SUBJECT_ICON[path[0]] ?? '📘'}</Text>
+                ]}
+              >
+                <Text style={styles.avatarEmoji}>
+                  {SUBJECT_ICON[path[0]] ?? '📘'}
+                </Text>
               </View>
               <View style={styles.backSpacer} />
             </View>
@@ -182,19 +246,30 @@ export default function BrowseNodeScreen() {
           const topics = getTopicChildren(item.node);
           return (
             <View
-              style={[styles.paperCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+              style={[
+                styles.paperCard,
+                { backgroundColor: colors.card, borderColor: colors.border },
+              ]}
+            >
               <Touchable
                 onPress={() => openChild(item.key, item.name)}
                 label={item.name}
                 scale={false}
                 dim
-                style={styles.paperTop}>
+                style={styles.paperTop}
+              >
                 <View style={[styles.badge, { borderColor: colors.border }]}>
-                  <Text style={[styles.badgeText, { color: colors.text }]}>{ordinal(index)}</Text>
+                  <Text style={[styles.badgeText, { color: colors.text }]}>
+                    {ordinal(index)}
+                  </Text>
                 </View>
                 <View style={styles.paperTitleWrap}>
-                  <Text style={[styles.paperTitle, { color: colors.text }]}>{item.name}</Text>
-                  <View style={[styles.titleRule, { backgroundColor: colors.text }]} />
+                  <Text style={[styles.paperTitle, { color: colors.text }]}>
+                    {item.name}
+                  </Text>
+                  <View
+                    style={[styles.titleRule, { backgroundColor: colors.text }]}
+                  />
                 </View>
                 <ChevronRight size={22} color={colors.textMuted} />
               </Touchable>
@@ -210,9 +285,12 @@ export default function BrowseNodeScreen() {
                 label={`Explore ${item.name} questions`}
                 scale={false}
                 dim
-                style={[styles.exploreRow, { borderTopColor: colors.border }]}>
+                style={[styles.exploreRow, { borderTopColor: colors.border }]}
+              >
                 <Search size={18} color={colors.text} />
-                <Text style={[styles.exploreText, { color: colors.text }]}>Explore Questions</Text>
+                <Text style={[styles.exploreText, { color: colors.text }]}>
+                  Explore Questions
+                </Text>
                 <ChevronRight size={20} color={colors.textMuted} />
               </Touchable>
             </View>
@@ -225,71 +303,87 @@ export default function BrowseNodeScreen() {
   // ---- Topic list ----------------------------------------------------------
   if (children.length > 0) {
     return (
-      <FlatList
-        {...LIST_TUNING}
-        style={{ backgroundColor: colors.background }}
-        contentContainerStyle={[styles.listContent, { paddingTop: insets.top + 8 }]}
-        data={children}
-        keyExtractor={item => item.key}
-        ListHeaderComponent={
-          <View style={styles.topicHeader}>
-            <View style={styles.headerRow}>
-              {backControl}
-              <View style={styles.topicTitleWrap}>
-                <Text style={[styles.kicker, { color: colors.textMuted }]}>
-                  {children.length} TOPICS
-                </Text>
-                <GradientText size={24}>{title}</GradientText>
-              </View>
-              <View style={styles.backSpacer} />
-            </View>
-          </View>
-        }
-        renderItem={({ item, index }) => {
-          const all = collectAllQuestions(item.node);
-          const done = countDone(all);
-          const pct = all.length ? (done / all.length) * 100 : 0;
-          return (
-            <Touchable
-              onPress={() => openChild(item.key, item.name)}
-              label={`${item.name}, ${done} of ${all.length} questions done`}
-              scaleTo={0.985}
-              style={[
-                styles.topicCard,
-                { backgroundColor: colors.card, borderColor: colors.border },
-              ]}>
-              <View style={[styles.badge, { borderColor: colors.border }]}>
-                <Text style={[styles.badgeText, { color: colors.text }]}>{ordinal(index)}</Text>
-              </View>
-              <View style={styles.topicBody}>
-                <Text style={[styles.topicName, { color: colors.text }]}>{item.name}</Text>
-                <View style={styles.topicBar}>
-                  <ThinBar percent={pct} />
+      <>
+        <FlatList
+          {...LIST_TUNING}
+          style={{ backgroundColor: colors.background }}
+          contentContainerStyle={[
+            styles.listContent,
+            { paddingTop: insets.top + 8 },
+          ]}
+          data={children}
+          keyExtractor={item => item.key}
+          ListHeaderComponent={
+            <View style={styles.topicHeader}>
+              <View style={styles.headerRow}>
+                {backControl}
+                <View style={styles.topicTitleWrap}>
+                  <Text style={[styles.kicker, { color: colors.textMuted }]}>
+                    {children.length} TOPICS
+                  </Text>
+                  <GradientText size={24}>{title}</GradientText>
                 </View>
-                <Text style={[styles.topicCount, { color: colors.textMuted }]}>
-                  {done}/{all.length} questions
-                </Text>
+                <View style={styles.backSpacer} />
               </View>
-              <ChevronRight size={22} color={colors.textMuted} />
-            </Touchable>
-          );
-        }}
-        ListFooterComponent={
-          questions.length > 0 ? (
-            <View style={styles.footer}>
-              <Text style={[styles.footerTitle, { color: colors.text }]}>Questions in {title}</Text>
-              {questions.map((question, index) => (
-                <QuestionRow
-                  key={`${index}-${question.slice(0, 24)}`}
-                  question={question}
-                  index={index}
-                  onAskAi={askAi}
-                />
-              ))}
             </View>
-          ) : undefined
-        }
-      />
+          }
+          renderItem={({ item, index }) => {
+            const all = collectAllQuestions(item.node);
+            const done = countDone(all);
+            const pct = all.length ? (done / all.length) * 100 : 0;
+            return (
+              <Touchable
+                onPress={() => openChild(item.key, item.name)}
+                label={`${item.name}, ${done} of ${all.length} questions done`}
+                scaleTo={0.985}
+                style={[
+                  styles.topicCard,
+                  { backgroundColor: colors.card, borderColor: colors.border },
+                ]}
+              >
+                <View style={[styles.badge, { borderColor: colors.border }]}>
+                  <Text style={[styles.badgeText, { color: colors.text }]}>
+                    {ordinal(index)}
+                  </Text>
+                </View>
+                <View style={styles.topicBody}>
+                  <Text style={[styles.topicName, { color: colors.text }]}>
+                    {item.name}
+                  </Text>
+                  <View style={styles.topicBar}>
+                    <ThinBar percent={pct} />
+                  </View>
+                  <Text
+                    style={[styles.topicCount, { color: colors.textMuted }]}
+                  >
+                    {done}/{all.length} questions
+                  </Text>
+                </View>
+                <ChevronRight size={22} color={colors.textMuted} />
+              </Touchable>
+            );
+          }}
+          ListFooterComponent={
+            questions.length > 0 ? (
+              <View style={styles.footer}>
+                <Text style={[styles.footerTitle, { color: colors.text }]}>
+                  Questions in {title}
+                </Text>
+                {questions.map((question, index) => (
+                  <QuestionRow
+                    key={`${index}-${question.slice(0, 24)}`}
+                    question={question}
+                    index={index}
+                    onAskAi={askAi}
+                    onNote={onNote}
+                  />
+                ))}
+              </View>
+            ) : undefined
+          }
+        />
+        {noteReader}
+      </>
     );
   }
 
@@ -297,91 +391,110 @@ export default function BrowseNodeScreen() {
   const doneHere = countDone(questions);
 
   return (
-    <FlatList
-      {...LIST_TUNING}
-      style={{ backgroundColor: colors.background }}
-      contentContainerStyle={[styles.listContent, { paddingTop: insets.top + 8 }]}
-      data={visible}
-      keyExtractor={item => `${item.index}-${item.question.slice(0, 24)}`}
-      initialNumToRender={12}
-      windowSize={10}
-      removeClippedSubviews
-      ListHeaderComponent={
-        <View style={styles.questionHeader}>
-          <View style={styles.headerRow}>
-            {backControl}
-            <View style={styles.topicTitleWrap}>
-              <Text style={[styles.kicker, { color: colors.textMuted }]}>
-                {collectQuestions(node, type).length} QUESTIONS
-              </Text>
-              <GradientText size={22}>{title}</GradientText>
-            </View>
-            <View style={styles.backSpacer} />
-          </View>
-          {/* Counts on the tabs, as the published app shows them: you can see
-              a topic has no essays before tapping into an empty list. */}
-          <SegmentedControl
-            options={[
-              { key: 'essay' as const, label: `Essays  ${essayCount}` },
-              { key: 'short-notes' as const, label: `Short Notes  ${shortNoteCount}` },
-            ]}
-            value={type}
-            onChange={setType}
-          />
-          {questions.length > 0 ? (
-            <View style={styles.questionStats}>
-              <Muted>
-                {doneHere} of {questions.length} done
-              </Muted>
-              <View style={styles.questionBar}>
-                <ThinBar percent={questions.length ? (doneHere / questions.length) * 100 : 0} />
-              </View>
-            </View>
-          ) : null}
-
-          {filterable ? (
-            <View style={styles.filterWrap}>
-              <FilterField
-                value={query}
-                onChange={setQuery}
-                placeholder={`Filter ${questions.length} questions`}
-                label={`Filter questions in ${title}`}
-              />
-              {filtering ? (
-                // Announced, because the result of typing is a list changing
-                // somewhere below the keyboard where it cannot be seen.
-                <Text
-                  accessibilityLiveRegion="polite"
-                  style={[styles.filterCount, { color: colors.textMuted }]}>
-                  {visible.length} of {questions.length}
+    <>
+      <FlatList
+        {...LIST_TUNING}
+        style={{ backgroundColor: colors.background }}
+        contentContainerStyle={[
+          styles.listContent,
+          { paddingTop: insets.top + 8 },
+        ]}
+        data={visible}
+        keyExtractor={item => `${item.index}-${item.question.slice(0, 24)}`}
+        initialNumToRender={12}
+        windowSize={10}
+        removeClippedSubviews
+        ListHeaderComponent={
+          <View style={styles.questionHeader}>
+            <View style={styles.headerRow}>
+              {backControl}
+              <View style={styles.topicTitleWrap}>
+                <Text style={[styles.kicker, { color: colors.textMuted }]}>
+                  {collectQuestions(node, type).length} QUESTIONS
                 </Text>
-              ) : null}
+                <GradientText size={22}>{title}</GradientText>
+              </View>
+              <View style={styles.backSpacer} />
             </View>
-          ) : null}
-        </View>
-      }
-      ListEmptyComponent={
-        // An empty list because you filtered is a different situation from an
-        // empty list because the topic has none, and telling someone to switch
-        // tabs when they have simply mistyped is actively unhelpful.
-        filtering ? (
-          <EmptyState
-            title="No matches"
-            subtitle={`Nothing in ${title} matches "${query.trim()}".`}
+            {/* Counts on the tabs, as the published app shows them: you can see
+              a topic has no essays before tapping into an empty list. */}
+            <SegmentedControl
+              options={[
+                { key: 'essay' as const, label: `Essays  ${essayCount}` },
+                {
+                  key: 'short-notes' as const,
+                  label: `Short Notes  ${shortNoteCount}`,
+                },
+              ]}
+              value={type}
+              onChange={setType}
+            />
+            {questions.length > 0 ? (
+              <View style={styles.questionStats}>
+                <Muted>
+                  {doneHere} of {questions.length} done
+                </Muted>
+                <View style={styles.questionBar}>
+                  <ThinBar
+                    percent={
+                      questions.length ? (doneHere / questions.length) * 100 : 0
+                    }
+                  />
+                </View>
+              </View>
+            ) : null}
+
+            {filterable ? (
+              <View style={styles.filterWrap}>
+                <FilterField
+                  value={query}
+                  onChange={setQuery}
+                  placeholder={`Filter ${questions.length} questions`}
+                  label={`Filter questions in ${title}`}
+                />
+                {filtering ? (
+                  // Announced, because the result of typing is a list changing
+                  // somewhere below the keyboard where it cannot be seen.
+                  <Text
+                    accessibilityLiveRegion="polite"
+                    style={[styles.filterCount, { color: colors.textMuted }]}
+                  >
+                    {visible.length} of {questions.length}
+                  </Text>
+                ) : null}
+              </View>
+            ) : null}
+          </View>
+        }
+        ListEmptyComponent={
+          // An empty list because you filtered is a different situation from an
+          // empty list because the topic has none, and telling someone to switch
+          // tabs when they have simply mistyped is actively unhelpful.
+          filtering ? (
+            <EmptyState
+              title="No matches"
+              subtitle={`Nothing in ${title} matches "${query.trim()}".`}
+            />
+          ) : (
+            <EmptyState
+              title={`No ${type === 'essay' ? 'essays' : 'short notes'} here`}
+              subtitle="Switch the tab above to see the other question type."
+            />
+          )
+        }
+        renderItem={({ item }) => (
+          // item.index, not the list position: the row's number is where the
+          // question sits in the topic, which does not change when filtered.
+          <QuestionRow
+            question={item.question}
+            index={item.index}
+            onAskAi={askAi}
+            onNote={onNote}
           />
-        ) : (
-          <EmptyState
-            title={`No ${type === 'essay' ? 'essays' : 'short notes'} here`}
-            subtitle="Switch the tab above to see the other question type."
-          />
-        )
-      }
-      renderItem={({ item }) => (
-        // item.index, not the list position: the row's number is where the
-        // question sits in the topic, which does not change when filtered.
-        <QuestionRow question={item.question} index={item.index} onAskAi={askAi} />
-      )}
-    />
+        )}
+      />
+      {noteReader}
+    </>
   );
 }
 

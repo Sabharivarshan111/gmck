@@ -838,6 +838,31 @@ await step('timer starts, pauses, resets, and opens its sheet', async () => {
   await seesText('45:00');
 });
 
+/**
+ * The affordance line has to tell the truth about what a triple tap does.
+ *
+ * It promised "handwritten note" on every row in every year, while the handler
+ * sent all of them to Ask AI. Third year is the only year the notes function
+ * has a textbook for — Community Medicine and Forensic Medicine — so it is the
+ * only year the promise can be kept, which is the same gate the web app uses.
+ */
+await step('a third-year row offers a handwritten note, other years do not', async () => {
+  await open(
+    'screen=browse&year=third-year&node=forensic-medicine,mechanical-injuries&title=Mechanical%20Injuries',
+  );
+  await declineAdPromptIfShown();
+  await seesText('Triple tap → handwritten note', 6000);
+
+  await open(
+    'screen=browse&year=second-year&node=pharmacology,paper-2,anti-microbial-drugs&title=Anti-Microbial%20Drugs',
+  );
+  await declineAdPromptIfShown();
+  await seesText('Triple tap to ask AI', 6000);
+  if (await page.getByText('Triple tap → handwritten note').count()) {
+    throw new Error('a second-year row promises a handwritten note it cannot produce');
+  }
+});
+
 // ---- The other tabs --------------------------------------------------------
 await step('notes screen renders its year picker', async () => {
   await open('screen=notes');

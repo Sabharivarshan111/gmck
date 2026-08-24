@@ -23,6 +23,13 @@ interface Props {
   onAskAi: (question: string) => void;
   /** Double tap — practice MCQs generated from this question. */
   onAskMcq?: (question: string) => void;
+  /**
+   * Triple tap — a handwritten note for this one question, when the screen can
+   * supply the subject the notes function needs to ground it. Third year only,
+   * matching the web app: those are the subjects it has a textbook for.
+   * Without it, a triple tap falls back to Ask AI.
+   */
+  onNote?: (question: string) => void;
 }
 
 /**
@@ -43,7 +50,13 @@ interface Props {
  * exposed as `accessibilityActions`. TalkBack surfaces them in its actions
  * menu; nobody has to land three taps on a moving list to reach a feature.
  */
-function QuestionRowBase({ question, index, onAskAi, onAskMcq }: Props) {
+function QuestionRowBase({
+  question,
+  index,
+  onAskAi,
+  onAskMcq,
+  onNote,
+}: Props) {
   const { colors } = useTheme();
   const reduceMotion = useReducedMotion();
   // Subscribes to *this* question only, so ticking one row does not re-render
@@ -82,8 +95,13 @@ function QuestionRowBase({ question, index, onAskAi, onAskMcq }: Props) {
   // intent flags the edge function needs. Hand-writing the prose here is what
   // previously sent MCQ requests down the generic-chatbot path.
   const askAnswer = useCallback(() => {
-    onAskAi(tripleTapPrompt(getCleanQuestionText(question)));
-  }, [onAskAi, question]);
+    const clean = getCleanQuestionText(question);
+    if (onNote) {
+      onNote(clean);
+      return;
+    }
+    onAskAi(tripleTapPrompt(clean));
+  }, [onAskAi, onNote, question]);
 
   const askMcq = useCallback(() => {
     const prompt = doubleTapPrompt(getCleanQuestionText(question));
@@ -159,7 +177,8 @@ function QuestionRowBase({ question, index, onAskAi, onAskMcq }: Props) {
           backgroundColor: done ? colors.cardElevated : colors.card,
           borderColor: done ? colors.success : colors.border,
         },
-      ]}>
+      ]}
+    >
       <View style={styles.main}>
         {/* Its own control, so ticking never has to survive tap counting. */}
         <Touchable
@@ -168,8 +187,14 @@ function QuestionRowBase({ question, index, onAskAi, onAskMcq }: Props) {
           state={{ checked: done }}
           label={done ? 'Mark as not done' : 'Mark as done'}
           hitSlop={14}
-          scaleTo={0.85}>
-          <View style={[styles.checkbox, { borderColor: done ? colors.success : colors.border }]}>
+          scaleTo={0.85}
+        >
+          <View
+            style={[
+              styles.checkbox,
+              { borderColor: done ? colors.success : colors.border },
+            ]}
+          >
             <Animated.View
               style={[
                 styles.checkboxFill,
@@ -177,18 +202,25 @@ function QuestionRowBase({ question, index, onAskAi, onAskMcq }: Props) {
                   backgroundColor: colors.success,
                   opacity: tick,
                   transform: [
-                    { scale: tick.interpolate({ inputRange: [0, 1], outputRange: [0.6, 1] }) },
+                    {
+                      scale: tick.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [0.6, 1],
+                      }),
+                    },
                   ],
                 },
               ]}
             />
-            {done ? <Check size={14} color={colors.primaryText} strokeWidth={3} /> : null}
+            {done ? (
+              <Check size={14} color={colors.primaryText} strokeWidth={3} />
+            ) : null}
           </View>
         </Touchable>
 
         <View style={styles.body}>
           <Text style={[styles.affordance, { color: colors.cyan }]}>
-            Triple tap → handwritten note
+            {onNote ? 'Triple tap → handwritten note' : 'Triple tap to ask AI'}
           </Text>
 
           <Text
@@ -199,7 +231,8 @@ function QuestionRowBase({ question, index, onAskAi, onAskMcq }: Props) {
                 color: done ? colors.textMuted : colors.text,
                 textDecorationLine: done ? 'line-through' : 'none',
               },
-            ]}>
+            ]}
+          >
             {index + 1}. {text}
           </Text>
 
@@ -210,11 +243,15 @@ function QuestionRowBase({ question, index, onAskAi, onAskMcq }: Props) {
               </Text>
             ) : null}
             {page ? (
-              <Text style={[styles.metaText, { color: colors.textMuted }]}>Pg. {page}</Text>
+              <Text style={[styles.metaText, { color: colors.textMuted }]}>
+                Pg. {page}
+              </Text>
             ) : null}
           </View>
 
-          <Text style={[styles.affordanceMcq, { color: colors.cyan }]}>DOUBLE TAP FOR MCQS</Text>
+          <Text style={[styles.affordanceMcq, { color: colors.cyan }]}>
+            DOUBLE TAP FOR MCQS
+          </Text>
         </View>
 
         {/* How many times this has been asked in past papers. */}
@@ -222,9 +259,15 @@ function QuestionRowBase({ question, index, onAskAi, onAskMcq }: Props) {
           <View
             style={[
               styles.countBadge,
-              { backgroundColor: colors.cardElevated, borderColor: colors.border },
-            ]}>
-            <Text style={[styles.countText, { color: colors.text }]}>{stars}</Text>
+              {
+                backgroundColor: colors.cardElevated,
+                borderColor: colors.border,
+              },
+            ]}
+          >
+            <Text style={[styles.countText, { color: colors.text }]}>
+              {stars}
+            </Text>
           </View>
         ) : null}
       </View>
