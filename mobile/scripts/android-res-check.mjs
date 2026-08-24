@@ -43,12 +43,48 @@ if (files.length === 0) {
   process.exit(1);
 }
 
-/** Names declared in values/*.xml, as `type/name`. */
+/**
+ * Names declared in values/*.xml, as `type/name`.
+ *
+ * Declaring one twice is as fatal as not declaring it at all, and it is the
+ * easier mistake to make: appending to a file you have not read leaves both
+ * copies in place, the XML stays valid, and every reference still resolves.
+ * It fails in the same four-minute Gradle step, one task earlier, with
+ *
+ *   Found item Color/ic_launcher_background more than one time
+ *
+ * which is exactly what a diagram commit did to this file and why every
+ * release build after it failed while the JS side stayed green.
+ */
 const declared = new Set();
 for (const file of files.filter(f => f.includes(`${path.sep}values`) && f.endsWith('.xml'))) {
   const body = await fs.readFile(file, 'utf8');
+  const seenHere = new Map();
   for (const [, tag, name] of body.matchAll(/<(color|string|dimen|style|bool|integer)\s+name="([^"]+)"/g)) {
-    declared.add(`${tag}/${name}`);
+    const key = `${tag}/${name}`;
+    if (seenHere.has(key)) {
+      failures.push(
+        `${path.relative(root, file)} declares ${key} twice — the resource merger rejects a ` +
+          'duplicate item and the release build fails at :app:mergeReleaseResources',
+      );
+    }
+    seenHere.set(key, true);
+    declared.add(key);
+  }
+}
+
+// The same name in two different values files is a duplicate too.
+const declaredIn = new Map();
+for (const file of files.filter(f => f.includes(`${path.sep}values`) && f.endsWith('.xml'))) {
+  const body = await fs.readFile(file, 'utf8');
+  for (const [, tag, name] of body.matchAll(/<(color|string|dimen|style|bool|integer)\s+name="([^"]+)"/g)) {
+    const key = `${tag}/${name}`;
+    const previous = declaredIn.get(key);
+    const where = path.relative(root, file);
+    if (previous && previous !== where) {
+      failures.push(`${key} is declared in both ${previous} and ${where} — one of them has to go`);
+    }
+    declaredIn.set(key, where);
   }
 }
 
@@ -97,7 +133,9 @@ if (failures.length > 0) {
   for (const failure of failures) {
     process.stdout.write(`  FAIL  ${failure}\n`);
   }
-  process.stdout.write(`\n${failures.length} dangling resource reference(s).\n`);
+  process.stdout.write(`\n${failures.length} resource problem(s) — the release build would fail.\n`);
   process.exit(1);
 }
-process.stdout.write(`OK  every resource reference in ${files.length} res/ files resolves\n`);
+process.stdout.write(
+  `OK  ${files.length} res/ files: every reference resolves, nothing declared twice\n`,
+);
