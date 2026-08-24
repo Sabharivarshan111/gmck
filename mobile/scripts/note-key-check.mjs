@@ -54,7 +54,7 @@ check(
   'the web overlay no longer builds `single::<subject>::<hash>` — this check needs rewriting against whatever replaced it',
 );
 check(
-  native !== null && /`single::\$\{subjectKey\}::\$\{hashKey\(/.test(native),
+  native !== null && /`single::\$\{(?:request\.)?subjectKey\}::\$\{hashKey\(/.test(native),
   'handwrittenNotes.ts does not build the key as `single::${subjectKey}::${hashKey(...)}` — the phone would land on its own cache rows',
 );
 

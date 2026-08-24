@@ -13,10 +13,11 @@ import {
   fetchSingleQuestionNote,
   type NotesContent,
 } from '@/lib/handwrittenNotes';
+import { NotesAiEditBox } from '@/components/NotesAiEditBox';
 import { getCleanQuestionText } from '@/lib/questionText';
 import { useTheme, withAlpha } from '@/theme';
 import { typeScale } from '@/theme/typography';
-import { X } from 'lucide-react-native';
+import { RotateCw, X } from 'lucide-react-native';
 
 /**
  * The reader a third-year triple tap opens.
@@ -67,10 +68,7 @@ export function SingleQuestionNote({
       setContent(null);
       try {
         const next = await fetchSingleQuestionNote(
-          question,
-          subjectKey,
-          subjectName,
-          yearLabel,
+          { question, subjectKey, subjectName, yearLabel },
           regenerate,
         );
         if (runId.current === run) {
@@ -126,6 +124,18 @@ export function SingleQuestionNote({
             </Text>
           </View>
           <Touchable
+            label="Write this note again"
+            onPress={() => generate(true)}
+            disabled={loading}
+            style={styles.close}
+            hitSlop={12}
+          >
+            <RotateCw
+              size={20}
+              color={loading ? colors.border : colors.textMuted}
+            />
+          </Touchable>
+          <Touchable
             label="Close note"
             onPress={close}
             style={styles.close}
@@ -171,6 +181,16 @@ export function SingleQuestionNote({
           ) : null}
 
           {content ? <NotesContentView content={content} /> : null}
+
+          {/* Below the note, not above it: the note is what was asked for, and
+              the way to change it belongs after the thing being changed. */}
+          {content && question ? (
+            <NotesAiEditBox
+              request={{ question, subjectKey, subjectName, yearLabel }}
+              content={content}
+              onApply={setContent}
+            />
+          ) : null}
         </ScrollView>
       </View>
     </Modal>

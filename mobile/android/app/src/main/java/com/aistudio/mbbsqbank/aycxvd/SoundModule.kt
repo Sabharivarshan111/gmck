@@ -145,6 +145,28 @@ class SoundModule(reactContext: ReactApplicationContext) :
   }
 
   /**
+   * A preset audition, on the alarm stream so it is always audible.
+   *
+   * See the spec for why: in Do Not Disturb the picker would otherwise be a
+   * list of names that make no sound, which is indistinguishable from broken.
+   * Only the picker calls this; a real tap still goes out on the sonification
+   * stream and is still muted with everything else.
+   */
+  override fun preview(name: String, volume: Double) {
+    val id = ids[name] ?: return
+    val loaded = synchronized(ready) { ready.contains(id) }
+    if (!loaded) {
+      return
+    }
+    val level = volume.coerceIn(0.0, 1.0).toFloat()
+    try {
+      alertPool.play(id, level, level, /* priority = */ 1, /* loop = */ 0, /* rate = */ 1f)
+    } catch (_: Throwable) {
+      // Never let feedback break the action it is decorating.
+    }
+  }
+
+  /**
    * Why Android is muting tap sounds right now, or "" if it is not.
    *
    * There is no way to hear this from JavaScript and no callback for it, so

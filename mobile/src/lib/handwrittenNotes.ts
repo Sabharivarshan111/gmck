@@ -54,10 +54,17 @@ function isLeafShape(node: BankNode): boolean {
 }
 
 /** Every leaf topic under a subject that has at least one question. */
-export function flattenSubjectTopics(subjectKey: string, node: BankNode | undefined): LeafTopic[] {
+export function flattenSubjectTopics(
+  subjectKey: string,
+  node: BankNode | undefined,
+): LeafTopic[] {
   const out: LeafTopic[] = [];
 
-  function walk(current: BankNode | undefined, keyPath: string[], namePath: string[]) {
+  function walk(
+    current: BankNode | undefined,
+    keyPath: string[],
+    namePath: string[],
+  ) {
     if (!current || typeof current !== 'object') {
       return;
     }
@@ -94,7 +101,9 @@ export function flattenSubjectTopics(subjectKey: string, node: BankNode | undefi
   walk(node, [], [node?.name ?? subjectKey]);
 
   const seen = new Set<string>();
-  return out.filter(topic => (seen.has(topic.key) ? false : (seen.add(topic.key), true)));
+  return out.filter(topic =>
+    seen.has(topic.key) ? false : (seen.add(topic.key), true),
+  );
 }
 
 /** Combine per-batch results, folding same-titled sections together. */
@@ -147,7 +156,9 @@ export function mergeNotes(parts: (NotesContent | null)[]): NotesContent {
   }
 
   if (extraTips.length) {
-    merged.highYieldTip = `${merged.highYieldTip} ${extraTips.join(' ')}`.trim();
+    merged.highYieldTip = `${merged.highYieldTip} ${extraTips.join(
+      ' ',
+    )}`.trim();
   }
   merged.pyqYears = Array.from(years).sort();
   return merged;
@@ -168,14 +179,20 @@ interface FunctionErrorContext {
 }
 
 /** Edge-function errors carry the useful message in the response body. */
-async function unwrapError(error: { message?: string; context?: unknown }): Promise<Error> {
+async function unwrapError(error: {
+  message?: string;
+  context?: unknown;
+}): Promise<Error> {
   let message = error.message ?? 'Failed';
   try {
     const context = error.context as FunctionErrorContext | undefined;
     if (context?.json) {
       const body = await context.json();
       if (body?.error) {
-        message = typeof body.error === 'string' ? body.error : JSON.stringify(body.error);
+        message =
+          typeof body.error === 'string'
+            ? body.error
+            : JSON.stringify(body.error);
       }
     } else if (context?.text) {
       const text = await context.text();
@@ -210,15 +227,18 @@ export async function fetchNotesBatch(
   batchIndex: number,
   regenerate: boolean,
 ): Promise<BatchResult> {
-  const { data, error } = await supabase.functions.invoke('generate-handwritten-notes', {
-    body: {
-      ...baseBody(request),
-      batchIndex,
-      batchSize: NOTES_BATCH_SIZE,
-      // Only the first batch may bust the cache.
-      regenerate: regenerate && batchIndex === 0,
+  const { data, error } = await supabase.functions.invoke(
+    'generate-handwritten-notes',
+    {
+      body: {
+        ...baseBody(request),
+        batchIndex,
+        batchSize: NOTES_BATCH_SIZE,
+        // Only the first batch may bust the cache.
+        regenerate: regenerate && batchIndex === 0,
+      },
     },
-  });
+  );
   if (error) {
     throw await unwrapError(error);
   }
@@ -247,9 +267,12 @@ export async function applyNotesEdit(
   content: NotesContent,
   editInstruction: string,
 ): Promise<NotesContent> {
-  const { data, error } = await supabase.functions.invoke('generate-handwritten-notes', {
-    body: { ...baseBody(request), content, editInstruction },
-  });
+  const { data, error } = await supabase.functions.invoke(
+    'generate-handwritten-notes',
+    {
+      body: { ...baseBody(request), content, editInstruction },
+    },
+  );
   if (error) {
     throw await unwrapError(error);
   }
@@ -287,36 +310,173 @@ export async function applyNotesEdit(
  * *similar* misses every one of them, regenerates, and spends quota to arrive
  * somewhere worse.
  */
-export async function fetchSingleQuestionNote(
-  question: string,
-  subjectKey: string,
-  subjectName: string,
-  yearLabel: string,
-  regenerate = false,
-): Promise<NotesContent> {
-  const clean = question.trim();
-  const { data, error } = await supabase.functions.invoke('generate-handwritten-notes', {
-    body: {
-      subtopicKey: `single::${subjectKey}::${hashKey(clean)}`,
-      year: yearLabel,
-      subject: subjectName || subjectKey || 'Community Medicine',
-      subtopicName: clean.slice(0, 80),
-      questions: clampQuestions([clean]),
-      singleMode: true,
-      regenerate,
-    },
-  });
+export interface SingleNoteRequest {
+  question: string;
+  subjectKey: string;
+  subjectName: string;
+  yearLabel: string;
+}
+
+/**
+ * The identity of one question's note.
+ *
+ * Every call about that note — generate, propose an edit, save the result —
+ * has to carry the identical body, or the edge function looks at a different
+ * cache row than the one on screen. Built in one place for that reason.
+ */
+function singleNoteBody(request: SingleNoteRequest): Record<string, unknown> {
+  const clean = request.question.trim();
+  return {
+    subtopicKey: `single::${request.subjectKey}::${hashKey(clean)}`,
+    year: request.yearLabel,
+    subject: request.subjectName || request.subjectKey || 'Community Medicine',
+    subtopicName: clean.slice(0, 80),
+    questions: clampQuestions([clean]),
+    singleMode: true,
+  };
+}
+
+async function invokeNotes(
+  body: Record<string, unknown>,
+): Promise<Record<string, unknown>> {
+  const { data, error } = await supabase.functions.invoke(
+    'generate-handwritten-notes',
+    { body },
+  );
   if (error) {
     throw await unwrapError(error);
   }
   if (data?.error) {
     throw new Error(String(data.error));
   }
-  const content = (data as { content?: NotesContent })?.content;
+  return (data ?? {}) as Record<string, unknown>;
+}
+
+export async function fetchSingleQuestionNote(
+  request: SingleNoteRequest,
+  regenerate = false,
+): Promise<NotesContent> {
+  const data = await invokeNotes({ ...singleNoteBody(request), regenerate });
+  const content = data.content as NotesContent | undefined;
   if (!content) {
     throw new Error('The note came back empty. Tap to try again.');
   }
   return content;
+}
+
+export interface NoteProposal {
+  /** Where the answer came from, which is the thing worth knowing before saying yes. */
+  source: 'textbook' | 'knowledge' | 'web';
+  found: boolean;
+  summary: string[];
+  content: NotesContent;
+}
+
+/**
+ * Ask for a change without making it.
+ *
+ * `proposeOnly` is the whole point: the function looks the request up in the
+ * reference textbook, drafts the change, and returns it *without writing
+ * anything*. Nothing is saved until the reader says yes, so a wrong answer
+ * costs a tap rather than the notes they were revising from.
+ *
+ * `useWeb` is the second try, offered only after a rejection — the textbook is
+ * the source that should win, and reaching past it by default would quietly
+ * turn a grounded note into a search result.
+ */
+export async function proposeNoteEdit(
+  request: SingleNoteRequest,
+  content: NotesContent,
+  editInstruction: string,
+  useWeb = false,
+): Promise<NoteProposal> {
+  const data = await invokeNotes({
+    ...singleNoteBody(request),
+    content,
+    editInstruction,
+    proposeOnly: true,
+    useWeb,
+  });
+  const proposed = data.content as NotesContent | undefined;
+  if (!proposed?.sections) {
+    throw new Error('The answer came back in a shape the app could not read.');
+  }
+  const source = data.source;
+  return {
+    source: source === 'textbook' || source === 'web' ? source : 'knowledge',
+    found: Boolean(data.found),
+    summary: Array.isArray(data.summary)
+      ? (data.summary as string[]).map(String)
+      : [],
+    content: proposed,
+  };
+}
+
+/**
+ * Fold a proposal into the notes instead of overwriting them.
+ *
+ * Gemini answers the question it was asked, which means it returns only the
+ * sections it touched. Treating that as the new note wipes every section it
+ * did not mention — the reader asks for one correction and loses the other
+ * nine. Same-titled sections are replaced, new ones appended, everything else
+ * left alone.
+ */
+export function mergeProposal(
+  previous: NotesContent | null,
+  next: NotesContent,
+): NotesContent {
+  if (!previous) {
+    return next;
+  }
+  const keyOf = (section: Section) =>
+    String(section?.title ?? '')
+      .toLowerCase()
+      .trim();
+  const out = [...(previous.sections ?? [])];
+  const indexByKey = new Map<string, number>();
+  out.forEach((section, i) => {
+    const key = keyOf(section);
+    if (key && !indexByKey.has(key)) {
+      indexByKey.set(key, i);
+    }
+  });
+  for (const section of next.sections ?? []) {
+    const key = keyOf(section);
+    const at = key ? indexByKey.get(key) : undefined;
+    if (at === undefined) {
+      out.push(section);
+      if (key) {
+        indexByKey.set(key, out.length - 1);
+      }
+    } else {
+      out[at] = section;
+    }
+  }
+  return {
+    ...previous,
+    highYieldTip: next.highYieldTip || previous.highYieldTip,
+    pyqYears: Array.from(
+      new Set([...(previous.pyqYears ?? []), ...(next.pyqYears ?? [])]),
+    ),
+    sections: out,
+  };
+}
+
+/** Persist an accepted edit so the next open reads it back. Best-effort. */
+export async function saveSingleNote(
+  request: SingleNoteRequest,
+  content: NotesContent,
+): Promise<void> {
+  try {
+    await invokeNotes({
+      ...singleNoteBody(request),
+      saveContent: true,
+      content,
+    });
+  } catch {
+    // The reader already has the change on screen; failing to cache it is not
+    // worth an error in their face.
+  }
 }
 
 /**

@@ -21,6 +21,7 @@ import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { ScrollView, Text, View } from 'react-native';
 import { NotesContentView } from '@/components/NotesContentView';
 import { SAMPLE_NOTES } from './notesSample';
+import { NotesAiEditBox } from '@/components/NotesAiEditBox';
 import { McqCard } from '@/components/McqCard';
 import { ThinkingDots } from '@/components/ThinkingDots';
 import { MessageEntrance } from '@/components/MessageEntrance';
@@ -95,6 +96,20 @@ function NotesRendererDemo() {
       style={{ backgroundColor: colors.background }}
       contentContainerStyle={{ padding: 16, paddingBottom: 48 }}>
       <NotesContentView content={SAMPLE_NOTES} />
+      {/* The AI edit box, so its layout and its failure path can be reviewed.
+          Sending from here reaches a Supabase function the sandbox cannot
+          call, which is the point of including it: the box has to fail into a
+          message rather than take the screen with it. */}
+      <NotesAiEditBox
+        request={{
+          question: 'Gustafson\u2019s method / Gustafson\u2019s changes in teeth.',
+          subjectKey: 'forensic-medicine',
+          subjectName: 'Forensic Medicine',
+          yearLabel: '3rd Year',
+        }}
+        content={SAMPLE_NOTES}
+        onApply={() => undefined}
+      />
     </ScrollView>
   );
 }

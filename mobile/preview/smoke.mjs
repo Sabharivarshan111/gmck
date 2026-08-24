@@ -891,6 +891,29 @@ await step('a diagram in prose renders as a picture, not as markdown', async () 
   await seesText('High-Yield Continuous Visual Mnemonic');
 });
 
+/**
+ * The box that changes a note has to ask before it changes it.
+ *
+ * Nothing is written until the reader says yes, and saying yes then asks how —
+ * add to what is there, or replace the lot. The sandbox cannot reach the edge
+ * function, so what is provable here is that the box mounts, its controls are
+ * reachable by label, and a failed request lands as a message instead of an
+ * empty screen.
+ */
+await step('the notes AI edit box mounts and fails into a message', async () => {
+  await open('screen=notesdemo');
+  await seesText('Fix these notes with AI');
+  const box = byLabel('Ask for a change to these notes');
+  await box.waitFor({ timeout: 5000 });
+  await box.fill('The Anaemia Mukt Bharat strategy is 6x6x6, please fix it.');
+  await tap('Send');
+  // Either the lookup line or the error it turns into — both mean the box ran.
+  await page
+    .getByText(/reference textbook|Couldn't|could not|Failed|Request failed/i)
+    .first()
+    .waitFor({ timeout: 15000 });
+});
+
 await step('ask ai screen renders and accepts input', async () => {
   await open('screen=askai');
   const box = page.locator('textarea, input').first();

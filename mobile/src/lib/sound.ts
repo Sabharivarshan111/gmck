@@ -92,5 +92,13 @@ export function silencingReason(): 'dnd' | 'silent' | 'vibrate' | '' {
  * you may want to hear the options before deciding to turn them on.
  */
 export function previewSound(name: string): void {
-  native?.play(name, name.startsWith('chime') ? CHIME_VOLUME : TAP_VOLUME);
+  const volume = name.startsWith('chime') ? CHIME_VOLUME : TAP_VOLUME;
+  // preview() when the module has it — it routes to the alarm stream, so a
+  // phone in Do Not Disturb still lets you hear what you are choosing. Falls
+  // back on an older build rather than going silent.
+  if (native?.preview) {
+    native.preview(name, volume);
+    return;
+  }
+  native?.play(name, volume);
 }

@@ -41,6 +41,19 @@ export interface Spec extends TurboModule {
    * The focus chime is exempt because it goes out as USAGE_ALARM.
    */
   silencingReason(): string;
+
+  /**
+   * Play a clip on the alarm stream, whatever the clip is.
+   *
+   * For the Settings preset picker only. A tap preset normally goes out as
+   * USAGE_ASSISTANCE_SONIFICATION, so on a phone in Do Not Disturb the picker
+   * is a list of names that make no sound when tapped — which reads as "the
+   * presets do not work" rather than "your phone is muted". Previewing is the
+   * one moment the point is to hear the clip, so it borrows the alarm stream
+   * the focus chime already uses. Nothing else does this: an actual tap still
+   * respects the phone.
+   */
+  preview(name: string, volume: number): void;
 }
 
 export default TurboModuleRegistry.get<Spec>('OrbitSound');
