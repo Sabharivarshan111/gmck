@@ -116,6 +116,7 @@ class SoundModule(reactContext: ReactApplicationContext) :
     load(CHIME, R.raw.chime)
     load("chime_bell", R.raw.chime_bell)
     load("chime_soft", R.raw.chime_soft)
+    load("chime_digital", R.raw.chime_digital)
   }
 
   private fun load(name: String, resId: Int) {

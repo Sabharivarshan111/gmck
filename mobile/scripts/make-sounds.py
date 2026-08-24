@@ -192,6 +192,43 @@ def chime_soft():
     return out
 
 
+def chime_digital():
+    """
+    Three short square-ish beeps — a kitchen timer, not an instrument.
+
+    The other alerts decay like something struck; this one holds and stops,
+    which is what makes it read as a machine telling you the time is up rather
+    than a note ending. Built from odd harmonics rather than a true square wave
+    because a real square is all edges and aliases badly at this sample rate;
+    five partials is enough to sound square and stays clean.
+
+    It still has an attack and a release. Starting or stopping a held waveform
+    at full amplitude is a step discontinuity, and that is an audible click on
+    top of the beep — the one rule every clip in this file obeys.
+    """
+    freq = 880.0  # A5, well inside what a phone speaker can reproduce
+    beep = 0.11
+    gap = 0.07
+    count = 3
+    length = int(RATE * (count * beep + (count - 1) * gap))
+    out = [0.0] * length
+    for n in range(count):
+        offset = int(RATE * n * (beep + gap))
+        span = int(RATE * beep)
+        for i in range(span):
+            if offset + i >= length:
+                break
+            t = i / RATE
+            square = 0.0
+            for harmonic in (1, 3, 5, 7, 9):
+                square += math.sin(2 * math.pi * freq * harmonic * t) / harmonic
+            # 4/pi normalises the partial sum back to roughly unit amplitude.
+            out[offset + i] += square * (4 / math.pi) * 0.22 * envelope(
+                i, span, attack_ms=4.0, decay=1e9
+            ) * (1.0 if i < span - int(RATE * 0.006) else 0.0)
+    return out
+
+
 import os
 import sys
 
@@ -217,6 +254,7 @@ def render():
         'chime.wav': chime(),
         'chime_bell.wav': chime_bell(),
         'chime_soft.wav': chime_soft(),
+        'chime_digital.wav': chime_digital(),
     }
 
 

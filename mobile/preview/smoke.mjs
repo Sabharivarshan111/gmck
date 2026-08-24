@@ -840,10 +840,71 @@ await step('timer starts, pauses, resets, and opens its sheet', async () => {
   await byLabel('Start timer').waitFor({ timeout: 4000 });
   await tap('Reset timer');
   await tap('Timer settings');
-  await seesText('Focus length');
-  await tap('45 minutes');
+  await seesText('Pomodoro Settings');
+});
+
+/**
+ * Every control in the Pomodoro sheet does something.
+ *
+ * The durations are drafted and only take effect on "Set this configuration",
+ * so the dial must NOT move while a slider does — and must move once the
+ * button is pressed. That ordering is the whole reason the sheet is built this
+ * way: the timer derives its length from these, and writing straight through
+ * would rewrite the clock mid-drag on a session the reader may not have meant
+ * to touch.
+ */
+await step('the pomodoro sheet drafts durations and commits them', async () => {
+  await open('screen=timer');
+  await tap('Timer settings');
+  await seesText('Pomodoro Settings');
+  await seesText('DURATIONS');
+
+  // .last(), because "Focus" is also the mode tab on the screen behind the
+  // sheet. .first() finds that one and drags it instead, which looks exactly
+  // like the slider silently doing nothing.
+  const focus = page.locator('[aria-label="Focus"]').last();
+  await focus.waitFor({ timeout: 5000 });
+  const box = await focus.boundingBox();
+
+  // Drag the Focus slider most of the way along its track.
+  await page.mouse.move(box.x + box.width * 0.2, box.y + box.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(box.x + box.width * 0.55, box.y + box.height / 2, { steps: 12 });
+  await page.mouse.up();
   await page.waitForTimeout(400);
-  await seesText('45:00');
+
+  if (!(await page.getByText('Pomodoro Settings').first().isVisible())) {
+    throw new Error('dragging a slider dismissed the sheet');
+  }
+
+  const body = await page.locator('body').innerText();
+  if (/\b25:00\b/.test(body) === false) {
+    throw new Error('the dial changed before the configuration was set — durations are not drafted');
+  }
+
+  await tap('Set this configuration');
+  await page.waitForTimeout(600);
+  const after = await page.locator('body').innerText();
+  if (/\b25:00\b/.test(after)) {
+    throw new Error('"Set this configuration" did not apply the drafted focus length');
+  }
+});
+
+/** The alert-sound choices are real controls, and Off is one of them. */
+await step('the pomodoro sheet offers working alert sounds', async () => {
+  await open('screen=timer');
+  await tap('Timer settings');
+  // The preview harness has no native sound module, so the whole block is
+  // hidden by design — assert on whichever state this build is in rather than
+  // pretending the shim has audio.
+  const hasSound = await page.getByText('ALERT SOUND').first().isVisible().catch(() => false);
+  if (hasSound) {
+    await tap('Test the alert sound');
+    await page.locator('[aria-label^="Digital"]').first().click({ timeout: 4000 });
+    await page.locator('[aria-label^="Off"]').first().click({ timeout: 4000 });
+  }
+  // Vibration and the cycle reset exist either way.
+  await byLabel('Reset the pomodoro cycle').waitFor({ timeout: 4000 });
 });
 
 /**

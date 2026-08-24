@@ -257,6 +257,26 @@ export function usePomodoro() {
     AsyncStorage.removeItem(SESSION_KEY).catch(() => {});
   }, [mode, minutesFor]);
 
+  /**
+   * Start the pomodoro count again from zero, back on a focus session.
+   *
+   * Distinct from reset(), which only restarts the session on screen. This is
+   * for the other thing people mean by "reset": the run of four is wrong —
+   * they were interrupted, or left the app running overnight — and the next
+   * long break should be counted from now rather than from whatever the tally
+   * happens to say.
+   */
+  const resetCycle = useCallback(() => {
+    const seconds = minutesFor('focus', settingsRef.current) * 60;
+    setIsRunning(false);
+    endsAtRef.current = null;
+    setCompletedFocus(0);
+    setMode('focus');
+    setTotalSeconds(seconds);
+    setRemaining(seconds);
+    AsyncStorage.removeItem(SESSION_KEY).catch(() => {});
+  }, [minutesFor]);
+
   const switchMode = useCallback(
     (next: PomodoroMode) => {
       const seconds = minutesFor(next, settingsRef.current) * 60;
@@ -303,6 +323,7 @@ export function usePomodoro() {
     reset,
     switchMode,
     updateSettings,
+    resetCycle,
   };
 }
 

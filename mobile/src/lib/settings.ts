@@ -34,6 +34,16 @@ export interface Settings {
   tapPreset: string;
   /** Which completion sound. See CHIME_PRESETS. */
   chimePreset: string;
+  /**
+   * How loud the completion sound is, 0–1.
+   *
+   * Separate from the phone's volume because this one clip is the only thing
+   * in the app loud enough to matter: it fires when you are not looking at the
+   * screen, and the right level in a library is the wrong one in a kitchen.
+   */
+  chimeVolume: number;
+  /** Whether the phone buzzes when a session ends, independently of tap haptics. */
+  timerVibration: boolean;
 }
 
 /**
@@ -51,8 +61,9 @@ export const TAP_PRESETS: { id: string; label: string; detail: string }[] = [
 ];
 
 export const CHIME_PRESETS: { id: string; label: string; detail: string }[] = [
-  { id: 'chime', label: 'Triad', detail: 'Three notes rising — the default' },
+  { id: 'chime', label: 'Chime', detail: 'Three notes rising — the default' },
   { id: 'chime_bell', label: 'Bell', detail: 'One struck note, carries further' },
+  { id: 'chime_digital', label: 'Digital', detail: 'Three flat beeps, like a kitchen timer' },
   { id: 'chime_soft', label: 'Soft', detail: 'Two quiet notes, for shared rooms' },
 ];
 
@@ -74,6 +85,11 @@ export const DEFAULT_SETTINGS: Settings = {
   timerSound: true,
   tapPreset: 'tap',
   chimePreset: 'chime',
+  chimeVolume: 0.85,
+  // On by default: the point of the alert is to reach someone who has stopped
+  // looking at the screen, and a phone face-down on a desk is silent but not
+  // still.
+  timerVibration: true,
 };
 
 export const HAPTIC_MIN_MS = 6;
@@ -117,6 +133,14 @@ export async function hydrateSettings(): Promise<void> {
         typeof parsed.chimePreset === 'string' && CHIME_IDS.includes(parsed.chimePreset)
           ? parsed.chimePreset
           : DEFAULT_SETTINGS.chimePreset,
+      chimeVolume:
+        typeof parsed.chimeVolume === 'number' && Number.isFinite(parsed.chimeVolume)
+          ? Math.max(0, Math.min(1, parsed.chimeVolume))
+          : DEFAULT_SETTINGS.chimeVolume,
+      timerVibration:
+        typeof parsed.timerVibration === 'boolean'
+          ? parsed.timerVibration
+          : DEFAULT_SETTINGS.timerVibration,
     };
     emit();
   } catch {

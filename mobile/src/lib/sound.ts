@@ -36,6 +36,7 @@ export const soundAvailable = native != null;
  * minute. It should sit under whatever else is happening, not on top of it.
  */
 const TAP_VOLUME = 0.28;
+/** Only the fallback: the chime's level is a setting, since it fires unattended. */
 const CHIME_VOLUME = 0.85;
 
 /** A press. Gated on the tap-sound setting, and plays the chosen preset. */
@@ -53,7 +54,7 @@ export function playChime(): void {
   if (!native || !settings.timerSound) {
     return;
   }
-  native.play(settings.chimePreset, CHIME_VOLUME);
+  native.play(settings.chimePreset, settings.chimeVolume ?? CHIME_VOLUME);
 }
 
 /**
@@ -92,7 +93,9 @@ export function silencingReason(): 'dnd' | 'silent' | 'vibrate' | '' {
  * you may want to hear the options before deciding to turn them on.
  */
 export function previewSound(name: string): void {
-  const volume = name.startsWith('chime') ? CHIME_VOLUME : TAP_VOLUME;
+  const volume = name.startsWith('chime')
+    ? (getSettings().chimeVolume ?? CHIME_VOLUME)
+    : TAP_VOLUME;
   // preview() when the module has it — it routes to the alarm stream, so a
   // phone in Do Not Disturb still lets you hear what you are choosing. Falls
   // back on an older build rather than going silent.

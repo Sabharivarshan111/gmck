@@ -1,15 +1,14 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   AccessibilityInfo,
   Animated,
   ScrollView,
   StyleSheet,
-  TextInput,
   View,
 } from 'react-native';
 import { Text } from '@/components/Text';
 import { Touchable } from '@/components/Touchable';
-import { Sheet } from '@/components/Sheet';
+import { PomodoroSettingsSheet } from '@/components/PomodoroSettingsSheet';
 import { ProgressRing } from '@/components/ProgressRing';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Coffee, Pencil, Play, Pause, RotateCcw, SlidersHorizontal, Sparkles, Timer as TimerIcon, Users } from 'lucide-react-native';
@@ -25,27 +24,11 @@ const MODES: { key: PomodoroMode; label: string; emoji: string }[] = [
   { key: 'long', label: 'Long break', emoji: '🌿' },
 ];
 
-const DURATION_CHOICES = [15, 20, 25, 30, 45, 60, 90];
-/**
- * The bounds on a custom focus length.
- *
- * One minute is the shortest thing that is still a session; 180 is three
- * hours, past which the break schedule stops meaning anything and the number
- * is more likely a typo than an intention.
- */
-const CUSTOM_MIN = 1;
-const CUSTOM_MAX = 180;
-
 export default function TimerScreen() {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const timer = usePomodoro();
   const [settingsOpen, setSettingsOpen] = useState(false);
-  /** What is typed in the custom field, as text — an empty field is not 0. */
-  const [customText, setCustomText] = useState('');
-  const customMinutes = Number.parseInt(customText, 10);
-  const customValid =
-    Number.isFinite(customMinutes) && customMinutes >= CUSTOM_MIN && customMinutes <= CUSTOM_MAX;
 
   const activeMode = MODES.find(m => m.key === timer.mode) ?? MODES[0];
   // How much of this session is still to come, for the dial ring.
@@ -90,16 +73,6 @@ export default function TimerScreen() {
     // would fire the flourish when the user switches tabs by hand.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [timer.completionNonce]);
-
-  /** Commit the typed length, then close — the same shape as picking a preset. */
-  const applyCustom = useCallback(() => {
-    if (!customValid) {
-      return;
-    }
-    timer.updateSettings({ focusMinutes: customMinutes });
-    setCustomText('');
-    setSettingsOpen(false);
-  }, [customValid, customMinutes, timer]);
 
   return (
     <ScrollView
@@ -178,20 +151,23 @@ export default function TimerScreen() {
             <Text style={[styles.dialKicker, { color: colors.textMuted }]}>
               {activeMode.emoji} {activeMode.label.toUpperCase()}
             </Text>
-            <View style={styles.dialClockRow}>
+            {/* The number itself, not just the pencil — the hint below says to
+                tap the number, and a hint that is only true of the 16dp icon
+                beside it is a hint that reads as a dead control. */}
+            <Touchable
+              onPress={() => setSettingsOpen(true)}
+              label="Pomodoro settings"
+              hint="Set the focus and break lengths, the alert sound and vibration"
+              scaleTo={0.96}
+              hitSlop={14}
+              style={styles.dialClockRow}>
               <Text
                 accessibilityLiveRegion="none"
                 style={[styles.dialClock, { color: colors.text }]}>
                 {formatClock(timer.remaining)}
               </Text>
-              <Touchable
-                onPress={() => setSettingsOpen(true)}
-                label="Set a custom focus length"
-                scaleTo={0.85}
-                hitSlop={14}>
-                <Pencil size={16} color={colors.textMuted} />
-              </Touchable>
-            </View>
+              <Pencil size={16} color={colors.textMuted} />
+            </Touchable>
             <Text style={[styles.dialHint, { color: colors.textMuted }]}>
               Tap the number to set custom time
             </Text>
@@ -272,95 +248,13 @@ export default function TimerScreen() {
         </View>
       </View>
 
-      <Sheet
+      <PomodoroSettingsSheet
         visible={settingsOpen}
         onClose={() => setSettingsOpen(false)}
-        title="Focus length">
-        <Text style={[styles.sheetSub, { color: colors.textMuted }]}>
-          Breaks: {timer.settings.shortMinutes}m short, {timer.settings.longMinutes}m long every{' '}
-          {timer.settings.longEvery} sessions
-        </Text>
-        <View style={styles.durationGrid}>
-          {DURATION_CHOICES.map(minutes => {
-            const active = timer.settings.focusMinutes === minutes;
-            return (
-              <Touchable
-                key={minutes}
-                onPress={() => {
-                  timer.updateSettings({ focusMinutes: minutes });
-                  setSettingsOpen(false);
-                }}
-                role="radio"
-                label={`${minutes} minutes`}
-                state={{ checked: active }}
-                scaleTo={0.94}
-                style={[
-                  styles.durationChip,
-                  {
-                    backgroundColor: active ? colors.primary : colors.cardElevated,
-                    borderColor: active ? colors.primary : colors.border,
-                  },
-                ]}>
-                <Text
-                  style={[
-                    styles.durationText,
-                    { color: active ? colors.primaryText : colors.text },
-                  ]}>
-                  {minutes}m
-                </Text>
-              </Touchable>
-            );
-          })}
-        </View>
-        {/*
-          The dial says "Tap the number to set custom time", and until this
-          existed that was not true: tapping opened seven fixed choices. A
-          preset grid is the fast path for the common lengths; this is the
-          promise being kept for everything else.
-
-          Minutes only, and clamped. A pomodoro of 0 is not a timer, and one
-          of 999 is a number someone typed by accident.
-        */}
-        <View style={[styles.customRow, { borderTopColor: colors.border }]}>
-          <Text style={[styles.customLabel, { color: colors.textMuted }]}>CUSTOM</Text>
-          <View style={styles.customEntry}>
-            <TextInput
-              value={customText}
-              onChangeText={next => setCustomText(next.replace(/[^0-9]/g, '').slice(0, 3))}
-              keyboardType="number-pad"
-              placeholder={String(timer.settings.focusMinutes)}
-              placeholderTextColor={colors.textMuted}
-              accessibilityLabel="Custom focus length in minutes"
-              returnKeyType="done"
-              onSubmitEditing={applyCustom}
-              style={[
-                styles.customInput,
-                { color: colors.text, borderColor: colors.border, backgroundColor: colors.card },
-              ]}
-            />
-            <Text style={[styles.customUnit, { color: colors.textMuted }]}>min</Text>
-            <Touchable
-              onPress={applyCustom}
-              label="Use this custom focus length"
-              disabled={!customValid}
-              scaleTo={0.95}
-              style={[
-                styles.customSet,
-                {
-                  backgroundColor: customValid ? colors.accent : withAlpha(colors.text, 0.12),
-                },
-              ]}>
-              <Text
-                style={[
-                  styles.customSetText,
-                  { color: customValid ? colors.onAccent : colors.textMuted },
-                ]}>
-                Set
-              </Text>
-            </Touchable>
-          </View>
-        </View>
-      </Sheet>
+        settings={timer.settings}
+        onApply={timer.updateSettings}
+        onResetCycle={timer.resetCycle}
+      />
     </ScrollView>
   );
 }
