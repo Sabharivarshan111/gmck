@@ -36,6 +36,11 @@ const SHOTS = [
   // Both themes get captured. A palette change that only ever gets eyeballed
   // in dark is a palette change that breaks light.
   { name: 'notes-bottom', query: 'screen=notes', scroll: 'bottom' },
+  // The handwritten-notes renderer against the fixture, top and bottom: the
+  // top shows the diagram card, the bottom the regenerate button and the AI
+  // edit box.
+  { name: 'notes-renderer', query: 'screen=notesdemo' },
+  { name: 'notes-renderer-bottom', query: 'screen=notesdemo', scroll: 'bottom' },
   { name: 'progress-bottom', query: 'screen=progress', scroll: 'bottom' },
   { name: 'timer-bottom', query: 'screen=timer', scroll: 'bottom' },
   { name: 'home-light', query: 'screen=home&theme=light' },

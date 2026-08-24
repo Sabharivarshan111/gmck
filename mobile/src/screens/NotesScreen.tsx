@@ -101,9 +101,34 @@ export default function NotesScreen() {
     return () => sub.remove();
   }, [view.kind, topicsViewFor]);
 
+  /**
+   * One step back, whatever level is open.
+   *
+   * Lifted to the screen so a single button can serve all three levels — which
+   * is what lets it live outside the ScrollView instead of once per view.
+   */
+  const goBack = useCallback(() => {
+    setView(current => {
+      if (current.kind === 'notes') {
+        return topicsViewFor(current);
+      }
+      if (current.kind === 'topics') {
+        return { kind: 'subjects', year: current.year };
+      }
+      if (current.kind === 'subjects') {
+        return { kind: 'years' };
+      }
+      return current;
+    });
+  }, [topicsViewFor]);
+
   return (
+    <View style={styles.screen}>
     <ScrollView
-      style={{ backgroundColor: colors.background }}
+      // flex: 1 because this is no longer the root view. A ScrollView with no
+      // flex inside a column parent sizes to its content, so it would grow
+      // past the screen instead of scrolling inside it.
+      style={[styles.screen, { backgroundColor: colors.background }]}
       contentContainerStyle={[styles.content, { paddingTop: insets.top + 12 }]}
       showsVerticalScrollIndicator={false}>
       {view.kind === 'years' ? (
@@ -113,7 +138,6 @@ export default function NotesScreen() {
       {view.kind === 'subjects' ? (
         <SubjectsView
           year={view.year}
-          onBack={() => setView({ kind: 'years' })}
           onPick={(subjectKey, subjectName, node) =>
             setView({ kind: 'topics', year: view.year, subjectKey, subjectName, node })
           }
@@ -126,7 +150,6 @@ export default function NotesScreen() {
           subjectKey={view.subjectKey}
           subjectName={view.subjectName}
           node={view.node}
-          onBack={() => setView({ kind: 'subjects', year: view.year })}
           onPick={topic =>
             setView({ kind: 'notes', year: view.year, subject: view.subjectName, topic })
           }
@@ -138,33 +161,47 @@ export default function NotesScreen() {
           year={view.year}
           subject={view.subject}
           topic={view.topic}
-          onBack={() => setView(topicsViewFor(view))}
         />
       ) : null}
     </ScrollView>
-  );
-}
 
-function BackHeader({
-  onBack,
-  title,
-  subtitle,
-}: {
-  onBack: () => void;
-  title: string;
-  subtitle?: string;
-}) {
-  const { colors } = useTheme();
-  return (
-    <View style={styles.backHeader}>
+    {/*
+      Outside the ScrollView, so it does not leave with the content.
+      A topic's notes run several screens, and the way out used to be at the
+      very top of them — leaving meant scrolling the whole page back up first.
+      It draws exactly where the header's own button sat, so nothing appears to
+      move; BackHeader now leaves a gap that size instead of shifting left.
+    */}
+    {view.kind !== 'years' ? (
       <Touchable
-        onPress={onBack}
+        onPress={goBack}
         label="Back"
         hitSlop={12}
         scaleTo={0.88}
-        style={[styles.backButton, { backgroundColor: colors.card, borderColor: colors.border }]}>
+        style={[
+          styles.floatingBack,
+          { top: insets.top + 12, backgroundColor: colors.card, borderColor: colors.border },
+        ]}>
         <ArrowLeft size={20} color={colors.text} />
       </Touchable>
+    ) : null}
+    </View>
+  );
+}
+
+/**
+ * The title block at the top of a level.
+ *
+ * It no longer draws its own back button — the screen floats one over this
+ * spot so it survives scrolling — but it still reserves the space, so nothing
+ * shifts and there is never a second one.
+ */
+function BackHeader({ title, subtitle }: { title: string; subtitle?: string }) {
+  const { colors } = useTheme();
+  return (
+    <View style={styles.backHeader}>
+      {/* The floating button draws here. */}
+      <View style={styles.backButton} />
       <View style={styles.flex}>
         <Text style={[styles.backTitle, { color: colors.text }]}>{title}</Text>
         {subtitle ? (
@@ -233,11 +270,9 @@ function YearsView({ currentYear, onPick }: { currentYear: Year; onPick: (year: 
 
 function SubjectsView({
   year,
-  onBack,
   onPick,
 }: {
   year: Year;
-  onBack: () => void;
   onPick: (key: string, name: string, node: BankNode) => void;
 }) {
   const { colors } = useTheme();
@@ -245,7 +280,7 @@ function SubjectsView({
 
   return (
     <>
-      <BackHeader onBack={onBack} title={`${YEAR_LABEL[YEAR_TO_KEY[year]]} • Subjects`} />
+      <BackHeader title={`${YEAR_LABEL[YEAR_TO_KEY[year]]} • Subjects`} />
       {subjects.map(subject => (
         <Touchable
           key={subject.key}
@@ -272,14 +307,12 @@ function TopicsView({
   subjectKey,
   subjectName,
   node,
-  onBack,
   onPick,
 }: {
   year: Year;
   subjectKey: string;
   subjectName: string;
   node: BankNode;
-  onBack: () => void;
   onPick: (topic: LeafTopic) => void;
 }) {
   const { colors } = useTheme();
@@ -288,7 +321,6 @@ function TopicsView({
   return (
     <>
       <BackHeader
-        onBack={onBack}
         title={subjectName}
         subtitle={`${YEAR_LABEL[YEAR_TO_KEY[year]]} • ${topics.length} topics`}
       />
@@ -323,12 +355,10 @@ function NotesDetailView({
   year,
   subject,
   topic,
-  onBack,
 }: {
   year: Year;
   subject: string;
   topic: LeafTopic;
-  onBack: () => void;
 }) {
   const { colors } = useTheme();
 
@@ -435,7 +465,7 @@ function NotesDetailView({
 
   return (
     <>
-      <BackHeader onBack={onBack} title={topic.name} subtitle={topic.breadcrumb} />
+      <BackHeader title={topic.name} subtitle={topic.breadcrumb} />
 
       {busy ? (
         <View style={[styles.status, { backgroundColor: colors.card, borderColor: colors.border }]}>
@@ -684,6 +714,19 @@ const styles = StyleSheet.create({
   yearHint: {
     fontSize: 13,
     marginTop: 2,
+  },
+  screen: {
+    flex: 1,
+  },
+  floatingBack: {
+    position: 'absolute',
+    left: 16,
+    height: 44,
+    width: 44,
+    borderRadius: 22,
+    borderWidth: StyleSheet.hairlineWidth,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   backHeader: {
     flexDirection: 'row',

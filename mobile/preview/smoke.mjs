@@ -914,6 +914,57 @@ await step('the notes AI edit box mounts and fails into a message', async () => 
     .waitFor({ timeout: 15000 });
 });
 
+/**
+ * The way out of a topic's notes must not scroll away with them.
+ *
+ * A generated topic is several screens long and the back button used to live
+ * at the top of it, so leaving meant scrolling the whole page up first. This
+ * asserts the button is still on screen after scrolling, and in the same
+ * place — a button that merely exists somewhere below the fold is the bug.
+ */
+await step('the notes back button stays put while the page scrolls', async () => {
+  await open('screen=notes');
+  await tap('3rd Year, browse subjects');
+  await declineAdPromptIfShown();
+  await tap('Forensic Medicine, see topics');
+
+  const back = byLabel('Back');
+  await back.waitFor({ timeout: 6000 });
+
+  // Inside the viewport, not merely somewhere in the document. Comparing two
+  // positions is not enough on its own: a button laid out below the scroll
+  // area never moves either, so an unfloated one passed a same-position check
+  // while sitting off the bottom of the screen the whole time.
+  const { height: viewport } = page.viewportSize();
+  // Near the top, on screen, both times.
+  //
+  // Two weaker versions of this passed on a button that was not floating at
+  // all. "Did not move" passes on one laid out below the scroll area, and
+  // "on screen and did not move" passes on one the flex column pins to the
+  // bottom — neither of which is a back button you can reach. Where it is
+  // matters as much as that it stays.
+  const TOP_THIRD = viewport / 3;
+  const parked = async where => {
+    const box = await back.boundingBox();
+    if (!box || box.y < 0 || box.y + box.height > viewport) {
+      throw new Error(`the back button is not on screen ${where} (y=${box ? Math.round(box.y) : 'none'}, viewport=${viewport})`);
+    }
+    if (box.y > TOP_THIRD) {
+      throw new Error(`the back button is at y=${Math.round(box.y)} ${where} — it belongs at the top, where the header's own button sits`);
+    }
+    return box;
+  };
+
+  const before = await parked('before scrolling');
+  await page.mouse.wheel(0, 1400);
+  await page.waitForTimeout(600);
+  const after = await parked('after scrolling');
+
+  if (Math.abs(after.y - before.y) > 2) {
+    throw new Error(`the back button moved ${Math.round(after.y - before.y)}px while scrolling`);
+  }
+});
+
 await step('ask ai screen renders and accepts input', async () => {
   await open('screen=askai');
   const box = page.locator('textarea, input').first();
