@@ -20,7 +20,11 @@ import {
   YEAR_KEYS,
   YEAR_LABEL,
   YearKey,
+  type SearchHit,
 } from '@/lib/questionBank';
+import { Touchable } from '@/components/Touchable';
+import { SingleQuestionNote } from '@/components/SingleQuestionNote';
+import { noteQuestionText } from '@/lib/questionText';
 import { useCountDone } from '@/hooks/useProgress';
 import { useProfile } from '@/hooks/useProfile';
 import { QuestionRow } from '@/components/QuestionRow';
@@ -66,7 +70,27 @@ export default function BrowseHomeScreen() {
     return () => clearTimeout(id);
   }, [query, debounced]);
 
-  const results = useMemo(() => searchQuestions(debounced), [debounced]);
+  /**
+   * Which year the search looks in.
+   *
+   * `null` is "every year", and it is the default: someone who types a drug
+   * name usually wants to know where it appears, not to be told there are no
+   * matches because the year they last browsed happened to be selected.
+   */
+  const [searchYear, setSearchYear] = useState<YearKey | null>(null);
+
+  /**
+   * A third-year hit gets the handwritten note here too.
+   *
+   * Otherwise the same question offers a note when reached by browsing and
+   * only Ask AI when reached by searching, which reads as the search finding
+   * a lesser copy of it. The hit already carries everything the note needs.
+   */
+  const [noted, setNoted] = useState<SearchHit | null>(null);
+  const results = useMemo(
+    () => searchQuestions(debounced, searchYear ?? undefined),
+    [debounced, searchYear],
+  );
   const isSearching = debounced.trim().length >= 2;
 
   const subjects = useMemo(() => {
@@ -75,6 +99,25 @@ export default function BrowseHomeScreen() {
       return { ...subject, total: all.length, done: countDone(all) };
     });
   }, [year, countDone]);
+
+  /**
+   * Open the topic a result lives in, and light the question up on arrival.
+   *
+   * The path comes from the search index, which check:search-index proves
+   * resolves back to a topic containing this exact question.
+   */
+  const openChapter = useCallback(
+    (hit: SearchHit) => {
+      navigation.push('BrowseNode', {
+        year: hit.year,
+        path: hit.path,
+        title: hit.topicName,
+        highlight: hit.question,
+        highlightType: hit.type,
+      });
+    },
+    [navigation],
+  );
 
   const askAi = useCallback(
     (question: string) => {
@@ -109,6 +152,43 @@ export default function BrowseHomeScreen() {
         />
       </View>
 
+      {/* Under the box, because it narrows what the box returns. "All years"
+          leads, and is the default: a search that silently only looked in one
+          year would report "no matches" for a question that is in the bank. */}
+      {isSearching ? (
+        <View style={styles.searchYears}>
+          {([null, ...YEAR_KEYS] as (YearKey | null)[]).map(key => {
+            const active = searchYear === key;
+            return (
+              <Touchable
+                key={key ?? 'all'}
+                label={
+                  key
+                    ? `Search ${YEAR_LABEL[key]} only`
+                    : 'Search every year'
+                }
+                state={{ selected: active }}
+                onPress={() => setSearchYear(key)}
+                style={[
+                  styles.searchYear,
+                  {
+                    backgroundColor: active ? colors.primary : colors.card,
+                    borderColor: active ? colors.primary : colors.border,
+                  },
+                ]}>
+                <Text
+                  style={[
+                    styles.searchYearText,
+                    { color: active ? colors.primaryText : colors.textMuted },
+                  ]}>
+                  {key ? YEAR_LABEL[key].replace(' Year', '') : 'All'}
+                </Text>
+              </Touchable>
+            );
+          })}
+        </View>
+      ) : null}
+
       {isSearching ? (
         <FlatList
           {...LIST_TUNING}
@@ -132,10 +212,26 @@ export default function BrowseHomeScreen() {
           renderItem={({ item, index }) => (
             <View>
               <Text style={[styles.hitPath, { color: colors.textMuted }]}>
-                {item.yearLabel} · {item.subjectName} ·{' '}
-                {item.type === 'essay' ? 'Essay' : 'Short Notes'}
+                {item.type === 'essay' ? 'Essay' : 'Short Notes'} · {item.yearLabel} →{' '}
+                {item.subjectName} → {item.topicName}
               </Text>
-              <QuestionRow question={item.question} index={index} onAskAi={askAi} />
+              <QuestionRow
+                question={item.question}
+                index={index}
+                onAskAi={askAi}
+                onNote={item.year === 'third-year' ? () => setNoted(item) : undefined}
+              />
+              {/* The result names where the question lives; this goes there.
+                  Without it a search can only tell you a question exists. */}
+              <Touchable
+                label={`Switch to ${item.topicName}`}
+                onPress={() => openChapter(item)}
+                style={[styles.switchRow, { borderColor: colors.border }]}>
+                <Text style={[styles.switchText, { color: colors.cyan }]}>
+                  Switch to this chapter
+                </Text>
+                <ChevronRight size={16} color={colors.cyan} />
+              </Touchable>
             </View>
           )}
         />
@@ -181,6 +277,14 @@ export default function BrowseHomeScreen() {
           )}
         />
       )}
+
+      <SingleQuestionNote
+        question={noted ? noteQuestionText(noted.question) : null}
+        subjectKey={noted?.subjectKey ?? ''}
+        subjectName={noted?.subjectName ?? ''}
+        yearLabel={noted?.yearLabel ?? ''}
+        onClose={() => setNoted(null)}
+      />
     </View>
   );
 }
@@ -230,6 +334,38 @@ const styles = StyleSheet.create({
   },
   resultCount: {
     marginBottom: 10,
+  },
+  searchYears: {
+    flexDirection: 'row',
+    gap: 8,
+    paddingHorizontal: 16,
+    paddingBottom: 10,
+  },
+  searchYear: {
+    flex: 1,
+    borderRadius: 999,
+    borderWidth: StyleSheet.hairlineWidth,
+    paddingVertical: 8,
+    alignItems: 'center',
+  },
+  searchYearText: {
+    fontSize: 13,
+    fontWeight: '600',
+  },
+  switchRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 4,
+    borderRadius: 999,
+    borderWidth: StyleSheet.hairlineWidth,
+    paddingVertical: 9,
+    marginTop: -4,
+    marginBottom: 16,
+  },
+  switchText: {
+    fontSize: 13,
+    fontWeight: '600',
   },
   hitPath: {
     fontSize: 11,

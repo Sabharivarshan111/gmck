@@ -3,9 +3,9 @@ import { Animated, StyleSheet, View } from 'react-native';
 import { Text } from '@/components/Text';
 import { Touchable } from '@/components/Touchable';
 import { Check } from 'lucide-react-native';
-import { useTheme } from '@/theme';
+import { useTheme, withAlpha } from '@/theme';
 import { typeScale } from '@/theme/typography';
-import { SPRING, springConfig, useReducedMotion } from '@/theme/motion';
+import { DURATION, EASE, SPRING, springConfig, useReducedMotion } from '@/theme/motion';
 import { toggleQuestionDone } from '@/lib/progress';
 import {
   countStars,
@@ -31,6 +31,11 @@ interface Props {
    * Without it, a triple tap falls back to Ask AI.
    */
   onNote?: (question: string) => void;
+  /**
+   * Flash this row — the reader arrived from a search result and has to be
+   * told which of sixty questions was the one they searched for.
+   */
+  highlighted?: boolean;
 }
 
 /**
@@ -57,6 +62,7 @@ function QuestionRowBase({
   onAskAi,
   onAskMcq,
   onNote,
+  highlighted = false,
 }: Props) {
   const { colors } = useTheme();
   const reduceMotion = useReducedMotion();
@@ -70,6 +76,41 @@ function QuestionRowBase({
   const text = getCleanQuestionText(question);
 
   const tick = useRef(new Animated.Value(done ? 1 : 0)).current;
+
+  /**
+   * The arrival flash, for a question reached from a search result.
+   *
+   * A pulse rather than a permanent mark: it lights, holds long enough to be
+   * found by eye, and leaves. Under reduced motion it shows and hides without
+   * the ramp — "this is the one you searched for" is information, not
+   * decoration, so it is not dropped, only the movement is.
+   */
+  const glow = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    if (!highlighted) {
+      glow.setValue(0);
+      return;
+    }
+    if (reduceMotion) {
+      glow.setValue(1);
+      return;
+    }
+    Animated.sequence([
+      Animated.timing(glow, {
+        toValue: 1,
+        duration: DURATION.fast,
+        easing: EASE.out,
+        useNativeDriver: false,
+      }),
+      Animated.delay(1200),
+      Animated.timing(glow, {
+        toValue: 0,
+        duration: DURATION.slow,
+        easing: EASE.out,
+        useNativeDriver: false,
+      }),
+    ]).start();
+  }, [highlighted, reduceMotion, glow]);
   const firstRun = useRef(true);
 
   useEffect(() => {
@@ -177,11 +218,32 @@ function QuestionRowBase({
       style={[
         styles.row,
         {
-          backgroundColor: done ? colors.cardElevated : colors.card,
+          // A done question reads as a green card with a ticked box, not as
+          // crossed-out text. Both said "finished"; only one of them still
+          // lets you revise from it, which is the entire reason to keep a
+          // question you have already answered on the screen.
+          backgroundColor: done ? withAlpha(colors.success, 0.1) : colors.card,
           borderColor: done ? colors.success : colors.border,
         },
       ]}
     >
+      {/* Drawn first, so it sits behind the row's content rather than tinting
+          it. Touchable is not an Animated component, which is why the flash is
+          its own layer instead of the row's own border and background. */}
+      {highlighted ? (
+        <Animated.View
+          pointerEvents="none"
+          style={[
+            styles.flash,
+            {
+              opacity: glow,
+              borderColor: colors.cyan,
+              backgroundColor: withAlpha(colors.cyan, 0.16),
+            },
+          ]}
+        />
+      ) : null}
+
       <View style={styles.main}>
         {/* Its own control, so ticking never has to survive tap counting. */}
         <Touchable
@@ -230,10 +292,10 @@ function QuestionRowBase({
             style={[
               typeScale.callout,
               styles.text,
-              {
-                color: done ? colors.textMuted : colors.text,
-                textDecorationLine: done ? 'line-through' : 'none',
-              },
+              // Full strength either way. The tick and the green card carry
+              // "done"; dimming and striking the text carried it twice over
+              // and made the question harder to read than an untouched one.
+              { color: colors.text },
             ]}
           >
             {index + 1}. {text}
@@ -287,6 +349,15 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     borderWidth: StyleSheet.hairlineWidth,
     marginBottom: 10,
+  },
+  flash: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    borderRadius: 14,
+    borderWidth: 1.5,
   },
   main: {
     flexDirection: 'row',

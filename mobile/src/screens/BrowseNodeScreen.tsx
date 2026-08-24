@@ -3,6 +3,7 @@ import React, {
   useEffect,
   useLayoutEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
@@ -64,10 +65,30 @@ export default function BrowseNodeScreen() {
   const navigation = useNavigation<Nav>();
   const route = useRoute<Route>();
   const countDone = useCountDone();
-  const { year, path, title } = route.params;
+  const { year, path, title, highlight, highlightType } = route.params;
 
-  const [type, setType] = useState<QuestionType>('essay');
+  // Open on the tab the searched question is actually on, or a reader who
+  // arrives from a search sees the other tab and an unhighlighted list.
+  const [type, setType] = useState<QuestionType>(highlightType ?? 'essay');
   const [query, setQuery] = useState('');
+
+  /**
+   * The searched question, flashed on arrival and then let go.
+   *
+   * Held in state rather than read from the route on every render because it
+   * has to *stop*: a highlight that never clears reads as a permanent
+   * selection, and the reader has no way to dismiss it.
+   */
+  const listRef = useRef<FlatList<{ index: number; question: string }>>(null);
+  const [flash, setFlash] = useState<string | null>(highlight ?? null);
+  useEffect(() => {
+    if (!highlight) {
+      return;
+    }
+    setFlash(highlight);
+    const id = setTimeout(() => setFlash(null), HIGHLIGHT_MS);
+    return () => clearTimeout(id);
+  }, [highlight]);
 
   useLayoutEffect(() => {
     navigation.setOptions({ headerShown: false });
@@ -113,6 +134,28 @@ export default function BrowseNodeScreen() {
       getCleanQuestionText(pair.question).toLowerCase().includes(needle),
     );
   }, [questions, query, filterable]);
+
+  /**
+   * Bring the searched question into view.
+   *
+   * Deferred a beat because the list has to have laid out before it can be
+   * told to move, and placed at 0.35 down the screen rather than at the very
+   * top — a row flush against the header reads as "the list starts here",
+   * which is the opposite of "this is the one you asked for".
+   */
+  useEffect(() => {
+    if (!flash) {
+      return;
+    }
+    const at = visible.findIndex(item => item.question === flash);
+    if (at < 0) {
+      return;
+    }
+    const id = setTimeout(() => {
+      listRef.current?.scrollToIndex({ index: at, animated: true, viewPosition: 0.35 });
+    }, 120);
+    return () => clearTimeout(id);
+  }, [flash, visible]);
 
   const filtering = filterable && query.trim().length > 0;
   const essayCount = useMemo(
@@ -394,11 +437,22 @@ export default function BrowseNodeScreen() {
     <>
       <FlatList
         {...LIST_TUNING}
+        ref={listRef}
         style={{ backgroundColor: colors.background }}
         contentContainerStyle={[
           styles.listContent,
           { paddingTop: insets.top + 8 },
         ]}
+        // Rows are different heights, so there is no getItemLayout to give and
+        // scrollToIndex is allowed to miss and correct itself.
+        onScrollToIndexFailed={info => {
+          setTimeout(() => {
+            listRef.current?.scrollToIndex({
+              index: Math.min(info.index, info.highestMeasuredFrameIndex),
+              animated: false,
+            });
+          }, 60);
+        }}
         data={visible}
         keyExtractor={item => `${item.index}-${item.question.slice(0, 24)}`}
         initialNumToRender={12}
@@ -490,6 +544,7 @@ export default function BrowseNodeScreen() {
             index={item.index}
             onAskAi={askAi}
             onNote={onNote}
+            highlighted={flash === item.question}
           />
         )}
       />
@@ -500,6 +555,14 @@ export default function BrowseNodeScreen() {
 
 /** Below this, scanning the list by eye beats typing. */
 const FILTER_THRESHOLD = 12;
+
+/**
+ * How long a searched question stays lit.
+ *
+ * Long enough to find with your eyes once the scroll settles, short enough to
+ * read as a flash rather than a selected state the reader now has to undo.
+ */
+const HIGHLIGHT_MS = 2000;
 
 const styles = StyleSheet.create({
   container: {

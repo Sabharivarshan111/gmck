@@ -214,6 +214,14 @@ export interface SearchHit {
   subjectKey: string;
   subjectName: string;
   type: QuestionType;
+  /**
+   * Route to the topic this question lives in, subject key first — exactly
+   * what BrowseNode takes. Without it a result can say where a question is but
+   * not take you there, which is most of what a search is for.
+   */
+  path: string[];
+  /** Leaf topic's display name, for the breadcrumb and the screen title. */
+  topicName: string;
 }
 
 /**
@@ -234,20 +242,82 @@ interface IndexEntry extends SearchHit {
 
 let searchIndex: IndexEntry[] | null = null;
 
+/**
+ * Walk one subject, recording the route to every question.
+ *
+ * collectQuestions() flattens, which is all the counters need and not enough
+ * to navigate: two topics' questions come back in one list with nothing saying
+ * which came from where. This mirrors the same traversal rules — the essay and
+ * short-notes buckets belong to the node that holds them, everything else is a
+ * child topic — but keeps the path it took.
+ *
+ * The path it records is the one `resolveNode` + `findTypeQuestions` will
+ * resolve back to the same question. That pairing is the contract; changing
+ * either walker without the other breaks "Switch to this chapter" silently,
+ * which is why check:search-index walks the whole bank and proves the round
+ * trip for every hit.
+ */
+function indexSubject(
+  node: unknown,
+  type: QuestionType,
+  path: string[],
+  topicName: string,
+  out: { question: string; path: string[]; topicName: string }[],
+): void {
+  if (!node || typeof node !== 'object') {
+    return;
+  }
+  const record = node as Record<string, unknown>;
+  const container = (record.subtopics ?? record) as Record<string, unknown>;
+
+  const bucketKeys = type === 'essay' ? ['essay'] : ['short-notes', 'short-note'];
+  for (const key of bucketKeys) {
+    const bucket = container[key] as { questions?: unknown } | undefined;
+    if (Array.isArray(bucket?.questions)) {
+      for (const question of bucket.questions as string[]) {
+        out.push({ question, path, topicName });
+      }
+    }
+  }
+  // A node can also carry its questions directly, with no bucket around them.
+  if (Array.isArray(record.questions)) {
+    for (const question of record.questions as string[]) {
+      out.push({ question, path, topicName });
+    }
+  }
+
+  for (const [key, value] of Object.entries(container)) {
+    if (key === 'name' || key === 'questions') {
+      continue;
+    }
+    if (key === 'essay' || key === 'short-notes' || key === 'short-note') {
+      continue;
+    }
+    if (value && typeof value === 'object') {
+      const child = value as Record<string, unknown>;
+      indexSubject(child, type, [...path, key], (child.name as string) ?? key, out);
+    }
+  }
+}
+
 function buildSearchIndex(): IndexEntry[] {
   const entries: IndexEntry[] = [];
   for (const year of YEAR_KEYS) {
     const yearLabel = YEAR_LABEL[year];
     for (const subject of getSubjects(year)) {
       for (const type of ['essay', 'short-notes'] as QuestionType[]) {
-        for (const question of collectQuestions(subject.node, type)) {
+        const found: { question: string; path: string[]; topicName: string }[] = [];
+        indexSubject(subject.node, type, [subject.key], subject.name, found);
+        for (const hit of found) {
           entries.push({
-            question,
-            haystack: question.toLowerCase(),
+            question: hit.question,
+            haystack: hit.question.toLowerCase(),
             year,
             yearLabel,
             subjectKey: subject.key,
             subjectName: subject.name,
+            topicName: hit.topicName,
+            path: hit.path,
             type,
           });
         }
@@ -258,7 +328,14 @@ function buildSearchIndex(): IndexEntry[] {
 }
 
 /** Search the whole bank for questions containing `query`. */
-export function searchQuestions(query: string, limit = 60): SearchHit[] {
+/**
+ * Search the bank for questions containing `query`.
+ *
+ * `year` narrows to one year. It is applied here rather than by filtering the
+ * results afterwards so the limit counts questions the reader can actually
+ * reach — filtering after the cut would return 60 hits and then show four.
+ */
+export function searchQuestions(query: string, year?: YearKey, limit = 60): SearchHit[] {
   const needle = query.trim().toLowerCase();
   if (needle.length < 2) {
     return [];
@@ -268,6 +345,9 @@ export function searchQuestions(query: string, limit = 60): SearchHit[] {
   }
   const hits: SearchHit[] = [];
   for (const entry of searchIndex) {
+    if (year && entry.year !== year) {
+      continue;
+    }
     if (entry.haystack.includes(needle)) {
       hits.push(entry);
       if (hits.length >= limit) {
@@ -276,6 +356,22 @@ export function searchQuestions(query: string, limit = 60): SearchHit[] {
     }
   }
   return hits;
+}
+
+/**
+ * The whole index, in the order it was built.
+ *
+ * Enumerating it is not something the app needs — every screen searches for
+ * something — but verifying it is. check:search-index has to prove that every
+ * question is in here and that every path in here leads back to its question,
+ * and it cannot do that through searchQuestions(), which needs a query of at
+ * least two characters and so can never ask for "all of it".
+ */
+export function allSearchHits(): SearchHit[] {
+  if (!searchIndex) {
+    searchIndex = buildSearchIndex();
+  }
+  return searchIndex;
 }
 
 /**

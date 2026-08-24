@@ -9,4 +9,3 @@ export const biochemistryData = {
   }
 };
 
-console.log("Biochemistry Paper 1 data:", biochemistryPaper1);

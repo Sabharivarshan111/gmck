@@ -644,31 +644,35 @@ await step('a question row toggles done and back', async () => {
   const row = page.locator('[aria-label][role="button"]').filter({ has: box }).first();
 
   /**
-   * Asserted on the strikethrough, not on aria-checked.
+   * Asserted on the row's own colours, not on aria-checked.
    *
    * The row does set `accessibilityState={{ checked }}`, which React Native
    * maps to TalkBack's checked state on Android — but react-native-web does
    * not mirror it to `aria-checked`, so it reads as null here. That is a gap
-   * in the harness, not in the app, and it is not worth contorting app code to
-   * satisfy a shim. The line-through is the same state, rendered.
+   * in the harness, not in the app, and not worth contorting app code to
+   * satisfy a shim.
+   *
+   * This used to read the strikethrough, which was the rendered form of the
+   * same state until a done question stopped being struck out — crossed-out
+   * text says "discard this", and a question you have answered is exactly the
+   * one you want to reread before an exam. The green card and the ticked box
+   * carry it now, so that is what this reads: the row's border and fill.
    */
-  const rowText = page.locator('[role="checkbox"]').first().locator('xpath=../../..');
-  const struck = () =>
-    rowText.evaluate(node =>
-      [...node.querySelectorAll('*')].some(child =>
-        getComputedStyle(child).textDecorationLine.includes('line-through'),
-      ),
-    );
+  const swatch = () =>
+    row.evaluate(node => {
+      const style = getComputedStyle(node);
+      return `${style.borderTopColor}|${style.backgroundColor}`;
+    });
 
-  const before = await struck();
+  const before = await swatch();
   await box.click();
   await page.waitForTimeout(500);
-  if ((await struck()) === before) {
+  if ((await swatch()) === before) {
     throw new Error(`tapping the checkbox did not change its done state (stayed ${before})`);
   }
   await box.click();
   await page.waitForTimeout(500);
-  if ((await struck()) !== before) {
+  if ((await swatch()) !== before) {
     throw new Error('second tap did not restore the original state');
   }
 });
@@ -966,6 +970,82 @@ await step('the notes back button stays put while the page scrolls', async () =>
 
   if (Math.abs(after.y - before.y) > 2) {
     throw new Error(`the back button moved ${Math.round(after.y - before.y)}px while scrolling`);
+  }
+});
+
+/**
+ * A search has to be able to take you to what it found.
+ *
+ * Before this, a result named the year and subject and stopped there — you
+ * still had to find the topic by hand. The path now comes from the search
+ * index, and check:search-index proves every one of those paths resolves back
+ * to a topic containing that exact question.
+ */
+await step('a search result switches to its chapter and lights the question', async () => {
+  await open('screen=browse');
+  await page.locator('input').first().fill('Shotgun');
+  await page.waitForTimeout(1600);
+  await seesText('Switch to this chapter', 6000).catch(() => {
+    throw new Error('no "Switch to this chapter" row appeared for the search');
+  });
+
+  const before = await page.locator('body').innerText();
+  if (!/Forensic Medicine/.test(before)) {
+    throw new Error('the result does not say which subject the question is in');
+  }
+
+  await page.locator('[aria-label^="Switch to "]').first().click();
+  await page.waitForTimeout(1200);
+  await declineAdPromptIfShown();
+
+  /*
+   * .last(), not .first().
+   *
+   * React Navigation keeps the screen you came from mounted underneath the one
+   * it pushed, so the search result's copy of this question is still in the
+   * DOM — hidden, with no bounding box. .first() finds that one and waits
+   * forever for it to become visible, reporting "not on the chapter it
+   * switched to" about a question that is plainly on screen.
+   */
+  const landed = page.getByText('Define Firearm', { exact: false }).last();
+  await landed.waitFor({ state: 'visible', timeout: 6000 }).catch(() => {
+    throw new Error('the searched question is not on the chapter it switched to');
+  });
+
+  // And it was scrolled to, not merely present: it is the fourth of five
+  // essays, so an unscrolled list leaves it below the fold.
+  const box = await landed.boundingBox();
+  const { height: viewport } = page.viewportSize();
+  if (!box || box.y < 0 || box.y > viewport) {
+    throw new Error(
+      `the searched question is off screen at y=${box ? Math.round(box.y) : 'none'} — ` +
+        'switching to the chapter did not scroll to it',
+    );
+  }
+});
+
+/** The year bar under the box narrows the search, and "All" restores it. */
+await step('the search year filter narrows results to one year', async () => {
+  await open('screen=browse');
+  await page.locator('input').first().fill('cell');
+  await page.waitForTimeout(1600);
+  const all = await page.locator('[aria-label^="Switch to "]').count();
+  if (all === 0) {
+    throw new Error('searching "cell" across all years returned nothing');
+  }
+
+  await tap('Search 3rd Year only');
+  await page.waitForTimeout(900);
+  const third = await page.locator('[aria-label^="Switch to "]').count();
+  if (third >= all) {
+    throw new Error(`filtering to 3rd year did not narrow anything (${all} → ${third})`);
+  }
+
+  await tap('Search every year');
+  await page.waitForTimeout(900);
+  const restored = await page.locator('[aria-label^="Switch to "]').count();
+  if (restored !== all) {
+    throw new Error(`"All" did not restore the full result set (${all} → ${restored})`);
   }
 });
 
