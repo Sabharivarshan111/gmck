@@ -63,7 +63,10 @@ class NotifyModule(reactContext: ReactApplicationContext) :
       promise.resolve(true)
       return
     }
-    val activity: Activity? = currentActivity
+    // getCurrentActivity(), not the `currentActivity` property. Kotlin does
+    // not synthesise one for it through the generated spec, and the difference
+    // is a compile error that only the six-minute Gradle step ever sees.
+    val activity: Activity? = getCurrentActivity()
     if (activity == null) {
       promise.resolve(false)
       return
