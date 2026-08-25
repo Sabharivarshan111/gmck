@@ -1025,55 +1025,38 @@ html.liquid-glass body::after {
   animation: success-glow 700ms cubic-bezier(0, 0, 0.2, 1) forwards;
 }
 
-/* Gradient Wipe metallic sheen text effect */
-@keyframes tte03-wipe {
-  0%   { background-position: 130% 0; }
-  18%  { background-position: 118% 0; }
-  100% { background-position: -30% 0; }
+/* Gradient Shimmer iridescent rainbow text effect */
+@keyframes shimmer {
+  to {
+    background-position: 300% 0;
+  }
 }
 
-@keyframes tte03-bloom {
-  0%, 30%, 100% { opacity: 0; }
-  55% { opacity: 0.55; }
-  80% { opacity: 0; }
-}
-
-.gradient-wipe-text {
+.gradient-shimmer-text {
   background: linear-gradient(
-    110deg,
-    #2c2f3d 0%,
-    #4a4e60 22%,
-    #2c2f3d 44%,
-    #f5d76e 49%,
-    #fff6d6 50%,
-    #f5d76e 51%,
-    #2c2f3d 56%,
-    #4a4e60 78%,
-    #2c2f3d 100%
+    100deg,
+    #ff2e97,
+    #ff8a00,
+    #ffe600,
+    #00ffd5,
+    #5d6bff,
+    #ff2e97
   );
-  background-size: 280% 100%;
-  background-position: 130% 0;
+  background-size: 300% 100%;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent !important;
   -webkit-text-fill-color: transparent !important;
-  animation: tte03-wipe 3.6s cubic-bezier(0.5, 0, 0.18, 1) infinite;
+  animation: shimmer 6s linear infinite;
+  filter: drop-shadow(0 0 18px rgba(255, 80, 200, 0.25));
   will-change: background-position;
 }
 
-.gradient-wipe-bloom {
-  animation: tte03-bloom 3.6s cubic-bezier(0.5, 0, 0.18, 1) infinite;
+@media (prefers-reduced-motion: reduce) {
+  .gradient-shimmer-text {
+    animation: none;
+  }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .gradient-wipe-text {
-    background-position: 50% 0;
-    animation: none;
-  }
-  .gradient-wipe-bloom {
-    animation: none;
-    opacity: 0;
-  }
-}
 
 

@@ -13,8 +13,8 @@ const FONT_FAMILY = Platform.select({
 });
 
 /**
- * Bold headline with a metallic sheen band that sweeps across the glyphs,
- * blooming as it crosses the center ("Gradient Wipe" effect).
+ * Bold headline with a rainbow gradient clipped to the text,
+ * sliding continuously for a glossy iridescent sweep ("Gradient Shimmer" effect).
  */
 export function GradientText({
   children,
@@ -45,8 +45,8 @@ export function GradientText({
     const loop = Animated.loop(
       Animated.timing(progress, {
         toValue: 1,
-        duration: 3600,
-        easing: Easing.bezier(0.5, 0, 0.18, 1),
+        duration: 6000,
+        easing: Easing.linear,
         useNativeDriver: false,
       }),
     );
@@ -54,13 +54,13 @@ export function GradientText({
     return () => loop.stop();
   }, [progress]);
 
-  // On Web, use hardware-accelerated CSS background-clip + bloom glow
+  // On Web, use hardware-accelerated CSS background-clip + shimmer animation
   if (Platform.OS === 'web') {
     return (
       <View style={[styles.wrap, { alignItems: align === 'center' ? 'center' : 'flex-start' }]}>
         <div style={{ position: 'relative', display: 'inline-grid', placeItems: 'center' }}>
           <h1
-            className="gradient-wipe-text"
+            className="gradient-shimmer-text"
             style={{
               margin: 0,
               padding: 0,
@@ -68,31 +68,11 @@ export function GradientText({
               fontFamily: FONT_FAMILY,
               fontWeight: weight as any,
               fontSize: size,
-              letterSpacing: letterSpacing ? `${letterSpacing}px` : '-0.02em',
-              lineHeight: 1.2,
+              letterSpacing: letterSpacing ? `${letterSpacing}px` : '-0.03em',
+              lineHeight: 1.1,
             }}>
             {children}
           </h1>
-          <div
-            className="gradient-wipe-bloom"
-            aria-hidden="true"
-            style={{
-              position: 'absolute',
-              inset: 0,
-              display: 'grid',
-              placeItems: 'center',
-              pointerEvents: 'none',
-              fontFamily: FONT_FAMILY,
-              fontWeight: weight as any,
-              fontSize: size,
-              letterSpacing: letterSpacing ? `${letterSpacing}px` : '-0.02em',
-              lineHeight: 1.2,
-              color: '#f5d76e',
-              filter: 'blur(12px)',
-              zIndex: -1,
-            }}>
-            {children}
-          </div>
         </div>
       </View>
     );
@@ -105,13 +85,12 @@ export function GradientText({
       <Svg width="100%" height={height}>
         <Defs>
           <LinearGradient id={id} x1="0" y1="0" x2="1" y2="0">
-            <Stop offset="0" stopColor="#4a4e60" />
-            <Stop offset="0.3" stopColor="#2c2f3d" />
-            <Stop offset="0.48" stopColor="#f5d76e" />
-            <Stop offset="0.5" stopColor="#fff6d6" />
-            <Stop offset="0.52" stopColor="#f5d76e" />
-            <Stop offset="0.7" stopColor="#2c2f3d" />
-            <Stop offset="1" stopColor="#4a4e60" />
+            <Stop offset="0" stopColor="#ff2e97" />
+            <Stop offset="0.2" stopColor="#ff8a00" />
+            <Stop offset="0.4" stopColor="#ffe600" />
+            <Stop offset="0.6" stopColor="#00ffd5" />
+            <Stop offset="0.8" stopColor="#5d6bff" />
+            <Stop offset="1" stopColor="#ff2e97" />
           </LinearGradient>
         </Defs>
         <SvgText
