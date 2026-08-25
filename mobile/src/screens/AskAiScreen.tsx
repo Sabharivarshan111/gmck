@@ -12,7 +12,7 @@ import { Text } from '@/components/Text';
 import { Touchable } from '@/components/Touchable';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRoute, type RouteProp } from '@react-navigation/native';
-import { Maximize2, Mic, RefreshCw, Send, Sparkles, Square } from 'lucide-react-native';
+import { Maximize2, Minimize2, Mic, RefreshCw, Send, Sparkles, Square } from 'lucide-react-native';
 import {
   cancelListening,
   ensureMicPermission,
@@ -70,6 +70,7 @@ export default function AskAiScreen() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   /**
    * Which assistant messages have finished revealing.
    *
@@ -252,16 +253,45 @@ export default function AskAiScreen() {
 
   return (
     <KeyboardAvoidingView
-      style={[styles.screen, { backgroundColor: colors.background, paddingTop: insets.top + 8 }]}
+      style={[
+        styles.screen,
+        {
+          backgroundColor: colors.background,
+          paddingTop: insets.top + (isFullscreen ? 0 : 8),
+          paddingHorizontal: isFullscreen ? 0 : 16,
+        },
+      ]}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-      <Text style={[styles.title, { color: colors.text }]}>Ask AI</Text>
-      <Text style={[styles.subtitle, { color: colors.textMuted }]}>
-        Your instant medical study companion
-      </Text>
+      {!isFullscreen ? (
+        <>
+          <Text style={[styles.title, { color: colors.text }]}>Ask AI</Text>
+          <Text style={[styles.subtitle, { color: colors.textMuted }]}>
+            Your instant medical study companion
+          </Text>
+        </>
+      ) : null}
 
-      <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
+      <View
+        style={[
+          styles.card,
+          isFullscreen
+            ? [
+                styles.cardFullscreen,
+                {
+                  backgroundColor: colors.background,
+                  borderColor: 'transparent',
+                  paddingBottom: insets.bottom,
+                },
+              ]
+            : { backgroundColor: colors.card, borderColor: colors.border },
+        ]}>
         {/* Assistant header */}
-        <View style={[styles.cardHeader, { borderBottomColor: colors.border }]}>
+        <View
+          style={[
+            styles.cardHeader,
+            { borderBottomColor: colors.border },
+            isFullscreen && styles.cardHeaderFullscreen,
+          ]}>
           <View
             style={[styles.avatar, { backgroundColor: withAlpha(colors.fuchsia, 0.18) }]}>
             <Text style={styles.avatarEmoji}>🧠</Text>
@@ -271,9 +301,24 @@ export default function AskAiScreen() {
           </Text>
           <View style={[styles.onlineDot, { backgroundColor: colors.green }]} />
           <View style={styles.headerSpacer} />
-          <View style={[styles.expandButton, { borderColor: colors.border }]}>
-            <Maximize2 size={16} color={colors.textMuted} />
-          </View>
+          <Touchable
+            onPress={() => setIsFullscreen(v => !v)}
+            label={isFullscreen ? 'Exit fullscreen chat' : 'Expand to fullscreen chat'}
+            hint="Toggle full screen AI chat view"
+            scaleTo={0.9}
+            style={[
+              styles.expandButton,
+              {
+                borderColor: isFullscreen ? colors.fuchsia : colors.border,
+                backgroundColor: isFullscreen ? withAlpha(colors.fuchsia, 0.14) : 'transparent',
+              },
+            ]}>
+            {isFullscreen ? (
+              <Minimize2 size={16} color={colors.fuchsia} />
+            ) : (
+              <Maximize2 size={16} color={colors.textMuted} />
+            )}
+          </Touchable>
         </View>
 
         {/* Conversation */}
@@ -484,12 +529,21 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     overflow: 'hidden',
   },
+  cardFullscreen: {
+    borderRadius: 0,
+    borderWidth: 0,
+    marginBottom: 0,
+  },
   cardHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
     padding: 14,
     borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+  cardHeaderFullscreen: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
   },
   avatar: {
     height: 40,
