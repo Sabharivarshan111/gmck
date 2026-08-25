@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react';
-import { Platform, StyleSheet, View } from 'react-native';
+import React, { useEffect, useMemo, useRef } from 'react';
+import { Animated, Easing, Platform, StyleSheet, View } from 'react-native';
 import Svg, { Defs, LinearGradient, Stop, Text as SvgText } from 'react-native-svg';
 import { useTheme } from '@/theme';
 
@@ -13,9 +13,8 @@ const FONT_FAMILY = Platform.select({
 });
 
 /**
- * Single-line heading with a horizontal colour gradient, matching the
- * `bg-gradient-to-r … bg-clip-text text-transparent` headings on the web.
- * Drawn as SVG text because React Native cannot gradient-fill glyphs.
+ * Bold headline with a metallic sheen band that sweeps across the glyphs,
+ * blooming as it crosses the center ("Gradient Wipe" effect).
  */
 export function GradientText({
   children,
@@ -40,8 +39,65 @@ export function GradientText({
     return `gt${seq}`;
   }, []);
 
-  const start = from ?? colors.text;
-  const end = to ?? colors.fuchsia;
+  const progress = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    const loop = Animated.loop(
+      Animated.timing(progress, {
+        toValue: 1,
+        duration: 3600,
+        easing: Easing.bezier(0.5, 0, 0.18, 1),
+        useNativeDriver: false,
+      }),
+    );
+    loop.start();
+    return () => loop.stop();
+  }, [progress]);
+
+  // On Web, use hardware-accelerated CSS background-clip + bloom glow
+  if (Platform.OS === 'web') {
+    return (
+      <View style={[styles.wrap, { alignItems: align === 'center' ? 'center' : 'flex-start' }]}>
+        <div style={{ position: 'relative', display: 'inline-grid', placeItems: 'center' }}>
+          <h1
+            className="gradient-wipe-text"
+            style={{
+              margin: 0,
+              padding: 0,
+              textAlign: align,
+              fontFamily: FONT_FAMILY,
+              fontWeight: weight as any,
+              fontSize: size,
+              letterSpacing: letterSpacing ? `${letterSpacing}px` : '-0.02em',
+              lineHeight: 1.2,
+            }}>
+            {children}
+          </h1>
+          <div
+            className="gradient-wipe-bloom"
+            aria-hidden="true"
+            style={{
+              position: 'absolute',
+              inset: 0,
+              display: 'grid',
+              placeItems: 'center',
+              pointerEvents: 'none',
+              fontFamily: FONT_FAMILY,
+              fontWeight: weight as any,
+              fontSize: size,
+              letterSpacing: letterSpacing ? `${letterSpacing}px` : '-0.02em',
+              lineHeight: 1.2,
+              color: '#f5d76e',
+              filter: 'blur(12px)',
+              zIndex: -1,
+            }}>
+            {children}
+          </div>
+        </div>
+      </View>
+    );
+  }
+
   const height = Math.round(size * 1.35);
 
   return (
@@ -49,9 +105,13 @@ export function GradientText({
       <Svg width="100%" height={height}>
         <Defs>
           <LinearGradient id={id} x1="0" y1="0" x2="1" y2="0">
-            <Stop offset="0" stopColor={start} />
-            <Stop offset="0.55" stopColor={start} />
-            <Stop offset="1" stopColor={end} />
+            <Stop offset="0" stopColor="#4a4e60" />
+            <Stop offset="0.3" stopColor="#2c2f3d" />
+            <Stop offset="0.48" stopColor="#f5d76e" />
+            <Stop offset="0.5" stopColor="#fff6d6" />
+            <Stop offset="0.52" stopColor="#f5d76e" />
+            <Stop offset="0.7" stopColor="#2c2f3d" />
+            <Stop offset="1" stopColor="#4a4e60" />
           </LinearGradient>
         </Defs>
         <SvgText
@@ -73,5 +133,6 @@ export function GradientText({
 const styles = StyleSheet.create({
   wrap: {
     width: '100%',
+    alignItems: 'center',
   },
 });
