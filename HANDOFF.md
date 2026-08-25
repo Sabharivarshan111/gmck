@@ -445,6 +445,51 @@ Performance work in the same pass:
 
 ---
 
+## 8a. Notifications, and two things they exposed (2026-08-25)
+
+The daily reminder ships. `NativeOrbitNotify` + `NotifyReceiver.kt` decide
+whether to fire on the phone, because the two inputs that matter — days to the
+exam, and whether "studied today" is still true — go stale overnight and a
+message composed in JavaScript would be wrong by morning. Settings has the
+master switch, three per-kind switches, and an animated bell.
+
+Two things worth knowing before touching it:
+
+- **Permission is asked through React Native's `PermissionsAndroid`, not the
+  native module.** The module's `requestPermission` fires the dialog and
+  resolves `false` in the same breath — it cannot wait — so the app had already
+  decided it was refused before anyone tapped Allow, wrote the setting back
+  off, and hid the three switches gated on it. The module stays as the fallback
+  for platforms with no `PermissionsAndroid`, which is the preview harness.
+- **`Touchable` publishes state as `aria-*` as well as `accessibilityState`.**
+  react-native-web 0.21 removed `accessibilityState` and reads only `aria-*`.
+  Every switch in the preview therefore reported no state at all, and the smoke
+  assertion "the daily reminder is off by default" had been passing on an
+  absent attribute rather than on a value. TalkBack on the phone still reads
+  `accessibilityState`; both are set from one value, so they cannot disagree.
+
+**Still unverified:** nothing here has met a real clock. Whether the alarm
+survives Doze, fires at the chosen hour, and backs off after three ignored
+notifications needs a device left alone overnight.
+
+## 8b. Where native and the web app still keep separate books
+
+Two features exist on both sides and do **not** share state. Same user, two
+answers, and neither side is wrong on its own:
+
+| Feature | Web | Native |
+|---|---|---|
+| Spaced revision | `revision_schedule` table + `review_question` RPC | `AsyncStorage`, textbook SM-2 |
+| Exam countdown | `exam_targets` table | `orbit:exam-v1` |
+
+The native SM-2 was written to match the server's SQL exactly — same grades
+(`again`/`hard`/`good`/`easy`), same enrolment at `due_date + 1` — so the
+schedules agree until the two are used on different devices, at which point
+they drift apart silently and permanently. Pointing the native hooks at the
+RPC is the fix; `check:spaced` pins the arithmetic either way.
+
+---
+
 ## 9. High-Yield AI Exam Diagrams & Localhost Previews
 
 ### Local Dev & Preview URLs
