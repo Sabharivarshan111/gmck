@@ -7,7 +7,7 @@
  * `check:smoke` walk a purchase flow that grants a month of ad-free to nobody.
  */
 const RazorpayCheckout = {
-  open(): Promise<never> {
+  open(_options?: any): Promise<never> {
     return Promise.reject({
       code: 0,
       description: 'Payment cancelled — Razorpay is not available in the preview.',

@@ -30,6 +30,7 @@ import { MessageEntrance } from '@/components/MessageEntrance';
 import { ThinkingDots } from '@/components/ThinkingDots';
 import { RevealText } from '@/components/RevealText';
 import { AnswerActions, followUpsFor } from '@/components/AnswerActions';
+import { WaveformRiver } from '@/components/WaveformRiver';
 import {
   askAi,
   displayText,
@@ -357,10 +358,20 @@ export default function AskAiScreen() {
 
         {/* Composer */}
         <View style={[styles.composerWrap, { borderTopColor: colors.border }]}>
+          {listening ? (
+            <WaveformRiver
+              active={listening}
+              color={colors.cyan ?? '#22d3ee'}
+              height={52}
+            />
+          ) : null}
           <View
             style={[
               styles.composer,
-              { backgroundColor: colors.background, borderColor: colors.border },
+              {
+                backgroundColor: colors.background,
+                borderColor: listening ? (colors.cyan ?? '#22d3ee') : colors.border,
+              },
             ]}>
             <View
               style={[styles.sparkAvatar, { backgroundColor: withAlpha(colors.fuchsia, 0.18) }]}>
