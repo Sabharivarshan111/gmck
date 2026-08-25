@@ -95,7 +95,6 @@ export function PomodoroSettingsSheet({
       visible={visible}
       onClose={onClose}
       title="Pomodoro Settings"
-      scrollable
       contentStyle={styles.content}>
       <Text style={[typeScale.footnote, styles.lede, { color: colors.textMuted }]}>
         Durations apply when you set them. Sound and vibration save as you change them.

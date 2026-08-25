@@ -31,6 +31,17 @@ export interface Digest {
   /** Epoch day the earliest revision card comes due, or -1. */
   revisionDueDay: number;
   revisionDueCount: number;
+  /**
+   * Which reminders the reader has allowed.
+   *
+   * Sent with the facts rather than checked here, because the choice has to be
+   * enforced at fire time — the app may not have run since it was changed, and
+   * a switch that only takes effect on the next launch is a switch that
+   * appears not to work.
+   */
+  allowExam: boolean;
+  allowStreak: boolean;
+  allowRevision: boolean;
 }
 
 /** Local midnight as a day number, matching what the receiver computes. */

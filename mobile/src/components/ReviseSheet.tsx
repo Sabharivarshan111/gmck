@@ -154,7 +154,6 @@ export function ReviseSheet({
       visible={visible}
       onClose={onClose}
       title={cards.length ? `Revise · ${Math.min(index + 1, cards.length)} / ${cards.length}` : 'Revise'}
-      scrollable
       contentStyle={styles.content}>
       {card ? (
         <>

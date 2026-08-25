@@ -56,6 +56,21 @@ export interface Settings {
   dailyReminder: boolean;
   /** Hour of day, 0–23, the reminder check runs. */
   reminderHour: number;
+  /**
+   * Which reminders are allowed, individually.
+   *
+   * Three switches rather than one, because they are three different bargains.
+   * Someone revising for an exam next week wants the countdown and may not care
+   * about a streak; someone using spaced revision daily wants the due queue and
+   * nothing else. One switch forces them to take all three or none, and the
+   * usual answer to that is none.
+   *
+   * All on when the master switch is on — the ladder already fires at most one
+   * a day, so the defaults are not a volume decision, just a scope one.
+   */
+  remindExam: boolean;
+  remindStreak: boolean;
+  remindRevision: boolean;
 }
 
 /**
@@ -101,6 +116,9 @@ export const DEFAULT_SETTINGS: Settings = {
   dailyReminder: false,
   // Early evening: after classes, before the night's studying is decided.
   reminderHour: 19,
+  remindExam: true,
+  remindStreak: true,
+  remindRevision: true,
   // On by default: the point of the alert is to reach someone who has stopped
   // looking at the screen, and a phone face-down on a desk is silent but not
   // still.
@@ -164,6 +182,16 @@ export async function hydrateSettings(): Promise<void> {
         typeof parsed.reminderHour === 'number' && Number.isFinite(parsed.reminderHour)
           ? Math.max(0, Math.min(23, Math.round(parsed.reminderHour)))
           : DEFAULT_SETTINGS.reminderHour,
+      remindExam:
+        typeof parsed.remindExam === 'boolean' ? parsed.remindExam : DEFAULT_SETTINGS.remindExam,
+      remindStreak:
+        typeof parsed.remindStreak === 'boolean'
+          ? parsed.remindStreak
+          : DEFAULT_SETTINGS.remindStreak,
+      remindRevision:
+        typeof parsed.remindRevision === 'boolean'
+          ? parsed.remindRevision
+          : DEFAULT_SETTINGS.remindRevision,
     };
     emit();
   } catch {

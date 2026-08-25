@@ -348,6 +348,36 @@ export function SettingsSheet({
               Android is blocking notifications for Orbit. Turn them on in system settings.
             </Text>
           ) : null}
+
+          {/* Only once the master switch is on. Showing three dead sub-switches
+              above the one that enables them is a menu that answers a question
+              nobody has asked yet. */}
+          {settings.dailyReminder && notifyAllowed ? (
+            <View style={styles.indent}>
+              <Text style={[styles.sectionLabel, { color: colors.textMuted }]}>WHAT TO SEND</Text>
+              <Switchable
+                label="Exam countdown"
+                detail="In the last week before a date you have set"
+                value={settings.remindExam}
+                onChange={next => setSetting('remindExam', next)}
+              />
+              <Switchable
+                label="Streak about to break"
+                detail="Only once a streak is worth keeping"
+                value={settings.remindStreak}
+                onChange={next => setSetting('remindStreak', next)}
+              />
+              <Switchable
+                label="Revision due"
+                detail="When spaced revision has questions for today"
+                value={settings.remindRevision}
+                onChange={next => setSetting('remindRevision', next)}
+              />
+              <Text style={[styles.note, { color: withAlpha(colors.text, 0.5) }]}>
+                Turning all three off is the same as turning the reminder off.
+              </Text>
+            </View>
+          ) : null}
         </>
       ) : null}
 
@@ -503,6 +533,12 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  sectionLabel: {
+    fontSize: 11,
+    letterSpacing: 0.8,
+    marginTop: 6,
+    marginBottom: 2,
   },
   indent: {
     paddingLeft: space.sm,

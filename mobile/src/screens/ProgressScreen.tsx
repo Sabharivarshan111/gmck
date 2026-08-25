@@ -50,6 +50,7 @@ import { ReviseSheet } from '@/components/ReviseSheet';
 import { useSpacedRepetition } from '@/hooks/useSpacedRepetition';
 import { getLastStudyDay, getQuestionId, isQuestionDone } from '@/lib/progress';
 import { epochDay, updateDigest } from '@/lib/notifications';
+import { useSettings } from '@/lib/settings';
 import { useExam } from '@/hooks/useExam';
 import { Brain } from 'lucide-react-native';
 import { ProgressCalendarTab } from '@/components/ProgressCalendarTab';
@@ -222,6 +223,7 @@ export default function ProgressScreen() {
    * know whether anything is due today, not the whole schedule.
    */
   const reminderExam = useExam(shortYear);
+  const reminderSettings = useSettings();
   useEffect(() => {
     const soonest = revision.cards.reduce<number | null>(
       (earliest, card) => (earliest === null || card.due < earliest ? card.due : earliest),
@@ -234,8 +236,20 @@ export default function ProgressScreen() {
       streak,
       revisionDueDay: soonest === null ? -1 : epochDay(soonest),
       revisionDueCount: revision.due.length,
+      allowExam: reminderSettings.remindExam,
+      allowStreak: reminderSettings.remindStreak,
+      allowRevision: reminderSettings.remindRevision,
     });
-  }, [reminderExam, revision.cards, revision.due.length, streak, totals.done]);
+  }, [
+    reminderExam,
+    revision.cards,
+    revision.due.length,
+    streak,
+    totals.done,
+    reminderSettings.remindExam,
+    reminderSettings.remindStreak,
+    reminderSettings.remindRevision,
+  ]);
 
   return (
     <ScrollView

@@ -112,9 +112,12 @@ class NotifyReceiver : BroadcastReceiver() {
    * work that is due today.
    */
   private fun compose(digest: org.json.JSONObject, today: Long): Pair<String, String>? {
+    // optBoolean defaults true so a digest written by an older build — one
+    // that predates these switches — behaves as it did before rather than
+    // going silent on every kind at once.
     val examDay = digest.optLong("examDay", -1L)
     val examName = digest.optString("examName", "your exam")
-    if (examDay > 0) {
+    if (digest.optBoolean("allowExam", true) && examDay > 0) {
       val days = (examDay - today).toInt()
       // A countdown is only news near the end. Ninety days out it is wallpaper.
       if (days in 0..7) {
@@ -128,13 +131,13 @@ class NotifyReceiver : BroadcastReceiver() {
     }
 
     val streak = digest.optInt("streak", 0)
-    if (streak >= 2) {
+    if (digest.optBoolean("allowStreak", true) && streak >= 2) {
       return "$streak day streak" to "One question keeps it. It resets at midnight."
     }
 
     val dueDay = digest.optLong("revisionDueDay", -1L)
     val dueCount = digest.optInt("revisionDueCount", 0)
-    if (dueDay in 0..today && dueCount > 0) {
+    if (digest.optBoolean("allowRevision", true) && dueDay in 0..today && dueCount > 0) {
       val what = if (dueCount == 1) "1 question is" else "$dueCount questions are"
       return "$what due for revision" to "Spaced revision only works on the day it comes up."
     }

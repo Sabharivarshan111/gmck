@@ -78,11 +78,16 @@ export interface SheetProps {
   /**
    * Let the content scroll when it is taller than the sheet.
    *
-   * Off by default, because most sheets here are short and a ScrollView that
-   * never scrolls is a pan responder that can still fight the drag. Turn it on
-   * for a sheet that can outgrow its 88% cap — without it the overflow is
-   * simply clipped and unreachable, which is how the Pomodoro sheet reached a
-   * phone with its two buttons off the bottom of the screen.
+   * **On by default**, and it was opt-in for exactly one release, which was
+   * long enough to prove that wrong: the Pomodoro sheet shipped with its two
+   * buttons clipped off the bottom, and Settings shipped with the sound
+   * presets and the notification switch unreachable below the fold. Every
+   * sheet that grows past the 88% cap has the same failure, and a default that
+   * has to be remembered is a default that will be forgotten.
+   *
+   * Content that fits does not scroll — the ScrollView shrinks to it — and the
+   * drag gate below means it never fights dismissal. There is no cost to
+   * leaving it on, which is the other half of why it is the default.
    */
   scrollable?: boolean;
   contentStyle?: StyleProp<ViewStyle>;
@@ -95,7 +100,7 @@ export function Sheet({
   headerRight,
   children,
   dismissable = true,
-  scrollable = false,
+  scrollable = true,
   contentStyle,
 }: SheetProps) {
   const { colors } = useTheme();

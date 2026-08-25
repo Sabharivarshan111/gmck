@@ -87,7 +87,6 @@ export function SubjectBreakdownSheet({
       visible={subject !== null}
       onClose={onClose}
       title={subject?.name ?? ''}
-      scrollable
       contentStyle={styles.content}>
       {summary ? (
         <>

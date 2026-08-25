@@ -949,6 +949,25 @@ await step('the daily reminder is off by default and explains itself', async () 
 
   const toggle = byLabel('Daily reminder');
   await scrollTo(toggle);
+
+  /*
+   * On screen, not merely in the document.
+   *
+   * The sheet caps at 88% height and used to clip everything past it with no
+   * way to scroll — so the sound presets and this switch existed, were
+   * reported "visible", and could not be reached or tapped by anyone. That
+   * shipped. Asserting the position is what tells the difference between a
+   * control that is present and one that is usable.
+   */
+  const box = await toggle.boundingBox();
+  const { height: viewport } = page.viewportSize();
+  if (!box || box.y < 0 || box.y + box.height > viewport) {
+    throw new Error(
+      `the reminder switch is off screen at y=${box ? Math.round(box.y) : 'none'} — ` +
+        'the settings sheet is clipping its content instead of scrolling',
+    );
+  }
+
   await seesText('Daily reminder', 5000);
   // The policy, in the sheet, not buried in a privacy page.
   await seesText('At most one a day', 4000);
