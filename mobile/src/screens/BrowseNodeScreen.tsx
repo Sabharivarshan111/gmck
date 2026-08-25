@@ -345,6 +345,7 @@ export default function BrowseNodeScreen() {
 
   // ---- Topic list ----------------------------------------------------------
   if (children.length > 0) {
+    const isSubjectLevel = path.length === 1;
     return (
       <>
         <FlatList
@@ -364,7 +365,13 @@ export default function BrowseNodeScreen() {
                   <Text style={[styles.kicker, { color: colors.textMuted }]}>
                     {children.length} TOPICS
                   </Text>
-                  <GradientText size={24}>{title}</GradientText>
+                  {isSubjectLevel ? (
+                    <GradientText size={24}>{title}</GradientText>
+                  ) : (
+                    <Text style={[styles.topicTitle, { color: colors.text }]}>
+                      {title}
+                    </Text>
+                  )}
                 </View>
                 <View style={styles.backSpacer} />
               </View>
@@ -466,7 +473,9 @@ export default function BrowseNodeScreen() {
                 <Text style={[styles.kicker, { color: colors.textMuted }]}>
                   {collectQuestions(node, type).length} QUESTIONS
                 </Text>
-                <GradientText size={22}>{title}</GradientText>
+                <Text style={[styles.topicTitle, { color: colors.text }]}>
+                  {title}
+                </Text>
               </View>
               <View style={styles.backSpacer} />
             </View>
@@ -607,6 +616,14 @@ const styles = StyleSheet.create({
   },
   topicTitleWrap: {
     flex: 1,
+    alignItems: 'center',
+  },
+  topicTitle: {
+    fontSize: 22,
+    fontWeight: '800',
+    textAlign: 'center',
+    letterSpacing: -0.2,
+    marginTop: 2,
   },
   questionHeader: {
     marginBottom: 14,

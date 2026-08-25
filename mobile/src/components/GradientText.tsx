@@ -16,7 +16,13 @@ let seq = 0;
  */
 const SHIMMER = ['#ff2e97', '#ff8a00', '#ffe600', '#00ffd5', '#5d6bff', '#ff2e97'];
 
-const SWEEP_MS = 6000;
+/*
+ * Fourteen seconds, not the six it started at. A heading that is *always*
+ * moving has to move slowly enough to sit behind the reading rather than
+ * compete with it — at six it read as an effect, which is the wrong amount of
+ * attention for a title.
+ */
+const SWEEP_MS = 14000;
 
 /**
  * react-native-svg's props go through the Animated bridge like any other, so
