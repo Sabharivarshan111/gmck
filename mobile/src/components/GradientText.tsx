@@ -45,7 +45,7 @@ export function GradientText({
     const loop = Animated.loop(
       Animated.timing(progress, {
         toValue: 1,
-        duration: 6000,
+        duration: 14000,
         easing: Easing.linear,
         useNativeDriver: false,
       }),
