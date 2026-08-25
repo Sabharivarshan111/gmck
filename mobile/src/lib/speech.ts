@@ -39,7 +39,13 @@ const native = OrbitSpeech ?? undefined;
  * this is a runtime question rather than a build-time one.
  */
 export function speechAvailable(): boolean {
-  if (!native || Platform.OS !== 'android') {
+  if (!native) {
+    return false;
+  }
+  if (Platform.OS === 'web') {
+    return true;
+  }
+  if (Platform.OS !== 'android') {
     return false;
   }
   try {
@@ -58,6 +64,9 @@ export function speechAvailable(): boolean {
  * after two refusals and the only route back is the system settings screen.
  */
 export async function ensureMicPermission(): Promise<boolean> {
+  if (Platform.OS === 'web') {
+    return true;
+  }
   if (Platform.OS !== 'android') {
     return false;
   }
