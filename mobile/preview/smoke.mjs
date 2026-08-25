@@ -882,6 +882,11 @@ await step('the pomodoro sheet drafts durations and commits them', async () => {
     throw new Error('the dial changed before the configuration was set — durations are not drafted');
   }
 
+  // The sheet scrolls, and the button is below the fold once the alert-sound
+  // block is in it. Playwright counts it visible either way, so a click without
+  // this reports a 4s timeout on a control that is simply further down.
+  await page.mouse.wheel(0, 700);
+  await page.waitForTimeout(500);
   await tap('Set this configuration');
   await page.waitForTimeout(600);
   const after = await page.locator('body').innerText();
@@ -894,16 +899,35 @@ await step('the pomodoro sheet drafts durations and commits them', async () => {
 await step('the pomodoro sheet offers working alert sounds', async () => {
   await open('screen=timer');
   await tap('Timer settings');
-  // The preview harness has no native sound module, so the whole block is
-  // hidden by design — assert on whichever state this build is in rather than
-  // pretending the shim has audio.
-  const hasSound = await page.getByText('ALERT SOUND').first().isVisible().catch(() => false);
-  if (hasSound) {
-    await tap('Test the alert sound');
-    await page.locator('[aria-label^="Digital"]').first().click({ timeout: 4000 });
-    await page.locator('[aria-label^="Off"]').first().click({ timeout: 4000 });
+  await seesText('ALERT SOUND', 5000);
+  await tap('Test the alert sound');
+
+  // Every duration slider is named and shows its value. Four anonymous tracks
+  // is what this sheet looked like on a phone before anyone could see it here:
+  // Slider draws only a track, and its `label` is for TalkBack.
+  for (const name of ['Focus', 'Short break', 'Long break', 'Long break every']) {
+    await seesText(name, 4000);
   }
-  // Vibration and the cycle reset exist either way.
+  // Values, not specific numbers: the step before this one commits a new focus
+  // length and it persists, so asserting "25 min" here fails for the right
+  // feature working correctly.
+  const sheet = await page.locator('body').innerText();
+  const minutes = (sheet.match(/\b\d+ min\b/g) ?? []).length;
+  if (minutes < 3) {
+    throw new Error(`only ${minutes} duration sliders show a value — they should all be labelled`);
+  }
+  if (!/\b\d+ pomodoros\b/.test(sheet)) {
+    throw new Error('the long-break interval shows no value');
+  }
+  // The rest is below the fold — the sheet scrolls now, so scroll it.
+  await page.mouse.wheel(0, 700);
+  await page.waitForTimeout(500);
+  await seesText('Volume', 4000);
+
+  await page.locator('[aria-label^="Digital"]').first().click({ timeout: 4000 });
+  await page.waitForTimeout(300);
+  await page.locator('[aria-label^="Off"]').first().click({ timeout: 4000 });
+  await page.waitForTimeout(300);
   await byLabel('Reset the pomodoro cycle').waitFor({ timeout: 4000 });
 });
 

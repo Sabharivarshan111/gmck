@@ -6,7 +6,7 @@ import { Sheet } from '@/components/Sheet';
 import { Slider } from '@/components/Slider';
 import { useTheme, withAlpha } from '@/theme';
 import { typeScale } from '@/theme/typography';
-import { Play, Volume2 } from 'lucide-react-native';
+import { Check, Play, Volume2 } from 'lucide-react-native';
 import { CHIME_PRESETS, setSetting, useSettings } from '@/lib/settings';
 import { previewSound, silencingReason, soundAvailable } from '@/lib/sound';
 import { complete as buzz } from '@/lib/haptics';
@@ -58,6 +58,12 @@ export function PomodoroSettingsSheet({
     onClose();
   }, [draft, onApply, onClose]);
 
+  /**
+   * Slider draws a bare track and nothing else — its `label` is for TalkBack,
+   * not the screen. Every caller draws its own name-and-value row, and this one
+   * has four in a column, so without it the sheet is four anonymous tracks and
+   * no way to tell which is the focus length.
+   */
   const duration = (
     key: keyof PomodoroSettings,
     label: string,
@@ -65,16 +71,23 @@ export function PomodoroSettingsSheet({
     max: number,
     unit: string,
   ) => (
-    <Slider
-      key={key}
-      label={label}
-      value={draft[key]}
-      min={min}
-      max={max}
-      step={1}
-      format={value => `${Math.round(value)} ${unit}`}
-      onChange={value => setDraft(prev => ({ ...prev, [key]: Math.round(value) }))}
-    />
+    <View key={key} style={styles.field}>
+      <View style={styles.fieldHead}>
+        <Text style={[typeScale.callout, styles.flex, { color: colors.text }]}>{label}</Text>
+        <Text style={[typeScale.footnote, styles.value, { color: colors.textMuted }]}>
+          {draft[key]} {unit}
+        </Text>
+      </View>
+      <Slider
+        label={label}
+        value={draft[key]}
+        min={min}
+        max={max}
+        step={1}
+        format={value => `${Math.round(value)} ${unit}`}
+        onChange={value => setDraft(prev => ({ ...prev, [key]: Math.round(value) }))}
+      />
+    </View>
   );
 
   return (
@@ -82,6 +95,7 @@ export function PomodoroSettingsSheet({
       visible={visible}
       onClose={onClose}
       title="Pomodoro Settings"
+      scrollable
       contentStyle={styles.content}>
       <Text style={[typeScale.footnote, styles.lede, { color: colors.textMuted }]}>
         Durations apply when you set them. Sound and vibration save as you change them.
@@ -144,6 +158,10 @@ export function PomodoroSettingsSheet({
                     }}
                     style={[
                       styles.option,
+                      // Off is not a sound, and there is an odd number of
+                      // these — giving it the full width makes that read as a
+                      // decision rather than a row that ran out of options.
+                      option.id === 'off' ? styles.optionWide : null,
                       {
                         backgroundColor: active ? withAlpha(colors.primary, 0.12) : colors.card,
                         borderColor: active ? colors.primary : colors.border,
@@ -167,28 +185,31 @@ export function PomodoroSettingsSheet({
             )}
           </View>
 
-          <View style={styles.volumeRow}>
-            <Volume2 size={15} color={colors.textMuted} />
-            <View style={styles.flex}>
-              <Slider
-                label="Volume"
-                value={prefs.chimeVolume}
-                min={0}
-                max={1}
-                step={0.05}
-                format={value => `${Math.round(value * 100)}%`}
-                onChange={value => setSetting('chimeVolume', value)}
-                // On the step, not the frame: every change writes the store and
-                // wakes every subscriber, and a preview per frame would stack
-                // twenty copies of the clip on top of each other.
-                onCommit={value => {
-                  setSetting('chimeVolume', value);
-                  if (prefs.timerSound) {
-                    previewSound(prefs.chimePreset);
-                  }
-                }}
-              />
+          <View style={styles.field}>
+            <View style={styles.fieldHead}>
+              <Volume2 size={15} color={colors.textMuted} />
+              <Text style={[typeScale.callout, styles.flex, { color: colors.text }]}>Volume</Text>
+              <Text style={[typeScale.footnote, styles.value, { color: colors.textMuted }]}>
+                {Math.round(prefs.chimeVolume * 100)}%
+              </Text>
             </View>
+            <Slider
+              label="Alert volume"
+              value={prefs.chimeVolume}
+              min={0}
+              max={1}
+              step={0.05}
+              format={value => `${Math.round(value * 100)} percent`}
+              onChange={value => setSetting('chimeVolume', value)}
+              // Previewed on release, not on the frame: a drag would otherwise
+              // stack twenty copies of the clip on top of each other.
+              onCommit={value => {
+                setSetting('chimeVolume', value);
+                if (prefs.timerSound) {
+                  previewSound(prefs.chimePreset);
+                }
+              }}
+            />
           </View>
         </>
       ) : null}
@@ -211,6 +232,9 @@ export function PomodoroSettingsSheet({
             Buzz your phone when the timer ends
           </Text>
         </View>
+        {/* A tick, not a filled square. An empty rounded box reads as a
+            control that failed to render rather than one that is switched
+            off — the same shape the question rows use for done. */}
         <View
           style={[
             styles.check,
@@ -218,8 +242,11 @@ export function PomodoroSettingsSheet({
               backgroundColor: prefs.timerVibration ? colors.primary : 'transparent',
               borderColor: prefs.timerVibration ? colors.primary : colors.border,
             },
-          ]}
-        />
+          ]}>
+          {prefs.timerVibration ? (
+            <Check size={15} color={colors.primaryText} strokeWidth={3} />
+          ) : null}
+        </View>
       </Touchable>
 
       <Touchable
@@ -247,7 +274,18 @@ export function PomodoroSettingsSheet({
 
 const styles = StyleSheet.create({
   content: {
-    gap: 14,
+    gap: 12,
+  },
+  field: {
+    gap: 2,
+  },
+  fieldHead: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  value: {
+    fontVariant: ['tabular-nums'],
   },
   flex: {
     flex: 1,
@@ -293,6 +331,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 11,
   },
+  optionWide: {
+    width: '100%',
+  },
   radio: {
     width: 18,
     height: 18,
@@ -322,6 +363,8 @@ const styles = StyleSheet.create({
     height: 26,
     borderRadius: 8,
     borderWidth: StyleSheet.hairlineWidth,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   primary: {
     borderRadius: 14,

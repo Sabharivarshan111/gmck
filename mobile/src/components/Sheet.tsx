@@ -9,6 +9,7 @@ import {
   View,
   type StyleProp,
   type ViewStyle,
+  ScrollView,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Text } from '@/components/Text';
@@ -74,6 +75,16 @@ export interface SheetProps {
    * one of them is how a "non-dismissable" sheet ends up swipe-dismissable.
    */
   dismissable?: boolean;
+  /**
+   * Let the content scroll when it is taller than the sheet.
+   *
+   * Off by default, because most sheets here are short and a ScrollView that
+   * never scrolls is a pan responder that can still fight the drag. Turn it on
+   * for a sheet that can outgrow its 88% cap — without it the overflow is
+   * simply clipped and unreachable, which is how the Pomodoro sheet reached a
+   * phone with its two buttons off the bottom of the screen.
+   */
+  scrollable?: boolean;
   contentStyle?: StyleProp<ViewStyle>;
 }
 
@@ -84,6 +95,7 @@ export function Sheet({
   headerRight,
   children,
   dismissable = true,
+  scrollable = false,
   contentStyle,
 }: SheetProps) {
   const { colors } = useTheme();
@@ -188,6 +200,9 @@ export function Sheet({
     onClose();
   }, [onClose]);
 
+  /** How far the content is scrolled, for the drag gate above. */
+  const scrollOffset = useRef(0);
+
   const panResponder = useMemo(
     () =>
       PanResponder.create({
@@ -195,8 +210,15 @@ export function Sheet({
         // vertical drag. ~8dp of hysteresis, and a 2:1 bias against
         // horizontal movement so a sideways swipe never grabs the sheet
         // (SKILL §10).
+        //
+        // A scrollable sheet only drags from the top of its content. Otherwise
+        // the two gestures are the same gesture: dragging down to read further
+        // up the list would dismiss the sheet instead, and the content below
+        // would be unreachable in a different way.
         onMoveShouldSetPanResponder: (_event, gesture) =>
-          Math.abs(gesture.dy) > 8 && Math.abs(gesture.dy) > Math.abs(gesture.dx) * 2,
+          scrollOffset.current <= 0 &&
+          Math.abs(gesture.dy) > 8 &&
+          Math.abs(gesture.dy) > Math.abs(gesture.dx) * 2,
         onPanResponderGrant: () => {
           // Read the *presentation* value. If the sheet was mid-flight, the
           // drag continues from where it visibly is (SKILL §3).
@@ -343,7 +365,24 @@ export function Sheet({
             </View>
           ) : null}
 
-          {children}
+          {scrollable ? (
+            <ScrollView
+              style={styles.scroll}
+              contentContainerStyle={styles.scrollContent}
+              showsVerticalScrollIndicator={false}
+              scrollEventThrottle={16}
+              onScroll={event => {
+                scrollOffset.current = event.nativeEvent.contentOffset.y;
+              }}
+              // No rubber-band at the top: the overscroll and the sheet's own
+              // drag would both be running, and the sheet would follow a
+              // finger that is still notionally scrolling.
+              bounces={false}>
+              {children}
+            </ScrollView>
+          ) : (
+            children
+          )}
         </Animated.View>
       </View>
     </Modal>
@@ -367,6 +406,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 8,
     maxHeight: '88%',
+  },
+  scroll: {
+    // Shrink to the content when it fits; the sheet's own maxHeight caps it.
+    flexGrow: 0,
+    flexShrink: 1,
+  },
+  scrollContent: {
+    paddingBottom: 8,
   },
   grabber: {
     alignSelf: 'center',
