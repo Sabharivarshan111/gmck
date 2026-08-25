@@ -1500,6 +1500,38 @@ await step('ask ai screen renders and accepts input', async () => {
  * do next. Tapping it lists every topic with its own count, so the answer is
  * "Postmortem Changes, 15 questions" rather than "study more".
  */
+/**
+ * The chat's expand button expands, and comes back.
+ *
+ * It was a decorative icon in a bordered box for a while — the shape of a
+ * control with nothing behind it. Now that it does something, the half worth
+ * checking is the *return*: a fullscreen toggle with no way out is a screen
+ * someone is stuck on.
+ */
+await step('the chat expands to fullscreen and comes back', async () => {
+  await open('screen=askai');
+  await page.waitForTimeout(700);
+
+  const expand = byLabel('Expand to fullscreen chat');
+  await expand.waitFor({ timeout: 5000 });
+  await expand.click();
+  await page.waitForTimeout(500);
+
+  // The heading is what fullscreen gives up for room.
+  const title = page.getByText('Your instant medical study companion');
+  if (await title.first().isVisible().catch(() => false)) {
+    throw new Error('fullscreen kept the header — it did not expand');
+  }
+
+  const exit = byLabel('Exit fullscreen chat');
+  if ((await exit.count()) === 0) {
+    throw new Error('fullscreen offers no way out');
+  }
+  await exit.click();
+  await page.waitForTimeout(500);
+  await seesText('Your instant medical study companion', 4000);
+});
+
 await step('a heatmap tile opens its subject breakdown', async () => {
   await open('screen=progress');
   // Opening My Progress spends the day's ad, and the dialog's scrim covers the
