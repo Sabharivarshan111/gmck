@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useRef } from 'react';
-import { Animated, Easing, Platform, StyleSheet, View } from 'react-native';
+import { Animated, Easing, StyleSheet, View } from 'react-native';
 import Svg, { Circle, Path } from 'react-native-svg';
 import { useReducedMotion } from '@/theme/motion';
 
@@ -15,6 +15,22 @@ const CHECK_LENGTH = 90; // Total length of path ≈ 66.5px, safely exceeded by 
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 const AnimatedPath = Animated.createAnimatedComponent(Path);
+
+/*
+ * The stroke animations run on the JS driver, deliberately.
+ *
+ * `strokeDashoffset` and an SVG `opacity` *attribute* are not style props, and
+ * the native driver only knows transform and style opacity. Asking it to drive
+ * stroke geometry on Android does not fall back — it throws, or the value
+ * simply never arrives and the tick never draws. This was written as
+ * `useNativeDriver: Platform.OS !== 'web'`, which is exactly backwards: web is
+ * where the flag is harmless (react-native-web ignores it) and Android is where
+ * it breaks. ProgressRing carries the same note for the same reason.
+ *
+ * The glow is a real Animated.View with a transform and a style opacity, so
+ * that one does run natively — and it is the part that would actually be seen
+ * to stutter.
+ */
 
 export const SuccessCheckmark = memo(function SuccessCheckmark({
   checked,
@@ -62,7 +78,7 @@ export const SuccessCheckmark = memo(function SuccessCheckmark({
           toValue: 1,
           duration: 360,
           easing: Easing.out(Easing.cubic),
-          useNativeDriver: Platform.OS !== 'web',
+          useNativeDriver: false,
         }),
         // 2. Checkmark draws completely in after circle starts closing
         Animated.sequence([
@@ -71,7 +87,7 @@ export const SuccessCheckmark = memo(function SuccessCheckmark({
             toValue: 1,
             duration: 300,
             easing: Easing.bezier(0.6, 0, 0.3, 1),
-            useNativeDriver: Platform.OS !== 'web',
+            useNativeDriver: false,
           }),
         ]),
         // 3. Radial glow pulse
@@ -107,18 +123,18 @@ export const SuccessCheckmark = memo(function SuccessCheckmark({
           toValue: 0,
           duration: 120,
           easing: Easing.linear,
-          useNativeDriver: Platform.OS !== 'web',
+          useNativeDriver: false,
         }),
         Animated.timing(checkProgress, {
           toValue: 0,
           duration: 120,
           easing: Easing.linear,
-          useNativeDriver: Platform.OS !== 'web',
+          useNativeDriver: false,
         }),
         Animated.timing(checkOpacity, {
           toValue: 0,
           duration: 100,
-          useNativeDriver: Platform.OS !== 'web',
+          useNativeDriver: false,
         }),
         Animated.timing(glowOpacity, {
           toValue: 0,

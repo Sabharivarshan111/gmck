@@ -23,6 +23,7 @@ import { NotesContentView } from '@/components/NotesContentView';
 import { SAMPLE_NOTES } from './notesSample';
 import { NotesAiEditBox } from '@/components/NotesAiEditBox';
 import { McqCard } from '@/components/McqCard';
+import { WaveformRiver } from '@/components/WaveformRiver';
 import { ThinkingDots } from '@/components/ThinkingDots';
 import { MessageEntrance } from '@/components/MessageEntrance';
 import { RevealText } from '@/components/RevealText';
@@ -143,6 +144,11 @@ function ChatMotionDemo() {
     <ScrollView
       style={{ backgroundColor: colors.background }}
       contentContainerStyle={{ padding: 16, gap: 14 }}>
+      {/* The dictation visualiser. It lives here because the composer's own
+          copy is unreachable from a browser: listen() rejects at once without a
+          recogniser, so `listening` never holds long enough to see. A component
+          nothing can render is a component nothing can check. */}
+      <WaveformRiver active color={colors.cyan ?? '#22d3ee'} />
       <ThinkingDots label="Thinking…" />
       <MessageEntrance>
         <View

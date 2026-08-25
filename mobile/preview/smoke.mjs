@@ -1433,6 +1433,59 @@ await step('the search year filter narrows results to one year', async () => {
   }
 });
 
+/**
+ * The dictation visualiser moves by transform, and redraws nothing.
+ *
+ * Checked on the chat demo rather than the composer: `listen()` rejects at once
+ * in a browser with no recogniser, so `listening` never holds long enough for
+ * the real one to appear. The first version of this advanced a `useState` from
+ * requestAnimationFrame — a React re-render and a fresh SVG path string sixty
+ * times a second, on the JS thread, while the speech recogniser is already on
+ * it. Asserting the path is *unchanged* while the transform moves is what tells
+ * the two implementations apart.
+ */
+await step('the dictation visualiser drifts by transform, not by redrawing', async () => {
+  await open('screen=chatdemo');
+  await page.waitForTimeout(1200);
+
+  const read = () =>
+    page.evaluate(() => {
+      const host = document.querySelector('[aria-label="Listening"]');
+      if (!host) {
+        return null;
+      }
+      const strip = host.querySelector('div');
+      const svg = host.querySelector('svg');
+      return {
+        transform: strip?.style?.transform ?? null,
+        path: svg?.querySelector('path')?.getAttribute('d') ?? null,
+      };
+    });
+
+  const before = await read();
+  if (!before) {
+    throw new Error('the listening visualiser did not render');
+  }
+  if (!before.path) {
+    throw new Error('the visualiser drew no wave');
+  }
+  if (!before.transform || !before.transform.includes('translateX')) {
+    throw new Error(`the strip has no translate (${before.transform}) — it is not drifting at all`);
+  }
+
+  await page.waitForTimeout(700);
+  const after = await read();
+  if (after.transform === before.transform) {
+    throw new Error('the strip did not move — the drift is animating nothing');
+  }
+  if (after.path !== before.path) {
+    throw new Error(
+      'the wave path changed between frames — the visualiser is recomputing its geometry ' +
+        'per frame instead of translating a drawn one',
+    );
+  }
+});
+
 await step('ask ai screen renders and accepts input', async () => {
   await open('screen=askai');
   const box = page.locator('textarea, input').first();
