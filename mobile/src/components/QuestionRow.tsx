@@ -2,10 +2,10 @@ import React, { memo, useCallback, useEffect, useRef } from 'react';
 import { Animated, StyleSheet, View } from 'react-native';
 import { Text } from '@/components/Text';
 import { Touchable } from '@/components/Touchable';
-import { Check } from 'lucide-react-native';
+import { SuccessCheckmark } from '@/components/SuccessCheckmark';
 import { useTheme, withAlpha } from '@/theme';
 import { typeScale } from '@/theme/typography';
-import { DURATION, EASE, SPRING, springConfig, useReducedMotion } from '@/theme/motion';
+import { DURATION, EASE, useReducedMotion } from '@/theme/motion';
 import { toggleQuestionDone } from '@/lib/progress';
 import {
   countStars,
@@ -75,8 +75,6 @@ function QuestionRowBase({
   const importance = importanceLabel(stars);
   const text = getCleanQuestionText(question);
 
-  const tick = useRef(new Animated.Value(done ? 1 : 0)).current;
-
   /**
    * The arrival flash, for a question reached from a search result.
    *
@@ -111,24 +109,6 @@ function QuestionRowBase({
       }),
     ]).start();
   }, [highlighted, reduceMotion, glow]);
-  const firstRun = useRef(true);
-
-  useEffect(() => {
-    if (firstRun.current) {
-      firstRun.current = false;
-      tick.setValue(done ? 1 : 0);
-      return;
-    }
-    if (reduceMotion) {
-      tick.setValue(done ? 1 : 0);
-      return;
-    }
-    Animated.spring(tick, {
-      toValue: done ? 1 : 0,
-      ...springConfig(done ? SPRING.momentum : SPRING.snappy),
-    }).start();
-  }, [done, reduceMotion, tick]);
-
   const toggle = useCallback(() => {
     toggleQuestionDone(question);
   }, [question]);
@@ -254,33 +234,12 @@ function QuestionRowBase({
           hitSlop={14}
           scaleTo={0.85}
         >
-          <View
-            style={[
-              styles.checkbox,
-              { borderColor: done ? colors.success : colors.border },
-            ]}
-          >
-            <Animated.View
-              style={[
-                styles.checkboxFill,
-                {
-                  backgroundColor: colors.success,
-                  opacity: tick,
-                  transform: [
-                    {
-                      scale: tick.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [0.6, 1],
-                      }),
-                    },
-                  ],
-                },
-              ]}
-            />
-            {done ? (
-              <Check size={14} color={colors.primaryText} strokeWidth={3} />
-            ) : null}
-          </View>
+          <SuccessCheckmark
+            checked={done}
+            size={22}
+            color={colors.success}
+            borderColor={colors.border}
+          />
         </Touchable>
 
         <View style={styles.body}>

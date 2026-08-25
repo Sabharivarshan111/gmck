@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
+import { SuccessCheckmark } from '@/components/SuccessCheckmark';
 import { Badge } from '@/components/ui/badge';
 
 interface QuestionCardEnhancedProps {
@@ -154,13 +154,16 @@ const QuestionCardEnhanced: React.FC<QuestionCardEnhancedProps> = ({ question, i
       >
         <CardContent className="p-3 text-left text-sm flex items-start justify-between">
           <div className="flex items-start gap-2">
-            <Checkbox 
-              id={`checkbox-enhanced-${index}`}
-              checked={isCompleted}
-              onCheckedChange={handleCheckboxChange}
-              onClick={(e) => e.stopPropagation()} // Prevent tap events when clicking the checkbox
-              className="mt-0.5 flex-shrink-0"
-            />
+            <div className="mt-0.5 flex-shrink-0">
+              <SuccessCheckmark
+                checked={isCompleted}
+                size={20}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleCheckboxChange(!isCompleted);
+                }}
+              />
+            </div>
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-1">
                 <span className="text-[10px] text-blue-500">

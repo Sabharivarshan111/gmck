@@ -1,9 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   AccessibilityInfo,
   Animated,
   ScrollView,
   StyleSheet,
+  TextInput,
   View,
 } from 'react-native';
 import { Text } from '@/components/Text';
@@ -13,11 +14,12 @@ import { useExam } from '@/hooks/useExam';
 import { daysUntil } from '@/lib/exam';
 import { ProgressRing } from '@/components/ProgressRing';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { CalendarClock, Coffee, Pencil, Play, Pause, RotateCcw, SlidersHorizontal, Sparkles, Timer as TimerIcon, Users } from 'lucide-react-native';
+import { CalendarClock, Check, Coffee, Pencil, Play, Pause, RotateCcw, SlidersHorizontal, Sparkles, Timer as TimerIcon, Users, X } from 'lucide-react-native';
 import { typeScale } from '@/theme/typography';
 import { useTheme, withAlpha } from '@/theme';
 import { SPRING, springConfig, useReducedMotion } from '@/theme/motion';
 import { formatClock, PomodoroMode, usePomodoro } from '@/hooks/usePomodoro';
+import { useOnlinePresence } from '@/hooks/useOnlinePresence';
 import { formatFocusTime } from '@/lib/focusStats';
 
 const MODES: { key: PomodoroMode; label: string; emoji: string }[] = [
@@ -30,6 +32,7 @@ export default function TimerScreen() {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const timer = usePomodoro();
+  const { onlineCount } = useOnlinePresence(timer.isRunning);
   /**
    * The exam, if one is set. Read here rather than passed down because the
    * Timer and My Progress are different tabs — there is no common parent to
@@ -40,6 +43,29 @@ export default function TimerScreen() {
   // be a day stale on a screen left open overnight.
   const examDays = exam ? daysUntil(exam) : null;
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [customInput, setCustomInput] = useState('');
+
+  const startEditing = useCallback(() => {
+    if (timer.isRunning) {
+      timer.pause();
+    }
+    const currentMins = Math.ceil(timer.remaining / 60) || 25;
+    setCustomInput(String(currentMins));
+    setIsEditing(true);
+  }, [timer]);
+
+  const saveCustomTime = useCallback(() => {
+    const parsed = parseInt(customInput, 10);
+    if (!isNaN(parsed) && parsed > 0) {
+      timer.setCustomMinutes(parsed);
+    }
+    setIsEditing(false);
+  }, [customInput, timer]);
+
+  const cancelEditing = useCallback(() => {
+    setIsEditing(false);
+  }, []);
 
   const activeMode = MODES.find(m => m.key === timer.mode) ?? MODES[0];
   // How much of this session is still to come, for the dial ring.
@@ -162,25 +188,64 @@ export default function TimerScreen() {
             <Text style={[styles.dialKicker, { color: colors.textMuted }]}>
               {activeMode.emoji} {activeMode.label.toUpperCase()}
             </Text>
-            {/* The number itself, not just the pencil — the hint below says to
-                tap the number, and a hint that is only true of the 16dp icon
-                beside it is a hint that reads as a dead control. */}
-            <Touchable
-              onPress={() => setSettingsOpen(true)}
-              label="Pomodoro settings"
-              hint="Set the focus and break lengths, the alert sound and vibration"
-              scaleTo={0.96}
-              hitSlop={14}
-              style={styles.dialClockRow}>
-              <Text
-                accessibilityLiveRegion="none"
-                style={[styles.dialClock, { color: colors.text }]}>
-                {formatClock(timer.remaining)}
-              </Text>
-              <Pencil size={16} color={colors.textMuted} />
-            </Touchable>
-            <Text style={[styles.dialHint, { color: colors.textMuted }]}>
-              Tap the number to set custom time
+            {isEditing ? (
+              <View style={styles.editContainer}>
+                <View style={styles.editRow}>
+                  <TextInput
+                    value={customInput}
+                    onChangeText={text => setCustomInput(text.replace(/[^0-9]/g, '').slice(0, 3))}
+                    keyboardType="number-pad"
+                    autoFocus
+                    maxLength={3}
+                    selectTextOnFocus
+                    returnKeyType="done"
+                    onSubmitEditing={saveCustomTime}
+                    style={[
+                      styles.dialInput,
+                      {
+                        color: colors.text,
+                        borderColor: colors.primary,
+                        backgroundColor: withAlpha(colors.primary, 0.1),
+                      },
+                    ]}
+                  />
+                  <Text style={[styles.editUnit, { color: colors.textMuted }]}>min</Text>
+                </View>
+                <View style={styles.editActions}>
+                  <Touchable
+                    onPress={cancelEditing}
+                    label="Cancel editing"
+                    scaleTo={0.88}
+                    style={[styles.editBtn, { backgroundColor: colors.card, borderColor: colors.border }]}>
+                    <X size={16} color={colors.textMuted} />
+                  </Touchable>
+                  <Touchable
+                    onPress={saveCustomTime}
+                    label="Apply custom time"
+                    scaleTo={0.88}
+                    style={[styles.editBtn, { backgroundColor: colors.success, borderColor: colors.success }]}>
+                    <Check size={16} color="#ffffff" strokeWidth={3} />
+                  </Touchable>
+                </View>
+              </View>
+            ) : (
+              <Touchable
+                onPress={startEditing}
+                label="Set custom time"
+                hint="Tap to type custom minutes for the timer"
+                scaleTo={0.96}
+                hitSlop={14}
+                style={styles.dialClockRow}>
+                <Text
+                  accessibilityLiveRegion="none"
+                  style={[styles.dialClock, { color: colors.text }]}>
+                  {formatClock(timer.remaining)}
+                </Text>
+                <Pencil size={16} color={colors.textMuted} />
+              </Touchable>
+            )}
+            <Text style={[styles.dialHint, { color: isEditing ? colors.primary : colors.textMuted }]}>
+              {isEditing ? 'Type minutes and tap ✓ to set' : 'Tap the number to set custom time'}
             </Text>
           </View>
         </ProgressRing>
@@ -227,10 +292,16 @@ export default function TimerScreen() {
         </View>
         <View style={styles.presenceBody}>
           <Text style={[styles.presenceLabel, { color: colors.textMuted }]}>
-            Studying with you right now
+            {onlineCount != null && onlineCount > 1
+              ? `${onlineCount} medical students studying right now`
+              : 'Studying with you right now'}
           </Text>
           <Text style={[styles.presenceValue, { color: colors.text }]}>
-            {timer.isRunning ? 'You are in a session' : 'Start a session to join'}
+            {timer.isRunning
+              ? onlineCount != null && onlineCount > 1
+                ? `You + ${onlineCount - 1} other${onlineCount - 1 === 1 ? '' : 's'} in deep focus`
+                : 'You are in deep focus'
+              : 'Start a session to join'}
           </Text>
         </View>
         <View style={[styles.presenceDot, { backgroundColor: colors.green }]} />
@@ -420,6 +491,46 @@ const styles = StyleSheet.create({
   dialHint: {
     fontSize: 12,
     marginTop: 6,
+  },
+  editContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 2,
+  },
+  editRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+  },
+  dialInput: {
+    fontSize: 44,
+    fontWeight: '600',
+    textAlign: 'center',
+    minWidth: 90,
+    paddingHorizontal: 12,
+    paddingVertical: 2,
+    borderRadius: 12,
+    borderWidth: 2,
+    fontVariant: ['tabular-nums'],
+  },
+  editUnit: {
+    fontSize: 18,
+    fontWeight: '600',
+  },
+  editActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginTop: 8,
+  },
+  editBtn: {
+    height: 34,
+    width: 34,
+    borderRadius: 17,
+    borderWidth: StyleSheet.hairlineWidth,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   controls: {
     flexDirection: 'row',
