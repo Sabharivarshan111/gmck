@@ -10,8 +10,8 @@ interface SuccessCheckmarkProps {
   borderColor?: string;
 }
 
-const CIRCLE_CIRCUMFERENCE = 295; // 2 * PI * 47
-const CHECK_LENGTH = 48;
+const CIRCLE_CIRCUMFERENCE = 285; // 2 * PI * 45 ≈ 282.7
+const CHECK_LENGTH = 90; // Total length of path ≈ 66.5px, safely exceeded by dasharray
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 const AnimatedPath = Animated.createAnimatedComponent(Path);
@@ -28,6 +28,7 @@ export const SuccessCheckmark = memo(function SuccessCheckmark({
   // Animation values
   const circleProgress = useRef(new Animated.Value(checked ? 1 : 0)).current;
   const checkProgress = useRef(new Animated.Value(checked ? 1 : 0)).current;
+  const checkOpacity = useRef(new Animated.Value(checked ? 1 : 0)).current;
   const glowScale = useRef(new Animated.Value(0.6)).current;
   const glowOpacity = useRef(new Animated.Value(0)).current;
 
@@ -36,12 +37,14 @@ export const SuccessCheckmark = memo(function SuccessCheckmark({
       firstMount.current = false;
       circleProgress.setValue(checked ? 1 : 0);
       checkProgress.setValue(checked ? 1 : 0);
+      checkOpacity.setValue(checked ? 1 : 0);
       return;
     }
 
     if (reduceMotion) {
       circleProgress.setValue(checked ? 1 : 0);
       checkProgress.setValue(checked ? 1 : 0);
+      checkOpacity.setValue(checked ? 1 : 0);
       glowOpacity.setValue(0);
       return;
     }
@@ -49,47 +52,48 @@ export const SuccessCheckmark = memo(function SuccessCheckmark({
     if (checked) {
       circleProgress.setValue(0);
       checkProgress.setValue(0);
+      checkOpacity.setValue(1);
       glowScale.setValue(0.6);
       glowOpacity.setValue(0);
 
       Animated.parallel([
-        // Circle draws closed (0 to 1 over 380ms)
+        // 1. Circle draws closed (0 to 1 over 360ms)
         Animated.timing(circleProgress, {
           toValue: 1,
-          duration: 380,
+          duration: 360,
           easing: Easing.out(Easing.cubic),
           useNativeDriver: Platform.OS !== 'web',
         }),
-        // Sequence checkmark draw starting right after circle begins
+        // 2. Checkmark draws completely in after circle starts closing
         Animated.sequence([
-          Animated.delay(220),
+          Animated.delay(180),
           Animated.timing(checkProgress, {
             toValue: 1,
-            duration: 320,
+            duration: 300,
             easing: Easing.bezier(0.6, 0, 0.3, 1),
             useNativeDriver: Platform.OS !== 'web',
           }),
         ]),
-        // Glow pulse sequence (scales and fades out)
+        // 3. Radial glow pulse
         Animated.sequence([
-          Animated.delay(180),
+          Animated.delay(150),
           Animated.parallel([
             Animated.timing(glowScale, {
               toValue: 1.5,
-              duration: 550,
+              duration: 500,
               easing: Easing.out(Easing.ease),
               useNativeDriver: true,
             }),
             Animated.sequence([
               Animated.timing(glowOpacity, {
                 toValue: 0.85,
-                duration: 180,
+                duration: 160,
                 easing: Easing.linear,
                 useNativeDriver: true,
               }),
               Animated.timing(glowOpacity, {
                 toValue: 0,
-                duration: 370,
+                duration: 340,
                 easing: Easing.out(Easing.ease),
                 useNativeDriver: true,
               }),
@@ -101,24 +105,29 @@ export const SuccessCheckmark = memo(function SuccessCheckmark({
       Animated.parallel([
         Animated.timing(circleProgress, {
           toValue: 0,
-          duration: 150,
+          duration: 120,
           easing: Easing.linear,
           useNativeDriver: Platform.OS !== 'web',
         }),
         Animated.timing(checkProgress, {
           toValue: 0,
-          duration: 150,
+          duration: 120,
           easing: Easing.linear,
+          useNativeDriver: Platform.OS !== 'web',
+        }),
+        Animated.timing(checkOpacity, {
+          toValue: 0,
+          duration: 100,
           useNativeDriver: Platform.OS !== 'web',
         }),
         Animated.timing(glowOpacity, {
           toValue: 0,
-          duration: 100,
+          duration: 80,
           useNativeDriver: true,
         }),
       ]).start();
     }
-  }, [checked, reduceMotion, circleProgress, checkProgress, glowScale, glowOpacity]);
+  }, [checked, reduceMotion, circleProgress, checkProgress, checkOpacity, glowScale, glowOpacity]);
 
   const circleDashOffset = circleProgress.interpolate({
     inputRange: [0, 1],
@@ -158,7 +167,7 @@ export const SuccessCheckmark = memo(function SuccessCheckmark({
         <Circle
           cx="50"
           cy="50"
-          r="47"
+          r="45"
           fill="none"
           stroke={borderColor}
           strokeWidth="6"
@@ -168,7 +177,7 @@ export const SuccessCheckmark = memo(function SuccessCheckmark({
         <AnimatedCircle
           cx="50"
           cy="50"
-          r="47"
+          r="45"
           fill={checked ? 'rgba(34, 217, 138, 0.15)' : 'none'}
           stroke={color}
           strokeWidth="7"
@@ -177,14 +186,15 @@ export const SuccessCheckmark = memo(function SuccessCheckmark({
           strokeDashoffset={circleDashOffset}
         />
 
-        {/* Animated Success Checkmark */}
+        {/* Animated Full Success Checkmark (only visible when active/animating) */}
         <AnimatedPath
-          d="M28 52 L44 67 L73 35"
+          d="M28 50 L42 66 L74 34"
           fill="none"
           stroke={color}
           strokeWidth="8.5"
           strokeLinecap="round"
           strokeLinejoin="round"
+          opacity={checkOpacity}
           strokeDasharray={`${CHECK_LENGTH}`}
           strokeDashoffset={checkDashOffset}
         />
