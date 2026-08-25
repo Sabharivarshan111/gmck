@@ -71,6 +71,27 @@ files into `mobile/`; a second copy will drift.
 - The open Gemini access, the absence of an app-side rate limit, and the public
   leaderboard are **deliberate**. Do not "fix" them.
 
+## Cutting a build
+
+Every workflow in `.github/workflows/` runs on a **push to
+`claude/native-app-sync`** and publishes to a GitHub **Release**, so you can
+cut one too — push, then watch Actions on `gmck`.
+
+| Want | Workflow | Package | Ads | Signs in? |
+|---|---|---|---|---|
+| Poke at it | `android-debug.yml` | `…aycxvd.debug` | none | no |
+| Test sign-in | `android-internal.yml` | `…aycxvd` | none | yes |
+| Upload to Play | `android-release.yml` | `…aycxvd` | **live** | yes |
+
+The release one builds both the `.aab` (for Play) and an `.apk` (to sideload).
+
+Only `gmck` holds the three signing secrets, so the mirror's release run always
+dies at "Restore the upload keystore" — a missing secret, not a broken build.
+
+`.agents/rules/40-releases.md` has the rest: what a wrong build costs, why
+sign-in only works in the internal one, and why CI is the first thing that ever
+compiles the Kotlin.
+
 ## New Architecture: a native module must be a TurboModule
 
 `newArchEnabled=true`. A module registered from a plain `ReactPackage` is

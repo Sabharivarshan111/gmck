@@ -19,6 +19,7 @@ when picking up work that was last touched from the other tool.
 | `.agents/rules/10-motion.md` | Motion rules for the React Native app — what to use, and what never ships |
 | `.agents/rules/20-interface.md` | Interface rules — theming, type, materials, accessibility |
 | `.agents/rules/30-reference.md` | Index of the vendored design skills, and where the long-form docs live |
+| `.agents/rules/40-releases.md` | Cutting builds — which of the four to use, how to trigger one, and the two things a wrong build costs |
 <!-- rules:end -->
 
 This repo is worked on from Claude Code *and* Antigravity, sometimes on the

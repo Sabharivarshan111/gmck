@@ -22,11 +22,16 @@ name: Internal APK (real package, real key)
 #      is a *different* certificate from the upload key, so it does not cover
 #      this build. Adding the printed SHA-1 is one entry in the console.
 #
-# What this build does NOT take from a release build is live ads. The JS is
-# bundled by hand with `--dev true`, so `__DEV__` stays true and src/lib/ads.ts
-# keeps serving Google's test units. An APK we install ourselves must never be
-# able to show us a live ad — that is an AdMob policy violation that can get
-# the account suspended.
+# What this build does NOT take from a release build is ads. It overwrites
+# src/lib/adsMode.ts with `ADS_ENABLED = false`, so AdMob never starts at all —
+# not the live units and not Google's test ones either. An APK we install
+# ourselves must never be able to show us a live ad; that is an AdMob policy
+# violation that can get the account suspended.
+#
+# It does this in **source**, not by forcing the bundler's `--dev true`, which
+# is what this comment used to describe. That older trick meant every test
+# build shipped development JavaScript — several times slower than the shipped
+# app, and the cause of most of the lag anyone reported from one.
 
 on:
   workflow_dispatch:
