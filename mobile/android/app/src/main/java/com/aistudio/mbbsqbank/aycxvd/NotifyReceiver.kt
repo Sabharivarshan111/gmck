@@ -81,7 +81,11 @@ class NotifyReceiver : BroadcastReceiver() {
     )
 
     val notification = NotificationCompat.Builder(context, CHANNEL)
-      .setSmallIcon(android.R.drawable.ic_dialog_info)
+      // Our own bell, not android.R.drawable.ic_dialog_info. Android renders a
+      // small icon as a silhouette from its alpha channel, so it has to be a
+      // single-colour shape drawn for that — see res/drawable/ic_notification.xml.
+      .setSmallIcon(R.drawable.ic_notification)
+      .setColor(0xFFD45CFF.toInt())
       .setContentTitle(message.first)
       .setContentText(message.second)
       .setStyle(NotificationCompat.BigTextStyle().bigText(message.second))

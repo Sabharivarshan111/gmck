@@ -973,10 +973,72 @@ await step('the daily reminder is off by default and explains itself', async () 
   await seesText('At most one a day', 4000);
   await seesText('already studied', 4000);
 
+  /*
+   * `=== 'false'`, not `!== 'true'`. This read `!== 'true'` while the attribute
+   * was not emitted at all, so it passed on `null` — a check that could not
+   * fail is not a check. Insisting on the string is what makes it one.
+   */
   const checked = await toggle.evaluate(el => el.getAttribute('aria-checked'));
-  if (checked === 'true') {
-    throw new Error('the daily reminder is on before anyone asked for it');
+  if (checked !== 'false') {
+    throw new Error(
+      checked === 'true'
+        ? 'the daily reminder is on before anyone asked for it'
+        : `the reminder switch reports no checked state (aria-checked=${checked}) — ` +
+          'TalkBack cannot say whether it is on',
+    );
   }
+});
+
+/**
+ * Turning the reminder on reveals what it may send, and each kind is its own
+ * switch.
+ *
+ * This is the state that shipped broken and that nothing here could see. The
+ * three sub-switches are gated on permission being held, the harness could
+ * never hold it, so "only Daily reminder is there" was true on a phone and
+ * invisible to every check. Asserting the *second* state is the point of this
+ * step; asserting the first one proved nothing.
+ */
+await step('turning the reminder on reveals what it may send', async () => {
+  await open('screen=home');
+  await tap('Settings');
+  await page.waitForTimeout(700);
+
+  const toggle = byLabel('Daily reminder');
+  await scrollTo(toggle);
+  await toggle.click();
+  await page.waitForTimeout(500);
+
+  await seesText('WHAT TO SEND', 4000);
+  for (const kind of ['Exam countdown', 'Streak about to break', 'Revision due']) {
+    const kindToggle = byLabel(kind).last();
+    await scrollTo(kindToggle);
+    const box = await kindToggle.boundingBox();
+    const { height: viewport } = page.viewportSize();
+    if (!box || box.y < 0 || box.y + box.height > viewport) {
+      throw new Error(
+        `"${kind}" is not on screen at y=${box ? Math.round(box.y) : 'none'} — ` +
+          'the per-kind reminder switches are unreachable',
+      );
+    }
+    // On by default: someone who asked for reminders asked for the useful
+    // ones. A section that arrives with everything off is a section that does
+    // nothing until it is configured, which is not what the switch promised.
+    const checked = await kindToggle.evaluate(el => el.getAttribute('aria-checked'));
+    if (checked !== 'true') {
+      throw new Error(`"${kind}" is off after enabling reminders — it should default on`);
+    }
+  }
+
+  // And each one is a real control, not a label.
+  const exam = byLabel('Exam countdown').last();
+  await exam.click();
+  await page.waitForTimeout(300);
+  const after = await exam.evaluate(el => el.getAttribute('aria-checked'));
+  if (after === 'true') {
+    throw new Error('"Exam countdown" did not turn off — the per-kind switches are dummies');
+  }
+  await exam.click();
 });
 
 await step('the pomodoro sheet offers working alert sounds', async () => {

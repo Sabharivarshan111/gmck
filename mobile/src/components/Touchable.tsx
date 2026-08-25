@@ -168,6 +168,23 @@ export function Touchable({
 
   return (
     <AnimatedPressable
+      /*
+       * State goes out twice, as accessibilityState and as the aria-* props.
+       *
+       * Not belt and braces: they are read by different things. Android's
+       * TalkBack gets it from accessibilityState, which is the documented
+       * native API and the one that matters on a phone. React Native Web 0.21
+       * removed accessibilityState entirely and reads only aria-*, so without
+       * these every switch in the preview reports no state at all — which is
+       * how a "the reminder is off by default" check passed while never
+       * looking at anything. React Native maps aria-* onto the same state
+       * natively, and the two values here are one value, so they cannot
+       * disagree.
+       */
+      aria-checked={state?.checked}
+      aria-selected={state?.selected}
+      aria-expanded={state?.expanded}
+      aria-busy={state?.busy}
       onPress={locked ? undefined : onPress}
       onLongPress={locked ? undefined : onLongPress}
       onPressIn={onPressIn}

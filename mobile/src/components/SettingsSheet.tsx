@@ -3,6 +3,7 @@ import { StyleSheet, Text as RNText, View } from 'react-native';
 import { Text } from '@/components/Text';
 import { Touchable } from '@/components/Touchable';
 import { Sheet } from '@/components/Sheet';
+import { NotificationBell } from '@/components/NotificationBell';
 import { Slider } from '@/components/Slider';
 import { Check } from 'lucide-react-native';
 import { useTheme, withAlpha } from '@/theme';
@@ -309,6 +310,13 @@ export function SettingsSheet({
 
       {notificationsAvailable ? (
         <>
+          <View style={styles.reminderHead}>
+            <NotificationBell enabled={settings.dailyReminder && notifyAllowed} />
+            <View style={styles.flex}>
+              <Text style={[typeScale.callout, { color: colors.text }]}>Daily reminder</Text>
+            </View>
+          </View>
+
           <Switchable
             label="Daily reminder"
             detail="One a day, and only when there is something worth saying"
@@ -352,7 +360,7 @@ export function SettingsSheet({
           {/* Only once the master switch is on. Showing three dead sub-switches
               above the one that enables them is a menu that answers a question
               nobody has asked yet. */}
-          {settings.dailyReminder && notifyAllowed ? (
+          {settings.dailyReminder ? (
             <View style={styles.indent}>
               <Text style={[styles.sectionLabel, { color: colors.textMuted }]}>WHAT TO SEND</Text>
               <Switchable
@@ -533,6 +541,12 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  reminderHead: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    marginTop: 6,
   },
   sectionLabel: {
     fontSize: 11,

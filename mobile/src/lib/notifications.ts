@@ -1,4 +1,15 @@
+import * as ReactNative from 'react-native';
+import { Platform } from 'react-native';
 import OrbitNotify from '@/native/NativeOrbitNotify';
+
+/**
+ * Read off the namespace, not as a named import: react-native-web does not
+ * export PermissionsAndroid, and an ESM named import of a missing export takes
+ * the whole bundle down rather than resolving to undefined.
+ */
+const PermissionsAndroid = (
+  ReactNative as unknown as { PermissionsAndroid?: typeof ReactNative.PermissionsAndroid }
+).PermissionsAndroid;
 
 /**
  * The daily study reminder.
@@ -60,18 +71,56 @@ export function hasNotificationPermission(): boolean {
 }
 
 /**
- * Ask for the microphone's louder cousin, once, when the switch is turned on.
+ * Ask, once, when the switch is turned on — and wait for the answer.
  *
- * Never at launch. Android stops showing the dialog after two refusals and the
- * only route back is the system settings screen, so the one chance to ask has
- * to come at the moment the user has said they want this.
+ * Through React Native's PermissionsAndroid rather than the native module,
+ * because the native one could not wait. It fired the dialog and resolved
+ * `false` in the same breath, so tapping "Allow" still left the switch off:
+ * the app had already decided it was refused, turned the setting back off, and
+ * hidden the per-kind switches that depend on it. Every user's first attempt
+ * failed, and the second one worked only because the permission was granted by
+ * then.
+ *
+ * PermissionsAndroid holds the promise across the dialog properly, including
+ * across an Activity that Android destroys and recreates while it is open.
+ *
+ * Never at launch: Android stops showing the dialog after two refusals and the
+ * only route back is the system settings screen, so the single chance to ask
+ * belongs at the moment the reader has said they want this.
  */
 export async function requestNotificationPermission(): Promise<boolean> {
-  if (!native) {
-    return false;
+  if (Platform.OS !== 'android' || !PermissionsAndroid) {
+    /*
+     * No PermissionsAndroid here — react-native-web has none, and that is the
+     * preview harness. Fall back to the module's own answer so the harness can
+     * still walk the *granted* path.
+     *
+     * Which is not a convenience. The bug this function exists to fix hid in
+     * exactly that gap: the sub-switches only appear once permission is held,
+     * so the one screen state that was broken was also the one state no
+     * automated check could ever reach. A path nothing can exercise is a path
+     * that regresses silently.
+     */
+    return (await native?.requestPermission()) ?? false;
+  }
+  // Below Android 13 there is no runtime permission; whether notifications are
+  // allowed at all is a system-settings question the native side answers.
+  if (typeof Platform.Version === 'number' && Platform.Version < 33) {
+    return hasNotificationPermission();
   }
   try {
-    return await native.requestPermission();
+    const permission = 'android.permission.POST_NOTIFICATIONS' as never;
+    if (await PermissionsAndroid.check(permission)) {
+      return true;
+    }
+    const result = await PermissionsAndroid.request(permission, {
+      title: 'Send you a study reminder?',
+      message:
+        'One a day at most, only when there is something worth saying. Never "come back and play".',
+      buttonPositive: 'Allow',
+      buttonNegative: 'Not now',
+    });
+    return result === PermissionsAndroid.RESULTS.GRANTED;
   } catch {
     return false;
   }

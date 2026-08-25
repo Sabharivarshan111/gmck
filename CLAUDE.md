@@ -596,6 +596,14 @@ stays true as screens get added. Give lists one spoken sentence per row rather
 than four fragments, and keep every target at 44dp (use `hitSlop`, not padding
 that changes the design).
 
+`state` goes out **twice** — as `accessibilityState` and as `aria-checked` /
+`aria-selected` / `aria-expanded` / `aria-busy`. TalkBack reads the first;
+react-native-web 0.21 dropped `accessibilityState` and reads only the second,
+so without the aria props every switch in the preview reports no state at all.
+That is not a preview-only cosmetic: `check:smoke` asserts through the DOM, and
+the reminder's "off by default" assertion passed for a year while reading an
+attribute that was never emitted.
+
 ## Storage keys are shared with the web app
 
 The native app deliberately reuses the web app's keys so one user with both

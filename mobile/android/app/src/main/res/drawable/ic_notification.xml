@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The status-bar icon for a study reminder.
+
+  Android draws a small icon as a **silhouette**: it takes the alpha channel
+  and throws the colours away. A coloured or filled bell comes out as a solid
+  white blob, which is why the default was still in place — the shape has to be
+  designed for one channel from the start.
+
+  So this is the bell outline in pure white on transparent, at 24dp, matching
+  the reference. The clapper is a separate path rather than part of the body:
+  merged, the two read as one lump at status-bar size.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M12,2.5a2,2 0 0 1 2,2v0.6a6,6 0 0 1 4,5.65V15l1.6,2.4a0.8,0.8 0 0 1 -0.66,1.24H5.06A0.8,0.8 0 0 1 4.4,17.4L6,15v-4.25a6,6 0 0 1 4,-5.65v-0.6a2,2 0 0 1 2,-2z" />
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M12,18.7a1.7,1.7 0 1 0 0,3.4a1.7,1.7 0 1 0 0,-3.4z" />
+</vector>
