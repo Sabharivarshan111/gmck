@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
+import { SuccessCheckmark } from '@/components/SuccessCheckmark';
 import { Badge } from '@/components/ui/badge';
 import { useTheme } from '@/components/theme/ThemeProvider';
 import { QUESTION_PROGRESS_EVENT, setQuestionDone } from '@/lib/question-progress';
@@ -219,15 +219,14 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, index, isFirstYea
       >
         <CardContent className="p-3 text-left text-sm flex items-start justify-between">
           <div className="flex items-start gap-2">
-            <div 
-              className="mt-0.5 flex-shrink-0 relative cursor-pointer"
-              onClick={handleCheckboxClick}
-            >
-              <Checkbox 
-                id={`checkbox-${index}`}
+            <div className="mt-0.5 flex-shrink-0 relative cursor-pointer">
+              <SuccessCheckmark
                 checked={isCompleted}
-                onCheckedChange={handleCheckboxChange}
-                className={getCheckboxClass()}
+                size={20}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleCheckboxChange(!isCompleted);
+                }}
               />
             </div>
             <div className="flex-1">
