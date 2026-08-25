@@ -146,13 +146,13 @@ export const AiChat = ({ initialQuestion }: AiChatProps = {}) => {
     };
   }, [handleSubmitQuestion]);
 
-  const baseHeight = isFullscreen ? 'h-full' : 'h-[420px]';
+  const baseHeight = isFullscreen ? 'h-full flex-1 min-h-0' : 'h-[420px]';
   const isLiquid = theme === "liquid-glass";
   const cardClassName = theme === "blackpink"
-    ? `backdrop-blur-sm bg-black/90 border-pink-500/30 flex flex-col ${baseHeight} shadow-xl rounded-2xl overflow-hidden`
+    ? `backdrop-blur-sm bg-black/90 border-pink-500/30 flex flex-col ${baseHeight} shadow-xl ${isFullscreen ? 'rounded-none md:rounded-2xl' : 'rounded-2xl'} overflow-hidden`
     : isLiquid
-      ? `backdrop-blur-2xl bg-white/60 border-white/60 flex flex-col ${baseHeight} shadow-[0_8px_32px_rgba(31,38,135,0.15)] rounded-2xl overflow-hidden`
-      : `relative flex flex-col ${baseHeight} rounded-2xl overflow-hidden border border-primary/25 bg-gradient-to-b from-[hsl(var(--card))] to-[hsl(var(--background))] shadow-[0_10px_40px_-15px_hsl(var(--primary)/0.35)]`;
+      ? `backdrop-blur-2xl bg-white/60 border-white/60 flex flex-col ${baseHeight} shadow-[0_8px_32px_rgba(31,38,135,0.15)] ${isFullscreen ? 'rounded-none md:rounded-2xl' : 'rounded-2xl'} overflow-hidden`
+      : `relative flex flex-col ${baseHeight} ${isFullscreen ? 'rounded-none md:rounded-2xl' : 'rounded-2xl'} overflow-hidden border border-primary/25 bg-gradient-to-b from-[hsl(var(--card))] to-[hsl(var(--background))] shadow-[0_10px_40px_-15px_hsl(var(--primary)/0.35)]`;
 
   const headerClassName = theme === "blackpink"
     ? "px-4 py-3 border-b border-pink-500/30"
@@ -229,8 +229,8 @@ export const AiChat = ({ initialQuestion }: AiChatProps = {}) => {
 
         
         
-        <CardContent className="p-0 flex-grow overflow-hidden flex flex-col">
-          <div className="flex-grow overflow-y-auto p-4 space-y-4">
+        <CardContent className="p-0 flex-1 min-h-0 overflow-hidden flex flex-col">
+          <div className="flex-1 min-h-0 overflow-y-auto p-4 space-y-4">
             {connectionError && (
               <div className={theme === "blackpink" 
                 ? "bg-red-900/30 border border-red-800 rounded-md p-3 flex items-start"
@@ -326,9 +326,8 @@ export const AiChat = ({ initialQuestion }: AiChatProps = {}) => {
           isolation: 'isolate',
           paddingBottom: 'env(safe-area-inset-bottom)',
         }}
-        className={`flex flex-col p-2 ${isLiquid ? "bg-[hsl(var(--background))]" : "bg-background"}`}
+        className={`flex flex-col p-0 md:p-3 ${isLiquid ? "bg-[hsl(var(--background))]" : "bg-background"}`}
       >
-
         {isLiquid && (
           <div
             aria-hidden
@@ -336,11 +335,11 @@ export const AiChat = ({ initialQuestion }: AiChatProps = {}) => {
             className="bg-gradient-to-br from-background via-background to-secondary/60 backdrop-blur-2xl"
           />
         )}
-        <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 }}>
+        <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0, height: '100%' }}>
           {content}
         </div>
       </div>,
-      document.documentElement,
+      document.body,
     );
   }
 
