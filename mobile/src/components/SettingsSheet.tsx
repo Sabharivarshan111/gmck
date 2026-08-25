@@ -23,6 +23,14 @@ import {
 } from '@/lib/settings';
 import { tick } from '@/lib/haptics';
 import { previewSound, silencingReason, soundAvailable } from '@/lib/sound';
+import {
+  DEFAULT_HOUR,
+  cancelNotifications,
+  hasNotificationPermission,
+  notificationsAvailable,
+  requestNotificationPermission,
+  setNotificationSchedule,
+} from '@/lib/notifications';
 
 /**
  * Everything the user can change, in one place.
@@ -108,6 +116,20 @@ export function SettingsSheet({
    * either this or the ringer mode. Reading it on open is both the cheapest
    * and the most accurate moment.
    */
+  /**
+   * Whether Android will actually let a reminder through.
+   *
+   * Re-read on open rather than watched: the permission can be revoked from
+   * system settings while the app is backgrounded, and a switch reading "on"
+   * over a permission that has been taken away is a switch that lies.
+   */
+  const [notifyAllowed, setNotifyAllowed] = useState(false);
+  useEffect(() => {
+    if (visible) {
+      setNotifyAllowed(hasNotificationPermission());
+    }
+  }, [visible]);
+
   const [silenced, setSilenced] =
     useState<ReturnType<typeof silencingReason>>('');
   useEffect(() => {
@@ -282,6 +304,50 @@ export function SettingsSheet({
             selected={settings.chimePreset}
             onSelect={id => setSetting('chimePreset', id)}
           />
+        </>
+      ) : null}
+
+      {notificationsAvailable ? (
+        <>
+          <Switchable
+            label="Daily reminder"
+            detail="One a day, and only when there is something worth saying"
+            value={settings.dailyReminder && notifyAllowed}
+            onChange={async next => {
+              if (!next) {
+                setSetting('dailyReminder', false);
+                cancelNotifications();
+                return;
+              }
+              const granted = hasNotificationPermission()
+                ? true
+                : await requestNotificationPermission();
+              const allowed = granted || hasNotificationPermission();
+              setNotifyAllowed(allowed);
+              if (!allowed) {
+                // Asked and refused. Leaving the switch off is the honest
+                // outcome — showing it on over a denied permission is a
+                // control that silently does nothing.
+                setSetting('dailyReminder', false);
+                return;
+              }
+              setSetting('dailyReminder', true);
+              setNotificationSchedule(true, settings.reminderHour ?? DEFAULT_HOUR);
+            }}
+          />
+          {/* The whole policy, said plainly. Someone deciding whether to let an
+              app onto their lock screen deserves to know what it will do
+              before they find out. */}
+          <Text style={[styles.note, { color: withAlpha(colors.text, 0.5) }]}>
+            At most one a day, in the evening. Nothing if you have already studied that day,
+            and it stops asking for a week after three you ignore. Exam countdowns, a streak
+            about to break, and revision that is due — never "come back and play".
+          </Text>
+          {settings.dailyReminder && !notifyAllowed ? (
+            <Text style={[styles.note, { color: colors.warning }]}>
+              Android is blocking notifications for Orbit. Turn them on in system settings.
+            </Text>
+          ) : null}
         </>
       ) : null}
 

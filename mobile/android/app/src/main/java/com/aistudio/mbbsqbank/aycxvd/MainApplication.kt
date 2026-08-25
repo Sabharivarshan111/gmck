@@ -18,6 +18,7 @@ class MainApplication : Application(), ReactApplication {
           // nothing to find and it is registered by hand. See SoundModule.kt.
           add(SoundPackage())
           add(SpeechPackage())
+          add(NotifyPackage())
         },
     )
   }

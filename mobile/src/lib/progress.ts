@@ -148,12 +148,53 @@ export async function hydrateProgress(): Promise<void> {
   }
 }
 
+/**
+ * The day something was last ticked off, as a local epoch day.
+ *
+ * The daily reminder's most important rule is "say nothing if they already
+ * studied today", and this is the only fact that answers it. Deriving it from
+ * the total done would make it true for anyone who has ever ticked anything —
+ * which silences the reminder permanently, for everyone, from their second day
+ * onwards.
+ */
+const LAST_STUDY_KEY = 'orbit:last-study-day';
+
+let lastStudyDay = -1;
+
+export function getLastStudyDay(): number {
+  return lastStudyDay;
+}
+
+export async function hydrateLastStudyDay(): Promise<void> {
+  try {
+    const raw = await AsyncStorage.getItem(LAST_STUDY_KEY);
+    const parsed = raw === null ? NaN : Number.parseInt(raw, 10);
+    lastStudyDay = Number.isFinite(parsed) ? parsed : -1;
+  } catch {
+    lastStudyDay = -1;
+  }
+}
+
+function markStudiedToday(): void {
+  const today = Math.floor(new Date().setHours(0, 0, 0, 0) / 86400000);
+  if (lastStudyDay === today) {
+    return;
+  }
+  lastStudyDay = today;
+  AsyncStorage.setItem(LAST_STUDY_KEY, String(today)).catch(() => {});
+}
+
 export function setQuestionDone(question: string, done: boolean): void {
   const id = getQuestionId(question);
   if (done) {
     doneIds.add(id);
   } else {
     doneIds.delete(id);
+  }
+  // Only a tick counts as studying. Un-ticking is a correction, and treating
+  // it as activity would let someone silence the reminder by undoing things.
+  if (done) {
+    markStudiedToday();
   }
   emit();
   emitQuestion(id);

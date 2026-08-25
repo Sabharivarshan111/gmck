@@ -4,7 +4,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { ThemeProvider, useTheme } from '@/theme';
 import RootNavigator from '@/navigation/RootNavigator';
-import { hydrateProgress, reconcileProgress } from '@/lib/progress';
+import { hydrateLastStudyDay, hydrateProgress, reconcileProgress } from '@/lib/progress';
 import { hydrateSettings } from '@/lib/settings';
 import { hydrateProfile } from '@/hooks/useProfile';
 import { initializeAds } from '@/lib/ads';
@@ -26,6 +26,9 @@ function Shell() {
     hydrateProgress().then(() => {
       reconcileProgress().catch(() => {});
     });
+    // Needed before the reminder digest is written, and cheap enough that it
+    // rides along with the rest rather than waiting for a screen to want it.
+    hydrateLastStudyDay().catch(() => {});
     // Profile, streak and XP; all cloud steps are best-effort.
     hydrateProfile().catch(() => {});
     // The chosen wallpaper, before the first paint of Home.

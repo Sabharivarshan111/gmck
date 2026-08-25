@@ -48,7 +48,9 @@ import { ExamCountdownCard } from '@/components/ExamCountdownCard';
 import { SubjectBreakdownSheet } from '@/components/SubjectBreakdownSheet';
 import { ReviseSheet } from '@/components/ReviseSheet';
 import { useSpacedRepetition } from '@/hooks/useSpacedRepetition';
-import { getQuestionId, isQuestionDone } from '@/lib/progress';
+import { getLastStudyDay, getQuestionId, isQuestionDone } from '@/lib/progress';
+import { epochDay, updateDigest } from '@/lib/notifications';
+import { useExam } from '@/hooks/useExam';
 import { Brain } from 'lucide-react-native';
 import { ProgressCalendarTab } from '@/components/ProgressCalendarTab';
 import { ProgressNotesTab } from '@/components/ProgressNotesTab';
@@ -208,6 +210,32 @@ export default function ProgressScreen() {
 
   const revision = useSpacedRepetition(doneQuestions);
   const [revising, setRevising] = useState(false);
+
+  /**
+   * Hand the daily reminder the facts, from the one screen that has them all.
+   *
+   * Written here rather than on a timer because this is where exam, streak and
+   * revision already meet — and because writing it also tells the native side
+   * the app was opened, which resets the ignored-reminder back-off.
+   *
+   * Only the *earliest* due day and the count go over: the receiver needs to
+   * know whether anything is due today, not the whole schedule.
+   */
+  const reminderExam = useExam(shortYear);
+  useEffect(() => {
+    const soonest = revision.cards.reduce<number | null>(
+      (earliest, card) => (earliest === null || card.due < earliest ? card.due : earliest),
+      null,
+    );
+    updateDigest({
+      examDay: reminderExam ? epochDay(reminderExam.date) : -1,
+      examName: reminderExam?.name ?? 'your exam',
+      lastStudyDay: getLastStudyDay(),
+      streak,
+      revisionDueDay: soonest === null ? -1 : epochDay(soonest),
+      revisionDueCount: revision.due.length,
+    });
+  }, [reminderExam, revision.cards, revision.due.length, streak, totals.done]);
 
   return (
     <ScrollView

@@ -44,6 +44,18 @@ export interface Settings {
   chimeVolume: number;
   /** Whether the phone buzzes when a session ends, independently of tap haptics. */
   timerVibration: boolean;
+  /**
+   * One study reminder a day.
+   *
+   * Off by default. A notification is the most intrusive thing this app can
+   * do — louder than a sound, which is already off by default for being
+   * public — and an app that starts posting to someone's lock screen because
+   * they installed it has made a decision that was not its to make. It is one
+   * tap to turn on, in the same place as everything else adjustable.
+   */
+  dailyReminder: boolean;
+  /** Hour of day, 0–23, the reminder check runs. */
+  reminderHour: number;
 }
 
 /**
@@ -86,6 +98,9 @@ export const DEFAULT_SETTINGS: Settings = {
   tapPreset: 'tap',
   chimePreset: 'chime',
   chimeVolume: 0.85,
+  dailyReminder: false,
+  // Early evening: after classes, before the night's studying is decided.
+  reminderHour: 19,
   // On by default: the point of the alert is to reach someone who has stopped
   // looking at the screen, and a phone face-down on a desk is silent but not
   // still.
@@ -141,6 +156,14 @@ export async function hydrateSettings(): Promise<void> {
         typeof parsed.timerVibration === 'boolean'
           ? parsed.timerVibration
           : DEFAULT_SETTINGS.timerVibration,
+      dailyReminder:
+        typeof parsed.dailyReminder === 'boolean'
+          ? parsed.dailyReminder
+          : DEFAULT_SETTINGS.dailyReminder,
+      reminderHour:
+        typeof parsed.reminderHour === 'number' && Number.isFinite(parsed.reminderHour)
+          ? Math.max(0, Math.min(23, Math.round(parsed.reminderHour)))
+          : DEFAULT_SETTINGS.reminderHour,
     };
     emit();
   } catch {

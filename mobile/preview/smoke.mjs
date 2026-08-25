@@ -934,6 +934,32 @@ await step('the pomodoro sheet drafts durations and commits them', async () => {
 });
 
 /** The alert-sound choices are real controls, and Off is one of them. */
+/**
+ * The reminder switch is off until someone turns it on, and says what it will
+ * do before they do.
+ *
+ * A notification is the most intrusive thing this app can send. One that starts
+ * arriving because the app was installed is one that gets the whole category
+ * muted, permanently, along with anything genuinely useful later.
+ */
+await step('the daily reminder is off by default and explains itself', async () => {
+  await open('screen=home');
+  await tap('Settings');
+  await page.waitForTimeout(700);
+
+  const toggle = byLabel('Daily reminder');
+  await scrollTo(toggle);
+  await seesText('Daily reminder', 5000);
+  // The policy, in the sheet, not buried in a privacy page.
+  await seesText('At most one a day', 4000);
+  await seesText('already studied', 4000);
+
+  const checked = await toggle.evaluate(el => el.getAttribute('aria-checked'));
+  if (checked === 'true') {
+    throw new Error('the daily reminder is on before anyone asked for it');
+  }
+});
+
 await step('the pomodoro sheet offers working alert sounds', async () => {
   await open('screen=timer');
   await tap('Timer settings');
