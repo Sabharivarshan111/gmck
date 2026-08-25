@@ -202,11 +202,7 @@ export default function TimerScreen() {
                     onSubmitEditing={saveCustomTime}
                     style={[
                       styles.dialInput,
-                      {
-                        color: colors.text,
-                        borderColor: colors.primary,
-                        backgroundColor: withAlpha(colors.primary, 0.1),
-                      },
+                      { color: colors.text },
                     ]}
                   />
                   <Text style={[styles.editUnit, { color: colors.textMuted }]}>min</Text>
@@ -504,19 +500,24 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   dialInput: {
-    fontSize: 44,
-    fontWeight: '600',
+    fontSize: 52,
+    fontWeight: '300',
     textAlign: 'center',
-    minWidth: 90,
-    paddingHorizontal: 12,
-    paddingVertical: 2,
-    borderRadius: 12,
-    borderWidth: 2,
+    width: 90,
+    padding: 0,
+    margin: 0,
+    borderWidth: 0,
+    backgroundColor: 'transparent',
     fontVariant: ['tabular-nums'],
+    // @ts-ignore
+    outlineWidth: 0,
+    // @ts-ignore
+    outlineStyle: 'none',
   },
   editUnit: {
-    fontSize: 18,
-    fontWeight: '600',
+    fontSize: 20,
+    fontWeight: '400',
+    alignSelf: 'center',
   },
   editActions: {
     flexDirection: 'row',
