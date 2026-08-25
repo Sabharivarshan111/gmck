@@ -19,10 +19,10 @@ import { tick } from '@/lib/haptics';
  * it — a stored number would be a day stale by morning, on exactly the screen
  * someone checks first thing.
  */
-export function ExamCountdownCard() {
+export function ExamCountdownCard({ year }: { year?: string }) {
   const { colors } = useTheme();
   const reduceMotion = useReducedMotion();
-  const exam = useExam();
+  const exam = useExam(year);
 
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState('');
@@ -88,15 +88,15 @@ export function ExamCountdownCard() {
     if (!date) {
       return;
     }
-    setExam({ name: name.trim() || 'Exam', date });
+    setExam({ name: name.trim() || 'Exam', date }, year);
     setEditing(false);
     tick();
-  }, [date, name]);
+  }, [date, name, year]);
 
   const clear = useCallback(() => {
-    setExam(null);
+    setExam(null, year);
     setEditing(false);
-  }, []);
+  }, [year]);
 
   return (
     <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>

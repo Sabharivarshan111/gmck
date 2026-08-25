@@ -1,129 +1,125 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 /**
- * SM-2, the SuperMemo 2 scheduler.
+ * The revision schedule, matching `review_question` in Postgres exactly.
  *
- * Revision works because recall is *hard*: a question you can barely answer
- * teaches you more than one you know cold. SM-2 finds that edge by growing the
- * gap between reviews for questions you get right and collapsing it for ones
- * you do not, so the cards you keep forgetting come back tomorrow and the ones
- * you own come back in a month.
+ * **This is not textbook SM-2, and it must not be.** The web app grades on the
+ * server: `review_question(_question_id, _grade)` owns the maths, the
+ * `revision_schedule` table owns the state, and `record_question_done` enrols a
+ * question the moment it is ticked. A phone that ran its own SM-2 would give
+ * the same user two different schedules for the same question — the one thing
+ * the shared storage keys exist to prevent.
  *
- * The algorithm is small enough to state completely:
+ * So the rules below are transcribed from
+ * `supabase/migrations/20260627023056_*.sql`, and `npm run check:spaced` reads
+ * that SQL and fails if the two drift:
  *
- *   ease      how generous the growth is, starting at 2.5 and never below 1.3
- *   interval  days until the next review
- *   reps      consecutive successes
+ *   again   interval := 1                              ease -= 0.20, floor 1.3
+ *   hard    interval := max(ceil(i × 1.2), i + 1)       ease -= 0.15, floor 1.3
+ *   good    interval := max(ceil(i × ease), i + 1)      ease unchanged
+ *   easy    interval := max(ceil(i × ease × 1.3), i+2)  ease += 0.15
  *
- * A grade of 3–5 is a pass, 0–2 a fail. On a fail, reps and interval reset —
- * the question is due again immediately, which is the point. On a pass, the
- * first two intervals are fixed at 1 and 6 days and every one after that is
- * the previous interval times the ease.
+ * The `max(…, i + 1)` is what stops a card with a low ease from standing still:
+ * ceil(1 × 1.2) is 2, but ceil(3 × 1.2) is 4 while ceil(3 × 1.0) would be 3 —
+ * an interval that never grows is a card that is due forever.
  *
- * The floor of 1.3 on ease is what stops a question you keep failing from
- * becoming permanently due — without it the ease decays towards zero and the
- * card jams the queue forever.
+ * This copy is used offline and before sign-in. When there is a session the
+ * RPC is authoritative and this only mirrors what it returns.
  */
 
+export type Grade = 'again' | 'hard' | 'good' | 'easy';
+
+export const GRADES: Grade[] = ['again', 'hard', 'good', 'easy'];
+
 export interface ReviewCard {
-  /** The raw question text, which is also its identity across the app. */
+  /** The question's storage id — the same one progress and the RPC use. */
+  questionId: string;
+  /** Raw question text, for display. Not part of the server row. */
   question: string;
   subject: string;
-  /** Days between the last review and the next. */
   interval: number;
   ease: number;
-  reps: number;
-  /** Epoch ms of the next due date, midnight-aligned. */
+  /** Epoch ms, midnight local, of the next review. */
   due: number;
 }
 
 const KEY = 'orbit:spaced-repetition-v1';
 
-/** Below this the scheduler stops separating hard cards from impossible ones. */
+/** The server's floor. Below it a failed card stops growing and jams the queue. */
 const MIN_EASE = 1.3;
 const START_EASE = 2.5;
-
-/** A pass. Below it, the card resets. */
-export const PASS_GRADE = 3;
+const START_INTERVAL = 1;
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 /**
  * Midnight local time.
  *
- * Due dates are days, not moments. Storing the exact timestamp means a card
- * reviewed at 11pm is not due until 11pm tomorrow, so a student revising in
- * the morning sees an empty queue and concludes it is broken.
+ * The server stores `due_date` as a DATE, so due-ness is a day and not a
+ * moment. Keeping a timestamp here instead would make a card reviewed at 11pm
+ * undue until 11pm tomorrow — the queue looks empty all morning, which reads
+ * as broken.
  */
-function startOfDay(at: number): number {
+export function startOfDay(at: number): number {
   const date = new Date(at);
   date.setHours(0, 0, 0, 0);
   return date.getTime();
 }
 
-/** A brand new card, due today. */
-export function newCard(question: string, subject: string, now = Date.now()): ReviewCard {
+/**
+ * A newly enrolled card.
+ *
+ * Due **tomorrow**, not today: `record_question_done` inserts
+ * `due_date = app_today() + 1`. Enrolling a question as due the moment it is
+ * ticked would put it in the queue in the same session it was learned, which
+ * is neither what the server does nor what spacing means.
+ */
+export function newCard(
+  questionId: string,
+  question: string,
+  subject: string,
+  now = Date.now(),
+): ReviewCard {
   return {
+    questionId,
     question,
     subject,
-    interval: 0,
+    interval: START_INTERVAL,
     ease: START_EASE,
-    reps: 0,
-    due: startOfDay(now),
+    due: startOfDay(now) + DAY_MS,
   };
 }
 
-/**
- * Apply a grade and return the card's next state.
- *
- * Pure, so the whole schedule can be tested without storage or a clock —
- * `npm run check:spaced` walks years of reviews through this.
- */
-export function grade(card: ReviewCard, quality: number, now = Date.now()): ReviewCard {
-  const q = Math.max(0, Math.min(5, Math.round(quality)));
+/** What one grade does to a card. Pure, and identical to the SQL. */
+export function grade(card: ReviewCard, quality: Grade, now = Date.now()): ReviewCard {
+  let interval = card.interval;
+  let ease = card.ease;
 
-  if (q < PASS_GRADE) {
-    // Failed. Back to the start of the ladder and due again today — the ease
-    // is still penalised, so a card failed repeatedly grows slower next time.
-    return {
-      ...card,
-      reps: 0,
-      interval: 0,
-      ease: Math.max(MIN_EASE, card.ease - 0.2),
-      due: startOfDay(now),
-    };
+  if (quality === 'again') {
+    interval = 1;
+    ease = Math.max(ease - 0.2, MIN_EASE);
+  } else if (quality === 'hard') {
+    interval = Math.max(Math.ceil(interval * 1.2), interval + 1);
+    ease = Math.max(ease - 0.15, MIN_EASE);
+  } else if (quality === 'good') {
+    interval = Math.max(Math.ceil(interval * ease), interval + 1);
+  } else {
+    interval = Math.max(Math.ceil(interval * ease * 1.3), interval + 2);
+    ease = ease + 0.15;
   }
-
-  const reps = card.reps + 1;
-  // The first two steps are fixed. SM-2 does not trust a single success to
-  // predict anything, so the ease only starts compounding from the third.
-  const interval = reps === 1 ? 1 : reps === 2 ? 6 : Math.round(card.interval * card.ease);
-
-  // The classic SM-2 ease update: a 5 nudges it up, a 4 leaves it, a 3 pulls
-  // it down. Rewriting this "more simply" is how the curve stops working.
-  const ease = Math.max(
-    MIN_EASE,
-    card.ease + (0.1 - (5 - q) * (0.08 + (5 - q) * 0.02)),
-  );
 
   return {
     ...card,
-    reps,
     interval,
     ease,
     due: startOfDay(now) + interval * DAY_MS,
   };
 }
 
-/** Everything due today or earlier, hardest first. */
+/** Everything due today or earlier, soonest-due first, as the web app orders it. */
 export function dueCards(cards: ReviewCard[], now = Date.now()): ReviewCard[] {
   const today = startOfDay(now);
-  return cards
-    .filter(card => card.due <= today)
-    // Lowest ease first: the cards you find hardest are the ones worth the
-    // attention you have, and a queue you abandon halfway should have spent it
-    // on those rather than on the ones you already know.
-    .sort((a, b) => a.ease - b.ease || a.due - b.due);
+  return cards.filter(card => card.due <= today).sort((a, b) => a.due - b.due);
 }
 
 export async function loadCards(): Promise<ReviewCard[]> {
@@ -139,7 +135,7 @@ export async function loadCards(): Promise<ReviewCard[]> {
     return parsed.filter(
       (card): card is ReviewCard =>
         card &&
-        typeof card.question === 'string' &&
+        typeof card.questionId === 'string' &&
         typeof card.due === 'number' &&
         typeof card.ease === 'number',
     );
@@ -152,7 +148,7 @@ export async function saveCards(cards: ReviewCard[]): Promise<void> {
   try {
     await AsyncStorage.setItem(KEY, JSON.stringify(cards));
   } catch {
-    // A schedule that fails to save is a schedule that starts again tomorrow,
-    // which is worth strictly more than crashing the screen it lives on.
+    // A schedule that fails to save starts again tomorrow, which is worth
+    // strictly more than crashing the screen it lives on.
   }
 }

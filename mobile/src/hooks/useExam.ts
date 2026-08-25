@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getExam, hydrateExam, isHydrated, subscribeExam, type Exam } from '@/lib/exam';
+import { getExam, hydrateExam, isHydrated, pullExam, subscribeExam, type Exam } from '@/lib/exam';
 
 /**
  * The stored exam, and nothing else.
@@ -9,7 +9,7 @@ import { getExam, hydrateExam, isHydrated, subscribeExam, type Exam } from '@/li
  * number. Callers derive it with `daysUntil()` at render, which is correct
  * every time the screen draws.
  */
-export function useExam(): Exam | null {
+export function useExam(year?: string): Exam | null {
   const [exam, setLocal] = useState<Exam | null>(getExam);
 
   useEffect(() => {
@@ -18,6 +18,14 @@ export function useExam(): Exam | null {
     }
     return subscribeExam(() => setLocal(getExam()));
   }, []);
+
+  // The cloud row after the local one, so the countdown paints immediately and
+  // is corrected a moment later rather than blinking in from empty.
+  useEffect(() => {
+    if (year) {
+      pullExam(year).catch(() => {});
+    }
+  }, [year]);
 
   return exam;
 }

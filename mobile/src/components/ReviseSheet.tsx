@@ -9,7 +9,7 @@ import { typeScale } from '@/theme/typography';
 import { DURATION, EASE, useReducedMotion } from '@/theme/motion';
 import { getCleanQuestionText, noteQuestionText } from '@/lib/questionText';
 import { fetchSingleQuestionNote, type NotesContent } from '@/lib/handwrittenNotes';
-import { grade, type ReviewCard } from '@/lib/spacedRepetition';
+import type { Grade, ReviewCard } from '@/lib/spacedRepetition';
 import { complete, tick } from '@/lib/haptics';
 
 /**
@@ -25,13 +25,18 @@ import { complete, tick } from '@/lib/haptics';
  * turns recall into recognition and the schedule stops measuring anything.
  */
 
-/** What the buttons mean, in SM-2's 0–5. */
-const GRADES = [
-  { quality: 1, label: 'Again', hint: 'No idea — show it again today' },
-  { quality: 3, label: 'Hard', hint: 'Got there, slowly' },
-  { quality: 4, label: 'Good', hint: 'Recalled it' },
-  { quality: 5, label: 'Easy', hint: 'Instant' },
-] as const;
+/**
+ * The four the server accepts.
+ *
+ * `review_question` rejects anything else outright — these strings are the
+ * contract, not a local vocabulary that gets mapped on the way out.
+ */
+const GRADE_BUTTONS: { quality: Grade; label: string; hint: string }[] = [
+  { quality: 'again', label: 'Again', hint: 'No idea — back to one day' },
+  { quality: 'hard', label: 'Hard', hint: 'Got there, slowly' },
+  { quality: 'good', label: 'Good', hint: 'Recalled it' },
+  { quality: 'easy', label: 'Easy', hint: 'Instant' },
+];
 
 export function ReviseSheet({
   visible,
@@ -45,7 +50,7 @@ export function ReviseSheet({
   cards: ReviewCard[];
   yearLabel: string;
   onClose: () => void;
-  onGraded: (card: ReviewCard, next: ReviewCard) => void;
+  onGraded: (card: ReviewCard, quality: Grade) => void;
 }) {
   const { colors } = useTheme();
   const reduceMotion = useReducedMotion();
@@ -124,11 +129,11 @@ export function ReviseSheet({
   }, [card, note, yearLabel]);
 
   const answer = useCallback(
-    (quality: number) => {
+    (quality: Grade) => {
       if (!card) {
         return;
       }
-      onGraded(card, grade(card, quality));
+      onGraded(card, quality);
       runId.current += 1;
       setNote(null);
       setError(null);
@@ -203,7 +208,7 @@ export function ReviseSheet({
 
           {revealed ? (
             <View style={styles.grades}>
-              {GRADES.map(option => (
+              {GRADE_BUTTONS.map(option => (
                 <Touchable
                   key={option.label}
                   label={option.label}
@@ -213,11 +218,11 @@ export function ReviseSheet({
                     styles.grade,
                     {
                       backgroundColor:
-                        option.quality < 3
+                        option.quality === 'again'
                           ? withAlpha(colors.danger, 0.14)
                           : withAlpha(colors.success, 0.12),
                       borderColor:
-                        option.quality < 3
+                        option.quality === 'again'
                           ? withAlpha(colors.danger, 0.5)
                           : withAlpha(colors.success, 0.4),
                     },
@@ -226,7 +231,7 @@ export function ReviseSheet({
                     style={[
                       typeScale.footnote,
                       styles.gradeText,
-                      { color: option.quality < 3 ? colors.danger : colors.success },
+                      { color: option.quality === 'again' ? colors.danger : colors.success },
                     ]}>
                     {option.label}
                   </Text>

@@ -48,7 +48,7 @@ import { ExamCountdownCard } from '@/components/ExamCountdownCard';
 import { SubjectBreakdownSheet } from '@/components/SubjectBreakdownSheet';
 import { ReviseSheet } from '@/components/ReviseSheet';
 import { useSpacedRepetition } from '@/hooks/useSpacedRepetition';
-import { isQuestionDone } from '@/lib/progress';
+import { getQuestionId, isQuestionDone } from '@/lib/progress';
 import { Brain } from 'lucide-react-native';
 import { ProgressCalendarTab } from '@/components/ProgressCalendarTab';
 import { ProgressNotesTab } from '@/components/ProgressNotesTab';
@@ -195,7 +195,13 @@ export default function ProgressScreen() {
       subjects.flatMap(subject =>
         collectAllQuestions(subject.node)
           .filter(isQuestionDone)
-          .map(question => ({ question, subject: subject.name })),
+          // The id, not just the text: it is what the schedule is keyed on,
+          // in the table and in the RPC, and it is the same id progress uses.
+          .map(question => ({
+            questionId: getQuestionId(question),
+            question,
+            subject: subject.name,
+          })),
       ),
     [subjects],
   );
@@ -490,7 +496,7 @@ export default function ProgressScreen() {
 
           {/* Exam countdown, then revision: the deadline gives the schedule
               its urgency, so it reads better above it than below. */}
-          <ExamCountdownCard />
+          <ExamCountdownCard year={shortYear} />
 
           <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
             <View style={styles.reviseRow}>
