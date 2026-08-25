@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Animated, StyleSheet, View } from 'react-native';
 import Svg, { Circle, Defs, LinearGradient, Stop } from 'react-native-svg';
 import { useTheme } from '@/theme';
@@ -152,16 +152,45 @@ export function ProgressRing({
   );
 }
 
-/** Thin white-to-pink bar shown under topic names in the browse lists. */
+/**
+ * Thin white-to-pink bar shown under topic names in the browse lists.
+ *
+ * The gradient is drawn once at the **track's** full pixel width and then
+ * clipped, rather than being drawn inside a box whose width is the percentage.
+ *
+ * That is not a refinement. `GradientFill` is an `<Svg width="100%">`, and on
+ * Android react-native-svg paints its canvas at the size it measured and does
+ * not repaint when its parent is merely resized. So a bar that went from half
+ * to full widened its wrapper and kept painting the old half: tick the last
+ * question in a topic and the bar sits at 50% for ever. It looked correct in
+ * the preview throughout, because a DOM `<svg width="100%">` reflows on its
+ * own — the one difference that mattered was the one the harness could not
+ * show.
+ *
+ * Clipping instead means the gradient's own box never changes size, so there
+ * is nothing for it to fail to repaint.
+ */
 export function ThinBar({ percent }: { percent: number }) {
   const { colors } = useTheme();
   const clamped = Math.max(0, Math.min(100, percent));
+  // Measured, because a child cannot express "the full width of my clipping
+  // parent" as a percentage — a percentage there resolves against the clip.
+  const [track, setTrack] = useState(0);
 
   return (
-    <View style={[styles.barTrack, { backgroundColor: colors.cardElevated }]}>
-      {clamped > 0 ? (
+    <View
+      onLayout={event => {
+        const width = Math.round(event.nativeEvent.layout.width);
+        // Guarded: onLayout fires on every re-layout, and setting state
+        // unconditionally from it is a render loop.
+        setTrack(previous => (previous === width ? previous : width));
+      }}
+      style={[styles.barTrack, { backgroundColor: colors.cardElevated }]}>
+      {clamped > 0 && track > 0 ? (
         <View style={[styles.barFillWrap, { width: `${clamped}%` }]}>
-          <GradientFill from={colors.text} to={colors.fuchsia} borderRadius={2} />
+          <View style={[styles.barGradient, { width: track }]}>
+            <GradientFill from={colors.text} to={colors.fuchsia} borderRadius={2} />
+          </View>
         </View>
       ) : null}
     </View>
@@ -182,6 +211,12 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   barFillWrap: {
+    height: 3,
+    // The clip. Its width is the value; what it reveals is a fixed-size
+    // gradient, so the gradient itself is never resized.
+    overflow: 'hidden',
+  },
+  barGradient: {
     height: 3,
   },
 });

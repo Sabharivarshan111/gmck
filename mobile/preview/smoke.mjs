@@ -715,6 +715,103 @@ await step('a question row toggles done and back', async () => {
   }
 });
 
+/**
+ * Ticking questions drives the topic's bar to the end, and the gradient inside
+ * it is sized by the track rather than by the value.
+ *
+ * The second half is the regression guard, and it is the half this harness can
+ * actually see. `GradientFill` is an `<Svg width="100%">`; on Android
+ * react-native-svg paints the canvas at the size it measured and does not
+ * repaint when its parent is merely resized, so a fill box whose *width* is the
+ * percentage keeps painting the old percentage — tick the last question in a
+ * topic and the bar stays where it was. A DOM svg reflows, so the bar looked
+ * perfect here the whole time. Asserting the shape is what catches it, because
+ * asserting the appearance never will.
+ */
+await step('the topic bar fills to the end, and its gradient is track-sized', async () => {
+  await open('screen=browse&year=second-year&node=pathology&title=Pathology');
+  await page.getByText('Explore Questions').first().click({ timeout: 5000 });
+  await page.waitForTimeout(800);
+  await page.locator('[aria-label^="The Cell as a Unit"]').first().click({ timeout: 5000 });
+  await page.waitForTimeout(900);
+  await declineAdPromptIfShown();
+  if (await page.getByText('No essays here').first().isVisible().catch(() => false)) {
+    await page.getByText('Short Notes').first().click({ timeout: 4000 });
+    await page.waitForTimeout(700);
+  }
+
+  // The topmost screen's counter: React Navigation leaves the previous screen
+  // mounted, and its counter matches the same pattern.
+  const readBar = () =>
+    page.evaluate(() => {
+      const labels = Array.from(document.querySelectorAll('*')).filter(
+        el => el.childElementCount === 0 && /^\d+ of \d+ done$/.test(el.textContent?.trim() ?? ''),
+      );
+      const node = labels[labels.length - 1];
+      if (!node) {
+        return null;
+      }
+      const stats = node.parentElement?.parentElement;
+      const fill = stats?.querySelector('div[style*="%"]') ?? null;
+      const track = fill?.parentElement ?? null;
+      const gradientBox = fill?.firstElementChild ?? null;
+      return {
+        label: node.textContent.trim(),
+        fillWidth: fill ? fill.style.width : null,
+        trackPx: track ? Math.round(track.getBoundingClientRect().width) : null,
+        gradientPx: gradientBox ? Math.round(gradientBox.getBoundingClientRect().width) : null,
+      };
+    });
+
+  const boxes = page.locator('[role="checkbox"]');
+  const count = await boxes.count();
+  if (count < 2) {
+    throw new Error(`this topic has ${count} question(s) — the step needs at least two`);
+  }
+
+  // All but one, so the bar is genuinely partial. That is the only state where
+  // the two implementations differ: at 100% a value-sized gradient and a
+  // track-sized one are the same width, and the check would pass on the bug.
+  for (let index = 0; index < count - 1; index += 1) {
+    // eslint-disable-next-line no-await-in-loop
+    await boxes.nth(index).click();
+    // eslint-disable-next-line no-await-in-loop
+    await page.waitForTimeout(450);
+  }
+
+  const partial = await readBar();
+  if (!partial) {
+    throw new Error('the topic counter disappeared while ticking questions');
+  }
+  if (partial.fillWidth === '100%') {
+    throw new Error(`the bar is full at ${partial.label} — one question is still unticked`);
+  }
+  /*
+   * The gradient is a fixed box the width of the track, revealed through the
+   * fill. If it measures the same as the fill instead, it is being sized by the
+   * value, which is the Android repaint bug: react-native-svg paints the canvas
+   * at the size it measured and will not repaint it when the parent is resized.
+   */
+  if (partial.trackPx && partial.gradientPx && Math.abs(partial.trackPx - partial.gradientPx) > 2) {
+    throw new Error(
+      `at ${partial.label} the bar's gradient is ${partial.gradientPx}px inside a ` +
+        `${partial.trackPx}px track — it is sized by the value, so Android paints a stale width`,
+    );
+  }
+
+  await boxes.nth(count - 1).click();
+  await page.waitForTimeout(450);
+  const done = await readBar();
+  if (!done) {
+    throw new Error('the topic counter disappeared after ticking every question');
+  }
+  if (done.fillWidth !== '100%') {
+    throw new Error(
+      `every question is ticked and the bar reads ${done.label} at ${done.fillWidth} — it should be full`,
+    );
+  }
+});
+
 await step('double tap a question opens Ask AI with the question text', async () => {
   // Same three levels as the step above. Re-navigating rather than reusing the
   // previous position keeps this step independent — a failure there should not
@@ -1039,6 +1136,63 @@ await step('turning the reminder on reveals what it may send', async () => {
     throw new Error('"Exam countdown" did not turn off — the per-kind switches are dummies');
   }
   await exam.click();
+});
+
+/**
+ * The subject heading is filled with a gradient, and the gradient moves.
+ *
+ * Worth a step of its own because the failure it guards is silent in both
+ * directions. The heading shipped with an `Animated.loop` bound to nothing: it
+ * drove the JS thread every frame, forever, and moved no pixels — and the
+ * shimmer everyone could see in this harness came from a CSS class in
+ * index.html that only ever existed on web. The preview agreed with the design
+ * while the phone showed a still rainbow.
+ *
+ * So: assert the fill is a gradient reference (the text is not a flat colour),
+ * and that the gradient's own coordinates are somewhere else a moment later.
+ */
+await step('the subject heading is filled with a gradient that moves', async () => {
+  await open('screen=browse&year=second-year&node=pathology&title=Pathology');
+  await page.waitForTimeout(1200);
+
+  const heading = await page.evaluate(() => {
+    const text = document.querySelector('svg text');
+    if (!text) {
+      return null;
+    }
+    const fill = text.getAttribute('fill') ?? '';
+    const id = fill.match(/url\(#(.+)\)/)?.[1];
+    const gradient = id ? document.getElementById(id) : null;
+    return {
+      content: text.textContent,
+      fill,
+      x1: gradient ? gradient.getAttribute('x1') : null,
+    };
+  });
+
+  if (!heading) {
+    throw new Error('the subject heading rendered no SVG text at all');
+  }
+  if (!heading.content) {
+    throw new Error('the subject heading is an empty glyph run');
+  }
+  if (heading.x1 === null) {
+    throw new Error(
+      `the heading's fill is ${heading.fill} — it should reference a gradient, not a flat colour`,
+    );
+  }
+
+  await page.waitForTimeout(1200);
+  const moved = await page.evaluate(() => {
+    const text = document.querySelector('svg text');
+    const id = (text?.getAttribute('fill') ?? '').match(/url\(#(.+)\)/)?.[1];
+    return id ? document.getElementById(id)?.getAttribute('x1') : null;
+  });
+  if (moved === heading.x1) {
+    throw new Error(
+      `the gradient sat at ${heading.x1} for over a second — the sweep is animating nothing`,
+    );
+  }
 });
 
 await step('the pomodoro sheet offers working alert sounds', async () => {

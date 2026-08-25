@@ -21,35 +21,6 @@
       * {
         box-sizing: border-box;
       }
-      @keyframes shimmer {
-        to {
-          background-position: 300% 0;
-        }
-      }
-      .gradient-shimmer-text {
-        background: linear-gradient(
-          100deg,
-          #ff2e97,
-          #ff8a00,
-          #ffe600,
-          #00ffd5,
-          #5d6bff,
-          #ff2e97
-        );
-        background-size: 300% 100%;
-        -webkit-background-clip: text;
-        background-clip: text;
-        color: transparent !important;
-        -webkit-text-fill-color: transparent !important;
-        animation: shimmer 6s linear infinite;
-        filter: drop-shadow(0 0 18px rgba(255, 80, 200, 0.25));
-        will-change: background-position;
-      }
-      @media (prefers-reduced-motion: reduce) {
-        .gradient-shimmer-text {
-          animation: none;
-        }
-      }
     </style>
   </head>
   <body>
