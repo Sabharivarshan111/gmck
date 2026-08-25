@@ -24,6 +24,10 @@ export default defineConfig({
         find: '@/native/NativeOrbitSound',
         replacement: path.resolve(__dirname, 'shims', 'orbit-sound.ts'),
       },
+      {
+        find: '@/native/NativeOrbitSpeech',
+        replacement: path.resolve(__dirname, 'shims', 'orbit-speech.ts'),
+      },
       { find: '@', replacement: path.resolve(root, 'src') },
       // lucide-react-native needs react-native-svg; the DOM build is equivalent
       // and exports the same icon names.

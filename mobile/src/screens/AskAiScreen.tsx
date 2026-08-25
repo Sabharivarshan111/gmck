@@ -12,7 +12,15 @@ import { Text } from '@/components/Text';
 import { Touchable } from '@/components/Touchable';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRoute, type RouteProp } from '@react-navigation/native';
-import { Maximize2, RefreshCw, Send, Sparkles } from 'lucide-react-native';
+import { Maximize2, Mic, RefreshCw, Send, Sparkles, Square } from 'lucide-react-native';
+import {
+  cancelListening,
+  ensureMicPermission,
+  listen,
+  speechAvailable,
+  speechErrorMessage,
+  stopListening,
+} from '@/lib/speech';
 import { typeScale } from '@/theme/typography';
 import { DURATION, EASE, useReducedMotion } from '@/theme/motion';
 import { useTheme, withAlpha } from '@/theme';
@@ -180,6 +188,46 @@ export default function AskAiScreen() {
     }
   }, [messages.length, loading]);
 
+  /**
+   * Dictation state.
+   *
+   * `micReady` is resolved once, not on every render: it asks the native side
+   * whether this phone has a recogniser, and a phone without one should never
+   * see the button rather than see it fail.
+   */
+  const [micReady] = useState(() => speechAvailable());
+  const [listening, setListening] = useState(false);
+  const [micError, setMicError] = useState<string | null>(null);
+
+  const toggleMic = useCallback(async () => {
+    if (listening) {
+      // Stop, keep what was heard. The pending listen() resolves with it.
+      stopListening();
+      return;
+    }
+    setMicError(null);
+    if (!(await ensureMicPermission())) {
+      setMicError('Microphone access is off for Orbit.');
+      return;
+    }
+    setListening(true);
+    try {
+      const heard = (await listen()).trim();
+      if (heard) {
+        // Appended, not replacing: dictating after typing half a question is
+        // the normal case, and replacing would silently delete it.
+        setInput(prev => (prev.trim() ? `${prev.trim()} ${heard}` : heard));
+      }
+    } catch (e) {
+      setMicError(speechErrorMessage((e as Error).message));
+    } finally {
+      setListening(false);
+    }
+  }, [listening]);
+
+  // Leaving the screen mid-sentence must not leave the recogniser running.
+  useEffect(() => () => cancelListening(), []);
+
   const canSend = input.trim().length > 0 && !loading;
 
   // 160ms: the send button's state changes as often as the first character of
@@ -339,6 +387,30 @@ export default function AskAiScreen() {
               * Two stacked layers, one fading over the other, gets there with
               * transform-and-opacity work only.
               */}
+            {/* Left of Send, because it is an input to the same field rather
+                than a second way to submit. Hidden entirely when the phone has
+                no recogniser — a mic that cannot listen is worse than no mic. */}
+            {micReady ? (
+              <Touchable
+                onPress={toggleMic}
+                label={listening ? 'Stop dictating' : 'Dictate a question'}
+                hint={listening ? undefined : 'Speak instead of typing'}
+                scaleTo={0.9}
+                style={[
+                  styles.mic,
+                  {
+                    backgroundColor: listening ? withAlpha(colors.danger, 0.16) : 'transparent',
+                    borderColor: listening ? colors.danger : colors.border,
+                  },
+                ]}>
+                {listening ? (
+                  <Square size={14} color={colors.danger} fill={colors.danger} />
+                ) : (
+                  <Mic size={18} color={colors.textMuted} />
+                )}
+              </Touchable>
+            ) : null}
+
             <View style={styles.sendWrap}>
               <Animated.View
                 pointerEvents="none"
@@ -367,6 +439,10 @@ export default function AskAiScreen() {
               </Touchable>
             </View>
           </View>
+          {micError ? (
+            <Text style={[styles.micError, { color: colors.danger }]}>{micError}</Text>
+          ) : null}
+
           <View style={styles.disclaimer}>
             <Sparkles size={12} color={colors.textMuted} />
             <Text style={[styles.disclaimerText, { color: colors.textMuted }]}>
@@ -473,6 +549,19 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     letterSpacing: 0.3,
     textTransform: 'uppercase',
+  },
+  mic: {
+    width: 38,
+    height: 38,
+    borderRadius: 12,
+    borderWidth: StyleSheet.hairlineWidth,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  micError: {
+    fontSize: 12,
+    paddingHorizontal: 4,
+    paddingTop: 6,
   },
   composerWrap: {
     borderTopWidth: StyleSheet.hairlineWidth,

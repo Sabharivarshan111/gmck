@@ -1,0 +1,191 @@
+package com.aistudio.mbbsqbank.aycxvd
+
+import android.content.Intent
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.speech.RecognitionListener
+import android.speech.RecognizerIntent
+import android.speech.SpeechRecognizer
+import com.facebook.react.bridge.Promise
+import com.facebook.react.bridge.ReactApplicationContext
+import com.facebook.react.module.annotations.ReactModule
+
+/**
+ * Dictation for the Ask AI composer, on Android's own SpeechRecognizer.
+ *
+ * See src/native/NativeOrbitSpeech.ts for why the platform recogniser rather
+ * than a bundled model. Two things about this API are easy to get wrong and
+ * are the reason this file exists rather than a thin wrapper:
+ *
+ * 1. **SpeechRecognizer is main-thread only.** Every call — create, start,
+ *    stop, destroy — must happen on the main looper, and it throws if it does
+ *    not. React Native calls TurboModule methods on the JS thread, so every
+ *    entry point here hops.
+ *
+ * 2. **It is single-use per session and leaks if it is not destroyed.** One
+ *    recogniser is created per start() and destroyed on every terminal path,
+ *    including the ones that look like they cannot happen.
+ */
+@ReactModule(name = SpeechModule.NAME)
+class SpeechModule(reactContext: ReactApplicationContext) :
+  NativeOrbitSpeechSpec(reactContext) {
+
+  private val main = Handler(Looper.getMainLooper())
+  private var recognizer: SpeechRecognizer? = null
+  private var pending: Promise? = null
+
+  /**
+   * What the recogniser heard so far.
+   *
+   * Partial results are kept rather than shown, so stop() has something to
+   * resolve with. Without it, ending early on a phone that has not yet
+   * delivered a final result resolves empty — which reads as "it did not hear
+   * me" when in fact it did.
+   */
+  private var partial: String = ""
+
+  override fun getName(): String = NAME
+
+  override fun isAvailable(): Boolean =
+    try {
+      SpeechRecognizer.isRecognitionAvailable(reactApplicationContext)
+    } catch (_: Throwable) {
+      false
+    }
+
+  override fun start(locale: String, promise: Promise) {
+    main.post {
+      // A second start() while one is running is a bug in the caller, but it
+      // must not strand the first promise unresolved.
+      finish(null, "busy")
+      if (!isAvailable()) {
+        promise.reject("unavailable", "This device has no speech recogniser.")
+        return@post
+      }
+      pending = promise
+      partial = ""
+      try {
+        val created = SpeechRecognizer.createSpeechRecognizer(reactApplicationContext)
+        recognizer = created
+        created.setRecognitionListener(listener)
+        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+          putExtra(
+            RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+            RecognizerIntent.LANGUAGE_MODEL_FREE_FORM,
+          )
+          putExtra(RecognizerIntent.EXTRA_LANGUAGE, locale)
+          putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
+          putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1)
+        }
+        created.startListening(intent)
+      } catch (error: Throwable) {
+        finish(null, "unavailable")
+      }
+    }
+  }
+
+  override fun stop() {
+    main.post {
+      try {
+        recognizer?.stopListening()
+      } catch (_: Throwable) {
+        // Already stopped, or never started. onResults still settles it.
+      }
+    }
+  }
+
+  override fun cancel() {
+    main.post {
+      try {
+        recognizer?.cancel()
+      } catch (_: Throwable) {
+        // Nothing to cancel.
+      }
+      finish(null, "cancelled")
+    }
+  }
+
+  /**
+   * Settle the pending promise and tear the recogniser down.
+   *
+   * Every exit runs through here, so there is one place that guarantees the
+   * promise is settled exactly once and the recogniser is destroyed. Passing a
+   * `text` resolves; passing an `error` rejects; the first caller wins.
+   */
+  private fun finish(text: String?, error: String?) {
+    val promise = pending
+    pending = null
+    try {
+      recognizer?.destroy()
+    } catch (_: Throwable) {
+      // Destroying a dead recogniser is not a failure worth reporting.
+    }
+    recognizer = null
+    if (promise == null) {
+      return
+    }
+    if (text != null) {
+      promise.resolve(text)
+    } else {
+      promise.reject(error ?: "unknown", error ?: "Speech recognition failed.")
+    }
+  }
+
+  private val listener = object : RecognitionListener {
+    override fun onReadyForSpeech(params: Bundle?) {}
+    override fun onBeginningOfSpeech() {}
+    override fun onRmsChanged(rmsdB: Float) {}
+    override fun onBufferReceived(buffer: ByteArray?) {}
+    override fun onEndOfSpeech() {}
+
+    override fun onPartialResults(partialResults: Bundle?) {
+      val text = firstResult(partialResults)
+      if (!text.isNullOrBlank()) {
+        partial = text
+      }
+    }
+
+    override fun onResults(results: Bundle?) {
+      val text = firstResult(results) ?: partial
+      finish(text, null)
+    }
+
+    override fun onError(error: Int) {
+      // A recogniser that heard something before erroring still heard it. The
+      // usual case is ERROR_NO_MATCH arriving after a good partial, and
+      // throwing that away loses a sentence the user just spoke.
+      if (partial.isNotBlank()) {
+        finish(partial, null)
+        return
+      }
+      finish(
+        null,
+        when (error) {
+          SpeechRecognizer.ERROR_NO_MATCH -> "no-match"
+          SpeechRecognizer.ERROR_SPEECH_TIMEOUT -> "no-speech"
+          SpeechRecognizer.ERROR_RECOGNIZER_BUSY -> "busy"
+          SpeechRecognizer.ERROR_NETWORK,
+          SpeechRecognizer.ERROR_NETWORK_TIMEOUT -> "network"
+          SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS -> "permission"
+          SpeechRecognizer.ERROR_CLIENT -> "cancelled"
+          else -> "unavailable"
+        },
+      )
+    }
+
+    override fun onEvent(eventType: Int, params: Bundle?) {}
+  }
+
+  private fun firstResult(bundle: Bundle?): String? =
+    bundle?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)?.firstOrNull()
+
+  override fun invalidate() {
+    super.invalidate()
+    main.post { finish(null, "cancelled") }
+  }
+
+  companion object {
+    const val NAME = "OrbitSpeech"
+  }
+}

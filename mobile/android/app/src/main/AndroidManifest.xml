@@ -7,6 +7,14 @@
          permission: no runtime prompt, it just has to be declared. -->
     <uses-permission android:name="android.permission.VIBRATE" />
 
+    <!--
+      Dictation in the Ask AI composer. A runtime permission, unlike the photo
+      picker, which needs none because Android's picker runs out of process —
+      there is no equivalent for the microphone, so this one is asked for, once,
+      the first time the mic is tapped and never at launch.
+    -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
     <application
       android:name=".MainApplication"
       android:label="@string/app_name"
@@ -37,4 +45,15 @@
         </intent-filter>
       </activity>
     </application>
+    <!--
+      Android 11 hid other packages from each other. SpeechRecognizer is a
+      separate app, so without declaring the intent this app cannot see it and
+      isRecognitionAvailable() returns false on every device — the mic would
+      simply never appear, with nothing in a log to say why.
+    -->
+    <queries>
+        <intent>
+            <action android:name="android.speech.RecognitionService" />
+        </intent>
+    </queries>
 </manifest>
