@@ -19,6 +19,7 @@ import { typeScale } from '@/theme/typography';
 import { useTheme, withAlpha } from '@/theme';
 import { SPRING, springConfig, useReducedMotion } from '@/theme/motion';
 import { formatClock, PomodoroMode, usePomodoro } from '@/hooks/usePomodoro';
+import { useOnlinePresence } from '@/hooks/useOnlinePresence';
 import { formatFocusTime } from '@/lib/focusStats';
 
 const MODES: { key: PomodoroMode; label: string; emoji: string }[] = [
@@ -31,6 +32,7 @@ export default function TimerScreen() {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const timer = usePomodoro();
+  const { onlineCount } = useOnlinePresence(timer.isRunning);
   /**
    * The exam, if one is set. Read here rather than passed down because the
    * Timer and My Progress are different tabs — there is no common parent to
@@ -290,10 +292,16 @@ export default function TimerScreen() {
         </View>
         <View style={styles.presenceBody}>
           <Text style={[styles.presenceLabel, { color: colors.textMuted }]}>
-            Studying with you right now
+            {onlineCount != null && onlineCount > 1
+              ? `${onlineCount} medical students studying right now`
+              : 'Studying with you right now'}
           </Text>
           <Text style={[styles.presenceValue, { color: colors.text }]}>
-            {timer.isRunning ? 'You are in a session' : 'Start a session to join'}
+            {timer.isRunning
+              ? onlineCount != null && onlineCount > 1
+                ? `You + ${onlineCount - 1} other${onlineCount - 1 === 1 ? '' : 's'} in deep focus`
+                : 'You are in deep focus'
+              : 'Start a session to join'}
           </Text>
         </View>
         <View style={[styles.presenceDot, { backgroundColor: colors.green }]} />
