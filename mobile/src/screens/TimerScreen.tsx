@@ -9,9 +9,11 @@ import {
 import { Text } from '@/components/Text';
 import { Touchable } from '@/components/Touchable';
 import { PomodoroSettingsSheet } from '@/components/PomodoroSettingsSheet';
+import { useExam } from '@/hooks/useExam';
+import { daysUntil } from '@/lib/exam';
 import { ProgressRing } from '@/components/ProgressRing';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Coffee, Pencil, Play, Pause, RotateCcw, SlidersHorizontal, Sparkles, Timer as TimerIcon, Users } from 'lucide-react-native';
+import { CalendarClock, Coffee, Pencil, Play, Pause, RotateCcw, SlidersHorizontal, Sparkles, Timer as TimerIcon, Users } from 'lucide-react-native';
 import { typeScale } from '@/theme/typography';
 import { useTheme, withAlpha } from '@/theme';
 import { SPRING, springConfig, useReducedMotion } from '@/theme/motion';
@@ -28,6 +30,15 @@ export default function TimerScreen() {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const timer = usePomodoro();
+  /**
+   * The exam, if one is set. Read here rather than passed down because the
+   * Timer and My Progress are different tabs — there is no common parent to
+   * hold it, which is why the store has its own listener set.
+   */
+  const exam = useExam();
+  // Derived at render: the count changes at midnight, and a stored one would
+  // be a day stale on a screen left open overnight.
+  const examDays = exam ? daysUntil(exam) : null;
   const [settingsOpen, setSettingsOpen] = useState(false);
 
   const activeMode = MODES.find(m => m.key === timer.mode) ?? MODES[0];
@@ -226,6 +237,33 @@ export default function TimerScreen() {
       </View>
 
       {/* Stats */}
+      {/* Above the stats, below the controls: the reason you are running a
+          timer at all belongs next to the timer, and it is the one number here
+          that is not about the session. */}
+      {exam && examDays !== null && examDays >= 0 ? (
+        <View
+          style={[
+            styles.examStrip,
+            {
+              backgroundColor: withAlpha(
+                examDays <= 7 ? colors.danger : colors.warning,
+                0.12,
+              ),
+              borderColor: withAlpha(examDays <= 7 ? colors.danger : colors.warning, 0.4),
+            },
+          ]}>
+          <CalendarClock
+            size={15}
+            color={examDays <= 7 ? colors.danger : colors.warning}
+          />
+          <Text style={[styles.examText, { color: colors.text }]} numberOfLines={1}>
+            {examDays === 0
+              ? `${exam.name} is today`
+              : `${examDays} ${examDays === 1 ? 'day' : 'days'} to ${exam.name}`}
+          </Text>
+        </View>
+      ) : null}
+
       <View style={styles.statsRow}>
         <View style={[styles.statCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
           <View style={styles.statHeader}>
@@ -436,6 +474,21 @@ const styles = StyleSheet.create({
     height: 12,
     width: 12,
     borderRadius: 6,
+  },
+  examStrip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    borderRadius: 999,
+    borderWidth: StyleSheet.hairlineWidth,
+    paddingHorizontal: 16,
+    paddingVertical: 9,
+    marginBottom: 14,
+  },
+  examText: {
+    fontSize: 13,
+    fontWeight: '600',
   },
   statsRow: {
     flexDirection: 'row',

@@ -83,6 +83,29 @@ const browser = await chromium.launch({
 // step below dispatches real touch events and they need a context that accepts
 // them.
 const context = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true });
+/**
+ * Start with a profile, the way a real second launch does.
+ *
+ * Without one the app shows its onboarding sheet, and that sheet is a
+ * full-screen modal — so every control on every screen behind it is present in
+ * the DOM, reported "visible" by Playwright, and completely unclickable. The
+ * suite has been running against that: `progress screen renders` passed by
+ * reading text through a modal nobody could touch, and the first flow that
+ * actually tried to *tap* something on My Progress failed with a timeout that
+ * looked like a missing button.
+ *
+ * Seeded before any script runs, in the web app's own key, because the two
+ * apps deliberately share it.
+ */
+await context.addInitScript(() => {
+  try {
+    window.localStorage.setItem(
+      'orbit-profile-v1',
+      JSON.stringify({ display_name: 'Smoke', year: 'second' }),
+    );
+  } catch {}
+});
+
 const page = await context.newPage();
 /** For dispatching touch events the mouse API cannot produce. */
 const cdp = await context.newCDPSession(page);
@@ -200,6 +223,21 @@ const tap = async label => {
   }
   await page.waitForTimeout(280);
 };
+/**
+ * Bring a control into the viewport.
+ *
+ * `page.mouse.wheel` does nothing to a react-native-web ScrollView — it is a
+ * div with its own overflow, and the wheel goes to the document instead. And
+ * Playwright counts an off-screen node "visible", so a click on one fails with
+ * a timeout that reads as a missing control rather than a distant one. This is
+ * the only thing that actually moves it.
+ */
+const scrollTo = async locator => {
+  await locator.waitFor({ timeout: 6000 });
+  await locator.evaluate(el => el.scrollIntoView({ block: 'center' }));
+  await page.waitForTimeout(400);
+};
+
 const seesText = async (text, timeout = 4000) => {
   await page.getByText(text, { exact: false }).first().waitFor({ state: 'visible', timeout });
 };
@@ -1139,6 +1177,77 @@ await step('ask ai screen renders and accepts input', async () => {
   const box = page.locator('textarea, input').first();
   await box.fill('What is myocardial infarction?');
   await byLabel('Send').waitFor({ timeout: 4000 });
+});
+
+/**
+ * A heatmap tile has to answer the question it raises.
+ *
+ * "Forensic Medicine 0%" says where you are behind and nothing about what to
+ * do next. Tapping it lists every topic with its own count, so the answer is
+ * "Postmortem Changes, 15 questions" rather than "study more".
+ */
+await step('a heatmap tile opens its subject breakdown', async () => {
+  await open('screen=progress');
+  // Opening My Progress spends the day's ad, and the dialog's scrim covers the
+  // screen until it is answered — a control under it is "visible" and
+  // unclickable, which reads as a missing control. It appears *after* open()'s
+  // settle wait, so this has to wait for it rather than ask once and move on.
+  await page.waitForTimeout(1200);
+  await declineAdPromptIfShown();
+  await declineAdPromptIfShown();
+  await seesText('Weak-topic heatmap', 8000);
+  // The heatmap is well down a long screen. Playwright counts an off-screen
+  // node visible, so a click without scrolling times out on something that is
+  // simply further down.
+  const tile = page.locator('[aria-label*="percent done"]').first();
+  await scrollTo(tile);
+  await tile.click({ timeout: 6000 });
+  await page.waitForTimeout(900);
+  await seesText('SUBTOPICS', 6000);
+  await seesText('Overall', 4000);
+  // Real counts, not placeholders.
+  const body = await page.locator('body').innerText();
+  if (!/\b\d+ \/ \d+\b/.test(body)) {
+    throw new Error('the breakdown shows no question counts');
+  }
+});
+
+/** The exam countdown takes a name and a date, and both persist. */
+await step('the exam countdown accepts a name and a date', async () => {
+  await open('screen=progress');
+  await page.waitForTimeout(1200);
+  await declineAdPromptIfShown();
+  await declineAdPromptIfShown();
+  await seesText('Exam countdown', 8000);
+  await scrollTo(byLabel('Set an exam date'));
+  await tap('Set an exam date');
+  await page.waitForTimeout(600);
+
+  await byLabel('Exam name').fill('Forensic Paper 1');
+  // The picker is a month grid drawn in-app, so a day is a real control with
+  // a real label rather than a native dialog the harness cannot see.
+  await tap('Next month');
+  const day = page.locator('[aria-label^="15 "]').first();
+  await day.click({ timeout: 5000 });
+  await tap('Save the exam date');
+  await page.waitForTimeout(700);
+
+  await seesText('Forensic Paper 1', 5000);
+  const body = await page.locator('body').innerText();
+  if (!/days to go/.test(body)) {
+    throw new Error('the countdown shows no day count after saving');
+  }
+});
+
+/** Spaced revision exists and reports its queue honestly. */
+await step('spaced revision reports its queue', async () => {
+  await open('screen=progress');
+  await declineAdPromptIfShown();
+  await seesText('Spaced revision', 8000);
+  const body = await page.locator('body').innerText();
+  if (!/due|caught up|Tick a question/.test(body)) {
+    throw new Error('the revision card says nothing about its queue');
+  }
 });
 
 await step('progress screen renders', async () => {

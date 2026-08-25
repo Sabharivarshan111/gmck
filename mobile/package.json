@@ -30,6 +30,7 @@
     "sync:agent-docs": "node scripts/sync-agent-docs.mjs",
     "check:note-key": "node scripts/note-key-check.mjs",
     "check:search-index": "node scripts/search-index-check.mjs",
+    "check:spaced": "node scripts/spaced-check.mjs",
     "check:native-sound": "node scripts/native-sound-check.mjs",
     "check:native-speech": "node scripts/native-speech-check.mjs"
   },

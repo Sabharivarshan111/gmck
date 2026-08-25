@@ -44,6 +44,12 @@ import { useCountDone } from '@/hooks/useProgress';
 import { useProfile } from '@/hooks/useProfile';
 import { ProfileSheet } from '@/components/ProfileSheet';
 import { Leaderboard } from '@/components/Leaderboard';
+import { ExamCountdownCard } from '@/components/ExamCountdownCard';
+import { SubjectBreakdownSheet } from '@/components/SubjectBreakdownSheet';
+import { ReviseSheet } from '@/components/ReviseSheet';
+import { useSpacedRepetition } from '@/hooks/useSpacedRepetition';
+import { isQuestionDone } from '@/lib/progress';
+import { Brain } from 'lucide-react-native';
 import { ProgressCalendarTab } from '@/components/ProgressCalendarTab';
 import { ProgressNotesTab } from '@/components/ProgressNotesTab';
 
@@ -174,6 +180,28 @@ export default function ProgressScreen() {
   }, []);
 
   const weakest = useMemo(() => [...subjects].sort((a, b) => a.pct - b.pct).slice(0, 4), [subjects]);
+
+  /** Which heatmap tile is open, or null. */
+  const [breakdown, setBreakdown] = useState<(typeof subjects)[number] | null>(null);
+
+  /**
+   * Every question already ticked, which is what seeds the revision schedule.
+   *
+   * Keyed on the progress version rather than recomputed per render: this
+   * walks the whole year's bank, and it only changes when something is ticked.
+   */
+  const doneQuestions = useMemo(
+    () =>
+      subjects.flatMap(subject =>
+        collectAllQuestions(subject.node)
+          .filter(isQuestionDone)
+          .map(question => ({ question, subject: subject.name })),
+      ),
+    [subjects],
+  );
+
+  const revision = useSpacedRepetition(doneQuestions);
+  const [revising, setRevising] = useState(false);
 
   return (
     <ScrollView
@@ -460,6 +488,53 @@ export default function ProgressScreen() {
             ) : null}
           </View>
 
+          {/* Exam countdown, then revision: the deadline gives the schedule
+              its urgency, so it reads better above it than below. */}
+          <ExamCountdownCard />
+
+          <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <View style={styles.reviseRow}>
+              <View style={[styles.reviseIcon, { backgroundColor: withAlpha(colors.violet, 0.16) }]}>
+                <Brain size={18} color={colors.violet} />
+              </View>
+              <View style={styles.grow}>
+                <Text style={[styles.cardTitle, { color: colors.text }]}>
+                  Spaced revision{' '}
+                  <Text style={[styles.cardHint, { color: colors.textMuted }]}>SM-2</Text>
+                </Text>
+                <Text style={[styles.cardHint, { color: colors.textMuted }]}>
+                  {revision.due.length === 0
+                    ? revision.cards.length === 0
+                      ? 'Tick a question off to start revising it'
+                      : 'Nothing due — you are caught up'
+                    : `${revision.due.length} due`}
+                </Text>
+              </View>
+              <Touchable
+                label="Start revising"
+                hint="Show the questions due for revision today"
+                disabled={revision.due.length === 0}
+                onPress={() => setRevising(true)}
+                style={[
+                  styles.revise,
+                  {
+                    backgroundColor:
+                      revision.due.length > 0 ? colors.primary : withAlpha(colors.text, 0.1),
+                  },
+                ]}>
+                <Text
+                  style={[
+                    styles.reviseText,
+                    {
+                      color: revision.due.length > 0 ? colors.primaryText : colors.textMuted,
+                    },
+                  ]}>
+                  Revise
+                </Text>
+              </Touchable>
+            </View>
+          </View>
+
           {/* Leaderboard */}
           <Leaderboard year={shortYear} selfName={displayName} />
 
@@ -468,12 +543,16 @@ export default function ProgressScreen() {
             <View style={styles.cardHeader}>
               <Text style={[styles.cardTitle, { color: colors.text }]}>Weak-topic heatmap</Text>
               <View style={styles.grow} />
-              <Text style={[styles.cardHint, { color: colors.textMuted }]}>weakest first</Text>
+              <Text style={[styles.cardHint, { color: colors.textMuted }]}>tap a tile</Text>
             </View>
             <View style={styles.heatGrid}>
               {weakest.map(subject => (
-                <View
+                <Touchable
                   key={subject.key}
+                  label={`${subject.name}, ${subject.pct} percent done`}
+                  hint="See every topic in this subject"
+                  onPress={() => setBreakdown(subject)}
+                  scaleTo={0.96}
                   style={[
                     styles.heatTile,
                     {
@@ -483,7 +562,7 @@ export default function ProgressScreen() {
                   ]}>
                   <Text style={[styles.heatName, { color: '#FCA5A5' }]}>{subject.name}</Text>
                   <Text style={[styles.heatPct, { color: '#FCA5A5' }]}>{subject.pct}%</Text>
-                </View>
+                </Touchable>
               ))}
             </View>
           </View>
@@ -567,6 +646,15 @@ export default function ProgressScreen() {
         onClose={() => setEditOpen(false)}
         onSave={save}
         dismissable={!!profile}
+      />
+      <SubjectBreakdownSheet subject={breakdown} onClose={() => setBreakdown(null)} />
+
+      <ReviseSheet
+        visible={revising}
+        cards={revision.due}
+        yearLabel={YEAR_LABEL[year]}
+        onClose={() => setRevising(false)}
+        onGraded={revision.record}
       />
     </ScrollView>
   );
@@ -850,6 +938,27 @@ const styles = StyleSheet.create({
   streakBadgeDays: {
     fontSize: 10,
     marginTop: 1,
+  },
+  reviseRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  reviseIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  revise: {
+    borderRadius: 999,
+    paddingHorizontal: 22,
+    paddingVertical: 10,
+  },
+  reviseText: {
+    fontSize: 14,
+    fontWeight: '600',
   },
   heatGrid: {
     flexDirection: 'row',
