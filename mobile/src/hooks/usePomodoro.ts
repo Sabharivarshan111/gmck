@@ -307,6 +307,26 @@ export function usePomodoro() {
     [isRunning, mode, minutesFor],
   );
 
+  const setCustomMinutes = useCallback(
+    (mins: number) => {
+      const safeMins = Math.max(1, Math.min(180, mins));
+      const seconds = safeMins * 60;
+      setIsRunning(false);
+      endsAtRef.current = null;
+      AsyncStorage.removeItem(SESSION_KEY).catch(() => {});
+      setTotalSeconds(seconds);
+      setRemaining(seconds);
+      if (mode === 'focus') {
+        updateSettings({ focusMinutes: safeMins });
+      } else if (mode === 'short') {
+        updateSettings({ shortMinutes: safeMins });
+      } else {
+        updateSettings({ longMinutes: safeMins });
+      }
+    },
+    [mode, updateSettings],
+  );
+
   return {
     mode,
     modeLabel: MODE_LABEL[mode],
@@ -324,6 +344,7 @@ export function usePomodoro() {
     switchMode,
     updateSettings,
     resetCycle,
+    setCustomMinutes,
   };
 }
 
