@@ -1,0 +1,51 @@
+name: Flashcards live check
+
+# Generates one real flashcard deck and reports what came back.
+#
+# This exists because the development sandboxes cannot reach Supabase — the
+# egress gateway refuses CONNECT to it, the same as it does for google.com — so
+# `generate-flashcards` shipped with its Gemini half never once executed. A
+# GitHub runner has open network, which makes this the only place the function
+# can actually be exercised before a student meets it.
+#
+# It runs on **push to the feature branch** rather than workflow_dispatch, for
+# the reason written up in .agents/rules/40-releases.md: GitHub only offers
+# "Run workflow" for a workflow that exists on the repository's default branch,
+# and the dispatch API 404s otherwise. Until this branch merges, a push is the
+# only way to start it.
+#
+# No secrets. It uses the anon key, which is a public client key already inside
+# the APK and the web bundle, and it calls the function exactly as the app does.
+# Do NOT add a service-role key: that key bypasses RLS, and the point of this
+# check is to prove the path a real client takes.
+#
+# It costs one Gemini call per run. `regenerate: true` is deliberate — a cache
+# hit would prove only that a row exists, which is the one thing not in doubt.
+# A 429 is reported and passes: the free tier is the binding constraint, and a
+# quota ceiling is not a defect in this code.
+
+on:
+  push:
+    branches:
+      - claude/native-app-sync
+    paths:
+      # Only when something that could change the deck changes. Every other
+      # push would burn quota to re-prove the same thing.
+      - 'mobile/scripts/flashcards-live-check.mjs'
+      - 'mobile/src/lib/flashcards.ts'
+      - '.github/workflows/flashcards-check.yml'
+  workflow_dispatch:
+
+jobs:
+  deck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Generate one deck and inspect it
+        working-directory: mobile
+        run: node scripts/flashcards-live-check.mjs
