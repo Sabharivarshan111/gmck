@@ -490,6 +490,55 @@ RPC is the fix; `check:spaced` pins the arithmetic either way.
 
 ---
 
+## 8c. Textbook grounding covers three years, not one (2026-08-25)
+
+`generate-handwritten-notes` picks its textbook by **subject**, never by year,
+and has eight books: Anatomy (Vishram Singh + Langman's), Physiology
+(Sembulingam), Biochemistry (Vasudevan), Pharmacology (KD Tripathi for
+classification + Tara Shanbhag for everything else), Pathology (Ramadas Nayak),
+Microbiology (Apurba Sastry), Community (Sia's Park), Forensic (Vision). Final
+year has none.
+
+Both clients gated the triple tap on `year === 'third-year'`, written when
+Community and Forensic were the only two books. Six more arrived and the gate
+did not move: 803 triple-tap notes were third year, one was second, none were
+first. **The native gate now follows `hasTextbook`; the web app
+(`src/components/QuestionCard.tsx:107`) still has the year check and needs the
+same change in Lovable.**
+
+Two traps worth knowing:
+
+- **The repo's copy of the edge function was two versions behind**, so reading
+  the code agreed with the gate. It is deleted — its folder holds a README
+  pointing at the deployed one. It was also propping up two `check:notes-schema`
+  assertions about diagram attachment that the live function does not do.
+- **`subject` had a `|| 'Community Medicine'` fallback.** Harmless while the
+  feature was third-year-only; now it would ground an Anatomy question in Park.
+
+`mobile/src/lib/textbooks.ts` mirrors the server's `pickBookKey`, and
+`npm run check:textbooks` pins them together — same rules in the same order,
+since the matches overlap.
+
+### The cache was poisoned, and has been cleared
+
+The 1st/2nd-year books were uploaded 23–25 Aug; every cached 1st/2nd-year note
+was generated 17 Jul – 24 Aug, i.e. **before its book existed**. The function
+returns the cache on the first batch unless `regenerate` is set, so none of them
+would ever have refreshed — the Notes tab would have kept serving ungrounded
+July answers for those subjects for ever.
+
+75 stale rows were backed up to `handwritten_notes_pre_textbook_backup` and
+deleted, so the next open of each topic regenerates against the textbook. Two
+Pharmacology notes made after its book landed were kept. Third year was never
+affected: Park and Vision were bundled inside the function long before the
+storage migration. **Drop the backup table once the regenerated notes look
+right.**
+
+Expect the first open of each 1st/2nd-year topic to be slow and to risk a 429 —
+every one is now a cache miss on a free-tier key.
+
+---
+
 ## 9. High-Yield AI Exam Diagrams & Localhost Previews
 
 ### Local Dev & Preview URLs
