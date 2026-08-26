@@ -48,8 +48,16 @@ on:
 # Cancelling is safe here because the artifact was already obsolete. The commit
 # that replaced it is the one worth building.
 concurrency:
+  # One at a time, but **never cancel a run that is already going**.
+  #
+  # The build workflows cancel their predecessors because a twenty-minute
+  # artifact for a superseded commit is waste. This is the opposite: a
+  # one-minute check whose whole purpose is to report an answer. Cancelling it
+  # in favour of a newer run throws that answer away and costs nothing less —
+  # which is exactly what happened on the first attempt, and why the deck was
+  # still unverified after two runs.
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   deck:
