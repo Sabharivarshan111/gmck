@@ -1,6 +1,6 @@
 # Handoff — Orbit MBBS native Android app
 
-**Last updated:** 2026-08-24
+**Last updated:** 2026-08-26
 
 Written so a fresh session (or a different person) can pick this up without the
 prior conversation. Read `CLAUDE.md` too — it lists the traps.
@@ -555,6 +555,9 @@ anyone with a URL can download them, and the notes function's own comments
 describe it as private. Set it private: the function reads it with the
 service-role key and will not notice.
 
+`supabase-tasks.yml` now does exactly this from a runner — see §8e. It had not
+started when this was written, so **confirm the flag before crossing it off.**
+
 ### 2. A flashcard deck has never been generated
 
 `generate-flashcards` is deployed and the image half is confirmed against the
@@ -608,6 +611,70 @@ diagram. Needs the same removal in Lovable; the native side is done and
 ### 6. Razorpay has never taken a real payment
 
 Unchanged from §2.2.
+
+---
+
+## 8e. Verification run and the Supabase token (2026-08-26, later)
+
+### Everything local is green
+
+Run in full on this branch at `1e4b2fbd`. This is the strongest signal available
+without a device, and it is complete — nothing was skipped:
+
+| | |
+|---|---|
+| `npx tsc --noEmit` | clean |
+| `npx eslint .` | **0 errors**, 64 warnings (all `no-inline-styles`) |
+| release bundle | succeeds — 4.4 MB, 19 assets copied |
+| `check:fanout` `check:sync` `check:contrast` `check:subject-cards` | pass |
+| `check:native-sound` `check:mcq` `check:notes-limits` `check:notes-schema` | pass |
+| `check:textbooks` `check:cloud-ids` `check:glass` `check:anki` `check:agent-docs` | pass |
+| `check:sounds` | pass — tap at 1850 Hz vs 220 Hz, all three chime notes dominate, no DC offset, no clipping |
+| `check:smoke` | pass — **38 flows, 0 crashes** |
+
+Smoke now covers the flashcard work end to end: a session showing a card and
+Anki's four buttons, writing and studying your own deck, a chapter opening with
+a retry when the deck cannot build, and Notes offering flashcards and a locked
+case proforma with no WhatsApp anywhere.
+
+Still unproven on a device, unchanged from §8d: the progress-bar and checkmark
+Android fixes, the daily reminder against a real clock, and Razorpay.
+
+### The Supabase token exists, and it does not help here
+
+The app's owner created a Supabase personal access token and added it to GitHub
+as `SUPABASE_ACCESS_TOKEN`. Two things follow, and both are permanent:
+
+**It cannot be used from an agent sandbox.** The egress gateway refuses the
+CONNECT itself — `403`, before any credential is offered, for
+`api.supabase.com` and the project host alike. Verified again this session
+against `curl -sS "$HTTPS_PROXY/__agentproxy/status"`, which lists the
+refusals. Being handed a token is not an unblock; it only moves the work to a
+runner. The permanent fix is the *environment's network policy* at
+claude.ai/code, which is the account owner's to change, not this repo's.
+
+**The token was never written down here.** It was held in the session
+scratchpad, used to confirm the above, and shredded. `git log -S sbp_` is
+clean and must stay that way.
+
+### `supabase-tasks.yml` is the route, and it has not run yet
+
+New workflow. It reports which of `SUPABASE_ACCESS_TOKEN` / `SUPABASE_TOKEN` /
+`SUPABASE_PAT` is set — printing `set`/`not set`, never a value — and then does
+§8d item 1: makes the `textbooks` bucket private via one idempotent SQL
+statement through the Management API.
+
+**It is queued, not finished.** Run `32985941650` on `gmck` sat in `queued` for
+over fifteen minutes with nothing else in progress. That is GitHub failing to
+allocate a runner, not a broken workflow — see `.agents/rules/40-releases.md`,
+"Reading a red pipeline before blaming the YAML", for why `startup_failure` and
+`409 Cannot cancel a workflow run that has not been queued yet` both mean the
+same thing, and why billing is never the answer (both repos are public).
+
+**Check which repo the secret is on.** Secrets are per repository and every push
+goes to two. The workflow runs on both `gmck` and `origin`; if the token was
+added to only one, the other reports `not set` and skips. Whoever picks this up
+should read the run's first step before assuming anything failed.
 
 ---
 

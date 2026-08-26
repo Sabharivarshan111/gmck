@@ -64,10 +64,10 @@ files into `mobile/`; a second copy will drift.
   signing key lives only in GitHub Actions secrets. Do not base64 it into a
   workflow file to "fix" a build.
 - **Test builds must serve no ads at all.** `mobile/src/lib/adsMode.ts` exports
-  `ADS_ENABLED = !__DEV__`; the debug and preview CI workflows overwrite it with
-  `false` so AdMob never even starts. Serving yourself live ads is an AdMob
-  policy violation that can suspend the account. Release builds leave it alone
-  and *do* serve live ads — `android-release.yml` asserts this.
+  `ADS_ENABLED = !__DEV__`; the debug and internal workflows overwrite it with
+  `false`, so AdMob never starts. Serving yourself live ads is a policy
+  violation that can suspend the account. Release builds leave it alone and *do*
+  serve ads — `android-release.yml` asserts that.
 - The open Gemini access, the absence of an app-side rate limit, and the public
   leaderboard are **deliberate**. Do not "fix" them.
 
@@ -85,12 +85,15 @@ cut one too — push, then watch Actions on `gmck`.
 
 The release one builds both the `.aab` (for Play) and an `.apk` (to sideload).
 
-Only `gmck` holds the three signing secrets, so the mirror's release run always
-dies at "Restore the upload keystore" — a missing secret, not a broken build.
+Secrets are per repo and every push goes to two: only `gmck` has the signing
+three, so the mirror's release run dies at "Restore the upload keystore" — a
+missing secret, not a broken build. Same for `SUPABASE_ACCESS_TOKEN`.
+
+No sandbox reaches Supabase — the gateway 403s the CONNECT — so a token is no
+unblock, only a reason to run `supabase-tasks.yml` on a runner.
 
 `.agents/rules/40-releases.md` has the rest: what a wrong build costs, why
-sign-in only works in the internal one, and why CI is the first thing that ever
-compiles the Kotlin.
+sign-in works only in the internal one, and why CI first compiles the Kotlin.
 
 ## New Architecture: a native module must be a TurboModule
 

@@ -52,13 +52,26 @@ the upload, not before.
 Do **not** change `applicationId` (`com.aistudio.mbbsqbank.aycxvd`). It matches
 the published listing; changing it publishes a *second app* instead of an update.
 
-## Why `origin`'s release run fails and that is fine
+## A secret belongs to one repo, and there are two remotes
 
-The signing keystore lives in three GitHub secrets — `ANDROID_KEYSTORE_BASE64`,
+**Every push goes to two repositories** — `gmck` and `origin` — and both run the
+same workflow files. A GitHub secret is *per repository*, so a workflow that
+reads one works on the remote that holds it and fails on the other, from
+identical code. That is the single most confusing failure mode in this repo, and
+it is never a bug in the YAML.
+
+The signing keystore lives in three secrets — `ANDROID_KEYSTORE_BASE64`,
 `ANDROID_STORE_PASSWORD`, `ANDROID_KEY_PASSWORD` — and only `gmck` has them.
 The mirror's release run therefore dies at *"Restore the upload keystore"*.
-That is a missing secret, not a broken build: check `gmck`'s run before
-debugging anything.
+Check `gmck`'s run before debugging anything.
+
+The same trap now applies to `SUPABASE_ACCESS_TOKEN` (below). When you ask
+someone to add a secret, **name the repository** — "add it to GitHub" gets it
+added to whichever one they had open, which is a coin flip.
+
+A workflow that needs a secret should therefore say which name it looked for
+and whether it found it, before doing anything else. Printing `set` / `not set`
+for a secret name leaks nothing and turns a silent skip into an answer.
 
 Never commit a keystore, a password or a `.jks`. The workflow writes the
 decoded key outside the workspace and deletes it in an `always()` step.
@@ -106,6 +119,66 @@ copy.
 It uses the **anon key**, which is public and already shipped inside the APK.
 Never add a service-role key: that key bypasses RLS, and this check exists to
 prove RLS works.
+
+## `supabase-tasks.yml` is how anything *changes* Supabase
+
+`supabase-check.yml` reads; this one writes. It holds the maintenance jobs that
+need the Management API — making a storage bucket private, running a one-off
+SQL statement — and it exists because **no agent sandbox can reach Supabase at
+all**.
+
+That block is worth understanding before you waste an hour on it. The egress
+gateway answers `403` to the CONNECT itself, for `api.supabase.com` and for
+`pmtgeydtqypwrypshhsx.supabase.co` alike, exactly as it does for `google.com`:
+
+```
+connect_rejected  gateway answered 403 to CONNECT
+                  pmtgeydtqypwrypshhsx.supabase.co:443
+```
+
+**A token does not change this.** The refusal happens before any credential is
+offered, so being handed a personal access token is not an unblock — it only
+moves the work to a runner. Do not retry, do not look for a proxy around it, and
+never disable TLS verification or unset `HTTPS_PROXY`. `curl -sS
+"$HTTPS_PROXY/__agentproxy/status"` shows the recent refusals if you want to see
+it for yourself. The only permanent fix is the *environment's network policy*,
+which is set by the account owner when the environment is created — not by
+anything in this repo.
+
+The token is a Supabase **personal access token: full management access to the
+account.** It lives only in GitHub's secret store. Never in this repo, never in
+a log, never in a command line where a process listing could catch it — read it
+from the environment, keep `set +x` on, and print bucket names and flags rather
+than responses.
+
+## Reading a red pipeline before blaming the YAML
+
+Both repos are **public**, so Actions minutes are free and unlimited. Billing is
+never the answer here; do not go looking for it.
+
+Two states mean *GitHub has not allocated a runner*, and neither is a defect in
+the workflow:
+
+- **`startup_failure`** — a previously-green workflow simply refusing to start.
+- **`409 Cannot cancel a workflow run that has not been queued yet`** when you
+  try to cancel a run that has sat in `queued` for half an hour. The run exists
+  but was never enqueued, so there is nothing to cancel.
+
+Both showed up together after a day of heavy pushing, with nothing in progress
+on either repo. The fix is to ask for less: the concurrency guards and the path
+filters on `android-debug.yml` and `android-internal.yml` are there for this, and
+a push now costs about a third of what it used to. Then wait — it recovers on
+its own.
+
+**Checks use `cancel-in-progress: false`; builds use `true`.** An obsolete build
+is worth cancelling because the commit that replaced it is the one worth
+building. A check that answers a question you are waiting on is not — cancelling
+it destroys the answer, which is how the first flashcards run died.
+
+A workflow file that is not on the **default** branch cannot be dispatched from
+the UI (`workflow_dispatch` 404s, and so does listing its runs by filename).
+Give anything you need to run from this branch a `push:` trigger with a `paths:`
+filter, or it is unreachable.
 
 ## Where the long version lives
 
