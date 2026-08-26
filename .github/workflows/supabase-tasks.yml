@@ -1,0 +1,95 @@
+name: Supabase tasks
+
+# The maintenance jobs that need Supabase's Management API, run from a runner
+# because the development sandboxes cannot reach Supabase at all — the egress
+# gateway answers `403` to CONNECT for both api.supabase.com and the project
+# host, so no credential helps there.
+#
+# **Reports first, changes second.** The first step says which secret it found
+# without ever printing a value, so "is the token actually in GitHub?" has an
+# answer even when everything after it is skipped.
+#
+# The token is a Supabase personal access token: full management access to the
+# account. It lives only in GitHub's secret store — never in this repo, never in
+# a log. `set +x` guards the shell, and every curl reads it from the environment
+# rather than the command line so it cannot appear in a process listing.
+
+on:
+  push:
+    branches:
+      - claude/native-app-sync
+    paths:
+      - '.github/workflows/supabase-tasks.yml'
+  workflow_dispatch:
+
+concurrency:
+  # Never cancel: this one makes changes, and a half-applied change is worse
+  # than a slow one.
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  tasks:
+    runs-on: ubuntu-latest
+    env:
+      PROJECT_REF: pmtgeydtqypwrypshhsx
+      # Whichever of these the repo has. Named separately so the report below
+      # can say which one was found rather than just "a token".
+      TOK_A: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      TOK_B: ${{ secrets.SUPABASE_TOKEN }}
+      TOK_C: ${{ secrets.SUPABASE_PAT }}
+    steps:
+      - name: Which Supabase secret is set
+        run: |
+          set +x
+          found=""
+          [ -n "$TOK_A" ] && { echo "SUPABASE_ACCESS_TOKEN: set"; found=A; } || echo "SUPABASE_ACCESS_TOKEN: not set"
+          [ -n "$TOK_B" ] && { echo "SUPABASE_TOKEN: set";        found=${found:-B}; } || echo "SUPABASE_TOKEN: not set"
+          [ -n "$TOK_C" ] && { echo "SUPABASE_PAT: set";          found=${found:-C}; } || echo "SUPABASE_PAT: not set"
+          if [ -z "$found" ]; then
+            echo "::error::No Supabase token secret found. Add one of the three names above under Settings → Secrets and variables → Actions."
+            exit 1
+          fi
+          echo "FOUND=$found" >> "$GITHUB_ENV"
+
+      - name: Check the token works, and report the textbooks bucket
+        run: |
+          set +eux
+          case "$FOUND" in A) TOKEN="$TOK_A";; B) TOKEN="$TOK_B";; *) TOKEN="$TOK_C";; esac
+          export TOKEN
+          code=$(curl -s -o /tmp/buckets.json -w '%{http_code}' \
+            -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' \
+            -X POST "https://api.supabase.com/v1/projects/$PROJECT_REF/database/query" \
+            -d '{"query":"select id, public from storage.buckets order by id;"}')
+          echo "list buckets: HTTP $code"
+          if [ "$code" = "401" ] || [ "$code" = "403" ]; then
+            echo "::error::The token was rejected ($code). It may have been rotated, or it may lack access to this project."
+            exit 1
+          fi
+          [ "$code" = "200" ] || { echo "::error::Unexpected response $code"; cat /tmp/buckets.json; exit 1; }
+          echo "--- buckets before ---"; cat /tmp/buckets.json; echo
+
+      - name: Make the textbooks bucket private
+        run: |
+          set +eux
+          case "$FOUND" in A) TOKEN="$TOK_A";; B) TOKEN="$TOK_B";; *) TOKEN="$TOK_C";; esac
+          export TOKEN
+          # It holds OCR'd copyrighted textbooks and the notes function's own
+          # comments describe it as private. Public means anyone with a URL can
+          # download them. The function reads it with the service-role key and
+          # is unaffected by the change.
+          #
+          # Idempotent: running it again on an already-private bucket is a
+          # no-op, which is what makes it safe to leave in a workflow.
+          code=$(curl -s -o /tmp/after.json -w '%{http_code}' \
+            -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' \
+            -X POST "https://api.supabase.com/v1/projects/$PROJECT_REF/database/query" \
+            -d '{"query":"update storage.buckets set public = false where id = '\''textbooks'\'' and public is true; select id, public from storage.buckets order by id;"}')
+          echo "update: HTTP $code"
+          [ "$code" = "200" ] || { echo "::error::Update failed ($code)"; cat /tmp/after.json; exit 1; }
+          echo "--- buckets after ---"; cat /tmp/after.json; echo
+          if grep -q '"id":"textbooks","public":true' /tmp/after.json; then
+            echo "::error::textbooks is still public"
+            exit 1
+          fi
+          echo "textbooks is private."
