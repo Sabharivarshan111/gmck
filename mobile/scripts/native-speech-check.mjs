@@ -151,6 +151,32 @@ if (await fs.stat(cli).then(() => true, () => false)) {
       moduleName === 'OrbitSpeech',
       `codegen read the spec as "${moduleName}", not "OrbitSpeech" — the Kotlin side would never be found`,
     );
+
+  /*
+   * The microphone-level emitter must survive codegen.
+   *
+   * `EventEmitter` is declared locally in the spec rather than imported,
+   * because React Native's package exports block the deep import its own docs
+   * use — tsc cannot resolve it, codegen does not care, and the two only agree
+   * because of that local declaration. That is a fragile agreement held
+   * together by a type name, so it is asserted here: without the emitter the
+   * generated Kotlin has no emitOnRms, SpeechModule stops compiling, and the
+   * first thing that finds out is a six-minute Gradle build.
+   */
+  const emitters = schema.modules?.NativeOrbitSpeech?.spec?.eventEmitters ?? [];
+  const rms = emitters.find(e => e.name === 'onRms');
+  check(
+    rms !== undefined,
+    'the spec no longer declares an onRms EventEmitter — the listening visualiser loses its audio input and goes back to being a decoration',
+  );
+  check(
+    rms?.typeAnnotation?.typeAnnotation?.type === 'NumberTypeAnnotation',
+    'onRms is not a number emitter — emitOnRms would be generated with the wrong signature',
+  );
+  check(
+    /emitOnRms\(/.test(moduleKt ?? ''),
+    'SpeechModule never calls emitOnRms — Android delivers the microphone level and it is being thrown away again',
+  );
     const names = (schema.modules?.NativeOrbitSpeech?.spec?.methods ?? []).map(m => m.name);
     for (const method of ['isAvailable', 'start', 'stop', 'cancel']) {
       check(names.includes(method), `codegen did not find ${method}() on the spec`);

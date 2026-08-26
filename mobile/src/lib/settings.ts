@@ -108,7 +108,18 @@ export const DEFAULT_SETTINGS: Settings = {
   // is not, and a phone that starts clicking in a lecture theatre is a bad
   // first impression — which is why it is the first switch in Settings and
   // takes one tap to silence, rather than something to go looking for.
-  tapSound: true,
+  /*
+   * Off. A vibration is private; a sound is not.
+   *
+   * An app that starts clicking out loud the first time it is opened — in a
+   * lecture, in a library, on a ward — has made a decision that was not its to
+   * make, and the reader's first act has to be finding the switch that stops
+   * it. This flipped to `true` in the commit that fixed the silent sound
+   * module, which is exactly when a default like this slips: the module was
+   * finally audible and turning it on was the quickest way to hear it.
+   * check:native-sound pins it.
+   */
+  tapSound: false,
   timerSound: true,
   tapPreset: 'tap',
   chimePreset: 'chime',

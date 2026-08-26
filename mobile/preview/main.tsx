@@ -24,6 +24,7 @@ import { SAMPLE_NOTES } from './notesSample';
 import { NotesAiEditBox } from '@/components/NotesAiEditBox';
 import { McqCard } from '@/components/McqCard';
 import { WaveformRiver } from '@/components/WaveformRiver';
+import FlashcardsScreen from '@/screens/FlashcardsScreen';
 import { ThinkingDots } from '@/components/ThinkingDots';
 import { MessageEntrance } from '@/components/MessageEntrance';
 import { RevealText } from '@/components/RevealText';
@@ -230,6 +231,17 @@ function Shell() {
 
   if (screen === 'chatdemo') {
     return <ChatMotionDemo />;
+  }
+
+  /*
+   * ?screen=flashcards — the deck browser on its own.
+   *
+   * Reachable in the app only through Notes, which makes it three taps away
+   * from a screenshot and from anyone reviewing it. `onExit` is a no-op here
+   * because there is nothing to go back to.
+   */
+  if (screen === 'flashcards') {
+    return <FlashcardsScreen onExit={() => {}} />;
   }
 
   return (

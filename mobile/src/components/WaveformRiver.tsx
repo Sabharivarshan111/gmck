@@ -4,6 +4,7 @@ import Svg, { Defs, LinearGradient, Path, Stop } from 'react-native-svg';
 import { Text } from '@/components/Text';
 import { useTheme } from '@/theme';
 import { useReducedMotion } from '@/theme/motion';
+import { onMicLevel } from '@/lib/speech';
 import { typeScale } from '@/theme/typography';
 
 interface WaveformRiverProps {
@@ -51,9 +52,12 @@ function wavePath(height: number): string {
  * it. Translating a drawn path is a transform: it composites on the GPU, runs
  * on the native driver, and re-renders nothing.
  *
- * The breathing is `scaleY` for the same reason. It is anchored at the centre,
- * which is where the wave's own midline sits, so the strip swells about its
- * axis rather than drifting off it.
+ * The **amplitude is the microphone**, not a timer. Android's RecognitionListener
+ * hands us a level several times a second while dictation runs; the module used
+ * to discard it in an empty `onRmsChanged`, which is why this reacted to nothing
+ * on a phone while the browser preview — which had its own Web Audio
+ * implementation — looked perfect. The one place it worked was the one place it
+ * did not ship.
  */
 export function WaveformRiver({ active = true, color = '#22d3ee', height = 52 }: WaveformRiverProps) {
   const { colors } = useTheme();
@@ -75,47 +79,78 @@ export function WaveformRiver({ active = true, color = '#22d3ee', height = 52 }:
   const [width, setWidth] = useState(0);
 
   const drift = useRef(new Animated.Value(0)).current;
-  const breathe = useRef(new Animated.Value(0)).current;
+  /**
+   * How loud it is, 0..1, smoothed.
+   *
+   * This is the real microphone, not a timer. Android's RecognitionListener
+   * delivers a level several times a second while the recogniser runs and the
+   * native module now forwards it; before that this component had no audio
+   * input at all and merely breathed on a loop, which is why it ignored the
+   * voice it was drawn for.
+   */
+  const level = useRef(new Animated.Value(0)).current;
   const running = active && !reduceMotion && width > 0;
+
+  useEffect(() => {
+    if (!active) {
+      return undefined;
+    }
+    let last = 0;
+    const stop = onMicLevel(next => {
+      /*
+       * Smoothed towards the new value rather than snapped to it. The raw
+       * signal is spiky enough to make the wave jitter, and an attack that is
+       * faster than the decay is what makes a voice read as a voice: it should
+       * jump when you start speaking and settle when you stop, not flutter.
+       */
+      const rising = next > last;
+      last = last + (next - last) * (rising ? 0.5 : 0.12);
+      // No native driver: this drives a transform, but it is set from JS on
+      // every sample rather than interpolated over time, so there is nothing
+      // for the native driver to run.
+      level.setValue(last);
+    });
+    return () => {
+      stop();
+      level.setValue(0);
+    };
+  }, [active, level]);
 
   useEffect(() => {
     if (!running) {
       drift.setValue(0);
-      breathe.setValue(0);
       return undefined;
     }
+    /*
+     * Only the drift loops now. The swell used to come from a second timed
+     * animation, which is what made this look alive while ignoring the
+     * microphone entirely — amplitude is the voice, and it arrives from
+     * onMicLevel above.
+     */
     const loop = Animated.loop(
-      Animated.parallel([
-        Animated.timing(drift, {
-          toValue: 1,
-          duration: DRIFT_MS,
-          // Linear: a drift that eases is a drift that visibly restarts.
-          easing: Easing.linear,
-          useNativeDriver: true,
-        }),
-        Animated.sequence([
-          Animated.timing(breathe, {
-            toValue: 1,
-            duration: DRIFT_MS / 2,
-            easing: Easing.inOut(Easing.ease),
-            useNativeDriver: true,
-          }),
-          Animated.timing(breathe, {
-            toValue: 0,
-            duration: DRIFT_MS / 2,
-            easing: Easing.inOut(Easing.ease),
-            useNativeDriver: true,
-          }),
-        ]),
-      ]),
+      Animated.timing(drift, {
+        toValue: 1,
+        duration: DRIFT_MS,
+        // Linear: a drift that eases is a drift that visibly restarts.
+        easing: Easing.linear,
+        useNativeDriver: true,
+      }),
     );
     loop.start();
     return () => loop.stop();
-  }, [breathe, drift, running]);
+  }, [drift, running]);
 
   const translateX = drift.interpolate({ inputRange: [0, 1], outputRange: [0, -width] });
-  // Never from 0 — nothing in this app scales from nothing.
-  const scaleY = breathe.interpolate({ inputRange: [0, 1], outputRange: [0.72, 1] });
+  /*
+   * Amplitude is the voice. Silence still shows a living line rather than a flat
+   * one — a wave that collapses to nothing reads as "the microphone is broken"
+   * rather than "nobody is speaking" — so the floor is 0.35 and never 0.
+   */
+  const scaleY = level.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0.35, 1.15],
+    extrapolate: 'clamp',
+  });
 
   return (
     <View
@@ -128,8 +163,17 @@ export function WaveformRiver({ active = true, color = '#22d3ee', height = 52 }:
         const next = Math.round(event.nativeEvent.layout.width);
         setWidth(previous => (previous === next ? previous : next));
       }}>
-      <Animated.View
-        style={[styles.strip, { width: width * 2, transform: [{ translateX }, { scaleY }] }]}>
+      {/*
+        Two nested views, one transform each, and that is not a style choice.
+        `translateX` runs on the native driver and `scaleY` is set from JS on
+        every microphone sample; React Native throws the moment a JS-driven and
+        a native-driven value share one `transform` array ("Attempting to run
+        JS driven animation on an animated node that has been moved to native").
+        Nesting keeps the endless drift on the GPU where it belongs and lets the
+        amplitude stay on the thread that receives it.
+      */}
+      <Animated.View style={[styles.strip, { width: width * 2, transform: [{ translateX }] }]}>
+        <Animated.View style={[styles.swell, { transform: [{ scaleY }] }]}>
         <Svg width={width * 2} height={height} viewBox={`0 0 ${TILE * 2} ${height}`}>
           <Defs>
             <LinearGradient id={gradientId} x1="0" y1="0" x2="1" y2="0">
@@ -141,6 +185,7 @@ export function WaveformRiver({ active = true, color = '#22d3ee', height = 52 }:
           <Path d={`${path} L ${TILE * 2} ${height} L 0 ${height} Z`} fill={`url(#${gradientId})`} />
           <Path d={path} stroke={color} strokeWidth="1.8" fill="none" />
         </Svg>
+        </Animated.View>
       </Animated.View>
 
       <View style={styles.badgeRow}>
@@ -158,6 +203,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     overflow: 'hidden',
     marginBottom: 8,
+  },
+  // Fills the strip, so the swell scales the drawing and nothing else.
+  swell: {
+    flex: 1,
+    transformOrigin: 'center',
   },
   strip: {
     // Written out rather than spread from StyleSheet.absoluteFill, which is a

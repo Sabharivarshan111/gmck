@@ -38,6 +38,33 @@ const native = OrbitSpeech ?? undefined;
  * recogniser installed. A phone can ship without one, or have it disabled, so
  * this is a runtime question rather than a build-time one.
  */
+/**
+ * Subscribe to the microphone level while the recogniser is running.
+ *
+ * Returns an unsubscribe. A no-op when the module is absent (the preview), so
+ * a caller never has to check.
+ *
+ * The raw value is dB on an unspecified scale — roughly -2 quiet to 10 loud on
+ * most devices, but vendors differ — so this normalises to 0..1 and leaves the
+ * shaping to the consumer. Clamped rather than trusted: a phone that reports
+ * outside the expected range must not push a visualiser off its own canvas.
+ */
+export function onMicLevel(listener: (level: number) => void): () => void {
+  const emitter = native?.onRms;
+  if (!emitter) {
+    return () => {};
+  }
+  try {
+    const subscription = emitter((rms: number) => {
+      const normalised = Math.max(0, Math.min(1, (rms + 2) / 12));
+      listener(normalised);
+    });
+    return () => subscription.remove();
+  } catch {
+    return () => {};
+  }
+}
+
 export function speechAvailable(): boolean {
   if (!native) {
     return false;

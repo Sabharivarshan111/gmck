@@ -1,5 +1,19 @@
 import type { TurboModule } from 'react-native';
 import { TurboModuleRegistry } from 'react-native';
+import type { EventSubscription } from 'react-native';
+
+/**
+ * Codegen's EventEmitter, declared here rather than imported.
+ *
+ * React Native's package `exports` map blocks the deep import
+ * (`react-native/Libraries/Types/CodegenTypes`) that its own docs use, so tsc
+ * cannot resolve it while codegen has no trouble — codegen matches this by the
+ * type's *name*, not by where it came from. Declaring it locally is what makes
+ * both agree. `npm run check:native-speech` runs the real codegen over this
+ * file, so if that ever stops being true it fails here rather than six minutes
+ * into a Gradle build.
+ */
+type EventEmitter<T> = (handler: (value: T) => void) => EventSubscription;
 
 /**
  * Dictation, on Android's own SpeechRecognizer.
@@ -49,6 +63,25 @@ export interface Spec extends TurboModule {
 
   /** Abandon the pending start(). Rejects it with `cancelled`. */
   cancel(): void;
+
+  /**
+   * How loud the microphone is, right now, in dB.
+   *
+   * Android's RecognitionListener delivers this several times a second for
+   * free while it is listening, and the module used to throw it away with an
+   * empty `onRmsChanged` override — which is why the listening visualiser on
+   * the phone was a decoration that ignored the voice it was drawn for. The
+   * browser preview reacted because it had its own Web Audio implementation,
+   * so the one place it looked right was the one place it did not ship.
+   *
+   * An EventEmitter rather than a promise because it is a stream: the point is
+   * the shape over time, and nothing here needs to be awaited.
+   *
+   * The range is roughly -2 (silence) to 10 (loud) on most devices, but the
+   * scale is not specified and vendors differ, so consumers must normalise
+   * rather than trust the bounds.
+   */
+  readonly onRms: EventEmitter<number>;
 }
 
 export default TurboModuleRegistry.get<Spec>('OrbitSpeech');

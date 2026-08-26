@@ -165,6 +165,26 @@ if (await fs.stat(cli).then(() => true, () => false)) {
   }
 }
 
+// Tap sounds are OFF by default, and haptics are on.
+//
+// A vibration is private; a sound is not. An app that starts clicking out loud
+// the first time it is opened — in a lecture, a library, on a ward — has made a
+// decision that was not its to make, and the reader's first act becomes hunting
+// for the switch that stops it.
+//
+// This shipped as `true` in the commit that fixed the silent sound module,
+// which is exactly when a default like this slips: the module was finally
+// audible, and turning it on was the quickest way to hear that it worked.
+const settings = (await read('src/lib/settings.ts')) ?? '';
+check(
+  /\n\s*tapSound: false,/.test(settings),
+  'tapSound no longer defaults to false — the app would start making noise the first time it is opened',
+);
+check(
+  /\n\s*haptics: true,/.test(settings),
+  'haptics no longer default to true — the quiet feedback is the one that should be on',
+);
+
 if (failures.length > 0) {
   for (const failure of failures) {
     process.stdout.write(`  FAIL  ${failure}\n`);

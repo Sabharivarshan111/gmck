@@ -3,7 +3,6 @@ import {
   Animated,
   FlatList,
   KeyboardAvoidingView,
-  Platform,
   StyleSheet,
   TextInput,
   View,
@@ -12,7 +11,16 @@ import { Text } from '@/components/Text';
 import { Touchable } from '@/components/Touchable';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRoute, type RouteProp } from '@react-navigation/native';
-import { Maximize2, Minimize2, Mic, RefreshCw, Send, Sparkles, Square } from 'lucide-react-native';
+import {
+  Maximize2,
+  Minimize2,
+  Mic,
+  RefreshCw,
+  Send,
+  Sparkles,
+  Square,
+  Trash2,
+} from 'lucide-react-native';
 import {
   cancelListening,
   ensureMicPermission,
@@ -83,6 +91,19 @@ export default function AskAiScreen() {
   const [revealed, setRevealed] = useState<Set<string>>(() => new Set());
   const markRevealed = useCallback((id: string) => {
     setRevealed(prev => (prev.has(id) ? prev : new Set(prev).add(id)));
+  }, []);
+
+  /**
+   * Empty the chat.
+   *
+   * `revealed` goes with it. It holds the ids of assistant messages that have
+   * finished their reveal animation, and ids are minted per message — so a set
+   * left behind would grow for the life of the screen, and a new message that
+   * happened to reuse an id would skip its animation and appear fully written.
+   */
+  const clearChat = useCallback(() => {
+    setMessages([]);
+    setRevealed(new Set());
   }, []);
 
   const send = useCallback(
@@ -261,7 +282,29 @@ export default function AskAiScreen() {
           paddingHorizontal: isFullscreen ? 0 : 16,
         },
       ]}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      /*
+       * 'padding' on Android too, not `undefined`.
+       *
+       * `undefined` means "do nothing, the window will resize" — which is what
+       * `android:windowSoftInputMode="adjustResize"` used to guarantee. It does
+       * not any more. This app targets SDK 36, and from Android 15 edge-to-edge
+       * is enforced for apps targeting 35+: the window no longer shrinks when
+       * the IME appears, the app draws behind it, and adjustResize is inert. So
+       * the composer sat under the keyboard and you could not see what you were
+       * typing.
+       *
+       * The manifest still says adjustResize, and should — it is what older
+       * versions use, and there it makes this padding a no-op rather than a
+       * conflict, because a resized window reports no keyboard height to pad by.
+       *
+       * No `keyboardVerticalOffset`. RN computes the lift as
+       * `frame.y + frame.height - keyboardTop` using this view's own
+       * screen-space bottom, which already sits above the tab bar — so the tab
+       * bar is accounted for, and adding its height again would lift the
+       * composer a whole bar clear of the keyboard and leave a gap that looks
+       * like a different bug.
+       */
+      behavior="padding">
       {!isFullscreen ? (
         <>
           <Text style={[styles.title, { color: colors.text }]}>Ask AI</Text>
@@ -301,6 +344,22 @@ export default function AskAiScreen() {
           </Text>
           <View style={[styles.onlineDot, { backgroundColor: colors.green }]} />
           <View style={styles.headerSpacer} />
+          {/*
+            Clear, and only when there is something to clear. A button that is
+            always there but does nothing most of the time is one the reader
+            learns to ignore — and this one is destructive, so it should not be
+            sitting under a thumb on an empty screen.
+          */}
+          {messages.length > 0 ? (
+            <Touchable
+              onPress={clearChat}
+              label="Clear this conversation"
+              hint="Removes every message in this chat"
+              scaleTo={0.9}
+              style={[styles.expandButton, { borderColor: colors.border }]}>
+              <Trash2 size={16} color={colors.textMuted} />
+            </Touchable>
+          ) : null}
           <Touchable
             onPress={() => setIsFullscreen(v => !v)}
             label={isFullscreen ? 'Exit fullscreen chat' : 'Expand to fullscreen chat'}
