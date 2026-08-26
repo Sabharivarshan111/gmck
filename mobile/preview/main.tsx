@@ -24,7 +24,38 @@ import { SAMPLE_NOTES } from './notesSample';
 import { NotesAiEditBox } from '@/components/NotesAiEditBox';
 import { McqCard } from '@/components/McqCard';
 import { WaveformRiver } from '@/components/WaveformRiver';
-import FlashcardsScreen from '@/screens/FlashcardsScreen';
+import FlashcardsScreen, { StudyView } from '@/screens/FlashcardsScreen';
+
+/**
+ * Three cards, shaped exactly as generate-flashcards returns them: two theory
+ * and one diagram, which is the half-and-half the deck is built to be.
+ */
+const ANKI_FIXTURE = [
+  {
+    id: 'demo::0',
+    kind: 'theory' as const,
+    front: 'Incubation period of typhoid fever',
+    back: '10–14 days (range 3–21).',
+    tags: ['typhoid', 'incubation'],
+  },
+  {
+    id: 'demo::1',
+    kind: 'image' as const,
+    front: 'Current strategy of filaria control',
+    back: '',
+    imageUrl:
+      'https://pmtgeydtqypwrypshhsx.supabase.co/storage/v1/object/public/diagrams/demo.png',
+    tags: ['flowchart'],
+  },
+  {
+    id: 'demo::2',
+    kind: 'theory' as const,
+    front: 'DOTS — what does the acronym stand for?',
+    back: 'Directly Observed Treatment, Short-course.',
+    hint: 'Five components',
+    tags: ['tb', 'ntep'],
+  },
+];
 import { ThinkingDots } from '@/components/ThinkingDots';
 import { MessageEntrance } from '@/components/MessageEntrance';
 import { RevealText } from '@/components/RevealText';
@@ -242,6 +273,33 @@ function Shell() {
    */
   if (screen === 'flashcards') {
     return <FlashcardsScreen onExit={() => {}} />;
+  }
+
+  /*
+   * ?screen=ankidemo — one study session, driven by a fixture.
+   *
+   * The real one needs a deck from Supabase, which the harness cannot reach, so
+   * without this every state past the error message is unreviewable: the card
+   * face, Show Answer, the four buttons and the interval each would give. Those
+   * are the parts worth looking at before they reach a phone.
+   */
+  if (screen === 'ankidemo') {
+    return (
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 16 }}>
+        <StudyView
+          year="third"
+          subjectName="Community Medicine"
+          topic={{
+            key: 'community-medicine::epidemiology-of-communicable-diseases',
+            name: 'Epidemiology of Communicable Diseases',
+            breadcrumb: 'Community Medicine › Epidemiology',
+            questions: [],
+          }}
+          onBack={() => {}}
+          fixture={ANKI_FIXTURE}
+        />
+      </ScrollView>
+    );
   }
 
   return (

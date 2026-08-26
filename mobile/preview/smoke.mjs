@@ -1336,6 +1336,55 @@ await step('notes screen renders its year picker', async () => {
  * version of this screen is exactly the kind of regression nothing else would
  * catch.
  */
+/**
+ * One study session, end to end, on the fixture route.
+ *
+ * The real screen needs a deck from Supabase and the harness has no route to
+ * it, so without this every state past the error message is unreachable — the
+ * card face, Show Answer, the four buttons, and the interval each one gives.
+ *
+ * The interval labels are the assertion that matters. They are Anki's numbers,
+ * and they caught a real bug: measuring the wall clock to a midnight-aligned
+ * due date made Easy read "3d" for a card scheduled four days out, and the
+ * amount it was wrong by depended on the time of day the test ran.
+ */
+await step('a flashcard session shows a card, then Anki\'s four buttons', async () => {
+  await open('screen=ankidemo');
+  await page.waitForTimeout(1200);
+
+  await seesText('Incubation period of typhoid fever', 5000);
+  await seesText('3 new', 4000);
+  // Face down until the reader has tried to recall it. An answer visible
+  // beside the question turns a memory test into reading.
+  if (await page.getByText('10–14 days').first().isVisible().catch(() => false)) {
+    throw new Error('the answer is visible before Show Answer — the card is not face down');
+  }
+
+  await byLabel('Show answer').click();
+  await page.waitForTimeout(500);
+  await seesText('10–14 days', 4000);
+
+  const labels = await page
+    .locator('[aria-label^="Again,"], [aria-label^="Hard,"], [aria-label^="Good,"], [aria-label^="Easy,"]')
+    .evaluateAll(els => els.map(el => el.getAttribute('aria-label')));
+  const expected = [
+    'Again, next in 1m',
+    'Hard, next in 6m',
+    'Good, next in 10m',
+    'Easy, next in 4d',
+  ];
+  if (JSON.stringify(labels) !== JSON.stringify(expected)) {
+    throw new Error(
+      `the answer buttons read ${JSON.stringify(labels)}, not Anki's ${JSON.stringify(expected)}`,
+    );
+  }
+
+  // Good on a new card walks to the 10m step; it must not vanish from the queue.
+  await page.locator('[aria-label^="Good,"]').click();
+  await page.waitForTimeout(700);
+  await seesText('Current strategy of filaria control', 4000);
+});
+
 await step('notes offers flashcards and a locked case proforma, and no WhatsApp', async () => {
   await open('screen=notes');
   await page.waitForTimeout(900);

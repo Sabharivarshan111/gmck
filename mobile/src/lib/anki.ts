@@ -59,6 +59,17 @@ export const LAPSE_MULTIPLIER = 0;
 export const LEECH_THRESHOLD = 8;
 export const NEW_PER_DAY = 20;
 export const REVIEWS_PER_DAY = 200;
+/**
+ * A hundred years, which is Anki's `maximum_review_interval`.
+ *
+ * It exists because the multipliers compound: a card answered Easy a dozen
+ * times runs past any horizon a medical student has, and "next due in 4.2
+ * years" is not a schedule, it is a card that has left the deck without
+ * saying so.
+ */
+export const MAX_INTERVAL = 36_500;
+/** `minimum_lapse_interval`: a lapsed card is never scheduled at zero days. */
+export const MIN_LAPSE_INTERVAL = 1;
 
 /** Midnight local. Review intervals are days, so due-ness is a day, not a moment. */
 export function startOfDay(at: number): number {
@@ -108,12 +119,13 @@ function stepIndex(steps: number[], remaining: number): number {
 }
 
 function graduate(card: Card, days: number, now: number): Card {
+  const capped = Math.min(days, MAX_INTERVAL);
   return {
     ...card,
     type: 'review',
     remainingSteps: 0,
-    interval: days,
-    due: startOfDay(now) + days * DAY,
+    interval: capped,
+    due: startOfDay(now) + capped * DAY,
   };
 }
 
@@ -184,7 +196,7 @@ export function answer(card: Card, grade: Grade, now = Date.now()): Card {
 
   // Review.
   if (grade === 'again') {
-    const lapsed = Math.max(1, Math.floor(card.interval * LAPSE_MULTIPLIER));
+    const lapsed = Math.max(MIN_LAPSE_INTERVAL, Math.floor(card.interval * LAPSE_MULTIPLIER));
     return {
       ...next,
       type: 'relearning',
@@ -217,6 +229,18 @@ export function answer(card: Card, grade: Grade, now = Date.now()): Card {
  */
 export function intervalLabel(card: Card, grade: Grade, now = Date.now()): string {
   const after = answer(card, grade, now);
+  /*
+   * A day-scale card is labelled by its **interval**, not by the wall clock.
+   *
+   * Review due dates are midnight-aligned, so `due - now` is short by however
+   * much of today has already gone: answering Easy at 3pm scheduled the card 4
+   * days out and the button read "3d". Anki shows the interval it just gave
+   * you, and it is the number that means something — "4d" is the schedule,
+   * "3d and 9 hours" is an accident of when you happened to press.
+   */
+  if (after.type === 'review') {
+    return dayLabel(after.interval);
+  }
   const ms = Math.max(0, after.due - now);
   if (ms < 60 * MINUTE) {
     return `${Math.max(1, Math.round(ms / MINUTE))}m`;
@@ -224,7 +248,11 @@ export function intervalLabel(card: Card, grade: Grade, now = Date.now()): strin
   if (ms < DAY) {
     return `${Math.round(ms / (60 * MINUTE))}h`;
   }
-  const days = Math.round(ms / DAY);
+  return dayLabel(Math.round(ms / DAY));
+}
+
+/** Days, months or years — Anki's own rounding. "0.007 days" is not an answer. */
+function dayLabel(days: number): string {
   if (days < 30) {
     return `${days}d`;
   }

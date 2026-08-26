@@ -44,6 +44,7 @@ const SHOTS = [
   // The flashcards walk, and the chat's new controls.
   { name: 'flashcards-decks', query: 'screen=flashcards' },
   { name: 'chatdemo', query: 'screen=chatdemo' },
+  { name: 'anki-study', query: 'screen=ankidemo' },
   { name: 'progress-bottom', query: 'screen=progress', scroll: 'bottom' },
   { name: 'timer-bottom', query: 'screen=timer', scroll: 'bottom' },
   { name: 'home-light', query: 'screen=home&theme=light' },

@@ -24,7 +24,7 @@ const mod = await import(
 const {
   newCard, answer, intervalLabel, dueQueue, counts, isLeech,
   LEARN_STEPS_MIN, GRADUATING_INTERVAL_GOOD, GRADUATING_INTERVAL_EASY,
-  START_EASE, MIN_EASE, LEECH_THRESHOLD,
+  START_EASE, MIN_EASE, LEECH_THRESHOLD, MAX_INTERVAL, MIN_LAPSE_INTERVAL,
 } = mod;
 
 const failures = [];
@@ -40,6 +40,19 @@ check(GRADUATING_INTERVAL_EASY === 4, 'graduating interval (easy) is not 4 days'
 check(START_EASE === 2.5, 'starting ease is not 2.5');
 check(MIN_EASE === 1.3, 'minimum ease is not 1.3');
 check(LEECH_THRESHOLD === 8, 'leech threshold is not 8');
+check(MAX_INTERVAL === 36_500, 'maximum review interval is not Anki\'s 36500 days');
+check(MIN_LAPSE_INTERVAL === 1, 'minimum lapse interval is not 1 day');
+
+// The multipliers compound, so without the cap a well-known card walks off the
+// end of any horizon a student has. Anki caps; so must this.
+let ancient = { ...newCard('cap', now), type: 'review', interval: 30_000, ease: 2.5, due: now };
+for (let i = 0; i < 5; i += 1) {
+  ancient = { ...answer(ancient, 'easy', now), type: 'review' };
+}
+check(
+  ancient.interval === MAX_INTERVAL,
+  `interval ran past the cap to ${ancient.interval} days — Anki stops at ${MAX_INTERVAL}`,
+);
 
 // --- Learning ---------------------------------------------------------------
 const fresh = newCard('q1', now);
@@ -143,6 +156,19 @@ check(c.fresh === 1 && c.review === 1, `deck counts are wrong: ${JSON.stringify(
 // --- Button labels ----------------------------------------------------------
 check(intervalLabel(fresh, 'again', now) === '1m', 'Again on a new card should read 1m');
 check(intervalLabel(fresh, 'easy', now) === '4d', 'Easy on a new card should read 4d');
+
+/*
+ * The label must not drift with the time of day. Review due dates are
+ * midnight-aligned, so measuring `due - now` under-reports by however much of
+ * today has gone — Easy at 3pm read "3d" for a card scheduled 4 days out.
+ */
+for (const hour of [0, 9, 15, 23]) {
+  const at = new Date(`2026-03-01T${String(hour).padStart(2, '0')}:30:00`).getTime();
+  check(
+    intervalLabel(newCard('t', at), 'easy', at) === '4d',
+    `Easy reads ${intervalLabel(newCard('t', at), 'easy', at)} at ${hour}:30 — it must be 4d at any hour`,
+  );
+}
 check(
   /^\d+mo$|^\d+\.\d+mo$/.test(intervalLabel({ ...review, interval: 60 }, 'good', now)),
   'a months-long interval should read in months, not days',

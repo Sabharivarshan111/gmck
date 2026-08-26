@@ -275,16 +275,27 @@ function TopicsView({
  * turns a memory test into reading. Anki calls the step "Show Answer" and so
  * does this.
  */
-function StudyView({
+export function StudyView({
   year,
   subjectName,
   topic,
   onBack,
+  fixture,
 }: {
   year: Year;
   subjectName: string;
   topic: LeafTopic;
   onBack: () => void;
+  /**
+   * A deck supplied instead of fetched.
+   *
+   * Only the preview passes this. The study screen is otherwise unreachable
+   * without a route to Supabase, which the harness does not have — so every
+   * state past "could not build this deck" was unreviewable and could not be
+   * screenshotted. A fixture is how the card, the four buttons and their
+   * interval previews get looked at before they reach a phone.
+   */
+  fixture?: DeckCard[];
 }) {
   const { colors } = useTheme();
   const [deck, setDeck] = useState<DeckCard[] | null>(null);
@@ -334,8 +345,15 @@ function StudyView({
   );
 
   useEffect(() => {
+    if (fixture) {
+      setDeck(fixture);
+      setDeckKey('preview::fixture');
+      setSchedule({});
+      setLoading(false);
+      return;
+    }
     load(false);
-  }, [load]);
+  }, [fixture, load]);
 
   const cards = useMemo<Card[]>(
     () => (deck ? reconcile(deck, schedule) : []),
