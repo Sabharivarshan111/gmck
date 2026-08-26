@@ -20,6 +20,7 @@ when picking up work that was last touched from the other tool.
 | `.agents/rules/20-interface.md` | Interface rules — theming, type, materials, accessibility |
 | `.agents/rules/30-reference.md` | Index of the vendored design skills, and where the long-form docs live |
 | `.agents/rules/40-releases.md` | Cutting builds — which of the four to use, how to trigger one, and the two things a wrong build costs |
+| `.agents/rules/50-notes.md` | Handwritten notes — which textbook grounds which subject, and the two ways that goes silently wrong |
 <!-- rules:end -->
 
 This repo is worked on from Claude Code *and* Antigravity, sometimes on the
@@ -149,6 +150,36 @@ Clamp from the **head**: the importance stars and PYQ year markers are at the
 start of a question string, and the model reads them to fill `pyqYears`.
 Trimming the front to fit would empty the year badges instead.
 `npm run check:notes-limits` walks all 413 topic groups.
+
+## The triple tap follows the textbook, not the year
+
+`generate-handwritten-notes` grounds every note in an OCR'd textbook from the
+private `textbooks` bucket, and it picks that book by **subject**. Eight books
+cover all of first, second and third year; final year has none and must keep
+falling through to Ask AI.
+
+`src/lib/textbooks.ts` mirrors the function's `pickBookKey` and
+`npm run check:textbooks` pins the two together — **in the same order**, because
+the matches overlap and testing `drug` before `microbio` sends an antimicrobial
+subject to the wrong book.
+
+The gate was `year === 'third-year'`, correct when Community and Forensic were
+the only two books and never revisited. 803 triple-tap notes were third year,
+one was second, none were first — students turned away from an answer that was
+already there. Two things kept it invisible:
+
+- **The repo's copy of the edge function was two versions behind**, so reading
+  the code agreed with the gate. It is gone; read the deployed function through
+  the Supabase MCP connector instead.
+- **`subject` fell back to `'Community Medicine'`.** Harmless while the feature
+  was third-year-only; it would now ground an Anatomy question in Park and hand
+  it back with a textbook's confidence.
+
+The cache key `single::{subjectKey}::{hash(question)}` is shared with the web
+app, so changing its shape orphans every existing note. And because the function
+returns the cache unless `regenerate` is set, **a note generated before its
+textbook existed never refreshes itself** — 75 of them had to be deleted so they
+would. Upload a new book, clear that subject's notes.
 
 ## Notes render the edge function's shapes, not strings
 

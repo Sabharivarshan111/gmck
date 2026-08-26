@@ -39,10 +39,28 @@ Full reference, in the repo, worth opening before any real animation work:
   morphing on screen are ease-in-out.
 - **UI motion stays under 300ms.** Press feedback 100–160ms; sheets and
   drawers may go to 500ms and no further.
-- **`useNativeDriver: true` on everything.** A busy JS thread — question-bank
-  walks, Supabase round-trips — must not be able to drop animation frames.
-  react-native-web has no native driver and warns about this in the preview;
-  that warning is expected and is not a defect.
+- **`useNativeDriver: true` on transforms and opacity — and only those.** A busy
+  JS thread (question-bank walks, Supabase round-trips) must not be able to drop
+  animation frames. react-native-web has no native driver and warns about this
+  in the preview; that warning is expected and is not a defect.
+
+  **But the native driver only knows transform and style opacity.** Animating an
+  SVG prop with it — `strokeDashoffset`, an `<Path opacity>` *attribute*, a
+  gradient's coordinates — does not fall back: on Android it throws, or the
+  value simply never arrives and nothing draws. Those need
+  `useNativeDriver: false`. `ProgressRing`, `GradientText` and `SuccessCheckmark`
+  all carry the note.
+
+  `useNativeDriver: Platform.OS !== 'web'` is the wrong shape and shipped once:
+  web is where the flag is harmless (RNW ignores it), Android is where it breaks.
+  It made the tick's checkmark unable to draw at all.
+
+- **Never advance a `useState` from `requestAnimationFrame`.** That is a React
+  re-render every frame, on the JS thread, on the phones this app is aimed at —
+  and if the render also builds a string (an SVG path, say) it rebuilds that too.
+  Express the movement as a transform over a *static* drawing instead: the
+  dictation visualiser draws one wave and translates it, so 60fps costs zero
+  re-renders. `grep requestAnimationFrame src/` should stay empty.
 - **Nothing scales from 0.** Entrances start at 0.6–0.9. A `scale(0)` entrance
   reads as materialising out of nowhere.
 - **Progress bars use `scaleX` with `transformOrigin: 'left'`, never an

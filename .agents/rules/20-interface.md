@@ -71,6 +71,32 @@ stops fitting inside the bottom bar's selection pill.
   design.
 - `check:smoke` selects controls by accessibility label, so a control it cannot
   find is one TalkBack cannot announce either.
+- **State goes out twice** — as `accessibilityState` *and* as `aria-checked` /
+  `aria-selected` / `aria-expanded` / `aria-busy`. TalkBack reads the first;
+  react-native-web 0.21 removed it and reads only the second. `Touchable` sets
+  both from one value. Without the aria half, every switch in the preview
+  reports no state at all — and a `check:smoke` assertion passed for a year
+  while reading an attribute that was never emitted.
+
+## Two things that look fine in the preview and are broken on a phone
+
+The preview is react-native-web. Where the DOM is more forgiving than Android,
+it will agree with a bug and keep agreeing.
+
+- **Never resize a box that contains an `<Svg width="100%">`.** On Android
+  react-native-svg paints its canvas at the size it measured and does not
+  repaint when a parent is merely resized; a DOM `<svg>` reflows on its own.
+  `ThinBar` drew its fill that way, so ticking the last question in a topic
+  widened the box and kept painting the old fraction — a progress bar stuck at
+  half, perfect in the preview. Draw the SVG once at full size and **clip** it
+  instead.
+- **One component, one rendering path.** A `Foo.web.tsx` beside `Foo.tsx` means
+  the harness renders the file that never ships, so the file that does ships
+  unreviewed. That is how a heading's animation was found to be bound to
+  nothing while the preview shimmered from a CSS class in `index.html`. If a
+  component cannot be reached in the harness (`listen()` rejects without a
+  recogniser, so the dictation visualiser never mounts), put it on a demo route
+  rather than giving it a second implementation.
 
 ## Performance, on a 3 GB phone
 
