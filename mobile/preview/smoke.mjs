@@ -1238,21 +1238,80 @@ await step('the pomodoro sheet offers working alert sounds', async () => {
  * has a textbook for — Community Medicine and Forensic Medicine — so it is the
  * only year the promise can be kept, which is the same gate the web app uses.
  */
-await step('a third-year row offers a handwritten note, other years do not', async () => {
-  await open(
-    'screen=browse&year=third-year&node=forensic-medicine,mechanical-injuries&title=Mechanical%20Injuries',
-  );
-  await declineAdPromptIfShown();
-  await seesText('Triple tap → handwritten note', 6000);
+/**
+ * The handwritten note is offered wherever there is a textbook to ground it in,
+ * which is a question about the subject and not the year.
+ *
+ * This step used to assert the opposite for second year — that the row must
+ * *not* offer a note — and it was right when it was written, because Community
+ * and Forensic were the only two books. Six more were added on the server and
+ * nothing here noticed, so the assertion went on defending a gate that was
+ * turning away first- and second-year students from an answer that already
+ * existed. Final year is the year with genuinely no books, and it is what the
+ * negative half checks now.
+ */
+await step('a row offers a handwritten note wherever there is a textbook', async () => {
+  const offersNote = async (route) => {
+    await open(route);
+    await declineAdPromptIfShown();
+    await page.waitForTimeout(700);
+    // A topic can hold essays, short notes, or only one of the two. First-year
+    // General Anatomy is short notes only and lands on an empty Essays tab, so
+    // there are no rows to read the label off until the tab is switched.
+    if (await page.getByText('No essays here').first().isVisible().catch(() => false)) {
+      await page.getByText('Short Notes').first().click({ timeout: 4000 });
+      await page.waitForTimeout(700);
+    }
+    return (await page.getByText('Triple tap → handwritten note').count()) > 0;
+  };
 
-  await open(
-    'screen=browse&year=second-year&node=pharmacology,paper-2,anti-microbial-drugs&title=Anti-Microbial%20Drugs',
-  );
-  await declineAdPromptIfShown();
-  await seesText('Triple tap to ask AI', 6000);
-  if (await page.getByText('Triple tap → handwritten note').count()) {
-    throw new Error('a second-year row promises a handwritten note it cannot produce');
+  // Third year — Forensic, grounded in Vision. This half already worked.
+  if (
+    !(await offersNote(
+      'screen=browse&year=third-year&node=forensic-medicine,mechanical-injuries&title=Mechanical%20Injuries',
+    ))
+  ) {
+    throw new Error('third year lost its handwritten note');
   }
+
+  // Second year — Pharmacology, grounded in KD Tripathi + Tara V Shanbhag.
+  if (
+    !(await offersNote(
+      'screen=browse&year=second-year&node=pharmacology,paper-2,anti-microbial-drugs&title=Anti-Microbial%20Drugs',
+    ))
+  ) {
+    throw new Error(
+      'a second-year row offers no handwritten note, but the notes function has two pharmacology books',
+    );
+  }
+
+  // First year — Anatomy, grounded in Vishram Singh + Langman's Embryology.
+  if (
+    !(await offersNote(
+      'screen=browse&year=first-year&node=anatomy,paper-1,general-anatomy&title=General%20Anatomy',
+    ))
+  ) {
+    throw new Error(
+      'a first-year row offers no handwritten note, but the notes function has an anatomy book',
+    );
+  }
+
+  /*
+   * Final year is the year that genuinely has no textbook. It must send the
+   * reader to Ask AI rather than promise a grounded note it cannot produce —
+   * a note badged "handwritten" that is really the generic answer is worse
+   * than no button, because nothing on screen says which one arrived.
+   */
+  if (
+    await offersNote(
+      'screen=browse&year=final-year&node=general-medicine,fundamentals-of-medicine&title=Fundamentals%20of%20Medicine',
+    )
+  ) {
+    throw new Error(
+      'a final-year row promises a handwritten note, but no textbook covers final year — it would be ungrounded',
+    );
+  }
+  await seesText('Triple tap to ask AI', 6000);
 });
 
 // ---- The other tabs --------------------------------------------------------

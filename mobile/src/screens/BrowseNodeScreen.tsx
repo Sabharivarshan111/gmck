@@ -26,6 +26,7 @@ import { GradientText } from '@/components/GradientText';
 import { ThinBar } from '@/components/ProgressRing';
 import { QuestionRow } from '@/components/QuestionRow';
 import { FilterField } from '@/components/FilterField';
+import { hasTextbook } from '@/lib/textbooks';
 import { getCleanQuestionText } from '@/lib/questionText';
 import {
   collectAllQuestions,
@@ -183,18 +184,23 @@ export default function BrowseNodeScreen() {
   );
 
   /**
-   * Third year is Community Medicine and Forensic Medicine, and those are the
-   * two subjects generate-handwritten-notes has a textbook for — which is
-   * exactly why the web app gates its handwritten triple tap on the same year
-   * and sends everything else to Ask AI. `subject` is the first path segment:
-   * the key under the year's `subtopics`, the same value the web app passes.
+   * A triple tap offers a handwritten note wherever the notes function has a
+   * textbook to ground it in — which is a question about the **subject**, not
+   * the year. `subject` is the first path segment: the key under the year's
+   * `subtopics`, the same value the web app passes.
+   *
+   * This was `year === 'third-year'`, from back when Community and Forensic
+   * were the only two books that existed. Eight books do now, covering every
+   * subject in first and second year too, so that gate was turning away
+   * students the server could already answer. Final year is the year with no
+   * books, and it falls out of `hasTextbook` on its own.
    */
   const subjectKey = path[0] ?? '';
   const subjectName = useMemo(
     () => getSubjects(year).find(s => s.key === subjectKey)?.name ?? subjectKey,
     [year, subjectKey],
   );
-  const notesAvailable = year === 'third-year' && subjectKey !== '';
+  const notesAvailable = subjectKey !== '' && hasTextbook(subjectKey, subjectName);
   const [notedQuestion, setNotedQuestion] = useState<string | null>(null);
   const openNote = useCallback(
     (question: string) => setNotedQuestion(question),

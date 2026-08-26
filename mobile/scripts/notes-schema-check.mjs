@@ -143,29 +143,21 @@ check(
   'the fixture has no image markdown, so the diagram path in prose is untested',
 );
 
-// 3. The edge function still declares those shapes.
-const fn = await fs
-  .readFile(path.join(root, '..', 'supabase/functions/generate-handwritten-notes/index.ts'), 'utf8')
-  .catch(() => null);
-if (fn) {
-  const declares = (type, fragment) =>
-    check(
-      fn.includes(fragment),
-      `the edge function no longer declares ${type} as ${fragment} — the renderer needs updating`,
-    );
-  declares('bullets', '"items": [ { "label": string, "description": string } ]');
-  declares('steps', '"items": [ { "title": string, "description": string, "keyTrigger"?: string } ]');
-  declares('flowchart', '"steps": [ { "label": string, "detail": string } ]');
-  declares('comparison', '"rows": [ { "label": string, "left": string, "right": string } ]');
-  check(
-    /attachDiagramToContent/.test(fn) && /question_diagrams/.test(fn),
-    'the edge function no longer attaches question_diagrams — notes would ship without their exam diagrams',
-  );
-  check(
-    /!\[[^\]]*\]\(\$\{/.test(fn),
-    'the edge function no longer emits the diagram as image markdown — RichText reads exactly that shape',
-  );
-}
+// 3. The edge function's shapes are no longer asserted from source, and that
+//    is deliberate.
+//
+//    They used to be read out of supabase/functions/generate-handwritten-notes/
+//    index.ts. That copy was two versions behind what is deployed and nothing
+//    deployed from it, so the assertions were green against a file the server
+//    had never run — two of them ("still attaches question_diagrams", "still
+//    emits image markdown") asserted behaviour the live function does not have
+//    at all. A check that passes by reading the wrong file is worse than no
+//    check, because it is counted as coverage.
+//
+//    The copy is gone (see that folder's README for where the real one lives
+//    and what it does). What survives here is everything that can be checked
+//    against code this repo actually ships: the fixture and the renderer, both
+//    above, plus the client-side book map in check:textbooks.
 
 if (failures.length > 0) {
   for (const failure of failures) {
@@ -174,4 +166,4 @@ if (failures.length > 0) {
   process.stdout.write(`\n${failures.length} problem(s) — notes would render wrong on a phone.\n`);
   process.exit(1);
 }
-process.stdout.write('OK  notes fixture, renderer and edge-function schema agree\n');
+process.stdout.write('OK  notes fixture and renderer agree\n');
