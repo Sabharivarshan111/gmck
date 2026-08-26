@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   ActivityIndicator,
   BackHandler,
-  Linking,
   Platform,
   ScrollView,
   StyleSheet,
@@ -13,11 +12,12 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   ArrowLeft,
   ChevronRight,
+  ClipboardList,
   GraduationCap,
-  MessageCircle,
+  Layers,
+  Lock,
   RotateCw,
   Sparkles,
-  TriangleAlert,
   Wand2,
 } from 'lucide-react-native';
 import { Text } from '@/components/Text';
@@ -27,8 +27,9 @@ import { typeScale } from '@/theme/typography';
 import { useTheme, withAlpha } from '@/theme';
 import { GradientFill } from '@/components/Gradient';
 import { NotesContentView } from '@/components/NotesContentView';
+import FlashcardsScreen from '@/screens/FlashcardsScreen';
 import { useProfile } from '@/hooks/useProfile';
-import { getSubjects, YEAR_LABEL, type BankNode, type YearKey } from '@/lib/questionBank';
+import { getSubjects, YEAR_LABEL, type BankNode } from '@/lib/questionBank';
 import { YEAR_TO_KEY, type Year } from '@/lib/profile';
 import {
   applyNotesEdit,
@@ -61,6 +62,13 @@ export default function NotesScreen() {
   const insets = useSafeAreaInsets();
   const { year: profileYear } = useProfile();
   const [view, setView] = useState<View_>({ kind: 'years' });
+  /*
+   * Flashcards take over the whole tab rather than becoming another `view`
+   * kind. They have their own year → subject → chapter walk and their own
+   * back stack, and folding that into this screen's state machine would mean
+   * one Back button serving two unrelated ladders.
+   */
+  const [flashcards, setFlashcards] = useState(false);
 
   const topicsViewFor = useCallback((current: Extract<View_, { kind: 'notes' }>): View_ => {
     const subjectKey = current.topic.key.split('::')[0];
@@ -122,6 +130,14 @@ export default function NotesScreen() {
     });
   }, [topicsViewFor]);
 
+  if (flashcards) {
+    return (
+      <View style={[styles.screen, { backgroundColor: colors.background }]}>
+        <FlashcardsScreen onExit={() => setFlashcards(false)} />
+      </View>
+    );
+  }
+
   return (
     <View style={styles.screen}>
     <ScrollView
@@ -132,7 +148,11 @@ export default function NotesScreen() {
       contentContainerStyle={[styles.content, { paddingTop: insets.top + 12 }]}
       showsVerticalScrollIndicator={false}>
       {view.kind === 'years' ? (
-        <YearsView currentYear={profileYear} onPick={year => setView({ kind: 'subjects', year })} />
+        <YearsView
+          currentYear={profileYear}
+          onPick={year => setView({ kind: 'subjects', year })}
+          onFlashcards={() => setFlashcards(true)}
+        />
       ) : null}
 
       {view.kind === 'subjects' ? (
@@ -214,7 +234,15 @@ function BackHeader({ title, subtitle }: { title: string; subtitle?: string }) {
   );
 }
 
-function YearsView({ currentYear, onPick }: { currentYear: Year; onPick: (year: Year) => void }) {
+function YearsView({
+  currentYear,
+  onPick,
+  onFlashcards,
+}: {
+  currentYear: Year;
+  onPick: (year: Year) => void;
+  onFlashcards: () => void;
+}) {
   const { colors } = useTheme();
   return (
     <>
@@ -263,7 +291,53 @@ function YearsView({ currentYear, onPick }: { currentYear: Year; onPick: (year: 
         ))}
       </View>
 
-      <WhatsAppBlock year={YEAR_TO_KEY[currentYear]} />
+      <Text style={[styles.sectionLabel, { color: colors.textMuted }]}>ALSO HERE</Text>
+
+      <Touchable
+        onPress={onFlashcards}
+        label="Anki flashcards, browse decks by year"
+        scaleTo={0.97}
+        style={[styles.extraCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+        <View style={[styles.extraIcon, { backgroundColor: withAlpha(colors.accent, 0.15) }]}>
+          <Layers size={18} color={colors.accent} />
+        </View>
+        <View style={styles.flex}>
+          <Text style={[styles.extraTitle, { color: colors.text }]}>Anki flashcards</Text>
+          <Text style={[styles.extraSub, { color: colors.textMuted }]}>
+            Theory and diagram cards for any chapter, scheduled the way Anki does it
+          </Text>
+        </View>
+        <ChevronRight size={18} color={colors.textMuted} />
+      </Touchable>
+
+      {/*
+        Locked, and it says so rather than looking tappable and doing nothing.
+        A card that appears live and swallows a press is worse than one plainly
+        not ready: the reader tries it repeatedly and concludes the app is
+        broken. It is a View rather than a Touchable so there is no press to
+        swallow, and TalkBack announces the state instead of offering a control
+        that does not work.
+      */}
+      <View
+        style={[
+          styles.extraCard,
+          styles.extraLocked,
+          { backgroundColor: colors.card, borderColor: colors.border },
+        ]}
+        accessible
+        accessibilityLabel="Case proforma. Coming soon, not yet available."
+        aria-disabled>
+        <View style={[styles.extraIcon, { backgroundColor: withAlpha(colors.textMuted, 0.15) }]}>
+          <ClipboardList size={18} color={colors.textMuted} />
+        </View>
+        <View style={styles.flex}>
+          <Text style={[styles.extraTitle, { color: colors.textMuted }]}>Case proforma</Text>
+          <Text style={[styles.extraSub, { color: colors.textMuted }]}>
+            Coming soon — clerking sheets for the wards
+          </Text>
+        </View>
+        <Lock size={16} color={colors.textMuted} />
+      </View>
     </>
   );
 }
@@ -589,54 +663,36 @@ function NotesDetailView({
   );
 }
 
-function WhatsAppBlock({ year }: { year: YearKey }) {
-  const { colors } = useTheme();
-  return (
-    <View style={[styles.groupCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
-      <View style={styles.groupHeader}>
-        <View style={[styles.groupIcon, { backgroundColor: withAlpha(colors.green, 0.15) }]}>
-          <MessageCircle size={18} color={colors.green} />
-        </View>
-        <View style={styles.flex}>
-          <Text style={[styles.rowTitle, { color: colors.text }]}>
-            WhatsApp group for {YEAR_LABEL[year].toLowerCase()}
-          </Text>
-          <Text style={[styles.groupSub, { color: colors.textMuted }]}>
-            Join our WhatsApp group for {YEAR_LABEL[year].toLowerCase()} study materials, notes and
-            exam updates.
-          </Text>
-        </View>
-      </View>
-
-      <Touchable
-        onPress={() => Linking.openURL('https://chat.whatsapp.com/').catch(() => {})}
-        label="Join our WhatsApp group"
-        hint="Opens WhatsApp"
-        style={styles.joinButton}>
-        <GradientFill from="#22C55E" to="#16A34A" borderRadius={12} />
-        <Text style={styles.joinText}>Tap here to join our WhatsApp group</Text>
-      </Touchable>
-
-      <View
-        style={[
-          styles.warning,
-          {
-            backgroundColor: withAlpha(colors.warning, 0.08),
-            borderColor: withAlpha(colors.warning, 0.4),
-          },
-        ]}>
-        <TriangleAlert size={16} color={colors.warning} />
-        <Text style={[styles.warningText, { color: colors.warning }]}>
-          You must be using the ORBIT MBBS app downloaded from the Play Store, on the latest
-          version, to join. Search "Orbit MBBS" on the Play Store and install or update it. Older
-          or illegitimate versions will not be allowed.
-        </Text>
-      </View>
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
+  extraCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    borderRadius: 16,
+    borderWidth: 1,
+    padding: 14,
+    marginBottom: 10,
+  },
+  // Dimmed, not hidden: the reader should know it is coming.
+  extraLocked: {
+    opacity: 0.55,
+  },
+  extraIcon: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  extraTitle: {
+    fontSize: 15,
+    fontWeight: '700',
+  },
+  extraSub: {
+    fontSize: 12,
+    marginTop: 2,
+    lineHeight: 17,
+  },
   content: {
     paddingHorizontal: 16,
     paddingBottom: 28,
@@ -847,52 +903,5 @@ const styles = StyleSheet.create({
   regenerateText: {
     fontSize: 14,
     fontWeight: '600',
-  },
-  groupCard: {
-    borderRadius: 16,
-    borderWidth: StyleSheet.hairlineWidth,
-    padding: 16,
-  },
-  groupHeader: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  groupIcon: {
-    height: 36,
-    width: 36,
-    borderRadius: 18,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  groupSub: {
-    fontSize: 14,
-    lineHeight: 20,
-    marginTop: 4,
-  },
-  joinButton: {
-    borderRadius: 12,
-    paddingVertical: 15,
-    alignItems: 'center',
-    justifyContent: 'center',
-    overflow: 'hidden',
-    marginTop: 16,
-  },
-  joinText: {
-    color: '#FFFFFF',
-    fontSize: 15,
-    fontWeight: '700',
-  },
-  warning: {
-    flexDirection: 'row',
-    gap: 10,
-    borderRadius: 12,
-    borderWidth: StyleSheet.hairlineWidth,
-    padding: 14,
-    marginTop: 14,
-  },
-  warningText: {
-    flex: 1,
-    fontSize: 13,
-    lineHeight: 19,
   },
 });

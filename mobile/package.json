@@ -34,7 +34,8 @@
     "check:native-sound": "node scripts/native-sound-check.mjs",
     "check:native-speech": "node scripts/native-speech-check.mjs",
     "check:native-notify": "node scripts/native-notify-check.mjs",
-    "check:textbooks": "node scripts/textbooks-check.mjs"
+    "check:textbooks": "node scripts/textbooks-check.mjs",
+    "check:anki": "node scripts/anki-check.mjs"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^3.1.1",

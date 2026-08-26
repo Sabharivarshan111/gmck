@@ -1,0 +1,154 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { supabase } from './supabase';
+import { type Card, newCard } from './anki';
+
+/**
+ * Flashcard decks: one per chapter, built by the `generate-flashcards` edge
+ * function and studied with Anki's scheduler.
+ *
+ * The deck (the cards themselves) is **shared** — the same chapter produces the
+ * same cards for everyone, so it is cached server-side and read by everybody.
+ * The schedule (which card is due when) is **personal**, and lives on the
+ * device. Keeping them apart is what lets a deck be generated once and studied
+ * by a thousand people on their own timetables.
+ */
+
+export interface DeckCard {
+  id: string;
+  kind: 'theory' | 'image';
+  front: string;
+  back: string;
+  hint?: string;
+  imageUrl?: string;
+  tags?: string[];
+}
+
+export interface Deck {
+  deckKey: string;
+  cards: DeckCard[];
+  cached: boolean;
+}
+
+/** Same shape the function builds, so a cache hit and a fresh build agree. */
+export function deckKeyFor(year: string, subject: string, subtopicKey: string): string {
+  return `${year}::${subject}::${subtopicKey}`;
+}
+
+function isDeckCard(value: unknown): value is DeckCard {
+  const card = value as DeckCard | null;
+  if (!card || typeof card !== 'object') {
+    return false;
+  }
+  if (typeof card.front !== 'string' || card.front.trim().length === 0) {
+    return false;
+  }
+  /*
+   * A theory card with no back cannot be answered, and an image card with no
+   * image is a blank rectangle. Both are dropped rather than shown — the same
+   * rule parseMcqs follows, and for the same reason: a broken card in a study
+   * deck teaches the wrong thing or nothing, and there is no way for the
+   * reader to tell which.
+   */
+  if (card.kind === 'image') {
+    return typeof card.imageUrl === 'string' && card.imageUrl.length > 0;
+  }
+  return typeof card.back === 'string' && card.back.trim().length > 0;
+}
+
+/** Errors come back in the body, so the message has to be dug out of it. */
+async function unwrapError(error: { message?: string; context?: unknown }): Promise<Error> {
+  let message = error.message ?? 'Could not build this deck';
+  try {
+    const context = error.context as { json?: () => Promise<{ error?: unknown }> } | undefined;
+    if (context?.json) {
+      const body = await context.json();
+      if (body?.error) {
+        message = typeof body.error === 'string' ? body.error : JSON.stringify(body.error);
+      }
+    }
+  } catch {
+    // Keep the original.
+  }
+  return new Error(message);
+}
+
+export async function fetchDeck(request: {
+  year: string;
+  subject: string;
+  subtopicKey: string;
+  subtopicName: string;
+  questions: string[];
+  regenerate?: boolean;
+}): Promise<Deck> {
+  const { data, error } = await supabase.functions.invoke('generate-flashcards', {
+    body: {
+      year: request.year,
+      subject: request.subject,
+      subtopicKey: request.subtopicKey,
+      subtopicName: request.subtopicName,
+      // The function caps at 400; sending the whole chapter of a big topic
+      // would 400 the request the way the notes function does.
+      questions: request.questions.slice(0, 300),
+      regenerate: request.regenerate ?? false,
+    },
+  });
+  if (error) {
+    throw await unwrapError(error);
+  }
+  if ((data as { error?: unknown } | null)?.error) {
+    throw new Error(String((data as { error: unknown }).error));
+  }
+  const payload = data as { deckKey?: string; cards?: unknown[]; cached?: boolean };
+  const cards = (payload?.cards ?? []).filter(isDeckCard);
+  if (cards.length === 0) {
+    throw new Error('This chapter produced no usable cards.');
+  }
+  return {
+    deckKey: payload.deckKey ?? deckKeyFor(request.year, request.subject, request.subtopicKey),
+    cards,
+    cached: Boolean(payload.cached),
+  };
+}
+
+// ---------------------------------------------------------------------------
+// The schedule, which is per device and per deck.
+// ---------------------------------------------------------------------------
+
+const key = (deckKey: string) => `orbit:anki:${deckKey}`;
+
+export type Schedule = Record<string, Card>;
+
+export async function loadSchedule(deckKey: string): Promise<Schedule> {
+  try {
+    const raw = await AsyncStorage.getItem(key(deckKey));
+    if (!raw) {
+      return {};
+    }
+    const parsed = JSON.parse(raw) as Schedule;
+    return parsed && typeof parsed === 'object' ? parsed : {};
+  } catch {
+    // A corrupt schedule is a study session lost, not a crash. Starting over
+    // costs the reader a few minutes; failing to open the deck costs the deck.
+    return {};
+  }
+}
+
+export async function saveSchedule(deckKey: string, schedule: Schedule): Promise<void> {
+  try {
+    await AsyncStorage.setItem(key(deckKey), JSON.stringify(schedule));
+  } catch {
+    // Best effort, like every other cache in the app.
+  }
+}
+
+/**
+ * Line the deck's cards up with what is known about them.
+ *
+ * A card the schedule has never seen starts new. A scheduled card whose id is
+ * no longer in the deck is dropped: regenerating a chapter renumbers the cards,
+ * and carrying a schedule for a card nobody can see would leave the queue
+ * permanently one card short with nothing to show for it.
+ */
+export function reconcile(cards: DeckCard[], schedule: Schedule, now = Date.now()): Card[] {
+  return cards.map(card => schedule[card.id] ?? newCard(card.id, now));
+}

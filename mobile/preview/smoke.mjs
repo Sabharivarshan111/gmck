@@ -1327,6 +1327,75 @@ await step('notes screen renders its year picker', async () => {
  * RichText, a note opened on a phone showed the reader
  * `![Parts of a 12-Gauge Shotgun Cartridge](https://…supabase.co/storage/…`.
  */
+/**
+ * The Notes tab's two extra cards, and the flashcard deck walk behind one of
+ * them.
+ *
+ * The WhatsApp block that used to sit here is asserted *gone*: it was removed
+ * on request, and a block that comes back because someone restored an old
+ * version of this screen is exactly the kind of regression nothing else would
+ * catch.
+ */
+await step('notes offers flashcards and a locked case proforma, and no WhatsApp', async () => {
+  await open('screen=notes');
+  await page.waitForTimeout(900);
+
+  const body = await page.locator('body').innerText();
+  if (/whatsapp/i.test(body)) {
+    throw new Error('the WhatsApp block is back on the Notes tab');
+  }
+  await seesText('Anki flashcards', 4000);
+  await seesText('Case proforma', 4000);
+
+  /*
+   * Locked means no control at all, not a control that swallows presses. If
+   * this ever becomes a Touchable it will announce itself to TalkBack as
+   * something that can be activated, and it cannot.
+   */
+  if (await byLabel('Case proforma, coming soon').count()) {
+    throw new Error('the locked proforma card is a pressable — it must not offer a press it cannot honour');
+  }
+
+  await byLabel('Anki flashcards, browse decks by year').click();
+  await page.waitForTimeout(900);
+  await seesText('Anki-style cards', 4000);
+  await seesText('SELECT YEAR', 4000);
+});
+
+/**
+ * Year → subject → chapter, and a deck that cannot be built says so.
+ *
+ * The harness has no route to Supabase, so the deck fetch always fails here.
+ * That makes this the only place the *failure* path gets walked, and it is the
+ * one a student on a train will meet: it has to offer a way back rather than a
+ * spinner that never ends or a blank screen.
+ */
+await step('a flashcard chapter opens, and a deck that cannot build offers a retry', async () => {
+  await open('screen=notes');
+  await page.waitForTimeout(700);
+  await byLabel('Anki flashcards, browse decks by year').click();
+  await page.waitForTimeout(800);
+
+  await page.locator('[aria-label^="3rd Year"]').first().click();
+  await page.waitForTimeout(800);
+  await page.locator('[aria-label^="Community Medicine"]').first().click();
+  await page.waitForTimeout(900);
+
+  const chapters = await page.locator('[aria-label*="study flashcards"]').count();
+  if (chapters < 5) {
+    throw new Error(`only ${chapters} chapters listed for Community Medicine — the walk is broken`);
+  }
+
+  await page.locator('[aria-label*="study flashcards"]').first().click();
+  await page.waitForTimeout(2500);
+
+  if ((await byLabel('Try building this deck again').count()) === 0) {
+    throw new Error(
+      'a deck that could not be built left no way forward — it must explain itself and offer a retry',
+    );
+  }
+});
+
 await step('a diagram in prose renders as a picture, not as markdown', async () => {
   await open('screen=notesdemo');
   await seesText('High-Yield Visual Exam Diagram');
