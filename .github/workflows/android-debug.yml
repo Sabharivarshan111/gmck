@@ -50,6 +50,21 @@ on:
     branches:
       - claude/android-react-native-app-o54cjj
       - claude/native-app-sync
+    # Only when something that reaches the APK changes.
+    #
+    # This used to fire on every push. Three Android builds ran per push, per
+    # remote — six twenty-minute jobs for a commit that might only have touched
+    # a markdown file. That volume is what left runs pending with nothing else
+    # even in progress: the account was asking for far more free runner capacity
+    # than the work needed.
+    #
+    # The release build still runs on every push, because that is the artifact
+    # anyone actually waits for. These two are for sideloading and for testing
+    # sign-in, and neither is worth a runner when only documentation moved.
+    paths:
+      - 'mobile/**'
+      - 'src/**'
+      - '.github/workflows/android-debug.yml'
 
 # One run per branch, and a new push cancels the one it supersedes.
 #
