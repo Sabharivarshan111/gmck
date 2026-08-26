@@ -1482,10 +1482,15 @@ await step('a flashcard chapter opens, and a deck that cannot build offers a ret
     throw new Error(`only ${chapters} chapters listed for Community Medicine — the walk is broken`);
   }
 
+  const abortRoute = route => route.abort();
+  await page.route('**/functions/v1/generate-flashcards', abortRoute);
   await page.locator('[aria-label*="study flashcards"]').first().click();
   await page.waitForTimeout(2500);
 
-  if ((await byLabel('Try building this deck again').count()) === 0) {
+  const retryCount = await byLabel('Try building this deck again').count();
+  await page.unroute('**/functions/v1/generate-flashcards', abortRoute);
+
+  if (retryCount === 0) {
     throw new Error(
       'a deck that could not be built left no way forward — it must explain itself and offer a retry',
     );

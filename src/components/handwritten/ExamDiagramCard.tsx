@@ -93,9 +93,6 @@ export default function ExamDiagramCard({
 
   if (!diagramUrl) return null;
 
-  const isFmt = (subject || "").toLowerCase().includes("forensic");
-  const badgeLabel = isFmt ? "Vision FMT Grounded" : "Park PSM Grounded";
-
   return (
     <>
       <div className="rounded-2xl border border-border/80 bg-gradient-to-b from-card to-muted/20 shadow-md overflow-hidden transition-all hover:shadow-lg">
@@ -110,7 +107,7 @@ export default function ExamDiagramCard({
                 <span className="text-xs font-bold text-foreground">High-Yield Exam Diagram</span>
                 <Badge variant="outline" className="text-[10px] font-semibold tracking-wider text-primary border-primary/30">
                   <Sparkles className="h-2.5 w-2.5 mr-1" />
-                  {badgeLabel}
+                  AI Exam Diagram
                 </Badge>
               </div>
             </div>
