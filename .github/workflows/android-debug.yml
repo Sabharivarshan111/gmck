@@ -51,6 +51,21 @@ on:
       - claude/android-react-native-app-o54cjj
       - claude/native-app-sync
 
+# One run per branch, and a new push cancels the one it supersedes.
+#
+# Without this every push started a fresh build while the previous one — now
+# building code nobody will ship — kept a runner for its full twenty minutes.
+# Six workflows fire on each push across two remotes, so a few pushes in a row
+# saturated the queue and GitHub began answering `startup_failure`: a
+# previously-green workflow simply refusing to start, which reads as a broken
+# pipeline rather than a full one.
+#
+# Cancelling is safe here because the artifact was already obsolete. The commit
+# that replaced it is the one worth building.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   # Needed by the release step below; the default token is read-only.
   contents: write
