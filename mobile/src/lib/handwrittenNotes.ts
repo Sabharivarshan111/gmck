@@ -330,7 +330,17 @@ function singleNoteBody(request: SingleNoteRequest): Record<string, unknown> {
   return {
     subtopicKey: `single::${request.subjectKey}::${hashKey(clean)}`,
     year: request.yearLabel,
-    subject: request.subjectName || request.subjectKey || 'Community Medicine',
+    /*
+     * No fallback subject. This read `|| 'Community Medicine'`, which was
+     * harmless while the feature was third-year-only and Community was most of
+     * it — an empty subject there guessed right. It is now offered for Anatomy,
+     * Physiology, Biochemistry, Pharmacology, Pathology and Microbiology, where
+     * the same guess grounds the answer in Park's Community Medicine and
+     * returns it with a textbook's confidence. A wrong book is worse than none:
+     * the server falls back to general MBBS knowledge when it cannot place the
+     * subject, and says nothing false.
+     */
+    subject: request.subjectName || request.subjectKey,
     subtopicName: clean.slice(0, 80),
     questions: clampQuestions([clean]),
     singleMode: true,
