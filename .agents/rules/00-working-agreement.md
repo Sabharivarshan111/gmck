@@ -58,6 +58,49 @@ careful to keep them apart; keep it that way.
   strongest available signal — and `mobile/preview` is react-native-web, so it
   checks layout and motion timing, never native rendering.
 
+## Which app a change belongs in
+
+**The native app in `mobile/` is the product. `src/` is frozen.**
+
+`src/` is the original Vite web app. It is still live, it still serves users,
+and it is not where work happens any more. Touch it only when the owner asks
+for it by name — "send it to Lovable too", "fix it in the web app as well" —
+and then only for the specific change asked for.
+
+`AGENTS.md` says "do not refactor the web app", which reads as a rule about
+*editing* existing web code. It is broader than that: **do not build new
+features there either.** A feature added to `src/` is invisible on the phone,
+which is the only place the owner sees this product.
+
+### Before building anything, check whether it already exists
+
+The features here are large and were built over many sessions. `HANDOFF.md`
+records what is done; `.agents/rules/` names the files. Flashcards, for one,
+are already built — `.agents/rules/60-flashcards.md` points at
+`mobile/src/screens/FlashcardsScreen.tsx`, `mobile/src/lib/anki.ts` and
+`mobile/src/lib/flashcards.ts`. Building a second one in the web app produces
+two implementations that disagree, and the owner sees the interface change
+under them for no reason they asked for.
+
+`npm run check:one-app` fails if the web app grows its own Anki scheduler,
+because there is exactly one and it lives in `mobile/src/lib/anki.ts`.
+
+### How to tell which app you are looking at
+
+The two Notes screens look alike — the native one was ported from the web one —
+so the reliable tells are the things that have since diverged:
+
+| | web app (`src/`) | native app (`mobile/`) |
+|---|---|---|
+| WhatsApp card under Notes | **yes** | removed |
+| "Case proforma" (locked) | no | **yes** |
+| "ALSO HERE" section | no | **yes** |
+| dev server | `localhost:8080` | `localhost:5173` |
+
+**If you can see the WhatsApp block in Notes, you are in the web app.** It was
+removed from the native app on the owner's instruction, in the same commit that
+added flashcards, so its presence also means the checkout predates that work.
+
 ## Previewing the app
 
 `npm run dev:mobile` at the repo root runs the **React Native** app in a

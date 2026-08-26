@@ -671,6 +671,7 @@ npm run check:sync               # progress reaches the cloud once a session exi
 npm run check:contrast           # every built-in theme stays readable
 npm run check:subject-cards      # custom themes recolour the cards, readably
 npm run check:native-sound       # the sound module is reachable under the New Arch
+npm run check:one-app            # the frozen web app has grown no second copy
 npm run check:mcq                # MCQ response parsing + the ask-gemini markers
 npm run check:notes-limits       # every topic still fits the notes function's schema
 npm run check:smoke              # drives the real screens; 18 flows, 0 crashes

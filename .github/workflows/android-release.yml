@@ -93,6 +93,9 @@ jobs:
           npm run check:native-sound
           npm run check:subject-cards
           npm run check:contrast
+          npm run check:anki
+          npm run check:textbooks
+          npm run check:one-app
 
       # The mirror image of the debug workflow's "Build with no ads at all".
       # That one overwrites this file; this one refuses to build if anything

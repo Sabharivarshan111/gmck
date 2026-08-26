@@ -678,6 +678,42 @@ should read the run's first step before assuming anything failed.
 
 ---
 
+## 8f. Flashcards got built twice — read this before starting a feature
+
+The native app already had Anki flashcards: `FlashcardsScreen.tsx`, Anki's
+scheduler in `lib/anki.ts`, the deck loader in `lib/flashcards.ts`, and five
+smoke flows covering study, custom decks and the retry path. Committed, pushed,
+green.
+
+A second implementation then appeared in **the web app** — a purple "Anki
+Flashcard Decks" hero on `src/components/shell/NotesTab.tsx`, its own year grid,
+its own copy. Nothing failed and nothing warned. The owner was shown a preview,
+saw an interface they had not asked for, and reasonably read it as their app
+having been changed underneath them.
+
+Nothing was lost: the native work was never touched, and the web work was never
+pushed. But it cost a session, and the cause was a gap in the rules rather than
+a mistake anyone could have caught by reading code.
+
+**What was missing:** `AGENTS.md` said "do not refactor the web app", which
+reads as a rule about editing existing web code. It did not say *do not build
+new features there*, and it did not say *check whether the feature already
+exists*. Both are now in `.agents/rules/00-working-agreement.md` under "Which
+app a change belongs in", along with a table of tells for identifying which app
+is on screen — the reliable one being that **Notes still shows the WhatsApp card
+in the web app and does not in the native app.**
+
+`npm run check:one-app` now fails if `src/` or `supabase/` grows a second copy
+of Anki's scheduler. It is deliberately narrow: the web app is still allowed to
+change when the owner asks for it by name, but not to duplicate logic that
+already exists natively and is tested there.
+
+While wiring it in, three checks turned out never to have run in CI at all —
+`check:anki`, `check:textbooks` and `check:one-app`. All three now run in the
+debug, internal and release workflows.
+
+---
+
 ## 9. High-Yield AI Exam Diagrams & Localhost Previews
 
 ### Local Dev & Preview URLs

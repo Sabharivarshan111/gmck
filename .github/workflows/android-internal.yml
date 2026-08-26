@@ -111,6 +111,9 @@ jobs:
           npm run check:subject-cards
           npm run check:agent-docs
           npm run check:payments
+          npm run check:anki
+          npm run check:textbooks
+          npm run check:one-app
 
       # Test ads come from source, not from the bundler's dev flag — see
       # mobile/src/lib/adsMode.ts. The Gradle plugin bundles this variant
