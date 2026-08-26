@@ -1,7 +1,14 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { ActivityIndicator, Image, ScrollView, StyleSheet, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Image,
+  ScrollView,
+  StyleSheet,
+  TextInput,
+  View,
+} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { ChevronRight, Layers, RotateCw } from 'lucide-react-native';
+import { ChevronRight, Layers, Plus, RotateCw, Trash2, User } from 'lucide-react-native';
 import { Text } from '@/components/Text';
 import { Touchable } from '@/components/Touchable';
 import { BackButton } from '@/components/BackButton';
@@ -30,6 +37,15 @@ import {
   type Grade,
 } from '@/lib/anki';
 import { tick, complete } from '@/lib/haptics';
+import {
+  addCard,
+  createDeck,
+  customDeckKey,
+  deleteCard,
+  deleteDeck,
+  loadCustomDecks,
+  type CustomDeck,
+} from '@/lib/customDecks';
 
 const YEARS: Year[] = ['first', 'second', 'third', 'final'];
 const YEAR_EMOJI: Record<Year, string> = {
@@ -49,6 +65,9 @@ const GRADE_LABEL: Record<Grade, string> = {
 
 type Screen =
   | { kind: 'years' }
+  | { kind: 'myDecks' }
+  | { kind: 'editDeck'; deckId: string }
+  | { kind: 'studyCustom'; deckId: string }
   | { kind: 'subjects'; year: Year }
   | { kind: 'topics'; year: Year; subjectKey: string; subjectName: string; node: BankNode }
   | {
@@ -70,8 +89,11 @@ export default function FlashcardsScreen({ onExit }: { onExit: () => void }) {
         onExit();
         return current;
       }
-      if (current.kind === 'subjects') {
+      if (current.kind === 'subjects' || current.kind === 'myDecks') {
         return { kind: 'years' };
+      }
+      if (current.kind === 'editDeck' || current.kind === 'studyCustom') {
+        return { kind: 'myDecks' };
       }
       if (current.kind === 'topics') {
         return { kind: 'subjects', year: current.year };
@@ -92,7 +114,27 @@ export default function FlashcardsScreen({ onExit }: { onExit: () => void }) {
       contentContainerStyle={[styles.content, { paddingTop: insets.top + 8 }]}
       keyboardShouldPersistTaps="handled">
       {view.kind === 'years' ? (
-        <YearsView onPick={year => setView({ kind: 'subjects', year })} onBack={back} />
+        <YearsView
+          onPick={year => setView({ kind: 'subjects', year })}
+          onMyDecks={() => setView({ kind: 'myDecks' })}
+          onBack={back}
+        />
+      ) : null}
+
+      {view.kind === 'myDecks' ? (
+        <MyDecksView
+          onBack={back}
+          onEdit={deckId => setView({ kind: 'editDeck', deckId })}
+          onStudy={deckId => setView({ kind: 'studyCustom', deckId })}
+        />
+      ) : null}
+
+      {view.kind === 'editDeck' ? (
+        <EditDeckView deckId={view.deckId} onBack={back} />
+      ) : null}
+
+      {view.kind === 'studyCustom' ? (
+        <CustomStudyView deckId={view.deckId} onBack={back} />
       ) : null}
 
       {view.kind === 'subjects' ? (
@@ -155,7 +197,15 @@ function Header({ title, subtitle, onBack }: { title: string; subtitle?: string;
   );
 }
 
-function YearsView({ onPick, onBack }: { onPick: (year: Year) => void; onBack: () => void }) {
+function YearsView({
+  onPick,
+  onMyDecks,
+  onBack,
+}: {
+  onPick: (year: Year) => void;
+  onMyDecks: () => void;
+  onBack: () => void;
+}) {
   const { colors } = useTheme();
   return (
     <>
@@ -192,7 +242,258 @@ function YearsView({ onPick, onBack }: { onPick: (year: Year) => void; onBack: (
           </Touchable>
         ))}
       </View>
+
+      <Text style={[styles.sectionLabel, { color: colors.textMuted, marginTop: 22 }]}>
+        YOUR OWN DECKS
+      </Text>
+      <Touchable
+        onPress={onMyDecks}
+        label="Your own decks, write and study your own cards"
+        scaleTo={0.97}
+        style={[styles.row, { backgroundColor: colors.card, borderColor: colors.border }]}>
+        <View style={[styles.rowIcon, { backgroundColor: withAlpha(colors.accent, 0.15) }]}>
+          <User size={18} color={colors.accent} />
+        </View>
+        <View style={styles.flex}>
+          <Text style={[styles.rowTitle, { color: colors.text }]}>Decks you write</Text>
+          <Text style={[styles.rowSub, { color: colors.textMuted }]}>
+            Kept on this phone only — they are not uploaded anywhere
+          </Text>
+        </View>
+        <ChevronRight size={20} color={colors.textMuted} />
+      </Touchable>
     </>
+  );
+}
+
+/** The list of decks you have written, and a box to start another. */
+function MyDecksView({
+  onBack,
+  onEdit,
+  onStudy,
+}: {
+  onBack: () => void;
+  onEdit: (deckId: string) => void;
+  onStudy: (deckId: string) => void;
+}) {
+  const { colors } = useTheme();
+  const [decks, setDecks] = useState<CustomDeck[] | null>(null);
+  const [name, setName] = useState('');
+
+  useEffect(() => {
+    loadCustomDecks().then(setDecks);
+  }, []);
+
+  const create = useCallback(async () => {
+    const trimmed = name.trim();
+    if (!trimmed) {
+      return;
+    }
+    const deck = await createDeck(trimmed);
+    setName('');
+    setDecks(await loadCustomDecks());
+    onEdit(deck.id);
+  }, [name, onEdit]);
+
+  const remove = useCallback(async (id: string) => {
+    setDecks(await deleteDeck(id));
+  }, []);
+
+  return (
+    <>
+      <Header title="Decks you write" subtitle="Kept on this phone only" onBack={onBack} />
+
+      <View style={[styles.card, styles.compactCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+        <Text style={[styles.rowTitle, { color: colors.text }]}>New deck</Text>
+        <View style={styles.newRow}>
+          <TextInput
+            value={name}
+            onChangeText={setName}
+            placeholder="e.g. Cranial nerves"
+            placeholderTextColor={colors.textMuted}
+            style={[styles.input, { color: colors.text, borderColor: colors.border }]}
+            returnKeyType="done"
+            onSubmitEditing={create}
+            accessibilityLabel="Name for the new deck"
+          />
+          <Touchable
+            onPress={create}
+            label="Create this deck"
+            disabled={name.trim().length === 0}
+            style={[styles.iconButton, { backgroundColor: colors.primary }]}>
+            <Plus size={18} color={colors.primaryText} />
+          </Touchable>
+        </View>
+        {/*
+          Said plainly, where the decision is made. These decks live in this
+          app's storage and nowhere else: no account, no upload, and no copy to
+          restore from. That is a fair trade for not needing an account, but it
+          is only fair if it is not a surprise later.
+        */}
+        <Text style={[styles.hint, { color: colors.textMuted }]}>
+          Your decks stay on this phone. Uninstalling the app removes them, and
+          they will not appear on another device.
+        </Text>
+      </View>
+
+      {decks === null ? (
+        <ActivityIndicator color={colors.accent} />
+      ) : decks.length === 0 ? (
+        <Text style={[styles.centeredText, { color: colors.textMuted }]}>
+          No decks yet. Name one above and start adding cards.
+        </Text>
+      ) : (
+        decks.map(deck => (
+          <View
+            key={deck.id}
+            style={[styles.row, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <Touchable
+              onPress={() => (deck.cards.length > 0 ? onStudy(deck.id) : onEdit(deck.id))}
+              label={`${deck.name}, ${deck.cards.length} cards, ${
+                deck.cards.length > 0 ? 'study' : 'add cards'
+              }`}
+              style={styles.flex}>
+              <Text style={[styles.rowTitle, { color: colors.text }]}>{deck.name}</Text>
+              <Text style={[styles.rowSub, { color: colors.textMuted }]}>
+                {deck.cards.length === 0
+                  ? 'No cards yet — tap to add some'
+                  : `${deck.cards.length} card${deck.cards.length === 1 ? '' : 's'}`}
+              </Text>
+            </Touchable>
+            <Touchable
+              onPress={() => onEdit(deck.id)}
+              label={`Edit ${deck.name}`}
+              style={[styles.iconButton, { borderColor: colors.border, borderWidth: 1 }]}>
+              <Plus size={16} color={colors.textMuted} />
+            </Touchable>
+            <Touchable
+              onPress={() => remove(deck.id)}
+              label={`Delete ${deck.name}`}
+              hint="Removes the deck and its cards from this phone"
+              style={[styles.iconButton, { borderColor: colors.border, borderWidth: 1 }]}>
+              <Trash2 size={16} color={colors.danger} />
+            </Touchable>
+          </View>
+        ))
+      )}
+    </>
+  );
+}
+
+/** Add and remove cards in one of your decks. */
+function EditDeckView({ deckId, onBack }: { deckId: string; onBack: () => void }) {
+  const { colors } = useTheme();
+  const [decks, setDecks] = useState<CustomDeck[] | null>(null);
+  const [front, setFront] = useState('');
+  const [back, setBack] = useState('');
+
+  useEffect(() => {
+    loadCustomDecks().then(setDecks);
+  }, []);
+
+  const deck = decks?.find(d => d.id === deckId) ?? null;
+
+  const add = useCallback(async () => {
+    if (!front.trim() || !back.trim()) {
+      return;
+    }
+    setDecks(await addCard(deckId, front, back));
+    setFront('');
+    setBack('');
+    complete();
+  }, [back, deckId, front]);
+
+  if (!deck) {
+    return <Header title="Deck" onBack={onBack} />;
+  }
+
+  return (
+    <>
+      <Header
+        title={deck.name}
+        subtitle={`${deck.cards.length} card${deck.cards.length === 1 ? '' : 's'}`}
+        onBack={onBack}
+      />
+
+      <View style={[styles.card, styles.compactCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+        <Text style={[styles.rowTitle, { color: colors.text }]}>New card</Text>
+        <TextInput
+          value={front}
+          onChangeText={setFront}
+          placeholder="Front — the question"
+          placeholderTextColor={colors.textMuted}
+          style={[styles.input, styles.inputBlock, { color: colors.text, borderColor: colors.border }]}
+          multiline
+          accessibilityLabel="Front of the card, the question"
+        />
+        <TextInput
+          value={back}
+          onChangeText={setBack}
+          placeholder="Back — the answer"
+          placeholderTextColor={colors.textMuted}
+          style={[styles.input, styles.inputBlock, { color: colors.text, borderColor: colors.border }]}
+          multiline
+          accessibilityLabel="Back of the card, the answer"
+        />
+        <Touchable
+          onPress={add}
+          label="Add this card"
+          disabled={!front.trim() || !back.trim()}
+          style={[styles.reveal, { backgroundColor: colors.primary }]}>
+          <Text style={[styles.revealText, { color: colors.primaryText }]}>Add card</Text>
+        </Touchable>
+        {/* One fact per card is the rule Anki is built around, so it is said
+            where the card is written rather than in a help page nobody opens. */}
+        <Text style={[styles.hint, { color: colors.textMuted }]}>
+          One fact per card. If the answer needs a paragraph, it is two cards.
+        </Text>
+      </View>
+
+      {deck.cards.map(card => (
+        <View
+          key={card.id}
+          style={[styles.row, { backgroundColor: colors.card, borderColor: colors.border }]}>
+          <View style={styles.flex}>
+            <Text style={[styles.rowTitle, { color: colors.text }]}>{card.front}</Text>
+            <Text style={[styles.rowSub, { color: colors.textMuted }]}>{card.back}</Text>
+          </View>
+          <Touchable
+            onPress={async () => setDecks(await deleteCard(deckId, card.id))}
+            label={`Delete the card "${card.front}"`}
+            style={[styles.iconButton, { borderColor: colors.border, borderWidth: 1 }]}>
+            <Trash2 size={16} color={colors.danger} />
+          </Touchable>
+        </View>
+      ))}
+    </>
+  );
+}
+
+/** Study one of your own decks, through exactly the same scheduler. */
+function CustomStudyView({ deckId, onBack }: { deckId: string; onBack: () => void }) {
+  const [deck, setDeck] = useState<CustomDeck | null>(null);
+
+  useEffect(() => {
+    loadCustomDecks().then(all => setDeck(all.find(d => d.id === deckId) ?? null));
+  }, [deckId]);
+
+  if (!deck) {
+    return <Header title="Deck" onBack={onBack} />;
+  }
+  /*
+   * The same StudyView, with the cards handed in rather than fetched. A deck
+   * you wrote and a deck Gemini wrote are the same thing once they are cards,
+   * and a second study screen would be a second place for the scheduler to
+   * drift.
+   */
+  return (
+    <StudyView
+      year="third"
+      subjectName={deck.name}
+      topic={{ key: customDeckKey(deck.id), name: deck.name, breadcrumb: deck.name, questions: [] }}
+      onBack={onBack}
+      fixture={deck.cards}
+    />
   );
 }
 
@@ -448,18 +749,15 @@ export function StudyView({
       />
 
       <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
-        {face.kind === 'image' && face.imageUrl && !imageFailed ? (
-          <Image
-            source={{ uri: face.imageUrl }}
-            style={styles.cardImage}
-            resizeMode="contain"
-            // A diagram that will not load must say so rather than leave a grey
-            // rectangle, which looks identical to "this app has no diagrams".
-            onError={() => setImageFailed(true)}
-            accessibilityLabel={face.front}
-          />
-        ) : null}
+        {/*
+          The question, and only the question.
 
+          The diagram belongs on the *back*, with the answer. It used to render
+          here — above the question, before Show Answer — which handed the
+          reader the answer and left "Show Answer" with nothing to reveal but a
+          sentence telling them to look at the picture they had already seen.
+          A diagram of the answer shown on the front is not a flashcard.
+        */}
         <Text style={[styles.cardFront, { color: colors.text }]}>{face.front}</Text>
 
         {!revealed && face.hint ? (
@@ -469,9 +767,25 @@ export function StudyView({
         {revealed ? (
           <>
             <View style={[styles.rule, { backgroundColor: colors.border }]} />
-            <Text style={[styles.cardBack, { color: colors.text }]}>
-              {face.back || 'Study the diagram above, then grade how well you recalled it.'}
-            </Text>
+
+            {/* The answer: the diagram, then the words. */}
+            {face.imageUrl && !imageFailed ? (
+              <Image
+                source={{ uri: face.imageUrl }}
+                style={styles.cardImage}
+                resizeMode="contain"
+                // A diagram that will not load has to say so. A grey rectangle
+                // looks identical to "this app does not show diagrams", and
+                // from inside the app there is no way to tell which it is.
+                onError={() => setImageFailed(true)}
+                accessibilityLabel={`Diagram: ${face.front}`}
+              />
+            ) : null}
+
+            {face.back ? (
+              <Text style={[styles.cardBack, { color: colors.text }]}>{face.back}</Text>
+            ) : null}
+
             {imageFailed ? (
               <Text style={[styles.hint, { color: colors.warning }]}>
                 This diagram could not be loaded.
@@ -524,14 +838,22 @@ export function StudyView({
         </Touchable>
       )}
 
-      <Touchable
-        onPress={() => load(true)}
-        label="Write this deck again"
-        hint="Discards these cards and generates new ones"
-        style={[styles.retry, { borderColor: colors.border }]}>
-        <RotateCw size={16} color={colors.textMuted} />
-        <Text style={[styles.retryText, { color: colors.textMuted }]}>Write this deck again</Text>
-      </Touchable>
+      {/*
+        Only for generated decks. A deck you wrote yourself has nothing to
+        regenerate — the button would call the edge function, and on a deck of
+        your own cards that is either a failure or, worse, a replacement of
+        what you typed with something Gemini made up.
+      */}
+      {fixture ? null : (
+        <Touchable
+          onPress={() => load(true)}
+          label="Write this deck again"
+          hint="Discards these cards and generates new ones"
+          style={[styles.retry, { borderColor: colors.border }]}>
+          <RotateCw size={16} color={colors.textMuted} />
+          <Text style={[styles.retryText, { color: colors.textMuted }]}>Write this deck again</Text>
+        </Touchable>
+      )}
     </>
   );
 }
@@ -628,6 +950,45 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   rowTitle: { fontSize: 15, fontWeight: '600', flex: 1 },
+  rowIcon: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  // The card shell without the study card's tall minimum height, which exists
+  // so a one-line question does not sit in a sliver.
+  compactCard: {
+    minHeight: 0,
+    justifyContent: 'flex-start',
+    gap: 10,
+  },
+  newRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  input: {
+    flex: 1,
+    borderWidth: 1,
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    fontSize: 15,
+  },
+  inputBlock: {
+    flex: 0,
+    minHeight: 48,
+    textAlignVertical: 'top',
+  },
+  iconButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   rowSub: { fontSize: 12, marginTop: 2 },
   card: {
     borderRadius: 18,

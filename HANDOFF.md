@@ -571,6 +571,15 @@ card" rule is not landing. Also confirm a 429 surfaces the quota message rather
 than a raw error — the free tier is the binding constraint and a deck is one
 call.
 
+### 2b. Image cards have no written answer yet
+
+`generate-flashcards` sets `back: ""` for image cards, so revealing one shows
+the diagram alone. The diagram is a legitimate answer on its own, but a line of
+text beside it is better. The fix is in the function: pass the diagram rows'
+question text to Gemini in the same call and ask for a short back for each, then
+attach the image. Needs a redeploy — the connector was offline when the client
+half was fixed.
+
 ### 3. The daily reminder has never met a clock
 
 `NotifyReceiver.kt` decides whether to fire on the phone. Nothing has confirmed

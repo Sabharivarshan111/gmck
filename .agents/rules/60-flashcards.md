@@ -51,6 +51,43 @@ images — so without it the same diagram appears three times in one sitting.
 
 A chapter with no diagrams becomes an all-theory deck, not an error.
 
+## The diagram is the answer, so it goes on the back
+
+An image card is: **front** the question, **back** the diagram *and* the answer
+text. It shipped the other way round for a few hours — the diagram rendered
+above the question, before Show Answer — which handed the reader the answer and
+left the reveal with nothing but a line telling them to look at the picture they
+had already seen. A diagram of the answer shown on the front is not a flashcard.
+
+`generate-flashcards` currently returns `back: ""` for image cards. That should
+become a short written answer alongside the picture; it needs the function
+redeployed and is listed in HANDOFF §8d.
+
+## Decks you write are on the phone, and nowhere else
+
+`lib/customDecks.ts`, AsyncStorage under `orbit:anki:custom-decks`.
+
+Generated decks are cached server-side because a chapter produces the same cards
+for everyone, so one Gemini call is worth sharing. A deck someone wrote is the
+opposite: it is theirs, it is nobody else's revision, and there is no shared
+cost to amortise. Uploading it would mean an account, a policy, and a row that
+outlives the app on someone else's server, for no benefit to the person who
+typed it.
+
+The trade is real — reinstall and they are gone — so the UI says so on the
+screen where the deck is created, not in a help page.
+
+They study through **the same `StudyView`**, with the cards handed in rather
+than fetched. A second study screen would be a second place for the scheduler to
+drift. The schedule key is namespaced `custom::{id}` so it can never collide
+with a generated deck's `{year}::{subject}::{chapter}` — a collision would have
+one deck reading the other's schedule, and the symptom is cards that are
+mysteriously already due.
+
+`StudyView` hides "Write this deck again" when it is given cards directly: on a
+hand-written deck that button would call the edge function and replace what
+someone typed with something Gemini made up.
+
 ## Decks are shared, schedules are not
 
 The deck is cached in the `flashcards` table keyed

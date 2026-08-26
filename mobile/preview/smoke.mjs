@@ -1419,6 +1419,53 @@ await step('notes offers flashcards and a locked case proforma, and no WhatsApp'
  * one a student on a train will meet: it has to offer a way back rather than a
  * spinner that never ends or a blank screen.
  */
+/**
+ * Writing your own deck, and studying it.
+ *
+ * These live in AsyncStorage and nowhere else, so this is the only path that
+ * needs no network at all — which also makes it the one flashcard flow the
+ * harness can walk end to end.
+ */
+await step('you can write your own deck, and study it', async () => {
+  await open('screen=flashcards');
+  await page.waitForTimeout(900);
+
+  await byLabel('Your own decks, write and study your own cards').click();
+  await page.waitForTimeout(700);
+  // The trade is stated where the decision is made, not in a help page.
+  await seesText('stay on this phone', 4000);
+
+  await byLabel('Name for the new deck').fill('Cranial nerves');
+  await byLabel('Create this deck').click();
+  await page.waitForTimeout(800);
+
+  await byLabel('Front of the card, the question').fill('Which nerve supplies the diaphragm?');
+  await byLabel('Back of the card, the answer').fill('Phrenic nerve (C3, C4, C5).');
+  await byLabel('Add this card').click();
+  await page.waitForTimeout(700);
+  await seesText('Phrenic nerve', 4000);
+
+  await byLabel('Go back').first().click();
+  await page.waitForTimeout(700);
+
+  const study = page.locator('[aria-label*="1 card, study"], [aria-label*="1 cards, study"]');
+  if ((await study.count()) === 0) {
+    throw new Error('the new deck does not offer to be studied');
+  }
+  await study.first().click();
+  await page.waitForTimeout(900);
+  await seesText('Which nerve supplies the diaphragm?', 4000);
+
+  /*
+   * A deck you wrote has nothing to regenerate. The button would call the edge
+   * function and replace your own cards with generated ones — which is not a
+   * failure mode anyone would guess from its label.
+   */
+  if (await byLabel('Write this deck again').count()) {
+    throw new Error('a hand-written deck offers to regenerate itself — that would discard your cards');
+  }
+});
+
 await step('a flashcard chapter opens, and a deck that cannot build offers a retry', async () => {
   await open('screen=notes');
   await page.waitForTimeout(700);
