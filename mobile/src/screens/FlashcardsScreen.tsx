@@ -8,7 +8,7 @@ import {
   View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { ChevronRight, Layers, Plus, RotateCw, Trash2, User } from 'lucide-react-native';
+import { ChevronLeft, ChevronRight, Layers, Plus, RotateCw, Trash2, User } from 'lucide-react-native';
 import { Text } from '@/components/Text';
 import { Touchable } from '@/components/Touchable';
 import { BackButton } from '@/components/BackButton';
@@ -662,17 +662,51 @@ export function StudyView({
   );
   const queue = useMemo(() => dueQueue(cards), [cards]);
   const tally = useMemo(() => counts(cards), [cards]);
-  const current = queue[0];
+
+  const [cardIndex, setCardIndex] = useState(0);
+  const [history, setHistory] = useState<Array<{ cardId: string; prevCard: Card }>>([]);
+
+  const safeIndex = queue.length > 0 ? Math.min(cardIndex, queue.length - 1) : 0;
+  const current = queue[safeIndex];
   const face = useMemo(
     () => (current && deck ? deck.find(c => c.id === current.id) ?? null : null),
     [current, deck],
   );
+
+  const canGoNext = queue.length > 1;
+  const canGoPrevious = safeIndex > 0 || history.length > 0;
+
+  const onNext = useCallback(() => {
+    if (queue.length <= 1) return;
+    setCardIndex(i => (i + 1) % queue.length);
+    setRevealed(false);
+    setImageFailed(false);
+  }, [queue.length]);
+
+  const onPrevious = useCallback(() => {
+    if (safeIndex > 0) {
+      setCardIndex(i => i - 1);
+      setRevealed(false);
+      setImageFailed(false);
+    } else if (history.length > 0) {
+      const last = history[history.length - 1];
+      setHistory(h => h.slice(0, -1));
+      setSchedule(prev => {
+        const updated = { ...prev, [last.cardId]: last.prevCard };
+        saveSchedule(deckKey, updated);
+        return updated;
+      });
+      setRevealed(false);
+      setImageFailed(false);
+    }
+  }, [safeIndex, deckKey, history]);
 
   const onGrade = useCallback(
     (grade: Grade) => {
       if (!current) {
         return;
       }
+      setHistory(h => [...h.slice(-10), { cardId: current.id, prevCard: current }]);
       const next = answer(current, grade);
       // A commit, so the stronger of the two taps. Anki's own feedback is the
       // card leaving; this is the same beat.
@@ -688,6 +722,7 @@ export function StudyView({
       });
       setRevealed(false);
       setImageFailed(false);
+      setCardIndex(0);
     },
     [current, deckKey],
   );
@@ -837,6 +872,46 @@ export function StudyView({
           <Text style={[styles.revealText, { color: colors.primaryText }]}>Show answer</Text>
         </Touchable>
       )}
+
+      {/* Deck & Question Navigation */}
+      <View style={styles.navRow}>
+        <Touchable
+          onPress={onPrevious}
+          disabled={!canGoPrevious}
+          label="Previous question"
+          scaleTo={0.96}
+          style={[
+            styles.navButton,
+            { borderColor: colors.border },
+            !canGoPrevious && styles.opacityDisabled,
+          ]}>
+          <ChevronLeft size={16} color={colors.text} />
+          <Text style={[styles.navButtonText, { color: colors.text }]}>Previous</Text>
+        </Touchable>
+
+        <Touchable
+          onPress={onBack}
+          label="Back to all decks"
+          scaleTo={0.96}
+          style={[styles.navButton, { borderColor: colors.border }]}>
+          <Layers size={16} color={colors.textMuted} />
+          <Text style={[styles.navButtonText, { color: colors.textMuted }]}>Decks</Text>
+        </Touchable>
+
+        <Touchable
+          onPress={onNext}
+          disabled={!canGoNext}
+          label="Next question"
+          scaleTo={0.96}
+          style={[
+            styles.navButton,
+            { borderColor: colors.border },
+            !canGoNext && styles.opacityDisabled,
+          ]}>
+          <Text style={[styles.navButtonText, { color: colors.text }]}>Next</Text>
+          <ChevronRight size={16} color={colors.text} />
+        </Touchable>
+      </View>
 
       {/*
         Only for generated decks. A deck you wrote yourself has nothing to
@@ -1073,4 +1148,28 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   retryText: { fontSize: 13, fontWeight: '600' },
+  navRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 8,
+    marginTop: 14,
+  },
+  navButton: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    borderRadius: 12,
+    borderWidth: 1,
+    paddingVertical: 11,
+  },
+  navButtonText: {
+    fontSize: 13,
+    fontWeight: '600',
+  },
+  opacityDisabled: {
+    opacity: 0.35,
+  },
 });

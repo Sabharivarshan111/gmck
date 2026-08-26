@@ -270,7 +270,7 @@ function dayLabel(days: number): string {
  * present itself as an impossible wall.
  */
 export function dueQueue(cards: Card[], now = Date.now()): Card[] {
-  const learning = cards
+  const learningDueNow = cards
     .filter(c => (c.type === 'learning' || c.type === 'relearning') && c.due <= now)
     .sort((a, b) => a.due - b.due);
   const review = cards
@@ -278,14 +278,18 @@ export function dueQueue(cards: Card[], now = Date.now()): Card[] {
     .sort((a, b) => a.due - b.due)
     .slice(0, REVIEWS_PER_DAY);
   const fresh = cards.filter(c => c.type === 'new').slice(0, NEW_PER_DAY);
-  return [...learning, ...review, ...fresh];
+  const learningUpcoming = cards
+    .filter(c => (c.type === 'learning' || c.type === 'relearning') && c.due > now)
+    .sort((a, b) => a.due - b.due);
+  return [...learningDueNow, ...review, ...fresh, ...learningUpcoming];
 }
 
 /** The three counts Anki puts at the bottom of a deck. */
 export function counts(cards: Card[], now = Date.now()) {
   const queue = dueQueue(cards, now);
+  const activeLearning = cards.filter(c => c.type === 'learning' || c.type === 'relearning').length;
   return {
-    learning: queue.filter(c => c.type === 'learning' || c.type === 'relearning').length,
+    learning: activeLearning,
     review: queue.filter(c => c.type === 'review').length,
     fresh: queue.filter(c => c.type === 'new').length,
   };

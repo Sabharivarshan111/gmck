@@ -90,6 +90,7 @@ export async function fetchDeck(request: {
       // would 400 the request the way the notes function does.
       questions: request.questions.slice(0, 300),
       regenerate: request.regenerate ?? false,
+      limit: Math.min(50, Math.max(10, request.questions.length)),
     },
   });
   if (error) {
