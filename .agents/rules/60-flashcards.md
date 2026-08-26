@@ -1,0 +1,84 @@
+---
+description: Anki flashcards — why the scheduler is not the app's other one, and what is still unverified
+---
+
+# Flashcards
+
+Notes → **Anki flashcards** → year → subject → chapter → study.
+`mobile/src/screens/FlashcardsScreen.tsx`, `mobile/src/lib/anki.ts`,
+`mobile/src/lib/flashcards.ts`, edge function `generate-flashcards`.
+
+## Do not merge this with the app's other spaced repetition
+
+There are two schedulers and they must stay two.
+
+| | `lib/spacedRepetition.ts` | `lib/anki.ts` |
+|---|---|---|
+| Mirrors | the server's `review_question` SQL | ankitects/anki |
+| Grain | whole days only | minutes, then days |
+| A lapse | shrinks the interval | sends the card through **relearning** |
+| Used by | My Progress → revision | flashcards |
+
+Anki walks a new card through learning steps of **1 and 10 minutes** before it
+earns a day-scale interval at all. Plain SM-2 has no concept of that. Folding
+one into the other breaks whichever one loses.
+
+`npm run check:anki` pins the Anki one to behaviours Anki's own tests assert:
+
+- **Again jumps to the first step**, not one rung down.
+- **Hard on the first step is the average of that step and the next** (5.5m).
+- Good on the last step graduates at 1 day; Easy graduates from anywhere at 4.
+- A review lapse goes to relearning, never straight back to review.
+- An interval always grows on a pass — a low-ease card that stands still is due
+  for ever.
+
+Defaults are Anki's, not invented: ease 2.5 start, −0.20/−0.15/0/+0.15, floor
+1.3, hard ×1.2, easy ×1.3, lapse ×0, leech at 8, 20 new and 200 reviews a day.
+
+## Half the deck is theory, half is diagrams
+
+`generate-flashcards` writes the theory half with `gemini-3.1-flash-lite` from
+the chapter's own past-year questions, so a deck tests what the exam asked.
+
+The image half takes **no model call**. It reads `question_diagrams` rows that
+already exist for the same `subtopic_key` and uses the picture with the question
+it belongs to. Captioning a diagram the model cannot see would be a guess
+presented as a fact.
+
+**Dedupe on `public_url`.** The chapters have far more rows than pictures —
+Community Medicine's communicable-diseases chapter has 34 rows and 16 distinct
+images — so without it the same diagram appears three times in one sitting.
+
+A chapter with no diagrams becomes an all-theory deck, not an error.
+
+## Decks are shared, schedules are not
+
+The deck is cached in the `flashcards` table keyed
+`{year}::{subject}::{subtopicKey}` and is readable by everyone: the same chapter
+produces the same cards, which is the whole reason the cache is worth having.
+Only the service role may write — a client that could write there could replace
+a chapter's cards for every student.
+
+The **schedule** lives on the device under `orbit:anki:{deckKey}`. That split is
+what lets one generated deck serve everyone on their own timetable.
+
+Regenerating a deck renumbers the cards, so `reconcile()` drops schedule entries
+whose id is gone. Keeping them would leave the queue permanently short.
+
+## What is NOT verified, and what to do about it
+
+The agent sandboxes **cannot reach Supabase** — the egress gateway refuses
+CONNECT — so none of the following has actually run. Antigravity can reach it.
+
+1. **A deck has never been generated.** Open one chapter, then check the row:
+   `select card_count, cards from flashcards where deck_key = '…';` Look for a
+   sane theory/image split, no repeated `imageUrl`, and backs short enough to
+   recall (roughly ≤ 25 words). If the backs are paragraphs, the prompt's
+   "one fact per card" rule is not landing and needs tightening.
+2. **429 handling is untested.** The free tier is the binding constraint and a
+   deck is one call. Confirm the quota message reaches the screen rather than a
+   raw error.
+3. **The `textbooks` bucket is public.** It holds OCR'd copyrighted textbooks
+   and the notes function's own comments call it private. Anyone with a URL can
+   download them. It should be private — the function reads it with the
+   service-role key and is unaffected by the change.

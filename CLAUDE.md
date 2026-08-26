@@ -21,6 +21,7 @@ when picking up work that was last touched from the other tool.
 | `.agents/rules/30-reference.md` | Index of the vendored design skills, and where the long-form docs live |
 | `.agents/rules/40-releases.md` | Cutting builds — which of the four to use, how to trigger one, and the two things a wrong build costs |
 | `.agents/rules/50-notes.md` | Handwritten notes — which textbook grounds which subject, and the two ways that goes silently wrong |
+| `.agents/rules/60-flashcards.md` | Anki flashcards — why the scheduler is not the app's other one, and what is still unverified |
 <!-- rules:end -->
 
 This repo is worked on from Claude Code *and* Antigravity, sometimes on the

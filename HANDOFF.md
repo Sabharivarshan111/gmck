@@ -539,6 +539,69 @@ every one is now a cache miss on a free-tier key.
 
 ---
 
+## 8d. What this session could NOT verify — for whoever can (2026-08-26)
+
+Everything below is written, typechecked, linted, smoke-covered and shipped. All
+of it is unproven in the one way that matters, because the agent sandboxes
+**cannot reach Supabase** (the egress gateway refuses CONNECT) and have **no
+emulator or device**. Antigravity has the connectors; a phone has the rest.
+
+Ordered by what it costs to be wrong.
+
+### 1. The `textbooks` bucket is public — fix this first
+
+It holds OCR'd copyrighted textbooks. `storage.buckets.public` is `true`, so
+anyone with a URL can download them, and the notes function's own comments
+describe it as private. Set it private: the function reads it with the
+service-role key and will not notice.
+
+### 2. A flashcard deck has never been generated
+
+`generate-flashcards` is deployed and the image half is confirmed against the
+live `question_diagrams` table by SQL. The **Gemini half has never run.** Open
+one chapter, then:
+
+```sql
+select card_count, cards from flashcards where deck_key = 'Third Year::Community Medicine::epidemiology-of-communicable-diseases';
+```
+
+Check: a sane theory/image split, no repeated `imageUrl`, and backs short enough
+to recall (~25 words). Paragraph-length backs mean the prompt's "one fact per
+card" rule is not landing. Also confirm a 429 surfaces the quota message rather
+than a raw error — the free tier is the binding constraint and a deck is one
+call.
+
+### 3. The daily reminder has never met a clock
+
+`NotifyReceiver.kt` decides whether to fire on the phone. Nothing has confirmed
+the alarm survives Doze, fires at the chosen hour, or backs off after three
+ignored notifications. Leave it on overnight.
+
+### 4. Two Android-only rendering fixes are diagnosed, not executed
+
+react-native-web is more forgiving than Android, so the preview agreed with both
+bugs and would agree with the fixes either way:
+
+- **The progress bar** stuck at half — `<Svg width="100%">` inside a box whose
+  width was the percentage. Tick every question in a topic and watch it reach
+  the end.
+- **The tick's checkmark** could not draw — `strokeDashoffset` on the native
+  driver. Tick a question and watch the green check animate.
+
+### 5. The web app still names textbooks
+
+`src/components/handwritten/ExamDiagramCard.tsx` renders `"Vision FMT Grounded"`
+/ `"Park PSM Grounded"`. The app names no textbook to the reader, and that
+caption is also third-year-only, so it is wrong above a first- or second-year
+diagram. Needs the same removal in Lovable; the native side is done and
+`check:textbooks` guards it.
+
+### 6. Razorpay has never taken a real payment
+
+Unchanged from §2.2.
+
+---
+
 ## 9. High-Yield AI Exam Diagrams & Localhost Previews
 
 ### Local Dev & Preview URLs
