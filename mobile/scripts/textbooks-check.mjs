@@ -103,11 +103,57 @@ for (const subject of ['general-medicine', 'obstetrics-gynaecology', 'ent', 'oph
   check(!matches(subject), `${subject} matched a book — final year has none, so this note would be ungrounded`);
 }
 
+// 5. No textbook is ever named to the reader.
+//
+// A student is studying, not being handed a bibliography, and the notes
+// function is told the same thing in its own prompt ("DO NOT include page
+// numbers or textbook citations", "never mention OCR/pages/edition inside the
+// notes"). The diagram card carried a hardcoded "Park & Vision FMT" caption,
+// which was both a book name and — once first and second year were switched on
+// — flatly wrong, since it named third year's two books above an Anatomy
+// diagram.
+//
+// Checked against rendered strings only. The book *keys* ('anatomy',
+// 'community') are internal and fine; what may not appear is an author or a
+// title.
+const NAMES = [
+  'Park', 'Vision FMT', 'Tripathi', 'Shanbhag', 'Sembulingam',
+  'Vasudevan', 'Ramadas', 'Nayak', 'Sastry', 'Vishram', 'Langman',
+];
+const uiFiles = [];
+const walk = async (dir) => {
+  for (const entry of await fs.readdir(path.join(root, dir), { withFileTypes: true })) {
+    const rel = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      await walk(rel);
+    } else if (/\.tsx?$/.test(entry.name)) {
+      uiFiles.push(rel);
+    }
+  }
+};
+await walk('src');
+for (const file of uiFiles) {
+  // eslint-disable-next-line no-await-in-loop
+  const body = await fs.readFile(path.join(root, file), 'utf8');
+  // Strings and JSX text, never comments — the reasoning is allowed to name
+  // the books; the interface is not.
+  const withoutComments = body
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .replace(/^\s*\/\/.*$/gm, '');
+  for (const name of NAMES) {
+    check(
+      !withoutComments.includes(name),
+      `${file} names a textbook ("${name}") outside a comment — the app never shows a book title to the reader`,
+    );
+  }
+}
+
 if (failures.length > 0) {
   for (const failure of failures) process.stdout.write(`  FAIL  ${failure}\n`);
   process.stdout.write(`\n${failures.length} problem(s) — the triple tap and its textbooks disagree.\n`);
   process.exit(1);
 }
 process.stdout.write(
-  `OK  ${SERVER_RULES.length} books mirrored, 8 subjects across 3 years can ground a triple tap, final year correctly cannot\n`,
+  `OK  ${SERVER_RULES.length} books mirrored across 3 years, final year correctly has none, ` +
+    `no book named in ${uiFiles.length} source files\n`,
 );

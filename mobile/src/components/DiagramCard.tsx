@@ -35,7 +35,15 @@ export function DiagramCard({ imageUrl, title, caption }: DiagramCardProps) {
         { backgroundColor: colors.card, borderColor: colors.border },
       ]}
     >
-      {/* Header Tag */}
+      {/*
+        The badge, and nothing else.
+        This carried a "Park & Vision FMT" caption naming the textbooks. Two
+        problems: the app never names a book anywhere — the reader is studying,
+        not being sold a bibliography, and the notes function is told the same
+        thing ("DO NOT include page numbers or textbook citations") — and the
+        caption was hardcoded to third year's two books, so it was flatly wrong
+        on an Anatomy or Pathology diagram once those years were switched on.
+      */}
       <View style={styles.header}>
         <View
           style={[
@@ -50,9 +58,6 @@ export function DiagramCard({ imageUrl, title, caption }: DiagramCardProps) {
             🎨 AI EXAM DIAGRAM
           </Text>
         </View>
-        <Text style={[styles.groundedText, { color: colors.textMuted }]}>
-          Park & Vision FMT
-        </Text>
       </View>
 
       {title ? (
@@ -199,10 +204,6 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '700',
     letterSpacing: 0.5,
-  },
-  groundedText: {
-    fontSize: 11,
-    fontWeight: '500',
   },
   title: {
     fontSize: 15,

@@ -88,14 +88,14 @@ export function hasTextbook(subjectKey: string, subjectName?: string): boolean {
   return pickBookKey(subjectKey) !== null || pickBookKey(subjectName ?? '') !== null;
 }
 
-/** The book behind a subject, for telling the reader where the answer came from. */
-export const BOOK_LABELS: Record<BookKey, string> = {
-  community: "Sia's Park Community Medicine",
-  forensic: 'Vision Forensic Medicine & Toxicology',
-  pharmacology: 'KD Tripathi + Tara V Shanbhag',
-  pathology: 'Ramadas Nayak — Pathology',
-  microbiology: 'Apurba S Sastry — Microbiology',
-  physiology: 'K Sembulingam — Physiology',
-  biochemistry: 'DM Vasudevan — Biochemistry',
-  anatomy: 'Vishram Singh — Anatomy',
-};
+/*
+ * There is deliberately no exported table of book titles here.
+ *
+ * The app never names a textbook to the reader. A student is studying, not
+ * being handed a bibliography, and the notes function is told the same thing —
+ * "DO NOT include page numbers or textbook citations", "never mention
+ * OCR/pages/edition inside the notes". A `BOOK_LABELS` map lived here for a
+ * few hours and the only thing anyone would ever do with it is render it, which
+ * is exactly what this rule forbids. `check:textbooks` fails if an author or
+ * title turns up in a string under src/.
+ */

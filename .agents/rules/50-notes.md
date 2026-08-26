@@ -49,6 +49,25 @@ Two things hid it, both worth recognising elsewhere:
   and return it with a textbook's confidence. There is no fallback subject: with
   none, the function uses general MBBS knowledge, which is at least not false.
 
+## Never name a textbook to the reader
+
+The table above is for choosing a book, not for showing one. A student is
+studying, not being handed a bibliography, and the notes function is told the
+same thing in its own prompt: *"DO NOT include page numbers or textbook
+citations"*, *"never mention OCR/pages/edition inside the notes"*.
+
+The diagram card carried a hardcoded `Park & Vision FMT` caption. Two problems
+in one string: it named the books, and it named **third year's** two books —
+so it sat above an Anatomy diagram claiming a forensic textbook the moment first
+and second year were switched on.
+
+`check:textbooks` now fails if an author or title appears anywhere in a string
+under `mobile/src/`. Comments may name them; the interface may not.
+
+The web app has the same caption at `src/components/handwritten/
+ExamDiagramCard.tsx` (`"Vision FMT Grounded"` / `"Park PSM Grounded"`) and needs
+the same removal in Lovable.
+
 ## The cache is keyed on the question, and shared with the web app
 
 `single::{subjectKey}::{hash(question)}`. The web app builds the identical key,
