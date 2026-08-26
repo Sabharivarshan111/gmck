@@ -95,11 +95,16 @@ so the reliable tells are the things that have since diverged:
 | WhatsApp card under Notes | **yes** | removed |
 | "Case proforma" (locked) | no | **yes** |
 | "ALSO HERE" section | no | **yes** |
-| dev server | `localhost:8080` | `localhost:5173` |
+| Notes hero | "Handwritten Notes", indigo | "Handwritten Notes", blue, kicker "AI GENERATED" |
 
 **If you can see the WhatsApp block in Notes, you are in the web app.** It was
 removed from the native app on the owner's instruction, in the same commit that
 added flashcards, so its presence also means the checkout predates that work.
+
+**Do not use the port number as the tell.** The root config pins the web app to
+`8080` and `mobile/preview` has no port set, so it takes Vite's default `5173` —
+but either can be overridden on the command line, and the case that produced
+this rule was the web app answering on `5173`. Judge by what is on the screen.
 
 ## Previewing the app
 
