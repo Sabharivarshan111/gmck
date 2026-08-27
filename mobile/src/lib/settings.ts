@@ -45,6 +45,20 @@ export interface Settings {
   /** Whether the phone buzzes when a session ends, independently of tap haptics. */
   timerVibration: boolean;
   /**
+   * How many *new* flashcards a day a deck will hand out.
+   *
+   * Anki's own default is 20, and the number matters more than it looks: the
+   * cap is most of what makes spaced repetition work. Twenty new cards a day
+   * is a habit; a 50-card chapter in one sitting is an evening that happens
+   * once and never again, and it lands every one of those cards back on the
+   * same future day.
+   *
+   * It is adjustable because whose habit it is is not the app's call — someone
+   * a week from an exam is in a different situation from someone in October.
+   * The default stays Anki's.
+   */
+  newCardsPerDay: number;
+  /**
    * One study reminder a day.
    *
    * Off by default. A notification is the most intrusive thing this app can
@@ -134,7 +148,20 @@ export const DEFAULT_SETTINGS: Settings = {
   // looking at the screen, and a phone face-down on a desk is silent but not
   // still.
   timerVibration: true,
+  // Anki's default, and a deliberate one — see the field's note.
+  newCardsPerDay: 20,
 };
+
+/**
+ * The range the slider offers.
+ *
+ * The floor is 5 rather than 1 because a deck that hands out one card a day is
+ * indistinguishable from a broken one. The ceiling is MAX_DECK_CARDS, since
+ * past that the cap stops capping anything: the largest deck the generator will
+ * build is 50 cards, and a limit above that just means "all of them".
+ */
+export const NEW_PER_DAY_MIN = 5;
+export const NEW_PER_DAY_MAX = 50;
 
 export const HAPTIC_MIN_MS = 6;
 export const HAPTIC_MAX_MS = 28;
@@ -185,6 +212,12 @@ export async function hydrateSettings(): Promise<void> {
         typeof parsed.timerVibration === 'boolean'
           ? parsed.timerVibration
           : DEFAULT_SETTINGS.timerVibration,
+      // Clamped rather than trusted: a stored 0 would hand out no new cards at
+      // all, which is a deck that looks empty for no stated reason.
+      newCardsPerDay:
+        typeof parsed.newCardsPerDay === 'number' && Number.isFinite(parsed.newCardsPerDay)
+          ? Math.round(Math.max(NEW_PER_DAY_MIN, Math.min(NEW_PER_DAY_MAX, parsed.newCardsPerDay)))
+          : DEFAULT_SETTINGS.newCardsPerDay,
       dailyReminder:
         typeof parsed.dailyReminder === 'boolean'
           ? parsed.dailyReminder

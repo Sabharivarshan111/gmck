@@ -48,6 +48,19 @@ const GEMINI_TIMEOUT_MS = 55_000;
  */
 const MIN_CARDS = 20;
 const MAX_CARDS = 50;
+/**
+ * A university exam question is worth more than one card.
+ *
+ * "Classify mechanical injuries and describe the medicolegal importance of
+ * each" is a dozen facts, and the model is told to split a question into its
+ * parts rather than restate it. Deck size used to *be* the question count, so a
+ * 44-question chapter capped out at 44 when it had material for a full fifty.
+ *
+ * Flat rather than weighted on purpose: the client computes the identical
+ * number in deckTargetFor(), and every extra term is another way for the two to
+ * disagree about a number the chapter list has already promised.
+ */
+const CARDS_PER_QUESTION = 1.2;
 
 /**
  * Ask for more theory cards than the deck needs.
@@ -202,36 +215,39 @@ serve(async (req) => {
      * two are pinned together by `npm run check:flashcard-size`, because the
      * chapter list promises a number that this function has to deliver.
      */
-    const target = limit ?? Math.max(MIN_CARDS, Math.min(MAX_CARDS, questions.length));
+    const target =
+      limit ??
+      Math.max(MIN_CARDS, Math.min(MAX_CARDS, Math.round(questions.length * CARDS_PER_QUESTION)));
     const deckKey = `${year}::${subject}::${subtopicKey}`;
 
     if (!regenerate) {
       const { data: cached } = await admin
         .from("flashcards")
-        .select("cards, card_count")
+        .select("cards, deck_target")
         .eq("deck_key", deckKey)
         .maybeSingle();
       /*
-       * A cached deck that is smaller than the floor was built by an older
-       * version of this function. Rebuild it rather than serve it: the reader
-       * was promised a deck of `target` and a stale row is exactly how they got
-       * 11 cards for a chapter the list said had 20.
+       * Serve the cache unless it was built before this sizing existed and is
+       * smaller than what today's algorithm would produce.
        *
-       * `card_count` is what stops that rule becoming a regeneration loop. A
-       * chapter can legitimately fail to reach the floor — the model returns
-       * what it returns — and a row that can never satisfy its own acceptance
-       * test would be rebuilt on every single open, one Gemini call each, for
-       * ever. Rows written from this version onwards set `card_count`; rows
-       * that predate it have it null. So "too small" only forces a rebuild
-       * once, for decks built before the floor existed, and after that the
-       * deck is accepted as the best this chapter can do.
+       * `deck_target` is the marker, and it has to be a column of its own.
+       * `card_count` cannot do the job: it has been written since long before
+       * the algorithm, so every legacy row already carries one and would be
+       * mistaken for current — which is how a 44-card Toxicology deck would
+       * have gone on being served after the target moved to 50.
+       *
+       * A row that *has* a target is always served. That is what stops this
+       * becoming a regeneration loop: a chapter can legitimately fall short —
+       * the model returns what it returns — and re-asking on every open would
+       * be one Gemini call per open, for ever, for a deck that will never get
+       * any bigger.
        */
-      const builtByThisVersion = typeof cached?.card_count === "number";
+      const builtByThisVersion = typeof cached?.deck_target === "number";
       if (
         cached?.cards &&
         Array.isArray(cached.cards) &&
         cached.cards.length > 0 &&
-        (builtByThisVersion || cached.cards.length >= Math.min(target, MIN_CARDS))
+        (builtByThisVersion || cached.cards.length >= target)
       ) {
         return new Response(JSON.stringify({ cached: true, deckKey, cards: cached.cards }), {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -379,9 +395,11 @@ serve(async (req) => {
       subtopic_key: subtopicKey,
       subtopic_name: subtopicName,
       cards,
-      // Also the marker that this row came from a version that knows about the
-      // floor. See the cache check above.
       card_count: cards.length,
+      // The marker that this row came from the current sizing algorithm, and
+      // the reason it is a column rather than a comparison. See the cache
+      // check above.
+      deck_target: target,
       updated_at: new Date().toISOString(),
     });
 

@@ -124,9 +124,23 @@ CONNECT — so none of the following has actually run. Antigravity can reach it.
 
 A chapter's question count is **not** its deck size. One "describe and classify"
 essay question is worth a dozen cards, so a 15-question chapter still owes the
-reader a full sitting. `MIN_CARDS`/`MAX_CARDS` in the edge function and
-`MIN_DECK_CARDS`/`MAX_DECK_CARDS` in `mobile/src/lib/flashcards.ts` are **20 and
-50**, and `deckTargetFor()` is the client's copy of the server's formula.
+reader a full sitting, and a 44-question one has material for more than 44.
+
+    target = clamp(20, 50, round(questions x 1.2))
+
+`MIN_CARDS`/`MAX_CARDS`/`CARDS_PER_QUESTION` in the edge function and
+`MIN_DECK_CARDS`/`MAX_DECK_CARDS`/`CARDS_PER_QUESTION` in
+`mobile/src/lib/flashcards.ts` are **20, 50 and 1.2**, and `deckTargetFor()` is
+the client's copy of the server's formula. Flat rather than weighted on purpose:
+two implementations in two languages must produce the identical number, and
+every extra term is another way for them to disagree.
+
+**A cached row is only current if it carries `deck_target`.** That column exists
+because `card_count` cannot do the job — it has been written since long before
+the algorithm, so every legacy row already has one and would be mistaken for
+current. A row without a target is served only if it already meets today's
+target, and rebuilt otherwise; a row *with* one is always served, which is what
+stops a chapter that genuinely falls short regenerating on every open for ever.
 
 The chapter list shows that number *before the deck exists*, which is why the
 two must not drift: the row is a promise the server has to keep.
@@ -151,9 +165,12 @@ for exactly 20 is how a deck arrives with 11.
 `20 new · 3 learning · 0 to review` is not a deck summary — it is what is **due
 right now**:
 
-- **new** — never studied. `dueQueue` serves at most `NEW_PER_DAY` (20) a day,
-  which is Anki's default. A 44-card deck showing "20 new" has not lost 24
-  cards; the header says `24 more tomorrow` for exactly this reason.
+- **new** — never studied. `dueQueue` serves at most `settings.newCardsPerDay`
+  a day. It defaults to Anki's 20 and **the reader can move it** (5-50) from the
+  slider under HOW MUCH A DAY on the Flashcards screen — the control lives next
+  to the decks it governs, not in Settings, because "why are there only 20?" is
+  the question it answers. A 50-card deck showing "20 new" has not lost 30; the
+  header says `30 more tomorrow` for exactly this reason.
 - **learning** — seen today, still inside the 1m/10m steps, coming back within
   the hour.
 - **to review** — graduated cards whose interval has elapsed. It is **0 on a

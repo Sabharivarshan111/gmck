@@ -269,7 +269,20 @@ function dayLabel(days: number): string {
  * Capped the way Anki caps: a day's study is bounded so a huge deck does not
  * present itself as an impossible wall.
  */
-export function dueQueue(cards: Card[], now = Date.now()): Card[] {
+export function dueQueue(
+  cards: Card[],
+  now = Date.now(),
+  /**
+   * How many new cards to hand out today.
+   *
+   * Defaults to Anki's 20, but the reader can move it — see
+   * `settings.newCardsPerDay`. It is a parameter rather than a module-level
+   * read because this file is pure: `check:anki` drives it with fixed inputs,
+   * and a scheduler that consulted a store would be a scheduler whose output
+   * depended on the phone it ran on.
+   */
+  newPerDay = NEW_PER_DAY,
+): Card[] {
   const learningDueNow = cards
     .filter(c => (c.type === 'learning' || c.type === 'relearning') && c.due <= now)
     .sort((a, b) => a.due - b.due);
@@ -277,7 +290,7 @@ export function dueQueue(cards: Card[], now = Date.now()): Card[] {
     .filter(c => c.type === 'review' && c.due <= startOfDay(now) + DAY - 1)
     .sort((a, b) => a.due - b.due)
     .slice(0, REVIEWS_PER_DAY);
-  const fresh = cards.filter(c => c.type === 'new').slice(0, NEW_PER_DAY);
+  const fresh = cards.filter(c => c.type === 'new').slice(0, Math.max(1, newPerDay));
   const learningUpcoming = cards
     .filter(c => (c.type === 'learning' || c.type === 'relearning') && c.due > now)
     .sort((a, b) => a.due - b.due);
@@ -285,8 +298,8 @@ export function dueQueue(cards: Card[], now = Date.now()): Card[] {
 }
 
 /** The three counts Anki puts at the bottom of a deck. */
-export function counts(cards: Card[], now = Date.now()) {
-  const queue = dueQueue(cards, now);
+export function counts(cards: Card[], now = Date.now(), newPerDay = NEW_PER_DAY) {
+  const queue = dueQueue(cards, now, newPerDay);
   const activeLearning = cards.filter(c => c.type === 'learning' || c.type === 'relearning').length;
   return {
     learning: activeLearning,

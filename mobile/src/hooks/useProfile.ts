@@ -11,6 +11,7 @@ import {
 } from '@/lib/profile';
 import type { YearKey } from '@/lib/questionBank';
 import { reconcileProgress } from '@/lib/progress';
+import { currentValue, recordToday, type StreakState } from '@/lib/streak';
 
 /**
  * Small store so every screen sees the same profile. The profile is read once
@@ -19,6 +20,7 @@ import { reconcileProgress } from '@/lib/progress';
  */
 let localProfile: LocalProfile | null = null;
 let cloudProfile: CloudProfile | null = null;
+let localStreak: StreakState = { lastActiveDay: '', current: 0, best: 0 };
 let hydrated = false;
 let version = 0;
 const listeners = new Set<() => void>();
@@ -57,6 +59,20 @@ export async function hydrateProfile(): Promise<void> {
     cloudProfile = { ...cloudProfile, streak: open.streak, last_active_date: open.last_active_date };
     emit();
   }
+}
+
+/**
+ * Record today locally, whether or not there is ever a session.
+ *
+ * Deliberately not inside `hydrateProfile`: that function's cloud half can fail
+ * for a dozen ordinary reasons — offline, anonymous auth disabled, no profile
+ * row yet — and the local streak is the half that has to work regardless. It
+ * was the *only* source before, which is why a fresh install showed "0 day
+ * streak" for ever.
+ */
+export async function hydrateStreak(): Promise<void> {
+  localStreak = await recordToday();
+  emit();
 }
 
 export function useProfile() {
@@ -114,7 +130,14 @@ export function useProfile() {
     yearKey: YEAR_TO_KEY[year] as YearKey,
     year,
     displayName: localProfile?.display_name ?? '',
-    streak: cloudProfile?.streak ?? 0,
+    /*
+     * The larger of the two, which is the only merge that cannot lose a day.
+     * The device's count always exists; the cloud's is what survives a
+     * reinstall and what the leaderboard reads. `currentValue` re-checks the
+     * stored day against today, so a streak broken two days ago reads as 0
+     * rather than as whatever it was when it stopped.
+     */
+    streak: Math.max(currentValue(localStreak), cloudProfile?.streak ?? 0),
     freezes: cloudProfile?.streak_freezes_available ?? 0,
     needsOnboarding: hydrated && !localProfile,
     save,

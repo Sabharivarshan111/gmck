@@ -40,13 +40,14 @@ check(server !== null, `${SERVER} is missing — the repo no longer carries the 
 
 if (client && server) {
   const num = (body, name) => {
-    const match = body.match(new RegExp(`${name}\\s*=\\s*(\\d+)`));
+    const match = body.match(new RegExp(`${name}\\s*=\\s*(\\d+(?:\\.\\d+)?)`));
     return match ? Number(match[1]) : null;
   };
 
   const pairs = [
     ['MIN_DECK_CARDS', 'MIN_CARDS', 'the floor — how small a deck is allowed to be'],
     ['MAX_DECK_CARDS', 'MAX_CARDS', 'the ceiling — how large a deck is allowed to be'],
+    ['CARDS_PER_QUESTION', 'CARDS_PER_QUESTION', 'cards per exam question'],
   ];
 
   for (const [clientName, serverName, what] of pairs) {
@@ -64,16 +65,15 @@ if (client && server) {
   // The formula, not just the numbers. Same shape both sides:
   //   max(MIN, min(MAX, questionCount))
   check(
-    /Math\.max\(\s*MIN_DECK_CARDS\s*,\s*Math\.min\(\s*MAX_DECK_CARDS\s*,\s*questionCount\s*\)\s*\)/.test(
-      client,
-    ),
-    `${CLIENT}: deckTargetFor is no longer max(MIN, min(MAX, questionCount))`,
+    /Math\.max\(\s*MIN_DECK_CARDS\s*,\s*Math\.min\(\s*MAX_DECK_CARDS\s*,\s*wanted\s*\)\s*\)/.test(client) &&
+      /Math\.round\(\s*questionCount\s*\*\s*CARDS_PER_QUESTION\s*\)/.test(client),
+    `${CLIENT}: deckTargetFor is no longer clamp(MIN, MAX, round(questions * CARDS_PER_QUESTION))`,
   );
   check(
-    /Math\.max\(\s*MIN_CARDS\s*,\s*Math\.min\(\s*MAX_CARDS\s*,\s*questions\.length\s*\)\s*\)/.test(
+    /Math\.max\(\s*MIN_CARDS\s*,\s*Math\.min\(\s*MAX_CARDS\s*,\s*Math\.round\(\s*questions\.length\s*\*\s*CARDS_PER_QUESTION\s*\)\s*\)\s*\)/.test(
       server,
     ),
-    `${SERVER}: target is no longer max(MIN, min(MAX, questions.length))`,
+    `${SERVER}: target is no longer clamp(MIN, MAX, round(questions.length * CARDS_PER_QUESTION))`,
   );
 
   // Images are a ceiling, never a quota: theory has to make up the difference,
@@ -101,17 +101,21 @@ if (client && server) {
   // A cached deck smaller than the floor is a deck built by an older version.
   // Serving it is how a stale row outlives the fix that replaced it.
   check(
-    /cached\.cards\.length\s*>=\s*Math\.min\(\s*target\s*,\s*MIN_CARDS\s*\)/.test(server),
-    `${SERVER}: an undersized cached deck is served instead of rebuilt`,
+    /cached\.cards\.length\s*>=\s*target/.test(server),
+    `${SERVER}: a cached deck built before the sizing algorithm is served even ` +
+      `when it is smaller than today's target — that is how a 44-card deck ` +
+      `outlived a move to 50`,
   );
 
   // ...but "too small, rebuild it" without an escape hatch is a Gemini call on
   // every open, for ever, for any chapter that cannot reach the floor. The
   // `card_count` marker is what makes the rebuild happen once instead.
   check(
-    /builtByThisVersion/.test(server) && /card_count:\s*cards\.length/.test(server),
-    `${SERVER}: nothing marks a row as built by the current version, so an ` +
-      `undersized deck would regenerate on every single open`,
+    /builtByThisVersion/.test(server) && /deck_target:\s*target/.test(server),
+    `${SERVER}: nothing marks a row as built by the current sizing algorithm, ` +
+      `so either a stale deck is served for ever or a short one regenerates on ` +
+      `every open. It must be deck_target — card_count predates the algorithm ` +
+      `and every legacy row already has one.`,
   );
 }
 

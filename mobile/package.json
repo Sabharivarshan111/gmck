@@ -37,7 +37,8 @@
     "check:textbooks": "node scripts/textbooks-check.mjs",
     "check:anki": "node scripts/anki-check.mjs",
     "check:one-app": "node scripts/one-app-check.mjs",
-    "check:flashcard-size": "node scripts/flashcard-size-check.mjs"
+    "check:flashcard-size": "node scripts/flashcard-size-check.mjs",
+    "check:streak": "node scripts/streak-check.mjs"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^3.1.1",

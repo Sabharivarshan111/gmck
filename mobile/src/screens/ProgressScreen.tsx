@@ -25,6 +25,7 @@ import {
 } from 'lucide-react-native';
 import { typeScale } from '@/theme/typography';
 import { useTheme, withAlpha, type ThemePreference } from '@/theme';
+import { onColor } from '@/theme/color';
 import { GradientFill } from '@/components/Gradient';
 import { ProgressRing, ThinBar } from '@/components/ProgressRing';
 import {
@@ -72,6 +73,25 @@ const XP_MILESTONES = [
   { label: 'Diamond Mind', xp: 500, medal: '💎' },
   { label: 'Legendary Healer', xp: 1000, medal: '👑' },
 ];
+
+/**
+ * Level from XP, using the milestones the Rewards list already shows.
+ *
+ * The card used to print the literal `1` and "50 XP to level 2" no matter what,
+ * so someone with 600 XP was told they were level 1 and 50 XP short — a
+ * progress display that never moved, next to a rewards list that did. Deriving
+ * both from XP_MILESTONES means the two halves of this screen can never
+ * disagree about the same number again.
+ */
+function levelFor(xp: number): { level: number; next: number | null; percent: number } {
+  const passed = XP_MILESTONES.filter(m => xp >= m.xp).length;
+  const level = passed + 1;
+  const next = XP_MILESTONES[passed]?.xp ?? null;
+  const floor = passed > 0 ? XP_MILESTONES[passed - 1].xp : 0;
+  const percent =
+    next === null ? 100 : Math.max(0, Math.min(100, ((xp - floor) / (next - floor)) * 100));
+  return { level, next, percent };
+}
 
 const STREAK_BADGES = [
   { label: 'Spark', days: 3, tint: '#7C2D12' },
@@ -132,6 +152,7 @@ export default function ProgressScreen() {
 
   const yearPct = totals.total ? Math.round((totals.done / totals.total) * 100) : 0;
   const xp = totals.done;
+  const level = useMemo(() => levelFor(xp), [xp]);
 
   useEffect(() => {
     getSignedInEmail().then(setEmail);
@@ -426,19 +447,23 @@ export default function ProgressScreen() {
               </View>
               <View style={styles.streakRight}>
                 <Text style={[styles.levelText, { color: colors.text }]}>
-                  Level <Text style={{ color: colors.fuchsia }}>1</Text>
+                  Level <Text style={{ color: colors.fuchsia }}>{level.level}</Text>
                   <Text style={{ color: colors.textMuted }}> · {xp} Year XP</Text>
                 </Text>
                 <Text style={[styles.lifetime, { color: colors.textMuted }]}>
-                  Lifetime: {xp} XP
+                  {level.next === null
+                    ? 'Top level reached'
+                    : `${level.next - xp} XP to level ${level.level + 1}`}
                 </Text>
               </View>
             </View>
             <View style={styles.streakBar}>
-              <ThinBar percent={Math.min(100, (xp / 50) * 100)} />
+              <ThinBar percent={level.percent} />
             </View>
             <Text style={[styles.streakHint, { color: colors.textMuted }]}>
-              {Math.min(xp, 50)} / 50 XP to level 2
+              {level.next === null
+                ? `${xp} XP · every milestone unlocked`
+                : `${xp} / ${level.next} XP to level ${level.level + 1}`}
             </Text>
             <View style={styles.badgeRow}>
               {[10, 50, 100, 500].map(milestone => (
@@ -515,22 +540,40 @@ export default function ProgressScreen() {
 
                 <Text style={[styles.subLabel, { color: colors.textMuted }]}>STREAK BADGES</Text>
                 <View style={styles.streakBadges}>
-                  {STREAK_BADGES.map(badge => (
-                    <View
-                      key={badge.label}
-                      style={[
-                        styles.streakBadge,
-                        { backgroundColor: badge.tint, borderColor: colors.border },
-                      ]}>
-                      <Text style={styles.streakBadgeEmoji}>🔥</Text>
-                      <Text style={[styles.streakBadgeName, { color: colors.text }]}>
-                        {badge.label}
-                      </Text>
-                      <Text style={[styles.streakBadgeDays, { color: colors.textMuted }]}>
-                        {badge.days} d
-                      </Text>
-                    </View>
-                  ))}
+                  {STREAK_BADGES.map(badge => {
+                    /*
+                     * The label's colour is solved against the tile, not taken
+                     * from the theme.
+                     *
+                     * These five tints are fixed hexes — they are the badge's
+                     * identity, the way the medals are — and the label used to
+                     * be `colors.text`. On a dark theme that is light text on a
+                     * dark tint and reads fine, which is why it shipped. On a
+                     * light theme it is near-black text on `#27272A`, and the
+                     * badge names were simply invisible. `onColor` is the same
+                     * rule `onAccent` follows for text on a filled accent.
+                     */
+                    const ink = onColor(badge.tint);
+                    const earned = streak >= badge.days;
+                    return (
+                      <View
+                        key={badge.label}
+                        style={[
+                          styles.streakBadge,
+                          {
+                            backgroundColor: badge.tint,
+                            borderColor: colors.border,
+                            opacity: earned ? 1 : 0.6,
+                          },
+                        ]}>
+                        <Text style={styles.streakBadgeEmoji}>{earned ? '🔥' : '🔒'}</Text>
+                        <Text style={[styles.streakBadgeName, { color: ink }]}>{badge.label}</Text>
+                        <Text style={[styles.streakBadgeDays, { color: withAlpha(ink, 0.75) }]}>
+                          {badge.days} d
+                        </Text>
+                      </View>
+                    );
+                  })}
                 </View>
               </>
             ) : null}

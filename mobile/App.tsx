@@ -6,7 +6,7 @@ import { ThemeProvider, useTheme } from '@/theme';
 import RootNavigator from '@/navigation/RootNavigator';
 import { hydrateLastStudyDay, hydrateProgress, reconcileProgress } from '@/lib/progress';
 import { hydrateSettings } from '@/lib/settings';
-import { hydrateProfile } from '@/hooks/useProfile';
+import { hydrateProfile, hydrateStreak } from '@/hooks/useProfile';
 import { initializeAds } from '@/lib/ads';
 import { hydratePremium, usePremiumSync } from '@/lib/premium';
 import { hydrateWallpaper, isWallpaperHydrated } from '@/hooks/useWallpaper';
@@ -31,6 +31,9 @@ function Shell() {
     hydrateLastStudyDay().catch(() => {});
     // Profile, streak and XP; all cloud steps are best-effort.
     hydrateProfile().catch(() => {});
+    // Separate from the profile: this half must land even when the cloud
+    // half cannot. See hydrateStreak.
+    hydrateStreak().catch(() => {});
     // The chosen wallpaper, before the first paint of Home.
     hydrateWallpaper()
       .catch(() => {})

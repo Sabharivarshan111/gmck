@@ -13,7 +13,7 @@ import { ThemeProvider, useTheme } from '@/theme';
 import RootNavigator from '@/navigation/RootNavigator';
 import { hydrateProgress } from '@/lib/progress';
 import { hydrateSettings } from '@/lib/settings';
-import { hydrateProfile } from '@/hooks/useProfile';
+import { hydrateProfile, hydrateStreak } from '@/hooks/useProfile';
 import { DailyAdConsent } from '@/components/DailyAdConsent';
 import { hydratePremium } from '@/lib/premium';
 import { hydrateWallpaper } from '@/hooks/useWallpaper';
@@ -235,6 +235,9 @@ function Shell() {
     hydrateProgress();
       hydrateSettings().catch(() => {});
     hydrateProfile().catch(() => {});
+    // Separate from the profile: this half must land even when the cloud
+    // half cannot. See hydrateStreak.
+    hydrateStreak().catch(() => {});
     hydratePremium().catch(() => {});
     hydrateWallpaper().catch(() => {});
   }, []);

@@ -30,26 +30,43 @@ export interface Deck {
 }
 
 /**
- * How many cards a chapter's deck will have.
+ * How many cards a chapter's deck should have.
  *
- * **Mirrors `MIN_CARDS`/`MAX_CARDS` in the `generate-flashcards` edge
- * function, and must keep mirroring them.** The chapter list shows this number
- * before the deck exists, so if the two drift the list makes a promise the
- * server does not keep — which is exactly how a chapter listed as "15
- * questions" opened as an 11-card deck.
+ * **Mirrors `MIN_CARDS`/`MAX_CARDS`/`CARDS_PER_QUESTION` in the
+ * `generate-flashcards` edge function, and must keep mirroring them.** The
+ * chapter list shows this number before the deck exists, so if the two drift
+ * the list makes a promise the server does not keep — which is exactly how a
+ * chapter listed as "15 questions" opened as an 11-card deck.
  *
- * The floor is the important half. A chapter's question count is not its
- * workload: one "describe and classify" essay question is worth a dozen cards,
- * so a 15-question chapter still deserves a full sitting. Deck size used to be
- * the question count, and small chapters were the ones that suffered.
+ * The shape is `clamp(20, 50, questions x 1.2)`, and each part earns its place:
+ *
+ * - **The multiplier is above 1** because a university exam question is not one
+ *   card. "Classify mechanical injuries and describe the medicolegal
+ *   importance of each" is a dozen facts, and the model is told to split a
+ *   question into its parts rather than restate it. Deck size used to *be* the
+ *   question count, which is why a 44-question chapter capped out at 44 when it
+ *   had enough material for a full fifty.
+ * - **The floor is 20** because a question count is not a workload. A
+ *   15-question chapter still owes the reader a full sitting, and it was the
+ *   small chapters — the ones with the most to unpack per question — that came
+ *   out thinnest.
+ * - **The ceiling is 50** because the model's output budget is finite and a
+ *   deck nobody can finish is a deck nobody starts. More than fifty is a second
+ *   chapter, not a longer one.
+ *
+ * It is deliberately a flat multiplier rather than something that weighs each
+ * question. Two implementations in two languages have to produce the identical
+ * number, and every extra term is another way for them to disagree.
  *
  * `npm run check:flashcard-size` pins this to the deployed function.
  */
 export const MIN_DECK_CARDS = 20;
 export const MAX_DECK_CARDS = 50;
+export const CARDS_PER_QUESTION = 1.2;
 
 export function deckTargetFor(questionCount: number): number {
-  return Math.max(MIN_DECK_CARDS, Math.min(MAX_DECK_CARDS, questionCount));
+  const wanted = Math.round(questionCount * CARDS_PER_QUESTION);
+  return Math.max(MIN_DECK_CARDS, Math.min(MAX_DECK_CARDS, wanted));
 }
 
 /** Same shape the function builds, so a cache hit and a fresh build agree. */

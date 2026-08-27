@@ -39,6 +39,14 @@ import {
   type Grade,
 } from '@/lib/anki';
 import { tick, complete } from '@/lib/haptics';
+import { Slider } from '@/components/Slider';
+import {
+  DEFAULT_SETTINGS,
+  NEW_PER_DAY_MAX,
+  NEW_PER_DAY_MIN,
+  setSetting,
+  useSettings,
+} from '@/lib/settings';
 import {
   addCard,
   createDeck,
@@ -209,6 +217,7 @@ function YearsView({
   onBack: () => void;
 }) {
   const { colors } = useTheme();
+  const { newCardsPerDay } = useSettings();
   return (
     <>
       <Header title="Flashcards" onBack={onBack} />
@@ -243,6 +252,35 @@ function YearsView({
             <Text style={[styles.gridHint, { color: colors.textMuted }]}>Tap to browse subjects</Text>
           </Touchable>
         ))}
+      </View>
+
+      {/*
+        The daily cap, where the decks are — not buried in Settings.
+
+        The cap is most of what makes spaced repetition work, and it is also the
+        single most confusing thing about it: a fifty-card deck that hands out
+        twenty reads as a deck that lost thirty. Putting the number next to the
+        decks it governs is what turns "why are there only 20?" into a control.
+      */}
+      <Text style={[styles.sectionLabel, { color: colors.textMuted, marginTop: 22 }]}>
+        HOW MUCH A DAY
+      </Text>
+      <View style={[styles.card, styles.compactCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+        <Slider
+          value={newCardsPerDay}
+          min={NEW_PER_DAY_MIN}
+          max={NEW_PER_DAY_MAX}
+          step={5}
+          detents={[20]}
+          onChange={value => setSetting('newCardsPerDay', value)}
+          label="New flashcards per day"
+          format={value => `${value} new cards a day`}
+        />
+        <Text style={[styles.hint, { color: colors.textMuted }]}>
+          {newCardsPerDay === DEFAULT_SETTINGS.newCardsPerDay
+            ? "Anki's default. Twenty a day is a habit; a whole chapter in one sitting is an evening that happens once."
+            : `Cards you have already started still come back on their own schedule — this only sets how many ${'new'} ones a deck introduces each day.`}
+        </Text>
       </View>
 
       <Text style={[styles.sectionLabel, { color: colors.textMuted, marginTop: 22 }]}>
@@ -701,16 +739,17 @@ export function StudyView({
     () => (deck ? reconcile(deck, schedule) : []),
     [deck, schedule],
   );
-  const queue = useMemo(() => dueQueue(cards), [cards]);
-  const tally = useMemo(() => counts(cards), [cards]);
+  const { newCardsPerDay } = useSettings();
+  const queue = useMemo(() => dueQueue(cards, Date.now(), newCardsPerDay), [cards, newCardsPerDay]);
+  const tally = useMemo(() => counts(cards, Date.now(), newCardsPerDay), [cards, newCardsPerDay]);
   /**
    * The three counts, plus what is being held back.
    *
-   * `dueQueue` serves at most NEW_PER_DAY (20) new cards a day, which is
-   * Anki's default and the whole point of spaced repetition — twenty a day is
-   * a habit, forty-four in one sitting is a evening that never happens again.
-   * But a 44-card deck that says "20 new" reads as a deck that lost 24 cards.
-   * Saying where they went is the difference between a limit and a bug.
+   * `dueQueue` serves at most `settings.newCardsPerDay` new cards a day —
+   * Anki's default of 20 unless the reader has moved it on the Flashcards
+   * screen. The cap is the whole point of spaced repetition, but a 50-card
+   * deck that says "20 new" reads as a deck that lost 30. Saying where they
+   * went is the difference between a limit and a bug.
    */
   const heldBack = useMemo(
     () => cards.filter(c => c.type === 'new').length - tally.fresh,

@@ -778,6 +778,57 @@ button is the thing to read.
 
 ---
 
+## 8h. Deck sizing, a daily limit you can move, and two fake numbers (2026-08-27)
+
+### Deck size is an algorithm now, not the question count
+
+    target = clamp(20, 50, round(questions x 1.2))
+
+Toxicology's 44 questions build a 50-card deck; Mechanical Injuries' 15 build
+20. Images are a ceiling of half and theory fills the rest, so 15 questions with
+7 diagrams is 7 image + 13 theory, and 44 questions with 25 diagrams is 25 + 25.
+
+Deployed as `generate-flashcards` **v9**. A new `flashcards.deck_target` column
+marks rows built by this algorithm — `card_count` could not, because it predates
+it and every legacy row already carries one. Legacy rows rebuild on next open
+unless they already meet today's target.
+
+### The 20-a-day cap is Anki's default, not a law
+
+`settings.newCardsPerDay` (5-50, default 20), on a slider under **HOW MUCH A
+DAY** on the Flashcards screen — next to the decks it governs rather than in
+Settings, because it is the answer to "why are there only 20?". `dueQueue` and
+`counts` take it as a **parameter**: `anki.ts` stays pure so `check:anki` can
+drive it with fixed inputs, and a scheduler that read a store would be one whose
+output depended on the phone it ran on.
+
+### The streak was cloud-only, so it was always 0
+
+`streak` came from `profiles.streak`, refreshed by `register_open`. That needs a
+session; anonymous sign-in happens inside `saveProfile` and nowhere else; on a
+fresh install there is no session at launch. So `cloudProfile` was null, the
+value fell back to `?? 0`, and the card read "0 day streak" for ever no matter
+how many days running the app was opened.
+
+`src/lib/streak.ts` keeps a local count that always works, and `useProfile`
+takes `Math.max(local, cloud)` — the only merge that cannot lose a day someone
+earned. Day keys are **local calendar days, not UTC**: a streak breaks when you
+miss a day, not when a timezone does. `hydrateStreak()` is called from `App.tsx`
+separately from `hydrateProfile()`, precisely because the cloud half is allowed
+to fail. `npm run check:streak` covers day one, same-day reopens, gaps, a
+backwards clock, and the case where a stored streak has gone stale.
+
+### Two numbers on that card were decorative
+
+- **Level was the literal `1`**, with "50 XP to level 2" beside it, for everyone
+  — so 600 XP still read as level 1. Both now come from `levelFor()`, derived
+  from the same `XP_MILESTONES` the Rewards list below already shows.
+- **Streak badge labels were `colors.text` on a fixed dark tint.** Fine on a
+  dark theme, invisible on a light one. They use `onColor(tint)` now, the same
+  rule `onAccent` follows, and unearned badges show a lock rather than a flame.
+
+---
+
 ## 9. High-Yield AI Exam Diagrams & Localhost Previews
 
 ### Local Dev & Preview URLs
