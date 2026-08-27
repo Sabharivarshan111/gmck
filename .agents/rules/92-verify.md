@@ -39,7 +39,14 @@ works".
 3. **A check script** for what the harness structurally cannot see — native
    modules, manifests, file storage, scheduling, agreement with the web app.
    `mobile/scripts/*-check.mjs`. The only cover Kotlin has.
-4. **The release bundle** — `npx react-native bundle --platform android --dev
+4. **`npm run check:kotlin`, for anything Kotlin.** There is no Kotlin compiler
+   in this sandbox: everything above is green over Kotlin that will not build,
+   and the error lands six minutes into a Gradle step on CI as a failed
+   release. Twice, so far. It reads React Native's own Android sources from
+   `node_modules` and matches every `override fun` against what it claims to
+   override. It is not a compiler — **a commit touching Kotlin is not verified
+   until the CI run is green.**
+5. **The release bundle** — `npx react-native bundle --platform android --dev
    false --entry-file index.js --bundle-output /tmp/b.js`.
 
 ## Before saying done
@@ -49,6 +56,7 @@ cd mobile
 npx tsc --noEmit
 npx eslint . --quiet     # --quiet is not optional; warnings hide the errors
 npm run check:smoke
+npm run check:kotlin     # if you touched any .kt
 node preview/shoot.mjs /tmp/shot   # then open the PNGs
 ```
 

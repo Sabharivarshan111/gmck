@@ -851,6 +851,7 @@ npm run check:streak             # the streak counts on a phone with no account
 npm run check:xp                 # one XP ladder, shared with the web app
 npm run check:reminder           # the daily reminder can actually reach a phone
 npm run check:note-media         # note attachments stay on the phone, uncapped
+npm run check:kotlin             # override signatures match; there is no local kotlinc
 npm run check:supabase-queue     # every job waiting on Supabase can still be applied
 npm run check:keyboard           # no text input can sit under the Android keyboard
 npm run check:mcq                # MCQ response parsing + the ask-gemini markers

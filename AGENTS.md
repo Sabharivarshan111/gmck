@@ -214,20 +214,14 @@ everything **outside** the providers and uses literal colours on purpose.
 ```sh
 cd mobile
 npx tsc --noEmit          # must be clean
-npx eslint . --quiet      # must print nothing (warnings hide the errors)
-npm run check:xp          # one XP ladder, shared with the web
-npm run check:reminder    # the reminder can reach a phone
+npx eslint . --quiet      # must print nothing (warnings hide errors)
+npm run check:xp          # one XP ladder, shared with web
+npm run check:reminder    # the reminder reaches a phone
 npm run check:note-media  # note media: on-phone, uncapped
-npm run check:fanout      # per-question subscriptions still isolated
-npm run check:sync        # progress reaches the cloud once a session exists
-npm run check:contrast    # every built-in theme stays readable
-npm run check:mcq         # MCQ parsing and the ask-gemini markers
-npm run check:notes-limits    # every topic fits the notes function's schema
-npm run check:notes-schema    # notes fixture, renderer and schema agree
-npm run check:native-sound    # the sound module is a reachable TurboModule
-npm run check:subject-cards   # custom-theme cards stay distinct and readable
-npm run check:sounds          # the synthesised clips are intact
-npm run check:smoke           # drives the real screens; 18 flows, 0 crashes
+npm run check:kotlin      # Kotlin overrides (no local kotlinc)
+npm run check:smoke       # drives the real screens through a browser
+# ...and every other check:* in mobile/package.json that touches what
+# you changed. Each one names the bug it exists for in its header.
 npx react-native bundle --platform android --dev false \
   --entry-file index.js --bundle-output /tmp/b.js   # must succeed
 ```

@@ -46,7 +46,17 @@ was treated as "it works".
 3. **A check script** for anything the harness structurally cannot see: native
    modules, manifests, file storage, scheduling, cross-app agreement. See
    `mobile/scripts/*-check.mjs`. This is the only cover for Kotlin.
-4. **The release bundle.**
+4. **`npm run check:kotlin`, for anything Kotlin.** There is **no Kotlin
+   compiler in this sandbox** — tsc, eslint, every check, the smoke harness and
+   the release bundle are all green over Kotlin that will not compile, and the
+   error appears six minutes into a Gradle step on CI as a failed release. That
+   has happened twice. This reads React Native's own Android sources out of
+   `node_modules` and matches every `override fun` against the declaration it
+   claims to come from.
+
+   It is not a compiler. **A commit that touches Kotlin is not verified until
+   the CI run is green** — check the workflow run before reporting it.
+5. **The release bundle.**
    `npx react-native bundle --platform android --dev false --entry-file index.js
    --bundle-output /tmp/b.js` — a green bundle is the strongest signal available
    without a device.
@@ -59,6 +69,7 @@ npx tsc --noEmit                 # clean
 npx eslint . --quiet             # MUST be --quiet: 69 warnings hide the errors,
                                  # and that has broken a release build already
 npm run check:smoke              # and a new step for what you built
+npm run check:kotlin             # if you touched any .kt — there is no local compiler
 node preview/shoot.mjs /tmp/shot # then open the PNGs and look at them
 ```
 
@@ -82,6 +93,7 @@ There is no emulator in most sandboxes. So:
 - **Never claim device behaviour was checked when it was not.** Say "the Kotlin
   compiles and is wired up; posting to the notification shade needs the APK on
   a phone."
+- **Kotlin is compiled by CI and nowhere else.** Wait for the run.
 - **Name what the harness cannot reach**: native modules, permissions dialogs,
   the soft keyboard (react-native-web has none), notification delivery, file
   pickers, audio.

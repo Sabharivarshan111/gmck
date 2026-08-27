@@ -45,8 +45,12 @@ class FilesModule(reactContext: ReactApplicationContext) :
 
   private val activityListener: ActivityEventListener =
     object : BaseActivityEventListener() {
+      // `activity` is non-null in BaseActivityEventListener; declaring it
+      // nullable makes this override nothing, which is a compile error only
+      // the six-minute Gradle step ever sees. The same trap as
+      // NotifyModule's getCurrentActivity().
       override fun onActivityResult(
-        activity: Activity?,
+        activity: Activity,
         requestCode: Int,
         resultCode: Int,
         data: Intent?,

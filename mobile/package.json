@@ -42,6 +42,7 @@
     "check:xp": "node scripts/xp-check.mjs",
     "check:reminder": "node scripts/reminder-check.mjs",
     "check:note-media": "node scripts/note-media-check.mjs",
+    "check:kotlin": "node scripts/kotlin-overrides-check.mjs",
     "check:supabase-queue": "node scripts/supabase-queue.mjs check",
     "check:keyboard": "node scripts/keyboard-check.mjs",
     "supabase:status": "node scripts/supabase-queue.mjs status",
