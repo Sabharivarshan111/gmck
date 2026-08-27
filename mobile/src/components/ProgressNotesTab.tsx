@@ -284,10 +284,17 @@ function NoteReader({
         />
       ))}
 
+      {/* Its own space. The players and file rows above run right to the edge
+          of their boxes, and a full-width button flush against one reads as
+          part of it. */}
       <Touchable
         onPress={() => onEdit(note)}
         label={`Edit ${note.title || "this note"}`}
-        style={[styles.editorBtn, { backgroundColor: colors.primary, borderColor: colors.primary }]}>
+        style={[
+          styles.editorBtn,
+          styles.readerEdit,
+          { backgroundColor: colors.primary, borderColor: colors.primary },
+        ]}>
         <Text style={{ color: colors.primaryText, fontWeight: "600" }}>Edit this note</Text>
       </Touchable>
     </Sheet>
@@ -1309,6 +1316,11 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     gap: 10,
     marginTop: 4,
+  },
+  readerEdit: {
+    marginTop: 18,
+    marginBottom: 8,
+    alignItems: "center",
   },
   editorBtn: {
     paddingHorizontal: 16,

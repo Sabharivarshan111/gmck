@@ -5,7 +5,7 @@ import { Maximize2, Pause, Play, RotateCcw, Volume2, VolumeX } from 'lucide-reac
 import { Text } from '@/components/Text';
 import { Touchable } from '@/components/Touchable';
 import { Slider } from '@/components/Slider';
-import { useTheme } from '@/theme';
+import { useTheme, withAlpha } from '@/theme';
 import { typeScale } from '@/theme/typography';
 import { onColor } from '@/theme/color';
 
@@ -210,6 +210,23 @@ export function NoteMediaPlayer({
           }}
           style={video ? styles.video : styles.none}
         />
+        {/*
+          Fullscreen sits on the frame, bottom right, where every video player
+          on the phone puts it — and where it does not have to compete with the
+          transport for horizontal room. The dark disc is so it stays visible
+          over a bright frame.
+        */}
+        {video ? (
+          <Touchable
+            onPress={() => setFull(true)}
+            label={`Play ${name} full screen`}
+            hint="Fills the screen and turns sideways"
+            scaleTo={0.9}
+            hitSlop={10}
+            style={styles.expand}>
+            <Maximize2 size={17} color="#FFFFFF" />
+          </Touchable>
+        ) : null}
       </View>
 
       <View style={styles.transport}>
@@ -262,32 +279,32 @@ export function NoteMediaPlayer({
             state={{ expanded: volumeOpen }}
             scaleTo={0.9}
             hitSlop={8}
-            style={styles.expand}>
+            style={[
+              styles.iconButton,
+              {
+                backgroundColor: volumeOpen
+                  ? withAlpha(colors.accent, 0.18)
+                  : colors.cardElevated,
+                borderColor: colors.border,
+              },
+            ]}>
             {muted || volume === 0 ? (
-              <VolumeX size={16} color={colors.warning} />
+              <VolumeX size={17} color={colors.warning} />
             ) : (
-              <Volume2 size={16} color={colors.textMuted} />
+              <Volume2 size={17} color={volumeOpen ? colors.accent : colors.text} />
             )}
           </Touchable>
         ) : null}
 
-        {/* Only a video has anything to make bigger. */}
-        {video ? (
-          <Touchable
-            onPress={() => setFull(true)}
-            label={`Play ${name} full screen`}
-            hint="Fills the screen and turns sideways"
-            scaleTo={0.9}
-            hitSlop={8}
-            style={styles.expand}>
-            <Maximize2 size={16} color={colors.textMuted} />
-          </Touchable>
-        ) : null}
       </View>
 
       {volumeOpen && hasAudio ? (
-        <View style={styles.volumeRow}>
-          <Text style={[styles.problem, { color: colors.textMuted }]}>
+        <View
+          style={[
+            styles.volumeRow,
+            { backgroundColor: colors.cardElevated, borderColor: colors.border },
+          ]}>
+          <Text style={[styles.volumeLabel, { color: colors.textMuted }]}>
             {muted ? 'Muted' : `${Math.round(volume * 100)}%`}
           </Text>
           <View style={styles.track}>
@@ -299,7 +316,6 @@ export function NoteMediaPlayer({
               onChange={onVolume}
               label={`Volume for ${name}`}
               format={value => `${Math.round(value * 100)} percent`}
-              ticks={[0, 0.5, 1]}
             />
           </View>
         </View>
@@ -332,8 +348,11 @@ export function NoteMediaPlayer({
 
 const styles = StyleSheet.create({
   wrap: {
-    gap: 8,
-    marginTop: 10,
+    gap: 10,
+    // Room above and below, so a player does not sit flush against the note's
+    // text or against whatever button follows it.
+    marginTop: 16,
+    marginBottom: 12,
   },
   name: {
     ...typeScale.footnote,
@@ -345,14 +364,19 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     overflow: 'hidden',
     backgroundColor: '#000',
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
   },
   /* A recording has nothing to look at, so it takes no room at all. */
   silent: {
     height: 0,
   },
   video: {
-    width: '100%',
-    height: '100%',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
   },
   none: {
     width: 0,
@@ -376,16 +400,40 @@ const styles = StyleSheet.create({
   time: {
     ...typeScale.caption,
     fontVariant: ['tabular-nums'],
-    minWidth: 78,
+    minWidth: 74,
     textAlign: 'right',
+  },
+  iconButton: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    borderWidth: StyleSheet.hairlineWidth,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   volumeRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+    gap: 12,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderRadius: 12,
+    paddingLeft: 14,
+    paddingRight: 10,
+    paddingVertical: 6,
+  },
+  volumeLabel: {
+    ...typeScale.caption,
+    fontVariant: ['tabular-nums'],
+    minWidth: 42,
   },
   expand: {
-    paddingLeft: 2,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    margin: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.55)',
   },
   problem: {
     ...typeScale.caption,
