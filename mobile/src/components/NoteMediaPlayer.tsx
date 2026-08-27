@@ -1,7 +1,7 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Video, { type VideoRef } from 'react-native-video';
-import { Maximize2, Pause, Play, RotateCcw } from 'lucide-react-native';
+import { Maximize2, Pause, Play, RotateCcw, Volume2, VolumeX } from 'lucide-react-native';
 import { Text } from '@/components/Text';
 import { Touchable } from '@/components/Touchable';
 import { Slider } from '@/components/Slider';
@@ -83,6 +83,32 @@ export function NoteMediaPlayer({
    */
   const [full, setFull] = useState(false);
 
+  /**
+   * Whether a seek is still in flight.
+   *
+   * Releasing the scrubber was making the thumb jump backwards and then
+   * forwards again. `seek()` is asynchronous, so the first `onProgress` after
+   * a release still carries the position from *before* the seek — which was
+   * written straight back into the slider, springing the thumb to the old
+   * spot until the seek landed and threw it forward. Progress is ignored until
+   * `onSeek` says the player has actually arrived.
+   */
+  const seeking = useRef(false);
+
+  /** 0 to 1. Muting is a separate state so the level survives being muted. */
+  const [volume, setVolume] = useState(1);
+  const [muted, setMuted] = useState(false);
+  const [volumeOpen, setVolumeOpen] = useState(false);
+  /**
+   * Whether the file has any sound in it at all.
+   *
+   * A screen recording made without the microphone or internal audio has no
+   * audio track, and plays back in perfect silence — which is
+   * indistinguishable from a broken player unless the player says so. `onLoad`
+   * reports the tracks, so it can.
+   */
+  const [hasAudio, setHasAudio] = useState(true);
+
   const shown = scrubbing ?? position;
   const total = duration > 0 ? duration : 0;
 
@@ -99,6 +125,38 @@ export function NoteMediaPlayer({
   }, [ended]);
 
   const Icon = ended ? RotateCcw : playing ? Pause : Play;
+
+  /*
+   * Stable across renders, because a drag re-renders this component on every
+   * step and the Slider's gesture must not be rebuilt underneath it. The
+   * Slider now reads its callbacks through refs so this is belt and braces,
+   * but a handler that changes identity forty times a second is worth not
+   * creating in the first place.
+   */
+  const onScrub = useCallback((next: number) => setScrubbing(next), []);
+  const onScrubEnd = useCallback((next: number) => {
+    seeking.current = true;
+    player.current?.seek(next);
+    setPosition(next);
+    setScrubbing(null);
+    setEnded(false);
+  }, []);
+
+  /*
+   * Half-second steps under ten minutes, whole seconds above.
+   *
+   * A fixed one-second step gave a 28-second clip twenty-eight positions, so
+   * the thumb moved in visible jumps rather than following the finger. An
+   * hour-long lecture does not need that resolution and would pay for it in
+   * re-renders.
+   */
+  const scrubStep = useMemo(() => (total > 600 ? 1 : 0.5), [total]);
+
+  /** Touching the level unmutes: nudging a slider means "let me hear it". */
+  const onVolume = useCallback((next: number) => {
+    setVolume(next);
+    setMuted(next === 0);
+  }, []);
 
   return (
     <View style={styles.wrap}>
@@ -127,11 +185,20 @@ export function NoteMediaPlayer({
           // stops when the app leaves the foreground. Both are what a player
           // is expected to do; neither is what a decorative video does.
           playInBackground={false}
-          onLoad={data => setDuration(data.duration)}
+          volume={volume}
+          muted={muted}
+          onLoad={data => {
+            setDuration(data.duration);
+            setHasAudio((data.audioTracks?.length ?? 0) > 0);
+          }}
           onProgress={data => {
-            if (scrubbing === null) {
+            if (scrubbing === null && !seeking.current) {
               setPosition(data.currentTime);
             }
+          }}
+          onSeek={data => {
+            seeking.current = false;
+            setPosition(data.currentTime);
           }}
           onEnd={() => {
             setPlaying(false);
@@ -160,19 +227,11 @@ export function NoteMediaPlayer({
             value={Math.min(shown, total || 1)}
             min={0}
             max={total || 1}
-            // Whole seconds. A lecture does not need frame-accurate scrubbing,
-            // and a step finer than the progress events arrive at is a thumb
-            // that stutters against its own updates.
-            step={1}
-            onChange={next => setScrubbing(next)}
-            onCommit={next => {
-              player.current?.seek(next);
-              setPosition(next);
-              setScrubbing(null);
-              setEnded(false);
-            }}
+            step={scrubStep}
+            onChange={onScrub}
+            onCommit={onScrubEnd}
             label={`Position in ${name}`}
-            format={value => formatTime(value)}
+            format={formatTime}
           />
         </View>
 
@@ -180,6 +239,37 @@ export function NoteMediaPlayer({
           {formatTime(shown)}
           {total > 0 ? ` / ${formatTime(total)}` : ''}
         </Text>
+
+        {/*
+          Volume, behind one button.
+
+          A slider always on screen would double the height of the transport
+          for something most people never touch — and the phone's own volume
+          keys already work. Tapping the speaker reveals it; long content in a
+          shared room is exactly when it is wanted.
+        */}
+        {hasAudio ? (
+          <Touchable
+            onPress={() => {
+              if (volumeOpen) {
+                setMuted(current => !current);
+              } else {
+                setVolumeOpen(true);
+              }
+            }}
+            label={muted ? `Unmute ${name}` : `Volume for ${name}`}
+            hint={volumeOpen ? 'Mutes and unmutes' : 'Opens the volume slider'}
+            state={{ expanded: volumeOpen }}
+            scaleTo={0.9}
+            hitSlop={8}
+            style={styles.expand}>
+            {muted || volume === 0 ? (
+              <VolumeX size={16} color={colors.warning} />
+            ) : (
+              <Volume2 size={16} color={colors.textMuted} />
+            )}
+          </Touchable>
+        ) : null}
 
         {/* Only a video has anything to make bigger. */}
         {video ? (
@@ -194,6 +284,40 @@ export function NoteMediaPlayer({
           </Touchable>
         ) : null}
       </View>
+
+      {volumeOpen && hasAudio ? (
+        <View style={styles.volumeRow}>
+          <Text style={[styles.problem, { color: colors.textMuted }]}>
+            {muted ? 'Muted' : `${Math.round(volume * 100)}%`}
+          </Text>
+          <View style={styles.track}>
+            <Slider
+              value={muted ? 0 : volume}
+              min={0}
+              max={1}
+              step={0.05}
+              onChange={onVolume}
+              label={`Volume for ${name}`}
+              format={value => `${Math.round(value * 100)} percent`}
+              ticks={[0, 0.5, 1]}
+            />
+          </View>
+        </View>
+      ) : null}
+
+      {/*
+        Silence with a reason.
+
+        A screen recording made without the microphone has no audio track at
+        all and plays back silently, which looks exactly like a broken player.
+        Saying so is the difference between "this app is broken" and "that file
+        has no sound in it".
+      */}
+      {!hasAudio ? (
+        <Text style={[styles.problem, { color: colors.textMuted }]}>
+          This file has no sound in it.
+        </Text>
+      ) : null}
 
       {error ? (
         <Text
@@ -254,6 +378,11 @@ const styles = StyleSheet.create({
     fontVariant: ['tabular-nums'],
     minWidth: 78,
     textAlign: 'right',
+  },
+  volumeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
   },
   expand: {
     paddingLeft: 2,

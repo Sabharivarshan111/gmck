@@ -142,17 +142,38 @@ export function Slider({
     springTo(x, target, { spring: SPRING.default, reduceMotion }).start();
   }, [value, travel, toX, x, reduceMotion]);
 
+  /**
+   * The callbacks and detents, read live rather than closed over.
+   *
+   * The PanResponder below is memoised, and a drag calls `onChange` on every
+   * step — so if the memo depended on the callbacks, a caller writing them
+   * inline in JSX (which is every caller) would have its responder rebuilt
+   * mid-gesture. The replacement has never seen the grant that started the
+   * drag, and the symptom is a control that moves a little and then hangs,
+   * or jitters as it is handed between two responders.
+   *
+   * This app has already paid for that lesson once, in the home-block resize
+   * (see CLAUDE.md). Fixing it in the primitive is what stops the next caller
+   * paying for it again.
+   */
+  const onChangeRef = useRef(onChange);
+  const onCommitRef = useRef(onCommit);
+  const detentsRef = useRef(detents);
+  onChangeRef.current = onChange;
+  onCommitRef.current = onCommit;
+  detentsRef.current = detents;
+
   const emit = useCallback(
     (px: number) => {
       const next = toValue(px);
       // Floats: 1.08 built by arithmetic is not always 1.08.
       if (Math.abs(next - emitted.current) >= step / 2) {
         emitted.current = next;
-        onChange(next);
+        onChangeRef.current(next);
       }
       return next;
     },
-    [onChange, step, toValue],
+    [step, toValue],
   );
 
   /** Window x of a touch → thumb-centre offset along the track. */
@@ -202,7 +223,7 @@ export function Slider({
           }
           let settled = emitted.current;
           const pull = range * DETENT_PULL;
-          for (const detent of detents ?? []) {
+          for (const detent of detentsRef.current ?? []) {
             if (Math.abs(settled - detent) <= pull) {
               settled = detent;
               break;
@@ -210,9 +231,9 @@ export function Slider({
           }
           if (Math.abs(settled - emitted.current) >= step / 2) {
             emitted.current = settled;
-            onChange(settled);
+            onChangeRef.current(settled);
           }
-          onCommit?.(settled);
+          onCommitRef.current?.(settled);
           const target = toX(settled);
           if (reduceMotion) {
             x.setValue(target);
@@ -226,20 +247,9 @@ export function Slider({
         },
         onPanResponderTerminationRequest: () => false,
       }),
-    [
-      detents,
-      emit,
-      held,
-      onChange,
-      onCommit,
-      positionOf,
-      range,
-      reduceMotion,
-      step,
-      toX,
-      travel,
-      x,
-    ],
+    // Deliberately no callbacks and no detents here — they are read through
+    // refs above, so a caller's inline arrow cannot rebuild this mid-drag.
+    [emit, held, positionOf, range, reduceMotion, step, toX, travel, x],
   );
 
   const fill = travel > 0 ? Animated.divide(Animated.add(x, THUMB_SIZE / 2), width) : 0;

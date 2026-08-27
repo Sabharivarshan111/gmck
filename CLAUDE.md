@@ -740,11 +740,28 @@ are tens of megabytes per ABI, bought to play formats Android cannot, and every
 file this plays came out of the phone's own picker and is by definition already
 decodable. `check:note-media` fails if a bundled media stack is ever added.
 
-Two details that look like fussiness and are not: **progress events are ignored
-while a finger is down** (otherwise the thumb jumps back to the playhead and
-fights the drag), and **fullscreen is a prop, not `presentFullscreenPlayer()`**
-— leaving fullscreen with the system back gesture tells an imperative call
-nothing, so the next tap on the button would do nothing.
+Four details that look like fussiness and are not:
+
+- **Progress is ignored while a finger is down** — otherwise the thumb jumps
+  back to the playhead and fights the drag.
+- **And until `onSeek` lands.** `seek()` is asynchronous, so the first progress
+  event after a release still carries the *old* position; writing it back
+  springs the thumb backwards and then throws it forward. That is the jitter.
+- **The scrub callbacks are `useCallback`, not inline arrows.** A drag
+  re-renders this forty times a second, and `Slider`'s PanResponder is
+  memoised — a handler that changes identity on every step rebuilds the
+  gesture underneath the finger. `Slider` now reads its callbacks through refs
+  so no caller can cause this again, which is the same fix the home-block
+  resize needed.
+- **Fullscreen is a prop, not `presentFullscreenPlayer()`** — leaving
+  fullscreen with the system back gesture tells an imperative call nothing, so
+  the next tap on the button would do nothing.
+
+Volume lives behind the speaker button rather than always on screen, and
+**`onLoad` reports whether the file has an audio track at all**. A screen
+recording made without the microphone is genuinely silent, which is
+indistinguishable from a broken player until the player says "this file has no
+sound in it".
 
 ## A note has to be openable, not just editable
 

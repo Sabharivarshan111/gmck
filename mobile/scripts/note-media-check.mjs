@@ -149,6 +149,45 @@ check(
   /player\.current\?\.seek\(/.test(player),
   'the scrubber no longer seeks, so it is a progress bar wearing a thumb',
 );
+// Specifically inside onProgress: `seeking.current` appears in the release
+// handler and in onSeek too, so merely finding it anywhere proves nothing.
+const onProgressBlock = player.slice(
+  player.indexOf('onProgress='),
+  player.indexOf('onSeek='),
+);
+check(
+  /!seeking\.current/.test(onProgressBlock) && /onSeek=/.test(player),
+  'progress is written back before the seek has landed — the thumb springs to the old ' +
+    'position and then jumps forward, which is the jitter on release',
+);
+check(
+  /const onScrub = useCallback/.test(player) && /const onScrubEnd = useCallback/.test(player),
+  'the scrubber callbacks are inline again — a drag re-renders this forty times a second, ' +
+    'and an unstable handler is what rebuilds a gesture underneath the finger',
+);
+check(
+  /volume=\{volume\}/.test(player) && /muted=\{muted\}/.test(player),
+  'the player has no volume control',
+);
+check(
+  /audioTracks\?\.length/.test(player),
+  'nothing checks whether the file has an audio track, so a silent screen recording is ' +
+    'indistinguishable from a broken player',
+);
+
+// And the primitive underneath it. Every slider in the app is driven by inline
+// arrows from JSX; the responder must not depend on them.
+const slider = code(read(path.join(mobile, 'src/components/Slider.tsx')));
+check(
+  /onChangeRef\.current/.test(slider) && /onCommitRef\.current/.test(slider),
+  'Slider calls its props directly again, so its memoised PanResponder depends on them and ' +
+    'is rebuilt mid-drag — the control moves a little and then hangs',
+);
+const responderDeps = slider.slice(slider.lastIndexOf('PanResponder.create'));
+check(
+  !/\[[^\]]*\bonChange\b[^\]]*\]/.test(responderDeps),
+  "Slider's responder memo depends on onChange again",
+);
 
 // ---------------------------------------------------------------------------
 // 4c. Two ways to attach, and the one that must never delete anything.
