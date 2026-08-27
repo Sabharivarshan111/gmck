@@ -285,8 +285,11 @@ jobs:
             Android will ask once for permission to install from this source.
 
             Installs as `com.aistudio.mbbsqbank.aycxvd.debug`, alongside the
-            Play Store app rather than replacing it. Serves Google's **test**
-            ads only, never live ones.
+            Play Store app rather than replacing it.
+
+            **No ads at all** — not live ones and not Google's test ones
+            either. This build sets `ADS_ENABLED = false`, so the AdMob SDK
+            never starts, the consent form never runs, and nothing is loaded.
 
             Built from `${{ github.sha }}`.
           files: mobile/android/app/build/outputs/apk/preview/*.apk

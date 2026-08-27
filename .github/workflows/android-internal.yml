@@ -194,7 +194,9 @@ jobs:
             this.** Same package name with a different signature, so Android
             will refuse the install otherwise.
 
-            Ads are still Google's **test** units, never live ones.
+            **No ads at all** — not live ones and not Google's test ones
+            either. This build sets `ADS_ENABLED = false`, so the AdMob SDK
+            never starts, the consent form never runs, and nothing is loaded.
 
             Built from `${{ github.sha }}`.
           files: mobile/android/app/build/outputs/apk/internal/*.apk
