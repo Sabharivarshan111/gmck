@@ -10,6 +10,15 @@
       "status": "done",
       "queuedAt": "2026-08-27T02:47:14.984Z",
       "appliedAt": "2026-08-27T08:12:23.806Z"
+    },
+    {
+      "id": "sb-drop-note-images-bucket",
+      "kind": "storage",
+      "summary": "Delete the empty `note-images` storage bucket from the Supabase dashboard",
+      "why": "It was created for a synced-notes design that was reversed the same hour: study notes are on-device only. Its four RLS policies are already dropped and it holds zero objects, so nothing can reach it and nothing is at risk — but an empty private bucket is a thing every future reader has to reason about before concluding it is dead. SQL cannot remove it (storage.protect_delete blocks direct deletion); it needs the Storage API or the dashboard's Buckets page.",
+      "verify": "select count(*) from storage.buckets where id='note-images' returns 0.",
+      "status": "pending",
+      "queuedAt": "2026-08-27T08:29:39.524Z"
     }
   ]
 }

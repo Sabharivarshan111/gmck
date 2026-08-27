@@ -9,7 +9,7 @@ import { typeScale } from "@/theme/typography";
 import { useUserNotes, type UserNote } from "@/hooks/useUserNotes";
 import { ChevronDown, FileText, ImagePlus, Pencil, Plus, Trash2, X } from "lucide-react-native";
 import { getSubjects, type YearKey } from "@/lib/questionBank";
-import { attachNoteImage, removeNoteImage, signNoteImages, MAX_IMAGES_PER_NOTE } from "@/lib/noteImages";
+import { attachNoteImage, loadNoteImage, removeNoteImage, MAX_IMAGES_PER_NOTE } from "@/lib/noteImages";
 import { withAlpha } from "@/theme";
 
 /** The bucket a note with no subject falls into. */
@@ -41,10 +41,10 @@ function NoteReader({
       setUrls([]);
       return;
     }
-    // The bucket is private, so these are signed and expire — fetched when the
-    // note is opened rather than held for the life of the list.
-    signNoteImages(note.images).then(signed => {
-      if (alive) setUrls(signed);
+    // Read from the device when the note is opened, rather than holding every
+    // picture in memory for the life of the list.
+    Promise.all(note.images.map(id => loadNoteImage(id))).then(found => {
+      if (alive) setUrls(found.filter((uri): uri is string => Boolean(uri)));
     });
     return () => {
       alive = false;
@@ -70,7 +70,7 @@ function NoteReader({
       ))}
       {note.images && note.images.length > 0 && urls.length === 0 ? (
         <Text style={[styles.noteEmpty, { color: colors.textMuted }]}>
-          Could not load the pictures. They are still saved.
+          The pictures for this note are no longer on this phone.
         </Text>
       ) : null}
 
@@ -89,8 +89,8 @@ function NoteThumb({ path }: { path: string }) {
   const [url, setUrl] = useState<string | null>(null);
   useEffect(() => {
     let alive = true;
-    signNoteImages([path]).then(([signed]) => {
-      if (alive) setUrl(signed ?? null);
+    loadNoteImage(path).then(found => {
+      if (alive) setUrl(found);
     });
     return () => {
       alive = false;
@@ -101,14 +101,13 @@ function NoteThumb({ path }: { path: string }) {
 }
 
 interface Props {
-  userId: string | null;
   /** The reader's year, which decides which subjects are offered. */
   year: YearKey;
 }
 
-export function ProgressNotesTab({ userId, year }: Props) {
+export function ProgressNotesTab({ year }: Props) {
   const { colors } = useTheme();
-  const { notes, createNote, updateNote, deleteNote } = useUserNotes(userId);
+  const { notes, createNote, updateNote, deleteNote } = useUserNotes();
 
   const [editing, setEditing] = useState<UserNote | null>(null);
   const [editTitle, setEditTitle] = useState("");
@@ -191,17 +190,11 @@ export function ProgressNotesTab({ userId, year }: Props) {
   /**
    * Attach a picture.
    *
-   * Uploaded to the private `note-images` bucket under this user's own folder,
-   * so it survives a reinstall and reaches their other devices. That needs a
-   * signed-in uid — without one there is nowhere to put it that would still be
-   * there tomorrow, and saying so beats a button that silently does nothing.
+   * Kept on this phone, like the note itself. No upload, no account, no server
+   * copy — see `lib/noteImages`. The picture is stored under its own
+   * AsyncStorage key and the note holds only its id.
    */
   const addImage = useCallback(async () => {
-    if (!userId) {
-      setImageError("Sign in to add pictures — they are stored with your account.");
-      return;
-    }
-    if (!editing) return;
     if (editImages.length >= MAX_IMAGES_PER_NOTE) {
       setImageError(`A note holds up to ${MAX_IMAGES_PER_NOTE} pictures.`);
       return;
@@ -209,16 +202,16 @@ export function ProgressNotesTab({ userId, year }: Props) {
     setBusyImage(true);
     setImageError(null);
     try {
-      const result = await attachNoteImage(userId, editing.id);
+      const result = await attachNoteImage();
       if (result && "error" in result) {
         setImageError(result.error);
       } else if (result) {
-        setEditImages(current => [...current, result.path]);
+        setEditImages(current => [...current, result.id]);
       }
     } finally {
       setBusyImage(false);
     }
-  }, [editImages.length, editing, userId]);
+  }, [editImages.length]);
 
   return (
     <View style={styles.container}>

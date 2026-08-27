@@ -124,12 +124,14 @@ export default function ProgressScreen() {
   /**
    * The Supabase auth uid, which is a different thing from the email.
    *
-   * Both tabs used to be handed `email`. `user_notes.user_id` and
-   * `calendar_events.user_id` are `uuid NOT NULL`, so Postgres rejected every
-   * insert — and supabase-js *returns* errors rather than throwing, so the
-   * rejection was discarded and the note kept its local id. Nothing failed
-   * visibly; notes and events simply never left the phone, on a screen whose
-   * whole header is about syncing across devices.
+   * The calendar used to be handed `email`. `calendar_events.user_id` is a
+   * `uuid NOT NULL`, so Postgres rejected every insert — and supabase-js
+   * *returns* errors rather than throwing, so the rejection was discarded and
+   * the event kept its local id. Nothing failed visibly; events simply never
+   * left the phone, on a screen whose header is about syncing across devices.
+   *
+   * Study notes deliberately do **not** use this: they are on-device only, by
+   * the owner's decision. See `hooks/useUserNotes`.
    */
   const [uid, setUid] = useState<string | null>(null);
   const [authBusy, setAuthBusy] = useState(false);
@@ -419,7 +421,7 @@ export default function ProgressScreen() {
       {tab === 'calendar' ? (
         <ProgressCalendarTab userId={uid} />
       ) : tab === 'notes' ? (
-        <ProgressNotesTab userId={uid} year={year} />
+        <ProgressNotesTab year={year} />
       ) : (
         <>
           {/* Year ring */}

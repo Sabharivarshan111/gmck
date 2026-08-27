@@ -37,8 +37,43 @@ const strip = text =>
 /** Hooks that write rows the database keys by uuid. */
 const HOOKS = [
   { file: 'src/hooks/useCalendarEvents.ts', table: 'calendar_events', prefix: 'cal_' },
-  { file: 'src/hooks/useUserNotes.ts', table: 'user_notes', prefix: 'note_' },
 ];
+
+/**
+ * Things that must never reach a server, and the file that decides.
+ *
+ * Personal study notes are on-device only — the app owner's decision, and the
+ * whole point of the feature: a ward-round scribble or a photograph of somebody
+ * else's textbook is not this app's to keep a copy of. `useUserNotes` used to
+ * be in HOOKS above, syncing to `user_notes`; it is here now because "we do not
+ * upload this" is only true for as long as somebody keeps it true, and a rule
+ * that lives in a chat message is a rule that lasts one session.
+ *
+ * The pictures follow the note: `lib/noteImages` keeps each one under its own
+ * AsyncStorage key and must not learn to upload either.
+ */
+const LOCAL_ONLY = [
+  { file: 'src/hooks/useUserNotes.ts', what: 'personal study notes' },
+  { file: 'src/lib/noteImages.ts', what: 'pictures attached to a study note' },
+];
+
+for (const { file, what } of LOCAL_ONLY) {
+  const raw = await fs.readFile(path.join(root, file), 'utf8').catch(() => null);
+  if (raw === null) {
+    check(false, `${file} is missing`);
+    continue;
+  }
+  const body = strip(raw);
+  check(
+    !/from\s*\(\s*["'`]/.test(body) && !/supabase\s*\./.test(body),
+    `${file} talks to Supabase, but ${what} are on-device only. Nothing here may ` +
+      `read, write or upload — see the note at the top of the file.`,
+  );
+  check(
+    !/storage\s*\.\s*from/.test(body),
+    `${file} uploads to Supabase Storage, but ${what} are on-device only.`,
+  );
+}
 
 for (const { file, table, prefix } of HOOKS) {
   const raw = await fs.readFile(path.join(root, file), 'utf8').catch(() => null);

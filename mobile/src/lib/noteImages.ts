@@ -1,121 +1,95 @@
-import { supabase } from './supabase';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { pickCardImage } from './cardImage';
 import { warn } from './log';
 
 /**
  * Pictures attached to a personal study note.
  *
- * **Uploaded to a private bucket, not inlined into the row.** A note syncs
- * across devices, so bytes in the row would mean every phone re-downloading
- * megabytes of JPEG just to list a note's title. The row stores paths; the
- * bytes live in `note-images`, which is private and whose RLS keys every
- * policy off the first path segment — so `{uid}/…` is the only folder a user
- * can reach.
+ * **On this phone, and nowhere else.** No bucket, no upload, no account. A
+ * study note is the most private thing in this app — a photo of a whiteboard,
+ * a page of somebody's own book, a scribble from a ward round — and the app's
+ * owner asked for it to stay on the device. That decision is not an
+ * implementation detail to be optimised away later: uploading it would mean a
+ * server copy that outlives the app, for a feature whose whole value is that it
+ * is yours.
  *
- * This is the opposite of the choice made for hand-written flashcards, and
- * deliberately: those never leave the phone, so there is no server to put them
- * on and no sync to keep small.
+ * The trade is the same one the hand-written flashcard decks make, and the UI
+ * says it plainly: reinstall the app or lose the phone and these go with it.
+ *
+ * **One AsyncStorage key per picture**, not an array inside the note.
+ * `orbit:user-notes:v1` is a single value holding every note; a few base64
+ * photographs in there would make reading the *list* of note titles a
+ * multi-megabyte parse on a cheap phone. The note stores ids; the bytes sit in
+ * their own keys and are read only when a note is opened.
  */
 
-export const BUCKET = 'note-images';
+const IMAGE_PREFIX = 'orbit:note-image:';
 
 /**
- * base64 → bytes, without a dependency.
- *
- * Hermes has no `Buffer`, and `atob` produces a binary *string* that would have
- * to be walked anyway. This is the walk, done once: fifteen lines instead of a
- * package, a lockfile change and a `npm ci` in three workflows.
+ * Enough for a diagram and its labels. Four rather than eight because these are
+ * kept locally and never thinned: every one is storage the reader does not get
+ * back until they delete the note.
  */
-const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+export const MAX_IMAGES_PER_NOTE = 4;
 
-function base64ToBytes(input: string): Uint8Array {
-  const clean = input.replace(/[^A-Za-z0-9+/]/g, '');
-  const bytes = new Uint8Array((clean.length * 3) >> 2);
-  let out = 0;
-  let buffer = 0;
-  let bits = 0;
-  for (let i = 0; i < clean.length; i++) {
-    buffer = (buffer << 6) | ALPHABET.indexOf(clean[i]);
-    bits += 6;
-    if (bits >= 8) {
-      bits -= 8;
-      bytes[out++] = (buffer >> bits) & 0xff;
-    }
-  }
-  // `>> 2` over-allocates by up to two bytes when the input was padded, and a
-  // trailing zero byte is a corrupt JPEG rather than a harmless one.
-  return out === bytes.length ? bytes : bytes.subarray(0, out);
-}
-
-/** Enough for a page of a textbook or a whiteboard; more is a second note. */
-export const MAX_IMAGES_PER_NOTE = 8;
-
-/** How long a display URL stays good. Long enough to read a note, not to share. */
-const SIGNED_URL_TTL_SECONDS = 60 * 60;
+const key = (id: string) => `${IMAGE_PREFIX}${id}`;
 
 /**
- * Pick one picture and put it in the note's folder.
+ * Pick a picture and keep it.
  *
- * Returns the storage **path**, which is what the row stores. Null means the
- * picker was cancelled; a string in `error` means it failed and the reader
- * should be told why rather than left with nothing.
+ * Returns the local id the note stores. Null means cancelled; `error` means it
+ * failed and the reader should be told rather than left with nothing.
  */
-export async function attachNoteImage(
-  userId: string,
-  noteId: string,
-): Promise<{ path: string } | { error: string } | null> {
+export async function attachNoteImage(): Promise<
+  { id: string } | { error: string } | null
+> {
   const picked = await pickCardImage();
   if (!picked) {
     return null;
   }
   if ('tooLarge' in picked) {
-    return { error: 'That picture is too big. Crop it, or pick a smaller one.' };
+    return { error: 'That picture is too big to keep on the phone. Crop it, or pick a smaller one.' };
   }
-
-  // pickCardImage hands back a data URI because that is what the flashcard
-  // decks need; here only the bytes matter.
-  const comma = picked.uri.indexOf(',');
-  const base64 = comma >= 0 ? picked.uri.slice(comma + 1) : picked.uri;
-  const mime = /^data:([^;]+)/.exec(picked.uri)?.[1] ?? 'image/jpeg';
-  const extension = mime === 'image/png' ? 'png' : mime === 'image/webp' ? 'webp' : 'jpg';
-  const path = `${userId}/${noteId}/${Date.now().toString(36)}.${extension}`;
-
-  const { error } = await supabase.storage
-    .from(BUCKET)
-    .upload(path, base64ToBytes(base64), { contentType: mime, upsert: false });
-
-  if (error) {
-    warn('note image upload failed:', error.message);
-    return { error: error.message || 'Could not upload that picture.' };
+  const id = `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 7)}`;
+  try {
+    await AsyncStorage.setItem(key(id), picked.uri);
+  } catch (error) {
+    warn('note image save failed:', error);
+    return { error: 'There was no room to save that picture.' };
   }
-  return { path };
+  return { id };
+}
+
+/** The data URI for one picture, or null if it is gone. */
+export async function loadNoteImage(id: string): Promise<string | null> {
+  try {
+    return await AsyncStorage.getItem(key(id));
+  } catch {
+    return null;
+  }
+}
+
+/** Forget one picture's bytes. The note is the source of truth for the list. */
+export async function removeNoteImage(id: string): Promise<void> {
+  try {
+    await AsyncStorage.removeItem(key(id));
+  } catch (error) {
+    warn('note image delete failed:', error);
+  }
 }
 
 /**
- * Display URLs for a note's pictures.
+ * Drop every picture a deleted note owned.
  *
- * The bucket is private, so there is no public URL to build — each one is
- * signed, and expires. Failures come back as an empty list rather than a
- * throw: a note whose pictures will not load is still a note worth reading.
+ * Without this a deleted note's photographs stay on the device for ever, taking
+ * space nothing on screen accounts for — the reader deleted the only thing that
+ * referenced them.
  */
-export async function signNoteImages(paths: string[]): Promise<string[]> {
-  if (paths.length === 0) {
-    return [];
+export async function removeNoteImages(ids: string[]): Promise<void> {
+  if (ids.length === 0) {
+    return;
   }
-  const { data, error } = await supabase.storage
-    .from(BUCKET)
-    .createSignedUrls(paths, SIGNED_URL_TTL_SECONDS);
-  if (error || !data) {
-    warn('note image signing failed:', error?.message);
-    return [];
-  }
-  return data.map(item => item.signedUrl).filter((url): url is string => Boolean(url));
-}
-
-/** Remove one picture's bytes. Best effort — the row is the source of truth. */
-export async function removeNoteImage(path: string): Promise<void> {
-  const { error } = await supabase.storage.from(BUCKET).remove([path]);
-  if (error) {
-    warn('note image delete failed:', error.message);
-  }
+  // multiRemove is not on the typed surface of this AsyncStorage build, and a
+  // handful of small deletes is not worth reaching around the types for.
+  await Promise.all(ids.map(id => removeNoteImage(id)));
 }

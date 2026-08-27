@@ -268,6 +268,31 @@ cloud profile because that is the proof both the session and the row exist.
 
 `npm run check:sync` pins the ordering.
 
+## Personal study notes never leave the phone
+
+My Progress → Notes. `hooks/useUserNotes.ts` and `lib/noteImages.ts` are
+**AsyncStorage only** — no row, no bucket, no account. This is the app owner's
+decision and it is the feature: a ward-round scribble or a photograph of
+somebody's own textbook is not this app's to keep a server copy of.
+
+`npm run check:cloud-ids` enforces it from the other side. Those two files are
+in its `LOCAL_ONLY` list, and it fails if either so much as imports the Supabase
+client. "We do not upload this" is only true while somebody keeps it true, and a
+rule that lives in a commit message lasts one session.
+
+Two consequences worth knowing before someone "fixes" them:
+
+- **Notes written in the web app do not appear on the phone**, and never will
+  while this holds. The `user_notes` table still exists and the web app still
+  uses it; the native app simply does not look.
+- **Pictures are one AsyncStorage key each** (`orbit:note-image:{id}`), and the
+  note stores ids. The note list is a single value, so base64 photographs inside
+  it would turn reading the *titles* into a multi-megabyte parse. Deleting a
+  note deletes its pictures — nothing else references them.
+
+The calendar in the same screen *is* synced, and that difference is deliberate:
+an exam date is a fact about a course, not about a person.
+
 ## A locally-created row must adopt its database id
 
 `calendar_events.id` and `user_notes.id` are `uuid` columns with a
