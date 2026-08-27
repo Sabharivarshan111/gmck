@@ -27,6 +27,7 @@ when picking up work that was last touched from the other tool.
 | `.agents/rules/80-keyboard.md` | Text inputs and the Android keyboard — why adjustResize is dead and what replaces it |
 | `.agents/rules/90-xp.md` | XP, badges, streak and the leaderboard — one ladder shared with the web app, and why a reward has to look like one |
 | `.agents/rules/91-notifications.md` | The daily study reminder — why it is usually silent, and the two ways that silence has meant "broken |
+| `.agents/rules/92-verify.md` | Prove a change works and show a screenshot before calling it done — what counts as proof here, and what the harness structurally cannot see |
 <!-- rules:end -->
 
 This repo is worked on from Claude Code *and* Antigravity, sometimes on the
@@ -674,6 +675,55 @@ That is not a preview-only cosmetic: `check:smoke` asserts through the DOM, and
 the reminder's "off by default" assertion passed for a year while reading an
 attribute that was never emitted.
 
+## A note carries whatever the reader needs it to
+
+Pictures, video, recordings and PDFs — **all on this phone**, no bucket, no
+upload, no account, and **no cap on any of it**. Both halves are the app
+owner's instruction, and both are enforced: `check:cloud-ids` from the network
+side, `check:note-media` from the storage side.
+
+Pictures and files are stored differently on purpose:
+
+- **A picture is a row.** `lib/noteImages.ts`, one AsyncStorage key each,
+  downscaled on the way in. Right for a photograph of a page.
+- **A file is a file.** `lib/noteFiles.ts` over the `OrbitFiles` native module,
+  copied into `filesDir/note-media/`. Forty megabytes of base64 video does not
+  belong in the store that also holds the note list — reading the note *titles*
+  would become a multi-megabyte parse.
+
+`FilesModule.kt` picks through `ACTION_OPEN_DOCUMENT`, which runs out of
+process and returns the one item chosen, so **no permission is requested and
+none may be added** — the same rule the photo picker follows. It copies rather
+than keeping the URI: a picker's grant is one-shot, and
+`react-native-image-picker` lands its results in the *cache* directory, which
+Android empties when it wants the space. A recording attached to a ward-round
+note has to still be there in a month.
+
+Deleting a note deletes its pictures **and its files**. Nothing else references
+them, and a forgotten video is a great deal of space the reader can never
+account for.
+
+The picker offers exactly the four kinds the reader can then use — image,
+video, audio, PDF. Video and audio play in place, paused until asked (autoplay
+would start a lecture recording out loud in whatever room they are in); a PDF
+hands off to Android's own viewer, because this app has no business being one.
+
+## A note has to be openable, not just editable
+
+The note card carried a pencil and a bin. Tapping the title did open it for
+reading — but a title looks like a title next to two icons that look like
+buttons, and the report was that there was no way to view a note at all. The
+body is a target too now, and the card says **"Read note ›"** rather than
+leaving it to be discovered.
+
+## Say "notifications", because that is the word people look for
+
+The reminder section was headed "Daily reminder" with a bell beside it, and the
+reader could not tell it was the notification switch. A bell is an icon, and
+this app uses "reminder" for exam countdowns and revision that are not
+notifications. It is a **NOTIFICATIONS** section now, and the switch reads
+"Daily reminder (notifications)" — the word Android's own settings use.
+
 ## The daily reminder needs its facts written before the evening
 
 `NotifyReceiver` decides at fire time, from a **digest** the app leaves behind
@@ -800,6 +850,7 @@ npm run check:flashcard-size     # the chapter list's card count is the one the 
 npm run check:streak             # the streak counts on a phone with no account
 npm run check:xp                 # one XP ladder, shared with the web app
 npm run check:reminder           # the daily reminder can actually reach a phone
+npm run check:note-media         # note attachments stay on the phone, uncapped
 npm run check:supabase-queue     # every job waiting on Supabase can still be applied
 npm run check:keyboard           # no text input can sit under the Android keyboard
 npm run check:mcq                # MCQ response parsing + the ask-gemini markers

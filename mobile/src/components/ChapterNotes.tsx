@@ -51,6 +51,15 @@ export function ChapterNotes({ chapterKey }: { chapterKey: string }) {
           {(note.images ?? []).map(id => (
             <NoteImage key={id} id={id} />
           ))}
+          {/* Videos, recordings and PDFs named rather than played: this block
+              sits under a generated note as an annotation on it, and a video
+              player mounted here would be the loudest thing on the chapter.
+              The Notes tab is where they open. */}
+          {(note.files ?? []).length > 0 ? (
+            <Text style={[styles.body, { color: colors.textMuted }]}>
+              {(note.files ?? []).map(file => file.name).join(' · ')}
+            </Text>
+          ) : null}
         </View>
       ))}
     </View>

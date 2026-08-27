@@ -1055,7 +1055,7 @@ await step('the daily reminder is off by default and explains itself', async () 
   await tap('Settings');
   await page.waitForTimeout(700);
 
-  const toggle = byLabel('Daily reminder');
+  const toggle = byLabel('Daily reminder (notifications)');
   await scrollTo(toggle);
 
   /*
@@ -1077,6 +1077,9 @@ await step('the daily reminder is off by default and explains itself', async () 
   }
 
   await seesText('Daily reminder', 5000);
+  // Said in the words Android's own settings use, because "reminder" alone
+  // did not tell the reader this was the notification switch.
+  await seesText('NOTIFICATIONS', 5000);
   // The policy, in the sheet, not buried in a privacy page.
   await seesText('At most one a day', 4000);
   await seesText('already studied', 4000);
@@ -1112,7 +1115,7 @@ await step('turning the reminder on reveals what it may send', async () => {
   await tap('Settings');
   await page.waitForTimeout(700);
 
-  const toggle = byLabel('Daily reminder');
+  const toggle = byLabel('Daily reminder (notifications)');
   await scrollTo(toggle);
   await toggle.click();
   await page.waitForTimeout(500);
@@ -1163,7 +1166,7 @@ await step('the reminder can be retimed, and will send one on demand', async () 
   await tap('Settings');
   await page.waitForTimeout(700);
 
-  const toggle = byLabel('Daily reminder');
+  const toggle = byLabel('Daily reminder (notifications)');
   await scrollTo(toggle);
   if ((await toggle.evaluate(el => el.getAttribute('aria-checked'))) !== 'true') {
     await toggle.click();
@@ -1636,6 +1639,39 @@ await step('a note filed under a chapter shows up on that chapter', async () => 
   await page.waitForTimeout(900);
   await seesText('YOUR NOTES', 4000);
   await seesText('Neoplasia mnemonics', 4000);
+});
+
+/**
+ * A saved note can be opened and read.
+ *
+ * The card carried a pencil and a bin and nothing else that looked like a
+ * button. Tapping the title did open it — but a title looks like a title next
+ * to two icons that look like controls, and the reader's report was that there
+ * was no way to view a note at all. So the assertion is not "the reader exists"
+ * but "the card says how to get into it, and the body is the way in".
+ */
+await step('a saved note can be opened and read without editing it', async () => {
+  await open('screen=progress');
+  await page.waitForTimeout(900);
+  await byLabel('Notes').first().click();
+  await page.waitForTimeout(600);
+  await byLabel('Create a new study note').click();
+  await page.waitForTimeout(600);
+
+  await byLabel('Note title').fill('Reading this back');
+  await byLabel('What the note says').fill('Nephrotic is protein, nephritic is blood.');
+  await byLabel('Save note').click();
+  await page.waitForTimeout(900);
+
+  // The affordance, in words, on the card.
+  await seesText('Read note', 4000);
+
+  // And the body is a target, not just the title — that is where a finger goes.
+  await byLabel('Read Reading this back').last().click();
+  await page.waitForTimeout(800);
+  await seesText('Nephrotic is protein', 4000);
+  // Reading is not editing: the way to change it has to be asked for.
+  await seesText('Edit this note', 4000);
 });
 
 await step('a card you write can carry a picture, revealed with the answer', async () => {

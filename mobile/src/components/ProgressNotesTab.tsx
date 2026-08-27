@@ -1,20 +1,191 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Image, Keyboard, StyleSheet, TextInput, View } from "react-native";
+import { Image, Keyboard, Linking, StyleSheet, TextInput, View } from "react-native";
 import { Text } from "@/components/Text";
 import { Touchable } from "@/components/Touchable";
 import { Dialog } from "@/components/Dialog";
 import { Sheet } from "@/components/Sheet";
+import Video from "react-native-video";
 import { useTheme } from "@/theme";
+import { useReducedMotion } from "@/theme/motion";
 import { typeScale } from "@/theme/typography";
 import { useUserNotes, type UserNote } from "@/hooks/useUserNotes";
-import { ChevronDown, FileText, ImagePlus, Pencil, Plus, Trash2, X } from "lucide-react-native";
+import {
+  BookOpen,
+  ChevronDown,
+  ChevronRight,
+  FileText,
+  FileType,
+  Film,
+  ImagePlus,
+  Music,
+  Paperclip,
+  Pencil,
+  Play,
+  Plus,
+  Trash2,
+  X,
+} from "lucide-react-native";
 import { getSubjects, type BankNode, type YearKey } from "@/lib/questionBank";
 import { flattenSubjectTopics } from "@/lib/handwrittenNotes";
 import { attachNoteImage, loadNoteImage, removeNoteImage } from "@/lib/noteImages";
+import {
+  attachNoteFile,
+  formatBytes,
+  kindOf,
+  noteFilesAvailable,
+  noteFileUri,
+  removeNoteFile,
+  type NoteFile,
+} from "@/lib/noteFiles";
 import { withAlpha } from "@/theme";
 
 /** The bucket a note with no subject falls into. */
 const UNFILED = "Unfiled";
+
+const KIND_LABEL: Record<string, string> = {
+  image: "Picture",
+  video: "Video",
+  audio: "Recording",
+  pdf: "PDF",
+  file: "File",
+};
+
+/** One icon per kind, so a list of four attachments is scannable. */
+function FileKindIcon({ file }: { file: NoteFile }) {
+  const { colors } = useTheme();
+  const kind = kindOf(file);
+  if (kind === "video") return <Film size={16} color={colors.accent} />;
+  if (kind === "audio") return <Music size={16} color={colors.accent} />;
+  if (kind === "pdf") return <FileType size={16} color={colors.accent} />;
+  if (kind === "image") return <ImagePlus size={16} color={colors.accent} />;
+  return <Paperclip size={16} color={colors.accent} />;
+}
+
+/**
+ * What a note carries, in one line, without opening anything.
+ *
+ * Counted by kind rather than totalled: "2 pictures · 1 video" tells the
+ * reader which note has the lecture in it, and "3 attachments" does not.
+ */
+function attachmentSummary(note: UserNote): string {
+  const parts: string[] = [];
+  const pictures = note.images?.length ?? 0;
+  if (pictures > 0) {
+    parts.push(`${pictures} picture${pictures === 1 ? "" : "s"}`);
+  }
+  const counts = new Map<string, number>();
+  for (const file of note.files ?? []) {
+    const kind = kindOf(file);
+    counts.set(kind, (counts.get(kind) ?? 0) + 1);
+  }
+  for (const [kind, count] of counts) {
+    const label = KIND_LABEL[kind] ?? "File";
+    parts.push(`${count} ${count === 1 ? label.toLowerCase() : `${label.toLowerCase()}s`}`);
+  }
+  return parts.join(" · ");
+}
+
+
+/**
+ * One attachment, rendered as the thing it is.
+ *
+ * A video plays in place, a recording plays in place, and a PDF hands off to
+ * whatever the reader already uses to read PDFs — this app has no business
+ * being a document viewer, and Android already has one.
+ *
+ * A missing file says so rather than showing a black rectangle. The reader can
+ * clear the app's storage from Android's settings at any moment, so "gone" is
+ * a state that happens rather than one being defended against.
+ */
+function NoteAttachment({ file }: { file: NoteFile }) {
+  const { colors } = useTheme();
+  const reduced = useReducedMotion();
+  const [playing, setPlaying] = useState(false);
+  const uri = noteFileUri(file);
+  const kind = kindOf(file);
+
+  if (!uri) {
+    return (
+      <View style={[styles.fileRow, { backgroundColor: colors.card, borderColor: colors.border }]}>
+        <FileKindIcon file={file} />
+        <View style={styles.flex}>
+          <Text style={[styles.fileName, { color: colors.text }]} numberOfLines={1}>
+            {file.name}
+          </Text>
+          <Text style={[styles.noteEmpty, { color: colors.textMuted }]}>
+            No longer on this phone.
+          </Text>
+        </View>
+      </View>
+    );
+  }
+
+  if (kind === "image") {
+    return <Image source={{ uri }} style={styles.readerImage} resizeMode="contain" />;
+  }
+
+  if (kind === "video" || kind === "audio") {
+    return (
+      <View style={styles.attachmentBlock}>
+        <Text style={[styles.fileName, { color: colors.text }]} numberOfLines={1}>
+          {file.name}
+        </Text>
+        {/*
+          Paused until asked.
+
+          Autoplay would start a lecture recording out loud the moment a note
+          is opened, which is the app making a decision about the room the
+          reader is in. Under reduced motion a video stays a still frame with
+          its controls — the same rule the wallpaper follows.
+        */}
+        <Video
+          source={{ uri }}
+          paused={!playing || reduced}
+          controls
+          repeat={false}
+          resizeMode="contain"
+          style={kind === "video" ? styles.readerVideo : styles.readerAudio}
+          onEnd={() => setPlaying(false)}
+          onError={() => setPlaying(false)}
+        />
+        {!playing ? (
+          <Touchable
+            onPress={() => setPlaying(true)}
+            label={`Play ${file.name}`}
+            style={[styles.attachBtn, { borderColor: colors.border }]}>
+            <Play size={14} color={colors.accent} />
+            <Text style={[styles.subjectChipText, { color: colors.accent }]}>
+              Play {kind === "video" ? "video" : "recording"}
+            </Text>
+          </Touchable>
+        ) : null}
+      </View>
+    );
+  }
+
+  return (
+    <Touchable
+      onPress={() => {
+        // Android's own document viewer. Rendering a PDF here would mean
+        // another dependency to do a job every phone already does.
+        Linking.openURL(uri).catch(() => {});
+      }}
+      label={`Open ${file.name}`}
+      style={[styles.fileRow, { backgroundColor: colors.card, borderColor: colors.border }]}>
+      <FileKindIcon file={file} />
+      <View style={styles.flex}>
+        <Text style={[styles.fileName, { color: colors.text }]} numberOfLines={1}>
+          {file.name}
+        </Text>
+        <Text style={[styles.noteEmpty, { color: colors.textMuted }]}>
+          {KIND_LABEL[kind]}
+          {formatBytes(file.size) ? ` · ${formatBytes(file.size)}` : ""} · tap to open
+        </Text>
+      </View>
+      <ChevronRight size={14} color={colors.textMuted} />
+    </Touchable>
+  );
+}
 
 /**
  * Reading a note, as opposed to editing one.
@@ -74,6 +245,10 @@ function NoteReader({
           The pictures for this note are no longer on this phone.
         </Text>
       ) : null}
+
+      {(note.files ?? []).map(file => (
+        <NoteAttachment key={file.id} file={file} />
+      ))}
 
       <Touchable
         onPress={() => onEdit(note)}
@@ -240,6 +415,7 @@ export function ProgressNotesTab({ year }: Props) {
   const [editChapterName, setEditChapterName] = useState<string | null>(null);
   const [filingOpen, setFilingOpen] = useState(false);
   const [editImages, setEditImages] = useState<string[]>([]);
+  const [editFiles, setEditFiles] = useState<NoteFile[]>([]);
   const [imageError, setImageError] = useState<string | null>(null);
   const [busyImage, setBusyImage] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<UserNote | null>(null);
@@ -282,6 +458,7 @@ export function ProgressNotesTab({ year }: Props) {
       setEditChapterKey(note.chapterKey ?? null);
       setEditChapterName(note.chapterName ?? null);
       setEditImages(note.images ?? []);
+      setEditFiles(note.files ?? []);
     } else {
       setEditing({ id: "new", title: "", content: "", created_at: "", updated_at: "" });
       setEditTitle("");
@@ -290,6 +467,7 @@ export function ProgressNotesTab({ year }: Props) {
       setEditChapterKey(null);
       setEditChapterName(null);
       setEditImages([]);
+      setEditFiles([]);
     }
   };
 
@@ -305,6 +483,7 @@ export function ProgressNotesTab({ year }: Props) {
       chapterKey: editChapterKey,
       chapterName: editChapterName,
       images: editImages,
+      files: editFiles,
     };
     if (editing.id === "new") {
       await createNote(patch);
@@ -331,6 +510,30 @@ export function ProgressNotesTab({ year }: Props) {
         setImageError(result.error);
       } else if (result) {
         setEditImages(current => [...current, result.id]);
+      }
+    } finally {
+      setBusyImage(false);
+    }
+  }, []);
+
+  /**
+   * Attach a video, a recording or a PDF.
+   *
+   * The same promise as the pictures — this phone, no upload, no account — and
+   * the same absence of a cap, for the same reason: it is the reader's own
+   * storage and the size of their own lecture recording is not this app's
+   * decision. See `lib/noteFiles` for why these are files on disk while the
+   * pictures are rows in AsyncStorage.
+   */
+  const addFile = useCallback(async () => {
+    setBusyImage(true);
+    setImageError(null);
+    try {
+      const result = await attachNoteFile();
+      if (result && "error" in result) {
+        setImageError(result.error);
+      } else if (result) {
+        setEditFiles(current => [...current, result.file]);
       }
     } finally {
       setBusyImage(false);
@@ -420,23 +623,49 @@ export function ProgressNotesTab({ year }: Props) {
                         </View>
                       </View>
 
-                      {n.content ? (
-                        <Text
-                          style={[styles.noteContent, { color: colors.textMuted }]}
-                          numberOfLines={3}>
-                          {n.content}
-                        </Text>
-                      ) : (
-                        <Text style={[styles.noteEmpty, { color: colors.textMuted }]}>
-                          (Empty note)
-                        </Text>
-                      )}
+                      {/*
+                        The body opens it too, and says so.
 
-                      {n.images && n.images.length > 0 ? (
-                        <Text style={[styles.noteEmpty, { color: colors.textMuted }]}>
-                          {n.images.length} picture{n.images.length === 1 ? "" : "s"}
-                        </Text>
-                      ) : null}
+                        Tapping the title already read the note, but a title
+                        looks like a title — next to a pencil and a bin, which
+                        look like buttons, it read as a card with two actions
+                        and no way in. The reader's own report was that there
+                        was no button to view a note. So the preview is a
+                        target as well, and the row underneath names what
+                        happens rather than leaving it to be discovered.
+                      */}
+                      <Touchable
+                        onPress={() => setReading(n)}
+                        label={`Read ${n.title || "note"}`}
+                        scale={false}
+                        dim
+                        style={styles.noteBody}>
+                        {n.content ? (
+                          <Text
+                            style={[styles.noteContent, { color: colors.textMuted }]}
+                            numberOfLines={3}>
+                            {n.content}
+                          </Text>
+                        ) : (
+                          <Text style={[styles.noteEmpty, { color: colors.textMuted }]}>
+                            (Empty note)
+                          </Text>
+                        )}
+
+                        {attachmentSummary(n) ? (
+                          <Text style={[styles.noteEmpty, { color: colors.textMuted }]}>
+                            {attachmentSummary(n)}
+                          </Text>
+                        ) : null}
+
+                        <View style={styles.readRow}>
+                          <BookOpen size={13} color={colors.fuchsia} />
+                          <Text style={[styles.readHint, { color: colors.fuchsia }]}>
+                            Read note
+                          </Text>
+                          <ChevronRight size={13} color={colors.fuchsia} />
+                        </View>
+                      </Touchable>
                     </View>
                   ))
                 : null}
@@ -559,6 +788,49 @@ export function ProgressNotesTab({ year }: Props) {
             </View>
           ) : null}
 
+          {/*
+            What is already attached, and how big it is.
+
+            The size is shown because there is no cap — the reader is the one
+            deciding whether a 300 MB video belongs on a phone with 2 GB free,
+            and they cannot decide that without the number.
+          */}
+          {editFiles.length > 0 ? (
+            <View style={styles.fileList}>
+              {editFiles.map(file => (
+                <View
+                  key={file.id}
+                  style={[
+                    styles.fileRow,
+                    { backgroundColor: colors.cardElevated, borderColor: colors.border },
+                  ]}>
+                  <FileKindIcon file={file} />
+                  <View style={styles.flex}>
+                    <Text style={[styles.fileName, { color: colors.text }]} numberOfLines={1}>
+                      {file.name}
+                    </Text>
+                    <Text style={[styles.noteEmpty, { color: colors.textMuted }]}>
+                      {KIND_LABEL[kindOf(file)]}
+                      {formatBytes(file.size) ? ` · ${formatBytes(file.size)}` : ""}
+                    </Text>
+                  </View>
+                  <Touchable
+                    onPress={() => {
+                      setEditFiles(current => current.filter(f => f.id !== file.id));
+                      // Best effort: the note is the source of truth, and an
+                      // orphaned file costs bytes rather than correctness.
+                      removeNoteFile(file.id);
+                    }}
+                    label={`Remove ${file.name}`}
+                    scaleTo={0.85}
+                    hitSlop={10}>
+                    <X size={14} color={colors.danger} />
+                  </Touchable>
+                </View>
+              ))}
+            </View>
+          ) : null}
+
           <View style={styles.attachRow}>
             <Touchable
               onPress={addImage}
@@ -570,7 +842,28 @@ export function ProgressNotesTab({ year }: Props) {
                 {busyImage ? "Adding…" : "Add picture"}
               </Text>
             </Touchable>
+            {/* Hidden rather than disabled where the module is absent, which is
+                the preview harness: a control that cannot work is worse than
+                one that is not offered. */}
+            {noteFilesAvailable ? (
+              <Touchable
+                onPress={addFile}
+                disabled={busyImage}
+                label="Add a video, recording or PDF to this note"
+                style={[styles.attachBtn, { borderColor: colors.border }]}>
+                <Paperclip size={16} color={colors.accent} />
+                <Text style={[styles.subjectChipText, { color: colors.accent }]}>
+                  {busyImage ? "Adding…" : "Add file"}
+                </Text>
+              </Touchable>
+            ) : null}
           </View>
+          {noteFilesAvailable ? (
+            <Text style={[styles.noteEmpty, { color: colors.textMuted }]}>
+              Video, audio or PDF. No size limit — it is kept on this phone, so the only
+              limit is the space you have.
+            </Text>
+          ) : null}
 
           {imageError ? (
             <Text
@@ -806,6 +1099,50 @@ const styles = StyleSheet.create({
   noteActions: {
     flexDirection: "row",
     gap: 12,
+  },
+  fileList: {
+    gap: 8,
+  },
+  fileRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+  },
+  fileName: {
+    ...typeScale.footnote,
+    fontWeight: "600",
+  },
+  attachmentBlock: {
+    gap: 8,
+    marginTop: 10,
+  },
+  readerVideo: {
+    width: "100%",
+    height: 210,
+    borderRadius: 12,
+    backgroundColor: "#000",
+  },
+  /* Audio has nothing to look at; the controls are the whole surface. */
+  readerAudio: {
+    width: "100%",
+    height: 54,
+  },
+  noteBody: {
+    gap: 4,
+  },
+  readRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    marginTop: 2,
+  },
+  readHint: {
+    ...typeScale.caption,
+    fontWeight: "700",
   },
   noteContent: {
     ...typeScale.body,

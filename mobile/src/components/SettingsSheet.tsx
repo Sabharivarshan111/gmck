@@ -333,16 +333,27 @@ export function SettingsSheet({
 
       {notificationsAvailable ? (
         <>
+          {/*
+            "NOTIFICATIONS", then "Daily reminder (notification)".
+            
+            The section was headed "Daily reminder" with a bell beside it, and
+            the reader's report was that they could not tell it was the
+            notification switch at all — a bell is an icon, and "reminder" is a
+            word this app also uses for exam countdowns and revision that are
+            not notifications. The word people go looking for is the one
+            Android's own settings use, so it is said twice: once as the
+            section, once in brackets on the switch that turns them on.
+          */}
           <View style={styles.reminderHead}>
             <NotificationBell enabled={settings.dailyReminder && notifyAllowed} />
-            <View style={styles.flex}>
-              <Text style={[typeScale.callout, { color: colors.text }]}>Daily reminder</Text>
-            </View>
+            <Text style={[styles.section, styles.sectionInline, { color: colors.textMuted }]}>
+              NOTIFICATIONS
+            </Text>
           </View>
 
           <Switchable
-            label="Daily reminder"
-            detail="One a day, and only when there is something worth saying"
+            label="Daily reminder (notifications)"
+            detail="Let Orbit send you a notification — one a day, and only when there is something worth saying"
             value={settings.dailyReminder && notifyAllowed}
             onChange={async next => {
               if (!next) {
@@ -655,6 +666,9 @@ const styles = StyleSheet.create({
     borderWidth: StyleSheet.hairlineWidth,
     paddingVertical: 12,
     marginTop: 12,
+  },
+  sectionInline: {
+    marginTop: 0,
   },
   reminderHead: {
     flexDirection: 'row',

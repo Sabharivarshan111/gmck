@@ -216,7 +216,8 @@ cd mobile
 npx tsc --noEmit          # must be clean
 npx eslint . --quiet      # must print nothing (warnings hide the errors)
 npm run check:xp          # one XP ladder, shared with the web
-npm run check:reminder    # the daily reminder can reach a phone
+npm run check:reminder    # the reminder can reach a phone
+npm run check:note-media  # note media: on-phone, uncapped
 npm run check:fanout      # per-question subscriptions still isolated
 npm run check:sync        # progress reaches the cloud once a session exists
 npm run check:contrast    # every built-in theme stays readable

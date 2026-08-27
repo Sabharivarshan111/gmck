@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { removeNoteImages } from "@/lib/noteImages";
+import { removeNoteFiles, type NoteFile } from "@/lib/noteFiles";
 
 /**
  * Personal study notes.
@@ -47,6 +48,18 @@ export interface UserNote {
    * parse on a cheap phone.
    */
   images?: string[];
+  /**
+   * Videos, recordings and PDFs, resolved through `lib/noteFiles`.
+   *
+   * Separate from `images` because they are stored differently and for a
+   * reason: a picture is a downscaled data URI in its own AsyncStorage key,
+   * while these are real files in the app's own directory. Forty megabytes of
+   * base64 video does not belong in the store that also holds this list.
+   *
+   * Records rather than bare ids, so the list can say "lecture-3.mp4, 42 MB"
+   * without opening anything.
+   */
+  files?: NoteFile[];
   created_at: string;
   updated_at: string;
 }
@@ -131,9 +144,11 @@ export function useUserNotes() {
     const next = notes.filter(note => note.id !== id);
     setNotes(next);
     await saveLocal(next);
-    // The pictures go with it. Nothing else references them, so leaving them
-    // behind is storage the reader can never account for or reclaim.
+    // The pictures and files go with it. Nothing else references them, so
+    // leaving them behind is storage the reader can never account for or
+    // reclaim — and a forgotten video is a great deal of it.
     await removeNoteImages(going?.images ?? []);
+    removeNoteFiles(going?.files);
   };
 
   /**

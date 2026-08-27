@@ -19,6 +19,7 @@ class MainApplication : Application(), ReactApplication {
           add(SoundPackage())
           add(SpeechPackage())
           add(NotifyPackage())
+          add(FilesPackage())
         },
     )
   }

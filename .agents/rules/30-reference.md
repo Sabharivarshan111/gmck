@@ -30,6 +30,7 @@ Antigravity does not, so **open the file** when the work touches its subject.
 | `.claude/skills/improve-animations/` | Survey a codebase's animation and motion code as a senior motion advisor, then produce a prioritized audit and self-contained implementation plans for other agents (or cheaper models) to execute. |
 | `.claude/skills/keyboard-safe-input/` | Stop a text input from sitting under the Android soft keyboard. |
 | `.claude/skills/review-animations/` | Reviews animation and motion code against a high craft bar derived from Emil Kowalski's design engineering philosophy. |
+| `.claude/skills/show-it-works/` | Prove a change works and show a screenshot of it, before saying it is done. |
 | `.claude/skills/supabase-resume/` | Pick up Supabase work that an earlier session could not do, and park work that this one cannot. |
 <!-- skills:end -->
 
