@@ -84,6 +84,20 @@ if (client && server) {
       `chapter with few diagrams will build a short deck`,
   );
 
+  // The client may send `limit`, and the server reads `limit ?? <floor>` — so a
+  // limit the client invents *replaces* the floor instead of being clamped by
+  // it. This has already happened once: a `Math.max(10, questions.length)` here
+  // rebuilt exactly the undersized decks the floor exists to prevent, and
+  // nothing failed. Whatever is sent has to come from deckTargetFor.
+  const limitLine = /limit:\s*([^,\n]+)/.exec(client);
+  if (limitLine) {
+    check(
+      /deckTargetFor\(/.test(limitLine[1]),
+      `${CLIENT} sends limit: ${limitLine[1].trim()} — a limit that is not ` +
+        `deckTargetFor(...) overrides the 20-card floor on the server`,
+    );
+  }
+
   // A cached deck smaller than the floor is a deck built by an older version.
   // Serving it is how a stale row outlives the fix that replaced it.
   check(

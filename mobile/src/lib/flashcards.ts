@@ -113,6 +113,19 @@ export async function fetchDeck(request: {
       // would 400 the request the way the notes function does.
       questions: request.questions.slice(0, 300),
       regenerate: request.regenerate ?? false,
+      /*
+       * The same number the row promised, and the same number the server would
+       * compute for itself.
+       *
+       * Sending a limit at all is what makes this dangerous: the function reads
+       * `limit ?? <its own floor>`, so any limit the client invents **replaces**
+       * the 20-card floor rather than being clamped by it. A `Math.max(10, …)`
+       * here quietly rebuilt the 15-card decks the floor exists to prevent.
+       * Going through deckTargetFor keeps one definition of deck size, and
+       * `npm run check:flashcard-size` fails if this line ever computes its own
+       * again.
+       */
+      limit: deckTargetFor(request.questions.length),
     },
   });
   if (error) {

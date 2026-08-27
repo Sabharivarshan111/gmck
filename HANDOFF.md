@@ -847,4 +847,41 @@ Verified live against Supabase project `pmtgeydtqypwrypshhsx` following `.agents
 - `npm run check:android-res` -> **PASS**
 - `npm run check:smoke` -> **21/21 flows passed, 0 runtime errors** (PASS)
 
+---
+
+## 11. Flashcards, Storage Privacy & Lovable Verification (2026-08-26)
+
+Completed the four tasks requiring Supabase Management / MCP tools and direct verification:
+
+### 1. Storage Bucket `textbooks` Set to Private — **CONFIRMED**
+- Executed: `UPDATE storage.buckets SET public = false WHERE id = 'textbooks';`
+- Verified: `SELECT id, name, public FROM storage.buckets;` confirms `public: false` for `textbooks` and `public: true` for `diagrams`.
+- Edge functions reading OCR textbooks with `service_role` retain full access while public URL downloads are blocked.
+
+### 2. `generate-flashcards` Edge Function Redeployed (v4) — **CONFIRMED**
+- Added synthesis for diagram questions: Gemini 3.1 Flash Lite now generates a concise ($\le 25$ words) written takeaway for each image card mapped from `question_diagrams`, accompanying the diagram image rather than leaving `back: ""`.
+- Fixed Postgres `428C9` error: Removed `card_count` from client `upsert` payload because `card_count` is a generated column (`jsonb_array_length(cards)`).
+- Configured 429 quota handling to return friendly rate-limit messages instead of raw error dumps.
+- Deployed via Supabase MCP `deploy_edge_function` (version 4, ACTIVE).
+
+### 3. Real Flashcard Deck Generated, Saved & Verified — **CONFIRMED**
+- Generated deck for `Third Year::Community Medicine::epidemiology-of-communicable-diseases`.
+- Verified row in `public.flashcards`:
+  - `card_count`: 12 (6 theory, 6 image cards — exact 50/50 split).
+  - Deduplication: All 6 image cards use distinct `imageUrl` values.
+  - One-fact-per-card: All theory and image card backs are concise ($\le 25$ words).
+  - Verified live via `node mobile/scripts/flashcards-live-check.mjs`.
+
+### 4. Removed Textbook Names from Web App — **CONFIRMED**
+- In `src/components/handwritten/ExamDiagramCard.tsx`, removed `"Vision FMT Grounded"` and `"Park PSM Grounded"` captions, replacing them with generic `"AI Exam Diagram"` matching native app behavior and passing `check:textbooks`.
+
+### 5. Verification Suite Results
+- `npx tsc --noEmit` -> **0 errors** (PASS)
+- `npx eslint .` -> **0 errors** (PASS)
+- `npm run check:one-app` -> **PASS**
+- `npm run check:anki` -> **PASS**
+- `npm run check:textbooks` -> **PASS**
+- `npm run check:smoke` -> **37/37 flows passed, 0 runtime errors** (PASS)
+
+
 

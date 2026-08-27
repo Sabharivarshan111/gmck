@@ -85,6 +85,28 @@ under them for no reason they asked for.
 `npm run check:one-app` fails if the web app grows its own Anki scheduler,
 because there is exactly one and it lives in `mobile/src/lib/anki.ts`.
 
+### Fetch before you fix, and push when you stop
+
+Both tools work on `claude/native-app-sync`, and neither can see the other's
+conversation. Twice in one day the same bug was fixed twice: flashcards were
+built in both apps, and then the deck-size bug was fixed independently on both
+remotes within an hour.
+
+So, before starting on a reported bug: `git fetch gmck && git fetch origin` and
+read the last few commits on **both**. `origin` and `gmck` can be at different
+commits — a push that succeeds on one can be rejected by the other — and the
+newer one is not always the one you are on.
+
+**Never force-push to resolve that.** Merge, keep both sides, and if the two
+changes genuinely conflict, keep the one the owner asked for and pin it with a
+check so it cannot be undone silently. `limit:` in `mobile/src/lib/flashcards.ts`
+is the worked example: a reasonable-looking client-side deck size overrode the
+server's floor, nothing failed, and only `check:flashcard-size` would have
+caught it.
+
+And push as soon as a change is verified, to **both** remotes. Work that sits
+uncommitted on one machine is work the other tool is about to redo.
+
 ### How to tell which app you are looking at
 
 The two Notes screens look alike — the native one was ported from the web one —
