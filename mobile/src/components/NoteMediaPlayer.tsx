@@ -1,7 +1,7 @@
 import React, { useCallback, useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Video, { type VideoRef } from 'react-native-video';
-import { Pause, Play, RotateCcw } from 'lucide-react-native';
+import { Maximize2, Pause, Play, RotateCcw } from 'lucide-react-native';
 import { Text } from '@/components/Text';
 import { Touchable } from '@/components/Touchable';
 import { Slider } from '@/components/Slider';
@@ -72,6 +72,17 @@ export function NoteMediaPlayer({
    */
   const [scrubbing, setScrubbing] = useState<number | null>(null);
 
+  /**
+   * Fullscreen, driven as a prop rather than by calling into the ref.
+   *
+   * `presentFullscreenPlayer()` is the imperative twin of this and leaves the
+   * component's idea of the state behind: leave fullscreen with the system
+   * back gesture and nothing tells React, so the next tap on the button does
+   * nothing. Holding it in state and letting the dismiss callbacks write back
+   * is the version that cannot drift.
+   */
+  const [full, setFull] = useState(false);
+
   const shown = scrubbing ?? position;
   const total = duration > 0 ? duration : 0;
 
@@ -106,6 +117,12 @@ export function NoteMediaPlayer({
           // A recording keeps playing with the screen off; a video is
           // something you are watching, so it holds the screen awake.
           preventsDisplaySleepDuringVideoPlayback={video}
+          fullscreen={full}
+          // Landscape, because a lecture or a procedure was filmed that way and
+          // a phone held upright wastes two thirds of the screen on black.
+          fullscreenOrientation="landscape"
+          fullscreenAutorotate
+          onFullscreenPlayerDidDismiss={() => setFull(false)}
           // The lecture keeps playing when the note is scrolled past, and
           // stops when the app leaves the foreground. Both are what a player
           // is expected to do; neither is what a decorative video does.
@@ -163,6 +180,19 @@ export function NoteMediaPlayer({
           {formatTime(shown)}
           {total > 0 ? ` / ${formatTime(total)}` : ''}
         </Text>
+
+        {/* Only a video has anything to make bigger. */}
+        {video ? (
+          <Touchable
+            onPress={() => setFull(true)}
+            label={`Play ${name} full screen`}
+            hint="Fills the screen and turns sideways"
+            scaleTo={0.9}
+            hitSlop={8}
+            style={styles.expand}>
+            <Maximize2 size={16} color={colors.textMuted} />
+          </Touchable>
+        ) : null}
       </View>
 
       {error ? (
@@ -224,6 +254,9 @@ const styles = StyleSheet.create({
     fontVariant: ['tabular-nums'],
     minWidth: 78,
     textAlign: 'right',
+  },
+  expand: {
+    paddingLeft: 2,
   },
   problem: {
     ...typeScale.caption,

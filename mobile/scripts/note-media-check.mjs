@@ -150,6 +150,66 @@ check(
   'the scrubber no longer seeks, so it is a progress bar wearing a thumb',
 );
 
+// ---------------------------------------------------------------------------
+// 4c. Two ways to attach, and the one that must never delete anything.
+//
+// A linked file belongs to the reader and lives outside this app. Detaching it
+// gives up our permission to read it and touches nothing else — pass an id
+// where a record belongs and the wrong branch deletes somebody's only copy of
+// their own recording.
+// ---------------------------------------------------------------------------
+const lib = code(read(path.join(mobile, 'src/lib/noteFiles.ts')));
+check(
+  /export function removeNoteFile\(file: NoteFile\)/.test(lib),
+  'removeNoteFile takes an id again — it cannot tell a copy from a link, and one of those ' +
+    'branches deletes a file that is not ours',
+);
+check(
+  /if \(file\.linked\)[\s\S]{0,200}release\(/.test(lib),
+  'detaching a linked file no longer releases the grant — or worse, deletes the original',
+);
+check(
+  /adoptNoteFile/.test(lib) && /linkIsAlive/.test(lib),
+  'a link can no longer be checked or copied in, which is the whole way out of a broken one',
+);
+check(
+  /takePersistableUriPermission/.test(module_),
+  'the link takes no persistable permission, so it would expire on the next reboot — the ' +
+    'worst failure, because nobody notices it until a week later',
+);
+check(
+  /FLAG_GRANT_PERSISTABLE_URI_PERMISSION/.test(module_),
+  'the pick intent does not request a persistable grant, so taking one throws',
+);
+check(
+  !/delete\(\)/.test(module_.slice(module_.indexOf('fun release'), module_.indexOf('fun pathFor'))),
+  'release() deletes something — a linked file is the reader\'s own and must never be touched',
+);
+// The choice has to be explained where it is made, not discovered a month
+// later when the file stops playing.
+for (const phrase of ['Keep a copy in Orbit', 'Link to the original', 'still plays it']) {
+  check(
+    tab.includes(phrase) || read(path.join(mobile, 'src/components/ProgressNotesTab.tsx')).includes(phrase),
+    `the attach chooser no longer says "${phrase}"`,
+  );
+}
+check(
+  /moved or deleted/.test(read(path.join(mobile, 'src/components/ProgressNotesTab.tsx'))),
+  'a broken link no longer says so, and shows a dead player instead',
+);
+
+// Fullscreen, landscape, and driven by state rather than the ref — leaving
+// fullscreen with the back gesture does not tell an imperative call anything,
+// so the next tap on the button would do nothing.
+check(
+  /fullscreen=\{full\}/.test(player) && /fullscreenOrientation="landscape"/.test(player),
+  'the video player has no fullscreen, or does not turn sideways for it',
+);
+check(
+  /onFullscreenPlayerDidDismiss/.test(player),
+  'nothing tells the player it left fullscreen, so the expand button stops working after once',
+);
+
 // The size rule, from the other side.
 const deps = JSON.parse(read(path.join(mobile, 'package.json'))).dependencies ?? {};
 for (const heavy of Object.keys(deps)) {
@@ -192,9 +252,17 @@ for (const file of ['src/lib/noteFiles.ts', 'src/lib/noteImages.ts']) {
     );
   }
 }
+/*
+ * No *manifest* permission. A URI grant is a different thing and the link path
+ * legitimately takes one: `takePersistableUriPermission` is the reader handing
+ * over one file they chose, not this app asking for their storage.
+ */
 check(
-  !/INTERNET|permission/i.test(code(module_)),
-  'FilesModule asks for a permission — ACTION_OPEN_DOCUMENT runs out of process and needs none',
+  !/Manifest\.permission|requestPermissions|READ_MEDIA|READ_EXTERNAL_STORAGE|INTERNET/.test(
+    code(module_),
+  ),
+  'FilesModule asks for a runtime or manifest permission — ACTION_OPEN_DOCUMENT runs out of ' +
+    'process and returns the one item chosen, so it needs none',
 );
 
 // ---------------------------------------------------------------------------

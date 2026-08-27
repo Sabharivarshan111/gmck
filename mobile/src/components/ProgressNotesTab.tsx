@@ -17,6 +17,8 @@ import {
   Film,
   ImagePlus,
   Music,
+  HardDriveDownload,
+  Link2,
   Paperclip,
   Pencil,
   Plus,
@@ -27,12 +29,15 @@ import { getSubjects, type BankNode, type YearKey } from "@/lib/questionBank";
 import { flattenSubjectTopics } from "@/lib/handwrittenNotes";
 import { attachNoteImage, loadNoteImage, removeNoteImage } from "@/lib/noteImages";
 import {
+  adoptNoteFile,
   attachNoteFile,
   formatBytes,
   kindOf,
+  linkIsAlive,
   noteFilesAvailable,
   noteFileUri,
   removeNoteFile,
+  type AttachMode,
   type NoteFile,
 } from "@/lib/noteFiles";
 import { withAlpha } from "@/theme";
@@ -95,12 +100,28 @@ function attachmentSummary(note: UserNote): string {
  * clear the app's storage from Android's settings at any moment, so "gone" is
  * a state that happens rather than one being defended against.
  */
-function NoteAttachment({ file }: { file: NoteFile }) {
+function NoteAttachment({
+  file,
+  onAdopted,
+}: {
+  file: NoteFile;
+  /** A link that has just been copied in, so the note can store the new record. */
+  onAdopted?: (was: NoteFile, now: NoteFile) => void;
+}) {
   const { colors } = useTheme();
+  const [busy, setBusy] = useState(false);
   const uri = noteFileUri(file);
   const kind = kindOf(file);
+  /*
+   * Asked once, when the note is opened.
+   *
+   * A copy is ours and always there. A link is not: the reader can delete or
+   * move the original from any file manager on the phone, and the note has to
+   * say so rather than showing a player that does nothing.
+   */
+  const alive = useMemo(() => Boolean(uri) && linkIsAlive(file), [file, uri]);
 
-  if (!uri) {
+  if (!uri || !alive) {
     return (
       <View style={[styles.fileRow, { backgroundColor: colors.card, borderColor: colors.border }]}>
         <FileKindIcon file={file} />
@@ -109,16 +130,34 @@ function NoteAttachment({ file }: { file: NoteFile }) {
             {file.name}
           </Text>
           <Text style={[styles.noteEmpty, { color: colors.textMuted }]}>
-            No longer on this phone.
+            {file.linked
+              ? "The original has been moved or deleted, so this link no longer works."
+              : "No longer on this phone."}
           </Text>
         </View>
       </View>
     );
   }
 
-  if (kind === "image") {
-    return <Image source={{ uri }} style={styles.readerImage} resizeMode="contain" />;
-  }
+  const linkFooter = file.linked ? (
+    <Touchable
+      onPress={async () => {
+        setBusy(true);
+        const result = await adoptNoteFile(file);
+        setBusy(false);
+        if ("file" in result && onAdopted) {
+          onAdopted(file, result.file);
+        }
+      }}
+      disabled={busy}
+      label={`Keep a copy of ${file.name} inside Orbit, so deleting the original does not matter`}
+      style={[styles.linkFooter, { borderColor: colors.border }]}>
+      <HardDriveDownload size={13} color={colors.cyan} />
+      <Text style={[styles.noteEmpty, { color: colors.cyan }]}>
+        {busy ? "Copying…" : "Linked to the original · keep a copy in Orbit"}
+      </Text>
+    </Touchable>
+  ) : null;
 
   if (kind === "video" || kind === "audio") {
     /*
@@ -126,10 +165,25 @@ function NoteAttachment({ file }: { file: NoteFile }) {
       recording out loud the moment a note is opened, which is the app making
       a decision about the room the reader is in.
     */
-    return <NoteMediaPlayer uri={uri} name={file.name} video={kind === "video"} />;
+    return (
+      <View>
+        <NoteMediaPlayer uri={uri} name={file.name} video={kind === "video"} />
+        {linkFooter}
+      </View>
+    );
+  }
+
+  if (kind === "image") {
+    return (
+      <View>
+        <Image source={{ uri }} style={styles.readerImage} resizeMode="contain" />
+        {linkFooter}
+      </View>
+    );
   }
 
   return (
+    <View>
     <Touchable
       onPress={() => {
         // Android's own document viewer. Rendering a PDF here would mean
@@ -150,6 +204,8 @@ function NoteAttachment({ file }: { file: NoteFile }) {
       </View>
       <ChevronRight size={14} color={colors.textMuted} />
     </Touchable>
+    {linkFooter}
+    </View>
   );
 }
 
@@ -165,10 +221,13 @@ function NoteReader({
   note,
   onClose,
   onEdit,
+  onFilesChanged,
 }: {
   note: UserNote | null;
   onClose: () => void;
   onEdit: (note: UserNote) => void;
+  /** A link that has just been copied in has to be written back to the note. */
+  onFilesChanged: (note: UserNote, files: NoteFile[]) => void;
 }) {
   const { colors } = useTheme();
   const [urls, setUrls] = useState<string[]>([]);
@@ -213,7 +272,16 @@ function NoteReader({
       ) : null}
 
       {(note.files ?? []).map(file => (
-        <NoteAttachment key={file.id} file={file} />
+        <NoteAttachment
+          key={file.id}
+          file={file}
+          onAdopted={(was, now) =>
+            onFilesChanged(
+              note,
+              (note.files ?? []).map(item => (item.id === was.id ? now : item)),
+            )
+          }
+        />
       ))}
 
       <Touchable
@@ -384,6 +452,7 @@ export function ProgressNotesTab({ year }: Props) {
   const [editFiles, setEditFiles] = useState<NoteFile[]>([]);
   const [imageError, setImageError] = useState<string | null>(null);
   const [busyImage, setBusyImage] = useState(false);
+  const [attachOpen, setAttachOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<UserNote | null>(null);
   /** The note being read. Reading and editing are different things. */
   const [reading, setReading] = useState<UserNote | null>(null);
@@ -491,11 +560,12 @@ export function ProgressNotesTab({ year }: Props) {
    * decision. See `lib/noteFiles` for why these are files on disk while the
    * pictures are rows in AsyncStorage.
    */
-  const addFile = useCallback(async () => {
+  const addFile = useCallback(async (mode: AttachMode) => {
+    setAttachOpen(false);
     setBusyImage(true);
     setImageError(null);
     try {
-      const result = await attachNoteFile();
+      const result = await attachNoteFile(mode);
       if (result && "error" in result) {
         setImageError(result.error);
       } else if (result) {
@@ -652,6 +722,12 @@ export function ProgressNotesTab({ year }: Props) {
         note={reading}
         onClose={() => setReading(null)}
         onEdit={note => openEditor(note)}
+        onFilesChanged={(note, files) => {
+          // Persist, and keep the open sheet showing the new state rather than
+          // the link it has just stopped being.
+          updateNote(note.id, { files });
+          setReading(current => (current ? { ...current, files } : current));
+        }}
       />
 
       {/* Note Editor Card */}
@@ -705,7 +781,59 @@ export function ProgressNotesTab({ year }: Props) {
             <ChevronDown size={16} color={colors.textMuted} style={styles.chevronClosed} />
           </Touchable>
 
-          <NoteFilingSheet
+          {/*
+        Two ways to attach, and the difference said before the choice.
+
+        This is the whole feature: one of them costs space and survives the
+        original being deleted, the other costs nothing and does not. Neither
+        is the right default for everybody, and a reader who finds out which
+        one they picked a month later, when the file stops playing, has been
+        failed by the interface rather than by the storage.
+      */}
+      <Sheet
+        visible={attachOpen}
+        onClose={() => setAttachOpen(false)}
+        title="How should Orbit keep it?">
+        <Touchable
+          onPress={() => addFile("copy")}
+          label="Keep a copy inside Orbit. Uses space on this phone, and survives the original being deleted"
+          style={[styles.modeRow, { backgroundColor: colors.card, borderColor: colors.border }]}>
+          <View style={[styles.modeIcon, { backgroundColor: withAlpha(colors.fuchsia, 0.15) }]}>
+            <HardDriveDownload size={18} color={colors.fuchsia} />
+          </View>
+          <View style={styles.flex}>
+            <Text style={[styles.rowTitle, { color: colors.text }]}>Keep a copy in Orbit</Text>
+            <Text style={[styles.rowSub, { color: colors.textMuted }]}>
+              The file is copied into this app. Delete, move or rename the original later and
+              your note still plays it. Uses space on your phone — as much as the file is big.
+            </Text>
+          </View>
+        </Touchable>
+
+        <Touchable
+          onPress={() => addFile("link")}
+          label="Link to the original. Uses no space, and stops working if you delete or move the file"
+          style={[styles.modeRow, { backgroundColor: colors.card, borderColor: colors.border }]}>
+          <View style={[styles.modeIcon, { backgroundColor: withAlpha(colors.cyan, 0.15) }]}>
+            <Link2 size={18} color={colors.cyan} />
+          </View>
+          <View style={styles.flex}>
+            <Text style={[styles.rowTitle, { color: colors.text }]}>Link to the original</Text>
+            <Text style={[styles.rowSub, { color: colors.textMuted }]}>
+              Nothing is copied, so this uses no extra space. It plays here from wherever the
+              file already is — but if you delete or move it, this note can no longer play it.
+              You can switch it to a copy at any time.
+            </Text>
+          </View>
+        </Touchable>
+
+        <Text style={[styles.note, { color: withAlpha(colors.text, 0.5) }]}>
+          Either way nothing is uploaded. Both options keep the file on this phone and no
+          copy of it ever leaves.
+        </Text>
+      </Sheet>
+
+      <NoteFilingSheet
             visible={filingOpen}
             year={year}
             onClose={() => setFilingOpen(false)}
@@ -778,16 +906,22 @@ export function ProgressNotesTab({ year }: Props) {
                     <Text style={[styles.noteEmpty, { color: colors.textMuted }]}>
                       {KIND_LABEL[kindOf(file)]}
                       {formatBytes(file.size) ? ` · ${formatBytes(file.size)}` : ""}
+                      {file.linked ? " · linked to the original" : " · kept in Orbit"}
                     </Text>
                   </View>
                   <Touchable
                     onPress={() => {
                       setEditFiles(current => current.filter(f => f.id !== file.id));
-                      // Best effort: the note is the source of truth, and an
-                      // orphaned file costs bytes rather than correctness.
-                      removeNoteFile(file.id);
+                      // The whole record, not the id: a linked file is the
+                      // reader's own and detaching it gives up our permission
+                      // to read it, never deletes it. See lib/noteFiles.
+                      removeNoteFile(file);
                     }}
-                    label={`Remove ${file.name}`}
+                    label={
+                      file.linked
+                        ? `Unlink ${file.name}, the original is not deleted`
+                        : `Remove ${file.name} from this note`
+                    }
                     scaleTo={0.85}
                     hitSlop={10}>
                     <X size={14} color={colors.danger} />
@@ -813,7 +947,7 @@ export function ProgressNotesTab({ year }: Props) {
                 one that is not offered. */}
             {noteFilesAvailable ? (
               <Touchable
-                onPress={addFile}
+                onPress={() => setAttachOpen(true)}
                 disabled={busyImage}
                 label="Add a video, recording or PDF to this note"
                 style={[styles.attachBtn, { borderColor: colors.border }]}>
@@ -1065,6 +1199,36 @@ const styles = StyleSheet.create({
   noteActions: {
     flexDirection: "row",
     gap: 12,
+  },
+  linkFooter: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 7,
+    marginTop: 6,
+    alignSelf: "flex-start",
+  },
+  modeRow: {
+    flexDirection: "row",
+    gap: 12,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderRadius: 14,
+    padding: 14,
+    marginBottom: 10,
+  },
+  modeIcon: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  note: {
+    ...typeScale.caption,
+    lineHeight: 18,
   },
   fileList: {
     gap: 8,

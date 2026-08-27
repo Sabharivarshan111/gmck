@@ -43,6 +43,9 @@ class FilesModule(reactContext: ReactApplicationContext) :
    */
   private var pending: Promise? = null
 
+  /** 'copy' or 'link', for the pick currently in flight. */
+  private var pendingMode: String = MODE_COPY
+
   private val activityListener: ActivityEventListener =
     object : BaseActivityEventListener() {
       // `activity` is non-null in BaseActivityEventListener; declaring it
@@ -69,7 +72,9 @@ class FilesModule(reactContext: ReactApplicationContext) :
           return
         }
         try {
-          promise.resolve(importUri(uri).toString())
+          val record =
+            if (pendingMode == MODE_LINK) linkUri(uri) else importUri(uri)
+          promise.resolve(record.toString())
         } catch (error: Throwable) {
           promise.reject("import_failed", error.message ?: "Could not keep that file.", error)
         }
@@ -87,7 +92,7 @@ class FilesModule(reactContext: ReactApplicationContext) :
     super.invalidate()
   }
 
-  override fun pick(promise: Promise) {
+  override fun pick(mode: String, promise: Promise) {
     val activity = getCurrentActivity()
     if (activity == null) {
       promise.resolve("")
@@ -97,6 +102,7 @@ class FilesModule(reactContext: ReactApplicationContext) :
     // unresolved promise is a spinner that never stops.
     pending?.resolve("")
     pending = promise
+    pendingMode = if (mode == MODE_LINK) MODE_LINK else MODE_COPY
 
     val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
       addCategory(Intent.CATEGORY_OPENABLE)
@@ -107,6 +113,19 @@ class FilesModule(reactContext: ReactApplicationContext) :
       putExtra(
         Intent.EXTRA_MIME_TYPES,
         arrayOf("image/*", "video/*", "audio/*", "application/pdf"),
+      )
+      /*
+       * A grant that survives a reboot, for the linking half.
+       *
+       * Without FLAG_GRANT_PERSISTABLE_URI_PERMISSION on the request,
+       * takePersistableUriPermission throws and the link works until the app
+       * is next killed — which is the worst possible failure, because it is
+       * the one nobody notices until a week later. Asking for it on both
+       * modes costs nothing; only the link path takes it.
+       */
+      addFlags(
+        Intent.FLAG_GRANT_READ_URI_PERMISSION or
+          Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION,
       )
     }
     try {
@@ -124,11 +143,10 @@ class FilesModule(reactContext: ReactApplicationContext) :
    * file to another app — a PDF viewer, a share sheet — has something to go on
    * beyond the MIME type we recorded.
    */
-  private fun importUri(uri: Uri): JSONObject {
-    val resolver = reactApplicationContext.contentResolver
+  private fun describe(uri: Uri): Pair<String, Long> {
     var name = "attachment"
     var size = 0L
-    resolver.query(uri, null, null, null, null)?.use { cursor ->
+    reactApplicationContext.contentResolver.query(uri, null, null, null, null)?.use { cursor ->
       if (cursor.moveToFirst()) {
         val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
         if (nameIndex >= 0 && !cursor.isNull(nameIndex)) {
@@ -140,6 +158,12 @@ class FilesModule(reactContext: ReactApplicationContext) :
         }
       }
     }
+    return name to size
+  }
+
+  private fun importUri(uri: Uri): JSONObject {
+    val resolver = reactApplicationContext.contentResolver
+    val (name, size) = describe(uri)
     val mime = resolver.getType(uri) ?: "application/octet-stream"
     val id = "${System.currentTimeMillis().toString(36)}${(0..0xFFFF).random().toString(36)}"
     val extension = name.substringAfterLast('.', "").take(8).filter { it.isLetterOrDigit() }
@@ -152,11 +176,67 @@ class FilesModule(reactContext: ReactApplicationContext) :
 
     return JSONObject().apply {
       put("id", target.name)
+      put("linked", false)
       put("name", name)
       put("mime", mime)
       // The copied length, not the provider's claim: a stream that ended early
       // would otherwise be recorded at its intended size.
       put("size", if (target.length() > 0) target.length() else size)
+    }
+  }
+
+  /**
+   * Keep a long-term reference, and copy nothing.
+   *
+   * The bytes stay wherever the reader put them, so this costs no space at
+   * all — and the file is not ours, so it can be renamed, moved or deleted at
+   * any moment and the note has to cope with that. `linkStatus` is how it
+   * finds out.
+   */
+  private fun linkUri(uri: Uri): JSONObject {
+    val resolver = reactApplicationContext.contentResolver
+    // Before reading anything: if this throws, the link would silently expire
+    // on the next reboot and it is better to fail here, loudly.
+    resolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+    val (name, size) = describe(uri)
+    return JSONObject().apply {
+      put("id", uri.toString())
+      put("uri", uri.toString())
+      put("linked", true)
+      put("name", name)
+      put("mime", resolver.getType(uri) ?: "application/octet-stream")
+      put("size", size)
+    }
+  }
+
+  override fun adopt(uri: String, promise: Promise) {
+    try {
+      promise.resolve(importUri(Uri.parse(uri)).toString())
+    } catch (error: Throwable) {
+      promise.reject("adopt_failed", error.message ?: "Could not copy that file.", error)
+    }
+  }
+
+  override fun linkStatus(uri: String): String =
+    try {
+      // Opening it is the only honest test. A row can survive in the
+      // provider's index after the file behind it has gone.
+      reactApplicationContext.contentResolver.openInputStream(Uri.parse(uri)).use { stream ->
+        if (stream == null) "missing" else "ok"
+      }
+    } catch (_: Throwable) {
+      "missing"
+    }
+
+  override fun release(uri: String) {
+    try {
+      reactApplicationContext.contentResolver.releasePersistableUriPermission(
+        Uri.parse(uri),
+        Intent.FLAG_GRANT_READ_URI_PERMISSION,
+      )
+    } catch (_: Throwable) {
+      // Never held, or already given up. Either way there is nothing to do —
+      // and note that nothing here deletes the reader's file.
     }
   }
 
@@ -195,5 +275,7 @@ class FilesModule(reactContext: ReactApplicationContext) :
   companion object {
     const val NAME = "OrbitFiles"
     private const val REQUEST_CODE = 4204
+    private const val MODE_COPY = "copy"
+    private const val MODE_LINK = "link"
   }
 }

@@ -699,6 +699,30 @@ than keeping the URI: a picker's grant is one-shot, and
 Android empties when it wants the space. A recording attached to a ward-round
 note has to still be there in a month.
 
+### Two ways to attach, and the one that must never delete
+
+- **Keep a copy in Orbit** — the bytes are copied into `filesDir/note-media/`.
+  Delete, move or rename the original and the note still plays it. Costs space.
+- **Link to the original** — nothing is copied; Orbit takes a *persistable URI
+  grant* on the file where it already is. Costs no space, and stops working if
+  the reader moves or deletes it. That is the deal, not a bug, and the chooser
+  says both consequences before either is picked.
+
+`FLAG_GRANT_PERSISTABLE_URI_PERMISSION` has to be on the **pick intent** or
+`takePersistableUriPermission` throws and the link silently expires at the next
+reboot — the worst failure available, because nobody notices for a week.
+
+**`removeNoteFile` takes the whole record, never an id.** A linked file belongs
+to the reader and lives outside this app: detaching it releases our grant and
+touches nothing else. An id alone makes the two cases indistinguishable, and
+the wrong branch deletes somebody's only copy of their own recording.
+
+`linkIsAlive()` is asked when a note opens, because a link is the one
+attachment that can vanish while the app is closed; a dead one says "the
+original has been moved or deleted" and offers **keep a copy in Orbit**, which
+is one tap. The reverse is not offered — turning a copy back into a link would
+mean guessing which file on the device it came from.
+
 Deleting a note deletes its pictures **and its files**. Nothing else references
 them, and a forgotten video is a great deal of space the reader can never
 account for.
@@ -707,6 +731,20 @@ The picker offers exactly the four kinds the reader can then use — image,
 video, audio, PDF. Video and audio play in place, paused until asked (autoplay
 would start a lecture recording out loud in whatever room they are in); a PDF
 hands off to Android's own viewer, because this app has no business being one.
+
+`components/NoteMediaPlayer.tsx` is the player: play/pause, a scrubber, times,
+and fullscreen-landscape for video. Built on **`react-native-video`, already in
+the APK** for the video wallpaper — Media3/ExoPlayer underneath, so it costs no
+size. libVLC was the obvious alternative and is wrong here: its own decoders
+are tens of megabytes per ABI, bought to play formats Android cannot, and every
+file this plays came out of the phone's own picker and is by definition already
+decodable. `check:note-media` fails if a bundled media stack is ever added.
+
+Two details that look like fussiness and are not: **progress events are ignored
+while a finger is down** (otherwise the thumb jumps back to the playhead and
+fights the drag), and **fullscreen is a prop, not `presentFullscreenPlayer()`**
+— leaving fullscreen with the system back gesture tells an imperative call
+nothing, so the next tap on the button would do nothing.
 
 ## A note has to be openable, not just editable
 

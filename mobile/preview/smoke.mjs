@@ -1705,10 +1705,23 @@ await step('a note takes a recording, and the recording gets a player', async ()
     throw new Error('the notes editor offers no way to attach a file');
   }
   await attach.click();
+  await page.waitForTimeout(700);
+
+  // The choice, and the consequence of each, said before either is taken.
+  await seesText('How should Orbit keep it?', 4000);
+  await seesText('Keep a copy in Orbit', 4000);
+  await seesText('Link to the original', 4000);
+  await seesText('still plays it', 4000);
+  await seesText('no longer play it', 4000);
+
+  await byLabel(
+    'Keep a copy inside Orbit. Uses space on this phone, and survives the original being deleted',
+  ).click();
   await page.waitForTimeout(800);
   await page.evaluate(() => {
     globalThis.__orbitPickFile = undefined;
   });
+  await seesText('kept in Orbit', 4000);
 
   // Named, and sized — with no cap, the size is how the reader decides.
   await seesText('Lecture 3.wav', 4000);
@@ -1738,6 +1751,78 @@ await step('a note takes a recording, and the recording gets a player', async ()
   await page.waitForTimeout(600);
   if ((await byLabel('Pause Lecture 3.wav').count()) === 0) {
     throw new Error('pressing play did not turn the control into a pause');
+  }
+});
+
+/**
+ * A linked file, the promise it makes, and the promise it breaks.
+ *
+ * Linking is the option that costs no space, and the price is that the file is
+ * not ours: move or delete the original and the note cannot play it. That is
+ * the deal rather than a bug, so what has to hold is that the note *says* so
+ * and offers the way out — copy it in — rather than showing a dead player.
+ */
+await step('a linked file can break, says so, and can be copied in instead', async () => {
+  await open('screen=progress');
+  await page.waitForTimeout(900);
+  await byLabel('Notes').first().click();
+  await page.waitForTimeout(600);
+  await byLabel('Create a new study note').click();
+  await page.waitForTimeout(600);
+  await byLabel('Note title').fill('Linked lecture');
+
+  await page.evaluate(() => {
+    globalThis.__orbitPickFile = 'audio';
+  });
+  await byLabel('Add a video, recording or PDF to this note').click();
+  await page.waitForTimeout(700);
+  await byLabel(
+    'Link to the original. Uses no space, and stops working if you delete or move the file',
+  ).click();
+  await page.waitForTimeout(800);
+  await page.evaluate(() => {
+    globalThis.__orbitPickFile = undefined;
+  });
+  // The editor says which of the two this is, so it is not a thing you learn
+  // a month later when the file stops playing.
+  await seesText('linked to the original', 4000);
+
+  await byLabel('Save note').click();
+  await page.waitForTimeout(900);
+  await byLabel('Read Linked lecture').last().click();
+  await page.waitForTimeout(1000);
+
+  // It plays, and offers to stop being a link.
+  const adopt = page.locator('[aria-label^="Keep a copy of"]').first();
+  if ((await adopt.count()) === 0) {
+    throw new Error('a linked attachment does not offer to become a copy');
+  }
+  await seesText('keep a copy in Orbit', 4000);
+
+  // Now delete the original, the way a file manager would, and reopen.
+  await byLabel('Done').first().click();
+  await page.waitForTimeout(500);
+  await page.evaluate(() => {
+    globalThis.__orbitBreakLink = 'all';
+  });
+  await byLabel('Read Linked lecture').last().click();
+  await page.waitForTimeout(900);
+  // Said plainly, rather than a player that does nothing.
+  await seesText('moved or deleted', 4000);
+
+  // Put it back, and copy it in — which is the way out, and is one tap.
+  await byLabel('Done').first().click();
+  await page.waitForTimeout(400);
+  await page.evaluate(() => {
+    globalThis.__orbitBreakLink = undefined;
+  });
+  await byLabel('Read Linked lecture').last().click();
+  await page.waitForTimeout(900);
+  await page.locator('[aria-label^="Keep a copy of"]').first().click();
+  await page.waitForTimeout(1200);
+  await seesText('Lecture 3.wav', 4000);
+  if ((await page.locator('[aria-label^="Keep a copy of"]').count()) > 0) {
+    throw new Error('the attachment still offers to be copied after it was copied');
   }
 });
 

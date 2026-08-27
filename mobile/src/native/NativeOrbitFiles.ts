@@ -41,12 +41,42 @@ export interface Spec extends TurboModule {
    * JavaScript and passed back is a grant that can lapse in between, and the
    * failure would look like a file that imported and then was not there.
    */
-  pick(): Promise<string>;
+  pick(mode: string): Promise<string>;
+
+  /**
+   * Copy a file that is currently only linked, so the note stops depending on
+   * it. Resolves the same JSON, now describing a copy.
+   *
+   * The reader can change their mind — link something today because the phone
+   * is nearly full, keep it properly once it is not. The other direction is
+   * not offered: turning a copy back into a link would mean guessing which
+   * file on the device it came from.
+   */
+  adopt(uri: string): Promise<string>;
+
+  /**
+   * Whether a linked original is still where it was: `'ok'` or `'missing'`.
+   *
+   * Cheap enough to ask when a note is opened. The whole point of a link is
+   * that the file is not ours, so it can move or be deleted at any time and
+   * the note has to say so rather than showing a dead player.
+   */
+  linkStatus(uri: string): string;
+
+  /**
+   * Give up the long-term read grant on a linked file.
+   *
+   * **Never deletes anything.** A linked file belongs to the reader and lives
+   * outside this app; removing the attachment removes our permission to read
+   * it and nothing else. Android also caps how many of these grants one app
+   * may hold, so releasing them is what keeps a heavy user from hitting it.
+   */
+  release(uri: string): void;
 
   /** The absolute path for an imported file, or an empty string if it is gone. */
   pathFor(id: string): string;
 
-  /** Forget one file's bytes. The note is the source of truth for the list. */
+  /** Forget one *copied* file's bytes. Never called for a linked one. */
   remove(id: string): void;
 
   /** Bytes currently held, so Settings can be honest about what this costs. */

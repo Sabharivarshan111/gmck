@@ -45,23 +45,86 @@ const SAMPLES = {
 } as const;
 
 const kept = new Map<string, string>();
+/** Linked originals the harness pretends still exist. Deleting one breaks it. */
+const linked = new Map<string, string>();
+
+/**
+ * Set to a linked file's uri, or to `'all'`, to simulate the reader deleting
+ * the original from a file manager — the one state a link has that a copy does
+ * not, and the one the interface has to say out loud.
+ */
+declare global {
+  // eslint-disable-next-line no-var
+  var __orbitBreakLink: string | undefined;
+}
+
+const sizeOf = (want: keyof typeof SAMPLES) =>
+  want === 'video' ? 42_000_000 : want === 'pdf' ? 1_400_000 : 6_800;
 
 export default {
-  pick: async () => {
+  pick: async (mode: string) => {
     const want = globalThis.__orbitPickFile;
     if (!want) {
       return '';
     }
     const sample = SAMPLES[want];
+    if (mode === 'link') {
+      /*
+       * A data URI with a fragment, not a `content://` one.
+       *
+       * On a phone the link *is* a content URI and the player reads it
+       * directly; a browser cannot. The fragment keeps two links to the same
+       * sample distinct without inventing a scheme nothing here could load —
+       * and what this shim exists to exercise is the linked/copied *branch*,
+       * which is a flag on the record, not the shape of the string.
+       */
+      const uri = `${sample.uri}#link${linked.size}`;
+      linked.set(uri, sample.uri);
+      return JSON.stringify({
+        id: uri,
+        uri,
+        linked: true,
+        name: sample.name,
+        mime: sample.mime,
+        size: sizeOf(want),
+      });
+    }
     const id = `preview-${want}-${kept.size}`;
     kept.set(id, sample.uri);
     return JSON.stringify({
       id,
+      linked: false,
       name: sample.name,
       mime: sample.mime,
       // Rounded and plausible, so the size line has something to format.
-      size: want === 'video' ? 42_000_000 : want === 'pdf' ? 1_400_000 : 6_800,
+      size: sizeOf(want),
     });
+  },
+  adopt: async (uri: string) => {
+    const source = linked.get(uri);
+    if (!source) {
+      throw new Error('gone');
+    }
+    const id = `preview-copied-${kept.size}`;
+    kept.set(id, source);
+    return JSON.stringify({
+      id,
+      linked: false,
+      name: 'Lecture 3.wav',
+      mime: 'audio/wav',
+      size: 6_800,
+    });
+  },
+  linkStatus: (uri: string) => {
+    const broken = globalThis.__orbitBreakLink;
+    if (broken === 'all' || broken === uri) {
+      return 'missing';
+    }
+    return linked.has(uri) ? 'ok' : 'missing';
+  },
+  release: (uri: string) => {
+    // Exactly what the real one does: forgets our key, deletes nothing.
+    linked.delete(uri);
   },
   /* A URL rather than a path — see the note in lib/noteFiles. */
   pathFor: (id: string) => kept.get(id) ?? '',

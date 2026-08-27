@@ -31,13 +31,30 @@ export const noteFilesAvailable = native != null;
 
 export type NoteFileKind = 'image' | 'video' | 'audio' | 'pdf' | 'file';
 
+/**
+ * How a file is attached.
+ *
+ * `copy` — the bytes are inside Orbit. Delete or move the original and the
+ * note still plays it. Costs space on the phone.
+ *
+ * `link` — nothing is copied; Orbit holds a long-term permission to read the
+ * file where it already is. Costs no space, and stops working if the reader
+ * moves or deletes the original. That is not a bug to be defended against, it
+ * is the deal, and the UI says so before the choice is made.
+ */
+export type AttachMode = 'copy' | 'link';
+
 export interface NoteFile {
-  /** The file's name inside the app's own media directory. */
+  /** A file name inside Orbit for a copy; the content URI for a link. */
   id: string;
   /** What it was called where it came from, for the reader to recognise. */
   name: string;
   mime: string;
   size: number;
+  /** True when the bytes are somebody else's and we only have a key. */
+  linked?: boolean;
+  /** The content URI, for a link. */
+  uri?: string;
 }
 
 /** What the note renderer should do with it. */
@@ -72,18 +89,23 @@ export function formatBytes(bytes: number): string {
  * `error` means it failed, which is worth one: a file that looked like it
  * attached and did not is the failure this returns rather than swallows.
  */
-export async function attachNoteFile(): Promise<
-  { file: NoteFile } | { error: string } | null
-> {
+export async function attachNoteFile(
+  mode: AttachMode,
+): Promise<{ file: NoteFile } | { error: string } | null> {
   if (!native) {
     return { error: 'This build cannot attach files.' };
   }
   let raw: string;
   try {
-    raw = await native.pick();
+    raw = await native.pick(mode);
   } catch (error) {
     warn('note file pick failed:', error);
-    return { error: 'That file could not be copied to your phone.' };
+    return {
+      error:
+        mode === 'link'
+          ? 'Orbit could not keep permission to read that file.'
+          : 'That file could not be copied to your phone.',
+    };
   }
   if (!raw) {
     return null;
@@ -93,17 +115,74 @@ export async function attachNoteFile(): Promise<
     if (typeof parsed.id !== 'string' || parsed.id.length === 0) {
       return { error: 'That file could not be copied to your phone.' };
     }
-    return {
-      file: {
-        id: parsed.id,
-        name: typeof parsed.name === 'string' && parsed.name ? parsed.name : 'Attachment',
-        mime: typeof parsed.mime === 'string' ? parsed.mime : 'application/octet-stream',
-        size: typeof parsed.size === 'number' ? parsed.size : 0,
-      },
-    };
+    return { file: toNoteFile(parsed) };
   } catch (error) {
     warn('note file record unreadable:', error);
     return { error: 'That file could not be copied to your phone.' };
+  }
+}
+
+function toNoteFile(parsed: Partial<NoteFile>): NoteFile {
+  return {
+    id: parsed.id as string,
+    name: typeof parsed.name === 'string' && parsed.name ? parsed.name : 'Attachment',
+    mime: typeof parsed.mime === 'string' ? parsed.mime : 'application/octet-stream',
+    size: typeof parsed.size === 'number' ? parsed.size : 0,
+    linked: parsed.linked === true,
+    uri: typeof parsed.uri === 'string' ? parsed.uri : undefined,
+  };
+}
+
+/**
+ * Copy a linked file in, so the note stops depending on the original.
+ *
+ * Offered on every linked attachment, because the reason to link is usually
+ * "not enough room today" and that changes. The reverse is not offered:
+ * turning a copy back into a link would mean guessing which file on the device
+ * it came from.
+ */
+export async function adoptNoteFile(
+  file: NoteFile,
+): Promise<{ file: NoteFile } | { error: string }> {
+  if (!native || !file.uri) {
+    return { error: 'That file could not be copied to your phone.' };
+  }
+  try {
+    const parsed = JSON.parse(await native.adopt(file.uri)) as Partial<NoteFile>;
+    if (typeof parsed.id !== 'string' || !parsed.id) {
+      return { error: 'That file could not be copied to your phone.' };
+    }
+    // The link's grant is no longer needed, and Android caps how many an app
+    // may hold. Released after the copy lands, never before.
+    try {
+      native.release(file.uri);
+    } catch {
+      // Nothing to do; the copy is what matters.
+    }
+    return { file: toNoteFile(parsed) };
+  } catch (error) {
+    warn('adopt failed:', error);
+    return { error: 'That file could not be copied to your phone.' };
+  }
+}
+
+/**
+ * Whether a linked original is still there.
+ *
+ * Always true for a copy — those are ours. For a link this is a real question
+ * with a real answer, asked when a note is opened.
+ */
+export function linkIsAlive(file: NoteFile): boolean {
+  if (!file.linked) {
+    return true;
+  }
+  if (!native || !file.uri) {
+    return false;
+  }
+  try {
+    return native.linkStatus(file.uri) === 'ok';
+  } catch {
+    return false;
   }
 }
 
@@ -117,6 +196,11 @@ export async function attachNoteFile(): Promise<
 export function noteFileUri(file: NoteFile): string | null {
   if (!native) {
     return null;
+  }
+  // A link is already a URI. ExoPlayer reads content:// directly, and so does
+  // the PDF hand-off, so there is nothing to resolve.
+  if (file.linked) {
+    return file.uri ?? null;
   }
   try {
     const path = native.pathFor(file.id);
@@ -137,12 +221,26 @@ export function noteFileUri(file: NoteFile): string | null {
   }
 }
 
-/** Forget one file's bytes. The note is the source of truth for the list. */
-export function removeNoteFile(id: string): void {
+/**
+ * Detach one file.
+ *
+ * Takes the whole record rather than an id, and that is the point: a **linked
+ * file belongs to the reader** and lives outside this app, so detaching it
+ * gives up our permission to read it and touches nothing else. Passing an id
+ * alone would have made the two cases indistinguishable here, and the wrong
+ * branch deletes somebody's only copy of their own recording.
+ */
+export function removeNoteFile(file: NoteFile): void {
   try {
-    native?.remove(id);
+    if (file.linked) {
+      if (file.uri) {
+        native?.release(file.uri);
+      }
+      return;
+    }
+    native?.remove(file.id);
   } catch (error) {
-    warn('note file delete failed:', error);
+    warn('note file detach failed:', error);
   }
 }
 
@@ -155,6 +253,6 @@ export function removeNoteFile(id: string): void {
  */
 export function removeNoteFiles(files: NoteFile[] | undefined): void {
   for (const file of files ?? []) {
-    removeNoteFile(file.id);
+    removeNoteFile(file);
   }
 }
