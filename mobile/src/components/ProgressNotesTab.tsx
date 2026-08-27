@@ -8,7 +8,8 @@ import { useTheme } from "@/theme";
 import { typeScale } from "@/theme/typography";
 import { useUserNotes, type UserNote } from "@/hooks/useUserNotes";
 import { ChevronDown, FileText, ImagePlus, Pencil, Plus, Trash2, X } from "lucide-react-native";
-import { getSubjects, type YearKey } from "@/lib/questionBank";
+import { getSubjects, type BankNode, type YearKey } from "@/lib/questionBank";
+import { flattenSubjectTopics } from "@/lib/handwrittenNotes";
 import { attachNoteImage, loadNoteImage, removeNoteImage } from "@/lib/noteImages";
 import { withAlpha } from "@/theme";
 
@@ -84,6 +85,128 @@ function NoteReader({
   );
 }
 
+/** What a note is filed against. Absent means unfiled. */
+interface Filing {
+  subject: string;
+  chapterKey: string | null;
+  chapterName: string | null;
+}
+
+/**
+ * Choosing the subject and chapter a note belongs to.
+ *
+ * Two steps in one sheet, the same walk the flashcard decks use — things that
+ * look alike must behave alike, and filing is a detour from writing that nobody
+ * takes twice if it costs three screens.
+ *
+ * "Not filed" comes first because it is the state a note starts in, and
+ * "the whole subject" is offered before the chapter list because a note about
+ * Pathology in general is a real thing and forcing a chapter would make people
+ * pick a wrong one.
+ */
+function NoteFilingSheet({
+  visible,
+  year,
+  onClose,
+  onPick,
+}: {
+  visible: boolean;
+  year: YearKey;
+  onClose: () => void;
+  onPick: (filing: Filing | null) => void;
+}) {
+  const { colors } = useTheme();
+  const [subject, setSubject] = useState<{ key: string; name: string; node: BankNode } | null>(null);
+
+  // Reopening starts at the top: landing inside a subject chosen last week is
+  // disorientation dressed as a shortcut.
+  useEffect(() => {
+    if (visible) setSubject(null);
+  }, [visible]);
+
+  const subjects = useMemo(() => getSubjects(year), [year]);
+  const chapters = useMemo(
+    () => (subject ? flattenSubjectTopics(subject.key, subject.node) : []),
+    [subject],
+  );
+
+  return (
+    <Sheet
+      visible={visible}
+      onClose={onClose}
+      title={subject ? subject.name : "File this note under"}
+      headerRight={
+        subject ? (
+          <Touchable onPress={() => setSubject(null)} label="Back to subjects" style={styles.sheetBack}>
+            <ChevronDown size={18} color={colors.accent} style={styles.chevronBack} />
+          </Touchable>
+        ) : undefined
+      }>
+      {!subject ? (
+        <>
+          <Touchable
+            onPress={() => onPick(null)}
+            label="Do not file this note under anything"
+            style={[styles.row, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <View style={styles.flex}>
+              <Text style={[styles.rowTitle, { color: colors.text }]}>Not filed</Text>
+              <Text style={[styles.rowSub, { color: colors.textMuted }]}>
+                Keep it in this list only
+              </Text>
+            </View>
+          </Touchable>
+          {subjects.map(item => (
+            <Touchable
+              key={item.key}
+              onPress={() => setSubject({ key: item.key, name: item.name, node: item.node })}
+              label={`${item.name}, choose a chapter`}
+              style={[styles.row, { backgroundColor: colors.card, borderColor: colors.border }]}>
+              <View style={styles.flex}>
+                <Text style={[styles.rowTitle, { color: colors.text }]}>{item.name}</Text>
+              </View>
+              <ChevronDown size={16} color={colors.textMuted} style={styles.chevronClosed} />
+            </Touchable>
+          ))}
+        </>
+      ) : (
+        <>
+          <Touchable
+            onPress={() => onPick({ subject: subject.name, chapterKey: null, chapterName: null })}
+            label={`File under ${subject.name} as a whole, not one chapter`}
+            style={[styles.row, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <View style={styles.flex}>
+              <Text style={[styles.rowTitle, { color: colors.text }]}>All of {subject.name}</Text>
+              <Text style={[styles.rowSub, { color: colors.textMuted }]}>
+                Not about one chapter in particular
+              </Text>
+            </View>
+          </Touchable>
+          {chapters.map(chapter => (
+            <Touchable
+              key={chapter.key}
+              onPress={() =>
+                onPick({
+                  subject: subject.name,
+                  chapterKey: chapter.key,
+                  chapterName: chapter.name,
+                })
+              }
+              label={`File this note under ${chapter.name}`}
+              style={[styles.row, { backgroundColor: colors.card, borderColor: colors.border }]}>
+              <View style={styles.flex}>
+                <Text style={[styles.rowTitle, { color: colors.text }]}>{chapter.name}</Text>
+                <Text style={[styles.rowSub, { color: colors.textMuted }]} numberOfLines={1}>
+                  {chapter.breadcrumb}
+                </Text>
+              </View>
+            </Touchable>
+          ))}
+        </>
+      )}
+    </Sheet>
+  );
+}
+
 /** One attached picture, signed on demand because the bucket is private. */
 function NoteThumb({ path }: { path: string }) {
   const [url, setUrl] = useState<string | null>(null);
@@ -113,6 +236,9 @@ export function ProgressNotesTab({ year }: Props) {
   const [editTitle, setEditTitle] = useState("");
   const [editContent, setEditContent] = useState("");
   const [editSubject, setEditSubject] = useState<string | null>(null);
+  const [editChapterKey, setEditChapterKey] = useState<string | null>(null);
+  const [editChapterName, setEditChapterName] = useState<string | null>(null);
+  const [filingOpen, setFilingOpen] = useState(false);
   const [editImages, setEditImages] = useState<string[]>([]);
   const [imageError, setImageError] = useState<string | null>(null);
   const [busyImage, setBusyImage] = useState(false);
@@ -158,12 +284,16 @@ export function ProgressNotesTab({ year }: Props) {
       setEditTitle(note.title);
       setEditContent(note.content);
       setEditSubject(note.subject ?? null);
+      setEditChapterKey(note.chapterKey ?? null);
+      setEditChapterName(note.chapterName ?? null);
       setEditImages(note.images ?? []);
     } else {
       setEditing({ id: "new", title: "", content: "", created_at: "", updated_at: "" });
       setEditTitle("");
       setEditContent("");
       setEditSubject(null);
+      setEditChapterKey(null);
+      setEditChapterName(null);
       setEditImages([]);
     }
   };
@@ -177,6 +307,8 @@ export function ProgressNotesTab({ year }: Props) {
       title: editTitle.trim() || "Untitled Note",
       content: editContent.trim(),
       subject: editSubject,
+      chapterKey: editChapterKey,
+      chapterName: editChapterName,
       images: editImages,
     };
     if (editing.id === "new") {
@@ -340,64 +472,64 @@ export function ProgressNotesTab({ year }: Props) {
           </Text>
           <TextInput
             placeholder="Note title…"
+            accessibilityLabel="Note title"
             placeholderTextColor={colors.textMuted}
             value={editTitle}
             onChangeText={setEditTitle}
             style={[styles.editorInput, { backgroundColor: colors.card, borderColor: colors.border, color: colors.text }]}
           />
-          {/* Which subject this belongs under. Horizontal because the list is
-              long and a wrapped grid of twelve chips is taller than the
-              editor it sits in. */}
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            keyboardShouldPersistTaps="handled"
-            contentContainerStyle={styles.subjectRow}>
-            <Touchable
-              onPress={() => setEditSubject(null)}
-              label="File this note under no subject"
-              state={{ selected: editSubject === null }}
-              style={[
-                styles.subjectChip,
-                {
-                  backgroundColor:
-                    editSubject === null ? withAlpha(colors.fuchsia, 0.15) : colors.card,
-                },
-              ]}>
-              <Text
-                style={[
-                  styles.subjectChipText,
-                  { color: editSubject === null ? colors.fuchsia : colors.textMuted },
-                ]}>
-                Unfiled
+          {/*
+            Where this note belongs.
+
+            One row rather than a scroller of chips: a subject alone is forty
+            chapters, and a note about neoplasia that surfaces on all of them is
+            noise rather than filing. The row states the current answer and
+            opens the same year-subject-chapter walk the flashcard decks use —
+            things that look alike should behave alike.
+          */}
+          <Touchable
+            onPress={() => setFilingOpen(true)}
+            label={
+              editChapterName
+                ? `Filed under ${editChapterName}. Change where this note belongs.`
+                : editSubject
+                  ? `Filed under ${editSubject}. Change where this note belongs.`
+                  : "Not filed under a chapter. Choose one."
+            }
+            style={[styles.filingRow, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <View style={[styles.rowIcon, { backgroundColor: withAlpha(colors.fuchsia, 0.15) }]}>
+              <FileText size={16} color={colors.fuchsia} />
+            </View>
+            <View style={styles.filingText}>
+              <Text style={[styles.filingTitle, { color: colors.text }]} numberOfLines={1}>
+                {editChapterName ?? editSubject ?? "Not filed"}
               </Text>
-            </Touchable>
-            {subjectOptions.map(name => {
-              const active = editSubject === name;
-              return (
-                <Touchable
-                  key={name}
-                  onPress={() => setEditSubject(name)}
-                  label={`File this note under ${name}`}
-                  state={{ selected: active }}
-                  style={[
-                    styles.subjectChip,
-                    { backgroundColor: active ? withAlpha(colors.fuchsia, 0.15) : colors.card },
-                  ]}>
-                  <Text
-                    style={[
-                      styles.subjectChipText,
-                      { color: active ? colors.fuchsia : colors.textMuted },
-                    ]}>
-                    {name}
-                  </Text>
-                </Touchable>
-              );
-            })}
-          </ScrollView>
+              <Text style={[styles.filingSub, { color: colors.textMuted }]} numberOfLines={1}>
+                {editChapterName
+                  ? `${editSubject} · shows on this chapter`
+                  : editSubject
+                    ? "Whole subject · tap to pick a chapter"
+                    : "Tap to file it under a subject and chapter"}
+              </Text>
+            </View>
+            <ChevronDown size={16} color={colors.textMuted} style={styles.chevronClosed} />
+          </Touchable>
+
+          <NoteFilingSheet
+            visible={filingOpen}
+            year={year}
+            onClose={() => setFilingOpen(false)}
+            onPick={picked => {
+              setEditSubject(picked?.subject ?? null);
+              setEditChapterKey(picked?.chapterKey ?? null);
+              setEditChapterName(picked?.chapterName ?? null);
+              setFilingOpen(false);
+            }}
+          />
 
           <TextInput
             placeholder="Write your clinical / study notes here…"
+            accessibilityLabel="What the note says"
             placeholderTextColor={colors.textMuted}
             value={editContent}
             onChangeText={setEditContent}
@@ -520,6 +652,33 @@ const styles = StyleSheet.create({
     gap: 8,
     paddingVertical: 6,
   },
+  chevronBack: {
+    transform: [{ rotate: "90deg" }],
+  },
+  sheetBack: {
+    width: 32,
+    height: 32,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    borderWidth: 1,
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 8,
+  },
+  rowSub: {
+    ...typeScale.footnote,
+  },
+  flex: {
+    flex: 1,
+  },
+  rowTitle: {
+    ...typeScale.bodyStrong,
+  },
   chevronClosed: {
     transform: [{ rotate: "-90deg" }],
   },
@@ -589,6 +748,31 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingHorizontal: 10,
     paddingVertical: 8,
+  },
+  rowIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  filingRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    borderWidth: 1,
+    borderRadius: 12,
+    padding: 10,
+    marginBottom: 10,
+  },
+  filingText: {
+    flex: 1,
+  },
+  filingTitle: {
+    ...typeScale.bodyStrong,
+  },
+  filingSub: {
+    ...typeScale.footnote,
   },
   subjectRow: {
     flexDirection: "row",

@@ -28,6 +28,7 @@ import { typeScale } from '@/theme/typography';
 import { useTheme, withAlpha } from '@/theme';
 import { GradientFill } from '@/components/Gradient';
 import { NotesContentView } from '@/components/NotesContentView';
+import { ChapterNotes } from '@/components/ChapterNotes';
 import FlashcardsScreen from '@/screens/FlashcardsScreen';
 import { useProfile } from '@/hooks/useProfile';
 import { getSubjects, YEAR_LABEL, type BankNode } from '@/lib/questionBank';
@@ -611,6 +612,15 @@ function NotesDetailView({
       ) : null}
 
       {content ? <NotesContentView content={content} /> : null}
+
+      {/*
+        Your own notes for this chapter, under the generated one.
+
+        Below rather than above on purpose: the thing asked for is the chapter's
+        note, and what you wrote is the annotation on it. Nothing renders when
+        nothing is filed here.
+      */}
+      <ChapterNotes chapterKey={topic.key} />
 
       {content && !busy ? (
         <>

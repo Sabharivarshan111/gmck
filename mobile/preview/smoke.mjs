@@ -1499,6 +1499,58 @@ await step('the flashcard sliders say what they are set to', async () => {
   }
 });
 
+/**
+ * A note filed under a chapter turns up on that chapter.
+ *
+ * Filing is only worth doing if the note then appears where it was filed —
+ * otherwise it is a label on a list nobody revisits. This walks the whole
+ * round trip: write it, file it, then open the chapter from the Notes tab and
+ * find it there.
+ */
+await step('a note filed under a chapter shows up on that chapter', async () => {
+  await open('screen=progress');
+  await page.waitForTimeout(900);
+
+  await byLabel('Notes').first().click();
+  await page.waitForTimeout(600);
+  await byLabel('Create a new study note').click();
+  await page.waitForTimeout(600);
+
+  await byLabel('Note title').fill('Neoplasia mnemonics');
+
+  // File it: subject, then chapter.
+  await page.locator('[aria-label*="file it under"], [aria-label*="Not filed under a chapter"]')
+    .first()
+    .click();
+  await page.waitForTimeout(600);
+  await seesText('Not filed', 4000);
+
+  const subject = page.locator('[aria-label*="choose a chapter"]').first();
+  if ((await subject.count()) === 0) {
+    throw new Error('the filing sheet offers no subjects');
+  }
+  const subjectLabel = (await subject.getAttribute('aria-label')) ?? '';
+  await subject.click();
+  await page.waitForTimeout(700);
+
+  const chapter = page.locator('[aria-label^="File this note under"]').first();
+  if ((await chapter.count()) === 0) {
+    throw new Error(`no chapters offered for ${subjectLabel}`);
+  }
+  const chapterName = ((await chapter.getAttribute('aria-label')) ?? '')
+    .replace('File this note under ', '')
+    .trim();
+  await chapter.click();
+  await page.waitForTimeout(700);
+
+  // The row now says where it went, which is the whole point of it.
+  await seesText(chapterName, 4000);
+
+  await byLabel('Save note').click();
+  await page.waitForTimeout(900);
+  await seesText('Neoplasia mnemonics', 4000);
+});
+
 await step('a card you write can carry a picture, revealed with the answer', async () => {
   await open('screen=flashcards');
   await page.waitForTimeout(900);

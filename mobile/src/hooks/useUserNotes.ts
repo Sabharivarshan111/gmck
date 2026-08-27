@@ -29,6 +29,17 @@ export interface UserNote {
   /** Free text from the question bank's subject list, or null for unfiled. */
   subject?: string | null;
   /**
+   * The chapter this note is about, as `flattenSubjectTopics` keys it —
+   * "pathology::paper-1/neoplasia".
+   *
+   * The key is what the chapter screen matches on; the name is kept beside it
+   * so the note can say where it is filed without walking the question bank to
+   * find out. Subject alone was not enough: "Pathology" is forty chapters, and
+   * a note about neoplasia surfacing on all of them is noise, not filing.
+   */
+  chapterKey?: string | null;
+  chapterName?: string | null;
+  /**
    * Local picture ids, resolved through `lib/noteImages`.
    *
    * Ids, not bytes: this whole list is one AsyncStorage value, and base64
@@ -90,6 +101,8 @@ export function useUserNotes() {
       title: initial?.title ?? "",
       content: initial?.content ?? "",
       subject: initial?.subject ?? null,
+      chapterKey: initial?.chapterKey ?? null,
+      chapterName: initial?.chapterName ?? null,
       images: initial?.images ?? [],
       created_at: now,
       updated_at: now,
@@ -102,7 +115,9 @@ export function useUserNotes() {
 
   const updateNote = async (
     id: string,
-    patch: Partial<Pick<UserNote, "title" | "content" | "subject" | "images">>,
+    patch: Partial<
+      Pick<UserNote, "title" | "content" | "subject" | "chapterKey" | "chapterName" | "images">
+    >,
   ) => {
     const next = notes.map(note =>
       note.id === id ? { ...note, ...patch, updated_at: new Date().toISOString() } : note,
@@ -121,5 +136,16 @@ export function useUserNotes() {
     await removeNoteImages(going?.images ?? []);
   };
 
-  return { notes, loading, createNote, updateNote, deleteNote, refetch: load };
+  /**
+   * The notes filed against one chapter.
+   *
+   * Exported as a plain function so the chapter screen can use it without
+   * mounting a second copy of the hook's state.
+   */
+  const notesForChapter = useCallback(
+    (chapterKey: string) => notes.filter(note => note.chapterKey === chapterKey),
+    [notes],
+  );
+
+  return { notes, loading, createNote, updateNote, deleteNote, notesForChapter, refetch: load };
 }
