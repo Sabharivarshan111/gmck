@@ -6,6 +6,7 @@ import { useTheme, withAlpha } from '@/theme';
 import { typeScale } from '@/theme/typography';
 import { useUserNotes } from '@/hooks/useUserNotes';
 import { loadNoteImage } from '@/lib/noteImages';
+import { plainPreview } from '@/components/NoteText';
 
 /**
  * The reader's own notes for the chapter they are looking at.
@@ -46,7 +47,7 @@ export function ChapterNotes({ chapterKey }: { chapterKey: string }) {
             </Text>
           </View>
           {note.content ? (
-            <Text style={[styles.body, { color: colors.textMuted }]}>{note.content}</Text>
+            <Text style={[styles.body, { color: colors.textMuted }]}>{plainPreview(note.content)}</Text>
           ) : null}
           {(note.images ?? []).map(id => (
             <NoteImage key={id} id={id} />

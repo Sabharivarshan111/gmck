@@ -31,7 +31,6 @@ const SRC = path.join(root, 'src');
  * is the note that says what to re-verify.
  */
 const LIFTED_BY_ANCESTOR = {
-  'components/ProgressNotesTab.tsx': 'ProgressScreen wraps its ScrollView in KeyboardSafe',
   'components/ProgressCalendarTab.tsx': 'ProgressScreen wraps its ScrollView in KeyboardSafe',
   'components/ProfileSheet.tsx': 'Sheet wraps its body in KeyboardSafe',
   'components/ColorPicker.tsx': 'Sheet (ThemeEditor is presented in one) wraps its body in KeyboardSafe',

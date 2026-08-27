@@ -1687,6 +1687,64 @@ await step('a saved note can be opened and read without editing it', async () =>
  * reason the image picker's is: a stub that invented a file on every call
  * would put the editor into a state no tap on a phone can produce.
  */
+/**
+ * Headings, subheadings and points — written by buttons, read as a list.
+ *
+ * The reader's friend compared it to a tablet note app with a formatting row
+ * and asked why this was "like simply typing". The note is still stored as
+ * plain text, which is what keeps it safe; the toolbar writes the markers and
+ * the reader renders them, so nobody has to know that a hyphen makes a bullet.
+ */
+await step('the note toolbar writes headings and points, and they render', async () => {
+  await open('screen=progress');
+  await page.waitForTimeout(900);
+  await byLabel('Notes').first().click();
+  await page.waitForTimeout(600);
+  await byLabel('Create a new study note').click();
+  await page.waitForTimeout(700);
+
+  await byLabel('Note title').fill('Enteric fever');
+
+  const body = byLabel('What the note says');
+  await body.fill('Antigens of S. Typhi');
+  await page.waitForTimeout(300);
+  await byLabel('Heading').click();
+  await page.waitForTimeout(400);
+
+  // The marker is written into the text, not hidden in some parallel format.
+  const afterHeading = await body.inputValue();
+  if (!afterHeading.startsWith('# ')) {
+    throw new Error(`the heading button wrote "${afterHeading}", expected it to start with "# "`);
+  }
+
+  // Pressing it again takes it off: a button that only adds leaves the reader
+  // deleting characters by hand.
+  await byLabel('Heading').click();
+  await page.waitForTimeout(400);
+  if ((await body.inputValue()).startsWith('# ')) {
+    throw new Error('the heading button does not toggle off');
+  }
+  await byLabel('Heading').click();
+  await page.waitForTimeout(300);
+
+  await body.fill('# Antigens of S. Typhi\n## O Antigen\nSomatic antigen\nPart of LPS');
+  await page.waitForTimeout(300);
+
+  await byLabel('Save note').click();
+  await page.waitForTimeout(1000);
+  await byLabel('Read Enteric fever').last().click();
+  await page.waitForTimeout(900);
+
+  // Read back as a note: the markers are gone and the text is there.
+  await seesText('Antigens of S. Typhi', 4000);
+  await seesText('O Antigen', 4000);
+  await seesText('Somatic antigen', 4000);
+  const shown = await page.locator('body').innerText();
+  if (shown.includes('## O Antigen') || shown.includes('# Antigens')) {
+    throw new Error('the reader is printing the markers instead of rendering them');
+  }
+});
+
 await step('a note takes a recording, and the recording gets a player', async () => {
   await open('screen=progress');
   await page.waitForTimeout(900);
@@ -1860,7 +1918,7 @@ await step('a linked file can break, says so, and can be copied in instead', asy
   await seesText('tap to save a copy', 4000);
 
   // Now delete the original, the way a file manager would, and reopen.
-  await byLabel('Done').first().click();
+  await byLabel('Back to notes').first().click();
   await page.waitForTimeout(500);
   await page.evaluate(() => {
     globalThis.__orbitBreakLink = 'all';
@@ -1871,7 +1929,7 @@ await step('a linked file can break, says so, and can be copied in instead', asy
   await seesText('moved or deleted', 4000);
 
   // Put it back, and copy it in — which is the way out, and is one tap.
-  await byLabel('Done').first().click();
+  await byLabel('Back to notes').first().click();
   await page.waitForTimeout(400);
   await page.evaluate(() => {
     globalThis.__orbitBreakLink = undefined;

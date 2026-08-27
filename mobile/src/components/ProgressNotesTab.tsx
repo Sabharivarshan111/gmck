@@ -1,9 +1,13 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Image, Keyboard, Linking, StyleSheet, TextInput, View } from "react-native";
+import { Image, Keyboard, Linking, Modal, ScrollView, StyleSheet, TextInput, View } from "react-native";
 import { Text } from "@/components/Text";
 import { Touchable } from "@/components/Touchable";
 import { Dialog } from "@/components/Dialog";
 import { Sheet } from "@/components/Sheet";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { KeyboardSafe } from "@/components/KeyboardSafe";
+import { NoteText, plainPreview } from "@/components/NoteText";
+import { NoteToolbar } from "@/components/NoteToolbar";
 import { useTheme } from "@/theme";
 import { NoteMediaPlayer } from "@/components/NoteMediaPlayer";
 import { typeScale } from "@/theme/typography";
@@ -11,6 +15,7 @@ import { useUserNotes, type UserNote } from "@/hooks/useUserNotes";
 import {
   BookOpen,
   ChevronDown,
+  ChevronLeft,
   ChevronRight,
   FileText,
   FileType,
@@ -230,6 +235,7 @@ function NoteReader({
   onFilesChanged: (note: UserNote, files: NoteFile[]) => void;
 }) {
   const { colors } = useTheme();
+  const insets = useSafeAreaInsets();
   const [urls, setUrls] = useState<string[]>([]);
 
   useEffect(() => {
@@ -251,16 +257,38 @@ function NoteReader({
   if (!note) return null;
 
   return (
-    <Sheet visible onClose={onClose} title={note.title || "Untitled Note"}>
+    <Modal visible animationType="slide" onRequestClose={onClose}>
+      <View style={[styles.page, { backgroundColor: colors.background }]}>
+        <View style={[styles.pageHeader, { paddingTop: insets.top + 8 }]}>
+          <Touchable onPress={onClose} label="Back to notes" scaleTo={0.85} hitSlop={12}>
+            <ChevronLeft size={24} color={colors.text} />
+          </Touchable>
+          <Text style={[styles.pageTitle, { color: colors.text }]} numberOfLines={1}>
+            {note.title || "Untitled Note"}
+          </Text>
+          <Touchable
+            onPress={() => onEdit(note)}
+            label={`Edit ${note.title || "this note"}`}
+            scaleTo={0.9}
+            hitSlop={12}>
+            <Pencil size={20} color={colors.text} />
+          </Touchable>
+        </View>
+        <ScrollView
+          style={styles.flex}
+          contentContainerStyle={[styles.pageBody, { paddingBottom: insets.bottom + 32 }]}>
       {note.subject ? (
         <View style={[styles.subjectChip, { backgroundColor: withAlpha(colors.fuchsia, 0.15) }]}>
           <Text style={[styles.subjectChipText, { color: colors.fuchsia }]}>{note.subject}</Text>
         </View>
       ) : null}
 
-      <Text style={[styles.readerBody, { color: colors.text }]}>
-        {note.content || "This note is empty."}
-      </Text>
+      {/* Typed as text, read as a note: "1." and "-" become real lists. */}
+      {note.content ? (
+        <NoteText content={note.content} />
+      ) : (
+        <Text style={[styles.readerBody, { color: colors.textMuted }]}>This note is empty.</Text>
+      )}
 
       {urls.map(url => (
         <Image key={url} source={{ uri: url }} style={styles.readerImage} resizeMode="contain" />
@@ -297,7 +325,9 @@ function NoteReader({
         ]}>
         <Text style={{ color: colors.primaryText, fontWeight: "600" }}>Edit this note</Text>
       </Touchable>
-    </Sheet>
+        </ScrollView>
+      </View>
+    </Modal>
   );
 }
 
@@ -446,6 +476,7 @@ interface Props {
 
 export function ProgressNotesTab({ year }: Props) {
   const { colors } = useTheme();
+  const insets = useSafeAreaInsets();
   const { notes, createNote, updateNote, deleteNote } = useUserNotes();
 
   const [editing, setEditing] = useState<UserNote | null>(null);
@@ -460,6 +491,11 @@ export function ProgressNotesTab({ year }: Props) {
   const [imageError, setImageError] = useState<string | null>(null);
   const [busyImage, setBusyImage] = useState(false);
   const [attachOpen, setAttachOpen] = useState(false);
+  /** Where the cursor is, so the toolbar knows which line to format. */
+  const [selection, setSelection] = useState({ start: 0, end: 0 });
+  const [forcedSelection, setForcedSelection] = useState<{ start: number; end: number } | null>(
+    null,
+  );
   const [deleteTarget, setDeleteTarget] = useState<UserNote | null>(null);
   /** The note being read. Reading and editing are different things. */
   const [reading, setReading] = useState<UserNote | null>(null);
@@ -501,6 +537,8 @@ export function ProgressNotesTab({ year }: Props) {
       setEditChapterName(note.chapterName ?? null);
       setEditImages(note.images ?? []);
       setEditFiles(note.files ?? []);
+      setSelection({ start: 0, end: 0 });
+      setForcedSelection(null);
     } else {
       setEditing({ id: "new", title: "", content: "", created_at: "", updated_at: "" });
       setEditTitle("");
@@ -510,6 +548,8 @@ export function ProgressNotesTab({ year }: Props) {
       setEditChapterName(null);
       setEditImages([]);
       setEditFiles([]);
+      setSelection({ start: 0, end: 0 });
+      setForcedSelection(null);
     }
   };
 
@@ -687,7 +727,7 @@ export function ProgressNotesTab({ year }: Props) {
                           <Text
                             style={[styles.noteContent, { color: colors.textMuted }]}
                             numberOfLines={3}>
-                            {n.content}
+                            {plainPreview(n.content)}
                           </Text>
                         ) : (
                           <Text style={[styles.noteEmpty, { color: colors.textMuted }]}>
@@ -737,12 +777,45 @@ export function ProgressNotesTab({ year }: Props) {
         }}
       />
 
-      {/* Note Editor Card */}
-      {editing ? (
-        <View style={[styles.editorCard, { backgroundColor: colors.cardElevated, borderColor: colors.border }]}>
-          <Text style={[styles.editorTitle, { color: colors.text }]}>
-            {editing.id === "new" ? "New Note" : "Edit Note"}
-          </Text>
+      {/*
+        The editor is a page, not a card in a list.
+
+        It used to be a block that appeared *inside* the Progress screen's
+        scroll view, under everything else — so writing a note meant scrolling
+        past a profile header, a sync card and a tab bar to find the box you
+        were typing in, with the keyboard covering half of what was left. The
+        reader's comparison was the flashcard decks, which open properly, and
+        it was the right comparison.
+      */}
+      <Modal
+        visible={!!editing}
+        animationType="slide"
+        onRequestClose={() => setEditing(null)}>
+        <KeyboardSafe>
+          <View style={[styles.page, { backgroundColor: colors.background }]}>
+            <View style={[styles.pageHeader, { paddingTop: insets.top + 8 }]}>
+              <Touchable
+                onPress={() => setEditing(null)}
+                label="Close without saving"
+                scaleTo={0.85}
+                hitSlop={12}>
+                <ChevronLeft size={24} color={colors.text} />
+              </Touchable>
+              <Text style={[styles.pageTitle, { color: colors.text }]} numberOfLines={1}>
+                {editing?.id === "new" ? "New note" : "Edit note"}
+              </Text>
+              <Touchable
+                onPress={handleSave}
+                label="Save note"
+                scaleTo={0.95}
+                style={[styles.pageSave, { backgroundColor: colors.primary }]}>
+                <Text style={{ color: colors.primaryText, fontWeight: "700" }}>Save</Text>
+              </Touchable>
+            </View>
+            <ScrollView
+              style={styles.flex}
+              contentContainerStyle={[styles.pageBody, { paddingBottom: insets.bottom + 32 }]}
+              keyboardShouldPersistTaps="handled">
           <TextInput
             placeholder="Note title…"
             accessibilityLabel="Note title"
@@ -856,14 +929,39 @@ export function ProgressNotesTab({ year }: Props) {
             }}
           />
 
+          {/*
+            The buttons that write the markers, so nobody has to know that a
+            hyphen makes a bullet. The note is still stored as plain text —
+            what is typed is what is saved — and `NoteText` renders the
+            markers when it is read.
+          */}
+          <NoteToolbar
+            value={editContent}
+            selection={selection}
+            onChange={(text, cursor) => {
+              setEditContent(text);
+              // Put the cursor where the edit left it, or a bullet inserted at
+              // the start of a line sends it to the end of the note.
+              setSelection({ start: cursor, end: cursor });
+              setForcedSelection({ start: cursor, end: cursor });
+            }}
+          />
           <TextInput
-            placeholder="Write your clinical / study notes here…"
+            placeholder={"Write your notes here…\n\nUse the buttons above for headings and points."}
             accessibilityLabel="What the note says"
             placeholderTextColor={colors.textMuted}
             value={editContent}
-            onChangeText={setEditContent}
+            onChangeText={text => {
+              setEditContent(text);
+              setForcedSelection(null);
+            }}
+            onSelectionChange={event => setSelection(event.nativeEvent.selection)}
+            // Controlled only for the frame after a toolbar press. Pinning it
+            // permanently would fight every tap the reader makes in the text.
+            selection={forcedSelection ?? undefined}
             multiline
-            numberOfLines={5}
+            textAlignVertical="top"
+            numberOfLines={10}
             style={[
               styles.editorTextarea,
               { backgroundColor: colors.card, borderColor: colors.border, color: colors.text },
@@ -984,24 +1082,10 @@ export function ProgressNotesTab({ year }: Props) {
             </Text>
           ) : null}
 
-          <View style={styles.editorButtons}>
-            <Touchable
-              onPress={() => setEditing(null)}
-              label="Cancel editing note"
-              scaleTo={0.95}
-              style={[styles.editorBtn, { borderColor: colors.border }]}>
-              <Text style={{ color: colors.textMuted }}>Cancel</Text>
-            </Touchable>
-            <Touchable
-              onPress={handleSave}
-              label="Save note"
-              scaleTo={0.95}
-              style={[styles.editorBtn, { backgroundColor: colors.primary, borderColor: colors.primary }]}>
-              <Text style={{ color: colors.primaryText, fontWeight: "600" }}>Save</Text>
-            </Touchable>
+            </ScrollView>
           </View>
-        </View>
-      ) : null}
+        </KeyboardSafe>
+      </Modal>
 
       {/* Delete Confirmation Dialog */}
       <Dialog
@@ -1320,6 +1404,29 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     gap: 10,
     marginTop: 4,
+  },
+  page: {
+    flex: 1,
+  },
+  pageHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    paddingHorizontal: 16,
+    paddingBottom: 12,
+  },
+  pageTitle: {
+    ...typeScale.title3,
+    flex: 1,
+  },
+  pageSave: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 10,
+  },
+  pageBody: {
+    paddingHorizontal: 16,
+    gap: 10,
   },
   readerEdit: {
     marginTop: 18,
