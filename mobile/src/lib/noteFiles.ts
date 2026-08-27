@@ -120,7 +120,18 @@ export function noteFileUri(file: NoteFile): string | null {
   }
   try {
     const path = native.pathFor(file.id);
-    return path ? `file://${path}` : null;
+    if (!path) {
+      return null;
+    }
+    /*
+     * The Android side returns an absolute path; anything else is already a
+     * URL and is handed through untouched. That second case is the preview
+     * harness, which has no app storage and serves a small sample instead —
+     * and it is there deliberately. The attach-and-play path is real on a
+     * phone, so if nothing here can walk it, the one flow this file exists for
+     * is the one flow no check can ever see.
+     */
+    return path.startsWith('/') ? `file://${path}` : path;
   } catch {
     return null;
   }

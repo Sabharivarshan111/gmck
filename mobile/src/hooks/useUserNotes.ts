@@ -117,6 +117,7 @@ export function useUserNotes() {
       chapterKey: initial?.chapterKey ?? null,
       chapterName: initial?.chapterName ?? null,
       images: initial?.images ?? [],
+      files: initial?.files ?? [],
       created_at: now,
       updated_at: now,
     };
@@ -126,10 +127,22 @@ export function useUserNotes() {
     return note;
   };
 
+  /*
+   * The editable fields, named once.
+   *
+   * `createNote` and `updateNote` both used to list them by hand, and adding
+   * `files` to the note without adding it here meant every attachment was
+   * dropped on save — silently, because the caller passes a variable rather
+   * than an object literal, so TypeScript's excess-property check never runs
+   * and neither function complained about a field it was quietly discarding.
+   */
   const updateNote = async (
     id: string,
     patch: Partial<
-      Pick<UserNote, "title" | "content" | "subject" | "chapterKey" | "chapterName" | "images">
+      Pick<
+        UserNote,
+        "title" | "content" | "subject" | "chapterKey" | "chapterName" | "images" | "files"
+      >
     >,
   ) => {
     const next = notes.map(note =>

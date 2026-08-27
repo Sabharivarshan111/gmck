@@ -83,6 +83,24 @@ check(
   'deleting a note no longer deletes its files — a forgotten video is a great deal of space',
 );
 
+// And saving one keeps them.
+//
+// createNote built the note field by field and updateNote's patch type listed
+// the editable fields by hand; neither mentioned `files`, so every attachment
+// was silently dropped on save. TypeScript said nothing — the caller passes a
+// variable rather than an object literal, so the excess-property check that
+// would have caught it never runs.
+const createBlock = hook.slice(hook.indexOf('const createNote'), hook.indexOf('const updateNote'));
+check(
+  /files:/.test(createBlock),
+  'createNote does not carry `files`, so attaching a recording and saving loses it',
+);
+const patchBlock = hook.slice(hook.indexOf('const updateNote'), hook.indexOf('const deleteNote'));
+check(
+  /"files"/.test(patchBlock),
+  'updateNote\'s patch type omits `files`, so editing a note strips its attachments',
+);
+
 // ---------------------------------------------------------------------------
 // 4. Every kind the picker offers, the reader can actually use.
 //
@@ -101,10 +119,46 @@ for (const [kind, expectation] of [
 ]) {
   check(expectation.test(tab), `the note reader has no way to open a ${kind}`);
 }
+// ---------------------------------------------------------------------------
+// 4b. The player.
+//
+// It is built on react-native-video, which this app already ships for the
+// video wallpaper — so it costs no size at all. libVLC would carry its own
+// decoders, tens of megabytes per ABI, to play formats the phone's own picker
+// could never have handed us in the first place.
+// ---------------------------------------------------------------------------
+const player = code(read(path.join(mobile, 'src/components/NoteMediaPlayer.tsx')));
 check(
-  /paused=\{!playing/.test(tab),
+  /from 'react-native-video'/.test(player),
+  'the note player is no longer built on react-native-video, which the app already ships',
+);
+check(
+  /paused=\{!playing\}/.test(player),
   'attached media autoplays — opening a note would start a lecture recording out loud',
 );
+check(
+  /controls=\{false\}/.test(player),
+  "the player uses ExoPlayer's own controls — a different typeface, accent and gesture set " +
+    'dropped into the middle of a note',
+);
+check(
+  /scrubbing === null/.test(player),
+  'progress events overwrite the thumb during a drag again, which reads as a control fighting you',
+);
+check(
+  /player\.current\?\.seek\(/.test(player),
+  'the scrubber no longer seeks, so it is a progress bar wearing a thumb',
+);
+
+// The size rule, from the other side.
+const deps = JSON.parse(read(path.join(mobile, 'package.json'))).dependencies ?? {};
+for (const heavy of Object.keys(deps)) {
+  check(
+    !/vlc|ffmpeg|libav/i.test(heavy),
+    `${heavy} is a bundled media stack — tens of megabytes per ABI, on phones chosen for ` +
+      'having no space, to decode files the phone can already decode',
+  );
+}
 
 // ---------------------------------------------------------------------------
 // 5. A note can be read, not only edited.

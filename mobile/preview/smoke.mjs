@@ -1674,6 +1674,73 @@ await step('a saved note can be opened and read without editing it', async () =>
   await seesText('Edit this note', 4000);
 });
 
+/**
+ * A note takes a recording, and the recording plays.
+ *
+ * The reader's report was "i cant see audio or video if I upload it". This is
+ * the whole round trip in one step: attach through the picker, see the file
+ * named and sized in the editor, save, open the note, and find a real
+ * transport — a play button that toggles and a scrubber that reports a time
+ * rather than a number.
+ *
+ * The shim hands back a genuine 0.4-second WAV. It is opt-in for the same
+ * reason the image picker's is: a stub that invented a file on every call
+ * would put the editor into a state no tap on a phone can produce.
+ */
+await step('a note takes a recording, and the recording gets a player', async () => {
+  await open('screen=progress');
+  await page.waitForTimeout(900);
+  await byLabel('Notes').first().click();
+  await page.waitForTimeout(600);
+  await byLabel('Create a new study note').click();
+  await page.waitForTimeout(600);
+
+  await byLabel('Note title').fill('Cardio lecture');
+
+  await page.evaluate(() => {
+    globalThis.__orbitPickFile = 'audio';
+  });
+  const attach = byLabel('Add a video, recording or PDF to this note');
+  if ((await attach.count()) === 0) {
+    throw new Error('the notes editor offers no way to attach a file');
+  }
+  await attach.click();
+  await page.waitForTimeout(800);
+  await page.evaluate(() => {
+    globalThis.__orbitPickFile = undefined;
+  });
+
+  // Named, and sized — with no cap, the size is how the reader decides.
+  await seesText('Lecture 3.wav', 4000);
+  await seesText('Recording', 4000);
+  await seesText('KB', 4000);
+
+  await byLabel('Save note').click();
+  await page.waitForTimeout(900);
+  await seesText('1 recording', 4000);
+
+  await byLabel('Read Cardio lecture').last().click();
+  await page.waitForTimeout(1000);
+
+  // A real transport: a button that changes state, and a scrubber that speaks
+  // a time. Before this, an attachment was a filename and nothing else.
+  const play = byLabel('Play Lecture 3.wav');
+  if ((await play.count()) === 0) {
+    throw new Error('the attached recording has no play control');
+  }
+  const scrub = byLabel('Position in Lecture 3.wav');
+  const spoken = await scrub.evaluate(el => el.getAttribute('aria-valuetext'));
+  if (!/^\d{1,2}:\d{2}/.test(spoken ?? '')) {
+    throw new Error(`the scrubber speaks "${spoken}", not a time`);
+  }
+
+  await play.click();
+  await page.waitForTimeout(600);
+  if ((await byLabel('Pause Lecture 3.wav').count()) === 0) {
+    throw new Error('pressing play did not turn the control into a pause');
+  }
+});
+
 await step('a card you write can carry a picture, revealed with the answer', async () => {
   await open('screen=flashcards');
   await page.waitForTimeout(900);

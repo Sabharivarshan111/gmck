@@ -4,9 +4,8 @@ import { Text } from "@/components/Text";
 import { Touchable } from "@/components/Touchable";
 import { Dialog } from "@/components/Dialog";
 import { Sheet } from "@/components/Sheet";
-import Video from "react-native-video";
 import { useTheme } from "@/theme";
-import { useReducedMotion } from "@/theme/motion";
+import { NoteMediaPlayer } from "@/components/NoteMediaPlayer";
 import { typeScale } from "@/theme/typography";
 import { useUserNotes, type UserNote } from "@/hooks/useUserNotes";
 import {
@@ -20,7 +19,6 @@ import {
   Music,
   Paperclip,
   Pencil,
-  Play,
   Plus,
   Trash2,
   X,
@@ -99,8 +97,6 @@ function attachmentSummary(note: UserNote): string {
  */
 function NoteAttachment({ file }: { file: NoteFile }) {
   const { colors } = useTheme();
-  const reduced = useReducedMotion();
-  const [playing, setPlaying] = useState(false);
   const uri = noteFileUri(file);
   const kind = kindOf(file);
 
@@ -125,42 +121,12 @@ function NoteAttachment({ file }: { file: NoteFile }) {
   }
 
   if (kind === "video" || kind === "audio") {
-    return (
-      <View style={styles.attachmentBlock}>
-        <Text style={[styles.fileName, { color: colors.text }]} numberOfLines={1}>
-          {file.name}
-        </Text>
-        {/*
-          Paused until asked.
-
-          Autoplay would start a lecture recording out loud the moment a note
-          is opened, which is the app making a decision about the room the
-          reader is in. Under reduced motion a video stays a still frame with
-          its controls — the same rule the wallpaper follows.
-        */}
-        <Video
-          source={{ uri }}
-          paused={!playing || reduced}
-          controls
-          repeat={false}
-          resizeMode="contain"
-          style={kind === "video" ? styles.readerVideo : styles.readerAudio}
-          onEnd={() => setPlaying(false)}
-          onError={() => setPlaying(false)}
-        />
-        {!playing ? (
-          <Touchable
-            onPress={() => setPlaying(true)}
-            label={`Play ${file.name}`}
-            style={[styles.attachBtn, { borderColor: colors.border }]}>
-            <Play size={14} color={colors.accent} />
-            <Text style={[styles.subjectChipText, { color: colors.accent }]}>
-              Play {kind === "video" ? "video" : "recording"}
-            </Text>
-          </Touchable>
-        ) : null}
-      </View>
-    );
+    /*
+      Paused until asked, in NoteMediaPlayer. Autoplay would start a lecture
+      recording out loud the moment a note is opened, which is the app making
+      a decision about the room the reader is in.
+    */
+    return <NoteMediaPlayer uri={uri} name={file.name} video={kind === "video"} />;
   }
 
   return (
@@ -1115,21 +1081,6 @@ const styles = StyleSheet.create({
   fileName: {
     ...typeScale.footnote,
     fontWeight: "600",
-  },
-  attachmentBlock: {
-    gap: 8,
-    marginTop: 10,
-  },
-  readerVideo: {
-    width: "100%",
-    height: 210,
-    borderRadius: 12,
-    backgroundColor: "#000",
-  },
-  /* Audio has nothing to look at; the controls are the whole surface. */
-  readerAudio: {
-    width: "100%",
-    height: 54,
   },
   noteBody: {
     gap: 4,
