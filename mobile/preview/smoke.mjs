@@ -1590,7 +1590,7 @@ await step('a note filed under a chapter shows up on that chapter', async () => 
   await page.waitForTimeout(900);
 
   await byLabel('Notes').first().click();
-  await page.waitForTimeout(600);
+  await page.waitForTimeout(800);
   await byLabel('Create a new study note').click();
   await page.waitForTimeout(600);
 
@@ -1654,7 +1654,7 @@ await step('a saved note can be opened and read without editing it', async () =>
   await open('screen=progress');
   await page.waitForTimeout(900);
   await byLabel('Notes').first().click();
-  await page.waitForTimeout(600);
+  await page.waitForTimeout(800);
   await byLabel('Create a new study note').click();
   await page.waitForTimeout(600);
 
@@ -1699,7 +1699,7 @@ await step('the note toolbar writes headings and points, and they render', async
   await open('screen=progress');
   await page.waitForTimeout(900);
   await byLabel('Notes').first().click();
-  await page.waitForTimeout(600);
+  await page.waitForTimeout(800);
   await byLabel('Create a new study note').click();
   await page.waitForTimeout(700);
 
@@ -1749,7 +1749,7 @@ await step('a note takes a recording, and the recording gets a player', async ()
   await open('screen=progress');
   await page.waitForTimeout(900);
   await byLabel('Notes').first().click();
-  await page.waitForTimeout(600);
+  await page.waitForTimeout(800);
   await byLabel('Create a new study note').click();
   await page.waitForTimeout(600);
 
@@ -1827,7 +1827,7 @@ await step('fullscreen keeps the play, scrub, time and volume controls', async (
   await open('screen=progress');
   await page.waitForTimeout(900);
   await byLabel('Notes').first().click();
-  await page.waitForTimeout(600);
+  await page.waitForTimeout(800);
   await byLabel('Create a new study note').click();
   await page.waitForTimeout(600);
   await byLabel('Note title').fill('Procedure clip');
@@ -1884,7 +1884,7 @@ await step('a linked file can break, says so, and can be copied in instead', asy
   await open('screen=progress');
   await page.waitForTimeout(900);
   await byLabel('Notes').first().click();
-  await page.waitForTimeout(600);
+  await page.waitForTimeout(800);
   await byLabel('Create a new study note').click();
   await page.waitForTimeout(600);
   await byLabel('Note title').fill('Linked lecture');

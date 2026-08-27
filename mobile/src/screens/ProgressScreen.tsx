@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
+  Modal,
   ScrollView,
   StyleSheet,
   View,
@@ -10,7 +11,9 @@ import { Touchable } from '@/components/Touchable';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   Check,
+  ChevronLeft,
   ChevronUp,
+  FileText,
   Flame,
   FlaskConical,
   Lock,
@@ -98,6 +101,7 @@ export default function ProgressScreen() {
   } = useProfile();
   const [editOpen, setEditOpen] = useState(false);
   const [tab, setTab] = useState<Tab>('stats');
+  const [notesOpen, setNotesOpen] = useState(false);
   const [rewardsOpen, setRewardsOpen] = useState(true);
   const [syncing, setSyncing] = useState(false);
   const [email, setEmail] = useState<string | null>(null);
@@ -355,7 +359,23 @@ export default function ProgressScreen() {
           return (
             <Touchable
               key={item.key}
-              onPress={() => setTab(item.key)}
+              onPress={() => {
+                /*
+                 * Notes is a place, not a panel.
+                 *
+                 * It used to swap the body of this screen, so the note list
+                 * sat under a profile header, a sync card and this very tab
+                 * row — and writing one meant scrolling past all of it. The
+                 * reader's comparison was the flashcard decks, which open as
+                 * their own screen. This does the same and leaves the tab
+                 * where it was, which is what was asked for.
+                 */
+                if (item.key === 'notes') {
+                  setNotesOpen(true);
+                  return;
+                }
+                setTab(item.key);
+              }}
               role="tab"
               label={item.label}
               state={{ selected: active }}
@@ -372,8 +392,6 @@ export default function ProgressScreen() {
 
       {tab === 'calendar' ? (
         <ProgressCalendarTab />
-      ) : tab === 'notes' ? (
-        <ProgressNotesTab year={year} />
       ) : (
         <>
           {/* Year ring */}
@@ -749,6 +767,47 @@ export default function ProgressScreen() {
           </View>
         </>
       )}
+      <Modal
+        visible={notesOpen}
+        animationType="slide"
+        onRequestClose={() => setNotesOpen(false)}>
+        <View style={{ flex: 1, backgroundColor: colors.background }}>
+          <ScrollView
+            style={styles.grow}
+            contentContainerStyle={[
+              styles.notesPage,
+              { paddingTop: insets.top + 12, paddingBottom: insets.bottom + 32 },
+            ]}
+            keyboardShouldPersistTaps="handled">
+            <View style={styles.notesHeader}>
+              <Touchable
+                onPress={() => setNotesOpen(false)}
+                label="Back to my progress"
+                scaleTo={0.85}
+                hitSlop={12}>
+                <ChevronLeft size={24} color={colors.text} />
+              </Touchable>
+              <Text style={[styles.notesHeaderTitle, { color: colors.text }]}>Your notes</Text>
+            </View>
+
+            <View style={styles.notesHero}>
+              <GradientFill from="#7C3AED" to="#C026D3" borderRadius={18} />
+              <View style={styles.notesHeroRow}>
+                <FileText size={16} color="#FFFFFF" />
+                <Text style={styles.notesHeroKicker}>YOUR OWN NOTES</Text>
+              </View>
+              <Text style={styles.notesHeroTitle}>Create your own notes</Text>
+              <Text style={styles.notesHeroBody}>
+                Headings, subheadings and points, with pictures, video, recordings and PDFs. File
+                one under a chapter and it shows up there too. Everything stays on this phone.
+              </Text>
+            </View>
+
+            <ProgressNotesTab year={year} />
+          </ScrollView>
+        </View>
+      </Modal>
+
       <ProfileSheet
         visible={editOpen || (!profile && tab === 'stats')}
         profile={profile}
@@ -771,6 +830,42 @@ export default function ProgressScreen() {
 }
 
 const styles = StyleSheet.create({
+  notesPage: {
+    paddingHorizontal: 16,
+    gap: 14,
+  },
+  notesHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  notesHeaderTitle: {
+    ...typeScale.title2,
+  },
+  notesHero: {
+    borderRadius: 18,
+    padding: 18,
+    overflow: 'hidden',
+    gap: 6,
+  },
+  notesHeroRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  notesHeroKicker: {
+    ...typeScale.overline,
+    color: '#FFFFFF',
+  },
+  notesHeroTitle: {
+    ...typeScale.title2,
+    color: '#FFFFFF',
+  },
+  notesHeroBody: {
+    ...typeScale.footnote,
+    color: 'rgba(255,255,255,0.9)',
+    lineHeight: 20,
+  },
   content: {
     paddingHorizontal: 16,
     paddingBottom: 32,

@@ -1391,7 +1391,14 @@ const styles = StyleSheet.create({
     ...typeScale.body,
   },
   editorTextarea: {
-    minHeight: 100,
+    /*
+     * Tall enough to write in.
+     *
+     * 100 was a comment box, and this is where a whole topic gets written —
+     * four lines meant scrolling a peephole to reread what you had just
+     * typed. The editor is its own page now, so the room is there to give.
+     */
+    minHeight: 360,
     borderRadius: 10,
     borderWidth: StyleSheet.hairlineWidth,
     paddingHorizontal: 12,
