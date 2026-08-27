@@ -57,14 +57,16 @@ linear is right, since any easing on a clock is a clock that lies — and under
 reduced motion the bar does not sweep at all, reporting the outcome by colour
 instead.
 
-## Study notes are on-device too, and enforced
+## My Progress → Notes and Calendar are on-device too, and enforced
 
-My Progress → Notes is `hooks/useUserNotes.ts` + `lib/noteImages.ts`, both
-**AsyncStorage only**. No row, no bucket, no account — the owner's decision, and
-the point of the feature.
+`hooks/useUserNotes.ts`, `lib/noteImages.ts` and `hooks/useCalendarEvents.ts`
+are **AsyncStorage only**. No row, no bucket, no account — the owner's decision,
+and the point of the feature.
 
-`npm run check:cloud-ids` lists both files as `LOCAL_ONLY` and fails if either
-imports the Supabase client at all. It briefly did sync, and briefly had a
+`npm run check:cloud-ids` lists all three as `LOCAL_ONLY` and fails if any of
+them imports the Supabase client at all. Its `HOOKS` list is empty as a result,
+which is the current answer rather than an oversight — the machinery stays for
+anything that syncs later. It briefly did sync, and briefly had a
 private storage bucket; both are gone and the columns that went with them were
 dropped. Do not add them back.
 
@@ -73,5 +75,7 @@ ids, because the note list is a single value and base64 photographs inside it
 would make reading the *titles* a multi-megabyte parse. Deleting a note deletes
 its pictures.
 
-The calendar on the same screen **is** synced. That is deliberate: an exam date
-is a fact about a course, a study note is a fact about a person.
+**No cap on pictures.** They are on the reader's phone; async-storage v3 stores
+through Room with no fixed size, so the only limit is free space. An invented
+cap would be this app deciding how many photographs of somebody's own textbook
+they may keep.

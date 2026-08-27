@@ -34,10 +34,18 @@ const check = (ok, message) => {
 const strip = text =>
   text.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/(^|[^:])\/\/.*$/gm, '$1');
 
-/** Hooks that write rows the database keys by uuid. */
-const HOOKS = [
-  { file: 'src/hooks/useCalendarEvents.ts', table: 'calendar_events', prefix: 'cal_' },
-];
+/**
+ * Hooks that write rows the database keys by uuid.
+ *
+ * **Empty, and that is the current answer rather than an oversight.** Both
+ * things that used to be here — the calendar and the study notes — are
+ * on-device only now, so they are in LOCAL_ONLY below instead. The machinery
+ * stays because the rule it encodes is still true of anything that *does* sync:
+ * a locally-created row must adopt its database id before any cloud write, or
+ * `update` and `delete` filter on an id the database never issued and a deleted
+ * row comes back on the next refetch.
+ */
+const HOOKS = [];
 
 /**
  * Things that must never reach a server, and the file that decides.
@@ -55,6 +63,7 @@ const HOOKS = [
 const LOCAL_ONLY = [
   { file: 'src/hooks/useUserNotes.ts', what: 'personal study notes' },
   { file: 'src/lib/noteImages.ts', what: 'pictures attached to a study note' },
+  { file: 'src/hooks/useCalendarEvents.ts', what: 'calendar events and exam targets' },
 ];
 
 for (const { file, what } of LOCAL_ONLY) {
@@ -115,4 +124,7 @@ if (failures.length > 0) {
   process.stdout.write(`\n${failures.length} problem(s) — cloud rows would drift from local ones.\n`);
   process.exit(1);
 }
-process.stdout.write('OK  locally-created rows adopt their database id before any cloud write\n');
+process.stdout.write(
+  `OK  ${LOCAL_ONLY.length} local-only store(s) never reach Supabase; ` +
+    `${HOOKS.length} syncing hook(s) adopt their database id before any cloud write\n`,
+);

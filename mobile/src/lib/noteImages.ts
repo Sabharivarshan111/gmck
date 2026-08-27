@@ -26,11 +26,18 @@ import { warn } from './log';
 const IMAGE_PREFIX = 'orbit:note-image:';
 
 /**
- * Enough for a diagram and its labels. Four rather than eight because these are
- * kept locally and never thinned: every one is storage the reader does not get
- * back until they delete the note.
+ * No cap, deliberately.
+ *
+ * There is nothing to ration. The pictures are on the reader's own phone, one
+ * AsyncStorage key each, and this library (v3) stores through Room with no
+ * fixed database size — the 6 MB `AsyncStorage_db_size_in_MB` ceiling belonged
+ * to v1's `ReactDatabaseSupplier` and is gone; there is no size constant left
+ * anywhere in its Android source. The only limit is the free space on the
+ * device, which is the reader's to spend.
+ *
+ * An invented cap would be this app deciding how many photographs of somebody's
+ * own textbook they are allowed to keep, which is not its call.
  */
-export const MAX_IMAGES_PER_NOTE = 4;
 
 const key = (id: string) => `${IMAGE_PREFIX}${id}`;
 

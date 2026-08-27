@@ -8,7 +8,7 @@ import { useCalendarEvents } from "@/hooks/useCalendarEvents";
 import { ChevronLeft, ChevronRight, Plus, Star, Trash2 } from "lucide-react-native";
 
 interface Props {
-  userId: string | null;
+  // Nothing needed: the calendar is on-device only. See useCalendarEvents.
 }
 
 const DAYS_SHORT = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
@@ -30,14 +30,14 @@ function toKey(d: Date): string {
   return `${y}-${m}-${day}`;
 }
 
-export function ProgressCalendarTab({ userId }: Props) {
+export function ProgressCalendarTab(_: Props) {
   const { colors } = useTheme();
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [viewMonth, setViewMonth] = useState<Date>(new Date());
   const [title, setTitle] = useState("");
   const [important, setImportant] = useState(false);
 
-  const { events, addEvent, updateEvent, deleteEvent } = useCalendarEvents(userId);
+  const { events, addEvent, updateEvent, deleteEvent } = useCalendarEvents();
 
   const byDate = useMemo(() => {
     const map = new Map<string, { count: number; important: boolean }>();

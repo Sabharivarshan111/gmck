@@ -268,30 +268,37 @@ cloud profile because that is the proof both the session and the row exist.
 
 `npm run check:sync` pins the ordering.
 
-## Personal study notes never leave the phone
+## My Progress → Notes and Calendar never leave the phone
 
-My Progress → Notes. `hooks/useUserNotes.ts` and `lib/noteImages.ts` are
-**AsyncStorage only** — no row, no bucket, no account. This is the app owner's
-decision and it is the feature: a ward-round scribble or a photograph of
-somebody's own textbook is not this app's to keep a server copy of.
+`hooks/useUserNotes.ts`, `lib/noteImages.ts` and `hooks/useCalendarEvents.ts`
+are **AsyncStorage only** — no row, no bucket, no account. This is the app
+owner's decision and it is the feature: a ward-round scribble, a photograph of
+somebody's own textbook, a viva date on their own calendar. None of it is this
+app's to keep a server copy of.
 
 `npm run check:cloud-ids` enforces it from the other side. Those two files are
 in its `LOCAL_ONLY` list, and it fails if either so much as imports the Supabase
 client. "We do not upload this" is only true while somebody keeps it true, and a
 rule that lives in a commit message lasts one session.
 
-Two consequences worth knowing before someone "fixes" them:
+Three consequences worth knowing before someone "fixes" them:
 
-- **Notes written in the web app do not appear on the phone**, and never will
-  while this holds. The `user_notes` table still exists and the web app still
-  uses it; the native app simply does not look.
+- **Notes and events written in the web app do not appear on the phone**, and
+  never will while this holds. `user_notes` (56 rows) and `calendar_events` (68)
+  still exist and the web app still uses them; the native app does not look.
+  Neither ever *did* work from the phone — both tabs were handed the signed-in
+  email while those columns are `uuid`, so Postgres rejected every insert and
+  supabase-js returned the error rather than throwing it.
 - **Pictures are one AsyncStorage key each** (`orbit:note-image:{id}`), and the
   note stores ids. The note list is a single value, so base64 photographs inside
   it would turn reading the *titles* into a multi-megabyte parse. Deleting a
   note deletes its pictures — nothing else references them.
-
-The calendar in the same screen *is* synced, and that difference is deliberate:
-an exam date is a fact about a course, not about a person.
+- **There is no cap on how many pictures a note holds.** There is nothing to
+  ration: they are on the reader's own phone, and async-storage v3 stores
+  through Room with no fixed database size — the 6 MB
+  `AsyncStorage_db_size_in_MB` ceiling belonged to v1 and there is no size
+  constant left in its Android source. The device's free space is the limit,
+  and it is the reader's to spend.
 
 ## A locally-created row must adopt its database id
 

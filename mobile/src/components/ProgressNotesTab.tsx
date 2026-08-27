@@ -9,7 +9,7 @@ import { typeScale } from "@/theme/typography";
 import { useUserNotes, type UserNote } from "@/hooks/useUserNotes";
 import { ChevronDown, FileText, ImagePlus, Pencil, Plus, Trash2, X } from "lucide-react-native";
 import { getSubjects, type YearKey } from "@/lib/questionBank";
-import { attachNoteImage, loadNoteImage, removeNoteImage, MAX_IMAGES_PER_NOTE } from "@/lib/noteImages";
+import { attachNoteImage, loadNoteImage, removeNoteImage } from "@/lib/noteImages";
 import { withAlpha } from "@/theme";
 
 /** The bucket a note with no subject falls into. */
@@ -195,10 +195,7 @@ export function ProgressNotesTab({ year }: Props) {
    * AsyncStorage key and the note holds only its id.
    */
   const addImage = useCallback(async () => {
-    if (editImages.length >= MAX_IMAGES_PER_NOTE) {
-      setImageError(`A note holds up to ${MAX_IMAGES_PER_NOTE} pictures.`);
-      return;
-    }
+    // No cap: they are on this phone and cost nobody else anything.
     setBusyImage(true);
     setImageError(null);
     try {
@@ -211,7 +208,7 @@ export function ProgressNotesTab({ year }: Props) {
     } finally {
       setBusyImage(false);
     }
-  }, [editImages.length]);
+  }, []);
 
   return (
     <View style={styles.container}>

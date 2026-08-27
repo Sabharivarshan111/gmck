@@ -42,7 +42,6 @@ import {
   signInWithGoogle,
   signOutGoogle,
 } from '@/lib/googleAuth';
-import { currentUserId } from '@/lib/profile';
 import { useCountDone } from '@/hooks/useProgress';
 import { useProfile } from '@/hooks/useProfile';
 import { ProfileSheet } from '@/components/ProfileSheet';
@@ -121,19 +120,6 @@ export default function ProgressScreen() {
   const [rewardsOpen, setRewardsOpen] = useState(true);
   const [syncing, setSyncing] = useState(false);
   const [email, setEmail] = useState<string | null>(null);
-  /**
-   * The Supabase auth uid, which is a different thing from the email.
-   *
-   * The calendar used to be handed `email`. `calendar_events.user_id` is a
-   * `uuid NOT NULL`, so Postgres rejected every insert — and supabase-js
-   * *returns* errors rather than throwing, so the rejection was discarded and
-   * the event kept its local id. Nothing failed visibly; events simply never
-   * left the phone, on a screen whose header is about syncing across devices.
-   *
-   * Study notes deliberately do **not** use this: they are on-device only, by
-   * the owner's decision. See `hooks/useUserNotes`.
-   */
-  const [uid, setUid] = useState<string | null>(null);
   const [authBusy, setAuthBusy] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
 
@@ -171,7 +157,6 @@ export default function ProgressScreen() {
 
   useEffect(() => {
     getSignedInEmail().then(setEmail);
-    currentUserId().then(setUid);
   }, []);
 
   // Once-a-day rewarded ad for the "progress" bucket. Gated on an existing
@@ -189,7 +174,6 @@ export default function ProgressScreen() {
     try {
       const account = await signInWithGoogle();
       setEmail(account.email);
-      setUid(await currentUserId());
       // Merge whatever this device recorded anonymously into the account.
       await reconcileProgress();
     } catch (err) {
@@ -206,7 +190,6 @@ export default function ProgressScreen() {
     try {
       await signOutGoogle();
       setEmail(null);
-      setUid(null);
     } finally {
       setAuthBusy(false);
     }
@@ -419,7 +402,7 @@ export default function ProgressScreen() {
       </View>
 
       {tab === 'calendar' ? (
-        <ProgressCalendarTab userId={uid} />
+        <ProgressCalendarTab />
       ) : tab === 'notes' ? (
         <ProgressNotesTab year={year} />
       ) : (
