@@ -119,3 +119,50 @@ CONNECT — so none of the following has actually run. Antigravity can reach it.
    and the notes function's own comments call it private. Anyone with a URL can
    download them. It should be private — the function reads it with the
    service-role key and is unaffected by the change.
+
+## Deck size is a floor, and two places have to agree on it
+
+A chapter's question count is **not** its deck size. One "describe and classify"
+essay question is worth a dozen cards, so a 15-question chapter still owes the
+reader a full sitting. `MIN_CARDS`/`MAX_CARDS` in the edge function and
+`MIN_DECK_CARDS`/`MAX_DECK_CARDS` in `mobile/src/lib/flashcards.ts` are **20 and
+50**, and `deckTargetFor()` is the client's copy of the server's formula.
+
+The chapter list shows that number *before the deck exists*, which is why the
+two must not drift: the row is a promise the server has to keep.
+`npm run check:flashcard-size` pins the constants, both formulas, and two rules
+that are easy to undo:
+
+- **Images are a ceiling, never a quota.** `wantTheory = target - images`, so a
+  chapter with four diagrams gets four image cards and sixteen theory ones, and
+  a chapter with none gets twenty theory cards. Take that subtraction out and
+  every chapter without diagrams builds a near-empty deck.
+- **An undersized cached deck rebuilds once, not for ever.** Rows carry
+  `card_count` as the marker that they came from a version that knows about the
+  floor. Without it, a chapter that genuinely cannot reach 20 cards would fail
+  its own cache test on every open and burn a Gemini call each time.
+
+Ask the model for **more** cards than the deck needs (`THEORY_MARGIN`). It
+routinely under-delivers, and cards are then dropped again as duplicates. Asking
+for exactly 20 is how a deck arrives with 11.
+
+## The three counts are Anki's, and the queue is capped
+
+`20 new · 3 learning · 0 to review` is not a deck summary — it is what is **due
+right now**:
+
+- **new** — never studied. `dueQueue` serves at most `NEW_PER_DAY` (20) a day,
+  which is Anki's default. A 44-card deck showing "20 new" has not lost 24
+  cards; the header says `24 more tomorrow` for exactly this reason.
+- **learning** — seen today, still inside the 1m/10m steps, coming back within
+  the hour.
+- **to review** — graduated cards whose interval has elapsed. It is **0 on a
+  new deck and stays 0 until the next day**, because a card graduated today is
+  due tomorrow at the earliest. Zero there is the system working.
+
+## Card ids are hashed from the front, not the index
+
+They used to be `{subtopicKey}::0`, `::1`, … The schedule lives on the phone and
+is keyed on the id, so regenerating a chapter handed card 0's ease, interval and
+lapses to whatever question landed in slot 0 next time. The deck kept working
+and quietly lied about what the reader had learned.

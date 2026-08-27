@@ -1,0 +1,116 @@
+// The chapter list promises a deck size before the deck exists.
+//
+// `TopicsView` renders `deckTargetFor(topic.questions.length)` cards under each
+// chapter. The reader taps it, and `generate-flashcards` decides — on a server,
+// from its own constants — how many cards to actually build. Those are two
+// implementations of one number, in two languages, in two places, and only one
+// of them is on the phone.
+//
+// When they disagree the reader is the one who finds out: a chapter advertised
+// as 15 questions opened as an 11-card deck, and there was no way to tell
+// whether cards had failed to generate, failed to load, or never existed.
+//
+// So this asserts the two agree — the constants, and the formula that combines
+// them. It reads the edge function from `supabase/functions/`, which is the
+// deployed source: the repo's copy of an edge function has gone stale before
+// (the notes function was two versions behind for weeks, and reading it agreed
+// with a bug), so the file being checked is the file being deployed.
+//
+//   node scripts/flashcard-size-check.mjs
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
+const CLIENT = 'mobile/src/lib/flashcards.ts';
+const SERVER = 'supabase/functions/generate-flashcards/index.ts';
+
+const failures = [];
+const check = (ok, message) => {
+  if (!ok) failures.push(message);
+};
+
+const read = file => fs.readFile(path.join(root, file), 'utf8');
+
+const client = await read(CLIENT).catch(() => null);
+const server = await read(SERVER).catch(() => null);
+
+check(client !== null, `${CLIENT} is missing — the chapter list has no deck size to show`);
+check(server !== null, `${SERVER} is missing — the repo no longer carries the deployed function`);
+
+if (client && server) {
+  const num = (body, name) => {
+    const match = body.match(new RegExp(`${name}\\s*=\\s*(\\d+)`));
+    return match ? Number(match[1]) : null;
+  };
+
+  const pairs = [
+    ['MIN_DECK_CARDS', 'MIN_CARDS', 'the floor — how small a deck is allowed to be'],
+    ['MAX_DECK_CARDS', 'MAX_CARDS', 'the ceiling — how large a deck is allowed to be'],
+  ];
+
+  for (const [clientName, serverName, what] of pairs) {
+    const a = num(client, clientName);
+    const b = num(server, serverName);
+    check(a !== null, `${CLIENT} no longer defines ${clientName}`);
+    check(b !== null, `${SERVER} no longer defines ${serverName}`);
+    check(
+      a !== null && b !== null && a === b,
+      `${what}: ${clientName} is ${a} but ${serverName} is ${b}. ` +
+        `The chapter list would promise ${a} cards and the server would build ${b}.`,
+    );
+  }
+
+  // The formula, not just the numbers. Same shape both sides:
+  //   max(MIN, min(MAX, questionCount))
+  check(
+    /Math\.max\(\s*MIN_DECK_CARDS\s*,\s*Math\.min\(\s*MAX_DECK_CARDS\s*,\s*questionCount\s*\)\s*\)/.test(
+      client,
+    ),
+    `${CLIENT}: deckTargetFor is no longer max(MIN, min(MAX, questionCount))`,
+  );
+  check(
+    /Math\.max\(\s*MIN_CARDS\s*,\s*Math\.min\(\s*MAX_CARDS\s*,\s*questions\.length\s*\)\s*\)/.test(
+      server,
+    ),
+    `${SERVER}: target is no longer max(MIN, min(MAX, questions.length))`,
+  );
+
+  // Images are a ceiling, never a quota: theory has to make up the difference,
+  // or a chapter with two diagrams builds a two-card deck.
+  check(
+    /const\s+wantTheory\s*=\s*target\s*-\s*selectedDiagrams\.length/.test(server),
+    `${SERVER}: theory no longer fills the space images did not use, so a ` +
+      `chapter with few diagrams will build a short deck`,
+  );
+
+  // A cached deck smaller than the floor is a deck built by an older version.
+  // Serving it is how a stale row outlives the fix that replaced it.
+  check(
+    /cached\.cards\.length\s*>=\s*Math\.min\(\s*target\s*,\s*MIN_CARDS\s*\)/.test(server),
+    `${SERVER}: an undersized cached deck is served instead of rebuilt`,
+  );
+
+  // ...but "too small, rebuild it" without an escape hatch is a Gemini call on
+  // every open, for ever, for any chapter that cannot reach the floor. The
+  // `card_count` marker is what makes the rebuild happen once instead.
+  check(
+    /builtByThisVersion/.test(server) && /card_count:\s*cards\.length/.test(server),
+    `${SERVER}: nothing marks a row as built by the current version, so an ` +
+      `undersized deck would regenerate on every single open`,
+  );
+}
+
+if (failures.length > 0) {
+  for (const failure of failures) {
+    process.stdout.write(`  FAIL  ${failure}\n`);
+  }
+  process.stdout.write(
+    `\n${failures.length} problem(s) — the chapter list and the server disagree about deck size.\n`,
+  );
+  process.exit(1);
+}
+
+process.stdout.write(
+  'OK  client and server agree on deck size; theory fills for missing diagrams; stale decks rebuild\n',
+);

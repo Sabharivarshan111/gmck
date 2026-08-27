@@ -1482,6 +1482,23 @@ await step('a flashcard chapter opens, and a deck that cannot build offers a ret
     throw new Error(`only ${chapters} chapters listed for Community Medicine — the walk is broken`);
   }
 
+  /*
+   * The row promises a deck size, not a question count.
+   *
+   * They are different numbers — an essay question is worth several cards — and
+   * the row used to show the question count, so a chapter listed as "15
+   * questions" opened as a deck of some other size and looked broken. Whatever
+   * the row says, it has to be the number of cards, and never below the floor.
+   */
+  const firstLabel = await page.locator('[aria-label*="study flashcards"]').first().getAttribute('aria-label');
+  const promised = Number(/,\s*(\d+)\s+cards,/.exec(firstLabel ?? '')?.[1]);
+  if (!Number.isFinite(promised)) {
+    throw new Error(`a chapter row does not promise a card count: ${firstLabel}`);
+  }
+  if (promised < 20) {
+    throw new Error(`a chapter promises ${promised} cards, below the 20-card floor`);
+  }
+
   await page.locator('[aria-label*="study flashcards"]').first().click();
   await page.waitForTimeout(2500);
 

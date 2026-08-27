@@ -138,6 +138,7 @@ jobs:
           npm run check:anki
           npm run check:textbooks
           npm run check:one-app
+          npm run check:flashcard-size
 
       # Test ads are chosen in source now, not by the bundler's dev flag —
       # see mobile/src/lib/adsMode.ts. Overwriting it here is what lets this

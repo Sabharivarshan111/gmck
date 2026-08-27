@@ -114,6 +114,7 @@ jobs:
           npm run check:anki
           npm run check:textbooks
           npm run check:one-app
+          npm run check:flashcard-size
 
       # Test ads come from source, not from the bundler's dev flag — see
       # mobile/src/lib/adsMode.ts. The Gradle plugin bundles this variant

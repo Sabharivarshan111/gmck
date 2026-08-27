@@ -714,6 +714,70 @@ debug, internal and release workflows.
 
 ---
 
+## 8g. Flashcards on a real phone: what was wrong (2026-08-27)
+
+The Supabase connector came online, so all of this was diagnosed against the
+live project rather than guessed. Four reports from the app's owner.
+
+### The counts were two different numbers, and both were right
+
+A chapter listed as "15 questions" opened as a deck showing "11 new", and one
+listed as 44 showed 20. Neither was losing cards.
+
+- The **row** showed the chapter's *question count*, from the question bank.
+- The **header** showed the *due queue*, which is capped at `NEW_PER_DAY` (20).
+
+So two unrelated numbers were being compared, and a third — the deck's actual
+size — was never shown at all. The row now shows `deckTargetFor(...)` cards, and
+the header adds `N more tomorrow` whenever the daily cap is holding cards back.
+
+### Decks were as small as their chapters
+
+`target` was `min(50, max(12, questions.length))`, so a 15-question chapter
+built a 15-card deck. A question count is not a workload — one essay question is
+worth a dozen cards. The floor is now **20** (`MIN_CARDS`/`MIN_DECK_CARDS`), the
+model is asked for `THEORY_MARGIN` more than the deck needs because it
+under-delivers, and images are a **ceiling not a quota**: theory fills whatever
+the diagrams did not.
+
+Undersized cached decks rebuild themselves on next open. `card_count` on the row
+is what keeps that from becoming a Gemini call on every open for a chapter that
+genuinely cannot reach 20 — see `.agents/rules/60-flashcards.md`.
+
+Deployed as `generate-flashcards` **v7**, from
+`supabase/functions/generate-flashcards/index.ts`, which is now in the repo
+precisely so the two cannot drift again.
+
+### Card ids were the card's position in the deck
+
+`{subtopicKey}::0`, `::1`, … The schedule is on the phone and keyed on the id,
+so regenerating a chapter handed card 0's ease, interval and lapses to whatever
+question landed in slot 0 next time. Ids are hashed from the front now.
+
+**Anyone who has already studied flashcards loses that progress once**, on the
+decks that rebuild. It is a few minutes of review, against a scheduler that was
+otherwise going to keep misattributing it.
+
+### "Add card" on a custom deck — hardened, not confirmed
+
+Not reproducible here: `check:smoke` walks that exact flow (name a deck, fill
+both fields, press Add, see the card) and it passes, and react-native-web has no
+soft keyboard. Two things were wrong regardless and both are fixed:
+
+- The press now dismisses the keyboard first. `keyboardShouldPersistTaps` on the
+  ScrollView does not cover a Pressable whose press begins inside the keyboard's
+  inset, and both fields are `multiline`, so the keyboard is up when the finger
+  lands. That is the likeliest cause and it is Android-only, which fits.
+- `addCard` was awaited in an async `onPress` with **no catch**. Any storage
+  failure was an unhandled rejection, which React Native does not surface: the
+  card just did not appear and there was nothing to read. It now shows the
+  error.
+
+**Needs confirming on a phone.** If it still fails, the error line under the
+button is the thing to read.
+
+---
+
 ## 9. High-Yield AI Exam Diagrams & Localhost Previews
 
 ### Local Dev & Preview URLs

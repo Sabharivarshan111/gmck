@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   Image,
+  Keyboard,
   ScrollView,
   StyleSheet,
   TextInput,
@@ -19,6 +20,7 @@ import { getSubjects, YEAR_LABEL, type BankNode } from '@/lib/questionBank';
 import { YEAR_TO_KEY, type Year } from '@/lib/profile';
 import { flattenSubjectTopics, type LeafTopic } from '@/lib/handwrittenNotes';
 import {
+  deckTargetFor,
   fetchDeck,
   loadSchedule,
   reconcile,
@@ -386,6 +388,7 @@ function EditDeckView({ deckId, onBack }: { deckId: string; onBack: () => void }
   const [decks, setDecks] = useState<CustomDeck[] | null>(null);
   const [front, setFront] = useState('');
   const [back, setBack] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     loadCustomDecks().then(setDecks);
@@ -397,10 +400,34 @@ function EditDeckView({ deckId, onBack }: { deckId: string; onBack: () => void }
     if (!front.trim() || !back.trim()) {
       return;
     }
-    setDecks(await addCard(deckId, front, back));
-    setFront('');
-    setBack('');
-    complete();
+    /*
+     * The keyboard goes first.
+     *
+     * Both fields are `multiline`, so on Android the soft keyboard is up while
+     * the finger comes down on this button. `keyboardShouldPersistTaps` on the
+     * ScrollView is what is supposed to let the tap through, and it does not
+     * cover a Pressable whose press begins inside the keyboard's own inset —
+     * the tap is spent dismissing the keyboard and the button never hears it.
+     * Dismissing first makes the press land the first time rather than the
+     * second, and costs nothing when there is no keyboard (the preview, where
+     * this always appeared to work).
+     */
+    Keyboard.dismiss();
+    try {
+      setDecks(await addCard(deckId, front, back));
+      setFront('');
+      setBack('');
+      setError(null);
+      complete();
+    } catch (err) {
+      /*
+       * Storage is the only thing that can fail here, and it used to fail
+       * invisibly: an async onPress with no catch is an unhandled rejection,
+       * which React Native does not surface. The card simply did not appear and
+       * there was nothing to read. Whatever went wrong, the reader gets told.
+       */
+      setError((err as Error)?.message ?? 'Could not save that card.');
+    }
   }, [back, deckId, front]);
 
   if (!deck) {
@@ -447,6 +474,11 @@ function EditDeckView({ deckId, onBack }: { deckId: string; onBack: () => void }
         <Text style={[styles.hint, { color: colors.textMuted }]}>
           One fact per card. If the answer needs a paragraph, it is two cards.
         </Text>
+        {error ? (
+          <Text accessibilityLiveRegion="polite" style={[styles.hint, { color: colors.danger }]}>
+            {error}
+          </Text>
+        ) : null}
       </View>
 
       {deck.cards.map(card => (
@@ -553,12 +585,21 @@ function TopicsView({
         <Touchable
           key={topic.key}
           onPress={() => onPick(topic)}
-          label={`${topic.name}, ${topic.questions.length} questions, study flashcards`}
+          label={`${topic.name}, ${deckTargetFor(topic.questions.length)} cards, study flashcards`}
           style={[styles.row, { backgroundColor: colors.card, borderColor: colors.border }]}>
           <View style={styles.flex}>
             <Text style={[styles.rowTitle, { color: colors.text }]}>{topic.name}</Text>
+            {/*
+              The deck's size, not the chapter's question count.
+
+              These are different numbers and the row used to show the wrong
+              one. A chapter of 15 questions builds a 20-card deck — an essay
+              question is worth several cards — so "15 questions" was a promise
+              about something the reader was never shown, and every deck looked
+              like it had lost cards on the way.
+            */}
             <Text style={[styles.rowSub, { color: colors.textMuted }]}>
-              {topic.questions.length} questions
+              {deckTargetFor(topic.questions.length)} cards
             </Text>
           </View>
           <ChevronRight size={20} color={colors.textMuted} />
@@ -662,6 +703,25 @@ export function StudyView({
   );
   const queue = useMemo(() => dueQueue(cards), [cards]);
   const tally = useMemo(() => counts(cards), [cards]);
+  /**
+   * The three counts, plus what is being held back.
+   *
+   * `dueQueue` serves at most NEW_PER_DAY (20) new cards a day, which is
+   * Anki's default and the whole point of spaced repetition — twenty a day is
+   * a habit, forty-four in one sitting is a evening that never happens again.
+   * But a 44-card deck that says "20 new" reads as a deck that lost 24 cards.
+   * Saying where they went is the difference between a limit and a bug.
+   */
+  const heldBack = useMemo(
+    () => cards.filter(c => c.type === 'new').length - tally.fresh,
+    [cards, tally.fresh],
+  );
+  const queueSubtitle = useMemo(() => {
+    const parts = [`${tally.fresh} new`, `${tally.learning} learning`, `${tally.review} to review`];
+    return heldBack > 0
+      ? `${parts.join(' · ')}  ·  ${heldBack} more tomorrow`
+      : parts.join(' · ');
+  }, [heldBack, tally.fresh, tally.learning, tally.review]);
   const current = queue[0];
   const face = useMemo(
     () => (current && deck ? deck.find(c => c.id === current.id) ?? null : null),
@@ -744,7 +804,7 @@ export function StudyView({
     <>
       <Header
         title={topic.name}
-        subtitle={`${tally.fresh} new · ${tally.learning} learning · ${tally.review} to review`}
+        subtitle={queueSubtitle}
         onBack={onBack}
       />
 

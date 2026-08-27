@@ -29,6 +29,29 @@ export interface Deck {
   cached: boolean;
 }
 
+/**
+ * How many cards a chapter's deck will have.
+ *
+ * **Mirrors `MIN_CARDS`/`MAX_CARDS` in the `generate-flashcards` edge
+ * function, and must keep mirroring them.** The chapter list shows this number
+ * before the deck exists, so if the two drift the list makes a promise the
+ * server does not keep — which is exactly how a chapter listed as "15
+ * questions" opened as an 11-card deck.
+ *
+ * The floor is the important half. A chapter's question count is not its
+ * workload: one "describe and classify" essay question is worth a dozen cards,
+ * so a 15-question chapter still deserves a full sitting. Deck size used to be
+ * the question count, and small chapters were the ones that suffered.
+ *
+ * `npm run check:flashcard-size` pins this to the deployed function.
+ */
+export const MIN_DECK_CARDS = 20;
+export const MAX_DECK_CARDS = 50;
+
+export function deckTargetFor(questionCount: number): number {
+  return Math.max(MIN_DECK_CARDS, Math.min(MAX_DECK_CARDS, questionCount));
+}
+
 /** Same shape the function builds, so a cache hit and a fresh build agree. */
 export function deckKeyFor(year: string, subject: string, subtopicKey: string): string {
   return `${year}::${subject}::${subtopicKey}`;
