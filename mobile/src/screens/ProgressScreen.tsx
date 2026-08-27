@@ -51,8 +51,8 @@ import { ExamCountdownCard } from '@/components/ExamCountdownCard';
 import { SubjectBreakdownSheet } from '@/components/SubjectBreakdownSheet';
 import { ReviseSheet } from '@/components/ReviseSheet';
 import { useSpacedRepetition } from '@/hooks/useSpacedRepetition';
-import { getLastStudyDay, getQuestionId, isQuestionDone } from '@/lib/progress';
-import { epochDay, updateDigest } from '@/lib/notifications';
+import { getQuestionId, isQuestionDone } from '@/lib/progress';
+import { syncReminders } from '@/lib/reminderSync';
 import { useSettings } from '@/lib/settings';
 import { useExam } from '@/hooks/useExam';
 import { Brain } from 'lucide-react-native';
@@ -216,33 +216,21 @@ export default function ProgressScreen() {
   const [revising, setRevising] = useState(false);
 
   /**
-   * Hand the daily reminder the facts, from the one screen that has them all.
+   * Refresh the daily reminder's facts when the things behind them change.
    *
-   * Written here rather than on a timer because this is where exam, streak and
-   * revision already meet — and because writing it also tells the native side
-   * the app was opened, which resets the ignored-reminder back-off.
+   * The digest itself is composed in `lib/reminderSync.ts` and written from
+   * there and from launch. It used to be composed *here*, which meant it only
+   * existed for readers who had visited this screen — everyone else armed an
+   * alarm over an empty digest and never heard a thing.
    *
-   * Only the *earliest* due day and the count go over: the receiver needs to
-   * know whether anything is due today, not the whole schedule.
+   * This effect stays because this is where exam, streak and revision change,
+   * and because writing a digest also tells the native side the app was
+   * opened, which resets the ignored-reminder back-off.
    */
   const reminderExam = useExam(shortYear);
   const reminderSettings = useSettings();
   useEffect(() => {
-    const soonest = revision.cards.reduce<number | null>(
-      (earliest, card) => (earliest === null || card.due < earliest ? card.due : earliest),
-      null,
-    );
-    updateDigest({
-      examDay: reminderExam ? epochDay(reminderExam.date) : -1,
-      examName: reminderExam?.name ?? 'your exam',
-      lastStudyDay: getLastStudyDay(),
-      streak,
-      revisionDueDay: soonest === null ? -1 : epochDay(soonest),
-      revisionDueCount: revision.due.length,
-      allowExam: reminderSettings.remindExam,
-      allowStreak: reminderSettings.remindStreak,
-      allowRevision: reminderSettings.remindRevision,
-    });
+    syncReminders().catch(() => {});
   }, [
     reminderExam,
     revision.cards,

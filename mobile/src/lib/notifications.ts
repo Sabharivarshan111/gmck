@@ -150,6 +150,38 @@ export function updateDigest(digest: Digest): void {
   }
 }
 
+export type TestResult = 'posted' | 'quiet' | 'blocked' | 'unavailable';
+
+/**
+ * Post tonight's reminder now.
+ *
+ * `posted` — a real reminder went out. `quiet` — tonight's rules produce
+ * nothing, so a note saying exactly that went out instead; delivery still
+ * proven. `blocked` — Android will not deliver. `unavailable` — no module,
+ * which is the preview harness.
+ */
+export async function sendTestNotification(): Promise<TestResult> {
+  if (!native) {
+    return 'unavailable';
+  }
+  try {
+    const result = await native.sendTest();
+    return result === 'posted' || result === 'quiet' || result === 'blocked'
+      ? result
+      : 'blocked';
+  } catch {
+    return 'blocked';
+  }
+}
+
+/** "7:00 pm" from an hour of the day, for a control that sets one. */
+export function formatHour(hour: number): string {
+  const h = ((hour % 24) + 24) % 24;
+  const suffix = h < 12 ? 'am' : 'pm';
+  const twelve = h % 12 === 0 ? 12 : h % 12;
+  return `${twelve}:00 ${suffix}`;
+}
+
 export function cancelNotifications(): void {
   try {
     native?.cancelAll();

@@ -5,7 +5,7 @@ import { Touchable } from '@/components/Touchable';
 import { Sheet } from '@/components/Sheet';
 import { NotificationBell } from '@/components/NotificationBell';
 import { Slider } from '@/components/Slider';
-import { Check } from 'lucide-react-native';
+import { BellRing, Check } from 'lucide-react-native';
 import { useTheme, withAlpha } from '@/theme';
 import { radius, space } from '@/theme/tokens';
 import { typeScale } from '@/theme/typography';
@@ -31,7 +31,11 @@ import {
   notificationsAvailable,
   requestNotificationPermission,
   setNotificationSchedule,
+  formatHour,
+  sendTestNotification,
+  type TestResult,
 } from '@/lib/notifications';
+import { syncReminders } from '@/lib/reminderSync';
 
 /**
  * Everything the user can change, in one place.
@@ -95,6 +99,23 @@ function Switchable({
   );
 }
 
+/**
+ * What to say after "Send one now".
+ *
+ * `quiet` is not a failure and must not read like one: it is the whole policy
+ * working — nothing due, so nothing sent. Saying "no notification appeared"
+ * there would teach the reader the feature is broken on exactly the evenings
+ * it is behaving best.
+ */
+const TEST_REPLY: Record<string, string> = {
+  posted: 'Sent — check your notification shade. That is the message tonight would carry.',
+  quiet:
+    'Sent a note saying there is nothing due. That is what tonight would be: no exam within a ' +
+    'week, no streak at risk, no revision waiting. Notifications are reaching you.',
+  blocked: 'Android is not letting Orbit post. Turn notifications on for Orbit in system settings.',
+  unavailable: 'This build cannot post notifications.',
+};
+
 export function SettingsSheet({
   visible,
   onClose,
@@ -125,6 +146,8 @@ export function SettingsSheet({
    * over a permission that has been taken away is a switch that lies.
    */
   const [notifyAllowed, setNotifyAllowed] = useState(false);
+  /** null before anything is sent, 'sending' while in flight, then the result. */
+  const [testState, setTestState] = useState<TestResult | 'sending' | null>(null);
   useEffect(() => {
     if (visible) {
       setNotifyAllowed(hasNotificationPermission());
@@ -341,6 +364,10 @@ export function SettingsSheet({
               }
               setSetting('dailyReminder', true);
               setNotificationSchedule(true, settings.reminderHour ?? DEFAULT_HOUR);
+              // The switch used to arm an alarm over an empty digest, so the
+              // check woke every evening, found no facts and went back to
+              // sleep. See lib/reminderSync.ts.
+              syncReminders().catch(() => {});
             }}
           />
           {/* The whole policy, said plainly. Someone deciding whether to let an
@@ -384,6 +411,83 @@ export function SettingsSheet({
               <Text style={[styles.note, { color: withAlpha(colors.text, 0.5) }]}>
                 Turning all three off is the same as turning the reminder off.
               </Text>
+
+              {/*
+                When it arrives.
+
+                The hour was a constant — 19:00, for everyone. A reminder is a
+                thing that interrupts you, so the one control it most obviously
+                needs is the one saying when it may. Whole hours only: the
+                alarm is inexact by design (see NotifyScheduler.kt), so minutes
+                would be a precision the delivery cannot honour.
+              */}
+              <Text style={[styles.sectionLabel, { color: colors.textMuted }]}>WHEN</Text>
+              <View style={styles.scaleRow}>
+                <Text style={[styles.rowDetail, { color: colors.textMuted }]}>
+                  Check for something to say at
+                </Text>
+                <Text style={[styles.value, { color: colors.text }]}>
+                  {formatHour(settings.reminderHour)}
+                </Text>
+              </View>
+              <Slider
+                value={settings.reminderHour}
+                min={6}
+                max={23}
+                step={1}
+                onChange={next => setSetting('reminderHour', Math.round(next))}
+                // On release, not on every step: each one re-arms an alarm.
+                onCommit={next => {
+                  setNotificationSchedule(true, Math.round(next));
+                  syncReminders().catch(() => {});
+                }}
+                label="Reminder time"
+                format={value => formatHour(Math.round(value))}
+                ticks={[6, 12, 19, 23]}
+                detents={[DEFAULT_HOUR]}
+              />
+              <Text style={[styles.note, { color: withAlpha(colors.text, 0.5) }]}>
+                Give or take a few minutes — the alarm is inexact so Android can
+                batch it with whatever else it was waking for, which is most of
+                what a daily alarm costs a battery.
+              </Text>
+
+              {/*
+                And the way to find out it works.
+
+                Almost every rule in this feature is a rule about *not*
+                posting, so it is silent on most evenings by design — which
+                makes working and broken look identical from the outside. This
+                sends tonight's real message through the real code path, and
+                says plainly when tonight's answer is "nothing".
+              */}
+              <Touchable
+                onPress={async () => {
+                  setTestState('sending');
+                  await syncReminders().catch(() => {});
+                  setTestState(await sendTestNotification());
+                }}
+                label="Send a reminder now"
+                hint="Posts tonight's reminder straight away so you can see one"
+                style={[
+                  styles.testButton,
+                  { borderColor: colors.border, backgroundColor: colors.cardElevated },
+                ]}>
+                <BellRing size={16} color={colors.accent} />
+                <Text style={[typeScale.callout, { color: colors.text }]}>
+                  {testState === 'sending' ? 'Sending…' : 'Send one now'}
+                </Text>
+              </Touchable>
+              {testState && testState !== 'sending' ? (
+                <Text
+                  accessibilityLiveRegion="polite"
+                  style={[
+                    styles.note,
+                    { color: testState === 'blocked' ? colors.warning : colors.textMuted },
+                  ]}>
+                  {TEST_REPLY[testState]}
+                </Text>
+              ) : null}
             </View>
           ) : null}
         </>
@@ -541,6 +645,16 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  testButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    borderRadius: 12,
+    borderWidth: StyleSheet.hairlineWidth,
+    paddingVertical: 12,
+    marginTop: 12,
   },
   reminderHead: {
     flexDirection: 'row',

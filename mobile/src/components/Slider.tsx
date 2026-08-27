@@ -263,6 +263,20 @@ export function Slider({
         now: Math.round(((value - min) / range) * 100),
         text: format(value),
       }}
+      /*
+       * The same value again as aria, for the same reason `Touchable` sends
+       * `state` twice: react-native-web 0.21 reads only the aria props, so
+       * without these a slider in the preview reports no value at all — and
+       * `check:smoke` drives this app through the DOM, so a control it cannot
+       * read the value of is a control nothing can assert moved. It is not
+       * preview-only either: a screen reader on the web app gets nothing.
+       * React Native maps aria-* onto the same state natively, and both come
+       * from the one `value`, so they cannot disagree.
+       */
+      aria-valuemin={0}
+      aria-valuemax={100}
+      aria-valuenow={Math.round(((value - min) / range) * 100)}
+      aria-valuetext={format(value)}
       accessibilityActions={[{ name: 'increment' }, { name: 'decrement' }]}
       onAccessibilityAction={event => {
         // TalkBack's adjustable role is swipe up / swipe down, and it is the

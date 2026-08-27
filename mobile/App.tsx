@@ -12,6 +12,7 @@ import { hydratePremium, usePremiumSync } from '@/lib/premium';
 import { hydrateWallpaper, isWallpaperHydrated } from '@/hooks/useWallpaper';
 import { DailyAdConsent } from '@/components/DailyAdConsent';
 import { XpToast } from '@/components/XpToast';
+import { syncReminders } from '@/lib/reminderSync';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 function Shell() {
@@ -26,6 +27,18 @@ function Shell() {
     hydrateSettings().catch(() => {});
     hydrateProgress().then(() => {
       reconcileProgress().catch(() => {});
+      /*
+       * Hand the reminder its facts, and re-arm its alarm.
+       *
+       * After hydration because every fact it writes is read from a store that
+       * has to be loaded first — a digest written before then says nobody has
+       * ever studied and no revision is due, which is a message the receiver
+       * would act on. And at launch at all because the digest used to be
+       * written from one screen, so a reader who turned the reminder on and
+       * never opened My Progress armed an alarm over an empty digest: it woke
+       * every evening, found nothing to say, and went back to sleep for ever.
+       */
+      syncReminders().catch(() => {});
     });
     // Needed before the reminder digest is written, and cheap enough that it
     // rides along with the rest rather than waiting for a screen to want it.

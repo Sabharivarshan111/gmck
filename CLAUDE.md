@@ -26,6 +26,7 @@ when picking up work that was last touched from the other tool.
 | `.agents/rules/70-supabase.md` | Supabase — why no sandbox can reach it, and the queue that stops blocked work being forgotten |
 | `.agents/rules/80-keyboard.md` | Text inputs and the Android keyboard — why adjustResize is dead and what replaces it |
 | `.agents/rules/90-xp.md` | XP, badges, streak and the leaderboard — one ladder shared with the web app, and why a reward has to look like one |
+| `.agents/rules/91-notifications.md` | The daily study reminder — why it is usually silent, and the two ways that silence has meant "broken |
 <!-- rules:end -->
 
 This repo is worked on from Claude Code *and* Antigravity, sometimes on the
@@ -673,6 +674,43 @@ That is not a preview-only cosmetic: `check:smoke` asserts through the DOM, and
 the reminder's "off by default" assertion passed for a year while reading an
 attribute that was never emitted.
 
+## The daily reminder needs its facts written before the evening
+
+`NotifyReceiver` decides at fire time, from a **digest** the app leaves behind
+— days to the exam, whether today counts as studied, the streak, what revision
+is due. It posts nothing when that digest is empty, which is correct.
+
+The digest used to be written from `ProgressScreen` and nowhere else. Turn the
+reminder on in Settings, never open My Progress, and the alarm woke every
+evening, found no facts and went back to sleep. For ever, with the switch
+showing on. Nothing failed and nothing logged.
+
+`lib/reminderSync.ts` is the only writer now, called from `App.tsx` **after
+`hydrateProgress` resolves** — before it, the digest says nobody has ever
+studied and the receiver acts on that. It also re-arms the alarm on every
+launch, because an Android alarm does not survive a force-stop and the switch
+was the only thing that had ever armed one.
+
+**"Send one now" is the feature, not a debug button.** Almost every rule here
+is a rule about *not* posting, so it is silent on most evenings by design — and
+that makes working and completely dead look identical from the outside, which
+is exactly how the bug above survived. `sendTest` runs the receiver's real
+`compose` over the real digest and posts through its real `post`; the
+*frequency* gates are skipped because this is a deliberate request, not the
+daily check, and it never writes `KEY_LAST_POSTED` or asking to see one would
+silence tonight's. When tonight's answer is genuinely nothing it says so rather
+than inventing a message.
+
+The hour is the reader's (`reminderHour`, 6 to 23). It had been a stored
+setting with no control behind it — 19:00 for everyone. Whole hours only:
+`setWindow` is inexact by design, so minutes would be a precision the delivery
+cannot honour.
+
+`npm run check:reminder` pins all of that, plus the manifest permissions, the
+receiver declaration and the TurboModule registration — none of which the
+preview harness can see, since react-native-web has no NotificationManager, no
+AlarmManager and no shade.
+
 ## XP is one ladder, and the phone does not get its own
 
 `mobile/src/lib/xp.ts` is the whole economy: the level band, the six badges,
@@ -761,6 +799,7 @@ npm run check:one-app            # the frozen web app has grown no second copy
 npm run check:flashcard-size     # the chapter list's card count is the one the server builds
 npm run check:streak             # the streak counts on a phone with no account
 npm run check:xp                 # one XP ladder, shared with the web app
+npm run check:reminder           # the daily reminder can actually reach a phone
 npm run check:supabase-queue     # every job waiting on Supabase can still be applied
 npm run check:keyboard           # no text input can sit under the Android keyboard
 npm run check:mcq                # MCQ response parsing + the ask-gemini markers

@@ -13,15 +13,14 @@
 > npm run dev:mobile        # or: cd mobile && npm run preview
 > ```
 >
-> If you previewed this project and saw an app with none of the motion work in
-> it, that is why: you were looking at the web app.
+> Previewed this and saw none of the motion work? That is why: you were
+> looking at the web app.
 
-Cross-tool rules (Antigravity, Cursor, Codex, Claude Code). Kept under
-Antigravity's 12,000-character cap, so it is deliberately the short version.
+Cross-tool rules (Antigravity, Cursor, Codex, Claude Code), kept under
+Antigravity's 12,000-char cap — deliberately the short version.
 
-**Read `HANDOFF.md` first** for current status and what is outstanding, then
-`CLAUDE.md` for the full reasoning behind everything below. This file is the
-subset that is expensive to get wrong in the first hour.
+**Read `HANDOFF.md` first** for current status, then `CLAUDE.md` for the full
+reasoning. This file is the subset that is expensive to get wrong early.
 
 `.agents/rules/` holds the rest, split so each file fits the cap:
 
@@ -40,7 +39,7 @@ holding rules of its own, or if any path above stops resolving.
 
 | Path | What |
 |---|---|
-| `src/`, `index.html`, `vite.config.ts` | the original Vite/React **web** app, still live |
+| `src/`, `index.html`, `vite.config.ts` | the Vite/React **web** app, still live |
 | `mobile/` | the **React Native Android** app |
 | `supabase/` | edge functions and migrations, shared by both |
 
@@ -217,6 +216,7 @@ cd mobile
 npx tsc --noEmit          # must be clean
 npx eslint . --quiet      # must print nothing (warnings hide the errors)
 npm run check:xp          # one XP ladder, shared with the web
+npm run check:reminder    # the daily reminder can reach a phone
 npm run check:fanout      # per-question subscriptions still isolated
 npm run check:sync        # progress reaches the cloud once a session exists
 npm run check:contrast    # every built-in theme stays readable

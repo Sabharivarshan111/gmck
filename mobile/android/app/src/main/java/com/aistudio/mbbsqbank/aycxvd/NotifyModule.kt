@@ -111,6 +111,48 @@ class NotifyModule(reactContext: ReactApplicationContext) :
       .apply()
   }
 
+  /**
+   * Post tonight's reminder now, so the reader can see one.
+   *
+   * The rules this feature is made of are rules about *not* posting — nothing
+   * if you studied today, nothing if there is no deadline near, one a week
+   * after three ignored — so it is silent on most evenings by design. Which
+   * makes "working correctly" and "completely broken" look identical from the
+   * outside, to the reader and to whoever wrote it. There was no way to tell
+   * short of waiting for the evening.
+   *
+   * It runs the receiver's real `compose` over the real digest and posts
+   * through the receiver's real `post`, so what arrives is what would arrive.
+   * The *frequency* gates are skipped on purpose: they are about how often,
+   * and this is a deliberate request, not the daily check. Nothing is written
+   * to KEY_LAST_POSTED either, or asking to see one would silence tonight's.
+   *
+   * When tonight's rules genuinely produce nothing it says so rather than
+   * inventing a message — that answer is the feature working, and it is worth
+   * more than a fake reminder that teaches the reader the wrong thing.
+   */
+  override fun sendTest(promise: Promise) {
+    val context = reactApplicationContext
+    if (!hasPermission()) {
+      promise.resolve("blocked")
+      return
+    }
+    val receiver = NotifyReceiver()
+    val digest = NotifyStore.digest(context)
+    val message = receiver.compose(digest, receiver.epochDay())
+    val posted = if (message != null) {
+      NotifyReceiver.post(context, message.first, message.second)
+    } else {
+      NotifyReceiver.post(
+        context,
+        "Reminders are on",
+        "Nothing to send tonight — no exam near, no streak at risk, no revision due. " +
+          "You will hear from Orbit when there is.",
+      )
+    }
+    promise.resolve(if (!posted) "blocked" else if (message != null) "posted" else "quiet")
+  }
+
   override fun cancelAll() {
     NotifyScheduler.cancel(reactApplicationContext)
     try {

@@ -13,6 +13,7 @@
  * checking is the one someone actually ends up in.
  */
 let granted = false;
+let digest: Record<string, unknown> = {};
 
 export default {
   hasPermission: () => granted,
@@ -21,6 +22,37 @@ export default {
     return true;
   },
   setSchedule: () => {},
-  updateDigest: () => {},
+  updateDigest: (json: string) => {
+    try {
+      digest = JSON.parse(json);
+    } catch {
+      digest = {};
+    }
+  },
+  /*
+   * The same ladder NotifyReceiver.compose walks — exam, then streak, then
+   * revision — decided only far enough to answer "posted or quiet".
+   *
+   * A shim that always said "posted" would let the harness assert a result
+   * the app can never actually produce, which is worse than not asserting.
+   * Nothing is drawn: a browser has no notification shade, and the point of
+   * the check is the Settings screen's reply, not the shade.
+   */
+  sendTest: async () => {
+    if (!granted) {
+      return 'blocked';
+    }
+    const day = Math.floor(new Date().setHours(0, 0, 0, 0) / 86400000);
+    const examDay = Number(digest.examDay ?? -1);
+    const hasExam = digest.allowExam !== false && examDay > 0 && examDay - day <= 7;
+    const hasStreak = digest.allowStreak !== false && Number(digest.streak ?? 0) >= 2;
+    const dueDay = Number(digest.revisionDueDay ?? -1);
+    const hasRevision =
+      digest.allowRevision !== false &&
+      dueDay >= 0 &&
+      dueDay <= day &&
+      Number(digest.revisionDueCount ?? 0) > 0;
+    return hasExam || hasStreak || hasRevision ? 'posted' : 'quiet';
+  },
   cancelAll: () => {},
 };

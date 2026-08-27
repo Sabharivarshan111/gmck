@@ -52,6 +52,23 @@ export interface Spec extends TurboModule {
    */
   updateDigest(json: string): void;
 
+  /**
+   * Post tonight's reminder right now, and say what happened.
+   *
+   * Resolves `'posted'` when a reminder went out, `'quiet'` when tonight's
+   * rules produce nothing (already studied today, no exam near, no streak, no
+   * revision due) and `'blocked'` when Android will not deliver it.
+   *
+   * It exists because the reminder is, by design, almost always silent — and
+   * a feature that is correct to do nothing is indistinguishable from one that
+   * is broken. There was no way for anybody, including the person who wrote
+   * it, to confirm it worked short of waiting for the evening.
+   *
+   * It runs the receiver's real `compose`, not a canned string. A test that
+   * posts a different notification from the real one tests the wrong thing.
+   */
+  sendTest(): Promise<string>;
+
   /** Clear anything posted and stop the daily check. */
   cancelAll(): void;
 }

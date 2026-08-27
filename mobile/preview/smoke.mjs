@@ -1150,6 +1150,70 @@ await step('turning the reminder on reveals what it may send', async () => {
 });
 
 /**
+ * The reminder can be moved, and can be made to prove itself.
+ *
+ * Both halves answer the same complaint. The hour was a constant — 19:00 for
+ * everyone, with `reminderHour` in the settings store and nothing that could
+ * set it — and there was no way to see a reminder without waiting for the
+ * evening, on a feature whose rules are almost all rules about *not* posting.
+ * Working and completely broken looked identical from the outside.
+ */
+await step('the reminder can be retimed, and will send one on demand', async () => {
+  await open('screen=home');
+  await tap('Settings');
+  await page.waitForTimeout(700);
+
+  const toggle = byLabel('Daily reminder');
+  await scrollTo(toggle);
+  if ((await toggle.evaluate(el => el.getAttribute('aria-checked'))) !== 'true') {
+    await toggle.click();
+    await page.waitForTimeout(500);
+  }
+
+  // The hour is a real slider over a real setting, and the label says the time
+  // rather than the number — "19" is not a time anyone reads.
+  const hour = byLabel('Reminder time');
+  await scrollTo(hour);
+  await seesText('Check for something to say at', 4000);
+  const shown = await page
+    .locator('text=/^\\d{1,2}:00 [ap]m$/')
+    .first()
+    .textContent();
+  if (!shown || !/^\d{1,2}:00 [ap]m$/.test(shown.trim())) {
+    throw new Error(`the reminder time reads "${shown}", not a clock time`);
+  }
+
+  // Dragged, the way a finger moves it. The keyboard is not a route here:
+  // the control answers TalkBack's adjustable actions, not arrow keys.
+  const before = await hour.evaluate(el => el.getAttribute('aria-valuetext'));
+  const track = await hour.boundingBox();
+  if (!track) {
+    throw new Error('the reminder time slider is not on screen');
+  }
+  await page.mouse.move(track.x + track.width / 2, track.y + track.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(track.x + 16, track.y + track.height / 2, { steps: 8 });
+  await page.mouse.up();
+  await page.waitForTimeout(500);
+  const moved = await hour.evaluate(el => el.getAttribute('aria-valuetext'));
+  if (moved === before) {
+    throw new Error(`the reminder hour did not move off ${before} — the slider is decoration`);
+  }
+  if (!/^\d{1,2}:00 [ap]m$/.test(moved ?? '')) {
+    throw new Error(`the slider's spoken value is "${moved}", not a clock time`);
+  }
+
+  // And the button that makes one appear. The shim walks the same ladder the
+  // receiver does, so "quiet" here is the real answer for a harness with no
+  // exam, no streak and no revision — not a stub that always says yes.
+  const send = byLabel('Send a reminder now');
+  await scrollTo(send);
+  await send.click();
+  await page.waitForTimeout(900);
+  await seesText('Notifications are reaching you', 5000);
+});
+
+/**
  * The subject heading is filled with a gradient, and the gradient moves.
  *
  * Worth a step of its own because the failure it guards is silent in both

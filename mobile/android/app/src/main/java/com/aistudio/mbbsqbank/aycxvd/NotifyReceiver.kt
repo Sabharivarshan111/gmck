@@ -68,36 +68,7 @@ class NotifyReceiver : BroadcastReceiver() {
 
     val message = compose(digest, today) ?: return
 
-    if (!NotificationManagerCompat.from(context).areNotificationsEnabled()) {
-      return
-    }
-
-    val open = context.packageManager.getLaunchIntentForPackage(context.packageName)
-    val pending = PendingIntent.getActivity(
-      context,
-      0,
-      open,
-      PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
-    )
-
-    val notification = NotificationCompat.Builder(context, CHANNEL)
-      // Our own bell, not android.R.drawable.ic_dialog_info. Android renders a
-      // small icon as a silhouette from its alpha channel, so it has to be a
-      // single-colour shape drawn for that — see res/drawable/ic_notification.xml.
-      .setSmallIcon(R.drawable.ic_notification)
-      .setColor(0xFFD45CFF.toInt())
-      .setContentTitle(message.first)
-      .setContentText(message.second)
-      .setStyle(NotificationCompat.BigTextStyle().bigText(message.second))
-      .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-      .setAutoCancel(true)
-      .setContentIntent(pending)
-      .build()
-
-    try {
-      NotificationManagerCompat.from(context).notify(NOTIFICATION_ID, notification)
-    } catch (_: SecurityException) {
-      // POST_NOTIFICATIONS revoked between the check and here.
+    if (!post(context, message.first, message.second)) {
       return
     }
 
@@ -115,7 +86,7 @@ class NotifyReceiver : BroadcastReceiver() {
    * have worked out for themselves — a date arriving, a streak about to break,
    * work that is due today.
    */
-  private fun compose(digest: org.json.JSONObject, today: Long): Pair<String, String>? {
+  internal fun compose(digest: org.json.JSONObject, today: Long): Pair<String, String>? {
     // optBoolean defaults true so a digest written by an older build — one
     // that predates these switches — behaves as it did before rather than
     // going silent on every kind at once.
@@ -149,7 +120,7 @@ class NotifyReceiver : BroadcastReceiver() {
     return null
   }
 
-  private fun epochDay(): Long {
+  internal fun epochDay(): Long {
     val now = Calendar.getInstance()
     now.set(Calendar.HOUR_OF_DAY, 0)
     now.set(Calendar.MINUTE, 0)
@@ -161,6 +132,52 @@ class NotifyReceiver : BroadcastReceiver() {
   companion object {
     const val CHANNEL = "orbit_study_reminder"
     const val NOTIFICATION_ID = 4201
+
+    /**
+     * Draw and post one. Returns false when Android will not deliver it.
+     *
+     * Shared with the module's `sendTest` on purpose: a test that posts a
+     * different notification from the real one — different channel, different
+     * icon, different tap target — proves that a *test* works and nothing
+     * about the reminder.
+     */
+    fun post(context: Context, title: String, body: String): Boolean {
+      ensureChannel(context)
+      if (!NotificationManagerCompat.from(context).areNotificationsEnabled()) {
+        return false
+      }
+
+      val open = context.packageManager.getLaunchIntentForPackage(context.packageName)
+      val pending = PendingIntent.getActivity(
+        context,
+        0,
+        open,
+        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+      )
+
+      val notification = NotificationCompat.Builder(context, CHANNEL)
+        // Our own bell, not android.R.drawable.ic_dialog_info. Android renders
+        // a small icon as a silhouette from its alpha channel, so it has to be
+        // a single-colour shape drawn for that — see
+        // res/drawable/ic_notification.xml.
+        .setSmallIcon(R.drawable.ic_notification)
+        .setColor(0xFFD45CFF.toInt())
+        .setContentTitle(title)
+        .setContentText(body)
+        .setStyle(NotificationCompat.BigTextStyle().bigText(body))
+        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+        .setAutoCancel(true)
+        .setContentIntent(pending)
+        .build()
+
+      return try {
+        NotificationManagerCompat.from(context).notify(NOTIFICATION_ID, notification)
+        true
+      } catch (_: SecurityException) {
+        // POST_NOTIFICATIONS revoked between the check and here.
+        false
+      }
+    }
 
     fun ensureChannel(context: Context) {
       if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.O) {
