@@ -1466,6 +1466,100 @@ await step('you can write your own deck, and study it', async () => {
   }
 });
 
+/**
+ * A card with a picture on it.
+ *
+ * The image half of the custom builder is the one path the harness could not
+ * reach at all until the picker shim learned to hand back an asset on request.
+ * What matters here is the rule the generated decks also follow: the picture
+ * belongs on the **back**. A diagram shown before "Show answer" is the answer.
+ */
+await step('a card you write can carry a picture, revealed with the answer', async () => {
+  await open('screen=flashcards');
+  await page.waitForTimeout(900);
+  await byLabel('Your own decks, write and study your own cards').click();
+  await page.waitForTimeout(700);
+
+  await byLabel('Name for the new deck').fill('Visual deck');
+  await byLabel('Create this deck').click();
+  await page.waitForTimeout(800);
+
+  // Only this step gets a picture out of the picker. See the shim.
+  await page.evaluate(() => {
+    globalThis.__orbitPickImage = true;
+  });
+  await byLabel('Front of the card, the question').fill('Identify the structure arrowed.');
+  await byLabel('Add a picture to this card').click();
+  await page.waitForTimeout(700);
+  await page.evaluate(() => {
+    globalThis.__orbitPickImage = false;
+  });
+
+  if ((await byLabel('Remove the attached picture').count()) === 0) {
+    throw new Error('the picture did not attach — nothing offers to remove it');
+  }
+
+  // A visual card may leave the answer blank: the diagram answers it.
+  await byLabel('Add this card').click();
+  await page.waitForTimeout(800);
+  await seesText('Identify the structure arrowed', 4000);
+
+  await byLabel('Go back').first().click();
+  await page.waitForTimeout(700);
+  const study = page.locator('[aria-label*="1 card, study"], [aria-label*="1 cards, study"]');
+  if ((await study.count()) === 0) {
+    throw new Error('a deck with one visual card does not offer to be studied');
+  }
+  await study.first().click();
+  await page.waitForTimeout(900);
+
+  // The front must NOT show the picture.
+  const imagesBefore = await page.locator('img').count();
+  await byLabel('Show answer').click();
+  await page.waitForTimeout(600);
+  const imagesAfter = await page.locator('img').count();
+  if (imagesAfter <= imagesBefore) {
+    throw new Error(
+      'revealing the answer added no picture — a visual card must show its diagram on the back',
+    );
+  }
+});
+
+/**
+ * The "+" in a chapter's corner, and where a deck is filed.
+ *
+ * The generate half needs Supabase and cannot run here. What is checkable is
+ * that the affordance exists, that it offers both routes, and that the writing
+ * route lands in a builder that can file the deck somewhere.
+ */
+await step('a chapter offers to add your own deck, and a deck can be filed', async () => {
+  await open('screen=flashcards');
+  await page.waitForTimeout(900);
+  await page.locator('[aria-label^="3rd Year"]').first().click();
+  await page.waitForTimeout(800);
+  await page.locator('[aria-label^="Community Medicine"]').first().click();
+  await page.waitForTimeout(900);
+  await page.locator('[aria-label*="study flashcards"]').first().click();
+  await page.waitForTimeout(2500);
+
+  await byLabel('Add a deck to this chapter').click();
+  await page.waitForTimeout(700);
+  await seesText('Generate a deck with AI', 4000);
+  await seesText('Write your own deck', 4000);
+
+  await byLabel('Write your own deck for this chapter').click();
+  await page.waitForTimeout(900);
+
+  // It arrives filed under the chapter it was made from.
+  const filing = page.locator('[aria-label^="Filed under"]');
+  if ((await filing.count()) === 0) {
+    throw new Error('a deck written from a chapter is not filed under it');
+  }
+  await filing.first().click();
+  await page.waitForTimeout(700);
+  await seesText('My decks', 4000);
+});
+
 await step('a flashcard chapter opens, and a deck that cannot build offers a retry', async () => {
   await open('screen=notes');
   await page.waitForTimeout(700);

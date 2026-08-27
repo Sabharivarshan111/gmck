@@ -59,6 +59,20 @@ export interface Settings {
    */
   newCardsPerDay: number;
   /**
+   * Seconds allowed per flashcard, or 0 for no timer.
+   *
+   * A pacing aid, not a test: it counts down beside the card and turns amber
+   * when it runs out, and **nothing happens** when it does. Auto-advancing
+   * would be the obvious next step and it is the wrong one — spaced repetition
+   * only works if you grade honestly, and a card that flips itself has graded
+   * for you.
+   *
+   * Off by default. A clock on a revision card is pressure, and pressure is a
+   * choice the reader makes for themselves, usually in the last fortnight
+   * before an exam.
+   */
+  cardSeconds: number;
+  /**
    * One study reminder a day.
    *
    * Off by default. A notification is the most intrusive thing this app can
@@ -150,7 +164,20 @@ export const DEFAULT_SETTINGS: Settings = {
   timerVibration: true,
   // Anki's default, and a deliberate one — see the field's note.
   newCardsPerDay: 20,
+  cardSeconds: 0,
 };
+
+/**
+ * The pacing range, in seconds per card.
+ *
+ * 0 is off and is its own detent. Above that the floor is 15 seconds — below
+ * that nobody is recalling anything, they are reading — and the ceiling is 120,
+ * past which a per-card clock has stopped being a pace and become a nap. The
+ * detents are the round numbers people actually think in: half a minute, a
+ * minute, two.
+ */
+export const CARD_SECONDS_MAX = 120;
+export const CARD_SECONDS_STEP = 15;
 
 /**
  * The range the slider offers.
@@ -218,6 +245,10 @@ export async function hydrateSettings(): Promise<void> {
         typeof parsed.newCardsPerDay === 'number' && Number.isFinite(parsed.newCardsPerDay)
           ? Math.round(Math.max(NEW_PER_DAY_MIN, Math.min(NEW_PER_DAY_MAX, parsed.newCardsPerDay)))
           : DEFAULT_SETTINGS.newCardsPerDay,
+      cardSeconds:
+        typeof parsed.cardSeconds === 'number' && Number.isFinite(parsed.cardSeconds)
+          ? Math.round(Math.max(0, Math.min(CARD_SECONDS_MAX, parsed.cardSeconds)))
+          : DEFAULT_SETTINGS.cardSeconds,
       dailyReminder:
         typeof parsed.dailyReminder === 'boolean'
           ? parsed.dailyReminder

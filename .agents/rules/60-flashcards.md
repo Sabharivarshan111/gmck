@@ -183,3 +183,6 @@ They used to be `{subtopicKey}::0`, `::1`, … The schedule lives on the phone a
 is keyed on the id, so regenerating a chapter handed card 0's ease, interval and
 lapses to whatever question landed in slot 0 next time. The deck kept working
 and quietly lied about what the reader had learned.
+
+Decks the reader makes themselves — written, generated, or with photos on
+them — are in `.agents/rules/61-own-decks.md`.

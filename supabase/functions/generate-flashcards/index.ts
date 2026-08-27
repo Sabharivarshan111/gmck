@@ -29,6 +29,20 @@ const BodySchema = z.object({
   questions: z.array(z.string().max(1000)).min(1).max(400),
   regenerate: z.boolean().optional(),
   limit: z.number().int().min(6).max(60).optional(),
+  /**
+   * Build it, return it, keep nothing.
+   *
+   * For a personal deck: someone asking for their own extra pass at a chapter
+   * is not producing a second deck for everybody, and the result belongs on the
+   * phone that asked for it. Without this the upsert below would write it into
+   * the shared cache under whatever key it was asked for.
+   *
+   * The client also sends a suffixed `subtopicKey` (`personalDeckKey`), which
+   * is belt and braces on purpose: it is what protects the shared row on any
+   * deployment that predates this flag, and unknown keys are stripped here
+   * rather than rejected, so an old client and a new one both behave.
+   */
+  noCache: z.boolean().optional(),
 });
 
 const GEMINI_MODEL = "gemini-3.1-flash-lite";
@@ -207,7 +221,8 @@ serve(async (req) => {
         status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
-    const { year, subject, subtopicKey, subtopicName, questions, regenerate, limit } = parsed.data;
+    const { year, subject, subtopicKey, subtopicName, questions, regenerate, limit, noCache } =
+      parsed.data;
 
     /*
      * The floor applies before anything else, so a small chapter is a full deck
@@ -220,7 +235,9 @@ serve(async (req) => {
       Math.max(MIN_CARDS, Math.min(MAX_CARDS, Math.round(questions.length * CARDS_PER_QUESTION)));
     const deckKey = `${year}::${subject}::${subtopicKey}`;
 
-    if (!regenerate) {
+    // A personal deck neither reads nor writes the shared cache: reading it
+    // would hand back the very deck this is meant to be an alternative to.
+    if (!regenerate && !noCache) {
       const { data: cached } = await admin
         .from("flashcards")
         .select("cards, deck_target")
@@ -388,20 +405,22 @@ serve(async (req) => {
       c.id = id;
     }
 
-    await admin.from("flashcards").upsert({
-      deck_key: deckKey,
-      year,
-      subject,
-      subtopic_key: subtopicKey,
-      subtopic_name: subtopicName,
-      cards,
-      card_count: cards.length,
-      // The marker that this row came from the current sizing algorithm, and
-      // the reason it is a column rather than a comparison. See the cache
-      // check above.
-      deck_target: target,
-      updated_at: new Date().toISOString(),
-    });
+    if (!noCache) {
+      await admin.from("flashcards").upsert({
+        deck_key: deckKey,
+        year,
+        subject,
+        subtopic_key: subtopicKey,
+        subtopic_name: subtopicName,
+        cards,
+        card_count: cards.length,
+        // The marker that this row came from the current sizing algorithm, and
+        // the reason it is a column rather than a comparison. See the cache
+        // check above.
+        deck_target: target,
+        updated_at: new Date().toISOString(),
+      });
+    }
 
     return new Response(JSON.stringify({
       cached: false,

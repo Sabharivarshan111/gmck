@@ -829,6 +829,68 @@ backwards clock, and the case where a stored streak has gone stale.
 
 ---
 
+## 8i. Decks you make yourself, and a pacing clock (2026-08-27)
+
+### The "+" on a chapter
+
+Top-right of a chapter's study screen, same circle as the theme button on Home.
+Two routes, both landing in `orbit:anki:custom-decks` — **on the phone only**:
+
+- **Generate a deck with AI** — another pass at the chapter from the same edge
+  function, kept locally.
+- **Write your own deck** — empty, filed under that chapter.
+
+A chapter now lists the decks made for it under YOUR DECKS HERE, so a generated
+deck is reachable more than once.
+
+**The dangerous part, and it is not obvious.** The server caches on
+`year::subject::subtopicKey`, so building a personal deck under the chapter's
+own key would *overwrite the deck everybody reads* — and since card ids are
+hashed from the front, every reader's schedule for every changed card would
+reset with it. `personalDeckKey()` suffixes the key so that cannot happen.
+
+`noCache: true` is the tidier fix and it is **written but not deployed** — the
+Supabase connector went offline mid-task. The function source in
+`supabase/functions/generate-flashcards/` has it; the live function is still v9.
+Nothing is broken by that: unknown keys are stripped by the zod schema rather
+than rejected, and the suffixed key is what actually protects the shared row.
+**Deploy it when the connector is back**, and do not remove the suffix when you
+do.
+
+### Pictures on a card
+
+`lib/cardImage.ts`. Stored as **data URIs, not file paths**: the picker returns
+a cache-directory URI and Android empties that whenever it wants the space,
+which is survivable for a wallpaper and fatal for a deck. Downscaled to 1200px
+at quality 0.6, capped at 700 KB each and 40 image cards a deck, because the
+whole deck list is one AsyncStorage value.
+
+The picture goes on the **back**. A visual card may leave the written answer
+blank; a theory card may not.
+
+### Filing
+
+A custom deck's `chapter` decides where it appears. The builder's top row opens
+a Sheet that walks year → subject → chapter, with "My decks" as the first option
+so a deck can be moved back out. Filing changes nothing else — the schedule is
+keyed on `customDeckKey(id)`.
+
+### The per-card clock
+
+`settings.cardSeconds`, 0 (off, default) to 120, on the Flashcards home under
+the daily limit. A bar drains beside the card and turns amber when it runs out
+and **nothing happens** — no auto-advance, no auto-reveal. Spaced repetition
+only works if the grade is honest.
+
+### On the preview
+
+`preview/shims/image-picker.ts` now returns a real asset when the harness sets
+`globalThis.__orbitPickImage`, and cancels otherwise. That flag exists so
+`check:smoke` can walk the visual-card path — attach, add, reveal, see the
+picture appear — which was previously unreachable in a browser.
+
+---
+
 ## 9. High-Yield AI Exam Diagrams & Localhost Previews
 
 ### Local Dev & Preview URLs

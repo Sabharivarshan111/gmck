@@ -69,6 +69,22 @@ export function deckTargetFor(questionCount: number): number {
   return Math.max(MIN_DECK_CARDS, Math.min(MAX_DECK_CARDS, wanted));
 }
 
+/**
+ * A key that cannot collide with the chapter's shared deck.
+ *
+ * The server caches on `year::subject::subtopicKey`, so asking it to build a
+ * *personal* extra deck under the chapter's own key would overwrite the deck
+ * everyone else reads — and because card ids are hashed from the front,
+ * everybody's schedule for every changed card would reset with it.
+ *
+ * A suffixed key sidesteps that entirely, with no server change and nothing to
+ * deploy first. `noCache` is the tidier fix for when it ships; this is what
+ * makes the feature safe in the meantime.
+ */
+export function personalDeckKey(topicKey: string, at = Date.now()): string {
+  return `${topicKey}#own-${at.toString(36)}`;
+}
+
 /** Same shape the function builds, so a cache hit and a fresh build agree. */
 export function deckKeyFor(year: string, subject: string, subtopicKey: string): string {
   return `${year}::${subject}::${subtopicKey}`;
@@ -119,6 +135,16 @@ export async function fetchDeck(request: {
   subtopicName: string;
   questions: string[];
   regenerate?: boolean;
+  /**
+   * Ask the server not to keep this deck.
+   *
+   * Set for a personal deck, which belongs on the phone that asked for it. The
+   * function's zod schema strips unknown keys rather than rejecting them, so
+   * sending this to a version that does not know about it is harmless — it
+   * caches as usual, which is why `personalDeckKey` is what actually protects
+   * the shared row.
+   */
+  noCache?: boolean;
 }): Promise<Deck> {
   const { data, error } = await supabase.functions.invoke('generate-flashcards', {
     body: {
@@ -130,6 +156,7 @@ export async function fetchDeck(request: {
       // would 400 the request the way the notes function does.
       questions: request.questions.slice(0, 300),
       regenerate: request.regenerate ?? false,
+      ...(request.noCache ? { noCache: true } : null),
       /*
        * The same number the row promised, and the same number the server would
        * compute for itself.

@@ -1,6 +1,7 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
+  Animated,
   Image,
   Keyboard,
   ScrollView,
@@ -9,12 +10,26 @@ import {
   View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { ChevronLeft, ChevronRight, Layers, Plus, RotateCw, Trash2, User } from 'lucide-react-native';
+import {
+  ChevronLeft,
+  ChevronRight,
+  ImagePlus,
+  Layers,
+  Pencil,
+  Plus,
+  RotateCw,
+  Sparkles,
+  Timer as TimerIcon,
+  Trash2,
+  User,
+  X,
+} from 'lucide-react-native';
 import { Text } from '@/components/Text';
 import { Touchable } from '@/components/Touchable';
 import { BackButton } from '@/components/BackButton';
 import { GradientFill } from '@/components/Gradient';
 import { typeScale } from '@/theme/typography';
+import { EASE, useReducedMotion } from '@/theme/motion';
 import { useTheme, withAlpha } from '@/theme';
 import { getSubjects, YEAR_LABEL, type BankNode } from '@/lib/questionBank';
 import { YEAR_TO_KEY, type Year } from '@/lib/profile';
@@ -23,6 +38,7 @@ import {
   deckTargetFor,
   fetchDeck,
   loadSchedule,
+  personalDeckKey,
   reconcile,
   saveSchedule,
   type DeckCard,
@@ -39,8 +55,12 @@ import {
   type Grade,
 } from '@/lib/anki';
 import { tick, complete } from '@/lib/haptics';
+import { pickCardImage } from '@/lib/cardImage';
 import { Slider } from '@/components/Slider';
+import { Sheet } from '@/components/Sheet';
 import {
+  CARD_SECONDS_MAX,
+  CARD_SECONDS_STEP,
   DEFAULT_SETTINGS,
   NEW_PER_DAY_MAX,
   NEW_PER_DAY_MIN,
@@ -53,8 +73,11 @@ import {
   customDeckKey,
   deleteCard,
   deleteDeck,
+  decksForChapter,
   loadCustomDecks,
+  setDeckChapter,
   type CustomDeck,
+  type DeckChapter,
 } from '@/lib/customDecks';
 
 const YEARS: Year[] = ['first', 'second', 'third', 'final'];
@@ -180,15 +203,29 @@ export default function FlashcardsScreen({ onExit }: { onExit: () => void }) {
         <StudyView
           year={view.year}
           subjectName={view.subjectName}
+          subjectKey={view.subjectKey}
           topic={view.topic}
           onBack={back}
+          onOpenOwn={deckId => setView({ kind: 'studyCustom', deckId })}
+          onWriteOwn={deckId => setView({ kind: 'editDeck', deckId })}
         />
       ) : null}
     </ScrollView>
   );
 }
 
-function Header({ title, subtitle, onBack }: { title: string; subtitle?: string; onBack: () => void }) {
+function Header({
+  title,
+  subtitle,
+  onBack,
+  right,
+}: {
+  title: string;
+  subtitle?: string;
+  onBack: () => void;
+  /** Trailing action, drawn as the circle the app's headers use elsewhere. */
+  right?: React.ReactNode;
+}) {
   const { colors } = useTheme();
   return (
     <View style={styles.headerRow}>
@@ -203,7 +240,37 @@ function Header({ title, subtitle, onBack }: { title: string; subtitle?: string;
           </Text>
         ) : null}
       </View>
+      {right}
     </View>
+  );
+}
+
+/**
+ * The circle in the top-right corner.
+ *
+ * Same shape and size as the theme and settings circles on Home, because it is
+ * the same idea in the same place: the one thing you can *do* to what is on
+ * screen. `Touchable` already carries the press spring, so there is no motion
+ * to write here — a second, hand-rolled press animation on one button is
+ * exactly the fork the house style exists to prevent.
+ */
+function HeaderAction({
+  onPress,
+  label,
+  children,
+}: {
+  onPress: () => void;
+  label: string;
+  children: React.ReactNode;
+}) {
+  const { colors } = useTheme();
+  return (
+    <Touchable
+      onPress={onPress}
+      label={label}
+      style={[styles.headerAction, { backgroundColor: colors.card, borderColor: colors.border }]}>
+      {children}
+    </Touchable>
   );
 }
 
@@ -217,7 +284,7 @@ function YearsView({
   onBack: () => void;
 }) {
   const { colors } = useTheme();
-  const { newCardsPerDay } = useSettings();
+  const { newCardsPerDay, cardSeconds } = useSettings();
   return (
     <>
       <Header title="Flashcards" onBack={onBack} />
@@ -283,6 +350,32 @@ function YearsView({
         </Text>
       </View>
 
+      {/*
+        Pacing, under the daily limit, because they are the same decision seen
+        from two sides: how much in a sitting, and how long each card gets.
+      */}
+      <View style={[styles.card, styles.compactCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+        <View style={styles.builderRow}>
+          <TimerIcon size={16} color={colors.textMuted} />
+          <Text style={[styles.rowTitle, styles.flex, { color: colors.text }]}>Time per card</Text>
+        </View>
+        <Slider
+          value={cardSeconds}
+          min={0}
+          max={CARD_SECONDS_MAX}
+          step={CARD_SECONDS_STEP}
+          detents={[0, 30, 60]}
+          onChange={value => setSetting('cardSeconds', value)}
+          label="Seconds allowed per card"
+          format={value => (value === 0 ? 'No timer' : `${value} seconds a card`)}
+        />
+        <Text style={[styles.hint, { color: colors.textMuted }]}>
+          {cardSeconds === 0
+            ? 'Off. Turn it on in the last fortnight before an exam, when pace is the thing you are practising.'
+            : `A bar drains beside each card and turns amber at ${cardSeconds}s. Nothing happens when it does — the card waits. ${newCardsPerDay} cards at ${cardSeconds}s is about ${Math.max(1, Math.round((newCardsPerDay * cardSeconds) / 60))} minutes.`}
+        </Text>
+      </View>
+
       <Text style={[styles.sectionLabel, { color: colors.textMuted, marginTop: 22 }]}>
         YOUR OWN DECKS
       </Text>
@@ -329,6 +422,9 @@ function MyDecksView({
     if (!trimmed) {
       return;
     }
+    // The keyboard is up and the button is under it. Same trap as Add card:
+    // the tap is spent dismissing rather than pressing.
+    Keyboard.dismiss();
     const deck = await createDeck(trimmed);
     setName('');
     setDecks(await loadCustomDecks());
@@ -398,6 +494,9 @@ function MyDecksView({
                 {deck.cards.length === 0
                   ? 'No cards yet — tap to add some'
                   : `${deck.cards.length} card${deck.cards.length === 1 ? '' : 's'}`}
+                {/* A filed deck still lives here too, and says where else it
+                    appears — otherwise filing it looks like losing it. */}
+                {deck.chapter ? ` · ${deck.chapter.topicName}` : ''}
               </Text>
             </Touchable>
             <Touchable
@@ -427,6 +526,8 @@ function EditDeckView({ deckId, onBack }: { deckId: string; onBack: () => void }
   const [front, setFront] = useState('');
   const [back, setBack] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [image, setImage] = useState<string | null>(null);
+  const [filingOpen, setFilingOpen] = useState(false);
 
   useEffect(() => {
     loadCustomDecks().then(setDecks);
@@ -434,8 +535,26 @@ function EditDeckView({ deckId, onBack }: { deckId: string; onBack: () => void }
 
   const deck = decks?.find(d => d.id === deckId) ?? null;
 
+  const attach = useCallback(async () => {
+    setError(null);
+    const picked = await pickCardImage();
+    if (!picked) {
+      return;
+    }
+    if ('tooLarge' in picked) {
+      setError('That picture is too big to keep on the phone. Crop it, or pick a smaller one.');
+      return;
+    }
+    setImage(picked.uri);
+    tick();
+  }, []);
+
   const add = useCallback(async () => {
-    if (!front.trim() || !back.trim()) {
+    /*
+     * A visual card answers with its picture, so it does not need a written
+     * back — the same rule the generated decks follow. A written one does.
+     */
+    if (!front.trim() || (!back.trim() && !image)) {
       return;
     }
     /*
@@ -452,9 +571,10 @@ function EditDeckView({ deckId, onBack }: { deckId: string; onBack: () => void }
      */
     Keyboard.dismiss();
     try {
-      setDecks(await addCard(deckId, front, back));
+      setDecks(await addCard(deckId, front, back, image ?? undefined));
       setFront('');
       setBack('');
+      setImage(null);
       setError(null);
       complete();
     } catch (err) {
@@ -466,7 +586,7 @@ function EditDeckView({ deckId, onBack }: { deckId: string; onBack: () => void }
        */
       setError((err as Error)?.message ?? 'Could not save that card.');
     }
-  }, [back, deckId, front]);
+  }, [back, deckId, front, image]);
 
   if (!deck) {
     return <Header title="Deck" onBack={onBack} />;
@@ -478,6 +598,50 @@ function EditDeckView({ deckId, onBack }: { deckId: string; onBack: () => void }
         title={deck.name}
         subtitle={`${deck.cards.length} card${deck.cards.length === 1 ? '' : 's'}`}
         onBack={onBack}
+      />
+
+      {/*
+        Where this deck lives.
+        
+        A deck about mechanical injuries is more use filed under mechanical
+        injuries than in a flat list that grows for ever — but a deck of
+        odds and ends is not, so it is a choice rather than a rule. Moving it
+        changes nothing about the cards or the schedule: filing is a property
+        of the deck, which is why `customDeckKey(id)` still finds its history.
+      */}
+      <Touchable
+        onPress={() => setFilingOpen(true)}
+        label={
+          deck.chapter
+            ? `Filed under ${deck.chapter.topicName}. Change where this deck is kept.`
+            : 'Kept in My decks. Change where this deck is kept.'
+        }
+        style={[styles.row, { backgroundColor: colors.card, borderColor: colors.border }]}>
+        <View style={[styles.rowIcon, { backgroundColor: withAlpha(colors.violet, 0.15) }]}>
+          <Layers size={18} color={colors.violet} />
+        </View>
+        <View style={styles.flex}>
+          <Text style={[styles.rowTitle, { color: colors.text }]}>
+            {deck.chapter ? deck.chapter.topicName : 'My decks'}
+          </Text>
+          <Text style={[styles.rowSub, { color: colors.textMuted }]}>
+            {deck.chapter
+              ? `${deck.chapter.subjectName} · tap to move it`
+              : 'Not filed under a chapter · tap to file it'}
+          </Text>
+        </View>
+        <ChevronRight size={18} color={colors.textMuted} />
+      </Touchable>
+
+      <FilingSheet
+        visible={filingOpen}
+        deck={deck}
+        onClose={() => setFilingOpen(false)}
+        onPick={async chapter => {
+          setDecks(await setDeckChapter(deckId, chapter));
+          setFilingOpen(false);
+          tick();
+        }}
       />
 
       <View style={[styles.card, styles.compactCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
@@ -500,17 +664,49 @@ function EditDeckView({ deckId, onBack }: { deckId: string; onBack: () => void }
           multiline
           accessibilityLabel="Back of the card, the answer"
         />
-        <Touchable
-          onPress={add}
-          label="Add this card"
-          disabled={!front.trim() || !back.trim()}
-          style={[styles.reveal, { backgroundColor: colors.primary }]}>
-          <Text style={[styles.revealText, { color: colors.primaryText }]}>Add card</Text>
-        </Touchable>
+        {/*
+          The picture, if there is one.
+
+          It previews at a readable size rather than as a thumbnail: the whole
+          reason to attach a diagram is that its labels matter, and a 40dp
+          square cannot tell you whether you picked the right screenshot.
+        */}
+        {image ? (
+          <View style={styles.attached}>
+            <Image source={{ uri: image }} style={styles.attachedImage} resizeMode="contain" />
+            <Touchable
+              onPress={() => setImage(null)}
+              label="Remove the attached picture"
+              style={[styles.attachedRemove, { backgroundColor: colors.card, borderColor: colors.border }]}>
+              <X size={14} color={colors.danger} />
+            </Touchable>
+          </View>
+        ) : null}
+
+        <View style={styles.builderRow}>
+          <Touchable
+            onPress={attach}
+            label={image ? 'Replace the attached picture' : 'Add a picture to this card'}
+            style={[styles.attachButton, { borderColor: colors.border }]}>
+            <ImagePlus size={16} color={colors.accent} />
+            <Text style={[styles.attachText, { color: colors.accent }]}>
+              {image ? 'Replace picture' : 'Add picture'}
+            </Text>
+          </Touchable>
+
+          <Touchable
+            onPress={add}
+            label="Add this card"
+            disabled={!front.trim() || (!back.trim() && !image)}
+            style={[styles.reveal, styles.flex, { backgroundColor: colors.primary }]}>
+            <Text style={[styles.revealText, { color: colors.primaryText }]}>Add card</Text>
+          </Touchable>
+        </View>
         {/* One fact per card is the rule Anki is built around, so it is said
             where the card is written rather than in a help page nobody opens. */}
         <Text style={[styles.hint, { color: colors.textMuted }]}>
-          One fact per card. If the answer needs a paragraph, it is two cards.
+          One fact per card. If the answer needs a paragraph, it is two cards. A card with a
+          picture can leave the answer blank — the diagram is the answer.
         </Text>
         {error ? (
           <Text accessibilityLiveRegion="polite" style={[styles.hint, { color: colors.danger }]}>
@@ -523,9 +719,14 @@ function EditDeckView({ deckId, onBack }: { deckId: string; onBack: () => void }
         <View
           key={card.id}
           style={[styles.row, { backgroundColor: colors.card, borderColor: colors.border }]}>
+          {card.imageUrl ? (
+            <Image source={{ uri: card.imageUrl }} style={styles.rowThumb} resizeMode="cover" />
+          ) : null}
           <View style={styles.flex}>
             <Text style={[styles.rowTitle, { color: colors.text }]}>{card.front}</Text>
-            <Text style={[styles.rowSub, { color: colors.textMuted }]}>{card.back}</Text>
+            <Text style={[styles.rowSub, { color: colors.textMuted }]}>
+              {card.back || (card.imageUrl ? 'Answered by the picture' : '')}
+            </Text>
           </View>
           <Touchable
             onPress={async () => setDecks(await deleteCard(deckId, card.id))}
@@ -655,17 +856,294 @@ function TopicsView({
  * turns a memory test into reading. Anki calls the step "Show Answer" and so
  * does this.
  */
+/**
+ * Choosing where a hand-written deck is filed.
+ *
+ * Three steps deep — year, subject, chapter — inside one Sheet rather than
+ * three screens, because filing a deck is a detour from writing it and a detour
+ * that pushes three screens onto the stack is one nobody takes twice. The Sheet
+ * scrolls, so a subject with forty chapters is a scroll rather than a crop.
+ */
+function FilingSheet({
+  visible,
+  deck,
+  onClose,
+  onPick,
+}: {
+  visible: boolean;
+  deck: CustomDeck;
+  onClose: () => void;
+  onPick: (chapter: DeckChapter | undefined) => void;
+}) {
+  const { colors } = useTheme();
+  const [year, setYear] = useState<Year | null>(null);
+  const [subject, setSubject] = useState<{ key: string; name: string; node: BankNode } | null>(null);
+
+  // Reopening starts at the top. Landing back inside the chapter list of a
+  // subject chosen a week ago is disorientation, not a shortcut.
+  useEffect(() => {
+    if (visible) {
+      setYear(null);
+      setSubject(null);
+    }
+  }, [visible]);
+
+  const subjects = useMemo(
+    () => (year ? getSubjects(YEAR_TO_KEY[year]) : []),
+    [year],
+  );
+  const topics = useMemo(
+    () => (subject ? flattenSubjectTopics(subject.key, subject.node) : []),
+    [subject],
+  );
+
+  const title = subject ? subject.name : year ? YEAR_LABEL[YEAR_TO_KEY[year]] : 'Keep this deck in';
+
+  return (
+    <Sheet
+      visible={visible}
+      onClose={onClose}
+      title={title}
+      headerRight={
+        subject || year ? (
+          <Touchable
+            onPress={() => (subject ? setSubject(null) : setYear(null))}
+            label="Back one step"
+            style={styles.sheetBack}>
+            <ChevronLeft size={18} color={colors.accent} />
+          </Touchable>
+        ) : undefined
+      }>
+      {!year ? (
+        <>
+          <Touchable
+            onPress={() => onPick(undefined)}
+            label="Keep this deck in My decks, not filed under a chapter"
+            style={[styles.row, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <View style={[styles.rowIcon, { backgroundColor: withAlpha(colors.accent, 0.15) }]}>
+              <User size={18} color={colors.accent} />
+            </View>
+            <View style={styles.flex}>
+              <Text style={[styles.rowTitle, { color: colors.text }]}>My decks</Text>
+              <Text style={[styles.rowSub, { color: colors.textMuted }]}>
+                {deck.chapter ? 'Move it out of its chapter' : 'Where it is now'}
+              </Text>
+            </View>
+          </Touchable>
+
+          <Text style={[styles.sectionLabel, { color: colors.textMuted }]}>OR FILE IT UNDER</Text>
+          {YEARS.map(y => (
+            <Touchable
+              key={y}
+              onPress={() => setYear(y)}
+              label={`${YEAR_LABEL[YEAR_TO_KEY[y]]}, choose a subject`}
+              style={[styles.row, { backgroundColor: colors.card, borderColor: colors.border }]}>
+              <Text style={styles.rowEmoji}>{YEAR_EMOJI[y]}</Text>
+              <View style={styles.flex}>
+                <Text style={[styles.rowTitle, { color: colors.text }]}>
+                  {YEAR_LABEL[YEAR_TO_KEY[y]]}
+                </Text>
+              </View>
+              <ChevronRight size={18} color={colors.textMuted} />
+            </Touchable>
+          ))}
+        </>
+      ) : !subject ? (
+        subjects.map(item => (
+          <Touchable
+            key={item.key}
+            onPress={() => setSubject({ key: item.key, name: item.name, node: item.node })}
+            label={`${item.name}, choose a chapter`}
+            style={[styles.row, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <View style={styles.flex}>
+              <Text style={[styles.rowTitle, { color: colors.text }]}>{item.name}</Text>
+            </View>
+            <ChevronRight size={18} color={colors.textMuted} />
+          </Touchable>
+        ))
+      ) : (
+        topics.map(topic => (
+          <Touchable
+            key={topic.key}
+            onPress={() =>
+              onPick({
+                year: year,
+                subjectKey: subject.key,
+                subjectName: subject.name,
+                topicKey: topic.key,
+                topicName: topic.name,
+              })
+            }
+            label={`File this deck under ${topic.name}`}
+            style={[styles.row, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <View style={styles.flex}>
+              <Text style={[styles.rowTitle, { color: colors.text }]}>{topic.name}</Text>
+            </View>
+            <ChevronRight size={18} color={colors.textMuted} />
+          </Touchable>
+        ))
+      )}
+    </Sheet>
+  );
+}
+
+/**
+ * The per-card clock.
+ *
+ * Purpose: state indication — how long you have been sitting on this card. It
+ * is a bar rather than a number because the number is not the point; the point
+ * is "am I dwelling", which is a shape you read without looking at it.
+ *
+ * Motion: `scaleX` on a transform with `transformOrigin: 'left'`, driven by one
+ * `Animated.timing` per card at `EASE.linear`. Linear is the correct curve for
+ * exactly one thing and this is it — constant motion, where any easing would be
+ * a clock that lies. Never an animated `width`: that is layout, paint and
+ * composite every frame on the JS thread, which is the house rule for every
+ * other bar in this app.
+ *
+ * **Nothing happens when it runs out.** It turns amber and stops. Auto-advancing
+ * is the obvious next feature and it is wrong: spaced repetition only works if
+ * the grade is honest, and a card that flips itself has graded for you.
+ */
+function CardClock({ seconds, resetKey }: { seconds: number; resetKey: string }) {
+  const { colors } = useTheme();
+  const reduceMotion = useReducedMotion();
+  const progress = useRef(new Animated.Value(0)).current;
+  const [spent, setSpent] = useState(false);
+
+  useEffect(() => {
+    setSpent(false);
+    progress.setValue(0);
+    const run = Animated.timing(progress, {
+      toValue: 1,
+      duration: seconds * 1000,
+      easing: EASE.linear,
+      useNativeDriver: true,
+    });
+    run.start(({ finished }) => {
+      if (finished) {
+        setSpent(true);
+      }
+    });
+    return () => run.stop();
+    // `resetKey` is the card: a new card restarts the clock, and grading the
+    // same card twice must not.
+  }, [progress, resetKey, seconds]);
+
+  /*
+   * Under reduced motion the bar does not sweep — a continuously moving element
+   * is the thing that setting exists to remove. It still reports the outcome by
+   * colour, which is information rather than movement.
+   */
+  const scaleX = reduceMotion
+    ? 1
+    : progress.interpolate({ inputRange: [0, 1], outputRange: [1, 0] });
+
+  return (
+    <View
+      style={[styles.clockTrack, { backgroundColor: withAlpha(colors.text, 0.08) }]}
+      accessibilityLabel={
+        spent ? `Your ${seconds} second pace for this card is up` : `Pacing: ${seconds} seconds a card`
+      }>
+      <Animated.View
+        style={[
+          styles.clockFill,
+          {
+            backgroundColor: spent ? colors.warning : colors.accent,
+            transform: [{ scaleX }],
+          },
+        ]}
+      />
+    </View>
+  );
+}
+
+/**
+ * What the "+" on a chapter offers.
+ *
+ * A Sheet, not a popover or a Dialog. Dialog is for either/or — confirm or
+ * cancel — and this is a menu of two things you might do plus leaving; and the
+ * Sheet already carries the drag-to-dismiss, the velocity handoff and the
+ * reduced-motion path, so choosing anything else here would mean rebuilding
+ * three solved problems to get one worse result.
+ */
+function ChapterAddSheet({
+  visible,
+  onClose,
+  onGenerate,
+  onWrite,
+  busy,
+}: {
+  visible: boolean;
+  onClose: () => void;
+  onGenerate: () => void;
+  onWrite: () => void;
+  busy: boolean;
+}) {
+  const { colors } = useTheme();
+  return (
+    <Sheet visible={visible} onClose={onClose} title="Add to this chapter">
+      <Touchable
+        onPress={onGenerate}
+        disabled={busy}
+        label="Generate another deck for this chapter with AI, kept on this phone"
+        style={[styles.row, { backgroundColor: colors.card, borderColor: colors.border }]}>
+        <View style={[styles.rowIcon, { backgroundColor: withAlpha(colors.fuchsia, 0.15) }]}>
+          {busy ? (
+            <ActivityIndicator size="small" color={colors.fuchsia} />
+          ) : (
+            <Sparkles size={18} color={colors.fuchsia} />
+          )}
+        </View>
+        <View style={styles.flex}>
+          <Text style={[styles.rowTitle, { color: colors.text }]}>
+            {busy ? 'Writing a deck…' : 'Generate a deck with AI'}
+          </Text>
+          <Text style={[styles.rowSub, { color: colors.textMuted }]}>
+            A fresh set of cards from this chapter&apos;s questions. Yours alone — it stays on this
+            phone and is not uploaded.
+          </Text>
+        </View>
+      </Touchable>
+
+      <Touchable
+        onPress={onWrite}
+        disabled={busy}
+        label="Write your own deck for this chapter"
+        style={[styles.row, { backgroundColor: colors.card, borderColor: colors.border }]}>
+        <View style={[styles.rowIcon, { backgroundColor: withAlpha(colors.accent, 0.15) }]}>
+          <Pencil size={18} color={colors.accent} />
+        </View>
+        <View style={styles.flex}>
+          <Text style={[styles.rowTitle, { color: colors.text }]}>Write your own deck</Text>
+          <Text style={[styles.rowSub, { color: colors.textMuted }]}>
+            Type the cards yourself, and add photos of diagrams from your phone.
+          </Text>
+        </View>
+      </Touchable>
+    </Sheet>
+  );
+}
+
 export function StudyView({
   year,
   subjectName,
+  subjectKey,
   topic,
   onBack,
+  onOpenOwn,
+  onWriteOwn,
   fixture,
 }: {
   year: Year;
   subjectName: string;
+  subjectKey?: string;
   topic: LeafTopic;
   onBack: () => void;
+  /** Opens a deck this reader made for this chapter. */
+  onOpenOwn?: (deckId: string) => void;
+  /** Starts writing one. */
+  onWriteOwn?: (deckId: string) => void;
   /**
    * A deck supplied instead of fetched.
    *
@@ -739,7 +1217,148 @@ export function StudyView({
     () => (deck ? reconcile(deck, schedule) : []),
     [deck, schedule],
   );
-  const { newCardsPerDay } = useSettings();
+  const { newCardsPerDay, cardSeconds } = useSettings();
+
+  // The "+" in the corner, and what it is doing.
+  const [addOpen, setAddOpen] = useState(false);
+  const [generating, setGenerating] = useState(false);
+  const [addError, setAddError] = useState<string | null>(null);
+
+  const chapter = useMemo(
+    () => ({
+      year,
+      subjectKey: subjectKey ?? subjectName,
+      subjectName,
+      topicKey: topic.key,
+      topicName: topic.name,
+    }),
+    [subjectKey, subjectName, topic.key, topic.name, year],
+  );
+
+  /**
+   * Build one more deck for this chapter, for this phone only.
+   *
+   * `personalDeckKey` is what keeps it off everyone else's: the server caches
+   * on the subtopic key, so asking under the chapter's own key would replace
+   * the shared deck and reset every reader's schedule with it. `noCache` says
+   * the same thing to a server new enough to understand it.
+   */
+  const generateOwn = useCallback(async () => {
+    setGenerating(true);
+    setAddError(null);
+    try {
+      const built = await fetchDeck({
+        year: yearLabel,
+        subject: subjectName,
+        subtopicKey: personalDeckKey(subtopicKey),
+        subtopicName: topic.name,
+        questions: topic.questions,
+        regenerate: true,
+        noCache: true,
+      });
+      const made = await createDeck(`${topic.name} — your AI deck`, {
+        chapter,
+        source: 'ai',
+        cards: built.cards,
+      });
+      setAddOpen(false);
+      complete();
+      onOpenOwn?.(made.id);
+    } catch (err) {
+      setAddError((err as Error)?.message ?? 'Could not build that deck.');
+    } finally {
+      setGenerating(false);
+    }
+  }, [chapter, onOpenOwn, subjectName, subtopicKey, topic.name, topic.questions, yearLabel]);
+
+  const writeOwn = useCallback(async () => {
+    const made = await createDeck(`${topic.name} — your deck`, { chapter, source: 'hand' });
+    setAddOpen(false);
+    onWriteOwn?.(made.id);
+  }, [chapter, onWriteOwn, topic.name]);
+
+  const addAction = onOpenOwn ? (
+    <HeaderAction onPress={() => setAddOpen(true)} label="Add a deck to this chapter">
+      <Plus size={20} color={colors.accent} />
+    </HeaderAction>
+  ) : undefined;
+
+  /**
+   * The decks this reader made for this chapter.
+   *
+   * Without this list, a generated deck is reachable exactly once — at the
+   * moment it is created — and then only from My decks, which is not where
+   * anyone would look for it. Reloaded whenever the sheet closes, since that is
+   * when one may have been added.
+   */
+  const [ownDecks, setOwnDecks] = useState<CustomDeck[]>([]);
+  useEffect(() => {
+    if (addOpen) {
+      return;
+    }
+    let alive = true;
+    loadCustomDecks().then(all => {
+      if (alive) {
+        setOwnDecks(decksForChapter(all, topic.key));
+      }
+    });
+    return () => {
+      alive = false;
+    };
+  }, [addOpen, topic.key]);
+
+  const ownDeckList =
+    ownDecks.length > 0 && onOpenOwn ? (
+      <>
+        <Text style={[styles.sectionLabel, { color: colors.textMuted }]}>YOUR DECKS HERE</Text>
+        {ownDecks.map(own => (
+          <Touchable
+            key={own.id}
+            onPress={() => (own.cards.length > 0 ? onOpenOwn(own.id) : onWriteOwn?.(own.id))}
+            label={`${own.name}, ${own.cards.length} cards, ${
+              own.cards.length > 0 ? 'study' : 'add cards'
+            }`}
+            style={[styles.row, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <View
+              style={[
+                styles.rowIcon,
+                {
+                  backgroundColor: withAlpha(
+                    own.source === 'ai' ? colors.fuchsia : colors.accent,
+                    0.15,
+                  ),
+                },
+              ]}>
+              {own.source === 'ai' ? (
+                <Sparkles size={16} color={colors.fuchsia} />
+              ) : (
+                <Pencil size={16} color={colors.accent} />
+              )}
+            </View>
+            <View style={styles.flex}>
+              <Text style={[styles.rowTitle, { color: colors.text }]}>{own.name}</Text>
+              <Text style={[styles.rowSub, { color: colors.textMuted }]}>
+                {own.cards.length === 0
+                  ? 'No cards yet — tap to add some'
+                  : `${own.cards.length} card${own.cards.length === 1 ? '' : 's'} · on this phone`}
+              </Text>
+            </View>
+            <ChevronRight size={18} color={colors.textMuted} />
+          </Touchable>
+        ))}
+      </>
+    ) : null;
+
+  const addSheet = (
+    <ChapterAddSheet
+      visible={addOpen}
+      onClose={() => setAddOpen(false)}
+      onGenerate={generateOwn}
+      onWrite={writeOwn}
+      busy={generating}
+    />
+  );
+
   const queue = useMemo(() => dueQueue(cards, Date.now(), newCardsPerDay), [cards, newCardsPerDay]);
   const tally = useMemo(() => counts(cards, Date.now(), newCardsPerDay), [cards, newCardsPerDay]);
   /**
@@ -844,7 +1463,9 @@ export function StudyView({
   if (error) {
     return (
       <>
-        <Header title={topic.name} onBack={onBack} />
+        <Header title={topic.name} onBack={onBack} right={addAction} />
+        {addSheet}
+        {ownDeckList}
         <View style={[styles.notice, { borderColor: withAlpha(colors.danger, 0.4) }]}>
           <Text style={[styles.noticeText, { color: colors.danger }]}>{error}</Text>
         </View>
@@ -862,7 +1483,14 @@ export function StudyView({
   if (!current || !face) {
     return (
       <>
-        <Header title={topic.name} subtitle={`${deck?.length ?? 0} cards`} onBack={onBack} />
+        <Header
+          title={topic.name}
+          subtitle={`${deck?.length ?? 0} cards`}
+          onBack={onBack}
+          right={addAction}
+        />
+        {addSheet}
+        {ownDeckList}
         <View style={styles.centered}>
           <Text style={[styles.doneTitle, { color: colors.text }]}>Nothing due right now</Text>
           <Text style={[styles.centeredText, { color: colors.textMuted }]}>
@@ -880,7 +1508,21 @@ export function StudyView({
         title={topic.name}
         subtitle={queueSubtitle}
         onBack={onBack}
+        right={addAction}
       />
+      {addSheet}
+      {addError ? (
+        <View style={[styles.notice, { borderColor: withAlpha(colors.danger, 0.4) }]}>
+          <Text style={[styles.noticeText, { color: colors.danger }]}>{addError}</Text>
+        </View>
+      ) : null}
+
+      {/*
+        The clock sits above the card, not on it: it is about the sitting, not
+        about this question, and a bar drawn inside the card would read as part
+        of the answer.
+      */}
+      {cardSeconds > 0 ? <CardClock seconds={cardSeconds} resetKey={current.id} /> : null}
 
       <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
         {/*
@@ -1018,6 +1660,8 @@ export function StudyView({
         your own cards that is either a failure or, worse, a replacement of
         what you typed with something Gemini made up.
       */}
+      {ownDeckList}
+
       {fixture ? null : (
         <Touchable
           onPress={() => load(true)}
@@ -1052,6 +1696,78 @@ const styles = StyleSheet.create({
     paddingBottom: 28,
   },
   flex: { flex: 1 },
+  sheetBack: {
+    width: 32,
+    height: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  rowEmoji: {
+    fontSize: 22,
+  },
+  builderRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  attachButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    borderWidth: 1,
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+  },
+  attachText: {
+    fontSize: typeScale.footnote.fontSize,
+    fontWeight: '700',
+  },
+  attached: {
+    marginBottom: 10,
+  },
+  attachedImage: {
+    width: '100%',
+    height: 180,
+    borderRadius: 12,
+  },
+  attachedRemove: {
+    position: 'absolute',
+    top: 6,
+    right: 6,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  rowThumb: {
+    width: 44,
+    height: 44,
+    borderRadius: 8,
+  },
+  clockTrack: {
+    height: 3,
+    borderRadius: 2,
+    overflow: 'hidden',
+    marginBottom: 10,
+  },
+  clockFill: {
+    height: 3,
+    width: '100%',
+    borderRadius: 2,
+    // Shrinks from the left edge, so the bar drains rather than slides.
+    transformOrigin: 'left',
+  },
+  headerAction: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
