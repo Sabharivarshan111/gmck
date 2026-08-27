@@ -20,6 +20,9 @@ import { hydrateWallpaper } from '@/hooks/useWallpaper';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { ScrollView, Text, View } from 'react-native';
 import { NotesContentView } from '@/components/NotesContentView';
+import { ChapterNotes } from '@/components/ChapterNotes';
+import { getSubjects, type YearKey } from '@/lib/questionBank';
+import { flattenSubjectTopics } from '@/lib/handwrittenNotes';
 import { SAMPLE_NOTES } from './notesSample';
 import { NotesAiEditBox } from '@/components/NotesAiEditBox';
 import { McqCard } from '@/components/McqCard';
@@ -276,6 +279,41 @@ function Shell() {
    */
   if (screen === 'flashcards') {
     return <FlashcardsScreen onExit={() => {}} />;
+  }
+
+  /*
+   * ?screen=chapternotes&subject=…&topic=… — the reader's own notes for one
+   * chapter, on their own.
+   *
+   * The real home of this block is NotesScreen, which only exists once the
+   * notes edge function has answered — a call the harness cannot make. Without
+   * a route the *other* half of filing a note is unreachable, and the half
+   * that shipped broken before was exactly this one.
+   *
+   * It takes the subject and chapter by **name** and resolves the key here,
+   * through the same flattenSubjectTopics the real screen uses. That is what
+   * makes it an assertion rather than a tautology: the filing sheet writes a
+   * key from one walk of the bank and this reads it back from another, so the
+   * two disagreeing is a failure rather than an invisible miss.
+   */
+  if (screen === 'chapternotes') {
+    const wantSubject = (params.get('subject') ?? '').toLowerCase();
+    const wantTopic = (params.get('topic') ?? '').toLowerCase();
+    const subject = getSubjects(nodeYear as YearKey).find(s => s.name.toLowerCase() === wantSubject);
+    const topic = subject
+      ? flattenSubjectTopics(subject.key, subject.node).find(
+          t => t.name.toLowerCase() === wantTopic,
+        )
+      : undefined;
+    return (
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 16 }}>
+        {topic ? (
+          <ChapterNotes chapterKey={topic.key} />
+        ) : (
+          <Text>no such chapter</Text>
+        )}
+      </ScrollView>
+    );
   }
 
   /*

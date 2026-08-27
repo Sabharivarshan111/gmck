@@ -1530,6 +1530,7 @@ await step('a note filed under a chapter shows up on that chapter', async () => 
     throw new Error('the filing sheet offers no subjects');
   }
   const subjectLabel = (await subject.getAttribute('aria-label')) ?? '';
+  const subjectName = subjectLabel.replace(', choose a chapter', '').trim();
   await subject.click();
   await page.waitForTimeout(700);
 
@@ -1548,6 +1549,17 @@ await step('a note filed under a chapter shows up on that chapter', async () => 
 
   await byLabel('Save note').click();
   await page.waitForTimeout(900);
+  await seesText('Neoplasia mnemonics', 4000);
+
+  // The half that matters: open that chapter and the note is under it.
+  // Filing is a label on a list until this is true, and this is the half that
+  // shipped unbuilt the first time.
+  await open(
+    `screen=chapternotes&year=second-year&subject=${encodeURIComponent(subjectName)}` +
+      `&topic=${encodeURIComponent(chapterName)}`,
+  );
+  await page.waitForTimeout(900);
+  await seesText('YOUR NOTES', 4000);
   await seesText('Neoplasia mnemonics', 4000);
 });
 

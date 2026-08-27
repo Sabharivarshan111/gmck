@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Image, Keyboard, ScrollView, StyleSheet, TextInput, View } from "react-native";
+import { Image, Keyboard, StyleSheet, TextInput, View } from "react-native";
 import { Text } from "@/components/Text";
 import { Touchable } from "@/components/Touchable";
 import { Dialog } from "@/components/Dialog";
@@ -246,11 +246,6 @@ export function ProgressNotesTab({ year }: Props) {
   /** The note being read. Reading and editing are different things. */
   const [reading, setReading] = useState<UserNote | null>(null);
   const [openSubjects, setOpenSubjects] = useState<Record<string, boolean>>({});
-
-  const subjectOptions = useMemo(
-    () => getSubjects(year).map(subject => subject.name),
-    [year],
-  );
 
   /**
    * Notes under their subject.

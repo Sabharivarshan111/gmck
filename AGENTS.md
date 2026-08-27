@@ -215,7 +215,7 @@ everything **outside** the providers and uses literal colours on purpose.
 ```sh
 cd mobile
 npx tsc --noEmit          # must be clean
-npx eslint .              # 0 errors (warnings are inline-style noise)
+npx eslint . --quiet      # must print nothing (warnings hide the errors)
 npm run check:fanout      # per-question subscriptions still isolated
 npm run check:sync        # progress reaches the cloud once a session exists
 npm run check:contrast    # every built-in theme stays readable
