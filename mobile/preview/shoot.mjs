@@ -43,6 +43,8 @@ const SHOTS = [
   { name: 'notes-renderer-bottom', query: 'screen=notesdemo', scroll: 'bottom' },
   // The flashcards walk, and the chat's new controls.
   { name: 'flashcards-decks', query: 'screen=flashcards' },
+  // The daily limit and the pacing clock live below the fold.
+  { name: 'flashcards-decks-bottom', query: 'screen=flashcards', scroll: 'bottom' },
   { name: 'chatdemo', query: 'screen=chatdemo' },
   { name: 'anki-study', query: 'screen=ankidemo' },
   { name: 'progress-bottom', query: 'screen=progress', scroll: 'bottom' },

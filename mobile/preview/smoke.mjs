@@ -1474,6 +1474,31 @@ await step('you can write your own deck, and study it', async () => {
  * What matters here is the rule the generated decks also follow: the picture
  * belongs on the **back**. A diagram shown before "Show answer" is the answer.
  */
+/**
+ * A slider with no number beside it.
+ *
+ * `Slider` draws no text of its own — `format` feeds the accessibility value
+ * and nothing else — so every caller has to render the value itself. Both of
+ * the Flashcards ones shipped without it: a bare track, and no way to tell what
+ * it was set to. This is cheap to assert and the failure is invisible in code
+ * review, which is exactly the pair of properties that earns a check.
+ */
+await step('the flashcard sliders say what they are set to', async () => {
+  await open('screen=flashcards');
+  await page.waitForTimeout(900);
+
+  await seesText('New cards', 4000);
+  await seesText('20 a day', 4000);
+  await seesText('Time per card', 4000);
+  await seesText('Off', 4000);
+
+  // And the spoken value is there too, which is the other half of the contract.
+  const daily = page.locator('[aria-label="New flashcards per day"]');
+  if ((await daily.count()) === 0) {
+    throw new Error('the daily limit slider is not reachable by label');
+  }
+});
+
 await step('a card you write can carry a picture, revealed with the answer', async () => {
   await open('screen=flashcards');
   await page.waitForTimeout(900);

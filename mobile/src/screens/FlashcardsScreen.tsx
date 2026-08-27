@@ -333,6 +333,19 @@ function YearsView({
         HOW MUCH A DAY
       </Text>
       <View style={[styles.card, styles.compactCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+        {/*
+          Name on the left, current value on the right, above the track.
+
+          `Slider` draws no text of its own — `format` feeds the accessibility
+          value only — so a caller that does not render this row ships a bare
+          track with nothing saying what it is set to.
+        */}
+        <View style={styles.sliderHead}>
+          <Text style={[styles.rowTitle, styles.flex, { color: colors.text }]}>New cards</Text>
+          <Text style={[styles.sliderValue, { color: colors.accent }]}>
+            {newCardsPerDay} a day
+          </Text>
+        </View>
         <Slider
           value={newCardsPerDay}
           min={NEW_PER_DAY_MIN}
@@ -358,6 +371,13 @@ function YearsView({
         <View style={styles.builderRow}>
           <TimerIcon size={16} color={colors.textMuted} />
           <Text style={[styles.rowTitle, styles.flex, { color: colors.text }]}>Time per card</Text>
+          <Text
+            style={[
+              styles.sliderValue,
+              { color: cardSeconds === 0 ? colors.textMuted : colors.accent },
+            ]}>
+            {cardSeconds === 0 ? 'Off' : `${cardSeconds}s`}
+          </Text>
         </View>
         <Slider
           value={cardSeconds}
@@ -1704,6 +1724,15 @@ const styles = StyleSheet.create({
   },
   rowEmoji: {
     fontSize: 22,
+  },
+  sliderHead: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  sliderValue: {
+    fontSize: typeScale.footnote.fontSize,
+    fontWeight: '800',
   },
   builderRow: {
     flexDirection: 'row',
