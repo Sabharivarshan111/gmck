@@ -27,9 +27,9 @@ subset that is expensive to get wrong in the first hour.
 
 | File | What |
 |---|---|
-| `.agents/rules/00-working-agreement.md` | how Claude Code and Antigravity share this repo without drifting |
-| `.agents/rules/10-motion.md` | animation rules, and what never ships |
-| `.agents/rules/20-interface.md` | theming, type, materials, accessibility, performance |
+| `.agents/rules/00-working-agreement.md` | how the two agents share this repo |
+| `.agents/rules/10-motion.md` | animation rules; what never ships |
+| `.agents/rules/20-interface.md` | theming, type, materials, a11y, perf |
 
 Deep reference stays in `.claude/skills/` and is **pointed at, never copied** —
 `apple-design/README.md` is its index. `npm run check:agent-docs` (in
@@ -216,6 +216,7 @@ everything **outside** the providers and uses literal colours on purpose.
 cd mobile
 npx tsc --noEmit          # must be clean
 npx eslint . --quiet      # must print nothing (warnings hide the errors)
+npm run check:xp          # one XP ladder, shared with the web
 npm run check:fanout      # per-question subscriptions still isolated
 npm run check:sync        # progress reaches the cloud once a session exists
 npm run check:contrast    # every built-in theme stays readable

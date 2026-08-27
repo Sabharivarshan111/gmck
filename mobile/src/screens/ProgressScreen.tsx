@@ -24,6 +24,7 @@ import {
   Trophy,
 } from 'lucide-react-native';
 import { typeScale } from '@/theme/typography';
+import { XP_MILESTONES, XP_PER_LEVEL, levelFor } from '@/lib/xp';
 import { useTheme, withAlpha, type ThemePreference } from '@/theme';
 import { onColor } from '@/theme/color';
 import { KeyboardSafe } from '@/components/KeyboardSafe';
@@ -66,34 +67,6 @@ const TABS: { key: Tab; label: string }[] = [
   { key: 'notes', label: 'Notes' },
 ];
 
-const XP_MILESTONES = [
-  { label: 'Bronze Scholar', xp: 10, medal: '🥉' },
-  { label: 'Silver Scholar', xp: 50, medal: '🥈' },
-  { label: 'Gold Scholar', xp: 100, medal: '🥇' },
-  { label: 'Platinum Mind', xp: 250, medal: '🔘' },
-  { label: 'Diamond Mind', xp: 500, medal: '💎' },
-  { label: 'Legendary Healer', xp: 1000, medal: '👑' },
-];
-
-/**
- * Level from XP, using the milestones the Rewards list already shows.
- *
- * The card used to print the literal `1` and "50 XP to level 2" no matter what,
- * so someone with 600 XP was told they were level 1 and 50 XP short — a
- * progress display that never moved, next to a rewards list that did. Deriving
- * both from XP_MILESTONES means the two halves of this screen can never
- * disagree about the same number again.
- */
-function levelFor(xp: number): { level: number; next: number | null; percent: number } {
-  const passed = XP_MILESTONES.filter(m => xp >= m.xp).length;
-  const level = passed + 1;
-  const next = XP_MILESTONES[passed]?.xp ?? null;
-  const floor = passed > 0 ? XP_MILESTONES[passed - 1].xp : 0;
-  const percent =
-    next === null ? 100 : Math.max(0, Math.min(100, ((xp - floor) / (next - floor)) * 100));
-  return { level, next, percent };
-}
-
 const STREAK_BADGES = [
   { label: 'Spark', days: 3, tint: '#7C2D12' },
   { label: 'Blaze', days: 7, tint: '#3F3F46' },
@@ -113,8 +86,16 @@ export default function ProgressScreen() {
   const insets = useSafeAreaInsets();
   const countDone = useCountDone();
 
-  const { local: profile, yearKey: year, year: shortYear, displayName, streak, freezes, save } =
-    useProfile();
+  const {
+    local: profile,
+    cloud,
+    yearKey: year,
+    year: shortYear,
+    displayName,
+    streak,
+    freezes,
+    save,
+  } = useProfile();
   const [editOpen, setEditOpen] = useState(false);
   const [tab, setTab] = useState<Tab>('stats');
   const [rewardsOpen, setRewardsOpen] = useState(true);
@@ -449,42 +430,82 @@ export default function ProgressScreen() {
                 <Text style={[styles.streakText, { color: colors.text }]}>
                   {streak} day streak
                 </Text>
-                <View style={[styles.freeze, { borderColor: withAlpha(colors.cyan, 0.5) }]}>
-                  <Snowflake size={11} color={colors.cyan} />
-                  <Text style={[styles.freezeText, { color: colors.cyan }]}>{freezes}</Text>
-                </View>
+                {/* A freeze count of zero is not a feature to advertise. */}
+                {freezes > 0 ? (
+                  <View
+                    accessible
+                    accessibilityLabel={`${freezes} streak freeze${freezes > 1 ? 's' : ''} left, each saves your streak if you miss a day`}
+                    style={[styles.freeze, { borderColor: withAlpha(colors.cyan, 0.5) }]}>
+                    <Snowflake size={11} color={colors.cyan} />
+                    <Text style={[styles.freezeText, { color: colors.cyan }]}>{freezes}</Text>
+                  </View>
+                ) : null}
               </View>
               <View style={styles.streakRight}>
+                {/*
+                  "Year XP" was textMuted, which on the black theme is the
+                  grey the reader said they could not read. It is one of the
+                  two numbers this card exists to show; it gets full text.
+                  The line under it used to repeat "N XP to level N+1", which
+                  the bar's own caption already says two rows down.
+                */}
                 <Text style={[styles.levelText, { color: colors.text }]}>
                   Level <Text style={{ color: colors.fuchsia }}>{level.level}</Text>
-                  <Text style={{ color: colors.textMuted }}> · {xp} Year XP</Text>
-                </Text>
-                <Text style={[styles.lifetime, { color: colors.textMuted }]}>
-                  {level.next === null
-                    ? 'Top level reached'
-                    : `${level.next - xp} XP to level ${level.level + 1}`}
+                  {' · '}
+                  {xp} Year XP
                 </Text>
               </View>
             </View>
             <View style={styles.streakBar}>
               <ThinBar percent={level.percent} />
             </View>
-            <Text style={[styles.streakHint, { color: colors.textMuted }]}>
-              {level.next === null
-                ? `${xp} XP · every milestone unlocked`
-                : `${xp} / ${level.next} XP to level ${level.level + 1}`}
+            <Text style={[styles.streakHint, { color: colors.text }]}>
+              {level.into} / {XP_PER_LEVEL} XP to level {level.level + 1}
             </Text>
+            {/*
+              The four badge tiles.
+
+              These were a hairline border on nothing, with the number in
+              textMuted and only the trophy changing colour — so on the black
+              theme an earned badge and an unearned one were the same dim grey
+              rectangle, and the reader's own report was that the card looked
+              fake. A reward you cannot tell you have won is not a reward.
+
+              Earned is now a filled tile: the accent behind it, and ink chosen
+              from the accent's own luminance rather than hardcoded white,
+              because amber and cyan accents need black. Unearned keeps the
+              card background and full-strength text at a reduced opacity — the
+              tile still reads, it just does not glow.
+            */}
             <View style={styles.badgeRow}>
-              {[10, 50, 100, 500].map(milestone => (
-                <View
-                  key={milestone}
-                  style={[styles.miniBadge, { borderColor: colors.border }]}>
-                  <Trophy size={16} color={xp >= milestone ? colors.warning : colors.textMuted} />
-                  <Text style={[styles.miniBadgeText, { color: colors.textMuted }]}>
-                    {milestone}
-                  </Text>
-                </View>
-              ))}
+              {[10, 50, 100, 500].map(milestone => {
+                const earned = xp >= milestone;
+                const ink = earned ? onColor(colors.accent) : colors.text;
+                return (
+                  <View
+                    key={milestone}
+                    accessible
+                    accessibilityRole="image"
+                    accessibilityLabel={
+                      earned
+                        ? `${milestone} question badge, earned`
+                        : `${milestone} question badge, ${milestone - xp} to go`
+                    }
+                    style={[
+                      styles.miniBadge,
+                      earned
+                        ? { backgroundColor: colors.accent, borderColor: colors.accent }
+                        : {
+                            backgroundColor: colors.cardElevated,
+                            borderColor: colors.border,
+                            opacity: 0.75,
+                          },
+                    ]}>
+                    <Trophy size={16} color={ink} />
+                    <Text style={[styles.miniBadgeText, { color: ink }]}>{milestone}</Text>
+                  </View>
+                );
+              })}
             </View>
           </View>
 
@@ -636,7 +657,7 @@ export default function ProgressScreen() {
           </View>
 
           {/* Leaderboard */}
-          <Leaderboard year={shortYear} selfName={displayName} />
+          <Leaderboard year={shortYear} selfName={displayName} selfId={cloud?.id ?? null} />
 
           {/* Weak-topic heatmap */}
           <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
@@ -921,10 +942,6 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '600',
   },
-  lifetime: {
-    fontSize: 11,
-    marginTop: 2,
-  },
   streakBar: {
     marginTop: 14,
   },
@@ -946,7 +963,8 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   miniBadgeText: {
-    fontSize: 11,
+    ...typeScale.caption,
+    fontWeight: '700',
   },
   card: {
     borderRadius: 16,

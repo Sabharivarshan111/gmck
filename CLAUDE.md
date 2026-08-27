@@ -25,6 +25,7 @@ when picking up work that was last touched from the other tool.
 | `.agents/rules/61-own-decks.md` | Decks the reader makes — written by hand, generated for one phone, or carrying photos from the gallery |
 | `.agents/rules/70-supabase.md` | Supabase — why no sandbox can reach it, and the queue that stops blocked work being forgotten |
 | `.agents/rules/80-keyboard.md` | Text inputs and the Android keyboard — why adjustResize is dead and what replaces it |
+| `.agents/rules/90-xp.md` | XP, badges, streak and the leaderboard — one ladder shared with the web app, and why a reward has to look like one |
 <!-- rules:end -->
 
 This repo is worked on from Claude Code *and* Antigravity, sometimes on the
@@ -672,6 +673,55 @@ That is not a preview-only cosmetic: `check:smoke` asserts through the DOM, and
 the reminder's "off by default" assertion passed for a year while reading an
 attribute that was never emitted.
 
+## XP is one ladder, and the phone does not get its own
+
+`mobile/src/lib/xp.ts` is the whole economy: the level band, the six badges,
+the year count they are earned against, and what a tick is worth announcing.
+Every one of those numbers mirrors `src/lib/rewards.ts` in the web app, and
+`npm run check:xp` reads both files and fails if they part company.
+
+It is one file because it was three, and three copies of a number that must
+agree with a fourth is three chances to disagree. It had already taken one:
+the web levels every **50 questions** (`floor(xp / 50) + 1`), the native card
+levelled off the *badge* thresholds instead, and 60 XP was level 2 in a browser
+and level 3 on the phone — same account, same questions ticked.
+
+Three things there are load-bearing:
+
+- **The count is year-scoped**, because that is what the card calls "Year XP",
+  what the badges are measured against and what the leaderboard ranks on. A
+  global count would announce "Bronze Scholar unlocked" over a card still
+  showing that badge locked, for anyone who has browsed another year.
+- **A milestone is read from the crossing**, not from a stored list of what has
+  been announced. A count that only goes up crosses each threshold once, so
+  there is no bookkeeping to go stale and nothing to re-announce next launch.
+- **`XpToast` waits for `isHydrated()`** and starts its baseline at `-1`.
+  Hydration loads every question ever ticked in one go; a baseline of 0 reads
+  that as one tick worth four hundred XP and says so.
+
+Ticking a question has to *say* so. The web app has toasted every tick since XP
+existed and the phone had none, so a tick fed a number you could only find by
+walking to My Progress — which is why the reader's report of the streak card
+was "i think it's fake". `components/XpToast.tsx` is mounted once at the root of
+`App.tsx`, like the web's `GlobalCelebrations`, so it fires on whichever screen
+the tick happened on.
+
+## A reward has to look like one
+
+The four badge tiles under the streak bar were a hairline border on nothing,
+with the number in `textMuted` and only the trophy icon changing colour. On the
+black theme an earned badge and an unearned one were the same dim grey
+rectangle — reported as "i cant see anything i think it's fake". An earned tile
+is filled with the accent now, its ink from `onColor` rather than hardcoded
+white (amber and cyan accents need black).
+
+The leaderboard had the matching defect: it fetched 50 rows and rendered
+`rows.slice(0, 10)`, so anyone ranked eleventh or lower could not find
+themselves on a board they were on, while the web app scrolled all 50. It also
+matched "you" on the **display name**, which highlights a stranger the moment
+two readers pick the same one; `selfId` is the profile id, and the name is only
+the fallback for a reader with no account.
+
 ## Storage keys are shared with the web app
 
 The native app deliberately reuses the web app's keys so one user with both
@@ -710,6 +760,7 @@ npm run check:native-sound       # the sound module is reachable under the New A
 npm run check:one-app            # the frozen web app has grown no second copy
 npm run check:flashcard-size     # the chapter list's card count is the one the server builds
 npm run check:streak             # the streak counts on a phone with no account
+npm run check:xp                 # one XP ladder, shared with the web app
 npm run check:supabase-queue     # every job waiting on Supabase can still be applied
 npm run check:keyboard           # no text input can sit under the Android keyboard
 npm run check:mcq                # MCQ response parsing + the ask-gemini markers

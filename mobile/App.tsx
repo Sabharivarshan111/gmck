@@ -11,6 +11,7 @@ import { initializeAds } from '@/lib/ads';
 import { hydratePremium, usePremiumSync } from '@/lib/premium';
 import { hydrateWallpaper, isWallpaperHydrated } from '@/hooks/useWallpaper';
 import { DailyAdConsent } from '@/components/DailyAdConsent';
+import { XpToast } from '@/components/XpToast';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 function Shell() {
@@ -84,6 +85,7 @@ function Shell() {
       <StatusBar barStyle={theme === 'dark' ? 'light-content' : 'dark-content'} />
       <RootNavigator />
       <DailyAdConsent />
+      <XpToast />
     </NavigationContainer>
   );
 }

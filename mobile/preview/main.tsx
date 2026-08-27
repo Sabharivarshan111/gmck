@@ -15,6 +15,7 @@ import { hydrateProgress } from '@/lib/progress';
 import { hydrateSettings } from '@/lib/settings';
 import { hydrateProfile, hydrateStreak } from '@/hooks/useProfile';
 import { DailyAdConsent } from '@/components/DailyAdConsent';
+import { XpToast } from '@/components/XpToast';
 import { hydratePremium } from '@/lib/premium';
 import { hydrateWallpaper } from '@/hooks/useWallpaper';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
@@ -347,6 +348,7 @@ function Shell() {
     <NavigationContainer theme={navTheme} initialState={buildInitialState()}>
       <RootNavigator />
       <DailyAdConsent />
+      <XpToast />
     </NavigationContainer>
   );
 }

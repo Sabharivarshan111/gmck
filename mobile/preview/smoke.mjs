@@ -708,6 +708,17 @@ await step('a question row toggles done and back', async () => {
   if ((await swatch()) === before) {
     throw new Error(`tapping the checkbox did not change its done state (stayed ${before})`);
   }
+
+  /*
+   * The tick says so.
+   *
+   * The web app has toasted every tick since XP existed and the phone had no
+   * toast at all, so a tick fed a number you could only find by walking to My
+   * Progress. Asserted here rather than in its own step because it has to fire
+   * on the screen the tick happened on, which is this one.
+   */
+  await seesText('+1 XP', 3000);
+
   await box.click();
   await page.waitForTimeout(500);
   if ((await swatch()) !== before) {
