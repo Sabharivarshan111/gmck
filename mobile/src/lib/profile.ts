@@ -188,3 +188,18 @@ export async function registerOpen(): Promise<{ streak: number; last_active_date
     return null;
   }
 }
+
+
+/**
+ * The signed-in Supabase auth uid, or null.
+ *
+ * Every `user_id` column in this project is a `uuid`, so this — not the email,
+ * not the display name — is the only value that may be written to one. Passing
+ * an email instead is not a mismatch that surfaces: Postgres rejects it,
+ * supabase-js returns the error rather than throwing, and the caller's
+ * `if (!error)` quietly takes the local-only branch.
+ */
+export async function currentUserId(): Promise<string | null> {
+  const { data } = await supabase.auth.getSession();
+  return data?.session?.user?.id ?? null;
+}

@@ -7,6 +7,20 @@ export interface UserNote {
   user_id?: string;
   title: string;
   content: string;
+  /**
+   * Free text from the question bank's subject list, or null for unfiled.
+   *
+   * Not a foreign key: the subjects are TypeScript data, not database rows, so
+   * a key would need a migration every time the bank changes.
+   */
+  subject?: string | null;
+  /**
+   * Storage paths in the private `note-images` bucket, `{uid}/{note}/{file}`.
+   *
+   * Paths, not bytes. Bytes in a synced row would mean every device
+   * re-downloading megabytes of JPEG just to list a note's title.
+   */
+  images?: string[];
   created_at: string;
   updated_at: string;
 }
@@ -84,6 +98,8 @@ export function useUserNotes(userId: string | null) {
       user_id: userId ?? undefined,
       title: initial?.title ?? "",
       content: initial?.content ?? "",
+      subject: initial?.subject ?? null,
+      images: initial?.images ?? [],
       created_at: now,
       updated_at: now,
     };
@@ -103,6 +119,8 @@ export function useUserNotes(userId: string | null) {
           user_id: userId,
           title: newNote.title,
           content: newNote.content,
+          subject: newNote.subject ?? null,
+          images: newNote.images ?? [],
         })
         .select("id, created_at, updated_at")
         .single();
@@ -129,7 +147,10 @@ export function useUserNotes(userId: string | null) {
     return newNote;
   };
 
-  const updateNote = async (id: string, patch: Partial<Pick<UserNote, "title" | "content">>) => {
+  const updateNote = async (
+    id: string,
+    patch: Partial<Pick<UserNote, "title" | "content" | "subject" | "images">>,
+  ) => {
     const next = notes.map(n => (n.id === id ? { ...n, ...patch, updated_at: new Date().toISOString() } : n));
     setNotes(next);
     await saveLocal(next);

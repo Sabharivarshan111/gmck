@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Text } from '@/components/Text';
+import { KeyboardSafe } from '@/components/KeyboardSafe';
 import { Touchable } from '@/components/Touchable';
 import { useTheme, withAlpha } from '@/theme';
 import { typeScale } from '@/theme/typography';
@@ -296,7 +297,13 @@ export function Sheet({
       // Android's back gesture. Left unhandled when the sheet is not
       // dismissable, so back cannot strand the user on an empty app.
       onRequestClose={dismissable ? requestClose : undefined}>
-      <View style={styles.root}>
+      {/*
+        Every sheet with a text field in it — the profile name, a custom
+        theme's hex, the pomodoro durations — sat under the keyboard, because
+        adjustResize is inert from Android 15. Fixing it here fixes all of
+        them, which is the point of the sheet being a primitive.
+      */}
+      <KeyboardSafe style={styles.root}>
         <Animated.View
           style={[
             StyleSheet.absoluteFill,
@@ -375,6 +382,9 @@ export function Sheet({
               style={styles.scroll}
               contentContainerStyle={styles.scrollContent}
               showsVerticalScrollIndicator={false}
+              // A tap on a button below a focused field must press it, not
+              // just dismiss the keyboard.
+              keyboardShouldPersistTaps="handled"
               scrollEventThrottle={16}
               onScroll={event => {
                 scrollOffset.current = event.nativeEvent.contentOffset.y;
@@ -389,7 +399,7 @@ export function Sheet({
             children
           )}
         </Animated.View>
-      </View>
+      </KeyboardSafe>
     </Modal>
   );
 }

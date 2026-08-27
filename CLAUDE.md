@@ -24,6 +24,7 @@ when picking up work that was last touched from the other tool.
 | `.agents/rules/60-flashcards.md` | Anki flashcards — why the scheduler is not the app's other one, and what is still unverified |
 | `.agents/rules/61-own-decks.md` | Decks the reader makes — written by hand, generated for one phone, or carrying photos from the gallery |
 | `.agents/rules/70-supabase.md` | Supabase — why no sandbox can reach it, and the queue that stops blocked work being forgotten |
+| `.agents/rules/80-keyboard.md` | Text inputs and the Android keyboard — why adjustResize is dead and what replaces it |
 <!-- rules:end -->
 
 This repo is worked on from Claude Code *and* Antigravity, sometimes on the
@@ -677,6 +678,7 @@ npm run check:one-app            # the frozen web app has grown no second copy
 npm run check:flashcard-size     # the chapter list's card count is the one the server builds
 npm run check:streak             # the streak counts on a phone with no account
 npm run check:supabase-queue     # every job waiting on Supabase can still be applied
+npm run check:keyboard           # no text input can sit under the Android keyboard
 npm run check:mcq                # MCQ response parsing + the ask-gemini markers
 npm run check:notes-limits       # every topic still fits the notes function's schema
 npm run check:smoke              # drives the real screens; 18 flows, 0 crashes

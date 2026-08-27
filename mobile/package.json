@@ -40,6 +40,7 @@
     "check:flashcard-size": "node scripts/flashcard-size-check.mjs",
     "check:streak": "node scripts/streak-check.mjs",
     "check:supabase-queue": "node scripts/supabase-queue.mjs check",
+    "check:keyboard": "node scripts/keyboard-check.mjs",
     "supabase:status": "node scripts/supabase-queue.mjs status",
     "supabase:done": "node scripts/supabase-queue.mjs done"
   },

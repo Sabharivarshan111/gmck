@@ -2,12 +2,12 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Animated,
   FlatList,
-  KeyboardAvoidingView,
   StyleSheet,
   TextInput,
   View,
 } from 'react-native';
 import { Text } from '@/components/Text';
+import { KeyboardSafe } from '@/components/KeyboardSafe';
 import { Touchable } from '@/components/Touchable';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRoute, type RouteProp } from '@react-navigation/native';
@@ -272,8 +272,13 @@ export default function AskAiScreen() {
     }).start();
   }, [canSend, reduceMotion, sendReady]);
 
+  /*
+   * The screen this bug was found on. The reasoning that used to live here is
+   * in KeyboardSafe now, because leaving it at one call site is exactly how
+   * eleven other inputs stayed broken for a month.
+   */
   return (
-    <KeyboardAvoidingView
+    <KeyboardSafe
       style={[
         styles.screen,
         {
@@ -281,30 +286,7 @@ export default function AskAiScreen() {
           paddingTop: insets.top + (isFullscreen ? 0 : 8),
           paddingHorizontal: isFullscreen ? 0 : 16,
         },
-      ]}
-      /*
-       * 'padding' on Android too, not `undefined`.
-       *
-       * `undefined` means "do nothing, the window will resize" — which is what
-       * `android:windowSoftInputMode="adjustResize"` used to guarantee. It does
-       * not any more. This app targets SDK 36, and from Android 15 edge-to-edge
-       * is enforced for apps targeting 35+: the window no longer shrinks when
-       * the IME appears, the app draws behind it, and adjustResize is inert. So
-       * the composer sat under the keyboard and you could not see what you were
-       * typing.
-       *
-       * The manifest still says adjustResize, and should — it is what older
-       * versions use, and there it makes this padding a no-op rather than a
-       * conflict, because a resized window reports no keyboard height to pad by.
-       *
-       * No `keyboardVerticalOffset`. RN computes the lift as
-       * `frame.y + frame.height - keyboardTop` using this view's own
-       * screen-space bottom, which already sits above the tab bar — so the tab
-       * bar is accounted for, and adding its height again would lift the
-       * composer a whole bar clear of the keyboard and leave a gap that looks
-       * like a different bug.
-       */
-      behavior="padding">
+      ]}>
       {!isFullscreen ? (
         <>
           <Text style={[styles.title, { color: colors.text }]}>Ask AI</Text>
@@ -566,7 +548,7 @@ export default function AskAiScreen() {
           </View>
         </View>
       </View>
-    </KeyboardAvoidingView>
+    </KeyboardSafe>
   );
 }
 

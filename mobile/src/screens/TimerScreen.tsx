@@ -8,6 +8,7 @@ import {
   View,
 } from 'react-native';
 import { Text } from '@/components/Text';
+import { KeyboardSafe } from '@/components/KeyboardSafe';
 import { Touchable } from '@/components/Touchable';
 import { PomodoroSettingsSheet } from '@/components/PomodoroSettingsSheet';
 import { useExam } from '@/hooks/useExam';
@@ -112,6 +113,7 @@ export default function TimerScreen() {
   }, [timer.completionNonce]);
 
   return (
+    <KeyboardSafe>
     <ScrollView
       style={{ backgroundColor: colors.background }}
       contentContainerStyle={[styles.content, { paddingTop: insets.top + 8 }]}
@@ -361,6 +363,7 @@ export default function TimerScreen() {
         onResetCycle={timer.resetCycle}
       />
     </ScrollView>
+    </KeyboardSafe>
   );
 }
 

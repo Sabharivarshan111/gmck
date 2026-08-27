@@ -25,6 +25,7 @@ import {
   X,
 } from 'lucide-react-native';
 import { Text } from '@/components/Text';
+import { KeyboardSafe } from '@/components/KeyboardSafe';
 import { Touchable } from '@/components/Touchable';
 import { BackButton } from '@/components/BackButton';
 import { GradientFill } from '@/components/Gradient';
@@ -142,6 +143,7 @@ export default function FlashcardsScreen({ onExit }: { onExit: () => void }) {
   }, [onExit]);
 
   return (
+    <KeyboardSafe>
     <ScrollView
       style={{ backgroundColor: colors.background }}
       contentContainerStyle={[styles.content, { paddingTop: insets.top + 8 }]}
@@ -211,6 +213,7 @@ export default function FlashcardsScreen({ onExit }: { onExit: () => void }) {
         />
       ) : null}
     </ScrollView>
+    </KeyboardSafe>
   );
 }
 

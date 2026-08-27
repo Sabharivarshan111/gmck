@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { FlatList, StyleSheet, TextInput, View } from 'react-native';
 import { Text } from '@/components/Text';
+import { KeyboardSafe } from '@/components/KeyboardSafe';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation, useRoute, type RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -129,6 +130,7 @@ export default function BrowseHomeScreen() {
   );
 
   return (
+    <KeyboardSafe>
     <View style={[styles.container, { backgroundColor: colors.background, paddingTop: insets.top + 8 }]}>
       <View style={styles.header}>
         <BackButton onPress={() => navigation.goBack()} />
@@ -286,6 +288,7 @@ export default function BrowseHomeScreen() {
         onClose={() => setNoted(null)}
       />
     </View>
+    </KeyboardSafe>
   );
 }
 

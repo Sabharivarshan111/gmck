@@ -21,6 +21,7 @@ import {
   Wand2,
 } from 'lucide-react-native';
 import { Text } from '@/components/Text';
+import { KeyboardSafe } from '@/components/KeyboardSafe';
 import { Touchable } from '@/components/Touchable';
 import { ProgressBar } from '@/components/ui';
 import { typeScale } from '@/theme/typography';
@@ -140,6 +141,7 @@ export default function NotesScreen() {
 
   return (
     <View style={styles.screen}>
+    <KeyboardSafe>
     <ScrollView
       // flex: 1 because this is no longer the root view. A ScrollView with no
       // flex inside a column parent sizes to its content, so it would grow
@@ -184,6 +186,7 @@ export default function NotesScreen() {
         />
       ) : null}
     </ScrollView>
+    </KeyboardSafe>
 
     {/*
       Outside the ScrollView, so it does not leave with the content.

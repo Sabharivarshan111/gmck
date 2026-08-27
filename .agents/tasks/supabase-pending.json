@@ -7,8 +7,9 @@
       "file": "supabase/functions/generate-flashcards/index.ts",
       "why": "A personal AI deck must not be written into the shared cache. The suffixed personalDeckKey() already protects the shared row on v9, so nothing is broken meanwhile — this removes the stray cache row a personal generation leaves behind. Do NOT remove the key suffix when deploying this.",
       "verify": "get_edge_function generate-flashcards → version > 9, and its source contains `noCache`. Then: generate a personal deck from a chapter's + menu and confirm no new row appears in `flashcards` with a `#own-` deck_key.",
-      "status": "pending",
-      "queuedAt": "2026-08-27T02:47:14.984Z"
+      "status": "done",
+      "queuedAt": "2026-08-27T02:47:14.984Z",
+      "appliedAt": "2026-08-27T08:12:23.806Z"
     }
   ]
 }

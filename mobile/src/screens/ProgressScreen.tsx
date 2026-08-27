@@ -26,6 +26,7 @@ import {
 import { typeScale } from '@/theme/typography';
 import { useTheme, withAlpha, type ThemePreference } from '@/theme';
 import { onColor } from '@/theme/color';
+import { KeyboardSafe } from '@/components/KeyboardSafe';
 import { GradientFill } from '@/components/Gradient';
 import { ProgressRing, ThinBar } from '@/components/ProgressRing';
 import {
@@ -41,6 +42,7 @@ import {
   signInWithGoogle,
   signOutGoogle,
 } from '@/lib/googleAuth';
+import { currentUserId } from '@/lib/profile';
 import { useCountDone } from '@/hooks/useProgress';
 import { useProfile } from '@/hooks/useProfile';
 import { ProfileSheet } from '@/components/ProfileSheet';
@@ -119,6 +121,17 @@ export default function ProgressScreen() {
   const [rewardsOpen, setRewardsOpen] = useState(true);
   const [syncing, setSyncing] = useState(false);
   const [email, setEmail] = useState<string | null>(null);
+  /**
+   * The Supabase auth uid, which is a different thing from the email.
+   *
+   * Both tabs used to be handed `email`. `user_notes.user_id` and
+   * `calendar_events.user_id` are `uuid NOT NULL`, so Postgres rejected every
+   * insert — and supabase-js *returns* errors rather than throwing, so the
+   * rejection was discarded and the note kept its local id. Nothing failed
+   * visibly; notes and events simply never left the phone, on a screen whose
+   * whole header is about syncing across devices.
+   */
+  const [uid, setUid] = useState<string | null>(null);
   const [authBusy, setAuthBusy] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
 
@@ -156,6 +169,7 @@ export default function ProgressScreen() {
 
   useEffect(() => {
     getSignedInEmail().then(setEmail);
+    currentUserId().then(setUid);
   }, []);
 
   // Once-a-day rewarded ad for the "progress" bucket. Gated on an existing
@@ -173,6 +187,7 @@ export default function ProgressScreen() {
     try {
       const account = await signInWithGoogle();
       setEmail(account.email);
+      setUid(await currentUserId());
       // Merge whatever this device recorded anonymously into the account.
       await reconcileProgress();
     } catch (err) {
@@ -189,6 +204,7 @@ export default function ProgressScreen() {
     try {
       await signOutGoogle();
       setEmail(null);
+      setUid(null);
     } finally {
       setAuthBusy(false);
     }
@@ -273,9 +289,17 @@ export default function ProgressScreen() {
   ]);
 
   return (
+    /*
+     * The calendar's event field and the study-note editor both live inside
+     * this scroll view, and both sat under the keyboard. See KeyboardSafe.
+     */
+    <KeyboardSafe>
     <ScrollView
       style={{ backgroundColor: colors.background }}
       contentContainerStyle={[styles.content, { paddingTop: insets.top + 12 }]}
+      // Without this the first tap on Save or Add is spent dismissing the
+      // keyboard and never reaches the button.
+      keyboardShouldPersistTaps="handled"
       showsVerticalScrollIndicator={false}>
       {/* Profile header */}
       <View style={styles.profileRow}>
@@ -393,9 +417,9 @@ export default function ProgressScreen() {
       </View>
 
       {tab === 'calendar' ? (
-        <ProgressCalendarTab userId={email} />
+        <ProgressCalendarTab userId={uid} />
       ) : tab === 'notes' ? (
-        <ProgressNotesTab userId={email} />
+        <ProgressNotesTab userId={uid} year={year} />
       ) : (
         <>
           {/* Year ring */}
@@ -748,6 +772,7 @@ export default function ProgressScreen() {
         onGraded={revision.record}
       />
     </ScrollView>
+    </KeyboardSafe>
   );
 }
 
