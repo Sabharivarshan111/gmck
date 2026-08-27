@@ -131,7 +131,7 @@ function NoteAttachment({
           </Text>
           <Text style={[styles.noteEmpty, { color: colors.textMuted }]}>
             {file.linked
-              ? "The original has been moved or deleted, so this link no longer works."
+              ? "The original was moved or deleted, so this no longer plays."
               : "No longer on this phone."}
           </Text>
         </View>
@@ -150,11 +150,11 @@ function NoteAttachment({
         }
       }}
       disabled={busy}
-      label={`Keep a copy of ${file.name} inside Orbit, so deleting the original does not matter`}
+      label={`Save a copy of ${file.name} in Orbit, so deleting the original does not matter`}
       style={[styles.linkFooter, { borderColor: colors.border }]}>
       <HardDriveDownload size={13} color={colors.cyan} />
       <Text style={[styles.noteEmpty, { color: colors.cyan }]}>
-        {busy ? "Copying…" : "Linked to the original · keep a copy in Orbit"}
+        {busy ? "Saving…" : "Linked · tap to save a copy"}
       </Text>
     </Touchable>
   ) : null;
@@ -800,43 +800,47 @@ export function ProgressNotesTab({ year }: Props) {
       <Sheet
         visible={attachOpen}
         onClose={() => setAttachOpen(false)}
-        title="How should Orbit keep it?">
+        title="Save it, or just link it?">
+        {/*
+          One line each.
+
+          This started as two paragraphs and the reader's friend called it
+          confusing, which it was — a choice presented as an essay is a choice
+          nobody reads. The whole decision is "does it survive the original
+          being deleted, and does it cost space", so that is the whole text.
+        */}
         <Touchable
           onPress={() => addFile("copy")}
-          label="Keep a copy inside Orbit. Uses space on this phone, and survives the original being deleted"
+          label="Save a copy in Orbit. Uses phone space, and keeps working if you delete the original"
           style={[styles.modeRow, { backgroundColor: colors.card, borderColor: colors.border }]}>
           <View style={[styles.modeIcon, { backgroundColor: withAlpha(colors.fuchsia, 0.15) }]}>
             <HardDriveDownload size={18} color={colors.fuchsia} />
           </View>
           <View style={styles.flex}>
-            <Text style={[styles.rowTitle, { color: colors.text }]}>Keep a copy in Orbit</Text>
+            <Text style={[styles.rowTitle, { color: colors.text }]}>Save a copy</Text>
             <Text style={[styles.rowSub, { color: colors.textMuted }]}>
-              The file is copied into this app. Delete, move or rename the original later and
-              your note still plays it. Uses space on your phone — as much as the file is big.
+              Safest. Works even if you delete the original. Uses phone space.
             </Text>
           </View>
         </Touchable>
 
         <Touchable
           onPress={() => addFile("link")}
-          label="Link to the original. Uses no space, and stops working if you delete or move the file"
+          label="Just link it. Uses no space, and stops working if you delete or move the original"
           style={[styles.modeRow, { backgroundColor: colors.card, borderColor: colors.border }]}>
           <View style={[styles.modeIcon, { backgroundColor: withAlpha(colors.cyan, 0.15) }]}>
             <Link2 size={18} color={colors.cyan} />
           </View>
           <View style={styles.flex}>
-            <Text style={[styles.rowTitle, { color: colors.text }]}>Link to the original</Text>
+            <Text style={[styles.rowTitle, { color: colors.text }]}>Just link it</Text>
             <Text style={[styles.rowSub, { color: colors.textMuted }]}>
-              Nothing is copied, so this uses no extra space. It plays here from wherever the
-              file already is — but if you delete or move it, this note can no longer play it.
-              You can switch it to a copy at any time.
+              Uses no space. Stops working if you delete or move the original.
             </Text>
           </View>
         </Touchable>
 
         <Text style={[styles.note, { color: withAlpha(colors.text, 0.5) }]}>
-          Either way nothing is uploaded. Both options keep the file on this phone and no
-          copy of it ever leaves.
+          Nothing is uploaded either way — the file stays on this phone.
         </Text>
       </Sheet>
 
@@ -913,7 +917,7 @@ export function ProgressNotesTab({ year }: Props) {
                     <Text style={[styles.noteEmpty, { color: colors.textMuted }]}>
                       {KIND_LABEL[kindOf(file)]}
                       {formatBytes(file.size) ? ` · ${formatBytes(file.size)}` : ""}
-                      {file.linked ? " · linked to the original" : " · kept in Orbit"}
+                      {file.linked ? " · linked" : " · saved in Orbit"}
                     </Text>
                   </View>
                   <Touchable

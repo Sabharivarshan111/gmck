@@ -226,7 +226,7 @@ check(
 );
 // The choice has to be explained where it is made, not discovered a month
 // later when the file stops playing.
-for (const phrase of ['Keep a copy in Orbit', 'Link to the original', 'still plays it']) {
+for (const phrase of ['Save a copy', 'Just link it', 'Works even if you delete the original']) {
   check(
     tab.includes(phrase) || read(path.join(mobile, 'src/components/ProgressNotesTab.tsx')).includes(phrase),
     `the attach chooser no longer says "${phrase}"`,
@@ -237,16 +237,39 @@ check(
   'a broken link no longer says so, and shows a dead player instead',
 );
 
-// Fullscreen, landscape, and driven by state rather than the ref — leaving
-// fullscreen with the back gesture does not tell an imperative call anything,
-// so the next tap on the button would do nothing.
+// ---------------------------------------------------------------------------
+// 4d. Fullscreen is ours, and it keeps the controls.
+//
+// The library's `fullscreen` prop on Android hands the surface to ExoPlayer's
+// own dialog, which draws *its* built-in controls — so with controls={false} a
+// reader got a fullscreen with no play button, no scrubber, no time and no
+// volume, still in portrait. `fullscreenOrientation` is iOS-only.
+// ---------------------------------------------------------------------------
 check(
-  /fullscreen=\{full\}/.test(player) && /fullscreenOrientation="landscape"/.test(player),
-  'the video player has no fullscreen, or does not turn sideways for it',
+  !/fullscreen=\{/.test(player),
+  "the player is back on react-native-video's own fullscreen, which on Android is a dialog " +
+    'with ExoPlayer\'s controls — and this app turns those off, so it has none at all',
 );
 check(
-  /onFullscreenPlayerDidDismiss/.test(player),
-  'nothing tells the player it left fullscreen, so the expand button stops working after once',
+  /<Modal/.test(player) && /supportedOrientations/.test(player),
+  'fullscreen is not the app\'s own modal any more',
+);
+check(
+  /OrbitScreen\?\.setLandscape/.test(player),
+  'nothing turns the phone sideways, so fullscreen is a portrait letterbox',
+);
+check(
+  /const transport = /.test(player) && (player.match(/transport\(/g) ?? []).length >= 2,
+  'the transport is not shared between the note and fullscreen — two copies is how one of ' +
+    'them ends up missing a button again',
+);
+check(
+  /resumeAt\.current/.test(player),
+  'nothing carries the position across the remount, so entering fullscreen restarts the video',
+);
+check(
+  /onRequestClose=\{leaveFull\}/.test(player),
+  'the back gesture no longer leaves fullscreen, so it closes the note instead',
 );
 
 // The size rule, from the other side.

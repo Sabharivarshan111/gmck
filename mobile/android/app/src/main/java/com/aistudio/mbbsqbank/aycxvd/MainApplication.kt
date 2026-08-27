@@ -20,6 +20,7 @@ class MainApplication : Application(), ReactApplication {
           add(SpeechPackage())
           add(NotifyPackage())
           add(FilesPackage())
+          add(ScreenPackage())
         },
     )
   }

@@ -33,6 +33,10 @@ export default defineConfig({
         replacement: path.resolve(__dirname, 'shims', 'orbit-notify.ts'),
       },
       {
+        find: '@/native/NativeOrbitScreen',
+        replacement: path.resolve(__dirname, 'shims', 'orbit-screen.ts'),
+      },
+      {
         find: '@/native/NativeOrbitFiles',
         replacement: path.resolve(__dirname, 'shims', 'orbit-files.ts'),
       },

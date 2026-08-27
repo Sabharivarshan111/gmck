@@ -1708,20 +1708,21 @@ await step('a note takes a recording, and the recording gets a player', async ()
   await page.waitForTimeout(700);
 
   // The choice, and the consequence of each, said before either is taken.
-  await seesText('How should Orbit keep it?', 4000);
-  await seesText('Keep a copy in Orbit', 4000);
-  await seesText('Link to the original', 4000);
-  await seesText('still plays it', 4000);
-  await seesText('no longer play it', 4000);
+  await seesText('Save it, or just link it?', 4000);
+  await seesText('Save a copy', 4000);
+  await seesText('Just link it', 4000);
+  // One line each. Two paragraphs read as an essay and nobody read them.
+  await seesText('Works even if you delete the original', 4000);
+  await seesText('Stops working if you delete or move', 4000);
 
   await byLabel(
-    'Keep a copy inside Orbit. Uses space on this phone, and survives the original being deleted',
+    'Save a copy in Orbit. Uses phone space, and keeps working if you delete the original',
   ).click();
   await page.waitForTimeout(800);
   await page.evaluate(() => {
     globalThis.__orbitPickFile = undefined;
   });
-  await seesText('kept in Orbit', 4000);
+  await seesText('saved in Orbit', 4000);
 
   // Named, and sized — with no cap, the size is how the reader decides.
   await seesText('Lecture 3.wav', 4000);
@@ -1755,6 +1756,65 @@ await step('a note takes a recording, and the recording gets a player', async ()
 });
 
 /**
+ * Fullscreen keeps the controls.
+ *
+ * The library's own fullscreen on Android hands the surface to ExoPlayer's
+ * dialog, which draws *its* built-in controls — and this app turns those off,
+ * so a reader got a fullscreen with no play button, no scrubber, no time and
+ * no volume, and only the back gesture to escape. Fullscreen is the app's own
+ * modal now, sharing one transport with the inline player, and this is the
+ * assertion that keeps every control in it.
+ */
+await step('fullscreen keeps the play, scrub, time and volume controls', async () => {
+  await open('screen=progress');
+  await page.waitForTimeout(900);
+  await byLabel('Notes').first().click();
+  await page.waitForTimeout(600);
+  await byLabel('Create a new study note').click();
+  await page.waitForTimeout(600);
+  await byLabel('Note title').fill('Procedure clip');
+
+  await page.evaluate(() => {
+    globalThis.__orbitPickFile = 'video';
+  });
+  await byLabel('Add a video, recording or PDF to this note').click();
+  await page.waitForTimeout(700);
+  await byLabel(
+    'Save a copy in Orbit. Uses phone space, and keeps working if you delete the original',
+  ).click();
+  await page.waitForTimeout(800);
+  await page.evaluate(() => {
+    globalThis.__orbitPickFile = undefined;
+  });
+
+  await byLabel('Save note').click();
+  await page.waitForTimeout(900);
+  await byLabel('Read Procedure clip').last().click();
+  await page.waitForTimeout(1000);
+
+  await byLabel('Play Procedure.mp4 full screen').click();
+  await page.waitForTimeout(900);
+
+  // Every control, still there — that is the whole point of the step.
+  for (const label of [
+    'Play Procedure.mp4',
+    'Position in Procedure.mp4',
+    'Volume for Procedure.mp4',
+    'Leave full screen',
+  ]) {
+    if ((await byLabel(label).count()) === 0) {
+      throw new Error(`fullscreen has no "${label}" control`);
+    }
+  }
+
+  await byLabel('Leave full screen').click();
+  await page.waitForTimeout(700);
+  if ((await byLabel('Play Procedure.mp4 full screen').count()) === 0) {
+    throw new Error('leaving fullscreen did not restore the inline player');
+  }
+});
+
+/**
  * A linked file, the promise it makes, and the promise it breaks.
  *
  * Linking is the option that costs no space, and the price is that the file is
@@ -1777,7 +1837,7 @@ await step('a linked file can break, says so, and can be copied in instead', asy
   await byLabel('Add a video, recording or PDF to this note').click();
   await page.waitForTimeout(700);
   await byLabel(
-    'Link to the original. Uses no space, and stops working if you delete or move the file',
+    'Just link it. Uses no space, and stops working if you delete or move the original',
   ).click();
   await page.waitForTimeout(800);
   await page.evaluate(() => {
@@ -1785,7 +1845,7 @@ await step('a linked file can break, says so, and can be copied in instead', asy
   });
   // The editor says which of the two this is, so it is not a thing you learn
   // a month later when the file stops playing.
-  await seesText('linked to the original', 4000);
+  await seesText('linked', 4000);
 
   await byLabel('Save note').click();
   await page.waitForTimeout(900);
@@ -1793,11 +1853,11 @@ await step('a linked file can break, says so, and can be copied in instead', asy
   await page.waitForTimeout(1000);
 
   // It plays, and offers to stop being a link.
-  const adopt = page.locator('[aria-label^="Keep a copy of"]').first();
+  const adopt = page.locator('[aria-label^="Save a copy of"]').first();
   if ((await adopt.count()) === 0) {
     throw new Error('a linked attachment does not offer to become a copy');
   }
-  await seesText('keep a copy in Orbit', 4000);
+  await seesText('tap to save a copy', 4000);
 
   // Now delete the original, the way a file manager would, and reopen.
   await byLabel('Done').first().click();
@@ -1818,10 +1878,10 @@ await step('a linked file can break, says so, and can be copied in instead', asy
   });
   await byLabel('Read Linked lecture').last().click();
   await page.waitForTimeout(900);
-  await page.locator('[aria-label^="Keep a copy of"]').first().click();
+  await page.locator('[aria-label^="Save a copy of"]').first().click();
   await page.waitForTimeout(1200);
   await seesText('Lecture 3.wav', 4000);
-  if ((await page.locator('[aria-label^="Keep a copy of"]').count()) > 0) {
+  if ((await page.locator('[aria-label^="Save a copy of"]').count()) > 0) {
     throw new Error('the attachment still offers to be copied after it was copied');
   }
 });
