@@ -29,6 +29,7 @@ Antigravity does not, so **open the file** when the work touches its subject.
 | `.claude/skills/find-animation-opportunities/` | Search a codebase or UI for places that don't animate but should, and reject everything that shouldn't. |
 | `.claude/skills/improve-animations/` | Survey a codebase's animation and motion code as a senior motion advisor, then produce a prioritized audit and self-contained implementation plans for other agents (or cheaper models) to execute. |
 | `.claude/skills/review-animations/` | Reviews animation and motion code against a high craft bar derived from Emil Kowalski's design engineering philosophy. |
+| `.claude/skills/supabase-resume/` | Pick up Supabase work that an earlier session could not do, and park work that this one cannot. |
 <!-- skills:end -->
 
 Adding one of these, or a file to `.agents/rules/`, means running

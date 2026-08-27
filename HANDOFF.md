@@ -891,6 +891,54 @@ picture appear — which was previously unreachable in a browser.
 
 ---
 
+## 8j. Work waiting on Supabase now has somewhere to live (2026-08-27)
+
+**`.agents/tasks/supabase-pending.json`**, committed, plus
+`mobile/scripts/supabase-queue.mjs`, a skill at
+`.claude/skills/supabase-resume/` for Claude Code and
+`.agents/rules/70-supabase.md` for Antigravity.
+
+Start any Supabase-touching session with `cd mobile && npm run supabase:status`.
+It says whether this machine has a route and what is outstanding, and
+`npm run supabase:done -- <id>` closes a job.
+
+### Why it exists
+
+Connectors drop mid-session — one did, halfway through the flashcards work —
+and the sandboxes can never reach Supabase directly. The failure that costs
+real money is not "it could not be done" but that it is **forgotten**: an agent
+writes the change into the repo, says so once in a chat message the next
+session cannot see, and the deploy never happens. That already happened here
+once, to `generate-handwritten-notes`, which sat two versions behind the
+deployed copy for weeks — so reading the code agreed with the bug nobody could
+find.
+
+### What it cannot do
+
+**Nothing turns the connector on but the person.** `ListConnectors` reports
+`connected` and `enabledInChat` separately, and the state to look for is
+`connected: true, enabledInChat: false` — authenticated, but toggled off for
+this conversation. That is a switch in the chat's connector settings and no
+tool can flip it. The skill says to report *which* of the two it is rather than
+saying "Supabase is down", because the remedies are completely different.
+
+There is also no background watcher. An agent notices a route when it next
+looks, which is at the start of a session or when its tools change — the queue
+is what makes that enough.
+
+### One job is in it
+
+`sb-nocache-deploy` — deploy `generate-flashcards` so it honours `noCache`. The
+live function is v9; the repo has it. Nothing is broken meanwhile: the suffixed
+`personalDeckKey()` is what actually protects the shared deck, and **it must not
+be removed when this lands**.
+
+`npm run check:supabase-queue` runs in all three build workflows and fails if a
+queued job points at a file that no longer exists. Verified by moving the file
+and watching it fail.
+
+---
+
 ## 9. High-Yield AI Exam Diagrams & Localhost Previews
 
 ### Local Dev & Preview URLs
