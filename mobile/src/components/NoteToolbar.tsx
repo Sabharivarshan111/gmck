@@ -1,9 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Bold, Heading1, Heading2, List, ListOrdered } from 'lucide-react-native';
+import {
+  Bold,
+  Heading1,
+  Heading2,
+  Highlighter,
+  Italic,
+  List,
+  ListOrdered,
+  Type,
+} from 'lucide-react-native';
 import { Text } from '@/components/Text';
 import { Touchable } from '@/components/Touchable';
 import { useTheme, withAlpha } from '@/theme';
+import { HIGHLIGHTS, NOTE_FONTS, noteFontFamily } from '@/components/NoteText';
+import { onColor } from '@/theme/color';
 import { typeScale } from '@/theme/typography';
 
 /**
@@ -86,40 +97,77 @@ export function nextNumber(text: string, at: number): string {
   return '1. ';
 }
 
-/** Wrap the selection in `**`, or unwrap it if it is already wrapped. */
-export function toggleBold(
+/**
+ * Wrap the selection in a marker, or unwrap it if it is already wrapped.
+ *
+ * Shared by bold, italic and highlight: they differ only in the characters,
+ * and three copies of this is three places for the unwrap case to be wrong.
+ */
+export function toggleWrap(
   text: string,
   selection: Selection,
+  open: string,
+  close: string = open,
 ): { text: string; cursor: number } {
   const { start, end } = selection;
   if (end <= start) {
     // Nothing selected: leave a pair with the cursor between them, ready to
     // type into. A button that does nothing on an empty selection reads as
     // broken.
-    return { text: `${text.slice(0, start)}****${text.slice(start)}`, cursor: start + 2 };
+    return {
+      text: `${text.slice(0, start)}${open}${close}${text.slice(start)}`,
+      cursor: start + open.length,
+    };
   }
   const chosen = text.slice(start, end);
-  if (chosen.startsWith('**') && chosen.endsWith('**') && chosen.length > 4) {
-    const bare = chosen.slice(2, -2);
+  if (
+    chosen.startsWith(open) &&
+    chosen.endsWith(close) &&
+    chosen.length > open.length + close.length
+  ) {
+    const bare = chosen.slice(open.length, -close.length);
     return { text: text.slice(0, start) + bare + text.slice(end), cursor: start + bare.length };
   }
   return {
-    text: `${text.slice(0, start)}**${chosen}**${text.slice(end)}`,
-    cursor: end + 4,
+    text: `${text.slice(0, start)}${open}${chosen}${close}${text.slice(end)}`,
+    cursor: end + open.length + close.length,
   };
 }
+
+const HIGHLIGHT_NAMES: Record<string, string> = {
+  y: 'Yellow',
+  g: 'Green',
+  b: 'Blue',
+  p: 'Pink',
+};
 
 export function NoteToolbar({
   value,
   selection,
   onChange,
+  font,
+  onFont,
 }: {
   value: string;
   selection: Selection;
   /** New text, and where the cursor should land in it. */
   onChange: (text: string, cursor: number) => void;
+  /** The face this note is written in — see `NOTE_FONTS`. */
+  font?: string | null;
+  onFont: (key: string) => void;
 }) {
   const { colors } = useTheme();
+  /*
+   * The colours are behind the highlighter, not beside it.
+   *
+   * Four more buttons permanently on the row would be four more things to look
+   * past every time a note is written, for a choice most people make once. The
+   * pen opens them; picking one highlights and closes them again.
+   */
+  const [palette, setPalette] = useState(false);
+  /* Same reasoning, same pattern: three more permanent buttons for a choice
+     made once a note would crowd out the ones used on every line. */
+  const [faces, setFaces] = useState(false);
 
   const apply = (marker: string) => {
     const result = toggleLinePrefix(value, selection.start, marker);
@@ -162,13 +210,50 @@ export function NoteToolbar({
         hint: 'Makes the selected words bold',
         icon: <Bold size={18} color={colors.text} />,
         run: () => {
-          const result = toggleBold(value, selection);
+          const result = toggleWrap(value, selection, '**');
           onChange(result.text, result.cursor);
+        },
+      },
+      {
+        key: 'italic',
+        label: 'Italic',
+        hint: 'Slants the selected words',
+        icon: <Italic size={18} color={colors.text} />,
+        run: () => {
+          const result = toggleWrap(value, selection, '_');
+          onChange(result.text, result.cursor);
+        },
+      },
+      {
+        key: 'highlight',
+        label: 'Highlight',
+        hint: 'Marks the selected words, and offers four colours',
+        icon: <Highlighter size={18} color={colors.text} />,
+        run: () => {
+          setFaces(false);
+          setPalette(open => !open);
+        },
+      },
+      {
+        key: 'font',
+        label: 'Typeface',
+        hint: 'Writes this note in a different face',
+        icon: <Type size={18} color={colors.text} />,
+        run: () => {
+          setPalette(false);
+          setFaces(open => !open);
         },
       },
     ];
 
+  const highlight = (key: string) => {
+    const result = toggleWrap(value, selection, key === 'y' ? '==' : `==${key}:`, '==');
+    onChange(result.text, result.cursor);
+    setPalette(false);
+  };
+
   return (
+    <View style={styles.column}>
     <View style={styles.wrap}>
       {buttons.map(button => (
         <Touchable
@@ -177,6 +262,7 @@ export function NoteToolbar({
           label={button.label}
           hint={button.hint}
           scaleTo={0.88}
+          hitSlop={6}
           style={[
             styles.button,
             { backgroundColor: colors.cardElevated, borderColor: colors.border },
@@ -184,23 +270,94 @@ export function NoteToolbar({
           {button.icon}
         </Touchable>
       ))}
-      <View style={styles.grow} />
-      <Text style={[styles.hint, { color: withAlpha(colors.text, 0.45) }]}>
-        Formats as you read
-      </Text>
+    </View>
+    {faces ? (
+      <View style={styles.wrap}>
+        {NOTE_FONTS.map(face => {
+          const chosen = (font ?? 'default') === face.key;
+          return (
+            <Touchable
+              key={face.key}
+              onPress={() => {
+                onFont(face.key);
+                setFaces(false);
+              }}
+              label={`${face.name} typeface`}
+              state={{ selected: chosen }}
+              scaleTo={0.92}
+              style={[
+                styles.face,
+                {
+                  backgroundColor: chosen ? colors.accent : colors.cardElevated,
+                  borderColor: colors.border,
+                },
+              ]}>
+              <Text
+                style={{
+                  fontFamily: noteFontFamily(face.key),
+                  color: chosen ? onColor(colors.accent) : colors.text,
+                  fontWeight: '600',
+                }}>
+                {face.name}
+              </Text>
+            </Touchable>
+          );
+        })}
+      </View>
+    ) : null}
+    {palette ? (
+      <View style={styles.wrap}>
+        {Object.entries(HIGHLIGHTS).map(([key, tint]) => (
+          <Touchable
+            key={key}
+            onPress={() => highlight(key)}
+            label={`${HIGHLIGHT_NAMES[key]} highlight`}
+            scaleTo={0.88}
+            style={[styles.swatch, { backgroundColor: tint }]}>
+            <Highlighter size={15} color={onColor(tint)} />
+          </Touchable>
+        ))}
+        <View style={styles.grow} />
+        <Text style={[styles.hint, { color: withAlpha(colors.text, 0.45) }]}>
+          Select words first
+        </Text>
+      </View>
+    ) : null}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  column: {
+    gap: 8,
+  },
+  face: {
+    paddingHorizontal: 14,
+    height: 34,
+    borderRadius: 10,
+    borderWidth: StyleSheet.hairlineWidth,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  swatch: {
+    width: 40,
+    height: 34,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   wrap: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    /* Eight buttons have to fit the narrowest phone this ships to without a
+       ninth pushing one off the edge — so they wrap rather than clip, and the
+       gap is tuned so the row is one line at 360dp. */
+    flexWrap: 'wrap',
+    gap: 6,
   },
   button: {
-    width: 40,
-    height: 40,
+    width: 38,
+    height: 38,
     borderRadius: 10,
     borderWidth: StyleSheet.hairlineWidth,
     alignItems: 'center',

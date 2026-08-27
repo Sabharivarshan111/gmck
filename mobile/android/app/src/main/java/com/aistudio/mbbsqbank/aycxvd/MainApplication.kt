@@ -3,6 +3,7 @@ package com.aistudio.mbbsqbank.aycxvd
 import android.app.Application
 import com.facebook.react.PackageList
 import com.facebook.react.ReactApplication
+import com.facebook.react.config.ReactFeatureFlags
 import com.facebook.react.ReactHost
 import com.facebook.react.ReactNativeApplicationEntryPoint.loadReactNative
 import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
@@ -27,6 +28,24 @@ class MainApplication : Application(), ReactApplication {
 
   override fun onCreate() {
     super.onCreate()
+    /*
+     * W3C pointer events, for the one thing that needs them: palm rejection.
+     *
+     * Android knows which tool produced a touch — finger, stylus, mouse — and
+     * React Native carries that through as `pointerType` on a pointer event,
+     * but only when this flag is on. Without it the note canvas cannot tell a
+     * nib from the heel of a hand, and every "palm rejection" left is a guess
+     * from pressure or contact size that works on one handset and not the next.
+     *
+     * It is *additive*: `dispatchJSPointerEvent` is a separate path from
+     * `dispatchJSTouchEvent`, so every existing PanResponder in the app — the
+     * sliders, the sheets, the home-block drag — keeps receiving exactly the
+     * touch events it did before. Nothing is intercepted or replaced.
+     *
+     * Set before loadReactNative, because the surface reads it when it builds
+     * its dispatcher and never looks again.
+     */
+    ReactFeatureFlags.dispatchPointerEvents = true
     loadReactNative(this)
   }
 }

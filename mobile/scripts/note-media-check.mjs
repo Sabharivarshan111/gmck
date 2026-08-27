@@ -90,15 +90,24 @@ check(
 // was silently dropped on save. TypeScript said nothing — the caller passes a
 // variable rather than an object literal, so the excess-property check that
 // would have caught it never runs.
+//
+// Naming `files` in both places fixed that instance and left the next field to
+// be forgotten the same way, so what is checked now is the shape of the fix:
+// one editable type derived from `UserNote`, spread into the new note and used
+// as the patch. A field added to the note is editable by construction.
+check(
+  /type NoteEdit = Partial<Omit<UserNote,/.test(hook),
+  'the editable fields are listed by hand again — the next one added will be dropped on save',
+);
 const createBlock = hook.slice(hook.indexOf('const createNote'), hook.indexOf('const updateNote'));
 check(
-  /files:/.test(createBlock),
-  'createNote does not carry `files`, so attaching a recording and saving loses it',
+  /initial\?: NoteEdit/.test(createBlock) && /\.\.\.initial,/.test(createBlock),
+  'createNote no longer spreads the whole edit, so a field it does not name is lost on save',
 );
 const patchBlock = hook.slice(hook.indexOf('const updateNote'), hook.indexOf('const deleteNote'));
 check(
-  /"files"/.test(patchBlock),
-  'updateNote\'s patch type omits `files`, so editing a note strips its attachments',
+  /patch: NoteEdit/.test(patchBlock),
+  "updateNote's patch is no longer the editable type, so editing a note can strip fields",
 );
 
 // ---------------------------------------------------------------------------

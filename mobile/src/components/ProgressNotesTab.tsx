@@ -6,7 +6,9 @@ import { Dialog } from "@/components/Dialog";
 import { Sheet } from "@/components/Sheet";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { KeyboardSafe } from "@/components/KeyboardSafe";
-import { NoteText, plainPreview } from "@/components/NoteText";
+import { NoteText, noteFontFamily, plainPreview } from "@/components/NoteText";
+import { InkedImage } from "@/components/InkedImage";
+import { DrawCanvas } from "@/components/DrawCanvas";
 import { NoteToolbar } from "@/components/NoteToolbar";
 import { useTheme } from "@/theme";
 import { NoteMediaPlayer } from "@/components/NoteMediaPlayer";
@@ -26,13 +28,14 @@ import {
   Link2,
   Paperclip,
   Pencil,
+  PenLine,
   Plus,
   Trash2,
   X,
 } from "lucide-react-native";
 import { getSubjects, type BankNode, type YearKey } from "@/lib/questionBank";
 import { flattenSubjectTopics } from "@/lib/handwrittenNotes";
-import { attachNoteImage, loadNoteImage, removeNoteImage } from "@/lib/noteImages";
+import { attachNoteImage, loadNoteImage, removeNoteImage, saveNoteInk } from "@/lib/noteImages";
 import {
   adoptNoteFile,
   attachNoteFile,
@@ -285,14 +288,17 @@ function NoteReader({
 
       {/* Typed as text, read as a note: "1." and "-" become real lists. */}
       {note.content ? (
-        <NoteText content={note.content} />
+        <NoteText content={note.content} font={note.font} />
       ) : (
         <Text style={[styles.readerBody, { color: colors.textMuted }]}>This note is empty.</Text>
       )}
 
-      {urls.map(url => (
-        <Image key={url} source={{ uri: url }} style={styles.readerImage} resizeMode="contain" />
-      ))}
+      {/* Whatever was drawn on it comes with it. */}
+      {(note.images ?? []).map((id, index) =>
+        urls[index] ? (
+          <InkedImage key={id} uri={urls[index]} imageId={id} style={styles.readerImage} />
+        ) : null,
+      )}
       {note.images && note.images.length > 0 && urls.length === 0 ? (
         <Text style={[styles.noteEmpty, { color: colors.textMuted }]}>
           The pictures for this note are no longer on this phone.
@@ -454,7 +460,7 @@ function NoteFilingSheet({
 }
 
 /** One attached picture, signed on demand because the bucket is private. */
-function NoteThumb({ path }: { path: string }) {
+function NoteThumb({ path, ink }: { path: string; ink?: number }) {
   const [url, setUrl] = useState<string | null>(null);
   useEffect(() => {
     let alive = true;
@@ -466,7 +472,9 @@ function NoteThumb({ path }: { path: string }) {
     };
   }, [path]);
   if (!url) return <View style={styles.thumb} />;
-  return <Image source={{ uri: url }} style={styles.thumb} resizeMode="cover" />;
+  // `ink` is a counter the editor bumps after a drawing is kept, so the
+  // thumbnail re-reads the marks rather than showing the picture as it was.
+  return <InkedImage key={ink} uri={url} imageId={path} style={styles.thumb} />;
 }
 
 interface Props {
@@ -488,11 +496,17 @@ export function ProgressNotesTab({ year }: Props) {
   const [filingOpen, setFilingOpen] = useState(false);
   const [editImages, setEditImages] = useState<string[]>([]);
   const [editFiles, setEditFiles] = useState<NoteFile[]>([]);
+  const [editFont, setEditFont] = useState<string | null>(null);
   const [imageError, setImageError] = useState<string | null>(null);
   const [busyImage, setBusyImage] = useState(false);
   const [attachOpen, setAttachOpen] = useState(false);
   /** Where the cursor is, so the toolbar knows which line to format. */
   const [selection, setSelection] = useState({ start: 0, end: 0 });
+  /** The picture currently open in the drawing canvas, by local id. */
+  const [drawing, setDrawing] = useState<string | null>(null);
+  /** Bumped when a drawing is kept, so thumbnails re-read their marks. */
+  const [inkVersion, setInkVersion] = useState(0);
+  const [drawingUri, setDrawingUri] = useState<string | null>(null);
   const [forcedSelection, setForcedSelection] = useState<{ start: number; end: number } | null>(
     null,
   );
@@ -525,6 +539,21 @@ export function ProgressNotesTab({ year }: Props) {
     });
   }, [notes]);
 
+  // The bytes for the picture being drawn on, read when the canvas opens.
+  useEffect(() => {
+    let alive = true;
+    if (!drawing) {
+      setDrawingUri(null);
+      return;
+    }
+    loadNoteImage(drawing).then(found => {
+      if (alive) setDrawingUri(found);
+    });
+    return () => {
+      alive = false;
+    };
+  }, [drawing]);
+
   const openEditor = (note?: UserNote) => {
     setImageError(null);
     setReading(null);
@@ -537,6 +566,7 @@ export function ProgressNotesTab({ year }: Props) {
       setEditChapterName(note.chapterName ?? null);
       setEditImages(note.images ?? []);
       setEditFiles(note.files ?? []);
+      setEditFont(note.font ?? null);
       setSelection({ start: 0, end: 0 });
       setForcedSelection(null);
     } else {
@@ -548,6 +578,7 @@ export function ProgressNotesTab({ year }: Props) {
       setEditChapterName(null);
       setEditImages([]);
       setEditFiles([]);
+      setEditFont(null);
       setSelection({ start: 0, end: 0 });
       setForcedSelection(null);
     }
@@ -566,6 +597,7 @@ export function ProgressNotesTab({ year }: Props) {
       chapterName: editChapterName,
       images: editImages,
       files: editFiles,
+      font: editFont,
     };
     if (editing.id === "new") {
       await createNote(patch);
@@ -870,6 +902,31 @@ export function ProgressNotesTab({ year }: Props) {
         one they picked a month later, when the file stops playing, has been
         failed by the interface rather than by the storage.
       */}
+      {/*
+        Drawing is its own screen, like the note pages.
+        A canvas inside a sheet would be a canvas the size of a postcard.
+      */}
+      <Modal
+        visible={!!drawing && !!drawingUri}
+        animationType="slide"
+        onRequestClose={() => setDrawing(null)}>
+        {drawing && drawingUri ? (
+          <DrawCanvas
+            uri={drawingUri}
+            onCancel={() => setDrawing(null)}
+            onDone={async (strokes, size) => {
+              await saveNoteInk(drawing, {
+                strokes,
+                width: size.width || 1,
+                height: size.height || 1,
+              });
+              setInkVersion(version => version + 1);
+              setDrawing(null);
+            }}
+          />
+        ) : null}
+      </Modal>
+
       <Sheet
         visible={attachOpen}
         onClose={() => setAttachOpen(false)}
@@ -938,6 +995,8 @@ export function ProgressNotesTab({ year }: Props) {
           <NoteToolbar
             value={editContent}
             selection={selection}
+            font={editFont}
+            onFont={setEditFont}
             onChange={(text, cursor) => {
               setEditContent(text);
               // Put the cursor where the edit left it, or a bullet inserted at
@@ -965,13 +1024,25 @@ export function ProgressNotesTab({ year }: Props) {
             style={[
               styles.editorTextarea,
               { backgroundColor: colors.card, borderColor: colors.border, color: colors.text },
+              // Typed in the face it will be read in. A preference that only
+              // appears after saving is one nobody trusts they have set.
+              editFont ? { fontFamily: noteFontFamily(editFont) } : null,
             ]}
           />
           {editImages.length > 0 ? (
             <View style={styles.thumbRow}>
               {editImages.map(path => (
                 <View key={path} style={styles.thumbWrap}>
-                  <NoteThumb path={path} />
+                  <Touchable
+                    onPress={() => setDrawing(path)}
+                    label="Draw on this picture"
+                    hint="Opens a pen, and a stylus can be used"
+                    scaleTo={0.95}>
+                    <NoteThumb path={path} ink={inkVersion} />
+                  </Touchable>
+                  <View style={[styles.thumbDraw, { backgroundColor: withAlpha("#000000", 0.55) }]}>
+                    <PenLine size={12} color="#FFFFFF" />
+                  </View>
                   <Touchable
                     onPress={async () => {
                       setEditImages(current => current.filter(p => p !== path));
@@ -1192,6 +1263,17 @@ const styles = StyleSheet.create({
     height: 240,
     borderRadius: 12,
     marginBottom: 12,
+  },
+  /* A pen badge in the corner, so the picture says it can be drawn on. */
+  thumbDraw: {
+    position: "absolute",
+    left: 4,
+    bottom: 4,
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
   },
   thumbRow: {
     flexDirection: "row",

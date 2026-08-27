@@ -23,6 +23,7 @@ when picking up work that was last touched from the other tool.
 | `.agents/rules/50-notes.md` | Handwritten notes — which textbook grounds which subject, and the two ways that goes silently wrong |
 | `.agents/rules/60-flashcards.md` | Anki flashcards — why the scheduler is not the app's other one, and what is still unverified |
 | `.agents/rules/61-own-decks.md` | Decks the reader makes — written by hand, generated for one phone, or carrying photos from the gallery |
+| `.agents/rules/62-own-notes.md` | Notes the reader writes — the markers that make a note a document, drawing on a picture with a stylus, and the one place Roboto is not pinned |
 | `.agents/rules/70-supabase.md` | Supabase — why no sandbox can reach it, and the queue that stops blocked work being forgotten |
 | `.agents/rules/80-keyboard.md` | Text inputs and the Android keyboard — why adjustResize is dead and what replaces it |
 | `.agents/rules/90-xp.md` | XP, badges, streak and the leaderboard — one ladder shared with the web app, and why a reward has to look like one |
@@ -762,6 +763,71 @@ Volume lives behind the speaker button rather than always on screen, and
 recording made without the microphone is genuinely silent, which is
 indistinguishable from a broken player until the player says "this file has no
 sound in it".
+
+## A note is written like a document, and read like one
+
+`components/NoteToolbar.tsx` writes markers into the text and
+`components/NoteText.tsx` renders them when the note is read — headings,
+bullets, numbered points, bold, italic and a four-colour highlight. **The note
+is still stored as the text that was typed**, so nothing is trapped in a format
+and anyone who already types `-` gets a bullet without touching the toolbar.
+
+Two rules that have each cost a bug:
+
+- **The renderer's fast path is "this line has no markers", not "this line
+  split into one piece".** A line that is entirely one mark — `_Vi is the
+  capsular one_` — splits into exactly one piece, and reading that as plain
+  text printed the underscores. Short lines are the ones people mark, so the
+  bug landed precisely where the feature was being used.
+- **Arbitrary text colour is refused, and that is not timidity.**
+  `check:contrast` guarantees every theme stays readable; a free foreground
+  picker is how that guarantee is lost. A highlight is safe because both the
+  ground and the ink are ours — `onColor()` computes the ink, so amber and cyan
+  get black rather than an unreadable white.
+
+`NOTE_FONTS` offers Plain, Serif and Mono for the note's body, stored as a
+**key** rather than a family name. They are Android's own generic families, so
+nothing is bundled. This is the one relaxation of the Roboto pin and it does
+not contradict it: the pin exists because OEM skins replace the *system* font
+and would re-typeset the whole app behind our back; naming a family for one
+note's body is a choice its writer made, and cannot reach the app's chrome.
+
+## Drawing on a picture needs the pointer-event flag turned on
+
+`components/DrawCanvas.tsx` draws strokes as `<Path>` elements through
+`react-native-svg`, which the app already ships. Skia is the other answer and
+it is megabytes of native library for a polyline over a photograph.
+
+**Palm rejection is real rather than a heuristic**: Android reports the tool
+that produced a touch, and React Native carries it through as `pointerType`, so
+once a `pen` has been seen on the canvas fingers stop drawing entirely. That
+depends on `ReactFeatureFlags.dispatchPointerEvents = true` in
+`MainApplication.kt`, set **before** `loadReactNative` — the flag is false by
+default and without it no pointer event ever arrives, leaving a canvas that
+silently does nothing. It is additive: `dispatchJSTouchEvent` still runs, so no
+existing PanResponder changes behaviour.
+
+Four things there look like fussiness and are each a bug that shipped:
+
+- **The board is the picture's box, not the screen's.** Marks are saved as
+  geometry and replayed over the photograph by an SVG `viewBox`, which fits
+  them the same way `resizeMode="contain"` fits the picture — and those two
+  coincide only while the shapes match. Drawn against a full-height stage, every
+  mark came back stretched and offset from the thing it was pointing at.
+- **The overlay needs `width="100%" height="100%"`.** An `<Svg>` carrying only
+  `StyleSheet.absoluteFill` falls back to SVG's default 300×150, which clips
+  everything below a third of the way down the picture. The first stroke drew,
+  the second did not, and the screenshot of the first looked like success.
+- **A stroke is never committed from inside another `setState` updater.** That
+  is a state update raised during a render pass, which React is entitled to
+  discard, and did. `liveRef` holds the live stroke and `finish` reads it.
+- **The eraser removes whole strokes.** A pixel eraser needs a bitmap and a
+  second render target; on an annotation — a circle round a structure, an arrow
+  — removing the mark you touched is what was wanted anyway.
+
+`check:smoke` draws two strokes, asserts both survive and that neither is
+clipped, then keeps them and asserts they come back over the thumbnail. Every
+bug above passed typecheck and lint; only the screenshot showed them.
 
 ## A note has to be openable, not just editable
 

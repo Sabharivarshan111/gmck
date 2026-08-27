@@ -1727,7 +1727,12 @@ await step('the note toolbar writes headings and points, and they render', async
   await byLabel('Heading').click();
   await page.waitForTimeout(300);
 
-  await body.fill('# Antigens of S. Typhi\n## O Antigen\nSomatic antigen\nPart of LPS');
+  // The last two lines are marked end to end. A whole-line mark splits into
+  // exactly one piece, which the renderer once read as "nothing to do" and
+  // printed the underscores — and short lines are the ones worth marking.
+  await body.fill(
+    '# Antigens of S. Typhi\n## O Antigen\nSomatic antigen\n_Part of LPS_\n==Heat stable==',
+  );
   await page.waitForTimeout(300);
 
   await byLabel('Save note').click();
@@ -1739,9 +1744,131 @@ await step('the note toolbar writes headings and points, and they render', async
   await seesText('Antigens of S. Typhi', 4000);
   await seesText('O Antigen', 4000);
   await seesText('Somatic antigen', 4000);
+  await seesText('Part of LPS', 4000);
+  await seesText('Heat stable', 4000);
   const shown = await page.locator('body').innerText();
+  if (shown.includes('_Part of LPS_') || shown.includes('==Heat stable==')) {
+    throw new Error('a line that is entirely marked printed its markers');
+  }
   if (shown.includes('## O Antigen') || shown.includes('# Antigens')) {
     throw new Error('the reader is printing the markers instead of rendering them');
+  }
+});
+
+/**
+ * Highlight, italic and the drawing canvas.
+ *
+ * The formatting half is pure text and fully checkable here. The drawing half
+ * is not: react-native-web has no pointer events carrying Android's tool type,
+ * so palm rejection itself is a device matter — what this asserts is that the
+ * canvas opens on a picture and offers pens, an eraser and undo, which is the
+ * part that can silently not exist.
+ */
+await step('notes highlight, and a picture opens a drawing canvas', async () => {
+  await open('screen=progress');
+  await page.waitForTimeout(900);
+  await byLabel('Notes').first().click();
+  await page.waitForTimeout(800);
+  await byLabel('Create a new study note').click();
+  await page.waitForTimeout(700);
+
+  await byLabel('Note title').fill('Highlighting');
+  const body = byLabel('What the note says');
+  await body.fill('Heat stable');
+  await page.waitForTimeout(300);
+
+  // The palette is behind the pen, not four more buttons on the row.
+  await byLabel('Highlight').click();
+  await page.waitForTimeout(400);
+  await seesText('Select words first', 4000);
+  await byLabel('Green highlight').click();
+  await page.waitForTimeout(400);
+  const marked = await body.inputValue();
+  if (!marked.includes('==g:')) {
+    throw new Error(`the green highlight wrote "${marked}"`);
+  }
+
+  await byLabel('Italic').click();
+  await page.waitForTimeout(300);
+  if (!(await body.inputValue()).includes('_')) {
+    throw new Error('the italic button wrote nothing');
+  }
+
+  // The face the note is written in — three of Android's own, nothing bundled.
+  await byLabel('Typeface').click();
+  await page.waitForTimeout(400);
+  await byLabel('Serif typeface').click();
+  await page.waitForTimeout(400);
+  const typed = await body.evaluate(node => getComputedStyle(node).fontFamily);
+  if (!typed.includes('serif')) {
+    throw new Error(`the serif typeface left the box in "${typed}"`);
+  }
+
+  // A picture, then the canvas over it.
+  await page.evaluate(() => {
+    globalThis.__orbitPickImage = true;
+  });
+  await byLabel('Add a picture to this note').click();
+  await page.waitForTimeout(900);
+  await page.evaluate(() => {
+    globalThis.__orbitPickImage = undefined;
+  });
+
+  await byLabel('Draw on this picture').first().click();
+  await page.waitForTimeout(800);
+  await seesText('Draw on the picture', 4000);
+  for (const tool of ['Red pen', 'Rub out a mark', 'Undo the last mark', 'Keep this drawing']) {
+    if ((await byLabel(tool).count()) === 0) {
+      throw new Error(`the drawing canvas has no "${tool}"`);
+    }
+  }
+  // Drawing itself, not just the buttons round it. This is the whole feature,
+  // and it has already been broken twice in ways no diff showed: a stroke that
+  // was committed from inside another state updater and thrown away, and an
+  // overlay that fell back to SVG's default 300x150 and clipped everything
+  // below a third of the way down the picture.
+  const stage = await page.locator('[data-testid="draw-stage"]').first().boundingBox();
+  if (!stage) {
+    throw new Error('the drawing canvas has no drawing area');
+  }
+  const drawStroke = async (top, run) => {
+    await page.mouse.move(stage.x + 40, stage.y + top);
+    await page.mouse.down();
+    for (let i = 1; i <= 10; i++) {
+      await page.mouse.move(stage.x + 40 + i * run, stage.y + top + i * 4);
+    }
+    await page.mouse.up();
+  };
+  await drawStroke(stage.height * 0.2, 12);
+  await byLabel('Blue pen').click();
+  // Deliberately low down: the clipped overlay drew the first stroke and lost
+  // this one, and one stroke looked like success.
+  await drawStroke(stage.height * 0.7, 12);
+  await page.waitForTimeout(300);
+
+  const drawn = await page.evaluate(() =>
+    Array.from(document.querySelectorAll('[data-testid="draw-stage"] path')).map(node => ({
+      stroke: node.getAttribute('stroke'),
+      onScreen: (() => {
+        const mark = node.getBoundingClientRect();
+        const svg = node.ownerSVGElement.getBoundingClientRect();
+        return mark.bottom <= svg.bottom + 1 && mark.right <= svg.right + 1;
+      })(),
+    })),
+  );
+  if (drawn.length !== 2) {
+    throw new Error(`drew two strokes, the canvas kept ${drawn.length}`);
+  }
+  if (drawn.some(mark => !mark.onScreen)) {
+    throw new Error('a stroke was drawn outside the overlay and is clipped');
+  }
+
+  await byLabel('Keep this drawing').click();
+  await page.waitForTimeout(700);
+  // Kept means kept: the marks come back over the thumbnail in the editor.
+  const kept = await page.locator('svg path[stroke="#3B82F6"]').count();
+  if (kept === 0) {
+    throw new Error('the drawing did not come back over the picture');
   }
 });
 

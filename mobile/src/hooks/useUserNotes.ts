@@ -60,11 +60,41 @@ export interface UserNote {
    * without opening anything.
    */
   files?: NoteFile[];
+  /**
+   * Which face the note is written in — a key from `NOTE_FONTS`, not a family
+   * name. Storing the family would tie every saved note to whatever string
+   * Android happened to accept the day it was written.
+   */
+  font?: string | null;
   created_at: string;
   updated_at: string;
 }
 
 const STORAGE_KEY = "orbit:user-notes:v1";
+
+/**
+ * The editable fields, named once — and once only.
+ *
+ * `createNote` and `updateNote` used to list them by hand, in two places.
+ * Adding `files` to the note without adding it to both meant every attachment
+ * was dropped on save, silently: the caller passes a variable rather than an
+ * object literal, so TypeScript's excess-property check never runs and neither
+ * function complained about the field it was quietly discarding. Deriving the
+ * list from `UserNote` means a new field cannot be forgotten here at all.
+ */
+export type NoteEdit = Partial<Omit<UserNote, "id" | "created_at" | "updated_at">>;
+
+/** What a note is before anything has been typed into it. */
+const BLANK: NoteEdit & Pick<UserNote, "title" | "content"> = {
+  title: "",
+  content: "",
+  subject: null,
+  chapterKey: null,
+  chapterName: null,
+  images: [],
+  files: [],
+  font: null,
+};
 
 export function useUserNotes() {
   const [notes, setNotes] = useState<UserNote[]>([]);
@@ -107,17 +137,12 @@ export function useUserNotes() {
     load();
   }, [load]);
 
-  const createNote = async (initial?: Partial<UserNote>): Promise<UserNote> => {
+  const createNote = async (initial?: NoteEdit): Promise<UserNote> => {
     const now = new Date().toISOString();
     const note: UserNote = {
+      ...BLANK,
+      ...initial,
       id: `note_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
-      title: initial?.title ?? "",
-      content: initial?.content ?? "",
-      subject: initial?.subject ?? null,
-      chapterKey: initial?.chapterKey ?? null,
-      chapterName: initial?.chapterName ?? null,
-      images: initial?.images ?? [],
-      files: initial?.files ?? [],
       created_at: now,
       updated_at: now,
     };
@@ -127,24 +152,7 @@ export function useUserNotes() {
     return note;
   };
 
-  /*
-   * The editable fields, named once.
-   *
-   * `createNote` and `updateNote` both used to list them by hand, and adding
-   * `files` to the note without adding it here meant every attachment was
-   * dropped on save — silently, because the caller passes a variable rather
-   * than an object literal, so TypeScript's excess-property check never runs
-   * and neither function complained about a field it was quietly discarding.
-   */
-  const updateNote = async (
-    id: string,
-    patch: Partial<
-      Pick<
-        UserNote,
-        "title" | "content" | "subject" | "chapterKey" | "chapterName" | "images" | "files"
-      >
-    >,
-  ) => {
+  const updateNote = async (id: string, patch: NoteEdit) => {
     const next = notes.map(note =>
       note.id === id ? { ...note, ...patch, updated_at: new Date().toISOString() } : note,
     );

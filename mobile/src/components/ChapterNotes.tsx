@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Image, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { FileText } from 'lucide-react-native';
 import { Text } from '@/components/Text';
 import { useTheme, withAlpha } from '@/theme';
@@ -7,6 +7,7 @@ import { typeScale } from '@/theme/typography';
 import { useUserNotes } from '@/hooks/useUserNotes';
 import { loadNoteImage } from '@/lib/noteImages';
 import { plainPreview } from '@/components/NoteText';
+import { InkedImage } from '@/components/InkedImage';
 
 /**
  * The reader's own notes for the chapter they are looking at.
@@ -84,7 +85,8 @@ function NoteImage({ id }: { id: string }) {
   if (!uri) {
     return null;
   }
-  return <Image source={{ uri }} style={styles.image} resizeMode="contain" />;
+  // With the marks, the same as everywhere else the picture is shown.
+  return <InkedImage uri={uri} imageId={id} style={styles.image} />;
 }
 
 const styles = StyleSheet.create({

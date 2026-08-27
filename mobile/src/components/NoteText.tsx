@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Text } from '@/components/Text';
 import { useTheme } from '@/theme';
+import { onColor } from '@/theme/color';
 import { typeScale } from '@/theme/typography';
 
 /**
@@ -66,27 +67,106 @@ export function parseNote(content: string): NoteBlock[] {
 }
 
 /**
- * `**bold**` inside a line becomes bold, and the asterisks go.
+ * The highlighter colours.
  *
- * The same convention `NotesContentView` already uses for the generated
- * notes, so a reader who has seen one has seen both.
+ * Four, because that is what a pack of highlighters has and what anybody
+ * actually uses to mark a page. They are fixed hexes rather than theme
+ * colours: a highlight means "this bit", and a mark that changes hue when the
+ * reader changes theme stops meaning anything. The ink on top is computed from
+ * each one, so it stays legible without being hardcoded white or black.
+ *
+ * Arbitrary *text* colour is deliberately not offered. The app guarantees
+ * contrast on every theme (`check:contrast`), and a free colour picker for
+ * foreground text is exactly how that guarantee is lost — yellow text on the
+ * light theme is unreadable and nothing would stop it. A highlight is safe
+ * because both the background and the ink are ours.
+ */
+export const HIGHLIGHTS: Record<string, string> = {
+  y: '#FDE68A',
+  g: '#BBF7D0',
+  b: '#BFDBFE',
+  p: '#FBCFE8',
+};
+
+/**
+ * The three faces a note may be written in.
+ *
+ * They are Android's own generic families, so nothing is bundled and the APK
+ * does not grow: every Android device since forever resolves `serif` and
+ * `monospace` to something real. A downloaded typeface would be hundreds of
+ * kilobytes per weight for a preference, on phones chosen for being cheap.
+ *
+ * This is the one place the app's Roboto pin is relaxed, and only inside the
+ * note's own body. The pin exists because OEM skins swap the *system* font and
+ * would re-typeset the whole interface behind our back (`theme/typography.ts`);
+ * naming a family here is the opposite — a deliberate choice, made by the
+ * person writing the note, that cannot leak into the app's chrome.
+ */
+export const NOTE_FONTS: { key: string; name: string; family?: string }[] = [
+  { key: 'default', name: 'Plain' },
+  { key: 'serif', name: 'Serif', family: 'serif' },
+  { key: 'mono', name: 'Mono', family: 'monospace' },
+];
+
+/** The family for a stored key, and `undefined` for the app's own face. */
+export function noteFontFamily(key?: string | null): string | undefined {
+  return NOTE_FONTS.find(font => font.key === key)?.family;
+}
+
+const INLINE = /(\*\*[^*]+\*\*|==(?:[ygbp]:)?[^=]+==|_[^_]+_)/g;
+
+/**
+ * `**bold**`, `_italic_` and `==highlight==` inside a line.
+ *
+ * The bold convention is the one `NotesContentView` already uses for the
+ * generated notes, so a reader who has seen one has seen both. `==` for a
+ * highlight is the convention every note app that has one uses.
  */
 function Inline({ text, style }: { text: string; style: object }) {
-  const parts = useMemo(() => text.split(/(\*\*[^*]+\*\*)/g).filter(Boolean), [text]);
-  if (parts.length === 1) {
+  const parts = useMemo(() => text.split(INLINE).filter(Boolean), [text]);
+  /*
+   * The fast path is "there are no markers here", not "there is one piece".
+   *
+   * A line that is *entirely* one mark — `_Vi is the capsular one_`, or a
+   * bullet that is nothing but a highlight — splits into exactly one piece,
+   * and the old check read that as plain text and printed the underscores.
+   * The lines most worth marking are the short ones, so this was wrong
+   * precisely where the feature was being used.
+   */
+  if (!text.includes('**') && !text.includes('==') && !text.includes('_')) {
     return <Text style={style}>{text}</Text>;
   }
   return (
     <Text style={style}>
-      {parts.map((part, index) =>
-        part.startsWith('**') && part.endsWith('**') && part.length > 4 ? (
-          <Text key={index} style={styles.strong}>
-            {part.slice(2, -2)}
-          </Text>
-        ) : (
-          part
-        ),
-      )}
+      {parts.map((part, index) => {
+        if (part.startsWith('**') && part.endsWith('**') && part.length > 4) {
+          return (
+            <Text key={index} style={styles.strong}>
+              {part.slice(2, -2)}
+            </Text>
+          );
+        }
+        if (part.startsWith('_') && part.endsWith('_') && part.length > 2) {
+          return (
+            <Text key={index} style={styles.italic}>
+              {part.slice(1, -1)}
+            </Text>
+          );
+        }
+        if (part.startsWith('==') && part.endsWith('==') && part.length > 4) {
+          const inner = part.slice(2, -2);
+          const keyed = inner.match(/^([ygbp]):(.*)$/);
+          const tint = HIGHLIGHTS[keyed?.[1] ?? 'y'] ?? HIGHLIGHTS.y;
+          return (
+            <Text
+              key={index}
+              style={[styles.highlight, { backgroundColor: tint, color: onColor(tint) }]}>
+              {keyed ? keyed[2] : inner}
+            </Text>
+          );
+        }
+        return part;
+      })}
     </Text>
   );
 }
@@ -106,15 +186,21 @@ export function plainPreview(content: string): string {
         .trim()
         .replace(/^#{1,3}\s+/, '')
         .replace(/^[-*•]\s+/, '• ')
-        .replace(/\*\*([^*]+)\*\*/g, '$1'),
+        .replace(/\*\*([^*]+)\*\*/g, '$1')
+        .replace(/_([^_]+)_/g, '$1')
+        .replace(/==(?:[ygbp]:)?([^=]+)==/g, '$1'),
     )
     .filter(line => line.length > 0)
     .join('  ');
 }
 
-export function NoteText({ content }: { content: string }) {
+export function NoteText({ content, font }: { content: string; font?: string | null }) {
   const { colors } = useTheme();
   const blocks = useMemo(() => parseNote(content), [content]);
+  const family = noteFontFamily(font);
+  // One object for the whole note rather than one per line: this renders every
+  // block, and a fresh style object per block is a fresh style per re-render.
+  const face = useMemo(() => (family ? { fontFamily: family } : null), [family]);
 
   return (
     <View>
@@ -129,6 +215,7 @@ export function NoteText({ content }: { content: string }) {
               style={[
                 block.level === 1 ? styles.heading : styles.subheading,
                 { color: colors.text },
+                face,
               ]}>
               {block.text}
             </Text>
@@ -147,12 +234,16 @@ export function NoteText({ content }: { content: string }) {
                 ]}>
                 {block.kind === 'bullet' ? '•' : block.marker}
               </Text>
-              <Inline text={block.text} style={[styles.body, { color: colors.text }]} />
+              <Inline text={block.text} style={[styles.body, { color: colors.text }, face]} />
             </View>
           );
         }
         return (
-          <Inline key={index} text={block.text} style={[styles.body, { color: colors.text }]} />
+          <Inline
+            key={index}
+            text={block.text}
+            style={[styles.body, { color: colors.text }, face]}
+          />
         );
       })}
     </View>
@@ -192,6 +283,13 @@ const styles = StyleSheet.create({
   },
   strong: {
     fontWeight: '700',
+  },
+  italic: {
+    fontStyle: 'italic',
+  },
+  highlight: {
+    /* A little air either side, so the mark reads as a swipe of pen. */
+    paddingHorizontal: 3,
   },
   /* A blank line is a paragraph break, not an empty row of text. */
   gap: {

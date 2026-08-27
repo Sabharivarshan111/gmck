@@ -24,6 +24,16 @@ import { warn } from './log';
  */
 
 const IMAGE_PREFIX = 'orbit:note-image:';
+/**
+ * The pen marks made on a picture, kept beside it rather than burnt into it.
+ *
+ * Flattening the strokes into the bitmap would need a native snapshot, would
+ * double the bytes stored, and would make the annotation permanent — draw an
+ * arrow in the wrong place and the only fix is deleting the picture. Kept as
+ * geometry, they render over the photograph at any size and can be redrawn or
+ * cleared later. The picture itself is never modified.
+ */
+const INK_PREFIX = 'orbit:note-ink:';
 
 /**
  * No cap, deliberately.
@@ -40,6 +50,37 @@ const IMAGE_PREFIX = 'orbit:note-image:';
  */
 
 const key = (id: string) => `${IMAGE_PREFIX}${id}`;
+const inkKey = (id: string) => `${INK_PREFIX}${id}`;
+
+export interface NoteInk {
+  strokes: { d: string; color: string; width: number }[];
+  /** The canvas the strokes were drawn on, so they scale to any box. */
+  width: number;
+  height: number;
+}
+
+export async function saveNoteInk(id: string, ink: NoteInk): Promise<void> {
+  try {
+    await AsyncStorage.setItem(inkKey(id), JSON.stringify(ink));
+  } catch (error) {
+    warn('note ink save failed:', error);
+  }
+}
+
+export async function loadNoteInk(id: string): Promise<NoteInk | null> {
+  try {
+    const raw = await AsyncStorage.getItem(inkKey(id));
+    if (!raw) {
+      return null;
+    }
+    const parsed = JSON.parse(raw) as Partial<NoteInk>;
+    return Array.isArray(parsed.strokes) && parsed.width && parsed.height
+      ? { strokes: parsed.strokes, width: parsed.width, height: parsed.height }
+      : null;
+  } catch {
+    return null;
+  }
+}
 
 /**
  * Pick a picture and keep it.
@@ -80,6 +121,9 @@ export async function loadNoteImage(id: string): Promise<string | null> {
 export async function removeNoteImage(id: string): Promise<void> {
   try {
     await AsyncStorage.removeItem(key(id));
+    // The marks go with the picture they were drawn on. Nothing else refers
+    // to them, so leaving them is bytes the reader can never account for.
+    await AsyncStorage.removeItem(inkKey(id));
   } catch (error) {
     warn('note image delete failed:', error);
   }
