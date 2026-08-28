@@ -106,10 +106,50 @@ export function PomodoroSettingsSheet({
         Durations apply when you set them. Sound and vibration save as you change them.
       </Text>
 
+      <Text style={[styles.section, { color: colors.textMuted }]}>DURATIONS</Text>
+      {duration('focusMinutes', 'Focus', 1, 180, 'min')}
+      {duration('shortMinutes', 'Short break', 1, 60, 'min')}
+      {duration('longMinutes', 'Long break', 1, 90, 'min')}
+      {duration('longEvery', 'Long break every', 2, 12, 'pomodoros')}
+
       <Text style={[styles.section, { color: colors.textMuted }]}>YOUR TREE</Text>
+
+      {/*
+        The whole feature has an off switch, and it is the first thing here.
+        A pomodoro timer is a perfectly good thing to want on its own; somebody
+        who finds a growing tree twee should not have to put up with it to use
+        the clock. Off hides the species, the plot and the wilt rule together —
+        half a feature is worse than none of it.
+      */}
+      <Touchable
+        label={draft.trees ? 'Use a plain timer with no tree' : 'Grow a tree while you focus'}
+        role="checkbox"
+        state={{ checked: draft.trees }}
+        onPress={() => setDraft(prev => ({ ...prev, trees: !prev.trees }))}
+        style={[styles.wilt, { borderColor: colors.border, backgroundColor: colors.card }]}>
+        <View style={styles.flex}>
+          <Text style={[typeScale.callout, { color: colors.text }]}>Grow a tree</Text>
+          <Text style={[typeScale.footnote, { color: colors.textMuted }]}>
+            A tree grows for as long as you focus and is planted when the session ends. Turn
+            this off for a plain pomodoro timer.
+          </Text>
+        </View>
+        <View
+          style={[
+            styles.box,
+            {
+              backgroundColor: draft.trees ? colors.accent : 'transparent',
+              borderColor: draft.trees ? colors.accent : colors.border,
+            },
+          ]}>
+          {draft.trees ? <Check size={14} color={colors.onAccent} /> : null}
+        </View>
+      </Touchable>
+
+      {draft.trees ? (
+        <>
       <Text style={[typeScale.footnote, { color: colors.textMuted }]}>
-        A tree grows for as long as you focus, and is planted in your forest when the session
-        ends. Species unlock with the minutes you have focused for.
+        Species unlock with the minutes you have focused for.
       </Text>
       <View style={styles.trees}>
         {SPECIES.map(species => {
@@ -192,12 +232,9 @@ export function PomodoroSettingsSheet({
           {draft.wilt ? <Check size={14} color={colors.onAccent} /> : null}
         </View>
       </Touchable>
+        </>
+      ) : null}
 
-      <Text style={[styles.section, { color: colors.textMuted }]}>DURATIONS</Text>
-      {duration('focusMinutes', 'Focus', 1, 180, 'min')}
-      {duration('shortMinutes', 'Short break', 1, 60, 'min')}
-      {duration('longMinutes', 'Long break', 1, 90, 'min')}
-      {duration('longEvery', 'Long break every', 2, 12, 'pomodoros')}
 
       {soundAvailable ? (
         <>

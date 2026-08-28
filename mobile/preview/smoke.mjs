@@ -1006,11 +1006,25 @@ await step('a focus session grows a tree, and plants it when it ends', async () 
   await tap('Apply custom time');
   await page.waitForTimeout(400);
 
+  /*
+   * How big the tree is, not how many pieces it has.
+   *
+   * The crown draws all of its masses from the moment it starts — they get
+   * *bigger*, they do not appear one by one — so counting nodes said "10 parts
+   * then 10 parts" while the tree was visibly growing.
+   */
   const treeSize = () =>
     page.evaluate(() => {
-      const svg = document.querySelector('[aria-label*="grown"] svg, [aria-label*="Sprout"] svg');
-      const paths = svg ? svg.querySelectorAll('path, circle, polygon') : [];
-      return paths.length;
+      const svg = document.querySelector('[aria-label*="grown"] svg');
+      if (!svg) {
+        return 0;
+      }
+      let area = 0;
+      for (const node of svg.querySelectorAll('circle, path, polygon, ellipse')) {
+        const box = node.getBBox();
+        area += box.width * box.height;
+      }
+      return Math.round(area);
     });
 
   await seesText('Plant a', 4000);
@@ -1025,8 +1039,8 @@ await step('a focus session grows a tree, and plants it when it ends', async () 
   // It grows: more of the tree is on screen half a minute in than at the start.
   await page.waitForTimeout(32000);
   const later = await treeSize();
-  if (later <= early) {
-    throw new Error(`the tree did not grow — ${early} parts at the start, ${later} later`);
+  if (later <= early * 1.2) {
+    throw new Error(`the tree did not grow — ${early} at the start, ${later} later`);
   }
 
   // And finishing plants it. The plot is the payoff; without it the tree grows
@@ -1040,14 +1054,19 @@ await step('a focus session grows a tree, and plants it when it ends', async () 
     throw new Error('the finished session planted nothing in the plot');
   }
 
-  // Put the focus length back. It is stored, and the next step asserts on the
-  // default — a test that leaves settings changed is a test that breaks its
-  // neighbours from a distance.
+  // Leave the screen as it was found. `setCustomMinutes` writes the length of
+  // the mode you are *in*, and the session ends on a break — so setting 25
+  // without switching back first would silently make the short break 25
+  // minutes and leave Focus at one, which is how three later steps failed.
   await open('screen=timer');
+  await byLabel('Focus').first().click();
+  await page.waitForTimeout(500);
+  await tap('Reset timer');
+  await page.waitForTimeout(300);
   await tap('Set custom time');
   await page.keyboard.type('25');
   await tap('Apply custom time');
-  await page.waitForTimeout(400);
+  await page.waitForTimeout(500);
 });
 
 /**
@@ -1065,6 +1084,83 @@ await step('the tree picker offers species, and names what is locked', async () 
     throw new Error('locked species do not say what they cost');
   }
   await seesText('Leaving withers the tree', 4000);
+});
+
+/**
+ * A break is a detour, not a reset.
+ *
+ * Switching to a break and back rebuilt the focus clock from the settings, so
+ * a session paused at 12:04 came back at 25:00 — the reader had done the thing
+ * the app tells them to do and lost the twelve minutes they had already sat
+ * through.
+ */
+await step('a paused session survives a trip to the break tab', async () => {
+  await open('screen=timer');
+  await byLabel('Focus').first().click();
+  await page.waitForTimeout(400);
+  await tap('Reset timer');
+  await page.waitForTimeout(300);
+  await tap('Start timer');
+  await page.waitForTimeout(4000);
+  await tap('Pause timer');
+  await page.waitForTimeout(400);
+
+  const clock = () => byLabel('Set custom time').innerText();
+  const paused = await clock();
+  if (/25:00/.test(paused)) {
+    throw new Error('the timer did not actually run');
+  }
+
+  await tap('Short break');
+  await page.waitForTimeout(600);
+  await byLabel('Focus').first().click();
+  await page.waitForTimeout(600);
+
+  const back = await clock();
+  if (back.trim() !== paused.trim()) {
+    throw new Error(`paused at ${paused.trim()} and came back at ${back.trim()}`);
+  }
+  await tap('Reset timer');
+  await page.waitForTimeout(400);
+});
+
+/**
+ * And the whole tree can be turned off, for anyone who wants a plain timer.
+ */
+await step('trees can be switched off, and the timer is a plain one', async () => {
+  await open('screen=timer');
+  await tap('Timer settings');
+  await seesText('Grow a tree', 4000);
+  await tap('Use a plain timer with no tree');
+  await page.waitForTimeout(500);
+
+  // Off hides the species and the wilt rule with it — half a feature is worse
+  // than none of it.
+  if ((await page.getByText('Leaving withers the tree').count()) > 0) {
+    throw new Error('the wilt rule is still offered with the trees turned off');
+  }
+  await page.mouse.wheel(0, 1400);
+  await page.waitForTimeout(500);
+  await tap('Set this configuration');
+  await page.waitForTimeout(800);
+
+  const body = await page.locator('body').innerText();
+  if (body.includes("TODAY'S PLOT")) {
+    throw new Error('the plot is still on screen with the trees turned off');
+  }
+  if (/plant an? /.test(body)) {
+    throw new Error('the timer still offers to plant something');
+  }
+
+  // Put it back: it is on by default, and the next step expects the default.
+  await tap('Timer settings');
+  await seesText('Grow a tree', 4000);
+  await tap('Grow a tree while you focus');
+  await page.waitForTimeout(400);
+  await page.mouse.wheel(0, 1400);
+  await page.waitForTimeout(500);
+  await tap('Set this configuration');
+  await page.waitForTimeout(600);
 });
 
 /**

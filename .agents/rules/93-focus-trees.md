@@ -77,6 +77,27 @@ which the timer already counts. The picker shows locked species with their
 price rather than hiding them: a ladder with nothing visible above you is a
 ladder you stop climbing.
 
+## The whole thing has an off switch
+
+`settings.trees`, on by default. A pomodoro timer is a perfectly good thing to
+want on its own, and someone who finds a growing tree twee should not have to
+put up with it to use the clock. Off hides the tree, the plot **and** the wilt
+rule together — half a feature is worse than none of it.
+
+It sits **under** the durations in the settings sheet, not above them. With the
+tree section first, the four duration sliders were pushed off the bottom of a
+sheet that will not scroll past them: a settings sheet whose main setting
+cannot be reached is broken.
+
+## A break is a detour, not a reset
+
+`switchMode` parks what was on the clock for the mode being left and restores
+it when that mode comes back. It used to rebuild the clock from the settings,
+so a session paused at 12:04, followed by a break, came back at 25:00 — the
+reader had done the thing the app tells them to do and lost the twelve minutes
+they had already sat through. Finishing, Reset and Restart clear the parked
+clock; those are the controls that mean "start this over".
+
 ## The dial holds the tree and the clock, and nothing else
 
 A 260dp circle has about 150dp of usable width across its middle. Tree, mode,

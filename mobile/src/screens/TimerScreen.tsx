@@ -15,7 +15,7 @@ import { useExam } from '@/hooks/useExam';
 import { daysUntil } from '@/lib/exam';
 import { ProgressRing } from '@/components/ProgressRing';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { CalendarClock, Check, Coffee, Pencil, Play, Pause, RotateCcw, SlidersHorizontal, Sprout, Users, X } from 'lucide-react-native';
+import { CalendarClock, Check, Coffee, Pencil, Play, Pause, RotateCcw, SlidersHorizontal, Sprout, Timer as TimerIcon, Users, X } from 'lucide-react-native';
 import { typeScale } from '@/theme/typography';
 import { useTheme, withAlpha } from '@/theme';
 import { SPRING, springConfig, useReducedMotion } from '@/theme/motion';
@@ -82,8 +82,10 @@ export default function TimerScreen() {
    *
    * At a literal zero the dial is empty soil, which reads as "nothing here"
    * rather than "ready" — the same reason nothing in this app scales from 0.
+   * It has to clear the crown's start, too: below that it is a bare grey twig,
+   * which looks like a rendering fault rather than a seedling.
    */
-  const growthShown = timer.mode === 'focus' ? Math.max(0.06, timer.growth) : 0;
+  const growthShown = timer.mode === 'focus' ? Math.max(0.2, timer.growth) : 0;
   // How much of this session is still to come, for the dial ring.
   const remainingPercent =
     timer.totalSeconds > 0 ? (timer.remaining / timer.totalSeconds) * 100 : 100;
@@ -232,7 +234,11 @@ export default function TimerScreen() {
               nothing about the identity changes; the middle of it stops being
               empty.
             */}
-            {timer.mode === 'focus' ? (
+            {!timer.settings.trees ? (
+              <Text style={[styles.dialKicker, { color: colors.textMuted }]}>
+                {activeMode.emoji} {activeMode.label.toUpperCase()}
+              </Text>
+            ) : timer.mode === 'focus' ? (
               <FocusTree
                 species={timer.settings.species}
                 growth={growthShown}
@@ -333,7 +339,7 @@ export default function TimerScreen() {
           ? 'Type minutes and tap ✓ to set'
           : timer.wilted
             ? 'You left — the minutes still count, but the tree is grey'
-            : timer.mode !== 'focus'
+            : timer.mode !== 'focus' || !timer.settings.trees
               ? `${activeMode.emoji} ${activeMode.label} · tap the number to change it`
               : timer.isRunning
                 ? `${activeMode.emoji} Focus · ${speciesFor(timer.settings.species).name} growing`
@@ -437,15 +443,19 @@ export default function TimerScreen() {
       */}
       <View style={[styles.plot, { backgroundColor: colors.card, borderColor: colors.border }]}>
         <View style={styles.plotHead}>
-          <Sprout size={15} color={colors.textMuted} />
+          {timer.settings.trees ? (
+            <Sprout size={15} color={colors.textMuted} />
+          ) : (
+            <TimerIcon size={15} color={colors.textMuted} />
+          )}
           <Text style={[styles.plotLabel, styles.flex, { color: colors.textMuted }]}>
-            TODAY'S PLOT
+            {timer.settings.trees ? "TODAY'S PLOT" : 'TODAY'}
           </Text>
           <Text style={[styles.plotTotal, { color: colors.text }]}>
             {formatFocusTime(timer.focusMinutesToday)}
           </Text>
         </View>
-        {today.length > 0 ? (
+        {!timer.settings.trees ? null : today.length > 0 ? (
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}

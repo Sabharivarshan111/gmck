@@ -670,6 +670,18 @@ that somebody studied.
 A withered tree is still planted, in grey — an empty plot says nothing
 happened, a grey one says exactly what did.
 
+**A break is a detour, not a reset.** `switchMode` parks the clock for the mode
+it leaves and restores it on the way back; it used to rebuild it from the
+settings, so a session paused at 12:04 came back at 25:00 after a break — the
+reader had done the thing the app tells them to do and lost twelve minutes they
+had already sat through. Finishing, Reset and Restart clear the parked clock,
+because those are the controls that mean "start this over".
+
+**The trees have an off switch, on by default**, and it hides the tree, the
+plot and the wilt rule together. It lives *under* the durations in the settings
+sheet: with it above, the four duration sliders were pushed off the bottom of a
+sheet that will not scroll past them.
+
 **Species unlock off lifetime focused minutes, not a currency.** Forest pays
 coins and sells them; this app already has one XP ladder shared with the web
 app, and a second economy is a second set of numbers to disagree with the

@@ -14,6 +14,16 @@ export interface PomodoroSettings {
   shortMinutes: number;
   longMinutes: number;
   longEvery: number;
+  /**
+   * Whether a focus session grows anything at all.
+   *
+   * On by default: it is the reason the timer is worth looking at. Off is
+   * offered because a pomodoro timer is a perfectly good thing to want on its
+   * own, and somebody who finds the tree twee should not have to put up with
+   * it to use the clock. Off hides the tree, the plot and the wilt rule
+   * together — half a feature is worse than none.
+   */
+  trees: boolean;
   /** Which tree a focus session plants — a key from `lib/trees`. */
   species: string;
   /**
@@ -32,6 +42,7 @@ export const DEFAULT_SETTINGS: PomodoroSettings = {
   shortMinutes: 5,
   longMinutes: 15,
   longEvery: 4,
+  trees: true,
   species: DEFAULT_SPECIES,
   wilt: true,
 };
@@ -101,12 +112,24 @@ export function usePomodoro() {
   settingsRef.current = settings;
   /** When the app went to the background, so the grace period can be measured. */
   const leftAt = useRef<number | null>(null);
+  /**
+   * What was left on the clock in each mode, kept while another mode is on.
+   *
+   * Switching to a break and back rebuilt the focus clock from the settings,
+   * so a session paused at 12:04 came back at 25:00 — the reader had taken a
+   * break, which is the thing the app is telling them to do, and lost the
+   * twelve minutes they had already sat through. A break is a detour, not a
+   * reset; only finishing, Reset or Restart start a mode over.
+   */
+  const parked = useRef<Partial<Record<PomodoroMode, { left: number; wilted: boolean }>>>({});
   const modeRef = useRef(mode);
   modeRef.current = mode;
   const runningRef = useRef(isRunning);
   runningRef.current = isRunning;
   const wiltedRef = useRef(wilted);
   wiltedRef.current = wilted;
+  const remainingRef = useRef(remaining);
+  remainingRef.current = remaining;
 
   const minutesFor = useCallback((next: PomodoroMode, from: PomodoroSettings) => {
     if (next === 'focus') {
@@ -181,6 +204,8 @@ export function usePomodoro() {
   const finishSession = useCallback(() => {
     setIsRunning(false);
     endsAtRef.current = null;
+    // A finished mode has nothing left to come back to.
+    delete parked.current[modeRef.current];
     AsyncStorage.removeItem(SESSION_KEY).catch(() => {});
     // Haptic, sound and visual have to land together — feedback split across
     // senses reads as several events rather than one (apple-design §13
@@ -202,12 +227,14 @@ export function usePomodoro() {
       setCompletedFocus(done);
       // The tree is planted the moment the session ends, wilted or not: an
       // empty plot says nothing happened, a grey tree says exactly what did.
-      plantTree({
-        at: Date.now(),
-        minutes: settingsRef.current.focusMinutes,
-        species: settingsRef.current.species,
-        wilted: wiltedRef.current,
-      }).catch(() => {});
+      if (settingsRef.current.trees) {
+        plantTree({
+          at: Date.now(),
+          minutes: settingsRef.current.focusMinutes,
+          species: settingsRef.current.species,
+          wilted: wiltedRef.current,
+        }).catch(() => {});
+      }
       setWilted(false);
       setFocusMinutesTotal(prev => {
         const updated = prev + settingsRef.current.focusMinutes;
@@ -271,6 +298,7 @@ export function usePomodoro() {
           away > WILT_GRACE_MS &&
           runningRef.current &&
           modeRef.current === 'focus' &&
+          settingsRef.current.trees &&
           settingsRef.current.wilt
         ) {
           setWilted(true);
@@ -318,6 +346,7 @@ export function usePomodoro() {
   }, [syncFromClock]);
 
   const reset = useCallback(() => {
+    delete parked.current[modeRef.current];
     setWilted(false);
     const seconds = minutesFor(mode, settingsRef.current) * 60;
     setIsRunning(false);
@@ -337,6 +366,7 @@ export function usePomodoro() {
    * happens to say.
    */
   const resetCycle = useCallback(() => {
+    parked.current = {};
     setWilted(false);
     const seconds = minutesFor('focus', settingsRef.current) * 60;
     setIsRunning(false);
@@ -350,13 +380,27 @@ export function usePomodoro() {
 
   const switchMode = useCallback(
     (next: PomodoroMode) => {
-      const seconds = minutesFor(next, settingsRef.current) * 60;
-      setWilted(false);
+      const full = minutesFor(next, settingsRef.current) * 60;
+      // Park whatever is on the clock now, unless it is untouched or spent —
+      // parking a full clock would mean restoring one, which is the same thing
+      // and only makes the record harder to reason about.
+      const currentFull = minutesFor(modeRef.current, settingsRef.current) * 60;
+      const left = endsAtRef.current
+        ? Math.max(0, Math.round((endsAtRef.current - Date.now()) / 1000))
+        : remainingRef.current;
+      if (left > 0 && left < currentFull) {
+        parked.current[modeRef.current] = { left, wilted: wiltedRef.current };
+      } else {
+        delete parked.current[modeRef.current];
+      }
+
+      const resume = parked.current[next];
       setIsRunning(false);
       endsAtRef.current = null;
       setMode(next);
-      setTotalSeconds(seconds);
-      setRemaining(seconds);
+      setTotalSeconds(full);
+      setRemaining(resume ? resume.left : full);
+      setWilted(resume ? resume.wilted : false);
       AsyncStorage.removeItem(SESSION_KEY).catch(() => {});
     },
     [minutesFor],
