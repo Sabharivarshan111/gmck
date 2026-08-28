@@ -4,6 +4,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { complete } from '@/lib/haptics';
 import { playChime } from '@/lib/sound';
 import { warn } from '@/lib/log';
+import { plantTree } from '@/lib/forest';
+import { DEFAULT_SPECIES } from '@/lib/trees';
 
 export type PomodoroMode = 'focus' | 'short' | 'long';
 
@@ -12,6 +14,17 @@ export interface PomodoroSettings {
   shortMinutes: number;
   longMinutes: number;
   longEvery: number;
+  /** Which tree a focus session plants — a key from `lib/trees`. */
+  species: string;
+  /**
+   * Whether leaving the app mid-session withers the tree.
+   *
+   * On by default, because it is the thing that makes the tree mean anything.
+   * Off is offered rather than assumed: someone revising from a PDF in another
+   * app is not being distracted, and an app that punishes them for it is an
+   * app they stop using.
+   */
+  wilt: boolean;
 }
 
 export const DEFAULT_SETTINGS: PomodoroSettings = {
@@ -19,7 +32,21 @@ export const DEFAULT_SETTINGS: PomodoroSettings = {
   shortMinutes: 5,
   longMinutes: 15,
   longEvery: 4,
+  species: DEFAULT_SPECIES,
+  wilt: true,
 };
+
+/**
+ * How long you may be away before the tree withers, in milliseconds.
+ *
+ * Forest kills the tree the instant you leave. That is right for an app whose
+ * only job is to stop you touching your phone, and wrong for a medical
+ * question bank: a notification, a glance at a caller, a two-second check of a
+ * formula are all things a student doing a fifty-minute Pharmacology block will
+ * do. Fifteen seconds is long enough for all of those and far too short to
+ * read anything.
+ */
+export const WILT_GRACE_MS = 15000;
 
 const SESSION_KEY = 'pomodoro:session';
 const SETTINGS_KEY = 'pomodoro:settings';
@@ -66,10 +93,20 @@ export function usePomodoro() {
   const [completionNonce, setCompletionNonce] = useState(0);
   const [focusMinutesTotal, setFocusMinutesTotal] = useState(0);
   const [focusMinutesToday, setFocusMinutesToday] = useState(0);
+  /** This session's tree has withered. Cleared when a new one is planted. */
+  const [wilted, setWilted] = useState(false);
 
   const endsAtRef = useRef<number | null>(null);
   const settingsRef = useRef(settings);
   settingsRef.current = settings;
+  /** When the app went to the background, so the grace period can be measured. */
+  const leftAt = useRef<number | null>(null);
+  const modeRef = useRef(mode);
+  modeRef.current = mode;
+  const runningRef = useRef(isRunning);
+  runningRef.current = isRunning;
+  const wiltedRef = useRef(wilted);
+  wiltedRef.current = wilted;
 
   const minutesFor = useCallback((next: PomodoroMode, from: PomodoroSettings) => {
     if (next === 'focus') {
@@ -163,6 +200,15 @@ export function usePomodoro() {
 
       const done = completedFocus + 1;
       setCompletedFocus(done);
+      // The tree is planted the moment the session ends, wilted or not: an
+      // empty plot says nothing happened, a grey tree says exactly what did.
+      plantTree({
+        at: Date.now(),
+        minutes: settingsRef.current.focusMinutes,
+        species: settingsRef.current.species,
+        wilted: wiltedRef.current,
+      }).catch(() => {});
+      setWilted(false);
       setFocusMinutesTotal(prev => {
         const updated = prev + settingsRef.current.focusMinutes;
         AsyncStorage.setItem(FOCUS_TOTAL_KEY, String(updated)).catch(() => {});
@@ -208,11 +254,34 @@ export function usePomodoro() {
     return () => clearInterval(id);
   }, [isRunning, syncFromClock]);
 
-  // Re-sync the moment the app returns to the foreground.
+  /*
+   * Re-sync on return — and wither the tree if the trip was a long one.
+   *
+   * `AppState` is all this needs: no permission, no Usage Access, no
+   * accessibility service. Forest's Deep Focus blocks other apps outright,
+   * which needs exactly those, is a Play-policy minefield, and would stop a
+   * student opening a calculator mid-revision. Knowing you left is enough.
+   */
   useEffect(() => {
     const handler = (state: AppStateStatus) => {
       if (state === 'active') {
+        const away = leftAt.current == null ? 0 : Date.now() - leftAt.current;
+        leftAt.current = null;
+        if (
+          away > WILT_GRACE_MS &&
+          runningRef.current &&
+          modeRef.current === 'focus' &&
+          settingsRef.current.wilt
+        ) {
+          setWilted(true);
+        }
         syncFromClock();
+        return;
+      }
+      // 'inactive' is the half-second of a system dialog or the app switcher
+      // being opened; only a real background counts as leaving.
+      if (state === 'background') {
+        leftAt.current = Date.now();
       }
     };
     const subscription = AppState.addEventListener('change', handler);
@@ -249,6 +318,7 @@ export function usePomodoro() {
   }, [syncFromClock]);
 
   const reset = useCallback(() => {
+    setWilted(false);
     const seconds = minutesFor(mode, settingsRef.current) * 60;
     setIsRunning(false);
     endsAtRef.current = null;
@@ -267,6 +337,7 @@ export function usePomodoro() {
    * happens to say.
    */
   const resetCycle = useCallback(() => {
+    setWilted(false);
     const seconds = minutesFor('focus', settingsRef.current) * 60;
     setIsRunning(false);
     endsAtRef.current = null;
@@ -280,6 +351,7 @@ export function usePomodoro() {
   const switchMode = useCallback(
     (next: PomodoroMode) => {
       const seconds = minutesFor(next, settingsRef.current) * 60;
+      setWilted(false);
       setIsRunning(false);
       endsAtRef.current = null;
       setMode(next);
@@ -338,6 +410,18 @@ export function usePomodoro() {
     focusMinutesTotal,
     focusMinutesToday,
     settings,
+    wilted,
+    /**
+     * How much of this focus session has been spent, 0 to 1.
+     *
+     * Derived rather than stored: it changes every tick anyway, and a second
+     * copy of a value the countdown already holds is a second thing that can
+     * disagree with the clock.
+     */
+    growth:
+      mode === 'focus' && totalSeconds > 0
+        ? Math.max(0, Math.min(1, 1 - remaining / totalSeconds))
+        : 0,
     start,
     pause,
     reset,

@@ -29,6 +29,7 @@ when picking up work that was last touched from the other tool.
 | `.agents/rules/90-xp.md` | XP, badges, streak and the leaderboard — one ladder shared with the web app, and why a reward has to look like one |
 | `.agents/rules/91-notifications.md` | The daily study reminder — why it is usually silent, and the two ways that silence has meant "broken |
 | `.agents/rules/92-verify.md` | Prove a change works and show a screenshot before calling it done — what counts as proof here, and what the harness structurally cannot see |
+| `.agents/rules/93-focus-trees.md` | The focus timer's trees — twelve species drawn from numbers, why they lean towards the theme rather than take it, and the wilt rule |
 <!-- rules:end -->
 
 This repo is worked on from Claude Code *and* Antigravity, sometimes on the
@@ -633,6 +634,51 @@ The fan is narrow on purpose. Widening it is the obvious way to separate six
 cards and it is wrong: 100° from an orange accent is green, and one green card
 in a warm theme looks like a bug rather than a sixth colour.
 
+## The timer grows a tree, and it is drawn rather than stored
+
+`src/lib/trees.ts` holds twelve species as numbers — crown shape, hue, trunk,
+girth, lean, spread, part count — and `components/FocusTree.tsx` is the one
+renderer that builds all of them. A thirteenth species is nine numbers, not a
+bitmap per density.
+
+**Every part's size is a pure function of `growth`, and `growth` changes once a
+second**, because that is how often the countdown ticks. A tree that takes
+twenty-five minutes to grow moves imperceptibly between ticks, so a frame loop
+would add nothing. The only thing running at frame rate is one sway, and that
+is a transform on a plain `View` on the native thread. Redrawing forty vector
+nodes every frame for twenty-five minutes is the version that makes a cheap
+phone unusable.
+
+**A species' hue is absolute, and leans towards the accent by at most 18°.** It
+used to be an *offset* from the accent, which made every tree the colour of
+every other — a fuchsia accent grew a fuchsia pine, a fuchsia maple and a
+fuchsia cherry, and naming them was a lie. A fraction alone is not enough of a
+cap either: green is almost opposite fuchsia, so a third of that gap is fifty
+degrees, and the oak came out yellow and the pine cyan. Saturation and value
+are fixed rather than taken from the theme, because the tree is the brightest
+thing on that screen by design.
+
+**The wilt rule is deliberately gentler than Forest's.** `AppState` is all it
+needs — Forest's Deep Focus blocks other apps, which needs Usage Access or an
+accessibility service, is a Play-policy minefield, and would stop a student
+opening a calculator mid-revision. Fifteen seconds of grace, `'background'`
+only (never `'inactive'`, which is a system dialog), breaks exempt, and the
+tree **withers rather than dies**: the minutes still count and the session
+still ends normally. Losing the work would be this app throwing away evidence
+that somebody studied.
+
+A withered tree is still planted, in grey — an empty plot says nothing
+happened, a grey one says exactly what did.
+
+**Species unlock off lifetime focused minutes, not a currency.** Forest pays
+coins and sells them; this app already has one XP ladder shared with the web
+app, and a second economy is a second set of numbers to disagree with the
+first.
+
+`src/lib/forest.ts` is the log, on this phone only, in `check:cloud-ids`'
+LOCAL_ONLY list — a record of when somebody was concentrating is a record of
+their day. `npm run check:trees` pins the species table to the renderer.
+
 ## Design tokens
 
 `src/theme/tokens.ts` holds the spacing and radius scales; `typeScale` in
@@ -1053,6 +1099,7 @@ npm run check:kotlin             # override signatures match; there is no local 
 npm run check:supabase-queue     # every job waiting on Supabase can still be applied
 npm run check:keyboard           # no text input can sit under the Android keyboard
 npm run check:edges              # no full-screen page sits under the status bar
+npm run check:trees              # the focus trees stay drawable and distinct
 npm run check:mcq                # MCQ response parsing + the ask-gemini markers
 npm run check:notes-limits       # every topic still fits the notes function's schema
 npm run check:smoke              # drives the real screens; 18 flows, 0 crashes

@@ -64,6 +64,7 @@ const LOCAL_ONLY = [
   { file: 'src/hooks/useUserNotes.ts', what: 'personal study notes' },
   { file: 'src/lib/noteImages.ts', what: 'pictures attached to a study note' },
   { file: 'src/hooks/useCalendarEvents.ts', what: 'calendar events and exam targets' },
+  { file: 'src/lib/forest.ts', what: 'the record of when this phone was concentrating' },
 ];
 
 for (const { file, what } of LOCAL_ONLY) {

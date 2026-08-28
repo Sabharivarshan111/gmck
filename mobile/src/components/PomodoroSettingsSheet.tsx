@@ -6,11 +6,13 @@ import { Sheet } from '@/components/Sheet';
 import { Slider } from '@/components/Slider';
 import { useTheme, withAlpha } from '@/theme';
 import { typeScale } from '@/theme/typography';
-import { Check, Play, Volume2 } from 'lucide-react-native';
+import { Check, Lock, Play, Volume2 } from 'lucide-react-native';
 import { CHIME_PRESETS, setSetting, useSettings } from '@/lib/settings';
 import { previewSound, silencingReason, soundAvailable } from '@/lib/sound';
 import { complete as buzz } from '@/lib/haptics';
 import type { PomodoroSettings } from '@/hooks/usePomodoro';
+import { TreeChip } from '@/components/FocusTree';
+import { nextUnlock, SPECIES } from '@/lib/trees';
 
 /**
  * Everything adjustable about the pomodoro, in one sheet.
@@ -32,15 +34,19 @@ export function PomodoroSettingsSheet({
   settings,
   onApply,
   onResetCycle,
+  focusMinutes,
 }: {
   visible: boolean;
   onClose: () => void;
   settings: PomodoroSettings;
   onApply: (next: PomodoroSettings) => void;
   onResetCycle: () => void;
+  /** Lifetime focused minutes, which is what unlocks species. */
+  focusMinutes: number;
 }) {
   const { colors } = useTheme();
   const prefs = useSettings();
+  const upcoming = nextUnlock(focusMinutes);
 
   const [draft, setDraft] = useState<PomodoroSettings>(settings);
   // Re-seed each time it opens, so a sheet closed without applying does not
@@ -65,7 +71,7 @@ export function PomodoroSettingsSheet({
    * no way to tell which is the focus length.
    */
   const duration = (
-    key: keyof PomodoroSettings,
+    key: 'focusMinutes' | 'shortMinutes' | 'longMinutes' | 'longEvery',
     label: string,
     min: number,
     max: number,
@@ -99,6 +105,93 @@ export function PomodoroSettingsSheet({
       <Text style={[typeScale.footnote, styles.lede, { color: colors.textMuted }]}>
         Durations apply when you set them. Sound and vibration save as you change them.
       </Text>
+
+      <Text style={[styles.section, { color: colors.textMuted }]}>YOUR TREE</Text>
+      <Text style={[typeScale.footnote, { color: colors.textMuted }]}>
+        A tree grows for as long as you focus, and is planted in your forest when the session
+        ends. Species unlock with the minutes you have focused for.
+      </Text>
+      <View style={styles.trees}>
+        {SPECIES.map(species => {
+          const unlocked = species.unlockAt <= focusMinutes;
+          const active = draft.species === species.key;
+          return (
+            <Touchable
+              key={species.key}
+              disabled={!unlocked}
+              onPress={() => setDraft(prev => ({ ...prev, species: species.key }))}
+              label={
+                unlocked
+                  ? `${species.name}`
+                  : `${species.name}, locked until ${species.unlockAt} focused minutes`
+              }
+              state={{ selected: active }}
+              scaleTo={0.92}
+              style={[
+                styles.tree,
+                {
+                  backgroundColor: active ? withAlpha(colors.primary, 0.14) : colors.card,
+                  borderColor: active ? colors.primary : colors.border,
+                  opacity: unlocked ? 1 : 0.45,
+                },
+              ]}>
+              <TreeChip species={species.key} size={46} />
+              <Text
+                numberOfLines={1}
+                style={[typeScale.caption, styles.treeName, { color: colors.text }]}>
+                {species.name}
+              </Text>
+              {unlocked ? null : (
+                <View style={styles.treeLock}>
+                  <Lock size={9} color={colors.textMuted} />
+                  <Text style={[styles.treeLockText, { color: colors.textMuted }]}>
+                    {species.unlockAt}m
+                  </Text>
+                </View>
+              )}
+            </Touchable>
+          );
+        })}
+      </View>
+      {upcoming ? (
+        <Text style={[typeScale.footnote, { color: colors.textMuted }]}>
+          {upcoming.unlockAt - focusMinutes} more focused minutes unlocks the{' '}
+          {upcoming.name.toLowerCase()}.
+        </Text>
+      ) : (
+        <Text style={[typeScale.footnote, { color: colors.textMuted }]}>
+          Every species unlocked. That is {Math.round(focusMinutes / 60)} hours of focus.
+        </Text>
+      )}
+
+      <Touchable
+        label={
+          draft.wilt
+            ? 'Stop the tree withering when you leave the app'
+            : 'Wither the tree if you leave the app'
+        }
+        role="checkbox"
+        state={{ checked: draft.wilt }}
+        onPress={() => setDraft(prev => ({ ...prev, wilt: !prev.wilt }))}
+        style={[styles.wilt, { borderColor: colors.border, backgroundColor: colors.card }]}>
+        <View style={styles.flex}>
+          <Text style={[typeScale.callout, { color: colors.text }]}>Leaving withers the tree</Text>
+          <Text style={[typeScale.footnote, { color: colors.textMuted }]}>
+            Switch apps for more than 15 seconds and the tree goes grey. Your minutes still
+            count — only the tree is lost.
+          </Text>
+        </View>
+        <View
+          style={[
+            styles.box,
+            {
+              backgroundColor: draft.wilt ? colors.accent : 'transparent',
+              borderColor: draft.wilt ? colors.accent : colors.border,
+            },
+          ]}>
+          {draft.wilt ? <Check size={14} color={colors.onAccent} /> : null}
+        </View>
+      </Touchable>
 
       <Text style={[styles.section, { color: colors.textMuted }]}>DURATIONS</Text>
       {duration('focusMinutes', 'Focus', 1, 180, 'min')}
@@ -272,6 +365,49 @@ export function PomodoroSettingsSheet({
 }
 
 const styles = StyleSheet.create({
+  trees: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  tree: {
+    width: 78,
+    alignItems: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 4,
+    gap: 2,
+    borderRadius: 12,
+    borderWidth: StyleSheet.hairlineWidth,
+  },
+  treeName: {
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+  treeLock: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+  },
+  treeLockText: {
+    fontSize: 10,
+    fontWeight: '700',
+  },
+  wilt: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    padding: 14,
+    borderRadius: 12,
+    borderWidth: StyleSheet.hairlineWidth,
+  },
+  box: {
+    width: 24,
+    height: 24,
+    borderRadius: 7,
+    borderWidth: StyleSheet.hairlineWidth,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   content: {
     gap: 12,
   },
@@ -295,7 +431,7 @@ const styles = StyleSheet.create({
   section: {
     fontSize: 11,
     letterSpacing: 0.8,
-    marginTop: 4,
+    marginTop: 10,
   },
   sectionRow: {
     flexDirection: 'row',

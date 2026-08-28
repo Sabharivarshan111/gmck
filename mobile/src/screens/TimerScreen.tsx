@@ -15,13 +15,21 @@ import { useExam } from '@/hooks/useExam';
 import { daysUntil } from '@/lib/exam';
 import { ProgressRing } from '@/components/ProgressRing';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { CalendarClock, Check, Coffee, Pencil, Play, Pause, RotateCcw, SlidersHorizontal, Sparkles, Timer as TimerIcon, Users, X } from 'lucide-react-native';
+import { CalendarClock, Check, Coffee, Pencil, Play, Pause, RotateCcw, SlidersHorizontal, Sprout, Users, X } from 'lucide-react-native';
 import { typeScale } from '@/theme/typography';
 import { useTheme, withAlpha } from '@/theme';
 import { SPRING, springConfig, useReducedMotion } from '@/theme/motion';
 import { formatClock, PomodoroMode, usePomodoro } from '@/hooks/usePomodoro';
 import { useOnlinePresence } from '@/hooks/useOnlinePresence';
 import { formatFocusTime } from '@/lib/focusStats';
+import { FocusTree, TreeChip } from '@/components/FocusTree';
+import { speciesFor } from '@/lib/trees';
+import { forestNow, loadForest, subscribeForest, treesToday } from '@/lib/forest';
+
+/** "an oak", "a pine" — a species name read aloud in a sentence. */
+function aOrAn(name: string): string {
+  return `${/^[aeiou]/i.test(name) ? 'an' : 'a'} ${name.toLowerCase()}`;
+}
 
 const MODES: { key: PomodoroMode; label: string; emoji: string }[] = [
   { key: 'focus', label: 'Focus', emoji: '🍅' },
@@ -69,6 +77,13 @@ export default function TimerScreen() {
   }, []);
 
   const activeMode = MODES.find(m => m.key === timer.mode) ?? MODES[0];
+  /*
+   * A seed already in the ground before the first tick.
+   *
+   * At a literal zero the dial is empty soil, which reads as "nothing here"
+   * rather than "ready" — the same reason nothing in this app scales from 0.
+   */
+  const growthShown = timer.mode === 'focus' ? Math.max(0.06, timer.growth) : 0;
   // How much of this session is still to come, for the dial ring.
   const remainingPercent =
     timer.totalSeconds > 0 ? (timer.remaining / timer.totalSeconds) * 100 : 100;
@@ -88,6 +103,27 @@ export default function TimerScreen() {
    */
   const reduceMotion = useReducedMotion();
   const swell = useRef(new Animated.Value(0)).current;
+
+  /*
+   * Today's plot, read once and kept in step with the store.
+   *
+   * `forest.ts` has a listener set rather than a context for the same reason
+   * `progress.ts` does: this screen re-renders every second while the timer
+   * runs, and a context holding the log would drag every consumer with it.
+   */
+  const [planted, setPlanted] = useState(forestNow());
+  useEffect(() => {
+    let alive = true;
+    loadForest().then(all => {
+      if (alive) setPlanted(all);
+    });
+    const stop = subscribeForest(() => setPlanted(forestNow()));
+    return () => {
+      alive = false;
+      stop();
+    };
+  }, []);
+  const today = treesToday(planted);
 
   useEffect(() => {
     if (timer.completionNonce === 0) {
@@ -187,9 +223,25 @@ export default function TimerScreen() {
           animate={false}
           trackColor={withAlpha(colors.primary, 0.16)}>
           <View style={styles.dial}>
-            <Text style={[styles.dialKicker, { color: colors.textMuted }]}>
-              {activeMode.emoji} {activeMode.label.toUpperCase()}
-            </Text>
+            {/*
+              The tree is the hero and the clock is information.
+              It was the other way round, and a countdown is a number you check
+              rather than a thing you watch — Forest's whole insight is that a
+              thing which is *growing* holds a room in a way a number never
+              does. The ring keeps carrying the same progress it always did, so
+              nothing about the identity changes; the middle of it stops being
+              empty.
+            */}
+            {timer.mode === 'focus' ? (
+              <FocusTree
+                species={timer.settings.species}
+                growth={growthShown}
+                wilted={timer.wilted}
+                size={124}
+              />
+            ) : (
+              <Text style={styles.breakGlyph}>{activeMode.emoji}</Text>
+            )}
             {isEditing ? (
               <View style={styles.editContainer}>
                 <View style={styles.editRow}>
@@ -242,12 +294,54 @@ export default function TimerScreen() {
                 <Pencil size={16} color={colors.textMuted} />
               </Touchable>
             )}
-            <Text style={[styles.dialHint, { color: isEditing ? colors.primary : colors.textMuted }]}>
-              {isEditing ? 'Type minutes and tap ✓ to set' : 'Tap the number to set custom time'}
-            </Text>
           </View>
         </ProgressRing>
       </Animated.View>
+
+      {/*
+        The state of the session, under the dial rather than inside it.
+
+        A 260dp circle has about 150dp of usable width across its middle, and
+        four stacked things — tree, mode, clock, hint — do not fit in it: the
+        hint sat *on* the ring and the break glyph sat *on* the mode. Inside the
+        ring is now the tree and the clock, which is what the dial is for, and
+        everything that is words lives on one line beneath it where it has the
+        whole screen to be legible in.
+      */}
+      <View
+        style={[
+          styles.statusPill,
+          {
+            backgroundColor: colors.card,
+            borderColor: timer.wilted ? withAlpha(colors.warning, 0.5) : colors.border,
+          },
+        ]}>
+        <Text
+          accessibilityLiveRegion="none"
+          numberOfLines={1}
+          style={[
+            styles.status,
+            {
+              color: timer.wilted
+                ? colors.warning
+                : isEditing
+                  ? colors.primary
+                  : colors.textMuted,
+            },
+          ]}>
+        {isEditing
+          ? 'Type minutes and tap ✓ to set'
+          : timer.wilted
+            ? 'You left — the minutes still count, but the tree is grey'
+            : timer.mode !== 'focus'
+              ? `${activeMode.emoji} ${activeMode.label} · tap the number to change it`
+              : timer.isRunning
+                ? `${activeMode.emoji} Focus · ${speciesFor(timer.settings.species).name} growing`
+                : `${activeMode.emoji} Focus · tap Play to plant ${aOrAn(
+                    speciesFor(timer.settings.species).name,
+                  )}`}
+        </Text>
+      </View>
 
       {/* Controls */}
       <View style={styles.controls}>
@@ -333,26 +427,43 @@ export default function TimerScreen() {
         </View>
       ) : null}
 
-      <View style={styles.statsRow}>
-        <View style={[styles.statCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
-          <View style={styles.statHeader}>
-            <TimerIcon size={14} color={colors.textMuted} />
-            <Text style={[styles.statLabel, { color: colors.textMuted }]}>Today</Text>
-          </View>
-          <Text style={[styles.statValue, { color: colors.text }]}>
+      {/*
+        Today's plot.
+        This replaced two cards that said "0m" and "0" — a pair of numbers that
+        were zero at the moment somebody was most likely to be looking at them,
+        and which said nothing the dial was not already saying. What goes here
+        instead is the reason to run the timer again: the row of trees you grew
+        today, greys included.
+      */}
+      <View style={[styles.plot, { backgroundColor: colors.card, borderColor: colors.border }]}>
+        <View style={styles.plotHead}>
+          <Sprout size={15} color={colors.textMuted} />
+          <Text style={[styles.plotLabel, styles.flex, { color: colors.textMuted }]}>
+            TODAY'S PLOT
+          </Text>
+          <Text style={[styles.plotTotal, { color: colors.text }]}>
             {formatFocusTime(timer.focusMinutesToday)}
           </Text>
-          <Text style={[styles.statSub, { color: colors.textMuted }]}>
-            Total: {formatFocusTime(timer.focusMinutesTotal)}
+        </View>
+        {today.length > 0 ? (
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.plotRow}>
+            {today.map(tree => (
+              <TreeChip key={tree.id} species={tree.species} wilted={tree.wilted} size={52} />
+            ))}
+          </ScrollView>
+        ) : (
+          <Text style={[styles.plotEmpty, { color: colors.textMuted }]}>
+            Nothing planted yet today. Finish a focus session and your tree stays here.
           </Text>
-        </View>
-        <View style={[styles.statCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
-          <View style={styles.statHeader}>
-            <Sparkles size={14} color={colors.textMuted} />
-            <Text style={[styles.statLabel, { color: colors.textMuted }]}>Pomodoros</Text>
-          </View>
-          <Text style={[styles.statValue, { color: colors.text }]}>{timer.completedFocus}</Text>
-        </View>
+        )}
+        <Text style={[styles.plotEmpty, { color: colors.textMuted }]}>
+          {timer.focusMinutesTotal > 0
+            ? `${formatFocusTime(timer.focusMinutesTotal)} focused in all · ${timer.completedFocus} in this run`
+            : 'Your first session starts the count'}
+        </Text>
       </View>
 
       <PomodoroSettingsSheet
@@ -361,6 +472,7 @@ export default function TimerScreen() {
         settings={timer.settings}
         onApply={timer.updateSettings}
         onResetCycle={timer.resetCycle}
+        focusMinutes={timer.focusMinutesTotal}
       />
     </ScrollView>
     </KeyboardSafe>
@@ -368,6 +480,61 @@ export default function TimerScreen() {
 }
 
 const styles = StyleSheet.create({
+  plot: {
+    borderRadius: 18,
+    borderWidth: StyleSheet.hairlineWidth,
+    padding: 14,
+    gap: 10,
+  },
+  plotHead: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  plotLabel: {
+    fontSize: 10,
+    letterSpacing: 1.6,
+    fontWeight: '700',
+  },
+  plotTotal: {
+    ...typeScale.bodyStrong,
+  },
+  plotRow: {
+    flexDirection: 'row',
+    gap: 4,
+    alignItems: 'flex-end',
+  },
+  plotEmpty: {
+    ...typeScale.caption,
+  },
+  /* Breaks have no tree — the coffee cup stands in, at a size that holds the
+     middle of a 260dp dial rather than floating in it. */
+  breakGlyph: {
+    fontSize: 60,
+    lineHeight: 70,
+  },
+  /*
+   * The session's state, in a pill of its own.
+   *
+   * Loose text under a 260dp ring lands in the gap between the ring and the
+   * Play button and reads as belonging to neither — it looked like a caption
+   * that had slipped. A pill is a thing, with its own edges, and the margins
+   * either side of it are what keep the ring, the pill and the controls three
+   * separate objects rather than one crowded stack.
+   */
+  statusPill: {
+    alignSelf: 'center',
+    maxWidth: '92%',
+    paddingHorizontal: 16,
+    paddingVertical: 9,
+    borderRadius: 999,
+    borderWidth: StyleSheet.hairlineWidth,
+    marginTop: 14,
+  },
+  status: {
+    ...typeScale.footnote,
+    textAlign: 'center',
+  },
   customRow: {
     marginTop: 14,
     paddingTop: 14,
@@ -449,7 +616,7 @@ const styles = StyleSheet.create({
   },
   dialWrap: {
     alignItems: 'center',
-    marginTop: 26,
+    marginTop: 22,
   },
   dial: {
     height: 260,
@@ -472,9 +639,10 @@ const styles = StyleSheet.create({
     // honest answer is no glow — same rule GlassSurface follows.
   },
   dialKicker: {
-    fontSize: 13,
+    fontSize: 12,
     letterSpacing: 2,
     fontWeight: '600',
+    marginTop: -6,
   },
   dialClockRow: {
     flexDirection: 'row',
@@ -483,13 +651,17 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   dialClock: {
-    fontSize: 52,
+    fontSize: 46,
     fontWeight: '300',
     fontVariant: ['tabular-nums'],
   },
   dialHint: {
-    fontSize: 12,
-    marginTop: 6,
+    fontSize: 11,
+    marginTop: 2,
+    /* Inside a 260dp circle, at the widest point text can be without
+       touching the ring at the height it sits. */
+    maxWidth: 190,
+    textAlign: 'center',
   },
   editContainer: {
     alignItems: 'center',
@@ -541,7 +713,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 22,
-    marginTop: 26,
+    marginTop: 20,
   },
   sideButton: {
     height: 56,

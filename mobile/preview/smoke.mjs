@@ -990,6 +990,84 @@ await step('timer starts, pauses, resets, and opens its sheet', async () => {
 });
 
 /**
+ * A focus session grows a tree, and finishing it plants one.
+ *
+ * The whole feature is a thing you watch rather than a number you check, so
+ * what is asserted is that it is *there and changing*: a bare countdown with an
+ * empty dial passes every other test on this screen.
+ */
+await step('a focus session grows a tree, and plants it when it ends', async () => {
+  await open('screen=timer');
+  await seesText('Focus Timer');
+
+  // One minute, so the whole plant-grow-finish loop fits in a test.
+  await tap('Set custom time');
+  await page.keyboard.type('1');
+  await tap('Apply custom time');
+  await page.waitForTimeout(400);
+
+  const treeSize = () =>
+    page.evaluate(() => {
+      const svg = document.querySelector('[aria-label*="grown"] svg, [aria-label*="Sprout"] svg');
+      const paths = svg ? svg.querySelectorAll('path, circle, polygon') : [];
+      return paths.length;
+    });
+
+  await seesText('Plant a', 4000);
+  await tap('Start timer');
+  await page.waitForTimeout(3000);
+  const early = await treeSize();
+  if (early === 0) {
+    throw new Error('no tree is drawn in the dial');
+  }
+  await seesText('growing', 4000);
+
+  // It grows: more of the tree is on screen half a minute in than at the start.
+  await page.waitForTimeout(32000);
+  const later = await treeSize();
+  if (later <= early) {
+    throw new Error(`the tree did not grow — ${early} parts at the start, ${later} later`);
+  }
+
+  // And finishing plants it. The plot is the payoff; without it the tree grows
+  // into a void and there is no reason to run a second session.
+  await page.waitForTimeout(30000);
+  await seesText("TODAY'S PLOT", 6000);
+  const planted = await page.evaluate(
+    () => document.querySelectorAll('[aria-label^="A withered"], [aria-label*="100 per cent"]').length,
+  );
+  if (planted === 0) {
+    throw new Error('the finished session planted nothing in the plot');
+  }
+
+  // Put the focus length back. It is stored, and the next step asserts on the
+  // default — a test that leaves settings changed is a test that breaks its
+  // neighbours from a distance.
+  await open('screen=timer');
+  await tap('Set custom time');
+  await page.keyboard.type('25');
+  await tap('Apply custom time');
+  await page.waitForTimeout(400);
+});
+
+/**
+ * The species picker says what is locked and what unlocks it.
+ */
+await step('the tree picker offers species, and names what is locked', async () => {
+  await open('screen=timer');
+  await tap('Timer settings');
+  await seesText('YOUR TREE', 4000);
+  await seesText('Sprout', 4000);
+  await seesText('Oak', 4000);
+  // Locked ones are shown rather than hidden: a ladder with nothing visible
+  // above you is a ladder you stop climbing.
+  if ((await byLabel('Pine, locked until 30 focused minutes').count()) === 0) {
+    throw new Error('locked species do not say what they cost');
+  }
+  await seesText('Leaving withers the tree', 4000);
+});
+
+/**
  * Every control in the Pomodoro sheet does something.
  *
  * The durations are drafted and only take effect on "Set this configuration",

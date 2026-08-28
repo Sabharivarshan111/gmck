@@ -66,6 +66,8 @@ import { RevealText } from '@/components/RevealText';
 import { AnswerActions, followUpsFor } from '@/components/AnswerActions';
 import { parseMcqs } from '@/lib/askAi';
 import { SAMPLE_MCQ_RESPONSE } from './mcqSample';
+import { FocusTree } from '@/components/FocusTree';
+import { SPECIES } from '@/lib/trees';
 
 /**
  * Preview entry point. Mirrors App.tsx, minus the cloud sync, and lets the
@@ -118,6 +120,42 @@ const METRICS = {
   insets: { top: 40, left: 0, right: 0, bottom: 16 },
   ...initialWindowMetrics,
 };
+
+/**
+ * ?screen=treegallery — every focus tree, at four stages of growth.
+ *
+ * Preview only. The trees are drawn from numbers rather than pictures, so the
+ * only way to see whether a species reads as that species is to look at all of
+ * them side by side, which is not a state the app itself can be put into.
+ */
+function TreeGallery() {
+  const { colors } = useTheme();
+  return (
+    <ScrollView
+      style={{ backgroundColor: colors.background }}
+      contentContainerStyle={{ padding: 16, gap: 10 }}>
+      {SPECIES.map(species => (
+        <View key={species.key} style={{ gap: 4 }}>
+          <Text style={{ color: colors.text, fontWeight: '700' }}>
+            {species.name} · {species.unlockAt} min
+          </Text>
+          <View style={{ flexDirection: 'row', gap: 8, alignItems: 'flex-end' }}>
+            {[0.15, 0.45, 0.75, 1].map(growth => (
+              <FocusTree
+                key={growth}
+                species={species.key}
+                growth={growth}
+                size={130}
+                sway={false}
+              />
+            ))}
+            <FocusTree species={species.key} growth={1} size={130} wilted sway={false} />
+          </View>
+        </View>
+      ))}
+    </ScrollView>
+  );
+}
 
 /**
  * ?screen=notesdemo — the handwritten-notes renderer with a fixture.
@@ -259,6 +297,9 @@ function Shell() {
     },
   };
 
+  if (screen === 'treegallery') {
+    return <TreeGallery />;
+  }
   if (screen === 'notesdemo') {
     return <NotesRendererDemo />;
   }
