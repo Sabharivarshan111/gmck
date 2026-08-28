@@ -98,13 +98,37 @@ megabytes of native library for a polyline over a photograph.
 - **Never commit a stroke from inside another `setState` updater.** It is a
   state update raised during a render pass, which React may discard — and did.
   `liveRef` holds the stroke; `finish` reads the ref.
-- **The eraser removes whole strokes.** A pixel eraser needs a bitmap and a
-  second render target; on an annotation, removing the mark you touched is what
-  was wanted.
+- **The eraser removes whole strokes, hit-tested against the segments.** A
+  pixel eraser needs a bitmap and a second render target; removing the mark you
+  touched is what was wanted anyway. Measuring against the recorded *points*
+  was the bug: a line drawn quickly is two points a long way apart, so tapping
+  the middle of it erased nothing, which reads as an eraser that does not work.
+- **A highlighter is one multiplier and one alpha**, not a second kind of
+  object — so everything that replays ink highlights for free. Highlighter
+  strokes are drawn before the rest whatever order they were made in, because a
+  wash *under* the writing is the point of it.
+- **A page can be ruled** — plain, lined or squared. The ruling is drawn into
+  the same SVG as the marks, so it scales with them, and is faint enough to be
+  paper rather than content.
 
 Ink lives in `orbit:note-ink:{imageId}` beside the picture and is deleted with
 it. `components/InkedImage.tsx` is the only thing that replays it — editor
 thumbnails, the reader and `ChapterNotes` all go through it.
+
+## A full-screen page is its own window
+
+The app is edge to edge (Android 15 forces it at `targetSdk 35+`). Screens
+reached through the navigator are inset by `SafeAreaView` up in the navigator —
+but a `<Modal>` is a **new window outside that tree**, so a page presented as
+one starts at pixel zero with the clock drawn over it. The drawing canvas had
+its title and its **Keep** button under the status bar; the handwritten-note
+viewer and the diagram lightbox guessed the height with a hardcoded 52 and 48,
+right on one phone and wrong under a cutout.
+
+`npm run check:edges` walks every opaque `<Modal>` and requires `insets.top` —
+in the modal's own JSX or in the component it renders as the page. Transparent
+modals are exempt (a dialog or a sheet floats over the page); a player that
+hides the status bar outright is the other correct answer.
 
 ## Prove it, and look at the screenshot
 

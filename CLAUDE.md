@@ -816,6 +816,28 @@ thumbnail — then Keep wrote the empty one over them. Existing ink also fixes
 the board's aspect, so the old marks and the new ones share one coordinate
 space and a single factor rescales the strokes and their widths together.
 
+## A full-screen Modal is its own window, and nothing insets it
+
+The app is edge to edge — Android 15 forces it at `targetSdk 35+`. Every screen
+reached through the navigator is padded by the navigator's `SafeAreaView`, but
+a `<Modal>` is a **new window outside that tree**: a page presented as one
+starts at pixel zero, with the clock and the battery drawn over the top of it.
+
+The drawing canvas shipped that way, with its title and its **Keep** button —
+the one control that finishes a drawing — underneath the system clock. Two
+older pages guessed instead: `SingleQuestionNote` padded by a hard 52 and
+`DiagramCard` by 48, both right on the phone they were written on and wrong
+under a display cutout.
+
+The preview harness cannot see any of this: it is a browser, the insets are
+zero, and the missing thing is a line that was never written. So
+`npm run check:edges` walks every opaque `<Modal>` and requires `insets.top`
+either in the modal's own JSX or in the component it renders as the page —
+following the child is the point, because the file holding the canvas's Modal
+was padding its *other* pages correctly and a whole-file check passed.
+Transparent modals are exempt; a player that hides the status bar outright is
+the other correct answer.
+
 ## Drawing on a picture needs the pointer-event flag turned on
 
 `components/DrawCanvas.tsx` draws strokes as `<Path>` elements through
@@ -845,9 +867,20 @@ Four things there look like fussiness and are each a bug that shipped:
 - **A stroke is never committed from inside another `setState` updater.** That
   is a state update raised during a render pass, which React is entitled to
   discard, and did. `liveRef` holds the live stroke and `finish` reads it.
-- **The eraser removes whole strokes.** A pixel eraser needs a bitmap and a
-  second render target; on an annotation — a circle round a structure, an arrow
-  — removing the mark you touched is what was wanted anyway.
+- **The eraser removes whole strokes, measured against the segments.** A pixel
+  eraser needs a bitmap and a second render target; on an annotation — a circle
+  round a structure, an arrow — removing the mark you touched is what was
+  wanted anyway. Hit-testing the recorded *points* is the trap: a line drawn
+  quickly is two points a long way apart, so tapping the middle of it erased
+  nothing and the eraser looked broken.
+
+The pens are a pen, a highlighter and the eraser. **A highlighter is one width
+multiplier and one alpha** rather than a second kind of object, so every place
+that replays ink highlights for free — and highlighter strokes are drawn before
+the rest, whatever order they were made in, because a wash *under* the writing
+is the whole point of marking something rather than covering it. A blank page
+can be plain, lined or squared; the ruling goes into the same SVG as the marks
+so it scales with them, at an alpha that keeps it paper rather than content.
 
 `check:smoke` draws two strokes, asserts both survive and that neither is
 clipped, then keeps them and asserts they come back over the thumbnail. Every
@@ -999,6 +1032,7 @@ npm run check:note-media         # note attachments stay on the phone, uncapped
 npm run check:kotlin             # override signatures match; there is no local kotlinc
 npm run check:supabase-queue     # every job waiting on Supabase can still be applied
 npm run check:keyboard           # no text input can sit under the Android keyboard
+npm run check:edges              # no full-screen page sits under the status bar
 npm run check:mcq                # MCQ response parsing + the ask-gemini markers
 npm run check:notes-limits       # every topic still fits the notes function's schema
 npm run check:smoke              # drives the real screens; 18 flows, 0 crashes

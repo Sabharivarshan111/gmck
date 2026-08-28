@@ -9,6 +9,7 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Text } from '@/components/Text';
 import { useTheme, withAlpha } from '@/theme';
 import { Maximize2, X } from 'lucide-react-native';
@@ -21,6 +22,9 @@ interface DiagramCardProps {
 
 export function DiagramCard({ imageUrl, title, caption }: DiagramCardProps) {
   const { colors } = useTheme();
+  /* The lightbox is a full-screen window of its own, drawn behind the status
+     bar like every Modal. A hardcoded top padding was right on one phone. */
+  const insets = useSafeAreaInsets();
   const [loading, setLoading] = useState(true);
   const [failed, setFailed] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
@@ -141,7 +145,7 @@ export function DiagramCard({ imageUrl, title, caption }: DiagramCardProps) {
         onRequestClose={() => setModalVisible(false)}
       >
         <View style={styles.modalBackdrop}>
-          <View style={styles.modalHeader}>
+          <View style={[styles.modalHeader, { paddingTop: insets.top + 12 }]}>
             <Text style={styles.modalTitle} numberOfLines={1}>
               {title ? title.replace(/^[🎨\s]+/, '') : 'Exam Diagram'}
             </Text>
@@ -263,7 +267,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
-    paddingTop: 48,
     paddingBottom: 16,
   },
   modalTitle: {

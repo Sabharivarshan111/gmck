@@ -52,11 +52,25 @@ const INK_PREFIX = 'orbit:note-ink:';
 const key = (id: string) => `${IMAGE_PREFIX}${id}`;
 const inkKey = (id: string) => `${INK_PREFIX}${id}`;
 
+export interface NoteInkStroke {
+  d: string;
+  color: string;
+  width: number;
+  /**
+   * Below 1 for a highlighter, so the mark sits over the writing rather than
+   * on top of it. Absent on every stroke written before highlighting existed,
+   * which is why it is optional rather than defaulted at the call site.
+   */
+  opacity?: number;
+}
+
 export interface NoteInk {
-  strokes: { d: string; color: string; width: number }[];
+  strokes: NoteInkStroke[];
   /** The canvas the strokes were drawn on, so they scale to any box. */
   width: number;
   height: number;
+  /** 'plain' | 'lined' | 'grid' — the ruling of a page written by hand. */
+  paper?: string;
 }
 
 export async function saveNoteInk(id: string, ink: NoteInk): Promise<void> {
@@ -75,7 +89,12 @@ export async function loadNoteInk(id: string): Promise<NoteInk | null> {
     }
     const parsed = JSON.parse(raw) as Partial<NoteInk>;
     return Array.isArray(parsed.strokes) && parsed.width && parsed.height
-      ? { strokes: parsed.strokes, width: parsed.width, height: parsed.height }
+      ? {
+          strokes: parsed.strokes,
+          width: parsed.width,
+          height: parsed.height,
+          paper: parsed.paper,
+        }
       : null;
   } catch {
     return null;

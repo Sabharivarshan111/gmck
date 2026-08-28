@@ -1,16 +1,28 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Image, StyleSheet, View, type LayoutChangeEvent } from 'react-native';
-import Svg, { Path } from 'react-native-svg';
-import { Check, Eraser, Pen, Undo2, X } from 'lucide-react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Svg, { Line, Path } from 'react-native-svg';
+import {
+  AlignJustify,
+  Check,
+  Eraser,
+  Grid3x3,
+  Hand,
+  Highlighter,
+  PenLine,
+  Square,
+  Undo2,
+  X,
+} from 'lucide-react-native';
 import { Text } from '@/components/Text';
 import { Touchable } from '@/components/Touchable';
 import { useTheme, withAlpha } from '@/theme';
 import { typeScale } from '@/theme/typography';
-import type { NoteInk } from '@/lib/noteImages';
 import { isDark, onColor } from '@/theme/color';
+import type { NoteInk, NoteInkStroke } from '@/lib/noteImages';
 
 /**
- * Drawing over a picture — a diagram annotated, a page marked up.
+ * Drawing over a picture, or on a page of its own.
  *
  * **Built on `react-native-svg`, which this app already ships.** A stroke is a
  * `<Path>`; the picture behind it is an `<Image>`. Skia would be the other
@@ -20,26 +32,40 @@ import { isDark, onColor } from '@/theme/color';
  * **Palm rejection is real, not a heuristic.** Android reports the tool that
  * produced a touch, and React Native's pointer events carry it through as
  * `pointerType` — `'pen'` for a stylus, `'touch'` for a finger. So once a pen
- * has been seen on this canvas, finger pointers stop drawing entirely: rest
- * your hand on the screen and nothing happens, which is the whole reason to
- * use a stylus on a phone. Guessing from pressure or contact size is what
- * other apps do, and it is why their palm rejection works on one handset and
- * not the next.
+ * has been seen on this canvas, finger pointers stop drawing: rest your hand
+ * on the screen and nothing happens, which is the whole reason to use a stylus
+ * on a phone. Guessing from pressure or contact size is what other apps do,
+ * and it is why their palm rejection works on one handset and not the next.
  *
  * A phone with no stylus is unaffected — no pen is ever seen, so fingers draw.
  */
 
-export interface Stroke {
-  /** SVG path data, built as the pointer moves. */
-  d: string;
-  color: string;
-  width: number;
-}
+export type Stroke = NoteInkStroke;
 
 /** The pens. Bright, because they sit on top of somebody's photograph. */
 export const INKS = ['#EF4444', '#F59E0B', '#22C55E', '#3B82F6', '#FFFFFF', '#111827'];
 
 const WIDTHS = [2, 4, 8];
+
+/**
+ * A highlighter is the same stroke, wider and see-through.
+ *
+ * Not a second kind of object: one multiplier and one alpha is the whole of
+ * it, and every part of the app that replays ink gets highlighting for free.
+ * The alpha is what makes it a highlighter rather than a fat pen — the writing
+ * underneath has to stay readable through it, which is the entire point of
+ * marking something rather than covering it.
+ */
+const HIGHLIGHT_SCALE = 7;
+const HIGHLIGHT_ALPHA = 0.45;
+
+/** How a blank page is ruled. Nothing for a picture — it has its own ground. */
+const PAPERS = ['plain', 'lined', 'grid'] as const;
+type Paper = (typeof PAPERS)[number];
+/** Ruling every 34 units of the board's width, which is a line you can write on. */
+const RULE = 34;
+
+type Tool = 'pen' | 'highlighter' | 'eraser';
 
 export function DrawCanvas({
   uri,
@@ -67,9 +93,21 @@ export function DrawCanvas({
   initial?: NoteInk | null;
   onCancel: () => void;
   /** The finished strokes, for the caller to keep beside the picture. */
-  onDone: (strokes: Stroke[], size: { width: number; height: number }) => void;
+  onDone: (strokes: Stroke[], size: { width: number; height: number }, paper: string) => void;
 }) {
   const { colors } = useTheme();
+  /*
+   * The screen is edge to edge, so the header has to step around the status
+   * bar itself.
+   *
+   * It did not, and the title and the Keep button were drawn *underneath* the
+   * clock and the battery — the one control that finishes the drawing, sitting
+   * behind the system's own pixels. Every other full-screen page in this app
+   * already pads by `insets.top`; this one was written as a bare `<Modal>` and
+   * missed it.
+   */
+  const insets = useSafeAreaInsets();
+
   /*
    * A photograph brings its own ground, so the board behind it is black and
    * the first pen is red — a mark that reads on anything. A blank page has to
@@ -77,13 +115,14 @@ export function DrawCanvas({
    * whichever of black or white can be seen on it. Defaulting to red ink on a
    * page would be a page nobody would choose to write on.
    */
-  const paper = uri ? '#000000' : colors.card;
+  const paperColor = uri ? '#000000' : colors.card;
   const [strokes, setStrokes] = useState<Stroke[]>([]);
   // One of INKS, not a bare hex, or the chosen pen matches no swatch and the
   // row opens with nothing selected.
   const [ink, setInk] = useState(uri ? INKS[0] : isDark(colors.card) ? '#FFFFFF' : '#111827');
   const [width, setWidth] = useState(WIDTHS[1]);
-  const [erasing, setErasing] = useState(false);
+  const [tool, setTool] = useState<Tool>('pen');
+  const [paper, setPaper] = useState<Paper>((initial?.paper as Paper) ?? 'plain');
   /** The space the board may occupy, measured. */
   const [frame, setFrame] = useState({ width: 0, height: 0 });
   /** The picture's own shape, which the board has to match — see `board`. */
@@ -166,6 +205,16 @@ export function DrawCanvas({
    * straight through.
    */
   const penSeen = useRef(false);
+  /**
+   * …unless the reader asks for fingers back.
+   *
+   * Automatic is right by default — nobody should have to find a setting to
+   * stop their palm drawing. But a stylus put down mid-note leaves the canvas
+   * refusing every touch, with no way back short of leaving the page, so the
+   * rule is stated on screen and can be turned off where it is stated.
+   */
+  const [fingerDrawing, setFingerDrawing] = useState(true);
+  const [penEver, setPenEver] = useState(false);
 
   /**
    * Whether pointer events reach this canvas at all.
@@ -178,16 +227,20 @@ export function DrawCanvas({
    */
   const sawPointer = useRef(false);
 
-  const accepts = useCallback((pointerType: string) => {
-    if (pointerType === 'pen') {
-      penSeen.current = true;
-      return true;
-    }
-    if (pointerType === 'mouse') {
-      return true;
-    }
-    return !penSeen.current;
-  }, []);
+  const accepts = useCallback(
+    (pointerType: string) => {
+      if (pointerType === 'pen') {
+        penSeen.current = true;
+        setPenEver(true);
+        return true;
+      }
+      if (pointerType === 'mouse') {
+        return true;
+      }
+      return !penSeen.current || fingerDrawing;
+    },
+    [fingerDrawing],
+  );
 
   const begin = useCallback(
     (x: number, y: number) => {
@@ -195,10 +248,15 @@ export function DrawCanvas({
         return;
       }
       drawing.current = true;
-      liveRef.current = { d: `M ${x.toFixed(1)} ${y.toFixed(1)}`, color: ink, width };
+      liveRef.current = {
+        d: `M ${x.toFixed(1)} ${y.toFixed(1)}`,
+        color: ink,
+        width: tool === 'highlighter' ? width * HIGHLIGHT_SCALE : width,
+        ...(tool === 'highlighter' ? { opacity: HIGHLIGHT_ALPHA } : null),
+      };
       setLive(liveRef.current);
     },
-    [ink, width],
+    [ink, tool, width],
   );
 
   const extend = useCallback((x: number, y: number) => {
@@ -241,38 +299,64 @@ export function DrawCanvas({
     });
   }, []);
 
+  const at = useCallback(
+    (x: number, y: number, down: boolean) => {
+      if (tool === 'eraser') {
+        rubOut(x, y);
+        return;
+      }
+      if (down) {
+        begin(x, y);
+      } else {
+        extend(x, y);
+      }
+    },
+    [begin, extend, rubOut, tool],
+  );
+
   const pointer = useMemo(
     () => ({
-      onPointerDown: (event: { nativeEvent: { pointerType: string; locationX?: number; locationY?: number; offsetX?: number; offsetY?: number } }) => {
+      onPointerDown: (event: {
+        nativeEvent: {
+          pointerType: string;
+          locationX?: number;
+          locationY?: number;
+          offsetX?: number;
+          offsetY?: number;
+        };
+      }) => {
         sawPointer.current = true;
-        const { pointerType } = event.nativeEvent;
-        if (!accepts(pointerType)) {
-          return;
-        }
-        const x = event.nativeEvent.offsetX ?? event.nativeEvent.locationX ?? 0;
-        const y = event.nativeEvent.offsetY ?? event.nativeEvent.locationY ?? 0;
-        if (erasing) {
-          rubOut(x, y);
-          return;
-        }
-        begin(x, y);
-      },
-      onPointerMove: (event: { nativeEvent: { pointerType: string; locationX?: number; locationY?: number; offsetX?: number; offsetY?: number } }) => {
         if (!accepts(event.nativeEvent.pointerType)) {
           return;
         }
-        const x = event.nativeEvent.offsetX ?? event.nativeEvent.locationX ?? 0;
-        const y = event.nativeEvent.offsetY ?? event.nativeEvent.locationY ?? 0;
-        if (erasing) {
-          rubOut(x, y);
+        at(
+          event.nativeEvent.offsetX ?? event.nativeEvent.locationX ?? 0,
+          event.nativeEvent.offsetY ?? event.nativeEvent.locationY ?? 0,
+          true,
+        );
+      },
+      onPointerMove: (event: {
+        nativeEvent: {
+          pointerType: string;
+          locationX?: number;
+          locationY?: number;
+          offsetX?: number;
+          offsetY?: number;
+        };
+      }) => {
+        if (!accepts(event.nativeEvent.pointerType)) {
           return;
         }
-        extend(x, y);
+        at(
+          event.nativeEvent.offsetX ?? event.nativeEvent.locationX ?? 0,
+          event.nativeEvent.offsetY ?? event.nativeEvent.locationY ?? 0,
+          false,
+        );
       },
       onPointerUp: finish,
       onPointerCancel: finish,
     }),
-    [accepts, begin, erasing, extend, finish, rubOut],
+    [accepts, at, finish],
   );
 
   /** See `sawPointer`: this only ever runs where pointer events are absent. */
@@ -280,26 +364,14 @@ export function DrawCanvas({
     () => ({
       onStartShouldSetResponder: () => !sawPointer.current,
       onMoveShouldSetResponder: () => !sawPointer.current,
-      onResponderGrant: (event: { nativeEvent: { locationX: number; locationY: number } }) => {
-        const { locationX, locationY } = event.nativeEvent;
-        if (erasing) {
-          rubOut(locationX, locationY);
-          return;
-        }
-        begin(locationX, locationY);
-      },
-      onResponderMove: (event: { nativeEvent: { locationX: number; locationY: number } }) => {
-        const { locationX, locationY } = event.nativeEvent;
-        if (erasing) {
-          rubOut(locationX, locationY);
-          return;
-        }
-        extend(locationX, locationY);
-      },
+      onResponderGrant: (event: { nativeEvent: { locationX: number; locationY: number } }) =>
+        at(event.nativeEvent.locationX, event.nativeEvent.locationY, true),
+      onResponderMove: (event: { nativeEvent: { locationX: number; locationY: number } }) =>
+        at(event.nativeEvent.locationX, event.nativeEvent.locationY, false),
       onResponderRelease: finish,
       onResponderTerminate: finish,
     }),
-    [begin, erasing, extend, finish, rubOut],
+    [at, finish],
   );
 
   /**
@@ -328,8 +400,46 @@ export function DrawCanvas({
 
   const undo = () => setStrokes(all => all.slice(0, -1));
 
+  /*
+   * Highlighter marks are drawn first, whatever order they were made in.
+   *
+   * A highlighter goes *under* writing — that is what makes it legible
+   * through the colour. Drawing them in stroke order means marking a word you
+   * already wrote puts a wash over the word.
+   */
+  const ordered = useMemo(
+    () => [...strokes].sort((a, b) => (a.opacity ? 0 : 1) - (b.opacity ? 0 : 1)),
+    [strokes],
+  );
+
+  const tools: { key: Tool; label: string; icon: React.ReactNode }[] = [
+    { key: 'pen', label: 'Pen', icon: <PenLine size={17} color={toolInk(tool === 'pen')} /> },
+    {
+      key: 'highlighter',
+      label: 'Highlighter',
+      icon: <Highlighter size={17} color={toolInk(tool === 'highlighter')} />,
+    },
+    {
+      key: 'eraser',
+      label: 'Rub out a mark',
+      icon: <Eraser size={17} color={toolInk(tool === 'eraser')} />,
+    },
+  ];
+
+  function toolInk(selected: boolean) {
+    return selected ? onColor(colors.accent) : colors.text;
+  }
+
   return (
-    <View style={[styles.root, { backgroundColor: colors.background }]}>
+    <View
+      style={[
+        styles.root,
+        {
+          backgroundColor: colors.background,
+          paddingTop: insets.top + 8,
+          paddingBottom: insets.bottom + 10,
+        },
+      ]}>
       <View style={styles.header}>
         <Touchable onPress={onCancel} label="Discard this drawing" scaleTo={0.85} hitSlop={12}>
           <X size={22} color={colors.text} />
@@ -337,8 +447,26 @@ export function DrawCanvas({
         <Text style={[styles.title, { color: colors.text }]}>
           {uri ? 'Draw on the picture' : 'Write or draw'}
         </Text>
+        {!uri ? (
+          <Touchable
+            onPress={() => setPaper(current => PAPERS[(PAPERS.indexOf(current) + 1) % PAPERS.length])}
+            label={`Paper: ${paper}`}
+            hint="Plain, lined or squared"
+            scaleTo={0.88}
+            hitSlop={8}
+            style={[styles.paperButton, { borderColor: colors.border }]}>
+            {paper === 'grid' ? (
+              <Grid3x3 size={15} color={colors.text} />
+            ) : paper === 'lined' ? (
+              <AlignJustify size={15} color={colors.text} />
+            ) : (
+              <Square size={15} color={colors.text} />
+            )}
+            <Text style={[styles.paperLabel, { color: colors.text }]}>{PAPER_NAME[paper]}</Text>
+          </Touchable>
+        ) : null}
         <Touchable
-          onPress={() => onDone(strokes, board)}
+          onPress={() => onDone(strokes, board, paper)}
           label="Keep this drawing"
           scaleTo={0.95}
           style={[styles.save, { backgroundColor: colors.primary }]}>
@@ -353,37 +481,40 @@ export function DrawCanvas({
         <View
           testID="draw-stage"
           accessibilityLabel="Drawing area"
-          style={[styles.board, board, { backgroundColor: paper }]}
+          style={[styles.board, board, { backgroundColor: paperColor }]}
           {...touchFallback}
           {...pointer}>
-        {uri ? <Image source={{ uri }} style={styles.picture} resizeMode="contain" /> : null}
-        <Svg
-          style={StyleSheet.absoluteFill}
-          width="100%"
-          height="100%"
-          pointerEvents="none">
-          {strokes.map((stroke, index) => (
-            <Path
-              key={index}
-              d={stroke.d}
-              stroke={stroke.color}
-              strokeWidth={stroke.width}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              fill="none"
-            />
-          ))}
-          {live ? (
-            <Path
-              d={live.d}
-              stroke={live.color}
-              strokeWidth={live.width}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              fill="none"
-            />
-          ) : null}
-        </Svg>
+          {uri ? <Image source={{ uri }} style={styles.picture} resizeMode="contain" /> : null}
+          <Svg
+            style={StyleSheet.absoluteFill}
+            width="100%"
+            height="100%"
+            pointerEvents="none">
+            {!uri ? <Ruling paper={paper} board={board} colors={colors} /> : null}
+            {ordered.map((stroke, index) => (
+              <Path
+                key={index}
+                d={stroke.d}
+                stroke={stroke.color}
+                strokeWidth={stroke.width}
+                strokeOpacity={stroke.opacity ?? 1}
+                strokeLinecap={stroke.opacity ? 'butt' : 'round'}
+                strokeLinejoin="round"
+                fill="none"
+              />
+            ))}
+            {live ? (
+              <Path
+                d={live.d}
+                stroke={live.color}
+                strokeWidth={live.width}
+                strokeOpacity={live.opacity ?? 1}
+                strokeLinecap={live.opacity ? 'butt' : 'round'}
+                strokeLinejoin="round"
+                fill="none"
+              />
+            ) : null}
+          </Svg>
         </View>
       </View>
 
@@ -393,36 +524,108 @@ export function DrawCanvas({
             key={colour}
             onPress={() => {
               setInk(colour);
-              setErasing(false);
+              if (tool === 'eraser') {
+                setTool('pen');
+              }
             }}
             label={`${NAMES[colour] ?? 'Ink'} pen`}
-            state={{ selected: !erasing && ink === colour }}
+            state={{ selected: tool !== 'eraser' && ink === colour }}
             scaleTo={0.88}
             style={[
               styles.swatch,
               { backgroundColor: colour },
-              !erasing && ink === colour && { borderColor: colors.text, borderWidth: 2.5 },
+              tool !== 'eraser' && ink === colour && { borderColor: colors.text, borderWidth: 2.5 },
             ]}>
-            {!erasing && ink === colour ? <Pen size={13} color={onColor(colour)} /> : null}
+            {tool !== 'eraser' && ink === colour ? (
+              <PenLine size={13} color={onColor(colour)} />
+            ) : null}
           </Touchable>
         ))}
+
+        <View style={styles.grow} />
+
+        {/*
+          The palm rule, said where it applies — and turned off there too.
+
+          It is a sentence rather than a switch until a stylus has actually
+          been used, because before then there is nothing to explain.
+        */}
+        <Touchable
+          onPress={() => setFingerDrawing(on => !on)}
+          disabled={!penEver}
+          label={
+            penEver
+              ? fingerDrawing
+                ? 'Ignore my palm while I use the stylus'
+                : 'Let me draw with a finger again'
+              : 'Finger or stylus, both draw'
+          }
+          state={{ selected: penEver && !fingerDrawing }}
+          scaleTo={0.92}
+          style={[
+            styles.finger,
+            {
+              backgroundColor: penEver && !fingerDrawing ? colors.accent : 'transparent',
+              borderColor: colors.border,
+            },
+          ]}>
+          <Hand
+            size={13}
+            color={
+              penEver && !fingerDrawing ? onColor(colors.accent) : withAlpha(colors.text, 0.55)
+            }
+          />
+          <Text
+            style={[
+              styles.hint,
+              {
+                color:
+                  penEver && !fingerDrawing ? onColor(colors.accent) : withAlpha(colors.text, 0.55),
+              },
+            ]}>
+            {penEver ? (fingerDrawing ? 'Finger on' : 'Palm ignored') : 'Finger or stylus'}
+          </Text>
+        </Touchable>
       </View>
 
       <View style={styles.tools}>
+        {tools.map(one => (
+          <Touchable
+            key={one.key}
+            onPress={() => setTool(one.key)}
+            label={one.label}
+            state={{ selected: tool === one.key }}
+            scaleTo={0.88}
+            style={[
+              styles.toolButton,
+              {
+                backgroundColor: tool === one.key ? colors.accent : colors.cardElevated,
+                borderColor: colors.border,
+              },
+            ]}>
+            {one.icon}
+          </Touchable>
+        ))}
+
+        <View style={styles.divider} />
+
         {WIDTHS.map(size_ => (
           <Touchable
             key={size_}
             onPress={() => {
               setWidth(size_);
-              setErasing(false);
+              if (tool === 'eraser') {
+                setTool('pen');
+              }
             }}
             label={`${size_ === 2 ? 'Thin' : size_ === 4 ? 'Medium' : 'Thick'} pen`}
-            state={{ selected: !erasing && width === size_ }}
+            state={{ selected: tool !== 'eraser' && width === size_ }}
             scaleTo={0.88}
             style={[
               styles.toolButton,
               {
-                backgroundColor: !erasing && width === size_ ? colors.accent : colors.cardElevated,
+                backgroundColor:
+                  tool !== 'eraser' && width === size_ ? colors.accent : colors.cardElevated,
                 borderColor: colors.border,
               },
             ]}>
@@ -431,27 +634,14 @@ export function DrawCanvas({
                 width: size_ * 2.2,
                 height: size_ * 2.2,
                 borderRadius: size_ * 1.1,
-                backgroundColor: !erasing && width === size_ ? onColor(colors.accent) : colors.text,
+                backgroundColor:
+                  tool !== 'eraser' && width === size_ ? onColor(colors.accent) : colors.text,
               }}
             />
           </Touchable>
         ))}
 
-        <Touchable
-          onPress={() => setErasing(current => !current)}
-          label="Rub out a mark"
-          hint="Tap a line to remove it"
-          state={{ selected: erasing }}
-          scaleTo={0.88}
-          style={[
-            styles.toolButton,
-            {
-              backgroundColor: erasing ? colors.accent : colors.cardElevated,
-              borderColor: colors.border,
-            },
-          ]}>
-          <Eraser size={17} color={erasing ? onColor(colors.accent) : colors.text} />
-        </Touchable>
+        <View style={styles.divider} />
 
         <Touchable
           onPress={undo}
@@ -468,13 +658,63 @@ export function DrawCanvas({
           ]}>
           <Undo2 size={17} color={colors.text} />
         </Touchable>
-
-        <View style={styles.grow} />
-        <Text style={[styles.hint, { color: withAlpha(colors.text, 0.45) }]}>
-          {penSeen.current ? 'Stylus · palm ignored' : 'Finger or stylus'}
-        </Text>
       </View>
     </View>
+  );
+}
+
+const PAPER_NAME: Record<Paper, string> = {
+  plain: 'Plain',
+  lined: 'Lined',
+  grid: 'Squared',
+};
+
+/**
+ * The ruling on a blank page.
+ *
+ * Drawn into the same SVG as the marks so it scales with them, and faint
+ * enough to be paper rather than content — ruling that competes with the
+ * writing is worse than no ruling.
+ */
+export function Ruling({
+  paper,
+  board,
+  colors,
+}: {
+  paper: string;
+  board: { width: number; height: number };
+  colors: { text: string };
+}) {
+  const lines = useMemo(() => {
+    if (paper === 'plain' || board.width <= 0) {
+      return [];
+    }
+    const out: { x1: number; y1: number; x2: number; y2: number }[] = [];
+    for (let y = RULE; y < board.height; y += RULE) {
+      out.push({ x1: 0, y1: y, x2: board.width, y2: y });
+    }
+    if (paper === 'grid') {
+      for (let x = RULE; x < board.width; x += RULE) {
+        out.push({ x1: x, y1: 0, x2: x, y2: board.height });
+      }
+    }
+    return out;
+  }, [board.height, board.width, paper]);
+
+  return (
+    <>
+      {lines.map((line, index) => (
+        <Line
+          key={index}
+          x1={line.x1}
+          y1={line.y1}
+          x2={line.x2}
+          y2={line.y2}
+          stroke={withAlpha(colors.text, 0.12)}
+          strokeWidth={1}
+        />
+      ))}
+    </>
   );
 }
 
@@ -493,18 +733,53 @@ export function scalePath(d: string, factor: number): string {
   return d.replace(/-?\d+(?:\.\d+)?/g, value => (Number(value) * factor).toFixed(1));
 }
 
+/** How far a point is from the segment ab, which is what "on the line" means. */
+function distanceToSegment(
+  px: number,
+  py: number,
+  ax: number,
+  ay: number,
+  bx: number,
+  by: number,
+): number {
+  const dx = bx - ax;
+  const dy = by - ay;
+  const lengthSquared = dx * dx + dy * dy;
+  const t =
+    lengthSquared === 0 ? 0 : Math.max(0, Math.min(1, ((px - ax) * dx + (py - ay) * dy) / lengthSquared));
+  const cx = ax + t * dx;
+  const cy = ay + t * dy;
+  return Math.hypot(px - cx, py - cy);
+}
+
 /**
  * Is this point on that stroke?
  *
- * Walks the path's own points rather than measuring a curve: the strokes are
- * polylines, so the points *are* the geometry, and a 20-point tolerance is a
- * fingertip.
+ * Measured against the **segments**, not the recorded points. A stroke drawn
+ * quickly is a handful of points a long way apart — a straight line across the
+ * page can be two — so testing the points alone meant tapping the middle of a
+ * line erased nothing at all, which reads as an eraser that does not work.
+ *
+ * The tolerance grows with the pen, because a thick mark's edge is further
+ * from its centre line than a thin one's, and half of it is the stroke's own
+ * half-width.
  */
-export function nearStroke(stroke: Stroke, x: number, y: number, tolerance = 20): boolean {
-  const points = stroke.d.match(/-?\d+(?:\.\d+)?\s-?\d+(?:\.\d+)?/g) ?? [];
-  for (const point of points) {
+export function nearStroke(stroke: Stroke, x: number, y: number, tolerance = 18): boolean {
+  const points = (stroke.d.match(/-?\d+(?:\.\d+)?\s-?\d+(?:\.\d+)?/g) ?? []).map(point => {
     const [px, py] = point.split(/\s+/).map(Number);
-    if (Math.abs(px - x) <= tolerance && Math.abs(py - y) <= tolerance) {
+    return { x: px, y: py };
+  });
+  if (points.length === 0) {
+    return false;
+  }
+  const reach = tolerance + stroke.width / 2;
+  if (points.length === 1) {
+    return Math.hypot(points[0].x - x, points[0].y - y) <= reach;
+  }
+  for (let i = 1; i < points.length; i++) {
+    const a = points[i - 1];
+    const b = points[i];
+    if (distanceToSegment(x, y, a.x, a.y, b.x, b.y) <= reach) {
       return true;
     }
   }
@@ -519,12 +794,25 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: 10,
     paddingHorizontal: 16,
   },
   title: {
     ...typeScale.title3,
     flex: 1,
+  },
+  paperButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    paddingHorizontal: 9,
+    paddingVertical: 6,
+    borderRadius: 9,
+    borderWidth: StyleSheet.hairlineWidth,
+  },
+  paperLabel: {
+    ...typeScale.caption,
+    fontWeight: '600',
   },
   save: {
     flexDirection: 'row',
@@ -551,7 +839,7 @@ const styles = StyleSheet.create({
   tools: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 6,
     paddingHorizontal: 16,
   },
   swatch: {
@@ -568,6 +856,20 @@ const styles = StyleSheet.create({
     borderWidth: StyleSheet.hairlineWidth,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  /* Breathing space between the three groups, so the row reads as pen, size
+     and undo rather than seven identical squares. */
+  divider: {
+    width: 6,
+  },
+  finger: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    paddingHorizontal: 9,
+    height: 30,
+    borderRadius: 15,
+    borderWidth: StyleSheet.hairlineWidth,
   },
   grow: {
     flex: 1,

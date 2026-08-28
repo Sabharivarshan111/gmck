@@ -6,6 +6,7 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Text } from '@/components/Text';
 import { Touchable } from '@/components/Touchable';
 import { NotesContentView } from '@/components/NotesContentView';
@@ -106,6 +107,13 @@ export function SingleQuestionNote({
     }
   }, [question, generate]);
 
+  /*
+   * The screen is edge to edge, so this page has to step around the status bar
+   * itself. It used to guess with a hard 52 — right on the phone it was
+   * written on and wrong under a cutout, a tall status bar, or none at all.
+   */
+  const insets = useSafeAreaInsets();
+
   const close = useCallback(() => {
     runId.current += 1;
     onClose();
@@ -119,7 +127,11 @@ export function SingleQuestionNote({
       statusBarTranslucent
     >
       <View style={[styles.root, { backgroundColor: colors.background }]}>
-        <View style={[styles.header, { borderBottomColor: colors.border }]}>
+        <View
+          style={[
+            styles.header,
+            { borderBottomColor: colors.border, paddingTop: insets.top + 12 },
+          ]}>
           <View style={styles.flex}>
             <Text style={[styles.eyebrow, { color: colors.fuchsia }]}>
               HANDWRITTEN NOTE
@@ -255,7 +267,6 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     gap: 12,
     paddingHorizontal: 16,
-    paddingTop: 52,
     paddingBottom: 12,
     borderBottomWidth: StyleSheet.hairlineWidth,
   },

@@ -976,11 +976,12 @@ export function ProgressNotesTab({ year }: Props) {
               setDrawing(null);
               setSheet(null);
             }}
-            onDone={async (strokes, size) => {
+            onDone={async (strokes, size, paper) => {
               const ink = {
                 strokes,
                 width: size.width || 1,
                 height: size.height || 1,
+                paper,
               };
               if (sheet) {
                 const id = sheet === NEW_SHEET ? `sheet_${Date.now()}` : sheet;

@@ -1902,6 +1902,61 @@ await step('a note can be written by hand on a blank page', async () => {
   };
   await scribble(board.height * 0.3);
   await page.waitForTimeout(300);
+
+  // The highlighter is the same stroke, wider and see-through — and it is
+  // drawn *under* the writing, which is what makes it a highlighter rather
+  // than a wash over the top.
+  await byLabel('Highlighter').click();
+  await byLabel('Amber pen').click();
+  await scribble(board.height * 0.3);
+  await page.waitForTimeout(300);
+  const washed = await page.evaluate(() =>
+    Array.from(document.querySelectorAll('[data-testid="draw-stage"] path')).map(node => ({
+      opacity: Number(node.getAttribute('stroke-opacity') ?? 1),
+      width: Number(node.getAttribute('stroke-width') ?? 0),
+    })),
+  );
+  if (washed.length !== 2) {
+    throw new Error(`expected a pen mark and a highlight, got ${washed.length}`);
+  }
+  if (!(washed[0].opacity < 1)) {
+    throw new Error('the highlight is not drawn first, so it covers the writing');
+  }
+  if (!(washed[0].width > washed[1].width * 3)) {
+    throw new Error('the highlighter is no wider than the pen');
+  }
+
+  // Rubbing out has to work on the middle of a line, not only where the
+  // pointer happened to be sampled. Testing the recorded points alone meant
+  // tapping a long straight stroke erased nothing at all.
+  await byLabel('Pen').click();
+  await byLabel('Blue pen').click();
+  await page.mouse.move(board.x + 30, board.y + board.height * 0.75);
+  await page.mouse.down();
+  await page.mouse.move(board.x + board.width - 30, board.y + board.height * 0.75);
+  await page.mouse.up();
+  await page.waitForTimeout(300);
+  await byLabel('Rub out a mark').click();
+  await page.mouse.click(board.x + board.width / 2, board.y + board.height * 0.75);
+  await page.waitForTimeout(300);
+  const afterErase = await page.evaluate(
+    () => document.querySelectorAll('[data-testid="draw-stage"] path').length,
+  );
+  if (afterErase !== 2) {
+    throw new Error(`tapping the middle of a line left ${afterErase} strokes, expected 2`);
+  }
+
+  // Ruling: paper the writing sits on, drawn into the same picture.
+  await byLabel('Pen').click();
+  await byLabel('Paper: plain').click();
+  await page.waitForTimeout(400);
+  const ruled = await page.evaluate(
+    () => document.querySelectorAll('[data-testid="draw-stage"] line').length,
+  );
+  if (ruled === 0) {
+    throw new Error('lined paper drew no lines');
+  }
+
   await byLabel('Keep this drawing').click();
   await page.waitForTimeout(800);
 
