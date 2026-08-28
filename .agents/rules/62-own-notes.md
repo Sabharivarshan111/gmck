@@ -107,6 +107,18 @@ megabytes of native library for a polyline over a photograph.
   object — so everything that replays ink highlights for free. Highlighter
   strokes are drawn before the rest whatever order they were made in, because a
   wash *under* the writing is the point of it.
+- **The rubber has two minds, and tapping it again picks one.** *Whole marks*
+  removes the stroke you touch — right for an annotation, where the mark is the
+  thing. *Rub it out* removes only what is under the rubber, by splitting the
+  stroke's geometry into the runs that survive, which is the only way to take
+  the middle out of a line. The walk is in steps of half the rubber, not point
+  to point, or a fast stroke's two far-apart points step straight over it.
+- **The six pens stay, and the wheel is the way out of them.** A wheel is
+  slower than a swatch every time you already know the pen you want.
+  `ColorWheel` is drawn, not imported: thirty-six wedges, each a gradient
+  between neighbouring hues **declared in user space along its own arc** —
+  bounding-box units ramp left to right whatever angle the wedge sits at, which
+  puts a spoke down every sector and gets worse as you add wedges.
 - **A page can be ruled** — plain, lined or squared. The ruling is drawn into
   the same SVG as the marks, so it scales with them, and is faint enough to be
   paper rather than content.

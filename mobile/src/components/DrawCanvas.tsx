@@ -14,6 +14,9 @@ import {
   Undo2,
   X,
 } from 'lucide-react-native';
+import { ColorWheel, WheelSwatch } from '@/components/ColorWheel';
+import { Sheet } from '@/components/Sheet';
+import { Slider } from '@/components/Slider';
 import { Text } from '@/components/Text';
 import { Touchable } from '@/components/Touchable';
 import { useTheme, withAlpha } from '@/theme';
@@ -122,6 +125,28 @@ export function DrawCanvas({
   const [ink, setInk] = useState(uri ? INKS[0] : isDark(colors.card) ? '#FFFFFF' : '#111827');
   const [width, setWidth] = useState(WIDTHS[1]);
   const [tool, setTool] = useState<Tool>('pen');
+  /**
+   * A colour the reader mixed, kept beside the six pens rather than instead of
+   * them. Six covers what anyone reaches for when annotating a diagram, and a
+   * wheel is slower than a swatch every time you already know the pen you want.
+   */
+  const [custom, setCustom] = useState<string | null>(null);
+  const [wheelOpen, setWheelOpen] = useState(false);
+  const [eraserOpen, setEraserOpen] = useState(false);
+  /**
+   * How the rubber works.
+   *
+   * **Stroke** takes the whole mark you touch — right for an annotation, where
+   * the mark *is* the thing: a circle round a structure, an arrow, a word.
+   * **Area** takes only what is under the rubber, which is what a rubber does
+   * and the only way to take the middle out of a long line.
+   *
+   * Stroke is the default because it is one tap to undo a mark, and because
+   * that is the behaviour this canvas has always had.
+   */
+  const [eraseMode, setEraseMode] = useState<'stroke' | 'area'>('stroke');
+  const [eraseSize, setEraseSize] = useState(16);
+  const [eraseHighlightOnly, setEraseHighlightOnly] = useState(false);
   const [paper, setPaper] = useState<Paper>((initial?.paper as Paper) ?? 'plain');
   /** The space the board may occupy, measured. */
   const [frame, setFrame] = useState({ width: 0, height: 0 });
@@ -288,16 +313,36 @@ export function DrawCanvas({
    * needs a hit test, and on an annotation — a circle round a structure, an
    * arrow, a word — removing the mark you touched is what was wanted anyway.
    */
-  const rubOut = useCallback((x: number, y: number) => {
-    setStrokes(all => {
-      for (let i = all.length - 1; i >= 0; i--) {
-        if (nearStroke(all[i], x, y)) {
-          return all.filter((_, index) => index !== i);
+  const rubOut = useCallback(
+    (x: number, y: number) => {
+      setStrokes(all => {
+        const mine = (stroke: Stroke) => !eraseHighlightOnly || !!stroke.opacity;
+        if (eraseMode === 'stroke') {
+          for (let i = all.length - 1; i >= 0; i--) {
+            if (mine(all[i]) && nearStroke(all[i], x, y)) {
+              return all.filter((_, index) => index !== i);
+            }
+          }
+          return all;
         }
-      }
-      return all;
-    });
-  }, []);
+        let changed = false;
+        const next: Stroke[] = [];
+        for (const stroke of all) {
+          if (!mine(stroke)) {
+            next.push(stroke);
+            continue;
+          }
+          const pieces = eraseArea(stroke, x, y, eraseSize / 2);
+          if (pieces.length !== 1 || pieces[0].d !== stroke.d) {
+            changed = true;
+          }
+          next.push(...pieces);
+        }
+        return changed ? next : all;
+      });
+    },
+    [eraseHighlightOnly, eraseMode, eraseSize],
+  );
 
   const at = useCallback(
     (x: number, y: number, down: boolean) => {
@@ -542,6 +587,26 @@ export function DrawCanvas({
           </Touchable>
         ))}
 
+        {/* The way out of the six. It shows the wheel until a colour has been
+            mixed, then shows that colour with the wheel around it. */}
+        {custom ? (
+          <Touchable
+            onPress={() => setWheelOpen(true)}
+            label="Your colour"
+            hint="Tap to mix another"
+            state={{ selected: tool !== 'eraser' && ink === custom }}
+            scaleTo={0.88}
+            style={[
+              styles.swatch,
+              { backgroundColor: custom },
+              tool !== 'eraser' && ink === custom && { borderColor: colors.text, borderWidth: 2.5 },
+            ]}>
+            <PenLine size={12} color={onColor(custom)} />
+          </Touchable>
+        ) : (
+          <WheelSwatch onPress={() => setWheelOpen(true)} size={30} />
+        )}
+
         <View style={styles.grow} />
 
         {/*
@@ -592,8 +657,17 @@ export function DrawCanvas({
         {tools.map(one => (
           <Touchable
             key={one.key}
-            onPress={() => setTool(one.key)}
+            onPress={() => {
+              // Tapping the rubber again opens how it rubs, which is where
+              // every drawing app puts it and where it was looked for.
+              if (one.key === 'eraser' && tool === 'eraser') {
+                setEraserOpen(true);
+                return;
+              }
+              setTool(one.key);
+            }}
             label={one.label}
+            hint={one.key === 'eraser' ? 'Tap again for whole marks or a rubber' : undefined}
             state={{ selected: tool === one.key }}
             scaleTo={0.88}
             style={[
@@ -659,7 +733,129 @@ export function DrawCanvas({
           <Undo2 size={17} color={colors.text} />
         </Touchable>
       </View>
+
+      <Sheet visible={wheelOpen} onClose={() => setWheelOpen(false)} title="Any colour">
+        <ColorWheel
+          value={custom ?? ink}
+          onChange={next => {
+            setCustom(next);
+            setInk(next);
+            if (tool === 'eraser') {
+              setTool('pen');
+            }
+          }}
+        />
+        <Text style={[styles.sheetNote, { color: colors.textMuted }]}>
+          Drag on the wheel for the colour, and the bar under it for how light or dark.
+        </Text>
+      </Sheet>
+
+      <Sheet visible={eraserOpen} onClose={() => setEraserOpen(false)} title="Rubber">
+        <View style={styles.sheetBody}>
+          <Choice
+            label="Whole marks"
+            detail="Touch a mark and all of it goes. Best for an arrow or a circle."
+            chosen={eraseMode === 'stroke'}
+            onPress={() => setEraseMode('stroke')}
+          />
+          <Choice
+            label="Rub it out"
+            detail="Takes only what is under the rubber, so you can take the middle out of a line."
+            chosen={eraseMode === 'area'}
+            onPress={() => setEraseMode('area')}
+          />
+
+          {eraseMode === 'area' ? (
+            <View style={styles.sizeRow}>
+              <Text style={{ color: colors.text, fontWeight: '600' }}>Rubber size</Text>
+              <View
+                style={{
+                  width: eraseSize,
+                  height: eraseSize,
+                  borderRadius: eraseSize / 2,
+                  backgroundColor: withAlpha(colors.text, 0.35),
+                }}
+              />
+            </View>
+          ) : null}
+          {eraseMode === 'area' ? (
+            <Slider
+              value={eraseSize}
+              min={8}
+              max={64}
+              step={4}
+              onChange={setEraseSize}
+              label="Rubber size"
+              format={size => `${size}`}
+            />
+          ) : null}
+
+          <Choice
+            label="Highlighter only"
+            detail="Leaves the writing alone and takes just the marker."
+            chosen={eraseHighlightOnly}
+            onPress={() => setEraseHighlightOnly(on => !on)}
+          />
+
+          <Touchable
+            onPress={() => {
+              setStrokes([]);
+              setEraserOpen(false);
+            }}
+            disabled={strokes.length === 0}
+            label="Erase everything on this page"
+            style={[
+              styles.clear,
+              { borderColor: colors.danger, opacity: strokes.length === 0 ? 0.4 : 1 },
+            ]}>
+            <Text style={{ color: colors.danger, fontWeight: '700' }}>Erase everything</Text>
+          </Touchable>
+        </View>
+      </Sheet>
     </View>
+  );
+}
+
+/** One choice in the rubber sheet: what it does, and what it is for. */
+function Choice({
+  label,
+  detail,
+  chosen,
+  onPress,
+}: {
+  label: string;
+  detail: string;
+  chosen: boolean;
+  onPress: () => void;
+}) {
+  const { colors } = useTheme();
+  return (
+    <Touchable
+      onPress={onPress}
+      role="radio"
+      label={label}
+      hint={detail}
+      state={{ checked: chosen }}
+      scaleTo={0.985}
+      style={[
+        styles.choice,
+        { borderColor: chosen ? colors.accent : colors.border, backgroundColor: colors.card },
+      ]}>
+      <View style={styles.grow}>
+        <Text style={{ color: colors.text, fontWeight: '600' }}>{label}</Text>
+        <Text style={[styles.sheetNote, { color: colors.textMuted }]}>{detail}</Text>
+      </View>
+      <View
+        style={[
+          styles.tick,
+          {
+            backgroundColor: chosen ? colors.accent : 'transparent',
+            borderColor: chosen ? colors.accent : colors.border,
+          },
+        ]}>
+        {chosen ? <Check size={14} color={onColor(colors.accent)} /> : null}
+      </View>
+    </Touchable>
   );
 }
 
@@ -731,6 +927,95 @@ const NAMES: Record<string, string> = {
  *  the whole of scaling one. */
 export function scalePath(d: string, factor: number): string {
   return d.replace(/-?\d+(?:\.\d+)?/g, value => (Number(value) * factor).toFixed(1));
+}
+
+/** The `M x y L x y …` of a path, as points. */
+function pathPoints(d: string): { x: number; y: number }[] {
+  return (d.match(/-?\d+(?:\.\d+)?\s-?\d+(?:\.\d+)?/g) ?? []).map(pair => {
+    const [x, y] = pair.split(/\s+/).map(Number);
+    return { x, y };
+  });
+}
+
+function toPath(points: { x: number; y: number }[]): string {
+  return points
+    .map((point, index) => `${index === 0 ? 'M' : 'L'} ${point.x.toFixed(1)} ${point.y.toFixed(1)}`)
+    .join(' ');
+}
+
+/**
+ * Drop the points that sit on a straight run.
+ *
+ * The area eraser walks a stroke in small steps so the rubber cannot be jumped
+ * over, and those steps all lie exactly on the original segments. Keeping them
+ * would grow the stroke every time it was erased near; this puts it back to
+ * roughly the corners it was drawn with.
+ */
+function simplify(points: { x: number; y: number }[], tolerance = 0.6) {
+  if (points.length < 3) {
+    return points;
+  }
+  const out = [points[0]];
+  for (let i = 1; i < points.length - 1; i++) {
+    const previous = out[out.length - 1];
+    const next = points[i + 1];
+    if (distanceToSegment(points[i].x, points[i].y, previous.x, previous.y, next.x, next.y) > tolerance) {
+      out.push(points[i]);
+    }
+  }
+  out.push(points[points.length - 1]);
+  return out;
+}
+
+/**
+ * Rub out the part of a stroke under the eraser, and keep the rest.
+ *
+ * This is what a rubber does, and it is what a stroke eraser cannot: take the
+ * middle out of a long line and leave the two ends. It works because a stroke
+ * is geometry — the piece under the rubber is dropped and each surviving run
+ * becomes a stroke of its own.
+ *
+ * The walk is in steps of half the rubber, not from point to point: a line
+ * drawn quickly is two points a long way apart, and testing only those would
+ * step straight over the rubber and rub out nothing.
+ */
+export function eraseArea(stroke: Stroke, x: number, y: number, radius: number): Stroke[] {
+  const points = pathPoints(stroke.d);
+  if (points.length === 0) {
+    return [stroke];
+  }
+  const reach = radius + stroke.width / 2;
+  if (!nearStroke(stroke, x, y, radius)) {
+    return [stroke];
+  }
+  const step = Math.max(1, reach / 2);
+  const runs: { x: number; y: number }[][] = [];
+  let run: { x: number; y: number }[] = [];
+  const take = (point: { x: number; y: number }) => {
+    if (Math.hypot(point.x - x, point.y - y) <= reach) {
+      if (run.length > 1) {
+        runs.push(run);
+      }
+      run = [];
+    } else {
+      run.push(point);
+    }
+  };
+  take(points[0]);
+  for (let i = 1; i < points.length; i++) {
+    const a = points[i - 1];
+    const b = points[i];
+    const length = Math.hypot(b.x - a.x, b.y - a.y);
+    // Capped so one enormous segment cannot turn a rub into a freeze.
+    const steps = Math.min(400, Math.max(1, Math.ceil(length / step)));
+    for (let k = 1; k <= steps; k++) {
+      take({ x: a.x + ((b.x - a.x) * k) / steps, y: a.y + ((b.y - a.y) * k) / steps });
+    }
+  }
+  if (run.length > 1) {
+    runs.push(run);
+  }
+  return runs.map(piece => ({ ...stroke, d: toPath(simplify(piece)) }));
 }
 
 /** How far a point is from the segment ab, which is what "on the line" means. */
@@ -843,9 +1128,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   swatch: {
-    width: 34,
-    height: 34,
-    borderRadius: 17,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -876,5 +1161,43 @@ const styles = StyleSheet.create({
   },
   hint: {
     ...typeScale.caption,
+  },
+  sheetBody: {
+    gap: 12,
+  },
+  /* The size, shown at the size it is — a number alone says nothing about how
+     much of a line it will take. */
+  sizeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    minHeight: 40,
+    paddingHorizontal: 4,
+  },
+  sheetNote: {
+    ...typeScale.caption,
+    marginTop: 2,
+  },
+  choice: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    padding: 14,
+    borderRadius: 12,
+    borderWidth: StyleSheet.hairlineWidth,
+  },
+  tick: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    borderWidth: StyleSheet.hairlineWidth,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  clear: {
+    alignItems: 'center',
+    paddingVertical: 13,
+    borderRadius: 12,
+    borderWidth: StyleSheet.hairlineWidth,
   },
 });

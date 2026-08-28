@@ -874,6 +874,26 @@ Four things there look like fussiness and are each a bug that shipped:
   quickly is two points a long way apart, so tapping the middle of it erased
   nothing and the eraser looked broken.
 
+**The rubber has two minds, and tapping the eraser again picks one.** *Whole
+marks* takes the stroke you touch, which is right for an annotation — the mark
+*is* the thing. *Rub it out* takes only what is under the rubber, by splitting
+the stroke into the runs that survive it, and is the only way to take the
+middle out of a line. Both walk the stroke in steps of half the rubber rather
+than point to point, because a fast stroke's points are far apart and testing
+only those steps straight over the rubber.
+
+**The six pens stay, and the wheel is the way out of them** — a wheel is slower
+than a swatch every single time you already know which pen you want.
+`components/ColorWheel.tsx` is drawn rather than imported: a hue wheel is
+wedges, each a gradient between two neighbouring hues, plus white fading
+outwards for saturation and a track underneath for value. The colour-picker
+packages bring a native module and a megabyte to draw a circle.
+
+Its one trap: **the wedge gradients must be declared in user space, from one
+rim corner to the other.** In bounding-box units a gradient runs left to right
+whatever angle its wedge sits at, so every sector gets a spoke down the middle
+— and adding wedges makes it worse rather than better.
+
 The pens are a pen, a highlighter and the eraser. **A highlighter is one width
 multiplier and one alpha** rather than a second kind of object, so every place
 that replays ink highlights for free — and highlighter strokes are drawn before

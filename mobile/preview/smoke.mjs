@@ -1946,6 +1946,61 @@ await step('a note can be written by hand on a blank page', async () => {
     throw new Error(`tapping the middle of a line left ${afterErase} strokes, expected 2`);
   }
 
+  // Any colour at all, mixed on a wheel — the way out of the six pens.
+  await byLabel('Any colour').click();
+  await page.waitForTimeout(700);
+  const wheel = await page.locator('[aria-label="Colour wheel"]').first().boundingBox();
+  if (!wheel) {
+    throw new Error('the colour wheel did not open');
+  }
+  await page.mouse.click(wheel.x + wheel.width * 0.8, wheel.y + wheel.height * 0.28);
+  await page.waitForTimeout(500);
+  await byLabel('Done').click();
+  await page.waitForTimeout(600);
+  if ((await byLabel('Your colour').count()) === 0) {
+    throw new Error('the mixed colour did not become a pen');
+  }
+
+  // The rubber, and the choice of how it rubs. Tapping the eraser a second
+  // time is where every drawing app puts this and where it was looked for.
+  await byLabel('Rub out a mark').click();
+  await page.waitForTimeout(200);
+  await byLabel('Rub out a mark').click();
+  await page.waitForTimeout(700);
+  await seesText('Whole marks', 4000);
+  await seesText('Rub it out', 4000);
+  await byLabel('Rub it out').click();
+  await page.waitForTimeout(400);
+  await byLabel('Done').click();
+  await page.waitForTimeout(700);
+
+  // Take the middle out of a line: one stroke becomes two, which the stroke
+  // eraser can never do.
+  await byLabel('Pen').click();
+  await page.mouse.move(board.x + 30, board.y + board.height * 0.55);
+  await page.mouse.down();
+  await page.mouse.move(board.x + board.width - 30, board.y + board.height * 0.55);
+  await page.mouse.up();
+  await page.waitForTimeout(300);
+  const beforeSplit = await page.evaluate(
+    () => document.querySelectorAll('[data-testid="draw-stage"] path').length,
+  );
+  await byLabel('Rub out a mark').click();
+  await page.waitForTimeout(300);
+  await page.mouse.move(board.x + board.width / 2, board.y + board.height * 0.55);
+  await page.mouse.down();
+  await page.mouse.move(board.x + board.width / 2 + 8, board.y + board.height * 0.55);
+  await page.mouse.up();
+  await page.waitForTimeout(400);
+  const afterSplit = await page.evaluate(
+    () => document.querySelectorAll('[data-testid="draw-stage"] path').length,
+  );
+  if (afterSplit !== beforeSplit + 1) {
+    throw new Error(
+      `rubbing the middle of a line left ${afterSplit} strokes, expected ${beforeSplit + 1}`,
+    );
+  }
+
   // Ruling: paper the writing sits on, drawn into the same picture.
   await byLabel('Pen').click();
   await byLabel('Paper: plain').click();
