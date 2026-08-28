@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { removeNoteImages } from "@/lib/noteImages";
+import { removeNoteImages, removeNoteInks } from "@/lib/noteImages";
 import { removeNoteFiles, type NoteFile } from "@/lib/noteFiles";
 
 /**
@@ -66,6 +66,15 @@ export interface UserNote {
    * Android happened to accept the day it was written.
    */
   font?: string | null;
+  /**
+   * Pages written by hand — ids whose marks live in `orbit:note-ink:{id}`,
+   * with no picture underneath.
+   *
+   * Separate from `images` because they are not pictures: there is nothing to
+   * load, sign or downscale, and a page with no strokes on it is an empty note
+   * rather than a broken thumbnail.
+   */
+  sheets?: string[];
   created_at: string;
   updated_at: string;
 }
@@ -94,6 +103,7 @@ const BLANK: NoteEdit & Pick<UserNote, "title" | "content"> = {
   images: [],
   files: [],
   font: null,
+  sheets: [],
 };
 
 export function useUserNotes() {
@@ -169,6 +179,8 @@ export function useUserNotes() {
     // leaving them behind is storage the reader can never account for or
     // reclaim — and a forgotten video is a great deal of it.
     await removeNoteImages(going?.images ?? []);
+    // A handwritten page is only its marks, so removing them removes it.
+    await removeNoteInks(going?.sheets ?? []);
     removeNoteFiles(going?.files);
   };
 

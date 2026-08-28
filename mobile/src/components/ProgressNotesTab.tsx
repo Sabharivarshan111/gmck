@@ -35,7 +35,15 @@ import {
 } from "lucide-react-native";
 import { getSubjects, type BankNode, type YearKey } from "@/lib/questionBank";
 import { flattenSubjectTopics } from "@/lib/handwrittenNotes";
-import { attachNoteImage, loadNoteImage, removeNoteImage, saveNoteInk } from "@/lib/noteImages";
+import {
+  attachNoteImage,
+  loadNoteImage,
+  loadNoteInk,
+  removeNoteImage,
+  removeNoteInk,
+  saveNoteInk,
+  type NoteInk,
+} from "@/lib/noteImages";
 import {
   adoptNoteFile,
   attachNoteFile,
@@ -80,6 +88,10 @@ function FileKindIcon({ file }: { file: NoteFile }) {
  */
 function attachmentSummary(note: UserNote): string {
   const parts: string[] = [];
+  const pages = note.sheets?.length ?? 0;
+  if (pages > 0) {
+    parts.push(`${pages} handwritten page${pages === 1 ? "" : "s"}`);
+  }
   const pictures = note.images?.length ?? 0;
   if (pictures > 0) {
     parts.push(`${pictures} picture${pictures === 1 ? "" : "s"}`);
@@ -289,9 +301,14 @@ function NoteReader({
       {/* Typed as text, read as a note: "1." and "-" become real lists. */}
       {note.content ? (
         <NoteText content={note.content} font={note.font} />
-      ) : (
+      ) : (note.sheets?.length ?? 0) > 0 ? null : (
         <Text style={[styles.readerBody, { color: colors.textMuted }]}>This note is empty.</Text>
       )}
+
+      {/* Pages written by hand, then the pictures. */}
+      {(note.sheets ?? []).map(id => (
+        <InkedImage key={id} imageId={id} ownShape style={styles.readerPage} />
+      ))}
 
       {/* Whatever was drawn on it comes with it. */}
       {(note.images ?? []).map((id, index) =>
@@ -459,6 +476,9 @@ function NoteFilingSheet({
   );
 }
 
+/** The canvas is open on a page that does not exist yet. */
+const NEW_SHEET = "new";
+
 /** One attached picture, signed on demand because the bucket is private. */
 function NoteThumb({ path, ink }: { path: string; ink?: number }) {
   const [url, setUrl] = useState<string | null>(null);
@@ -497,6 +517,11 @@ export function ProgressNotesTab({ year }: Props) {
   const [editImages, setEditImages] = useState<string[]>([]);
   const [editFiles, setEditFiles] = useState<NoteFile[]>([]);
   const [editFont, setEditFont] = useState<string | null>(null);
+  const [editSheets, setEditSheets] = useState<string[]>([]);
+  /** The handwritten page open on the canvas — an existing id, or "new". */
+  const [sheet, setSheet] = useState<string | null>(null);
+  /** What is already on whichever canvas is open, so it is not started over. */
+  const [canvasInk, setCanvasInk] = useState<NoteInk | null>(null);
   const [imageError, setImageError] = useState<string | null>(null);
   const [busyImage, setBusyImage] = useState(false);
   const [attachOpen, setAttachOpen] = useState(false);
@@ -554,6 +579,31 @@ export function ProgressNotesTab({ year }: Props) {
     };
   }, [drawing]);
 
+  /*
+   * And whatever is already drawn there.
+   *
+   * Opening the pen a second time used to show an empty canvas over marks that
+   * were still on the thumbnail, and Keep then replaced them with whatever was
+   * drawn on the empty one. The canvas waits for this rather than starting
+   * blank, which is why it is a separate piece of state and not a prop read
+   * inline.
+   */
+  useEffect(() => {
+    let alive = true;
+    const id = sheet && sheet !== NEW_SHEET ? sheet : drawing;
+    if (!id) {
+      setCanvasInk(null);
+      return;
+    }
+    setCanvasInk(null);
+    loadNoteInk(id).then(found => {
+      if (alive) setCanvasInk(found);
+    });
+    return () => {
+      alive = false;
+    };
+  }, [drawing, sheet]);
+
   const openEditor = (note?: UserNote) => {
     setImageError(null);
     setReading(null);
@@ -567,6 +617,7 @@ export function ProgressNotesTab({ year }: Props) {
       setEditImages(note.images ?? []);
       setEditFiles(note.files ?? []);
       setEditFont(note.font ?? null);
+      setEditSheets(note.sheets ?? []);
       setSelection({ start: 0, end: 0 });
       setForcedSelection(null);
     } else {
@@ -579,6 +630,7 @@ export function ProgressNotesTab({ year }: Props) {
       setEditImages([]);
       setEditFiles([]);
       setEditFont(null);
+      setEditSheets([]);
       setSelection({ start: 0, end: 0 });
       setForcedSelection(null);
     }
@@ -598,6 +650,7 @@ export function ProgressNotesTab({ year }: Props) {
       images: editImages,
       files: editFiles,
       font: editFont,
+      sheets: editSheets,
     };
     if (editing.id === "new") {
       await createNote(patch);
@@ -761,7 +814,7 @@ export function ProgressNotesTab({ year }: Props) {
                             numberOfLines={3}>
                             {plainPreview(n.content)}
                           </Text>
-                        ) : (
+                        ) : (n.sheets?.length ?? 0) > 0 ? null : (
                           <Text style={[styles.noteEmpty, { color: colors.textMuted }]}>
                             (Empty note)
                           </Text>
@@ -907,21 +960,47 @@ export function ProgressNotesTab({ year }: Props) {
         A canvas inside a sheet would be a canvas the size of a postcard.
       */}
       <Modal
-        visible={!!drawing && !!drawingUri}
+        visible={(!!drawing && !!drawingUri) || !!sheet}
         animationType="slide"
-        onRequestClose={() => setDrawing(null)}>
-        {drawing && drawingUri ? (
+        onRequestClose={() => {
+          setDrawing(null);
+          setSheet(null);
+        }}>
+        {(drawing && drawingUri) || sheet ? (
           <DrawCanvas
-            uri={drawingUri}
-            onCancel={() => setDrawing(null)}
+            /* The same canvas either way: a page is a picture that is not
+               there. See DrawCanvas. */
+            uri={sheet ? null : drawingUri}
+            initial={canvasInk}
+            onCancel={() => {
+              setDrawing(null);
+              setSheet(null);
+            }}
             onDone={async (strokes, size) => {
-              await saveNoteInk(drawing, {
+              const ink = {
                 strokes,
                 width: size.width || 1,
                 height: size.height || 1,
-              });
+              };
+              if (sheet) {
+                const id = sheet === NEW_SHEET ? `sheet_${Date.now()}` : sheet;
+                // A page nobody drew on is not a page. Keeping it would put an
+                // empty rectangle in the note for ever.
+                if (strokes.length > 0) {
+                  await saveNoteInk(id, ink);
+                  setEditSheets(current =>
+                    current.includes(id) ? current : [...current, id],
+                  );
+                } else if (sheet !== NEW_SHEET) {
+                  await removeNoteInk(id);
+                  setEditSheets(current => current.filter(one => one !== id));
+                }
+                setSheet(null);
+              } else if (drawing) {
+                await saveNoteInk(drawing, ink);
+                setDrawing(null);
+              }
               setInkVersion(version => version + 1);
-              setDrawing(null);
             }}
           />
         ) : null}
@@ -1029,6 +1108,41 @@ export function ProgressNotesTab({ year }: Props) {
               editFont ? { fontFamily: noteFontFamily(editFont) } : null,
             ]}
           />
+          {/*
+            Pages written by hand. They sit above the pictures because they are
+            the note, not an attachment to it.
+          */}
+          {editSheets.length > 0 ? (
+            <View style={styles.thumbRow}>
+              {editSheets.map(id => (
+                <View key={id} style={styles.thumbWrap}>
+                  <Touchable
+                    onPress={() => setSheet(id)}
+                    label="Open this handwritten page"
+                    hint="Opens the pen again, with what is already written"
+                    scaleTo={0.95}>
+                    <InkedImage key={inkVersion} imageId={id} style={styles.thumb} />
+                  </Touchable>
+                  <View style={[styles.thumbDraw, { backgroundColor: withAlpha("#000000", 0.55) }]}>
+                    <PenLine size={12} color="#FFFFFF" />
+                  </View>
+                  <Touchable
+                    onPress={async () => {
+                      setEditSheets(current => current.filter(one => one !== id));
+                      await removeNoteInk(id);
+                    }}
+                    label="Remove this handwritten page"
+                    style={[
+                      styles.thumbRemove,
+                      { backgroundColor: colors.card, borderColor: colors.border },
+                    ]}>
+                    <X size={12} color={colors.danger} />
+                  </Touchable>
+                </View>
+              ))}
+            </View>
+          ) : null}
+
           {editImages.length > 0 ? (
             <View style={styles.thumbRow}>
               {editImages.map(path => (
@@ -1121,6 +1235,14 @@ export function ProgressNotesTab({ year }: Props) {
               <Text style={[styles.subjectChipText, { color: colors.accent }]}>
                 {busyImage ? "Adding…" : "Add picture"}
               </Text>
+            </Touchable>
+            <Touchable
+              onPress={() => setSheet(NEW_SHEET)}
+              label="Write or draw this note by hand"
+              hint="Opens a blank page for a stylus or a finger"
+              style={[styles.attachBtn, { borderColor: colors.border }]}>
+              <PenLine size={16} color={colors.accent} />
+              <Text style={[styles.subjectChipText, { color: colors.accent }]}>Write by hand</Text>
             </Touchable>
             {/* Hidden rather than disabled where the module is absent, which is
                 the preview harness: a control that cannot work is worse than
@@ -1261,6 +1383,19 @@ const styles = StyleSheet.create({
   readerImage: {
     width: "100%",
     height: 240,
+    borderRadius: 12,
+    marginBottom: 12,
+  },
+  /*
+   * A written page carries no height of its own here: `InkedImage` gives it
+   * the aspect it was written at, and a fixed height in this style would win
+   * and squash it back. The cap keeps a page written on a tall phone from
+   * being a screen and a half of scrolling before the next one.
+   */
+  readerPage: {
+    width: "100%",
+    maxHeight: 460,
+    alignSelf: "center",
     borderRadius: 12,
     marginBottom: 12,
   },

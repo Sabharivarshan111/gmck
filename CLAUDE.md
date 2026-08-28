@@ -792,6 +792,30 @@ not contradict it: the pin exists because OEM skins replace the *system* font
 and would re-typeset the whole app behind our back; naming a family for one
 note's body is a choice its writer made, and cannot reach the app's chrome.
 
+## The pen writes on a page as well as on a picture
+
+`DrawCanvas` takes a picture or nothing, and nothing is a blank page. Drawing
+was reachable only from an attached picture at first, so someone who wanted to
+write a diagram out with a stylus had to photograph something to write on —
+which is exactly what was reported, as "where is the option to select stylus".
+
+A page is an id in `sheets[]` whose marks live in `orbit:note-ink:{id}` with no
+picture beneath. Three consequences:
+
+- **A page with no strokes is not a page**, and is never saved.
+- **A note that is entirely handwriting is not empty.** The card and the reader
+  both had a literal "(Empty note)" branch keyed on `content` alone.
+- **A read page keeps the shape it was written on.** A photograph letterboxed
+  in a fixed box still reads correctly, because the photograph is the subject.
+  A page *is* the paper: forced into a landscape box, portrait handwriting
+  shrinks into a column with empty card either side and looks broken.
+
+**The canvas opens seeded with what is already drawn there.** It did not, and
+the second visit showed an empty canvas over marks still visible on the
+thumbnail — then Keep wrote the empty one over them. Existing ink also fixes
+the board's aspect, so the old marks and the new ones share one coordinate
+space and a single factor rescales the strokes and their widths together.
+
 ## Drawing on a picture needs the pointer-event flag turned on
 
 `components/DrawCanvas.tsx` draws strokes as `<Path>` elements through

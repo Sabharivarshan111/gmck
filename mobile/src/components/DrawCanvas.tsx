@@ -6,7 +6,8 @@ import { Text } from '@/components/Text';
 import { Touchable } from '@/components/Touchable';
 import { useTheme, withAlpha } from '@/theme';
 import { typeScale } from '@/theme/typography';
-import { onColor } from '@/theme/color';
+import type { NoteInk } from '@/lib/noteImages';
+import { isDark, onColor } from '@/theme/color';
 
 /**
  * Drawing over a picture — a diagram annotated, a page marked up.
@@ -42,18 +43,45 @@ const WIDTHS = [2, 4, 8];
 
 export function DrawCanvas({
   uri,
+  initial,
   onCancel,
   onDone,
 }: {
-  /** The picture being drawn on. */
-  uri: string;
+  /**
+   * The picture being drawn on, or nothing for a blank page.
+   *
+   * A page is not a second feature: it is the same canvas with no photograph
+   * under it, which is what "write it by hand" needs. Drawing was only ever
+   * reachable from an attached picture, so someone who wanted to write a
+   * diagram out with a stylus had to photograph something first.
+   */
+  uri?: string | null;
+  /**
+   * What is already drawn here, so opening the pen again continues the work
+   * instead of starting a blank canvas over it.
+   *
+   * Without this, the second visit showed nothing and `onDone` replaced the
+   * first drawing with whatever was made on the empty canvas — the marks were
+   * still on the thumbnail right up until they were silently overwritten.
+   */
+  initial?: NoteInk | null;
   onCancel: () => void;
   /** The finished strokes, for the caller to keep beside the picture. */
   onDone: (strokes: Stroke[], size: { width: number; height: number }) => void;
 }) {
   const { colors } = useTheme();
+  /*
+   * A photograph brings its own ground, so the board behind it is black and
+   * the first pen is red — a mark that reads on anything. A blank page has to
+   * *be* the paper, so it takes the theme's card colour and the first pen is
+   * whichever of black or white can be seen on it. Defaulting to red ink on a
+   * page would be a page nobody would choose to write on.
+   */
+  const paper = uri ? '#000000' : colors.card;
   const [strokes, setStrokes] = useState<Stroke[]>([]);
-  const [ink, setInk] = useState(INKS[0]);
+  // One of INKS, not a bare hex, or the chosen pen matches no swatch and the
+  // row opens with nothing selected.
+  const [ink, setInk] = useState(uri ? INKS[0] : isDark(colors.card) ? '#FFFFFF' : '#111827');
   const [width, setWidth] = useState(WIDTHS[1]);
   const [erasing, setErasing] = useState(false);
   /** The space the board may occupy, measured. */
@@ -63,6 +91,17 @@ export function DrawCanvas({
 
   useEffect(() => {
     let alive = true;
+    if (initial) {
+      // Existing marks decide the shape, so the board they were recorded
+      // against and the board being drawn on now are the same one.
+      setAspect(initial.width / initial.height);
+      return;
+    }
+    if (!uri) {
+      // A page has no shape of its own, so it takes the shape of the space.
+      setAspect(-1);
+      return;
+    }
     Image.getSize(
       uri,
       (w, h) => {
@@ -81,7 +120,7 @@ export function DrawCanvas({
     return () => {
       alive = false;
     };
-  }, [uri]);
+  }, [initial, uri]);
 
   /**
    * The drawing surface is the picture's box, not the screen's.
@@ -263,6 +302,30 @@ export function DrawCanvas({
     [begin, erasing, extend, finish, rubOut],
   );
 
+  /**
+   * Lay the existing marks onto this board.
+   *
+   * They were recorded against a board of their own size; the aspect is the
+   * same by construction above, so one factor maps every coordinate — and the
+   * pen widths with them, or a thick line reopened on a bigger screen comes
+   * back hairline.
+   */
+  const seeded = useRef(false);
+  useEffect(() => {
+    if (seeded.current || !initial || board.width <= 0) {
+      return;
+    }
+    seeded.current = true;
+    const factor = board.width / (initial.width || 1);
+    setStrokes(
+      initial.strokes.map(stroke => ({
+        ...stroke,
+        d: scalePath(stroke.d, factor),
+        width: stroke.width * factor,
+      })),
+    );
+  }, [board.width, initial]);
+
   const undo = () => setStrokes(all => all.slice(0, -1));
 
   return (
@@ -271,7 +334,9 @@ export function DrawCanvas({
         <Touchable onPress={onCancel} label="Discard this drawing" scaleTo={0.85} hitSlop={12}>
           <X size={22} color={colors.text} />
         </Touchable>
-        <Text style={[styles.title, { color: colors.text }]}>Draw on the picture</Text>
+        <Text style={[styles.title, { color: colors.text }]}>
+          {uri ? 'Draw on the picture' : 'Write or draw'}
+        </Text>
         <Touchable
           onPress={() => onDone(strokes, board)}
           label="Keep this drawing"
@@ -288,10 +353,10 @@ export function DrawCanvas({
         <View
           testID="draw-stage"
           accessibilityLabel="Drawing area"
-          style={[styles.board, board]}
+          style={[styles.board, board, { backgroundColor: paper }]}
           {...touchFallback}
           {...pointer}>
-        <Image source={{ uri }} style={styles.picture} resizeMode="contain" />
+        {uri ? <Image source={{ uri }} style={styles.picture} resizeMode="contain" /> : null}
         <Svg
           style={StyleSheet.absoluteFill}
           width="100%"
@@ -422,6 +487,12 @@ const NAMES: Record<string, string> = {
   '#111827': 'Black',
 };
 
+/** Every number in a path, multiplied — the strokes are polylines, so this is
+ *  the whole of scaling one. */
+export function scalePath(d: string, factor: number): string {
+  return d.replace(/-?\d+(?:\.\d+)?/g, value => (Number(value) * factor).toFixed(1));
+}
+
 /**
  * Is this point on that stroke?
  *
@@ -472,7 +543,6 @@ const styles = StyleSheet.create({
   board: {
     borderRadius: 12,
     overflow: 'hidden',
-    backgroundColor: '#000',
   },
   picture: {
     width: '100%',

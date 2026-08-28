@@ -1872,6 +1872,68 @@ await step('notes highlight, and a picture opens a drawing canvas', async () => 
   }
 });
 
+await step('a note can be written by hand on a blank page', async () => {
+  await open('screen=progress');
+  await page.waitForTimeout(900);
+  await byLabel('Notes').first().click();
+  await page.waitForTimeout(800);
+  await byLabel('Create a new study note').click();
+  await page.waitForTimeout(700);
+  await byLabel('Note title').fill('Brachial plexus');
+
+  // The whole point: a stylus needs somewhere to write that is not a photo.
+  // Drawing used to be reachable only from an attached picture, so writing a
+  // diagram out by hand meant photographing something first.
+  await byLabel('Write or draw this note by hand').click();
+  await page.waitForTimeout(800);
+  await seesText('Write or draw', 4000);
+
+  const board = await page.locator('[data-testid="draw-stage"]').first().boundingBox();
+  if (!board) {
+    throw new Error('the blank page has no drawing area');
+  }
+  const scribble = async top => {
+    await page.mouse.move(board.x + 40, board.y + top);
+    await page.mouse.down();
+    for (let i = 1; i <= 10; i++) {
+      await page.mouse.move(board.x + 40 + i * 16, board.y + top + (i % 2 ? 10 : -10));
+    }
+    await page.mouse.up();
+  };
+  await scribble(board.height * 0.3);
+  await page.waitForTimeout(300);
+  await byLabel('Keep this drawing').click();
+  await page.waitForTimeout(800);
+
+  // Re-opening continues the work rather than starting over. The bug was a
+  // blank canvas laid over marks that Keep then silently replaced.
+  await byLabel('Open this handwritten page').click();
+  await page.waitForTimeout(900);
+  const kept = await page.evaluate(
+    () => document.querySelectorAll('[data-testid="draw-stage"] path').length,
+  );
+  if (kept === 0) {
+    throw new Error('re-opening a handwritten page starts blank, so Keep would erase it');
+  }
+  await byLabel('Discard this drawing').click();
+  await page.waitForTimeout(600);
+
+  await byLabel('Save note').click();
+  await page.waitForTimeout(1000);
+  // It comes back as a page of the note, not as an attachment to one — and the
+  // card must not call a note that is entirely handwriting "(Empty note)".
+  await seesText('Brachial plexus', 4000);
+  // Two controls carry this label — the title and the body. The body is the
+  // one that holds the preview.
+  const card = await page.locator('[aria-label="Read Brachial plexus"]').last().innerText();
+  if (!card.includes('1 handwritten page')) {
+    throw new Error(`the card does not mention the page — it says "${card}"`);
+  }
+  if (card.includes('(Empty note)')) {
+    throw new Error('a note that is entirely handwritten reads as empty');
+  }
+});
+
 await step('a note takes a recording, and the recording gets a player', async () => {
   await open('screen=progress');
   await page.waitForTimeout(900);

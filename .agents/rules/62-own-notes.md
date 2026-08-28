@@ -52,7 +52,27 @@ made, and it cannot reach the app's chrome.
 The editor's text box is drawn in the chosen face too. A preference that only
 appears after saving is one nobody trusts they have set.
 
-## Drawing on a picture
+## Writing by hand, and drawing on a picture
+
+Two ways in, **one canvas**: `components/DrawCanvas.tsx` with a picture under
+it, or with nothing under it. "Write by hand" in the editor opens a blank page;
+the pen badge on a picture's thumbnail opens the same canvas over the photo.
+
+Drawing used to be reachable *only* from an attached picture, which meant
+writing a diagram out with a stylus required photographing something first —
+the reader asked where the stylus option was, and the honest answer was that
+there was nowhere to write.
+
+A page is `sheets[]` on the note: ids whose marks live in
+`orbit:note-ink:{id}` with no picture. A page with no strokes is not kept, and
+the note card and the reader must not call a note that is entirely handwriting
+"(Empty note)".
+
+**The canvas is seeded with what is already there** (`initial`). Without it the
+second visit showed a blank canvas over marks that were still on the thumbnail,
+and Keep replaced them. Existing ink also decides the board's aspect, so old
+and new strokes share one coordinate space and one factor rescales them.
+
 
 `components/DrawCanvas.tsx` — strokes are `<Path>` elements over the photo,
 through `react-native-svg`, which this app already ships. Skia would be

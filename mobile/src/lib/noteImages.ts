@@ -129,6 +129,20 @@ export async function removeNoteImage(id: string): Promise<void> {
   }
 }
 
+/** Forget one handwritten page. It has no bytes but its own marks. */
+export async function removeNoteInk(id: string): Promise<void> {
+  try {
+    await AsyncStorage.removeItem(inkKey(id));
+  } catch (error) {
+    warn('note ink delete failed:', error);
+  }
+}
+
+/** The same, for every page a deleted note owned. */
+export async function removeNoteInks(ids: string[]): Promise<void> {
+  await Promise.all(ids.map(id => removeNoteInk(id)));
+}
+
 /**
  * Drop every picture a deleted note owned.
  *
