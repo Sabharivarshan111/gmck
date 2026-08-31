@@ -53,7 +53,8 @@
     "audit:diagrams": "node scripts/diagram-audit.mjs",
     "shot:homeedit": "node preview/homeedit-shot.mjs",
     "shot:treeglide": "node preview/tree-growth-shot.mjs",
-    "shot:species": "node preview/species-shot.mjs"
+    "shot:species": "node preview/species-shot.mjs",
+    "shot:timerrun": "node preview/timer-run-shot.mjs"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^3.1.1",
