@@ -6,56 +6,12 @@ import {
   View,
   type LayoutChangeEvent,
 } from 'react-native';
-import { ChevronDown, ChevronUp, GripVertical, Minus, Plus } from 'lucide-react-native';
+import { ChevronDown, ChevronUp, GripVertical, Minus, Plus, Trash2 } from 'lucide-react-native';
 import { Touchable } from '@/components/Touchable';
 import { ReorderLockContext } from '@/components/ReorderLock';
 import { dragOwner } from '@/components/dragOwner';
 import { useTheme, withAlpha } from '@/theme';
 import { SPRING, springConfig, springTo, useReducedMotion } from '@/theme/motion';
-
-/**
- * Vertical drag-to-reorder for a handful of variable-height blocks.
- *
- * Reordering is **transform-only**. The children are always rendered in the
- * order given by `rendered`, which never changes while the screen is alive;
- * where each one appears is `translateY`. That is the single decision the rest
- * of this file follows from, and it buys two things:
- *
- *   • Committing a drop changes nothing on screen. Re-rendering the tree in
- *     the new order would repaint every block on the same frame the offsets
- *     are zeroed, and any disagreement between those two is a flash.
- *   • Every block that moves out of the way moves on the native driver. None
- *     of this touches layout, so the six SVGs in the subject grid are never
- *     asked to redraw because something above them was reordered.
- *
- * Heights are measured rather than assumed, because the blocks are a hero
- * card, a row of four buttons and a two-column grid — no two are the same
- * height, and the grid's changes with the year. Each row's measured height
- * includes its child's margins, so a section carries its own trailing space
- * with it and the gaps do not shuffle when the order does.
- *
- * **Editing is entered by holding a block**, and nothing about it is on
- * screen until then: a Home screen that greets you with instructions for
- * rearranging it has its priorities backwards.
- *
- * Getting the hold right takes two pieces, because React Native has no
- * gesture arbitration between a parent and a child. The timer is started from
- * `onTouchStart`, which a view receives even when a descendant owns the
- * responder, and cancelled by movement or release. When it fires, the row
- * takes the responder from the button under the finger with a capture-phase
- * claim, so the same finger carries straight on into the drag. The press that
- * button had already begun is neutralised by ReorderLockContext — see that
- * file; without it, holding the Pathology card to rearrange would open
- * Pathology on release.
- *
- * The header button enters the same mode. A hold cannot be discovered by a
- * screen reader, and TalkBack's own long-press is spoken for.
- *
- * The arrows are not a fallback for the drag; they are the other half of it.
- * The list is about two screens tall, so dragging from the bottom to the top
- * is not one gesture, and a drag is unusable with TalkBack besides. Both
- * routes commit through the same function.
- */
 
 export interface ReorderableProps<Id extends string> {
   /** Render order. Fixed for the life of the screen — see above. */
@@ -80,6 +36,8 @@ export interface ReorderableProps<Id extends string> {
   scaleRange?: { min: number; max: number };
   /** Fires while a block is held, so the page can stop scrolling under it. */
   onDragChange?: (dragging: boolean) => void;
+  /** Remove / hide a section from the home layout */
+  onRemove?: (id: Id) => void;
   sections: Record<Id, React.ReactNode>;
   labels: Record<Id, string>;
 }
@@ -94,6 +52,7 @@ export function Reorderable<Id extends string>({
   onScale,
   scaleRange,
   onDragChange,
+  onRemove,
   sections,
   labels,
 }: ReorderableProps<Id>) {
@@ -618,13 +577,13 @@ export function Reorderable<Id extends string>({
                     <Touchable
                       onPress={() => step(id, -0.05)}
                       label={`Make ${labels[id]} smaller`}
-                      disabled={(scales?.[id] ?? 1) <= (scaleRange?.min ?? 0.75) + 0.001}
+                      disabled={(scales?.[id] ?? 1) <= (scaleRange?.min ?? 0.65) + 0.001}
                       scaleTo={0.9}
                       style={styles.arrow}>
                       <Minus
                         size={16}
                         color={
-                          (scales?.[id] ?? 1) <= (scaleRange?.min ?? 0.75) + 0.001
+                          (scales?.[id] ?? 1) <= (scaleRange?.min ?? 0.65) + 0.001
                             ? withAlpha(colors.text, 0.25)
                             : colors.text
                         }
@@ -633,17 +592,31 @@ export function Reorderable<Id extends string>({
                     <Touchable
                       onPress={() => step(id, 0.05)}
                       label={`Make ${labels[id]} bigger`}
-                      disabled={(scales?.[id] ?? 1) >= (scaleRange?.max ?? 1.3) - 0.001}
+                      disabled={(scales?.[id] ?? 1) >= (scaleRange?.max ?? 1.45) - 0.001}
                       scaleTo={0.9}
                       style={styles.arrow}>
                       <Plus
                         size={16}
                         color={
-                          (scales?.[id] ?? 1) >= (scaleRange?.max ?? 1.3) - 0.001
+                          (scales?.[id] ?? 1) >= (scaleRange?.max ?? 1.45) - 0.001
                             ? withAlpha(colors.text, 0.25)
                             : colors.text
                         }
                       />
+                    </Touchable>
+                  </>
+                ) : null}
+
+                {onRemove ? (
+                  <>
+                    <View style={[styles.divider, { backgroundColor: colors.border }]} />
+                    <Touchable
+                      onPress={() => onRemove(id)}
+                      label={`Remove ${labels[id]}`}
+                      scaleTo={0.9}
+                      hitSlop={6}
+                      style={styles.arrow}>
+                      <Trash2 size={14} color={colors.danger} />
                     </Touchable>
                   </>
                 ) : null}

@@ -603,6 +603,13 @@ function Shell() {
       </NavigationContainer>
     );
   }
+  if (screen === 'homeresized') {
+    return (
+      <NavigationContainer theme={navTheme}>
+        <HomeScreen initialEditing={false} />
+      </NavigationContainer>
+    );
+  }
 
   if (screen === 'mcqdemo') {
     return <McqDemo />;

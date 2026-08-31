@@ -109,7 +109,7 @@ const HOME_SCALE_RANGE = { min: HOME_SCALE_MIN, max: HOME_SCALE_MAX };
 export default function HomeScreen({ initialEditing = false }: { initialEditing?: boolean } = {}) {
   const { colors, theme, textSize, setTextSize, custom, setCustom, preference, setPreference } =
     useTheme();
-  const { order, rendered, scales, save, setScale, reset } = useHomeOrder();
+  const { order, rendered, scales, save, removeSection, setScale, reset } = useHomeOrder();
   /**
    * Shrunk far enough that the block should shed its secondary detail rather
    * than keep rendering it at a size nobody can read. Zooming out is the
@@ -364,6 +364,7 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
           onScale={setScale}
           scaleRange={HOME_SCALE_RANGE}
           onDragChange={setDragging}
+          onRemove={removeSection}
           labels={HOME_SECTION_LABEL}
           sections={{
             hero: (

@@ -57,6 +57,7 @@ const SHOTS = [
   { name: 'usernotes-preview-light', query: 'screen=usernotesdemo&mode=preview&theme=light' },
   { name: 'home-edit', query: 'screen=homeedit' },
   { name: 'home-edit-bottom', query: 'screen=homeedit', scroll: 'bottom' },
+  { name: 'home-resized', query: 'screen=homeresized' },
   { name: 'home-light', query: 'screen=home&theme=light' },
   { name: 'progress-light', query: 'screen=progress&theme=light' },
 ];

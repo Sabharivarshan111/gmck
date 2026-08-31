@@ -23,8 +23,8 @@ export type HomeSection = (typeof HOME_SECTIONS)[number];
  * which is why anything under COMPACT_BELOW also drops the block's secondary
  * detail rather than just rendering it small.
  */
-export const HOME_SCALE_MIN = 0.75;
-export const HOME_SCALE_MAX = 1.3;
+export const HOME_SCALE_MIN = 0.65;
+export const HOME_SCALE_MAX = 1.45;
 export const HOME_SCALE_DEFAULT = 1;
 /** Below this a block sheds its secondary content instead of shrinking it. */
 export const COMPACT_BELOW = 0.9;
@@ -40,11 +40,8 @@ export const HOME_SECTION_LABEL: Record<HomeSection, string> = {
 /**
  * Reconcile a stored order against the sections that exist today.
  *
- * Anything unknown is dropped and anything missing is appended, so a release
- * that adds or removes a section cannot leave someone with a Home screen that
- * is missing a block — the failure mode of storing a plain array and trusting
- * it. Appending rather than inserting is the honest default: we know the new
- * section exists, not where this particular person would want it.
+ * Preserves user's custom section exclusions (e.g. removed WhatsApp block)
+ * while ensuring only valid sections are loaded.
  */
 export function reconcileOrder(stored: unknown): HomeSection[] {
   const known = new Set<string>(HOME_SECTIONS);
@@ -57,13 +54,11 @@ export function reconcileOrder(stored: unknown): HomeSection[] {
         out.push(value as HomeSection);
       }
     }
-  }
-  for (const section of HOME_SECTIONS) {
-    if (!seen.has(section)) {
-      out.push(section);
+    if (out.length > 0) {
+      return out;
     }
   }
-  return out;
+  return [...HOME_SECTIONS];
 }
 
 function defaultScales(): Record<HomeSection, number> {
@@ -96,15 +91,6 @@ function reconcileScales(stored: unknown): Record<HomeSection, number> {
 export function useHomeOrder() {
   const [order, setOrder] = useState<HomeSection[]>([...HOME_SECTIONS]);
   const [scales, setScales] = useState<Record<HomeSection, number>>(defaultScales);
-  /**
-   * The order the rows are *rendered* in, fixed for the life of the screen.
-   *
-   * Reordering only moves transforms; the tree never re-orders. Committing a
-   * drag by re-rendering the children in the new order would repaint every
-   * section at the exact moment the transforms are reset to zero, and any
-   * disagreement between the two is a visible flash. This way the commit
-   * changes nothing on screen, which is what a finished drag should look like.
-   */
   const [rendered, setRendered] = useState<HomeSection[]>([...HOME_SECTIONS]);
 
   useEffect(() => {
@@ -115,9 +101,6 @@ export function useHomeOrder() {
         }
         try {
           const parsed = JSON.parse(value);
-          // Two shapes: the original bare array, and the object that replaced
-          // it. Reading both means an existing arrangement is not thrown away
-          // by the release that added sizes.
           const next = reconcileOrder(Array.isArray(parsed) ? parsed : parsed?.order);
           setOrder(next);
           setRendered(next);
@@ -146,11 +129,15 @@ export function useHomeOrder() {
     [persist, scales],
   );
 
-  /**
-   * `commit` false while a finger is still on the handle: the value is needed
-   * on screen every frame, but writing it to storage every frame is a write
-   * per pixel dragged.
-   */
+  const removeSection = useCallback(
+    (id: HomeSection) => {
+      const next = order.filter(key => key !== id);
+      setOrder(next);
+      persist(next, scales);
+    },
+    [order, persist, scales],
+  );
+
   const setScale = useCallback(
     (section: HomeSection, scale: number, commit = true) => {
       setScales(previous => {
@@ -172,5 +159,5 @@ export function useHomeOrder() {
     AsyncStorage.removeItem(KEY).catch(() => {});
   }, []);
 
-  return { order, rendered, scales, save, setScale, reset };
+  return { order, rendered, scales, save, removeSection, setScale, reset };
 }
