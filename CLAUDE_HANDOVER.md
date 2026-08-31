@@ -79,17 +79,17 @@ This document contains the complete record of architecture, features, bugs solve
   - Releases are built automatically by GitHub Actions workflow `.github/workflows/android-release.yml`.
   - The workflow runs full checks, lints, typechecks, builds signed `app-release.aab` and `app-release.apk`, and attaches both binaries to a new GitHub Release.
 - **Latest Live Release on GitHub**:
-  - **Release Name**: `Release build 103` (tag: `release-103`)
-  - **URL**: [https://github.com/Sabharivarshan111/gmck/releases/tag/release-103](https://github.com/Sabharivarshan111/gmck/releases/tag/release-103)
+  - **Release Name**: `Release build 105` (tag: `release-105`)
+  - **URL**: [https://github.com/Sabharivarshan111/gmck/releases/tag/release-105](https://github.com/Sabharivarshan111/gmck/releases/tag/release-105)
   - **Assets Attached**:
-    - `app-release.aab` (**69.53 MB**) — Google Play Console signed bundle (User device download: **~24 MB**).
-    - `app-release.apk` (**87.81 MB**) — Standalone signed APK with full R8 bytecode minification (reduced by **7.14 MB**).
+    - `app-release.aab` (**69.54 MB**) — Google Play Console signed bundle.
+    - `app-release.apk` (**87.82 MB**) — Standalone signed APK with full R8 bytecode minification and Dual-Axis Home Resizing.
 - **Pre-Release Check Suite**: All 22 pre-release scripts pass (`check:fanout`, `check:mcq`, `check:notes-limits`, `check:notes-schema`, `check:sync`, `check:cloud-ids`, `check:android-res`, `check:theme-from-image`, `check:glass`, `check:sounds`, `check:agent-docs`, `check:payments`, `check:native-sound`, `check:subject-cards`, `check:contrast`, `check:anki`, `check:textbooks`, `check:one-app`, `check:flashcard-size`, `check:streak`, `check:supabase-queue`, `check:keyboard`).
 
 ---
 
 ## 6. 📚 Agent Rules & Conventions
-- `.agents/rules/94-textbook-grounded-diagram-engine.md`: Standard protocol for pre-generation textbook research from Indian MBBS textbooks (*BD Chaurasia, Vishram Singh, K. Sembulingam, DM Vasudevan, Ramadas Nayak, KD Tripathi, Apurba Sastry, K. Park*). **Note**: Native `generate_image` is an Antigravity-specific tool operating in batches of 10.
+- `.agents/rules/94-textbook-grounded-diagram-engine.md`: Standard protocol for pre-generation live Supabase duplicate check across all 228 diagrams. **Note**: Native `generate_image` is an Antigravity-specific tool operating in batches of 10.
 - `.agents/rules/95-release-and-pipeline-engine.md`: Instructions for dispatching release workflows and building APK/AAB binaries.
 - `CLAUDE.md`: Synchronized rule index.
 
