@@ -22,7 +22,13 @@ This document contains the complete record of architecture, features, bugs solve
 - **Problem**:
   - When typing notes or using formatting tools (Bold, Heading, Highlight, Bullets, Numbers), the editor was a raw `TextInput`. Users saw raw markdown tags (`# Heading`, `**bold**`, `==highlight==`, `- bullet`) while writing and had no way to view the formatted result in real time.
   - Heading and list parsing was fragile if trailing spaces or formatting markers varied.
+  - When long-pressing on a mobile phone to select text, Android frequently selects trailing whitespace (`"word "`), which broke markdown tags into invalid strings like `**word **`.
 - **Completed Work**:
+  - `mobile/src/components/NoteToolbar.tsx`:
+    - **Long-Press Selection Formatting**: Long-pressing or double-tapping any text in the note editor and tapping **`B`**, **`I`**, or **`Highlighter`** immediately wraps the selected text.
+    - **Whitespace Trimming**: `toggleWrap` automatically detects and excludes leading/trailing whitespace from the selection bounds so formatting is always syntactically valid (`**word** ` instead of `**word **`).
+    - **Multi-Color Highlight Switching & Toggle**: Selecting an already-highlighted phrase and tapping a new swatch switches colors (`==y:text==` $\rightarrow$ `==p:text==`), or tapping the same color un-highlights it.
+    - Added visual active state indicators on toolbar buttons when palettes are open.
   - `mobile/src/components/NoteText.tsx`:
     - Upgraded `parseNote` to leniently parse `#` to `######` headings (including `#Heading`), bullets (`-`, `*`, `•`, `+`, `–`, `—`), numbers (`1.`, `1)`, `1:`, `1]`), and bold line headers.
     - Upgraded `parseInlineTokens` to support markdown and HTML inline markers (`**bold**`, `__bold__`, `<b>`, `<strong>`, `*italic*`, `_italic_`, `<i>`, `<em>`, `==highlight==`, `==y:yellow==`, `==g:green==`, `==b:blue==`, `==p:pink==`, `<mark>`, `~~strike~~`, `<del>`, `<s>`).
