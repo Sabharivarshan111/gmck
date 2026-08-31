@@ -127,7 +127,7 @@ for (const shot of SHOTS) {
   if (shot.name === 'home-resized') {
     await page.goto(`http://localhost:5199/?${shot.query}`, { waitUntil: 'networkidle' });
     await page.evaluate(() => {
-      localStorage.setItem(
+      window.localStorage.setItem(
         'orbit:home-order-v1',
         JSON.stringify({
           order: ['hero', 'quick', 'whatsapp', 'subjects', 'stats'],
