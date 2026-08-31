@@ -24,7 +24,7 @@ import { useOnlinePresence } from '@/hooks/useOnlinePresence';
 import { formatFocusTime } from '@/lib/focusStats';
 import { FocusTree, TreeChip } from '@/components/FocusTree';
 import { speciesFor } from '@/lib/trees';
-import { forestNow, loadForest, subscribeForest, treesToday } from '@/lib/forest';
+import { clearTodayForest, forestNow, loadForest, subscribeForest, treesToday } from '@/lib/forest';
 
 /** "an oak", "a pine" — a species name read aloud in a sentence. */
 function aOrAn(name: string): string {
@@ -78,14 +78,10 @@ export default function TimerScreen() {
 
   const activeMode = MODES.find(m => m.key === timer.mode) ?? MODES[0];
   /*
-   * A seed already in the ground before the first tick.
-   *
-   * At a literal zero the dial is empty soil, which reads as "nothing here"
-   * rather than "ready" — the same reason nothing in this app scales from 0.
-   * It has to clear the crown's start, too: below that it is a bare grey twig,
-   * which looks like a rendering fault rather than a seedling.
+   * Botanical growth starts at Stage 1 (0.0: seed / soil mound / pot)
+   * and smoothly interpolates across all 24 frames to Stage 24 (1.0: mature tree).
    */
-  const growthShown = timer.mode === 'focus' ? Math.max(0.2, timer.growth) : 0;
+  const growthShown = timer.mode === 'focus' ? timer.growth : 0;
   // How much of this session is still to come, for the dial ring.
   const remainingPercent =
     timer.totalSeconds > 0 ? (timer.remaining / timer.totalSeconds) * 100 : 100;
@@ -126,6 +122,9 @@ export default function TimerScreen() {
     };
   }, []);
   const today = treesToday(planted);
+  const handleResetToday = useCallback(async () => {
+    await clearTodayForest();
+  }, []);
 
   useEffect(() => {
     if (timer.completionNonce === 0) {
@@ -454,6 +453,19 @@ export default function TimerScreen() {
           <Text style={[styles.plotTotal, { color: colors.text }]}>
             {formatFocusTime(timer.focusMinutesToday)}
           </Text>
+          {today.length > 0 || timer.focusMinutesToday > 0 ? (
+            <Touchable
+              onPress={handleResetToday}
+              label="Reset today's plot"
+              scaleTo={0.9}
+              style={[
+                styles.resetPlotBtn,
+                { backgroundColor: colors.cardElevated, borderColor: colors.border },
+              ]}>
+              <RotateCcw size={11} color={colors.textMuted} />
+              <Text style={[styles.resetPlotText, { color: colors.textMuted }]}>Reset</Text>
+            </Touchable>
+          ) : null}
         </View>
         {!timer.settings.trees ? null : today.length > 0 ? (
           <ScrollView
@@ -516,6 +528,20 @@ const styles = StyleSheet.create({
   },
   plotEmpty: {
     ...typeScale.caption,
+  },
+  resetPlotBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 8,
+    borderWidth: StyleSheet.hairlineWidth,
+    marginLeft: 4,
+  },
+  resetPlotText: {
+    fontSize: 11,
+    fontWeight: '600',
   },
   /* Breaks have no tree — the coffee cup stands in, at a size that holds the
      middle of a 260dp dial rather than floating in it. */

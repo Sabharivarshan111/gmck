@@ -122,37 +122,165 @@ const METRICS = {
 };
 
 /**
- * ?screen=treegallery — every focus tree, at four stages of growth.
- *
- * Preview only. The trees are drawn from numbers rather than pictures, so the
- * only way to see whether a species reads as that species is to look at all of
- * them side by side, which is not a state the app itself can be put into.
+/**
+ * ?screen=treegallery — every focus tree, at 5 key stages of 24-frame growth.
  */
 function TreeGallery() {
   const { colors } = useTheme();
   return (
     <ScrollView
       style={{ backgroundColor: colors.background }}
-      contentContainerStyle={{ padding: 16, gap: 10 }}>
+      contentContainerStyle={{ padding: 16, gap: 14 }}>
+      <View style={{ marginBottom: 8 }}>
+        <Text style={{ color: colors.text, fontSize: 18, fontWeight: '800' }}>
+          🌿 24-Frame Cinematic Botanical Growth Engine
+        </Text>
+        <Text style={{ color: colors.textSecondary, fontSize: 12, marginTop: 2 }}>
+          Dual-layer optical cross-dissolve across all 24 sliced keyframes
+        </Text>
+      </View>
       {SPECIES.map(species => (
-        <View key={species.key} style={{ gap: 4 }}>
-          <Text style={{ color: colors.text, fontWeight: '700' }}>
-            {species.name} · {species.unlockAt} min
-          </Text>
-          <View style={{ flexDirection: 'row', gap: 8, alignItems: 'flex-end' }}>
-            {[0.15, 0.45, 0.75, 1].map(growth => (
-              <FocusTree
-                key={growth}
-                species={species.key}
-                growth={growth}
-                size={130}
-                sway={false}
-              />
+        <View key={species.key} style={{ gap: 6, backgroundColor: colors.card, padding: 12, borderRadius: 16, borderWidth: 1, borderColor: colors.border }}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Text style={{ color: colors.text, fontWeight: '700', fontSize: 14 }}>
+              {species.name}
+            </Text>
+            <Text style={{ color: colors.primary, fontWeight: '600', fontSize: 12 }}>
+              Unlock: {species.unlockAt}m
+            </Text>
+          </View>
+          <View style={{ flexDirection: 'row', gap: 6, alignItems: 'flex-end', justifyContent: 'space-between' }}>
+            {[0.05, 0.25, 0.50, 0.75, 1.0].map(growth => (
+              <View key={growth} style={{ alignItems: 'center', gap: 2 }}>
+                <FocusTree
+                  species={species.key}
+                  growth={growth}
+                  size={64}
+                  sway={false}
+                />
+                <Text style={{ color: colors.textSecondary, fontSize: 10, fontWeight: '600' }}>
+                  {Math.round(growth * 100)}%
+                </Text>
+              </View>
             ))}
-            <FocusTree species={species.key} growth={1} size={130} wilted sway={false} />
           </View>
         </View>
       ))}
+    </ScrollView>
+  );
+}
+
+/**
+ * ?screen=growthshowcase — Interactive 24-frame growth interpolation showcase.
+ */
+function GrowthShowcase() {
+  const { colors } = useTheme();
+  const [progress, setProgress] = React.useState(0.5);
+  const [activeSpecies, setActiveSpecies] = React.useState('oak');
+
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      setProgress(p => (p >= 1.0 ? 0.0 : +(p + 0.04).toFixed(2)));
+    }, 400);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <ScrollView
+      style={{ backgroundColor: colors.background }}
+      contentContainerStyle={{ padding: 16, gap: 16 }}>
+      <View>
+        <Text style={{ color: colors.text, fontSize: 20, fontWeight: '800' }}>
+          Real-Time Procedural Interpolation
+        </Text>
+        <Text style={{ color: colors.textSecondary, fontSize: 13, marginTop: 4 }}>
+          Continuous dual-layer cross-dissolve & sub-pixel scale morphing
+        </Text>
+      </View>
+
+      {/* Interactive Live Timer Ring Simulation */}
+      <View
+        style={{
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: 24,
+          backgroundColor: colors.card,
+          borderRadius: 24,
+          borderWidth: 1,
+          borderColor: colors.border,
+        }}>
+        <View
+          style={{
+            width: 220,
+            height: 220,
+            borderRadius: 110,
+            borderWidth: 4,
+            borderColor: colors.primary,
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: colors.background,
+          }}>
+          <FocusTree species={activeSpecies} growth={progress} size={160} sway={true} />
+        </View>
+        <Text style={{ color: colors.text, fontSize: 16, fontWeight: '700', marginTop: 12 }}>
+          {Math.round(progress * 100)}% Grown · Stage {Math.min(24, Math.floor(progress * 23) + 1)}/24
+        </Text>
+      </View>
+
+      {/* Species Selector */}
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
+        {SPECIES.map(sp => (
+          <View
+            key={sp.key}
+            style={{
+              paddingHorizontal: 12,
+              paddingVertical: 8,
+              borderRadius: 12,
+              backgroundColor: sp.key === activeSpecies ? colors.primary : colors.card,
+              borderWidth: 1,
+              borderColor: colors.border,
+            }}>
+            <Text
+              onPress={() => setActiveSpecies(sp.key)}
+              style={{
+                color: sp.key === activeSpecies ? '#FFFFFF' : colors.text,
+                fontWeight: '600',
+                fontSize: 12,
+              }}>
+              {sp.name}
+            </Text>
+          </View>
+        ))}
+      </ScrollView>
+
+      {/* 24-Frame Full Filmstrip */}
+      <View style={{ gap: 8 }}>
+        <Text style={{ color: colors.text, fontSize: 15, fontWeight: '700' }}>
+          24 Discrete Transparent Slices ({activeSpecies})
+        </Text>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
+          {Array.from({ length: 24 }, (_, i) => i + 1).map(stageNum => (
+            <View
+              key={stageNum}
+              style={{
+                width: 54,
+                height: 60,
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: colors.card,
+                borderRadius: 8,
+                borderWidth: 1,
+                borderColor: colors.border,
+                padding: 2,
+              }}>
+              <FocusTree species={activeSpecies} growth={(stageNum - 1) / 23} size={42} sway={false} />
+              <Text style={{ color: colors.textSecondary, fontSize: 9, fontWeight: '700' }}>
+                F{stageNum}
+              </Text>
+            </View>
+          ))}
+        </View>
+      </View>
     </ScrollView>
   );
 }
@@ -299,6 +427,9 @@ function Shell() {
 
   if (screen === 'treegallery') {
     return <TreeGallery />;
+  }
+  if (screen === 'growthshowcase') {
+    return <GrowthShowcase />;
   }
   if (screen === 'notesdemo') {
     return <NotesRendererDemo />;

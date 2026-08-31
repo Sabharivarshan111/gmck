@@ -49,6 +49,9 @@ const SHOTS = [
   { name: 'anki-study', query: 'screen=ankidemo' },
   { name: 'progress-bottom', query: 'screen=progress', scroll: 'bottom' },
   { name: 'timer-bottom', query: 'screen=timer', scroll: 'bottom' },
+  { name: 'treegallery', query: 'screen=treegallery' },
+  { name: 'treegallery-bottom', query: 'screen=treegallery', scroll: 'bottom' },
+  { name: 'growthshowcase', query: 'screen=growthshowcase' },
   { name: 'home-light', query: 'screen=home&theme=light' },
   { name: 'progress-light', query: 'screen=progress&theme=light' },
 ];

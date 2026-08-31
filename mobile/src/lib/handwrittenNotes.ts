@@ -384,15 +384,126 @@ const DIAGRAM_STOP_WORDS = new Set([
   'poisons', 'poison', 'poisoning', 'acute', 'chronic', 'general', 'special',
   'system', 'systemic', 'organs', 'organ', 'human', 'structure', 'structures',
   'functions', 'function', 'parts', 'part', 'suitable', 'examples', 'available',
-  'protection', 'act', 'acts', 'proof', 'therapeutic'
+  'protection', 'act', 'acts', 'proof', 'therapeutic', 'classification',
+  'bone', 'bones', 'artery', 'arteries', 'vein', 'veins', 'nerve', 'nerves',
+  'muscle', 'muscles', 'joint', 'joints', 'gland', 'glands', 'duct', 'ducts',
+  'wall', 'walls', 'cord', 'blood', 'reflex', 'reflexes', 'cycles',
+  'disorder', 'disorders', 'disease', 'diseases', 'syndrome', 'syndromes',
+  'supply', 'long', 'marrow', 'smear', 'picture', 'findings', 'origin',
+  'course', 'distribution', 'branches', 'termination', 'anastomosis', 'relations',
+  'articular', 'surface', 'surfaces', 'disc', 'discs', 'ligament', 'ligaments',
+  'movement', 'movements', 'capsule', 'cavity', 'cavities', 'cartilage',
+  'borders', 'border', 'fossa', 'tubercle', 'process', 'notch', 'insertion',
+  'action', 'actions', 'innervation', 'tributaries', 'boundaries', 'contents',
+  'extent', 'variation', 'variations', 'correlate', 'development', 'formation',
+  'sites', 'presenting', 'location', 'anomalies', 'lesions', 'derivatives',
+  'drainage', 'lymphatic', 'histology', 'gross', 'microscopic',
 ]);
 
+function normalizeSubject(keyOrName?: string): string | undefined {
+  if (!keyOrName) return undefined;
+  const s = keyOrName.toLowerCase().replace(/[-_]/g, ' ').trim();
+  if (s.includes('anat')) return 'Anatomy';
+  if (s.includes('physio')) return 'Physiology';
+  if (s.includes('biochem')) return 'Biochemistry';
+  if (s.includes('patho')) return 'Pathology';
+  if (s.includes('pharm')) return 'Pharmacology';
+  if (s.includes('micro')) return 'Microbiology';
+  if (s.includes('comm') || s.includes('psm')) return 'Community Medicine';
+  if (s.includes('foren') || s.includes('fmt')) return 'Forensic Medicine';
+  if (s.includes('ent')) return 'ENT';
+  if (s.includes('ophth')) return 'Ophthalmology';
+  if (s.includes('surg') || s.includes('ortho')) return 'General Surgery and Orthopaedics';
+  if (s.includes('med')) return 'General Medicine';
+  if (s.includes('paed') || s.includes('ped')) return 'Paediatrics';
+  if (s.includes('obg') || s.includes('gyn') || s.includes('obst')) return 'Obstetrics & Gynaecology';
+  return undefined;
+}
+
 /**
- * Look up a diagram from `question_diagrams` for a single question or topic query.
+ * Known distinct anatomical/clinical entities to prevent cross-organ collisions.
  */
-export async function findDiagramForQuery(
+const EXCLUSIVE_ENTITIES = [
+  ['temporomandibular', 'tmj', 'mandible', 'mandibular'],
+  ['shoulder', 'glenohumeral', 'scapula', 'acromion', 'rotator cuff'],
+  ['knee', 'patella', 'meniscus', 'cruciate'],
+  ['elbow', 'radioulnar', 'olecranon'],
+  ['hip', 'acetabulum', 'iliofemoral'],
+  ['wrist', 'carpal', 'carpometacarpal'],
+  ['brachial', 'plexus', 'erbs'],
+  ['femoral', 'femur'],
+  ['popliteal'],
+  ['axilla', 'axillary'],
+  ['carotid'],
+  ['cavernous'],
+  ['intercostal'],
+  ['coronary'],
+  ['atrium', 'atrial'],
+  ['cerebellum', 'cerebellar'],
+  ['cerebrum', 'cerebral', 'internal capsule'],
+  ['medulla', 'medullary'],
+  ['pons', 'pontine'],
+  ['midbrain'],
+  ['facial nerve', 'facial'],
+  ['median nerve', 'median'],
+  ['ulnar nerve', 'ulnar'],
+  ['radial nerve', 'radial'],
+  ['sciatic'],
+  ['duodenum', 'duodenal'],
+  ['pancreas', 'pancreatic'],
+  ['spleen', 'splenic'],
+  ['liver', 'hepatic', 'portal'],
+  ['kidney', 'renal'],
+  ['stomach', 'gastric'],
+  ['testis', 'testicular'],
+  ['ovary', 'ovarian'],
+  ['breast', 'mammary'],
+  ['lung', 'lungs', 'bronchopulmonary'],
+  ['larynx', 'laryngeal', 'vocal cord'],
+  ['pharynx', 'pharyngeal'],
+  ['palatine tonsil', 'tonsil'],
+  ['tongue', 'lingual'],
+  ['parotid'],
+  ['thyroid'],
+  ['pituitary'],
+];
+
+/**
+ * Build an authentic, textbook-grounded Gemini image generation prompt for any MBBS question.
+ */
+export function buildGeminiPromptForQuestion(
+  question: string,
+  subject?: string,
+): string {
+  const cleanQ = question
+    .replace(/[0-9]+\./g, '')
+    .replace(/\(.*?\)/g, '')
+    .replace(/[*#★☆]/g, '')
+    .trim();
+
+  const subj = normalizeSubject(subject) || 'Medical Science';
+
+  let textbook = 'standard MBBS textbook (BD Chaurasia / Vishram Singh)';
+  if (subj === 'Physiology') textbook = 'K. Sembulingam / Guyton & Hall';
+  if (subj === 'Biochemistry') textbook = 'DM Vasudevan / Harper';
+  if (subj === 'Pathology') textbook = 'Ramadas Nayak / Robbins & Cotran';
+  if (subj === 'Pharmacology') textbook = 'KD Tripathi / Tara Shanbhag';
+  if (subj === 'Microbiology') textbook = 'Apurba Sastry / Ananthanarayan';
+  if (subj === 'Community Medicine') textbook = 'K. Park (PSM)';
+  if (subj === 'Forensic Medicine') textbook = 'KS Narayan Reddy / Gautam Biswas';
+
+  return `A professional university exam diagram for the MBBS ${subj} topic: "${cleanQ}".\n\nTextbook Grounding: Based directly on standard schematics from ${textbook}.\nLayout & Style: Crisp 2D medical textbook illustration, anatomical line art with soft watercolor shading, straight horizontal leader lines with clear bold labels, strictly centered on a solid pure white background (#FFFFFF) with high contrast and zero clutter.`;
+}
+
+/**
+ * Look up ALL authentic diagrams from `question_diagrams` for a question or topic query.
+ * Scoped strictly by subject and exclusive entity families to prevent false positives.
+ */
+export async function findAllDiagramsForQuery(
   query: string,
-): Promise<{ url: string; title?: string } | null> {
+  subjectKey?: string,
+  subjectName?: string,
+): Promise<Array<{ url: string; title?: string }>> {
   const clean = query
     .replace(/[0-9]+\./g, '')
     .replace(/\(.*?\)/g, '')
@@ -401,56 +512,86 @@ export async function findDiagramForQuery(
     .replace(/\s+/g, ' ')
     .trim();
   if (clean.length < 4) {
-    return null;
+    return [];
   }
 
-  const words = clean
-    .toLowerCase()
+  const queryLower = clean.toLowerCase();
+  const canonicalSubject = normalizeSubject(subjectName || subjectKey);
+  if (!canonicalSubject) {
+    return [];
+  }
+
+  const matchingFamily = EXCLUSIVE_ENTITIES.find(family =>
+    family.some(kw => queryLower.includes(kw)),
+  );
+
+  const words = queryLower
     .split(/\s+/)
     .filter(w => w.length > 3 && !DIAGRAM_STOP_WORDS.has(w));
-  if (words.length === 0) {
-    return null;
-  }
 
   try {
     const { data } = await supabase
       .from('question_diagrams')
-      .select('public_url, question_text')
-      .not('public_url', 'is', null);
+      .select('public_url, storage_path, question_text, subject')
+      .not('public_url', 'is', null)
+      .ilike('subject', `%${canonicalSubject}%`);
 
     if (!data || data.length === 0) {
-      return null;
+      return [];
     }
 
-    let bestMatch: { public_url: string; question_text: string } | null = null;
-    let maxScore = 0;
+    const matches: Array<{ url: string; title: string; score: number }> = [];
+    const seenUrls = new Set<string>();
 
     for (const row of data) {
       if (!row.public_url || !row.question_text) continue;
+      if (seenUrls.has(row.public_url)) continue;
+
       const rowText = row.question_text.toLowerCase();
+      const storagePath = (row.storage_path || '').toLowerCase();
+
+      if (matchingFamily) {
+        const rowMatchesFamily = matchingFamily.some(
+          kw => rowText.includes(kw) || storagePath.includes(kw),
+        );
+        if (!rowMatchesFamily) {
+          continue; // Strict barrier
+        }
+      }
+
       let score = 0;
+      if (queryLower.length >= 15 && (rowText.includes(queryLower.slice(0, 25)) || queryLower.includes(rowText.slice(0, 25)))) {
+        score += 10;
+      }
+
       for (const w of words) {
-        if (rowText.includes(w)) {
+        if (rowText.includes(w) || storagePath.includes(w)) {
           score += 1;
         }
       }
-      if (score > maxScore) {
-        maxScore = score;
-        bestMatch = row;
+
+      if (score >= 1) {
+        seenUrls.add(row.public_url);
+        matches.push({
+          url: row.public_url,
+          title: row.question_text,
+          score,
+        });
       }
     }
 
-    if (maxScore >= 1 && bestMatch) {
-      return { url: bestMatch.public_url, title: bestMatch.question_text };
-    }
+    // Sort by relevance score descending
+    matches.sort((a, b) => b.score - a.score);
+    return matches.map(m => ({ url: m.url, title: m.title }));
   } catch (err) {
     console.warn('[handwrittenNotes] diagram lookup failed:', err);
   }
-  return null;
+  return [];
 }
 
 /**
- * Ensures single-question note content carries its visual exam diagram.
+ * Ensures single-question note content carries its authentic visual exam diagrams,
+ * or attaches a ready-to-use Gemini prompt if no pre-rendered diagram exists.
  */
 export async function ensureSingleNoteDiagram(
   content: NotesContent,
@@ -467,33 +608,52 @@ export async function ensureSingleNoteDiagram(
     return content;
   }
 
-  const diagram = await findDiagramForQuery(request.question);
-  if (!diagram?.url) {
+  const diagrams = await findAllDiagramsForQuery(
+    request.question,
+    request.subjectKey,
+    request.subjectName,
+  );
+
+  if (diagrams.length === 0) {
     return content;
   }
 
-  const diagramSection: Section = {
-    type: 'definition',
-    title: 'High-Yield Visual Exam Diagram',
-    icon: '🎨',
-    payload: {
-      text: `![High-Yield Exam Diagram](${diagram.url})\n\n💡 High-Yield Continuous Visual Mnemonic (Standard Textbook Grounded)`,
-    },
-  };
+  // Attach ALL authentic matching diagrams as rich visual sections
+  const diagramSections: Section[] = diagrams.map((diag, idx) => {
+    const cleanTitle = (diag.title || request.question)
+      .replace(/[0-9]+\./g, '')
+      .replace(/\(.*?\)/g, '')
+      .replace(/[*#★☆]/g, '')
+      .trim();
+
+    const sectionTitle =
+      diagrams.length > 1
+        ? `High-Yield Visual Exam Diagram (${idx + 1}/${diagrams.length})`
+        : 'High-Yield Visual Exam Diagram';
+
+    return {
+      type: 'definition',
+      title: sectionTitle,
+      icon: '🎨',
+      payload: {
+        text: `![${cleanTitle}](${diag.url})\n\n💡 High-Yield Continuous Visual Mnemonic (Standard Textbook Grounded)`,
+      },
+    };
+  });
 
   const enriched: NotesContent = {
     ...content,
-    diagramUrl: diagram.url,
-    sections: [diagramSection, ...content.sections],
+    diagramUrl: diagrams[0]?.url,
+    sections: [...diagramSections, ...content.sections],
   };
 
-  // Best effort save back to Supabase so future requests receive the diagram
+  // Best effort save back to Supabase
   try {
     const clean = request.question.trim();
     await supabase.from('handwritten_notes').upsert({
       subtopic_key: `single::${request.subjectKey}::${hashKey(clean)}`,
       year: request.yearLabel,
-      subject: request.subjectName || request.subjectKey || 'Community Medicine',
+      subject: request.subjectName || request.subjectKey || 'Medical Science',
       subtopic_name: clean.slice(0, 80),
       content: enriched,
       updated_at: new Date().toISOString(),

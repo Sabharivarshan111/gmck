@@ -113,59 +113,146 @@ export function noteFontFamily(key?: string | null): string | undefined {
   return NOTE_FONTS.find(font => font.key === key)?.family;
 }
 
-const INLINE = /(\*\*[^*]+\*\*|==(?:[ygbp]:)?[^=]+==|_[^_]+_)/g;
+interface InlineStyle {
+  bold?: boolean;
+  italic?: boolean;
+  highlight?: string;
+  strike?: boolean;
+}
+
+export interface InlineToken extends InlineStyle {
+  text: string;
+}
 
 /**
- * `**bold**`, `_italic_` and `==highlight==` inside a line.
- *
- * The bold convention is the one `NotesContentView` already uses for the
- * generated notes, so a reader who has seen one has seen both. `==` for a
- * highlight is the convention every note app that has one uses.
+ * Tokenize inline formatting including bold, italic, highlights, and combinations.
+ */
+export function parseInlineTokens(text: string, currentStyle: InlineStyle = {}): InlineToken[] {
+  if (!text) return [];
+
+  // Match delimiter patterns: highlight, bold, strikethrough, italic
+  const highlightMatch = text.match(/==(?:([ygbp]):)?([^=\n]+?)==/);
+  const boldMatch = text.match(/(?:\*\*([^*]+?)\*\*|__([^_]+?)__)/);
+  const strikeMatch = text.match(/~~([^~]+?)~~/);
+  const italicMatch = text.match(/(?:^|[^*_])(?:\*([^*\s](?:[^*]*?[^*\s])?)\*|_([^_\\s](?:[^_]*?[^_\\s])?)_)/);
+
+  // Find the earliest matching token
+  let earliest: {
+    index: number;
+    length: number;
+    inner: string;
+    style: InlineStyle;
+  } | null = null;
+
+  if (highlightMatch && highlightMatch.index !== undefined) {
+    earliest = {
+      index: highlightMatch.index,
+      length: highlightMatch[0].length,
+      inner: highlightMatch[2],
+      style: { ...currentStyle, highlight: highlightMatch[1] || 'y' },
+    };
+  }
+
+  if (boldMatch && boldMatch.index !== undefined) {
+    if (!earliest || boldMatch.index < earliest.index) {
+      earliest = {
+        index: boldMatch.index,
+        length: boldMatch[0].length,
+        inner: boldMatch[1] || boldMatch[2],
+        style: { ...currentStyle, bold: true },
+      };
+    }
+  }
+
+  if (strikeMatch && strikeMatch.index !== undefined) {
+    if (!earliest || strikeMatch.index < earliest.index) {
+      earliest = {
+        index: strikeMatch.index,
+        length: strikeMatch[0].length,
+        inner: strikeMatch[1],
+        style: { ...currentStyle, strike: true },
+      };
+    }
+  }
+
+  if (italicMatch && italicMatch.index !== undefined) {
+    const matchStr = italicMatch[0];
+    const offset = matchStr.startsWith('*') || matchStr.startsWith('_') ? 0 : 1;
+    const actualIndex = italicMatch.index + offset;
+    const actualLength = matchStr.length - offset;
+    if (!earliest || actualIndex < earliest.index) {
+      earliest = {
+        index: actualIndex,
+        length: actualLength,
+        inner: italicMatch[1] || italicMatch[2],
+        style: { ...currentStyle, italic: true },
+      };
+    }
+  }
+
+  if (!earliest) {
+    return [{ text, ...currentStyle }];
+  }
+
+  const before = text.slice(0, earliest.index);
+  const after = text.slice(earliest.index + earliest.length);
+
+  const tokens: InlineToken[] = [];
+  if (before) {
+    tokens.push(...parseInlineTokens(before, currentStyle));
+  }
+  tokens.push(...parseInlineTokens(earliest.inner, earliest.style));
+  if (after) {
+    tokens.push(...parseInlineTokens(after, currentStyle));
+  }
+
+  return tokens;
+}
+
+/**
+ * `**bold**`, `_italic_`, `*italic*` and `==highlight==` inside any note line.
  */
 function Inline({ text, style }: { text: string; style: object }) {
-  const parts = useMemo(() => text.split(INLINE).filter(Boolean), [text]);
-  /*
-   * The fast path is "there are no markers here", not "there is one piece".
-   *
-   * A line that is *entirely* one mark — `_Vi is the capsular one_`, or a
-   * bullet that is nothing but a highlight — splits into exactly one piece,
-   * and the old check read that as plain text and printed the underscores.
-   * The lines most worth marking are the short ones, so this was wrong
-   * precisely where the feature was being used.
-   */
-  if (!text.includes('**') && !text.includes('==') && !text.includes('_')) {
+  const tokens = useMemo(() => parseInlineTokens(text), [text]);
+
+  if (
+    tokens.length === 1 &&
+    !tokens[0].bold &&
+    !tokens[0].italic &&
+    !tokens[0].highlight &&
+    !tokens[0].strike
+  ) {
     return <Text style={style}>{text}</Text>;
   }
+
   return (
     <Text style={style}>
-      {parts.map((part, index) => {
-        if (part.startsWith('**') && part.endsWith('**') && part.length > 4) {
-          return (
-            <Text key={index} style={styles.strong}>
-              {part.slice(2, -2)}
-            </Text>
-          );
+      {tokens.map((token, index) => {
+        const tokenStyles: any[] = [];
+        if (token.bold) {
+          tokenStyles.push(styles.strong);
         }
-        if (part.startsWith('_') && part.endsWith('_') && part.length > 2) {
-          return (
-            <Text key={index} style={styles.italic}>
-              {part.slice(1, -1)}
-            </Text>
-          );
+        if (token.italic) {
+          tokenStyles.push(styles.italic);
         }
-        if (part.startsWith('==') && part.endsWith('==') && part.length > 4) {
-          const inner = part.slice(2, -2);
-          const keyed = inner.match(/^([ygbp]):(.*)$/);
-          const tint = HIGHLIGHTS[keyed?.[1] ?? 'y'] ?? HIGHLIGHTS.y;
-          return (
-            <Text
-              key={index}
-              style={[styles.highlight, { backgroundColor: tint, color: onColor(tint) }]}>
-              {keyed ? keyed[2] : inner}
-            </Text>
-          );
+        if (token.strike) {
+          tokenStyles.push(styles.strike);
         }
-        return part;
+        if (token.highlight) {
+          const tint = HIGHLIGHTS[token.highlight] ?? HIGHLIGHTS.y;
+          tokenStyles.push([
+            styles.highlight,
+            { backgroundColor: tint, color: onColor(tint) },
+          ]);
+        }
+        if (tokenStyles.length === 0) {
+          return token.text;
+        }
+        return (
+          <Text key={index} style={tokenStyles}>
+            {token.text}
+          </Text>
+        );
       })}
     </Text>
   );
@@ -173,10 +260,6 @@ function Inline({ text, style }: { text: string; style: object }) {
 
 /**
  * The note as one line of plain prose, for a card's three-line preview.
- *
- * A preview is too small to render structure, and showing "# Antigens of S.
- * Typhi" there would put the punctuation back in the one place the reader
- * cannot expand it away.
  */
 export function plainPreview(content: string): string {
   return content
@@ -186,9 +269,13 @@ export function plainPreview(content: string): string {
         .trim()
         .replace(/^#{1,3}\s+/, '')
         .replace(/^[-*•]\s+/, '• ')
+        .replace(/^\d{1,3}[.)]\s+/, '')
         .replace(/\*\*([^*]+)\*\*/g, '$1')
+        .replace(/__([^_]+)__/g, '$1')
+        .replace(/\*([^*]+)\*/g, '$1')
         .replace(/_([^_]+)_/g, '$1')
-        .replace(/==(?:[ygbp]:)?([^=]+)==/g, '$1'),
+        .replace(/==(?:[ygbp]:)?([^=]+)==/g, '$1')
+        .replace(/~~([^~]+)~~/g, '$1'),
     )
     .filter(line => line.length > 0)
     .join('  ');
@@ -210,15 +297,15 @@ export function NoteText({ content, font }: { content: string; font?: string | n
         }
         if (block.kind === 'heading') {
           return (
-            <Text
+            <Inline
               key={index}
+              text={block.text}
               style={[
                 block.level === 1 ? styles.heading : styles.subheading,
                 { color: colors.text },
                 face,
-              ]}>
-              {block.text}
-            </Text>
+              ]}
+            />
           );
         }
         if (block.kind === 'bullet' || block.kind === 'number') {
@@ -257,18 +344,20 @@ const styles = StyleSheet.create({
   },
   heading: {
     ...typeScale.title3,
+    fontWeight: '700',
     marginTop: 16,
-    marginBottom: 4,
+    marginBottom: 6,
   },
   subheading: {
     ...typeScale.bodyStrong,
+    fontWeight: '700',
     marginTop: 12,
-    marginBottom: 2,
+    marginBottom: 4,
   },
   row: {
     flexDirection: 'row',
     gap: 6,
-    marginBottom: 3,
+    marginBottom: 4,
   },
   marker: {
     ...typeScale.body,
@@ -287,9 +376,13 @@ const styles = StyleSheet.create({
   italic: {
     fontStyle: 'italic',
   },
+  strike: {
+    textDecorationLine: 'line-through',
+  },
   highlight: {
     /* A little air either side, so the mark reads as a swipe of pen. */
-    paddingHorizontal: 3,
+    paddingHorizontal: 4,
+    borderRadius: 3,
   },
   /* A blank line is a paragraph break, not an empty row of text. */
   gap: {

@@ -136,3 +136,17 @@ export async function clearForest(): Promise<void> {
     warn('forest clear failed:', error);
   }
 }
+
+export async function clearTodayForest(now = Date.now()): Promise<void> {
+  const all = await loadForest();
+  const today = dayKey(now);
+  const next = all.filter(tree => dayKey(tree.at) !== today);
+  cache = next;
+  announce();
+  try {
+    await AsyncStorage.setItem(KEY, JSON.stringify(next));
+  } catch (error) {
+    warn('forest clear today failed:', error);
+  }
+}
+

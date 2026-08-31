@@ -20,6 +20,73 @@ interface DiagramCardProps {
   caption?: string;
 }
 
+/**
+ * Format a human-readable diagram name / heading.
+ * Prioritizes clean explicit titles, descriptive alt text, or formatted image filenames.
+ */
+export function formatDiagramHeading(
+  title?: string,
+  caption?: string,
+  imageUrl?: string,
+): string {
+  // 1. Check title
+  if (title) {
+    const cleaned = title
+      .replace(/^[🎨\s]+/, '')
+      .replace(/[*#★☆]/g, '')
+      .trim();
+    if (
+      cleaned &&
+      !cleaned.toLowerCase().includes('high-yield visual exam diagram') &&
+      !cleaned.toLowerCase().includes('ai exam diagram')
+    ) {
+      return cleaned;
+    }
+  }
+
+  // 2. Check caption (alt text)
+  if (caption) {
+    const cleaned = caption
+      .replace(/!\[.*?\]\(.*?\)/g, '')
+      .replace(/https:\/\/[^\s]+/g, '')
+      .replace(/[*#★☆]/g, '')
+      .trim();
+    if (
+      cleaned &&
+      cleaned.length > 2 &&
+      !cleaned.toLowerCase().includes('high-yield exam diagram') &&
+      !cleaned.toLowerCase().includes('exam diagram') &&
+      !cleaned.toLowerCase().startsWith('http')
+    ) {
+      return cleaned;
+    }
+  }
+
+  // 3. Derive from imageUrl filename
+  if (imageUrl) {
+    try {
+      const pathname = imageUrl.split('?')[0];
+      const filename = pathname.split('/').pop() || '';
+      const base = filename.replace(/\.[a-zA-Z0-9]+$/, '');
+      if (base && base.length > 2) {
+        return base
+          .split(/[-_]+/)
+          .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+          .join(' ')
+          .replace(/\bVs\b/g, 'vs')
+          .replace(/\bAnd\b/g, '&')
+          .replace(/\bOf\b/g, 'of')
+          .replace(/\bIn\b/g, 'in')
+          .replace(/\bAt\b/g, 'at');
+      }
+    } catch {
+      // ignore
+    }
+  }
+
+  return 'Exam Diagram';
+}
+
 export function DiagramCard({ imageUrl, title, caption }: DiagramCardProps) {
   const { colors } = useTheme();
   /* The lightbox is a full-screen window of its own, drawn behind the status
@@ -32,6 +99,20 @@ export function DiagramCard({ imageUrl, title, caption }: DiagramCardProps) {
 
   if (!imageUrl) return null;
 
+  const heading = formatDiagramHeading(title, caption, imageUrl);
+  const cleanedCaption = caption
+    ? caption
+        .replace(/!\[.*?\]\(.*?\)/g, '')
+        .replace(/https:\/\/[^\s]+/g, '')
+        .trim()
+    : '';
+  // Avoid duplicating caption if it's identical to heading or generic
+  const showCaption =
+    cleanedCaption &&
+    cleanedCaption !== heading &&
+    cleanedCaption.toLowerCase() !== 'high-yield exam diagram' &&
+    cleanedCaption.toLowerCase() !== 'exam diagram';
+
   return (
     <View
       style={[
@@ -39,15 +120,6 @@ export function DiagramCard({ imageUrl, title, caption }: DiagramCardProps) {
         { backgroundColor: colors.card, borderColor: colors.border },
       ]}
     >
-      {/*
-        The badge, and nothing else.
-        This carried a "Park & Vision FMT" caption naming the textbooks. Two
-        problems: the app never names a book anywhere — the reader is studying,
-        not being sold a bibliography, and the notes function is told the same
-        thing ("DO NOT include page numbers or textbook citations") — and the
-        caption was hardcoded to third year's two books, so it was flatly wrong
-        on an Anatomy or Pathology diagram once those years were switched on.
-      */}
       <View style={styles.header}>
         <View
           style={[
@@ -64,21 +136,6 @@ export function DiagramCard({ imageUrl, title, caption }: DiagramCardProps) {
         </View>
       </View>
 
-      {title ? (
-        <Text style={[styles.title, { color: colors.text }]}>
-          {title.replace(/^[🎨\s]+/, '')}
-        </Text>
-      ) : null}
-
-      {/*
-        A diagram that will not load has to say so.
-        onLoadEnd fires on failure as well as success, so without onError the
-        spinner clears and the card sits there as an empty grey rectangle —
-        which looks identical to "the app does not show diagrams" and is
-        undiagnosable from a phone. The usual causes are the storage bucket
-        being private (403) or the row pointing at an object that is gone
-        (404), and neither is visible from inside the app.
-      */}
       <Pressable
         onPress={() => (failed ? undefined : setModalVisible(true))}
         disabled={failed}
@@ -127,13 +184,17 @@ export function DiagramCard({ imageUrl, title, caption }: DiagramCardProps) {
         )}
       </Pressable>
 
-      {/* Caption */}
-      {caption ? (
+      {/* Diagram Heading / Name */}
+      <View style={styles.diagramHeadingRow}>
+        <Text style={[styles.diagramHeading, { color: colors.text }]}>
+          {heading}
+        </Text>
+      </View>
+
+      {/* Optional explanatory caption or mnemonic note */}
+      {showCaption ? (
         <Text style={[styles.caption, { color: colors.textMuted }]}>
-          {caption
-            .replace(/!\[.*?\]\(.*?\)/g, '')
-            .replace(/https:\/\/[^\s]+/g, '')
-            .trim()}
+          {cleanedCaption}
         </Text>
       ) : null}
 
@@ -147,7 +208,7 @@ export function DiagramCard({ imageUrl, title, caption }: DiagramCardProps) {
         <View style={styles.modalBackdrop}>
           <View style={[styles.modalHeader, { paddingTop: insets.top + 12 }]}>
             <Text style={styles.modalTitle} numberOfLines={1}>
-              {title ? title.replace(/^[🎨\s]+/, '') : 'Exam Diagram'}
+              {heading}
             </Text>
             <Pressable
               onPress={() => setModalVisible(false)}
@@ -255,7 +316,17 @@ const styles = StyleSheet.create({
   caption: {
     fontSize: 12,
     lineHeight: 17,
-    marginTop: 8,
+    marginTop: 4,
+  },
+  diagramHeadingRow: {
+    marginTop: 10,
+    marginBottom: 2,
+  },
+  diagramHeading: {
+    fontSize: 15,
+    fontWeight: '700',
+    lineHeight: 20,
+    letterSpacing: -0.2,
   },
   modalBackdrop: {
     flex: 1,

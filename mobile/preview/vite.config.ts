@@ -8,6 +8,22 @@ const root = path.resolve(__dirname, '..');
 // this config exists solely to render the same screens in a browser.
 export default defineConfig({
   root: __dirname,
+  server: {
+    host: '0.0.0.0',
+    port: 5173,
+    cors: true,
+    allowedHosts: true,
+    fs: {
+      strict: false,
+      allow: [path.resolve(__dirname, '..'), path.resolve(__dirname, '../..')],
+    },
+  },
+  preview: {
+    host: '0.0.0.0',
+    port: 5173,
+    cors: true,
+    allowedHosts: true,
+  },
   plugins: [react()],
   define: {
     global: 'window',
