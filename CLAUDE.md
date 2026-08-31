@@ -31,6 +31,7 @@ when picking up work that was last touched from the other tool.
 | `.agents/rules/92-verify.md` | Prove a change works and show a screenshot before calling it done — what counts as proof here, and what the harness structurally cannot see |
 | `.agents/rules/93-focus-trees.md` | The focus timer's trees — twelve species drawn from numbers, why they lean towards the theme rather than take it, and the wilt rule |
 | `.agents/rules/94-textbook-grounded-diagram-engine.md` |  |
+| `.agents/rules/95-release-and-pipeline-engine.md` |  |
 <!-- rules:end -->
 
 This repo is worked on from Claude Code *and* Antigravity, sometimes on the
