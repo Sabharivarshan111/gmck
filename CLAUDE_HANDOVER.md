@@ -117,4 +117,25 @@ This document contains the complete record of architecture, features, bugs solve
   - `mobile/src/screens/HomeScreen.tsx`:
     - In edit mode, each subject card displays an **Image Upload Button (`ImagePlus`)** to choose an image from the photo gallery, and an **`X` Reset Button** to revert to the default holographic foil gradient.
 
+---
 
+## 8. 🧬 Medical Diagram Precise Entity Matching & Android Background Crash Fix
+- **Diagram False-Positive Mismatches (Transport Mechanisms & TCA Cycle)**:
+  - **Problem**:
+    - Opening "Transport mechanisms a) Passive..." showed unrelated "Lipoprotein Metabolism (Reverse Cholesterol Transport)" and "Bilirubin Metabolism (Formation, transport and fate)" diagrams.
+    - Opening "TCA cycle – definition, sequence of reaction, energetics, regulation" showed "Glycolysis" and "Gluconeogenesis" diagrams.
+  - **Root Cause**:
+    - `findAllDiagramsForQuery` in `handwrittenNotes.ts` used generic word matching (`score += 1` for common words like `transport`, `definition`, `sequence`, `reaction`, `energetics`, `regulation`, `cycle`) with a low match threshold ($\ge 2$).
+  - **Fix**:
+    - Added all generic query terms (`definition`, `sequence`, `reaction`, `energetics`, `regulation`, `mechanism`, `transport`, `metabolism`, etc.) to `DIAGRAM_STOP_WORDS`.
+    - Added dedicated exclusive entity families in `EXCLUSIVE_ENTITIES` for all Biochemistry pathways (*TCA cycle, Glycolysis, Gluconeogenesis, Glycogen storage, HMP shunt, Urea cycle, Beta-oxidation, Ketogenesis, Lipoprotein/RCT, Bilirubin/Jaundice, Purine/Gout, Pyrimidine, SPEP Electrophoresis, ETC complexes, Visual cycle, Translation, Membrane transport*) and Physiology systems.
+    - Upgraded `findAllDiagramsForQuery` to require strict entity family matching with zero false positives.
+    - Upgraded `ensureSingleNoteDiagram` to automatically validate and strip any existing mismatched/corrupted diagram sections from previously cached notes.
+
+- **Android App Resume / Background Crash Fix**:
+  - **Problem**:
+    - Leaving the app in the background for a while caused the app to crash on the first resume attempt, while the second launch worked normally.
+  - **Root Cause**:
+    - When Android OS kills a backgrounded process to reclaim RAM, it saves the Activity state (`savedInstanceState`). On resume, Android attempts to replay the native Fragment transactions from the bundle before the React Native JavaScript engine and navigation tree have hydrated, triggering a native Fragment restoration crash.
+  - **Fix**:
+    - In `mobile/android/app/src/main/java/com/aistudio/mbbsqbank/aycxvd/MainActivity.kt`, updated `onCreate(savedInstanceState: Bundle?)` to pass `super.onCreate(null)` per official React Navigation / React Native Android guidelines. This discards stale native Fragment state and ensures every process restoration boots cleanly without crashes.

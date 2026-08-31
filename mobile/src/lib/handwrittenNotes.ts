@@ -363,7 +363,7 @@ async function invokeNotes(
   return (data ?? {}) as Record<string, unknown>;
 }
 
-const DIAGRAM_STOP_WORDS = new Set([
+export const DIAGRAM_STOP_WORDS = new Set([
   'define', 'describe', 'explain', 'discuss', 'enumerate', 'classify', 'write',
   'short', 'note', 'notes', 'briefly', 'detail', 'types', 'various', 'causes',
   'features', 'clinical', 'management', 'treatment', 'prevention', 'control',
@@ -374,7 +374,7 @@ const DIAGRAM_STOP_WORDS = new Set([
   'guidelines', 'algorithm', 'signs', 'symptoms', 'procedure', 'investigations',
   'role', 'what', 'which', 'about', 'with', 'from', 'between', 'under',
   'their', 'does', 'have', 'been', 'give', 'name', 'list', 'state', 'applied',
-  'life', 'cycle', 'diagram', 'draw', 'drawn', 'neat', 'labelled', 'question',
+  'life', 'cycle', 'cycles', 'diagram', 'draw', 'drawn', 'neat', 'labelled', 'question',
   'examination', 'appearance', 'effects', 'program', 'programme', 'scheme',
   'strategy', 'national', 'india', 'indian', 'level', 'levels', 'status',
   'health', 'community', 'public', 'primary', 'secondary', 'tertiary',
@@ -387,7 +387,7 @@ const DIAGRAM_STOP_WORDS = new Set([
   'protection', 'act', 'acts', 'proof', 'therapeutic', 'classification',
   'bone', 'bones', 'artery', 'arteries', 'vein', 'veins', 'nerve', 'nerves',
   'muscle', 'muscles', 'joint', 'joints', 'gland', 'glands', 'duct', 'ducts',
-  'wall', 'walls', 'cord', 'blood', 'reflex', 'reflexes', 'cycles',
+  'wall', 'walls', 'cord', 'blood', 'reflex', 'reflexes',
   'disorder', 'disorders', 'disease', 'diseases', 'syndrome', 'syndromes',
   'supply', 'long', 'marrow', 'smear', 'picture', 'findings', 'origin',
   'course', 'distribution', 'branches', 'termination', 'anastomosis', 'relations',
@@ -398,6 +398,11 @@ const DIAGRAM_STOP_WORDS = new Set([
   'extent', 'variation', 'variations', 'correlate', 'development', 'formation',
   'sites', 'presenting', 'location', 'anomalies', 'lesions', 'derivatives',
   'drainage', 'lymphatic', 'histology', 'gross', 'microscopic',
+  'definition', 'definitions', 'sequence', 'reaction', 'reactions', 'energetics',
+  'regulation', 'mechanism', 'mechanisms', 'steps', 'pathway', 'pathways',
+  'transport', 'transports', 'passive', 'active', 'fate', 'synthesis',
+  'degradation', 'metabolism', 'abnormalities', 'important', 'significance',
+  'molecules', 'molecule', 'overview', 'pathophysiology', 'complications',
 ]);
 
 function normalizeSubject(keyOrName?: string): string | undefined {
@@ -421,9 +426,10 @@ function normalizeSubject(keyOrName?: string): string | undefined {
 }
 
 /**
- * Known distinct anatomical/clinical entities to prevent cross-organ collisions.
+ * Known distinct anatomical/clinical entities to prevent cross-organ and cross-topic collisions.
  */
 const EXCLUSIVE_ENTITIES = [
+  // Anatomy
   ['temporomandibular', 'tmj', 'mandible', 'mandibular'],
   ['shoulder', 'glenohumeral', 'scapula', 'acromion', 'rotator cuff'],
   ['synovial', 'synovial joint', 'diarthrodial', 'articular capsule'],
@@ -472,6 +478,54 @@ const EXCLUSIVE_ENTITIES = [
   ['parotid'],
   ['thyroid'],
   ['pituitary'],
+  // Biochemistry pathways & cycles
+  ['tca', 'tca cycle', 'krebs', 'citric acid', 'citric acid cycle', 'tricarboxylic', 'anaplerosis', 'anaplerotic', 'citrate synthase'],
+  ['glycolysis', 'embden', 'meyerhof', 'hexokinase', 'glucokinase', 'phosphofructokinase', 'pfk 1', 'pfk-1', 'pyruvate kinase', 'rapoport'],
+  ['gluconeogenesis', 'cori cycle', 'cahill cycle', 'alanine cycle', 'pyruvate carboxylase', 'pepck', 'fructose 1 6 bisphosphatase', 'glucose 6 phosphatase'],
+  ['glycogen', 'glycogenesis', 'glycogenolysis', 'von gierke', 'pompe', 'cori disease', 'mcardle', 'glycogen storage'],
+  ['hmp shunt', 'pentose phosphate', 'g6pd', 'favism', 'transketolase', 'transaldolase'],
+  ['urea cycle', 'hyperammonemia', 'ornithine', 'citrulline', 'argininosuccinate', 'arginase', 'carbamoyl phosphate synthetase i'],
+  ['beta oxidation', 'carnitine', 'carnitine shuttle', 'cpt-1', 'cpt-2', 'acyl coa dehydrogenase'],
+  ['ketogenesis', 'ketone body', 'ketone bodies', 'ketolysis', 'dka', 'diabetic ketoacidosis', 'hmg coa synthase'],
+  ['cholesterol', 'statin', 'hmg coa reductase', 'mevalonate', 'squalene'],
+  ['lipoprotein', 'chylomicron', 'chylomicrons', 'vldl', 'ldl', 'hdl', 'reverse cholesterol transport', 'rct', 'abetalipoproteinemia', 'tangier', 'atherogenesis', 'dyslipidemia', 'hyperlipoproteinemia'],
+  ['bilirubin', 'jaundice', 'heme catabolism', 'heme degradation', 'urobilinogen', 'stercobilin', 'kernicterus', 'crigler', 'gilbert', 'dubinhohnson', 'rotor'],
+  ['heme synthesis', 'porphyria', 'porphyrias', 'ala synthase', 'lead poisoning', 'acute intermittent porphyria', 'coproporphyria'],
+  ['purine', 'uric acid', 'gout', 'lesch nyhan', 'prpp', 'allopurinol', 'salvage pathway'],
+  ['pyrimidine', 'orotic acid', 'orotic aciduria', 'carbamoyl phosphate synthetase ii', 'cad enzyme'],
+  ['phenylalanine', 'tyrosine', 'pku', 'phenylketonuria', 'alkaptonuria', 'albinism', 'homogentisic'],
+  ['tryptophan', 'serotonin', 'melatonin', 'carcinoid', 'hartnup', 'niacin', 'pellagra'],
+  ['one carbon', 'methionine', 'homocysteine', 'folate trap', 'sam', 'tetrahydrofolate'],
+  ['enzyme kinetics', 'lineweaver', 'burk', 'michaelis', 'menten', 'km', 'vmax', 'competitive inhibition', 'non competitive'],
+  ['electrophoresis', 'spep', 'serum protein electrophoresis', 'multiple myeloma', 'm band', 'gamma globulin'],
+  ['electron transport chain', 'etc complexes', 'oxidative phosphorylation', 'chemiosmotic', 'atp synthase', 'rotenone', 'cyanide', 'uncoupler', 'dnp'],
+  ['visual cycle', 'wald', 'rhodopsin', 'vitamin a', 'retinal', 'opsin', 'night blindness'],
+  ['translation', 'ribosome', 'elongation', 'initiation factor', 'tetracycline', 'chloramphenicol', 'erythromycin', 'cycloheximide'],
+  ['cell membrane transport', 'transport mechanisms', 'passive transport', 'simple diffusion', 'facilitated diffusion', 'sodium potassium pump', 'na k atpase', 'ping pong mechanism', 'ping-pong'],
+  // Physiology
+  ['action potential', 'resting membrane potential', 'depolarization', 'repolarization', 'hyperpolarization'],
+  ['cardiac cycle', 'wiggers', 'isovolumetric', 'ejection phase', 'atrial systole'],
+  ['pacemaker', 'cardiac action potential', 'phase 4 depolarization', 'sa node'],
+  ['coagulation', 'hemostasis', 'intrinsic pathway', 'extrinsic pathway', 'thrombin', 'fibrinogen', 'clotting factor'],
+  ['erythropoiesis', 'erythropoietin', 'proerythroblast', 'reticulocyte', 'normoblast'],
+  ['baroreceptor', 'carotid sinus', 'aortic arch', 'buffer nerve', 'vasomotor center'],
+  ['raas', 'renin', 'angiotensin', 'aldosterone', 'juxtaglomerular', 'macula densa'],
+  ['gfr', 'glomerular filtration', 'podocyte', 'filtration barrier', 'starling forces'],
+  ['countercurrent', 'vasa recta', 'loop of henle', 'medullary hyperosmolality'],
+  ['spirogram', 'lung volumes', 'vital capacity', 'fev1', 'fvc', 'residual volume'],
+  ['oxygen hemoglobin', 'dissociation curve', 'bohr effect', 'haldane effect', 'p50', '2,3-bpg'],
+  ['neural control of respiration', 'dorsal respiratory group', 'drg', 'vrg', 'pneumotaxic', 'apneustic'],
+  ['gastric acid', 'parietal cell', 'proton pump', 'h/k atpase', 'gastrin', 'histamine h2', 'vagus'],
+  ['neuromuscular junction', 'nmj', 'acetylcholine', 'motor end plate', 'myasthenia gravis'],
+  ['sarcomere', 'cross bridge', 'actin', 'myosin', 'troponin', 'tropomyosin', 'sliding filament'],
+  ['basal ganglia', 'direct pathway', 'indirect pathway', 'striatum', 'substantia nigra', 'parkinson'],
+  ['pyramidal tract', 'corticospinal', 'lateral corticospinal', 'internal capsule', 'upper motor neuron'],
+  ['visual pathway', 'optic chiasma', 'bitemporal hemianopia', 'homonymous hemianopia', 'lateral geniculate'],
+  ['micturition', 'cystometrogram', 'detrusor', 'internal sphincter', 'pudendal nerve'],
+  ['menstrual cycle', 'follicular phase', 'luteal phase', 'ovulation', 'lh surge', 'endometrium'],
+  ['spermatogenesis', 'sertoli', 'leydig', 'blood testis barrier', 'fsh', 'testosterone'],
+  ['glucose homeostasis', 'insulin', 'glucagon', 'beta cell', 'islet of langerhans'],
+  ['renal acidification', 'bicarbonate reabsorption', 'glutaminase', 'titratable acid'],
 ];
 
 /**
@@ -524,9 +578,10 @@ export async function findAllDiagramsForQuery(
     family.some(kw => queryLower.includes(kw)),
   );
 
-  const words = queryLower
-    .split(/\s+/)
-    .filter(w => w.length > 3 && !DIAGRAM_STOP_WORDS.has(w));
+  // If query is not in a specific known diagram family, do not loose-match on generic words
+  if (!matchingFamily) {
+    return [];
+  }
 
   try {
     const { data } = await supabase
@@ -549,13 +604,12 @@ export async function findAllDiagramsForQuery(
       const rowText = row.question_text.toLowerCase();
       const storagePath = (row.storage_path || '').toLowerCase();
 
-      if (matchingFamily) {
-        const rowMatchesFamily = matchingFamily.some(
-          kw => rowText.includes(kw) || storagePath.includes(kw),
-        );
-        if (!rowMatchesFamily) {
-          continue; // Strict barrier
-        }
+      // Strict barrier: candidate MUST match the specific entity family
+      const rowMatchesFamily = matchingFamily.some(
+        kw => rowText.includes(kw) || storagePath.includes(kw),
+      );
+      if (!rowMatchesFamily) {
+        continue;
       }
 
       // Ignore storage path if it explicitly belongs to a different subject prefix
@@ -566,31 +620,14 @@ export async function findAllDiagramsForQuery(
         if (isCrossSubject) continue;
       }
 
-      let score = 0;
-      if (queryLower.length >= 12 && (rowText.includes(queryLower.slice(0, 20)) || queryLower.includes(rowText.slice(0, 20)))) {
-        score += 10;
-      }
-
-      for (const w of words) {
-        if (rowText.includes(w) || storagePath.includes(w)) {
-          score += 1;
-        }
-      }
-
-      const minRequiredScore = matchingFamily ? 1 : 2;
-
-      if (score >= minRequiredScore) {
-        seenUrls.add(row.public_url);
-        matches.push({
-          url: row.public_url,
-          title: row.question_text,
-          score,
-        });
-      }
+      seenUrls.add(row.public_url);
+      matches.push({
+        url: row.public_url,
+        title: row.question_text,
+        score: 10,
+      });
     }
 
-    // Sort by relevance score descending
-    matches.sort((a, b) => b.score - a.score);
     return matches.map(m => ({ url: m.url, title: m.title }));
   } catch (err) {
     console.warn('[handwrittenNotes] diagram lookup failed:', err);
@@ -601,20 +638,46 @@ export async function findAllDiagramsForQuery(
 /**
  * Ensures single-question note content carries its authentic visual exam diagrams,
  * or attaches a ready-to-use Gemini prompt if no pre-rendered diagram exists.
+ * Automatically cleans any mismatched/false-positive diagram sections.
  */
 export async function ensureSingleNoteDiagram(
   content: NotesContent,
   request: SingleNoteRequest,
 ): Promise<NotesContent> {
-  const hasStorageDiagram = content.sections?.some(
+  const queryLower = request.question.toLowerCase();
+  const matchingFamily = EXCLUSIVE_ENTITIES.find(family =>
+    family.some(kw => queryLower.includes(kw)),
+  );
+
+  // Clean out any mismatched/corrupted diagram sections from old cached runs
+  const cleanedSections = (content.sections || []).filter(s => {
+    const isDiagram =
+      s.icon === '🎨' ||
+      (typeof s.payload?.text === 'string' &&
+        s.payload.text.includes('supabase.co/storage/v1/object/public/diagrams'));
+    if (!isDiagram) {
+      return true;
+    }
+    // If it's a diagram, verify it actually matches the question's family
+    if (!matchingFamily) {
+      return false; // Question has no matching diagram family, so strip diagram
+    }
+    const text = (
+      (s.title || '') + ' ' + (typeof s.payload?.text === 'string' ? s.payload.text : '')
+    ).toLowerCase();
+    const matchesFamily = matchingFamily.some(kw => text.includes(kw));
+    return matchesFamily;
+  });
+
+  const hasValidDiagram = cleanedSections.some(
     s =>
       s.icon === '🎨' ||
       (typeof s.payload?.text === 'string' &&
         s.payload.text.includes('supabase.co/storage/v1/object/public/diagrams')),
   );
 
-  if (hasStorageDiagram) {
-    return content;
+  if (hasValidDiagram) {
+    return { ...content, sections: cleanedSections };
   }
 
   const diagrams = await findAllDiagramsForQuery(
@@ -624,7 +687,7 @@ export async function ensureSingleNoteDiagram(
   );
 
   if (diagrams.length === 0) {
-    return content;
+    return { ...content, sections: cleanedSections, diagramUrl: undefined };
   }
 
   // Attach ALL authentic matching diagrams as rich visual sections
@@ -653,7 +716,7 @@ export async function ensureSingleNoteDiagram(
   const enriched: NotesContent = {
     ...content,
     diagramUrl: diagrams[0]?.url,
-    sections: [...diagramSections, ...content.sections],
+    sections: [...diagramSections, ...cleanedSections],
   };
 
   // Best effort save back to Supabase

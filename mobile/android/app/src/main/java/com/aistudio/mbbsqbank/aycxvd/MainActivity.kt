@@ -30,8 +30,7 @@ class MainActivity : ReactActivity() {
    * because that is where the fragment manager replays the saved state.
    */
   override fun onCreate(savedInstanceState: Bundle?) {
-    supportFragmentManager.fragmentFactory = RNScreensFragmentFactory()
-    super.onCreate(savedInstanceState)
+    super.onCreate(null)
   }
 
   /**
