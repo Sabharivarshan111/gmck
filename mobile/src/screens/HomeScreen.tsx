@@ -342,8 +342,7 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
               { backgroundColor: withAlpha(colors.accent, 0.14), borderColor: colors.accent },
             ]}>
             <Text style={[styles.editBannerText, { color: colors.text }]}>
-              Drag a block to reorder it. Drag the bar under a block, or use − and +, to
-              change its size.
+              Drag bottom (↕) or side (↔) bar to resize. Tap 🗑️ to hide, or Reset to restore all.
             </Text>
             <Touchable onPress={reset} label="Reset home layout" scaleTo={0.94}>
               <Text style={[styles.editReset, { color: colors.textMuted }]}>Reset</Text>

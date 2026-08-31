@@ -189,70 +189,66 @@ export function Reorderable<Id extends string>({
    */
   const resizable = onScale !== undefined;
   const resizers = useMemo(() => {
-    const map = {} as Record<Id, ReturnType<typeof PanResponder.create>>;
+    const map = {} as Record<
+      Id,
+      {
+        vertical: ReturnType<typeof PanResponder.create>;
+        horizontal: ReturnType<typeof PanResponder.create>;
+        corner: ReturnType<typeof PanResponder.create>;
+      }
+    >;
     if (!resizable) {
       return map;
     }
     for (const id of rendered) {
       let start = 1;
       let latest = 1;
-      map[id] = PanResponder.create({
-        onStartShouldSetPanResponderCapture: () => editing,
-        onMoveShouldSetPanResponderCapture: () => editing,
-        onPanResponderGrant: () => {
-          start = scalesRef.current?.[id] ?? 1;
-          latest = start;
-          dragOwner.current = id;
-          /**
-           * Stop the page scrolling for the duration of the drag.
-           *
-           * This is the whole bug behind "resizing does nothing on my phone".
-           * Reordering did this and resizing did not, so a finger dragging the
-           * grip was competing with the ScrollView it sits inside — and the
-           * ScrollView wins. React Native says so out loud, in a warning that
-           * only appears under real touch events:
-           *
-           *   ScrollView doesn't take rejection well - scrolls anyway
-           *
-           * The page scrolled, the block did not resize, and nothing looked
-           * broken from the outside. Mouse-driven testing never reproduced it,
-           * which is why this survived three reports.
-           */
-          onDragChangeRef.current?.(true);
-        },
-        onPanResponderMove: (_event, gesture) => {
-          // Divided by the block's own height, which is what keeps the grip
-          // under the finger: the drawn height is natural × scale, so a
-          // change of dy/natural grows the block by exactly the distance
-          // dragged. A fixed divisor would make the hero crawl and the
-          // WhatsApp strip bolt.
-          const natural = naturals.get(id) || heights.get(id) || 200;
-          const min = scaleRangeRef.current?.min ?? 0.75;
-          const max = scaleRangeRef.current?.max ?? 1.3;
-          latest = Math.min(max, Math.max(min, start + gesture.dy / natural));
-          onScaleRef.current?.(id, latest, false);
-        },
-        onPanResponderRelease: () => {
-          dragOwner.current = null;
-          onDragChangeRef.current?.(false);
-          // `latest`, not the `scales` prop: this responder is built once per
-          // order, so a value read from that prop is whatever it was when the
-          // gesture started — committing it would undo the whole drag.
-          onScaleRef.current?.(id, latest, true);
-        },
-        onPanResponderTerminate: () => {
-          dragOwner.current = null;
-          onDragChangeRef.current?.(false);
-          onScaleRef.current?.(id, latest, true);
-        },
-        onPanResponderTerminationRequest: () => false,
-      });
+
+      const createHandler = (axis: 'y' | 'x' | 'both') =>
+        PanResponder.create({
+          onStartShouldSetPanResponderCapture: () => editing,
+          onMoveShouldSetPanResponderCapture: () => editing,
+          onPanResponderGrant: () => {
+            start = scalesRef.current?.[id] ?? 1;
+            latest = start;
+            dragOwner.current = id;
+            onDragChangeRef.current?.(true);
+          },
+          onPanResponderMove: (_event, gesture) => {
+            const natural = naturals.get(id) || heights.get(id) || 200;
+            const min = scaleRangeRef.current?.min ?? 0.65;
+            const max = scaleRangeRef.current?.max ?? 1.45;
+            let delta = 0;
+            if (axis === 'y') {
+              delta = gesture.dy / natural;
+            } else if (axis === 'x') {
+              delta = gesture.dx / 240;
+            } else {
+              delta = (gesture.dx + gesture.dy) / (natural + 200);
+            }
+            latest = Math.min(max, Math.max(min, start + delta));
+            onScaleRef.current?.(id, latest, false);
+          },
+          onPanResponderRelease: () => {
+            dragOwner.current = null;
+            onDragChangeRef.current?.(false);
+            onScaleRef.current?.(id, latest, true);
+          },
+          onPanResponderTerminate: () => {
+            dragOwner.current = null;
+            onDragChangeRef.current?.(false);
+            onScaleRef.current?.(id, latest, true);
+          },
+          onPanResponderTerminationRequest: () => false,
+        });
+
+      map[id] = {
+        vertical: createHandler('y'),
+        horizontal: createHandler('x'),
+        corner: createHandler('both'),
+      };
     }
     return map;
-    // Deliberately not rebuilt when a scale changes: a resize writes a new
-    // scale on every frame, and swapping a PanResponder mid-gesture hands the
-    // move events to an instance that never saw the grant. That is why the
-    // live values are read through refs above.
   }, [editing, heights, naturals, onDragChangeRef, rendered, resizable]);
 
   const responders = useMemo(() => {
@@ -505,26 +501,47 @@ export function Reorderable<Id extends string>({
             </Animated.View>
 
             {editing && onScale ? (
-              <View
-                accessible
-                accessibilityRole="adjustable"
-                accessibilityLabel={`Resize ${labels[id]}`}
-                accessibilityValue={{
-                  min: 75,
-                  max: 130,
-                  now: Math.round((scales?.[id] ?? 1) * 100),
-                  text: `${Math.round((scales?.[id] ?? 1) * 100)} percent`,
-                }}
-                accessibilityActions={[{ name: 'increment' }, { name: 'decrement' }]}
-                onAccessibilityAction={event => {
-                  // A drag is not something a screen reader can perform, so
-                  // the same value is reachable in steps.
-                  step(id, event.nativeEvent.actionName === 'increment' ? 0.05 : -0.05);
-                }}
-                style={styles.resizeZone}
-                {...resizers[id]?.panHandlers}>
-                <View style={[styles.resizeGrip, { backgroundColor: colors.accent }]} />
-              </View>
+              <>
+                {/* Bottom Handle: Vertical Height Resize */}
+                <View
+                  accessible
+                  accessibilityRole="adjustable"
+                  accessibilityLabel={`Resize height for ${labels[id]}`}
+                  accessibilityValue={{
+                    min: 65,
+                    max: 145,
+                    now: Math.round((scales?.[id] ?? 1) * 100),
+                    text: `${Math.round((scales?.[id] ?? 1) * 100)} percent`,
+                  }}
+                  accessibilityActions={[{ name: 'increment' }, { name: 'decrement' }]}
+                  onAccessibilityAction={event => {
+                    step(id, event.nativeEvent.actionName === 'increment' ? 0.05 : -0.05);
+                  }}
+                  style={styles.verticalResizeZone}
+                  {...resizers[id]?.vertical.panHandlers}>
+                  <View style={[styles.horizontalGrip, { backgroundColor: '#F43F5E' }]} />
+                </View>
+
+                {/* Right-Side Handle: Horizontal Width Resize */}
+                <View
+                  accessible
+                  accessibilityRole="adjustable"
+                  accessibilityLabel={`Resize width for ${labels[id]}`}
+                  style={styles.horizontalResizeZone}
+                  {...resizers[id]?.horizontal.panHandlers}>
+                  <View style={[styles.verticalGrip, { backgroundColor: '#F43F5E' }]} />
+                </View>
+
+                {/* Bottom-Right Corner Handle: 2D Dual-Axis Resize */}
+                <View
+                  accessible
+                  accessibilityRole="adjustable"
+                  accessibilityLabel={`2D resize for ${labels[id]}`}
+                  style={styles.cornerResizeZone}
+                  {...resizers[id]?.corner.panHandlers}>
+                  <View style={styles.cornerGrip} />
+                </View>
+              </>
             ) : null}
 
             {editing ? (
@@ -657,43 +674,78 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
     paddingVertical: 5,
   },
-  resizeZone: {
+  verticalResizeZone: {
     position: 'absolute',
-    // Inside the row, not straddling its edge.
-    //
-    // It sat at -14 first, which put half the target in the gap *below* the
-    // block — and that gap belongs to the next block, whose own drag
-    // responder claimed the touch. Dragging the hero's grip reordered the
-    // quick actions instead of resizing anything, which looked like the
-    // resize doing nothing rather than the wrong view winning.
-    //
-    // 36dp, not 24. A thumb is about 45dp across and the page under this
-    // strip scrolls, so a target that a finger only half lands on reads as
-    // "resizing does not work" rather than "I missed". This is also why the
-    // block's control cluster carries − and + : the drag is the good
-    // interaction, and the buttons are the one that cannot be missed.
     bottom: 0,
     left: 0,
-    right: 0,
-    height: 36,
+    right: 36,
+    height: 34,
     zIndex: 3,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  horizontalGrip: {
+    width: 60,
+    height: 5.5,
+    borderRadius: 3,
+    opacity: 0.95,
+    shadowColor: '#F43F5E',
+    shadowOpacity: 0.6,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 1 },
+    elevation: 3,
+  },
+  horizontalResizeZone: {
+    position: 'absolute',
+    top: 10,
+    bottom: 34,
+    right: 0,
+    width: 32,
+    zIndex: 3,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  verticalGrip: {
+    width: 5.5,
+    height: 48,
+    borderRadius: 3,
+    opacity: 0.95,
+    shadowColor: '#F43F5E',
+    shadowOpacity: 0.6,
+    shadowRadius: 4,
+    shadowOffset: { width: 1, height: 0 },
+    elevation: 3,
+  },
+  cornerResizeZone: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    width: 36,
+    height: 36,
+    zIndex: 4,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  cornerGrip: {
+    width: 14,
+    height: 14,
+    borderBottomWidth: 3.5,
+    borderRightWidth: 3.5,
+    borderColor: '#F43F5E',
+    borderBottomRightRadius: 4,
+    opacity: 0.95,
+    shadowColor: '#F43F5E',
+    shadowOpacity: 0.7,
+    shadowRadius: 3,
+    shadowOffset: { width: 1, height: 1 },
+    elevation: 3,
   },
   divider: {
     width: StyleSheet.hairlineWidth,
     alignSelf: 'stretch',
     marginVertical: 5,
   },
-  resizeGrip: {
-    width: 56,
-    height: 5,
-    borderRadius: 3,
-    opacity: 0.9,
-  },
   arrow: {
-    // 28dp of pixels, 44dp of target: Touchable's default hit slop is what
-    // makes up the difference.
     height: 28,
     width: 28,
     alignItems: 'center',
