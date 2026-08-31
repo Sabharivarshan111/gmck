@@ -52,6 +52,9 @@ const SHOTS = [
   { name: 'treegallery', query: 'screen=treegallery' },
   { name: 'treegallery-bottom', query: 'screen=treegallery', scroll: 'bottom' },
   { name: 'growthshowcase', query: 'screen=growthshowcase' },
+  { name: 'usernotes-edit', query: 'screen=usernotesdemo&mode=edit' },
+  { name: 'usernotes-preview', query: 'screen=usernotesdemo&mode=preview' },
+  { name: 'usernotes-preview-light', query: 'screen=usernotesdemo&mode=preview&theme=light' },
   { name: 'home-light', query: 'screen=home&theme=light' },
   { name: 'progress-light', query: 'screen=progress&theme=light' },
 ];

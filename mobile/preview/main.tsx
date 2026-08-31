@@ -19,9 +19,15 @@ import { XpToast } from '@/components/XpToast';
 import { hydratePremium } from '@/lib/premium';
 import { hydrateWallpaper } from '@/hooks/useWallpaper';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
-import { ScrollView, Text, View } from 'react-native';
+import { ScrollView, Text, TextInput, View } from 'react-native';
 import { NotesContentView } from '@/components/NotesContentView';
 import { ChapterNotes } from '@/components/ChapterNotes';
+import { NoteText } from '@/components/NoteText';
+import { NoteToolbar } from '@/components/NoteToolbar';
+import { Touchable } from '@/components/Touchable';
+import { Pencil, Eye } from 'lucide-react-native';
+import { withAlpha } from '@/theme';
+import { typeScale } from '@/theme/typography';
 import { getSubjects, type YearKey } from '@/lib/questionBank';
 import { flattenSubjectTopics } from '@/lib/handwrittenNotes';
 import { SAMPLE_NOTES } from './notesSample';
@@ -399,6 +405,158 @@ function ChatMotionDemo() {
   );
 }
 
+/**
+ * ?screen=usernotesdemo — Interactive user study notes live preview & editor testing.
+ */
+function UserNotesDemo() {
+  const { colors } = useTheme();
+  const [mode, setMode] = React.useState<'edit' | 'preview'>(
+    params.get('mode') === 'edit' ? 'edit' : 'preview',
+  );
+  const [content, setContent] = React.useState(
+    `# Blood Supply of a Long Bone\n## Arterial Supply & Microcirculation\nThe arterial supply of a growing long bone is derived from **four primary arterial sources**:\n\n- **Nutrient Artery**: Enters obliquely via the nutrient canal in the diaphysis, dividing into ascending and descending medullary branches.\n- **Epiphyseal Arteries**: Arise from periarticular anastomoses, supplying the non-articular epiphysis.\n- **Metaphyseal Arteries**: Form hairpin vascular loops beneath the epiphyseal growth plate.\n- **Periosteal Arteries**: Supply the outer 1/3rd of the compact bone cortex.\n\n1. High clinical importance in ==y:acute hematogenous osteomyelitis==.\n2. Metaphyseal hairpin loops are the ==p:most common site for bacterial emboli== in pediatric patients!\n3. Haversian canals run longitudinally containing central ==b:neurovascular bundles==.`,
+  );
+  const [selection, setSelection] = React.useState({ start: 0, end: 0 });
+
+  return (
+    <ScrollView
+      style={{ flex: 1, backgroundColor: colors.background }}
+      contentContainerStyle={{ padding: 16, paddingBottom: 48, gap: 14 }}>
+      <View style={{ gap: 4 }}>
+        <Text style={{ ...typeScale.title2, color: colors.text, fontWeight: '800' }}>
+          Personal Study Notes
+        </Text>
+        <Text style={{ ...typeScale.footnote, color: colors.textMuted }}>
+          Real-time markdown engine with live preview & formatting toolbar
+        </Text>
+      </View>
+
+      {/* Segmented Mode Switcher */}
+      <View
+        style={{
+          flexDirection: 'row',
+          borderRadius: 12,
+          borderWidth: 1,
+          borderColor: colors.border,
+          backgroundColor: colors.card,
+          padding: 4,
+          gap: 4,
+        }}>
+        <Touchable
+          onPress={() => setMode('edit')}
+          label="Edit note mode"
+          style={{
+            flex: 1,
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 6,
+            paddingVertical: 8,
+            borderRadius: 8,
+            backgroundColor: mode === 'edit' ? colors.primary : 'transparent',
+          }}>
+          <Pencil size={15} color={mode === 'edit' ? colors.primaryText : colors.textMuted} />
+          <Text
+            style={{
+              ...typeScale.callout,
+              fontWeight: '700',
+              color: mode === 'edit' ? colors.primaryText : colors.textMuted,
+            }}>
+            Edit Mode
+          </Text>
+        </Touchable>
+
+        <Touchable
+          onPress={() => setMode('preview')}
+          label="Live preview mode"
+          style={{
+            flex: 1,
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 6,
+            paddingVertical: 8,
+            borderRadius: 8,
+            backgroundColor: mode === 'preview' ? colors.fuchsia : 'transparent',
+          }}>
+          <Eye size={15} color={mode === 'preview' ? '#FFFFFF' : colors.textMuted} />
+          <Text
+            style={{
+              ...typeScale.callout,
+              fontWeight: '700',
+              color: mode === 'preview' ? '#FFFFFF' : colors.textMuted,
+            }}>
+            Live Preview
+          </Text>
+        </Touchable>
+      </View>
+
+      {mode === 'edit' ? (
+        <View style={{ gap: 10 }}>
+          <NoteToolbar
+            value={content}
+            selection={selection}
+            isPreview={false}
+            onTogglePreview={() => setMode('preview')}
+            onChange={(text, cursor) => {
+              setContent(text);
+              setSelection({ start: cursor, end: cursor });
+            }}
+          />
+          <TextInput
+            value={content}
+            onChangeText={setContent}
+            onSelectionChange={e => setSelection(e.nativeEvent.selection)}
+            multiline
+            textAlignVertical="top"
+            numberOfLines={12}
+            style={{
+              minHeight: 280,
+              backgroundColor: colors.card,
+              borderColor: colors.border,
+              borderWidth: 1,
+              borderRadius: 14,
+              padding: 14,
+              color: colors.text,
+              ...typeScale.body,
+            }}
+          />
+        </View>
+      ) : (
+        <View
+          style={{
+            backgroundColor: colors.card,
+            borderColor: colors.border,
+            borderWidth: 1,
+            borderRadius: 16,
+            padding: 18,
+            gap: 12,
+          }}>
+          <View style={{ gap: 6 }}>
+            <View
+              style={{
+                alignSelf: 'flex-start',
+                backgroundColor: withAlpha(colors.fuchsia, 0.15),
+                paddingHorizontal: 8,
+                paddingVertical: 3,
+                borderRadius: 6,
+              }}>
+              <Text style={{ ...typeScale.caption, fontWeight: '700', color: colors.fuchsia }}>
+                Anatomy · Upper Limb & Osteology
+              </Text>
+            </View>
+            <Text style={{ ...typeScale.title2, fontWeight: '700', color: colors.text }}>
+              Blood Supply of Long Bones
+            </Text>
+          </View>
+          <View style={{ height: 1, backgroundColor: colors.border, width: '100%' }} />
+          <NoteText content={content} />
+        </View>
+      )}
+    </ScrollView>
+  );
+}
+
 function Shell() {
   const { theme, colors } = useTheme();
   React.useEffect(() => {
@@ -433,6 +591,9 @@ function Shell() {
   }
   if (screen === 'notesdemo') {
     return <NotesRendererDemo />;
+  }
+  if (screen === 'usernotesdemo') {
+    return <UserNotesDemo />;
   }
 
   if (screen === 'mcqdemo') {
