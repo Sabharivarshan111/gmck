@@ -124,6 +124,7 @@ export function useHomeOrder() {
   const save = useCallback(
     (next: HomeSection[]) => {
       setOrder(next);
+      setRendered(next);
       persist(next, scales);
     },
     [persist, scales],
@@ -133,6 +134,7 @@ export function useHomeOrder() {
     (id: HomeSection) => {
       const next = order.filter(key => key !== id);
       setOrder(next);
+      setRendered(next);
       persist(next, scales);
     },
     [order, persist, scales],
@@ -155,9 +157,10 @@ export function useHomeOrder() {
     const next = [...HOME_SECTIONS];
     setOrder(next);
     setRendered(next);
-    setScales(defaultScales());
-    AsyncStorage.removeItem(KEY).catch(() => {});
-  }, []);
+    const defScales = defaultScales();
+    setScales(defScales);
+    persist(next, defScales);
+  }, [persist]);
 
   return { order, rendered, scales, save, removeSection, setScale, reset };
 }

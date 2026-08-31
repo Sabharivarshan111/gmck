@@ -380,12 +380,20 @@ export function Reorderable<Id extends string>({
     valueFor,
   ]);
 
+  useEffect(() => {
+    for (const val of shifts.values()) {
+      val.setValue(0);
+    }
+  }, [order, shifts]);
+
   return (
     <>
-      {rendered.map(id => {
+      {order.map((id, index) => {
+        if (!sections[id]) {
+          return null;
+        }
         const shift = valueFor(shifts, id);
         const lift = valueFor(lifts, id);
-        const index = order.indexOf(id);
         const zoom = scales?.[id] ?? 1;
         return (
           <Animated.View
@@ -394,9 +402,6 @@ export function Reorderable<Id extends string>({
               const next = event.nativeEvent.layout.height;
               if (heights.get(id) !== next) {
                 heights.set(id, next);
-                // A block changed size — the year picker swapped the subject
-                // grid, the text size moved. Everything below it has to move
-                // with it or the stack tears open.
                 settle(order);
               }
             }}
