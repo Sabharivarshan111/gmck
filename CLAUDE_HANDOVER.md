@@ -139,3 +139,35 @@ This document contains the complete record of architecture, features, bugs solve
     - When Android OS kills a backgrounded process to reclaim RAM, it saves the Activity state (`savedInstanceState`). On resume, Android attempts to replay the native Fragment transactions from the bundle before the React Native JavaScript engine and navigation tree have hydrated, triggering a native Fragment restoration crash.
   - **Fix**:
     - In `mobile/android/app/src/main/java/com/aistudio/mbbsqbank/aycxvd/MainActivity.kt`, updated `onCreate(savedInstanceState: Bundle?)` to pass `super.onCreate(null)` per official React Navigation / React Native Android guidelines. This discards stale native Fragment state and ensures every process restoration boots cleanly without crashes.
+
+- **Diagram Preservation on Note Regenerate & AI Edits**:
+  - **Problem**:
+    - Tapping "Write this note again" (Regenerate) or using "Fix notes with AI" (`NotesAiEditBox`) caused attached visual diagrams to disappear.
+  - **Root Cause**:
+    - The AI edge function returns text-only sections. When applying edits or replacing notes, the proposal wiped the `🎨 High-Yield Visual Exam Diagram` section and `diagramUrl`.
+  - **Fix**:
+    - In `mobile/src/lib/handwrittenNotes.ts` (`mergeProposal`), extracted and pinned all existing diagram sections at the top of the notes.
+    - In `mobile/src/components/NotesAiEditBox.tsx` (`apply`), preserved authentic diagram sections when replacing note contents.
+
+---
+
+## 9. 🚀 Current GitHub Release Status (Release Build 110)
+- **Latest Live Release on GitHub**:
+  - **Release Name**: `Release build 110` (tag: `release-110`)
+  - **URL**: [https://github.com/Sabharivarshan111/gmck/releases/tag/release-110](https://github.com/Sabharivarshan111/gmck/releases/tag/release-110)
+  - **Assets Attached**:
+    - `app-release.aab` (**69.54 MB**) — Google Play Console signed bundle.
+    - `app-release.apk` (**87.82 MB**) — Standalone signed APK with strict diagram matching, diagram preservation, and background crash fix.
+- **Commits Included**:
+  - `fd158d1` — `fix(notes): preserve diagrams during regenerate and Fix Notes with AI edit`
+  - `d23c3a9` — `fix(diagrams): enforce strict entity matching to prevent false positives and fix Android process death crash`
+  - `0da101a` — `fix(home): zero-gap component deletion, 50% halving with 2x2 reflow, and precision glowing resize handles`
+
+---
+
+## 10. ⏳ Active Scheduled Timers & Next Steps for Claude
+1. **Gemini Image Generation 4-Hour Quota Reset**:
+   - Scheduled reset time: **2026-08-31T12:57:53Z UTC (~6:28 PM IST)**.
+   - When quota resets, generate the remaining 10 high-yield Anatomy diagrams and upload them to Supabase Storage `diagrams/anatomy/`.
+2. **User Notes & Testing**:
+   - The user has tested the app on mobile. Remind them to install **Release Build 110** (tag `release-110`) from the GitHub release link to verify all fixes on device.
