@@ -216,17 +216,17 @@ export function Reorderable<Id extends string>({
           },
           onPanResponderMove: (_event, gesture) => {
             const natural = naturals.get(id) || heights.get(id) || 200;
-            const min = scaleRangeRef.current?.min ?? 0.65;
-            const max = scaleRangeRef.current?.max ?? 1.45;
+            const min = scaleRangeRef.current?.min ?? 0.5;
+            const max = scaleRangeRef.current?.max ?? 1.0;
             let delta = 0;
             if (axis === 'y') {
-              delta = gesture.dy / natural;
+              delta = gesture.dy / (natural * 1.2);
             } else if (axis === 'x') {
-              delta = gesture.dx / 240;
+              delta = gesture.dx / 220;
             } else {
-              delta = (gesture.dx + gesture.dy) / (natural + 200);
+              delta = (gesture.dx + gesture.dy) / (natural + 220);
             }
-            latest = Math.min(max, Math.max(min, start + delta));
+            latest = Math.min(max, Math.max(min, Math.round((start + delta) * 100) / 100));
             onScaleRef.current?.(id, latest, false);
           },
           onPanResponderRelease: () => {
@@ -640,24 +640,24 @@ const styles = StyleSheet.create({
   },
   cardContainer: {
     position: 'relative',
+    borderRadius: 20,
   },
   controls: {
     position: 'absolute',
-    // Sits in the gap above the block rather than on top of it. Overlaying
-    // the corner covered the "Ask AI" icon and half the WhatsApp row — a
-    // control for rearranging blocks should not hide what is in them.
-    top: -22,
-    right: 4,
+    top: -24,
+    right: 0,
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 15,
+    borderRadius: 16,
     borderWidth: StyleSheet.hairlineWidth,
-    paddingHorizontal: 2,
-    elevation: 4,
+    paddingHorizontal: 3,
+    paddingVertical: 2,
+    elevation: 6,
     shadowColor: '#000',
-    shadowOpacity: 0.25,
+    shadowOpacity: 0.3,
     shadowRadius: 6,
     shadowOffset: { width: 0, height: 2 },
+    zIndex: 12,
   },
   grip: {
     paddingHorizontal: 4,
@@ -665,69 +665,68 @@ const styles = StyleSheet.create({
   },
   verticalResizeZone: {
     position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 36,
-    height: 34,
-    zIndex: 3,
+    bottom: -11,
+    left: '50%',
+    marginLeft: -32,
+    width: 64,
+    height: 24,
+    zIndex: 10,
     alignItems: 'center',
     justifyContent: 'center',
   },
   horizontalGrip: {
-    width: 60,
+    width: 44,
     height: 5.5,
     borderRadius: 3,
-    opacity: 0.95,
     shadowColor: '#F43F5E',
-    shadowOpacity: 0.6,
-    shadowRadius: 4,
+    shadowOpacity: 0.8,
+    shadowRadius: 5,
     shadowOffset: { width: 0, height: 1 },
-    elevation: 3,
+    elevation: 4,
   },
   horizontalResizeZone: {
     position: 'absolute',
-    top: 10,
-    bottom: 34,
-    right: 0,
-    width: 32,
-    zIndex: 3,
+    top: '50%',
+    marginTop: -32,
+    right: -11,
+    width: 24,
+    height: 64,
+    zIndex: 10,
     alignItems: 'center',
     justifyContent: 'center',
   },
   verticalGrip: {
     width: 5.5,
-    height: 48,
+    height: 44,
     borderRadius: 3,
-    opacity: 0.95,
     shadowColor: '#F43F5E',
-    shadowOpacity: 0.6,
-    shadowRadius: 4,
+    shadowOpacity: 0.8,
+    shadowRadius: 5,
     shadowOffset: { width: 1, height: 0 },
-    elevation: 3,
+    elevation: 4,
   },
   cornerResizeZone: {
     position: 'absolute',
-    bottom: 0,
-    right: 0,
-    width: 36,
-    height: 36,
-    zIndex: 4,
+    bottom: -8,
+    right: -8,
+    width: 28,
+    height: 28,
+    zIndex: 11,
     alignItems: 'center',
     justifyContent: 'center',
   },
   cornerGrip: {
     width: 14,
     height: 14,
-    borderBottomWidth: 3.5,
-    borderRightWidth: 3.5,
-    borderColor: '#F43F5E',
-    borderBottomRightRadius: 4,
-    opacity: 0.95,
+    borderRadius: 7,
+    backgroundColor: '#F43F5E',
+    borderWidth: 2,
+    borderColor: '#FFFFFF',
     shadowColor: '#F43F5E',
-    shadowOpacity: 0.7,
-    shadowRadius: 3,
-    shadowOffset: { width: 1, height: 1 },
-    elevation: 3,
+    shadowOpacity: 0.8,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 1 },
+    elevation: 4,
   },
   divider: {
     width: StyleSheet.hairlineWidth,

@@ -369,7 +369,9 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
             hero: (
               <>
             {/* Hero card */}
-            <GlassSurface style={styles.hero} borderRadius={20}>
+            <GlassSurface
+              style={[styles.hero, scales.hero < 0.75 && { padding: 12 }]}
+              borderRadius={20}>
               <View
                 style={[styles.heroGlow, { backgroundColor: withAlpha(colors.fuchsia, 0.12) }]}
                 pointerEvents="none"
@@ -377,19 +379,23 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
               <Animated.View style={{ opacity: heroFade }}>
                 <Text
                   accessibilityRole="header"
-                  style={[styles.heroTitle, { color: colors.fuchsia }]}>
+                  style={[
+                    styles.heroTitle,
+                    { color: colors.fuchsia },
+                    scales.hero < 0.75 && { fontSize: 18, lineHeight: 22 },
+                  ]}>
                   {hero.title}
                 </Text>
                 {/* The sentence is the first thing to go: the headline is
                     what carries the block, and three lines of encouragement is
                     exactly the sort of thing someone shrinking their home
                     screen wants back. */}
-                {compact.hero ? null : (
+                {scales.hero < 0.85 ? null : (
                   <Text style={[styles.heroBody, { color: colors.textMuted }]}>{hero.body}</Text>
                 )}
               </Animated.View>
 
-              {compact.hero ? null : (
+              {scales.hero < 0.85 ? null : (
               <View style={[styles.credit, { borderColor: colors.border }]}>
                 <View>
                   <Text style={[styles.creditLabel, { color: colors.textMuted }]}>CREATED BY</Text>
@@ -401,7 +407,7 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
 
               {/* Tappable, so the carousel is something the reader controls rather
                   than something that happens to them (SKILL §16 Agency). */}
-              <View style={styles.dots}>
+              <View style={[styles.dots, scales.hero < 0.75 && { marginTop: 8 }]}>
                 {HERO_SLIDES.map((item, index) => (
                   <Touchable
                     key={item.title}
@@ -428,37 +434,49 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
             quick: (
               <>
             {/* Quick actions */}
-            <View style={styles.quickRow}>
+            <View
+              style={[
+                styles.quickRow,
+                scales.quick < 0.75 && {
+                  flexWrap: 'wrap',
+                  justifyContent: 'space-between',
+                  gap: 8,
+                },
+              ]}>
               <QuickAction
-                icon={<TrendingUp size={20} color={colors.primary} />}
+                icon={<TrendingUp size={18} color={colors.primary} />}
                 label="Progress"
                 sub="Track your learning"
                 color={colors.primary}
-                compact={compact.quick}
+                compact={scales.quick < 0.85}
+                style={scales.quick < 0.75 ? { width: '48%', flex: 0, flexBasis: '48%' } : undefined}
                 onPress={() => goToTab('Progress')}
               />
               <QuickAction
-                icon={<Search size={20} color={colors.cyan} />}
+                icon={<Search size={18} color={colors.cyan} />}
                 label="Search"
                 sub="Find topics instantly"
                 color={colors.cyan}
-                compact={compact.quick}
+                compact={scales.quick < 0.85}
+                style={scales.quick < 0.75 ? { width: '48%', flex: 0, flexBasis: '48%' } : undefined}
                 onPress={() => navigation.navigate('BrowseHome', { focusSearch: true })}
               />
               <QuickAction
-                icon={<TimerIcon size={20} color={colors.emerald} />}
+                icon={<TimerIcon size={18} color={colors.emerald} />}
                 label="Timer"
                 sub="Focus with Pomodoro"
                 color={colors.emerald}
-                compact={compact.quick}
+                compact={scales.quick < 0.85}
+                style={scales.quick < 0.75 ? { width: '48%', flex: 0, flexBasis: '48%' } : undefined}
                 onPress={() => goToTab('Timer')}
               />
               <QuickAction
-                icon={<Sparkles size={20} color={colors.fuchsia} />}
+                icon={<Sparkles size={18} color={colors.fuchsia} />}
                 label="Ask AI"
                 sub="Get instant help"
                 color={colors.fuchsia}
-                compact={compact.quick}
+                compact={scales.quick < 0.85}
+                style={scales.quick < 0.75 ? { width: '48%', flex: 0, flexBasis: '48%' } : undefined}
                 onPress={() => goToTab('AskAI')}
               />
             </View>
@@ -477,16 +495,29 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
                 {
                   borderColor: withAlpha(colors.green, 0.3),
                   backgroundColor: withAlpha(colors.green, 0.05),
+                  paddingHorizontal: scales.whatsapp < 0.75 ? 12 : 16,
+                  paddingVertical: scales.whatsapp < 0.75 ? 8 : 12,
                 },
               ]}>
-              <View style={[styles.whatsappIcon, { backgroundColor: withAlpha(colors.green, 0.15) }]}>
-                <MessageCircle size={16} color={colors.green} />
+              <View
+                style={[
+                  styles.whatsappIcon,
+                  { backgroundColor: withAlpha(colors.green, 0.15) },
+                  scales.whatsapp < 0.75 && { width: 26, height: 26, borderRadius: 13 },
+                ]}>
+                <MessageCircle size={scales.whatsapp < 0.75 ? 14 : 16} color={colors.green} />
               </View>
               <View style={styles.whatsappBody}>
-                <Text style={[styles.whatsappTitle, { color: colors.text }]}>
+                <Text
+                  style={[
+                    styles.whatsappTitle,
+                    { color: colors.text },
+                    scales.whatsapp < 0.75 && { fontSize: 13 },
+                  ]}
+                  numberOfLines={1}>
                   Join our WhatsApp community
                 </Text>
-                      {compact.whatsapp ? null : (
+                {scales.whatsapp < 0.85 ? null : (
                   <Text style={[styles.whatsappSub, { color: colors.textMuted }]}>
                     {WHATSAPP_LABEL[year]} materials, notes & updates
                   </Text>
@@ -818,6 +849,7 @@ function QuickAction({
   sub,
   color,
   compact,
+  style,
   onPress,
 }: {
   icon: React.ReactNode;
@@ -825,6 +857,7 @@ function QuickAction({
   sub: string;
   color: string;
   compact?: boolean;
+  style?: any;
   onPress: () => void;
 }) {
   return (
@@ -834,7 +867,7 @@ function QuickAction({
       // The description survives here rather than on screen: TalkBack has room
       // for it, a quarter of a 390dp row does not.
       hint={sub}
-      style={styles.quickActionTarget}>
+      style={[styles.quickActionTarget, style]}>
       {/* The surface is a child rather than the Touchable's own style, so the
           specular rim can sit above the fill without wrapping the press
           target in an extra layout box. */}

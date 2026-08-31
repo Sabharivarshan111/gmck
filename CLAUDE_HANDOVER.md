@@ -96,15 +96,17 @@ This document contains the complete record of architecture, features, bugs solve
 ---
 
 ## 7. 🎛️ Home Screen Component Resizing, Drag-and-Drop & Custom Subject Media
-- **Real-Time Responsive Component Resizing (Zero Clipping & Pure Flexbox Reflow)**:
-  - **Root Cause of Horizontal Clipping**:
-    - Previously, horizontal resizing used a naive `transform: [{ scale: zoom }]` with `width: 100/zoom %` and `overflow: hidden`. Because React Native on Android does not support CSS `transformOrigin: top left` (it anchors to center by default), reducing width caused the scaled view to expand beyond the viewport and get sliced in half by `overflow: hidden`.
-  - **Resolution in `Reorderable.tsx`**:
-    - Removed `transform: scale()` and `overflow: hidden`.
-    - Implemented native **Responsive Container Width Scaling**: sets dynamic container width `${Math.round(zoom * 100)}%` centered with `alignSelf: 'center'` (range: 60% to 100%).
-    - In real-time, React Native Yoga flexbox cleanly reflows all inner text, buttons, and sub-elements without any clipping.
-    - `onLayout` measures the exact natural reflowed height, and lower sections animate smoothly with spring physics.
-    - The bottom vertical resize bar (`↕`), right-side horizontal resize bar (`↔`), corner 2D grip (`⤡`), and floating pill toolbar are attached directly to the container, following its exact boundaries.
+- **Real-Time Responsive Component Resizing (Zero Clipping, 50% Halving & Pure Flexbox Reflow)**:
+  - **50% Scaling Range**: Allows resizing cards down to 50% width (`HOME_SCALE_MIN = 0.50`), enabling users to halve components (like the Welcome hero card or Quick Actions) smoothly.
+  - **Real-Time Layout Reflow**:
+    - When `hero` is halved, the card centers gracefully, body text & creator badge shed, title font scales down responsively, and carousel dots remain centered.
+    - When `quick` actions are halved, the 4 buttons automatically reflow into a clean **2x2 grid** (`width: '48%'`), displaying full labels (*Progress, Search, Timer, Ask AI*) with zero truncation or text clipping.
+    - When `stats` and `whatsapp` are narrowed, they adjust their padding and font sizes into crisp single-column / compact badges.
+  - **Precision-Aligned Glowing Slider Handles**:
+    - Right-side vertical handle (`↔`): centered directly along the right card border (`top: 50%`, `right: -11`, glowing pill `44x5.5dp`).
+    - Bottom horizontal handle (`↕`): centered directly along the bottom card border (`left: 50%`, `bottom: -11`, glowing pill `44x5.5dp`).
+    - Corner 2D grip (`⤡`): glowing circular target badge (`bottom: -8`, `right: -8`).
+    - Floating pill toolbar: docked cleanly at the top-right corner (`top: -24`, `right: 0`).
 - **Custom Subject Card Background Image & Media (<20MB)**:
   - `mobile/src/hooks/useSubjectBackgrounds.ts`:
     - Manages user-uploaded custom pictures / video frames per subject with persistent AsyncStorage cache (`orbit:subject-backgrounds-v1`).

@@ -124,7 +124,21 @@ page.on('console', message => {
 });
 
 for (const shot of SHOTS) {
-  await page.goto(`http://localhost:5199/?${shot.query}`, { waitUntil: 'networkidle' });
+  if (shot.name === 'home-resized') {
+    await page.goto(`http://localhost:5199/?${shot.query}`, { waitUntil: 'networkidle' });
+    await page.evaluate(() => {
+      localStorage.setItem(
+        'orbit:home-order-v1',
+        JSON.stringify({
+          order: ['hero', 'quick', 'whatsapp', 'subjects', 'stats'],
+          scales: { hero: 0.55, quick: 0.65, whatsapp: 0.75, subjects: 1.0, stats: 0.65 },
+        }),
+      );
+    });
+    await page.reload({ waitUntil: 'networkidle' });
+  } else {
+    await page.goto(`http://localhost:5199/?${shot.query}`, { waitUntil: 'networkidle' });
+  }
   // Let springs settle and fonts swap in.
   await page.waitForTimeout(1200);
   if (shot.scroll === 'bottom') {
