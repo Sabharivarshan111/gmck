@@ -102,8 +102,9 @@ export function nextNumber(text: string, at: number): string {
 /**
  * Wrap the selection in a marker, or unwrap it if it is already wrapped.
  *
- * Shared by bold, italic and highlight: they differ only in the characters,
- * and three copies of this is three places for the unwrap case to be wrong.
+ * Excludes leading and trailing whitespace from the selection so markdown tags
+ * like `**bold**` or `==highlight==` never break when Android's native text
+ * selection includes trailing spaces.
  */
 export function toggleWrap(
   text: string,
@@ -111,28 +112,84 @@ export function toggleWrap(
   open: string,
   close: string = open,
 ): { text: string; cursor: number } {
-  const { start, end } = selection;
-  if (end <= start) {
-    // Nothing selected: leave a pair with the cursor between them, ready to
-    // type into. A button that does nothing on an empty selection reads as
-    // broken.
+  let { start, end } = selection;
+  if (end < start) {
+    const tmp = start;
+    start = end;
+    end = tmp;
+  }
+  if (end === start) {
+    // Nothing selected: leave a pair with the cursor between them, ready to type into.
     return {
       text: `${text.slice(0, start)}${open}${close}${text.slice(start)}`,
       cursor: start + open.length,
     };
   }
-  const chosen = text.slice(start, end);
+
+  // Adjust selection to exclude leading and trailing whitespace
+  const rawChosen = text.slice(start, end);
+  let leadingSpaces = 0;
+  while (leadingSpaces < rawChosen.length && /\s/.test(rawChosen[leadingSpaces])) {
+    leadingSpaces++;
+  }
+  let trailingSpaces = 0;
+  while (
+    trailingSpaces < rawChosen.length - leadingSpaces &&
+    /\s/.test(rawChosen[rawChosen.length - 1 - trailingSpaces])
+  ) {
+    trailingSpaces++;
+  }
+
+  const actualStart = start + leadingSpaces;
+  const actualEnd = end - trailingSpaces;
+  const chosen = text.slice(actualStart, actualEnd);
+
+  if (chosen.length === 0) {
+    return {
+      text: `${text.slice(0, start)}${open}${close}${text.slice(start)}`,
+      cursor: start + open.length,
+    };
+  }
+
+  // Check if already wrapped with this exact tag -> toggle off
   if (
     chosen.startsWith(open) &&
     chosen.endsWith(close) &&
-    chosen.length > open.length + close.length
+    chosen.length >= open.length + close.length
   ) {
     const bare = chosen.slice(open.length, -close.length);
-    return { text: text.slice(0, start) + bare + text.slice(end), cursor: start + bare.length };
+    return {
+      text: text.slice(0, actualStart) + bare + text.slice(actualEnd),
+      cursor: actualStart + bare.length,
+    };
   }
+
+  // If wrapping with a highlight tag, check if it's already highlighted in another color
+  if (open.startsWith('==') && close === '==') {
+    const highlightMatch = chosen.match(/^==([ygbp]:)?([\s\S]+?)==$/);
+    if (highlightMatch) {
+      const inner = highlightMatch[2];
+      const currentPrefix = highlightMatch[1] ? `==${highlightMatch[1]}` : '==';
+      if (currentPrefix === open) {
+        // Toggle off if same color
+        return {
+          text: text.slice(0, actualStart) + inner + text.slice(actualEnd),
+          cursor: actualStart + inner.length,
+        };
+      }
+      // Switch to new color
+      const replacement = `${open}${inner}${close}`;
+      return {
+        text: text.slice(0, actualStart) + replacement + text.slice(actualEnd),
+        cursor: actualStart + replacement.length,
+      };
+    }
+  }
+
+  const replacement = `${open}${chosen}${close}`;
   return {
-    text: `${text.slice(0, start)}${open}${chosen}${close}${text.slice(end)}`,
-    cursor: end + open.length + close.length,
+    text: text.slice(0, actualStart) + replacement + text.slice(actualEnd),
+    cursor: actualEnd + open.length + close.length,
   };
 }
 
@@ -235,7 +292,8 @@ export function NoteToolbar({
         key: 'highlight',
         label: 'Highlight',
         hint: 'Marks the selected words, and offers four colours',
-        icon: <Highlighter size={18} color={colors.text} />,
+        icon: <Highlighter size={18} color={palette ? colors.primaryText : colors.text} />,
+        active: palette,
         run: () => {
           setFaces(false);
           setPalette(open => !open);
@@ -245,7 +303,8 @@ export function NoteToolbar({
         key: 'font',
         label: 'Typeface',
         hint: 'Writes this note in a different face',
-        icon: <Type size={18} color={colors.text} />,
+        icon: <Type size={18} color={faces ? colors.primaryText : colors.text} />,
+        active: faces,
         run: () => {
           setPalette(false);
           setFaces(open => !open);
@@ -258,7 +317,7 @@ export function NoteToolbar({
       key: 'preview',
       label: isPreview ? 'Edit mode' : 'Live preview',
       hint: isPreview ? 'Switch back to editing' : 'See live formatted preview of your note',
-      icon: isPreview ? <EyeOff size={18} color={colors.fuchsia} /> : <Eye size={18} color={colors.fuchsia} />,
+      icon: isPreview ? <EyeOff size={18} color="#FFFFFF" /> : <Eye size={18} color={colors.fuchsia} />,
       active: isPreview,
       run: onTogglePreview,
     });
@@ -283,7 +342,10 @@ export function NoteToolbar({
           hitSlop={6}
           style={[
             styles.button,
-            { backgroundColor: colors.cardElevated, borderColor: colors.border },
+            {
+              backgroundColor: button.active ? (button.key === 'preview' ? colors.fuchsia : colors.primary) : colors.cardElevated,
+              borderColor: button.active ? (button.key === 'preview' ? colors.fuchsia : colors.primary) : colors.border,
+            },
           ]}>
           {button.icon}
         </Touchable>
