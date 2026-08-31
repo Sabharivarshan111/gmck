@@ -426,6 +426,12 @@ function normalizeSubject(keyOrName?: string): string | undefined {
 const EXCLUSIVE_ENTITIES = [
   ['temporomandibular', 'tmj', 'mandible', 'mandibular'],
   ['shoulder', 'glenohumeral', 'scapula', 'acromion', 'rotator cuff'],
+  ['synovial', 'synovial joint', 'diarthrodial', 'articular capsule'],
+  ['cartilaginous', 'synchondrosis', 'symphysis', 'primary cartilaginous', 'secondary cartilaginous'],
+  ['fibrous joint', 'suture', 'gomphosis', 'syndesmosis', 'schindylesis'],
+  ['nutrient artery', 'blood supply of bone', 'blood supply of long bone', 'haversian artery'],
+  ['ossification', 'endochondral', 'intramembranous', 'epiphyseal plate', 'growth plate', 'zone of proliferation'],
+  ['compact bone', 'haversian system', 'osteon', 'volkmann', 'lamellae', 'lacunae'],
   ['knee', 'patella', 'meniscus', 'cruciate'],
   ['elbow', 'radioulnar', 'olecranon'],
   ['hip', 'acetabulum', 'iliofemoral'],
@@ -483,14 +489,7 @@ export function buildGeminiPromptForQuestion(
 
   const subj = normalizeSubject(subject) || 'Medical Science';
 
-  let textbook = 'standard MBBS textbook (BD Chaurasia / Vishram Singh)';
-  if (subj === 'Physiology') textbook = 'K. Sembulingam / Guyton & Hall';
-  if (subj === 'Biochemistry') textbook = 'DM Vasudevan / Harper';
-  if (subj === 'Pathology') textbook = 'Ramadas Nayak / Robbins & Cotran';
-  if (subj === 'Pharmacology') textbook = 'KD Tripathi / Tara Shanbhag';
-  if (subj === 'Microbiology') textbook = 'Apurba Sastry / Ananthanarayan';
-  if (subj === 'Community Medicine') textbook = 'K. Park (PSM)';
-  if (subj === 'Forensic Medicine') textbook = 'KS Narayan Reddy / Gautam Biswas';
+  const textbook = `standard MBBS ${subj} curriculum benchmark`;
 
   return `A professional university exam diagram for the MBBS ${subj} topic: "${cleanQ}".\n\nTextbook Grounding: Based directly on standard schematics from ${textbook}.\nLayout & Style: Crisp 2D medical textbook illustration, anatomical line art with soft watercolor shading, straight horizontal leader lines with clear bold labels, strictly centered on a solid pure white background (#FFFFFF) with high contrast and zero clutter.`;
 }
@@ -559,8 +558,16 @@ export async function findAllDiagramsForQuery(
         }
       }
 
+      // Ignore storage path if it explicitly belongs to a different subject prefix
+      const subjectPrefix = canonicalSubject.toLowerCase().slice(0, 4);
+      if (storagePath.length > 5 && !storagePath.includes(subjectPrefix) && !storagePath.includes('general')) {
+        const otherSubjects = ['physiology', 'biochemistry', 'pathology', 'pharmacology', 'microbiology', 'forensic', 'community'];
+        const isCrossSubject = otherSubjects.some(os => !canonicalSubject.toLowerCase().includes(os) && storagePath.startsWith(os + '/'));
+        if (isCrossSubject) continue;
+      }
+
       let score = 0;
-      if (queryLower.length >= 15 && (rowText.includes(queryLower.slice(0, 25)) || queryLower.includes(rowText.slice(0, 25)))) {
+      if (queryLower.length >= 12 && (rowText.includes(queryLower.slice(0, 20)) || queryLower.includes(rowText.slice(0, 20)))) {
         score += 10;
       }
 
@@ -570,7 +577,9 @@ export async function findAllDiagramsForQuery(
         }
       }
 
-      if (score >= 1) {
+      const minRequiredScore = matchingFamily ? 1 : 2;
+
+      if (score >= minRequiredScore) {
         seenUrls.add(row.public_url);
         matches.push({
           url: row.public_url,
