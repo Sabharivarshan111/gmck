@@ -35,6 +35,7 @@ import { NotesAiEditBox } from '@/components/NotesAiEditBox';
 import { McqCard } from '@/components/McqCard';
 import { WaveformRiver } from '@/components/WaveformRiver';
 import FlashcardsScreen, { StudyView } from '@/screens/FlashcardsScreen';
+import HomeScreen from '@/screens/HomeScreen';
 
 /**
  * Three cards, shaped exactly as generate-flashcards returns them: two theory
@@ -594,6 +595,13 @@ function Shell() {
   }
   if (screen === 'usernotesdemo') {
     return <UserNotesDemo />;
+  }
+  if (screen === 'homeedit') {
+    return (
+      <NavigationContainer theme={navTheme}>
+        <HomeScreen initialEditing={true} />
+      </NavigationContainer>
+    );
   }
 
   if (screen === 'mcqdemo') {

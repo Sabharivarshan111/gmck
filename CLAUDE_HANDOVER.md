@@ -92,3 +92,20 @@ This document contains the complete record of architecture, features, bugs solve
 - `.agents/rules/94-textbook-grounded-diagram-engine.md`: Standard protocol for pre-generation textbook research from Indian MBBS textbooks (*BD Chaurasia, Vishram Singh, K. Sembulingam, DM Vasudevan, Ramadas Nayak, KD Tripathi, Apurba Sastry, K. Park*). **Note**: Native `generate_image` is an Antigravity-specific tool operating in batches of 10.
 - `.agents/rules/95-release-and-pipeline-engine.md`: Instructions for dispatching release workflows and building APK/AAB binaries.
 - `CLAUDE.md`: Synchronized rule index.
+
+---
+
+## 7. 🎛️ Home Screen Component Resizing, Drag-and-Drop & Custom Subject Media
+- **Real-Time Component Resizing & Reordering**:
+  - `mobile/src/components/Reorderable.tsx`: Long-pressing any section enters edit mode (`editing = true`).
+  - Supports vertical drag-to-reorder, +/- step buttons, and continuous horizontal/scale resizing grips with real-time responsive reflow of inner contents.
+- **Custom Subject Card Background Image & Media (<20MB)**:
+  - `mobile/src/hooks/useSubjectBackgrounds.ts`:
+    - Manages user-uploaded custom pictures / video frames per subject with persistent AsyncStorage cache (`orbit:subject-backgrounds-v1`).
+    - Enforces a strict **20 MB size limit** (`MAX_SUBJECT_MEDIA_BYTES = 20 * 1024 * 1024`), rejecting oversized files with a friendly user dialog.
+  - `mobile/src/components/HoloCard.tsx`:
+    - When `bgImageUri` is set, renders the user's custom photo/video frame with a dark glass scrim (`rgba(0,0,0,0.45)`) and iridescent holographic sheen over it.
+    - Preserves subject emoji icon, uppercase name, percentage, and progress bar with 100% readability.
+  - `mobile/src/screens/HomeScreen.tsx`:
+    - In edit mode, each subject card displays an **Image Upload Button (`ImagePlus`)** to choose an image from the photo gallery, and an **`X` Reset Button** to revert to the default holographic foil gradient.
+

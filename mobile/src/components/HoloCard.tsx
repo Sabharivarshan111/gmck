@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Animated, StyleSheet, View, type LayoutChangeEvent, type StyleProp, type ViewStyle } from 'react-native';
+import { Animated, Image, StyleSheet, View, type LayoutChangeEvent, type StyleProp, type ViewStyle } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
 import Svg, { Defs, LinearGradient, Pattern, Rect, Stop } from 'react-native-svg';
 import { Touchable } from '@/components/Touchable';
@@ -14,54 +14,10 @@ const PERIOD = 7000;
 /** Offset between neighbouring cards, so the light crosses the grid. */
 const STAGGER = 900;
 
-/**
- * Holographic foil card.
- *
- * A subject card is a flat rectangle of colour, and a question bank is a long
- * grind — the cards are the thing you look at before deciding to start. This
- * gives them the one property a printed foil card has that a screen normally
- * cannot: the surface answers back when the light moves across it.
- *
- * Three layers do it, drawn bottom to top:
- *
- *   1. **The gradient**, which is what was already there.
- *   2. **Grain** — fine diagonal hatching at 5% white. Static. It is what
- *      stops the sheen from reading as a coloured rectangle sliding past: a
- *      real foil has a texture for the light to catch on.
- *   3. **The sheen** — a wide iridescent band that drifts across, while the
- *      whole card leans a few degrees. The lean is the important half. A
- *      moving highlight on a flat card is a moving highlight; a highlight
- *      that moves *because the card turned* is a surface.
- *
- * It runs on its own, without being touched. That is deliberate: the card's
- * tap opens the subject, so anything driven by a press would be seen for
- * about a tenth of a second before the screen changed. The drift is the
- * whole effect, so it has to be there when you are only looking.
- *
- * What that costs, and what keeps it affordable:
- *
- *   • Everything is `transform` on the native driver, so the JS thread does
- *     nothing per frame and Android re-uses each card's display list — a
- *     matrix update and a composite, not a redraw of the SVG inside.
- *   • It **stops when the screen is not focused**. Switching to the Timer tab
- *     leaves Home mounted, and six cards animating behind a screen nobody is
- *     looking at is pure battery.
- *   • Under reduced motion there is no drift and no sheen at all. A still
- *     rainbow band across a card is not a gentler version of this effect, it
- *     is a smear.
- *
- * The iridescent hues are fixed rather than themed, for the same reason
- * GlassSurface's specular highlight is always white: they describe how a
- * material behaves under light, not what colour the app is.
- *
- * Not taken from the reference: pointer-tracked tilt, which has no meaning
- * without a cursor, and `mix-blend-mode: color-dodge`, which React Native has
- * no equivalent for. The sheen is a translucent wash instead — softer than
- * the web original, and the honest limit rather than a fake.
- */
 export function HoloCard({
   from,
   to,
+  bgImageUri,
   borderRadius = 16,
   borderColor,
   style,
@@ -69,10 +25,12 @@ export function HoloCard({
   index = 0,
   label,
   onPress,
+  disabled = false,
   children,
 }: {
   from: string;
   to: string;
+  bgImageUri?: string | null;
   borderRadius?: number;
   borderColor: string;
   /** The card's box in its parent: width, height. */
@@ -83,6 +41,7 @@ export function HoloCard({
   index?: number;
   label: string;
   onPress: () => void;
+  disabled?: boolean;
   children: React.ReactNode;
 }) {
   const reduceMotion = useReducedMotion();
@@ -166,23 +125,27 @@ export function HoloCard({
         ],
       };
 
-  return (
-    <Animated.View
-      // Without this the tilt is not the cheap operation it looks like.
-      // Animating a transform only avoids a redraw when the view is already a
-      // texture; otherwise Android re-executes the whole subtree's draw list
-      // every frame — and this subtree contains two SVGs, one of them a
-      // repeating pattern fill. Six of those redrawing at 60fps is what made
-      // the Home screen stutter on a phone that should not stutter at all.
-      //
-      // Promoting the card to a hardware layer costs one texture per card and
-      // turns the tilt back into a matrix multiply.
-      renderToHardwareTextureAndroid={!reduceMotion}
-      style={[style, tilt]}
-      onLayout={(event: LayoutChangeEvent) => setWidth(event.nativeEvent.layout.width)}>
-      <Touchable onPress={onPress} label={label} scaleTo={0.975} style={[innerStyle, { borderColor }]}>
-        {/* Gradient and grain are static and share one canvas: a second SVG
-            per card would double the native views behind the grid. */}
+  const content = (
+    <>
+      {/* Custom user-uploaded background or default holographic gradient */}
+      {bgImageUri ? (
+        <View
+          pointerEvents="none"
+          style={[StyleSheet.absoluteFill, { borderRadius, overflow: 'hidden' }]}>
+          <Image
+            source={{ uri: bgImageUri }}
+            style={StyleSheet.absoluteFill}
+            resizeMode="cover"
+          />
+          {/* Dark glass overlay scrim so white text, emoji and progress bar have 100% contrast */}
+          <View
+            style={[
+              StyleSheet.absoluteFill,
+              { backgroundColor: 'rgba(0, 0, 0, 0.45)' },
+            ]}
+          />
+        </View>
+      ) : (
         <View
           pointerEvents="none"
           style={[StyleSheet.absoluteFill, { borderRadius, overflow: 'hidden' }]}>
@@ -205,32 +168,47 @@ export function HoloCard({
             <Rect x="0" y="0" width="100%" height="100%" fill={`url(#${ids.grain})`} />
           </Svg>
         </View>
+      )}
 
-        {reduceMotion || width === 0 ? null : (
-          <View
-            pointerEvents="none"
-            style={[StyleSheet.absoluteFill, { borderRadius, overflow: 'hidden' }]}>
-            <Animated.View
-              renderToHardwareTextureAndroid
-              style={[styles.sheen, sheenStyle]}>
-              <Svg width="100%" height="100%">
-                <Defs>
-                  <LinearGradient id={ids.sheen} x1="0" y1="0.25" x2="1" y2="0.75">
-                    <Stop offset="0" stopColor="#22D3EE" stopOpacity="0" />
-                    <Stop offset="0.38" stopColor="#22D3EE" stopOpacity="0.55" />
-                    <Stop offset="0.5" stopColor="#FF5CA8" stopOpacity="0.6" />
-                    <Stop offset="0.62" stopColor="#7C5CFF" stopOpacity="0.55" />
-                    <Stop offset="1" stopColor="#7C5CFF" stopOpacity="0" />
-                  </LinearGradient>
-                </Defs>
-                <Rect x="0" y="0" width="100%" height="100%" fill={`url(#${ids.sheen})`} />
-              </Svg>
-            </Animated.View>
-          </View>
-        )}
+      {reduceMotion || width === 0 ? null : (
+        <View
+          pointerEvents="none"
+          style={[StyleSheet.absoluteFill, { borderRadius, overflow: 'hidden' }]}>
+          <Animated.View
+            renderToHardwareTextureAndroid
+            style={[styles.sheen, sheenStyle]}>
+            <Svg width="100%" height="100%">
+              <Defs>
+                <LinearGradient id={ids.sheen} x1="0" y1="0.25" x2="1" y2="0.75">
+                  <Stop offset="0" stopColor="#22D3EE" stopOpacity="0" />
+                  <Stop offset="0.38" stopColor="#22D3EE" stopOpacity="0.55" />
+                  <Stop offset="0.5" stopColor="#FF5CA8" stopOpacity="0.6" />
+                  <Stop offset="0.62" stopColor="#7C5CFF" stopOpacity="0.55" />
+                  <Stop offset="1" stopColor="#7C5CFF" stopOpacity="0" />
+                </LinearGradient>
+              </Defs>
+              <Rect x="0" y="0" width="100%" height="100%" fill={`url(#${ids.sheen})`} />
+            </Svg>
+          </Animated.View>
+        </View>
+      )}
 
-        {children}
-      </Touchable>
+      {children}
+    </>
+  );
+
+  return (
+    <Animated.View
+      renderToHardwareTextureAndroid={!reduceMotion}
+      style={[style, tilt]}
+      onLayout={(event: LayoutChangeEvent) => setWidth(event.nativeEvent.layout.width)}>
+      {disabled ? (
+        <View style={[innerStyle, { borderColor }]}>{content}</View>
+      ) : (
+        <Touchable onPress={onPress} label={label} scaleTo={0.975} style={[innerStyle, { borderColor }]}>
+          {content}
+        </Touchable>
+      )}
     </Animated.View>
   );
 }

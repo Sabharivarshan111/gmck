@@ -22,6 +22,8 @@ import { GlassSurface } from '@/components/GlassSurface';
 import { WallpaperBackground, useWallpaperText } from '@/components/WallpaperBackground';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
+import { Dialog } from '@/components/Dialog';
+import { useSubjectBackgrounds } from '@/hooks/useSubjectBackgrounds';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import {
   ArrowRight,
@@ -29,6 +31,7 @@ import {
   ChevronRight,
   Flag,
   Flame,
+  ImagePlus,
   Menu,
   MessageCircle,
   Moon,
@@ -39,6 +42,7 @@ import {
   TrendingUp,
   Trophy,
   SlidersHorizontal,
+  X,
 } from 'lucide-react-native';
 import { useTheme, withAlpha } from '@/theme';
 import { DEFAULT_GRADIENT, SUBJECT_GRADIENT, themedGradient } from '@/theme/subjectCards';
@@ -102,7 +106,7 @@ const WHATSAPP_LABEL: Record<YearKey, string> = {
  */
 const HOME_SCALE_RANGE = { min: HOME_SCALE_MIN, max: HOME_SCALE_MAX };
 
-export default function HomeScreen() {
+export default function HomeScreen({ initialEditing = false }: { initialEditing?: boolean } = {}) {
   const { colors, theme, textSize, setTextSize, custom, setCustom, preference, setPreference } =
     useTheme();
   const { order, rendered, scales, save, setScale, reset } = useHomeOrder();
@@ -119,7 +123,7 @@ export default function HomeScreen() {
       ),
     [scales],
   );
-  const [editing, setEditing] = useState(false);
+  const [editing, setEditing] = useState(initialEditing);
   /**
    * Whether the settings sheet is open. Text size used to have its own circle
    * in the header; a header that grows a button per preference is a toolbar
@@ -136,6 +140,8 @@ export default function HomeScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<Nav>();
   const countDone = useCountDone();
+  const { getBackground, pickBackground, removeSubjectBackground } = useSubjectBackgrounds();
+  const [cardUploadError, setCardUploadError] = useState<string | null>(null);
 
   const [slide, setSlide] = useState(0);
   const [focusMinutes, setFocusMinutes] = useState(0);
@@ -528,6 +534,7 @@ export default function HomeScreen() {
                 if (!subject) {
                   return null;
                 }
+                const customBg = getBackground(subject.key);
                 return (
                   <HoloCard
                     index={subjects.indexOf(subject)}
@@ -537,11 +544,45 @@ export default function HomeScreen() {
                     label={`${subject.name}, ${subject.pct}% complete`}
                     from={cardGradient(subject)[0]}
                     to={cardGradient(subject)[1]}
+                    bgImageUri={customBg?.uri}
+                    disabled={editing}
                     borderColor={colors.border}
                     borderRadius={16}
                     style={styles.subjectTile}
                     innerStyle={styles.subjectCard}>
-                    <Text style={styles.subjectEmoji}>{subject.icon}</Text>
+                    <View style={styles.subjectHeaderRow}>
+                      <Text style={styles.subjectEmoji}>{subject.icon}</Text>
+                      {editing ? (
+                        <View style={styles.cardCustomActions}>
+                          <Touchable
+                            onPress={async () => {
+                              const res = await pickBackground(subject.key);
+                              if (!res.success && res.error) {
+                                setCardUploadError(res.error);
+                              }
+                            }}
+                            label={`Upload picture for ${subject.name}`}
+                            hitSlop={6}
+                            scaleTo={0.88}
+                            style={[
+                              styles.cardPicBtn,
+                              { backgroundColor: customBg ? colors.accent : withAlpha('#000000', 0.65) },
+                            ]}>
+                            <ImagePlus size={14} color="#FFFFFF" />
+                          </Touchable>
+                          {customBg ? (
+                            <Touchable
+                              onPress={() => removeSubjectBackground(subject.key)}
+                              label={`Remove picture for ${subject.name}`}
+                              hitSlop={6}
+                              scaleTo={0.88}
+                              style={[styles.cardPicBtn, { backgroundColor: withAlpha(colors.danger, 0.85) }]}>
+                              <X size={14} color="#FFFFFF" />
+                            </Touchable>
+                          ) : null}
+                        </View>
+                      ) : null}
+                    </View>
                     <View style={styles.subjectFooter}>
                       <Text style={[styles.subjectName, { color: colors.text }]}>
                         {subject.name.toUpperCase()}
@@ -647,6 +688,14 @@ export default function HomeScreen() {
           setYearPickerOpen(false);
           navigation.navigate('BrowseHome', { year: key });
         }}
+      />
+
+      <Dialog
+        visible={!!cardUploadError}
+        onDismiss={() => setCardUploadError(null)}
+        title="File Size Limit"
+        message={cardUploadError || ''}
+        actions={[{ label: 'OK', onPress: () => setCardUploadError(null), tone: 'primary' }]}
       />
       </ScrollView>
     </WallpaperBackground>
@@ -1197,12 +1246,33 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     overflow: 'hidden',
   },
-  subjectEmoji: {
+  subjectHeaderRow: {
     position: 'absolute',
     top: 12,
+    left: 12,
     right: 12,
-    fontSize: 34,
-    opacity: 0.8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    zIndex: 2,
+  },
+  cardCustomActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  cardPicBtn: {
+    width: 28,
+    height: 28,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+  },
+  subjectEmoji: {
+    fontSize: 32,
+    opacity: 0.9,
   },
   subjectFooter: {
     zIndex: 1,
