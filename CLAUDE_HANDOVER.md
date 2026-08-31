@@ -171,3 +171,36 @@ This document contains the complete record of architecture, features, bugs solve
    - When quota resets, generate the remaining 10 high-yield Anatomy diagrams and upload them to Supabase Storage `diagrams/anatomy/`.
 2. **User Notes & Testing**:
    - The user has tested the app on mobile. Remind them to install **Release Build 110** (tag `release-110`) from the GitHub release link to verify all fixes on device.
+
+---
+
+## 11. 🖼️ Diagram Matching Rebuilt as an Identity Join (Claude Code, 2026-08-31)
+
+**Antigravity → this is the part of §4 and §8 that did not hold. Read before touching diagrams again.**
+
+### What was still wrong
+The reader reported *TCA cycle – definition, sequence of reaction, energetics, regulation* still opening with **"High-Yield Visual Exam Diagram (1/3)" = Glycolysis** and **(2/3) = Gluconeogenesis**, and the wrong pictures surviving Regenerate and "Fix notes with AI".
+
+The `EXCLUSIVE_ENTITIES` / `DIAGRAM_STOP_WORDS` approach cannot be made correct by tuning. It is a *search* over a table that already holds the *answer*: `question_diagrams` has one row per question, keyed by `question_id`, which is the app's own `getQuestionId(question)` (`question-` + first 50 chars, whitespace dashed) — 849 of the 862 picture-carrying rows match it character for character.
+
+### What changed in the app
+- `findDiagramsForQuestion` (replaces `findAllDiagramsForQuery`): two equality lookups — `question_id`, then `question_text` — plus a normalised-text fallback scoped to the subject for the 13 hand-inserted rows whose id is a slug (`anat-types-of-synovial-joints`). **No scoring, no containment, no word lists.** `EXCLUSIVE_ENTITIES` and `DIAGRAM_STOP_WORDS` are deleted.
+- `applyQuestionDiagrams` **replaces** a note's diagram sections instead of topping them up, on first open, Regenerate and accepted AI edits. `mergeProposal` and `NotesAiEditBox` no longer pin the old ones — that pinning is exactly why regenerate kept the wrong picture. Notes now heal themselves on the next open, with no new APK.
+- `npm run check:diagrams` runs the real lookup against production-shaped rows and fails if scoring or a keyword table returns.
+- `node preview/diagram-shot.mjs` screenshots the TCA note and asserts one unnumbered card.
+
+### What changed in Supabase (already applied)
+- **Cleared 58 cached `handwritten_notes` rows** of diagram sections that did not belong to their question (51 of 73 were wrong). They re-attach correctly on next open.
+- **Re-pointed 22 `question_diagrams` rows** and **cleared 7** that had no correct plate. Every edited row records its previous path in `error_log`, so all of it is reversible.
+  - Substring artefacts: *Amlodipine* → `aml_auer_rods_vs_cml_leukemia.jpg` ("AML" inside "AMLodipine"); *Couple Protection Rate* → `coup_contrecoup_brain_trauma.jpg`; *Salicylates* → the HIV virion.
+  - Plain mismatches with a correct plate already in the bucket: *Hodgkin's lymphoma* was on the ETC complexes plate; *Megaloblastic Anaemia* and *Echinococcus granulosus* on the bilirubin plate; *Peptic Ulcer Disease* on serum protein electrophoresis; *Hemophilia* / *Bleeding Disorders* on the immunoglobulin plate; four forensic rigor-mortis questions on the physiology sarcomere plate.
+
+### The filename idea, measured
+The app owner suggested matching on the image filename (`tca_cycle_*.jpg` for a TCA question). Measured over all 851 rows with a picture, as whole-word matching on the filename's *specific* tokens, requiring ≥2 and a unique winner: **abstains on 68%**, and of the ones it answers it agreed 196 and disagreed 19. Reading those 19 found **eleven genuinely wrong rows** — that is where the repairs above came from.
+
+So it is shipped as **`npm run audit:diagrams`**, a reporting tool, and deliberately *not* as the matcher: over the same rows it puts *Cerebellum — external and internal features* on `right_atrium_internal_features.jpg` and *Median nerve* on `facial_nerve_complete_course.jpg`. That is the reported bug again. **Run it after every diagram upload; apply its output by hand.**
+
+### Still open
+- 636 of 851 mapped questions share no filename tokens, so the audit has no opinion on them — they have not been verified either way.
+- The 15 **chapter-level** notes (`community-medicine::…`, `forensic-medicine::…`) still carry diagram sections written by the web app. Left alone deliberately: a chapter diagram is not tied to one question, and the native `ChapterNotes` does not attach any.
+- `npm run check:smoke` fails 7 steps (home reorder/resize, subject-card drag, year picker, focus tree, pomodoro drafting, note-toolbar markers). **Identical on the commit before this one** — pre-existing, not from this change, and not investigated here.

@@ -1,6 +1,8 @@
 import { supabase } from './supabase';
 import { collectQuestions, type BankNode } from './questionBank';
 import { clampQuestions } from './notesLimits';
+import { getQuestionId } from './progress';
+import { warn } from '@/lib/log';
 
 /**
  * Handwritten-notes generation, ported from
@@ -363,48 +365,7 @@ async function invokeNotes(
   return (data ?? {}) as Record<string, unknown>;
 }
 
-export const DIAGRAM_STOP_WORDS = new Set([
-  'define', 'describe', 'explain', 'discuss', 'enumerate', 'classify', 'write',
-  'short', 'note', 'notes', 'briefly', 'detail', 'types', 'various', 'causes',
-  'features', 'clinical', 'management', 'treatment', 'prevention', 'control',
-  'diagnosis', 'laboratory', 'importance', 'difference', 'differentiate',
-  'compare', 'versus', 'medical', 'patient', 'person', 'child', 'female',
-  'male', 'years', 'months', 'rules', 'rule', 'case', 'cases', 'study',
-  'outline', 'aspects', 'factors', 'principles', 'methods', 'criteria',
-  'guidelines', 'algorithm', 'signs', 'symptoms', 'procedure', 'investigations',
-  'role', 'what', 'which', 'about', 'with', 'from', 'between', 'under',
-  'their', 'does', 'have', 'been', 'give', 'name', 'list', 'state', 'applied',
-  'life', 'cycle', 'cycles', 'diagram', 'draw', 'drawn', 'neat', 'labelled', 'question',
-  'examination', 'appearance', 'effects', 'program', 'programme', 'scheme',
-  'strategy', 'national', 'india', 'indian', 'level', 'levels', 'status',
-  'health', 'community', 'public', 'primary', 'secondary', 'tertiary',
-  'following', 'based', 'first', 'second', 'third', 'final', 'paper', 'topic',
-  'practice', 'body', 'changes', 'death', 'living', 'post', 'mortem',
-  'antemortem', 'postmortem', 'wounds', 'wound', 'injury', 'injuries',
-  'poisons', 'poison', 'poisoning', 'acute', 'chronic', 'general', 'special',
-  'system', 'systemic', 'organs', 'organ', 'human', 'structure', 'structures',
-  'functions', 'function', 'parts', 'part', 'suitable', 'examples', 'available',
-  'protection', 'act', 'acts', 'proof', 'therapeutic', 'classification',
-  'bone', 'bones', 'artery', 'arteries', 'vein', 'veins', 'nerve', 'nerves',
-  'muscle', 'muscles', 'joint', 'joints', 'gland', 'glands', 'duct', 'ducts',
-  'wall', 'walls', 'cord', 'blood', 'reflex', 'reflexes',
-  'disorder', 'disorders', 'disease', 'diseases', 'syndrome', 'syndromes',
-  'supply', 'long', 'marrow', 'smear', 'picture', 'findings', 'origin',
-  'course', 'distribution', 'branches', 'termination', 'anastomosis', 'relations',
-  'articular', 'surface', 'surfaces', 'disc', 'discs', 'ligament', 'ligaments',
-  'movement', 'movements', 'capsule', 'cavity', 'cavities', 'cartilage',
-  'borders', 'border', 'fossa', 'tubercle', 'process', 'notch', 'insertion',
-  'action', 'actions', 'innervation', 'tributaries', 'boundaries', 'contents',
-  'extent', 'variation', 'variations', 'correlate', 'development', 'formation',
-  'sites', 'presenting', 'location', 'anomalies', 'lesions', 'derivatives',
-  'drainage', 'lymphatic', 'histology', 'gross', 'microscopic',
-  'definition', 'definitions', 'sequence', 'reaction', 'reactions', 'energetics',
-  'regulation', 'mechanism', 'mechanisms', 'steps', 'pathway', 'pathways',
-  'transport', 'transports', 'passive', 'active', 'fate', 'synthesis',
-  'degradation', 'metabolism', 'abnormalities', 'important', 'significance',
-  'molecules', 'molecule', 'overview', 'pathophysiology', 'complications',
-]);
-
+/** Map a bank subject key or display name onto the name the diagram rows use. */
 function normalizeSubject(keyOrName?: string): string | undefined {
   if (!keyOrName) return undefined;
   const s = keyOrName.toLowerCase().replace(/[-_]/g, ' ').trim();
@@ -424,109 +385,6 @@ function normalizeSubject(keyOrName?: string): string | undefined {
   if (s.includes('obg') || s.includes('gyn') || s.includes('obst')) return 'Obstetrics & Gynaecology';
   return undefined;
 }
-
-/**
- * Known distinct anatomical/clinical entities to prevent cross-organ and cross-topic collisions.
- */
-const EXCLUSIVE_ENTITIES = [
-  // Anatomy
-  ['temporomandibular', 'tmj', 'mandible', 'mandibular'],
-  ['shoulder', 'glenohumeral', 'scapula', 'acromion', 'rotator cuff'],
-  ['synovial', 'synovial joint', 'diarthrodial', 'articular capsule'],
-  ['cartilaginous', 'synchondrosis', 'symphysis', 'primary cartilaginous', 'secondary cartilaginous'],
-  ['fibrous joint', 'suture', 'gomphosis', 'syndesmosis', 'schindylesis'],
-  ['nutrient artery', 'blood supply of bone', 'blood supply of long bone', 'haversian artery'],
-  ['ossification', 'endochondral', 'intramembranous', 'epiphyseal plate', 'growth plate', 'zone of proliferation'],
-  ['compact bone', 'haversian system', 'osteon', 'volkmann', 'lamellae', 'lacunae'],
-  ['knee', 'patella', 'meniscus', 'cruciate'],
-  ['elbow', 'radioulnar', 'olecranon'],
-  ['hip', 'acetabulum', 'iliofemoral'],
-  ['wrist', 'carpal', 'carpometacarpal'],
-  ['brachial', 'plexus', 'erbs'],
-  ['femoral', 'femur'],
-  ['popliteal'],
-  ['axilla', 'axillary'],
-  ['carotid'],
-  ['cavernous'],
-  ['intercostal'],
-  ['coronary'],
-  ['atrium', 'atrial'],
-  ['cerebellum', 'cerebellar'],
-  ['cerebrum', 'cerebral', 'internal capsule'],
-  ['medulla', 'medullary'],
-  ['pons', 'pontine'],
-  ['midbrain'],
-  ['facial nerve', 'facial'],
-  ['median nerve', 'median'],
-  ['ulnar nerve', 'ulnar'],
-  ['radial nerve', 'radial'],
-  ['sciatic'],
-  ['duodenum', 'duodenal'],
-  ['pancreas', 'pancreatic'],
-  ['spleen', 'splenic'],
-  ['liver', 'hepatic', 'portal'],
-  ['kidney', 'renal'],
-  ['stomach', 'gastric'],
-  ['testis', 'testicular'],
-  ['ovary', 'ovarian'],
-  ['breast', 'mammary'],
-  ['lung', 'lungs', 'bronchopulmonary'],
-  ['larynx', 'laryngeal', 'vocal cord'],
-  ['pharynx', 'pharyngeal'],
-  ['palatine tonsil', 'tonsil'],
-  ['tongue', 'lingual'],
-  ['parotid'],
-  ['thyroid'],
-  ['pituitary'],
-  // Biochemistry pathways & cycles
-  ['tca', 'tca cycle', 'krebs', 'citric acid', 'citric acid cycle', 'tricarboxylic', 'anaplerosis', 'anaplerotic', 'citrate synthase'],
-  ['glycolysis', 'embden', 'meyerhof', 'hexokinase', 'glucokinase', 'phosphofructokinase', 'pfk 1', 'pfk-1', 'pyruvate kinase', 'rapoport'],
-  ['gluconeogenesis', 'cori cycle', 'cahill cycle', 'alanine cycle', 'pyruvate carboxylase', 'pepck', 'fructose 1 6 bisphosphatase', 'glucose 6 phosphatase'],
-  ['glycogen', 'glycogenesis', 'glycogenolysis', 'von gierke', 'pompe', 'cori disease', 'mcardle', 'glycogen storage'],
-  ['hmp shunt', 'pentose phosphate', 'g6pd', 'favism', 'transketolase', 'transaldolase'],
-  ['urea cycle', 'hyperammonemia', 'ornithine', 'citrulline', 'argininosuccinate', 'arginase', 'carbamoyl phosphate synthetase i'],
-  ['beta oxidation', 'carnitine', 'carnitine shuttle', 'cpt-1', 'cpt-2', 'acyl coa dehydrogenase'],
-  ['ketogenesis', 'ketone body', 'ketone bodies', 'ketolysis', 'dka', 'diabetic ketoacidosis', 'hmg coa synthase'],
-  ['cholesterol', 'statin', 'hmg coa reductase', 'mevalonate', 'squalene'],
-  ['lipoprotein', 'chylomicron', 'chylomicrons', 'vldl', 'ldl', 'hdl', 'reverse cholesterol transport', 'rct', 'abetalipoproteinemia', 'tangier', 'atherogenesis', 'dyslipidemia', 'hyperlipoproteinemia'],
-  ['bilirubin', 'jaundice', 'heme catabolism', 'heme degradation', 'urobilinogen', 'stercobilin', 'kernicterus', 'crigler', 'gilbert', 'dubinhohnson', 'rotor'],
-  ['heme synthesis', 'porphyria', 'porphyrias', 'ala synthase', 'lead poisoning', 'acute intermittent porphyria', 'coproporphyria'],
-  ['purine', 'uric acid', 'gout', 'lesch nyhan', 'prpp', 'allopurinol', 'salvage pathway'],
-  ['pyrimidine', 'orotic acid', 'orotic aciduria', 'carbamoyl phosphate synthetase ii', 'cad enzyme'],
-  ['phenylalanine', 'tyrosine', 'pku', 'phenylketonuria', 'alkaptonuria', 'albinism', 'homogentisic'],
-  ['tryptophan', 'serotonin', 'melatonin', 'carcinoid', 'hartnup', 'niacin', 'pellagra'],
-  ['one carbon', 'methionine', 'homocysteine', 'folate trap', 'sam', 'tetrahydrofolate'],
-  ['enzyme kinetics', 'lineweaver', 'burk', 'michaelis', 'menten', 'km', 'vmax', 'competitive inhibition', 'non competitive'],
-  ['electrophoresis', 'spep', 'serum protein electrophoresis', 'multiple myeloma', 'm band', 'gamma globulin'],
-  ['electron transport chain', 'etc complexes', 'oxidative phosphorylation', 'chemiosmotic', 'atp synthase', 'rotenone', 'cyanide', 'uncoupler', 'dnp'],
-  ['visual cycle', 'wald', 'rhodopsin', 'vitamin a', 'retinal', 'opsin', 'night blindness'],
-  ['translation', 'ribosome', 'elongation', 'initiation factor', 'tetracycline', 'chloramphenicol', 'erythromycin', 'cycloheximide'],
-  ['cell membrane transport', 'transport mechanisms', 'passive transport', 'simple diffusion', 'facilitated diffusion', 'sodium potassium pump', 'na k atpase', 'ping pong mechanism', 'ping-pong'],
-  // Physiology
-  ['action potential', 'resting membrane potential', 'depolarization', 'repolarization', 'hyperpolarization'],
-  ['cardiac cycle', 'wiggers', 'isovolumetric', 'ejection phase', 'atrial systole'],
-  ['pacemaker', 'cardiac action potential', 'phase 4 depolarization', 'sa node'],
-  ['coagulation', 'hemostasis', 'intrinsic pathway', 'extrinsic pathway', 'thrombin', 'fibrinogen', 'clotting factor'],
-  ['erythropoiesis', 'erythropoietin', 'proerythroblast', 'reticulocyte', 'normoblast'],
-  ['baroreceptor', 'carotid sinus', 'aortic arch', 'buffer nerve', 'vasomotor center'],
-  ['raas', 'renin', 'angiotensin', 'aldosterone', 'juxtaglomerular', 'macula densa'],
-  ['gfr', 'glomerular filtration', 'podocyte', 'filtration barrier', 'starling forces'],
-  ['countercurrent', 'vasa recta', 'loop of henle', 'medullary hyperosmolality'],
-  ['spirogram', 'lung volumes', 'vital capacity', 'fev1', 'fvc', 'residual volume'],
-  ['oxygen hemoglobin', 'dissociation curve', 'bohr effect', 'haldane effect', 'p50', '2,3-bpg'],
-  ['neural control of respiration', 'dorsal respiratory group', 'drg', 'vrg', 'pneumotaxic', 'apneustic'],
-  ['gastric acid', 'parietal cell', 'proton pump', 'h/k atpase', 'gastrin', 'histamine h2', 'vagus'],
-  ['neuromuscular junction', 'nmj', 'acetylcholine', 'motor end plate', 'myasthenia gravis'],
-  ['sarcomere', 'cross bridge', 'actin', 'myosin', 'troponin', 'tropomyosin', 'sliding filament'],
-  ['basal ganglia', 'direct pathway', 'indirect pathway', 'striatum', 'substantia nigra', 'parkinson'],
-  ['pyramidal tract', 'corticospinal', 'lateral corticospinal', 'internal capsule', 'upper motor neuron'],
-  ['visual pathway', 'optic chiasma', 'bitemporal hemianopia', 'homonymous hemianopia', 'lateral geniculate'],
-  ['micturition', 'cystometrogram', 'detrusor', 'internal sphincter', 'pudendal nerve'],
-  ['menstrual cycle', 'follicular phase', 'luteal phase', 'ovulation', 'lh surge', 'endometrium'],
-  ['spermatogenesis', 'sertoli', 'leydig', 'blood testis barrier', 'fsh', 'testosterone'],
-  ['glucose homeostasis', 'insulin', 'glucagon', 'beta cell', 'islet of langerhans'],
-  ['renal acidification', 'bicarbonate reabsorption', 'glutaminase', 'titratable acid'],
-];
 
 /**
  * Build an authentic, textbook-grounded Gemini image generation prompt for any MBBS question.
@@ -549,150 +407,167 @@ export function buildGeminiPromptForQuestion(
 }
 
 /**
- * Look up ALL authentic diagrams from `question_diagrams` for a question or topic query.
- * Scoped strictly by subject and exclusive entity families to prevent false positives.
+ * The identity of a question, as `question_diagrams.question_id` stores it.
+ *
+ * `getQuestionId` is the app's own per-question storage key — `question-` plus
+ * the first 50 characters with whitespace turned into dashes — and it is the
+ * *same string* the diagram pipeline filed every row under. 849 of the 862
+ * rows that carry a picture match it character for character, so this is a
+ * primary-key join, not a search. It is imported rather than re-implemented
+ * because a second copy of that 50 would drift and silently match nothing.
  */
-export async function findAllDiagramsForQuery(
-  query: string,
-  subjectKey?: string,
-  subjectName?: string,
-): Promise<Array<{ url: string; title?: string }>> {
-  const clean = query
-    .replace(/[0-9]+\./g, '')
-    .replace(/\(.*?\)/g, '')
-    .replace(/[*#★☆]/g, '')
-    .replace(/[^a-zA-Z0-9 ]/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
-  if (clean.length < 4) {
-    return [];
-  }
-
-  const queryLower = clean.toLowerCase();
-  const canonicalSubject = normalizeSubject(subjectName || subjectKey);
-  if (!canonicalSubject) {
-    return [];
-  }
-
-  const matchingFamily = EXCLUSIVE_ENTITIES.find(family =>
-    family.some(kw => queryLower.includes(kw)),
-  );
-
-  // If query is not in a specific known diagram family, do not loose-match on generic words
-  if (!matchingFamily) {
-    return [];
-  }
-
-  try {
-    const { data } = await supabase
-      .from('question_diagrams')
-      .select('public_url, storage_path, question_text, subject')
-      .not('public_url', 'is', null)
-      .ilike('subject', `%${canonicalSubject}%`);
-
-    if (!data || data.length === 0) {
-      return [];
-    }
-
-    const matches: Array<{ url: string; title: string; score: number }> = [];
-    const seenUrls = new Set<string>();
-
-    for (const row of data) {
-      if (!row.public_url || !row.question_text) continue;
-      if (seenUrls.has(row.public_url)) continue;
-
-      const rowText = row.question_text.toLowerCase();
-      const storagePath = (row.storage_path || '').toLowerCase();
-
-      // Strict barrier: candidate MUST match the specific entity family
-      const rowMatchesFamily = matchingFamily.some(
-        kw => rowText.includes(kw) || storagePath.includes(kw),
-      );
-      if (!rowMatchesFamily) {
-        continue;
-      }
-
-      // Ignore storage path if it explicitly belongs to a different subject prefix
-      const subjectPrefix = canonicalSubject.toLowerCase().slice(0, 4);
-      if (storagePath.length > 5 && !storagePath.includes(subjectPrefix) && !storagePath.includes('general')) {
-        const otherSubjects = ['physiology', 'biochemistry', 'pathology', 'pharmacology', 'microbiology', 'forensic', 'community'];
-        const isCrossSubject = otherSubjects.some(os => !canonicalSubject.toLowerCase().includes(os) && storagePath.startsWith(os + '/'));
-        if (isCrossSubject) continue;
-      }
-
-      seenUrls.add(row.public_url);
-      matches.push({
-        url: row.public_url,
-        title: row.question_text,
-        score: 10,
-      });
-    }
-
-    return matches.map(m => ({ url: m.url, title: m.title }));
-  } catch (err) {
-    console.warn('[handwrittenNotes] diagram lookup failed:', err);
-  }
-  return [];
+function diagramQuestionId(question: string): string {
+  return getQuestionId(question.trim());
 }
 
 /**
- * Ensures single-question note content carries its authentic visual exam diagrams,
- * or attaches a ready-to-use Gemini prompt if no pre-rendered diagram exists.
- * Automatically cleans any mismatched/false-positive diagram sections.
+ * The remaining rows were inserted by hand and carry a paraphrased
+ * `question_id` (`anat-types-of-synovial-joints`), so they are reached through
+ * their `question_text` instead. Stars are the importance markers the bank
+ * appends and the row may or may not have kept them, so they come off both
+ * sides before the comparison — which stays an **equality**, never a
+ * containment. "Types of synovial joint" and "Types of synovial joint **" are
+ * the same question; "Glycolysis …" and "TCA cycle …" are not, and every
+ * looser test that has been tried here made them look like they were.
  */
-export async function ensureSingleNoteDiagram(
-  content: NotesContent,
-  request: SingleNoteRequest,
-): Promise<NotesContent> {
-  const queryLower = request.question.toLowerCase();
-  const matchingFamily = EXCLUSIVE_ENTITIES.find(family =>
-    family.some(kw => queryLower.includes(kw)),
+function normalizeQuestionText(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/[*#★☆•]/g, ' ')
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+}
+
+const DIAGRAM_URL_MARK = 'supabase.co/storage/v1/object/public/diagrams';
+
+function isDiagramSection(section: Section): boolean {
+  return (
+    section?.icon === '🎨' ||
+    (typeof section?.payload?.text === 'string' &&
+      section.payload.text.includes(DIAGRAM_URL_MARK))
   );
+}
 
-  // Clean out any mismatched/corrupted diagram sections from old cached runs
-  const cleanedSections = (content.sections || []).filter(s => {
-    const isDiagram =
-      s.icon === '🎨' ||
-      (typeof s.payload?.text === 'string' &&
-        s.payload.text.includes('supabase.co/storage/v1/object/public/diagrams'));
-    if (!isDiagram) {
-      return true;
-    }
-    // If it's a diagram, verify it actually matches the question's family
-    if (!matchingFamily) {
-      return false; // Question has no matching diagram family, so strip diagram
-    }
-    const text = (
-      (s.title || '') + ' ' + (typeof s.payload?.text === 'string' ? s.payload.text : '')
-    ).toLowerCase();
-    const matchesFamily = matchingFamily.some(kw => text.includes(kw));
-    return matchesFamily;
-  });
+export interface QuestionDiagram {
+  url: string;
+  title?: string;
+}
 
-  const hasValidDiagram = cleanedSections.some(
-    s =>
-      s.icon === '🎨' ||
-      (typeof s.payload?.text === 'string' &&
-        s.payload.text.includes('supabase.co/storage/v1/object/public/diagrams')),
-  );
-
-  if (hasValidDiagram) {
-    return { ...content, sections: cleanedSections };
+/**
+ * One question's diagrams, and nobody else's.
+ *
+ * This used to score candidates by keyword against "exclusive entity
+ * families", and the families are the reason a TCA cycle note opened with a
+ * Glycolysis diagram, a Gluconeogenesis diagram and then its own: every
+ * biochemistry row in the family was a hit, ranked, and all of them were
+ * attached as "Diagram (1/3)". Widening or narrowing the word lists only ever
+ * moved which questions were wrong — a question whose text merely *mentions*
+ * a pathway is not a question about it.
+ *
+ * `question_diagrams` already answers this exactly. Every row is one question
+ * and carries that question's own id, so the number of diagrams a question has
+ * is the number of rows it has — usually one, sometimes none, and never a
+ * neighbour's. Identity is the whole matcher now; there is no scoring left to
+ * tune.
+ */
+export async function findDiagramsForQuestion(
+  question: string,
+  subjectKey?: string,
+  subjectName?: string,
+): Promise<QuestionDiagram[]> {
+  const clean = question.trim();
+  if (clean.length < 3) {
+    return [];
   }
 
-  const diagrams = await findAllDiagramsForQuery(
-    request.question,
-    request.subjectKey,
-    request.subjectName,
-  );
+  const out: QuestionDiagram[] = [];
+  const seen = new Set<string>();
+  const take = (
+    rows: Array<{ public_url?: string | null; question_text?: string | null }> | null,
+  ) => {
+    for (const row of rows ?? []) {
+      const url = row.public_url;
+      if (!url || seen.has(url)) continue;
+      seen.add(url);
+      out.push({ url, title: row.question_text ?? undefined });
+    }
+  };
 
-  if (diagrams.length === 0) {
-    return { ...content, sections: cleanedSections, diagramUrl: undefined };
+  try {
+    /*
+     * The identity join. Both halves are equalities on indexed columns, so
+     * this is two tiny lookups rather than the whole subject pulled down and
+     * filtered in JavaScript, which is what the keyword version did on every
+     * note open.
+     */
+    const [byId, byText] = await Promise.all([
+      supabase
+        .from('question_diagrams')
+        .select('public_url, question_text')
+        .eq('question_id', diagramQuestionId(clean))
+        .not('public_url', 'is', null),
+      supabase
+        .from('question_diagrams')
+        .select('public_url, question_text')
+        .eq('question_text', clean)
+        .not('public_url', 'is', null),
+    ]);
+
+    take(byId.data);
+    take(byText.data);
+
+    if (out.length > 0) {
+      return out;
+    }
+
+    /*
+     * Only if neither exact key hit: the hand-inserted rows, whose stars and
+     * the bank's differ. Scoped to the subject because a bare question like
+     * "Jaundice" exists in more than one, and still compared for equality
+     * after normalisation.
+     */
+    const canonicalSubject = normalizeSubject(subjectName || subjectKey);
+    if (!canonicalSubject) {
+      return [];
+    }
+    const wanted = normalizeQuestionText(clean);
+    if (!wanted) {
+      return [];
+    }
+
+    const { data } = await supabase
+      .from('question_diagrams')
+      .select('public_url, question_text')
+      .not('public_url', 'is', null)
+      .ilike('subject', `%${canonicalSubject}%`);
+
+    take(
+      (data ?? []).filter(
+        row =>
+          typeof row.question_text === 'string' &&
+          normalizeQuestionText(row.question_text) === wanted,
+      ),
+    );
+  } catch (err) {
+    warn('[handwrittenNotes] diagram lookup failed:', err);
   }
 
-  // Attach ALL authentic matching diagrams as rich visual sections
-  const diagramSections: Section[] = diagrams.map((diag, idx) => {
-    const cleanTitle = (diag.title || request.question)
+  return out;
+}
+
+/**
+ * The diagram sections a note is *allowed* to have, in the order they render.
+ *
+ * Pure and synchronous so every path that rewrites a note — first open,
+ * regenerate, an accepted AI edit — can land on the same answer without asking
+ * the network again.
+ */
+export function buildDiagramSections(
+  diagrams: QuestionDiagram[],
+  question: string,
+): Section[] {
+  return diagrams.map((diag, idx) => {
+    const cleanTitle = (diag.title || question)
       .replace(/[0-9]+\./g, '')
       .replace(/\(.*?\)/g, '')
       .replace(/[*#★☆]/g, '')
@@ -712,29 +587,101 @@ export async function ensureSingleNoteDiagram(
       },
     };
   });
+}
 
-  const enriched: NotesContent = {
+/**
+ * Replace whatever diagrams a note is carrying with the ones that belong to it.
+ *
+ * **Replace, not top up.** The old version kept any existing diagram section
+ * that mentioned a family keyword and only fetched when there were none, so a
+ * note cached with three wrong pictures kept all three for ever — reopening it
+ * confirmed them, and Regenerate and "Fix notes with AI" both explicitly
+ * pinned them back on top of the new text. Rebuilding from the lookup every
+ * time is what makes those three paths self-healing: the wrong picture is gone
+ * the next time the note is opened, without anyone clearing a cache.
+ *
+ * A question with no row gets no diagram section at all, rather than a
+ * plausible neighbour.
+ */
+export function applyQuestionDiagrams(
+  content: NotesContent,
+  diagrams: QuestionDiagram[],
+  question: string,
+): NotesContent {
+  const body = (content.sections ?? []).filter(s => !isDiagramSection(s));
+  const diagramSections = buildDiagramSections(diagrams, question);
+  return {
     ...content,
     diagramUrl: diagrams[0]?.url,
-    sections: [...diagramSections, ...cleanedSections],
+    sections: [...diagramSections, ...body],
   };
+}
 
-  // Best effort save back to Supabase
-  try {
-    const clean = request.question.trim();
-    await supabase.from('handwritten_notes').upsert({
-      subtopic_key: `single::${request.subjectKey}::${hashKey(clean)}`,
-      year: request.yearLabel,
-      subject: request.subjectName || request.subjectKey || 'Medical Science',
-      subtopic_name: clean.slice(0, 80),
-      content: enriched,
-      updated_at: new Date().toISOString(),
-    });
-  } catch {
-    // Non-fatal
+/** True when two notes carry the same diagrams in the same order. */
+function sameDiagrams(a: NotesContent, b: NotesContent): boolean {
+  const urls = (content: NotesContent) =>
+    (content.sections ?? [])
+      .filter(isDiagramSection)
+      .map(s => (typeof s.payload?.text === 'string' ? s.payload.text : ''))
+      .join('|');
+  return urls(a) === urls(b) && (a.diagramUrl ?? '') === (b.diagramUrl ?? '');
+}
+
+/**
+ * Give one question's note exactly its own diagrams.
+ *
+ * Called on every open, every regenerate and every accepted AI edit, so the
+ * lookup is memoised for the life of the process — the answer is a database
+ * identity and cannot change between two taps.
+ */
+const diagramCache = new Map<string, Promise<QuestionDiagram[]>>();
+
+export function resolveQuestionDiagrams(
+  request: SingleNoteRequest,
+): Promise<QuestionDiagram[]> {
+  const key = `${request.subjectKey}::${request.question.trim()}`;
+  let pending = diagramCache.get(key);
+  if (!pending) {
+    pending = findDiagramsForQuestion(
+      request.question,
+      request.subjectKey,
+      request.subjectName,
+    ).catch(() => []);
+    diagramCache.set(key, pending);
+  }
+  return pending;
+}
+
+export async function ensureSingleNoteDiagram(
+  content: NotesContent,
+  request: SingleNoteRequest,
+): Promise<NotesContent> {
+  const diagrams = await resolveQuestionDiagrams(request);
+  const next = applyQuestionDiagrams(content, diagrams, request.question);
+
+  /*
+   * Write the corrected note back only when the diagrams actually moved.
+   * An unconditional upsert would rewrite `updated_at` on every open of every
+   * note, which turns a read into a write for the whole question bank.
+   */
+  if (!sameDiagrams(content, next)) {
+    try {
+      const clean = request.question.trim();
+      await supabase.from('handwritten_notes').upsert({
+        subtopic_key: `single::${request.subjectKey}::${hashKey(clean)}`,
+        year: request.yearLabel,
+        subject: request.subjectName || request.subjectKey || 'Medical Science',
+        subtopic_name: clean.slice(0, 80),
+        content: next,
+        updated_at: new Date().toISOString(),
+      });
+    } catch {
+      // The reader has the right picture on screen; failing to cache it is not
+      // worth an error in their face.
+    }
   }
 
-  return enriched;
+  return next;
 }
 
 export async function fetchSingleQuestionNote(
@@ -818,13 +765,16 @@ export function mergeProposal(
       .toLowerCase()
       .trim();
 
-  // Extract previous diagrams so they are never lost
-  const prevDiagrams = (previous.sections ?? []).filter(
-    s => s.icon === '🎨' || (typeof s.payload?.text === 'string' && s.payload.text.includes('supabase.co/storage/v1/object/public/diagrams')),
-  );
-
+  /*
+   * Diagrams are carried across so a text edit does not drop the picture, but
+   * they are *not* the last word on which pictures the note gets:
+   * `ensureSingleNoteDiagram` runs over the merged result and replaces them
+   * with the question's own. Pinning them here was how a wrong diagram
+   * survived every regenerate and every AI edit.
+   */
+  const prevDiagrams = (previous.sections ?? []).filter(isDiagramSection);
   const prevNonDiagrams = (previous.sections ?? []).filter(
-    s => s.icon !== '🎨' && !(typeof s.payload?.text === 'string' && s.payload.text.includes('supabase.co/storage/v1/object/public/diagrams')),
+    s => !isDiagramSection(s),
   );
 
   const out = [...prevNonDiagrams];
@@ -852,10 +802,8 @@ export function mergeProposal(
     }
   }
 
-  // Pinned authentic diagrams always sit at the top
-  const nextDiagrams = (next.sections ?? []).filter(
-    s => s.icon === '🎨' || (typeof s.payload?.text === 'string' && s.payload.text.includes('supabase.co/storage/v1/object/public/diagrams')),
-  );
+  // Diagrams always sit at the top of the note.
+  const nextDiagrams = (next.sections ?? []).filter(isDiagramSection);
   const finalDiagrams = nextDiagrams.length > 0 ? nextDiagrams : prevDiagrams;
 
   return {

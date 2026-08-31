@@ -6,8 +6,10 @@ import { useTheme, withAlpha } from '@/theme';
 import { typeScale } from '@/theme/typography';
 import { BookOpen, Globe, Send, Sparkles } from 'lucide-react-native';
 import {
+  applyQuestionDiagrams,
   mergeProposal,
   proposeNoteEdit,
+  resolveQuestionDiagrams,
   saveSingleNote,
   type NoteProposal,
   type NotesContent,
@@ -136,31 +138,31 @@ export function NotesAiEditBox({
   );
 
   const apply = useCallback(
-    (
+    async (
       bubble: Extract<Bubble, { role: 'proposal' }>,
       mode: 'add' | 'replace',
     ) => {
-      const next =
+      const merged =
         mode === 'add'
           ? mergeProposal(content, bubble.proposal.content)
-          : {
-              ...bubble.proposal.content,
-              diagramUrl: content?.diagramUrl || bubble.proposal.content.diagramUrl,
-              sections: [
-                ...(content?.sections || []).filter(
-                  s =>
-                    s.icon === '🎨' ||
-                    (typeof s.payload?.text === 'string' &&
-                      s.payload.text.includes('supabase.co/storage/v1/object/public/diagrams')),
-                ),
-                ...(bubble.proposal.content.sections || []).filter(
-                  s =>
-                    s.icon !== '🎨' &&
-                    !(typeof s.payload?.text === 'string' &&
-                      s.payload.text.includes('supabase.co/storage/v1/object/public/diagrams')),
-                ),
-              ],
-            };
+          : bubble.proposal.content;
+
+      /*
+       * The proposal is text; the diagrams are the question's, not the
+       * edit's. This used to carry the note's existing diagram sections
+       * straight through, which meant a note that had picked up a wrong
+       * picture kept it through every correction the reader made — the one
+       * thing they could not fix with "fix notes with AI". Re-resolving from
+       * `question_diagrams` costs nothing (the lookup is memoised for the
+       * session) and is the same answer the reader would get by reopening.
+       */
+      const diagrams = await resolveQuestionDiagrams(request);
+      const next = applyQuestionDiagrams(
+        merged,
+        diagrams,
+        request.question,
+      );
+
       patch(bubble.id, { state: 'accepted' });
       onApply(next);
       push({
@@ -168,7 +170,9 @@ export function NotesAiEditBox({
         text:
           mode === 'add'
             ? 'Added to your notes — your other sections are untouched.'
-            : 'The note was replaced with this (diagrams preserved).',
+            : diagrams.length > 0
+            ? 'The note was replaced with this (its diagram is kept).'
+            : 'The note was replaced with this.',
       });
       void saveSingleNote(request, next);
     },
@@ -409,8 +413,8 @@ export function NotesAiEditBox({
                   Add it to what you have, or replace the whole note?
                 </Text>
                 <View style={styles.actions}>
-                  {pill('Add to notes', () => apply(bubble, 'add'), 'accent')}
-                  {pill('Replace all', () => apply(bubble, 'replace'))}
+                  {pill('Add to notes', () => void apply(bubble, 'add'), 'accent')}
+                  {pill('Replace all', () => void apply(bubble, 'replace'))}
                 </View>
               </>
             ) : null}

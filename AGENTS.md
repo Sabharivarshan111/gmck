@@ -220,6 +220,7 @@ npm run check:reminder    # the reminder reaches a phone
 npm run check:note-media  # note media: on-phone, uncapped
 npm run check:edges       # no page sits under the status bar
 npm run check:trees       # focus trees drawable and distinct
+npm run check:diagrams    # a question shows its own diagram, or none
 npm run check:kotlin      # Kotlin overrides (no local kotlinc)
 npm run check:smoke       # drives the real screens through a browser
 # ...and every other check:* in mobile/package.json that touches what

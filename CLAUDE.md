@@ -192,6 +192,54 @@ returns the cache unless `regenerate` is set, **a note generated before its
 textbook existed never refreshes itself** — 75 of them had to be deleted so they
 would. Upload a new book, clear that subject's notes.
 
+## A question's diagram is looked up by identity, never by words
+
+`question_diagrams` holds **one row per question**, and that row's
+`question_id` is the app's own per-question key — `question-` plus the first 50
+characters with whitespace dashed, `getQuestionId` in `lib/progress.ts`, which
+849 of the 862 rows carrying a picture match character for character. So the
+number of diagrams a question has is the number of rows it has: usually one,
+often none, and never a neighbour's. `findDiagramsForQuestion` is that join,
+plus the row's `question_text` as a second key for the thirteen hand-inserted
+rows whose id is a slug (`anat-types-of-synovial-joints`). Both are
+equalities. Nothing else decides.
+
+It was a search before, and that is the bug that was reported: candidates were
+scored against "exclusive entity families" — a word list per pathway — so
+*TCA cycle – definition, sequence of reaction, energetics, regulation* opened
+with **"High-Yield Visual Exam Diagram (1/3)" showing Glycolysis**, then (2/3)
+Gluconeogenesis, then its own. Widening and narrowing those lists twice only
+moved which questions were wrong, because the premise is wrong: a question that
+*mentions* a pathway is not a question about it, and no vocabulary separates
+them.
+
+Three things around it were the same bug wearing different clothes:
+
+- **The rebuild replaces, it does not top up.** `applyQuestionDiagrams` strips
+  every diagram section and rebuilds from the lookup — on first open, on
+  Regenerate, and on an accepted "Fix notes with AI" edit. `mergeProposal` and
+  `NotesAiEditBox` used to *pin* the note's existing diagrams to the top as
+  something to be preserved, which meant a note cached with the wrong picture
+  kept it through every correction the reader made. That is why "I click
+  regenerate and the wrong images still come".
+- **No row means no picture.** A plausible neighbour is worse than a blank.
+- **It heals without a new build.** A note whose diagrams no longer match is
+  rewritten back to `handwritten_notes` on the next open, so a wrong picture
+  cached months ago disappears the first time anyone looks at it.
+
+**The filename is an auditor, not a matcher.** Every plate is named for what it
+draws, so a question sharing two or more of a filename's specific words is
+probably that plate's — `npm run audit:diagrams` does that and prints where it
+disagrees with the stored row. It is worth running after every upload: on its
+first run it found eleven genuinely wrong rows, including "Megaloblastic
+Anaemia" filed under a bilirubin plate and "Peptic Ulcer Disease" under serum
+protein electrophoresis. It must never choose what the reader sees. Measured
+over the same 851 rows it also puts "Cerebellum — external and internal
+features" on `right_atrium_internal_features.jpg` and "Median nerve" on
+`facial_nerve_complete_course.jpg`, and answers nothing at all for two thirds
+of them. `npm run check:diagrams` runs the real lookup against production rows
+and fails if a keyword table, a score, or a containment test comes back.
+
 ## Notes render the edge function's shapes, not strings
 
 `generate-handwritten-notes` emits **objects** in every list section — a
@@ -1114,6 +1162,7 @@ npm run check:supabase-queue     # every job waiting on Supabase can still be ap
 npm run check:keyboard           # no text input can sit under the Android keyboard
 npm run check:edges              # no full-screen page sits under the status bar
 npm run check:trees              # the focus trees stay drawable and distinct
+npm run check:diagrams           # a question shows its own diagram, or none
 npm run check:mcq                # MCQ response parsing + the ask-gemini markers
 npm run check:notes-limits       # every topic still fits the notes function's schema
 npm run check:smoke              # drives the real screens; 18 flows, 0 crashes

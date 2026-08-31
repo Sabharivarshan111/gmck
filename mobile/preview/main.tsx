@@ -21,6 +21,7 @@ import { hydrateWallpaper } from '@/hooks/useWallpaper';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { ScrollView, Text, TextInput, View } from 'react-native';
 import { NotesContentView } from '@/components/NotesContentView';
+import { applyQuestionDiagrams } from '@/lib/handwrittenNotes';
 import { ChapterNotes } from '@/components/ChapterNotes';
 import { NoteText } from '@/components/NoteText';
 import { NoteToolbar } from '@/components/NoteToolbar';
@@ -31,6 +32,7 @@ import { typeScale } from '@/theme/typography';
 import { getSubjects, type YearKey } from '@/lib/questionBank';
 import { flattenSubjectTopics } from '@/lib/handwrittenNotes';
 import { SAMPLE_NOTES } from './notesSample';
+import { TCA_DIAGRAMS, TCA_NOTE, TCA_QUESTION } from './diagramSample';
 import { NotesAiEditBox } from '@/components/NotesAiEditBox';
 import { McqCard } from '@/components/McqCard';
 import { WaveformRiver } from '@/components/WaveformRiver';
@@ -288,6 +290,44 @@ function GrowthShowcase() {
           ))}
         </View>
       </View>
+    </ScrollView>
+  );
+}
+
+/**
+ * ?screen=diagramdemo — the top of a single-question note, where the bug was.
+ *
+ * "TCA cycle – definition, sequence of reaction, energetics, regulation" used
+ * to open with three diagram cards: (1/3) Glycolysis, (2/3) Gluconeogenesis,
+ * and only then its own. This renders the same question through the app's own
+ * `applyQuestionDiagrams`, so the card count and the caption on screen are the
+ * ones the phone would draw.
+ *
+ * The picture itself cannot load here — the sandbox is firewalled from the
+ * storage bucket — so what this screen proves is the *choice*: one card, named
+ * for this question. Which file that URL points at is proved separately, and
+ * against production rows, by `npm run check:diagrams`.
+ */
+function DiagramDemo() {
+  const { colors } = useTheme();
+  const content = applyQuestionDiagrams(TCA_NOTE, TCA_DIAGRAMS, TCA_QUESTION);
+  return (
+    <ScrollView
+      style={{ backgroundColor: colors.background }}
+      contentContainerStyle={{ padding: 16, paddingBottom: 48 }}>
+      <Text
+        style={{
+          color: colors.fuchsia,
+          fontSize: 12,
+          letterSpacing: 1.4,
+          marginBottom: 4,
+        }}>
+        HANDWRITTEN NOTE
+      </Text>
+      <Text style={{ color: colors.text, fontSize: 20, marginBottom: 16 }}>
+        TCA cycle – definition, sequence of reaction, energetics, regulation
+      </Text>
+      <NotesContentView content={content} />
     </ScrollView>
   );
 }
@@ -589,6 +629,9 @@ function Shell() {
   }
   if (screen === 'growthshowcase') {
     return <GrowthShowcase />;
+  }
+  if (screen === 'diagramdemo') {
+    return <DiagramDemo />;
   }
   if (screen === 'notesdemo') {
     return <NotesRendererDemo />;
