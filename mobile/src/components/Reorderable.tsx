@@ -464,85 +464,71 @@ export function Reorderable<Id extends string>({
                 while this one visibly grew over them.
               */}
               <View
-                style={
-                  zoom === 1
-                    ? undefined
-                    : {
-                        height: (heights.get(id) ?? 0) > 0
-                          ? (naturals.get(id) ?? 0) * zoom
-                          : undefined,
-                        overflow: 'hidden',
-                      }
-                }>
+                style={[
+                  styles.cardContainer,
+                  {
+                    width: zoom >= 0.99 ? '100%' : `${Math.round(zoom * 100)}%`,
+                    alignSelf: 'center',
+                  },
+                ]}>
                 <View
                   onLayout={event => {
-                    // The height *before* scaling. Measured on the inner view
-                    // so it is the content's own size, not the zoomed box's.
                     const next = event.nativeEvent.layout.height;
                     if (naturals.get(id) !== next) {
                       naturals.set(id, next);
                       settle(order);
                     }
-                  }}
-                  style={
-                    zoom === 1
-                      ? undefined
-                      : {
-                          width: `${100 / zoom}%`,
-                          transform: [{ scale: zoom }],
-                          transformOrigin: 'top left',
-                        }
-                  }>
+                  }}>
                   <ReorderLockContext.Provider value={editing}>
                     {sections[id]}
                   </ReorderLockContext.Provider>
                 </View>
+
+                {editing && onScale ? (
+                  <>
+                    {/* Bottom Handle: Vertical Size Resize */}
+                    <View
+                      accessible
+                      accessibilityRole="adjustable"
+                      accessibilityLabel={`Resize height for ${labels[id]}`}
+                      accessibilityValue={{
+                        min: 60,
+                        max: 100,
+                        now: Math.round((scales?.[id] ?? 1) * 100),
+                        text: `${Math.round((scales?.[id] ?? 1) * 100)} percent`,
+                      }}
+                      accessibilityActions={[{ name: 'increment' }, { name: 'decrement' }]}
+                      onAccessibilityAction={event => {
+                        step(id, event.nativeEvent.actionName === 'increment' ? 0.05 : -0.05);
+                      }}
+                      style={styles.verticalResizeZone}
+                      {...resizers[id]?.vertical.panHandlers}>
+                      <View style={[styles.horizontalGrip, { backgroundColor: '#F43F5E' }]} />
+                    </View>
+
+                    {/* Right-Side Handle: Horizontal Width Resize */}
+                    <View
+                      accessible
+                      accessibilityRole="adjustable"
+                      accessibilityLabel={`Resize width for ${labels[id]}`}
+                      style={styles.horizontalResizeZone}
+                      {...resizers[id]?.horizontal.panHandlers}>
+                      <View style={[styles.verticalGrip, { backgroundColor: '#F43F5E' }]} />
+                    </View>
+
+                    {/* Bottom-Right Corner Handle: 2D Dual-Axis Resize */}
+                    <View
+                      accessible
+                      accessibilityRole="adjustable"
+                      accessibilityLabel={`2D resize for ${labels[id]}`}
+                      style={styles.cornerResizeZone}
+                      {...resizers[id]?.corner.panHandlers}>
+                      <View style={styles.cornerGrip} />
+                    </View>
+                  </>
+                ) : null}
               </View>
             </Animated.View>
-
-            {editing && onScale ? (
-              <>
-                {/* Bottom Handle: Vertical Height Resize */}
-                <View
-                  accessible
-                  accessibilityRole="adjustable"
-                  accessibilityLabel={`Resize height for ${labels[id]}`}
-                  accessibilityValue={{
-                    min: 65,
-                    max: 145,
-                    now: Math.round((scales?.[id] ?? 1) * 100),
-                    text: `${Math.round((scales?.[id] ?? 1) * 100)} percent`,
-                  }}
-                  accessibilityActions={[{ name: 'increment' }, { name: 'decrement' }]}
-                  onAccessibilityAction={event => {
-                    step(id, event.nativeEvent.actionName === 'increment' ? 0.05 : -0.05);
-                  }}
-                  style={styles.verticalResizeZone}
-                  {...resizers[id]?.vertical.panHandlers}>
-                  <View style={[styles.horizontalGrip, { backgroundColor: '#F43F5E' }]} />
-                </View>
-
-                {/* Right-Side Handle: Horizontal Width Resize */}
-                <View
-                  accessible
-                  accessibilityRole="adjustable"
-                  accessibilityLabel={`Resize width for ${labels[id]}`}
-                  style={styles.horizontalResizeZone}
-                  {...resizers[id]?.horizontal.panHandlers}>
-                  <View style={[styles.verticalGrip, { backgroundColor: '#F43F5E' }]} />
-                </View>
-
-                {/* Bottom-Right Corner Handle: 2D Dual-Axis Resize */}
-                <View
-                  accessible
-                  accessibilityRole="adjustable"
-                  accessibilityLabel={`2D resize for ${labels[id]}`}
-                  style={styles.cornerResizeZone}
-                  {...resizers[id]?.corner.panHandlers}>
-                  <View style={styles.cornerGrip} />
-                </View>
-              </>
-            ) : null}
 
             {editing ? (
               <View
@@ -650,6 +636,9 @@ const styles = StyleSheet.create({
   row: {
     // No margin here: each section keeps its own, so the gap travels with the
     // block that owns it rather than being redistributed on every reorder.
+    position: 'relative',
+  },
+  cardContainer: {
     position: 'relative',
   },
   controls: {

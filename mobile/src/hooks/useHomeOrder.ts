@@ -23,11 +23,11 @@ export type HomeSection = (typeof HOME_SECTIONS)[number];
  * which is why anything under COMPACT_BELOW also drops the block's secondary
  * detail rather than just rendering it small.
  */
-export const HOME_SCALE_MIN = 0.65;
-export const HOME_SCALE_MAX = 1.45;
+export const HOME_SCALE_MIN = 0.6;
+export const HOME_SCALE_MAX = 1.0;
 export const HOME_SCALE_DEFAULT = 1;
 /** Below this a block sheds its secondary content instead of shrinking it. */
-export const COMPACT_BELOW = 0.9;
+export const COMPACT_BELOW = 0.88;
 
 export const HOME_SECTION_LABEL: Record<HomeSection, string> = {
   hero: 'Welcome card',

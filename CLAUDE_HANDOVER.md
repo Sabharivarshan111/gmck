@@ -96,9 +96,15 @@ This document contains the complete record of architecture, features, bugs solve
 ---
 
 ## 7. 🎛️ Home Screen Component Resizing, Drag-and-Drop & Custom Subject Media
-- **Real-Time Component Resizing & Reordering**:
-  - `mobile/src/components/Reorderable.tsx`: Long-pressing any section enters edit mode (`editing = true`).
-  - Supports vertical drag-to-reorder, +/- step buttons, and continuous horizontal/scale resizing grips with real-time responsive reflow of inner contents.
+- **Real-Time Responsive Component Resizing (Zero Clipping & Pure Flexbox Reflow)**:
+  - **Root Cause of Horizontal Clipping**:
+    - Previously, horizontal resizing used a naive `transform: [{ scale: zoom }]` with `width: 100/zoom %` and `overflow: hidden`. Because React Native on Android does not support CSS `transformOrigin: top left` (it anchors to center by default), reducing width caused the scaled view to expand beyond the viewport and get sliced in half by `overflow: hidden`.
+  - **Resolution in `Reorderable.tsx`**:
+    - Removed `transform: scale()` and `overflow: hidden`.
+    - Implemented native **Responsive Container Width Scaling**: sets dynamic container width `${Math.round(zoom * 100)}%` centered with `alignSelf: 'center'` (range: 60% to 100%).
+    - In real-time, React Native Yoga flexbox cleanly reflows all inner text, buttons, and sub-elements without any clipping.
+    - `onLayout` measures the exact natural reflowed height, and lower sections animate smoothly with spring physics.
+    - The bottom vertical resize bar (`↕`), right-side horizontal resize bar (`↔`), corner 2D grip (`⤡`), and floating pill toolbar are attached directly to the container, following its exact boundaries.
 - **Custom Subject Card Background Image & Media (<20MB)**:
   - `mobile/src/hooks/useSubjectBackgrounds.ts`:
     - Manages user-uploaded custom pictures / video frames per subject with persistent AsyncStorage cache (`orbit:subject-backgrounds-v1`).
@@ -108,4 +114,5 @@ This document contains the complete record of architecture, features, bugs solve
     - Preserves subject emoji icon, uppercase name, percentage, and progress bar with 100% readability.
   - `mobile/src/screens/HomeScreen.tsx`:
     - In edit mode, each subject card displays an **Image Upload Button (`ImagePlus`)** to choose an image from the photo gallery, and an **`X` Reset Button** to revert to the default holographic foil gradient.
+
 
