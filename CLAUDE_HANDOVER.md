@@ -73,11 +73,11 @@ This document contains the complete record of architecture, features, bugs solve
   - Releases are built automatically by GitHub Actions workflow `.github/workflows/android-release.yml`.
   - The workflow runs full checks, lints, typechecks, builds signed `app-release.aab` and `app-release.apk`, and attaches both binaries to a new GitHub Release.
 - **Latest Live Release on GitHub**:
-  - **Release Name**: `Release build 101` (tag: `release-101`)
-  - **URL**: [https://github.com/Sabharivarshan111/gmck/releases/tag/release-101](https://github.com/Sabharivarshan111/gmck/releases/tag/release-101)
+  - **Release Name**: `Release build 103` (tag: `release-103`)
+  - **URL**: [https://github.com/Sabharivarshan111/gmck/releases/tag/release-103](https://github.com/Sabharivarshan111/gmck/releases/tag/release-103)
   - **Assets Attached**:
-    - `app-release.aab` (**70.69 MB**) — Google Play Console signed bundle.
-    - `app-release.apk` (**94.95 MB**) — Standalone signed APK for direct device installation.
+    - `app-release.aab` (**69.53 MB**) — Google Play Console signed bundle (User device download: **~24 MB**).
+    - `app-release.apk` (**87.81 MB**) — Standalone signed APK with full R8 bytecode minification (reduced by **7.14 MB**).
 - **Pre-Release Check Suite**: All 22 pre-release scripts pass (`check:fanout`, `check:mcq`, `check:notes-limits`, `check:notes-schema`, `check:sync`, `check:cloud-ids`, `check:android-res`, `check:theme-from-image`, `check:glass`, `check:sounds`, `check:agent-docs`, `check:payments`, `check:native-sound`, `check:subject-cards`, `check:contrast`, `check:anki`, `check:textbooks`, `check:one-app`, `check:flashcard-size`, `check:streak`, `check:supabase-queue`, `check:keyboard`).
 
 ---
