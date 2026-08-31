@@ -143,7 +143,24 @@ export function NotesAiEditBox({
       const next =
         mode === 'add'
           ? mergeProposal(content, bubble.proposal.content)
-          : bubble.proposal.content;
+          : {
+              ...bubble.proposal.content,
+              diagramUrl: content?.diagramUrl || bubble.proposal.content.diagramUrl,
+              sections: [
+                ...(content?.sections || []).filter(
+                  s =>
+                    s.icon === '🎨' ||
+                    (typeof s.payload?.text === 'string' &&
+                      s.payload.text.includes('supabase.co/storage/v1/object/public/diagrams')),
+                ),
+                ...(bubble.proposal.content.sections || []).filter(
+                  s =>
+                    s.icon !== '🎨' &&
+                    !(typeof s.payload?.text === 'string' &&
+                      s.payload.text.includes('supabase.co/storage/v1/object/public/diagrams')),
+                ),
+              ],
+            };
       patch(bubble.id, { state: 'accepted' });
       onApply(next);
       push({
@@ -151,7 +168,7 @@ export function NotesAiEditBox({
         text:
           mode === 'add'
             ? 'Added to your notes — your other sections are untouched.'
-            : 'The note was replaced with this.',
+            : 'The note was replaced with this (diagrams preserved).',
       });
       void saveSingleNote(request, next);
     },

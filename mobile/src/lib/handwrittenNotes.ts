@@ -817,7 +817,17 @@ export function mergeProposal(
     String(section?.title ?? '')
       .toLowerCase()
       .trim();
-  const out = [...(previous.sections ?? [])];
+
+  // Extract previous diagrams so they are never lost
+  const prevDiagrams = (previous.sections ?? []).filter(
+    s => s.icon === '🎨' || (typeof s.payload?.text === 'string' && s.payload.text.includes('supabase.co/storage/v1/object/public/diagrams')),
+  );
+
+  const prevNonDiagrams = (previous.sections ?? []).filter(
+    s => s.icon !== '🎨' && !(typeof s.payload?.text === 'string' && s.payload.text.includes('supabase.co/storage/v1/object/public/diagrams')),
+  );
+
+  const out = [...prevNonDiagrams];
   const indexByKey = new Map<string, number>();
   out.forEach((section, i) => {
     const key = keyOf(section);
@@ -825,7 +835,11 @@ export function mergeProposal(
       indexByKey.set(key, i);
     }
   });
+
   for (const section of next.sections ?? []) {
+    // If next has a diagram section, prefer it, otherwise keep previous
+    if (section.icon === '🎨') continue;
+
     const key = keyOf(section);
     const at = key ? indexByKey.get(key) : undefined;
     if (at === undefined) {
@@ -837,13 +851,21 @@ export function mergeProposal(
       out[at] = section;
     }
   }
+
+  // Pinned authentic diagrams always sit at the top
+  const nextDiagrams = (next.sections ?? []).filter(
+    s => s.icon === '🎨' || (typeof s.payload?.text === 'string' && s.payload.text.includes('supabase.co/storage/v1/object/public/diagrams')),
+  );
+  const finalDiagrams = nextDiagrams.length > 0 ? nextDiagrams : prevDiagrams;
+
   return {
     ...previous,
+    diagramUrl: next.diagramUrl || previous.diagramUrl,
     highYieldTip: next.highYieldTip || previous.highYieldTip,
     pyqYears: Array.from(
       new Set([...(previous.pyqYears ?? []), ...(next.pyqYears ?? [])]),
     ),
-    sections: out,
+    sections: [...finalDiagrams, ...out],
   };
 }
 
