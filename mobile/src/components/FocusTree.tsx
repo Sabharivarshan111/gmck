@@ -111,6 +111,7 @@ export function FocusTree({
 
     rafId = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(rafId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reduceMotion]);
 
   const g = Math.max(0, Math.min(1, renderedGrowth));
