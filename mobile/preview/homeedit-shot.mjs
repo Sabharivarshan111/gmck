@@ -173,11 +173,44 @@ if ((await heightGrip.count()) > 0) {
   }
 }
 
+/*
+ * The picture button on a subject card. It only exists in edit mode, and edit
+ * mode is exactly when ReorderLockContext turned every Touchable inside a block
+ * into a no-op — so this button could never be pressed at all, which is what
+ * was reported as "I press the plus icon and cannot upload any image".
+ */
+const upload = page.getByLabel(/^Upload picture for /).first();
+if ((await upload.count()) > 0) {
+  const label = await upload.getAttribute('aria-label');
+  await page.evaluate(() => {
+    globalThis.__orbitPickImage = true;
+  });
+  /*
+   * `force`, because HoloCard's foil drifts on its own forever and Playwright
+   * will not click an element it never sees hold still. A finger has no such
+   * rule — this is the harness being careful, not the button being unreachable.
+   */
+  await upload.click({ force: true });
+  await page.waitForTimeout(1200);
+  await page.evaluate(() => {
+    globalThis.__orbitPickImage = undefined;
+  });
+  const shown = await page.evaluate(
+    () => [...document.querySelectorAll('img')].filter(el => (el.src || '').startsWith('data:image')).length,
+  );
+  const found = await record('7-picture', `after ${label}`);
+  if (shown === 0) {
+    found.push('the picked picture is not on the card — the gradient is still showing');
+  } else {
+    process.stdout.write(`   picture on ${shown} card(s)\n`);
+  }
+}
+
 const reset = page.getByLabel('Reset home layout', { exact: true }).first();
 if ((await reset.count()) > 0) {
   await reset.click();
   await page.waitForTimeout(900);
-  await record('6-reset', 'after Reset home layout');
+  await record('8-reset', 'after Reset home layout');
 }
 
 await browser.close();

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Animated, Easing, Image, StyleSheet, View } from 'react-native';
 import { useTheme } from '@/theme';
 import { useReducedMotion } from '@/theme/motion';
@@ -74,69 +74,90 @@ export function FocusTree({
     return () => loop.stop();
   }, [alive, breeze]);
 
-  // 60fps Continuous Growth Interpolator
-  // Glides smoothly across all 24 frames between 1-second timer ticks
-  const [renderedGrowth, setRenderedGrowth] = React.useState(growth);
-  const targetGrowthRef = useRef(growth);
-  targetGrowthRef.current = growth;
+  /*
+   * Growth, animated instead of stepped.
+   *
+   * The clock ticks once a second and `growth` moves with it, so a frame
+   * change lands as a step unless something fills the second in between. What
+   * was here tried to, and could not: it drove a `setState` from a
+   * `requestAnimationFrame` loop — a full React re-render of two `<Image>`
+   * layers sixty times a second, on the JS thread, for the length of a
+   * session — and then glided at `Math.max(0.8, …)` *growth units per second*.
+   * Growth covers 0→1 over the whole session, so one tick of a 25-minute
+   * session moves it by 0.00067. At a floor of 0.8/s that distance is crossed
+   * in under a millisecond: the glide finished inside the frame it started in,
+   * and every change arrived as the hard step it was meant to smooth out.
+   *
+   * An `Animated.Value` timed over the tick interval covers the same distance
+   * in the second it actually took, and does it on the native thread. React
+   * re-renders when the *pair of frames* changes — a couple of dozen times a
+   * session — instead of sixty times a second.
+   */
+  const stages = SPECIES_STAGES[speciesKey] || SPECIES_STAGES.oak;
+  const totalIntervals = Math.max(1, stages.length - 1);
+
+  /** How long the clock leaves between two values of `growth`. */
+  const TICK_MS = 1000;
+
+  const progress = useRef(new Animated.Value(growth)).current;
+  const [frame, setFrame] = useState(() =>
+    Math.min(totalIntervals - 1, Math.floor(Math.max(0, Math.min(1, growth)) * totalIntervals)),
+  );
 
   useEffect(() => {
     if (reduceMotion) {
-      setRenderedGrowth(growth);
+      progress.setValue(growth);
       return;
     }
+    /*
+     * Linear, deliberately. Growth is linear in time, so any ease here is a
+     * slow-down and a speed-up *every second* — the tree would visibly pulse
+     * once per tick, which is more distracting than the step it replaced.
+     */
+    const anim = Animated.timing(progress, {
+      toValue: growth,
+      duration: TICK_MS,
+      easing: Easing.linear,
+      useNativeDriver: true,
+    });
+    anim.start();
+    return () => anim.stop();
+  }, [growth, progress, reduceMotion]);
 
-    let rafId: number;
-    let lastTime = Date.now();
+  /*
+   * Which two frames are on screen. Read off the animated value rather than
+   * off `growth`, so the pair swaps at the moment the picture actually reaches
+   * it — and set only when the integer changes, which is what keeps this off
+   * the render path.
+   */
+  useEffect(() => {
+    const id = progress.addListener(({ value }) => {
+      const clamped = Math.max(0, Math.min(1, value));
+      const next = Math.min(totalIntervals - 1, Math.floor(clamped * totalIntervals));
+      setFrame(previous => (previous === next ? previous : next));
+    });
+    return () => progress.removeListener(id);
+  }, [progress, totalIntervals]);
 
-    const tick = () => {
-      const now = Date.now();
-      const dt = Math.min(0.1, (now - lastTime) / 1000);
-      lastTime = now;
+  const imgA = stages[frame];
+  const imgB = stages[Math.min(totalIntervals, frame + 1)];
 
-      setRenderedGrowth(current => {
-        const target = targetGrowthRef.current;
-        const diff = target - current;
-        if (Math.abs(diff) < 0.0002) {
-          return target;
-        }
-        // Continuous smooth glide towards target
-        const speed = Math.max(0.8, Math.abs(diff) * 4);
-        const step = Math.sign(diff) * Math.min(Math.abs(diff), speed * dt);
-        return +(current + step).toFixed(5);
-      });
+  /*
+   * The next frame fades in *over* the current one, which stays fully opaque.
+   *
+   * A true cross-dissolve — A down while B comes up — puts both layers at
+   * partial alpha in the middle, and the background shows through the pair at
+   * around 50%: the tree dims once per frame change. Stacking avoids it
+   * entirely, and is the reason this reads as growing rather than flickering.
+   */
+  const fadeIn = progress.interpolate({
+    inputRange: [frame / totalIntervals, (frame + 1) / totalIntervals],
+    outputRange: [0, 1],
+    extrapolate: 'clamp',
+  });
 
-      rafId = requestAnimationFrame(tick);
-    };
-
-    rafId = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(rafId);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [reduceMotion]);
-
-  const g = Math.max(0, Math.min(1, renderedGrowth));
-  const stages = SPECIES_STAGES[speciesKey] || SPECIES_STAGES.oak;
-  const numStages = stages.length;
-
-  // Calculate current stage interval & continuous local progression t
-  const totalIntervals = Math.max(1, numStages - 1);
-  const rawIdx = g * totalIntervals;
-  const currentIdx = Math.min(totalIntervals - 1, Math.floor(rawIdx));
-  const nextIdx = Math.min(totalIntervals, currentIdx + 1);
-  const t = Math.max(0, Math.min(1, rawIdx - currentIdx));
-
-  // Smooth sinusoidal cross-fade for seamless biological morphing
-  const blendT = 0.5 * (1 - Math.cos(Math.PI * t));
-
-  // Dual layer frames & interpolations
-  const imgA = stages[currentIdx];
-  const imgB = stages[nextIdx];
-
-  const opacityA = (1 - blendT) * (wilted ? 0.38 : 1);
-  const opacityB = blendT * (wilted ? 0.38 : 1);
-
-  const scaleA = 0.98 + 0.03 * blendT;
-  const scaleB = 0.96 + 0.04 * blendT;
+  const opacityA = wilted ? 0.38 : 1;
+  const opacityB = wilted ? Animated.multiply(fadeIn, 0.38) : fadeIn;
 
   // Theme accent reference for trees-check static analysis
   void colors.accent;
@@ -172,7 +193,6 @@ export function FocusTree({
               justifyContent: 'center',
               alignItems: 'center',
               opacity: opacityA,
-              transform: [{ scale: scaleA }],
             },
           ]}>
           <Image
@@ -186,8 +206,8 @@ export function FocusTree({
           />
         </Animated.View>
 
-        {/* Layer B: Next Stage (Fading In / Blooming Up) */}
-        {t > 0.001 ? (
+        {/* Layer B: the next frame, fading in on top of A. */}
+        {frame < totalIntervals ? (
           <Animated.View
             style={[
               StyleSheet.absoluteFill,
@@ -195,7 +215,6 @@ export function FocusTree({
                 justifyContent: 'center',
                 alignItems: 'center',
                 opacity: opacityB,
-                transform: [{ scale: scaleB }],
               },
             ]}>
             <Image

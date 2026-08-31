@@ -295,6 +295,45 @@ function GrowthShowcase() {
 }
 
 /**
+ * ?screen=treeglide — the focus tree driven at the rate a real session moves.
+ *
+ * `GrowthShowcase` advances growth by 0.04 every 400ms, which is about sixty
+ * times faster than a 25-minute session, and at that speed a broken
+ * interpolator looks fine: the old one snapped, but it snapped so often that
+ * the tree still appeared to be moving. This drives it the way `TimerScreen`
+ * does — one tick a second, `1 / (25 * 60)` of the way — which is the only
+ * rate at which "does it glide between frames" is a real question.
+ */
+function TreeGlide() {
+  const { colors } = useTheme();
+  /*
+   * A one-minute session, which is the case the stepping was reported from and
+   * the hardest one to get right: growth covers 1/60 per tick, about 38% of a
+   * whole frame interval, so every second has to carry a third of a frame's
+   * worth of fade. A 25-minute session moves 25 times slower and hides the
+   * difference behind rounding.
+   */
+  const SESSION_SECONDS = 60;
+  // Start part-way in, so a frame boundary is crossed during the sample.
+  const [elapsed, setElapsed] = React.useState(4);
+  React.useEffect(() => {
+    const id = setInterval(() => setElapsed(value => value + 1), 1000);
+    return () => clearInterval(id);
+  }, []);
+  return (
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: colors.background,
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}>
+      <FocusTree species="oak" growth={elapsed / SESSION_SECONDS} size={180} />
+    </View>
+  );
+}
+
+/**
  * ?screen=diagramdemo — the top of a single-question note, where the bug was.
  *
  * "TCA cycle – definition, sequence of reaction, energetics, regulation" used
@@ -626,6 +665,9 @@ function Shell() {
 
   if (screen === 'treegallery') {
     return <TreeGallery />;
+  }
+  if (screen === 'treeglide') {
+    return <TreeGlide />;
   }
   if (screen === 'growthshowcase') {
     return <GrowthShowcase />;

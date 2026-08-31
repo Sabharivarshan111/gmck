@@ -5,6 +5,7 @@ import { Touchable } from '@/components/Touchable';
 import { Sheet } from '@/components/Sheet';
 import { HoloCard } from '@/components/HoloCard';
 import { Reorderable } from '@/components/Reorderable';
+import { ReorderLockContext } from '@/components/ReorderLock';
 import {
   COMPACT_BELOW,
   HOME_HEIGHT_MAX,
@@ -25,7 +26,7 @@ import { WallpaperBackground, useWallpaperText } from '@/components/WallpaperBac
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { Dialog } from '@/components/Dialog';
-import { useSubjectBackgrounds } from '@/hooks/useSubjectBackgrounds';
+import { subjectMediaUri, useSubjectBackgrounds } from '@/hooks/useSubjectBackgrounds';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import {
   ArrowRight,
@@ -593,7 +594,7 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
                     label={`${subject.name}, ${subject.pct}% complete`}
                     from={cardGradient(subject)[0]}
                     to={cardGradient(subject)[1]}
-                    bgImageUri={customBg?.uri}
+                    bgImageUri={subjectMediaUri(customBg)}
                     disabled={editing}
                     borderColor={colors.border}
                     borderRadius={16}
@@ -602,6 +603,18 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
                     <View style={styles.subjectHeaderRow}>
                       <Text style={styles.subjectEmoji}>{subject.icon}</Text>
                       {editing ? (
+                        /*
+                         * These two buttons only exist in edit mode, and edit
+                         * mode is exactly when `ReorderLockContext` turns every
+                         * Touchable inside a block into a no-op — so the picture
+                         * button could never have been pressed. The lock is
+                         * there so that *holding* a subject card to rearrange
+                         * does not also open that subject on release; it was
+                         * never meant to cover the controls that edit mode adds.
+                         * They opt out, the way the reorder arrows do by
+                         * living outside the block entirely.
+                         */
+                        <ReorderLockContext.Provider value={false}>
                         <View style={styles.cardCustomActions}>
                           <Touchable
                             onPress={async () => {
@@ -630,6 +643,7 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
                             </Touchable>
                           ) : null}
                         </View>
+                        </ReorderLockContext.Provider>
                       ) : null}
                     </View>
                     <View style={styles.subjectFooter}>

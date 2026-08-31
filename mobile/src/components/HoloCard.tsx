@@ -47,6 +47,11 @@ export function HoloCard({
   const reduceMotion = useReducedMotion();
   const focused = useIsFocused();
   const [width, setWidth] = useState(0);
+  /** Reset per picture, so replacing a broken one is enough to try again. */
+  const [bgFailed, setBgFailed] = useState(false);
+  useEffect(() => {
+    setBgFailed(false);
+  }, [bgImageUri]);
 
   const ids = useMemo(() => {
     holoSeq += 1;
@@ -128,7 +133,7 @@ export function HoloCard({
   const content = (
     <>
       {/* Custom user-uploaded background or default holographic gradient */}
-      {bgImageUri ? (
+      {bgImageUri && !bgFailed ? (
         <View
           pointerEvents="none"
           style={[StyleSheet.absoluteFill, { borderRadius, overflow: 'hidden' }]}>
@@ -136,6 +141,14 @@ export function HoloCard({
             source={{ uri: bgImageUri }}
             style={StyleSheet.absoluteFill}
             resizeMode="cover"
+            /*
+             * A picture that will not load falls back to the card's own
+             * gradient. The alternative is what shipped: the scrim drawn over
+             * nothing, which is a black tile — indistinguishable from the app
+             * being broken, and it is what a reader sees once Android has
+             * emptied the cache the picker's file was sitting in.
+             */
+            onError={() => setBgFailed(true)}
           />
           {/* Dark glass overlay scrim so white text, emoji and progress bar have 100% contrast */}
           <View

@@ -101,7 +101,14 @@ export default {
     });
   },
   adopt: async (uri: string) => {
-    const source = linked.get(uri);
+    /*
+     * A URI this shim handed out is a link being adopted. Anything else is a
+     * fresh one from the photo picker — the subject-card background copies
+     * those in the same way — and the real module copies whatever bytes it is
+     * pointed at, so refusing here would make the preview disagree with the
+     * device about the one path being tested.
+     */
+    const source = linked.get(uri) ?? uri;
     if (!source) {
       throw new Error('gone');
     }
