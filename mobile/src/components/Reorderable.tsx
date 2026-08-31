@@ -10,6 +10,7 @@ import { ChevronDown, ChevronUp, GripVertical, Minus, Plus, Trash2 } from 'lucid
 import { Touchable } from '@/components/Touchable';
 import { ReorderLockContext } from '@/components/ReorderLock';
 import { dragOwner } from '@/components/dragOwner';
+import { dragArm } from '@/components/dragArm';
 import { useTheme, withAlpha } from '@/theme';
 import { SPRING, springConfig, springTo, useReducedMotion } from '@/theme/motion';
 
@@ -337,8 +338,15 @@ export function Reorderable<Id extends string>({
       let startShift = 0;
 
       map[id] = PanResponder.create({
-        onStartShouldSetPanResponder: () => editing,
-        onMoveShouldSetPanResponder: () => editing,
+        /*
+         * Never on touch-down, and never on a move that has not been asked
+         * for. Claiming every touch in edit mode is why the page could not be
+         * scrolled: the ScrollView under these blocks never saw a gesture, so
+         * rearranging Home meant being stuck at whatever was on screen, with
+         * the study stats below the subject grid unreachable.
+         */
+        onStartShouldSetPanResponder: () => false,
+        onMoveShouldSetPanResponder: () => editing && dragArm.isArmed(id),
         // Capture, so the finger that was holding a button inside this block
         // is taken over the moment it moves. Without this the drag could only
         // start on a part of the block that is not a control, which on the
@@ -348,7 +356,8 @@ export function Reorderable<Id extends string>({
         // cards are individually sortable, and capture runs parent-first, so
         // without this check the block would win every time and a card could
         // never be picked up.
-        onMoveShouldSetPanResponderCapture: () => editing && dragOwner.current === null,
+        onMoveShouldSetPanResponderCapture: () =>
+          editing && dragOwner.current === null && dragArm.isArmed(id),
         onPanResponderGrant: () => {
           tentative = order;
           const renderTops = topsFor(rendered);
@@ -506,11 +515,14 @@ export function Reorderable<Id extends string>({
             // even while a button inside it owns the gesture, which is the
             // only way to time a hold that starts on a control.
             onTouchStart={event => {
-              if (editing) {
-                return;
-              }
               const touch = event.nativeEvent.touches[0] ?? event.nativeEvent;
               holdStart.current = { x: touch.pageX, y: touch.pageY };
+              if (editing) {
+                // Already rearranging: a press that stays put arms *this*
+                // block's drag, and a flick is left to the ScrollView.
+                dragArm.begin(String(id), touch.pageX, touch.pageY);
+                return;
+              }
               cancelHold();
               holdTimer.current = setTimeout(() => {
                 holdTimer.current = null;
@@ -519,6 +531,11 @@ export function Reorderable<Id extends string>({
             }}
             onTouchMove={event => {
               const touch = event.nativeEvent.touches[0] ?? event.nativeEvent;
+              if (editing) {
+                // Travelling before the press has counted out means a scroll.
+                dragArm.moved(touch.pageX, touch.pageY);
+                return;
+              }
               const moved =
                 Math.abs(touch.pageX - holdStart.current.x) +
                 Math.abs(touch.pageY - holdStart.current.y);
@@ -526,8 +543,14 @@ export function Reorderable<Id extends string>({
                 cancelHold();
               }
             }}
-            onTouchEnd={cancelHold}
-            onTouchCancel={cancelHold}
+            onTouchEnd={() => {
+              dragArm.cancel();
+              cancelHold();
+            }}
+            onTouchCancel={() => {
+              dragArm.cancel();
+              cancelHold();
+            }}
             style={[
               styles.row,
               /*

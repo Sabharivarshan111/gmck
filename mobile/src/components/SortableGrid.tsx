@@ -9,6 +9,7 @@ import {
   type ViewStyle,
 } from 'react-native';
 import { dragOwner } from '@/components/dragOwner';
+import { dragArm } from '@/components/dragArm';
 import { SPRING, springConfig, springTo, useReducedMotion } from '@/theme/motion';
 
 /**
@@ -139,17 +140,26 @@ export function SortableGrid<Id extends string>({
         // down. A start-only claim can never fire for that finger, and the
         // block around the card would take the drag instead — you would hold
         // a card and end up moving the whole grid.
-        onStartShouldSetPanResponderCapture: () => {
-          if (!editing) {
+        /*
+         * Never on touch-down. Claiming the gesture the instant a finger
+         * landed on a card is half of why Home could not be scrolled while
+         * being rearranged — the subject grid is the tallest block on the
+         * screen, so most of a scroll starts on one of these tiles.
+         */
+        onStartShouldSetPanResponderCapture: () => false,
+        onMoveShouldSetPanResponderCapture: () => {
+          if (!editing || !dragArm.isArmed(id)) {
             return false;
           }
-          // Also claimed here, not only in onTouchStart: a pointer that is not
-          // a finger never fires touch events at all, and without this the
-          // block would still steal the gesture on the first move.
+          /*
+           * Claimed here rather than on touch-down, but still before the block
+           * around it gets a look: capture runs parent-first, and the block
+           * declines while `dragOwner` is set, which is what lets a single
+           * card be picked up out of a block that is itself draggable.
+           */
           dragOwner.current = id;
           return true;
         },
-        onMoveShouldSetPanResponderCapture: () => editing,
         onPanResponderGrant: () => {
           tentative = order;
           const from = slotAt(rendered.indexOf(id));
@@ -262,19 +272,32 @@ export function SortableGrid<Id extends string>({
                 ],
               },
             ]}
-            // Claimed on touch-down, before anything is dragged and whether
-            // or not the mode is on yet. It is what tells the block around
-            // this grid that the finger is spoken for — capture runs
-            // parent-first, so without it the block steals every gesture and
-            // a card can never be picked up. See dragOwner.ts.
-            onTouchStart={() => {
+            /*
+             * `dragOwner` is claimed on touch-down because it is what tells the
+             * block around this grid that the finger is spoken for — capture
+             * runs parent-first, so without it the block steals every gesture
+             * and a card can never be picked up. See dragOwner.ts.
+             *
+             * Arming is the separate question of whether this is a drag at
+             * all: a press that stays put is picking the card up, a flick is
+             * scrolling the page. See dragArm.ts.
+             */
+            onTouchStart={event => {
               dragOwner.current = id;
+              const touch = event.nativeEvent.touches[0] ?? event.nativeEvent;
+              dragArm.begin(id, touch.pageX, touch.pageY);
+            }}
+            onTouchMove={event => {
+              const touch = event.nativeEvent.touches[0] ?? event.nativeEvent;
+              dragArm.moved(touch.pageX, touch.pageY);
             }}
             onTouchEnd={() => {
               dragOwner.current = null;
+              dragArm.cancel();
             }}
             onTouchCancel={() => {
               dragOwner.current = null;
+              dragArm.cancel();
             }}
             {...responders[id].panHandlers}>
             {renderItem(id)}

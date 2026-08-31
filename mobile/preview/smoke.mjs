@@ -512,12 +512,28 @@ await step('a block resizes with its grip, and the size survives a reload', asyn
   await open('screen=home');
 
   /** The hero's drawn height. Resizing it is the whole point of the grip. */
+  /*
+   * Found through the block's own "Move Welcome card up" control, not through
+   * the words on it. The hero is a carousel: it rotates to "Track Your
+   * Journey" on its own, and a measurement keyed to "Welcome to Orbit" then
+   * finds nothing and reports a height of 0 — a failure that depends on how
+   * long the previous step took.
+   */
   const heroHeight = () =>
     page.evaluate(() => {
-      const node = [...document.querySelectorAll('div')].find(el =>
-        el.textContent?.startsWith('Welcome to Orbit'),
-      );
-      return node ? Math.round(node.getBoundingClientRect().height) : 0;
+      const control = document.querySelector('[aria-label="Move Welcome card up"]');
+      if (!control) {
+        return 0;
+      }
+      let node = control;
+      for (let i = 0; i < 8 && node.parentElement; i += 1) {
+        node = node.parentElement;
+        const rect = node.getBoundingClientRect();
+        if (rect.height > 60) {
+          return Math.round(rect.height);
+        }
+      }
+      return 0;
     });
 
   /**
@@ -1025,40 +1041,46 @@ await step('a focus session grows a tree, and plants it when it ends', async () 
   await page.waitForTimeout(400);
 
   /*
-   * How big the tree is, not how many pieces it has.
+   * Which frame is drawn, not how much vector area it covers.
    *
-   * The crown draws all of its masses from the moment it starts — they get
-   * *bigger*, they do not appear one by one — so counting nodes said "10 parts
-   * then 10 parts" while the tree was visibly growing.
+   * The tree used to be drawn as SVG and this counted the area of its nodes.
+   * It is a sequence of pre-rendered frames now, so there is no `<svg>` to
+   * find and the old measure reported "no tree" for a dial that was drawing
+   * one perfectly well — a stale test rather than a broken screen. What the
+   * frames give instead is an ordered identity: the picture at the front of
+   * the dial changes as the session runs, and *which* one it is says how far
+   * along the growth is.
    */
-  const treeSize = () =>
+  const treeFrames = () =>
     page.evaluate(() => {
-      const svg = document.querySelector('[aria-label*="grown"] svg');
-      if (!svg) {
-        return 0;
+      const dial = document.querySelector('[aria-label*="grown"]');
+      if (!dial) {
+        return [];
       }
-      let area = 0;
-      for (const node of svg.querySelectorAll('circle, path, polygon, ellipse')) {
-        const box = node.getBBox();
-        area += box.width * box.height;
-      }
-      return Math.round(area);
+      return [...dial.querySelectorAll('img')]
+        .map(img => img.getAttribute('src') || '')
+        .filter(Boolean);
     });
 
   await seesText('Plant a', 4000);
   await tap('Start timer');
   await page.waitForTimeout(3000);
-  const early = await treeSize();
-  if (early === 0) {
+  const early = await treeFrames();
+  if (early.length === 0) {
     throw new Error('no tree is drawn in the dial');
   }
   await seesText('growing', 4000);
 
-  // It grows: more of the tree is on screen half a minute in than at the start.
+  // It grows: half a minute in, the dial is showing a later frame than it was.
   await page.waitForTimeout(32000);
-  const later = await treeSize();
-  if (later <= early * 1.2) {
-    throw new Error(`the tree did not grow — ${early} at the start, ${later} later`);
+  const later = await treeFrames();
+  if (later.length === 0) {
+    throw new Error('the tree disappeared from the dial part way through');
+  }
+  if (later.join('|') === early.join('|')) {
+    throw new Error(
+      `the tree did not grow — the same frame is drawn 35s in (${early.join(', ')})`,
+    );
   }
 
   // And finishing plants it. The plot is the payoff; without it the tree grows
@@ -1066,7 +1088,8 @@ await step('a focus session grows a tree, and plants it when it ends', async () 
   await page.waitForTimeout(30000);
   await seesText("TODAY'S PLOT", 6000);
   const planted = await page.evaluate(
-    () => document.querySelectorAll('[aria-label^="A withered"], [aria-label*="100 per cent"]').length,
+    () =>
+      document.querySelectorAll('[aria-label^="A withered"], [aria-label^="A grown"]').length,
   );
   if (planted === 0) {
     throw new Error('the finished session planted nothing in the plot');

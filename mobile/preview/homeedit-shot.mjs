@@ -206,6 +206,79 @@ if ((await upload.count()) > 0) {
   }
 }
 
+/*
+ * Scrolling, which edit mode used to make impossible: every block and every
+ * subject card claimed the gesture on touch-down, so the ScrollView never saw
+ * one and the study stats below the subject grid could not be reached.
+ *
+ * A wheel event is not the same test as a finger, so this drags with real
+ * touch events, starting on the subject grid — the tallest block, and where
+ * most of a scroll actually begins.
+ */
+/** react-native-web scrolls an inner div, not the document. Find the tallest one. */
+const findScroller = () =>
+  page.evaluate(() => {
+    let best = null;
+    for (const el of document.querySelectorAll('div')) {
+      const over = el.scrollHeight - el.clientHeight;
+      if (over > 200 && (!best || over > best.over)) {
+        best = { over, top: el.scrollTop };
+        el.setAttribute('data-scroller', '1');
+      }
+    }
+    return best;
+  });
+const foundScroller = await findScroller();
+const scrollProbe = { before: foundScroller?.top ?? -1 };
+
+/*
+ * Anchored on a subject card's picture button, which is inside the tallest
+ * block and definitely on screen in edit mode. Starting the drag on a control
+ * is not a special case either — it is where a lot of real scrolls begin.
+ */
+const gridBox = await page.evaluate(() => {
+  const card = document.querySelector('[aria-label^="Upload picture for"]');
+  if (!card) return null;
+  const r = card.getBoundingClientRect();
+  return { x: r.x + r.width / 2, y: r.y + r.height / 2 };
+});
+if (gridBox && scrollProbe.before >= 0) {
+  const cdp = await page.context().newCDPSession(page);
+  const send = (type, ty) =>
+    cdp.send('Input.dispatchTouchEvent', {
+      type,
+      touchPoints:
+        type === 'touchEnd' ? [] : [{ x: gridBox.x, y: ty, radiusX: 10, radiusY: 10, force: 1 }],
+    });
+  await send('touchStart', gridBox.y);
+  for (let i = 1; i <= 10; i += 1) {
+    await send('touchMove', gridBox.y - (260 * i) / 10);
+    await page.waitForTimeout(16);
+  }
+  await send('touchEnd', gridBox.y - 260);
+  await page.waitForTimeout(600);
+
+  const after = await page.evaluate(() => {
+    const el = document.querySelector('[data-scroller="1"]');
+    return el ? el.scrollTop : 0;
+  });
+  await record('9-scrolled', 'after a touch drag up on the subject grid');
+  /*
+   * Reported, not asserted — and that is the honest limit of this harness.
+   *
+   * On Android a PanResponder that claims the gesture on touch-down becomes
+   * the responder and the ScrollView above it cannot take it back, which is
+   * why edit mode could not be scrolled. react-native-web has no such
+   * arbitration: the browser scrolls regardless, so this number is identical
+   * with the bug present and with it fixed (554 -> 638 either way, measured).
+   * A check that passes both ways is worse than no check, so it prints and
+   * leaves the verdict to a device.
+   */
+  process.stdout.write(
+    `   scrolled ${scrollProbe.before} -> ${Math.round(after)} (browser scrolls either way — device only)\n`,
+  );
+}
+
 const reset = page.getByLabel('Reset home layout', { exact: true }).first();
 if ((await reset.count()) > 0) {
   await reset.click();

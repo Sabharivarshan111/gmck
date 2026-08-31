@@ -65,6 +65,30 @@ export function PomodoroSettingsSheet({
   }, [draft, onApply, onClose]);
 
   /**
+   * Choices that take effect the moment they are made.
+   *
+   * Only the **durations** need drafting, and the reason is specific to them:
+   * the timer derives its length from those numbers, so writing through while
+   * a slider moves would rewrite the clock mid-drag on a session the reader
+   * may not have meant to touch.
+   *
+   * None of that is true of which tree grows. Drafting it anyway is what was
+   * reported: tapping *Sprout* highlighted the tile, and the pill on the timer
+   * still said "tap Play to plant an oak" — the choice was thrown away unless
+   * the reader scrolled past four sliders and pressed "Set this configuration",
+   * which nothing on the tile suggests. A grid where the selected item lights
+   * up has already told the reader it was selected.
+   */
+  const applyNow = useCallback(
+    (patch: Partial<PomodoroSettings>) => {
+      const next = { ...draft, ...patch };
+      setDraft(next);
+      onApply(next);
+    },
+    [draft, onApply],
+  );
+
+  /**
    * Slider draws a bare track and nothing else — its `label` is for TalkBack,
    * not the screen. Every caller draws its own name-and-value row, and this one
    * has four in a column, so without it the sheet is four anonymous tracks and
@@ -125,7 +149,7 @@ export function PomodoroSettingsSheet({
         label={draft.trees ? 'Use a plain timer with no tree' : 'Grow a tree while you focus'}
         role="checkbox"
         state={{ checked: draft.trees }}
-        onPress={() => setDraft(prev => ({ ...prev, trees: !prev.trees }))}
+        onPress={() => applyNow({ trees: !draft.trees })}
         style={[styles.wilt, { borderColor: colors.border, backgroundColor: colors.card }]}>
         <View style={styles.flex}>
           <Text style={[typeScale.callout, { color: colors.text }]}>Grow a tree</Text>
@@ -159,7 +183,7 @@ export function PomodoroSettingsSheet({
             <Touchable
               key={species.key}
               disabled={!unlocked}
-              onPress={() => setDraft(prev => ({ ...prev, species: species.key }))}
+              onPress={() => applyNow({ species: species.key })}
               label={
                 unlocked
                   ? `${species.name}`
@@ -212,7 +236,7 @@ export function PomodoroSettingsSheet({
         }
         role="checkbox"
         state={{ checked: draft.wilt }}
-        onPress={() => setDraft(prev => ({ ...prev, wilt: !prev.wilt }))}
+        onPress={() => applyNow({ wilt: !draft.wilt })}
         style={[styles.wilt, { borderColor: colors.border, backgroundColor: colors.card }]}>
         <View style={styles.flex}>
           <Text style={[typeScale.callout, { color: colors.text }]}>Leaving withers the tree</Text>

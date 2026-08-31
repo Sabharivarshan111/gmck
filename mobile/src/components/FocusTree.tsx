@@ -248,9 +248,19 @@ export function TreeChip({
 }) {
   const stages = SPECIES_STAGES[species];
   const imageSource = stages ? stages[stages.length - 1] : TREE_IMAGES[species] || TREE_IMAGES.oak;
+  const name = speciesFor(species).name.toLowerCase();
 
   return (
     <View
+      /*
+       * Named, because this is what a finished session leaves behind. Every
+       * tree in Today's Plot and in the species grid was an unlabelled picture
+       * — TalkBack announced nothing at all for the payoff of the whole
+       * feature, and a withered tree and a grown one were indistinguishable
+       * without sight, which is the one distinction the plot exists to make.
+       */
+      accessible
+      accessibilityLabel={wilted ? `A withered ${name}` : `A grown ${name}`}
       style={{
         width: size,
         height: size,
