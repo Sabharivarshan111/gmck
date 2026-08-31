@@ -29,6 +29,24 @@ export const HOME_SCALE_DEFAULT = 1;
 /** Below this a block sheds its secondary content instead of shrinking it. */
 export const COMPACT_BELOW = 0.85;
 
+/**
+ * How tall a block is drawn, as a multiplier of the height its content needs.
+ *
+ * A second axis, because width alone could not do the job the side and bottom
+ * grips advertise: both used to drive `scales`, so dragging the *bottom* bar
+ * made the block narrower and never taller, and the control did the opposite
+ * of what it showed.
+ *
+ * **Grow-only, and deliberately.** Height is applied as a `minHeight`, so the
+ * block can be given more room than its content needs but never less — there
+ * is no honest way to make a card shorter than the words inside it except by
+ * cutting them off, and "I want less of this" is what the width axis and the
+ * bin are for.
+ */
+export const HOME_HEIGHT_MIN = 1;
+export const HOME_HEIGHT_MAX = 1.8;
+export const HOME_HEIGHT_DEFAULT = 1;
+
 export const HOME_SECTION_LABEL: Record<HomeSection, string> = {
   hero: 'Welcome card',
   quick: 'Quick actions',
@@ -67,6 +85,22 @@ function defaultScales(): Record<HomeSection, number> {
   ) as Record<HomeSection, number>;
 }
 
+function defaultHeights(): Record<HomeSection, number> {
+  return Object.fromEntries(
+    HOME_SECTIONS.map(key => [key, HOME_HEIGHT_DEFAULT]),
+  ) as Record<HomeSection, number>;
+}
+
+export function clampHeight(value: number): number {
+  if (!Number.isFinite(value)) {
+    return HOME_HEIGHT_DEFAULT;
+  }
+  return Math.min(
+    HOME_HEIGHT_MAX,
+    Math.max(HOME_HEIGHT_MIN, Math.round(value * 100) / 100),
+  );
+}
+
 export function clampScale(value: number): number {
   if (!Number.isFinite(value)) {
     return HOME_SCALE_DEFAULT;
@@ -88,9 +122,44 @@ function reconcileScales(stored: unknown): Record<HomeSection, number> {
   return out;
 }
 
+/**
+ * Heights read back the same way. A layout stored before this axis existed has
+ * no `heights` key at all and lands on 1 for every block, which is the size it
+ * was already being drawn at — so nobody's arrangement changes under them.
+ */
+function reconcileHeights(stored: unknown): Record<HomeSection, number> {
+  const out = defaultHeights();
+  if (stored && typeof stored === 'object') {
+    for (const key of HOME_SECTIONS) {
+      const value = (stored as Record<string, unknown>)[key];
+      if (typeof value === 'number') {
+        out[key] = clampHeight(value);
+      }
+    }
+  }
+  return out;
+}
+
 export function useHomeOrder() {
   const [order, setOrder] = useState<HomeSection[]>([...HOME_SECTIONS]);
   const [scales, setScales] = useState<Record<HomeSection, number>>(defaultScales);
+  const [heights, setHeights] = useState<Record<HomeSection, number>>(defaultHeights);
+
+  /**
+   * The order the blocks are rendered in, which is kept equal to `order`.
+   *
+   * `Reorderable` uses `translateY` offsets to *preview* a move while a finger
+   * is down, and normal flow layout for everything else. It is tempting to
+   * make the offsets the permanent truth and never re-render — that is what
+   * the code did — but the offsets are a running sum of measured block
+   * heights, and a measured height excludes the block's own margin. Flow
+   * layout does not. Every commit therefore left each block out by the margins
+   * between it and its old slot: a screen-high hole above the Welcome card and
+   * the WhatsApp strip drawn through the middle of it.
+   *
+   * So the list re-renders and the offsets are zeroed in the same commit. They
+   * agree because only one of them is ever in charge.
+   */
   const [rendered, setRendered] = useState<HomeSection[]>([...HOME_SECTIONS]);
 
   useEffect(() => {
@@ -105,6 +174,7 @@ export function useHomeOrder() {
           setOrder(next);
           setRendered(next);
           setScales(reconcileScales(Array.isArray(parsed) ? null : parsed?.scales));
+          setHeights(reconcileHeights(Array.isArray(parsed) ? null : parsed?.heights));
         } catch {
           // A corrupt entry should not stop Home from rendering.
         }
@@ -113,10 +183,15 @@ export function useHomeOrder() {
   }, []);
 
   const persist = useCallback(
-    (nextOrder: HomeSection[], nextScales: Record<HomeSection, number>) => {
-      AsyncStorage.setItem(KEY, JSON.stringify({ order: nextOrder, scales: nextScales })).catch(
-        () => {},
-      );
+    (
+      nextOrder: HomeSection[],
+      nextScales: Record<HomeSection, number>,
+      nextHeights: Record<HomeSection, number>,
+    ) => {
+      AsyncStorage.setItem(
+        KEY,
+        JSON.stringify({ order: nextOrder, scales: nextScales, heights: nextHeights }),
+      ).catch(() => {});
     },
     [],
   );
@@ -125,9 +200,9 @@ export function useHomeOrder() {
     (next: HomeSection[]) => {
       setOrder(next);
       setRendered(next);
-      persist(next, scales);
+      persist(next, scales, heights);
     },
-    [persist, scales],
+    [heights, persist, scales],
   );
 
   const removeSection = useCallback(
@@ -135,9 +210,9 @@ export function useHomeOrder() {
       const next = order.filter(key => key !== id);
       setOrder(next);
       setRendered(next);
-      persist(next, scales);
+      persist(next, scales, heights);
     },
-    [order, persist, scales],
+    [heights, order, persist, scales],
   );
 
   const setScale = useCallback(
@@ -145,12 +220,25 @@ export function useHomeOrder() {
       setScales(previous => {
         const next = { ...previous, [section]: clampScale(scale) };
         if (commit) {
-          persist(order, next);
+          persist(order, next, heights);
         }
         return next;
       });
     },
-    [order, persist],
+    [heights, order, persist],
+  );
+
+  const setHeightScale = useCallback(
+    (section: HomeSection, scale: number, commit = true) => {
+      setHeights(previous => {
+        const next = { ...previous, [section]: clampHeight(scale) };
+        if (commit) {
+          persist(order, scales, next);
+        }
+        return next;
+      });
+    },
+    [order, persist, scales],
   );
 
   const reset = useCallback(() => {
@@ -158,9 +246,21 @@ export function useHomeOrder() {
     setOrder(next);
     setRendered(next);
     const defScales = defaultScales();
+    const defHeights = defaultHeights();
     setScales(defScales);
-    persist(next, defScales);
+    setHeights(defHeights);
+    persist(next, defScales, defHeights);
   }, [persist]);
 
-  return { order, rendered, scales, save, removeSection, setScale, reset };
+  return {
+    order,
+    rendered,
+    scales,
+    heights,
+    save,
+    removeSection,
+    setScale,
+    setHeightScale,
+    reset,
+  };
 }

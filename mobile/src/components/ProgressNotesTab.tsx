@@ -1130,12 +1130,18 @@ export function ProgressNotesTab({ year }: Props) {
                 onFont={setEditFont}
                 isPreview={false}
                 onTogglePreview={() => setEditorMode('preview')}
-                onChange={(text, cursor) => {
+                onChange={(text, cursor, select) => {
                   setEditContent(text);
-                  // Put the cursor where the edit left it, or a bullet inserted at
-                  // the start of a line sends it to the end of the note.
-                  setSelection({ start: cursor, end: cursor });
-                  setForcedSelection({ start: cursor, end: cursor });
+                  /*
+                   * Put the cursor where the edit left it — or, when the button
+                   * wrapped something, keep that something *selected*, so the
+                   * next button applies to the same words. Collapsing to a
+                   * cursor is why bolding a highlighted word left an empty
+                   * `****` at the caret and the word unchanged.
+                   */
+                  const next = select ?? { start: cursor, end: cursor };
+                  setSelection(next);
+                  setForcedSelection(next);
                 }}
               />
               <TextInput

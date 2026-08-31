@@ -50,7 +50,8 @@
     "check:edges": "node scripts/edge-to-edge-check.mjs",
     "check:trees": "node scripts/trees-check.mjs",
     "check:diagrams": "node scripts/diagram-match-check.mjs",
-    "audit:diagrams": "node scripts/diagram-audit.mjs"
+    "audit:diagrams": "node scripts/diagram-audit.mjs",
+    "shot:homeedit": "node preview/homeedit-shot.mjs"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^3.1.1",

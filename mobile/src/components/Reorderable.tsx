@@ -34,6 +34,14 @@ export interface ReorderableProps<Id extends string> {
    */
   onScale?: (id: Id, scale: number, commit: boolean) => void;
   scaleRange?: { min: number; max: number };
+  /**
+   * How tall each block is drawn, as a multiplier of the height its content
+   * needs. Separate from `scales` because the side grip and the bottom grip
+   * advertise two different axes, and both used to drive the width one.
+   */
+  heightScales?: Record<string, number>;
+  onHeightScale?: (id: Id, scale: number, commit: boolean) => void;
+  heightRange?: { min: number; max: number };
   /** Fires while a block is held, so the page can stop scrolling under it. */
   onDragChange?: (dragging: boolean) => void;
   /** Remove / hide a section from the home layout */
@@ -51,6 +59,9 @@ export function Reorderable<Id extends string>({
   scales,
   onScale,
   scaleRange,
+  heightScales,
+  onHeightScale,
+  heightRange,
   onDragChange,
   onRemove,
   sections,
@@ -85,6 +96,12 @@ export function Reorderable<Id extends string>({
   onScaleRef.current = onScale;
   const scaleRangeRef = useRef(scaleRange);
   scaleRangeRef.current = scaleRange;
+  const heightScalesRef = useRef(heightScales);
+  heightScalesRef.current = heightScales;
+  const onHeightScaleRef = useRef(onHeightScale);
+  onHeightScaleRef.current = onHeightScale;
+  const heightRangeRef = useRef(heightRange);
+  heightRangeRef.current = heightRange;
   const onDragChangeRef = useRef(onDragChange);
   onDragChangeRef.current = onDragChange;
   const holdTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -101,6 +118,14 @@ export function Reorderable<Id extends string>({
   const shifts = useRef(new Map<Id, Animated.Value>()).current;
   const lifts = useRef(new Map<Id, Animated.Value>()).current;
   const [held, setHeld] = useState<Id | null>(null);
+  /*
+   * `naturals` is a ref so the resize responders can read it without being
+   * rebuilt mid-gesture, but `minHeight` is derived from it and has to reach
+   * the render. This counter is the one thing that pulls a measurement into a
+   * paint; without it a block's height only took effect on some later,
+   * unrelated re-render.
+   */
+  const [, setNaturalTick] = useState(0);
 
   /** Lazily created, so adding a section needs no registration step. */
   const valueFor = useCallback((store: Map<Id, Animated.Value>, id: Id): Animated.Value => {
@@ -159,13 +184,15 @@ export function Reorderable<Id extends string>({
       const next = [...order];
       next.splice(from, 1);
       next.splice(to, 0, id);
+      // No settle(): the list re-renders in this order and flow layout puts
+      // every block where it belongs. Springing offsets on top of that is what
+      // made the arrows tear the page apart.
       onOrderChange(next);
-      settle(next);
     },
-    [onOrderChange, order, settle],
+    [onOrderChange, order],
   );
 
-  /** One notch of size, for the +/- buttons and the a11y actions. */
+  /** One notch of width, for the +/- buttons and the a11y actions. */
   const step = useCallback(
     (id: Id, delta: number) => {
       const min = scaleRangeRef.current?.min ?? 0.75;
@@ -176,14 +203,27 @@ export function Reorderable<Id extends string>({
     [onScaleRef, scaleRangeRef, scalesRef],
   );
 
+  /** The same, for the height axis, which only the bottom grip drives. */
+  const stepHeight = useCallback(
+    (id: Id, delta: number) => {
+      const min = heightRangeRef.current?.min ?? 1;
+      const max = heightRangeRef.current?.max ?? 1.8;
+      const next = (heightScalesRef.current?.[id] ?? 1) + delta;
+      onHeightScaleRef.current?.(id, Math.min(max, Math.max(min, next)), true);
+    },
+    [heightRangeRef, heightScalesRef, onHeightScaleRef],
+  );
+
   /**
-   * The resize grips.
+   * The resize grips, one per axis.
    *
-   * Height rather than a corner drag: a block always spans the full width, so
-   * width is not a thing anyone can choose, and offering a diagonal handle
-   * would imply it is. Dragging down makes the block bigger.
+   * The bottom bar changes **height**, the side bar changes **width**, and the
+   * corner does both. That sounds obvious and was not the case: all three used
+   * to write the same `scales` value, so the bar drawn across the bottom edge
+   * made the block *narrower* and never taller. A control has to do the thing
+   * it draws.
    *
-   * The scale moves with the finger — `commit` false — and is written to
+   * The size moves with the finger — `commit` false — and is written to
    * storage once, on release. Storing on every frame is a write per pixel
    * dragged.
    */
@@ -203,41 +243,68 @@ export function Reorderable<Id extends string>({
     for (const id of rendered) {
       let start = 1;
       let latest = 1;
+      let startHeight = 1;
+      let latestHeight = 1;
 
       const createHandler = (axis: 'y' | 'x' | 'both') =>
         PanResponder.create({
           onStartShouldSetPanResponderCapture: () => editing,
           onMoveShouldSetPanResponderCapture: () => editing,
           onPanResponderGrant: () => {
-            start = scalesRef.current?.[id] ?? 1;
+            start = axis === 'y' ? heightScalesRef.current?.[id] ?? 1 : scalesRef.current?.[id] ?? 1;
+            startHeight = heightScalesRef.current?.[id] ?? 1;
             latest = start;
+            latestHeight = startHeight;
             dragOwner.current = id;
             onDragChangeRef.current?.(true);
           },
           onPanResponderMove: (_event, gesture) => {
+            /*
+             * The vertical divisor is the block's *natural* height, not its
+             * drawn one. The drawn height is `natural * heightScale`, so this
+             * is exactly what keeps the grip under the finger — a fixed
+             * divisor makes the subject grid crawl and the WhatsApp strip
+             * bolt.
+             */
             const natural = naturals.get(id) || heights.get(id) || 200;
             const min = scaleRangeRef.current?.min ?? 0.5;
             const max = scaleRangeRef.current?.max ?? 1.0;
-            let delta = 0;
-            if (axis === 'y') {
-              delta = gesture.dy / (natural * 1.2);
-            } else if (axis === 'x') {
-              delta = gesture.dx / 220;
-            } else {
-              delta = (gesture.dx + gesture.dy) / (natural + 220);
+            const hMin = heightRangeRef.current?.min ?? 1;
+            const hMax = heightRangeRef.current?.max ?? 1.8;
+
+            if (axis === 'y' || axis === 'both') {
+              const delta = gesture.dy / natural;
+              latestHeight = Math.min(
+                hMax,
+                Math.max(hMin, Math.round((startHeight + delta) * 100) / 100),
+              );
+              onHeightScaleRef.current?.(id, latestHeight, false);
             }
-            latest = Math.min(max, Math.max(min, Math.round((start + delta) * 100) / 100));
-            onScaleRef.current?.(id, latest, false);
+            if (axis === 'x' || axis === 'both') {
+              const delta = gesture.dx / 220;
+              latest = Math.min(max, Math.max(min, Math.round((start + delta) * 100) / 100));
+              onScaleRef.current?.(id, latest, false);
+            }
           },
           onPanResponderRelease: () => {
             dragOwner.current = null;
             onDragChangeRef.current?.(false);
-            onScaleRef.current?.(id, latest, true);
+            if (axis === 'y' || axis === 'both') {
+              onHeightScaleRef.current?.(id, latestHeight, true);
+            }
+            if (axis === 'x' || axis === 'both') {
+              onScaleRef.current?.(id, latest, true);
+            }
           },
           onPanResponderTerminate: () => {
             dragOwner.current = null;
             onDragChangeRef.current?.(false);
-            onScaleRef.current?.(id, latest, true);
+            if (axis === 'y' || axis === 'both') {
+              onHeightScaleRef.current?.(id, latestHeight, true);
+            }
+            if (axis === 'x' || axis === 'both') {
+              onScaleRef.current?.(id, latest, true);
+            }
           },
           onPanResponderTerminationRequest: () => false,
         });
@@ -249,7 +316,17 @@ export function Reorderable<Id extends string>({
       };
     }
     return map;
-  }, [editing, heights, naturals, onDragChangeRef, rendered, resizable]);
+  }, [
+    editing,
+    heightRangeRef,
+    heightScalesRef,
+    heights,
+    naturals,
+    onDragChangeRef,
+    onHeightScaleRef,
+    rendered,
+    resizable,
+  ]);
 
   const responders = useMemo(() => {
     const map = {} as Record<Id, ReturnType<typeof PanResponder.create>>;
@@ -352,13 +429,21 @@ export function Reorderable<Id extends string>({
           } else {
             valueFor(lifts, id).setValue(0);
           }
-          const renderTops = topsFor(rendered);
-          springTo(valueFor(shifts, id), topsFor(tentative)[id] - renderTops[id], {
-            spring: SPRING.momentum,
-            reduceMotion,
-          }).start();
           if (tentative !== order) {
+            /*
+             * Committing re-renders the list in this order and the effect
+             * above zeroes every offset, which lands the block within a few
+             * pixels of where the finger left it — the reorder has already
+             * happened on screen by then. Springing it to a computed offset
+             * instead is what left it one displacement out.
+             */
             onOrderChange(tentative);
+          } else {
+            // Nothing moved, so there is no re-render coming to zero this.
+            springTo(valueFor(shifts, id), 0, {
+              spring: SPRING.momentum,
+              reduceMotion,
+            }).start();
           }
         },
         onPanResponderTerminationRequest: () => false,
@@ -380,11 +465,21 @@ export function Reorderable<Id extends string>({
     valueFor,
   ]);
 
+  /**
+   * A committed order is drawn by flow layout, so the preview offsets go.
+   *
+   * They have to go in the *same* commit that re-renders the list, and nothing
+   * may animate them afterwards. An offset is a running sum of measured block
+   * heights and a measured height excludes that block's margin, so an offset
+   * left running after the re-render puts the block out by every margin it
+   * crossed — which is the WhatsApp strip drawn through the Welcome card.
+   */
   useEffect(() => {
     for (const val of shifts.values()) {
+      val.stopAnimation();
       val.setValue(0);
     }
-  }, [order, shifts]);
+  }, [rendered, shifts]);
 
   return (
     <>
@@ -395,6 +490,8 @@ export function Reorderable<Id extends string>({
         const shift = valueFor(shifts, id);
         const lift = valueFor(lifts, id);
         const zoom = scales?.[id] ?? 1;
+        const tall = heightScales?.[id] ?? 1;
+        const natural = naturals.get(id) ?? 0;
         return (
           <Animated.View
             key={id}
@@ -433,6 +530,17 @@ export function Reorderable<Id extends string>({
             onTouchCancel={cancelHold}
             style={[
               styles.row,
+              /*
+               * In edit mode the row grows two lanes of its own: one above for
+               * the toolbar, one below for the height grip. Both used to hang
+               * outside the row on negative offsets, so every toolbar was
+               * drawn across the block above it — covering "View all", the
+               * quick actions, and the instruction banner — and every grip
+               * landed in the gap that belongs to the *next* block, whose
+               * responder claims the touch. Chrome that overlaps its
+               * neighbours is chrome you cannot aim at.
+               */
+              editing ? styles.rowEditing : null,
               {
                 transform: [{ translateY: shift }],
                 zIndex: held === id ? 2 : 1,
@@ -477,10 +585,37 @@ export function Reorderable<Id extends string>({
                   },
                 ]}>
                 <View
+                  /*
+                   * Height is a floor, not a transform. `minHeight` gives the
+                   * block more room than its content needs and never less, so
+                   * nothing is squashed or clipped and the blocks below move
+                   * down by exactly what was added — a `scaleY` would have
+                   * changed nothing about layout and drawn this block straight
+                   * over the next one.
+                   *
+                   * It goes on the card itself rather than on the wrapper
+                   * around it. On the wrapper the extra height was real but the
+                   * card inside kept its own size, so the block grew a band of
+                   * empty background under it and the stored height read back
+                   * as a different number than the one that was dragged.
+                   */
+                  style={
+                    natural > 0 && tall > 1 ? { minHeight: natural * tall } : undefined
+                  }
                   onLayout={event => {
                     const next = event.nativeEvent.layout.height;
+                    /*
+                     * Only while nothing is being added, or the measurement
+                     * feeds itself: minHeight raises the height, the new height
+                     * is recorded as "natural", and the next multiply is
+                     * against a number that already includes it.
+                     */
+                    if (tall > 1 && naturals.has(id)) {
+                      return;
+                    }
                     if (naturals.get(id) !== next) {
                       naturals.set(id, next);
+                      setNaturalTick(value => value + 1);
                       settle(order);
                     }
                   }}>
@@ -491,44 +626,80 @@ export function Reorderable<Id extends string>({
 
                 {editing && onScale ? (
                   <>
-                    {/* Bottom Handle: Vertical Size Resize */}
+                    {/* The bottom bar makes the block taller. */}
                     <View
                       accessible
                       accessibilityRole="adjustable"
-                      accessibilityLabel={`Resize height for ${labels[id]}`}
+                      accessibilityLabel={`Height of ${labels[id]}`}
                       accessibilityValue={{
-                        min: 60,
+                        min: 100,
+                        max: 180,
+                        now: Math.round(tall * 100),
+                        text: `${Math.round(tall * 100)} percent tall`,
+                      }}
+                      accessibilityActions={[{ name: 'increment' }, { name: 'decrement' }]}
+                      onAccessibilityAction={event => {
+                        stepHeight(id, event.nativeEvent.actionName === 'increment' ? 0.1 : -0.1);
+                      }}
+                      style={styles.verticalResizeZone}
+                      {...resizers[id]?.vertical.panHandlers}>
+                      <View
+                        style={[
+                          styles.gripPad,
+                          {
+                            backgroundColor: colors.cardElevated,
+                            borderColor: colors.border,
+                          },
+                        ]}>
+                        <View style={[styles.gripBar, { backgroundColor: colors.textMuted }]} />
+                      </View>
+                    </View>
+
+                    {/* The side bar makes it narrower or wider. */}
+                    <View
+                      accessible
+                      accessibilityRole="adjustable"
+                      accessibilityLabel={`Width of ${labels[id]}`}
+                      accessibilityValue={{
+                        min: 50,
                         max: 100,
-                        now: Math.round((scales?.[id] ?? 1) * 100),
-                        text: `${Math.round((scales?.[id] ?? 1) * 100)} percent`,
+                        now: Math.round(zoom * 100),
+                        text: `${Math.round(zoom * 100)} percent wide`,
                       }}
                       accessibilityActions={[{ name: 'increment' }, { name: 'decrement' }]}
                       onAccessibilityAction={event => {
                         step(id, event.nativeEvent.actionName === 'increment' ? 0.05 : -0.05);
                       }}
-                      style={styles.verticalResizeZone}
-                      {...resizers[id]?.vertical.panHandlers}>
-                      <View style={[styles.horizontalGrip, { backgroundColor: '#F43F5E' }]} />
-                    </View>
-
-                    {/* Right-Side Handle: Horizontal Width Resize */}
-                    <View
-                      accessible
-                      accessibilityRole="adjustable"
-                      accessibilityLabel={`Resize width for ${labels[id]}`}
                       style={styles.horizontalResizeZone}
                       {...resizers[id]?.horizontal.panHandlers}>
-                      <View style={[styles.verticalGrip, { backgroundColor: '#F43F5E' }]} />
+                      <View
+                        style={[
+                          styles.gripPadTall,
+                          {
+                            backgroundColor: colors.cardElevated,
+                            borderColor: colors.border,
+                          },
+                        ]}>
+                        <View style={[styles.gripBarTall, { backgroundColor: colors.textMuted }]} />
+                      </View>
                     </View>
 
-                    {/* Bottom-Right Corner Handle: 2D Dual-Axis Resize */}
+                    {/* The corner does both at once. */}
                     <View
                       accessible
                       accessibilityRole="adjustable"
-                      accessibilityLabel={`2D resize for ${labels[id]}`}
+                      accessibilityLabel={`Width and height of ${labels[id]}`}
                       style={styles.cornerResizeZone}
                       {...resizers[id]?.corner.panHandlers}>
-                      <View style={styles.cornerGrip} />
+                      <View
+                        style={[
+                          styles.cornerGrip,
+                          {
+                            borderColor: colors.textMuted,
+                            backgroundColor: colors.cardElevated,
+                          },
+                        ]}
+                      />
                     </View>
                   </>
                 ) : null}
@@ -637,11 +808,33 @@ export function Reorderable<Id extends string>({
   );
 }
 
+/** Height of the lane above a block that the toolbar sits in, in edit mode. */
+const TOOLBAR_LANE = 38;
+/**
+ * And the lanes below and to the right, for the width and height grips. A grip
+ * drawn over the card it resizes covers the thing being resized — the width bar
+ * used to sit across "Ask AI" — and a grip drawn *outside* the row lands in the
+ * next block's touch area, where its responder claims the drag.
+ */
+const GRIP_LANE = 22;
+
 const styles = StyleSheet.create({
   row: {
     // No margin here: each section keeps its own, so the gap travels with the
     // block that owns it rather than being redistributed on every reorder.
     position: 'relative',
+  },
+  /**
+   * Edit mode's two lanes. `TOOLBAR_LANE` is tall enough for the 32dp pill
+   * plus air; `GRIP_LANE` for the height bar and the corner dot. They exist so
+   * the chrome has somewhere of its own to be drawn — with the chrome hanging
+   * outside the row instead, every toolbar covered the block above it and
+   * every grip sat in the next block's touch area.
+   */
+  rowEditing: {
+    paddingTop: TOOLBAR_LANE,
+    paddingBottom: GRIP_LANE,
+    paddingRight: GRIP_LANE,
   },
   cardContainer: {
     position: 'relative',
@@ -649,7 +842,7 @@ const styles = StyleSheet.create({
   },
   controls: {
     position: 'absolute',
-    top: -24,
+    top: 0,
     right: 0,
     flexDirection: 'row',
     alignItems: 'center',
@@ -670,68 +863,86 @@ const styles = StyleSheet.create({
   },
   verticalResizeZone: {
     position: 'absolute',
-    bottom: -11,
+    bottom: -GRIP_LANE,
     left: '50%',
-    marginLeft: -32,
-    width: 64,
-    height: 24,
+    marginLeft: -34,
+    width: 68,
+    height: GRIP_LANE,
     zIndex: 10,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  horizontalGrip: {
-    width: 44,
-    height: 5.5,
-    borderRadius: 3,
-    shadowColor: '#F43F5E',
-    shadowOpacity: 0.8,
-    shadowRadius: 5,
-    shadowOffset: { width: 0, height: 1 },
-    elevation: 4,
+  /**
+   * A grip that reads as a control rather than a stray red line.
+   *
+   * The first pass drew a bare rose-coloured bar with a glow, in a fixed
+   * `#F43F5E` that belonged to no theme — on the dark ground it looked like a
+   * rendering fault, which is what it was reported as. This is the pill every
+   * other draggable thing on the platform uses: a surface with a border and a
+   * muted bar inside, so it is legible on every palette, and large enough to
+   * find with a thumb without being loud enough to compete with the content it
+   * is attached to.
+   */
+  gripPad: {
+    width: 52,
+    height: 18,
+    borderRadius: 9,
+    borderWidth: StyleSheet.hairlineWidth,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  gripBar: {
+    width: 22,
+    height: 2.5,
+    borderRadius: 2,
+    opacity: 0.8,
+  },
+  gripPadTall: {
+    width: 18,
+    height: 52,
+    borderRadius: 9,
+    borderWidth: StyleSheet.hairlineWidth,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  gripBarTall: {
+    width: 2.5,
+    height: 22,
+    borderRadius: 2,
+    opacity: 0.8,
   },
   horizontalResizeZone: {
     position: 'absolute',
     top: '50%',
-    marginTop: -32,
-    right: -11,
-    width: 24,
-    height: 64,
+    marginTop: -34,
+    right: -GRIP_LANE,
+    width: GRIP_LANE,
+    height: 68,
     zIndex: 10,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  verticalGrip: {
-    width: 5.5,
-    height: 44,
-    borderRadius: 3,
-    shadowColor: '#F43F5E',
-    shadowOpacity: 0.8,
-    shadowRadius: 5,
-    shadowOffset: { width: 1, height: 0 },
-    elevation: 4,
-  },
+
   cornerResizeZone: {
     position: 'absolute',
-    bottom: -8,
-    right: -8,
+    bottom: -GRIP_LANE,
+    right: -GRIP_LANE,
     width: 28,
     height: 28,
     zIndex: 11,
     alignItems: 'center',
     justifyContent: 'center',
   },
+  /** The corner reads as a corner: a right angle, not a dot. */
   cornerGrip: {
     width: 14,
     height: 14,
-    borderRadius: 7,
-    backgroundColor: '#F43F5E',
-    borderWidth: 2,
-    borderColor: '#FFFFFF',
-    shadowColor: '#F43F5E',
-    shadowOpacity: 0.8,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 1 },
-    elevation: 4,
+    borderBottomRightRadius: 5,
+    borderRightWidth: 2,
+    borderBottomWidth: 2,
+    borderTopWidth: 0,
+    borderLeftWidth: 0,
+    backgroundColor: 'transparent',
   },
   divider: {
     width: StyleSheet.hairlineWidth,

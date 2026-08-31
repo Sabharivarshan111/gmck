@@ -111,7 +111,7 @@ export function toggleWrap(
   selection: Selection,
   open: string,
   close: string = open,
-): { text: string; cursor: number } {
+): { text: string; cursor: number; select?: Selection } {
   let { start, end } = selection;
   if (end < start) {
     const tmp = start;
@@ -161,6 +161,7 @@ export function toggleWrap(
     return {
       text: text.slice(0, actualStart) + bare + text.slice(actualEnd),
       cursor: actualStart + bare.length,
+      select: { start: actualStart, end: actualStart + bare.length },
     };
   }
 
@@ -175,6 +176,7 @@ export function toggleWrap(
         return {
           text: text.slice(0, actualStart) + inner + text.slice(actualEnd),
           cursor: actualStart + inner.length,
+          select: { start: actualStart, end: actualStart + inner.length },
         };
       }
       // Switch to new color
@@ -182,6 +184,7 @@ export function toggleWrap(
       return {
         text: text.slice(0, actualStart) + replacement + text.slice(actualEnd),
         cursor: actualStart + replacement.length,
+        select: { start: actualStart, end: actualStart + replacement.length },
       };
     }
   }
@@ -190,6 +193,7 @@ export function toggleWrap(
   return {
     text: text.slice(0, actualStart) + replacement + text.slice(actualEnd),
     cursor: actualEnd + open.length + close.length,
+    select: { start: actualStart, end: actualStart + replacement.length },
   };
 }
 
@@ -211,8 +215,17 @@ export function NoteToolbar({
 }: {
   value: string;
   selection: Selection;
-  /** New text, and where the cursor should land in it. */
-  onChange: (text: string, cursor: number) => void;
+  /**
+   * New text, where the cursor should land, and — when a marker was wrapped
+   * around something — what should stay *selected*.
+   *
+   * The selection is the part that was missing. Every format collapsed the
+   * selection to a cursor, so highlighting a word and then pressing **B** put
+   * an empty `****` at the caret instead of bolding the word that was still
+   * visibly selected. Two styles on the same words was simply not reachable
+   * from the toolbar.
+   */
+  onChange: (text: string, cursor: number, select?: Selection) => void;
   /** The face this note is written in — see `NOTE_FONTS`. */
   font?: string | null;
   onFont: (key: string) => void;
@@ -234,6 +247,7 @@ export function NoteToolbar({
   const [faces, setFaces] = useState(false);
 
   const apply = (marker: string) => {
+    // A line prefix has nothing to keep selected — the cursor lands after it.
     const result = toggleLinePrefix(value, selection.start, marker);
     onChange(result.text, result.cursor);
   };
@@ -275,7 +289,7 @@ export function NoteToolbar({
         icon: <Bold size={18} color={colors.text} />,
         run: () => {
           const result = toggleWrap(value, selection, '**');
-          onChange(result.text, result.cursor);
+          onChange(result.text, result.cursor, result.select);
         },
       },
       {
@@ -285,7 +299,7 @@ export function NoteToolbar({
         icon: <Italic size={18} color={colors.text} />,
         run: () => {
           const result = toggleWrap(value, selection, '_');
-          onChange(result.text, result.cursor);
+          onChange(result.text, result.cursor, result.select);
         },
       },
       {
@@ -325,7 +339,7 @@ export function NoteToolbar({
 
   const highlight = (key: string) => {
     const result = toggleWrap(value, selection, key === 'y' ? '==' : `==${key}:`, '==');
-    onChange(result.text, result.cursor);
+    onChange(result.text, result.cursor, result.select);
     setPalette(false);
   };
 

@@ -7,6 +7,8 @@ import { HoloCard } from '@/components/HoloCard';
 import { Reorderable } from '@/components/Reorderable';
 import {
   COMPACT_BELOW,
+  HOME_HEIGHT_MAX,
+  HOME_HEIGHT_MIN,
   HOME_SCALE_MAX,
   HOME_SCALE_MIN,
   HOME_SECTION_LABEL,
@@ -105,11 +107,22 @@ const WHATSAPP_LABEL: Record<YearKey, string> = {
  * new one every render, which is a rebuild mid-drag.
  */
 const HOME_SCALE_RANGE = { min: HOME_SCALE_MIN, max: HOME_SCALE_MAX };
+const HOME_HEIGHT_RANGE = { min: HOME_HEIGHT_MIN, max: HOME_HEIGHT_MAX };
 
 export default function HomeScreen({ initialEditing = false }: { initialEditing?: boolean } = {}) {
   const { colors, theme, textSize, setTextSize, custom, setCustom, preference, setPreference } =
     useTheme();
-  const { order, rendered, scales, save, removeSection, setScale, reset } = useHomeOrder();
+  const {
+    order,
+    rendered,
+    scales,
+    heights,
+    save,
+    removeSection,
+    setScale,
+    setHeightScale,
+    reset,
+  } = useHomeOrder();
   /**
    * Shrunk far enough that the block should shed its secondary detail rather
    * than keep rendering it at a size nobody can read. Zooming out is the
@@ -342,7 +355,9 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
               { backgroundColor: withAlpha(colors.accent, 0.14), borderColor: colors.accent },
             ]}>
             <Text style={[styles.editBannerText, { color: colors.text }]}>
-              Drag bottom (↕) or side (↔) bar to resize. Tap 🗑️ to hide, or Reset to restore all.
+              Drag the side bar (↔) for width, the bottom bar (↕) for height, or
+              the corner for both. Hold and drag a block to move it. 🗑️ hides one;
+              Reset brings everything back.
             </Text>
             <Touchable onPress={reset} label="Reset home layout" scaleTo={0.94}>
               <Text style={[styles.editReset, { color: colors.textMuted }]}>Reset</Text>
@@ -362,6 +377,9 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
           scales={scales}
           onScale={setScale}
           scaleRange={HOME_SCALE_RANGE}
+          heightScales={heights}
+          onHeightScale={setHeightScale}
+          heightRange={HOME_HEIGHT_RANGE}
           onDragChange={setDragging}
           onRemove={removeSection}
           labels={HOME_SECTION_LABEL}

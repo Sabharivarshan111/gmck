@@ -557,27 +557,45 @@ await step('a block resizes with its grip, and the size survives a reload', asyn
   await tap('Rearrange home screen');
   const before = await heroHeight();
 
-  await dragGrip('Resize Welcome card', 70);
+  /*
+   * The bottom bar is the *height* axis, and only the height axis. Both grips
+   * used to write the same width value, so this drag made the block narrower
+   * and the assertion below could never have held.
+   */
+  await dragGrip('Height of Welcome card', 90);
   const grown = await heroHeight();
   if (!(grown > before + 20)) {
-    throw new Error(`dragging the grip down grew the hero by only ${grown - before}px`);
+    throw new Error(`dragging the height bar down grew the hero by only ${grown - before}px`);
   }
 
-  await dragGrip('Resize Welcome card', -140);
+  // Height is a floor, so dragging back up returns it to what its content
+  // needs and no further — there is no honest way to be shorter than the words.
+  await dragGrip('Height of Welcome card', -140);
   const shrunk = await heroHeight();
-  if (!(shrunk < before - 20)) {
-    throw new Error(`dragging the grip up shrank the hero by only ${before - shrunk}px`);
+  if (Math.abs(shrunk - before) > 24) {
+    throw new Error(`dragging the height bar up left the hero at ${shrunk}px, not back at ${before}px`);
   }
+
+  await dragGrip('Height of Welcome card', 90);
+  const regrown = await heroHeight();
 
   await tap('Finish rearranging');
   await open('screen=home');
+  /*
+   * Measured back in edit mode, because that is where `regrown` was measured.
+   * Edit mode gives each block two lanes of its own for its toolbar and its
+   * grips, so a block is exactly those lanes taller while it is being edited —
+   * comparing one against the other reports a 60px "loss" that is really the
+   * chrome not being there.
+   */
+  await tap('Rearrange home screen');
+  await page.waitForTimeout(500);
   const reloaded = await heroHeight();
-  if (Math.abs(reloaded - shrunk) > 32) {
-    throw new Error(`the block size did not survive a reload (${shrunk} \u2192 ${reloaded})`);
+  if (Math.abs(reloaded - regrown) > 32) {
+    throw new Error(`the block size did not survive a reload (${regrown} \u2192 ${reloaded})`);
   }
 
   // Put it back, so the rest of the run sees the layout it expects.
-  await tap('Rearrange home screen');
   await tap('Reset home layout');
   await page.waitForTimeout(700);
   if (Math.abs((await heroHeight()) - before) > 24) {

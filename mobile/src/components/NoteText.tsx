@@ -132,7 +132,14 @@ export function parseInlineTokens(text: string, currentStyle: InlineStyle = {}):
   const highlightMatch = text.match(/==(?:([ygbp]):)?([^=\n]+?)==/) || text.match(/<mark(?: class="([ygbp])")?>([^<]+?)<\/mark>/i);
   const boldMatch = text.match(/(?:\*\*([^*]+?)\*\*|__([^_]+?)__|<b>([^<]+?)<\/b>|<strong>([^<]+?)<\/strong>)/i);
   const strikeMatch = text.match(/(?:~~([^~]+?)~~|<del>([^<]+?)<\/del>|<s>([^<]+?)<\/s>)/i);
-  const italicMatch = text.match(/(?:^|[^*_])(?:\*([^*\s](?:[^*]*?[^*\s])?)\*|_([^_\\s](?:[^_]*?[^_\\s])?)_|<i>([^<]+?)<\/i>|<em>([^<]+?)<\/em>)/i);
+  /*
+   * `\s`, not `\\s`. In a regex *literal* the second is an escaped backslash
+   * followed by a literal `s`, so the underscore form's character class read
+   * "not an underscore, not a backslash, and not the letter s" — and with the
+   * `i` flag, not `S` either. `_Part of LPS_` therefore never matched, and the
+   * reader printed the underscores. A word ending in s is not a rare shape.
+   */
+  const italicMatch = text.match(/(?:^|[^*_])(?:\*([^*\s](?:[^*]*?[^*\s])?)\*|_([^_\s](?:[^_]*?[^_\s])?)_|<i>([^<]+?)<\/i>|<em>([^<]+?)<\/em>)/i);
 
   // Find the earliest matching token
   let earliest: {
