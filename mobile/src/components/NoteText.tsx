@@ -40,26 +40,24 @@ export function parseNote(content: string): NoteBlock[] {
     if (line.length === 0) {
       return { kind: 'blank' };
     }
-    // "- item", "* item", "• item"
-    const bullet = line.match(/^[-*•]\s+(.*)$/);
-    if (bullet) {
+    // "- item", "* item", "• item", "+ item", "– item", "— item"
+    const bullet = line.match(/^[-*•+–—]\s*(.*)$/);
+    if (bullet && bullet[1].length > 0) {
       return { kind: 'bullet', text: bullet[1] };
     }
-    // "1. item", "2) item"
-    const numbered = line.match(/^(\d{1,3})[.)]\s+(.*)$/);
-    if (numbered) {
+    // "1. item", "2) item", "3: item"
+    const numbered = line.match(/^(\d{1,3})[.)\]:]\s*(.*)$/);
+    if (numbered && numbered[2].length > 0) {
       return { kind: 'number', marker: `${numbered[1]}.`, text: numbered[2] };
     }
-    // "# Heading" — and a line that is entirely bold, which is how people
-    // write a heading when they are not thinking about markdown.
-    const hash = line.match(/^(#{1,3})\s+(.*)$/);
-    if (hash) {
-      // One hash is the section, two or three are what sits under it. Deeper
-      // than that is an outline, and an outline is not a study note.
-      return { kind: 'heading', text: hash[2], level: hash[1].length === 1 ? 1 : 2 };
+    // "# Heading", "## Subheading", "### Subheading", or "#Heading"
+    const hash = line.match(/^(#{1,6})\s*(.*)$/);
+    if (hash && hash[2].length > 0) {
+      const cleanHeading = hash[2].replace(/\s*#+\s*$/, '');
+      return { kind: 'heading', text: cleanHeading, level: hash[1].length === 1 ? 1 : 2 };
     }
-    const wrapped = line.match(/^\*\*(.+)\*\*$/);
-    if (wrapped) {
+    const wrapped = line.match(/^\*\*(.+)\*\*$/) || line.match(/^__(.+)__$/);
+    if (wrapped && wrapped[1].length > 0) {
       return { kind: 'heading', text: wrapped[1], level: 2 };
     }
     return { kind: 'text', text: line };
@@ -131,10 +129,10 @@ export function parseInlineTokens(text: string, currentStyle: InlineStyle = {}):
   if (!text) return [];
 
   // Match delimiter patterns: highlight, bold, strikethrough, italic
-  const highlightMatch = text.match(/==(?:([ygbp]):)?([^=\n]+?)==/);
-  const boldMatch = text.match(/(?:\*\*([^*]+?)\*\*|__([^_]+?)__)/);
-  const strikeMatch = text.match(/~~([^~]+?)~~/);
-  const italicMatch = text.match(/(?:^|[^*_])(?:\*([^*\s](?:[^*]*?[^*\s])?)\*|_([^_\\s](?:[^_]*?[^_\\s])?)_)/);
+  const highlightMatch = text.match(/==(?:([ygbp]):)?([^=\n]+?)==/) || text.match(/<mark(?: class="([ygbp])")?>([^<]+?)<\/mark>/i);
+  const boldMatch = text.match(/(?:\*\*([^*]+?)\*\*|__([^_]+?)__|<b>([^<]+?)<\/b>|<strong>([^<]+?)<\/strong>)/i);
+  const strikeMatch = text.match(/(?:~~([^~]+?)~~|<del>([^<]+?)<\/del>|<s>([^<]+?)<\/s>)/i);
+  const italicMatch = text.match(/(?:^|[^*_])(?:\*([^*\s](?:[^*]*?[^*\s])?)\*|_([^_\\s](?:[^_]*?[^_\\s])?)_|<i>([^<]+?)<\/i>|<em>([^<]+?)<\/em>)/i);
 
   // Find the earliest matching token
   let earliest: {
@@ -148,7 +146,7 @@ export function parseInlineTokens(text: string, currentStyle: InlineStyle = {}):
     earliest = {
       index: highlightMatch.index,
       length: highlightMatch[0].length,
-      inner: highlightMatch[2],
+      inner: highlightMatch[2] || highlightMatch[1] || '',
       style: { ...currentStyle, highlight: highlightMatch[1] || 'y' },
     };
   }
@@ -158,7 +156,7 @@ export function parseInlineTokens(text: string, currentStyle: InlineStyle = {}):
       earliest = {
         index: boldMatch.index,
         length: boldMatch[0].length,
-        inner: boldMatch[1] || boldMatch[2],
+        inner: boldMatch[1] || boldMatch[2] || boldMatch[3] || boldMatch[4] || '',
         style: { ...currentStyle, bold: true },
       };
     }
@@ -169,7 +167,7 @@ export function parseInlineTokens(text: string, currentStyle: InlineStyle = {}):
       earliest = {
         index: strikeMatch.index,
         length: strikeMatch[0].length,
-        inner: strikeMatch[1],
+        inner: strikeMatch[1] || strikeMatch[2] || strikeMatch[3] || '',
         style: { ...currentStyle, strike: true },
       };
     }
@@ -177,14 +175,14 @@ export function parseInlineTokens(text: string, currentStyle: InlineStyle = {}):
 
   if (italicMatch && italicMatch.index !== undefined) {
     const matchStr = italicMatch[0];
-    const offset = matchStr.startsWith('*') || matchStr.startsWith('_') ? 0 : 1;
+    const offset = matchStr.startsWith('*') || matchStr.startsWith('_') || matchStr.startsWith('<') ? 0 : 1;
     const actualIndex = italicMatch.index + offset;
     const actualLength = matchStr.length - offset;
     if (!earliest || actualIndex < earliest.index) {
       earliest = {
         index: actualIndex,
         length: actualLength,
-        inner: italicMatch[1] || italicMatch[2],
+        inner: italicMatch[1] || italicMatch[2] || italicMatch[3] || italicMatch[4] || '',
         style: { ...currentStyle, italic: true },
       };
     }

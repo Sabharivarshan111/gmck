@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import {
   Bold,
+  Eye,
+  EyeOff,
   Heading1,
   Heading2,
   Highlighter,
@@ -46,7 +48,7 @@ function lineAt(text: string, at: number): { start: number; end: number } {
   return { start, end: nextBreak === -1 ? text.length : nextBreak };
 }
 
-const PREFIX = /^(\s*)(#{1,3}\s+|[-*•]\s+|\d{1,3}[.)]\s+)?/;
+const PREFIX = /^(\s*)(#{1,6}\s+|[-*•+–—]\s+|\d{1,3}[.)\]:]\s+)?/;
 
 /**
  * Put one marker on the cursor's line, or take it off again.
@@ -86,7 +88,7 @@ export function nextNumber(text: string, at: number): string {
   const { start } = lineAt(text, at);
   const before = text.slice(0, start).split(/\r?\n/);
   for (let i = before.length - 1; i >= 0; i--) {
-    const previous = before[i].match(/^\s*(\d{1,3})[.)]\s+/);
+    const previous = before[i].match(/^\s*(\d{1,3})[.)\]:]\s+/);
     if (previous) {
       return `${Number(previous[1]) + 1}. `;
     }
@@ -147,6 +149,8 @@ export function NoteToolbar({
   onChange,
   font,
   onFont,
+  onTogglePreview,
+  isPreview,
 }: {
   value: string;
   selection: Selection;
@@ -155,6 +159,9 @@ export function NoteToolbar({
   /** The face this note is written in — see `NOTE_FONTS`. */
   font?: string | null;
   onFont: (key: string) => void;
+  /** Toggle live preview mode */
+  onTogglePreview?: () => void;
+  isPreview?: boolean;
 }) {
   const { colors } = useTheme();
   /*
@@ -174,7 +181,7 @@ export function NoteToolbar({
     onChange(result.text, result.cursor);
   };
 
-  const buttons: { key: string; label: string; hint: string; icon: React.ReactNode; run: () => void }[] =
+  const buttons: { key: string; label: string; hint: string; icon: React.ReactNode; run: () => void; active?: boolean }[] =
     [
       {
         key: 'h1',
@@ -245,6 +252,17 @@ export function NoteToolbar({
         },
       },
     ];
+
+  if (onTogglePreview) {
+    buttons.push({
+      key: 'preview',
+      label: isPreview ? 'Edit mode' : 'Live preview',
+      hint: isPreview ? 'Switch back to editing' : 'See live formatted preview of your note',
+      icon: isPreview ? <EyeOff size={18} color={colors.fuchsia} /> : <Eye size={18} color={colors.fuchsia} />,
+      active: isPreview,
+      run: onTogglePreview,
+    });
+  }
 
   const highlight = (key: string) => {
     const result = toggleWrap(value, selection, key === 'y' ? '==' : `==${key}:`, '==');

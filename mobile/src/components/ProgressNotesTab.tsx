@@ -19,6 +19,7 @@ import {
   ChevronDown,
   ChevronLeft,
   ChevronRight,
+  Eye,
   FileText,
   FileType,
   Film,
@@ -538,6 +539,8 @@ export function ProgressNotesTab({ year }: Props) {
   const [deleteTarget, setDeleteTarget] = useState<UserNote | null>(null);
   /** The note being read. Reading and editing are different things. */
   const [reading, setReading] = useState<UserNote | null>(null);
+  /** Whether the note editor is in live preview mode or edit mode. */
+  const [editorMode, setEditorMode] = useState<'edit' | 'preview'>('edit');
   const [openSubjects, setOpenSubjects] = useState<Record<string, boolean>>({});
 
   /**
@@ -607,6 +610,7 @@ export function ProgressNotesTab({ year }: Props) {
   const openEditor = (note?: UserNote) => {
     setImageError(null);
     setReading(null);
+    setEditorMode('edit');
     if (note) {
       setEditing(note);
       setEditTitle(note.title);
@@ -1067,48 +1071,126 @@ export function ProgressNotesTab({ year }: Props) {
           />
 
           {/*
-            The buttons that write the markers, so nobody has to know that a
-            hyphen makes a bullet. The note is still stored as plain text —
-            what is typed is what is saved — and `NoteText` renders the
-            markers when it is read.
+            Mode Switcher: Edit Mode vs Live Preview.
+            Gives the reader an instant real-time view of how headings, bold text,
+            highlights, and bullet points render.
           */}
-          <NoteToolbar
-            value={editContent}
-            selection={selection}
-            font={editFont}
-            onFont={setEditFont}
-            onChange={(text, cursor) => {
-              setEditContent(text);
-              // Put the cursor where the edit left it, or a bullet inserted at
-              // the start of a line sends it to the end of the note.
-              setSelection({ start: cursor, end: cursor });
-              setForcedSelection({ start: cursor, end: cursor });
-            }}
-          />
-          <TextInput
-            placeholder={"Write your notes here…\n\nUse the buttons above for headings and points."}
-            accessibilityLabel="What the note says"
-            placeholderTextColor={colors.textMuted}
-            value={editContent}
-            onChangeText={text => {
-              setEditContent(text);
-              setForcedSelection(null);
-            }}
-            onSelectionChange={event => setSelection(event.nativeEvent.selection)}
-            // Controlled only for the frame after a toolbar press. Pinning it
-            // permanently would fight every tap the reader makes in the text.
-            selection={forcedSelection ?? undefined}
-            multiline
-            textAlignVertical="top"
-            numberOfLines={10}
-            style={[
-              styles.editorTextarea,
-              { backgroundColor: colors.card, borderColor: colors.border, color: colors.text },
-              // Typed in the face it will be read in. A preference that only
-              // appears after saving is one nobody trusts they have set.
-              editFont ? { fontFamily: noteFontFamily(editFont) } : null,
-            ]}
-          />
+          <View style={[styles.tabBarWrap, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <Touchable
+              onPress={() => setEditorMode('edit')}
+              label="Edit note content"
+              style={[
+                styles.tabBarItem,
+                editorMode === 'edit'
+                  ? [styles.tabBarActive, { backgroundColor: colors.primary }]
+                  : undefined,
+              ]}>
+              <Pencil size={15} color={editorMode === 'edit' ? colors.primaryText : colors.textMuted} />
+              <Text
+                style={[
+                  styles.tabBarText,
+                  { color: editorMode === 'edit' ? colors.primaryText : colors.textMuted },
+                ]}>
+                Edit Mode
+              </Text>
+            </Touchable>
+
+            <Touchable
+              onPress={() => setEditorMode('preview')}
+              label="Live preview note formatting"
+              style={[
+                styles.tabBarItem,
+                editorMode === 'preview'
+                  ? [styles.tabBarActive, { backgroundColor: colors.fuchsia }]
+                  : undefined,
+              ]}>
+              <Eye size={15} color={editorMode === 'preview' ? '#FFFFFF' : colors.textMuted} />
+              <Text
+                style={[
+                  styles.tabBarText,
+                  { color: editorMode === 'preview' ? '#FFFFFF' : colors.textMuted },
+                ]}>
+                Live Preview
+              </Text>
+            </Touchable>
+          </View>
+
+          {editorMode === 'edit' ? (
+            <>
+              {/*
+                The buttons that write the markers, so nobody has to know that a
+                hyphen makes a bullet. The note is still stored as plain text —
+                what is typed is what is saved — and `NoteText` renders the
+                markers when it is read.
+              */}
+              <NoteToolbar
+                value={editContent}
+                selection={selection}
+                font={editFont}
+                onFont={setEditFont}
+                isPreview={false}
+                onTogglePreview={() => setEditorMode('preview')}
+                onChange={(text, cursor) => {
+                  setEditContent(text);
+                  // Put the cursor where the edit left it, or a bullet inserted at
+                  // the start of a line sends it to the end of the note.
+                  setSelection({ start: cursor, end: cursor });
+                  setForcedSelection({ start: cursor, end: cursor });
+                }}
+              />
+              <TextInput
+                placeholder={"Write your notes here…\n\nUse the buttons above for headings, bold text, highlights, and bullet points."}
+                accessibilityLabel="What the note says"
+                placeholderTextColor={colors.textMuted}
+                value={editContent}
+                onChangeText={text => {
+                  setEditContent(text);
+                  setForcedSelection(null);
+                }}
+                onSelectionChange={event => setSelection(event.nativeEvent.selection)}
+                // Controlled only for the frame after a toolbar press. Pinning it
+                // permanently would fight every tap the reader makes in the text.
+                selection={forcedSelection ?? undefined}
+                multiline
+                textAlignVertical="top"
+                numberOfLines={10}
+                style={[
+                  styles.editorTextarea,
+                  { backgroundColor: colors.card, borderColor: colors.border, color: colors.text },
+                  // Typed in the face it will be read in. A preference that only
+                  // appears after saving is one nobody trusts they have set.
+                  editFont ? { fontFamily: noteFontFamily(editFont) } : null,
+                ]}
+              />
+            </>
+          ) : (
+            <View style={[styles.livePreviewCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+              <View style={styles.previewHeader}>
+                <View style={[styles.previewBadgeWrap, { backgroundColor: withAlpha(colors.fuchsia, 0.15) }]}>
+                  <Text style={[styles.previewBadge, { color: colors.fuchsia }]}>
+                    {editSubject ? `${editSubject}${editChapterName ? ' · ' + editChapterName : ''}` : 'General Study Note'}
+                  </Text>
+                </View>
+                <Text style={[styles.previewTitle, { color: colors.text }]}>
+                  {editTitle.trim() || 'Untitled Note'}
+                </Text>
+              </View>
+
+              <View style={[styles.previewDivider, { backgroundColor: colors.border }]} />
+
+              {editContent.trim().length > 0 ? (
+                <View style={styles.previewContent}>
+                  <NoteText content={editContent} font={editFont} />
+                </View>
+              ) : (
+                <View style={styles.emptyPreviewBox}>
+                  <Text style={[styles.emptyPreviewText, { color: colors.textMuted }]}>
+                    No text written yet. Switch to "Edit Mode" to write with headings (#), bold (**), highlights (==), and bullet points (-).
+                  </Text>
+                </View>
+              )}
+            </View>
+          )}
           {/*
             Pages written by hand. They sit above the pictures because they are
             the note, not an attachment to it.
@@ -1663,5 +1745,74 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 10,
     borderWidth: StyleSheet.hairlineWidth,
+  },
+  tabBarWrap: {
+    flexDirection: "row",
+    borderRadius: 12,
+    borderWidth: StyleSheet.hairlineWidth,
+    padding: 4,
+    gap: 4,
+    marginVertical: 4,
+  },
+  tabBarItem: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+    paddingVertical: 8,
+    borderRadius: 8,
+  },
+  tabBarActive: {
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 1,
+  },
+  tabBarText: {
+    ...typeScale.callout,
+    fontWeight: "700",
+  },
+  livePreviewCard: {
+    borderRadius: 16,
+    borderWidth: StyleSheet.hairlineWidth,
+    padding: 16,
+    gap: 12,
+    minHeight: 360,
+  },
+  previewHeader: {
+    gap: 6,
+  },
+  previewBadgeWrap: {
+    alignSelf: "flex-start",
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+  },
+  previewBadge: {
+    ...typeScale.caption,
+    fontWeight: "700",
+  },
+  previewTitle: {
+    ...typeScale.title2,
+    fontWeight: "700",
+  },
+  previewDivider: {
+    height: StyleSheet.hairlineWidth,
+    width: "100%",
+  },
+  previewContent: {
+    paddingTop: 4,
+  },
+  emptyPreviewBox: {
+    paddingVertical: 32,
+    paddingHorizontal: 16,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  emptyPreviewText: {
+    ...typeScale.body,
+    textAlign: "center",
+    fontStyle: "italic",
+    lineHeight: 22,
   },
 });

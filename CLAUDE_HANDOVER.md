@@ -18,7 +18,34 @@ This document contains the complete record of architecture, features, bugs solve
 
 ---
 
-## 2. 🎨 Medical Diagram Engine & Database Synchronization
+## 2. 📝 User Notes Live Preview & Rich Real-Time Formatting
+- **Problem**:
+  - When typing notes or using formatting tools (Bold, Heading, Highlight, Bullets, Numbers), the editor was a raw `TextInput`. Users saw raw markdown tags (`# Heading`, `**bold**`, `==highlight==`, `- bullet`) while writing and had no way to view the formatted result in real time.
+  - Heading and list parsing was fragile if trailing spaces or formatting markers varied.
+- **Completed Work**:
+  - `mobile/src/components/NoteText.tsx`:
+    - Upgraded `parseNote` to leniently parse `#` to `######` headings (including `#Heading`), bullets (`-`, `*`, `•`, `+`, `–`, `—`), numbers (`1.`, `1)`, `1:`, `1]`), and bold line headers.
+    - Upgraded `parseInlineTokens` to support markdown and HTML inline markers (`**bold**`, `__bold__`, `<b>`, `<strong>`, `*italic*`, `_italic_`, `<i>`, `<em>`, `==highlight==`, `==y:yellow==`, `==g:green==`, `==b:blue==`, `==p:pink==`, `<mark>`, `~~strike~~`, `<del>`, `<s>`).
+    - Made `plainPreview` clean and robust so card previews strip markdown tags cleanly without showing raw `#` or `*`.
+  - `mobile/src/components/ProgressNotesTab.tsx`:
+    - Added a **Segmented Mode Switcher** at the top of the editor: **[Edit Mode (Pencil)] | [Live Preview (Eye)]**.
+    - In **Live Preview Mode**: Renders a dedicated live card displaying real-time formatted `<NoteText content={editContent} font={editFont} />` with exact bold styling, multi-color highlighters, hierarchical headings, indented bullets, and attached media/drawings.
+  - `mobile/src/components/NoteToolbar.tsx`: Added an instant toggle button to switch between editing and live preview directly from the toolbar.
+
+---
+
+## 3. 📱 Android Memory Optimization & App Size Reduction (Google Guidelines)
+- **Problem**:
+  - App assets had 7MB of redundant uncompressed `.jpg` duplicates alongside `.png` frames in `mobile/src/assets/trees/`.
+  - Proguard / R8 minification and resource shrinking were missing keep rules for TurboModules.
+- **Completed Work**:
+  - Removed 7MB of unused `.jpg` tree assets in `mobile/src/assets/trees/`.
+  - Re-deflated all 384 PNG frames with maximum zlib compression level 9 and optimal filter type.
+  - `mobile/android/app/proguard-rules.pro`: Added comprehensive keep rules for React Native TurboModules, JNI bindings, and app namespaces so R8 can safely minify code and shrink resources in release builds without runtime reflection regressions.
+
+---
+
+## 4. 🎨 Medical Diagram Engine & Database Synchronization
 - **Problem**:
   - Questions like "Types of synovial joint" and "Cartilaginous joint" showed "Rotator Cuff" diagrams.
   - "Blood supply of a long bone" showed "AML vs CML" blood smear pathology plates due to low keyword match thresholds on common words like `"joint"`, `"blood"`, and `"bone"`.
@@ -41,7 +68,7 @@ This document contains the complete record of architecture, features, bugs solve
 
 ---
 
-## 3. 🚀 GitHub Release & Pipeline Automation
+## 5. 🚀 GitHub Release & Pipeline Automation
 - **How Releases Work**:
   - Releases are built automatically by GitHub Actions workflow `.github/workflows/android-release.yml`.
   - The workflow runs full checks, lints, typechecks, builds signed `app-release.aab` and `app-release.apk`, and attaches both binaries to a new GitHub Release.
@@ -55,24 +82,7 @@ This document contains the complete record of architecture, features, bugs solve
 
 ---
 
-## 4. 📚 Agent Rules & Conventions
-- `.agents/rules/94-textbook-grounded-diagram-engine.md`: Standard protocol for pre-generation textbook research from Indian MBBS textbooks (*BD Chaurasia, Vishram Singh, K. Sembulingam, DM Vasudevan, Ramadas Nayak, KD Tripathi, Apurba Sastry, K. Park*). **Note**: Native `generate_image` is an Antigravity-specific tool.
+## 6. 📚 Agent Rules & Conventions
+- `.agents/rules/94-textbook-grounded-diagram-engine.md`: Standard protocol for pre-generation textbook research from Indian MBBS textbooks (*BD Chaurasia, Vishram Singh, K. Sembulingam, DM Vasudevan, Ramadas Nayak, KD Tripathi, Apurba Sastry, K. Park*). **Note**: Native `generate_image` is an Antigravity-specific tool operating in batches of 10.
 - `.agents/rules/95-release-and-pipeline-engine.md`: Instructions for dispatching release workflows and building APK/AAB binaries.
 - `CLAUDE.md`: Synchronized rule index.
-
----
-
-## 5. Next Steps for Upcoming Sessions
-1. **Next Medical Diagram Batch (Queue of 10)**:
-   - When Gemini image generation quota resets (~3 hours), the next 10 high-yield missing Anatomy diagrams from the catalog are:
-     1. `Bronchopulmonary segments****`
-     2. `Blood supply & lymphatic drainage of stomach ****`
-     3. `Blood supply of spinal cord****`
-     4. `Carotid triangle – Boundaries, Contents, Clinical anatomy ***`
-     5. `Ciliary ganglion****`
-     6. `Events at the level of sternal angle***`
-     7. `Development of tongue****`
-     8. `Descent of testes ***`
-     9. `Azygos vein***`
-     10. `Caudate Nucleus & Basal Ganglia Relations ***`
-2. **Always Check Supabase First**: Query `question_diagrams` before generating to prevent duplicates.
