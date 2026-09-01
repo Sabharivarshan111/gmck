@@ -21,7 +21,7 @@ import { hydrateWallpaper } from '@/hooks/useWallpaper';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { ScrollView, Text, TextInput, View } from 'react-native';
 import { NotesContentView } from '@/components/NotesContentView';
-import { applyQuestionDiagrams } from '@/lib/handwrittenNotes';
+import { applyQuestionDiagrams, applyTopicDiagrams } from '@/lib/handwrittenNotes';
 import { ChapterNotes } from '@/components/ChapterNotes';
 import { NoteText } from '@/components/NoteText';
 import { NoteToolbar } from '@/components/NoteToolbar';
@@ -403,6 +403,71 @@ function NotesRendererDemo() {
   );
 }
 
+/*
+ * Stand-in plates.
+ *
+ * The real ones are `question_diagrams.public_url`s in the Supabase storage
+ * bucket, which no sandbox can reach — the egress gateway refuses it. What
+ * this screen is for is the part that does not depend on the bytes: that a
+ * chapter's diagrams become sections at all, that each is captioned with the
+ * question it answers, and that they sit above the note body rather than
+ * inside it. Drawn rather than downloaded, for the same reason the focus
+ * trees' fixtures are.
+ */
+const PLATE_SYNOVIAL =
+  'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NDAiIGhlaWdodD0iNDIwIj48cmVjdCB3aWR0aD0iNjQwIiBoZWlnaHQ9IjQyMCIgZmlsbD0iI2ZmZmZmZiIvPjxyZWN0IHg9IjI0IiB5PSIyNCIgd2lkdGg9IjU5MiIgaGVpZ2h0PSIzNzIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzFmMjkzNyIgc3Ryb2tlLXdpZHRoPSIzIi8+PHRleHQgeD0iMzIwIiB5PSIxODAiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjMwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjMTExODI3Ij5UeXBlcyBvZiBzeW5vdmlhbCBqb2ludDwvdGV4dD48dGV4dCB4PSIzMjAiIHk9IjIyOCIgZm9udC1mYW1pbHk9Ikdlb3JnaWEsc2VyaWYiIGZvbnQtc2l6ZT0iMTciIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2YjcyODAiPnBsYW5lIC0gaGluZ2UgLSBwaXZvdCAtIHNhZGRsZSAtIGJhbGwgYW5kIHNvY2tldDwvdGV4dD48bGluZSB4MT0iMTIwIiB5MT0iMjc4IiB4Mj0iNTIwIiB5Mj0iMjc4IiBzdHJva2U9IiMwZWE1ZTkiIHN0cm9rZS13aWR0aD0iMyIvPjxjaXJjbGUgY3g9IjEyMCIgY3k9IjI3OCIgcj0iOCIgZmlsbD0iIzBlYTVlOSIvPjxjaXJjbGUgY3g9IjUyMCIgY3k9IjI3OCIgcj0iOCIgZmlsbD0iIzBlYTVlOSIvPjwvc3ZnPg==';
+const PLATE_PLEXUS =
+  'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NDAiIGhlaWdodD0iNDIwIj48cmVjdCB3aWR0aD0iNjQwIiBoZWlnaHQ9IjQyMCIgZmlsbD0iI2ZmZmZmZiIvPjxyZWN0IHg9IjI0IiB5PSIyNCIgd2lkdGg9IjU5MiIgaGVpZ2h0PSIzNzIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzFmMjkzNyIgc3Ryb2tlLXdpZHRoPSIzIi8+PHRleHQgeD0iMzIwIiB5PSIxODAiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjMwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjMTExODI3Ij5CcmFjaGlhbCBwbGV4dXM8L3RleHQ+PHRleHQgeD0iMzIwIiB5PSIyMjgiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjE3IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjNmI3MjgwIj5yb290cyAtIHRydW5rcyAtIGRpdmlzaW9ucyAtIGNvcmRzIC0gYnJhbmNoZXM8L3RleHQ+PGxpbmUgeDE9IjEyMCIgeTE9IjI3OCIgeDI9IjUyMCIgeTI9IjI3OCIgc3Ryb2tlPSIjMGVhNWU5IiBzdHJva2Utd2lkdGg9IjMiLz48Y2lyY2xlIGN4PSIxMjAiIGN5PSIyNzgiIHI9IjgiIGZpbGw9IiMwZWE1ZTkiLz48Y2lyY2xlIGN4PSI1MjAiIGN5PSIyNzgiIHI9IjgiIGZpbGw9IiMwZWE1ZTkiLz48L3N2Zz4=';
+const PLATE_AXILLA =
+  'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NDAiIGhlaWdodD0iNDIwIj48cmVjdCB3aWR0aD0iNjQwIiBoZWlnaHQ9IjQyMCIgZmlsbD0iI2ZmZmZmZiIvPjxyZWN0IHg9IjI0IiB5PSIyNCIgd2lkdGg9IjU5MiIgaGVpZ2h0PSIzNzIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzFmMjkzNyIgc3Ryb2tlLXdpZHRoPSIzIi8+PHRleHQgeD0iMzIwIiB5PSIxODAiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjMwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjMTExODI3Ij5BeGlsbGE8L3RleHQ+PHRleHQgeD0iMzIwIiB5PSIyMjgiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjE3IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjNmI3MjgwIj5ib3VuZGFyaWVzIGFuZCBjb250ZW50czwvdGV4dD48bGluZSB4MT0iMTIwIiB5MT0iMjc4IiB4Mj0iNTIwIiB5Mj0iMjc4IiBzdHJva2U9IiMwZWE1ZTkiIHN0cm9rZS13aWR0aD0iMyIvPjxjaXJjbGUgY3g9IjEyMCIgY3k9IjI3OCIgcj0iOCIgZmlsbD0iIzBlYTVlOSIvPjxjaXJjbGUgY3g9IjUyMCIgY3k9IjI3OCIgcj0iOCIgZmlsbD0iIzBlYTVlOSIvPjwvc3ZnPg==';
+
+/**
+ * ?screen=chapterdiagrams — a chapter note with its chapter's diagrams on it.
+ *
+ * The Notes tab renders a whole chapter, and it showed no pictures at all
+ * while triple-tapping one of that chapter's own questions showed them: the
+ * chapter path never asked for a diagram. `findDiagramsForTopic` is the
+ * lookup, `check:diagrams` proves it returns a chapter's own plates and
+ * nobody else's, and this is the other half — what those plates look like once
+ * `applyTopicDiagrams` has put them on the page.
+ *
+ * The diagrams are a fixture rather than a live lookup because
+ * `question_diagrams` is behind Supabase, which no sandbox can reach. What is
+ * real here is the renderer and the section shape it is given.
+ */
+function ChapterDiagramsDemo() {
+  const { colors } = useTheme();
+  const withDiagrams = React.useMemo(
+    () =>
+      applyTopicDiagrams(SAMPLE_NOTES, [
+        {
+          url: PLATE_SYNOVIAL,
+          question: 'Types of synovial joint',
+          title: 'Types of synovial joint',
+        },
+        {
+          url: PLATE_PLEXUS,
+          question:
+            'Describe the formation, relations and branches of the brachial plexus***',
+          title: 'Brachial plexus — formation, relations and branches',
+        },
+        {
+          url: PLATE_AXILLA,
+          question: 'Axilla: boundaries and contents**',
+          title: 'Axilla — boundaries and contents',
+        },
+      ]),
+    [],
+  );
+  return (
+    <ScrollView
+      style={{ backgroundColor: colors.background }}
+      contentContainerStyle={{ padding: 16, paddingBottom: 48 }}>
+      <NotesContentView content={withDiagrams} />
+    </ScrollView>
+  );
+}
+
 /**
  * ?screen=mcqdemo — the MCQ cards a double tap produces.
  *
@@ -501,6 +566,12 @@ function UserNotesDemo() {
     start: number;
     end: number;
   } | null>(null);
+  /*
+   * `onFont` is a required prop and this screen never passed it, so pressing
+   * Typeface here called `undefined`. The real screen has always had it — the
+   * same drift as the dropped selection above.
+   */
+  const [font, setFont] = React.useState<string | null>(null);
 
   return (
     <ScrollView
@@ -580,6 +651,8 @@ function UserNotesDemo() {
           <NoteToolbar
             value={content}
             selection={selection}
+            font={font}
+            onFont={setFont}
             isPreview={false}
             onTogglePreview={() => setMode('preview')}
             /*
@@ -654,7 +727,7 @@ function UserNotesDemo() {
             </Text>
           </View>
           <View style={{ height: 1, backgroundColor: colors.border, width: '100%' }} />
-          <NoteText content={content} />
+          <NoteText content={content} font={font} />
         </View>
       )}
     </ScrollView>
@@ -698,6 +771,9 @@ function Shell() {
   }
   if (screen === 'diagramdemo') {
     return <DiagramDemo />;
+  }
+  if (screen === 'chapterdiagrams') {
+    return <ChapterDiagramsDemo />;
   }
   if (screen === 'notesdemo') {
     return <NotesRendererDemo />;

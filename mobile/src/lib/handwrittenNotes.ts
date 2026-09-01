@@ -555,6 +555,221 @@ export async function findDiagramsForQuestion(
   return out;
 }
 
+/** A chapter's diagram, and the question inside that chapter it belongs to. */
+export interface TopicDiagram extends QuestionDiagram {
+  question: string;
+}
+
+/**
+ * How many ids go into one `in (…)` list.
+ *
+ * PostgREST puts the filter in the query string, and a question id is about
+ * sixty characters, so a chapter with two hundred questions would be a twelve
+ * kilobyte URL. Chunking keeps each request ordinary; the chapters that need
+ * more than one chunk are the ones with the most pictures to find.
+ */
+const DIAGRAM_LOOKUP_CHUNK = 80;
+
+function chunk<T>(items: T[], size: number): T[][] {
+  const out: T[][] = [];
+  for (let i = 0; i < items.length; i += size) {
+    out.push(items.slice(i, i + size));
+  }
+  return out;
+}
+
+/**
+ * Every diagram belonging to any question in a chapter.
+ *
+ * The Notes tab showed no pictures at all — in any year, for any subject —
+ * while triple-tapping a single question showed them, and the reason was that
+ * nothing in the chapter path ever asked. `findDiagramsForQuestion` is a
+ * question's own lookup and the chapter screen simply never called an
+ * equivalent, so a chapter built out of forty questions with thirty pictures
+ * between them rendered as text.
+ *
+ * This is the same join, widened: `question_diagrams` holds one row per
+ * question keyed by the app's own `getQuestionId`, so a chapter's diagrams are
+ * the rows for its questions' ids. Identity, still — a chapter is a *set* of
+ * questions rather than a looser match, and nothing here scores or guesses. A
+ * question with no row contributes nothing, and a picture belonging to a
+ * question in another chapter can never appear.
+ *
+ * One request per chunk rather than one per question: a forty-question chapter
+ * would otherwise be eighty round trips on a phone, before a single word of
+ * the note is drawn.
+ */
+export async function findDiagramsForTopic(
+  questions: string[],
+  subjectKey?: string,
+  subjectName?: string,
+): Promise<TopicDiagram[]> {
+  const clean = questions.map(q => q.trim()).filter(q => q.length >= 3);
+  if (clean.length === 0) {
+    return [];
+  }
+
+  /*
+   * Both keys map back to the question they came from, so a picture can be
+   * captioned with the question it answers. In a chapter that matters more
+   * than it does on a single note: twenty unlabelled diagrams in a row are
+   * twenty pictures nobody can place.
+   */
+  const byId = new Map<string, string>();
+  const byText = new Map<string, string>();
+  for (const question of clean) {
+    byId.set(diagramQuestionId(question), question);
+    byText.set(question, question);
+  }
+
+  const found = new Map<string, TopicDiagram>();
+  const order = new Map(clean.map((question, index) => [question, index]));
+
+  try {
+    const idChunks = chunk([...byId.keys()], DIAGRAM_LOOKUP_CHUNK);
+    const textChunks = chunk([...byText.keys()], DIAGRAM_LOOKUP_CHUNK);
+
+    const results = await Promise.all([
+      ...idChunks.map(ids =>
+        supabase
+          .from('question_diagrams')
+          .select('question_id, public_url, question_text')
+          .in('question_id', ids)
+          .not('public_url', 'is', null),
+      ),
+      ...textChunks.map(texts =>
+        supabase
+          .from('question_diagrams')
+          .select('question_id, public_url, question_text')
+          .in('question_text', texts)
+          .not('public_url', 'is', null),
+      ),
+    ]);
+
+    for (const result of results) {
+      for (const row of result.data ?? []) {
+        const url = (row as { public_url?: string | null }).public_url;
+        if (!url || found.has(url)) {
+          continue;
+        }
+        const rowId = (row as { question_id?: string | null }).question_id ?? '';
+        const rowText = (row as { question_text?: string | null }).question_text ?? '';
+        const question = byId.get(rowId) ?? byText.get(rowText.trim());
+        if (!question) {
+          // A row that came back but matches none of this chapter's questions
+          // is somebody else's. It cannot normally happen — both filters are
+          // equalities on this chapter's own keys — and dropping it is what
+          // keeps that true if one ever changes.
+          continue;
+        }
+        found.set(url, { url, question, title: rowText || question });
+      }
+    }
+    /*
+     * The hand-inserted rows, reached the same way the single-question path
+     * reaches them: their `question_id` is a slug (`anat-types-of-synovial-
+     * joints`) and their `question_text` keeps a different number of stars, so
+     * neither exact key finds them.
+     *
+     * One subject-scoped query for the whole chapter, and still an
+     * **equality** after normalisation — never a containment. Every looser
+     * test tried here is what put Glycolysis at the top of a TCA cycle note.
+     */
+    const canonicalSubject = normalizeSubject(subjectName || subjectKey);
+    if (canonicalSubject) {
+      const wanted = new Map<string, string>();
+      for (const question of clean) {
+        const key = normalizeQuestionText(question);
+        if (key) {
+          wanted.set(key, question);
+        }
+      }
+      const { data } = await supabase
+        .from('question_diagrams')
+        .select('question_id, public_url, question_text')
+        .not('public_url', 'is', null)
+        .ilike('subject', `%${canonicalSubject}%`);
+
+      for (const row of data ?? []) {
+        const url = (row as { public_url?: string | null }).public_url;
+        const rowText = (row as { question_text?: string | null }).question_text;
+        if (!url || found.has(url) || typeof rowText !== 'string') {
+          continue;
+        }
+        const question = wanted.get(normalizeQuestionText(rowText));
+        if (question) {
+          found.set(url, { url, question, title: rowText });
+        }
+      }
+    }
+  } catch (err) {
+    warn('[handwrittenNotes] chapter diagram lookup failed:', err);
+  }
+
+  // In the chapter's own question order, so the pictures read down the page in
+  // the order the material does.
+  return [...found.values()].sort(
+    (a, b) => (order.get(a.question) ?? 0) - (order.get(b.question) ?? 0),
+  );
+}
+
+/**
+ * A chapter's diagrams, each captioned with the question it answers.
+ *
+ * Separate from `buildDiagramSections` because the numbering means something
+ * different. On one question, "(2/3)" is the second of that question's three
+ * pictures. In a chapter it would be the second of the chapter's forty, which
+ * says nothing — the question is the useful label, and it is the one thing a
+ * chapter's diagrams have that a single note's do not.
+ */
+export function buildTopicDiagramSections(diagrams: TopicDiagram[]): Section[] {
+  return diagrams.map(diag => {
+    const cleanTitle = (diag.title || diag.question)
+      .replace(/[0-9]+\./g, '')
+      .replace(/\(.*?\)/g, '')
+      .replace(/[*#★☆]/g, '')
+      .trim()
+      // A chapter's questions are full exam questions and run long; a caption
+      // is a label, not the question restated.
+      .slice(0, 90);
+
+    return {
+      type: 'definition',
+      title: 'High-Yield Visual Exam Diagram',
+      icon: '🎨',
+      // The caption goes in the image's own alt text and nowhere else:
+      // `DiagramCard` already prints it under the picture, so repeating it in
+      // the body draws the same line twice.
+      payload: { text: `![${cleanTitle}](${diag.url})` },
+    };
+  });
+}
+
+/**
+ * Put a chapter's diagrams on its note.
+ *
+ * **Replaces, like the single-question path**, and for the same reason: a
+ * chapter note is cached server-side, so a page that was built before its
+ * pictures existed has to pick them up on the next open rather than staying
+ * blank until somebody regenerates it. Stripping and rebuilding every time is
+ * what makes that free.
+ *
+ * The saved copy stays free of them — `saveMergedNotes` is given the merged
+ * text, not this — because the cache is shared with the web app and the
+ * diagrams are decided on the client each time it is read.
+ */
+export function applyTopicDiagrams(
+  content: NotesContent,
+  diagrams: TopicDiagram[],
+): NotesContent {
+  const body = (content.sections ?? []).filter(s => !isDiagramSection(s));
+  return {
+    ...content,
+    diagramUrl: diagrams[0]?.url,
+    sections: [...buildTopicDiagramSections(diagrams), ...body],
+  };
+}
+
 /**
  * The diagram sections a note is *allowed* to have, in the order they render.
  *

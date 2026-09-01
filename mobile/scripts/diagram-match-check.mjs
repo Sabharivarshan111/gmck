@@ -133,6 +133,17 @@ function fakeSupabase() {
           filters.kind = `eq:${col}`;
           return q;
         },
+        /*
+         * The chapter lookup asks for a whole chapter's keys at once. Still an
+         * equality — a set membership test is `eq` repeated, not a search —
+         * and still on an indexed column.
+         */
+        in(col, values) {
+          const wanted = new Set(values);
+          filters.push(row => wanted.has(row[col]));
+          filters.kind = `in:${col}`;
+          return q;
+        },
         ilike(col, pattern) {
           const needle = pattern.replace(/%/g, '').toLowerCase();
           filters.push(row =>
@@ -211,7 +222,13 @@ const mod = await import(
   `data:text/javascript;base64,${Buffer.from(out.outputFiles[0].text).toString('base64')}`
 );
 
-const { findDiagramsForQuestion, applyQuestionDiagrams } = mod;
+const {
+  findDiagramsForQuestion,
+  applyQuestionDiagrams,
+  findDiagramsForTopic,
+  applyTopicDiagrams,
+  buildTopicDiagramSections,
+} = mod;
 check(
   typeof findDiagramsForQuestion === 'function',
   'handwrittenNotes no longer exports findDiagramsForQuestion — the lookup was renamed or removed',
@@ -391,6 +408,131 @@ check(
 check(
   healedDiagrams[0]?.title === 'High-Yield Visual Exam Diagram',
   `one diagram was titled "${healedDiagrams[0]?.title}" — the count only belongs there when there is more than one`,
+);
+
+// ------------------------------------------------------------- the chapter
+//
+// The Notes tab shows a whole chapter, built out of every question in it, and
+// it showed **no pictures at all** — in any year, for any subject — while
+// triple-tapping one of those same questions showed them. Nothing in the
+// chapter path ever asked for a diagram.
+//
+// A chapter's diagrams are its questions' diagrams, so the rule that holds for
+// one question has to hold for the set: identity only, and a picture belonging
+// to a question that is not in this chapter can never appear.
+
+check(
+  typeof findDiagramsForTopic === 'function',
+  'handwrittenNotes no longer exports findDiagramsForTopic — the Notes tab has no diagrams again',
+);
+
+issued.length = 0;
+const chapter = await findDiagramsForTopic(
+  [
+    'TCA cycle – definition, sequence of reaction, energetics, regulation***',
+    'Anaplerotic Reactions ***',
+    // In the chapter, with no row of its own. It must contribute nothing
+    // rather than borrow a neighbour's plate.
+    'Respiratory quotient**',
+  ],
+  'biochemistry',
+  'Biochemistry',
+);
+
+check(
+  chapter.length === 1,
+  `a chapter of three questions returned ${chapter.length} diagrams — TCA and Anaplerotic share one plate and the third has none`,
+);
+check(
+  chapter.every(d => /tca_cycle_amphibolic/.test(d.url)),
+  `the chapter picked up ${chapter.map(d => d.url.split('/').pop()).join(', ')}`,
+);
+/*
+ * The two that made the original bug visible. Glycolysis and Gluconeogenesis
+ * are in the same subject and share almost every word with the TCA question;
+ * neither is in this chapter, so neither may come back.
+ */
+check(
+  !chapter.some(d => /glycolysis|gluconeogenesis/.test(d.url)),
+  'a chapter picked up a plate belonging to a question that is not in it — the exact failure the single-question lookup was rewritten to stop',
+);
+check(
+  chapter.every(d => typeof d.question === 'string' && d.question.length > 0),
+  'a chapter diagram came back without the question it belongs to, so it cannot be captioned',
+);
+check(
+  issued.length > 0 && !issued.includes('unfiltered'),
+  `the chapter lookup pulled the table down unfiltered (${issued.join(', ')})`,
+);
+
+/** Every question in the chapter, and one query per key kind rather than per question. */
+issued.length = 0;
+const wholeChapter = await findDiagramsForTopic(
+  ROWS.filter(r => r.subject === 'Biochemistry').map(r => r.question_text),
+  'biochemistry',
+  'Biochemistry',
+);
+check(
+  wholeChapter.length === 3,
+  `a chapter holding all five biochemistry questions returned ${wholeChapter.length} pictures, expected 3 distinct plates`,
+);
+check(
+  new Set(wholeChapter.map(d => d.url)).size === wholeChapter.length,
+  'the same picture came back twice — two questions sharing a plate must not print it twice',
+);
+check(
+  issued.filter(kind => kind.startsWith('in:')).length <= 4,
+  `the chapter lookup issued ${issued.filter(k => k.startsWith('in:')).length} membership queries — it must batch, not ask per question`,
+);
+
+/** The hand-inserted rows, whose ids are slugs, are reachable from a chapter too. */
+const anatomyChapter = await findDiagramsForTopic(
+  ['Types of synovial joint **', 'Cartilaginous joint'],
+  'anatomy',
+  'Anatomy',
+);
+check(
+  anatomyChapter.length === 2,
+  `the anatomy chapter found ${anatomyChapter.length} of its 2 hand-inserted diagrams`,
+);
+
+/** And a chapter of questions nobody drew gets nothing at all. */
+const emptyChapter = await findDiagramsForTopic(
+  ['Respiratory quotient**', 'Define enzyme'],
+  'biochemistry',
+  'Biochemistry',
+);
+check(
+  emptyChapter.length === 0,
+  `a chapter with no diagrams returned ${emptyChapter.length} — a plausible neighbour is worse than a blank`,
+);
+
+/** Captions name the question, not "(2/40)", which would say nothing. */
+const chapterSections = buildTopicDiagramSections(wholeChapter);
+check(
+  chapterSections.every(s => !/\(\d+\/\d+\)/.test(s.title)),
+  'a chapter diagram is numbered out of the chapter total, which tells the reader nothing about what it shows',
+);
+
+/** Replace, not top up — the same rule that makes the single-note path heal. */
+const staleChapter = {
+  sections: [
+    { type: 'definition', title: 'High-Yield Visual Exam Diagram', icon: '🎨', payload: { text: 'old' } },
+    { type: 'definition', title: 'Axilla', payload: { text: 'kept' } },
+  ],
+};
+const rebuilt = applyTopicDiagrams(staleChapter, wholeChapter);
+check(
+  rebuilt.sections.filter(s => s.icon === '🎨').length === wholeChapter.length,
+  'the chapter rebuild kept a diagram section that is no longer this chapter\'s',
+);
+check(
+  rebuilt.sections.some(s => s.title === 'Axilla'),
+  'the chapter rebuild dropped the note body',
+);
+check(
+  applyTopicDiagrams(staleChapter, []).sections.every(s => s.icon !== '🎨'),
+  'a chapter with no diagrams kept a stale diagram section',
 );
 
 // -------------------------------------------------------------------- source

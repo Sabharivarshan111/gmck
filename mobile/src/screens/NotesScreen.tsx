@@ -35,13 +35,16 @@ import { getSubjects, YEAR_LABEL, type BankNode } from '@/lib/questionBank';
 import { YEAR_TO_KEY, type Year } from '@/lib/profile';
 import {
   applyNotesEdit,
+  applyTopicDiagrams,
   fetchNotesBatch,
+  findDiagramsForTopic,
   flattenSubjectTopics,
   INTER_BATCH_DELAY_MS,
   mergeNotes,
   saveMergedNotes,
   type LeafTopic,
   type NotesContent,
+  type TopicDiagram,
 } from '@/lib/handwrittenNotes';
 
 const YEARS: Year[] = ['first', 'second', 'third', 'final'];
@@ -463,6 +466,18 @@ function NotesDetailView({
     [topic, year, subject],
   );
 
+  /**
+   * The chapter's own diagrams, held apart from its text.
+   *
+   * Apart because the two arrive from different places and change at different
+   * times: the text is generated and cached server-side, the pictures are a
+   * lookup against `question_diagrams` done fresh on every open. Keeping them
+   * separate is what lets a chapter cached before its pictures existed show
+   * them the next time it is read, with nothing to regenerate and no new
+   * build — the same self-healing the single-question path has.
+   */
+  const diagrams = useRef<TopicDiagram[]>([]);
+
   const generate = useCallback(
     async (regenerate: boolean) => {
       setPhase('loading');
@@ -470,6 +485,23 @@ function NotesDetailView({
       setContent(null);
       setCompletedBatches(0);
       const collected: (NotesContent | null)[] = [];
+
+      /*
+       * Started now and not waited on. A chapter's text takes seconds to
+       * minutes to generate and the lookup is two or three queries, so making
+       * the first batch wait for it would add latency to the thing the reader
+       * is actually staring at. Whichever lands first, the pictures go on at
+       * the next `show()`.
+       */
+      const diagramsReady = findDiagramsForTopic(topic.questions, subject, subject)
+        .then(found => {
+          diagrams.current = found;
+          return found;
+        })
+        .catch(() => [] as TopicDiagram[]);
+
+      /** The merged text with whatever pictures are known about so far. */
+      const show = () => setContent(applyTopicDiagrams(mergeNotes(collected), diagrams.current));
 
       try {
         let index = 0;
@@ -480,7 +512,7 @@ function NotesDetailView({
           setTotalBatches(batch.totalBatches);
           setCompletedBatches(index + 1);
           // Show each batch as it lands rather than waiting for the whole set.
-          setContent(mergeNotes(collected));
+          show();
           more = batch.hasMore;
           index += 1;
 
@@ -500,11 +532,21 @@ function NotesDetailView({
 
         if (!cancelled.current) {
           const merged = mergeNotes(collected);
-          setContent(merged);
           setPhase('done');
           if (collected.length > 1) {
-            // Cache the merged page so the next open is a single call.
+            /*
+             * The *text* is cached, never the pictures. The row is shared with
+             * the web app and read by everybody, and the diagrams are decided
+             * on the client on every open — writing them in would freeze one
+             * day's answer into a page that heals itself for free otherwise.
+             */
             saveMergedNotes(request, merged);
+          }
+          // The lookup usually finished long ago; this is for the chapter that
+          // came back from the cache before it did.
+          await diagramsReady;
+          if (!cancelled.current) {
+            show();
           }
         }
       } catch (err) {
@@ -514,7 +556,7 @@ function NotesDetailView({
         }
       }
     },
-    [request],
+    [request, topic.questions, subject],
   );
 
   useEffect(() => {
@@ -530,7 +572,10 @@ function NotesDetailView({
     setError(null);
     try {
       const updated = await applyNotesEdit(request, content, text);
-      setContent(updated);
+      // Rebuilt rather than kept: an edit rewrites the sections, and the
+      // pictures belong to the chapter's questions rather than to any version
+      // of its text.
+      setContent(applyTopicDiagrams(updated, diagrams.current));
       setInstruction('');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Could not apply the edit.');
