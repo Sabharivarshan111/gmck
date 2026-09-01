@@ -93,3 +93,68 @@ jobs:
             exit 1
           fi
           echo "textbooks is private."
+
+      - name: Delete the empty note-images bucket
+        run: |
+          set +eux
+          case "$FOUND" in A) TOKEN="$TOK_A";; B) TOKEN="$TOK_B";; *) TOKEN="$TOK_C";; esac
+          export TOKEN
+
+          # Left over from a synced-notes design that was reversed the same
+          # hour: note pictures are AsyncStorage-only and `check:cloud-ids`
+          # keeps them that way. The bucket has been empty, private and free of
+          # RLS policies ever since, so this is tidying rather than a fix — the
+          # app's owner asked for it on 2026-09-01.
+          #
+          # SQL cannot do it. `storage.protect_delete()` raises 42501 on any
+          # direct delete from the storage tables, which is a guard worth
+          # respecting rather than disabling: it is what stops a stray DELETE
+          # orphaning objects. The Storage API is the supported route, and it
+          # refuses a bucket that still has anything in it — so emptiness is
+          # checked by the API itself rather than only by us.
+
+          # Refuse to go on if it has gained an object since this was written.
+          code=$(curl -s -o /tmp/count.json -w '%{http_code}' \
+            -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' \
+            -X POST "https://api.supabase.com/v1/projects/$PROJECT_REF/database/query" \
+            -d '{"query":"select count(*)::int as files from storage.objects where bucket_id = '\''note-images'\'';"}')
+          [ "$code" = "200" ] || { echo "::error::Could not count objects ($code)"; cat /tmp/count.json; exit 1; }
+          echo "objects in note-images: $(cat /tmp/count.json)"
+          if ! grep -q '"files":0' /tmp/count.json; then
+            echo "::error::note-images is not empty — refusing to delete it."
+            exit 1
+          fi
+
+          # The Storage API needs a project key, not the personal access token.
+          # Fetched here and masked immediately, so it cannot reach a log even
+          # by accident; it is never written to disk and never echoed.
+          code=$(curl -s -o /tmp/keys.json -w '%{http_code}' \
+            -H "Authorization: Bearer $TOKEN" \
+            "https://api.supabase.com/v1/projects/$PROJECT_REF/api-keys")
+          [ "$code" = "200" ] || { echo "::error::Could not read the project keys ($code)"; exit 1; }
+          SRK=$(python3 -c "import json,sys;print(next((k.get('api_key','') for k in json.load(open('/tmp/keys.json')) if k.get('name')=='service_role'), ''))")
+          rm -f /tmp/keys.json
+          if [ -z "$SRK" ]; then
+            echo "::error::No service_role key came back from the Management API."
+            exit 1
+          fi
+          echo "::add-mask::$SRK"
+          export SRK
+
+          code=$(curl -s -o /tmp/del.json -w '%{http_code}' \
+            -H "Authorization: Bearer $SRK" -H "apikey: $SRK" \
+            -X DELETE "https://$PROJECT_REF.supabase.co/storage/v1/bucket/note-images")
+          echo "delete bucket: HTTP $code"
+          # 404 means somebody already removed it, which is the same end state.
+          if [ "$code" != "200" ] && [ "$code" != "404" ]; then
+            echo "::error::Delete failed ($code)"; cat /tmp/del.json; exit 1
+          fi
+
+          # The queue entry's own verify step.
+          code=$(curl -s -o /tmp/verify.json -w '%{http_code}' \
+            -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' \
+            -X POST "https://api.supabase.com/v1/projects/$PROJECT_REF/database/query" \
+            -d '{"query":"select count(*)::int as still_there from storage.buckets where id = '\''note-images'\'';"}')
+          echo "--- verify ---"; cat /tmp/verify.json; echo
+          grep -q '"still_there":0' /tmp/verify.json || { echo "::error::note-images is still there"; exit 1; }
+          echo "note-images is gone."

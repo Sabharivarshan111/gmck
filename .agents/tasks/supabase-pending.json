@@ -15,11 +15,10 @@
       "id": "sb-drop-note-images-bucket",
       "kind": "storage",
       "summary": "Delete the empty `note-images` storage bucket from the Supabase dashboard",
-      "why": "DECLINED BY THE APP'S OWNER, 2026-09-01 \u2014 do not delete this bucket. Kept deliberately; the entry stays here so the next session does not re-queue it. Original reasoning, still accurate: it was created for a synced-notes design that was reversed the same hour, since study notes are on-device only. Re-verified on 2026-09-01 and it is completely inert: private, zero objects, and zero RLS policies referencing it, so nothing can read or write it. The only cost of keeping it is that a future reader of the dashboard has to work out whether notes sync \u2014 which this note now answers, so that cost is paid. Nothing is at risk either way.",
-      "verify": "Nothing to apply. If you are checking it is still harmless: select public, (select count(*) from storage.objects o where o.bucket_id='note-images') as files from storage.buckets where id='note-images';  -- expect false, 0",
-      "status": "declined",
-      "queuedAt": "2026-08-27T08:29:39.524Z",
-      "declinedAt": "2026-09-01T03:40:00.000Z"
+      "why": "It was created for a synced-notes design that was reversed the same hour: study notes are on-device only. Its four RLS policies are already dropped and it holds zero objects, so nothing can reach it and nothing is at risk \u2014 but an empty private bucket is a thing every future reader has to reason about before concluding it is dead. Briefly declined on 2026-09-01 and then asked for again once the owner knew what it was; that is the whole reason a decision belongs in this file rather than in a chat message. SQL cannot remove it: storage.protect_delete() raises 42501 on any direct delete from the storage tables, and that guard should be respected rather than disabled. supabase-tasks.yml now has a step that does it through the Storage API, which refuses a non-empty bucket of its own accord.",
+      "verify": "select count(*) from storage.buckets where id='note-images' returns 0.",
+      "status": "pending",
+      "queuedAt": "2026-08-27T08:29:39.524Z"
     }
   ]
 }
