@@ -107,15 +107,22 @@ class FilesModule(reactContext: ReactApplicationContext) :
     val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
       addCategory(Intent.CATEGORY_OPENABLE)
       type = "*/*"
-      // Named rather than left open: the note renderer can show a picture,
-      // play a video or a recording, and open a PDF. Offering a .zip would be
-      // offering something nothing downstream can do anything with.
-      /*
-       * `kinds` narrows the picker when the caller knows what it wants — the
-       * music player asks for `audio/*`, and offering it a PDF would be
-       * offering something the player cannot do anything with. Empty means the
-       * note attachment case, which genuinely takes all four.
-       */
+      // Line comments, and this is not a style choice.
+      //
+      // Kotlin block comments NEST: a `/*` inside one opens another and needs
+      // its own `*/`. The MIME wildcard for a whole family ends in a slash and
+      // a star, so writing one inside a block comment opens a comment that is
+      // never closed, and the compiler reports it at the END of the file as
+      // "Unclosed comment" plus every later declaration unresolved. That is
+      // what failed release 115 and internal 116, and it is the mirror image
+      // of the bug that failed internal 114, where a wildcard's `*/` closed a
+      // comment early. Both cost a fourteen-minute Gradle step to find.
+      //
+      // `kinds` narrows the picker when the caller knows what it wants: the
+      // music player asks for the audio family, and offering it a PDF would be
+      // offering something the player cannot do anything with. Empty means the
+      // note-attachment case, which genuinely takes all four — a picture to
+      // show, a video or a recording to play, a PDF to hand off.
       val wanted =
         if (kinds.isBlank()) {
           arrayOf("image/*", "video/*", "audio/*", "application/pdf")

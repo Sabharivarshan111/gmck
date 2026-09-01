@@ -268,7 +268,9 @@ if (existsSync(codegenCli)) {
 }
 
 /*
- * A block comment that closes itself.
+ * A block comment that closes itself, or opens another one.
+ *
+ * Two failure modes, mirror images of each other, and each has cost a build:
  *
  * `*` followed by `/` ends a block comment wherever it appears, including in
  * the middle of a sentence. Writing the MIME wildcard `*` `/` `*` into a
@@ -311,7 +313,39 @@ for (const name of readdirSync(appKotlin).filter(f => f.endsWith('.kt'))) {
         at = open + 2;
         continue;
       }
+      /*
+       * A `/*` inside a comment body, which is the *other* half of this bug
+       * and the one that failed release 115 and internal 116.
+       *
+       * Kotlin block comments **nest**: an opener inside a body starts a
+       * second comment that needs its own closer. The MIME wildcard
+       * for a whole family is a word, a slash and a star — so a comment
+       * explaining why the picker asks for the audio family opened a second
+       * comment nobody closed. The outer one then ran to the end of the file,
+       * and the compiler reported it as "Unclosed comment" at the last line
+       * plus every declaration after it unresolved: `MODE_COPY` at line 105,
+       * defined at 367, inside the companion object the comment had eaten.
+       *
+       * Checked before the closer, because the nested opener comes first and
+       * because the terminator that follows it belongs to the *inner*
+       * comment, not to this one.
+       *
+       * (This paragraph is written without the literal character pairs for
+       * the same reason the Kotlin is: spelling one out in a comment about
+       * comments is how this file got a SyntaxError of its own.)
+       */
+      const nested = line.indexOf('/*', at);
       const close = line.indexOf('*/', at);
+      if (nested >= 0 && (close < 0 || nested < close)) {
+        check(
+          false,
+          `${name}:${index + 1}: a block comment body contains "/*", which opens a ` +
+            'nested comment in Kotlin — the outer one then runs to the end of the file. ' +
+            'Write it with // line comments instead.',
+        );
+        at = nested + 2;
+        continue;
+      }
       if (close < 0) {
         break;
       }
@@ -344,5 +378,5 @@ if (failures.length > 0) {
 console.log(
   `OK  ${checked} override(s) match the React Native declarations they claim, ` +
     `${specsChecked} match the generated TurboModule specs, ` +
-    `${commentsChecked} block comment(s) end where they should`,
+    `${commentsChecked} block comment(s) open and close where they should`,
 );
