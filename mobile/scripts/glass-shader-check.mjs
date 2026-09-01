@@ -61,12 +61,33 @@ check(
   'requireNativeComponent is called unconditionally — it must be behind the availability flag',
 );
 
-/* ---- what makes it affordable enough to run everywhere ---- */
+/* ---- only a real backdrop is refracted ---- */
 
-// The wallpaper gate is gone on purpose: what is behind a card is the page,
-// and bending that is the effect. What the gate was really protecting was
-// cost, and these three are the things that answer it properly. Lose any one
-// and this becomes a full-screen rasterisation on a cheap phone, every frame.
+// Removing these shipped the bug they now prevent. With no wallpaper the
+// backdrop search fell through to "the biggest view with a background", which
+// is the React root: it draws the whole UI, so every pane refracted a picture
+// containing its own text and showed a ghost of itself a few pixels off.
+check(
+  /wallpaper\s*!==\s*null/.test(code('src/components/GlassSurface.tsx')),
+  'GlassSurface mounts the shader with no wallpaper. What is behind a card is then a flat colour, and capturing the screen instead captures the card\'s own content — every pane refracts a ghost of itself',
+);
+check(
+  !/bestPlain/.test(view),
+  'GlassView still falls back to the largest view with a background. That view is the React root, and it draws the entire UI',
+);
+check(
+  /COVERAGE/.test(view) && /area >= floor/.test(view),
+  'GlassView does not require the backdrop to cover the page, so the largest card on screen would be taken for the wallpaper',
+);
+check(
+  /return bestTexture \?: bestImage$/m.test(view),
+  'the backdrop search must return only a full-page image or video, and nothing else',
+);
+
+/* ---- what keeps it affordable ---- */
+
+// Lose any one of these and this becomes a full-screen rasterisation on a
+// cheap phone, every frame.
 check(
   /CAPTURE_SCALE/.test(view) && /canvas\.scale\(CAPTURE_SCALE, CAPTURE_SCALE\)/.test(view),
   'the capture is not downscaled — a full-size ARGB_8888 bitmap is about 10MB and nine times the draw, per refresh',
@@ -102,6 +123,10 @@ check(
 check(
   /bestTexture \?: bestImage/.test(view),
   'a TextureView must win the background search — it is the whole page and it is the one thing that moves',
+);
+check(
+  /onAttachedToWindow[\s\S]{0,1600}lastCaptureAt = 0L/.test(view),
+  'a new pane does not invalidate the shared capture, so a screen inherits the previous screen\'s picture — the Timer showed the Home screen inside its music player',
 );
 
 /* ---- the draw order ---- */

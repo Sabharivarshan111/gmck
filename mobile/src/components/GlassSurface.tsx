@@ -112,26 +112,27 @@ export function GlassSurface({
   const [size, setSize] = useState({ width: 0, height: 0 });
 
   /*
-   * The AGSL pane, on Android 13 and up. Wallpaper or no wallpaper.
+   * The AGSL pane, on Android 13 and up, over a wallpaper.
    *
-   * It was gated on a wallpaper at first, on the grounds that refracting a
-   * flat colour returns a flat colour. That is true of the *theme colour* and
-   * false of the screen: what sits behind a card is the page — headings, other
-   * cards, a progress bar, the subject grid — and bending that is exactly what
-   * a pane of glass laid on a page does. The capture is the whole background
-   * either way, so there was never a case where it had nothing to work with.
+   * The wallpaper condition was removed once, on the argument that what sits
+   * behind a card is the page and bending the page is the effect. That
+   * argument is wrong, and the screenshots of it are unambiguous: content
+   * drawn *over* a pane cannot be behind it, so capturing the screen captured
+   * each card's own text and every card refracted a ghost of itself a few
+   * pixels off — "Search Search", "Timer Timer", the hero's paragraph inside
+   * the quick actions.
    *
-   * What the wallpaper condition was really protecting was *cost*, and that is
-   * answered properly now instead: the capture is a third of each dimension
-   * and shared by every pane, so it is about 1.2MB rather than 10, and the
-   * refresh is throttled to one for the whole screen at a time.
+   * What is genuinely behind a card is the wallpaper, or a flat colour. There
+   * is no third thing. So: with a picture, real refraction; without one, the
+   * drawn bevel, which is the honest answer to refracting a flat colour rather
+   * than a lesser version of something else.
    *
-   * A **video** wallpaper works too, which it did not before. `GlassView`
-   * prefers a TextureView over everything else when there is one, and
-   * `WallpaperBackground` now asks for a TextureView precisely so there is.
+   * `GlassView` refuses a backdrop that is not a full-page image or video as
+   * well. This gate is the cheap half of the same rule — it stops a native
+   * view being mounted per card to discover there is nothing to do.
    */
   const { wallpaper } = useWallpaper();
-  const shaded = GLASS_SHADER_AVAILABLE && lit;
+  const shaded = GLASS_SHADER_AVAILABLE && lit && wallpaper !== null;
 
   const onLayout = (event: LayoutChangeEvent) => {
     const { width, height } = event.nativeEvent.layout;

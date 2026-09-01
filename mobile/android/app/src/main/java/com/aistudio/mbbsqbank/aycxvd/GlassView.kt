@@ -143,6 +143,19 @@ class GlassView(context: android.content.Context) : View(context) {
     super.onAttachedToWindow()
     if (supported()) {
       viewTreeObserver.addOnPreDrawListener(preDraw)
+      /*
+       * A new pane means a screen that was not on display when the last
+       * capture was taken, so that capture is not this screen's.
+       *
+       * Without this the bitmap outlived the screen it came from: opening the
+       * Timer showed the Home screen's quick actions and its WhatsApp banner
+       * inside the music player, because nothing had *moved* since, and the
+       * only other refresh trigger was movement.
+       */
+      localShader = null
+      attempts = 0
+      gaveUp = false
+      synchronized(lock) { lastCaptureAt = 0L }
     }
   }
 
@@ -179,7 +192,8 @@ class GlassView(context: android.content.Context) : View(context) {
     // still one only when something did. Either way the throttle decides
     // whether the request is actually honoured.
     val moving = synchronized(lock) { sharedView } is TextureView
-    if (moving || SystemClock.uptimeMillis() - lastOffsetChange < STILL_AFTER_MS) {
+    val settling = SystemClock.uptimeMillis() - lastOffsetChange < STILL_AFTER_MS
+    if (moving || settling) {
       if (refresh()) invalidate()
     }
   }
@@ -370,6 +384,15 @@ class GlassView(context: android.content.Context) : View(context) {
     private const val STILL_AFTER_MS = 400L
 
     /**
+     * How much of the page a view must cover to be the page.
+     *
+     * A wallpaper is drawn edge to edge behind everything; a card is not.
+     * Without a floor, the largest *card* on a screen would be taken for the
+     * backdrop as soon as the wallpaper went away.
+     */
+    private const val COVERAGE = 0.9f
+
+    /**
      * How many times to try before leaving it alone.
      *
      * Some backgrounds cannot be read at all — a SurfaceView, a
@@ -389,37 +412,58 @@ class GlassView(context: android.content.Context) : View(context) {
      * too, so size is what separates the page from the things on it.
      */
     private fun findBackground(root: View): View? {
+      /*
+       * A backdrop, or nothing at all.
+       *
+       * This used to fall back to "the biggest view that has a background",
+       * and that view is the React root — which draws the **entire UI**. Every
+       * pane then refracted a picture with its own text in it, so a card
+       * showed a ghost of itself a few pixels off: "Search Search", "Timer
+       * Timer", the hero's paragraph inside the quick actions, and the whole
+       * Home screen inside the Timer's music player.
+       *
+       * The mistake underneath it was treating "what is behind this pane" as
+       * "what is on the screen". Content that is drawn *over* a pane cannot be
+       * behind it, and in a flat theme there is nothing behind a card except a
+       * colour. So the only thing accepted here is a real background layer —
+       * the wallpaper, image or video — and it has to actually cover the page
+       * for that to be what it is.
+       *
+       * With no wallpaper this returns null, the shader stands down, and the
+       * drawn bevel is what shows. That is not a downgrade; it is the honest
+       * answer to "refract a flat colour".
+       */
+      val rootArea = root.width.toLong() * root.height.toLong()
+      if (rootArea <= 0L) return null
+      val floor = (rootArea * COVERAGE).toLong()
+
       var bestImage: View? = null
       var bestImageArea = 0L
       var bestTexture: View? = null
       var bestTextureArea = 0L
-      var bestPlain: View? = null
-      var bestPlainArea = 0L
       fun walk(view: View) {
         if (!view.isShown || view.width <= 0 || view.height <= 0 || view is GlassView) return
         val area = view.width.toLong() * view.height.toLong()
-        if (view is TextureView) {
-          // The video wallpaper. Preferred over everything else when present:
-          // it is the whole page, and it is the one thing that moves.
-          if (area > bestTextureArea) {
-            bestTextureArea = area
-            bestTexture = view
+        if (area >= floor) {
+          if (view is TextureView) {
+            // The video wallpaper, and the only moving backdrop there is.
+            if (area > bestTextureArea) {
+              bestTextureArea = area
+              bestTexture = view
+            }
+          } else if (view is ImageView && view.drawable != null) {
+            if (area > bestImageArea) {
+              bestImageArea = area
+              bestImage = view
+            }
           }
-        } else if (view is ImageView && view.drawable != null) {
-          if (area > bestImageArea) {
-            bestImageArea = area
-            bestImage = view
-          }
-        } else if (view.background != null && area > bestPlainArea) {
-          bestPlainArea = area
-          bestPlain = view
         }
         if (view is ViewGroup) {
           for (i in 0 until view.childCount) walk(view.getChildAt(i))
         }
       }
       walk(root)
-      return bestTexture ?: bestImage ?: bestPlain
+      return bestTexture ?: bestImage
     }
 
     /**

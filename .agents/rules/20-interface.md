@@ -56,8 +56,13 @@ custom-theme subject cards.
 - **Android 13+ gets a real AGSL shader** (`GlassView.kt`, registered as
   `OrbitGlass`), drawn **between the fill and the bevel**. That order is the
   safety story: an older phone, a video wallpaper, or a failed capture all
-  leave a finished card rather than a hole. Gated on API 33 and on
-  `hasViewManagerConfig`, and affordable because the capture is a third of
+  leave a finished card rather than a hole. Gated on API 33, on
+  `hasViewManagerConfig`, and on **a wallpaper being set** — the backdrop
+  search accepts only a full-page image or video, because content drawn *over*
+  a pane cannot be behind it and capturing the screen instead captures each
+  card's own text (it shipped once: "Search Search", "Timer Timer"). A new
+  pane invalidates the shared capture, or a screen inherits the last one's
+  picture. Affordable because the capture is a third of
   each dimension, shared, throttled to one per 90ms, and taken with every pane
   standing down so the glass is not inside the picture it refracts.
 - **A video wallpaper refracts too**, but only because `WallpaperBackground`

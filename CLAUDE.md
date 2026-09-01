@@ -611,12 +611,28 @@ Two gates:
 - **`hasViewManagerConfig`.** The sound module is the cautionary tale: a native
   thing that is silently absent looks exactly like one quietly doing nothing.
 
-There was a third — a wallpaper had to be set — and it was wrong. The argument
-was that refracting a flat colour returns a flat colour, which is true of the
-*theme colour* and false of the screen: what sits behind a card is the page,
-and bending that is what a pane of glass laid on a page does. What the gate was
-really protecting was cost, and cost is answered directly instead, by three
-things `check:glass-shader` pins:
+**And a wallpaper has to be set.** That gate was removed once, on the argument
+that what sits behind a card is the page and bending the page is the effect.
+It shipped, and the screenshots settled it: content drawn *over* a pane cannot
+be behind it, so capturing the screen captured each card's own children and
+every pane refracted a ghost of itself a few pixels off — "Search Search",
+"Timer Timer", the hero's paragraph inside the quick actions. `findBackground`
+had fallen through to "the largest view with a background", which is the React
+root, and the root draws the whole UI.
+
+What is genuinely behind a card is the wallpaper or a flat colour; there is no
+third thing. So the backdrop search now accepts **only a full-page image or
+video** — nothing else, and it must cover 90% of the root to count — and with
+no wallpaper the shader stands down to the bevel, which is the honest answer to
+refracting a flat colour rather than a lesser version of something else.
+
+**A new pane invalidates the shared capture.** The bitmap outlived the screen
+it came from: opening the Timer showed Home's quick actions and its WhatsApp
+banner inside the music player, because nothing had *moved* since and movement
+was the only other refresh trigger.
+
+Cost is what makes the capture affordable at all, and `check:glass-shader` pins
+three things for it:
 
 - **The capture is a third of each dimension** — a ninth of the pixels, about
   1.2MB instead of 10, and a draw that costs about a ninth as much. Nothing is
