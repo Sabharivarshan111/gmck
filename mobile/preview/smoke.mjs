@@ -1531,26 +1531,33 @@ await step('the pomodoro sheet offers working alert sounds', async () => {
 });
 
 /**
- * The affordance line has to tell the truth about what a triple tap does.
- *
- * It promised "handwritten note" on every row in every year, while the handler
- * sent all of them to Ask AI. Third year is the only year the notes function
- * has a textbook for — Community Medicine and Forensic Medicine — so it is the
- * only year the promise can be kept, which is the same gate the web app uses.
- */
-/**
  * The handwritten note is offered wherever there is a textbook to ground it in,
- * which is a question about the subject and not the year.
+ * which is a question about the **subject** and not the year.
  *
- * This step used to assert the opposite for second year — that the row must
- * *not* offer a note — and it was right when it was written, because Community
- * and Forensic were the only two books. Six more were added on the server and
- * nothing here noticed, so the assertion went on defending a gate that was
- * turning away first- and second-year students from an answer that already
- * existed. Final year is the year with genuinely no books, and it is what the
- * negative half checks now.
+ * This step has now been wrong in both directions, and the shape of the two
+ * mistakes is the same one:
+ *
+ *   • It first asserted that only third year may offer a note. True when it was
+ *     written — Community and Forensic were the only two books — and it went on
+ *     defending that gate through six more, turning first- and second-year
+ *     students away from an answer that already existed.
+ *   • It then asserted that final year may *not*, on the same reasoning one
+ *     year later. Eight more books landed, covering every final-year subject,
+ *     and the assertion was again guarding a state of the world that had moved.
+ *
+ * So the negative half is gone from here rather than re-aimed at whichever
+ * subject happens to be uncovered this month. **Every subject in the shipped
+ * bank now has a book**, so there is no row left that can honestly show the
+ * fallback, and a smoke step cannot test a screen that does not exist. What
+ * still has to be true — that a subject with no book falls back to Ask AI, and
+ * that the gate reads the textbook rather than the year — is asserted in
+ * `check:textbooks`, against the table itself, where it stays true no matter
+ * how many books are added.
+ *
+ * What this step is for is the other half: the promise on the row matches what
+ * the handler will actually do, in all four years.
  */
-await step('a row offers a handwritten note wherever there is a textbook', async () => {
+await step('every year offers a handwritten note, because every subject has a book', async () => {
   const offersNote = async (route) => {
     await open(route);
     await declineAdPromptIfShown();
@@ -1565,53 +1572,20 @@ await step('a row offers a handwritten note wherever there is a textbook', async
     return (await page.getByText('Triple tap → handwritten note').count()) > 0;
   };
 
-  // Third year — Forensic, grounded in Vision. This half already worked.
-  if (
-    !(await offersNote(
-      'screen=browse&year=third-year&node=forensic-medicine,mechanical-injuries&title=Mechanical%20Injuries',
-    ))
-  ) {
-    throw new Error('third year lost its handwritten note');
-  }
+  const years = [
+    ['first year', 'Anatomy — Vishram Singh', 'screen=browse&year=first-year&node=anatomy,paper-1,general-anatomy&title=General%20Anatomy'],
+    ['second year', 'Pharmacology — KD Tripathi', 'screen=browse&year=second-year&node=pharmacology,paper-2,anti-microbial-drugs&title=Anti-Microbial%20Drugs'],
+    ['third year', 'Forensic — Vision', 'screen=browse&year=third-year&node=forensic-medicine,mechanical-injuries&title=Mechanical%20Injuries'],
+    ['final year', 'General Medicine — the eight final-year books', 'screen=browse&year=final-year&node=general-medicine,fundamentals-of-medicine&title=Fundamentals%20of%20Medicine'],
+  ];
 
-  // Second year — Pharmacology, grounded in KD Tripathi + Tara V Shanbhag.
-  if (
-    !(await offersNote(
-      'screen=browse&year=second-year&node=pharmacology,paper-2,anti-microbial-drugs&title=Anti-Microbial%20Drugs',
-    ))
-  ) {
-    throw new Error(
-      'a second-year row offers no handwritten note, but the notes function has two pharmacology books',
-    );
+  for (const [year, grounding, route] of years) {
+    if (!(await offersNote(route))) {
+      throw new Error(
+        `a ${year} row offers no handwritten note, but the notes function has a book for it (${grounding}) — the reader is being turned away from an answer that exists`,
+      );
+    }
   }
-
-  // First year — Anatomy, grounded in Vishram Singh + Langman's Embryology.
-  if (
-    !(await offersNote(
-      'screen=browse&year=first-year&node=anatomy,paper-1,general-anatomy&title=General%20Anatomy',
-    ))
-  ) {
-    throw new Error(
-      'a first-year row offers no handwritten note, but the notes function has an anatomy book',
-    );
-  }
-
-  /*
-   * Final year is the year that genuinely has no textbook. It must send the
-   * reader to Ask AI rather than promise a grounded note it cannot produce —
-   * a note badged "handwritten" that is really the generic answer is worse
-   * than no button, because nothing on screen says which one arrived.
-   */
-  if (
-    await offersNote(
-      'screen=browse&year=final-year&node=general-medicine,fundamentals-of-medicine&title=Fundamentals%20of%20Medicine',
-    )
-  ) {
-    throw new Error(
-      'a final-year row promises a handwritten note, but no textbook covers final year — it would be ungrounded',
-    );
-  }
-  await seesText('Triple tap to ask AI', 6000);
 });
 
 // ---- The other tabs --------------------------------------------------------
@@ -1693,19 +1667,40 @@ await step('notes offers flashcards and a locked case proforma, and no WhatsApp'
   if (/whatsapp/i.test(body)) {
     throw new Error('the WhatsApp block is back on the Notes tab');
   }
-  await seesText('Anki flashcards', 4000);
+  await seesText('Anki-style flashcards', 4000);
   await seesText('Case proforma', 4000);
 
   /*
    * Locked means no control at all, not a control that swallows presses. If
    * this ever becomes a Touchable it will announce itself to TalkBack as
    * something that can be activated, and it cannot.
+   *
+   * This is asserted against the **element**, not against a label string. The
+   * version before it looked for a label that had been reworded, so it counted
+   * zero and passed — every time, including on a proforma that had become a
+   * button. An assertion that cannot fail is worse than no assertion, because
+   * a green line says it was checked.
    */
-  if (await byLabel('Case proforma, coming soon').count()) {
-    throw new Error('the locked proforma card is a pressable — it must not offer a press it cannot honour');
+  const proforma = byLabel('Case proforma. Coming soon, not yet available.');
+  if (!(await proforma.count())) {
+    throw new Error('the locked proforma card no longer announces itself to TalkBack');
+  }
+  const shape = await proforma.first().evaluate(el => ({
+    tag: el.tagName,
+    role: el.getAttribute('role'),
+    focusable: el.getAttribute('tabindex') !== null,
+    disabled: el.getAttribute('aria-disabled'),
+  }));
+  if (shape.tag === 'BUTTON' || shape.role === 'button' || shape.focusable) {
+    throw new Error(
+      `the locked proforma card is a pressable (${JSON.stringify(shape)}) — it must not offer a press it cannot honour`,
+    );
+  }
+  if (shape.disabled !== 'true') {
+    throw new Error('the locked proforma card does not carry aria-disabled, so TalkBack will not say it is unavailable');
   }
 
-  await byLabel('Anki flashcards, browse decks by year').click();
+  await byLabel('Anki-style flashcards, browse decks by year').click();
   await page.waitForTimeout(900);
   await seesText('Anki-style cards', 4000);
   await seesText('SELECT YEAR', 4000);
@@ -2554,7 +2549,7 @@ await step('a chapter offers to add your own deck, and a deck can be filed', asy
 await step('a flashcard chapter opens, and a deck that cannot build offers a retry', async () => {
   await open('screen=notes');
   await page.waitForTimeout(700);
-  await byLabel('Anki flashcards, browse decks by year').click();
+  await byLabel('Anki-style flashcards, browse decks by year').click();
   await page.waitForTimeout(800);
 
   await page.locator('[aria-label^="3rd Year"]').first().click();

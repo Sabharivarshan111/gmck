@@ -107,6 +107,46 @@ for (const [year, subjects] of Object.entries(EXPECTED)) {
   }
 }
 
+// 4b. The gate still has an "off" — and this is the assertion that had to move
+//      here.
+//
+// The smoke suite used to carry the negative half: it drove a final-year row
+// and asserted it showed "Triple tap to ask AI", because final year was the one
+// year with no books. Eight books later that row is grounded, and **every
+// subject in the shipped bank now matches something above**, so no screen in
+// the app can show the fallback any more. A UI test therefore cannot check it,
+// and the version that tried was doing nothing but going red.
+//
+// It still has to be checked, because `hasTextbook` returning true for
+// everything would be indistinguishable from a working gate right up until a
+// subject with no book was added — and then it would badge the generic answer
+// as a grounded one, silently. So it is checked against the function instead of
+// against a screen, where a full bank cannot hide it.
+const UNGROUNDED = [
+  'astrology',
+  'dermatology',            // a real MBBS subject with no book here yet
+  'psychiatry',
+  'radiology',
+  '',
+];
+for (const subject of UNGROUNDED) {
+  check(
+    !matches(subject),
+    `"${subject}" matches a textbook rule it should not — a note for it would be ungrounded but badged as grounded`,
+  );
+}
+// And the fallback string the row falls back *to* still exists. Deleting it
+// would leave a subject with no book showing no affordance at all.
+const row = await fs.readFile(path.join(root, 'src/components/QuestionRow.tsx'), 'utf8');
+check(
+  row.includes('Triple tap to ask AI'),
+  'QuestionRow no longer offers "Triple tap to ask AI" — a subject with no textbook would show no affordance at all',
+);
+check(
+  row.includes('Triple tap → handwritten note'),
+  'QuestionRow no longer offers "Triple tap → handwritten note"',
+);
+
 // 5. No textbook is ever named to the reader.
 //
 // A student is studying, not being handed a bibliography, and the notes

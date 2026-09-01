@@ -190,10 +190,15 @@ export default function BrowseNodeScreen() {
    * `subtopics`, the same value the web app passes.
    *
    * This was `year === 'third-year'`, from back when Community and Forensic
-   * were the only two books that existed. Eight books do now, covering every
-   * subject in first and second year too, so that gate was turning away
-   * students the server could already answer. Final year is the year with no
-   * books, and it falls out of `hasTextbook` on its own.
+   * were the only two books that existed. Sixteen do now, covering every
+   * subject in the bank, so that gate was turning away students the server
+   * could already answer.
+   *
+   * That every subject currently has one is not a reason to drop the gate.
+   * `hasTextbook` is what keeps the promise on the row honest the moment a
+   * subject without a book is added — and a note badged "handwritten" that is
+   * really the generic answer is worse than no button, because nothing on
+   * screen says which one arrived.
    */
   const subjectKey = path[0] ?? '';
   const subjectName = useMemo(
