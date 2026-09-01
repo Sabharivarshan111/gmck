@@ -299,8 +299,8 @@ function QuestionRowBase({
   );
 }
 
-/** The published app's disambiguation window (QuestionCardEnhanced.tsx). */
-const TAP_WINDOW_MS = 280;
+/** Reliable disambiguation window so triple-taps register smoothly on Android touch screens. */
+const TAP_WINDOW_MS = 380;
 
 const styles = StyleSheet.create({
   row: {

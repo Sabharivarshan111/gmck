@@ -58,6 +58,8 @@ const SHOTS = [
   { name: 'home-edit', query: 'screen=homeedit' },
   { name: 'home-edit-bottom', query: 'screen=homeedit', scroll: 'bottom' },
   { name: 'home-resized', query: 'screen=homeresized' },
+  { name: 'tca-note', query: 'screen=tcanote' },
+  { name: 'tca-note-bottom', query: 'screen=tcanote', scroll: 'bottom' },
   { name: 'home-light', query: 'screen=home&theme=light' },
   { name: 'progress-light', query: 'screen=progress&theme=light' },
 ];

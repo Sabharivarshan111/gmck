@@ -175,16 +175,35 @@ This document contains the complete record of architecture, features, bugs solve
 
 ---
 
-## 9. 🚀 Current GitHub Release Status (Release Build 113 -> 114)
-- **Live on GitHub**:
-  - **Release Name**: `Release build 113` (tag: `release-113`)
-  - **Assets**: `app-release.apk` (87.82 MB) and `app-release.aab` (69.54 MB).
-- **Latest Commit**:
-  - `568c62b` & latest batch updates committed and pushed to `main` and `claude/native-app-sync`.
+## 11. 🏥 Final Year Triple-Tap & Textbook Grounding Integration (16 Textbooks Across 4 MBBS Years)
+- **Problem**:
+  - Final Year textbooks were uploaded to Supabase storage bucket `textbooks` on August 31, but `mobile/src/lib/textbooks.ts`, `QuestionCard.tsx`, and `generate-handwritten-notes` had not been mapped to them.
+  - Triple-tapping any Final Year question previously routed to generic Ask AI with no textbook grounding.
+  - In `BrowseHomeScreen.tsx`, search results were hardcoded to `item.year === 'third-year'` for handwritten notes.
+  - In `QuestionRow.tsx`, `TAP_WINDOW_MS` was set to `280ms`, causing fast 3-tap gestures on Android touchscreens to prematurely time out into double-tap MCQs.
+- **Completed Work**:
+  - **16 Textbooks Configured Across All 4 MBBS Years**:
+    - **1st Year**: Anatomy (*Vishram Singh + Langman's*), Physiology (*K. Sembulingam*), Biochemistry (*DM Vasudevan*).
+    - **2nd Year**: Pharmacology (*KD Tripathi + Tara Shanbhag*), Pathology (*Ramadas Nayak*), Microbiology (*Apurba S. Sastry*).
+    - **3rd Year**: Community Medicine (*Sia's Park*), Forensic Medicine (*Vision*).
+    - **Final Year**:
+      - **Obstetrics**: Grounded in **DC Dutta** (`obgyn/dc_dutta_gynaecology_part1.txt` & `part2.txt`).
+      - **Gynaecology**: Grounded in **Shaw's** (`obgyn/shaws_gynaecology_part1.txt` & `part2.txt`).
+      - **General Surgery**: Grounded in **Manipal Manual of Surgery** (`surgery/manipal_surgery_part1.txt`..`part4.txt`).
+      - **Orthopaedics**: Grounded in **Maheshwari Essential Orthopaedics** (`orthopaedics/maheshwari_orthopaedics_part1.txt` & `part2.txt`).
+      - **General Medicine**: Grounded in **Manipal Prep Manual of Medicine** (`medicine/manipal_medicine_part1.txt`..`part3.txt`).
+      - **Paediatrics**: Grounded in **OP Ghai Essential Pediatrics** (`paediatrics/op_ghai_paediatrics_part1.txt`..`part3.txt`).
+      - **ENT**: Grounded in **PL Dhingra** (`ent/dhingra_ent_part1.txt` & `part2.txt`).
+      - **Ophthalmology**: Grounded in **AK Khurana** (`ophthalmology/khurana_ophthalmology_part1.txt` & `part2.txt`).
+  - **Dynamic Multi-Year Triple-Tap Gate**:
+    - `src/components/QuestionCard.tsx`: Replaced hardcoded `yearKey === "third-year"` with `hasTextbook(subjectKey, subjectName)` and adjusted tap window to 380ms.
+    - `mobile/src/lib/textbooks.ts` & `src/lib/textbooks.ts`: Full mirror of `pickBookKey` across all 16 subjects.
+    - `mobile/src/screens/BrowseHomeScreen.tsx`: Updated search result `onNote` to use `hasTextbook(item.subjectKey, item.subjectName)`.
+    - `mobile/src/components/QuestionRow.tsx`: Increased `TAP_WINDOW_MS` from `280ms` to `380ms` for seamless touch responsiveness on Android.
+  - **Server Edge Function**:
+    - Created `supabase/functions/generate-handwritten-notes/index.ts` and `textbook.ts` supporting dynamic storage chunk downloading, tokenized paragraph relevance ranking, and single-mode question caching in `handwritten_notes`.
+  - **Validation**:
+    - `npm --prefix mobile run check:textbooks`: **PASSED** (16 books verified across all 4 MBBS years).
+    - `npm --prefix mobile run typecheck`: **PASSED** (0 errors).
+    - `npm run build`: **PASSED** (Vite web build clean).
 
----
-
-## 10. 💡 Mac Sleep & Background Autonomous Processing Note
-- When the user closes the MacBook lid, macOS suspends CPU & WiFi (System Sleep).
-- Local timers pause during sleep and fire immediately upon lid reopening.
-- To allow overnight/unattended generation when stepping away, recommend using `caffeinate` or adjusting macOS Sleep settings (`System Settings -> Displays -> Prevent automatic sleeping on power adapter`).

@@ -29,7 +29,7 @@ import { Pencil, Eye } from 'lucide-react-native';
 import { withAlpha } from '@/theme';
 import { typeScale } from '@/theme/typography';
 import { getSubjects, type YearKey } from '@/lib/questionBank';
-import { flattenSubjectTopics } from '@/lib/handwrittenNotes';
+import { flattenSubjectTopics, ensureSingleNoteDiagram, type NotesContent } from '@/lib/handwrittenNotes';
 import { SAMPLE_NOTES } from './notesSample';
 import { NotesAiEditBox } from '@/components/NotesAiEditBox';
 import { McqCard } from '@/components/McqCard';
@@ -325,6 +325,78 @@ function NotesRendererDemo() {
 }
 
 /**
+ * ?screen=tcanote — Live preview of TCA cycle handwritten notes with authentic diagram matching.
+ */
+function TcaNoteDemo() {
+  const { colors } = useTheme();
+  const [content, setContent] = React.useState<NotesContent | null>(null);
+
+  React.useEffect(() => {
+    async function load() {
+      const request = {
+        question: 'TCA cycle – definition, sequence of reaction, energetics, regulation***',
+        subjectKey: 'biochemistry',
+        subjectName: 'Biochemistry',
+        yearLabel: '1st Year',
+      };
+      const raw: NotesContent = {
+        highYieldTip: "Remember the '3-3-1' rule: 3 NADH, 1 FADH2, and 1 GTP (ATP) are produced per cycle. The cycle is 'amphibolic' because it serves both catabolic and anabolic roles.",
+        pyqYears: ['2023', '2021', '2019'],
+        sections: [
+          {
+            type: 'definition',
+            title: 'Definition of TCA Cycle',
+            icon: '📌',
+            payload: { text: 'The Citric Acid Cycle (TCA cycle or Krebs cycle) is a series of enzymatic reactions occurring in the mitochondrial matrix.' },
+          },
+          {
+            type: 'definition',
+            title: 'Sequence of Reactions',
+            icon: '🔁',
+            payload: { text: '1. Citrate Synthase (Acetyl-CoA + OAA -> Citrate)\n2. Aconitase (Citrate -> Isocitrate)\n3. Isocitrate Dehydrogenase (Rate-limiting)\n4. Alpha-Ketoglutarate Dehydrogenase' },
+          },
+          {
+            type: 'definition',
+            title: 'Energetics of TCA Cycle',
+            icon: '⚡',
+            payload: { text: 'Total yield per Acetyl-CoA oxidized: 10 ATP (3 NADH = 7.5 ATP, 1 FADH2 = 1.5 ATP, 1 GTP = 1 ATP).' },
+          },
+        ],
+      };
+      const enriched = await ensureSingleNoteDiagram(raw, request);
+      setContent(enriched);
+    }
+    void load();
+  }, []);
+
+  if (!content) {
+    return (
+      <View style={{ flex: 1, backgroundColor: colors.background, alignItems: 'center', justifyContent: 'center' }}>
+        <Text style={{ color: colors.textSecondary }}>Loading TCA Cycle Notes…</Text>
+      </View>
+    );
+  }
+
+  return (
+    <ScrollView
+      style={{ backgroundColor: colors.background }}
+      contentContainerStyle={{ padding: 16, paddingBottom: 48 }}>
+      <NotesContentView content={content} />
+      <NotesAiEditBox
+        request={{
+          question: 'TCA cycle – definition, sequence of reaction, energetics, regulation***',
+          subjectKey: 'biochemistry',
+          subjectName: 'Biochemistry',
+          yearLabel: '1st Year',
+        }}
+        content={content}
+        onApply={setContent}
+      />
+    </ScrollView>
+  );
+}
+
+/**
  * ?screen=mcqdemo — the MCQ cards a double tap produces.
  *
  * Same reason as notesdemo: the real ones come from ask-gemini, which costs
@@ -592,6 +664,9 @@ function Shell() {
   }
   if (screen === 'notesdemo') {
     return <NotesRendererDemo />;
+  }
+  if (screen === 'tcanote') {
+    return <TcaNoteDemo />;
   }
   if (screen === 'usernotesdemo') {
     return <UserNotesDemo />;

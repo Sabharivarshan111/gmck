@@ -4,21 +4,10 @@
  * A **mirror of `pickBookKey` in the deployed edge function's `textbook.ts`**,
  * kept identical on purpose: the server decides what it can ground an answer
  * in, and the client only decides whether to offer the button. Both sides
- * therefore have to agree on the same list, and `npm run check:textbooks`
- * fails if this drifts from the function's own copy.
- *
- * The gate used to be `year === 'third-year'`, with a comment explaining that
- * third year is Community and Forensic and those were the only two books that
- * existed. That was true when it was written. The function has since grown to
- * eight books covering first and second year as well, and the gate did not —
- * so a first-year student triple-tapping got Ask AI's generic answer while a
- * textbook-grounded one was sitting there, fully uploaded, unreachable. What
- * hid it is that the repo's copy of the function was the stale two-book one,
- * so reading the code agreed with the bug.
+ * therefore have to agree on the same list.
  *
  * Keyed on the **subject**, never the year, because that is what the server
- * keys on. Final year is the one that genuinely has no books, and it falls out
- * of this list on its own rather than being special-cased.
+ * keys on.
  */
 export type BookKey =
   | 'community'
@@ -41,6 +30,8 @@ export type BookKey =
 
 export function pickBookKey(subject: string): BookKey | null {
   const s = (subject || '').toLowerCase();
+
+  // --- 3rd year ---
   if (
     s.includes('community') ||
     s.includes('psm') ||
@@ -52,6 +43,8 @@ export function pickBookKey(subject: string): BookKey | null {
   if (s.includes('forensic') || s.includes('fmt') || s.includes('toxicology')) {
     return 'forensic';
   }
+
+  // --- 2nd year ---
   if (s.includes('pharmac') || s.includes('drug')) {
     return 'pharmacology';
   }
@@ -68,6 +61,8 @@ export function pickBookKey(subject: string): BookKey | null {
   ) {
     return 'microbiology';
   }
+
+  // --- 1st year ---
   if (s.includes('physiolog')) {
     return 'physiology';
   }
@@ -84,18 +79,24 @@ export function pickBookKey(subject: string): BookKey | null {
   }
 
   // --- Final year ---
+  // OB-GYN: check more specific terms first.
+  // "obstetrics-gynaecology" as a combined key → return 'obstetrics' (Dutta)
+  // so hasTextbook returns true; the server loads both Dutta + Shaw.
   if (s.includes('obstet')) {
     return 'obstetrics';
   }
   if (s.includes('gynae') || s.includes('gynec') || s.includes('gynaec')) {
     return 'gynaecology';
   }
+
+  // Surgery vs Orthopaedics: check ortho first (more specific) then surgery.
   if (s.includes('ortho')) {
     return 'orthopaedics';
   }
   if (s.includes('surg')) {
     return 'surgery';
   }
+
   if (s.includes('medicine') || s.includes('general-medicine')) {
     return 'medicine';
   }
@@ -108,6 +109,7 @@ export function pickBookKey(subject: string): BookKey | null {
   if (s.includes('ophthalm') || s.includes('eye')) {
     return 'ophthalmology';
   }
+
   return null;
 }
 
@@ -122,15 +124,3 @@ export function pickBookKey(subject: string): BookKey | null {
 export function hasTextbook(subjectKey: string, subjectName?: string): boolean {
   return pickBookKey(subjectKey) !== null || pickBookKey(subjectName ?? '') !== null;
 }
-
-/*
- * There is deliberately no exported table of book titles here.
- *
- * The app never names a textbook to the reader. A student is studying, not
- * being handed a bibliography, and the notes function is told the same thing —
- * "DO NOT include page numbers or textbook citations", "never mention
- * OCR/pages/edition inside the notes". A `BOOK_LABELS` map lived here for a
- * few hours and the only thing anyone would ever do with it is render it, which
- * is exactly what this rule forbids. `check:textbooks` fails if an author or
- * title turns up in a string under src/.
- */
