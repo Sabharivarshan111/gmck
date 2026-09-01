@@ -25,6 +25,7 @@ import {
 } from '@/lib/questionBank';
 import { Touchable } from '@/components/Touchable';
 import { SingleQuestionNote } from '@/components/SingleQuestionNote';
+import { hasTextbook } from '@/lib/textbooks';
 import { noteQuestionText } from '@/lib/questionText';
 import { useCountDone } from '@/hooks/useProgress';
 import { useProfile } from '@/hooks/useProfile';
@@ -221,7 +222,7 @@ export default function BrowseHomeScreen() {
                 question={item.question}
                 index={index}
                 onAskAi={askAi}
-                onNote={item.year === 'third-year' ? () => setNoted(item) : undefined}
+                onNote={hasTextbook(item.subjectKey, item.subjectName) ? () => setNoted(item) : undefined}
               />
               {/* The result names where the question lives; this goes there.
                   Without it a search can only tell you a question exists. */}

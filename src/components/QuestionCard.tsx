@@ -4,6 +4,7 @@ import { SuccessCheckmark } from '@/components/SuccessCheckmark';
 import { Badge } from '@/components/ui/badge';
 import { useTheme } from '@/components/theme/ThemeProvider';
 import { QUESTION_PROGRESS_EVENT, setQuestionDone } from '@/lib/question-progress';
+import { hasTextbook } from '@/lib/textbooks';
 
 interface QuestionCardProps {
   question: string;
@@ -66,7 +67,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, index, isFirstYea
   // Single tap handler that determines whether to trigger double or triple tap
   const handleTap = () => {
     const now = Date.now();
-    const tapDelay = 280; // Faster window so quick taps register
+    const tapDelay = 380; // Reliable window so triple-taps register smoothly on mobile/touch
     const timeSinceLastTap = now - lastTapTime.current;
 
     // Clear any pending timeout
@@ -103,15 +104,15 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, index, isFirstYea
   // The action to perform on triple tap
   const handleTripleTapAction = () => {
     const cleanedQuestion = getCleanQuestionText(question);
-    // Third-year subjects → open handwritten-note overlay instead of Ask AI
-    if (yearKey === "third-year") {
+    // Subjects with an uploaded textbook → open handwritten-note overlay
+    if (hasTextbook(subjectKey || '', subjectName)) {
       setTapStatus('processing-answer');
       window.dispatchEvent(new CustomEvent('orbit:single-note', {
         detail: {
           question: cleanedQuestion,
           subject: subjectName || subjectKey || "Community Medicine",
           subjectKey: subjectKey || "",
-          year: "3rd Year",
+          year: yearKey || "",
         },
       }));
       setTimeout(() => setTapStatus('idle'), 800);
@@ -234,7 +235,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, index, isFirstYea
                 <span className={`text-[10px] ${theme === "blackpink" ? "text-[#FFDEE2]" : "text-blue-500"}`}>
                   {tapStatus === 'idle' && (
                     <span className="flex items-center">
-                      {yearKey === "third-year" ? "Triple tap → handwritten note" : "Triple tap to ask AI"}
+                      {hasTextbook(subjectKey || '', subjectName) ? "Triple tap → handwritten note" : "Triple tap to ask AI"}
                       {pageNumber && (
                         <span className={getPageNumberClass()}>
                           Pg. {pageNumber}
@@ -244,7 +245,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, index, isFirstYea
                   )}
                   {tapStatus === 'processing-answer' && (
                     <span className="animate-pulse">
-                      {yearKey === "third-year" ? "Opening handwritten note..." : "Getting answer..."}
+                      {hasTextbook(subjectKey || '', subjectName) ? "Opening handwritten note..." : "Getting answer..."}
                     </span>
                   )}
                   {tapStatus === 'processing-mcq' && (

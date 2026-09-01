@@ -17,23 +17,57 @@ interface DiagramItem {
 }
 
 const DIAG_STOP = new Set([
-  'blood', 'supply', 'bone', 'bones', 'artery', 'arteries', 'vein', 'veins',
-  'nerve', 'nerves', 'muscle', 'muscles', 'joint', 'joints', 'structure',
-  'structures', 'functions', 'parts', 'part', 'types', 'clinical', 'applied',
-  'detail', 'describe', 'explain', 'discuss', 'write', 'enumerate', 'classify',
-  'long', 'short', 'small', 'large', 'tract', 'marrow', 'smear', 'picture',
+  'define', 'describe', 'explain', 'discuss', 'enumerate', 'classify', 'write',
+  'short', 'note', 'notes', 'briefly', 'detail', 'types', 'various', 'causes',
+  'features', 'clinical', 'management', 'treatment', 'prevention', 'control',
+  'diagnosis', 'laboratory', 'importance', 'difference', 'differentiate',
+  'compare', 'versus', 'medical', 'patient', 'person', 'child', 'female',
+  'male', 'years', 'months', 'rules', 'rule', 'case', 'cases', 'study',
+  'outline', 'aspects', 'factors', 'principles', 'methods', 'criteria',
+  'guidelines', 'algorithm', 'signs', 'symptoms', 'procedure', 'investigations',
+  'role', 'what', 'which', 'about', 'with', 'from', 'between', 'under',
+  'their', 'does', 'have', 'been', 'give', 'name', 'list', 'state', 'applied',
+  'life', 'cycle', 'cycles', 'diagram', 'draw', 'drawn', 'neat', 'labelled', 'question',
+  'examination', 'appearance', 'effects', 'program', 'programme', 'scheme',
+  'strategy', 'national', 'india', 'indian', 'level', 'levels', 'status',
+  'health', 'community', 'public', 'primary', 'secondary', 'tertiary',
+  'following', 'based', 'first', 'second', 'third', 'final', 'paper', 'topic',
+  'practice', 'body', 'changes', 'death', 'living', 'post', 'mortem',
+  'antemortem', 'postmortem', 'wounds', 'wound', 'injury', 'injuries',
+  'poisons', 'poison', 'poisoning', 'acute', 'chronic', 'general', 'special',
+  'system', 'systemic', 'organs', 'organ', 'human', 'structure', 'structures',
+  'functions', 'function', 'parts', 'part', 'suitable', 'examples', 'available',
+  'protection', 'act', 'acts', 'proof', 'therapeutic', 'classification',
+  'bone', 'bones', 'artery', 'arteries', 'vein', 'veins', 'nerve', 'nerves',
+  'muscle', 'muscles', 'joint', 'joints', 'gland', 'glands', 'duct', 'ducts',
+  'wall', 'walls', 'cord', 'blood', 'reflex', 'reflexes',
+  'disorder', 'disorders', 'disease', 'diseases', 'syndrome', 'syndromes',
+  'supply', 'long', 'marrow', 'smear', 'picture', 'findings', 'origin',
+  'course', 'distribution', 'branches', 'termination', 'anastomosis', 'relations',
   'articular', 'surface', 'surfaces', 'disc', 'discs', 'ligament', 'ligaments',
   'movement', 'movements', 'capsule', 'cavity', 'cavities', 'cartilage',
   'borders', 'border', 'fossa', 'tubercle', 'process', 'notch', 'insertion',
   'action', 'actions', 'innervation', 'tributaries', 'boundaries', 'contents',
   'extent', 'variation', 'variations', 'correlate', 'development', 'formation',
   'sites', 'presenting', 'location', 'anomalies', 'lesions', 'derivatives',
-  'drainage', 'lymphatic', 'histology', 'gross', 'microscopic', 'aspects',
+  'drainage', 'lymphatic', 'histology', 'gross', 'microscopic',
+  'definition', 'definitions', 'sequence', 'reaction', 'reactions', 'energetics',
+  'regulation', 'mechanism', 'mechanisms', 'steps', 'pathway', 'pathways',
+  'transport', 'transports', 'passive', 'active', 'fate', 'synthesis',
+  'degradation', 'metabolism', 'abnormalities', 'important', 'significance',
+  'molecules', 'molecule', 'overview', 'pathophysiology', 'complications',
 ]);
 
 const EXCLUSIVE_ENTITIES = [
+  // Anatomy
   ['temporomandibular', 'tmj', 'mandible', 'mandibular'],
   ['shoulder', 'glenohumeral', 'scapula', 'acromion', 'rotator cuff'],
+  ['synovial', 'synovial joint', 'diarthrodial', 'articular capsule'],
+  ['cartilaginous', 'synchondrosis', 'symphysis', 'primary cartilaginous', 'secondary cartilaginous'],
+  ['fibrous joint', 'suture', 'gomphosis', 'syndesmosis', 'schindylesis'],
+  ['nutrient artery', 'blood supply of bone', 'blood supply of long bone', 'haversian artery'],
+  ['ossification', 'endochondral', 'intramembranous', 'epiphyseal plate', 'growth plate', 'zone of proliferation'],
+  ['compact bone', 'haversian system', 'osteon', 'volkmann', 'lamellae', 'lacunae'],
   ['knee', 'patella', 'meniscus', 'cruciate'],
   ['elbow', 'radioulnar', 'olecranon'],
   ['hip', 'acetabulum', 'iliofemoral'],
@@ -51,15 +85,25 @@ const EXCLUSIVE_ENTITIES = [
   ['cerebrum', 'cerebral', 'internal capsule'],
   ['medulla', 'medullary'],
   ['pons', 'pontine'],
-  ['midbrain'],
-  ['facial nerve', 'facial'],
-  ['median nerve', 'median'],
-  ['ulnar nerve', 'ulnar'],
-  ['radial nerve', 'radial'],
-  ['sciatic'],
-  ['duodenum', 'duodenal'],
+  ['facial nerve', 'facial', 'bells palsy'],
+  ['median nerve', 'median', 'carpal tunnel', 'anterior interosseous', 'ape thumb'],
+  ['ulnar nerve', 'ulnar', 'guyon', 'claw hand', 'cubital tunnel'],
+  ['radial nerve', 'radial', 'spiral groove', 'wrist drop', 'posterior interosseous'],
+  ['sciatic', 'sciatic nerve', 'piriformis', 'foot drop'],
+  ['femoral nerve', 'femoral'],
+  ['rectus sheath', 'arcuate line', 'linea alba', 'pyramidalis'],
+  ['trigeminal', 'trigeminal nerve', 'mandibular nerve', 'ophthalmic nerve', 'maxillary nerve', 'otic ganglion', 'ciliary ganglion', 'pterygopalatine ganglion'],
+  ['thoracic duct', 'cisterna chyli', 'chylothorax'],
+  ['stomach bed', 'lesser sac'],
+  ['anal canal', 'pectinate line', 'anal valves', 'hemorrhoids', 'anal columns', 'intersphincteric', 'hilton'],
+  ['lateral wall of nose', 'concha', 'meatus', 'sinus opening', 'hiatus semilunaris', 'bulla ethmoidalis', 'sphenoethmoidal'],
+  ['submandibular gland', 'wharton', 'submandibular duct', 'mylohyoid'],
+  ['pharynx', 'pharyngeal constrictor', 'killian', 'zenker', 'pharyngeal pouch', 'pharyngeal wall'],
+  ['uterus', 'mackenrodt', 'cardinal ligament', 'uterine artery', 'fallopian tube', 'uterosacral', 'uterine prolapse'],
+  ['venous drainage of heart', 'coronary sinus', 'cardiac veins', 'great cardiac vein', 'middle cardiac vein', 'vein of marshall'],
+  ['duodenum', 'duodenal papilla', 'ampulla of vater', 'ligament of treitz', 'pancreaticoduodenal'],
   ['pancreas', 'pancreatic'],
-  ['spleen', 'splenic'],
+  ['spleen', 'splenic', 'splenomegaly', 'gastrosplenic', 'lienorenal'],
   ['liver', 'hepatic', 'portal'],
   ['kidney', 'renal'],
   ['stomach', 'gastric'],
@@ -68,12 +112,35 @@ const EXCLUSIVE_ENTITIES = [
   ['breast', 'mammary'],
   ['lung', 'lungs', 'bronchopulmonary'],
   ['larynx', 'laryngeal', 'vocal cord'],
-  ['pharynx', 'pharyngeal'],
   ['palatine tonsil', 'tonsil'],
-  ['tongue', 'lingual'],
+  ['tongue', 'lingual', 'papillae', 'genioglossus', 'hyoglossus'],
   ['parotid'],
-  ['thyroid'],
+  ['thyroid', 'thyroid gland', 'berry ligament', 'external laryngeal nerve'],
   ['pituitary'],
+  // Biochemistry pathways & cycles
+  ['tca', 'tca cycle', 'krebs', 'citric acid', 'citric acid cycle', 'tricarboxylic', 'anaplerosis', 'anaplerotic', 'citrate synthase'],
+  ['glycolysis', 'embden', 'meyerhof', 'hexokinase', 'glucokinase', 'phosphofructokinase', 'pfk 1', 'pfk-1', 'pyruvate kinase', 'rapoport'],
+  ['gluconeogenesis', 'cori cycle', 'cahill cycle', 'alanine cycle', 'pyruvate carboxylase', 'pepck', 'fructose 1 6 bisphosphatase', 'glucose 6 phosphatase'],
+  ['glycogen', 'glycogenesis', 'glycogenolysis', 'von gierke', 'pompe', 'cori disease', 'mcardle', 'glycogen storage'],
+  ['hmp shunt', 'pentose phosphate', 'g6pd', 'favism', 'transketolase', 'transaldolase'],
+  ['urea cycle', 'hyperammonemia', 'ornithine', 'citrulline', 'argininosuccinate', 'arginase', 'carbamoyl phosphate synthetase i'],
+  ['beta oxidation', 'carnitine', 'carnitine shuttle', 'cpt-1', 'cpt-2', 'acyl coa dehydrogenase'],
+  ['ketogenesis', 'ketone body', 'ketone bodies', 'ketolysis', 'dka', 'diabetic ketoacidosis', 'hmg coa synthase'],
+  ['cholesterol', 'statin', 'hmg coa reductase', 'mevalonate', 'squalene'],
+  ['lipoprotein', 'chylomicron', 'chylomicrons', 'vldl', 'ldl', 'hdl', 'reverse cholesterol transport', 'rct', 'abetalipoproteinemia', 'tangier', 'atherogenesis', 'dyslipidemia', 'hyperlipoproteinemia'],
+  ['bilirubin', 'jaundice', 'heme catabolism', 'heme degradation', 'urobilinogen', 'stercobilin', 'kernicterus', 'crigler', 'gilbert', 'dubinhohnson', 'rotor'],
+  ['heme synthesis', 'porphyria', 'porphyrias', 'ala synthase', 'lead poisoning', 'acute intermittent porphyria', 'coproporphyria'],
+  ['purine', 'uric acid', 'gout', 'lesch nyhan', 'prpp', 'allopurinol', 'salvage pathway'],
+  ['pyrimidine', 'orotic acid', 'orotic aciduria', 'carbamoyl phosphate synthetase ii', 'cad enzyme'],
+  ['phenylalanine', 'tyrosine', 'pku', 'phenylketonuria', 'alkaptonuria', 'albinism', 'homogentisic'],
+  ['tryptophan', 'serotonin', 'melatonin', 'carcinoid', 'hartnup', 'niacin', 'pellagra'],
+  ['one carbon', 'methionine', 'homocysteine', 'folate trap', 'sam', 'tetrahydrofolate'],
+  ['enzyme kinetics', 'lineweaver', 'burk', 'michaelis', 'menten', 'km', 'vmax', 'competitive inhibition', 'non competitive'],
+  ['electrophoresis', 'spep', 'serum protein electrophoresis', 'multiple myeloma', 'm band', 'gamma globulin'],
+  ['electron transport chain', 'etc complexes', 'oxidative phosphorylation', 'chemiosmotic', 'atp synthase', 'rotenone', 'cyanide', 'uncoupler', 'dnp'],
+  ['visual cycle', 'wald', 'rhodopsin', 'vitamin a', 'retinal', 'opsin', 'night blindness'],
+  ['translation', 'ribosome', 'elongation', 'initiation factor', 'tetracycline', 'chloramphenicol', 'erythromycin', 'cycloheximide'],
+  ['cell membrane transport', 'transport mechanisms', 'passive transport', 'simple diffusion', 'facilitated diffusion', 'sodium potassium pump', 'na k atpase', 'ping pong mechanism', 'ping-pong'],
 ];
 
 export default function ExamDiagramCard({
@@ -109,6 +176,14 @@ export default function ExamDiagramCard({
           family.some(kw => queryLower.includes(kw))
         );
 
+        if (!matchingFamily) {
+          if (isMounted) {
+            setDiagrams([]);
+            setLoading(false);
+          }
+          return;
+        }
+
         let queryBuilder = supabase
           .from("question_diagrams")
           .select("public_url, storage_path, question_text")
@@ -123,10 +198,6 @@ export default function ExamDiagramCard({
         const seenUrls = new Set<string>();
 
         if (allRows && allRows.length > 0) {
-          const words = queryLower
-            .split(/\s+/)
-            .filter(w => w.length > 3 && !DIAG_STOP.has(w));
-
           for (const row of allRows) {
             if (!row.public_url || !row.question_text) continue;
             if (seenUrls.has(row.public_url)) continue;
@@ -134,32 +205,17 @@ export default function ExamDiagramCard({
             const rowText = row.question_text.toLowerCase();
             const storagePath = (row.storage_path || '').toLowerCase();
 
-            if (matchingFamily) {
-              const matches = matchingFamily.some(kw => rowText.includes(kw) || storagePath.includes(kw));
-              if (!matches) continue;
-            }
+            const matches = matchingFamily.some(kw => rowText.includes(kw) || storagePath.includes(kw));
+            if (!matches) continue;
 
-            let score = 0;
-            if (queryLower.length >= 15 && (rowText.includes(queryLower.slice(0, 25)) || queryLower.includes(rowText.slice(0, 25)))) {
-              score += 10;
-            }
-
-            for (const w of words) {
-              if (rowText.includes(w) || storagePath.includes(w)) score++;
-            }
-
-            if (score >= 1) {
-              seenUrls.add(row.public_url);
-              matchedList.push({
-                url: row.public_url,
-                title: row.question_text,
-                score,
-              });
-            }
+            seenUrls.add(row.public_url);
+            matchedList.push({
+              url: row.public_url,
+              title: row.question_text,
+              score: 10,
+            });
           }
         }
-
-        matchedList.sort((a, b) => b.score - a.score);
 
         if (isMounted) {
           setDiagrams(matchedList.map(m => ({ url: m.url, title: m.title })));

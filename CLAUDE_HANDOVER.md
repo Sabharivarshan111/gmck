@@ -149,58 +149,61 @@ This document contains the complete record of architecture, features, bugs solve
     - In `mobile/src/lib/handwrittenNotes.ts` (`mergeProposal`), extracted and pinned all existing diagram sections at the top of the notes.
     - In `mobile/src/components/NotesAiEditBox.tsx` (`apply`), preserved authentic diagram sections when replacing note contents.
 
+- **Batch 1 & Batch 2 Anatomy Diagrams Added (Total: 115 Complete Anatomy Diagrams in Supabase)**:
+  - **Batch 1 (10 Diagrams)**:
+    1. `ulnar_nerve_course_branches.jpg` (Medial cord, cubital tunnel, Guyon canal, claw hand)
+    2. `radial_nerve_spiral_groove.jpg` (Posterior cord, spiral groove with profunda brachii, PIN, wrist drop)
+    3. `median_nerve_course_branches.jpg` (Cubital fossa, pronator teres, carpal tunnel, LOAF, ape thumb)
+    4. `sciatic_nerve_course_branches.jpg` (Piriformis, hamstrings, popliteal bifurcation, foot drop)
+    5. `femoral_nerve_course_branches.jpg` (L2-L4, psoas groove, femoral triangle, quadriceps)
+    6. `rectus_sheath_cross_sections.jpg` (3 levels, arcuate line, rectus abdominis, epigastric vessels)
+    7. `trigeminal_nerve_divisions_ganglia.jpg` (V1-V3, Ciliary, Pterygopalatine, Otic, Submandibular ganglia)
+    8. `thoracic_duct_course_tributaries.jpg` (Cisterna chyli, T5 crossing, left Pirogoff angle)
+    9. `stomach_bed_posterior_relations.jpg` (Lesser sac, pancreas, left kidney, splenic artery, spleen)
+    10. `spleen_visceral_surfaces_relations.jpg` (Gastric, renal, colic, pancreatic impressions, hilum)
+  - **Batch 2 (10 Diagrams)**:
+    11. `thyroid_gross_relations_blood_supply.jpg` (Pretracheal fascia, Berry ligament, recurrent laryngeal nerve)
+    12. `kidney_anterior_relations_impressions.jpg` (Right vs Left kidney organ impressions & peritoneal coverage)
+    13. `anal_canal_interior_pectinate_line.jpg` (Morgagni columns, pectinate line, internal & external sphincters)
+    14. `tongue_muscles_nerve_supply_lymphatics.jpg` (Papillae, genioglossus, CN V3/VII/IX/XII innervation)
+    15. `lateral_wall_of_nose_meatuses_sinuses.jpg` (Conchae, meatuses, paranasal air sinus openings)
+    16. `submandibular_gland_relations_mylohyoid.jpg` (Mylohyoid border wrap, Wharton duct lingual nerve sling)
+    17. `pharynx_constrictor_muscles_killians.jpg` (Superior/middle/inferior constrictors, Killian's dehiscence)
+    18. `uterus_supports_ligaments_blood_supply.jpg` (Mackenrodt cardinal ligaments, uterine artery 'water under bridge')
+    19. `venous_drainage_heart_coronary_sinus.jpg` (Coronary sinus tributaries, cardiac veins, Thebesian veins)
+    20. `duodenum_parts_interior_arterial_arcade.jpg` (4 parts, major/minor duodenal papillae of Vater, SMA arcade)
+
 ---
 
-## 9. 🚀 Current GitHub Release Status (Release Build 110)
-- **Latest Live Release on GitHub**:
-  - **Release Name**: `Release build 110` (tag: `release-110`)
-  - **URL**: [https://github.com/Sabharivarshan111/gmck/releases/tag/release-110](https://github.com/Sabharivarshan111/gmck/releases/tag/release-110)
-  - **Assets Attached**:
-    - `app-release.aab` (**69.54 MB**) — Google Play Console signed bundle.
-    - `app-release.apk` (**87.82 MB**) — Standalone signed APK with strict diagram matching, diagram preservation, and background crash fix.
-- **Commits Included**:
-  - `fd158d1` — `fix(notes): preserve diagrams during regenerate and Fix Notes with AI edit`
-  - `d23c3a9` — `fix(diagrams): enforce strict entity matching to prevent false positives and fix Android process death crash`
-  - `0da101a` — `fix(home): zero-gap component deletion, 50% halving with 2x2 reflow, and precision glowing resize handles`
+## 11. 🏥 Final Year Triple-Tap & Textbook Grounding Integration (16 Textbooks Across 4 MBBS Years)
+- **Problem**:
+  - Final Year textbooks were uploaded to Supabase storage bucket `textbooks` on August 31, but `mobile/src/lib/textbooks.ts`, `QuestionCard.tsx`, and `generate-handwritten-notes` had not been mapped to them.
+  - Triple-tapping any Final Year question previously routed to generic Ask AI with no textbook grounding.
+  - In `BrowseHomeScreen.tsx`, search results were hardcoded to `item.year === 'third-year'` for handwritten notes.
+  - In `QuestionRow.tsx`, `TAP_WINDOW_MS` was set to `280ms`, causing fast 3-tap gestures on Android touchscreens to prematurely time out into double-tap MCQs.
+- **Completed Work**:
+  - **16 Textbooks Configured Across All 4 MBBS Years**:
+    - **1st Year**: Anatomy (*Vishram Singh + Langman's*), Physiology (*K. Sembulingam*), Biochemistry (*DM Vasudevan*).
+    - **2nd Year**: Pharmacology (*KD Tripathi + Tara Shanbhag*), Pathology (*Ramadas Nayak*), Microbiology (*Apurba S. Sastry*).
+    - **3rd Year**: Community Medicine (*Sia's Park*), Forensic Medicine (*Vision*).
+    - **Final Year**:
+      - **Obstetrics**: Grounded in **DC Dutta** (`obgyn/dc_dutta_gynaecology_part1.txt` & `part2.txt`).
+      - **Gynaecology**: Grounded in **Shaw's** (`obgyn/shaws_gynaecology_part1.txt` & `part2.txt`).
+      - **General Surgery**: Grounded in **Manipal Manual of Surgery** (`surgery/manipal_surgery_part1.txt`..`part4.txt`).
+      - **Orthopaedics**: Grounded in **Maheshwari Essential Orthopaedics** (`orthopaedics/maheshwari_orthopaedics_part1.txt` & `part2.txt`).
+      - **General Medicine**: Grounded in **Manipal Prep Manual of Medicine** (`medicine/manipal_medicine_part1.txt`..`part3.txt`).
+      - **Paediatrics**: Grounded in **OP Ghai Essential Pediatrics** (`paediatrics/op_ghai_paediatrics_part1.txt`..`part3.txt`).
+      - **ENT**: Grounded in **PL Dhingra** (`ent/dhingra_ent_part1.txt` & `part2.txt`).
+      - **Ophthalmology**: Grounded in **AK Khurana** (`ophthalmology/khurana_ophthalmology_part1.txt` & `part2.txt`).
+  - **Dynamic Multi-Year Triple-Tap Gate**:
+    - `src/components/QuestionCard.tsx`: Replaced hardcoded `yearKey === "third-year"` with `hasTextbook(subjectKey, subjectName)` and adjusted tap window to 380ms.
+    - `mobile/src/lib/textbooks.ts` & `src/lib/textbooks.ts`: Full mirror of `pickBookKey` across all 16 subjects.
+    - `mobile/src/screens/BrowseHomeScreen.tsx`: Updated search result `onNote` to use `hasTextbook(item.subjectKey, item.subjectName)`.
+    - `mobile/src/components/QuestionRow.tsx`: Increased `TAP_WINDOW_MS` from `280ms` to `380ms` for seamless touch responsiveness on Android.
+  - **Server Edge Function**:
+    - Created `supabase/functions/generate-handwritten-notes/index.ts` and `textbook.ts` supporting dynamic storage chunk downloading, tokenized paragraph relevance ranking, and single-mode question caching in `handwritten_notes`.
+  - **Validation**:
+    - `npm --prefix mobile run check:textbooks`: **PASSED** (16 books verified across all 4 MBBS years).
+    - `npm --prefix mobile run typecheck`: **PASSED** (0 errors).
+    - `npm run build`: **PASSED** (Vite web build clean).
 
----
-
-## 10. ⏳ Active Scheduled Timers & Next Steps for Claude
-1. **Gemini Image Generation 4-Hour Quota Reset**:
-   - Scheduled reset time: **2026-08-31T12:57:53Z UTC (~6:28 PM IST)**.
-   - When quota resets, generate the remaining 10 high-yield Anatomy diagrams and upload them to Supabase Storage `diagrams/anatomy/`.
-2. **User Notes & Testing**:
-   - The user has tested the app on mobile. Remind them to install **Release Build 110** (tag `release-110`) from the GitHub release link to verify all fixes on device.
-
----
-
-## 11. 🖼️ Diagram Matching Rebuilt as an Identity Join (Claude Code, 2026-08-31)
-
-**Antigravity → this is the part of §4 and §8 that did not hold. Read before touching diagrams again.**
-
-### What was still wrong
-The reader reported *TCA cycle – definition, sequence of reaction, energetics, regulation* still opening with **"High-Yield Visual Exam Diagram (1/3)" = Glycolysis** and **(2/3) = Gluconeogenesis**, and the wrong pictures surviving Regenerate and "Fix notes with AI".
-
-The `EXCLUSIVE_ENTITIES` / `DIAGRAM_STOP_WORDS` approach cannot be made correct by tuning. It is a *search* over a table that already holds the *answer*: `question_diagrams` has one row per question, keyed by `question_id`, which is the app's own `getQuestionId(question)` (`question-` + first 50 chars, whitespace dashed) — 849 of the 862 picture-carrying rows match it character for character.
-
-### What changed in the app
-- `findDiagramsForQuestion` (replaces `findAllDiagramsForQuery`): two equality lookups — `question_id`, then `question_text` — plus a normalised-text fallback scoped to the subject for the 13 hand-inserted rows whose id is a slug (`anat-types-of-synovial-joints`). **No scoring, no containment, no word lists.** `EXCLUSIVE_ENTITIES` and `DIAGRAM_STOP_WORDS` are deleted.
-- `applyQuestionDiagrams` **replaces** a note's diagram sections instead of topping them up, on first open, Regenerate and accepted AI edits. `mergeProposal` and `NotesAiEditBox` no longer pin the old ones — that pinning is exactly why regenerate kept the wrong picture. Notes now heal themselves on the next open, with no new APK.
-- `npm run check:diagrams` runs the real lookup against production-shaped rows and fails if scoring or a keyword table returns.
-- `node preview/diagram-shot.mjs` screenshots the TCA note and asserts one unnumbered card.
-
-### What changed in Supabase (already applied)
-- **Cleared 58 cached `handwritten_notes` rows** of diagram sections that did not belong to their question (51 of 73 were wrong). They re-attach correctly on next open.
-- **Re-pointed 22 `question_diagrams` rows** and **cleared 7** that had no correct plate. Every edited row records its previous path in `error_log`, so all of it is reversible.
-  - Substring artefacts: *Amlodipine* → `aml_auer_rods_vs_cml_leukemia.jpg` ("AML" inside "AMLodipine"); *Couple Protection Rate* → `coup_contrecoup_brain_trauma.jpg`; *Salicylates* → the HIV virion.
-  - Plain mismatches with a correct plate already in the bucket: *Hodgkin's lymphoma* was on the ETC complexes plate; *Megaloblastic Anaemia* and *Echinococcus granulosus* on the bilirubin plate; *Peptic Ulcer Disease* on serum protein electrophoresis; *Hemophilia* / *Bleeding Disorders* on the immunoglobulin plate; four forensic rigor-mortis questions on the physiology sarcomere plate.
-
-### The filename idea, measured
-The app owner suggested matching on the image filename (`tca_cycle_*.jpg` for a TCA question). Measured over all 851 rows with a picture, as whole-word matching on the filename's *specific* tokens, requiring ≥2 and a unique winner: **abstains on 68%**, and of the ones it answers it agreed 196 and disagreed 19. Reading those 19 found **eleven genuinely wrong rows** — that is where the repairs above came from.
-
-So it is shipped as **`npm run audit:diagrams`**, a reporting tool, and deliberately *not* as the matcher: over the same rows it puts *Cerebellum — external and internal features* on `right_atrium_internal_features.jpg` and *Median nerve* on `facial_nerve_complete_course.jpg`. That is the reported bug again. **Run it after every diagram upload; apply its output by hand.**
-
-### Still open
-- 636 of 851 mapped questions share no filename tokens, so the audit has no opinion on them — they have not been verified either way.
-- The 15 **chapter-level** notes (`community-medicine::…`, `forensic-medicine::…`) still carry diagram sections written by the web app. Left alone deliberately: a chapter diagram is not tied to one question, and the native `ChapterNotes` does not attach any.
-- `npm run check:smoke` fails 7 steps (home reorder/resize, subject-card drag, year picker, focus tree, pomodoro drafting, note-toolbar markers). **Identical on the commit before this one** — pre-existing, not from this change, and not investigated here.

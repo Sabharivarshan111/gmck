@@ -39,6 +39,14 @@ const SERVER_RULES = [
   ['physiology', ['physiolog']],
   ['biochemistry', ['biochem']],
   ['anatomy', ['anatom', 'embryo', 'histolog', 'osteolog']],
+  ['obstetrics', ['obstet']],
+  ['gynaecology', ['gynae', 'gynec', 'gynaec']],
+  ['orthopaedics', ['ortho']],
+  ['surgery', ['surg']],
+  ['medicine', ['medicine', 'general-medicine']],
+  ['paediatrics', ['paediat', 'pediatr']],
+  ['ent', ['ent', 'otorhinolaryng', 'otolaryngol']],
+  ['ophthalmology', ['ophthalm', 'eye']],
 ];
 
 const source = await fs.readFile(path.join(root, 'src/lib/textbooks.ts'), 'utf8');
@@ -80,13 +88,13 @@ check(
   "the note gate is back to comparing the year — it must follow the subject's textbook",
 );
 
-// 4. Every subject in the shipped bank lands where it should. This is the part
-//    that would have caught the original bug on its own.
+// 4. Every subject in the shipped bank lands where it should.
 const bank = await fs.readFile(path.join(root, '..', 'src/data/questionBankData.ts'), 'utf8');
 const EXPECTED = {
   'first-year': ['anatomy', 'physiology', 'biochemistry'],
   'second-year': ['pharmacology', 'pathology', 'microbiology'],
   'third-year': ['forensic-medicine', 'community-medicine'],
+  'final-year': ['general-medicine', 'obstetrics-gynaecology', 'general-surgery', 'paediatrics', 'ent', 'ophthalmology'],
 };
 const matches = (subject) => {
   const s = subject.toLowerCase();
@@ -97,10 +105,6 @@ for (const [year, subjects] of Object.entries(EXPECTED)) {
   for (const subject of subjects) {
     check(matches(subject), `${year}/${subject} has a textbook on the server but does not match — it would be silently turned away`);
   }
-}
-// Final year has no books, and must not pretend to.
-for (const subject of ['general-medicine', 'obstetrics-gynaecology', 'ent', 'ophthalmology', 'paediatrics']) {
-  check(!matches(subject), `${subject} matched a book — final year has none, so this note would be ungrounded`);
 }
 
 // 5. No textbook is ever named to the reader.
@@ -154,6 +158,6 @@ if (failures.length > 0) {
   process.exit(1);
 }
 process.stdout.write(
-  `OK  ${SERVER_RULES.length} books mirrored across 3 years, final year correctly has none, ` +
+  `OK  ${SERVER_RULES.length} books mirrored across all 4 MBBS years, ` +
     `no book named in ${uiFiles.length} source files\n`,
 );
