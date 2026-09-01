@@ -50,6 +50,7 @@
     "check:edges": "node scripts/edge-to-edge-check.mjs",
     "check:trees": "node scripts/trees-check.mjs",
     "check:music": "node preview/music-shot.mjs",
+    "check:tour": "node scripts/tour-check.mjs",
     "check:glass-shader": "node scripts/glass-shader-check.mjs",
     "check:bot": "node --experimental-strip-types --no-warnings scripts/bot-check.mjs",
     "check:bot-faces": "node preview/bot-shot.mjs",

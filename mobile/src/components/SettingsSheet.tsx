@@ -5,7 +5,7 @@ import { Touchable } from '@/components/Touchable';
 import { Sheet } from '@/components/Sheet';
 import { NotificationBell } from '@/components/NotificationBell';
 import { Slider } from '@/components/Slider';
-import { BellRing, Check } from 'lucide-react-native';
+import { BellRing, Check, Compass } from 'lucide-react-native';
 import { useTheme, withAlpha } from '@/theme';
 import { radius, space } from '@/theme/tokens';
 import { typeScale } from '@/theme/typography';
@@ -23,6 +23,8 @@ import {
   CHIME_PRESETS,
 } from '@/lib/settings';
 import { tick } from '@/lib/haptics';
+import { CHAPTERS } from '@/tour/script';
+import { startTour } from '@/tour/store';
 import { previewSound, silencingReason, soundAvailable } from '@/lib/sound';
 import {
   DEFAULT_HOUR,
@@ -504,6 +506,44 @@ export function SettingsSheet({
         </>
       ) : null}
 
+      {/*
+        The walkthrough, on demand.
+        Two reasons it is a list of chapters rather than one "replay" button.
+        The first run is eighteen steps and nobody comes back here wanting all
+        eighteen again — they have forgotten one thing, and being made to sit
+        through the other seventeen to reach it is why in-app tours get skipped
+        the first time. The second is that the tour is the only place several
+        of these features are explained at all, so it has to be reachable as
+        reference and not only as an introduction.
+      */}
+      <Text style={[styles.section, { color: colors.textMuted }]}>WALKTHROUGH</Text>
+      <View style={styles.tourRows}>
+        {CHAPTERS.filter(chapter => chapter.id !== 'welcome').map(chapter => (
+          <Touchable
+            key={chapter.id}
+            onPress={() => {
+              /*
+               * Close first. The tour points at controls on the screens behind
+               * this sheet, and a sheet left open would cover the first thing
+               * it tries to spotlight.
+               */
+              onClose();
+              tick();
+              startTour(chapter.id);
+            }}
+            label={`Walk me through ${chapter.name}`}
+            hint={chapter.blurb}
+            scaleTo={0.98}
+            style={[styles.tourRow, { borderColor: colors.border }]}>
+            <Compass size={16} color={colors.accent} />
+            <View style={styles.flex}>
+              <Text style={[styles.rowLabel, { color: colors.text }]}>{chapter.name}</Text>
+              <Text style={[styles.rowDetail, { color: colors.textMuted }]}>{chapter.blurb}</Text>
+            </View>
+          </Touchable>
+        ))}
+      </View>
+
       <Text style={[styles.footnote, { color: withAlpha(colors.text, 0.45) }]}>
         Themes and wallpaper live behind the moon button, next door.
       </Text>
@@ -578,6 +618,16 @@ function SoundPicker({
 }
 
 const styles = StyleSheet.create({
+  tourRows: { gap: space.sm },
+  tourRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: space.md,
+    paddingVertical: space.md,
+    paddingHorizontal: space.md,
+    borderRadius: radius.md,
+    borderWidth: StyleSheet.hairlineWidth,
+  },
   flex: { flex: 1 },
   preset: {
     flexDirection: 'row',

@@ -2594,6 +2594,175 @@ await step('a flashcard chapter opens, and a deck that cannot build offers a ret
   }
 });
 
+/**
+ * The first-run walkthrough, walked.
+ *
+ * The parts of it that can go wrong are all invisible from the code: a
+ * spotlight that lands on nothing because a label moved, a step that cannot be
+ * left, an overlay that swallows the press meant for the control it is
+ * pointing at. `check:tour` catches the label drift statically; this is the
+ * half that needs a browser.
+ *
+ * It walks every step of the real script rather than a sample, because the
+ * failure this most needs to catch — Next stops working somewhere in the
+ * middle — is invisible until the step it happens on.
+ */
+await step('the walkthrough runs end to end, and every step can be left', async () => {
+  /*
+   * A profile first. On a fresh install My Progress force-opens a
+   * non-dismissable profile sheet, the tour deliberately stands down for it,
+   * and this flow is about the tour rather than about that gate — which has
+   * its own coverage. Without this the run would legitimately stall on the
+   * step that navigates to My Progress.
+   */
+  await page.addInitScript(() => {
+    window.localStorage.setItem(
+      'orbit-profile-v1',
+      JSON.stringify({ display_name: 'Asha', year: 'second' }),
+    );
+  });
+  await open('tour=1');
+  await declineAdPromptIfShown();
+
+  const eyebrow = () => page.locator('text=/· [0-9]+ OF [0-9]+/').first().innerText();
+  const first = await eyebrow();
+  if (!/1 OF (\d+)/.test(first)) {
+    throw new Error(`the walkthrough did not start at its first step: "${first}"`);
+  }
+  const total = Number(/1 OF (\d+)/.exec(first)[1]);
+  if (total < 12) {
+    throw new Error(`the walkthrough is only ${total} steps — it has lost most of itself`);
+  }
+
+  for (let at = 1; at <= total; at += 1) {
+    const seen = await eyebrow();
+    if (!seen.includes(`${at} OF ${total}`)) {
+      throw new Error(`expected step ${at} of ${total}, the card says "${seen}"`);
+    }
+    // Every step, without exception. A first-run tour with a step you cannot
+    // skip out of is the reason people uninstall an app on day one.
+    if (!(await byLabel('Skip the walkthrough').count())) {
+      throw new Error(`step ${at} of ${total} offers no way to skip`);
+    }
+    const next = page
+      .locator('[aria-label^="Next:"], [aria-label^="Show me around"], [aria-label^="Finish the walkthrough"]')
+      .first();
+    if (!(await next.count())) {
+      throw new Error(`step ${at} of ${total} has no way forward`);
+    }
+    /*
+     * A plain click, not a forced one. The overlay is four scrim panels around
+     * a live hole, and the card sits on top of them — if a panel or the card's
+     * own wrapper ever covers its buttons, this is the assertion that says so.
+     * `force` would paper over exactly that bug.
+     */
+    await next.click({ timeout: 6000 });
+    await page.waitForTimeout(700);
+  }
+
+  if (await byLabel('Skip the walkthrough').count()) {
+    throw new Error('the walkthrough did not close after its last step');
+  }
+});
+
+/**
+ * The three gestures, rehearsed.
+ *
+ * A triple tap is the least discoverable thing in the app, and this step is the
+ * only place it is taught. The rehearsal has to actually respond, or it teaches
+ * nothing and looks broken in the one place a new reader is paying attention.
+ */
+await step('the walkthrough rehearses the tick, the double tap and the triple tap', async () => {
+  await open('tour=study');
+  await declineAdPromptIfShown();
+  await page.locator('[aria-label^="Next:"]').first().click({ timeout: 6000 });
+  await page.waitForTimeout(700);
+
+  const question = page.locator('[aria-label^="Practice question. Double tap"]').first();
+  await question.waitFor({ timeout: 4000 });
+  /*
+   * The rendered page, not a walk up from some anchor.
+   *
+   * Two earlier versions of this read the wrong node and reported a working
+   * demo as broken: one took the last line of an ancestor and got the "Next"
+   * caption, the next walked up looking for "Practice question" — which is an
+   * accessibility label and never appears as text at all, so the walk ran off
+   * the top of the document. The three sentences being asserted are unique on
+   * screen, so the page is the honest thing to read.
+   */
+  const cardText = () => page.locator('body').innerText();
+
+  await page.locator('[aria-label="Practice question, mark as done"]').first().click();
+  await page.waitForTimeout(400);
+  if (!/Ticked/.test(await cardText())) {
+    throw new Error('ticking the practice question said nothing about XP');
+  }
+
+  await question.click();
+  await question.click();
+  await page.waitForTimeout(700);
+  if (!/Double tap →/.test(await cardText())) {
+    throw new Error('a double tap on the practice question was not recognised');
+  }
+
+  await question.click();
+  await question.click();
+  await question.click();
+  await page.waitForTimeout(700);
+  if (!/Triple tap →/.test(await cardText())) {
+    throw new Error('a triple tap on the practice question was not recognised');
+  }
+
+  // Skip is the way out, and it has to actually end the tour rather than
+  // advance it.
+  await byLabel('Skip the walkthrough').click();
+  await page.waitForTimeout(500);
+  if (await byLabel('Skip the walkthrough').count()) {
+    throw new Error('Skip did not end the walkthrough');
+  }
+});
+
+/**
+ * Pressing the real control the tour is pointing at moves the tour on.
+ *
+ * This is the whole reason the scrim is four rectangles rather than one view
+ * with a hole painted on it: the reader is meant to press the actual button,
+ * and the actual button is meant to work. If the overlay ever starts eating
+ * that press, the tour still *looks* right and teaches nothing.
+ */
+await step('tapping the spotlighted control advances the walkthrough', async () => {
+  await open('tour=focus');
+  await declineAdPromptIfShown();
+  await page.locator('[aria-label^="Next:"]').first().click({ timeout: 6000 });
+  await page.waitForTimeout(800);
+
+  const eyebrow = () => page.locator('text=/· [0-9]+ OF [0-9]+/').first().innerText();
+  const before = await eyebrow();
+  // No `force`: the point is that the press reaches the control through the
+  // hole, exactly as a finger would.
+  await byLabel('Timer settings').click({ timeout: 6000 });
+  await page.waitForTimeout(1200);
+  const after = await eyebrow();
+  if (before === after) {
+    throw new Error(
+      `pressing the spotlighted control did not move the tour on — still at "${after}"`,
+    );
+  }
+  /*
+   * And the sheet it opened is genuinely open, which is the other half of the
+   * claim. The control was not merely observed being pressed: it did its job.
+   *
+   * That sheet is a `<Modal>`, so it is its own window and sits above the
+   * overlay — the tour is now on its next step *behind* it, which is the
+   * intended shape of this interaction rather than a defect: the reader tapped
+   * the button to see the sheet, they read it, they close it, and the tour has
+   * moved on. Nothing is left to click here, so this flow ends by navigating
+   * away rather than by pressing a Skip that is correctly covered.
+   */
+  await byLabel('Reset the pomodoro cycle').waitFor({ timeout: 6000 });
+  await open('screen=home');
+});
+
 await step('a diagram in prose renders as a picture, not as markdown', async () => {
   await open('screen=notesdemo');
   await seesText('High-Yield Visual Exam Diagram');

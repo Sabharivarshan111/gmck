@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { StatusBar, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
+import { navigationRef } from '@/navigation/ref';
 import { ThemeProvider, useTheme } from '@/theme';
 import RootNavigator from '@/navigation/RootNavigator';
 import { hydrateLastStudyDay, hydrateProgress, reconcileProgress } from '@/lib/progress';
@@ -14,6 +15,8 @@ import { DailyAdConsent } from '@/components/DailyAdConsent';
 import { XpToast } from '@/components/XpToast';
 import { syncReminders } from '@/lib/reminderSync';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { TourOverlay } from '@/components/TourOverlay';
+import { getTourState, hydrateTour, startTour } from '@/tour/store';
 
 function Shell() {
   const { theme, colors, hydrated } = useTheme();
@@ -57,6 +60,26 @@ function Shell() {
     // Load the cached ad-free expiry before any ad decision is made, then
     // start the SDK and preload so the first ad has no wait.
     hydratePremium().then(() => initializeAds()).catch(() => {});
+    /*
+     * Offer the walkthrough, once, on a phone that has not had it.
+     *
+     * After its own hydration and nowhere else: the record of having seen it
+     * is the only thing that decides, and starting before that read lands
+     * would show the tour to somebody who had already skipped it — the single
+     * most irritating thing a first-run tour can do.
+     *
+     * It is not gated on the profile or on any other hydration. The tour
+     * explains the app rather than the reader's data, so it has nothing to
+     * wait for, and a reader who has just installed the app is exactly who it
+     * is for.
+     */
+    hydrateTour()
+      .then(() => {
+        if (!getTourState().seen) {
+          startTour();
+        }
+      })
+      .catch(() => {});
   }, []);
 
   /**
@@ -92,13 +115,17 @@ function Shell() {
   };
 
   return (
-    <NavigationContainer theme={navTheme}>
+    <NavigationContainer theme={navTheme} ref={navigationRef}>
       {/* Android draws edge-to-edge in RN 0.87, so the bar is translucent and
           only the icon style is ours to set. */}
       <StatusBar barStyle={theme === 'dark' ? 'light-content' : 'dark-content'} />
       <RootNavigator />
       <DailyAdConsent />
       <XpToast />
+      {/* Last, so it paints over the tab bar and everything else — it is
+          explaining them. It is transparent to touches except where it draws,
+          so the app underneath stays usable while it is up. */}
+      <TourOverlay />
     </NavigationContainer>
   );
 }

@@ -8,6 +8,7 @@ import { useTheme } from '@/theme';
 import { DisplayNameError, type LocalProfile, type Year } from '@/lib/profile';
 import { YEAR_LABEL } from '@/lib/questionBank';
 import { YEAR_TO_KEY } from '@/lib/profile';
+import { setTourPaused } from '@/tour/store';
 
 const YEARS: Year[] = ['first', 'second', 'third', 'final'];
 
@@ -29,6 +30,21 @@ export function ProfileSheet({
   dismissable?: boolean;
 }) {
   const { colors } = useTheme();
+
+  /*
+   * Non-dismissable and visible means this is the fresh-install gate, and
+   * nothing may compete with it. The walkthrough is told so it can stand down
+   * — it is a modal, it is above everything drawn in the app tree, and a tour
+   * arguing with a form the reader cannot escape is the worst of both.
+   */
+  const blocking = visible && !dismissable;
+  useEffect(() => {
+    if (!blocking) {
+      return;
+    }
+    setTourPaused(true);
+    return () => setTourPaused(false);
+  }, [blocking]);
 
   const [name, setName] = useState('');
   const [year, setYear] = useState<Year>('second');

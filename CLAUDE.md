@@ -33,6 +33,7 @@ when picking up work that was last touched from the other tool.
 | `.agents/rules/93-focus-trees.md` | The focus timer's trees — twelve species drawn from numbers, why they lean towards the theme rather than take it, and the wilt rule |
 | `.agents/rules/94-textbook-grounded-diagram-engine.md` |  |
 | `.agents/rules/95-release-and-pipeline-engine.md` |  |
+| `.agents/rules/96-walkthrough.md` | The first-run walkthrough — how it finds a control by its accessibility label, why the scrim is four rectangles rather than one, and the one thing it may never name |
 <!-- rules:end -->
 
 This repo is worked on from Claude Code *and* Antigravity, sometimes on the
@@ -1483,6 +1484,7 @@ npm run check:music              # the player opens below its button, and plays
 npm run check:glass-shader       # the AGSL pane is gated, layered, and never load-bearing
 npm run check:diagrams           # a question shows its own diagram, or none
 npm run check:apkg               # an Anki package imports, and not its decoy collection
+npm run check:tour               # the walkthrough points at controls that exist, and names no book
 npm run check:mcq                # MCQ response parsing + the ask-gemini markers
 npm run check:notes-limits       # every topic still fits the notes function's schema
 npm run check:smoke              # drives the real screens; 18 flows, 0 crashes

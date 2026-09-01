@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import {
   Animated,
   Pressable,
@@ -13,6 +13,12 @@ import { SPRING, springTo, useReducedMotion } from '@/theme/motion';
 import { useReorderLocked } from '@/components/ReorderLock';
 import { tap as hapticTap } from '@/lib/haptics';
 import { playTap } from '@/lib/sound';
+import {
+  isTourTarget,
+  notifyTourPress,
+  registerTourTarget,
+  unregisterTourTarget,
+} from '@/tour/store';
 
 /**
  * The app's press target.
@@ -111,6 +117,33 @@ export function Touchable({
   const locked = useReorderLocked();
   const pressed = useRef(new Animated.Value(0)).current;
 
+  /**
+   * The walkthrough finds controls by their accessibility label, and this is
+   * the whole of what makes that work — no screen registers anything, and no
+   * component had to be touched to become tourable.
+   *
+   * It is gated on `isTourTarget`, a Set lookup against the labels the tour
+   * script actually names. That gate is not tidiness: this component is in
+   * every row of a five-hundred-row question list, and a ref plus an effect
+   * per row for a feature that runs once, for two minutes, on the first
+   * launch, would be a cost paid by every reader for ever. Eighteen labels
+   * pay it; nothing else does.
+   *
+   * Addressing by label is also the same handle `check:smoke` uses, on the
+   * same reasoning: a control the tour cannot find is one TalkBack cannot
+   * announce either.
+   */
+  const isTarget = isTourTarget(label);
+  const tourRef = useRef<React.ComponentRef<typeof Pressable> | null>(null);
+  useEffect(() => {
+    const node = tourRef.current;
+    if (!isTarget || !node) {
+      return;
+    }
+    registerTourTarget(label, node);
+    return () => unregisterTourTarget(label, node);
+  }, [isTarget, label]);
+
   const animateTo = useCallback(
     (value: number) => {
       // SPRING.snappy: critically damped and quick. Press feedback must never
@@ -185,7 +218,20 @@ export function Touchable({
       aria-selected={state?.selected}
       aria-expanded={state?.expanded}
       aria-busy={state?.busy}
-      onPress={locked ? undefined : onPress}
+      ref={isTarget ? tourRef : undefined}
+      onPress={
+        locked
+          ? undefined
+          : isTarget
+            ? () => {
+                onPress?.();
+                // After the control's own handler, and on press rather than
+                // press-in: the tour follows a press that actually completed,
+                // so a finger put down and slid off does not move it on.
+                notifyTourPress(label);
+              }
+            : onPress
+      }
       onLongPress={locked ? undefined : onLongPress}
       onPressIn={onPressIn}
       onPressOut={onPressOut}

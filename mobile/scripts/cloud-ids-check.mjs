@@ -78,6 +78,15 @@ const LOCAL_ONLY = [
    * played from app storage and it goes nowhere.
    */
   { file: 'src/lib/music.ts', what: 'music picked from this phone' },
+  /*
+   * Whether somebody has seen the walkthrough is not a fact about them worth
+   * putting on a server, and there is nothing to keep in step: a fresh install
+   * is a fresh phone and should be offered the tour again. A sync here would
+   * be pure downside — a reinstalled app that silently skipped its own
+   * introduction because a row somewhere remembered a phone that no longer
+   * exists.
+   */
+  { file: 'src/tour/store.ts', what: 'whether this phone has had the walkthrough' },
 ];
 
 for (const { file, what } of LOCAL_ONLY) {

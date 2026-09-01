@@ -8,6 +8,7 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { SafeAreaProvider, initialWindowMetrics } from 'react-native-safe-area-context';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
+import { navigationRef } from '@/navigation/ref';
 import type { InitialState } from '@react-navigation/native';
 import { ThemeProvider, useTheme } from '@/theme';
 import { Bot } from '@/components/Bot';
@@ -18,6 +19,9 @@ import { hydrateSettings } from '@/lib/settings';
 import { hydrateProfile, hydrateStreak } from '@/hooks/useProfile';
 import { DailyAdConsent } from '@/components/DailyAdConsent';
 import { XpToast } from '@/components/XpToast';
+import { TourOverlay } from '@/components/TourOverlay';
+import { startTour } from '@/tour/store';
+import type { ChapterId } from '@/tour/script';
 import { hydratePremium } from '@/lib/premium';
 import { hydrateWallpaper } from '@/hooks/useWallpaper';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
@@ -97,6 +101,16 @@ const nodePath = params.get('node');
 const nodeYear = params.get('year') ?? 'second-year';
 const nodeTitle = params.get('title') ?? 'Topic';
 const themeParam = params.get('theme') === 'light' ? 'light' : 'dark';
+/**
+ * The walkthrough, started only when asked for.
+ *
+ * It must **never** start on its own here. `hydrateTour` is not called in the
+ * preview, so nothing sets `seen` and nothing calls `startTour` — which is the
+ * point: an overlay that appeared by default would cover the screen for all
+ * sixty-one existing smoke steps and fail every one of them for a reason that
+ * has nothing to do with what they test.
+ */
+const tourParam = params.get('tour');
 
 const tabIndex = Math.max(
   0,
@@ -855,6 +869,11 @@ function Shell() {
     hydrateStreak().catch(() => {});
     hydratePremium().catch(() => {});
     hydrateWallpaper().catch(() => {});
+    // Only on request. `?tour=1` runs the whole thing; `?tour=focus` runs one
+    // chapter. Never by default — see tourParam.
+    if (tourParam) {
+      startTour(tourParam === '1' ? undefined : (tourParam as ChapterId));
+    }
   }, []);
 
   const base = theme === 'dark' ? DarkTheme : DefaultTheme;
@@ -994,10 +1013,11 @@ function Shell() {
   }
 
   return (
-    <NavigationContainer theme={navTheme} initialState={buildInitialState()}>
+    <NavigationContainer theme={navTheme} ref={navigationRef} initialState={buildInitialState()}>
       <RootNavigator />
       <DailyAdConsent />
       <XpToast />
+      <TourOverlay />
     </NavigationContainer>
   );
 }
