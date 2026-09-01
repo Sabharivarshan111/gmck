@@ -733,6 +733,21 @@ function ImportDecksView({
               styling: cards are shown as text here rather than as web pages, so a deck's own
               fonts and colours are not kept.
             </Text>
+
+            {/*
+              Said once, where the name is actually used.
+
+              This app reads and writes Anki's file format so decks can move
+              between the two — that is interoperability, and saying so is
+              allowed. What is not allowed is looking like Anki's product or
+              like something Anki endorsed, and the difference between those
+              two is a sentence.
+            */}
+            <Text style={[styles.hint, { color: colors.textMuted, marginTop: 12 }]}>
+              Anki is a trademark of Ankitects Pty Ltd. Orbit is not affiliated with, endorsed
+              by or supported by Ankitects — it reads and writes the .apkg format so your decks
+              can move between the two.
+            </Text>
           </View>
         </>
       )}

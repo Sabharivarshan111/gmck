@@ -81,6 +81,23 @@ for (const { file, what } of LOCAL_ONLY) {
     continue;
   }
   const body = strip(raw);
+  /*
+   * The import itself, not just a call.
+   *
+   * This checked only for *usage* — a `.from("table")` or a `supabase.` — and
+   * CLAUDE.md has always said it "fails if either so much as imports the
+   * Supabase client". It did not. Adding the import and using it through an
+   * alias, or adding it today and using it in six months, both passed.
+   *
+   * The import is the honest line to draw: a file that has no reason to reach
+   * the network has no reason to name the client at all, and catching it at
+   * the import is the difference between a rule and a hope.
+   */
+  check(
+    !/import[^;]*from\s*["'`][^"'`]*supabase[^"'`]*["'`]/.test(body),
+    `${file} imports the Supabase client, but ${what} are on-device only. ` +
+      `Nothing here may read, write or upload — see the note at the top of the file.`,
+  );
   check(
     !/from\s*\(\s*["'`]/.test(body) && !/supabase\s*\./.test(body),
     `${file} talks to Supabase, but ${what} are on-device only. Nothing here may ` +

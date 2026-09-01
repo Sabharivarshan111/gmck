@@ -531,8 +531,15 @@ export function parseLegacyDecks(decksJson: string): { id: string; name: string 
 /* ------------------------------------------------------------------ cloze */
 
 /*
- * Ported from anki's rslib/src/cloze.rs, which is the only definition of this
- * syntax there is. The shape is `{{c1::hidden text}}` with two extensions that
+ * **Written to match the cloze syntax's behaviour, not translated from anki's
+ * source.** The syntax is a data format — it is what makes a deck readable in
+ * more than one program — and a format is not copyrightable; anki's code is
+ * AGPL-3.0 and none of it is here. `rslib/src/cloze.rs` is the only precise
+ * written description of the syntax that exists, so it is what the behaviour
+ * below was checked against, and `npm run check:apkg` asserts that behaviour
+ * against real .apkg files rather than against anyone's code.
+ *
+ * The shape is `{{c1::hidden text}}` with two extensions that
  * both turn up constantly in medical decks and are silently wrong if dropped:
  *
  *   {{c1::text::hint}}   a hint, shown in the brackets instead of "..."

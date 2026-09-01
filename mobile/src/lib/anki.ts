@@ -1,8 +1,21 @@
 /**
  * Anki's scheduler, as Anki actually implements it.
  *
- * Ported from ankitects/anki `rslib/src/scheduler/states/` and the default deck
- * config in `rslib/src/deckconfig/`. This is deliberately **not**
+ * **Written to match Anki's observable behaviour, not translated from its
+ * source.** The distinction is legal as much as technical, so it is recorded
+ * here rather than left to be guessed at later: Anki is AGPL-3.0, and code
+ * copied from it would put this whole app under that licence. Nothing is
+ * copied. What is reproduced is the *behaviour* — an algorithm and a set of
+ * default numbers, neither of which is copyrightable.
+ *
+ * The algorithm is SM-2, published by Piotr Wozniak for SuperMemo in the
+ * 1980s and reimplemented in dozens of programs since. The constants below
+ * are Anki's published defaults, which are facts about how Anki behaves; they
+ * are checked against `rslib/src/scheduler/states/` and
+ * `rslib/src/deckconfig/` the way one checks an answer, and asserted in
+ * `npm run check:anki` as behaviours rather than as code.
+ *
+ * This is deliberately **not**
  * `spacedRepetition.ts`: that one mirrors the server's `review_question` SQL,
  * which is plain SM-2 with no sub-day scheduling. Anki is a different machine —
  * a card walks learning steps in *minutes* before it ever earns a day-scale

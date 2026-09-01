@@ -72,6 +72,36 @@ there is no way around it: everything modern Anki exports is zstd. Its ProGuard
 keep is load-bearing — R8 cannot see JNI callbacks, so without it the importer
 works in every test build and fails only in the shipped one.
 
+## The name is used for compatibility, and that has rules
+
+Anki's code is **AGPL-3.0** and AnkiDroid's is **GPL-3.0**. Neither is in this
+repository and neither may be added: copied code would put this whole app under
+that licence. What is reproduced is *behaviour* — a file format and a published
+algorithm (SM-2), neither of which is copyrightable. `mobile/src/lib/anki.ts`,
+`mobile/src/lib/apkgFormat.ts` and `mobile/scripts/anki-check.mjs` say so at the
+top; do not reintroduce the phrase "ported from", because it describes something
+that did not happen and is the first thing anyone auditing this would search for.
+
+"Anki" is a trademark of Ankitects Pty Ltd. Three rules follow:
+
+- **It is never in the app's name.** `app_name` is `Orbit MBBS` and stays that.
+- **It is never in the Play Store listing's title**, and the listing must carry
+  the same disclaimer the import screen does. That is a Play Console change, not
+  a code change, so it is written here rather than being enforceable by a check:
+
+      Anki is a trademark of Ankitects Pty Ltd. Orbit is not affiliated with,
+      endorsed by or supported by Ankitects.
+
+- **In the app it describes compatibility, not identity.** "Import your Anki
+  cards" and "Anki-style flashcards" say the true thing. A heading reading
+  "Anki flashcards" does not, and was changed for that reason.
+
+Shared decks a reader downloads are somebody else's copyrighted work. The app
+imports them **on the device and never uploads them**, which is the difference
+between a reader using their own file and this app redistributing it — and it is
+why `check:cloud-ids` listing `importedDecks.ts` is doing legal work as well as
+engineering work. Do not add a sync for imported decks.
+
 ## An imported deck is not a `CustomDeck`
 
 The decks you write are one AsyncStorage value with pictures inline. A shared

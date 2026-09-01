@@ -302,14 +302,14 @@ function YearsView({
 
       <Touchable
         onPress={onFlashcards}
-        label="Anki flashcards, browse decks by year"
+        label="Anki-style flashcards, browse decks by year"
         scaleTo={0.97}
         style={[styles.extraCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
         <View style={[styles.extraIcon, { backgroundColor: withAlpha(colors.accent, 0.15) }]}>
           <Layers size={18} color={colors.accent} />
         </View>
         <View style={styles.flex}>
-          <Text style={[styles.extraTitle, { color: colors.text }]}>Anki flashcards</Text>
+          <Text style={[styles.extraTitle, { color: colors.text }]}>Anki-style flashcards</Text>
           <Text style={[styles.extraSub, { color: colors.textMuted }]}>
             Theory and diagram cards for any chapter, scheduled the way Anki does it
           </Text>

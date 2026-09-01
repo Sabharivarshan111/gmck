@@ -1,9 +1,15 @@
 // The flashcard scheduler must behave like Anki, because it says it does.
 //
-// Ported from ankitects/anki rslib/src/scheduler/states/ and the default deck
-// config. Every assertion here is a behaviour Anki's own tests assert, so a
-// change that breaks one is a change that stopped being Anki — at which point
-// the name on the button is a lie about how the card will come back.
+// Every assertion here is a *behaviour*, checked against how Anki is
+// documented and observed to behave — not against its code, which is AGPL-3.0
+// and none of which is in this repository. A behaviour that breaks is a change
+// that stopped being Anki, at which point the name on the button is a lie
+// about how the card will come back.
+//
+// The algorithm is SM-2, published for SuperMemo in the 1980s; the constants
+// are Anki's published defaults. Neither an algorithm nor a default value is
+// copyrightable, which is what makes reimplementing them from behaviour the
+// right thing to do rather than merely a convenient one.
 //
 //   node scripts/anki-check.mjs
 import { build } from 'esbuild';
