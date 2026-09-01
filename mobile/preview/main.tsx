@@ -497,6 +497,10 @@ function UserNotesDemo() {
     `# Blood Supply of a Long Bone\n## Arterial Supply & Microcirculation\nThe arterial supply of a growing long bone is derived from **four primary arterial sources**:\n\n- **Nutrient Artery**: Enters obliquely via the nutrient canal in the diaphysis, dividing into ascending and descending medullary branches.\n- **Epiphyseal Arteries**: Arise from periarticular anastomoses, supplying the non-articular epiphysis.\n- **Metaphyseal Arteries**: Form hairpin vascular loops beneath the epiphyseal growth plate.\n- **Periosteal Arteries**: Supply the outer 1/3rd of the compact bone cortex.\n\n1. High clinical importance in ==y:acute hematogenous osteomyelitis==.\n2. Metaphyseal hairpin loops are the ==p:most common site for bacterial emboli== in pediatric patients!\n3. Haversian canals run longitudinally containing central ==b:neurovascular bundles==.`,
   );
   const [selection, setSelection] = React.useState({ start: 0, end: 0 });
+  const [forcedSelection, setForcedSelection] = React.useState<{
+    start: number;
+    end: number;
+  } | null>(null);
 
   return (
     <ScrollView
@@ -578,15 +582,35 @@ function UserNotesDemo() {
             selection={selection}
             isPreview={false}
             onTogglePreview={() => setMode('preview')}
-            onChange={(text, cursor) => {
+            /*
+             * The third argument is what keeps the words selected after a
+             * format, and this screen used to drop it — so pressing Bold and
+             * then Italic put `__` after the bolded word instead of around it,
+             * and two styles on one word were unreachable *here* while working
+             * perfectly in the app. `ProgressNotesTab` has always honoured it.
+             *
+             * That drift is the reason this demo exists at all: it is what the
+             * toolbar is tested through, so a demo that is easier on the
+             * toolbar than the real screen is a test that passes for a feature
+             * nobody can use. Keep the two the same shape.
+             */
+            onChange={(text, cursor, select) => {
               setContent(text);
-              setSelection({ start: cursor, end: cursor });
+              const next = select ?? { start: cursor, end: cursor };
+              setSelection(next);
+              setForcedSelection(next);
             }}
           />
           <TextInput
             value={content}
             onChangeText={setContent}
-            onSelectionChange={e => setSelection(e.nativeEvent.selection)}
+            onSelectionChange={e => {
+              setSelection(e.nativeEvent.selection);
+              setForcedSelection(null);
+            }}
+            // Controlled only for the frame after a toolbar press, the same as
+            // the real screen: pinning it would fight every tap in the text.
+            selection={forcedSelection ?? undefined}
             multiline
             textAlignVertical="top"
             numberOfLines={12}

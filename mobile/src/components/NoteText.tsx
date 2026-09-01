@@ -40,10 +40,26 @@ export function parseNote(content: string): NoteBlock[] {
     if (line.length === 0) {
       return { kind: 'blank' };
     }
-    // "- item", "* item", "• item", "+ item", "– item", "— item"
-    const bullet = line.match(/^[-*•+–—]\s*(.*)$/);
-    if (bullet && bullet[1].length > 0) {
-      return { kind: 'bullet', text: bullet[1] };
+    /*
+     * "- item", "• item", "+ item", "– item", "— item", and "* item".
+     *
+     * **The asterisk is the awkward one and it needs its own rule.** It starts
+     * a bullet and it also starts `*italic*` and `**bold**`, and this used to
+     * be one lenient pattern — `^[-*•+–—]\s*(.*)$` — which made *every* line
+     * beginning with an asterisk a bullet. So pressing Bold at the start of a
+     * line produced `**word**`, which came back as a bullet whose text was
+     * `*word**`, and the reader saw a bullet point with asterisks in it and no
+     * bold anywhere. The Bold button could not work on a line that began with
+     * it, which is most of the lines anybody presses it on.
+     *
+     * Markdown's own answer is the fix: a `*` bullet requires a space after
+     * it. `* item` is a list; `*italic*` and `**bold**` are not. The other
+     * markers stay lenient because none of them mean anything else, and people
+     * do type "-item" without the space.
+     */
+    const bullet = line.match(/^[-•+–—]\s*(.*)$/) || line.match(/^\*[^\S\n](\s*.*)$/);
+    if (bullet && bullet[1].trim().length > 0) {
+      return { kind: 'bullet', text: bullet[1].trim() };
     }
     // "1. item", "2) item", "3: item"
     const numbered = line.match(/^(\d{1,3})[.)\]:]\s*(.*)$/);
@@ -56,10 +72,15 @@ export function parseNote(content: string): NoteBlock[] {
       const cleanHeading = hash[2].replace(/\s*#+\s*$/, '');
       return { kind: 'heading', text: cleanHeading, level: hash[1].length === 1 ? 1 : 2 };
     }
-    const wrapped = line.match(/^\*\*(.+)\*\*$/) || line.match(/^__(.+)__$/);
-    if (wrapped && wrapped[1].length > 0) {
-      return { kind: 'heading', text: wrapped[1], level: 2 };
-    }
+    /*
+     * A line that is entirely bold used to become a subheading, on the guess
+     * that somebody typing `**Title**` on its own meant a heading. That guess
+     * predates the toolbar. Now there are H1 and H2 buttons, and the guess
+     * actively fights the Bold button next to them: select a word, press
+     * Bold, and the line would come back a different size with a margin above
+     * it — which is not what the button says it does. Bold makes bold; the
+     * heading buttons make headings.
+     */
     return { kind: 'text', text: line };
   });
 }

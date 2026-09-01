@@ -106,6 +106,27 @@ export function nextNumber(text: string, at: number): string {
  * like `**bold**` or `==highlight==` never break when Android's native text
  * selection includes trailing spaces.
  */
+/**
+ * The word the caret is in, or null if it is not in one.
+ *
+ * A hyphen and an apostrophe count as part of a word, because the words this
+ * gets pressed on are things like `beta-blocker` and `Meckel's`, and bolding
+ * half of one is worse than bolding none of it.
+ */
+export function wordAround(text: string, at: number): { start: number; end: number } | null {
+  const isWord = (char: string | undefined) => !!char && /[\p{L}\p{N}'’-]/u.test(char);
+
+  let start = at;
+  let end = at;
+  while (start > 0 && isWord(text[start - 1])) {
+    start -= 1;
+  }
+  while (end < text.length && isWord(text[end])) {
+    end += 1;
+  }
+  return end > start ? { start, end } : null;
+}
+
 export function toggleWrap(
   text: string,
   selection: Selection,
@@ -119,11 +140,33 @@ export function toggleWrap(
     end = tmp;
   }
   if (end === start) {
-    // Nothing selected: leave a pair with the cursor between them, ready to type into.
-    return {
-      text: `${text.slice(0, start)}${open}${close}${text.slice(start)}`,
-      cursor: start + open.length,
-    };
+    /*
+     * Nothing selected, so take the word the caret is sitting in.
+     *
+     * It used to drop an empty `****` at the caret and put the cursor between
+     * the pair, which is the right answer only if the next thing that happens
+     * is typing. What actually happens is that the caret is somewhere in a
+     * word — you read the line back, decide *that* is the important one, and
+     * press Bold — and the reader was left with a stray `****` in the middle
+     * of their note and nothing emphasised. The report came with a photograph
+     * of exactly that: `**jjhyyyy******`.
+     *
+     * Selecting a word first is the discoverable way to do this and it still
+     * works; this makes the undiscoverable way do something useful instead of
+     * something untidy.
+     */
+    const word = wordAround(text, start);
+    if (word) {
+      start = word.start;
+      end = word.end;
+    } else {
+      // On whitespace, or an empty line: there is nothing to wrap, so leave
+      // the pair open with the cursor between them, ready to type into.
+      return {
+        text: `${text.slice(0, start)}${open}${close}${text.slice(start)}`,
+        cursor: start + open.length,
+      };
+    }
   }
 
   // Adjust selection to exclude leading and trailing whitespace

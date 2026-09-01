@@ -50,11 +50,14 @@
     "check:edges": "node scripts/edge-to-edge-check.mjs",
     "check:trees": "node scripts/trees-check.mjs",
     "check:diagrams": "node scripts/diagram-match-check.mjs",
+    "check:apkg": "node scripts/apkg-check.mjs",
+    "fixtures:apkg": "python3 scripts/make-apkg-fixtures.py",
     "audit:diagrams": "node scripts/diagram-audit.mjs",
     "shot:homeedit": "node preview/homeedit-shot.mjs",
     "shot:treeglide": "node preview/tree-growth-shot.mjs",
     "shot:species": "node preview/species-shot.mjs",
-    "shot:timerrun": "node preview/timer-run-shot.mjs"
+    "shot:timerrun": "node preview/timer-run-shot.mjs",
+    "shot:notetoolbar": "node preview/notetoolbar-shot.mjs"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^3.1.1",
