@@ -41,7 +41,28 @@ export interface Spec extends TurboModule {
    * JavaScript and passed back is a grant that can lapse in between, and the
    * failure would look like a file that imported and then was not there.
    */
-  pick(mode: string): Promise<string>;
+  pick(mode: string, kinds: string): Promise<string>;
+
+  /**
+   * What a copied audio file says about itself.
+   *
+   * Resolves JSON `{ title, artist, album, durationMs, artwork }`, where
+   * `artwork` is a `file://` path to the cover the track carries, or an empty
+   * string when it has none.
+   *
+   * Read with Android's own `MediaMetadataRetriever`, because the alternative
+   * is parsing ID3, Vorbis comments and MP4 atoms by hand — three container
+   * formats to answer a question the platform already answers.
+   *
+   * The cover is written to a **file** beside the track rather than returned
+   * as a data URI. Album art is routinely a megabyte; base64 in a store that
+   * also holds the playlist would make reading the *track list* a
+   * multi-megabyte parse, which is the same rule the note pictures follow.
+   *
+   * A file with no tags is not an error — plenty of recordings have none, and
+   * the player falls back to the filename.
+   */
+  audioInfo(id: string): Promise<string>;
 
   /**
    * Copy a file that is currently only linked, so the note stops depending on

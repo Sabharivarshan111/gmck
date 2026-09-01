@@ -35,9 +35,20 @@ custom-theme subject cards.
 ## Materials and wallpaper
 
 - **Liquid Glass is a material, not a palette.** `components/GlassSurface.tsx`
-  is the only place that draws it: specular highlight first, then translucency,
-  then float. **No backdrop blur and no faking it** — a lighter rectangle
+  is the only place that draws it, and what it draws is a **bevel**: the rim
+  (a stroked rect whose gradient runs corner to corner, brightest on the far
+  edge), then the specular hairline, then the inner glow, then translucency
+  and float. **No backdrop blur and no faking it** — a lighter rectangle
   pretending to be a blur is what makes an imitation look cheap.
+- Three things that bevel gets wrong if they are touched: the rim is
+  **measured**, never `100%` (a stroke at 100% pushes half its width past the
+  edge, where the clip removes the brightest part); the specular's length is
+  **capped in dp**, because as a fraction it turns a tall card grey; and the
+  ink **follows the theme** — white on a dark pane, near-black on a light one,
+  where a white rim on a white card is nothing at all.
+- **`bevel` draws the light without the translucency**, for a surface that is
+  *about* being glass under a solid theme (the music player). Not for general
+  use: a rim round every list row undoes the distinction.
 - **A wallpaper always carries a scrim**, drawn in `colors.background` and
   never black. `MIN_DIM` is 0.2 rather than 0: an unreadable app is not a
   preference.

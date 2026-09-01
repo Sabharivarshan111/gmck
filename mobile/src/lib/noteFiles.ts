@@ -97,7 +97,7 @@ export async function attachNoteFile(
   }
   let raw: string;
   try {
-    raw = await native.pick(mode);
+    raw = await native.pick(mode, '');
   } catch (error) {
     warn('note file pick failed:', error);
     return {

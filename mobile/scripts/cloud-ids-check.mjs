@@ -72,6 +72,12 @@ const LOCAL_ONLY = [
    * stronger reason than the ones above, not a weaker one.
    */
   { file: 'src/lib/importedDecks.ts', what: 'decks imported from an Anki package' },
+  /*
+   * The same reason again, and for the same kind of file: music the reader
+   * picked off their own phone is somebody's copyrighted recording. It is
+   * played from app storage and it goes nowhere.
+   */
+  { file: 'src/lib/music.ts', what: 'music picked from this phone' },
 ];
 
 for (const { file, what } of LOCAL_ONLY) {

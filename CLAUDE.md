@@ -541,12 +541,40 @@ background. The two cancel and text holds AA at 100%; `npm run check:glass`
 sweeps the range and proves it. What breaks past the cap is the surface — its
 border and lift dissolve into the picture and a card stops reading as one.
 
-`components/GlassSurface.tsx` is the only place that draws it. Three things do
-the work, in order of how much they matter: the **specular highlight** (a
-bright hairline on the top edge fading down — the most identifiable feature of
-Apple's material and the cheapest to draw correctly), **translucency** (a wash
-at partial alpha, so the page reads through), and **float** (soft shadow,
-larger radius).
+`components/GlassSurface.tsx` is the only place that draws it, and what it
+draws is a **bevel**, in this order: the **rim** (a stroked rounded rect whose
+gradient runs corner to corner — bright where the light lands, dim across the
+middle, brightest on the far edge, which is the pane's thickness lit from
+behind), the **specular highlight** (a bright hairline along the top), the
+**inner glow** (white at the rim falling off inwards, elliptical so it follows
+the surface's proportions), then **translucency** and **float**.
+
+It was a flat 55%-white border and a top wash before, and that is why it read
+as a pale card rather than as glass. The reference it was rebuilt against —
+kokonutui's Liquid Glass card — runs an `feDisplacementMap` through a CSS
+`backdrop-filter`, and over the flat page it is demonstrated on **that filter
+changes almost nothing you can see**; every load-bearing entry in its shadow
+stack is an *inset*. A bevel is what the picture actually shows, and a bevel
+is drawable.
+
+Three details there are each a bug that shipped:
+
+- **The rim is measured, not `100%`.** A stroke has width, and a rect at 100%
+  pushes half of it past the edge, where the parent's clip removes precisely
+  the brightest part of the bevel.
+- **The specular's length is in dp, capped at 20.** As a fraction of the
+  surface it scaled with the card: a third of the way down a 200dp player is
+  66dp of white wash, which turns a near-black card grey and reads as fog.
+- **The ink follows the theme.** White on a dark pane; near-black on a light
+  one, where a white rim on a white card over a pale page is nothing at all —
+  which is what the Liquid Glass preset looked like. The reference switches
+  the same way between its light and dark modes.
+
+**The bevel and the translucency are separable**, and `bevel` is the prop that
+says so: a surface that is *about* being glass — the music player — draws the
+light on top of a solid theme's own opaque card, because the reference's card
+is itself a solid near-black one. It is not for general use. A rim round every
+list row would undo the distinction it exists to draw.
 
 **No backdrop blur, and no faking it.** Real refraction needs a backdrop
 filter, which React Native has no equivalent for without `react-native-blur`
@@ -794,6 +822,62 @@ and the alpha is where a card quietly turns unreadable.
 The fan is narrow on purpose. Widening it is the obvious way to separate six
 cards and it is wrong: 100° from an orange accent is green, and one green card
 in a warm theme looks like a bug rather than a sixth colour.
+
+## Music on the Timer is the reader's own, and it stays theirs
+
+`src/lib/music.ts` and `components/MusicPlayer.tsx`, behind the button on the
+right of the transport row. It plays **files already on the phone**, chosen
+through Android's document picker: no catalogue, no account, no streaming,
+nothing uploaded. `check:cloud-ids` holds that from the network side, and the
+reason is the same one the imported Anki decks have — this is somebody's
+copyrighted recording, and uploading it would be this app redistributing it.
+
+It **replaced the Coffee button**, and that lost nothing: "Short break" is one
+of the three mode chips at the top of the same screen and always was. That
+side of the transport row is now the thing you reach for *during* a session
+rather than to end one.
+
+Four things there are less obvious than they look:
+
+- **Copy or link, asked before the picker opens.** The same two the note
+  attachments offer, for the same reasons — a copy survives the original being
+  deleted and costs space; a link costs nothing and dies with the original —
+  and the sheet says both consequences before either is picked. It also says
+  to **put the music in one folder first**, because Android's picker reopens
+  wherever it was last and a collection spread across Downloads, WhatsApp and
+  a memory card is a lot of taps per track.
+- **A link only works because the grant is persistable.** An ordinary picker
+  grant is one-shot and expires at the next reboot, which would leave a
+  playlist that silently emptied itself — worse than one that was never saved.
+- **`removeTrack` takes the whole track, never an id**, exactly like
+  `removeNoteFile`. Forgetting a copy deletes our bytes; forgetting a link
+  releases our grant and touches nothing. An id alone cannot tell the two
+  apart, and the wrong branch is somebody's music gone.
+- **The MIME type is a hint, and the extension is the second opinion.**
+  Providers disagree about what audio is — some report
+  `application/octet-stream` for an ordinary `.m4a` — so the check happens
+  after the pick, and a file that is not audio is deleted again rather than
+  added to a playlist it cannot play.
+- **Tags come from `MediaMetadataRetriever`, and cover art is written to a
+  sidecar file.** `audioInfo` returns a `file://` path rather than base64: an
+  embedded cover is often several hundred kilobytes, and crossing the bridge as
+  a string would be that much again in UTF-16 for something `Image` can read
+  off disk.
+- **`react-native-video` has no audio-only prop.** A zero-sized player is how
+  you say it. It is already in the APK for the video wallpaper, so this costs
+  nothing; the artwork on screen is the file's own tag, never a video frame.
+
+The empty state has to **say which button to press** — there is nothing to
+browse and nothing to sign into, so a player with an empty list and no
+instruction reads as broken rather than as waiting for a file. It says "Tap
+the + button to select music from your phone", and once there are tracks it
+says how many. Not "your music, from your phone": that is a reassurance the
+chooser has already given, and on the card it is just words taking up a line.
+
+`npm run check:music` drives the real screen: it asserts the card grows rather
+than appears, that it lands *below the button and above the presence box*,
+that the tags and the cover art reach the plate, and that the close button puts
+it away.
 
 ## The timer grows a tree, and it is drawn rather than stored
 
@@ -1273,6 +1357,7 @@ npm run check:supabase-queue     # every job waiting on Supabase can still be ap
 npm run check:keyboard           # no text input can sit under the Android keyboard
 npm run check:edges              # no full-screen page sits under the status bar
 npm run check:trees              # the focus trees stay drawable and distinct
+npm run check:music              # the player opens below its button, and plays
 npm run check:diagrams           # a question shows its own diagram, or none
 npm run check:apkg               # an Anki package imports, and not its decoy collection
 npm run check:mcq                # MCQ response parsing + the ask-gemini markers

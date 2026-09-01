@@ -44,6 +44,16 @@ const SAMPLES = {
   },
 } as const;
 
+/**
+ * Cover art, so the music player's artwork branch is reviewable.
+ *
+ * A real 24x24 PNG rather than a coloured `View`: what is being checked is
+ * that an *image* the tags carried is decoded and drawn in the plate, and a
+ * placeholder rectangle would pass that whether or not it ever was.
+ */
+const COVER_PNG =
+  'iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAIAAABvFaqvAAAAhUlEQVR42q3V6wnAIAxG0TtBp+uvTtLpukF3aqEgYjUmXwTFFxxETeS8r1K2Y5cLNZSxWki2OpBm8dYlFl+Ttyi9pEU9yFg0Y9niP6VZdGcFi9FC1MJYC1nYG/ZbTE/RaeG5Wo+F871NLfxBYFuEItOwiKaLkYWQw7oWWmJdBv0tMl9QDT02x25j6boaPwAAAABJRU5ErkJggg==';
+
 const kept = new Map<string, string>();
 /** Linked originals the harness pretends still exist. Deleting one breaks it. */
 const linked = new Map<string, string>();
@@ -137,6 +147,26 @@ export default {
   pathFor: (id: string) => kept.get(id) ?? '',
   remove: (id: string) => {
     kept.delete(id);
+  },
+  /**
+   * What the tags say, as `MediaMetadataRetriever` would report them.
+   *
+   * The device reads them out of the file and writes any embedded cover to a
+   * sidecar; here they are constants, because what is under test on this side
+   * is the player — a title over an artist, a duration the scrubber can span,
+   * and a picture in the plate.
+   */
+  audioInfo: async (id: string) => {
+    if (!kept.has(id)) {
+      return '';
+    }
+    return JSON.stringify({
+      title: 'Nocturne in E flat',
+      artist: 'Study Session',
+      album: 'Piano for Revision',
+      durationMs: 214_000,
+      artwork: `data:image/png;base64,${COVER_PNG}`,
+    });
   },
   totalBytes: () => 0,
 };

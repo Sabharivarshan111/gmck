@@ -15,7 +15,7 @@ import { useExam } from '@/hooks/useExam';
 import { daysUntil } from '@/lib/exam';
 import { ProgressRing } from '@/components/ProgressRing';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { CalendarClock, Check, Coffee, Pencil, Play, Pause, RotateCcw, SlidersHorizontal, Sprout, Timer as TimerIcon, Users, X } from 'lucide-react-native';
+import { CalendarClock, Check, Music, Pencil, Play, Pause, RotateCcw, SlidersHorizontal, Sprout, Timer as TimerIcon, Users, X } from 'lucide-react-native';
 import { typeScale } from '@/theme/typography';
 import { useTheme, withAlpha } from '@/theme';
 import { SPRING, springConfig, useReducedMotion } from '@/theme/motion';
@@ -25,6 +25,7 @@ import { formatFocusTime } from '@/lib/focusStats';
 import { FocusTree, TreeChip } from '@/components/FocusTree';
 import { speciesFor } from '@/lib/trees';
 import { clearTodayForest, forestNow, loadForest, subscribeForest, treesToday } from '@/lib/forest';
+import { MusicPlayerReveal } from '@/components/MusicPlayer';
 
 /** "an oak", "a pine" — a species name read aloud in a sentence. */
 function aOrAn(name: string): string {
@@ -52,6 +53,7 @@ export default function TimerScreen() {
   // be a day stale on a screen left open overnight.
   const examDays = exam ? daysUntil(exam) : null;
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [musicOpen, setMusicOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [customInput, setCustomInput] = useState('');
 
@@ -372,14 +374,29 @@ export default function TimerScreen() {
           )}
         </Touchable>
 
+        {/* Music, where the break button was. Taking a break is still one tap
+            away on the mode chips above, which is where it always was; this
+            side of the row is now the thing you reach for *during* a session
+            rather than to end one. */}
         <Touchable
-          onPress={() => timer.switchMode('short')}
-          label="Take a short break"
+          onPress={() => setMusicOpen(open => !open)}
+          label={musicOpen ? 'Hide the music player' : 'Show the music player'}
+          hint="Plays music from this phone"
+          state={{ expanded: musicOpen }}
           scaleTo={0.9}
-          style={[styles.sideButton, { borderColor: colors.border }]}>
-          <Coffee size={20} color={colors.text} />
+          style={[
+            styles.sideButton,
+            {
+              borderColor: musicOpen ? colors.accent : colors.border,
+              backgroundColor: musicOpen ? withAlpha(colors.accent, 0.14) : 'transparent',
+            },
+          ]}>
+          <Music size={20} color={musicOpen ? colors.accent : colors.text} />
         </Touchable>
       </View>
+
+      {/* Below the button that opened it, above the presence box. */}
+      <MusicPlayerReveal open={musicOpen} onClose={() => setMusicOpen(false)} />
 
       {/* Presence */}
       <View

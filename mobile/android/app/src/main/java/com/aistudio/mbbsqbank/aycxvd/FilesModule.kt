@@ -92,7 +92,7 @@ class FilesModule(reactContext: ReactApplicationContext) :
     super.invalidate()
   }
 
-  override fun pick(mode: String, promise: Promise) {
+  override fun pick(mode: String, kinds: String, promise: Promise) {
     val activity = getCurrentActivity()
     if (activity == null) {
       promise.resolve("")
@@ -110,10 +110,19 @@ class FilesModule(reactContext: ReactApplicationContext) :
       // Named rather than left open: the note renderer can show a picture,
       // play a video or a recording, and open a PDF. Offering a .zip would be
       // offering something nothing downstream can do anything with.
-      putExtra(
-        Intent.EXTRA_MIME_TYPES,
-        arrayOf("image/*", "video/*", "audio/*", "application/pdf"),
-      )
+      /*
+       * `kinds` narrows the picker when the caller knows what it wants — the
+       * music player asks for `audio/*`, and offering it a PDF would be
+       * offering something the player cannot do anything with. Empty means the
+       * note attachment case, which genuinely takes all four.
+       */
+      val wanted =
+        if (kinds.isBlank()) {
+          arrayOf("image/*", "video/*", "audio/*", "application/pdf")
+        } else {
+          kinds.split(",").map { it.trim() }.filter { it.isNotEmpty() }.toTypedArray()
+        }
+      putExtra(Intent.EXTRA_MIME_TYPES, wanted)
       /*
        * A grant that survives a reboot, for the linking half.
        *
@@ -206,6 +215,86 @@ class FilesModule(reactContext: ReactApplicationContext) :
       put("name", name)
       put("mime", resolver.getType(uri) ?: "application/octet-stream")
       put("size", size)
+    }
+  }
+
+  /**
+   * What a copied audio file says about itself.
+   *
+   * `MediaMetadataRetriever` is Android's own tag reader, which is the whole
+   * reason to use it: the alternative is parsing ID3v2, Vorbis comments and
+   * MP4 atoms by hand — three container formats, to answer a question the
+   * platform already answers.
+   *
+   * The cover is written to a file beside the track. Album art is routinely a
+   * megabyte, and handing it back as a data URI would put it in the same
+   * stored value as the playlist, making a *track list* read a multi-megabyte
+   * parse. The note pictures follow the same rule for the same reason.
+   *
+   * Missing tags are normal, not an error. A voice memo has none, and the
+   * player falls back to the filename.
+   */
+  override fun audioInfo(id: String, promise: Promise) {
+    try {
+      // A copied track is a file in our own media directory, named by its id.
+      // A linked one has no file of ours at all — its id *is* the content URI
+      // the reader picked, and the retriever has to be pointed at it through
+      // the resolver, using the persisted grant taken at pick time.
+      val linked = id.contains("://")
+      val file = if (linked) null else File(mediaDir(), id)
+      if (file != null && !file.exists()) {
+        promise.resolve("")
+        return
+      }
+      // Somewhere to put an embedded cover. A URI is not a filename, so a
+      // linked track's art is filed under a hash of it — stable across
+      // launches, and it cannot collide with a copied track's id.
+      val artName = if (linked) "link-${id.hashCode().toUInt()}.art" else "$id.art"
+      val out = JSONObject()
+      val retriever = android.media.MediaMetadataRetriever()
+      try {
+        if (linked) {
+          retriever.setDataSource(reactApplicationContext, android.net.Uri.parse(id))
+        } else {
+          retriever.setDataSource(file!!.absolutePath)
+        }
+        out.put(
+          "title",
+          retriever.extractMetadata(android.media.MediaMetadataRetriever.METADATA_KEY_TITLE) ?: "",
+        )
+        out.put(
+          "artist",
+          retriever.extractMetadata(android.media.MediaMetadataRetriever.METADATA_KEY_ARTIST) ?: "",
+        )
+        out.put(
+          "album",
+          retriever.extractMetadata(android.media.MediaMetadataRetriever.METADATA_KEY_ALBUM) ?: "",
+        )
+        out.put(
+          "durationMs",
+          retriever
+            .extractMetadata(android.media.MediaMetadataRetriever.METADATA_KEY_DURATION)
+            ?.toLongOrNull() ?: 0L,
+        )
+
+        val art = retriever.embeddedPicture
+        if (art != null && art.isNotEmpty()) {
+          val cover = File(mediaDir(), artName)
+          cover.writeBytes(art)
+          out.put("artwork", "file://${cover.absolutePath}")
+        } else {
+          out.put("artwork", "")
+        }
+      } finally {
+        // `release()` rather than `close()`: close() is API 29+, and this app
+        // still runs on 24.
+        retriever.release()
+      }
+      promise.resolve(out.toString())
+    } catch (error: Throwable) {
+      // A file the platform cannot read tags from is still playable, so this
+      // answers empty rather than rejecting and losing the track.
+      promise.resolve("")
     }
   }
 

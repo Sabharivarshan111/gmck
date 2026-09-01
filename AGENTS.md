@@ -167,9 +167,9 @@ exam question" on purpose. `npm run check:mcq` covers the parsing.
   `theme/typography.ts` for type. A bare `fontSize` ships without its tracking
   and leading.
 - **Font is pinned to Roboto** — OEM skins otherwise re-typeset the whole app.
-- **No backdrop blur, and no faking it.** React Native has no equivalent
-  without another dependency. `GlassSurface` draws the specular highlight,
-  translucency and float instead.
+- **No backdrop blur, and no faking it.** `GlassSurface` draws a bevel: a
+  corner-to-corner rim, a dp-capped specular, an inner glow. The rim is
+  measured, never `100%`; its ink follows the theme.
 - **Never put `elevation` on a view with no background colour.** Android takes
   the shadow outline from the bounds, so a large `borderRadius` renders as a
   visible polygon.
