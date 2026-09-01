@@ -648,6 +648,13 @@ await step('a subject card can be dragged to another slot', async () => {
   // and the card order comes back unchanged.
   await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
   await page.mouse.down();
+  /*
+   * Sideways, in small steps, with no pause first — deliberately the way
+   * somebody actually moves a card, and the exact gesture that used to do
+   * nothing. A drag arms either on a short held press or on travel that is
+   * clearly horizontal, and only the second of those is a movement anyone
+   * would discover on their own. See dragArm.ts.
+   */
   await page.mouse.move(box.x + box.width * 1.5, box.y + box.height / 2, { steps: 10 });
   await page.mouse.up();
   await page.waitForTimeout(800);

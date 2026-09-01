@@ -14,6 +14,17 @@
  * something up starts with the finger resting on it. So a drag is armed by a
  * short press that has not travelled, and a flick is left alone.
  *
+ * **And by travelling sideways**, which is the half that was missing. The page
+ * scrolls vertically and only vertically, so horizontal movement cannot be a
+ * scroll — there is nothing for it to be but a drag. Without that rule, moving
+ * a subject card to the slot beside it required a press-then-drag with no sign
+ * anywhere that the press was needed, so dragging one the way anybody would
+ * did nothing at all and the feature read as missing. It was reported as
+ * exactly that: "I could move each subject card individually, now it's gone."
+ *
+ * The press still matters, because a *vertical* rearrange is genuinely
+ * ambiguous with a scroll and nothing but intent separates them.
+ *
  * One finger, one module-level state, for the same reason `dragOwner` is:
  * a hook per row would be a fresh state for every block and the two would
  * disagree about which one is holding the touch.
@@ -30,7 +41,18 @@ const ARM_MS = 200;
 /** Movement that means the finger is going somewhere, not settling. */
 const ARM_SLOP = 10;
 
+/**
+ * Sideways travel that can only be a drag.
+ *
+ * Larger than `ARM_SLOP` and biased: the finger has to be going clearly more
+ * across than down, so a diagonal scroll flick — which is most of them, since
+ * thumbs arc — is still left to the ScrollView.
+ */
+const SIDEWAYS = 14;
+
 let armedId: string | null = null;
+/** Who the counting press belongs to, so a sideways arm knows what it armed. */
+let pending: string | null = null;
 let timer: ReturnType<typeof setTimeout> | null = null;
 let origin = { x: 0, y: 0 };
 
@@ -39,6 +61,7 @@ export const dragArm = {
   begin(id: string, x: number, y: number) {
     dragArm.cancel();
     origin = { x, y };
+    pending = id;
     timer = setTimeout(() => {
       timer = null;
       armedId = id;
@@ -51,7 +74,20 @@ export const dragArm = {
    * does nothing.
    */
   moved(x: number, y: number) {
-    if (timer && Math.abs(x - origin.x) + Math.abs(y - origin.y) > ARM_SLOP) {
+    if (!timer) {
+      return;
+    }
+    const dx = Math.abs(x - origin.x);
+    const dy = Math.abs(y - origin.y);
+    // Sideways beats the timer: nothing but a drag moves across a page that
+    // only scrolls up and down, so there is nothing to wait to find out.
+    if (dx > SIDEWAYS && dx > dy * 1.6) {
+      const id = pending;
+      dragArm.cancel();
+      armedId = id;
+      return;
+    }
+    if (dx + dy > ARM_SLOP) {
       dragArm.cancel();
     }
   },
@@ -62,6 +98,7 @@ export const dragArm = {
       timer = null;
     }
     armedId = null;
+    pending = null;
   },
 
   isArmed(id: string): boolean {
