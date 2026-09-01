@@ -60,15 +60,14 @@ files into `mobile/`; a second copy will drift.
 - **`versionCode` must increase on every Play upload.** 13 is live; the repo
   carries 14.
 - **Never commit secrets** — keystore, passwords, certificates, API keys. The
-  signing key lives only in GitHub Actions secrets. Do not base64 it into a
-  workflow file to "fix" a build.
+  signing key lives only in GitHub Actions secrets; never base64 it into a
+  workflow to "fix" a build.
 - **Test builds must serve no ads at all.** `mobile/src/lib/adsMode.ts` exports
   `ADS_ENABLED = !__DEV__`; the debug and internal workflows overwrite it with
-  `false`, so AdMob never starts. Serving yourself live ads is a policy
-  violation that can suspend the account. Release builds leave it alone and *do*
-  serve ads — `android-release.yml` asserts that.
-- The open Gemini access, the absence of an app-side rate limit, and the public
-  leaderboard are **deliberate**. Do not "fix" them.
+  `false`, so AdMob never starts. Serving yourself live ads can suspend the
+  account. Release builds leave it alone — `android-release.yml` asserts that.
+- Open Gemini access, no app-side rate limit, and the public leaderboard are
+  **deliberate**. Do not "fix" them.
 
 ## Cutting a build
 
@@ -107,9 +106,17 @@ A working native module needs all four: a spec in `mobile/src/native/Native*.ts`
 **generated** spec, and a `BaseReactPackage` declaring `isTurboModule = true`.
 `npm run check:native-sound` asserts it.
 
-Audio specifics that look like bugs and are the platform: taps use
-`USAGE_ASSISTANCE_SONIFICATION` so silent mode and Do Not Disturb mute them;
-the focus chime uses `USAGE_ALARM` on its own pool so it survives DND.
+Platform, not bugs: taps use `USAGE_ASSISTANCE_SONIFICATION`, so silent mode
+and DND mute them; the focus chime uses `USAGE_ALARM` and survives DND.
+
+## An Anki package is chosen by `meta`, never by filename
+
+Every version 3 `.apkg` also carries a **decoy** `collection.anki2` holding one
+note saying the file needs a newer Anki. A reader that picks by filename
+imports it with no error and returns a one-card deck that looks like success.
+Also: `name` columns are `COLLATE unicase`, which **no SQLite outside Anki
+has**, so `ORDER BY name` throws on a device only.
+`.agents/rules/63-anki-import.md`.
 
 ## Notes render objects, not strings
 
@@ -119,11 +126,10 @@ the focus chime uses `USAGE_ALARM` on its own pool so it survives DND.
 `comparison` rows are `{label, left, right}`. Only `revision.items` is
 `string[]`.
 
-Running an item through `String(item)` prints `[object Object]` on a phone.
-That shipped once, because the preview fixture had been written with plain
-strings — a fixture that agreed with the bug. `**bold**` in the model's output
-is a highlight, not literal asterisks. `npm run check:notes-schema` pins the
-fixture, the renderer and the edge function's schema together.
+`String(item)` prints `[object Object]` on a phone. That shipped once, because
+the preview fixture used plain strings — a fixture that agreed with the bug.
+`**bold**` is a highlight, not literal asterisks. `npm run check:notes-schema`
+pins the fixture, the renderer and the function's schema together.
 
 Its zod schema is `questions: z.array(z.string().max(1000)).min(1).max(400)`,
 and a violation is a **400 for the whole request**, breaking Notes for one
@@ -194,20 +200,19 @@ One user with both installed must see one state:
 
 Changing any of these shapes breaks cross-install continuity.
 
-`record_questions_done` opens with `IF _year IS NULL THEN RETURN 0` — it needs
-the caller's `profiles` row to exist, so a push before that returns 0 and
-reports **no error**. `npm run check:sync` pins the ordering.
+`record_questions_done` opens with `IF _year IS NULL THEN RETURN 0`: it needs
+the caller's `profiles` row, so a push before that returns 0 and reports **no
+error**. `npm run check:sync` pins the ordering.
 
 ## `mobile/preview/` is a dev-only tool
 
-It renders the RN screens in a browser via react-native-web so screens can be
-reviewed without an emulator. It is **not** imported by `index.js`, Metro never
-sees it, and nothing from it reaches the APK. When you add a native dependency,
-add a shim there; when you add a provider to `App.tsx`, add it to
-`preview/main.tsx` too.
+It renders the RN screens in a browser via react-native-web, so screens can be
+reviewed without an emulator. Metro never sees it and nothing from it reaches
+the APK. Add a native dependency, add a shim there; add a provider to
+`App.tsx`, add it to `preview/main.tsx` too.
 
-A render error must never blank the app: `components/ErrorBoundary.tsx` wraps
-everything **outside** the providers and uses literal colours on purpose.
+A render error must never blank the app: `ErrorBoundary.tsx` wraps everything
+**outside** the providers and uses literal colours on purpose.
 
 ## Verify before claiming something works
 
@@ -221,6 +226,7 @@ npm run check:note-media  # note media: on-phone, uncapped
 npm run check:edges       # no page sits under the status bar
 npm run check:trees       # focus trees drawable and distinct
 npm run check:diagrams    # a question shows its own diagram, or none
+npm run check:apkg        # an Anki package imports, and not its decoy
 npm run check:kotlin      # Kotlin overrides (no local kotlinc)
 npm run check:smoke       # drives the real screens through a browser
 # ...and every other check:* in mobile/package.json that touches what

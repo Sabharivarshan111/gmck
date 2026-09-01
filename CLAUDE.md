@@ -24,6 +24,7 @@ when picking up work that was last touched from the other tool.
 | `.agents/rules/60-flashcards.md` | Anki flashcards — why the scheduler is not the app's other one, and what is still unverified |
 | `.agents/rules/61-own-decks.md` | Decks the reader makes — written by hand, generated for one phone, or carrying photos from the gallery |
 | `.agents/rules/62-own-notes.md` | Notes the reader writes — the markers that make a note a document, drawing on a picture with a stylus, and the one place Roboto is not pinned |
+| `.agents/rules/63-anki-import.md` | Importing an Anki .apkg — the decoy collection every modern package carries, and the collation no phone has |
 | `.agents/rules/70-supabase.md` | Supabase — why no sandbox can reach it, and the queue that stops blocked work being forgotten |
 | `.agents/rules/80-keyboard.md` | Text inputs and the Android keyboard — why adjustResize is dead and what replaces it |
 | `.agents/rules/90-xp.md` | XP, badges, streak and the leaderboard — one ladder shared with the web app, and why a reward has to look like one |
@@ -239,6 +240,97 @@ features" on `right_atrium_internal_features.jpg` and "Median nerve" on
 `facial_nerve_complete_course.jpg`, and answers nothing at all for two thirds
 of them. `npm run check:diagrams` runs the real lookup against production rows
 and fails if a keyword table, a score, or a containment test comes back.
+
+## An Anki package is chosen by `meta`, never by its filenames
+
+`.apkg` import: `src/lib/apkgFormat.ts` (the format), `src/lib/importedDecks.ts`
+(the storage), `ApkgModule.kt` (the zip, the zstd and the SQLite), and the
+"Import your Anki cards" row under **Decks you write**.
+
+A package is a ZIP holding a SQLite collection and a numbered pile of media.
+Three layouts are in the wild and they differ in ways that are invisible until
+one of them is wrong:
+
+| | collection | media list | compression |
+|---|---|---|---|
+| v1 — no `meta` entry | `collection.anki2`, schema 11 | JSON hashmap | none |
+| v2 — `meta` says 2 | `collection.anki21`, schema 11 | JSON hashmap | none |
+| v3 — `meta` says 3 | `collection.anki21b`, schema 18 | protobuf | **zstd** |
+
+**Every v3 package also contains a `collection.anki2`, and it is a decoy.**
+`export_collection` in anki's colpkg/export.rs calls `write_dummy_collection`
+unconditionally, so beside the real collection there is a complete, valid,
+schema 11 one holding a single note reading "This file requires a newer version
+of Anki." A reader that picks by filename finds it, parses it, throws nothing,
+warns about nothing, and hands back a one-card deck containing an error
+message — which is the worst outcome available, because it looks like it
+worked. `packageLayout()` reads `meta` first and only falls back to filenames
+when there is none.
+
+Four more that are each silently wrong rather than loudly:
+
+- **Schema 15 moved notetypes out of `col`.** Before it they are one JSON blob
+  in `col.models`; from 15 on that column is left as `"{}"` and the
+  `notetypes`/`fields`/`templates` tables are the truth.
+- **Schema 15+ deck names use `\x1f`** between levels and only become `::` on
+  the way out, so a name read straight from the table has an unprintable
+  character in the middle of it.
+- **A media file's zip entry is named for its position in the media list.**
+  `"0"`, `"1"`. Nothing but the list knows which is which.
+- **Never `ORDER BY` or `WHERE` a name column.** Every `name` in a schema 15+
+  collection is `COLLATE unicase`, a collation Anki's Rust backend registers
+  and *no other SQLite has* — Android's included. SQLite resolves collations
+  lazily, so plain `SELECT`s work and `ORDER BY name` throws `no such collation
+  sequence: unicase` on a device and nowhere a desktop Anki would ever show it.
+
+**The `cards` table is the authority on how many cards a note has.** Card
+generation already ran inside Anki, so one row in, one card out: `ord` selects
+the template on a normal notetype and the cloze number on a cloze one.
+Re-deriving it would be reimplementing the part of Anki most likely to
+disagree, to answer a question the file already answers.
+
+### The reading is TypeScript because the Kotlin cannot be run here
+
+There is no emulator in these sandboxes, so Kotlin is unverifiable until it is
+on a phone. Everything that decides what a card *says* — the cloze algorithm,
+template rendering, the protobuf configs, HTML flattening, media references —
+is in `apkgFormat.ts`, and `npm run check:apkg` opens the real `.apkg` files
+that `scripts/make-apkg-fixtures.py` builds, decompresses them with
+`node:zlib`'s zstd, and opens them with `node:sqlite` — **a stock SQLite with
+no `unicase`, which is exactly the position Android is in**. All three package
+versions import to the same ten cards. Reverted to picking by filename, it
+fails eighteen ways.
+
+Kotlin does only what JavaScript cannot: `ACTION_OPEN_DOCUMENT` (no permission,
+and none may be added), `java.util.zip`, `android.database.sqlite`, and zstd.
+
+**`zstd-jni` is the one dependency that costs bytes** — roughly half a megabyte
+in the split Play download — and there is no way around it: everything modern
+Anki exports is zstd unless the exporter ticked "support older Anki versions".
+Its ProGuard keep is load-bearing, because R8 cannot see JNI callbacks and
+without it the importer works in every test build and fails only in the shipped
+one.
+
+### An imported deck is not a `CustomDeck`
+
+The decks you write live in one AsyncStorage value with pictures inline. A
+shared medical deck is thousands of cards and hundreds of megabytes, so an
+imported one puts **its cards in a key of their own** (the deck list stays a
+small read) and **its pictures in files** under `filesDir/anki-media/{id}/`.
+Deleting a deck takes its cards, its schedule and its media folder — a
+forgotten one is space the reader can only see as "Orbit is using 400MB".
+
+It stays on this phone, and that is a stronger rule than the one the written
+decks follow rather than a weaker one: a shared deck is somebody else's work
+the reader downloaded for themselves, and uploading it would be this app
+redistributing it. `check:cloud-ids` lists it, and `check:apkg` asserts the
+picker takes no permission and the module never touches the network.
+
+**An imported card may carry pictures on its question side.** That is not a
+contradiction of the rule that a diagram belongs on the back: that rule is
+about *our* image cards, where the diagram is the answer. An Anki card's front
+is whatever its author wrote, and an ECG above "identify this rhythm" is the
+question.
 
 ## Notes render the edge function's shapes, not strings
 
@@ -1163,6 +1255,7 @@ npm run check:keyboard           # no text input can sit under the Android keybo
 npm run check:edges              # no full-screen page sits under the status bar
 npm run check:trees              # the focus trees stay drawable and distinct
 npm run check:diagrams           # a question shows its own diagram, or none
+npm run check:apkg               # an Anki package imports, and not its decoy collection
 npm run check:mcq                # MCQ response parsing + the ask-gemini markers
 npm run check:notes-limits       # every topic still fits the notes function's schema
 npm run check:smoke              # drives the real screens; 18 flows, 0 crashes
