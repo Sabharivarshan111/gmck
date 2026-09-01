@@ -85,6 +85,26 @@ under them for no reason they asked for.
 `npm run check:one-app` fails if the web app grows its own Anki scheduler,
 because there is exactly one and it lives in `mobile/src/lib/anki.ts`.
 
+### "Build a webapp" means deploy the one that exists
+
+Asked for a web app alongside the Android one, the answer is that `src/` **is**
+that web app and has been since before the native app existed. Publishing it is
+a deploy, not a build. `vercel.json` at the repo root already carries the build
+command, the output directory, the `--legacy-peer-deps` install (a Capacitor
+plugin pins a peer the repo has outgrown) and the SPA rewrite that
+`BrowserRouter` needs; it requires no environment variables, because the
+Supabase URL and *publishable* key are in the client source and are public by
+design. No service-role key goes near a Vite build — it would be inlined into a
+file the whole internet downloads.
+
+One trap, fixed but worth recognising: 145 entries in the root
+`package-lock.json` resolved to a private Lovable registry that 403s everywhere
+else, so `npm ci` only worked inside that sandbox. Nothing caught it because
+nothing builds the repo root — the Android workflows use
+`mobile/package-lock.json`. If you add a root dependency from inside a Lovable
+sandbox, grep the lockfile diff for `pkg.dev` before committing.
+`HANDOFF.md` §12 has the detail.
+
 ### Fetch before you fix, and push when you stop
 
 Both tools work on `claude/native-app-sync`, and neither can see the other's
