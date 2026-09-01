@@ -22,6 +22,7 @@ class MainApplication : Application(), ReactApplication {
           add(NotifyPackage())
           add(FilesPackage())
           add(ScreenPackage())
+          add(ApkgPackage())
         },
     )
   }

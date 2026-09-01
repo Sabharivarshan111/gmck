@@ -279,6 +279,31 @@ dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
 
+    /*
+     * Zstandard, for reading Anki packages.
+     *
+     * This is the only part of the .apkg format Android does not already
+     * have. A package is a ZIP (java.util.zip) holding a SQLite collection
+     * (android.database.sqlite) — both free — but since Anki 2.1.50 the
+     * collection, the media list and every media file inside it are
+     * zstd-compressed, and everything modern Anki exports is that format
+     * unless the person exporting ticked "support older Anki versions". A
+     * shared deck downloaded from AnkiWeb cannot be read without this.
+     *
+     * It is a native library, and it is the one dependency in the importer
+     * that costs bytes: the AAR carries a .so per ABI, so the universal APK
+     * grows by roughly two megabytes and the *Play download*, which is split
+     * per ABI, by about half of one. That is the whole price of the feature,
+     * and there is no way around it — the alternative is a pure-Kotlin zstd
+     * decoder, which is well over a thousand lines whose bugs would present
+     * as a corrupt deck.
+     *
+     * Everything else about reading a package is in TypeScript
+     * (src/lib/apkgFormat.ts) where `npm run check:apkg` can run it against
+     * real files. See ApkgModule.kt.
+     */
+    implementation("com.github.luben:zstd-jni:1.5.6-9@aar")
+
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
     } else {

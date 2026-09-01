@@ -65,6 +65,13 @@ const LOCAL_ONLY = [
   { file: 'src/lib/noteImages.ts', what: 'pictures attached to a study note' },
   { file: 'src/hooks/useCalendarEvents.ts', what: 'calendar events and exam targets' },
   { file: 'src/lib/forest.ts', what: 'the record of when this phone was concentrating' },
+  /*
+   * An imported Anki deck is somebody else's copyrighted work that the reader
+   * downloaded for themselves. Uploading it would not be this app storing a
+   * user's data, it would be this app redistributing a shared deck — a
+   * stronger reason than the ones above, not a weaker one.
+   */
+  { file: 'src/lib/importedDecks.ts', what: 'decks imported from an Anki package' },
 ];
 
 for (const { file, what } of LOCAL_ONLY) {

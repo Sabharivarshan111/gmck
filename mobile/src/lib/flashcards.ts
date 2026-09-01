@@ -20,6 +20,18 @@ export interface DeckCard {
   back: string;
   hint?: string;
   imageUrl?: string;
+  /**
+   * Pictures on the *question* side, which only an imported Anki card has.
+   *
+   * A generated card's diagram is always on the back, because the diagram is
+   * the answer and showing it first hands the answer over. An imported card is
+   * not ours: its front is whatever its author wrote, and an ECG strip above
+   * "identify this rhythm" *is* the question. Hiding it would leave a card
+   * asking about a picture the reader cannot see.
+   */
+  frontImages?: string[];
+  /** Pictures on the answer side. `imageUrl` is the first of these. */
+  backImages?: string[];
   tags?: string[];
 }
 

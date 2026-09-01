@@ -13,6 +13,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   ChevronLeft,
   ChevronRight,
+  Download,
+  FileDown,
   ImagePlus,
   Layers,
   Pencil,
@@ -35,6 +37,18 @@ import { useTheme, withAlpha } from '@/theme';
 import { getSubjects, YEAR_LABEL, type BankNode } from '@/lib/questionBank';
 import { YEAR_TO_KEY, type Year } from '@/lib/profile';
 import { flattenSubjectTopics, type LeafTopic } from '@/lib/handwrittenNotes';
+import {
+  deleteImportedDeck,
+  discardPackage,
+  importedDeckKey,
+  importPackage,
+  loadImportedCards,
+  loadImportedDecks,
+  MAX_IMPORT_CARDS,
+  stagePackage,
+  type ImportedDeck,
+  type StagedPackage,
+} from '@/lib/importedDecks';
 import {
   deckTargetFor,
   fetchDeck,
@@ -100,6 +114,8 @@ const GRADE_LABEL: Record<Grade, string> = {
 type Screen =
   | { kind: 'years' }
   | { kind: 'myDecks' }
+  | { kind: 'importDecks' }
+  | { kind: 'studyImported'; deckId: string }
   | { kind: 'editDeck'; deckId: string }
   | { kind: 'studyCustom'; deckId: string }
   | { kind: 'subjects'; year: Year }
@@ -123,8 +139,15 @@ export default function FlashcardsScreen({ onExit }: { onExit: () => void }) {
         onExit();
         return current;
       }
-      if (current.kind === 'subjects' || current.kind === 'myDecks') {
+      if (
+        current.kind === 'subjects' ||
+        current.kind === 'myDecks' ||
+        current.kind === 'importDecks'
+      ) {
         return { kind: 'years' };
+      }
+      if (current.kind === 'studyImported') {
+        return { kind: 'importDecks' };
       }
       if (current.kind === 'editDeck' || current.kind === 'studyCustom') {
         return { kind: 'myDecks' };
@@ -152,6 +175,7 @@ export default function FlashcardsScreen({ onExit }: { onExit: () => void }) {
         <YearsView
           onPick={year => setView({ kind: 'subjects', year })}
           onMyDecks={() => setView({ kind: 'myDecks' })}
+          onImport={() => setView({ kind: 'importDecks' })}
           onBack={back}
         />
       ) : null}
@@ -162,6 +186,17 @@ export default function FlashcardsScreen({ onExit }: { onExit: () => void }) {
           onEdit={deckId => setView({ kind: 'editDeck', deckId })}
           onStudy={deckId => setView({ kind: 'studyCustom', deckId })}
         />
+      ) : null}
+
+      {view.kind === 'importDecks' ? (
+        <ImportDecksView
+          onBack={back}
+          onStudy={deckId => setView({ kind: 'studyImported', deckId })}
+        />
+      ) : null}
+
+      {view.kind === 'studyImported' ? (
+        <ImportedStudyView deckId={view.deckId} onBack={back} />
       ) : null}
 
       {view.kind === 'editDeck' ? (
@@ -280,10 +315,12 @@ function HeaderAction({
 function YearsView({
   onPick,
   onMyDecks,
+  onImport,
   onBack,
 }: {
   onPick: (year: Year) => void;
   onMyDecks: () => void;
+  onImport: () => void;
   onBack: () => void;
 }) {
   const { colors } = useTheme();
@@ -418,7 +455,366 @@ function YearsView({
         </View>
         <ChevronRight size={20} color={colors.textMuted} />
       </Touchable>
+
+      {/*
+        Under "Decks you write", and shaped like it, because it is the same
+        kind of thing: a deck that is yours rather than one this app made. The
+        screen behind it explains where an .apkg comes from — that is the part
+        people get stuck on, not the tapping.
+      */}
+      <Touchable
+        onPress={onImport}
+        label="Import your Anki cards from an apkg file"
+        scaleTo={0.97}
+        style={[styles.row, { backgroundColor: colors.card, borderColor: colors.border }]}>
+        <View style={[styles.rowIcon, { backgroundColor: withAlpha(colors.fuchsia, 0.15) }]}>
+          <FileDown size={18} color={colors.fuchsia} />
+        </View>
+        <View style={styles.flex}>
+          <Text style={[styles.rowTitle, { color: colors.text }]}>Import your Anki cards</Text>
+          <Text style={[styles.rowSub, { color: colors.textMuted }]}>
+            Open an .apkg deck from Anki or AnkiWeb — it stays on this phone
+          </Text>
+        </View>
+        <ChevronRight size={20} color={colors.textMuted} />
+      </Touchable>
     </>
+  );
+}
+
+/**
+ * Importing an Anki package.
+ *
+ * The tapping is the easy part; **where an .apkg comes from is what people get
+ * stuck on**, so the instructions are on the screen rather than in a help page
+ * nobody opens. Three routes cover essentially everybody: a deck somebody
+ * shared with them, a deck off AnkiWeb, and a deck exported from their own
+ * Anki on a computer.
+ *
+ * Everything here stays on the phone. A shared deck is somebody else's work
+ * that the reader downloaded for themselves — uploading it would be this app
+ * redistributing it, which is a stronger reason than the one the hand-written
+ * decks have, not a weaker one. `npm run check:cloud-ids` enforces it.
+ */
+function ImportDecksView({
+  onBack,
+  onStudy,
+}: {
+  onBack: () => void;
+  onStudy: (deckId: string) => void;
+}) {
+  const { colors } = useTheme();
+  const [decks, setDecks] = useState<ImportedDeck[] | null>(null);
+  const [staged, setStaged] = useState<StagedPackage | null>(null);
+  const [chosen, setChosen] = useState<Set<string>>(new Set());
+  const [busy, setBusy] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    loadImportedDecks().then(setDecks);
+  }, []);
+
+  const pick = useCallback(async () => {
+    setError(null);
+    setBusy('Reading the package…');
+    try {
+      const next = await stagePackage();
+      if (next) {
+        setStaged(next);
+        // Everything, unless the reader narrows it. A package with one deck in
+        // it — which most shared decks are — then needs no choice at all.
+        setChosen(new Set(next.decks.map(deck => deck.id)));
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'That file could not be read.');
+    } finally {
+      setBusy(null);
+    }
+  }, []);
+
+  const run = useCallback(async () => {
+    if (!staged) {
+      return;
+    }
+    setError(null);
+    setBusy('Importing…');
+    try {
+      const deck = await importPackage(staged, {
+        deckIds: chosen.size === staged.decks.length ? [] : [...chosen],
+        onProgress: progress =>
+          setBusy(
+            progress.step === 'media'
+              ? 'Copying pictures…'
+              : progress.step === 'saving'
+                ? 'Saving…'
+                : 'Reading the cards…',
+          ),
+      });
+      setStaged(null);
+      setDecks(await loadImportedDecks());
+      onStudy(deck.id);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'That package could not be imported.');
+    } finally {
+      setBusy(null);
+    }
+  }, [chosen, onStudy, staged]);
+
+  const cancel = useCallback(() => {
+    if (staged) {
+      discardPackage(staged);
+    }
+    setStaged(null);
+  }, [staged]);
+
+  const remove = useCallback(async (id: string) => {
+    setDecks(await deleteImportedDeck(id));
+  }, []);
+
+  const chosenCards = staged
+    ? staged.decks.filter(deck => chosen.has(deck.id)).reduce((sum, deck) => sum + deck.cards, 0)
+    : 0;
+
+  return (
+    <>
+      <Header
+        title="Import your Anki cards"
+        subtitle="Kept on this phone only"
+        onBack={onBack}
+      />
+
+      {error ? (
+        <View style={[styles.notice, { borderColor: withAlpha(colors.danger, 0.4) }]}>
+          <Text style={[styles.noticeText, { color: colors.danger }]}>{error}</Text>
+        </View>
+      ) : null}
+
+      {staged ? (
+        <View
+          style={[
+            styles.card,
+            styles.compactCard,
+            { backgroundColor: colors.card, borderColor: colors.border },
+          ]}>
+          <Text style={[styles.rowTitle, { color: colors.text }]}>{staged.fileName}</Text>
+          <Text style={[styles.rowSub, { color: colors.textMuted }]}>
+            {staged.totalCards} cards in {staged.decks.length}{' '}
+            {staged.decks.length === 1 ? 'deck' : 'decks'}
+          </Text>
+
+          {/* Which decks to take. A package can hold thirty chapters and the
+              reader usually wants one; taking all of them is how a phone ends
+              up with thirty thousand cards it will never see. */}
+          {staged.decks.length > 1
+            ? staged.decks.map(deck => {
+                const on = chosen.has(deck.id);
+                return (
+                  <Touchable
+                    key={deck.id}
+                    onPress={() =>
+                      setChosen(previous => {
+                        const next = new Set(previous);
+                        if (next.has(deck.id)) {
+                          next.delete(deck.id);
+                        } else {
+                          next.add(deck.id);
+                        }
+                        return next;
+                      })
+                    }
+                    label={`${deck.name}, ${deck.cards} cards`}
+                    state={{ checked: on }}
+                    scaleTo={0.97}
+                    style={[
+                      styles.row,
+                      {
+                        backgroundColor: on ? withAlpha(colors.accent, 0.12) : colors.cardElevated,
+                        borderColor: on ? colors.accent : colors.border,
+                      },
+                    ]}>
+                    <View style={styles.flex}>
+                      <Text style={[styles.rowTitle, { color: colors.text }]}>{deck.name}</Text>
+                      <Text style={[styles.rowSub, { color: colors.textMuted }]}>
+                        {deck.cards} cards
+                      </Text>
+                    </View>
+                  </Touchable>
+                );
+              })
+            : null}
+
+          {chosenCards > MAX_IMPORT_CARDS ? (
+            <Text style={[styles.hint, { color: colors.warning }]}>
+              That is {chosenCards} cards. The first {MAX_IMPORT_CARDS} will be imported — pick
+              fewer decks to choose which.
+            </Text>
+          ) : null}
+
+          <View style={styles.newRow}>
+            <Touchable
+              onPress={cancel}
+              label="Cancel this import"
+              scaleTo={0.95}
+              style={[styles.reveal, styles.flex, { borderWidth: 1, borderColor: colors.border }]}>
+              <Text style={[styles.revealText, { color: colors.textMuted }]}>Cancel</Text>
+            </Touchable>
+            <Touchable
+              onPress={run}
+              label={`Import ${Math.min(chosenCards, MAX_IMPORT_CARDS)} cards`}
+              disabled={chosenCards === 0 || busy !== null}
+              scaleTo={0.95}
+              style={[styles.reveal, styles.flex, { backgroundColor: colors.primary }]}>
+              <Text style={[styles.revealText, { color: colors.primaryText }]}>
+                {busy ?? `Import ${Math.min(chosenCards, MAX_IMPORT_CARDS)} cards`}
+              </Text>
+            </Touchable>
+          </View>
+        </View>
+      ) : (
+        <>
+          <Touchable
+            onPress={pick}
+            label="Choose an apkg file to import"
+            disabled={busy !== null}
+            scaleTo={0.97}
+            style={[styles.row, { backgroundColor: colors.primary, borderColor: colors.primary }]}>
+            <View style={[styles.rowIcon, { backgroundColor: withAlpha(colors.primaryText, 0.2) }]}>
+              <Download size={18} color={colors.primaryText} />
+            </View>
+            <View style={styles.flex}>
+              <Text style={[styles.rowTitle, { color: colors.primaryText }]}>
+                {busy ?? 'Choose an .apkg file'}
+              </Text>
+              <Text style={[styles.rowSub, { color: withAlpha(colors.primaryText, 0.75) }]}>
+                Your files, Downloads, Drive — wherever you saved it
+              </Text>
+            </View>
+          </Touchable>
+
+          {/*
+            The part people actually get stuck on. Written as three routes
+            rather than one, because "download a deck" means something
+            different depending on where the reader is starting from.
+          */}
+          <View
+            style={[
+              styles.card,
+              styles.compactCard,
+              { backgroundColor: colors.card, borderColor: colors.border },
+            ]}>
+            <Text style={[styles.rowTitle, { color: colors.text }]}>
+              Where do I get an .apkg?
+            </Text>
+
+            <Text style={[styles.rowSub, { color: colors.textMuted, marginTop: 8 }]}>
+              <Text style={{ color: colors.text, fontWeight: '700' }}>From AnkiWeb. </Text>
+              Open ankiweb.net/shared/decks in your browser, search for the subject, and press
+              Download. The file lands in your Downloads folder — come back here and choose it.
+            </Text>
+
+            <Text style={[styles.rowSub, { color: colors.textMuted, marginTop: 10 }]}>
+              <Text style={{ color: colors.text, fontWeight: '700' }}>From a friend. </Text>
+              A deck sent on WhatsApp or Telegram saves like any other file. Tap it once to
+              download it, then choose it here — you do not need to open it in anything first.
+            </Text>
+
+            <Text style={[styles.rowSub, { color: colors.textMuted, marginTop: 10 }]}>
+              <Text style={{ color: colors.text, fontWeight: '700' }}>From your own Anki. </Text>
+              On a computer: right-click the deck, Export, choose{' '}
+              <Text style={{ color: colors.text }}>Anki Deck Package (*.apkg)</Text>, and tick
+              Include media if it has pictures. Scheduling is not needed — this app keeps its own.
+            </Text>
+
+            <Text style={[styles.hint, { color: colors.textMuted, marginTop: 12 }]}>
+              Both the old and the new package formats work, with or without media. Cloze
+              deletions, reversed cards and pictures all come across. What does not is the
+              styling: cards are shown as text here rather than as web pages, so a deck's own
+              fonts and colours are not kept.
+            </Text>
+          </View>
+        </>
+      )}
+
+      {/* What has already been imported. */}
+      {decks === null ? (
+        <View style={styles.centered}>
+          <ActivityIndicator color={colors.accent} />
+        </View>
+      ) : decks.length === 0 ? (
+        <Text style={[styles.hint, { color: colors.textMuted }]}>
+          Nothing imported yet. Decks you bring in appear here, and stay on this phone.
+        </Text>
+      ) : (
+        <>
+          <Text style={[styles.sectionLabel, { color: colors.textMuted, marginTop: 18 }]}>
+            IMPORTED DECKS
+          </Text>
+          {decks.map(deck => (
+            <View
+              key={deck.id}
+              style={[styles.row, { backgroundColor: colors.card, borderColor: colors.border }]}>
+              <Touchable
+                onPress={() => onStudy(deck.id)}
+                label={`Study ${deck.name}, ${deck.cardCount} cards`}
+                scaleTo={0.98}
+                style={styles.flex}>
+                <Text style={[styles.rowTitle, { color: colors.text }]}>{deck.name}</Text>
+                <Text style={[styles.rowSub, { color: colors.textMuted }]}>
+                  {deck.cardCount} cards
+                  {deck.mediaCount > 0
+                    ? ` · ${deck.mediaCount} pictures · ${Math.max(1, Math.round(deck.mediaBytes / 1e6))} MB`
+                    : ''}
+                  {deck.truncated ? ' · part of a larger package' : ''}
+                </Text>
+              </Touchable>
+              <Touchable
+                onPress={() => remove(deck.id)}
+                label={`Delete ${deck.name}`}
+                hitSlop={8}
+                scaleTo={0.9}
+                style={styles.iconButton}>
+                <Trash2 size={16} color={colors.danger} />
+              </Touchable>
+            </View>
+          ))}
+        </>
+      )}
+    </>
+  );
+}
+
+/** An imported deck, studied through the same scheduler as everything else. */
+function ImportedStudyView({ deckId, onBack }: { deckId: string; onBack: () => void }) {
+  const [deck, setDeck] = useState<ImportedDeck | null>(null);
+  const [cards, setCards] = useState<DeckCard[] | null>(null);
+
+  useEffect(() => {
+    loadImportedDecks().then(all => setDeck(all.find(d => d.id === deckId) ?? null));
+    loadImportedCards(deckId).then(setCards);
+  }, [deckId]);
+
+  if (!deck || cards === null) {
+    return <Header title="Imported deck" onBack={onBack} />;
+  }
+  /*
+   * The same StudyView, with the cards handed in — the route a deck you wrote
+   * already takes. A second study screen would be a second place for the
+   * scheduler to drift, and `importedDeckKey` namespaces the schedule so an
+   * imported deck can never read another deck's history.
+   */
+  return (
+    <StudyView
+      year="first"
+      subjectName={deck.name}
+      topic={{
+        key: importedDeckKey(deckId),
+        name: deck.name,
+        breadcrumb: deck.source,
+        questions: [],
+      }}
+      fixture={cards}
+      onBack={onBack}
+    />
   );
 }
 
@@ -1559,6 +1955,25 @@ export function StudyView({
         */}
         <Text style={[styles.cardFront, { color: colors.text }]}>{face.front}</Text>
 
+        {/*
+          Pictures on the question side, which only an imported Anki card has.
+
+          The rule above — a diagram belongs on the back — is about *our* image
+          cards, where the diagram is the answer. An imported card is somebody
+          else's, its front is whatever they wrote, and an ECG strip above
+          "identify this rhythm" is the question rather than the answer to it.
+          Hiding it leaves a card asking about a picture that is not there.
+        */}
+        {(face.frontImages ?? []).map(uri => (
+          <Image
+            key={uri}
+            source={{ uri }}
+            style={styles.cardImage}
+            resizeMode="contain"
+            accessibilityLabel={`Picture on this card: ${face.front.slice(0, 60)}`}
+          />
+        ))}
+
         {!revealed && face.hint ? (
           <Text style={[styles.hint, { color: colors.textMuted }]}>Hint: {face.hint}</Text>
         ) : null}
@@ -1568,18 +1983,28 @@ export function StudyView({
             <View style={[styles.rule, { backgroundColor: colors.border }]} />
 
             {/* The answer: the diagram, then the words. */}
-            {face.imageUrl && !imageFailed ? (
-              <Image
-                source={{ uri: face.imageUrl }}
-                style={styles.cardImage}
-                resizeMode="contain"
-                // A diagram that will not load has to say so. A grey rectangle
-                // looks identical to "this app does not show diagrams", and
-                // from inside the app there is no way to tell which it is.
-                onError={() => setImageFailed(true)}
-                accessibilityLabel={`Diagram: ${face.front}`}
-              />
-            ) : null}
+            {/*
+              `backImages` when the card has them and `imageUrl` otherwise, so
+              a generated or hand-written card is unaffected and an imported
+              one can answer with more than one picture — Anki cards routinely
+              do, and taking only the first would silently drop the rest.
+            */}
+            {(face.backImages ?? (face.imageUrl ? [face.imageUrl] : [])).map(uri =>
+              imageFailed ? null : (
+                <Image
+                  key={uri}
+                  source={{ uri }}
+                  style={styles.cardImage}
+                  resizeMode="contain"
+                  // A diagram that will not load has to say so. A grey
+                  // rectangle looks identical to "this app does not show
+                  // diagrams", and from inside the app there is no way to
+                  // tell which it is.
+                  onError={() => setImageFailed(true)}
+                  accessibilityLabel={`Diagram: ${face.front}`}
+                />
+              ),
+            )}
 
             {face.back ? (
               <Text style={[styles.cardBack, { color: colors.text }]}>{face.back}</Text>

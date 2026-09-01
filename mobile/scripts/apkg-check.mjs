@@ -497,6 +497,93 @@ if (fs.existsSync(kotlin)) {
   report.push('note           ApkgModule.kt not present yet; the SQL pinning is skipped');
 }
 
+/* ------------------------------------------------- the module is reachable */
+
+/*
+ * Under the New Architecture a module registered any other way is never asked
+ * for at all: `NativeModules.OrbitApkg` is simply undefined, with no crash, no
+ * warning and nothing in a log. This app has already shipped one that did not
+ * exist on every device — the sound module — so the four pieces that make a
+ * TurboModule are asserted rather than assumed. See check:native-sound.
+ */
+const kotlinDir = path.join(root, 'android/app/src/main/java/com/aistudio/mbbsqbank/aycxvd');
+const pieces = {
+  spec: path.join(root, 'src/native/NativeOrbitApkg.ts'),
+  module: path.join(kotlinDir, 'ApkgModule.kt'),
+  pkg: path.join(kotlinDir, 'ApkgPackage.kt'),
+  app: path.join(kotlinDir, 'MainApplication.kt'),
+  gradle: path.join(root, 'android/app/build.gradle'),
+  proguard: path.join(root, 'android/app/proguard-rules.pro'),
+};
+const missing = Object.entries(pieces).filter(([, file]) => !fs.existsSync(file));
+check(missing.length === 0, `missing: ${missing.map(([name]) => name).join(', ')}`);
+
+if (missing.length === 0) {
+  const read = name => fs.readFileSync(pieces[name], 'utf8');
+  const spec = read('spec');
+  const module = read('module');
+  const pkg = read('pkg');
+
+  check(
+    /TurboModuleRegistry\.get</.test(spec),
+    'NativeOrbitApkg uses getEnforcing — a missing module should hide the feature, not crash the app',
+  );
+  const codegen = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8')).codegenConfig;
+  check(
+    codegen?.jsSrcsDir === 'src/native',
+    'codegenConfig no longer points at src/native, so no spec is generated for this module',
+  );
+  check(
+    /class ApkgModule\([^)]*\)\s*:\s*NativeOrbitApkgSpec/.test(module),
+    'ApkgModule does not extend the generated NativeOrbitApkgSpec',
+  );
+  check(
+    /class ApkgPackage\s*:\s*BaseReactPackage/.test(pkg),
+    'ApkgPackage is not a BaseReactPackage — a plain ReactPackage is never read under the New Architecture',
+  );
+  check(
+    /isTurboModule\s*=\s*\*\/\s*true/.test(pkg) || /\/\*\s*isTurboModule[^*]*\*\/\s*true/.test(pkg),
+    'ApkgPackage does not declare isTurboModule = true',
+  );
+  check(
+    /add\(ApkgPackage\(\)\)/.test(read('app')),
+    'MainApplication never adds ApkgPackage, so the module is not registered at all',
+  );
+
+  // zstd is the one thing Android has no version of, and every modern package
+  // needs it. A minified release build drops it without the keep rule, so the
+  // importer would work in every test build and fail only in the shipped one.
+  check(
+    /com\.github\.luben:zstd-jni/.test(read('gradle')),
+    'zstd-jni is not a dependency — every Anki package made since 2.1.50 is zstd and cannot be read without it',
+  );
+  check(
+    /-keep class com\.github\.luben\.zstd/.test(read('proguard')),
+    'no ProGuard keep for zstd — R8 cannot see JNI callbacks, so the importer would fail only in the release build',
+  );
+
+  // The picker must stay permissionless, the same rule the note and photo
+  // pickers follow.
+  check(
+    /ACTION_OPEN_DOCUMENT/.test(module),
+    'the package picker no longer uses ACTION_OPEN_DOCUMENT',
+  );
+  const manifest = fs.readFileSync(
+    path.join(root, 'android/app/src/main/AndroidManifest.xml'),
+    'utf8',
+  );
+  check(
+    !/READ_MEDIA_|READ_EXTERNAL_STORAGE|MANAGE_EXTERNAL_STORAGE/.test(manifest),
+    'a storage permission appeared in the manifest — ACTION_OPEN_DOCUMENT needs none, and asking for the whole device to read one file is not a trade this app makes',
+  );
+
+  // An imported deck is somebody's own study material and stays on the phone.
+  check(
+    !/supabase|http:\/\/|https:\/\//.test(module.replace(/\/\*[\s\S]*?\*\//g, '')),
+    'ApkgModule reaches the network — an imported deck never leaves the phone',
+  );
+}
+
 /* -------------------------------------------------------------------- done */
 
 process.stdout.write(`${report.join('\n')}\n`);
