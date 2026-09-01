@@ -104,21 +104,46 @@ whose id is gone. Keeping them would leave the queue permanently short.
 
 ## What is NOT verified, and what to do about it
 
-The agent sandboxes **cannot reach Supabase** — the egress gateway refuses
-CONNECT — so none of the following has actually run. Antigravity can reach it.
+**Direct network access to Supabase is blocked** in the agent sandboxes — the
+egress gateway refuses CONNECT — but that is not the same as having no route.
+A **Supabase MCP connector is a route**, and when one is loaded these can be
+checked from Claude Code as easily as from Antigravity. Items 1 and 3 below sat
+unverified for weeks because "the sandbox cannot reach Supabase" was read as
+"this cannot be checked"; both took one query each.
 
-1. **A deck has never been generated.** Open one chapter, then check the row:
-   `select card_count, cards from flashcards where deck_key = '…';` Look for a
-   sane theory/image split, no repeated `imageUrl`, and backs short enough to
-   recall (roughly ≤ 25 words). If the backs are paragraphs, the prompt's
-   "one fact per card" rule is not landing and needs tightening.
+`npm run supabase:status` says the same thing at the top of its output. Read it
+before concluding something here is unknowable.
+
+1. ~~A deck has never been generated.~~ **Four have, and they were checked on
+   2026-09-01.** All three worries came back clean:
+
+   | deck | cards | image | distinct images | avg back | longest back |
+   |---|---|---|---|---|---|
+   | Forensic · toxicology | 44 | 2 | 2 | 10 w | 19 w |
+   | Pharmacology · ANS | 24 | 0 | 0 | 5 w | 10 w |
+   | Forensic · mechanical injuries | 15 | 3 | 3 | 13 w | 16 w |
+   | Community Med · communicable dis. | 12 | 6 | 6 | 14 w | 20 w |
+
+   **Dedupe on `public_url` works** — image cards equals distinct images in
+   every deck. **"One fact per card" is landing** — the longest back in 95
+   cards is 20 words, against a ≤25 target, so the prompt does not need
+   tightening. The image half is a ceiling and not a quota, as designed: the
+   chapter with no diagrams got 24 theory cards.
+
+   One thing to expect rather than treat as a bug: **all four rows have a null
+   `deck_target`**, so they predate the sizing algorithm, and two of them (15
+   and 12) are under today's floor of 20. Those two rebuild once on next open
+   and then carry a target. That is the documented self-healing, not a loop.
 2. **429 handling is untested.** The free tier is the binding constraint and a
    deck is one call. Confirm the quota message reaches the screen rather than a
    raw error.
-3. **The `textbooks` bucket is public.** It holds OCR'd copyrighted textbooks
-   and the notes function's own comments call it private. Anyone with a URL can
-   download them. It should be private — the function reads it with the
-   service-role key and is unaffected by the change.
+3. ~~The `textbooks` bucket is public.~~ **Verified private, 2026-09-01.**
+   `storage.buckets.public` is `false` for `textbooks` (42 files, 40 MB), and
+   the deployed `textbook.ts` fetches
+   `${SUPABASE_URL}/storage/v1/object/textbooks/${path}` — the *authenticated*
+   endpoint, not `/object/public/` — with the service-role key in the header.
+   Nothing needs doing. `diagrams` is still public and is meant to be: those
+   are this app's own generated plates, referenced by public URL from notes.
 
 ## Deck size is a floor, and two places have to agree on it
 

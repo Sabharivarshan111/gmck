@@ -548,17 +548,38 @@ emulator or device**. Antigravity has the connectors; a phone has the rest.
 
 Ordered by what it costs to be wrong.
 
-### 1. The `textbooks` bucket is public — fix this first
+### 1. ~~The `textbooks` bucket is public~~ — DONE, confirmed 2026-09-01
 
-It holds OCR'd copyrighted textbooks. `storage.buckets.public` is `true`, so
-anyone with a URL can download them, and the notes function's own comments
-describe it as private. Set it private: the function reads it with the
-service-role key and will not notice.
+`supabase-tasks.yml` did its job. Confirmed by query, as this entry asked:
 
-`supabase-tasks.yml` now does exactly this from a runner — see §8e. It had not
-started when this was written, so **confirm the flag before crossing it off.**
+    select id, public from storage.buckets;
+    -- textbooks | false     (42 files, 40 MB)
+    -- diagrams  | true      (249 files, 171 MB) — intended, see below
 
-### 2. A flashcard deck has never been generated
+And the deployed `textbook.ts` reads it correctly for a private bucket:
+`fetch(`${SUPABASE_URL}/storage/v1/object/textbooks/${path}`)` — the
+**authenticated** endpoint rather than `/object/public/` — with the
+service-role key in the `Authorization` and `apikey` headers. So the copyright
+exposure is closed and triple-tap is unaffected, in the app and in the web app
+alike, because neither ever touched the bucket: `mobile/src/lib/textbooks.ts`
+is a pure lookup table with no Supabase call in it.
+
+`diagrams` stays public on purpose — those are this app's own generated plates,
+referenced by public URL from inside cached notes.
+
+### 2. ~~A flashcard deck has never been generated~~ — DONE, checked 2026-09-01
+
+Four exist (95 cards). Every worry this entry raised came back clean: dedupe on
+`public_url` holds (image cards == distinct images in all four decks), and the
+longest answer across all 95 cards is 20 words against a ≤25 target, so "one
+fact per card" is landing and the prompt does not need tightening. Full table
+in `.agents/rules/60-flashcards.md`.
+
+All four rows have a null `deck_target`, so they predate the sizing algorithm
+and the two under today's floor of 20 will rebuild once on next open. That is
+the documented self-healing rather than a loop.
+
+### 2b. The original note, for context
 
 `generate-flashcards` is deployed and the image half is confirmed against the
 live `question_diagrams` table by SQL. The **Gemini half has never run.** Open
