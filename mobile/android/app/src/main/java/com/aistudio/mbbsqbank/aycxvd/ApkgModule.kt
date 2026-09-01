@@ -112,7 +112,7 @@ class ApkgModule(reactContext: ReactApplicationContext) : NativeOrbitApkgSpec(re
   /* ------------------------------------------------------------- picking */
 
   override fun pick(promise: Promise) {
-    val activity = currentActivity
+    val activity = getCurrentActivity()
     if (activity == null) {
       promise.resolve("")
       return
@@ -122,15 +122,17 @@ class ApkgModule(reactContext: ReactApplicationContext) : NativeOrbitApkgSpec(re
 
     val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
       addCategory(Intent.CATEGORY_OPENABLE)
-      /*
-       * `*/*` rather than a MIME type for .apkg, because there isn't one that
-       * can be relied on. Android derives a document's type from the provider,
-       * and providers disagree about what an .apkg is: Drive reports
-       * application/octet-stream, some file managers report application/zip,
-       * and a few report nothing at all. Naming any of them hides the file the
-       * reader is looking straight at, in a picker with no way to say "show me
-       * everything". The extension is checked after the fact instead.
-       */
+      // Every type, rather than a MIME type for .apkg, because there isn't one
+      // that can be relied on. Android derives a document's type from the
+      // provider, and providers disagree about what an .apkg is: Drive reports
+      // application/octet-stream, some file managers report application/zip,
+      // and a few report nothing at all. Naming any of them hides the file the
+      // reader is looking straight at, in a picker with no way to say "show me
+      // everything". The extension is checked after the fact instead.
+      //
+      // Written with line comments on purpose: the wildcard this sets contains
+      // the character pair that ends a block comment, and spelling it inside
+      // one silently turns the rest of the paragraph into code.
       type = "*/*"
       addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
     }
@@ -659,7 +661,7 @@ class ApkgModule(reactContext: ReactApplicationContext) : NativeOrbitApkgSpec(re
    */
   override fun share(path: String, promise: Promise) {
     promise.runCatchingBool("share_failed") {
-      val activity = currentActivity ?: return@runCatchingBool false
+      val activity = getCurrentActivity() ?: return@runCatchingBool false
       val file = File(path)
       // Only ever out of our own sharing folder. A path from anywhere else is
       // a bug in the caller, and honouring it would turn this into a way to

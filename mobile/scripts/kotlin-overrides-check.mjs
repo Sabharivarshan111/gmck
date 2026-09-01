@@ -152,6 +152,73 @@ for (const file of readdirSync(appKotlin).filter(f => f.endsWith('.kt'))) {
   }
 }
 
+/*
+ * A block comment that closes itself.
+ *
+ * `*` followed by `/` ends a block comment wherever it appears, including in
+ * the middle of a sentence. Writing the MIME wildcard `*` `/` `*` into a
+ * comment about it therefore ended the comment on its own first line and left
+ * the rest of the paragraph to be parsed as Kotlin — forty-one errors, all of
+ * them "Unresolved reference 'can'", "'relied'", "'derives'", because the
+ * compiler was reading English prose as code.
+ *
+ * Nothing in this sandbox can compile Kotlin, so this class of bug costs a
+ * fourteen-minute Gradle step to discover.
+ *
+ * The rule has to be narrow, because the obvious version is wrong: this
+ * codebase is full of `/* isTurboModule = *``/ true,` — a block comment used
+ * as an argument label, which closes mid-line on purpose and is correct
+ * Kotlin. What separates the two is that the label idiom opens and closes on
+ * **one line**. A comment that ran over several lines and then ends in the
+ * middle of one is prose that stopped being prose.
+ */
+let commentsChecked = 0;
+for (const name of readdirSync(appKotlin).filter(f => f.endsWith('.kt'))) {
+  const text = readFileSync(path.join(appKotlin, name), 'utf8');
+  const lines = text.split('\n');
+  let inBlock = false;
+  /** The line the open block comment started on. */
+  let openedAt = -1;
+  lines.forEach((line, index) => {
+    // Strings can hold the pair legitimately — `type = "*/*"` is the very
+    // thing that has to keep working — so only comment bodies are examined.
+    let at = 0;
+    while (at < line.length) {
+      if (!inBlock) {
+        const open = line.indexOf('/*', at);
+        const lineComment = line.indexOf('//', at);
+        const quote = line.indexOf('"', at);
+        if (open < 0 || (lineComment >= 0 && lineComment < open) || (quote >= 0 && quote < open)) {
+          break;
+        }
+        inBlock = true;
+        openedAt = index;
+        at = open + 2;
+        continue;
+      }
+      const close = line.indexOf('*/', at);
+      if (close < 0) {
+        break;
+      }
+      inBlock = false;
+      commentsChecked += 1;
+      const after = line.slice(close + 2).trim();
+      // A one-line `/* label = */ value` is the argument-label idiom and is
+      // fine. Only a comment that spanned lines and then stopped mid-line is
+      // prose being compiled.
+      if (after.length > 0 && openedAt !== index) {
+        check(
+          false,
+          `${name}:${index + 1}: a block comment ends mid-line, and ` +
+            `everything after it — ${JSON.stringify(after.slice(0, 48))} — is compiled as code. ` +
+            'Write it with // line comments instead.',
+        );
+      }
+      at = close + 2;
+    }
+  });
+}
+
 if (failures.length > 0) {
   console.error('Kotlin override check failed:\n');
   for (const failure of failures) console.error(`  - ${failure}`);
