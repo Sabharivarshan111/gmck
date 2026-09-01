@@ -51,6 +51,7 @@
     "check:trees": "node scripts/trees-check.mjs",
     "check:music": "node preview/music-shot.mjs",
     "check:glass-shader": "node scripts/glass-shader-check.mjs",
+    "check:bot": "node --experimental-strip-types --no-warnings scripts/bot-check.mjs",
     "check:diagrams": "node scripts/diagram-match-check.mjs",
     "check:apkg": "node scripts/apkg-check.mjs",
     "fixtures:apkg": "python3 scripts/make-apkg-fixtures.py",
