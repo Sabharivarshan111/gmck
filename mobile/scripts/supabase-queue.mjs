@@ -90,7 +90,8 @@ async function reachable(timeoutMs = 8000) {
 }
 
 function describe(job) {
-  const lines = [`  ${job.status === 'done' ? '·' : '!'} ${job.id}  ${job.kind}`];
+  const mark = { done: '·', declined: '×' }[job.status] ?? '!';
+  const lines = [`  ${mark} ${job.id}  ${job.kind}`];
   lines.push(`      ${job.summary}`);
   if (job.file) lines.push(`      apply: ${job.file}`);
   if (job.why) lines.push(`      why:   ${job.why}`);
@@ -101,7 +102,18 @@ const [, , command = 'status', arg] = process.argv;
 
 if (command === 'status' || command === 'check') {
   const queue = await readQueue();
-  const pending = queue.jobs.filter(job => job.status !== 'done');
+  /*
+   * `declined` is a finished state, not a waiting one.
+   *
+   * A job the app's owner has said no to must stop being advertised as work,
+   * or every future session reads "1 job waiting" and does the thing that was
+   * refused. It stays in the file rather than being deleted, because the
+   * decision and its reasoning are the useful part — a job that vanishes gets
+   * re-queued by whoever next notices the same tidy-up.
+   */
+  const FINISHED = new Set(['done', 'declined']);
+  const pending = queue.jobs.filter(job => !FINISHED.has(job.status));
+  const declined = queue.jobs.filter(job => job.status === 'declined');
 
   if (command === 'check') {
     // CI: a job that points at a file nobody kept is a job nobody can do.
@@ -136,6 +148,17 @@ if (command === 'status' || command === 'check') {
     process.stdout.write('  (nothing)\n');
   } else {
     for (const job of pending) process.stdout.write(`${describe(job)}\n`);
+  }
+
+  /*
+   * Listed, but plainly not as work. A refused job that is invisible gets
+   * proposed again by the next person who spots the same loose end.
+   */
+  if (declined.length > 0) {
+    process.stdout.write(
+      `\n${declined.length} declined — do NOT do these, the reason is in each one:\n`,
+    );
+    for (const job of declined) process.stdout.write(`${describe(job)}\n`);
   }
   process.exit(0);
 }
