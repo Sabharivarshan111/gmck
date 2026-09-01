@@ -66,7 +66,13 @@ jobs:
             echo "::error::The token was rejected ($code). It may have been rotated, or it may lack access to this project."
             exit 1
           fi
-          [ "$code" = "200" ] || { echo "::error::Unexpected response $code"; cat /tmp/buckets.json; exit 1; }
+          # Any 2xx. The Management API's database/query answers **201**, not
+          # 200, and this check accepted only 200 — which is why this workflow
+          # has never once succeeded, in either of its runs, while doing the
+          # query correctly every time. The bucket it was written to fix was
+          # made private by some other route; do not read a green tick here as
+          # evidence that a past run applied anything.
+          case "$code" in 2*) ;; *) echo "::error::Unexpected response $code"; cat /tmp/buckets.json; exit 1;; esac
           echo "--- buckets before ---"; cat /tmp/buckets.json; echo
 
       - name: Make the textbooks bucket private
@@ -86,7 +92,7 @@ jobs:
             -X POST "https://api.supabase.com/v1/projects/$PROJECT_REF/database/query" \
             -d '{"query":"update storage.buckets set public = false where id = '\''textbooks'\'' and public is true; select id, public from storage.buckets order by id;"}')
           echo "update: HTTP $code"
-          [ "$code" = "200" ] || { echo "::error::Update failed ($code)"; cat /tmp/after.json; exit 1; }
+          case "$code" in 2*) ;; *) echo "::error::Update failed ($code)"; cat /tmp/after.json; exit 1;; esac
           echo "--- buckets after ---"; cat /tmp/after.json; echo
           if grep -q '"id":"textbooks","public":true' /tmp/after.json; then
             echo "::error::textbooks is still public"
@@ -118,7 +124,7 @@ jobs:
             -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' \
             -X POST "https://api.supabase.com/v1/projects/$PROJECT_REF/database/query" \
             -d '{"query":"select count(*)::int as files from storage.objects where bucket_id = '\''note-images'\'';"}')
-          [ "$code" = "200" ] || { echo "::error::Could not count objects ($code)"; cat /tmp/count.json; exit 1; }
+          case "$code" in 2*) ;; *) echo "::error::Could not count objects ($code)"; cat /tmp/count.json; exit 1;; esac
           echo "objects in note-images: $(cat /tmp/count.json)"
           if ! grep -q '"files":0' /tmp/count.json; then
             echo "::error::note-images is not empty — refusing to delete it."
@@ -131,7 +137,7 @@ jobs:
           code=$(curl -s -o /tmp/keys.json -w '%{http_code}' \
             -H "Authorization: Bearer $TOKEN" \
             "https://api.supabase.com/v1/projects/$PROJECT_REF/api-keys")
-          [ "$code" = "200" ] || { echo "::error::Could not read the project keys ($code)"; exit 1; }
+          case "$code" in 2*) ;; *) echo "::error::Could not read the project keys ($code)"; exit 1;; esac
           SRK=$(python3 -c "import json,sys;print(next((k.get('api_key','') for k in json.load(open('/tmp/keys.json')) if k.get('name')=='service_role'), ''))")
           rm -f /tmp/keys.json
           if [ -z "$SRK" ]; then
@@ -145,10 +151,10 @@ jobs:
             -H "Authorization: Bearer $SRK" -H "apikey: $SRK" \
             -X DELETE "https://$PROJECT_REF.supabase.co/storage/v1/bucket/note-images")
           echo "delete bucket: HTTP $code"
-          # 404 means somebody already removed it, which is the same end state.
-          if [ "$code" != "200" ] && [ "$code" != "404" ]; then
-            echo "::error::Delete failed ($code)"; cat /tmp/del.json; exit 1
-          fi
+          case "$code" in
+            2*|404) ;;
+            *) echo "::error::Delete failed ($code)"; cat /tmp/del.json; exit 1;;
+          esac
 
           # The queue entry's own verify step.
           code=$(curl -s -o /tmp/verify.json -w '%{http_code}' \

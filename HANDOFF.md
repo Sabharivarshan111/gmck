@@ -550,7 +550,14 @@ Ordered by what it costs to be wrong.
 
 ### 1. ~~The `textbooks` bucket is public~~ — DONE, confirmed 2026-09-01
 
-`supabase-tasks.yml` did its job. Confirmed by query, as this entry asked:
+**Not by `supabase-tasks.yml`** — that workflow had never once succeeded. Both
+its runs failed on `[ "$code" = "200" ]` while the Management API's
+`database/query` endpoint answers **201**, so it ran the right query, got the
+right answer, and then called it an error. Fixed to accept any 2xx. Whatever
+made the bucket private was some other route; a green tick on that workflow was
+never available to read as evidence.
+
+Confirmed by direct query instead, as this entry asked:
 
     select id, public from storage.buckets;
     -- textbooks | false     (42 files, 40 MB)

@@ -137,7 +137,9 @@ before concluding something here is unknowable.
 2. **429 handling is untested.** The free tier is the binding constraint and a
    deck is one call. Confirm the quota message reaches the screen rather than a
    raw error.
-3. ~~The `textbooks` bucket is public.~~ **Verified private, 2026-09-01.**
+3. ~~The `textbooks` bucket is public.~~ **Verified private by query,
+   2026-09-01** — not by `supabase-tasks.yml`, which had never succeeded (it
+   required HTTP 200 from an endpoint that answers 201; now fixed).
    `storage.buckets.public` is `false` for `textbooks` (42 files, 40 MB), and
    the deployed `textbook.ts` fetches
    `${SUPABASE_URL}/storage/v1/object/textbooks/${path}` — the *authenticated*
