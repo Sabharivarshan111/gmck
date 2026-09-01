@@ -8,11 +8,14 @@ import android.graphics.Paint
 import android.graphics.RuntimeShader
 import android.graphics.Shader
 import android.os.Build
+import android.os.SystemClock
+import android.view.TextureView
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.widget.ImageView
 import kotlin.math.abs
+import kotlin.math.max
 
 /**
  * Real refraction, on the phones that can do it.
@@ -35,24 +38,36 @@ import kotlin.math.abs
  * every instance shares, and each view samples its own window of it, tracked
  * as the card scrolls.
  *
- * A snapshot is only honest because of what is actually behind a card in this
- * app: a wallpaper, or a flat theme colour. Both are still. The things that
- * move are the cards themselves, which are siblings of the background and not
- * part of it. Over a scrolling *background* this technique would show a frozen
- * picture, and it is worth knowing that before it is reused somewhere else.
+ * Three things make that affordable enough to keep fresh rather than take
+ * once, which is what lets this work over a scrolling page and a playing
+ * video rather than only over a still wallpaper:
  *
- * `revision` is how JS says the background changed — a new wallpaper, mostly.
- * There is no listener that could know.
+ * **It is captured small.** A third of each dimension, so a ninth of the
+ * pixels — about 1.2MB instead of 10 on a 1080x2400 phone, and a draw that
+ * costs about a ninth as much. Nothing is lost: a refracted, edge-weighted
+ * backdrop is not a place anybody reads detail, and a downscaled source reads
+ * as the softness real glass has anyway.
  *
- * ## What can go wrong, and what happens then
+ * **It is shared and throttled.** One bitmap for every pane on screen, and
+ * never more than one capture per `MIN_INTERVAL_MS`, whoever asks.
  *
- * A **video wallpaper** is a SurfaceView, and `draw()` on one produces
- * nothing: the video lives on a separate surface the view hierarchy cannot
- * read. The capture comes back transparent, `looksReal()` rejects it, and
- * after a few retries this view gives up for good and leaves the bevel. That
- * is the correct outcome and it is why the retries are bounded — a view that
- * kept re-rasterising a full-screen bitmap every frame, forever, on a cheap
- * phone, is a worse bug than the one it was trying to fix.
+ * **It only refreshes when something moved.** A still screen captures once
+ * and then costs nothing at all. Scrolling refreshes on the throttle; a video
+ * wallpaper, which is moving by definition, refreshes on it continuously.
+ *
+ * ## Two traps, and what is done about them
+ *
+ * A **video** is a `TextureView` here rather than the SurfaceView
+ * `react-native-video` uses by default — see WallpaperBackground. A
+ * SurfaceView's frames are on a separate surface the hierarchy cannot read, so
+ * `draw()` returns nothing and the old code stood down to the bevel. A
+ * TextureView answers `getBitmap`, so the shader can refract a moving picture.
+ *
+ * And **capturing the screen would capture the glass**, which would then
+ * refract its own last frame, and that of the frame before, and so on — a
+ * smear that gets worse every time. `capturing` is why: while a capture is in
+ * flight every pane draws nothing, so what is rasterised is the app without
+ * its glass, which is exactly what should be behind glass.
  */
 class GlassView(context: android.content.Context) : View(context) {
 
@@ -116,6 +131,7 @@ class GlassView(context: android.content.Context) : View(context) {
   private var offsetY = 0f
   private var attempts = 0
   private var gaveUp = false
+  private var lastOffsetChange = 0L
 
   private val preDraw =
     ViewTreeObserver.OnPreDrawListener {
@@ -156,24 +172,50 @@ class GlassView(context: android.content.Context) : View(context) {
     if (abs(x - offsetX) >= 0.5f || abs(y - offsetY) >= 0.5f) {
       offsetX = x
       offsetY = y
+      lastOffsetChange = SystemClock.uptimeMillis()
       invalidate()
+    }
+    // A moving picture has to be re-read whether or not this card moved; a
+    // still one only when something did. Either way the throttle decides
+    // whether the request is actually honoured.
+    val moving = synchronized(lock) { sharedView } is TextureView
+    if (moving || SystemClock.uptimeMillis() - lastOffsetChange < STILL_AFTER_MS) {
+      if (refresh()) invalidate()
     }
   }
 
   private fun supported(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
 
   /**
-   * Rasterise whatever is behind, once, for everyone.
+   * Ask for a fresher picture, if the throttle allows one.
+   *
+   * Returns whether anything was actually re-read, so the caller only
+   * invalidates when there is something new to draw.
+   */
+  private fun refresh(): Boolean {
+    if (gaveUp || !supported()) return false
+    val now = SystemClock.uptimeMillis()
+    synchronized(lock) {
+      if (now - lastCaptureAt < MIN_INTERVAL_MS) return false
+    }
+    return capture(force = true) != null
+  }
+
+  /**
+   * Rasterise whatever is behind, small, for everyone.
    *
    * Shared rather than per-view because it is the same picture for all of
-   * them and it is measured in megabytes — a full-screen ARGB_8888 bitmap is
-   * about ten on a 1080x2400 phone, and one per card would be indefensible on
-   * the handsets this app is for.
+   * them, and taken at a third of each dimension because nothing here reads
+   * detail: the result is refracted, weighted towards the rim, and softened
+   * on the way — a downscaled source looks more like glass, not less, and
+   * costs a ninth as much to produce.
    */
-  private fun capture(): Bitmap? {
-    synchronized(lock) {
-      val existing = sharedBitmap
-      if (existing != null && !existing.isRecycled) return existing
+  private fun capture(force: Boolean = false): Bitmap? {
+    if (!force) {
+      synchronized(lock) {
+        val existing = sharedBitmap
+        if (existing != null && !existing.isRecycled) return existing
+      }
     }
     if (gaveUp || width <= 0 || height <= 0) return null
     val background = findBackground(rootView) ?: run { attempts += 1; return null }
@@ -181,20 +223,48 @@ class GlassView(context: android.content.Context) : View(context) {
       attempts += 1
       return null
     }
+
+    val scaledWidth = max(1, (background.width * CAPTURE_SCALE).toInt())
+    val scaledHeight = max(1, (background.height * CAPTURE_SCALE).toInt())
+
     return try {
-      val bitmap = Bitmap.createBitmap(background.width, background.height, Bitmap.Config.ARGB_8888)
-      background.draw(Canvas(bitmap))
-      if (!looksReal(bitmap)) {
-        bitmap.recycle()
+      /*
+       * Every pane stands down while this runs.
+       *
+       * `background.draw` walks the whole tree, this view included, so
+       * without the flag each capture would contain the refraction from the
+       * previous one — glass reflecting glass, smearing a little further
+       * every time. What should be behind glass is the app without it.
+       */
+      capturing = true
+      val bitmap =
+        if (background is TextureView) {
+          // A SurfaceView cannot be read at all; a TextureView can, and this
+          // is the only path that gets a *video* wallpaper into the shader.
+          background.getBitmap(scaledWidth, scaledHeight)
+        } else {
+          Bitmap.createBitmap(scaledWidth, scaledHeight, Bitmap.Config.ARGB_8888).also {
+            val canvas = Canvas(it)
+            canvas.scale(CAPTURE_SCALE, CAPTURE_SCALE)
+            background.draw(canvas)
+          }
+        }
+
+      if (bitmap == null || !looksReal(bitmap)) {
+        bitmap?.recycle()
         attempts += 1
         if (attempts >= MAX_ATTEMPTS) gaveUp = true
         null
       } else {
         synchronized(lock) {
-          sharedBitmap?.recycle()
+          if (sharedBitmap !== bitmap) sharedBitmap?.recycle()
           sharedBitmap = bitmap
           sharedView = background
+          lastCaptureAt = SystemClock.uptimeMillis()
         }
+        // A fresh bitmap needs a fresh BitmapShader; the old one still points
+        // at pixels that have just been recycled.
+        localShader = null
         attempts = 0
         bitmap
       }
@@ -202,6 +272,8 @@ class GlassView(context: android.content.Context) : View(context) {
       attempts += 1
       if (attempts >= MAX_ATTEMPTS) gaveUp = true
       null
+    } finally {
+      capturing = false
     }
   }
 
@@ -210,6 +282,9 @@ class GlassView(context: android.content.Context) : View(context) {
     // hardware accelerated, and every case where the capture failed, leaves
     // this view drawing nothing over the card GlassSurface already painted.
     if (!supported() || !canvas.isHardwareAccelerated || width <= 0 || height <= 0) return
+    // Stand down while the screen is being rasterised, or this pane's own
+    // refraction ends up inside the picture it refracts.
+    if (capturing) return
     val bitmap = capture() ?: return
 
     var bitmapShader = localShader
@@ -233,6 +308,7 @@ class GlassView(context: android.content.Context) : View(context) {
     if (dirty) {
       program.setInputShader("backdrop", bitmapShader)
       program.setFloatUniform("backdropSize", bitmap.width.toFloat(), bitmap.height.toFloat())
+      program.setFloatUniform("captureScale", CAPTURE_SCALE)
       program.setFloatUniform("cornerRadius", cornerRadius)
       program.setFloatUniform("refraction", refraction)
       program.setFloatUniform("chromatic", chromatic)
@@ -258,15 +334,51 @@ class GlassView(context: android.content.Context) : View(context) {
     private val lock = Any()
     private var sharedBitmap: Bitmap? = null
     private var sharedView: View? = null
+    private var lastCaptureAt = 0L
+
+    /**
+     * True while the screen is being rasterised.
+     *
+     * Read by every pane's `onDraw`, so the capture contains the app without
+     * its glass. Not synchronised on purpose: it is set and cleared on the UI
+     * thread within one synchronous `draw()`, and the only readers are on that
+     * same thread inside that same call.
+     */
+    @Volatile
+    private var capturing = false
+
+    /**
+     * A third of each dimension, so a ninth of the pixels.
+     *
+     * What the shader does with the backdrop — bend it hardest at the rim,
+     * split the channels, brighten the edge — is not somewhere anyone reads
+     * detail, and a downscaled source reads as the softness real glass has.
+     * The saving is what makes re-capturing affordable at all.
+     */
+    private const val CAPTURE_SCALE = 1f / 3f
+
+    /** No more than one capture this often, however many panes ask. */
+    private const val MIN_INTERVAL_MS = 90L
+
+    /**
+     * How long after the last movement a screen still counts as moving.
+     *
+     * Momentum scrolling stops arriving as offset changes before it stops
+     * looking like motion, so a short tail avoids the backdrop freezing a
+     * moment before the page does.
+     */
+    private const val STILL_AFTER_MS = 400L
 
     /**
      * How many times to try before leaving it alone.
      *
-     * A video wallpaper can never be captured, so this has to end. Retrying
-     * a full-screen rasterisation forever is the failure that would actually
-     * hurt somebody's phone.
+     * Some backgrounds cannot be read at all — a SurfaceView, a
+     * hardware-protected surface — so this has to end. Retrying a
+     * rasterisation forever is the failure that would actually hurt
+     * somebody's phone, and standing down costs only the shader: the card and
+     * its bevel are already drawn underneath.
      */
-    private const val MAX_ATTEMPTS = 8
+    private const val MAX_ATTEMPTS = 12
 
     /**
      * The picture behind: the biggest drawn image, or failing that the biggest
@@ -279,12 +391,21 @@ class GlassView(context: android.content.Context) : View(context) {
     private fun findBackground(root: View): View? {
       var bestImage: View? = null
       var bestImageArea = 0L
+      var bestTexture: View? = null
+      var bestTextureArea = 0L
       var bestPlain: View? = null
       var bestPlainArea = 0L
       fun walk(view: View) {
         if (!view.isShown || view.width <= 0 || view.height <= 0 || view is GlassView) return
         val area = view.width.toLong() * view.height.toLong()
-        if (view is ImageView && view.drawable != null) {
+        if (view is TextureView) {
+          // The video wallpaper. Preferred over everything else when present:
+          // it is the whole page, and it is the one thing that moves.
+          if (area > bestTextureArea) {
+            bestTextureArea = area
+            bestTexture = view
+          }
+        } else if (view is ImageView && view.drawable != null) {
           if (area > bestImageArea) {
             bestImageArea = area
             bestImage = view
@@ -298,15 +419,15 @@ class GlassView(context: android.content.Context) : View(context) {
         }
       }
       walk(root)
-      return bestImage ?: bestPlain
+      return bestTexture ?: bestImage ?: bestPlain
     }
 
     /**
      * Is there anything in this bitmap?
      *
-     * A SurfaceView — the video wallpaper — draws nothing into a canvas, so
-     * the capture comes back fully transparent and refracting it would replace
-     * a perfectly good card with a hole. Nine points, and most of them have to
+     * A surface the hierarchy cannot read draws nothing into a canvas, so the
+     * capture comes back fully transparent and refracting it would replace a
+     * perfectly good card with a hole. Nine points, and most of them have to
      * be opaque.
      */
     private fun looksReal(bitmap: Bitmap): Boolean {
@@ -346,6 +467,7 @@ class GlassView(context: android.content.Context) : View(context) {
       """
       uniform shader backdrop;
       uniform float2 backdropSize;
+      uniform float captureScale;
       uniform float2 size;
       uniform float2 origin;
       uniform float cornerRadius;
@@ -393,8 +515,11 @@ class GlassView(context: android.content.Context) : View(context) {
         float depth = clamp(-d / max(r, 1.0), 0.0, 1.0);
         float curve = pow(1.0 - depth, 3.0);
 
-        float2 base = coord + origin;
-        float push = curve * refraction * min(size.x, size.y);
+        // The backdrop was captured small, so the window this pane samples has
+        // to shrink by the same factor. Getting this wrong shows as the
+        // refraction sliding away from the card as you scroll down the page.
+        float2 base = (coord + origin) * captureScale;
+        float push = curve * refraction * min(size.x, size.y) * captureScale;
         float2 shift = normal * push;
 
         half4 colour;

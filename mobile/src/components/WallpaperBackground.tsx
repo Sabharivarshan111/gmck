@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { AppState, Image, StyleSheet, View, type AppStateStatus } from 'react-native';
-import Video from 'react-native-video';
+import Video, { ViewType } from 'react-native-video';
 import { useTheme } from '@/theme';
 import { useReducedMotion } from '@/theme/motion';
 import { useWallpaper } from '@/hooks/useWallpaper';
@@ -79,6 +79,22 @@ export function WallpaperBackground({ children }: { children: React.ReactNode })
             paused={!foreground || reduceMotion}
             disableFocus
             playInBackground={false}
+            /*
+             * A TextureView, not the default SurfaceView, and the reason is
+             * the glass.
+             *
+             * A SurfaceView's frames live on a separate surface that the view
+             * hierarchy cannot read: `draw()` into a canvas produces nothing,
+             * which is why a video wallpaper used to leave every glass card
+             * falling back to its drawn bevel. A TextureView is composited in
+             * the hierarchy and can be sampled with `getBitmap`, so the
+             * shader can refract a moving picture.
+             *
+             * It costs a little more than a SurfaceView — an extra copy per
+             * frame — which for one full-screen background is the right side
+             * of the trade, and it is only paid by readers who chose a video.
+             */
+            viewType={ViewType.TEXTURE}
             onError={() => {
               setBroken(true);
               clear();

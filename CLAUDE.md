@@ -605,24 +605,42 @@ So a plain `SimpleViewManager` works, with no codegen, no `codegenConfig`
 change and no C++ entry point — which this app has none of and would otherwise
 have had to grow for one view.
 
-Three gates, and each is load-bearing:
+Two gates:
 
 - **API 33.** `RuntimeShader` arrived in Android 13; `minSdkVersion` is 24.
-- **A wallpaper.** This looks like a restriction and is physics: a shader
-  refracts what is behind it, and behind a card here is either the reader's
-  picture or a flat theme colour. Refracting a flat colour returns a flat
-  colour, so without a picture it is a ten-megabyte bitmap spent reproducing
-  the image already on screen. It is also the only case where the capture is
-  *honest* — the wallpaper is genuinely still, and the things that move are its
-  siblings.
 - **`hasViewManagerConfig`.** The sound module is the cautionary tale: a native
   thing that is silently absent looks exactly like one quietly doing nothing.
 
+There was a third — a wallpaper had to be set — and it was wrong. The argument
+was that refracting a flat colour returns a flat colour, which is true of the
+*theme colour* and false of the screen: what sits behind a card is the page,
+and bending that is what a pane of glass laid on a page does. What the gate was
+really protecting was cost, and cost is answered directly instead, by three
+things `check:glass-shader` pins:
+
+- **The capture is a third of each dimension** — a ninth of the pixels, about
+  1.2MB instead of 10, and a draw that costs about a ninth as much. Nothing is
+  lost: a refracted, rim-weighted backdrop is not where anyone reads detail,
+  and a downscaled source reads as the softness real glass has.
+- **One bitmap, shared, at most one capture per 90ms**, however many panes ask.
+  A still screen captures once and then costs nothing; scrolling refreshes on
+  the throttle.
+- **Every pane stands down while a capture runs.** `background.draw` walks the
+  whole tree, so without that flag each capture would contain the previous
+  frame's refraction — glass reflecting glass, smearing further every time.
+
+**A video wallpaper works too.** It did not before, and the reason was that
+`react-native-video` renders into a SurfaceView by default, whose frames live
+on a surface the view hierarchy cannot read: `draw()` produced nothing and
+every glass card stood down. `WallpaperBackground` now asks for
+`ViewType.TEXTURE`, and `GlassView` prefers a TextureView over everything else
+in its background search and samples it with `getBitmap`. A TextureView costs
+an extra copy per frame, paid only by readers who chose a video.
+
 **It is drawn between the fill and the bevel, and that order is the whole
 safety story.** The fill is already painted, so a phone below Android 13, a
-video wallpaper (a SurfaceView draws nothing into a canvas, so the capture
-comes back empty and `looksReal` rejects it), or a capture that never succeeds
-all leave a finished card rather than a hole. The bevel stays on top because it
+background that genuinely cannot be read, or a capture that never succeeds all
+leave a finished card rather than a hole. The bevel stays on top because it
 follows the theme. The retries are bounded for the same reason: re-rasterising
 a full-screen bitmap forever on a cheap phone is worse than the bug it was
 fixing.

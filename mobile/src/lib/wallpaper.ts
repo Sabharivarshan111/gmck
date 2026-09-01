@@ -56,10 +56,16 @@ export interface Wallpaper {
  *
  * The picker already downscales images on the way in, so this is really about
  * video, which it does not touch: a 200MB clip decoded behind every screen is
- * not a wallpaper, it is a way to make a cheap phone unusable. 20MB is
+ * not a wallpaper, it is a way to make a cheap phone unusable. 30MB is
  * generous for a short loop and firmly the wrong side of "a whole film".
+ *
+ * Raised from 20MB at the app owner's request. What the number is protecting
+ * against is decode cost per frame rather than storage, and that tracks
+ * resolution and bitrate rather than file length — so a longer loop at the
+ * same resolution costs nothing extra to play, and the ceiling can move
+ * without the reason for having one changing.
  */
-export const MAX_WALLPAPER_BYTES = 20 * 1024 * 1024;
+export const MAX_WALLPAPER_BYTES = 30 * 1024 * 1024;
 
 const KEY = 'orbit:wallpaper';
 

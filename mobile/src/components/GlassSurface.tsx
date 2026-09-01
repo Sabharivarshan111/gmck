@@ -112,22 +112,26 @@ export function GlassSurface({
   const [size, setSize] = useState({ width: 0, height: 0 });
 
   /*
-   * The AGSL pane, on Android 13 and up, and only over a picture.
+   * The AGSL pane, on Android 13 and up. Wallpaper or no wallpaper.
    *
-   * Both halves of that are in `native/OrbitGlass`, and the second is not
-   * timidity: a shader refracts what is behind it, and behind a card here is
-   * either the wallpaper or a flat colour. Refracting a flat colour returns a
-   * flat colour, so without a picture the effect is a full-screen bitmap spent
-   * to reproduce the image already on screen.
+   * It was gated on a wallpaper at first, on the grounds that refracting a
+   * flat colour returns a flat colour. That is true of the *theme colour* and
+   * false of the screen: what sits behind a card is the page — headings, other
+   * cards, a progress bar, the subject grid — and bending that is exactly what
+   * a pane of glass laid on a page does. The capture is the whole background
+   * either way, so there was never a case where it had nothing to work with.
    *
-   * A **video** wallpaper is offered it anyway rather than excluded here. It
-   * will not work — a SurfaceView draws nothing into a canvas, so the capture
-   * comes back empty — but the view detects that itself, gives up after a
-   * bounded number of tries and leaves the bevel. Deciding it in JS would mean
-   * two places that have to agree about a thing only one of them can see.
+   * What the wallpaper condition was really protecting was *cost*, and that is
+   * answered properly now instead: the capture is a third of each dimension
+   * and shared by every pane, so it is about 1.2MB rather than 10, and the
+   * refresh is throttled to one for the whole screen at a time.
+   *
+   * A **video** wallpaper works too, which it did not before. `GlassView`
+   * prefers a TextureView over everything else when there is one, and
+   * `WallpaperBackground` now asks for a TextureView precisely so there is.
    */
   const { wallpaper } = useWallpaper();
-  const shaded = GLASS_SHADER_AVAILABLE && lit && wallpaper !== null;
+  const shaded = GLASS_SHADER_AVAILABLE && lit;
 
   const onLayout = (event: LayoutChangeEvent) => {
     const { width, height } = event.nativeEvent.layout;
@@ -257,6 +261,9 @@ export function GlassSurface({
           style={StyleSheet.absoluteFill}
           cornerRadius={borderRadius}
           tint={withAlpha(colors.card, colors.translucency * 0.5)}
+          // Changing the wallpaper is the one background change nothing
+          // native could notice, so JS says so. Everything else the view
+          // refreshes on its own.
           revision={wallpaper ? revisionOf(wallpaper.uri) : 0}
         />
       ) : null}

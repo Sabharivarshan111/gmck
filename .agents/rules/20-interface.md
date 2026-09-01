@@ -56,9 +56,13 @@ custom-theme subject cards.
 - **Android 13+ gets a real AGSL shader** (`GlassView.kt`, registered as
   `OrbitGlass`), drawn **between the fill and the bevel**. That order is the
   safety story: an older phone, a video wallpaper, or a failed capture all
-  leave a finished card rather than a hole. Gated on API 33, on a wallpaper
-  being set (refracting a flat colour returns a flat colour), and on
-  `hasViewManagerConfig`.
+  leave a finished card rather than a hole. Gated on API 33 and on
+  `hasViewManagerConfig`, and affordable because the capture is a third of
+  each dimension, shared, throttled to one per 90ms, and taken with every pane
+  standing down so the glass is not inside the picture it refracts.
+- **A video wallpaper refracts too**, but only because `WallpaperBackground`
+  asks for `ViewType.TEXTURE`: a SurfaceView's frames are on a surface the
+  hierarchy cannot read, and `draw()` on one returns nothing.
 - **A view is not a module.** Modules must be TurboModules because the module
   interop flag is false; `useFabricInterop()` defaults to **true**, so a plain
   `SimpleViewManager` works with no codegen and no C++ entry point.
