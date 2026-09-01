@@ -19,7 +19,9 @@
 // that exists with a different parameter list is the failure worth naming.
 //
 //   node scripts/kotlin-overrides-check.mjs
-import { readFileSync, readdirSync, existsSync } from 'node:fs';
+import { readFileSync, readdirSync, existsSync, mkdtempSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
+import { tmpdir } from 'node:os';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
@@ -152,6 +154,119 @@ for (const file of readdirSync(appKotlin).filter(f => f.endsWith('.kt'))) {
   }
 }
 
+
+/*
+ * The generated TurboModule specs, which this script could not see before.
+ *
+ * The comment above says generated specs "are produced by codegen at build time
+ * and are not on disk, so they are out of reach here". They are not out of
+ * reach — the codegen CLI is in node_modules and runs in a second. So the one
+ * class of Kotlin error this check could not catch is the one it now catches
+ * first: an `override fun` whose parameters do not match the abstract method
+ * codegen wrote, which is a compile error fourteen minutes into a Gradle step
+ * and invisible everywhere else.
+ *
+ * The mapping is codegen's own, from
+ * ReactNativeCodegen's Kotlin generator:
+ *
+ *   string            -> String            boolean -> Boolean
+ *   number / double   -> Double            int32   -> Int
+ *   a Promise return  -> a trailing `promise: Promise`, returning Unit
+ *   void return       -> Unit
+ */
+const codegenCli = path.join(
+  mobile,
+  'node_modules/@react-native/codegen/lib/cli/combine/combine-js-to-schema-cli.js',
+);
+let specsChecked = 0;
+if (existsSync(codegenCli)) {
+  const outFile = path.join(
+    mkdtempSync(path.join(tmpdir(), 'orbit-specs-')),
+    'schema.json',
+  );
+  try {
+    execFileSync('node', [codegenCli, '--platform', 'android', outFile, 'src/native'], {
+      cwd: mobile,
+      stdio: 'pipe',
+    });
+    const schema = JSON.parse(readFileSync(outFile, 'utf8'));
+
+    /** One codegen type as the Kotlin generator writes it. */
+    const kotlinType = annotation => {
+      switch (annotation?.type) {
+        case 'StringTypeAnnotation':
+          return 'String';
+        case 'BooleanTypeAnnotation':
+          return 'Boolean';
+        case 'Int32TypeAnnotation':
+          return 'Int';
+        case 'NumberTypeAnnotation':
+        case 'DoubleTypeAnnotation':
+        case 'FloatTypeAnnotation':
+          return 'Double';
+        default:
+          // Objects, arrays and callbacks map to types this check does not try
+          // to name. Skipping one method is right; guessing at it would report
+          // a mismatch that is not there.
+          return null;
+      }
+    };
+
+    for (const [specName, module] of Object.entries(schema.modules ?? {})) {
+      // NativeOrbitSound -> OrbitSound -> SoundModule.kt
+      const bare = specName.replace(/^Native/, '');
+      const kotlinName = `${bare.replace(/^Orbit/, '')}Module.kt`;
+      const kotlinPath = path.join(appKotlin, kotlinName);
+      if (!existsSync(kotlinPath)) {
+        continue;
+      }
+      const source = readFileSync(kotlinPath, 'utf8');
+      check(
+        source.includes(`${specName}Spec(`),
+        `${kotlinName} does not extend the generated ${specName}Spec, so none of its methods are the ones codegen declared`,
+      );
+
+      for (const method of module.spec?.methods ?? []) {
+        const params = method.typeAnnotation?.params ?? [];
+        const expected = params.map(param => kotlinType(param.typeAnnotation));
+        if (expected.some(type => type === null)) {
+          continue;
+        }
+        const returns = method.typeAnnotation?.returnTypeAnnotation?.type;
+        if (returns === 'PromiseTypeAnnotation') {
+          expected.push('Promise');
+        }
+
+        const overrides = functionsNamed(source, method.name).filter(declaration =>
+          /(^|\s)override\s/.test(
+            source.slice(Math.max(0, source.indexOf(declaration) - 40), source.indexOf(declaration)),
+          ),
+        );
+        if (overrides.length === 0) {
+          check(
+            false,
+            `${kotlinName} never overrides ${method.name}(), which ${specName}Spec declares abstract`,
+          );
+          continue;
+        }
+        specsChecked += 1;
+        const shapes = overrides.map(paramTypes);
+        check(
+          shapes.some(
+            shape =>
+              shape.length === expected.length &&
+              shape.every((type, i) => type === expected[i]),
+          ),
+          `${kotlinName}: override fun ${method.name}(${shapes[0].join(', ')}) does not match ` +
+            `the generated ${specName}Spec, which declares ${method.name}(${expected.join(', ')})`,
+        );
+      }
+    }
+  } catch (error) {
+    check(false, `codegen could not read the native specs: ${String(error.message).split('\n')[0]}`);
+  }
+}
+
 /*
  * A block comment that closes itself.
  *
@@ -226,4 +341,8 @@ if (failures.length > 0) {
   process.exit(1);
 }
 
-console.log(`OK  ${checked} override(s) match the React Native declarations they claim`);
+console.log(
+  `OK  ${checked} override(s) match the React Native declarations they claim, ` +
+    `${specsChecked} match the generated TurboModule specs, ` +
+    `${commentsChecked} block comment(s) end where they should`,
+);
