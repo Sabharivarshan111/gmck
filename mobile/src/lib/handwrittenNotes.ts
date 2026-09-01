@@ -746,13 +746,89 @@ export function buildTopicDiagramSections(diagrams: TopicDiagram[]): Section[] {
 }
 
 /**
- * Put a chapter's diagrams on its note.
+ * Normalised enough to compare a caption with a heading.
+ *
+ * Lower case, no punctuation, no importance stars or PYQ markers, single
+ * spaces. Deliberately not a stemmer: this is used for *containment*, not for
+ * scoring, and the whole point is that it either matches or it does not.
+ */
+function comparable(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/**
+ * Which section a picture belongs above, or null when nothing says.
+ *
+ * **Containment, never a score.** A heading is placed above a diagram only
+ * when the heading's words appear, in order, inside the question that diagram
+ * answers — "Axilla: Boundaries and Contents" inside "Axilla - boundaries,
+ * contents, applied anatomy" — or the reverse. That is an equality test on a
+ * substring, and it is the same discipline `findDiagramsForQuestion` follows
+ * for the far more dangerous job of deciding *which* picture a question gets:
+ * scoring words against each other is exactly how the TCA cycle ended up
+ * illustrated with glycolysis.
+ *
+ * The stakes here are lower — this decides only where on the page a correct
+ * picture sits — which is why a fallback is acceptable at all. It is not a
+ * licence to guess: an unmatched diagram goes to its batch, not to whichever
+ * heading looked closest.
+ */
+function sectionFor(
+  body: Section[],
+  diagram: TopicDiagram,
+  taken: Set<number>,
+): number | null {
+  const question = comparable(diagram.question);
+  if (!question) {
+    return null;
+  }
+  for (let i = 0; i < body.length; i += 1) {
+    if (taken.has(i)) {
+      continue;
+    }
+    const title = comparable(String(body[i].title ?? ''));
+    // Three words is the floor. "Contents" or "Course" appears in half the
+    // headings in an anatomy chapter and inside most of the questions, so a
+    // shorter match is a coincidence rather than a subject.
+    if (title.split(' ').length < 3) {
+      continue;
+    }
+    if (question.includes(title) || title.includes(question.slice(0, 60))) {
+      return i;
+    }
+  }
+  return null;
+}
+
+/**
+ * Put a chapter's diagrams on its note, each one above the text it illustrates.
+ *
+ * They used to go in a block at the top, and the report was exactly what that
+ * layout does to somebody revising: you scroll past forty pictures to reach
+ * the writing, read about the axilla, and then scroll back up to find the
+ * axilla picture. A diagram is a caption for a piece of text and belongs
+ * against it.
+ *
+ * Placement, in order of how much it can be trusted:
+ *
+ * 1. **The heading it names.** `sectionFor` above — containment, not scoring.
+ * 2. **Its own batch.** A chapter's text is generated `NOTES_BATCH_SIZE`
+ *    questions at a time and merged in order, so a diagram whose question is
+ *    the 24th of the chapter belongs with the sections the third batch
+ *    produced. That is arithmetic on a known list rather than a guess, and it
+ *    is why `questionOrder` is worth passing.
+ * 3. **The end.** Never the top: a picture nobody can place is still less
+ *    confusing after the reading than in front of it.
  *
  * **Replaces, like the single-question path**, and for the same reason: a
- * chapter note is cached server-side, so a page that was built before its
- * pictures existed has to pick them up on the next open rather than staying
- * blank until somebody regenerates it. Stripping and rebuilding every time is
- * what makes that free.
+ * chapter note is cached server-side, so a page built before its pictures
+ * existed picks them up on the next open rather than staying blank until
+ * somebody regenerates it. Stripping and rebuilding every time is what makes
+ * that free.
  *
  * The saved copy stays free of them — `saveMergedNotes` is given the merged
  * text, not this — because the cache is shared with the web app and the
@@ -761,13 +837,64 @@ export function buildTopicDiagramSections(diagrams: TopicDiagram[]): Section[] {
 export function applyTopicDiagrams(
   content: NotesContent,
   diagrams: TopicDiagram[],
+  questionOrder: string[] = [],
 ): NotesContent {
   const body = (content.sections ?? []).filter(s => !isDiagramSection(s));
-  return {
-    ...content,
-    diagramUrl: diagrams[0]?.url,
-    sections: [...buildTopicDiagramSections(diagrams), ...body],
-  };
+  if (diagrams.length === 0) {
+    return { ...content, diagramUrl: undefined, sections: body };
+  }
+
+  const cards = buildTopicDiagramSections(diagrams);
+  /** Where each question sits in the chapter, for the batch fallback. */
+  const place = new Map<string, number>();
+  questionOrder.forEach((question, index) => place.set(question, index));
+
+  /** Diagrams to emit immediately before body[i]. */
+  const before = new Map<number, Section[]>();
+  const trailing: Section[] = [];
+  const taken = new Set<number>();
+
+  diagrams.forEach((diagram, n) => {
+    let at = sectionFor(body, diagram, taken);
+    if (at === null) {
+      const index = place.get(diagram.question);
+      if (index !== undefined && body.length > 0) {
+        /*
+         * The batch this question was written in, mapped onto the sections it
+         * produced. Sections per batch is not fixed — the model writes as many
+         * as the material needs — so this divides the body evenly by batch
+         * count rather than pretending to know which section came from which
+         * question.
+         */
+        const batches = Math.max(1, Math.ceil(questionOrder.length / NOTES_BATCH_SIZE));
+        const batch = Math.floor(index / NOTES_BATCH_SIZE);
+        at = Math.min(body.length - 1, Math.floor((batch / batches) * body.length));
+      }
+    }
+    if (at === null) {
+      trailing.push(cards[n]);
+      return;
+    }
+    taken.add(at);
+    const list = before.get(at);
+    if (list) {
+      list.push(cards[n]);
+    } else {
+      before.set(at, [cards[n]]);
+    }
+  });
+
+  const sections: Section[] = [];
+  body.forEach((section, i) => {
+    const pictures = before.get(i);
+    if (pictures) {
+      sections.push(...pictures);
+    }
+    sections.push(section);
+  });
+  sections.push(...trailing);
+
+  return { ...content, diagramUrl: diagrams[0]?.url, sections };
 }
 
 /**

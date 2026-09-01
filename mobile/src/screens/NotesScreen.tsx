@@ -501,7 +501,14 @@ function NotesDetailView({
         .catch(() => [] as TopicDiagram[]);
 
       /** The merged text with whatever pictures are known about so far. */
-      const show = () => setContent(applyTopicDiagrams(mergeNotes(collected), diagrams.current));
+      /*
+       * The question list goes in so a picture that matches no heading can
+       * still land near the text it belongs to: it is the only thing that
+       * knows a question is the 24th of the chapter, and therefore which batch
+       * of sections it was written alongside.
+       */
+      const show = () =>
+        setContent(applyTopicDiagrams(mergeNotes(collected), diagrams.current, topic.questions));
 
       try {
         let index = 0;
@@ -575,14 +582,14 @@ function NotesDetailView({
       // Rebuilt rather than kept: an edit rewrites the sections, and the
       // pictures belong to the chapter's questions rather than to any version
       // of its text.
-      setContent(applyTopicDiagrams(updated, diagrams.current));
+      setContent(applyTopicDiagrams(updated, diagrams.current, topic.questions));
       setInstruction('');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Could not apply the edit.');
     } finally {
       setEditing(false);
     }
-  }, [instruction, content, request]);
+  }, [instruction, content, request, topic.questions]);
 
   const busy = phase === 'loading' || phase === 'waiting';
 

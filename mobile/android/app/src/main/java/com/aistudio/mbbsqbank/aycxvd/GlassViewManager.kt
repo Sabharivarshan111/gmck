@@ -1,5 +1,6 @@
 package com.aistudio.mbbsqbank.aycxvd
 
+import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.SimpleViewManager
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.annotations.ReactProp
@@ -28,10 +29,20 @@ class GlassViewManager : SimpleViewManager<GlassView>() {
 
   override fun createViewInstance(context: ThemedReactContext): GlassView = GlassView(context)
 
-  /** Matched to the surface's own radius, or the corner refracts in the wrong place. */
+  /**
+   * Density-converted, and that conversion is the whole bug this once had.
+   *
+   * A `@ReactProp` float arrives exactly as JavaScript wrote it — **dp** — but
+   * the shader measures in pixels: its `size` uniform is the view's `width`
+   * and `height`, which are pixels. So a 24dp corner became a 24-*pixel* one,
+   * a third of its intended radius on a 3x phone, and every glass surface came
+   * out looking square-cornered while the fill and the bevel underneath it
+   * were correctly round. Nothing else in this app hits it, because every
+   * other native prop here is a colour, a string or a flag.
+   */
   @ReactProp(name = "cornerRadius", defaultFloat = 24f)
   fun setCornerRadius(view: GlassView, value: Float) {
-    view.cornerRadius = value
+    view.cornerRadius = PixelUtil.toPixelFromDIP(value)
   }
 
   @ReactProp(name = "refraction", defaultFloat = 0.05f)

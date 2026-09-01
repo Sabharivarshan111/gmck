@@ -168,6 +168,15 @@ check(
   'GlassView adds a pre-draw listener it never removes',
 );
 
+/* ---- units ---- */
+
+check(
+  /PixelUtil\.toPixelFromDIP\(value\)/.test(
+    read('android/app/src/main/java/com/aistudio/mbbsqbank/aycxvd/GlassViewManager.kt'),
+  ),
+  'cornerRadius reaches the shader in dp while the shader measures in pixels. A 24dp corner becomes 24 pixels — a third of the radius on a 3x phone — and every glass surface looks square-cornered',
+);
+
 /* ---- registration ---- */
 
 check(/SimpleViewManager<GlassView>/.test(manager), 'GlassViewManager is not a SimpleViewManager');
