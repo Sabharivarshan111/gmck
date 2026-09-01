@@ -120,29 +120,52 @@ export function GlassSurface({
   }
 
   /*
-   * The rim is thin on a small control and thicker on a card. A 1.5dp bevel
-   * around a 34dp button is a ring; the same ring around a full-width card is
-   * a hairline nobody sees.
-   */
-  /*
    * The bevel is drawn in the ink the surface is *not*.
    *
    * White, on a dark pane, is the highlight the reference draws in dark mode.
    * On a light one it is invisible — a white rim on a white card over a pale
-   * page is nothing at all, which is exactly what this surface looked like
-   * before — so a light theme gets the same bevel in near-black, which is what
-   * the reference itself switches to in light mode. The alphas are lower
-   * because dark ink on a light ground carries much further than the reverse.
+   * page is nothing at all — so a light theme gets the same bevel in
+   * near-black, which is what the reference itself switches to in light mode.
+   * The alphas are lower because dark ink on a light ground carries much
+   * further than the reverse.
    */
   const dark = theme === 'dark';
   const ink = dark ? '#FFFFFF' : '#0B1B33';
+  const shade = dark ? '#000814' : '#FFFFFF';
   const a = (onDark: number, onLight: number) => String(dark ? onDark : onLight);
+  /*
+   * A raised surface is nearer the light, so its rim catches more of it. This
+   * is the only thing that distinguishes two stacked panes once both are
+   * translucent — without it a sheet over a card reads as one thicker card.
+   */
+  const lift = elevated ? 1.15 : 1;
 
+  /*
+   * The rim is thin on a small control and thicker on a card. A 1.6dp bevel
+   * around a 34dp button is a ring; the same ring around a full-width card is
+   * a hairline nobody sees.
+   */
   const rim = borderRadius >= radius.lg ? 1.6 : 1.2;
   const inset = rim / 2;
   const width = Math.max(size.width - rim, 0);
   const height = Math.max(size.height - rim, 0);
   const drawable = width > 1 && height > 1;
+  /*
+   * The counter-rim: a second, dimmer line of the *opposite* polarity, drawn
+   * just inside the bright one and lit from the opposite corner.
+   *
+   * This is the detail that separates a bevel from an outline, and it is
+   * explicit in the reference's shadow stack — a dark inset at the top-left
+   * *and* a bright one at the bottom-right, in light mode; both inverted in
+   * dark mode. One bright line alone is a box someone drew a border around.
+   * Two lines of opposite polarity, a pixel apart, is an edge with thickness:
+   * the eye reads the pair as the near face and the far face of the same
+   * piece of glass.
+   */
+  const counterInset = rim + Math.max(rim * 0.6, 0.8);
+  const counterWidth = Math.max(size.width - counterInset * 2, 0);
+  const counterHeight = Math.max(size.height - counterInset * 2, 0);
+  const counterDrawable = counterWidth > 2 && counterHeight > 2;
   // A unique-enough suffix so two surfaces on one screen cannot share a
   // gradient id — SVG defs are document-global, and the second surface would
   // otherwise silently take the first one's geometry.
@@ -209,10 +232,18 @@ export function GlassSurface({
                   *through* the pane's thickness, which is the brighter of the
                   two and the detail that says "this has depth". */}
               <LinearGradient id={`rim${key}`} x1="0" y1="0" x2="1" y2="1">
-                <Stop offset="0" stopColor={ink} stopOpacity={a(0.62, 0.28)} />
-                <Stop offset="0.4" stopColor={ink} stopOpacity={a(0.16, 0.07)} />
-                <Stop offset="0.72" stopColor={ink} stopOpacity={a(0.24, 0.1)} />
-                <Stop offset="1" stopColor={ink} stopOpacity={a(0.95, 0.42)} />
+                <Stop offset="0" stopColor={ink} stopOpacity={String(+a(0.62, 0.28) * lift)} />
+                <Stop offset="0.4" stopColor={ink} stopOpacity={String(+a(0.16, 0.07) * lift)} />
+                <Stop offset="0.72" stopColor={ink} stopOpacity={String(+a(0.24, 0.1) * lift)} />
+                <Stop offset="1" stopColor={ink} stopOpacity={String(+a(0.95, 0.42) * lift)} />
+              </LinearGradient>
+              {/* The counter-rim, lit from the opposite corner: darkest where
+                  the bright rim is brightest. Half a step behind it, so the
+                  two read as the two faces of one edge. */}
+              <LinearGradient id={`ctr${key}`} x1="1" y1="1" x2="0" y2="0">
+                <Stop offset="0" stopColor={shade} stopOpacity={a(0.3, 0.5)} />
+                <Stop offset="0.45" stopColor={shade} stopOpacity={a(0.06, 0.1)} />
+                <Stop offset="1" stopColor={shade} stopOpacity={a(0.18, 0.28)} />
               </LinearGradient>
               {/* Inner glow: nothing in the middle, white by the edge. Sized
                   to the surface, so a wide card glows along its long edges
@@ -245,6 +276,18 @@ export function GlassSurface({
               rx={borderRadius}
               fill={`url(#glow${key})`}
             />
+            {counterDrawable ? (
+              <Rect
+                x={counterInset}
+                y={counterInset}
+                width={counterWidth}
+                height={counterHeight}
+                rx={Math.max(borderRadius - counterInset, 0)}
+                fill="none"
+                stroke={`url(#ctr${key})`}
+                strokeWidth={rim * 0.8}
+              />
+            ) : null}
             <Rect
               x={inset}
               y={inset}
@@ -265,14 +308,22 @@ export function GlassSurface({
 
 const styles = StyleSheet.create({
   glass: {
-    // Float. Glass has no weight of its own; the shadow is what says it is a
-    // pane above the page rather than a panel set into it. The rim above is
-    // the whole border now — a flat `borderWidth` under a drawn bevel reads as
-    // a second, wrong outline.
+    /*
+     * Float. Glass has no weight of its own; the shadow is what says it is a
+     * pane above the page rather than a panel set into it.
+     *
+     * Wide, soft and faint, because a tight dark shadow is what an opaque
+     * card casts. On a dark theme it is nearly invisible and that is correct
+     * — there the bevel carries the depth, which is exactly the balance the
+     * reference strikes between its light and dark modes.
+     *
+     * The rim above is the whole border now: a flat `borderWidth` under a
+     * drawn bevel reads as a second, wrong outline.
+     */
     elevation: 6,
-    shadowColor: '#0B1B33',
-    shadowOpacity: 0.12,
-    shadowRadius: 18,
-    shadowOffset: { width: 0, height: 6 },
+    shadowColor: '#000814',
+    shadowOpacity: 0.16,
+    shadowRadius: 24,
+    shadowOffset: { width: 0, height: 8 },
   },
 });

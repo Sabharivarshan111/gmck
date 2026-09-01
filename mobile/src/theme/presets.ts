@@ -83,22 +83,41 @@ export const PRESETS: Preset[] = [
      *     gradient rim in GlassSurface.
      *   • **Concentric radii and float.** Larger corners and a soft shadow, so
      *     a panel reads as sitting above the page rather than cut into it.
-     *   • **A cool, bright ground.** Glass has no colour of its own; it takes
-     *     it from what is behind. A near-white cool background is what lets
-     *     the translucency read at all — over black, a white wash at 60% is
-     *     just a grey card.
+     *   • **A deep, cool ground.** Glass has no colour of its own; it takes it
+     *     from what is behind, so it needs something behind it with contrast
+     *     to spare.
      *
-     * What does NOT survive: real refraction and background blur. Both need a
-     * backdrop filter, which React Native has no equivalent for without a
-     * native module (react-native-blur or Skia). Faking a blur by drawing a
-     * lighter rectangle is what makes an imitation look cheap, so it is left
-     * out rather than approximated. See .claude/skills/apple-design/README.md,
-     * where "no backdrop blur" is recorded as a deliberate departure.
+     * This preset used to be near-white — `#EAEFF6` behind a `#FFFFFF` card —
+     * on the reasoning that a bright ground is what lets translucency read,
+     * because over black a *white wash* at 60% is just a grey card. That
+     * reasoning was sound for the material at the time and is obsolete now:
+     * the wash is the theme's own card colour rather than white, and what
+     * carries the effect is the bevel GlassSurface draws, not the fill.
      *
-     * Text stays near-black: "glass" is a surface treatment, never a licence
+     * What the old palette actually produced was a white card four per cent
+     * lighter than the page it sat on, with a white rim on top of that —
+     * three near-identical whites, which is a surface with nothing to show
+     * through it and no edge you can find. Apple demonstrates this material
+     * over photographs and saturated colour for the same reason.
+     *
+     * So: a near-black with a blue cast, a slate card that is visibly a layer
+     * above it, and an accent bright enough to hold its own against both.
+     * `theme` is derived from the background's luminance, so the status bar,
+     * the navigator and the moon icon follow this without being told.
+     *
+     * What still does NOT survive: real refraction and background blur. Both
+     * need a backdrop filter, which React Native has no equivalent for
+     * without a native module. The Android shader libraries that do it draw
+     * nothing below Android 13 and sample a one-off bitmap snapshot of the
+     * background, which is stale the moment anything scrolls — so this stays
+     * a drawn bevel rather than an imitation of refraction. See
+     * .claude/skills/apple-design/README.md, where "no backdrop blur" is
+     * recorded as a deliberate departure.
+     *
+     * Text stays near-white: "glass" is a surface treatment, never a licence
      * for grey-on-grey type.
      */
-    palette: { background: '#EAEFF6', text: '#0F1419', accent: '#2F7DEC', card: '#FFFFFF' },
+    palette: { background: '#080C14', text: '#F2F5FA', accent: '#5B9DFF', card: '#161E2C' },
     material: 'glass',
   },
 ];

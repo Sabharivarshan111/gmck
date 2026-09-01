@@ -40,12 +40,25 @@ custom-theme subject cards.
   edge), then the specular hairline, then the inner glow, then translucency
   and float. **No backdrop blur and no faking it** — a lighter rectangle
   pretending to be a blur is what makes an imitation look cheap.
+- **There are two rims, of opposite polarity** — the bright one and a dimmer
+  counter-rim just inside it, lit from the opposite corner. One line alone is
+  a box with a border; two, a pixel apart, is an edge with thickness. The
+  reference's stack has both.
 - Three things that bevel gets wrong if they are touched: the rim is
   **measured**, never `100%` (a stroke at 100% pushes half its width past the
   edge, where the clip removes the brightest part); the specular's length is
   **capped in dp**, because as a fraction it turns a tall card grey; and the
   ink **follows the theme** — white on a dark pane, near-black on a light one,
   where a white rim on a white card is nothing at all.
+- **The Liquid Glass preset is dark**, and used to be near-white over a white
+  card: three near-identical whites, so the material had nothing to show
+  through it and no edge you could find.
+- **Neither Liquid Glass package belongs here.** `@callstack/liquid-glass` is
+  iOS 26+ only and renders a plain View on Android.
+  `@uginy/react-native-liquid-glass` really does run an AGSL shader, but its
+  `onDraw` is gated on API 33 and falls through to `super.onDraw` below it —
+  a transparent hole, and `minSdkVersion` is 24 — and its backdrop is a
+  one-off ~10MB bitmap snapshot, stale over anything that scrolls.
 - **`bevel` draws the light without the translucency**, for a surface that is
   *about* being glass under a solid theme (the music player). Not for general
   use: a rim round every list row undoes the distinction.

@@ -557,7 +557,15 @@ changes almost nothing you can see**; every load-bearing entry in its shadow
 stack is an *inset*. A bevel is what the picture actually shows, and a bevel
 is drawable.
 
-Three details there are each a bug that shipped:
+**There are two rims, of opposite polarity.** The bright one, and a dimmer
+counter-rim a pixel inside it lit from the *opposite* corner — darkest exactly
+where the bright one is brightest. This is what separates a bevel from an
+outline, and it is explicit in the reference's stack: a dark inset at the
+top-left *and* a bright one at the bottom-right in light mode, both inverted
+in dark. One line alone is a box someone drew a border around; two, a pixel
+apart, is an edge the eye reads as having thickness.
+
+Three more details, each a bug that shipped:
 
 - **The rim is measured, not `100%`.** A stroke has width, and a rect at 100%
   pushes half of it past the edge, where the parent's clip removes precisely
@@ -569,6 +577,38 @@ Three details there are each a bug that shipped:
   one, where a white rim on a white card over a pale page is nothing at all —
   which is what the Liquid Glass preset looked like. The reference switches
   the same way between its light and dark modes.
+
+**The Liquid Glass preset is dark, and used to be near-white.** `#EAEFF6`
+behind a `#FFFFFF` card, on the reasoning that a bright ground is what lets
+translucency read — sound for the material at the time, obsolete once the wash
+became the theme's own card colour and the bevel started carrying the effect.
+What it actually produced was a card four per cent lighter than its page under
+a white rim: three near-identical whites, a surface with nothing to show
+through it and no edge you could find. Apple demonstrates this material over
+photographs for the same reason.
+
+### The two Liquid Glass packages, and why neither is here
+
+Both get suggested, and the answer is written down so it is not re-litigated:
+
+- **`@callstack/liquid-glass` is iOS 26+ only.** On Android it renders a plain
+  opaque `View` and exports `isLiquidGlassSupported` as false. This app is
+  Android-only, so it is bytes in the APK and nothing on screen.
+- **`@uginy/react-native-liquid-glass` is real on Android** — an AGSL
+  `RuntimeShader` doing refraction, chromatic aberration and iridescence — and
+  it is still the wrong trade here, for two reasons found by reading its
+  `LiquidGlassView.kt` rather than its README. Its `onDraw` is gated on
+  `SDK_INT >= TIRAMISU` and falls through to `super.onDraw` otherwise, so on
+  **anything below Android 13 the view draws nothing at all** — a transparent
+  hole, and `minSdkVersion` here is 24. And its backdrop is not live:
+  `requestSharedCapture()` rasterises the whole background view into an
+  `ARGB_8888` bitmap once (about 10MB at 1080×2400) and the shader samples
+  that snapshot, so the refraction shows whatever was behind the card when it
+  mounted. Fine over a still wallpaper, wrong over every scrolling list in
+  this app.
+
+If a backdrop filter ever arrives that is live and works below Android 13,
+`GlassSurface` is still the one file that changes.
 
 **The bevel and the translucency are separable**, and `bevel` is the prop that
 says so: a surface that is *about* being glass — the music player — draws the

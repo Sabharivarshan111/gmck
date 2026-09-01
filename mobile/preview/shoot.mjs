@@ -115,6 +115,20 @@ const context = await browser.newContext({
 });
 const page = await context.newPage();
 
+/*
+ * Seed a theme before the app boots, so a preset can be photographed without
+ * driving the theme sheet on every shot. `SHOOT_THEME=liquidglass` is how the
+ * glass material gets reviewed at all — it is the one preset whose surfaces
+ * differ from every other, and a screenshot of the default says nothing about
+ * it.
+ */
+const shootTheme = process.env.SHOOT_THEME ?? '';
+if (shootTheme) {
+  await page.addInitScript(key => {
+    window.localStorage.setItem('orbit:theme-preference', key);
+  }, shootTheme);
+}
+
 const errors = [];
 page.on('pageerror', error => errors.push(`${error.message}`));
 page.on('console', message => {
