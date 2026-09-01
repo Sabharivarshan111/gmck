@@ -520,6 +520,171 @@ class ApkgModule(reactContext: ReactApplicationContext) : NativeOrbitApkgSpec(re
     return if (cleaned.isEmpty() || cleaned == "." || cleaned == "..") "file" else cleaned.take(120)
   }
 
+  /* -------------------------------------------------------------- export */
+
+  /**
+   * Write a deck out as an `.apkg`.
+   *
+   * A transcription, and deliberately nothing more: every decision about what
+   * goes in the file — the notetype JSON, the note and card rows, the media
+   * map, the checksums — is made in `src/lib/apkgExport.ts`, where
+   * `npm run check:apkg` builds a real package from the same payload and reads
+   * it back through the importer. This opens a database, inserts what it was
+   * given, and zips it.
+   *
+   * **Schema 11, no `meta`, no zstd.** The oldest package layout, on purpose:
+   * every Anki ever released can open it, and the person being handed the deck
+   * did not choose their Anki version. It is also the layout our own importer
+   * reads without decompressing anything.
+   */
+  override fun exportDeck(payload: String, promise: Promise) {
+    promise.runCatching("export_failed") {
+      val json = JSONObject(payload)
+      val folder = File(reactApplicationContext.cacheDir, SHARING).apply { mkdirs() }
+      /*
+       * Cleared first. The share sheet holds a grant on whatever was last
+       * exported, and a folder that only ever grows would keep every deck the
+       * reader has ever sent in the cache with nothing to remove it.
+       */
+      folder.listFiles()?.forEach { it.delete() }
+
+      val collectionFile = File(folder, "collection.anki2")
+      collectionFile.delete()
+      writeCollection(collectionFile, json)
+
+      val outFile = File(folder, safeName(json.optString("fileName", "deck.apkg")))
+      java.util.zip.ZipOutputStream(outFile.outputStream().buffered()).use { zip ->
+        zip.putNextEntry(java.util.zip.ZipEntry("collection.anki2"))
+        collectionFile.inputStream().use { it.copyTo(zip) }
+        zip.closeEntry()
+
+        val media = json.optJSONArray("media") ?: org.json.JSONArray()
+        val map = JSONObject()
+        for (i in 0 until media.length()) {
+          val item = media.getJSONObject(i)
+          val index = item.getString("index")
+          map.put(index, item.getString("name"))
+          zip.putNextEntry(java.util.zip.ZipEntry(index))
+          zip.write(Base64.decode(item.getString("base64"), Base64.DEFAULT))
+          zip.closeEntry()
+        }
+        // The media map is written even when it is empty: anki's own reader
+        // treats a missing `media` entry as an older file, and an empty object
+        // is what an export with no pictures is supposed to carry.
+        zip.putNextEntry(java.util.zip.ZipEntry("media"))
+        zip.write(map.toString().toByteArray())
+        zip.closeEntry()
+      }
+      collectionFile.delete()
+      outFile.absolutePath
+    }
+  }
+
+  /** The schema 11 collection, built from the rows JavaScript decided on. */
+  private fun writeCollection(file: File, json: JSONObject) {
+    val db = SQLiteDatabase.openOrCreateDatabase(file, null)
+    try {
+      db.execSQL(SQL_CREATE_COL)
+      db.execSQL(SQL_CREATE_NOTES)
+      db.execSQL(SQL_CREATE_CARDS)
+      db.execSQL(SQL_CREATE_REVLOG)
+      db.execSQL(SQL_CREATE_GRAVES)
+      db.execSQL("CREATE INDEX ix_cards_nid ON cards (nid)")
+      db.execSQL("CREATE INDEX ix_notes_csum ON notes (csum)")
+
+      val now = System.currentTimeMillis()
+      db.execSQL(
+        "INSERT INTO col VALUES (1,?,?,?,11,0,0,0,?,?,?,?,'{}')",
+        arrayOf<Any>(
+          json.getLong("crt"),
+          now,
+          now,
+          json.getString("conf"),
+          json.getString("models"),
+          json.getString("decks"),
+          json.getString("dconf"),
+        ),
+      )
+
+      db.beginTransaction()
+      try {
+        val notes = json.getJSONArray("notes")
+        for (i in 0 until notes.length()) {
+          val note = notes.getJSONObject(i)
+          db.execSQL(
+            "INSERT INTO notes VALUES (?,?,?,?,-1,?,?,?,?,0,'')",
+            arrayOf<Any>(
+              note.getLong("id"),
+              note.getString("guid"),
+              note.getLong("mid"),
+              note.getLong("mod"),
+              note.getString("tags"),
+              note.getString("flds"),
+              note.getString("sfld"),
+              note.getLong("csum"),
+            ),
+          )
+        }
+        val cards = json.getJSONArray("cards")
+        for (i in 0 until cards.length()) {
+          val card = cards.getJSONObject(i)
+          db.execSQL(
+            "INSERT INTO cards VALUES (?,?,?,?,?,-1,0,0,?,0,0,0,0,0,0,0,0,'')",
+            arrayOf<Any>(
+              card.getLong("id"),
+              card.getLong("nid"),
+              card.getLong("did"),
+              card.getInt("ord"),
+              card.getLong("mod"),
+              card.getInt("due"),
+            ),
+          )
+        }
+        db.setTransactionSuccessful()
+      } finally {
+        db.endTransaction()
+      }
+    } finally {
+      db.close()
+    }
+  }
+
+  /**
+   * Offer the file to whatever the reader wants to send it with.
+   *
+   * A `file://` URI in an Intent throws `FileUriExposedException` on anything
+   * since Android 7, so this goes out as a `content://` from the app's own
+   * FileProvider with a one-shot read grant attached — the receiving app can
+   * read that one file and nothing else in this app's storage.
+   */
+  override fun share(path: String, promise: Promise) {
+    promise.runCatchingBool("share_failed") {
+      val activity = currentActivity ?: return@runCatchingBool false
+      val file = File(path)
+      // Only ever out of our own sharing folder. A path from anywhere else is
+      // a bug in the caller, and honouring it would turn this into a way to
+      // hand any file in the app to another app.
+      if (file.parentFile?.name != SHARING || !file.exists()) {
+        return@runCatchingBool false
+      }
+      val uri = androidx.core.content.FileProvider.getUriForFile(
+        reactApplicationContext,
+        "${reactApplicationContext.packageName}.fileprovider",
+        file,
+      )
+      val send = Intent(Intent.ACTION_SEND).apply {
+        // The MIME type Anki registers. A generic octet-stream hides the deck
+        // from apps that filter, which is most of the ones worth sending to.
+        type = "application/apkg"
+        putExtra(Intent.EXTRA_STREAM, uri)
+        putExtra(Intent.EXTRA_SUBJECT, file.name)
+        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+      }
+      activity.startActivity(Intent.createChooser(send, "Share this deck"))
+      true
+    }
+  }
+
   /* ------------------------------------------------------------ plumbing */
 
   /**
@@ -537,11 +702,55 @@ class ApkgModule(reactContext: ReactApplicationContext) : NativeOrbitApkgSpec(re
     }
   }
 
+  /** The same, for the one call that answers with a boolean. */
+  private inline fun Promise.runCatchingBool(code: String, body: () -> Boolean) {
+    try {
+      resolve(body())
+    } catch (error: Throwable) {
+      reject(code, error.message ?: "That deck could not be shared.", error)
+    }
+  }
+
   companion object {
     const val NAME = "OrbitApkg"
     private const val REQUEST_CODE = 0x4150 // 'AP'
     private const val STAGING = "apkg-staging"
     private const val MEDIA = "anki-media"
+    /** Named in res/xml/orbit_file_paths.xml — the two must agree. */
+    private const val SHARING = "apkg-share"
+
+    /*
+     * Schema 11, which is what an export writes. Character for character the
+     * table definitions anki's own schema11.sql has, because the file has to
+     * open in Anki as well as in here.
+     */
+    private const val SQL_CREATE_COL =
+      "CREATE TABLE col (id integer PRIMARY KEY, crt integer NOT NULL, " +
+        "mod integer NOT NULL, scm integer NOT NULL, ver integer NOT NULL, " +
+        "dty integer NOT NULL, usn integer NOT NULL, ls integer NOT NULL, " +
+        "conf text NOT NULL, models text NOT NULL, decks text NOT NULL, " +
+        "dconf text NOT NULL, tags text NOT NULL)"
+    private const val SQL_CREATE_NOTES =
+      "CREATE TABLE notes (id integer PRIMARY KEY, guid text NOT NULL, " +
+        "mid integer NOT NULL, mod integer NOT NULL, usn integer NOT NULL, " +
+        "tags text NOT NULL, flds text NOT NULL, sfld integer NOT NULL, " +
+        "csum integer NOT NULL, flags integer NOT NULL, data text NOT NULL)"
+    private const val SQL_CREATE_CARDS =
+      "CREATE TABLE cards (id integer PRIMARY KEY, nid integer NOT NULL, " +
+        "did integer NOT NULL, ord integer NOT NULL, mod integer NOT NULL, " +
+        "usn integer NOT NULL, type integer NOT NULL, queue integer NOT NULL, " +
+        "due integer NOT NULL, ivl integer NOT NULL, factor integer NOT NULL, " +
+        "reps integer NOT NULL, lapses integer NOT NULL, left integer NOT NULL, " +
+        "odue integer NOT NULL, odid integer NOT NULL, flags integer NOT NULL, " +
+        "data text NOT NULL)"
+    private const val SQL_CREATE_REVLOG =
+      "CREATE TABLE revlog (id integer PRIMARY KEY, cid integer NOT NULL, " +
+        "usn integer NOT NULL, ease integer NOT NULL, ivl integer NOT NULL, " +
+        "lastIvl integer NOT NULL, factor integer NOT NULL, time integer NOT NULL, " +
+        "type integer NOT NULL)"
+    private const val SQL_CREATE_GRAVES =
+      "CREATE TABLE graves (usn integer NOT NULL, oid integer NOT NULL, " +
+        "type integer NOT NULL)"
 
     /*
      * These are `SQL` from src/lib/apkgFormat.ts, character for character.

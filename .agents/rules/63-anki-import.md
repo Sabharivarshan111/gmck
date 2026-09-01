@@ -86,6 +86,34 @@ themselves, and uploading it would be this app redistributing it.
 `check:cloud-ids` lists it; `check:apkg` asserts the picker takes no permission
 and the module never touches the network.
 
+## Exporting writes the *oldest* layout
+
+`mobile/src/lib/apkgExport.ts`, and the share button on a deck in **Decks you
+write**. It writes version 1 — a plain `collection.anki2` at schema 11, a JSON
+media map, no `meta` and no zstd — on purpose:
+
+- **Every Anki ever released can open it.** A version 3 package is refused
+  outright by anything before 2.1.50, and the person being handed the deck did
+  not choose their Anki version.
+- Nothing has to compress, for a file that is a few hundred kilobytes.
+- It round-trips through our own importer, which is what `check:apkg` asserts:
+  a deck is exported, a real package is built from the payload in Node, and the
+  importer reads it back. The writer and the reader are independent, so a deck
+  that survives means both agree about the format rather than agreeing with
+  each other's mistakes.
+
+Pictures on a written card are data URIs; they become files in the package with
+an `<img>` in the note, because a data URI in a field is a field several hundred
+kilobytes long that Anki would store, sync and never show.
+
+Sharing needs a **FileProvider**: a `file://` URI in an Intent throws
+`FileUriExposedException` on anything since Android 7. It exposes exactly one
+cache directory — `apkg-share`, named in both `res/xml/orbit_file_paths.xml`
+and `ApkgModule` — and `exported="false"` with `grantUriPermissions="true"`, so
+the only access anyone gets is the one-shot grant on the Intent. The authority
+is `${applicationId}.fileprovider`, because two installed builds declaring the
+same authority is an install failure with a useless message.
+
 **An imported card may carry pictures on its question side.** Not a
 contradiction of "a diagram belongs on the back" — that rule is about *our*
 image cards, where the diagram is the answer. An Anki card's front is whatever

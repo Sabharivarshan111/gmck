@@ -151,6 +151,55 @@ if ((await row.count()) === 0) {
   });
 }
 
+/* ------------------------------------------------ sharing a deck you wrote */
+
+/*
+ * The other direction. A deck somebody typed is stuck on their phone unless it
+ * can be handed to somebody, and "export as .apkg" means nothing to a reader
+ * who has never used Anki — so the button has to be findable and the screen
+ * has to say what the file is.
+ */
+await page.goto('http://localhost:5225/?screen=flashcards', { waitUntil: 'networkidle' });
+await page.waitForTimeout(1200);
+await page.getByLabel('Your own decks, write and study your own cards').first().click({ force: true });
+await page.waitForTimeout(800);
+
+// A deck with a card in it, so the share button is reachable at all.
+await page.getByPlaceholder(/Cranial nerves/i).first().fill('Cranial nerves');
+await page.getByLabel('Create this deck').first().click({ force: true });
+await page.waitForTimeout(900);
+await page.getByPlaceholder(/front/i).first().fill('Which nerve is CN VII?');
+await page.getByPlaceholder(/back/i).first().fill('The facial nerve');
+await page.getByLabel('Add this card').first().click({ force: true });
+await page.waitForTimeout(700);
+await page.getByLabel('Back').first().click({ force: true }).catch(() => {});
+await page.waitForTimeout(800);
+
+const shareButton = page.getByLabel(/^Share .* as an Anki file$/).first();
+if ((await shareButton.count()) === 0) {
+  failures.push('a deck with cards in it has no share button');
+} else {
+  const body = await page.evaluate(() => document.body.innerText);
+  for (const wanted of ['.apkg', 'Anki', 'Import your Anki cards']) {
+    if (!body.includes(wanted)) {
+      failures.push(`the sharing explanation never mentions ${wanted}`);
+    }
+  }
+  // The one fact people get wrong about sharing: it is a copy, not a link.
+  if (!/sends a copy|send it again/i.test(body)) {
+    failures.push('the screen does not say that sharing sends a copy');
+  }
+  steps.push({ name: 'share', file: await shot('5-share') });
+
+  await shareButton.click({ force: true });
+  await page.waitForTimeout(1200);
+  const opened = await page.evaluate(() => globalThis.__orbitSharedApkg === true);
+  if (!opened) {
+    failures.push('pressing share never reached the share sheet');
+  }
+  steps.push({ name: 'shared', file: await shot('6-shared') });
+}
+
 await browser.close();
 await server.close();
 

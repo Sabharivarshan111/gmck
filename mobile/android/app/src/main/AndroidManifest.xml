@@ -64,6 +64,35 @@
             android:name=".NotifyReceiver"
             android:exported="false" />
 
+        <!--
+          Handing one exported deck to the share sheet.
+
+          A file in this app's own storage cannot be sent to WhatsApp or Gmail
+          directly: since Android 7 a `file://` URI in an Intent throws
+          FileUriExposedException. A FileProvider mints a `content://` URI with
+          a one-shot read grant for the receiving app instead.
+
+          `exported="false"` with `grantUriPermissions="true"` is the pair that
+          matters: nothing may query this provider on its own, and the only
+          access anyone gets is the grant attached to the Intent we send. The
+          paths file names a single cache directory, so the one file being
+          shared is the only thing reachable.
+
+          The authority carries ${applicationId} rather than the package name
+          written out, because the debug and preview builds add a `.debug`
+          suffix — two installed builds declaring the same authority is an
+          install failure with a message that says nothing useful.
+        -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/orbit_file_paths" />
+        </provider>
+
         <receiver
             android:name=".BootReceiver"
             android:exported="false">

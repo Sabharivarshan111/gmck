@@ -20,6 +20,7 @@ import {
   type ApkgMediaEntry,
   type ApkgNotetype,
 } from './apkgFormat';
+import { buildExport } from './apkgExport';
 import { warn } from './log';
 
 /**
@@ -170,6 +171,34 @@ export async function deleteImportedDeck(id: string): Promise<ImportedDeck[]> {
     warn('[importedDecks] could not remove media for', id, error);
   }
   return next;
+}
+
+/* ------------------------------------------------------------- the export */
+
+/**
+ * Write a deck out as an `.apkg` and offer it to the share sheet.
+ *
+ * The other direction, and the reason it is worth having: a deck somebody
+ * typed is stuck on their phone otherwise. An `.apkg` is the one format that
+ * is worth anything to the person receiving it — it opens in Anki on any
+ * platform, and it opens in this app's own importer.
+ *
+ * Everything about what goes in the file is decided in `apkgExport.ts`, which
+ * `npm run check:apkg` builds a real package from and reads back through the
+ * importer. This is the two native calls.
+ */
+export async function shareWrittenDeck(deck: {
+  name: string;
+  cards: DeckCard[];
+}): Promise<{ shared: boolean; cards: number }> {
+  const native = available();
+  const payload = buildExport(deck);
+  if (payload.notes.length === 0) {
+    throw new ApkgError('empty', 'There are no finished cards in this deck to share yet.');
+  }
+  const path = await native.exportDeck(JSON.stringify(payload));
+  const shared = await native.share(path);
+  return { shared, cards: payload.notes.length };
 }
 
 /* ------------------------------------------------------------- the import */

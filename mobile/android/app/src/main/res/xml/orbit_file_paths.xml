@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  What the FileProvider is allowed to hand out.
+
+  One directory, and it is a cache directory: `cacheDir/apkg-share`, where an
+  exported deck is written just before the share sheet opens. Nothing else in
+  the app is reachable through the provider — not the note media, not the
+  imported decks, not the databases — because a provider that exposes more
+  than the one file being shared is a way for another app to read the reader's
+  own notes by guessing a path.
+-->
+<paths>
+    <cache-path name="apkg-share" path="apkg-share/" />
+</paths>

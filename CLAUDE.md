@@ -326,6 +326,25 @@ the reader downloaded for themselves, and uploading it would be this app
 redistributing it. `check:cloud-ids` lists it, and `check:apkg` asserts the
 picker takes no permission and the module never touches the network.
 
+### Exporting writes the oldest layout
+
+`src/lib/apkgExport.ts`, behind the share button on a deck in **Decks you
+write**. It writes version 1 — `collection.anki2` at schema 11, a JSON media
+map, no `meta`, no zstd — because every Anki ever released can open that and
+the person being handed the deck did not choose their Anki version.
+
+`check:apkg` **round-trips** it: a deck is exported, a real package is built
+from the payload in Node, and the importer reads it back. The writer and the
+reader are independent, so a deck that survives the trip means both halves
+agree about the format rather than agreeing with each other's mistakes.
+
+Sharing needs a **FileProvider** — a `file://` URI in an Intent throws
+`FileUriExposedException` on anything since Android 7. It exposes exactly one
+cache directory (`apkg-share`, named in both `res/xml/orbit_file_paths.xml` and
+`ApkgModule`), is `exported="false"` with `grantUriPermissions="true"`, and its
+authority is `${applicationId}.fileprovider` so the debug build does not
+collide with the release one.
+
 **An imported card may carry pictures on its question side.** That is not a
 contradiction of the rule that a diagram belongs on the back: that rule is
 about *our* image cards, where the diagram is the answer. An Anki card's front

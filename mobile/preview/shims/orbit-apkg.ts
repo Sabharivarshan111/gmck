@@ -20,6 +20,9 @@
 declare global {
   // eslint-disable-next-line no-var
   var __orbitPickApkg: boolean | undefined;
+  /** Set when the share sheet would have opened, so a test can see it did. */
+  // eslint-disable-next-line no-var
+  var __orbitSharedApkg: boolean | undefined;
 }
 
 /** A package shaped like a real shared deck: several chapters, one big. */
@@ -86,6 +89,22 @@ const shim = {
 
   mediaBytes(): number {
     return 0;
+  },
+
+  /*
+   * Export reports success without writing anything. The file it would write
+   * needs SQLite and a ZIP, neither of which a browser has — and the part that
+   * decides what goes *in* it is `apkgExport.ts`, which `check:apkg` builds a
+   * real package from and reads back through the importer. This shim is here
+   * so the button and its explanation can be pressed and screenshotted.
+   */
+  async exportDeck(): Promise<string> {
+    return '/preview/apkg-share/deck.apkg';
+  },
+
+  async share(): Promise<boolean> {
+    globalThis.__orbitSharedApkg = true;
+    return true;
   },
 
   forget(): void {},

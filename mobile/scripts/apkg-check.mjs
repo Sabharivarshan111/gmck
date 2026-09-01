@@ -497,6 +497,215 @@ if (fs.existsSync(kotlin)) {
   report.push('note           ApkgModule.kt not present yet; the SQL pinning is skipped');
 }
 
+/* ------------------------------------------------------------- round trip */
+
+/*
+ * Export a deck, then import it back.
+ *
+ * This is the strongest thing that can be checked without a phone: the writer
+ * and the reader are independent — one builds `col.models` JSON and note rows,
+ * the other parses them and applies card templates — so a deck that survives
+ * the trip means both halves agree about the format rather than agreeing with
+ * each other's mistakes.
+ *
+ * The package is built here the same way `ApkgModule.export` builds one on the
+ * device: a schema 11 SQLite database, the rows from `buildExport`, and a ZIP
+ * with a JSON media map. The Kotlin is a transcription of these twenty lines.
+ */
+const exportBundle = await build({
+  entryPoints: [path.join(root, 'src/lib/apkgExport.ts')],
+  bundle: true,
+  format: 'esm',
+  write: false,
+  platform: 'neutral',
+  absWorkingDir: root,
+  alias: { '@': path.join(root, 'src') },
+});
+const exporter = await import(
+  `data:text/javascript;base64,${Buffer.from(exportBundle.outputFiles[0].text).toString('base64')}`
+);
+
+/** A one-pixel PNG, as a data URI — the shape a written card's picture has. */
+const PNG_DATA_URI =
+  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==';
+
+const written = {
+  name: 'Cranial nerves',
+  cards: [
+    { id: 'c1', kind: 'theory', front: 'Which nerve is CN VII?', back: 'The facial nerve', tags: ['cn'] },
+    {
+      id: 'c2',
+      kind: 'image',
+      front: 'Name this foramen',
+      back: 'Foramen ovale',
+      imageUrl: PNG_DATA_URI,
+    },
+    // An empty card, which must be dropped rather than exported as a card
+    // nobody can answer.
+    { id: 'c3', kind: 'theory', front: '   ', back: '' },
+  ],
+};
+
+const pkg = exporter.buildExport(written, Date.UTC(2026, 0, 2, 12));
+
+check(pkg.notes.length === 2, `exported ${pkg.notes.length} notes, expected 2 (the empty one is dropped)`);
+check(pkg.media.length === 1, `exported ${pkg.media.length} media files, expected 1`);
+check(
+  pkg.fileName === 'Cranial nerves.apkg',
+  `the file would be called ${pkg.fileName}`,
+);
+// sha1, against a value anyone can check with `printf abc | sha1sum`.
+check(
+  exporter.sha1Hex('abc') === 'a9993e364706816aba3e25717850c26c9cd0d89d',
+  `sha1 is wrong: ${exporter.sha1Hex('abc')}`,
+);
+
+/** Write the package the way the device writes it. */
+function writePackage(bundle, outPath) {
+  const temp = path.join(os.tmpdir(), `apkg-export-${process.pid}.anki2`);
+  if (fs.existsSync(temp)) fs.unlinkSync(temp);
+  const db = new DatabaseSync(temp);
+  db.exec(`
+    CREATE TABLE col (id integer PRIMARY KEY, crt integer NOT NULL, mod integer NOT NULL,
+      scm integer NOT NULL, ver integer NOT NULL, dty integer NOT NULL, usn integer NOT NULL,
+      ls integer NOT NULL, conf text NOT NULL, models text NOT NULL, decks text NOT NULL,
+      dconf text NOT NULL, tags text NOT NULL);
+    CREATE TABLE notes (id integer PRIMARY KEY, guid text NOT NULL, mid integer NOT NULL,
+      mod integer NOT NULL, usn integer NOT NULL, tags text NOT NULL, flds text NOT NULL,
+      sfld integer NOT NULL, csum integer NOT NULL, flags integer NOT NULL, data text NOT NULL);
+    CREATE TABLE cards (id integer PRIMARY KEY, nid integer NOT NULL, did integer NOT NULL,
+      ord integer NOT NULL, mod integer NOT NULL, usn integer NOT NULL, type integer NOT NULL,
+      queue integer NOT NULL, due integer NOT NULL, ivl integer NOT NULL, factor integer NOT NULL,
+      reps integer NOT NULL, lapses integer NOT NULL, left integer NOT NULL, odue integer NOT NULL,
+      odid integer NOT NULL, flags integer NOT NULL, data text NOT NULL);
+    CREATE TABLE revlog (id integer PRIMARY KEY, cid integer NOT NULL, usn integer NOT NULL,
+      ease integer NOT NULL, ivl integer NOT NULL, lastIvl integer NOT NULL,
+      factor integer NOT NULL, time integer NOT NULL, type integer NOT NULL);
+    CREATE TABLE graves (usn integer NOT NULL, oid integer NOT NULL, type integer NOT NULL);
+    CREATE INDEX ix_cards_nid ON cards (nid);
+    CREATE INDEX ix_notes_csum ON notes (csum);
+  `);
+  db.prepare(
+    'INSERT INTO col VALUES (1,?,?,?,11,0,0,0,?,?,?,?,?)',
+  ).run(bundle.crt, Date.now(), Date.now(), bundle.conf, bundle.models, bundle.decks, bundle.dconf, '{}');
+  const note = db.prepare("INSERT INTO notes VALUES (?,?,?,?,-1,?,?,?,?,0,'')");
+  for (const row of bundle.notes) {
+    note.run(row.id, row.guid, row.mid, row.mod, row.tags, row.flds, row.sfld, row.csum);
+  }
+  const card = db.prepare("INSERT INTO cards VALUES (?,?,?,?,?,-1,0,0,?,0,0,0,0,0,0,0,0,'')");
+  for (const row of bundle.cards) {
+    card.run(row.id, row.nid, row.did, row.ord, row.mod, row.due);
+  }
+  db.close();
+
+  const collection = fs.readFileSync(temp);
+  fs.unlinkSync(temp);
+
+  // A stored-only ZIP, which is all this needs and is fifty lines rather than
+  // a dependency. The device uses java.util.zip.
+  const files = [{ name: 'collection.anki2', data: collection }];
+  files.push({ name: 'media', data: Buffer.from(exporter.mediaMap(bundle), 'utf8') });
+  for (const item of bundle.media) {
+    files.push({ name: item.index, data: Buffer.from(item.base64, 'base64') });
+  }
+  const chunks = [];
+  const central = [];
+  let offset = 0;
+  const crcTable = [...Array(256)].map((_, n) => {
+    let c = n;
+    for (let k = 0; k < 8; k += 1) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
+    return c >>> 0;
+  });
+  const crc32 = buf => {
+    let c = 0xffffffff;
+    for (const byte of buf) c = crcTable[(c ^ byte) & 0xff] ^ (c >>> 8);
+    return (c ^ 0xffffffff) >>> 0;
+  };
+  for (const file of files) {
+    const nameBuf = Buffer.from(file.name, 'utf8');
+    const crc = crc32(file.data);
+    const local = Buffer.alloc(30);
+    local.writeUInt32LE(0x04034b50, 0);
+    local.writeUInt16LE(20, 4);
+    local.writeUInt32LE(crc, 14);
+    local.writeUInt32LE(file.data.length, 18);
+    local.writeUInt32LE(file.data.length, 22);
+    local.writeUInt16LE(nameBuf.length, 26);
+    chunks.push(local, nameBuf, file.data);
+    const entry = Buffer.alloc(46);
+    entry.writeUInt32LE(0x02014b50, 0);
+    entry.writeUInt16LE(20, 4);
+    entry.writeUInt16LE(20, 6);
+    entry.writeUInt32LE(crc, 16);
+    entry.writeUInt32LE(file.data.length, 20);
+    entry.writeUInt32LE(file.data.length, 24);
+    entry.writeUInt16LE(nameBuf.length, 28);
+    entry.writeUInt32LE(offset, 42);
+    central.push(entry, nameBuf);
+    offset += local.length + nameBuf.length + file.data.length;
+  }
+  const centralBuf = Buffer.concat(central);
+  const end = Buffer.alloc(22);
+  end.writeUInt32LE(0x06054b50, 0);
+  end.writeUInt16LE(files.length, 8);
+  end.writeUInt16LE(files.length, 10);
+  end.writeUInt32LE(centralBuf.length, 12);
+  end.writeUInt32LE(offset, 16);
+  fs.writeFileSync(outPath, Buffer.concat([...chunks, centralBuf, end]));
+}
+
+const roundTripPath = path.join(os.tmpdir(), `apkg-roundtrip-${process.pid}.apkg`);
+try {
+  writePackage(pkg, roundTripPath);
+  const reopened = openPackage(roundTripPath);
+  const back = apkg.cardsFromCollection(reopened.collection);
+
+  check(
+    reopened.layout.version === 1,
+    `the exported package reads as version ${reopened.layout.version}, expected 1`,
+  );
+  check(back.length === 2, `the exported deck came back as ${back.length} cards, expected 2`);
+
+  const facial = back.find(card => card.front.includes('CN VII'));
+  check(!!facial, 'the first card did not survive the round trip');
+  if (facial) {
+    check(
+      facial.back === 'The facial nerve',
+      `the answer came back as ${JSON.stringify(facial.back)}`,
+    );
+    check(facial.deck === 'Cranial nerves', `the deck came back named ${facial.deck}`);
+    check(facial.tags.join() === 'cn', `the tags came back as ${facial.tags.join()}`);
+  }
+
+  const foramen = back.find(card => card.front.includes('foramen'));
+  check(!!foramen, 'the picture card did not survive the round trip');
+  if (foramen) {
+    check(
+      foramen.backMedia.length === 1,
+      `the picture came back as ${JSON.stringify(foramen.backMedia)}`,
+    );
+    check(
+      foramen.back.includes('Foramen ovale'),
+      `the answer text was lost beside the picture: ${JSON.stringify(foramen.back)}`,
+    );
+    // The bytes have to be in the zip under the index the media map gives.
+    const entry = reopened.media.find(item => item.name === foramen.backMedia[0]);
+    check(!!entry, 'the picture is named on a card but missing from the media map');
+    check(
+      !!entry && reopened.zip.has(entry.index),
+      'the media map names a zip entry that is not in the package',
+    );
+  }
+
+  report.push(
+    `round trip     wrote ${pkg.notes.length} notes + ${pkg.media.length} media, read back ${back.length} cards`,
+  );
+} catch (error) {
+  failures.push(`round trip: ${error.message}`);
+} finally {
+  if (fs.existsSync(roundTripPath)) fs.unlinkSync(roundTripPath);
+}
+
 /* ------------------------------------------------- the module is reachable */
 
 /*
@@ -582,6 +791,56 @@ if (missing.length === 0) {
     !/supabase|http:\/\/|https:\/\//.test(module.replace(/\/\*[\s\S]*?\*\//g, '')),
     'ApkgModule reaches the network — an imported deck never leaves the phone',
   );
+
+  /* ---- the export half ---- */
+
+  check(/override fun exportDeck\(/.test(module), 'ApkgModule cannot write a package');
+  check(/override fun share\(/.test(module), 'ApkgModule cannot hand a package to the share sheet');
+  // The oldest layout on the way out, so every Anki can open it — and so our
+  // own importer reads it without decompressing anything.
+  check(
+    /ZipEntry\("collection\.anki2"\)/.test(module),
+    'the export does not write collection.anki2 — the oldest layout is what makes the file openable everywhere',
+  );
+  check(
+    !/anki21b/.test(module.replace(/\/\*[\s\S]*?\*\//g, '')),
+    'the export writes a version 3 package, which nothing before Anki 2.1.50 can open',
+  );
+
+  /*
+   * A `file://` URI in an Intent throws FileUriExposedException on anything
+   * since Android 7, so sharing needs a FileProvider — and the provider must
+   * expose exactly the directory the module writes into and nothing else.
+   */
+  const manifestPath = path.join(root, 'android/app/src/main/AndroidManifest.xml');
+  const manifestXml = fs.readFileSync(manifestPath, 'utf8');
+  const pathsFile = path.join(root, 'android/app/src/main/res/xml/orbit_file_paths.xml');
+  check(
+    /androidx\.core\.content\.FileProvider/.test(manifestXml),
+    'no FileProvider in the manifest — sharing a file would throw FileUriExposedException',
+  );
+  check(
+    /android:authorities="\$\{applicationId\}\.fileprovider"/.test(manifestXml),
+    'the FileProvider authority is not built from ${applicationId}, so the debug build collides with the release one',
+  );
+  check(
+    /android:exported="false"/.test(
+      manifestXml.slice(manifestXml.indexOf('<provider'), manifestXml.indexOf('</provider>')),
+    ),
+    'the FileProvider is exported — nothing may query it except through the grant we attach',
+  );
+  check(fs.existsSync(pathsFile), 'res/xml/orbit_file_paths.xml is missing');
+  if (fs.existsSync(pathsFile)) {
+    const paths = fs.readFileSync(pathsFile, 'utf8');
+    check(
+      /path="apkg-share\/"/.test(paths) && /SHARING = "apkg-share"/.test(module),
+      'the shared directory in orbit_file_paths.xml and ApkgModule disagree — the share would throw IllegalArgumentException',
+    );
+    check(
+      !/<root-path|<external-path/.test(paths),
+      'the FileProvider exposes more than the sharing directory, which is a way to read the reader\'s own notes by guessing a path',
+    );
+  }
 }
 
 /* -------------------------------------------------------------------- done */

@@ -107,6 +107,34 @@ export interface Spec extends TurboModule {
 
   /** Delete a staged package once the import has finished with it. */
   discard(path: string): void;
+
+  /**
+   * Write a deck out as an `.apkg`, and hand it to the share sheet.
+   *
+   * `payload` is the JSON of an `ExportPackage` — the collection's own JSON
+   * columns and its note and card rows, all decided in `src/lib/apkgExport.ts`
+   * where `npm run check:apkg` builds a real package from it and reads it back
+   * with the importer. Kotlin writes the bytes and nothing else: a schema 11
+   * SQLite database and a stored ZIP, both of which Android already has.
+   *
+   * No zstd on the way out. The oldest package layout is written on purpose,
+   * because every Anki ever released can open it and the person being given
+   * the deck did not choose their Anki version.
+   *
+   * Resolves the path of the file it wrote. `share` is separate so the export
+   * can be reported as finished before the chooser covers the screen.
+   */
+  exportDeck(payload: string): Promise<string>;
+
+  /**
+   * Offer one exported file to whatever the reader wants to send it with.
+   *
+   * A `file://` URI in an Intent throws `FileUriExposedException` on anything
+   * since Android 7, so this goes out as a `content://` from the app's
+   * FileProvider with a one-shot read grant attached — the receiving app gets
+   * that one file and nothing else.
+   */
+  share(path: string): Promise<boolean>;
 }
 
 export default TurboModuleRegistry.get<Spec>('OrbitApkg');

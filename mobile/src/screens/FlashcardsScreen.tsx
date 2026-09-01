@@ -20,6 +20,7 @@ import {
   Pencil,
   Plus,
   RotateCw,
+  Share2,
   Sparkles,
   Timer as TimerIcon,
   Trash2,
@@ -45,6 +46,7 @@ import {
   loadImportedCards,
   loadImportedDecks,
   MAX_IMPORT_CARDS,
+  shareWrittenDeck,
   stagePackage,
   type ImportedDeck,
   type StagedPackage,
@@ -854,6 +856,24 @@ function MyDecksView({
     setDecks(await deleteDeck(id));
   }, []);
 
+  /*
+   * Writing the file takes a moment on a big deck, so the button reports it
+   * rather than looking like it did nothing until the chooser appears.
+   */
+  const [sharing, setSharing] = useState<string | null>(null);
+  const [shareError, setShareError] = useState<string | null>(null);
+  const share = useCallback(async (deck: CustomDeck) => {
+    setShareError(null);
+    setSharing(deck.id);
+    try {
+      await shareWrittenDeck(deck);
+    } catch (err) {
+      setShareError(err instanceof Error ? err.message : 'That deck could not be shared.');
+    } finally {
+      setSharing(null);
+    }
+  }, []);
+
   return (
     <>
       <Header title="Decks you write" subtitle="Kept on this phone only" onBack={onBack} />
@@ -924,6 +944,26 @@ function MyDecksView({
               style={[styles.iconButton, { borderColor: colors.border, borderWidth: 1 }]}>
               <Plus size={16} color={colors.textMuted} />
             </Touchable>
+            {/*
+              Sharing sits on the deck rather than on a screen of its own,
+              because it is a thing you do *to one deck* and this row is the
+              only place all of them are listed. It is hidden while the deck is
+              empty: an .apkg of nothing is a file that wastes somebody's time
+              twice, once sending it and once opening it.
+            */}
+            {deck.cards.length > 0 ? (
+              <Touchable
+                onPress={() => share(deck)}
+                label={`Share ${deck.name} as an Anki file`}
+                hint="Makes an .apkg your friend can open in Anki or in Orbit"
+                disabled={sharing !== null}
+                style={[styles.iconButton, { borderColor: colors.border, borderWidth: 1 }]}>
+                <Share2
+                  size={16}
+                  color={sharing === deck.id ? colors.textMuted : colors.accent}
+                />
+              </Touchable>
+            ) : null}
             <Touchable
               onPress={() => remove(deck.id)}
               label={`Delete ${deck.name}`}
@@ -934,6 +974,47 @@ function MyDecksView({
           </View>
         ))
       )}
+
+      {shareError ? (
+        <View style={[styles.notice, { borderColor: withAlpha(colors.danger, 0.4) }]}>
+          <Text style={[styles.noticeText, { color: colors.danger }]}>{shareError}</Text>
+        </View>
+      ) : null}
+
+      {/*
+        What the share button actually does, next to the button rather than in
+        a help page. "Export as .apkg" means nothing to somebody who has never
+        used Anki, and the useful facts are short: what the file is, who can
+        open it, and that it is a copy rather than a link.
+      */}
+      {decks !== null && decks.some(deck => deck.cards.length > 0) ? (
+        <View
+          style={[
+            styles.card,
+            styles.compactCard,
+            { backgroundColor: colors.card, borderColor: colors.border },
+          ]}>
+          <Text style={[styles.rowTitle, { color: colors.text }]}>
+            Sharing a deck with a friend
+          </Text>
+          <Text style={[styles.rowSub, { color: colors.textMuted, marginTop: 6 }]}>
+            The share button on a deck makes an <Text style={{ color: colors.text }}>.apkg</Text>{' '}
+            file — the same format Anki uses — and hands it to WhatsApp, Telegram, Gmail or
+            anything else on your phone. Pictures on your cards go inside the file, so nothing
+            breaks at the other end.
+          </Text>
+          <Text style={[styles.rowSub, { color: colors.textMuted, marginTop: 10 }]}>
+            Whoever gets it can open it in <Text style={{ color: colors.text }}>Anki</Text> on any
+            phone or computer, or bring it into Orbit through{' '}
+            <Text style={{ color: colors.text }}>Import your Anki cards</Text>. They do not need
+            this app and they do not need an account.
+          </Text>
+          <Text style={[styles.hint, { color: colors.textMuted, marginTop: 10 }]}>
+            It sends a copy. Editing your deck afterwards does not change the file they already
+            have — send it again to give them the new version.
+          </Text>
+        </View>
+      ) : null}
     </>
   );
 }
