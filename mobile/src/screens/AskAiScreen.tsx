@@ -10,7 +10,7 @@ import { Text } from '@/components/Text';
 import { KeyboardSafe } from '@/components/KeyboardSafe';
 import { Touchable } from '@/components/Touchable';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useRoute, type RouteProp } from '@react-navigation/native';
+import { useIsFocused, useRoute, type RouteProp } from '@react-navigation/native';
 import {
   Maximize2,
   Minimize2,
@@ -39,6 +39,8 @@ import { ThinkingDots } from '@/components/ThinkingDots';
 import { RevealText } from '@/components/RevealText';
 import { AnswerActions, followUpsFor } from '@/components/AnswerActions';
 import { WaveformRiver } from '@/components/WaveformRiver';
+import { Bot } from '@/components/Bot';
+import type { StateId } from '@/bot/states';
 import {
   askAi,
   displayText,
@@ -78,6 +80,38 @@ export default function AskAiScreen() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  /*
+   * The bot reads the screen rather than being told.
+   *
+   * Every state here is one the chat is genuinely in, and each is derived from
+   * a value that already existed — no new flags, and nothing to keep in step
+   * by hand. `wide` is the beat after an answer lands, and it is a timer
+   * rather than a state of the screen's because "an answer just arrived" is
+   * not a thing the screen otherwise needs to know.
+   */
+  const [justAnswered, setJustAnswered] = useState(false);
+  /** Whether the composer has focus, which is what the bot looks towards. */
+  const [typing, setTyping] = useState(false);
+  const focused = useIsFocused();
+
+  /*
+   * Six states, and the order of these checks is the priority.
+   *
+   * An error outranks everything: the bot must not be mid-wink about an answer
+   * that failed to arrive. Unfocused outranks the rest because a screen nobody
+   * is looking at should cost nothing, and `sleep` is the state whose loop
+   * stops immediately.
+   */
+  const lastFailed = messages[messages.length - 1]?.failed === true;
+  const botState: StateId = lastFailed
+    ? 'exclaim'
+    : !focused
+      ? 'sleep'
+      : loading
+        ? 'thinking'
+        : justAnswered
+          ? 'wide'
+          : 'idle';
   const [isFullscreen, setIsFullscreen] = useState(false);
   /**
    * Which assistant messages have finished revealing.
@@ -190,6 +224,14 @@ export default function AskAiScreen() {
         ]);
       } finally {
         setLoading(false);
+        /*
+         * One beat of "the answer landed", then back to idle. Long enough to
+         * read as a reaction, short enough that it is over before anybody has
+         * finished the first line — a face that stayed wide-eyed while you read
+         * would be a face staring at you.
+         */
+        setJustAnswered(true);
+        setTimeout(() => setJustAnswered(false), 1400);
       }
     },
     [loading, messages],
@@ -317,9 +359,16 @@ export default function AskAiScreen() {
             { borderBottomColor: colors.border },
             isFullscreen && styles.cardHeaderFullscreen,
           ]}>
-          <View
-            style={[styles.avatar, { backgroundColor: withAlpha(colors.fuchsia, 0.18) }]}>
-            <Text style={styles.avatarEmoji}>🧠</Text>
+          {/*
+            The bot, where a 🧠 emoji used to be.
+            
+            It is the loading indicator as well as the face: `thinking` is what
+            it does while a request is in flight, which is why there is no
+            second spinner beside it. See components/Bot.tsx for why the loop
+            stops on its own, and src/bot/ for the engine.
+          */}
+          <View style={[styles.avatar, { backgroundColor: withAlpha(colors.accent, 0.16) }]}>
+            <Bot state={botState} size={34} active={focused} watchingInput={typing} />
           </View>
           <Text style={[styles.assistantName, { color: colors.text }]}>
             Medical <Text style={{ color: colors.fuchsia }}>Assistant</Text>
@@ -466,6 +515,8 @@ export default function AskAiScreen() {
             <TextInput
               value={input}
               onChangeText={setInput}
+              onFocus={() => setTyping(true)}
+              onBlur={() => setTyping(false)}
               placeholder="Ask a medical question…"
               placeholderTextColor={colors.textMuted}
               style={[styles.input, { color: colors.text }]}
@@ -592,9 +643,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  avatarEmoji: {
-    fontSize: 20,
   },
   assistantName: {
     fontSize: 17,

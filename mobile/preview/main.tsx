@@ -10,6 +10,8 @@ import { SafeAreaProvider, initialWindowMetrics } from 'react-native-safe-area-c
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import type { InitialState } from '@react-navigation/native';
 import { ThemeProvider, useTheme } from '@/theme';
+import { Bot } from '@/components/Bot';
+import type { StateId } from '@/bot/states';
 import RootNavigator from '@/navigation/RootNavigator';
 import { hydrateProgress } from '@/lib/progress';
 import { hydrateSettings } from '@/lib/settings';
@@ -623,6 +625,42 @@ function ChatMotionDemo() {
 }
 
 /**
+ * ?screen=botdemo — every one of the avatar's states, side by side.
+ *
+ * The engine can be checked in Node, which covers what it *computes*; this
+ * covers what it *looks like*, which no assertion can. Six at once rather than
+ * one at a time, because the thing worth seeing is whether they read as
+ * different expressions of one face — a state that is indistinguishable from
+ * idle is a state that is not earning its place.
+ */
+function BotDemo() {
+  const { colors } = useTheme();
+  const states: StateId[] = ['idle', 'thinking', 'wide', 'wink', 'exclaim', 'sleep'];
+  return (
+    <View style={{ flex: 1, backgroundColor: colors.background, padding: 24 }}>
+      <Text style={{ color: colors.text, fontSize: 22, fontWeight: '800', marginBottom: 20 }}>
+        Bot states
+      </Text>
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 24 }}>
+        {states.map(state => (
+          <View key={state} style={{ alignItems: 'center', width: 96 }} testID={`bot-${state}`}>
+            <View
+              style={{
+                backgroundColor: withAlpha(colors.accent, 0.16),
+                borderRadius: 20,
+                padding: 8,
+              }}>
+              <Bot state={state} size={72} />
+            </View>
+            <Text style={{ color: colors.textMuted, marginTop: 8, fontSize: 12 }}>{state}</Text>
+          </View>
+        ))}
+      </View>
+    </View>
+  );
+}
+
+/**
  * ?screen=usernotesdemo — Interactive user study notes live preview & editor testing.
  */
 function UserNotesDemo() {
@@ -855,6 +893,9 @@ function Shell() {
   }
   if (screen === 'usernotesdemo') {
     return <UserNotesDemo />;
+  }
+  if (screen === 'botdemo') {
+    return <BotDemo />;
   }
   if (screen === 'homeedit') {
     return (

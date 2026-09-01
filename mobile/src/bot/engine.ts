@@ -208,10 +208,35 @@ export class BotEngine {
     this.since = now;
   }
 
-  /** Whether the frame at `now` is the last one that will ever change. */
+  /**
+   * Whether the frame at `now` is the last one that will ever change.
+   *
+   * A glance does not un-settle anything: it is a step, applied whole, and
+   * the caller re-samples when it changes. Treating it as motion would keep
+   * the loop alive for as long as the keyboard was open.
+   */
   settledAt(now: number): boolean {
     const def = STATES[this.current];
     return now - this.since >= def.morph && isStill(this.current);
+  }
+
+  /**
+   * Where the bot is looking, when something outside is steering it.
+   *
+   * On the web the reference follows the pointer. A phone has none, so what
+   * steers it here is what the reader is *doing*: while the composer has
+   * focus, the bot looks down at it. That is a better answer than a cursor
+   * would be, because on a phone the thing worth watching is the thing being
+   * typed.
+   *
+   * Degrees, added to whatever the state's own pose says, and clamped — an
+   * unbounded offset would let a caller push the eyes off the sphere, which
+   * the engine's own check would then catch as an eye outside the body.
+   */
+  private glance: { yaw: number; pitch: number } = { yaw: 0, pitch: 0 };
+
+  setGlance(yaw: number, pitch: number): void {
+    this.glance = { yaw: clamp(yaw, -22, 22), pitch: clamp(pitch, -22, 22) };
   }
 
   sample(now: number): BotFrame {
@@ -231,6 +256,20 @@ export class BotEngine {
       const from = poseFor(STATES[this.previous], elapsed, now);
       pose = blendPose(from, pose, easings.outQuint(clamp(elapsed / def.morph)));
     }
+
+    /*
+     * Applied after the morph blend, not before it. Blending a glance would
+     * make the offset arrive gradually, and the eyes would lag behind the
+     * keyboard opening by the length of whatever morph happened to be running.
+     */
+    pose = {
+      ...pose,
+      gaze: {
+        ...pose.gaze,
+        yaw: pose.gaze.yaw + this.glance.yaw,
+        pitch: pose.gaze.pitch + this.glance.pitch,
+      },
+    };
 
     const cx = HALF_BOX;
     const cy = HALF_BOX;
