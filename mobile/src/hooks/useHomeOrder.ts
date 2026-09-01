@@ -43,6 +43,20 @@ export const COMPACT_BELOW = 0.85;
  * cutting them off, and "I want less of this" is what the width axis and the
  * bin are for.
  */
+/**
+ * Where a block sits across the width: 0 hard left, 0.5 centred, 1 hard right.
+ *
+ * It only means anything once a block has been made narrower than the page —
+ * a full-width block has nowhere to go — which is exactly when it was asked
+ * for: shrink the Welcome card and it sat marooned in the middle with empty
+ * space either side, and there was no way to push it into a corner.
+ *
+ * A fraction of the *free* space rather than an absolute offset, so the
+ * placement survives resizing the block afterwards: a block pinned left stays
+ * left whatever width it is given next.
+ */
+export const HOME_ALIGN_DEFAULT = 0.5;
+
 export const HOME_HEIGHT_MIN = 1;
 export const HOME_HEIGHT_MAX = 1.8;
 export const HOME_HEIGHT_DEFAULT = 1;
@@ -91,6 +105,13 @@ function defaultHeights(): Record<HomeSection, number> {
   ) as Record<HomeSection, number>;
 }
 
+export function clampAlign(value: number): number {
+  if (!Number.isFinite(value)) {
+    return HOME_ALIGN_DEFAULT;
+  }
+  return Math.min(1, Math.max(0, Math.round(value * 100) / 100));
+}
+
 export function clampHeight(value: number): number {
   if (!Number.isFinite(value)) {
     return HOME_HEIGHT_DEFAULT;
@@ -99,6 +120,12 @@ export function clampHeight(value: number): number {
     HOME_HEIGHT_MAX,
     Math.max(HOME_HEIGHT_MIN, Math.round(value * 100) / 100),
   );
+}
+
+function defaultAligns(): Record<HomeSection, number> {
+  return Object.fromEntries(
+    HOME_SECTIONS.map(key => [key, HOME_ALIGN_DEFAULT]),
+  ) as Record<HomeSection, number>;
 }
 
 export function clampScale(value: number): number {
@@ -127,6 +154,25 @@ function reconcileScales(stored: unknown): Record<HomeSection, number> {
  * no `heights` key at all and lands on 1 for every block, which is the size it
  * was already being drawn at — so nobody's arrangement changes under them.
  */
+/**
+ * Placements read back, with anything missing centred.
+ *
+ * An install from before this existed has no `aligns` key and lands on 0.5 for
+ * every block, which is where they have always been drawn.
+ */
+function reconcileAligns(stored: unknown): Record<HomeSection, number> {
+  const next = defaultAligns();
+  if (stored && typeof stored === 'object') {
+    for (const key of HOME_SECTIONS) {
+      const value = (stored as Record<string, unknown>)[key];
+      if (typeof value === 'number') {
+        next[key] = clampAlign(value);
+      }
+    }
+  }
+  return next;
+}
+
 function reconcileHeights(stored: unknown): Record<HomeSection, number> {
   const out = defaultHeights();
   if (stored && typeof stored === 'object') {
@@ -144,6 +190,7 @@ export function useHomeOrder() {
   const [order, setOrder] = useState<HomeSection[]>([...HOME_SECTIONS]);
   const [scales, setScales] = useState<Record<HomeSection, number>>(defaultScales);
   const [heights, setHeights] = useState<Record<HomeSection, number>>(defaultHeights);
+  const [aligns, setAligns] = useState<Record<HomeSection, number>>(defaultAligns);
 
   /**
    * The order the blocks are rendered in, which is kept equal to `order`.
@@ -175,6 +222,7 @@ export function useHomeOrder() {
           setRendered(next);
           setScales(reconcileScales(Array.isArray(parsed) ? null : parsed?.scales));
           setHeights(reconcileHeights(Array.isArray(parsed) ? null : parsed?.heights));
+          setAligns(reconcileAligns(Array.isArray(parsed) ? null : parsed?.aligns));
         } catch {
           // A corrupt entry should not stop Home from rendering.
         }
@@ -187,10 +235,16 @@ export function useHomeOrder() {
       nextOrder: HomeSection[],
       nextScales: Record<HomeSection, number>,
       nextHeights: Record<HomeSection, number>,
+      nextAligns: Record<HomeSection, number>,
     ) => {
       AsyncStorage.setItem(
         KEY,
-        JSON.stringify({ order: nextOrder, scales: nextScales, heights: nextHeights }),
+        JSON.stringify({
+          order: nextOrder,
+          scales: nextScales,
+          heights: nextHeights,
+          aligns: nextAligns,
+        }),
       ).catch(() => {});
     },
     [],
@@ -200,9 +254,9 @@ export function useHomeOrder() {
     (next: HomeSection[]) => {
       setOrder(next);
       setRendered(next);
-      persist(next, scales, heights);
+      persist(next, scales, heights, aligns);
     },
-    [heights, persist, scales],
+    [aligns, heights, persist, scales],
   );
 
   const removeSection = useCallback(
@@ -210,9 +264,9 @@ export function useHomeOrder() {
       const next = order.filter(key => key !== id);
       setOrder(next);
       setRendered(next);
-      persist(next, scales, heights);
+      persist(next, scales, heights, aligns);
     },
-    [heights, order, persist, scales],
+    [aligns, heights, order, persist, scales],
   );
 
   const setScale = useCallback(
@@ -220,12 +274,12 @@ export function useHomeOrder() {
       setScales(previous => {
         const next = { ...previous, [section]: clampScale(scale) };
         if (commit) {
-          persist(order, next, heights);
+          persist(order, next, heights, aligns);
         }
         return next;
       });
     },
-    [heights, order, persist],
+    [aligns, heights, order, persist],
   );
 
   const setHeightScale = useCallback(
@@ -233,12 +287,28 @@ export function useHomeOrder() {
       setHeights(previous => {
         const next = { ...previous, [section]: clampHeight(scale) };
         if (commit) {
-          persist(order, scales, next);
+          persist(order, scales, next, aligns);
         }
         return next;
       });
     },
-    [order, persist, scales],
+    [aligns, order, persist, scales],
+  );
+
+  const setAlign = useCallback(
+    (section: HomeSection, align: number, commit = true) => {
+      setAligns(previous => {
+        const next = { ...previous, [section]: clampAlign(align) };
+        if (commit) {
+          persist(order, scales, heights, next);
+        }
+        return next;
+      });
+    },
+    // Not `aligns`: this reads the previous value through the updater, which is
+    // what keeps the identity stable while a finger is dragging the block —
+    // a new callback every frame would replace the responder mid-gesture.
+    [heights, order, persist, scales],
   );
 
   const reset = useCallback(() => {
@@ -247,9 +317,11 @@ export function useHomeOrder() {
     setRendered(next);
     const defScales = defaultScales();
     const defHeights = defaultHeights();
+    const defAligns = defaultAligns();
     setScales(defScales);
     setHeights(defHeights);
-    persist(next, defScales, defHeights);
+    setAligns(defAligns);
+    persist(next, defScales, defHeights, defAligns);
   }, [persist]);
 
   return {
@@ -257,10 +329,12 @@ export function useHomeOrder() {
     rendered,
     scales,
     heights,
+    aligns,
     save,
     removeSection,
     setScale,
     setHeightScale,
+    setAlign,
     reset,
   };
 }

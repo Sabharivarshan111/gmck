@@ -6,7 +6,16 @@ import {
   View,
   type LayoutChangeEvent,
 } from 'react-native';
-import { ChevronDown, ChevronUp, GripVertical, Minus, Plus, Trash2 } from 'lucide-react-native';
+import {
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  ChevronUp,
+  GripVertical,
+  Minus,
+  Plus,
+  Trash2,
+} from 'lucide-react-native';
 import { Touchable } from '@/components/Touchable';
 import { ReorderLockContext } from '@/components/ReorderLock';
 import { dragOwner } from '@/components/dragOwner';
@@ -43,6 +52,18 @@ export interface ReorderableProps<Id extends string> {
   heightScales?: Record<string, number>;
   onHeightScale?: (id: Id, scale: number, commit: boolean) => void;
   heightRange?: { min: number; max: number };
+  /**
+   * Where each block sits across the page: 0 hard left, 0.5 centred, 1 hard
+   * right. A fraction of the free space rather than an offset in pixels, so a
+   * block pinned to a corner stays there when it is resized afterwards.
+   *
+   * It only does anything once a block is narrower than the page — that is
+   * when the space to move it into exists, and it is the state it was asked
+   * for from: a shrunk Welcome card marooned in the middle with no way to push
+   * it into a corner.
+   */
+  aligns?: Record<string, number>;
+  onAlign?: (id: Id, align: number, commit: boolean) => void;
   /** Fires while a block is held, so the page can stop scrolling under it. */
   onDragChange?: (dragging: boolean) => void;
   /** Remove / hide a section from the home layout */
@@ -63,6 +84,8 @@ export function Reorderable<Id extends string>({
   heightScales,
   onHeightScale,
   heightRange,
+  aligns,
+  onAlign,
   onDragChange,
   onRemove,
   sections,
@@ -101,6 +124,17 @@ export function Reorderable<Id extends string>({
   heightScalesRef.current = heightScales;
   const onHeightScaleRef = useRef(onHeightScale);
   onHeightScaleRef.current = onHeightScale;
+  /*
+   * Read through refs for the same reason as the scales: the drag responders
+   * are built once per order, and one rebuilt mid-gesture has never seen the
+   * grant that recorded where the finger started.
+   */
+  const alignsRef = useRef(aligns);
+  alignsRef.current = aligns;
+  const onAlignRef = useRef(onAlign);
+  onAlignRef.current = onAlign;
+  /** The width of the page the blocks are laid out in, for the drag maths. */
+  const widthRef = useRef(0);
   const heightRangeRef = useRef(heightRange);
   heightRangeRef.current = heightRange;
   const onDragChangeRef = useRef(onDragChange);
@@ -336,6 +370,8 @@ export function Reorderable<Id extends string>({
       // starts from the arrangement actually on screen.
       let tentative = order;
       let startShift = 0;
+      /** Where across the page the block was when the finger landed. */
+      let alignStart = 0.5;
 
       map[id] = PanResponder.create({
         /*
@@ -360,6 +396,7 @@ export function Reorderable<Id extends string>({
           editing && dragOwner.current === null && dragArm.isArmed(id),
         onPanResponderGrant: () => {
           tentative = order;
+          alignStart = alignsRef.current?.[id] ?? 0.5;
           const renderTops = topsFor(rendered);
           startShift = topsFor(order)[id] - renderTops[id];
           valueFor(shifts, id).stopAnimation();
@@ -375,6 +412,25 @@ export function Reorderable<Id extends string>({
         },
         onPanResponderMove: (_event, gesture) => {
           valueFor(shifts, id).setValue(startShift + gesture.dy);
+
+          /*
+           * Sideways places the block; up and down still reorders it. One
+           * gesture, two axes, which is what "pick it up and put it where I
+           * want" means — and it needs no new grip on a row that already has
+           * six controls in it.
+           *
+           * The travel is divided by the *free* space rather than by the page
+           * width, so the block keeps up with the finger whatever size it has
+           * been made: a block at 90% has a tenth of the page to move across
+           * and must cross it in a tenth of the drag, or placing it feels
+           * broken in exactly the way a fixed divisor made the hero crawl.
+           */
+          const zoomNow = scalesRef.current?.[id] ?? 1;
+          const free = widthRef.current * (1 - zoomNow);
+          if (onAlignRef.current && free > 1) {
+            const from = alignStart;
+            onAlignRef.current(id, from + gesture.dx / free, false);
+          }
 
           /**
            * Swap with a neighbour once the dragged block's leading edge has
@@ -430,6 +486,10 @@ export function Reorderable<Id extends string>({
         onPanResponderRelease: () => {
           setHeld(null);
           onDragChange?.(false);
+          // Store the placement once, on release, rather than once per frame.
+          if (onAlignRef.current) {
+            onAlignRef.current(id, alignsRef.current?.[id] ?? 0.5, true);
+          }
           if (!reduceMotion) {
             Animated.spring(valueFor(lifts, id), {
               toValue: 0,
@@ -500,6 +560,7 @@ export function Reorderable<Id extends string>({
         const lift = valueFor(lifts, id);
         const zoom = scales?.[id] ?? 1;
         const tall = heightScales?.[id] ?? 1;
+        const place = aligns?.[id] ?? 0.5;
         const natural = naturals.get(id) ?? 0;
         return (
           <Animated.View
@@ -509,6 +570,18 @@ export function Reorderable<Id extends string>({
               if (heights.get(id) !== next) {
                 heights.set(id, next);
                 settle(order);
+              }
+              /*
+               * The width the blocks are placed across, taken from the row
+               * rather than from `Dimensions`: this is the width inside the
+               * page's own padding, which is the space a block is actually
+               * drawn in. A second `onLayout` on this node would replace this
+               * one — JSX keeps the last prop — and silently stop the height
+               * measurement the reorder depends on.
+               */
+              const width = event.nativeEvent.layout.width;
+              if (width > 0) {
+                widthRef.current = width;
               }
             }}
             // Touch handlers rather than a responder: these fire on the row
@@ -604,7 +677,18 @@ export function Reorderable<Id extends string>({
                   styles.cardContainer,
                   {
                     width: zoom >= 0.99 ? '100%' : `${Math.round(zoom * 100)}%`,
-                    alignSelf: 'center',
+                    /*
+                     * Placed from the left edge rather than centred.
+                     *
+                     * `alignSelf: 'center'` is `place` fixed at 0.5, which is
+                     * why a shrunk block always sat in the middle with equal
+                     * space either side and no way to move it. The margin is a
+                     * percentage of the row, so it is the same fraction of the
+                     * free space at any width — a block pinned to a corner
+                     * stays in that corner when it is resized afterwards.
+                     */
+                    alignSelf: 'flex-start',
+                    marginLeft: `${Math.round(place * (1 - zoom) * 1000) / 10}%`,
                   },
                 ]}>
                 <View
@@ -804,6 +888,44 @@ export function Reorderable<Id extends string>({
                             ? withAlpha(colors.text, 0.25)
                             : colors.text
                         }
+                      />
+                    </Touchable>
+                  </>
+                ) : null}
+
+                {/*
+                  Left and right, and only once there is somewhere to go.
+
+                  At full width a block fills the row and these would be two
+                  buttons that visibly do nothing; shrink it and they appear
+                  beside the size controls that created the space. Dragging the
+                  block sideways does the same thing continuously — this is the
+                  version that always lands, the same argument as the size
+                  steps above.
+                */}
+                {onAlign && zoom < 0.99 ? (
+                  <>
+                    <View style={[styles.divider, { backgroundColor: colors.border }]} />
+                    <Touchable
+                      onPress={() => onAlign(id, Math.max(0, place - 0.25), true)}
+                      label={`Move ${labels[id]} left`}
+                      disabled={place <= 0.001}
+                      scaleTo={0.9}
+                      style={styles.arrow}>
+                      <ChevronLeft
+                        size={16}
+                        color={place <= 0.001 ? withAlpha(colors.text, 0.25) : colors.text}
+                      />
+                    </Touchable>
+                    <Touchable
+                      onPress={() => onAlign(id, Math.min(1, place + 0.25), true)}
+                      label={`Move ${labels[id]} right`}
+                      disabled={place >= 0.999}
+                      scaleTo={0.9}
+                      style={styles.arrow}>
+                      <ChevronRight
+                        size={16}
+                        color={place >= 0.999 ? withAlpha(colors.text, 0.25) : colors.text}
                       />
                     </Touchable>
                   </>

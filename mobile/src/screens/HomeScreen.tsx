@@ -118,10 +118,12 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
     rendered,
     scales,
     heights,
+    aligns,
     save,
     removeSection,
     setScale,
     setHeightScale,
+    setAlign,
     reset,
   } = useHomeOrder();
   /**
@@ -357,8 +359,9 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
             ]}>
             <Text style={[styles.editBannerText, { color: colors.text }]}>
               Drag the side bar (↔) for width, the bottom bar (↕) for height, or
-              the corner for both. Hold and drag a block to move it. 🗑️ hides one;
-              Reset brings everything back.
+              the corner for both. Hold and drag a block to move it — up and down
+              to reorder, sideways to place it anywhere across the page. 🗑️ hides
+              one; Reset brings everything back.
             </Text>
             <Touchable onPress={reset} label="Reset home layout" scaleTo={0.94}>
               <Text style={[styles.editReset, { color: colors.textMuted }]}>Reset</Text>
@@ -381,6 +384,8 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
           heightScales={heights}
           onHeightScale={setHeightScale}
           heightRange={HOME_HEIGHT_RANGE}
+          aligns={aligns}
+          onAlign={setAlign}
           onDragChange={setDragging}
           onRemove={removeSection}
           labels={HOME_SECTION_LABEL}

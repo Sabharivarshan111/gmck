@@ -174,6 +174,100 @@ if ((await heightGrip.count()) > 0) {
 }
 
 /*
+ * Placing a block across the page.
+ *
+ * Reported with a circled screenshot of a shrunk Welcome card: it sat marooned
+ * in the middle with empty space either side, and there was no way to push it
+ * into a corner. `alignSelf: 'center'` was the placement, fixed at one value.
+ *
+ * The block has been made smaller by the two presses above, so there is free
+ * space to move it into. Pressed rather than dragged: the drag does the same
+ * thing continuously, but a synthetic drag on a block that also reorders is a
+ * test of the harness's aim rather than of the feature.
+ */
+const leftward = page.getByLabel(/^Move .* left$/).first();
+if ((await leftward.count()) > 0) {
+  const label = await leftward.getAttribute('aria-label');
+  const boxOf = async () => {
+    const control = page.getByLabel(label, { exact: true }).first();
+    return control.evaluate(el => {
+      /*
+       * The *card*, not the row.
+       *
+       * The row is always the full width of the page — placement moves the
+       * card inside it — so measuring the row reports the same left edge
+       * whatever the block is doing, which is a test that can only ever pass.
+       * Walk up to the row, then back down to the outermost child that is
+       * narrower than it: that is the container the margin is on.
+       */
+      let row = el;
+      for (let i = 0; i < 10 && row.parentElement; i += 1) {
+        row = row.parentElement;
+        if (row.getBoundingClientRect().height > 60) break;
+      }
+      /*
+       * The container is the one carrying a percentage width — that is the
+       * node the zoom sets and the placement margins. Picking "the first
+       * child narrower than the row" instead lands on the animated wrapper
+       * one level out, which is full width and never moves, so the test
+       * reports no movement however well the feature works.
+       */
+      for (const node of row.querySelectorAll('div')) {
+        if (!node.style || !node.style.width.endsWith('%')) continue;
+        const r = node.getBoundingClientRect();
+        if (r.height < 40) continue;
+        return {
+          left: r.left,
+          right: r.right,
+          width: r.width,
+          margin: getComputedStyle(node).marginLeft,
+        };
+      }
+      return null;
+    });
+  };
+  const before = await boxOf();
+  await leftward.click({ force: true });
+  await leftward.click({ force: true });
+  await page.waitForTimeout(600);
+  const after = await boxOf();
+  const found = await record('6-placed-left', `after two presses of ${label}`);
+  if (before && after) {
+    process.stdout.write(
+      `   placed left ${Math.round(before.left)} -> ${Math.round(after.left)}` +
+        ` (width ${Math.round(after.width)}, margin ${before.margin} -> ${after.margin})\n`,
+    );
+    if (after.left >= before.left - 4) {
+      found.push(
+        `"${label}" did not move the block: its left edge stayed at ${Math.round(after.left)}px`,
+      );
+    }
+    if (Math.abs(after.width - before.width) > 4) {
+      found.push('placing the block changed its width — that is the size control, not this one');
+    }
+  }
+
+  // And back to the right, so the control is not one-way.
+  const rightward = page.getByLabel(/^Move .* right$/).first();
+  if ((await rightward.count()) > 0) {
+    await rightward.click({ force: true });
+    await rightward.click({ force: true });
+    await page.waitForTimeout(600);
+    const back = await boxOf();
+    if (back && after && back.left <= after.left + 4) {
+      found.push('the block would not go back to the right');
+    }
+  }
+} else {
+  report.push({
+    name: '6-placed-left',
+    note: 'no placement control — a shrunk block still cannot be moved sideways',
+    file: '(none)',
+    found: ['the Move left control is missing entirely'],
+  });
+}
+
+/*
  * The picture button on a subject card. It only exists in edit mode, and edit
  * mode is exactly when ReorderLockContext turned every Touchable inside a block
  * into a no-op — so this button could never be pressed at all, which is what
