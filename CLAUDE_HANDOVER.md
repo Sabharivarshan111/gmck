@@ -149,25 +149,42 @@ This document contains the complete record of architecture, features, bugs solve
     - In `mobile/src/lib/handwrittenNotes.ts` (`mergeProposal`), extracted and pinned all existing diagram sections at the top of the notes.
     - In `mobile/src/components/NotesAiEditBox.tsx` (`apply`), preserved authentic diagram sections when replacing note contents.
 
+- **Batch 1 & Batch 2 Anatomy Diagrams Added (Total: 115 Complete Anatomy Diagrams in Supabase)**:
+  - **Batch 1 (10 Diagrams)**:
+    1. `ulnar_nerve_course_branches.jpg` (Medial cord, cubital tunnel, Guyon canal, claw hand)
+    2. `radial_nerve_spiral_groove.jpg` (Posterior cord, spiral groove with profunda brachii, PIN, wrist drop)
+    3. `median_nerve_course_branches.jpg` (Cubital fossa, pronator teres, carpal tunnel, LOAF, ape thumb)
+    4. `sciatic_nerve_course_branches.jpg` (Piriformis, hamstrings, popliteal bifurcation, foot drop)
+    5. `femoral_nerve_course_branches.jpg` (L2-L4, psoas groove, femoral triangle, quadriceps)
+    6. `rectus_sheath_cross_sections.jpg` (3 levels, arcuate line, rectus abdominis, epigastric vessels)
+    7. `trigeminal_nerve_divisions_ganglia.jpg` (V1-V3, Ciliary, Pterygopalatine, Otic, Submandibular ganglia)
+    8. `thoracic_duct_course_tributaries.jpg` (Cisterna chyli, T5 crossing, left Pirogoff angle)
+    9. `stomach_bed_posterior_relations.jpg` (Lesser sac, pancreas, left kidney, splenic artery, spleen)
+    10. `spleen_visceral_surfaces_relations.jpg` (Gastric, renal, colic, pancreatic impressions, hilum)
+  - **Batch 2 (10 Diagrams)**:
+    11. `thyroid_gross_relations_blood_supply.jpg` (Pretracheal fascia, Berry ligament, recurrent laryngeal nerve)
+    12. `kidney_anterior_relations_impressions.jpg` (Right vs Left kidney organ impressions & peritoneal coverage)
+    13. `anal_canal_interior_pectinate_line.jpg` (Morgagni columns, pectinate line, internal & external sphincters)
+    14. `tongue_muscles_nerve_supply_lymphatics.jpg` (Papillae, genioglossus, CN V3/VII/IX/XII innervation)
+    15. `lateral_wall_of_nose_meatuses_sinuses.jpg` (Conchae, meatuses, paranasal air sinus openings)
+    16. `submandibular_gland_relations_mylohyoid.jpg` (Mylohyoid border wrap, Wharton duct lingual nerve sling)
+    17. `pharynx_constrictor_muscles_killians.jpg` (Superior/middle/inferior constrictors, Killian's dehiscence)
+    18. `uterus_supports_ligaments_blood_supply.jpg` (Mackenrodt cardinal ligaments, uterine artery 'water under bridge')
+    19. `venous_drainage_heart_coronary_sinus.jpg` (Coronary sinus tributaries, cardiac veins, Thebesian veins)
+    20. `duodenum_parts_interior_arterial_arcade.jpg` (4 parts, major/minor duodenal papillae of Vater, SMA arcade)
+
 ---
 
-## 9. 🚀 Current GitHub Release Status (Release Build 110)
-- **Latest Live Release on GitHub**:
-  - **Release Name**: `Release build 110` (tag: `release-110`)
-  - **URL**: [https://github.com/Sabharivarshan111/gmck/releases/tag/release-110](https://github.com/Sabharivarshan111/gmck/releases/tag/release-110)
-  - **Assets Attached**:
-    - `app-release.aab` (**69.54 MB**) — Google Play Console signed bundle.
-    - `app-release.apk` (**87.82 MB**) — Standalone signed APK with strict diagram matching, diagram preservation, and background crash fix.
-- **Commits Included**:
-  - `fd158d1` — `fix(notes): preserve diagrams during regenerate and Fix Notes with AI edit`
-  - `d23c3a9` — `fix(diagrams): enforce strict entity matching to prevent false positives and fix Android process death crash`
-  - `0da101a` — `fix(home): zero-gap component deletion, 50% halving with 2x2 reflow, and precision glowing resize handles`
+## 9. 🚀 Current GitHub Release Status (Release Build 113 -> 114)
+- **Live on GitHub**:
+  - **Release Name**: `Release build 113` (tag: `release-113`)
+  - **Assets**: `app-release.apk` (87.82 MB) and `app-release.aab` (69.54 MB).
+- **Latest Commit**:
+  - `568c62b` & latest batch updates committed and pushed to `main` and `claude/native-app-sync`.
 
 ---
 
-## 10. ⏳ Active Scheduled Timers & Next Steps for Claude
-1. **Gemini Image Generation 4-Hour Quota Reset**:
-   - Scheduled reset time: **2026-08-31T12:57:53Z UTC (~6:28 PM IST)**.
-   - When quota resets, generate the remaining 10 high-yield Anatomy diagrams and upload them to Supabase Storage `diagrams/anatomy/`.
-2. **User Notes & Testing**:
-   - The user has tested the app on mobile. Remind them to install **Release Build 110** (tag `release-110`) from the GitHub release link to verify all fixes on device.
+## 10. 💡 Mac Sleep & Background Autonomous Processing Note
+- When the user closes the MacBook lid, macOS suspends CPU & WiFi (System Sleep).
+- Local timers pause during sleep and fire immediately upon lid reopening.
+- To allow overnight/unattended generation when stepping away, recommend using `caffeinate` or adjusting macOS Sleep settings (`System Settings -> Displays -> Prevent automatic sleeping on power adapter`).
