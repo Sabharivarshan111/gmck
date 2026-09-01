@@ -53,12 +53,22 @@ custom-theme subject cards.
 - **The Liquid Glass preset is dark**, and used to be near-white over a white
   card: three near-identical whites, so the material had nothing to show
   through it and no edge you could find.
+- **Android 13+ gets a real AGSL shader** (`GlassView.kt`, registered as
+  `OrbitGlass`), drawn **between the fill and the bevel**. That order is the
+  safety story: an older phone, a video wallpaper, or a failed capture all
+  leave a finished card rather than a hole. Gated on API 33, on a wallpaper
+  being set (refracting a flat colour returns a flat colour), and on
+  `hasViewManagerConfig`.
+- **A view is not a module.** Modules must be TurboModules because the module
+  interop flag is false; `useFabricInterop()` defaults to **true**, so a plain
+  `SimpleViewManager` works with no codegen and no C++ entry point.
 - **Neither Liquid Glass package belongs here.** `@callstack/liquid-glass` is
   iOS 26+ only and renders a plain View on Android.
-  `@uginy/react-native-liquid-glass` really does run an AGSL shader, but its
-  `onDraw` is gated on API 33 and falls through to `super.onDraw` below it —
-  a transparent hole, and `minSdkVersion` is 24 — and its backdrop is a
-  one-off ~10MB bitmap snapshot, stale over anything that scrolls.
+  `@uginy/react-native-liquid-glass` is an Expo module — `requireNativeView`
+  from `expo`, `ExpoModulesCorePlugin.gradle` — so it would bring the whole
+  Expo module system into a bare app for one view. Its technique is what
+  `GlassView.kt` does; below API 33 it draws nothing and its capture retries
+  are unbounded, and neither of those was copied.
 - **`bevel` draws the light without the translucency**, for a surface that is
   *about* being glass under a solid theme (the music player). Not for general
   use: a rim round every list row undoes the distinction.

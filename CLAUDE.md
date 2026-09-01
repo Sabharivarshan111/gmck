@@ -587,6 +587,57 @@ a white rim: three near-identical whites, a surface with nothing to show
 through it and no edge you could find. Apple demonstrates this material over
 photographs for the same reason.
 
+### Real refraction on Android 13+, and the bevel everywhere else
+
+`GlassView.kt` is an AGSL `RuntimeShader` — a rounded-rectangle signed
+distance field, a surface normal from its gradient, the backdrop sampled along
+that normal hardest at the rim, the three channels split slightly for fringing,
+and a Fresnel term for the edge. `GlassViewManager` registers it as
+`OrbitGlass`; `src/native/OrbitGlass.tsx` decides whether it may be used at
+all.
+
+**A view is not a module, and the New Architecture treats them oppositely.**
+Every module here is a TurboModule because the module interop flag is false in
+every stable release. For a *view* `useFabricInterop()` defaults to **true**,
+and Fabric registers an `UnstableLegacyViewManagerAutomaticComponentDescriptor`
+for a component it has no descriptor for (`ComponentDescriptorRegistry.cpp`).
+So a plain `SimpleViewManager` works, with no codegen, no `codegenConfig`
+change and no C++ entry point — which this app has none of and would otherwise
+have had to grow for one view.
+
+Three gates, and each is load-bearing:
+
+- **API 33.** `RuntimeShader` arrived in Android 13; `minSdkVersion` is 24.
+- **A wallpaper.** This looks like a restriction and is physics: a shader
+  refracts what is behind it, and behind a card here is either the reader's
+  picture or a flat theme colour. Refracting a flat colour returns a flat
+  colour, so without a picture it is a ten-megabyte bitmap spent reproducing
+  the image already on screen. It is also the only case where the capture is
+  *honest* — the wallpaper is genuinely still, and the things that move are its
+  siblings.
+- **`hasViewManagerConfig`.** The sound module is the cautionary tale: a native
+  thing that is silently absent looks exactly like one quietly doing nothing.
+
+**It is drawn between the fill and the bevel, and that order is the whole
+safety story.** The fill is already painted, so a phone below Android 13, a
+video wallpaper (a SurfaceView draws nothing into a canvas, so the capture
+comes back empty and `looksReal` rejects it), or a capture that never succeeds
+all leave a finished card rather than a hole. The bevel stays on top because it
+follows the theme. The retries are bounded for the same reason: re-rasterising
+a full-screen bitmap forever on a cheap phone is worse than the bug it was
+fixing.
+
+`npm run check:glass-shader` pins every one of those — the gates, the draw
+order, the bounded retries, and that the preview shim reports the shader
+absent. Nothing here can run it: no emulator, and the harness is a browser with
+no `RuntimeShader`. **The first real proof is an APK on a phone.**
+
+While wiring it: `theme/index.tsx` read `useWallpaper() !== null`, which
+compares the hook's *object* against null and is therefore always true. A
+custom theme counted as having a wallpaper whether or not one was set, so
+`customGlass` was gated on the translucency slider alone and surfaces went
+see-through over a flat colour with nothing behind them to see.
+
 ### The two Liquid Glass packages, and why neither is here
 
 Both get suggested, and the answer is written down so it is not re-litigated:
@@ -594,21 +645,18 @@ Both get suggested, and the answer is written down so it is not re-litigated:
 - **`@callstack/liquid-glass` is iOS 26+ only.** On Android it renders a plain
   opaque `View` and exports `isLiquidGlassSupported` as false. This app is
   Android-only, so it is bytes in the APK and nothing on screen.
-- **`@uginy/react-native-liquid-glass` is real on Android** — an AGSL
-  `RuntimeShader` doing refraction, chromatic aberration and iridescence — and
-  it is still the wrong trade here, for two reasons found by reading its
-  `LiquidGlassView.kt` rather than its README. Its `onDraw` is gated on
-  `SDK_INT >= TIRAMISU` and falls through to `super.onDraw` otherwise, so on
-  **anything below Android 13 the view draws nothing at all** — a transparent
-  hole, and `minSdkVersion` here is 24. And its backdrop is not live:
-  `requestSharedCapture()` rasterises the whole background view into an
-  `ARGB_8888` bitmap once (about 10MB at 1080×2400) and the shader samples
-  that snapshot, so the refraction shows whatever was behind the card when it
-  mounted. Fine over a still wallpaper, wrong over every scrolling list in
-  this app.
+- **`@uginy/react-native-liquid-glass` is an Expo module.** Its JS calls
+  `requireNativeView` from `expo` and its Gradle applies
+  `ExpoModulesCorePlugin.gradle` from `:expo-modules-core`, so installing it
+  into this bare app means adding the whole Expo module system to a shipped
+  Play app for one view. Its technique is the right one and is what
+  `GlassView.kt` does; its packaging is not. It is MIT, and it is worth
+  reading — but two things in it are worth *not* copying: below API 33 its
+  `onDraw` falls through to `super.onDraw` and the view is a transparent hole,
+  and its capture retries are unbounded.
 
-If a backdrop filter ever arrives that is live and works below Android 13,
-`GlassSurface` is still the one file that changes.
+If a backdrop filter ever arrives that is live and needs no capture,
+`GlassView` is the one file that changes.
 
 **The bevel and the translucency are separable**, and `bevel` is the prop that
 says so: a surface that is *about* being glass — the music player — draws the
@@ -1398,6 +1446,7 @@ npm run check:keyboard           # no text input can sit under the Android keybo
 npm run check:edges              # no full-screen page sits under the status bar
 npm run check:trees              # the focus trees stay drawable and distinct
 npm run check:music              # the player opens below its button, and plays
+npm run check:glass-shader       # the AGSL pane is gated, layered, and never load-bearing
 npm run check:diagrams           # a question shows its own diagram, or none
 npm run check:apkg               # an Anki package imports, and not its decoy collection
 npm run check:mcq                # MCQ response parsing + the ask-gemini markers

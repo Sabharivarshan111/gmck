@@ -9,6 +9,8 @@ import {
 import Svg, { Defs, LinearGradient, RadialGradient, Rect, Stop } from 'react-native-svg';
 import { useTheme, withAlpha } from '@/theme';
 import { radius } from '@/theme/tokens';
+import { useWallpaper } from '@/hooks/useWallpaper';
+import { GLASS_SHADER_AVAILABLE, OrbitGlass } from '@/native/OrbitGlass';
 
 /**
  * A card surface that knows whether the theme is solid or glass.
@@ -60,6 +62,22 @@ import { radius } from '@/theme/tokens';
  * half of that width past the edge, where the parent's clip would remove
  * precisely the brightest part of the bevel.
  */
+/**
+ * A small stable number for a wallpaper's uri.
+ *
+ * The native side captures the background once and has no way to learn that
+ * the picture changed, so JS has to say. A hash rather than a counter because
+ * it survives a relaunch: the same wallpaper produces the same number, and a
+ * different one does not, with no state to keep anywhere.
+ */
+function revisionOf(uri: string): number {
+  let hash = 0;
+  for (let i = 0; i < uri.length; i += 1) {
+    hash = (hash * 31 + uri.charCodeAt(i)) | 0;
+  }
+  return Math.abs(hash);
+}
+
 export function GlassSurface({
   children,
   style,
@@ -92,6 +110,24 @@ export function GlassSurface({
   const glass = colors.material === 'glass';
   const lit = glass || bevel;
   const [size, setSize] = useState({ width: 0, height: 0 });
+
+  /*
+   * The AGSL pane, on Android 13 and up, and only over a picture.
+   *
+   * Both halves of that are in `native/OrbitGlass`, and the second is not
+   * timidity: a shader refracts what is behind it, and behind a card here is
+   * either the wallpaper or a flat colour. Refracting a flat colour returns a
+   * flat colour, so without a picture the effect is a full-screen bitmap spent
+   * to reproduce the image already on screen.
+   *
+   * A **video** wallpaper is offered it anyway rather than excluded here. It
+   * will not work — a SurfaceView draws nothing into a canvas, so the capture
+   * comes back empty — but the view detects that itself, gives up after a
+   * bounded number of tries and leaves the bevel. Deciding it in JS would mean
+   * two places that have to agree about a thing only one of them can see.
+   */
+  const { wallpaper } = useWallpaper();
+  const shaded = GLASS_SHADER_AVAILABLE && lit && wallpaper !== null;
 
   const onLayout = (event: LayoutChangeEvent) => {
     const { width, height } = event.nativeEvent.layout;
@@ -208,6 +244,22 @@ export function GlassSurface({
         },
         style,
       ]}>
+      {/*
+        Under the bevel and over the fill, which is the only order that is
+        safe. The fill is already painted, so a shader that draws nothing —
+        an older phone, a video wallpaper, a capture that never succeeded —
+        leaves a finished card rather than a hole. The bevel stays on top
+        because it is the part that follows the theme, and because it is the
+        half that has been seen to work.
+      */}
+      {shaded ? (
+        <OrbitGlass
+          style={StyleSheet.absoluteFill}
+          cornerRadius={borderRadius}
+          tint={withAlpha(colors.card, colors.translucency * 0.5)}
+          revision={wallpaper ? revisionOf(wallpaper.uri) : 0}
+        />
+      ) : null}
       <View
         pointerEvents="none"
         style={[StyleSheet.absoluteFill, { borderRadius, overflow: 'hidden' }]}>

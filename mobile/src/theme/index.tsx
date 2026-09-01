@@ -368,7 +368,17 @@ export function ThemeProvider({
    * own rather than becoming translucent windows onto a flat colour, which is
    * just a lighter card with extra steps.
    */
-  const hasWallpaper = useWallpaper() !== null;
+  /*
+   * `.wallpaper`, not the hook's return value.
+   *
+   * This read `useWallpaper() !== null`, which compares the hook's *object* —
+   * `{ wallpaper, set, clear }` — against null and is therefore always true.
+   * So a custom theme counted as having a wallpaper whether or not one was
+   * set, and `customGlass` was gated on the translucency slider alone: the
+   * surfaces went see-through over a flat colour, with nothing behind them to
+   * see, which is the washed-out card this whole material is trying not to be.
+   */
+  const hasWallpaper = useWallpaper().wallpaper !== null;
   const customGlass = preference === 'custom' && hasWallpaper && translucency > 0;
   const material: Material = customGlass
     ? 'glass'
