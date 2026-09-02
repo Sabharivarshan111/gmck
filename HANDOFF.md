@@ -1169,17 +1169,36 @@ Pass `teamId: "sabharivarshan111"` to every Vercel MCP call for this project.
     orbitmbbs-sabharivarshan111s-projects.vercel.app
     orbitmbbs-git-main-sabharivarshan111s-projects.vercel.app
 
-return 403 to anyone not signed in to that Vercel account. There is no custom
-domain, so nothing is exempt. A student opening any of these sees a Vercel
-login page, not the app.
+returned 403 to anyone not signed in to that account, and there is no custom
+domain to be exempt — a student opening any of them saw a Vercel login page.
 
-Turning it off is `update_project_deployment_protection` with
-`ssoProtection: { enabled: false }` — deliberately **not** done unasked, because
-it is the difference between a private preview and a public website.
+**It is off now**, on the owner's explicit instruction:
+`update_project_deployment_protection` with `ssoProtection: { enabled: false }`.
+The site is public. Re-enable it in Vercel → Settings → Deployment Protection,
+or with the same call and `enabled: true`.
 
 Note also that `create_git_project` produces a **preview** deployment
-(`target: null`), not a production one. Production comes from an ordinary push
-to `main` once the project is linked.
+(`target: null`). Production comes from an ordinary push to `main`, which is
+now wired: three production deployments have landed from pushes, so a merge to
+`main` publishes the site as well as being the branch the Android workflows
+build.
+
+**That last point is worth pausing on.** `main` is now a release channel for a
+public website, not only the branch the APK workflows read. A commit that
+breaks the web build no longer just fails a check — it fails a deploy that
+people can see. `npm run build` at the repo root is the check that matters, and
+nothing in CI runs it.
+
+### What could not be verified from the sandbox
+
+The agent proxy denies `*.vercel.app` outright (`connect_rejected`, "policy
+denial"), so the live page could not be opened from here and **nobody should
+read this section as "the site was seen working"**. What *is* verified: the
+production deployment reports READY on the right commit, its build log matches
+a local `npm run build` file for file (2,418.41 kB main chunk in both), and the
+protection API returns `ssoProtection.enabled: false`. Whether the page paints
+and whether `/faq` resolves through the SPA rewrite is a browser check somebody
+outside this sandbox has to do.
 
 ### If you do deploy it
 
