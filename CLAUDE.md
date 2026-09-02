@@ -304,6 +304,17 @@ Both apps picked it up with no deploy, because both read this table and
 Do not be tempted to loosen the matcher to reach a row like this — that is the
 keyword search coming back through the side door. Fix the row.
 
+**A question answers to two strings, and only one of them is on screen.**
+Every screen strips the leading `"12. "` before opening a note — it has to,
+because `generate-handwritten-notes` keys its cache on a hash of that exact
+string and 75+ notes hang off those hashes — while `question_diagrams` filed
+its rows under the bank's raw text. The first 50 characters then differ, the id
+misses, the text equality misses, and 53 of the 855 pictures were unreachable
+from all three apps with nothing anywhere saying why. The screen passes both
+forms (`rawQuestion`), and the lookup asks about both with `.in()`, which is
+`.eq` repeated rather than a search. `rawQuestion` reaches the diagram lookup
+and nothing else: merging it into `question` would change what gets hashed.
+
 **The filename is an auditor, not a matcher.** Every plate is named for what it
 draws, so a question sharing two or more of a filename's specific words is
 probably that plate's — `npm run audit:diagrams` does that and prints where it
@@ -1558,6 +1569,7 @@ npm run check:trees              # the focus trees stay drawable and distinct
 npm run check:music              # the player opens below its button, and plays
 npm run check:glass-shader       # the AGSL pane is gated, layered, and never load-bearing
 npm run check:diagrams           # a question shows its own diagram, or none
+npm run check:web-note           # the web triple tap draws the plate, answer beneath
 npm run check:apkg               # an Anki package imports, and not its decoy collection
 npm run check:tour               # the walkthrough points at controls that exist, and names no book
 npm run check:mcq                # MCQ response parsing + the ask-gemini markers
