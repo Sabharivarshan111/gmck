@@ -55,6 +55,7 @@
     "check:bot": "node --experimental-strip-types --no-warnings scripts/bot-check.mjs",
     "check:bot-faces": "node preview/bot-shot.mjs",
     "check:diagrams": "node scripts/diagram-match-check.mjs",
+    "check:single-note": "node scripts/single-note-diagram-check.mjs",
     "check:apkg": "node scripts/apkg-check.mjs",
     "fixtures:apkg": "python3 scripts/make-apkg-fixtures.py",
     "audit:diagrams": "node scripts/diagram-audit.mjs",

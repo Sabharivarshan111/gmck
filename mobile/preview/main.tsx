@@ -81,6 +81,7 @@ import { RevealText } from '@/components/RevealText';
 import { AnswerActions, followUpsFor } from '@/components/AnswerActions';
 import { parseMcqs } from '@/lib/askAi';
 import { SAMPLE_MCQ_RESPONSE } from './mcqSample';
+import { SingleQuestionNote } from '@/components/SingleQuestionNote';
 import { FocusTree } from '@/components/FocusTree';
 import { SPECIES } from '@/lib/trees';
 
@@ -906,6 +907,31 @@ function Shell() {
   }
   if (screen === 'notesdemo') {
     return <NotesRendererDemo />;
+  }
+  /*
+   * ?screen=singlenote — the real triple-tap note reader, on the real question.
+   *
+   * Nothing is faked inside the app: this mounts `SingleQuestionNote`, which
+   * calls `fetchSingleQuestionNote` → `ensureSingleNoteDiagram` →
+   * `findDiagramsForQuestion` → `applyQuestionDiagrams` exactly as it does on a
+   * phone. Only the *network* is stubbed, by the test driving the page, so the
+   * question this route names is the one whose row was verified in production.
+   *
+   * That is the difference between proving the renderer can draw a picture —
+   * which `notesdemo` already did — and proving this screen puts one there.
+   */
+  if (screen === 'singlenote') {
+    return (
+      <SingleQuestionNote
+        question={
+          'Brachial plexus - Formation, variation (pre and post fixed), branches and applied anatomy. ***'
+        }
+        subjectKey="anatomy"
+        subjectName="Anatomy"
+        yearLabel="First Year"
+        onClose={() => {}}
+      />
+    );
   }
   if (screen === 'tcanote') {
     return <TcaNoteDemo />;
