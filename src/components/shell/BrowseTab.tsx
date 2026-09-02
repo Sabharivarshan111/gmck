@@ -5,7 +5,6 @@ import { collectQuestions, countDone, QUESTION_PROGRESS_EVENT } from "@/lib/ques
 import { useProfile } from "@/hooks/use-profile";
 import QuestionCard from "@/components/QuestionCard";
 import { requestDailyAd } from "@/lib/daily-ad";
-import GoogleGateCard from "@/components/GoogleGateCard";
 import { pushBackHandler } from "@/lib/back-stack";
 
 
@@ -76,7 +75,7 @@ function getTopicChildren(node: any): Array<{ key: string; name: string; node: a
 }
 
 export default function BrowseTab({ meta }: { meta?: BrowseMeta }) {
-  const { local, isAnonymous } = useProfile();
+  const { local } = useProfile();
   const profileYearKey = useMemo(() => {
     const y = local?.year ?? "second";
     return ({ first: "first-year", second: "second-year", third: "third-year", final: "final-year" } as const)[y] ?? "second-year";
@@ -211,41 +210,35 @@ export default function BrowseTab({ meta }: { meta?: BrowseMeta }) {
           })}
         </div>
 
-        {isAnonymous ? (
-          <GoogleGateCard />
-        ) : (
-          <>
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <input
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search questions..."
-                className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-card border border-border/60 text-sm focus:outline-none focus:border-primary/60"
-              />
-            </div>
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search questions..."
+            className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-card border border-border/60 text-sm focus:outline-none focus:border-primary/60"
+          />
+        </div>
 
-            {filtered.length === 0 ? (
-              <div className="text-center py-10 text-sm text-muted-foreground">
-                No {activeTab === "essay" ? "essays" : "short notes"} available.
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {filtered.map((question, i) => (
-                  <QuestionCard
-                    key={`${question.slice(0, 40)}-${i}`}
-                    question={question}
-                    index={i}
-                    isFirstYear={yearKey === "first-year"}
-                    highlight={!!highlightQuestion && question === highlightQuestion}
-                    yearKey={yearKey}
-                    subjectKey={subjectKey ?? undefined}
-                    subjectName={subjects.find((s) => s.key === subjectKey)?.name}
-                  />
-                ))}
-              </div>
-            )}
-          </>
+        {filtered.length === 0 ? (
+          <div className="text-center py-10 text-sm text-muted-foreground">
+            No {activeTab === "essay" ? "essays" : "short notes"} available.
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {filtered.map((question, i) => (
+              <QuestionCard
+                key={`${question.slice(0, 40)}-${i}`}
+                question={question}
+                index={i}
+                isFirstYear={yearKey === "first-year"}
+                highlight={!!highlightQuestion && question === highlightQuestion}
+                yearKey={yearKey}
+                subjectKey={subjectKey ?? undefined}
+                subjectName={subjects.find((s) => s.key === subjectKey)?.name}
+              />
+            ))}
+          </div>
         )}
       </div>
     );

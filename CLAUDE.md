@@ -1520,6 +1520,32 @@ matched "you" on the **display name**, which highlights a stranger the moment
 two readers pick the same one; `selfId` is the profile id, and the name is only
 the fallback for a reader with no account.
 
+## The web app asks nobody to sign in
+
+`BrowseTab` rendered a "We've crossed 1000+ users — you're requested to sign in
+with Google" card **instead of** the question list for every reader without a
+session. Not a prompt beside the bank: a wall in front of it. It is gone on the
+app owner's instruction, along with `GoogleGateCard`, `GoogleSyncButton` and
+`EmailSyncButton`, and `npm run check:open-access` drives the built app down to
+a real topic with no session and fails if any of it comes back.
+
+Two things it deliberately did **not** remove, and both would be a surprise:
+
+- **The anonymous session stays.** It is what carries XP, the streak, the
+  leaderboard and cloud progress, and no reader is ever asked for anything to
+  get one — `saveProfile` creates it when they set their name and year. Removing
+  it would take My Progress down with it, which is not what "remove sign-in"
+  meant.
+- **Buying still signs you in.** `RemoveAdsButton` and `NotesPurchaseCard` call
+  `signInWithOAuth` when the reader presses Buy, because a purchase has to
+  attach to an account or it cannot be restored. Nothing asks until they choose
+  to pay.
+
+The three "Sign in with Google or email to…" placeholders on Notes, Calendar and
+the leaderboard now say "Set your name and year above" — which is what they
+always actually meant, since all three gate on `userId` and that comes from the
+profile.
+
 ## Storage keys are shared with the web app
 
 The native app deliberately reuses the web app's keys so one user with both
@@ -1570,6 +1596,7 @@ npm run check:music              # the player opens below its button, and plays
 npm run check:glass-shader       # the AGSL pane is gated, layered, and never load-bearing
 npm run check:diagrams           # a question shows its own diagram, or none
 npm run check:web-note           # the web triple tap draws the plate, answer beneath
+npm run check:open-access        # no sign-in wall stands in front of the questions
 npm run check:apkg               # an Anki package imports, and not its decoy collection
 npm run check:tour               # the walkthrough points at controls that exist, and names no book
 npm run check:mcq                # MCQ response parsing + the ask-gemini markers

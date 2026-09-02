@@ -153,7 +153,7 @@ const Leaderboard = ({ year, currentUserId, enabled }: Props) => {
     return (
       <div className="rounded-2xl bg-card border p-4 text-center text-sm text-muted-foreground">
         <Trophy className="h-5 w-5 mx-auto mb-2 text-primary" />
-        Sign in to join the leaderboard (set your name above).
+        Set your name and year above to join the leaderboard.
       </div>
     );
   }
