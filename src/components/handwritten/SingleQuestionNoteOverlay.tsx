@@ -7,6 +7,8 @@ import NotesAiEditBox from "./NotesAiEditBox";
 
 interface Payload {
   question: string;
+  /** The bank's string before the leading "12. " was stripped. Diagrams only. */
+  rawQuestion?: string;
   subject: string;
   subjectKey: string;
   year: string;
@@ -140,6 +142,7 @@ export default function SingleQuestionNoteOverlay() {
                    separately because they mean different things, and the
                    chapter hub passes only the first. */
                 questionText={payload?.question}
+                rawQuestionText={payload?.rawQuestion}
               />
               <NotesAiEditBox
                 compact

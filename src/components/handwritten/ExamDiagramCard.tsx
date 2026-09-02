@@ -20,6 +20,14 @@ interface ExamDiagramCardProps {
    * keying on it is what returned a neighbour's picture.
    */
   questionText?: string;
+  /**
+   * The bank's own string for the same question, still carrying its leading
+   * `"12. "`. Every screen strips that before opening a note, because the notes
+   * function's cache key is a hash of the stripped form — but the diagram
+   * pipeline filed its rows under the raw text. 53 of the 855 pictures are
+   * reachable only through this.
+   */
+  rawQuestionText?: string;
   subject?: string;
   defaultOpen?: boolean;
 }
@@ -54,6 +62,7 @@ type DiagramItem = QuestionDiagram;
 
 export default function ExamDiagramCard({
   questionText,
+  rawQuestionText,
   subject,
 }: ExamDiagramCardProps) {
   const [diagrams, setDiagrams] = useState<DiagramItem[]>([]);
@@ -75,7 +84,7 @@ export default function ExamDiagramCard({
       return;
     }
     setLoading(true);
-    findDiagramsForQuestion(supabase, question, subject)
+    findDiagramsForQuestion(supabase, question, subject, rawQuestionText)
       .then(found => {
         if (!isMounted) return;
         setDiagrams(found);
@@ -87,7 +96,7 @@ export default function ExamDiagramCard({
     return () => {
       isMounted = false;
     };
-  }, [questionText, subject]);
+  }, [questionText, rawQuestionText, subject]);
 
   if (loading) {
     return (

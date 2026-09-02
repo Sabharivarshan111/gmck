@@ -110,6 +110,14 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, index, isFirstYea
       window.dispatchEvent(new CustomEvent('orbit:single-note', {
         detail: {
           question: cleanedQuestion,
+          /*
+           * The bank's own string, still carrying its leading "12. ".
+           * `question` has had that removed and must keep having it removed —
+           * the notes function's cache key is a hash of it — but the diagram
+           * rows were filed under the numbered text, so without this a
+           * numbered question's picture cannot be found at all.
+           */
+          rawQuestion: question,
           subject: subjectName || subjectKey || "Community Medicine",
           subjectKey: subjectKey || "",
           year: yearKey || "",

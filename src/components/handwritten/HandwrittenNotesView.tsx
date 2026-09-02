@@ -274,7 +274,7 @@ const RevisionSection = ({ items }: { items: string[] }) => (
 
 /** ---------- Main view ---------- */
 export default function HandwrittenNotesView({
-  subtopicName, content, subject, questionText,
+  subtopicName, content, subject, questionText, rawQuestionText,
 }: {
   subtopicName: string;
   content: NotesContent;
@@ -288,6 +288,12 @@ export default function HandwrittenNotesView({
    * hub does not and correctly shows no diagram card.
    */
   questionText?: string;
+  /**
+   * The same question before its leading `"12. "` was stripped, when the caller
+   * has it. Used only to find the diagram: 53 rows are filed under the numbered
+   * text, and `questionText` can no longer reach them.
+   */
+  rawQuestionText?: string;
 }) {
   return (
     <div className="space-y-4">
@@ -303,7 +309,11 @@ export default function HandwrittenNotesView({
       </div>
 
       {/* High-Yield AI Exam Diagram */}
-      <ExamDiagramCard questionText={questionText} subject={subject} />
+      <ExamDiagramCard
+        questionText={questionText}
+        rawQuestionText={rawQuestionText}
+        subject={subject}
+      />
 
       {/* High-Yield Tip */}
       {content.highYieldTip && (

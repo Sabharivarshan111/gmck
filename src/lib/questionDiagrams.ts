@@ -102,6 +102,43 @@ function take(rows: DiagramRow[] | null | undefined, into: QuestionDiagram[], se
 }
 
 /**
+ * The strings a question can legitimately be known by, deduplicated.
+ *
+ * There is more than one because the reader's screen and the diagram pipeline
+ * disagree about the leading `"12. "`. Every screen that opens a note strips it
+ * — the web's `getCleanQuestionText`, the native app's `noteQuestionText` — so
+ * the string that reaches this lookup is the *unnumbered* one, while the row
+ * was filed under the bank's raw text and still carries the number. The id is
+ * then built from a different 50 characters and misses, the text equality
+ * misses too, and 53 of the 855 pictures in the table are unreachable from any
+ * of the three apps.
+ *
+ * Stripping the number is correct and must stay: the notes function's cache
+ * key is a hash of that same string, and changing it orphans every note ever
+ * generated. So the caller passes both, and identity is asked about both.
+ */
+const LEADING_NUMBER = /^\d+\.\s/;
+
+export function questionIdentities(...forms: (string | null | undefined)[]): string[] {
+  const out: string[] = [];
+  const push = (value: string) => {
+    const clean = value.trim();
+    if (clean.length >= 3 && !out.includes(clean)) {
+      out.push(clean);
+    }
+  };
+  for (const form of forms) {
+    const clean = (form ?? '').trim();
+    if (!clean) continue;
+    push(clean);
+    // Both directions: a caller may hold the numbered form or the stripped
+    // one, and a row may have been filed under either.
+    push(clean.replace(LEADING_NUMBER, ''));
+  }
+  return out;
+}
+
+/**
  * One question's diagrams, and nobody else's.
  *
  * `subject` is only ever used to scope the last-resort fallback, and even
@@ -112,11 +149,13 @@ export async function findDiagramsForQuestion(
   client: DiagramClient,
   question: string,
   subject?: string,
+  rawQuestion?: string,
 ): Promise<QuestionDiagram[]> {
   const clean = question.trim();
   if (clean.length < 3) {
     return [];
   }
+  const forms = questionIdentities(clean, rawQuestion);
 
   const out: QuestionDiagram[] = [];
   const seen = new Set<string>();
@@ -132,11 +171,11 @@ export async function findDiagramsForQuestion(
       client
         .from('question_diagrams')
         .select('public_url, question_text')
-        .eq('question_id', questionDiagramId(clean)),
+        .in('question_id', forms.map(questionDiagramId)),
       client
         .from('question_diagrams')
         .select('public_url, question_text')
-        .eq('question_text', clean),
+        .in('question_text', forms),
     ]);
 
     /*
@@ -165,8 +204,8 @@ export async function findDiagramsForQuestion(
      * normalisation rather than a search.
      */
     const canonical = (subject ?? '').trim();
-    const wanted = normalizeQuestionText(clean);
-    if (!canonical || !wanted) {
+    const wanted = forms.map(normalizeQuestionText).filter(Boolean);
+    if (!canonical || wanted.length === 0) {
       return out;
     }
 
@@ -179,7 +218,7 @@ export async function findDiagramsForQuestion(
       (data ?? []).filter(
         (row: DiagramRow) =>
           typeof row.question_text === 'string' &&
-          normalizeQuestionText(row.question_text) === wanted,
+          wanted.includes(normalizeQuestionText(row.question_text)),
       ),
       out,
       seen,
@@ -210,9 +249,16 @@ export async function findDiagramsForTopic(
     return byQuestion;
   }
 
+  /*
+   * Every identity a question answers to points back at the question itself,
+   * so a row filed under the numbered text is still found when the chapter
+   * hands us the stripped one (and the other way round).
+   */
   const idOf = new Map<string, string>();
   for (const question of cleaned) {
-    idOf.set(questionDiagramId(question), question);
+    for (const form of questionIdentities(question)) {
+      idOf.set(questionDiagramId(form), question);
+    }
   }
 
   try {

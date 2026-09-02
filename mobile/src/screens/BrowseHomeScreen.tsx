@@ -283,6 +283,7 @@ export default function BrowseHomeScreen() {
 
       <SingleQuestionNote
         question={noted ? noteQuestionText(noted.question) : null}
+        rawQuestion={noted?.question ?? null}
         subjectKey={noted?.subjectKey ?? ''}
         subjectName={noted?.subjectName ?? ''}
         yearLabel={noted?.yearLabel ?? ''}
