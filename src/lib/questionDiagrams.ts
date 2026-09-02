@@ -132,15 +132,25 @@ export async function findDiagramsForQuestion(
       client
         .from('question_diagrams')
         .select('public_url, question_text')
-        .eq('question_id', questionDiagramId(clean))
-        .not('public_url', 'is', null),
+        .eq('question_id', questionDiagramId(clean)),
       client
         .from('question_diagrams')
         .select('public_url, question_text')
-        .eq('question_text', clean)
-        .not('public_url', 'is', null),
+        .eq('question_text', clean),
     ]);
 
+    /*
+     * The error is inspected, not just the data. supabase-js **returns**
+     * errors rather than throwing them, so the `try` around this never fires
+     * for a query that failed — `data` is simply null and `take` adds nothing.
+     * A question with a perfectly good row then renders with no diagram and
+     * nothing says why, which looks exactly like the question having no
+     * picture.
+     */
+    if (byId?.error || byText?.error) {
+      // eslint-disable-next-line no-console
+      console.warn('[questionDiagrams] lookup failed:', byId?.error ?? byText?.error);
+    }
     take(byId?.data, out, seen);
     take(byText?.data, out, seen);
 
@@ -163,7 +173,6 @@ export async function findDiagramsForQuestion(
     const { data } = await client
       .from('question_diagrams')
       .select('public_url, question_text')
-      .not('public_url', 'is', null)
       .ilike('subject', `%${canonical}%`);
 
     take(
@@ -210,8 +219,7 @@ export async function findDiagramsForTopic(
     const { data } = await client
       .from('question_diagrams')
       .select('public_url, question_text, question_id')
-      .in('question_id', [...idOf.keys()])
-      .not('public_url', 'is', null);
+      .in('question_id', [...idOf.keys()]);
 
     for (const row of (data ?? []) as (DiagramRow & { question_id?: string | null })[]) {
       const question = row.question_id ? idOf.get(row.question_id) : undefined;

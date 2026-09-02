@@ -504,15 +504,26 @@ export async function findDiagramsForQuestion(
       supabase
         .from('question_diagrams')
         .select('public_url, question_text')
-        .eq('question_id', diagramQuestionId(clean))
-        .not('public_url', 'is', null),
+        .eq('question_id', diagramQuestionId(clean)),
       supabase
         .from('question_diagrams')
         .select('public_url, question_text')
-        .eq('question_text', clean)
-        .not('public_url', 'is', null),
+        .eq('question_text', clean),
     ]);
 
+    /*
+     * The error is inspected, not just the data.
+     *
+     * supabase-js **returns** errors rather than throwing them, so the `try`
+     * around this block never fires for a query that failed — `byId.data` is
+     * simply null and `take` quietly adds nothing. A question with a perfectly
+     * good row then renders with no diagram and nothing anywhere says why,
+     * which is indistinguishable from the question having no picture. That is
+     * the exact trap CLAUDE.md names, and it was live in this function.
+     */
+    if (byId.error || byText.error) {
+      warn('[handwrittenNotes] diagram lookup failed:', byId.error ?? byText.error);
+    }
     take(byId.data);
     take(byText.data);
 
@@ -538,7 +549,6 @@ export async function findDiagramsForQuestion(
     const { data } = await supabase
       .from('question_diagrams')
       .select('public_url, question_text')
-      .not('public_url', 'is', null)
       .ilike('subject', `%${canonicalSubject}%`);
 
     take(
@@ -634,15 +644,13 @@ export async function findDiagramsForTopic(
         supabase
           .from('question_diagrams')
           .select('question_id, public_url, question_text')
-          .in('question_id', ids)
-          .not('public_url', 'is', null),
+          .in('question_id', ids),
       ),
       ...textChunks.map(texts =>
         supabase
           .from('question_diagrams')
           .select('question_id, public_url, question_text')
-          .in('question_text', texts)
-          .not('public_url', 'is', null),
+          .in('question_text', texts),
       ),
     ]);
 
@@ -687,7 +695,6 @@ export async function findDiagramsForTopic(
       const { data } = await supabase
         .from('question_diagrams')
         .select('question_id, public_url, question_text')
-        .not('public_url', 'is', null)
         .ilike('subject', `%${canonicalSubject}%`);
 
       for (const row of data ?? []) {
