@@ -206,6 +206,21 @@ plus the row's `question_text` as a second key for the thirteen hand-inserted
 rows whose id is a slug (`anat-types-of-synovial-joints`). Both are
 equalities. Nothing else decides.
 
+**Choosing the picture and placing it are two different jobs, and only the
+first is an identity join.** Once a chapter's pictures are known to be its own,
+`sectionFor` / `sectionIndexForQuestion` decide *where each sits* — and there a
+heuristic is allowed, because getting it slightly wrong reorders a correct
+picture by a paragraph and can never show a wrong one. It was containment-only,
+and that matched almost nothing (a two-word heading like "Shoulder Joint" was
+skipped, "Breast: Anatomy and Lymphatics" is not a substring of "Breast —
+Location, structure…"), so every early picture fell through to the batch
+fallback and piled onto section zero — the "all the images are at the top, then
+all the theory" report. Placement now also lays a picture against the unclaimed
+heading that shares the most of its **distinctive** words (generic anatomy
+words dropped), so a chapter reads picture-then-text-then-picture. This is
+`overlap`, never a `score`, and it decides order only — `check:diagrams` still
+fails if the *lookup* grows a keyword table, a score, or a containment test.
+
 It was a search before, and that is the bug that was reported: candidates were
 scored against "exclusive entity families" — a word list per pathway — so
 *TCA cycle – definition, sequence of reaction, energetics, regulation* opened
