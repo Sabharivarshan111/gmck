@@ -25,6 +25,7 @@ Antigravity does not, so **open the file** when the work touches its subject.
 | `.claude/skills/animate/` | Build an animation from scratch, making the decisions in the order that determines whether it feels right — should it animate at all, what purpose, which tool, which properties, which curve and duration, how it interrupts, how it exits. |
 | `.claude/skills/animation-vocabulary/` | Reverse-lookup glossary that turns a vague description of a web animation or motion effect into its exact term ("the bouncy thing when a popover opens" → Pop in; "the iOS rubber-band scroll" → Rubber-banding). |
 | `.claude/skills/apple-design/` | Apple's approach to interface design and fluid, physical motion, translated for the web. |
+| `.claude/skills/cinematic-product-launch-video/` | > |
 | `.claude/skills/emil-design-eng/` | This skill encodes Emil Kowalski's philosophy on UI polish, component design, animation decisions, and the invisible details that make software feel great. |
 | `.claude/skills/find-animation-opportunities/` | Search a codebase or UI for places that don't animate but should, and reject everything that shouldn't. |
 | `.claude/skills/improve-animations/` | Survey a codebase's animation and motion code as a senior motion advisor, then produce a prioritized audit and self-contained implementation plans for other agents (or cheaper models) to execute. |

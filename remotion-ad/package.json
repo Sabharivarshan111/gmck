@@ -7,17 +7,17 @@
     "preflight": "node scripts/preflight.mjs",
     "screens": "node scripts/capture-screens.mjs",
     "plates": "node scripts/fetch-plates.mjs",
-    "voice": "node scripts/generate-voiceovers.mjs",
+    "voice": "node scripts/voice-manifest.mjs && python3 scripts/synthesize.py",
     "studio": "remotion studio",
     "render:a": "remotion render orbit-the-pattern out/orbit-the-pattern.mp4",
     "render:b": "remotion render orbit-2am out/orbit-2am.mp4",
     "render:c": "remotion render orbit-draw-it-from-memory out/orbit-draw-it-from-memory.mp4",
-    "render:all": "npm run render:a && npm run render:b && npm run render:c"
+    "render:all": "npm run render:a && npm run render:b && npm run render:c",
+    "voice:manifest": "node scripts/voice-manifest.mjs"
   },
   "dependencies": {
     "@remotion/cli": "4.0.520",
     "@remotion/media-utils": "4.0.520",
-    "msedge-tts": "^1.3.4",
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "remotion": "4.0.520"

@@ -34,6 +34,10 @@ jobs:
         with:
           node-version: 22
 
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
       - name: Install the app's deps (for the screenshot harness)
         working-directory: mobile
         run: npm ci --legacy-peer-deps
@@ -53,6 +57,9 @@ jobs:
       - name: Download the real medical plates
         working-directory: remotion-ad
         run: npm run plates
+
+      - name: Install edge-tts
+        run: pip install edge-tts
 
       - name: Synthesise the voiceovers
         working-directory: remotion-ad

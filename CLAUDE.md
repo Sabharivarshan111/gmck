@@ -34,6 +34,7 @@ when picking up work that was last touched from the other tool.
 | `.agents/rules/94-textbook-grounded-diagram-engine.md` |  |
 | `.agents/rules/95-release-and-pipeline-engine.md` |  |
 | `.agents/rules/96-walkthrough.md` | The first-run walkthrough — how it finds a control by its accessibility label, why the scrim is four rectangles rather than one, and the one thing it may never name |
+| `.agents/rules/97-video-ads.md` |  |
 <!-- rules:end -->
 
 This repo is worked on from Claude Code *and* Antigravity, sometimes on the
