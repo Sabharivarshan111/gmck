@@ -1145,20 +1145,41 @@ whatever it is given straight into a file the whole internet downloads.
 
 So a Vercel project needs **no environment variables at all**.
 
-### Where the deploy got to
+### It is deployed, and the account slug is the thing that was wrong
 
-`vercel.json` is committed and the build is verified locally. The Vercel MCP
-connector could not finish the link: `list_teams` and
-`get_git_deployment_context` both return `{"teams": []}`, and
-`create_git_project` requires a team id, so the connected account exposes no
-scope the connector can create a project in. A direct file upload is not a way
-around it — the build output is a single 2.3 MB JS chunk.
+Project `orbitmbbs` (`prj_NJgXie5Ni1SjwT9xcWuRSliJNxq4`), linked to
+`Sabharivarshan111/gmck`, production branch `main`, framework auto-detected as
+Vite. It builds clean from `vercel.json`.
 
-**To finish it, either:** grant the Vercel connection team scope and re-run
-`create_git_project` for `Sabharivarshan111/gmck`, **or** add the repo in the
-Vercel dashboard as a new project with the root directory left at `/`. Either
-way `vercel.json` supplies the build command, the output directory, the install
-flag and the rewrite, so there is nothing else to configure.
+**`list_teams` returns `{"teams": []}` and always will** — this is a personal
+account with no teams. `create_git_project` nevertheless *requires* a `teamId`,
+and the answer is the personal slug in **lower case**: `sabharivarshan111`. The
+GitHub capitalisation (`Sabharivarshan111`) returns a 403 that reads like an
+authorisation failure and is really just a bad slug. That one detail cost an
+hour and a wrong conclusion — it was written up here as "the connector cannot
+do this", which was false.
+
+Pass `teamId: "sabharivarshan111"` to every Vercel MCP call for this project.
+
+### The URLs are login-walled, and that is a project setting
+
+`ssoProtection` is **enabled** for `all_except_custom_domains`, so all three of
+
+    orbitmbbs.vercel.app
+    orbitmbbs-sabharivarshan111s-projects.vercel.app
+    orbitmbbs-git-main-sabharivarshan111s-projects.vercel.app
+
+return 403 to anyone not signed in to that Vercel account. There is no custom
+domain, so nothing is exempt. A student opening any of these sees a Vercel
+login page, not the app.
+
+Turning it off is `update_project_deployment_protection` with
+`ssoProtection: { enabled: false }` — deliberately **not** done unasked, because
+it is the difference between a private preview and a public website.
+
+Note also that `create_git_project` produces a **preview** deployment
+(`target: null`), not a production one. Production comes from an ordinary push
+to `main` once the project is linked.
 
 ### If you do deploy it
 
