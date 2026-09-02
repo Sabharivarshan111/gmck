@@ -1,7 +1,8 @@
 import React from 'react';
-import { useCurrentFrame, interpolate, spring, useVideoConfig } from 'remotion';
+import { useCurrentFrame, interpolate, spring, useVideoConfig, Easing } from 'remotion';
 
 import type { CameraMove } from '../scripts/types';
+import { InteractiveTouchRipple, type TouchPreset } from './InteractiveTouchRipple';
 
 interface LayeredCameraPhoneProps {
   children?: React.ReactNode;
@@ -13,54 +14,116 @@ interface LayeredCameraPhoneProps {
   themeColor?: string;
   shotIndex?: number;
   durationInFrames?: number;
+  touchPreset?: TouchPreset;
+  isTripleTap?: boolean;
 }
 
 export const LayeredCameraPhone: React.FC<LayeredCameraPhoneProps> = ({
   children,
   src,
   move = 'hero',
-  t,
+  t: externalT,
   focus,
   accent,
   themeColor = '#38bdf8',
   shotIndex = 0,
-  durationInFrames = 105
+  durationInFrames = 120,
+  touchPreset,
+  isTripleTap = false
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const activeAccent = accent ?? themeColor;
 
-  // Subtle natural camera breathing & shot entry spring
-  const entrySpring = spring({
-    frame,
-    fps,
-    config: { damping: 16, stiffness: 70, mass: 0.9 }
-  });
+  // Normalized time across the entire shot duration (0 to 1)
+  const progress = Math.min(1, Math.max(0, frame / durationInFrames));
 
-  // Intentional cinematic 3D camera angles per shot type
-  // Smooth continuous push-ins, subtle tilts, and elegant settles
-  const cameraTrajectories = [
-    { startScale: 1.08, endScale: 1.15, rx: 3, ry: -4, rz: -0.4, y: -10 },
-    { startScale: 1.11, endScale: 1.17, rx: -2, ry: 3, rz: 0.4, y: -14 },
-    { startScale: 1.09, endScale: 1.16, rx: 3, ry: -3, rz: -0.3, y: -12 },
-    { startScale: 1.12, endScale: 1.18, rx: 2, ry: 2, rz: 0.3, y: -16 },
-    { startScale: 1.10, endScale: 1.19, rx: -3, ry: -3, rz: -0.4, y: -15 },
-    { startScale: 1.12, endScale: 1.16, rx: 0, ry: 0, rz: 0, y: -12 }
+  // Determine dynamic focal point based on touch preset or explicit focus prop
+  let focalOrigin = '50% 50%';
+  if (focus !== undefined) {
+    focalOrigin = `50% ${Math.round(focus * 100)}%`;
+  } else if (touchPreset === 'bottomNavBrowse' || touchPreset === 'bottomNavNotes' || touchPreset === 'bottomNavTimer' || touchPreset === 'bottomNavProgress') {
+    focalOrigin = '50% 88%';
+  } else if (touchPreset === 'tripleTap' || touchPreset === 'questionCard') {
+    focalOrigin = '50% 36%';
+  } else if (touchPreset === 'timerStartButton') {
+    focalOrigin = '50% 72%';
+  } else if (touchPreset === 'mcqOption') {
+    focalOrigin = '50% 52%';
+  } else if (touchPreset === 'flashcardFlip') {
+    focalOrigin = '50% 48%';
+  }
+
+  // Base camera angles for subtle continuous living motion
+  const baseTrajectories = [
+    { rx0: 3.5, rx1: 0.8, ry0: -4.0, ry1: -1.0, rz0: -0.4, rz1: -0.1, y0: -125, y1: -138 },
+    { rx0: -2.5, rx1: -0.5, ry0: 3.5, ry1: 0.8, rz0: 0.4, rz1: 0.1, y0: -128, y1: -140 },
+    { rx0: 3.0, rx1: 0.6, ry0: -3.0, ry1: -0.8, rz0: -0.3, rz1: -0.1, y0: -126, y1: -136 },
+    { rx0: 2.2, rx1: 0.4, ry0: 2.5, ry1: 0.5, rz0: 0.3, rz1: 0.1, y0: -129, y1: -142 },
+    { rx0: -3.0, rx1: -0.6, ry0: -3.0, ry1: -0.6, rz0: -0.4, rz1: -0.1, y0: -127, y1: -139 }
   ];
 
-  const traj = cameraTrajectories[shotIndex % cameraTrajectories.length];
+  const traj = baseTrajectories[shotIndex % baseTrajectories.length];
 
-  // Camera smooth continuous push-in and 3D perspective rotation
-  const cameraScale = interpolate(entrySpring, [0, 1], [traj.startScale, traj.endScale]);
-  const rotateX = interpolate(entrySpring, [0, 1], [traj.rx * 1.5, traj.rx * 0.3]);
-  const rotateY = interpolate(entrySpring, [0, 1], [traj.ry * 1.5, traj.ry * 0.3]);
-  const rotateZ = interpolate(entrySpring, [0, 1], [traj.rz * 1.5, traj.rz * 0.3]);
-  const translateY = interpolate(entrySpring, [0, 1], [traj.y + 12, traj.y]);
+  // Continuous uninterrupted camera trajectory calculations
+  let dynamicScale = 1.20;
+  let dynamicOrigin = focalOrigin;
+  let translateY = interpolate(progress, [0, 1], [traj.y0, traj.y1]);
+  let rotateX = interpolate(progress, [0, 1], [traj.rx0, traj.rx1]);
+  let rotateY = interpolate(progress, [0, 1], [traj.ry0, traj.ry1]);
+  let rotateZ = interpolate(progress, [0, 1], [traj.rz0, traj.rz1]);
+
+  const touchTriggerFrame = Math.round(durationInFrames * 0.24);
+
+  if (move === 'macro' || move === 'push' || touchPreset) {
+    // Push in -> touch press & ripple -> pull back seamlessly
+    // Smooth spline interpolation: 0% -> 30% (zoom in to 1.50) -> 100% (pull back to 1.24)
+    if (progress <= 0.30) {
+      dynamicScale = interpolate(
+        progress,
+        [0, 0.30],
+        [1.18, 1.50],
+        { easing: Easing.out(Easing.quad), extrapolateRight: 'clamp' }
+      );
+    } else {
+      dynamicScale = interpolate(
+        progress,
+        [0.30, 1.0],
+        [1.50, 1.24],
+        { easing: Easing.inOut(Easing.quad), extrapolateRight: 'clamp' }
+      );
+    }
+    dynamicOrigin = focalOrigin;
+  } else if (move === 'pull') {
+    // Start zoomed in -> smoothly pull back across the full shot
+    dynamicScale = interpolate(
+      progress,
+      [0, 1.0],
+      [1.46, 1.20],
+      { easing: Easing.out(Easing.cubic), extrapolateRight: 'clamp' }
+    );
+  } else {
+    // Hero continuous subtle drift
+    dynamicScale = interpolate(
+      progress,
+      [0, 1.0],
+      [1.20, 1.28],
+      { easing: Easing.out(Easing.quad), extrapolateRight: 'clamp' }
+    );
+  }
 
   // Specular sweep across the glass screen
-  const glareX = interpolate(frame, [0, durationInFrames * 0.75], [-120, 220], {
+  const glareX = interpolate(progress, [0, 0.85], [-120, 220], {
     extrapolateRight: 'clamp'
   });
+
+  // Physical button depress & tactile haptic bounce feedback
+  const buttonBounce = spring({
+    frame: Math.max(0, frame - touchTriggerFrame),
+    fps,
+    config: { damping: 12, stiffness: 140 }
+  });
+  const innerScreenScale = interpolate(buttonBounce, [0, 0.35, 1], [1, 0.982, 1]);
 
   return (
     <div
@@ -78,12 +141,13 @@ export const LayeredCameraPhone: React.FC<LayeredCameraPhoneProps> = ({
       <div
         style={{
           position: 'absolute',
-          width: '540px',
-          height: '980px',
-          borderRadius: '80px',
-          background: `radial-gradient(circle at center, ${themeColor}28 0%, transparent 65%)`,
-          filter: 'blur(60px)',
-          transform: `scale(${cameraScale}) translateY(${translateY}px)`,
+          width: '640px',
+          height: '1140px',
+          borderRadius: '90px',
+          background: `radial-gradient(circle at center, ${activeAccent}33 0%, transparent 68%)`,
+          filter: 'blur(75px)',
+          transform: `scale(${dynamicScale}) translateY(${translateY}px)`,
+          transformOrigin: dynamicOrigin,
           zIndex: 1,
           pointerEvents: 'none'
         }}
@@ -93,18 +157,19 @@ export const LayeredCameraPhone: React.FC<LayeredCameraPhoneProps> = ({
       <div
         style={{
           position: 'relative',
-          width: '430px',
-          height: '870px',
-          borderRadius: '54px',
-          padding: '12px',
+          width: '510px',
+          height: '1030px',
+          borderRadius: '62px',
+          padding: '14px',
           background: 'linear-gradient(135deg, #334155 0%, #0f172a 40%, #1e293b 70%, #0f172a 100%)',
           boxShadow: `
-            0 30px 70px -15px rgba(0, 0, 0, 0.95),
-            0 0 35px -5px ${themeColor}33,
+            0 35px 85px -15px rgba(0, 0, 0, 0.95),
+            0 0 45px -5px ${activeAccent}33,
             inset 0 1.5px 2px rgba(255, 255, 255, 0.35),
             inset 0 -1.5px 2px rgba(0, 0, 0, 0.8)
           `,
-          transform: `scale(${cameraScale}) translateY(${translateY}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) rotateZ(${rotateZ}deg)`,
+          transform: `scale(${dynamicScale}) translateY(${translateY}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) rotateZ(${rotateZ}deg)`,
+          transformOrigin: dynamicOrigin,
           transformStyle: 'preserve-3d',
           zIndex: 10
         }}
@@ -114,7 +179,7 @@ export const LayeredCameraPhone: React.FC<LayeredCameraPhoneProps> = ({
           style={{
             position: 'absolute',
             inset: '3px',
-            borderRadius: '51px',
+            borderRadius: '59px',
             border: '1.5px solid rgba(255, 255, 255, 0.12)',
             pointerEvents: 'none',
             zIndex: 12
@@ -126,7 +191,7 @@ export const LayeredCameraPhone: React.FC<LayeredCameraPhoneProps> = ({
           style={{
             width: '100%',
             height: '100%',
-            borderRadius: '42px',
+            borderRadius: '48px',
             overflow: 'hidden',
             position: 'relative',
             backgroundColor: '#030712'
@@ -136,18 +201,18 @@ export const LayeredCameraPhone: React.FC<LayeredCameraPhoneProps> = ({
           <div
             style={{
               position: 'absolute',
-              top: '12px',
+              top: '14px',
               left: '50%',
               transform: 'translateX(-50%)',
-              width: '105px',
-              height: '26px',
+              width: '120px',
+              height: '28px',
               backgroundColor: '#000000',
               borderRadius: '20px',
               zIndex: 100,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
-              padding: '0 10px',
+              padding: '0 12px',
               boxShadow: '0 2px 8px rgba(0, 0, 0, 0.8)'
             }}
           >
@@ -166,14 +231,22 @@ export const LayeredCameraPhone: React.FC<LayeredCameraPhoneProps> = ({
                 width: '7px',
                 height: '7px',
                 borderRadius: '50%',
-                backgroundColor: themeColor,
-                boxShadow: `0 0 8px ${themeColor}`
+                backgroundColor: activeAccent,
+                boxShadow: `0 0 8px ${activeAccent}`
               }}
             />
           </div>
 
-          {/* Pristine Screen Content */}
-          <div style={{ width: '100%', height: '100%' }}>
+          {/* Pristine Screen Content with Interactive Touch Feedback */}
+          <div
+            style={{
+              width: '100%',
+              height: '100%',
+              transform: `scale(${innerScreenScale})`,
+              transformOrigin: dynamicOrigin,
+              transition: 'transform 0.08s ease'
+            }}
+          >
             {children ? (
               children
             ) : src ? (
@@ -190,6 +263,16 @@ export const LayeredCameraPhone: React.FC<LayeredCameraPhoneProps> = ({
               />
             ) : null}
           </div>
+
+          {/* Interactive Touch & Button Ripple Overlay */}
+          {touchPreset ? (
+            <InteractiveTouchRipple
+              preset={touchPreset}
+              accent={activeAccent}
+              isTripleTap={isTripleTap}
+              startFrame={touchTriggerFrame}
+            />
+          ) : null}
 
           {/* Glass Specular Glare Reflection */}
           <div

@@ -7,23 +7,23 @@ import { HyperframesAppleKeynote } from './compositions/HyperframesAppleKeynote'
 import { HyperframesCollegeHumor } from './compositions/HyperframesCollegeHumor';
 import { HyperframesCyberpunkOS } from './compositions/HyperframesCyberpunkOS';
 import { SHOT_TIMINGS } from './shotTimings';
+import { DYNAMIC_SCRIPT_TIMINGS } from './dynamicScriptTimings';
 
 import { ShotTimeline } from './components/ShotTimeline';
 import { thePattern } from './scripts/thePattern';
 import { twoAM } from './scripts/twoAM';
 import { drawItFromMemory } from './scripts/drawItFromMemory';
-import { TOTAL_FRAMES } from './scripts/types';
 
 const FPS = 30;
 
 export const Root: React.FC = () => {
   return (
     <>
-      {/* --- STANDALONE 90s THEMATIC LAUNCH ADS (Claude Pipeline) --- */}
+      {/* --- STANDALONE THEMATIC LAUNCH ADS (Calm Audio-Paced & Responsive Focal Camera) --- */}
       <Composition
         id="orbit-the-pattern"
         component={ShotTimeline}
-        durationInFrames={TOTAL_FRAMES}
+        durationInFrames={DYNAMIC_SCRIPT_TIMINGS['orbit-the-pattern']?.totalFrames ?? 3965}
         fps={FPS}
         width={1080}
         height={1920}
@@ -32,7 +32,7 @@ export const Root: React.FC = () => {
       <Composition
         id="orbit-2am"
         component={ShotTimeline}
-        durationInFrames={TOTAL_FRAMES}
+        durationInFrames={DYNAMIC_SCRIPT_TIMINGS['orbit-2am']?.totalFrames ?? 4302}
         fps={FPS}
         width={1080}
         height={1920}
@@ -41,7 +41,7 @@ export const Root: React.FC = () => {
       <Composition
         id="orbit-draw-it-from-memory"
         component={ShotTimeline}
-        durationInFrames={TOTAL_FRAMES}
+        durationInFrames={DYNAMIC_SCRIPT_TIMINGS['orbit-draw-it-from-memory']?.totalFrames ?? 4813}
         fps={FPS}
         width={1080}
         height={1920}
