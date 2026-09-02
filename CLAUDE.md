@@ -229,6 +229,50 @@ Three things around it were the same bug wearing different clothes:
   rewritten back to `handwritten_notes` on the next open, so a wrong picture
   cached months ago disappears the first time anyone looks at it.
 
+### There are three copies of this app, and they have diverged
+
+| Where | What | Diagram code |
+|---|---|---|
+| `mobile/` | the native Android app | `lib/handwrittenNotes.ts` → the shared module |
+| `src/` | the web app, deployed to Vercel from `main` | `components/handwritten/ExamDiagramCard.tsx` → the shared module |
+| Lovable project `mbbsqbank-questor` | **a separate tree**, published at its own URL | its own `components/diagrams/` — not in this repo |
+
+The Lovable project is the same *app* — same `package.json`, same og-image, same
+Supabase — but **it is not this repo's `src/`**. It has files this repo does not
+(`components/diagrams/DiagramViewer.tsx`, `DiagramChip.tsx`,
+`admin/AdminDiagramsPanel.tsx`) and lacks files this repo has
+(`ExamDiagramCard.tsx`, `shell/`, `theme/`, `walkthrough/`). A fix pushed here
+does **not** reach it; it has to be sent through the Lovable connector as a
+message to its agent.
+
+Workspace `SsJFPAW9Fet3beeN2YWW`, project `89df4dbc-89e6-4e44-a7b1-76b9de94066e`.
+
+### A picture that exists is not the same as a picture that is reachable
+
+`question_diagrams` has 5,435 rows and **855 of them carry a `public_url`**. The
+other 4,580 are placeholders for a picture nobody has generated, and no lookup
+can do anything about that — a question with no image is the ordinary case, not
+a bug.
+
+Separately, and much less obviously: **three of the 855 are orphaned.** They
+carry a slug `question_id` (`question-shoulder-joint-cardinal-relations-sagittal`)
+instead of the bank key, *and* a paraphrased `question_text` instead of the
+question's own. All three are Shoulder joint diagrams, and all three are
+therefore invisible in **every** app — the id join misses, the text join misses,
+and the normalised subject fallback misses. Proved with the three real queries
+against production: 0, 0, 0.
+
+That matters because it looks exactly like the code being broken, and it is not.
+`CLAUDE.md` describes the thirteen hand-inserted slug rows as reachable "through
+their `question_text`" — which is only true when that text **equals** the bank's
+question. For these three it does not.
+
+**The fix is data, not code.** Set `question_id` to the bank key
+(`getQuestionId(question)`), or make `question_text` exactly the bank's question
+string. Both apps pick it up immediately, because both read the same table.
+Do not be tempted to loosen the matcher to reach them — that is the keyword
+search coming back through the side door.
+
 **The filename is an auditor, not a matcher.** Every plate is named for what it
 draws, so a question sharing two or more of a filename's specific words is
 probably that plate's — `npm run audit:diagrams` does that and prints where it
