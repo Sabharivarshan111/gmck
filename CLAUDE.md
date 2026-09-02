@@ -247,6 +247,29 @@ message to its agent.
 
 Workspace `SsJFPAW9Fet3beeN2YWW`, project `89df4dbc-89e6-4e44-a7b1-76b9de94066e`.
 
+### `question_id` is UNIQUE, so a question has **one** row by id
+
+`question_diagrams` has exactly two constraints: `PRIMARY KEY (id)` and
+`UNIQUE (question_id)`. `question_text` is not constrained.
+
+That corrects something stated below and believed for months. "The number of
+diagrams a question has is the number of rows it has" is true, but the rows
+cannot all be found by id — only one can. **A second and third diagram for the
+same question are reachable only through the `question_text` query**, which is
+why that query exists and is not redundant with the id one.
+
+The practical consequence, and it is a real design tension: the caption under a
+diagram is the row's `question_text`, and matching by text needs that same
+column to equal the question. So a question with several diagrams has several
+rows whose text is the question — and they therefore share one caption. 849
+rows already look like this, because for an ordinary row `question_text` **is**
+the bank's question. A row with a hand-written descriptive caption is the
+exception, and it is exactly the row that cannot be found.
+
+Attempting `update … set question_id = <bank key>` on more than one row fails
+with `duplicate key value violates unique constraint`. That error is the schema
+telling you to use `question_text` for the extras.
+
 ### A picture that exists is not the same as a picture that is reachable
 
 `question_diagrams` has 5,435 rows and **855 of them carry a `public_url`**. The
@@ -267,11 +290,19 @@ That matters because it looks exactly like the code being broken, and it is not.
 their `question_text`" — which is only true when that text **equals** the bank's
 question. For these three it does not.
 
-**The fix is data, not code.** Set `question_id` to the bank key
-(`getQuestionId(question)`), or make `question_text` exactly the bank's question
-string. Both apps pick it up immediately, because both read the same table.
-Do not be tempted to loosen the matcher to reach them — that is the keyword
-search coming back through the side door.
+**The fix is data, not code**, and it has been applied to those three: the most
+comprehensive plate took the `question_id` slot (which first had to be freed —
+an empty placeholder row with `public_url IS NULL` was holding the unique key,
+and was parked under `parked-empty-<id>` rather than deleted), and all three had
+`question_text` set to the bank's exact question so the text query returns them
+together. Verified by running the app's own two queries against production:
+**3 diagrams**, where it had been 0.
+
+Both apps picked it up with no deploy, because both read this table and
+`applyQuestionDiagrams` rebuilds a cached note's diagram sections on every open.
+
+Do not be tempted to loosen the matcher to reach a row like this — that is the
+keyword search coming back through the side door. Fix the row.
 
 **The filename is an auditor, not a matcher.** Every plate is named for what it
 draws, so a question sharing two or more of a filename's specific words is
