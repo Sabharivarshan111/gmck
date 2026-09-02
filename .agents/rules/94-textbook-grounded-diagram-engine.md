@@ -90,3 +90,8 @@ of the same thing is a second answer that can disagree with the first.
 - **Art Style**: Colored pencil anatomical/histological sketching standard for university theory and practical exams.
 - **Aspect Ratio**: `4:3` (optimal for mobile and desktop viewports).
 
+### 4. Zero-Author-Watermark Mandate
+- **STRICT PROHIBITION**: NEVER render textbook author names, book titles, editions, page numbers, or publisher headers on the image canvas (e.g. NEVER write "BD Chaurasia", "Vishram Singh", "KD Tripathi", "Sembulingam", "Apurba Sastry", "Ramadas Nayak", "Langman", etc.).
+- **Content Only**: The canvas must contain ONLY the medical topic title banner, clean anatomical/physiological/biochemical structures, straight pointer lines, and anatomical labels.
+- **Automated Cleaner**: Any image generated with incidental author header text is automatically cleaned via `scripts/clean_and_reupload_diagrams.mjs` using `sharp` before being published to Supabase Storage.
+

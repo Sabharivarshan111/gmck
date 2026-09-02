@@ -1,0 +1,28 @@
+{
+  "name": "orbit-mbbs-remotion-ad",
+  "version": "1.0.0",
+  "private": true,
+  "description": "High-Converting Cinematic Video Ad for Orbit MBBS built with Remotion",
+  "scripts": {
+    "start": "remotion preview",
+    "build": "tsc --noEmit",
+    "render:vertical": "remotion render OrbitAdVertical out/orbit-ad-reels-9x16.mp4",
+    "render:landscape": "remotion render OrbitAdLandscape out/orbit-ad-landscape-16x9.mp4",
+    "still": "remotion still OrbitAdVertical out/preview-frame.png --frame 300"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.220",
+    "@remotion/player": "^4.0.220",
+    "lucide-react": "^0.460.0",
+    "msedge-tts": "^2.0.7",
+    "music-metadata": "^11.15.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "remotion": "^4.0.220"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "typescript": "^5.6.3"
+  }
+}
