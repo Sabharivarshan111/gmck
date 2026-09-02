@@ -572,6 +572,67 @@ if (editBox) {
   );
 }
 
+// ------------------------------------------------------- and the web app too
+//
+// The native app was fixed months ago; the **web app kept the bug**, and kept
+// it in its most literal form — `EXCLUSIVE_ENTITIES`, the same hand-written
+// family-of-keywords table this check exists to keep out, plus a hundred-word
+// stop list feeding a scorer. It went unnoticed because this check only ever
+// read `mobile/`.
+//
+// It had a second failure the native one never did: a question matching *no*
+// family returned an empty list, so most questions showed nothing at all
+// rather than the wrong picture. That is what "I cannot find any images
+// relevant to that" was.
+//
+// Both apps now share `src/lib/questionDiagrams.ts`. This half asserts the web
+// side did not quietly grow its own again.
+/**
+ * Comments stripped first.
+ *
+ * Both of these files now *explain* the keyword table they replaced, by name,
+ * so a check that reads the raw text finds `EXCLUSIVE_ENTITIES` in the
+ * paragraph saying why it was deleted and fails. A check a comment can trip is
+ * a check that punishes writing things down — `check:tour` learned the same
+ * thing an hour earlier.
+ */
+const stripComments = source =>
+  source === null
+    ? null
+    : source.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:])\/\/.*$/gm, '$1');
+
+const webDiagram = stripComments(await read('../src/components/handwritten/ExamDiagramCard.tsx'));
+if (webDiagram !== null) {
+  check(
+    !/EXCLUSIVE_ENTITIES/.test(webDiagram),
+    'the web app has grown EXCLUSIVE_ENTITIES back — a keyword family table is exactly how the TCA cycle got illustrated with glycolysis',
+  );
+  check(
+    !/DIAG_STOP|score:\s*\d/.test(webDiagram),
+    'the web diagram card is scoring candidates again instead of looking a question up by its own id',
+  );
+  check(
+    /findDiagramsForQuestion/.test(webDiagram),
+    'the web diagram card no longer uses the shared identity lookup',
+  );
+  check(
+    !/topicName\s*\|\|/.test(webDiagram),
+    'the web diagram card falls back to the chapter name again — no row is filed under a chapter, and looking one up that way returns a neighbour\'s picture',
+  );
+}
+
+const shared = stripComments(await read('../src/lib/questionDiagrams.ts'));
+if (shared !== null) {
+  check(
+    /slice\(0, 50\)/.test(shared),
+    'the shared question key has lost its 50-character slice, which is what question_diagrams filed every row under',
+  );
+  check(
+    !/score|rank|includes\(kw\)/.test(shared),
+    'the shared lookup has grown scoring — identity is the whole matcher',
+  );
+}
+
 // ---------------------------------------------------------------------- report
 
 if (failures.length > 0) {

@@ -140,9 +140,12 @@ export function Touchable({
     if (!isTarget || !node) {
       return;
     }
-    registerTourTarget(label, node);
-    return () => unregisterTourTarget(label, node);
-  }, [isTarget, label]);
+    // The role goes with it: two controls can honestly share a label — Home's
+    // "Ask AI" quick action and the bottom bar's "Ask AI" tab both do — and the
+    // role is what tells the tour which one a step meant.
+    const entry = registerTourTarget(label, node, role);
+    return () => unregisterTourTarget(label, entry);
+  }, [isTarget, label, role]);
 
   const animateTo = useCallback(
     (value: number) => {

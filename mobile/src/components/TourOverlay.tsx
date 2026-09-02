@@ -111,7 +111,7 @@ export function TourOverlay() {
       if (cancelled) {
         return;
       }
-      const rect = await measureTourTarget(step.target!);
+      const rect = await measureTourTarget(step.target!, step.targetRole);
       if (cancelled || !rect) {
         return;
       }

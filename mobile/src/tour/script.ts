@@ -78,6 +78,14 @@ export interface TourStep {
    * never a dead end waiting for a control that is not there.
    */
   target?: string;
+  /**
+   * The target's accessibility role, when the label alone is ambiguous.
+   *
+   * `Ask AI` and `Timer` are the label of a bottom-bar **tab** and of a Home
+   * quick action, and both are correct. Without this the tour drew its ring
+   * over whichever registered first, which was always Home's.
+   */
+  targetRole?: string;
   /** Where the target lives, so Next can navigate before looking for it. */
   tab?: TabName;
   /**
@@ -146,6 +154,7 @@ export const STEPS: TourStep[] = [
       'The little face is the assistant: it looks down while you type, thinks while it works, and dozes off when you leave.',
     tab: 'AskAI',
     target: 'Ask AI',
+    targetRole: 'tab',
     tapToAdvance: true,
   },
 
@@ -159,6 +168,7 @@ export const STEPS: TourStep[] = [
       'grounded in a standard reference for that subject, with the exam diagrams in line beside the answers.',
     tab: 'Notes',
     target: 'Notes',
+    targetRole: 'tab',
     tapToAdvance: true,
   },
   {
@@ -197,6 +207,7 @@ export const STEPS: TourStep[] = [
       'Focus, short break and long break. Every finished session is counted towards your day.',
     tab: 'Timer',
     target: 'Timer',
+    targetRole: 'tab',
     tapToAdvance: true,
   },
   {
@@ -263,6 +274,7 @@ export const STEPS: TourStep[] = [
       'The heatmap shows which subjects you have been avoiding.',
     tab: 'Progress',
     target: 'My Progress',
+    targetRole: 'tab',
     tapToAdvance: true,
   },
   {
