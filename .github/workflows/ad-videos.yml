@@ -1,0 +1,169 @@
+# Render the three launch ads to MP4 and publish them as a GitHub Release.
+#
+# This runs in CI rather than in an agent sandbox for one concrete reason: the
+# sandbox's proxy denies both speech.platform.bing.com (so there is no
+# voiceover) and the Supabase storage host (so the medical plates and the notes
+# screens cannot load). A runner has open network, so it can capture clean
+# screens, download the real plates, synthesise the voice, and render.
+#
+# Each ad is a complete, standalone 90-second spot. They render as three
+# parallel jobs because they are three separate videos, never chapters of one.
+
+name: Ad videos
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag for the MP4s (e.g. ads-1)'
+        required: true
+        default: 'ads-1'
+
+permissions:
+  contents: write
+
+jobs:
+  assets:
+    name: Capture screens, plates and voiceovers
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install the app's deps (for the screenshot harness)
+        working-directory: mobile
+        run: npm ci --legacy-peer-deps
+
+      - name: Install the renderer's deps
+        working-directory: remotion-ad
+        run: npm install --legacy-peer-deps
+
+      - name: Install Chromium for the screenshot harness
+        working-directory: mobile
+        run: npx playwright-core install chromium --with-deps
+
+      - name: Capture the real app screens
+        working-directory: remotion-ad
+        run: npm run screens
+
+      - name: Download the real medical plates
+        working-directory: remotion-ad
+        run: npm run plates
+
+      - name: Synthesise the voiceovers
+        working-directory: remotion-ad
+        run: npm run voice
+
+      # Nothing renders until every asset a script names is present and is not
+      # a blank capture. This is the guard against shipping a cut with "this
+      # diagram could not be loaded" in it, which has happened before.
+      - name: Preflight
+        working-directory: remotion-ad
+        run: npm run preflight
+
+      - name: Share the assets with the render jobs
+        uses: actions/upload-artifact@v4
+        with:
+          name: ad-assets
+          path: |
+            remotion-ad/public/app_screens
+            remotion-ad/public/audio
+          retention-days: 1
+
+  render:
+    name: Render ${{ matrix.ad }}
+    needs: assets
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - ad: orbit-the-pattern
+            file: orbit-the-pattern.mp4
+          - ad: orbit-2am
+            file: orbit-2am.mp4
+          - ad: orbit-draw-it-from-memory
+            file: orbit-draw-it-from-memory.mp4
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install the renderer's deps
+        working-directory: remotion-ad
+        run: npm install --legacy-peer-deps
+
+      - name: Pull the assets
+        uses: actions/download-artifact@v4
+        with:
+          name: ad-assets
+          path: remotion-ad/public
+
+      - name: Preflight
+        working-directory: remotion-ad
+        run: npm run preflight
+
+      - name: Render
+        working-directory: remotion-ad
+        run: |
+          npx remotion render "${{ matrix.ad }}" "out/${{ matrix.file }}" \
+            --concurrency=2 --log=info
+
+      - name: Check the file is a real video, not an empty container
+        working-directory: remotion-ad
+        run: |
+          SIZE=$(stat -c%s "out/${{ matrix.file }}")
+          echo "${{ matrix.file }} is $SIZE bytes"
+          # 90 seconds of 1080x1920 at CRF 18 is several megabytes. Anything
+          # under one is a failed render that produced a valid-looking file.
+          if [ "$SIZE" -lt 1000000 ]; then
+            echo "Render produced only $SIZE bytes — treating as a failure."
+            exit 1
+          fi
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.ad }}
+          path: remotion-ad/out/${{ matrix.file }}
+          retention-days: 14
+
+  publish:
+    name: Publish the MP4s
+    needs: render
+    runs-on: ubuntu-latest
+    steps:
+      - name: Collect the three ads
+        uses: actions/download-artifact@v4
+        with:
+          path: ads
+          pattern: orbit-*
+          merge-multiple: true
+
+      - name: List what will be published
+        run: ls -la ads
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ inputs.tag }}
+          name: Launch ads (${{ inputs.tag }})
+          body: |
+            Three complete 90-second vertical launch ads (1080x1920, 30fps).
+            Each is a standalone spot, not a cut of one longer film.
+
+            | File | Angle | Voice |
+            |---|---|---|
+            | `orbit-the-pattern.mp4` | The repeats are already counted | en-US-AvaNeural |
+            | `orbit-2am.mp4` | The night before the exam | en-US-JennyNeural |
+            | `orbit-draw-it-from-memory.mp4` | The diagram is where the marks are | en-US-AriaNeural |
+
+            Scripts and the reasoning behind each hook are in
+            `.agents/video/AD-SCRIPTS.md`.
+          files: ads/*.mp4
