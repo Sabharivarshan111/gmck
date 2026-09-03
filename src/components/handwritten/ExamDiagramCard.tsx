@@ -3,149 +3,66 @@ import { Maximize2, Download, Sparkles, Image as ImageIcon, ZoomIn, X, ChevronLe
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  findDiagramsForQuestion,
+  type QuestionDiagram,
+} from "@/lib/questionDiagrams";
 
 interface ExamDiagramCardProps {
+  /**
+   * The question this diagram belongs to, and the only thing it is looked up
+   * by. A diagram belongs to a *question*; there is no such thing as a
+   * chapter's diagram, and no row is filed under one.
+   *
+   * There used to be a `topicName` beside this, and the card fell back to it.
+   * It is gone rather than left unused: a chapter name sitting in the props of
+   * a component that looks things up is an invitation to key on it again, and
+   * keying on it is what returned a neighbour's picture.
+   */
   questionText?: string;
-  topicName?: string;
+  /**
+   * The bank's own string for the same question, still carrying its leading
+   * `"12. "`. Every screen strips that before opening a note, because the notes
+   * function's cache key is a hash of the stripped form — but the diagram
+   * pipeline filed its rows under the raw text. 53 of the 855 pictures are
+   * reachable only through this.
+   */
+  rawQuestionText?: string;
   subject?: string;
   defaultOpen?: boolean;
 }
 
-interface DiagramItem {
-  url: string;
-  title: string;
-}
+type DiagramItem = QuestionDiagram;
 
-const DIAG_STOP = new Set([
-  'define', 'describe', 'explain', 'discuss', 'enumerate', 'classify', 'write',
-  'short', 'note', 'notes', 'briefly', 'detail', 'types', 'various', 'causes',
-  'features', 'clinical', 'management', 'treatment', 'prevention', 'control',
-  'diagnosis', 'laboratory', 'importance', 'difference', 'differentiate',
-  'compare', 'versus', 'medical', 'patient', 'person', 'child', 'female',
-  'male', 'years', 'months', 'rules', 'rule', 'case', 'cases', 'study',
-  'outline', 'aspects', 'factors', 'principles', 'methods', 'criteria',
-  'guidelines', 'algorithm', 'signs', 'symptoms', 'procedure', 'investigations',
-  'role', 'what', 'which', 'about', 'with', 'from', 'between', 'under',
-  'their', 'does', 'have', 'been', 'give', 'name', 'list', 'state', 'applied',
-  'life', 'cycle', 'cycles', 'diagram', 'draw', 'drawn', 'neat', 'labelled', 'question',
-  'examination', 'appearance', 'effects', 'program', 'programme', 'scheme',
-  'strategy', 'national', 'india', 'indian', 'level', 'levels', 'status',
-  'health', 'community', 'public', 'primary', 'secondary', 'tertiary',
-  'following', 'based', 'first', 'second', 'third', 'final', 'paper', 'topic',
-  'practice', 'body', 'changes', 'death', 'living', 'post', 'mortem',
-  'antemortem', 'postmortem', 'wounds', 'wound', 'injury', 'injuries',
-  'poisons', 'poison', 'poisoning', 'acute', 'chronic', 'general', 'special',
-  'system', 'systemic', 'organs', 'organ', 'human', 'structure', 'structures',
-  'functions', 'function', 'parts', 'part', 'suitable', 'examples', 'available',
-  'protection', 'act', 'acts', 'proof', 'therapeutic', 'classification',
-  'bone', 'bones', 'artery', 'arteries', 'vein', 'veins', 'nerve', 'nerves',
-  'muscle', 'muscles', 'joint', 'joints', 'gland', 'glands', 'duct', 'ducts',
-  'wall', 'walls', 'cord', 'blood', 'reflex', 'reflexes',
-  'disorder', 'disorders', 'disease', 'diseases', 'syndrome', 'syndromes',
-  'supply', 'long', 'marrow', 'smear', 'picture', 'findings', 'origin',
-  'course', 'distribution', 'branches', 'termination', 'anastomosis', 'relations',
-  'articular', 'surface', 'surfaces', 'disc', 'discs', 'ligament', 'ligaments',
-  'movement', 'movements', 'capsule', 'cavity', 'cavities', 'cartilage',
-  'borders', 'border', 'fossa', 'tubercle', 'process', 'notch', 'insertion',
-  'action', 'actions', 'innervation', 'tributaries', 'boundaries', 'contents',
-  'extent', 'variation', 'variations', 'correlate', 'development', 'formation',
-  'sites', 'presenting', 'location', 'anomalies', 'lesions', 'derivatives',
-  'drainage', 'lymphatic', 'histology', 'gross', 'microscopic',
-  'definition', 'definitions', 'sequence', 'reaction', 'reactions', 'energetics',
-  'regulation', 'mechanism', 'mechanisms', 'steps', 'pathway', 'pathways',
-  'transport', 'transports', 'passive', 'active', 'fate', 'synthesis',
-  'degradation', 'metabolism', 'abnormalities', 'important', 'significance',
-  'molecules', 'molecule', 'overview', 'pathophysiology', 'complications',
-]);
-
-const EXCLUSIVE_ENTITIES = [
-  // Anatomy
-  ['temporomandibular', 'tmj', 'mandible', 'mandibular'],
-  ['shoulder', 'glenohumeral', 'scapula', 'acromion', 'rotator cuff'],
-  ['synovial', 'synovial joint', 'diarthrodial', 'articular capsule'],
-  ['cartilaginous', 'synchondrosis', 'symphysis', 'primary cartilaginous', 'secondary cartilaginous'],
-  ['fibrous joint', 'suture', 'gomphosis', 'syndesmosis', 'schindylesis'],
-  ['nutrient artery', 'blood supply of bone', 'blood supply of long bone', 'haversian artery'],
-  ['ossification', 'endochondral', 'intramembranous', 'epiphyseal plate', 'growth plate', 'zone of proliferation'],
-  ['compact bone', 'haversian system', 'osteon', 'volkmann', 'lamellae', 'lacunae'],
-  ['knee', 'patella', 'meniscus', 'cruciate'],
-  ['elbow', 'radioulnar', 'olecranon'],
-  ['hip', 'acetabulum', 'iliofemoral'],
-  ['wrist', 'carpal', 'carpometacarpal'],
-  ['brachial', 'plexus', 'erbs'],
-  ['femoral', 'femur'],
-  ['popliteal'],
-  ['axilla', 'axillary'],
-  ['carotid'],
-  ['cavernous'],
-  ['intercostal'],
-  ['coronary'],
-  ['atrium', 'atrial'],
-  ['cerebellum', 'cerebellar'],
-  ['cerebrum', 'cerebral', 'internal capsule'],
-  ['medulla', 'medullary'],
-  ['pons', 'pontine'],
-  ['facial nerve', 'facial', 'bells palsy'],
-  ['median nerve', 'median', 'carpal tunnel', 'anterior interosseous', 'ape thumb'],
-  ['ulnar nerve', 'ulnar', 'guyon', 'claw hand', 'cubital tunnel'],
-  ['radial nerve', 'radial', 'spiral groove', 'wrist drop', 'posterior interosseous'],
-  ['sciatic', 'sciatic nerve', 'piriformis', 'foot drop'],
-  ['femoral nerve', 'femoral'],
-  ['rectus sheath', 'arcuate line', 'linea alba', 'pyramidalis'],
-  ['trigeminal', 'trigeminal nerve', 'mandibular nerve', 'ophthalmic nerve', 'maxillary nerve', 'otic ganglion', 'ciliary ganglion', 'pterygopalatine ganglion'],
-  ['thoracic duct', 'cisterna chyli', 'chylothorax'],
-  ['stomach bed', 'lesser sac'],
-  ['anal canal', 'pectinate line', 'anal valves', 'hemorrhoids', 'anal columns', 'intersphincteric', 'hilton'],
-  ['lateral wall of nose', 'concha', 'meatus', 'sinus opening', 'hiatus semilunaris', 'bulla ethmoidalis', 'sphenoethmoidal'],
-  ['submandibular gland', 'wharton', 'submandibular duct', 'mylohyoid'],
-  ['pharynx', 'pharyngeal constrictor', 'killian', 'zenker', 'pharyngeal pouch', 'pharyngeal wall'],
-  ['uterus', 'mackenrodt', 'cardinal ligament', 'uterine artery', 'fallopian tube', 'uterosacral', 'uterine prolapse'],
-  ['venous drainage of heart', 'coronary sinus', 'cardiac veins', 'great cardiac vein', 'middle cardiac vein', 'vein of marshall'],
-  ['duodenum', 'duodenal papilla', 'ampulla of vater', 'ligament of treitz', 'pancreaticoduodenal'],
-  ['pancreas', 'pancreatic'],
-  ['spleen', 'splenic', 'splenomegaly', 'gastrosplenic', 'lienorenal'],
-  ['liver', 'hepatic', 'portal'],
-  ['kidney', 'renal'],
-  ['stomach', 'gastric'],
-  ['testis', 'testicular'],
-  ['ovary', 'ovarian'],
-  ['breast', 'mammary'],
-  ['lung', 'lungs', 'bronchopulmonary'],
-  ['larynx', 'laryngeal', 'vocal cord'],
-  ['palatine tonsil', 'tonsil'],
-  ['tongue', 'lingual', 'papillae', 'genioglossus', 'hyoglossus'],
-  ['parotid'],
-  ['thyroid', 'thyroid gland', 'berry ligament', 'external laryngeal nerve'],
-  ['pituitary'],
-  // Biochemistry pathways & cycles
-  ['tca', 'tca cycle', 'krebs', 'citric acid', 'citric acid cycle', 'tricarboxylic', 'anaplerosis', 'anaplerotic', 'citrate synthase'],
-  ['glycolysis', 'embden', 'meyerhof', 'hexokinase', 'glucokinase', 'phosphofructokinase', 'pfk 1', 'pfk-1', 'pyruvate kinase', 'rapoport'],
-  ['gluconeogenesis', 'cori cycle', 'cahill cycle', 'alanine cycle', 'pyruvate carboxylase', 'pepck', 'fructose 1 6 bisphosphatase', 'glucose 6 phosphatase'],
-  ['glycogen', 'glycogenesis', 'glycogenolysis', 'von gierke', 'pompe', 'cori disease', 'mcardle', 'glycogen storage'],
-  ['hmp shunt', 'pentose phosphate', 'g6pd', 'favism', 'transketolase', 'transaldolase'],
-  ['urea cycle', 'hyperammonemia', 'ornithine', 'citrulline', 'argininosuccinate', 'arginase', 'carbamoyl phosphate synthetase i'],
-  ['beta oxidation', 'carnitine', 'carnitine shuttle', 'cpt-1', 'cpt-2', 'acyl coa dehydrogenase'],
-  ['ketogenesis', 'ketone body', 'ketone bodies', 'ketolysis', 'dka', 'diabetic ketoacidosis', 'hmg coa synthase'],
-  ['cholesterol', 'statin', 'hmg coa reductase', 'mevalonate', 'squalene'],
-  ['lipoprotein', 'chylomicron', 'chylomicrons', 'vldl', 'ldl', 'hdl', 'reverse cholesterol transport', 'rct', 'abetalipoproteinemia', 'tangier', 'atherogenesis', 'dyslipidemia', 'hyperlipoproteinemia'],
-  ['bilirubin', 'jaundice', 'heme catabolism', 'heme degradation', 'urobilinogen', 'stercobilin', 'kernicterus', 'crigler', 'gilbert', 'dubinhohnson', 'rotor'],
-  ['heme synthesis', 'porphyria', 'porphyrias', 'ala synthase', 'lead poisoning', 'acute intermittent porphyria', 'coproporphyria'],
-  ['purine', 'uric acid', 'gout', 'lesch nyhan', 'prpp', 'allopurinol', 'salvage pathway'],
-  ['pyrimidine', 'orotic acid', 'orotic aciduria', 'carbamoyl phosphate synthetase ii', 'cad enzyme'],
-  ['phenylalanine', 'tyrosine', 'pku', 'phenylketonuria', 'alkaptonuria', 'albinism', 'homogentisic'],
-  ['tryptophan', 'serotonin', 'melatonin', 'carcinoid', 'hartnup', 'niacin', 'pellagra'],
-  ['one carbon', 'methionine', 'homocysteine', 'folate trap', 'sam', 'tetrahydrofolate'],
-  ['enzyme kinetics', 'lineweaver', 'burk', 'michaelis', 'menten', 'km', 'vmax', 'competitive inhibition', 'non competitive'],
-  ['electrophoresis', 'spep', 'serum protein electrophoresis', 'multiple myeloma', 'm band', 'gamma globulin'],
-  ['electron transport chain', 'etc complexes', 'oxidative phosphorylation', 'chemiosmotic', 'atp synthase', 'rotenone', 'cyanide', 'uncoupler', 'dnp'],
-  ['visual cycle', 'wald', 'rhodopsin', 'vitamin a', 'retinal', 'opsin', 'night blindness'],
-  ['translation', 'ribosome', 'elongation', 'initiation factor', 'tetracycline', 'chloramphenicol', 'erythromycin', 'cycloheximide'],
-  ['cell membrane transport', 'transport mechanisms', 'passive transport', 'simple diffusion', 'facilitated diffusion', 'sodium potassium pump', 'na k atpase', 'ping pong mechanism', 'ping-pong'],
-];
+/*
+ * What used to be here: a hundred-word stop list and an EXCLUSIVE_ENTITIES
+ * table — a hand-written family of keywords per pathway — used to score every
+ * row in the subject against the question's text.
+ *
+ * It is deleted rather than tuned. It produced two different wrong answers and
+ * the second one is what was reported as "I cannot find any images relevant to
+ * that":
+ *
+ *   • A question that *matched* a family got every row in that family. "TCA
+ *     cycle - definition, sequence of reaction, energetics, regulation" opened
+ *     with Glycolysis as "diagram 1 of 3", then Gluconeogenesis, then its own.
+ *   • A question that matched *no* family returned an empty list and rendered
+ *     nothing at all — which is most questions, because the families were
+ *     written by hand and the bank has 5,523 questions.
+ *
+ * Widening or narrowing the lists only moved which questions were wrong. The
+ * premise is wrong: a question that mentions a pathway is not a question about
+ * it, and no vocabulary separates them. The native app deleted this table
+ * months ago; the web app kept it.
+ *
+ * `question_diagrams` already answers the question exactly — one row per
+ * question, carrying that question's own id — so identity is the whole matcher
+ * now and `lib/questionDiagrams.ts` is where it lives, once, for both apps.
+ */
 
 export default function ExamDiagramCard({
   questionText,
-  topicName,
+  rawQuestionText,
   subject,
 }: ExamDiagramCardProps) {
   const [diagrams, setDiagrams] = useState<DiagramItem[]>([]);
@@ -155,82 +72,31 @@ export default function ExamDiagramCard({
 
   useEffect(() => {
     let isMounted = true;
-    const fetchDiagrams = async () => {
-      setLoading(true);
-      try {
-        const queryTerm = (questionText || topicName || "").trim();
-        if (!queryTerm) {
-          setLoading(false);
-          return;
-        }
-
-        const cleanQuery = queryTerm
-          .replace(/[0-9]+\./g, "")
-          .replace(/\(Pg.*\)/gi, "")
-          .replace(/\(Feb.*\)|\(Aug.*\)|\(Oct.*\)|\(Jan.*\)/gi, "")
-          .replace(/[*#]/g, "")
-          .trim();
-
-        const queryLower = cleanQuery.toLowerCase();
-        const matchingFamily = EXCLUSIVE_ENTITIES.find(family =>
-          family.some(kw => queryLower.includes(kw))
-        );
-
-        if (!matchingFamily) {
-          if (isMounted) {
-            setDiagrams([]);
-            setLoading(false);
-          }
-          return;
-        }
-
-        let queryBuilder = supabase
-          .from("question_diagrams")
-          .select("public_url, storage_path, question_text")
-          .not("public_url", "is", null);
-
-        if (subject) {
-          queryBuilder = queryBuilder.ilike("subject", `%${subject}%`);
-        }
-
-        const { data: allRows } = await queryBuilder;
-        const matchedList: Array<{ url: string; title: string; score: number }> = [];
-        const seenUrls = new Set<string>();
-
-        if (allRows && allRows.length > 0) {
-          for (const row of allRows) {
-            if (!row.public_url || !row.question_text) continue;
-            if (seenUrls.has(row.public_url)) continue;
-
-            const rowText = row.question_text.toLowerCase();
-            const storagePath = (row.storage_path || '').toLowerCase();
-
-            const matches = matchingFamily.some(kw => rowText.includes(kw) || storagePath.includes(kw));
-            if (!matches) continue;
-
-            seenUrls.add(row.public_url);
-            matchedList.push({
-              url: row.public_url,
-              title: row.question_text,
-              score: 10,
-            });
-          }
-        }
-
-        if (isMounted) {
-          setDiagrams(matchedList.map(m => ({ url: m.url, title: m.title })));
-          setActiveIndex(0);
-        }
-      } catch (err) {
-        console.error("Error fetching diagrams:", err);
-      } finally {
+    /*
+     * Keyed on the question and nothing else. There is no chapter-name
+     * fallback: looking a diagram up by the chapter's name is what produced a
+     * neighbour's picture, and no row is filed under a chapter anyway.
+     */
+    const question = (questionText ?? "").trim();
+    if (!question) {
+      setDiagrams([]);
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+    findDiagramsForQuestion(supabase, question, subject, rawQuestionText)
+      .then(found => {
+        if (!isMounted) return;
+        setDiagrams(found);
+        setActiveIndex(0);
+      })
+      .finally(() => {
         if (isMounted) setLoading(false);
-      }
+      });
+    return () => {
+      isMounted = false;
     };
-
-    fetchDiagrams();
-    return () => { isMounted = false; };
-  }, [questionText, topicName, subject]);
+  }, [questionText, rawQuestionText, subject]);
 
   if (loading) {
     return (
@@ -330,7 +196,7 @@ export default function ExamDiagramCard({
         >
           <img
             src={currentDiagram.url}
-            alt={currentDiagram.title || topicName || questionText || "Exam Diagram"}
+            alt={currentDiagram.title || questionText || "Exam Diagram"}
             className="w-full max-h-96 object-contain rounded-xl transition-transform duration-300 group-hover:scale-[1.01]"
             loading="lazy"
           />
@@ -387,7 +253,7 @@ export default function ExamDiagramCard({
                 {diagrams.length > 1 ? `Plate ${activeIndex + 1}/${diagrams.length}` : "Visual Exam Plate"}
               </Badge>
               <span className="text-sm font-semibold truncate max-w-md">
-                {currentDiagram.title || topicName || questionText}
+                {currentDiagram.title || questionText}
               </span>
             </div>
             <div className="flex items-center gap-2">

@@ -30,7 +30,7 @@ interface Props {
    * matching the web app: those are the subjects it has a textbook for.
    * Without it, a triple tap falls back to Ask AI.
    */
-  onNote?: (question: string) => void;
+  onNote?: (question: string, rawQuestion: string) => void;
   /**
    * Flash this row — the reader arrived from a search result and has to be
    * told which of sixty questions was the one they searched for.
@@ -121,7 +121,11 @@ function QuestionRowBase({
       // noteQuestionText, not getCleanQuestionText: the notes function's cache
       // key is a hash of this string, and the web app hashes the version that
       // still has its stars and year on it.
-      onNote(noteQuestionText(question));
+      //
+      // The bank's raw string goes too. It is the only thing that can find a
+      // diagram filed under a numbered question, because the note key must
+      // stay the stripped form and the two disagree by exactly that number.
+      onNote(noteQuestionText(question), question);
       return;
     }
     onAskAi(tripleTapPrompt(getCleanQuestionText(question)));

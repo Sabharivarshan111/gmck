@@ -274,8 +274,27 @@ const RevisionSection = ({ items }: { items: string[] }) => (
 
 /** ---------- Main view ---------- */
 export default function HandwrittenNotesView({
-  subtopicName, content, subject,
-}: { subtopicName: string; content: NotesContent; subject?: string }) {
+  subtopicName, content, subject, questionText, rawQuestionText,
+}: {
+  subtopicName: string;
+  content: NotesContent;
+  subject?: string;
+  /**
+   * The question this page answers, when it answers exactly one.
+   *
+   * A diagram belongs to a *question*, not to a chapter — there is no such
+   * thing as a chapter's diagram — so without this there is nothing to look
+   * one up by. The single-question overlay has it and passes it; the chapter
+   * hub does not and correctly shows no diagram card.
+   */
+  questionText?: string;
+  /**
+   * The same question before its leading `"12. "` was stripped, when the caller
+   * has it. Used only to find the diagram: 53 rows are filed under the numbered
+   * text, and `questionText` can no longer reach them.
+   */
+  rawQuestionText?: string;
+}) {
   return (
     <div className="space-y-4">
       {/* Header */}
@@ -290,7 +309,11 @@ export default function HandwrittenNotesView({
       </div>
 
       {/* High-Yield AI Exam Diagram */}
-      <ExamDiagramCard topicName={subtopicName} subject={subject} />
+      <ExamDiagramCard
+        questionText={questionText}
+        rawQuestionText={rawQuestionText}
+        subject={subject}
+      />
 
       {/* High-Yield Tip */}
       {content.highYieldTip && (

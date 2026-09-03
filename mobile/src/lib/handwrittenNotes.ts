@@ -318,6 +318,15 @@ export interface SingleNoteRequest {
   subjectKey: string;
   subjectName: string;
   yearLabel: string;
+  /**
+   * The bank's string for this question, before the leading `"12. "` was
+   * removed — used for the diagram lookup and for nothing else.
+   *
+   * It is a second field rather than a replacement because `question` is what
+   * the notes function's cache key is a hash of. The two differ for the 53
+   * pictures filed under a numbered question, and those were unreachable.
+   */
+  rawQuestion?: string;
 }
 
 /**
@@ -470,15 +479,47 @@ export interface QuestionDiagram {
  * neighbour's. Identity is the whole matcher now; there is no scoring left to
  * tune.
  */
+/**
+ * The strings a question answers to.
+ *
+ * Every screen that opens a note hands this lookup `noteQuestionText(question)`
+ * — the bank's string with its leading `"12. "` removed — while the diagram
+ * pipeline filed the row under the bank's raw text, number and all. The id is
+ * then built from a different 50 characters, the text equality misses too, and
+ * 53 of the 855 pictures in the table cannot be reached from any of the three
+ * apps. Stripping the number has to stay (the notes cache key is a hash of that
+ * exact string), so identity is asked about both forms instead.
+ */
+const LEADING_NUMBER = /^\d+\.\s/;
+
+function questionIdentities(...forms: Array<string | null | undefined>): string[] {
+  const out: string[] = [];
+  const push = (value: string) => {
+    const clean = value.trim();
+    if (clean.length >= 3 && !out.includes(clean)) {
+      out.push(clean);
+    }
+  };
+  for (const form of forms) {
+    const clean = (form ?? '').trim();
+    if (!clean) continue;
+    push(clean);
+    push(clean.replace(LEADING_NUMBER, ''));
+  }
+  return out;
+}
+
 export async function findDiagramsForQuestion(
   question: string,
   subjectKey?: string,
   subjectName?: string,
+  rawQuestion?: string,
 ): Promise<QuestionDiagram[]> {
   const clean = question.trim();
   if (clean.length < 3) {
     return [];
   }
+  const forms = questionIdentities(clean, rawQuestion);
 
   const out: QuestionDiagram[] = [];
   const seen = new Set<string>();
@@ -504,15 +545,26 @@ export async function findDiagramsForQuestion(
       supabase
         .from('question_diagrams')
         .select('public_url, question_text')
-        .eq('question_id', diagramQuestionId(clean))
-        .not('public_url', 'is', null),
+        .in('question_id', forms.map(diagramQuestionId)),
       supabase
         .from('question_diagrams')
         .select('public_url, question_text')
-        .eq('question_text', clean)
-        .not('public_url', 'is', null),
+        .in('question_text', forms),
     ]);
 
+    /*
+     * The error is inspected, not just the data.
+     *
+     * supabase-js **returns** errors rather than throwing them, so the `try`
+     * around this block never fires for a query that failed — `byId.data` is
+     * simply null and `take` quietly adds nothing. A question with a perfectly
+     * good row then renders with no diagram and nothing anywhere says why,
+     * which is indistinguishable from the question having no picture. That is
+     * the exact trap CLAUDE.md names, and it was live in this function.
+     */
+    if (byId.error || byText.error) {
+      warn('[handwrittenNotes] diagram lookup failed:', byId.error ?? byText.error);
+    }
     take(byId.data);
     take(byText.data);
 
@@ -530,22 +582,21 @@ export async function findDiagramsForQuestion(
     if (!canonicalSubject) {
       return [];
     }
-    const wanted = normalizeQuestionText(clean);
-    if (!wanted) {
+    const wanted = forms.map(normalizeQuestionText).filter(Boolean);
+    if (wanted.length === 0) {
       return [];
     }
 
     const { data } = await supabase
       .from('question_diagrams')
       .select('public_url, question_text')
-      .not('public_url', 'is', null)
       .ilike('subject', `%${canonicalSubject}%`);
 
     take(
       (data ?? []).filter(
         row =>
           typeof row.question_text === 'string' &&
-          normalizeQuestionText(row.question_text) === wanted,
+          wanted.includes(normalizeQuestionText(row.question_text)),
       ),
     );
   } catch (err) {
@@ -634,15 +685,13 @@ export async function findDiagramsForTopic(
         supabase
           .from('question_diagrams')
           .select('question_id, public_url, question_text')
-          .in('question_id', ids)
-          .not('public_url', 'is', null),
+          .in('question_id', ids),
       ),
       ...textChunks.map(texts =>
         supabase
           .from('question_diagrams')
           .select('question_id, public_url, question_text')
-          .in('question_text', texts)
-          .not('public_url', 'is', null),
+          .in('question_text', texts),
       ),
     ]);
 
@@ -687,7 +736,6 @@ export async function findDiagramsForTopic(
       const { data } = await supabase
         .from('question_diagrams')
         .select('question_id, public_url, question_text')
-        .not('public_url', 'is', null)
         .ilike('subject', `%${canonicalSubject}%`);
 
       for (const row of data ?? []) {
@@ -981,13 +1029,16 @@ const diagramCache = new Map<string, Promise<QuestionDiagram[]>>();
 export function resolveQuestionDiagrams(
   request: SingleNoteRequest,
 ): Promise<QuestionDiagram[]> {
-  const key = `${request.subjectKey}::${request.question.trim()}`;
+  const key = `${request.subjectKey}::${request.question.trim()}::${(
+    request.rawQuestion ?? ''
+  ).trim()}`;
   let pending = diagramCache.get(key);
   if (!pending) {
     pending = findDiagramsForQuestion(
       request.question,
       request.subjectKey,
       request.subjectName,
+      request.rawQuestion,
     ).catch(() => []);
     diagramCache.set(key, pending);
   }

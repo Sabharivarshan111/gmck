@@ -110,6 +110,7 @@ export function ReviseSheet({
     try {
       const content = await fetchSingleQuestionNote({
         question: noteQuestionText(card.question),
+        rawQuestion: card.question,
         subjectKey: card.subject,
         subjectName: card.subject,
         yearLabel,

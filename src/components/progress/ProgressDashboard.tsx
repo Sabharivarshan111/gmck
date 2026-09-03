@@ -8,8 +8,6 @@ import YearRingCard from "./YearRingCard";
 import SubjectsList from "./SubjectsList";
 import StreakXPCard from "./StreakXPCard";
 import Leaderboard from "./Leaderboard";
-import GoogleSyncButton from "./GoogleSyncButton";
-import EmailSyncButton from "./EmailSyncButton";
 import RewardsShelf from "./RewardsShelf";
 import StreakTipsCard from "./StreakTipsCard";
 import ProgressCalendarTab from "./ProgressCalendarTab";
@@ -118,9 +116,6 @@ const ProgressDashboard = () => {
           <Pencil className="h-4 w-4" />
         </Button>
       </div>
-
-      <GoogleSyncButton isAnonymous={isAnonymous} email={email} onSignOut={signOut} />
-      <EmailSyncButton isAnonymous={isAnonymous} email={email} userId={userId} onSignOut={signOut} />
 
       <Tabs defaultValue="stats" className="w-full">
         <TabsList className="grid w-full grid-cols-3">

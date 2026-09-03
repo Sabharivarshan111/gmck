@@ -5,6 +5,7 @@ import type { View } from 'react-native';
 
 /** The measurable host instance behind a `<View>`, not the component type. */
 type ViewHandle = React.ComponentRef<typeof View>;
+import { setWalkthroughActive } from '@/lib/dailyAd';
 import { STEPS, TOUR_TARGETS, type ChapterId, type TourStep } from './script';
 
 /**
@@ -146,6 +147,19 @@ export function startTour(chapter?: ChapterId): void {
     return;
   }
   state = { ...state, index: 0, run };
+  /*
+   * Nothing may interrupt the walkthrough, and the daily ad prompt is the one
+   * thing that can: opening My Progress asks to play the day's rewarded ad, so
+   * the tour's own navigation to that step raised a modal titled "Sorry for
+   * the inconvenience" straight over the card.
+   *
+   * `dailyAd.ts` has had the flag for this since before the tour existed and
+   * **nothing had ever set it**, so `walkthroughActive` was false for the
+   * whole life of the file. Suppressing rather than deferring is deliberate:
+   * the prompt is once a day, and spending it on a screen the reader was sent
+   * to by a tour means they see it again for real later.
+   */
+  setWalkthroughActive(true);
   emit();
 }
 
@@ -179,6 +193,8 @@ export function previousStep(): void {
  */
 export function endTour(): void {
   state = { ...state, index: null, run: [], seen: true };
+  // The day's ad is available again the moment the tour is out of the way.
+  setWalkthroughActive(false);
   emit();
   markSeen();
 }
@@ -210,28 +226,36 @@ export function setTourPaused(paused: boolean): void {
  * detached by react-native-screens and measures as zero, so the wrong one
  * rules itself out without the script having to name a screen.
  */
-const targets = new Map<string, Set<ViewHandle>>();
+interface RegisteredTarget {
+  node: ViewHandle;
+  /** The control's accessibility role, which is how a tab is told from a card. */
+  role: string;
+}
+
+const targets = new Map<string, Set<RegisteredTarget>>();
 
 /** Whether this label is worth the cost of registering. Called on every layout. */
 export function isTourTarget(label: string): boolean {
   return TOUR_TARGETS.has(label);
 }
 
-export function registerTourTarget(label: string, node: ViewHandle): void {
+export function registerTourTarget(label: string, node: ViewHandle, role: string): RegisteredTarget {
   let set = targets.get(label);
   if (!set) {
-    set = new Set<ViewHandle>();
+    set = new Set<RegisteredTarget>();
     targets.set(label, set);
   }
-  set.add(node);
+  const entry = { node, role };
+  set.add(entry);
+  return entry;
 }
 
-export function unregisterTourTarget(label: string, node: ViewHandle): void {
+export function unregisterTourTarget(label: string, entry: RegisteredTarget): void {
   const set = targets.get(label);
   if (!set) {
     return;
   }
-  set.delete(node);
+  set.delete(entry);
   if (set.size === 0) {
     targets.delete(label);
   }
@@ -255,14 +279,36 @@ export interface TargetRect {
  * answer rather than a failure — the reader may have scrolled it away, or be
  * on another tab. The overlay turns that into a plain centred card.
  */
-export async function measureTourTarget(label: string): Promise<TargetRect | null> {
+export async function measureTourTarget(
+  label: string,
+  role?: string,
+): Promise<TargetRect | null> {
   const set = targets.get(label);
   if (!set || set.size === 0) {
     return null;
   }
+  /*
+   * The role is how two honest controls with the same label are told apart,
+   * and without it the spotlight landed on the wrong one.
+   *
+   * Home's quick actions are labelled "Timer" and "Ask AI" — correctly, that
+   * is what they do — and so are the bottom bar's tabs. Home mounts first, so
+   * it registered first, so it won every lookup: the Ask AI step drew its ring
+   * over a stale quick-action rectangle in the middle of the Ask AI screen,
+   * pointing at nothing. Both labels are right and neither should change; what
+   * was missing was the tour saying which *kind* of control it meant.
+   *
+   * A detached screen still measures as zero and is discarded below, which is
+   * what keeps My Progress's own "Notes" tab out of the way of the bottom
+   * bar's.
+   */
+  const candidates = [...set].filter(entry => !role || entry.role === role);
+  if (candidates.length === 0) {
+    return null;
+  }
   const rects = await Promise.all(
-    [...set].map(
-      node =>
+    candidates.map(
+      ({ node }) =>
         new Promise<TargetRect | null>(resolve => {
           try {
             node.measureInWindow((x, y, width, height) => {

@@ -40,10 +40,20 @@ export const LayeredCameraPhone: React.FC<LayeredCameraPhoneProps> = ({
 
   // Determine dynamic focal point based on touch preset or explicit focus prop
   let focalOrigin = '50% 50%';
+  const isBottomNav = typeof touchPreset === 'string' && touchPreset.startsWith('bottomNav');
+
   if (focus !== undefined) {
     focalOrigin = `50% ${Math.round(focus * 100)}%`;
-  } else if (touchPreset === 'bottomNavBrowse' || touchPreset === 'bottomNavNotes' || touchPreset === 'bottomNavTimer' || touchPreset === 'bottomNavProgress') {
-    focalOrigin = '50% 88%';
+  } else if (touchPreset === 'bottomNavHome') {
+    focalOrigin = '10% 94%';
+  } else if (touchPreset === 'bottomNavBrowse' || touchPreset === 'bottomNavNotes') {
+    focalOrigin = '30% 94%';
+  } else if (touchPreset === 'bottomNavTimer') {
+    focalOrigin = '50% 94%';
+  } else if (touchPreset === 'bottomNavAI') {
+    focalOrigin = '70% 94%';
+  } else if (touchPreset === 'bottomNavProgress') {
+    focalOrigin = '90% 94%';
   } else if (touchPreset === 'tripleTap' || touchPreset === 'questionCard') {
     focalOrigin = '50% 36%';
   } else if (touchPreset === 'timerStartButton') {
@@ -75,7 +85,25 @@ export const LayeredCameraPhone: React.FC<LayeredCameraPhoneProps> = ({
 
   const touchTriggerFrame = Math.round(durationInFrames * 0.24);
 
-  if (move === 'macro' || move === 'push' || touchPreset) {
+  if (isBottomNav) {
+    // Zoom in directly to that icon in navigation bar, button depresses with ripple, then zooms out smoothly
+    if (progress <= 0.28) {
+      dynamicScale = interpolate(
+        progress,
+        [0, 0.28],
+        [1.18, 1.62],
+        { easing: Easing.out(Easing.cubic), extrapolateRight: 'clamp' }
+      );
+    } else {
+      dynamicScale = interpolate(
+        progress,
+        [0.28, 1.0],
+        [1.62, 1.18],
+        { easing: Easing.inOut(Easing.quad), extrapolateRight: 'clamp' }
+      );
+    }
+    dynamicOrigin = focalOrigin;
+  } else if (move === 'macro' || move === 'push' || touchPreset) {
     // Push in -> touch press & ripple -> pull back seamlessly
     // Smooth spline interpolation: 0% -> 30% (zoom in to 1.50) -> 100% (pull back to 1.24)
     if (progress <= 0.30) {

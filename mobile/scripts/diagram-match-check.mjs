@@ -87,6 +87,20 @@ const ROWS = [
     subject: 'Biochemistry',
     storage_path: 'biochemistry/gluconeogenesis_bypasses_cori_cycle.jpg',
   },
+  /*
+   * Filed under the bank's *numbered* text. Every screen strips the leading
+   * "11. " before opening a note — it must, because the notes function's cache
+   * key is a hash of the stripped string — so this row is reachable only if the
+   * lookup asks about both forms. 53 of the 855 rows with a picture are like
+   * this, and none of them could be found from any of the three apps.
+   */
+  {
+    question_id: 'question-11.-Explain-the-steps-of-Modern-sewage-treatment-a',
+    question_text:
+      '11. Explain the steps of Modern sewage treatment and discuss its role in preventing waterborne disease. ***',
+    subject: 'Community Medicine',
+    storage_path: 'community/modern_sewage_treatment_steps.jpg',
+  },
   // Hand-inserted: the id is a slug, so only the text can reach it.
   {
     question_id: 'anat-types-of-synovial-joints',
@@ -340,6 +354,58 @@ check(
 );
 
 /**
+ * A numbered question, opened the way a reader opens it.
+ *
+ * `noteQuestionText` removes the leading "11. " before this is ever called, so
+ * what arrives is the stripped string while the row carries the numbered one.
+ * The first 50 characters therefore differ, the id misses, and the text
+ * equality misses too — which is indistinguishable from the question having no
+ * picture, and is why a Community Medicine question with a real plate showed a
+ * blank. The screen hands the raw string over as well now.
+ */
+const NUMBERED =
+  '11. Explain the steps of Modern sewage treatment and discuss its role in preventing waterborne disease. ***';
+const unnumbered = NUMBERED.replace(/^\d+\.\s/, '');
+
+const numbered = await findDiagramsForQuestion(
+  unnumbered,
+  'community',
+  'Community Medicine',
+  NUMBERED,
+);
+check(
+  numbered.length === 1 &&
+    names(numbered)[0] === 'community/modern_sewage_treatment_steps.jpg',
+  `a numbered question opened from a screen got ${names(numbered).join(', ') || 'nothing'} — the row is filed under the number the screen strips, so the raw string has to be asked about too`,
+);
+
+/*
+ * And it still works with only the stripped form, because the number can be
+ * removed from either side. What must never happen is the reverse: the row
+ * being found for some *other* question that happens to start with a number.
+ */
+const numberedNoRaw = await findDiagramsForQuestion(
+  NUMBERED,
+  'community',
+  'Community Medicine',
+);
+check(
+  numberedNoRaw.length === 1,
+  'a caller holding only the numbered string must still find the row',
+);
+
+const otherNumbered = await findDiagramsForQuestion(
+  'Explain the steps of pasteurisation of milk. **',
+  'community',
+  'Community Medicine',
+  '12. Explain the steps of pasteurisation of milk. **',
+);
+check(
+  otherNumbered.length === 0,
+  `a different numbered question collected ${names(otherNumbered).join(', ')} — dropping the number may not turn identity into a prefix match`,
+);
+
+/**
  * Containment is the trap the old matcher fell into. "Joint" is in both of the
  * rows above, so a lookup that ever answers this one is scoring again.
  */
@@ -548,8 +614,18 @@ check(
 
 if (lib) {
   check(
-    /\.eq\('question_id'/.test(lib),
+    /\.(eq|in)\('question_id'/.test(lib),
     'the lookup no longer joins on question_id — that key is the whole matcher',
+  );
+  /*
+   * `.in` is `.eq` repeated: a question answers to more than one string (the
+   * bank's numbered text and the stripped one every screen sends), and a set
+   * membership test over those is still identity. `like` on either key is not,
+   * and is the shape a prefix or substring match would arrive in.
+   */
+  check(
+    !/\.i?like\('question_(id|text)'/.test(lib),
+    'the lookup is pattern-matching question_id or question_text — identity is an equality, and a LIKE is how it stops being one',
   );
   check(
     !/EXCLUSIVE_ENTITIES|DIAGRAM_STOP_WORDS/.test(lib),
@@ -569,6 +645,71 @@ if (editBox) {
   check(
     !/s\.icon === '🎨' \|\|/.test(editBox),
     'NotesAiEditBox is preserving existing diagram sections by hand again — that is how the wrong picture survived every correction the reader made',
+  );
+}
+
+// ------------------------------------------------------- and the web app too
+//
+// The native app was fixed months ago; the **web app kept the bug**, and kept
+// it in its most literal form — `EXCLUSIVE_ENTITIES`, the same hand-written
+// family-of-keywords table this check exists to keep out, plus a hundred-word
+// stop list feeding a scorer. It went unnoticed because this check only ever
+// read `mobile/`.
+//
+// It had a second failure the native one never did: a question matching *no*
+// family returned an empty list, so most questions showed nothing at all
+// rather than the wrong picture. That is what "I cannot find any images
+// relevant to that" was.
+//
+// Both apps now share `src/lib/questionDiagrams.ts`. This half asserts the web
+// side did not quietly grow its own again.
+/**
+ * Comments stripped first.
+ *
+ * Both of these files now *explain* the keyword table they replaced, by name,
+ * so a check that reads the raw text finds `EXCLUSIVE_ENTITIES` in the
+ * paragraph saying why it was deleted and fails. A check a comment can trip is
+ * a check that punishes writing things down — `check:tour` learned the same
+ * thing an hour earlier.
+ */
+const stripComments = source =>
+  source === null
+    ? null
+    : source.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:])\/\/.*$/gm, '$1');
+
+const webDiagram = stripComments(await read('../src/components/handwritten/ExamDiagramCard.tsx'));
+if (webDiagram !== null) {
+  check(
+    !/EXCLUSIVE_ENTITIES/.test(webDiagram),
+    'the web app has grown EXCLUSIVE_ENTITIES back — a keyword family table is exactly how the TCA cycle got illustrated with glycolysis',
+  );
+  check(
+    !/DIAG_STOP|score:\s*\d/.test(webDiagram),
+    'the web diagram card is scoring candidates again instead of looking a question up by its own id',
+  );
+  check(
+    /findDiagramsForQuestion/.test(webDiagram),
+    'the web diagram card no longer uses the shared identity lookup',
+  );
+  check(
+    !/topicName\s*\|\|/.test(webDiagram),
+    'the web diagram card falls back to the chapter name again — no row is filed under a chapter, and looking one up that way returns a neighbour\'s picture',
+  );
+}
+
+const shared = stripComments(await read('../src/lib/questionDiagrams.ts'));
+if (shared !== null) {
+  check(
+    /slice\(0, 50\)/.test(shared),
+    'the shared question key has lost its 50-character slice, which is what question_diagrams filed every row under',
+  );
+  check(
+    !/score|rank|includes\(kw\)/.test(shared),
+    'the shared lookup has grown scoring — identity is the whole matcher',
+  );
+  check(
+    !/\.i?like\('question_(id|text)'/.test(shared),
+    'the shared lookup is pattern-matching question_id or question_text — identity is an equality',
   );
 }
 

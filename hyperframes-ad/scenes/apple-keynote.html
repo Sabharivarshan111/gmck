@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Orbit MBBS - Apple Keynote Style Ad (Hyperframes Dynamic)</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      width: 1080px;
+      height: 1920px;
+      background: radial-gradient(circle at 50% 40%, #0f172a 0%, #020617 100%);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: #ffffff;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justifyContent: space-around;
+      padding: 60px 40px;
+      position: relative;
+    }
+    .particles {
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(2px 2px at 40px 60px, #38bdf8 50%, transparent),
+                        radial-gradient(3px 3px at 120px 180px, #818cf8 50%, transparent);
+      background-size: 200px 200px;
+      opacity: 0.4;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 28px;
+      border-radius: 9999px;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1.5px solid #38bdf860;
+      box-shadow: 0 0 25px rgba(56, 189, 248, 0.3);
+      font-size: 18px;
+      font-weight: 800;
+      color: #38bdf8;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      animation: pulse 2s infinite ease-in-out;
+    }
+    .title {
+      font-size: 60px;
+      font-weight: 900;
+      line-height: 1.15;
+      text-align: center;
+      max-width: 900px;
+      background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #38bdf8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .phone-container {
+      width: 440px;
+      height: 900px;
+      border-radius: 54px;
+      padding: 14px;
+      background: linear-gradient(145deg, #1e293b, #020617);
+      box-shadow: 0 30px 80px rgba(0,0,0,0.9), 0 0 50px rgba(56,189,248,0.3);
+      border: 2px solid rgba(255,255,255,0.2);
+      animation: float 4s ease-in-out infinite;
+    }
+    .screen {
+      width: 100%;
+      height: 100%;
+      background: #090d16;
+      border-radius: 42px;
+      padding: 48px 20px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .feature-card {
+      padding: 20px;
+      border-radius: 20px;
+      background: rgba(30, 41, 59, 0.8);
+      border: 1.5px solid #38bdf840;
+    }
+    .cta-btn {
+      padding: 20px 52px;
+      border-radius: 9999px;
+      background: linear-gradient(135deg, #38bdf8 0%, #6366f1 100%);
+      font-size: 24px;
+      font-weight: 900;
+      box-shadow: 0 0 45px rgba(56, 189, 248, 0.6);
+      border: none;
+      color: #fff;
+      animation: pulse 2s infinite ease-in-out;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(-2deg); }
+      50% { transform: translateY(-16px) rotate(2deg); }
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.04); }
+    }
+  </style>
+</head>
+<body data-duration="75s" data-fps="30">
+  <div class="particles"></div>
+  
+  <div class="badge">⚡ ORBIT MBBS • APPLE KEYNOTE PRECISION</div>
+  
+  <h1 class="title">Engineered for Medical Exam Precision</h1>
+
+  <div class="phone-container">
+    <div class="screen">
+      <div style="font-size: 11px; color: #10b981; font-weight: 900;">ORBIT MBBS OS</div>
+      <div style="font-size: 20px; font-weight: 900;">Final Year MBBS • 5,000+ PYQs</div>
+
+      <div class="feature-card">
+        <div style="font-size: 11px; color: #f59e0b; font-weight: 800;">★ 10-STAR REPEATED ESSAY</div>
+        <div style="font-size: 14px; font-weight: 800; margin-top: 4px;">"Stomach Morphology & Lymphatics"</div>
+        <div style="font-size: 11px; color: #38bdf8; margin-top: 8px;">👆 Triple-Tap for 8-Page Essay</div>
+      </div>
+
+      <div class="feature-card" style="border-color: #c084fc;">
+        <div style="font-size: 11px; color: #c084fc; font-weight: 800;">🎨 200+ HAND-DRAWN PLATES</div>
+        <div style="font-size: 14px; font-weight: 800; margin-top: 4px;">Gallbladder, Calot's Triangle & Knee Joint</div>
+      </div>
+
+      <div class="feature-card" style="border-color: #10b981;">
+        <div style="font-size: 11px; color: #10b981; font-weight: 800;">🌳 FOCUS TREES & ANKI SYNC</div>
+        <div style="font-size: 14px; font-weight: 800; margin-top: 4px;">Grow Jacaranda & 1-Click .apkg Export</div>
+      </div>
+    </div>
+  </div>
+
+  <button class="cta-btn">📲 Download Orbit MBBS • Free on iOS & Android</button>
+</body>
+</html>

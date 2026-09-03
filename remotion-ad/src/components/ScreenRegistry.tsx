@@ -15,6 +15,8 @@ export const SCREENS: Record<string, ScreenAsset> = {
   glassHome: { kind: 'screen', file: 'app_screens/glass-home.png' },
   browse: { kind: 'screen', file: 'app_screens/browse.png' },
   questions: { kind: 'screen', file: 'app_screens/questions.png' },
+  questionsChapters: { kind: 'screen', file: 'app_screens/questions-chapters.png' },
+  questionsLeaf: { kind: 'screen', file: 'app_screens/questions-leaf.png' },
 
   noteHero: { kind: 'screen', file: 'app_screens/notes-renderer.png' },
   noteBody: { kind: 'screen', file: 'app_screens/notes-renderer.png' },
@@ -31,6 +33,11 @@ export const SCREENS: Record<string, ScreenAsset> = {
   userNotes: { kind: 'screen', file: 'app_screens/notes.png' },
   userNotesEdit: { kind: 'screen', file: 'app_screens/usernotes-edit.png' },
   userNotesPreview: { kind: 'screen', file: 'app_screens/usernotes-preview.png' },
+  userNotesMedia: { kind: 'screen', file: 'app_screens/usernotes-preview.png' },
+
+  themeCustomizer: { kind: 'screen', file: 'app_screens/home-edit.png' },
+  wallpaperCustomizer: { kind: 'screen', file: 'app_screens/glass-home.png' },
+  outroCard: { kind: 'screen', file: 'app_screens/glass-home.png' },
 
   timer: { kind: 'screen', file: 'app_screens/timer.png' },
   timerBottom: { kind: 'screen', file: 'app_screens/timer-bottom.png' },

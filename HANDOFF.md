@@ -1,6 +1,6 @@
 # Handoff — Orbit MBBS native Android app
 
-**Last updated:** 2026-08-26
+**Last updated:** 2026-09-01
 
 Written so a fresh session (or a different person) can pick this up without the
 prior conversation. Read `CLAUDE.md` too — it lists the traps.
@@ -1074,3 +1074,136 @@ Completed the four tasks requiring Supabase Management / MCP tools and direct ve
 
 
 
+
+---
+
+## 12. The web app, Vercel, and the lockfile that only worked in one place (2026-09-01)
+
+**For Antigravity as much as for Claude Code. Read this before touching the
+repo root.**
+
+### There is one web app, and it already exists
+
+The owner asked for "a webapp alongside the native Android app". The answer is
+that the repo has had one since before the native app existed — the Vite/React
+app in `src/`, `index.html`, `vite.config.ts`, the one that is live and that
+`CLAUDE.md` says to leave frozen. It has real pages: Index, About, Blog, FAQ,
+StudyTips, Privacy, Terms, plus `pages/subjects` and `pages/articles`.
+
+**Do not build a second one.** That is not a style preference, it is the exact
+failure `mobile/scripts/one-app-check.mjs` was written for: a feature got built
+twice, nothing failed, nothing warned, and the owner opened an app they had not
+asked for with no way to tell which version they were looking at. The rule is in
+`.agents/rules/00-working-agreement.md` under "Which app a change belongs in".
+
+So "publish the web app" means **deploy the app in `src/`**, not create one.
+
+### The root lockfile pointed at a registry only Lovable can reach
+
+145 of the 722 entries in the root `package-lock.json` resolved to
+`europe-west4-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache` — the private
+pull-through mirror belonging to the sandbox this project was first built in.
+Every one of them returns 403 from anywhere else, so `npm ci` at the repo root
+had been impossible outside that sandbox for as long as the file existed.
+
+Nothing caught it because **nothing builds the repo root**. All three Android
+workflows install `mobile/package-lock.json`, which is a separate and clean
+file. The root lockfile is only exercised by someone running the web app, and
+it broke the moment there was a reason to build it somewhere else.
+
+Fixed in `248c09e` by rewriting only the host and keeping every version and
+integrity hash — the private registry is a pull-through mirror, so the tarballs
+are byte-identical and the hashes still verify. **Do not "fix" this by
+regenerating the lockfile**: that re-resolves all 722 packages to answer a
+question about 145 hostnames, and the diff stops being reviewable.
+
+If a package is ever added at the repo root from inside a Lovable sandbox,
+check `git diff package-lock.json` for that hostname before committing.
+
+### Two more things the web build needs
+
+- **`npm install --legacy-peer-deps`.** `@codetrix-studio/capacitor-google-auth`
+  declares a peer of `@capacitor/core@^6` while the repo is on 8. It is a
+  Capacitor plugin and has nothing to do with the web build, but npm refuses the
+  whole install over it. Pinned in `vercel.json`'s `installCommand`.
+- **An SPA rewrite.** `App.tsx` uses `BrowserRouter`, so without
+  `"rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]` every deep
+  link (/about, /faq, a subject page) is a 404 on first load. Also in
+  `vercel.json`.
+
+With those, `npm run build` succeeds: 23 files, 3.1 MB in `dist/`.
+
+### No secrets are needed to build it
+
+`src/integrations/supabase/client.ts` hardcodes the project URL and the
+**publishable** key, which are public by design and already inside the shipped
+bundle. The tracked `.env` holds only `VITE_SUPABASE_PROJECT_ID`,
+`VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` — nothing in `src/`
+even reads `import.meta.env`. There is **no service-role key anywhere in the
+repo**, and none may be added: that key bypasses RLS, and a Vite build inlines
+whatever it is given straight into a file the whole internet downloads.
+
+So a Vercel project needs **no environment variables at all**.
+
+### It is deployed, and the account slug is the thing that was wrong
+
+Project `orbitmbbs` (`prj_NJgXie5Ni1SjwT9xcWuRSliJNxq4`), linked to
+`Sabharivarshan111/gmck`, production branch `main`, framework auto-detected as
+Vite. It builds clean from `vercel.json`.
+
+**`list_teams` returns `{"teams": []}` and always will** — this is a personal
+account with no teams. `create_git_project` nevertheless *requires* a `teamId`,
+and the answer is the personal slug in **lower case**: `sabharivarshan111`. The
+GitHub capitalisation (`Sabharivarshan111`) returns a 403 that reads like an
+authorisation failure and is really just a bad slug. That one detail cost an
+hour and a wrong conclusion — it was written up here as "the connector cannot
+do this", which was false.
+
+Pass `teamId: "sabharivarshan111"` to every Vercel MCP call for this project.
+
+### The URLs are login-walled, and that is a project setting
+
+`ssoProtection` is **enabled** for `all_except_custom_domains`, so all three of
+
+    orbitmbbs.vercel.app
+    orbitmbbs-sabharivarshan111s-projects.vercel.app
+    orbitmbbs-git-main-sabharivarshan111s-projects.vercel.app
+
+returned 403 to anyone not signed in to that account, and there is no custom
+domain to be exempt — a student opening any of them saw a Vercel login page.
+
+**It is off now**, on the owner's explicit instruction:
+`update_project_deployment_protection` with `ssoProtection: { enabled: false }`.
+The site is public. Re-enable it in Vercel → Settings → Deployment Protection,
+or with the same call and `enabled: true`.
+
+Note also that `create_git_project` produces a **preview** deployment
+(`target: null`). Production comes from an ordinary push to `main`, which is
+now wired: three production deployments have landed from pushes, so a merge to
+`main` publishes the site as well as being the branch the Android workflows
+build.
+
+**That last point is worth pausing on.** `main` is now a release channel for a
+public website, not only the branch the APK workflows read. A commit that
+breaks the web build no longer just fails a check — it fails a deploy that
+people can see. `npm run build` at the repo root is the check that matters, and
+nothing in CI runs it.
+
+### What could not be verified from the sandbox
+
+The agent proxy denies `*.vercel.app` outright (`connect_rejected`, "policy
+denial"), so the live page could not be opened from here and **nobody should
+read this section as "the site was seen working"**. What *is* verified: the
+production deployment reports READY on the right commit, its build log matches
+a local `npm run build` file for file (2,418.41 kB main chunk in both), and the
+protection API returns `ssoProtection.enabled: false`. Whether the page paints
+and whether `/faq` resolves through the SPA rewrite is a browser check somebody
+outside this sandbox has to do.
+
+### If you do deploy it
+
+The web app and the native app **share one Supabase project, one question bank
+and one set of storage keys** (`orbit-profile-v1`, `question-<slug>`,
+`orbit:daily-ad:*`). A change to any of those shapes breaks cross-install
+continuity, and now breaks it for a live website too rather than just for
+someone with both installed.

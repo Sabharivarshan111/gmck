@@ -5,6 +5,7 @@ import { LayeredCameraPhone } from './LayeredCameraPhone';
 import { PlateCard } from './PlateCard';
 import { KineticWordCaption } from './KineticWordCaption';
 import { screenAsset } from './ScreenRegistry';
+import { UserNotesMediaScreen, ThemeCustomizerScreen, OutroScreen } from './CustomAppScreens';
 import type { AdScript, Shot } from '../scripts/types';
 import { DYNAMIC_SCRIPT_TIMINGS, type ShotTiming } from '../dynamicScriptTimings';
 
@@ -42,23 +43,30 @@ const ShotView: React.FC<ShotViewProps> = ({ shot, timing, voiceSrc, shotIndex }
   let touchPreset: any = undefined;
   let isTripleTap = false;
 
-  if (shot.text.toLowerCase().includes('triple-tap') || (shot.screen === 'questions' && shot.text.toLowerCase().includes('tap'))) {
+  if (shot.text.toLowerCase().includes('triple-tap') || (shot.screen?.startsWith('questions') && shot.text.toLowerCase().includes('tap'))) {
     touchPreset = 'tripleTap';
     isTripleTap = true;
   } else if (shot.screen === 'browse') {
     touchPreset = 'bottomNavBrowse';
   } else if (shot.screen === 'timer') {
-    touchPreset = 'timerStartButton';
+    touchPreset = 'bottomNavTimer';
+  } else if (shot.screen === 'askai') {
+    touchPreset = 'bottomNavAI';
+  } else if (shot.screen === 'progress') {
+    touchPreset = 'bottomNavProgress';
+  } else if (shot.screen === 'userNotes' || shot.screen === 'userNotesEdit' || shot.screen === 'userNotesMedia') {
+    touchPreset = 'bottomNavNotes';
   } else if (shot.screen === 'ankiStudy' || shot.screen === 'chatdemo') {
     touchPreset = 'mcqOption';
   } else if (shot.screen === 'flashcards') {
     touchPreset = 'flashcardFlip';
-  } else if (shot.screen === 'userNotes' || shot.screen === 'userNotesEdit') {
-    touchPreset = 'bottomNavNotes';
-  } else if (shot.screen === 'progress') {
-    touchPreset = 'bottomNavProgress';
-  } else if (shot.screen === 'glassHome') {
+  } else if (shot.screen === 'themeCustomizer' || shot.screen === 'wallpaperCustomizer' || shot.screen === 'glassHome') {
     touchPreset = 'themeSwatch';
+  }
+
+  let customScreenContent: React.ReactNode = null;
+  if (shot.screen === 'outroCard') {
+    customScreenContent = <OutroScreen />;
   }
 
   return (
@@ -78,7 +86,9 @@ const ShotView: React.FC<ShotViewProps> = ({ shot, timing, voiceSrc, shotIndex }
             isTripleTap={isTripleTap}
             shotIndex={shotIndex}
             durationInFrames={durationInFrames}
-          />
+          >
+            {customScreenContent}
+          </LayeredCameraPhone>
         )}
       </AbsoluteFill>
       <AbsoluteFill style={{ opacity: alpha }}>

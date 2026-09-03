@@ -14,8 +14,8 @@ export const drawItFromMemory: AdScript = {
   rate: '+10%',
   pitch: '-1Hz',
   shots: [
-    { n: 1, screen: null, camera: 'macro', text: 'Draw the brachial plexus', vo: 'You can explain the brachial plexus. Now draw it.', accent: '#FF4D8D' },
-    { n: 2, screen: null, camera: 'push', text: 'From memory', vo: 'From memory. Four minutes. Most people freeze here.', accent: '#FF4D8D' },
+    { n: 1, screen: 'plateBrachial', camera: 'macro', text: 'Draw the brachial plexus', vo: 'You can explain the brachial plexus. Now draw it.', focus: 0.25, accent: '#FF4D8D' },
+    { n: 2, screen: 'plateBrachial', camera: 'push', text: 'From memory', vo: 'From memory. Four minutes. Most people freeze here.', focus: 0.35, accent: '#FF4D8D' },
     { n: 3, screen: 'plateBrachial', camera: 'settle', text: 'This is the mark', vo: 'This is what the examiner wants on the page.', accent: '#22D3A6' },
     { n: 4, screen: 'plateBrachial', camera: 'macro', text: 'Roots. Trunks. Cords.', vo: 'Roots, trunks, divisions, cords, branches. All labelled.', focus: 0.4, accent: '#22D3A6' },
     { n: 5, screen: 'noteDiagram', camera: 'pull', text: 'Inside the app', vo: "It's already in the app. Attached to that question.", accent: '#22D3A6' },
@@ -41,8 +41,8 @@ export const drawItFromMemory: AdScript = {
     { n: 25, screen: 'timer', camera: 'push', text: '25:00', vo: 'Twenty-five focused minutes. A tree grows for it.', accent: '#22D3A6' },
     { n: 26, screen: 'treegallery', camera: 'trackLeft', text: '12 species', vo: 'Twelve species. Earned in hours, not coins.', accent: '#22D3A6' },
     { n: 27, screen: 'progress', camera: 'pull', text: 'Your year', vo: 'Everything you drilled, mapped across the year.', accent: '#F5B301' },
-    { n: 28, screen: 'glassHome', camera: 'orbit', text: '', vo: "And it looks like something you'd want to open.", accent: '#4CC2FF' },
-    { n: 29, screen: null, camera: 'pull', text: '3:40 left', vo: 'Same question. Same four minutes. Different outcome.', accent: '#FF4D8D' },
-    { n: 30, screen: null, camera: 'settle', text: 'Orbit MBBS QBank', vo: 'Orbit MBBS. Free on Google Play.', accent: '#7C5CFF' },
+    { n: 28, screen: 'themeCustomizer', camera: 'orbit', text: '', vo: "And it looks like something you'd want to open.", accent: '#4CC2FF' },
+    { n: 29, screen: 'userNotesEdit', camera: 'pull', text: '3:40 left', vo: 'Same question. Same four minutes. Different outcome.', accent: '#FF4D8D' },
+    { n: 30, screen: 'outroCard', camera: 'settle', text: 'Orbit MBBS', vo: 'Orbit MBBS. Free on Google Play.', accent: '#7C5CFF' },
   ],
 };

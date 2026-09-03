@@ -2,9 +2,11 @@ import React from 'react';
 import { interpolate, useCurrentFrame } from 'remotion';
 
 export type TouchPreset =
+  | 'bottomNavHome'
   | 'bottomNavBrowse'
   | 'bottomNavNotes'
   | 'bottomNavTimer'
+  | 'bottomNavAI'
   | 'bottomNavProgress'
   | 'questionCard'
   | 'tripleTap'
@@ -24,10 +26,12 @@ interface InteractiveTouchRippleProps {
 }
 
 const PRESET_COORDS: Record<string, { x: number; y: number }> = {
-  bottomNavBrowse: { x: 30, y: 92 },
-  bottomNavNotes: { x: 50, y: 92 },
-  bottomNavTimer: { x: 70, y: 92 },
-  bottomNavProgress: { x: 90, y: 92 },
+  bottomNavHome: { x: 10, y: 94 },
+  bottomNavBrowse: { x: 30, y: 94 },
+  bottomNavNotes: { x: 30, y: 94 },
+  bottomNavTimer: { x: 50, y: 94 },
+  bottomNavAI: { x: 70, y: 94 },
+  bottomNavProgress: { x: 90, y: 94 },
   questionCard: { x: 50, y: 38 },
   tripleTap: { x: 50, y: 42 },
   diagramCard: { x: 50, y: 40 },

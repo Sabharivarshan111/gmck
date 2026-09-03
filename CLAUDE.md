@@ -229,6 +229,92 @@ Three things around it were the same bug wearing different clothes:
   rewritten back to `handwritten_notes` on the next open, so a wrong picture
   cached months ago disappears the first time anyone looks at it.
 
+### There are three copies of this app, and they have diverged
+
+| Where | What | Diagram code |
+|---|---|---|
+| `mobile/` | the native Android app | `lib/handwrittenNotes.ts` → the shared module |
+| `src/` | the web app, deployed to Vercel from `main` | `components/handwritten/ExamDiagramCard.tsx` → the shared module |
+| Lovable project `mbbsqbank-questor` | **a separate tree**, published at its own URL | its own `components/diagrams/` — not in this repo |
+
+The Lovable project is the same *app* — same `package.json`, same og-image, same
+Supabase — but **it is not this repo's `src/`**. It has files this repo does not
+(`components/diagrams/DiagramViewer.tsx`, `DiagramChip.tsx`,
+`admin/AdminDiagramsPanel.tsx`) and lacks files this repo has
+(`ExamDiagramCard.tsx`, `shell/`, `theme/`, `walkthrough/`). A fix pushed here
+does **not** reach it; it has to be sent through the Lovable connector as a
+message to its agent.
+
+Workspace `SsJFPAW9Fet3beeN2YWW`, project `89df4dbc-89e6-4e44-a7b1-76b9de94066e`.
+
+### `question_id` is UNIQUE, so a question has **one** row by id
+
+`question_diagrams` has exactly two constraints: `PRIMARY KEY (id)` and
+`UNIQUE (question_id)`. `question_text` is not constrained.
+
+That corrects something stated below and believed for months. "The number of
+diagrams a question has is the number of rows it has" is true, but the rows
+cannot all be found by id — only one can. **A second and third diagram for the
+same question are reachable only through the `question_text` query**, which is
+why that query exists and is not redundant with the id one.
+
+The practical consequence, and it is a real design tension: the caption under a
+diagram is the row's `question_text`, and matching by text needs that same
+column to equal the question. So a question with several diagrams has several
+rows whose text is the question — and they therefore share one caption. 849
+rows already look like this, because for an ordinary row `question_text` **is**
+the bank's question. A row with a hand-written descriptive caption is the
+exception, and it is exactly the row that cannot be found.
+
+Attempting `update … set question_id = <bank key>` on more than one row fails
+with `duplicate key value violates unique constraint`. That error is the schema
+telling you to use `question_text` for the extras.
+
+### A picture that exists is not the same as a picture that is reachable
+
+`question_diagrams` has 5,435 rows and **855 of them carry a `public_url`**. The
+other 4,580 are placeholders for a picture nobody has generated, and no lookup
+can do anything about that — a question with no image is the ordinary case, not
+a bug.
+
+Separately, and much less obviously: **three of the 855 are orphaned.** They
+carry a slug `question_id` (`question-shoulder-joint-cardinal-relations-sagittal`)
+instead of the bank key, *and* a paraphrased `question_text` instead of the
+question's own. All three are Shoulder joint diagrams, and all three are
+therefore invisible in **every** app — the id join misses, the text join misses,
+and the normalised subject fallback misses. Proved with the three real queries
+against production: 0, 0, 0.
+
+That matters because it looks exactly like the code being broken, and it is not.
+`CLAUDE.md` describes the thirteen hand-inserted slug rows as reachable "through
+their `question_text`" — which is only true when that text **equals** the bank's
+question. For these three it does not.
+
+**The fix is data, not code**, and it has been applied to those three: the most
+comprehensive plate took the `question_id` slot (which first had to be freed —
+an empty placeholder row with `public_url IS NULL` was holding the unique key,
+and was parked under `parked-empty-<id>` rather than deleted), and all three had
+`question_text` set to the bank's exact question so the text query returns them
+together. Verified by running the app's own two queries against production:
+**3 diagrams**, where it had been 0.
+
+Both apps picked it up with no deploy, because both read this table and
+`applyQuestionDiagrams` rebuilds a cached note's diagram sections on every open.
+
+Do not be tempted to loosen the matcher to reach a row like this — that is the
+keyword search coming back through the side door. Fix the row.
+
+**A question answers to two strings, and only one of them is on screen.**
+Every screen strips the leading `"12. "` before opening a note — it has to,
+because `generate-handwritten-notes` keys its cache on a hash of that exact
+string and 75+ notes hang off those hashes — while `question_diagrams` filed
+its rows under the bank's raw text. The first 50 characters then differ, the id
+misses, the text equality misses, and 53 of the 855 pictures were unreachable
+from all three apps with nothing anywhere saying why. The screen passes both
+forms (`rawQuestion`), and the lookup asks about both with `.in()`, which is
+`.eq` repeated rather than a search. `rawQuestion` reaches the diagram lookup
+and nothing else: merging it into `question` would change what gets hashed.
+
 **The filename is an auditor, not a matcher.** Every plate is named for what it
 draws, so a question sharing two or more of a filename's specific words is
 probably that plate's — `npm run audit:diagrams` does that and prints where it
@@ -1434,6 +1520,32 @@ matched "you" on the **display name**, which highlights a stranger the moment
 two readers pick the same one; `selfId` is the profile id, and the name is only
 the fallback for a reader with no account.
 
+## The web app asks nobody to sign in
+
+`BrowseTab` rendered a "We've crossed 1000+ users — you're requested to sign in
+with Google" card **instead of** the question list for every reader without a
+session. Not a prompt beside the bank: a wall in front of it. It is gone on the
+app owner's instruction, along with `GoogleGateCard`, `GoogleSyncButton` and
+`EmailSyncButton`, and `npm run check:open-access` drives the built app down to
+a real topic with no session and fails if any of it comes back.
+
+Two things it deliberately did **not** remove, and both would be a surprise:
+
+- **The anonymous session stays.** It is what carries XP, the streak, the
+  leaderboard and cloud progress, and no reader is ever asked for anything to
+  get one — `saveProfile` creates it when they set their name and year. Removing
+  it would take My Progress down with it, which is not what "remove sign-in"
+  meant.
+- **Buying still signs you in.** `RemoveAdsButton` and `NotesPurchaseCard` call
+  `signInWithOAuth` when the reader presses Buy, because a purchase has to
+  attach to an account or it cannot be restored. Nothing asks until they choose
+  to pay.
+
+The three "Sign in with Google or email to…" placeholders on Notes, Calendar and
+the leaderboard now say "Set your name and year above" — which is what they
+always actually meant, since all three gate on `userId` and that comes from the
+profile.
+
 ## Storage keys are shared with the web app
 
 The native app deliberately reuses the web app's keys so one user with both
@@ -1483,6 +1595,8 @@ npm run check:trees              # the focus trees stay drawable and distinct
 npm run check:music              # the player opens below its button, and plays
 npm run check:glass-shader       # the AGSL pane is gated, layered, and never load-bearing
 npm run check:diagrams           # a question shows its own diagram, or none
+npm run check:web-note           # the web triple tap draws the plate, answer beneath
+npm run check:open-access        # no sign-in wall stands in front of the questions
 npm run check:apkg               # an Anki package imports, and not its decoy collection
 npm run check:tour               # the walkthrough points at controls that exist, and names no book
 npm run check:mcq                # MCQ response parsing + the ask-gemini markers

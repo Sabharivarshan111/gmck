@@ -1,0 +1,31 @@
+{
+  "name": "orbit-mbbs-hyperframes-ads",
+  "version": "1.0.0",
+  "description": "Hyperframes Suite for Orbit MBBS Video Advertisements",
+  "compositions": [
+    {
+      "id": "OrbitAd_AppleKeynote",
+      "src": "./scenes/apple-keynote.html",
+      "durationInFrames": 2250,
+      "fps": 30,
+      "width": 1080,
+      "height": 1920
+    },
+    {
+      "id": "OrbitAd_CollegeHumor",
+      "src": "./scenes/college-humor.html",
+      "durationInFrames": 2250,
+      "fps": 30,
+      "width": 1080,
+      "height": 1920
+    },
+    {
+      "id": "OrbitAd_CyberpunkOS",
+      "src": "./scenes/cyberpunk-os.html",
+      "durationInFrames": 2250,
+      "fps": 30,
+      "width": 1080,
+      "height": 1920
+    }
+  ]
+}

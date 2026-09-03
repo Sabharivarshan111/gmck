@@ -207,16 +207,21 @@ export default function BrowseNodeScreen() {
   );
   const notesAvailable = subjectKey !== '' && hasTextbook(subjectKey, subjectName);
   const [notedQuestion, setNotedQuestion] = useState<string | null>(null);
-  const openNote = useCallback(
-    (question: string) => setNotedQuestion(question),
-    [],
-  );
-  const closeNote = useCallback(() => setNotedQuestion(null), []);
+  const [notedRaw, setNotedRaw] = useState<string | null>(null);
+  const openNote = useCallback((question: string, rawQuestion: string) => {
+    setNotedQuestion(question);
+    setNotedRaw(rawQuestion);
+  }, []);
+  const closeNote = useCallback(() => {
+    setNotedQuestion(null);
+    setNotedRaw(null);
+  }, []);
   const onNote = notesAvailable ? openNote : undefined;
 
   const noteReader = (
     <SingleQuestionNote
       question={notedQuestion}
+      rawQuestion={notedRaw}
       subjectKey={subjectKey}
       subjectName={subjectName}
       yearLabel={YEAR_LABEL[year]}

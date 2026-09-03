@@ -19,7 +19,7 @@ const ProgressNotesTab = ({ userId }: Props) => {
   if (!userId) {
     return (
       <div className="rounded-2xl bg-card border p-6 text-center text-sm text-muted-foreground">
-        Sign in with Google or email to use cloud-synced notes.
+        Set your name and year above to start keeping notes.
       </div>
     );
   }

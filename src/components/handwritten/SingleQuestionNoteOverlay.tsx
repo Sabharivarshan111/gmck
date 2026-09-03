@@ -7,6 +7,8 @@ import NotesAiEditBox from "./NotesAiEditBox";
 
 interface Payload {
   question: string;
+  /** The bank's string before the leading "12. " was stripped. Diagrams only. */
+  rawQuestion?: string;
   subject: string;
   subjectKey: string;
   year: string;
@@ -131,7 +133,17 @@ export default function SingleQuestionNoteOverlay() {
           )}
           {content && !loading && (
             <div className="space-y-4">
-              <HandwrittenNotesView subtopicName={payload?.question || ""} content={content} subject={payload?.subject} />
+              <HandwrittenNotesView
+                subtopicName={payload?.question || ""}
+                content={content}
+                subject={payload?.subject}
+                /* The heading and the diagram key are the same string here —
+                   this overlay *is* one question — but they are passed
+                   separately because they mean different things, and the
+                   chapter hub passes only the first. */
+                questionText={payload?.question}
+                rawQuestionText={payload?.rawQuestion}
+              />
               <NotesAiEditBox
                 compact
                 subtopicKey={`single::${payload!.subjectKey}::${hashKey(payload!.question)}`}

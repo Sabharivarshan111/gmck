@@ -33,6 +33,14 @@ const SHOTS = [
     name: 'questions',
     query: 'screen=browse&year=second-year&node=pathology&title=Pathology',
   },
+  {
+    name: 'questions-chapters',
+    query: 'screen=browse&year=second-year&node=pathology,paper-1&title=Paper%201',
+  },
+  {
+    name: 'questions-leaf',
+    query: 'screen=browse&year=second-year&node=pathology,paper-1,cell-injury&title=Cell%20Injury',
+  },
   // Both themes get captured. A palette change that only ever gets eyeballed
   // in dark is a palette change that breaks light.
   { name: 'notes-bottom', query: 'screen=notes', scroll: 'bottom' },

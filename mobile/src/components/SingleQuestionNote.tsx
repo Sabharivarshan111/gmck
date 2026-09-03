@@ -39,6 +39,7 @@ import { RotateCw, X } from 'lucide-react-native';
  */
 export function SingleQuestionNote({
   question,
+  rawQuestion,
   subjectKey,
   subjectName,
   yearLabel,
@@ -46,6 +47,14 @@ export function SingleQuestionNote({
 }: {
   /** Null closes the reader. Changing it starts a new note. */
   question: string | null;
+  /**
+   * The bank's own string for this question, still carrying its leading
+   * `"12. "`. `question` has had that removed because the notes function's
+   * cache key is a hash of it; the diagram rows were filed under the numbered
+   * text, so the lookup needs this as well or a numbered question's picture is
+   * unreachable.
+   */
+  rawQuestion?: string | null;
   subjectKey: string;
   subjectName: string;
   yearLabel: string;
@@ -77,7 +86,13 @@ export function SingleQuestionNote({
       setContent(null);
       try {
         const next = await fetchSingleQuestionNote(
-          { question, subjectKey, subjectName, yearLabel },
+          {
+            question,
+            rawQuestion: rawQuestion ?? undefined,
+            subjectKey,
+            subjectName,
+            yearLabel,
+          },
           regenerate,
         );
         if (runId.current === run) {
@@ -93,7 +108,7 @@ export function SingleQuestionNote({
         }
       }
     },
-    [question, subjectKey, subjectName, yearLabel],
+    [question, rawQuestion, subjectKey, subjectName, yearLabel],
   );
 
   useEffect(() => {
@@ -222,7 +237,13 @@ export function SingleQuestionNote({
 
           {content && question ? (
             <NotesAiEditBox
-              request={{ question, subjectKey, subjectName, yearLabel }}
+              request={{
+                question,
+                rawQuestion: rawQuestion ?? undefined,
+                subjectKey,
+                subjectName,
+                yearLabel,
+              }}
               content={content}
               onApply={setContent}
             />

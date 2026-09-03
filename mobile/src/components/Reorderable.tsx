@@ -953,15 +953,25 @@ export function Reorderable<Id extends string>({
   );
 }
 
-/** Height of the lane above a block that the toolbar sits in, in edit mode. */
-const TOOLBAR_LANE = 38;
+/**
+ * Height of the lane above a block that the toolbar sits in, in edit mode.
+ *
+ * Tight against the 32dp pill on purpose. At 38 the lanes added 60dp of empty
+ * vertical to *every* block, which across five blocks is most of a screen of
+ * nothing — the report was that the page had "so much space" and that a block
+ * was hard to get hold of, and a small block ended up with its grip apparently
+ * floating on its own in the gap below it. The chrome still has its own lane,
+ * which is what stops a toolbar covering the block above it; it is just no
+ * longer given more room than the pill inside it needs.
+ */
+const TOOLBAR_LANE = 26;
 /**
  * And the lanes below and to the right, for the width and height grips. A grip
  * drawn over the card it resizes covers the thing being resized — the width bar
  * used to sit across "Ask AI" — and a grip drawn *outside* the row lands in the
  * next block's touch area, where its responder claims the drag.
  */
-const GRIP_LANE = 22;
+const GRIP_LANE = 14;
 
 const styles = StyleSheet.create({
   row: {
