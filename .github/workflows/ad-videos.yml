@@ -61,13 +61,22 @@ jobs:
       - name: Install edge-tts
         run: pip install edge-tts
 
+      # `npm run voice` writes the manifest AND runs the synthesiser. It used to
+      # only write the manifest, which meant CI never re-recorded anything and
+      # the committed clips could drift away from the script -- orbit-2am had
+      # done exactly that, and would have shipped an ad whose voice contradicted
+      # its own captions.
+      #
+      # If Microsoft's endpoint is unreachable this step fails and no ad is
+      # published. That is the intended trade: an ad with no voice is not an ad.
       - name: Synthesise the voiceovers
         working-directory: remotion-ad
         run: npm run voice
 
       # Nothing renders until every asset a script names is present and is not
       # a blank capture. This is the guard against shipping a cut with "this
-      # diagram could not be loaded" in it, which has happened before.
+      # diagram could not be loaded" in it, which has happened before -- and now
+      # also against a silent shot, which is worse because it looks finished.
       - name: Preflight
         working-directory: remotion-ad
         run: npm run preflight
@@ -132,6 +141,33 @@ jobs:
           # under one is a failed render that produced a valid-looking file.
           if [ "$SIZE" -lt 1000000 ]; then
             echo "Render produced only $SIZE bytes — treating as a failure."
+            exit 1
+          fi
+
+      # The last word on "does it have a voice".
+      #
+      # Everything upstream checks inputs: that the mp3s exist, that they are
+      # not truncated, that they say what the script says. None of that proves
+      # the render actually muxed them in -- `staticFile()` on a bad path does
+      # not stop a Remotion render, it just produces silence. So ask the
+      # finished file.
+      - name: Check the video actually has a voice in it
+        working-directory: remotion-ad
+        run: |
+          set -e
+          STREAMS=$(ffprobe -v error -select_streams a \
+            -show_entries stream=codec_type -of csv=p=0 "out/${{ matrix.file }}" | wc -l)
+          if [ "$STREAMS" -lt 1 ]; then
+            echo "::error::${{ matrix.file }} has NO audio stream — it is a silent ad."
+            exit 1
+          fi
+          DUR=$(ffprobe -v error -select_streams a:0 \
+            -show_entries stream=duration -of csv=p=0 "out/${{ matrix.file }}")
+          echo "audio stream present, ${DUR}s"
+          # A 90s ad whose audio track is a couple of seconds long is a render
+          # that found one clip and missed twenty-nine.
+          if awk "BEGIN{exit !(${DUR:-0} < 60)}"; then
+            echo "::error::audio is only ${DUR}s of a 90s ad — most shots are silent."
             exit 1
           fi
 
