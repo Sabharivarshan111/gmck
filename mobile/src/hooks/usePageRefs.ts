@@ -21,7 +21,7 @@ export function usePageRefs(
   pages: Map<string, ConfirmedPage>;
   refresh: () => void;
 } {
-  const { showPageRefs } = useSettings();
+  const { showPageRefs, myBookId } = useSettings();
   const [pages, setPages] = useState<Map<string, ConfirmedPage>>(new Map());
 
   // The identity of the array changes every render; its content is what matters.
@@ -32,12 +32,15 @@ export function usePageRefs(
       setPages(new Map());
       return;
     }
-    const next = await confirmedPagesFor(questions.map(question => ({ question })));
+    const next = await confirmedPagesFor(
+      questions.map(question => ({ question })),
+      myBookId,
+    );
     setPages(next);
     // `questions` is intentionally read through the memo key rather than listed:
     // a new array of the same questions must not refetch.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showPageRefs, key]);
+  }, [showPageRefs, key, myBookId]);
 
   useEffect(() => {
     void load();

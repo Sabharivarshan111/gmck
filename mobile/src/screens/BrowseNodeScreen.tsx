@@ -118,7 +118,7 @@ export default function BrowseNodeScreen() {
    * be five hundred rows long, so the pages arrive in one batch keyed by
    * question id and each row reads its own out of the map.
    */
-  const { showPageRefs } = useSettings();
+  const { showPageRefs, myBookId, myBookLabel } = useSettings();
   const cleanQuestions = useMemo(
     () => questions.map(getCleanQuestionText),
     [questions],
@@ -566,6 +566,7 @@ export default function BrowseNodeScreen() {
                   color={showPageRefs ? colors.primaryText : colors.textMuted}
                 />
                 <Text
+                  numberOfLines={1}
                   style={[
                     styles.pageToggleText,
                     {
@@ -573,7 +574,7 @@ export default function BrowseNodeScreen() {
                     },
                   ]}
                 >
-                  Textbook pages
+                  {showPageRefs && myBookLabel ? myBookLabel : 'Textbook pages'}
                 </Text>
                 <View
                   style={[
@@ -666,6 +667,7 @@ export default function BrowseNodeScreen() {
                 ? pageFor(pages, getCleanQuestionText(item.question))
                 : undefined
             }
+            myBook={Boolean(myBookId)}
           />
         )}
       />

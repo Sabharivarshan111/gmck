@@ -225,6 +225,15 @@ export interface ConfirmedPage {
  */
 export async function confirmedPagesFor(
   questions: { question: string; rawQuestion?: string }[],
+  /**
+   * The reader's own book. When set, ONLY that book's page comes back.
+   *
+   * This is the difference between a useful number and a useless one: a reader
+   * holding Robbins does not want the page in Harrison, and cannot tell the two
+   * apart from a chip. With no book chosen the best-supported page is returned
+   * and the chip names its book instead.
+   */
+  myBookId?: string,
 ): Promise<Map<string, ConfirmedPage>> {
   const out = new Map<string, ConfirmedPage>();
   if (questions.length === 0) {
@@ -241,6 +250,7 @@ export async function confirmedPagesFor(
 
   const { data, error } = await supabase.rpc('confirmed_page_refs', {
     _question_ids: [...ids],
+    _book_id: myBookId || null,
   });
   if (error) {
     warn('pageRefs.confirmedPagesFor', error.message);

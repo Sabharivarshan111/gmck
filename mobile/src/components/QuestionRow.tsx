@@ -48,6 +48,16 @@ interface Props {
    * from the screen's single batch fetch rather than fetched per row.
    */
   communityPage?: ConfirmedPage;
+  /**
+   * Whether the page shown is from the reader's OWN chosen book.
+   *
+   * When it is, the chip drops the book name — the header already says which
+   * book once, and repeating it on five hundred rows is noise that also pushes
+   * the page number, the only part that changes, off the end of the chip.
+   * Without a chosen book the name stays: an unattributed page number is not
+   * something a reader can act on.
+   */
+  myBook?: boolean;
 }
 
 /**
@@ -77,6 +87,7 @@ function QuestionRowBase({
   highlighted = false,
   onPageRef,
   communityPage,
+  myBook = false,
 }: Props) {
   const { colors } = useTheme();
   const reduceMotion = useReducedMotion();
@@ -330,9 +341,11 @@ function QuestionRowBase({
                 ]}
               >
                 {communityPage
-                  ? `${communityPage.bookName}${
-                      communityPage.edition ? ` ${communityPage.edition}` : ''
-                    } · p.${communityPage.page}`
+                  ? myBook
+                    ? `p.${communityPage.page}`
+                    : `${communityPage.bookName}${
+                        communityPage.edition ? ` ${communityPage.edition}` : ''
+                      } · p.${communityPage.page}`
                   : 'Add textbook page'}
               </Text>
             </Touchable>

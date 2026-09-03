@@ -111,6 +111,22 @@ export interface Settings {
    * about page references until somebody says they want them.
    */
   showPageRefs: boolean;
+  /**
+   * The book this reader actually owns, as a `reference_books` id.
+   *
+   * A page number is only worth anything to somebody holding that book, so the
+   * row chip shows the page for THIS book. Without it the chip showed whichever
+   * book had the most votes, which means a reader holding Robbins was being
+   * given a page in Harrison — a number that is not wrong so much as useless,
+   * and worse, indistinguishable from a useful one.
+   *
+   * Empty means "no book chosen": the chip then falls back to the
+   * best-supported book and names it, which is the honest version of not
+   * knowing.
+   */
+  myBookId: string;
+  /** The chosen book's name, cached so a chip can render before any fetch. */
+  myBookLabel: string;
 }
 
 /**
@@ -173,6 +189,8 @@ export const DEFAULT_SETTINGS: Settings = {
   // Off: only useful to a reader holding that particular book, and it is what
   // gates the network call.
   showPageRefs: false,
+  myBookId: '',
+  myBookLabel: '',
   // On by default: the point of the alert is to reach someone who has stopped
   // looking at the screen, and a phone face-down on a desk is silent but not
   // still.
@@ -286,6 +304,12 @@ export async function hydrateSettings(): Promise<void> {
         typeof parsed.showPageRefs === 'boolean'
           ? parsed.showPageRefs
           : DEFAULT_SETTINGS.showPageRefs,
+      myBookId:
+        typeof parsed.myBookId === 'string' ? parsed.myBookId : DEFAULT_SETTINGS.myBookId,
+      myBookLabel:
+        typeof parsed.myBookLabel === 'string'
+          ? parsed.myBookLabel
+          : DEFAULT_SETTINGS.myBookLabel,
     };
     emit();
   } catch {

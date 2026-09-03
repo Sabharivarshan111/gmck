@@ -117,10 +117,35 @@ if (left !== 0) {
 }
 await shot('pageref-5-toggle-off-again');
 
+// The quorum indicator, on fixed data.
+//
+// The real sheet reads Supabase, which no agent sandbox can reach, so the part
+// of this feature that carries its meaning — how close a page is to being shown
+// to everyone — is the part that could otherwise never be photographed.
+// `?screen=quorumdemo` renders the real QuorumPips against three fixed claims.
+await page.goto('http://localhost:5201/?screen=quorumdemo', { waitUntil: 'networkidle' });
+await page.waitForTimeout(1200);
+await shot('pageref-6-quorum');
+
+const bars = await page.locator('[role="progressbar"]').count();
+if (bars !== 3) {
+  throw new Error(`expected 3 quorum indicators, found ${bars}`);
+}
+// A confirmed claim and a pending one must not read the same.
+if ((await page.getByText('Shown to everyone').count()) !== 1) {
+  throw new Error('the confirmed claim does not say it is shown to everyone');
+}
+if ((await page.getByText('Needs more readers').count()) !== 2) {
+  throw new Error('the pending claims do not say they need more readers');
+}
+
 await browser.close();
 await server.close();
 
 if (errors.length) {
   process.stdout.write(`\nPage errors:\n${errors.join('\n')}\n`);
 }
-process.stdout.write('\nOK  toggle switches, chips follow it, sheet opens and states the quorum\n');
+process.stdout.write(
+  '\nOK  toggle switches, chips follow it, the sheet opens and states the quorum,\n' +
+    '    and the indicator distinguishes a confirmed page from a pending one\n',
+);

@@ -11,6 +11,7 @@ import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/
 import { navigationRef } from '@/navigation/ref';
 import type { InitialState } from '@react-navigation/native';
 import { ThemeProvider, useTheme } from '@/theme';
+import { QuorumPips } from '@/components/QuorumPips';
 import { Bot } from '@/components/Bot';
 import type { StateId } from '@/bot/states';
 import RootNavigator from '@/navigation/RootNavigator';
@@ -452,6 +453,74 @@ const PLATE_AXILLA =
  * `question_diagrams` is behind Supabase, which no sandbox can reach. What is
  * real here is the renderer and the section shape it is given.
  */
+
+/*
+ * ?screen=quorumdemo — the claim rows and their quorum pips, on fixed data.
+ *
+ * The real sheet reads Supabase, which no agent sandbox can reach, so the one
+ * part of this feature that carries its meaning — how close a page is to being
+ * shown to everyone — was the part that could never be photographed. This is
+ * fixed data through the *real* QuorumPips component, so what the screenshot
+ * shows is what a phone draws.
+ */
+function QuorumDemo() {
+  const { colors } = useTheme();
+  const rows = [
+    { book: 'Robbins Basic Pathology', edition: '10th', page: 341, votes: 3 },
+    { book: 'Harrison', edition: '21st', page: 288, votes: 2 },
+    { book: "Gray's Anatomy for Students", edition: '4th', page: 47, votes: 1 },
+  ];
+  return (
+    <View style={{ flex: 1, backgroundColor: colors.background, padding: 20, gap: 12 }}>
+      <Text style={{ color: colors.text, fontSize: 22, fontWeight: '800' }}>
+        Textbook page
+      </Text>
+      <Text style={{ color: colors.textMuted, fontSize: 13 }}>
+        A page number appears for everyone once 3 readers have entered the same
+        one for the same book and edition.
+      </Text>
+      {rows.map(r => {
+        const confirmed = r.votes >= 3;
+        return (
+          <View
+            key={r.book}
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: 8,
+              borderRadius: 12,
+              borderWidth: 1,
+              paddingHorizontal: 12,
+              paddingVertical: 10,
+              backgroundColor: colors.cardElevated,
+              borderColor: confirmed ? colors.success : colors.border,
+            }}>
+            <View style={{ flex: 1, gap: 2 }}>
+              <Text style={{ color: colors.text, fontSize: 14, fontWeight: '700' }}>
+                {r.book} · {r.edition}
+              </Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 2 }}>
+                <Text style={{ color: colors.text, fontSize: 12, fontWeight: '800' }}>
+                  p.{r.page}
+                </Text>
+                <QuorumPips votes={r.votes} quorum={3} />
+                <Text
+                  style={{
+                    color: confirmed ? colors.success : colors.textMuted,
+                    fontSize: 12,
+                  }}>
+                  {confirmed ? 'Shown to everyone' : 'Needs more readers'}
+                </Text>
+              </View>
+            </View>
+          </View>
+        );
+      })}
+    </View>
+  );
+}
+
+
 function ChapterDiagramsDemo() {
   const { colors } = useTheme();
   const withDiagrams = React.useMemo(
@@ -901,6 +970,9 @@ function Shell() {
   }
   if (screen === 'diagramdemo') {
     return <DiagramDemo />;
+  }
+  if (screen === 'quorumdemo') {
+    return <QuorumDemo />;
   }
   if (screen === 'chapterdiagrams') {
     return <ChapterDiagramsDemo />;

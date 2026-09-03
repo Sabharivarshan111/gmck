@@ -8,9 +8,11 @@ import {
 } from 'react-native';
 import { BookOpen, Check, Plus, Trash2 } from 'lucide-react-native';
 import { Text } from '@/components/Text';
+import { QuorumPips } from '@/components/QuorumPips';
 import { Sheet } from '@/components/Sheet';
 import { Touchable } from '@/components/Touchable';
 import { useTheme } from '@/theme';
+import { setSetting, useSettings } from '@/lib/settings';
 import { typeScale } from '@/theme/typography';
 import {
   PAGE_REF_QUORUM,
@@ -53,6 +55,7 @@ export function PageRefSheet({
   onChanged,
 }: Props) {
   const { colors } = useTheme();
+  const { myBookId } = useSettings();
 
   const [refs, setRefs] = useState<PageRef[]>([]);
   const [books, setBooks] = useState<ReferenceBook[]>([]);
@@ -80,13 +83,20 @@ export function PageRefSheet({
       setRefs(nextRefs);
       setBooks(nextBooks);
       setMayContribute(allowed);
-      setBookId(previous => previous ?? nextBooks[0]?.id ?? null);
+      // Their own book first — that is the whole point of having chosen one.
+      setBookId(
+        previous =>
+          previous ??
+          (myBookId && nextBooks.some(b => b.id === myBookId)
+            ? myBookId
+            : nextBooks[0]?.id ?? null),
+      );
     } catch (err) {
       setError(String(err));
     } finally {
       setLoading(false);
     }
-  }, [question, rawQuestion]);
+  }, [question, rawQuestion, myBookId]);
 
   useEffect(() => {
     if (visible) {
@@ -114,6 +124,11 @@ export function PageRefSheet({
         previous.some(b => b.id === book.id) ? previous : [...previous, book],
       );
       setBookId(book.id);
+      setSetting('myBookId', book.id);
+      setSetting(
+        'myBookLabel',
+        book.edition ? `${book.name} ${book.edition}` : book.name,
+      );
       setAdding(false);
       setNewName('');
       setNewEdition('');
@@ -199,18 +214,20 @@ export function PageRefSheet({
                   {ref.bookName}
                   {ref.edition ? ` · ${ref.edition}` : ''}
                 </Text>
-                <Text
-                  style={[
-                    styles.refState,
-                    {
-                      color: ref.confirmed ? colors.success : colors.textMuted,
-                    },
-                  ]}
-                >
-                  {ref.confirmed
-                    ? `Page ${ref.page} · confirmed by ${ref.votes}`
-                    : `Page ${ref.page} · ${ref.votes} of ${PAGE_REF_QUORUM} so far`}
-                </Text>
+                <View style={styles.refStateRow}>
+                  <Text style={[styles.refPage, { color: colors.text }]}>
+                    p.{ref.page}
+                  </Text>
+                  <QuorumPips votes={ref.votes} quorum={PAGE_REF_QUORUM} />
+                  <Text
+                    style={[
+                      styles.refState,
+                      { color: ref.confirmed ? colors.success : colors.textMuted },
+                    ]}
+                  >
+                    {ref.confirmed ? 'Shown to everyone' : 'Needs more readers'}
+                  </Text>
+                </View>
               </View>
               {ref.mine ? (
                 <Touchable
@@ -239,15 +256,27 @@ export function PageRefSheet({
             <Text style={[styles.label, { color: colors.textMuted }]}>
               YOUR BOOK
             </Text>
+            <Text style={[styles.hint, { color: colors.textMuted }]}>
+              Picking one keeps it: question rows then show its page, not
+              another book's.
+            </Text>
             <View style={styles.bookWrap}>
               {books.map(book => {
                 const on = book.id === bookId;
                 return (
                   <Touchable
                     key={book.id}
-                    label={`Use ${book.name} ${book.edition}`}
+                    label={`Use ${book.name} ${book.edition} as your textbook`}
                     state={{ selected: on }}
-                    onPress={() => setBookId(book.id)}
+                    onPress={() => {
+                      setBookId(book.id);
+                      // Remember it: this is the book the row chips will use.
+                      setSetting('myBookId', book.id);
+                      setSetting(
+                        'myBookLabel',
+                        book.edition ? `${book.name} ${book.edition}` : book.name,
+                      );
+                    }}
                     style={[
                       styles.bookChip,
                       {
@@ -447,6 +476,21 @@ const styles = StyleSheet.create({
   },
   refState: {
     ...typeScale.caption,
+    flexShrink: 1,
+  },
+  refStateRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginTop: 2,
+  },
+  refPage: {
+    ...typeScale.caption,
+    fontWeight: '800',
+  },
+  hint: {
+    ...typeScale.caption,
+    marginTop: -2,
   },
   iconButton: {
     padding: 6,
