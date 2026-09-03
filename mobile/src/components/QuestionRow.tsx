@@ -1,5 +1,6 @@
 import React, { memo, useCallback, useEffect, useRef } from 'react';
 import { Animated, StyleSheet, View } from 'react-native';
+import { BookOpen } from 'lucide-react-native';
 import { Text } from '@/components/Text';
 import { Touchable } from '@/components/Touchable';
 import { SuccessCheckmark } from '@/components/SuccessCheckmark';
@@ -16,6 +17,7 @@ import {
 } from '@/lib/questionText';
 import { useQuestionDone } from '@/hooks/useProgress';
 import { doubleTapPrompt, tripleTapPrompt } from '@/lib/askAi';
+import type { ConfirmedPage } from '@/lib/pageRefs';
 
 interface Props {
   question: string;
@@ -36,6 +38,16 @@ interface Props {
    * told which of sixty questions was the one they searched for.
    */
   highlighted?: boolean;
+  /**
+   * Open the textbook-page sheet. Absent when the reader has page references
+   * switched off, which is also what stops the screen fetching them at all.
+   */
+  onPageRef?: (question: string, rawQuestion: string) => void;
+  /**
+   * The page three or more readers agreed on, if there is one. Handed down
+   * from the screen's single batch fetch rather than fetched per row.
+   */
+  communityPage?: ConfirmedPage;
 }
 
 /**
@@ -63,6 +75,8 @@ function QuestionRowBase({
   onAskMcq,
   onNote,
   highlighted = false,
+  onPageRef,
+  communityPage,
 }: Props) {
   const { colors } = useTheme();
   const reduceMotion = useReducedMotion();
@@ -277,6 +291,53 @@ function QuestionRowBase({
             ) : null}
           </View>
 
+          {/* A page other readers agreed on, in a book they named.
+            *
+            * Kept separate from the "Pg." above, and always carrying the book's
+            * name, because they are not the same claim: that one is the page in
+            * whichever book the bank was compiled from, this one is a page in a
+            * book three readers say they are holding. Printing a bare number
+            * for both would merge two different books into one wrong reference.
+            */}
+          {onPageRef ? (
+            <Touchable
+              label={
+                communityPage
+                  ? `Page ${communityPage.page} in ${communityPage.bookName}. Change or add a page reference.`
+                  : 'Add a textbook page for this question'
+              }
+              onPress={() => onPageRef(text, noteQuestionText(question))}
+              hitSlop={6}
+              style={[
+                styles.pageChip,
+                {
+                  backgroundColor: communityPage
+                    ? withAlpha(colors.success, 0.12)
+                    : colors.cardElevated,
+                  borderColor: communityPage ? colors.success : colors.border,
+                },
+              ]}
+            >
+              <BookOpen
+                size={11}
+                color={communityPage ? colors.success : colors.textMuted}
+              />
+              <Text
+                numberOfLines={1}
+                style={[
+                  styles.pageChipText,
+                  { color: communityPage ? colors.success : colors.textMuted },
+                ]}
+              >
+                {communityPage
+                  ? `${communityPage.bookName}${
+                      communityPage.edition ? ` ${communityPage.edition}` : ''
+                    } · p.${communityPage.page}`
+                  : 'Add textbook page'}
+              </Text>
+            </Touchable>
+          ) : null}
+
           <Text style={[styles.affordanceMcq, { color: colors.cyan }]}>
             DOUBLE TAP FOR MCQS
           </Text>
@@ -384,6 +445,24 @@ const styles = StyleSheet.create({
   countText: {
     fontSize: 12,
     fontWeight: '700',
+  },
+  pageChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    gap: 5,
+    marginTop: 6,
+    borderRadius: 999,
+    borderWidth: StyleSheet.hairlineWidth,
+    paddingHorizontal: 9,
+    paddingVertical: 4,
+    // A long book name must not push the row's width around.
+    maxWidth: '100%',
+  },
+  pageChipText: {
+    fontSize: 11,
+    fontWeight: '700',
+    flexShrink: 1,
   },
 });
 

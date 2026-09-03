@@ -16,7 +16,7 @@ import {
 } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
-import { ArrowLeft, ChevronRight, Search } from 'lucide-react-native';
+import { ArrowLeft, BookOpen, ChevronRight, Search } from 'lucide-react-native';
 import { typeScale } from '@/theme/typography';
 import { useTheme } from '@/theme';
 import { LIST_TUNING } from '@/components/listTuning';
@@ -40,6 +40,9 @@ import {
   resolveNode,
 } from '@/lib/questionBank';
 import { SingleQuestionNote } from '@/components/SingleQuestionNote';
+import { PageRefSheet } from '@/components/PageRefSheet';
+import { usePageRefs, pageFor } from '@/hooks/usePageRefs';
+import { setSetting, useSettings } from '@/lib/settings';
 import { useCountDone } from '@/hooks/useProgress';
 import { requestDailyAd } from '@/lib/dailyAd';
 import type { HomeStackParamList, RootTabParamList } from '@/navigation/types';
@@ -106,6 +109,30 @@ export default function BrowseNodeScreen() {
   const node = useMemo(() => resolveNode(year, path), [year, path]);
   const children = useMemo(() => getTopicChildren(node), [node]);
   const questions = useMemo(() => findTypeQuestions(node, type), [node, type]);
+
+  /**
+   * Textbook page references.
+   *
+   * The toggle is the switch for the whole feature on this screen: off, the
+   * rows carry no chip and `usePageRefs` makes no request at all. The list can
+   * be five hundred rows long, so the pages arrive in one batch keyed by
+   * question id and each row reads its own out of the map.
+   */
+  const { showPageRefs } = useSettings();
+  const cleanQuestions = useMemo(
+    () => questions.map(getCleanQuestionText),
+    [questions],
+  );
+  const { pages, refresh: refreshPages } = usePageRefs(cleanQuestions);
+  const [pageRefTarget, setPageRefTarget] = useState<{
+    question: string;
+    rawQuestion: string;
+  } | null>(null);
+  const openPageRef = useCallback(
+    (question: string, rawQuestion: string) =>
+      setPageRefTarget({ question, rawQuestion }),
+    [],
+  );
 
   /**
    * Only worth showing above a list long enough to scroll.
@@ -508,6 +535,69 @@ export default function BrowseNodeScreen() {
               value={type}
               onChange={setType}
             />
+            {/* The page-reference switch.
+              *
+              * A pill that reads on or off at a glance, like a quick setting,
+              * because that is what it is: it turns the chips on every row on
+              * and off, and while it is off nothing here asks the network about
+              * page numbers at all.
+              */}
+            {questions.length > 0 ? (
+              <Touchable
+                label={
+                  showPageRefs
+                    ? 'Hide textbook page numbers'
+                    : 'Show textbook page numbers'
+                }
+                state={{ checked: showPageRefs }}
+                onPress={() => setSetting('showPageRefs', !showPageRefs)}
+                style={[
+                  styles.pageToggle,
+                  {
+                    backgroundColor: showPageRefs
+                      ? colors.primary
+                      : colors.cardElevated,
+                    borderColor: showPageRefs ? colors.primary : colors.border,
+                  },
+                ]}
+              >
+                <BookOpen
+                  size={14}
+                  color={showPageRefs ? colors.primaryText : colors.textMuted}
+                />
+                <Text
+                  style={[
+                    styles.pageToggleText,
+                    {
+                      color: showPageRefs ? colors.primaryText : colors.text,
+                    },
+                  ]}
+                >
+                  Textbook pages
+                </Text>
+                <View
+                  style={[
+                    styles.pageToggleDot,
+                    {
+                      backgroundColor: showPageRefs
+                        ? colors.primaryText
+                        : colors.textMuted,
+                    },
+                  ]}
+                />
+                <Text
+                  style={[
+                    styles.pageToggleState,
+                    {
+                      color: showPageRefs ? colors.primaryText : colors.textMuted,
+                    },
+                  ]}
+                >
+                  {showPageRefs ? 'ON' : 'OFF'}
+                </Text>
+              </Touchable>
+            ) : null}
+
             {questions.length > 0 ? (
               <View style={styles.questionStats}>
                 <Muted>
@@ -570,10 +660,23 @@ export default function BrowseNodeScreen() {
             onAskAi={askAi}
             onNote={onNote}
             highlighted={flash === item.question}
+            onPageRef={showPageRefs ? openPageRef : undefined}
+            communityPage={
+              showPageRefs
+                ? pageFor(pages, getCleanQuestionText(item.question))
+                : undefined
+            }
           />
         )}
       />
       {noteReader}
+      <PageRefSheet
+        visible={pageRefTarget !== null}
+        onClose={() => setPageRefTarget(null)}
+        question={pageRefTarget?.question ?? ''}
+        rawQuestion={pageRefTarget?.rawQuestion}
+        onChanged={refreshPages}
+      />
     </>
   );
 }
@@ -743,6 +846,29 @@ const styles = StyleSheet.create({
   },
   questionStats: {
     marginTop: 12,
+  },
+  pageToggle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    gap: 7,
+    marginTop: 12,
+    borderRadius: 999,
+    borderWidth: 1,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+  },
+  pageToggleText: {
+    ...typeScale.caption,
+    fontWeight: '700',
+  },
+  pageToggleDot: {
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+  },
+  pageToggleState: {
+    ...typeScale.overline,
   },
   questionBar: {
     marginTop: 6,

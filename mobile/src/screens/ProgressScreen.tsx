@@ -59,6 +59,7 @@ import { syncReminders } from '@/lib/reminderSync';
 import { useSettings } from '@/lib/settings';
 import { useExam } from '@/hooks/useExam';
 import { Brain } from 'lucide-react-native';
+import { AdminPanel } from '@/components/AdminPanel';
 import { ProgressCalendarTab } from '@/components/ProgressCalendarTab';
 import { ProgressNotesTab } from '@/components/ProgressNotesTab';
 
@@ -765,6 +766,9 @@ export default function ProgressScreen() {
               })}
             </View>
           </View>
+
+          {/* Renders nothing unless Postgres says this account is an admin. */}
+          <AdminPanel />
         </>
       )}
       <Modal

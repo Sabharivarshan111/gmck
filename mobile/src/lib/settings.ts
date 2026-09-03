@@ -99,6 +99,18 @@ export interface Settings {
   remindExam: boolean;
   remindStreak: boolean;
   remindRevision: boolean;
+  /**
+   * Whether question rows show a textbook page reference.
+   *
+   * Off by default, and it is a *toggle* rather than something always on for
+   * the reason the feature exists at all: a page number is only worth anything
+   * to somebody holding that book. For everyone else it is a number taking up
+   * a line on every row of a five-hundred-row list.
+   *
+   * Turning it on is also what makes a row fetch — nothing asks the network
+   * about page references until somebody says they want them.
+   */
+  showPageRefs: boolean;
 }
 
 /**
@@ -158,6 +170,9 @@ export const DEFAULT_SETTINGS: Settings = {
   remindExam: true,
   remindStreak: true,
   remindRevision: true,
+  // Off: only useful to a reader holding that particular book, and it is what
+  // gates the network call.
+  showPageRefs: false,
   // On by default: the point of the alert is to reach someone who has stopped
   // looking at the screen, and a phone face-down on a desk is silent but not
   // still.
@@ -267,6 +282,10 @@ export async function hydrateSettings(): Promise<void> {
         typeof parsed.remindRevision === 'boolean'
           ? parsed.remindRevision
           : DEFAULT_SETTINGS.remindRevision,
+      showPageRefs:
+        typeof parsed.showPageRefs === 'boolean'
+          ? parsed.showPageRefs
+          : DEFAULT_SETTINGS.showPageRefs,
     };
     emit();
   } catch {
