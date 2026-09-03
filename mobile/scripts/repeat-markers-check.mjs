@@ -9,10 +9,13 @@
  *
  * The numbers, measured here rather than remembered:
  *
- *   first-year   ~56% of questions carry a marker
- *   second-year  ~80%
- *   third-year   ~87%
- *   final-year   ~21%   -- and General Medicine is 0 of 660
+ *   first-year    592/836   71%
+ *   second-year   970/1013  96%
+ *   third-year    861/861   100%
+ *   final-year    681/2562  27%   -- and General Medicine is 0 of 691
+ *
+ * (An earlier version of this check printed 56/80/87/21% and "0 of 660". Those
+ * were wrong: its own extractor lost 631 questions. See bank-strings.mjs.)
  *
  * A question is marked either with asterisks ("Necrosis ****") or with a list
  * of years it was asked ("(Feb 22;Feb 11;Aug 06)"). Final-year subjects were
@@ -25,8 +28,8 @@
  * HAS markers today loses them, which would be a real regression, and it prints
  * the table so the gap stays a number somebody can act on.
  */
-import fs from 'node:fs';
 import path from 'node:path';
+import { bankQuestions } from './bank-strings.mjs';
 
 const DATA = path.join(process.cwd(), '..', 'src', 'data', 'topics');
 
@@ -71,33 +74,19 @@ const YEARS = {
  */
 const KNOWN_UNMARKED = new Set(['generalMedicine']);
 
-function tsFiles(dir) {
-  if (!fs.existsSync(dir)) {
-    return [];
-  }
-  let out = [];
-  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-    const full = path.join(dir, entry.name);
-    if (entry.isDirectory()) {
-      out = out.concat(tsFiles(full));
-    } else if (entry.name.endsWith('.ts')) {
-      out.push(full);
-    }
-  }
-  return out;
-}
-
-/** Question strings, not the object keys and structure around them. */
-function questionsIn(file) {
-  const source = fs.readFileSync(file, 'utf8');
-  const found = [];
-  for (const match of source.matchAll(/"((?:[^"\\]|\\.){25,})"/g)) {
-    const text = match[1];
-    if (!/[a-z]/i.test(text)) continue;
-    if (/^\s*[,{]|questions:|subtopics:|name:/.test(text)) continue;
-    found.push(text);
-  }
-  return found;
+/**
+ * Questions per subject, from the shared scanner.
+ *
+ * This used to walk the source with its own regex and got two things wrong:
+ * a string shorter than the minimum length inverted quote parity so it matched
+ * the gaps between questions, and `indexOf(']')` truncated every array holding
+ * a "[Pg:325]" marker. Between them the count was out by 631 questions and the
+ * per-year percentages this check prints were wrong. See scripts/bank-strings.mjs.
+ */
+const BY_SUBJECT = new Map();
+for (const row of bankQuestions(DATA)) {
+  if (!BY_SUBJECT.has(row.subject)) BY_SUBJECT.set(row.subject, []);
+  BY_SUBJECT.get(row.subject).push(row.text);
 }
 
 const failures = [];
@@ -107,18 +96,12 @@ for (const [year, subjects] of Object.entries(YEARS)) {
   let total = 0;
   let marked = 0;
   for (const subject of subjects) {
-    const files = [
-      path.join(DATA, `${subject}.ts`),
-      ...tsFiles(path.join(DATA, subject)),
-    ];
+    const texts = BY_SUBJECT.get(subject) ?? [];
     let subTotal = 0;
     let subMarked = 0;
-    for (const file of files) {
-      if (!fs.existsSync(file) || fs.statSync(file).isDirectory()) continue;
-      for (const question of questionsIn(file)) {
-        subTotal += 1;
-        if (countStars(question) > 0) subMarked += 1;
-      }
+    for (const question of texts) {
+      subTotal += 1;
+      if (countStars(question) > 0) subMarked += 1;
     }
     total += subTotal;
     marked += subMarked;

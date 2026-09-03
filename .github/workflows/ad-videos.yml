@@ -151,10 +151,24 @@ jobs:
       # the render actually muxed them in -- `staticFile()` on a bad path does
       # not stop a Remotion render, it just produces silence. So ask the
       # finished file.
+      # ffprobe is NOT on a stock ubuntu-latest runner. Remotion ships its own
+      # ffmpeg but does not put it on PATH, so this has to be installed --
+      # without it the check below read an empty result as "no audio stream" and
+      # failed all three renders that had in fact succeeded.
+      - name: Install ffmpeg (for ffprobe)
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+
       - name: Check the video actually has a voice in it
         working-directory: remotion-ad
         run: |
-          set -e
+          set -euo pipefail
+          # A missing tool is its own failure, never "the ad is silent". Reading
+          # a broken check as a broken ad is how three good renders got thrown
+          # away, and it is the more expensive mistake because it looks real.
+          if ! command -v ffprobe >/dev/null 2>&1; then
+            echo "::error::ffprobe is not installed — cannot verify the audio."
+            exit 1
+          fi
           STREAMS=$(ffprobe -v error -select_streams a \
             -show_entries stream=codec_type -of csv=p=0 "out/${{ matrix.file }}" | wc -l)
           if [ "$STREAMS" -lt 1 ]; then
@@ -162,7 +176,7 @@ jobs:
             exit 1
           fi
           DUR=$(ffprobe -v error -select_streams a:0 \
-            -show_entries stream=duration -of csv=p=0 "out/${{ matrix.file }}")
+            -show_entries stream=duration -of csv=p=0 "out/${{ matrix.file }}" | head -1)
           echo "audio stream present, ${DUR}s"
           # A 90s ad whose audio track is a couple of seconds long is a render
           # that found one clip and missed twenty-nine.
