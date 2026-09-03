@@ -33,7 +33,16 @@ this app, so three clients are needed. Missing one produces DEVELOPER_ERROR
 
   3. DEBUG / PREVIEW -- the .debug build from the debug-APK workflow
      Package   com.aistudio.mbbsqbank.aycxvd.debug
-     SHA-1     5E:8F:16:06:2E:A3:CD:2C:4A:0D:54:78:76:BA:A6:F3:8C:AB:F6:25
+     SHA-1     CE:EA:8A:41:BB:07:78:C4:78:26:D8:8F:CC:E0:2C:C9:EB:29:40:68
+
+     ^ the UPLOAD key, not the debug key. Verified 2026-09-03: the three
+     signing secrets ARE set on this repo, so android-debug.yml decodes
+     ANDROID_KEYSTORE_BASE64 and signs with the upload key. Its "sign with the
+     upload key" step is conditional (`if: env.ANDROID_KEYSTORE_BASE64 != ''`),
+     so this flips back to the checked-in debug key
+     5E:8F:16:06:2E:A3:CD:2C:4A:0D:54:78:76:BA:A6:F3:8C:AB:F6:25 only if the
+     secret is ever removed. Check which one a given APK actually carries with
+     `apksigner verify --print-certs` before blaming Google Cloud.
 
 
 The one people get wrong
@@ -55,14 +64,23 @@ has not gone through.
 
 Why the debug entry needs its own client
 ----------------------------------------
-The debug workflow signs with Android's standard debug key when no keystore
-secret is present. Its SHA-1 is the same on every machine on earth and is not
-a secret -- which is the trade-off: registering it means anyone can build an
-app that signs in as this one. Acceptable for a `.debug` package that owns
-nothing; do not register it against the production package name.
+An Android OAuth client is a (package name, SHA-1) PAIR, and the debug build
+differs in BOTH: `applicationIdSuffix ".debug"` gives it its own package name,
+and it may be signed by either of two certificates. So it always needs a client
+of its own -- what changes is only which SHA-1 goes in it.
 
-If the three signing secrets are set on the gmck repo, the debug workflow signs
-with the upload key instead and this entry is unnecessary.
+  secrets set (the case today)  -> aycxvd.debug + upload key CE:EA:8A:...
+  secrets absent                -> aycxvd.debug + debug key  5E:8F:16:...
+
+An earlier version of this file said the debug entry became "unnecessary" once
+the secrets were set. That was wrong: it accounted for the certificate changing
+and forgot the package name is different either way, so sign-in in the debug
+build would still fail with DEVELOPER_ERROR.
+
+If it is ever signed with the checked-in debug key, note that key's SHA-1 is
+the same on every machine on earth and is not a secret -- registering it means
+anyone can build an app that signs in as this one. Acceptable for a `.debug`
+package that owns nothing; never register it against the production package.
 
 
 Also required
