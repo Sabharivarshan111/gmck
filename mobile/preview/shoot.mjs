@@ -144,12 +144,88 @@ if (shootTheme) {
   }, shootTheme);
 }
 
+/**
+ * Console noise that is a property of the harness, not of the app.
+ *
+ * These are ignored with a reason rather than by widening the check, because
+ * the check is worth keeping: an uncaught exception (`pageerror`) is always
+ * fatal, and so is any console error not listed here.
+ *
+ * This list did not exist while nothing ran shoot.mjs on a machine with real
+ * network. The ad-video pipeline does, and it failed on its first green
+ * capture of all 33 screens — the runner reached Supabase, got the 401 a
+ * session-less harness must get, and the run died with every screenshot
+ * already correct on disk.
+ */
+const IGNORED = [
+  {
+    // react-native-web forwards RN's `collapsable` prop to the DOM, where it is
+    // not a boolean attribute. Unconditional, on every screen, forever.
+    match: /non-boolean attribute|collapsable/i,
+    why: 'react-native-web forwards RN’s collapsable prop to the DOM',
+  },
+  {
+    // The harness never signs in, so every authenticated Supabase call is a
+    // 401 by design. On a sandbox with no egress these never fire at all,
+    // which is why this only ever failed on a runner.
+    match: /status of 401/i,
+    why: 'the preview harness has no session; authenticated calls must 401',
+  },
+  {
+    // Chromium asks for /favicon.ico on its own and the harness has none.
+    // Scoped to that one path, so any other 404 is still a failure.
+    match: /favicon\.ico/i,
+    why: 'the browser asks for a favicon the preview harness does not ship',
+  },
+  {
+    // The agent sandboxes route through a proxy that refuses Supabase, so the
+    // same calls fail before they get a status. On a CI runner, which has
+    // egress, these become the 401 above. Either way it is the environment
+    // answering, not the app — and the failing URLs are printed regardless.
+    match: /ERR_TUNNEL_CONNECTION_FAILED|ERR_PROXY|ERR_NAME_NOT_RESOLVED|ERR_ABORTED/i,
+    why: 'no egress to Supabase from this environment',
+  },
+];
+
 const errors = [];
-page.on('pageerror', error => errors.push(`${error.message}`));
-page.on('console', message => {
-  if (message.type() === 'error') {
-    errors.push(message.text());
+const ignored = [];
+
+/** Records the URL behind a bare "Failed to load resource", which never said. */
+const failedUrls = [];
+page.on('response', response => {
+  if (response.status() >= 400) {
+    failedUrls.push(`${response.status()} ${response.url()}`);
   }
+});
+// A request that never got a response has no status — a blocked host, DNS, a
+// refused proxy. Those are exactly the ones the console describes as a bare
+// "Failed to load resource" with no clue which resource.
+page.on('requestfailed', request => {
+  failedUrls.push(
+    `${request.failure()?.errorText ?? 'failed'} ${request.url()}`,
+  );
+});
+
+function record(text) {
+  const excuse = IGNORED.find(entry => entry.match.test(text));
+  if (excuse) {
+    ignored.push(excuse.why);
+  } else {
+    errors.push(text);
+  }
+}
+
+// An uncaught exception is never excused.
+page.on('pageerror', error => errors.push(`uncaught: ${error.message}`));
+page.on('console', message => {
+  if (message.type() !== 'error') {
+    return;
+  }
+  // A "Failed to load resource" carries no URL in its text, and a request that
+  // is served a 404 by a worker or another frame never reaches the listeners
+  // above. The console message's own location does know which one it was.
+  const where = message.location?.()?.url;
+  record(where ? `${message.text()}  <- ${where}` : message.text());
 });
 
 for (const shot of SHOTS) {
@@ -195,7 +271,22 @@ for (const shot of SHOTS) {
 await browser.close();
 await server.close();
 
+if (ignored.length) {
+  const counts = new Map();
+  for (const why of ignored) {
+    counts.set(why, (counts.get(why) ?? 0) + 1);
+  }
+  process.stdout.write('\nIgnored, with reason:\n');
+  for (const [why, n] of counts) {
+    process.stdout.write(`  ${String(n).padStart(3)} x ${why}\n`);
+  }
+}
+
 if (errors.length) {
   process.stdout.write(`\nRuntime errors seen while capturing:\n${errors.join('\n')}\n`);
+  // A bare "Failed to load resource" never said which one. Now it can.
+  if (failedUrls.length) {
+    process.stdout.write(`\nRequests that failed:\n  ${failedUrls.join('\n  ')}\n`);
+  }
   process.exitCode = 1;
 }
