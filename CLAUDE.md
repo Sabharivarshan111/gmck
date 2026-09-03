@@ -35,6 +35,8 @@ when picking up work that was last touched from the other tool.
 | `.agents/rules/95-release-and-pipeline-engine.md` |  |
 | `.agents/rules/96-walkthrough.md` | The first-run walkthrough — how it finds a control by its accessibility label, why the scrim is four rectangles rather than one, and the one thing it may never name |
 | `.agents/rules/97-video-ads.md` |  |
+| `.agents/rules/98-page-references.md` | Community textbook pages — why three different readers have to agree before a page number is shown, and why that rule lives in Postgres rather than in the app |
+| `.agents/rules/99-admin.md` | The admin dashboard — why the gate is a role in the database and never an email compared in the client, and what deliberately stays in the web panel |
 <!-- rules:end -->
 
 This repo is worked on from Claude Code *and* Antigravity, sometimes on the
@@ -112,6 +114,36 @@ Do not "fix" these without reading the reasoning:
    default is `Easing.inOut(Easing.ease)` — an ease-in-out that starts slow,
    delaying the exact moment the user is watching. Omitting `easing` is the bug,
    not the default.
+
+## The repeat-count circle is missing in Final Year because the data is
+
+Every question row can carry a circle on the right saying how many times it has
+been asked. `countStars` reads it from the question string — asterisks
+(`Necrosis ****`) or a list of years (`(Feb 22;Feb 11;Aug 06)`) — and it behaves
+identically on all four years.
+
+It is nearly absent from Final Year anyway, and that has been reported as a
+rendering bug more than once. It is not:
+
+| Year | Questions carrying a repeat marker |
+|---|---|
+| first-year | 69% |
+| second-year | 88% |
+| third-year | 96% |
+| **final-year** | **23%** |
+
+**General Medicine is 0 of 660.** Those questions were transcribed as
+`What is Leptospirosis? (Page No: 370)` — a page number and nothing else. There
+is no marker, so there is nothing to count and no circle to draw.
+
+The fix is the marked-up source for those subjects. It is **not** code, and it
+is not a looser matcher: inventing a count would tell students which questions
+repeat on the basis of nothing, which is worse than a blank.
+
+`npm run check:repeat-markers` prints the table and fails only if a subject that
+has markers today loses them. Low coverage is deliberately not a failure — it is
+a fact about the bank, and the check exists so it is a number somebody can act
+on rather than something a reader discovers.
 
 ## The question bank is shared, not copied
 
