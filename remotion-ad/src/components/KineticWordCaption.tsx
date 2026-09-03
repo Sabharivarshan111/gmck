@@ -20,14 +20,14 @@ export const KineticWordCaption: React.FC<KineticWordCaptionProps> = ({
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  const words = text.split(' ');
-  const totalWords = words.length;
+  const words = text.trim().split(/\s+/).filter(Boolean);
+  const totalWords = Math.max(1, words.length);
 
   // Active word progression across the spoken audio duration
   // Words highlight naturally as the speaker pronounces them
   const activeWordFloat = interpolate(
     frame,
-    [3, Math.max(10, audioFrames - 6)],
+    [2, Math.max(8, audioFrames - 4)],
     [0, totalWords - 1],
     {
       extrapolateLeft: 'clamp',
@@ -59,7 +59,7 @@ export const KineticWordCaption: React.FC<KineticWordCaptionProps> = ({
     <div
       style={{
         position: 'absolute',
-        bottom: '310px', // Elevated well above Instagram / TikTok bottom HUD overlays
+        bottom: '120px', // Comfortably placed below smartphone with >200px clearance
         left: '40px',
         right: '40px',
         display: 'flex',
@@ -108,7 +108,7 @@ export const KineticWordCaption: React.FC<KineticWordCaptionProps> = ({
               key={idx}
               style={{
                 fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif',
-                fontSize: '32px',
+                fontSize: '28px',
                 fontWeight: isActive ? 900 : 700,
                 color,
                 textShadow,

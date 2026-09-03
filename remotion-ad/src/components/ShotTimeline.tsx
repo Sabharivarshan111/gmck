@@ -4,7 +4,6 @@ import { AuroraMeshBackground } from './AuroraMeshBackground';
 import { LayeredCameraPhone } from './LayeredCameraPhone';
 import { PlateCard } from './PlateCard';
 import { KineticWordCaption } from './KineticWordCaption';
-import { GlowBadge } from './GlowBadge';
 import { screenAsset } from './ScreenRegistry';
 import type { AdScript, Shot } from '../scripts/types';
 import { DYNAMIC_SCRIPT_TIMINGS, type ShotTiming } from '../dynamicScriptTimings';
@@ -84,7 +83,7 @@ const ShotView: React.FC<ShotViewProps> = ({ shot, timing, voiceSrc, shotIndex }
       </AbsoluteFill>
       <AbsoluteFill style={{ opacity: alpha }}>
         <KineticWordCaption
-          text={shot.text}
+          text={timing?.vo || shot.vo || shot.text}
           accent={accent}
           audioFrames={audioFrames}
           durationInFrames={durationInFrames}
@@ -128,7 +127,6 @@ export const ShotTimeline: React.FC<{ script: AdScript; withVoice?: boolean }> =
           />
         </Sequence>
       ))}
-      <GlowBadge label="Orbit MBBS QBank" accent={DEFAULT_ACCENT} />
     </AbsoluteFill>
   );
 };

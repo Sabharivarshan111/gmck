@@ -54,13 +54,13 @@ export const LayeredCameraPhone: React.FC<LayeredCameraPhoneProps> = ({
     focalOrigin = '50% 48%';
   }
 
-  // Base camera angles for subtle continuous living motion
+  // Base camera angles for subtle continuous living motion (elevated vertically to leave >200px subtitle clearance)
   const baseTrajectories = [
-    { rx0: 3.5, rx1: 0.8, ry0: -4.0, ry1: -1.0, rz0: -0.4, rz1: -0.1, y0: -125, y1: -138 },
-    { rx0: -2.5, rx1: -0.5, ry0: 3.5, ry1: 0.8, rz0: 0.4, rz1: 0.1, y0: -128, y1: -140 },
-    { rx0: 3.0, rx1: 0.6, ry0: -3.0, ry1: -0.8, rz0: -0.3, rz1: -0.1, y0: -126, y1: -136 },
-    { rx0: 2.2, rx1: 0.4, ry0: 2.5, ry1: 0.5, rz0: 0.3, rz1: 0.1, y0: -129, y1: -142 },
-    { rx0: -3.0, rx1: -0.6, ry0: -3.0, ry1: -0.6, rz0: -0.4, rz1: -0.1, y0: -127, y1: -139 }
+    { rx0: 3.5, rx1: 0.8, ry0: -4.0, ry1: -1.0, rz0: -0.4, rz1: -0.1, y0: -190, y1: -205 },
+    { rx0: -2.5, rx1: -0.5, ry0: 3.5, ry1: 0.8, rz0: 0.4, rz1: 0.1, y0: -192, y1: -208 },
+    { rx0: 3.0, rx1: 0.6, ry0: -3.0, ry1: -0.8, rz0: -0.3, rz1: -0.1, y0: -190, y1: -204 },
+    { rx0: 2.2, rx1: 0.4, ry0: 2.5, ry1: 0.5, rz0: 0.3, rz1: 0.1, y0: -194, y1: -210 },
+    { rx0: -3.0, rx1: -0.6, ry0: -3.0, ry1: -0.6, rz0: -0.4, rz1: -0.1, y0: -191, y1: -206 }
   ];
 
   const traj = baseTrajectories[shotIndex % baseTrajectories.length];
@@ -157,10 +157,10 @@ export const LayeredCameraPhone: React.FC<LayeredCameraPhoneProps> = ({
       <div
         style={{
           position: 'relative',
-          width: '510px',
-          height: '1030px',
-          borderRadius: '62px',
-          padding: '14px',
+          width: '488px',
+          height: '1024px',
+          borderRadius: '52px',
+          padding: '12px',
           background: 'linear-gradient(135deg, #334155 0%, #0f172a 40%, #1e293b 70%, #0f172a 100%)',
           boxShadow: `
             0 35px 85px -15px rgba(0, 0, 0, 0.95),
@@ -178,20 +178,20 @@ export const LayeredCameraPhone: React.FC<LayeredCameraPhoneProps> = ({
         <div
           style={{
             position: 'absolute',
-            inset: '3px',
-            borderRadius: '59px',
-            border: '1.5px solid rgba(255, 255, 255, 0.12)',
+            inset: '2px',
+            borderRadius: '50px',
+            border: '1.5px solid rgba(255, 255, 255, 0.14)',
             pointerEvents: 'none',
             zIndex: 12
           }}
         />
 
-        {/* Screen Display Viewport (Pristine, 100% Crisp Frame) */}
+        {/* Screen Display Viewport (Exact 19.5:9 Ratio, 100% Uncropped Full Navigation Bar) */}
         <div
           style={{
             width: '100%',
             height: '100%',
-            borderRadius: '48px',
+            borderRadius: '38px',
             overflow: 'hidden',
             position: 'relative',
             backgroundColor: '#030712'
@@ -201,11 +201,11 @@ export const LayeredCameraPhone: React.FC<LayeredCameraPhoneProps> = ({
           <div
             style={{
               position: 'absolute',
-              top: '14px',
+              top: '12px',
               left: '50%',
               transform: 'translateX(-50%)',
-              width: '120px',
-              height: '28px',
+              width: '116px',
+              height: '26px',
               backgroundColor: '#000000',
               borderRadius: '20px',
               zIndex: 100,
@@ -219,8 +219,8 @@ export const LayeredCameraPhone: React.FC<LayeredCameraPhoneProps> = ({
             {/* Camera Lens */}
             <div
               style={{
-                width: '9px',
-                height: '9px',
+                width: '8px',
+                height: '8px',
                 borderRadius: '50%',
                 background: 'radial-gradient(circle at 30% 30%, #1e293b, #020617)'
               }}
@@ -228,8 +228,8 @@ export const LayeredCameraPhone: React.FC<LayeredCameraPhoneProps> = ({
             {/* Live Indicator */}
             <div
               style={{
-                width: '7px',
-                height: '7px',
+                width: '6px',
+                height: '6px',
                 borderRadius: '50%',
                 backgroundColor: activeAccent,
                 boxShadow: `0 0 8px ${activeAccent}`
@@ -237,7 +237,7 @@ export const LayeredCameraPhone: React.FC<LayeredCameraPhoneProps> = ({
             />
           </div>
 
-          {/* Pristine Screen Content with Interactive Touch Feedback */}
+          {/* Pristine Screen Content with Interactive Touch Feedback (100% Navigation Bar Visible) */}
           <div
             style={{
               width: '100%',
@@ -256,8 +256,7 @@ export const LayeredCameraPhone: React.FC<LayeredCameraPhoneProps> = ({
                 style={{
                   width: '100%',
                   height: '100%',
-                  objectFit: 'cover',
-                  objectPosition: focus !== undefined ? `center ${focus * 100}%` : 'top center',
+                  objectFit: 'fill',
                   display: 'block'
                 }}
               />
