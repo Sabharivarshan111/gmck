@@ -1,10 +1,19 @@
 # Waiting on Lovable credits — wire the diagram into the triple-tap note
 
-**Status:** blocked. `send_message` was rejected with *"Your workspace is out of
-credits"* (workspace `SsJFPAW9Fet3beeN2YWW`, project
+**Status:** still blocked, retried 2026-09-02. `send_message` rejected again with
+*"Your workspace is out of credits"* (workspace `SsJFPAW9Fet3beeN2YWW`, project
 `89df4dbc-89e6-4e44-a7b1-76b9de94066e`). Add credits at
 https://lovable.dev/settings/billing, then send the message below through the
 Lovable connector and ask the project to publish afterwards.
+
+**The data is no longer the blocker.** As of 2026-09-02 the 60 orphaned plates
+have rows in `question_diagrams` (see `diagram-rows-2026-09-02.md`), so the
+lookup returns pictures for brachial plexus, shoulder, ulnar/median/radial nerve
+and the rest. The ONLY thing left for the live Lovable site is this wiring — its
+reader never calls the lookup. The native app and the Vercel `src/` app already
+show the pictures; they read the table live and their readers call the lookup.
+The message below now also names the shoulder and ulnar questions, which have
+rows now too.
 
 ## Why this is still outstanding
 

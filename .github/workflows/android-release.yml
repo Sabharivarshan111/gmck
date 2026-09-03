@@ -23,6 +23,10 @@ on:
         default: true
   push:
     branches:
+      # main included so a merge here cuts a release with no API access
+      # needed — see the note in android-debug.yml. This one keeps no
+      # paths filter on purpose: it is the artifact people wait for.
+      - main
       - claude/native-app-sync
 
 # One run per branch, and a new push cancels the one it supersedes.

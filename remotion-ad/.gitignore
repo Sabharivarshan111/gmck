@@ -1,0 +1,9 @@
+node_modules/
+out/
+.screens-tmp/
+
+# Screens and plates are fetched fresh on every render, never committed — a
+# committed screenshot is a UI the app may no longer have, and a committed
+# plate goes stale the moment the diagram is regenerated.
+public/app_screens/
+public/audio/

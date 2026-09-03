@@ -1,6 +1,6 @@
 # Handoff — Orbit MBBS native Android app
 
-**Last updated:** 2026-09-01
+**Last updated:** 2026-09-02
 
 Written so a fresh session (or a different person) can pick this up without the
 prior conversation. Read `CLAUDE.md` too — it lists the traps.
@@ -1186,8 +1186,18 @@ build.
 **That last point is worth pausing on.** `main` is now a release channel for a
 public website, not only the branch the APK workflows read. A commit that
 breaks the web build no longer just fails a check — it fails a deploy that
-people can see. `npm run build` at the repo root is the check that matters, and
-nothing in CI runs it.
+people can see. `npm run build` at the repo root is the check that matters.
+
+**As of 2026-09-02, CI runs it.** The `webpack.yml` workflow was GitHub's
+default "NodeJS with Webpack" template: it ran `npx webpack` against a project
+that has never contained webpack (`npm run build` is `vite build`), under a bare
+`npm install` that cannot resolve this repo's peer deps — so it had been red on
+every commit on `main` for as long as the run history goes back, which is a
+check nobody reads. It is now a **Web build** workflow that runs
+`npm ci --legacy-peer-deps && npm run build` on Node 22, the way Vercel builds
+it. Reproduced the original failure and confirmed the fixed command passes
+locally (`✓ built in 12s`, 2,408 kB main chunk — the figure this section
+already records).
 
 ### What could not be verified from the sandbox
 
@@ -1207,3 +1217,128 @@ and one set of storage keys** (`orbit-profile-v1`, `question-<slug>`,
 `orbit:daily-ad:*`). A change to any of those shapes breaks cross-install
 continuity, and now breaks it for a live website too rather than just for
 someone with both installed.
+
+---
+
+## 13. Diagrams reached the reader, and the ads got an engine (2026-09-02)
+
+Three things happened this session. Read all three before touching diagrams or
+video — two of them changed production data, which leaves no diff to read.
+
+### 13a. 60 uploaded plates had no row, so no app could show them
+
+**Symptom the owner reported:** "triple tap ulnar nerve, median nerve — the
+image is not showing", after Antigravity had generated ten more pictures.
+
+**Cause, and it was not the code.** The diagram engine uploads plates to the
+`diagrams` bucket without writing the matching `question_diagrams` row. A plate
+with no row is invisible in every app — `findDiagramsForQuestion` is a strict
+identity join, so **no row means no picture, correctly**. All 33 plates uploaded
+on 1–2 Sep had zero rows, plus a tail of older ones.
+
+**Fix: data, not code.** 60 rows across ~50 plates were filed to the bank
+questions they draw, taking the plate count with a picture from 855 to 915.
+Matching was done by reading each filename against the extracted question bank
+and picking by hand — the same discipline as `audit:diagrams`, never applied
+blind. Full record, including the SQL shape and the slug ids used for the two
+questions that needed a second plate, is in
+**`.agents/queue/diagram-rows-2026-09-02.md`**.
+
+Four plates are deliberately still unfiled: the question bank has no question
+for femoral nerve, trigeminal nerve, spleen (gross) or submandibular ganglion.
+That is correct, not a bug. ~27 more orphans are histology plates and duplicate
+takes of topics that already have a canonical plate.
+
+**This will happen again on the next upload run.** The durable fix is for
+whatever uploads a plate to write its row in the same step. Until then, re-run
+the orphan query in that note after every upload. **Do not loosen the matcher to
+reach them** — that is the keyword search coming back through the side door.
+
+### 13b. Chapter notes showed every picture at the top, then all the theory
+
+**Symptom:** open Anatomy → Upper Limb and you get a wall of images, then the
+writing. To read about the breast you scroll past forty pictures and back.
+
+**Cause.** The interleave logic existed but degraded to nothing. `sectionFor`
+matched a picture to its heading by **containment only**, which matched almost
+nothing in practice: "Shoulder Joint" is two words and was skipped by a
+three-word floor, and "Breast: Anatomy and Lymphatics" is not a substring of
+"Breast - Location, structure…". Everything then fell through to the batch
+fallback, which placed a whole batch's pictures before the batch's *first*
+section — section zero for the first batch.
+
+**Fix.** Placement now also lays a picture against the unclaimed heading that
+shares the most of its **distinctive** words, and never stacks two on one
+heading. Verified against the real Upper Limb note: all eight pictures land
+directly before their own heading, none at the top.
+
+**The distinction that matters, and it is in `CLAUDE.md` too:** choosing a
+picture and placing it are different jobs. Choosing stays a strict identity
+join — `check:diagrams` still fails if the *lookup* grows a keyword table, a
+score or a containment test. Placing may use a heuristic, because getting it
+slightly wrong reorders a correct picture by a paragraph and can never show a
+wrong one. The code says `overlap`, never `score`, partly so the guard regex
+keeps passing.
+
+Mirrored into the shared web module's `sectionIndexForQuestion` so both trees
+behave the same.
+
+### 13c. The live Lovable site still shows no diagrams, and only credits block it
+
+The data fix reaches the native app and the Vercel `src/` app immediately —
+both read the table live and rebuild a cached note's diagrams on every open.
+
+**It does not reach `mbbsqbank-questor.lovable.app`.** That tree has diverged:
+its `SingleQuestionNoteOverlay` renders `HandwrittenNotesView` and neither file
+imports `useQuestionDiagrams`, `DiagramChip` or `DiagramViewer`. The lookup
+there is correct and is **dead code on the reader's path**.
+
+The wiring message is written out in full in
+**`.agents/queue/lovable-diagram-wiring.md`**. It was rejected again on
+2026-09-02: *"Your workspace is out of credits."* Add credits at
+https://lovable.dev/settings/billing, send it, then ask the project to publish.
+
+### 13d. The launch ads now have a real engine
+
+Antigravity's video work is **not in this repo** — no `remotion-ad/`, no MP4 in
+any release, nothing in any branch's history. What survived is its post-mortem
+skill, and the failures it describes are still live: of the 14 screenshots its
+asset manifest names, **10 do not exist here**, and running the app's own
+screenshot harness reproduces the exact defect — the notes capture contains the
+literal string "This diagram could not be loaded" and `tca-note.png` renders
+fully black.
+
+What exists now:
+
+| Thing | Where |
+|---|---|
+| Renderer | `remotion-ad/` |
+| Three scripts, prose + hook rationale | `.agents/video/AD-SCRIPTS.md` |
+| Three scripts, as data | `remotion-ad/src/scripts/` |
+| CI render + MP4 release | `.github/workflows/ad-videos.yml` |
+| The standard, for any agent | `.claude/skills/cinematic-product-launch-video/SKILL.md` |
+| Antigravity's copy | `.agents/rules/97-video-ads.md` |
+
+Three **complete, standalone** 90-second vertical ads, 30 shots × exactly 3.0s,
+one shared motion engine, different shot data. Every one of the skill's five
+failure modes is now enforced by code rather than remembered — most importantly
+`preflight.mjs`, which refuses to render when any asset is missing or under 4KB
+(the size a black capture comes out at).
+
+**Rendering cannot finish in an agent sandbox, and this was tested rather than
+assumed:**
+
+- `speech.platform.bing.com` — the first error is `CERTIFICATE_VERIFY_FAILED`,
+  and that part **is** fixable by appending the proxy CA to certifi. Fixing it
+  gets you to a **403 on the WebSocket upgrade**. Do not report the cert error
+  as the blocker.
+- Supabase storage — **403 CONNECT**, so no plates and no clean notes screens.
+
+So motion is reviewed locally (`remotion still … --props='{"withVoice":false}'`)
+and the product is rendered in CI, which has open network. Voice is Python
+**edge-tts**, as asked for: `voice-manifest.mjs` dumps the 90 lines,
+`synthesize.py` speaks them and raises on a file under 2KB.
+
+**What is outstanding:** `workflow_dispatch` only appears for workflows on the
+**default branch**. The workflow must reach `main` before Actions → **Ad
+videos** can be run. Nothing else blocks the MP4s.

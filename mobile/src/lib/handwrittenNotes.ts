@@ -809,21 +809,56 @@ function comparable(text: string): string {
 }
 
 /**
+ * Words too common across a chapter's headings to place anything by. A picture
+ * of the shoulder shares "joint" with half the anatomy chapter; only "shoulder"
+ * tells you where it goes. Dropped from the word-overlap step below — never
+ * from the picture *lookup*, which is a strict identity join and does not run
+ * here at all.
+ */
+const PLACEMENT_COMMON_WORDS = new Set([
+  'and', 'the', 'of', 'a', 'an', 'in', 'on', 'with', 'to', 'for', 'its',
+  'note', 'notes', 'anatomy', 'applied', 'clinical', 'features', 'relations',
+  'structure', 'parts', 'blood', 'supply', 'nerve', 'muscles', 'exam', 'points',
+  'must', 'know', 'write', 'essentials', 'type', 'types', 'branches', 'course',
+  'contents', 'boundaries', 'development', 'histology', 'gross', 'important',
+]);
+
+/** The words in a heading or a question that actually say what it is about. */
+function distinctiveWords(text: string): Set<string> {
+  const out = new Set<string>();
+  for (const word of comparable(text).split(' ')) {
+    if (word.length >= 4 && !PLACEMENT_COMMON_WORDS.has(word)) {
+      out.add(word);
+    }
+  }
+  return out;
+}
+
+/**
  * Which section a picture belongs above, or null when nothing says.
  *
- * **Containment, never a score.** A heading is placed above a diagram only
- * when the heading's words appear, in order, inside the question that diagram
- * answers — "Axilla: Boundaries and Contents" inside "Axilla - boundaries,
- * contents, applied anatomy" — or the reverse. That is an equality test on a
- * substring, and it is the same discipline `findDiagramsForQuestion` follows
- * for the far more dangerous job of deciding *which* picture a question gets:
- * scoring words against each other is exactly how the TCA cycle ended up
- * illustrated with glycolysis.
+ * The picture is already the question's own — `findDiagramsForTopic` is a
+ * strict identity join and decided that. This only decides *where on the page*
+ * it sits, so it is allowed a heuristic the lookup is not: it lays each diagram
+ * against the heading that shares the most of its distinctive words, so a
+ * chapter reads picture-then-text-then-picture instead of every picture in a
+ * block at the top. Getting this slightly wrong reorders a correct picture by a
+ * paragraph; it can never show the wrong one, because choosing the picture is
+ * not this function's job.
  *
- * The stakes here are lower — this decides only where on the page a correct
- * picture sits — which is why a fallback is acceptable at all. It is not a
- * licence to guess: an unmatched diagram goes to its batch, not to whichever
- * heading looked closest.
+ * Two rules keep it honest rather than a free-for-all:
+ *
+ * - **Distinctive words only.** "Shoulder Joint" and "Movements of Shoulder
+ *   Joint" both share "shoulder" with a shoulder question; "joint", "muscles",
+ *   "relations" are dropped because half the chapter's headings carry them.
+ * - **A heading is claimed once.** `taken` stops two diagrams stacking on one
+ *   section, which is the whole reason the old containment-only version piled
+ *   everything on section zero: it matched almost nothing, and the batch
+ *   fallback then sent every early picture to the same index.
+ *
+ * Containment ("Axilla: Boundaries and Contents" inside "Axilla - boundaries,
+ * contents, applied anatomy") is kept as the strongest signal — a heading
+ * wholly inside the question, or the reverse, wins outright.
  */
 function sectionFor(
   body: Section[],
@@ -834,22 +869,46 @@ function sectionFor(
   if (!question) {
     return null;
   }
+  const wanted = distinctiveWords(diagram.question);
+
+  let best: number | null = null;
+  let bestOverlap = 0;
   for (let i = 0; i < body.length; i += 1) {
     if (taken.has(i)) {
       continue;
     }
     const title = comparable(String(body[i].title ?? ''));
-    // Three words is the floor. "Contents" or "Course" appears in half the
-    // headings in an anatomy chapter and inside most of the questions, so a
-    // shorter match is a coincidence rather than a subject.
-    if (title.split(' ').length < 3) {
+    if (!title) {
       continue;
     }
-    if (question.includes(title) || title.includes(question.slice(0, 60))) {
+    // Containment is the surest match and takes the slot immediately, the same
+    // as the old rule — but only for a heading long enough that containment
+    // means something ("Cubital Fossa" inside a cubital-fossa question).
+    if (
+      title.split(' ').length >= 3 &&
+      (question.includes(title) || title.includes(question.slice(0, 60)))
+    ) {
       return i;
     }
+    // Otherwise, how many of the question's distinctive words this heading
+    // carries. The earliest heading wins a tie, so pictures keep the chapter's
+    // own order.
+    let overlap = 0;
+    const titleWords = distinctiveWords(String(body[i].title ?? ''));
+    for (const word of titleWords) {
+      if (wanted.has(word)) {
+        overlap += 1;
+      }
+    }
+    if (overlap > bestOverlap) {
+      bestOverlap = overlap;
+      best = i;
+    }
   }
-  return null;
+  // One shared distinctive word is enough to place a picture that is already
+  // known to be this question's; zero means nothing on the page names it, so it
+  // falls to the batch step rather than landing on a heading at random.
+  return bestOverlap >= 1 ? best : null;
 }
 
 /**
@@ -902,6 +961,21 @@ export function applyTopicDiagrams(
   const trailing: Section[] = [];
   const taken = new Set<number>();
 
+  /** The first section at or after `from` that no diagram has claimed yet. */
+  const nearestFree = (from: number): number | null => {
+    for (let i = Math.max(0, from); i < body.length; i += 1) {
+      if (!taken.has(i)) {
+        return i;
+      }
+    }
+    for (let i = Math.min(from, body.length) - 1; i >= 0; i -= 1) {
+      if (!taken.has(i)) {
+        return i;
+      }
+    }
+    return null;
+  };
+
   diagrams.forEach((diagram, n) => {
     let at = sectionFor(body, diagram, taken);
     if (at === null) {
@@ -912,11 +986,15 @@ export function applyTopicDiagrams(
          * produced. Sections per batch is not fixed — the model writes as many
          * as the material needs — so this divides the body evenly by batch
          * count rather than pretending to know which section came from which
-         * question.
+         * question. `nearestFree` then spreads a batch's pictures down the
+         * page rather than stacking them all before the batch's first section —
+         * which, for the first batch, is section zero, and was the whole "every
+         * picture at the top" complaint.
          */
         const batches = Math.max(1, Math.ceil(questionOrder.length / NOTES_BATCH_SIZE));
         const batch = Math.floor(index / NOTES_BATCH_SIZE);
-        at = Math.min(body.length - 1, Math.floor((batch / batches) * body.length));
+        const guess = Math.min(body.length - 1, Math.floor((batch / batches) * body.length));
+        at = nearestFree(guess);
       }
     }
     if (at === null) {
@@ -924,12 +1002,7 @@ export function applyTopicDiagrams(
       return;
     }
     taken.add(at);
-    const list = before.get(at);
-    if (list) {
-      list.push(cards[n]);
-    } else {
-      before.set(at, [cards[n]]);
-    }
+    before.set(at, [cards[n]]);
   });
 
   const sections: Section[] = [];

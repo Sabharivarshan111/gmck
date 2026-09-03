@@ -330,6 +330,48 @@ export function comparable(text: string): string {
  * all and is not up there. It is still not a licence to guess — an unmatched
  * diagram goes to the end, not to whichever heading looked closest.
  */
+/**
+ * Words too common across a chapter's headings to place anything by. A picture
+ * of the shoulder shares "joint" with half an anatomy chapter; only "shoulder"
+ * says where it goes. Dropped from the word-overlap step — never from the
+ * picture *lookup*, which is a strict identity join and does not run here.
+ */
+const PLACEMENT_COMMON_WORDS = new Set([
+  'and', 'the', 'of', 'a', 'an', 'in', 'on', 'with', 'to', 'for', 'its',
+  'note', 'notes', 'anatomy', 'applied', 'clinical', 'features', 'relations',
+  'structure', 'parts', 'blood', 'supply', 'nerve', 'muscles', 'exam', 'points',
+  'must', 'know', 'write', 'essentials', 'type', 'types', 'branches', 'course',
+  'contents', 'boundaries', 'development', 'histology', 'gross', 'important',
+]);
+
+function distinctiveWords(text: string): Set<string> {
+  const out = new Set<string>();
+  for (const word of comparable(text).split(' ')) {
+    if (word.length >= 4 && !PLACEMENT_COMMON_WORDS.has(word)) {
+      out.add(word);
+    }
+  }
+  return out;
+}
+
+/**
+ * Which section a picture belongs above, or null when nothing on the page
+ * names it.
+ *
+ * The picture is already the question's own — `findDiagramsForTopic` is a
+ * strict identity join and decided that. This only decides *where* it sits, so
+ * it may use a heuristic the lookup may not: each diagram takes the unclaimed
+ * heading that shares the most of its distinctive words, so a chapter reads
+ * picture-then-text-then-picture rather than every picture stacked at the top.
+ * Getting it slightly wrong reorders a correct picture by a paragraph; it can
+ * never show the wrong one, because choosing the picture is not done here.
+ *
+ * Containment (a heading wholly inside the question, or the reverse) stays the
+ * strongest signal and wins outright; otherwise the best distinctive-word
+ * overlap does, and one shared word is the floor — the earliest heading breaks
+ * a tie, so pictures keep the chapter's own order. Claiming each heading once
+ * (`taken`) is what stops the pictures piling on section zero.
+ */
 export function sectionIndexForQuestion(
   titles: string[],
   question: string,
@@ -339,20 +381,30 @@ export function sectionIndexForQuestion(
   if (!wanted) {
     return null;
   }
+  const wantedWords = distinctiveWords(question);
+
+  let best: number | null = null;
+  let bestOverlap = 0;
   for (let i = 0; i < titles.length; i += 1) {
     if (taken.has(i)) continue;
     const title = comparable(titles[i] ?? '');
-    /*
-     * Three words is the floor. "Contents" or "Course" appears in half the
-     * headings in an anatomy chapter and inside most of the questions, so a
-     * shorter match is a coincidence rather than a subject.
-     */
-    if (title.split(' ').length < 3) continue;
-    if (wanted.includes(title) || title.includes(wanted.slice(0, 60))) {
+    if (!title) continue;
+    if (
+      title.split(' ').length >= 3 &&
+      (wanted.includes(title) || title.includes(wanted.slice(0, 60)))
+    ) {
       return i;
     }
+    let overlap = 0;
+    for (const word of distinctiveWords(titles[i] ?? '')) {
+      if (wantedWords.has(word)) overlap += 1;
+    }
+    if (overlap > bestOverlap) {
+      bestOverlap = overlap;
+      best = i;
+    }
   }
-  return null;
+  return bestOverlap >= 1 ? best : null;
 }
 
 /**

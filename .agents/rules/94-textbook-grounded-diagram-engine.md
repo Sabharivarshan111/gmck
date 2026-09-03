@@ -33,6 +33,17 @@ Three more things that were part of the same bug:
 - **The cache heals itself.** A note whose diagrams no longer match is rewritten
   back to `handwritten_notes` the next time it is opened.
 
+**Placing a picture is not choosing it.** Once a chapter's diagrams are known to
+be its own, `sectionFor` decides where each sits on the page, and a heuristic is
+allowed there because a mistake reorders a correct picture by a paragraph and
+never shows a wrong one. It was containment-only, which matched almost nothing
+(two-word headings like "Shoulder Joint" were skipped; "Breast: Anatomy and
+Lymphatics" is not a substring of the breast question), so every early picture
+fell to the batch fallback and stacked on section zero — every image at the top,
+then all the theory. It now also places a picture against the unclaimed heading
+sharing the most of its distinctive words. That is `overlap` on placement, not a
+`score` on the lookup; the lookup stays a strict identity join.
+
 ### The filename is an auditor, not a matcher
 
 Every plate is named for what it draws, so a question sharing two or more of a

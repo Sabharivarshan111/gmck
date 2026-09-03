@@ -48,6 +48,13 @@ on:
   workflow_dispatch:
   push:
     branches:
+      # main is included so that merging or pushing here builds and releases
+      # without anyone needing GitHub API access to dispatch a run by hand.
+      # That was the real reason only Claude Code could cut a build: Antigravity
+      # has no API token to call workflow_dispatch with, and main fired nothing.
+      # The paths filter below is what keeps this affordable — a commit that
+      # only moves documentation still burns no runner.
+      - main
       - claude/android-react-native-app-o54cjj
       - claude/native-app-sync
     # Only when something that reaches the APK changes.
