@@ -1186,8 +1186,18 @@ build.
 **That last point is worth pausing on.** `main` is now a release channel for a
 public website, not only the branch the APK workflows read. A commit that
 breaks the web build no longer just fails a check — it fails a deploy that
-people can see. `npm run build` at the repo root is the check that matters, and
-nothing in CI runs it.
+people can see. `npm run build` at the repo root is the check that matters.
+
+**As of 2026-09-02, CI runs it.** The `webpack.yml` workflow was GitHub's
+default "NodeJS with Webpack" template: it ran `npx webpack` against a project
+that has never contained webpack (`npm run build` is `vite build`), under a bare
+`npm install` that cannot resolve this repo's peer deps — so it had been red on
+every commit on `main` for as long as the run history goes back, which is a
+check nobody reads. It is now a **Web build** workflow that runs
+`npm ci --legacy-peer-deps && npm run build` on Node 22, the way Vercel builds
+it. Reproduced the original failure and confirmed the fixed command passes
+locally (`✓ built in 12s`, 2,408 kB main chunk — the figure this section
+already records).
 
 ### What could not be verified from the sandbox
 
