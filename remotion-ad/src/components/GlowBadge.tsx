@@ -1,43 +1,62 @@
 import React from 'react';
 import { spring, useCurrentFrame, useVideoConfig } from 'remotion';
 
-/** The small category pill at the top. Present the whole ad, never animated
- *  per shot — a chrome element that re-animates on every cut is noise. */
-export const GlowBadge: React.FC<{ label: string; accent: string }> = ({ label, accent }) => {
+interface GlowBadgeProps {
+  icon?: string;
+  label: string;
+  delay?: number;
+  color?: string;
+  accent?: string;
+}
+
+export const GlowBadge: React.FC<GlowBadgeProps> = ({
+  icon = '✨',
+  label,
+  delay = 0,
+  color = '#38bdf8',
+  accent
+}) => {
+  const activeColor = accent ?? color;
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const enter = spring({ frame, fps, config: { damping: 20, mass: 0.8, stiffness: 90 } });
+
+  const scale = spring({
+    frame: frame - delay,
+    fps,
+    config: { damping: 12, stiffness: 140 }
+  });
+
+  const pulse = Math.sin((frame + delay * 5) * 0.08) * 0.05 + 1;
 
   return (
     <div
       style={{
-        position: 'absolute',
-        top: 132,
-        left: 0,
-        right: 0,
-        display: 'flex',
-        justifyContent: 'center',
-        opacity: enter,
-        transform: `translateY(${(1 - enter) * -18}px)`,
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '10px',
+        padding: '10px 24px',
+        borderRadius: '9999px',
+        background: 'rgba(15, 23, 42, 0.75)',
+        backdropFilter: 'blur(16px)',
+        border: `1.5px solid ${color}40`,
+        boxShadow: `0 0 24px ${color}30, inset 0 0 12px ${color}20`,
+        transform: `scale(${scale * pulse})`,
+        opacity: scale,
+        zIndex: 10
       }}
     >
-      <div
+      <span style={{ fontSize: '20px' }}>{icon}</span>
+      <span
         style={{
-          padding: '12px 26px',
-          borderRadius: 999,
-          background: 'rgba(3,7,18,0.6)',
-          backdropFilter: 'blur(18px)',
-          boxShadow: `inset 0 0 0 1px ${accent}55, 0 0 34px -12px ${accent}`,
-          fontFamily: 'Inter, system-ui, sans-serif',
-          fontSize: 24,
+          fontSize: '18px',
           fontWeight: 700,
-          letterSpacing: '0.16em',
-          textTransform: 'uppercase',
-          color: '#E2E8F0',
+          color: '#ffffff',
+          letterSpacing: '0.04em',
+          textTransform: 'uppercase'
         }}
       >
         {label}
-      </div>
+      </span>
     </div>
   );
 };

@@ -63,10 +63,10 @@ CRITICAL RULES:
    - "flowchart" { steps: string[] }
    - "outcome" { text: string }
    - "revision" { items: string[] }
-3. Grounding: Rely strictly on the provided textbook excerpts as primary source of truth. Do NOT mention OCR errors, editions, or page numbers in the output.
-4. Depth:
-   - Essays: In-depth clinical features, etiopathogenesis, classifications, investigations, management algorithms, tables/flowcharts.
-   - Short Notes: Crisp bullet points, high-yield numbers, diagnostic criteria, key drug regimens.
+3. Grounding: Rely strictly on standard Indian MBBS textbooks (Vishram Singh/BD Chaurasia for Anatomy, Sembulingam for Physiology, Vasudevan for Biochemistry, KD Tripathi/Shanbhag for Pharmacology, Ramadas Nayak for Pathology, Apurba Sastry for Microbiology, Park for Community Med, Dutta for Ob, Shaw for Gyn, Manipal for Surgery/Medicine, Khurana for Ophtha, Dhingra for ENT, Ghai for Paediatrics). Do NOT mention OCR errors, editions, or page numbers in the output.
+4. Comprehensive Exam Depth Requirements:
+   - SHORT NOTES (Minimum 3-Page Exam Equivalent): Provide at least 6–8 exhaustive, structured sections (Definition & Overview, Etiopathogenesis/Gross Anatomy, Key Clinical Features & Diagnostic Criteria, High-Yield Investigations & Lab Values, Definitive Pharmacological/Surgical Management, Complications).
+   - ESSAYS (Minimum 8-Page Exam Equivalent): Provide at least 10–14 rich, highly detailed sections with exhaustive sub-headings, full comparative tables, diagnostic flowcharts, clinical staging systems (e.g. TNM, CEAP, Child-Pugh, NYHA), emergency and definitive step-by-step management protocols, and postoperative complications.
 5. Response MUST be valid JSON only matching the schema:
 {
   "highYieldTip": "string",

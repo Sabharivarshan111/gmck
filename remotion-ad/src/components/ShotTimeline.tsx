@@ -4,32 +4,33 @@ import { AuroraMeshBackground } from './AuroraMeshBackground';
 import { LayeredCameraPhone } from './LayeredCameraPhone';
 import { PlateCard } from './PlateCard';
 import { KineticWordCaption } from './KineticWordCaption';
-import { GlowBadge } from './GlowBadge';
 import { screenAsset } from './ScreenRegistry';
-import { SHOT_FRAMES, type AdScript, type Shot } from '../scripts/types';
+import { UserNotesMediaScreen, ThemeCustomizerScreen, OutroScreen } from './CustomAppScreens';
+import type { AdScript, Shot } from '../scripts/types';
+import { DYNAMIC_SCRIPT_TIMINGS, type ShotTiming } from '../dynamicScriptTimings';
 
 const DEFAULT_ACCENT = '#7C5CFF';
 
-/**
- * One 3-second shot.
- *
- * The transition between shots is a *continuation*, not a crossfade: the
- * outgoing shot's camera keeps travelling while the incoming one arrives over
- * 10 frames. That is what makes the ad feel like one continuous camera move
- * through the product rather than 30 slides.
- */
-const ShotView: React.FC<{ shot: Shot; voiceSrc: string | null }> = ({ shot, voiceSrc }) => {
+interface ShotViewProps {
+  shot: Shot;
+  timing?: ShotTiming;
+  voiceSrc: string | null;
+  shotIndex: number;
+}
+
+const ShotView: React.FC<ShotViewProps> = ({ shot, timing, voiceSrc, shotIndex }) => {
   const frame = useCurrentFrame();
-  const t = Math.min(1, frame / SHOT_FRAMES);
+  const durationInFrames = timing?.shotFrames ?? 120;
+  const audioFrames = timing?.audioFrames ?? 90;
+  const t = Math.min(1, frame / durationInFrames);
   const accent = shot.accent ?? DEFAULT_ACCENT;
 
-  // Arrive over 10 frames, leave over the last 8. Never a symmetric crossfade —
-  // an incoming shot should be established before the outgoing one is gone.
-  const enter = interpolate(frame, [0, 10], [0, 1], {
+  // Smooth seamless shot arrival & exit easing
+  const enter = interpolate(frame, [0, 12], [0, 1], {
     extrapolateRight: 'clamp',
     easing: Easing.out(Easing.cubic),
   });
-  const leave = interpolate(frame, [SHOT_FRAMES - 8, SHOT_FRAMES], [1, 0], {
+  const leave = interpolate(frame, [durationInFrames - 10, durationInFrames], [1, 0], {
     extrapolateLeft: 'clamp',
     easing: Easing.in(Easing.cubic),
   });
@@ -38,6 +39,36 @@ const ShotView: React.FC<{ shot: Shot; voiceSrc: string | null }> = ({ shot, voi
   const asset = shot.screen ? screenAsset(shot.screen) : null;
   const src = asset ? staticFile(asset.file) : null;
 
+  // Derive interactive touch target based on script shot
+  let touchPreset: any = undefined;
+  let isTripleTap = false;
+
+  if (shot.text.toLowerCase().includes('triple-tap') || (shot.screen?.startsWith('questions') && shot.text.toLowerCase().includes('tap'))) {
+    touchPreset = 'tripleTap';
+    isTripleTap = true;
+  } else if (shot.screen === 'browse') {
+    touchPreset = 'bottomNavBrowse';
+  } else if (shot.screen === 'timer') {
+    touchPreset = 'bottomNavTimer';
+  } else if (shot.screen === 'askai') {
+    touchPreset = 'bottomNavAI';
+  } else if (shot.screen === 'progress') {
+    touchPreset = 'bottomNavProgress';
+  } else if (shot.screen === 'userNotes' || shot.screen === 'userNotesEdit' || shot.screen === 'userNotesMedia') {
+    touchPreset = 'bottomNavNotes';
+  } else if (shot.screen === 'ankiStudy' || shot.screen === 'chatdemo') {
+    touchPreset = 'mcqOption';
+  } else if (shot.screen === 'flashcards') {
+    touchPreset = 'flashcardFlip';
+  } else if (shot.screen === 'themeCustomizer' || shot.screen === 'wallpaperCustomizer' || shot.screen === 'glassHome') {
+    touchPreset = 'themeSwatch';
+  }
+
+  let customScreenContent: React.ReactNode = null;
+  if (shot.screen === 'outroCard') {
+    customScreenContent = <OutroScreen />;
+  }
+
   return (
     <AbsoluteFill>
       <AuroraMeshBackground accent={accent} intensity={shot.camera === 'macro' ? 0.6 : 1} />
@@ -45,48 +76,67 @@ const ShotView: React.FC<{ shot: Shot; voiceSrc: string | null }> = ({ shot, voi
         {asset?.kind === 'plate' && src ? (
           <PlateCard src={src} move={shot.camera} t={t} accent={accent} />
         ) : (
-          <LayeredCameraPhone src={src} move={shot.camera} t={t} accent={accent} focus={shot.focus} />
+          <LayeredCameraPhone
+            src={src}
+            move={shot.camera}
+            t={t}
+            accent={accent}
+            focus={shot.focus}
+            touchPreset={touchPreset}
+            isTripleTap={isTripleTap}
+            shotIndex={shotIndex}
+            durationInFrames={durationInFrames}
+          >
+            {customScreenContent}
+          </LayeredCameraPhone>
         )}
       </AbsoluteFill>
       <AbsoluteFill style={{ opacity: alpha }}>
-        <KineticWordCaption text={shot.text} accent={accent} />
+        <KineticWordCaption
+          text={timing?.vo || shot.vo || shot.text}
+          accent={accent}
+          audioFrames={audioFrames}
+          durationInFrames={durationInFrames}
+        />
       </AbsoluteFill>
       {voiceSrc ? <Audio src={voiceSrc} /> : null}
     </AbsoluteFill>
   );
 };
 
-/**
- * The whole ad: 30 shots of exactly 90 frames.
- *
- * `withVoice` is off in the sandbox that has no access to the speech endpoint,
- * so the composition still renders (silent) for motion review. CI renders it
- * with voice; nothing about the visuals changes between the two.
- */
 export const ShotTimeline: React.FC<{ script: AdScript; withVoice?: boolean }> = ({
   script,
   withVoice = true,
-}) => (
-  <AbsoluteFill style={{ backgroundColor: '#030712' }}>
-    {script.shots.map((shot, i) => (
-      <Sequence
-        key={shot.n}
-        from={i * SHOT_FRAMES}
-        durationInFrames={SHOT_FRAMES}
-        // Shots overlap by the arrival window so the camera never stops dead
-        // between them.
-        layout="none"
-      >
-        <ShotView
-          shot={shot}
-          voiceSrc={
-            withVoice
-              ? staticFile(`audio/${script.id}/shot_${String(shot.n).padStart(2, '0')}.mp3`)
-              : null
-          }
-        />
-      </Sequence>
-    ))}
-    <GlowBadge label="Orbit MBBS QBank" accent={DEFAULT_ACCENT} />
-  </AbsoluteFill>
-);
+}) => {
+  const timingReport = DYNAMIC_SCRIPT_TIMINGS[script.id];
+  const shotsWithTimings = script.shots.map((shot, i) => {
+    const timing = timingReport?.shots.find((s) => s.n === shot.n);
+    const startFrame = timing?.startFrame ?? i * 120;
+    const durationInFrames = timing?.shotFrames ?? 120;
+    return { shot, timing, startFrame, durationInFrames, index: i };
+  });
+
+  return (
+    <AbsoluteFill style={{ backgroundColor: '#030712' }}>
+      {shotsWithTimings.map(({ shot, timing, startFrame, durationInFrames, index }) => (
+        <Sequence
+          key={shot.n}
+          from={startFrame}
+          durationInFrames={durationInFrames}
+          layout="none"
+        >
+          <ShotView
+            shot={shot}
+            timing={timing}
+            shotIndex={index}
+            voiceSrc={
+              withVoice
+                ? staticFile(`audio/${script.id}/shot_${String(shot.n).padStart(2, '0')}.mp3`)
+                : null
+            }
+          />
+        </Sequence>
+      ))}
+    </AbsoluteFill>
+  );
+};

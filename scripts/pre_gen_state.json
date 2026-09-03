@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "lastRunAt": "2026-09-02T09:03:59.644Z",
+  "subjects": {
+    "general-medicine": {
+      "year": "final-year",
+      "totalQuestions": 680,
+      "lastProcessedIndex": 497,
+      "lastQuestion": "What is Sideroblastic anaemia? (Page No: 756)",
+      "completedCount": 504,
+      "failedCount": 1,
+      "status": "in-progress",
+      "lastUpdated": "2026-09-02T09:03:59.643Z"
+    },
+    "general-medicine,general-surgery": {
+      "year": "final-year",
+      "totalQuestions": 0,
+      "lastProcessedIndex": 0,
+      "lastQuestion": "",
+      "completedCount": 0,
+      "failedCount": 0,
+      "status": "completed",
+      "lastUpdated": "2026-09-02T07:56:18.938Z"
+    }
+  }
+}

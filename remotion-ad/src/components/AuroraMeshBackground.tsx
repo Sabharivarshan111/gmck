@@ -1,56 +1,104 @@
 import React from 'react';
-import { AbsoluteFill, useCurrentFrame, interpolate } from 'remotion';
+import { useCurrentFrame, interpolate } from 'remotion';
 
-/**
- * The ground the whole ad sits on: deep obsidian with slow aurora mesh.
- *
- * It drifts on a long period (hundreds of frames) so it reads as atmosphere
- * rather than as an animation competing with the device. The accent is passed
- * per shot, so the room subtly changes colour with the feature being shown —
- * which is what makes cuts feel motivated instead of arbitrary.
- */
-export const AuroraMeshBackground: React.FC<{
-  accent: string;
-  /** 0..1, how strongly the room is lit. Macro shots dim it to isolate. */
+interface AuroraProps {
+  theme?: 'apple' | 'college' | 'cyberpunk';
+  accent?: string;
   intensity?: number;
-}> = ({ accent, intensity = 1 }) => {
+}
+
+export const AuroraMeshBackground: React.FC<AuroraProps> = ({
+  theme = 'apple',
+  accent,
+  intensity = 1
+}) => {
   const frame = useCurrentFrame();
 
-  // Two blobs on different slow periods; their beat makes the light feel alive
-  // without ever resolving into a loop the eye can catch.
-  const driftA = Math.sin(frame / 190) * 12;
-  const driftB = Math.cos(frame / 260) * 16;
-  const breathe = interpolate(Math.sin(frame / 150), [-1, 1], [0.82, 1.06]);
+  const orb1X = interpolate(frame % 300, [0, 150, 300], [20, 80, 20]);
+  const orb1Y = interpolate(frame % 360, [0, 180, 360], [10, 60, 10]);
+  const orb2X = interpolate(frame % 400, [0, 200, 400], [80, 20, 80]);
+  const orb2Y = interpolate(frame % 280, [0, 140, 280], [70, 20, 70]);
+  const orb3Scale = interpolate(frame % 200, [0, 100, 200], [1, 1.3, 1]);
+
+  let c1 = '#0284c7', c2 = '#6366f1', c3 = '#0f172a', bg = '#020617';
+  if (accent) {
+    c1 = accent; c2 = `${accent}bb`; c3 = '#0f172a'; bg = '#030712';
+  } else if (theme === 'college') {
+    c1 = '#dc2626'; c2 = '#7c3aed'; c3 = '#1e1b4b'; bg = '#0a0101';
+  } else if (theme === 'cyberpunk') {
+    c1 = '#06b6d4'; c2 = '#d946ef'; c3 = '#4f46e5'; bg = '#000000';
+  }
 
   return (
-    <AbsoluteFill style={{ backgroundColor: '#030712' }}>
-      <AbsoluteFill
+    <div
+      style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        backgroundColor: bg,
+        overflow: 'hidden',
+        zIndex: 0
+      }}
+    >
+      {/* Dynamic Aurora Mesh Orbs */}
+      <div
         style={{
-          opacity: 0.55 * intensity * breathe,
-          background: `radial-gradient(60% 44% at ${50 + driftA}% ${26 + driftB * 0.4}%, ${accent}66 0%, transparent 68%)`,
+          position: 'absolute',
+          top: `${orb1Y}%`,
+          left: `${orb1X}%`,
+          width: '500px',
+          height: '500px',
+          transform: 'translate(-50%, -50%)',
+          borderRadius: '50%',
+          background: `radial-gradient(circle, ${c1} 0%, rgba(0,0,0,0) 70%)`,
+          opacity: 0.35,
+          filter: 'blur(70px)'
         }}
       />
-      <AbsoluteFill
+      <div
         style={{
-          opacity: 0.4 * intensity * breathe,
-          background: `radial-gradient(52% 40% at ${34 - driftB}% ${74 + driftA * 0.3}%, ${accent}40 0%, transparent 70%)`,
+          position: 'absolute',
+          top: `${orb2Y}%`,
+          left: `${orb2X}%`,
+          width: '600px',
+          height: '600px',
+          transform: 'translate(-50%, -50%)',
+          borderRadius: '50%',
+          background: `radial-gradient(circle, ${c2} 0%, rgba(0,0,0,0) 70%)`,
+          opacity: 0.3,
+          filter: 'blur(80px)'
         }}
       />
-      {/* A cool counter-light keeps the accent from flattening into one wash. */}
-      <AbsoluteFill
+      <div
         style={{
-          opacity: 0.3 * intensity,
-          background: `radial-gradient(46% 34% at ${72 + driftB * 0.5}% ${58 - driftA * 0.5}%, #1E3A8A55 0%, transparent 72%)`,
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          width: '700px',
+          height: '700px',
+          transform: `translate(-50%, -50%) scale(${orb3Scale})`,
+          borderRadius: '50%',
+          background: `radial-gradient(circle, ${c3} 0%, rgba(0,0,0,0) 70%)`,
+          opacity: 0.25,
+          filter: 'blur(90px)'
         }}
       />
-      {/* Vignette: pulls the eye to the centre and stops the mesh reaching the
-          safe zones where the caption and the platform UI live. */}
-      <AbsoluteFill
+      {/* Subtle Fine Grid Texture */}
+      <div
         style={{
-          background:
-            'radial-gradient(72% 55% at 50% 45%, transparent 0%, rgba(3,7,18,0.55) 78%, rgba(3,7,18,0.9) 100%)',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          backgroundImage:
+            'linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px)',
+          backgroundSize: '40px 40px',
+          opacity: 0.6
         }}
       />
-    </AbsoluteFill>
+    </div>
   );
 };
