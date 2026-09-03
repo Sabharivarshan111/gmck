@@ -1354,3 +1354,124 @@ and the product is rendered in CI, which has open network. Voice is Python
 **What is outstanding:** `workflow_dispatch` only appears for workflows on the
 **default branch**. The workflow must reach `main` before Actions → **Ad
 videos** can be run. Nothing else blocks the MP4s.
+
+---
+
+# 14. Session of 2026-09-03 (Claude Code) — what landed, and two mistakes worth inheriting
+
+Written so a **new Claude account** and **Antigravity** can both pick this up
+cold. Everything below is on `main`.
+
+## 14.1 Shipped
+
+| What | Where | Rules file |
+|---|---|---|
+| Community textbook page references, 3-reader quorum | `lib/pageRefs.ts`, `components/PageRefSheet.tsx`, toggle in `BrowseNodeScreen` | `.agents/rules/98-page-references.md` |
+| Admin dashboard, gated on `is_admin()` | `components/AdminPanel.tsx`, `hooks/useIsAdmin.ts`, `lib/admin.ts` | `.agents/rules/99-admin.md` |
+| Ad voice guarantees | `remotion-ad/scripts/preflight.mjs`, `ad-videos.yml` | — |
+
+Supabase, all applied: `reference_books`, `question_page_refs`,
+`page_refs_for_question`, `submit_page_ref`, `withdraw_page_ref`,
+`confirmed_page_refs`, `page_ref_quorum`, plus four `admin_*page_ref*`
+functions. Migration files are in `supabase/migrations/2026090312*`.
+
+## 14.2 THE MISTAKE TO NOT REPEAT: I nearly deleted 220 correct diagram rows
+
+`question_diagrams` has plates attached to many questions —
+`immunoglobulin_structure_and_polymer_architecture.jpg` was on **126**,
+`blood_pressure_baroreceptor_reflex.jpg` on **100**, and
+`dengue_pathogenesis_ade_and_serology.jpg` on **41**. The dengue one was
+genuinely wrong on ~29 of them: an **"ADE" substring collision** had put a
+dengue plate on cardiac tampon*ade*, coagulation casc*ade*, nephron block*ade*,
+Gr*ade*nigo's, intr*ade*rmal, "in*ade*quate treatment", aden*oma*, adenoid,
+adenosine — and Breast Carcinoma, which the app's owner spotted himself.
+
+So I wrote a cleanup: delete any row whose question shares no distinctive whole
+word with its plate's filename. 220 rows matched. **I previewed a sample before
+running it, and almost every one was CORRECT:**
+
+- "What is the management of Hepatitis B?" → `hbv_virion_and_serological_markers` ✓
+- "Ghon's Complex" → `tuberculous_granuloma_histology` ✓
+- "Atropine" → `cholinergic_neurotransmission_receptors` ✓
+- "Isoniazid" → `antitubercular_drugs_ripe_moa` ✓
+- "Faucial diphtheria" → `corynebacterium_diphtheriae…` ✓
+- "Abnormal Immunoglobulin**s**" → the immunoglobulin plate ✓ (failed only on the plural)
+
+That rule was **the keyword matcher coming back through the side door, in
+reverse** — the exact thing `CLAUDE.md` and `check:diagrams` exist to forbid.
+Medicine is full of questions whose right plate shares no word with them.
+
+**So: never bulk-fix `question_diagrams` by a text rule, in either direction.**
+Fix rows you have read individually. `npm run audit:diagrams` proposes and
+`scripts/orphan-diagram-candidates.mjs` proposes; a human decides. When a plate
+is wrong and no right one exists, **clear `public_url` and leave no picture** —
+that is what was done to Breast Carcinoma.
+
+Still outstanding: 57 plates sit on more than 5 questions each (562 rows). Some
+of that is legitimate (one plate answering a family of questions), some is
+collision damage. It needs reading, not a script.
+
+## 14.3 The bank extractor was wrong twice, and numbers were reported from it
+
+`mobile/scripts/bank-strings.mjs` is now the only correct way to read questions
+out of `src/data/topics/`. Two bugs it exists to prevent, both of which silently
+under-counted:
+
+1. **Quote parity.** `/"((?:[^"\\]|\\.){N,})"/g` fails at a string shorter than
+   N, the engine advances one char, and the next quote it finds is that string's
+   *closing* one — from then on every "match" is the **gap between** questions.
+   On `anatomy/paper1.ts`: 245 matches, none containing a question.
+2. **`indexOf(']')`.** Community Medicine questions end `[Pg:325]`, so the first
+   `]` is inside a string and the array was truncated there.
+
+Together they lost **631 questions**. The repeat-marker percentages I first
+reported (56/80/87/21%) were wrong. Corrected, via the scanner:
+
+| Year | Carry a repeat marker |
+|---|---|
+| first-year | 592/836 (71%) |
+| second-year | 970/1013 (96%) |
+| third-year | 861/861 (100%) |
+| **final-year** | **681/2562 (27%)** |
+
+**General Medicine is 0 of 691.** The Final Year repeat circle is missing
+because the marker is missing from the bank — `countStars` is correct and works
+identically on all four years. The fix is the marked-up source for those
+subjects. Do not invent counts. `npm run check:repeat-markers`.
+
+## 14.4 Ads: three bugs, all of which shipped silently
+
+1. **`npm run voice` never ran the synthesiser** — only wrote the manifest. CI
+   used whatever mp3s were committed.
+2. **orbit-2am's audio had drifted off its script** on 16 of 30 shots — the
+   voice said one thing while the caption said another. `preflight.mjs` now
+   compares each recorded line to the script via `audio/manifest.json`.
+3. **My own ffprobe check failed three good renders.** ffprobe is not on
+   ubuntu-latest; the command printed nothing, `wc -l` gave 0, and 0 was read as
+   "no audio stream". A missing tool is now its own error. **A false "this
+   artefact is broken" is more expensive than no check at all.**
+
+`shoot.mjs` also now ignores three classes of harness noise *with a stated
+reason and a count* (react-native-web's `collapsable`, session-less Supabase
+401s, the missing favicon) instead of failing on any console error.
+
+## 14.5 For Antigravity specifically
+
+- `main` is in all three Android push triggers, so **a push to `main` cuts a
+  build** — no API dispatch needed. Releases publish themselves.
+- Read `.agents/rules/98-page-references.md` and `99-admin.md` before touching
+  either feature. The quorum lives in Postgres on purpose; do not move it into
+  the client.
+- If you add diagram rows: `question_id` is UNIQUE, so **one** plate per
+  question holds the bank key and extras are reachable only through
+  `question_text`. Set that text to the bank's exact string.
+- §14.2 applies to you too.
+
+## 14.6 Still open
+
+- Textbook-page UI is functional but plain; the owner asked for a design pass
+  (visualise the quorum rather than stating it, entrance motion, reduced-motion).
+- "Current textbook" selection: the row chip shows the best-supported book's
+  page, not the reader's own book. Persist a chosen book and filter by it.
+- The 562 over-attached diagram rows in §14.2.
+- General Medicine repeat markers (§14.3).
