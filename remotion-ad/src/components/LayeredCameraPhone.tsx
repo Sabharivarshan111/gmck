@@ -64,13 +64,25 @@ export const LayeredCameraPhone: React.FC<LayeredCameraPhoneProps> = ({
     focalOrigin = '50% 48%';
   }
 
-  // Base camera angles for subtle continuous living motion (elevated vertically to leave >200px subtitle clearance)
+  // Base camera angles for subtle continuous living motion.
+  //
+  // The lift keeps the device clear of the caption plate at the bottom of the
+  // frame, but it was set near -190 and that overshot: the translate sits
+  // *inside* the same transform as the scale, so it is multiplied by it. On a
+  // macro or push dynamicScale reaches 1.50, which turns -190 into -285 of real
+  // travel and puts the top of the phone at y = -2 -- the frame edge slicing
+  // the app's own title in half on the opening hook.
+  //
+  // Sized instead from what has to fit: the device is 1048 tall, so at 1.50 it
+  // draws 1572 in a 1920 frame whose bottom ~170 belongs to the caption. That
+  // leaves 1750 of usable height, so a lift near -100 centres it with the top
+  // on screen and the caption still clear.
   const baseTrajectories = [
-    { rx0: 3.5, rx1: 0.8, ry0: -4.0, ry1: -1.0, rz0: -0.4, rz1: -0.1, y0: -190, y1: -205 },
-    { rx0: -2.5, rx1: -0.5, ry0: 3.5, ry1: 0.8, rz0: 0.4, rz1: 0.1, y0: -192, y1: -208 },
-    { rx0: 3.0, rx1: 0.6, ry0: -3.0, ry1: -0.8, rz0: -0.3, rz1: -0.1, y0: -190, y1: -204 },
-    { rx0: 2.2, rx1: 0.4, ry0: 2.5, ry1: 0.5, rz0: 0.3, rz1: 0.1, y0: -194, y1: -210 },
-    { rx0: -3.0, rx1: -0.6, ry0: -3.0, ry1: -0.6, rz0: -0.4, rz1: -0.1, y0: -191, y1: -206 }
+    { rx0: 3.5, rx1: 0.8, ry0: -4.0, ry1: -1.0, rz0: -0.4, rz1: -0.1, y0: -100, y1: -115 },
+    { rx0: -2.5, rx1: -0.5, ry0: 3.5, ry1: 0.8, rz0: 0.4, rz1: 0.1, y0: -102, y1: -118 },
+    { rx0: 3.0, rx1: 0.6, ry0: -3.0, ry1: -0.8, rz0: -0.3, rz1: -0.1, y0: -100, y1: -114 },
+    { rx0: 2.2, rx1: 0.4, ry0: 2.5, ry1: 0.5, rz0: 0.3, rz1: 0.1, y0: -104, y1: -120 },
+    { rx0: -3.0, rx1: -0.6, ry0: -3.0, ry1: -0.6, rz0: -0.4, rz1: -0.1, y0: -101, y1: -116 }
   ];
 
   const traj = baseTrajectories[shotIndex % baseTrajectories.length];
@@ -225,46 +237,17 @@ export const LayeredCameraPhone: React.FC<LayeredCameraPhoneProps> = ({
             backgroundColor: '#030712'
           }}
         >
-          {/* Top Dynamic Island Pill */}
-          <div
-            style={{
-              position: 'absolute',
-              top: '12px',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              width: '116px',
-              height: '26px',
-              backgroundColor: '#000000',
-              borderRadius: '20px',
-              zIndex: 100,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: '0 12px',
-              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.8)'
-            }}
-          >
-            {/* Camera Lens */}
-            <div
-              style={{
-                width: '8px',
-                height: '8px',
-                borderRadius: '50%',
-                background: 'radial-gradient(circle at 30% 30%, #1e293b, #020617)'
-              }}
-            />
-            {/* Live Indicator */}
-            <div
-              style={{
-                width: '6px',
-                height: '6px',
-                borderRadius: '50%',
-                backgroundColor: activeAccent,
-                boxShadow: `0 0 8px ${activeAccent}`
-              }}
-            />
-          </div>
-
+          {/* No Dynamic Island is drawn.
+            *
+            * The screens are captured from the preview harness in a plain
+            * browser viewport, so they carry no status-bar inset -- the app's
+            * own header sits at y = 0. An island overlaid at top: 12px
+            * therefore lands squarely on that header and blanked out half of
+            * "Question Bank" on the opening shot of every ad.
+            *
+            * Insetting the screenshot to make room is worse: it would push the
+            * bottom nav out of the device. The bezel, the rounded corners and
+            * the titanium edge already read as a phone without it. */}
           {/* Pristine Screen Content with Interactive Touch Feedback (100% Navigation Bar Visible) */}
           <div
             style={{

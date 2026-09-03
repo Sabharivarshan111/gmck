@@ -13,7 +13,10 @@ export const SCREENS: Record<string, ScreenAsset> = {
   home: { kind: 'screen', file: 'app_screens/home.png' },
   homeLight: { kind: 'screen', file: 'app_screens/home-light.png' },
   glassHome: { kind: 'screen', file: 'app_screens/glass-home.png' },
-  browse: { kind: 'screen', file: 'app_screens/browse.png' },
+  // Final year, because it is the only year with six subjects. Second year
+  // has three rows and then 40% of the screen is black, which in a wide
+  // shot reads as an empty app while the voiceover claims 5,545 questions.
+  browse: { kind: 'screen', file: 'app_screens/browse-final.png' },
   questions: { kind: 'screen', file: 'app_screens/questions.png' },
   questionsChapters: { kind: 'screen', file: 'app_screens/questions-chapters.png' },
   questionsLeaf: { kind: 'screen', file: 'app_screens/questions-leaf.png' },
@@ -256,7 +259,7 @@ export const Shot01_HookScreen: React.FC = () => <PristineAppScreen imageName="g
 export const Shot02_PrecisionScreen: React.FC = () => <PristineAppScreen imageName="home.png" />;
 
 // SHOT 3: TN MGR University 4-Year Grid
-export const Shot03_TNMGRMUGridScreen: React.FC = () => <PristineAppScreen imageName="browse.png" />;
+export const Shot03_TNMGRMUGridScreen: React.FC = () => <PristineAppScreen imageName="browse-final.png" />;
 
 // SHOT 4: 5,000+ Past Papers Question Bank
 export const Shot04_QuestionBankScreen: React.FC = () => <PristineAppScreen imageName="questions.png" />;

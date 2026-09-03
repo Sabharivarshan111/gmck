@@ -25,6 +25,11 @@ const SHOTS = [
   // bar or a card clipped by the scroll container is invisible from the top.
   { name: 'home-bottom', query: 'screen=home', scroll: 'bottom' },
   { name: 'browse', query: 'screen=browse' },
+  // Final year is the only year with six subjects, so it is the one browse
+  // screen whose list fills the phone. The ads use it: second year has three
+  // rows and then half a screen of black, which reads as an empty app in a
+  // wide shot however true it is.
+  { name: 'browse-final', query: 'screen=browse&year=final-year' },
   { name: 'notes', query: 'screen=notes' },
   { name: 'timer', query: 'screen=timer' },
   { name: 'askai', query: 'screen=askai' },

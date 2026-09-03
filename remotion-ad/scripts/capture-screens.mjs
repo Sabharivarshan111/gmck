@@ -25,7 +25,7 @@ await fs.mkdir(out, { recursive: true });
 
 // Freshly captured screens.
 const fromShoot = [
-  'home', 'home-light', 'browse', 'questions', 'notes-renderer',
+  'home', 'home-light', 'browse', 'browse-final', 'questions', 'notes-renderer',
   'notes-renderer-bottom', 'askai', 'chatdemo', 'flashcards-decks',
   'anki-study', 'notes', 'usernotes-edit', 'usernotes-preview', 'timer',
   'timer-bottom', 'growthshowcase', 'treegallery', 'progress', 'progress-bottom',
