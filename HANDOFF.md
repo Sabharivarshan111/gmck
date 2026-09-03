@@ -151,7 +151,19 @@ back to the debug key and the result is **not** publishable.
 
 ## 2. Blocking items — do these first
 
-### 2.1 Signing secrets are not in CI yet
+### 2.1 ~~Signing secrets are not in CI yet~~ — DONE, confirmed 2026-09-03
+
+**The three secrets are set.** `android-internal.yml` exits 1 with an explicit
+error when `ANDROID_KEYSTORE_BASE64` is missing, and `internal-124`, `-125` and
+`-126` all published — a release it cannot reach without decoding the keystore.
+So the section below is history; keep it for the upload-key reset story, not as
+an outstanding task.
+
+**One consequence that changes the OAuth setup**, and it is easy to miss: with
+the secret present, `android-debug.yml` signs the debug APK with the **upload
+key**, not Android's standard debug key. The Android OAuth client for the
+`.debug` package therefore needs SHA-1 `CE:EA:8A:…` (the upload key), *not*
+`5E:8F:16:…` (the checked-in debug key). See `mobile/OAUTH-SETUP.md`.
 
 **The upload key reset is done.** The original upload key belonged to *Google
 AI Studio* (`CN=AI Studio, O=Google`), so no keystore ever existed on the
