@@ -33,6 +33,9 @@ module.exports = [
         getComputedStyle: 'readonly',
         document: 'readonly',
         window: 'readonly',
+        // web-note-diagram-check dispatches the same `orbit:single-note` event
+        // QuestionCard does, to drive the real triple-tap overlay.
+        CustomEvent: 'readonly',
       },
       parserOptions: { ecmaVersion: 2022, sourceType: 'module' },
     },

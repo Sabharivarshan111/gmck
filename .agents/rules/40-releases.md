@@ -28,6 +28,27 @@ desktop browser, and the whole point is installing from the phone.
 `.apk` (sideload this to test the real thing). The other two produce an APK only
 — Play never sees them.
 
+## How to actually cut one (you do not need API access)
+
+**Push to `main`, and all three build and publish their releases.** That is the
+whole answer, and it is new as of 2026-09-03.
+
+Before that, the three workflows only fired on pushes to
+`claude/native-app-sync`, and `main` was in none of the lists. So a merge to
+`main` built nothing, and the only other route was calling `workflow_dispatch`
+through the GitHub API — which needs a token. Claude Code has one through its
+GitHub connector; **Antigravity does not**, which is the entire reason it could
+never cut a build while Claude Code could. It was never a permissions problem
+to argue about, just a branch missing from three lists.
+
+The `paths:` filters on the debug and internal workflows are what keep this
+affordable — a commit that only moves documentation still burns no runner.
+`android-release.yml` deliberately has no paths filter, because it is the
+artifact people actually wait for.
+
+Each workflow also still accepts a manual `workflow_dispatch` from the Actions
+tab, which is the way to rebuild a commit without pushing a new one.
+
 ## Two things that cost real money if you get them wrong
 
 **1. A test build must never be able to show a live ad.** Serving yourself live
