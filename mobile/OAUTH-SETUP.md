@@ -93,6 +93,50 @@ Also required
 * The OAuth consent screen must be published, or only test users can sign in.
 
 
+The exact values, so nothing has to be guessed
+-----------------------------------------------
+  Google Cloud project number   358287134961
+  Supabase project ref          pmtgeydtqypwrypshhsx
+  Supabase URL                  https://pmtgeydtqypwrypshhsx.supabase.co
+
+  Where the client secret lives:
+    Cloud Console -> Credentials -> click the *Web application* client
+    "Orbit ... web" (id 358287134961-24qidem5pd...) -> right-hand panel,
+    "Client secret". It is NOT in this repo and must never be committed.
+    If it was never noted down, press "Add secret" / rotate and use the new
+    one -- then update Supabase, or sign-in breaks.
+
+  Paste targets:
+    Web client ID     -> Supabase -> Authentication -> Providers -> Google
+                         -> "Client ID (for OAuth)"
+    Client secret     -> same page -> "Client Secret (for OAuth)"
+
+  Authorized redirect URI, on the WEB client only:
+    https://pmtgeydtqypwrypshhsx.supabase.co/auth/v1/callback
+
+    Supabase prints this exact string on the Google provider page. The three
+    Android clients take no redirect URI at all -- Android clients have no
+    such field, which is a useful way to tell you are editing the right one.
+
+
+Two different flows, and only one needs the redirect URI
+---------------------------------------------------------
+  NATIVE (mobile/src/lib/googleAuth.ts)
+    GoogleSignin.signIn() -> supabase.auth.signInWithIdToken()
+    Google issues the ID token on-device. No browser, no redirect. What it
+    needs is an Android OAuth client matching (package, SHA-1). This is the
+    flow behind "Sign in with Google to sync across devices".
+
+  BROWSER (src/lib/native-auth.ts, RemoveAdsButton, NotesPurchaseCard)
+    supabase.auth.signInWithOAuth({ provider: 'google' })
+    This one round-trips through a browser, so it needs the redirect URI above
+    registered on the Web client. The Capacitor build additionally returns to
+    `app.lovable.orbitmbbs://auth/callback`.
+
+  So a setup that only registers Android clients gives you working native
+  sign-in and a failing "Buy" button, and vice versa. Both are needed.
+
+
 How to verify each certificate yourself
 ---------------------------------------
   # debug key (checked in, password "android")
