@@ -288,7 +288,7 @@ jobs:
           body: |
             Installable debug build of the Orbit MBBS native app.
 
-            **Download `orbit-debug.apk` below and open it on your phone.**
+            **Download `app-preview.apk` below and open it on your phone.**
             Android will ask once for permission to install from this source.
 
             Installs as `com.aistudio.mbbsqbank.aycxvd.debug`, alongside the
