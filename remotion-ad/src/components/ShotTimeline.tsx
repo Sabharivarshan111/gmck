@@ -39,6 +39,8 @@ interface ShotViewProps {
   shot: Shot;
   timing?: ShotTiming;
   voiceSrc: string | null;
+  /** True for the silent cut: drop the aurora and sit the shot on black. */
+  onBlack?: boolean;
   shotIndex: number;
   durationOverride?: number;
   reel?: boolean;
@@ -51,6 +53,7 @@ const ShotView: React.FC<ShotViewProps> = ({
   shotIndex,
   durationOverride,
   reel = false,
+  onBlack = false,
 }) => {
   const frame = useCurrentFrame();
   const durationInFrames = durationOverride ?? timing?.shotFrames ?? 120;
@@ -104,7 +107,21 @@ const ShotView: React.FC<ShotViewProps> = ({
 
   return (
     <AbsoluteFill>
-      <AuroraMeshBackground accent={accent} intensity={shot.camera === 'macro' ? 0.6 : 1} />
+      {/* The silent cut runs on true black.
+        *
+        * A reel is watched muted and thumb-first, so the subtitle cut has to
+        * survive with no voice carrying it. The aurora is a lovely bed under a
+        * narrated ad and it is the wrong choice here: it lifts the ground off
+        * black, and every phone gallery, every Reels feed and every dark OLED
+        * frames the video against black already. Matching it makes the phone in
+        * the shot and the caption look like they are floating in the feed
+        * rather than sitting on a coloured card someone designed.
+        *
+        * The accent does not disappear — it stays in the caption, the rim and
+        * the touch ripple, where it marks meaning instead of filling space. */}
+      {onBlack ? null : (
+        <AuroraMeshBackground accent={accent} intensity={shot.camera === 'macro' ? 0.6 : 1} />
+      )}
       <AbsoluteFill style={{ opacity: alpha }}>
         {asset?.kind === 'plate' && src ? (
           <PlateCard
@@ -189,7 +206,7 @@ export const ShotTimeline: React.FC<{ script: AdScript; withVoice?: boolean }> =
   const total = reel ? scriptFrames(script) : (timingReport?.totalFrames ?? cursor);
 
   return (
-    <AbsoluteFill style={{ backgroundColor: '#030712' }}>
+    <AbsoluteFill style={{ backgroundColor: reel && !withVoice ? '#000000' : '#030712' }}>
       {/*
         The bed sits under everything and runs the whole composition. It is the
         first child so no shot's background can be drawn beneath it, and it is
@@ -224,6 +241,7 @@ export const ShotTimeline: React.FC<{ script: AdScript; withVoice?: boolean }> =
             durationOverride={durationInFrames}
             reel={reel}
             voiceSrc={withVoice && !reel ? voiceFile(script, shot) : null}
+            onBlack={reel && !withVoice}
           />
         </Sequence>
       ))}
