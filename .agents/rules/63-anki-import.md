@@ -4,7 +4,7 @@ description: Importing an Anki .apkg — the decoy collection every modern packa
 
 # Importing an Anki package
 
-`mobile/src/lib/apkgFormat.ts` (the format), `mobile/src/lib/importedDecks.ts` (the storage),
+`src/lib/apkgFormat.ts` (the format), `mobile/src/lib/importedDecks.ts` (the storage),
 `ApkgModule.kt` (zip, zstd, SQLite), and the **Import your Anki cards** row
 under Decks you write.
 
@@ -78,7 +78,7 @@ Anki's code is **AGPL-3.0** and AnkiDroid's is **GPL-3.0**. Neither is in this
 repository and neither may be added: copied code would put this whole app under
 that licence. What is reproduced is *behaviour* — a file format and a published
 algorithm (SM-2), neither of which is copyrightable. `mobile/src/lib/anki.ts`,
-`mobile/src/lib/apkgFormat.ts` and `mobile/scripts/anki-check.mjs` say so at the
+`src/lib/apkgFormat.ts` and `mobile/scripts/anki-check.mjs` say so at the
 top; do not reintroduce the phrase "ported from", because it describes something
 that did not happen and is the first thing anyone auditing this would search for.
 
@@ -118,7 +118,7 @@ and the module never touches the network.
 
 ## Exporting writes the *oldest* layout
 
-`mobile/src/lib/apkgExport.ts`, and the share button on a deck in **Decks you
+`src/lib/apkgExport.ts`, and the share button on a deck in **Decks you
 write**. It writes version 1 — a plain `collection.anki2` at schema 11, a JSON
 media map, no `meta` and no zstd — on purpose:
 

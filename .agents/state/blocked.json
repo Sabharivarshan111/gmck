@@ -1,0 +1,107 @@
+{
+  "_README": [
+    "Work that is stopped, and the person who can start it again.",
+    "",
+    "This is the hand-written half of the resume report, and it is deliberately small.",
+    "Everything an agent can derive — the branch, the dirty tree, the last commits, the",
+    "Supabase queue, the open notes — is derived by mobile/scripts/resume-status.mjs.",
+    "What cannot be derived is who is allowed to unblock a thing, so that is what lives",
+    "here and nothing else.",
+    "",
+    "'blocked' without an owner is the failure this file exists to stop. An agent cannot",
+    "flip a connector toggle, paste a GitHub Actions secret, buy Lovable credits, put a",
+    "card through Razorpay or enable a branch ruleset. A report that says 'blocked on",
+    "Supabase' reads as 'try again later'; 'blocked on the owner enabling the connector",
+    "in this chat's settings' is an instruction someone can act on in ten seconds.",
+    "",
+    "clearsWhen is a cheap OFFLINE probe of something that would be observably different",
+    "once the blocker is gone. The report prints MAY BE CLEAR when it fires; it never",
+    "edits this file, because a probe can be right about the filesystem and wrong about",
+    "the world. Kinds: manual | pathExists | pathMissing | grepPresent | grepAbsent |",
+    "supabaseJobDone.",
+    "",
+    "Add an entry the moment you are stopped by something, not at the end of the session.",
+    "Set status to 'cleared' rather than deleting: a blocker that vanishes gets rediscovered."
+  ],
+  "updated": "2026-09-04",
+  "blockers": [
+    {
+      "id": "supabase-route",
+      "what": "generate-handwritten-notes cannot be deployed (job sb-physio-flowchart): 3 of 11 cached Physiology notes have no flowchart, which is the section a student actually writes down.",
+      "blockedOn": "a route to Supabase. No agent sandbox has one — the egress gateway answers 403 to the CONNECT itself, before any credential is offered, so a personal access token is not an unblock.",
+      "owner": "the app owner, in two ways: enable the Supabase connector for the chat (Claude Code or Antigravity), or push so that .github/workflows/supabase-tasks.yml runs on a GitHub runner, which does have a route.",
+      "remedy": "cd mobile && npm run supabase:status, then follow .claude/skills/supabase-resume/SKILL.md. If the connector is missing, report WHICH: connected:false is a reconnect, connected:true + enabledInChat:false is a toggle in the chat's connector settings. No tool can flip it.",
+      "since": "2026-09-03",
+      "source": "HANDOFF.md §8j, .agents/rules/70-supabase.md",
+      "clearsWhen": {
+        "kind": "supabaseJobDone",
+        "id": "sb-physio-flowchart"
+      },
+      "status": "cleared",
+      "clearedOn": "2026-09-04",
+      "clearedBy": "A route exists after all, and the standing claim that no sandbox has one is now too strong. A session holding the Supabase MCP connector can reach an edge function WITHOUT any direct egress: the `http` extension (v1.6) is installed on this project, so Postgres itself makes the request. select http_post('https://pmtgeydtqypwrypshhsx.supabase.co/functions/v1/<slug>', <json body>::text, 'application/json') — raise the timeout first with http_set_curlopt('CURLOPT_TIMEOUT_MS','170000') or a model call will be cut off at the default. generate-handwritten-notes has verify_jwt:false so it needs no Authorization header. Build the body from the row itself with jsonb_build_object so a large note never has to travel through an agent's context. This is what made the sb-physio-flowchart backfill possible from a sandbox, and it is also how the repair was diagnosed: query_logs on source='function_logs' reads the function's own console output back.",
+      "stillTrue": "The egress gateway still refuses a direct CONNECT to *.supabase.co and api.supabase.com from the sandbox, so supabase-js, the CLI and physio-flowchart-backfill.mjs --run still cannot work here. What changed is that the CONNECTOR is a usable route to both SQL and the functions, not only to SQL. Deploying a function still needs the connector's deploy_edge_function; the http extension cannot do that (the Management API needs a personal access token)."
+    },
+    {
+      "id": "lovable-credits",
+      "what": "The Lovable-published copy of the web app never calls the diagram lookup on the reader's path, so triple-tapping a question there shows no picture. The native app and the Vercel web app both show them; the data is correct and is not the blocker.",
+      "blockedOn": "Lovable workspace SsJFPAW9Fet3beeN2YWW is out of credits — send_message is rejected outright. That project is a separate tree from this repo's src/, so a commit here cannot reach it.",
+      "owner": "the app owner — add credits at https://lovable.dev/settings/billing. Then any agent can send the queued message through the Lovable connector.",
+      "remedy": "The exact message to send is written out in .agents/queue/lovable-diagram-wiring.md. Send it, then ask the project to publish.",
+      "since": "2026-09-02",
+      "source": ".agents/queue/lovable-diagram-wiring.md, CLAUDE.md 'There are three copies of this app'",
+      "clearsWhen": {
+        "kind": "pathMissing",
+        "path": ".agents/queue/lovable-diagram-wiring.md"
+      }
+    },
+    {
+      "id": "razorpay-untested",
+      "what": "The ad-free purchase has never had a real payment through it. It builds, the preview shim refuses rather than faking success, and check:payments holds the price and the server-side signature check — but this is untested code that handles money.",
+      "blockedOn": "one real payment, on a device, from a person with a card. Razorpay test mode first.",
+      "owner": "the app owner. There is no emulator in the sandboxes and no way for an agent to pay.",
+      "remedy": "Pay Rs 50 on a device, then confirm a premium_subscriptions row appears with expires_at a month out. RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET must be set on the Supabase project or razorpay-create-order returns 500.",
+      "since": "2026-08-27",
+      "source": "HANDOFF.md §2.2",
+      "clearsWhen": {
+        "kind": "manual"
+      }
+    },
+    {
+      "id": "openai-key-revoke",
+      "what": "A live OpenAI API key was committed at src/components/AIChatWindow.tsx:14 (commit f50c8e8). The file is gone from HEAD and the key is purged from gmck's history, but it is still in mbbsqbank-questor-ee7eadb9's history.",
+      "blockedOn": "revocation. Purging history does not revoke a key, and the key is still valid until somebody revokes it.",
+      "owner": "the app owner, at platform.openai.com. An agent has no login there and must never be given one.",
+      "remedy": "Revoke it. Then set this entry's status to 'cleared' with the date.",
+      "since": "2026-08-26",
+      "source": "HANDOFF.md §2.3",
+      "clearsWhen": {
+        "kind": "manual"
+      }
+    },
+    {
+      "id": "oauth-sha1-deployment",
+      "what": "Google Sign-In needs an Android OAuth client whose SHA-1 matches the certificate that signed the running build. Play App Signing means real users run a build signed by GOOGLE's key, not the upload key — so registering only the upload key gives sign-in that works in every test build and fails for every real user.",
+      "blockedOn": "three Android OAuth clients existing in Google Cloud: deployment (54:F7:27:...), internal/upload (CE:EA:8A:...), and .debug.",
+      "owner": "the app owner, in the Google Cloud console. An agent cannot create OAuth clients.",
+      "remedy": "mobile/OAUTH-SETUP.md has all three with their exact values.",
+      "since": "2026-08-26",
+      "source": "HANDOFF.md §2.4",
+      "clearsWhen": {
+        "kind": "manual"
+      }
+    },
+    {
+      "id": "repo-deletion-protection",
+      "what": "Nothing on GitHub currently stops this repository, or the main branch, being deleted. check:repo-intact guards the contents of a checkout; it cannot guard the repository.",
+      "blockedOn": "repository settings. The GitHub admin and Actions APIs are denied by the agent proxy, and repository deletion protection is an owner-only setting in any case.",
+      "owner": "the app owner (or an org admin). The exact click paths are in .agents/REPO-PROTECTION.md.",
+      "remedy": "Settings > Rules > Rulesets > New branch ruleset, target main, tick Restrict deletions and Restrict force pushes. Then Settings > General > Danger Zone and confirm who can delete. An off-GitHub mirror is the only real backstop.",
+      "since": "2026-09-04",
+      "source": ".agents/REPO-PROTECTION.md",
+      "clearsWhen": {
+        "kind": "manual"
+      }
+    }
+  ]
+}

@@ -37,6 +37,13 @@ jobs:
           node-version: 22.x
           cache: npm
 
+      # Before anything is installed: this one is plain node with no
+      # dependencies, so a repository that has lost a load-bearing path fails
+      # here in seconds instead of after a two-minute install. It guards the
+      # question bank in src/data/ that this very build compiles into the site.
+      - name: Nothing load-bearing has been deleted
+        run: node mobile/scripts/repo-intact-check.mjs
+
       # --legacy-peer-deps is not optional here and is what every other
       # workflow in this repo already uses.
       - name: Install

@@ -1475,3 +1475,64 @@ reason and a count* (react-native-web's `collapsable`, session-less Supabase
   page, not the reader's own book. Persist a chosen book and filter by it.
 - The 562 over-attached diagram rows in §14.2.
 - General Medicine repeat markers (§14.3).
+
+---
+
+# 15. `npm run resume` — stop reading this file first (2026-09-04)
+
+Everything above is a hand-written record, and it is worth keeping. But it is
+also the failure it was written to prevent: prose is true on the day it is
+written, and §8f (flashcards built twice) and §8j (a Supabase deploy announced
+once, in a chat message, and forgotten for weeks) are both what a stale status
+file costs.
+
+So the first command in any session, on any account, in any tool, is now:
+
+```sh
+npm run resume            # root, or: cd mobile && npm run resume
+```
+
+`mobile/scripts/resume-status.mjs`. It runs **offline** — no network, no
+Supabase, no GitHub API — because the case it exists for is a fresh clone in a
+sandbox behind the egress proxy. It derives what can be derived (branch, dirty
+tree, last commits, remote comparison, the Supabase queue, the open notes under
+`.agents/queue/`) and runs the three integrity checks.
+
+Only two things in it are hand-written, because only two cannot be derived:
+
+- **`.agents/state/resume-notes.md`** — what you were in the middle of and the
+  next action. Append at the bottom, heading `## YYYY-MM-DD — <tool> — <line>`.
+  The date is parsed: an entry older than HEAD is printed as history, not
+  status, so an obviously old note announces itself instead of being believed.
+- **`.agents/state/blocked.json`** — what is stopped and **who can unstop it**.
+  Half the open work here is blocked on a person: a secret only the owner can
+  paste, a connector toggle no tool can flip, Lovable credits, a real payment.
+  "Blocked" without an owner is what turns a blocker into a permanent one.
+
+`.agents/state/session-state.json` is a generated snapshot of the same facts
+(`npm run resume:write`) for a reader who cannot run anything.
+
+Claude Code prints the report automatically — `.claude/hooks/session-start.sh`,
+registered as a `SessionStart` hook in `.claude/settings.json`. It is
+read-only, offline, and exits 0 whatever happens; delete that entry to turn it
+off. Antigravity, Cursor and Codex have no equivalent, which is what
+`.agents/rules/05-resume.md` and the row in `AGENTS.md` are for.
+
+## The repo must not be deletable by accident
+
+`npm run check:repo-intact` (`mobile/scripts/repo-intact-check.mjs`) fails if a
+load-bearing path is missing, emptied or shrunk under a floor, if the Supabase
+queue stops parsing, or if a deletion under `src/data/`, `.agents/`,
+`.claude/`, `.github/workflows/` or `supabase/migrations/` is **staged**. It
+runs in `android-debug`, `android-internal`, `android-release` and — before
+`npm ci`, since it needs no dependencies — `webpack.yml`, so it cannot become a
+check that exists without ever running (§8f).
+
+It **cannot** stop the repository being deleted on github.com. That is an
+owner-only setting and the GitHub admin API is denied by the agent proxy
+(§2.1). `.agents/REPO-PROTECTION.md` is the other half, with click paths: a
+`protect-main` branch ruleset (restrict deletions, block force pushes), who
+holds `admin`, and a `git clone --mirror` kept off GitHub. All three are the
+owner's to do. There is deliberately **no** mirror workflow, because it would
+need a secret nobody has set and would sit in the workflow list looking like
+protection while skipping silently — the §8f and §14.4 shape exactly.
