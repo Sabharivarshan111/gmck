@@ -46,6 +46,7 @@ import {
   type Card,
   type Grade,
 } from "./anki";
+import { type CardMode, type CardPathway } from "./pathwayCards";
 
 export { answer, counts, dueQueue, GRADES, intervalLabel, isLeech, newCard, NEW_PER_DAY };
 export type { Card, Grade };
@@ -61,6 +62,24 @@ export interface DeckCard {
   frontImages?: string[];
   /** Pictures on the answer side. `imageUrl` is the first of these. */
   backImages?: string[];
+  /**
+   * What kind of thinking this card asks for, when the deck knows.
+   *
+   * Set by `generate-flashcards` for a first-year chapter, absent on every deck
+   * built before that. Absent means no chip, which is what those decks have
+   * always looked like.
+   */
+  mode?: CardMode;
+  /**
+   * The ordered chain drawn on the answer side, for a card whose plate is a
+   * pathway.
+   *
+   * Orthogonal to `kind` on purpose: a pathway card is still an image card, and
+   * a client that has never heard of this field renders it exactly as it
+   * rendered every image card before — the picture, then the written answer.
+   * The chain is an enrichment, never the only thing carrying the card.
+   */
+  pathway?: CardPathway;
   tags?: string[];
 }
 

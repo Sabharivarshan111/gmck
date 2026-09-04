@@ -77,6 +77,74 @@ const ANKI_FIXTURE = [
     tags: ['tb', 'ntep'],
   },
 ];
+
+/**
+ * ?screen=pathwaydemo — a first-year deck, the kind `generate-flashcards` now
+ * builds for Anatomy, Physiology and Biochemistry.
+ *
+ * Four cards, one of each thing that is new: a pathway card carrying its plate
+ * AND the chain the plate draws, a reasoning card (a claim, then "why"), an
+ * applied vignette, and a plain recall card for contrast. The content is
+ * standard first-year biochemistry so the screenshot shows what a real card
+ * looks like rather than lorem ipsum at the right length.
+ *
+ * The plate's URL is the real one. The sandbox cannot reach Supabase — the
+ * egress policy answers 403 — so the harness that drives this screen stubs the
+ * bytes, and it also drives the state where the plate does NOT arrive, which is
+ * the state the chain exists to survive.
+ */
+const PATHWAY_FIXTURE = [
+  {
+    id: 'pathway::0',
+    kind: 'image' as const,
+    mode: 'pathway' as const,
+    front:
+      'Trace the pathway: Glycolysis \u2013 definition, sequence of reaction, energetics, regulation\n\nName the steps in order, the enzyme at each, and where it is blocked.',
+    back: 'Cytoplasmic oxidation of glucose to pyruvate; net 2 ATP and 2 NADH per glucose.',
+    imageUrl:
+      'https://pmtgeydtqypwrypshhsx.supabase.co/storage/v1/object/public/diagrams/biochemistry/glycolysis_pathway_energetics.jpg',
+    pathway: {
+      steps: [
+        { label: 'Glucose \u2192 Glucose-6-phosphate', detail: 'Hexokinase (glucokinase in liver). 1 ATP spent.' },
+        { label: 'F6P \u2192 Fructose-1,6-bisphosphate', detail: 'PFK-1 \u2014 rate-limiting, irreversible. 1 ATP spent.' },
+        { label: 'F1,6-BP \u2192 G3P + DHAP', detail: 'Aldolase splits the 6-carbon chain in two.' },
+        { label: 'G3P \u2192 1,3-BPG', detail: 'G3P dehydrogenase. The only NADH-yielding step.' },
+        { label: '1,3-BPG \u2192 3-phosphoglycerate', detail: 'Phosphoglycerate kinase. 2 ATP, substrate-level.' },
+        { label: 'PEP \u2192 Pyruvate', detail: 'Pyruvate kinase. 2 ATP, irreversible.' },
+      ],
+      caption:
+        'Net 2 ATP and 2 NADH per glucose. PFK-1 is the rate-limiting step, and the one every regulation question turns on.',
+    },
+    tags: ['diagram', 'biochemistry', 'flowchart'],
+  },
+  {
+    id: 'pathway::1',
+    kind: 'theory' as const,
+    mode: 'reasoning' as const,
+    front:
+      'When the Rapoport-Luebering cycle operates in the red cell there is no net ATP generation. Why?',
+    back: '1,3-BPG is diverted to 2,3-BPG, bypassing phosphoglycerate kinase \u2014 the ATP-yielding step is skipped.',
+    hint: 'Which step is being bypassed?',
+    tags: ['glycolysis', 'rbc'],
+  },
+  {
+    id: 'pathway::2',
+    kind: 'theory' as const,
+    mode: 'applied' as const,
+    front:
+      'A 52-year-old man has total cholesterol 465 mg/dL and LDL 178 mg/dL. He is started on atorvastatin \u2014 what is its mechanism of action?',
+    back: 'Competitive inhibition of HMG-CoA reductase, the rate-limiting enzyme of cholesterol synthesis; hepatic LDL receptors are upregulated.',
+    tags: ['lipids', 'statin'],
+  },
+  {
+    id: 'pathway::3',
+    kind: 'theory' as const,
+    mode: 'recall' as const,
+    front: 'Rate-limiting enzyme of glycolysis, and its main allosteric activator?',
+    back: 'Phosphofructokinase-1, activated by fructose-2,6-bisphosphate.',
+    tags: ['glycolysis', 'regulation'],
+  },
+];
 import { ThinkingDots } from '@/components/ThinkingDots';
 import { MessageEntrance } from '@/components/MessageEntrance';
 import { RevealText } from '@/components/RevealText';
@@ -1105,6 +1173,32 @@ function Shell() {
           }}
           onBack={() => {}}
           fixture={ANKI_FIXTURE}
+        />
+      </ScrollView>
+    );
+  }
+
+  /*
+   * ?screen=pathwaydemo — the first-year deck, drawn by the real screen.
+   *
+   * Same route as ankidemo and for the same reason: the deck comes from
+   * Supabase, the harness has no way to reach it, and the states worth looking
+   * at all live past that call.
+   */
+  if (screen === 'pathwaydemo') {
+    return (
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 16 }}>
+        <StudyView
+          year="first"
+          subjectName="Biochemistry"
+          topic={{
+            key: 'biochemistry::carbohydrate-metabolism',
+            name: 'Carbohydrate Metabolism',
+            breadcrumb: 'Biochemistry \u203a Carbohydrate Metabolism',
+            questions: [],
+          }}
+          onBack={() => {}}
+          fixture={PATHWAY_FIXTURE}
         />
       </ScrollView>
     );

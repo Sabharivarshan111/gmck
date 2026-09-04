@@ -10,6 +10,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { YEAR_LABELS, type Year } from "@/lib/year-subjects";
 import { diagramSubtopicKey, type LeafTopic } from "@/lib/leaf-topics";
+import PathwayFlow from "@/components/flashcards/PathwayFlow";
+import { CARD_MODE_LABEL, normalizePathway } from "@/lib/pathwayCards";
 import {
   answer,
   counts,
@@ -260,6 +262,21 @@ export default function StudyView({
           with the answer: a diagram of the answer shown on the front is not a
           flashcard, it is the answer.
         */}
+        {/*
+          What the card is asking for, before the question.
+
+          A first-year paper mixes three acts of recall — a fact, a claim to
+          justify, a vignette to work through — and knowing which is coming is
+          the difference between reading the question twice and reading it once.
+          It is a field on the card, set by the server; a deck built before that
+          field existed has no chip and looks exactly as it always did.
+        */}
+        {face.mode && (
+          <span className="inline-block rounded-full border border-primary/45 bg-primary/10 px-2.5 py-0.5 text-[10px] font-extrabold tracking-wider text-primary">
+            {CARD_MODE_LABEL[face.mode]}
+          </span>
+        )}
+
         <p className="text-lg font-semibold leading-snug whitespace-pre-wrap">{face.front}</p>
 
         {/*
@@ -303,9 +320,23 @@ export default function StudyView({
             {face.back && (
               <p className="text-sm leading-relaxed whitespace-pre-wrap">{face.back}</p>
             )}
+
+            {/*
+              The chain the plate draws, under the plate.
+
+              Under, not instead: the picture is the shape of the pathway and
+              this is its content, and a first-year exam asks for both. It is
+              also what keeps the card worth answering when the plate does not
+              arrive, which is why the line below softens when there is a chain
+              to fall back on rather than reporting a dead card.
+            */}
+            {face.pathway && <PathwayFlow pathway={face.pathway} />}
+
             {imageFailed && (
               <p className="text-xs text-amber-600 dark:text-amber-400">
-                This diagram could not be loaded.
+                {normalizePathway(face.pathway)
+                  ? "The diagram could not be loaded — the steps above are the answer."
+                  : "This diagram could not be loaded."}
               </p>
             )}
           </>

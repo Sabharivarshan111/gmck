@@ -192,6 +192,30 @@ for (const file of uiFiles) {
   }
 }
 
+// Two edge functions ground answers in the same books, and each carries its own
+// copy of the retrieval.
+//
+// `generate-flashcards` cannot import `generate-handwritten-notes/textbook.ts`:
+// a Supabase function is deployed as its own folder, and a relative import
+// reaching outside it does not travel. So the file is duplicated, and the only
+// thing that makes a duplicate safe is a check that it is still a duplicate —
+// a drifted copy would ground a first-year deck in a *different* set of
+// paragraphs from the notes for the same chapter, with nothing on either
+// screen to say why they disagree.
+const FN_A = 'supabase/functions/generate-handwritten-notes/textbook.ts';
+const FN_B = 'supabase/functions/generate-flashcards/textbook.ts';
+const [bookA, bookB] = await Promise.all([
+  fs.readFile(path.join(root, '..', FN_A), 'utf8').catch(() => null),
+  fs.readFile(path.join(root, '..', FN_B), 'utf8').catch(() => null),
+]);
+check(bookA !== null, `${FN_A} is missing — the notes function has lost its textbook retrieval`);
+check(bookB !== null, `${FN_B} is missing — the flashcards function cannot ground a first-year deck`);
+check(
+  bookA !== null && bookA === bookB,
+  `${FN_A} and ${FN_B} have drifted. They must stay byte-identical: copy one over the other, ` +
+    `and change both when the book list changes.`,
+);
+
 if (failures.length > 0) {
   for (const failure of failures) process.stdout.write(`  FAIL  ${failure}\n`);
   process.stdout.write(`\n${failures.length} problem(s) — the triple tap and its textbooks disagree.\n`);
@@ -199,5 +223,6 @@ if (failures.length > 0) {
 }
 process.stdout.write(
   `OK  ${SERVER_RULES.length} books mirrored across all 4 MBBS years, ` +
+    `both edge functions' retrieval identical, ` +
     `no book named in ${uiFiles.length} source files\n`,
 );

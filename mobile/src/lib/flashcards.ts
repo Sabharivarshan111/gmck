@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { supabase } from './supabase';
 import { type Card, newCard } from '@shared/anki';
+import { type CardMode, type CardPathway } from '@shared/pathwayCards';
 
 /**
  * Flashcard decks: one per chapter, built by the `generate-flashcards` edge
@@ -32,6 +33,25 @@ export interface DeckCard {
   frontImages?: string[];
   /** Pictures on the answer side. `imageUrl` is the first of these. */
   backImages?: string[];
+  /**
+   * What kind of thinking this card asks for, when the deck knows.
+   *
+   * Set by `generate-flashcards` for a first-year chapter, absent on every deck
+   * built before that and on every hand-written one. Absent means no chip,
+   * which is what those decks have always looked like.
+   */
+  mode?: CardMode;
+  /**
+   * The ordered chain drawn on the answer side, for a card whose plate is a
+   * pathway.
+   *
+   * Orthogonal to `kind` on purpose. A pathway card is still an image card —
+   * it has a plate and it is subject to the same "images are a ceiling" sizing
+   * — and a client that has never heard of this field renders it exactly as it
+   * rendered every image card before: the picture, then the written answer.
+   * The chain is an enrichment, never the only thing carrying the card.
+   */
+  pathway?: CardPathway;
   tags?: string[];
 }
 

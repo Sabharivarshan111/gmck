@@ -73,6 +73,8 @@ import {
 } from '@shared/anki';
 import { tick, complete } from '@/lib/haptics';
 import { pickCardImage } from '@/lib/cardImage';
+import { PathwayFlow } from '@/components/PathwayFlow';
+import { CARD_MODE_LABEL, normalizePathway } from '@shared/pathwayCards';
 import { Slider } from '@/components/Slider';
 import { Sheet } from '@/components/Sheet';
 import {
@@ -2049,6 +2051,31 @@ export function StudyView({
           sentence telling them to look at the picture they had already seen.
           A diagram of the answer shown on the front is not a flashcard.
         */}
+        {/*
+          What the card is asking for, before the question.
+
+          A first-year paper mixes three different acts of recall — a fact, a
+          claim to justify, a vignette to work through — and knowing which one
+          is coming is the difference between reading the question twice and
+          reading it once. It is a field on the card, set by the server; a deck
+          built before that field existed has no chip, and looks exactly as it
+          always did.
+        */}
+        {face.mode ? (
+          <View
+            style={[
+              styles.modeChip,
+              {
+                backgroundColor: withAlpha(colors.accent, 0.14),
+                borderColor: withAlpha(colors.accent, 0.45),
+              },
+            ]}>
+            <Text style={[styles.modeChipText, { color: colors.accent }]}>
+              {CARD_MODE_LABEL[face.mode]}
+            </Text>
+          </View>
+        ) : null}
+
         <Text style={[styles.cardFront, { color: colors.text }]}>{face.front}</Text>
 
         {/*
@@ -2106,9 +2133,23 @@ export function StudyView({
               <Text style={[styles.cardBack, { color: colors.text }]}>{face.back}</Text>
             ) : null}
 
+            {/*
+              The chain the plate draws, under the plate.
+
+              Under, not instead: the picture is the shape of the pathway and
+              this is its content, and a first-year exam asks for both. It is
+              also what keeps the card worth answering when the plate does not
+              arrive — which is why the "could not be loaded" line below softens
+              when there is a chain to fall back on rather than reporting a dead
+              card.
+            */}
+            {face.pathway ? <PathwayFlow pathway={face.pathway} /> : null}
+
             {imageFailed ? (
               <Text style={[styles.hint, { color: colors.warning }]}>
-                This diagram could not be loaded.
+                {normalizePathway(face.pathway)
+                  ? 'The diagram could not be loaded — the steps above are the answer.'
+                  : 'This diagram could not be loaded.'}
               </Text>
             ) : null}
           </>
@@ -2446,6 +2487,19 @@ const styles = StyleSheet.create({
     height: 220,
     borderRadius: 12,
     marginBottom: 16,
+  },
+  modeChip: {
+    alignSelf: 'flex-start',
+    borderWidth: StyleSheet.hairlineWidth,
+    borderRadius: 999,
+    paddingHorizontal: 9,
+    paddingVertical: 3,
+    marginBottom: 10,
+  },
+  modeChipText: {
+    fontSize: 10,
+    fontWeight: '800',
+    letterSpacing: 0.9,
   },
   cardFront: {
     fontSize: 19,

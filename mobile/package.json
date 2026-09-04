@@ -38,6 +38,7 @@
     "check:textbooks": "node scripts/textbooks-check.mjs",
     "check:anki": "node scripts/anki-check.mjs",
     "check:one-app": "node scripts/one-app-check.mjs",
+    "check:pathway-cards": "node --experimental-strip-types --no-warnings scripts/pathway-cards-check.mjs",
     "check:flashcard-size": "node scripts/flashcard-size-check.mjs",
     "check:streak": "node scripts/streak-check.mjs",
     "check:xp": "node scripts/xp-check.mjs",
