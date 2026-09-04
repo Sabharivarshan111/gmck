@@ -205,3 +205,35 @@ filter, or it is unreachable.
 
 `mobile/BUILD-FROM-PHONE.md` — step by step, from a phone, no computer.
 `HANDOFF.md` §2 — what is still blocking, and §6 for building.
+
+## Three ways a build goes red that are NOT the build (2026-09-04)
+
+All three read as "my change did not ship".
+
+**1. A shared module cannot find Babel's helpers.**
+
+    Unable to resolve module @babel/runtime/helpers/interopRequireDefault
+      from /repo/src/lib/apkgFormat.ts
+
+Every Android build failed to bundle for two days. Metro walks **up from the
+requesting file**, so a shared module in `../src/lib/` looks in
+`/repo/node_modules`, never `mobile/node_modules` — the only one CI installs.
+Babel injects helper imports into what it transforms. Fixed with
+`resolver.nodeModulesPaths`. Not reproducible where `/repo/node_modules` exists;
+move it aside and run the real bundle.
+
+**2. The Vercel build breaks on a file in `mobile/`.** The mirror image: the web
+app imported from `mobile/`, and esbuild resolves the nearest tsconfig to every
+file it compiles — `mobile/tsconfig.json`, extending a package only
+`mobile/node_modules` has. Three production deploys failed unnoticed: a failed
+deploy leaves the previous one up, so the site keeps working. **A shared module
+belongs in `src/lib/`, via `@shared`.** Never import `mobile/` inside `src/`.
+
+**3. A doc check gates every Android build.** `check:agent-docs` runs first in
+all three workflows and fails on a rules file pointing at a path that no longer
+exists. Moving a file breaks the APK until the rules are repointed: the error
+names a markdown file while the symptom is "no APK".
+
+**Green deploy, stale phone:** `public/sw.js` evicts caches by changing its cache
+name, and `SW_VERSION` sat unchanged for a month, so `activate` deleted nothing.
+Bump it whenever a reader must see the change.
