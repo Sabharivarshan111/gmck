@@ -99,12 +99,31 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          # The 90-second launch ads.
           - ad: orbit-the-pattern
             file: orbit-the-pattern.mp4
           - ad: orbit-2am
             file: orbit-2am.mp4
           - ad: orbit-draw-it-from-memory
             file: orbit-draw-it-from-memory.mp4
+          # The 60-second Instagram reels, each in two cuts. The silent one is
+          # not an afterthought: most reels are watched muted, so it is the cut
+          # that has to work without a word being heard.
+          - ad: orbit-reel-repeats
+            file: orbit-reel-repeats.mp4
+          - ad: orbit-reel-repeats-silent
+            file: orbit-reel-repeats-silent.mp4
+            silent: true
+          - ad: orbit-reel-six-hours
+            file: orbit-reel-six-hours.mp4
+          - ad: orbit-reel-six-hours-silent
+            file: orbit-reel-six-hours-silent.mp4
+            silent: true
+          - ad: orbit-reel-draw-it
+            file: orbit-reel-draw-it.mp4
+          - ad: orbit-reel-draw-it-silent
+            file: orbit-reel-draw-it-silent.mp4
+            silent: true
     steps:
       - uses: actions/checkout@v4
 
@@ -175,13 +194,18 @@ jobs:
             echo "::error::${{ matrix.file }} has NO audio stream — it is a silent ad."
             exit 1
           fi
-          DUR=$(ffprobe -v error -select_streams a:0 \
+          AUDIO=$(ffprobe -v error -select_streams a:0 \
             -show_entries stream=duration -of csv=p=0 "out/${{ matrix.file }}" | head -1)
-          echo "audio stream present, ${DUR}s"
-          # A 90s ad whose audio track is a couple of seconds long is a render
-          # that found one clip and missed twenty-nine.
-          if awk "BEGIN{exit !(${DUR:-0} < 60)}"; then
-            echo "::error::audio is only ${DUR}s of a 90s ad — most shots are silent."
+          VIDEO=$(ffprobe -v error -select_streams v:0 \
+            -show_entries stream=duration -of csv=p=0 "out/${{ matrix.file }}" | head -1)
+          echo "audio ${AUDIO}s of video ${VIDEO}s"
+          # Measured against the file's OWN length rather than a hardcoded 90,
+          # because the reels are 60s and a fixed threshold would either pass a
+          # broken reel or fail a good one. A render that found one clip and
+          # missed the rest shows up as an audio track far shorter than the
+          # picture it is under.
+          if awk "BEGIN{exit !(${AUDIO:-0} < ${VIDEO:-1} * 0.8)}"; then
+            echo "::error::audio is only ${AUDIO}s under ${VIDEO}s of video — most of it is silent."
             exit 1
           fi
 
@@ -220,6 +244,23 @@ jobs:
             | `orbit-the-pattern.mp4` | The repeats are already counted | en-US-AvaNeural |
             | `orbit-2am.mp4` | The night before the exam | en-US-JennyNeural |
             | `orbit-draw-it-from-memory.mp4` | The diagram is where the marks are | en-US-AriaNeural |
+
+            And six 60-second Instagram reels — three scripts, each in two cuts.
+            The `-silent` cut has no voiceover and carries itself on the music
+            bed and the on-screen text, because most reels are watched muted.
+
+            | File | Cut |
+            |---|---|
+            | `orbit-reel-repeats.mp4` | voiced |
+            | `orbit-reel-repeats-silent.mp4` | music only |
+            | `orbit-reel-six-hours.mp4` | voiced |
+            | `orbit-reel-six-hours-silent.mp4` | music only |
+            | `orbit-reel-draw-it.mp4` | voiced |
+            | `orbit-reel-draw-it-silent.mp4` | music only |
+
+            The music is synthesised by `remotion-ad/scripts/make-beds.py` and
+            owned outright — no stock track, because "free for non-commercial"
+            does not cover an advertisement for a paid app.
 
             Scripts and the reasoning behind each hook are in
             `.agents/video/AD-SCRIPTS.md`.

@@ -25,13 +25,21 @@ import {
   ApkgError,
   FIELD_SEPARATOR,
   SQL,
+  cardsFromCollection,
   decodeLegacyMediaMap,
   decodeMediaEntries,
+  decodeNotetypeConfig,
   decodePackageMeta,
+  decodeTemplateConfig,
   packageLayout,
   parseLegacyDecks,
+  parseLegacyNotetypes,
   type ApkgCard,
+  type ApkgCardRow,
+  type ApkgCollection,
+  type ApkgNotetype,
 } from './apkgFormat';
+import { mediaMap, type ExportPackage } from './apkgExport';
 
 /** What the browser needs, loaded only when a package is actually opened. */
 async function loadDeps() {
@@ -43,8 +51,45 @@ async function loadDeps() {
   return { fflate, fzstd, initSqlJs };
 }
 
+/**
+ * Where `sql-wasm.wasm` is served from.
+ *
+ * It has to be given rather than guessed, and that is a bundler fact rather
+ * than a preference: `new URL('…', import.meta.url)` built from a template
+ * string is not statically analysable, so Vite leaves it alone and the built
+ * app asks for `/node_modules/sql.js/dist/sql-wasm.wasm` — a 404, and a
+ * feature that works in `npm run dev` and nowhere else. The web app passes the
+ * URL Vite emitted for the asset; the Node checks let this default stand,
+ * because sql.js falls back to reading the file beside its own script there.
+ */
+let wasmUrl: string | null = null;
+
+/** Tell the reader where the WASM lives, once, at startup. */
+export function setSqlWasmUrl(url: string): void {
+  wasmUrl = url;
+}
+
+async function openSqlJs(deps: Awaited<ReturnType<typeof loadDeps>>) {
+  return deps.initSqlJs(
+    // Served from this app's own bundle, never a CDN: the app must keep
+    // working offline and must not hand a third party a request every time
+    // somebody imports a deck.
+    wasmUrl ? { locateFile: () => wasmUrl as string } : undefined,
+  );
+}
+
 export interface ImportedApkg {
+  /** The package's own name for what is inside, for naming the deck. */
   deckName: string;
+  /**
+   * The collection as read: notetypes, decks, and one row per card.
+   *
+   * Handed back whole rather than only as rendered cards, because the rows are
+   * what proves which collection was opened — a v3 package's decoy holds one
+   * note whose `flds` reads "This file requires a newer version of Anki".
+   */
+  collection: ApkgCollection;
+  /** Those rows with their templates applied and their HTML flattened. */
   cards: ApkgCard[];
   /** Media, keyed by the filename a card's HTML refers to. */
   media: Map<string, Blob>;
@@ -85,13 +130,10 @@ export async function readApkg(file: File): Promise<ImportedApkg> {
   }
   const collectionBytes = layout.zstd ? fzstd.decompress(raw) : raw;
 
-  const SqlJs = await initSqlJs({
-    // Served from the bundle, not a CDN: the app must keep working offline and
-    // must not hand a third party a request every time somebody imports.
-    locateFile: (f: string) => new URL(`../../node_modules/sql.js/dist/${f}`, import.meta.url).href,
-  });
+  const SqlJs = await openSqlJs({ fflate, fzstd, initSqlJs });
   const db = new SqlJs.Database(collectionBytes);
 
+  let collection: ApkgCollection;
   try {
     // The schema is a property of the COLLECTION, not of the package: a v1 and
     // a v2 package are both schema 11, and `packageLayout` only ever sees
@@ -99,16 +141,27 @@ export async function readApkg(file: File): Promise<ImportedApkg> {
     // getting it from the layout instead is what made both legacy fixtures
     // throw "no such table: decks".
     const schema = Number(query(db, SQL.version)[0]?.ver ?? 11);
-    const cards = readCards(db);
-    const media = readMedia(entries, layout, fzstd);
-    return {
-      deckName: readDeckName(db, schema) ?? file.name.replace(/\.apkg$/i, ''),
-      cards,
-      media,
-    };
+    collection = readCollection(db, schema);
   } finally {
     db.close();
   }
+
+  /*
+   * The rendering is the shared code, not a browser copy of it.
+   *
+   * `cardsFromCollection` applies the template, resolves the cloze number and
+   * flattens the HTML, and it is the same function the phone runs on what
+   * Kotlin read. `check:apkg` pins its behaviour against real packages; a
+   * second implementation here would be a second thing to get wrong, in the
+   * one part of this format where being subtly wrong is invisible.
+   */
+  const cards = cardsFromCollection(collection);
+  return {
+    deckName: packageDeckName(collection) ?? file.name.replace(/\.(apkg|colpkg)$/i, ''),
+    collection,
+    cards,
+    media: readMedia(entries, layout, fzstd),
+  };
 }
 
 /** Rows out of sql.js, as plain objects. */
@@ -122,32 +175,102 @@ function query(db: { exec: (sql: string) => { columns: string[]; values: unknown
   );
 }
 
-function readDeckName(db: never, schema: number): string | null {
-  // Before schema 15 there IS no `decks` table — decks are a JSON blob in
-  // `col.decks`, the same way notetypes are in `col.models`. Querying `decks`
-  // on a v1 or v2 package fails with "no such table", which is how this was
-  // found: v3 opened fine and both legacy fixtures threw.
+/** SQLite hands int64 back as a JS number; every id here is a string. */
+const id = (value: unknown) => String(value ?? '');
+
+/**
+ * The whole collection: notetypes, decks and one row per card.
+ *
+ * Two shapes, and the split is at schema 15. Before it a notetype is one entry
+ * in the `col.models` JSON blob and a deck one entry in `col.decks`; from 15 on
+ * both columns are left as `"{}"` and the `notetypes`/`fields`/`templates` and
+ * `decks` tables are the truth. A reader that knows only the old path finds a
+ * modern collection with no notetypes at all, imports nothing, and says
+ * nothing about why.
+ */
+function readCollection(db: never, schema: number): ApkgCollection {
+  const cards = query(db as never, SQL.cards).map(row => ({
+    id: id(row.id),
+    nid: id(row.nid),
+    did: id(row.did),
+    ord: Number(row.ord ?? 0),
+    mid: id(row.mid),
+    flds: String(row.flds ?? ''),
+    tags: String(row.tags ?? ''),
+  })) as ApkgCardRow[];
+
   if (schema < 15) {
     const [row] = query(db as never, SQL.legacyModels);
-    const decks = typeof row?.decks === 'string' ? parseLegacyDecks(row.decks) : [];
-    return decks[0]?.name ?? null;
+    return {
+      schema,
+      notetypes: parseLegacyNotetypes(typeof row?.models === 'string' ? row.models : '{}'),
+      decks: parseLegacyDecks(typeof row?.decks === 'string' ? row.decks : '{}'),
+      cards,
+    };
   }
 
-  const rows = query(db as never, SQL.decks);
-  const name = rows[0]?.name;
-  // Schema 15+ separates deck levels with \x1f and only turns it into "::" on
-  // the way out, so a name read straight from the table has an unprintable
-  // character in the middle of it.
-  return typeof name === 'string' ? name.split(FIELD_SEPARATOR).join('::') : null;
+  /*
+   * Both configs are protobuf, and both are read by `apkgFormat`'s own
+   * decoder. sql.js hands a BLOB column back as a Uint8Array, which is what
+   * those functions take — the same bytes Kotlin passes across the bridge as
+   * base64.
+   */
+  const fields = new Map<string, string[]>();
+  for (const row of query(db as never, SQL.fields)) {
+    const list = fields.get(id(row.ntid)) ?? [];
+    list.push(String(row.name ?? ''));
+    fields.set(id(row.ntid), list);
+  }
+  const templates = new Map<string, ApkgNotetype['templates']>();
+  for (const row of query(db as never, SQL.templates)) {
+    const list = templates.get(id(row.ntid)) ?? [];
+    const config = decodeTemplateConfig(toBytes(row.config));
+    list.push({ name: String(row.name ?? ''), qfmt: config.qfmt, afmt: config.afmt });
+    templates.set(id(row.ntid), list);
+  }
+
+  const notetypes: ApkgNotetype[] = query(db as never, SQL.notetypes).map(row => ({
+    id: id(row.id),
+    name: String(row.name ?? ''),
+    cloze: decodeNotetypeConfig(toBytes(row.config)).cloze,
+    fields: fields.get(id(row.id)) ?? [],
+    templates: templates.get(id(row.id)) ?? [],
+  }));
+
+  const decks = query(db as never, SQL.decks).map(row => ({
+    id: id(row.id),
+    // Schema 15+ separates deck levels with \x1f and only turns it into "::"
+    // on the way out, so a name read straight from the table has an
+    // unprintable character in the middle of it.
+    name: String(row.name ?? '').split(FIELD_SEPARATOR).join('::'),
+  }));
+
+  return { schema, notetypes, decks, cards };
 }
 
-function readCards(db: never): ApkgCard[] {
-  // The `cards` table is the authority on how many cards a note has: card
-  // generation already ran inside Anki, so one row in, one card out. Deriving
-  // it again would be reimplementing the part of Anki most likely to disagree,
-  // to answer a question the file already answers.
-  const rows = query(db as never, SQL.cards);
-  return rows as unknown as ApkgCard[];
+function toBytes(value: unknown): Uint8Array {
+  return value instanceof Uint8Array ? value : new Uint8Array(0);
+}
+
+/**
+ * What to call the deck this package becomes.
+ *
+ * The deck the cards are actually in, not `decks[0]` — a collection always
+ * carries a "Default" deck whether or not anything is filed in it, so the
+ * first row is routinely the one name that describes nothing.
+ */
+function packageDeckName(collection: ApkgCollection): string | null {
+  const used = new Set(collection.cards.map(card => card.did));
+  const named = collection.decks.filter(deck => used.has(deck.id));
+  if (named.length === 1) {
+    return named[0].name;
+  }
+  // Several decks in one package: their common parent is the honest name, and
+  // failing that the reader gets the filename.
+  const shortest = named.map(deck => deck.name.split('::')[0]).sort()[0];
+  return named.length > 1 && named.every(deck => deck.name.startsWith(shortest))
+    ? shortest
+    : null;
 }
 
 function readMedia(

@@ -1,10 +1,10 @@
-import type { AdScript } from './types';
-import { thePattern } from './thePattern';
-import { twoAM } from './twoAM';
-import { drawItFromMemory } from './drawItFromMemory';
-import { reelRepeats } from './reelRepeats';
-import { reelSixHours } from './reelSixHours';
-import { reelDrawIt } from './reelDrawIt';
+import type { AdScript } from './types.ts';
+import { thePattern } from './thePattern.ts';
+import { twoAM } from './twoAM.ts';
+import { drawItFromMemory } from './drawItFromMemory.ts';
+import { reelRepeats } from './reelRepeats.ts';
+import { reelSixHours } from './reelSixHours.ts';
+import { reelDrawIt } from './reelDrawIt.ts';
 
 /**
  * Every script that exists, in one list.

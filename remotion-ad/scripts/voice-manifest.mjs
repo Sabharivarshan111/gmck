@@ -7,14 +7,13 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 
-const load = async (f) =>
-  import(pathToFileURL(path.join(process.cwd(), 'src', 'scripts', f)).href);
+// Every script, from the one list that has them all — see preflight.mjs for
+// why naming them here separately is the bug this replaces.
+const { ALL_SCRIPTS } = await import(
+  pathToFileURL(path.join(process.cwd(), 'src', 'scripts', 'index.ts')).href
+);
 
-const { thePattern } = await load('thePattern.ts');
-const { twoAM } = await load('twoAM.ts');
-const { drawItFromMemory } = await load('drawItFromMemory.ts');
-
-const manifest = [thePattern, twoAM, drawItFromMemory].map((s) => ({
+const manifest = ALL_SCRIPTS.map((s) => ({
   id: s.id,
   voice: s.voice,
   rate: s.rate,

@@ -39,12 +39,17 @@ for (const rel of [...new Set(files)]) {
 //
 // ShotTimeline builds the path by convention — `audio/<id>/shot_NN.mp3` — so
 // this rebuilds it the same way from the scripts rather than trusting a list.
-const load = async f =>
-  import(pathToFileURL(path.join(root, 'src', 'scripts', f)).href);
-const { thePattern } = await load('thePattern.ts');
-const { twoAM } = await load('twoAM.ts');
-const { drawItFromMemory } = await load('drawItFromMemory.ts');
-const scripts = [thePattern, twoAM, drawItFromMemory];
+// Every script, from the one list that has them all.
+//
+// This used to name three imports of its own, and `voice-manifest.mjs` named
+// the same three separately. Adding the reels made that concrete: they were
+// registered as compositions and rendered, and NEITHER file knew they existed —
+// so their voice clips were never synthesised and this check never noticed they
+// were missing. A reel would have shipped silent, which is exactly the failure
+// the audio checks below exist to prevent.
+const { ALL_SCRIPTS: scripts } = await import(
+  pathToFileURL(path.join(root, 'src', 'scripts', 'index.ts')).href
+);
 
 // edge-tts writes a zero-byte mp3 when its socket is refused, so "the file is
 // there" is not the question — "is there speech in it" is. Two seconds of
@@ -67,6 +72,27 @@ for (const script of scripts) {
     } catch {
       problems.push(`${rel} is missing — shot ${shot.n} of ${script.id} would be silent`);
     }
+  }
+}
+
+// ---- The music bed, for the cuts that have one --------------------------
+//
+// A silent reel has no voiceover by design, so the bed is the ONLY thing
+// carrying it. A missing bed there is a sixty-second film with no sound at all.
+for (const script of scripts) {
+  if (!script.music) {
+    continue;
+  }
+  try {
+    const { size } = await fs.stat(path.join(root, 'public', script.music));
+    if (size < MIN_AUDIO_BYTES) {
+      problems.push(`${script.music} is only ${size} bytes — not a music bed`);
+    }
+  } catch {
+    problems.push(
+      `${script.music} is missing — ${script.id} has no music, and its silent ` +
+        'cut would have no sound at all',
+    );
   }
 }
 
