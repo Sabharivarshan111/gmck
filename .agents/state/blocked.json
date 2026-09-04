@@ -90,7 +90,8 @@
       "clearsWhen": {
         "kind": "manual"
       },
-      "evidence2026_09_04": "Narrowed with live data: auth.identities holds 322 google identities, most recent sign-in 2026-09-01. The Supabase Google provider, Web client ID and secret are therefore correct and working (those are the web app's browser flow). The app's DEVELOPER_ERROR is thrown by Google Play Services ON THE DEVICE before Supabase is contacted, and means no Android OAuth client matches the APK's (package name, SHA-1). Nothing in this repo or in Supabase can fix it. Do not re-investigate the Supabase side."
+      "evidence2026_09_04": "Narrowed with live data: auth.identities holds 322 google identities, most recent sign-in 2026-09-01. The Supabase Google provider, Web client ID and secret are therefore correct and working (those are the web app's browser flow). The app's DEVELOPER_ERROR is thrown by Google Play Services ON THE DEVICE before Supabase is contacted, and means no Android OAuth client matches the APK's (package name, SHA-1). Nothing in this repo or in Supabase can fix it. Do not re-investigate the Supabase side.",
+      "confirmedFromArtifact2026_09_04": "The internal APK's own certificate, read out of the build with apksigner rather than taken from a doc (run 33890078552, release internal-144): package com.aistudio.mbbsqbank.aycxvd, SHA-1 ceea8a41bb0778c47826d88fcce02cc9eb294068 = CE:EA:8A:41:BB:07:78:C4:78:26:D8:8F:CC:E0:2C:C9:EB:29:40:68. That matches OAUTH-SETUP.md's client #2 exactly, so the upload-key value there is verified. Client #1 (Play App Signing) still cannot be read from here — it only exists in the Play Console."
     },
     {
       "id": "repo-deletion-protection",

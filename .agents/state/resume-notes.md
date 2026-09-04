@@ -118,3 +118,38 @@ the build, in CI, which is where a failure belongs.
 - Do not respawn a killed agent without checking what it already did. One died
   one call after "Deploying v56" — the deploy had succeeded.
 - Do not bulk-fix `question_diagrams` by any text rule, in either direction.
+
+## 2026-09-04 (later) — Claude Code — three builds out, two agents salvaged after a rate limit
+
+**DONE — the builds the owner asked for are published.**
+- **Internal APK** — run 33890078552, release `internal-144`, `app-internal.apk`.
+  Every step green.
+- **Release AAB + APK** — run 33888281335, all 33 steps success, both uploaded
+  and published. (Its overall label reads "cancelled" only because a later push
+  superseded it after the steps had finished — read the steps, not the label.)
+- The unblocker was `resolver.nodeModulesPaths` in `mobile/metro.config.js`.
+  Every Android bundle had failed since `8d8841ab` on
+  `@babel/runtime/helpers/interopRequireDefault` unresolvable from
+  `src/lib/apkgFormat.ts`.
+
+**The APK's real SHA-1, read with apksigner rather than from a doc:**
+`com.aistudio.mbbsqbank.aycxvd` / `CE:EA:8A:41:BB:07:78:C4:78:26:D8:8F:CC:E0:2C:C9:EB:29:40:68`
+— matches OAUTH-SETUP.md client #2 exactly. Google sign-in's DEVELOPER_ERROR is
+therefore purely the missing Android OAuth client; `auth.identities` has 322
+working google identities, so the Supabase half is proven fine.
+
+**Two agents were killed by the account limit (resets 19:40 UTC) and BOTH were
+salvaged** — because they wrote real files and checkpointed, which is the rule
+added earlier today. Their work is committed at `014d614e` (first-year pathway
+flashcards) and `635c7217` (three 60s ads: mascot presenter + beat-grid).
+
+**NEXT — what those two did NOT finish:**
+- **Screenshots of the pathway cards.** The flashcards agent died right before
+  capturing them; `mobile/preview/pathway-card-shots.mjs` exists and is unrun.
+  This repo's rule says a visible change is not done until it is shown.
+- **`generate-flashcards` is still v10 live.** The first-year/textbook/pathway
+  source is in the repo, undeployed on purpose. Deploy needs the Supabase
+  connector, then generate one first-year chapter and read the cards back.
+- **No frame of any ad has been rendered.** preflight's only complaints are the
+  72 missing voiceover mp3s + manifest, which is edge-tts (egress-denied here,
+  CI runs `voice` before preflight). Trigger **Ad videos** to see them.
