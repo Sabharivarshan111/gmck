@@ -13,6 +13,8 @@ import { ShotTimeline } from './components/ShotTimeline';
 import { thePattern } from './scripts/thePattern';
 import { twoAM } from './scripts/twoAM';
 import { drawItFromMemory } from './scripts/drawItFromMemory';
+import { REELS } from './scripts/index';
+import { scriptFrames } from './scripts/types';
 
 const FPS = 30;
 
@@ -47,6 +49,42 @@ export const Root: React.FC = () => {
         height={1920}
         defaultProps={{ script: drawItFromMemory }}
       />
+
+      {/* --- 60-SECOND INSTAGRAM REELS, IN TWO CUTS EACH ---
+
+          Every reel is registered twice against the same script: once voiced,
+          once with the music bed alone. They are not two videos — they are two
+          mixes of one edit, which is why the second one is a prop rather than
+          a second script. The silent cut is the one that gets watched, because
+          a reel is watched muted; the voiced cut is the one that gets watched
+          twice.
+
+          Composition ids are kebab-case throughout. Remotion rejects an
+          underscore in an id, and the failure arrives at render time in CI
+          rather than at type-check.
+      */}
+      {REELS.map((reel) => (
+        <React.Fragment key={reel.id}>
+          <Composition
+            id={reel.id}
+            component={ShotTimeline}
+            durationInFrames={scriptFrames(reel)}
+            fps={FPS}
+            width={1080}
+            height={1920}
+            defaultProps={{ script: reel, withVoice: true }}
+          />
+          <Composition
+            id={`${reel.id}-silent`}
+            component={ShotTimeline}
+            durationInFrames={scriptFrames(reel)}
+            fps={FPS}
+            width={1080}
+            height={1920}
+            defaultProps={{ script: reel, withVoice: false }}
+          />
+        </React.Fragment>
+      ))}
 
       {/* --- REMOTION 3 FULL COMPOSITIONS (Dynamic Audio-Paced) --- */}
       {/* 1. Apple Keynote Precision Masterpiece (Vertical 9:16) */}

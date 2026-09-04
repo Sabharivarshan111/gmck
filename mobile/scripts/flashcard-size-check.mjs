@@ -24,6 +24,14 @@ import { fileURLToPath } from 'node:url';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 const CLIENT = 'mobile/src/lib/flashcards.ts';
 const SERVER = 'supabase/functions/generate-flashcards/index.ts';
+/*
+ * The web app builds decks from the same edge function, and it cannot import
+ * the phone's copy of this number: `mobile/src/lib/flashcards.ts` pulls in
+ * AsyncStorage and the React Native Supabase client, neither of which exists in
+ * a browser. So there is a third implementation, and it is pinned here rather
+ * than left to drift — the same reason the second one is.
+ */
+const WEB_CLIENT = 'src/lib/flashcards.ts';
 
 const failures = [];
 const check = (ok, message) => {
@@ -34,9 +42,11 @@ const read = file => fs.readFile(path.join(root, file), 'utf8');
 
 const client = await read(CLIENT).catch(() => null);
 const server = await read(SERVER).catch(() => null);
+const web = await read(WEB_CLIENT).catch(() => null);
 
 check(client !== null, `${CLIENT} is missing — the chapter list has no deck size to show`);
 check(server !== null, `${SERVER} is missing — the repo no longer carries the deployed function`);
+check(web !== null, `${WEB_CLIENT} is missing — the web app has no deck size to show`);
 
 if (client && server) {
   const num = (body, name) => {
@@ -98,6 +108,36 @@ if (client && server) {
     );
   }
 
+  // The web app's copy, held to the identical constants and the identical
+  // formula. It is a separate bundle in a separate app, so nothing but this
+  // stops the browser's chapter list promising a different number from the
+  // phone's for the same chapter.
+  if (web) {
+    for (const [clientName, serverName, what] of pairs) {
+      const a = num(web, clientName);
+      const b = num(server, serverName);
+      check(a !== null, `${WEB_CLIENT} no longer defines ${clientName}`);
+      check(
+        a !== null && b !== null && a === b,
+        `${what}: ${clientName} is ${a} in ${WEB_CLIENT} but ${serverName} is ${b}. ` +
+          `The web chapter list would promise ${a} cards and the server would build ${b}.`,
+      );
+    }
+    check(
+      /Math\.max\(\s*MIN_DECK_CARDS\s*,\s*Math\.min\(\s*MAX_DECK_CARDS\s*,\s*wanted\s*\)\s*\)/.test(web) &&
+        /Math\.round\(\s*questionCount\s*\*\s*CARDS_PER_QUESTION\s*\)/.test(web),
+      `${WEB_CLIENT}: deckTargetFor is no longer clamp(MIN, MAX, round(questions * CARDS_PER_QUESTION))`,
+    );
+    const webLimit = /limit:\s*([^,\n]+)/.exec(web);
+    if (webLimit) {
+      check(
+        /deckTargetFor\(/.test(webLimit[1]),
+        `${WEB_CLIENT} sends limit: ${webLimit[1].trim()} — a limit that is not ` +
+          `deckTargetFor(...) overrides the 20-card floor on the server`,
+      );
+    }
+  }
+
   // A cached deck smaller than the floor is a deck built by an older version.
   // Serving it is how a stale row outlives the fix that replaced it.
   check(
@@ -130,5 +170,5 @@ if (failures.length > 0) {
 }
 
 process.stdout.write(
-  'OK  client and server agree on deck size; theory fills for missing diagrams; stale decks rebuild\n',
+  'OK  both clients and the server agree on deck size; theory fills for missing diagrams; stale decks rebuild\n',
 );

@@ -9,8 +9,20 @@ import type { CameraMove } from '../scripts/types';
  * it is not put inside the device. It is still driven by the same camera moves
  * so the cut into and out of it matches the shots around it.
  */
-export const PlateCard: React.FC<{ src: string; move: CameraMove; t: number; accent: string }> = ({
-  src, move, t, accent,
+export const PlateCard: React.FC<{
+  src: string;
+  move: CameraMove;
+  t: number;
+  accent: string;
+  /**
+   * Vertical shift, in px. Defaults to 0 so the long-form ads are unchanged;
+   * a reel passes the same lift the device gets, so a plate shot and a phone
+   * shot sit at the same height either side of a cut and the headline below
+   * has the same clearance from both.
+   */
+  lift?: number;
+}> = ({
+  src, move, t, accent, lift = 0,
 }) => {
   const ease = t * t * (3 - 2 * t);
   const zoom =
@@ -24,7 +36,14 @@ export const PlateCard: React.FC<{ src: string; move: CameraMove; t: number; acc
   const x = move === 'trackLeft' ? 90 - ease * 180 : 0;
 
   return (
-    <AbsoluteFill style={{ alignItems: 'center', justifyContent: 'center', perspective: 1800 }}>
+    <AbsoluteFill
+      style={{
+        alignItems: 'center',
+        justifyContent: 'center',
+        perspective: 1800,
+        transform: `translateY(${lift}px)`,
+      }}
+    >
       <div
         style={{
           position: 'absolute',

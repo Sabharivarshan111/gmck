@@ -16,6 +16,21 @@ interface LayeredCameraPhoneProps {
   durationInFrames?: number;
   touchPreset?: TouchPreset;
   isTripleTap?: boolean;
+  /**
+   * Framing adjustments for a format that has less room than the long-form
+   * ads. Both default to no change, so the three 90-second ads render exactly
+   * as they do today.
+   *
+   * A reel puts its headline at `bottom: 330` to clear Instagram's own UI,
+   * which leaves ~460px less frame for the device than a caption at 120 does.
+   * Rather than let the phone run under the text, a reel passes a slightly
+   * smaller `scaleMul` and a larger `liftExtra`. Measured, not chosen: at the
+   * widest zoom this engine reaches (1.62, on a bottom-nav shot) the device is
+   * 1,024 tall, so 0.86 and -70 put its lower edge at ~1409 against a headline
+   * block whose top edge is ~1465.
+   */
+  scaleMul?: number;
+  liftExtra?: number;
 }
 
 export const LayeredCameraPhone: React.FC<LayeredCameraPhoneProps> = ({
@@ -29,7 +44,9 @@ export const LayeredCameraPhone: React.FC<LayeredCameraPhoneProps> = ({
   shotIndex = 0,
   durationInFrames = 120,
   touchPreset,
-  isTripleTap = false
+  isTripleTap = false,
+  scaleMul = 1,
+  liftExtra = 0
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -151,6 +168,11 @@ export const LayeredCameraPhone: React.FC<LayeredCameraPhoneProps> = ({
       { easing: Easing.out(Easing.quad), extrapolateRight: 'clamp' }
     );
   }
+
+  // Format framing, applied after every camera branch so it scales and lifts
+  // whatever move the shot chose. Defaults are 1 and 0 — a no-op for the ads.
+  dynamicScale *= scaleMul;
+  translateY += liftExtra;
 
   // Specular sweep across the glass screen
   const glareX = interpolate(progress, [0, 0.85], [-120, 220], {

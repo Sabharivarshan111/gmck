@@ -36,6 +36,9 @@ module.exports = [
         // web-note-diagram-check dispatches the same `orbit:single-note` event
         // QuestionCard does, to drive the real triple-tap overlay.
         CustomEvent: 'readonly',
+        // The web-flashcards checks read back the schedule the study view
+        // wrote, which is where the web app keeps it.
+        localStorage: 'readonly',
       },
       parserOptions: { ecmaVersion: 2022, sourceType: 'module' },
     },

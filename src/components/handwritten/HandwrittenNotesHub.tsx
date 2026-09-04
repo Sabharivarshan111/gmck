@@ -4,54 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { YEAR_LABELS, getYearSubjects, type Year } from "@/lib/year-subjects";
-import { collectQuestions } from "@/lib/question-progress";
+import { flattenSubjectTopics, type LeafTopic } from "@/lib/leaf-topics";
 import HandwrittenNotesView, { type NotesContent } from "./HandwrittenNotesView";
 import NotesAiEditBox from "./NotesAiEditBox";
-
-/** Walk a subject node and return every leaf topic that has at least one essay or short-note question. */
-interface LeafTopic {
-  key: string;          // stable path key
-  name: string;         // topic display name (last segment)
-  breadcrumb: string;   // "Paper 1 › Cell Injury"
-  questions: string[];
-}
-
-function flattenSubjectTopics(subjectKey: string, node: any): LeafTopic[] {
-  const out: LeafTopic[] = [];
-  function walk(n: any, keyPath: string[], namePath: string[]) {
-    if (!n || typeof n !== "object") return;
-    // If this node itself has essay/short-note arrays -> it's a leaf topic.
-    const essay = collectQuestions(n, "essay");
-    const shorts = collectQuestions(n, "short-notes");
-    const unique = Array.from(new Set([...essay, ...shorts])).filter(Boolean);
-    const hasChildren = n.subtopics && typeof n.subtopics === "object";
-    if (unique.length > 0 && (!hasChildren || Object.keys(n.subtopics).length === 0 || isLeafShape(n))) {
-      out.push({
-        key: `${subjectKey}::${keyPath.join("/")}`,
-        name: namePath[namePath.length - 1] ?? n.name ?? "Topic",
-        breadcrumb: namePath.join(" › "),
-        questions: unique,
-      });
-      return;
-    }
-    if (hasChildren) {
-      for (const [k, v] of Object.entries<any>(n.subtopics)) {
-        walk(v, [...keyPath, k], [...namePath, v?.name ?? k]);
-      }
-    }
-  }
-  walk(node, [], [node?.name ?? subjectKey]);
-  // dedupe by key
-  const seen = new Set<string>();
-  return out.filter((t) => (seen.has(t.key) ? false : (seen.add(t.key), true)));
-}
-
-/** A node is a leaf shape when its subtopics are only essay/short-notes arrays (no further named topics). */
-function isLeafShape(n: any) {
-  if (!n?.subtopics) return true;
-  const keys = Object.keys(n.subtopics);
-  return keys.every((k) => k === "essay" || k === "short-note" || k === "short-notes" || Array.isArray(n.subtopics[k]?.questions));
-}
 
 type View =
   | { kind: "years" }

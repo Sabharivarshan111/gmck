@@ -60,3 +60,22 @@ one means uploading the chunks to the `textbooks` bucket, adding the path to
 - `proposeOnly: true` is the "fix these notes with AI" box: it returns
   `{ found, source, summary, content }` and persists nothing until the reader
   says yes.
+
+## `pending-deploy/` — read this before you conclude the copy is back
+
+There is one exception to "do not re-add a copy here", and it is running now:
+`pending-deploy/` holds the function's source **with an undeployed change on
+top of it**, downloaded from production at version 52 so that a change written
+in a sandbox with no route to Supabase can be applied by whoever gets one. It is
+a payload with an expiry date, not a checkout — its README says to delete it the
+moment it is deployed, and `.agents/tasks/supabase-pending.json` carries the job
+that does so.
+
+The change: every Physiology note is guaranteed a flowchart section. Physiology
+is examined on mechanism, and 3 of the 11 Physiology notes in the cache had none.
+
+Note also that the version table below is stale — **the deployed function is
+version 52, not 47**, and `pickBookKey` now matches the final-year subjects
+(obgyn, surgery/ortho, paediatrics, ophthalmology, ENT, general medicine) as
+well, so "final year matches nothing" is no longer true of the deployed code.
+Read the function, not this file.
