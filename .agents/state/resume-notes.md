@@ -153,3 +153,46 @@ flashcards) and `635c7217` (three 60s ads: mascot presenter + beat-grid).
 - **No frame of any ad has been rendered.** preflight's only complaints are the
   72 missing voiceover mp3s + manifest, which is edge-tts (egress-denied here,
   CI runs `voice` before preflight). Trigger **Ad videos** to see them.
+
+## 2026-09-04 — (later) — Claude Code — a bad deploy of generate-flashcards, and its repair
+
+**INCIDENT, read this before touching `generate-flashcards`.** I deployed
+`generate-flashcards` **v12** with a body of the literal string
+`__PLACEHOLDER__` and no `textbook.ts`. That is a dead function in production:
+every first-year deck generation would have failed while it stood. It was my
+error — I called the deploy tool with a stub payload instead of the repo's real
+file contents.
+
+Repair dispatched immediately: a courier agent redeploys BOTH files verbatim
+(`index.ts` + `textbook.ts`), keeps `verify_jwt: true`, and proves it by
+fetching the deployed source back and `diff`ing it against the repo — the same
+byte-identity check that took v10 -> v11. If you are reading this and
+`get_edge_function` still shows a placeholder, that repair did not land: redeploy
+from `supabase/functions/generate-flashcards/` and diff.
+
+**The lesson, so it is a rule rather than a memory:** `deploy_edge_function`
+takes the file bodies inline, and a stub payload is accepted silently — the tool
+reports `status: ACTIVE` and a fresh version number for a function that cannot
+run. Never call it without the real contents in the `files` array, and always
+`get_edge_function` + `diff` afterwards. A version number is not proof.
+
+**What was being deployed, and why:** the `applied` card mode was asked for and
+never produced (`.agents/queue/flashcards-applied-cards-2026-09-04.md`). Two live
+runs of v11 returned 32 cards across `recall`, `reasoning` and `pathway` and
+**zero** `applied`. The prompt asked for them as a fraction ("a quarter") in the
+tail of a long system prompt; the model followed the taxonomy and ignored the
+quota. Commit `9060209a` moves the quota into the **user** prompt as explicit
+integers, beside "Write AT LEAST N theory flashcards" — the one numeric demand
+this function has ever reliably obeyed. First year only.
+
+Whether that worked is measured, not assumed: invoke with `noCache: true` and
+count `mode = 'applied'`. If it is still zero, the next step is structural
+rather than persuasive — `appliedCards` as its own array, the way `diagramCards`
+already is. **Do not close the gap by relabelling recall cards**; a card with no
+vignette is not an applied card, and mislabelling would make the measurement
+stop working as a check.
+
+**Ads:** run 33927028250 still in progress, **0 failed jobs of 14**. Ten of the
+thirteen renders are done and green, including all three of the new 60-second
+reels — the first time any reel has ever rendered. The three 90-second ads are
+the ones still going.
