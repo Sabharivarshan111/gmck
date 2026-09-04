@@ -17,6 +17,7 @@ when picking up work that was last touched from the other tool.
 |---|---|
 | `.agents/rules/00-working-agreement.md` | How Claude Code and Antigravity share this repo without fighting each other |
 | `.agents/rules/05-resume.md` | Picking work up where a dead session left it — the one command that says where things stopped, and why the answer lives in the repo rather than in a chat |
+| `.agents/rules/06-rate-limits.md` |  |
 | `.agents/rules/10-motion.md` | Motion rules for the React Native app — what to use, and what never ships |
 | `.agents/rules/20-interface.md` | Interface rules — theming, type, materials, accessibility |
 | `.agents/rules/30-reference.md` | Index of the vendored design skills, and where the long-form docs live |

@@ -77,13 +77,13 @@ which is the only place the owner sees this product.
 The features here are large and were built over many sessions. `HANDOFF.md`
 records what is done; `.agents/rules/` names the files. Flashcards, for one,
 are already built — `.agents/rules/60-flashcards.md` points at
-`mobile/src/screens/FlashcardsScreen.tsx`, `mobile/src/lib/anki.ts` and
+`mobile/src/screens/FlashcardsScreen.tsx`, `src/lib/anki.ts` and
 `mobile/src/lib/flashcards.ts`. Building a second one in the web app produces
 two implementations that disagree, and the owner sees the interface change
 under them for no reason they asked for.
 
 `npm run check:one-app` fails if the web app grows its own Anki scheduler,
-because there is exactly one and it lives in `mobile/src/lib/anki.ts`.
+because there is exactly one and it lives in `src/lib/anki.ts`.
 
 ### "Build a webapp" means deploy the one that exists
 

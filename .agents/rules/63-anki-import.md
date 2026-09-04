@@ -77,7 +77,7 @@ works in every test build and fails only in the shipped one.
 Anki's code is **AGPL-3.0** and AnkiDroid's is **GPL-3.0**. Neither is in this
 repository and neither may be added: copied code would put this whole app under
 that licence. What is reproduced is *behaviour* — a file format and a published
-algorithm (SM-2), neither of which is copyrightable. `mobile/src/lib/anki.ts`,
+algorithm (SM-2), neither of which is copyrightable. `src/lib/anki.ts`,
 `src/lib/apkgFormat.ts` and `mobile/scripts/anki-check.mjs` say so at the
 top; do not reintroduce the phrase "ported from", because it describes something
 that did not happen and is the first thing anyone auditing this would search for.

@@ -19,10 +19,11 @@ reasoning; this file is the subset that is expensive to get wrong early.
 
 | File | What |
 |---|---|
-| `.agents/rules/00-working-agreement.md` | how the two agents share this repo |
-| `.agents/rules/05-resume.md` | resuming where a dead session stopped |
+| `.agents/rules/00-working-agreement.md` | how two agents share this repo |
+| `.agents/rules/05-resume.md` | resuming where a session stopped |
+| `.agents/rules/06-rate-limits.md` | surviving a rate limit intact |
 | `.agents/rules/10-motion.md` | animation rules; what never ships |
-| `.agents/rules/20-interface.md` | theming, type, materials, a11y, perf |
+| `.agents/rules/20-interface.md` | theming, type, materials, a11y |
 
 Deep reference stays in `.claude/skills/`, **pointed at, never copied**;
 `apple-design/README.md` indexes it. `npm run check:agent-docs` fails if a rules
@@ -33,7 +34,7 @@ above stops resolving.
 
 | Path | What |
 |---|---|
-| `src/`, `index.html`, `vite.config.ts` | the Vite/React **web** app, still live |
+| `src/`, `index.html`, `vite.config.ts` | the Vite/React **web** app, live |
 | `mobile/` | the **React Native Android** app |
 | `supabase/` | edge functions and migrations, shared by both |
 
@@ -107,7 +108,7 @@ and DND mute them; the focus chime is `USAGE_ALARM` and survives DND.
 Every version 3 `.apkg` also carries a **decoy** `collection.anki2` holding one
 note saying the file needs a newer Anki. A reader that picks by filename
 imports it with no error and returns a one-card deck that looks like success.
-`name` columns are `COLLATE unicase`, which **no SQLite outside Anki has**, so `ORDER BY name` throws on a device only.
+`name` columns are `COLLATE unicase`, which **no SQLite outside Anki has** — `ORDER BY name` throws on a device only.
 `.agents/rules/63-anki-import.md`.
 
 ## Notes render objects, not strings
@@ -159,7 +160,7 @@ question" on purpose. `npm run check:mcq` covers the parsing.
   `theme/typography.ts` for type. A bare `fontSize` ships with no tracking or
   leading.
 - **Font is pinned to Roboto** — OEM skins otherwise re-typeset the whole app.
-- **No backdrop blur**; the Liquid Glass packages don't give one here (`.agents/rules/20-interface.md`). `GlassSurface` draws a bevel: two rims of
+- **No backdrop blur** (`.agents/rules/20-interface.md`). `GlassSurface` draws a bevel: two rims of
   opposite polarity, a dp-capped specular, an inner glow.
 - **Never put `elevation` on a view with no background colour.** Android takes
   the shadow outline from the bounds, so a large `borderRadius` renders as a
