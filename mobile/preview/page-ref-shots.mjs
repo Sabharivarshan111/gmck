@@ -57,7 +57,13 @@ await page.waitForTimeout(1400);
 await shot('pageref-1-toggle-off');
 
 // The toggle, by the label a screen reader would read.
-const on = page.getByLabel('Show textbook page numbers');
+//
+// It is a round icon button with no text on it, so this label is the ONLY
+// thing announcing what it does — which is exactly why it is matched here by
+// label rather than by an icon or a position. When the pill became a circle
+// this line failed, and that is the check working: a control the harness
+// cannot find by label is one TalkBack cannot announce either.
+const on = page.getByLabel(/Textbook page numbers are off/);
 if ((await on.count()) === 0) {
   throw new Error('the textbook-pages toggle is not on the question screen');
 }
@@ -108,7 +114,7 @@ await page.locator('[aria-label="Done"]:visible').first().click();
 await page.waitForTimeout(700);
 
 // Turning it back off must take the chips with it.
-const off = page.getByLabel('Hide textbook page numbers');
+const off = page.getByLabel(/Textbook page numbers are on/);
 await off.first().click();
 await page.waitForTimeout(700);
 const left = await page.getByLabel('Add a textbook page for this question').count();

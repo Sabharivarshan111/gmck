@@ -537,20 +537,34 @@ export default function BrowseNodeScreen() {
             />
             {/* The page-reference switch.
               *
-              * A pill that reads on or off at a glance, like a quick setting,
-              * because that is what it is: it turns the chips on every row on
-              * and off, and while it is off nothing here asks the network about
-              * page numbers at all.
+              * A round icon button on the RIGHT, not a wide pill on the left.
+              *
+              * It began as a pill reading "Textbook pages - ON", which stated
+              * its own name and state in words and took a whole line to do it,
+              * hard against the left margin under the tabs. That is a lot of
+              * furniture for a quick setting, and the app's owner said so.
+              * This is the same control drawn the way the rest of the app draws
+              * quick settings — the theme button on Home is a circle of exactly
+              * this size — so it reads as a control rather than as a banner.
+              *
+              * State is carried by the fill, which is what a round toggle has
+              * instead of a word: accent when on, card when off. The label is
+              * unchanged and still says what it does and what state it is in,
+              * because that is what TalkBack reads and it is the only thing a
+              * screen reader gets once the word "ON" is gone from the screen.
               */}
             {questions.length > 0 ? (
               <Touchable
                 label={
                   showPageRefs
-                    ? 'Hide textbook page numbers'
-                    : 'Show textbook page numbers'
+                    ? `Textbook page numbers are on${
+                        myBookLabel ? `, showing ${myBookLabel}` : ''
+                      }. Turn them off.`
+                    : 'Textbook page numbers are off. Turn them on.'
                 }
                 state={{ checked: showPageRefs }}
                 onPress={() => setSetting('showPageRefs', !showPageRefs)}
+                hitSlop={10}
                 style={[
                   styles.pageToggle,
                   {
@@ -562,40 +576,9 @@ export default function BrowseNodeScreen() {
                 ]}
               >
                 <BookOpen
-                  size={14}
+                  size={18}
                   color={showPageRefs ? colors.primaryText : colors.textMuted}
                 />
-                <Text
-                  numberOfLines={1}
-                  style={[
-                    styles.pageToggleText,
-                    {
-                      color: showPageRefs ? colors.primaryText : colors.text,
-                    },
-                  ]}
-                >
-                  {showPageRefs && myBookLabel ? myBookLabel : 'Textbook pages'}
-                </Text>
-                <View
-                  style={[
-                    styles.pageToggleDot,
-                    {
-                      backgroundColor: showPageRefs
-                        ? colors.primaryText
-                        : colors.textMuted,
-                    },
-                  ]}
-                />
-                <Text
-                  style={[
-                    styles.pageToggleState,
-                    {
-                      color: showPageRefs ? colors.primaryText : colors.textMuted,
-                    },
-                  ]}
-                >
-                  {showPageRefs ? 'ON' : 'OFF'}
-                </Text>
               </Touchable>
             ) : null}
 
@@ -850,27 +833,16 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
   pageToggle: {
-    flexDirection: 'row',
+    // A circle, on the right. 36dp drawn; `hitSlop` carries it past the 44dp
+    // minimum without padding that would change how big the circle looks.
     alignItems: 'center',
-    alignSelf: 'flex-start',
-    gap: 7,
+    justifyContent: 'center',
+    alignSelf: 'flex-end',
+    width: 36,
+    height: 36,
     marginTop: 12,
-    borderRadius: 999,
+    borderRadius: 18,
     borderWidth: 1,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-  },
-  pageToggleText: {
-    ...typeScale.caption,
-    fontWeight: '700',
-  },
-  pageToggleDot: {
-    width: 4,
-    height: 4,
-    borderRadius: 2,
-  },
-  pageToggleState: {
-    ...typeScale.overline,
   },
   questionBar: {
     marginTop: 6,
