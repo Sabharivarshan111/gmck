@@ -1,5 +1,14 @@
 // Bump this on every meaningful change so old caches are evicted on activate.
-const SW_VERSION = 'v2-2026-08-09';
+//
+// It was left at v2-2026-08-09 for a month, through every deploy in that time.
+// Nothing breaks loudly when it goes stale, which is exactly why it gets
+// forgotten: `activate` deletes every cache whose name is not CACHE_NAME, so an
+// unchanged name means it deletes nothing and whatever a phone cached under it
+// survives indefinitely. Navigation is network-first, so a reader online gets
+// the new HTML anyway — but one that ever fell back to the cached shell keeps
+// being served the asset hashes that shell names, and those ARE cached. Bumping
+// this is the one lever that empties the old cache for everybody.
+const SW_VERSION = 'v3-2026-09-04';
 const CACHE_NAME = `mbbs-qb-${SW_VERSION}`;
 
 const PRECACHE_URLS = [

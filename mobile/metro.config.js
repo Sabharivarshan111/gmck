@@ -26,6 +26,30 @@ const config = {
       '@data': sharedData,
       '@shared': sharedLib,
     },
+    /*
+     * Where a file OUTSIDE this folder looks for node_modules.
+     *
+     * Metro resolves a bare module request by walking up from the requesting
+     * file. For `../src/lib/apkgFormat.ts` that is `/repo/src/node_modules`,
+     * then `/repo/node_modules` — and never `mobile/node_modules`, which is the
+     * only one CI installs. Babel injects helper imports of its own into the
+     * files it transforms (`@babel/runtime/helpers/interopRequireDefault` for a
+     * default import of a CommonJS module), so a shared file that needs one
+     * fails to bundle with:
+     *
+     *   Unable to resolve module @babel/runtime/helpers/interopRequireDefault
+     *   from /repo/src/lib/apkgFormat.ts
+     *
+     * It is invisible on a developer's machine, because running the web app
+     * once installs `/repo/node_modules` and the walk finds the helper there.
+     * The release build has no such folder, so this was a green local build and
+     * a red CI one — the same environment difference that had the Vercel build
+     * failing on `mobile/tsconfig.json`, pointing the other way.
+     *
+     * `@shared` was safe for a year because the only file behind it was the
+     * profanity list, which is plain data Babel adds nothing to.
+     */
+    nodeModulesPaths: [path.resolve(__dirname, 'node_modules')],
   },
 };
 
