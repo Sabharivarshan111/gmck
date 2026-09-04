@@ -89,7 +89,8 @@
       "source": "HANDOFF.md §2.4",
       "clearsWhen": {
         "kind": "manual"
-      }
+      },
+      "evidence2026_09_04": "Narrowed with live data: auth.identities holds 322 google identities, most recent sign-in 2026-09-01. The Supabase Google provider, Web client ID and secret are therefore correct and working (those are the web app's browser flow). The app's DEVELOPER_ERROR is thrown by Google Play Services ON THE DEVICE before Supabase is contacted, and means no Android OAuth client matches the APK's (package name, SHA-1). Nothing in this repo or in Supabase can fix it. Do not re-investigate the Supabase side."
     },
     {
       "id": "repo-deletion-protection",

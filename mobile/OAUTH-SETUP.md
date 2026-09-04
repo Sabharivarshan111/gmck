@@ -45,6 +45,36 @@ this app, so three clients are needed. Missing one produces DEVELOPER_ERROR
      `apksigner verify --print-certs` before blaming Google Cloud.
 
 
+The Supabase half is PROVEN WORKING — do not re-investigate it
+--------------------------------------------------------------
+Measured against the live project on 2026-09-04, so this is evidence rather
+than an assumption:
+
+  select provider, count(*), max(last_sign_in_at) from auth.identities group by 1;
+
+  google  322 identities   last sign-in 2026-09-01
+  email    23 identities   last sign-in 2026-08-06
+
+322 Google identities, the most recent three days old. So the Google provider
+in Supabase, the Web client ID and its secret are all correct and in use. They
+are almost certainly all from the WEB app, which uses `signInWithOAuth` in a
+browser and needs no Android client at all.
+
+That matters because it splits the problem in half. **DEVELOPER_ERROR is thrown
+by Google Play Services on the phone, before Supabase is contacted at all.** The
+device is saying "no OAuth client matches this app's package name and signing
+certificate". Nothing in Supabase, and nothing in this repo's code, can cause it
+or fix it. The only fix is registering the Android client below.
+
+So when sign-in fails in the app:
+
+  DEVELOPER_ERROR / status 10   -> the Android OAuth client. This file.
+  an error from Supabase after  -> the Web client ID or its secret.
+  the Google sheet appearing
+
+If the account picker never appears, it is always the first one.
+
+
 The one people get wrong
 ------------------------
 Play App Signing is enabled on this app. Google re-signs the upload with its
