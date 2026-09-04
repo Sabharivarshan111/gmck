@@ -210,7 +210,7 @@ These papers do not only ask students to define things. Write a deliberate MIX, 
    • "A 4-year-old presents with night blindness and dry, wrinkled conjunctiva. Which vitamin is deficient, and what is its role in the visual cycle?"
    Keep the vignette to ONE sentence with the numbers that matter. The question must be answerable in a few seconds.
 
-Proportions for the theory cards: roughly half "recall", a quarter "reasoning", a quarter "applied". Never fewer than three of each once you are asked for twelve or more cards.
+The user prompt states EXACTLY how many cards of each mode to write. Those counts are requirements, not suggestions: meet them before you write a single extra "recall" card.
 
 Anatomy applies just as much: a nerve lesion and the deformity it causes, a fracture and the vessel at risk, a triangle and what crosses it.`;
 
@@ -689,6 +689,40 @@ serve(async (req) => {
       userPrompt += `\nTEXTBOOK REFERENCE (OCR extract from this chapter's own textbook; treat as the PRIMARY source of truth, and write every card from it):\n"""\n${refText}\n"""\n\nNever name a textbook, an author, an edition or a page number on a card.\n`;
     }
     userPrompt += `\nWrite AT LEAST ${askTheory} theory flashcards covering these high-yield university exam questions from this chapter (prioritized by exam repetition frequency):\n\n${list}\n\nThere are only ${questions.length} questions listed, and you must still produce at least ${askTheory} cards — split each question into its individual examinable facts. Strictly one fact per card. Concise, recallable answers (<= 25 words). High-yield textbook facts only.`;
+
+    /*
+     * The mode split, as counts, here rather than in the system prompt.
+     *
+     * `FIRST_YEAR_SYSTEM_PROMPT` asked for "roughly half recall, a quarter
+     * reasoning, a quarter applied" and the model obeyed the taxonomy while
+     * ignoring the quota: two live runs of v11 returned 32 cards carrying
+     * `recall`, `reasoning` and `pathway`, and **zero** `applied` — the mode
+     * the owner asked for by name, modelled on their own papers.
+     *
+     * Two things are different here and both are deliberate. It is a **count**
+     * rather than a fraction, because "at least ${askTheory} theory cards" is
+     * the one numeric demand this function has ever reliably got obeyed. And it
+     * sits in the *user* prompt beside that demand rather than in the tail of a
+     * long system prompt, which is where the instructions that get followed
+     * already live.
+     *
+     * If a run still comes back with no applied cards, the next step is
+     * structural rather than persuasive — ask for `appliedCards` as its own
+     * array, the way `diagramCards` already is. Do not close the gap by
+     * relabelling recall cards: a card with no vignette is not an applied card,
+     * and mislabelling it would make the measurement stop working.
+     */
+    if (isFirstYear) {
+      const wantApplied = Math.max(3, Math.round(askTheory * 0.25));
+      const wantReasoning = Math.max(3, Math.round(askTheory * 0.25));
+      const wantRecall = Math.max(0, askTheory - wantApplied - wantReasoning);
+      userPrompt +=
+        `\n\nMODE QUOTA — count them before you answer. Of those ${askTheory} theory cards, EXACTLY ` +
+        `${wantApplied} must have "mode": "applied" (a one-line clinical vignette, then the question), ` +
+        `EXACTLY ${wantReasoning} must have "mode": "reasoning" (a claim, then "Why?", answered with the mechanism), ` +
+        `and the remaining ${wantRecall} are "mode": "recall". A deck that is short on "applied" is a failed answer, ` +
+        `however good its recall cards are. Write the ${wantApplied} applied cards FIRST, then the reasoning ones, then fill up with recall.`;
+    }
 
     if (selectedDiagrams.length > 0) {
       const diagList = selectedDiagrams
