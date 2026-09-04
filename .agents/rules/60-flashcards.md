@@ -5,7 +5,7 @@ description: Anki flashcards — why the scheduler is not the app's other one, a
 # Flashcards
 
 Notes → **Anki flashcards** → year → subject → chapter → study.
-`mobile/src/screens/FlashcardsScreen.tsx`, `mobile/src/lib/anki.ts`,
+`mobile/src/screens/FlashcardsScreen.tsx`, `src/lib/anki.ts`,
 `mobile/src/lib/flashcards.ts`, edge function `generate-flashcards`.
 
 ## Do not merge this with the app's other spaced repetition

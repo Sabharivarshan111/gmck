@@ -138,6 +138,10 @@ jobs:
           npm run check:theme-from-image
           npm run check:glass
           npm run check:sounds
+          # Nothing load-bearing has been deleted. First, because every check
+          # below is meaningless if the thing it checks is gone — and because
+          # the question bank in src/data/ is hand-transcribed with no upstream.
+          npm run check:repo-intact
           npm run check:agent-docs
           npm run check:payments
           npm run check:native-sound

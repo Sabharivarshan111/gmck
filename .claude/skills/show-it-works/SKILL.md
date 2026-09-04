@@ -112,3 +112,37 @@ week later.
 | "I've added X" as the whole report | Add what proves X, and what X does not cover |
 | "Tests pass" (didn't run them) | Run them and paste the last line |
 | "Fixed the release" (didn't rebuild) | Check the actual workflow run |
+
+## Take the screenshot, and SHOW it — every time, unasked
+
+Added on the owner's instruction, 2026-09-04: *"hereafter what you do,
+screenshot and show what you build in preview"*. This applies to Claude Code
+and to Antigravity equally.
+
+Looking at the picture yourself is not the rule. **Delivering it is.** The
+owner has repeatedly been the one to find a defect that a harness had already
+drawn — the wrong plate on Breast Carcinoma, a baroreceptor diagram over the
+cardiac cycle question, two sliders with no number on them. In each case a
+screenshot existed or could have; nobody put it in front of the person who
+would recognise it in one second.
+
+So, for any change with a visible surface:
+
+1. Capture it from the **real screen**, through the preview harness, not from a
+   mockup and not from a description. `node preview/shoot.mjs [outDir]` for the
+   set; the targeted harnesses (`preview/page-ref-shots.mjs`,
+   `diagram-shot.mjs`, `music-shot.mjs`, `apkg-shot.mjs`, …) for one feature.
+   Write a new one when none fits — they are short.
+2. **Look at it** before sending. A capture you did not open is not evidence,
+   and this repo has shipped a black `tca-note.png` and a notes capture reading
+   "This diagram could not be loaded" precisely that way.
+3. **Send it**, and say what in the picture shows the change. In Claude Code
+   that is the file-sending tool; in Antigravity, attach it in the reply.
+4. Say what the picture **cannot** show. react-native-web is not Android: it
+   has no native driver, no real gesture timing, no `RuntimeShader`, no
+   TalkBack. A screenshot proves layout and copy. It never proves feel, and it
+   never proves a native module is registered.
+
+A change with no visible surface — a check, a schedule, an edge function — is
+exempt from the picture and not from the proof: show the command and its real
+output instead.

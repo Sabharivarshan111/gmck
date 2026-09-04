@@ -329,10 +329,13 @@ function QuestionRowBase({
                 },
               ]}
             >
-              <BookOpen
-                size={11}
-                color={communityPage ? colors.success : colors.textMuted}
-              />
+              {/* Label first, icon after it.
+                *
+                * The icon led, and on the shortest state ("Add textbook page")
+                * that put a symbol before the reader had been told what the
+                * control was — the eye lands on the glyph, then travels right
+                * to find out what it meant. Trailing, it reads as a mark on the
+                * end of a phrase, which is what it is. */}
               <Text
                 numberOfLines={1}
                 style={[
@@ -348,6 +351,10 @@ function QuestionRowBase({
                       } · p.${communityPage.page}`
                   : 'Add textbook page'}
               </Text>
+              <BookOpen
+                size={11}
+                color={communityPage ? colors.success : colors.textMuted}
+              />
             </Touchable>
           ) : null}
 

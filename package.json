@@ -10,7 +10,10 @@
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview",
-    "preview:mobile": "npm --prefix mobile run preview"
+    "preview:mobile": "npm --prefix mobile run preview",
+    "resume": "npm --prefix mobile run resume",
+    "resume:write": "npm --prefix mobile run resume:write",
+    "check:repo-intact": "npm --prefix mobile run check:repo-intact"
   },
   "dependencies": {
     "@capacitor/app": "^8.1.0",

@@ -2,54 +2,49 @@
 
 > **Running this in an IDE? `npm run dev` is the OLD WEB APP.**
 >
-> This repo holds two apps. The root `dev`, `build` and `preview` scripts —
-> the ones an IDE's Run button finds, because they are in the root
-> `package.json` — serve the original Vite web app in `src/`. The native
-> React Native app, with all of its animations, lives in `mobile/`.
->
-> To see the native app in a browser:
+> The root `dev`, `build` and `preview` scripts — the ones an IDE's Run button
+> finds — serve the Vite web app in `src/`. The native React Native app, with
+> all of the motion work, is in `mobile/`. Previewed the root and saw none of
+> it? That is why.
 >
 > ```sh
 > npm run dev:mobile        # or: cd mobile && npm run preview
 > ```
->
-> Previewed this and saw none of the motion work? That is why: you were
-> looking at the web app.
 
-Cross-tool rules (Antigravity, Cursor, Codex, Claude Code), kept under
-Antigravity's 12,000-char cap — deliberately the short version.
+Cross-tool rules (Antigravity, Cursor, Codex, Claude Code), under Antigravity's
+12,000-char cap. **Read `HANDOFF.md` first**, then `CLAUDE.md` for the
+reasoning; this file is the subset that is expensive to get wrong early.
 
-**Read `HANDOFF.md` first** for current status, then `CLAUDE.md` for the full
-reasoning. This file is the subset that is expensive to get wrong early.
-
-`.agents/rules/` holds the rest, split so each file fits the cap:
+`.agents/rules/` holds the rest, each within the cap:
 
 | File | What |
 |---|---|
-| `.agents/rules/00-working-agreement.md` | how the two agents share this repo |
+| `.agents/rules/00-working-agreement.md` | how two agents share this repo |
+| `.agents/rules/05-resume.md` | resuming where a session stopped |
+| `.agents/rules/06-rate-limits.md` | surviving a rate limit intact |
 | `.agents/rules/10-motion.md` | animation rules; what never ships |
-| `.agents/rules/20-interface.md` | theming, type, materials, a11y, perf |
+| `.agents/rules/20-interface.md` | theming, type, materials, a11y |
 
-Deep reference stays in `.claude/skills/` and is **pointed at, never copied** —
-`apple-design/README.md` is its index. `npm run check:agent-docs` (in
-`mobile/`) fails if a rules file goes over the cap, if `GEMINI.md` starts
-holding rules of its own, or if any path above stops resolving.
+Deep reference stays in `.claude/skills/`, **pointed at, never copied**;
+`apple-design/README.md` indexes it. `npm run check:agent-docs` fails if a rules
+file goes over the cap, if `GEMINI.md` grows rules of its own, or if a path
+above stops resolving.
 
 ## The repo holds two apps
 
 | Path | What |
 |---|---|
-| `src/`, `index.html`, `vite.config.ts` | the Vite/React **web** app, still live |
+| `src/`, `index.html`, `vite.config.ts` | the Vite/React **web** app, live |
 | `mobile/` | the **React Native Android** app |
 | `supabase/` | edge functions and migrations, shared by both |
 
 They share one Supabase project and one question bank. **Do not refactor the
 web app while working on the native one.**
 
-`src/data/` (~750 KB of TypeScript) reaches the native app through a `@data`
+`src/data/` (~750 KB) reaches the native app through a `@data`
 alias, and `src/lib/profanity.ts` through `@shared`. Wired in
 `mobile/metro.config.js`, `mobile/babel.config.js`, `mobile/tsconfig.json` and
-`mobile/preview/vite.config.ts` — **all four must agree**. Never copy those
+`mobile/preview/vite.config.ts` — **all four must agree**, and never copy those
 files into `mobile/`; a second copy will drift.
 
 ## Things that will cost real money or users
@@ -61,7 +56,7 @@ files into `mobile/`; a second copy will drift.
   carries 14.
 - **Never commit secrets** — keystore, passwords, certificates, API keys. The
   signing key lives only in GitHub Actions secrets; never base64 it into a
-  workflow to "fix" a build.
+  workflow.
 - **Test builds must serve no ads at all.** `mobile/src/lib/adsMode.ts` exports
   `ADS_ENABLED = !__DEV__`; the debug and internal workflows overwrite it with
   `false`, so AdMob never starts. Serving yourself live ads can suspend the
@@ -72,8 +67,8 @@ files into `mobile/`; a second copy will drift.
 ## Cutting a build
 
 Every workflow in `.github/workflows/` runs on a **push to
-`claude/native-app-sync`** and publishes to a GitHub **Release**, so you can
-cut one too — push, then watch Actions on `gmck`.
+`claude/native-app-sync`** and publishes a GitHub **Release** — push, then
+watch Actions on `gmck`.
 
 | Want | Workflow | Package | Ads | Signs in? |
 |---|---|---|---|---|
@@ -81,41 +76,39 @@ cut one too — push, then watch Actions on `gmck`.
 | Test sign-in | `android-internal.yml` | `…aycxvd` | none | yes |
 | Upload to Play | `android-release.yml` | `…aycxvd` | **live** | yes |
 
-The release one builds both the `.aab` (for Play) and an `.apk` (to sideload).
+The release one builds both an `.aab` (Play) and an `.apk` (sideload).
 
-Secrets are per repo and every push goes to two: only `gmck` has the signing
-three, so the mirror's release run dies at "Restore the upload keystore" — a
-missing secret, not a broken build. Same for `SUPABASE_ACCESS_TOKEN`.
+Secrets are per repo: only `gmck` has the signing three, so the mirror's
+release run dies at "Restore the upload keystore" — a missing secret, not a
+broken build. Same for `SUPABASE_ACCESS_TOKEN`.
 
 No sandbox reaches Supabase — the gateway 403s the CONNECT — so a token is no
 unblock, only a reason to run `supabase-tasks.yml` on a runner.
 
-`.agents/rules/40-releases.md` has the rest: what a wrong build costs, why
-sign-in works only in the internal one, and why CI first compiles the Kotlin.
+`.agents/rules/40-releases.md`: what a wrong build costs, why sign-in works
+only in the internal one, why CI compiles the Kotlin first.
 
 ## New Architecture: a native module must be a TurboModule
 
 `newArchEnabled=true`. A module registered from a plain `ReactPackage` is
-**never reachable** — the TurboModule manager only reads such packages when
-`useTurboModuleInterop` is on, and that flag is `false` in every stable React
-Native release. The sound module shipped that way and was silent on every
-device with no error anywhere.
+**never reachable**: the TurboModule manager reads such packages only when
+`useTurboModuleInterop` is on, and that flag is `false` in every stable
+release. The sound module shipped that way, silent on every device, no error.
 
 A working native module needs all four: a spec in `mobile/src/native/Native*.ts`,
 `codegenConfig` in `mobile/package.json`, the Kotlin class extending the
-**generated** spec, and a `BaseReactPackage` declaring `isTurboModule = true`.
-`npm run check:native-sound` asserts it.
+**generated** spec, a `BaseReactPackage` declaring `isTurboModule = true`.
+`check:native-sound` asserts it.
 
 Platform, not bugs: taps use `USAGE_ASSISTANCE_SONIFICATION`, so silent mode
-and DND mute them; the focus chime uses `USAGE_ALARM` and survives DND.
+and DND mute them; the focus chime is `USAGE_ALARM` and survives DND.
 
 ## An Anki package is chosen by `meta`, never by filename
 
 Every version 3 `.apkg` also carries a **decoy** `collection.anki2` holding one
 note saying the file needs a newer Anki. A reader that picks by filename
 imports it with no error and returns a one-card deck that looks like success.
-Also: `name` columns are `COLLATE unicase`, which **no SQLite outside Anki
-has**, so `ORDER BY name` throws on a device only.
+`name` columns are `COLLATE unicase`, which **no SQLite outside Anki has** — `ORDER BY name` throws on a device only.
 `.agents/rules/63-anki-import.md`.
 
 ## Notes render objects, not strings
@@ -126,29 +119,29 @@ has**, so `ORDER BY name` throws on a device only.
 `comparison` rows are `{label, left, right}`. Only `revision.items` is
 `string[]`.
 
-`String(item)` prints `[object Object]` on a phone. That shipped once, because
-the preview fixture used plain strings — a fixture that agreed with the bug.
+`String(item)` prints `[object Object]` on a phone. That shipped once: the
+preview fixture used plain strings — a fixture that agreed with the bug.
 `**bold**` is a highlight, not literal asterisks. `npm run check:notes-schema`
-pins the fixture, the renderer and the function's schema together.
+pins fixture, renderer and schema together.
 
-Its zod schema is `questions: z.array(z.string().max(1000)).min(1).max(400)`,
-and a violation is a **400 for the whole request**, breaking Notes for one
+Its zod schema is `questions: z.array(z.string().max(1000)).min(1).max(400)`;
+a violation is a **400 for the whole request**, breaking Notes for one
 topic with no symptom elsewhere. `mobile/src/lib/notesLimits.ts` clamps from the
-*head*, because importance stars and PYQ years are at the start of a question.
+*head*: importance stars and PYQ years are at the start of a question.
 
 ## `ask-gemini` is told the intent, it does not infer it
 
 `mobile/src/lib/askAi.ts` owns every request to that function; nothing else
-should build one. The function picks its system prompt from **flags in the
-request body** — `isMCQRequest` selects the MCQ branch. Prose that *describes*
-wanting MCQs does nothing. The medical-vs-generic prompt is chosen by keyword
-match on the prompt text, which is why `tripleTapPrompt()` says "MBBS medical
-exam question" on purpose. `npm run check:mcq` covers the parsing.
+should build one. It picks its system prompt from **flags in the request
+body**: `isMCQRequest` selects the MCQ branch, and prose that *describes*
+wanting MCQs does nothing. The medical-vs-generic prompt is a keyword match on
+the prompt text, which is why `tripleTapPrompt()` says "MBBS medical exam
+question" on purpose. `npm run check:mcq` covers the parsing.
 
 ## Motion, themes and accessibility
 
 - **Do not hand-roll an animation.** Springs, easings, durations, momentum and
-  rubber-banding live in `mobile/src/theme/motion.ts`. The primitives are
+  rubber-banding live in `mobile/src/theme/motion.ts`. The primitives:
   `Touchable`, `Sheet`, `Dialog`, `Slider`, `HoloCard`, `Reorderable`,
   `SortableGrid`, `BackButton`, `listTuning`.
 - **Every `Animated.timing` names an `easing` from `EASE`.** Omitting it is the
@@ -156,7 +149,7 @@ exam question" on purpose. `npm run check:mcq` covers the parsing.
 - **Progress bars use `scaleX` + `transformOrigin: 'left'`, never animated
   `width`.** Width forces layout every frame on the JS thread.
 - **Nothing scales from 0.** Entrances start at 0.6–0.9.
-- **Reduced motion is not optional.** `useReducedMotion()` is wired into every
+- **Reduced motion is not optional.** `useReducedMotion()` is in every
   primitive; new motion handles it in the same commit.
 - **`Touchable` requires a `label`.** An unlabelled control is unusable with
   TalkBack. Keep targets at 44dp using `hitSlop`, not padding.
@@ -164,34 +157,33 @@ exam question" on purpose. `npm run check:mcq` covers the parsing.
   `success`/`warning`/`danger` stay green/amber/red in **every** theme, and
   `onAccent` is computed from luminance, never hardcoded white.
 - **Design tokens**: `theme/tokens.ts` for spacing and radius, `typeScale` in
-  `theme/typography.ts` for type. A bare `fontSize` ships without its tracking
-  and leading.
+  `theme/typography.ts` for type. A bare `fontSize` ships with no tracking or
+  leading.
 - **Font is pinned to Roboto** — OEM skins otherwise re-typeset the whole app.
-- **No backdrop blur**; the Liquid Glass packages don't give one here (see
-  `.agents/rules/20-interface.md`). `GlassSurface` draws a bevel: two rims of
+- **No backdrop blur** (`.agents/rules/20-interface.md`). `GlassSurface` draws a bevel: two rims of
   opposite polarity, a dp-capped specular, an inner glow.
 - **Never put `elevation` on a view with no background colour.** Android takes
   the shadow outline from the bounds, so a large `borderRadius` renders as a
-  visible polygon.
+  polygon.
 
 ## Performance rules that are not micro-optimisation
 
 The target is a 3 GB Android phone.
 
-- Question rows subscribe to **one question** (`useQuestionDone`), never to the
+- Question rows subscribe to **one question** (`useQuestionDone`), never the
   store's global version. `npm run check:fanout` fails if that regresses.
-- `theme/textScale.tsx` multiplies the type ramp and is applied centrally in
+- `theme/textScale.tsx` multiplies the type ramp, applied centrally in
   `components/Text.tsx`, which takes a **zero-cost fast path at exactly 1**.
   Do not move that work anywhere it runs per row.
 - Sliders emit on the **step**, not the frame: every `Text` subscribes to text
   size, so a callback per frame is a full-tree re-render per frame.
 - PanResponders built in a `useMemo` must not depend on values that change
-  during the gesture — the replacement never saw the grant, and the drag dies
+  during the gesture: the replacement never saw the grant, so the drag dies
   after one frame.
 
 ## Storage keys are shared with the web app
 
-One user with both installed must see one state:
+One user with both installed sees one state:
 
 - `orbit-profile-v1` — `{ display_name, year }` with short year codes
   (`first`/`second`/`third`/`final`), **not** the internal `YearKey` form
@@ -202,17 +194,25 @@ Changing any of these shapes breaks cross-install continuity.
 
 `record_questions_done` opens with `IF _year IS NULL THEN RETURN 0`: it needs
 the caller's `profiles` row, so a push before that returns 0 and reports **no
-error**. `npm run check:sync` pins the ordering.
+error**. `npm run check:sync` pins the order.
 
 ## `mobile/preview/` is a dev-only tool
 
-It renders the RN screens in a browser via react-native-web, so screens can be
-reviewed without an emulator. Metro never sees it and nothing from it reaches
-the APK. Add a native dependency, add a shim there; add a provider to
-`App.tsx`, add it to `preview/main.tsx` too.
+It renders the RN screens in a browser via react-native-web. Metro never sees
+it and nothing from it reaches the APK. Add a native dependency, add a shim
+there; add a provider to `App.tsx`, add it to `preview/main.tsx`.
 
 A render error must never blank the app: `ErrorBoundary.tsx` wraps everything
-**outside** the providers and uses literal colours on purpose.
+**outside** the providers and uses literal colours deliberately.
+
+## A dead session leaves nothing but the repo
+
+The connection drops, the session is deleted, the account signs out — and the
+next agent cannot see this chat. Start with `npm run resume` (root, or in
+`mobile/`): it derives branch, dirty tree, last commits, the Supabase queue and
+the open notes, and says what is **BLOCKED and on whom** — no agent can flip a
+connector, paste a secret or buy credits. Before you stop, append to
+`.agents/state/resume-notes.md`. `.agents/rules/05-resume.md`.
 
 ## Verify before claiming something works
 
@@ -228,17 +228,18 @@ npm run check:trees       # focus trees drawable and distinct
 npm run check:diagrams    # a question shows its own diagram, or none
 npm run check:apkg        # an Anki package imports, and not its decoy
 npm run check:kotlin      # Kotlin overrides (no local kotlinc)
+npm run check:repo-intact # nothing load-bearing was deleted
 npm run check:smoke       # drives the real screens through a browser
-# ...and every other check:* in mobile/package.json that touches what
-# you changed. Each one names the bug it exists for in its header.
+# ...and every other check:* in mobile/package.json touching what you
+# changed. Each names the bug it exists for in its header.
 npx react-native bundle --platform android --dev false \
   --entry-file index.js --bundle-output /tmp/b.js   # must succeed
 ```
 
-`check:smoke` selects controls by accessibility label, so a control it cannot
-find is one TalkBack cannot announce either. It needs a Chromium binary.
+`check:smoke` selects controls by accessibility label, so one it cannot find is
+one TalkBack cannot announce either. It needs a Chromium binary.
 
-There is usually no emulator available, so a green bundle is the strongest
-signal short of a device. **Do not claim device behaviour was verified when it
-was not** — and note the preview harness is react-native-web, so it checks
-layout, not native rendering, gestures or animation timing.
+There is usually no emulator, so a green bundle is the strongest signal short
+of a device. **Do not claim device behaviour was verified when it was not**:
+the preview harness is react-native-web and checks layout, not native
+rendering, gestures or timing.

@@ -11,7 +11,8 @@ import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/
 import { navigationRef } from '@/navigation/ref';
 import type { InitialState } from '@react-navigation/native';
 import { ThemeProvider, useTheme } from '@/theme';
-import { QuorumPips } from '@/components/QuorumPips';
+import { ClaimRow } from '@/components/PageRefSheet';
+import type { PageRef } from '@/lib/pageRefs';
 import { Bot } from '@/components/Bot';
 import type { StateId } from '@/bot/states';
 import RootNavigator from '@/navigation/RootNavigator';
@@ -459,16 +460,44 @@ const PLATE_AXILLA =
  *
  * The real sheet reads Supabase, which no agent sandbox can reach, so the one
  * part of this feature that carries its meaning — how close a page is to being
- * shown to everyone — was the part that could never be photographed. This is
- * fixed data through the *real* QuorumPips component, so what the screenshot
- * shows is what a phone draws.
+ * shown to everyone, and the row arriving to say so — was the part that could
+ * never be photographed.
+ *
+ * It mounts the **real `ClaimRow`**, not a copy of its markup. A demo that
+ * re-implements a renderer is a demo that can agree with a bug: the notes
+ * screen shipped `[object Object]` on a phone while its fixture, written with
+ * plain strings, looked perfect. Only the three claims are fixed here.
  */
 function QuorumDemo() {
   const { colors } = useTheme();
-  const rows = [
-    { book: 'Robbins Basic Pathology', edition: '10th', page: 341, votes: 3 },
-    { book: 'Harrison', edition: '21st', page: 288, votes: 2 },
-    { book: "Gray's Anatomy for Students", edition: '4th', page: 47, votes: 1 },
+  const claims: PageRef[] = [
+    {
+      bookId: 'demo-robbins',
+      bookName: 'Robbins Basic Pathology',
+      edition: '10th',
+      page: 341,
+      votes: 3,
+      confirmed: true,
+      mine: false,
+    },
+    {
+      bookId: 'demo-harrison',
+      bookName: 'Harrison',
+      edition: '21st',
+      page: 288,
+      votes: 2,
+      confirmed: false,
+      mine: true,
+    },
+    {
+      bookId: 'demo-grays',
+      bookName: "Gray's Anatomy for Students",
+      edition: '4th',
+      page: 47,
+      votes: 1,
+      confirmed: false,
+      mine: false,
+    },
   ];
   return (
     <View style={{ flex: 1, backgroundColor: colors.background, padding: 20, gap: 12 }}>
@@ -479,43 +508,14 @@ function QuorumDemo() {
         A page number appears for everyone once 3 readers have entered the same
         one for the same book and edition.
       </Text>
-      {rows.map(r => {
-        const confirmed = r.votes >= 3;
-        return (
-          <View
-            key={r.book}
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: 8,
-              borderRadius: 12,
-              borderWidth: 1,
-              paddingHorizontal: 12,
-              paddingVertical: 10,
-              backgroundColor: colors.cardElevated,
-              borderColor: confirmed ? colors.success : colors.border,
-            }}>
-            <View style={{ flex: 1, gap: 2 }}>
-              <Text style={{ color: colors.text, fontSize: 14, fontWeight: '700' }}>
-                {r.book} · {r.edition}
-              </Text>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 2 }}>
-                <Text style={{ color: colors.text, fontSize: 12, fontWeight: '800' }}>
-                  p.{r.page}
-                </Text>
-                <QuorumPips votes={r.votes} quorum={3} />
-                <Text
-                  style={{
-                    color: confirmed ? colors.success : colors.textMuted,
-                    fontSize: 12,
-                  }}>
-                  {confirmed ? 'Shown to everyone' : 'Needs more readers'}
-                </Text>
-              </View>
-            </View>
-          </View>
-        );
-      })}
+      {claims.map((claim, index) => (
+        <ClaimRow
+          key={claim.bookId}
+          claim={claim}
+          index={index}
+          onWithdraw={() => {}}
+        />
+      ))}
     </View>
   );
 }

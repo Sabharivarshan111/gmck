@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { supabase } from './supabase';
-import { type Card, newCard } from './anki';
+import { type Card, newCard } from '@shared/anki';
 
 /**
  * Flashcard decks: one per chapter, built by the `generate-flashcards` edge

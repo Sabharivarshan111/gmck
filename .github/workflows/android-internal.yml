@@ -116,6 +116,10 @@ jobs:
           npm run check:android-res
           npm run check:native-sound
           npm run check:subject-cards
+          # Nothing load-bearing has been deleted. First, because every check
+          # below is meaningless if the thing it checks is gone — and because
+          # the question bank in src/data/ is hand-transcribed with no upstream.
+          npm run check:repo-intact
           npm run check:agent-docs
           npm run check:payments
           npm run check:anki
