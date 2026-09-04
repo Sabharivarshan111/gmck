@@ -18,7 +18,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const bundled = await build({
-  entryPoints: [path.join(root, 'src/lib/anki.ts')],
+  entryPoints: [path.join(root, '..', 'src/lib/anki.ts')],
   bundle: true,
   format: 'esm',
   write: false,

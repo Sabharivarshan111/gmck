@@ -1,6 +1,8 @@
 // Two apps live in this repo. Only one of them is being built.
 //
-//   src/       the original Vite web app — still live, and frozen
+//   src/       the original Vite web app — still live, and frozen.
+//              src/lib/ is ALSO the shared tree: modules both apps import live
+//              there and mobile reaches them through its `@shared` alias.
 //   mobile/    the React Native Android app — the product
 //
 // This check exists because a feature was once built twice: the native app
@@ -32,7 +34,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '.
 const SINGLE_HOME = [
   {
     what: "Anki's scheduler",
-    home: 'mobile/src/lib/anki.ts',
+    home: 'src/lib/anki.ts',
     // Two of the three must appear together, so prose mentioning "leech" or a
     // component named after Anki does not trip it.
     markers: ['LEARN_STEPS', 'START_EASE', 'GRADUATING_INTERVAL', 'RELEARN_STEPS'],
@@ -71,8 +73,18 @@ for (const rule of SINGLE_HOME) {
     failures.push(`${rule.what} should live in ${rule.home}, which is missing`);
     continue;
   }
+  const homeAbs = path.join(root, rule.home);
   for (const dir of SEARCH_DIRS) {
     for await (const file of walk(path.join(root, dir))) {
+      // The home is inside a searched directory now, so it would otherwise be
+      // reported as a second copy of itself. The rule is "exactly one copy",
+      // not "none in src/" — the scheduler moved to src/lib/ because that is
+      // where this repo keeps modules BOTH apps import (`@shared`), and the
+      // web app could not be built without it: the Vercel build resolves the
+      // nearest tsconfig to every file it compiles, and reaching into
+      // mobile/ found mobile/tsconfig.json, which extends a package installed
+      // only in mobile/node_modules. Three production deploys failed on it.
+      if (file === homeAbs) continue;
       const body = await fs.readFile(file, 'utf8');
       const hits = rule.markers.filter(marker => body.includes(marker));
       if (hits.length >= rule.needed) {

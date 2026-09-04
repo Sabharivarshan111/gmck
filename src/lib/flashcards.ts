@@ -45,7 +45,7 @@ import {
   NEW_PER_DAY,
   type Card,
   type Grade,
-} from "../../mobile/src/lib/anki";
+} from "./anki";
 
 export { answer, counts, dueQueue, GRADES, intervalLabel, isLeech, newCard, NEW_PER_DAY };
 export type { Card, Grade };

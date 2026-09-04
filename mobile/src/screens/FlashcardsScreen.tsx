@@ -70,7 +70,7 @@ import {
   isLeech,
   type Card,
   type Grade,
-} from '@/lib/anki';
+} from '@shared/anki';
 import { tick, complete } from '@/lib/haptics';
 import { pickCardImage } from '@/lib/cardImage';
 import { Slider } from '@/components/Slider';

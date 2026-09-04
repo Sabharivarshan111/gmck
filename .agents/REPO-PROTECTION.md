@@ -115,6 +115,46 @@ cd gmck-mirror.git && git remote update    # to refresh it later
 `--mirror` takes every branch, tag and note, not just the checked-out tree.
 Keep it on a drive, or push it to a second host (GitLab, Codeberg, a NAS).
 
+### A GitHub mirror was asked for, and an agent cannot create it
+
+Asked for explicitly by the owner on 2026-09-04, attempted the same session, and
+refused by GitHub:
+
+    create_repository gmck-backup (private)
+    -> 403 Resource not accessible by integration
+
+The Claude GitHub App is installed against **selected repositories**, and the
+only one selected is `gmck` itself — `list_repos` returns exactly one row. So an
+agent can push to this repo and can read it, and cannot bring a second one into
+existence. This is the same shape as the Actions-secrets 403 in HANDOFF §2.1:
+not a bug, not worth retrying, and not fixable from inside a session.
+
+**It is two steps, and the second one any session can do.**
+
+1. *The owner, once, about a minute.* github.com → **New repository** →
+   name `gmck-backup`, **Private**, do **not** initialise with a README (an
+   initial commit gives the mirror push a history to conflict with). Then
+   Settings → GitHub Apps → Claude → **Repository access** → add `gmck-backup`,
+   or the push below will 403 the same way.
+
+2. *Anyone, including an agent.* From a checkout that is **not shallow** — check
+   first, because a CI or web-session clone usually is, and mirroring a shallow
+   clone produces a truncated backup that looks complete:
+
+   ```sh
+   git rev-parse --is-shallow-repository     # must print false
+   git fetch --unshallow --tags origin       # if it printed true
+   git remote add backup https://github.com/Sabharivarshan111/gmck-backup.git
+   git push backup --all && git push backup --tags
+   ```
+
+   This checkout was shallow at 97 commits when the session started, against
+   2052 real ones. That is the whole reason the check above is written down.
+
+Refresh it with the same two pushes whenever it matters; there is no schedule,
+and a stale mirror is still a mirror. `gmck` is currently **public**, so the
+mirror being private is the more protective of the two, not the less.
+
 ### Why there is no mirror workflow in `.github/workflows/`
 
 There nearly was, and it would have been the wrong thing to add. A push-mirror
