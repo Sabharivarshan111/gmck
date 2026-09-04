@@ -71,3 +71,50 @@ is `npm run resume`.
 check fails. It is wired into a `SessionStart` hook and into `&&` chains; a
 report that fails is read as a broken tool and gets removed. The *check* fails
 the build, in CI, which is where a failure belongs.
+
+## 2026-09-04 — Claude Code — merged to main; builds and the first ad render in flight
+
+**DONE** (all on `main` at `a8ca2713`, verified against the live systems, not locally)
+- **The Vercel site was serving a build from before web flashcards existed.**
+  Three production deploys had failed on `failed to resolve
+  "extends":"@react-native/typescript-config"` — `src/lib/flashcards.ts`
+  imported the Anki scheduler across the tree, and esbuild resolves the nearest
+  tsconfig to every file it compiles. `anki.ts` moved to `src/lib/`. Production
+  is READY on the merge; Web build workflow green for the first time in three
+  commits.
+- **Physiology flowcharts: 14 of 14 cached notes.** Live function is **v56**.
+  The queued payload was not enough — the repair path had two bugs, the real one
+  being that `callModel` sent `SYSTEM_PROMPT` on every call, so a request for one
+  flowchart section came back as a whole note every time. Three of those 14 were
+  written by real readers after the deploy and arrived with a flowchart, which is
+  the guarantee working unattended.
+- **The cardiac cycle question was showing a baroreceptor reflex plate.** Fixed
+  at the data layer to `cardiac_cycle_wiggers_diagram.jpg`; three other plainly
+  wrong attachments on that plate cleared. Backup: `question_diagrams_fix_20260904`.
+- Textbook chip icon moved to the trailing edge; screenshot captured and sent.
+- Skills: `session-resume`, `rate-limit-resume`, and the "show the screenshot"
+  rule in `92-verify.md` + `show-it-works`.
+
+**IN FLIGHT — check these first**
+- Android **debug / internal / release** runs on `a8ca2713`. They had been red
+  since `8d8841ab` on `check:agent-docs` (dead pointers to
+  `mobile/src/lib/apkgFormat.ts`), which this merge fixes. If one fails, read the
+  log and fix it — do not stop at "it failed".
+- **Ad videos** run 33887390781 — the first time that workflow has ever run.
+  9 render targets: 3 × 90s ads and 3 × 60s reels in voiced + silent cuts.
+
+**NEXT**
+- The owner's ad brief is NOT met yet, and the gap is specific: they want
+  (1) one 60s voiced ad where the **mascot presents** — `BotAvatar.tsx` exists
+  but is only used inside the AI-chat screen mock, never as a presenter; and
+  (2) two 60s subtitle-only cuts on a **black** background, beat-synced to a
+  bed they can swap. The `-silent` cuts already exist; the black ground and the
+  beat sync do not.
+- 56 plates still sit on >5 questions each (555 rows). Read them, never bulk-fix.
+- `check:smoke` has one pre-existing failure on HEAD: "a note filed under a
+  chapter shows up on that chapter" (locator timeout). Not caused by this work.
+
+**DO NOT**
+- Do not respawn a killed agent without checking what it already did. One died
+  one call after "Deploying v56" — the deploy had succeeded.
+- Do not bulk-fix `question_diagrams` by any text rule, in either direction.
