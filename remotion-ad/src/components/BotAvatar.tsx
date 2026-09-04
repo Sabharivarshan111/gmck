@@ -1,19 +1,38 @@
 import React from 'react';
-import { interpolate, spring, useCurrentFrame, useVideoConfig } from 'remotion';
+import { useCurrentFrame } from 'remotion';
 
 interface BotAvatarProps {
   stage?: 1 | 2 | 3 | 4 | 5 | 6;
   state?: 'idle' | 'thinking' | 'talking' | 'celebrating';
   size?: number;
+  /**
+   * Override the stage colour.
+   *
+   * Inside the chat mock the colour IS the level, so nothing passes this. In
+   * an ad the mascot is the one figure carrying a shot whose accent lights the
+   * rim, the caption and the backlight — a bot that stays violet through an
+   * amber shot reads as a sticker pasted on rather than as something standing
+   * in the room. Optional, so the chat screen is untouched.
+   */
+  color?: string;
+  /**
+   * The little "LVL n AI BOT" strap. `null` removes it.
+   *
+   * It is right in the chat mock, where it explains the avatar's level. In an
+   * ad it is four words of chrome under a face, at a size nobody reads, in the
+   * one shot the viewer is deciding whether to keep watching.
+   */
+  badge?: string | null;
 }
 
 export const BotAvatar: React.FC<BotAvatarProps> = ({
   stage = 4,
   state = 'talking',
-  size = 140
+  size = 140,
+  color,
+  badge
 }) => {
   const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
 
   const bounce = Math.sin(frame * 0.15) * 6;
   const eyeBlink = frame % 90 > 84 ? 0.1 : 1;
@@ -29,7 +48,8 @@ export const BotAvatar: React.FC<BotAvatarProps> = ({
     6: '#fbbf24'
   };
 
-  const currentColor = stageColors[stage];
+  const currentColor = color ?? stageColors[stage];
+  const strap = badge === undefined ? `LVL ${stage} AI BOT` : badge;
 
   return (
     <div
@@ -131,18 +151,20 @@ export const BotAvatar: React.FC<BotAvatarProps> = ({
         />
 
         {/* Stage Badge */}
-        <div
-          style={{
-            position: 'absolute',
-            bottom: '4px',
-            fontSize: '9px',
-            fontWeight: 800,
-            color: currentColor,
-            letterSpacing: '0.05em'
-          }}
-        >
-          LVL {stage} AI BOT
-        </div>
+        {strap ? (
+          <div
+            style={{
+              position: 'absolute',
+              bottom: `${Math.max(4, size * 0.03)}px`,
+              fontSize: `${Math.max(9, size * 0.064)}px`,
+              fontWeight: 800,
+              color: currentColor,
+              letterSpacing: '0.05em'
+            }}
+          >
+            {strap}
+          </div>
+        ) : null}
       </div>
     </div>
   );

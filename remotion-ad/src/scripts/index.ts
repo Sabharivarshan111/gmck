@@ -5,6 +5,9 @@ import { drawItFromMemory } from './drawItFromMemory.ts';
 import { reelRepeats } from './reelRepeats.ts';
 import { reelSixHours } from './reelSixHours.ts';
 import { reelDrawIt } from './reelDrawIt.ts';
+import { reelGuide } from './reelGuide.ts';
+import { reelFunctions } from './reelFunctions.ts';
+import { reelOneQuestion } from './reelOneQuestion.ts';
 
 /**
  * Every script that exists, in one list.
@@ -24,9 +27,35 @@ export const ALL_SCRIPTS: AdScript[] = [
   reelRepeats,
   reelSixHours,
   reelDrawIt,
+  reelGuide,
+  reelFunctions,
+  reelOneQuestion,
 ];
 
 /** The 60-second vertical cuts, which are the ones with fixed shot frames. */
 export const REELS: AdScript[] = ALL_SCRIPTS.filter((s) => s.format === 'reel');
 
-export { thePattern, twoAM, drawItFromMemory, reelRepeats, reelSixHours, reelDrawIt };
+export {
+  thePattern,
+  twoAM,
+  drawItFromMemory,
+  reelRepeats,
+  reelSixHours,
+  reelDrawIt,
+  reelGuide,
+  reelFunctions,
+  reelOneQuestion,
+};
+
+/**
+ * The reels that have nothing spoken in them at all.
+ *
+ * Not the same as the `-silent` MIX of a voiced reel, which has clips the
+ * render leaves out. These were written without a voice — `Root.tsx` registers
+ * them once rather than twice, and `voice-manifest` / `preflight` know not to
+ * expect an mp3 that was never meant to exist.
+ */
+export const SILENT_REELS: AdScript[] = REELS.filter((s) => Boolean(s.noVoice));
+
+/** The reels that do have a voice, and therefore ship in two mixes. */
+export const VOICED_REELS: AdScript[] = REELS.filter((s) => !s.noVoice);

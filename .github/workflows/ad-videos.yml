@@ -58,6 +58,18 @@ jobs:
         working-directory: remotion-ad
         run: npm run plates
 
+      # The music beds are synthesised, not sourced -- see make-beds.py for the
+      # licence reasoning. They are gitignored like every other asset, so they
+      # have to be built here.
+      #
+      # This step did not exist, and nothing else generates them: the reels'
+      # preflight would have failed on a missing bed the first time this
+      # workflow ran with them in it, and the two subtitle-led reels have no
+      # voice at all, so for those the bed is the ONLY audio in the file.
+      - name: Generate the music beds
+        working-directory: remotion-ad
+        run: python3 scripts/make-beds.py
+
       - name: Install edge-tts
         run: pip install edge-tts
 
@@ -124,6 +136,20 @@ jobs:
           - ad: orbit-reel-draw-it-silent
             file: orbit-reel-draw-it-silent.mp4
             silent: true
+          # The mascot ad: the app's own chat avatar hosting sixty seconds,
+          # female voice, deliberately unhurried.
+          - ad: orbit-reel-guide
+            file: orbit-reel-guide.mp4
+          - ad: orbit-reel-guide-silent
+            file: orbit-reel-guide-silent.mp4
+            silent: true
+          # The two subtitle-led cuts. These are registered ONCE each, not as a
+          # voiced/silent pair: they were written with no spoken track, so
+          # there is no second mix of them to render.
+          - ad: orbit-reel-functions
+            file: orbit-reel-functions.mp4
+          - ad: orbit-reel-one-question
+            file: orbit-reel-one-question.mp4
     steps:
       - uses: actions/checkout@v4
 
@@ -257,6 +283,19 @@ jobs:
             | `orbit-reel-six-hours-silent.mp4` | music only |
             | `orbit-reel-draw-it.mp4` | voiced |
             | `orbit-reel-draw-it-silent.mp4` | music only |
+            | `orbit-reel-guide.mp4` | voiced — the mascot hosts |
+            | `orbit-reel-guide-silent.mp4` | music only |
+
+            And two 60-second reels with **no voiceover at all** — the caption
+            names a real function on every shot, on a black ground, cut to a
+            declared tempo. Swap the bed for your own track at the same tempo
+            and every cut still lands on a beat; a different tempo is one
+            number in the script. `.agents/video/BEAT-SYNC.md` is the contract.
+
+            | File | Cut to |
+            |---|---|
+            | `orbit-reel-functions.mp4` | 100 BPM — every function, one per shot |
+            | `orbit-reel-one-question.mp4` | 120 BPM — one question, end to end |
 
             The music is synthesised by `remotion-ad/scripts/make-beds.py` and
             owned outright — no stock track, because "free for non-commercial"

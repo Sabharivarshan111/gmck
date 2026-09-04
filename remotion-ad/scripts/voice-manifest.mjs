@@ -13,7 +13,11 @@ const { ALL_SCRIPTS } = await import(
   pathToFileURL(path.join(process.cwd(), 'src', 'scripts', 'index.ts')).href
 );
 
-const manifest = ALL_SCRIPTS.map((s) => ({
+// A `noVoice` script is skipped outright: it was written with no spoken track,
+// so listing it here would tell `synthesize.py` to record eighteen empty lines
+// and then fail on the first one. The `-silent` cut of a VOICED reel is a
+// different thing entirely and stays in — it has clips, the mix leaves them out.
+const manifest = ALL_SCRIPTS.filter((s) => !s.noVoice).map((s) => ({
   id: s.id,
   voice: s.voice,
   rate: s.rate,
@@ -29,4 +33,9 @@ await fs.mkdir(out, { recursive: true });
 await fs.writeFile(path.join(out, 'manifest.json'), JSON.stringify(manifest, null, 2));
 
 const total = manifest.reduce((n, s) => n + s.lines.length, 0);
-process.stdout.write(`manifest written: ${manifest.length} ads, ${total} lines\n`);
+const silent = ALL_SCRIPTS.length - manifest.length;
+process.stdout.write(
+  `manifest written: ${manifest.length} ads, ${total} lines` +
+    (silent ? ` (${silent} subtitle-led ad(s) have no spoken track)` : '') +
+    '\n',
+);

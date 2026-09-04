@@ -5,10 +5,14 @@ import { LayeredCameraPhone } from './LayeredCameraPhone';
 import { PlateCard } from './PlateCard';
 import { KineticWordCaption } from './KineticWordCaption';
 import { ReelHeadline } from './ReelHeadline';
+import { BeatCaption, BeatRoom } from './BeatCaption';
+import { MascotStage } from './MascotStage';
+import type { BeatClock } from './beatGrid';
+import { beatEnergy } from './beatGrid';
 import { screenAsset } from './ScreenRegistry';
 import { UserNotesMediaScreen, ThemeCustomizerScreen, OutroScreen } from './CustomAppScreens';
 import type { AdScript, Shot } from '../scripts/types';
-import { scriptFrames } from '../scripts/types';
+import { resolveShotFrames, framesPerBeat, scriptFrames } from '../scripts/types';
 import { DYNAMIC_SCRIPT_TIMINGS, type ShotTiming } from '../dynamicScriptTimings';
 
 const DEFAULT_ACCENT = '#7C5CFF';
@@ -44,6 +48,17 @@ interface ShotViewProps {
   shotIndex: number;
   durationOverride?: number;
   reel?: boolean;
+  /**
+   * Present only on the beat-synced ads. When it is here the shot lights,
+   * breathes and counts on the music's own grid; when it is not, nothing in
+   * this file behaves any differently than it did before the beat cuts
+   * existed.
+   */
+  clock?: BeatClock;
+  /** Whole beats this shot holds for, for the counter under the caption. */
+  beats?: number;
+  /** Subtitle-led cut: the caption is the argument, so it replaces the headline. */
+  subtitleLed?: boolean;
 }
 
 const ShotView: React.FC<ShotViewProps> = ({
@@ -54,6 +69,9 @@ const ShotView: React.FC<ShotViewProps> = ({
   durationOverride,
   reel = false,
   onBlack = false,
+  clock,
+  beats = 4,
+  subtitleLed = false,
 }) => {
   const frame = useCurrentFrame();
   const durationInFrames = durationOverride ?? timing?.shotFrames ?? 120;
@@ -122,7 +140,28 @@ const ShotView: React.FC<ShotViewProps> = ({
       {onBlack ? null : (
         <AuroraMeshBackground accent={accent} intensity={shot.camera === 'macro' ? 0.6 : 1} />
       )}
-      <AbsoluteFill style={{ opacity: alpha }}>
+      {/* A beat-synced cut still gets lit, just not filled. See `BeatRoom`. */}
+      {clock ? (
+        <BeatRoom accent={accent} clock={clock} durationInFrames={durationInFrames} />
+      ) : null}
+      {/*
+        The device sits out the shots the mascot hosts.
+
+        `screen: null` draws an empty dark phone, which is right for a cold
+        open and wrong here — a black slab behind the presenter is a prop
+        nobody is looking at, and it steals the depth the figure needs. When
+        the mascot has the frame, it has the frame.
+      */}
+      {shot.mascot === 'hero' ? null : (
+      <AbsoluteFill
+        style={{
+          opacity: alpha,
+          // The device breathes with the bed on the beat cuts. Under one per
+          // cent: a phone that visibly bounces reads as a GIF, and the point
+          // is that the picture and the music are the same object.
+          transform: clock ? `scale(${1 + beatEnergy(frame, clock) * 0.008})` : undefined,
+        }}
+      >
         {asset?.kind === 'plate' && src ? (
           <PlateCard
             src={src}
@@ -149,10 +188,30 @@ const ShotView: React.FC<ShotViewProps> = ({
           </LayeredCameraPhone>
         )}
       </AbsoluteFill>
+      )}
+      {shot.mascot ? (
+        <MascotStage
+          mode={shot.mascot}
+          accent={accent}
+          durationInFrames={durationInFrames}
+          // Alternated so a recurring guide is a guide rather than wallpaper:
+          // it changes which side of the device it steps in from.
+          side={shotIndex % 2 === 0 ? 'left' : 'right'}
+        />
+      ) : null}
       <AbsoluteFill style={{ opacity: alpha }}>
-        {reel ? (
+        {subtitleLed && clock ? (
+          <BeatCaption
+            text={shot.text}
+            kicker={shot.kicker}
+            accent={accent}
+            durationInFrames={durationInFrames}
+            clock={clock}
+            beats={beats}
+          />
+        ) : reel ? (
           <ReelHeadline
-            text={shot.text || shot.vo}
+            text={shot.text || shot.vo || ''}
             accent={accent}
             durationInFrames={durationInFrames}
           />
@@ -190,13 +249,19 @@ export const ShotTimeline: React.FC<{ script: AdScript; withVoice?: boolean }> =
   // the shots declare their frames and the voice is written to fit them. When
   // `shot.frames` is set it wins; when it is not, nothing about the existing
   // ads changes.
+  // `resolveShotFrames` is the one place that knows both dialects — raw
+  // `frames`, and `beats` against the script's `bpm`. A shot's length is never
+  // read off the shot here, so the beat grid cannot be bypassed by accident.
+  const resolved = resolveShotFrames(script);
+
   let cursor = 0;
   const shotsWithTimings = script.shots.map((shot, i) => {
     const timing = timingReport?.shots.find((s) => s.n === shot.n);
-    if (shot.frames) {
+    const fixed = resolved[i];
+    if (fixed > 0) {
       const startFrame = cursor;
-      cursor += shot.frames;
-      return { shot, timing, startFrame, durationInFrames: shot.frames, index: i };
+      cursor += fixed;
+      return { shot, timing, startFrame, durationInFrames: fixed, index: i };
     }
     const startFrame = timing?.startFrame ?? i * 120;
     const durationInFrames = timing?.shotFrames ?? 120;
@@ -205,8 +270,23 @@ export const ShotTimeline: React.FC<{ script: AdScript; withVoice?: boolean }> =
 
   const total = reel ? scriptFrames(script) : (timingReport?.totalFrames ?? cursor);
 
+  // A cut written in beats carries its clock down to every shot, so the type,
+  // the room light and the device all move on the same grid the cuts land on.
+  const perBeat = script.bpm ? framesPerBeat(script.bpm) : null;
+  const gridOrigin = script.beatOffsetFrames ?? 0;
+
+  // Two different silences.
+  //
+  // `withVoice: false` is the muted MIX of a voiced reel — the clips exist and
+  // the render leaves them out. `script.noVoice` is an ad that was never
+  // written to be spoken, and its captions are carrying the product. Both sit
+  // on true black; only the second replaces the headline with the subtitle.
+  const black = reel && (!withVoice || Boolean(script.noVoice));
+  const subtitleLed = Boolean(script.noVoice);
+  const speaks = withVoice && !script.noVoice;
+
   return (
-    <AbsoluteFill style={{ backgroundColor: reel && !withVoice ? '#000000' : '#030712' }}>
+    <AbsoluteFill style={{ backgroundColor: black ? '#000000' : '#030712' }}>
       {/*
         The bed sits under everything and runs the whole composition. It is the
         first child so no shot's background can be drawn beneath it, and it is
@@ -240,8 +320,11 @@ export const ShotTimeline: React.FC<{ script: AdScript; withVoice?: boolean }> =
             shotIndex={index}
             durationOverride={durationInFrames}
             reel={reel}
-            voiceSrc={withVoice && !reel ? voiceFile(script, shot) : null}
-            onBlack={reel && !withVoice}
+            voiceSrc={speaks && !reel ? voiceFile(script, shot) : null}
+            onBlack={black}
+            clock={perBeat ? { perBeat, originFrame: startFrame - gridOrigin } : undefined}
+            beats={perBeat ? Math.round(durationInFrames / perBeat) : undefined}
+            subtitleLed={subtitleLed}
           />
         </Sequence>
       ))}
@@ -257,7 +340,7 @@ export const ShotTimeline: React.FC<{ script: AdScript; withVoice?: boolean }> =
         which is what a fast cut sounds like anyway. `preflight` still fails if
         a clip overruns by enough to talk over the next line.
       */}
-      {reel && withVoice
+      {reel && speaks
         ? shotsWithTimings.map(({ shot, startFrame }) => (
             <Sequence key={`vo-${shot.n}`} from={startFrame} layout="none">
               <Audio src={voiceFile(script, shot)} />

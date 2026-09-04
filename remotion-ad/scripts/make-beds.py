@@ -59,12 +59,42 @@ PROGRESSIONS = {
     "six-hours": [[38, 45, 53, 57], [34, 41, 50, 53], [41, 48, 57, 60], [36, 43, 52, 55]],
     # Brighter and higher: this one is a challenge, not a worry.
     "draw-it": [[40, 47, 55, 59], [36, 43, 52, 55], [43, 50, 59, 62], [38, 45, 54, 57]],
+    # The mascot ad. Warm and major, and the only bed here that spends the
+    # whole minute under a *voice* that is deliberately unhurried — so it is
+    # the sparsest of the six and never adds a layer while a line is landing.
+    "guide": [[45, 52, 61, 64], [43, 50, 59, 62], [40, 47, 57, 59], [41, 48, 57, 60]],
+    # "Every function": a catalogue, so the bed is a steady inventory rather
+    # than an arc. It repeats without developing on purpose — the pictures are
+    # what change, and a bed that keeps arriving somewhere new competes.
+    "functions": [[45, 52, 60, 64], [45, 52, 59, 64], [47, 54, 62, 66], [43, 50, 59, 62]],
+    # "One question, end to end": a sequence, so this one does move. It steps
+    # up a tone across the four bars and lands back at the start, which is what
+    # a loop that is going somewhere sounds like.
+    "one-question": [[41, 48, 57, 60], [43, 50, 59, 62], [45, 52, 60, 64], [40, 47, 55, 59]],
 }
 
 # Bars per reel, chosen so a bar boundary lands near that script's own turns.
 # 60s at these tempos is a whole number of bars, which is what lets the last
 # bar end exactly on the cut rather than being faded out mid-phrase.
-TEMPOS = {"repeats": 25, "six-hours": 24, "draw-it": 26}  # bars in 60 seconds
+#
+# **A bar is four beats, so `bars * 4` is the bed's tempo in beats per minute.**
+# That is not trivia: the two subtitle-led reels declare a `bpm` in their script
+# and cut on that grid, and the bed under them has to be the same tempo or the
+# picture and the music are two rhythms in one film. Keep these two in step:
+#
+#   bed-functions      25 bars -> 100 beats in 60s -> reelFunctions    bpm: 100
+#   bed-one-question   30 bars -> 120 beats in 60s -> reelOneQuestion  bpm: 120
+#
+# The other four are cut in frames rather than beats, so their bar count only
+# has to make the sections land near their own turns.
+TEMPOS = {
+    "repeats": 25,
+    "six-hours": 24,
+    "draw-it": 26,
+    "guide": 22,
+    "functions": 25,
+    "one-question": 30,
+}  # bars in 60 seconds
 
 
 def sections(name: str, bar: float):
@@ -89,6 +119,39 @@ def sections(name: str, bar: float):
         if end:
             return (0.7, 0.25, 0.0, 0.5)
         return (0.7, 0.85, 0.6, 1.0)
+
+    if name == "guide":
+        # A tour with a host. The bed opens almost bare so the first thing
+        # heard is her voice rather than a synthesiser, brings the pulse in as
+        # the product arrives at ~2.5s, and drops back under the close.
+        if bar < 1.0:
+            return (0.85, 0.0, 0.3, 0.3)
+        if end:
+            return (0.7, 0.25, 0.25, 0.45)
+        # Lower everywhere than the silent beds: there is a voice on top of
+        # this one for three quarters of its length.
+        return (0.62, 0.6, 0.5, 0.8)
+
+    if name == "functions":
+        # A catalogue, cut every four to six beats. The pulse is the spine and
+        # it is in from bar one, because the very first cut is on a beat and a
+        # bed that has not started yet makes that cut look accidental.
+        if bar < 1.0:
+            return (0.85, 0.7, 0.3, 0.7)
+        if end:
+            return (0.7, 0.4, 0.2, 0.55)
+        return (0.7, 0.95, 0.7, 1.0)
+
+    if name == "one-question":
+        # Faster and tighter. It is a sequence, so this one builds: the arp
+        # arrives with the written answer at ~8s and never leaves.
+        if bar < 1.0:
+            return (0.9, 0.75, 0.0, 0.75)
+        if bar < 4.0:
+            return (0.8, 0.9, 0.45, 0.95)
+        if end:
+            return (0.72, 0.45, 0.25, 0.55)
+        return (0.7, 1.0, 0.8, 1.0)
 
     if name == "draw-it":
         # A challenge: the pluck is in from the first bar, the pulse joins on
@@ -233,14 +296,14 @@ def write(path: pathlib.Path, samples: list) -> None:
 
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
-    for name in ("repeats", "six-hours", "draw-it"):
+    for name in ("repeats", "six-hours", "draw-it", "guide", "functions", "one-question"):
         target = OUT / f"bed-{name}.wav"
         write(target, build(name))
         size = target.stat().st_size
         print(f"  bed-{name}.wav  {size / 1024 / 1024:.1f}MB  {SECONDS:.0f}s  {TEMPOS[name]} bars")
         if size < 1_000_000:
             raise SystemExit(f"{target.name} came out {size} bytes — that is not 60 seconds of audio.")
-    print(f"\n3 music beds written to {OUT}")
+    print(f"\n{len(TEMPOS)} music beds written to {OUT}")
 
 
 if __name__ == "__main__":

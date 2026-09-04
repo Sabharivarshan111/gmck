@@ -13,7 +13,7 @@ import { ShotTimeline } from './components/ShotTimeline';
 import { thePattern } from './scripts/thePattern';
 import { twoAM } from './scripts/twoAM';
 import { drawItFromMemory } from './scripts/drawItFromMemory';
-import { REELS } from './scripts/index';
+import { SILENT_REELS, VOICED_REELS } from './scripts/index';
 import { scriptFrames } from './scripts/types';
 
 const FPS = 30;
@@ -63,7 +63,7 @@ export const Root: React.FC = () => {
           underscore in an id, and the failure arrives at render time in CI
           rather than at type-check.
       */}
-      {REELS.map((reel) => (
+      {VOICED_REELS.map((reel) => (
         <React.Fragment key={reel.id}>
           <Composition
             id={reel.id}
@@ -84,6 +84,28 @@ export const Root: React.FC = () => {
             defaultProps={{ script: reel, withVoice: false }}
           />
         </React.Fragment>
+      ))}
+
+      {/* --- THE SUBTITLE-LED REELS ---
+
+          These are registered ONCE, not twice. A voiced reel ships in two
+          mixes because there is a voice to leave out; these were written with
+          no spoken track at all — the caption is the product — so a `-silent`
+          twin would be a byte-identical second render under a second name, and
+          the person downloading them would have no way to tell which was
+          which.
+      */}
+      {SILENT_REELS.map((reel) => (
+        <Composition
+          key={reel.id}
+          id={reel.id}
+          component={ShotTimeline}
+          durationInFrames={scriptFrames(reel)}
+          fps={FPS}
+          width={1080}
+          height={1920}
+          defaultProps={{ script: reel, withVoice: false }}
+        />
       ))}
 
       {/* --- REMOTION 3 FULL COMPOSITIONS (Dynamic Audio-Paced) --- */}
