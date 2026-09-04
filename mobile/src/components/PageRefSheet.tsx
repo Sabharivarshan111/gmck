@@ -1,6 +1,7 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
+  Animated,
   Keyboard,
   StyleSheet,
   TextInput,
@@ -13,6 +14,7 @@ import { Sheet } from '@/components/Sheet';
 import { Touchable } from '@/components/Touchable';
 import { useTheme } from '@/theme';
 import { setSetting, useSettings } from '@/lib/settings';
+import { DURATION, EASE, useReducedMotion } from '@/theme/motion';
 import { typeScale } from '@/theme/typography';
 import {
   PAGE_REF_QUORUM,
@@ -198,47 +200,13 @@ export function PageRefSheet({
           <Text style={[styles.label, { color: colors.textMuted }]}>
             ENTERED SO FAR
           </Text>
-          {refs.map(ref => (
-            <View
+          {refs.map((ref, index) => (
+            <ClaimRow
               key={`${ref.bookId}:${ref.page}`}
-              style={[
-                styles.refRow,
-                {
-                  backgroundColor: colors.cardElevated,
-                  borderColor: ref.confirmed ? colors.success : colors.border,
-                },
-              ]}
-            >
-              <View style={styles.refBody}>
-                <Text style={[styles.refBook, { color: colors.text }]}>
-                  {ref.bookName}
-                  {ref.edition ? ` · ${ref.edition}` : ''}
-                </Text>
-                <View style={styles.refStateRow}>
-                  <Text style={[styles.refPage, { color: colors.text }]}>
-                    p.{ref.page}
-                  </Text>
-                  <QuorumPips votes={ref.votes} quorum={PAGE_REF_QUORUM} />
-                  <Text
-                    style={[
-                      styles.refState,
-                      { color: ref.confirmed ? colors.success : colors.textMuted },
-                    ]}
-                  >
-                    {ref.confirmed ? 'Shown to everyone' : 'Needs more readers'}
-                  </Text>
-                </View>
-              </View>
-              {ref.mine ? (
-                <Touchable
-                  label={`Withdraw your page ${ref.page} for ${ref.bookName}`}
-                  onPress={() => void withdraw(ref)}
-                  style={styles.iconButton}
-                >
-                  <Trash2 size={16} color={colors.danger} />
-                </Touchable>
-              ) : null}
-            </View>
+              claim={ref}
+              index={index}
+              onWithdraw={() => void withdraw(ref)}
+            />
           ))}
         </View>
       ) : null}
@@ -439,6 +407,115 @@ export function PageRefSheet({
         </Text>
       ) : null}
     </Sheet>
+  );
+}
+
+/**
+ * One claim — a book, a page, and how close it is to being shown to everybody.
+ *
+ * It has an entrance because it arrives: the claims are fetched after the sheet
+ * is already open, so without one the list of what other readers have said
+ * appears between two frames with nothing to say it just got here. The row
+ * rises 10dp and fades, `EASE.out` (entrances never ease in), staggered by 45ms
+ * so three claims read as one arrival and not a queue — and the segments fill
+ * behind it, half a beat later, which is the rule drawing itself.
+ *
+ * Only opacity and transform, so it runs on the native driver: the sheet opens
+ * while `pageRefsFor` and `listBooks` are still resolving, and a busy JS thread
+ * must not be able to stutter it. Under reduced motion the row is simply there,
+ * fully drawn, and the pips are not asked to fill.
+ *
+ * Exported for `?screen=quorumdemo` in the preview, which is the only way this
+ * row can be photographed: its data comes from Supabase and no agent sandbox
+ * can reach it. The demo mounts *this* component against fixed claims rather
+ * than a copy of its markup — a fixture that duplicates a renderer is a fixture
+ * that can agree with a bug, which is how the notes screen once shipped
+ * `[object Object]` while the demo looked perfect.
+ */
+export function ClaimRow({
+  claim,
+  index,
+  onWithdraw,
+}: {
+  claim: PageRef;
+  index: number;
+  onWithdraw: () => void;
+}) {
+  const { colors } = useTheme();
+  const reduceMotion = useReducedMotion();
+  // Never from 0: it starts at 1 under reduced motion and 0 opacity otherwise,
+  // and nothing here is scaled at all.
+  const enter = useRef(new Animated.Value(reduceMotion ? 1 : 0)).current;
+
+  useEffect(() => {
+    if (reduceMotion) {
+      enter.setValue(1);
+      return;
+    }
+    const animation = Animated.timing(enter, {
+      toValue: 1,
+      duration: DURATION.base,
+      easing: EASE.out,
+      delay: index * 45,
+      useNativeDriver: true,
+    });
+    animation.start();
+    return () => animation.stop();
+  }, [enter, index, reduceMotion]);
+
+  return (
+    <Animated.View
+      style={[
+        styles.refRow,
+        {
+          backgroundColor: colors.cardElevated,
+          borderColor: claim.confirmed ? colors.success : colors.border,
+          opacity: enter,
+          transform: [
+            {
+              translateY: enter.interpolate({
+                inputRange: [0, 1],
+                outputRange: [10, 0],
+              }),
+            },
+          ],
+        },
+      ]}
+    >
+      <View style={styles.refBody}>
+        <Text style={[styles.refBook, { color: colors.text }]}>
+          {claim.bookName}
+          {claim.edition ? ` · ${claim.edition}` : ''}
+        </Text>
+        <View style={styles.refStateRow}>
+          <Text style={[styles.refPage, { color: colors.text }]}>
+            p.{claim.page}
+          </Text>
+          <QuorumPips
+            votes={claim.votes}
+            quorum={PAGE_REF_QUORUM}
+            enterDelay={index * 45 + Math.round(DURATION.base / 2)}
+          />
+          <Text
+            style={[
+              styles.refState,
+              { color: claim.confirmed ? colors.success : colors.textMuted },
+            ]}
+          >
+            {claim.confirmed ? 'Shown to everyone' : 'Needs more readers'}
+          </Text>
+        </View>
+      </View>
+      {claim.mine ? (
+        <Touchable
+          label={`Withdraw your page ${claim.page} for ${claim.bookName}`}
+          onPress={onWithdraw}
+          style={styles.iconButton}
+        >
+          <Trash2 size={16} color={colors.danger} />
+        </Touchable>
+      ) : null}
+    </Animated.View>
   );
 }
 
