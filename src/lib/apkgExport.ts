@@ -1,5 +1,28 @@
-import type { DeckCard } from './flashcards';
 import { FIELD_SEPARATOR } from './apkgFormat';
+
+/**
+ * The four fields a package actually needs off a card.
+ *
+ * Declared here rather than imported from `./flashcards`, and that is not
+ * fussiness — it is a bug this file already caused once. While this module
+ * lived under `mobile/src/lib/`, `./flashcards` meant the React Native one.
+ * Moving it to the shared `src/lib/` silently re-pointed the same import at the
+ * *web* app's `flashcards.ts`, which reaches for `localStorage` and the
+ * Supabase browser client, and dragged both into the native app's typecheck.
+ *
+ * Nothing caught it except tsc, because the two `DeckCard` types are
+ * structurally identical — the binding changed, the shape did not. A shared
+ * module that names no app cannot be re-pointed by being moved.
+ *
+ * Both apps' `DeckCard` satisfies this structurally, so neither has to change.
+ */
+export interface ExportableCard {
+  front?: string;
+  back?: string;
+  /** A `data:` URI. Anything else is skipped rather than fetched. */
+  imageUrl?: string;
+  tags?: string[];
+}
 
 /**
  * Writing an Anki package, so a deck you wrote can be given to somebody.
@@ -300,7 +323,7 @@ function readDataUri(uri: string): { extension: string; base64: string } | null 
  * collide, so each one steps forward from the last.
  */
 export function buildExport(
-  deck: { name: string; cards: DeckCard[] },
+  deck: { name: string; cards: ExportableCard[] },
   now = Date.now(),
 ): ExportPackage {
   const name = safeDeckName(deck.name);

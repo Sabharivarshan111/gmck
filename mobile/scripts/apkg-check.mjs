@@ -104,7 +104,7 @@ function readZip(file) {
 /* -------------------------------------------------------------- the module */
 
 const bundled = await build({
-  entryPoints: [path.join(root, 'src/lib/apkgFormat.ts')],
+  entryPoints: [path.join(root, '..', 'src/lib/apkgFormat.ts')],
   bundle: true,
   format: 'esm',
   write: false,
@@ -513,7 +513,7 @@ if (fs.existsSync(kotlin)) {
  * with a JSON media map. The Kotlin is a transcription of these twenty lines.
  */
 const exportBundle = await build({
-  entryPoints: [path.join(root, 'src/lib/apkgExport.ts')],
+  entryPoints: [path.join(root, '..', 'src/lib/apkgExport.ts')],
   bundle: true,
   format: 'esm',
   write: false,

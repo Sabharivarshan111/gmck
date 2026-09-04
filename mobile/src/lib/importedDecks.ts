@@ -19,8 +19,8 @@ import {
   type ApkgCollection,
   type ApkgMediaEntry,
   type ApkgNotetype,
-} from './apkgFormat';
-import { buildExport } from './apkgExport';
+} from '@shared/apkgFormat';
+import { buildExport } from '@shared/apkgExport';
 import { warn } from './log';
 
 /**
