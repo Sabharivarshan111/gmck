@@ -11,7 +11,8 @@ import { radius, space } from '@/theme/tokens';
 import { typeScale } from '@/theme/typography';
 import { DURATION, EASE, useReducedMotion } from '@/theme/motion';
 import { goToTab } from '@/navigation/ref';
-import { chapterOf, STEPS, type TourStep } from '@/tour/script';
+import { chapterOf, SKIP_FAREWELL,
+  STEPS, type TourStep } from '@/tour/script';
 import {
   endTour,
   measureTourTarget,
@@ -85,8 +86,20 @@ export function TourOverlay() {
    * tour that kept navigating behind a form the reader cannot leave would move
    * the app under them while they filled it in.
    */
-  const step: TourStep | null =
+  /*
+   * Skip does not end the tour on its first press.
+   *
+   * It shows one card that spotlights the real Settings button and says the
+   * walkthrough lives there. Before this, the only thing that mentioned replay
+   * was the Skip button's accessibility HINT — spoken by TalkBack and read by
+   * nobody else — so the reader most likely to want it back was the one
+   * guaranteed not to be told. A second press ends it, so nobody is trapped.
+   */
+  const [farewell, setFarewell] = useState(false);
+
+  const scripted: TourStep | null =
     index === null || paused ? null : (STEPS[run[index]] ?? null);
+  const step: TourStep | null = farewell && scripted ? SKIP_FAREWELL : scripted;
   const stepId = step?.id ?? null;
 
   const [placement, setPlacement] = useState<Placement>({ rect: null, below: true });
@@ -134,6 +147,51 @@ export function TourOverlay() {
       }
     };
   }, [stepId, step, window.height]);
+
+  /*
+   * The tap hint, on steps that want the reader to actually press the control.
+   *
+   * The ring says "look here". It does not say "press this", and the
+   * difference matters: the whole point of a step with `tapToAdvance` is that
+   * the reader learns the control by using it. There was a line of caption text
+   * saying so, and a line of text is what people skip.
+   *
+   * So a ripple expands out of the control on a slow beat, with a soft disc
+   * riding it. Deliberately a ripple and not a drawn hand: a hand has to be
+   * pointed somewhere, is wrong for half the screen positions, and looks like
+   * clip art at any size.
+   *
+   * It runs on its own clock rather than sharing the ring's, because they are
+   * saying different things and a single value would make them one gesture.
+   */
+  const tapHint = useRef(new Animated.Value(0)).current;
+  const wantsTap = Boolean(step?.tapToAdvance);
+
+  useEffect(() => {
+    if (!wantsTap || !placement.rect || reduceMotion) {
+      // Under reduced motion there is no ripple at all. A single expanding
+      // shape IS the animation here — there is no slower version of it that
+      // still means "press this" — so the caption line carries the step alone.
+      tapHint.setValue(0);
+      return;
+    }
+    tapHint.setValue(0);
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(tapHint, {
+          toValue: 1,
+          duration: 1100,
+          easing: EASE.out,
+          useNativeDriver: true,
+        }),
+        // A pause between ripples. Without it this is a continuous pulsing
+        // blob, which reads as a loading state rather than an instruction.
+        Animated.delay(700),
+      ]),
+    );
+    loop.start();
+    return () => loop.stop();
+  }, [wantsTap, placement.rect, tapHint, reduceMotion]);
 
   // ---- The ring's breath ---------------------------------------------------
   const pulse = useRef(new Animated.Value(0)).current;
@@ -262,6 +320,35 @@ export function TourOverlay() {
         />
       ))}
 
+      {ring && wantsTap && !reduceMotion ? (
+        <Animated.View
+          pointerEvents="none"
+          style={[
+            styles.tapRipple,
+            {
+              left: ring.x + ring.width / 2 - TAP_DOT,
+              top: ring.y + ring.height / 2 - TAP_DOT,
+              borderColor: colors.accent,
+              transform: [
+                {
+                  scale: tapHint.interpolate({
+                    // From just under the control to comfortably past it, so
+                    // the ripple reads as leaving the button rather than
+                    // arriving at it.
+                    inputRange: [0, 1],
+                    outputRange: [0.6, 2.6],
+                  }),
+                },
+              ],
+              opacity: tapHint.interpolate({
+                inputRange: [0, 0.15, 1],
+                outputRange: [0, 0.55, 0],
+              }),
+            },
+          ]}
+        />
+      ) : null}
+
       {ring ? (
         <Animated.View
           pointerEvents="none"
@@ -341,16 +428,21 @@ export function TourOverlay() {
           ]}>
           <View style={styles.head}>
             <Text style={[typeScale.overline, { color: colors.accent }]}>
-              {chapter.name.toUpperCase()} · {position} OF {total}
+              {/* The farewell is not one of the numbered steps, so it does not
+                  claim to be: "WELCOME · 4 OF 18" over a goodbye card is a
+                  reader wondering what happened to the other fourteen. */}
+              {farewell ? 'FINDING IT AGAIN' : `${chapter.name.toUpperCase()} · ${position} OF ${total}`}
             </Text>
             <Touchable
-              onPress={endTour}
-              label="Skip the walkthrough"
-              hint="You can start it again from Settings"
+              onPress={() => (farewell ? endTour() : setFarewell(true))}
+              label={farewell ? 'Close the walkthrough' : 'Skip the walkthrough'}
+              hint={farewell ? undefined : 'It shows you where to find it again'}
               scaleTo={0.9}
               hitSlop={12}
               style={styles.skip}>
-              <Text style={[typeScale.footnote, { color: colors.textMuted }]}>Skip</Text>
+              <Text style={[typeScale.footnote, { color: colors.textMuted }]}>
+                {farewell ? 'Close' : 'Skip'}
+              </Text>
               <X size={14} color={colors.textMuted} />
             </Touchable>
           </View>
@@ -369,7 +461,7 @@ export function TourOverlay() {
           ) : null}
 
           <View style={styles.actions}>
-            {position > 1 ? (
+            {position > 1 && !farewell ? (
               <Touchable
                 onPress={goBack}
                 label="Previous step"
@@ -382,14 +474,22 @@ export function TourOverlay() {
               <View />
             )}
             <Touchable
-              onPress={isLast ? endTour : advance}
-              label={isLast ? 'Finish the walkthrough' : `${primary}: step ${position + 1} of ${total}`}
+              onPress={isLast || farewell ? endTour : advance}
+              label={
+                farewell
+                  ? 'Close the walkthrough'
+                  : isLast
+                    ? 'Finish the walkthrough'
+                    : `${primary}: step ${position + 1} of ${total}`
+              }
               scaleTo={0.94}
               style={[styles.next, { backgroundColor: colors.accent }]}>
               <Text style={[typeScale.bodyStrong, { color: onColor(colors.accent) }]}>
                 {primary}
               </Text>
-              {isLast ? null : <ChevronRight size={16} color={onColor(colors.accent)} />}
+              {isLast || farewell ? null : (
+                <ChevronRight size={16} color={onColor(colors.accent)} />
+              )}
             </Touchable>
           </View>
         </View>
@@ -398,8 +498,18 @@ export function TourOverlay() {
   );
 }
 
+/** The tap ripple's radius before it is scaled. */
+const TAP_DOT = 22;
+
 const styles = StyleSheet.create({
   scrim: { position: 'absolute' },
+  tapRipple: {
+    position: 'absolute',
+    width: TAP_DOT * 2,
+    height: TAP_DOT * 2,
+    borderRadius: TAP_DOT,
+    borderWidth: 2,
+  },
   ring: {
     position: 'absolute',
     borderWidth: 2,

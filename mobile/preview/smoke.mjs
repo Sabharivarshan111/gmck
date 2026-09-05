@@ -223,6 +223,23 @@ const tap = async label => {
   }
   await page.waitForTimeout(280);
 };
+
+/**
+ * Enter rearrange mode.
+ *
+ * It used to be one tap on the hamburger. That button now opens the menu —
+ * everything the app can do — and rearranging is a row inside it, so getting
+ * there is two taps. This helper exists so the three flows that rearrange say
+ * what they mean rather than repeating the route, and so the next change to
+ * that route is one edit.
+ *
+ * The row's label is still `Rearrange home screen`, which is why the tour and
+ * TalkBack both still find it.
+ */
+async function startRearranging() {
+  await tap('Menu');
+  await tap('Rearrange home screen');
+}
 /**
  * Bring a control into the viewport.
  *
@@ -476,12 +493,13 @@ await step('home blocks rearrange, and the order survives a reload', async () =>
       return node ? node.getBoundingClientRect().top : NaN;
     }, text);
 
+
   const heroFirst = (await topOf('Welcome to Orbit')) < (await topOf('Join our WhatsApp'));
   if (!heroFirst) {
     throw new Error('expected the hero above the WhatsApp block to start with');
   }
 
-  await tap('Rearrange home screen');
+  await startRearranging();
   await seesText('Drag a block');
   await tap('Move WhatsApp community up');
   await tap('Move WhatsApp community up');
@@ -499,7 +517,7 @@ await step('home blocks rearrange, and the order survives a reload', async () =>
 
   // Reset, so the rest of the run sees the layout it expects — and so the one
   // control that undoes all of this is covered too.
-  await tap('Rearrange home screen');
+  await startRearranging();
   await tap('Reset home layout');
   await page.waitForTimeout(700);
   if ((await topOf('Welcome to Orbit')) > (await topOf('Join our WhatsApp'))) {
@@ -570,7 +588,7 @@ await step('a block resizes with its grip, and the size survives a reload', asyn
     await page.waitForTimeout(400);
   };
 
-  await tap('Rearrange home screen');
+  await startRearranging();
   const before = await heroHeight();
 
   /*
@@ -604,7 +622,7 @@ await step('a block resizes with its grip, and the size survives a reload', asyn
    * comparing one against the other reports a 60px "loss" that is really the
    * chrome not being there.
    */
-  await tap('Rearrange home screen');
+  await startRearranging();
   await page.waitForTimeout(500);
   const reloaded = await heroHeight();
   if (Math.abs(reloaded - regrown) > 32) {
@@ -640,7 +658,7 @@ await step('a subject card can be dragged to another slot', async () => {
     throw new Error(`expected at least two subject cards, saw ${before.length}`);
   }
 
-  await tap('Rearrange home screen');
+  await startRearranging();
   const first = page.locator(`[aria-label^="${before[0]}"]`).first();
   const box = await first.boundingBox();
   // Into the slot to its right. The card claims the gesture ahead of the

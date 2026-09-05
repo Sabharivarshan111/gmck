@@ -103,6 +103,35 @@ export interface TourStep {
   cta?: string;
 }
 
+/**
+ * The card shown when somebody presses Skip, before the tour actually ends.
+ *
+ * Skipping used to end it outright, and the only place that said the tour can
+ * be replayed was the *hint* on the Skip button — which is spoken by TalkBack
+ * and read by nobody else. So the reader who most needed to know where the
+ * walkthrough lives was the one guaranteed not to be told.
+ *
+ * This is one card, and it spotlights the real Settings button while it says
+ * so, because "in Settings" is a sentence and a ring round the actual control
+ * is an answer. Pressing Skip again from here ends it — the second press is
+ * unambiguous, and nobody is trapped.
+ *
+ * It is deliberately NOT part of `STEPS`: it has no chapter, it must never
+ * appear in the replay list, and it would otherwise change every "N of 18"
+ * in the run.
+ */
+export const SKIP_FAREWELL: TourStep = {
+  id: 'farewell',
+  chapter: 'welcome',
+  title: 'It lives in here',
+  body:
+    'No problem. The walkthrough is in Settings whenever you want it — and you can replay just one part of it, ' +
+    'so you never have to sit through the whole thing again.',
+  tab: 'Home',
+  target: 'Settings',
+  cta: 'Got it',
+};
+
 export const STEPS: TourStep[] = [
   // ---- Welcome -------------------------------------------------------------
   {
@@ -192,10 +221,29 @@ export const STEPS: TourStep[] = [
     chapter: 'notes',
     title: 'Flashcards, scheduled properly',
     body:
-      'Theory and diagram cards for any chapter, with the same spacing algorithm Anki uses. ' +
-      'You can write your own decks, open an .apkg you already have, and share a deck you wrote as one.',
+      'Tap here for cards built from any chapter — theory on one side, the diagram on the other. ' +
+      'They come back on the same spacing algorithm Anki uses, so you see a card just before you would forget it.',
     tab: 'Notes',
     target: 'Anki-style flashcards, browse decks by year',
+    tapToAdvance: true,
+  },
+  {
+    id: 'anki-import',
+    chapter: 'notes',
+    title: 'Already have an Anki deck?',
+    body:
+      'Open it here and it just works — your senior\'s deck, one off AnkiWeb, or your own export. ' +
+      'Pictures and audio come with it, and the whole deck stays on this phone.',
+    tab: 'Notes',
+  },
+  {
+    id: 'anki-own',
+    chapter: 'notes',
+    title: 'Or write your own',
+    body:
+      'Make a deck by hand, add a photo from your gallery to any card, and share the finished deck as a file. ' +
+      'It exports in the oldest Anki format on purpose, so whoever you send it to can open it.',
+    tab: 'Notes',
   },
 
   // ---- Focus timer ---------------------------------------------------------
@@ -224,13 +272,22 @@ export const STEPS: TourStep[] = [
   {
     id: 'music',
     chapter: 'focus',
-    title: 'Your own music while you work',
+    title: 'Your own music, while you work',
     body:
-      'Play files that are already on your phone — put them in one folder first and picking them is quick. ' +
-      'Nothing is streamed and nothing is uploaded; it plays what you chose and nothing else.',
+      'Tap the music button for the player. It plays files already on this phone — nothing streams, nothing uploads, ' +
+      'and no account is asked for.',
     tab: 'Timer',
     target: 'Show the music player',
     tapToAdvance: true,
+  },
+  {
+    id: 'music-add',
+    chapter: 'focus',
+    title: 'Adding a track',
+    body:
+      'Press + in the player, choose whether to copy the file into Orbit or just link to it, and pick it from your phone. ' +
+      'Put your music in one folder first — the picker reopens wherever you were last.',
+    tab: 'Timer',
   },
   {
     id: 'tree',
@@ -289,22 +346,52 @@ export const STEPS: TourStep[] = [
     tapToAdvance: true,
   },
   {
-    id: 'reminders',
+    id: 'progress-detail',
     chapter: 'progress',
-    title: 'One reminder, in the evening',
+    title: 'What My Progress keeps',
     body:
-      'Settings → Daily reminder. It tells you how many days are left before your exam, what revision is due, ' +
-      'and when your streak is about to break — at an hour you choose, and only when it has something to say.',
+      'A ring per subject so you can see the weak one at a glance, a heatmap of every day you studied, ' +
+      'your streak and XP, and a leaderboard for your year.',
+    tab: 'Progress',
+  },
+  {
+    id: 'reminders-open',
+    chapter: 'progress',
+    title: 'Last thing: the evening reminder',
+    body:
+      'Tap Settings — the sliders button in the top right. This is the only notification Orbit ever sends.',
     tab: 'Home',
     target: 'Settings',
+    tapToAdvance: true,
+  },
+  {
+    id: 'reminders-bell',
+    chapter: 'progress',
+    title: 'Now turn on Daily reminder',
+    body:
+      'Under NOTIFICATIONS. It says how many days to your exam, what revision is due and when your streak is about to break — ' +
+      'at an hour you pick, and only when it has something to say.',
+    tab: 'Home',
+    target: 'Daily reminder (notifications)',
     tapToAdvance: true,
     cta: 'Finish',
   },
 ];
 
-/** Every control the script points at. `Touchable` checks this on layout. */
+/**
+ * Every control the script points at. `Touchable` checks this on layout.
+ *
+ * `SKIP_FAREWELL` is in here explicitly rather than left out because its
+ * target happens to be named by another step too. It does today, and a set
+ * built from `STEPS` alone would therefore have worked — right up until the
+ * reminders step stopped pointing at Settings, at which point Skip would have
+ * silently degraded to a centred card with no ring and nothing saying where
+ * the walkthrough lives, which is the one thing that card exists to show.
+ */
 export const TOUR_TARGETS: ReadonlySet<string> = new Set(
-  STEPS.map(step => step.target).filter((label): label is string => Boolean(label)),
+  [...STEPS, SKIP_FAREWELL]
+    .map(step => step.target)
+    .filter((label): label is string => Boolean(label)),
 );
 
 export function chapterOf(id: ChapterId): Chapter {
