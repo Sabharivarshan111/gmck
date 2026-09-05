@@ -2896,6 +2896,53 @@ await step('the notes back button stays put while the page scrolls', async () =>
  * index, and check:search-index proves every one of those paths resolves back
  * to a topic containing that exact question.
  */
+/*
+ * Triple-tapping a search result opens the textbook-grounded note, not Ask AI.
+ *
+ * Reported as the home-screen search sending a triple tap to the chat while
+ * the same question, reached by browsing, produced a note. The wiring for it
+ * landed on 2026-09-01 and the build on Play is versionCode 13, so what the
+ * owner is running genuinely does not have it — but nothing in this suite
+ * covered the search path, which is how it could have been broken again by any
+ * of the renderItem edits since without anybody noticing.
+ *
+ * `askAnswer` in QuestionRow prefers `onNote` and falls through to
+ * `tripleTapPrompt` only when there is none, so what this really asserts is
+ * that the search screen passes one.
+ */
+await step('a triple tap on a search result opens the note, not the chat', async () => {
+  await open('screen=browse');
+  await page.locator('input').first().fill('Shotgun');
+  await page.waitForTimeout(1600);
+  await seesText('Switch to this chapter', 6000).catch(() => {
+    throw new Error('no search results to triple-tap');
+  });
+
+  const row = page.locator('[aria-label^="Question "]').first();
+  await row.waitFor({ state: 'visible', timeout: 4000 }).catch(() => {
+    throw new Error('the search result has no question row');
+  });
+  // Three taps inside QuestionRow's TAP_WINDOW_MS, which is what the component
+  // counts — a Playwright triple-click is one event with detail:3 and never
+  // reaches its handler three times.
+  for (let i = 0; i < 3; i++) {
+    await row.click({ timeout: 4000 });
+    await page.waitForTimeout(90);
+  }
+  await page.waitForTimeout(1500);
+
+  const after = await page.locator('body').innerText();
+  if (/Ask AI|Ask Orbit AI/i.test(after) && !/note/i.test(after)) {
+    throw new Error('a triple tap on a search result went to Ask AI instead of the note');
+  }
+  // The note sheet is the one thing that has a Regenerate control; the chat
+  // screen has an input and a send button.
+  const note = page.locator('[aria-label*="note" i], [aria-label*="Regenerate" i]').first();
+  if (!(await note.isVisible().catch(() => false))) {
+    throw new Error('no handwritten note opened from the search result');
+  }
+});
+
 await step('a search result switches to its chapter and lights the question', async () => {
   await open('screen=browse');
   await page.locator('input').first().fill('Shotgun');

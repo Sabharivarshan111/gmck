@@ -182,7 +182,12 @@ jobs:
       - name: Read the version the build actually carries
         id: appversion
         run: |
-          gradle=mobile/android/app/build.gradle
+          # The job's default working-directory is `mobile` (see `defaults`
+          # near the top), so this path is relative to that and NOT to the
+          # repo root. Getting it wrong fails the step after a nineteen-minute
+          # build has already succeeded, which is the most expensive place in
+          # this workflow to be wrong.
+          gradle=android/app/build.gradle
           code=$(grep -m1 -oP '^\s*versionCode\s+\K[0-9]+' "$gradle")
           name=$(grep -m1 -oP '^\s*versionName\s+"\K[^"]+' "$gradle")
           if [ -z "$code" ] || [ -z "$name" ]; then
