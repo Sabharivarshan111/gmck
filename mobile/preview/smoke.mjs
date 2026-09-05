@@ -2369,17 +2369,26 @@ await step('a note takes a recording, and the recording gets a player', async ()
   await attach.click();
   await page.waitForTimeout(700);
 
-  // The choice, and the consequence of each, said before either is taken.
+  /*
+   * The choice, and the consequence of each, said before either is taken.
+   *
+   * Asserted as the two GUARANTEES rather than as two exact sentences. This
+   * required the literal "Works even if you delete the original", which was
+   * the wording until 1fdbf17c reworded both options to say what a copy and a
+   * link *are* — and this step, plus the two after it, had been failing ever
+   * since on a screen that is correct. Worse than one red step: the sheet
+   * stays open when this throws, so the next two timed out at 30 seconds
+   * against its scrim, and one stale string read as three broken flows.
+   */
   await seesText('Save it, or just link it?', 4000);
   await seesText('Save a copy', 4000);
   await seesText('Just link it', 4000);
-  // One line each. Two paragraphs read as an essay and nobody read them.
-  await seesText('Works even if you delete the original', 4000);
-  await seesText('Stops working if you delete or move', 4000);
+  await seesText('even if you delete', 4000);
+  await seesText('stops opening it if you delete', 4000);
 
-  await byLabel(
-    'Save a copy in Orbit. Uses phone space, and keeps working if you delete the original',
-  ).click();
+  // Driven by the leading words, so the explanation can be reworded without
+  // breaking the drive — the same fix check:music was given.
+  await page.locator('[aria-label^="Save a copy in Orbit"]').first().click();
   await page.waitForTimeout(800);
   await page.evaluate(() => {
     globalThis.__orbitPickFile = undefined;
@@ -2441,9 +2450,9 @@ await step('fullscreen keeps the play, scrub, time and volume controls', async (
   });
   await byLabel('Add a video, recording or PDF to this note').click();
   await page.waitForTimeout(700);
-  await byLabel(
-    'Save a copy in Orbit. Uses phone space, and keeps working if you delete the original',
-  ).click();
+  // Driven by the leading words, so the explanation can be reworded without
+  // breaking the drive — the same fix check:music was given.
+  await page.locator('[aria-label^="Save a copy in Orbit"]').first().click();
   await page.waitForTimeout(800);
   await page.evaluate(() => {
     globalThis.__orbitPickFile = undefined;
@@ -2498,9 +2507,7 @@ await step('a linked file can break, says so, and can be copied in instead', asy
   });
   await byLabel('Add a video, recording or PDF to this note').click();
   await page.waitForTimeout(700);
-  await byLabel(
-    'Just link it. Uses no space, and stops working if you delete or move the original',
-  ).click();
+  await page.locator('[aria-label^="Just link it"]').first().click();
   await page.waitForTimeout(800);
   await page.evaluate(() => {
     globalThis.__orbitPickFile = undefined;
