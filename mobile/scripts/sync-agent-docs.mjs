@@ -37,6 +37,43 @@ function firstSentence(text) {
   return stop === -1 ? trimmed : trimmed.slice(0, stop + 1);
 }
 
+/**
+ * The "Use when ..." clause of a skill's description — the TRIGGER.
+ *
+ * Every vendored skill's frontmatter says what it is for and then, in a second
+ * sentence, when to reach for it. Claude Code reads the whole description and
+ * decides for itself; Antigravity never sees the file at all, only the table
+ * this script writes — and that table was keeping the first sentence and
+ * throwing the trigger away.
+ *
+ * The effect was an alphabetical list of thirteen subjects with no way to tell
+ * which one applied without opening all thirteen, which is the same as having
+ * none. This is the column that makes them usable from the other tool.
+ *
+ * Returns null when a skill does not state one, rather than inventing a
+ * trigger from the first sentence: a guessed "use when" is worse than an
+ * honest blank, because it reads as authoritative.
+ */
+function useWhen(text) {
+  const trimmed = text.replace(/\s+/g, ' ').trim();
+  /*
+   * The preposition varies and the first version of this only caught "Use
+   * when", which silently blanked the trigger on three skills that had one —
+   * "Use at the very start of any session", "Use whenever finishing a
+   * feature", "Use at the start of any session that touches Supabase". A
+   * blank that looks like "this skill has no trigger" when it has one is
+   * worse than no column, because nobody re-checks it.
+   */
+  const match = trimmed.match(
+    /\bUse (?:this skill |this )?(when\b|whenever\b|at\b|for\b|before\b|after\b|during\b|on\b)(.*)$/i,
+  );
+  if (!match) {
+    return null;
+  }
+  const clause = `${match[1]}${match[2]}`.replace(/^[\s:,]+/, '').trim().replace(/\.$/, '');
+  return clause.length > 0 ? clause : null;
+}
+
 async function skillIndex() {
   const dir = path.join(root, '.claude', 'skills');
   const names = await fs.readdir(dir).catch(() => []);
@@ -49,14 +86,26 @@ async function skillIndex() {
       continue;
     }
     const description = frontmatter(body, 'description') ?? '';
-    rows.push(`| \`.claude/skills/${name}/\` | ${firstSentence(description)} |`);
+    const trigger = useWhen(description);
+    rows.push(
+      `| \`.claude/skills/${name}/\` | ${firstSentence(description)} | ${
+        trigger ?? '—'
+      } |`,
+    );
   }
   return [
-    'Vendored reference material. Claude Code loads these automatically;',
-    'Antigravity does not, so **open the file** when the work touches its subject.',
+    'Vendored reference material. Claude Code loads these automatically from the',
+    'skill\'s own frontmatter; **Antigravity never sees these files**, so this table',
+    'is the whole of its access to them.',
     '',
-    '| Skill | What it is for |',
-    '|---|---|',
+    'Read the third column first. It is the `Use when ...` clause out of each',
+    "skill's frontmatter, and it is there because a list of thirteen subjects with",
+    'no triggers is a list you would have to open thirteen times to use. When the',
+    'work matches a trigger, **open that SKILL.md and follow it** — these are not',
+    'summaries, the file is the material.',
+    '',
+    '| Skill | What it is for | Open it when |',
+    '|---|---|---|',
     ...rows,
   ].join('\n');
 }

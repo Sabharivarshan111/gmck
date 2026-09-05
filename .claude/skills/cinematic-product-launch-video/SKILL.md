@@ -1,6 +1,6 @@
 ---
 name: cinematic-product-launch-video
-description: "Master standard and skill for creating world-class, Apple Keynote / Stripe-level SaaS product launch and promo videos using Remotion and Hyperframes. Documents past failure modes, 3D camera choreography, UI integrity, neural voice calibration, and mobile safe-zone compliance."
+description: "Master standard and skill for creating world-class, Apple Keynote / Stripe-level SaaS product launch and promo videos using Remotion and Hyperframes. Documents past failure modes, 3D camera choreography, UI integrity, neural voice calibration, and mobile safe-zone compliance. Use when working on anything under remotion-ad/ — writing or re-cutting an ad script, changing shot timing, camera moves or captions, adding or re-recording a voice, or diagnosing a broken frame in a rendered cut."
 ---
 
 # 🎬 Cinematic SaaS Product Launch & Promo Video Engine

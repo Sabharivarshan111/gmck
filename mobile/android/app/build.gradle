@@ -108,11 +108,17 @@ android {
         applicationId "com.aistudio.mbbsqbank.aycxvd"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        // 13 / "0.0.0.13" is already live on Play, and Play rejects an upload
-        // whose versionCode is not higher than the last one. Bump these for
-        // every subsequent upload.
-        versionCode 14
-        versionName "0.0.0.14"
+        // 13 / "0.0.0.13" is live on Play. Play rejects an upload whose
+        // versionCode is not higher than the last one, so bump these for every
+        // subsequent upload — INCLUDING a re-upload after a rejection, which
+        // is what 15 is.
+        //
+        // 14 was rejected: "your app could crash on 16 KB devices", naming
+        // libzstd-jni-1.5.6-9.so. That is fixed (zstd-jni is 1.5.7-16 below,
+        // whose x86_64 library is 16 KB aligned where 1.5.6-9's was 4 KB), but
+        // the fix cannot reach Play under the version that was refused.
+        versionCode 15
+        versionName "0.0.0.15"
 
         // Deep-link / OAuth callback scheme, consumed by the intent-filter in
         // AndroidManifest.xml. Added with an indexed put rather than assigning
