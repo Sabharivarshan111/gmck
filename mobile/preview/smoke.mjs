@@ -2999,12 +2999,17 @@ await step('a triple tap on a search result opens the note, not the chat', async
   await page.waitForTimeout(2000);
 
   /*
-   * The note page carries a Regenerate control; the Ask AI screen does not, and
-   * has a message input instead. That pair is what separates the two outcomes —
-   * looking for the word "note" in the body text would match the search screen
-   * itself.
+   * "Close note" is the control the note page always has and the Ask AI screen
+   * never does. That pair is what separates the two outcomes — looking for the
+   * word "note" in the body text would match the search screen itself.
+   *
+   * Written as `[aria-label*="Regenerate"]` first, which fails on a note that
+   * opened perfectly: there is no such label. `SingleQuestionNote` says "Write
+   * this note again from the top". A selector for a control that does not exist
+   * reports the feature broken, which is the worst way for a test to be wrong —
+   * it accuses the app.
    */
-  const note = page.locator('[aria-label*="Regenerate" i]').first();
+  const note = page.locator('[aria-label="Close note"]').first();
   if (!(await note.isVisible().catch(() => false))) {
     const wentToChat = await page
       .locator('[aria-label="Message"], [aria-label*="Ask" i]')
