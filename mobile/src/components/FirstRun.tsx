@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Text } from '@/components/Text';
+import { KeyboardSafe } from '@/components/KeyboardSafe';
 import { Touchable } from '@/components/Touchable';
 import { GradientFill } from '@/components/Gradient';
 import { useTheme, withAlpha } from '@/theme';
@@ -196,7 +197,13 @@ export function FirstRun() {
         welcome sits under the clock and the button under the gesture bar
         (CLAUDE.md, "A full-screen Modal is its own window").
       */}
-      <View
+      {/*
+        The name field is a text input near the bottom of a full-screen page,
+        which since Android 15 means it sits UNDER the keyboard: the window no
+        longer shrinks for the IME when the app targets 35+, so `adjustResize`
+        is inert. `check:keyboard` caught this one before a device did.
+      */}
+      <KeyboardSafe
         style={[
           styles.page,
           {
@@ -359,7 +366,7 @@ export function FirstRun() {
             </Text>
           </ScrollView>
         )}
-      </View>
+      </KeyboardSafe>
     </Modal>
   );
 }

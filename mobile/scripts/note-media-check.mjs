@@ -233,9 +233,31 @@ check(
   !/delete\(\)/.test(module_.slice(module_.indexOf('fun release'), module_.indexOf('fun pathFor'))),
   'release() deletes something — a linked file is the reader\'s own and must never be touched',
 );
-// The choice has to be explained where it is made, not discovered a month
-// later when the file stops playing.
-for (const phrase of ['Save a copy', 'Just link it', 'Works even if you delete the original']) {
+/*
+ * The choice has to be explained where it is made, not discovered a month
+ * later when the file stops playing.
+ *
+ * This asserted the literal sentence "Works even if you delete the original",
+ * which was the wording until 1fdbf17c reworded both options to say what a
+ * copy and a link ARE — because the consequences alone assumed the reader
+ * already knew the difference, which is a filesystem distinction dressed in
+ * ordinary English. `check:music` was updated for that and this was not, so it
+ * has been failing ever since on a screen that is correct.
+ *
+ * It now asserts the two consequences that actually have to be stated, in
+ * whatever words: that a copy survives the original being deleted, and that a
+ * link does not. Reworded again and this still holds; the guarantee removed
+ * and it does not.
+ */
+check(
+  /still opens (it|the file) even if you delete/.test(tab),
+  'the attach chooser no longer says a copy survives the original being deleted',
+);
+check(
+  /stops (opening it|working) if you delete/.test(tab),
+  'the attach chooser no longer says a link stops working if the original goes',
+);
+for (const phrase of ['Save a copy', 'Just link it']) {
   check(
     tab.includes(phrase) || read(path.join(mobile, 'src/components/ProgressNotesTab.tsx')).includes(phrase),
     `the attach chooser no longer says "${phrase}"`,

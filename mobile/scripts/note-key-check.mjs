@@ -107,9 +107,28 @@ if (nativeText) {
     'noteQuestionText trims — the web app does not, and trailing space changes the hash',
   );
 }
+/*
+ * The note is opened on the hashed string, and the bank's raw one goes with it.
+ *
+ * This required `onNote(noteQuestionText(question))` — an exact match on a
+ * one-argument call, written before the diagram lookup needed the raw text as
+ * well. `rawQuestion` was added as a second argument (CLAUDE.md, "A question
+ * answers to two strings, and only one of them is on screen": 53 of the 855
+ * pictures were unreachable because the id is built from the stripped form and
+ * the diagram rows are filed under the numbered one), and this check has been
+ * failing ever since on a call that is right.
+ *
+ * So: the first argument is still the hashed form, and the raw string is still
+ * passed after it. Both matter and neither is asserted by the other.
+ */
 check(
-  nativeRow !== null && /onNote\(noteQuestionText\(question\)\)/.test(nativeRow),
-  'QuestionRow does not send noteQuestionText(question) to the note path',
+  nativeRow !== null && /onNote\(noteQuestionText\(question\)/.test(nativeRow),
+  'QuestionRow does not send noteQuestionText(question) as the note path\'s first argument',
+);
+check(
+  nativeRow !== null && /onNote\(noteQuestionText\(question\),\s*question\)/.test(nativeRow),
+  'QuestionRow no longer passes the bank\'s raw question alongside the hashed one — ' +
+    'a diagram filed under a numbered question becomes unreachable',
 );
 
 // 4. subtopicName. The web app sends the first 80 characters.
