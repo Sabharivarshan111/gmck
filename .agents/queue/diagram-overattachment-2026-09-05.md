@@ -1,8 +1,10 @@
 # The 56 plates on more than five questions — read row by row
 
-**Status:** in progress. 15 of 56 plates read; 20 rows corrected. This note is
-the record of which plates have been read, so the next session does not start
-over or re-read what is already clean.
+**Status:** DONE. All 56 plates read row by row; **48 rows corrected** — 3
+repointed to the plate that draws them, 45 cleared to no picture. Verified
+against the database rather than counted from this note: rows carrying a
+`public_url` went from 967 to **922**, which is the 45 clears exactly, and the
+3 repoints move a row without changing the count.
 
 ## Why this is by hand and never a script
 
@@ -70,3 +72,81 @@ Re-derive the list with:
 - Both apps pick these corrections up with no deploy: they read this table
   live, and `applyQuestionDiagrams` rebuilds a cached note's diagram sections
   every time it is opened.
+
+---
+
+# The rest of the 56, read 2026-09-05
+
+## The four that are worth remembering
+
+These are not near misses. Each is a picture that teaches the wrong thing, and
+three of the four are the **substring collision** this repo's lookup design
+exists to prevent — the row was written by something matching on words:
+
+- **"Clinical Uses of Somatostatin and Octreotide"** on
+  `cholesterol_biosynthesis_statins.jpg`. Somato**statin** is not a statin.
+- **"Lymphogranuloma venereum"** (twice) on `tuberculous_granuloma_histology`.
+  Chlamydial, and the shared word is "granuloma".
+- **"What is Stroke or cerebral infarction?"** on
+  `myocardial_infarction_coagulative_necrosis`. Cerebral infarction is
+  **liquefactive** necrosis — the plate says the opposite of the answer.
+- **"IgA Nephropathy"** on `immunoglobulin_structure_and_polymer_architecture`.
+  The plate draws IgA's polymer; the question is a kidney disease.
+
+## Every remaining plate, and its verdict
+
+| Plate | Rows | Verdict |
+|---|---|---|
+| `echinococcus_granulosus_hydatid_cyst…` | 9 | clean. Casoni's test is the hydatid skin test. |
+| `lepromatous_leprosy_virchow_cells_grenz` | 10 | clean. |
+| `polio_pathogenesis` | 10 | clean. |
+| `rigor_mortis_nysten_law` | 9 | **3 cleared**: Algor mortis, Livor mortis / hypostasis, hypostasis vs bruise. All postmortem changes, none of them the one the plate draws, and no plate exists for them. |
+| `gaba_a_receptor_benzodiazepine_barbiturate` | 9 | **1 cleared**: "Second Generation Antihistamines" — H1 blockers have nothing to do with GABA-A. |
+| `raas_pathway_jga` | 9 | **1 cleared**: adrenocortical hormones and the physiological anatomy of the adrenal. Aldosterone is RAAS's output; the gland is not drawn, and there is no adrenal plate. |
+| `rabies_neuro_cycle` | 9 | clean. |
+| `seminoma_testis_histology` | 9 | **3 cleared**: all three ovarian tumour questions. Wrong organ. The dermoid plate draws one ovarian germ cell tumour, not the class, so repointing would have been a partial answer dressed as the answer. |
+| `typhoid_sanitary_barrier` | 9 | clean. |
+| `chronic_peptic_ulcer_askanazy` | 8 | clean. |
+| `fatty_liver_steatosis_histology` | 8 | clean — and it already serves the main Alcoholic Liver Disease questions, which is why clearing the ALD row off the bilirubin plate cost that subject nothing. |
+| `treponema_pallidum_syphilis_stages…` | 8 | clean. |
+| `tuberculous_granuloma_histology` | 8 | **4 cleared**: LGV x2, Granulomatous Amoebic Encephalitis, Wegener's. "Necrosis" stays — caseation is what the plate draws. |
+| `acute_proliferative_glomerulonephritis_psgn` | 7 | **2 cleared**: Crescentic GN and RPGN. Same organ, different histology; the plate has no crescents in it. |
+| `cholesterol_biosynthesis_statins` | 7 | **2 cleared**: somatostatin (above) and MI drug therapy. Bile acid formation stays — cholesterol is its substrate and the plate draws the synthesis. |
+| `cholinergic_neurotransmission_receptors` | 7 | **1 cleared**: Bronchodilators, which the question asks about as sympathomimetics. |
+| `glucose_homeostasis_insulin_glucagon` | 7 | clean. |
+| `hashimotos_thyroiditis_histology` | 7 | **1 cleared**: Riedel's thyroiditis, a distinct fibrous entity. |
+| `immunoglobulin_structure…` | 7 | **2 cleared**: IgA nephropathy (above) and autoimmune haemolytic anaemia. |
+| `intracranial_hemorrhages` | 7 | **1 cleared**: intracranial complications of CSOM — abscess and meningitis, not haemorrhage. |
+| `serum_protein_electrophoresis_spep_patterns` | 7 | **1 cleared**: Gastric Adenocarcinoma. This is the row `audit:diagrams` flagged on its first run; now fixed. |
+| `taenia_solium_life_cycle…` | 7 | **2 cleared**: Diphyllobothrium latum and Hymenolepis nana — different tapeworms with their own cycles. "Tapeworms" stays; T. solium is the type species. |
+| `wald_visual_cycle_vitamin_a` | 7 | clean. |
+| `wallace_rule_of_nines_burns` | 7 | clean. |
+| `mature_cystic_teratoma_ovary_dermoid` | 6 | **1 cleared**: "Epidermal cyst / Epidermoid cyst" — a skin swelling, not an ovarian dermoid. |
+| `antitubercular_drugs_ripe_moa` | 6 | **1 cleared**: "Biotransformation", a general pharmacokinetics question. |
+| `myocardial_infarction_coagulative_necrosis` | 6 | **1 cleared**: cerebral infarction (above). |
+| `palatine_tonsil_histology_plate` | 6 | **1 cleared**: the lingual tonsil, a different structure. |
+| `corynebacterium_diphtheriae…` | 9 | clean. The membranous-tonsillitis differentials belong: diphtheria is the classic one. |
+| `dose_response_curve_antagonism` | 6 | clean. Beta-blockers stay — they are the textbook competitive antagonist. |
+| `glycogen_metabolism_gsd_types` | 6 | clean. |
+| `growth_chart_road_to_health` | 6 | clean. |
+| `ketogenesis_ketolysis_dka` | 6 | clean. |
+| `leishmania_kala_azar_cycle` | 6 | clean. The sandfly is drawn in the cycle. |
+| `medically_important_helminth_eggs…` | 6 | clean. |
+| `menstrual_cycle_integrated_phases` | 6 | clean. Female infertility is marginal — ovulatory causes are one group of several — but the cycle is the substrate the question reasons over. Noted, not acted on. |
+| `tryptophan_metabolism_carcinoid_hartnup` | 6 | clean. |
+| `vibrio_cholerae_enterotoxin_moa_and_tcbs` | 6 | clean. |
+| `wuchereria_filariasis_cycle` | 6 | clean. |
+
+## What this did not find
+
+**No plate was over-attached because the lookup is wrong.** Every stray was a
+single bad row. Thirty of the fifty-six plates were completely clean, and the
+biggest plate of all — the HIV virion on 34 questions — was wrong exactly once.
+So over-attachment on its own remains what it was: a fact about the bank, not a
+defect, and not a number worth driving down.
+
+## Nothing needs deploying
+
+Both apps read this table live, and `applyQuestionDiagrams` rebuilds a cached
+note's diagram sections every time it is opened. A note that was cached months
+ago with one of these 48 pictures loses it the first time anyone opens it.
