@@ -203,6 +203,29 @@ const page = await context.newPage();
  * differ from every other, and a screenshot of the default says nothing about
  * it.
  */
+/*
+ * Seed a profile, or every shot is the first-run gate.
+ *
+ * `FirstRun` is a full-screen Modal shown whenever the profile store has
+ * hydrated with nothing in it, which on a fresh browser is every launch. It is
+ * correct behaviour and it would silently replace all 33 screenshots with the
+ * same welcome panel — the screenshots being the one thing here that can see
+ * native-ish layout at all.
+ *
+ * One shot deliberately wants it. `SHOOT_FIRST_RUN=1` leaves the storage empty
+ * so the gate itself can be photographed and reviewed.
+ */
+if (!process.env.SHOOT_FIRST_RUN) {
+  await page.addInitScript(() => {
+    try {
+      window.localStorage.setItem(
+        'orbit-profile-v1',
+        JSON.stringify({ display_name: 'Orbit', year: 'second' }),
+      );
+    } catch {}
+  });
+}
+
 const shootTheme = process.env.SHOOT_THEME ?? '';
 if (shootTheme) {
   await page.addInitScript(key => {
