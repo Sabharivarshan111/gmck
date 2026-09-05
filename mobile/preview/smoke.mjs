@@ -3294,15 +3294,29 @@ await step('first run asks for the year instead of assuming one', async () => {
       throw new Error('the first-run gate is not the welcome screen');
     }
 
-    // None of the four may be pre-selected. aria-checked is what carries this
-    // — react-native-web 0.21 emits no accessibilityState at all.
-    const checked = await first.evaluate(() =>
-      ['First Year', 'Second Year', 'Third Year', 'Final Year'].filter(
-        label =>
-          document.querySelector(`[aria-label="${label}"]`)?.getAttribute('aria-checked') ===
-          'true',
-      ),
+    /*
+     * None of the four may be pre-selected. `aria-checked` is what carries
+     * this — react-native-web 0.21 emits no `accessibilityState` at all.
+     *
+     * The labels are `YEAR_LABEL`'s: "1st Year", not "First Year". Written the
+     * long way first, this matched nothing and the assertion passed while
+     * testing nothing — which is the failure mode a check like this has, since
+     * "no year is selected" and "no year card exists" look identical to it.
+     * So it counts the cards it found and fails if that is not four.
+     */
+    const years = ['1st Year', '2nd Year', '3rd Year', 'Final Year'];
+    const found = await first.evaluate(
+      labels =>
+        labels
+          .map(label => document.querySelector(`[aria-label="${label}"]`))
+          .map(el => (el ? el.getAttribute('aria-checked') : null)),
+      years,
     );
+    const present = found.filter(v => v !== null);
+    if (present.length !== 4) {
+      throw new Error(`first run offers ${present.length} year cards, expected 4 (${years.join(', ')})`);
+    }
+    const checked = years.filter((_, i) => found[i] === 'true');
     if (checked.length > 0) {
       throw new Error(`first run pre-selects ${checked.join(', ')} — the reader must choose`);
     }
@@ -3316,7 +3330,7 @@ await step('first run asks for the year instead of assuming one', async () => {
     }
 
     // And a real choice is the one that is stored — not the second-year default.
-    await first.locator('[aria-label="Third Year"]').first().click({ timeout: 4000 });
+    await first.locator('[aria-label="3rd Year"]').first().click({ timeout: 4000 });
     await first.locator('[aria-label="Display name"]').first().fill('Fresher');
     await first.locator('[aria-label="Start studying"]').first().click({ timeout: 4000 });
     await first.waitForTimeout(1200);
