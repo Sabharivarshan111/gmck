@@ -142,6 +142,26 @@ async function step(name, fn) {
   await declineAdPromptIfShown();
   await closeSheetIfOpen();
   await closeModalIfOpen();
+  await finishRearrangingIfOpen();
+}
+
+/**
+ * Leave home's edit mode if a step failed inside it.
+ *
+ * Rearranging locks the controls underneath it — that is `ReorderLock`, and it
+ * is what stops a held subject card also opening that subject. A step that
+ * threw before reaching "Finish rearranging" therefore left every later step
+ * tapping into a locked screen: `year picker opens and browses a year` had
+ * been failing on a 4-second timeout for "View all years", which is on Home,
+ * present, visible, and deliberately unresponsive. One broken step was
+ * reporting as two.
+ */
+async function finishRearrangingIfOpen() {
+  const done = page.locator('[aria-label="Finish rearranging"]').first();
+  if (await done.isVisible().catch(() => false)) {
+    await done.click().catch(() => {});
+    await page.waitForTimeout(400);
+  }
 }
 
 /** The theme editor is a modal card, not a sheet; it closes with its X. */
@@ -236,6 +256,47 @@ const tap = async label => {
  * The row's label is still `Rearrange home screen`, which is why the tour and
  * TalkBack both still find it.
  */
+/**
+ * Drag with **touch** events, through CDP.
+ *
+ * Not `page.mouse`. React Native Web's responder system does see mouse events,
+ * but the gesture code being tested does not treat them the same: `dragArm`
+ * arms on travel it reads from a touch, and a PanResponder can pass under
+ * mousedown/mousemove and still lose the gesture on a phone. A mouse drag is
+ * therefore a test of something nobody does — which is how "a subject card can
+ * be dragged to another slot" failed here for weeks while the same drag worked
+ * by hand and the block-resize drag, which already used CDP, passed.
+ *
+ * Stepped, because the responder reads movement: one jump from down to up is a
+ * tap that happens to end somewhere else.
+ */
+async function touchDrag(cdp, page, from, to, { steps = 12, holdMs = 0 } = {}) {
+  const send = (type, point) =>
+    cdp.send('Input.dispatchTouchEvent', {
+      type,
+      touchPoints:
+        type === 'touchEnd'
+          ? []
+          : [{ x: point.x, y: point.y, radiusX: 12, radiusY: 12, force: 1 }],
+    });
+  await send('touchStart', from);
+  if (holdMs > 0) {
+    // A hold is how a reorder is armed when the travel is not obviously
+    // horizontal; both routes exist and both are worth exercising.
+    await page.waitForTimeout(holdMs);
+    await send('touchMove', { x: from.x + 1, y: from.y + 1 });
+  }
+  for (let i = 1; i <= steps; i += 1) {
+    await send('touchMove', {
+      x: from.x + ((to.x - from.x) * i) / steps,
+      y: from.y + ((to.y - from.y) * i) / steps,
+    });
+    await page.waitForTimeout(16);
+  }
+  await send('touchEnd', to);
+  await page.waitForTimeout(400);
+}
+
 async function startRearranging() {
   await tap('Menu');
   await tap('Rearrange home screen');
@@ -591,19 +652,7 @@ await step('a block resizes with its grip, and the size survives a reload', asyn
     }
     const x = box.x + box.width / 2;
     const y = box.y + box.height / 2;
-    const send = (type, ty) =>
-      cdp.send('Input.dispatchTouchEvent', {
-        type,
-        touchPoints:
-          type === 'touchEnd' ? [] : [{ x, y: ty, radiusX: 12, radiusY: 12, force: 1 }],
-      });
-    await send('touchStart', y);
-    for (let i = 1; i <= 12; i += 1) {
-      await send('touchMove', y + (dy * i) / 12);
-      await page.waitForTimeout(16);
-    }
-    await send('touchEnd', y + dy);
-    await page.waitForTimeout(400);
+    await touchDrag(cdp, page, { x, y }, { x, y: y + dy });
   };
 
   await startRearranging();
@@ -682,8 +731,6 @@ await step('a subject card can be dragged to another slot', async () => {
   // Into the slot to its right. The card claims the gesture ahead of the
   // block it sits in; if that ever regresses, the whole block moves instead
   // and the card order comes back unchanged.
-  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
-  await page.mouse.down();
   /*
    * Sideways, in small steps, with no pause first — deliberately the way
    * somebody actually moves a card, and the exact gesture that used to do
@@ -691,9 +738,14 @@ await step('a subject card can be dragged to another slot', async () => {
    * clearly horizontal, and only the second of those is a movement anyone
    * would discover on their own. See dragArm.ts.
    */
-  await page.mouse.move(box.x + box.width * 1.5, box.y + box.height / 2, { steps: 10 });
-  await page.mouse.up();
-  await page.waitForTimeout(800);
+  await touchDrag(
+    cdp,
+    page,
+    { x: box.x + box.width / 2, y: box.y + box.height / 2 },
+    { x: box.x + box.width * 1.5, y: box.y + box.height / 2 },
+    { steps: 14 },
+  );
+  await page.waitForTimeout(400);
 
   const after = await cards();
   if (after[0] === before[0]) {
