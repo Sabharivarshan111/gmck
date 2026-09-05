@@ -54,9 +54,9 @@ tab, which is the way to rebuild a commit without pushing a new one.
 **1. A test build must never be able to show a live ad.** Serving yourself live
 ads is an AdMob policy violation that can suspend the account. The debug and
 internal workflows overwrite `mobile/src/lib/adsMode.ts` with
-`ADS_ENABLED = false` before building — not Google's test ads, *none*, because
-starting the AdMob SDK and the UMP consent form is real work at launch on a
-phone that has none to spare.
+`ADS_ENABLED = false` — not Google's test ads, *none*, because starting the
+AdMob SDK and the UMP consent form is real work at launch on a phone that has
+none to spare.
 
 The release workflow does the mirror image: it **refuses to build** unless that
 file is in its shipped form (`ADS_ENABLED = !__DEV__`). A release that silently
@@ -66,12 +66,15 @@ Never key this to `__DEV__`. It used to be, and that forced every installable
 test build to ship development JavaScript to stay safe — several times slower
 than the shipped app, and the cause of most "the app lags" reports.
 
-**2. `versionCode` must increase on every Play upload.** `mobile/android/app/build.gradle`.
-13 is live; the repo carries 14. Play rejects a repeat, and it rejects it after
-the upload, not before.
+**2. `versionCode` must increase on every Play upload.** Play rejects a repeat,
+and it rejects it *after* the upload. 13 is live and the repo carries 15 — 14
+was rejected and cannot be reused. It is in `mobile/android/app/build.gradle`
+AND `mobile/src/lib/appVersion.ts`, which is how the app knows its own version
+with no native module; `npm run check:version` fails if they disagree. Bumping
+also needs an `app_releases` row, `live_on_play` false until Play serves it.
 
-Do **not** change `applicationId` (`com.aistudio.mbbsqbank.aycxvd`). It matches
-the published listing; changing it publishes a *second app* instead of an update.
+Do **not** change `applicationId` (`com.aistudio.mbbsqbank.aycxvd`): it matches
+the published listing, and changing it publishes a *second app*.
 
 ## A secret belongs to one repo, and there are two remotes
 
@@ -174,37 +177,35 @@ than responses.
 
 ## Reading a red pipeline before blaming the YAML
 
-Both repos are **public**, so Actions minutes are free and unlimited. Billing is
-never the answer here; do not go looking for it.
+Both repos are **public**, so Actions minutes are free and unlimited. Billing
+is never the answer; do not go looking for it.
 
-Two states mean *GitHub has not allocated a runner*, and neither is a defect in
-the workflow:
+Two states mean *GitHub has not allocated a runner*, neither a defect in the
+workflow:
 
 - **`startup_failure`** — a previously-green workflow simply refusing to start.
-- **`409 Cannot cancel a workflow run that has not been queued yet`** when you
-  try to cancel a run that has sat in `queued` for half an hour. The run exists
-  but was never enqueued, so there is nothing to cancel.
+- **`409 Cannot cancel a workflow run that has not been queued yet`** on a run
+  that has sat in `queued` for half an hour. It exists but was never enqueued,
+  so there is nothing to cancel.
 
 Both showed up together after a day of heavy pushing, with nothing in progress
-on either repo. The fix is to ask for less: the concurrency guards and the path
-filters on `android-debug.yml` and `android-internal.yml` are there for this, and
-a push now costs about a third of what it used to. Then wait — it recovers on
-its own.
+on either repo. The fix is to ask for less — the concurrency guards and path
+filters on `android-debug.yml` and `android-internal.yml` are there for this —
+then wait. It recovers on its own.
 
 **Checks use `cancel-in-progress: false`; builds use `true`.** An obsolete build
-is worth cancelling because the commit that replaced it is the one worth
-building. A check that answers a question you are waiting on is not — cancelling
-it destroys the answer, which is how the first flashcards run died.
+is worth cancelling — the commit that replaced it is the one worth building. A
+check answering a question you are waiting on is not: cancelling it destroys
+the answer, which is how the first flashcards run died.
 
-A workflow file that is not on the **default** branch cannot be dispatched from
-the UI (`workflow_dispatch` 404s, and so does listing its runs by filename).
-Give anything you need to run from this branch a `push:` trigger with a `paths:`
-filter, or it is unreachable.
+A workflow file not on the **default** branch cannot be dispatched from the UI
+(`workflow_dispatch` 404s, as does listing its runs by filename). Give anything
+you need to run from a branch a `push:` trigger with a `paths:` filter.
 
 ## Where the long version lives
 
-`mobile/BUILD-FROM-PHONE.md` — step by step, from a phone, no computer.
-`HANDOFF.md` §2 — what is still blocking, and §6 for building.
+`mobile/BUILD-FROM-PHONE.md` — step by step, from a phone. `HANDOFF.md` §2 for
+what is blocking, §6 for building.
 
 ## Three ways a build goes red that are NOT the build (2026-09-04)
 
@@ -217,17 +218,17 @@ All three read as "my change did not ship".
 
 Every Android build failed to bundle for two days. Metro walks **up from the
 requesting file**, so a shared module in `../src/lib/` looks in
-`/repo/node_modules`, never `mobile/node_modules` — the only one CI installs.
-Babel injects helper imports into what it transforms. Fixed with
-`resolver.nodeModulesPaths`. Not reproducible where `/repo/node_modules` exists;
-move it aside and run the real bundle.
+`/repo/node_modules`, never `mobile/node_modules` — the only one CI installs,
+and Babel injects helper imports into what it transforms. Fixed with
+`resolver.nodeModulesPaths`. Not reproducible where `/repo/node_modules`
+exists; move it aside and run the real bundle.
 
-**2. The Vercel build breaks on a file in `mobile/`.** The mirror image: the web
-app imported from `mobile/`, and esbuild resolves the nearest tsconfig to every
-file it compiles — `mobile/tsconfig.json`, extending a package only
-`mobile/node_modules` has. Three production deploys failed unnoticed: a failed
-deploy leaves the previous one up, so the site keeps working. **A shared module
-belongs in `src/lib/`, via `@shared`.** Never import `mobile/` inside `src/`.
+**2. The Vercel build breaks on a file in `mobile/`.** The mirror image: the
+web app imported from `mobile/`, and esbuild resolves the nearest tsconfig to
+every file — `mobile/tsconfig.json`, extending a package only
+`mobile/node_modules` has. Three deploys failed unnoticed, because a failed one
+leaves the previous up. **A shared module belongs in `src/lib/`, via
+`@shared`.**
 
 **3. A doc check gates every Android build.** `check:agent-docs` runs first in
 all three workflows and fails on a rules file pointing at a path that no longer

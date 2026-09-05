@@ -3,17 +3,17 @@
 > **Running this in an IDE? `npm run dev` is the OLD WEB APP.**
 >
 > The root `dev`, `build` and `preview` scripts — the ones an IDE's Run button
-> finds — serve the Vite web app in `src/`. The native React Native app, with
-> all of the motion work, is in `mobile/`. Previewed the root and saw none of
-> it? That is why.
+> finds — serve the Vite web app in `src/`. The native app, with all of the
+> motion work, is in `mobile/`. Previewed the root and saw none of it? That is
+> why.
 >
 > ```sh
 > npm run dev:mobile        # or: cd mobile && npm run preview
 > ```
 
 Cross-tool rules (Antigravity, Cursor, Codex, Claude Code), under Antigravity's
-12,000-char cap. **Read `HANDOFF.md` first**, then `CLAUDE.md` for the
-reasoning; this file is the subset that is expensive to get wrong early.
+12,000-char cap — which this file sits against, so an addition means a trim.
+**Read `HANDOFF.md` first**, then `CLAUDE.md`.
 
 `.agents/rules/` holds the rest, each within the cap:
 
@@ -52,11 +52,12 @@ files into `mobile/`; a second copy will drift.
 - **`applicationId` is `com.aistudio.mbbsqbank.aycxvd`.** It matches the
   published Play listing. Changing it publishes a *second app* instead of an
   update.
-- **`versionCode` must increase on every Play upload.** 13 is live; the repo
-  carries 14.
+- **`versionCode` must increase on every Play upload.** 13 is live, the repo
+  carries 15 (14 was rejected and cannot be reused). It sits in `build.gradle`
+  AND `mobile/src/lib/appVersion.ts`; `check:version` fails if they disagree,
+  and bumping needs an `app_releases` row too.
 - **Never commit secrets** — keystore, passwords, certificates, API keys. The
-  signing key lives only in GitHub Actions secrets; never base64 it into a
-  workflow.
+  signing key lives only in GitHub Actions secrets.
 - **Test builds must serve no ads at all.** `mobile/src/lib/adsMode.ts` exports
   `ADS_ENABLED = !__DEV__`; the debug and internal workflows overwrite it with
   `false`, so AdMob never starts. Serving yourself live ads can suspend the
@@ -95,10 +96,10 @@ only in the internal one, why CI compiles the Kotlin first.
 `useTurboModuleInterop` is on, and that flag is `false` in every stable
 release. The sound module shipped that way, silent on every device, no error.
 
-A working native module needs all four: a spec in `mobile/src/native/Native*.ts`,
-`codegenConfig` in `mobile/package.json`, the Kotlin class extending the
-**generated** spec, a `BaseReactPackage` declaring `isTurboModule = true`.
-`check:native-sound` asserts it.
+A working native module needs all four: a spec in
+`mobile/src/native/Native*.ts`, `codegenConfig` in `mobile/package.json`, the
+Kotlin class extending the **generated** spec, and a `BaseReactPackage`
+declaring `isTurboModule = true`. `check:native-sound` asserts it.
 
 Platform, not bugs: taps use `USAGE_ASSISTANCE_SONIFICATION`, so silent mode
 and DND mute them; the focus chime is `USAGE_ALARM` and survives DND.
@@ -108,8 +109,8 @@ and DND mute them; the focus chime is `USAGE_ALARM` and survives DND.
 Every version 3 `.apkg` also carries a **decoy** `collection.anki2` holding one
 note saying the file needs a newer Anki. A reader that picks by filename
 imports it with no error and returns a one-card deck that looks like success.
-`name` columns are `COLLATE unicase`, which **no SQLite outside Anki has** — `ORDER BY name` throws on a device only.
-`.agents/rules/63-anki-import.md`.
+`name` columns are `COLLATE unicase`, which **no SQLite outside Anki has**:
+`ORDER BY name` throws on a device only. `.agents/rules/63-anki-import.md`.
 
 ## Notes render objects, not strings
 
@@ -121,13 +122,13 @@ imports it with no error and returns a one-card deck that looks like success.
 
 `String(item)` prints `[object Object]` on a phone. That shipped once: the
 preview fixture used plain strings — a fixture that agreed with the bug.
-`**bold**` is a highlight, not literal asterisks. `npm run check:notes-schema`
-pins fixture, renderer and schema together.
+`**bold**` is a highlight, not literal asterisks. `check:notes-schema` pins
+fixture, renderer and schema together.
 
 Its zod schema is `questions: z.array(z.string().max(1000)).min(1).max(400)`;
-a violation is a **400 for the whole request**, breaking Notes for one
-topic with no symptom elsewhere. `mobile/src/lib/notesLimits.ts` clamps from the
-*head*: importance stars and PYQ years are at the start of a question.
+a violation is a **400 for the whole request**, breaking Notes for one topic
+with no symptom elsewhere. `mobile/src/lib/notesLimits.ts` clamps from the
+*head*: stars and PYQ years are at the start of a question.
 
 ## `ask-gemini` is told the intent, it does not infer it
 
@@ -157,14 +158,12 @@ question" on purpose. `npm run check:mcq` covers the parsing.
   `success`/`warning`/`danger` stay green/amber/red in **every** theme, and
   `onAccent` is computed from luminance, never hardcoded white.
 - **Design tokens**: `theme/tokens.ts` for spacing and radius, `typeScale` in
-  `theme/typography.ts` for type. A bare `fontSize` ships with no tracking or
-  leading.
+  `theme/typography.ts` for type. A bare `fontSize` has no tracking or leading.
 - **Font is pinned to Roboto** — OEM skins otherwise re-typeset the whole app.
-- **No backdrop blur** (`.agents/rules/20-interface.md`). `GlassSurface` draws a bevel: two rims of
-  opposite polarity, a dp-capped specular, an inner glow.
+- **No backdrop blur** (`.agents/rules/20-interface.md`). `GlassSurface` draws a
+  bevel: two rims of opposite polarity, a dp-capped specular, an inner glow.
 - **Never put `elevation` on a view with no background colour.** Android takes
-  the shadow outline from the bounds, so a large `borderRadius` renders as a
-  polygon.
+  the outline from the bounds, so a large `borderRadius` draws as a polygon.
 
 ## Performance rules that are not micro-optimisation
 
@@ -221,10 +220,9 @@ cd mobile
 npx tsc --noEmit          # must be clean
 npx eslint . --quiet      # must print nothing (warnings hide errors)
 npm run check:xp          # one XP ladder, shared with web
+npm run check:version     # gradle and appVersion.ts agree
 npm run check:reminder    # the reminder reaches a phone
-npm run check:note-media  # note media: on-phone, uncapped
 npm run check:edges       # no page sits under the status bar
-npm run check:trees       # focus trees drawable and distinct
 npm run check:diagrams    # a question shows its own diagram, or none
 npm run check:apkg        # an Anki package imports, and not its decoy
 npm run check:kotlin      # Kotlin overrides (no local kotlinc)
@@ -237,9 +235,9 @@ npx react-native bundle --platform android --dev false \
 ```
 
 `check:smoke` selects controls by accessibility label, so one it cannot find is
-one TalkBack cannot announce either. It needs a Chromium binary.
+one TalkBack cannot announce. It needs a Chromium binary.
 
 There is usually no emulator, so a green bundle is the strongest signal short
 of a device. **Do not claim device behaviour was verified when it was not**:
-the preview harness is react-native-web and checks layout, not native
-rendering, gestures or timing.
+the harness is react-native-web and checks layout, not native rendering,
+gestures or timing.

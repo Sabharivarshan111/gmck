@@ -2970,28 +2970,45 @@ await step('a triple tap on a search result opens the note, not the chat', async
     throw new Error('no search results to triple-tap');
   });
 
-  const row = page.locator('[aria-label^="Question "]').first();
-  await row.waitFor({ state: 'visible', timeout: 4000 }).catch(() => {
+  /*
+   * The row's accessibility label IS the question, so there is no prefix to
+   * match on. It is found the way the double-tap step finds one: the labelled
+   * button that contains a checkbox.
+   */
+  const box = page.locator('[role="checkbox"]').first();
+  await box.waitFor({ timeout: 5000 }).catch(() => {
     throw new Error('the search result has no question row');
   });
-  // Three taps inside QuestionRow's TAP_WINDOW_MS, which is what the component
-  // counts — a Playwright triple-click is one event with detail:3 and never
-  // reaches its handler three times.
-  for (let i = 0; i < 3; i++) {
-    await row.click({ timeout: 4000 });
-    await page.waitForTimeout(90);
-  }
-  await page.waitForTimeout(1500);
+  const row = page.locator('[aria-label][role="button"]').filter({ has: box }).first();
+  const point = await row.boundingBox();
 
-  const after = await page.locator('body').innerText();
-  if (/Ask AI|Ask Orbit AI/i.test(after) && !/note/i.test(after)) {
-    throw new Error('a triple tap on a search result went to Ask AI instead of the note');
-  }
-  // The note sheet is the one thing that has a Regenerate control; the chat
-  // screen has an input and a send button.
-  const note = page.locator('[aria-label*="note" i], [aria-label*="Regenerate" i]').first();
+  // Three taps inside QuestionRow's TAP_WINDOW_MS. `clickCount: 3` through
+  // page.mouse, because three awaited .click() calls each cost more than the
+  // window and the second would start a new count.
+  await page.mouse.click(point.x + point.width / 2, point.y + 12, {
+    clickCount: 3,
+    delay: 40,
+  });
+  await page.waitForTimeout(2000);
+
+  /*
+   * The note page carries a Regenerate control; the Ask AI screen does not, and
+   * has a message input instead. That pair is what separates the two outcomes —
+   * looking for the word "note" in the body text would match the search screen
+   * itself.
+   */
+  const note = page.locator('[aria-label*="Regenerate" i]').first();
   if (!(await note.isVisible().catch(() => false))) {
-    throw new Error('no handwritten note opened from the search result');
+    const wentToChat = await page
+      .locator('[aria-label="Message"], [aria-label*="Ask" i]')
+      .first()
+      .isVisible()
+      .catch(() => false);
+    throw new Error(
+      wentToChat
+        ? 'a triple tap on a search result went to Ask AI instead of the note'
+        : 'no handwritten note opened from the search result',
+    );
   }
 });
 

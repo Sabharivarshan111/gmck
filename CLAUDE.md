@@ -99,8 +99,21 @@ Do not "fix" these without reading the reasoning:
    and OEM skins replace it — MIUI ships MiSans, One UI ships SamsungOne — which
    would silently re-typeset the app on those phones.
 
-6. **`versionCode` must increase on every Play upload.** 13 is already live; the
-   repo carries 14.
+6. **`versionCode` must increase on every Play upload.** 13 is live on Play;
+   the repo carries 15. 14 was built and then **rejected** by Play — "your app
+   could crash on 16 KB devices", naming `libzstd-jni-1.5.6-9.so` — and a
+   rejected number cannot be reused, so the fix shipped as 15.
+
+   The number now lives in two places that must agree: `build.gradle` and
+   `src/lib/appVersion.ts`, which is how the app knows its own version without
+   a native module. `npm run check:version` fails if they part company, and the
+   release workflow reads the notes' version out of gradle rather than having
+   it typed in — it was hardcoded to 14 and stayed 14 through the bump, so a
+   correct v15 build announced itself as the number Play had refused.
+
+   Bumping is three edits and a row: both files, and an `app_releases` row so
+   older builds can offer the update and the new one can say what it fixed.
+   Leave `live_on_play` false until the listing actually serves it.
 
 7. **Progress bars use `scaleX` + `transformOrigin: 'left'`, never an animated
    `width`.** Width is a layout property: animating it forces layout, paint and
