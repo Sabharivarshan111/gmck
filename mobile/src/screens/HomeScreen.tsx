@@ -70,6 +70,13 @@ import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 
 type Nav = NativeStackNavigationProp<HomeStackParamList, 'HomeMain'>;
 
+/**
+ * How faint the hero's text is allowed to get mid-swap.
+ *
+ * Not zero. See the cross-fade effect below for what zero cost us.
+ */
+const HERO_FADE_FLOOR = 0.35;
+
 const HERO_SLIDES = [
   {
     title: 'Welcome to Orbit!',
@@ -193,14 +200,30 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
     return () => clearInterval(id);
   }, [reduceMotion]);
 
-  // Cross-fade between slides. A hard cut mid-sentence reads as a glitch; the
-  // fade is what tells you the text was replaced deliberately.
+  /**
+   * Cross-fade between slides. A hard cut mid-sentence reads as a glitch; the
+   * fade is what tells you the text was replaced deliberately.
+   *
+   * **It starts at `HERO_FADE_FLOOR`, not at 0**, and that is the same rule as
+   * "nothing scales from 0" applied to opacity. Only the headline and the
+   * sentence are inside this fade — the CREATED BY chip and the dots are not,
+   * because they do not change between slides. So at opacity 0 the hero is a
+   * large empty card with a credit chip floating in it, which every reader saw
+   * for the length of the fade, every six seconds. It is also what a
+   * screenshot catches if it lands in that window: the committed
+   * `glass-home.png` used by the ads is exactly that frame, and it shipped in
+   * a finished cut with no headline and no quote.
+   *
+   * A floor means the incoming text is always legible and simply rises to
+   * full. It still reads as a deliberate swap; it can no longer read as a
+   * broken card.
+   */
   useEffect(() => {
     if (reduceMotion) {
       heroFade.setValue(1);
       return;
     }
-    heroFade.setValue(0);
+    heroFade.setValue(HERO_FADE_FLOOR);
     Animated.timing(heroFade, {
       toValue: 1,
       duration: DURATION.base,

@@ -17,6 +17,21 @@ const PLATES = {
   'plate-ulnar-nerve.jpg': 'anatomy/ulnar_nerve_course_branches.jpg',
   'plate-calots-triangle.jpg': 'anatomy/extrahepatic_biliary_apparatus_calots.jpg',
   'plate-shoulder-joint.jpg': 'anatomy/shoulder_joint_rotator_cuff_muscles.jpg',
+  /*
+   * The three below are not shown on their own — they go INTO the app screens,
+   * so the note screens photograph a real plate instead of the preview
+   * harness's drawn stand-in.
+   *
+   * That stand-in is right for the harness and was wrong in an advertisement:
+   * it is a white rectangle reading "Types of synovial joint" over the words
+   * "plane - hinge - pivot - saddle - ball and socket" and a blue line, and
+   * that is what a finished cut showed while the caption underneath promised a
+   * diagram. Each of these is the plate the bank really files against that
+   * exact question, so the caption and the picture agree.
+   */
+  'plate-synovial-joints.jpg': 'anatomy/types_of_synovial_joints.jpg',
+  'plate-axilla.jpg': 'anatomy/axilla_boundaries_axillary_artery.jpg',
+  'plate-tca-cycle.jpg': 'biochemistry/tca_cycle_amphibolic_anaplerosis.jpg',
 };
 
 const outDir = path.join(process.cwd(), 'public', 'app_screens');

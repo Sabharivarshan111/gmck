@@ -171,6 +171,24 @@ const screen = (params.get('screen') ?? 'home').toLowerCase();
 const nodePath = params.get('node');
 const nodeYear = params.get('year') ?? 'second-year';
 const nodeTitle = params.get('title') ?? 'Topic';
+
+/**
+ * `?plates=real` — draw the note screens with the real medical plates.
+ *
+ * The stand-ins further down are right for reviewing layout and wrong in an
+ * advertisement: a white rectangle reading "Types of synovial joint" over a
+ * blue line went out in a finished cut, under a caption promising a diagram.
+ *
+ * The real plates live in a Supabase bucket that no sandbox can reach, so this
+ * does not fetch them. The ad pipeline downloads them in CI
+ * (`remotion-ad/scripts/fetch-plates.mjs`) and drops them into
+ * `preview/public/plates/`, which Vite serves from the root; this switch is
+ * what makes the screens ask for them. Without the files the screens fall back
+ * to the stand-ins rather than showing a broken image, because a preview that
+ * cannot run outside CI is a preview nobody uses.
+ */
+const useRealPlates = params.get('plates') === 'real';
+const realPlate = (name: string) => `/plates/plate-${name}.jpg`;
 const themeParam = params.get('theme') === 'light' ? 'light' : 'dark';
 /**
  * The walkthrough, started only when asked for.
@@ -436,7 +454,22 @@ function TreeGlide() {
  */
 function DiagramDemo() {
   const { colors } = useTheme();
-  const content = applyQuestionDiagrams(TCA_NOTE, TCA_DIAGRAMS, TCA_QUESTION);
+  /*
+   * The fixture points at the plate's Supabase URL, which is right for the app
+   * and unreachable from a sandbox — the captured screen then shows the "this
+   * diagram could not be loaded" placeholder, and that placeholder is what
+   * `screenshots/single-note-diagram.png` held while the ads were copying it
+   * in. With `?plates=real` the same row points at the same plate downloaded
+   * to disk, so the screen photographs the picture rather than the failure.
+   */
+  const diagrams = React.useMemo(
+    () =>
+      useRealPlates
+        ? TCA_DIAGRAMS.map(d => ({ ...d, url: realPlate('tca-cycle') }))
+        : TCA_DIAGRAMS,
+    [],
+  );
+  const content = applyQuestionDiagrams(TCA_NOTE, diagrams, TCA_QUESTION);
   return (
     <ScrollView
       style={{ backgroundColor: colors.background }}
@@ -595,18 +628,18 @@ function ChapterDiagramsDemo() {
     () =>
       applyTopicDiagrams(SAMPLE_NOTES, [
         {
-          url: PLATE_SYNOVIAL,
+          url: useRealPlates ? realPlate('synovial-joints') : PLATE_SYNOVIAL,
           question: 'Types of synovial joint',
           title: 'Types of synovial joint',
         },
         {
-          url: PLATE_PLEXUS,
+          url: useRealPlates ? realPlate('brachial-plexus') : PLATE_PLEXUS,
           question:
             'Describe the formation, relations and branches of the brachial plexus***',
           title: 'Brachial plexus — formation, relations and branches',
         },
         {
-          url: PLATE_AXILLA,
+          url: useRealPlates ? realPlate('axilla') : PLATE_AXILLA,
           question: 'Axilla: boundaries and contents**',
           title: 'Axilla — boundaries and contents',
         },

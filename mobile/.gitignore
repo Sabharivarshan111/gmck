@@ -102,3 +102,9 @@ android/app/src/main/res/raw/*
 !android/app/src/main/res/raw/chime_bell.wav
 !android/app/src/main/res/raw/chime_soft.wav
 !android/app/src/main/res/raw/chime_digital.wav
+
+# Real medical plates, downloaded by remotion-ad/scripts/fetch-plates.mjs so the
+# note screens photograph a picture instead of a stand-in. Never committed: they
+# are large, they are the bucket's copy, and a stale one is how a wrong diagram
+# reaches an ad.
+preview/public/plates/

@@ -50,13 +50,18 @@ jobs:
         working-directory: mobile
         run: npx playwright-core install chromium --with-deps
 
-      - name: Capture the real app screens
-        working-directory: remotion-ad
-        run: npm run screens
-
+      # Plates BEFORE screens, and the order is load-bearing rather than tidy.
+      # Two of the captured screens are note screens that draw a medical plate;
+      # with no plate on disk the harness draws a stand-in (a white rectangle
+      # with the diagram's name on it) or renders "this diagram could not be
+      # loaded". Both of those have reached a published ad.
       - name: Download the real medical plates
         working-directory: remotion-ad
         run: npm run plates
+
+      - name: Capture the real app screens
+        working-directory: remotion-ad
+        run: npm run screens
 
       # The music beds are synthesised, not sourced -- see make-beds.py for the
       # licence reasoning. They are gitignored like every other asset, so they

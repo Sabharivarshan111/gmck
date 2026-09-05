@@ -73,6 +73,28 @@ const SHOTS = [
   { name: 'home-resized', query: 'screen=homeresized' },
   { name: 'tca-note', query: 'screen=tcanote' },
   { name: 'tca-note-bottom', query: 'screen=tcanote', scroll: 'bottom' },
+  /*
+   * The two note screens that carry a medical plate.
+   *
+   * `plates=real` makes them ask for the downloaded plates rather than the
+   * harness's drawn stand-ins. They used to be captured by hand and committed
+   * to `screenshots/`, and the ads copied those committed files in — which is
+   * how a white rectangle reading "Types of synovial joint" and a "this
+   * diagram could not be loaded" placeholder both ended up in a finished cut.
+   * Captured here, they are rebuilt on every render like every other screen.
+   *
+   * With no plates on disk the harness falls back to the stand-ins, so this
+   * still produces a usable screen locally.
+   */
+  /*
+   * Scrolled, because this screen's diagrams sit at the end of the note.
+   * `applyTopicDiagrams` is given no question order here, so none of the three
+   * plates can be placed against a heading and all three fall to the trailing
+   * append — correct behaviour, and it means the top of this screen is the
+   * note's text. An ad frame of it has to reach the pictures.
+   */
+  { name: 'chapter-diagrams', query: 'screen=chapterdiagrams&plates=real', plates: 3, scroll: 'bottom' },
+  { name: 'single-note-diagram', query: 'screen=diagramdemo&plates=real', plates: 1 },
   { name: 'home-light', query: 'screen=home&theme=light' },
   { name: 'progress-light', query: 'screen=progress&theme=light' },
 ];
@@ -124,9 +146,39 @@ const browser = await chromium.launch({
   ...(executablePath ? { executablePath } : {}),
   args: ['--no-sandbox', '--font-render-hinting=none'],
 });
+/**
+ * Screens that promised a real plate and did not get one.
+ *
+ * Collected rather than thrown, so one missing plate does not cost the whole
+ * run of screens — but the process still exits non-zero at the end, because a
+ * capture that silently substitutes a stand-in is exactly how this reached a
+ * published advertisement.
+ */
+const plateProblems = [];
+
 const context = await browser.newContext({
   viewport: { width: 390, height: 844 },
   deviceScaleFactor: 2,
+  /*
+   * Photograph the app with its motion stood down, and the reason is not
+   * taste — it is that a screenshot of a moving screen is a coin toss.
+   *
+   * The home hero rotates every six seconds and cross-fades its headline and
+   * quote on every change. A capture that lands in that window gets a large
+   * empty card with the CREATED BY chip floating in it, and the committed
+   * `glass-home.png` the ads use IS that frame: no headline, no quote. It went
+   * out in a finished advertisement.
+   *
+   * `prefers-reduced-motion: reduce` is a mode this app already supports
+   * properly — react-native-web maps the media query onto
+   * `AccessibilityInfo.isReduceMotionEnabled`, `useReducedMotion()` reads it,
+   * and every primitive honours it. Nothing is hidden by it: sheets and
+   * breakdowns start fully open instead of animating in, the hero pins at full
+   * opacity and stops rotating, the trees stop swaying and still draw. Every
+   * screen ends up in its settled state, which is the state worth
+   * photographing anyway.
+   */
+  reducedMotion: 'reduce',
 });
 const page = await context.newPage();
 
@@ -264,6 +316,40 @@ for (const shot of SHOTS) {
     });
     await page.waitForTimeout(500);
   }
+  /*
+   * A screen that promises a diagram has to have loaded one.
+   *
+   * This is the check that was missing, and its absence is why an ad shipped
+   * showing a white rectangle captioned "Types of synovial joint" and another
+   * showing "this diagram could not be loaded". Both screens rendered
+   * perfectly — the layout was right, the caption was right, the section was
+   * in the right place — and the picture inside was a stand-in or a failure.
+   * Nothing looking at the DOM would have noticed, because nothing looked.
+   *
+   * `naturalWidth` is the honest question: it is 0 for an image that has not
+   * decoded, whatever its src says, so this catches a 404, a blocked host and
+   * a zero-byte file alike. The src check catches the other half — a screen
+   * that quietly fell back to the drawn stand-in, which decodes perfectly.
+   */
+  if (shot.plates) {
+    const found = await page.evaluate(() =>
+      [...document.querySelectorAll('img')]
+        .map(img => ({ src: img.currentSrc || img.src, w: img.naturalWidth }))
+        .filter(i => i.src.includes('/plates/')),
+    );
+    const loaded = found.filter(i => i.w > 0);
+    if (loaded.length < shot.plates) {
+      plateProblems.push(
+        `${shot.name}: wanted ${shot.plates} real plate(s), got ${loaded.length} ` +
+          `loaded of ${found.length} referenced. ` +
+          (found.length === 0
+            ? 'None were even asked for — the harness fell back to the drawn stand-in, ' +
+              'so the plates are not in preview/public/plates/.'
+            : 'Referenced but not decoded — the files are missing or truncated.'),
+      );
+    }
+  }
+
   await page.screenshot({ path: path.join(outDir, `${shot.name}.png`) });
   process.stdout.write(`captured ${shot.name}\n`);
 }
@@ -288,5 +374,18 @@ if (errors.length) {
   if (failedUrls.length) {
     process.stdout.write(`\nRequests that failed:\n  ${failedUrls.join('\n  ')}\n`);
   }
+  process.exitCode = 1;
+}
+
+if (plateProblems.length) {
+  process.stdout.write(
+    '\nA screen that promises a diagram did not photograph one:\n' +
+      plateProblems.map(p => `  - ${p}`).join('\n') +
+      '\n\nThese screens go into the ads. A stand-in or a broken image here is\n' +
+      'what put a white rectangle captioned "Types of synovial joint", and a\n' +
+      '"this diagram could not be loaded" placeholder, into a published cut.\n' +
+      'Run `npm run plates` in remotion-ad/ first, or capture without\n' +
+      '`plates=real` if you only want the layout.\n',
+  );
   process.exitCode = 1;
 }
