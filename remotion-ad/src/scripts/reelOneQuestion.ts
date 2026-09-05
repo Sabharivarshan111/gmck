@@ -48,7 +48,7 @@ export const reelOneQuestion: AdScript = {
     { n: 6, beats: 6, screen: 'noteBodyBottom', camera: 'glideDown', kicker: 'Last minute', text: 'It ends with the must-write points', accent: '#FF4D8D' },
 
     // --- the plate that belongs to it.
-    { n: 7, beats: 6, screen: 'plateBrachial', camera: 'settle', kicker: 'Its own diagram', text: 'The plate for that question', accent: '#22D3A6' },
+    { n: 7, beats: 6, screen: 'plateBrachial', camera: 'settle', kicker: 'Its own diagram', text: 'The diagram for that question', accent: '#22D3A6' },
     { n: 8, beats: 4, screen: 'plateUlnar', camera: 'trackLeft', kicker: 'Only its own', text: "Never a neighbour's picture", accent: '#22D3A6' },
     { n: 9, beats: 6, screen: 'noteDiagram', camera: 'pull', kicker: 'In place', text: 'Picture first, then the theory', accent: '#22D3A6' },
 

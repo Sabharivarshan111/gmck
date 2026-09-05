@@ -18,10 +18,39 @@ import { syncPremiumCache } from '@/lib/premium';
  * expiry.
  */
 
-/** The only plan the app sells from the ad prompt. Others exist server-side. */
+/** The plan bought when nothing else is chosen. */
 export const ADFREE_MONTHLY = 'adfree_monthly';
 
-/** ₹50, in paise, and only ever for display — the server sets what is charged. */
+/**
+ * The three lengths of ad-free the app sells.
+ *
+ * **The prices here are labels, not amounts.** Nothing in this file is ever
+ * sent as a price: the client posts a plan KEY and `razorpay-create-order`
+ * looks the amount up in its own table. That is the whole reason the server
+ * holds it — a client that could name its own amount could buy a year for one
+ * rupee, and checking afterwards does not help, because the order Razorpay
+ * charges against was already created with whatever it said.
+ *
+ * So if a number here disagrees with the server, the reader is shown the wrong
+ * price and charged the right one. `npm run check:payments` pins the two
+ * together for exactly that reason.
+ */
+export interface AdFreeTier {
+  plan: string;
+  /** What the button says. */
+  label: string;
+  price: string;
+  /** The per-month cost, so a longer tier can show what it saves. */
+  note?: string;
+}
+
+export const ADFREE_TIERS: AdFreeTier[] = [
+  { plan: 'adfree_monthly', label: '1 month', price: '₹50' },
+  { plan: 'adfree_6months', label: '6 months', price: '₹150', note: '₹25 a month' },
+  { plan: 'adfree_yearly', label: '1 year', price: '₹300', note: '₹25 a month' },
+];
+
+/** ₹50, and only ever for display — the server sets what is charged. */
 export const ADFREE_PRICE_LABEL = '₹50';
 
 export type PurchaseOutcome =
@@ -76,20 +105,33 @@ function message(error: unknown): string {
 }
 
 /**
- * Buy a month without ads.
+ * Buy a stretch without ads.
  *
  * Requires a signed-in Supabase user: the edge function refuses an anonymous
  * caller, because a purchase that cannot be attributed to an account is a
  * purchase that cannot be restored on the next phone.
+ *
+ * @param plan one of `ADFREE_TIERS`. Defaults to the month, which is what the
+ *   ad prompt buys when the reader taps the price rather than choosing.
+ *
+ * Every tier writes the SAME entitlement — a `premium_subscriptions` row whose
+ * plan is `adfree_monthly`, with `expires_at` moved further out. That is why no
+ * reader of the entitlement had to change for this: `premium.ts` here and the
+ * web app both ask "is there an unexpired adfree_monthly row", and a year is
+ * that same row with a later date.
  */
-export async function buyAdFreeMonth(email?: string, name?: string): Promise<PurchaseOutcome> {
+export async function buyAdFree(
+  plan: string = ADFREE_MONTHLY,
+  email?: string,
+  name?: string,
+): Promise<PurchaseOutcome> {
   const { data: sessionData } = await supabase.auth.getSession();
   if (!sessionData.session) {
     return { status: 'failed', message: 'Sign in first so the purchase stays with your account.' };
   }
 
   const { data, error } = await supabase.functions.invoke<CreatedOrder>('razorpay-create-order', {
-    body: { plan: ADFREE_MONTHLY },
+    body: { plan },
   });
   if (error || !data?.order_id || !data.key_id) {
     return { status: 'failed', message: error?.message ?? 'Could not start the payment.' };
@@ -127,7 +169,7 @@ export async function buyAdFreeMonth(email?: string, name?: string): Promise<Pur
       razorpay_order_id: result.razorpay_order_id ?? data.order_id,
       razorpay_payment_id: result.razorpay_payment_id,
       razorpay_signature: result.razorpay_signature,
-      plan: ADFREE_MONTHLY,
+      plan,
     },
   });
   if (verifyError) {

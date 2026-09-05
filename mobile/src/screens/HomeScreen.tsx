@@ -19,6 +19,8 @@ import { SortableGrid } from '@/components/SortableGrid';
 import { useSubjectOrder } from '@/hooks/useSubjectOrder';
 import { SettingsSheet } from '@/components/SettingsSheet';
 import { ThemeMenu, type Anchor } from '@/components/ThemeMenu';
+import { HomeMenuSheet } from '@/components/HomeMenuSheet';
+import { premiumExpiresAt } from '@/lib/premium';
 import { presetByKey } from '@/theme/presets';
 import { ThemeEditor } from '@/components/ThemeEditor';
 import { GlassSurface } from '@/components/GlassSurface';
@@ -152,6 +154,7 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
    * waiting to happen, so it lives in Settings now with everything else.
    */
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [dragging, setDragging] = useState(false);
   /**
    * Content drawn straight onto the background reads this rather than
@@ -351,13 +354,14 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
               Rearranging is normally entered by holding a block, but a hold
               is not something a screen reader can offer, so this is the other
               way in — and the way back out. */}
+          {/* While rearranging it stays the way OUT of that mode — a menu
+              behind a mode you cannot leave is worse than no menu. Otherwise
+              it opens everything the app can do. */}
           <Touchable
-            onPress={() => setEditing(value => !value)}
-            label={editing ? 'Finish rearranging' : 'Rearrange home screen'}
-            hint={
-              editing ? undefined : 'Or hold any block on this screen to start moving it'
-            }
-            state={{ expanded: editing }}
+            onPress={() => (editing ? setEditing(false) : setMenuOpen(true))}
+            label={editing ? 'Finish rearranging' : 'Menu'}
+            hint={editing ? undefined : 'Everything the app can do'}
+            state={{ expanded: editing || menuOpen }}
             scaleTo={0.9}
             style={styles.iconButton}>
             {editing ? (
@@ -781,6 +785,20 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
         {/* Overlays. They render into their own layer, so their place in the
             tree is arbitrary — what matters is that they are not inside a
             block that can be dragged. */}
+      <HomeMenuSheet
+        visible={menuOpen}
+        onClose={() => setMenuOpen(false)}
+        onGoToTab={goToTab}
+        onBrowse={() => navigation.navigate('BrowseHome', {})}
+        onSearch={() => navigation.navigate('BrowseHome', { focusSearch: true })}
+        onRearrange={() => setEditing(true)}
+        onSettings={() => setSettingsOpen(true)}
+        onThemes={() => setThemeOpen(true)}
+        onCommunity={openCommunity}
+        adFreeUntil={premiumExpiresAt()?.slice(0, 10) ?? null}
+        onRemoveAds={() => setSettingsOpen(true)}
+      />
+
       <ThemeMenu
         visible={themeOpen}
         anchor={anchor}

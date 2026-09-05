@@ -42,7 +42,7 @@ export default function TimerScreen() {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const timer = usePomodoro();
-  const { onlineCount } = useOnlinePresence(timer.isRunning);
+  const { onlineCount } = useOnlinePresence(timer.isRunning, timer.remaining);
   /**
    * The exam, if one is set. Read here rather than passed down because the
    * Timer and My Progress are different tabs — there is no common parent to

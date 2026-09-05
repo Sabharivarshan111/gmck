@@ -90,7 +90,7 @@ export const reelGuide: AdScript = {
     // --- the diagrams, which is the part nothing else does.
     { n: 8, frames: 110, screen: 'plateBrachial', mascot: 'guide', camera: 'settle', text: 'Its own diagram', silentText: "Its own diagram, every time", vo: 'Its own diagram comes with it.', accent: '#22D3A6' },
     { n: 9, frames: 100, screen: 'noteDiagram', camera: 'pull', text: 'Picture first', silentText: "Picture, then the theory", vo: 'Picture first, then the theory.', accent: '#22D3A6' },
-    { n: 10, frames: 100, screen: 'chapterDiagrams', camera: 'glideDown', text: 'Two hundred and fifty plates', silentText: "250 exam plates", vo: 'Two hundred and fifty plates.', accent: '#22D3A6' },
+    { n: 10, frames: 100, screen: 'chapterDiagrams', camera: 'glideDown', text: 'Two hundred and fifty diagrams', silentText: "250 exam diagrams", vo: 'Two hundred and fifty diagrams.', accent: '#22D3A6' },
 
     // --- Ask AI. The mascot is the one asking, which is the join between the
     //     presenter and the feature — it is literally this avatar in the app.

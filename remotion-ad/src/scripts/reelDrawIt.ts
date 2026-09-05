@@ -42,17 +42,17 @@ export const reelDrawIt: AdScript = {
     { n: 3, frames: 90, screen: 'plateUlnar', camera: 'trackRight', text: 'Where the marks are', silentText: "This is where the marks are", vo: 'That is where the marks are.', accent: '#22D3A6' },
 
     // --- and it is already in the app, attached to that exact question.
-    { n: 4, frames: 105, screen: 'questionsLeaf', camera: 'push', text: 'Already in the app', silentText: "It's already in the app", vo: 'This plate is already in the app.', focus: 0.28, accent: '#7C5CFF' },
+    { n: 4, frames: 105, screen: 'questionsLeaf', camera: 'push', text: 'Already in the app', silentText: "It's already in the app", vo: 'This diagram is already in the app.', focus: 0.28, accent: '#7C5CFF' },
     { n: 5, frames: 105, screen: 'questionsLeaf', camera: 'macro', text: 'Triple-tap the question', silentText: "Triple-tap the question", vo: 'Triple-tap the question and it appears.', focus: 0.28, accent: '#FF4D8D' },
     { n: 6, frames: 120, screen: 'noteDiagram', camera: 'pull', text: 'The picture comes first', silentText: "Picture, then the theory", vo: 'The picture comes first, then the theory.', accent: '#22D3A6' },
     { n: 7, frames: 120, screen: 'plateStomach', camera: 'macro', text: 'Drawn for that question', silentText: "Never a neighbour's picture", vo: "Drawn for that question, never a neighbour's.", accent: '#22D3A6' },
-    { n: 8, frames: 120, screen: 'chapterDiagrams', camera: 'glideDown', text: 'Two hundred and fifty plates', silentText: "250 exam plates", vo: 'Two hundred and fifty plates, drawn by hand.', accent: '#22D3A6' },
+    { n: 8, frames: 120, screen: 'chapterDiagrams', camera: 'glideDown', text: 'Two hundred and fifty diagrams', silentText: "250 exam diagrams", vo: 'Two hundred and fifty diagrams, drawn by hand.', accent: '#22D3A6' },
     { n: 9, frames: 105, screen: 'noteBody', camera: 'glideDown', text: 'Tables and flowcharts', silentText: "Tables. Flowcharts. Years", vo: 'Tables and flowcharts, laid out properly.', accent: '#FF4D8D' },
 
     // --- now you draw it, which is the drill the hook demanded.
     { n: 10, frames: 105, screen: 'userNotesEdit', camera: 'macro', text: 'Now draw it yourself', silentText: "Now you draw it", vo: 'Now draw it yourself. Blank page.', focus: 0.35, accent: '#FF8A3D' },
     { n: 11, frames: 105, screen: 'userNotesEdit', camera: 'macro', text: 'Rest your palm', silentText: "Rest your palm on it", vo: 'Rest your palm. It takes the pen.', focus: 0.5, accent: '#FF8A3D' },
-    { n: 12, frames: 105, screen: 'userNotesPreview', camera: 'pull', text: 'Compare yours against the plate', silentText: "Yours against the plate", vo: 'Then compare yours against the plate.', accent: '#FF8A3D' },
+    { n: 12, frames: 105, screen: 'userNotesPreview', camera: 'pull', text: 'Compare yours against the diagram', silentText: "Yours against the diagram", vo: 'Then compare yours against the diagram.', accent: '#FF8A3D' },
 
     { n: 13, frames: 90, screen: 'flashcards', camera: 'orbit', text: 'Make it a card', silentText: "Drill it until automatic", vo: 'Make it a card. Drill it.', accent: '#4CC2FF' },
     { n: 14, frames: 90, screen: 'ankiStudy', camera: 'push', text: 'It returns before you forget', silentText: "Back before you forget", vo: 'It returns before you forget.', accent: '#4CC2FF' },

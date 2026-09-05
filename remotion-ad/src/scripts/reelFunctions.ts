@@ -82,7 +82,7 @@ export const reelFunctions: AdScript = {
     { n: 7, beats: 6, screen: 'noteBody', camera: 'glideDown', kicker: 'Written notes', text: 'The high-yield lines are marked', accent: '#FF4D8D' },
 
     // --- the diagrams.
-    { n: 8, beats: 6, screen: 'plateBrachial', camera: 'settle', kicker: 'Exam diagrams', text: '250 plates, every part labelled', accent: '#22D3A6' },
+    { n: 8, beats: 6, screen: 'plateBrachial', camera: 'settle', kicker: 'Exam diagrams', text: '250 diagrams, every part labelled', accent: '#22D3A6' },
     { n: 9, beats: 4, screen: 'noteDiagram', camera: 'pull', kicker: 'Inside the note', text: 'Picture first, then the theory', accent: '#22D3A6' },
 
     // --- AI.

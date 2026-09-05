@@ -4,7 +4,7 @@ import { Dialog } from '@/components/Dialog';
 import { Text } from '@/components/Text';
 import { Touchable } from '@/components/Touchable';
 import { useTheme, withAlpha } from '@/theme';
-import { ADFREE_PRICE_LABEL, buyAdFreeMonth } from '@/lib/razorpay';
+import { ADFREE_TIERS, buyAdFree } from '@/lib/razorpay';
 import { isPremiumCached } from '@/lib/premium';
 import {
   confirmDailyAd,
@@ -25,7 +25,8 @@ export function DailyAdConsent() {
   const [prompt, setPrompt] = useState<DailyAdPrompt | null>(null);
   // Kept so the text does not vanish while the dialog animates out.
   const [shown, setShown] = useState<DailyAdPrompt | null>(null);
-  const [buying, setBuying] = useState(false);
+  /** Which tier is mid-purchase, so only that row shows a spinner. */
+  const [buying, setBuying] = useState<string | null>(null);
   const [purchaseError, setPurchaseError] = useState<string | null>(null);
 
   useEffect(() => subscribeDailyAd(setPrompt), []);
@@ -62,27 +63,30 @@ export function DailyAdConsent() {
    * being asked; paying is a different kind of act, and putting it in the same
    * row would make a purchase one mis-tap away from a dismissal.
    */
-  const buy = useCallback(async () => {
-    if (buying) {
-      return;
-    }
-    setBuying(true);
-    setPurchaseError(null);
-    const outcome = await buyAdFreeMonth().catch(() => ({
-      status: 'failed' as const,
-      message: 'Payment could not be started.',
-    }));
-    setBuying(false);
-    if (outcome.status === 'done') {
-      // Ads are off from here, so the prompt that triggered this is moot.
-      setPrompt(null);
-      return;
-    }
-    if (outcome.status === 'failed') {
-      setPurchaseError(outcome.message);
-    }
-    // A cancellation says nothing: the user closed the sheet on purpose.
-  }, [buying]);
+  const buy = useCallback(
+    async (plan: string) => {
+      if (buying) {
+        return;
+      }
+      setBuying(plan);
+      setPurchaseError(null);
+      const outcome = await buyAdFree(plan).catch(() => ({
+        status: 'failed' as const,
+        message: 'Payment could not be started.',
+      }));
+      setBuying(null);
+      if (outcome.status === 'done') {
+        // Ads are off from here, so the prompt that triggered this is moot.
+        setPrompt(null);
+        return;
+      }
+      if (outcome.status === 'failed') {
+        setPurchaseError(outcome.message);
+      }
+      // A cancellation says nothing: the user closed the sheet on purpose.
+    },
+    [buying],
+  );
 
   return (
     <Dialog
@@ -93,23 +97,51 @@ export function DailyAdConsent() {
       footer={
         isPremiumCached() ? null : (
           <View>
-            <Touchable
-              onPress={buy}
-              label={`Remove ads for a month for ${ADFREE_PRICE_LABEL}`}
-              disabled={buying}
-              scaleTo={0.97}
-              style={[
-                styles.offer,
-                { borderColor: withAlpha(colors.accent, 0.5), backgroundColor: withAlpha(colors.accent, 0.1) },
-              ]}>
-              {buying ? (
-                <ActivityIndicator size="small" color={colors.accent} />
-              ) : (
-                <Text style={[styles.offerText, { color: colors.accent }]}>
-                  Or remove ads for a month — {ADFREE_PRICE_LABEL}
-                </Text>
-              )}
-            </Touchable>
+            {/*
+              Three lengths, cheapest first, each its own row.
+
+              Not a picker and not a segmented control: this is already a
+              dialog answering a different question, and a control with a
+              *state* would need a second tap to commit. One tap per row means
+              the price the reader read is the price they pressed.
+
+              The month stays first because it is the one the prompt is really
+              offering — somebody irritated by an ad wants it gone now, not a
+              subscription decision. The longer rows carry what they work out
+              at per month, which is the only honest way to say they are
+              better value.
+            */}
+            {ADFREE_TIERS.map(tier => (
+              <Touchable
+                key={tier.plan}
+                onPress={() => buy(tier.plan)}
+                label={`Remove ads for ${tier.label}, ${tier.price}`}
+                disabled={buying !== null}
+                scaleTo={0.97}
+                style={[
+                  styles.offer,
+                  {
+                    borderColor: withAlpha(colors.accent, 0.5),
+                    backgroundColor: withAlpha(colors.accent, 0.1),
+                    opacity: buying !== null && buying !== tier.plan ? 0.5 : 1,
+                  },
+                ]}>
+                {buying === tier.plan ? (
+                  <ActivityIndicator size="small" color={colors.accent} />
+                ) : (
+                  <View style={styles.offerRow}>
+                    <Text style={[styles.offerText, { color: colors.accent }]}>
+                      No ads for {tier.label} — {tier.price}
+                    </Text>
+                    {tier.note ? (
+                      <Text style={[styles.offerNote, { color: colors.textMuted }]}>
+                        {tier.note}
+                      </Text>
+                    ) : null}
+                  </View>
+                )}
+              </Touchable>
+            ))}
             {purchaseError ? (
               <Text
                 accessibilityLiveRegion="polite"
@@ -137,6 +169,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     minHeight: 44,
+    marginBottom: 8,
+  },
+  offerRow: {
+    alignItems: 'center',
+  },
+  offerNote: {
+    fontSize: 11,
+    marginTop: 2,
   },
   offerText: {
     fontSize: 14,

@@ -56,7 +56,7 @@ export const reelRepeats: AdScript = {
     // --- the diagrams, which is the part nothing else does.
     { n: 9, frames: 120, screen: 'plateBrachial', camera: 'settle', text: 'The diagram that question needs', silentText: "And its own diagram", vo: 'With the diagram that question needs.', accent: '#22D3A6' },
     { n: 10, frames: 105, screen: 'noteDiagram', camera: 'pull', text: 'Picture before theory', silentText: "Picture, then the theory", vo: 'Picture before theory, every single time.', accent: '#22D3A6' },
-    { n: 11, frames: 105, screen: 'chapterDiagrams', camera: 'glideDown', text: 'Two hundred and fifty plates', silentText: "250 exam plates", vo: 'Two hundred and fifty plates, hand-drawn.', accent: '#22D3A6' },
+    { n: 11, frames: 105, screen: 'chapterDiagrams', camera: 'glideDown', text: 'Two hundred and fifty diagrams', silentText: "250 exam diagrams", vo: 'Two hundred and fifty diagrams, hand-drawn.', accent: '#22D3A6' },
 
     // --- everything else, one beat each. One idea per shot, no stacking.
     { n: 12, frames: 105, screen: 'askai', camera: 'push', text: 'Ask anything', silentText: "Stuck? Ask the AI", vo: 'Ask anything and it explains properly.', accent: '#7C5CFF' },

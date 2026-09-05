@@ -250,7 +250,18 @@ export default function ExamDiagramCard({
           <div className="w-full max-w-4xl flex items-center justify-between text-white mb-2 px-2">
             <div className="flex items-center gap-2">
               <Badge className="bg-primary text-primary-foreground text-xs">
-                {diagrams.length > 1 ? `Plate ${activeIndex + 1}/${diagrams.length}` : "Visual Exam Plate"}
+                {/*
+                  "Diagram", not "Plate".
+
+                  A plate is what a textbook publisher calls a printed figure,
+                  and it is the word this codebase uses internally for the
+                  files. It is not the word a medical student uses for the
+                  thing they have to reproduce in an answer booklet, and the
+                  label on a lightbox is read by the second group only.
+                */}
+                {diagrams.length > 1
+                  ? `Diagram ${activeIndex + 1}/${diagrams.length}`
+                  : "Exam Diagram"}
               </Badge>
               <span className="text-sm font-semibold truncate max-w-md">
                 {currentDiagram.title || questionText}

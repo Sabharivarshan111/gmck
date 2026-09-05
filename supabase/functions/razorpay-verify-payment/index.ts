@@ -49,7 +49,7 @@ Deno.serve(async (req) => {
     const paymentId = body?.razorpay_payment_id;
     const signature = body?.razorpay_signature;
     const rawPlan = typeof body?.plan === "string" ? body.plan : "";
-    const planKey = rawPlan === "notes_fmspm" || rawPlan === "notes_pharmac"
+    const planKey = NOTES_PLANS.has(rawPlan) || ADFREE_TIERS[rawPlan]
       ? rawPlan
       : "adfree_monthly";
 
@@ -99,7 +99,9 @@ Deno.serve(async (req) => {
     const base = existing?.expires_at && new Date(existing.expires_at) > new Date()
       ? new Date(existing.expires_at)
       : new Date();
-    const adfreeAt = new Date(base.getTime() + 30 * 24 * 60 * 60 * 1000).toISOString();
+    const tier = ADFREE_TIERS[planKey];
+    const adfreeDays = tier ? tier.days : ADFREE_TIERS.adfree_monthly.days;
+    const adfreeAt = new Date(base.getTime() + adfreeDays * 24 * 60 * 60 * 1000).toISOString();
 
     const common = {
       user_id: user.id,
