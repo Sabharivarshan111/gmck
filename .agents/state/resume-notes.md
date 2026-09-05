@@ -488,3 +488,75 @@ checks EXECUTE at trigger CREATE time, not at fire time.
   most recent 2026-09-04. The owner's own account has a google identity. The
   only gap is the three Android OAuth clients in Google Cloud, which is
   `oauth-sha1-deployment` in blocked.json and is the owner's to do.
+
+## 2026-09-05 — Claude Code — first run asks, an old build learns about a new one, and two XP bugs
+
+Nine things from the owner's list. The two worth reading about are the ones
+that were each a single symptom hiding two different bugs.
+
+### "If I untap any question it shows as XP gained" was two bugs
+
+**Web.** `use-xp-stream` takes an XP number from three places and they count
+different populations: `cloudXp` and the realtime `profiles` row are the
+server's count for the ACCOUNT (`profiles.xp` is `COUNT(*) FROM
+question_progress WHERE user_id` — global), while `readLocalXp()` counts the
+`question-` keys in THIS BROWSER. Sign in on a second browser and the two are
+300 and 4. All three handlers wrote into one `prevXp` ref, so un-ticking ran
+the local one first (4 → 3, no toast, ref := 3) and then the realtime one read
+299 against a baseline of 3 and toasted **"+296 XP"**. One baseline per source
+now; realtime shares the cloud's because it *is* `profiles.xp`.
+
+**Native.** `pullProgressFromCloud` merges and never deletes — correct, a tick
+from another device has to arrive — but a row un-ticked HERE comes back if
+`record_question_undone` never landed, and that RPC returns silently with no
+session, no profile year, or offline. `XpToast` reads the rise as a tick.
+`pendingUndo` parks the id until the server confirms the delete; the pull skips
+a parked id **and retries its undo**, and the push filters them or the two
+fight every launch.
+
+### The year was never asked for
+
+Onboarding lived only on My Progress, behind a tab. A fresh install opened on
+Home having been asked nothing, and `useProfile` falls back to `'second'` — so
+a first year got second year's bank with the chip agreeing. `FirstRun` is now a
+gate at the app root (icon, "Welcome to Orbit", "Made by the community",
+optional Google, name, and four years with **none** pre-selected).
+
+`readLocalProfile` also stopped coercing an unreadable year to `'second'`,
+which silently turned a stored `'third-year'` into second year.
+
+### Traps hit on the way, worth not hitting again
+
+* **`state={{ disabled: true }}` on a `Touchable` really disables it** —
+  `isDisabled = disabled || state?.disabled` feeds the Pressable. A button that
+  is meant to stay pressable and explain what is missing must not use it.
+* **The workflow's release notes had `versionCode 14` typed into them** and
+  stayed 14 through the bump to 15, so a correct v15 build told the owner it
+  was the number Play rejected. Read from gradle now — and the step's path is
+  relative to `mobile`, because the job sets `defaults.run.working-directory`.
+  Getting that wrong fails **after** a 19-minute build has succeeded.
+* **`revoke ... from public` on a new function does not stick.** Supabase's
+  template grants EXECUTE to `anon` by name. Second time on this project.
+  Proved with `has_function_privilege` afterwards, which is the only way to
+  know.
+* **The repo's copy of `razorpay-verify-payment` was three plans behind the
+  deployed one.** Reading it would have said a 6-month purchase grants a month.
+  Synced, and `check:payments` now pins the tiers from both sides.
+* **A mouse drag is not a touch drag.** The subject-card reorder test used
+  `page.mouse` and had been failing for weeks while the gesture worked by hand.
+  And a step that failed inside home's edit mode left `ReorderLock` on, so the
+  year-picker step after it timed out on a control that was present, visible
+  and deliberately unresponsive — one broken step reporting as two.
+
+### Open
+
+* `app_releases` has rows for 13 (live) and 15 (`live_on_play` **false**). The
+  update prompt stays silent until somebody sets that true, which is right —
+  set it when the listing actually serves v15, not when the build lands.
+* The search-result triple tap is correct in the repo and has been since
+  2026-09-01. Play is on versionCode 13, so what the owner is running predates
+  it; shipping v15 is the fix, and there is now a smoke step so it cannot
+  regress.
+* `.agents/queue/play-billing-migration.md` — what moving off Razorpay
+  involves. Not optional; about a working week; none of it doable from a
+  sandbox.
