@@ -2380,7 +2380,17 @@ await step('a note takes a recording, and the recording gets a player', async ()
    * stays open when this throws, so the next two timed out at 30 seconds
    * against its scrim, and one stale string read as three broken flows.
    */
-  await seesText('Save it, or just link it?', 4000);
+  /*
+   * The sheet's TITLE moved too, in the same rewording — "Save it, or just link
+   * it?" became "Copy the file, or just link to it?". It is the first assertion
+   * in this step, so the whole flow died four seconds in while every part of it
+   * below worked: the probe that found this got "Recording · 7 KB · saved in
+   * Orbit" on screen with the title check the only thing failing.
+   *
+   * Matched on the half that carries the meaning rather than the sentence, for
+   * the same reason the two consequences below are.
+   */
+  await seesText('or just link', 4000);
   await seesText('Save a copy', 4000);
   await seesText('Just link it', 4000);
   await seesText('even if you delete', 4000);
