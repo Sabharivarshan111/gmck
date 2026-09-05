@@ -771,6 +771,49 @@ if (missing.length === 0) {
     'no ProGuard keep for zstd — R8 cannot see JNI callbacks, so the importer would fail only in the release build',
   );
 
+  /*
+   * The version has to be one whose native libraries are 16 KB aligned.
+   *
+   * Android 15 allows a 16 KB memory page size, and a `.so` whose LOAD
+   * segments are aligned to less than that cannot be mapped — the app dies on
+   * `System.loadLibrary`, which here is the moment somebody opens their first
+   * Anki package. Play rejected version 14 for exactly this and named
+   * `libzstd-jni-1.5.6-9.so`.
+   *
+   * `ndkVersion` cannot fix it. That governs code this project compiles;
+   * zstd-jni ships an AAR with the `.so` files already built, so their
+   * alignment was decided by whoever published that version. Google's own
+   * remediation text says "upgrade to NDK r28", and following it here would
+   * have changed nothing — which is worth knowing before an afternoon is spent
+   * on it.
+   *
+   * Measured from the published AARs, maximum PT_LOAD alignment:
+   *
+   *              1.5.6-9   1.5.7-16
+   *   arm64-v8a    65536      16384
+   *   x86_64        4096      16384   <- the failure
+   *
+   * 1.5.7-1 is the first release of the 1.5.7 line, so the floor is that. If
+   * this needs changing, re-measure rather than trusting a release note: the
+   * alignment is not mentioned in one.
+   */
+  const zstdVersion = (read('gradle').match(/com\.github\.luben:zstd-jni:(\d+)\.(\d+)\.(\d+)-(\d+)/) ?? []).slice(1).map(Number);
+  check(
+    zstdVersion.length === 4,
+    'the zstd-jni version could not be read out of build.gradle',
+  );
+  if (zstdVersion.length === 4) {
+    const [maj, min, patch] = zstdVersion;
+    const atLeast157 =
+      maj > 1 || (maj === 1 && min > 5) || (maj === 1 && min === 5 && patch >= 7);
+    check(
+      atLeast157,
+      `zstd-jni is pinned to ${zstdVersion.slice(0, 3).join('.')}-${zstdVersion[3]}, whose x86_64 ` +
+        'library is 4 KB aligned. Play refuses that as "your app could crash on 16 KB devices", ' +
+        'and no NDK setting on our side can change a prebuilt AAR — use 1.5.7-1 or later',
+    );
+  }
+
   // The picker must stay permissionless, the same rule the note and photo
   // pickers follow.
   check(

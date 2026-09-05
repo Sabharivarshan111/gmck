@@ -6,6 +6,8 @@ import { reelRepeats } from './reelRepeats.ts';
 import { reelSixHours } from './reelSixHours.ts';
 import { reelDrawIt } from './reelDrawIt.ts';
 import { reelGuide } from './reelGuide.ts';
+import { reelGuideAnswer } from './reelGuideAnswer.ts';
+import { reelGuideNight } from './reelGuideNight.ts';
 import { reelFunctions } from './reelFunctions.ts';
 import { reelOneQuestion } from './reelOneQuestion.ts';
 
@@ -28,6 +30,8 @@ export const ALL_SCRIPTS: AdScript[] = [
   reelSixHours,
   reelDrawIt,
   reelGuide,
+  reelGuideAnswer,
+  reelGuideNight,
   reelFunctions,
   reelOneQuestion,
 ];
@@ -43,6 +47,8 @@ export {
   reelSixHours,
   reelDrawIt,
   reelGuide,
+  reelGuideAnswer,
+  reelGuideNight,
   reelFunctions,
   reelOneQuestion,
 };

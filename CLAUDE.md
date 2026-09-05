@@ -449,6 +449,17 @@ Its ProGuard keep is load-bearing, because R8 cannot see JNI callbacks and
 without it the importer works in every test build and fails only in the shipped
 one.
 
+**Its version is pinned at 1.5.7-1 or later, and `ndkVersion` cannot substitute
+for that.** Android 15 allows a 16 KB memory page; a `.so` aligned to less
+cannot be mapped, so the app dies on `System.loadLibrary` — here, the moment
+somebody opens their first Anki package. Play rejected version 14 for it,
+naming `libzstd-jni-1.5.6-9.so`, and its own remediation text ("upgrade to NDK
+r28") is the wrong lead: `ndkVersion` governs code this project compiles, and
+zstd-jni ships an AAR whose `.so` files are already built. Measured PT_LOAD
+alignment: 1.5.6-9 is arm64 65536 but **x86_64 4096**; 1.5.7-16 is 16384 for
+both. `npm run check:apkg` holds the floor — re-measure rather than trusting a
+release note, which does not mention alignment.
+
 ### An imported deck is not a `CustomDeck`
 
 The decks you write live in one AsyncStorage value with pictures inline. A

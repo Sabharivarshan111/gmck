@@ -301,8 +301,36 @@ dependencies {
      * Everything else about reading a package is in TypeScript
      * (src/lib/apkgFormat.ts) where `npm run check:apkg` can run it against
      * real files. See ApkgModule.kt.
+     *
+     * ## The version is pinned for 16 KB page support, and NDK cannot fix it
+     *
+     * Play rejected version 14 with "Your app could crash on 16 KB devices",
+     * naming `libzstd-jni-1.5.6-9.so` for arm64-v8a and x86_64. Android 15
+     * allows a 16 KB memory page size, and a shared library whose LOAD
+     * segments are aligned to less than that cannot be mapped -- the app dies
+     * at the `System.loadLibrary` call, which here is the first time anyone
+     * opens an Anki package.
+     *
+     * Google's own advice on that screen is "upgrade to NDK r28 or higher",
+     * and following it here would have done nothing. `ndkVersion` governs code
+     * THIS project compiles; zstd-jni ships as an AAR with the `.so` files
+     * already built, so its alignment was decided by whoever built 1.5.6-9 and
+     * no setting on our side can change it. The fix is a newer artifact.
+     *
+     * Measured from the published AARs rather than assumed -- maximum PT_LOAD
+     * alignment, read out of the ELF program headers:
+     *
+     *            1.5.6-9    1.5.7-16
+     *   arm64-v8a  65536      16384     both fine
+     *   x86_64      4096      16384     4096 is the failure
+     *
+     * (armeabi-v7a and x86 are 32-bit; the 16 KB rule does not apply to them.)
+     *
+     * So x86_64 was the real breakage. Re-run that measurement before changing
+     * this version again -- the number is not in the release notes and a
+     * version that looks newer is not evidence.
      */
-    implementation("com.github.luben:zstd-jni:1.5.6-9@aar")
+    implementation("com.github.luben:zstd-jni:1.5.7-16@aar")
 
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")

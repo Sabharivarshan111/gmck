@@ -153,6 +153,20 @@ jobs:
           - ad: orbit-reel-guide-silent
             file: orbit-reel-guide-silent.mp4
             silent: true
+          # Two more with the same host. "Ask me anything" watches it do one
+          # question end to end instead of touring the app; "It is late" is the
+          # only mascot ad with a pain hook, and the only reel that closes on
+          # the morning rather than on the product.
+          - ad: orbit-reel-guide-answer
+            file: orbit-reel-guide-answer.mp4
+          - ad: orbit-reel-guide-answer-silent
+            file: orbit-reel-guide-answer-silent.mp4
+            silent: true
+          - ad: orbit-reel-guide-night
+            file: orbit-reel-guide-night.mp4
+          - ad: orbit-reel-guide-night-silent
+            file: orbit-reel-guide-night-silent.mp4
+            silent: true
           # The two subtitle-led cuts. These are registered ONCE each, not as a
           # voiced/silent pair: they were written with no spoken track, so
           # there is no second mix of them to render.
@@ -326,7 +340,7 @@ jobs:
           tag_name: ${{ inputs.tag }}
           name: Launch ads (${{ inputs.tag }})
           body: |
-            Nine ads, thirteen files. Every one is a standalone spot, not a cut
+            Eleven ads, nineteen files. Every one is a standalone spot, not a cut
             of one longer film, and each was uploaded by its own render job as
             it finished rather than all at the end.
 
@@ -339,7 +353,9 @@ jobs:
             | `orbit-2am.mp4` | The night before the exam | en-US-JennyNeural |
             | `orbit-draw-it-from-memory.mp4` | The diagram is where the marks are | en-US-AriaNeural |
 
-            **Four 60-second voiced reels, each in two cuts.** The `-silent` cut
+            **Six 60-second voiced reels, each in two cuts.** Three of them are hosted
+            by the app's own chat mascot: a tour, a worked question, and the night
+            before the exam. The `-silent` cut
             has no voiceover and carries itself on the music bed and the
             on-screen text, because most reels are watched muted.
 
@@ -353,6 +369,10 @@ jobs:
             | `orbit-reel-draw-it-silent.mp4` | music only |
             | `orbit-reel-guide.mp4` | voiced — the app's own mascot hosts |
             | `orbit-reel-guide-silent.mp4` | music only |
+            | `orbit-reel-guide-answer.mp4` | voiced — the mascot works one question end to end |
+            | `orbit-reel-guide-answer-silent.mp4` | music only |
+            | `orbit-reel-guide-night.mp4` | voiced — the mascot at two in the morning |
+            | `orbit-reel-guide-night-silent.mp4` | music only |
 
             **Two 60-second reels with no voiceover at all** — the caption names
             a real function on every shot, on a black ground, cut to a declared
