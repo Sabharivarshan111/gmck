@@ -67,3 +67,18 @@ public URL, verified in the database:
   - "Draw a labeled diagram of the brachial plexus."
 Open the note and look at it rather than reporting it done from the code. Then
 publish — the published site is what the owner is looking at.
+
+---
+
+## 2026-09-05 — the credits block is gone
+
+`send_message` to workspace `SsJFPAW9Fet3beeN2YWW`, project
+`89df4dbc-89e6-4e44-a7b1-76b9de94066e` was **accepted** today (a WhatsApp-links
+message, `status: "accepted"`), where every attempt since 2026-09-02 was
+rejected outright for want of credits.
+
+So this note is no longer blocked on the owner. **Send the message above.** One
+practical detail learned today: the MCP `send_message` tool times out at 60
+seconds while the Lovable agent keeps working, so a timeout is not a failure —
+check `list_messages` and look at the message's `status` before resending, or a
+retry will queue the same work twice and spend the credits twice.
