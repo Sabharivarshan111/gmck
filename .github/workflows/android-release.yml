@@ -174,13 +174,32 @@ jobs:
           path: mobile/android/app/build/outputs/apk/release/*.apk
           if-no-files-found: error
 
+      # The version the release NOTES claim has to be the version the AAB
+      # carries, and it cannot be typed by hand. It was hardcoded to 14 and
+      # stayed 14 through the bump to 15 — so the notes on a correct build told
+      # the owner it was the number Play had already rejected. Read it out of
+      # the gradle file that the build just used.
+      - name: Read the version the build actually carries
+        id: appversion
+        run: |
+          gradle=mobile/android/app/build.gradle
+          code=$(grep -m1 -oP '^\s*versionCode\s+\K[0-9]+' "$gradle")
+          name=$(grep -m1 -oP '^\s*versionName\s+"\K[^"]+' "$gradle")
+          if [ -z "$code" ] || [ -z "$name" ]; then
+            echo "could not read versionCode/versionName from $gradle" >&2
+            exit 1
+          fi
+          echo "code=$code" >> "$GITHUB_OUTPUT"
+          echo "name=$name" >> "$GITHUB_OUTPUT"
+          echo "Building versionCode $code ($name)"
+
       # Artifacts need a desktop browser and expire; a release asset can be
       # downloaded from the phone that is going to install it.
       - name: Publish the AAB and APK where a phone can reach them
         uses: softprops/action-gh-release@v2
         with:
           tag_name: release-${{ github.run_number }}
-          name: Release build ${{ github.run_number }}
+          name: Release build ${{ github.run_number }} — v${{ steps.appversion.outputs.code }}
           prerelease: true
           body: |
             Signed release build of the Orbit MBBS native app.
@@ -188,7 +207,7 @@ jobs:
             - `app-release.aab` — upload this to Google Play.
             - `app-release.apk` — install this directly to test the real thing.
 
-            Package `com.aistudio.mbbsqbank.aycxvd`, versionCode 14.
+            Package `com.aistudio.mbbsqbank.aycxvd`, versionCode ${{ steps.appversion.outputs.code }} (${{ steps.appversion.outputs.name }}).
             **Serves live ads**, unlike the debug and preview builds.
 
             Signed with the upload key whose SHA-1 is

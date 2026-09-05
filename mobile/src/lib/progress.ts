@@ -16,6 +16,35 @@ import { warn } from '@/lib/log';
 
 const KEY_PREFIX = 'question-';
 
+/**
+ * Un-ticks whose `record_question_undone` has not been confirmed by the server.
+ *
+ * `pullProgressFromCloud` merges and never deletes, which is right — a tick
+ * made on another device has to reach this one. But it also means a row the
+ * reader un-ticked HERE comes straight back if the RPC that was meant to
+ * delete it did not land: offline, no session yet, or a profile with no year,
+ * all of which the RPC family returns from silently.
+ *
+ * The resurrection then arrives as a rise in the count, and `XpToast` reads a
+ * rise as a tick — so un-ticking a question announced "+1 XP" a moment later,
+ * for undoing something. That is what the app's owner reported.
+ *
+ * An id is parked here at the un-tick and released the moment the server
+ * confirms the delete. So the tombstone exists exactly while it is needed: if
+ * the RPC succeeded there is no cloud row left to resurrect anyway, and if it
+ * failed this is what holds the un-tick until a later reconcile retries it. It
+ * is persisted because the failure that needs it most is an app that was
+ * killed before the retry.
+ */
+const PENDING_UNDO_KEY = 'orbit:pending-undo';
+let pendingUndo = new Set<string>();
+
+function persistPendingUndo(): void {
+  AsyncStorage.setItem(PENDING_UNDO_KEY, JSON.stringify(Array.from(pendingUndo))).catch(error =>
+    warn('pending-undo persist failed:', error),
+  );
+}
+
 let doneIds = new Set<string>();
 let hydrated = false;
 let version = 0;
@@ -130,6 +159,13 @@ export function totalDone(): number {
 export async function hydrateProgress(): Promise<void> {
   try {
     const keys = await AsyncStorage.getAllKeys();
+    const parked = await AsyncStorage.getItem(PENDING_UNDO_KEY);
+    if (parked) {
+      const list: unknown = JSON.parse(parked);
+      if (Array.isArray(list)) {
+        pendingUndo = new Set(list.filter((id): id is string => typeof id === 'string'));
+      }
+    }
     const questionKeys = keys.filter(key => key.startsWith(KEY_PREFIX));
     if (questionKeys.length > 0) {
       const entries = await AsyncStorage.getMany(questionKeys);
@@ -203,6 +239,17 @@ export function setQuestionDone(question: string, done: boolean): void {
     warn('setQuestionDone persist failed:', error),
   );
 
+  // Park the un-tick before the request goes out, so a pull that overlaps it
+  // cannot put the row back. A tick clears any tombstone the same id had.
+  if (done) {
+    if (pendingUndo.delete(id)) {
+      persistPendingUndo();
+    }
+  } else {
+    pendingUndo.add(id);
+    persistPendingUndo();
+  }
+
   // The RPCs are idempotent, so an un-tick always lowers XP even if this
   // device never recorded the original tick.
   const rpc = done ? 'record_question_done' : 'record_question_undone';
@@ -211,6 +258,13 @@ export function setQuestionDone(question: string, done: boolean): void {
       const { error } = await supabase.rpc(rpc, { _question_id: id });
       if (error) {
         warn(`${rpc} failed:`, error);
+        return;
+      }
+      // Confirmed gone from the server, so there is nothing left to guard
+      // against — and leaving the tombstone would block a genuine re-tick made
+      // on another device from ever reaching this one.
+      if (!done && pendingUndo.delete(id)) {
+        persistPendingUndo();
       }
     } catch (error) {
       warn(`${rpc} threw:`, error);
@@ -237,7 +291,10 @@ export async function pushProgressToCloud(): Promise<void> {
   }
   pushing = true;
   try {
-    const ids = Array.from(doneIds);
+    // Never push an id that is parked for deletion: the pull's retry above and
+    // this would then fight, one deleting the row and the other re-inserting
+    // it, on every launch.
+    const ids = Array.from(doneIds).filter(id => !pendingUndo.has(id));
     const CHUNK = 500;
     for (let i = 0; i < ids.length; i += CHUNK) {
       await supabase.rpc('record_questions_done', { _question_ids: ids.slice(i, i + CHUNK) });
@@ -266,13 +323,39 @@ export async function pullProgressFromCloud(): Promise<void> {
       return;
     }
     const incoming: Record<string, string> = {};
+    const stillThere: string[] = [];
     let added = false;
     for (const row of (data ?? []) as { question_id: string }[]) {
-      if (row.question_id && !doneIds.has(row.question_id)) {
+      if (!row.question_id) {
+        continue;
+      }
+      // An un-tick this device made and the server has not confirmed. Merging
+      // it would undo the reader's own action and read as a fresh tick.
+      if (pendingUndo.has(row.question_id)) {
+        stillThere.push(row.question_id);
+        continue;
+      }
+      if (!doneIds.has(row.question_id)) {
         doneIds.add(row.question_id);
         incoming[row.question_id] = 'true';
         added = true;
       }
+    }
+    // The row surviving is the proof the RPC never landed, so this is the
+    // retry. Sequential rather than parallel: a reader who un-ticked a whole
+    // topic offline should not open with fifty simultaneous requests.
+    for (const id of stillThere) {
+      const { error: undoError } = await supabase.rpc('record_question_undone', {
+        _question_id: id,
+      });
+      if (undoError) {
+        warn('record_question_undone retry failed:', undoError);
+        continue;
+      }
+      pendingUndo.delete(id);
+    }
+    if (stillThere.length > 0) {
+      persistPendingUndo();
     }
     if (added) {
       await AsyncStorage.setMany(incoming);

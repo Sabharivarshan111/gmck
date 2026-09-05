@@ -29,21 +29,40 @@ export function useXpStream({
   onCelebrate,
   onXpDelta,
 }: Options) {
-  const prevXp = useRef<number>(Math.max(cloudXp, readLocalXp()));
+  /*
+   * One baseline per source, because a lower reading from one source is not a
+   * gain in another.
+   *
+   * Three places report an XP number here and they do not count the same
+   * thing. `cloudXp` and the realtime `profiles` row are the server's count of
+   * every question this ACCOUNT has ever ticked; `readLocalXp()` counts the
+   * `question-` keys in THIS BROWSER. Sign in on a second browser and the
+   * first is 300 while the second is 4.
+   *
+   * They shared one `prevXp` ref and each handler wrote its own number into
+   * it, so un-ticking a question ran the local handler first (4 -> 3, no
+   * toast, ref := 3) and then the realtime one, which read 299 against a
+   * baseline of 3 and congratulated the reader with "+296 XP" for undoing
+   * something. Ticking did the same with a different absurd number — which is
+   * why the report was about the un-tick: a big number after a tick still
+   * looks like the feature working.
+   */
+  const prevCloudXp = useRef<number>(cloudXp);
+  const prevLocalXp = useRef<number>(readLocalXp());
   const prevStreak = useRef<number>(cloudStreak);
   const nameRef = useRef<string | undefined>(displayName);
   useEffect(() => { nameRef.current = displayName; }, [displayName]);
 
   // Sync refs when cloud values arrive
   useEffect(() => {
-    // Use cloud as the source of truth; local is best-effort and may lag.
+    // Compared against the cloud's own previous value, never against the
+    // browser's — see the refs above.
     const xp = cloudXp;
-    if (xp > prevXp.current) {
-      const delta = xp - prevXp.current;
-      handleXpChange(prevXp.current, xp, delta);
+    if (xp > prevCloudXp.current) {
+      handleXpChange(prevCloudXp.current, xp, xp - prevCloudXp.current);
     }
-    // Always sync ref (including decreases from un-ticks) so future deltas are correct.
-    prevXp.current = xp;
+    // Always sync (including decreases from un-ticks) so future deltas are correct.
+    prevCloudXp.current = xp;
   }, [cloudXp]);
 
   useEffect(() => {
@@ -64,7 +83,10 @@ export function useXpStream({
       ? `Great work, Dr. ${currentName}!`
       : "Keep going!";
     toast.success(`+${delta} XP`, { description: desc, duration: 2000 });
-    const unlocks = detectNewUnlocks(to, prevStreak.current);
+    // The delta is honest to whichever source reported it; a badge is decided
+    // on the best total known, so a browser that has only ticked four
+    // questions does not un-announce an account's Gold Scholar.
+    const unlocks = detectNewUnlocks(Math.max(to, prevCloudXp.current), prevStreak.current);
     if (unlocks.leveledUp) {
       onCelebrate({ kind: "level", value: unlocks.leveledUp });
     }
@@ -79,26 +101,26 @@ export function useXpStream({
       description: "Keep the flame alive — answer one question tomorrow.",
       duration: 2500,
     });
-    const unlocks = detectNewUnlocks(prevXp.current, to);
+    const unlocks = detectNewUnlocks(Math.max(prevCloudXp.current, prevLocalXp.current), to);
     if (unlocks.streakMilestone) {
       onCelebrate({ kind: "streak", value: unlocks.streakMilestone });
     }
     for (const b of unlocks.badges) {
       onCelebrate({ kind: "badge", value: b.threshold, label: b.label, emoji: b.emoji });
     }
-    commitUnlocks(unlocks, prevXp.current, to);
+    commitUnlocks(unlocks, Math.max(prevCloudXp.current, prevLocalXp.current), to);
   }
 
   // Local progress event → recompute local XP (handles both increases and decreases)
   useEffect(() => {
     const handler = () => {
       const xp = readLocalXp();
-      if (xp > prevXp.current) {
-        const delta = xp - prevXp.current;
-        handleXpChange(prevXp.current, xp, delta);
+      if (xp > prevLocalXp.current) {
+        handleXpChange(prevLocalXp.current, xp, xp - prevLocalXp.current);
       }
-      // Always sync — allows un-tick to lower local XP without celebrating.
-      prevXp.current = xp;
+      // Always sync — an un-tick lowers this browser's count without
+      // celebrating, and without moving the cloud's baseline.
+      prevLocalXp.current = xp;
     };
     window.addEventListener(QUESTION_PROGRESS_EVENT, handler);
     return () => window.removeEventListener(QUESTION_PROGRESS_EVENT, handler);
@@ -116,11 +138,12 @@ export function useXpStream({
         (payload: any) => {
           const newXp: number = payload.new?.xp ?? 0;
           const newStreak: number = payload.new?.streak ?? 0;
-          if (newXp > prevXp.current) {
-            const delta = newXp - prevXp.current;
-            handleXpChange(prevXp.current, newXp, delta);
-            prevXp.current = newXp;
+          // The realtime row IS profiles.xp, so it shares the cloud baseline
+          // rather than keeping a third one that could drift from it.
+          if (newXp > prevCloudXp.current) {
+            handleXpChange(prevCloudXp.current, newXp, newXp - prevCloudXp.current);
           }
+          prevCloudXp.current = newXp;
           if (newStreak > prevStreak.current) {
             handleStreakChange(prevStreak.current, newStreak);
             prevStreak.current = newStreak;
