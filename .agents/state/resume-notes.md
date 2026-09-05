@@ -438,3 +438,53 @@ means nothing is published at all.
 No render has run. The sandbox cannot reach edge-tts or the plate bucket, so
 the word timings and the ads themselves are CI's first look — and the committed
 mp3s still speak the OLD lines, which is exactly what preflight now fails on.
+
+## 2026-09-05 — Claude Code — the security advisors, and a revoke that silently did nothing
+
+Ran the Supabase security advisors after the diagrams fix. **81 findings, 3 of
+them ERROR.** All three are closed; the remaining 69 were each read and are
+by design (documented in the two migration headers). Zero ERRORs now.
+
+| Was open | Now |
+|---|---|
+| `handwritten_notes_pre_flowchart_backup` — RLS disabled, 11 rows, readable by anyone with the anon key | RLS on, no policy: service role only |
+| `question_diagrams_fix_20260904` — same, 4 rows | RLS on, no policy |
+| `weekly_leaders` — a view running with its OWNER's rights, so it returned rows the caller's RLS would refuse | `security_invoker = on` |
+
+Neither table is referenced by either app or any edge function; they are
+migration backups. Proved the fix by `set role anon` and re-counting: the
+flowchart backup returns **0 of its 11 rows**.
+
+### The lesson worth keeping: `revoke ... from anon` did nothing
+
+The first migration revoked EXECUTE on the admin RPCs from `anon`, reported
+success, and left them exactly as reachable as before. Postgres grants EXECUTE
+on a new function to PUBLIC by default, and `anon` was inheriting **PUBLIC's**
+grant, not one of its own:
+
+    admin_revoke_user_access  {=X/postgres,postgres=X/postgres,authenticated=X/postgres,...}
+                               ^^^ this is PUBLIC
+
+The only reason it was caught is that the change was verified afterwards with
+`has_function_privilege('anon', ...)` rather than trusted. It still answered
+true. The second migration revokes from PUBLIC and grants back to
+`authenticated`. **Verify a grant change by asking the database, never by the
+statement succeeding.**
+
+Also: `grant_admin_for_owner_email()` — SECURITY DEFINER, writes `user_roles` —
+was exposed at `/rest/v1/rpc/`. It is a trigger function so calling it raised
+rather than doing anything, but nothing that grants a role should be an HTTP
+endpoint. Revoked from everyone; the trigger still fires, because Postgres
+checks EXECUTE at trigger CREATE time, not at fire time.
+
+### Two things confirmed rather than changed
+
+* **The admin dashboard already exists in the native app** and is already
+  granted. `AdminPanel` is mounted at `ProgressScreen.tsx:771`, gated by
+  `useIsAdmin` -> `is_admin()`, and `sabharivarshan111@gmail.com`
+  (`1c0f5bac-…`) holds the `admin` role in `user_roles`. Every `admin_*`
+  function self-gates too — checked each body.
+* **The Supabase half of Google Sign-In is working**: 323 google identities,
+  most recent 2026-09-04. The owner's own account has a google identity. The
+  only gap is the three Android OAuth clients in Google Cloud, which is
+  `oauth-sha1-deployment` in blocked.json and is the owner's to do.
