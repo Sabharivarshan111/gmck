@@ -270,3 +270,85 @@ returning 200 with real cards. The v12 placeholder is gone.
 Verifying a deploy by diffing the read-back: extract the returned file contents
 with `jq -j`, **not** `jq -r`. `-r` appends its own newline to a file that
 already ends in one and reports a spurious one-line difference on every file.
+
+## 2026-09-05 — Claude Code — the ads showed a broken app, and there were four causes
+
+The owner watched the published reels and reported three things: a "this
+diagram could not be loaded" placeholder, a white box captioned "Types of
+synovial joint", and a home screen showing "Welcome to Orbit … CREATED BY
+Sabharivarshan S" with **no motivational quote**. All three were real. Chasing
+them found a fourth.
+
+### 1. The hero blanks to an empty card — a real app bug, not just an ad bug
+
+`HomeScreen`'s headline and quote are inside the slide cross-fade; the CREATED
+BY chip is not. The fade started at `opacity 0`, so for its duration the hero
+is a large empty card with a credit chip floating in it — **every reader, every
+six seconds**. The committed `glass-home.png` the ads used is exactly that
+frame. Fixed with `HERO_FADE_FLOOR = 0.35`: the same rule as "nothing scales
+from 0", applied to opacity.
+
+### 2 and 3. The two diagram screens
+
+`screenshots/single-note-diagram.png` held the failure placeholder (the fixture
+points at the plate's Supabase URL, which no sandbox can reach) and
+`chapter-diagrams.png` held the harness's **drawn stand-in** — a white
+rectangle with the diagram's name over "plane - hinge - pivot - saddle - ball
+and socket". Both were captured by hand months ago and the ad pipeline copied
+the committed files in.
+
+Now: `fetch-plates.mjs` downloads the plates those screens name (including the
+real `types_of_synovial_joints` and `tca_cycle_amphibolic_anaplerosis`), the
+workflow runs **plates before screens**, `capture-screens.mjs` stages them
+where Vite serves them, and the harness draws them under `?plates=real`. Both
+screens are captured fresh every render.
+
+### 4. Seven more assets were named by shots and produced by nothing
+
+Found while checking the above. `staticFile()` on a missing file is a broken
+image in a finished ad. Two were plates never downloaded
+(`calots_triangle_anatomy.jpg`, `stomach_lymphatics_anatomy.jpg` — both exist
+in the bucket); five were screens nothing captured.
+
+**Preflight could not see any of them.** It read `file:` entries out of the
+SCREENS registry and stopped; an asset named by an `imageName=` or
+`plateImage=` prop was invisible. It scans the props now — 21 assets are named
+that way.
+
+**And 100 generated screens were committed** to `remotion-ad/public/app_screens/`
+despite `.gitignore` forbidding it since it was written. That is why three
+files no step produces still passed preflight: the checkout supplied them. They
+are untracked now, which is what makes the capture list load-bearing.
+
+`public/audio/` is still tracked, deliberately: preflight compares every
+recorded line against the script text, so a stale clip is caught. A stale
+screen is not.
+
+### The guard that was missing everywhere
+
+Every one of these rendered perfectly — right layout, right caption, right
+section — with a stand-in, a failure or nothing at all inside. **Nothing looked
+at the DOM, so nothing noticed.** `shoot.mjs` now asserts each diagram screen
+decoded its plates (`naturalWidth > 0`, src under `/plates/`) and exits
+non-zero otherwise.
+
+Captures are also taken under `prefers-reduced-motion` now, which this app
+supports properly and which pins every screen in its settled state. A
+screenshot of a moving screen is a coin toss, and cause 1 is what losing it
+costs.
+
+### Verified by walking the graph, not by eye
+
+All **38** assets named anywhere in the ad code are produced by fetch-plates,
+capture-screens or the shooter, and the shooter really produces all 26 screens
+the capture list asks for. Re-check with the node one-liner in the commit
+`471eaacb` message if any of these lists change.
+
+### Where it is
+
+Ads re-dispatched as **ads-3** after `471eaacb`; the earlier ads-3 dispatch was
+cancelled because it predated causes 2-4. A check-in is scheduled. **Preflight
+has never had teeth before — this is the first run where a missing asset can
+actually fail the build**, so expect it to find things.
+
+74 app screens re-captured into `screenshots/all/`.
