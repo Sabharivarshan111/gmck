@@ -138,9 +138,30 @@ check(
   !/imgMatch|cleanText/.test(rendererCode),
   'NotesContentView is back to matching images per section type — only the first image survives, and only in the types that were special-cased',
 );
+// The fixture must still exercise image-markdown-in-prose, which is how the
+// edge function delivers a diagram: a `definition` section whose text is
+// `![alt](url)` and a caption. What it must NOT do is name a real host.
+//
+// This used to require `storage/v1/object/public` in the fixture — it was
+// asserting that the fixture pointed at Supabase storage. Nothing in a sandbox
+// can reach that host and the object it named had been deleted from the
+// bucket, so `DiagramCard` fell to its error branch and the captured
+// screenshot read **"This diagram could not be loaded."** That capture is what
+// the ad renderer draws for every note shot in every ad; it shipped, and was
+// reported twice. The check was holding the bug in place.
+//
+// So: the markdown has to be there, and the URL has to be a parameter rather
+// than a literal. A fixture that reaches the network to render is a fixture
+// that fails differently on every machine.
 check(
-  /!\[/.test(fixture) && /storage\/v1\/object\/public/.test(fixture),
+  /!\[/.test(fixture) && /\(' \+ diagramUrl \+ '\)/.test(fixture),
   'the fixture has no image markdown, so the diagram path in prose is untested',
+);
+check(
+  !/storage\/v1\/object\/public/.test(fixture),
+  'the fixture names a real storage URL again — it cannot be reached from a ' +
+    'sandbox, and the capture that fails becomes "This diagram could not be ' +
+    'loaded" inside every ad',
 );
 
 // 3. The edge function's shapes are no longer asserted from source, and that

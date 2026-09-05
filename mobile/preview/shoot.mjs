@@ -52,8 +52,22 @@ const SHOTS = [
   // The handwritten-notes renderer against the fixture, top and bottom: the
   // top shows the diagram card, the bottom the regenerate button and the AI
   // edit box.
-  { name: 'notes-renderer', query: 'screen=notesdemo' },
-  { name: 'notes-renderer-bottom', query: 'screen=notesdemo', scroll: 'bottom' },
+  //
+  // `plates=real` and the plate assertion are load-bearing on BOTH of these,
+  // for the same reason they are on the two diagram screens below. These two
+  // PNGs are what the ad renderer draws for every note shot in every one of
+  // the nine ads, and the fixture's diagram section used to point at a
+  // Supabase storage URL — unreachable from a sandbox, and gone from the
+  // bucket in any case — so the capture quietly contained "This diagram could
+  // not be loaded". It shipped in a published cut and was reported twice,
+  // because nothing here was looking at what the diagram card actually drew.
+  { name: 'notes-renderer', query: 'screen=notesdemo&plates=real', plates: 1 },
+  {
+    name: 'notes-renderer-bottom',
+    query: 'screen=notesdemo&plates=real',
+    plates: 1,
+    scroll: 'bottom',
+  },
   // The flashcards walk, and the chat's new controls.
   { name: 'flashcards-decks', query: 'screen=flashcards' },
   // The daily limit and the pacing clock live below the fold.

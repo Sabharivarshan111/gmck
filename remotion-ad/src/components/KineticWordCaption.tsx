@@ -1,5 +1,6 @@
 import React from 'react';
 import { useCurrentFrame, interpolate, spring, useVideoConfig } from 'remotion';
+import { activeWordAt, lineFor } from './wordSync';
 
 interface KineticWordCaptionProps {
   text: string;
@@ -7,6 +8,17 @@ interface KineticWordCaptionProps {
   accent?: string;
   audioFrames?: number;
   durationInFrames?: number;
+  /**
+   * Which recording this caption is reading along with.
+   *
+   * Both are needed to find the shot's word boundaries, and both are optional
+   * so the component still renders in isolation. Without them it falls back to
+   * spreading the line evenly across the clip, which is the behaviour this
+   * component had before and which never lined up with the voice — see
+   * `wordSync.ts`.
+   */
+  scriptId?: string;
+  shotN?: number;
 }
 
 export const KineticWordCaption: React.FC<KineticWordCaptionProps> = ({
@@ -14,7 +26,9 @@ export const KineticWordCaption: React.FC<KineticWordCaptionProps> = ({
   themeColor = '#38bdf8',
   accent,
   audioFrames = 90,
-  durationInFrames = 105
+  durationInFrames = 105,
+  scriptId,
+  shotN
 }) => {
   const activeColor = accent ?? themeColor;
   const frame = useCurrentFrame();
@@ -23,18 +37,20 @@ export const KineticWordCaption: React.FC<KineticWordCaptionProps> = ({
   const words = text.trim().split(/\s+/).filter(Boolean);
   const totalWords = Math.max(1, words.length);
 
-  // Active word progression across the spoken audio duration
-  // Words highlight naturally as the speaker pronounces them
-  const activeWordFloat = interpolate(
-    frame,
-    [2, Math.max(8, audioFrames - 4)],
-    [0, totalWords - 1],
-    {
-      extrapolateLeft: 'clamp',
-      extrapolateRight: 'clamp'
-    }
-  );
-  const activeIndex = Math.min(totalWords - 1, Math.floor(activeWordFloat));
+  /*
+   * The active word comes from the recording, not from arithmetic.
+   *
+   * This used to be `interpolate(frame, [2, audioFrames - 4], [0, n - 1])` —
+   * an even slice of the clip per word. That is only right if every word takes
+   * the same time to say, so the highlight drifted a word or two off the voice
+   * by the middle of every line, in all three long-form ads, for their whole
+   * ninety seconds. `activeWordAt` reads the synthesiser's own WordBoundary
+   * events and keeps the even spread only as a fallback for a shot that has no
+   * recorded timing.
+   */
+  const line = scriptId ? lineFor(scriptId, shotN ?? -1) : undefined;
+  const spoken = activeWordAt(line, frame, fps, totalWords, Math.max(8, audioFrames - 4));
+  const activeIndex = Math.min(totalWords - 1, spoken);
 
   // Overall container spring entrance
   const containerSpring = spring({
@@ -93,8 +109,15 @@ export const KineticWordCaption: React.FC<KineticWordCaptionProps> = ({
           const isActive = idx === activeIndex;
           const isPassed = idx < activeIndex;
 
+          // Each word's entrance starts when that word is said. It used to
+          // start at `idx * (audioFrames / totalWords)` — the same even-slice
+          // assumption as the highlight, so the two were consistently wrong
+          // together, which is why neither looked like a bug on its own.
+          const startsAt = line?.words[idx]
+            ? (line.words[idx].startMs / 1000) * fps
+            : idx * (audioFrames / totalWords);
           const wordSpring = spring({
-            frame: Math.max(0, frame - (idx * (audioFrames / totalWords))),
+            frame: Math.max(0, frame - startsAt),
             fps,
             config: { damping: 14, stiffness: 100 }
           });

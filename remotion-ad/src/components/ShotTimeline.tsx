@@ -59,6 +59,12 @@ interface ShotViewProps {
   beats?: number;
   /** Subtitle-led cut: the caption is the argument, so it replaces the headline. */
   subtitleLed?: boolean;
+  /**
+   * The script this shot belongs to, so a caption can look up when each of its
+   * words is actually spoken. Without it every caption falls back to spreading
+   * the line evenly across the clip, which is the desync that was reported.
+   */
+  scriptId?: string;
 }
 
 const ShotView: React.FC<ShotViewProps> = ({
@@ -72,6 +78,7 @@ const ShotView: React.FC<ShotViewProps> = ({
   clock,
   beats = 4,
   subtitleLed = false,
+  scriptId,
 }) => {
   const frame = useCurrentFrame();
   const durationInFrames = durationOverride ?? timing?.shotFrames ?? 120;
@@ -210,10 +217,21 @@ const ShotView: React.FC<ShotViewProps> = ({
             beats={beats}
           />
         ) : reel ? (
+          /*
+             A voiced reel's headline is a verbatim span of its spoken line —
+             `preflight` enforces that — so it can arrive on the word that
+             starts it instead of at the cut. Before this, the headline said
+             one thing while the voice said another entirely ("2,025 already
+             asked" over "Your university repeats its questions"), which is the
+             half of the sync complaint you could see rather than hear.
+          */
           <ReelHeadline
             text={shot.text || shot.vo || ''}
             accent={accent}
             durationInFrames={durationInFrames}
+            scriptId={scriptId}
+            shotN={shot.n}
+            spokenLine={shot.vo}
           />
         ) : (
           <KineticWordCaption
@@ -221,6 +239,8 @@ const ShotView: React.FC<ShotViewProps> = ({
             accent={accent}
             audioFrames={audioFrames}
             durationInFrames={durationInFrames}
+            scriptId={scriptId}
+            shotN={shot.n}
           />
         )}
       </AbsoluteFill>
@@ -325,6 +345,7 @@ export const ShotTimeline: React.FC<{ script: AdScript; withVoice?: boolean }> =
             clock={perBeat ? { perBeat, originFrame: startFrame - gridOrigin } : undefined}
             beats={perBeat ? Math.round(durationInFrames / perBeat) : undefined}
             subtitleLed={subtitleLed}
+            scriptId={speaks ? script.id : undefined}
           />
         </Sequence>
       ))}

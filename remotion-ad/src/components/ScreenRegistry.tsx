@@ -15,7 +15,8 @@ export const SCREENS: Record<string, ScreenAsset> = {
   glassHome: { kind: 'screen', file: 'app_screens/glass-home.png' },
   // Final year, because it is the only year with six subjects. Second year
   // has three rows and then 40% of the screen is black, which in a wide
-  // shot reads as an empty app while the voiceover claims 5,545 questions.
+  // shot reads as an empty app while the voiceover claims five thousand six
+  // hundred questions.
   browse: { kind: 'screen', file: 'app_screens/browse-final.png' },
   questions: { kind: 'screen', file: 'app_screens/questions.png' },
   questionsChapters: { kind: 'screen', file: 'app_screens/questions-chapters.png' },

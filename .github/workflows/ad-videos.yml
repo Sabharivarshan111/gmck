@@ -98,6 +98,11 @@ jobs:
         working-directory: remotion-ad
         run: npm run preflight
 
+      # `public/audio` now carries a `shot_NN.words.json` beside every mp3 —
+      # when each word of that line is actually spoken, straight from the
+      # Speech service. The render jobs re-derive the timing tables from those,
+      # so they travel with the clips they describe and cannot get out of step
+      # with them.
       - name: Share the assets with the render jobs
         uses: actions/upload-artifact@v4
         with:
@@ -171,6 +176,19 @@ jobs:
         with:
           name: ad-assets
           path: remotion-ad/public
+
+      # The captions read a generated module to know when each word is spoken,
+      # and the long-form ads take their shot lengths from the same
+      # measurements. Both are rebuilt here, from the very clips this job is
+      # about to mux, rather than trusted from the repo.
+      #
+      # The committed copy of `src/generated/voiceTimings.ts` is empty on
+      # purpose: a checked-in measurement is a measurement of an older
+      # recording, and laying new audio out on old boundaries is exactly the
+      # drift that put every ad's captions out of step with its voice.
+      - name: Measure the recordings
+        working-directory: remotion-ad
+        run: npm run measure
 
       - name: Preflight
         working-directory: remotion-ad
@@ -246,9 +264,50 @@ jobs:
           path: remotion-ad/out/${{ matrix.file }}
           retention-days: 14
 
+      # Publish THIS ad now, rather than waiting for the other twelve.
+      #
+      # The release used to be written by a single job behind `needs: render`,
+      # so nothing reached GitHub until the slowest render in the matrix
+      # finished — and if one of them failed, thirteen good renders were
+      # published as nothing at all. A ninety-second 1080x1920 render is the
+      # better part of an hour; the owner asked to be able to watch them arrive.
+      #
+      # `gh release create` is allowed to fail because thirteen jobs race to be
+      # the first to need it and only one can win; the losers find it already
+      # there, which is the outcome all of them wanted. `--clobber` makes the
+      # upload itself idempotent, so a re-run replaces its own asset instead of
+      # erroring on a name that is taken. The final `publish` job then writes
+      # the real release notes over the placeholder.
+      - name: Publish this ad to the release
+        working-directory: remotion-ad
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ inputs.tag }}
+        run: |
+          set -uo pipefail
+          gh release create "$TAG" \
+            --title "Launch ads ($TAG)" \
+            --notes "Renders are being published as each one finishes. The full notes land when the matrix completes." \
+            || echo "release $TAG already exists — uploading into it"
+          for attempt in 1 2 3 4; do
+            if gh release upload "$TAG" "out/${{ matrix.file }}" --clobber; then
+              echo "published ${{ matrix.file }}"
+              exit 0
+            fi
+            echo "upload attempt $attempt failed; retrying"
+            sleep $((attempt * 5))
+          done
+          echo "::error::could not upload ${{ matrix.file }} after four attempts"
+          exit 1
+
+  # Every ad has already been uploaded by its own render job. This job exists
+  # to replace the placeholder notes with the real ones, and to say out loud
+  # which files actually made it — a matrix entry that failed is a file that is
+  # missing from the release, and that is worth seeing in one place.
   publish:
-    name: Publish the MP4s
+    name: Finish the release notes
     needs: render
+    if: always()
     runs-on: ubuntu-latest
     steps:
       - name: Collect the three ads
@@ -267,8 +326,12 @@ jobs:
           tag_name: ${{ inputs.tag }}
           name: Launch ads (${{ inputs.tag }})
           body: |
-            Three complete 90-second vertical launch ads (1080x1920, 30fps).
-            Each is a standalone spot, not a cut of one longer film.
+            Nine ads, thirteen files. Every one is a standalone spot, not a cut
+            of one longer film, and each was uploaded by its own render job as
+            it finished rather than all at the end.
+
+            **Three 90-second vertical launch ads** (1080x1920, 30fps), paced by
+            their own recorded voiceover.
 
             | File | Angle | Voice |
             |---|---|---|
@@ -276,9 +339,9 @@ jobs:
             | `orbit-2am.mp4` | The night before the exam | en-US-JennyNeural |
             | `orbit-draw-it-from-memory.mp4` | The diagram is where the marks are | en-US-AriaNeural |
 
-            And six 60-second Instagram reels — three scripts, each in two cuts.
-            The `-silent` cut has no voiceover and carries itself on the music
-            bed and the on-screen text, because most reels are watched muted.
+            **Four 60-second voiced reels, each in two cuts.** The `-silent` cut
+            has no voiceover and carries itself on the music bed and the
+            on-screen text, because most reels are watched muted.
 
             | File | Cut |
             |---|---|
@@ -288,19 +351,34 @@ jobs:
             | `orbit-reel-six-hours-silent.mp4` | music only |
             | `orbit-reel-draw-it.mp4` | voiced |
             | `orbit-reel-draw-it-silent.mp4` | music only |
-            | `orbit-reel-guide.mp4` | voiced — the mascot hosts |
+            | `orbit-reel-guide.mp4` | voiced — the app's own mascot hosts |
             | `orbit-reel-guide-silent.mp4` | music only |
 
-            And two 60-second reels with **no voiceover at all** — the caption
-            names a real function on every shot, on a black ground, cut to a
-            declared tempo. Swap the bed for your own track at the same tempo
-            and every cut still lands on a beat; a different tempo is one
-            number in the script. `.agents/video/BEAT-SYNC.md` is the contract.
+            **Two 60-second reels with no voiceover at all** — the caption names
+            a real function on every shot, on a black ground, cut to a declared
+            tempo. Swap the bed for your own track at the same tempo and every
+            cut still lands on a beat; a different tempo is one number in the
+            script. `.agents/video/BEAT-SYNC.md` is the contract.
 
             | File | Cut to |
             |---|---|
             | `orbit-reel-functions.mp4` | 100 BPM — every function, one per shot |
             | `orbit-reel-one-question.mp4` | 120 BPM — one question, end to end |
+
+            ### What the captions and the voice agree about
+
+            Every caption is now synchronised to the recording rather than to a
+            guess. The synthesiser reports when it says each word, those
+            boundaries are measured in the same CI run that records them, and
+            the captions highlight against them — so a lit word is the word in
+            the air. A voiced reel's headline is a verbatim phrase from the line
+            spoken under it, and the render is refused if that stops being true.
+
+            ### The numbers in these ads
+
+            Measured from the shipped bank and the live diagram table:
+            **5,634 questions**, **3,463** of them carrying a repeat marker, and
+            **250 hand-drawn plates** attached to **922 questions**.
 
             The music is synthesised by `remotion-ad/scripts/make-beds.py` and
             owned outright — no stock track, because "free for non-commercial"

@@ -257,6 +257,183 @@ try {
   problems.push('public/audio/manifest.json is missing — the voiceover has never been synthesised');
 }
 
+/* ------------------------------------------------------------------------
+ * No quantity may be shaped like a year.
+ *
+ * The bank's repeat-marker count was written on screen as "2,025", and the
+ * app's owner watched the finished reels and asked what 2025 was doing in
+ * them. They were right to: beside the words "the years asked", a four-digit
+ * number with a comma in it is a year, and no amount of context rescues it at
+ * two seconds a shot.
+ *
+ * It was also stale and counting the wrong thing, which is the usual pairing —
+ * a number nobody can sanity-check by looking at it is a number that rots
+ * quietly. So the rule is shape, not accuracy: any bare 19xx/20xx, and any
+ * "1,xxx"/"2,xxx", is refused in anything the viewer reads or hears. Counts
+ * that genuinely land in that range have to be written another way ("over
+ * two thousand"), and a real year in a PYQ badge belongs in a screenshot,
+ * not in the ad's own copy.
+ * --------------------------------------------------------------------- */
+const YEAR_SHAPED = /\b(?:19|20)\d{2}\b|\b[12],\d{3}\b/;
+
+for (const script of scripts) {
+  for (const shot of script.shots) {
+    for (const [field, value] of [
+      ['text', shot.text],
+      ['vo', shot.vo],
+      ['kicker', shot.kicker],
+    ]) {
+      if (value && YEAR_SHAPED.test(value)) {
+        problems.push(
+          `${script.id} shot ${shot.n}: \`${field}\` contains "${value}", and ` +
+            'a four-digit number in that range reads as a year rather than as ' +
+            'a count. Write it in words.',
+        );
+      }
+    }
+  }
+}
+
+/* ------------------------------------------------------------------------
+ * A voiced reel's headline must be words the voice actually says.
+ *
+ * This is the rule that makes the reels synchronisable at all. The headline
+ * and the voiceover used to be written independently: shot one of "Already
+ * Asked" put "2,025 already asked" on screen while the voice said "Your
+ * university repeats its questions". A viewer with the sound on read one
+ * sentence and heard a different one, and no amount of timing work can fix
+ * that — there is nothing to line the words up with.
+ *
+ * So the headline is a verbatim, consecutive span of the spoken line, and
+ * `ReelHeadline` lights each of its words at the moment it is said. If this
+ * check is failing, the fix is in the script: shorten the headline until it is
+ * a phrase the line contains, rather than loosening the comparison.
+ *
+ * Comparison is on letters and digits only, so punctuation and case in either
+ * place are free. A `noVoice` reel is exempt: its caption IS the argument and
+ * there is no voice for it to agree with.
+ * --------------------------------------------------------------------- */
+const wordsOf = text =>
+  String(text ?? '')
+    .split(/\s+/)
+    .map(w => w.toLowerCase().replace(/[^a-z0-9]/g, ''))
+    .filter(Boolean);
+
+const isSpanOf = (span, line) => {
+  const want = wordsOf(span);
+  const said = wordsOf(line);
+  if (want.length === 0) return true;
+  for (let i = 0; i + want.length <= said.length; i += 1) {
+    let hit = true;
+    for (let k = 0; k < want.length; k += 1) {
+      if (said[i + k] !== want[k]) {
+        hit = false;
+        break;
+      }
+    }
+    if (hit) return true;
+  }
+  return false;
+};
+
+for (const script of scripts) {
+  if (script.format !== 'reel' || script.noVoice) continue;
+  for (const shot of script.shots) {
+    if (!shot.text) continue;
+    if (!isSpanOf(shot.text, shot.vo)) {
+      problems.push(
+        `${script.id} shot ${shot.n}: the headline "${shot.text}" is not a ` +
+          `phrase inside the spoken line "${shot.vo}" — the viewer would read ` +
+          'one thing and hear another',
+      );
+    }
+  }
+}
+
+/* ------------------------------------------------------------------------
+ * The word timings have to be the ones for THESE lines.
+ *
+ * `src/generated/voiceTimings.ts` is what the captions read to know when each
+ * word is spoken, and `src/dynamicScriptTimings.ts` is what paces the
+ * long-form ads. Both are written by `scripts/measure-audio.mjs` from the
+ * recordings, and the copy committed to the repo is deliberately empty.
+ *
+ * The failure this prevents is the one that produced the reported desync:
+ * `dynamicScriptTimings.ts` was a hand-maintained file that nothing
+ * regenerated, so CI recorded new lines and then laid them out on boundaries
+ * measured from an older script. Because the shots run end to end, one line
+ * that grew pushed every later shot out of step with its own audio, and the
+ * error accumulated over the whole ninety seconds with nothing failing.
+ * --------------------------------------------------------------------- */
+try {
+  const { VOICE_TIMINGS } = await import(
+    pathToFileURL(path.join(root, 'src', 'generated', 'voiceTimings.ts')).href
+  );
+  const { DYNAMIC_SCRIPT_TIMINGS } = await import(
+    pathToFileURL(path.join(root, 'src', 'dynamicScriptTimings.ts')).href
+  );
+
+  for (const script of scripts) {
+    if (script.noVoice) continue;
+
+    const measured = VOICE_TIMINGS[script.id];
+    if (!measured || Object.keys(measured).length === 0) {
+      problems.push(
+        `${script.id} has no word timings — run \`npm run voice\`, which now ` +
+          'measures the recordings it just made. Without them every caption ' +
+          'falls back to spreading its line evenly across the shot, which is ' +
+          'the desync this replaced.',
+      );
+      continue;
+    }
+
+    for (const shot of script.shots) {
+      const line = measured[shot.n];
+      if (!line) {
+        problems.push(`${script.id} shot ${shot.n} has no word timing`);
+      } else if (line.vo !== shot.vo) {
+        problems.push(
+          `${script.id} shot ${shot.n}: the timings were measured from ` +
+            `"${line.vo}" but the script now says "${shot.vo}" — run ` +
+            '`npm run voice`',
+        );
+      } else if (!Array.isArray(line.words) || line.words.length === 0) {
+        problems.push(
+          `${script.id} shot ${shot.n} was measured but carries no word ` +
+            'boundaries, so its caption cannot be synchronised',
+        );
+      }
+    }
+
+    // The long-form ads are paced by these numbers, so a stale row there moves
+    // every later shot, not just its own.
+    if (script.format !== 'reel') {
+      const table = DYNAMIC_SCRIPT_TIMINGS[script.id];
+      if (!table) {
+        problems.push(`${script.id} has no shot-boundary table — run \`npm run voice\``);
+      } else {
+        for (const shot of script.shots) {
+          const row = table.shots.find(r => r.n === shot.n);
+          if (!row) {
+            problems.push(`${script.id} shot ${shot.n} is missing from the boundary table`);
+          } else if (row.vo !== shot.vo) {
+            problems.push(
+              `${script.id} shot ${shot.n}: the shot is ${row.shotFrames} frames ` +
+                `long because "${row.vo}" took that long to say, but the script ` +
+                `now says "${shot.vo}" — every later shot is out of step too. ` +
+                'Run `npm run voice`.',
+            );
+          }
+        }
+      }
+    }
+  }
+} catch (err) {
+  problems.push(
+    `the timing tables could not be read (${err.message}) — run \`npm run voice\``,
+  );
+}
+
 if (problems.length) {
   process.stdout.write('PREFLIGHT FAILED\n');
   for (const p of problems) process.stdout.write(`  - ${p}\n`);

@@ -25,11 +25,78 @@ import type { NotesContent } from '@/lib/handwrittenNotes';
  * supabase/functions/generate-handwritten-notes/index.ts, and
  * `npm run check:notes-schema` fails if they drift apart again.
  *
+ * ## The diagram is a parameter, never a URL
+ *
+ * This fixture used to embed a `supabase.co/storage/...` link for its diagram
+ * section. Nothing in a sandbox can reach that host, and the object it named
+ * no longer exists in the bucket in any case, so `DiagramCard` fell to its
+ * error branch and drew **"This diagram could not be loaded."** — inside the
+ * screenshot the ad renderer uses for every note shot in every ad. It reached
+ * a published cut and the app's owner reported it twice.
+ *
+ * The fix is that a fixture may not depend on the network. `sampleNotes()`
+ * takes the picture to draw; `SAMPLE_NOTES` keeps the old name and passes a
+ * drawn stand-in, so a caller that says nothing gets something that always
+ * renders. `preview/main.tsx` hands it the real downloaded plate when the
+ * harness is asked for `plates=real`, which is the mode the ad captures use.
+ *
  * The content is standard textbook material on myocardial infarction, matching
  * the first essay in Final Year → General Medicine → Cardiology. It is a
  * rendering fixture, not teaching material, and is never shown to a user.
  */
-export const SAMPLE_NOTES: NotesContent = {
+/**
+ * The picture the fixture draws when the caller does not supply one.
+ *
+ * A data URI rather than a file, for the same reason the chapter-diagram
+ * stand-ins are drawn: it cannot 404, it cannot be blocked by an egress
+ * gateway, and it renders identically in the harness and on a phone. It is
+ * captioned as a stand-in on its face so that a stand-in can never be mistaken
+ * for a real plate in a screenshot — which is the other half of the bug this
+ * replaces, where a blank white box captioned "Types of synovial joint" went
+ * out in an ad looking like a failed diagram.
+ */
+const DRAWN_STAND_IN =
+  'data:image/svg+xml;utf8,' +
+  encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" width="640" height="420">' +
+      '<rect width="640" height="420" fill="#0f172a"/>' +
+      '<rect x="20" y="20" width="600" height="380" fill="none" stroke="#334155" stroke-width="2" stroke-dasharray="8 8"/>' +
+      '<text x="320" y="200" font-family="Georgia,serif" font-size="26" text-anchor="middle" fill="#94a3b8">Renderer stand-in</text>' +
+      '<text x="320" y="240" font-family="Georgia,serif" font-size="16" text-anchor="middle" fill="#64748b">pass a plate URL to draw a real one</text>' +
+      '</svg>',
+  );
+
+/**
+ * The fixture, with a diagram of the caller's choosing.
+ *
+ * ## Why the alt text is a parameter too
+ *
+ * `formatDiagramHeading` picks the card's heading in three steps: an explicit
+ * title, then the alt text, then — if both are generic — the image's own
+ * filename, prettified. The edge function's alt text is literally
+ * "High-Yield Exam Diagram", which that function is written to reject, so in
+ * the app the heading a reader sees is almost always the **filename** of the
+ * plate: `tca_cycle_amphibolic_anaplerosis.jpg` reads out as "Tca Cycle
+ * Amphibolic Anaplerosis".
+ *
+ * The ad renderer's copies of those plates are renamed on the way down
+ * (`plate-tca-cycle.jpg`), so the same code would head the card "Plate Tca
+ * Cycle" — a name that exists only inside the capture pipeline and that no
+ * reader of the app will ever see. Putting a real diagram title in the alt
+ * text makes the screenshot show what the app shows, rather than what the
+ * harness happens to have called the file.
+ *
+ * @param diagramUrl what the diagram section should draw. Anything `Image`
+ *   accepts: a downloaded plate under `/plates/`, or the drawn stand-in.
+ * @param diagramAlt the markdown alt text. Defaults to the generic string the
+ *   edge function really emits, so the default fixture stays faithful to the
+ *   contract it exists to test.
+ */
+export const sampleNotes = (
+  diagramUrl: string = DRAWN_STAND_IN,
+  diagramAlt: string = 'High-Yield Exam Diagram',
+): NotesContent => ({
+
   highYieldTip:
     '**Troponin** is the most sensitive and specific marker. It rises at 3–4 hours, peaks at 24 hours and stays elevated for up to 10 days — so it is the marker of choice for late presentation.',
   pyqYears: ['2023', '2021', '2019', '2017'],
@@ -44,7 +111,7 @@ export const SAMPLE_NOTES: NotesContent = {
       title: 'High-Yield Visual Exam Diagram',
       icon: '🎨',
       payload: {
-        text: '![High-Yield Exam Diagram](https://pmtgeydtqypwrypshhsx.supabase.co/storage/v1/object/public/diagrams/community/sample-life-cycle.jpg)\n\n💡 High-Yield Continuous Visual Mnemonic (Standard Textbook Grounded)',
+        text: '![' + diagramAlt + '](' + diagramUrl + ')\n\n💡 High-Yield Continuous Visual Mnemonic (Standard Textbook Grounded)',
       },
     },
     {
@@ -252,4 +319,14 @@ export const SAMPLE_NOTES: NotesContent = {
       },
     },
   ],
-};
+});
+
+/**
+ * The fixture with the drawn stand-in, under the name every existing caller
+ * already imports.
+ *
+ * Kept as a value rather than made a function call at each site so that
+ * `check:notes-schema`, which reads this file as text and asserts every
+ * section key is exercised, keeps working unchanged.
+ */
+export const SAMPLE_NOTES: NotesContent = sampleNotes();
