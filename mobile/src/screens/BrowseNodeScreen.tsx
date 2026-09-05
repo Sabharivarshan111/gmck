@@ -134,15 +134,33 @@ export default function BrowseNodeScreen() {
     [],
   );
 
+  const essayCount = useMemo(
+    () => findTypeQuestions(node, 'essay').length,
+    [node],
+  );
+  const shortNoteCount = useMemo(
+    () => findTypeQuestions(node, 'short-notes').length,
+    [node],
+  );
+
   /**
-   * Only worth showing above a list long enough to scroll.
+   * Only worth showing above a list long enough to scroll — measured across
+   * BOTH tabs, not the one you are looking at.
    *
    * The largest topic in the bank holds 67 questions; plenty hold three. A
    * field above three rows is chrome that costs a row of space and earns
    * nothing, so it appears at the point where finding something by eye starts
    * to lose to typing two letters.
+   *
+   * It used to count `questions.length`, which is the CURRENT TAB's questions.
+   * A topic with sixty short notes and eight essays therefore had a search
+   * field that vanished when you pressed Essays and came back when you pressed
+   * Short Notes — reported as the search bar not working in Essays, which is
+   * what it looks like when a control disappears the moment you switch to the
+   * thing you wanted to search. A control that is there on one tab has to be
+   * there on the other; it is the same screen.
    */
-  const filterable = questions.length >= FILTER_THRESHOLD;
+  const filterable = essayCount + shortNoteCount >= FILTER_THRESHOLD;
 
   /**
    * Pairs, not strings, because the number shown on each row is its position
@@ -186,14 +204,6 @@ export default function BrowseNodeScreen() {
   }, [flash, visible]);
 
   const filtering = filterable && query.trim().length > 0;
-  const essayCount = useMemo(
-    () => findTypeQuestions(node, 'essay').length,
-    [node],
-  );
-  const shortNoteCount = useMemo(
-    () => findTypeQuestions(node, 'short-notes').length,
-    [node],
-  );
 
   // A subject page listing exam papers looks different from a topic list.
   const isPaperLevel =
@@ -535,6 +545,35 @@ export default function BrowseNodeScreen() {
               value={type}
               onChange={setType}
             />
+            {/*
+              Search first, then the textbook-page button, then the progress
+              bar. That order is the app owner's, and it is also the order the
+              controls are used in: you arrive at a topic to FIND something,
+              and page numbers are a preference you set once. The button used
+              to sit directly under the tabs with the field two controls
+              further down, so the first thing under "Essays / Short Notes" was
+              a setting rather than the way in.
+            */}
+            {filterable ? (
+              <View style={styles.filterWrap}>
+                <FilterField
+                  value={query}
+                  onChange={setQuery}
+                  placeholder={`Filter ${questions.length} questions`}
+                  label={`Filter questions in ${title}`}
+                />
+                {filtering ? (
+                  // Announced, because the result of typing is a list changing
+                  // somewhere below the keyboard where it cannot be seen.
+                  <Text
+                    accessibilityLiveRegion="polite"
+                    style={[styles.filterCount, { color: colors.textMuted }]}
+                  >
+                    {visible.length} of {questions.length}
+                  </Text>
+                ) : null}
+              </View>
+            ) : null}
             {/* The page-reference switch.
               *
               * A round icon button on the RIGHT, not a wide pill on the left.
@@ -597,26 +636,6 @@ export default function BrowseNodeScreen() {
               </View>
             ) : null}
 
-            {filterable ? (
-              <View style={styles.filterWrap}>
-                <FilterField
-                  value={query}
-                  onChange={setQuery}
-                  placeholder={`Filter ${questions.length} questions`}
-                  label={`Filter questions in ${title}`}
-                />
-                {filtering ? (
-                  // Announced, because the result of typing is a list changing
-                  // somewhere below the keyboard where it cannot be seen.
-                  <Text
-                    accessibilityLiveRegion="polite"
-                    style={[styles.filterCount, { color: colors.textMuted }]}
-                  >
-                    {visible.length} of {questions.length}
-                  </Text>
-                ) : null}
-              </View>
-            ) : null}
           </View>
         }
         ListEmptyComponent={

@@ -74,6 +74,55 @@ export async function listSubscribers(): Promise<Subscriber[]> {
   }));
 }
 
+/**
+ * One purchase, as the admin panel shows it.
+ *
+ * Separate from `Subscriber` because they answer different questions.
+ * `Subscriber` is the aggregate — who has paid, how much in total, what is
+ * live now — and it genuinely cannot say when anything was bought: a reader
+ * who bought a month in June, a month in August and a year in September is one
+ * row reading "Rs 400" and a single date. The refund question, the "my ads came
+ * back" question and the "when does mine run out" question are all about the
+ * individual purchases.
+ */
+export interface Purchase {
+  id: string;
+  plan: string;
+  amountPaise: number;
+  purchasedAt: string;
+  startsAt: string | null;
+  expiresAt: string | null;
+  /** Still running, measured against the DATABASE's clock rather than a phone's. */
+  active: boolean;
+  /** A bundled grant the reader did not pay for — the free month with notes. */
+  complimentary: boolean;
+  paymentId: string | null;
+  orderId: string | null;
+}
+
+/** Everything one account has ever bought, newest first. */
+export async function listUserPurchases(userId: string): Promise<Purchase[]> {
+  const { data, error } = await supabase.rpc('admin_user_purchases', {
+    _user_id: userId,
+  });
+  if (error) {
+    warn('admin.listUserPurchases', error.message);
+    return [];
+  }
+  return ((data ?? []) as Record<string, unknown>[]).map(row => ({
+    id: row.id as string,
+    plan: (row.plan as string) ?? '',
+    amountPaise: Number(row.amount_paise ?? 0),
+    purchasedAt: (row.purchased_at as string) ?? '',
+    startsAt: (row.starts_at as string | null) ?? null,
+    expiresAt: (row.expires_at as string | null) ?? null,
+    active: Boolean(row.active),
+    complimentary: Boolean(row.complimentary),
+    paymentId: (row.razorpay_payment_id as string | null) ?? null,
+    orderId: (row.razorpay_order_id as string | null) ?? null,
+  }));
+}
+
 /** Take every unlock off one account. */
 export async function revokeAccess(userId: string): Promise<string | null> {
   const { error } = await supabase.rpc('admin_revoke_user_access', {

@@ -25,6 +25,8 @@ import {
   type DiagramStats,
   type PageRefStats,
   type Subscriber,
+  listUserPurchases,
+  type Purchase,
 } from '@/lib/admin';
 
 /** Which bundle a buyer owns, in words rather than plan keys. */
@@ -69,6 +71,38 @@ export function AdminPanel() {
   const [confirming, setConfirming] = useState<
     { kind: 'revoke'; subscriber: Subscriber } | { kind: 'ref'; ref: AdminPageRef } | null
   >(null);
+  /**
+   * Whose purchase history is open, and what it is.
+   *
+   * Fetched per account rather than all at once: the list is capped at twelve
+   * rows on screen but the query behind it is every buyer there has ever been,
+   * and one round trip per row on open is nothing next to fetching a history
+   * for eleven people nobody asked about.
+   *
+   * Kept keyed by id rather than as a single "open row", so closing and
+   * reopening does not re-fetch what is already known.
+   */
+  const [expanded, setExpanded] = useState<string | null>(null);
+  const [history, setHistory] = useState<Record<string, Purchase[]>>({});
+  const [loadingHistory, setLoadingHistory] = useState<string | null>(null);
+
+  const toggleHistory = useCallback(
+    async (userId: string) => {
+      if (expanded === userId) {
+        setExpanded(null);
+        return;
+      }
+      setExpanded(userId);
+      if (history[userId]) {
+        return;
+      }
+      setLoadingHistory(userId);
+      const rows = await listUserPurchases(userId);
+      setHistory(current => ({ ...current, [userId]: rows }));
+      setLoadingHistory(null);
+    },
+    [expanded, history],
+  );
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -175,34 +209,111 @@ export function AdminPanel() {
             <View
               key={s.userId}
               style={[
-                styles.row,
+                styles.rowCard,
                 { backgroundColor: colors.cardElevated, borderColor: colors.border },
               ]}
             >
-              <View style={styles.rowBody}>
-                <Text style={[styles.rowTitle, { color: colors.text }]}>
-                  {s.displayName || 'Unnamed'} · ₹{(s.totalPaise / 100).toFixed(0)}
-                </Text>
-                <Text
-                  numberOfLines={1}
-                  style={[styles.rowSub, { color: colors.textMuted }]}
-                >
-                  {s.email ?? 'no email'}
-                </Text>
-                <Text style={[styles.rowSub, { color: colors.textMuted }]}>
-                  {notesLabel(s.notesPlans)} {s.notesActive ? 'unlocked' : 'locked'} ·
-                  Ad-free {s.adfreeActive ? 'on' : 'expired'}
-                </Text>
-              </View>
-              {s.notesActive || s.adfreeActive ? (
+              <View style={styles.rowHead}>
+                {/*
+                  The whole summary is the control that opens the history.
+                  A chevron on its own is a 24dp target beside a row of text
+                  that looks like it should be tappable and is not.
+                */}
                 <Touchable
-                  label={`Remove all access for ${s.displayName || 'this user'}`}
-                  onPress={() => setConfirming({ kind: 'revoke', subscriber: s })}
-                  hitSlop={8}
-                  style={styles.iconButton}
+                  label={`${s.displayName || 'Unnamed'}, purchases`}
+                  state={{ expanded: expanded === s.userId }}
+                  onPress={() => void toggleHistory(s.userId)}
+                  scale={false}
+                  style={styles.rowBody}
                 >
-                  <Trash2 size={15} color={colors.danger} />
+                  <Text style={[styles.rowTitle, { color: colors.text }]}>
+                    {s.displayName || 'Unnamed'} · ₹{(s.totalPaise / 100).toFixed(0)}
+                  </Text>
+                  <Text
+                    numberOfLines={1}
+                    style={[styles.rowSub, { color: colors.textMuted }]}
+                  >
+                    {s.email ?? 'no email'}
+                  </Text>
+                  <Text style={[styles.rowSub, { color: colors.textMuted }]}>
+                    {notesLabel(s.notesPlans)} {s.notesActive ? 'unlocked' : 'locked'} ·
+                    Ad-free {s.adfreeActive ? 'on' : 'expired'}
+                  </Text>
+                  {/*
+                    The two dates that get asked about, on the row itself:
+                    "when did they buy" and "when does it stop". Everything
+                    else is one tap away.
+                  */}
+                  <Text style={[styles.rowSub, { color: colors.textMuted }]}>
+                    First bought {shortDate(s.firstPurchase)}
+                    {s.adfreeExpiresAt
+                      ? ` · Ad-free ${s.adfreeActive ? 'until' : 'ended'} ${shortDate(
+                          s.adfreeExpiresAt,
+                        )}`
+                      : ''}
+                  </Text>
                 </Touchable>
+                {s.notesActive || s.adfreeActive ? (
+                  <Touchable
+                    label={`Remove all access for ${s.displayName || 'this user'}`}
+                    onPress={() => setConfirming({ kind: 'revoke', subscriber: s })}
+                    hitSlop={8}
+                    style={styles.iconButton}
+                  >
+                    <Trash2 size={15} color={colors.danger} />
+                  </Touchable>
+                ) : null}
+              </View>
+
+              {expanded === s.userId ? (
+                <View style={[styles.history, { borderColor: colors.border }]}>
+                  {loadingHistory === s.userId ? (
+                    <ActivityIndicator size="small" color={colors.primary} />
+                  ) : (history[s.userId] ?? []).length === 0 ? (
+                    <Text style={[styles.rowSub, { color: colors.textMuted }]}>
+                      No individual rows — the aggregate above is all there is.
+                    </Text>
+                  ) : (
+                    (history[s.userId] ?? []).map(p => (
+                      <View key={p.id} style={styles.purchase}>
+                        <View style={styles.purchaseHead}>
+                          <Text style={[styles.purchasePlan, { color: colors.text }]}>
+                            {planLabel(p.plan)}
+                          </Text>
+                          {/*
+                            Current and past are said in words as well as in
+                            colour: "green means live" is a convention nobody
+                            was taught, and the panel is read in a hurry.
+                          */}
+                          <Text
+                            style={[
+                              styles.purchaseState,
+                              { color: p.active ? colors.success : colors.textMuted },
+                            ]}
+                          >
+                            {p.active ? 'CURRENT' : 'EXPIRED'}
+                          </Text>
+                        </View>
+                        <Text style={[styles.rowSub, { color: colors.textMuted }]}>
+                          {p.complimentary
+                            ? 'Free — bundled with another purchase'
+                            : `₹${(p.amountPaise / 100).toFixed(0)}`}
+                          {' · bought '}
+                          {shortDate(p.purchasedAt)}
+                          {p.expiresAt ? ` · ${p.active ? 'ends' : 'ended'} ${shortDate(p.expiresAt)}` : ''}
+                        </Text>
+                        {p.paymentId ? (
+                          <Text
+                            numberOfLines={1}
+                            style={[styles.rowSub, { color: colors.textMuted }]}
+                          >
+                            {p.paymentId}
+                          </Text>
+                        ) : null}
+                      </View>
+                    ))
+                  )}
+                </View>
               ) : null}
             </View>
           ))
@@ -378,7 +489,84 @@ function Stat({ label, value }: { label: string; value: string }) {
   );
 }
 
+/**
+ * A date somebody reads at a glance, not an ISO string.
+ *
+ * `toLocaleDateString` with no locale argument follows the device, which is
+ * what is wanted: the admin is one person, on their own phone.
+ */
+function shortDate(iso: string | null): string {
+  if (!iso) {
+    return 'unknown';
+  }
+  const at = new Date(iso);
+  if (Number.isNaN(at.getTime())) {
+    return 'unknown';
+  }
+  return at.toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+/**
+ * What a plan string means in English.
+ *
+ * `adfree_monthly` is the ENTITLEMENT row every ad-free tier writes (see
+ * razorpay-verify-payment), so the length actually bought is in the amount
+ * rather than in the name — which is why the label leans on "Ad-free" and lets
+ * the price and the end date say how long.
+ */
+function planLabel(plan: string): string {
+  if (plan.startsWith('adfree')) {
+    return 'Ad-free';
+  }
+  if (plan === 'notes_fmspm') {
+    return 'FM + SPM notes';
+  }
+  if (plan === 'notes_pharmac') {
+    return 'Pharmacology notes';
+  }
+  return plan || 'Unknown';
+}
+
 const styles = StyleSheet.create({
+  /*
+   * The subscriber row is a column now, not a row: it stacks a summary and,
+   * when opened, that account's purchase history under it. `styles.row` stays
+   * as it was for the page-reference list below, which is still one line.
+   */
+  rowCard: {
+    borderRadius: 12,
+    borderWidth: 1,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+  },
+  rowHead: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  history: {
+    borderTopWidth: StyleSheet.hairlineWidth,
+    marginTop: 10,
+    paddingTop: 10,
+    gap: 10,
+  },
+  purchase: {
+    gap: 2,
+  },
+  purchaseHead: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  purchasePlan: {
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  purchaseState: {
+    fontSize: 10,
+    fontWeight: '800',
+    letterSpacing: 1,
+  },
   card: {
     borderRadius: 18,
     borderWidth: 1,

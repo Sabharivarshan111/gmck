@@ -12,6 +12,8 @@ import { initializeAds } from '@/lib/ads';
 import { hydratePremium, usePremiumSync } from '@/lib/premium';
 import { hydrateWallpaper, isWallpaperHydrated } from '@/hooks/useWallpaper';
 import { DailyAdConsent } from '@/components/DailyAdConsent';
+import { FirstRun } from '@/components/FirstRun';
+import { UpdateNotice } from '@/components/UpdateNotice';
 import { XpToast } from '@/components/XpToast';
 import { syncReminders } from '@/lib/reminderSync';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
@@ -120,8 +122,17 @@ function Shell() {
           only the icon style is ours to set. */}
       <StatusBar barStyle={theme === 'dark' ? 'light-content' : 'dark-content'} />
       <RootNavigator />
+      {/*
+        Above everything, and before it: the app has no correct behaviour until
+        it knows which year it is showing. Every screen behind this is already
+        mounted, which is what makes it instant once the answer is given.
+      */}
+      <FirstRun />
       <DailyAdConsent />
       <XpToast />
+      {/* Late, and above the navigator, so a release note is never drawn
+          underneath the screen it is describing. */}
+      <UpdateNotice />
       {/* Last, so it paints over the tab bar and everything else — it is
           explaining them. It is transparent to touches except where it draws,
           so the app underneath stays usable while it is up. */}

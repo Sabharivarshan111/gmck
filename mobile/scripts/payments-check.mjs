@@ -91,6 +91,45 @@ if (verify) {
     verify.includes('constantTimeEqual'),
     'razorpay-verify-payment no longer compares the signature in constant time',
   );
+  /*
+   * One entitlement, three prices.
+   *
+   * Every ad-free tier writes a row whose plan is `adfree_monthly` with
+   * `expires_at` further out, because that plan string IS the entitlement and
+   * both apps read it by name (`premium.ts` here, the web app's own check, and
+   * `admin_list_subscribers` in Postgres). Writing `adfree_yearly` instead
+   * would mean editing every one of those readers, and the one that got missed
+   * would be somebody who paid three hundred rupees and still saw ads — with a
+   * valid row in the table saying they should not.
+   *
+   * So the invariant is pinned here rather than worked around with a permissive
+   * matcher on each reader. Which tier was actually bought is not lost:
+   * `amount_paise` says, and the admin dashboard shows it.
+   */
+  for (const tier of ['adfree_6months', 'adfree_yearly']) {
+    check(
+      verify.includes(tier),
+      `razorpay-verify-payment does not know about ${tier} — that purchase would grant a month`,
+    );
+  }
+  check(
+    /plan:\s*"adfree_monthly",\s*amount_paise:\s*adfreePaise/.test(verify),
+    'a longer ad-free tier no longer writes the adfree_monthly entitlement row — ' +
+      'every reader of the entitlement filters on that exact plan string by name',
+  );
+  check(
+    /base\.getTime\(\) \+ adfreeDays/.test(verify),
+    'buying again no longer extends from the existing expiry, so time already paid for is lost',
+  );
+}
+{
+  // The readers, from the other side: if one of them ever stops asking for the
+  // plan the function writes, the two halves have parted company.
+  const premium = code(await fs.readFile(path.join(root, 'src/lib/premium.ts'), 'utf8'));
+  check(
+    /'plan',\s*'adfree_monthly'|'plan',\s*ADFREE_MONTHLY/.test(premium),
+    'premium.ts no longer looks for the plan string razorpay-verify-payment writes',
+  );
 }
 
 // The preview must not be able to fake a success.

@@ -3132,6 +3132,80 @@ await step('progress screen renders', async () => {
   await seesText('YOUR YEAR', 6000);
 });
 
+/*
+ * First run, in a browser that has never seen this app.
+ *
+ * Every other step above runs with `orbit-profile-v1` seeded, because the
+ * onboarding sheet is a full-screen modal and nothing behind it is reachable.
+ * That seeding also meant the sheet itself was never once driven — and the
+ * defect it was hiding is the one the app's owner found: the year row opened
+ * with Second Year already chosen, so a reader who read the name field, typed
+ * a name and pressed the button below it was enrolled in a syllabus nobody
+ * asked them about. Wrong questions, wrong counts, wrong leaderboard, and
+ * nothing on screen saying a choice had been made for them.
+ *
+ * Its own context so the storage really is empty; the shared one has an init
+ * script that cannot be removed.
+ */
+await step('first run asks for the year instead of assuming one', async () => {
+  const fresh = await browser.newContext({
+    viewport: { width: 390, height: 844 },
+    hasTouch: true,
+  });
+  const first = await fresh.newPage();
+  try {
+    await first.goto('http://localhost:5202/?screen=home', { waitUntil: 'networkidle' });
+    // The welcome panel holds for SPLASH_MS before the form, and a tap skips
+    // it — which is also the assertion that the tap works.
+    await first.waitForTimeout(900);
+    await first.locator('[aria-label="Continue"]').first().click({ timeout: 4000 }).catch(() => {});
+    await first.waitForTimeout(700);
+
+    const start = first.locator('[aria-label^="Choose your year first"]').first();
+    if (!(await start.isVisible().catch(() => false))) {
+      throw new Error('the first-run gate does not open with the year unanswered');
+    }
+    // The welcome has to have said the two things it exists to say.
+    const welcomed = await first.evaluate(() => document.body.innerText);
+    if (!/Made by the community/i.test(welcomed) && !/Two things and you/i.test(welcomed)) {
+      throw new Error('the first-run gate is not the welcome screen');
+    }
+
+    // None of the four may be pre-selected. aria-checked is what carries this
+    // — react-native-web 0.21 emits no accessibilityState at all.
+    const checked = await first.evaluate(() =>
+      ['First Year', 'Second Year', 'Third Year', 'Final Year'].filter(
+        label =>
+          document.querySelector(`[aria-label="${label}"]`)?.getAttribute('aria-checked') ===
+          'true',
+      ),
+    );
+    if (checked.length > 0) {
+      throw new Error(`first run pre-selects ${checked.join(', ')} — the reader must choose`);
+    }
+
+    // Pressing on anyway has to say what is missing rather than do nothing.
+    await start.click({ timeout: 4000 });
+    await first.waitForTimeout(400);
+    const said = await first.evaluate(() => document.body.innerText);
+    if (!/Choose your year/i.test(said)) {
+      throw new Error('submitting with no year chosen neither saves nor explains itself');
+    }
+
+    // And a real choice is the one that is stored — not the second-year default.
+    await first.locator('[aria-label="Third Year"]').first().click({ timeout: 4000 });
+    await first.locator('[aria-label="Display name"]').first().fill('Fresher');
+    await first.locator('[aria-label="Start studying"]').first().click({ timeout: 4000 });
+    await first.waitForTimeout(1200);
+    const stored = await first.evaluate(() => window.localStorage.getItem('orbit-profile-v1'));
+    if (!stored || JSON.parse(stored).year !== 'third') {
+      throw new Error(`first run stored ${stored} — the year the reader picked was third`);
+    }
+  } finally {
+    await fresh.close();
+  }
+});
+
 // ---- Report ----------------------------------------------------------------
 await browser.close();
 await server.close();
