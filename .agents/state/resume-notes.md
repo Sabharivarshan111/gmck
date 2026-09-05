@@ -196,3 +196,77 @@ stop working as a check.
 thirteen renders are done and green, including all three of the new 60-second
 reels — the first time any reel has ever rendered. The three 90-second ads are
 the ones still going.
+
+## 2026-09-05 — Claude Code — the web app's Anki import, and three things finished
+
+### DONE: the Vercel web app imports Anki packages
+
+**The owner reported this four times and the root cause was not a missing
+feature.** `src/lib/apkgWeb.ts` was already written, already correct and
+already passing `check:apkg-web` — fflate for the zip, sql.js for the
+collection, fzstd for v3, and it takes the real collection rather than the
+decoy. **Nothing imported it.** `FlashcardsHub` still rendered a panel saying
+"Importing your own .apkg is on the Android app", written back when that was
+true, and `apkgWeb.ts`'s own header even says that belief was wrong.
+
+Now wired, with `src/lib/importedDecksWeb.ts` (deck list in localStorage, cards
+and media in IndexedDB — the phone's split, for the phone's reason) and
+`ImportedStudyView` (same `dueQueue`/`answer`/schedule as a generated deck).
+
+**Two production bugs found by driving it rather than reading it:**
+1. sql.js fetched its WASM **over the network** in the built app. `apkgWeb.ts`
+   refuses to guess that URL and says why; the hub now passes the one Vite
+   emits, so 658KB of WASM ships with the app and no request leaves the origin.
+2. The WASM only becomes a build asset because of the `?url` import.
+
+`npm run check:apkg-web-import` is new and is the check that would have caught
+the original bug: it serves the built `dist`, walks a first-time reader **past
+the tour** to the hub, hands a real v3 package to the real file input, and
+asserts on what a reader sees — ten cards not one, an answer on reveal, grading
+moving on, the deck surviving a reload, deletion working. `check:apkg-web`
+proved the reader; nothing drove the screen, which is exactly where this fell
+through. Screenshots in `screenshots/web-anki/`.
+
+**NOT VERIFIED, and it is the next thing to do:** whether this reached
+production. The sandbox cannot reach `orbitmbbs.vercel.app` (the agent proxy
+403s it) and the Vercel connector returns **no teams** for this account, so
+neither route works from here. `npm run build` at the repo root is clean, which
+is the strongest signal available. Somebody with the Vercel dashboard should
+confirm the deploy for commit `9e77a07c` went green.
+
+### DONE: generate-flashcards applied cards, at v15
+
+Closed. `.agents/queue/flashcards-applied-cards-2026-09-04.md` has the full
+three-attempt table. Two findings worth not re-learning: **the ordering
+instruction is load-bearing** ("write the applied cards FIRST…" — removing it
+dropped applied AND reasoning to zero in 2 of 3 runs), and **never name an
+integer for recall** (the model satisfied it and stopped 8 cards short).
+Measured live: applied 5/5/4, reasoning 5/5/4, recall 2/1/1, decks full.
+
+### DONE: all 56 over-attached diagram plates read
+
+48 rows corrected, `.agents/queue/diagram-overattachment-2026-09-05.md`.
+Verified against the database: rows with a picture went 967 -> 922. The finding
+underneath is that **the lookup was never the problem** — every stray was one
+bad row, and thirty of the fifty-six plates were completely clean.
+
+### DONE: the ads
+
+Run 33927028250 completed **success**, 14 of 14 jobs. Release `ads-2` carries
+**13 MP4s**: the three 90-second ads and ten 60-second reels, including the
+three the owner asked for — `orbit-reel-guide` (mascot presents, voiced) and
+`orbit-reel-functions` / `orbit-reel-one-question` (no voice, captions, black,
+beat-synced). `.agents/video/BEAT-SYNC.md` now exists; the release body had
+been pointing readers at a file that was not in the repo.
+
+### The deploy incident from earlier is repaired
+
+`generate-flashcards` is at **v15**, `verify_jwt: true`, both files diffed
+byte-identical against this tree, and proved alive by a live invocation
+returning 200 with real cards. The v12 placeholder is gone.
+
+### A rule for the next courier
+
+Verifying a deploy by diffing the read-back: extract the returned file contents
+with `jq -j`, **not** `jq -r`. `-r` appends its own newline to a file that
+already ends in one and reports a spurious one-line difference on every file.
