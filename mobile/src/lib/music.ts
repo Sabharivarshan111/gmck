@@ -143,7 +143,7 @@ export async function pickTrack(mode: AttachMode = 'copy'): Promise<PickResult> 
 
   let raw: string;
   try {
-    raw = await native.pick(mode, 'audio/*');
+    raw = await native.pick(mode, 'audio/*', 'music');
   } catch (error) {
     warn('[music] picker failed:', error);
     return { error: 'That file could not be added.' };

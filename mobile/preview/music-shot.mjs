@@ -150,20 +150,38 @@ const chooser = await page.evaluate(() => {
   const text = document.body.innerText;
   return {
     folderTip: /make one folder on your phone/i.test(text),
-    copy: /Save a copy/.test(text) && /delete the original/i.test(text),
+    // "delete, move or rename the original" — matched by its ends rather than
+    // as one phrase, so the middle can list more ways to lose a file without
+    // this needing an edit.
+    copy: /Save a copy/.test(text) && /delete.*the original/is.test(text),
     link: /Just link it/.test(text) && /Uses no space/i.test(text),
-    noUpload: /Nothing is uploaded either way/.test(text),
+    noUpload: /nothing is\s+uploaded/i.test(text),
+    /*
+     * Each option has to be EXPLAINED, not just named and costed.
+     *
+     * A reader read the previous wording — accurate, one line, consequences
+     * only — and still could not tell the two apart, because it assumed they
+     * already knew what a copy and a link are here. Both now open with
+     * something they have certainly done, and the sheet names a default for
+     * anyone who does not want to decide.
+     */
+    copyExplained: /like forwarding/i.test(text),
+    linkExplained: /like a shortcut/i.test(text),
+    hasDefault: /Not sure\?/i.test(text),
   };
 });
 note(chooser.folderTip, 'the chooser tells the reader to make one music folder first');
 note(chooser.copy, 'and offers "Save a copy", with what it costs');
 note(chooser.link, 'and "Just link it", with what it costs');
+note(chooser.copyExplained, 'and says what a copy IS, not only what it costs');
+note(chooser.linkExplained, 'and what a link IS');
+note(chooser.hasDefault, 'and names one for a reader who does not want to choose');
 note(chooser.noUpload, 'and says neither one uploads anything');
 
+// By its leading words, so the explanation can be reworded without breaking
+// the drive. It still fails if the option stops being a labelled control.
 await page
-  .getByLabel(
-    'Save a copy in Orbit. Uses phone space, and keeps playing if you delete the original',
-  )
+  .getByLabel(/^Save a copy in Orbit/)
   .first()
   .click();
 await page.waitForTimeout(900);

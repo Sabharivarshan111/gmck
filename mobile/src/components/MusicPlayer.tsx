@@ -527,7 +527,7 @@ export function MusicPlayer({ onClose }: { onClose: () => void }) {
       <Sheet
         visible={chooserOpen}
         onClose={() => setChooserOpen(false)}
-        title="Save it, or just link it?">
+        title="Copy the song, or just link to it?">
         <View style={[styles.tip, { backgroundColor: withAlpha(colors.accent, 0.12) }]}>
           <FolderOpen size={16} color={colors.accent} />
           <Text style={[styles.tipText, { color: colors.text }]}>
@@ -538,22 +538,25 @@ export function MusicPlayer({ onClose }: { onClose: () => void }) {
 
         <Touchable
           onPress={() => add('copy')}
-          label="Save a copy in Orbit. Uses phone space, and keeps playing if you delete the original"
+          label="Save a copy in Orbit, recommended. Orbit keeps its own copy, so it still plays even if you delete or move the original. Uses a little space."
           style={[styles.modeRow, { backgroundColor: colors.card, borderColor: colors.border }]}>
           <View style={[styles.modeIcon, { backgroundColor: withAlpha(colors.fuchsia, 0.15) }]}>
             <HardDriveDownload size={18} color={colors.fuchsia} />
           </View>
           <View style={styles.modeBody}>
-            <Text style={[styles.rowTitle, { color: colors.text }]}>Save a copy</Text>
+            <Text style={[styles.rowTitle, { color: colors.text }]}>
+              Save a copy · recommended
+            </Text>
             <Text style={[styles.rowSub, { color: colors.textMuted }]}>
-              Safest. Keeps playing even if you delete the original. Uses phone space.
+              Orbit keeps its own copy — like forwarding a song to yourself. It still plays even
+              if you delete, move or rename the original. Uses a little space.
             </Text>
           </View>
         </Touchable>
 
         <Touchable
           onPress={() => add('link')}
-          label="Just link it. Uses no space, and stops playing if you delete or move the original"
+          label="Just link it. Orbit only remembers where the song is, like a shortcut. Uses no space, but stops playing if you delete or move the file."
           style={[styles.modeRow, { backgroundColor: colors.card, borderColor: colors.border }]}>
           <View style={[styles.modeIcon, { backgroundColor: withAlpha(colors.cyan, 0.15) }]}>
             <Link2 size={18} color={colors.cyan} />
@@ -561,13 +564,15 @@ export function MusicPlayer({ onClose }: { onClose: () => void }) {
           <View style={styles.modeBody}>
             <Text style={[styles.rowTitle, { color: colors.text }]}>Just link it</Text>
             <Text style={[styles.rowSub, { color: colors.textMuted }]}>
-              Uses no space. Stops playing if you move or delete the original.
+              Orbit only remembers where the song is — like a shortcut. Uses no space, but it
+              stops playing if you delete, move or rename the file.
             </Text>
           </View>
         </Touchable>
 
         <Text style={[styles.sheetNote, { color: withAlpha(colors.text, 0.5) }]}>
-          Nothing is uploaded either way — the music stays on this phone.
+          Not sure? Choose Save a copy. Either way the music stays on this phone — nothing is
+          uploaded.
         </Text>
       </Sheet>
     </GlassSurface>

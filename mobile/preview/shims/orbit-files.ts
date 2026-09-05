@@ -72,7 +72,7 @@ const sizeOf = (want: keyof typeof SAMPLES) =>
   want === 'video' ? 42_000_000 : want === 'pdf' ? 1_400_000 : 6_800;
 
 export default {
-  pick: async (mode: string) => {
+  pick: async (mode: string, _kinds?: string, _bucket?: string) => {
     const want = globalThis.__orbitPickFile;
     if (!want) {
       return '';

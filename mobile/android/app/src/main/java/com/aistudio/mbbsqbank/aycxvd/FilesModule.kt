@@ -1,8 +1,11 @@
 package com.aistudio.mbbsqbank.aycxvd
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
+import android.provider.DocumentsContract
 import android.provider.OpenableColumns
 import com.facebook.react.bridge.ActivityEventListener
 import com.facebook.react.bridge.BaseActivityEventListener
@@ -46,6 +49,16 @@ class FilesModule(reactContext: ReactApplicationContext) :
   /** 'copy' or 'link', for the pick currently in flight. */
   private var pendingMode: String = MODE_COPY
 
+  /**
+   * Which picker is up, so the folder it lands on is remembered for that one.
+   *
+   * Android's document picker keeps ONE "last visited" location per app, not
+   * one per purpose. Adding a track from a music folder therefore left the
+   * note-attachment picker opening in that music folder — the wrong place for
+   * a scan or a lecture recording, and it read as the app being stuck there.
+   */
+  private var pendingBucket: String = ""
+
   private val activityListener: ActivityEventListener =
     object : BaseActivityEventListener() {
       // `activity` is non-null in BaseActivityEventListener; declaring it
@@ -74,6 +87,9 @@ class FilesModule(reactContext: ReactApplicationContext) :
         try {
           val record =
             if (pendingMode == MODE_LINK) linkUri(uri) else importUri(uri)
+          // Remembered only on success: a pick that failed to copy is not a
+          // folder worth sending anybody back to.
+          rememberFolder(pendingBucket, uri)
           promise.resolve(record.toString())
         } catch (error: Throwable) {
           promise.reject("import_failed", error.message ?: "Could not keep that file.", error)
@@ -92,7 +108,22 @@ class FilesModule(reactContext: ReactApplicationContext) :
     super.invalidate()
   }
 
-  override fun pick(mode: String, kinds: String, promise: Promise) {
+  /**
+   * Where a given picker was last used, remembered per bucket.
+   *
+   * SharedPreferences rather than a field: the point is to survive the app
+   * being killed, which is exactly when a reader comes back and expects the
+   * picker to still know where their notes live.
+   */
+  private fun lastFolderPrefs() =
+    reactApplicationContext.getSharedPreferences(PICKER_PREFS, Context.MODE_PRIVATE)
+
+  private fun rememberFolder(bucket: String, uri: Uri) {
+    if (bucket.isBlank()) return
+    lastFolderPrefs().edit().putString(bucket, uri.toString()).apply()
+  }
+
+  override fun pick(mode: String, kinds: String, bucket: String, promise: Promise) {
     val activity = getCurrentActivity()
     if (activity == null) {
       promise.resolve("")
@@ -103,6 +134,7 @@ class FilesModule(reactContext: ReactApplicationContext) :
     pending?.resolve("")
     pending = promise
     pendingMode = if (mode == MODE_LINK) MODE_LINK else MODE_COPY
+    pendingBucket = bucket
 
     val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
       addCategory(Intent.CATEGORY_OPENABLE)
@@ -143,6 +175,24 @@ class FilesModule(reactContext: ReactApplicationContext) :
         Intent.FLAG_GRANT_READ_URI_PERMISSION or
           Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION,
       )
+      /*
+       * Open where THIS picker was last used, not where any picker was.
+       *
+       * The system remembers one location per app, so adding music from a
+       * music folder left the note-attachment picker opening there too — a
+       * folder full of songs when the reader wanted a scan. Naming the last
+       * document each bucket picked overrides that: the picker opens in the
+       * folder that document lives in.
+       *
+       * API 26. `minSdkVersion` is 24, and on 24 and 25 this is simply absent
+       * and the picker behaves as it did before — the setting is a hint in
+       * any case, and a provider that does not recognise the URI ignores it.
+       */
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && bucket.isNotBlank()) {
+        lastFolderPrefs().getString(bucket, null)?.let { remembered ->
+          putExtra(DocumentsContract.EXTRA_INITIAL_URI, Uri.parse(remembered))
+        }
+      }
     }
     try {
       activity.startActivityForResult(intent, REQUEST_CODE)
@@ -373,5 +423,8 @@ class FilesModule(reactContext: ReactApplicationContext) :
     private const val REQUEST_CODE = 4204
     private const val MODE_COPY = "copy"
     private const val MODE_LINK = "link"
+
+    /** Where each picker was last used. One entry per bucket. */
+    private const val PICKER_PREFS = "orbit-picker-folders"
   }
 }

@@ -1014,33 +1014,44 @@ export function ProgressNotesTab({ year }: Props) {
       <Sheet
         visible={attachOpen}
         onClose={() => setAttachOpen(false)}
-        title="Save it, or just link it?">
+        title="Copy the file, or just link to it?">
         {/*
-          One line each.
+          Say what each one IS, with something the reader has already done.
 
-          This started as two paragraphs and the reader's friend called it
-          confusing, which it was — a choice presented as an essay is a choice
-          nobody reads. The whole decision is "does it survive the original
-          being deleted, and does it cost space", so that is the whole text.
+          This has been through two versions and a reader still could not tell
+          them apart. It was two paragraphs first — an essay nobody reads. Then
+          it was trimmed to the consequences alone ("Works even if you delete
+          the original. Uses phone space."), which is accurate and assumes the
+          reader already knows what a copy and a link ARE in this context. That
+          is the assumption that failed: the words are ordinary English and the
+          distinction is a filesystem one.
+
+          So each option now opens with a comparison to something they have
+          certainly done — forwarding a photo to themselves, and a shortcut —
+          and the consequence follows it. And the sheet names a default, so
+          somebody who does not want to think about it does not have to.
         */}
         <Touchable
           onPress={() => addFile("copy")}
-          label="Save a copy in Orbit. Uses phone space, and keeps working if you delete the original"
+          label="Save a copy in Orbit, recommended. Orbit keeps its own copy, so the note still opens the file even if you delete or move the original. Uses a little space."
           style={[styles.modeRow, { backgroundColor: colors.card, borderColor: colors.border }]}>
           <View style={[styles.modeIcon, { backgroundColor: withAlpha(colors.fuchsia, 0.15) }]}>
             <HardDriveDownload size={18} color={colors.fuchsia} />
           </View>
           <View style={styles.flex}>
-            <Text style={[styles.rowTitle, { color: colors.text }]}>Save a copy</Text>
+            <Text style={[styles.rowTitle, { color: colors.text }]}>
+              Save a copy · recommended
+            </Text>
             <Text style={[styles.rowSub, { color: colors.textMuted }]}>
-              Safest. Works even if you delete the original. Uses phone space.
+              Orbit keeps its own copy — like forwarding a photo to yourself. The note still
+              opens it even if you delete, move or rename the original. Uses a little space.
             </Text>
           </View>
         </Touchable>
 
         <Touchable
           onPress={() => addFile("link")}
-          label="Just link it. Uses no space, and stops working if you delete or move the original"
+          label="Just link it. Orbit only remembers where the file is, like a shortcut. Uses no space, but stops working if you delete or move the file."
           style={[styles.modeRow, { backgroundColor: colors.card, borderColor: colors.border }]}>
           <View style={[styles.modeIcon, { backgroundColor: withAlpha(colors.cyan, 0.15) }]}>
             <Link2 size={18} color={colors.cyan} />
@@ -1048,13 +1059,15 @@ export function ProgressNotesTab({ year }: Props) {
           <View style={styles.flex}>
             <Text style={[styles.rowTitle, { color: colors.text }]}>Just link it</Text>
             <Text style={[styles.rowSub, { color: colors.textMuted }]}>
-              Uses no space. Stops working if you delete or move the original.
+              Orbit only remembers where the file is — like a shortcut. Uses no space, but the
+              note stops opening it if you delete, move or rename the file.
             </Text>
           </View>
         </Touchable>
 
         <Text style={[styles.note, { color: withAlpha(colors.text, 0.5) }]}>
-          Nothing is uploaded either way — the file stays on this phone.
+          Not sure? Choose Save a copy. Either way the file stays on this phone — nothing is
+          uploaded.
         </Text>
       </Sheet>
 

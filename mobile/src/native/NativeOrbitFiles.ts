@@ -40,8 +40,16 @@ export interface Spec extends TurboModule {
    * Picking and copying are one call on purpose: a content URI handed to
    * JavaScript and passed back is a grant that can lapse in between, and the
    * failure would look like a file that imported and then was not there.
+   *
+   * `bucket` names WHICH picker this is, so each one reopens where it was last
+   * used. Android's document picker remembers one location per app, not per
+   * purpose: choosing a track from a music folder left the note-attachment
+   * picker opening in that same music folder, which is the wrong place for a
+   * scan or a lecture recording and looked like the app had got stuck there.
+   * Pass a stable name — `'music'`, `'note-media'` — and nothing else has to
+   * change.
    */
-  pick(mode: string, kinds: string): Promise<string>;
+  pick(mode: string, kinds: string, bucket: string): Promise<string>;
 
   /**
    * What a copied audio file says about itself.
