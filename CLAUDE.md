@@ -99,10 +99,17 @@ Do not "fix" these without reading the reasoning:
    and OEM skins replace it — MIUI ships MiSans, One UI ships SamsungOne — which
    would silently re-typeset the app on those phones.
 
-6. **`versionCode` must increase on every Play upload.** 13 is live on Play;
-   the repo carries 15. 14 was built and then **rejected** by Play — "your app
-   could crash on 16 KB devices", naming `libzstd-jni-1.5.6-9.so` — and a
-   rejected number cannot be reused, so the fix shipped as 15.
+6. **`versionCode` must increase on every Play upload.** **14 is live on Play**
+   and the repo carries 15.
+
+   This file said 13 for weeks and it was wrong; the app's owner corrected it
+   on 2026-09-05, reading their own console. What produced the error is worth
+   knowing, because the same shape will produce it again: an upload of 14 was
+   refused with "your app could crash on 16 KB devices" naming
+   `libzstd-jni-1.5.6-9.so`, that refusal was written down here as "14 was
+   rejected, 13 is live", and nothing ever re-checked. A rejection of one
+   upload is not proof of what the listing serves. **Ask the console, not this
+   file.**
 
    The number now lives in two places that must agree: `build.gradle` and
    `src/lib/appVersion.ts`, which is how the app knows its own version without

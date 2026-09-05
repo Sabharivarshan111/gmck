@@ -52,17 +52,17 @@ files into `mobile/`; a second copy will drift.
 - **`applicationId` is `com.aistudio.mbbsqbank.aycxvd`.** It matches the
   published Play listing. Changing it publishes a *second app* instead of an
   update.
-- **`versionCode` must increase on every Play upload.** 13 is live, the repo
-  carries 15 (14 was rejected and cannot be reused). It sits in `build.gradle`
-  AND `mobile/src/lib/appVersion.ts`; `check:version` fails if they disagree,
-  and bumping needs an `app_releases` row too.
+- **`versionCode` must increase on every Play upload.** 14 is live, the repo
+  carries 15. It sits in `build.gradle` AND `mobile/src/lib/appVersion.ts`;
+  `check:version` fails if they disagree, and a bump needs an `app_releases`
+  row. Which number is LIVE comes from the console, not here.
 - **Never commit secrets** — keystore, passwords, certificates, API keys. The
   signing key lives only in GitHub Actions secrets.
 - **Test builds must serve no ads at all.** `mobile/src/lib/adsMode.ts` exports
   `ADS_ENABLED = !__DEV__`; the debug and internal workflows overwrite it with
   `false`, so AdMob never starts. Serving yourself live ads can suspend the
   account. Release builds leave it alone — `android-release.yml` asserts that.
-- Open Gemini access, no app-side rate limit, and the public leaderboard are
+- Open Gemini access, no app-side rate limit and the public leaderboard are
   **deliberate**. Do not "fix" them.
 
 ## Cutting a build

@@ -54,9 +54,8 @@ tab, which is the way to rebuild a commit without pushing a new one.
 **1. A test build must never be able to show a live ad.** Serving yourself live
 ads is an AdMob policy violation that can suspend the account. The debug and
 internal workflows overwrite `mobile/src/lib/adsMode.ts` with
-`ADS_ENABLED = false` — not Google's test ads, *none*, because starting the
-AdMob SDK and the UMP consent form is real work at launch on a phone that has
-none to spare.
+`ADS_ENABLED = false` — not Google's test ads, *none*, because starting the SDK
+and the UMP consent form is real work at launch on a phone with none to spare.
 
 The release workflow does the mirror image: it **refuses to build** unless that
 file is in its shipped form (`ADS_ENABLED = !__DEV__`). A release that silently
@@ -67,14 +66,14 @@ test build to ship development JavaScript to stay safe — several times slower
 than the shipped app, and the cause of most "the app lags" reports.
 
 **2. `versionCode` must increase on every Play upload.** Play rejects a repeat,
-and it rejects it *after* the upload. 13 is live and the repo carries 15 — 14
-was rejected and cannot be reused. It is in `mobile/android/app/build.gradle`
-AND `mobile/src/lib/appVersion.ts`, which is how the app knows its own version
-with no native module; `npm run check:version` fails if they disagree. Bumping
-also needs an `app_releases` row, `live_on_play` false until Play serves it.
+and it rejects it *after* the upload. **14 is live, the repo carries 15** — and
+which number is live comes from the console, never from a file here (this said
+13 for weeks). The number is in `mobile/android/app/build.gradle` AND
+`mobile/src/lib/appVersion.ts`; `check:version` fails if they disagree, and a
+bump needs an `app_releases` row, `live_on_play` false until Play serves it.
 
 Do **not** change `applicationId` (`com.aistudio.mbbsqbank.aycxvd`): it matches
-the published listing, and changing it publishes a *second app*.
+the listing, and changing it publishes a *second app*.
 
 ## A secret belongs to one repo, and there are two remotes
 
@@ -188,10 +187,10 @@ workflow:
   that has sat in `queued` for half an hour. It exists but was never enqueued,
   so there is nothing to cancel.
 
-Both showed up together after a day of heavy pushing, with nothing in progress
-on either repo. The fix is to ask for less — the concurrency guards and path
-filters on `android-debug.yml` and `android-internal.yml` are there for this —
-then wait. It recovers on its own.
+Both showed up together after a day of heavy pushing, nothing in progress on
+either repo. Ask for less — the concurrency guards and path filters on
+`android-debug.yml` and `android-internal.yml` are there for this — then wait.
+It recovers on its own.
 
 **Checks use `cancel-in-progress: false`; builds use `true`.** An obsolete build
 is worth cancelling — the commit that replaced it is the one worth building. A
@@ -220,20 +219,20 @@ Every Android build failed to bundle for two days. Metro walks **up from the
 requesting file**, so a shared module in `../src/lib/` looks in
 `/repo/node_modules`, never `mobile/node_modules` — the only one CI installs,
 and Babel injects helper imports into what it transforms. Fixed with
-`resolver.nodeModulesPaths`. Not reproducible where `/repo/node_modules`
-exists; move it aside and run the real bundle.
+`resolver.nodeModulesPaths`. Not reproducible where `/repo/node_modules` is
+present; move it aside and run the real bundle.
 
 **2. The Vercel build breaks on a file in `mobile/`.** The mirror image: the
 web app imported from `mobile/`, and esbuild resolves the nearest tsconfig to
 every file — `mobile/tsconfig.json`, extending a package only
-`mobile/node_modules` has. Three deploys failed unnoticed, because a failed one
-leaves the previous up. **A shared module belongs in `src/lib/`, via
-`@shared`.**
+`mobile/node_modules` has. Three deploys failed unnoticed, since a failed one
+leaves the previous up. **Shared code belongs in `src/lib/`, via `@shared`.**
 
 **3. A doc check gates every Android build.** `check:agent-docs` runs first in
-all three workflows and fails on a rules file pointing at a path that no longer
-exists. Moving a file breaks the APK until the rules are repointed: the error
-names a markdown file while the symptom is "no APK".
+all three workflows and fails on a dead path in a rules file, or one over the
+12,000-char cap — including this one, which sits against it. Moving a file, or
+adding a paragraph here, breaks the APK, naming a markdown file while the
+symptom is "no APK".
 
 **Green deploy, stale phone:** `public/sw.js` evicts caches by changing its cache
 name, and `SW_VERSION` sat unchanged for a month, so `activate` deleted nothing.
