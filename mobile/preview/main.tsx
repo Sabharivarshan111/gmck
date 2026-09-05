@@ -22,6 +22,8 @@ import { hydrateProfile, hydrateStreak } from '@/hooks/useProfile';
 import { DailyAdConsent } from '@/components/DailyAdConsent';
 import { XpToast } from '@/components/XpToast';
 import { TourOverlay } from '@/components/TourOverlay';
+import { FirstRun } from '@/components/FirstRun';
+import { UpdateNotice } from '@/components/UpdateNotice';
 import { startTour } from '@/tour/store';
 import type { ChapterId } from '@/tour/script';
 import { hydratePremium } from '@/lib/premium';
@@ -1262,8 +1264,18 @@ function Shell() {
   return (
     <NavigationContainer theme={navTheme} ref={navigationRef} initialState={buildInitialState()}>
       <RootNavigator />
+      {/*
+        These four mirror App.tsx, and the mirror is the point: the preview has
+        its own tree, so anything mounted at the app root has to be mounted
+        here too or it is simply absent from every screenshot and every smoke
+        run. `FirstRun` was, which is exactly the drift CLAUDE.md warns about —
+        the step written to prove the year is asked for failed on a gate that
+        was never rendered.
+      */}
+      <FirstRun />
       <DailyAdConsent />
       <XpToast />
+      <UpdateNotice />
       <TourOverlay />
     </NavigationContainer>
   );
