@@ -67,17 +67,35 @@ if (appId && playPackage) {
   );
 }
 
-// The prompt and the card both read `app_releases`; nothing else may.
+/*
+ * Whether an update EXISTS is Google Play's answer. The table only holds words.
+ *
+ * This used to assert the opposite — that `appUpdate.ts` filtered rows on
+ * `.eq('live_on_play', true)` and `.gt('version_code', APP_VERSION_CODE)`,
+ * because the app decided for itself whether a newer release was out. That flag
+ * was a person promising by hand that the listing had caught up, and it failed
+ * in both directions: late and nobody hears about the update, early and every
+ * phone is sent to a page still showing the version it is running.
+ *
+ * `NativeOrbitUpdate` asks Play instead. What survives here is the half Play
+ * cannot do — Play hands no release notes to a client, in any shape — so the
+ * table is now a lookup by the versionCode Play names, and a version with no
+ * row still prompts, wordlessly. `check:native-update` guards the module
+ * itself.
+ */
 const updateLib = read(path.join(mobile, 'src', 'lib', 'appUpdate.ts'));
+const updateCode = updateLib.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/(^|[^:])\/\/.*$/gm, '$1');
 check(
-  /\.eq\('live_on_play', true\)/.test(updateLib),
-  'the update check no longer requires live_on_play — a build reaches testers days ' +
-    'before the listing serves it, and sending everyone to a page showing the version ' +
-    'they already have reads as the app being broken',
+  /from '@\/native\/NativeOrbitUpdate'/.test(updateCode),
+  'appUpdate.ts no longer asks Google Play whether an update exists',
 );
 check(
-  /\.gt\('version_code', APP_VERSION_CODE\)/.test(updateLib),
-  'the update check no longer compares against this build\'s own version',
+  !/live_on_play/.test(updateCode),
+  'appUpdate.ts reads live_on_play again — that is the hand-flipped flag Play replaced',
+);
+check(
+  /\.eq\('version_code', versionCode\)/.test(updateCode),
+  'the notes lookup no longer keys on the versionCode Play names',
 );
 check(
   /export async function dismissUpdate\(versionCode: number\)/.test(updateLib),
@@ -103,5 +121,5 @@ if (failures.length > 0) {
 
 console.log(
   `OK  versionCode ${gradleCode?.[1]} (${gradleName?.[1]}) agrees across gradle and the app, ` +
-    'update prompt gated on live_on_play, notes card carries no ad',
+    'update comes from Google Play, notes card carries no ad',
 );

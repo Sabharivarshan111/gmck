@@ -2,123 +2,126 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { supabase } from '@/lib/supabase';
 import { warn } from '@/lib/log';
 import { APP_VERSION_CODE } from '@/lib/appVersion';
+import OrbitUpdate, { type UpdateStatus } from '@/native/NativeOrbitUpdate';
 
 /**
- * "There is a newer version" and "here is what this one fixed", from one table.
+ * "There is a newer version" comes from Google Play. "Here is what it fixed"
+ * cannot.
  *
- * ## Why not Google's in-app update API
+ * ## Why Play answers the first question and a table used to
  *
- * `com.google.android.play:app-update` is the official answer to the first
- * half and it cannot do the second at all: Play does not hand release notes to
- * the client, so a card saying what an update fixed has to come from
- * somewhere else regardless. It also only works for a build Play itself
- * installed — every APK from CI, and every sideloaded test build, gets
- * `UPDATE_NOT_AVAILABLE` no matter what is on the listing, which is exactly
- * the configuration this gets tested in. And it is another native dependency,
- * with a TurboModule to write, for a number.
+ * This asked `app_releases` whether a row existed with a higher versionCode and
+ * a `live_on_play` flag set. That flag was a person promising, by hand, that
+ * the Play listing had caught up — and until they remembered, the prompt was
+ * silent; if they were early, it sent everyone to a page still showing the
+ * version they had. Play knows the answer for *this reader on their track*, and
+ * knows it without being told.
  *
- * So: one `app_releases` row per shipped versionCode, read anonymously. It
- * answers both questions, needs nothing new in the APK, and the notes can be
- * corrected after the build has gone out — which the Play listing's own
- * "what's new" cannot be without a new release.
+ * `NativeOrbitUpdate` is that API. It reports nothing at all for a build Play
+ * did not install, which is every APK from CI and every debug build — so the
+ * absence of a prompt in testing is the expected result, not a fault.
  *
- * ## The two rules that stop this being annoying
+ * ## Why the table is still here
  *
- * **`live_on_play` gates the prompt.** A build reaches testers days before the
- * listing serves it. Telling everyone else to go and update to a version the
- * store does not have yet sends them to a page showing the version they
- * already have, which reads as the app being broken.
+ * Play does not give release notes to a client. Not in a different shape, not
+ * behind another call — it is not in the API. So the words on the card come
+ * from `app_releases`, looked up by the versionCode Play names. **No row means
+ * the prompt still appears, without a list**: knowing an update exists is worth
+ * more than knowing what is in it.
  *
- * **A dismissal is per version.** Postponing 16 must not also postpone 17.
- * Stored as the version that was declined rather than a boolean, so the next
- * release asks again on its own without anything having to clear a flag.
+ * `live_on_play` is gone from the table with this change. It only ever existed
+ * to answer the question Play now answers, and a column nobody reads is a thing
+ * every future reader has to reason about before concluding it is dead.
  */
 
 const SEEN_VERSION_KEY = 'orbit:last-run-version';
 const DISMISSED_KEY = 'orbit:update-dismissed';
 const LAST_CHECK_KEY = 'orbit:update-checked-at';
 
-/** Six hours. The answer changes a few times a year; this is politeness. */
+/** Six hours. Play caches its own answer; this is politeness about asking. */
 const CHECK_EVERY_MS = 6 * 60 * 60 * 1000;
 
-export interface Release {
+/** Play's own threshold for "this has been available long enough to insist". */
+const HIGH_PRIORITY = 4;
+
+export interface ReleaseNotes {
   versionCode: number;
   versionName: string;
   headline: string;
   notes: string[];
-  mandatory: boolean;
-  liveOnPlay: boolean;
 }
+
+export interface UpdateOffer {
+  status: UpdateStatus;
+  /** Null when this version has no row — the prompt still shows. */
+  notes: ReleaseNotes | null;
+  /** Play marked it high priority, so the card does not offer "Not now". */
+  urgent: boolean;
+}
+
+export const updateSupported = OrbitUpdate !== null;
+
+const COLUMNS = 'version_code, version_name, headline, notes';
 
 interface Row {
   version_code: number;
   version_name: string;
   headline: string;
   notes: string[] | null;
-  mandatory: boolean;
-  live_on_play: boolean;
 }
 
-const toRelease = (row: Row): Release => ({
+const toNotes = (row: Row): ReleaseNotes => ({
   versionCode: row.version_code,
   versionName: row.version_name,
   headline: row.headline,
   notes: row.notes ?? [],
-  mandatory: row.mandatory,
-  liveOnPlay: row.live_on_play,
 });
 
-const COLUMNS = 'version_code, version_name, headline, notes, mandatory, live_on_play';
-
-/**
- * The newest release that is actually installable, or null.
- *
- * Ordered and filtered in Postgres rather than here: a client that fetches the
- * whole table to find one row gets slower with every release it has ever made.
- */
-export async function fetchUpdate(): Promise<Release | null> {
+/** The words for one versionCode, or null. */
+export async function notesFor(versionCode: number): Promise<ReleaseNotes | null> {
+  if (!versionCode) {
+    return null;
+  }
   const { data, error } = await supabase
     .from('app_releases')
     .select(COLUMNS)
-    .gt('version_code', APP_VERSION_CODE)
-    .eq('live_on_play', true)
-    .order('version_code', { ascending: false })
-    .limit(1)
+    .eq('version_code', versionCode)
     .maybeSingle();
   if (error) {
-    // supabase-js returns errors rather than throwing them, so this is the
-    // only place they can be noticed. Offline is the ordinary case and is not
-    // worth interrupting anybody over.
-    warn('fetchUpdate failed:', error);
+    // supabase-js returns errors rather than throwing them, so this is the only
+    // place one can be noticed. Offline is ordinary; the card copes without.
+    warn('notesFor failed:', error);
     return null;
   }
-  return data ? toRelease(data as Row) : null;
+  return data ? toNotes(data as Row) : null;
 }
 
-/** This build's own release row, for the "what's new" card. */
-export async function fetchOwnRelease(): Promise<Release | null> {
-  const { data, error } = await supabase
-    .from('app_releases')
-    .select(COLUMNS)
-    .eq('version_code', APP_VERSION_CODE)
-    .maybeSingle();
-  if (error) {
-    warn('fetchOwnRelease failed:', error);
+/** This build's own notes, for the card shown after an update lands. */
+export const ownNotes = () => notesFor(APP_VERSION_CODE);
+
+/** Ask Play. Null when the module is absent — the preview, and any non-Play build. */
+export async function playStatus(): Promise<UpdateStatus | null> {
+  if (!OrbitUpdate) {
     return null;
   }
-  return data ? toRelease(data as Row) : null;
+  try {
+    return JSON.parse(await OrbitUpdate.check()) as UpdateStatus;
+  } catch (error) {
+    warn('OrbitUpdate.check failed:', error);
+    return null;
+  }
 }
 
 /**
  * Whether this launch is the first on a new version.
  *
- * Read and written separately, and the write is `markVersionSeen` below,
- * because between the two the card has to actually be shown. Marking it seen
- * at the read would lose the card for anyone whose app is killed while the
- * network call for its notes is still out — which on a cheap phone is not rare.
+ * Read and written separately, because between the two the card has to actually
+ * be shown: marking it seen at the read would lose the card for anyone whose
+ * app is killed while the request for its notes is still out, which on a cheap
+ * phone is not rare.
  *
- * A fresh install is deliberately NOT an upgrade: there is nothing to tell
- * them changed. The very first launch records the version and shows nothing.
+ * A fresh install is deliberately NOT an upgrade. There is nothing to tell them
+ * changed; the first launch records the version and shows nothing.
  */
 export async function upgradedThisLaunch(): Promise<boolean> {
   try {
@@ -137,7 +140,7 @@ export async function markVersionSeen(): Promise<void> {
   await AsyncStorage.setItem(SEEN_VERSION_KEY, String(APP_VERSION_CODE)).catch(() => {});
 }
 
-/** Postpone one specific version. */
+/** Postpone one specific version, so declining 16 does not decline 17. */
 export async function dismissUpdate(versionCode: number): Promise<void> {
   await AsyncStorage.setItem(DISMISSED_KEY, String(versionCode)).catch(() => {});
 }
@@ -154,30 +157,50 @@ async function dismissed(versionCode: number): Promise<boolean> {
 /**
  * The update to offer right now, or null.
  *
- * Everything that decides "not now" is in here rather than in the component,
- * so the card has one input and cannot half-apply a rule. A mandatory release
- * ignores both the dismissal and the throttle: that is the whole meaning of
- * the flag, and it is the reason it defaults to false.
+ * Every "not now" rule lives here rather than in the component, so the card has
+ * one input and cannot half-apply one. A high-priority release skips the
+ * dismissal and the throttle — that is what the priority means, and it is why
+ * nothing sets it by default.
  */
-export async function updateToOffer(): Promise<Release | null> {
-  const release = await fetchUpdate();
-  if (!release) {
+export async function updateToOffer(): Promise<UpdateOffer | null> {
+  const status = await playStatus();
+  if (!status || !status.available) {
     return null;
   }
-  if (release.mandatory) {
-    return release;
-  }
-  if (await dismissed(release.versionCode)) {
-    return null;
-  }
-  try {
-    const last = Number.parseInt((await AsyncStorage.getItem(LAST_CHECK_KEY)) ?? '0', 10);
-    if (Number.isFinite(last) && Date.now() - last < CHECK_EVERY_MS) {
+  const urgent = status.priority >= HIGH_PRIORITY;
+
+  if (!urgent) {
+    if (await dismissed(status.versionCode)) {
       return null;
     }
-    await AsyncStorage.setItem(LAST_CHECK_KEY, String(Date.now()));
-  } catch {
-    // Storage unavailable is not a reason to withhold an update.
+    try {
+      const last = Number.parseInt((await AsyncStorage.getItem(LAST_CHECK_KEY)) ?? '0', 10);
+      if (Number.isFinite(last) && Date.now() - last < CHECK_EVERY_MS) {
+        return null;
+      }
+      await AsyncStorage.setItem(LAST_CHECK_KEY, String(Date.now()));
+    } catch {
+      // Storage unavailable is not a reason to withhold an update.
+    }
   }
-  return release;
+
+  return { status, notes: await notesFor(status.versionCode), urgent };
+}
+
+/** Show Play's sheet. 'accepted' | 'cancelled' | 'failed' | 'unavailable'. */
+export async function startUpdate(urgent: boolean): Promise<string> {
+  if (!OrbitUpdate) {
+    return 'unavailable';
+  }
+  try {
+    return await OrbitUpdate.start(urgent ? 'immediate' : 'flexible');
+  } catch (error) {
+    warn('OrbitUpdate.start failed:', error);
+    return 'failed';
+  }
+}
+
+/** Install a finished flexible download. Restarts the app. */
+export function completeUpdate(): void {
+  OrbitUpdate?.complete();
 }

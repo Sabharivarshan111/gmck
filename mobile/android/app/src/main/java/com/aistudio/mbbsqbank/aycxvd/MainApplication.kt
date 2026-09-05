@@ -22,6 +22,7 @@ class MainApplication : Application(), ReactApplication {
           add(NotifyPackage())
           add(FilesPackage())
           add(ScreenPackage())
+          add(UpdatePackage())
           add(ApkgPackage())
           // A view, not a module — see GlassViewManager for why that is a
           // different registration path under the New Architecture.

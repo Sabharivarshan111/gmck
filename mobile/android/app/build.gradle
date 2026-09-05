@@ -282,6 +282,20 @@ android {
 }
 
 dependencies {
+    /*
+     * Google Play's in-app update API.
+     *
+     * The one thing that actually knows whether a newer build is live for a
+     * given reader on a given track — which was a boolean somebody had to
+     * remember to flip before. Small: it is a thin client over Play services,
+     * not a bundled stack, and it ships its own ProGuard rules so nothing here
+     * has to keep it.
+     *
+     * It answers nothing for a build Play did not install, so every APK from
+     * this repo's CI sees no update however the listing looks. Test through
+     * internal app sharing.
+     */
+    implementation 'com.google.android.play:app-update:2.1.0'
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
 

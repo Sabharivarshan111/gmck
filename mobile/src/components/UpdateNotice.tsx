@@ -1,68 +1,120 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { Linking, StyleSheet, View } from 'react-native';
-import { Rocket, Sparkles } from 'lucide-react-native';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { StyleSheet, View } from 'react-native';
+import { Download, Rocket, Sparkles } from 'lucide-react-native';
 import { Dialog } from '@/components/Dialog';
 import { Text } from '@/components/Text';
 import { useTheme, withAlpha } from '@/theme';
 import { typeScale } from '@/theme/typography';
-import { PLAY_MARKET_URL, PLAY_WEB_URL } from '@/lib/appVersion';
 import {
+  completeUpdate,
   dismissUpdate,
-  fetchOwnRelease,
   markVersionSeen,
+  ownNotes,
+  playStatus,
+  startUpdate,
   updateToOffer,
   upgradedThisLaunch,
-  type Release,
+  type ReleaseNotes,
+  type UpdateOffer,
 } from '@/lib/appUpdate';
 
 /**
- * Two cards, one component, because they are the same card at two moments.
+ * Three cards, one component, because they are one card at three moments.
  *
- * "A newer version exists, here is what it fixes" and "you just updated, here
- * is what it fixed" render the same list from the same row. Splitting them
- * would be two components that must agree about how a release is presented,
- * and the second one would be the one that goes stale — it is only seen on the
- * launch after an install.
+ * "A newer version exists", "it has finished downloading, restart to install",
+ * and "you just updated, here is what it fixed" all render the same list from
+ * the same row. Splitting them would be three components that must agree about
+ * how a release is presented, and the last would be the one that went stale —
+ * it is only seen on the launch after an install.
  *
- * ## Shaped after the ad-consent dialog, and deliberately not carrying an ad
+ * ## Shaped after the ad-consent dialog, and carrying no ad
  *
- * The reader knows that card: it is the one that appears, explains itself and
- * offers a way out. That familiarity is the reason to reuse the shape. But the
- * ad prompt earns its offer by being *about* the ad, and this is not — putting
- * a purchase next to "what we fixed" would make the fixes read as the pretext.
- * Nothing is sold here.
+ * The reader knows that card: it appears, explains itself, and offers a way
+ * out. That familiarity is the reason to reuse the shape. But the ad prompt
+ * earns its offer by being *about* the ad, and this is not — a purchase next to
+ * "what we fixed" makes the fixes read as the pretext. `check:version` fails
+ * the build if this file ever imports anything ad- or payment-related.
  *
  * ## Why only one is ever on screen
  *
- * A launch cannot be both. If this build is newer than the last one that ran,
- * there is nothing newer on Play to offer — this IS the new one. The update
- * check therefore only runs when the what's-new card has nothing to say.
+ * A launch cannot be both an upgrade and behind one: if this build is newer
+ * than the last that ran, it IS the new one. So the Play check is not even made
+ * when the what's-new card has something to say.
+ *
+ * ## What is absent, and why that is correct
+ *
+ * Play reports no update for a build it did not install — every APK from CI,
+ * every debug build, and the preview harness, where the module is absent
+ * entirely. None of these cards can be driven by `check:smoke`. That is the
+ * same position the sound module is in, and the first real proof is an
+ * internally-shared build on a phone.
  */
 
-/** Long enough that it is not competing with the app finishing its own launch. */
+/** Long enough not to compete with the app finishing its own launch. */
 const SETTLE_MS = 1400;
 
-type Mode = 'update' | 'whatsnew';
+/** While a download is in flight. Play reports bytes; this reads them. */
+const POLL_MS = 2500;
+
+type Mode = 'update' | 'ready' | 'whatsnew';
 
 export function UpdateNotice() {
   const { colors } = useTheme();
-  const [release, setRelease] = useState<Release | null>(null);
   const [mode, setMode] = useState<Mode>('update');
+  const [offer, setOffer] = useState<UpdateOffer | null>(null);
+  const [own, setOwn] = useState<ReleaseNotes | null>(null);
+  const [visible, setVisible] = useState(false);
+  const polling = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const stopPolling = useCallback(() => {
+    if (polling.current) {
+      clearInterval(polling.current);
+      polling.current = null;
+    }
+  }, []);
+
+  /**
+   * Watch a flexible download to its end.
+   *
+   * Polled rather than pushed. An event emitter is a second mechanism to get
+   * right — codegen, subscription lifetime, the New Architecture's own emitter
+   * plumbing — for a value read by one card; see UpdateModule.kt.
+   */
+  const watchDownload = useCallback(() => {
+    stopPolling();
+    polling.current = setInterval(() => {
+      void (async () => {
+        const status = await playStatus();
+        if (!status) {
+          stopPolling();
+          return;
+        }
+        if (status.installStatus === 'downloaded') {
+          stopPolling();
+          setMode('ready');
+          setVisible(true);
+        } else if (status.installStatus === 'failed' || status.installStatus === 'canceled') {
+          stopPolling();
+        }
+      })();
+    }, POLL_MS);
+  }, [stopPolling]);
 
   useEffect(() => {
     let cancelled = false;
     const timer = setTimeout(() => {
       void (async () => {
-        // Ordered, not raced: what's new wins, and the update check is not even
-        // made when it applies. See the header.
+        // Ordered, not raced: what's new wins, and Play is not even asked when
+        // it applies. See the header.
         if (await upgradedThisLaunch()) {
-          const own = await fetchOwnRelease();
+          const notes = await ownNotes();
           if (cancelled) {
             return;
           }
-          if (own && own.notes.length > 0) {
+          if (notes && notes.notes.length > 0) {
+            setOwn(notes);
             setMode('whatsnew');
-            setRelease(own);
+            setVisible(true);
             return;
           }
           // A version with no row has nothing to say. Record it anyway, or
@@ -71,67 +123,92 @@ export function UpdateNotice() {
           await markVersionSeen();
           return;
         }
-        const offer = await updateToOffer();
-        if (!cancelled && offer) {
+
+        /*
+         * A download that finished while the app was closed.
+         *
+         * Play holds it, and nothing installs it until `completeUpdate` is
+         * called — so without this the reader downloads an update once and is
+         * never asked to install it again.
+         */
+        const status = await playStatus();
+        if (cancelled) {
+          return;
+        }
+        if (status?.installStatus === 'downloaded') {
+          setMode('ready');
+          setVisible(true);
+          return;
+        }
+
+        const next = await updateToOffer();
+        if (!cancelled && next) {
+          setOffer(next);
           setMode('update');
-          setRelease(offer);
+          setVisible(true);
         }
       })();
     }, SETTLE_MS);
     return () => {
       cancelled = true;
       clearTimeout(timer);
+      stopPolling();
     };
-  }, []);
+  }, [stopPolling]);
 
   const close = useCallback(() => {
-    const current = release;
-    setRelease(null);
-    if (!current) {
-      return;
-    }
+    setVisible(false);
     if (mode === 'whatsnew') {
       void markVersionSeen();
-    } else {
-      void dismissUpdate(current.versionCode);
+    } else if (mode === 'update' && offer) {
+      void dismissUpdate(offer.status.versionCode);
     }
-  }, [mode, release]);
+    // 'ready' is deliberately not dismissed: the bytes are already on the
+    // phone, and asking again next launch costs nothing.
+  }, [mode, offer]);
 
-  const openPlay = useCallback(() => {
-    // Closed but deliberately NOT recorded as dismissed: they said yes. If the
-    // store visit does not end in an install, the next check should offer it
-    // again rather than treat the intention as the update.
-    setRelease(null);
-    /*
-     * `market:` first, https second.
-     *
-     * `canOpenURL` is not asked. On Android 11+ it answers false for any
-     * scheme not declared in `<queries>`, so asking would report the Play app
-     * missing on a phone that has it — and the declaration would be a manifest
-     * change for a question `openURL`'s own failure already answers.
-     */
-    Linking.openURL(PLAY_MARKET_URL).catch(() => {
-      Linking.openURL(PLAY_WEB_URL).catch(() => {});
-    });
+  const accept = useCallback(() => {
+    setVisible(false);
+    void (async () => {
+      const outcome = await startUpdate(offer?.urgent ?? false);
+      // Play's own sheet has just been answered. Accepted means the download
+      // has begun; everything else is the reader's decision and says nothing.
+      if (outcome === 'accepted') {
+        watchDownload();
+      }
+    })();
+  }, [offer, watchDownload]);
+
+  const install = useCallback(() => {
+    setVisible(false);
+    // Restarts the app.
+    completeUpdate();
   }, []);
 
-  const isUpdate = mode === 'update';
+  const release = mode === 'whatsnew' ? own : offer?.notes ?? null;
+  const heading =
+    mode === 'whatsnew'
+      ? `What's new in ${own?.versionName ?? 'this update'}`
+      : mode === 'ready'
+      ? 'Update ready to install'
+      : `Update available${release ? ` — ${release.versionName}` : ''}`;
+  const message =
+    mode === 'ready'
+      ? 'Orbit has downloaded it. Installing takes a few seconds and restarts the app.'
+      : release?.headline ??
+        (mode === 'update' ? 'A newer version of Orbit is on the Play Store.' : undefined);
 
   return (
     <Dialog
-      visible={release !== null}
-      // A mandatory release still closes. A dialog with no way out is a phone
-      // the reader cannot use, and the flag exists to make the update loud, not
-      // to hold their app hostage.
+      visible={visible}
+      // Even an urgent release closes. A dialog with no way out is a phone the
+      // reader cannot use, and priority exists to make an update loud rather
+      // than to hold their question bank hostage.
       onDismiss={close}
-      title={
-        isUpdate
-          ? `Update available — ${release?.versionName ?? ''}`
-          : `What's new in ${release?.versionName ?? 'this update'}`
-      }
-      message={release?.headline}
+      title={heading}
+      message={message}
       footer={
-        release ? (
+        release && release.notes.length > 0 && mode !== 'ready' ? (
           <View
             style={[
               styles.notes,
@@ -141,13 +218,13 @@ export function UpdateNotice() {
               },
             ]}>
             <View style={styles.notesHead}>
-              {isUpdate ? (
-                <Rocket size={14} color={colors.accent} />
-              ) : (
+              {mode === 'whatsnew' ? (
                 <Sparkles size={14} color={colors.accent} />
+              ) : (
+                <Rocket size={14} color={colors.accent} />
               )}
               <Text style={[styles.notesTitle, { color: colors.accent }]}>
-                {isUpdate ? 'What this update fixes' : 'Fixed in this version'}
+                {mode === 'whatsnew' ? 'Fixed in this version' : 'What this update fixes'}
               </Text>
             </View>
             {release.notes.map((note, i) => (
@@ -157,15 +234,27 @@ export function UpdateNotice() {
               </View>
             ))}
           </View>
+        ) : mode === 'ready' ? (
+          <View style={styles.readyRow}>
+            <Download size={14} color={colors.textMuted} />
+            <Text style={[styles.noteText, { color: colors.textMuted }]}>
+              Nothing you have written is lost — Orbit saves as you go.
+            </Text>
+          </View>
         ) : null
       }
       actions={
-        isUpdate
+        mode === 'whatsnew'
+          ? [{ label: 'Got it', onPress: close, tone: 'primary' }]
+          : mode === 'ready'
           ? [
-              { label: 'Not now', onPress: close, tone: 'secondary' },
-              { label: 'Update', onPress: openPlay, tone: 'primary' },
+              { label: 'Later', onPress: close, tone: 'secondary' },
+              { label: 'Install now', onPress: install, tone: 'primary' },
             ]
-          : [{ label: 'Got it', onPress: close, tone: 'primary' }]
+          : [
+              { label: 'Not now', onPress: close, tone: 'secondary' },
+              { label: 'Update', onPress: accept, tone: 'primary' },
+            ]
       }
     />
   );
@@ -191,6 +280,11 @@ const styles = StyleSheet.create({
   },
   noteRow: {
     flexDirection: 'row',
+    gap: 8,
+  },
+  readyRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 8,
   },
   bullet: {
