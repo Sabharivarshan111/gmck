@@ -21,6 +21,11 @@ which is why `save()` is not used any more. `save()` throws the boundaries
 away, and asking for them is the only reason this now assembles the audio by
 hand.
 
+It has to ASK for words: `Communicate`'s `boundary` argument defaults to
+`"SentenceBoundary"`, and the service sends one kind or the other, never both.
+Left at the default the stream carries audio and no word events at all, which
+is how the first CI run of this failed.
+
 Two rules that are not style choices:
 
 * **Single-language US English voices only.** A `*MultilingualNeural` voice
@@ -61,6 +66,15 @@ async def speak(ad: dict) -> None:
             ad["voice"],
             rate=ad["rate"],
             pitch=ad["pitch"],
+            # `boundary` defaults to "SentenceBoundary", and that default is
+            # the whole reason the first run of this failed: the stream came
+            # back with audio and not one word event, because the service was
+            # being asked for sentence marks. edge-tts sends exactly one of the
+            # two -- see `Communicate.__init__` and the `wd`/`sq` flags it
+            # writes into the config message -- so asking for words is not an
+            # addition, it is a choice. Words are what a caption needs; a
+            # sentence mark is the shot boundary, which the edit already knows.
+            boundary="WordBoundary",
         )
 
         # Assembled by hand rather than with `save()`, because `save()` drops
@@ -96,8 +110,17 @@ async def speak(ad: dict) -> None:
         # the finished film with the sound on.
         if not words:
             raise SystemExit(
-                f"{line['name']} came back with no word boundaries. The caption "
-                f"for this shot could not be synchronised to the voice."
+                f"{line['name']} came back with {size} bytes of audio and no "
+                f"word boundaries at all.\n\n"
+                f"The usual cause is the `boundary=` argument above. edge-tts "
+                f"sends WORD marks or SENTENCE marks, never both, and it "
+                f"defaults to sentences -- so a stream that carries audio and "
+                f"nothing else is the service answering the question it was "
+                f"actually asked. Check that `Communicate(...)` still passes "
+                f"boundary=\"WordBoundary\".\n\n"
+                f"Without these the captions fall back to spreading each line "
+                f"evenly across its shot, which never lines up with speech and "
+                f"is the desync this exists to fix."
             )
         spoken = words[-1]["startMs"] + words[-1]["durationMs"]
         print(
