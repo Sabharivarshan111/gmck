@@ -40,6 +40,10 @@ function firstSentence(text) {
 /**
  * The "Use when ..." clause of a skill's description — the TRIGGER.
  *
+ * Named `triggerClause` and not `useWhen`: eslint's `rules-of-hooks` reads any
+ * `useX` as a React Hook and fails the build for calling one in a loop. That
+ * cost a release build, in a Node script with no React in it.
+ *
  * Every vendored skill's frontmatter says what it is for and then, in a second
  * sentence, when to reach for it. Claude Code reads the whole description and
  * decides for itself; Antigravity never sees the file at all, only the table
@@ -54,7 +58,7 @@ function firstSentence(text) {
  * trigger from the first sentence: a guessed "use when" is worse than an
  * honest blank, because it reads as authoritative.
  */
-function useWhen(text) {
+function triggerClause(text) {
   const trimmed = text.replace(/\s+/g, ' ').trim();
   /*
    * The preposition varies and the first version of this only caught "Use
@@ -86,7 +90,7 @@ async function skillIndex() {
       continue;
     }
     const description = frontmatter(body, 'description') ?? '';
-    const trigger = useWhen(description);
+    const trigger = triggerClause(description);
     rows.push(
       `| \`.claude/skills/${name}/\` | ${firstSentence(description)} | ${
         trigger ?? '—'
