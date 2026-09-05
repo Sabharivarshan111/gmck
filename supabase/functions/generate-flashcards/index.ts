@@ -706,6 +706,21 @@ serve(async (req) => {
      * long system prompt, which is where the instructions that get followed
      * already live.
      *
+     * ## Two things measured the hard way, both counter-intuitive
+     *
+     * **The ordering instruction is load-bearing.** Written as "write the
+     * applied cards FIRST, then the reasoning ones, then fill up with recall",
+     * three of three runs produced applied cards. Rewritten as the calmer
+     * "meet all three counts", two of three runs produced zero applied AND
+     * zero reasoning. Say the order.
+     *
+     * **Do not name an integer for recall.** When the quota read "4 applied,
+     * 4 reasoning, and the remaining 9 recall", two runs returned exactly nine
+     * theory cards, every one of them recall — the model anchored on the last
+     * number it was given, satisfied it, and stopped eight cards short of the
+     * total it had been asked for twice. Applied and reasoning are stated as
+     * minimums with a number; recall is "every remaining card" with none.
+     *
      * If a run still comes back with no applied cards, the next step is
      * structural rather than persuasive — ask for `appliedCards` as its own
      * array, the way `diagramCards` already is. Do not close the gap by
@@ -715,13 +730,14 @@ serve(async (req) => {
     if (isFirstYear) {
       const wantApplied = Math.max(3, Math.round(askTheory * 0.25));
       const wantReasoning = Math.max(3, Math.round(askTheory * 0.25));
-      const wantRecall = Math.max(0, askTheory - wantApplied - wantReasoning);
       userPrompt +=
-        `\n\nMODE QUOTA — count them before you answer. Of those ${askTheory} theory cards, EXACTLY ` +
-        `${wantApplied} must have "mode": "applied" (a one-line clinical vignette, then the question), ` +
-        `EXACTLY ${wantReasoning} must have "mode": "reasoning" (a claim, then "Why?", answered with the mechanism), ` +
-        `and the remaining ${wantRecall} are "mode": "recall". A deck that is short on "applied" is a failed answer, ` +
-        `however good its recall cards are. Write the ${wantApplied} applied cards FIRST, then the reasoning ones, then fill up with recall.`;
+        `\n\nMODE QUOTA — write them in this order. FIRST write ${wantApplied} cards with "mode": "applied" ` +
+        `(a one-line clinical vignette, then the question). THEN write ${wantReasoning} cards with ` +
+        `"mode": "reasoning" (a claim, then "Why?", answered with the mechanism). ONLY THEN fill the rest of ` +
+        `the ${askTheory} theory cards with "mode": "recall" — every remaining card is a recall card, and you ` +
+        `keep writing them until you reach ${askTheory} in total. A deck short on applied cards is a failed ` +
+        `answer however good its recall cards are, and a deck with no recall cards is equally wrong, because ` +
+        `recall is what the reader drills.`;
     }
 
     if (selectedDiagrams.length > 0) {
