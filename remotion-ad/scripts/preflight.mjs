@@ -22,6 +22,40 @@ const registry = await fs.readFile(
 );
 const files = [...registry.matchAll(/file:\s*'([^']+)'/g)].map(m => m[1]);
 
+/*
+ * The assets named by PROPS, not by the registry — and this is the half that
+ * was missing.
+ *
+ * `PristineAppScreen imageName="glass-progress.png"` and
+ * `DiagramCardScreen plateImage="stomach_lymphatics_anatomy.jpg"` both resolve
+ * to `app_screens/<name>` through `staticFile()`, exactly like a registry
+ * entry, and the check above never looked at them. Seven files were named this
+ * way and produced by nothing: two plates that were never downloaded and five
+ * screens that were never captured or copied. Every one of them rendered as a
+ * broken image in a finished, published advertisement, and nothing failed.
+ *
+ * Scanned across every component rather than just the registry, because the
+ * prop can be written anywhere a shot is defined.
+ */
+const componentDir = path.join(root, 'src/components');
+const propNamed = new Set();
+for (const name of await fs.readdir(componentDir)) {
+  if (!name.endsWith('.tsx')) continue;
+  const body = await fs.readFile(path.join(componentDir, name), 'utf8');
+  for (const [, asset] of body.matchAll(
+    /(?:imageName|plateImage)=["']([^"'{}]+\.(?:png|jpg|jpeg|webp))["']/g,
+  )) {
+    propNamed.add(`app_screens/${asset}`);
+  }
+  // `staticFile('app_screens/…')` written out in full, which one shot does.
+  for (const [, asset] of body.matchAll(
+    /staticFile\(\s*['"`](app_screens\/[^'"`$]+)['"`]\s*\)/g,
+  )) {
+    propNamed.add(asset);
+  }
+}
+files.push(...propNamed);
+
 for (const rel of [...new Set(files)]) {
   const full = path.join(root, 'public', rel);
   try {

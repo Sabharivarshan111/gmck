@@ -32,6 +32,19 @@ const PLATES = {
   'plate-synovial-joints.jpg': 'anatomy/types_of_synovial_joints.jpg',
   'plate-axilla.jpg': 'anatomy/axilla_boundaries_axillary_artery.jpg',
   'plate-tca-cycle.jpg': 'biochemistry/tca_cycle_amphibolic_anaplerosis.jpg',
+  /*
+   * These two are named directly by `DiagramCardScreen` shots, under these
+   * exact filenames, and NOTHING was producing them. `staticFile()` on a file
+   * that is not there is a broken image in a finished ad, and preflight could
+   * not see it: it only reads the `file:` entries in the SCREENS registry, and
+   * these live in `plateImage=` props on components.
+   *
+   * `calots_triangle_anatomy.jpg` is the same plate as `plate-calots-triangle`
+   * above under the name the component asks for — the download is cheap and a
+   * rename here would mean editing a shot to fix a build.
+   */
+  'calots_triangle_anatomy.jpg': 'anatomy/extrahepatic_biliary_apparatus_calots.jpg',
+  'stomach_lymphatics_anatomy.jpg': 'anatomy/stomach_lymphatics_clogs_areas_virchow.jpg',
 };
 
 const outDir = path.join(process.cwd(), 'public', 'app_screens');

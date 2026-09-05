@@ -65,9 +65,29 @@ const fromShoot = [
   // Captured fresh rather than copied from `screenshots/`: these two carry a
   // medical plate, and the committed copies held a stand-in and a failed image.
   'single-note-diagram', 'chapter-diagrams',
+  // Named by a shot's `imageName` prop and produced by nothing until now.
+  'tca-note',
+  /*
+   * Named by SCREENS entries and produced by nothing either — they survived
+   * only because 100 generated screens were committed to `public/app_screens/`
+   * despite `.gitignore` forbidding exactly that, so the checkout supplied
+   * them. They are untracked now, which is what makes this list load-bearing:
+   * anything not produced here is now genuinely absent, and preflight says so.
+   */
+  'questions-chapters', 'questions-leaf', 'home-edit',
 ];
 // Screens the harness does not produce, kept in the repo's screenshots/ dir.
-const fromRepo = ['glass-home', 'apkg-1-hub', 'music-06-playing'];
+const fromRepo = [
+  'glass-home', 'apkg-1-hub', 'music-06-playing',
+  /*
+   * Named by `imageName=` props on ad shots and produced by none of the steps
+   * above. Each was a broken image in a finished cut, and preflight was blind
+   * to all of them because it only reads the SCREENS registry's `file:`
+   * entries — never the props.
+   */
+  'glass-progress', 'tour-03-gestures', 'bot-liquidglass', 'apkg-3-chooser',
+  'homeedit-7-picture',
+];
 
 for (const name of fromShoot) {
   await fs.copyFile(path.join(tmp, `${name}.png`), path.join(out, `${name}.png`));
