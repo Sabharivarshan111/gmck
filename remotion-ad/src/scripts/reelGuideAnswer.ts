@@ -47,39 +47,39 @@ export const reelGuideAnswer: AdScript = {
   music: 'audio/bed/bed-guide-answer.wav',
   shots: [
     // --- the offer, from the face. No product for two and a half seconds.
-    { n: 1, frames: 75, screen: null, mascot: 'hero', camera: 'settle', text: 'Ask me anything', vo: 'Ask me anything.', accent: '#7C5CFF' },
-    { n: 2, frames: 100, screen: 'questionsLeaf', mascot: 'guide', camera: 'macro', text: 'Pick a question', vo: 'Pick a question. Any question.', focus: 0.28, accent: '#F5B301' },
+    { n: 1, frames: 75, screen: null, mascot: 'hero', camera: 'settle', text: 'Ask me anything', silentText: "Ask it anything", vo: 'Ask me anything.', accent: '#7C5CFF' },
+    { n: 2, frames: 100, screen: 'questionsLeaf', mascot: 'guide', camera: 'macro', text: 'Pick a question', silentText: "Start with any question", vo: 'Pick a question. Any question.', focus: 0.28, accent: '#F5B301' },
 
     // --- what the list already knows before you read a word.
-    { n: 3, frames: 105, screen: 'questionsLeaf', camera: 'macro', text: 'how often it repeats', vo: 'The stars say how often it repeats.', focus: 0.28, accent: '#F5B301' },
+    { n: 3, frames: 105, screen: 'questionsLeaf', camera: 'macro', text: 'how often it repeats', silentText: "The stars are frequency", vo: 'The stars say how often it repeats.', focus: 0.28, accent: '#F5B301' },
 
     // --- the mascot does the work, in the first person.
-    { n: 4, frames: 100, screen: 'noteHero', mascot: 'guide', camera: 'push', text: 'I write the answer', vo: 'Triple tap. I write the answer.', accent: '#FF4D8D' },
-    { n: 5, frames: 100, screen: 'noteBody', camera: 'glideDown', text: 'the years asked', vo: 'Headings, points, and the years asked.', accent: '#FF4D8D' },
-    { n: 6, frames: 110, screen: 'noteBodyBottom', camera: 'glideDown', text: 'the must write points', vo: 'It ends with the must write points.', accent: '#FF4D8D' },
+    { n: 4, frames: 100, screen: 'noteHero', mascot: 'guide', camera: 'push', text: 'I write the answer', silentText: "Triple-tap for the answer", vo: 'Triple tap. I write the answer.', accent: '#FF4D8D' },
+    { n: 5, frames: 100, screen: 'noteBody', camera: 'glideDown', text: 'the years asked', silentText: "Headings, points, years asked", vo: 'Headings, points, and the years asked.', accent: '#FF4D8D' },
+    { n: 6, frames: 110, screen: 'noteBodyBottom', camera: 'glideDown', text: 'the must write points', silentText: "It ends with the must-writes", vo: 'It ends with the must write points.', accent: '#FF4D8D' },
 
     // --- the plate, which is the part nothing else does.
-    { n: 7, frames: 105, screen: 'plateBrachial', mascot: 'guide', camera: 'settle', text: 'the diagram that belongs', vo: 'Then the diagram that belongs to it.', accent: '#22D3A6' },
-    { n: 8, frames: 110, screen: 'noteDiagram', camera: 'pull', text: 'Picture first', vo: 'Picture first, then the theory underneath.', accent: '#22D3A6' },
+    { n: 7, frames: 105, screen: 'plateBrachial', mascot: 'guide', camera: 'settle', text: 'the diagram that belongs', silentText: "The diagram for that question", vo: 'Then the diagram that belongs to it.', accent: '#22D3A6' },
+    { n: 8, frames: 110, screen: 'noteDiagram', camera: 'pull', text: 'Picture first', silentText: "Picture, then the theory", vo: 'Picture first, then the theory underneath.', accent: '#22D3A6' },
 
     // --- still stuck. This is the join: it is literally this avatar in the app.
-    { n: 9, frames: 100, screen: 'askai', mascot: 'guide', camera: 'push', text: 'Ask me again', vo: 'Still not clear? Ask me again.', accent: '#7C5CFF' },
-    { n: 10, frames: 100, screen: 'chatdemo', camera: 'macro', text: 'I explain it properly', vo: 'I explain it properly, not briefly.', accent: '#7C5CFF' },
+    { n: 9, frames: 100, screen: 'askai', mascot: 'guide', camera: 'push', text: 'Ask me again', silentText: "Still stuck? Ask", vo: 'Still not clear? Ask me again.', accent: '#7C5CFF' },
+    { n: 10, frames: 100, screen: 'chatdemo', camera: 'macro', text: 'I explain it properly', silentText: "It explains properly", vo: 'I explain it properly, not briefly.', accent: '#7C5CFF' },
 
     // --- making it stick.
-    { n: 11, frames: 105, screen: 'flashcards', mascot: 'guide', camera: 'orbit', text: 'turn it into flashcards', vo: 'Then I turn it into flashcards.', accent: '#4CC2FF' },
-    { n: 12, frames: 95, screen: 'ankiStudy', camera: 'macro', text: 'before you forget', vo: 'They come back before you forget.', accent: '#4CC2FF' },
+    { n: 11, frames: 105, screen: 'flashcards', mascot: 'guide', camera: 'orbit', text: 'turn it into flashcards', silentText: "Then it makes flashcards", vo: 'Then I turn it into flashcards.', accent: '#4CC2FF' },
+    { n: 12, frames: 95, screen: 'ankiStudy', camera: 'macro', text: 'before you forget', silentText: "Back before you forget", vo: 'They come back before you forget.', accent: '#4CC2FF' },
 
     // --- the hour you give it.
-    { n: 13, frames: 100, screen: 'timer', mascot: 'guide', camera: 'push', text: 'A tree grows', vo: 'Set a session. A tree grows.', accent: '#22D3A6' },
-    { n: 14, frames: 95, screen: 'treegallery', camera: 'trackRight', text: 'Twelve species', vo: 'Twelve species, earned in focused hours.', accent: '#22D3A6' },
-    { n: 15, frames: 105, screen: 'progress', camera: 'pull', text: 'stays on your phone', vo: 'Your streak stays on your phone.', accent: '#F5B301' },
+    { n: 13, frames: 100, screen: 'timer', mascot: 'guide', camera: 'push', text: 'A tree grows', silentText: "Focus, and a tree grows", vo: 'Set a session. A tree grows.', accent: '#22D3A6' },
+    { n: 14, frames: 95, screen: 'treegallery', camera: 'trackRight', text: 'Twelve species', silentText: "Twelve species to unlock", vo: 'Twelve species, earned in focused hours.', accent: '#22D3A6' },
+    { n: 15, frames: 105, screen: 'progress', camera: 'pull', text: 'stays on your phone', silentText: "Your streak stays on your phone", vo: 'Your streak stays on your phone.', accent: '#F5B301' },
 
     // --- and the box that gets ticked, which is where the question started.
-    { n: 16, frames: 95, screen: 'questionsLeaf', camera: 'macro', text: 'You never reopen it', vo: 'Tick it. You never reopen it.', focus: 0.28, accent: '#F5B301' },
-    { n: 17, frames: 95, screen: 'glassHome', camera: 'orbit', text: 'how you like', vo: 'Make it look how you like.', accent: '#4CC2FF' },
+    { n: 16, frames: 95, screen: 'questionsLeaf', camera: 'macro', text: 'You never reopen it', silentText: "Tick it. Never reopen it", vo: 'Tick it. You never reopen it.', focus: 0.28, accent: '#F5B301' },
+    { n: 17, frames: 95, screen: 'glassHome', camera: 'orbit', text: 'how you like', silentText: "Four themes, or build one", vo: 'Make it look how you like.', accent: '#4CC2FF' },
 
     // --- one CTA, no second ask.
-    { n: 18, frames: 105, screen: null, mascot: 'hero', camera: 'settle', text: 'Free on Google Play', vo: "That's Orbit. Free on Google Play.", accent: '#7C5CFF' },
+    { n: 18, frames: 105, screen: null, mascot: 'hero', camera: 'settle', text: 'Free on Google Play', silentText: "Orbit MBBS, free on Google Play", vo: "That's Orbit. Free on Google Play.", accent: '#7C5CFF' },
   ],
 };

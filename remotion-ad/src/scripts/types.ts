@@ -97,6 +97,32 @@ export interface Shot {
    */
   beats?: number;
   /**
+   * The headline the SILENT cut of a voiced reel shows instead of `text`.
+   *
+   * ## Why the two cannot be the same string
+   *
+   * `text` is constrained to be a verbatim span of `vo`, so that a viewer with
+   * the sound on reads the words being spoken. That rule fixed a real bug and
+   * it is not going away — but it optimises for the cut that has audio, and it
+   * quietly damaged the one that does not.
+   *
+   * A span of a sentence is usually a fragment. With the sound off,
+   * `orbit-reel-guide-silent` read "The way examiners read", "Before you
+   * forget", "Picture first" — each of which is the tail of a line nobody
+   * heard. And because a spoken line must spell its numbers out, the muted
+   * viewer got "Five thousand six hundred questions" where "5,634 questions"
+   * is the thing that stops a thumb.
+   *
+   * The silent cut is the one most people watch. So it gets its own headline:
+   * a standalone claim, numerals allowed, that has to make sense to somebody
+   * who will never hear a word. `preflight` requires one on every shot of a
+   * voiced reel.
+   *
+   * A `noVoice` script does not use this — its `text` IS the standalone
+   * caption, because there was never a voice for it to agree with.
+   */
+  silentText?: string;
+  /**
    * A two-or-three word label above the caption, saying where in the app this
    * lives ("QUESTION BANK", "FOCUS TIMER").
    *

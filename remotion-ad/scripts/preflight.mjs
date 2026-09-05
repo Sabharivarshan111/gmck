@@ -336,6 +336,49 @@ const isSpanOf = (span, line) => {
   return false;
 };
 
+/* ------------------------------------------------------------------------
+ * The muted cut needs a headline that stands on its own.
+ *
+ * `text` is a verbatim span of the spoken line, which is what keeps the voiced
+ * cut in sync. A span of a sentence is usually a FRAGMENT, and the silent cut
+ * renders the same string — so with the sound off,
+ * `orbit-reel-guide-silent` read "The way examiners read", "Before you
+ * forget", "Picture first": each the tail of a line nobody heard. The owner
+ * reported it, and it was introduced by the fix for the previous complaint.
+ *
+ * The silent cut is the one most people watch, so it gets `silentText`: a
+ * standalone claim, numerals allowed (a spoken line must spell numbers out;
+ * a caption should not), written for somebody who will never hear a word.
+ * Required on every shot of a voiced reel, because a missing one falls back to
+ * the fragment and nothing on screen would say so.
+ * --------------------------------------------------------------------- */
+for (const script of scripts) {
+  if (script.format !== 'reel' || script.noVoice) continue;
+  for (const shot of script.shots) {
+    if (!shot.silentText) {
+      problems.push(
+        `${script.id} shot ${shot.n} has no \`silentText\`, so its silent cut ` +
+          `would show "${shot.text}" — a fragment of a line the muted viewer ` +
+          'never hears',
+      );
+      continue;
+    }
+    if (YEAR_SHAPED.test(shot.silentText)) {
+      problems.push(
+        `${script.id} shot ${shot.n}: \`silentText\` contains "${shot.silentText}", ` +
+          'and a four-digit number in that range reads as a year',
+      );
+    }
+    const words = shot.silentText.trim().split(/\s+/).filter(Boolean).length;
+    if (words > 6) {
+      problems.push(
+        `${script.id} shot ${shot.n}: \`silentText\` is ${words} words. A reel ` +
+          'headline is read in under a second — keep it to six.',
+      );
+    }
+  }
+}
+
 for (const script of scripts) {
   if (script.format !== 'reel' || script.noVoice) continue;
   for (const shot of script.shots) {

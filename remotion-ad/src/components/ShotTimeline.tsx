@@ -226,7 +226,17 @@ const ShotView: React.FC<ShotViewProps> = ({
              half of the sync complaint you could see rather than hear.
           */
           <ReelHeadline
-            text={shot.text || shot.vo || ''}
+            /*
+               The muted cut gets its own headline.
+
+               `shot.text` is a verbatim span of the spoken line, which is what
+               keeps the voiced cut in sync — and a span of a sentence is
+               usually a fragment. With no audio "The way examiners read" is
+               the tail of a line nobody heard. `silentText` is a standalone
+               claim written for exactly that viewer, and it is the one who
+               matters most: a reel is watched muted.
+            */
+            text={(scriptId ? shot.text : shot.silentText ?? shot.text) || shot.vo || ''}
             accent={accent}
             durationInFrames={durationInFrames}
             scriptId={scriptId}
