@@ -4,8 +4,10 @@ import {
   ChevronRight,
   GraduationCap,
   Layers,
-  Smartphone,
+  Loader2,
   Sparkles,
+  Trash2,
+  Upload,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
@@ -21,7 +23,32 @@ import {
   saveNewPerDay,
   type StartedDeck,
 } from "@/lib/flashcards";
+import {
+  deleteImportedDeck,
+  importPackage,
+  loadImportedDecks,
+  MAX_IMPORT_CARDS,
+  type ImportedDeck,
+} from "@/lib/importedDecksWeb";
+/*
+ * Where sql.js finds its WASM, resolved by Vite at build time.
+ *
+ * `apkgWeb.ts` will not guess this, and its header says why: a `new URL(…,
+ * import.meta.url)` built from a template string is not statically analysable,
+ * so Vite leaves it alone and the built app asks for a path under
+ * `node_modules` that is not deployed. Without this line the import works in
+ * `npm run dev` and, in production, sql.js falls back to fetching the file
+ * over the network — which is both a 404 and a request to somewhere else every
+ * time a reader opens a deck.
+ *
+ * `?url` emits the file as an asset and hands back its hashed path, so the
+ * WASM ships with the app and is served from its own origin. It is the browser
+ * build's WASM specifically: sql.js's `exports.browser` points at
+ * `sql-wasm-browser.js`, and the two are a pair.
+ */
+import sqlWasmUrl from "sql.js/dist/sql-wasm-browser.wasm?url";
 import StudyView from "./StudyView";
+import ImportedStudyView from "./ImportedStudyView";
 
 const YEARS: Year[] = ["first", "second", "third", "final"];
 const YEAR_ICONS: Record<Year, string> = {
@@ -35,7 +62,8 @@ type View =
   | { kind: "years" }
   | { kind: "subjects"; year: Year }
   | { kind: "topics"; year: Year; subjectKey: string; subjectName: string; node: any }
-  | { kind: "study"; year: Year; subjectName: string; topic: LeafTopic };
+  | { kind: "study"; year: Year; subjectName: string; topic: LeafTopic }
+  | { kind: "imported"; deck: ImportedDeck };
 
 /**
  * Anki-style flashcards in the browser.
@@ -70,6 +98,7 @@ export default function FlashcardsHub({ onExit }: { onExit?: () => void }) {
           onResume={(year, subjectName, topic) =>
             setView({ kind: "study", year, subjectName, topic })
           }
+          onStudyImported={(deck) => setView({ kind: "imported", deck })}
         />
       )}
       {view.kind === "subjects" && (
@@ -95,6 +124,13 @@ export default function FlashcardsHub({ onExit }: { onExit?: () => void }) {
               topic,
             })
           }
+        />
+      )}
+      {view.kind === "imported" && (
+        <ImportedStudyView
+          deck={view.deck}
+          newPerDay={newPerDay}
+          onBack={() => setView({ kind: "years" })}
         />
       )}
       {view.kind === "study" && (
@@ -155,17 +191,21 @@ function YearsView({
   onNewPerDay,
   onPick,
   onResume,
+  onStudyImported,
   onExit,
 }: {
   newPerDay: number;
   onNewPerDay: (value: number) => void;
   onPick: (y: Year) => void;
   onResume: (year: Year, subjectName: string, topic: LeafTopic) => void;
+  onStudyImported: (deck: ImportedDeck) => void;
   onExit?: () => void;
 }) {
   const [started, setStarted] = useState<StartedDeck[]>([]);
+  const [imported, setImported] = useState<ImportedDeck[]>([]);
   useEffect(() => {
     setStarted(listStartedDecks());
+    setImported(loadImportedDecks());
   }, []);
   const index = useChapterIndex(started.length > 0);
   const resumable = started
@@ -272,32 +312,152 @@ function YearsView({
       </div>
 
       {/*
-        Saying plainly what this app cannot do, rather than offering a picker
-        that would fail on almost every real file.
+        Importing an Anki package, in the browser.
 
-        A modern .apkg is a ZIP holding a SQLite collection compressed with
-        zstd. The native app reads one with `java.util.zip`,
-        `android.database.sqlite` and zstd-jni; a browser has none of the three
-        without shipping a SQLite build and a zstd decoder of its own. A partial
-        importer is the worst outcome available here — every v3 package also
-        carries a decoy `collection.anki2` holding one note that reads "This
-        file requires a newer version of Anki", so a naive reader hands back a
-        one-card deck and looks like it worked.
+        This panel used to say the feature was Android-only, on the reasoning
+        that a browser has no zip, no SQLite and no zstd. That was wrong, and
+        `apkgWeb.ts` says so in its own header: a *native module* is what React
+        Native lacks. A browser reaches all three without asking for a
+        permission — fflate, sql.js (WASM) and fzstd — and `apkgWeb.ts` had
+        already been written to do it. It simply was not wired to a button, so the
+        panel that stood here kept sending readers to the phone.
+
+        The 1.5MB of sql.js WASM is behind a dynamic import inside `readApkg`,
+        so a reader who never imports a deck never downloads it — which is
+        almost every reader.
       */}
-      <div className="rounded-xl border bg-muted/40 p-4 flex items-start gap-3">
-        <Smartphone className="h-4 w-4 mt-0.5 text-muted-foreground flex-shrink-0" />
-        <div className="space-y-1">
-          <p className="text-sm font-medium">Importing your own .apkg is on the Android app</p>
-          <p className="text-xs text-muted-foreground">
-            Reading an Anki package needs a zip, a SQLite database and zstd, which the phone app
-            has and a browser does not. Decks you write yourself live on the phone too.
-          </p>
-          <p className="text-[10px] text-muted-foreground pt-1">
-            Anki is a trademark of Ankitects Pty Ltd. Orbit is not affiliated with, endorsed by
-            or supported by Ankitects.
-          </p>
-        </div>
+      <p className="text-xs tracking-widest text-muted-foreground pt-2">YOUR OWN ANKI DECKS</p>
+      <ImportPanel decks={imported} onDecks={setImported} onStudy={onStudyImported} />
+    </div>
+  );
+}
+
+/**
+ * Choose a `.apkg`, read it, and list what has been imported.
+ *
+ * The file input is the browser's `ACTION_OPEN_DOCUMENT`: it returns the one
+ * file the reader chose and grants nothing else, so this needs no permission,
+ * exactly like the phone's picker.
+ *
+ * Three things the message here has to get right, because each one is a way
+ * this looks broken when it is working:
+ *
+ * - **Say it may take a moment.** The first import downloads 1.5MB of SQLite
+ *   WASM and then parses a database. On a big package that is seconds of
+ *   nothing happening, and a button that appears to do nothing is the failure
+ *   people report.
+ * - **Say the deck stays here.** A shared medical deck is somebody else's work
+ *   the reader downloaded; this app never uploads it, and a reader wondering
+ *   whether it did deserves an answer on the screen rather than in a policy.
+ * - **Say when a package was truncated.** `MAX_IMPORT_CARDS` silently taking
+ *   the first five thousand of a thirty-thousand-card package is exactly the
+ *   "it imported but half my deck is missing" report.
+ */
+function ImportPanel({
+  decks,
+  onDecks,
+  onStudy,
+}: {
+  decks: ImportedDeck[];
+  onDecks: (decks: ImportedDeck[]) => void;
+  onStudy: (deck: ImportedDeck) => void;
+}) {
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const onFile = useCallback(
+    async (event: React.ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0];
+      // Clearing the input is what lets the same file be chosen twice. Without
+      // it a failed import cannot be retried without picking something else
+      // first, which reads as the button having stopped working.
+      event.target.value = "";
+      if (!file) return;
+
+      setBusy(true);
+      setError(null);
+      try {
+        const { readApkg, setSqlWasmUrl } = await import("@/lib/apkgWeb");
+        setSqlWasmUrl(sqlWasmUrl);
+        const pkg = await readApkg(file);
+        const deck = await importPackage(pkg, file.name);
+        onDecks(loadImportedDecks());
+        onStudy(deck);
+      } catch (e) {
+        setError((e as Error).message || "That package could not be opened.");
+      } finally {
+        setBusy(false);
+      }
+    },
+    [onDecks, onStudy]
+  );
+
+  return (
+    <div className="rounded-xl border bg-card p-4 space-y-3">
+      <div className="space-y-1">
+        <p className="text-sm font-medium">Import a .apkg</p>
+        <p className="text-xs text-muted-foreground">
+          Your deck is read in this browser and stays in it — nothing is uploaded. A large
+          package takes a moment the first time.
+        </p>
       </div>
+
+      <label className="block">
+        <input
+          type="file"
+          accept=".apkg,application/zip"
+          className="sr-only"
+          disabled={busy}
+          onChange={onFile}
+          aria-label="Choose an Anki package to import"
+        />
+        <span
+          className={`flex items-center justify-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium ${
+            busy ? "opacity-60" : "cursor-pointer hover:bg-muted/60"
+          }`}
+        >
+          {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+          {busy ? "Reading the package…" : "Choose a .apkg file"}
+        </span>
+      </label>
+
+      {error && (
+        <p className="text-xs text-red-600 dark:text-red-400" role="alert">
+          {error}
+        </p>
+      )}
+
+      {decks.map((deck) => (
+        <div key={deck.id} className="flex items-center gap-2 rounded-lg border p-3">
+          <button
+            className="flex-1 text-left min-w-0"
+            onClick={() => onStudy(deck)}
+            aria-label={`Study ${deck.name}, ${deck.cardCount} cards`}
+          >
+            <p className="text-sm font-medium truncate">{deck.name}</p>
+            <p className="text-xs text-muted-foreground">
+              {deck.cardCount} cards
+              {deck.mediaCount > 0 && ` · ${deck.mediaCount} pictures`}
+              {deck.truncated && ` · first ${MAX_IMPORT_CARDS} of a larger package`}
+            </p>
+          </button>
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label={`Delete ${deck.name}`}
+            onClick={() => {
+              void deleteImportedDeck(deck.id).then(onDecks);
+            }}
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
+      ))}
+
+      <p className="text-[10px] text-muted-foreground">
+        Anki is a trademark of Ankitects Pty Ltd. Orbit is not affiliated with, endorsed by
+        or supported by Ankitects.
+      </p>
     </div>
   );
 }

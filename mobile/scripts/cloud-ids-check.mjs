@@ -73,6 +73,14 @@ const LOCAL_ONLY = [
    */
   { file: 'src/lib/importedDecks.ts', what: 'decks imported from an Anki package' },
   /*
+   * And the browser's half of the same feature, which is why this one entry
+   * reaches out of `mobile/`. Import used to be Android-only, so the rule only
+   * had one file to guard; now that the web app reads a package too, a copy of
+   * a shared deck can exist in a browser as well, and "it stays on this
+   * device" has to be enforced in both places or it is enforced in neither.
+   */
+  { file: '../src/lib/importedDecksWeb.ts', what: 'decks imported from an Anki package, in the browser' },
+  /*
    * The same reason again, and for the same kind of file: music the reader
    * picked off their own phone is somebody's copyrighted recording. It is
    * played from app storage and it goes nowhere.

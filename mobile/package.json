@@ -67,6 +67,7 @@
     "check:open-access": "node scripts/open-access-check.mjs",
     "check:apkg": "node scripts/apkg-check.mjs",
     "check:apkg-web": "node preview/web-apkg-check.mjs",
+    "check:apkg-web-import": "node preview/web-apkg-import-check.mjs",
     "fixtures:apkg": "python3 scripts/make-apkg-fixtures.py",
     "audit:diagrams": "node scripts/diagram-audit.mjs",
     "shot:homeedit": "node preview/homeedit-shot.mjs",
