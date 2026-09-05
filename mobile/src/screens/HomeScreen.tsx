@@ -458,7 +458,27 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
               said 24, so the bevel and the shader drew a different curve from
               the card — the corner people saw as cut.
             */}
-            <GlassSurface style={[styles.hero, scales.hero < 0.75 && { padding: 12 }]}>
+            {/*
+              `heights.hero > 1 && styles.grow` is what makes dragging the
+              height bar do anything visible.
+
+              `Reorderable` gives the block a taller SLOT — that part always
+              worked — but a card only fills a slot if it says so. Without this
+              the hero kept its natural height and the dragged space came out
+              as a band of empty background beneath it, which is what the owner
+              reported as the block not resizing, and what `check:smoke`
+              measured as "grew the hero by only 0px".
+
+              Conditional, not unconditional: `flex: 1` at rest would make the
+              card fight its own content for height on a screen where nothing
+              has been resized.
+            */}
+            <GlassSurface
+              style={[
+                styles.hero,
+                scales.hero < 0.75 && { padding: 12 },
+                heights.hero > 1 && styles.grow,
+              ]}>
               <View
                 style={[styles.heroGlow, { backgroundColor: withAlpha(colors.fuchsia, 0.12) }]}
                 pointerEvents="none"
@@ -524,6 +544,7 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
             <View
               style={[
                 styles.quickRow,
+                heights.quick > 1 && styles.grow,
                 scales.quick < 0.75 && {
                   flexWrap: 'wrap',
                   justifyContent: 'space-between',
@@ -579,6 +600,7 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
               scaleTo={0.985}
               style={[
                 styles.whatsapp,
+                heights.whatsapp > 1 && styles.grow,
                 {
                   borderColor: withAlpha(colors.green, 0.3),
                   backgroundColor: withAlpha(colors.green, 0.05),
@@ -748,7 +770,12 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
             stats: (
               <>
             {/* Stats */}
-            <View style={[styles.stats, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <View
+              style={[
+                styles.stats,
+                heights.stats > 1 && styles.grow,
+                { backgroundColor: colors.card, borderColor: colors.border },
+              ]}>
               <View style={styles.stat}>
                 <View style={[styles.statIcon, { backgroundColor: withAlpha(colors.primary, 0.15) }]}>
                   <Flame size={20} color={colors.primary} />
@@ -1105,6 +1132,8 @@ const SubjectFill = React.memo(function SubjectFillBar({
 });
 
 const styles = StyleSheet.create({
+  /** Fills the taller slot `Reorderable` gives a block that has been resized. */
+  grow: { flex: 1 },
   transparent: {
     backgroundColor: 'transparent',
   },

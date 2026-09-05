@@ -239,6 +239,24 @@ const tap = async label => {
 async function startRearranging() {
   await tap('Menu');
   await tap('Rearrange home screen');
+  /*
+   * Wait for the menu to actually be gone before touching anything behind it.
+   *
+   * `tap` returns as soon as the click lands, and the Sheet dismisses on a
+   * spring — so for a few hundred milliseconds afterwards its scrim is still
+   * over the page and swallows the next touch. That is how this presented:
+   * "dragging the height bar down grew the hero by only 0px", because the drag
+   * landed on the scrim rather than the grip, while the same drag done by hand
+   * grew the block from 263px to 352px.
+   *
+   * Waiting for the row to leave the DOM is the real signal; the settle after
+   * it covers the tail of the animation, which `waitFor` cannot see.
+   */
+  await page
+    .locator('[aria-label="Rearrange home screen"]')
+    .waitFor({ state: 'detached', timeout: 4000 })
+    .catch(() => {});
+  await page.waitForTimeout(500);
 }
 /**
  * Bring a control into the viewport.

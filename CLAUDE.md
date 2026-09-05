@@ -938,15 +938,40 @@ Two consequences worth knowing before touching it:
   It wraps the block's *content* only — wrapping the row would disable the
   reorder arrows, which are Touchables too.
 
-## Resizing a block is a zoom, and the grip must own its responder
+## Resizing a block has two axes, and a card only fills a slot if it says so
 
-Each block carries a size of its own (`scales` in `hooks/useHomeOrder.ts`,
-0.75-1.3), dragged live from the grip on its bottom edge. The block is drawn
-by giving its content `1/scale` of the width and scaling it back up from the
-top-left, so everything inside grows together and no section has to know it is
-being resized. The wrapper's height is set to `natural * scale` by hand,
-because a transform changes nothing about layout — without it the blocks below
-would sit where they were while this one grew over them.
+Each block carries **two** sizes of its own, both in `hooks/useHomeOrder.ts`:
+`scales` for width (0.75-1.3, the side grip) and `heights` for height (1-1.8,
+the bottom grip). The corner grip drives both. They were one value once, so the
+bar drawn across the bottom edge made the block narrower and never taller — a
+control has to do the thing it draws.
+
+**Width is a real width, not a zoom.** The block is given `width: N%` of the
+row and its content reflows into it. An earlier comment here described a zoom —
+"1/scale of the width, scaled back up from the top-left, so everything inside
+grows together" — and no such transform exists in the code. Below
+`COMPACT_BELOW` (0.9) blocks drop their secondary detail instead, which is a
+different thing and is deliberate.
+
+**Height is a `minHeight` on the block's slot, and the card must claim it.**
+`Reorderable` makes the slot `natural * heightScale` tall. That alone was what
+shipped: the card kept its natural size and the dragged space came out as a
+band of empty background beneath it, so the block looked like it had not
+resized at all. Reported by the owner, and `check:smoke` had it too —
+*"dragging the height bar down grew the hero by only 0px"*, because the test
+measures the card rather than the slot.
+
+A comment in `Reorderable.tsx` already claimed this was fixed by putting the
+`minHeight` "on the card itself rather than the wrapper". It was not:
+`sections[id]` renders its own card, so that View is still the wrapper. The fix
+is at the other end — each section's root card carries
+`heights.<id> > 1 && styles.grow` (`flex: 1`) in `HomeScreen`, so it fills the
+slot it was given. Conditional, because `flex: 1` at rest makes a card fight
+its own content for height on a screen nobody has resized.
+
+`subjects` deliberately has no `grow`: it is a header plus a `SortableGrid`
+rather than one card, and there is nothing there for the extra height to belong
+to.
 
 Three things there are easy to undo by accident:
 
