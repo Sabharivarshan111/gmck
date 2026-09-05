@@ -44,6 +44,16 @@ export interface Spec extends TurboModule {
   pick(): Promise<string>;
 
   /**
+   * The package the app was opened with, staged, or `""` on an ordinary launch.
+   *
+   * The manifest offers Orbit when a `.apkg` is tapped in a file manager or a
+   * chat; this is what makes that offer mean something. Safe to call on every
+   * launch and every resume — it clears the intent once it has taken it, so a
+   * file is never imported twice.
+   */
+  takeLaunchFile(): Promise<string>;
+
+  /**
    * What is in the archive, without unpacking any of it.
    *
    * Resolves JSON `{ entries: [{ name, size }], meta: string | null }`, where

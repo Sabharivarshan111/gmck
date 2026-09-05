@@ -262,8 +262,36 @@ function available(): NonNullable<typeof OrbitApkg> {
  * the pictures — waits until they have chosen which decks they want.
  */
 export async function stagePackage(): Promise<StagedPackage | null> {
+  return stageStaged(await available().pick());
+}
+
+/**
+ * The package the app was opened with, if a `.apkg` was tapped elsewhere.
+ *
+ * Returns null on an ordinary launch, which is almost every launch, so a
+ * screen can call this on mount without deciding first whether to. The native
+ * side clears the intent as it hands the file over, so this yields a package
+ * once and then null — an import the reader backed out of does not reopen
+ * itself every time they switch back to the app.
+ */
+export async function stageLaunchPackage(): Promise<StagedPackage | null> {
+  if (!OrbitApkg) {
+    return null;
+  }
+  return stageStaged(await OrbitApkg.takeLaunchFile());
+}
+
+/**
+ * Everything both entry points share: check it is a package, survey it, and
+ * report what is inside.
+ *
+ * One body rather than two, because the interesting part — the version
+ * decision, and the decoy collection every v3 package carries — must not exist
+ * twice. A file that arrived from WhatsApp is the same file as one chosen in
+ * the picker.
+ */
+async function stageStaged(picked: string): Promise<StagedPackage | null> {
   const native = available();
-  const picked = await native.pick();
   if (!picked) {
     return null;
   }

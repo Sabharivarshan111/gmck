@@ -64,6 +64,12 @@ import {
 import { useCountDone } from '@/hooks/useProgress';
 import { useProfile } from '@/hooks/useProfile';
 import { KEY_TO_YEAR } from '@/lib/profile';
+import {
+  groupUrl,
+  groupsForYear,
+  YEAR_LABEL as WHATSAPP_YEAR_LABEL,
+  type WhatsAppGroup,
+} from '@shared/whatsappGroups';
 import { readFocusMinutes, formatFocusTime } from '@/lib/focusStats';
 import type { HomeStackParamList, RootTabParamList } from '@/navigation/types';
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
@@ -101,13 +107,6 @@ const SUBJECT_CARD_HEIGHT = 160;
  */
 const SUBJECT_CARD_COMPACT = 108;
 const SUBJECT_CARD_RATIO = 0.485;
-
-const WHATSAPP_LABEL: Record<YearKey, string> = {
-  'first-year': '1st year',
-  'second-year': '2nd year',
-  'third-year': '3rd year',
-  'final-year': 'Final year',
-};
 
 /**
  * Hoisted, because `Reorderable` builds one PanResponder per block and only
@@ -167,6 +166,15 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
   const [cardUploadError, setCardUploadError] = useState<string | null>(null);
 
   const [slide, setSlide] = useState(0);
+  /**
+   * Which WhatsApp groups to offer, when a year has more than one.
+   *
+   * Final year has two — the batch sitting the exam, and the 2023 question-bank
+   * group — and a reader is plausibly in either, so the app asks. Every other
+   * year has exactly one and opens it without a detour: a sheet listing a
+   * single choice is a tap nobody asked for.
+   */
+  const [groupChoice, setGroupChoice] = useState<WhatsAppGroup[] | null>(null);
   const [focusMinutes, setFocusMinutes] = useState(0);
   const [yearPickerOpen, setYearPickerOpen] = useState(false);
   const [themeOpen, setThemeOpen] = useState(false);
@@ -233,6 +241,30 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
   }, [slide, heroFade, reduceMotion]);
 
   const { yearKey: year, streak, setYear } = useProfile();
+  /*
+   * The profile's short year code is what the shared group list is keyed by —
+   * the same code `orbit-profile-v1` stores, so the phone and the web app agree
+   * on which groups a reader is offered.
+   */
+  const shortYear = KEY_TO_YEAR[year];
+  const groups = useMemo(() => groupsForYear(shortYear), [shortYear]);
+
+  /**
+   * Open the year's group, or ask which one when the year has several.
+   *
+   * `openURL` is given the plain invite link. `chat.whatsapp.com` is a verified
+   * Android App Link, so WhatsApp takes it directly when installed and the
+   * browser takes it when not — both correct. The old code opened
+   * `https://chat.whatsapp.com/` with no code on it at all, which is why this
+   * never joined anything.
+   */
+  const openCommunity = useCallback(() => {
+    if (groups.length > 1) {
+      setGroupChoice(groups);
+      return;
+    }
+    Linking.openURL(groupUrl(groups[0])).catch(() => {});
+  }, [groups]);
 
   const subjects = useMemo(
     () =>
@@ -416,9 +448,13 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
             hero: (
               <>
             {/* Hero card */}
-            <GlassSurface
-              style={[styles.hero, scales.hero < 0.75 && { padding: 12 }]}
-              borderRadius={20}>
+            {/*
+              No `borderRadius` prop: `styles.hero` carries it, and that is the
+              one the fill is clipped to. It used to say 20 here while the style
+              said 24, so the bevel and the shader drew a different curve from
+              the card — the corner people saw as cut.
+            */}
+            <GlassSurface style={[styles.hero, scales.hero < 0.75 && { padding: 12 }]}>
               <View
                 style={[styles.heroGlow, { backgroundColor: withAlpha(colors.fuchsia, 0.12) }]}
                 pointerEvents="none"
@@ -533,7 +569,7 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
               <>
             {/* WhatsApp community */}
             <Touchable
-              onPress={() => Linking.openURL('https://chat.whatsapp.com/').catch(() => {})}
+              onPress={openCommunity}
               label="Join our WhatsApp community"
               hint="Opens WhatsApp"
               scaleTo={0.985}
@@ -566,7 +602,9 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
                 </Text>
                 {scales.whatsapp < 0.85 ? null : (
                   <Text style={[styles.whatsappSub, { color: colors.textMuted }]}>
-                    {WHATSAPP_LABEL[year]} materials, notes & updates
+                    {groups.length > 1
+                      ? `${groups.length} ${WHATSAPP_YEAR_LABEL[shortYear]} groups — pick one`
+                      : groups[0].blurb}
                   </Text>
                 )}
               </View>
@@ -760,6 +798,59 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
           setEditorOpen(false);
         }}
       />
+
+      {/*
+        Which community group, when the year has more than one.
+
+        Only final year does, and only because it genuinely has two — the batch
+        sitting the exam and the 2023 question-bank group. Naming both and
+        saying who each is for is the whole point: picking one for the reader
+        would send half of them to the wrong room.
+      */}
+      <Sheet
+        visible={groupChoice !== null}
+        onClose={() => setGroupChoice(null)}
+        title="Join the community">
+        <View style={{ gap: space.sm, paddingBottom: space.md }}>
+          <Text style={{ color: colors.textMuted, fontSize: 13, marginBottom: space.xs }}>
+            {WHATSAPP_YEAR_LABEL[shortYear]} has two groups. Open whichever is yours — you can
+            join both.
+          </Text>
+          {(groupChoice ?? []).map(group => (
+            <Touchable
+              key={group.code}
+              label={`Open ${group.name} on WhatsApp`}
+              hint={group.blurb}
+              onPress={() => {
+                setGroupChoice(null);
+                Linking.openURL(groupUrl(group)).catch(() => {});
+              }}
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: space.sm,
+                borderWidth: 1,
+                borderColor: withAlpha(colors.green, 0.3),
+                backgroundColor: withAlpha(colors.green, 0.05),
+                borderRadius: radius.lg,
+                paddingHorizontal: space.md,
+                paddingVertical: space.sm,
+              }}>
+              <View
+                style={[styles.whatsappIcon, { backgroundColor: withAlpha(colors.green, 0.15) }]}>
+                <MessageCircle size={16} color={colors.green} />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={{ color: colors.text, fontWeight: '700', fontSize: 14 }}>
+                  {group.name}
+                </Text>
+                <Text style={{ color: colors.textMuted, fontSize: 12 }}>{group.blurb}</Text>
+              </View>
+              <Text style={{ color: colors.green, fontWeight: '800', fontSize: 13 }}>Join</Text>
+            </Touchable>
+          ))}
+        </View>
+      </Sheet>
 
       <SettingsSheet
         visible={settingsOpen}

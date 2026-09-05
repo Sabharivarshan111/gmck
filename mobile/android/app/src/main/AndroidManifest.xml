@@ -54,6 +54,48 @@
             <category android:name="android.intent.category.BROWSABLE" />
             <data android:scheme="${appAuthRedirectScheme}" />
         </intent-filter>
+
+        <!--
+          Open an Anki package from a file manager, a chat or a download.
+
+          The app could already import a `.apkg` — but only from inside, through
+          its own picker. Tapping the file anywhere else did not offer Orbit at
+          all, which is backwards: a shared deck arrives as a file in WhatsApp
+          or Downloads, and that is the moment somebody wants to open it.
+
+          THE MIME TYPE CANNOT BE TRUSTED, so this matches on the extension
+          instead. Android derives a `.apkg`'s type from its extension, has no
+          entry for one, and hands out `application/octet-stream` — and some
+          providers say `application/zip` because a package IS a zip. Matching
+          only `application/*` would put Orbit in the chooser for every binary
+          file on the phone; matching only `application/zip` would miss most
+          real packages.
+
+          `pathPattern` needs BOTH the plain and the escaped-dot form. Android's
+          pattern matcher is not a regex: `.` is a literal dot in a pathPattern,
+          while `\\.` is what some providers' encoded paths carry, and the two
+          are matched separately. The wildcard prefix `.*` before it is required
+          because pathPattern anchors at the start of the whole path.
+
+          `mimeType` and `scheme` must both be present or the filter matches
+          nothing at all — an intent-filter with a `data` element that names an
+          extension but no scheme is silently dead.
+        -->
+        <intent-filter android:label="@string/apkg_open_label">
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="content" />
+            <data android:scheme="file" />
+            <data android:host="*" />
+            <data android:mimeType="application/octet-stream" />
+            <data android:mimeType="application/zip" />
+            <data android:mimeType="application/x-zip-compressed" />
+            <data android:mimeType="application/apkg" />
+            <data android:pathPattern=".*\\.apkg" />
+            <data android:pathPattern=".*\\..*\\.apkg" />
+            <data android:pathPattern=".*\\..*\\..*\\.apkg" />
+        </intent-filter>
       </activity>
 
         <!--

@@ -46,6 +46,15 @@ const shim = {
     return JSON.stringify(FIXTURE);
   },
 
+  /*
+   * A browser is never opened *with* a file, so this is always the ordinary
+   * launch. Returning "" rather than throwing is what lets the screen call it
+   * unconditionally on mount without the preview needing a special case.
+   */
+  async takeLaunchFile(): Promise<string> {
+    return '';
+  },
+
   async survey(): Promise<string> {
     return JSON.stringify({
       entries: [

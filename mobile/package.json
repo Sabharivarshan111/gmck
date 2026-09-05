@@ -58,6 +58,7 @@
     "check:repeat-markers": "node scripts/repeat-markers-check.mjs",
     "check:music": "node preview/music-shot.mjs",
     "check:tour": "node scripts/tour-check.mjs",
+    "check:glass-radius": "node scripts/glass-radius-check.mjs",
     "check:glass-shader": "node scripts/glass-shader-check.mjs",
     "check:bot": "node --experimental-strip-types --no-warnings scripts/bot-check.mjs",
     "check:bot-faces": "node preview/bot-shot.mjs",

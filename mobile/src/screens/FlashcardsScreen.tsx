@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
+  AppState,
   Animated,
   Image,
   Keyboard,
@@ -47,6 +48,7 @@ import {
   loadImportedDecks,
   MAX_IMPORT_CARDS,
   shareWrittenDeck,
+  stageLaunchPackage,
   stagePackage,
   type ImportedDeck,
   type StagedPackage,
@@ -518,23 +520,67 @@ function ImportDecksView({
     loadImportedDecks().then(setDecks);
   }, []);
 
+  /** Put a staged package on screen for the reader to confirm. */
+  const offer = useCallback((next: StagedPackage | null) => {
+    if (!next) {
+      return;
+    }
+    setStaged(next);
+    // Everything, unless the reader narrows it. A package with one deck in
+    // it — which most shared decks are — then needs no choice at all.
+    setChosen(new Set(next.decks.map(deck => deck.id)));
+  }, []);
+
   const pick = useCallback(async () => {
     setError(null);
     setBusy('Reading the package…');
     try {
-      const next = await stagePackage();
-      if (next) {
-        setStaged(next);
-        // Everything, unless the reader narrows it. A package with one deck in
-        // it — which most shared decks are — then needs no choice at all.
-        setChosen(new Set(next.decks.map(deck => deck.id)));
-      }
+      offer(await stagePackage());
     } catch (err) {
       setError(err instanceof Error ? err.message : 'That file could not be read.');
     } finally {
       setBusy(null);
     }
-  }, []);
+  }, [offer]);
+
+  /*
+   * A `.apkg` tapped in a file manager, a chat or Downloads.
+   *
+   * The manifest offers Orbit for those files; without this the app would open
+   * on this screen having done nothing with the file, which is worse than not
+   * appearing in the chooser at all.
+   *
+   * Run on mount AND on every return to the foreground, because Android
+   * delivers the file by starting or resuming the Activity and this screen may
+   * already have been mounted. `takeLaunchFile` clears the intent as it hands
+   * the file over, so the repeat calls cost one bridge hop and return nothing.
+   */
+  useEffect(() => {
+    let live = true;
+    const take = () => {
+      stageLaunchPackage()
+        .then(next => {
+          if (live) {
+            offer(next);
+          }
+        })
+        .catch(err => {
+          if (live) {
+            setError(err instanceof Error ? err.message : 'That file could not be read.');
+          }
+        });
+    };
+    take();
+    const sub = AppState.addEventListener('change', state => {
+      if (state === 'active') {
+        take();
+      }
+    });
+    return () => {
+      live = false;
+      sub.remove();
+    };
+  }, [offer]);
 
   const run = useCallback(async () => {
     if (!staged) {

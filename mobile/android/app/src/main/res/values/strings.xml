@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">Orbit MBBS</string>
+    <!--
+      What the chooser calls Orbit when a `.apkg` is opened from elsewhere.
+
+      Not the app name: the chooser already shows that above the icon, and a row
+      reading "Orbit MBBS / Orbit MBBS" says nothing. This says what will happen
+      to the file, which is the only thing being decided at that moment.
+    -->
+    <string name="apkg_open_label">Import to Orbit flashcards</string>
 </resources>

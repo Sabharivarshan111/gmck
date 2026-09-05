@@ -145,6 +145,48 @@ class ApkgModule(reactContext: ReactApplicationContext) : NativeOrbitApkgSpec(re
   }
 
   /**
+   * The package this app was opened WITH, if it was opened with one.
+   *
+   * A `.apkg` mostly arrives as a file in WhatsApp or Downloads, and until the
+   * manifest grew its VIEW filter, tapping one did not offer Orbit at all — the
+   * only way in was the app's own picker, from inside. The filter is half the
+   * feature; this is the other half, and without it Orbit would appear in the
+   * chooser and then open on the home screen having done nothing, which is
+   * worse than not appearing.
+   *
+   * **The intent's data is cleared once taken.** An Activity keeps the intent
+   * that started it for as long as it lives, so a launch file that is not
+   * consumed is re-delivered on every resume — the reader closes the import,
+   * switches away, comes back, and it opens again with no way to stop it.
+   *
+   * Resolves "" when the app was opened normally, which is almost every launch,
+   * so the JS side can call this unconditionally.
+   */
+  override fun takeLaunchFile(promise: Promise) {
+    val activity = getCurrentActivity()
+    if (activity == null) {
+      promise.resolve("")
+      return
+    }
+    val intent = activity.intent
+    val uri = if (intent?.action == Intent.ACTION_VIEW) intent.data else null
+    if (uri == null) {
+      promise.resolve("")
+      return
+    }
+    // Cleared BEFORE the copy, not after: staging a large package can throw,
+    // and a failure that leaves the intent in place re-opens the same broken
+    // file every time the app is resumed.
+    intent.data = null
+    intent.action = Intent.ACTION_MAIN
+    try {
+      promise.resolve(stage(uri).toString())
+    } catch (error: Throwable) {
+      promise.reject("unreadable", "That file could not be opened.", error)
+    }
+  }
+
+  /**
    * Copy the chosen file somewhere the import can make several passes over it.
    *
    * The picker's grant is one-shot and its URI may point into a provider that

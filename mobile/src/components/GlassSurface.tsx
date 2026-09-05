@@ -83,12 +83,28 @@ export function GlassSurface({
   style,
   /** Raised surfaces sit brighter, the way a nearer pane catches more light. */
   elevated = false,
-  borderRadius = radius.lg,
+  borderRadius: radiusProp,
   bevel = false,
 }: {
   children?: React.ReactNode;
   style?: StyleProp<ViewStyle>;
   elevated?: boolean;
+  /**
+   * The corner radius, when the style does not already carry one.
+   *
+   * **Usually you should not pass this.** The style's own `borderRadius` is
+   * read below and is the better place for it: the style is what clips the
+   * fill, so a radius written there is the one the card actually has, and a
+   * different number passed here silently draws the bevel on a different
+   * curve.
+   *
+   * That is not hypothetical. The home hero's style said `radius.xl` (24) and
+   * this prop said 20, so the fill was clipped at 24 while the bevel, the
+   * counter-rim and the shader were all drawn at 20 — four pixels of
+   * divergence at every corner, which reads as the corner being cut. It sat
+   * directly above the quick-action tiles, whose two numbers agreed, so the
+   * screen showed two different corner treatments side by side.
+   */
   borderRadius?: number;
   /**
    * Draw the glass bevel even under a solid theme.
@@ -106,6 +122,22 @@ export function GlassSurface({
    */
   bevel?: boolean;
 }) {
+  /*
+   * One radius for the fill, the bevel and the shader.
+   *
+   * The style wins, because the style is what clips the fill — `borderRadius`
+   * on the outer View is the card's real shape, and anything drawn on a
+   * different curve is drawn wrong. The prop is the fallback for a surface
+   * that sets no radius of its own, and `radius.lg` the fallback for both.
+   *
+   * `StyleSheet.flatten` because `style` is routinely an array with a
+   * conditional in it, and only the flattened result says which radius
+   * actually applies.
+   */
+  const styleRadius = StyleSheet.flatten(style)?.borderRadius;
+  const borderRadius =
+    typeof styleRadius === 'number' ? styleRadius : (radiusProp ?? radius.lg);
+
   const { colors, theme } = useTheme();
   const glass = colors.material === 'glass';
   const lit = glass || bevel;
