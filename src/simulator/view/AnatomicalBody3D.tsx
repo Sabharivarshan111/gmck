@@ -115,8 +115,11 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
     scene.background = new THREE.Color(isLight ? 0xf8fafc : 0x060913);
     sceneRef.current = scene;
 
-    const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 50);
-    camera.position.set(0, 0.10, 4.3);
+    const isMobile = width < 640;
+    const defaultDist = isMobile ? 6.5 : 5.2;
+    const defaultY = isMobile ? -0.05 : 0.15;
+    const camera = new THREE.PerspectiveCamera(38, width / height, 0.1, 50);
+    camera.position.set(0, defaultY, defaultDist);
     cameraRef.current = camera;
 
     // --- 2. Renderer ---
@@ -133,8 +136,8 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
     controls.enableDamping = true;
     controls.dampingFactor = 0.06;
     controls.minDistance = 0.8;
-    controls.maxDistance = 7.5;
-    controls.target.set(0, 0.05, 0);
+    controls.maxDistance = 8.5;
+    controls.target.set(0, isMobile ? -0.05 : 0.10, 0);
     controlsRef.current = controls;
 
     // --- 4. Lighting Rig (Medical Studio 3-Point Light) ---
@@ -142,7 +145,7 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
     ambientLightRef.current = ambientLight;
     scene.add(ambientLight);
 
-    const keyLight = new THREE.DirectionalLight(0xffffff, isLight ? 2.4 : 2.8);
+    const keyLight = new THREE.DirectionalLight(0xfffaf4, isLight ? 2.5 : 2.8);
     keyLight.position.set(3, 4, 4);
     keyLightRef.current = keyLight;
     scene.add(keyLight);
@@ -166,16 +169,28 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
     heartLight.position.set(-0.06, 0.44, 0.35);
     scene.add(heartLight);
 
-    // Ground grid
-    const gridHelper = new THREE.GridHelper(
-      7,
-      28,
-      isLight ? 0x94a3b8 : 0x00e5ff,
-      isLight ? 0xe2e8f0 : 0x1e293b
-    );
-    gridHelper.position.y = -2.1;
-    gridHelperRef.current = gridHelper;
-    scene.add(gridHelper);
+    // Ground platform & concentric rings (inspired by ashemag/human-atlas studio floor)
+    if (isLight) {
+      const platform = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.95, 1.0, 0.03, 64),
+        new THREE.MeshStandardMaterial({ color: 0xeeeeec, metalness: 0.08, roughness: 0.72 })
+      );
+      platform.position.y = -1.92;
+      scene.add(platform);
+
+      const outerRing = new THREE.Mesh(
+        new THREE.RingGeometry(0.98, 0.995, 64),
+        new THREE.MeshBasicMaterial({ color: 0x94a3b8, transparent: true, opacity: 0.32, side: THREE.DoubleSide })
+      );
+      outerRing.rotation.x = -Math.PI / 2;
+      outerRing.position.y = -1.90;
+      scene.add(outerRing);
+    } else {
+      const gridHelper = new THREE.GridHelper(7, 28, 0x00e5ff, 0x1e293b);
+      gridHelper.position.y = -2.1;
+      gridHelperRef.current = gridHelper;
+      scene.add(gridHelper);
+    }
 
     // Procedural Groups
     const vascularGroup = new THREE.Group();
@@ -205,7 +220,7 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
       '/models/human_body.glb',
       (gltf) => {
         const bodyObj = gltf.scene;
-        const bodyWrapper = createNormalizedModelWrapper(bodyObj, 3.8);
+        const bodyWrapper = createNormalizedModelWrapper(bodyObj, 3.4);
         bodyWrapper.rotation.y = -Math.PI / 2;
         bodyWrapper.position.set(0, 0, 0);
 
@@ -213,15 +228,15 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
         bodyWrapper.traverse((child) => {
           if (child instanceof THREE.Mesh) {
             const mat = new THREE.MeshPhysicalMaterial({
-              color: isLight ? 0x93c5fd : 0x38bdf8,
-              roughness: 0.14,
-              metalness: 0.08,
-              transmission: 0.92,
-              ior: 1.45,
+              color: isLight ? 0xf1f5f9 : 0x38bdf8,
+              roughness: isLight ? 0.42 : 0.14,
+              metalness: 0.05,
+              transmission: isLight ? 0.85 : 0.92,
+              ior: 1.35,
               transparent: true,
-              opacity: isLight ? 0.35 : 0.55,
-              clearcoat: 0.9,
-              clearcoatRoughness: 0.1,
+              opacity: isLight ? 0.28 : 0.55,
+              clearcoat: isLight ? 0.2 : 0.9,
+              clearcoatRoughness: 0.25,
             });
             child.material = mat;
             humanBodyMaterialsRef.current.push(mat);
@@ -893,23 +908,24 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
 
   const resetCamera = (preset: 'anterior' | 'head' | 'thorax' | 'abdomen') => {
     if (!cameraRef.current || !controlsRef.current) return;
+    const isMob = window.innerWidth < 640;
     switch (preset) {
       case 'anterior':
-        cameraRef.current.position.set(0, 0.10, 4.3);
-        controlsRef.current.target.set(0, 0.05, 0);
+        cameraRef.current.position.set(0, isMob ? -0.05 : 0.15, isMob ? 6.5 : 5.2);
+        controlsRef.current.target.set(0, isMob ? -0.05 : 0.10, 0);
         break;
       case 'head':
-        // Centered precisely on calvarium / brain vault at y = 1.58
-        cameraRef.current.position.set(0, 1.58, 1.25);
-        controlsRef.current.target.set(0, 1.58, 0.04);
+        // Centered precisely on cranial vault / brain at y = 1.42, z = 0.04
+        cameraRef.current.position.set(0, 1.42, isMob ? 1.65 : 1.35);
+        controlsRef.current.target.set(0, 1.42, 0.04);
         break;
       case 'thorax':
-        cameraRef.current.position.set(-0.05, 0.52, 1.85);
-        controlsRef.current.target.set(-0.05, 0.50, 0);
+        cameraRef.current.position.set(-0.04, 0.46, isMob ? 2.15 : 1.85);
+        controlsRef.current.target.set(-0.04, 0.46, 0);
         break;
       case 'abdomen':
-        cameraRef.current.position.set(0.08, 0.22, 1.75);
-        controlsRef.current.target.set(0.08, 0.22, 0);
+        cameraRef.current.position.set(0.06, 0.18, isMob ? 2.05 : 1.75);
+        controlsRef.current.target.set(0.06, 0.18, 0);
         break;
     }
     controlsRef.current.update();
@@ -949,54 +965,60 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
         </div>
       )}
 
-      {/* Camera Presets Floating Pill Toolbar */}
-      <div
-        className={`absolute top-3 left-3 z-10 flex flex-wrap items-center gap-1.5 px-3 py-1.5 rounded-xl border backdrop-blur-md text-xs transition-all ${
-          isLight
-            ? 'bg-white/85 text-slate-700 border-slate-200/80 shadow-sm'
-            : 'bg-slate-900/85 text-slate-300 border-slate-800 shadow-lg'
-        }`}
-      >
-        <span
-          className={`font-semibold flex items-center gap-1 mr-1 text-[11px] ${
-            isLight ? 'text-sky-700' : 'text-cyan-400'
+      {/* Top Floating Control Bar (Apple HIG Responsive Layout) */}
+      <div className="absolute top-3 left-3 right-3 z-10 flex items-center justify-between pointer-events-none gap-2">
+        {/* Camera Presets Segmented Pill */}
+        <div
+          className={`pointer-events-auto flex items-center gap-1 p-1 rounded-2xl border backdrop-blur-xl text-xs transition-all ${
+            isLight
+              ? 'bg-white/90 text-slate-700 border-slate-200/90 shadow-sm'
+              : 'bg-slate-900/90 text-slate-300 border-slate-800 shadow-lg'
           }`}
         >
-          <span className="w-2 h-2 rounded-full bg-sky-500 animate-pulse" />
-          Focus:
-        </span>
-        <button
-          onClick={() => resetCamera('anterior')}
-          className={`px-2 py-0.8 rounded-lg font-medium transition-colors ${
-            isLight ? 'hover:bg-slate-100 text-slate-700' : 'bg-slate-800 hover:bg-slate-700 text-slate-200'
+          <div
+            className={`font-bold flex items-center gap-1 px-2 text-[11px] ${
+              isLight ? 'text-sky-700' : 'text-cyan-400'
+            }`}
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-sky-500 animate-pulse" />
+            <span className="hidden sm:inline">Focus</span>
+          </div>
+          {(
+            [
+              { id: 'anterior', label: 'Full' },
+              { id: 'head', label: 'Head' },
+              { id: 'thorax', label: 'Thorax' },
+              { id: 'abdomen', label: 'Abdomen' },
+            ] as const
+          ).map((preset) => (
+            <button
+              key={preset.id}
+              onClick={() => resetCamera(preset.id)}
+              className={`min-h-[32px] px-2.5 py-1 rounded-xl text-[11px] font-semibold transition-all ${
+                cameraPreset === preset.id
+                  ? isLight
+                    ? 'bg-sky-600 text-white shadow-xs'
+                    : 'bg-cyan-500 text-slate-950 font-bold shadow-xs'
+                  : isLight
+                  ? 'hover:bg-slate-100 text-slate-600'
+                  : 'hover:bg-slate-800 text-slate-400'
+              }`}
+            >
+              {preset.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Desktop-only helper text */}
+        <div
+          className={`hidden md:flex items-center text-[11px] px-3 py-1.5 rounded-xl border backdrop-blur-md pointer-events-none font-medium ${
+            isLight
+              ? 'bg-white/80 text-slate-500 border-slate-200/80 shadow-2xs'
+              : 'bg-slate-900/80 text-slate-400 border-slate-800'
           }`}
         >
-          Full
-        </button>
-        <button
-          onClick={() => resetCamera('head')}
-          className={`px-2 py-0.8 rounded-lg font-medium transition-colors ${
-            isLight ? 'hover:bg-slate-100 text-slate-700' : 'bg-slate-800 hover:bg-slate-700 text-slate-200'
-          }`}
-        >
-          Head & Brain
-        </button>
-        <button
-          onClick={() => resetCamera('thorax')}
-          className={`px-2 py-0.8 rounded-lg font-medium transition-colors ${
-            isLight ? 'hover:bg-slate-100 text-slate-700' : 'bg-slate-800 hover:bg-slate-700 text-slate-200'
-          }`}
-        >
-          Thorax
-        </button>
-        <button
-          onClick={() => resetCamera('abdomen')}
-          className={`px-2 py-0.8 rounded-lg font-medium transition-colors ${
-            isLight ? 'hover:bg-slate-100 text-slate-700' : 'bg-slate-800 hover:bg-slate-700 text-slate-200'
-          }`}
-        >
-          Abdomen
-        </button>
+          Tap organ to inspect • Drag to rotate 3D
+        </div>
       </div>
 
       {/* Selected Organ Floating Quick Badge (Mobile / Desktop) */}
@@ -1035,17 +1057,6 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
           </p>
         </div>
       )}
-
-      {/* Helper text */}
-      <div
-        className={`absolute top-3 right-3 z-10 text-[10px] md:text-[11px] px-2.5 py-1 rounded-xl border backdrop-blur-md pointer-events-none ${
-          isLight
-            ? 'bg-white/80 text-slate-500 border-slate-200/80'
-            : 'bg-slate-900/80 text-slate-400 border-slate-800'
-        }`}
-      >
-        Tap organ to inspect • Drag to rotate 3D
-      </div>
     </div>
   );
 };

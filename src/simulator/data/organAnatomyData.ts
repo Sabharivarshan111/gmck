@@ -16,11 +16,22 @@ export interface DetailedOrganAnatomy {
   };
   lymphaticDrainage: string[];
   musculoskeletalRelations: string[];
+  originsAndInsertions?: {
+    origin: string[];
+    insertion: string[];
+    action: string[];
+    nerveSupply: string;
+  };
   histologyAndPhysiology: string;
   clinicalBedsideSigns: string[];
   nmcMbbssVivaPearls: string[];
   radiologicalCorrelation: string;
   surgicalApproaches: string;
+  supabaseTextbookReference?: {
+    subtopic: string;
+    keyPearls: string[];
+    diagramUrl?: string;
+  };
 }
 
 export const ORGAN_ANATOMY_DATABASE: Record<string, DetailedOrganAnatomy> = {
@@ -309,6 +320,33 @@ export const ORGAN_ANATOMY_DATABASE: Record<string, DetailedOrganAnatomy> = {
       'Thorax: 12 thoracic vertebrae, 12 pairs of ribs (true ribs 1-7, false ribs 8-10, floating ribs 11-12), costal cartilages, and sternum.',
       'Diaphragmatic attachments: Sternal part from xiphoid; Costal part from lower 6 ribs; Lumbar part from crura (Right crus L1-L3, Left crus L1-L2) and arcuate ligaments.',
     ],
+    originsAndInsertions: {
+      origin: [
+        'Diaphragm: Sternal head (posterior xiphoid), Costal head (inner surfaces of lower 6 ribs & cartilages), Lumbar head (right crus L1-L3, left crus L1-L2, arcuate ligaments).',
+        'Pectoralis Major: Clavicular head (medial half clavicle), Sternocostal head (anterior sternum & upper 6 costal cartilages).',
+        'Rectus Abdominis: Pubic crest and pubic symphysis.',
+      ],
+      insertion: [
+        'Diaphragm: Central tendon of diaphragm (pierced by IVC at T8).',
+        'Pectoralis Major: Lateral lip of bicipital groove of humerus.',
+        'Rectus Abdominis: 5th, 6th, 7th costal cartilages and xiphoid process.',
+      ],
+      action: [
+        'Diaphragm: Primary muscle of inspiration (draws central tendon inferiorly, driving 75% of resting tidal volume).',
+        'Pectoralis Major: Adduction and medial rotation of arm; clavicular head assists flexion.',
+        'Rectus Abdominis: Trunk flexion, increases intra-abdominal pressure.',
+      ],
+      nerveSupply:
+        'Diaphragm: Phrenic nerve (C3-C5); Pectoralis major: Medial & lateral pectoral nerves (C5-T1); Rectus abdominis: Intercostal nerves (T7-T12).',
+    },
+    supabaseTextbookReference: {
+      subtopic: 'Shoulder Joint & Thoracic Framework',
+      keyPearls: [
+        'Glenohumeral joint is supported dynamically by rotator cuff muscles (SITS: Supraspinatus, Infraspinatus, Teres minor, Subscapularis).',
+        'Axillary nerve (C5-C6) curves around surgical neck of humerus and is vulnerable in anterior shoulder dislocation.',
+      ],
+      diagramUrl: 'https://pmtgeydtqypwrypshhsx.supabase.co/storage/v1/object/public/diagrams/anatomy/shoulder_joint_articular_relations.jpg',
+    },
     histologyAndPhysiology:
       'Cortical (compact) bone organized into Haversian systems (osteons) with concentric lamellae, osteocytes within lacunae, and central Haversian canals containing neurovascular bundles. Trabecular (cancellous) bone housing red hematopoietic bone marrow in flat bones (sternum, iliac crest, vertebrae).',
     clinicalBedsideSigns: [
@@ -465,4 +503,182 @@ export const ORGAN_ANATOMY_DATABASE: Record<string, DetailedOrganAnatomy> = {
     surgicalApproaches:
       'Fasciotomy for Compartment Syndrome (indicated ONLY after coagulopathy is corrected with ASV and FFP, and compartment pressure > 30 mmHg or within 30 mmHg of diastolic BP).',
   },
+
+  stomach: {
+    id: 'stomach',
+    name: 'Stomach & Gastric Apparatus',
+    latinName: 'Gaster / Ventriculus',
+    system: 'Gastrointestinal & Digestive System',
+    quadrantOrCavity: 'Left Hypochondrium, Epigastrium & Umbilical Region',
+    surfaceLandmarks:
+      'Cardiac orifice lies behind 7th costal cartilage 2.5 cm from sternum (T11 level). Pyloric orifice lies 1.2 cm right of midline on transpyloric plane (L1). Greater curvature arches from 5th intercostal space down to L3.',
+    dimensionsAndWeight: 'Capacity ~30 mL at birth, 1000-1500 mL in adults; J-shaped muscular reservoir.',
+    arterialSupply: [
+      'Left Gastric Artery (direct branch of Celiac Trunk at T12): Supplies upper lesser curvature and lower esophagus.',
+      'Right Gastric Artery (branch of Proper Hepatic Artery): Anastomoses with left gastric along lesser curvature.',
+      'Left Gastroepiploic / Gastroomental (branch of Splenic Artery): Traverses gastrosplenic ligament to supply upper greater curvature.',
+      'Right Gastroepiploic (branch of Gastroduodenal Artery): Traverses greater omentum along lower greater curvature.',
+      'Short Gastric Arteries (5-7 branches from Splenic Artery): Supply the gastric fundus.',
+    ],
+    venousDrainage: [
+      'Right and Left Gastric Veins: Drain directly into the Portal Vein (Left gastric forms important site of Porto-Systemic Anastomosis at lower esophagus -> esophageal varices).',
+      'Right Gastroepiploic Vein: Drains into Superior Mesenteric Vein (SMV).',
+      'Left Gastroepiploic & Short Gastric Veins: Drain into Splenic Vein.',
+      'Prepyloric Vein of Mayo: Ascends vertically across anterior surface of gastroduodenal junction into right gastric vein (surgeon landmark for pylorus).',
+    ],
+    innervation: {
+      sympathetic: 'T6-T9/T10 spinal segments via greater splanchnic nerve and celiac plexus (inhibitory to motility, motor to pyloric sphincter, vasoconstrictive).',
+      parasympathetic: 'Anterior and Posterior Vagal Trunks (CN X): Anterior vagus gives Nerve of Latarjet along lesser curvature and hepatic branch; Posterior vagus gives posterior nerve of Latarjet and celiac branch (secretomotor to gastric glands, motor to muscular wall).',
+      somaticOrSensory: 'Visceral pain afferents accompany sympathetic nerves to T6-T9 dorsal root ganglia.',
+      referredPain: 'Epigastric burning or gnawing pain radiating to T6-T9 dermatomes and through to the back (especially in posterior peptic ulcer penetration into pancreas).',
+    },
+    lymphaticDrainage: [
+      'Four anatomical territories draining along coronary, splenic, hepatic, and subpyloric chains to Celiac lymph nodes around celiac trunk.',
+      'Virchow Node (Troisier sign): Metastatic enlargement of left supraclavicular lymph node via thoracic duct from gastric adenocarcinoma.',
+    ],
+    musculoskeletalRelations: [
+      'Stomach Bed (structures separated from stomach by lesser sac / omental bursa): Pancreas (body and tail), Left kidney (upper pole), Left suprarenal gland, Spleen (gastric surface), Splenic artery (tortuous course), Transverse mesocolon, and Diaphragm (left crus).',
+      'Anterior Relations: Anterior abdominal wall, left lobe of liver, and diaphragm.',
+    ],
+    histologyAndPhysiology:
+      'Four layers: Mucosa, Submucosa, Muscularis externa (inner oblique, middle circular, outer longitudinal), and Serosa. Mucosa contains Parietal (oxyntic) cells secreting HCl and Intrinsic Factor (vital for Vit B12 absorption in terminal ileum), and Chief (peptic) cells secreting Pepsinogen.',
+    clinicalBedsideSigns: [
+      'Succussion Splash: Sloshing fluid sound heard on auscultation over epigastrium when gently rocking patient abdomen > 3-4 hours after meal (indicates Gastric Outlet Obstruction / Pyloric Stenosis).',
+      'Sister Mary Joseph Nodule: Palpable nodule at umbilicus indicating transperitoneal metastasis from gastric cancer.',
+      'Krukenberg Tumor: Bilateral metastatic mucinous signet-ring cell ovarian carcinoma from primary gastric adenocarcinoma.',
+    ],
+    nmcMbbssVivaPearls: [
+      'Q: What forms the Stomach Bed? A: Pancreas body/tail, Left kidney, Left suprarenal, Spleen, Splenic artery, Transverse mesocolon, and Diaphragm.',
+      'Q: Why is posterior peptic ulcer erosion life-threatening? A: Posterior duodenal/gastric ulcers erode into the Gastroduodenal Artery or Splenic Artery, causing catastrophic arterial hemorrhage.',
+      'Q: What is the anatomical rationale for Highly Selective Vagotomy (HSV)? A: Denervates acid-secreting parietal cells by dividing branches of anterior and posterior nerves of Latarjet while preserving the "crow\'s foot" branches to pyloric antrum, avoiding need for drainage procedure.',
+    ],
+    radiologicalCorrelation:
+      'Barium Meal Upper GI Series: Demonstrates normal gastric mucosal rugal folds, J-shape, and rapid passage of contrast through pyloric canal into duodenal bulb (C-loop).',
+    surgicalApproaches:
+      'Upper midline laparotomy or chevron incision; Laparoscopic sleeve gastrectomy / Roux-en-Y gastric bypass with port placement in upper abdomen.',
+    supabaseTextbookReference: {
+      subtopic: 'Stomach - location, relations, blood supply, stomach bed',
+      keyPearls: [
+        'Stomach bed consists of 7 structures separated by omental bursa: Pancreas, Left kidney, Left suprarenal gland, Spleen, Splenic artery, Transverse mesocolon, and Diaphragm.',
+        'Left gastric artery is the smallest branch of celiac trunk; runs to cardiac orifice then along lesser curvature.',
+      ],
+      diagramUrl: 'https://pmtgeydtqypwrypshhsx.supabase.co/storage/v1/object/public/diagrams/physiology/gastric_hcl_secretion_parietal.jpg',
+    },
+  },
+
+  pancreas: {
+    id: 'pancreas',
+    name: 'Pancreas & Duodenopancreatic Complex',
+    latinName: 'Pancreas',
+    system: 'Digestive & Endocrine System',
+    quadrantOrCavity: 'Epigastrium and Left Hypochondrium (Retroperitoneal, along L1-L2 transpyloric plane)',
+    surfaceLandmarks:
+      'Head nestled inside C-shaped curve of duodenum over L2; Neck crosses L1 vertebra; Body ascends obliquely across aorta; Tail extends into splenorenal (lienorenal) ligament to splenic hilum.',
+    dimensionsAndWeight: 'Length 12-15 cm, Weight ~80-100 g; soft lobulated retroperitoneal gland.',
+    arterialSupply: [
+      'Superior Pancreaticoduodenal Arteries (Anterior & Posterior): Arise from Gastroduodenal Artery (Celiac axis).',
+      'Inferior Pancreaticoduodenal Arteries (Anterior & Posterior): Arise from Superior Mesenteric Artery (SMA). Form critical celiac-SMA collateral cascade around duodenal head.',
+      'Arteria Pancreatica Magna & Caudal Pancreatic Arteries: Direct branches of tortuous Splenic Artery supplying body and tail.',
+    ],
+    venousDrainage: [
+      'Splenic Vein: Runs in posterior groove along body/tail of pancreas.',
+      'Superior Pancreaticoduodenal Vein: Drains into Portal Vein directly.',
+      'Inferior Pancreaticoduodenal Vein: Drains into Superior Mesenteric Vein (SMV).',
+      'Portal Vein Formation: Occurs directly behind the NECK of pancreas by the union of Splenic Vein and Superior Mesenteric Vein.',
+    ],
+    innervation: {
+      sympathetic: 'T6-T10 spinal segments via greater and lesser splanchnic nerves and celiac/superior mesenteric plexuses (vasoconstriction and pain transmission).',
+      parasympathetic: 'Vagus nerve (CN X) branches via celiac plexus (secretomotor control of exocrine pancreatic juice rich in bicarbonate and digestive enzymes).',
+      somaticOrSensory: 'Visceral sensory pain fibers travel with sympathetic nerves to T6-T10 ganglia.',
+      referredPain: 'Severe, agonizing epigastric pain boring directly through to the back, relieved characteristically by leaning forward ("Mohammedan prayer position").',
+    },
+    lymphaticDrainage: [
+      'Follows arterial supply to Pancreaticosplenic, Celiac, and Superior Mesenteric lymph nodes.',
+    ],
+    musculoskeletalRelations: [
+      'Anterior: Stomach, lesser sac (omental bursa), transverse mesocolon, and root of transverse colon.',
+      'Posterior: Aorta, IVC, right and left renal veins, left kidney upper pole, left suprarenal gland, and vertebral column (L1-L2).',
+      'Uncinate process: Hooks posterior to Superior Mesenteric Vein and Artery (SMA and SMV cross anterior to uncinate process but posterior to neck).',
+    ],
+    histologyAndPhysiology:
+      'Dual organ: Exocrine (98%): Acinar cells secreting trypsinogen, chymotrypsinogen, amylase, and lipase stimulated by CCK; Duct cells secreting bicarbonate fluid stimulated by secretin. Endocrine (2%): Islets of Langerhans containing Alpha cells (Glucagon), Beta cells (Insulin), Delta cells (Somatostatin), and PP cells.',
+    clinicalBedsideSigns: [
+      'Cullen Sign: Periumbilical superficial ecchymosis indicating retroperitoneal hemorrhage in acute necrotizing pancreatitis.',
+      'Grey Turner Sign: Flank bruising/ecchymosis due to tracking of hemorrhagic retroperitoneal fluid along transversalis fascia.',
+      'Trousseau Sign of Malignancy: Migratory superficial thrombophlebitis associated with pancreatic adenocarcinoma.',
+    ],
+    nmcMbbssVivaPearls: [
+      'Q: Behind which anatomical structure does the Portal Vein form? A: Behind the NECK of the pancreas, by confluence of Splenic Vein and Superior Mesenteric Vein.',
+      'Q: What is the relationship of the SMA and SMV to the pancreas? A: They emerge from behind the lower border of the neck and pass ANTERIOR to the uncinate process and 3rd part of duodenum.',
+      'Q: What is the embryological origin of the pancreas? A: Dual origin: Ventral pancreatic bud (forms uncinate process and inferior head) and Dorsal pancreatic bud (forms upper head, neck, body, tail). Main duct of Wirsung derives from ventral duct + distal dorsal duct.',
+    ],
+    radiologicalCorrelation:
+      'Contrast-Enhanced CT (CECT) Abdomen: Gold standard for acute pancreatitis; demonstrates parenchymal necrosis, peripancreatic fluid collections, and pseudocyst formation.',
+    surgicalApproaches:
+      'Whipple Procedure (Pancreaticoduodenectomy): En bloc resection of pancreatic head, duodenum, gallbladder, distal bile duct, and distal stomach for periampullary carcinoma; Frey / Puestow procedure for chronic pancreatitis.',
+    supabaseTextbookReference: {
+      subtopic: 'Pancreas – location, parts, relations, duct system, blood supply',
+      keyPearls: [
+        'Portal vein is formed behind the neck of pancreas by junction of splenic vein and superior mesenteric vein.',
+        'Uncinate process lies posterior to superior mesenteric vessels and anterior to abdominal aorta.',
+      ],
+      diagramUrl: 'https://pmtgeydtqypwrypshhsx.supabase.co/storage/v1/object/public/diagrams/anatomy/pancreas_duct_system_relations.jpg',
+    },
+  },
+
+  spleen: {
+    id: 'spleen',
+    name: 'Spleen & Reticuloendothelial Reservoir',
+    latinName: 'Lien / Splen',
+    system: 'Lymphatic & Reticuloendothelial System',
+    quadrantOrCavity: 'Left Hypochondrium (beneath Left 9th, 10th, and 11th ribs)',
+    surfaceLandmarks:
+      'Long axis lies parallel to 10th rib. Lies between fundus of stomach and diaphragm. Anterior border reaches midaxillary line; cannot be palpated clinically unless enlarged by at least 2 to 3 times its normal size.',
+    dimensionsAndWeight: 'Harris Odd Numbers Rule: 1 inch thick, 3 inches broad, 5 inches long, 7 ounces weight (150-200g), related to ribs 9 to 11.',
+    arterialSupply: [
+      'Splenic Artery: Largest, highly tortuous branch of Celiac Trunk; travels along superior border of pancreas, enters splenorenal ligament, and divides into 5-6 segmental branches at splenic hilum (end-arteries without anastomoses -> prone to wedge-shaped splenic infarction).',
+    ],
+    venousDrainage: [
+      'Splenic Vein: Formed at hilum by union of 5-6 tributaries; passes horizontally behind body and tail of pancreas; joins Superior Mesenteric Vein behind neck of pancreas to form the Portal Vein. Receives Short gastric, Left gastroepiploic, and Inferior Mesenteric veins.',
+    ],
+    innervation: {
+      sympathetic: 'T6-T8 spinal segments via celiac plexus (governs splenic capsular smooth muscle contraction and arteriolar vasomotor tone).',
+      parasympathetic: 'Vagus nerve (CN X) branches via celiac plexus.',
+      somaticOrSensory: 'Splenic capsule innervated by pain fibers; splenic parenchyma is insensitive.',
+      referredPain: 'Kehr Sign: Sharp referred pain to tip of left shoulder caused by blood in the left subdiaphragmatic space irritating the diaphragmatic peritoneum (C3-C5 phrenic nerve dermatome).',
+    },
+    lymphaticDrainage: [
+      'Splenic lymphatics emerge from hilum and drain into Pancreaticosplenic (splenic) lymph nodes along splenic artery, thence to Celiac nodes.',
+    ],
+    musculoskeletalRelations: [
+      'Diaphragmatic Surface: Smooth and convex, related to diaphragm which separates it from left costodiaphragmatic recess, left lung base, and ribs 9, 10, 11.',
+      'Visceral Surface: Gastric impression (fundus of stomach), Renal impression (left kidney upper pole and lateral border), Colic impression (splenic flexure of colon), and Pancreatic impression (tail of pancreas in contact with hilum).',
+      'Ligaments: Gastrosplenic ligament (contains short gastric and left gastroepiploic vessels); Splenorenal (lienorenal) ligament (contains splenic vessels and tail of pancreas).',
+    ],
+    histologyAndPhysiology:
+      'White Pulp (20%): Periarteriolar lymphoid sheaths (PALS - rich in T cells) and lymphoid follicles (B cells) for humoral antibody production (IgM against encapsulated organisms). Red Pulp (80%): Splenic cords of Billroth and venous sinusoids for filtration of aged erythrocytes, platelet reservoir (30% of platelets), and iron recycling.',
+    clinicalBedsideSigns: [
+      'Castell Sign: Percuss in lowest intercostal space in left anterior axillary line (Castell space); percussion note changes from resonant to dull during full inspiration in mild splenomegaly.',
+      'Nixon Method: Patient placed in right lateral decubitus; percussion starts at lower border of pulmonary resonance in posterior axillary line downward; dullness > 8 cm implies splenomegaly.',
+      'Splenic Notch: Palpable notch on anterior border differentiates enlarged spleen from left renal mass.',
+    ],
+    nmcMbbssVivaPearls: [
+      'Q: What are the contents of the Lienorenal (Splenorenal) ligament? A: Splenic artery, Splenic vein, Tail of pancreas, splenic lymph nodes, and autonomic nerves.',
+      'Q: Why must vaccination against encapsulated bacteria be given after Splenectomy? A: Spleen is the primary site for opsonization and clearance of encapsulated bacteria (Streptococcus pneumoniae, Neisseria meningitidis, Haemophilus influenzae); loss of spleen risks Overwhelming Post-Splenectomy Infection (OPSI). Give pneumococcal, meningococcal, and Hib vaccines.',
+      'Q: Why is the splenic artery so remarkably tortuous? A: Accommodates extensive distension of the stomach during meals and movements of the left hemidiaphragm without stretching or kinking the vessel.',
+    ],
+    radiologicalCorrelation:
+      'Abdominal Ultrasound: Normal splenic length <= 12 cm; splenomegaly diagnosed when craniocaudal length exceeds 13 cm.',
+    surgicalApproaches:
+      'Left subcostal (Kocher) incision or upper midline laparotomy; Laparoscopic splenectomy with division of splenocolic, gastrosplenic, and splenorenal ligaments with vascular stapling at hilum.',
+    supabaseTextbookReference: {
+      subtopic: 'Spleen - external features, relations, histology, applied anatomy',
+      keyPearls: [
+        'Harris odd numbers rule: 1 x 3 x 5 inches, 7 ounces, ribs 9 to 11.',
+        'Kehr sign is referred pain to left shoulder tip due to blood irritating phrenic nerve (C3-C5) under left diaphragm.',
+      ],
+      diagramUrl: 'https://pmtgeydtqypwrypshhsx.supabase.co/storage/v1/object/public/diagrams/anatomy/spleen_histology_plate.jpg',
+    },
+  },
 };
+

@@ -231,59 +231,63 @@ export const Simulator: React.FC = () => {
         </div>
       </header>
 
-      {/* 2. Mobile Segmented Tab Bar (Visible on mobile/tablet < 1024px) */}
-      <div
-        className={`lg:hidden px-3 py-2 border-b sticky top-[53px] z-20 backdrop-blur-md flex items-center justify-between gap-1.5 overflow-x-auto no-scrollbar ${
-          isLight ? 'bg-white/90 border-slate-200/80' : 'bg-slate-900/90 border-slate-800'
-        }`}
-      >
-        <button
-          onClick={() => setMobileTab('3d')}
-          className={`flex-1 py-1.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all ${
-            mobileTab === '3d'
-              ? isLight
-                ? 'bg-sky-600 text-white shadow-xs'
-                : 'bg-cyan-500 text-slate-950 shadow-xs'
-              : isLight
-              ? 'text-slate-600 hover:bg-slate-100'
-              : 'text-slate-400 hover:bg-slate-800'
+      {/* 2. Mobile Segmented Tab Bar (Apple HIG Recessed Segmented Control) */}
+      <div className="lg:hidden px-3 pt-2 pb-1 sticky top-[53px] z-20">
+        <div
+          className={`h-11 p-1 rounded-2xl border flex items-center justify-between gap-1 backdrop-blur-xl ${
+            isLight
+              ? 'bg-slate-200/80 border-slate-300/60 shadow-xs'
+              : 'bg-slate-900/90 border-slate-800'
           }`}
         >
-          <Layers className="w-3.5 h-3.5" />
-          <span>3D Anatomy</span>
-        </button>
+          <button
+            onClick={() => setMobileTab('3d')}
+            className={`flex-1 h-9 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all duration-200 ${
+              mobileTab === '3d'
+                ? isLight
+                  ? 'bg-white text-slate-900 shadow-sm'
+                  : 'bg-cyan-500 text-slate-950 shadow-sm font-black'
+                : isLight
+                ? 'text-slate-600 hover:text-slate-900'
+                : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            <Layers className="w-3.5 h-3.5" />
+            <span>3D Anatomy</span>
+          </button>
 
-        <button
-          onClick={() => setMobileTab('telemetry')}
-          className={`flex-1 py-1.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all ${
-            mobileTab === 'telemetry'
-              ? isLight
-                ? 'bg-sky-600 text-white shadow-xs'
-                : 'bg-cyan-500 text-slate-950 shadow-xs'
-              : isLight
-              ? 'text-slate-600 hover:bg-slate-100'
-              : 'text-slate-400 hover:bg-slate-800'
-          }`}
-        >
-          <Monitor className="w-3.5 h-3.5" />
-          <span>ICU Monitor</span>
-        </button>
+          <button
+            onClick={() => setMobileTab('telemetry')}
+            className={`flex-1 h-9 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all duration-200 ${
+              mobileTab === 'telemetry'
+                ? isLight
+                  ? 'bg-white text-slate-900 shadow-sm'
+                  : 'bg-cyan-500 text-slate-950 shadow-sm font-black'
+                : isLight
+                ? 'text-slate-600 hover:text-slate-900'
+                : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            <Monitor className="w-3.5 h-3.5" />
+            <span>ICU Monitor</span>
+          </button>
 
-        <button
-          onClick={() => setMobileTab('interventions')}
-          className={`flex-1 py-1.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all ${
-            mobileTab === 'interventions'
-              ? isLight
-                ? 'bg-sky-600 text-white shadow-xs'
-                : 'bg-cyan-500 text-slate-950 shadow-xs'
-              : isLight
-              ? 'text-slate-600 hover:bg-slate-100'
-              : 'text-slate-400 hover:bg-slate-800'
-          }`}
-        >
-          <Sparkles className="w-3.5 h-3.5" />
-          <span>Rx & Case</span>
-        </button>
+          <button
+            onClick={() => setMobileTab('interventions')}
+            className={`flex-1 h-9 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all duration-200 ${
+              mobileTab === 'interventions'
+                ? isLight
+                  ? 'bg-white text-slate-900 shadow-sm'
+                  : 'bg-cyan-500 text-slate-950 shadow-sm font-black'
+                : isLight
+                ? 'text-slate-600 hover:text-slate-900'
+                : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Rx & Case</span>
+          </button>
+        </div>
       </div>
 
       {/* 3. Main Stage Content */}
@@ -315,6 +319,53 @@ export const Simulator: React.FC = () => {
           </div>
         </div>
 
+        {/* 1-Tap Organ Deep Inspector Strip (Desktop & Mobile 3D) */}
+        <div
+          className={`p-2.5 rounded-2xl border flex items-center gap-2 overflow-x-auto no-scrollbar ${
+            isLight ? 'bg-white/95 border-slate-200/80 shadow-xs' : 'bg-slate-900/90 border-slate-800 shadow-md'
+          }`}
+        >
+          <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-slate-400 pl-1 pr-2 border-r border-slate-200 dark:border-slate-800 flex-shrink-0">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span>Deep Inspector:</span>
+          </div>
+          {[
+            { id: 'heart', label: 'Heart & Aorta', icon: '🫀' },
+            { id: 'lungs', label: 'Lungs & Trachea', icon: '🫁' },
+            { id: 'brain', label: 'Brain & Cranium', icon: '🧠' },
+            { id: 'liver', label: 'Liver & Biliary', icon: '🩸' },
+            { id: 'stomach', label: 'Stomach & Bed', icon: '🥣' },
+            { id: 'pancreas', label: 'Pancreas', icon: '🥞' },
+            { id: 'spleen', label: 'Spleen', icon: '🛡️' },
+            { id: 'kidney', label: 'Kidneys & Adrenals', icon: '🫘' },
+            { id: 'skeletal', label: 'Skeleton & Ribs', icon: '🦴' },
+            { id: 'snakebite', label: 'Snakebite Wound', icon: '🐍' },
+          ].map((item) => (
+            <button
+              key={item.id}
+              onClick={() => {
+                setSelectedOrganId(item.id);
+                if (item.id === 'brain') setCameraPreset('head');
+                else if (item.id === 'heart' || item.id === 'lungs') setCameraPreset('thorax');
+                else if (item.id === 'liver' || item.id === 'kidney' || item.id === 'stomach' || item.id === 'pancreas' || item.id === 'spleen') setCameraPreset('abdomen');
+                else setCameraPreset('anterior');
+              }}
+              className={`min-h-[36px] px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap flex items-center gap-1.5 transition-all flex-shrink-0 cursor-pointer ${
+                selectedOrganId === item.id
+                  ? isLight
+                    ? 'bg-sky-600 text-white shadow-xs'
+                    : 'bg-cyan-500 text-slate-950 font-bold shadow-xs'
+                  : isLight
+                  ? 'bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200/80'
+                  : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700'
+              }`}
+            >
+              <span>{item.icon}</span>
+              <span>{item.label}</span>
+            </button>
+          ))}
+        </div>
+
         {/* MOBILE VIEW: Tab-driven clean single stage */}
         <div className="lg:hidden flex flex-col space-y-3">
           {mobileTab === '3d' && (
@@ -333,7 +384,7 @@ export const Simulator: React.FC = () => {
           )}
 
           {mobileTab === 'telemetry' && (
-            <div className="h-[460px] w-full">
+            <div className="h-[520px] w-full pb-3">
               <IcuMonitor
                 vitals={vitals}
                 sampleWaveforms={handleSampleWaveforms}

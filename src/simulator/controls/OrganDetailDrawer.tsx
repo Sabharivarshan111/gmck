@@ -213,6 +213,103 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
                 </ul>
               </div>
 
+              {/* Musculoskeletal Attachments & Biomechanics (Z-Anatomy Standard) */}
+              {organ.originsAndInsertions && (
+                <div
+                  className={`p-4 rounded-2xl border ${
+                    isLight ? 'bg-amber-50/70 border-amber-200/80' : 'bg-amber-950/20 border-amber-900/40'
+                  }`}
+                >
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-amber-800 dark:text-amber-400 mb-2.5 flex items-center gap-1.5">
+                    <Layers className="w-4 h-4 text-amber-600" />
+                    Musculoskeletal Origins, Insertions & Biomechanics
+                  </h4>
+                  <div className="space-y-2.5 text-xs">
+                    <div>
+                      <span className="font-bold text-amber-900 dark:text-amber-300">Origins (Origo): </span>
+                      <ul className="list-disc list-inside mt-1 space-y-1">
+                        {organ.originsAndInsertions.origin.map((o, idx) => (
+                          <li key={idx} className={isLight ? 'text-slate-700' : 'text-slate-300'}>
+                            {o}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div>
+                      <span className="font-bold text-amber-900 dark:text-amber-300">Insertions (Insertio): </span>
+                      <ul className="list-disc list-inside mt-1 space-y-1">
+                        {organ.originsAndInsertions.insertion.map((ins, idx) => (
+                          <li key={idx} className={isLight ? 'text-slate-700' : 'text-slate-300'}>
+                            {ins}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div>
+                      <span className="font-bold text-amber-900 dark:text-amber-300">Action (Actio): </span>
+                      <ul className="list-disc list-inside mt-1 space-y-1">
+                        {organ.originsAndInsertions.action.map((act, idx) => (
+                          <li key={idx} className={isLight ? 'text-slate-700' : 'text-slate-300'}>
+                            {act}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div className="pt-1.5 border-t border-amber-200 dark:border-amber-900/60">
+                      <span className="font-bold text-amber-900 dark:text-amber-300">Innervation: </span>
+                      <span className={isLight ? 'text-slate-700' : 'text-slate-300'}>
+                        {organ.originsAndInsertions.nerveSupply}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* In-House Supabase Textbook Curriculum & Diagram */}
+              {organ.supabaseTextbookReference && (
+                <div
+                  className={`p-4 rounded-2xl border ${
+                    isLight ? 'bg-emerald-50/70 border-emerald-200/80' : 'bg-emerald-950/20 border-emerald-900/40'
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-emerald-800 dark:text-emerald-400 flex items-center gap-1.5">
+                      <BookOpen className="w-4 h-4 text-emerald-600" />
+                      In-House Orbit MBBS Textbook Notes
+                    </h4>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 uppercase">
+                      Verified BDC / Gray's
+                    </span>
+                  </div>
+                  <p className="text-xs font-semibold text-emerald-900 dark:text-emerald-200 mb-2">
+                    {organ.supabaseTextbookReference.subtopic}
+                  </p>
+                  <ul className="space-y-1.5 text-xs mb-3">
+                    {organ.supabaseTextbookReference.keyPearls.map((kp, idx) => (
+                      <li key={idx} className="flex items-start gap-1.5 text-slate-700 dark:text-slate-300">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1 flex-shrink-0" />
+                        <span>{kp}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  {organ.supabaseTextbookReference.diagramUrl && (
+                    <div className="rounded-xl overflow-hidden border border-emerald-200/80 dark:border-emerald-900/40 bg-white dark:bg-slate-900 p-1">
+                      <img
+                        src={organ.supabaseTextbookReference.diagramUrl}
+                        alt={organ.name}
+                        className="w-full h-40 object-contain rounded-lg bg-slate-50 dark:bg-slate-950"
+                        onError={(e) => {
+                          (e.target as HTMLElement).style.display = 'none';
+                        }}
+                      />
+                      <div className="text-[10px] text-center text-slate-400 py-1">
+                        Curriculum Plate: {organ.name}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
               {/* Histology & Core Physiology */}
               <div
                 className={`p-4 rounded-2xl border ${
@@ -450,9 +547,12 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
             {[
               { id: 'heart', name: 'Heart' },
               { id: 'lungs', name: 'Lungs' },
-              { id: 'liver', name: 'Liver' },
-              { id: 'kidney', name: 'Kidneys' },
               { id: 'brain', name: 'Brain' },
+              { id: 'liver', name: 'Liver' },
+              { id: 'stomach', name: 'Stomach' },
+              { id: 'pancreas', name: 'Pancreas' },
+              { id: 'spleen', name: 'Spleen' },
+              { id: 'kidney', name: 'Kidneys' },
               { id: 'skeletal', name: 'Skeleton' },
               { id: 'aorta', name: 'Aorta' },
               { id: 'ascites', name: 'Ascites' },

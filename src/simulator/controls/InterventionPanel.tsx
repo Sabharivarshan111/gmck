@@ -1,6 +1,6 @@
 import React from 'react';
 import { AnatomicalLayer, DiagnosticToolType, ScenarioDefinition } from '../types';
-import { Layers, Stethoscope, Sparkles, Activity, AlertCircle } from 'lucide-react';
+import { Layers, Stethoscope, Sparkles, Activity, AlertCircle, ChevronDown } from 'lucide-react';
 
 interface InterventionPanelProps {
   scenarios: ScenarioDefinition[];
@@ -30,21 +30,17 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
 
   return (
     <div
-      className={`rounded-2xl md:rounded-3xl p-4 md:p-5 flex flex-col space-y-4 border transition-all ${
+      className={`rounded-2xl md:rounded-3xl border p-4 md:p-5 space-y-4 md:space-y-5 transition-all ${
         isLight
-          ? 'bg-white text-slate-900 border-slate-200/80 shadow-md'
-          : 'bg-slate-900/90 text-slate-100 border-slate-800 shadow-xl'
+          ? 'bg-white border-slate-200/80 shadow-sm text-slate-800'
+          : 'bg-slate-900 border-slate-800 shadow-xl text-slate-100'
       }`}
     >
-      {/* 1. Scenario Selector & Clinical Header */}
-      <div
-        className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b ${
-          isLight ? 'border-slate-100' : 'border-slate-800'
-        }`}
-      >
-        <div>
+      {/* 1. Header: Active Clinical Scenario & Case Picker */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-200 dark:border-slate-800">
+        <div className="min-w-0">
           <div
-            className={`text-[10px] md:text-[11px] font-bold uppercase tracking-wider ${
+            className={`text-[10px] font-bold uppercase tracking-wider ${
               isLight ? 'text-sky-600' : 'text-cyan-400'
             }`}
           >
@@ -52,33 +48,36 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
           </div>
           <h2 className="text-base md:text-lg font-black flex items-center gap-2 mt-0.5">
             <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse flex-shrink-0" />
-            <span>{currentScenario.title}</span>
+            <span className="truncate">{currentScenario.title}</span>
           </h2>
-          <p className={`text-xs mt-0.5 ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>
+          <p className={`text-xs mt-0.5 line-clamp-1 ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>
             {currentScenario.chiefComplaint}
           </p>
         </div>
 
-        {/* Scenario Switcher Dropdown */}
-        <div className="flex items-center gap-2 flex-shrink-0">
-          <label className={`text-xs font-semibold ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>
+        {/* Scenario Switcher Dropdown (Responsive, No Overflow) */}
+        <div className="w-full sm:w-auto flex flex-col sm:flex-row sm:items-center gap-1.5 min-w-0 mt-1 sm:mt-0">
+          <label className={`text-[10px] sm:text-xs font-bold uppercase tracking-wider flex-shrink-0 ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>
             Case:
           </label>
-          <select
-            value={currentScenarioId}
-            onChange={(e) => onSelectScenario(e.target.value)}
-            className={`text-xs font-medium rounded-xl px-3 py-2 border transition-all focus:outline-none focus:ring-2 ${
-              isLight
-                ? 'bg-slate-50 hover:bg-slate-100 border-slate-200 text-slate-800 focus:ring-sky-500'
-                : 'bg-slate-800 border-slate-700 text-slate-200 focus:ring-cyan-500'
-            }`}
-          >
-            {scenarios.map((sc) => (
-              <option key={sc.id} value={sc.id}>
-                {sc.title}
-              </option>
-            ))}
-          </select>
+          <div className="relative w-full sm:w-72 min-w-0">
+            <select
+              value={currentScenarioId}
+              onChange={(e) => onSelectScenario(e.target.value)}
+              className={`w-full truncate text-xs font-semibold rounded-xl pl-3 pr-8 py-2 border transition-all focus:outline-none focus:ring-2 appearance-none cursor-pointer ${
+                isLight
+                  ? 'bg-slate-100/90 hover:bg-slate-200/80 border-slate-300/80 text-slate-900 focus:ring-sky-500'
+                  : 'bg-slate-800 border-slate-700 text-slate-200 focus:ring-cyan-500'
+              }`}
+            >
+              {scenarios.map((sc) => (
+                <option key={sc.id} value={sc.id}>
+                  {sc.title}
+                </option>
+              ))}
+            </select>
+            <ChevronDown className="w-4 h-4 text-slate-500 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+          </div>
         </div>
       </div>
 
