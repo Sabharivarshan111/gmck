@@ -560,3 +560,111 @@ which silently turned a stored `'third-year'` into second year.
 * `.agents/queue/play-billing-migration.md` — what moving off Razorpay
   involves. Not optional; about a working week; none of it doable from a
   sandbox.
+
+## 2026-09-06 — Claude Code — Play's own update API, a green smoke suite, and v15 built
+
+Picks up from the 2026-09-05 entry above. **v15 is built and signed and has not
+been uploaded yet** — that is where this stopped.
+
+### The update prompt is Google Play's now, not a row in our table
+
+Yesterday's entry describes an `app_releases` table with a `live_on_play`
+boolean. **That flag is gone**, and so is `mandatory`. Do not add them back.
+
+The flag was a person promising, by hand, that the Play listing had caught up
+with an upload. A row appears the moment a build is cut — days before Play
+serves it — and it failed in both directions: set late and nobody hears about
+the update, set early and every phone is sent to a listing still showing the
+version it is running.
+
+`com.google.android.play:app-update:2.1.0`, wrapped as the **`OrbitUpdate`
+TurboModule** (`src/native/NativeOrbitUpdate.ts`, `UpdateModule.kt`,
+`UpdatePackage.kt`, registered in `MainApplication.kt`). Play knows the answer
+for a given reader on their track without being told.
+
+**The table survives for the one thing Play cannot do: it hands no release
+notes to a client, in any shape.** `app_releases` is now a lookup by the
+versionCode Play names, holding the words for the update card and the what's-new
+card. A version with no row still prompts, without a list.
+
+Flexible, never immediate by default. Immediate takes the screen and will not
+give it back — for a question bank that is a student locked out the evening
+before an exam. It is reached only at Play priority >= 4, which nothing sets.
+`check:native-update` fails if that flips.
+
+**None of it can be exercised here.** Play reports no update for a build it did
+not install — every APK from CI, every debug build, and the preview where the
+module is absent. So "no card" and "completely broken" look identical, which is
+the sound module's failure exactly. The check asserts the four TurboModule
+pieces, the Gradle dependency, flexible-by-default, the install stage, a
+dismissable dialog, and that the preview shim reports the module ABSENT rather
+than faking one. First real proof is **internal app sharing on a phone**.
+
+### The smoke suite is green — 120 pass, 0 fail — and four "failures" were the test
+
+It had been 110/5 and every one of the five was the test accusing the app.
+Worth knowing because the same shapes will recur:
+
+* **A stale string is worth three red steps.** The attach chooser was reworded
+  in August (1fdbf17c). `check:note-media` and three smoke steps still asserted
+  the old sentences — including the sheet TITLE, which is the first assertion,
+  so the step died four seconds in and left its sheet open. The two steps after
+  it then timed out at thirty seconds each against that scrim. One sentence,
+  three broken flows, two of them entirely healthy.
+* **A selector for a control that does not exist accuses the app.** The
+  search-result note step looked for `[aria-label*="Regenerate"]`. There is no
+  such label — `SingleQuestionNote` says "Write this note again from the top" —
+  so it reported "no handwritten note opened" about a note that had opened.
+* **Wrong labels can make an assertion pass while testing nothing.** The
+  first-run step checked `aria-checked` on "First Year"/"Third Year". The labels
+  are "1st Year"/"3rd Year", so it matched no elements and concluded nothing was
+  pre-selected. It now counts the four cards before asking which is checked.
+* **A mouse drag is not a touch drag.** The subject-card reorder used
+  `page.mouse` while `dragArm` reads touch; it had been failing for weeks while
+  the gesture worked by hand. And that step throwing left home in edit mode, so
+  the year-picker step after it timed out on a control that was present and
+  deliberately unresponsive — `ReorderLock`. One broken step, two red.
+
+`finishRearrangingIfOpen()` is now part of every step's cleanup, alongside
+closing a sheet and a modal, for the same reason those are.
+
+### Three new checks, and why each exists
+
+| Check | Catches |
+|---|---|
+| `check:version` | `build.gradle` and `src/lib/appVersion.ts` disagreeing, and PLAY_PACKAGE not matching the applicationId |
+| `check:preview-parity` | a root overlay in `App.tsx` that was never mounted in `preview/main.tsx` — it caught `FirstRun`, absent from every screenshot and smoke run |
+| `check:native-update` | the four TurboModule pieces, flexible-by-default, the install stage, and a preview shim that admits the module is absent |
+
+All three run in the Checks step of all three Android workflows.
+
+**Two of `check:native-update`'s assertions passed on deliberately broken files
+before I caught it**, both the same way: the doc comment explaining a rule
+contains the words the check greps for, so the prose satisfied the check for the
+rule. Both now read comment-stripped source. `native-sound-check.mjs` documents
+this trap in its header and I still wrote it wrong twice.
+
+### 14 is live on Play, not 13
+
+Corrected by the owner from their own console. Four files said 13 and
+`app_releases` had 13 flagged live. The error came from one refused upload of 14
+being written down as "14 was rejected, 13 is live" and never re-checked. **A
+refused upload is not proof of what the listing serves.**
+
+### New: the Play Console form is part of the release
+
+`.agents/rules/41-play-release-notes.md` and
+`.claude/skills/play-release-notes/`. A build is not delivered until the owner
+has the Release name and Release notes pasted in the chat — they upload from a
+phone, and v15 was built, signed and linked before anyone noticed nobody had
+written them. Covers the 500-char cap and the two things that may never appear:
+a Razorpay price (Play requires Play Billing for digital goods, and the notes
+are where a reviewer looks) and anything that has never worked once.
+
+### Where it stands
+
+* **Release 192** — `.aab` and `.apk` published, versionCode 15, built from
+  `ee3ffcec` which has the Play update API. Not uploaded.
+* The owner was mid-upload in the Play Console when this session ended.
+* `live_on_play` no longer exists, so **nothing needs flipping after upload**.
+  That was the whole point of the change.

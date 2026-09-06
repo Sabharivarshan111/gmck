@@ -22,6 +22,7 @@ when picking up work that was last touched from the other tool.
 | `.agents/rules/20-interface.md` | Interface rules — theming, type, materials, accessibility |
 | `.agents/rules/30-reference.md` | Index of the vendored design skills, and where the long-form docs live |
 | `.agents/rules/40-releases.md` | Cutting builds — which of the four to use, how to trigger one, and the two things a wrong build costs |
+| `.agents/rules/41-play-release-notes.md` | The two strings the Play Console asks for at upload — what to write in Release name and Release notes, and the two things that may never appear in them |
 | `.agents/rules/50-notes.md` | Handwritten notes — which textbook grounds which subject, and the two ways that goes silently wrong |
 | `.agents/rules/60-flashcards.md` | Anki flashcards — why the scheduler is not the app's other one, and what is still unverified |
 | `.agents/rules/61-own-decks.md` | Decks the reader makes — written by hand, generated for one phone, or carrying photos from the gallery |
