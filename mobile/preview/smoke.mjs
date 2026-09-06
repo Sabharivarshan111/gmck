@@ -2177,6 +2177,68 @@ await step('notes highlight, and a picture opens a drawing canvas', async () => 
   }
 });
 
+/**
+ * Tapping a picture opens it full screen.
+ *
+ * The reader asked for this of every picture in the app — a triple-tap
+ * diagram, a handwritten note, a flashcard, an Anki card, a photo in their own
+ * notes — because a diagram's labels are the point of it and a phone draws
+ * them at a size nobody can read.
+ *
+ * `DiagramCard` already had a lightbox and it did not zoom: it was a
+ * `<ScrollView maximumZoomScale minimumZoomScale centerContent>`, three props
+ * that are **iOS-only**, so on Android it was a static picture wearing a
+ * zoomable lightbox's code. Every one of those call sites now goes through
+ * `ZoomableImage`.
+ *
+ * This walks a note's own picture rather than the diagram card, because the
+ * note's is a data URI that genuinely loads in a browser while the card's
+ * comes from Supabase Storage, which the sandbox cannot reach — and the card
+ * correctly disables Enlarge while the picture has failed.
+ *
+ * **The pinch itself is not proved here.** It is a two-finger gesture against
+ * a PanResponder, and a browser standing in for that would be a test agreeing
+ * with its own assumptions. What is proved is that the viewer opens on a tap,
+ * says how to use it, and closes.
+ */
+await step('a picture in a note opens full screen', async () => {
+  await open('screen=progress');
+  await page.waitForTimeout(900);
+  await byLabel('Notes').first().click();
+  await page.waitForTimeout(800);
+  await byLabel('Create a new study note').click();
+  await page.waitForTimeout(700);
+
+  await byLabel('Note title').fill('Zooming in');
+  await byLabel('What the note says').fill('The picture is the point of this note.');
+
+  await page.evaluate(() => {
+    globalThis.__orbitPickImage = true;
+  });
+  await byLabel('Add a picture to this note').click();
+  await page.waitForTimeout(900);
+  await page.evaluate(() => {
+    globalThis.__orbitPickImage = undefined;
+  });
+
+  await byLabel('Save note').click();
+  await page.waitForTimeout(900);
+  await byLabel('Read Zooming in').last().click();
+  await page.waitForTimeout(900);
+
+  const opener = page.locator('[aria-label*="Opens full screen"]').first();
+  await opener.waitFor({ timeout: 6000 });
+  await opener.click();
+  await page.waitForTimeout(700);
+  await seesText('Pinch to zoom, drag to move, double-tap to zoom in and out', 5000);
+
+  await byLabel('Close the picture').click();
+  await page.waitForTimeout(500);
+  if (await page.getByText('Pinch to zoom, drag to move').count()) {
+    throw new Error('the picture viewer would not close');
+  }
+});
+
 await step('a note can be written by hand on a blank page', async () => {
   await open('screen=progress');
   await page.waitForTimeout(900);
@@ -2828,6 +2890,58 @@ await step('the walkthrough rehearses the tick, the double tap and the triple ta
 });
 
 /**
+ * Replaying a chapter from Settings plays that chapter.
+ *
+ * It did not. `farewell` is local state in `TourOverlay`, which is mounted for
+ * the life of the app, and nothing reset it when the tour ended — so after a
+ * reader pressed Skip once, every later `startTour(chapter)` rendered the
+ * farewell card over step one. Tapping "Focus timer" in Settings showed "It
+ * lives in here", pointing at the Settings button they had just used, and the
+ * chapter never played. Reported exactly that way.
+ *
+ * This walks the real path: skip, close, open Settings, pick a chapter, and
+ * assert the card is that chapter's own first step. A unit test on the flag
+ * would not have caught it, because the flag was correct — what was wrong was
+ * that it outlived the run it belonged to.
+ */
+await step('a chapter replayed from Settings plays the chapter, not the farewell', async () => {
+  await open('tour=1');
+  await declineAdPromptIfShown();
+
+  // Skip once: the farewell card, which is the state the bug hid in.
+  await byLabel('Skip the walkthrough').click();
+  await page.waitForTimeout(500);
+  const farewellText = await page.locator('body').innerText();
+  if (!/It lives in here/.test(farewellText)) {
+    throw new Error('Skip no longer shows the card that says where the walkthrough lives');
+  }
+
+  // Close it. The tour is now over and `farewell` must not survive it.
+  await byLabel('Close the walkthrough').click();
+  await page.waitForTimeout(500);
+
+  await byLabel('Settings').click();
+  await page.waitForTimeout(600);
+  await byLabel('Walk me through Focus timer').click();
+  await page.waitForTimeout(900);
+
+  const replayed = await page.locator('body').innerText();
+  if (/It lives in here/.test(replayed)) {
+    throw new Error(
+      'replaying a chapter showed the skip farewell again — the chapter never played',
+    );
+  }
+  if (!/FOCUS TIMER · 1 OF/.test(replayed)) {
+    throw new Error(
+      `replaying the Focus timer chapter did not start at its first step: ${replayed.slice(0, 200)}`,
+    );
+  }
+
+  await byLabel('Skip the walkthrough').click();
+  await page.waitForTimeout(400);
+});
+
+/**
  * Pressing the real control the tour is pointing at moves the tour on.
  *
  * This is the whole reason the scrim is four rectangles rather than one view
@@ -2881,6 +2995,11 @@ await step('a diagram in prose renders as a picture, not as markdown', async () 
   // the prose that followed it survived the split.
   await byLabel('Enlarge diagram image').waitFor({ timeout: 6000 });
   await seesText('High-Yield Continuous Visual Mnemonic');
+
+  // The viewer this card opens is exercised through a note's own picture
+  // instead — see 'a picture in a note opens full screen'. The card's Enlarge
+  // button is deliberately disabled while the image has failed to load, and in
+  // this sandbox it always has: there is no route to Supabase Storage.
 });
 
 /**

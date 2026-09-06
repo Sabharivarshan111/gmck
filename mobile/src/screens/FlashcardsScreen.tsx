@@ -31,6 +31,7 @@ import {
 import { Text } from '@/components/Text';
 import { KeyboardSafe } from '@/components/KeyboardSafe';
 import { Touchable } from '@/components/Touchable';
+import { TappableImage } from '@/components/ZoomableImage';
 import { BackButton } from '@/components/BackButton';
 import { GradientFill } from '@/components/Gradient';
 import { typeScale } from '@/theme/typography';
@@ -2134,12 +2135,11 @@ export function StudyView({
           Hiding it leaves a card asking about a picture that is not there.
         */}
         {(face.frontImages ?? []).map(uri => (
-          <Image
+          <TappableImage
             key={uri}
-            source={{ uri }}
+            uri={uri}
             style={styles.cardImage}
-            resizeMode="contain"
-            accessibilityLabel={`Picture on this card: ${face.front.slice(0, 60)}`}
+            label={`Picture on this card: ${face.front.slice(0, 60)}. Opens full screen`}
           />
         ))}
 
@@ -2160,17 +2160,16 @@ export function StudyView({
             */}
             {(face.backImages ?? (face.imageUrl ? [face.imageUrl] : [])).map(uri =>
               imageFailed ? null : (
-                <Image
+                <TappableImage
                   key={uri}
-                  source={{ uri }}
+                  uri={uri}
                   style={styles.cardImage}
-                  resizeMode="contain"
+                  label={`Diagram: ${face.front}. Opens full screen`}
                   // A diagram that will not load has to say so. A grey
                   // rectangle looks identical to "this app does not show
                   // diagrams", and from inside the app there is no way to
                   // tell which it is.
                   onError={() => setImageFailed(true)}
-                  accessibilityLabel={`Diagram: ${face.front}`}
                 />
               ),
             )}

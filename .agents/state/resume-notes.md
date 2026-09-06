@@ -741,3 +741,82 @@ every token Play knows about on every launch. The unique index had to be made
 non-partial for that: `ON CONFLICT` cannot infer a partial index and PostgREST
 has nowhere to put its WHERE clause. Migration `20260906020100` is that fix and
 explains itself.
+
+## 2026-09-06 — Claude Code — pinch-to-zoom on every picture, and v17
+
+### Two bugs, both of which looked like features that were merely absent
+
+**The lightbox never zoomed on Android.** `DiagramCard` opened a full-screen
+`<ScrollView maximumZoomScale={3} minimumZoomScale={1} centerContent>` — and
+all three of those props are **iOS-only**. On Android, the only platform this
+app ships to, they are silently ignored. The code read as a zoomable lightbox,
+reviewed as one, and had been a static picture on every phone that ever ran it.
+
+`components/ZoomableImage.tsx` is the replacement: a hand-written PanResponder
+pinch (two touches is a distance and a midpoint), one-finger pan, double-tap to
+zoom towards the tap, bounds computed from the **drawn** picture rather than the
+window, and an elastic under-1 pinch that springs back. No new dependency —
+`react-native-gesture-handler` is not installed and pinch is the only thing that
+would justify it, and there is nothing to arbitrate with inside a `<Modal>`.
+
+`TappableImage` is the wrapper that makes a picture one tap from full screen.
+Wired into: the triple-tap / handwritten-notes diagram (`DiagramCard`),
+flashcard and imported-Anki card faces on both sides (`FlashcardsScreen`), a
+note's attached pictures and its handwritten pages (`ProgressNotesTab`, via
+`InkedImage zoomable`). `InkedImage`'s SVG was extracted as `Ink` so the viewer
+draws **the same** marks over the same picture rather than a second copy that
+could sit a few pixels off.
+
+**Replaying a chapter from Settings replayed the farewell instead.**
+`farewell` is local state in `TourOverlay`, which is mounted for the life of the
+app, and nothing reset it when the tour ended. So after one press of Skip, every
+later `startTour(chapter)` rendered `SKIP_FAREWELL` over step one: tapping
+"Focus timer" showed "It lives in here" pointing at the Settings button the
+reader had just used, and the chapter never played. Reset on `index === null`.
+
+### Both were proved by breaking them, not by reasoning
+
+The full smoke suite is very slow under this sandbox's throttled clock, so each
+flow was also driven on its own through a temporary harness (deleted):
+
+* Walkthrough replay, fix reverted: `FAIL: replaying a chapter showed the skip
+  farewell again — the chapter never played`. Fix restored: `PASS`.
+* The picture viewer opens on a tap, says how to use it, and closes —
+  screenshotted at `/tmp/viewer-open.png` before the harness was removed.
+
+Both are now steps in `preview/smoke.mjs`: *'a chapter replayed from Settings
+plays the chapter, not the farewell'* and *'a picture in a note opens full
+screen'*.
+
+**The pinch itself is not proved anywhere.** It is a two-finger gesture against
+a PanResponder; a browser standing in for that would be a test agreeing with its
+own assumptions. First real proof is a phone.
+
+The viewer step drives a **note's** picture rather than the diagram card,
+because the note's is a data URI that loads in a browser while the card's comes
+from Supabase Storage, which the sandbox cannot reach — and the card correctly
+disables Enlarge while its picture has failed to load.
+
+### v17
+
+versionCode 17 / 0.0.0.17 in `build.gradle` and `appVersion.ts`, with an
+`app_releases` row. **v16 never reached a reader** — Play blocked it on the
+Advertising ID declaration — so from a phone on 14, v17 is the update carrying
+everything since 14, and its notes say so.
+
+### The AD_ID error is NOT the manifest, and that is now measured
+
+The v16 `.aab` from GitHub release `release-193` was downloaded and unzipped:
+`com.google.android.gms.permission.AD_ID` appears in
+`base/manifest/AndroidManifest.xml`. The manifest half has been correct since
+commit `0ef51eec`.
+
+What is still outstanding is the **Advertising ID declaration form** in Play
+Console (Policy → App content → Advertising ID) and the other **active
+artifacts** in the release. Play's wording is "a manifest file in one of your
+**active artifacts**", and v14 and v15 predate the fix — so a release that
+retains one of them still errors however correct the new bundle is.
+
+**Never tick "I understand the ramifications… turn off release errors".** That
+declares the app ships WITHOUT the permission, which is no longer true, and it
+trades targeted-ad revenue for making a form go away.

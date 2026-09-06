@@ -97,6 +97,27 @@ export function TourOverlay() {
    */
   const [farewell, setFarewell] = useState(false);
 
+  /*
+   * ...and it has to be forgotten when the tour stops.
+   *
+   * This is local component state, and `TourOverlay` is mounted for the life
+   * of the app — so `farewell` survived `endTour()`. The next `startTour()`,
+   * from a chapter row in Settings, then found it still true and rendered
+   * SKIP_FAREWELL over step one: the reader tapped "Focus timer", got "It
+   * lives in here" pointing at Settings again, and the chapter they asked for
+   * never played. Reported exactly that way.
+   *
+   * Reset on the tour not running rather than inside `endTour`, because the
+   * flag belongs to this component and every path that stops the tour ends
+   * with `index === null` — including any future one that does not go through
+   * `endTour` at all.
+   */
+  useEffect(() => {
+    if (index === null && farewell) {
+      setFarewell(false);
+    }
+  }, [index, farewell]);
+
   const scripted: TourStep | null =
     index === null || paused ? null : (STEPS[run[index]] ?? null);
   const step: TourStep | null = farewell && scripted ? SKIP_FAREWELL : scripted;

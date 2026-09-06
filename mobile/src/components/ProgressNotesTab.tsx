@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Image, Keyboard, Linking, Modal, ScrollView, StyleSheet, TextInput, View } from "react-native";
+import { Keyboard, Linking, Modal, ScrollView, StyleSheet, TextInput, View } from "react-native";
 import { Text } from "@/components/Text";
 import { Touchable } from "@/components/Touchable";
 import { Dialog } from "@/components/Dialog";
@@ -8,6 +8,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { KeyboardSafe } from "@/components/KeyboardSafe";
 import { NoteText, noteFontFamily, plainPreview } from "@/components/NoteText";
 import { InkedImage } from "@/components/InkedImage";
+import { TappableImage } from "@/components/ZoomableImage";
 import { DrawCanvas } from "@/components/DrawCanvas";
 import { NoteToolbar } from "@/components/NoteToolbar";
 import { useTheme } from "@/theme";
@@ -197,7 +198,11 @@ function NoteAttachment({
   if (kind === "image") {
     return (
       <View>
-        <Image source={{ uri }} style={styles.readerImage} resizeMode="contain" />
+        <TappableImage
+          uri={uri}
+          style={styles.readerImage}
+          label="Picture attached to this note. Opens full screen"
+        />
         {linkFooter}
       </View>
     );
@@ -308,13 +313,27 @@ function NoteReader({
 
       {/* Pages written by hand, then the pictures. */}
       {(note.sheets ?? []).map(id => (
-        <InkedImage key={id} imageId={id} ownShape style={styles.readerPage} />
+        <InkedImage
+          key={id}
+          imageId={id}
+          ownShape
+          zoomable
+          title="Handwritten page"
+          style={styles.readerPage}
+        />
       ))}
 
       {/* Whatever was drawn on it comes with it. */}
       {(note.images ?? []).map((id, index) =>
         urls[index] ? (
-          <InkedImage key={id} uri={urls[index]} imageId={id} style={styles.readerImage} />
+          <InkedImage
+            key={id}
+            uri={urls[index]}
+            imageId={id}
+            zoomable
+            title="Picture in this note"
+            style={styles.readerImage}
+          />
         ) : null,
       )}
       {note.images && note.images.length > 0 && urls.length === 0 ? (
