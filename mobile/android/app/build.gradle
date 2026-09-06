@@ -296,6 +296,26 @@ dependencies {
      * internal app sharing.
      */
     implementation 'com.google.android.play:app-update:2.1.0'
+
+    /*
+     * Google Play Billing.
+     *
+     * Play's Payments policy requires this for digital content consumed inside
+     * the app, which is exactly what ad-free and the notes unlocks are. It is
+     * not a stack: a thin AAR over Play services, no native libraries of its
+     * own, and it ships its own ProGuard rules so nothing here has to keep it.
+     *
+     * Pinned at 8.x or later deliberately. Google made Billing Library 8+
+     * mandatory for new apps and updates from 31 August 2026, and 7 and below
+     * stop working on that timetable rather than merely being discouraged.
+     * `enableAutoServiceReconnection`, which BillingModule relies on, arrived
+     * in 8 as well.
+     *
+     * It answers nothing for a build Play did not install, so every APK from
+     * this repo's CI sees no products at all. Test with a licence tester on the
+     * internal testing track — mobile/PLAY-BILLING-SETUP.md.
+     */
+    implementation 'com.android.billingclient:billing:9.1.0'
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
 

@@ -23,6 +23,7 @@ when picking up work that was last touched from the other tool.
 | `.agents/rules/30-reference.md` | Index of the vendored design skills, and where the long-form docs live |
 | `.agents/rules/40-releases.md` | Cutting builds — which of the four to use, how to trigger one, and the two things a wrong build costs |
 | `.agents/rules/41-play-release-notes.md` | The two strings the Play Console asks for at upload — what to write in Release name and Release notes, and the two things that may never appear in them |
+| `.agents/rules/42-play-billing.md` | Google Play Billing — why Razorpay cannot stay, what is already built, and the rules a payment path has to keep (nothing granted, nothing priced, nothing acknowledged on the client) |
 | `.agents/rules/50-notes.md` | Handwritten notes — which textbook grounds which subject, and the two ways that goes silently wrong |
 | `.agents/rules/60-flashcards.md` | Anki flashcards — why the scheduler is not the app's other one, and what is still unverified |
 | `.agents/rules/61-own-decks.md` | Decks the reader makes — written by hand, generated for one phone, or carrying photos from the gallery |
@@ -1689,6 +1690,7 @@ npm run check:sync               # progress reaches the cloud once a session exi
 npm run check:contrast           # every built-in theme stays readable
 npm run check:subject-cards      # custom themes recolour the cards, readably
 npm run check:native-sound       # the sound module is reachable under the New Arch
+npm run check:billing            # Play Billing grants nothing on the client, prices nothing
 npm run check:one-app            # the frozen web app has grown no second copy
 npm run check:flashcard-size     # the chapter list's card count is the one the server builds
 npm run check:streak             # the streak counts on a phone with no account

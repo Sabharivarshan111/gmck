@@ -43,6 +43,7 @@
     "check:streak": "node scripts/streak-check.mjs",
     "check:preview-parity": "node scripts/preview-parity-check.mjs",
     "check:native-update": "node scripts/native-update-check.mjs",
+    "check:billing": "node scripts/billing-check.mjs",
     "check:version": "node scripts/version-check.mjs",
     "check:xp": "node scripts/xp-check.mjs",
     "check:reminder": "node scripts/reminder-check.mjs",

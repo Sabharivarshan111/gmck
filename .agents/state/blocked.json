@@ -3,8 +3,8 @@
     "Work that is stopped, and the person who can start it again.",
     "",
     "This is the hand-written half of the resume report, and it is deliberately small.",
-    "Everything an agent can derive \u2014 the branch, the dirty tree, the last commits, the",
-    "Supabase queue, the open notes \u2014 is derived by mobile/scripts/resume-status.mjs.",
+    "Everything an agent can derive — the branch, the dirty tree, the last commits, the",
+    "Supabase queue, the open notes — is derived by mobile/scripts/resume-status.mjs.",
     "What cannot be derived is who is allowed to unblock a thing, so that is what lives",
     "here and nothing else.",
     "",
@@ -23,30 +23,30 @@
     "Add an entry the moment you are stopped by something, not at the end of the session.",
     "Set status to 'cleared' rather than deleting: a blocker that vanishes gets rediscovered."
   ],
-  "updated": "2026-09-04",
+  "updated": "2026-09-06",
   "blockers": [
     {
       "id": "supabase-route",
       "what": "generate-handwritten-notes cannot be deployed (job sb-physio-flowchart): 3 of 11 cached Physiology notes have no flowchart, which is the section a student actually writes down.",
-      "blockedOn": "a route to Supabase. No agent sandbox has one \u2014 the egress gateway answers 403 to the CONNECT itself, before any credential is offered, so a personal access token is not an unblock.",
+      "blockedOn": "a route to Supabase. No agent sandbox has one — the egress gateway answers 403 to the CONNECT itself, before any credential is offered, so a personal access token is not an unblock.",
       "owner": "the app owner, in two ways: enable the Supabase connector for the chat (Claude Code or Antigravity), or push so that .github/workflows/supabase-tasks.yml runs on a GitHub runner, which does have a route.",
       "remedy": "cd mobile && npm run supabase:status, then follow .claude/skills/supabase-resume/SKILL.md. If the connector is missing, report WHICH: connected:false is a reconnect, connected:true + enabledInChat:false is a toggle in the chat's connector settings. No tool can flip it.",
       "since": "2026-09-03",
-      "source": "HANDOFF.md \u00a78j, .agents/rules/70-supabase.md",
+      "source": "HANDOFF.md §8j, .agents/rules/70-supabase.md",
       "clearsWhen": {
         "kind": "supabaseJobDone",
         "id": "sb-physio-flowchart"
       },
       "status": "cleared",
       "clearedOn": "2026-09-04",
-      "clearedBy": "A route exists after all, and the standing claim that no sandbox has one is now too strong. A session holding the Supabase MCP connector can reach an edge function WITHOUT any direct egress: the `http` extension (v1.6) is installed on this project, so Postgres itself makes the request. select http_post('https://pmtgeydtqypwrypshhsx.supabase.co/functions/v1/<slug>', <json body>::text, 'application/json') \u2014 raise the timeout first with http_set_curlopt('CURLOPT_TIMEOUT_MS','170000') or a model call will be cut off at the default. generate-handwritten-notes has verify_jwt:false so it needs no Authorization header. Build the body from the row itself with jsonb_build_object so a large note never has to travel through an agent's context. This is what made the sb-physio-flowchart backfill possible from a sandbox, and it is also how the repair was diagnosed: query_logs on source='function_logs' reads the function's own console output back.",
+      "clearedBy": "A route exists after all, and the standing claim that no sandbox has one is now too strong. A session holding the Supabase MCP connector can reach an edge function WITHOUT any direct egress: the `http` extension (v1.6) is installed on this project, so Postgres itself makes the request. select http_post('https://pmtgeydtqypwrypshhsx.supabase.co/functions/v1/<slug>', <json body>::text, 'application/json') — raise the timeout first with http_set_curlopt('CURLOPT_TIMEOUT_MS','170000') or a model call will be cut off at the default. generate-handwritten-notes has verify_jwt:false so it needs no Authorization header. Build the body from the row itself with jsonb_build_object so a large note never has to travel through an agent's context. This is what made the sb-physio-flowchart backfill possible from a sandbox, and it is also how the repair was diagnosed: query_logs on source='function_logs' reads the function's own console output back.",
       "stillTrue": "The egress gateway still refuses a direct CONNECT to *.supabase.co and api.supabase.com from the sandbox, so supabase-js, the CLI and physio-flowchart-backfill.mjs --run still cannot work here. What changed is that the CONNECTOR is a usable route to both SQL and the functions, not only to SQL. Deploying a function still needs the connector's deploy_edge_function; the http extension cannot do that (the Management API needs a personal access token)."
     },
     {
       "id": "lovable-credits",
       "what": "The Lovable-published copy of the web app never calls the diagram lookup on the reader's path, so triple-tapping a question there shows no picture. The native app and the Vercel web app both show them; the data is correct and is not the blocker.",
-      "blockedOn": "Lovable workspace SsJFPAW9Fet3beeN2YWW is out of credits \u2014 send_message is rejected outright. That project is a separate tree from this repo's src/, so a commit here cannot reach it.",
-      "owner": "the app owner \u2014 add credits at https://lovable.dev/settings/billing. Then any agent can send the queued message through the Lovable connector.",
+      "blockedOn": "Lovable workspace SsJFPAW9Fet3beeN2YWW is out of credits — send_message is rejected outright. That project is a separate tree from this repo's src/, so a commit here cannot reach it.",
+      "owner": "the app owner — add credits at https://lovable.dev/settings/billing. Then any agent can send the queued message through the Lovable connector.",
       "remedy": "The exact message to send is written out in .agents/queue/lovable-diagram-wiring.md. Send it, then ask the project to publish.",
       "since": "2026-09-02",
       "source": ".agents/queue/lovable-diagram-wiring.md, CLAUDE.md 'There are three copies of this app'",
@@ -57,12 +57,12 @@
     },
     {
       "id": "razorpay-untested",
-      "what": "The ad-free purchase has never had a real payment through it. It builds, the preview shim refuses rather than faking success, and check:payments holds the price and the server-side signature check \u2014 but this is untested code that handles money.",
+      "what": "The ad-free purchase has never had a real payment through it. It builds, the preview shim refuses rather than faking success, and check:payments holds the price and the server-side signature check — but this is untested code that handles money.",
       "blockedOn": "one real payment, on a device, from a person with a card. Razorpay test mode first.",
       "owner": "the app owner. There is no emulator in the sandboxes and no way for an agent to pay.",
       "remedy": "Pay Rs 50 on a device, then confirm a premium_subscriptions row appears with expires_at a month out. RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET must be set on the Supabase project or razorpay-create-order returns 500.",
       "since": "2026-08-27",
-      "source": "HANDOFF.md \u00a72.2",
+      "source": "HANDOFF.md §2.2",
       "clearsWhen": {
         "kind": "manual"
       }
@@ -74,24 +74,24 @@
       "owner": "the app owner, at platform.openai.com. An agent has no login there and must never be given one.",
       "remedy": "Revoke it. Then set this entry's status to 'cleared' with the date.",
       "since": "2026-08-26",
-      "source": "HANDOFF.md \u00a72.3",
+      "source": "HANDOFF.md §2.3",
       "clearsWhen": {
         "kind": "manual"
       }
     },
     {
       "id": "oauth-sha1-deployment",
-      "what": "Google Sign-In needs an Android OAuth client whose SHA-1 matches the certificate that signed the running build. Play App Signing means real users run a build signed by GOOGLE's key, not the upload key \u2014 so registering only the upload key gives sign-in that works in every test build and fails for every real user.",
+      "what": "Google Sign-In needs an Android OAuth client whose SHA-1 matches the certificate that signed the running build. Play App Signing means real users run a build signed by GOOGLE's key, not the upload key — so registering only the upload key gives sign-in that works in every test build and fails for every real user.",
       "blockedOn": "three Android OAuth clients existing in Google Cloud: deployment (54:F7:27:...), internal/upload (CE:EA:8A:...), and .debug.",
       "owner": "the app owner, in the Google Cloud console. An agent cannot create OAuth clients.",
       "remedy": "mobile/OAUTH-SETUP.md has all three with their exact values.",
       "since": "2026-08-26",
-      "source": "HANDOFF.md \u00a72.4",
+      "source": "HANDOFF.md §2.4",
       "clearsWhen": {
         "kind": "manual"
       },
       "evidence2026_09_04": "Narrowed with live data: auth.identities holds 322 google identities, most recent sign-in 2026-09-01. The Supabase Google provider, Web client ID and secret are therefore correct and working (those are the web app's browser flow). The app's DEVELOPER_ERROR is thrown by Google Play Services ON THE DEVICE before Supabase is contacted, and means no Android OAuth client matches the APK's (package name, SHA-1). Nothing in this repo or in Supabase can fix it. Do not re-investigate the Supabase side.",
-      "confirmedFromArtifact2026_09_04": "The internal APK's own certificate, read out of the build with apksigner rather than taken from a doc (run 33890078552, release internal-144): package com.aistudio.mbbsqbank.aycxvd, SHA-1 ceea8a41bb0778c47826d88fcce02cc9eb294068 = CE:EA:8A:41:BB:07:78:C4:78:26:D8:8F:CC:E0:2C:C9:EB:29:40:68. That matches OAUTH-SETUP.md's client #2 exactly, so the upload-key value there is verified. Client #1 (Play App Signing) still cannot be read from here \u2014 it only exists in the Play Console."
+      "confirmedFromArtifact2026_09_04": "The internal APK's own certificate, read out of the build with apksigner rather than taken from a doc (run 33890078552, release internal-144): package com.aistudio.mbbsqbank.aycxvd, SHA-1 ceea8a41bb0778c47826d88fcce02cc9eb294068 = CE:EA:8A:41:BB:07:78:C4:78:26:D8:8F:CC:E0:2C:C9:EB:29:40:68. That matches OAUTH-SETUP.md's client #2 exactly, so the upload-key value there is verified. Client #1 (Play App Signing) still cannot be read from here — it only exists in the Play Console."
     },
     {
       "id": "repo-deletion-protection",
@@ -103,6 +103,19 @@
       "source": ".agents/REPO-PROTECTION.md",
       "clearsWhen": {
         "kind": "manual"
+      }
+    },
+    {
+      "id": "play-billing-console",
+      "what": "Google Play Billing is fully built and switched off (PLAY_BILLING_ENABLED = false). The TurboModule, the client, both edge functions and the database columns are in place and check:billing is green — but no product exists in Play Console, no service account key is set, and no Pub/Sub topic exists, so play-verify-purchase returns 500 and grants nothing. Play's Payments policy requires Play Billing for ad-free and the notes unlocks; Razorpay is the current live path and cannot stay.",
+      "blockedOn": "Play Console products, a Google Cloud service account with Play Developer API access, PLAY_SERVICE_ACCOUNT_JSON and PLAY_RTDN_SECRET as Supabase secrets, a Pub/Sub topic for Real-Time Developer Notifications, licence testers, and a build installed FROM Play rather than sideloaded. Billing answers nothing at all for a build Play did not install, so no sandbox and no CI APK can exercise a single call.",
+      "owner": "the app owner. An agent cannot create a Play Console product, a Google Cloud service account, a Pub/Sub topic, or make a payment. There is no emulator with Play services here and no card.",
+      "remedy": "mobile/PLAY-BILLING-SETUP.md — eight steps, in order, each with what it is for and the link. Step 8 is flipping the flag, and only after a licence tester has bought each of the five products once.",
+      "since": "2026-09-06",
+      "source": "mobile/PLAY-BILLING-SETUP.md, .agents/queue/play-billing-migration.md, .agents/rules/42-play-billing.md",
+      "clearsWhen": {
+        "kind": "pathMissing",
+        "path": "mobile/PLAY-BILLING-SETUP.md"
       }
     }
   ]

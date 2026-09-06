@@ -668,3 +668,76 @@ are where a reviewer looks) and anything that has never worked once.
 * The owner was mid-upload in the Play Console when this session ended.
 * `live_on_play` no longer exists, so **nothing needs flipping after upload**.
   That was the whole point of the change.
+
+## 2026-09-06 — Claude Code — Play Billing, built and switched off
+
+Picks up from the entry above (Play's update API, green smoke, v15 built). Two
+things happened since: **v16 was built and is signed** (release run 193, AD_ID
+declared in the manifest), and **Google Play Billing was built end to end**.
+
+### v16
+
+`release-193` on GitHub carries `app-release.aab` and `app-release.apk` for
+versionCode 16 / 0.0.0.16. It contains the Play in-app update API — so once 16
+is live on Play, a phone on 16 gets the update card for 17 without anything
+being flipped by hand.
+
+**The AD_ID rejection has two halves and only one was code.** The manifest half
+is done. The other half is the **Advertising ID declaration form** in Play
+Console → Policy → App content, which is the owner's, and the owner reports it
+still showing "You can't rollout releases with artifacts targeting Android 13
+until you have completed this declaration" with the Save button greyed out. The
+answers are correct on screen (Yes; Advertising or marketing; "turn off release
+errors" left UNTICKED, which is right now that the permission is really there).
+Greyed Save means the form is not dirty — changing any answer and changing it
+back re-enables Save and re-submits the declaration. **Do not tick "turn off
+release errors":** that declares the app ships WITHOUT the permission, which is
+no longer true, and it would be trading targeted ad revenue for a form that goes
+away.
+
+### Play Billing
+
+`.agents/rules/42-play-billing.md` is the rule; `mobile/PLAY-BILLING-SETUP.md`
+is the owner's eight steps; `.agents/queue/play-billing-migration.md` is the
+status page it used to be a proposal in.
+
+**It is off.** `PLAY_BILLING_ENABLED = false` and Razorpay is still what ships.
+`check:billing` FAILS if that flag is true — that is deliberate, not a bug to
+work around: this path has never taken a real payment, and the flag is flipped
+after a licence tester has bought each of the five products on a phone.
+
+What was built, all committed and all green under `check:billing`:
+
+* `OrbitBilling` TurboModule — spec, `BillingModule.kt`, `BillingPackage.kt`,
+  registered in `MainApplication.kt`, `com.android.billingclient:billing:9.1.0`.
+  Hand-written because `react-native-iap` was archived in April 2026 and its
+  successor is an Expo module.
+* `mobile/src/lib/playBilling.ts` — the one door to the module and to the
+  verification function.
+* `supabase/functions/play-verify-purchase/` and `supabase/functions/play-rtdn/`
+  — **both deployed to production** (project `pmtgeydtqypwrypshhsx`).
+* `premium_subscriptions` grew `source`, `play_purchase_token` (UNIQUE),
+  `play_product_id`, `play_order_id`, `play_state`, `auto_renewing` —
+  **applied to production**. Play rows land in the SAME table Razorpay writes,
+  so no reader of the entitlement changed.
+
+**Neither function has been invoked.** This sandbox's proxy refuses
+`pmtgeydtqypwrypshhsx.supabase.co` outright (`Host not in allowlist`), so the
+deploy succeeded and nothing beyond that was exercised. Both return 500 with
+"PLAY_SERVICE_ACCOUNT_JSON is not set on this project" until the owner does
+step 3, which is the correct failure.
+
+The five things `check:billing` catches were each verified by breaking the repo
+on purpose and watching it fail: the flag flipped on, a price written into the
+client, the client and server disagreeing about base plans, the two
+`googlePlayAuth.ts` copies drifting, and acknowledgement moved before the grant.
+
+### The one non-obvious thing in there
+
+**A subscription keeps ONE purchase token for its whole life.** Every renewal
+reports the same token, which is why the row is upserted on
+`play_purchase_token` rather than inserted, and why `restore()` can safely post
+every token Play knows about on every launch. The unique index had to be made
+non-partial for that: `ON CONFLICT` cannot infer a partial index and PostgREST
+has nowhere to put its WHERE clause. Migration `20260906020100` is that fix and
+explains itself.

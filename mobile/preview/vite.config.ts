@@ -61,6 +61,10 @@ export default defineConfig({
         replacement: path.resolve(__dirname, 'shims', 'orbit-update.ts'),
       },
       {
+        find: '@/native/NativeOrbitBilling',
+        replacement: path.resolve(__dirname, 'shims', 'orbit-billing.ts'),
+      },
+      {
         find: '@/native/NativeOrbitApkg',
         replacement: path.resolve(__dirname, 'shims', 'orbit-apkg.ts'),
       },
