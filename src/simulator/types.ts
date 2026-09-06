@@ -1,6 +1,6 @@
 export type AnatomicalLayer = 'skin' | 'glass' | 'vascular' | 'viscera' | 'skeletal';
 
-export type DiagnosticToolType = 'none' | 'pupil' | 'ultrasound' | 'stethoscope' | 'ecg12';
+export type DiagnosticToolType = 'none' | 'pupil' | 'ultrasound' | 'stethoscope' | 'ecg12' | 'piccled';
 
 export interface PatientVitals {
   heartRate: number;        // bpm (normal 60-100)

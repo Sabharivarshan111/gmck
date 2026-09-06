@@ -1,3 +1,48 @@
+export interface VascularNodeReference {
+  id: string;
+  name: string;
+  type: 'artery' | 'vein';
+  parentVessel?: string;
+  territory: string;
+  clinicalNote: string;
+  cameraPreset?: 'anterior' | 'head' | 'thorax' | 'abdomen';
+}
+
+export interface NerveNodeReference {
+  id: string;
+  name: string;
+  roots: string;
+  origin: string;
+  motorSupply: string;
+  sensorySupply: string;
+  clinicalNote: string;
+  cameraPreset?: 'anterior' | 'head' | 'thorax' | 'abdomen';
+}
+
+export interface OsseousLandmark {
+  landmark: string;
+  bone: string;
+  details: string;
+}
+
+export interface MuscleAttachmentGraph {
+  origins: OsseousLandmark[];
+  insertions: OsseousLandmark[];
+  action: string;
+  synergists?: string;
+  antagonists?: string;
+  nerveSupply: string;
+}
+
+export interface OrthogonalRelations {
+  anterior: string[];
+  posterior: string[];
+  superior: string[];
+  inferior: string[];
+  medial: string[];
+  lateral: string[];
+}
+
 export interface DetailedOrganAnatomy {
   id: string;
   name: string;
@@ -7,26 +52,33 @@ export interface DetailedOrganAnatomy {
   surfaceLandmarks: string;
   dimensionsAndWeight: string;
   arterialSupply: string[];
+  arterialNodes?: VascularNodeReference[];
   venousDrainage: string[];
+  venousNodes?: VascularNodeReference[];
   innervation: {
     sympathetic: string;
     parasympathetic: string;
     somaticOrSensory: string;
     referredPain: string;
   };
+  nerveNodes?: NerveNodeReference[];
   lymphaticDrainage: string[];
   musculoskeletalRelations: string[];
+  relationsStructured?: OrthogonalRelations;
   originsAndInsertions?: {
     origin: string[];
     insertion: string[];
     action: string[];
     nerveSupply: string;
   };
+  muscleGraph?: MuscleAttachmentGraph;
   histologyAndPhysiology: string;
   clinicalBedsideSigns: string[];
   nmcMbbssVivaPearls: string[];
   radiologicalCorrelation: string;
   surgicalApproaches: string;
+  parentStructureId?: string;
+  breadcrumbs?: { id: string; label: string }[];
   supabaseTextbookReference?: {
     subtopic: string;
     keyPearls: string[];
@@ -48,12 +100,51 @@ export const ORGAN_ANATOMY_DATABASE: Record<string, DetailedOrganAnatomy> = {
       'Right Coronary Artery (RCA): Arises from anterior aortic sinus. Supplies RA, RV, posterior 1/3 of interventricular septum, SA node (60%), and AV node (90%). Branches into Marginal and Posterior Interventricular (PDA) arteries.',
       'Left Coronary Artery (LCA): Arises from left posterior aortic sinus. Bifurcates into Left Anterior Descending (LAD - "widow maker") and Left Circumflex (LCx). Supplies LA, anterior 2/3 of septum, and LV anterolateral myocardium.',
     ],
+    arterialNodes: [
+      {
+        id: 'lad_artery',
+        name: 'Left Anterior Descending (LAD) Artery',
+        type: 'artery',
+        parentVessel: 'Left Main Coronary Artery (LCA)',
+        territory: 'Anterior 2/3 of interventricular septum, apex, and anterior LV wall',
+        clinicalNote: 'Occlusion causes Acute Anterior Wall STEMI (Leads V1-V4 elevation). Nicknamed the "Widow Maker".',
+        cameraPreset: 'thorax',
+      },
+      {
+        id: 'rca_artery',
+        name: 'Right Coronary Artery (RCA)',
+        type: 'artery',
+        parentVessel: 'Ascending Aorta (Anterior Aortic Sinus)',
+        territory: 'Right atrium, right ventricle, posterior 1/3 of septum, SA node (60%), AV node (90%)',
+        clinicalNote: 'Occlusion causes Acute Inferior Wall STEMI (Leads II, III, aVF) and RV Infarction hypotension.',
+        cameraPreset: 'thorax',
+      },
+      {
+        id: 'lcx_artery',
+        name: 'Left Circumflex (LCx) Artery',
+        type: 'artery',
+        parentVessel: 'Left Main Coronary Artery (LCA)',
+        territory: 'Lateral and posterior walls of left ventricle, left atrium',
+        clinicalNote: 'Occlusion causes Lateral Wall STEMI (Leads I, aVL, V5, V6).',
+        cameraPreset: 'thorax',
+      },
+    ],
     venousDrainage: [
       'Coronary Sinus (opens into right atrium between IVC orifice and right AV orifice, guarded by Thebesian valve).',
       'Great Cardiac Vein (accompanies LAD in anterior interventricular groove).',
       'Middle Cardiac Vein (accompanies PDA in posterior interventricular groove).',
       'Small Cardiac Vein (accompanies marginal branch of RCA).',
-      'Anterior Cardiac Veins & Venae Cordis Minimae (Thebesian veins directly into cardiac chambers).',
+    ],
+    venousNodes: [
+      {
+        id: 'coronary_sinus',
+        name: 'Coronary Sinus',
+        type: 'vein',
+        parentVessel: 'Right Atrium (Thebesian Valve)',
+        territory: 'Receives ~75% of total cardiac venous drainage',
+        clinicalNote: 'Key landmark in electrophysiology for biventricular pacemaker lead placement in cardiac resynchronization therapy.',
+        cameraPreset: 'thorax',
+      },
     ],
     innervation: {
       sympathetic: 'T1-T5 spinal segments via superficial and deep cardiac plexuses (increases heart rate, inotropy, dromotropy via Beta-1 adrenergic receptors).',
@@ -61,6 +152,18 @@ export const ORGAN_ANATOMY_DATABASE: Record<string, DetailedOrganAnatomy> = {
       somaticOrSensory: 'Afferent cardiac visceral pain fibers travel retrogradely with T1-T4/T5 sympathetic nerves.',
       referredPain: 'Substernal chest pressure radiating along dermatomes T1-T4 to inner aspect of left arm, forearm, ulnar border, jaw, and epigastrium.',
     },
+    nerveNodes: [
+      {
+        id: 'vagus_nerve',
+        name: 'Vagus Nerve (Cranial Nerve X)',
+        roots: 'Medulla oblongata (Nucleus ambiguus & Dorsal motor nucleus)',
+        origin: 'Brainstem exiting via Jugular Foramen',
+        motorSupply: 'Parasympathetic preganglionic fibers to SA & AV nodes (M2 receptors)',
+        sensorySupply: 'Baroreceptor afferents from aortic arch (aortic nerve)',
+        clinicalNote: 'Carotid sinus massage or Valsalva augments vagal tone, terminating AV nodal reentrant tachycardia (AVNRT).',
+        cameraPreset: 'head',
+      },
+    ],
     lymphaticDrainage: [
       'Subepicardial lymphatic network drains into right anterior mediastinal and tracheobronchial (subcarinal) lymph nodes.',
     ],
@@ -70,8 +173,16 @@ export const ORGAN_ANATOMY_DATABASE: Record<string, DetailedOrganAnatomy> = {
       'Inferior: Central tendon of diaphragm (resting on diaphragm via fibrous pericardium).',
       'Lateral: Mediastinal pleura, phrenic nerve, and pericardiophrenic vessels on each side.',
     ],
+    relationsStructured: {
+      anterior: ['Body of Sternum', 'Costal Cartilages (Ribs 2-6)', 'Transversus Thoracis Muscle', 'Parietal Pleura'],
+      posterior: ['Esophagus', 'Descending Thoracic Aorta', 'Thoracic Duct', 'Azygos Vein', 'T5-T8 Vertebrae'],
+      superior: ['Aortic Arch', 'Bifurcation of Pulmonary Trunk', 'Superior Vena Cava (SVC)'],
+      inferior: ['Central Tendon of Diaphragm', 'Inferior Vena Cava (IVC)'],
+      medial: ['Interatrial Septum', 'Interventricular Septum'],
+      lateral: ['Mediastinal Pleura', 'Phrenic Nerve (C3-C5)', 'Pericardiophrenic Vessels'],
+    },
     histologyAndPhysiology:
-      'Striated branched cardiomyocytes with intercalated discs and gap junctions (nexus) forming functional syncytium. Excitation-contraction coupling governed by L-type calcium channels and RyR2 ryanodine receptors on sarcoplasmic reticulum.',
+      'Striated branched cardiomyocytes with intercalated discs and gap junctions forming functional syncytium. Excitation-contraction coupling governed by L-type calcium channels and RyR2 ryanodine receptors on sarcoplasmic reticulum.',
     clinicalBedsideSigns: [
       'First Heart Sound (S1): Closure of Mitral and Tricuspid valves at onset of systole. Loud in mitral stenosis; soft in mitral regurgitation.',
       'Second Heart Sound (S2): Aortic (A2) and Pulmonary (P2) valve closure. Physiological splitting widens on inspiration.',
@@ -89,8 +200,356 @@ export const ORGAN_ANATOMY_DATABASE: Record<string, DetailedOrganAnatomy> = {
       'Chest X-Ray PA view: Cardiothoracic ratio (CTR) should be <= 50%. Prominent left cardiac border with 4 bulges: Aortic knuckle, Pulmonary conus, Left atrial appendage, and Left ventricular apex.',
     surgicalApproaches:
       'Median sternotomy for open heart surgery / CABG; Left anterolateral thoracotomy in 5th ICS for emergency resuscitative thoracotomy; Pericardiocentesis through Larrey point (left infrasternal angle directed at 45 deg toward left shoulder).',
+    breadcrumbs: [{ id: 'thorax', label: 'Thoracic Cavity' }, { id: 'heart', label: 'Heart & Great Vessels' }],
   },
 
+  // 2. LEFT ANTERIOR DESCENDING ARTERY
+  lad_artery: {
+    id: 'lad_artery',
+    name: 'Left Anterior Descending (LAD) Artery',
+    latinName: 'Ramus Interventricularis Anterior Arteriae Coronariae Sinistrae',
+    system: 'Cardiovascular System',
+    quadrantOrCavity: 'Anterior Interventricular Sulcus of Heart',
+    surfaceLandmarks: 'Runs from coronary sulcus down the anterior groove to notch just to the right of cardiac apex.',
+    dimensionsAndWeight: 'Caliber: 3.5 - 4.5 mm at origin, length 10 - 13 cm.',
+    arterialSupply: ['Arises as terminal bifurcation branch of the Left Main Coronary Artery (LMCA).'],
+    arterialNodes: [
+      {
+        id: 'heart',
+        name: 'Parent: Left Main Coronary Artery & Cor Humanum',
+        type: 'artery',
+        territory: 'Supplies 45-55% of left ventricular myocardium',
+        clinicalNote: 'Critical bifurcation with LCx.',
+        cameraPreset: 'thorax',
+      },
+    ],
+    venousDrainage: ['Accompanied by the Great Cardiac Vein which ascends in anterior interventricular sulcus.'],
+    innervation: {
+      sympathetic: 'Superficial cardiac plexus (Alpha-1 vasoconstriction, Beta-2 vasodilation).',
+      parasympathetic: 'Vagus nerve cholinergic branches.',
+      somaticOrSensory: 'T1-T4 cardiac visceral pain afferents.',
+      referredPain: 'Substernal chest heaviness radiating to left shoulder, inner arm, ulnar border.',
+    },
+    lymphaticDrainage: ['Anterior mediastinal lymph nodes.'],
+    musculoskeletalRelations: ['Runs over anterior interventricular myocardium, covered by epicardial adipose tissue.'],
+    relationsStructured: {
+      anterior: ['Epicardium', 'Visceral Pericardium', 'Anterior Chest Wall'],
+      posterior: ['Interventricular Septum (anterior 2/3)', 'Anterior Myocardium of Left Ventricle'],
+      superior: ['Bifurcation of Left Main Coronary Artery', 'Pulmonary Trunk'],
+      inferior: ['Cardiac Apex', 'Incisura Apicis Cordis'],
+      medial: ['Right Ventricular Conus Arteriosus'],
+      lateral: ['Left Ventricle Anterolateral Wall', 'Diagonal Branches (D1, D2)'],
+    },
+    histologyAndPhysiology: 'Muscular medium-sized artery with internal elastic lamina; highly susceptible to atherosclerosis and shear stress.',
+    clinicalBedsideSigns: [
+      'Acute Anterior Wall STEMI: Hyperacute T waves, ST elevation in Leads V1, V2, V3, V4.',
+      'Reciprocal ST depression in inferior leads (II, III, aVF).',
+      'Cardiogenic shock and ventricular septal rupture if proximal LAD occludes.',
+    ],
+    nmcMbbssVivaPearls: [
+      'Q: Why is LAD called the "Widow Maker"? A: Supplies anterior LV wall and bundle branches; occlusion causes sudden massive pump failure or VFib.',
+      'Q: Which vessel is the gold standard conduit for CABG to LAD? A: Left Internal Mammary Artery (LIMA).',
+    ],
+    radiologicalCorrelation: 'Coronary Angiography: Left anterior oblique (LAO) cranial view best profiles the proximal and mid LAD.',
+    surgicalApproaches: 'Coronary Artery Bypass Grafting (CABG) via median sternotomy or minimally invasive direct coronary artery bypass (MIDCAB) through 4th left ICS.',
+    parentStructureId: 'heart',
+    breadcrumbs: [
+      { id: 'thorax', label: 'Thoracic Cavity' },
+      { id: 'heart', label: 'Heart & Great Vessels' },
+      { id: 'lad_artery', label: 'LAD Artery' },
+    ],
+  },
+
+  // 3. PECTORALIS MAJOR MUSCLE
+  pectoralis_major: {
+    id: 'pectoralis_major',
+    name: 'Pectoralis Major Muscle',
+    latinName: 'Musculus Pectoralis Major',
+    system: 'Muscular System',
+    quadrantOrCavity: 'Anterior Thoracic Wall',
+    surfaceLandmarks: 'Forms anterior wall of axilla and prominent anterior chest muscular contour.',
+    dimensionsAndWeight: 'Broad, thick, fan-shaped muscle; thickness ~1.5 - 2.5 cm.',
+    arterialSupply: [
+      'Pectoral branch of Thoracoacromial Trunk (from 2nd part of axillary artery).',
+      'Lateral Thoracic Artery.',
+      'Perforating branches of Internal Thoracic Artery.',
+    ],
+    arterialNodes: [
+      {
+        id: 'thoracoacromial',
+        name: 'Thoracoacromial Trunk (Pectoral Branch)',
+        type: 'artery',
+        parentVessel: 'Axillary Artery (2nd Part)',
+        territory: 'Pectoralis major and minor muscles and anterior chest wall',
+        clinicalNote: 'Crucial vascular pedicle for deltopectoral and pectoralis major myocutaneous flaps in reconstructive surgery.',
+        cameraPreset: 'thorax',
+      },
+    ],
+    venousDrainage: [
+      'Cephalic Vein (travels along lateral border in deltopectoral groove, piercing clavipectoral fascia).',
+      'Axillary Vein.',
+    ],
+    innervation: {
+      sympathetic: 'Vasomotor fibers to muscular arterioles.',
+      parasympathetic: 'None.',
+      somaticOrSensory: 'Medial and Lateral Pectoral Nerves from brachial plexus.',
+      referredPain: 'Anterior chest wall and medial arm pain.',
+    },
+    nerveNodes: [
+      {
+        id: 'pectoral_nerves',
+        name: 'Lateral & Medial Pectoral Nerves',
+        roots: 'C5, C6, C7 (Lateral) & C8, T1 (Medial)',
+        origin: 'Lateral and Medial Cords of Brachial Plexus',
+        motorSupply: 'Clavicular head (C5, C6) and Sternocostal head (C7, C8, T1)',
+        sensorySupply: 'Proprioception from muscle spindles',
+        clinicalNote: 'Preserved in modified radical mastectomy; injured in radical mastectomy causing pectoralis atrophy.',
+        cameraPreset: 'thorax',
+      },
+    ],
+    lymphaticDrainage: [
+      'Axillary lymph nodes (predominantly anterior / pectoral group) and parasternal internal mammary nodes.',
+    ],
+    musculoskeletalRelations: [
+      'Anterior: Deep fascia, subcutaneous fat, platysma, mammary gland, skin.',
+      'Posterior: Pectoralis minor, clavipectoral fascia, axillary vessels, brachial plexus cords, ribs 2-6, intercostal muscles.',
+      'Superior: Clavicle, subclavius, deltopectoral triangle bounding cephalic vein.',
+      'Lateral: Deltoid muscle, bicipital groove of humerus.',
+    ],
+    relationsStructured: {
+      anterior: ['Mammary Gland (Breast)', 'Subcutaneous Fat', 'Platysma', 'Skin'],
+      posterior: ['Pectoralis Minor', 'Clavipectoral Fascia', 'Axillary Artery & Vein', 'Ribs 2-6', 'Intercostal Muscles'],
+      superior: ['Clavicle (Medial Half)', 'Subclavius Muscle', 'Deltopectoral Groove (Cephalic Vein)'],
+      inferior: ['Anterior Rectus Sheath', 'External Abdominal Oblique Aponeurosis', 'Serratus Anterior'],
+      medial: ['Sternum (Manubrium & Body)', 'Costal Cartilages 1-6'],
+      lateral: ['Deltoid Muscle', 'Lateral Lip of Bicipital Groove of Humerus'],
+    },
+    originsAndInsertions: {
+      origin: [
+        'Clavicular head: Medial half of anterior border of clavicle.',
+        'Sternocostal head: Anterior surface of sternum, upper 6 costal cartilages, and external oblique aponeurosis.',
+      ],
+      insertion: [
+        'Lateral lip of bicipital groove (intertubercular sulcus) of humerus via U-shaped bilaminar flat tendon.',
+      ],
+      action: [
+        'Adduction and medial rotation of arm at shoulder joint.',
+        'Clavicular head flexes arm; sternocostal head extends flexed arm.',
+        'Accessory muscle of inspiration during respiratory distress (arms fixed).',
+      ],
+      nerveSupply: 'Lateral Pectoral Nerve (C5-C7) and Medial Pectoral Nerve (C8-T1).',
+    },
+    muscleGraph: {
+      origins: [
+        { landmark: 'Medial Clavicle', bone: 'Clavicle', details: 'Anterior aspect of medial half' },
+        { landmark: 'Sternum & Costal Cartilages', bone: 'Sternum', details: 'Anterior surface of manubrium, body, ribs 1-6' },
+      ],
+      insertions: [
+        { landmark: 'Lateral Lip of Bicipital Groove', bone: 'Humerus', details: 'Crest of greater tubercle of humerus' },
+      ],
+      action: 'Adduction, medial rotation, flexion, and accessory inspiration',
+      nerveSupply: 'Lateral (C5-C7) and Medial (C8-T1) Pectoral Nerves',
+    },
+    histologyAndPhysiology: 'Parallel fascicles of Type II fast-twitch and Type I slow-twitch striated muscle fibers; powerful adductor.',
+    clinicalBedsideSigns: [
+      'Climbing Muscle: Tested by asking patient to press hands against hips while palpating anterior axillary fold.',
+      'Poland Syndrome: Congenital absence of sternocostal head of pectoralis major associated with syndactyly.',
+    ],
+    nmcMbbssVivaPearls: [
+      'Q: What forms the anterior axillary fold? A: Lower rounded border of Pectoralis Major.',
+      'Q: What pierces the clavipectoral fascia? A: Lateral pectoral nerve, Thoracoacromial artery, Cephalic vein, Lymphatics (acronym: L-T-C-L).',
+    ],
+    radiologicalCorrelation: 'Chest CT: Symmetrical soft tissue density on anterior thorax; asymmetry indicates Poland syndrome or post-mastectomy.',
+    surgicalApproaches: 'Deltopectoral approach for shoulder arthroplasty; Pectoralis major myocutaneous flap for head and neck reconstruction.',
+    breadcrumbs: [{ id: 'thorax', label: 'Thoracic Wall' }, { id: 'pectoralis_major', label: 'Pectoralis Major' }],
+  },
+
+  // 4. DELTOID MUSCLE
+  deltoid: {
+    id: 'deltoid',
+    name: 'Deltoid Muscle',
+    latinName: 'Musculus Deltoideus',
+    system: 'Muscular System',
+    quadrantOrCavity: 'Shoulder (Scapular Region)',
+    surfaceLandmarks: 'Forms the rounded contour of the shoulder and lateral prominence of arm.',
+    dimensionsAndWeight: 'Multipennate central part, unipennate anterior and posterior parts; high force generator.',
+    arterialSupply: [
+      'Posterior Circumflex Humeral Artery (from 3rd part of axillary artery, accompanies axillary nerve).',
+      'Deltoid branch of Thoracoacromial Trunk.',
+    ],
+    arterialNodes: [
+      {
+        id: 'post_circumflex_humeral',
+        name: 'Posterior Circumflex Humeral Artery',
+        type: 'artery',
+        parentVessel: 'Axillary Artery (3rd Part)',
+        territory: 'Deltoid muscle, shoulder joint, head of humerus',
+        clinicalNote: 'Passes through quadrangular space with axillary nerve; vulnerable in fractures of surgical neck of humerus.',
+        cameraPreset: 'thorax',
+      },
+    ],
+    venousDrainage: ['Cephalic Vein', 'Posterior Circumflex Humeral Vein draining into Axillary Vein.'],
+    innervation: {
+      sympathetic: 'Vasomotor adrenergic fibers.',
+      parasympathetic: 'None.',
+      somaticOrSensory: 'Axillary Nerve (C5, C6).',
+      referredPain: 'Regimental badge area over upper lateral arm.',
+    },
+    nerveNodes: [
+      {
+        id: 'axillary_nerve',
+        name: 'Axillary Nerve (Circumflex Nerve)',
+        roots: 'C5, C6',
+        origin: 'Posterior Cord of Brachial Plexus',
+        motorSupply: 'Deltoid and Teres Minor muscles',
+        sensorySupply: 'Upper Lateral Cutaneous Nerve of Arm ("Regimental Badge Area")',
+        clinicalNote: 'Tested clinically by pinprick sensation over regimental badge area; paralysis causes flat shoulder silhouette.',
+        cameraPreset: 'thorax',
+      },
+    ],
+    lymphaticDrainage: ['Subscapular and central axillary lymph nodes.'],
+    musculoskeletalRelations: [
+      'Superficial: Skin, platysma, superficial fascia, lateral supraclavicular cutaneous nerves.',
+      'Deep: Subdeltoid/subacromial bursa, rotator cuff tendons (supraspinatus, infraspinatus, teres minor, subscapularis), tendon of long head of biceps, quadrangular space, axillary nerve.',
+    ],
+    relationsStructured: {
+      anterior: ['Cephalic Vein', 'Deltopectoral Triangle', 'Pectoralis Major'],
+      posterior: ['Infraspinatus', 'Teres Major & Minor', 'Long Head of Triceps'],
+      superior: ['Acromion Process', 'Clavicle (Lateral 1/3)', 'Spine of Scapula'],
+      inferior: ['Brachialis', 'Lateral Head of Triceps'],
+      medial: ['Subacromial Bursa', 'Supraspinatus Tendon', 'Head of Humerus'],
+      lateral: ['Deltoid Tuberosity of Humerus', 'Subcutaneous Tissue & Skin'],
+    },
+    originsAndInsertions: {
+      origin: [
+        'Anterior fibers: Lateral third of anterior border of clavicle.',
+        'Middle fibers: Lateral border of acromion process (multipennate).',
+        'Posterior fibers: Lower lip of spine of scapula.',
+      ],
+      insertion: ['Deltoid tuberosity on lateral middle shaft of humerus.'],
+      action: [
+        'Multipennate acromial fibers abduct arm from 15 to 90 degrees (initiated 0-15 deg by Supraspinatus).',
+        'Anterior fibers flex and medially rotate arm.',
+        'Posterior fibers extend and laterally rotate arm.',
+      ],
+      nerveSupply: 'Axillary Nerve (C5, C6).',
+    },
+    muscleGraph: {
+      origins: [
+        { landmark: 'Lateral Clavicle', bone: 'Clavicle', details: 'Anterior lateral third' },
+        { landmark: 'Acromion', bone: 'Scapula', details: 'Lateral border of acromion process' },
+        { landmark: 'Spine of Scapula', bone: 'Scapula', details: 'Inferior lip of scapular spine' },
+      ],
+      insertions: [{ landmark: 'Deltoid Tuberosity', bone: 'Humerus', details: 'Middle lateral shaft of humerus' }],
+      action: 'Primary abductor of arm (15° to 90°), flexion, extension',
+      nerveSupply: 'Axillary Nerve (C5, C6)',
+    },
+    histologyAndPhysiology: 'Multipennate architecture allows short fiber length with massive physiological cross-sectional area and heavy lifting power.',
+    clinicalBedsideSigns: [
+      'Intramuscular Injection Safe Zone: 2-3 fingerbreadths below acromion process to avoid axillary nerve traversing deep surface 5cm below acromion.',
+      'Loss of shoulder contour ("Square shoulder sign") in anterior shoulder dislocation and axillary nerve palsy.',
+    ],
+    nmcMbbssVivaPearls: [
+      'Q: What muscle initiates shoulder abduction from 0 to 15 degrees? A: Supraspinatus; deltoid takes over from 15 to 90 degrees.',
+      'Q: What muscles abduct beyond 90 degrees? A: Serratus anterior and Trapezius (overhead abduction via scapular upward rotation).',
+    ],
+    radiologicalCorrelation: 'MRI Shoulder: Coronal oblique view demonstrates deltoid muscle belly, subacromial bursa, and supraspinatus tendon integrity.',
+    surgicalApproaches: 'Deltopectoral approach to shoulder joint; direct lateral deltoid-splitting approach (split <5cm to safeguard axillary nerve).',
+    breadcrumbs: [{ id: 'upper_limb', label: 'Upper Limb' }, { id: 'deltoid', label: 'Deltoid Muscle' }],
+  },
+
+  // 5. LIVER & BILIARY TREE
+  liver: {
+    id: 'liver',
+    name: 'Liver & Biliary Apparatus',
+    latinName: 'Hepar',
+    system: 'Digestive & Metabolic System',
+    quadrantOrCavity: 'Right Hypochondrium, Epigastrium, extending into Left Hypochondrium',
+    surfaceLandmarks:
+      'Upper border at right 5th intercostal space (midclavicular line). Lower border follows right costal margin. Liver span normally 10-12 cm in midclavicular line.',
+    dimensionsAndWeight: 'Weight ~1500g (largest visceral organ and gland in human body).',
+    arterialSupply: [
+      'Hepatic Artery Proper (branch of Celiac Trunk via Common Hepatic Artery): Delivers 25% of liver blood flow (oxygenated). Bifurcates into Right and Left Hepatic Arteries at porta hepatis.',
+    ],
+    arterialNodes: [
+      {
+        id: 'celiac_trunk',
+        name: 'Celiac Trunk & Common Hepatic Artery',
+        type: 'artery',
+        parentVessel: 'Abdominal Aorta (at T12 level)',
+        territory: 'Foregut structures: Liver, Gallbladder, Stomach, Spleen, Duodenum (upper half), Pancreas',
+        clinicalNote: 'First major anterior branch of abdominal aorta. Essential landmark in hepatobiliary and pancreatic surgery.',
+        cameraPreset: 'abdomen',
+      },
+    ],
+    venousDrainage: [
+      'Hepatic Portal Vein (formed by union of Superior Mesenteric Vein and Splenic Vein behind neck of pancreas): Delivers 75% of liver blood flow (nutrient-rich).',
+      'Right, Middle, and Left Hepatic Veins: Drain directly into Inferior Vena Cava (IVC) at the superior bare area.',
+    ],
+    venousNodes: [
+      {
+        id: 'portal_vein',
+        name: 'Hepatic Portal Vein',
+        type: 'vein',
+        parentVessel: 'Union of SMV + Splenic Vein behind Pancreatic Neck',
+        territory: 'Drains all venous blood from stomach, intestines, colon, spleen, and pancreas into hepatic sinusoids',
+        clinicalNote: 'Normal portal pressure 5-10 mmHg. In cirrhosis, portal HTN >12 mmHg drives bleeding esophageal varices and ascites.',
+        cameraPreset: 'abdomen',
+      },
+    ],
+    innervation: {
+      sympathetic: 'Celiac plexus (T7-T10 splanchnic nerves).',
+      parasympathetic: 'Anterior and Posterior Vagal Trunks (CN X).',
+      somaticOrSensory: 'Right Phrenic Nerve (C3-C5) sensory fibers supply Glisson\'s capsule and peritoneal covering.',
+      referredPain: 'Pain referred to right shoulder tip (dermatomes C3-C5) in hepatic distension, abscess, or cholecystitis.',
+    },
+    nerveNodes: [
+      {
+        id: 'phrenic_nerve',
+        name: 'Right Phrenic Nerve (C3, C4, C5)',
+        roots: 'C3, C4, C5',
+        origin: 'Cervical Plexus traversing anterior scalene muscle',
+        motorSupply: 'Right hemidiaphragm',
+        sensorySupply: 'Diaphragmatic peritoneum, Glisson\'s capsule, fibrous pericardium',
+        clinicalNote: 'Explains classic referred pain from gallbladder/liver capsule to the right shoulder tip.',
+        cameraPreset: 'thorax',
+      },
+    ],
+    lymphaticDrainage: [
+      'Deep lymphatics follow portal tracts to hepatic nodes at porta hepatis, thence to celiac nodes. Superficial bare area lymphatics drain through diaphragm to posterior mediastinal nodes.',
+    ],
+    musculoskeletalRelations: [
+      'Superior: Diaphragm, heart and pericardium, bilateral lungs and pleurae.',
+      'Anterior: Anterior abdominal wall, xiphoid process, costal margin 7-10.',
+      'Posterior: IVC, gallbladder bed, right kidney, right suprarenal gland, duodenum, stomach.',
+      'Inferior: Hepatic flexure of colon, transverse colon, right kidney.',
+    ],
+    relationsStructured: {
+      anterior: ['Anterior Abdominal Wall', 'Costal Margin (Ribs 7-10)', 'Xiphoid Process'],
+      posterior: ['Inferior Vena Cava', 'Right Kidney & Adrenal', 'Stomach Bed', 'Vertebrae T10-T12'],
+      superior: ['Diaphragm', 'Pericardium / Heart', 'Right Lung Base'],
+      inferior: ['Hepatic Flexure of Colon', 'Duodenum (1st & 2nd parts)', 'Gallbladder'],
+      medial: ['Lesser Omentum', 'Stomach (Lesser Curvature)'],
+      lateral: ['Right Costal Margin', 'Diaphragm (Lateral Recess)'],
+    },
+    histologyAndPhysiology:
+      'Hexagonal hepatic lobules with central vein and portal triads (hepatic artery, portal venule, bile ductule). Sinusoids lined by fenestrated endothelia and phagocytic Kupffer cells (macrophages). Space of Disse houses hepatic stellate cells (Ito cells) storing Vitamin A and producing fibrosis in cirrhosis.',
+    clinicalBedsideSigns: [
+      'Hepatomegaly: Liver palpable >2 cm below right costal margin with firm or irregular nodular edge.',
+      'Stigmata of Chronic Liver Disease (PICCLED): Spider angiomas in SVC territory, palmar erythema, leuconychia (Muehrcke lines), Dupuytren contracture, asterixis (flapping tremor), caput medusae.',
+      'Icterus / Jaundice: Scleral icterus detected when serum bilirubin > 2.5 mg/dL.',
+    ],
+    nmcMbbssVivaPearls: [
+      'Q: What is Couinaud\'s hepatic segmentation based upon? A: 8 independent functional segments, each with its own dual vascular inflow, biliary drainage, and lymphatic pedicle; division line is Cantlie\'s line (IVC to gallbladder fossa).',
+      'Q: What structures lie in the free edge of lesser omentum (hepatoduodenal ligament)? A: Portal vein (posterior), Hepatic artery proper (anterior-left), Common bile duct (anterior-right); acronym: D-A-V (Duct, Artery, Vein).',
+      'Q: Where is the Epiploic Foramen of Winslow located? A: Passage between greater and lesser peritoneal sacs, bounded anteriorly by portal triad.',
+    ],
+    radiologicalCorrelation: 'Abdominal Ultrasound: Normal liver is homogeneous and slightly hyperechoic compared to renal cortex. Cirrhosis shows coarsened echotexture, surface nodularity, and portal vein dilatation (>13 mm).',
+    surgicalApproaches: 'Right subcostal (Kocher\'s) incision or Mercedes-Benz incision for open hepatectomy and liver transplantation; Pringle maneuver (cross-clamping hepatoduodenal ligament for up to 60 mins to control hepatic hemorrhage).',
+    breadcrumbs: [{ id: 'abdomen', label: 'Abdominal Cavity' }, { id: 'liver', label: 'Liver & Biliary Apparatus' }],
+  },
+
+  // 6. PULMONARY SYSTEM (LUNGS)
   lungs: {
     id: 'lungs',
     name: 'Pulmonary System (Bilateral Lungs & Bronchial Tree)',
@@ -98,50 +557,309 @@ export const ORGAN_ANATOMY_DATABASE: Record<string, DetailedOrganAnatomy> = {
     system: 'Respiratory System',
     quadrantOrCavity: 'Right & Left Pleural Cavities (Thorax)',
     surfaceLandmarks:
-      'Apex rises 2.5cm above medial 1/3 of clavicle. Lower borders: 6th rib at midclavicular line, 8th rib at midaxillary line, 10th rib at scapular line. Pleural reflection drops two ribs lower (8th, 10th, 12th ribs).',
-    dimensionsAndWeight: 'Right lung ~625g (heavier, 3 lobes: superior, middle, inferior); Left lung ~565g (2 lobes: superior and inferior, with lingula and cardiac notch).',
+      'Apex extends 2.5 cm above medial third of clavicle into root of neck. Lower border at midclavicular line (rib 6), midaxillary line (rib 8), scapular line (rib 10); parietal pleura extends 2 ribs lower (8, 10, 12).',
+    dimensionsAndWeight: 'Right lung ~625g (3 lobes: superior, middle, inferior; 2 fissures: oblique & horizontal); Left lung ~565g (2 lobes: superior & inferior; cardiac notch & lingula).',
     arterialSupply: [
-      'Pulmonary Arteries: Deoxygenated blood from right ventricle at low pressure (mean ~15 mmHg) into extensive capillary alveolar bed.',
-      'Bronchial Arteries: High-pressure oxygenated systemic nutrition. Left bronchial arteries (2) arise directly from thoracic aorta; Right bronchial artery (1) arises from 3rd posterior intercostal artery.',
+      'Pulmonary Arteries (deoxygenated venous blood from RV for gas exchange; low pressure ~25/10 mmHg).',
+      'Bronchial Arteries (oxygenated systemic blood supplying conducting airway parenchyma; left branches from descending aorta, right from 3rd posterior intercostal).',
+    ],
+    arterialNodes: [
+      {
+        id: 'pulmonary_trunk',
+        name: 'Pulmonary Trunk & Bilateral Pulmonary Arteries',
+        type: 'artery',
+        parentVessel: 'Right Ventricle Conus Arteriosus',
+        territory: 'Bilateral pulmonary lobar and segmental capillary alveolar networks',
+        clinicalNote: 'Saddle embolus lodged at bifurcation causes acute right heart strain, catastrophic obstructive shock, and sudden death.',
+        cameraPreset: 'thorax',
+      },
     ],
     venousDrainage: [
-      '4 Pulmonary Veins (2 superior, 2 inferior) drain oxygenated blood into Left Atrium.',
-      'Bronchial Veins: Right bronchial vein drains into Azygos vein; Left bronchial vein drains into Accessory Hemiazygos vein.',
+      'Four Pulmonary Veins (two right, two left): Drain oxygenated blood directly into left atrium.',
+      'Bronchial Veins: Drain into azygos vein on right and accessory hemiazygos vein on left.',
+    ],
+    venousNodes: [
+      {
+        id: 'pulmonary_veins',
+        name: 'Bilateral Pulmonary Veins (Four)',
+        type: 'vein',
+        parentVessel: 'Left Atrium (Posterosuperior wall)',
+        territory: 'Transports 100% of oxygenated alveolar blood back to left heart',
+        clinicalNote: 'Ectopic electrical triggers inside pulmonary vein myocardial sleeves are the primary culprit initiating Atrial Fibrillation (target for radiofrequency catheter ablation).',
+        cameraPreset: 'thorax',
+      },
     ],
     innervation: {
-      sympathetic: 'T2-T5 spinal sympathetic ganglia via pulmonary plexuses (bronchodilation and mild vasoconstriction via Beta-2 adrenergic receptors).',
-      parasympathetic: 'Vagus Nerve (CN X) fibers causing bronchoconstriction and glandular secretomotor mucus secretion (M3 receptors).',
-      somaticOrSensory: 'Visceral pleura has no somatic pain sensation. Parietal pleura is acutely sensitive to pain (costal pleura via intercostal nerves, diaphragmatic/mediastinal pleura via phrenic nerve C3-C5).',
-      referredPain: 'Diaphragmatic pleural inflammation refers sharp pain to the ipsilateral shoulder tip (supraclavicular nerves C3-C4 dermatome).',
+      sympathetic: 'T2-T5 sympathetic ganglia (bronchodilation and vasoconstriction via Beta-2 receptors).',
+      parasympathetic: 'Vagus nerve CN X (bronchoconstriction, vasodilation, and secretomotor to bronchial mucous glands via M3 receptors).',
+      somaticOrSensory: 'Visceral pleura is insensitive to pain; parietal pleura is exquisitely sensitive via intercostal nerves and phrenic nerve.',
+      referredPain: 'Diaphragmatic pleural irritation referred to right or left shoulder tip via phrenic nerve (C3-C5).',
     },
+    nerveNodes: [
+      {
+        id: 'phrenic_nerve',
+        name: 'Phrenic Nerve (C3, C4, C5)',
+        roots: 'C3, C4, C5',
+        origin: 'Cervical plexus',
+        motorSupply: 'Diaphragm (sole motor innervation)',
+        sensorySupply: 'Mediastinal and central diaphragmatic parietal pleura',
+        clinicalNote: 'Irritation causes diaphragmatic referred pain to C3-C5 dermatomes over the shoulder tip (Kehr\'s sign).',
+        cameraPreset: 'thorax',
+      },
+    ],
     lymphaticDrainage: [
-      'Superficial subpleural and deep broncho-pulmonary lymphatic vessels -> Hilum bronchopulmonary (hilar) nodes -> Tracheobronchial (carinal) nodes -> Bronchomediastinal lymph trunks.',
+      'Superficial subpleural and deep bronchopulmonary lymphatics drain into tracheobronchial (subcarinal) nodes, thence to paratracheal nodes and thoracic duct / right lymphatic duct.',
     ],
     musculoskeletalRelations: [
-      'Thoracic cage: 12 pairs of ribs, external/internal intercostal muscles, serratus anterior, pectoralis minor.',
-      'Diaphragm: Right dome higher than left dome due to underlying liver; innervated by Phrenic nerve (C3, C4, C5 keep the diaphragm alive).',
+      'Anterior: Ribs 1-6, costal cartilages, sternum, internal thoracic vessels.',
+      'Posterior: Thoracic spine T1-T12, sympathetic trunk, posterior intercostal neurovascular bundles.',
+      'Inferior: Diaphragm, separating right lung from liver, and left lung from spleen, stomach, left kidney.',
+      'Medial: Mediastinum (heart, great vessels, trachea, esophagus, vagus & phrenic nerves).',
     ],
+    relationsStructured: {
+      anterior: ['Ribs 1-6 & Intercostal Muscles', 'Sternum', 'Internal Thoracic Artery'],
+      posterior: ['Thoracic Vertebrae T1-T12', 'Azygos Vein', 'Sympathetic Trunk'],
+      superior: ['Suprapleural Membrane (Sibson\'s Fascia)', 'Subclavian Artery & Vein'],
+      inferior: ['Diaphragm', 'Liver (Right)', 'Stomach & Spleen (Left)'],
+      medial: ['Heart & Pericardium', 'Trachea & Carina', 'Esophagus', 'Thoracic Aorta'],
+      lateral: ['Thoracic Cage', 'Ribs 1-10', 'Intercostal Neurovascular Bundles'],
+    },
     histologyAndPhysiology:
-      'Alveoli lined by Type I pneumocytes (95% of alveolar surface, thin for gas exchange) and Type II pneumocytes (synthesize dipalmitoylphosphatidylcholine DPPC pulmonary surfactant). Gas diffusion governed by Fick law across 0.2-0.5 um blood-air barrier.',
+      'Type I pneumocytes (95% of alveolar surface, thin squamous for gas exchange); Type II pneumocytes (surfactant synthesis via dipalmitoylphosphatidylcholine to prevent alveolar collapse). Blood-air barrier thickness ~0.2 - 0.5 um.',
     clinicalBedsideSigns: [
-      'Vesicular Breath Sounds: Soft, rustling sound with inspiratory:expiratory duration ratio 3:1, without inspiratory-expiratory pause.',
-      'Bronchial Breathing: Harsh, hollow tubular sound with audible expiration longer or equal to inspiration, separated by distinct pause (heard over consolidation or above pleural effusion).',
-      'Crepitations (Crackles): Intermittent non-musical crackling sounds due to explosive reopening of small airways. Fine crackles in pulmonary edema/fibrosis; coarse in bronchiectasis/bronchitis.',
-      'Stony Dull Percussion Note: Diagnostic hallmark of pleural effusion.',
-      'Aegophony (E-to-A transition): Nasal bleating quality over compressed lung at superior margin of pleural effusion.',
+      'Consolidation: Dull percussion note, increased tactile vocal fremitus (TVF), bronchial breathing, whispering pectoriloquy.',
+      'Pleural Effusion: Stony dull percussion note, absent breath sounds, reduced TVF, aegophony at upper border.',
+      'Tension Pneumothorax: Hyperresonant percussion note, absent breath sounds on affected side, tracheal deviation to opposite side, obstructive shock.',
     ],
     nmcMbbssVivaPearls: [
-      'Q: Why are aspirated foreign bodies more likely to lodge in the right main bronchus? A: Right bronchus is wider, shorter (2.5cm vs 5cm), and runs more vertically (25 deg vs 45 deg angle with trachea).',
-      'Q: Surface landmark for chest tube (ICD) insertion? A: Triangle of Safety in 5th intercostal space anterior to midaxillary line (bounded by anterior border of latissimus dorsi, lateral border of pectoralis major, apex in axilla, and base at horizontal level of 5th ICS).',
-      'Q: What is the anatomical dead space volume? A: Approximately 150 mL (or 2.2 mL/kg).',
-      'Q: What structure passes through the diaphragm at T8, T10, and T12? A: T8: Caval opening (IVC, right phrenic); T10: Esophageal hiatus (esophagus, vagus nerves); T12: Aortic hiatus (aorta, thoracic duct, azygos vein). Remember: "I (IVC 8) Ate (8) Ten (10) Eggs (Esophagus 10) At (Aorta 12) Twelve (12)".',
+      'Q: Why do inhaled foreign bodies preferentially lodge in the right main bronchus? A: Right bronchus is wider, shorter (2.5 cm vs 5 cm), and more vertical (25 deg vs 45 deg from tracheal axis).',
+      'Q: What is the costodiaphragmatic recess? A: Potential space 2 ribs deep at the inferior pleural reflection (between ribs 8 and 10 in midaxillary line); primary site for thoracentesis needle insertion (8th ICS along superior border of 9th rib).',
     ],
-    radiologicalCorrelation:
-      'Normal PA CXR demonstrates clear radiolucent lung fields with sharp lateral and cardiophrenic angles. Blunting of costophrenic angle requires >= 175-200 mL of pleural fluid on erect film.',
-    surgicalApproaches:
-      'Posterolateral thoracotomy (5th or 6th ICS) for lung resection/lobectomy; Video-Assisted Thoracoscopic Surgery (VATS) using 3-port triangular access.',
+    radiologicalCorrelation: 'Chest X-Ray: Trachea central, costophrenic angles sharp. Blunting of costophrenic angle requires >175 mL pleural fluid on PA view.',
+    surgicalApproaches: 'Posterolateral thoracotomy through 5th intercostal space for lung resection; Video-assisted thoracoscopic surgery (VATS); Tube thoracostomy (chest drain) in safe triangle (5th ICS anterior to midaxillary line).',
+    breadcrumbs: [{ id: 'thorax', label: 'Thoracic Cavity' }, { id: 'lungs', label: 'Pulmonary System' }],
   },
 
+
+  // 7. RIGHT CORONARY ARTERY
+  rca_artery: {
+    id: 'rca_artery',
+    name: 'Right Coronary Artery (RCA)',
+    latinName: 'Arteria Coronaria Dextra',
+    system: 'Cardiovascular System',
+    quadrantOrCavity: 'Coronary Sulcus (Thorax)',
+    surfaceLandmarks: 'Arises from anterior aortic sinus of ascending aorta; runs in right AV groove towards crux cordis.',
+    dimensionsAndWeight: 'Caliber ~3.5 - 4.0 mm, length ~12 - 14 cm.',
+    arterialSupply: ['Originates directly from the anterior aortic sinus (sinus of Valsalva) of the ascending aorta.'],
+    arterialNodes: [
+      {
+        id: 'heart',
+        name: 'Cor Humanum (Heart Base)',
+        type: 'artery',
+        territory: 'Right atrium, right ventricle, posteroinferior 1/3 of septum',
+        clinicalNote: 'Supplies SA node in 60% and AV node in 90% of individuals.',
+        cameraPreset: 'thorax'
+      }
+    ],
+    venousDrainage: ['Accompanied by small cardiac vein in anterior atrioventricular groove and middle cardiac vein at apex.'],
+    innervation: {
+      sympathetic: 'Superficial and deep cardiac plexuses (T1-T5).',
+      parasympathetic: 'Vagus nerve (CN X).',
+      somaticOrSensory: 'T1-T5 visceral afferents.',
+      referredPain: 'Epigastric discomfort, nausea, bradycardia, radiating to jaw or left arm in inferior STEMI.'
+    },
+    lymphaticDrainage: ['Anterior mediastinal lymph nodes.'],
+    musculoskeletalRelations: ['Lies in the fatty atrioventricular groove between right atrium and right ventricle.'],
+    relationsStructured: {
+      anterior: ['Right Atrial Appendage', 'Anterior Chest Wall', 'Costal Cartilages'],
+      posterior: ['Right Atrium', 'Interatrial Septum', 'Crux Cordis'],
+      superior: ['Aortic Root', 'Superior Vena Cava'],
+      inferior: ['Acute Margin of Heart', 'Diaphragmatic Surface of Heart'],
+      medial: ['Ascending Aorta', 'Pulmonary Trunk'],
+      lateral: ['Right Ventricle Free Wall', 'Right Phrenic Nerve']
+    },
+    histologyAndPhysiology: 'Muscular medium artery with elastic lamina; vascular tone regulated by endothelial NO, adenosine, and autonomic inputs.',
+    clinicalBedsideSigns: [
+      'Acute Inferior STEMI: ST elevation in Leads II, III, and aVF with reciprocal depression in I and aVL.',
+      'Sinus Bradycardia / Complete Heart Block (supplies SA node in 60%, AV node in 90%).',
+      'Right Ventricular Infarction: Hypotension, clear lung fields, elevated JVP (Kussmaul sign) — nitrates contraindicated!'
+    ],
+    nmcMbbssVivaPearls: [
+      'Q: What is the clinical danger of giving nitroglycerin in inferior STEMI with RCA occlusion? A: Nitrates drop preload; RV infarction relies critically on high RV preload, so nitrates precipitate profound cardiogenic shock.',
+      'Q: Which branch supplies the AV node? A: Arises at the crux cordis from the apex of the U-turn of RCA in right-dominant hearts.'
+    ],
+    radiologicalCorrelation: 'Coronary Angiography (LAO view): Visualizes RCA course, marginal branches, and posterior descending artery (PDA).',
+    surgicalApproaches: 'Percutaneous Coronary Intervention (PCI) via right radial or femoral artery; CABG with saphenous vein graft.',
+    breadcrumbs: [{ id: 'thorax', label: 'Thorax' }, { id: 'heart', label: 'Heart' }, { id: 'rca_artery', label: 'Right Coronary Artery' }]
+  },
+
+  // 8. VAGUS NERVE
+  vagus_nerve: {
+    id: 'vagus_nerve',
+    name: 'Vagus Nerve (Cranial Nerve X)',
+    latinName: 'Nervus Vagus',
+    system: 'Nervous System (Autonomic / Parasympathetic)',
+    quadrantOrCavity: 'Brainstem -> Carotid Sheath (Neck) -> Mediastinum -> Abdomen',
+    surfaceLandmarks: 'Descends in neck within carotid sheath between internal jugular vein and internal/common carotid artery.',
+    dimensionsAndWeight: 'Longest cranial nerve; extends from medulla to splenic flexure of colon (~75 cm).',
+    arterialSupply: ['Supplied by ascending pharyngeal artery, superior and inferior thyroid arteries, and bronchial arteries.'],
+    venousDrainage: ['Internal jugular vein, vertebral venous plexus.'],
+    innervation: {
+      sympathetic: 'Modulated by postganglionic sympathetic fibers from superior cervical ganglion.',
+      parasympathetic: 'Main parasympathetic conduit of thorax and foregut/midgut.',
+      somaticOrSensory: 'Auricular branch (Arnold\'s nerve) sensory to posterior EAC and tympanic membrane.',
+      referredPain: 'Arnold\'s ear reflex: Cough induced by stimulating external auditory canal.'
+    },
+    lymphaticDrainage: ['Deep cervical lymph nodes (jugulodigastric and jugulo-omohyoid).'],
+    musculoskeletalRelations: ['Carotid sheath behind common carotid artery and internal jugular vein; crosses anterior to subclavian artery on right.'],
+    relationsStructured: {
+      anterior: ['Common Carotid Artery', 'Internal Jugular Vein', 'Sternocleidomastoid Muscle'],
+      posterior: ['Longus Colli Muscle', 'Prevertebral Fascia', 'Sympathetic Trunk'],
+      superior: ['Jugular Foramen', 'Hypoglossal Nerve (CN XII)', 'Accessory Nerve (CN XI)'],
+      inferior: ['Cardiac Plexus', 'Esophageal Plexus', 'Celiac Plexus'],
+      medial: ['Trachea', 'Esophagus', 'Recurrent Laryngeal Nerve'],
+      lateral: ['Internal Jugular Vein', 'Deep Cervical Lymph Nodes']
+    },
+    histologyAndPhysiology: '80-90% sensory/afferent fibers carrying visceral feedback to Nucleus Tractus Solitarius (NTS); 10-20% parasympathetic efferents from dorsal motor nucleus.',
+    clinicalBedsideSigns: [
+      'Uvula deviation to normal side and loss of gag reflex in unilateral vagal palsy.',
+      'Hoarseness of voice in Recurrent Laryngeal Nerve palsy (Ortner syndrome in mitral stenosis).',
+      'Neurocardiogenic (vasovagal) syncope triggered by excessive vagal tone / bradycardia / vasodilation.'
+    ],
+    nmcMbbssVivaPearls: [
+      'Q: Why does the Left Recurrent Laryngeal nerve loop lower than the Right? A: Left loops under aortic arch (embryonic 6th aortic arch / ductus arteriosus), while Right loops under subclavian artery (4th aortic arch).',
+      'Q: What is the vasovagal syncope reflex arc? A: Afferent via mechanoreceptors/C-fibers to NTS, efferent parasympathetic bradycardia via CN X and sympathoinhibition causing peripheral pooling.'
+    ],
+    radiologicalCorrelation: 'Neck/Thorax CT: Identifies mediastinal adenopathy or aortic arch aneurysms compressing left recurrent laryngeal nerve.',
+    surgicalApproaches: 'Carotid endarterectomy incision along anterior border of SCM; vagus nerve identified and mobilized inside carotid sheath.',
+    breadcrumbs: [{ id: 'head', label: 'Head & Neck' }, { id: 'brain', label: 'Brainstem' }, { id: 'vagus_nerve', label: 'Vagus Nerve' }]
+  },
+
+  // 9. PHRENIC NERVE
+  phrenic_nerve: {
+    id: 'phrenic_nerve',
+    name: 'Phrenic Nerve (C3, C4, C5)',
+    latinName: 'Nervus Phrenicus',
+    system: 'Nervous System (Somatic & Visceral Afferent)',
+    quadrantOrCavity: 'Cervical Root -> Superior Mediastinum -> Middle Mediastinum -> Diaphragm',
+    surfaceLandmarks: 'Descends vertically across anterior surface of scalenus anterior muscle, deep to prevertebral fascia.',
+    dimensionsAndWeight: 'Caliber ~2.0 mm; bilateral symmetry with right nerve shorter and more vertical.',
+    arterialSupply: ['Supplied by pericardiophrenic artery (branch of internal thoracic artery) which accompanies the nerve.'],
+    venousDrainage: ['Pericardiophrenic veins draining into internal thoracic vein or brachiocephalic vein.'],
+    innervation: {
+      sympathetic: 'Postganglionic sympathetic fibers from middle/inferior cervical ganglia.',
+      parasympathetic: 'None.',
+      somaticOrSensory: 'Sole motor supply to diaphragm; sensory to central tendon, mediastinal pleura, fibrous pericardium.',
+      referredPain: 'Shoulder tip pain (dermatomes C3-C5) in subdiaphragmatic irritation, cholecystitis, or ruptured spleen (Kehr\'s sign).'
+    },
+    lymphaticDrainage: ['Phrenic and mediastinal lymph nodes.'],
+    musculoskeletalRelations: ['Crosses scalenus anterior muscle from lateral to medial, deep to transverse cervical and suprascapular vessels.'],
+    relationsStructured: {
+      anterior: ['Sternocleidomastoid', 'Internal Jugular Vein', 'Subclavian Vein'],
+      posterior: ['Scalenus Anterior Muscle', 'Brachial Plexus Roots', 'Subclavian Artery'],
+      superior: ['C3-C5 Cervical Nerve Roots'],
+      inferior: ['Diaphragm Dome (Central Tendon)'],
+      medial: ['Ascending Cervical Artery', 'Pericardium', 'Superior Vena Cava (Right)'],
+      lateral: ['Pleural Dome / Lung Apex', 'Pericardiophrenic Artery']
+    },
+    histologyAndPhysiology: 'Large myelinated A-alpha motor axons innervating hemidiaphragm; provides 75% of resting tidal volume ventilation.',
+    clinicalBedsideSigns: [
+      'Paradoxical respiration (inward abdominal motion during inspiration) in bilateral diaphragmatic paralysis.',
+      'Hiccups (singultus): Involuntary spasmodic contraction of diaphragm terminated by sudden glottis closure.',
+      'Heaving of opposite hemidiaphragm on sniffing under fluoroscopy (Sniff test for phrenic palsy).'
+    ],
+    nmcMbbssVivaPearls: [
+      'Q: What is the classic medical mnemonic for phrenic nerve roots? A: "C3, C4, C5 keeps the diaphragm alive!"',
+      'Q: Why does splenic rupture cause left shoulder tip pain? A: Free peritoneal blood irritates inferior surface of left hemidiaphragm; phrenic nerve afferents (C3-C5) enter dorsal horn where supraclavicular sensory fibers (C3-C4) synapse, causing referred pain (Kehr sign).'
+    ],
+    radiologicalCorrelation: 'Chest Radiograph: Elevated hemidiaphragm (>2 cm higher on right than left, or left higher than right). Fluoroscopic Sniff test confirms paralysis.',
+    surgicalApproaches: 'Anterior scalene block in regional anesthesia; careful dissection during thymectomy or CABG to avoid thermal phrenic injury.',
+    breadcrumbs: [{ id: 'neck', label: 'Cervical Spine' }, { id: 'thorax', label: 'Mediastinum' }, { id: 'phrenic_nerve', label: 'Phrenic Nerve' }]
+  },
+
+  // 10. CELIAC TRUNK & PORTAL VEIN
+  celiac_trunk: {
+    id: 'celiac_trunk',
+    name: 'Celiac Trunk & Branches',
+    latinName: 'Truncus Coeliacus',
+    system: 'Cardiovascular System (Arterial)',
+    quadrantOrCavity: 'Retroperitoneum (T12 Vertebral Level, Epigastrium)',
+    surfaceLandmarks: 'Arises immediately below aortic hiatus of diaphragm at T12, just above upper border of pancreas.',
+    dimensionsAndWeight: 'Length ~1.25 cm (very short, thick trunk); caliber 7-8 mm.',
+    arterialSupply: ['Arises from anterior aspect of abdominal aorta at T12.'],
+    venousDrainage: ['Drained via tributaries of the Hepatic Portal Vein and Splenic Vein.'],
+    innervation: {
+      sympathetic: 'Greater splanchnic nerve (T5-T9) via celiac ganglion.',
+      parasympathetic: 'Posterior vagal trunk.',
+      somaticOrSensory: 'Visceral epigastric afferents.',
+      referredPain: 'Deep boring epigastric pain radiating directly to back (T12-L1) in pancreatitis or peptic ulcer perforation.'
+    },
+    lymphaticDrainage: ['Celiac lymph nodes surrounding the trunk, thence to cisterna chyli.'],
+    musculoskeletalRelations: ['Surrounded by celiac plexus of nerves, retroperitoneal behind lesser sac.'],
+    relationsStructured: {
+      anterior: ['Lesser Omentum', 'Lesser Sac', 'Stomach Bed'],
+      posterior: ['Abdominal Aorta', 'Crura of Diaphragm', 'T12 Vertebra'],
+      superior: ['Median Arcuate Ligament of Diaphragm', 'Caudate Lobe of Liver'],
+      inferior: ['Superior Border of Pancreas', 'Splenic Vein', 'Left Renal Vein'],
+      medial: ['Celiac Ganglion', 'Inferior Vena Cava'],
+      lateral: ['Left Gastric Artery', 'Splenic Artery', 'Common Hepatic Artery']
+    },
+    histologyAndPhysiology: 'Elastic-muscular large arterial conduit giving off the classic "tripod" trifurcation: Left Gastric, Splenic, and Common Hepatic arteries.',
+    clinicalBedsideSigns: [
+      'Median Arcuate Ligament Syndrome (Dunbar syndrome): Postprandial epigastric pain and weight loss caused by diaphragmatic crus compression.',
+      'Epigastric systolic bruit heard over upper abdomen in high-grade celiac stenosis.'
+    ],
+    nmcMbbssVivaPearls: [
+      'Q: What are the three classic terminal branches of the celiac trunk? A: Left Gastric Artery, Splenic Artery (tortuous course), and Common Hepatic Artery.',
+      'Q: What is the boundary between foregut and midgut vascular territories? A: Major duodenal papilla (ampulla of Vater) in second part of duodenum (celiac trunk foregut meets SMA midgut via superior and inferior pancreaticoduodenal arcade).'
+    ],
+    radiologicalCorrelation: 'CT Angiography of Abdomen: Demonstrates seagull-wing appearance of celiac trifurcation.',
+    surgicalApproaches: 'Midline laparotomy or laparoscopic celiac axis exposure for aneurysm repair or median arcuate ligament release.',
+    breadcrumbs: [{ id: 'abdomen', label: 'Abdomen' }, { id: 'liver', label: 'Foregut' }, { id: 'celiac_trunk', label: 'Celiac Trunk' }]
+  },
+
+  portal_vein: {
+    id: 'portal_vein',
+    name: 'Hepatic Portal Vein',
+    latinName: 'Vena Portae Hepatis',
+    system: 'Cardiovascular System (Venous)',
+    quadrantOrCavity: 'Transverse Mesocolon / Porta Hepatis / Liver (Abdomen)',
+    surfaceLandmarks: 'Forms behind the neck of pancreas at L2 level; ascends in right free margin of lesser omentum to porta hepatis.',
+    dimensionsAndWeight: 'Length ~8 cm, diameter ~10-12 mm; pressure normal 5-10 mmHg.',
+    arterialSupply: ['Vascular conduit receiving deoxygenated nutrient-rich mesenteric blood; vasa vasorum supplied by hepatic artery branches.'],
+    venousDrainage: ['Enters hepatic sinusoids, drains into hepatic veins thence into IVC.'],
+    innervation: {
+      sympathetic: 'Celiac plexus sympathetic vasoconstrictor fibers.',
+      parasympathetic: 'Vagal fibers.',
+      somaticOrSensory: 'Visceral afferents travel to celiac ganglion.',
+      referredPain: 'Vague periumbilical and right hypochondrial dull ache in portal vein thrombosis.'
+    },
+    lymphaticDrainage: ['Hepatic and celiac lymph node chains.'],
+    musculoskeletalRelations: ['Ascends in free edge of lesser omentum (hepatoduodenal ligament) posterior to bile duct and hepatic artery proper.'],
+    relationsStructured: {
+      anterior: ['Bile Duct (anterior-right)', 'Hepatic Artery Proper (anterior-left)', 'Neck of Pancreas'],
+      posterior: ['Inferior Vena Cava (IVC)', 'Epiploic Foramen of Winslow', 'Right Crus of Diaphragm'],
+      superior: ['Porta Hepatis', 'Right & Left Lobar Portal Branches'],
+      inferior: ['Superior Mesenteric Vein', 'Splenic Vein Confluence', 'Duodenum (1st Part)'],
+      medial: ['Celiac Axis', 'Abdominal Aorta'],
+      lateral: ['Gallbladder Neck', 'Right Kidney (Posterolateral)']
+    },
+    histologyAndPhysiology: 'Large capacious venous trunk without valves; carries ~1000-1200 mL/min of blood rich in digested nutrients, amino acids, and pancreatic hormones to the liver.',
+    clinicalBedsideSigns: [
+      'Caput Medusae: Dilated tortuous subcutaneous veins radiating from umbilicus due to recanalization of umbilical vein in ligamentum teres.',
+      'Splenomegaly: Massive congestive splenic enlargement due to backward pressure in splenic vein.',
+      'Upper GI Bleeding: Hematemesis from ruptured esophageal varices (portosystemic anastomosis between left gastric vein and azygos vein).'
+    ],
+    nmcMbbssVivaPearls: [
+      'Q: What are the 4 major sites of portosystemic (porto-caval) anastomosis? A: 1) Lower esophagus (Left Gastric vein with Azygos vein -> varices); 2) Anal canal (Superior Rectal vein with Middle/Inferior Rectal veins -> hemorrhoids); 3) Umbilicus (Paraumbilical veins with Epigastric veins -> Caput Medusae); 4) Retroperitoneum (Colic veins with Retroperitoneal veins of Retzius).',
+      'Q: What forms the portal vein? A: Superior Mesenteric Vein (SMV) uniting with the Splenic Vein behind the neck of the pancreas.'
+    ],
+    radiologicalCorrelation: 'Doppler Ultrasound Abdomen: Assesses hepatopetal (normal forward) vs hepatofugal (reversed in severe cirrhosis) portal flow and checks for portal vein thrombosis.',
+    surgicalApproaches: 'Transjugular Intrahepatic Portosystemic Shunt (TIPS) between hepatic vein and intrahepatic portal branch to decompress portal hypertension.',
+    breadcrumbs: [{ id: 'abdomen', label: 'Abdomen' }, { id: 'liver', label: 'Hepatobiliary' }, { id: 'portal_vein', label: 'Hepatic Portal Vein' }]
+  },
+
+  // HEAD: BRAIN
   brain: {
     id: 'brain',
     name: 'Cerebrum, Cerebellum & Brainstem',
@@ -194,56 +912,7 @@ export const ORGAN_ANATOMY_DATABASE: Record<string, DetailedOrganAnatomy> = {
       'Pterional (frontotemporal) craniotomy for Circle of Willis aneurysms; Suboccipital craniectomy for posterior fossa decompression; Emergency burr hole exploration at 3cm above and behind outer canthus for EDH evacuation.',
   },
 
-  liver: {
-    id: 'liver',
-    name: 'Liver & Biliary System',
-    latinName: 'Hepar',
-    system: 'Digestive & Metabolic System',
-    quadrantOrCavity: 'Right Hypochondrium, Epigastrium & Left Hypochondrium (Abdomen)',
-    surfaceLandmarks:
-      'Upper border: 5th intercostal space at right midclavicular line. Lower border: Crosses midline midway between xiphisternum and umbilicus. Normal liver span is 8-12 cm in right midclavicular line.',
-    dimensionsAndWeight: 'Weight ~1.4 - 1.6 kg (largest internal organ and exocrine gland).',
-    arterialSupply: [
-      'Dual blood supply: Total hepatic blood flow ~1500 mL/min (25% of cardiac output).',
-      'Hepatic Artery Proper (30% of blood flow, 50% of oxygen supply): Branch of Common Hepatic from Coeliac Trunk (vertebral level T12/L1). Divides into Right and Left Hepatic Arteries in porta hepatis.',
-      'Portal Vein (70% of blood flow, 50% of oxygen supply): Formed by union of Superior Mesenteric Vein (SMV) and Splenic Vein behind neck of pancreas at L2 level. Nutrient-rich deoxygenated blood from gut.',
-    ],
-    venousDrainage: [
-      'Right, Middle, and Left Hepatic Veins exit posterior surface of liver and drain directly into Inferior Vena Cava (IVC) immediately below diaphragm. (Budd-Chiari syndrome = hepatic vein thrombosis).',
-    ],
-    innervation: {
-      sympathetic: 'Coeliac plexus (T7-T10 splanchnic nerves).',
-      parasympathetic: 'Hepatic branches of anterior and posterior Vagal trunks.',
-      somaticOrSensory: 'Liver parenchyma and Glisson capsule visceral sensory. Parietal peritoneum and right diaphragmatic surface innervated by right Phrenic nerve (C3-C5).',
-      referredPain: 'Hepatic inflammation or subdiaphragmatic abscess stretching diaphragmatic peritoneum refers pain to the right shoulder tip (C4 dermatome).',
-    },
-    lymphaticDrainage: [
-      'Deep lymphatic vessels accompany hepatic portal triads to hepatic nodes at porta hepatis, thence to coeliac lymph nodes. Superficial lymphatics from bare area pass through diaphragm to posterior mediastinal nodes.',
-    ],
-    musculoskeletalRelations: [
-      'Anterior/Superior: Diaphragm, right costal margin (ribs 7-11), xiphoid process, anterior abdominal wall.',
-      'Posteroinferior Visceral Surface: Stomach (gastric impression), duodenum (duodenal impression), gallbladder (cystic fossa), hepatic flexure of colon (colic impression), right kidney and right suprarenal gland.',
-    ],
-    histologyAndPhysiology:
-      'Classic hexagonal lobule centered on terminal hepatic venule (central vein) with portal triads at periphery. Couinaud anatomical division into 8 independent functional segments, each with its own vascular and biliary pedicle (Segment I: Caudate lobe; Segments II-VIII).',
-    clinicalBedsideSigns: [
-      'Liver Span Percussion: Upper border determined by heavy percussion from lung resonance to dullness in 5th ICS; lower border by light percussion moving upward from right iliac fossa (normal 8-12cm).',
-      'Hepatomegaly: Palpable below right costal margin moving with respiration. Tender and soft in acute hepatitis/congestive heart failure; hard, irregular, and nodular in hepatocellular carcinoma.',
-      'Stigmata of Chronic Liver Disease: Spider naevi (superior vena caval distribution), palmar erythema, leuconychia (Terry nails), Dupuytren contracture, gynecomastia, caput medusae, and parotid enlargement.',
-      'Asterixis (Flapping Tremor): Negative myoclonus elicited by dorsiflexing wrists with outstretched fingers and eyes closed (hallmark of Grade II Hepatic Encephalopathy).',
-    ],
-    nmcMbbssVivaPearls: [
-      'Q: What is the Pringle Maneuver? A: Temporary digital or vascular clamp compression of the hepatoduodenal ligament (free border of lesser omentum) containing the Hepatic Artery, Portal Vein, and Common Bile Duct to control catastrophic hepatic hemorrhage during surgery (safe ischemic time ~15-20 mins).',
-      'Q: What are the 5 major Portosystemic Anastomotic sites? A: 1) Lower esophagus (Left gastric vein <-> Azygos vein -> Esophageal varices); 2) Umbilicus (Paraumbilical veins <-> Epigastric veins -> Caput medusae); 3) Anal canal (Superior rectal vein <-> Middle/Inferior rectal veins -> Hemorrhoids); 4) Retroperitoneum (Colic veins <-> Retroperitoneal veins of Retzius); 5) Bare area of liver.',
-      'Q: What is SAAG and its diagnostic significance? A: Serum-Ascites Albumin Gradient = Serum Albumin - Ascitic Fluid Albumin. SAAG >= 1.1 g/dL indicates Portal Hypertension (Cirrhosis, Cardiac failure, Budd-Chiari); SAAG < 1.1 g/dL indicates Non-portal causes (Peritoneal carcinomatosis, TB peritonitis, Nephrotic syndrome).',
-      'Q: Cantlie Line? A: Line from IVC fossa to gallbladder fossa separating functional right and left lobes of liver (supplied by right and left branches of hepatic artery and portal vein).',
-    ],
-    radiologicalCorrelation:
-      'Abdominal Ultrasound: Normal liver echogenicity is equal or slightly greater than renal cortex. Fatty liver shows hyperechoic "bright" liver with posterior acoustic attenuation. Cirrhosis shows surface nodularity, coarse parenchymal texture, and attenuated hepatic veins.',
-    surgicalApproaches:
-      'Kocher right subcostal incision (2 fingers below and parallel to right costal margin); Mercedes-Benz or Chevron roof-top incision for orthotopic liver transplantation and major hepatic resections.',
-  },
-
+  // HEAD: KIDNEY
   kidney: {
     id: 'kidney',
     name: 'Renal System (Right & Left Kidneys)',
@@ -291,6 +960,7 @@ export const ORGAN_ANATOMY_DATABASE: Record<string, DetailedOrganAnatomy> = {
       'Lumbotomy (flank incision through bed of 11th or 12th rib); Gibson incision in iliac fossa for renal transplantation (placing graft in iliac fossa with vascular anastomosis to external iliac vessels).',
   },
 
+  // HEAD: SKELETAL
   skeletal: {
     id: 'skeletal',
     name: 'Human Skeletal Architecture & Thoracic Cage',
@@ -366,6 +1036,7 @@ export const ORGAN_ANATOMY_DATABASE: Record<string, DetailedOrganAnatomy> = {
       'Median sternotomy splitting midline of manubrium and sternal body using electric oscillating saw; Thoracotomy through bed of non-resected or subperiosteally resected 5th/6th rib.',
   },
 
+  // HEAD: AORTA
   aorta: {
     id: 'aorta',
     name: 'Aorta & Great Arterial System',
@@ -412,6 +1083,7 @@ export const ORGAN_ANATOMY_DATABASE: Record<string, DetailedOrganAnatomy> = {
       'Transperitoneal midline laparotomy or retroperitoneal left flank approach for open AAA repair; Endovascular Aneurysm Repair (EVAR) via bilateral femoral artery percutaneous access.',
   },
 
+  // HEAD: ASCITES
   ascites: {
     id: 'ascites',
     name: 'Peritoneal Ascitic Collection',
@@ -457,6 +1129,7 @@ export const ORGAN_ANATOMY_DATABASE: Record<string, DetailedOrganAnatomy> = {
       'Therapeutic large-volume paracentesis (LVP) with concurrent IV albumin replacement (8g albumin per liter of ascites removed beyond 5L); Transjugular Intrahepatic Portosystemic Shunt (TIPS) for refractory ascites.',
   },
 
+  // HEAD: SNAKEBITE
   snakebite: {
     id: 'snakebite',
     name: "Russell's Viper Envenomation Site",
@@ -504,6 +1177,7 @@ export const ORGAN_ANATOMY_DATABASE: Record<string, DetailedOrganAnatomy> = {
       'Fasciotomy for Compartment Syndrome (indicated ONLY after coagulopathy is corrected with ASV and FFP, and compartment pressure > 30 mmHg or within 30 mmHg of diastolic BP).',
   },
 
+  // HEAD: STOMACH
   stomach: {
     id: 'stomach',
     name: 'Stomach & Gastric Apparatus',
@@ -566,6 +1240,7 @@ export const ORGAN_ANATOMY_DATABASE: Record<string, DetailedOrganAnatomy> = {
     },
   },
 
+  // HEAD: PANCREAS
   pancreas: {
     id: 'pancreas',
     name: 'Pancreas & Duodenopancreatic Complex',
@@ -626,6 +1301,7 @@ export const ORGAN_ANATOMY_DATABASE: Record<string, DetailedOrganAnatomy> = {
     },
   },
 
+  // HEAD: SPLEEN
   spleen: {
     id: 'spleen',
     name: 'Spleen & Reticuloendothelial Reservoir',
@@ -681,4 +1357,3 @@ export const ORGAN_ANATOMY_DATABASE: Record<string, DetailedOrganAnatomy> = {
     },
   },
 };
-

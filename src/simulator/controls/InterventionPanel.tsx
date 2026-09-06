@@ -335,7 +335,7 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
               Modal Tools
             </span>
           </div>
-          <div className="grid grid-cols-4 gap-1.5">
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-1.5">
             <button
               onClick={() => onOpenTool('pupil')}
               className={`py-2 px-1 rounded-xl text-xs font-bold border flex items-center justify-center gap-1 transition-all cursor-pointer ${
@@ -375,6 +375,16 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
               }`}
             >
               📈 12-Lead
+            </button>
+            <button
+              onClick={() => onOpenTool('piccled')}
+              className={`py-2 px-1.5 rounded-xl text-xs font-bold border flex items-center justify-center gap-1 transition-all cursor-pointer ${
+                isLight
+                  ? 'bg-amber-50 hover:bg-amber-100 border-amber-200 text-amber-900 shadow-2xs'
+                  : 'bg-amber-950/40 hover:bg-amber-900/60 border-amber-800 text-amber-300'
+              }`}
+            >
+              🖐️ PICCLED
             </button>
           </div>
         </div>

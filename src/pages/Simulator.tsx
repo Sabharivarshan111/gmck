@@ -22,6 +22,7 @@ import { IcuMonitor } from '../simulator/instruments/IcuMonitor';
 import { DiagnosticTools } from '../simulator/instruments/DiagnosticTools';
 import { InterventionPanel } from '../simulator/controls/InterventionPanel';
 import { OrganDetailDrawer } from '../simulator/controls/OrganDetailDrawer';
+import { WardExamModal } from '../simulator/controls/WardExamModal';
 import { DissectionToolbar } from '../simulator/controls/DissectionToolbar';
 import { DissectionToolMode, Part } from '../simulator/data/atlasTypes';
 
@@ -53,7 +54,7 @@ export const Simulator: React.FC = () => {
   const [mobileTab, setMobileTab] = useState<'3d' | 'telemetry' | 'interventions'>('3d');
 
   // Selected Organ for Deep Anatomical Sheet
-  const [selectedOrganId, setSelectedOrganId] = useState<string | null>(null);
+  const [selectedOrganId, setSelectedOrganId] = useState<string | null>(searchParams.get('organ') || null);
 
   // Active Camera Preset
   const [cameraPreset, setCameraPreset] = useState<'anterior' | 'head' | 'thorax' | 'abdomen'>('anterior');
@@ -526,8 +527,13 @@ export const Simulator: React.FC = () => {
       {/* 4. Apple-Style Deep Organ Anatomical Drawer (Slide-up on mobile, slide-in on desktop) */}
       <OrganDetailDrawer
         organId={selectedOrganId}
-        onClose={() => setSelectedOrganId(null)}
+        onClose={() => {
+          setSelectedOrganId(null);
+          setIsolatedPartId(null);
+        }}
         onFocusCamera={(preset) => setCameraPreset(preset)}
+        onSelectOrgan={(newOrganId) => setSelectedOrganId(newOrganId)}
+        onIsolateStructure={(structureId) => setIsolatedPartId(structureId)}
         onDissectOrgan={(organKey) => {
           const fakePart: Part = {
             id: organKey,
@@ -552,6 +558,15 @@ export const Simulator: React.FC = () => {
         pathology={pathology}
         vitals={vitals}
         onClose={() => setActiveTool('none')}
+      />
+
+      {/* 6. Bedside Ward Examination Modal (PICCLED: Pitting Edema, Scleral Icterus, Pallor, Cyanosis, Ascites) */}
+      <WardExamModal
+        isOpen={activeTool === 'piccled'}
+        onClose={() => setActiveTool('none')}
+        vitals={vitals}
+        pathology={pathology}
+        theme={theme}
       />
     </div>
   );
