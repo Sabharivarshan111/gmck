@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { AnatomicalLayer, DiagnosticToolType, ScenarioDefinition } from '../types';
-import { Layers, Stethoscope, Sparkles, Activity, AlertCircle, ChevronDown } from 'lucide-react';
+import { Layers, Stethoscope, Sparkles, Activity, AlertCircle, ChevronDown, ShieldAlert, HeartPulse, Pill, Syringe } from 'lucide-react';
 
 interface InterventionPanelProps {
   scenarios: ScenarioDefinition[];
@@ -27,6 +27,39 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
 }) => {
   const currentScenario = scenarios.find((s) => s.id === currentScenarioId) || scenarios[0];
   const isLight = theme === 'light';
+  const [activeInterventionTab, setActiveInterventionTab] = useState<'all' | 'resus' | 'cardiac' | 'antidotes' | 'procedures'>('all');
+
+  // Categorized interventions
+  const interventions = [
+    // Resuscitation & Fluids
+    { id: 'saline', label: 'IV Saline', sub: '500 mL Bolus', icon: '💧', cat: 'resus', color: 'sky' },
+    { id: 'oxygen', label: 'High-Flow O2', sub: '15 L/min NRB', icon: '🫁', cat: 'resus', color: 'teal' },
+    { id: 'defib', label: 'Defibrillator', sub: '200J Biphasic', icon: '⚡', cat: 'resus', color: 'rose' },
+
+    // Vasoactive & Cardiac
+    { id: 'adrenaline', label: 'Adrenaline', sub: '1 mg IV / 0.5 IM', icon: '⚡', cat: 'cardiac', color: 'rose' },
+    { id: 'noradrenaline', label: 'Noradrenaline', sub: 'Infusion >65 MAP', icon: '🩸', cat: 'cardiac', color: 'red' },
+    { id: 'atropine', label: 'Atropine', sub: '0.6 mg IV', icon: '💉', cat: 'cardiac', color: 'purple' },
+    { id: 'nitroglycerin', label: 'Nitroglycerin', sub: '0.4 mg SL', icon: '💊', cat: 'cardiac', color: 'amber' },
+    { id: 'furosemide', label: 'Furosemide', sub: '40 mg IV', icon: '🌊', cat: 'cardiac', color: 'blue' },
+
+    // Antidotes & Metabolic
+    { id: 'antivenom', label: 'Antivenom', sub: '10 Vials ASV', icon: '🐍', cat: 'antidotes', color: 'emerald' },
+    { id: 'pralidoxime', label: 'Pralidoxime', sub: '2-PAM 2g IV', icon: '🧪', cat: 'antidotes', color: 'indigo' },
+    { id: 'insulin_iv', label: 'Regular Insulin', sub: '10 Units IV', icon: '💉', cat: 'antidotes', color: 'violet' },
+
+    // Procedures & Decompressions
+    { id: 'needle_decomp', label: 'Needle Decomp', sub: '2nd ICS MCL', icon: '🎯', cat: 'procedures', color: 'orange' },
+    { id: 'pericardiocentesis', label: 'Pericardiocentesis', sub: 'Subxiphoid Tap', icon: '🫀', cat: 'procedures', color: 'red' },
+    { id: 'rtpa', label: 'r-tPA Alteplase', sub: '0.9 mg/kg IV', icon: '🧠', cat: 'procedures', color: 'cyan' },
+  ];
+
+  const filteredInterventions = activeInterventionTab === 'all'
+    ? interventions
+    : interventions.filter(i => i.cat === activeInterventionTab);
+
+  // Group scenarios by category
+  const categories = Array.from(new Set(scenarios.map(s => s.category)));
 
   return (
     <div
@@ -40,14 +73,14 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-200 dark:border-slate-800">
         <div className="min-w-0">
           <div
-            className={`text-[10px] font-bold uppercase tracking-wider ${
+            className={`text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5 ${
               isLight ? 'text-sky-600' : 'text-cyan-400'
             }`}
           >
-            Active MBBS Clinical Scenario
+            <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+            <span>Active MBBS Clinical Scenario ({scenarios.length} Cases Available)</span>
           </div>
           <h2 className="text-base md:text-lg font-black flex items-center gap-2 mt-0.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse flex-shrink-0" />
             <span className="truncate">{currentScenario.title}</span>
           </h2>
           <p className={`text-xs mt-0.5 line-clamp-1 ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>
@@ -55,12 +88,12 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
           </p>
         </div>
 
-        {/* Scenario Switcher Dropdown (Responsive, No Overflow) */}
+        {/* Scenario Switcher Dropdown (Responsive, Categorized) */}
         <div className="w-full sm:w-auto flex flex-col sm:flex-row sm:items-center gap-1.5 min-w-0 mt-1 sm:mt-0">
           <label className={`text-[10px] sm:text-xs font-bold uppercase tracking-wider flex-shrink-0 ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>
             Case:
           </label>
-          <div className="relative w-full sm:w-72 min-w-0">
+          <div className="relative w-full sm:w-80 min-w-0">
             <select
               value={currentScenarioId}
               onChange={(e) => onSelectScenario(e.target.value)}
@@ -70,15 +103,40 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
                   : 'bg-slate-800 border-slate-700 text-slate-200 focus:ring-cyan-500'
               }`}
             >
-              {scenarios.map((sc) => (
-                <option key={sc.id} value={sc.id}>
-                  {sc.title}
-                </option>
+              {categories.map((cat) => (
+                <optgroup key={cat} label={`── ${cat} ──`}>
+                  {scenarios
+                    .filter((sc) => sc.category === cat)
+                    .map((sc) => (
+                      <option key={sc.id} value={sc.id}>
+                        {sc.title}
+                      </option>
+                    ))}
+                </optgroup>
               ))}
             </select>
             <ChevronDown className="w-4 h-4 text-slate-500 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
           </div>
         </div>
+      </div>
+
+      {/* Case Details Badge Strip */}
+      <div className="flex flex-wrap items-center gap-2 text-xs">
+        <span className={`px-2.5 py-1 rounded-lg font-semibold border ${
+          isLight ? 'bg-slate-100 border-slate-200 text-slate-700' : 'bg-slate-800 border-slate-700 text-slate-300'
+        }`}>
+          Category: <strong>{currentScenario.category}</strong>
+        </span>
+        <span className={`px-2.5 py-1 rounded-lg font-semibold border ${
+          isLight ? 'bg-amber-50 border-amber-200 text-amber-800' : 'bg-amber-950/40 border-amber-800/60 text-amber-300'
+        }`}>
+          Target Rx: {currentScenario.targetInterventions.join(', ')}
+        </span>
+        <span className={`px-2.5 py-1 rounded-lg font-semibold border ${
+          isLight ? 'bg-rose-50 border-rose-200 text-rose-800' : 'bg-rose-950/40 border-rose-800/60 text-rose-300'
+        }`}>
+          Lethal Errors: {currentScenario.lethalTriggers.join(', ')}
+        </span>
       </div>
 
       {/* 2. Anatomical Layer Toggles & Diagnostic Tools */}
@@ -92,7 +150,7 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
           <div className="text-xs font-bold flex items-center justify-between">
             <span className="flex items-center gap-1.5">
               <Layers className={`w-4 h-4 ${isLight ? 'text-sky-600' : 'text-cyan-400'}`} />
-              Anatomical 3D Layers
+              Anatomical 3D Systems
             </span>
             <span className={`text-[10px] uppercase font-mono ${isLight ? 'text-slate-400' : 'text-slate-500'}`}>
               5 layers
@@ -105,13 +163,13 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
                 { id: 'skin', label: 'Skin' },
                 { id: 'vascular', label: 'Vessels' },
                 { id: 'viscera', label: 'Viscera' },
-                { id: 'skeletal', label: 'X-Ray' },
+                { id: 'skeletal', label: 'Skeleton' },
               ] as const
             ).map((l) => (
               <button
                 key={l.id}
                 onClick={() => onSelectLayer(l.id)}
-                className={`py-2 px-1 rounded-xl text-xs font-bold border transition-all ${
+                className={`py-2 px-1 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
                   activeLayer === l.id
                     ? isLight
                       ? 'bg-sky-600 text-white border-sky-600 shadow-sm shadow-sky-500/20'
@@ -145,7 +203,7 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
           <div className="grid grid-cols-4 gap-1.5">
             <button
               onClick={() => onOpenTool('pupil')}
-              className={`py-2 px-1 rounded-xl text-xs font-bold border flex items-center justify-center gap-1 transition-all ${
+              className={`py-2 px-1 rounded-xl text-xs font-bold border flex items-center justify-center gap-1 transition-all cursor-pointer ${
                 isLight
                   ? 'bg-white hover:bg-slate-100 border-slate-200 text-slate-700 shadow-xs'
                   : 'bg-slate-900 hover:bg-slate-800 border-slate-800 text-slate-300'
@@ -155,7 +213,7 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
             </button>
             <button
               onClick={() => onOpenTool('ultrasound')}
-              className={`py-2 px-1 rounded-xl text-xs font-bold border flex items-center justify-center gap-1 transition-all ${
+              className={`py-2 px-1 rounded-xl text-xs font-bold border flex items-center justify-center gap-1 transition-all cursor-pointer ${
                 isLight
                   ? 'bg-white hover:bg-slate-100 border-slate-200 text-slate-700 shadow-xs'
                   : 'bg-slate-900 hover:bg-slate-800 border-slate-800 text-slate-300'
@@ -165,7 +223,7 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
             </button>
             <button
               onClick={() => onOpenTool('stethoscope')}
-              className={`py-2 px-1 rounded-xl text-xs font-bold border flex items-center justify-center gap-1 transition-all ${
+              className={`py-2 px-1 rounded-xl text-xs font-bold border flex items-center justify-center gap-1 transition-all cursor-pointer ${
                 isLight
                   ? 'bg-white hover:bg-slate-100 border-slate-200 text-slate-700 shadow-xs'
                   : 'bg-slate-900 hover:bg-slate-800 border-slate-800 text-slate-300'
@@ -175,7 +233,7 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
             </button>
             <button
               onClick={() => onOpenTool('ecg12')}
-              className={`py-2 px-1 rounded-xl text-xs font-bold border flex items-center justify-center gap-1 transition-all ${
+              className={`py-2 px-1 rounded-xl text-xs font-bold border flex items-center justify-center gap-1 transition-all cursor-pointer ${
                 isLight
                   ? 'bg-white hover:bg-slate-100 border-slate-200 text-slate-700 shadow-xs'
                   : 'bg-slate-900 hover:bg-slate-800 border-slate-800 text-slate-300'
@@ -187,142 +245,100 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
         </div>
       </div>
 
-      {/* 3. Clinical Interventions / Resuscitation Drugs */}
+      {/* 3. Categorized Emergency Interventions / Resuscitation Drugs */}
       <div
-        className={`p-3.5 md:p-4 rounded-2xl border space-y-2.5 ${
+        className={`p-3.5 md:p-4 rounded-2xl border space-y-3 ${
           isLight ? 'bg-slate-50/80 border-slate-200/80' : 'bg-slate-950/70 border-slate-800'
+        }`}
+      >
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div className="flex items-center gap-1.5 text-xs font-bold">
+            <Sparkles className={`w-4 h-4 ${isLight ? 'text-amber-500' : 'text-amber-400'}`} />
+            <span>Emergency Interventions & Pharmacotherapy</span>
+          </div>
+
+          {/* Sub-category selector */}
+          <div className="flex items-center gap-1 overflow-x-auto no-scrollbar text-xs">
+            {[
+              { id: 'all', label: 'All (14)' },
+              { id: 'resus', label: 'Resus & Fluids' },
+              { id: 'cardiac', label: 'Vasoactive' },
+              { id: 'antidotes', label: 'Antidotes' },
+              { id: 'procedures', label: 'Procedures' },
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveInterventionTab(tab.id as any)}
+                className={`px-2.5 py-1 rounded-lg text-[11px] font-bold whitespace-nowrap transition-all cursor-pointer ${
+                  activeInterventionTab === tab.id
+                    ? isLight
+                      ? 'bg-sky-600 text-white shadow-xs'
+                      : 'bg-cyan-500 text-slate-950 shadow-xs font-black'
+                    : isLight
+                    ? 'bg-slate-200/80 hover:bg-slate-300 text-slate-700'
+                    : 'bg-slate-800 hover:bg-slate-700 text-slate-400'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Interventions Button Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
+          {filteredInterventions.map((item) => (
+            <button
+              key={item.id}
+              onClick={() => onApplyAction(item.id)}
+              className={`p-2.5 rounded-xl border text-xs font-bold flex flex-col items-center text-center transition-all cursor-pointer active:scale-95 ${
+                isLight
+                  ? 'bg-white hover:bg-slate-100/90 border-slate-200 text-slate-800 shadow-xs'
+                  : 'bg-slate-900 hover:bg-slate-800 border-slate-800 text-slate-200'
+              }`}
+            >
+              <span className="text-xl mb-0.5">{item.icon}</span>
+              <span className="truncate w-full">{item.label}</span>
+              <span className={`text-[10px] truncate w-full ${isLight ? 'text-slate-500 font-semibold' : 'text-slate-400'}`}>
+                {item.sub}
+              </span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* 4. Clinical Event Log & Bedside Feedback */}
+      <div
+        className={`p-3 md:p-4 rounded-2xl border space-y-2 ${
+          isLight ? 'bg-slate-50/60 border-slate-200/80' : 'bg-slate-950/50 border-slate-800'
         }`}
       >
         <div className="flex items-center justify-between text-xs font-bold">
           <span className="flex items-center gap-1.5">
-            <Sparkles className={`w-4 h-4 ${isLight ? 'text-amber-500' : 'text-amber-400'}`} />
-            Emergency Interventions & Pharmacotherapy
+            <Activity className={`w-3.5 h-3.5 ${isLight ? 'text-sky-600' : 'text-cyan-400'}`} />
+            Clinical Event Log & Feedback
           </span>
           <span className={`text-[10px] font-mono ${isLight ? 'text-slate-400' : 'text-slate-500'}`}>
-            Tap to infuse
+            {logs.length} entries
           </span>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
-          <button
-            onClick={() => onApplyAction('saline')}
-            className={`p-2 rounded-xl border text-xs font-bold flex flex-col items-center text-center transition-all ${
-              isLight
-                ? 'bg-sky-50 hover:bg-sky-100 border-sky-200 text-sky-800 shadow-xs'
-                : 'bg-blue-950/50 hover:bg-blue-900/60 border-blue-800/60 text-blue-300'
-            }`}
-          >
-            <span className="text-base">💧</span>
-            <span>IV Saline</span>
-            <span className={`text-[10px] ${isLight ? 'text-sky-600' : 'text-blue-400/80'}`}>500 mL Bolus</span>
-          </button>
-
-          <button
-            onClick={() => onApplyAction('antivenom')}
-            className={`p-2 rounded-xl border text-xs font-bold flex flex-col items-center text-center transition-all ${
-              isLight
-                ? 'bg-emerald-50 hover:bg-emerald-100 border-emerald-200 text-emerald-800 shadow-xs'
-                : 'bg-emerald-950/50 hover:bg-emerald-900/60 border-emerald-800/60 text-emerald-300'
-            }`}
-          >
-            <span className="text-base">🧪</span>
-            <span>Antivenom</span>
-            <span className={`text-[10px] ${isLight ? 'text-emerald-600' : 'text-emerald-400/80'}`}>10 Vials ASV</span>
-          </button>
-
-          <button
-            onClick={() => onApplyAction('atropine')}
-            className={`p-2 rounded-xl border text-xs font-bold flex flex-col items-center text-center transition-all ${
-              isLight
-                ? 'bg-purple-50 hover:bg-purple-100 border-purple-200 text-purple-800 shadow-xs'
-                : 'bg-purple-950/50 hover:bg-purple-900/60 border-purple-800/60 text-purple-300'
-            }`}
-          >
-            <span className="text-base">💉</span>
-            <span>Atropine</span>
-            <span className={`text-[10px] ${isLight ? 'text-purple-600' : 'text-purple-400/80'}`}>0.6 mg IV</span>
-          </button>
-
-          <button
-            onClick={() => onApplyAction('adrenaline')}
-            className={`p-2 rounded-xl border text-xs font-bold flex flex-col items-center text-center transition-all ${
-              isLight
-                ? 'bg-rose-50 hover:bg-rose-100 border-rose-200 text-rose-800 shadow-xs'
-                : 'bg-red-950/50 hover:bg-red-900/60 border-red-800/60 text-red-300'
-            }`}
-          >
-            <span className="text-base">⚡</span>
-            <span>Adrenaline</span>
-            <span className={`text-[10px] ${isLight ? 'text-rose-600' : 'text-red-400/80'}`}>1 mg IV</span>
-          </button>
-
-          <button
-            onClick={() => onApplyAction('oxygen')}
-            className={`p-2 rounded-xl border text-xs font-bold flex flex-col items-center text-center transition-all ${
-              isLight
-                ? 'bg-teal-50 hover:bg-teal-100 border-teal-200 text-teal-800 shadow-xs'
-                : 'bg-cyan-950/50 hover:bg-cyan-900/60 border-cyan-800/60 text-cyan-300'
-            }`}
-          >
-            <span className="text-base">🫁</span>
-            <span>High-Flow O2</span>
-            <span className={`text-[10px] ${isLight ? 'text-teal-600' : 'text-cyan-400/80'}`}>15 L/min NRB</span>
-          </button>
-
-          <button
-            onClick={() => onApplyAction('nitroglycerin')}
-            className={`p-2 rounded-xl border text-xs font-bold flex flex-col items-center text-center transition-all ${
-              isLight
-                ? 'bg-amber-50 hover:bg-amber-100 border-amber-200 text-amber-800 shadow-xs'
-                : 'bg-amber-950/50 hover:bg-amber-900/60 border-amber-800/60 text-amber-300'
-            }`}
-          >
-            <span className="text-base">💊</span>
-            <span>Nitroglycerin</span>
-            <span className={`text-[10px] ${isLight ? 'text-amber-600' : 'text-amber-400/80'}`}>0.4 mg SL</span>
-          </button>
-
-          <button
-            onClick={() => onApplyAction('defib')}
-            className={`p-2 rounded-xl border text-xs font-bold flex flex-col items-center text-center transition-all ${
-              isLight
-                ? 'bg-red-100 hover:bg-red-200 border-red-300 text-red-900 shadow-xs'
-                : 'bg-rose-950/50 hover:bg-rose-900/60 border-rose-800/60 text-rose-300'
-            }`}
-          >
-            <span className="text-base">⚡⚡</span>
-            <span>Defibrillator</span>
-            <span className={`text-[10px] ${isLight ? 'text-red-700' : 'text-rose-400/80'}`}>200J Biphasic</span>
-          </button>
-        </div>
-      </div>
-
-      {/* 4. Real-Time Clinical Event Log */}
-      <div
-        className={`rounded-2xl border p-3 space-y-1.5 ${
-          isLight ? 'bg-slate-50 border-slate-200/80' : 'bg-slate-950/90 border-slate-800'
-        }`}
-      >
-        <div className="text-[10px] font-mono font-bold uppercase tracking-wider flex items-center justify-between">
-          <span className={isLight ? 'text-slate-500' : 'text-slate-400'}>Clinical Event Log & Feedback</span>
-          <span className={isLight ? 'text-slate-400' : 'text-slate-600'}>{logs.length} entries</span>
-        </div>
-        <div className="h-16 md:h-20 overflow-y-auto font-mono text-xs space-y-1 pr-2">
-          {logs.slice(-5).map((log, index) => (
+        <div className="space-y-1.5 max-h-36 overflow-y-auto pr-1">
+          {logs.slice(-6).map((log, idx) => (
             <div
-              key={index}
-              className={`p-1 rounded flex items-center gap-2 ${
-                log.includes('CRITICAL ERROR')
-                  ? isLight
-                    ? 'bg-rose-50 border border-rose-200 text-rose-700 font-bold'
-                    : 'bg-red-950/80 border border-red-800 text-red-300 font-bold'
+              key={idx}
+              className={`p-2 rounded-xl text-xs font-mono flex items-start gap-2 ${
+                log.includes('CRITICAL') || log.includes('ERROR')
+                  ? 'bg-red-500/10 border border-red-500/30 text-red-500 dark:text-red-400 font-semibold'
+                  : log.includes('CAUTION') || log.includes('WARNING')
+                  ? 'bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-amber-400'
                   : isLight
-                  ? 'text-slate-700'
-                  : 'text-slate-300'
+                  ? 'bg-white border border-slate-200 text-slate-700'
+                  : 'bg-slate-900 border border-slate-800 text-slate-300'
               }`}
             >
-              <span className={`text-[10px] ${isLight ? 'text-slate-400' : 'text-slate-600'}`}>•</span>
-              <span className="text-[11px] md:text-xs">{log}</span>
+              <span className="text-slate-400 flex-shrink-0">•</span>
+              <span className="flex-1">{log}</span>
             </div>
           ))}
         </div>

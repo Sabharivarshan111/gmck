@@ -92,7 +92,7 @@ export const Simulator: React.FC = () => {
 
       if (kernelRef.current) {
         kernelRef.current.tick(dt);
-        setVitals({ ...kernelRef.current.vitals });
+        setVitals({ ...kernelRef.current.getLiveVitals() });
         setPathology({ ...kernelRef.current.pathology });
       }
     };
