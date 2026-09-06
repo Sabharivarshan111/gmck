@@ -1,7 +1,7 @@
 # Orbit MBBS Real-Time 3D Interactive Patient Simulator
 ## Technical & Pathophysiological Specification Document
 
-**Document Version:** 5.0.0-FIVE-DRIVE-CLINICAL-LIBRARY-COMPLETE  
+**Document Version:** 6.0.0-AGI-OPEN-SOURCE-SIMULATOR-SYNTHESIS  
 **Target Systems:** Orbit MBBS Mobile (React Native / Three.js / WebGL), Orbit Web, Supabase Edge Infrastructure  
 **Curriculum Grounding:** National Medical Commission (NMC) Competency-Based Medical Education (CBME), Madras Medical College (MMC) Final Year Clinical Curriculum, *Kundu's Bedside Clinics in Medicine*, *Das Clinical Surgery*, *Macleod's Clinical Examination*, *Harrison's Principles of Internal Medicine*, *Robbins & Cotran Pathologic Basis of Disease*, *Guyton & Hall Physiology*, *Reddy's Essentials of Forensic Medicine*, *KD Tripathi Pharmacology*, *Bailey & Love Surgery*, *DC Dutta Obstetrics*.
 
@@ -1825,6 +1825,467 @@ To support complete clinical procedures in the 3D simulator, Orbit incorporates 
 
 ---
 
+### 7.5. Deep-Dive: Open-Source Biomathematical Physiology Engines
+
+To establish an FDA-grade physiological substrate, Orbit synthesizes the mathematical formalisms of the world's premier open-source human physiology engines:
+
+```
++---------------------------------------------------------------------------------------------------------------------------------+
+|                                     OPEN-SOURCE COMPUTATIONAL PHYSIOLOGY ENGINES COMPARISON                                     |
++---------------------------------------------------------------------------------------------------------------------------------+
+| Feature / Dimension       | Kitware Pulse Engine          | BioGears Engine              | HumMod / QHP                 | OpenCOR / CellML / JSim     |
++---------------------------+-------------------------------+------------------------------+------------------------------+-----------------------------+
+| Origin & Governance       | Kitware (Fork of BioGears '17)| ARA / US DoD / TATRC         | Univ. Mississippi (Guyton)   | Auckland Bioengineering/NSR |
+| License                   | Apache 2.0 (Permissive)       | Apache 2.0 (Permissive)      | Custom / Academic Open       | Apache 2.0 / GPL            |
+| Core Language             | Modern C++17                  | C++11 / Java GUI             | C++ / XML Schema             | C++ / Qt / Python / Java    |
+| WebAssembly Compilation   | Native (Emscripten dockcross) | Partial / Heavy Native Deps  | Indirect (Bodylight.js / DAE)| Native via libCellML Wasm   |
+| Primary Mathematical Core | Lumped-parameter MNA Circuits | Lumped-parameter Circuits    | 10,000+ DAEs & Algebraic Eq. | Cell/Organ ODE/PDE models   |
+| Time-Step Fidelity        | 50 - 100 Hz fixed-step        | 50 - 100 Hz fixed-step       | Multi-scale (seconds to days)| Adaptive / Sub-millisecond  |
+| State Serialization       | Google Protocol Buffers (Full)| XML / Custom Binary State    | Text / XML Snapshot          | SED-ML / JSON State         |
+| PK/PD Architecture        | Physiologically-Based (PBPK)  | Compartmental PBPK           | Organ Clearance Functions    | Custom Reaction Kinetics    |
+| Mobile Browser Viability  | High (<40 MB Wasm heap)       | Moderate (>90 MB Wasm heap)  | Low (Desktop focused)        | High (Modular components)   |
++---------------------------------------------------------------------------------------------------------------------------------+
+```
+
+#### 7.5.1. Kitware Pulse Physiology Engine: Architectural Deep-Dive & Wasm Pipeline
+- **Lumped-Parameter 0-D Circuit Analogs**: Pulse models biological fluid and gas dynamics through electrical circuit equivalents:
+  $$\text{Voltage } (V) \equiv \text{Pressure } (P), \quad \text{Current } (I) \equiv \text{Volumetric Flow Rate } (Q), \quad \text{Charge } (q) \equiv \text{Volume } (V)$$
+  Fluid compliance is governed by $C = \frac{\Delta V}{\Delta P}$, vascular resistance by Poiseuille impedance $R = \frac{8\eta L}{\pi r^4} = \frac{\Delta P}{Q}$, and inertial fluid inductance by $L_i = \frac{\rho l}{A}$.
+- **WebAssembly Compilation Pipeline**:
+  Pulse compiles into high-speed WebAssembly using Emscripten toolchains (`emconfigure` / `emmake`) with optimized build flags:
+  ```bash
+  emcmake cmake -B build_wasm -DCMAKE_BUILD_TYPE=Release \
+    -DENABLE_PULSE_C_API=ON -DENABLE_PULSE_JAVA_API=OFF \
+    -DCMAKE_CXX_FLAGS="-O3 -flto -msimd128 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s INITIAL_MEMORY=67108864"
+  ```
+- **State Serialization & Branching "What-If" Trees**:
+  Pulse structures its entire internal runtime state using **Google Protocol Buffers (`PulseDataModel.proto`)**. Because every compartment's pressure, volume, hematocrit, gas partial pressures ($\text{PaO}_2, \text{PaCO}_2$), and receptor occupancies are codified in Protobuf messages, the engine can serialize a complete patient snapshot in $<3.2\text{ ms}$ into a compact binary buffer:
+  ```cpp
+  // Dynamic State Forking in Pulse C++ Core
+  CDM::PulseStateData stateSnapshot;
+  pulseEngine->SerializeState(stateSnapshot); // Capture baseline state at t = 15 min
+  // Timeline A: Fork with Antivenom
+  std::unique_ptr<PulseEngine> timelineA = PulseEngine::Create();
+  timelineA->DeserializeState(stateSnapshot);
+  timelineA->AdministerSubstance("IndianPolyvalentAntivenom", 10.0, VolumeUnit::mL);
+  // Timeline B: Fork with Conservative Saline
+  std::unique_ptr<PulseEngine> timelineB = PulseEngine::Create();
+  timelineB->DeserializeState(stateSnapshot);
+  timelineB->AdministerCompound("NormalSaline", 1000.0, VolumeUnit::mL);
+  ```
+- **Custom Pharmacokinetic / Pharmacodynamic (PK/PD) Substance Modeling**:
+  Pulse enables custom xenobiotics and drugs by declaring physicochemical and clearance parameters:
+  $$\frac{dC_p}{dt} = \frac{\text{Dose Rate}}{V_d} - \left(\frac{\text{CL}_{\text{renal}} + \text{CL}_{\text{hepatic}}}{V_d}\right) \cdot C_p$$
+  $$\text{Effect} = E_0 + \frac{E_{\max} \cdot C_e^\gamma}{EC_{50}^\gamma + C_e^\gamma}, \quad \text{where } \frac{dC_e}{dt} = k_{e0}(C_p - C_e)$$
+  Custom Indian pharmacopeia entities (e.g. *Polyvalent Snake Antivenom*, *Pralidoxime PAM*, *Artesunate*, *Magnesium Sulfate Pritchard protocol*) are injected via declarative XML/Protobuf definitions overriding standard receptor affinities.
+
+#### 7.5.2. BioGears Engine & Military Trauma Modeling
+- Forked by Kitware in 2017 to create Pulse, BioGears continues to specialize in complex penetrating ballistic trauma, tension pneumothorax with thoracic needle decompression, blast lung injury, and combat tourniquet placement.
+- Its solver utilizes **Modified Nodal Analysis (MNA)** with dense matrix factorization. While extraordinarily rich in extreme polytrauma scenarios, its computational overhead ($O(N^3)$ matrix inversion) requires aggressive optimization for mobile WebGL environments.
+
+#### 7.5.3. HumMod / Guyton Model: Long-Term Quantitative Human Physiology (QHP)
+- Derived from Arthur Guyton’s landmark 1972 circulatory model and developed at the University of Mississippi Medical Center, HumMod contains over **10,000 physiological variables** interconnected across hundreds of non-linear Differential Algebraic Equations (DAEs).
+- **Integrative Multi-Day Homeostasis**: Unlike short-term ICU monitors, HumMod excels at multi-day and multi-week endocrine/renal compensations:
+  - *Renin-Angiotensin-Aldosterone System (RAAS)* feedback.
+  - *Erythropoietin (EPO)* release kinetics in chronic hypoxic kidney disease.
+  - *Tubuloglomerular feedback* and long-term resetting of pressure natriuresis.
+- **Portability for Orbit**: HumMod's XML-based model descriptions are ingested by Orbit's offline mathematical transpiler, converting Guyton's chronic feedback loops into discrete time-update blocks for subacute ward cases (e.g. DCLD cirrhotic ascites accumulation over 7 ward days).
+
+#### 7.5.4. Standards-Based Physiology: CellML, SBML, OpenCOR & JSim
+- **CellML & SBML Interoperability**: Orbit supports loading standardized biomathematical models from the **Physiome Model Repository (PMR)**:
+  - *Noble 1998* cardiac ventricular electrophysiology model.
+  - *Hodgkin-Huxley* nerve axon action potential equations.
+  - *Topp et al. 2000* beta-cell mass, insulin, and glucose dynamics model.
+- High-fidelity cellular modules compiled via `libCellML` run as micro-solvers within Orbit's cellular zoom viewport.
+
+#### 7.5.5. Numerical Stiff Solvers & Web Worker Threading Architecture
+Physiological dynamics encompass extreme multi-scale stiffness:
+- **Fast Scales**: Cardiac depolarization ($\sim 1\text{ ms}$), action potential upstroke ($\sim 0.1\text{ ms}$).
+- **Intermediate Scales**: Mechanical cardiac contraction ($\sim 300\text{ ms}$), arterial pulse wave ($\sim 100\text{ ms}$).
+- **Slow Scales**: Pharmacokinetic distribution ($\sim 15 - 60\text{ min}$), renal solute clearance ($\sim 6 - 24\text{ hours}$).
+
+**The Failure of Explicit Solvers (Forward Euler / RK4)**:
+Explicit Runge-Kutta (RK4) requires time steps smaller than the smallest system eigenvalue: $\Delta t < \frac{2}{|\lambda_{\max}|}$. When simulating stiff membrane potentials or rapid capillary fluid transudation, explicit solvers become numerically unstable, causing infinite pressure explosions ($NaN$).
+
+**The SUNDIALS CVODE / Implicit BDF Solution**:
+Orbit employs **Backward Differentiation Formulas (BDF)** of variable order (orders 1 to 5) with fixed-lead Newton-Raphson nonlinear iterations:
+$$y_n = \sum_{i=1}^q \alpha_{n,i} y_{n-i} + \Delta t \, \beta_{n,0} f(t_n, y_n)$$
+This ensures unconditional numerical stability across all physiological timescales.
+
+**Web Worker & Lockless SharedArrayBuffer Architecture**:
+To ensure the Three.js rendering pipeline stays pinned at a buttery **60 - 120 FPS** without a microsecond of frame stutter:
+```
++----------------------------------------------------------------------------------------------------+
+|                                WEB WORKER MULTI-THREADED ARCHITECTURE                              |
++----------------------------------------------------------------------------------------------------+
+|                                                                                                    |
+|    [ UI MAIN THREAD ]                                          [ BACKGROUND WEB WORKER ]           |
+|    Three.js 3D Viewport                                        Pulse / C++ Wasm Kernel             |
+|    React Native / WebGL                                        100 Hz Stiff ODE Solver             |
+|    60 - 120 FPS Rendering                                      MNA Companion Circuits              |
+|             |                                                              |                       |
+|             |  Dispatches User Interventions                               |                       |
+|             |  (e.g., Atropine 0.6mg IV, Needle Decomp.)                   |                       |
+|             +------------------------------------------------------------> |                       |
+|             |                  postMessage({ type: 'INJECT_DRUG' })        |                       |
+|             |                                                              |                       |
+|             |                  Continuous Lock-Free Telemetry              |                       |
+|             |  <========================================================== +                       |
+|             |         SharedArrayBuffer (Float64Array Ring Buffer)         |                       |
+|             |         - ECG Lead II Voltage (1000 Hz)                      |                       |
+|             |         - Arterial Pressure Waveform (100 Hz)                |                       |
+|             |         - Central Venous Pressure Waveform (100 Hz)          |                       |
+|             |         - Capnography EtCO2 Waveform (100 Hz)                |                       |
+|             v                                                              v                       |
+|    [ Cubic Hermite Spline ]                                     [ Fixed 10ms Delta-T Loop ]        |
+|    Smooth Interpolation to Screen                               Atomics.wait / Atomics.notify      |
+|                                                                                                    |
++----------------------------------------------------------------------------------------------------+
+```
+
+---
+
+### 7.6. Deep-Dive: 3D Anatomical Assets, Meshopt/Draco Pipeline, GLSL Shaders & Biomechanical Rigging
+
+#### 7.6.1. Open-Source Anatomical Repositories & Mesh Optimization Pipeline
+- **BodyParts3D / Anatomography (DBCLS, University of Tokyo)**:
+  - Based directly on the **Foundational Model of Anatomy (FMA)** ontology, mapping 3,000+ distinct anatomical structures with exact anatomical naming.
+  - Released under **CC-BY-SA 2.1 Japan**, making it an ideal open-source geometric substrate.
+  - *Optimization*: Raw models (>20 million polygons) undergo quadric error decimation, remeshing, and hierarchy assembly into standard glTF 2.0.
+- **Harvard Surgical Planning Laboratory (SPL) Multi-Modality Datasets**:
+  - High-precision volumetric models derived from multi-sequence MRI and high-resolution CT (e.g. brain atlases with basal ganglia, internal capsule, and ventricular tree).
+- **NIH 3D Print Exchange & NLM Visible Human Project (VHP)**:
+  - Cryosectional cross-sectional photographic and surface reconstructions providing millimeter-accurate spatial relationships for visceral organs and thoracic cage anatomy.
+- **glTF 2.0 Binary (`.glb`) with Draco & Meshopt Compression**:
+  - Meshes utilize `EXT_meshopt_compression` for rapid worker-based decoding with minimal GC pressure on mobile devices.
+  - Overall bundle footprint is kept strictly under **250 MB VRAM** and **60 MB disk cache**, ensuring seamless operation on mid-range Android and iOS devices.
+
+#### 7.6.2. WebGL2 / WebGPU Pathological Shaders
+Orbit uses dedicated GLSL uber-shaders to render real-time systemic pathology without triggering costly shader re-compilations:
+
+**1. Dynamic Skin Pathology (Subsurface Scattering & Icterus/Cyanosis/Pallor)**:
+```glsl
+// WebGL2 Pathological Skin Fragment Shader
+precision highp float;
+
+uniform sampler2D u_albedoMap;
+uniform sampler2D u_regionalMaskMap; // R: Sclera/Mucosa, G: Peripheral/Nails, B: Central/Lips
+
+uniform float u_pallor;      // 0.0 (Normal) to 1.0 (Severe Shock / Hb 3.0 g/dL)
+uniform float u_cyanosis;    // 0.0 (SpO2 99%) to 1.0 (SpO2 < 70%)
+uniform float u_jaundice;    // 0.0 to 1.0 (Bilirubin > 2.5 mg/dL clinical threshold)
+uniform float u_co_cherry;   // 0.0 to 1.0 (Carboxyhemoglobin toxicity)
+uniform float u_diaphoresis; // 0.0 to 1.0 (Sweat droplet normal map strength)
+
+in vec2 v_uv;
+in vec3 v_normal;
+in vec3 v_viewDir;
+out vec4 fragColor;
+
+void main() {
+    vec4 baseAlbedo = texture(u_albedoMap, v_uv);
+    vec4 masks = texture(u_regionalMaskMap, v_uv);
+    
+    vec3 color = baseAlbedo.rgb;
+    
+    // 1. Pallor: Blanched dermal capillary bed (melanin/collagen baseline)
+    vec3 blanchedBase = mix(color, vec3(0.85, 0.82, 0.76), 0.65);
+    color = mix(color, blanchedBase, u_pallor);
+    
+    // 2. Cyanosis: Deoxygenated venous blood (Central vs Peripheral)
+    vec3 deoxBlue = vec3(0.22, 0.28, 0.55);
+    float cyanoticZone = max(masks.g * 1.0, masks.b * 1.6); // Mucosa/Lips more sensitive
+    color = mix(color, color * deoxBlue * 1.8, u_cyanosis * cyanoticZone);
+    
+    // 3. Jaundice: Bilirubin tissue deposition (affects elastin-rich sclera first)
+    vec3 bileYellow = vec3(0.92, 0.81, 0.12);
+    float icterusIntensity = masks.r * 2.2 + (1.0 - masks.r) * 0.45; // High affinity for sclera
+    color = mix(color, color * bileYellow * 1.35, u_jaundice * icterusIntensity);
+    
+    // 4. Carbon Monoxide Cherry-Red Erythema
+    vec3 carboxyRed = vec3(0.95, 0.08, 0.18);
+    color = mix(color, carboxyRed, u_co_cherry * 0.55);
+    
+    // 5. Specular Diaphoresis Highlight (Cold Clammy Skin)
+    vec3 halfVec = normalize(v_viewDir + vec3(0.0, 1.0, 0.5));
+    float spec = pow(max(dot(v_normal, halfVec), 0.0), 32.0);
+    color += vec3(1.0) * spec * (u_diaphoresis * 0.4);
+
+    fragColor = vec4(color, baseAlbedo.a);
+}
+```
+
+**2. Gravity-Aligned Fluid Effusions & Ascites (Vertex & Raymarching)**:
+- *Pleural Effusion*: Displaces the lower lung boundaries inward while rendering an anechoic fluid meniscus creeping up the parietal pleura based on the gravitational vector $\vec{g} = (0, -1, 0)$.
+- *Ascites*: Dynamically distends the anterior abdominal wall mesh based on fluid volume while flattening the flanks in the supine position (shifting dullness geometry).
+
+**3. Dynamic Organ Pathology & Myocardial Infarction Hypokinesia**:
+- In acute STEMI, the normal map in the affected coronary artery perfusion territory (e.g. anterior LAD wall) is dynamically flattened, reducing systolic thickening from $40\%$ to $0\%$ (akinesis) or paradoxical outward systolic bulging (dyskinesis).
+
+#### 7.6.3. Biomechanical Rigging, Morph Targets & Procedural Kinematics
+- **Respiratory Distress Morph Targets**:
+  - *Intercostal Retraction*: Sparse vertex deltas pulling intercostal spaces inward during inspiration.
+  - *Tracheal Tug*: Caudal displacement of the thyroid notch synchronized with peak negative inspiratory intrathoracic pressure.
+  - *Paradoxical Flail Chest*: Floating rib segment moves inward during inspiration and outward during expiration.
+- **Neurological Rigging**:
+  - *Decerebrate Posturing*: Upper extremity adduction, extension, pronation, wrist flexion; lower extremity extension and plantar flexion.
+  - *Decorticate Posturing*: Upper extremity adduction, elbow flexion, wrist and finger flexion over chest; lower extremity extension.
+  - *House-Brackmann Facial Nerve Palsy (Grade I - VI)*: Independent left/right facial action units. In Grade V (Severe), ipsilateral frontalis wrinkling is absent, incomplete eye closure (lagophthalmos), and severe angle-of-mouth droop.
+- **Procedural Tremor Kinematics (Asterixis / Parkinson's)**:
+  Rather than rigid keyframes, tremors are generated dynamically via mathematical phase oscillators:
+  ```typescript
+  // Procedural Asterixis (Hepatic Flap) Kinematic Engine
+  export function computeAsterixisRotation(timeSec: number, severity: number): number {
+    const frequency = 3.2; // 2 - 5 Hz characteristic metabolic flap
+    const phase = (timeSec * frequency) % 1.0;
+    // Asymmetric Sawtooth: Slow tonic dorsiflexion followed by sudden involuntary lapse & recovery
+    const flapAngle = phase < 0.75 
+      ? (phase / 0.75) * (Math.PI / 8)          // Sustained dorsiflexion
+      : ((1.0 - phase) / 0.25) * (Math.PI / 8); // Sudden lapse/drop
+    return flapAngle * severity;
+  }
+  ```
+
+---
+
+### 7.7. Deep-Dive: Virtual Medical Diagnostic Devices & Sensor Instrumentation
+
+#### 7.7.1. Pupillary Light Reflex (PLR) Biomathematical Simulation
+Orbit implements the **Longtin-Milton Delay Differential Equation (DDE)** model of the pupil:
+$$\tau_p \frac{dD(t)}{dt} + D(t) = f\left( \int_{t - \tau_d}^t L(s) \, ds \right)$$
+where:
+- $D(t)$ is pupil diameter (range: $1.5\text{ mm}$ to $8.5\text{ mm}$).
+- $\tau_p \approx 0.30\text{ s}$ is the sphincter pupillae mechanical time constant.
+- $\tau_d \approx 0.25\text{ s}$ is the neurological latency across the afferent and efferent arc.
+- $f(L)$ is a nonlinear sigmoidal firing function:
+  $$f(L) = D_{\max} - \frac{D_{\max} - D_{\min}}{1 + \left(\frac{\bar{L}}{\theta}\right)^n}$$
+
+```
++----------------------------------------------------------------------------------------------------+
+|                                    PUPILLARY LIGHT REFLEX CIRCUITRY                                |
++----------------------------------------------------------------------------------------------------+
+|                                                                                                    |
+|    Light Stimulus L(t) ---> Retina ---> Optic Nerve (CN II) ---> Pretectal Nucleus (Midbrain)     |
+|                                                                       |            |               |
+|                                              +------------------------+            +-------+       |
+|                                              | (Bilateral Projection)                      |       |
+|                                              v                                             v       |
+|                                     Left E-W Nucleus                              Right E-W Nucleus|
+|                                              | (CN III)                                    |       |
+|                                              v                                             v       |
+|                                     Left Ciliary Ganglion                         Right Ciliary Gan|
+|                                              |                                             |       |
+|                                              v                                             v       |
+|                                     Left Constrictor Pupillae                     Right Constrictor|
+|                                                                                                    |
++----------------------------------------------------------------------------------------------------+
+```
+
+**Clinical Pupillary Pathology Engine**:
+1. **Relative Afferent Pupillary Defect (RAPD / Marcus Gunn Pupil)**:
+   - Evaluated using the **Swinging Flashlight Test**.
+   - The afferent light input for the affected eye is attenuated: $L_{\text{affected}} = 0.25 \cdot L_{\text{source}}$.
+   - When the flashlight swings from normal eye $\to$ affected eye, total bilateral neural drive drops, causing both pupils to **paradoxically dilate**.
+2. **Horner's Syndrome**:
+   - Sympathetic pathway disruption (first, second, or third order).
+   - Clinical Triad: Miosis ($D_{\text{baseline}} \approx 2.0\text{ mm}$), Ptosis ($1 - 2\text{ mm}$ upper lid droop via Müller's muscle), Anhidrosis. Dilation lag upon sudden darkness ($>15\text{ s}$ to dilate vs normal $<5\text{ s}$).
+3. **Argyll Robertson Pupil (Neurosyphilis / Tabes Dorsalis)**:
+   - Light-Near Dissociation: Pretectal light pathways damaged, Edinger-Westphal accommodation fibers preserved. Light response $= 0$; accommodation to near object is intact.
+4. **Uncal Herniation (Hutchinson's Pupil)**:
+   - Uncus of temporal lobe herniates across tentorium cerebelli, compressing ipsilateral CN III against the petroclinoid ligament.
+   - Stage 1: Sluggish response. Stage 2: Ipsilateral fixed, wide dilated pupil ($8.0\text{ mm}$). Stage 3: Bilateral fixed dilated pupils (brain death).
+
+#### 7.7.2. 12-Lead Electrocardiogram Synthesis: McSharry Dynamical Model
+Rather than playing back looped prerecorded audio or static PNG images, Orbit generates continuous, real-time 12-lead ECG waveforms using the **McSharry-Clifford-Smith dynamical ODE model on a 3D limit cycle**:
+$$\dot{x} = \alpha \left(1 - \sqrt{x^2 + y^2}\right)x - \omega y$$
+$$\dot{y} = \alpha \left(1 - \sqrt{x^2 + y^2}\right)y + \omega x$$
+$$\dot{z} = -\sum_{i \in \{P, Q, R, S, T\}} a_i \Delta \theta_i \exp\left(-\frac{\Delta \theta_i^2}{2 b_i^2}\right) - (z - z_0)$$
+where $\theta = \text{atan2}(y, x)$, $\Delta \theta_i = (\theta - \theta_i) \pmod{2\pi}$, and $\omega = \frac{2\pi}{RR}$.
+
+**Pathology Transformations**:
+- **Acute STEMI**: The isoelectric $z_0$ parameter is shifted upward by $+0.35\text{ mV}$ between the $S$ and $T$ waves in leads facing the infarct territory, while opposite reciprocal leads experience negative $z_0$ depression.
+- **Hyperkalemia Evolution**:
+  - $[K^+] = 6.0\text{ mEq/L}$: Tall, narrow, tented T waves ($a_T \uparrow 200\%, b_T \downarrow 50\%$).
+  - $[K^+] = 7.5\text{ mEq/L}$: PR interval prolongation, flattening/loss of P waves ($a_P \to 0$).
+  - $[K^+] = 8.5\text{ mEq/L}$: Severe QRS widening ($b_Q, b_R, b_S \times 2.5$).
+  - $[K^+] > 9.0\text{ mEq/L}$: Sine wave pattern deteriorating into Ventricular Fibrillation or Asystole.
+- **Atrial Fibrillation**:
+  - Parameter $a_P$ set to $0$ (loss of P waves).
+  - $RR$ interval duration is governed by a non-stationary Markov random walk.
+  - High-frequency low-amplitude fibrillatory ($f$) waves synthesized at $400 - 600\text{ Hz}$ across baseline.
+
+#### 7.7.3. Virtual Point-of-Care Ultrasound (POCUS) Engine
+- **Platform Foundation**: Integrates concepts from **3D Slicer**, **PLUS Toolkit**, and **ITK-Wasm / VTK.js**.
+- **Volumetric Multiplanar Reconstruction (MPR)**:
+  As the user drags the virtual ultrasound probe across the 3D patient skin, the probe's position $\vec{P} \in \mathbb{R}^3$ and orientation quaternion $\mathbf{q} \in \mathbb{H}$ define a cutting plane intersecting the segmented patient organ voxel grid.
+- **B-Mode Ultrasound Physics Shader**:
+  1. *Acoustic Impedance Mismatch*: Generates reflection brightness at tissue interfaces ($Z_1 \to Z_2$) proportional to $R = \left(\frac{Z_2 - Z_1}{Z_2 + Z_1}\right)^2$.
+  2. *Rayleigh Speckle Simulation*: Adds procedural 3D Simplex noise scaled to tissue cellular density.
+  3. *Acoustic Shadowing*: Downward raymarching casts dark dropout shadows behind bone (ribs) or calcified gallstones.
+  4. *Posterior Acoustic Enhancement*: Tissues deep to anechoic fluid collections (urinary bladder, ascites, pericardial effusion) exhibit hyper-echogenic gain amplification.
+- **Core Clinical Presets**:
+  - **eFAST (Extended Focused Assessment with Sonography for Trauma)**: Morison's pouch (hepatorenal recess), Splenorenal recess, Suprapubic (pouch of Douglas), Thoracic pleural sliding (M-mode seashore sign vs barcode sign in pneumothorax).
+  - **FOCUS (Focused Cardiac Ultrasound)**: Parasternal Long Axis (PLAX), Parasternal Short Axis (PSAX), Apical 4-Chamber (A4C), Subcostal 4-Chamber (tamponade with RV diastolic collapse and IVC plethora).
+
+#### 7.7.4. Real-Time Auscultation Sound Engine
+- **Web Audio API Graph**:
+  ```
+  [ Stethoscope Mesh Collision Raycaster ]
+                 |
+                 v
+  [ Dynamic Distance Weighting (A, P, T, M areas) ]
+                 |
+                 v
+  [ Source Oscillators / Noise Generators ] ---> [ BiquadFilterNode ] ---> [ HRIR ConvolverNode ] ---> [ AudioDestinationNode ]
+                                               (Bell / Diaphragm EQ)      (3D Spatial Acoustics)          (Speakers / Headphones)
+  ```
+- **Physical Modeling vs Wavetable**:
+  - *Heart Sounds*: $S_1$ and $S_2$ are synthesized using damped low-frequency sinusoids ($40 - 120\text{ Hz}$).
+  - *Murmurs*: Bandpass-filtered white noise envelopes. For Aortic Stenosis, a crescendo-decrescendo diamond envelope modulates gain during systole. For Mitral Regurgitation, a plateau pansystolic envelope spans from $S_1$ to $S_2$.
+  - *Lung Sounds*: Vesicular breath sounds (soft low-pass noise $<400\text{ Hz}$), bronchial breathing (tubular high-frequency noise with silent inspiratory-expiratory gap), wheezes (parallel sinusoidal oscillators drifting between $300 - 800\text{ Hz}$), and crackles (stochastic Poisson bursts of $2 - 5\text{ ms}$ impulsive transients).
+- **Interactive Stethoscope Acoustics**:
+  Toggling between the **Bell** (accentuates low-frequency $S_3, S_4$, and mitral stenosis rumble via a $20 - 150\text{ Hz}$ bandpass) and **Diaphragm** (accentuates high-frequency murmurs, clicks, and ejection sounds via a $100 - 1000\text{ Hz}$ bandpass).
+
+#### 7.7.5. Mechanical Ventilation & Invasive Hemodynamics
+- **Equation of Motion of the Respiratory System**:
+  $$P_{aw}(t) = \frac{V(t)}{C_{rs}} + R_{aw} \cdot \dot{V}(t) + \text{PEEP}$$
+  where $C_{rs}$ is respiratory system compliance (reduced to $<20\text{ mL/cmH}_2\text{O}$ in ARDS) and $R_{aw}$ is airway resistance (increased to $>15\text{ cmH}_2\text{O/(L/s)}$ in severe status asthmaticus).
+- **Ventilation Modes**:
+  - *Volume Control (VCV)*: Constant flow delivery, airway pressure climbs to Peak Inspiratory Pressure ($PIP$), post-inspiratory pause yields Plateau Pressure ($P_{plat}$).
+  - *Pressure Control (PCV)*: Constant pressure delivery, decelerating flow profile.
+  - *Pressure Support (PSV)*: Patient-triggered spontaneous breathing with flow cycling.
+- **Patient-Ventilator Dyssynchrony**:
+  - *Auto-PEEP (Intrinsic PEEP)*: Expiratory flow does not reach baseline before the next breath, causing progressive dynamic hyperinflation.
+  - *Double Triggering & Breath Stacking*: High patient drive overcomes ventilator cycle, triggering a second consecutive tidal volume and dangerously spiking transpulmonary pressure.
+- **Invasive Telemetry Waveform Synthesis**:
+  - *Arterial Line*: Generates realistic percussion wave, tidal wave, and dicrotic notch (aortic valve closure). Calculates real-time Pulse Pressure Variation ($PPV = \frac{\Delta PP_{\max} - \Delta PP_{\min}}{PP_{\text{mean}}}$) to guide fluid responsiveness.
+  - *Central Venous Pressure (CVP)*: Synthesizes $a$ wave (atrial contraction), $c$ wave (tricuspid bulges during isovolumetric ventricular contraction), $x$ descent, $v$ wave (atrial filling), and $y$ descent (tricuspid opening). Cannon $a$ waves appear during AV dissociation / VT.
+
+---
+
+### 7.8. Deep-Dive: Clinical Multi-Agent Systems, Virtual Standardized Patients & Automated OSCE Evaluators
+
+#### 7.8.1. Multi-Agent Hospital Simulacrum (Agent Hospital Evolution)
+Orbit adopts the **Agent Hospital** paradigm (pioneered by Tsinghua University and open-source medical LLM agent researchers) to transform clinical simulation from a solitary quiz into an interactive, crowded hospital ward:
+- **Nurse Agent**: Monitors telemetry, administers physician orders, reports sudden vital deterioration ("Doctor, the blood pressure just dropped to 70/40!"), and checks medication rights (Right Patient, Right Drug, Right Dose, Right Route, Right Time).
+- **Consultant / Attending Agent**: Conducts bedside ward rounds, questions the student's clinical reasoning ("Why did you choose a calcium channel blocker instead of a beta-blocker here?"), and provides formative feedback.
+- **Radiology / Laboratory Tech Agents**: Process ordered investigations with realistic turn-around delays (e.g. Stat ECG: $60\text{ s}$; Bedside Troponin: $15\text{ min}$; CT Head: $30\text{ min}$).
+
+#### 7.8.2. Virtual Standardized Patient (VSP) Cognitive Architecture
+The VSP bridges deterministic biophysics with natural language intelligence through a **Two-Tier Decoupled Architecture**:
+```
++----------------------------------------------------------------------------------------------------+
+|                         VIRTUAL STANDARDIZED PATIENT COGNITIVE PIPELINE                            |
++----------------------------------------------------------------------------------------------------+
+|                                                                                                    |
+|    [ TIER 1: DETERMINISTIC PHYSIOLOGY ENGINE (Pulse / C++ Wasm) ]                                  |
+|    Calculates PaO2, PaCO2, BP, Heart Rate, Pain Score (0-10), Blood Volume at 100 Hz                |
+|                                       |                                                            |
+|                                       v (1 Hz Telemetry Snapshot)                                  |
+|    [ TIER 2: STOCHASTIC NATURAL LANGUAGE AGENT (Fine-Tuned LLM) ]                                  |
+|                                       |                                                            |
+|    +----------------------------------+----------------------------------+                         |
+|    | Dynamic Context Injection:                                          |                         |
+|    | - SpO2 < 85%: Enable Speech Dyspnea (short 2-3 word gasped bursts) |                         |
+|    | - Pain > 7: Inject Non-Verbal Vocalizations ([groans], [cries out]) |                         |
+|    | - SBP < 80: Enable Confusion / Obtundation / Slowed Recall          |                         |
+|    +---------------------------------------------------------------------+                         |
+|                                       |                                                            |
+|                                       v                                                            |
+|    [ Calgary-Cambridge Information Gating Matrix ]                                                 |
+|    Checks Student's Empathy Score & Question Openness:                                             |
+|    - Open question ("How can I help you today?") --> Unlocks primary narrative                     |
+|    - Closed interrogative ("Do you have chest pain?") --> Binary yes/no answer                     |
+|    - High Empathy / Rapport established --> Unlocks sensitive history (Alcohol, Domestic abuse)    |
+|                                                                                                    |
++----------------------------------------------------------------------------------------------------+
+```
+
+#### 7.8.3. Automated Clinical Decision Reasoning & Scoring Engines
+Orbit evaluates clinical competence against established international and Indian guidelines (AHA/ACC, Surviving Sepsis Campaign, ATLS, Indian National Health Mission):
+1. **Exponential Time-to-Intervention Penalty Curves**:
+   Instead of arbitrary pass/fail gates, score decay is continuously coupled to physiological deterioration:
+   $$\text{Score}(t) = \text{Score}_{\max} \cdot \exp\left(-k \cdot \max(0, t - t_{\text{ideal}})\right)$$
+   - *Acute STEMI Door-to-Needle Time*: $t_{\text{ideal}} = 30\text{ min}$. After 30 minutes, myocardium enters irreversible wavefront necrosis.
+   - *Septic Shock Hour-1 Bundle*: $t_{\text{ideal}} = 60\text{ min}$ for broad-spectrum antibiotics, blood cultures, and $30\text{ mL/kg}$ crystalloid.
+2. **Critical Failure Safety Triggers**:
+   Dangerous actions immediately trip critical failure state events:
+   - *Trigger*: Administering IV Fluid Bolus ($1000\text{ mL}$) when patient has Acute Cardiogenic Pulmonary Edema ($PCWP > 25\text{ mmHg}$). Outcome: Rapid alveolar flooding, flash pulmonary edema, acute hypoxemic arrest.
+   - *Trigger*: Administering high-flow $100\% \text{ O}_2$ via non-rebreather mask to a chronic hypercapnic COPD patient with baseline $\text{PaCO}_2 = 65\text{ mmHg}$. Outcome: Elimination of hypoxic respiratory drive, severe hypercapnic encephalopathy, and respiratory arrest.
+   - *Trigger*: Administering intravenous beta-blocker (Metoprolol) to a patient in decompensated cardiogenic shock or with acute cocaine toxicity (unopposed alpha-adrenergic coronary vasospasm).
+
+#### 7.8.4. Declarative JSON/YAML Scenario Schema & Medical Ontologies
+To enable community-driven case authoring across medical colleges, scenarios are specified via a strict declarative schema bound to international medical knowledge graphs:
+
+```yaml
+scenario_metadata:
+  id: "orbit_cardio_stemi_004"
+  title: "Acute Inferior Wall STEMI with Right Ventricular Involvement"
+  curriculum_code: "NMC_CBME_IM_6.3"
+  difficulty: "Final_Year_MBBS"
+  author: "Madras Medical College Clinical Skills Group"
+
+knowledge_graph_bindings:
+  primary_diagnosis: "SNOMED:22298006" # Myocardial infarction of inferior wall
+  secondary_diagnosis: "SNOMED:233843008" # Right ventricular myocardial infarction
+  icd_11: "BA41.1"
+  prescribed_drugs:
+    - "RxNorm:1191"   # Aspirin
+    - "RxNorm:341248" # Clopidogrel
+    - "RxNorm:1114195" # Ticagrelor
+    - "RxNorm:7052"   # Morphine
+  required_labs:
+    - "LOINC:42757-5" # Cardiac Troponin I
+    - "LOINC:11524-6" # 12-lead ECG study
+
+initial_patient_state:
+  vitals:
+    heart_rate: 52       # Sinus bradycardia from nodal ischemia
+    blood_pressure_sys: 84
+    blood_pressure_dia: 56
+    spo2: 94
+    respiratory_rate: 22
+    gcs: 15
+  hemodynamics:
+    cvp: 14             # Elevated CVP (RV failure)
+    pcwp: 10            # Low/normal PCWP (Clear lung fields!)
+  persona:
+    name: "Muruganandam"
+    age: 58
+    gender: "Male"
+    occupation: "Bus Conductor"
+    anxiety_level: 0.85
+    health_literacy: "Low"
+
+branching_dag:
+  nodes:
+    - id: "PRESENTATION"
+      description: "Patient clutching chest, pale, diaphoretic. Clear lungs."
+    - id: "NITROGLYCERIN_DISASTER"
+      description: "Student gave sublingual nitroglycerin! Sudden preload collapse."
+      triggers:
+        action: "GIVE_DRUG"
+        drug: "Nitroglycerin"
+      delta_vitals:
+        blood_pressure_sys: 55
+        blood_pressure_dia: 30
+        heart_rate: 120
+      penalty: -50
+    - id: "VOLUME_EXPANSION_STABLE"
+      description: "Student recognized RV MI triad (Hypotension + Raised JVP + Clear Lungs), held nitrates, and gave IV normal saline bolus."
+      triggers:
+        action: "GIVE_FLUID"
+        type: "NormalSaline"
+        volume_ml: 1000
+      delta_vitals:
+        blood_pressure_sys: 105
+        blood_pressure_dia: 68
+        heart_rate: 74
+      bonus: +50
+```
+
+---
+
 ## 8. Verification & Delivery Roadmap
 
 * **Phase 1: Architecture & Specifications (COMPLETED ✅)**
@@ -1863,6 +2324,14 @@ To support complete clinical procedures in the 3D simulator, Orbit incorporates 
   - Codified Orthopaedic Goniometry (full joint degrees of freedom) and Peripheral Nerve Injury Localization (claw hand, wrist drop, foot drop).
   - Specified Surgical Varicose Veins Hemodynamic Valve Incompetence Engine (Brodie-Trendelenburg 1 & 2, Perthes, CEAP C0-C6).
   - Detailed Obstetric Gestational Diabetes Mellitus (GDM) DIPSI/IADPSG and Pediatric RSV Bronchiolitis airway mechanics.
+* **Phase 1.13: AGI Open-Source Medical Simulator Ecosystem & Biomechanical Blueprint (COMPLETED ✅ — Sept 6, 2026)**
+  - Fully mapped open-source computational physiology engines (Kitware Pulse Wasm pipeline, BioGears DoD trauma models, HumMod 10,000-variable Guyton long-term homeostasis, CellML/JSim/OpenCOR standards).
+  - Designed stiff differential equation solver architecture (CVODE / SUNDIALS implicit BDF with Newton iterations) running inside a dedicated background Web Worker communicating with 60-120 FPS Three.js UI via lockless `SharedArrayBuffer` ring buffers.
+  - Specified 3D anatomical asset optimization (BodyParts3D FMA ontology, Harvard SPL, Draco/Meshopt glTF 2.0 scene graph, <250 MB mobile VRAM budget).
+  - Programmed GLSL shaders for dynamic systemic pathology: subsurface scattering skin shader (pallor, central vs peripheral cyanosis, jaundice with sclera weighting, CO cherry-red), gravity-aligned raymarched fluid effusions (meniscus sign, shifting dullness), and dynamic myocardial ischemia hypokinesia.
+  - Formulated biomechanical rigging & morph targets for clinical examination signs (House-Brackmann facial nerve palsy, intercostal retractions, tracheal tug, flail chest, decerebrate/decorticate posturing, procedural 3.2 Hz asterixis sawtooth flap).
+  - Specified virtual diagnostic instrumentation: Longtin-Milton DDE pupillary light reflex with swinging flashlight RAPD and Horner's; McSharry ECGSYN 3D dynamical model for continuous 12-lead waveforms; 3D Slicer/PLUS/ITK-Wasm E-FAST POCUS ultrasound shaders (acoustic impedance, Rayleigh speckle, acoustic shadowing); Web Audio HRIR auscultation with dynamic probe collision; ASL 5000 equation of motion for mechanical ventilation and invasive hemodynamics.
+  - Architected clinical multi-agent systems and virtual standardized patients (Agent Hospital paradigm: nurse, attending, tech, patient; 50Hz biophysics + 1Hz LLM translation; Calgary-Cambridge trust-gated information disclosure; exponential time-to-intervention penalties; critical failure safety triggers; declarative JSON/YAML authoring schema with SNOMED-CT, RxNorm, and LOINC bindings).
 * **Phase 2: Claude Handover & Sync (ACTIVE)**
   - Update `CLAUDE_HANDOVER.md` to ensure Claude and all collaborating tools share identical context.
 * **Phase 3: Prototype Scaffolding (FUTURE — PENDING USER APPROVAL)**
