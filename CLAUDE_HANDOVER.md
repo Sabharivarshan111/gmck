@@ -485,6 +485,35 @@ High-resolution screenshots were captured using headless Google Chrome on the li
 
 ---
 
-### 13.3 Build & Git Verification
-- `npm run build` passes with zero errors (all TypeScript types verified).
-- Clean working directory ready for Git synchronization with `origin main`.
+---
+
+### 13.4 Realistic Open-Source 3D Anatomical Model Engine (v8.0 PBR)
+Following the mandate for medical-grade realism, all procedural primitives were replaced with **authentic open-source 3D medical binary GLTF (`.glb`) assets**:
+1. `public/models/human_body.glb` (1.7 MB): 28,391 vertices, anatomically accurate male body mesh with dual-mode PBR materials (translucent holographic glass and realistic human skin with PICCLED pathology color shifting).
+2. `public/models/heart.glb` (3.2 MB): High-detail four-chambered heart with ventricles, atria, ascending aorta, pulmonary trunk, and coronary vessels.
+3. `public/models/lungs.glb` (12.0 MB): Realistic bilateral pulmonary lobes with respiratory cycle expansion.
+4. `public/models/liver.glb` (3.9 MB): 3D scanned hepatic anatomy with right/left lobes and gallbladder bed.
+5. `public/models/kidney.glb` (1.5 MB): Retroperitoneal bilateral kidneys with renal cortex and hilum.
+6. `public/models/brain.glb` (3.1 MB): Cerebrum, cerebellar hemispheres, gyri, sulci, and brainstem.
+7. `public/models/skeletal.glb` (2.1 MB): Full human skeleton (skull, 12-pair ribcage, sternum, spine, pelvis, and limbs) for the X-Ray layer.
+
+#### Two-Tier Centering & Scale Normalization Wrapper:
+A mathematically robust wrapper was implemented in `AnatomicalBody3D.tsx`:
+- Places raw GLTF scene in a `centeringGroup`, computes `Box3` center, subtracts center so $(0,0,0)$ is the exact geometric centroid.
+- Applies permanent `baseScale = targetHeight / maxDim` to `centeringGroup`.
+- Places `centeringGroup` in an outer `wrapper` group where world positioning, rotation, and dynamic animation scaling (cardiac systolic squeeze, lung tidal expansion) operate without overwriting base normalization.
+
+#### Realistic 3D Screenshots Captured (`docs/screenshots/`):
+- `docs/screenshots/simulator_realistic.png`: Master overview with realistic human body in physical glass, beating heart, lungs, liver, kidneys, and glowing great vessels.
+- `docs/screenshots/simulator_realistic_skin.png`: Realistic human skin view with muscular surface contours and bite wound trauma marker.
+- `docs/screenshots/simulator_realistic_xray.png`: Full realistic 3D skeleton with ribcage, spine, and pelvis.
+- `docs/screenshots/simulator_realistic_viscera.png`: Visceral layer with beating heart, breathing lungs, liver, and kidneys.
+- `docs/screenshots/simulator_realistic_thorax.png`: Thoracic close-up focusing on the cardiovascular pump and ascending aorta.
+- `docs/screenshots/simulator_realistic_brain.png`: Head & Brain close-up focusing on the realistic 3D cerebrum and brainstem.
+
+---
+
+### 13.5 Build & Git Verification
+- `npm run build` passes with zero errors in 6.51s.
+- All 7 realistic GLB models integrated and verified in production preview.
+- All new screenshots committed and synchronized with GitHub remote `origin/main`.

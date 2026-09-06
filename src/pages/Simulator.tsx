@@ -143,6 +143,7 @@ export const Simulator: React.FC = () => {
               pathology={pathology}
               layer={activeLayer}
               scenarioId={currentScenarioId}
+              cameraPreset={(searchParams.get('camera') as any) || 'anterior'}
             />
           </div>
 
