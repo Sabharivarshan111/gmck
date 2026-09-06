@@ -22,6 +22,7 @@ import Pathology from "./pages/subjects/Pathology";
 import Pharmacology from "./pages/subjects/Pharmacology";
 import Biochemistry from "./pages/subjects/Biochemistry";
 import Microbiology from "./pages/subjects/Microbiology";
+import Simulator from "./pages/Simulator";
 import GlobalCelebrations from "./components/GlobalCelebrations";
 import ExamReminderPopup from "./components/ExamReminderPopup";
 import DailyAdConsent from "./components/DailyAdConsent";
@@ -86,6 +87,7 @@ const App = () => (
               <Route path="/subjects/pharmacology" element={<Pharmacology />} />
               <Route path="/subjects/biochemistry" element={<Biochemistry />} />
               <Route path="/subjects/microbiology" element={<Microbiology />} />
+              <Route path="/simulator" element={<Simulator />} />
             </Routes>
           </BrowserRouter>
         </PomodoroProvider>

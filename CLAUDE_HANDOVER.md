@@ -430,5 +430,61 @@ Codified via 4 specialized frontier research subagents covering neonatal transit
   - Massive Transfusion Protocol (MTP): Citrate chelation hypocalcemia and storage RBC potassium leakage hyperkalemia.
 - **Advanced Receptor-Bound Toxidromes**:
   - Organophosphate (OP) Poisoning: AChE active-site phosphorylation; oxime reactivation rate $k_{\text{react}}$ vs irreversible enzyme aging rate $k_{\text{aging}}$. Atropine competitive muscarinic receptor occupancy target ($>80\%$) titrated to the "Five Clearings".
-  - Cyanide Toxicity: Complex IV cytochrome $c$ oxidase ($	ext{Fe}^{3+}$) inhibition; cessation of oxidative phosphorylation, severe lactic acidosis ($>10\text{ mmol/L}$), arterialization of venous blood ($\text{ScvO}_2 > 90\%$); Hydroxocobalamin antidote kinetics forming cyanocobalamin (Vitamin $\text{B}_{12}$).
+  - Cyanide Toxicity: Complex IV cytochrome $c$ oxidase ($\text{Fe}^{3+}$) inhibition; cessation of oxidative phosphorylation, severe lactic acidosis ($>10\text{ mmol/L}$), arterialization of venous blood ($\text{ScvO}_2 > 90\%$); Hydroxocobalamin antidote kinetics forming cyanocobalamin (Vitamin $\text{B}_{12}$).
   - Carbon Monoxide Poisoning: Haldane affinity constant $M = 240$; leftward oxyhemoglobin shift; elimination half-life curve ($320\text{ min}$ room air $\to 80\text{ min}$ $100\%\text{ O}_2 \to 23\text{ min}$ HBO $3.0\text{ ATA}$).
+
+---
+
+## 13. Interactive 3D Patient Simulator: Live Implementation & Verification Handover
+
+### 13.1 Scaffolding Architecture
+The production-grade interactive **3D Virtual Patient Simulator** is now live and fully integrated into the Orbit MBBS React application at the `/simulator` route.
+
+#### Core Source Files Created:
+1. `src/simulator/types.ts`:
+   - Full TypeScript domain definitions: `PatientVitals`, `PatientPathologyState`, `ScenarioDefinition`, `TelemetryWaveformSample`, `AnatomicalLayer`, and `DiagnosticToolType`.
+2. `src/simulator/engine/PhysiologyKernel.ts`:
+   - 100 Hz closed-loop differential physiology engine.
+   - Synthesizes dynamic McSharry Lead II ECG, Windkessel arterial line with dicrotic notch, central venous pressure (a, c, v waves), EtCO2 square capnography, and SpO2 plethysmography.
+   - Pre-loaded with 4 core scenarios: Russell's Viper Envenomation, Acute Inferior STEMI with RV MI, Septic Shock, and Decompensated Cirrhosis.
+   - Implements lethal triggers (e.g. Nitroglycerin in RV infarction precipitating acute RV preload loss and Ventricular Fibrillation).
+3. `src/simulator/view/AnatomicalBody3D.tsx`:
+   - Three.js procedural PBR anatomical system running at 60 FPS.
+   - Sculpted humanoid silhouette (cranium with brain, cervical neck, deltoids, pectorals, tapered torso, pelvis, limbs).
+   - Viscera: Beating crimson heart (systolic/diastolic squeeze), expanding lungs with tidal breathing, reddish-brown liver (jaundiced yellow in cirrhosis), retroperitoneal kidneys, and golden ascites envelope.
+   - Glowing arterial (red) and venous (blue) vascular branches with Windkessel pulse wave propagation.
+   - Raycasting interaction for all organs, displaying clinical bedside signs and physiological parameters.
+   - Seamless layer toggles: `'glass'`, `'skin'`, `'vascular'`, `'viscera'`, `'skeletal'`.
+4. `src/simulator/instruments/IcuMonitor.tsx`:
+   - Philips IntelliVue / Mindray style multiparameter patient monitor.
+   - 25 mm/s canvas sweep with glowing phosphor traces for Lead II ECG, Arterial Line, SpO2 Pleth, and Capnography.
+   - Web Audio QRS beep generator with pitch dynamically keyed to SpO2 saturation.
+5. `src/simulator/instruments/DiagnosticTools.tsx`:
+   - **Pupillometry**: Direct/consensual pupillary light reflex with penlight and millimeter gauge.
+   - **POCUS Ultrasound**: 2D sector B-mode scan for subxiphoid cardiac view (pericardial effusion stripe), eFAST Morison's pouch, and lung sliding.
+   - **Stethoscope**: Auscultation at Mitral, Aortic, and lung bases with acoustic synthesis (S1, S2, S3 gallop, crackles).
+   - **12-Lead ECG**: Pink calibration paper displaying Leads I-III, aVR, aVL, aVF, V1-V6 with ST elevation and reciprocal depression.
+6. `src/simulator/controls/InterventionPanel.tsx`:
+   - Scenario switcher, layer toggles, bedside diagnostic triggers, resuscitation action buttons, and real-time event log.
+7. `src/pages/Simulator.tsx`:
+   - Master page connecting 3D Viewport, ICU Monitor, Intervention Panel, and Diagnostic Tools.
+   - Supports URL search parameters (`?scenario=...&tool=...&layer=...&action=...`) for automated testing and deep-linking.
+8. `src/App.tsx` & `src/components/shell/HomeTab.tsx`:
+   - Route `/simulator` registered.
+   - Glowing promotional banner added to the home screen for one-tap student access.
+
+---
+
+### 13.2 Captured Visual Evidence
+High-resolution screenshots were captured using headless Google Chrome on the live Vite preview server and are stored in `docs/screenshots/`:
+- `docs/screenshots/simulator_overview.png`: Full simulator layout, procedural 3D glass anatomy, and 25 mm/s ICU telemetry sweep.
+- `docs/screenshots/simulator_ecg12.png`: 12-Lead ECG showing hyperacute ST elevation in Leads II, III, aVF.
+- `docs/screenshots/simulator_pocus.png`: Point-of-Care Ultrasound displaying subxiphoid cardiac view and pericardial effusion.
+- `docs/screenshots/simulator_pupil.png`: Bedside pupillometry tool with interactive penlight and millimeter scale.
+- `docs/screenshots/simulator_stemi_collapse.png`: Lethal trigger response: Nitroglycerin collapsing blood pressure to 48/24 and triggering Ventricular Fibrillation.
+
+---
+
+### 13.3 Build & Git Verification
+- `npm run build` passes with zero errors (all TypeScript types verified).
+- Clean working directory ready for Git synchronization with `origin main`.

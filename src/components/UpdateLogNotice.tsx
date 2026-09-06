@@ -37,6 +37,7 @@ export default function UpdateLogNotice() {
   useEffect(() => {
     const t = setTimeout(() => {
       try {
+        if (typeof window !== "undefined" && window.location.pathname.startsWith("/simulator")) return;
         if (localStorage.getItem(FLAG_KEY) === "shown") return;
         setOpen(true);
       } catch { /* ignore */ }
