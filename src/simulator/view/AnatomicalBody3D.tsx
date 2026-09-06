@@ -10,7 +10,10 @@ interface AnatomicalBody3DProps {
   layer: AnatomicalLayer;
   scenarioId: string;
   cameraPreset?: 'anterior' | 'head' | 'thorax' | 'abdomen';
-  onSelectOrgan?: (organ: { name: string; description: string; clinicalSign: string }) => void;
+  theme?: 'light' | 'dark';
+  selectedOrganId?: string | null;
+  onSelectOrganId?: (organId: string) => void;
+  onSelectOrgan?: (organ: { name: string; description: string; clinicalSign: string; organId?: string }) => void;
 }
 
 // Utility to center any loaded model to (0,0,0) and scale to target height
@@ -54,6 +57,9 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
   layer,
   scenarioId,
   cameraPreset,
+  theme = 'light',
+  selectedOrganId,
+  onSelectOrganId,
   onSelectOrgan,
 }) => {
   const mountRef = useRef<HTMLDivElement>(null);
@@ -61,6 +67,7 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
     name: string;
     description: string;
     clinicalSign: string;
+    organId?: string;
   } | null>(null);
   const [loadProgress, setLoadProgress] = useState<number>(0);
   const [modelsReady, setModelsReady] = useState<boolean>(false);
@@ -83,8 +90,18 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
   const skeletalWrapperRef = useRef<THREE.Group | null>(null);
   const ascitesMeshRef = useRef<THREE.Mesh | null>(null);
   const traumaMarkerRef = useRef<THREE.Group | null>(null);
+  const gridHelperRef = useRef<THREE.GridHelper | null>(null);
+
+  // Light References
+  const ambientLightRef = useRef<THREE.AmbientLight | null>(null);
+  const keyLightRef = useRef<THREE.DirectionalLight | null>(null);
+  const fillLightRef = useRef<THREE.DirectionalLight | null>(null);
+  const rimLight1Ref = useRef<THREE.DirectionalLight | null>(null);
+  const rimLight2Ref = useRef<THREE.DirectionalLight | null>(null);
 
   const animTimeRef = useRef<number>(0);
+
+  const isLight = theme === 'light';
 
   useEffect(() => {
     const container = mountRef.current;
@@ -95,7 +112,7 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
 
     // --- 1. Scene & Camera ---
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x060913);
+    scene.background = new THREE.Color(isLight ? 0xf8fafc : 0x060913);
     sceneRef.current = scene;
 
     const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 50);
@@ -107,7 +124,7 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.35;
+    renderer.toneMappingExposure = isLight ? 1.15 : 1.35;
     container.appendChild(renderer.domElement);
     rendererRef.current = renderer;
 
@@ -115,38 +132,49 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.06;
-    controls.minDistance = 1.0;
+    controls.minDistance = 0.8;
     controls.maxDistance = 7.5;
     controls.target.set(0, 0.05, 0);
     controlsRef.current = controls;
 
     // --- 4. Lighting Rig (Medical Studio 3-Point Light) ---
-    const ambientLight = new THREE.AmbientLight(0x223048, 2.2);
+    const ambientLight = new THREE.AmbientLight(isLight ? 0xffffff : 0x223048, isLight ? 1.8 : 2.2);
+    ambientLightRef.current = ambientLight;
     scene.add(ambientLight);
 
-    const keyLight = new THREE.DirectionalLight(0xffffff, 2.8);
+    const keyLight = new THREE.DirectionalLight(0xffffff, isLight ? 2.4 : 2.8);
     keyLight.position.set(3, 4, 4);
+    keyLightRef.current = keyLight;
     scene.add(keyLight);
 
-    const fillLight = new THREE.DirectionalLight(0x90caf9, 1.8);
+    const fillLight = new THREE.DirectionalLight(isLight ? 0xe2e8f0 : 0x90caf9, isLight ? 1.5 : 1.8);
     fillLight.position.set(-3, 2, 3);
+    fillLightRef.current = fillLight;
     scene.add(fillLight);
 
-    const rimLight1 = new THREE.DirectionalLight(0x00e5ff, 3.2);
+    const rimLight1 = new THREE.DirectionalLight(isLight ? 0x94a3b8 : 0x00e5ff, isLight ? 1.2 : 3.2);
     rimLight1.position.set(-4, 2, -3);
+    rimLight1Ref.current = rimLight1;
     scene.add(rimLight1);
 
-    const rimLight2 = new THREE.DirectionalLight(0x7c4dff, 2.2);
+    const rimLight2 = new THREE.DirectionalLight(isLight ? 0xcbd5e1 : 0x7c4dff, isLight ? 1.0 : 2.2);
     rimLight2.position.set(4, -2, -3);
+    rimLight2Ref.current = rimLight2;
     scene.add(rimLight2);
 
-    const heartLight = new THREE.PointLight(0xff1744, 2.5, 2.0);
+    const heartLight = new THREE.PointLight(0xff1744, 2.2, 2.0);
     heartLight.position.set(-0.06, 0.44, 0.35);
     scene.add(heartLight);
 
-    // Holographic ground grid
-    const gridHelper = new THREE.GridHelper(7, 28, 0x00e5ff, 0x1e293b);
+    // Ground grid
+    const gridHelper = new THREE.GridHelper(
+      7,
+      28,
+      isLight ? 0x94a3b8 : 0x00e5ff,
+      isLight ? 0xe2e8f0 : 0x1e293b
+    );
     gridHelper.position.y = -2.1;
+    gridHelperRef.current = gridHelper;
     scene.add(gridHelper);
 
     // Procedural Groups
@@ -178,7 +206,6 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
       (gltf) => {
         const bodyObj = gltf.scene;
         const bodyWrapper = createNormalizedModelWrapper(bodyObj, 3.8);
-        // Rotate 90 deg around Y so chest faces forward (+Z)
         bodyWrapper.rotation.y = -Math.PI / 2;
         bodyWrapper.position.set(0, 0, 0);
 
@@ -186,19 +213,20 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
         bodyWrapper.traverse((child) => {
           if (child instanceof THREE.Mesh) {
             const mat = new THREE.MeshPhysicalMaterial({
-              color: 0x38bdf8,
-              roughness: 0.18,
-              metalness: 0.12,
-              transmission: 0.86,
-              ior: 1.46,
+              color: isLight ? 0x93c5fd : 0x38bdf8,
+              roughness: 0.14,
+              metalness: 0.08,
+              transmission: 0.92,
+              ior: 1.45,
               transparent: true,
-              opacity: 0.55,
+              opacity: isLight ? 0.35 : 0.55,
               clearcoat: 0.9,
               clearcoatRoughness: 0.1,
             });
             child.material = mat;
             humanBodyMaterialsRef.current.push(mat);
             child.userData = {
+              organId: 'body',
               name: 'Human Anatomical Body',
               desc: 'Full-body anatomical frame with musculoskeletal landmarks and cutaneous innervation dermatomes.',
               sign: 'General physical examination: Pallor, Icterus, Cyanosis, Clubbing, Lymphadenopathy, Edema (PICCLED).',
@@ -234,6 +262,7 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
               child.material.side = THREE.DoubleSide;
             }
             child.userData = {
+              organId: 'heart',
               name: 'Cardiovascular Pump (Heart & Great Vessels)',
               desc: 'Four-chambered muscular pump: Left ventricle generates systemic mean arterial pressure; coronary arteries supply myocardium.',
               sign: 'Auscultation of S1-S2, S3 gallop in volume overload, ST-elevation in acute myocardial infarction.',
@@ -269,6 +298,7 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
               child.material.side = THREE.DoubleSide;
             }
             child.userData = {
+              organId: 'lungs',
               name: 'Pulmonary System (Right & Left Lungs)',
               desc: 'Tracheobronchial tree and alveolar gas exchange surface. Generates vital capacity and PaO2 oxygenation.',
               sign: 'Vesicular breath sounds; fine end-inspiratory crackles (crepitations) in pulmonary edema/shock.',
@@ -303,6 +333,7 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
               child.material.side = THREE.DoubleSide;
             }
             child.userData = {
+              organId: 'liver',
               name: 'Liver (Hepatic Lobes & Biliary Architecture)',
               desc: 'Metabolic synthesis of albumin, prothrombin (INR), urea, and biliary clearance of conjugated bilirubin.',
               sign: 'Liver span measurement in midclavicular line (8-12cm); icteric jaundice; asterixis flap in hepatic encephalopathy.',
@@ -321,13 +352,14 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
       }
     );
 
-    // E. Realistic 3D Brain
+    // E. Realistic 3D Brain (CALIBRATED ACCURATELY INTO CRANIAL VAULT AT y = 1.58)
     gltfLoader.load(
       '/models/brain.glb',
       (gltf) => {
         const brainObj = gltf.scene;
-        const brainWrapper = createNormalizedModelWrapper(brainObj, 0.30);
-        brainWrapper.position.set(0, 1.42, 0.02);
+        const brainWrapper = createNormalizedModelWrapper(brainObj, 0.28);
+        // Elevated to sit squarely within the calvarium/skull vault (y = 1.58, z = 0.04)
+        brainWrapper.position.set(0, 1.58, 0.04);
 
         brainWrapper.traverse((child) => {
           if (child instanceof THREE.Mesh) {
@@ -337,7 +369,8 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
               child.material.side = THREE.DoubleSide;
             }
             child.userData = {
-              name: 'Cerebrum & Cranial Brainstem',
+              organId: 'brain',
+              name: 'Cerebrum, Cerebellum & Brainstem',
               desc: 'Central command for consciousness, cardiorespiratory autonomic centers in medulla, and cranial nerve nuclei.',
               sign: 'Glasgow Coma Scale (GCS), pupillary light reflex (CN II/III), motor/sensory examination.',
             };
@@ -371,6 +404,7 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
               child.material.side = THREE.DoubleSide;
             }
             child.userData = {
+              organId: 'kidney',
               name: 'Renal Architecture (Right & Left Kidneys)',
               desc: 'Glomerular filtration, electrolyte homeostasis, renin secretion, and acid-base regulation.',
               sign: 'Urine output monitoring (>0.5 mL/kg/h); ballotable nephromegaly; renal angle tenderness.',
@@ -406,6 +440,7 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
               side: THREE.DoubleSide,
             });
             child.userData = {
+              organId: 'skeletal',
               name: 'Human Skeletal Architecture (X-Ray Framework)',
               desc: 'Axial and appendicular skeleton: Thoracic cage protection, hematopoietic bone marrow, calcium phosphate reservoir.',
               sign: 'Fracture screening, sternal compression landmarks, rib series interpretation.',
@@ -453,6 +488,7 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
     ]);
     const aortaMesh = new THREE.Mesh(new THREE.TubeGeometry(aortaCurve, 50, 0.026, 12, false), arterialMat);
     aortaMesh.userData = {
+      organId: 'aorta',
       name: 'Aorta & Systemic Arterial Conduit',
       desc: 'High-pressure compliant reservoir delivering pulsatile stroke volume to systemic tissues.',
       sign: 'Synchronous radial and femoral pulses; absence of radio-femoral delay.',
@@ -489,6 +525,7 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
     ]);
     const ivcMesh = new THREE.Mesh(new THREE.TubeGeometry(ivcCurve, 30, 0.030, 12, false), venousMat);
     ivcMesh.userData = {
+      organId: 'ivc',
       name: 'Inferior Vena Cava & Venous Return',
       desc: 'Capacitance reservoir returning deoxygenated blood to right atrium under low pressure.',
       sign: 'Jugular Venous Pressure (JVP) elevation and hepatojugular reflux.',
@@ -524,6 +561,7 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
     const sternumMesh = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.38, 0.022), boneMat);
     sternumMesh.position.set(0, 0.58, 0.26);
     sternumMesh.userData = {
+      organId: 'skeletal',
       name: 'Sternum & Sternal Angle of Louis',
       desc: 'Anterior landmark for cardiac compression and intercostal space counting.',
       sign: 'Manubriosternal junction baseline for measuring vertical JVP column height.',
@@ -552,6 +590,7 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
     traumaGroup.add(haloMesh);
 
     traumaGroup.userData = {
+      organId: 'snakebite',
       name: "Russell's Viper Envenomation Puncture Site",
       desc: 'Paired fang punctures 18mm apart with advancing wooden edema, persistent oozing, and blister formation.',
       sign: '20-minute Whole Blood Clotting Test (20WBCT) incoagulable; clear indication for 10 vials polyvalent ASV.',
@@ -579,6 +618,7 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
     ascitesMesh.position.set(0, -0.10, 0.06);
     ascitesMesh.visible = false;
     ascitesMesh.userData = {
+      organId: 'ascites',
       name: 'Peritoneal Ascitic Collection',
       desc: 'Free transudative peritoneal fluid driven by portal hypertension and hypoalbuminemia.',
       sign: 'Shifting dullness (>1500 mL) and fluid thrill (>2000 mL); diagnostic paracentesis with SAAG calculation.',
@@ -599,7 +639,7 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
 
       const interactiveObjects: THREE.Object3D[] = [];
       scene.traverse((obj) => {
-        if (obj.userData && obj.userData.name) {
+        if (obj.userData && obj.userData.name && obj.userData.organId !== 'body') {
           interactiveObjects.push(obj);
         }
       });
@@ -613,11 +653,15 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
 
         if (hit && hit.userData && hit.userData.name) {
           const info = {
+            organId: hit.userData.organId,
             name: hit.userData.name,
             description: hit.userData.desc || '',
             clinicalSign: hit.userData.sign || '',
           };
           setSelectedOrganInfo(info);
+          if (onSelectOrganId && hit.userData.organId) {
+            onSelectOrganId(hit.userData.organId);
+          }
           if (onSelectOrgan) onSelectOrgan(info);
         }
       }
@@ -685,6 +729,40 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
     };
   }, []);
 
+  // Update Theme dynamically
+  useEffect(() => {
+    if (!sceneRef.current || !rendererRef.current) return;
+    const scene = sceneRef.current;
+    scene.background = new THREE.Color(isLight ? 0xf8fafc : 0x060913);
+    rendererRef.current.toneMappingExposure = isLight ? 1.15 : 1.35;
+
+    if (ambientLightRef.current) {
+      ambientLightRef.current.color.setHex(isLight ? 0xffffff : 0x223048);
+      ambientLightRef.current.intensity = isLight ? 1.8 : 2.2;
+    }
+    if (fillLightRef.current) {
+      fillLightRef.current.color.setHex(isLight ? 0xe2e8f0 : 0x90caf9);
+    }
+    if (gridHelperRef.current) {
+      scene.remove(gridHelperRef.current);
+      const newGrid = new THREE.GridHelper(
+        7,
+        28,
+        isLight ? 0x94a3b8 : 0x00e5ff,
+        isLight ? 0xe2e8f0 : 0x1e293b
+      );
+      newGrid.position.y = -2.1;
+      gridHelperRef.current = newGrid;
+      scene.add(newGrid);
+    }
+
+    // Adjust human body glass material
+    humanBodyMaterialsRef.current.forEach((mat) => {
+      mat.color.setHex(isLight ? 0x93c5fd : 0x38bdf8);
+      mat.opacity = isLight ? 0.35 : 0.55;
+    });
+  }, [theme, isLight]);
+
   // Sync Layers and Pathology
   useEffect(() => {
     const bodyMaterials = humanBodyMaterialsRef.current;
@@ -740,20 +818,20 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
       case 'glass':
         // Holographic Glass Mode
         bodyMaterials.forEach((mat) => {
-          mat.transmission = 0.88;
-          mat.opacity = 0.45;
+          mat.transmission = 0.92;
+          mat.opacity = isLight ? 0.35 : 0.45;
           mat.roughness = 0.15;
           mat.clearcoat = 0.9;
-          mat.color.setHex(0x38bdf8);
+          mat.color.setHex(isLight ? 0x93c5fd : 0x38bdf8);
         });
         if (skeletonModel) skeletonModel.visible = false;
         break;
 
       case 'vascular':
         bodyMaterials.forEach((mat) => {
-          mat.transmission = 0.95;
-          mat.opacity = 0.16;
-          mat.color.setHex(0x38bdf8);
+          mat.transmission = 0.96;
+          mat.opacity = isLight ? 0.12 : 0.16;
+          mat.color.setHex(isLight ? 0x93c5fd : 0x38bdf8);
         });
         if (heart) heart.visible = true;
         if (lungs) lungs.visible = false;
@@ -767,9 +845,9 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
 
       case 'viscera':
         bodyMaterials.forEach((mat) => {
-          mat.transmission = 0.93;
-          mat.opacity = 0.20;
-          mat.color.setHex(0x38bdf8);
+          mat.transmission = 0.95;
+          mat.opacity = isLight ? 0.14 : 0.20;
+          mat.color.setHex(isLight ? 0x93c5fd : 0x38bdf8);
         });
         if (heart) heart.visible = true;
         if (lungs) lungs.visible = true;
@@ -784,7 +862,7 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
       case 'skeletal':
         bodyMaterials.forEach((mat) => {
           mat.transmission = 0.96;
-          mat.opacity = 0.12;
+          mat.opacity = isLight ? 0.08 : 0.12;
           mat.color.setHex(0x94a3b8);
         });
         if (heart) heart.visible = false;
@@ -811,7 +889,7 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
     if (traumaMarkerRef.current) {
       traumaMarkerRef.current.visible = scenarioId === 'snakebite';
     }
-  }, [layer, pathology, scenarioId, modelsReady]);
+  }, [layer, pathology, scenarioId, modelsReady, isLight]);
 
   const resetCamera = (preset: 'anterior' | 'head' | 'thorax' | 'abdomen') => {
     if (!cameraRef.current || !controlsRef.current) return;
@@ -821,8 +899,9 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
         controlsRef.current.target.set(0, 0.05, 0);
         break;
       case 'head':
-        cameraRef.current.position.set(0, 1.42, 1.25);
-        controlsRef.current.target.set(0, 1.42, 0);
+        // Centered precisely on calvarium / brain vault at y = 1.58
+        cameraRef.current.position.set(0, 1.58, 1.25);
+        controlsRef.current.target.set(0, 1.58, 0.04);
         break;
       case 'thorax':
         cameraRef.current.position.set(-0.05, 0.52, 1.85);
@@ -843,83 +922,129 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
   }, [cameraPreset]);
 
   return (
-    <div className="relative w-full h-full min-h-[420px] bg-slate-950 rounded-xl overflow-hidden border border-slate-800 shadow-2xl">
+    <div
+      className={`relative w-full h-full min-h-[380px] md:min-h-[460px] rounded-2xl md:rounded-3xl overflow-hidden border ${
+        isLight ? 'bg-slate-50 border-slate-200/80 shadow-md' : 'bg-slate-950 border-slate-800 shadow-2xl'
+      }`}
+    >
       <div ref={mountRef} className="w-full h-full cursor-grab active:cursor-grabbing" />
 
       {/* Loading Progress Bar */}
       {!modelsReady && (
-        <div className="absolute inset-0 z-20 bg-slate-950/80 backdrop-blur-md flex flex-col items-center justify-center space-y-3">
-          <div className="w-8 h-8 rounded-full border-2 border-cyan-500 border-t-transparent animate-spin" />
-          <div className="font-mono text-xs text-cyan-300 font-semibold tracking-wider">
-            LOADING REALISTIC 3D ANATOMY ASSETS ({loadProgress}%)
+        <div
+          className={`absolute inset-0 z-20 backdrop-blur-md flex flex-col items-center justify-center space-y-3 ${
+            isLight ? 'bg-white/85 text-slate-800' : 'bg-slate-950/80 text-cyan-300'
+          }`}
+        >
+          <div className="w-8 h-8 rounded-full border-2 border-sky-500 border-t-transparent animate-spin" />
+          <div className="font-mono text-xs font-semibold tracking-wider">
+            LOADING REALISTIC 3D ANATOMY ({loadProgress}%)
           </div>
-          <div className="w-48 h-1.5 bg-slate-800 rounded-full overflow-hidden">
+          <div className={`w-48 h-1.5 rounded-full overflow-hidden ${isLight ? 'bg-slate-200' : 'bg-slate-800'}`}>
             <div
-              className="h-full bg-gradient-to-r from-cyan-500 to-emerald-400 transition-all duration-300"
+              className="h-full bg-gradient-to-r from-sky-500 to-emerald-400 transition-all duration-300"
               style={{ width: `${loadProgress}%` }}
             />
           </div>
         </div>
       )}
 
-      {/* Camera Presets */}
-      <div className="absolute top-4 left-4 z-10 flex flex-wrap gap-2 bg-slate-900/85 backdrop-blur-md px-3 py-2 rounded-lg border border-slate-800 text-xs text-slate-300">
-        <span className="font-semibold text-cyan-400 flex items-center gap-1">
-          <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
-          Camera:
+      {/* Camera Presets Floating Pill Toolbar */}
+      <div
+        className={`absolute top-3 left-3 z-10 flex flex-wrap items-center gap-1.5 px-3 py-1.5 rounded-xl border backdrop-blur-md text-xs transition-all ${
+          isLight
+            ? 'bg-white/85 text-slate-700 border-slate-200/80 shadow-sm'
+            : 'bg-slate-900/85 text-slate-300 border-slate-800 shadow-lg'
+        }`}
+      >
+        <span
+          className={`font-semibold flex items-center gap-1 mr-1 text-[11px] ${
+            isLight ? 'text-sky-700' : 'text-cyan-400'
+          }`}
+        >
+          <span className="w-2 h-2 rounded-full bg-sky-500 animate-pulse" />
+          Focus:
         </span>
         <button
           onClick={() => resetCamera('anterior')}
-          className="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded transition-colors"
+          className={`px-2 py-0.8 rounded-lg font-medium transition-colors ${
+            isLight ? 'hover:bg-slate-100 text-slate-700' : 'bg-slate-800 hover:bg-slate-700 text-slate-200'
+          }`}
         >
-          Full Body
+          Full
         </button>
         <button
           onClick={() => resetCamera('head')}
-          className="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded transition-colors"
+          className={`px-2 py-0.8 rounded-lg font-medium transition-colors ${
+            isLight ? 'hover:bg-slate-100 text-slate-700' : 'bg-slate-800 hover:bg-slate-700 text-slate-200'
+          }`}
         >
           Head & Brain
         </button>
         <button
           onClick={() => resetCamera('thorax')}
-          className="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded transition-colors"
+          className={`px-2 py-0.8 rounded-lg font-medium transition-colors ${
+            isLight ? 'hover:bg-slate-100 text-slate-700' : 'bg-slate-800 hover:bg-slate-700 text-slate-200'
+          }`}
         >
-          Thorax & Heart
+          Thorax
         </button>
         <button
           onClick={() => resetCamera('abdomen')}
-          className="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded transition-colors"
+          className={`px-2 py-0.8 rounded-lg font-medium transition-colors ${
+            isLight ? 'hover:bg-slate-100 text-slate-700' : 'bg-slate-800 hover:bg-slate-700 text-slate-200'
+          }`}
         >
-          Abdomen & Liver
+          Abdomen
         </button>
       </div>
 
-      {/* Selected Organ Inspection Card */}
+      {/* Selected Organ Floating Quick Badge (Mobile / Desktop) */}
       {selectedOrganInfo && (
-        <div className="absolute bottom-4 left-4 right-4 md:right-auto md:max-w-md z-10 bg-slate-900/95 backdrop-blur-md p-4 rounded-xl border border-cyan-500/50 shadow-2xl text-left animate-in fade-in slide-in-from-bottom-2">
-          <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-800">
-            <h4 className="font-bold text-cyan-400 text-sm flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-cyan-500 animate-ping" />
+        <div
+          onClick={() => {
+            if (onSelectOrganId && selectedOrganInfo.organId) {
+              onSelectOrganId(selectedOrganInfo.organId);
+            }
+          }}
+          className={`absolute bottom-3 left-3 right-3 md:right-auto md:max-w-sm z-10 p-3 rounded-2xl border backdrop-blur-xl shadow-xl text-left cursor-pointer transition-all hover:scale-[1.01] animate-in fade-in slide-in-from-bottom-2 ${
+            isLight
+              ? 'bg-white/95 text-slate-900 border-sky-300/80 shadow-sky-500/10'
+              : 'bg-slate-900/95 text-slate-100 border-cyan-500/50 shadow-cyan-500/20'
+          }`}
+        >
+          <div className="flex items-center justify-between pb-1.5 mb-1.5 border-b border-slate-200 dark:border-slate-800">
+            <h4
+              className={`font-bold text-xs md:text-sm flex items-center gap-1.5 ${
+                isLight ? 'text-sky-700' : 'text-cyan-400'
+              }`}
+            >
+              <span className="w-2 h-2 rounded-full bg-sky-500 animate-ping" />
               {selectedOrganInfo.name}
             </h4>
-            <button
-              onClick={() => setSelectedOrganInfo(null)}
-              className="text-slate-400 hover:text-white text-xs px-2 py-0.5 rounded bg-slate-800"
+            <span
+              className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full uppercase ${
+                isLight ? 'bg-sky-100 text-sky-700' : 'bg-cyan-950 text-cyan-300'
+              }`}
             >
-              ✕
-            </button>
+              Tap for Deep Anatomy ➔
+            </span>
           </div>
-          <p className="text-xs text-slate-300 mb-2 leading-relaxed">{selectedOrganInfo.description}</p>
-          <div className="text-[11px] bg-cyan-950/50 border border-cyan-800/50 p-2.5 rounded-lg text-cyan-300">
-            <span className="font-bold text-cyan-200">Clinical Bedside Sign: </span>
-            {selectedOrganInfo.clinicalSign}
-          </div>
+          <p className="text-[11px] text-slate-600 dark:text-slate-300 line-clamp-2 leading-relaxed">
+            {selectedOrganInfo.description}
+          </p>
         </div>
       )}
 
       {/* Helper text */}
-      <div className="absolute top-4 right-4 z-10 text-[11px] bg-slate-900/80 backdrop-blur-md px-3 py-1.5 rounded-md border border-slate-800 text-slate-400 pointer-events-none">
-        Click any 3D organ to inspect • Drag to rotate 3D
+      <div
+        className={`absolute top-3 right-3 z-10 text-[10px] md:text-[11px] px-2.5 py-1 rounded-xl border backdrop-blur-md pointer-events-none ${
+          isLight
+            ? 'bg-white/80 text-slate-500 border-slate-200/80'
+            : 'bg-slate-900/80 text-slate-400 border-slate-800'
+        }`}
+      >
+        Tap organ to inspect • Drag to rotate 3D
       </div>
     </div>
   );

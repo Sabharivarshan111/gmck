@@ -5,12 +5,14 @@ interface IcuMonitorProps {
   vitals: PatientVitals;
   sampleWaveforms: () => TelemetryWaveformSample;
   ecgRhythm: string;
+  theme?: 'light' | 'dark';
 }
 
 export const IcuMonitor: React.FC<IcuMonitorProps> = ({
   vitals,
   sampleWaveforms,
   ecgRhythm,
+  theme = 'light',
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [audioEnabled, setAudioEnabled] = useState<boolean>(false);
@@ -223,12 +225,24 @@ export const IcuMonitor: React.FC<IcuMonitorProps> = ({
     };
   }, [sampleWaveforms, vitals, audioEnabled]);
 
+  const isLight = theme === 'light';
+
   return (
-    <div className="flex flex-col lg:flex-row bg-[#060911] border border-slate-800 rounded-xl overflow-hidden shadow-2xl h-full">
+    <div
+      className={`flex flex-col lg:flex-row rounded-2xl md:rounded-3xl overflow-hidden border shadow-xl h-full transition-all ${
+        isLight ? 'bg-white border-slate-200/80 shadow-slate-200/50' : 'bg-[#060911] border-slate-800 shadow-2xl'
+      }`}
+    >
       {/* Waveform Sweep Screen (Left / Main) */}
       <div className="relative flex-1 bg-[#080c15] p-2.5 flex flex-col justify-between">
         {/* Top Monitor Status Bar */}
-        <div className="flex items-center justify-between px-3 py-1.5 bg-slate-900/90 rounded-lg border border-slate-800 text-[11px] text-slate-300">
+        <div
+          className={`flex items-center justify-between px-3 py-1.5 rounded-xl border text-[11px] ${
+            isLight
+              ? 'bg-slate-900 text-slate-200 border-slate-800'
+              : 'bg-slate-900/90 text-slate-300 border-slate-800'
+          }`}
+        >
           <div className="flex items-center gap-3">
             <span className="font-mono font-bold text-emerald-400 flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
