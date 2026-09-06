@@ -117,8 +117,8 @@ android {
         // libzstd-jni-1.5.6-9.so. That is fixed (zstd-jni is 1.5.7-16 below,
         // whose x86_64 library is 16 KB aligned where 1.5.6-9's was 4 KB), but
         // the fix cannot reach Play under the version that was refused.
-        versionCode 15
-        versionName "0.0.0.15"
+        versionCode 16
+        versionName "0.0.0.16"
 
         // Deep-link / OAuth callback scheme, consumed by the intent-filter in
         // AndroidManifest.xml. Added with an indexed put rather than assigning

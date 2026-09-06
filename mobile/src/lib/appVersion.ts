@@ -17,8 +17,8 @@
  * BUMPING: change `versionCode`/`versionName` in build.gradle, change these to
  * match, and add the matching row to `app_releases` (see `appUpdate.ts`).
  */
-export const APP_VERSION_CODE = 15;
-export const APP_VERSION_NAME = '0.0.0.15';
+export const APP_VERSION_CODE = 16;
+export const APP_VERSION_NAME = '0.0.0.16';
 
 /**
  * The Play listing, for the button that sends someone to update.

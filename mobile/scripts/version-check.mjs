@@ -113,6 +113,41 @@ for (const forbidden of ['razorpay', 'buyAdFree', 'ADFREE_TIERS', 'showRewarded'
   );
 }
 
+/*
+ * The advertising ID permission, which Play refuses a release without.
+ *
+ * v15 was rejected for it: "your advertising ID declaration in Play Console
+ * says that your app uses advertising ID. A manifest file in one of your active
+ * artifacts doesn't include the com.google.android.gms.permission.AD_ID
+ * permission." Since Android 13 an app targeting API 33+ that reads the ad ID
+ * must declare it, or Play zeroes the identifier — AdMob then serves untargeted
+ * ads and earns a fraction of what it does now.
+ *
+ * The obvious assumption is that the ads library brings it, and it does not:
+ * `react-native-google-mobile-ads` declares INTERNET, WAKE_LOCK and
+ * ACCESS_NETWORK_STATE and nothing else. It leans on the play-services-ads AAR
+ * to merge this one, and whatever the build resolved did not reach the shipped
+ * artifact.
+ *
+ * Nothing else here can catch it. Gradle builds happily, the app runs, the ads
+ * even show — the loss is silent and lands in the revenue, and the only thing
+ * that ever said so was the Play Console refusing an upload twenty minutes
+ * after a build somebody waited for.
+ */
+const manifest = read(path.join(mobile, 'android/app/src/main/AndroidManifest.xml'));
+check(
+  /<uses-permission android:name="com\.google\.android\.gms\.permission\.AD_ID"\s*\/>/.test(
+    manifest,
+  ),
+  'AndroidManifest.xml does not declare com.google.android.gms.permission.AD_ID — ' +
+    'Play refuses the upload, and a build that got through would have its advertising ' +
+    'identifier zeroed. The ads library does not declare it; this app must.',
+);
+check(
+  !/AD_ID"[^>]*tools:node="remove"/.test(manifest),
+  'something removes the AD_ID permission during manifest merging',
+);
+
 if (failures.length > 0) {
   console.error('version check failed:\n');
   for (const failure of failures) console.error(`  - ${failure}`);
@@ -121,5 +156,5 @@ if (failures.length > 0) {
 
 console.log(
   `OK  versionCode ${gradleCode?.[1]} (${gradleName?.[1]}) agrees across gradle and the app, ` +
-    'update comes from Google Play, notes card carries no ad',
+    'update comes from Google Play, AD_ID declared, notes card carries no ad',
 );
