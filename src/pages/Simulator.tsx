@@ -22,6 +22,8 @@ import { IcuMonitor } from '../simulator/instruments/IcuMonitor';
 import { DiagnosticTools } from '../simulator/instruments/DiagnosticTools';
 import { InterventionPanel } from '../simulator/controls/InterventionPanel';
 import { OrganDetailDrawer } from '../simulator/controls/OrganDetailDrawer';
+import { DissectionToolbar } from '../simulator/controls/DissectionToolbar';
+import { DissectionToolMode, Part } from '../simulator/data/atlasTypes';
 
 export const Simulator: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -55,6 +57,70 @@ export const Simulator: React.FC = () => {
 
   // Active Camera Preset
   const [cameraPreset, setCameraPreset] = useState<'anterior' | 'head' | 'thorax' | 'abdomen'>('anterior');
+
+  // Interactive Dissection Engine State
+  const [toolMode, setToolMode] = useState<DissectionToolMode>('inspect');
+  const [isXray, setIsXray] = useState<boolean>(false);
+  const [layerPeel, setLayerPeel] = useState<number>(0.0);
+  const [hiddenPartIds, setHiddenPartIds] = useState<string[]>([]);
+  const [dissectedParts, setDissectedParts] = useState<Part[]>([]);
+  const [isolatedPartId, setIsolatedPartId] = useState<string | null>(null);
+
+  // Dissection Handlers
+  const handleDissectPart = (part: Part) => {
+    if (toolMode === 'isolate') {
+      setIsolatedPartId((prev) => (prev === part.id ? null : part.id));
+      setLogs((prev) => [
+        ...prev,
+        `🔍 Isolated ${part.name} (${part.system}) — Contextual structures dimmed.`,
+      ]);
+      return;
+    }
+
+    // Scalpel or Cut mode
+    setHiddenPartIds((prev) => (prev.includes(part.id) ? prev : [...prev, part.id]));
+    setDissectedParts((prev) => (prev.some((p) => p.id === part.id) ? prev : [...prev, part]));
+    setLogs((prev) => [
+      ...prev,
+      `✂️ Dissected ${part.name} (${part.system}) — Deep planes & neurovascular bed exposed.`,
+    ]);
+  };
+
+  const handleRestorePart = (partId: string) => {
+    setHiddenPartIds((prev) => prev.filter((id) => id !== partId));
+    setDissectedParts((prev) => prev.filter((p) => p.id !== partId));
+    setLogs((prev) => [...prev, `Restored ${partId} to anatomical 3D space.`]);
+  };
+
+  const handleUndoLastDissect = () => {
+    if (dissectedParts.length === 0) return;
+    const lastPart = dissectedParts[dissectedParts.length - 1];
+    setHiddenPartIds((prev) => prev.filter((id) => id !== lastPart.id));
+    setDissectedParts((prev) => prev.slice(0, -1));
+    setLogs((prev) => [...prev, `Undid dissection of ${lastPart.name}.`]);
+  };
+
+  const handleRestoreAll = () => {
+    setHiddenPartIds([]);
+    setDissectedParts([]);
+    setIsolatedPartId(null);
+    setLogs((prev) => [...prev, 'Full anatomical reconstruction restored.']);
+  };
+
+  // Keyboard shortcuts: Cmd+Z / Ctrl+Z to undo, Escape to clear
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'z') {
+        e.preventDefault();
+        handleUndoLastDissect();
+      } else if (e.key === 'Escape') {
+        setIsolatedPartId(null);
+        setSelectedOrganId(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [dissectedParts]);
 
   // Global listener for organ selection events
   useEffect(() => {
@@ -294,18 +360,42 @@ export const Simulator: React.FC = () => {
       <main className="flex-1 p-3 md:p-5 max-w-7xl mx-auto w-full flex flex-col space-y-4">
         {/* DESKTOP VIEW: Split View (Side-by-side) */}
         <div className="hidden lg:grid lg:grid-cols-12 gap-4">
-          {/* 3D Anatomical Viewport (7 cols) */}
-          <div className="lg:col-span-7 h-[520px]">
-            <AnatomicalBody3D
-              vitals={vitals}
-              pathology={pathology}
-              layer={activeLayer}
-              scenarioId={currentScenarioId}
-              cameraPreset={cameraPreset}
+          {/* 3D Anatomical Viewport with Interactive Dissection Engine (7 cols) */}
+          <div className="lg:col-span-7 flex flex-col space-y-2">
+            {/* Dissection & Peeler Toolbar */}
+            <DissectionToolbar
+              toolMode={toolMode}
+              onSelectToolMode={setToolMode}
+              isXray={isXray}
+              onToggleXray={() => setIsXray(!isXray)}
+              layerPeel={layerPeel}
+              onChangeLayerPeel={setLayerPeel}
+              dissectedParts={dissectedParts}
+              onRestorePart={handleRestorePart}
+              onUndoLastDissect={handleUndoLastDissect}
+              onRestoreAll={handleRestoreAll}
               theme={theme}
-              selectedOrganId={selectedOrganId}
-              onSelectOrganId={(organId) => setSelectedOrganId(organId)}
             />
+
+            {/* Viewport Canvas */}
+            <div className="h-[490px] w-full relative">
+              <AnatomicalBody3D
+                vitals={vitals}
+                pathology={pathology}
+                layer={activeLayer}
+                scenarioId={currentScenarioId}
+                cameraPreset={cameraPreset}
+                theme={theme}
+                selectedOrganId={selectedOrganId}
+                onSelectOrganId={(organId) => setSelectedOrganId(organId)}
+                toolMode={toolMode}
+                isXray={isXray}
+                layerPeel={layerPeel}
+                hiddenPartIds={hiddenPartIds}
+                isolatedPartId={isolatedPartId}
+                onDissectPart={handleDissectPart}
+              />
+            </div>
           </div>
 
           {/* ICU Telemetry Monitor (5 cols) */}
@@ -369,17 +459,38 @@ export const Simulator: React.FC = () => {
         {/* MOBILE VIEW: Tab-driven clean single stage */}
         <div className="lg:hidden flex flex-col space-y-3">
           {mobileTab === '3d' && (
-            <div className="h-[440px] w-full">
-              <AnatomicalBody3D
-                vitals={vitals}
-                pathology={pathology}
-                layer={activeLayer}
-                scenarioId={currentScenarioId}
-                cameraPreset={cameraPreset}
+            <div className="flex flex-col space-y-2 w-full">
+              <DissectionToolbar
+                toolMode={toolMode}
+                onSelectToolMode={setToolMode}
+                isXray={isXray}
+                onToggleXray={() => setIsXray(!isXray)}
+                layerPeel={layerPeel}
+                onChangeLayerPeel={setLayerPeel}
+                dissectedParts={dissectedParts}
+                onRestorePart={handleRestorePart}
+                onUndoLastDissect={handleUndoLastDissect}
+                onRestoreAll={handleRestoreAll}
                 theme={theme}
-                selectedOrganId={selectedOrganId}
-                onSelectOrganId={(organId) => setSelectedOrganId(organId)}
               />
+              <div className="h-[420px] w-full relative">
+                <AnatomicalBody3D
+                  vitals={vitals}
+                  pathology={pathology}
+                  layer={activeLayer}
+                  scenarioId={currentScenarioId}
+                  cameraPreset={cameraPreset}
+                  theme={theme}
+                  selectedOrganId={selectedOrganId}
+                  onSelectOrganId={(organId) => setSelectedOrganId(organId)}
+                  toolMode={toolMode}
+                  isXray={isXray}
+                  layerPeel={layerPeel}
+                  hiddenPartIds={hiddenPartIds}
+                  isolatedPartId={isolatedPartId}
+                  onDissectPart={handleDissectPart}
+                />
+              </div>
             </div>
           )}
 
@@ -417,6 +528,21 @@ export const Simulator: React.FC = () => {
         organId={selectedOrganId}
         onClose={() => setSelectedOrganId(null)}
         onFocusCamera={(preset) => setCameraPreset(preset)}
+        onDissectOrgan={(organKey) => {
+          const fakePart: Part = {
+            id: organKey,
+            name: organKey.charAt(0).toUpperCase() + organKey.slice(1),
+            system: 'viscera' as any,
+            bounds: [[0, 0, 0], [0, 0, 0]],
+            vertexCount: 0,
+            indexCount: 0,
+            vertices: 0,
+            indices: 0,
+          };
+          setHiddenPartIds((prev) => (prev.includes(organKey) ? prev : [...prev, organKey]));
+          setDissectedParts((prev) => (prev.some((p) => p.id === organKey) ? prev : [...prev, fakePart]));
+          setLogs((prev) => [...prev, `✂️ Dissected structure: ${fakePart.name} — Underlying planes exposed.`]);
+        }}
         theme={theme}
       />
 

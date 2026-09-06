@@ -220,3 +220,37 @@ export class PointerTap {
     this.blocked = true;
   }
 }
+
+export type DissectionToolMode = 'inspect' | 'scalpel' | 'isolate' | 'xray';
+
+export interface DissectionState {
+  toolMode: DissectionToolMode;
+  hiddenPartIds: string[];
+  isolatedPartId: string | null;
+  isXray: boolean;
+  layerPeel: number;
+}
+
+export interface ClinicalDepartment {
+  id: string;
+  name: string;
+  shortName: string;
+  icon: string;
+  badgeClass: string;
+}
+
+export const CLINICAL_DEPARTMENTS: ClinicalDepartment[] = [
+  { id: 'all', name: 'All Specialties', shortName: 'All', icon: '🏥', badgeClass: 'bg-slate-100 text-slate-800' },
+  { id: 'cardiology', name: 'Cardiovascular Medicine', shortName: 'Cardiology', icon: '🫀', badgeClass: 'bg-red-100 text-red-800' },
+  { id: 'toxicology', name: 'Toxicology & Shock', shortName: 'Toxicology', icon: '🐍', badgeClass: 'bg-amber-100 text-amber-800' },
+  { id: 'emergency_trauma', name: 'Emergency & Polytrauma', shortName: 'ER & Trauma', icon: '🚨', badgeClass: 'bg-rose-100 text-rose-800' },
+  { id: 'gastroenterology', name: 'Gastroenterology & Hepatology', shortName: 'Gastro & Liver', icon: '🧪', badgeClass: 'bg-emerald-100 text-emerald-800' },
+  { id: 'pulmonology', name: 'Pulmonology & Infectious Disease', shortName: 'Pulmo & ID', icon: '🫁', badgeClass: 'bg-cyan-100 text-cyan-800' },
+  { id: 'endocrinology_nephrology', name: 'Endocrinology & Nephrology', shortName: 'Endo & Nephro', icon: '🩸', badgeClass: 'bg-indigo-100 text-indigo-800' },
+  { id: 'neurology', name: 'Neurology & Stroke', shortName: 'Neurology', icon: '🧠', badgeClass: 'bg-purple-100 text-purple-800' },
+  { id: 'general_surgery', name: 'General & Vascular Surgery', shortName: 'Surgery', icon: '🔪', badgeClass: 'bg-orange-100 text-orange-800' },
+  { id: 'obg', name: 'Obstetrics & Gynaecology', shortName: 'OBG', icon: '🤰', badgeClass: 'bg-pink-100 text-pink-800' },
+  { id: 'pediatrics', name: 'Pediatric Critical Care', shortName: 'Pediatrics', icon: '👶', badgeClass: 'bg-blue-100 text-blue-800' },
+  { id: 'orthopedics', name: 'Orthopedics & Limb Trauma', shortName: 'Ortho', icon: '🦴', badgeClass: 'bg-stone-100 text-stone-800' },
+];
+

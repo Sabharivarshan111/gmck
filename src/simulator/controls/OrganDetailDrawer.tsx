@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import {
   X,
+  Scissors,
   Heart,
   Activity,
   Zap,
@@ -20,6 +21,7 @@ interface OrganDetailDrawerProps {
   organId: string | null;
   onClose: () => void;
   onFocusCamera?: (preset: 'anterior' | 'head' | 'thorax' | 'abdomen') => void;
+  onDissectOrgan?: (organId: string) => void;
   theme?: 'light' | 'dark';
 }
 
@@ -27,6 +29,7 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
   organId,
   onClose,
   onFocusCamera,
+  onDissectOrgan,
   theme = 'light',
 }) => {
   const [activeTab, setActiveTab] = useState<'overview' | 'vascular' | 'lymphatics' | 'clinical'>(
@@ -123,6 +126,23 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
               <Compass className="w-4 h-4" />
               <span className="hidden sm:inline">Focus 3D</span>
             </button>
+            {onDissectOrgan && (
+              <button
+                onClick={() => {
+                  onDissectOrgan(organKey);
+                  onClose();
+                }}
+                title="Dissect / Remove this structure from 3D viewport"
+                className={`p-2 rounded-xl border text-xs font-semibold flex items-center gap-1 transition-all ${
+                  isLight
+                    ? 'bg-rose-50 hover:bg-rose-100 text-rose-700 border-rose-200'
+                    : 'bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border-rose-800/60'
+                }`}
+              >
+                <Scissors className="w-4 h-4 text-rose-500" />
+                <span className="hidden sm:inline">Dissect</span>
+              </button>
+            )}
             <button
               onClick={onClose}
               className={`p-2 rounded-xl transition-colors ${
