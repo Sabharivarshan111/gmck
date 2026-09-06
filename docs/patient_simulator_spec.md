@@ -1,7 +1,7 @@
 # Orbit MBBS Real-Time 3D Interactive Patient Simulator
 ## Technical & Pathophysiological Specification Document
 
-**Document Version:** 7.0.0-OMNI-SIMULATOR-COMPLETE  
+**Document Version:** 8.0.0-UNIVERSAL-BIOMEDICAL-SIMULATION-COMPLETE  
 **Target Systems:** Orbit MBBS Mobile (React Native / Three.js / WebGL), Orbit Web, Supabase Edge Infrastructure  
 **Curriculum Grounding:** National Medical Commission (NMC) Competency-Based Medical Education (CBME), Madras Medical College (MMC) Final Year Clinical Curriculum, *Kundu's Bedside Clinics in Medicine*, *Das Clinical Surgery*, *Macleod's Clinical Examination*, *Harrison's Principles of Internal Medicine*, *Robbins & Cotran Pathologic Basis of Disease*, *Guyton & Hall Physiology*, *Reddy's Essentials of Forensic Medicine*, *KD Tripathi Pharmacology*, *Bailey & Love Surgery*, *DC Dutta Obstetrics*.
 
@@ -2515,6 +2515,292 @@ To prepare students for complex neurotrauma, high-risk labor rooms, and invasive
 
 ---
 
+### 7.11. Deep-Dive: Neonatal Resuscitation (NRP 8th Edition), Fetal-to-Neonatal Transition & PPHN
+
+To capture the profound, rapid physiological metamorphosis occurring at birth, Orbit incorporates exact biophysical models for pulmonary fluid clearance, shunt closure, and the Neonatal Resuscitation Program (NRP) 8th Edition decision matrix:
+
+```
++---------------------------------------------------------------------------------------------------------------------------------+
+|                                    NEONATAL TRANSITION & NRP 8TH EDITION RESUSCITATION                                          |
++---------------------------------------------------------------------------------------------------------------------------------+
+| Transition Phase          | Biomathematical Formalism    | Critical Telemetry / Variables  | Clinical Action & Failure Triggers         |
++---------------------------+------------------------------+---------------------------------+--------------------------------------------+
+| Fetal Lung Fluid          | ENaC Michaelis-Menten flux   | Pleural pressure -70 cmH2O,     | Surfactant deficiency -> Alveolar collapse |
+| Clearance & Aeration      | Starling + Osmotic gradient  | Surface tension γ(r) Laplace    | Respiratory Distress Syndrome (RDS).       |
++---------------------------+------------------------------+---------------------------------+--------------------------------------------+
+| Circulatory Metamorphosis | Cord clamp SVR spike ODE     | PVR drops by 80%,               | PPHN: Right-to-Left shunt (FO + PDA)       |
+| & Fetal Shunts Closure    | Oxygen-mediated PVR drop     | LA > RA pressure (FO flap close)| Refractory hypoxemia -> Inhaled NO (iNO).  |
++---------------------------+------------------------------+---------------------------------+--------------------------------------------+
+| The Golden Minute         | 60-second state machine      | HR < 100 bpm vs Apnea/Gasping   | Effective PPV (PIP 20-25, PEEP 5 cmH2O),   |
+| NRP Resuscitation Flow    | MR. SOPA corrective loop     | Pre-ductal SpO2 target curve    | Failure to ventilate -> MR. SOPA steps.    |
++---------------------------+------------------------------+---------------------------------+--------------------------------------------+
+| Advanced Resuscitation &  | 3:1 CPR (120 events/min)     | Depth 1/3 AP thoracic diameter  | Epinephrine (0.02 mg/kg IV/UVC),           |
+| Emergency Vascular Access | UVC catheterization physics  | 1 thin-walled vein, 2 arteries  | Normal Saline bolus (10 mL/kg over 10m).   |
++---------------------------------------------------------------------------------------------------------------------------------+
+```
+
+#### 7.11.1. Fetal-to-Neonatal Physiological Transition at Birth
+1. **Alveolar Fluid Clearance & ENaC Kinetics**:
+   Prior to labor, the fetal pulmonary epithelium secretes chloride and fluid into future airspaces. Labor catecholamines (epinephrine surge $[E]$) switch the epithelium into active sodium absorption via Epithelial Sodium Channels (ENaC):
+   $$J_{\text{Na}} = J_{\text{base}} + J_{\max} \cdot \frac{[E]^n}{K_d^n + [E]^n}$$
+   Total fluid absorption flux $J_v$ combines Starling filtration with active osmotic sodium absorption:
+   $$J_v = L_p \cdot S \cdot \left([\Delta P_{\text{cap}} - \Delta P_{\text{int}}] - \sigma [\pi_{\text{cap}} - \pi_{\text{int}}]\right) + \Phi_{\text{osmotic}}(J_{\text{Na}})$$
+   - *The First Breath*: Generates massive negative intrathoracic opening pressures:
+     $$P_{\text{pleural}}(t) = -70 \cdot \left(\frac{t}{\tau_{\text{insp}}}\right) \cdot \exp\left(-\frac{t}{\tau_{\text{insp}}}\right) \text{ cmH}_2\text{O}$$
+   - *Laplace Law & Surfactant*: Alveolar opening pressure $P_{\text{alveolus}} = \frac{2\gamma(r)}{r} - P_{\text{pleural}}$, where dynamic surface tension $\gamma(r)$ drops rapidly as surfactant dipalmitoylphosphatidylcholine (DPPC) spreads.
+2. **Circulatory Transition Dynamics**:
+   - *Systemic Vascular Resistance (SVR)*: Clamping the low-resistance placental circuit abruptly elevates SVR:
+     $$\text{SVR}(t) = \text{SVR}_{\text{fetal}} + (\text{SVR}_{\text{neonatal}} - \text{SVR}_{\text{fetal}}) \cdot (1 - e^{-k_{\text{cord}} t})$$
+   - *Pulmonary Vascular Resistance (PVR)*: Lung inflation and alveolar oxygenation cause an immediate $80\%$ drop in PVR:
+     $$\text{PVR}(t) = \text{PVR}_{\min} + (\text{PVR}_{\max} - \text{PVR}_{\min}) \cdot e^{-k_{\text{aeration}} V_L(t)} \cdot \left(1 - 0.8 \cdot \frac{\text{PaO}_2^4}{\text{PaO}_2^4 + P_{50}^4}\right)$$
+3. **Dynamic Closure of Fetal Shunts**:
+   - *Foramen Ovale*: Driven by pressure reversal. As pulmonary venous return surges into the left atrium, $P_{\text{LA}} > P_{\text{RA}}$, pushing the septum primum against the septum secundum and functionally closing the flap valve:
+     $$Q_{\text{FO}} = C_v \cdot A(P_{\text{RA}} - P_{\text{LA}}) \cdot \sqrt{2\rho |P_{\text{RA}} - P_{\text{LA}}|}, \quad \text{where } A(x) = A_{\max} \text{ if } x > 0 \text{ else } 0$$
+   - *Ductus Arteriosus (DA)*: Muscular constriction is governed by rising arterial $\text{PaO}_2$ (which inhibits voltage-gated $\text{K}^+$ channels, triggering smooth muscle depolarization and calcium influx) combined with rapid clearance of circulating maternal prostaglandin $E_2$ ($\text{PGE}_2$):
+     $$\frac{dR_{\text{DA}}}{dt} = k_{\text{O2}} \cdot \max(0, \text{PaO}_2 - \text{PaO}_{2,\text{threshold}}) - k_{\text{PGE2}} \cdot [\text{PGE}_2]$$
+4. **Persistent Pulmonary Hypertension of the Newborn (PPHN)**:
+   Failure of PVR to drop post-delivery results in sustained suprasystemic pulmonary pressures, reopening right-to-left shunting through the DA and foramen ovale:
+   - Diagnosed via pre-ductal (right hand) vs post-ductal (lower limb) $\text{SpO}_2$ gradient $> 10\%$.
+   - **Inhaled Nitric Oxide (iNO) Response Engine**:
+     $$\text{PVR}_{\text{PPHN}} = \text{PVR}_{\text{baseline}} - \Delta\text{PVR}_{\max} \cdot \frac{[\text{iNO}]}{K_m + [\text{iNO}]}$$
+     Selectively dilates ventilated pulmonary arterioles without causing systemic hypotension.
+
+#### 7.11.2. Neonatal Resuscitation Program (NRP 8th Edition) Engine
+1. **The Golden Minute State Machine**:
+   - *State 0 (0-30s)*: Rapid Assessment: Term? Muscle tone? Breathing or crying? If NO $\to$ warm, dry, stimulate, position airway, suction secretions if obstructed.
+   - *State 1 (30-60s)*: Heart Rate Assessment: If $\text{HR} < 100\text{ bpm}$ or apnea/gasping $\to$ initiate **Positive Pressure Ventilation (PPV)** immediately via T-piece resuscitator ($\text{PIP } 20 - 25\text{ cmH}_2\text{O}, \text{PEEP } 5\text{ cmH}_2\text{O}, \text{Rate } 40 - 60\text{ breaths/min}$). Connect pulse oximeter to right wrist (pre-ductal).
+2. **Ventilation Corrective Steps (MR. SOPA)**:
+   Triggered if heart rate is not rising and chest is not moving after $15\text{ seconds}$ of PPV:
+   - **M**ask adjustment $\to$ **R**eposition airway $\to$ 5 breaths $\to$ **S**uction mouth and nose $\to$ **O**pen mouth $\to$ 5 breaths $\to$ **P**ressure increase (increase PIP by $5\text{ cmH}_2\text{O}$ up to max $40\text{ cmH}_2\text{O}$) $\to$ **A**lternative airway (endotracheal intubation or laryngeal mask).
+3. **Coordinated 3:1 Chest Compressions**:
+   Triggered if $\text{HR} < 60\text{ bpm}$ despite $30\text{ seconds}$ of effective PPV through an alternative airway:
+   - *Cadence*: 3 compressions : 1 ventilation every 2 seconds ($90\text{ compressions} + 30\text{ breaths} = 120\text{ events/min}$). Compressions delivered via two-thumb encircling-hands technique depressing lower third of sternum by one-third AP thoracic diameter.
+   - Increase $\text{FiO}_2$ to $100\%$.
+4. **Emergency Vascular Access & Medications**:
+   - *Umbilical Venous Catheter (UVC)*: Procedurally identified as single thin-walled, wide-lumen vessel at 12 o'clock position (contrasted with two thick-walled muscular umbilical arteries at 4 and 8 o'clock). Inserted $2 - 4\text{ cm}$ until free venous blood is aspirated.
+   - *Epinephrine*: $0.02\text{ mg/kg}$ ($0.2\text{ mL/kg}$ of $1:10,000$ concentration) IV/UVC, flushed with $3\text{ mL}$ normal saline.
+   - *Volume Expansion*: Normal saline $10\text{ mL/kg}$ over $5 - 10\text{ minutes}$ for acute hypovolemic blood loss.
+5. **APGAR Scoring Engine**: Evaluated automatically at 1 and 5 minutes post-delivery:
+   $$\text{APGAR} = \text{Appearance}(0-2) + \text{Pulse}(0-2) + \text{Grimace}(0-2) + \text{Activity}(0-2) + \text{Respiration}(0-2)$$
+
+---
+
+### 7.12. Deep-Dive: Cardiopulmonary Bypass (CPB), Perfusion Engineering & Diastolic Cardioplegia
+
+To train cardiothoracic surgery residents and cardiac anesthetists, Orbit models the full mechanical and thermodynamic circuits of the heart-lung machine:
+
+```
++---------------------------------------------------------------------------------------------------------------------------------+
+|                                    CARDIOPULMONARY BYPASS & PERFUSION ENGINEERING                                               |
++---------------------------------------------------------------------------------------------------------------------------------+
+| System Domain             | Physical / Thermodynamic Model| Monitored Parameters & Curves   | Clinical Failure & Safety Alarms          |
++---------------------------+-------------------------------+---------------------------------+--------------------------------------------+
+| Circuit Hydraulics &      | Roller occlusive displacement | Total pump flow Q_art, SVR,     | Venous air lock (loss of siphon),          |
+| Priming Dynamics          | Centrifugal H-Q curve         | Line P (<300 mmHg), Prime Hct   | Massive air embolus, Low reservoir level.  |
++---------------------------+-------------------------------+---------------------------------+--------------------------------------------+
+| Hypothermic Metabolism    | Van 't Hoff / Arrhenius Q10   | MVO2 drop (50% @ 28°C),         | Rewarming gradient >10°C (microemboli),    |
+| & Acid-Base Management    | MVO2(T) = MVO2(37)·Q10^((T-37)| Alpha-stat vs pH-stat pH/pCO2   | Hyperthermic cerebral injury (Tout > 37°C).|
++---------------------------+-------------------------------+---------------------------------+--------------------------------------------+
+| Electromechanical         | Nernst equilibrium potential  | Membrane depolarization -50 mV, | Incomplete arrest (persistent EKG spikes), |
+| Diastolic Arrest          | Nav1.5 fast Na channel inact. | Line P (root <150, sinus <40)   | Coronary sinus rupture (P > 50 mmHg).      |
++---------------------------+-------------------------------+---------------------------------+--------------------------------------------+
+| Systemic Anticoagulation  | Heparin AT-III acceleration   | ACT target > 480 s,             | Protamine Type III reaction (catastrophic  |
+| & Protamine Reversal      | Stoichiometric neutralization | Protamine dose (1mg / 100 IU)   | pulmonary hypertension & RV failure).      |
++---------------------------------------------------------------------------------------------------------------------------------+
+```
+
+#### 7.12.1. CPB Circuit Architecture & Hydraulics
+1. **Venous Drainage**:
+   - Gravity siphon drainage from right atrium / bicaval cannulae to venous reservoir:
+     $$Q_v = \frac{\pi \cdot r^4 \cdot (\rho g \Delta h - P_{\text{CVP}})}{8 \eta L}$$
+   - Vacuum-Assisted Venous Drainage (VAVD): Adds regulated negative pressure ($-20\text{ to }-40\text{ mmHg}$) to the cardiotomy reservoir, increasing drainage through smaller minimally invasive cannulae.
+2. **Arterial Blood Pumps**:
+   - *Roller Pump (Positive Displacement)*: Flow is strictly proportional to $\text{RPM} \times \text{Boot Volume}$; independent of systemic afterload, but causes hemolysis if tubing occlusion is too tight.
+   - *Centrifugal Pump (Non-Occlusive Impeller)*: Flow is afterload-dependent based on the $H-Q$ characteristic curve. If patient $\text{SVR}$ spikes, forward flow drops; if pump stops, retrograde flow from patient aorta occurs unless a one-way check valve is present.
+3. **Hemodilution & Priming Equations**:
+   Addition of $1200 - 1500\text{ mL}$ crystalloid prime dilutes patient blood volume:
+   $$\text{Hct}_{\text{on-bypass}} = \frac{\text{Hct}_{\text{pre}} \cdot \text{BV}}{\text{BV} + V_{\text{prime}}}$$
+   Target on-bypass hematocrit: $22 - 25\%$ (optimizes blood viscosity at hypothermia while maintaining oxygen delivery). Target pump flow rate: $\text{Cardiac Index (CI)} = 2.2 - 2.4\text{ L/min/m}^2$.
+
+#### 7.12.2. Hypothermic Thermodynamics & Acid-Base Management
+1. **Van 't Hoff $Q_{10}$ Temperature Coefficient**:
+   Whole-body metabolic rate and oxygen consumption ($M\dot{V}\text{O}_2$) drop exponentially during hypothermic cooling:
+   $$M\dot{V}\text{O}_2(T) = M\dot{V}\text{O}_2(37^\circ\text{C}) \times Q_{10}^{\frac{T - 37}{10}}$$
+   where $Q_{10} \approx 2.2 - 2.5$.
+   - At moderate hypothermia ($28^\circ\text{C}$): $M\dot{V}\text{O}_2$ drops by $\approx 50\%$.
+   - At Deep Hypothermic Circulatory Arrest ($18^\circ\text{C}$, DHCA): $M\dot{V}\text{O}_2$ drops by $>85\%$, allowing safe total circulatory arrest for up to $30 - 45\text{ minutes}$.
+2. **Heat Exchanger Safety Constraints**:
+   - The temperature gradient between heating water and arterial blood must never exceed $10^\circ\text{C}$ ($\Delta T_{\text{water-blood}} < 10^\circ\text{C}$) to prevent outgassing and microemboli formation.
+   - Arterial blood outlet temperature must never exceed $37^\circ\text{C}$ to prevent thermal cerebral cortical denaturation.
+3. **Alpha-Stat vs pH-Stat Strategies**:
+   - *Alpha-Stat*: Does not add $\text{CO}_2$ to sweep gas. Maintains uncorrected $\text{pH} = 7.40$ and $\text{PaCO}_2 = 40\text{ mmHg}$ at $37^\circ\text{C}$. Preserves intracellular enzyme ionization and cerebral autoregulation. Standard for adult cardiac surgery.
+   - *pH-Stat*: Adds $\text{CO}_2$ to sweep gas to maintain temperature-corrected $\text{pH} = 7.40$ at the patient's actual cold core temperature. Induces cerebral vasodilation, providing uniform brain cooling; standard for pediatric congenital repairs.
+
+#### 7.12.3. Electromechanical Diastolic Cardioplegic Arrest
+1. **High-Potassium Depolarizing Arrest (Nernst Formulation)**:
+   Infusion of hyperkalemic crystalloid or blood cardioplegia (St. Thomas Hospital solution $[K^+] = 16 - 20\text{ mEq/L}$, or Del Nido solution with lidocaine):
+   $$E_K = \frac{RT}{zF} \ln\left(\frac{[K^+]_{\text{extracellular}}}{[K^+]_{\text{intracellular}}}\right)$$
+   Elevating extracellular $[K^+]$ shifts resting membrane potential ($E_m$) from $-90\text{ mV}$ to approximately $-50\text{ mV}$. This voltage shift permanently locks the inactivation gates ($h$-gates) of fast voltage-gated sodium channels ($\text{Na}_v1.5$), halting Phase 0 action potential upstrokes and freezing the myocardium in flaccid **diastolic arrest**, reducing myocardial ATP consumption by $>95\%$.
+2. **Delivery Routes & Pressure Safety**:
+   - *Antegrade (Aortic Root / Coronary Ostia)*: Infusion pressure maintained at $100 - 150\text{ mmHg}$ (monitored via root line). Prevents aortic root dissection and coronary endothelial denudation.
+   - *Retrograde (Coronary Sinus)*: Pressure must strictly remain $< 40 - 50\text{ mmHg}$ to prevent fatal coronary sinus rupture and capillary edema.
+
+#### 7.12.4. Anticoagulation & Protamine Stoichiometry
+1. **Heparinization Kinetics**:
+   Unfractionated heparin ($300 - 400\text{ IU/kg}$) accelerates Antithrombin III activity by $1,000\times$, inhibiting Thrombin (IIa) and Factor Xa. CPB cannot be initiated until **Activated Clotting Time (ACT) $> 480\text{ seconds}$**.
+2. **Protamine Reversal & Catastrophic Adverse Reactions**:
+   Neutralization ratio: $1.0\text{ mg}$ Protamine Sulfate per $100\text{ IU}$ circulating Heparin.
+   - *Type I Reaction*: Rapid infusion triggers systemic histamine release $\to$ profound peripheral vasodilation and hypotension.
+   - *Type II Reaction*: True IgE-mediated anaphylaxis or IgG-mediated anaphylactoid reaction (high risk in diabetics using NPH insulin or post-vasectomy patients).
+   - *Type III Reaction*: Catastrophic pulmonary vasoconstriction mediated by thromboxane $A_2$ release. Causes acute severe pulmonary arterial hypertension ($\text{PAP} > 60\text{ mmHg}$), acute right ventricular dilation, tricuspid regurgitation, and systemic cardiovascular collapse.
+
+---
+
+### 7.13. Deep-Dive: Minimally Invasive Surgery (Laparoscopy/Endoscopy) & Soft-Tissue Biomechanics
+
+To simulate laparoscopic abdominal and thoracic procedures (cholecystectomy, appendectomy, hernia repair), Orbit incorporates physical gas dynamics, real-time continuum elastodynamics, and electrosurgical bioheat models:
+
+```
++---------------------------------------------------------------------------------------------------------------------------------+
+|                                    MINIMALLY INVASIVE SURGERY & SOFT-TISSUE BIOMECHANICS                                        |
++---------------------------------------------------------------------------------------------------------------------------------+
+| Simulation Domain         | Computational Physical Model | Visual / Mechanical Effects     | Surgical Hazards & Complications           |
++---------------------------+------------------------------+---------------------------------+--------------------------------------------+
+| CO2 Pneumoperitoneum      | Boyle's law gas insufflation | Abdominal wall distension,      | IVC compression (CO drop), SVR spike 40%,  |
+| Hemodynamics              | Diaphragmatic cephalad shift | FRC reduction by 35%            | Subcutaneous emphysema, Gas embolus.       |
++---------------------------+------------------------------+---------------------------------+--------------------------------------------+
+| Soft-Tissue Continuum     | Extended Position-Based Dyn  | Liver/Bowel elastic indentation,| Dynamic mesh tearing, capsular avulsion,   |
+| Mechanics (Wasm / WebGL)  | (XPBD) Neo-Hookean energy    | Grasping & retraction physics   | Hollow visceral perforation.               |
++---------------------------+------------------------------+---------------------------------+--------------------------------------------+
+| Virtual Laparoscopic      | Oblique view matrix (30°/45°)| Fulcrum effect movement inversion| Loss of depth perception, Monoscopic strain|
+| Optics & Mechanics        | Pivot constraint kinematics  | Monocular visual cues           | Blind trocar insertion visceral injury.    |
++---------------------------+------------------------------+---------------------------------+--------------------------------------------+
+| Electrosurgical Bioheat   | Pennes bioheat transfer PDE  | Intracellular steam explosion,  | Lateral thermal spread (>2 mm),            |
+| & Smoke Particle Engine   | Joule heating Q = J²·ρ·t     | Volumetric smoke fog particles  | Stray current coupling bile duct transect. |
++---------------------------------------------------------------------------------------------------------------------------------+
+```
+
+#### 7.13.1. Pneumoperitoneum Insufflation & Hemodynamics
+1. **Insufflator Physics**:
+   Regulates intraperitoneal pressure to $12 - 15\text{ mmHg}$ at flow rates of $20 - 40\text{ L/min}$ using pure $\text{CO}_2$ (non-flammable, high blood solubility).
+2. **Systemic Hemodynamic Cascade of Elevated Intra-Abdominal Pressure (IAP)**:
+   - *Venous Return*: At $\text{IAP} > 15\text{ mmHg}$, direct compression of the Inferior Vena Cava (IVC) and femoral venous beds causes lower extremity blood pooling, decreasing venous return, preload, and cardiac output by $20 - 30\%$.
+   - *Systemic Vascular Resistance (SVR)*: Compression of the abdominal aorta combined with neurohumoral release of vasopressin and catecholamines causes $\text{SVR}$ to spike by $+30\text{ to }+50\%$, elevating mean arterial pressure and cardiac afterload.
+3. **Respiratory & Acid-Base Derangements**:
+   - Diaphragmatic cephalad displacement reduces Functional Residual Capacity (FRC) by $30 - 40\%$, elevating peak inspiratory airway pressure ($\text{PIP}$) on the mechanical ventilator.
+   - Continuous transperitoneal absorption of $\text{CO}_2$ produces hypercapnia and respiratory acidosis, requiring a compensatory $15 - 25\%$ increase in ventilator minute ventilation.
+
+#### 7.13.2. Soft-Tissue Physics & Real-Time XPBD Mesh Deformation in WebAssembly
+1. **Neo-Hookean Hyperelasticity**:
+   Biological soft tissues (liver parenchyma, spleen, bowel wall) exhibit non-linear elastic stress-strain curves with large deformations. Modeled via the strain energy density function:
+   $$W = \frac{\mu}{2}(I_1 - 3) + \frac{K}{2}(J - 1)^2$$
+   where $\mu$ is shear modulus, $K$ is bulk modulus, $I_1 = \text{tr}(\mathbf{C})$ is the first invariant of the right Cauchy-Green deformation tensor, and $J = \det(\mathbf{F})$ represents volumetric ratio.
+2. **Extended Position-Based Dynamics (XPBD)**:
+   Traditional Finite Element Methods (FEM) require costly implicit matrix factorization ($O(N^3)$), which freezes web rendering threads. Orbit uses **XPBD in WebAssembly**, projecting distance, volume, and bending constraints directly onto mesh vertices:
+   $$\Delta \mathbf{x} = -\frac{\mathbf{C}(\mathbf{x})}{\nabla \mathbf{C} \cdot \mathbf{M}^{-1} \nabla \mathbf{C}^T + \tilde{\alpha}} \mathbf{M}^{-1} \nabla \mathbf{C}^T$$
+   where $\tilde{\alpha} = \frac{\alpha}{\Delta t^2}$ is the compliant constraint parameter. This enables real-time tool grasping, tissue retraction, and dynamic mesh cutting/tearing at 60 FPS without matrix inversion stalls.
+
+#### 7.13.3. Laparoscopic Optics & Electrosurgical Physics
+1. **Fulcrum Effect & Optics**:
+   - Instruments pivot through the abdominal wall trocar:
+     $$\vec{p}_{\text{effector}} = \vec{p}_{\text{pivot}} + s \cdot (\vec{p}_{\text{pivot}} - \vec{p}_{\text{handle}})$$
+     Movement is inverted: moving the handle left swings the tip right; elevating the handle pushes the tip down.
+   - 30-degree angled laparoscope applies an off-axis rotational view transform, enabling inspection around corners and behind visceral structures.
+2. **Electrosurgical Cutting vs Coagulation**:
+   Current density $J = \frac{I}{A}$; Joule heating dissipation $Q = J^2 \cdot \rho \cdot t$.
+   - *Cutting Waveform*: Continuous high-frequency sine wave ($>500\text{ kHz}$) delivers high energy in a tiny area, causing instantaneous intracellular boiling ($>100^\circ\text{C}$), cellular membrane steam explosion, and clean vaporization.
+   - *Coagulation Waveform*: Interrupted, modulated high-voltage bursts ($<10\%$ duty cycle) allow heat to diffuse, causing protein denaturation, coagulum formation, and vessel sealing without tissue vaporization.
+3. **Pennes Bioheat Transfer Equation & Thermal Spread**:
+   Models lateral heat conduction to adjacent structures (e.g. thermal injury to common bile duct during cystic duct dissection):
+   $$\rho_t c_t \frac{\partial T}{\partial t} = \nabla \cdot (k_t \nabla T) + \omega_b c_b (T_a - T) + Q_{\text{met}} + Q_{\text{joule}}$$
+   where $\omega_b c_b (T_a - T)$ models capillary perfusion cooling. If tissue temperature exceeds $65^\circ\text{C}$, thermal coagulation necrosis occurs.
+4. **WebGL Smoke Evacuation Particle System**:
+   Volumetric particles emitted proportional to $Q_{\text{joule}}$, drifting via curl-noise fields and obscuring the laparoscopic camera until active suction is applied.
+
+---
+
+### 7.14. Deep-Dive: Immunohematology, Transfusion Reaction Dynamics (AHTR/TRALI/TACO) & Advanced Toxidromes
+
+To prepare students for critical blood banking decisions and toxicological resuscitation, Orbit codifies the molecular immunology and receptor kinetics of transfusion emergencies and fatal poisonings:
+
+```
++---------------------------------------------------------------------------------------------------------------------------------+
+|                                    IMMUNOHEMATOLOGY & ADVANCED TOXICOLOGY ENGINE                                                |
++---------------------------------------------------------------------------------------------------------------------------------+
+| Clinical Condition        | Immunological / Biochemical ODE| Characteristic Physical Findings| Life-Saving Antidote / Action Target     |
++---------------------------+------------------------------+---------------------------------+--------------------------------------------+
+| Acute Hemolytic           | Classical complement MAC     | Fever, flank pain, hypotension, | Stop transfusion immediately,              |
+| Transfusion Rxn (AHTR)    | Free Hb NO scavenging -> ATN | Hemoglobinuria (port-wine urine)| Forced diuresis (Furosemide + Mannitol).   |
++---------------------------+------------------------------+---------------------------------+--------------------------------------------+
+| TRALI (Two-Hit Lung)      | Endothelial priming +        | Bilateral non-cardiogenic edema | Supportive low-tidal-volume ventilation,   |
+| vs TACO (Fluid Overload)  | Anti-HLA neutrophil activation| PCWP < 18 (TRALI) vs > 18 (TACO)| Diuretics (effective in TACO, not TRALI).  |
++---------------------------+------------------------------+---------------------------------+--------------------------------------------+
+| Organophosphate (OP)      | AChE serine phosphorylation  | SLUDGEM / DUMBELS, miosis,      | Atropine until bronchorrhea clears,        |
+| Poisoning & Aging         | k_react (oximes) vs k_aging  | Copious pulmonary secretions    | Pralidoxime (PAM) before aging occurs.     |
++---------------------------+------------------------------+---------------------------------+--------------------------------------------+
+| Cyanide Poisoning         | Cytochrome c oxidase Complex | Severe lactic acidosis (>10mM), | Hydroxocobalamin (Cyanokit -> Vitamin B12) |
+| (Mitochondrial Arrest)    | IV inhibition; O2 extraction=0| Bright red venous blood ScvO2>90| Sodium thiosulfate (rhodanese cofactor).   |
++---------------------------+------------------------------+---------------------------------+--------------------------------------------+
+| Carbon Monoxide (CO)      | Haldane affinity M = 240     | Cherry-red skin (late/fatal),   | 100% O2 NRB (t1/2: 320 -> 80 min),         |
+| Poisoning                 | Oxy-Hb leftward shift        | Headaches, syncope, elevated COHb| Hyperbaric O2 @ 3.0 ATA (t1/2 -> 23 min).  |
++---------------------------------------------------------------------------------------------------------------------------------+
+```
+
+#### 7.14.1. Immunohematology & Transfusion Reactions
+1. **ABO / Rh Compatibility Logic**:
+   - Forward grouping tests patient red cells against Anti-A, Anti-B, and Anti-D reagents.
+   - Reverse grouping tests patient serum against known $A_1$ and $B$ red cells.
+   - Major crossmatch compatibility rule:
+     $$\text{Incompatible} = (Ag_{A,\text{donor}} \land Ab_{A,\text{recipient}}) \lor (Ag_{B,\text{donor}} \land Ab_{B,\text{recipient}}) \lor (Ag_{D,\text{donor}} \land Ab_{D,\text{recipient}})$$
+2. **Acute Hemolytic Transfusion Reaction (AHTR) Pathophysiology**:
+   - *Complement Membrane Attack Complex (MAC)*:
+     Recipient IgM antibodies bind donor RBC antigens, activating the classical complement pathway ($C_1 \to C_4b2a \to C_3b \to C_{5b-9}$), causing massive intravascular hemolysis:
+     $$\frac{d[\text{MAC}]}{dt} = k_1 [\text{Ag-Ab}] [C1q] - k_{\text{decay}} [\text{MAC}]$$
+   - *Anaphylatoxin Distributive Shock*: Complement fragments $C_3a$ and $C_5a$ trigger systemic mast cell degranulation, releasing histamine and leukotrienes $\to$ severe distributive shock.
+   - *Free Hemoglobin Nephrotoxicity & NO Scavenging*:
+     Lysis of $>100\text{ mL}$ of RBCs saturates circulating haptoglobin ($>100\text{ mg/dL}$ free Hb), spilling free hemoglobin into renal glomeruli. Free heme scavenges endothelial Nitric Oxide (NO):
+     $$\frac{d[\text{NO}]}{dt} = \text{Production}_{\text{NO}} - k_{\text{scavenge}} [\text{FreeHb}_{\text{unbound}}] [\text{NO}]$$
+     Loss of NO causes severe renal cortical vasoconstriction. Heme iron catalyzes lipid peroxidation of proximal tubular epithelial cells, inducing Acute Tubular Necrosis (ATN), casts, hemoglobinuria (dark burgundy/port-wine urine), and acute anuria.
+3. **TRALI vs TACO Differential Diagnostics**:
+   - **TRALI (Transfusion-Related Acute Lung Injury)**: Two-Hit Model. Hit 1: Pulmonary vascular endothelial priming by patient cytokines (sepsis, surgery). Hit 2: Transfusion of donor antibodies (anti-HLA or anti-HNA from multiparous donors) activating primed pulmonary neutrophils $\to$ alveolar capillary microvascular rupture:
+     $$J_v = K_f \left([P_c - P_i] - \sigma [\pi_c - \pi_i]\right)$$
+     Capillary filtration coefficient $K_f$ spikes massively, driving high-protein non-cardiogenic pulmonary edema with normal pulmonary capillary wedge pressure ($\text{PCWP} < 18\text{ mmHg}$) and normal BNP.
+   - **TACO (Transfusion-Associated Circulatory Overload)**: Simple hydrostatic volume overload. Capillary permeability $K_f$ remains normal, but capillary hydrostatic pressure $P_c$ spikes ($>18\text{ mmHg}$), driving low-protein transudative pulmonary edema with massive NT-proBNP elevation; responds rapidly to furosemide diuresis.
+4. **Massive Transfusion Protocol (MTP) Derangements**:
+   Administration of $>10\text{ units}$ of PRBCs in $24\text{ hours}$ (or $>4\text{ units}$ in $1\text{ hour}$):
+   - *Citrate Toxicity*: Trisodium citrate preservative binds free ionized calcium:
+     $$\frac{d[i\text{Ca}^{2+}]}{dt} = -k_{\text{bind}} [\text{Citrate}] [i\text{Ca}^{2+}] + k_{\text{release}}$$
+     Causes hypocalcemia, prolonging the QT interval and impairing myocardial contractility.
+   - *Storage Hyperkalemia*: Stored red cells leak intracellular potassium over time (up to $30\text{ mEq/L}$ in units near expiration date), precipitating acute hyperkalemic arrhythmias during rapid transfusion.
+
+#### 7.14.2. Advanced Toxidromes & Receptor Kinetics
+1. **Organophosphate (OP) Poisoning & Aging Kinetics**:
+   OP compounds phosphorylate the serine hydroxyl group within the active esteratic site of Acetylcholinesterase (AChE), rendering it inactive:
+   $$\frac{d[\text{AChE-OP}]}{dt} = k_{\text{inhibit}} [\text{AChE}] [\text{OP}] - \left(k_{\text{react}} [\text{Oxime}] + k_{\text{aging}}\right) [\text{AChE-OP}]$$
+   - *Enzyme Aging*: Spontaneous dealkylation of the organophosphoryl conjugate leaves a negative charge on the catalytic site, permanently preventing oxime reactivation:
+     $$\frac{d[\text{Aged-AChE}]}{dt} = k_{\text{aging}} [\text{AChE-OP}]$$
+     Once aged, de novo AChE synthesis ($\sim 1\%\text{ per day}$) is required for recovery.
+   - *Atropine Muscarinic Receptor Occupancy Target*:
+     $$\text{Occupancy} = \frac{[\text{Atropine}]}{K_d + [\text{Atropine}] + \frac{K_d}{K_{d,\text{ACh}}} [\text{ACh}]}$$
+     Atropine is titrated to an occupancy $>80\%$, indicated clinically by the **"Five Clearings"**: drying of copious tracheobronchial secretions (bronchorrhea), relief of bronchospasm, heart rate $>80\text{ bpm}$, systolic BP $>80\text{ mmHg}$, and pupils dilated.
+2. **Cyanide Toxicity & Mitochondrial Cytochrome Arrest**:
+   Cyanide ($CN^-$) binds with extreme affinity to the ferric ($\text{Fe}^{3+}$) iron of cytochrome $a_3$ in Cytochrome $c$ Oxidase (Complex IV of the electron transport chain):
+   $$\frac{d[\text{CytC-Blocked}]}{dt} = k_{\text{on}} [CN^-] [\text{CytC}_{\text{free}}] - k_{\text{off}} [\text{CytC-Blocked}]$$
+   - *Pathophysiology*: Halts aerobic oxidative phosphorylation. Cells switch to anaerobic glycolysis, generating massive lactic acidosis ($[\text{Lactate}] > 10\text{ mmol/L}$).
+   - *Oxygen Extraction Failure*: Tissues cannot extract oxygen from circulating blood; venous blood leaves tissues fully oxygenated, producing arterialization of central venous blood ($\text{ScvO}_2 > 90\%$) and bright red retinal veins.
+   - *Antidote Kinetics*: Hydroxocobalamin ($5\text{ g}$ IV) binds cyanide with higher affinity than cytochrome oxidase, forming non-toxic cyanocobalamin (Vitamin $\text{B}_{12}$) excreted in urine.
+3. **Carbon Monoxide (CO) Poisoning & Haldane Dissociation**:
+   CO binds hemoglobin with $240\times$ higher affinity than oxygen, governed by the Haldane equation:
+   $$\frac{[\text{COHb}]}{[\text{O}_2\text{Hb}]} = 240 \times \frac{P_{\text{CO}}}{P_{\text{O}_2}}$$
+   - Alters hemoglobin conformation, shifting the oxyhemoglobin dissociation curve to the far left (Haldane effect), preventing oxygen release to hypoperfused tissues.
+   - *Elimination Half-Life Curve*:
+     $$[\text{COHb}](t) = [\text{COHb}]_0 \cdot \exp\left(-\frac{\ln 2}{t_{1/2}} t\right)$$
+     * Room air ($21\% \text{ O}_2$): $t_{1/2} = 320\text{ minutes}$.
+     * $100\% \text{ O}_2$ via non-rebreather mask: $t_{1/2} = 80\text{ minutes}$.
+     * Hyperbaric Oxygen (HBO at $3.0\text{ ATA}$): $t_{1/2} = 23\text{ minutes}$.
+
+---
+
 ## 8. Verification & Delivery Roadmap
 
 * **Phase 1: Architecture & Specifications (COMPLETED ✅)**
@@ -2569,6 +2855,12 @@ To prepare students for complex neurotrauma, high-risk labor rooms, and invasive
   - Integrated Neuro-ICU telemetry: 4-channel raw qEEG (Delta, Theta, Alpha, Beta PSD, SEF 95, Bispectral Index BIS 0-100, burst suppression BSR, NCSE, triphasic waves), invasive ICP Monro-Kellie compliance, P1/P2/P3 waveforms, Lundberg A/B/C waves, CPP = MAP - ICP, and TCD Gosling Pulsatility Index.
   - Simulated Obstetric Labor 6-DOF kinematics (7 Cardinal Movements: Engagement, Descent, Flexion, Internal Rotation, Extension, Restitution/External Rotation, Expulsion) coupled to real-time Cardiotocography (CTG FHR variability, early/late/variable decelerations, tocodynamometry Montevideo Units).
   - Specified Invasive Bedside Procedures: Difficult airway Cormack-Lehane grading, Eschmann bougie tracheal clicks and carina hold-up, surgical cricothyroidotomy; Lumbar Puncture multi-layer haptics (ligamentum flavum 'pop', hydrostatic opening pressure, local anesthetic baricity tilt); Ultrasound-guided CVC Seldinger technique with guidewire atrial ectopy safety check.
+* **Phase 1.15: Universal Frontier Ingestion: Neonatal NRP, Cardiopulmonary Bypass, Laparoscopic Biomechanics & Immunohematology (COMPLETED ✅ — Sept 6, 2026)**
+  - Codified Fetal-to-Neonatal Transition (ENaC sodium kinetics, first breath -70 cmH2O pressure, surfactant Laplace law, SVR spike, oxygen-mediated PVR drop, foramen ovale and ductus arteriosus shunt closure, PPHN with iNO vasodilation).
+  - Programmed Neonatal Resuscitation Program (NRP 8th Edition) Golden Minute state machine, MR. SOPA ventilation corrective loop, 3:1 CPR (120 events/min), UVC catheterization, and APGAR scoring engine.
+  - Specified Cardiopulmonary Bypass (CPB) heart-lung machine circuit hydraulics (gravity vs VAVD, roller vs centrifugal H-Q curves, hemodilution prime Hct), Van 't Hoff Q10 hypothermic metabolic arrest, alpha-stat vs pH-stat, high-potassium Nernst depolarizing diastolic cardioplegic arrest (St. Thomas / Del Nido Nav1.5 inactivation), and protamine-heparin ACT stoichiometry with Type I/II/III adverse reactions.
+  - Formulated Minimally Invasive Surgery (MIS) & Soft-Tissue Biomechanics: CO2 pneumoperitoneum Boyle's law/Poiseuille hemodynamics (IVC compression, SVR spikes 30-50%, FRC drop 30-40%, respiratory hypercapnia); SOFA/Vega/XPBD continuum mechanics Neo-Hookean hyperelasticity ($W = (\mu/2)(I_1-3) + (K/2)(J-1)^2$), constraint projection for dynamic tearing/cutting/grasping without matrix inversion; 0° vs 30° laparoscope projection matrices, trocar fulcrum effect pivot constraint; electrosurgery Joule heating $Q = J^2ho t$, cutting vs coagulation waveforms, Pennes bioheat transfer equation for lateral thermal spread, and smoke particle system with curl-noise.
+  - Integrated Immunohematology & Advanced Toxicology: Forward/Reverse ABO/Rh crossmatching boolean matrix, Acute Hemolytic Transfusion Reaction (AHTR complement MAC cascade, free Hb NO scavenging with renal vasoconstriction and ATN), TRALI two-hit Kf Starling permeability vs TACO hydrostatic Pc > 18 mmHg overload, MTP citrate-hypocalcemia and potassium leakage; Organophosphate AChE phosphorylation, oxime reactivation k_react vs aging k_aging, atropine muscarinic occupancy; Cyanide Complex IV cytochrome c oxidase inhibition, ScvO2 > 90%, hydroxocobalamin antidote; Carbon monoxide Haldane M=240 equation and t_1/2 elimination across room air, 100% O2, and HBO 3.0 ATA.
 * **Phase 2: Claude Handover & Sync (ACTIVE)**
   - Update `CLAUDE_HANDOVER.md` to ensure Claude and all collaborating tools share identical context.
 * **Phase 3: Prototype Scaffolding (FUTURE — PENDING USER APPROVAL)**
