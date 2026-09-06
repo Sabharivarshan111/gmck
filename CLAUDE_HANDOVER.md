@@ -210,7 +210,7 @@ This document contains the complete record of architecture, features, bugs solve
 ---
 
 ## 9. 🫀 Orbit Real-Time 3D Interactive Patient Simulator (Architecture & Specification)
-- **Specification Document**: [`docs/patient_simulator_spec.md`](file:///Users/sabharivarshan/.gemini/antigravity/scratch/gmck/docs/patient_simulator_spec.md) (1,620+ lines, ~169KB, Version `6.0.0-AGI-OPEN-SOURCE-SIMULATOR-SYNTHESIS`)
+- **Specification Document**: [`docs/patient_simulator_spec.md`](file:///Users/sabharivarshan/.gemini/antigravity/scratch/gmck/docs/patient_simulator_spec.md) (1,620+ lines, ~169KB, Version `7.0.0-OMNI-SIMULATOR-COMPLETE`)
 - **Overview**:
   - A real-time 3D clinical simulator for medical students to simulate acute emergencies AND daily ward inpatient cases, observing whole-body interconnected physiological responses in real-time.
   - Grounded across all 4 MBBS years in standard textbooks (*Harrison's, Robbins, Guyton, Reddy's Forensic Medicine, KD Tripathi, Bailey & Love, DC Dutta*) and clinical manuals (*Madras Medical College (MMC) Final Year Clinical Curriculum, Kundu's Bedside Clinics, Das Clinical Surgery, Macleod's Clinical Examination*).
@@ -241,7 +241,7 @@ This document contains the complete record of architecture, features, bugs solve
 - **Master Clinical Drive Library & PDF Repository**:
   - Full instructions, drive URLs, folder manifests, and PDF reading protocols for Claude are documented in [`docs/CLINICAL_DRIVE_LIBRARY.md`](file:///Users/sabharivarshan/.gemini/antigravity/scratch/gmck/docs/CLINICAL_DRIVE_LIBRARY.md).
   - All **28 core clinical PDFs (385 MB total)** are stored directly within the repo under [`docs/clinical_materials/`](file:///Users/sabharivarshan/.gemini/antigravity/scratch/gmck/docs/clinical_materials/). Claude can inspect any of them using native `view_file` or extract text via `scratch/pdf_reader.py`.
-- **Current Status**: Exhaustive research and architectural specification completed. Version `6.0.0-AGI-OPEN-SOURCE-SIMULATOR-SYNTHESIS`. **No code implementation initiated yet** per strict user instruction ("dont build anything just do research").
+- **Current Status**: Exhaustive research and architectural specification completed. Version `7.0.0-OMNI-SIMULATOR-COMPLETE`. **No code implementation initiated yet** per strict user instruction ("dont build anything just do research").
 
 
 ---
@@ -311,3 +311,64 @@ Synthesized via 4 autonomous AGI deep-dive research subagents investigating the 
   - Critical failure triggers: IV fluid bolus in cardiogenic pulmonary edema, high-flow $100\% 	ext{ O}_2$ in chronic hypercapnic COPD, or beta-blockers in cardiogenic shock.
   - Automated OSCE rubric mapped to NMC CBME and USMLE Step 2 CS.
   - Declarative JSON/YAML scenario authoring schema bound to SNOMED-CT, RxNorm, and LOINC.
+
+---
+
+## 11. 🏥 Advanced Critical Care Life Support, Dialysis, Neuro-ICU & Procedural Engine (v7.0.0)
+
+Codified via two specialized research subagents covering tertiary ICU life-support machines, advanced neuromonitoring, 3D obstetric labor mechanics, and invasive bedside interventions:
+
+### 11.1. Extracorporeal Life Support & Mechanical Circulatory Assistance
+- **ECMO Fluid Dynamics**:
+  - Hydraulic pump curves: $\Delta P_{	ext{pump}} = a\cdot	ext{RPM}^2 - b\cdot	ext{RPM}\cdot Q - c\cdot Q^2$.
+  - Membrane oxygenator gradient: $\Delta P = P_{	ext{pre}} - P_{	ext{post}} = R_{	ext{membrane}} \cdot Q_{	ext{ecmo}}$ (clotting warning $>50	ext{ mmHg}$).
+  - Sweep gas flow ($L/\min$) driving $	ext{CO}_2$ clearance; sweep $	ext{FiO}_2$ driving post-membrane $	ext{PaO}_2$.
+  - Recirculation fraction in VV-ECMO: $R_f = rac{S_{	ext{pre}}O_2 - S_vO_2}{S_{	ext{post}}O_2 - S_vO_2}$.
+  - **Harlequin Syndrome**: Differential hypoxemia in peripheral femoral VA-ECMO; native LV ejects deoxygenated blood into aortic arch/coronaries/brain ($	ext{SpO}_2 pprox 70\%$) while lower body receives oxygenated retrograde ECMO blood ($	ext{SpO}_2 pprox 99\%$).
+- **Intra-Aortic Balloon Pump (IABP)**:
+  - Pneumatic helium counterpulsation ($34-50	ext{ cc}$).
+  - Inflation at dicrotic notch ($T_{	ext{aov\_close}}$) augments diastolic aortic pressure and coronary artery perfusion ($+30-60\%$).
+  - Deflation immediately prior to systole creates vacuum afterload reduction, lowering LV stroke work and $	ext{MVO}_2$.
+  - Assistance modes (1:1, 1:2, 1:3); timing error waveforms (early/late inflation, early/late deflation).
+
+### 11.2. Continuous Renal Replacement Therapy (CRRT) & Viscoelastic Hemostasis
+- **CRRT Clearances & Hydraulics**:
+  - Convective clearance (CVVH): $K_{	ext{conv}} = Q_f \cdot S \cdot rac{Q_b}{Q_b + Q_{r,	ext{pre}}}$.
+  - Diffusive clearance (CVVHD): $K_{	ext{diff}} = Q_d \cdot rac{C_{do}}{C_{pi}}$.
+  - Transmembrane Pressure: $	ext{TMP} = rac{P_{	ext{pre}} + P_{	ext{return}}}{2} - P_{	ext{effluent}}$ (fouling alarm $>350	ext{ mmHg}$; critical $>450	ext{ mmHg}$).
+  - Regional Citrate Anticoagulation (RCA): Pre-filter citrate chelation of $i	ext{Ca}^{2+} (<0.35	ext{ mmol/L})$, post-filter $	ext{CaCl}_2$ replacement ($1.1-1.3	ext{ mmol/L}$); citrate lock ratio $rac{	ext{Total Ca}}{i	ext{Ca}} > 2.5$.
+- **Viscoelastic Hemostatic Monitoring (TEG & ROTEM)**:
+  - Shear elastic modulus: $G(t) = rac{5000 \cdot A(t)}{100 - A(t)}$ dynes/$	ext{cm}^2$.
+  - MTP guidance: $R$-time / CT $>10	ext{ min} 	o$ FFP; $lpha$-angle $<53^\circ 	o$ Cryoprecipitate; $MA / MCF <50	ext{ mm} 	o$ Platelets; $LY30 >3\% 	o$ Tranexamic Acid (TXA).
+  - ROTEM assays: EXTEM (tissue factor), INTEM (contact), FIBTEM (cytochalasin D platelet inhibitor to isolate fibrinogen), HEPTEM (heparinase).
+
+### 11.3. Neuro-ICU Telemetry: qEEG, BIS, Invasive ICP & TCD
+- **Quantitative EEG (qEEG) & BIS**:
+  - 4-channel power spectral density FFT across Delta ($0.5-4	ext{ Hz}$), Theta ($4-8	ext{ Hz}$), Alpha ($8-13	ext{ Hz}$), Beta ($13-30	ext{ Hz}$).
+  - Bispectral Index (BIS 0-100), Spectral Edge Frequency (SEF 95), and Burst Suppression Ratio (BSR).
+  - Pathologies: Non-convulsive status epilepticus (NCSE $>2.5	ext{ Hz}$ spike-wave) and hepatic encephalopathy triphasic waves ($1.5-2.5	ext{ Hz}$).
+- **Invasive ICP & TCD**:
+  - Monro-Kellie compliance curve: $	ext{ICP} = P_0 \cdot e^{k(V - V_{	ext{reserve}})}$.
+  - Tri-phasic pulse waveforms ($P_1, P_2, P_3$). Poor compliance sign: $P_2 > P_1$.
+  - Lundberg $A$-waves (plateau waves $>50	ext{ mmHg}$ for $5-20	ext{ min}$ indicating impending herniation), $B$-waves, and $C$-waves.
+  - Cerebral Perfusion Pressure: $	ext{CPP} = 	ext{MAP} - 	ext{ICP}$ (target $60-70	ext{ mmHg}$).
+  - Transcranial Doppler (TCD): Gosling Pulsatility Index $PI = rac{	ext{PSV} - 	ext{EDV}}{	ext{VM}}$ (elevated $>1.5$ in raised ICP).
+
+### 11.4. Obstetric Delivery Biomechanics & Real-Time CTG
+- **7 Cardinal Movements of Labor (6-DOF Kinematic Chain)**:
+  1. Engagement (BPD at pelvic inlet, synclitism vs asynclitism)
+  2. Descent (station $-3 	o 0 	o +3$)
+  3. Flexion (suboccipitobregmatic $9.5	ext{ cm}$ presentation)
+  4. Internal Rotation (LOT/ROT to Direct OA)
+  5. Extension (crowning and pivoting under pubic symphysis)
+  6. Restitution & External Rotation (head aligns with bisacromial diameter)
+  7. Expulsion (anterior shoulder under subpubic arch, followed by posterior shoulder and trunk).
+- **Real-Time Cardiotocography (CTG)**:
+  - Baseline FHR ($110-160	ext{ bpm}$) + variability ($6-25	ext{ bpm}$).
+  - Decelerations: Early (head compression, mirrors contraction), Late (uteroplacental insufficiency, shifted post-peak), Variable (cord compression, abrupt drop with shoulders).
+  - Uterine tocodynamometry: Contraction frequency, duration, intensity in Montevideo Units ($MVU > 200$).
+
+### 11.5. Invasive Bedside Interventions Simulation
+- **Difficult Airway**: Cormack-Lehane laryngoscopy grading (I-IV), POGO score, Eschmann bougie tactile tracheal clicks and carina hold-up ($24-28	ext{ cm}$), emergency scalpel-finger-bougie surgical cricothyroidotomy.
+- **Lumbar Puncture (LP)**: Tuffier's line (L4-L5), multi-layer tissue resistance profile (ligamentum flavum tactile 'pop', epidural loss of resistance, dura-arachnoid pop), hydrostatic CSF opening pressure manometry ($10-20	ext{ cmH}_2	ext{O}$), and local anesthetic baricity dispersion with table tilt.
+- **Ultrasound-Guided CVC**: RIJ vein vs Carotid artery compressibility and pulsatility; Seldinger technique with guidewire depth safety check (Lead II ECG PVCs if $>15-20	ext{ cm}$ in right atrium).

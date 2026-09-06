@@ -1,7 +1,7 @@
 # Orbit MBBS Real-Time 3D Interactive Patient Simulator
 ## Technical & Pathophysiological Specification Document
 
-**Document Version:** 6.0.0-AGI-OPEN-SOURCE-SIMULATOR-SYNTHESIS  
+**Document Version:** 7.0.0-OMNI-SIMULATOR-COMPLETE  
 **Target Systems:** Orbit MBBS Mobile (React Native / Three.js / WebGL), Orbit Web, Supabase Edge Infrastructure  
 **Curriculum Grounding:** National Medical Commission (NMC) Competency-Based Medical Education (CBME), Madras Medical College (MMC) Final Year Clinical Curriculum, *Kundu's Bedside Clinics in Medicine*, *Das Clinical Surgery*, *Macleod's Clinical Examination*, *Harrison's Principles of Internal Medicine*, *Robbins & Cotran Pathologic Basis of Disease*, *Guyton & Hall Physiology*, *Reddy's Essentials of Forensic Medicine*, *KD Tripathi Pharmacology*, *Bailey & Love Surgery*, *DC Dutta Obstetrics*.
 
@@ -2286,6 +2286,235 @@ branching_dag:
 
 ---
 
+### 7.9. Deep-Dive: Extracorporeal Life Support, Dialysis & Viscoelastic Hemostasis (ECMO, IABP, CRRT, TEG/ROTEM)
+
+To simulate tertiary ICU life support and trauma resuscitation with absolute fidelity, Orbit incorporates complete biomathematical models for extracorporeal circulation, mechanical cardiac assistance, renal replacement, and viscoelastic hemostatic monitoring:
+
+```
++---------------------------------------------------------------------------------------------------------------------------------+
+|                                     ADVANCED CRITICAL CARE & EXTRACORPOREAL CIRCUITS                                            |
++---------------------------------------------------------------------------------------------------------------------------------+
+| System / Machine          | Mathematical Formalism       | Monitored Telemetry / Waveforms | Clinical Failure & Alarm Triggers          |
++---------------------------+------------------------------+---------------------------------+--------------------------------------------+
+| Extracorporeal Membrane   | Hydraulic H-Q pump curves    | Q_ecmo, RPM, P_pre, P_post,     | Circuit cavitation (chattering),           |
+| Oxygenation (ECMO)        | Membrane gas flux ODEs       | ΔP_oxygenator, Recirculation %  | Oxygenator clot (rising ΔP), Harlequin syn.|
++---------------------------+------------------------------+---------------------------------+--------------------------------------------+
+| Intra-Aortic Balloon Pump | Lumped pneumatic bellows ODE | Augmented DBP, End-diastolic P, | Early/Late inflation (aortic valve clash), |
+| (IABP)                    | Presystolic vacuum afterload | 1:1, 1:2, 1:3 assistance curves | Early/Late deflation (lost afterload drop).|
++---------------------------+------------------------------+---------------------------------+--------------------------------------------+
+| Continuous Renal Replace- | Convective-diffusive flux    | TMP, ΔP_filter, Access P,       | Membrane fouling (TMP > 350-450 mmHg),     |
+| ment Therapy (CRRT)       | Sieving coefficient S        | Return P, Effluent dose mL/kg/h | Filter clotting, Citrate lock (Ca ratio>2.5)|
++---------------------------+------------------------------+---------------------------------+--------------------------------------------+
+| Viscoelastic Hemostasis   | Torsion shear elastic modulus| R-time, K-time, α-angle, MA,    | Coagulopathy (R > 10m -> FFP),             |
+| (TEG / ROTEM)             | G(t) = 5000·A(t)/(100 - A(t))| LY30 / Clot Lysis %             | Hypofibrinogenemia (α < 53° -> Cryo), TXA. |
++---------------------------------------------------------------------------------------------------------------------------------+
+```
+
+#### 7.9.1. Extracorporeal Membrane Oxygenation (ECMO) Dynamics
+1. **VA-ECMO (Veno-Arterial) vs VV-ECMO (Veno-Venous)**:
+   - **Centrifugal Pump Hydraulics**:
+     Flow rate $Q_{\text{ecmo}}$ is governed by the rotational speed ($\text{RPM}$) against total circuit impedance:
+     $$\Delta P_{\text{pump}} = a \cdot \text{RPM}^2 - b \cdot \text{RPM} \cdot Q_{\text{ecmo}} - c \cdot Q_{\text{ecmo}}^2$$
+   - **Membrane Oxygenator Pressure Drop & Gas Exchange**:
+     $$\Delta P_{\text{membrane}} = P_{\text{pre-oxy}} - P_{\text{post-oxy}} = R_{\text{membrane}} \cdot Q_{\text{ecmo}}$$
+     An acute rise in $\Delta P_{\text{membrane}} > 50\text{ mmHg}$ signals hollow-fiber thrombosis.
+     - *Carbon Dioxide Clearance*: Modulated linearly by Sweep Gas Flow ($L/\min$):
+       $$\dot{V}\text{CO}_2 = Q_{\text{sweep}} \cdot \frac{P_{\text{gas\_out}}\text{CO}_2}{P_{\text{atm}}}$$
+     - *Oxygenation*: Post-oxygenator $\text{PaO}_2$ is governed by sweep gas $\text{FiO}_2$ and membrane surface area diffusion capacity ($D_L\text{O}_2$).
+2. **VV-ECMO Recirculation Fraction**:
+   In dual-lumen or femoral-internal jugular VV circuits, a portion of reinfused oxygenated blood is immediately sucked back into the drainage cannula:
+   $$R_f = \frac{S_{\text{pre}}O_2 - S_vO_2}{S_{\text{post}}O_2 - S_vO_2}$$
+   where $S_vO_2$ is native mixed venous saturation. High $R_f (>30\%)$ causes systemic desaturation despite a fully functional membrane.
+3. **Harlequin Syndrome (North-South Syndrome / Differential Hypoxemia)**:
+   In peripheral femoral VA-ECMO with recovering native cardiac output but severely injured lungs (e.g. ARDS), antegrade ejection of poorly oxygenated blood from the native left ventricle clashes against retrograde ECMO oxygenated blood ascending from the femoral artery:
+   - *Watershed Mixing Zone*: Shifts based on the ratio $\frac{Q_{\text{native\_LV}}}{Q_{\text{ecmo}}}$.
+   - *Clinical Consequence*: Cerebral circulation and coronary arteries receive hypoxic blood ($\text{SpO}_2 \approx 70\%$, monitored on right radial artery), while lower extremities receive hyperoxemic blood ($\text{SpO}_2 \approx 99\%$). Managed by converting to V-A-V ECMO or increasing ventilator PEEP.
+
+#### 7.9.2. Intra-Aortic Balloon Pump (IABP) Counterpulsation Engine
+1. **Helium Counterpulsation Mechanics**:
+   Pneumatic helium displacement ($34 - 50\text{ cc}$) inside the descending thoracic aorta.
+2. **Diastolic Augmentation (Inflation Timing)**:
+   - Inflates precisely at the **Dicrotic Notch** (aortic valve closure):
+     $$T_{\text{inflate}} = T_{\text{dicrotic\_notch}}$$
+   - Augments diastolic aortic root pressure, driving retrograde blood flow into left and right coronary arteries ($+30\text{ to }+60\%$ coronary perfusion).
+3. **Presystolic Unloading (Deflation Timing)**:
+   - Deflates immediately prior to isometric ventricular contraction:
+     $$T_{\text{deflate}} = T_{\text{R\_wave}} - \Delta t_{\text{pre-ejection}}$$
+   - Creates a sudden vacuum in the ascending aorta, lowering end-diastolic pressure and reducing left ventricular afterload, wall tension, and myocardial $\text{MVO}_2$.
+4. **Timing Artifacts & Diagnostic Waveforms**:
+   - *Early Inflation*: Balloon inflates before aortic valve closure $\to$ premature aortic valve clash, increased afterload, severe reduction in cardiac output.
+   - *Late Inflation*: Lost peak diastolic augmentation $\to$ suboptimal coronary perfusion.
+   - *Early Deflation*: Loss of afterload reduction, retrograde coronary stealing.
+   - *Late Deflation*: Left ventricle ejects against an inflated balloon $\to$ catastrophic spike in afterload and LV wall stress.
+
+#### 7.9.3. Continuous Renal Replacement Therapy (CRRT) & Regional Citrate Anticoagulation
+1. **Clearance Equations across Modalities**:
+   - **CVVH (Convective Clearance)**: Solute dragged across membrane with plasma water:
+     $$K_{\text{conv}} = Q_f \cdot S \cdot \left(\frac{Q_b}{Q_b + Q_{r,\text{pre}}}\right)$$
+     where $S$ is the sieving coefficient ($S \approx 1.0$ for urea, creatinine; $S \approx 0$ for albumin) and $Q_{r,\text{pre}}$ is pre-dilution replacement fluid.
+   - **CVVHD (Diffusive Clearance)**: Countercurrent dialysate flow driven by Fickian concentration gradient:
+     $$K_{\text{diff}} = Q_d \cdot \left(\frac{C_{do}}{C_{pi}}\right)$$
+   - **CVVHDF**: $K_{\text{total}} = K_{\text{conv}} + K_{\text{diff}}$. Target effluent dose: $20 - 25\text{ mL/kg/hr}$.
+2. **Circuit Pressure Alarms & Membrane Fouling**:
+   - **Transmembrane Pressure (TMP)**:
+     $$\text{TMP} = \frac{P_{\text{pre-filter}} + P_{\text{venous-return}}}{2} - P_{\text{effluent}}$$
+     Alarm threshold: $\text{TMP} > 350\text{ mmHg}$ indicates membrane pore clogging (protein cake layer); $\text{TMP} > 450\text{ mmHg}$ mandates circuit change.
+   - **Filter Pressure Drop ($\Delta P_{\text{filter}}$)**:
+     $$\Delta P_{\text{filter}} = P_{\text{pre-filter}} - P_{\text{venous-return}}$$
+     An acute rise in $\Delta P_{\text{filter}} > 150\text{ mmHg}$ indicates hollow-fiber clotting.
+3. **Regional Citrate Anticoagulation (RCA) Protocol**:
+   - Pre-filter infusion of trisodium citrate chelates free ionized calcium ($\text{Ca}^{2+}$), blocking the coagulation cascade (intrinsic and common pathways):
+     $$\text{Post-filter } i\text{Ca}^{2+} \text{ target: } < 0.35\text{ mmol/L}$$
+   - Systemic calcium chloride ($\text{CaCl}_2$) infusion distal to venous bubble trap restores systemic coagulation:
+     $$\text{Systemic } i\text{Ca}^{2+} \text{ target: } 1.10 - 1.30\text{ mmol/L}$$
+   - **Citrate Toxicity / Lock Detection**: When hepatic citrate metabolism fails (e.g. shock liver, hypoperfusion), citrate accumulates:
+     $$\text{Citrate Lock Ratio} = \frac{\text{Total Serum Calcium (mmol/L)}}{\text{Ionized Calcium (mmol/L)}} > 2.5$$
+     Triggers acute metabolic acidosis with elevated anion gap and worsening hypocalcemia.
+
+#### 7.9.4. Viscoelastic Hemostasis (TEG & ROTEM) & Resuscitation Guidance
+1. **Torsion Shear Elastic Modulus**:
+   A cylindrical cup oscillates at $0.087\text{ Hz}$ containing whole blood; as fibrin cross-links form, torque is transmitted to a suspended pin. The shear modulus $G(t)$ in dynes/$\text{cm}^2$ is calculated directly from amplitude $A(t)$ (in mm):
+   $$G(t) = \frac{5000 \cdot A(t)}{100 - A(t)}$$
+2. **TEG Parameters & Massive Transfusion Protocol (MTP) Algorithm**:
+   - **Reaction Time ($R$-time, normal $5 - 10\text{ min}$)**: Latency until initial clot formation ($2\text{ mm}$ amplitude). Governed by clotting factors (II, VII, IX, X). If $R > 10\text{ min} \to$ administer **Fresh Frozen Plasma (FFP)**.
+   - **K-time ($1 - 3\text{ min}$) & $\alpha$-angle ($53 - 72^\circ$)**: Clot kinetics and fibrinogen cleavage speed. If $\alpha < 53^\circ \to$ administer **Cryoprecipitate / Fibrinogen Concentrate**.
+   - **Maximum Amplitude ($MA$, normal $50 - 70\text{ mm}$)**: Peak clot strength. Reflects $80\%$ platelet number/aggregation and $20\%$ fibrin meshwork. If $MA < 50\text{ mm} \to$ administer **Platelet Concentrate**.
+   - **$LY30$ (normal $< 3\%$)**: Percentage of clot amplitude decrease 30 minutes after $MA$. If $LY30 > 3\% \to$ acute **Hyperfibrinolysis**, administer **Tranexamic Acid (TXA)** stat.
+3. **ROTEM Differential Assays**:
+   - **EXTEM**: Extrinsic pathway activation via tissue factor.
+   - **INTEM**: Intrinsic pathway activation via ellagic acid.
+   - **FIBTEM**: Extrinsic activation + Cytochalasin D (platelet cytoskeleton inhibitor). Completely isolates fibrinogen contribution; if FIBTEM Maximum Clot Firmness ($\text{MCF}$) $< 10\text{ mm} \to$ direct indication for cryoprecipitate.
+   - **HEPTEM**: Contains heparinase; if HEPTEM normalizes an elevated INTEM clotting time, heparin excess/reversal with Protamine is confirmed.
+
+---
+
+### 7.10. Deep-Dive: Neuro-ICU Telemetry, Obstetric Mechanics & Bedside Interventions
+
+To prepare students for complex neurotrauma, high-risk labor rooms, and invasive bedside resuscitation, Orbit codifies detailed biomechanical and procedural algorithms:
+
+```
++---------------------------------------------------------------------------------------------------------------------------------+
+|                                    NEURO-ICU, OBSTETRICS & INVASIVE PROCEDURAL SUITE                                           |
++---------------------------------------------------------------------------------------------------------------------------------+
+| Clinical Domain           | Kinematic / Physical Model   | Critical Waveforms / Angles     | Complications & Landmark Triggers          |
++---------------------------+------------------------------+---------------------------------+--------------------------------------------+
+| Quantitative EEG &        | 4-channel power spectral FFT | Delta/Theta/Alpha/Beta PSD,     | Burst Suppression Ratio (BSR),             |
+| Bispectral Index (BIS)    | Bispectral phase coupling    | SEF 95, BIS scale 0-100         | Non-convulsive status epilepticus (NCSE).  |
++---------------------------+------------------------------+---------------------------------+--------------------------------------------+
+| Invasive Intracranial     | Monro-Kellie compliance ODE  | P1, P2, P3 arterial pulsations, | Lundberg A-waves (>50 mmHg x 15m),         |
+| Pressure (ICP) & TCD      | CPP = MAP - ICP              | Lundberg A/B/C waves, Gosling PI| Impending transtentorial herniation.       |
++---------------------------+------------------------------+---------------------------------+--------------------------------------------+
+| Obstetric Labor           | 6-DOF kinematic pelvis chain | 7 Cardinal Movements trajectory,| FHR variability, early/late/variable decel,|
+| Mechanics & CTG           | Uterine tocodynamometry      | Montevideo Units (MVU > 200)    | Shoulder dystocia (turtle sign mechanics). |
++---------------------------+------------------------------+---------------------------------+--------------------------------------------+
+| Difficult Airway &        | Cormack-Lehane geometry      | POGO score 0-100%,              | Tracheal clicks & carina hold-up (26 cm),  |
+| Cricothyroidotomy         | Bougie vibration haptics     | Vocal cord visualization        | Scalpel-finger-bougie emergency conduit.   |
++---------------------------+------------------------------+---------------------------------+--------------------------------------------+
+| Lumbar Puncture &         | Multi-layer tissue impedance | Hydrostatic column manometry    | Ligamentum flavum 'pop', CSF opening P,    |
+| Spinal Anesthesia         | Baricity density dispersion  | 10 - 20 cmH2O                   | Hyperbaric / Isobaric bupivacaine spread.  |
++---------------------------+------------------------------+---------------------------------+--------------------------------------------+
+| Ultrasound-Guided         | Seldinger acoustic tracking  | Non-pulsatile venous flash,     | Guidewire ectopy on Lead II ECG (>15cm RA),|
+| CVC Insertion             | Probe compression kinematics | Venous vs Arterial Doppler      | Pneumothorax, carotid artery puncture.     |
++---------------------------------------------------------------------------------------------------------------------------------+
+```
+
+#### 7.10.1. Quantitative EEG (qEEG) & Bispectral Index (BIS) Simulation
+1. **Power Spectral Density & Frequency Bands**:
+   The raw 4-channel EEG signal is synthesized via multi-oscillator Fourier summation:
+   $$\text{EEG}(t) = \sum_{i \in \{\delta, \theta, \alpha, \beta\}} A_i(t) \cdot \sin(2\pi f_i t + \phi_i) + \mathcal{N}(0, \sigma^2)$$
+   - *Delta ($\delta$)*: $0.5 - 4\text{ Hz}$ (deep anesthesia, coma, structural cerebral ischemia).
+   - *Theta ($\theta$)*: $4 - 8\text{ Hz}$ (light sedation, metabolic encephalopathy).
+   - *Alpha ($\alpha$)*: $8 - 13\text{ Hz}$ (relaxed wakefulness with eyes closed, propofol anteriorization).
+   - *Beta ($\beta$)*: $13 - 30\text{ Hz}$ (alert cognitive activity, light sedation).
+2. **Bispectral Index (BIS, Scale 0 - 100)**:
+   - Evaluates depth of sedation:
+     * $90 - 100$: Awake, alert.
+     * $60 - 80$: Moderate conscious sedation.
+     * $40 - 60$: General surgical anesthesia (target for endotracheal intubation).
+     * $< 40$: Deep hypnotic state.
+     * $0$: Isoelectric flatline (burst suppression $100\%$).
+   - Derived mathematically through a combination of **BetaRatio** ($\log \frac{P_{30-47\text{Hz}}}{P_{11-20\text{Hz}}}$), **SynchFastSlow** (bispectral phase coupling between $0.5 - 4.7\text{ Hz}$ and $40 - 47\text{ Hz}$), and the **Burst Suppression Ratio (BSR)**:
+     $$\text{BSR} = \frac{\text{Time with voltage } < 5\,\mu\text{V}}{\text{Total epoch duration } (63\text{ s})} \times 100\%$$
+3. **Pathological Waveform Engines**:
+   - *Non-Convulsive Status Epilepticus (NCSE)*: Continuous rhythmic generalized spike-and-wave discharges $>2.5\text{ Hz}$ without overt motor convulsions.
+   - *Hepatic Encephalopathy*: Bilateral synchronous, frontally dominant **triphasic waves** ($1.5 - 2.5\text{ Hz}$) with characteristic anterior-to-posterior time lag.
+
+#### 7.10.2. Invasive Intracranial Pressure (ICP) & Transcranial Doppler (TCD)
+1. **Monro-Kellie Doctrine & Compliance Curve**:
+   The intracranial vault has a fixed volume ($V_{\text{skull}} = V_{\text{brain}} + V_{\text{blood}} + V_{\text{CSF}} + V_{\text{mass}}$). Intracranial pressure is an exponential function of added volume:
+   $$\text{ICP} = P_0 \cdot \exp\left(k \cdot (V_{\text{brain}} + V_{\text{blood}} + V_{\text{CSF}} + V_{\text{mass}} - V_{\text{reserve}})\right)$$
+   Intracranial elastance $E = \frac{d\text{ICP}}{dV} = k \cdot \text{ICP}$. Once baseline CSF and venous volume compensation is exhausted, miniscule increases in volume (hematoma or cerebral edema) cause catastrophic exponential spikes in ICP.
+2. **Parenchymal ICP Pulse Waveform Morphology**:
+   Each cardiac cycle transmits a tri-phasic ICP waveform:
+   - **$P_1$ (Percussion Wave)**: Arterial pulse transmitted via choroid plexus (sharp peak).
+   - **$P_2$ (Tidal Wave)**: Cerebral parenchymal rebound/compliance. In normal brain, $P_1 > P_2 > P_3$. In **reduced intracranial compliance**, the brain cannot cushion the pulse, causing **$P_2 > P_1$** (warning of impending intracranial hypertension).
+   - **$P_3$ (Dicrotic Wave)**: Venous outflow / aortic dicrotic closure.
+3. **Lundberg Wave Classifications**:
+   - **$A$-Waves (Plateau Waves)**: Sudden steep elevation of ICP to $50 - 100\text{ mmHg}$ persisting for $5 - 20\text{ minutes}$, accompanied by cerebral ischemia, pupillary dilation, and impending herniation.
+   - **$B$-Waves**: Sharp rhythmic fluctuations ($10 - 20\text{ mmHg}$) at $0.5 - 2\text{ waves/min}$, reflecting respiratory-driven intracranial autoregulatory instability.
+   - **$C$-Waves**: Small rhythmic oscillations ($4 - 8\text{ per min}$) corresponding to systemic vasomotor Traube-Hering oscillations.
+4. **Cerebral Perfusion Pressure (CPP) & TCD Gosling Index**:
+   $$\text{CPP} = \text{MAP} - \text{ICP}$$
+   Target: $60 - 70\text{ mmHg}$. If $\text{CPP} < 50\text{ mmHg}$, cerebral tissue hypoperfusion occurs; if $\text{CPP} < 30\text{ mmHg}$, irreversible brain infarction.
+   - **Transcranial Doppler (Middle Cerebral Artery)**:
+     $$\text{Gosling Pulsatility Index (PI)} = \frac{\text{PSV} - \text{EDV}}{\text{Mean Velocity}}$$
+     Normal $PI = 0.8 - 1.2$. A high $PI > 1.5$ indicates severe downstream microvascular resistance from elevated ICP.
+
+#### 7.10.3. Obstetric Labor Delivery Mechanics & Cardiotocography (CTG)
+1. **6-DOF Kinematic Chain of the 7 Cardinal Movements**:
+   Orbit models the passage of the fetal head through the maternal pelvis using exact biomechanical transformations:
+   - **1. Engagement**: The widest transverse diameter (biparietal diameter, $\text{BPD} \approx 9.5\text{ cm}$) passes the pelvic inlet. Evaluated for *synclitism* (sagittal suture midway between pubic symphysis and sacral promontory) vs *anterior/posterior asynclitism*.
+   - **2. Descent**: Progressive downward advance governed by uterine force vector $\vec{F}_{\text{uterine}}$ and maternal pushing $\vec{F}_{\text{valsalva}}$. Station tracked from $-3\text{ cm}$ (above spines) to $0$ (engaged at spines) to $+3\text{ cm}$ (perineum).
+   - **3. Flexion**: Passive resistance from the cervix and pelvic floor forces the chin onto the fetal chest, substituting the suboccipitobregmatic diameter ($9.5\text{ cm}$) for the larger occipitofrontal diameter ($11.5\text{ cm}$).
+   - **4. Internal Rotation**: Levator ani muscle gutter rotates the occiput from LOT/ROT by $90^\circ$ to Direct Occiput Anterior (OA) under the pubic arch.
+   - **5. Extension**: As station reaches $+3$ (crowning), the fetal occiput pivots under the pubic symphysis (acting as a fulcrum). The head deflexes, delivering the brow, face, and chin over the perineum.
+   - **6. Restitution & External Rotation**: The head uncoils $45^\circ$ to align with the bisacromial shoulder diameter, then rotates another $45^\circ$ as the anterior shoulder engages behind the pubic bone.
+   - **7. Expulsion**: Downward traction delivers the anterior shoulder under the pubic symphysis, followed by upward traction delivering the posterior shoulder and trunk.
+2. **Real-Time Cardiotocography (CTG) Engine**:
+   - **Uterine Tocodynamometry**:
+     $$\text{Uterine Contraction Amplitude } C(t) = A_{\max} \cdot \exp\left(-\frac{(t - t_0)^2}{2\sigma^2}\right)$$
+     - *Montevideo Units (MVU)*: Sum of contraction peak intensities above baseline over $10\text{ minutes}$. Adequate labor: $200 - 250\text{ MVU}$.
+   - **Fetal Heart Rate (FHR) Periodic Decelerations**:
+     $$\text{FHR}(t) = \text{Baseline} + \text{Variability}(t) - \Delta\text{FHR}_{\text{decel}}(t)$$
+     - **Early Decelerations**: Direct mechanical fetal head compression stimulates the vagus nerve. Symmetric gradual decrease whose **nadir coincides exactly with the contraction peak** (mirror image). Benign physiological finding.
+     - **Late Decelerations**: Uteroplacental insufficiency (reduced intervillous blood flow during peak contraction causes fetal hypoxemia and chemoreceptor stimulation). Gradual decrease whose **nadir occurs after the peak of the contraction** (lag $>20\text{ s}$). Ominous sign of fetal metabolic acidosis.
+     - **Variable Decelerations**: Umbilical cord compression. Abrupt drop ($<30\text{ s}$ from onset to nadir) of $\ge 15\text{ bpm}$ lasting $\ge 15\text{ s}$, preceded and followed by compensatory accelerations ("shoulders").
+
+#### 7.10.4. Invasive Bedside Procedures: Airway, LP & Central Line Simulation
+1. **Difficult Airway Simulation Engine**:
+   - **Laryngoscopy View Geometry**: Cormack-Lehane Grade I (full glottis visible), Grade II (posterior commissure only), Grade III (epiglottis only, vocal cords hidden), Grade IV (soft palate only). Percentage of Glottic Opening (POGO) score $0 - 100\%$.
+   - **Eschmann Gum Elastic Bougie Haptics**:
+     - *Tracheal Clicks*: Dynamic haptic friction pulses ($F_{\text{click}} = A \cdot \sin(\omega v_{\text{insert}})$) triggered as the coudé tip rubs against cartilaginous tracheal rings (absent in esophageal intubation).
+     - *Carina Hold-Up*: Rigid mechanical stop encountered at $24 - 28\text{ cm}$ as the bougie enters a mainstem bronchus.
+   - **Emergency Surgical Cricothyroidotomy State Machine**:
+     1. Laryngeal landmark palpation (thyroid notch $\to$ cricothyroid membrane $\to$ cricoid ring).
+     2. Vertical skin incision $\to$ horizontal membrane stab incision.
+     3. Finger bougie railroading through airway conduit.
+     4. Size 6.0 cuffed endotracheal tube insertion with bilateral chest rise verification.
+2. **Lumbar Puncture (LP) & Spinal Anesthesia**:
+   - **Surface Landmarks**: Palpation of Tuffier's line (supracristal plane intersecting L4 spinous process or L4-L5 interspace).
+   - **Multi-Layer Tissue Penetration Force Model**:
+     $$F_{\text{needle}}(x) = k_{\text{tissue}}(x) \cdot v + F_{\text{puncture}}(x)$$
+     Traversal sequence: Skin (moderate resistance) $\to$ Subcutaneous fat (low) $\to$ Supraspinous ligament (dense fibrous) $\to$ Interspinous ligament $\to$ **Ligamentum Flavum (peak resistance $F_{\max}$ followed by tactile 'pop')** $\to$ Epidural space (sudden loss of resistance) $\to$ Dura-arachnoid membrane (second distinct 'pop') $\to$ Subarachnoid space with free CSF flow.
+   - **CSF Opening Pressure Manometry**:
+     $$P_{\text{opening}} = P_{\text{intracranial}} + \rho_{\text{CSF}} \cdot g \cdot h_{\text{spine}}$$
+     Normal: $10 - 20\text{ cmH}_2\text{O}$. Elevated $>25\text{ cmH}_2\text{O}$ in acute bacterial meningitis or idiopathic intracranial hypertension.
+   - **Spinal Anesthetic Baricity Dispersion**:
+     $$\vec{v}_{\text{drug}} \propto (\rho_{\text{local\_anesthetic}} - \rho_{\text{CSF}}) \cdot \sin(\theta_{\text{bed\_tilt}})$$
+     Hyperbaric bupivacaine ($0.5\%$ in $8.25\%$ dextrose, $\rho \approx 1.026\text{ g/mL}$) sinks to dependent thoracic kyphosis or sacral hollow based on Trendelenburg/Reverse-Trendelenburg tilt. Isobaric bupivacaine ($\rho \approx 1.000\text{ g/mL}$) remains localized at injection level.
+3. **Ultrasound-Guided Central Venous Catheter (CVC) Insertion**:
+   - **Anatomical Differentiation (Right Internal Jugular vs Carotid)**:
+     - *Internal Jugular Vein*: Thin-walled, oval, completely compressible under transducer pressure, expands during Valsalva maneuver, non-pulsatile.
+     - *Common Carotid Artery*: Thick hyperechoic wall, circular, non-compressible, pulsatile waveform with brisk systolic expansion on Doppler.
+   - **Seldinger Technique State Machine**:
+     1. Transverse out-of-plane needle tracking; visualization of anterior vein wall tenting followed by lumen entry.
+     2. Blood flash verification: dark non-pulsatile venous blood vs bright pulsatile arterial jet.
+     3. J-tip guidewire advancement: Must pass effortlessly. **ECG Safety Check**: If guidewire is advanced $>15 - 20\text{ cm}$ into right atrium, it irritates the endocardium, triggering premature ventricular contractions (PVCs) on Lead II ECG monitor.
+     4. Scalpel skin nick, dilator passage through deep cervical fascia.
+     5. Triple-lumen catheter advancement, guidewire removal, aspiration of all 3 ports, saline flush, and suture fixation at $12 - 15\text{ cm}$ mark.
+
+---
+
 ## 8. Verification & Delivery Roadmap
 
 * **Phase 1: Architecture & Specifications (COMPLETED ✅)**
@@ -2332,6 +2561,14 @@ branching_dag:
   - Formulated biomechanical rigging & morph targets for clinical examination signs (House-Brackmann facial nerve palsy, intercostal retractions, tracheal tug, flail chest, decerebrate/decorticate posturing, procedural 3.2 Hz asterixis sawtooth flap).
   - Specified virtual diagnostic instrumentation: Longtin-Milton DDE pupillary light reflex with swinging flashlight RAPD and Horner's; McSharry ECGSYN 3D dynamical model for continuous 12-lead waveforms; 3D Slicer/PLUS/ITK-Wasm E-FAST POCUS ultrasound shaders (acoustic impedance, Rayleigh speckle, acoustic shadowing); Web Audio HRIR auscultation with dynamic probe collision; ASL 5000 equation of motion for mechanical ventilation and invasive hemodynamics.
   - Architected clinical multi-agent systems and virtual standardized patients (Agent Hospital paradigm: nurse, attending, tech, patient; 50Hz biophysics + 1Hz LLM translation; Calgary-Cambridge trust-gated information disclosure; exponential time-to-intervention penalties; critical failure safety triggers; declarative JSON/YAML authoring schema with SNOMED-CT, RxNorm, and LOINC bindings).
+* **Phase 1.14: Critical Care Machines, Dialysis, Neuro-ICU & Bedside Interventions (COMPLETED ✅ — Sept 6, 2026)**
+  - Codified Extracorporeal Membrane Oxygenation (ECMO) hydraulic H-Q curves, membrane oxygenator pressure drop (ΔP), recirculation fraction, and Harlequin syndrome (North-South differential hypoxemia).
+  - Formulated Intra-Aortic Balloon Pump (IABP) helium counterpulsation, dicrotic notch diastolic augmentation, presystolic afterload reduction, and early/late timing error waveforms.
+  - Specified Continuous Renal Replacement Therapy (CRRT) clearance equations (CVVH, CVVHD, CVVHDF), Transmembrane Pressure (TMP), hollow-fiber clotting dynamics, and Regional Citrate Anticoagulation (RCA) with citrate lock safety triggers.
+  - Modeled Viscoelastic Hemostatic Monitoring (TEG & ROTEM): shear elastic modulus $G(t) = 5000 A(t) / (100 - A(t))$, R-time (FFP), α-angle (Cryo), MA (Platelets), LY30 (TXA hyperfibrinolysis), and ROTEM EXTEM/INTEM/FIBTEM/HEPTEM assays.
+  - Integrated Neuro-ICU telemetry: 4-channel raw qEEG (Delta, Theta, Alpha, Beta PSD, SEF 95, Bispectral Index BIS 0-100, burst suppression BSR, NCSE, triphasic waves), invasive ICP Monro-Kellie compliance, P1/P2/P3 waveforms, Lundberg A/B/C waves, CPP = MAP - ICP, and TCD Gosling Pulsatility Index.
+  - Simulated Obstetric Labor 6-DOF kinematics (7 Cardinal Movements: Engagement, Descent, Flexion, Internal Rotation, Extension, Restitution/External Rotation, Expulsion) coupled to real-time Cardiotocography (CTG FHR variability, early/late/variable decelerations, tocodynamometry Montevideo Units).
+  - Specified Invasive Bedside Procedures: Difficult airway Cormack-Lehane grading, Eschmann bougie tracheal clicks and carina hold-up, surgical cricothyroidotomy; Lumbar Puncture multi-layer haptics (ligamentum flavum 'pop', hydrostatic opening pressure, local anesthetic baricity tilt); Ultrasound-guided CVC Seldinger technique with guidewire atrial ectopy safety check.
 * **Phase 2: Claude Handover & Sync (ACTIVE)**
   - Update `CLAUDE_HANDOVER.md` to ensure Claude and all collaborating tools share identical context.
 * **Phase 3: Prototype Scaffolding (FUTURE — PENDING USER APPROVAL)**
