@@ -65,7 +65,8 @@ export const Simulator: React.FC = () => {
   const [layerPeel, setLayerPeel] = useState<number>(0.0);
   const [hiddenPartIds, setHiddenPartIds] = useState<string[]>([]);
   const [dissectedParts, setDissectedParts] = useState<Part[]>([]);
-  const [isolatedPartId, setIsolatedPartId] = useState<string | null>(null);
+  const [isolatedPartId, setIsolatedPartId] = useState<string | null>(searchParams.get('isolate') || null);
+  const [contextOrganId, setContextOrganId] = useState<string | null>(null);
 
   // Dissection Handlers
   const handleDissectPart = (part: Part) => {
@@ -85,6 +86,17 @@ export const Simulator: React.FC = () => {
       ...prev,
       `✂️ Dissected ${part.name} (${part.system}) — Deep planes & neurovascular bed exposed.`,
     ]);
+  };
+
+  const handleSelectToolMode = (mode: DissectionToolMode) => {
+    setToolMode(mode);
+    if (mode === 'isolate' && selectedOrganId) {
+      setIsolatedPartId(selectedOrganId);
+      setLogs((prev) => [
+        ...prev,
+        `🔍 Isolated ${selectedOrganId.toUpperCase()} — Surrounding structures dimmed.`,
+      ]);
+    }
   };
 
   const handleRestorePart = (partId: string) => {
@@ -145,6 +157,10 @@ export const Simulator: React.FC = () => {
       setPathology({ ...kernelRef.current.pathology });
       setLogs([...kernelRef.current.logs]);
     }
+    const organ = searchParams.get('organ');
+    if (organ) setSelectedOrganId(organ);
+    const isolate = searchParams.get('isolate');
+    if (isolate) setIsolatedPartId(isolate);
   }, [searchParams]);
 
   // Simulation Clock Tick Loop (60 Hz UI sync)
@@ -366,7 +382,7 @@ export const Simulator: React.FC = () => {
             {/* Dissection & Peeler Toolbar */}
             <DissectionToolbar
               toolMode={toolMode}
-              onSelectToolMode={setToolMode}
+              onSelectToolMode={handleSelectToolMode}
               isXray={isXray}
               onToggleXray={() => setIsXray(!isXray)}
               layerPeel={layerPeel}
@@ -380,6 +396,28 @@ export const Simulator: React.FC = () => {
 
             {/* Viewport Canvas */}
             <div className="h-[490px] w-full relative">
+              {isolatedPartId && (
+                <div className="absolute top-3 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-amber-300 dark:border-amber-700 shadow-md">
+                  <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+                  <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
+                    Isolated: {isolatedPartId.replace(/_/g, ' ').toUpperCase()}
+                  </span>
+                  {contextOrganId && contextOrganId !== isolatedPartId && (
+                    <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 border-l border-slate-300 dark:border-slate-700 pl-2">
+                      Organ: {contextOrganId.replace(/_/g, ' ').toUpperCase()}
+                    </span>
+                  )}
+                  <button
+                    onClick={() => {
+                      setIsolatedPartId(null);
+                      setContextOrganId(null);
+                    }}
+                    className="ml-1 text-[11px] font-bold px-2.5 py-0.5 rounded-md bg-amber-100 hover:bg-amber-200 text-amber-900 dark:bg-amber-950 dark:hover:bg-amber-900 dark:text-amber-200 transition-colors cursor-pointer"
+                  >
+                    Show Full Body
+                  </button>
+                </div>
+              )}
               <AnatomicalBody3D
                 vitals={vitals}
                 pathology={pathology}
@@ -388,6 +426,7 @@ export const Simulator: React.FC = () => {
                 cameraPreset={cameraPreset}
                 theme={theme}
                 selectedOrganId={selectedOrganId}
+                contextOrganId={contextOrganId}
                 onSelectOrganId={(organId) => setSelectedOrganId(organId)}
                 toolMode={toolMode}
                 isXray={isXray}
@@ -421,8 +460,10 @@ export const Simulator: React.FC = () => {
             <span>Deep Inspector:</span>
           </div>
           {[
+            { id: 'full', label: 'Full Body', icon: '🧍' },
             { id: 'heart', label: 'Heart & Aorta', icon: '🫀' },
             { id: 'lungs', label: 'Lungs & Trachea', icon: '🫁' },
+            { id: 'abdomen', label: 'Abdomen & GI', icon: '🥘' },
             { id: 'brain', label: 'Brain & Cranium', icon: '🧠' },
             { id: 'liver', label: 'Liver & Biliary', icon: '🩸' },
             { id: 'stomach', label: 'Stomach & Bed', icon: '🥣' },
@@ -431,80 +472,138 @@ export const Simulator: React.FC = () => {
             { id: 'kidney', label: 'Kidneys & Adrenals', icon: '🫘' },
             { id: 'skeletal', label: 'Skeleton & Ribs', icon: '🦴' },
             { id: 'snakebite', label: 'Snakebite Wound', icon: '🐍' },
-          ].map((item) => (
-            <button
-              key={item.id}
-              onClick={() => {
-                setSelectedOrganId(item.id);
-                if (item.id === 'brain') setCameraPreset('head');
-                else if (item.id === 'heart' || item.id === 'lungs') setCameraPreset('thorax');
-                else if (item.id === 'liver' || item.id === 'kidney' || item.id === 'stomach' || item.id === 'pancreas' || item.id === 'spleen') setCameraPreset('abdomen');
-                else setCameraPreset('anterior');
-              }}
-              className={`min-h-[36px] px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap flex items-center gap-1.5 transition-all flex-shrink-0 cursor-pointer ${
-                selectedOrganId === item.id
-                  ? isLight
-                    ? 'bg-sky-600 text-white shadow-xs'
-                    : 'bg-cyan-500 text-slate-950 font-bold shadow-xs'
-                  : isLight
-                  ? 'bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200/80'
-                  : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700'
-              }`}
-            >
-              <span>{item.icon}</span>
-              <span>{item.label}</span>
-            </button>
-          ))}
+          ].map((item) => {
+            const isActive =
+              item.id === 'full'
+                ? !isolatedPartId && !selectedOrganId
+                : isolatedPartId === item.id || selectedOrganId === item.id;
+            return (
+              <button
+                key={item.id}
+                onClick={() => {
+                  if (item.id === 'full') {
+                    setIsolatedPartId(null);
+                    setSelectedOrganId(null);
+                    setContextOrganId(null);
+                    setCameraPreset('anterior');
+                    return;
+                  }
+                  if (isolatedPartId === item.id) {
+                    // Toggle off back to full body
+                    setIsolatedPartId(null);
+                    setSelectedOrganId(null);
+                    setContextOrganId(null);
+                    setCameraPreset('anterior');
+                    return;
+                  }
+                  // 1-Tap Isolate: Show that organ only along with its blood supply, lymphatics & nerves!
+                  setSelectedOrganId(item.id);
+                  setIsolatedPartId(item.id);
+                  setContextOrganId(null);
+
+                  if (item.id === 'brain') setCameraPreset('head');
+                  else if (item.id === 'heart' || item.id === 'lungs') setCameraPreset('thorax');
+                  else if (
+                    item.id === 'abdomen' ||
+                    item.id === 'liver' ||
+                    item.id === 'kidney' ||
+                    item.id === 'stomach' ||
+                    item.id === 'pancreas' ||
+                    item.id === 'spleen'
+                  )
+                    setCameraPreset('abdomen');
+                  else setCameraPreset('anterior');
+                }}
+                className={`min-h-[36px] px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap flex items-center gap-1.5 transition-all flex-shrink-0 cursor-pointer ${
+                  isActive
+                    ? isLight
+                      ? 'bg-sky-600 text-white shadow-xs'
+                      : 'bg-cyan-500 text-slate-950 font-bold shadow-xs'
+                    : isLight
+                    ? 'bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200/80'
+                    : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700'
+                }`}
+              >
+                <span>{item.icon}</span>
+                <span>{item.label}</span>
+              </button>
+            );
+          })}
         </div>
 
-        {/* MOBILE VIEW: Tab-driven clean single stage */}
+        {/* MOBILE VIEW: Tab-driven clean single stage (Kept permanently mounted to prevent WebGL context destruction) */}
         <div className="lg:hidden flex flex-col space-y-3">
-          {mobileTab === '3d' && (
-            <div className="flex flex-col space-y-2 w-full">
-              <DissectionToolbar
-                toolMode={toolMode}
-                onSelectToolMode={setToolMode}
-                isXray={isXray}
-                onToggleXray={() => setIsXray(!isXray)}
-                layerPeel={layerPeel}
-                onChangeLayerPeel={setLayerPeel}
-                dissectedParts={dissectedParts}
-                onRestorePart={handleRestorePart}
-                onUndoLastDissect={handleUndoLastDissect}
-                onRestoreAll={handleRestoreAll}
-                theme={theme}
-              />
-              <div className="h-[420px] w-full relative">
-                <AnatomicalBody3D
-                  vitals={vitals}
-                  pathology={pathology}
-                  layer={activeLayer}
-                  scenarioId={currentScenarioId}
-                  cameraPreset={cameraPreset}
-                  theme={theme}
-                  selectedOrganId={selectedOrganId}
-                  onSelectOrganId={(organId) => setSelectedOrganId(organId)}
-                  toolMode={toolMode}
-                  isXray={isXray}
-                  layerPeel={layerPeel}
-                  hiddenPartIds={hiddenPartIds}
-                  isolatedPartId={isolatedPartId}
-                  onDissectPart={handleDissectPart}
-                />
-              </div>
-            </div>
-          )}
-
-          {mobileTab === 'telemetry' && (
-            <div className="h-[520px] w-full pb-3">
-              <IcuMonitor
+          <div
+            className="flex flex-col space-y-2 w-full"
+            style={{ display: mobileTab === '3d' ? 'flex' : 'none' }}
+          >
+            <DissectionToolbar
+              toolMode={toolMode}
+              onSelectToolMode={handleSelectToolMode}
+              isXray={isXray}
+              onToggleXray={() => setIsXray(!isXray)}
+              layerPeel={layerPeel}
+              onChangeLayerPeel={setLayerPeel}
+              dissectedParts={dissectedParts}
+              onRestorePart={handleRestorePart}
+              onUndoLastDissect={handleUndoLastDissect}
+              onRestoreAll={handleRestoreAll}
+              theme={theme}
+            />
+            <div className="h-[420px] w-full relative touch-none">
+              {isolatedPartId && (
+                <div className="absolute top-3 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2 px-3 py-1 rounded-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-amber-300 dark:border-amber-700 shadow-md">
+                  <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+                  <span className="text-[11px] font-bold text-slate-800 dark:text-slate-200">
+                    Isolated: {isolatedPartId.replace(/_/g, ' ').toUpperCase()}
+                  </span>
+                  {contextOrganId && contextOrganId !== isolatedPartId && (
+                    <span className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 border-l border-slate-300 dark:border-slate-700 pl-1.5">
+                      Organ: {contextOrganId.replace(/_/g, ' ').toUpperCase()}
+                    </span>
+                  )}
+                  <button
+                    onClick={() => {
+                      setIsolatedPartId(null);
+                      setContextOrganId(null);
+                    }}
+                    className="ml-1 text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-100 text-amber-900 dark:bg-amber-950 dark:text-amber-200"
+                  >
+                    Restore
+                  </button>
+                </div>
+              )}
+              <AnatomicalBody3D
                 vitals={vitals}
-                sampleWaveforms={handleSampleWaveforms}
-                ecgRhythm={pathology.ecgRhythm}
+                pathology={pathology}
+                layer={activeLayer}
+                scenarioId={currentScenarioId}
+                cameraPreset={cameraPreset}
                 theme={theme}
+                selectedOrganId={selectedOrganId}
+                contextOrganId={contextOrganId}
+                onSelectOrganId={(organId) => setSelectedOrganId(organId)}
+                toolMode={toolMode}
+                isXray={isXray}
+                layerPeel={layerPeel}
+                hiddenPartIds={hiddenPartIds}
+                isolatedPartId={isolatedPartId}
+                onDissectPart={handleDissectPart}
               />
             </div>
-          )}
+          </div>
+
+          <div
+            className="h-[520px] w-full pb-3"
+            style={{ display: mobileTab === 'telemetry' ? 'block' : 'none' }}
+          >
+            <IcuMonitor
+              vitals={vitals}
+              sampleWaveforms={handleSampleWaveforms}
+              ecgRhythm={pathology.ecgRhythm}
+              theme={theme}
+            />
+          </div>
         </div>
 
         {/* Bottom Panel: Interventions, Diagnostics & Case Scenarios */}
@@ -527,13 +626,18 @@ export const Simulator: React.FC = () => {
       {/* 4. Apple-Style Deep Organ Anatomical Drawer (Slide-up on mobile, slide-in on desktop) */}
       <OrganDetailDrawer
         organId={selectedOrganId}
+        isolatedPartId={isolatedPartId}
         onClose={() => {
           setSelectedOrganId(null);
           setIsolatedPartId(null);
+          setContextOrganId(null);
         }}
         onFocusCamera={(preset) => setCameraPreset(preset)}
         onSelectOrgan={(newOrganId) => setSelectedOrganId(newOrganId)}
-        onIsolateStructure={(structureId) => setIsolatedPartId(structureId)}
+        onIsolateStructure={(structureId, parentOrganId) => {
+          setIsolatedPartId(structureId);
+          setContextOrganId(parentOrganId || null);
+        }}
         onDissectOrgan={(organKey) => {
           const fakePart: Part = {
             id: organKey,

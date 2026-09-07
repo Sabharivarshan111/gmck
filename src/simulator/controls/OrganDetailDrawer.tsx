@@ -27,16 +27,18 @@ import {
 
 interface OrganDetailDrawerProps {
   organId: string | null;
+  isolatedPartId?: string | null;
   onClose: () => void;
   onFocusCamera?: (preset: 'anterior' | 'head' | 'thorax' | 'abdomen') => void;
   onSelectOrgan?: (organId: string) => void;
-  onIsolateStructure?: (structureId: string | null) => void;
+  onIsolateStructure?: (structureId: string | null, parentOrganId?: string | null) => void;
   onDissectOrgan?: (organId: string) => void;
   theme?: 'light' | 'dark';
 }
 
 export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
   organId,
+  isolatedPartId,
   onClose,
   onFocusCamera,
   onSelectOrgan,
@@ -48,16 +50,13 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
     'overview'
   );
   const [navHistory, setNavHistory] = useState<string[]>([]);
-  const [isIsolated, setIsIsolated] = useState(false);
 
   // Sync initial organId into history
   useEffect(() => {
     if (organId) {
       setNavHistory([organId]);
-      setIsIsolated(false);
     } else {
       setNavHistory([]);
-      setIsIsolated(false);
     }
   }, [organId]);
 
@@ -117,13 +116,19 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
     }
   };
 
+  const isStructureIsolated = !!isolatedPartId && (
+    isolatedPartId.toLowerCase() === organKey.toLowerCase() ||
+    isolatedPartId.toLowerCase() === currentNavId.toLowerCase() ||
+    organKey.toLowerCase().includes(isolatedPartId.toLowerCase()) ||
+    isolatedPartId.toLowerCase().includes(organKey.toLowerCase()) ||
+    organ.name.toLowerCase().includes(isolatedPartId.toLowerCase())
+  );
+
   const toggleIsolation = () => {
-    if (isIsolated) {
-      setIsIsolated(false);
-      if (onIsolateStructure) onIsolateStructure(null);
+    if (isStructureIsolated) {
+      if (onIsolateStructure) onIsolateStructure(null, organKey);
     } else {
-      setIsIsolated(true);
-      if (onIsolateStructure) onIsolateStructure(organKey);
+      if (onIsolateStructure) onIsolateStructure(currentNavId || organKey, organKey);
     }
   };
 
@@ -140,7 +145,7 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
       {/* Backdrop (tap to dismiss on mobile) */}
       <div
         onClick={onClose}
-        className="absolute inset-0 bg-black/40 backdrop-blur-sm pointer-events-auto transition-opacity"
+        className="md:hidden absolute inset-0 bg-black/30 pointer-events-auto transition-opacity"
       />
 
       {/* Drawer Container */}
@@ -258,17 +263,19 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
 
             <button
               onClick={toggleIsolation}
-              title={isIsolated ? 'Restore full anatomy view' : 'Isolate this structure in 3D viewport'}
-              className={`p-2 rounded-xl border text-xs font-semibold flex items-center gap-1.5 transition-all min-h-[44px] px-3 ${
-                isIsolated
-                  ? 'bg-amber-500 text-white border-amber-600 shadow-xs ring-2 ring-amber-400/40'
+              id="drawer-isolate-btn"
+              data-testid="drawer-isolate-btn"
+              title={isStructureIsolated ? 'Restore full anatomy view' : 'Isolate this structure in 3D viewport'}
+              className={`p-2 rounded-xl border text-xs font-semibold flex items-center gap-1.5 transition-all min-h-[44px] px-3.5 cursor-pointer ${
+                isStructureIsolated
+                  ? 'bg-amber-500 hover:bg-amber-600 text-white border-amber-600 shadow-md ring-2 ring-amber-400/40 font-bold'
                   : isLight
-                  ? 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-300'
+                  ? 'bg-white hover:bg-slate-100 text-slate-800 border-slate-300 shadow-xs'
                   : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-700'
               }`}
             >
-              <Eye className="w-4 h-4" />
-              <span className="hidden sm:inline">{isIsolated ? 'Isolated' : 'Isolate'}</span>
+              <Eye className="w-4 h-4 text-inherit" />
+              <span className="font-bold">{isStructureIsolated ? 'Isolated' : 'Isolate'}</span>
             </button>
 
             {onDissectOrgan && (
@@ -526,21 +533,27 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
                         }`}
                       >
                         <div className="flex items-start justify-between gap-2">
-                          <div>
-                            <div className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-                              {art.name}
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="w-2.5 h-2.5 rounded-full bg-rose-500 flex-shrink-0" />
+                              <span className={`text-sm font-black tracking-tight ${isLight ? 'text-slate-900' : 'text-white'}`}>
+                                {art.name}
+                              </span>
                             </div>
                             {art.parentVessel && (
-                              <div className="text-[11px] text-rose-600 dark:text-rose-400 font-medium mt-0.5">
+                              <div className="text-xs text-rose-600 dark:text-rose-400 font-semibold">
                                 Parent: {art.parentVessel}
                               </div>
                             )}
                           </div>
                           <button
-                            onClick={() => navigateToStructure(art.id, art.cameraPreset)}
-                            className="px-2.5 py-1.5 rounded-lg text-xs font-bold bg-rose-500 hover:bg-rose-600 text-white flex items-center gap-1 min-h-[36px] transition-colors"
+                            onClick={() => {
+                              navigateToStructure(art.id, art.cameraPreset);
+                              if (onIsolateStructure) onIsolateStructure(art.id, organKey);
+                            }}
+                            className="px-3 py-1.5 rounded-xl text-xs font-bold bg-rose-500 hover:bg-rose-600 text-white flex items-center gap-1 min-h-[36px] shadow-xs transition-all flex-shrink-0 cursor-pointer"
                           >
-                            <span>Inspect</span>
+                            <span>Inspect in 3D</span>
                             <ArrowRight className="w-3 h-3" />
                           </button>
                         </div>
@@ -597,21 +610,27 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
                         }`}
                       >
                         <div className="flex items-start justify-between gap-2">
-                          <div>
-                            <div className="text-xs font-bold text-slate-900 dark:text-white">
-                              {vein.name}
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="w-2.5 h-2.5 rounded-full bg-blue-500 flex-shrink-0" />
+                              <span className={`text-sm font-black tracking-tight ${isLight ? 'text-slate-900' : 'text-white'}`}>
+                                {vein.name}
+                              </span>
                             </div>
                             {vein.parentVessel && (
-                              <div className="text-[11px] text-blue-600 dark:text-blue-400 font-medium mt-0.5">
+                              <div className="text-xs text-blue-600 dark:text-blue-400 font-semibold">
                                 Drains into: {vein.parentVessel}
                               </div>
                             )}
                           </div>
                           <button
-                            onClick={() => navigateToStructure(vein.id, vein.cameraPreset)}
-                            className="px-2.5 py-1.5 rounded-lg text-xs font-bold bg-blue-500 hover:bg-blue-600 text-white flex items-center gap-1 min-h-[36px] transition-colors"
+                            onClick={() => {
+                              navigateToStructure(vein.id, vein.cameraPreset);
+                              if (onIsolateStructure) onIsolateStructure(vein.id, organKey);
+                            }}
+                            className="px-3 py-1.5 rounded-xl text-xs font-bold bg-blue-500 hover:bg-blue-600 text-white flex items-center gap-1 min-h-[36px] shadow-xs transition-all flex-shrink-0 cursor-pointer"
                           >
-                            <span>Inspect</span>
+                            <span>Inspect in 3D</span>
                             <ArrowRight className="w-3 h-3" />
                           </button>
                         </div>
@@ -668,19 +687,25 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
                         }`}
                       >
                         <div className="flex items-start justify-between gap-2">
-                          <div>
-                            <div className="text-xs font-bold text-slate-900 dark:text-white">
-                              {nerve.name}
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="w-2.5 h-2.5 rounded-full bg-amber-500 flex-shrink-0" />
+                              <span className={`text-sm font-black tracking-tight ${isLight ? 'text-slate-900' : 'text-white'}`}>
+                                {nerve.name}
+                              </span>
                             </div>
-                            <div className="text-[11px] text-amber-600 dark:text-amber-400 font-medium mt-0.5">
+                            <div className="text-xs text-amber-600 dark:text-amber-400 font-semibold">
                               Roots: {nerve.roots} | Origin: {nerve.origin}
                             </div>
                           </div>
                           <button
-                            onClick={() => navigateToStructure(nerve.id, nerve.cameraPreset)}
-                            className="px-2.5 py-1.5 rounded-lg text-xs font-bold bg-amber-500 hover:bg-amber-600 text-white flex items-center gap-1 min-h-[36px] transition-colors"
+                            onClick={() => {
+                              navigateToStructure(nerve.id, nerve.cameraPreset);
+                              if (onIsolateStructure) onIsolateStructure(nerve.id, organKey);
+                            }}
+                            className="px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-600 text-white flex items-center gap-1 min-h-[36px] shadow-xs transition-all flex-shrink-0 cursor-pointer"
                           >
-                            <span>Inspect</span>
+                            <span>Inspect in 3D</span>
                             <ArrowRight className="w-3 h-3" />
                           </button>
                         </div>
@@ -696,26 +721,68 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
                   </div>
                 )}
 
-                {/* Autonomic Breakdown & Referred Pain */}
+                {/* Autonomic Breakdown & Referred Pain (Fully Clickable & Isolatable) */}
                 <div className="grid grid-cols-1 gap-2 text-xs">
-                  <div className={`p-2.5 rounded-xl ${isLight ? 'bg-white border border-amber-100' : 'bg-slate-900/60'}`}>
-                    <span className="font-bold text-amber-600 dark:text-amber-400">Sympathetic: </span>
-                    <span className={isLight ? 'text-slate-700' : 'text-slate-300'}>
-                      {organ.innervation.sympathetic}
-                    </span>
+                  <div className={`p-3 rounded-xl flex items-center justify-between gap-2 ${isLight ? 'bg-white border border-amber-100' : 'bg-slate-900/60'}`}>
+                    <div className="min-w-0 flex-1">
+                      <span className="font-bold text-amber-600 dark:text-amber-400">Sympathetic: </span>
+                      <span className={isLight ? 'text-slate-700' : 'text-slate-300'}>
+                        {organ.innervation.sympathetic}
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => {
+                        navigateToStructure('sympathetic', 'thorax');
+                        if (onIsolateStructure) onIsolateStructure('sympathetic', organKey);
+                      }}
+                      className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-amber-500 hover:bg-amber-600 text-white flex items-center gap-1 shrink-0 cursor-pointer shadow-xs transition-colors"
+                      title="Isolate sympathetic nerve supply in 3D"
+                    >
+                      <span>Inspect 3D</span>
+                      <ArrowRight className="w-3 h-3" />
+                    </button>
                   </div>
-                  <div className={`p-2.5 rounded-xl ${isLight ? 'bg-white border border-amber-100' : 'bg-slate-900/60'}`}>
-                    <span className="font-bold text-amber-600 dark:text-amber-400">Parasympathetic: </span>
-                    <span className={isLight ? 'text-slate-700' : 'text-slate-300'}>
-                      {organ.innervation.parasympathetic}
-                    </span>
+
+                  <div className={`p-3 rounded-xl flex items-center justify-between gap-2 ${isLight ? 'bg-white border border-amber-100' : 'bg-slate-900/60'}`}>
+                    <div className="min-w-0 flex-1">
+                      <span className="font-bold text-amber-600 dark:text-amber-400">Parasympathetic: </span>
+                      <span className={isLight ? 'text-slate-700' : 'text-slate-300'}>
+                        {organ.innervation.parasympathetic}
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => {
+                        navigateToStructure('vagus_nerve', organKey === 'heart' ? 'thorax' : 'head');
+                        if (onIsolateStructure) onIsolateStructure('vagus_nerve', organKey);
+                      }}
+                      className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-amber-500 hover:bg-amber-600 text-white flex items-center gap-1 shrink-0 cursor-pointer shadow-xs transition-colors"
+                      title="Isolate parasympathetic / vagal nerve supply in 3D"
+                    >
+                      <span>Inspect 3D</span>
+                      <ArrowRight className="w-3 h-3" />
+                    </button>
                   </div>
-                  <div className={`p-2.5 rounded-xl ${isLight ? 'bg-white border border-amber-100' : 'bg-slate-900/60'}`}>
-                    <span className="font-bold text-amber-600 dark:text-amber-400">Sensory/Somatic: </span>
-                    <span className={isLight ? 'text-slate-700' : 'text-slate-300'}>
-                      {organ.innervation.somaticOrSensory}
-                    </span>
+
+                  <div className={`p-3 rounded-xl flex items-center justify-between gap-2 ${isLight ? 'bg-white border border-amber-100' : 'bg-slate-900/60'}`}>
+                    <div className="min-w-0 flex-1">
+                      <span className="font-bold text-amber-600 dark:text-amber-400">Sensory/Somatic: </span>
+                      <span className={isLight ? 'text-slate-700' : 'text-slate-300'}>
+                        {organ.innervation.somaticOrSensory}
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => {
+                        navigateToStructure('somatic_nerve', 'head');
+                        if (onIsolateStructure) onIsolateStructure('somatic_nerve');
+                      }}
+                      className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-amber-500 hover:bg-amber-600 text-white flex items-center gap-1 shrink-0 cursor-pointer shadow-xs transition-colors"
+                      title="Isolate somatic / sensory nerves in 3D"
+                    >
+                      <span>Inspect 3D</span>
+                      <ArrowRight className="w-3 h-3" />
+                    </button>
                   </div>
+
                   <div className={`p-2.5 rounded-xl ${isLight ? 'bg-amber-100/60 text-amber-900' : 'bg-amber-950/40 text-amber-200'}`}>
                     <span className="font-bold">Referred Pain Pattern: </span>
                     <span>{organ.innervation.referredPain}</span>
@@ -749,108 +816,174 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
                 {organ.relationsStructured ? (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                     {/* Superior */}
-                    <div className={`p-3 rounded-xl border ${isLight ? 'bg-white border-indigo-100' : 'bg-slate-900/60 border-indigo-950'}`}>
-                      <div className="font-bold text-indigo-600 dark:text-indigo-400 mb-1 flex items-center gap-1">
+                    <div className={`p-3 rounded-xl border ${isLight ? 'bg-white border-indigo-100 shadow-2xs' : 'bg-slate-900/60 border-indigo-950'}`}>
+                      <div className="font-bold text-indigo-600 dark:text-indigo-400 mb-2 flex items-center gap-1">
                         <span>↑ Superior (Cranial)</span>
                       </div>
-                      <div className="flex flex-wrap gap-1 mt-1">
+                      <div className="space-y-1.5">
                         {organ.relationsStructured.superior.map((item, idx) => (
                           <button
                             key={idx}
-                            onClick={() => navigateToStructure(item.toLowerCase())}
-                            className="px-2 py-1 rounded-md text-[11px] font-medium bg-slate-100 dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-900/40 text-slate-700 dark:text-slate-300 transition-colors min-h-[32px]"
+                            onClick={() => {
+                              navigateToStructure(item.toLowerCase());
+                              if (onIsolateStructure) onIsolateStructure(item.toLowerCase(), organKey);
+                            }}
+                            className="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-50 dark:bg-slate-800/80 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 border border-slate-200/80 dark:border-slate-700/80 text-slate-800 dark:text-slate-200 transition-all flex items-center justify-between gap-1.5 min-h-[34px] w-full text-left cursor-pointer group"
+                            title={`Inspect and isolate ${item} in 3D`}
                           >
-                            {item}
+                            <div className="flex items-center gap-1.5 min-w-0">
+                              <span className="text-indigo-500 font-bold shrink-0">📍</span>
+                              <span className="truncate">{item}</span>
+                            </div>
+                            <div className="flex items-center gap-0.5 text-[10px] text-indigo-600 dark:text-indigo-400 font-bold shrink-0 opacity-75 group-hover:opacity-100">
+                              <span>3D</span>
+                              <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                            </div>
                           </button>
                         ))}
                       </div>
                     </div>
 
                     {/* Inferior */}
-                    <div className={`p-3 rounded-xl border ${isLight ? 'bg-white border-indigo-100' : 'bg-slate-900/60 border-indigo-950'}`}>
-                      <div className="font-bold text-indigo-600 dark:text-indigo-400 mb-1 flex items-center gap-1">
+                    <div className={`p-3 rounded-xl border ${isLight ? 'bg-white border-indigo-100 shadow-2xs' : 'bg-slate-900/60 border-indigo-950'}`}>
+                      <div className="font-bold text-indigo-600 dark:text-indigo-400 mb-2 flex items-center gap-1">
                         <span>↓ Inferior (Caudal)</span>
                       </div>
-                      <div className="flex flex-wrap gap-1 mt-1">
+                      <div className="space-y-1.5">
                         {organ.relationsStructured.inferior.map((item, idx) => (
                           <button
                             key={idx}
-                            onClick={() => navigateToStructure(item.toLowerCase())}
-                            className="px-2 py-1 rounded-md text-[11px] font-medium bg-slate-100 dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-900/40 text-slate-700 dark:text-slate-300 transition-colors min-h-[32px]"
+                            onClick={() => {
+                              navigateToStructure(item.toLowerCase());
+                              if (onIsolateStructure) onIsolateStructure(item.toLowerCase(), organKey);
+                            }}
+                            className="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-50 dark:bg-slate-800/80 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 border border-slate-200/80 dark:border-slate-700/80 text-slate-800 dark:text-slate-200 transition-all flex items-center justify-between gap-1.5 min-h-[34px] w-full text-left cursor-pointer group"
+                            title={`Inspect and isolate ${item} in 3D`}
                           >
-                            {item}
+                            <div className="flex items-center gap-1.5 min-w-0">
+                              <span className="text-indigo-500 font-bold shrink-0">📍</span>
+                              <span className="truncate">{item}</span>
+                            </div>
+                            <div className="flex items-center gap-0.5 text-[10px] text-indigo-600 dark:text-indigo-400 font-bold shrink-0 opacity-75 group-hover:opacity-100">
+                              <span>3D</span>
+                              <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                            </div>
                           </button>
                         ))}
                       </div>
                     </div>
 
                     {/* Anterior */}
-                    <div className={`p-3 rounded-xl border ${isLight ? 'bg-white border-indigo-100' : 'bg-slate-900/60 border-indigo-950'}`}>
-                      <div className="font-bold text-indigo-600 dark:text-indigo-400 mb-1 flex items-center gap-1">
+                    <div className={`p-3 rounded-xl border ${isLight ? 'bg-white border-indigo-100 shadow-2xs' : 'bg-slate-900/60 border-indigo-950'}`}>
+                      <div className="font-bold text-indigo-600 dark:text-indigo-400 mb-2 flex items-center gap-1">
                         <span>⊙ Anterior (Ventral)</span>
                       </div>
-                      <div className="flex flex-wrap gap-1 mt-1">
+                      <div className="space-y-1.5">
                         {organ.relationsStructured.anterior.map((item, idx) => (
                           <button
                             key={idx}
-                            onClick={() => navigateToStructure(item.toLowerCase())}
-                            className="px-2 py-1 rounded-md text-[11px] font-medium bg-slate-100 dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-900/40 text-slate-700 dark:text-slate-300 transition-colors min-h-[32px]"
+                            onClick={() => {
+                              navigateToStructure(item.toLowerCase());
+                              if (onIsolateStructure) onIsolateStructure(item.toLowerCase(), organKey);
+                            }}
+                            className="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-50 dark:bg-slate-800/80 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 border border-slate-200/80 dark:border-slate-700/80 text-slate-800 dark:text-slate-200 transition-all flex items-center justify-between gap-1.5 min-h-[34px] w-full text-left cursor-pointer group"
+                            title={`Inspect and isolate ${item} in 3D`}
                           >
-                            {item}
+                            <div className="flex items-center gap-1.5 min-w-0">
+                              <span className="text-indigo-500 font-bold shrink-0">📍</span>
+                              <span className="truncate">{item}</span>
+                            </div>
+                            <div className="flex items-center gap-0.5 text-[10px] text-indigo-600 dark:text-indigo-400 font-bold shrink-0 opacity-75 group-hover:opacity-100">
+                              <span>3D</span>
+                              <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                            </div>
                           </button>
                         ))}
                       </div>
                     </div>
 
                     {/* Posterior */}
-                    <div className={`p-3 rounded-xl border ${isLight ? 'bg-white border-indigo-100' : 'bg-slate-900/60 border-indigo-950'}`}>
-                      <div className="font-bold text-indigo-600 dark:text-indigo-400 mb-1 flex items-center gap-1">
+                    <div className={`p-3 rounded-xl border ${isLight ? 'bg-white border-indigo-100 shadow-2xs' : 'bg-slate-900/60 border-indigo-950'}`}>
+                      <div className="font-bold text-indigo-600 dark:text-indigo-400 mb-2 flex items-center gap-1">
                         <span>⊗ Posterior (Dorsal)</span>
                       </div>
-                      <div className="flex flex-wrap gap-1 mt-1">
+                      <div className="space-y-1.5">
                         {organ.relationsStructured.posterior.map((item, idx) => (
                           <button
                             key={idx}
-                            onClick={() => navigateToStructure(item.toLowerCase())}
-                            className="px-2 py-1 rounded-md text-[11px] font-medium bg-slate-100 dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-900/40 text-slate-700 dark:text-slate-300 transition-colors min-h-[32px]"
+                            onClick={() => {
+                              navigateToStructure(item.toLowerCase());
+                              if (onIsolateStructure) onIsolateStructure(item.toLowerCase(), organKey);
+                            }}
+                            className="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-50 dark:bg-slate-800/80 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 border border-slate-200/80 dark:border-slate-700/80 text-slate-800 dark:text-slate-200 transition-all flex items-center justify-between gap-1.5 min-h-[34px] w-full text-left cursor-pointer group"
+                            title={`Inspect and isolate ${item} in 3D`}
                           >
-                            {item}
+                            <div className="flex items-center gap-1.5 min-w-0">
+                              <span className="text-indigo-500 font-bold shrink-0">📍</span>
+                              <span className="truncate">{item}</span>
+                            </div>
+                            <div className="flex items-center gap-0.5 text-[10px] text-indigo-600 dark:text-indigo-400 font-bold shrink-0 opacity-75 group-hover:opacity-100">
+                              <span>3D</span>
+                              <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                            </div>
                           </button>
                         ))}
                       </div>
                     </div>
 
                     {/* Medial */}
-                    <div className={`p-3 rounded-xl border ${isLight ? 'bg-white border-indigo-100' : 'bg-slate-900/60 border-indigo-950'}`}>
-                      <div className="font-bold text-indigo-600 dark:text-indigo-400 mb-1 flex items-center gap-1">
+                    <div className={`p-3 rounded-xl border ${isLight ? 'bg-white border-indigo-100 shadow-2xs' : 'bg-slate-900/60 border-indigo-950'}`}>
+                      <div className="font-bold text-indigo-600 dark:text-indigo-400 mb-2 flex items-center gap-1">
                         <span>→ Medial</span>
                       </div>
-                      <div className="flex flex-wrap gap-1 mt-1">
+                      <div className="space-y-1.5">
                         {organ.relationsStructured.medial.map((item, idx) => (
                           <button
                             key={idx}
-                            onClick={() => navigateToStructure(item.toLowerCase())}
-                            className="px-2 py-1 rounded-md text-[11px] font-medium bg-slate-100 dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-900/40 text-slate-700 dark:text-slate-300 transition-colors min-h-[32px]"
+                            onClick={() => {
+                              navigateToStructure(item.toLowerCase());
+                              if (onIsolateStructure) onIsolateStructure(item.toLowerCase(), organKey);
+                            }}
+                            className="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-50 dark:bg-slate-800/80 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 border border-slate-200/80 dark:border-slate-700/80 text-slate-800 dark:text-slate-200 transition-all flex items-center justify-between gap-1.5 min-h-[34px] w-full text-left cursor-pointer group"
+                            title={`Inspect and isolate ${item} in 3D`}
                           >
-                            {item}
+                            <div className="flex items-center gap-1.5 min-w-0">
+                              <span className="text-indigo-500 font-bold shrink-0">📍</span>
+                              <span className="truncate">{item}</span>
+                            </div>
+                            <div className="flex items-center gap-0.5 text-[10px] text-indigo-600 dark:text-indigo-400 font-bold shrink-0 opacity-75 group-hover:opacity-100">
+                              <span>3D</span>
+                              <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                            </div>
                           </button>
                         ))}
                       </div>
                     </div>
 
                     {/* Lateral */}
-                    <div className={`p-3 rounded-xl border ${isLight ? 'bg-white border-indigo-100' : 'bg-slate-900/60 border-indigo-950'}`}>
-                      <div className="font-bold text-indigo-600 dark:text-indigo-400 mb-1 flex items-center gap-1">
+                    <div className={`p-3 rounded-xl border ${isLight ? 'bg-white border-indigo-100 shadow-2xs' : 'bg-slate-900/60 border-indigo-950'}`}>
+                      <div className="font-bold text-indigo-600 dark:text-indigo-400 mb-2 flex items-center gap-1">
                         <span>← Lateral</span>
                       </div>
-                      <div className="flex flex-wrap gap-1 mt-1">
+                      <div className="space-y-1.5">
                         {organ.relationsStructured.lateral.map((item, idx) => (
                           <button
                             key={idx}
-                            onClick={() => navigateToStructure(item.toLowerCase())}
-                            className="px-2 py-1 rounded-md text-[11px] font-medium bg-slate-100 dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-900/40 text-slate-700 dark:text-slate-300 transition-colors min-h-[32px]"
+                            onClick={() => {
+                              navigateToStructure(item.toLowerCase());
+                              if (onIsolateStructure) onIsolateStructure(item.toLowerCase(), organKey);
+                            }}
+                            className="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-50 dark:bg-slate-800/80 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 border border-slate-200/80 dark:border-slate-700/80 text-slate-800 dark:text-slate-200 transition-all flex items-center justify-between gap-1.5 min-h-[34px] w-full text-left cursor-pointer group"
+                            title={`Inspect and isolate ${item} in 3D`}
                           >
-                            {item}
+                            <div className="flex items-center gap-1.5 min-w-0">
+                              <span className="text-indigo-500 font-bold shrink-0">📍</span>
+                              <span className="truncate">{item}</span>
+                            </div>
+                            <div className="flex items-center gap-0.5 text-[10px] text-indigo-600 dark:text-indigo-400 font-bold shrink-0 opacity-75 group-hover:opacity-100">
+                              <span>3D</span>
+                              <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                            </div>
                           </button>
                         ))}
                       </div>
@@ -911,7 +1044,7 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
                   NMC MBBS Practical / Viva High-Yield Pearls
                 </h4>
                 <div className="space-y-2">
-                  {organ.nmcMbbssVivaPearls.map((pearl, idx) => (
+                  {organ.nmcVivaQuestions.map((pearl, idx) => (
                     <div
                       key={idx}
                       className={`p-3 rounded-xl border text-xs leading-relaxed ${
@@ -920,7 +1053,13 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
                           : 'bg-slate-900/60 border-purple-900/30 text-slate-200'
                       }`}
                     >
-                      {pearl}
+                      <div className="font-bold text-purple-600 dark:text-purple-400 mb-1 flex items-center gap-1.5">
+                        <span className="w-4 h-4 rounded-full bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 flex items-center justify-center text-[10px] font-bold">
+                          Q
+                        </span>
+                        <span>Clinical High-Yield Topic</span>
+                      </div>
+                      <p className="text-slate-700 dark:text-slate-200 pl-5">{pearl}</p>
                     </div>
                   ))}
                 </div>
@@ -928,7 +1067,7 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
 
               {/* Radiological Correlation */}
               <div
-                className={`p-4 rounded-2xl border ${
+                className={`p-3.5 rounded-2xl border ${
                   isLight ? 'bg-slate-50 border-slate-200/80' : 'bg-slate-800/40 border-slate-800'
                 }`}
               >
@@ -946,6 +1085,55 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
           {/* TAB 5: LYMPHATICS & SURGICAL APPROACHES */}
           {activeTab === 'lymphatics' && (
             <div className="space-y-4 animate-in fade-in duration-200">
+              {/* Lymphatic Node Drainage Cards */}
+              <div
+                className={`p-4 rounded-2xl border ${
+                  isLight ? 'bg-emerald-50/50 border-emerald-100' : 'bg-emerald-950/20 border-emerald-900/40'
+                }`}
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5">
+                    <Shield className="w-4 h-4 text-emerald-500" />
+                    Regional Lymphatic Drainage & Lymph Nodes
+                  </h4>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-900/50 text-emerald-800 dark:text-emerald-200">
+                    Immune Matrix
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mb-3">
+                  Click any regional lymphatic drainage basin to isolate lymphatic vessels and immune organs in 3D.
+                </p>
+
+                <div className="space-y-2">
+                  {organ.lymphaticDrainage.map((lymph, idx) => (
+                    <div
+                      key={idx}
+                      className={`p-3 rounded-xl border flex items-center justify-between gap-3 ${
+                        isLight ? 'bg-white border-emerald-100 shadow-2xs' : 'bg-slate-900/60 border-emerald-900/30'
+                      }`}
+                    >
+                      <div className="flex items-start gap-2 min-w-0 flex-1">
+                        <span className="w-2 h-2 rounded-full bg-emerald-500 mt-1.5 shrink-0" />
+                        <span className={`text-xs font-medium leading-relaxed ${isLight ? 'text-slate-800' : 'text-slate-200'}`}>
+                          {lymph}
+                        </span>
+                      </div>
+                      <button
+                        onClick={() => {
+                          navigateToStructure('lymphatic', organ.cameraPreset || 'thorax');
+                          if (onIsolateStructure) onIsolateStructure('lymphatic', organKey);
+                        }}
+                        className="px-2.5 py-1.5 rounded-lg text-[11px] font-bold bg-emerald-600 hover:bg-emerald-700 text-white flex items-center gap-1 shrink-0 cursor-pointer shadow-xs transition-colors"
+                        title="Inspect lymphatic drainage network in 3D"
+                      >
+                        <span>Inspect 3D</span>
+                        <ArrowRight className="w-3 h-3" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
               {/* Surgical Approaches */}
               <div
                 className={`p-4 rounded-2xl border ${
@@ -959,26 +1147,6 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
                 <p className={`text-xs leading-relaxed ${isLight ? 'text-slate-700' : 'text-slate-200'}`}>
                   {organ.surgicalApproaches}
                 </p>
-              </div>
-
-              {/* Lymphatic Drainage */}
-              <div
-                className={`p-4 rounded-2xl border ${
-                  isLight ? 'bg-emerald-50/50 border-emerald-100' : 'bg-emerald-950/20 border-emerald-900/40'
-                }`}
-              >
-                <h4 className="text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 mb-2.5 flex items-center gap-1.5">
-                  <Shield className="w-4 h-4 text-emerald-500" />
-                  Lymphatic Node Drainage
-                </h4>
-                <ul className="space-y-2 text-xs leading-relaxed">
-                  {organ.lymphaticDrainage.map((lymph, idx) => (
-                    <li key={idx} className="flex items-start gap-2">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 flex-shrink-0" />
-                      <span className={isLight ? 'text-slate-700' : 'text-slate-300'}>{lymph}</span>
-                    </li>
-                  ))}
-                </ul>
               </div>
             </div>
           )}

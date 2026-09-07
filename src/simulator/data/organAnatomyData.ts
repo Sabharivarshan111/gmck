@@ -1356,4 +1356,114 @@ export const ORGAN_ANATOMY_DATABASE: Record<string, DetailedOrganAnatomy> = {
       diagramUrl: 'https://pmtgeydtqypwrypshhsx.supabase.co/storage/v1/object/public/diagrams/anatomy/spleen_histology_plate.jpg',
     },
   },
+
+  // 21. ABDOMEN & GASTROINTESTINAL VISCERA
+  abdomen: {
+    id: 'abdomen',
+    name: 'Abdominal Cavity & Gastrointestinal Viscera',
+    latinName: 'Cavitas Abdominalis',
+    system: 'Digestive & Abdominal Neurovascular System',
+    quadrantOrCavity: 'Peritoneal & Retroperitoneal Cavities (T12 - L5)',
+    surfaceLandmarks:
+      'Bounded superiorly by xiphisternum and costal margins (ribs 7-10), inferiorly by pubic symphysis and iliac crests, posteriorly by lumbar spine and psoas/quadratus lumborum muscles. Transpyloric plane of Addison at L1 (midway between jugular notch and pubic symphysis).',
+    dimensionsAndWeight: 'Total capacity ~4-5 liters; extends from diaphragm down to pelvic brim.',
+    arterialSupply: [
+      'Celiac Trunk (T12): Supplies foregut via Left Gastric, Common Hepatic, and Splenic arteries.',
+      'Superior Mesenteric Artery (L1): Supplies midgut (distal duodenum to proximal 2/3 transverse colon) via Inferior Pancreaticoduodenal, Intestinal branches, Ileocolic, Right Colic, and Middle Colic arteries.',
+      'Inferior Mesenteric Artery (L3): Supplies hindgut (distal 1/3 transverse colon to upper rectum) via Left Colic, Sigmoid, and Superior Rectal arteries.',
+      'Renal Arteries (L1-L2): Bilateral direct branches from abdominal aorta supplying kidneys and adrenals.',
+    ],
+    arterialNodes: [
+      {
+        id: 'celiac_trunk',
+        name: 'Celiac Trunk (Axis of Foregut)',
+        type: 'artery',
+        parentVessel: 'Abdominal Aorta (Anterior aspect at T12 hiatus)',
+        territory: 'Stomach, liver, gallbladder, spleen, abdominal esophagus, and superior half of duodenum & pancreas',
+        clinicalNote: 'Tripartite branching into Left Gastric, Splenic, and Common Hepatic arteries. Aneurysms or compression by median arcuate ligament causes Dunbar Syndrome.',
+        cameraPreset: 'abdomen',
+      },
+      {
+        id: 'superior_mesenteric_artery',
+        name: 'Superior Mesenteric Artery (SMA)',
+        type: 'artery',
+        parentVessel: 'Abdominal Aorta (L1, 1cm below celiac trunk)',
+        territory: 'Midgut: distal duodenum, jejunum, ileum, cecum, appendix, ascending colon, proximal 2/3 transverse colon',
+        clinicalNote: 'Acute mesenteric ischemia (embolus lodging in SMA) causes pain out of proportion to physical exam findings and catastrophic bowel necrosis.',
+        cameraPreset: 'abdomen',
+      },
+    ],
+    venousDrainage: [
+      'Hepatic Portal System: Formed behind neck of pancreas by union of Superior Mesenteric Vein and Splenic Vein (with Inferior Mesenteric Vein entering splenic vein). Transports nutrient-rich venous blood from GI tract to hepatic sinusoids for metabolic processing.',
+      'Systemic Venous Return: Left, Middle, and Right Hepatic Veins drain directly into Inferior Vena Cava (IVC) at central tendon of diaphragm (T8).',
+    ],
+    venousNodes: [
+      {
+        id: 'portal_vein',
+        name: 'Hepatic Portal Vein',
+        type: 'vein',
+        parentVessel: 'Formed by junction of Splenic Vein and Superior Mesenteric Vein (L2)',
+        territory: 'Drains 100% of splanchnic venous return into liver sinusoids (~1000-1200 mL/min)',
+        clinicalNote: 'Portal hypertension (>10-12 mmHg) causes portosystemic collateral dilation: bleeding esophageal varices, caput medusae, and ascites.',
+        cameraPreset: 'abdomen',
+      },
+    ],
+    innervation: {
+      sympathetic:
+        'Thoracic & Lumbar Splanchnic Nerves: Greater splanchnic (T5-T9) to Celiac ganglion; Lesser splanchnic (T10-T11) to Aorticorenal/SMA ganglion; Least splanchnic (T12) to renal plexus; Lumbar splanchnics (L1-L2) to IMA and Hypogastric plexuses. Inhibits peristalsis and secretomotor activity; induces arteriolar vasoconstriction.',
+      parasympathetic:
+        'Anterior and Posterior Vagal Trunks (CN X) supply foregut and midgut down to splenic flexure. Pelvic Splanchnic Nerves (S2-S4, nervi erigentes) supply hindgut from splenic flexure to upper anal canal. Stimulates peristalsis, relaxes sphincters, and triggers glandular secretion.',
+      somaticOrSensory:
+        'Visceral peritoneum is insensitive to touch and cutting, but sensitive to stretch/ischemia via visceral afferents. Parietal peritoneum is exquisitely sensitive to somatic pain via lower 6 thoracic and subcostal nerves (T7-T12).',
+      referredPain:
+        'Foregut pain referred to Epigastrium (T7-T9); Midgut pain referred to Umbilicus (T10); Hindgut pain referred to Hypogastrium / Suprapubic region (T11-L1).',
+    },
+    nerveNodes: [
+      {
+        id: 'splanchnic_nerves',
+        name: 'Splanchnic Nerves (Greater, Lesser, Least)',
+        roots: 'T5 - T12 sympathetic preganglionic fibers',
+        origin: 'Thoracic Sympathetic Trunk',
+        motorSupply: 'Inhibitory to intestinal smooth muscle, motor to sphincters, vasoconstrictor',
+        sensorySupply: 'Visceral nociceptive afferents transmitting dull visceral ache',
+        clinicalNote: 'Celiac plexus neurolysis / block (injecting neurolytic ethanol) provides profound visceral pain relief in advanced pancreatic cancer.',
+        cameraPreset: 'abdomen',
+      },
+    ],
+    lymphaticDrainage: [
+      'Mesenteric, celiac, and lumbar (para-aortic) lymph node chains drain into the Cisterna Chyli at L1-L2, which continues upward as the Thoracic Duct traversing the aortic hiatus (T12) to empty into the left venous angle.',
+    ],
+    musculoskeletalRelations: [
+      'Anterior: Anterior abdominal wall muscles (Rectus abdominis, External oblique, Internal oblique, Transversus abdominis).',
+      'Posterior: Lumbar vertebrae L1-L5, Psoas major, Quadratus lumborum, and Iliacus muscles.',
+      'Superior: Diaphragm, separating abdominal viscera from heart and lungs.',
+      'Inferior: Greater pelvis, pelvic inlet, and iliac fossae.',
+    ],
+    relationsStructured: {
+      anterior: ['Anterior Abdominal Wall Muscles', 'Rectus Sheath & Linea Alba', 'Greater Omentum'],
+      posterior: ['Lumbar Spine L1-L5', 'Abdominal Aorta & IVC', 'Psoas Major & Quadratus Lumborum'],
+      superior: ['Thoracoabdominal Diaphragm', 'Inferior Phrenic Vessels', 'Costal Margins (Ribs 7-10)'],
+      inferior: ['Pelvic Brim & True Pelvis', 'Common Iliac Vessels', 'Urinary Bladder & Sigmoid Colon'],
+      medial: ['Vertebral Column', 'Median Sagittal Plane', 'Superior & Inferior Mesenteric Vessels'],
+      lateral: ['Transversus Abdominis', 'Internal & External Oblique Muscles', 'Iliac Crests'],
+    },
+    histologyAndPhysiology:
+      'Peritoneal membrane secretes serous lubricating fluid (50 mL); gut-associated lymphoid tissue (GALT / Peyer patches) provides mucosal immunity; enteric nervous system (Auerbach myenteric and Meissner submucosal plexuses) coordinates autonomous peristalsis and mucosal secretion.',
+    clinicalBedsideSigns: [
+      'Acute Peritonitis: Rigid "board-like" abdominal wall involuntary guarding, rebound tenderness (Blumberg sign), absent bowel sounds.',
+      'Appendicitis (McBurney Point): Point tenderness at junction of lateral 1/3 and medial 2/3 of line from ASIS to umbilicus.',
+      'Murphy Sign: Inspiratory arrest upon palpation of RUQ during deep inspiration, diagnostic for acute cholecystitis.',
+      'Shifting Dullness & Fluid Wave: Detects free peritoneal fluid / ascites (>1500-2000 mL) in portal hypertension or cirrhosis.',
+    ],
+    nmcMbbssVivaPearls: [
+      'Q: What forms the Hepatic Portal Vein? A: Union of the Splenic Vein and Superior Mesenteric Vein behind the neck of the pancreas at L2 level.',
+      'Q: Name the 4 main Portosystemic Anastomoses and clinical consequences of portal hypertension? A: 1) Lower esophagus (esophageal varices - catastrophic hematemesis); 2) Upper anal canal (hemorrhoids); 3) Umbilicus (Caput Medusae); 4) Retroperitoneum (veins of Retzius).',
+      'Q: Where does the Cisterna Chyli lie? A: Anterior to L1-L2 vertebral bodies, between the abdominal aorta on the left and right crus of diaphragm on the right.',
+    ],
+    radiologicalCorrelation:
+      'Erect Abdominal X-Ray: Crescent of free air under the right hemidiaphragm confirms hollow viscus perforation (pneumoperitoneum). Ultrasound / CT: Visualizes liver parenchymal echogenicity, gallbladder wall thickness (<3mm), biliary duct caliber (<6mm), and retroperitoneal lymphadenopathy.',
+    surgicalApproaches:
+      'Midline laparotomy (linea alba); Paramedian incision; Kocher subcostal incision (open cholecystectomy / hepatic surgery); McBurney / Gridiron incision for open appendectomy; Multi-port laparoscopic abdominal access.',
+    breadcrumbs: [{ id: 'abdomen', label: 'Abdominal Cavity' }, { id: 'viscera', label: 'Abdominal Viscera & Gastrointestinal System' }],
+  },
 };

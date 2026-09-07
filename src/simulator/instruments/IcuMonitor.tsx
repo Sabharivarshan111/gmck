@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { PatientVitals, TelemetryWaveformSample } from '../types';
+import { GraduationCap } from 'lucide-react';
+import { EcgIcuTutorialModal } from './EcgIcuTutorialModal';
 
 interface IcuMonitorProps {
   vitals: PatientVitals;
@@ -16,6 +18,7 @@ export const IcuMonitor: React.FC<IcuMonitorProps> = ({
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [audioEnabled, setAudioEnabled] = useState<boolean>(false);
+  const [isTutorialOpen, setIsTutorialOpen] = useState<boolean>(false);
   const audioCtxRef = useRef<AudioContext | null>(null);
   const lastBeepTimeRef = useRef<number>(0);
   const sweepXRef = useRef<number>(0);
@@ -359,6 +362,14 @@ export const IcuMonitor: React.FC<IcuMonitorProps> = ({
 
           <div className="flex items-center gap-2">
             <button
+              onClick={() => setIsTutorialOpen(true)}
+              className="flex items-center gap-1 px-2.5 py-1 rounded text-[10px] font-bold border border-rose-500/40 bg-rose-500/20 text-rose-300 hover:bg-rose-500/30 transition-all cursor-pointer shadow-sm shadow-rose-950/40"
+              title="Open 12-Lead ECG & ICU Telemetry Tutorial (LKG to Specialist)"
+            >
+              <GraduationCap className="w-3.5 h-3.5" />
+              <span>🎓 Tutorial</span>
+            </button>
+            <button
               onClick={() => setAudioEnabled(!audioEnabled)}
               className={`px-2.5 py-1 rounded text-[10px] font-semibold border transition-all ${
                 audioEnabled
@@ -368,7 +379,7 @@ export const IcuMonitor: React.FC<IcuMonitorProps> = ({
             >
               {audioEnabled ? '🔊 Tone ON' : '🔇 Muted'}
             </button>
-            <span className="text-slate-500 font-mono text-[10px]">INTELLIVUE X3 SIM</span>
+            <span className="text-slate-500 font-mono text-[10px] hidden sm:inline">INTELLIVUE X3 SIM</span>
           </div>
         </div>
 
@@ -509,6 +520,13 @@ export const IcuMonitor: React.FC<IcuMonitorProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Interactive 4-Tier Masterclass Tutorial Modal */}
+      <EcgIcuTutorialModal
+        isOpen={isTutorialOpen}
+        onClose={() => setIsTutorialOpen(false)}
+        theme={theme}
+      />
     </div>
   );
 };

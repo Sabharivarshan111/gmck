@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { DiagnosticToolType, PatientPathologyState, PatientVitals } from '../types';
 import { StethoscopeAudioEngine, HeartSoundPreset, LungSoundPreset, AuscultationSite } from './StethoscopeSynthesizer';
 import { Ecg12LeadCanvas } from './Ecg12LeadCanvas';
-import { Volume2, VolumeX, Eye, Stethoscope, Radio, Activity, Sparkles, CheckCircle2, AlertTriangle, Info } from 'lucide-react';
+import { EcgIcuTutorialModal } from './EcgIcuTutorialModal';
+import { Volume2, VolumeX, Eye, Stethoscope, Radio, Activity, Sparkles, CheckCircle2, AlertTriangle, Info, GraduationCap } from 'lucide-react';
 
 interface DiagnosticToolsProps {
   tool: DiagnosticToolType;
@@ -58,6 +59,8 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
   const [stethSite, setStethSite] = useState<AuscultationSite>('mitral');
   const [stethMode, setStethMode] = useState<'bell' | 'diaphragm'>('diaphragm');
   const [isListening, setIsListening] = useState<boolean>(false);
+  const [customHeartOverride, setCustomHeartOverride] = useState<HeartSoundPreset | null>(null);
+  const [isTutorialOpen, setIsTutorialOpen] = useState<boolean>(false);
   const audioEngineRef = useRef<StethoscopeAudioEngine | null>(null);
 
   useEffect(() => {
@@ -107,25 +110,33 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
         audioEngineRef.current.startPulmonaryAuscultation(vitals.respiratoryRate, lungPreset);
       } else {
         audioEngineRef.current.stopPulmonaryAuscultation();
-        // Resolve heart sound preset
-        let heartPreset: HeartSoundPreset = 'normal';
-        if (vitals.cvp > 12 && vitals.meanArterialPressure < 65) {
-          heartPreset = 'tamponade_muffled';
-        } else if (pathology.heartSoundType === 's3_gallop') {
-          heartPreset = 's3_gallop';
-        } else if (pathology.heartSoundType === 's4_gallop') {
-          heartPreset = 's4_gallop';
-        } else if (pathology.heartSoundType === 'murmur_systolic') {
-          heartPreset = 'mitral_stenosis';
-        } else if (pathology.heartSoundType === 'friction_rub') {
-          heartPreset = 'friction_rub';
+        // Resolve heart sound preset with clinical routing & manual audition override
+        let heartPreset: HeartSoundPreset = customHeartOverride || 'normal';
+        if (!customHeartOverride) {
+          if (vitals.cvp > 12 && vitals.meanArterialPressure < 65) {
+            heartPreset = 'tamponade_muffled';
+          } else if (pathology.heartSoundType === 's3_gallop') {
+            heartPreset = 's3_gallop';
+          } else if (pathology.heartSoundType === 's4_gallop') {
+            heartPreset = 's4_gallop';
+          } else if (pathology.heartSoundType === 'aortic_stenosis' || pathology.heartSoundType === 'murmur_systolic') {
+            heartPreset = 'aortic_stenosis';
+          } else if (pathology.heartSoundType === 'mitral_regurg') {
+            heartPreset = 'mitral_regurg';
+          } else if (pathology.heartSoundType === 'aortic_regurg') {
+            heartPreset = 'aortic_regurg';
+          } else if (pathology.heartSoundType === 'mitral_stenosis') {
+            heartPreset = 'mitral_stenosis';
+          } else if (pathology.heartSoundType === 'friction_rub') {
+            heartPreset = 'friction_rub';
+          }
         }
         audioEngineRef.current.startCardiacAuscultation(vitals.heartRate, heartPreset);
       }
     };
 
     startAudio();
-  }, [isListening, stethSite, stethMode, vitals.heartRate, vitals.respiratoryRate, pathology]);
+  }, [isListening, stethSite, stethMode, vitals.heartRate, vitals.respiratoryRate, pathology, customHeartOverride]);
 
   // ============================================================================
   // 3. POCUS ULTRASOUND CANVAS
@@ -569,6 +580,49 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
                     </button>
                   ))}
                 </div>
+
+                {/* Medical-Grade Murmur Verification & Audition Suite */}
+                <div className="pt-2 border-t border-slate-800 space-y-1.5">
+                  <div className="flex items-center justify-between text-xs text-slate-300">
+                    <span className="font-semibold flex items-center gap-1.5 text-slate-200">
+                      <Volume2 className="w-3.5 h-3.5 text-emerald-400" />
+                      <span>Clinically Verified Murmurs & Sounds (Medical-Grade DSP):</span>
+                    </span>
+                    {customHeartOverride && (
+                      <button
+                        onClick={() => setCustomHeartOverride(null)}
+                        className="text-[10px] text-amber-400 hover:underline cursor-pointer font-mono"
+                      >
+                        Reset to Case Default
+                      </button>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 text-xs">
+                    {[
+                      { id: 'normal', label: 'Normal S1/S2', sub: 'M1-T1 & A2-P2 Splits' },
+                      { id: 's3_gallop', label: 'S3 Gallop', sub: 'Ventricular Filling (CHF)' },
+                      { id: 's4_gallop', label: 'S4 Gallop', sub: 'Atrial Kick (LVH / Stiff)' },
+                      { id: 'aortic_stenosis', label: 'Aortic Stenosis', sub: 'Harsh Systolic Diamond' },
+                      { id: 'mitral_regurg', label: 'Mitral Regurg', sub: 'Holosystolic Plateau' },
+                      { id: 'aortic_regurg', label: 'Aortic Regurg', sub: 'Diastolic Decrescendo' },
+                      { id: 'mitral_stenosis', label: 'Mitral Stenosis', sub: 'Opening Snap + Rumble' },
+                      { id: 'friction_rub', label: 'Friction Rub', sub: 'Triphasic Leathery Scratch' },
+                    ].map((m) => (
+                      <button
+                        key={m.id}
+                        onClick={() => setCustomHeartOverride(m.id as HeartSoundPreset)}
+                        className={`p-2 rounded-xl border text-left flex flex-col justify-between transition-all cursor-pointer ${
+                          customHeartOverride === m.id
+                            ? 'bg-rose-500/20 border-rose-500 text-rose-300 shadow-sm'
+                            : 'bg-slate-950/80 hover:bg-slate-800/80 border-slate-800 text-slate-400'
+                        }`}
+                      >
+                        <span className="font-bold text-[11px] truncate">{m.label}</span>
+                        <span className="text-[9px] opacity-70 truncate">{m.sub}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </div>
 
               {/* Auscultation Player Display */}
@@ -711,11 +765,21 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
           {/* ================= 4. 12-LEAD ECG ================= */}
           {tool === 'ecg12' && (
             <div className="space-y-4">
-              <div className="flex items-center justify-between text-xs text-slate-300">
-                <span className="font-semibold">Standard 12-Lead Diagnostic Electrocardiograph:</span>
-                <span className="font-mono text-cyan-400 font-bold">
-                  Rhythm: {pathology.ecgRhythm.toUpperCase().replace('_', ' ')}
-                </span>
+              <div className="flex items-center justify-between text-xs text-slate-300 flex-wrap gap-2">
+                <div className="flex items-center gap-2">
+                  <span className="font-semibold">Standard 12-Lead Diagnostic Electrocardiograph:</span>
+                  <span className="font-mono text-cyan-400 font-bold">
+                    Rhythm: {pathology.ecgRhythm.toUpperCase().replace('_', ' ')}
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsTutorialOpen(true)}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold text-xs shadow-md hover:shadow-cyan-500/25 transition-all cursor-pointer"
+                >
+                  <GraduationCap className="w-4 h-4" />
+                  <span>🎓 12-Lead Master Tutorial</span>
+                </button>
               </div>
 
               {/* Universal 12-Lead Canvas with Continuous Lead II Strip */}
@@ -744,6 +808,13 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
           )}
         </div>
       </div>
+
+      {/* 4-Tier Interactive ECG & ICU Tutorial Modal */}
+      <EcgIcuTutorialModal
+        isOpen={isTutorialOpen}
+        onClose={() => setIsTutorialOpen(false)}
+        theme={theme}
+      />
     </div>
   );
 };
