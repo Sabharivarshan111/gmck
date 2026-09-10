@@ -1054,3 +1054,42 @@ that must NOT match, `javascript:`/`file:` being refused, and timestamps. Its
 first version passed for the wrong reason: the "nothing is fetched" assertion
 matched this file's own comment saying "no fetch, no oEmbed lookup". Stripped
 comments, same as `check:native-update` had to.
+
+### The black circle in the music player
+
+Reported as "what the fuck is black circle behind music player". It is the
+transport's own play button with no track loaded: it filled with
+`withAlpha(colors.text, 0.12)` and kept `colors.primaryText` for the icon —
+on a dark theme, a near-black disc with a black triangle on it, sitting between
+two outlined circles. The play mark was invisible inside its own button.
+
+The rule it broke is one the theme already states: **`primaryText` is the ink
+for `primary`**, and painting it on anything else is a pairing nobody checked.
+The two states are now two controls rather than one control with a swapped
+background — filled and legible when there is something to play, the same glass
+circle as its neighbours when there is not. A filled button that does nothing is
+also a lie about what it will do.
+
+`check:glass-radius` caught the first attempt: `styles.playControl` already
+carried `borderRadius: 22` and I passed the prop as well. A glass surface draws
+its fill, rim, counter-rim and shader on ONE curve, and two copies of the number
+is how a corner ends up looking cut. Separate style for the glass variant.
+
+**The wider Liquid Glass audit is NOT done** — that is the rest of what was
+asked ("read articles and open-source projects, fix it if our implementation is
+shit"), and it is a bigger piece than one control.
+
+### Two checks fail on a clean tree, and both look like the harness
+
+`check:music` and `check:page-refs` both time out waiting for a control to
+become "visible, enabled and stable". Confirmed by stashing all work and
+re-running: they fail without any of it. It looks like Playwright's stability
+wait never settling against the app's continuous animations (the subject-card
+foil, the gradient heading) under this sandbox's heavily throttled clock —
+`force: true` is what every probe written today needed. Not run to ground.
+
+### The Supabase connector expired mid-session
+
+Token expired while verifying the presence table, so the "studying now" count
+could NOT be checked against live data and the `generate-flashcards` deploy
+could not be attempted through the connector either. Both need it back.
