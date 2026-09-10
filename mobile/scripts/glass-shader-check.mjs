@@ -134,15 +134,51 @@ check(
 const surfaceCode = code('src/components/GlassSurface.tsx');
 const shaderAt = surfaceCode.indexOf('<OrbitGlass');
 const bevelAt = surfaceCode.indexOf('pointerEvents="none"');
-const fillAt = surfaceCode.indexOf('backgroundColor: glass');
+const fillAt = surfaceCode.indexOf('backgroundColor: fill');
 check(shaderAt > 0, 'GlassSurface never renders OrbitGlass');
 check(
   fillAt > 0 && fillAt < shaderAt,
   'the fill must be painted before the shader, so a phone that cannot draw the shader still has a card',
 );
+/*
+ * One wash, not two.
+ *
+ * The shader is opaque wherever it draws, so it replaces the fill rather than
+ * sitting over it. Give the two different alphas and the same theme produces a
+ * different card on Android 13 with a wallpaper than it does anywhere else —
+ * which is what shipped, and which nothing on screen could explain.
+ */
+check(
+  /tint=\{fill\}/.test(surfaceCode),
+  'the shader is given a different wash from the fill it draws over; one theme would then render two different cards depending on the phone',
+);
 check(
   bevelAt > shaderAt,
   'the bevel must be drawn over the shader, not under it — it is the part that follows the theme and the part that is known to work',
+);
+
+/* ---- what the pane is made of ---- */
+
+/*
+ * The backdrop is captured at a third of each dimension and magnified back.
+ * A BitmapShader's filtering is normally the drawing Paint's to decide, and a
+ * RuntimeShader input has no Paint, so it defaults to NEAREST — every captured
+ * pixel arriving as a hard 3x3 block, in the one layer that is meant to be the
+ * softest thing on screen.
+ */
+check(
+  /filterMode\s*=\s*Shader\.FILTER_MODE_LINEAR/.test(view),
+  'the backdrop is sampled without linear filtering, so a third-scale capture is magnified back as hard blocks',
+);
+
+/*
+ * A ring of light that is the same brightness the whole way round is a halo,
+ * and GlassSurface draws a directional bevel straight over it — two layers
+ * disagreeing about where the light is.
+ */
+check(
+  /lightDir/.test(view) && /dot\(normal, lightDir\)/.test(view),
+  'the Fresnel rim lost its direction; an evenly lit edge reads as a border someone drew, and fights the bevel above it',
 );
 
 /* ---- the native fallbacks ---- */

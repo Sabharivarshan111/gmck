@@ -256,6 +256,28 @@ export function GlassSurface({
    */
   const specular = Math.min(size.height * 0.5, 20);
 
+  /*
+   * One wash, painted twice, and it has to be the same one both times.
+   *
+   * The shader is opaque wherever it draws — its alpha is 1 everywhere inside
+   * the pane — so it does not sit *over* the fill, it replaces it. It was
+   * given a different mix from the fill underneath it (`translucency * 0.5`
+   * against the fill's `1 - translucency`), which meant one theme, one slider
+   * and two different cards: on Android 13 with a wallpaper the surface was
+   * far more see-through than the reader had asked for, and on anything older
+   * it was exactly right. Nothing on screen said why.
+   *
+   * Worse at the other end: a *solid* theme that opted into the bevel got an
+   * opaque card everywhere except on the phones that could run the shader,
+   * where it quietly turned translucent. Deriving both from one value is what
+   * makes the slider mean the same thing on every phone.
+   */
+  const fill = glass
+    ? withAlpha(colors.card, 1 - colors.translucency * (elevated ? 0.72 : 1))
+    : elevated
+      ? colors.cardElevated
+      : colors.card;
+
   return (
     <View
       onLayout={onLayout}
@@ -272,11 +294,7 @@ export function GlassSurface({
           // see-through reads as a mistake.
           // Translucency is the theme's, not the bevel's: a solid theme asked
           // for an opaque card and gets one, with the light drawn over it.
-          backgroundColor: glass
-            ? withAlpha(colors.card, 1 - colors.translucency * (elevated ? 0.72 : 1))
-            : elevated
-              ? colors.cardElevated
-              : colors.card,
+          backgroundColor: fill,
           borderRadius,
         },
         style,
@@ -293,7 +311,7 @@ export function GlassSurface({
         <OrbitGlass
           style={StyleSheet.absoluteFill}
           cornerRadius={borderRadius}
-          tint={withAlpha(colors.card, colors.translucency * 0.5)}
+          tint={fill}
           // Changing the wallpaper is the one background change nothing
           // native could notice, so JS says so. Everything else the view
           // refreshes on its own.
