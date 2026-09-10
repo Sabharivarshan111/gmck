@@ -61,6 +61,18 @@ handed over. `npm run check:agent-docs` enforces the mechanical parts.
 They share one Supabase project and one question bank. The web app is still
 live; do not refactor it while working on the native app.
 
+## 3D Virtual Patient Simulator & Open-Source Anatomy Skill
+
+The 3D Anatomy and Virtual Patient Simulator lives in `src/simulator/`. Full engineering specifications, open-source dataset evaluation (BodyParts3D, Z-Anatomy, ashemag/human-atlas), chunk streaming protocols, WebGL custom shader discard, lighting calibration, and mobile stability rules are documented in:
+- **Skill reference**: `.agents/skills/open-source-3d-anatomy/SKILL.md`
+
+### Core Engineering Invariants for 3D Simulator:
+1. **Never increase studio lighting above 2.3 total lumens**: Excess lumens + ACESFilmic tone mapping causes specular blowout and bleaches tissue into a chalky/clay model. Use calibrated pigments: `#dc2626` (artery), `#1d4ed8` (vein), `#f59e0b` (nerve), `#991b1b` with alpha 0.44 (myocardium).
+2. **Mobile chunk streaming concurrency is capped at 2**: `fetchChunksWithLimit(chunks, 2)` on mobile devices avoids WebKit Jetsam OOM crashes.
+3. **Clamp mobile DPR to 1.0**: On touch devices, clamp `devicePixelRatio` to `1.0` to avoid GPU tile exhaustion.
+4. **Preserve canvas in DOM during mobile tab switches**: In `src/pages/Simulator.tsx`, toggle visibility via CSS (`display: none` / `display: flex`) rather than unmounting React tree.
+
+
 ## Things that look like bugs but are deliberate
 
 Do not "fix" these without reading the reasoning:

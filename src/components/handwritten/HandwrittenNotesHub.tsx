@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ArrowLeft, BookOpen, Loader2, RefreshCw, Sparkles, GraduationCap, Layers, Send, Wand2, RotateCw } from "lucide-react";
+import { Link } from "react-router-dom";
+import { ArrowLeft, BookOpen, Loader2, RefreshCw, Sparkles, GraduationCap, Layers, Send, Wand2, RotateCw, Activity, Lock, ClipboardList, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
@@ -87,6 +88,58 @@ function YearsView({ onPick }: { onPick: (y: Year) => void }) {
             <p className="text-xs text-muted-foreground mt-1">Tap to browse subjects</p>
           </button>
         ))}
+      </div>
+
+      {/* ALSO HERE SECTION */}
+      <div className="pt-2 space-y-3">
+        <p className="text-xs tracking-widest text-muted-foreground uppercase font-bold">ALSO HERE</p>
+
+        {/* Case Proforma (Locked) */}
+        <div className="rounded-2xl border bg-muted/40 p-4 flex items-center justify-between opacity-80 cursor-not-allowed">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center text-muted-foreground">
+              <ClipboardList className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <p className="font-bold text-sm text-muted-foreground">Case proforma</p>
+                <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
+                  COMING SOON
+                </span>
+              </div>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Coming soon — clerking sheets for the wards
+              </p>
+            </div>
+          </div>
+          <Lock className="w-4 h-4 text-muted-foreground" />
+        </div>
+
+        {/* 3D Patient Simulator Card */}
+        <Link
+          to="/simulator"
+          className="rounded-2xl border-2 border-sky-500/40 bg-gradient-to-r from-sky-500/5 via-card to-emerald-500/5 p-4 flex items-center justify-between hover:border-sky-500 hover:shadow-lg transition-all group"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-sky-500/15 text-sky-600 dark:text-sky-400 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+              <Activity className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <p className="font-bold text-sm text-foreground group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors">
+                  Orbit 3D Patient Simulator
+                </p>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-700 dark:text-sky-300 border border-sky-500/30">
+                  v8.5 LIVE
+                </span>
+              </div>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Interactive 3D body, ICU telemetry, POCUS, organ anatomy sheets & emergency resuscitation
+              </p>
+            </div>
+          </div>
+          <ChevronRight className="w-5 h-5 text-sky-500 group-hover:translate-x-1 transition-transform" />
+        </Link>
       </div>
     </div>
   );

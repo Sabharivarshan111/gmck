@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { TrendingUp, Search, Timer as TimerIcon, Sparkles, Flame, Trophy, ArrowRight, Flag, Menu, ChevronRight, Check, X, BookOpen, FileText } from "lucide-react";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import type { Year } from "@/lib/year-subjects";
@@ -147,6 +148,30 @@ export default function HomeTab({ onNavigate }: { onNavigate: (tab: ShellTab, me
         <QuickAction icon={TimerIcon} label="Timer" sub="Focus with Pomodoro" color="text-emerald-400" onClick={() => onNavigate("timer")} />
         <QuickAction icon={Sparkles} label="Ask AI" sub="Get instant help" color="text-fuchsia-400" onClick={() => onNavigate("askai")} />
       </section>
+
+      {/* 3D Virtual Patient Simulator Banner */}
+      <Link
+        to="/simulator"
+        className="block relative overflow-hidden rounded-2xl border border-cyan-500/40 bg-gradient-to-r from-cyan-950/60 via-slate-900 to-emerald-950/60 p-4 group hover:border-cyan-400 transition-all shadow-lg shadow-cyan-950/20"
+      >
+        <div className="flex items-center justify-between">
+          <div className="space-y-1">
+            <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-cyan-500/20 border border-cyan-500/30 text-[10px] font-mono text-cyan-300">
+              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+              NEW • V8.0 3D PATIENT SIMULATOR
+            </div>
+            <h3 className="text-base font-bold text-white group-hover:text-cyan-300 transition-colors">
+              3D Virtual Patient Simulator
+            </h3>
+            <p className="text-xs text-slate-300 line-clamp-1">
+              Interactive 3D glass anatomy, real-time ICU monitor sweep, POCUS, pupillometry & resuscitation.
+            </p>
+          </div>
+          <div className="w-10 h-10 rounded-xl bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center text-cyan-400 group-hover:scale-110 group-hover:bg-cyan-500 group-hover:text-slate-950 transition-all ml-3 shrink-0">
+            <ArrowRight className="w-5 h-5" />
+          </div>
+        </div>
+      </Link>
 
       {/* Premium notes purchase — year specific */}
       {local?.year === "third" && <PremiumNotesCard />}

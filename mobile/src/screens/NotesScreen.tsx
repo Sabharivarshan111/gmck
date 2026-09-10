@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
+  Activity,
   ArrowLeft,
   ChevronRight,
   ClipboardList,
@@ -30,6 +31,7 @@ import { GradientFill } from '@/components/Gradient';
 import { NotesContentView } from '@/components/NotesContentView';
 import { ChapterNotes } from '@/components/ChapterNotes';
 import FlashcardsScreen from '@/screens/FlashcardsScreen';
+import PatientSimulatorScreen from '@/screens/PatientSimulatorScreen';
 import { useProfile } from '@/hooks/useProfile';
 import { getSubjects, YEAR_LABEL, type BankNode } from '@/lib/questionBank';
 import { YEAR_TO_KEY, type Year } from '@/lib/profile';
@@ -74,6 +76,7 @@ export default function NotesScreen() {
    * one Back button serving two unrelated ladders.
    */
   const [flashcards, setFlashcards] = useState(false);
+  const [patientSimulator, setPatientSimulator] = useState(false);
 
   const topicsViewFor = useCallback((current: Extract<View_, { kind: 'notes' }>): View_ => {
     const subjectKey = current.topic.key.split('::')[0];
@@ -135,6 +138,14 @@ export default function NotesScreen() {
     });
   }, [topicsViewFor]);
 
+  if (patientSimulator) {
+    return (
+      <View style={[styles.screen, { backgroundColor: colors.background }]}>
+        <PatientSimulatorScreen onExit={() => setPatientSimulator(false)} />
+      </View>
+    );
+  }
+
   if (flashcards) {
     return (
       <View style={[styles.screen, { backgroundColor: colors.background }]}>
@@ -158,6 +169,7 @@ export default function NotesScreen() {
           currentYear={profileYear}
           onPick={year => setView({ kind: 'subjects', year })}
           onFlashcards={() => setFlashcards(true)}
+          onPatientSimulator={() => setPatientSimulator(true)}
         />
       ) : null}
 
@@ -245,10 +257,12 @@ function YearsView({
   currentYear,
   onPick,
   onFlashcards,
+  onPatientSimulator,
 }: {
   currentYear: Year;
   onPick: (year: Year) => void;
   onFlashcards: () => void;
+  onPatientSimulator: () => void;
 }) {
   const { colors } = useTheme();
   return (
@@ -345,6 +359,42 @@ function YearsView({
         </View>
         <Lock size={16} color={colors.textMuted} />
       </View>
+
+      {/* Orbit 3D Patient Simulator Card */}
+      <Touchable
+        onPress={onPatientSimulator}
+        label="Orbit 3D Patient Simulator, interactive clinical resuscitation and anatomy"
+        scaleTo={0.97}
+        style={[
+          styles.extraCard,
+          {
+            backgroundColor: colors.card,
+            borderColor: withAlpha('#0ea5e9', 0.45),
+            borderWidth: 1.5,
+          },
+        ]}>
+        <View style={[styles.extraIcon, { backgroundColor: withAlpha('#0ea5e9', 0.15) }]}>
+          <Activity size={18} color="#0ea5e9" />
+        </View>
+        <View style={styles.flex}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+            <Text style={[styles.extraTitle, { color: colors.text }]}>Orbit 3D Patient Simulator</Text>
+            <View
+              style={{
+                backgroundColor: withAlpha('#0ea5e9', 0.15),
+                paddingHorizontal: 6,
+                paddingVertical: 1.5,
+                borderRadius: 999,
+              }}>
+              <Text style={{ fontSize: 9, fontWeight: '800', color: '#0ea5e9' }}>v8.5 LIVE</Text>
+            </View>
+          </View>
+          <Text style={[styles.extraSub, { color: colors.textMuted }]}>
+            Interactive 3D body, ICU telemetry, POCUS, organ anatomy sheets & emergency resuscitation
+          </Text>
+        </View>
+        <ChevronRight size={18} color="#0ea5e9" />
+      </Touchable>
     </>
   );
 }
