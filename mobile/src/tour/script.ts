@@ -334,15 +334,40 @@ export const STEPS: TourStep[] = [
     targetRole: 'tab',
     tapToAdvance: true,
   },
+  /*
+   * There is no Calendar tab any more.
+   *
+   * It was a month grid you could pin a note to, and it became the attendance
+   * tracker. This step used to point at it by name, which meant the spotlight
+   * had nothing to find and the step lost its arrow while still telling the
+   * reader to tap something. `check:tour` is what caught it — it matches every
+   * `target` against the accessibility labels that exist in `src/`, so a
+   * renamed control cannot quietly orphan a step.
+   *
+   * The exam countdown did not move: it is on the Stats tab, where it always
+   * was, so the step now says where it actually is.
+   */
   {
     id: 'exam',
     chapter: 'progress',
     title: 'Put your exam in',
     body:
-      'The Calendar tab takes your exam name and date and counts down to it. ' +
+      'Scroll down the Stats tab and you can enter your exam name and date, and it counts down to it. ' +
       'Your own dates stay on this phone — they are never uploaded anywhere.',
     tab: 'Progress',
-    target: 'Calendar',
+    target: 'Stats',
+    tapToAdvance: true,
+  },
+  {
+    id: 'attendance',
+    chapter: 'progress',
+    title: 'And your attendance',
+    body:
+      'Add your subjects and clinical postings, then tap Present or Absent after each one. ' +
+      'Orbit works out how many more you can miss and still be above your target — and it never rounds up. ' +
+      'This stays on your phone too.',
+    tab: 'Progress',
+    target: 'Attendance',
     tapToAdvance: true,
   },
   {

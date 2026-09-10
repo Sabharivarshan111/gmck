@@ -43,6 +43,16 @@
       "verify": "get_edge_function generate-flashcards -> version > 15 and the source contains `extractJson`. Then generate a deck for a chapter that has none and confirm a NEW row appears: `select deck_key, card_count, created_at from flashcards order by created_at desc limit 3;` should show today. A sandbox can invoke the function without direct egress via the `http` extension from Postgres — see blocker `supabase-route`.",
       "status": "pending",
       "queuedAt": "2026-09-10T17:52:31.347834Z"
+    },
+    {
+      "id": "sb-release-22",
+      "kind": "sql",
+      "summary": "Insert the app_releases row for versionCode 22",
+      "why": "Older builds read app_releases to offer the update, and the new build reads its own row to say what it fixed. With no row, the in-app update prompt never fires for 22 and the What's New card is empty — which looks exactly like the update feature being broken. Queued rather than applied because this sandbox has no route to Supabase: direct egress is blocked (HTTP 403 at the gateway) and the MCP connector's token expired mid-session. live_on_play stays false until the listing actually serves 22.",
+      "sql": "insert into public.app_releases (version_code, version_name, live_on_play, headline, notes) values (22, '0.0.0.22', false, 'Glass that looks like glass, and an admin panel that stops lying', array['Glass surfaces sampled their backdrop with no filtering, so a third-scale capture was magnified back as hard blocks. They are smooth now.','A glass card is lit from a direction rather than glowing evenly all round, and its edge shows the far side of the pane.','A glass card is now exactly as translucent as the theme asked for, on every phone. It was far more see-through on Android 13 with a wallpaper.','The admin dashboard showed zeros whether a read was empty, failed, or refused. It now says which.','The walkthrough pointed at a Calendar tab that no longer exists. It points at Attendance, and explains the bunk calculator.']) on conflict (version_code) do update set version_name = excluded.version_name, headline = excluded.headline, notes = excluded.notes;",
+      "verify": "select version_code, headline from public.app_releases where version_code = 22 returns one row. Then install 22 over 21 and confirm the update prompt appears, and that the What's New card lists those five lines.",
+      "status": "pending",
+      "queuedAt": "2026-09-10T18:40:28.867Z"
     }
   ]
 }
