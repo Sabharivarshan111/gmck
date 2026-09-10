@@ -64,6 +64,11 @@ export function AdminPanel() {
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
   const [diagrams, setDiagrams] = useState<DiagramStats | null>(null);
   const [pageStats, setPageStats] = useState<PageRefStats | null>(null);
+  /** What each section could not read, said under that section. */
+  const [readErrors, setReadErrors] = useState<{
+    subscribers: string | null;
+    pageRefs: string | null;
+  }>({ subscribers: null, pageRefs: null });
   const [refs, setRefs] = useState<AdminPageRef[]>([]);
   const [onlyPending, setOnlyPending] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -114,10 +119,22 @@ export function AdminPanel() {
         pageRefStats(),
         listPageRefs(onlyPending),
       ]);
-      setSubscribers(s);
+      setSubscribers(s.data);
       setDiagrams(d);
-      setPageStats(ps);
-      setRefs(r);
+      setPageStats(ps.data);
+      setRefs(r.data);
+      /*
+       * Kept per section rather than thrown.
+       *
+       * One failing read must not blank the other three — the panel's job is to
+       * show what it CAN see and be honest about the rest. Before this, a
+       * failed read was a `warn()` in a log and four zeros on screen, so
+       * "nothing here yet" and "this did not work" were the same picture.
+       */
+      setReadErrors({
+        subscribers: s.error,
+        pageRefs: ps.error ?? r.error,
+      });
     } catch (err) {
       setError(String(err));
     } finally {
@@ -200,10 +217,22 @@ export function AdminPanel() {
           <Stat label="Revenue" value={`₹${revenue.toFixed(0)}`} />
         </View>
 
-        {subscribers.length === 0 ? (
-          <Text style={[styles.empty, { color: colors.textMuted }]}>
-            No purchases yet.
+        {readErrors.subscribers ? (
+          <Text
+            accessibilityLiveRegion="polite"
+            style={[styles.empty, { color: colors.danger }]}>
+            Could not read the subscribers: {readErrors.subscribers}
           </Text>
+        ) : null}
+
+        {subscribers.length === 0 ? (
+          // Same rule as the page claims: "no purchases yet" is a statement
+          // about the data, and it may only be made once the data was read.
+          readErrors.subscribers ? null : (
+            <Text style={[styles.empty, { color: colors.textMuted }]}>
+              No purchases yet.
+            </Text>
+          )
         ) : (
           subscribers.slice(0, 12).map(s => (
             <View
@@ -341,12 +370,28 @@ export function AdminPanel() {
         icon={<BookOpen size={13} color={colors.textMuted} />}
         title="Textbook pages"
       >
+        {/*
+          A dash when the read failed, a number when it worked.
+
+          "0" is a claim about the data and it must only be made when the data
+          was actually read. This section showed four zeros whether the table
+          was empty, the RPC had failed, or the session was not an admin — and
+          on a phone there is no console to tell them apart.
+        */}
         <View style={styles.statRow}>
-          <Stat label="Entries" value={String(pageStats?.totalRefs ?? 0)} />
-          <Stat label="Confirmed" value={String(pageStats?.confirmedPages ?? 0)} />
-          <Stat label="Pending" value={String(pageStats?.pendingPages ?? 0)} />
-          <Stat label="Readers" value={String(pageStats?.contributors ?? 0)} />
+          <Stat label="Entries" value={pageStats ? String(pageStats.totalRefs) : '—'} />
+          <Stat label="Confirmed" value={pageStats ? String(pageStats.confirmedPages) : '—'} />
+          <Stat label="Pending" value={pageStats ? String(pageStats.pendingPages) : '—'} />
+          <Stat label="Readers" value={pageStats ? String(pageStats.contributors) : '—'} />
         </View>
+
+        {readErrors.pageRefs ? (
+          <Text
+            accessibilityLiveRegion="polite"
+            style={[styles.empty, { color: colors.danger }]}>
+            Could not read the page claims: {readErrors.pageRefs}
+          </Text>
+        ) : null}
 
         <Touchable
           label={onlyPending ? 'Show all page claims' : 'Show only pending claims'}
@@ -360,20 +405,40 @@ export function AdminPanel() {
             },
           ]}
         >
+          {/*
+            One label, two states — not two labels.
+
+            It used to read "All claims" when unfiltered and "Pending only"
+            when filtered, so the text described the CURRENT mode while the
+            highlight described whether the filter was on. Unhighlighted and
+            reading "All claims" is genuinely ambiguous: it looks like a button
+            that would show you all the claims, and pressing it does the
+            opposite. A filter chip says what it filters and lights up when it
+            is doing it.
+          */}
           <Text
             style={[
               styles.filterChipText,
               { color: onlyPending ? colors.primaryText : colors.text },
             ]}
           >
-            {onlyPending ? 'Pending only' : 'All claims'}
+            Pending only
           </Text>
         </Touchable>
+        <Text style={[styles.note, { color: colors.textMuted }]}>
+          {onlyPending
+            ? 'Claims still waiting for a third reader to agree.'
+            : `Every claim, confirmed and pending${refs.length >= 25 ? ' — newest 25' : ''}.`}
+        </Text>
 
         {refs.length === 0 ? (
-          <Text style={[styles.empty, { color: colors.textMuted }]}>
-            Nobody has entered a textbook page yet.
-          </Text>
+          readErrors.pageRefs ? null : (
+            <Text style={[styles.empty, { color: colors.textMuted }]}>
+              {onlyPending
+                ? 'No claims are waiting for a third reader.'
+                : 'Nobody has entered a textbook page yet.'}
+            </Text>
+          )
         ) : (
           refs.slice(0, 25).map(ref => (
             <View
