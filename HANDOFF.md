@@ -257,7 +257,7 @@ fails for every real user.
 |---|---|---|
 | App name | Orbit MBBS | `mobile/app.json`, `strings.xml` |
 | applicationId / namespace | `com.aistudio.mbbsqbank.aycxvd` | `mobile/android/app/build.gradle` |
-| versionCode / versionName | 14 / `0.0.0.14` (13 is live) | same |
+| versionCode / versionName | 15 / `0.0.0.15` (**14 is live on Play**) | same |
 | minSdk / targetSdk | 24 / 36 | `mobile/android/build.gradle` |
 | Deep-link scheme | `com.aistudio.mbbsqbank.aycxvd` | manifest intent-filter |
 | Google Web Client ID | `358287134961-24qidem5pd6qhtkq43b3a9cfcp87c49p.apps.googleusercontent.com` | `mobile/src/lib/googleAuth.ts` |

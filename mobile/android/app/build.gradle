@@ -108,11 +108,23 @@ android {
         applicationId "com.aistudio.mbbsqbank.aycxvd"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        // 13 / "0.0.0.13" is already live on Play, and Play rejects an upload
-        // whose versionCode is not higher than the last one. Bump these for
-        // every subsequent upload.
-        versionCode 14
-        versionName "0.0.0.14"
+        // 14 / "0.0.0.14" is what the listing serves. Play rejects an upload
+        // whose versionCode is not higher than the last one, so bump these for
+        // every subsequent upload — INCLUDING a re-upload after a rejection.
+        //
+        // This comment said 13 for weeks and it was wrong. What produced the
+        // error is worth knowing because the same shape will produce it again:
+        // an upload of 14 was refused, the refusal was written down here as
+        // "14 was rejected, 13 is live", and nothing ever re-checked. A
+        // rejection of one upload is not proof of what the listing serves.
+        // Ask the console, not this file.
+        //
+        // 14 was rejected: "your app could crash on 16 KB devices", naming
+        // libzstd-jni-1.5.6-9.so. That is fixed (zstd-jni is 1.5.7-16 below,
+        // whose x86_64 library is 16 KB aligned where 1.5.6-9's was 4 KB), but
+        // the fix cannot reach Play under the version that was refused.
+        versionCode 22
+        versionName "0.0.0.22"
 
         // Deep-link / OAuth callback scheme, consumed by the intent-filter in
         // AndroidManifest.xml. Added with an indexed put rather than assigning
@@ -276,6 +288,40 @@ android {
 }
 
 dependencies {
+    /*
+     * Google Play's in-app update API.
+     *
+     * The one thing that actually knows whether a newer build is live for a
+     * given reader on a given track — which was a boolean somebody had to
+     * remember to flip before. Small: it is a thin client over Play services,
+     * not a bundled stack, and it ships its own ProGuard rules so nothing here
+     * has to keep it.
+     *
+     * It answers nothing for a build Play did not install, so every APK from
+     * this repo's CI sees no update however the listing looks. Test through
+     * internal app sharing.
+     */
+    implementation 'com.google.android.play:app-update:2.1.0'
+
+    /*
+     * Google Play Billing.
+     *
+     * Play's Payments policy requires this for digital content consumed inside
+     * the app, which is exactly what ad-free and the notes unlocks are. It is
+     * not a stack: a thin AAR over Play services, no native libraries of its
+     * own, and it ships its own ProGuard rules so nothing here has to keep it.
+     *
+     * Pinned at 8.x or later deliberately. Google made Billing Library 8+
+     * mandatory for new apps and updates from 31 August 2026, and 7 and below
+     * stop working on that timetable rather than merely being discouraged.
+     * `enableAutoServiceReconnection`, which BillingModule relies on, arrived
+     * in 8 as well.
+     *
+     * It answers nothing for a build Play did not install, so every APK from
+     * this repo's CI sees no products at all. Test with a licence tester on the
+     * internal testing track — mobile/PLAY-BILLING-SETUP.md.
+     */
+    implementation 'com.android.billingclient:billing:9.1.0'
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
 
@@ -301,8 +347,36 @@ dependencies {
      * Everything else about reading a package is in TypeScript
      * (src/lib/apkgFormat.ts) where `npm run check:apkg` can run it against
      * real files. See ApkgModule.kt.
+     *
+     * ## The version is pinned for 16 KB page support, and NDK cannot fix it
+     *
+     * Play rejected version 14 with "Your app could crash on 16 KB devices",
+     * naming `libzstd-jni-1.5.6-9.so` for arm64-v8a and x86_64. Android 15
+     * allows a 16 KB memory page size, and a shared library whose LOAD
+     * segments are aligned to less than that cannot be mapped -- the app dies
+     * at the `System.loadLibrary` call, which here is the first time anyone
+     * opens an Anki package.
+     *
+     * Google's own advice on that screen is "upgrade to NDK r28 or higher",
+     * and following it here would have done nothing. `ndkVersion` governs code
+     * THIS project compiles; zstd-jni ships as an AAR with the `.so` files
+     * already built, so its alignment was decided by whoever built 1.5.6-9 and
+     * no setting on our side can change it. The fix is a newer artifact.
+     *
+     * Measured from the published AARs rather than assumed -- maximum PT_LOAD
+     * alignment, read out of the ELF program headers:
+     *
+     *            1.5.6-9    1.5.7-16
+     *   arm64-v8a  65536      16384     both fine
+     *   x86_64      4096      16384     4096 is the failure
+     *
+     * (armeabi-v7a and x86 are 32-bit; the 16 KB rule does not apply to them.)
+     *
+     * So x86_64 was the real breakage. Re-run that measurement before changing
+     * this version again -- the number is not in the release notes and a
+     * version that looks newer is not evidence.
      */
-    implementation("com.github.luben:zstd-jni:1.5.6-9@aar")
+    implementation("com.github.luben:zstd-jni:1.5.7-16@aar")
 
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")

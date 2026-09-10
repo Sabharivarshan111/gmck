@@ -707,7 +707,9 @@ export function Reorderable<Id extends string>({
                    * as a different number than the one that was dragged.
                    */
                   style={
-                    natural > 0 && tall > 1 ? { minHeight: natural * tall } : undefined
+                    natural > 0 && tall > 1
+                      ? { minHeight: natural * tall, ...styles.growable }
+                      : undefined
                   }
                   onLayout={event => {
                     const next = event.nativeEvent.layout.height;
@@ -727,7 +729,29 @@ export function Reorderable<Id extends string>({
                     }
                   }}>
                   <ReorderLockContext.Provider value={editing}>
-                    {sections[id]}
+                    {/*
+                      The block's card has to FILL the height it was dragged
+                      to, not sit at the top of it.
+                     
+                      `minHeight` on this container makes the slot taller, and
+                      that alone is what shipped: the card kept its natural
+                      size and the extra height came out as a band of empty
+                      background beneath it. The owner reported it as the block
+                      not resizing, and `check:smoke` measured the card rather
+                      than the slot and agreed — "grew the hero by only 0px".
+                     
+                      A comment here already claimed this was fixed by putting
+                      `minHeight` "on the card itself rather than the wrapper".
+                      It was not: `sections[id]` renders its own card, so this
+                      View is still the wrapper the comment warns about.
+                     
+                      `flex: 1` on a child of a column container with a
+                      definite minimum height is what actually hands the space
+                      down. It is applied only while the block is taller than
+                      natural, because an unconditional `flex: 1` would make
+                      every block fight its own content for height at rest.
+                    */}
+                    <View style={tall > 1 ? styles.fill : undefined}>{sections[id]}</View>
                   </ReorderLockContext.Provider>
                 </View>
 
@@ -974,6 +998,10 @@ const TOOLBAR_LANE = 26;
 const GRIP_LANE = 14;
 
 const styles = StyleSheet.create({
+  /** A column container that can hand its extra height to its child. */
+  growable: { flexDirection: 'column' },
+  /** Takes whatever height the container has spare. */
+  fill: { flex: 1 },
   row: {
     // No margin here: each section keeps its own, so the gap travels with the
     // block that owns it rather than being redistributed on every reorder.

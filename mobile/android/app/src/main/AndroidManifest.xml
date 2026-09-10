@@ -26,6 +26,37 @@
     -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
+    <!--
+      The advertising ID, and why it is declared HERE rather than left to the
+      SDK.
+
+      Play refused version 15 over it: "your advertising ID declaration in Play
+      Console says that your app uses advertising ID. A manifest file in one of
+      your active artifacts doesn't include the
+      com.google.android.gms.permission.AD_ID permission." Since Android 13 an
+      app targeting API 33+ that reads the advertising ID must declare this, or
+      Play zeroes the identifier out — which for this app means AdMob serving
+      untargeted ads and earning a fraction of what it does now.
+
+      The obvious assumption is that the ads library brings it. It does not:
+      `react-native-google-mobile-ads` declares INTERNET, WAKE_LOCK and
+      ACCESS_NETWORK_STATE and nothing else (read its
+      android/src/main/AndroidManifest.xml). It relies on the play-services-ads
+      AAR to merge this one in, and whatever that resolved to did not reach the
+      shipped artifact — Play read the real merged manifest and it was absent.
+
+      Declaring it in the app's own manifest is Google's documented fix and does
+      not depend on which version of the AAR a build resolves. It is a
+      normal-level permission: no runtime prompt, and nothing to ask the reader.
+
+      It stays declared in the debug and internal builds too, where
+      `adsMode.ts` is overwritten with ADS_ENABLED = false and the SDK never
+      starts. A permission the app does not exercise costs nothing; a manifest
+      that differs between build types is how a release ships without something
+      every test build had.
+    -->
+    <uses-permission android:name="com.google.android.gms.permission.AD_ID" />
+
     <application
       android:name=".MainApplication"
       android:label="@string/app_name"

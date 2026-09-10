@@ -31,6 +31,7 @@ import {
 import { Text } from '@/components/Text';
 import { KeyboardSafe } from '@/components/KeyboardSafe';
 import { Touchable } from '@/components/Touchable';
+import { TappableImage } from '@/components/ZoomableImage';
 import { BackButton } from '@/components/BackButton';
 import { GradientFill } from '@/components/Gradient';
 import { typeScale } from '@/theme/typography';
@@ -397,7 +398,11 @@ function YearsView({
           min={NEW_PER_DAY_MIN}
           max={NEW_PER_DAY_MAX}
           step={5}
-          detents={[20]}
+          // The round numbers people actually think in. The range runs to 200
+          // for imported decks — a shared .apkg is thousands of cards and 50 a
+          // day means meeting the last of them next year — and without detents
+          // a forty-step slider makes 100 as hard to land on as 95.
+          detents={[20, 50, 100]}
           onChange={value => setSetting('newCardsPerDay', value)}
           label="New flashcards per day"
           format={value => `${value} new cards a day`}
@@ -2134,12 +2139,11 @@ export function StudyView({
           Hiding it leaves a card asking about a picture that is not there.
         */}
         {(face.frontImages ?? []).map(uri => (
-          <Image
+          <TappableImage
             key={uri}
-            source={{ uri }}
+            uri={uri}
             style={styles.cardImage}
-            resizeMode="contain"
-            accessibilityLabel={`Picture on this card: ${face.front.slice(0, 60)}`}
+            label={`Picture on this card: ${face.front.slice(0, 60)}. Opens full screen`}
           />
         ))}
 
@@ -2160,17 +2164,16 @@ export function StudyView({
             */}
             {(face.backImages ?? (face.imageUrl ? [face.imageUrl] : [])).map(uri =>
               imageFailed ? null : (
-                <Image
+                <TappableImage
                   key={uri}
-                  source={{ uri }}
+                  uri={uri}
                   style={styles.cardImage}
-                  resizeMode="contain"
+                  label={`Diagram: ${face.front}. Opens full screen`}
                   // A diagram that will not load has to say so. A grey
                   // rectangle looks identical to "this app does not show
                   // diagrams", and from inside the app there is no way to
                   // tell which it is.
                   onError={() => setImageFailed(true)}
-                  accessibilityLabel={`Diagram: ${face.front}`}
                 />
               ),
             )}

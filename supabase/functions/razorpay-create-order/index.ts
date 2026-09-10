@@ -9,6 +9,8 @@ const corsHeaders = {
 /** Amounts are fixed server-side. */
 const PLANS: Record<string, { amount: number; label: string }> = {
   adfree_monthly: { amount: 5000, label: "Ad-free — 1 month" },
+  adfree_6months: { amount: 15000, label: "Ad-free — 6 months" },
+  adfree_yearly: { amount: 30000, label: "Ad-free — 1 year" },
   notes_fmspm: { amount: 5000, label: "FM + SPM revision notes" },
   notes_pharmac: { amount: 5000, label: "Pharmacology full-subject notes" },
 };

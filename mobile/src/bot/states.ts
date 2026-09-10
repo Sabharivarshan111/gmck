@@ -1,7 +1,7 @@
 import type { HeadGaze } from './face';
 
 /**
- * The six the chat actually has something to say with.
+ * The seven the chat actually has something to say with.
  *
  * The reference (jeremy-prt/bloub, MIT) carries fifteen — orbit, swirl, burst,
  * comet, egg, hexagon, play, notify, alert as well as these. They are a
@@ -22,7 +22,14 @@ import type { HeadGaze } from './face';
  * more than it looks, because it is the state the bot spends most of its life
  * in and the one where it must cost nothing at all.
  */
-export type StateId = 'idle' | 'thinking' | 'wide' | 'wink' | 'exclaim' | 'sleep';
+export type StateId =
+  | 'idle'
+  | 'thinking'
+  | 'wide'
+  | 'wink'
+  | 'dismay'
+  | 'exclaim'
+  | 'sleep';
 
 export interface StateDef {
   id: StateId;
@@ -116,6 +123,36 @@ export const STATES: Record<StateId, StateDef> = {
     lids: [1, 0.06],
     wander: 0.6,
     blink: false,
+    float: true,
+    sway: null,
+  },
+
+  /**
+   * The answer was wrong.
+   *
+   * **Not `exclaim`, and that distinction is the whole reason this exists.**
+   * `exclaim` means the app failed — a request that did not arrive, an offline
+   * phone — and it is deliberately not charming, because nothing about a
+   * failure should be. A wrong answer is not a failure of the app and it is
+   * not a failure of the reader either; it is the ordinary thing that happens
+   * while learning, and the face for it has to be sympathetic rather than
+   * alarmed. Reusing `exclaim` would have taught readers that getting one
+   * wrong is the same event as the app breaking.
+   *
+   * So: eyes narrowed and turned down and away, a little roll, no wide stare.
+   * It reads as a wince, which is what a friend does when you miss one.
+   */
+  dismay: {
+    id: 'dismay',
+    morph: 0.2,
+    // Down and to the side. Looking straight at somebody who just got it
+    // wrong is the version that reads as disapproval.
+    gaze: { yaw: 34, pitch: 46, roll: -22 },
+    eyeW: 0.94,
+    eyeH: 0.52,
+    lids: REST_EYES,
+    wander: 0.3,
+    blink: true,
     float: true,
     sway: null,
   },

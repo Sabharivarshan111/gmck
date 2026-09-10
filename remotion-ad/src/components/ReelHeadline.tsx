@@ -1,10 +1,16 @@
 import React from 'react';
 import { useCurrentFrame, useVideoConfig, interpolate, spring, Easing } from 'remotion';
+import { lineFor, spanWordFrames } from './wordSync';
 
 interface ReelHeadlineProps {
   text: string;
   accent: string;
   durationInFrames: number;
+  /** The script this shot belongs to; absent on a silent cut. */
+  scriptId?: string;
+  shotN?: number;
+  /** The full line being spoken, of which `text` is a verbatim span. */
+  spokenLine?: string;
 }
 
 /**
@@ -30,11 +36,42 @@ interface ReelHeadlineProps {
  *   headline is fully legible well before the ~1.7s at which a Reels viewer
  *   has already decided. A stagger that looks elegant at 90 seconds is a
  *   headline that finishes assembling after the scroll.
+ *
+ * ## What it means for this to be in sync
+ *
+ * The headline used to be unrelated to the words being spoken under it. Shot
+ * one of "Already Asked" read "2,025 already asked" while the voice said "Your
+ * university repeats its questions" — a viewer with the sound on read one
+ * sentence and heard a different one, which is what the app's owner reported
+ * as nothing syncing. The scripts now write the headline as a **verbatim span
+ * of the spoken line** and `preflight` fails a render where that is not true.
+ *
+ * Given that, this can light each word at the moment it is said. The words
+ * still all arrive within ten frames — the muted cut is the one that gets
+ * watched, and holding a word back until it is spoken would damage it to
+ * improve the other — so the sync is carried by colour, not by entrance. On a
+ * silent cut there is no recording to read and the highlight simply never
+ * runs.
  */
-export const ReelHeadline: React.FC<ReelHeadlineProps> = ({ text, accent, durationInFrames }) => {
+export const ReelHeadline: React.FC<ReelHeadlineProps> = ({
+  text,
+  accent,
+  durationInFrames,
+  scriptId,
+  shotN,
+  spokenLine,
+}) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const words = text.trim().split(/\s+/).filter(Boolean);
+
+  // When each headline word is actually said. Null on a silent cut, and null
+  // if the headline is not a span of the line — in both cases every word is
+  // drawn lit, which is what the headline looked like before any of this.
+  const spokenAt =
+    scriptId && spokenLine
+      ? spanWordFrames(lineFor(scriptId, shotN ?? -1), text, fps)
+      : null;
 
   if (words.length === 0) return null;
 
@@ -90,6 +127,10 @@ export const ReelHeadline: React.FC<ReelHeadlineProps> = ({ text, accent, durati
             fps,
             config: { damping: 15, stiffness: 170, mass: 0.6 },
           });
+          // Unlit until this word is spoken, then it stays lit. With no
+          // recording every word counts as spoken, so the headline reads
+          // exactly as it did before word timings existed.
+          const said = spokenAt ? frame >= spokenAt[i] : true;
           return (
             <span
               key={`${word}-${i}`}
@@ -100,11 +141,14 @@ export const ReelHeadline: React.FC<ReelHeadlineProps> = ({ text, accent, durati
                 fontWeight: 900,
                 letterSpacing: '-0.025em',
                 lineHeight: 1.12,
-                color: '#ffffff',
-                textShadow: `0 4px 24px rgba(0,0,0,0.8), 0 0 34px ${accent}55`,
+                color: said ? '#ffffff' : 'rgba(255, 255, 255, 0.42)',
+                textShadow: said
+                  ? `0 4px 24px rgba(0,0,0,0.8), 0 0 34px ${accent}88`
+                  : '0 4px 24px rgba(0,0,0,0.8)',
                 display: 'inline-block',
                 opacity: entrance,
                 transform: `translateY(${interpolate(entrance, [0, 1], [22, 0])}px)`,
+                transition: 'color 0.1s linear, text-shadow 0.1s linear',
               }}
             >
               {word}

@@ -520,13 +520,31 @@ export const OutroScreen: React.FC = () => {
           </div>
         </div>
 
-        {/* Feature Highlights Under Badge */}
+        {/*
+          Feature highlights under the badge.
+
+          These are the last three claims in every ad, so they are the three
+          most worth being right about, and two of them were not:
+
+          * **"915+ Plates" was the question count wearing the drawings' name.**
+            `question_diagrams` holds one row per question, and 922 of those
+            rows carry a picture — but they point at only **250 distinct
+            drawings**, because one plate answers many questions. Calling that
+            915 plates overstated the artwork by nearly four times.
+          * **"100% Offline" was a claim about the whole app.** The bundled
+            question bank genuinely works with no network; the handwritten
+            notes, the plates and Ask AI all need one the first time. So the
+            claim is scoped to the part that is true rather than dropped.
+
+          Measured 2026-09-05: 5,634 questions, 3,463 of them carrying a repeat
+          marker, 250 plates across 922 questions.
+        */}
         <div style={{ display: 'flex', gap: '16px', marginTop: '36px', fontSize: '11px', color: '#94a3b8' }}>
-          <span>✓ 5,500+ Questions</span>
+          <span>✓ 5,600+ Questions</span>
           <span>•</span>
-          <span>✓ 915+ Plates</span>
+          <span>✓ 250 Exam Plates</span>
           <span>•</span>
-          <span>✓ 100% Offline</span>
+          <span>✓ Offline Question Bank</span>
         </div>
       </div>
     </div>

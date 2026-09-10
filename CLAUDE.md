@@ -22,6 +22,8 @@ when picking up work that was last touched from the other tool.
 | `.agents/rules/20-interface.md` | Interface rules — theming, type, materials, accessibility |
 | `.agents/rules/30-reference.md` | Index of the vendored design skills, and where the long-form docs live |
 | `.agents/rules/40-releases.md` | Cutting builds — which of the four to use, how to trigger one, and the two things a wrong build costs |
+| `.agents/rules/41-play-release-notes.md` | The two strings the Play Console asks for at upload — what to write in Release name and Release notes, and the two things that may never appear in them |
+| `.agents/rules/42-play-billing.md` | Google Play Billing — why Razorpay cannot stay, what is already built, and the rules a payment path has to keep (nothing granted, nothing priced, nothing acknowledged on the client) |
 | `.agents/rules/50-notes.md` | Handwritten notes — which textbook grounds which subject, and the two ways that goes silently wrong |
 | `.agents/rules/60-flashcards.md` | Anki flashcards — why the scheduler is not the app's other one, and what is still unverified |
 | `.agents/rules/61-own-decks.md` | Decks the reader makes — written by hand, generated for one phone, or carrying photos from the gallery |
@@ -111,8 +113,28 @@ Do not "fix" these without reading the reasoning:
    and OEM skins replace it — MIUI ships MiSans, One UI ships SamsungOne — which
    would silently re-typeset the app on those phones.
 
-6. **`versionCode` must increase on every Play upload.** 13 is already live; the
-   repo carries 14.
+6. **`versionCode` must increase on every Play upload.** **14 is live on Play**
+   and the repo carries 15.
+
+   This file said 13 for weeks and it was wrong; the app's owner corrected it
+   on 2026-09-05, reading their own console. What produced the error is worth
+   knowing, because the same shape will produce it again: an upload of 14 was
+   refused with "your app could crash on 16 KB devices" naming
+   `libzstd-jni-1.5.6-9.so`, that refusal was written down here as "14 was
+   rejected, 13 is live", and nothing ever re-checked. A rejection of one
+   upload is not proof of what the listing serves. **Ask the console, not this
+   file.**
+
+   The number now lives in two places that must agree: `build.gradle` and
+   `src/lib/appVersion.ts`, which is how the app knows its own version without
+   a native module. `npm run check:version` fails if they part company, and the
+   release workflow reads the notes' version out of gradle rather than having
+   it typed in — it was hardcoded to 14 and stayed 14 through the bump, so a
+   correct v15 build announced itself as the number Play had refused.
+
+   Bumping is three edits and a row: both files, and an `app_releases` row so
+   older builds can offer the update and the new one can say what it fixed.
+   Leave `live_on_play` false until the listing actually serves it.
 
 7. **Progress bars use `scaleX` + `transformOrigin: 'left'`, never an animated
    `width`.** Width is a layout property: animating it forces layout, paint and
@@ -460,6 +482,17 @@ Anki exports is zstd unless the exporter ticked "support older Anki versions".
 Its ProGuard keep is load-bearing, because R8 cannot see JNI callbacks and
 without it the importer works in every test build and fails only in the shipped
 one.
+
+**Its version is pinned at 1.5.7-1 or later, and `ndkVersion` cannot substitute
+for that.** Android 15 allows a 16 KB memory page; a `.so` aligned to less
+cannot be mapped, so the app dies on `System.loadLibrary` — here, the moment
+somebody opens their first Anki package. Play rejected version 14 for it,
+naming `libzstd-jni-1.5.6-9.so`, and its own remediation text ("upgrade to NDK
+r28") is the wrong lead: `ndkVersion` governs code this project compiles, and
+zstd-jni ships an AAR whose `.so` files are already built. Measured PT_LOAD
+alignment: 1.5.6-9 is arm64 65536 but **x86_64 4096**; 1.5.7-16 is 16384 for
+both. `npm run check:apkg` holds the floor — re-measure rather than trusting a
+release note, which does not mention alignment.
 
 ### An imported deck is not a `CustomDeck`
 
@@ -939,15 +972,40 @@ Two consequences worth knowing before touching it:
   It wraps the block's *content* only — wrapping the row would disable the
   reorder arrows, which are Touchables too.
 
-## Resizing a block is a zoom, and the grip must own its responder
+## Resizing a block has two axes, and a card only fills a slot if it says so
 
-Each block carries a size of its own (`scales` in `hooks/useHomeOrder.ts`,
-0.75-1.3), dragged live from the grip on its bottom edge. The block is drawn
-by giving its content `1/scale` of the width and scaling it back up from the
-top-left, so everything inside grows together and no section has to know it is
-being resized. The wrapper's height is set to `natural * scale` by hand,
-because a transform changes nothing about layout — without it the blocks below
-would sit where they were while this one grew over them.
+Each block carries **two** sizes of its own, both in `hooks/useHomeOrder.ts`:
+`scales` for width (0.75-1.3, the side grip) and `heights` for height (1-1.8,
+the bottom grip). The corner grip drives both. They were one value once, so the
+bar drawn across the bottom edge made the block narrower and never taller — a
+control has to do the thing it draws.
+
+**Width is a real width, not a zoom.** The block is given `width: N%` of the
+row and its content reflows into it. An earlier comment here described a zoom —
+"1/scale of the width, scaled back up from the top-left, so everything inside
+grows together" — and no such transform exists in the code. Below
+`COMPACT_BELOW` (0.9) blocks drop their secondary detail instead, which is a
+different thing and is deliberate.
+
+**Height is a `minHeight` on the block's slot, and the card must claim it.**
+`Reorderable` makes the slot `natural * heightScale` tall. That alone was what
+shipped: the card kept its natural size and the dragged space came out as a
+band of empty background beneath it, so the block looked like it had not
+resized at all. Reported by the owner, and `check:smoke` had it too —
+*"dragging the height bar down grew the hero by only 0px"*, because the test
+measures the card rather than the slot.
+
+A comment in `Reorderable.tsx` already claimed this was fixed by putting the
+`minHeight` "on the card itself rather than the wrapper". It was not:
+`sections[id]` renders its own card, so that View is still the wrapper. The fix
+is at the other end — each section's root card carries
+`heights.<id> > 1 && styles.grow` (`flex: 1`) in `HomeScreen`, so it fills the
+slot it was given. Conditional, because `flex: 1` at rest makes a card fight
+its own content for height on a screen nobody has resized.
+
+`subjects` deliberately has no `grow`: it is a header plus a `SortableGrid`
+rather than one card, and there is nothing there for the extra height to belong
+to.
 
 Three things there are easy to undo by accident:
 
@@ -1644,6 +1702,7 @@ npm run check:sync               # progress reaches the cloud once a session exi
 npm run check:contrast           # every built-in theme stays readable
 npm run check:subject-cards      # custom themes recolour the cards, readably
 npm run check:native-sound       # the sound module is reachable under the New Arch
+npm run check:billing            # Play Billing grants nothing on the client, prices nothing
 npm run check:one-app            # the frozen web app has grown no second copy
 npm run check:flashcard-size     # the chapter list's card count is the one the server builds
 npm run check:streak             # the streak counts on a phone with no account

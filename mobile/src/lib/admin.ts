@@ -15,6 +15,34 @@
 import { supabase } from './supabase';
 import { warn } from './log';
 
+/**
+ * A read that can fail, and says so.
+ *
+ * Every fetch here used to swallow its error into `warn()` and hand back an
+ * empty list or a null. On a phone that is invisible: the panel rendered zeros,
+ * and **three completely different situations looked identical** — there is
+ * genuinely nothing yet, the RPC failed, or this session is not an admin so a
+ * `where public.is_admin()` returned no rows at all.
+ *
+ * That is the failure this codebase keeps meeting: a thing that is absent
+ * rather than broken, with nothing anywhere saying which. The textbook-pages
+ * section showed "Nobody has entered a textbook page yet" for all three, and
+ * the only way to tell them apart was a `warn()` in a log nobody on a phone can
+ * read.
+ *
+ * So a reader now carries its own error, and the panel prints it under the
+ * section it belongs to. One section failing no longer hides the others, and
+ * "0" now means zero.
+ */
+export interface AdminRead<T> {
+  data: T;
+  /** Null when the read succeeded, whatever it found. */
+  error: string | null;
+}
+
+const ok = <T,>(data: T): AdminRead<T> => ({ data, error: null });
+const failed = <T,>(data: T, error: string): AdminRead<T> => ({ data, error });
+
 export interface Subscriber {
   userId: string;
   displayName: string | null;
@@ -55,13 +83,13 @@ export interface AdminPageRef {
 }
 
 /** Everyone who has ever paid, and what they currently hold. */
-export async function listSubscribers(): Promise<Subscriber[]> {
+export async function listSubscribers(): Promise<AdminRead<Subscriber[]>> {
   const { data, error } = await supabase.rpc('admin_list_subscribers');
   if (error) {
     warn('admin.listSubscribers', error.message);
-    return [];
+    return failed([], error.message);
   }
-  return ((data ?? []) as Record<string, unknown>[]).map(row => ({
+  return ok(((data ?? []) as Record<string, unknown>[]).map(row => ({
     userId: row.user_id as string,
     displayName: (row.display_name as string | null) ?? null,
     email: (row.email as string | null) ?? null,
@@ -71,6 +99,55 @@ export async function listSubscribers(): Promise<Subscriber[]> {
     totalPaise: Number(row.total_paise ?? 0),
     firstPurchase: (row.first_purchase as string) ?? '',
     adfreeExpiresAt: (row.adfree_expires_at as string | null) ?? null,
+  })));
+}
+
+/**
+ * One purchase, as the admin panel shows it.
+ *
+ * Separate from `Subscriber` because they answer different questions.
+ * `Subscriber` is the aggregate — who has paid, how much in total, what is
+ * live now — and it genuinely cannot say when anything was bought: a reader
+ * who bought a month in June, a month in August and a year in September is one
+ * row reading "Rs 400" and a single date. The refund question, the "my ads came
+ * back" question and the "when does mine run out" question are all about the
+ * individual purchases.
+ */
+export interface Purchase {
+  id: string;
+  plan: string;
+  amountPaise: number;
+  purchasedAt: string;
+  startsAt: string | null;
+  expiresAt: string | null;
+  /** Still running, measured against the DATABASE's clock rather than a phone's. */
+  active: boolean;
+  /** A bundled grant the reader did not pay for — the free month with notes. */
+  complimentary: boolean;
+  paymentId: string | null;
+  orderId: string | null;
+}
+
+/** Everything one account has ever bought, newest first. */
+export async function listUserPurchases(userId: string): Promise<Purchase[]> {
+  const { data, error } = await supabase.rpc('admin_user_purchases', {
+    _user_id: userId,
+  });
+  if (error) {
+    warn('admin.listUserPurchases', error.message);
+    return [];
+  }
+  return ((data ?? []) as Record<string, unknown>[]).map(row => ({
+    id: row.id as string,
+    plan: (row.plan as string) ?? '',
+    amountPaise: Number(row.amount_paise ?? 0),
+    purchasedAt: (row.purchased_at as string) ?? '',
+    startsAt: (row.starts_at as string | null) ?? null,
+    expiresAt: (row.expires_at as string | null) ?? null,
+    active: Boolean(row.active),
+    complimentary: Boolean(row.complimentary),
+    paymentId: (row.razorpay_payment_id as string | null) ?? null,
+    orderId: (row.razorpay_order_id as string | null) ?? null,
   }));
 }
 
@@ -116,34 +193,44 @@ export async function diagramStats(): Promise<DiagramStats> {
   return { total, withPicture, approved, failed };
 }
 
-export async function pageRefStats(): Promise<PageRefStats | null> {
+export async function pageRefStats(): Promise<AdminRead<PageRefStats | null>> {
   const { data, error } = await supabase.rpc('admin_page_ref_stats');
   if (error) {
     warn('admin.pageRefStats', error.message);
-    return null;
+    return failed(null, error.message);
   }
   const row = (data ?? [])[0] as Record<string, unknown> | undefined;
   if (!row) {
-    return null;
+    /*
+     * No row is not "no data". `admin_page_ref_stats` is
+     * `select ... where public.is_admin()` with no FROM, so a non-admin gets
+     * ZERO ROWS rather than an error — and that is indistinguishable from an
+     * empty table unless it is said out loud here. It was rendering as four
+     * zeros and "Nobody has entered a textbook page yet", which is a sentence
+     * about the data when the truth was about the caller.
+     */
+    return failed(null, 'The database returned no row — this session is not an admin.');
   }
-  return {
+  return ok({
     totalRefs: Number(row.total_refs ?? 0),
     confirmedPages: Number(row.confirmed_pages ?? 0),
     pendingPages: Number(row.pending_pages ?? 0),
     books: Number(row.books ?? 0),
     contributors: Number(row.contributors ?? 0),
-  };
+  });
 }
 
-export async function listPageRefs(onlyPending: boolean): Promise<AdminPageRef[]> {
+export async function listPageRefs(
+  onlyPending: boolean,
+): Promise<AdminRead<AdminPageRef[]>> {
   const { data, error } = await supabase.rpc('admin_list_page_refs', {
     _only_pending: onlyPending,
   });
   if (error) {
     warn('admin.listPageRefs', error.message);
-    return [];
+    return failed([], error.message);
   }
-  return ((data ?? []) as Record<string, unknown>[]).map(row => ({
+  return ok(((data ?? []) as Record<string, unknown>[]).map(row => ({
     questionId: row.question_id as string,
     questionText: (row.question_text as string) ?? '',
     bookId: row.book_id as string,
@@ -153,7 +240,7 @@ export async function listPageRefs(onlyPending: boolean): Promise<AdminPageRef[]
     votes: Number(row.votes ?? 0),
     confirmed: Boolean(row.confirmed),
     lastSeen: (row.last_seen as string) ?? '',
-  }));
+  })));
 }
 
 /** Remove a wrong claim — every reader's vote for that page of that book. */

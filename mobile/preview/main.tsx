@@ -18,10 +18,13 @@ import type { StateId } from '@/bot/states';
 import RootNavigator from '@/navigation/RootNavigator';
 import { hydrateProgress } from '@/lib/progress';
 import { hydrateSettings } from '@/lib/settings';
+import { hydrateAttendance } from '@/lib/attendance';
 import { hydrateProfile, hydrateStreak } from '@/hooks/useProfile';
 import { DailyAdConsent } from '@/components/DailyAdConsent';
 import { XpToast } from '@/components/XpToast';
 import { TourOverlay } from '@/components/TourOverlay';
+import { FirstRun } from '@/components/FirstRun';
+import { UpdateNotice } from '@/components/UpdateNotice';
 import { startTour } from '@/tour/store';
 import type { ChapterId } from '@/tour/script';
 import { hydratePremium } from '@/lib/premium';
@@ -39,7 +42,7 @@ import { withAlpha } from '@/theme';
 import { typeScale } from '@/theme/typography';
 import { getSubjects, type YearKey } from '@/lib/questionBank';
 import { flattenSubjectTopics, ensureSingleNoteDiagram, type NotesContent } from '@/lib/handwrittenNotes';
-import { SAMPLE_NOTES } from './notesSample';
+import { SAMPLE_NOTES, sampleNotes } from './notesSample';
 import { TCA_DIAGRAMS, TCA_NOTE, TCA_QUESTION } from './diagramSample';
 import { NotesAiEditBox } from '@/components/NotesAiEditBox';
 import { McqCard } from '@/components/McqCard';
@@ -500,11 +503,33 @@ function DiagramDemo() {
  */
 function NotesRendererDemo() {
   const { colors } = useTheme();
+  /*
+   * The diagram this screen draws is chosen here, not baked into the fixture.
+   *
+   * This screen is the source of `notes-renderer.png`, which the ad renderer
+   * uses for EVERY note shot in every ad. The fixture used to name a
+   * `supabase.co/storage/...` URL that no sandbox can reach and that no longer
+   * exists in the bucket, so `DiagramCard` drew "This diagram could not be
+   * loaded" — and that frame shipped in a published cut, twice.
+   *
+   * With `plates=real` it takes the downloaded plate, exactly as the two
+   * diagram screens do. Without it, the fixture's own drawn stand-in, which
+   * cannot fail. Neither path touches the network at capture time.
+   */
+  const content = React.useMemo(
+    () => (useRealPlates
+        ? sampleNotes(
+            realPlate('tca-cycle'),
+            'TCA cycle: amphibolic role and anaplerotic reactions',
+          )
+        : SAMPLE_NOTES),
+    [],
+  );
   return (
     <ScrollView
       style={{ backgroundColor: colors.background }}
       contentContainerStyle={{ padding: 16, paddingBottom: 48 }}>
-      <NotesContentView content={SAMPLE_NOTES} />
+      <NotesContentView content={content} />
       {/* The AI edit box, so its layout and its failure path can be reviewed.
           Sending from here reaches a Supabase function the sandbox cannot
           call, which is the point of including it: the box has to fail into a
@@ -516,7 +541,7 @@ function NotesRendererDemo() {
           subjectName: 'Forensic Medicine',
           yearLabel: '3rd Year',
         }}
-        content={SAMPLE_NOTES}
+        content={content}
         onApply={() => undefined}
       />
     </ScrollView>
@@ -737,12 +762,59 @@ function TcaNoteDemo() {
 function McqDemo() {
   const { colors } = useTheme();
   const items = parseMcqs(SAMPLE_MCQ_RESPONSE) ?? [];
+  /*
+   * The bot is here because the reaction is a two-component behaviour and
+   * neither half proves it alone: `McqCard` reports the answer, the screen
+   * decides the face. The real screen cannot be driven from a browser — its
+   * MCQs come from ask-gemini, which needs a key and costs quota — so this is
+   * where the wiring is reviewable, using the same props the screen passes.
+   */
+  const [reaction, setReaction] = React.useState<StateId | null>(null);
+  const timer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+  const react = React.useCallback((next: StateId) => {
+    setReaction(next);
+    if (timer.current) clearTimeout(timer.current);
+    timer.current = setTimeout(() => setReaction(null), 2200);
+  }, []);
+  const pokes = React.useRef({ count: 0, at: 0 });
+
   return (
     <ScrollView
       style={{ backgroundColor: colors.background }}
       contentContainerStyle={{ padding: 16, paddingBottom: 48, gap: 10 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+        <Touchable
+          onPress={() => {
+            const now = Date.now();
+            const run = pokes.current;
+            run.count = now - run.at < 1500 ? run.count + 1 : 1;
+            run.at = now;
+            react(run.count >= 4 ? 'dismay' : run.count % 2 === 0 ? 'wink' : 'wide');
+          }}
+          label="The assistant"
+          hint="Tap to say hello"
+          scaleTo={0.92}
+          style={{
+            width: 44,
+            height: 44,
+            borderRadius: 22,
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: withAlpha(colors.accent, 0.16),
+          }}>
+          <Bot state={reaction ?? 'idle'} size={34} active />
+        </Touchable>
+        <Text style={{ color: colors.textMuted, fontSize: 12 }}>
+          {reaction ? `reacting: ${reaction}` : 'reacting: none'}
+        </Text>
+      </View>
       {items.map((item, i) => (
-        <McqCard key={i} item={item} index={i} />
+        <McqCard
+          key={i}
+          item={item}
+          index={i}
+          onAnswer={correct => react(correct ? 'wink' : 'dismay')}
+        />
       ))}
     </ScrollView>
   );
@@ -1034,6 +1106,10 @@ function Shell() {
   React.useEffect(() => {
     hydrateProgress();
       hydrateSettings().catch(() => {});
+    // Read once at launch, like every other on-device store. The Attendance
+    // tab renders from memory, so a card that had to wait for storage would
+    // flash "no subjects yet" at somebody who has six.
+    hydrateAttendance().catch(() => {});
     hydrateProfile().catch(() => {});
     // Separate from the profile: this half must land even when the cloud
     // half cannot. See hydrateStreak.
@@ -1240,8 +1316,18 @@ function Shell() {
   return (
     <NavigationContainer theme={navTheme} ref={navigationRef} initialState={buildInitialState()}>
       <RootNavigator />
+      {/*
+        These four mirror App.tsx, and the mirror is the point: the preview has
+        its own tree, so anything mounted at the app root has to be mounted
+        here too or it is simply absent from every screenshot and every smoke
+        run. `FirstRun` was, which is exactly the drift CLAUDE.md warns about —
+        the step written to prove the year is asked for failed on a gate that
+        was never rendered.
+      */}
+      <FirstRun />
       <DailyAdConsent />
       <XpToast />
+      <UpdateNotice />
       <TourOverlay />
     </NavigationContainer>
   );

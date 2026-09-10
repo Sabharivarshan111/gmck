@@ -82,11 +82,60 @@ air before the cut.
 
 ## Facts that may be claimed
 
-5,545 unique questions; 2,025 carrying a PYQ year marker; 2,734 star-rated; 915
-diagram rows across 272 plates; 4 MBBS years; 12 tree species.
+Re-measured 2026-09-05, because three of the four were wrong and had shipped:
+
+| | Claim | Was claimed |
+|---|---|---|
+| questions in the bank | **5,634** | 5,545 |
+| carrying a repeat marker | **3,463** (2,013 of them a year list) | "2,025" |
+| hand-drawn plates | **250**, attached to 922 questions | "915 plates" |
+| MBBS years / tree species | 4 / 12 | unchanged |
+
+"915" counted `question_diagrams` **rows** carrying a picture — the question
+count wearing the drawings' name. One plate answers many questions.
+
+**No quantity may be shaped like a year.** "2,025" on screen beside "the years
+asked" reads as 2025, and the owner reported it as such. `preflight` refuses any
+bare `19xx`/`20xx` or `1,xxx`/`2,xxx` in `text`, `vo` or `kicker`. Write it in
+words.
 
 **Never claim** a user count, a pass rate, that AI answers are exam-verified, or
-any university endorsement.
+any university endorsement. "100% offline" is also refused — the bundled bank
+works offline; notes, plates and Ask AI do not.
+
+## The caption must be the words that are spoken
+
+Three separate bugs made the ads look unsynchronised, and all three are now
+enforced rather than remembered:
+
+1. **A voiced reel's `text` must be a verbatim span of its `vo`.** They used to
+   be written independently — "2,025 already asked" on screen over "Your
+   university repeats its questions" in the ear. `preflight` fails the render
+   otherwise, and `ReelHeadline` lights each word as it is said.
+2. **Word timings come from the synthesiser.** `synthesize.py` passes
+   `boundary="WordBoundary"` (the edge-tts default is `SentenceBoundary`, which
+   returns audio and no word marks at all) and keeps every event.
+   `measure-audio.mjs` bakes them into `remotion-ad/src/generated/voiceTimings.ts`.
+3. **`remotion-ad/src/dynamicScriptTimings.ts` is generated, never edited.** It used to be
+   committed and unregenerated, so CI recorded new lines and laid them on
+   boundaries measured from an older script; the shots run end to end, so one
+   line that grew pushed every later shot out of step. `preflight` fails when a
+   row describes a line the script no longer contains.
+
+The committed `remotion-ad/src/generated/voiceTimings.ts` is deliberately EMPTY. A
+checked-in measurement is a measurement of an older recording.
+
+## The mascot has three ads and one voice
+
+`reelGuide` (a tour), `reelGuideAnswer` (one question worked end to end) and
+`reelGuideNight` (the night before the exam) are all hosted by `BotAvatar` —
+the Ask AI chat's own face. All three use **`en-US-AvaNeural` at `+0%`**: it is
+one character, and three voices would make it three characters. Mood is carried
+by the bed, not the voice.
+
+A new bed is a row in `TEMPOS`, `PROGRESSIONS` and a `sections()` branch in
+`make-beds.py`. `main()` walks `TEMPOS`; it used to walk a hardcoded tuple while
+printing `len(TEMPOS)`, so a seventh bed reported success and was never built.
 
 ## Assets are never committed
 

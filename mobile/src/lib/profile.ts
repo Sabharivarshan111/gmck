@@ -63,13 +63,30 @@ export async function readLocalProfile(): Promise<LocalProfile | null> {
     if (!parsed || typeof parsed.display_name !== 'string') {
       return null;
     }
-    const year: Year =
-      parsed.year === 'first' ||
-      parsed.year === 'second' ||
-      parsed.year === 'third' ||
-      parsed.year === 'final'
-        ? parsed.year
-        : 'second';
+    /*
+     * A year we cannot read is a year to ask about, never one to guess.
+     *
+     * This coerced anything unrecognised to `'second'`. For a genuinely empty
+     * field that is a guess with a one-in-four chance; for a profile stored in
+     * the app's INTERNAL key form it is worse than a guess, because
+     * `'third-year'` is a perfectly good answer that this turned into second
+     * year, silently, and the reader then sees another year's whole question
+     * bank with nothing on screen admitting it. The two forms are documented
+     * as easy to confuse (CLAUDE.md, "Storage keys are shared with the web
+     * app") which is reason enough to accept both rather than to fall through.
+     */
+    const stored = parsed.year as string | undefined;
+    const year: Year | null =
+      stored === 'first' || stored === 'second' || stored === 'third' || stored === 'final'
+        ? stored
+        : stored && stored in KEY_TO_YEAR
+        ? KEY_TO_YEAR[stored as YearKey]
+        : null;
+    if (!year) {
+      // Null re-opens the first-run sheet, which asks. One tap, against a
+      // syllabus that would otherwise be wrong for as long as they use the app.
+      return null;
+    }
     return { display_name: parsed.display_name, year };
   } catch {
     return null;

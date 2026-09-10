@@ -1,6 +1,6 @@
 ---
 name: review-animations
-description: Reviews animation and motion code against a high craft bar derived from Emil Kowalski's design engineering philosophy. Default to flagging; approval is earned.
+description: Reviews animation and motion code against a high craft bar derived from Emil Kowalski's design engineering philosophy. Default to flagging; approval is earned. Use when reviewing a diff that adds or changes motion, before approving it.
 disable-model-invocation: true
 ---
 

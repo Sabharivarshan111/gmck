@@ -1,18 +1,15 @@
 import React, { useState } from 'react';
 import {
   ActivityIndicator,
-  Dimensions,
   Image,
-  Modal,
   Pressable,
-  ScrollView,
   StyleSheet,
   View,
 } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Text } from '@/components/Text';
+import { ZoomableImage } from '@/components/ZoomableImage';
 import { useTheme, withAlpha } from '@/theme';
-import { Maximize2, X } from 'lucide-react-native';
+import { Maximize2 } from 'lucide-react-native';
 
 interface DiagramCardProps {
   imageUrl: string;
@@ -89,13 +86,9 @@ export function formatDiagramHeading(
 
 export function DiagramCard({ imageUrl, title, caption }: DiagramCardProps) {
   const { colors } = useTheme();
-  /* The lightbox is a full-screen window of its own, drawn behind the status
-     bar like every Modal. A hardcoded top padding was right on one phone. */
-  const insets = useSafeAreaInsets();
   const [loading, setLoading] = useState(true);
   const [failed, setFailed] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  const screen = Dimensions.get('window');
 
   if (!imageUrl) return null;
 
@@ -198,45 +191,21 @@ export function DiagramCard({ imageUrl, title, caption }: DiagramCardProps) {
         </Text>
       ) : null}
 
-      {/* Fullscreen Lightbox Modal */}
-      <Modal
+      {/*
+        The lightbox pinches to zoom, and did not before.
+        It was a `<ScrollView maximumZoomScale={3} minimumZoomScale={1}
+        centerContent>` — three props that are **iOS-only**. On Android, the
+        only platform this app ships to, they are silently ignored, so this
+        read as a zoomable lightbox and was a static picture on every phone
+        that has ever run it. See ZoomableImage.tsx.
+      */}
+      <ZoomableImage
         visible={modalVisible}
-        transparent={true}
-        animationType="fade"
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.modalBackdrop}>
-          <View style={[styles.modalHeader, { paddingTop: insets.top + 12 }]}>
-            <Text style={styles.modalTitle} numberOfLines={1}>
-              {heading}
-            </Text>
-            <Pressable
-              onPress={() => setModalVisible(false)}
-              style={styles.closeButton}
-              accessibilityRole="button"
-              accessibilityLabel="Close enlarged diagram"
-            >
-              <X size={24} color="#ffffff" />
-            </Pressable>
-          </View>
-
-          <ScrollView
-            contentContainerStyle={styles.scrollContainer}
-            maximumZoomScale={3}
-            minimumZoomScale={1}
-            centerContent
-          >
-            <Image
-              source={{ uri: imageUrl }}
-              style={{
-                width: screen.width,
-                height: screen.height * 0.75,
-              }}
-              resizeMode="contain"
-            />
-          </ScrollView>
-        </View>
-      </Modal>
+        onClose={() => setModalVisible(false)}
+        uri={imageUrl}
+        title={heading}
+        imageLabel={cleanedCaption || heading}
+      />
     </View>
   );
 }
@@ -327,34 +296,5 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     lineHeight: 20,
     letterSpacing: -0.2,
-  },
-  modalBackdrop: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.95)',
-    justifyContent: 'center',
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingBottom: 16,
-  },
-  modalTitle: {
-    color: '#ffffff',
-    fontSize: 16,
-    fontWeight: '600',
-    flex: 1,
-    marginRight: 12,
-  },
-  closeButton: {
-    padding: 8,
-    borderRadius: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-  },
-  scrollContainer: {
-    flexGrow: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
 });

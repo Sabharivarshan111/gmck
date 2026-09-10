@@ -305,6 +305,22 @@ class GlassView(context: android.content.Context) : View(context) {
     if (bitmapShader == null) {
       bitmapShader =
         BitmapShader(bitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP).also {
+          /*
+           * Linear, explicitly, and this is the single most visible line here.
+           *
+           * The backdrop is captured at a third of each dimension and the
+           * shader then magnifies it back by the same factor. A BitmapShader's
+           * filtering is normally decided by the Paint that draws it, and a
+           * RuntimeShader input has no Paint — so it falls back to NEAREST, and
+           * every captured pixel arrives on screen as a hard 3x3 block. The one
+           * layer in this app that is supposed to be the softest thing on it
+           * was the only pixelated one.
+           *
+           * It also removes the reason to want a blur pass: a linear 3x
+           * magnification of a downscaled capture IS a cheap blur, which is
+           * most of what Apple's material is doing behind its own panes.
+           */
+          it.filterMode = Shader.FILTER_MODE_LINEAR
           localShader = it
         }
       dirty = true
@@ -572,11 +588,43 @@ class GlassView(context: android.content.Context) : View(context) {
         colour.b = backdrop.eval(sampleAt(base + shift * (1.0 - chromatic))).b;
         colour.a = 1.0;
 
+        // The edge shows the far side of the pane.
+        //
+        // This is what makes a lozenge read as a solid object rather than as a
+        // hole cut in the page, and both Android Liquid Glass implementations
+        // worth reading do it: at a grazing angle a real pane stops
+        // transmitting and starts reflecting, and what it reflects is what is
+        // beside it. Mirroring the sample through the pane's own centre is the
+        // cheap, correct version of that. `pow(..., 8.0)` keeps it in the last
+        // few pixels; any wider and the card starts showing a ghost of itself.
+        float2 mirrored = (size - coord + origin) * captureScale;
+        float reflectivity = pow(1.0 - depth, 8.0) * 0.35;
+        colour.rgb = mix(colour.rgb, backdrop.eval(sampleAt(mirrored)).rgb, reflectivity);
+
         colour.rgb = mix(colour.rgb, tint.rgb, tint.a);
 
-        // Fresnel: a grazing surface reflects more. This is the bright rim,
-        // and it is the cheapest half of what makes the material read.
-        float fresnel = pow(1.0 - depth, 6.0) * edgeGlow;
+        /*
+         * Fresnel, with a direction.
+         *
+         * A grazing surface reflects more, and the old term said only that —
+         * the same brightness the whole way round, which is a halo. Nothing in
+         * the world is lit evenly from every side, and a ring of light is the
+         * single thing that most reliably reads as a shape someone drew a
+         * border around.
+         *
+         * Worse, GlassSurface draws its own bevel directly over this one, and
+         * that bevel *is* directional: bright at the near corner, dim across
+         * the middle, bright again on the far edge. A uniform ring underneath
+         * was flattening it back out — two layers arguing about where the light
+         * was. So the same light lives here: a main lobe where the light lands,
+         * and a smaller counter-lobe on the opposite edge, which is the pane's
+         * thickness lit from behind rather than a second lamp.
+         */
+        float2 lightDir = normalize(float2(-0.4, -1.0));
+        float lobe = dot(normal, lightDir);
+        float lit = max(lobe, 0.0) * max(lobe, 0.0);
+        float behind = max(-lobe, 0.0) * max(-lobe, 0.0) * 0.45;
+        float fresnel = pow(1.0 - depth, 6.0) * edgeGlow * (lit + behind) * 1.6;
         colour.rgb = colour.rgb + half3(fresnel);
 
         // Feather the last pixel of the edge so the corner is not a staircase.

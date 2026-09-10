@@ -1,0 +1,100 @@
+name: Deploy Supabase edge functions
+
+# Deploys the edge functions from THIS REPO's `supabase/functions/`.
+#
+# ## Why a workflow and not the connector
+#
+# The development sandboxes cannot reach Supabase at all — the egress gateway
+# answers 403 to CONNECT for both `api.supabase.com` and the project host — so
+# an agent working in one has exactly two options: the MCP connector, which
+# takes each file's full text as a parameter, or this.
+#
+# The connector is fine for a small function and wrong for a large one.
+# `generate-flashcards/index.ts` is 43 KB, and deploying it through a parameter
+# means an agent re-typing 43 KB of working code from memory with a single
+# silent typo able to break the app's flagship feature for everyone. A runner
+# already has the file on disk and byte-identical.
+#
+# So: source of truth is the repo, and this is how the repo reaches production.
+# It is also what makes `supabase/functions/` worth keeping accurate — the
+# repo's copy of `generate-handwritten-notes` was once two versions behind the
+# deployed one, and reading it agreed with a bug that had already been fixed.
+#
+# The token is a Supabase personal access token with full management access. It
+# lives only in GitHub's secret store, is read from the environment rather than
+# a command line so it cannot appear in a process listing, and is never echoed.
+
+on:
+  workflow_dispatch:
+    inputs:
+      functions:
+        description: 'Space-separated function slugs, or "all"'
+        required: true
+        default: generate-flashcards
+
+concurrency:
+  # Never cancel a deploy half-done.
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      PROJECT_REF: pmtgeydtqypwrypshhsx
+      TOK_A: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      TOK_B: ${{ secrets.SUPABASE_TOKEN }}
+      TOK_C: ${{ secrets.SUPABASE_PAT }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Which Supabase secret is set
+        run: |
+          set +x
+          found=""
+          [ -n "$TOK_A" ] && { echo "SUPABASE_ACCESS_TOKEN: set"; found=A; } || echo "SUPABASE_ACCESS_TOKEN: not set"
+          [ -n "$TOK_B" ] && { echo "SUPABASE_TOKEN: set";        found=${found:-B}; } || echo "SUPABASE_TOKEN: not set"
+          [ -n "$TOK_C" ] && { echo "SUPABASE_PAT: set";          found=${found:-C}; } || echo "SUPABASE_PAT: not set"
+          if [ -z "$found" ]; then
+            echo "::error::No Supabase token secret found. Add one under Settings → Secrets and variables → Actions."
+            exit 1
+          fi
+          echo "FOUND=$found" >> "$GITHUB_ENV"
+
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Say what is about to be deployed
+        run: |
+          # Printed before anything is pushed, because "which version went out"
+          # is the question asked after a deploy goes wrong, and a log that only
+          # says "success" cannot answer it.
+          for slug in ${{ github.event.inputs.functions }}; do
+            [ "$slug" = "all" ] && continue
+            dir="supabase/functions/$slug"
+            if [ ! -d "$dir" ]; then
+              echo "::error::$dir does not exist in this repo"
+              exit 1
+            fi
+            echo "--- $slug ---"
+            find "$dir" -type f | while read -r f; do
+              printf '  %s  %s bytes  sha256:%s\n' "$f" "$(wc -c <"$f")" "$(sha256sum "$f" | cut -c1-16)"
+            done
+          done
+
+      - name: Deploy
+        run: |
+          set +x
+          case "$FOUND" in A) TOKEN="$TOK_A";; B) TOKEN="$TOK_B";; *) TOKEN="$TOK_C";; esac
+          export SUPABASE_ACCESS_TOKEN="$TOKEN"
+          set -e
+          if [ "${{ github.event.inputs.functions }}" = "all" ]; then
+            supabase functions deploy --project-ref "$PROJECT_REF"
+          else
+            for slug in ${{ github.event.inputs.functions }}; do
+              echo "::group::deploy $slug"
+              supabase functions deploy "$slug" --project-ref "$PROJECT_REF"
+              echo "::endgroup::"
+            done
+          fi

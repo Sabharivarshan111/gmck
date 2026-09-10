@@ -1,10 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Dialog } from '@/components/Dialog';
 import { Text } from '@/components/Text';
-import { Touchable } from '@/components/Touchable';
 import { useTheme, withAlpha } from '@/theme';
-import { ADFREE_PRICE_LABEL, buyAdFreeMonth } from '@/lib/razorpay';
+import { Lock } from 'lucide-react-native';
 import { isPremiumCached } from '@/lib/premium';
 import {
   confirmDailyAd,
@@ -25,8 +24,6 @@ export function DailyAdConsent() {
   const [prompt, setPrompt] = useState<DailyAdPrompt | null>(null);
   // Kept so the text does not vanish while the dialog animates out.
   const [shown, setShown] = useState<DailyAdPrompt | null>(null);
-  const [buying, setBuying] = useState(false);
-  const [purchaseError, setPurchaseError] = useState<string | null>(null);
 
   useEffect(() => subscribeDailyAd(setPrompt), []);
 
@@ -53,37 +50,6 @@ export function DailyAdConsent() {
     }
   }, [prompt]);
 
-  /**
-   * The offer, in the one place it is actually wanted: next to the ad the user
-   * is being asked to watch. Anywhere else it is an interruption; here it is
-   * the alternative to the thing on screen.
-   *
-   * It is not a third dialog action. "Not now" and "OK" answer the question
-   * being asked; paying is a different kind of act, and putting it in the same
-   * row would make a purchase one mis-tap away from a dismissal.
-   */
-  const buy = useCallback(async () => {
-    if (buying) {
-      return;
-    }
-    setBuying(true);
-    setPurchaseError(null);
-    const outcome = await buyAdFreeMonth().catch(() => ({
-      status: 'failed' as const,
-      message: 'Payment could not be started.',
-    }));
-    setBuying(false);
-    if (outcome.status === 'done') {
-      // Ads are off from here, so the prompt that triggered this is moot.
-      setPrompt(null);
-      return;
-    }
-    if (outcome.status === 'failed') {
-      setPurchaseError(outcome.message);
-    }
-    // A cancellation says nothing: the user closed the sheet on purpose.
-  }, [buying]);
-
   return (
     <Dialog
       visible={prompt !== null}
@@ -91,32 +57,46 @@ export function DailyAdConsent() {
       title={shown?.title}
       message={shown?.message}
       footer={
+        /*
+         * Ad-free is not for sale right now, and this says so rather than
+         * hiding.
+         *
+         * It USED to open Razorpay's checkout from here. Google Play's
+         * Payments policy requires Play Billing for digital content consumed
+         * inside the app, and removing ads is exactly that — so taking the
+         * money through Razorpay put the whole listing at risk of removal, for
+         * fifty rupees. The Razorpay SDK, its plan table and every call to it
+         * are gone from this app; see `.agents/rules/42-play-billing.md`.
+         *
+         * The replacement is Google Play Billing, which is written and is
+         * deliberately switched off (`PLAY_BILLING_ENABLED = false`) until the
+         * products exist in Play Console and a licence tester has bought each
+         * of them once. Until then there is nothing to sell, and a button that
+         * cannot work is worse than a sentence that explains why.
+         *
+         * Someone who already paid keeps what they paid for: this is the only
+         * thing that changed, and every reader of the entitlement is untouched
+         * — which is why `isPremiumCached()` still hides this row.
+         */
         isPremiumCached() ? null : (
-          <View>
-            <Touchable
-              onPress={buy}
-              label={`Remove ads for a month for ${ADFREE_PRICE_LABEL}`}
-              disabled={buying}
-              scaleTo={0.97}
-              style={[
-                styles.offer,
-                { borderColor: withAlpha(colors.accent, 0.5), backgroundColor: withAlpha(colors.accent, 0.1) },
-              ]}>
-              {buying ? (
-                <ActivityIndicator size="small" color={colors.accent} />
-              ) : (
-                <Text style={[styles.offerText, { color: colors.accent }]}>
-                  Or remove ads for a month — {ADFREE_PRICE_LABEL}
-                </Text>
-              )}
-            </Touchable>
-            {purchaseError ? (
-              <Text
-                accessibilityLiveRegion="polite"
-                style={[styles.offerError, { color: colors.danger }]}>
-                {purchaseError}
+          <View
+            style={[
+              styles.soon,
+              {
+                borderColor: withAlpha(colors.textMuted, 0.35),
+                backgroundColor: withAlpha(colors.textMuted, 0.08),
+              },
+            ]}>
+            <Lock size={14} color={colors.textMuted} />
+            <View style={styles.soonBody}>
+              <Text style={[styles.soonTitle, { color: colors.text }]}>
+                Ad-free is coming soon
               </Text>
-            ) : null}
+              <Text style={[styles.soonNote, { color: colors.textMuted }]}>
+                We are moving payments to Google Play. Nothing is for sale in the
+                app until that is ready.
+              </Text>
+            </View>
           </View>
         )
       }
@@ -129,22 +109,25 @@ export function DailyAdConsent() {
 }
 
 const styles = StyleSheet.create({
-  offer: {
+  soon: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 10,
     borderRadius: 12,
     borderWidth: StyleSheet.hairlineWidth,
     paddingVertical: 12,
     paddingHorizontal: 14,
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: 44,
   },
-  offerText: {
+  soonBody: {
+    flex: 1,
+    gap: 2,
+  },
+  soonTitle: {
     fontSize: 14,
     fontWeight: '700',
   },
-  offerError: {
+  soonNote: {
     fontSize: 12,
     lineHeight: 17,
-    marginTop: 8,
   },
 });

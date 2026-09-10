@@ -6,7 +6,7 @@ description: The first-run walkthrough — how it finds a control by its accessi
 
 `mobile/src/tour/` is the script and the state; `components/TourOverlay.tsx`
 draws it; `components/TourGestureDemo.tsx` is the one interactive step.
-`npm run check:tour` pins it, and `check:smoke` walks all 18 steps.
+`npm run check:tour` pins it, and `check:smoke` walks the run.
 
 ## Controls are addressed by their accessibility label
 
@@ -50,9 +50,40 @@ tabs behind a form the reader cannot leave would move the app under them.
 
 ## Length was the design problem, not the content
 
-Eighteen steps, five chapters, `FOCUS TIMER · 10 of 18` in the card so the end
-is always in sight, Skip on screen at every step, and Settings replays any
-single chapter. Nobody comes back wanting all eighteen again.
+Twenty-three steps, six chapters, `FOCUS TIMER · 10 of 23` in the card so the
+end is always in sight, Skip on screen at every step, and Settings replays any
+single chapter. Nobody comes back wanting all twenty-three again.
+
+## A step that wants a tap says so with motion, not a caption
+
+`tapToAdvance` steps draw a ripple expanding out of the spotlit control on a
+slow beat. The ring says "look here" and does not say "press this", and the
+difference is the whole point of those steps — the reader is meant to learn the
+control by using it. There was a line of caption text saying so, and a line of
+text is what people skip.
+
+A ripple rather than a drawn hand: a hand has to point somewhere, is wrong for
+half the screen positions, and looks like clip art at any size. It runs on its
+own clock, not the ring's, because two things saying different things off one
+value read as one gesture. **Under reduced motion there is no ripple at all** —
+a single expanding shape IS the animation, there is no slower version of it
+that still means "press this", so the caption carries the step alone.
+
+## Skip does not end the tour on its first press
+
+It shows one card — `SKIP_FAREWELL`, which is deliberately not in `STEPS` — that
+spotlights the real Settings button and says the walkthrough lives there. A
+second press ends it, so nobody is trapped.
+
+Before this, the only thing that mentioned replay was the Skip button's
+accessibility *hint*: spoken by TalkBack and read by nobody else. The reader
+most likely to want the tour back was the one guaranteed not to be told where
+it was.
+
+It carries no chapter and no `N of 23` — "WELCOME · 4 OF 23" over a goodbye card
+is a reader wondering what happened to the other nineteen — and its target is
+listed in `TOUR_TARGETS` explicitly rather than left to the coincidence that
+another step happens to name Settings too.
 
 ## What may never appear in it
 

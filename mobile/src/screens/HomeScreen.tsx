@@ -19,6 +19,8 @@ import { SortableGrid } from '@/components/SortableGrid';
 import { useSubjectOrder } from '@/hooks/useSubjectOrder';
 import { SettingsSheet } from '@/components/SettingsSheet';
 import { ThemeMenu, type Anchor } from '@/components/ThemeMenu';
+import { HomeMenuSheet } from '@/components/HomeMenuSheet';
+import { premiumExpiresAt } from '@/lib/premium';
 import { presetByKey } from '@/theme/presets';
 import { ThemeEditor } from '@/components/ThemeEditor';
 import { GlassSurface } from '@/components/GlassSurface';
@@ -52,6 +54,7 @@ import { DEFAULT_GRADIENT, SUBJECT_GRADIENT, themedGradient } from '@/theme/subj
 import { DURATION, EASE, useReducedMotion } from '@/theme/motion';
 import { radius, space } from '@/theme/tokens';
 import { typeScale } from '@/theme/typography';
+import { useTextScale } from '@/theme/textScale';
 import { GradientFill } from '@/components/Gradient';
 import {
   collectAllQuestions,
@@ -113,12 +116,27 @@ const SUBJECT_CARD_RATIO = 0.485;
  * rebuilds them when this changes — an object literal in the JSX would be a
  * new one every render, which is a rebuild mid-drag.
  */
+/**
+ * A subject tile's name always occupies this many lines.
+ *
+ * Two, because "General Surgery and Orthopaedics" needs two and everything
+ * shorter needs the tile beside it to line up with it. See where it is used.
+ */
+const SUBJECT_NAME_LINES = 2;
+/** The taller of the two ramps a name can be set in, so the box fits both. */
+const SUBJECT_NAME_LINE = typeScale.footnote.lineHeight ?? 18;
+
 const HOME_SCALE_RANGE = { min: HOME_SCALE_MIN, max: HOME_SCALE_MAX };
 const HOME_HEIGHT_RANGE = { min: HOME_HEIGHT_MIN, max: HOME_HEIGHT_MAX };
 
 export default function HomeScreen({ initialEditing = false }: { initialEditing?: boolean } = {}) {
   const { colors, theme, textSize, setTextSize, custom, setCustom, preference, setPreference } =
     useTheme();
+  /*
+   * The in-app text multiplier, for the one box below whose height is written
+   * in dp rather than in lines. Everything else gets it inside `Text`.
+   */
+  const scale = useTextScale();
   const {
     order,
     rendered,
@@ -152,6 +170,7 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
    * waiting to happen, so it lives in Settings now with everything else.
    */
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [dragging, setDragging] = useState(false);
   /**
    * Content drawn straight onto the background reads this rather than
@@ -351,13 +370,14 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
               Rearranging is normally entered by holding a block, but a hold
               is not something a screen reader can offer, so this is the other
               way in — and the way back out. */}
+          {/* While rearranging it stays the way OUT of that mode — a menu
+              behind a mode you cannot leave is worse than no menu. Otherwise
+              it opens everything the app can do. */}
           <Touchable
-            onPress={() => setEditing(value => !value)}
-            label={editing ? 'Finish rearranging' : 'Rearrange home screen'}
-            hint={
-              editing ? undefined : 'Or hold any block on this screen to start moving it'
-            }
-            state={{ expanded: editing }}
+            onPress={() => (editing ? setEditing(false) : setMenuOpen(true))}
+            label={editing ? 'Finish rearranging' : 'Menu'}
+            hint={editing ? undefined : 'Everything the app can do'}
+            state={{ expanded: editing || menuOpen }}
             scaleTo={0.9}
             style={styles.iconButton}>
             {editing ? (
@@ -454,7 +474,27 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
               said 24, so the bevel and the shader drew a different curve from
               the card — the corner people saw as cut.
             */}
-            <GlassSurface style={[styles.hero, scales.hero < 0.75 && { padding: 12 }]}>
+            {/*
+              `heights.hero > 1 && styles.grow` is what makes dragging the
+              height bar do anything visible.
+
+              `Reorderable` gives the block a taller SLOT — that part always
+              worked — but a card only fills a slot if it says so. Without this
+              the hero kept its natural height and the dragged space came out
+              as a band of empty background beneath it, which is what the owner
+              reported as the block not resizing, and what `check:smoke`
+              measured as "grew the hero by only 0px".
+
+              Conditional, not unconditional: `flex: 1` at rest would make the
+              card fight its own content for height on a screen where nothing
+              has been resized.
+            */}
+            <GlassSurface
+              style={[
+                styles.hero,
+                scales.hero < 0.75 && { padding: 12 },
+                heights.hero > 1 && styles.grow,
+              ]}>
               <View
                 style={[styles.heroGlow, { backgroundColor: withAlpha(colors.fuchsia, 0.12) }]}
                 pointerEvents="none"
@@ -520,6 +560,7 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
             <View
               style={[
                 styles.quickRow,
+                heights.quick > 1 && styles.grow,
                 scales.quick < 0.75 && {
                   flexWrap: 'wrap',
                   justifyContent: 'space-between',
@@ -575,6 +616,7 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
               scaleTo={0.985}
               style={[
                 styles.whatsapp,
+                heights.whatsapp > 1 && styles.grow,
                 {
                   borderColor: withAlpha(colors.green, 0.3),
                   backgroundColor: withAlpha(colors.green, 0.05),
@@ -713,9 +755,42 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
                       ) : null}
                     </View>
                     <View style={styles.subjectFooter}>
-                      <Text style={[styles.subjectName, { color: colors.text }]}>
-                        {subject.name.toUpperCase()}
-                      </Text>
+                      {/*
+                        The name gets a two-line box whether it needs one or not.
+
+                        This is what was reported as the General Surgery tile
+                        "not being nice", and the wrapping was only half of it.
+                        "GENERAL SURGERY AND ORTHOPAEDICS" takes two lines and
+                        "PAEDIATRICS" beside it takes one, so the progress bar
+                        and "% Complete" sat at different heights in the same
+                        row and the grid came out ragged. Fixing the wrap alone
+                        would not have touched that: a one-line name still ends
+                        higher than a two-line one.
+
+                        So the block is always two lines tall and the footer
+                        below it always starts in the same place. It scales with
+                        the in-app text size, or the alignment it buys would come
+                        apart for exactly the readers who most need the app to
+                        look composed.
+
+                        The tracking is the other half. Caps need it to stay
+                        countable, but it is also what caps cost — so names over
+                        twenty characters spend it, dropping to 0.2 and one rung
+                        down the ramp, which is enough to keep every name in the
+                        bank inside two lines. Short names keep it, because they
+                        have nothing to buy with it.
+                      */}
+                      <View style={{ minHeight: SUBJECT_NAME_LINES * SUBJECT_NAME_LINE * scale }}>
+                        <Text
+                          numberOfLines={SUBJECT_NAME_LINES}
+                          style={[
+                            styles.subjectName,
+                            subject.name.length > 20 && styles.subjectNameLong,
+                            { color: colors.text },
+                          ]}>
+                          {subject.name.toUpperCase()}
+                        </Text>
+                      </View>
                       {compact.subjects ? null : (
                         <View
                           style={[
@@ -744,7 +819,12 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
             stats: (
               <>
             {/* Stats */}
-            <View style={[styles.stats, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <View
+              style={[
+                styles.stats,
+                heights.stats > 1 && styles.grow,
+                { backgroundColor: colors.card, borderColor: colors.border },
+              ]}>
               <View style={styles.stat}>
                 <View style={[styles.statIcon, { backgroundColor: withAlpha(colors.primary, 0.15) }]}>
                   <Flame size={20} color={colors.primary} />
@@ -781,6 +861,20 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
         {/* Overlays. They render into their own layer, so their place in the
             tree is arbitrary — what matters is that they are not inside a
             block that can be dragged. */}
+      <HomeMenuSheet
+        visible={menuOpen}
+        onClose={() => setMenuOpen(false)}
+        onGoToTab={goToTab}
+        onBrowse={() => navigation.navigate('BrowseHome', {})}
+        onSearch={() => navigation.navigate('BrowseHome', { focusSearch: true })}
+        onRearrange={() => setEditing(true)}
+        onSettings={() => setSettingsOpen(true)}
+        onThemes={() => setThemeOpen(true)}
+        onCommunity={openCommunity}
+        adFreeUntil={premiumExpiresAt()?.slice(0, 10) ?? null}
+        onRemoveAds={() => setSettingsOpen(true)}
+      />
+
       <ThemeMenu
         visible={themeOpen}
         anchor={anchor}
@@ -1087,6 +1181,8 @@ const SubjectFill = React.memo(function SubjectFillBar({
 });
 
 const styles = StyleSheet.create({
+  /** Fills the taller slot `Reorderable` gives a block that has been resized. */
+  grow: { flex: 1 },
   transparent: {
     backgroundColor: 'transparent',
   },
@@ -1467,6 +1563,11 @@ const styles = StyleSheet.create({
     // Set in caps, which is exactly where letters need to be pushed apart to
     // stay countable.
     letterSpacing: 0.6,
+  },
+  subjectNameLong: {
+    ...typeScale.caption,
+    fontWeight: '700',
+    letterSpacing: 0.2,
   },
   subjectTrack: {
     height: 4,

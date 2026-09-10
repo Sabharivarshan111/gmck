@@ -230,6 +230,79 @@ check(
   'level crossings are not being announced between badges',
 );
 
+// ---------------------------------------------------------------------------
+// 5. Un-ticking a question never announces XP.
+//
+// Reported as "why the hell if i untap any question it shows as xp gained",
+// and it was two separate bugs with the same symptom, one in each app.
+//
+// WEB. Three sources report an XP number into `use-xp-stream`: the `cloudXp`
+// prop, the realtime `profiles` row (both = the server's count of every
+// question the ACCOUNT has ticked) and `readLocalXp()` (the `question-` keys
+// in THIS BROWSER). They are different populations — sign in on a second
+// browser and the first is 300 while the second is 4 — and all three wrote
+// into one `prevXp` ref. Un-ticking ran the local handler first (4 -> 3, no
+// toast, ref := 3), then the realtime one read 299 against a baseline of 3 and
+// toasted "+296 XP" for undoing something.
+//
+// NATIVE. `pullProgressFromCloud` merges and never deletes, so a row whose
+// `record_question_undone` never landed came straight back on the next
+// reconcile. The count rose, and `XpToast` reads a rise as a tick.
+//
+// Neither is visible to tsc, eslint or the preview harness: every version of
+// both compiles, and the bug needs two sources at different scales or a failed
+// RPC to show itself.
+// ---------------------------------------------------------------------------
+const stream = code(read(path.join(web, 'hooks', 'use-xp-stream.ts')));
+
+check(
+  !/\bprevXp\b/.test(stream),
+  'use-xp-stream is back to one shared prevXp ref — a lower reading from one ' +
+    'source then reads as a gain in another, which is the "+296 XP" on an un-tick',
+);
+check(
+  /const prevCloudXp = useRef/.test(stream) && /const prevLocalXp = useRef/.test(stream),
+  'use-xp-stream no longer keeps a baseline per source',
+);
+// The local handler must never touch the cloud baseline, and vice versa: that
+// cross-write IS the bug, whatever the refs are called.
+const localHandler = stream.slice(
+  stream.indexOf('const xp = readLocalXp();'),
+  stream.indexOf('window.addEventListener(QUESTION_PROGRESS_EVENT'),
+);
+check(
+  localHandler.length > 0 && !/prevCloudXp\.current\s*=/.test(localHandler),
+  'the local-XP handler writes the cloud baseline — a browser count of 4 then ' +
+    'makes the next cloud reading of 299 look like a gain',
+);
+
+const store = code(read(path.join(mobile, 'src', 'lib', 'progress.ts')));
+check(
+  /pendingUndo/.test(store),
+  'progress.ts no longer parks un-ticks, so a cloud pull can resurrect one',
+);
+check(
+  /if \(pendingUndo\.has\(row\.question_id\)\)/.test(store),
+  'pullProgressFromCloud merges a row the reader has just un-ticked — the count ' +
+    'rises and the toast announces it as a tick',
+);
+check(
+  /filter\(id => !pendingUndo\.has\(id\)\)/.test(store),
+  'pushProgressToCloud re-uploads ids that are parked for deletion, so the push ' +
+    'and the pull retry fight on every launch',
+);
+check(
+  /record_question_undone'?,\s*\{[\s\S]{0,80}\}\);\s*\n\s*if \(undoError\)/.test(store) ||
+    /record_question_undone/.test(store.slice(store.indexOf('pullProgressFromCloud'))),
+  'a surviving cloud row is the proof the un-tick never landed — the pull must retry it, ' +
+    'not just skip it, or the tombstone is permanent',
+);
+check(
+  /PENDING_UNDO_KEY/.test(store) && /AsyncStorage\.setItem\(PENDING_UNDO_KEY/.test(store),
+  'the parked un-ticks are not persisted — the failure that needs them most is an ' +
+    'app killed before the retry',
+);
+
 if (failures.length > 0) {
   console.error('XP model check failed:\n');
   for (const failure of failures) console.error(`  - ${failure}`);
@@ -238,5 +311,5 @@ if (failures.length > 0) {
 
 console.log(
   `OK  one ladder (${XP_PER_LEVEL} XP/level), ${webBadges.length} shared badges, ` +
-    'leaderboard unsliced, ticks announced once',
+    'leaderboard unsliced, ticks announced once, un-ticks announce nothing',
 );

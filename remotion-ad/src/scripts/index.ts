@@ -6,8 +6,21 @@ import { reelRepeats } from './reelRepeats.ts';
 import { reelSixHours } from './reelSixHours.ts';
 import { reelDrawIt } from './reelDrawIt.ts';
 import { reelGuide } from './reelGuide.ts';
+import { reelGuideAnswer } from './reelGuideAnswer.ts';
+import { reelGuideNight } from './reelGuideNight.ts';
 import { reelFunctions } from './reelFunctions.ts';
 import { reelOneQuestion } from './reelOneQuestion.ts';
+import { reelAnki } from './reelAnki.ts';
+import { reelAttendance } from './reelAttendance.ts';
+import { reelSecondYear } from './reelSecondYear.ts';
+import { reelSetup } from './reelSetup.ts';
+import { reelPages } from './reelPages.ts';
+import { reelFirstYear } from './reelFirstYear.ts';
+import { reelSpaced } from './reelSpaced.ts';
+import { reelProgress } from './reelProgress.ts';
+import { reelReminder } from './reelReminder.ts';
+import { reelYours } from './reelYours.ts';
+import { reelNotes } from './reelNotes.ts';
 
 /**
  * Every script that exists, in one list.
@@ -28,8 +41,21 @@ export const ALL_SCRIPTS: AdScript[] = [
   reelSixHours,
   reelDrawIt,
   reelGuide,
+  reelGuideAnswer,
+  reelGuideNight,
   reelFunctions,
   reelOneQuestion,
+  reelAnki,
+  reelAttendance,
+  reelSecondYear,
+  reelSetup,
+  reelPages,
+  reelFirstYear,
+  reelSpaced,
+  reelProgress,
+  reelReminder,
+  reelYours,
+  reelNotes,
 ];
 
 /** The 60-second vertical cuts, which are the ones with fixed shot frames. */
@@ -43,8 +69,21 @@ export {
   reelSixHours,
   reelDrawIt,
   reelGuide,
+  reelGuideAnswer,
+  reelGuideNight,
   reelFunctions,
   reelOneQuestion,
+  reelAnki,
+  reelAttendance,
+  reelSecondYear,
+  reelSetup,
+  reelPages,
+  reelFirstYear,
+  reelSpaced,
+  reelProgress,
+  reelReminder,
+  reelYours,
+  reelNotes,
 };
 
 /**

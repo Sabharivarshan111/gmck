@@ -71,6 +71,15 @@ PROGRESSIONS = {
     # up a tone across the four bars and lands back at the start, which is what
     # a loop that is going somewhere sounds like.
     "one-question": [[41, 48, 57, 60], [43, 50, 59, 62], [45, 52, 60, 64], [40, 47, 55, 59]],
+    # The mascot's second ad: it works one question through from the list to a
+    # ticked box, so this moves where "guide" holds still. Same key family as
+    # "guide" -- it is the same character, and a bed in an unrelated key makes
+    # two ads about one mascot sound like two different products.
+    "guide-answer": [[45, 52, 61, 64], [47, 54, 62, 66], [43, 50, 59, 62], [40, 47, 57, 59]],
+    # The mascot's third: the night before the exam. The same key again, taken
+    # an octave's worth of mood down -- lower voicings, minor colour, and it
+    # resolves, because this one ends with the morning rather than a cliff.
+    "guide-night": [[40, 47, 55, 59], [36, 43, 52, 55], [38, 45, 53, 57], [41, 48, 57, 60]],
 }
 
 # Bars per reel, chosen so a bar boundary lands near that script's own turns.
@@ -92,6 +101,8 @@ TEMPOS = {
     "six-hours": 24,
     "draw-it": 26,
     "guide": 22,
+    "guide-answer": 24,
+    "guide-night": 20,
     "functions": 25,
     "one-question": 30,
 }  # bars in 60 seconds
@@ -131,6 +142,31 @@ def sections(name: str, bar: float):
         # Lower everywhere than the silent beds: there is a voice on top of
         # this one for three quarters of its length.
         return (0.62, 0.6, 0.5, 0.8)
+
+    if name == "guide-answer":
+        # The same host, working rather than touring. It opens as bare as
+        # "guide" because the first thing heard has to be her, then holds a
+        # steady pulse through the middle: this ad follows one question from
+        # the list to a ticked box, so the bed keeps time rather than building
+        # to anything.
+        if bar < 1.0:
+            return (0.85, 0.0, 0.25, 0.3)
+        if end:
+            return (0.7, 0.25, 0.2, 0.45)
+        return (0.62, 0.7, 0.45, 0.85)
+
+    if name == "guide-night":
+        # Two in the morning. The quietest bed here: no pulse at all for the
+        # first two bars, because the ad opens on the host saying it is late
+        # and a beat under that line would contradict it. It lifts only at the
+        # end, where the morning arrives.
+        if bar < 2.0:
+            return (0.8, 0.0, 0.0, 0.3)
+        if bar < 4.0:
+            return (0.72, 0.35, 0.2, 0.6)
+        if end:
+            return (0.75, 0.4, 0.35, 0.6)
+        return (0.6, 0.55, 0.4, 0.8)
 
     if name == "functions":
         # A catalogue, cut every four to six beats. The pulse is the spine and
@@ -295,8 +331,18 @@ def write(path: pathlib.Path, samples: list) -> None:
 
 
 def main() -> None:
+    """
+    Build every bed named in TEMPOS.
+
+    This used to walk a hardcoded tuple of six names while the closing line
+    counted `len(TEMPOS)`, so adding a seventh entry printed "8 music beds
+    written" and wrote six — a reel would then have gone to render naming a bed
+    that was never built. `TEMPOS` is the one place a bed is declared, and this
+    reads it, for the same reason `voice-manifest.mjs` reads ALL_SCRIPTS rather
+    than its own list.
+    """
     OUT.mkdir(parents=True, exist_ok=True)
-    for name in ("repeats", "six-hours", "draw-it", "guide", "functions", "one-question"):
+    for name in TEMPOS:
         target = OUT / f"bed-{name}.wav"
         write(target, build(name))
         size = target.stat().st_size

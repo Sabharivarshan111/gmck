@@ -439,19 +439,40 @@ export function MusicPlayer({ onClose }: { onClose: () => void }) {
           </GlassSurface>
         </Touchable>
 
+        {/*
+          With nothing loaded this is a GLASS circle, not a filled one.
+
+          It used to fill with `withAlpha(colors.text, 0.12)` and keep
+          `colors.primaryText` for the icon — and on a dark theme those are a
+          near-black disc and a black triangle. The result was a black hole
+          between two outlined circles, with the play mark invisible inside it,
+          and it was reported as exactly that: "what is the black circle behind
+          the music player".
+
+          The rule it broke is one the theme already states: `primaryText` is
+          the ink for `primary`, and painting it on anything else is a colour
+          pairing nobody checked. So the two states are now two different
+          controls rather than one control with a swapped background — filled
+          and legible when there is something to play, the same glass as its
+          neighbours when there is not. A filled button that does nothing is
+          also a lie about what it will do.
+        */}
         <Touchable
           onPress={() => setPlaying(value => !value)}
           label={playing ? 'Pause music' : 'Play music'}
           disabled={!current}
           scaleTo={0.93}
-          style={[
-            styles.playControl,
-            { backgroundColor: current ? colors.primary : withAlpha(colors.text, 0.12) },
-          ]}>
-          {playing ? (
-            <Pause size={20} color={colors.primaryText} fill={colors.primaryText} />
+          style={current ? [styles.playControl, { backgroundColor: colors.primary }] : undefined}>
+          {current ? (
+            playing ? (
+              <Pause size={20} color={colors.primaryText} fill={colors.primaryText} />
+            ) : (
+              <Play size={20} color={colors.primaryText} fill={colors.primaryText} />
+            )
           ) : (
-            <Play size={20} color={colors.primaryText} fill={colors.primaryText} />
+            <GlassSurface elevated bevel borderRadius={22} style={styles.playGlass}>
+              <Play size={20} color={withAlpha(colors.text, 0.35)} />
+            </GlassSurface>
           )}
         </Touchable>
 
@@ -605,6 +626,21 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  /*
+   * The same box, with the radius left to the prop.
+   *
+   * `GlassSurface` draws its fill, its rim, its counter-rim and its shader on
+   * the radius it is GIVEN, so naming it in the style as well is two copies of
+   * one number — and `check:glass-radius` exists because that is how a corner
+   * ends up looking cut. The filled variant above keeps its own, since nothing
+   * else is drawing its curve.
+   */
+  playGlass: {
+    width: 44,
+    height: 44,
     alignItems: 'center',
     justifyContent: 'center',
   },

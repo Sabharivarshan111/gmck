@@ -16,8 +16,7 @@
     "paths": {
       "@/*": ["../src/*"],
       "@data/*": ["../../src/data/*"],
-      "@shared/*": ["../../src/lib/*"],
-      "react-native-razorpay": ["./shims/razorpay.ts"]
+      "@shared/*": ["../../src/lib/*"]
     }
   },
   "include": ["**/*.ts", "**/*.tsx"],

@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo, useRef } from 'react';
-import { Animated, Easing, StyleSheet, View } from 'react-native';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { Animated, Easing, StyleSheet, View, type LayoutChangeEvent } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
 import Svg, { Defs, LinearGradient, Stop, Text as SvgText } from 'react-native-svg';
 import { FONT_FAMILY } from '@/theme/typography';
@@ -23,6 +23,23 @@ const SHIMMER = ['#ff2e97', '#ff8a00', '#ffe600', '#00ffd5', '#5d6bff', '#ff2e97
  * attention for a title.
  */
 const SWEEP_MS = 14000;
+
+/**
+ * Roughly how wide one character is, as a fraction of the font size.
+ *
+ * Bold Roboto, mixed case, averaged over the subject names in the bank. It is
+ * an estimate and it is allowed to be: it only decides how far the size steps
+ * down, and `textLength` below is what actually guarantees the fit.
+ */
+const AVG_ADVANCE = 0.58;
+
+/**
+ * How small a heading may get before shrinking stops being the right answer.
+ *
+ * Past this the title is no longer the biggest thing on the screen and stops
+ * reading as a heading at all; the tracking clamp takes over instead.
+ */
+const MIN_SIZE = 15;
 
 /**
  * react-native-svg's props go through the Animated bridge like any other, so
@@ -91,6 +108,40 @@ export function GradientText({
     return () => loop.stop();
   }, [progress, running]);
 
+  /*
+   * SVG text does not wrap and does not shrink.
+   *
+   * That is the whole bug this measurement exists for: at a fixed 24px,
+   * "Obstetrics & Gynaecology" is wider than the header it sits in, and
+   * because it is centred it overflowed BOTH edges — the first letter
+   * disappeared under the back button and the last one off the right of the
+   * screen. It looked like the text was broken; it was drawn correctly and
+   * simply did not fit.
+   *
+   * `width: '100%'` on the wrapper made this invisible to every layout check,
+   * because the wrapper was always exactly the right size. Only the glyphs
+   * overflowed it.
+   */
+  const [box, setBox] = useState(0);
+  const estimated = size * AVG_ADVANCE * children.length;
+  const fits = box === 0 || estimated <= box;
+  /** Step the size down towards the box, but never below a heading's floor. */
+  const fitted = fits ? size : Math.max(MIN_SIZE, Math.floor((box / estimated) * size));
+  /*
+   * And a hard stop for the one case shrinking cannot solve.
+   *
+   * `textLength` forces the string to exactly this width — which means it
+   * STRETCHES text that is narrower as readily as it tightens text that is
+   * wider. Applying it whenever the title did not fit at full size was wrong
+   * for that reason: the shrink had already made it fit, and the clamp then
+   * pulled the letters back out to the full width of the header. It is only
+   * correct once the size has bottomed out at the floor and the string is
+   * still too wide, and then `lengthAdjust="spacing"` spends the difference on
+   * the gaps rather than on the glyphs — squashing the letters themselves is
+   * the option that looks cheap.
+   */
+  const clamp = !fits && fitted <= MIN_SIZE ? box : undefined;
+
   const height = Math.round(size * 1.35);
 
   /*
@@ -102,7 +153,9 @@ export function GradientText({
   const x2 = progress.interpolate({ inputRange: [0, 1], outputRange: ['100%', '200%'] });
 
   return (
-    <View style={[styles.wrap, { height }]}>
+    <View
+      style={[styles.wrap, { height }]}
+      onLayout={(event: LayoutChangeEvent) => setBox(event.nativeEvent.layout.width)}>
       <Svg width="100%" height={height}>
         <Defs>
           <AnimatedLinearGradient id={id} x1={x1} y1="0" x2={x2} y2="0">
@@ -117,8 +170,12 @@ export function GradientText({
         </Defs>
         <SvgText
           x={align === 'center' ? '50%' : '0'}
-          y={size}
-          fontSize={size}
+          // Baseline follows the size the text is actually drawn at, or a
+          // shrunken title sits high in a box built for the full one.
+          y={fitted}
+          fontSize={fitted}
+          textLength={clamp}
+          lengthAdjust="spacing"
           // Roboto by name, not "sans-serif". React Native follows the system
           // font and OEM skins replace it — MIUI ships MiSans, One UI ships
           // SamsungOne — so a heading left to the default is re-typeset on

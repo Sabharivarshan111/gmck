@@ -60,14 +60,22 @@ import { useSettings } from '@/lib/settings';
 import { useExam } from '@/hooks/useExam';
 import { Brain } from 'lucide-react-native';
 import { AdminPanel } from '@/components/AdminPanel';
-import { ProgressCalendarTab } from '@/components/ProgressCalendarTab';
+import { AttendanceTab } from '@/components/AttendanceTab';
 import { ProgressNotesTab } from '@/components/ProgressNotesTab';
 
-type Tab = 'stats' | 'calendar' | 'notes';
+type Tab = 'stats' | 'attendance' | 'notes';
 
 const TABS: { key: Tab; label: string }[] = [
   { key: 'stats', label: 'Stats' },
-  { key: 'calendar', label: 'Calendar' },
+  /*
+   * Attendance, not Calendar.
+   *
+   * The Calendar was a month grid you could pin a note to, and almost nobody
+   * did — an exam date already lives in the countdown above, and everything
+   * else a student writes down goes in their notes. What they DO count, every
+   * week, is whether they are still above seventy-five.
+   */
+  { key: 'attendance', label: 'Attendance' },
   { key: 'notes', label: 'Notes' },
 ];
 
@@ -353,6 +361,58 @@ export default function ProgressScreen() {
         </Text>
       </Touchable>
 
+      {/*
+        Revision sits ABOVE the tabs, not inside Stats.
+        Asked for, and it is the right shape: what is due today does not belong
+        to one tab's worth of the screen. It used to live below the year ring
+        inside Stats, so a reader on Calendar or on their way to Notes could not
+        see that anything was due at all — and the whole point of a spacing
+        schedule is that it is the first thing you are told, not something found
+        by scrolling the tab that happened to be open.
+      */}
+      <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
+        <View style={styles.reviseRow}>
+          <View style={[styles.reviseIcon, { backgroundColor: withAlpha(colors.violet, 0.16) }]}>
+            <Brain size={18} color={colors.violet} />
+          </View>
+          <View style={styles.grow}>
+            <Text style={[styles.cardTitle, { color: colors.text }]}>
+              Spaced revision{' '}
+              <Text style={[styles.cardHint, { color: colors.textMuted }]}>SM-2</Text>
+            </Text>
+            <Text style={[styles.cardHint, { color: colors.textMuted }]}>
+              {revision.due.length === 0
+                ? revision.cards.length === 0
+                  ? 'Tick a question off to start revising it'
+                  : 'Nothing due — you are caught up'
+                : `${revision.due.length} due`}
+            </Text>
+          </View>
+          <Touchable
+            label="Start revising"
+            hint="Show the questions due for revision today"
+            disabled={revision.due.length === 0}
+            onPress={() => setRevising(true)}
+            style={[
+              styles.revise,
+              {
+                backgroundColor:
+                  revision.due.length > 0 ? colors.primary : withAlpha(colors.text, 0.1),
+              },
+            ]}>
+            <Text
+              style={[
+                styles.reviseText,
+                {
+                  color: revision.due.length > 0 ? colors.primaryText : colors.textMuted,
+                },
+              ]}>
+              Revise
+            </Text>
+          </Touchable>
+        </View>
+      </View>
+
       {/* Tabs */}
       <View style={[styles.tabs, { backgroundColor: colors.cardElevated }]}>
         {TABS.map(item => {
@@ -391,8 +451,8 @@ export default function ProgressScreen() {
         })}
       </View>
 
-      {tab === 'calendar' ? (
-        <ProgressCalendarTab />
+      {tab === 'attendance' ? (
+        <AttendanceTab />
       ) : (
         <>
           {/* Year ring */}
@@ -616,52 +676,7 @@ export default function ProgressScreen() {
             ) : null}
           </View>
 
-          {/* Exam countdown, then revision: the deadline gives the schedule
-              its urgency, so it reads better above it than below. */}
           <ExamCountdownCard year={shortYear} />
-
-          <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
-            <View style={styles.reviseRow}>
-              <View style={[styles.reviseIcon, { backgroundColor: withAlpha(colors.violet, 0.16) }]}>
-                <Brain size={18} color={colors.violet} />
-              </View>
-              <View style={styles.grow}>
-                <Text style={[styles.cardTitle, { color: colors.text }]}>
-                  Spaced revision{' '}
-                  <Text style={[styles.cardHint, { color: colors.textMuted }]}>SM-2</Text>
-                </Text>
-                <Text style={[styles.cardHint, { color: colors.textMuted }]}>
-                  {revision.due.length === 0
-                    ? revision.cards.length === 0
-                      ? 'Tick a question off to start revising it'
-                      : 'Nothing due — you are caught up'
-                    : `${revision.due.length} due`}
-                </Text>
-              </View>
-              <Touchable
-                label="Start revising"
-                hint="Show the questions due for revision today"
-                disabled={revision.due.length === 0}
-                onPress={() => setRevising(true)}
-                style={[
-                  styles.revise,
-                  {
-                    backgroundColor:
-                      revision.due.length > 0 ? colors.primary : withAlpha(colors.text, 0.1),
-                  },
-                ]}>
-                <Text
-                  style={[
-                    styles.reviseText,
-                    {
-                      color: revision.due.length > 0 ? colors.primaryText : colors.textMuted,
-                    },
-                  ]}>
-                  Revise
-                </Text>
-              </Touchable>
-            </View>
-          </View>
 
           {/* Leaderboard */}
           <Leaderboard year={shortYear} selfName={displayName} selfId={cloud?.id ?? null} />
@@ -710,8 +725,27 @@ export default function ProgressScreen() {
                 <FlaskConical size={20} color={colors.text} />
               </View>
               <View style={styles.subjectBody}>
+                {/*
+                  The percentage sits with the FIRST line of the name.
+
+                  "General Surgery and Orthopaedics" is the only subject long
+                  enough to wrap here, and the row centred its two children —
+                  so on that one row the 0% dropped half a line below where it
+                  sits on every other row, and the whole card grew around it.
+                  It read as the box being broken rather than as a long name.
+
+                  Three things together fix it: the name takes the space it
+                  needs and no more (`flex: 1`, so the percentage is never
+                  pushed off the edge), it wraps to at most two lines, and the
+                  row aligns to the top so the number stays put whether the
+                  name beside it is one line or two.
+                */}
                 <View style={styles.subjectTop}>
-                  <Text style={[styles.subjectName, { color: colors.text }]}>{subject.name}</Text>
+                  <Text
+                    numberOfLines={2}
+                    style={[styles.subjectName, { color: colors.text }]}>
+                    {subject.name}
+                  </Text>
                   <Text style={[styles.subjectPct, { color: colors.fuchsia }]}>
                     {subject.pct}%
                   </Text>
@@ -1216,12 +1250,16 @@ const styles = StyleSheet.create({
   },
   subjectTop: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     justifyContent: 'space-between',
+    gap: 10,
   },
   subjectName: {
-    fontSize: 17,
+    // From the ramp, not a bare fontSize: a size written on its own ships
+    // without the tracking and leading that belong to it.
+    ...typeScale.title3,
     fontWeight: '700',
+    flex: 1,
   },
   subjectPct: {
     fontSize: 14,

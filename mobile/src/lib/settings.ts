@@ -216,12 +216,25 @@ export const CARD_SECONDS_STEP = 15;
  * The range the slider offers.
  *
  * The floor is 5 rather than 1 because a deck that hands out one card a day is
- * indistinguishable from a broken one. The ceiling is MAX_DECK_CARDS, since
- * past that the cap stops capping anything: the largest deck the generator will
- * build is 50 cards, and a limit above that just means "all of them".
+ * indistinguishable from a broken one.
+ *
+ * **The ceiling used to be MAX_DECK_CARDS — 50 — and that was wrong from the
+ * day Anki import shipped.** The reasoning was that the largest deck the
+ * generator builds is fifty cards, so a higher cap would just mean "all of
+ * them". That is true of a GENERATED deck and false of an imported one: a
+ * shared medical `.apkg` is routinely two or three thousand cards, and fifty
+ * new a day means the reader meets the last of them some time next year. The
+ * cap has to be sized against the largest deck somebody can actually have, and
+ * that is not a deck this app writes.
+ *
+ * 200 is Anki's own upper end for a working day and roughly what a reader
+ * cramming a subject before an exam sets it to. It is still a cap rather than
+ * "unlimited", because an uncapped first day of a 3,000-card deck buries the
+ * schedule under a backlog nobody clears and the deck gets abandoned — which is
+ * the failure Anki's own default of twenty exists to prevent.
  */
 export const NEW_PER_DAY_MIN = 5;
-export const NEW_PER_DAY_MAX = 50;
+export const NEW_PER_DAY_MAX = 200;
 
 export const HAPTIC_MIN_MS = 6;
 export const HAPTIC_MAX_MS = 28;

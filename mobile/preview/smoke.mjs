@@ -142,6 +142,26 @@ async function step(name, fn) {
   await declineAdPromptIfShown();
   await closeSheetIfOpen();
   await closeModalIfOpen();
+  await finishRearrangingIfOpen();
+}
+
+/**
+ * Leave home's edit mode if a step failed inside it.
+ *
+ * Rearranging locks the controls underneath it — that is `ReorderLock`, and it
+ * is what stops a held subject card also opening that subject. A step that
+ * threw before reaching "Finish rearranging" therefore left every later step
+ * tapping into a locked screen: `year picker opens and browses a year` had
+ * been failing on a 4-second timeout for "View all years", which is on Home,
+ * present, visible, and deliberately unresponsive. One broken step was
+ * reporting as two.
+ */
+async function finishRearrangingIfOpen() {
+  const done = page.locator('[aria-label="Finish rearranging"]').first();
+  if (await done.isVisible().catch(() => false)) {
+    await done.click().catch(() => {});
+    await page.waitForTimeout(400);
+  }
 }
 
 /** The theme editor is a modal card, not a sheet; it closes with its X. */
@@ -223,6 +243,82 @@ const tap = async label => {
   }
   await page.waitForTimeout(280);
 };
+
+/**
+ * Enter rearrange mode.
+ *
+ * It used to be one tap on the hamburger. That button now opens the menu —
+ * everything the app can do — and rearranging is a row inside it, so getting
+ * there is two taps. This helper exists so the three flows that rearrange say
+ * what they mean rather than repeating the route, and so the next change to
+ * that route is one edit.
+ *
+ * The row's label is still `Rearrange home screen`, which is why the tour and
+ * TalkBack both still find it.
+ */
+/**
+ * Drag with **touch** events, through CDP.
+ *
+ * Not `page.mouse`. React Native Web's responder system does see mouse events,
+ * but the gesture code being tested does not treat them the same: `dragArm`
+ * arms on travel it reads from a touch, and a PanResponder can pass under
+ * mousedown/mousemove and still lose the gesture on a phone. A mouse drag is
+ * therefore a test of something nobody does — which is how "a subject card can
+ * be dragged to another slot" failed here for weeks while the same drag worked
+ * by hand and the block-resize drag, which already used CDP, passed.
+ *
+ * Stepped, because the responder reads movement: one jump from down to up is a
+ * tap that happens to end somewhere else.
+ */
+async function touchDrag(cdp, page, from, to, { steps = 12, holdMs = 0 } = {}) {
+  const send = (type, point) =>
+    cdp.send('Input.dispatchTouchEvent', {
+      type,
+      touchPoints:
+        type === 'touchEnd'
+          ? []
+          : [{ x: point.x, y: point.y, radiusX: 12, radiusY: 12, force: 1 }],
+    });
+  await send('touchStart', from);
+  if (holdMs > 0) {
+    // A hold is how a reorder is armed when the travel is not obviously
+    // horizontal; both routes exist and both are worth exercising.
+    await page.waitForTimeout(holdMs);
+    await send('touchMove', { x: from.x + 1, y: from.y + 1 });
+  }
+  for (let i = 1; i <= steps; i += 1) {
+    await send('touchMove', {
+      x: from.x + ((to.x - from.x) * i) / steps,
+      y: from.y + ((to.y - from.y) * i) / steps,
+    });
+    await page.waitForTimeout(16);
+  }
+  await send('touchEnd', to);
+  await page.waitForTimeout(400);
+}
+
+async function startRearranging() {
+  await tap('Menu');
+  await tap('Rearrange home screen');
+  /*
+   * Wait for the menu to actually be gone before touching anything behind it.
+   *
+   * `tap` returns as soon as the click lands, and the Sheet dismisses on a
+   * spring — so for a few hundred milliseconds afterwards its scrim is still
+   * over the page and swallows the next touch. That is how this presented:
+   * "dragging the height bar down grew the hero by only 0px", because the drag
+   * landed on the scrim rather than the grip, while the same drag done by hand
+   * grew the block from 263px to 352px.
+   *
+   * Waiting for the row to leave the DOM is the real signal; the settle after
+   * it covers the tail of the animation, which `waitFor` cannot see.
+   */
+  await page
+    .locator('[aria-label="Rearrange home screen"]')
+    .waitFor({ state: 'detached', timeout: 4000 })
+    .catch(() => {});
+  await page.waitForTimeout(500);
+}
 /**
  * Bring a control into the viewport.
  *
@@ -476,12 +572,13 @@ await step('home blocks rearrange, and the order survives a reload', async () =>
       return node ? node.getBoundingClientRect().top : NaN;
     }, text);
 
+
   const heroFirst = (await topOf('Welcome to Orbit')) < (await topOf('Join our WhatsApp'));
   if (!heroFirst) {
     throw new Error('expected the hero above the WhatsApp block to start with');
   }
 
-  await tap('Rearrange home screen');
+  await startRearranging();
   await seesText('Drag a block');
   await tap('Move WhatsApp community up');
   await tap('Move WhatsApp community up');
@@ -499,7 +596,7 @@ await step('home blocks rearrange, and the order survives a reload', async () =>
 
   // Reset, so the rest of the run sees the layout it expects — and so the one
   // control that undoes all of this is covered too.
-  await tap('Rearrange home screen');
+  await startRearranging();
   await tap('Reset home layout');
   await page.waitForTimeout(700);
   if ((await topOf('Welcome to Orbit')) > (await topOf('Join our WhatsApp'))) {
@@ -555,22 +652,10 @@ await step('a block resizes with its grip, and the size survives a reload', asyn
     }
     const x = box.x + box.width / 2;
     const y = box.y + box.height / 2;
-    const send = (type, ty) =>
-      cdp.send('Input.dispatchTouchEvent', {
-        type,
-        touchPoints:
-          type === 'touchEnd' ? [] : [{ x, y: ty, radiusX: 12, radiusY: 12, force: 1 }],
-      });
-    await send('touchStart', y);
-    for (let i = 1; i <= 12; i += 1) {
-      await send('touchMove', y + (dy * i) / 12);
-      await page.waitForTimeout(16);
-    }
-    await send('touchEnd', y + dy);
-    await page.waitForTimeout(400);
+    await touchDrag(cdp, page, { x, y }, { x, y: y + dy });
   };
 
-  await tap('Rearrange home screen');
+  await startRearranging();
   const before = await heroHeight();
 
   /*
@@ -604,7 +689,7 @@ await step('a block resizes with its grip, and the size survives a reload', asyn
    * comparing one against the other reports a 60px "loss" that is really the
    * chrome not being there.
    */
-  await tap('Rearrange home screen');
+  await startRearranging();
   await page.waitForTimeout(500);
   const reloaded = await heroHeight();
   if (Math.abs(reloaded - regrown) > 32) {
@@ -640,14 +725,12 @@ await step('a subject card can be dragged to another slot', async () => {
     throw new Error(`expected at least two subject cards, saw ${before.length}`);
   }
 
-  await tap('Rearrange home screen');
+  await startRearranging();
   const first = page.locator(`[aria-label^="${before[0]}"]`).first();
   const box = await first.boundingBox();
   // Into the slot to its right. The card claims the gesture ahead of the
   // block it sits in; if that ever regresses, the whole block moves instead
   // and the card order comes back unchanged.
-  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
-  await page.mouse.down();
   /*
    * Sideways, in small steps, with no pause first — deliberately the way
    * somebody actually moves a card, and the exact gesture that used to do
@@ -655,9 +738,14 @@ await step('a subject card can be dragged to another slot', async () => {
    * clearly horizontal, and only the second of those is a movement anyone
    * would discover on their own. See dragArm.ts.
    */
-  await page.mouse.move(box.x + box.width * 1.5, box.y + box.height / 2, { steps: 10 });
-  await page.mouse.up();
-  await page.waitForTimeout(800);
+  await touchDrag(
+    cdp,
+    page,
+    { x: box.x + box.width / 2, y: box.y + box.height / 2 },
+    { x: box.x + box.width * 1.5, y: box.y + box.height / 2 },
+    { steps: 14 },
+  );
+  await page.waitForTimeout(400);
 
   const after = await cards();
   if (after[0] === before[0]) {
@@ -2089,6 +2177,193 @@ await step('notes highlight, and a picture opens a drawing canvas', async () => 
   }
 });
 
+/**
+ * A YouTube link in a note, and it plays where it sits.
+ *
+ * The link is pasted in the shape people actually send each other —
+ * `youtu.be/…?t=90`, no scheme — because that is the shape a naive parser
+ * misses, and a feature that silently refuses half of what is pasted is one
+ * nobody trusts twice. `check:note-links` covers the other five shapes and the
+ * URLs that must never be opened.
+ *
+ * The player itself is a WebView, and the harness swaps in a shim: an iframe
+ * pointing at YouTube from a sandbox with no route to the internet is a grey
+ * rectangle that takes seconds to give up, and it would make every screenshot
+ * depend on whether YouTube was reachable from CI. What is proved here is the
+ * wiring — that the still comes first and the player replaces it on a tap.
+ */
+await step('a YouTube link is added to a note, and plays in it', async () => {
+  await open('screen=progress');
+  await declineAdPromptIfShown();
+  await byLabel('Notes').first().click({ force: true });
+  await page.waitForTimeout(700);
+  await byLabel('Create a new study note').click({ force: true });
+  await page.waitForTimeout(600);
+  await byLabel('Note title').fill('Krebs cycle lecture');
+
+  await byLabel('Add a link or a YouTube video to this note').click({ force: true });
+  await page.waitForTimeout(400);
+
+  // Refused in place, while the reader still has what they meant to paste.
+  await byLabel('Link address').fill('not a url');
+  await byLabel('Add this link').click({ force: true });
+  await page.waitForTimeout(400);
+  if (!/does not look like a web address/.test(await page.locator('body').innerText())) {
+    throw new Error('a non-URL was accepted as a link');
+  }
+
+  await byLabel('Link address').fill('youtu.be/dQw4w9WgXcQ?t=90');
+  await byLabel('What to call this link').fill('Krebs, worked through');
+  await byLabel('Add this link').click({ force: true });
+  await page.waitForTimeout(600);
+  if ((await page.locator('[aria-label^="Play "]').count()) === 0) {
+    throw new Error('the link was added but offers no way to play it');
+  }
+
+  await byLabel('Save note').click({ force: true });
+  await page.waitForTimeout(700);
+  if (!/1 video/.test(await page.locator('body').innerText())) {
+    throw new Error('the note card does not say it has a video in it');
+  }
+
+  await byLabel('Read Krebs cycle lecture').last().click({ force: true });
+  await page.waitForTimeout(700);
+  const reading = await page.locator('body').innerText();
+  if (/This note is empty/.test(reading)) {
+    throw new Error('a note whose whole content is a lecture link reads as empty');
+  }
+  await page.locator('[aria-label^="Play "]').first().click({ force: true });
+  await page.waitForTimeout(600);
+  if ((await page.locator('[aria-label="Video player"]').count()) === 0) {
+    throw new Error('tapping play did not mount the player');
+  }
+});
+
+/**
+ * Attendance: the arithmetic a student would otherwise do wrong on paper.
+ *
+ * `check:attendance` pins the maths against worked examples; this proves the
+ * screen is wired to it — that marking a class moves the count, that the
+ * verdict changes with it, and that a posting knows how many days it has left.
+ *
+ * The numbers below are chosen because they are the case that catches a
+ * rounding bug: four of five is 80%, comfortably above 75, and yet there is
+ * NOTHING spare — 4/0.75 is 5.33, floored to 5, which is exactly the five
+ * already held. An implementation that rounds says "you can miss one more",
+ * and a student who believes it drops below the line.
+ */
+await step('attendance counts classes, and says what is still spare', async () => {
+  await open('screen=progress');
+  await declineAdPromptIfShown();
+  await byLabel('Attendance').first().click({ force: true });
+  await page.waitForTimeout(700);
+
+  await byLabel('Add a subject').click({ force: true });
+  await page.waitForTimeout(500);
+  await byLabel('Subject name').fill('Pathology');
+  await byLabel('Add this subject').click({ force: true });
+  await page.waitForTimeout(600);
+
+  for (let i = 0; i < 4; i += 1) {
+    await byLabel('Mark present for Pathology').click({ force: true });
+    await page.waitForTimeout(150);
+  }
+  await byLabel('Mark absent for Pathology').click({ force: true });
+  await page.waitForTimeout(600);
+
+  const body = await page.locator('body').innerText();
+  if (!/4 of 5 classes/.test(body)) {
+    throw new Error('marking present and absent did not move the count');
+  }
+  if (!/80%/.test(body)) {
+    throw new Error('four of five is not being reported as 80%');
+  }
+  if (!/cannot miss another one/.test(body)) {
+    throw new Error(
+      `80% with nothing spare was not reported as such: ${(body.match(/You can[^\n]*|Exactly[^\n]*|Below[^\n]*/) || ['(no verdict)'])[0]}`,
+    );
+  }
+
+  // A posting knows its length, which is what makes "you can miss N" honest.
+  await byLabel('Clinical postings').click({ force: true });
+  await page.waitForTimeout(600);
+  await byLabel('Add a posting').click({ force: true });
+  await page.waitForTimeout(500);
+  await byLabel('Posting name').fill('Paediatrics');
+  await byLabel('Length of the posting in days').fill('30');
+  await byLabel('Add this posting').click({ force: true });
+  await page.waitForTimeout(600);
+  await byLabel('Mark present for Paediatrics').click({ force: true });
+  await page.waitForTimeout(500);
+
+  const posting = await page.locator('body').innerText();
+  if (!/29 left/.test(posting)) {
+    throw new Error('a posting is not counting down the days it has left');
+  }
+});
+
+/**
+ * Tapping a picture opens it full screen.
+ *
+ * The reader asked for this of every picture in the app — a triple-tap
+ * diagram, a handwritten note, a flashcard, an Anki card, a photo in their own
+ * notes — because a diagram's labels are the point of it and a phone draws
+ * them at a size nobody can read.
+ *
+ * `DiagramCard` already had a lightbox and it did not zoom: it was a
+ * `<ScrollView maximumZoomScale minimumZoomScale centerContent>`, three props
+ * that are **iOS-only**, so on Android it was a static picture wearing a
+ * zoomable lightbox's code. Every one of those call sites now goes through
+ * `ZoomableImage`.
+ *
+ * This walks a note's own picture rather than the diagram card, because the
+ * note's is a data URI that genuinely loads in a browser while the card's
+ * comes from Supabase Storage, which the sandbox cannot reach — and the card
+ * correctly disables Enlarge while the picture has failed.
+ *
+ * **The pinch itself is not proved here.** It is a two-finger gesture against
+ * a PanResponder, and a browser standing in for that would be a test agreeing
+ * with its own assumptions. What is proved is that the viewer opens on a tap,
+ * says how to use it, and closes.
+ */
+await step('a picture in a note opens full screen', async () => {
+  await open('screen=progress');
+  await page.waitForTimeout(900);
+  await byLabel('Notes').first().click();
+  await page.waitForTimeout(800);
+  await byLabel('Create a new study note').click();
+  await page.waitForTimeout(700);
+
+  await byLabel('Note title').fill('Zooming in');
+  await byLabel('What the note says').fill('The picture is the point of this note.');
+
+  await page.evaluate(() => {
+    globalThis.__orbitPickImage = true;
+  });
+  await byLabel('Add a picture to this note').click();
+  await page.waitForTimeout(900);
+  await page.evaluate(() => {
+    globalThis.__orbitPickImage = undefined;
+  });
+
+  await byLabel('Save note').click();
+  await page.waitForTimeout(900);
+  await byLabel('Read Zooming in').last().click();
+  await page.waitForTimeout(900);
+
+  const opener = page.locator('[aria-label*="Opens full screen"]').first();
+  await opener.waitFor({ timeout: 6000 });
+  await opener.click();
+  await page.waitForTimeout(700);
+  await seesText('Pinch to zoom, drag to move, double-tap to zoom in and out', 5000);
+
+  await byLabel('Close the picture').click();
+  await page.waitForTimeout(500);
+  if (await page.getByText('Pinch to zoom, drag to move').count()) {
+    throw new Error('the picture viewer would not close');
+  }
+});
+
 await step('a note can be written by hand on a blank page', async () => {
   await open('screen=progress');
   await page.waitForTimeout(900);
@@ -2281,17 +2556,36 @@ await step('a note takes a recording, and the recording gets a player', async ()
   await attach.click();
   await page.waitForTimeout(700);
 
-  // The choice, and the consequence of each, said before either is taken.
-  await seesText('Save it, or just link it?', 4000);
+  /*
+   * The choice, and the consequence of each, said before either is taken.
+   *
+   * Asserted as the two GUARANTEES rather than as two exact sentences. This
+   * required the literal "Works even if you delete the original", which was
+   * the wording until 1fdbf17c reworded both options to say what a copy and a
+   * link *are* — and this step, plus the two after it, had been failing ever
+   * since on a screen that is correct. Worse than one red step: the sheet
+   * stays open when this throws, so the next two timed out at 30 seconds
+   * against its scrim, and one stale string read as three broken flows.
+   */
+  /*
+   * The sheet's TITLE moved too, in the same rewording — "Save it, or just link
+   * it?" became "Copy the file, or just link to it?". It is the first assertion
+   * in this step, so the whole flow died four seconds in while every part of it
+   * below worked: the probe that found this got "Recording · 7 KB · saved in
+   * Orbit" on screen with the title check the only thing failing.
+   *
+   * Matched on the half that carries the meaning rather than the sentence, for
+   * the same reason the two consequences below are.
+   */
+  await seesText('or just link', 4000);
   await seesText('Save a copy', 4000);
   await seesText('Just link it', 4000);
-  // One line each. Two paragraphs read as an essay and nobody read them.
-  await seesText('Works even if you delete the original', 4000);
-  await seesText('Stops working if you delete or move', 4000);
+  await seesText('even if you delete', 4000);
+  await seesText('stops opening it if you delete', 4000);
 
-  await byLabel(
-    'Save a copy in Orbit. Uses phone space, and keeps working if you delete the original',
-  ).click();
+  // Driven by the leading words, so the explanation can be reworded without
+  // breaking the drive — the same fix check:music was given.
+  await page.locator('[aria-label^="Save a copy in Orbit"]').first().click();
   await page.waitForTimeout(800);
   await page.evaluate(() => {
     globalThis.__orbitPickFile = undefined;
@@ -2353,9 +2647,9 @@ await step('fullscreen keeps the play, scrub, time and volume controls', async (
   });
   await byLabel('Add a video, recording or PDF to this note').click();
   await page.waitForTimeout(700);
-  await byLabel(
-    'Save a copy in Orbit. Uses phone space, and keeps working if you delete the original',
-  ).click();
+  // Driven by the leading words, so the explanation can be reworded without
+  // breaking the drive — the same fix check:music was given.
+  await page.locator('[aria-label^="Save a copy in Orbit"]').first().click();
   await page.waitForTimeout(800);
   await page.evaluate(() => {
     globalThis.__orbitPickFile = undefined;
@@ -2410,9 +2704,7 @@ await step('a linked file can break, says so, and can be copied in instead', asy
   });
   await byLabel('Add a video, recording or PDF to this note').click();
   await page.waitForTimeout(700);
-  await byLabel(
-    'Just link it. Uses no space, and stops working if you delete or move the original',
-  ).click();
+  await page.locator('[aria-label^="Just link it"]').first().click();
   await page.waitForTimeout(800);
   await page.evaluate(() => {
     globalThis.__orbitPickFile = undefined;
@@ -2723,6 +3015,58 @@ await step('the walkthrough rehearses the tick, the double tap and the triple ta
 });
 
 /**
+ * Replaying a chapter from Settings plays that chapter.
+ *
+ * It did not. `farewell` is local state in `TourOverlay`, which is mounted for
+ * the life of the app, and nothing reset it when the tour ended — so after a
+ * reader pressed Skip once, every later `startTour(chapter)` rendered the
+ * farewell card over step one. Tapping "Focus timer" in Settings showed "It
+ * lives in here", pointing at the Settings button they had just used, and the
+ * chapter never played. Reported exactly that way.
+ *
+ * This walks the real path: skip, close, open Settings, pick a chapter, and
+ * assert the card is that chapter's own first step. A unit test on the flag
+ * would not have caught it, because the flag was correct — what was wrong was
+ * that it outlived the run it belonged to.
+ */
+await step('a chapter replayed from Settings plays the chapter, not the farewell', async () => {
+  await open('tour=1');
+  await declineAdPromptIfShown();
+
+  // Skip once: the farewell card, which is the state the bug hid in.
+  await byLabel('Skip the walkthrough').click();
+  await page.waitForTimeout(500);
+  const farewellText = await page.locator('body').innerText();
+  if (!/It lives in here/.test(farewellText)) {
+    throw new Error('Skip no longer shows the card that says where the walkthrough lives');
+  }
+
+  // Close it. The tour is now over and `farewell` must not survive it.
+  await byLabel('Close the walkthrough').click();
+  await page.waitForTimeout(500);
+
+  await byLabel('Settings').click();
+  await page.waitForTimeout(600);
+  await byLabel('Walk me through Focus timer').click();
+  await page.waitForTimeout(900);
+
+  const replayed = await page.locator('body').innerText();
+  if (/It lives in here/.test(replayed)) {
+    throw new Error(
+      'replaying a chapter showed the skip farewell again — the chapter never played',
+    );
+  }
+  if (!/FOCUS TIMER · 1 OF/.test(replayed)) {
+    throw new Error(
+      `replaying the Focus timer chapter did not start at its first step: ${replayed.slice(0, 200)}`,
+    );
+  }
+
+  await byLabel('Skip the walkthrough').click();
+  await page.waitForTimeout(400);
+});
+
+/**
  * Pressing the real control the tour is pointing at moves the tour on.
  *
  * This is the whole reason the scrim is four rectangles rather than one view
@@ -2776,6 +3120,11 @@ await step('a diagram in prose renders as a picture, not as markdown', async () 
   // the prose that followed it survived the split.
   await byLabel('Enlarge diagram image').waitFor({ timeout: 6000 });
   await seesText('High-Yield Continuous Visual Mnemonic');
+
+  // The viewer this card opens is exercised through a note's own picture
+  // instead — see 'a picture in a note opens full screen'. The card's Enlarge
+  // button is deliberately disabled while the image has failed to load, and in
+  // this sandbox it always has: there is no route to Supabase Storage.
 });
 
 /**
@@ -2860,6 +3209,75 @@ await step('the notes back button stays put while the page scrolls', async () =>
  * index, and check:search-index proves every one of those paths resolves back
  * to a topic containing that exact question.
  */
+/*
+ * Triple-tapping a search result opens the textbook-grounded note, not Ask AI.
+ *
+ * Reported as the home-screen search sending a triple tap to the chat while
+ * the same question, reached by browsing, produced a note. The wiring for it
+ * landed on 2026-09-01 and the build on Play is versionCode 13, so what the
+ * owner is running genuinely does not have it — but nothing in this suite
+ * covered the search path, which is how it could have been broken again by any
+ * of the renderItem edits since without anybody noticing.
+ *
+ * `askAnswer` in QuestionRow prefers `onNote` and falls through to
+ * `tripleTapPrompt` only when there is none, so what this really asserts is
+ * that the search screen passes one.
+ */
+await step('a triple tap on a search result opens the note, not the chat', async () => {
+  await open('screen=browse');
+  await page.locator('input').first().fill('Shotgun');
+  await page.waitForTimeout(1600);
+  await seesText('Switch to this chapter', 6000).catch(() => {
+    throw new Error('no search results to triple-tap');
+  });
+
+  /*
+   * The row's accessibility label IS the question, so there is no prefix to
+   * match on. It is found the way the double-tap step finds one: the labelled
+   * button that contains a checkbox.
+   */
+  const box = page.locator('[role="checkbox"]').first();
+  await box.waitFor({ timeout: 5000 }).catch(() => {
+    throw new Error('the search result has no question row');
+  });
+  const row = page.locator('[aria-label][role="button"]').filter({ has: box }).first();
+  const point = await row.boundingBox();
+
+  // Three taps inside QuestionRow's TAP_WINDOW_MS. `clickCount: 3` through
+  // page.mouse, because three awaited .click() calls each cost more than the
+  // window and the second would start a new count.
+  await page.mouse.click(point.x + point.width / 2, point.y + 12, {
+    clickCount: 3,
+    delay: 40,
+  });
+  await page.waitForTimeout(2000);
+
+  /*
+   * "Close note" is the control the note page always has and the Ask AI screen
+   * never does. That pair is what separates the two outcomes — looking for the
+   * word "note" in the body text would match the search screen itself.
+   *
+   * Written as `[aria-label*="Regenerate"]` first, which fails on a note that
+   * opened perfectly: there is no such label. `SingleQuestionNote` says "Write
+   * this note again from the top". A selector for a control that does not exist
+   * reports the feature broken, which is the worst way for a test to be wrong —
+   * it accuses the app.
+   */
+  const note = page.locator('[aria-label="Close note"]').first();
+  if (!(await note.isVisible().catch(() => false))) {
+    const wentToChat = await page
+      .locator('[aria-label="Message"], [aria-label*="Ask" i]')
+      .first()
+      .isVisible()
+      .catch(() => false);
+    throw new Error(
+      wentToChat
+        ? 'a triple tap on a search result went to Ask AI instead of the note'
+        : 'no handwritten note opened from the search result',
+    );
+  }
+});
+
 await step('a search result switches to its chapter and lights the question', async () => {
   await open('screen=browse');
   await page.locator('input').first().fill('Shotgun');
@@ -3094,6 +3512,94 @@ await step('spaced revision reports its queue', async () => {
 await step('progress screen renders', async () => {
   await open('screen=progress');
   await seesText('YOUR YEAR', 6000);
+});
+
+/*
+ * First run, in a browser that has never seen this app.
+ *
+ * Every other step above runs with `orbit-profile-v1` seeded, because the
+ * onboarding sheet is a full-screen modal and nothing behind it is reachable.
+ * That seeding also meant the sheet itself was never once driven — and the
+ * defect it was hiding is the one the app's owner found: the year row opened
+ * with Second Year already chosen, so a reader who read the name field, typed
+ * a name and pressed the button below it was enrolled in a syllabus nobody
+ * asked them about. Wrong questions, wrong counts, wrong leaderboard, and
+ * nothing on screen saying a choice had been made for them.
+ *
+ * Its own context so the storage really is empty; the shared one has an init
+ * script that cannot be removed.
+ */
+await step('first run asks for the year instead of assuming one', async () => {
+  const fresh = await browser.newContext({
+    viewport: { width: 390, height: 844 },
+    hasTouch: true,
+  });
+  const first = await fresh.newPage();
+  try {
+    await first.goto('http://localhost:5202/?screen=home', { waitUntil: 'networkidle' });
+    // The welcome panel holds for SPLASH_MS before the form, and a tap skips
+    // it — which is also the assertion that the tap works.
+    await first.waitForTimeout(900);
+    await first.locator('[aria-label="Continue"]').first().click({ timeout: 4000 }).catch(() => {});
+    await first.waitForTimeout(700);
+
+    const start = first.locator('[aria-label^="Choose your year first"]').first();
+    if (!(await start.isVisible().catch(() => false))) {
+      throw new Error('the first-run gate does not open with the year unanswered');
+    }
+    // The welcome has to have said the two things it exists to say.
+    const welcomed = await first.evaluate(() => document.body.innerText);
+    if (!/Made by the community/i.test(welcomed) && !/Two things and you/i.test(welcomed)) {
+      throw new Error('the first-run gate is not the welcome screen');
+    }
+
+    /*
+     * None of the four may be pre-selected. `aria-checked` is what carries
+     * this — react-native-web 0.21 emits no `accessibilityState` at all.
+     *
+     * The labels are `YEAR_LABEL`'s: "1st Year", not "First Year". Written the
+     * long way first, this matched nothing and the assertion passed while
+     * testing nothing — which is the failure mode a check like this has, since
+     * "no year is selected" and "no year card exists" look identical to it.
+     * So it counts the cards it found and fails if that is not four.
+     */
+    const years = ['1st Year', '2nd Year', '3rd Year', 'Final Year'];
+    const found = await first.evaluate(
+      labels =>
+        labels
+          .map(label => document.querySelector(`[aria-label="${label}"]`))
+          .map(el => (el ? el.getAttribute('aria-checked') : null)),
+      years,
+    );
+    const present = found.filter(v => v !== null);
+    if (present.length !== 4) {
+      throw new Error(`first run offers ${present.length} year cards, expected 4 (${years.join(', ')})`);
+    }
+    const checked = years.filter((_, i) => found[i] === 'true');
+    if (checked.length > 0) {
+      throw new Error(`first run pre-selects ${checked.join(', ')} — the reader must choose`);
+    }
+
+    // Pressing on anyway has to say what is missing rather than do nothing.
+    await start.click({ timeout: 4000 });
+    await first.waitForTimeout(400);
+    const said = await first.evaluate(() => document.body.innerText);
+    if (!/Choose your year/i.test(said)) {
+      throw new Error('submitting with no year chosen neither saves nor explains itself');
+    }
+
+    // And a real choice is the one that is stored — not the second-year default.
+    await first.locator('[aria-label="3rd Year"]').first().click({ timeout: 4000 });
+    await first.locator('[aria-label="Display name"]').first().fill('Fresher');
+    await first.locator('[aria-label="Start studying"]').first().click({ timeout: 4000 });
+    await first.waitForTimeout(1200);
+    const stored = await first.evaluate(() => window.localStorage.getItem('orbit-profile-v1'));
+    if (!stored || JSON.parse(stored).year !== 'third') {
+      throw new Error(`first run stored ${stored} — the year the reader picked was third`);
+    }
+  } finally {
+    await fresh.close();
+  }
 });
 
 // ---- Report ----------------------------------------------------------------

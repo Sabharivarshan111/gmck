@@ -30,6 +30,16 @@ const SHOTS = [
   // rows and then half a screen of black, which reads as an empty app in a
   // wide shot however true it is.
   { name: 'browse-final', query: 'screen=browse&year=final-year' },
+  { name: 'browse-first', query: 'screen=browse&year=first-year' },
+  /*
+   * The settings sheet, opened by its own button.
+   *
+   * Nothing else captures it, and the notifications section inside it is the
+   * only picture of a feature whose whole design is to be silent most
+   * evenings. An ad for it with no screen of it would be an ad for a claim.
+   */
+  { name: 'settings', query: 'screen=home', tap: ['Settings'] },
+  { name: 'settings-bottom', query: 'screen=home', tap: ['Settings'], scroll: 'bottom' },
   { name: 'notes', query: 'screen=notes' },
   { name: 'timer', query: 'screen=timer' },
   { name: 'askai', query: 'screen=askai' },
@@ -52,8 +62,22 @@ const SHOTS = [
   // The handwritten-notes renderer against the fixture, top and bottom: the
   // top shows the diagram card, the bottom the regenerate button and the AI
   // edit box.
-  { name: 'notes-renderer', query: 'screen=notesdemo' },
-  { name: 'notes-renderer-bottom', query: 'screen=notesdemo', scroll: 'bottom' },
+  //
+  // `plates=real` and the plate assertion are load-bearing on BOTH of these,
+  // for the same reason they are on the two diagram screens below. These two
+  // PNGs are what the ad renderer draws for every note shot in every one of
+  // the nine ads, and the fixture's diagram section used to point at a
+  // Supabase storage URL — unreachable from a sandbox, and gone from the
+  // bucket in any case — so the capture quietly contained "This diagram could
+  // not be loaded". It shipped in a published cut and was reported twice,
+  // because nothing here was looking at what the diagram card actually drew.
+  { name: 'notes-renderer', query: 'screen=notesdemo&plates=real', plates: 1 },
+  {
+    name: 'notes-renderer-bottom',
+    query: 'screen=notesdemo&plates=real',
+    plates: 1,
+    scroll: 'bottom',
+  },
   // The flashcards walk, and the chat's new controls.
   { name: 'flashcards-decks', query: 'screen=flashcards' },
   // The daily limit and the pacing clock live below the fold.
@@ -61,6 +85,57 @@ const SHOTS = [
   { name: 'chatdemo', query: 'screen=chatdemo' },
   { name: 'anki-study', query: 'screen=ankidemo' },
   { name: 'progress-bottom', query: 'screen=progress', scroll: 'bottom' },
+  // Both live inside My Progress, behind a tab. See the `tap` handling below.
+  /*
+   * A tracker with nothing in it says "No subjects yet", which is the correct
+   * empty state and a useless frame: the whole argument of the feature is the
+   * number it works out for you, and an empty list has none. So it is seeded,
+   * with a second-year timetable and attendance that is genuinely mixed — one
+   * subject comfortable, one exactly on the line, one already below it. A demo
+   * where everything is fine does not show what the tool is for.
+   */
+  {
+    name: 'attendance',
+    query: 'screen=progress',
+    seed: {
+      'orbit:attendance-v1': [
+        { id: 'a1', name: 'Pathology', kind: 'theory', target: 75, held: 64, attended: 55 },
+        { id: 'a2', name: 'Pharmacology', kind: 'theory', target: 75, held: 61, attended: 46 },
+        { id: 'a3', name: 'Microbiology', kind: 'theory', target: 75, held: 58, attended: 41 },
+        { id: 'a4', name: 'Forensic Medicine', kind: 'theory', target: 75, held: 33, attended: 30 },
+      ],
+    },
+    tap: ['Attendance'],
+  },
+  {
+    name: 'attendance-postings',
+    query: 'screen=progress',
+    seed: {
+      'orbit:attendance-v1': [
+        {
+          id: 'p1',
+          name: 'General Medicine',
+          kind: 'posting',
+          target: 75,
+          held: 18,
+          attended: 15,
+          totalDays: 28,
+          startDate: '2026-08-24',
+        },
+        {
+          id: 'p2',
+          name: 'General Surgery',
+          kind: 'posting',
+          target: 75,
+          held: 12,
+          attended: 8,
+          totalDays: 28,
+          startDate: '2026-09-01',
+        },
+      ],
+    },
+    tap: ['Attendance', 'Clinical postings'],
+  },
   { name: 'timer-bottom', query: 'screen=timer', scroll: 'bottom' },
   { name: 'treegallery', query: 'screen=treegallery' },
   { name: 'treegallery-bottom', query: 'screen=treegallery', scroll: 'bottom' },
@@ -189,6 +264,29 @@ const page = await context.newPage();
  * differ from every other, and a screenshot of the default says nothing about
  * it.
  */
+/*
+ * Seed a profile, or every shot is the first-run gate.
+ *
+ * `FirstRun` is a full-screen Modal shown whenever the profile store has
+ * hydrated with nothing in it, which on a fresh browser is every launch. It is
+ * correct behaviour and it would silently replace all 33 screenshots with the
+ * same welcome panel — the screenshots being the one thing here that can see
+ * native-ish layout at all.
+ *
+ * One shot deliberately wants it. `SHOOT_FIRST_RUN=1` leaves the storage empty
+ * so the gate itself can be photographed and reviewed.
+ */
+if (!process.env.SHOOT_FIRST_RUN) {
+  await page.addInitScript(() => {
+    try {
+      window.localStorage.setItem(
+        'orbit-profile-v1',
+        JSON.stringify({ display_name: 'Orbit', year: 'second' }),
+      );
+    } catch {}
+  });
+}
+
 const shootTheme = process.env.SHOOT_THEME ?? '';
 if (shootTheme) {
   await page.addInitScript(key => {
@@ -293,11 +391,49 @@ for (const shot of SHOTS) {
       );
     });
     await page.reload({ waitUntil: 'networkidle' });
+  } else if (shot.seed) {
+    /*
+     * Seed storage, then reload so the app hydrates from it.
+     *
+     * The app reads these keys once at startup, so writing them after the
+     * first paint changes nothing — which is why this loads the page, writes,
+     * and loads again rather than writing and hoping.
+     */
+    await page.goto('http://localhost:5199/', { waitUntil: 'networkidle' });
+    await page.evaluate(entries => {
+      for (const [key, value] of entries) {
+        window.localStorage.setItem(key, JSON.stringify(value));
+      }
+    }, Object.entries(shot.seed));
+    await page.goto(`http://localhost:5199/?${shot.query}`, { waitUntil: 'networkidle' });
   } else {
     await page.goto(`http://localhost:5199/?${shot.query}`, { waitUntil: 'networkidle' });
   }
   // Let springs settle and fonts swap in.
   await page.waitForTimeout(1200);
+  /*
+   * Open a sub-tab before capturing.
+   *
+   * Some of what the ads have to show is not a screen with a URL — the
+   * attendance tracker and the spaced-revision list live *inside* the My
+   * Progress tab, behind a control. The alternative was a query parameter per
+   * sub-tab, which is a preview-only code path in a screen that ships.
+   *
+   * Controls are found by their accessibility label, which is the same
+   * discipline `check:smoke` follows and for the same reason: a control this
+   * harness cannot find is one TalkBack cannot announce either, so a tap that
+   * stops working is a real defect rather than a broken test.
+   *
+   * `force` because these controls animate continuously — Playwright's
+   * "stable" wait never resolves against a spring that is still settling.
+   */
+  for (const label of shot.tap ?? []) {
+    await page
+      .locator(`[aria-label="${label}"]`)
+      .first()
+      .click({ force: true, timeout: 15000 });
+    await page.waitForTimeout(700);
+  }
   if (shot.scroll === 'bottom') {
     // react-native-web renders ScrollView as an overflow container, so the
     // window does not scroll — find the scroller and drive it directly.

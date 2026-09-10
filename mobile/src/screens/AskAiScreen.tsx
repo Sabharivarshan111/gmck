@@ -34,6 +34,9 @@ import { DURATION, EASE, useReducedMotion } from '@/theme/motion';
 import { useTheme, withAlpha } from '@/theme';
 import { GradientFill } from '@/components/Gradient';
 import { McqCard } from '@/components/McqCard';
+// A poke is a commit — the reader deliberately touched the face — so it earns
+// `tick` rather than the weaker press feedback `Touchable` already gives.
+import { tick } from '@/lib/haptics';
 import { MessageEntrance } from '@/components/MessageEntrance';
 import { ThinkingDots } from '@/components/ThinkingDots';
 import { RevealText } from '@/components/RevealText';
@@ -94,13 +97,64 @@ export default function AskAiScreen() {
   const [typing, setTyping] = useState(false);
   const focused = useIsFocused();
 
+  /**
+   * A face the bot is wearing for a moment, over whatever it would otherwise be.
+   *
+   * Answering an MCQ and poking the bot both write here. It clears itself,
+   * because every one of these is a beat rather than a mode — a bot left
+   * wincing at a question answered four minutes ago has stopped meaning
+   * anything.
+   */
+  const [reaction, setReaction] = useState<StateId | null>(null);
+  const reactionTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const react = useCallback((next: StateId, ms = 1800) => {
+    setReaction(next);
+    if (reactionTimer.current) {
+      clearTimeout(reactionTimer.current);
+    }
+    reactionTimer.current = setTimeout(() => setReaction(null), ms);
+  }, []);
+
+  // A timer that outlives the screen would set state on an unmounted tree.
+  useEffect(
+    () => () => {
+      if (reactionTimer.current) {
+        clearTimeout(reactionTimer.current);
+      }
+    },
+    [],
+  );
+
+  /**
+   * Poking the bot.
+   *
+   * It looks up, then winks, and if you keep going it gets fed up — which is
+   * the whole joke, and it is why the count matters rather than just the tap.
+   * A face that does exactly the same thing every time you touch it is a
+   * button; one that notices you are doing it repeatedly is a character.
+   *
+   * The run resets after a second and a half of being left alone, so coming
+   * back to it later starts over rather than picking up mid-sulk.
+   */
+  const pokes = useRef({ count: 0, at: 0 });
+  const poke = useCallback(() => {
+    const now = Date.now();
+    const run = pokes.current;
+    run.count = now - run.at < 1500 ? run.count + 1 : 1;
+    run.at = now;
+    tick();
+    react(run.count >= 4 ? 'dismay' : run.count % 2 === 0 ? 'wink' : 'wide', 1200);
+  }, [react]);
+
   /*
-   * Six states, and the order of these checks is the priority.
+   * Seven states, and the order of these checks is the priority.
    *
    * An error outranks everything: the bot must not be mid-wink about an answer
    * that failed to arrive. Unfocused outranks the rest because a screen nobody
    * is looking at should cost nothing, and `sleep` is the state whose loop
-   * stops immediately.
+   * stops immediately. A reaction sits below `thinking` on purpose — a wince
+   * that hides the fact a request is in flight has taken away the spinner.
    */
   const lastFailed = messages[messages.length - 1]?.failed === true;
   const botState: StateId = lastFailed
@@ -109,9 +163,8 @@ export default function AskAiScreen() {
       ? 'sleep'
       : loading
         ? 'thinking'
-        : justAnswered
-          ? 'wide'
-          : 'idle';
+        : (reaction ??
+          (justAnswered ? 'wide' : 'idle'));
   const [isFullscreen, setIsFullscreen] = useState(false);
   /**
    * Which assistant messages have finished revealing.
@@ -367,9 +420,15 @@ export default function AskAiScreen() {
             second spinner beside it. See components/Bot.tsx for why the loop
             stops on its own, and src/bot/ for the engine.
           */}
-          <View style={[styles.avatar, { backgroundColor: withAlpha(colors.accent, 0.16) }]}>
+          <Touchable
+            onPress={poke}
+            label="The assistant"
+            hint="Tap to say hello"
+            scaleTo={0.92}
+            hitSlop={6}
+            style={[styles.avatar, { backgroundColor: withAlpha(colors.accent, 0.16) }]}>
             <Bot state={botState} size={34} active={focused} watchingInput={typing} />
-          </View>
+          </Touchable>
           <Text style={[styles.assistantName, { color: colors.text }]}>
             Medical <Text style={{ color: colors.fuchsia }}>Assistant</Text>
           </Text>
@@ -443,7 +502,12 @@ export default function AskAiScreen() {
                         {item.text}
                       </Text>
                       {item.mcqs.map((mcq, i) => (
-                        <McqCard key={`${item.id}-${i}`} item={mcq} index={i} />
+                        <McqCard
+                          key={`${item.id}-${i}`}
+                          item={mcq}
+                          index={i}
+                          onAnswer={correct => react(correct ? 'wink' : 'dismay', 2200)}
+                        />
                       ))}
                     </View>
                   </MessageEntrance>

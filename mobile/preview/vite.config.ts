@@ -57,6 +57,18 @@ export default defineConfig({
         replacement: path.resolve(__dirname, 'shims', 'orbit-files.ts'),
       },
       {
+        find: '@/native/NativeOrbitUpdate',
+        replacement: path.resolve(__dirname, 'shims', 'orbit-update.ts'),
+      },
+      {
+        find: 'react-native-webview',
+        replacement: path.resolve(__dirname, 'shims', 'webview.tsx'),
+      },
+      {
+        find: '@/native/NativeOrbitBilling',
+        replacement: path.resolve(__dirname, 'shims', 'orbit-billing.ts'),
+      },
+      {
         find: '@/native/NativeOrbitApkg',
         replacement: path.resolve(__dirname, 'shims', 'orbit-apkg.ts'),
       },
@@ -91,10 +103,6 @@ export default defineConfig({
       {
         find: 'react-native-video',
         replacement: path.resolve(__dirname, 'shims', 'video.tsx'),
-      },
-      {
-        find: 'react-native-razorpay',
-        replacement: path.resolve(__dirname, 'shims', 'razorpay.ts'),
       },
       {
         find: 'react-native-google-mobile-ads',

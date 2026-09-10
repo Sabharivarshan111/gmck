@@ -72,6 +72,18 @@ there is no way around it: everything modern Anki exports is zstd. Its ProGuard
 keep is load-bearing — R8 cannot see JNI callbacks, so without it the importer
 works in every test build and fails only in the shipped one.
 
+**The version is pinned at 1.5.7-1 or later, for 16 KB pages.** Android 15
+allows a 16 KB memory page, and a `.so` aligned to less cannot be mapped — the
+app dies on `System.loadLibrary`, which here is the moment somebody opens their
+first package. Play rejected version 14 naming `libzstd-jni-1.5.6-9.so`.
+
+`ndkVersion` cannot fix this, and Google's own remediation text ("upgrade to
+NDK r28") sends you the wrong way: that governs code we compile, and zstd-jni
+ships an AAR with the `.so` files already built. Measured PT_LOAD alignment —
+1.5.6-9 is arm64 65536 / **x86_64 4096**, 1.5.7-16 is 16384 for both. x86_64
+was the failure. `check:apkg` enforces the floor; re-measure rather than trust a
+release note, which does not mention alignment.
+
 ## The name is used for compatibility, and that has rules
 
 Anki's code is **AGPL-3.0** and AnkiDroid's is **GPL-3.0**. Neither is in this
