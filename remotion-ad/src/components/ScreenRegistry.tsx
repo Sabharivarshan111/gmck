@@ -52,6 +52,43 @@ export const SCREENS: Record<string, ScreenAsset> = {
   progress: { kind: 'screen', file: 'app_screens/progress.png' },
   progressBottom: { kind: 'screen', file: 'app_screens/progress-bottom.png' },
 
+  // --- captured with the harness's `tap`, because they live behind a control
+  //     rather than behind a URL --------------------------------------------
+  attendance: { kind: 'screen', file: 'app_screens/attendance.png' },
+  attendancePostings: { kind: 'screen', file: 'app_screens/attendance-postings.png' },
+  settings: { kind: 'screen', file: 'app_screens/settings.png' },
+  settingsNotifications: { kind: 'screen', file: 'app_screens/settings-bottom.png' },
+  // First year, for the ad that is about first year. The default browse shot
+  // is second year and naming the wrong subjects under a first-year claim is
+  // the sort of thing a viewer notices and nobody else does.
+  browseFirst: { kind: 'screen', file: 'app_screens/browse-first.png' },
+  notesBottom: { kind: 'screen', file: 'app_screens/notes-bottom.png' },
+  flashcardsBottom: { kind: 'screen', file: 'app_screens/flashcards-decks-bottom.png' },
+
+  // --- walkthroughs captured by their own harnesses and committed ----------
+  apkgHubOnly: { kind: 'screen', file: 'app_screens/apkg-1-hub.png' },
+  apkgInstructions: { kind: 'screen', file: 'app_screens/apkg-2-instructions.png' },
+  apkgChooser: { kind: 'screen', file: 'app_screens/apkg-3-chooser.png' },
+  apkgNarrowed: { kind: 'screen', file: 'app_screens/apkg-4-narrowed.png' },
+  apkgShare: { kind: 'screen', file: 'app_screens/apkg-5-share.png' },
+  apkgShared: { kind: 'screen', file: 'app_screens/apkg-6-shared.png' },
+
+  pageRefToggle: { kind: 'screen', file: 'app_screens/pageref-2-toggle-on.png' },
+  pageRefSheet: { kind: 'screen', file: 'app_screens/pageref-3-sheet.png' },
+  pageRefAddBook: { kind: 'screen', file: 'app_screens/pageref-4-add-book.png' },
+  pageRefQuorum: { kind: 'screen', file: 'app_screens/pageref-6-quorum.png' },
+
+  tourWelcome: { kind: 'screen', file: 'app_screens/tour-01-welcome.png' },
+  tourSpotlight: { kind: 'screen', file: 'app_screens/tour-02-spotlight.png' },
+  tourGestures: { kind: 'screen', file: 'app_screens/tour-03-gestures.png' },
+  tourPomodoro: { kind: 'screen', file: 'app_screens/tour-04-pomodoro.png' },
+
+  homeEditTaller: { kind: 'screen', file: 'app_screens/homeedit-5-taller.png' },
+  homeEditPicture: { kind: 'screen', file: 'app_screens/homeedit-7-picture.png' },
+  glassNotes: { kind: 'screen', file: 'app_screens/glass-notes.png' },
+  glassProgress: { kind: 'screen', file: 'app_screens/glass-progress.png' },
+  noteToolbar: { kind: 'screen', file: 'app_screens/notetoolbar-both-preview.png' },
+
   // --- real plates, pulled from Supabase storage by scripts/fetch-plates ---
   plateBrachial: { kind: 'plate', file: 'app_screens/plate-brachial-plexus.jpg' },
   plateUlnar: { kind: 'plate', file: 'app_screens/plate-ulnar-nerve.jpg' },

@@ -75,6 +75,10 @@ const fromShoot = [
    * anything not produced here is now genuinely absent, and preflight says so.
    */
   'questions-chapters', 'questions-leaf', 'home-edit',
+  // Behind a control rather than a URL — the harness taps them open by their
+  // accessibility label, which is also proof that TalkBack can reach them.
+  'attendance', 'attendance-postings', 'settings', 'settings-bottom',
+  'browse-first', 'notes-bottom', 'flashcards-decks-bottom',
 ];
 // Screens the harness does not produce, kept in the repo's screenshots/ dir.
 const fromRepo = [
@@ -87,6 +91,12 @@ const fromRepo = [
    */
   'glass-progress', 'tour-03-gestures', 'bot-liquidglass', 'apkg-3-chooser',
   'homeedit-7-picture',
+  // The walkthroughs the new ads are made of. Each is a real capture from its
+  // own harness (apkg-shot, page-ref-shots, homeedit-shot); none is a mockup.
+  'apkg-2-instructions', 'apkg-4-narrowed', 'apkg-5-share', 'apkg-6-shared',
+  'pageref-2-toggle-on', 'pageref-3-sheet', 'pageref-4-add-book', 'pageref-6-quorum',
+  'tour-01-welcome', 'tour-02-spotlight', 'tour-04-pomodoro',
+  'homeedit-5-taller', 'glass-notes', 'notetoolbar-both-preview',
 ];
 
 for (const name of fromShoot) {

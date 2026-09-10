@@ -174,6 +174,55 @@ jobs:
             file: orbit-reel-functions.mp4
           - ad: orbit-reel-one-question
             file: orbit-reel-one-question.mp4
+
+          # The eleven feature reels. Each is voiced, so each renders twice —
+          # once with the voice and once as the silent cut, which is the one
+          # most people watch. They are one argument each, on purpose: an ad
+          # that covers everything is an ad nobody finishes.
+          - ad: orbit-reel-anki
+            file: orbit-reel-anki.mp4
+          - ad: orbit-reel-anki-silent
+            file: orbit-reel-anki-silent.mp4
+          - ad: orbit-reel-attendance
+            file: orbit-reel-attendance.mp4
+          - ad: orbit-reel-attendance-silent
+            file: orbit-reel-attendance-silent.mp4
+          - ad: orbit-reel-second-year
+            file: orbit-reel-second-year.mp4
+          - ad: orbit-reel-second-year-silent
+            file: orbit-reel-second-year-silent.mp4
+          - ad: orbit-reel-setup
+            file: orbit-reel-setup.mp4
+          - ad: orbit-reel-setup-silent
+            file: orbit-reel-setup-silent.mp4
+          - ad: orbit-reel-pages
+            file: orbit-reel-pages.mp4
+          - ad: orbit-reel-pages-silent
+            file: orbit-reel-pages-silent.mp4
+          - ad: orbit-reel-first-year
+            file: orbit-reel-first-year.mp4
+          - ad: orbit-reel-first-year-silent
+            file: orbit-reel-first-year-silent.mp4
+          - ad: orbit-reel-spaced
+            file: orbit-reel-spaced.mp4
+          - ad: orbit-reel-spaced-silent
+            file: orbit-reel-spaced-silent.mp4
+          - ad: orbit-reel-progress
+            file: orbit-reel-progress.mp4
+          - ad: orbit-reel-progress-silent
+            file: orbit-reel-progress-silent.mp4
+          - ad: orbit-reel-reminder
+            file: orbit-reel-reminder.mp4
+          - ad: orbit-reel-reminder-silent
+            file: orbit-reel-reminder-silent.mp4
+          - ad: orbit-reel-yours
+            file: orbit-reel-yours.mp4
+          - ad: orbit-reel-yours-silent
+            file: orbit-reel-yours-silent.mp4
+          - ad: orbit-reel-notes
+            file: orbit-reel-notes.mp4
+          - ad: orbit-reel-notes-silent
+            file: orbit-reel-notes-silent.mp4
     steps:
       - uses: actions/checkout@v4
 
