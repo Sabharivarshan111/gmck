@@ -108,23 +108,31 @@ android {
         applicationId "com.aistudio.mbbsqbank.aycxvd"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        // 14 / "0.0.0.14" is what the listing serves. Play rejects an upload
-        // whose versionCode is not higher than the last one, so bump these for
-        // every subsequent upload — INCLUDING a re-upload after a rejection.
+        // 17 is the highest versionCode ever uploaded to Play, so 18 is next.
         //
-        // This comment said 13 for weeks and it was wrong. What produced the
-        // error is worth knowing because the same shape will produce it again:
-        // an upload of 14 was refused, the refusal was written down here as
-        // "14 was rejected, 13 is live", and nothing ever re-checked. A
-        // rejection of one upload is not proof of what the listing serves.
-        // Ask the console, not this file.
+        // The app's owner read that off their own console on 2026-09-11. This
+        // file has been wrong about it twice — it said 13 for weeks, then 14 —
+        // and the rule that keeps coming out of that is the same one every
+        // time: **ask the console, not this file.** A rejection of one upload
+        // is not proof of what the listing serves, and neither is a comment.
+        //
+        // The repo briefly ran ahead to 23. Those numbers were CI artifacts
+        // and were never uploaded, so nothing consumed them and 18 is free.
+        // That only holds while it stays true: an internal or closed-track
+        // upload consumes a versionCode exactly like a production one, so if
+        // any build between 18 and 23 was ever pushed to Play, this has to
+        // jump past it.
+        //
+        // Play rejects an upload whose versionCode is not higher than the last
+        // one, so bump these for every subsequent upload — INCLUDING a
+        // re-upload after a rejection.
         //
         // 14 was rejected: "your app could crash on 16 KB devices", naming
         // libzstd-jni-1.5.6-9.so. That is fixed (zstd-jni is 1.5.7-16 below,
         // whose x86_64 library is 16 KB aligned where 1.5.6-9's was 4 KB), but
         // the fix cannot reach Play under the version that was refused.
-        versionCode 23
-        versionName "0.0.0.23"
+        versionCode 18
+        versionName "0.0.0.18"
 
         // Deep-link / OAuth callback scheme, consumed by the intent-filter in
         // AndroidManifest.xml. Added with an indexed put rather than assigning
