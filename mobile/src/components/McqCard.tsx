@@ -23,7 +23,24 @@ const LETTERS = ['A', 'B', 'C', 'D'] as const;
  * extra tap every single time. It appears with the result, which is the moment
  * it becomes useful.
  */
-function McqCardBase({ item, index }: { item: Mcq; index: number }) {
+function McqCardBase({
+  item,
+  index,
+  onAnswer,
+}: {
+  item: Mcq;
+  index: number;
+  /**
+   * Told once, when the first answer is picked.
+   *
+   * The chat's avatar reacts to it — a wink for right, a wince for wrong. It
+   * is a callback rather than the card reaching for the bot itself, because a
+   * card in a list has no business knowing what else is on the screen, and
+   * because `check:fanout`'s rule applies here too: this is rendered once per
+   * question and must not subscribe to anything.
+   */
+  onAnswer?: (correct: boolean) => void;
+}) {
   const { colors } = useTheme();
   const reduceMotion = useReducedMotion();
   const [picked, setPicked] = useState<string | null>(null);
@@ -50,9 +67,17 @@ function McqCardBase({ item, index }: { item: Mcq; index: number }) {
   const choose = useCallback(
     (letter: string) => {
       // First answer only — see the note above.
-      setPicked(prev => prev ?? letter);
+      setPicked(prev => {
+        if (prev) {
+          return prev;
+        }
+        // Told once, on the first answer, for the same reason: the bot must
+        // not wince again because somebody tapped a greyed-out option.
+        onAnswer?.(letter === item.correct);
+        return letter;
+      });
     },
-    [],
+    [item.correct, onAnswer],
   );
 
   const correct = picked === item.correct;

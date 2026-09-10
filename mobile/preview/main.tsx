@@ -762,12 +762,59 @@ function TcaNoteDemo() {
 function McqDemo() {
   const { colors } = useTheme();
   const items = parseMcqs(SAMPLE_MCQ_RESPONSE) ?? [];
+  /*
+   * The bot is here because the reaction is a two-component behaviour and
+   * neither half proves it alone: `McqCard` reports the answer, the screen
+   * decides the face. The real screen cannot be driven from a browser — its
+   * MCQs come from ask-gemini, which needs a key and costs quota — so this is
+   * where the wiring is reviewable, using the same props the screen passes.
+   */
+  const [reaction, setReaction] = React.useState<StateId | null>(null);
+  const timer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+  const react = React.useCallback((next: StateId) => {
+    setReaction(next);
+    if (timer.current) clearTimeout(timer.current);
+    timer.current = setTimeout(() => setReaction(null), 2200);
+  }, []);
+  const pokes = React.useRef({ count: 0, at: 0 });
+
   return (
     <ScrollView
       style={{ backgroundColor: colors.background }}
       contentContainerStyle={{ padding: 16, paddingBottom: 48, gap: 10 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+        <Touchable
+          onPress={() => {
+            const now = Date.now();
+            const run = pokes.current;
+            run.count = now - run.at < 1500 ? run.count + 1 : 1;
+            run.at = now;
+            react(run.count >= 4 ? 'dismay' : run.count % 2 === 0 ? 'wink' : 'wide');
+          }}
+          label="The assistant"
+          hint="Tap to say hello"
+          scaleTo={0.92}
+          style={{
+            width: 44,
+            height: 44,
+            borderRadius: 22,
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: withAlpha(colors.accent, 0.16),
+          }}>
+          <Bot state={reaction ?? 'idle'} size={34} active />
+        </Touchable>
+        <Text style={{ color: colors.textMuted, fontSize: 12 }}>
+          {reaction ? `reacting: ${reaction}` : 'reacting: none'}
+        </Text>
+      </View>
       {items.map((item, i) => (
-        <McqCard key={i} item={item} index={i} />
+        <McqCard
+          key={i}
+          item={item}
+          index={i}
+          onAnswer={correct => react(correct ? 'wink' : 'dismay')}
+        />
       ))}
     </ScrollView>
   );

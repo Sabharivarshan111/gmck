@@ -292,12 +292,78 @@ async function callGemini(
   return text;
 }
 
-function parseJson(raw: string): any {
+/**
+ * The first complete JSON value in whatever the model sent back.
+ *
+ * This used to strip one leading fence and one trailing fence and JSON.parse
+ * the whole remainder, which throws the moment the model emits ANYTHING after
+ * the array closes — a second fenced block, a line of commentary:
+ *
+ *     SyntaxError: Unexpected non-whitespace character after JSON at position 6975
+ *
+ * That is what production was doing, and the throw lands before the deck is
+ * built, so the `flashcards` upsert at the bottom of this file was never
+ * reached: four rows, none newer than 27 August, while readers generated decks
+ * every day and paid the full Gemini cost for each one.
+ *
+ * `parseMcqs` in the client has taken the outermost bracket pair since the day
+ * it was written, and CLAUDE.md says why: the model decorates its JSON whatever
+ * the prompt demands. Prompting it not to is not a fix — it complies most of
+ * the time, which is worse than never, because the failure is then rare enough
+ * to look like something else.
+ *
+ * Scanned rather than matched with a regex: a regex cannot count depth, and a
+ * card's own text contains brackets and escaped quotes routinely.
+ */
+function extractJson(raw: string): string {
   let text = raw.trim();
   if (text.startsWith("```")) {
-    text = text.replace(/^```(?:json)?/i, "").replace(/```\s*$/g, "").trim();
+    text = text.replace(/^```(?:json)?/i, "").trim();
   }
-  return JSON.parse(text);
+  const open = text.search(/[[{]/);
+  if (open === -1) {
+    return text;
+  }
+  const closer = text[open] === "[" ? "]" : "}";
+  const opener = text[open];
+  let depth = 0;
+  let inString = false;
+  let escaped = false;
+  for (let i = open; i < text.length; i++) {
+    const ch = text[i];
+    if (escaped) {
+      escaped = false;
+      continue;
+    }
+    if (ch === "\\") {
+      // Only meaningful inside a string, and harmless outside one.
+      escaped = true;
+      continue;
+    }
+    if (ch === '"') {
+      inString = !inString;
+      continue;
+    }
+    if (inString) {
+      continue;
+    }
+    if (ch === opener) {
+      depth++;
+    } else if (ch === closer) {
+      depth--;
+      if (depth === 0) {
+        return text.slice(open, i + 1);
+      }
+    }
+  }
+  // Unbalanced: hand back what is there and let JSON.parse produce the real
+  // message. A truncated response is a different failure from a decorated one,
+  // and pretending to have salvaged it would hide that.
+  return text.slice(open);
+}
+
+function parseJson(raw: string): any {
+  return JSON.parse(extractJson(raw));
 }
 
 function cleanQuestion(q: string): string {
