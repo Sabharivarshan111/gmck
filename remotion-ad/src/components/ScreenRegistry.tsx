@@ -62,6 +62,7 @@ export const SCREENS: Record<string, ScreenAsset> = {
   // is second year and naming the wrong subjects under a first-year claim is
   // the sort of thing a viewer notices and nobody else does.
   browseFirst: { kind: 'screen', file: 'app_screens/browse-first.png' },
+  browseThird: { kind: 'screen', file: 'app_screens/browse-third.png' },
   notesBottom: { kind: 'screen', file: 'app_screens/notes-bottom.png' },
   flashcardsBottom: { kind: 'screen', file: 'app_screens/flashcards-decks-bottom.png' },
 

@@ -230,6 +230,14 @@ jobs:
             file: orbit-reel-notes.mp4
           - ad: orbit-reel-notes-silent
             file: orbit-reel-notes-silent.mp4
+          - ad: orbit-reel-third-year
+            file: orbit-reel-third-year.mp4
+          - ad: orbit-reel-third-year-silent
+            file: orbit-reel-third-year-silent.mp4
+          - ad: orbit-reel-final-year
+            file: orbit-reel-final-year.mp4
+          - ad: orbit-reel-final-year-silent
+            file: orbit-reel-final-year-silent.mp4
     steps:
       - uses: actions/checkout@v4
 

@@ -78,7 +78,7 @@ const fromShoot = [
   // Behind a control rather than a URL — the harness taps them open by their
   // accessibility label, which is also proof that TalkBack can reach them.
   'attendance', 'attendance-postings', 'settings', 'settings-bottom',
-  'browse-first', 'notes-bottom', 'flashcards-decks-bottom',
+  'browse-first', 'browse-third', 'notes-bottom', 'flashcards-decks-bottom',
 ];
 // Screens the harness does not produce, kept in the repo's screenshots/ dir.
 const fromRepo = [

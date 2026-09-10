@@ -7,3 +7,4 @@ out/
 # plate goes stale the moment the diagram is regenerated.
 public/app_screens/
 public/audio/
+__pycache__/

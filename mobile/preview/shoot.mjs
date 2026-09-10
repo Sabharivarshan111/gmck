@@ -31,6 +31,7 @@ const SHOTS = [
   // wide shot however true it is.
   { name: 'browse-final', query: 'screen=browse&year=final-year' },
   { name: 'browse-first', query: 'screen=browse&year=first-year' },
+  { name: 'browse-third', query: 'screen=browse&year=third-year' },
   /*
    * The settings sheet, opened by its own button.
    *
