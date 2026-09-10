@@ -56,7 +56,7 @@ export const reelFinalYear: AdScript = {
     { n: 11, frames: 100, screen: 'attendancePostings', camera: 'macro', text: 'How many you can still miss', silentText: 'How many you can still miss', vo: 'And how many you can still miss. It never rounds up.', focus: 0.4, accent: '#22D3A6' },
     { n: 12, frames: 100, screen: 'userNotesEdit', camera: 'glideDown', text: 'Write up a case on the ward', silentText: 'Write a case up on rounds', vo: 'Write up a case on the ward, in the app.', accent: '#FF4D8D' },
     { n: 13, frames: 100, screen: 'userNotesMedia', mascot: 'guide', camera: 'macro', text: 'A photo, a recording, a PDF', silentText: 'A photo, a recording, a PDF', vo: 'A photo, a recording, a PDF. No limit on any of it.', accent: '#FF4D8D' },
-    { n: 14, frames: 95, screen: 'notes', camera: 'push', text: 'None of it leaves your phone', silentText: 'None of it leaves your phone', vo: 'And none of it leaves your phone.', accent: '#22D3A6' },
+    { n: 14, frames: 95, screen: 'userNotes', camera: 'push', text: 'None of it leaves your phone', silentText: 'None of it leaves your phone', vo: 'And none of it leaves your phone.', accent: '#22D3A6' },
     { n: 15, frames: 95, screen: 'timer', camera: 'push', text: 'Twenty-five minutes at a time', silentText: 'Twenty-five minutes at a time', vo: 'Revise in twenty-five minutes at a time.', accent: '#22D3A6' },
     { n: 16, frames: 95, screen: 'progress', camera: 'pull', text: 'Your streak needs no account', silentText: 'Your streak needs no account', vo: 'Your streak needs no account at all.', accent: '#F5B301' },
     { n: 17, frames: 85, screen: null, mascot: 'hero', camera: 'settle', text: 'Made for final year', silentText: 'Made for final year', vo: 'Made for final year.', accent: '#FF4D8D' },

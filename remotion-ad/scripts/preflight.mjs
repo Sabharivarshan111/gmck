@@ -102,6 +102,43 @@ const { REEL_FRAMES, resolveShotFrames, framesPerBeat } = await import(
 // rather than durations is what keeps that true at a tempo whose beat is not a
 // whole number of frames, and this is the assertion that the arithmetic did
 // not drift.
+/*
+ * Every `screen` a shot names has to be a key in SCREENS.
+ *
+ * It did not, and the gap cost most of a render. `screenAsset()` throws
+ * "Unknown screen" — a good error, raised at the worst possible moment: two
+ * reels named `notes` where the registry calls that screen `userNotes`, and
+ * the failure surfaced at **frame 975 of 1800**, after the assets job, after
+ * eight other videos had rendered, in two jobs that had each been running for
+ * minutes. Everything below already checks that a named FILE exists; nothing
+ * checked that a named KEY does.
+ *
+ * The registry is TSX and this is plain Node, so the keys are read out of the
+ * source rather than imported. That is a little crude and it is the whole
+ * point: this must not need the renderer's toolchain to run.
+ */
+const registrySource = await fs.readFile(
+  path.join(root, 'src', 'components', 'ScreenRegistry.tsx'),
+  'utf8',
+);
+const registryBody = registrySource.slice(
+  registrySource.indexOf('export const SCREENS'),
+  registrySource.indexOf('export const screenAsset'),
+);
+const screenKeys = new Set(
+  [...registryBody.matchAll(/^ {2}([A-Za-z][A-Za-z0-9]*):\s*\{/gm)].map((m) => m[1]),
+);
+for (const script of scripts) {
+  for (const shot of script.shots) {
+    if (shot.screen && !screenKeys.has(shot.screen)) {
+      problems.push(
+        `${script.id} shot ${shot.n} names screen "${shot.screen}", which is not in ` +
+          `SCREENS — the render throws on the frame that first shows it`,
+      );
+    }
+  }
+}
+
 for (const script of scripts) {
   if (script.format !== 'reel') {
     continue;
