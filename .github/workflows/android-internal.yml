@@ -133,6 +133,7 @@ jobs:
           npm run check:preview-parity
           npm run check:native-update
           npm run check:billing
+          npm run check:attendance
 
       # Test ads come from source, not from the bundler's dev flag — see
       # mobile/src/lib/adsMode.ts. The Gradle plugin bundles this variant

@@ -2178,6 +2178,69 @@ await step('notes highlight, and a picture opens a drawing canvas', async () => 
 });
 
 /**
+ * Attendance: the arithmetic a student would otherwise do wrong on paper.
+ *
+ * `check:attendance` pins the maths against worked examples; this proves the
+ * screen is wired to it — that marking a class moves the count, that the
+ * verdict changes with it, and that a posting knows how many days it has left.
+ *
+ * The numbers below are chosen because they are the case that catches a
+ * rounding bug: four of five is 80%, comfortably above 75, and yet there is
+ * NOTHING spare — 4/0.75 is 5.33, floored to 5, which is exactly the five
+ * already held. An implementation that rounds says "you can miss one more",
+ * and a student who believes it drops below the line.
+ */
+await step('attendance counts classes, and says what is still spare', async () => {
+  await open('screen=progress');
+  await declineAdPromptIfShown();
+  await byLabel('Attendance').first().click({ force: true });
+  await page.waitForTimeout(700);
+
+  await byLabel('Add a subject').click({ force: true });
+  await page.waitForTimeout(500);
+  await byLabel('Subject name').fill('Pathology');
+  await byLabel('Add this subject').click({ force: true });
+  await page.waitForTimeout(600);
+
+  for (let i = 0; i < 4; i += 1) {
+    await byLabel('Mark present for Pathology').click({ force: true });
+    await page.waitForTimeout(150);
+  }
+  await byLabel('Mark absent for Pathology').click({ force: true });
+  await page.waitForTimeout(600);
+
+  const body = await page.locator('body').innerText();
+  if (!/4 of 5 classes/.test(body)) {
+    throw new Error('marking present and absent did not move the count');
+  }
+  if (!/80%/.test(body)) {
+    throw new Error('four of five is not being reported as 80%');
+  }
+  if (!/cannot miss another one/.test(body)) {
+    throw new Error(
+      `80% with nothing spare was not reported as such: ${(body.match(/You can[^\n]*|Exactly[^\n]*|Below[^\n]*/) || ['(no verdict)'])[0]}`,
+    );
+  }
+
+  // A posting knows its length, which is what makes "you can miss N" honest.
+  await byLabel('Clinical postings').click({ force: true });
+  await page.waitForTimeout(600);
+  await byLabel('Add a posting').click({ force: true });
+  await page.waitForTimeout(500);
+  await byLabel('Posting name').fill('Paediatrics');
+  await byLabel('Length of the posting in days').fill('30');
+  await byLabel('Add this posting').click({ force: true });
+  await page.waitForTimeout(600);
+  await byLabel('Mark present for Paediatrics').click({ force: true });
+  await page.waitForTimeout(500);
+
+  const posting = await page.locator('body').innerText();
+  if (!/29 left/.test(posting)) {
+    throw new Error('a posting is not counting down the days it has left');
+  }
+});
+
+/**
  * Tapping a picture opens it full screen.
  *
  * The reader asked for this of every picture in the app — a triple-tap

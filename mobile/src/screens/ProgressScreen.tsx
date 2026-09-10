@@ -60,14 +60,22 @@ import { useSettings } from '@/lib/settings';
 import { useExam } from '@/hooks/useExam';
 import { Brain } from 'lucide-react-native';
 import { AdminPanel } from '@/components/AdminPanel';
-import { ProgressCalendarTab } from '@/components/ProgressCalendarTab';
+import { AttendanceTab } from '@/components/AttendanceTab';
 import { ProgressNotesTab } from '@/components/ProgressNotesTab';
 
-type Tab = 'stats' | 'calendar' | 'notes';
+type Tab = 'stats' | 'attendance' | 'notes';
 
 const TABS: { key: Tab; label: string }[] = [
   { key: 'stats', label: 'Stats' },
-  { key: 'calendar', label: 'Calendar' },
+  /*
+   * Attendance, not Calendar.
+   *
+   * The Calendar was a month grid you could pin a note to, and almost nobody
+   * did — an exam date already lives in the countdown above, and everything
+   * else a student writes down goes in their notes. What they DO count, every
+   * week, is whether they are still above seventy-five.
+   */
+  { key: 'attendance', label: 'Attendance' },
   { key: 'notes', label: 'Notes' },
 ];
 
@@ -443,8 +451,8 @@ export default function ProgressScreen() {
         })}
       </View>
 
-      {tab === 'calendar' ? (
-        <ProgressCalendarTab />
+      {tab === 'attendance' ? (
+        <AttendanceTab />
       ) : (
         <>
           {/* Year ring */}

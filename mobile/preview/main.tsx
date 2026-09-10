@@ -18,6 +18,7 @@ import type { StateId } from '@/bot/states';
 import RootNavigator from '@/navigation/RootNavigator';
 import { hydrateProgress } from '@/lib/progress';
 import { hydrateSettings } from '@/lib/settings';
+import { hydrateAttendance } from '@/lib/attendance';
 import { hydrateProfile, hydrateStreak } from '@/hooks/useProfile';
 import { DailyAdConsent } from '@/components/DailyAdConsent';
 import { XpToast } from '@/components/XpToast';
@@ -1058,6 +1059,10 @@ function Shell() {
   React.useEffect(() => {
     hydrateProgress();
       hydrateSettings().catch(() => {});
+    // Read once at launch, like every other on-device store. The Attendance
+    // tab renders from memory, so a card that had to wait for storage would
+    // flash "no subjects yet" at somebody who has six.
+    hydrateAttendance().catch(() => {});
     hydrateProfile().catch(() => {});
     // Separate from the profile: this half must land even when the cloud
     // half cannot. See hydrateStreak.

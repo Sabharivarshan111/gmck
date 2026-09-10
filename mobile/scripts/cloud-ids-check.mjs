@@ -63,7 +63,13 @@ const HOOKS = [];
 const LOCAL_ONLY = [
   { file: 'src/hooks/useUserNotes.ts', what: 'personal study notes' },
   { file: 'src/lib/noteImages.ts', what: 'pictures attached to a study note' },
-  { file: 'src/hooks/useCalendarEvents.ts', what: 'calendar events and exam targets' },
+  /*
+   * Attendance replaced the calendar, and inherits its rule wholesale.
+   *
+   * A record of which days somebody turned up is a record of their movements.
+   * It is a stronger reason than the calendar ever had, not a weaker one.
+   */
+  { file: 'src/lib/attendance.ts', what: 'which classes and postings you attended' },
   { file: 'src/lib/forest.ts', what: 'the record of when this phone was concentrating' },
   /*
    * An imported Anki deck is somebody else's copyrighted work that the reader

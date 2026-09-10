@@ -7,6 +7,7 @@ import { ThemeProvider, useTheme } from '@/theme';
 import RootNavigator from '@/navigation/RootNavigator';
 import { hydrateLastStudyDay, hydrateProgress, reconcileProgress } from '@/lib/progress';
 import { hydrateSettings } from '@/lib/settings';
+import { hydrateAttendance } from '@/lib/attendance';
 import { hydrateProfile, hydrateStreak } from '@/hooks/useProfile';
 import { initializeAds } from '@/lib/ads';
 import { hydratePremium, usePremiumSync } from '@/lib/premium';
@@ -30,6 +31,10 @@ function Shell() {
     // Load saved completion state before the first counts render, then try a
     // best-effort cloud merge (a no-op when signed out or offline).
     hydrateSettings().catch(() => {});
+    // Read once at launch, like every other on-device store. The Attendance
+    // tab renders from memory, so a card that had to wait for storage would
+    // flash "no subjects yet" at somebody who has six.
+    hydrateAttendance().catch(() => {});
     hydrateProgress().then(() => {
       reconcileProgress().catch(() => {});
       /*
