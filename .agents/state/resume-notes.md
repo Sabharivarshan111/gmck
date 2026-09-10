@@ -887,3 +887,70 @@ stable. **It fails on a clean tree too** — confirmed by stashing this work and
 re-running. It looks like Playwright's stability wait never settling under this
 sandbox's heavily throttled clock rather than an app fault, but it has not been
 run to ground.
+
+## 2026-09-10 — Claude Code — four reported layout bugs, and the card cap
+
+All four came with screenshots, and three of them were the same class of
+mistake: a fixed size meeting a string nobody measured.
+
+### The topic header was clipped at BOTH ends
+
+`GradientText` draws SVG text, and **SVG text does not wrap and does not
+shrink**. At a fixed 24px, "Obstetrics & Gynaecology" is wider than the header,
+and because it is centred it overflowed both edges — the first letter under the
+back button, the last off the right of the screen. It read as broken text and
+was drawn exactly as asked.
+
+`width: '100%'` on the wrapper is why no layout check ever saw it: the wrapper
+was always the right size, and only the glyphs overflowed.
+
+It now measures its box and steps the size down; `textLength` with
+`lengthAdjust="spacing"` is a last resort once the size has bottomed out, and
+**only then** — the first attempt applied it whenever the title did not fit at
+full size, which stretched an already-shrunk title back out to the full width
+of the header. Caught by measuring, not by reading.
+
+**The browser cannot reproduce the original clipping** — Chrome's fallback font
+is narrower than the phone's Roboto, so it fit there before and after. The
+shrink is driven by character count rather than font metrics, so it applies the
+same on a device; the phone is still the real proof.
+
+### The My Progress subject row sat crooked
+
+"General Surgery and Orthopaedics" is the only subject long enough to wrap
+there, and `subjectTop` centred its two children — so on that one row the `0%`
+dropped half a line below where it sits on every other row. Measured: the
+name-to-percent offsets were `2, 12, 2, 2` and are now `0, 0, 0, 0`.
+
+### Home's subject tiles
+
+Names now get a fixed two-line box, so a one-line name starts at the same
+height as the two-line name beside it (measured: an 18px spread, now 0), and
+names over twenty characters spend their letter-spacing to stay inside two
+lines. **My first hypothesis here was wrong** and my own probe disproved it: I
+measured "% Complete", which is bottom-anchored and was already aligned. The
+names were the ragged part.
+
+### 50 new cards a day was sized for the wrong deck
+
+`NEW_PER_DAY_MAX` was reasoned from `MAX_DECK_CARDS` — the biggest deck the
+generator builds. That was true of a generated deck and false from the day Anki
+import shipped: a shared `.apkg` is two or three thousand cards, and fifty a
+day means meeting the last of them next year. Now 200, with detents at 20/50/100
+so a forty-step slider still lands on the round numbers.
+
+### Spaced revision moved above the tabs
+
+Asked for, and the right shape: what is due today does not belong to one tab's
+worth of the screen. It was below the year ring inside Stats, so a reader on
+Calendar or heading to Notes never saw that anything was due.
+
+### Still open from the same message
+
+Not started: the chat mascot reacting to right/wrong MCQ answers; the first
+generated Anki deck not reaching Supabase; a YouTube link and player in notes;
+linked note files not playing; the Anki/attendance/feature ad scripts; verifying
+the "studying now" count; the Liquid Glass audit and the black circle behind the
+music player; and the Calendar → attendance tracker rebuild with a bunk
+calculator (reference: AlphaLearn's "Smart Bunk Calculator" — Theory and
+Postings tracked separately).

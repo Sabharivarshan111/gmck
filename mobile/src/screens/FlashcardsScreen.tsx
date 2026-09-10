@@ -398,7 +398,11 @@ function YearsView({
           min={NEW_PER_DAY_MIN}
           max={NEW_PER_DAY_MAX}
           step={5}
-          detents={[20]}
+          // The round numbers people actually think in. The range runs to 200
+          // for imported decks — a shared .apkg is thousands of cards and 50 a
+          // day means meeting the last of them next year — and without detents
+          // a forty-step slider makes 100 as hard to land on as 95.
+          detents={[20, 50, 100]}
           onChange={value => setSetting('newCardsPerDay', value)}
           label="New flashcards per day"
           format={value => `${value} new cards a day`}
