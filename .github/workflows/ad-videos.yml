@@ -167,13 +167,20 @@ jobs:
           - ad: orbit-reel-guide-night-silent
             file: orbit-reel-guide-night-silent.mp4
             silent: true
-          # The two subtitle-led cuts. These are registered ONCE each, not as a
-          # voiced/silent pair: they were written with no spoken track, so
-          # there is no second mix of them to render.
+          # These two were written subtitle-led, with no spoken track at all,
+          # and so rendered once each. They have a voice now: the app owner
+          # asked for every ad to exist both ways, and "no voice" was a
+          # property of two scripts rather than a choice about the campaign.
+          # Their captions were already standalone, so each became the shot's
+          # `silentText` and the spoken line was written around it.
           - ad: orbit-reel-functions
             file: orbit-reel-functions.mp4
+          - ad: orbit-reel-functions-silent
+            file: orbit-reel-functions-silent.mp4
           - ad: orbit-reel-one-question
             file: orbit-reel-one-question.mp4
+          - ad: orbit-reel-one-question-silent
+            file: orbit-reel-one-question-silent.mp4
 
           # The eleven feature reels. Each is voiced, so each renders twice —
           # once with the voice and once as the silent cut, which is the one

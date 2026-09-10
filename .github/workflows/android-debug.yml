@@ -159,6 +159,7 @@ jobs:
           npm run check:billing
           npm run check:attendance
           npm run check:admin
+          npm run check:no-simulator
           npm run check:note-links
 
       # Test ads are chosen in source now, not by the bundler's dev flag —

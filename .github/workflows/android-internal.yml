@@ -135,6 +135,7 @@ jobs:
           npm run check:billing
           npm run check:attendance
           npm run check:admin
+          npm run check:no-simulator
           npm run check:note-links
 
       # Test ads come from source, not from the bundler's dev flag — see

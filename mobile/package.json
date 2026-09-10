@@ -46,6 +46,7 @@
     "check:billing": "node scripts/billing-check.mjs",
     "check:attendance": "node scripts/attendance-check.mjs",
     "check:admin": "node scripts/admin-check.mjs",
+    "check:no-simulator": "node scripts/no-simulator-check.mjs",
     "check:note-links": "node scripts/note-links-check.mjs",
     "check:version": "node scripts/version-check.mjs",
     "check:xp": "node scripts/xp-check.mjs",

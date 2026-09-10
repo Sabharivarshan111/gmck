@@ -62,49 +62,51 @@ export const reelFunctions: AdScript = {
   id: 'orbit-reel-functions',
   title: 'Orbit MBBS — Reel: Every function',
   format: 'reel',
-  noVoice: true,
+  voice: 'en-US-AvaNeural',
+  rate: '+0%',
+  pitch: '+0Hz',
   bpm: 100,
   music: 'audio/bed/bed-functions.wav',
   shots: [
     // --- hook: two snaps. The number, then the thing about the number.
     // Four beats is 2.4s, which is over the ~1.7s at which a Reels viewer has
     // already decided — so the claim is in the FIRST shot, not built up to.
-    { n: 1, beats: 4, screen: 'questionsLeaf', camera: 'macro', kicker: 'Question bank', text: '5,634 past exam questions', focus: 0.28, accent: '#F5B301' },
-    { n: 2, beats: 4, screen: 'questionsLeaf', camera: 'macro', kicker: 'Repeat markers', text: '3,463 have been asked before', focus: 0.28, accent: '#F5B301' },
+    { n: 1, beats: 4, screen: 'questionsLeaf', camera: 'macro', kicker: 'Question bank', text: '5,634 past exam questions', focus: 0.28, accent: '#F5B301' , silentText: '5,634 past exam questions', vo: '5,634 past exam questions, all sorted.' },
+    { n: 2, beats: 4, screen: 'questionsLeaf', camera: 'macro', kicker: 'Repeat markers', text: '3,463 have been asked before', focus: 0.28, accent: '#F5B301' , silentText: '3,463 have been asked before', vo: '3,463 have been asked before.' },
 
     // --- what is in there.
-    { n: 3, beats: 4, screen: 'browse', camera: 'trackLeft', kicker: 'All four years', text: 'Every subject in your year', accent: '#7C5CFF' },
-    { n: 4, beats: 6, screen: 'questionsChapters', camera: 'push', kicker: 'Subject and chapter', text: 'Broken down to the chapter', focus: 0.35, accent: '#7C5CFF' },
-    { n: 5, beats: 6, screen: 'questionsLeaf', camera: 'macro', kicker: 'Importance stars', text: 'Four stars, four exams', focus: 0.28, accent: '#F5B301' },
+    { n: 3, beats: 4, screen: 'browse', camera: 'trackLeft', kicker: 'All four years', text: 'Every subject in your year', accent: '#7C5CFF' , silentText: 'Every subject in your year', vo: 'Every subject in your year.' },
+    { n: 4, beats: 6, screen: 'questionsChapters', camera: 'push', kicker: 'Subject and chapter', text: 'Broken down to the chapter', focus: 0.35, accent: '#7C5CFF' , silentText: 'Broken down to the chapter', vo: 'Broken down to the chapter.' },
+    { n: 5, beats: 6, screen: 'questionsLeaf', camera: 'macro', kicker: 'Importance stars', text: 'Four stars, four exams', focus: 0.28, accent: '#F5B301' , silentText: 'Four stars, four exams', vo: 'Four stars, four exams. Start there.' },
 
     // --- the payload.
-    { n: 6, beats: 6, screen: 'noteHero', camera: 'push', kicker: 'Triple tap', text: 'A full answer, written out', accent: '#FF4D8D' },
-    { n: 7, beats: 6, screen: 'noteBody', camera: 'glideDown', kicker: 'Written notes', text: 'The high-yield lines are marked', accent: '#FF4D8D' },
+    { n: 6, beats: 6, screen: 'noteHero', camera: 'push', kicker: 'Triple tap', text: 'A full answer, written out', accent: '#FF4D8D' , silentText: 'A full answer, written out', vo: 'A full answer, written out, in one gesture.' },
+    { n: 7, beats: 6, screen: 'noteBody', camera: 'glideDown', kicker: 'Written notes', text: 'The high-yield lines are marked', accent: '#FF4D8D' , silentText: 'The high-yield lines are marked', vo: 'The high-yield lines are marked for you.' },
 
     // --- the diagrams.
-    { n: 8, beats: 6, screen: 'plateBrachial', camera: 'settle', kicker: 'Exam diagrams', text: '250 diagrams, every part labelled', accent: '#22D3A6' },
-    { n: 9, beats: 4, screen: 'noteDiagram', camera: 'pull', kicker: 'Inside the note', text: 'Picture first, then the theory', accent: '#22D3A6' },
+    { n: 8, beats: 6, screen: 'plateBrachial', camera: 'settle', kicker: 'Exam diagrams', text: '250 diagrams, every part labelled', accent: '#22D3A6' , silentText: '250 diagrams, every part labelled', vo: '250 diagrams, every part labelled.' },
+    { n: 9, beats: 4, screen: 'noteDiagram', camera: 'pull', kicker: 'Inside the note', text: 'Picture first, then the theory', accent: '#22D3A6' , silentText: 'Picture first, then the theory', vo: 'Picture first, then the theory.' },
 
     // --- AI.
-    { n: 10, beats: 6, screen: 'askai', camera: 'push', kicker: 'Ask AI', text: 'Ask any medical question', accent: '#7C5CFF' },
-    { n: 11, beats: 4, screen: 'chatdemo', camera: 'macro', kicker: 'Follow-ups', text: 'Then ask it to test you', accent: '#7C5CFF' },
+    { n: 10, beats: 6, screen: 'askai', camera: 'push', kicker: 'Ask AI', text: 'Ask any medical question', accent: '#7C5CFF' , silentText: 'Ask any medical question', vo: 'Ask any medical question, in plain words.' },
+    { n: 11, beats: 4, screen: 'chatdemo', camera: 'macro', kicker: 'Follow-ups', text: 'Then ask it to test you', accent: '#7C5CFF' , silentText: 'Then ask it to test you', vo: 'Then ask it to test you.' },
 
     // --- cards.
-    { n: 12, beats: 6, screen: 'flashcards', camera: 'orbit', kicker: 'Flashcards', text: 'Anki-style cards for any chapter', accent: '#4CC2FF' },
-    { n: 13, beats: 4, screen: 'ankiStudy', camera: 'macro', kicker: 'Spaced repetition', text: 'Hard cards come back sooner', accent: '#4CC2FF' },
-    { n: 14, beats: 4, screen: 'apkgHub', camera: 'push', kicker: 'Your pace', text: 'You choose how many a day', accent: '#4CC2FF' },
+    { n: 12, beats: 6, screen: 'flashcards', camera: 'orbit', kicker: 'Flashcards', text: 'Anki-style cards for any chapter', accent: '#4CC2FF' , silentText: 'Anki-style cards for any chapter', vo: 'Anki-style cards for any chapter.' },
+    { n: 13, beats: 4, screen: 'ankiStudy', camera: 'macro', kicker: 'Spaced repetition', text: 'Hard cards come back sooner', accent: '#4CC2FF' , silentText: 'Hard cards come back sooner', vo: 'Hard cards come back sooner.' },
+    { n: 14, beats: 4, screen: 'apkgHub', camera: 'push', kicker: 'Your pace', text: 'You choose how many a day', accent: '#4CC2FF' , silentText: 'You choose how many a day', vo: 'You choose how many a day.' },
 
     // --- focus.
-    { n: 15, beats: 6, screen: 'timer', camera: 'push', kicker: 'Focus timer', text: 'Tap play to plant an oak', accent: '#22D3A6' },
-    { n: 16, beats: 4, screen: 'treegallery', camera: 'trackRight', kicker: 'Twelve species', text: 'Unlocked by the hours you focus', accent: '#22D3A6' },
-    { n: 17, beats: 4, screen: 'music', camera: 'macro', kicker: 'Your own music', text: 'Straight from your phone', accent: '#22D3A6' },
+    { n: 15, beats: 6, screen: 'timer', camera: 'push', kicker: 'Focus timer', text: 'Tap play to plant an oak', accent: '#22D3A6' , silentText: 'Tap play to plant an oak', vo: 'Tap play to plant an oak.' },
+    { n: 16, beats: 4, screen: 'treegallery', camera: 'trackRight', kicker: 'Twelve species', text: 'Unlocked by the hours you focus', accent: '#22D3A6' , silentText: 'Unlocked by the hours you focus', vo: 'Unlocked by the hours you focus, twelve species.' },
+    { n: 17, beats: 4, screen: 'music', camera: 'macro', kicker: 'Your own music', text: 'Straight from your phone', accent: '#22D3A6' , silentText: 'Straight from your phone', vo: 'Straight from your phone, your own music.' },
 
     // --- the reader's own work.
-    { n: 18, beats: 4, screen: 'userNotesEdit', camera: 'glideDown', kicker: 'Your own notes', text: 'Headings and bullets as you type', accent: '#FF4D8D' },
-    { n: 19, beats: 4, screen: 'progress', camera: 'pull', kicker: 'My progress', text: 'A name and a year to start', accent: '#F5B301' },
-    { n: 20, beats: 4, screen: 'glassHome', camera: 'orbit', kicker: 'Themes', text: 'Four themes, or build your own', accent: '#4CC2FF' },
+    { n: 18, beats: 4, screen: 'userNotesEdit', camera: 'glideDown', kicker: 'Your own notes', text: 'Headings and bullets as you type', accent: '#FF4D8D' , silentText: 'Headings and bullets as you type', vo: 'Headings and bullets as you type.' },
+    { n: 19, beats: 4, screen: 'progress', camera: 'pull', kicker: 'My progress', text: 'A name and a year to start', accent: '#F5B301' , silentText: 'A name and a year', vo: 'A name and a year to start.' },
+    { n: 20, beats: 4, screen: 'glassHome', camera: 'orbit', kicker: 'Themes', text: 'Four themes, or build your own', accent: '#4CC2FF' , silentText: 'Four themes, or build your own', vo: 'Four themes, or build your own.' },
 
     // --- one CTA, no second ask.
-    { n: 21, beats: 4, screen: 'outroCard', camera: 'settle', kicker: 'Free on Google Play', text: 'Orbit MBBS', accent: '#7C5CFF' },
+    { n: 21, beats: 4, screen: 'outroCard', camera: 'settle', kicker: 'Free on Google Play', text: 'Orbit MBBS', accent: '#7C5CFF' , silentText: 'Orbit MBBS', vo: 'Orbit MBBS. Free on Google Play.' },
   ],
 };
