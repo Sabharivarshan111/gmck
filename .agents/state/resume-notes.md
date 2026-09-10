@@ -954,3 +954,63 @@ the "studying now" count; the Liquid Glass audit and the black circle behind the
 music player; and the Calendar → attendance tracker rebuild with a bunk
 calculator (reference: AlphaLearn's "Smart Bunk Calculator" — Theory and
 Postings tracked separately).
+
+## 2026-09-10 (later) — Claude Code — attendance, a reactive mascot, and a dead deck parser
+
+### Attendance replaced the Calendar tab
+
+`src/lib/attendance.ts` + `components/AttendanceTab.tsx`, Theory and Clinical
+postings as two lists. Local only, in `check:cloud-ids`' LOCAL_ONLY list — a
+record of which days somebody turned up is a record of their movements.
+
+`npm run check:attendance` walks eighteen worked examples. **Floor, never
+round**: four of five is 80%, above the 75 line, and yet nothing is spare
+(4/0.75 = 5.33 → 5, which is the five already held). Verified by switching it
+to round and watching that example fail. Two more breakages caught: dropping
+the rotation cap, and unclamping `attended` from `held`.
+
+`ProgressCalendarTab` and `useCalendarEvents` are deleted.
+
+### The bot reacts
+
+New `dismay` state — **deliberately not `exclaim`**, which means the app
+failed. A wrong answer is not a failure of the app or of the reader, and
+reusing the alarmed face would teach that getting one wrong is the same event
+as the app breaking.
+
+`McqCard` gained `onAnswer`; `AskAiScreen` turns it into a transient face and
+the avatar is now tappable. Poking it alternates wide/wink and it gets fed up
+on the fourth in a run. Driven in the harness: wrong → `dismay`, right →
+`wink`, four pokes → `["wide","wink","wide","dismay"]`.
+
+### generate-flashcards has been throwing since August, and nobody could see it
+
+**This is the big one.** `flashcards` has four rows, none newer than 27 August,
+while the logs show decks being generated all day. Every run dies in
+`parseJson` with `Unexpected non-whitespace character after JSON at position
+6975`, which is long before the upsert — so readers pay the full Gemini cost on
+every open and get an error.
+
+The `[flashcards] subject=…` line that reads like a success is at line 749 and
+`callGemini` is at 836. **It is a pre-flight log.** That is why the feature
+looked alive in the logs while the table stood still, and it is worth
+remembering the next time a log seems to prove something.
+
+Fixed with `extractJson` — outermost bracket pair, scanned with string/escape
+tracking — which is what `parseMcqs` has done in the client since day one.
+Eight shapes checked; the shipped parser fails six.
+
+**It is committed and NOT deployed.** Queued as `sb-flashcards-json-parse`.
+The sandbox cannot reach Supabase, and the MCP connector takes each file's full
+text as a parameter — `index.ts` is 43 KB, and retyping that has one silent typo
+between it and breaking the flagship feature for everyone. So
+`.github/workflows/supabase-deploy-functions.yml` now deploys from the repo
+instead. **It cannot be dispatched until it is on `main`**: GitHub only
+registers `workflow_dispatch` from the default branch. That is the only thing
+standing between the fix and production.
+
+### Still not started
+
+YouTube links and an inline player in notes; linked note files not playing;
+verifying the "studying now" count; the Liquid Glass audit and the black circle
+behind the music player; and the ad scripts.
