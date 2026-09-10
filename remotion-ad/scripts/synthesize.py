@@ -52,6 +52,52 @@ import edge_tts
 AUDIO = pathlib.Path(__file__).resolve().parent.parent / "public" / "audio"
 MIN_BYTES = 2000
 
+# Four attempts at 3s, 6s, 12s. The far end is Microsoft's public Speech
+# endpoint and its commonest refusal is rate limiting, so the backoff starts
+# slow rather than hammering the thing that just said no.
+RETRIES = 4
+BACKOFF_SECONDS = 3
+
+
+class ThinStream(RuntimeError):
+    """The service answered, with nothing usable in it. Worth another go."""
+
+
+async def record(line: dict, ad: dict) -> tuple[bytes, list[dict]]:
+    """
+    One line, with retries, because the far end is somebody else's server.
+
+    `edge_tts` talks to Microsoft's public Speech endpoint over a websocket. It
+    throttles, it drops connections, and it sometimes closes a stream having
+    sent no audio at all — which surfaces as `NoAudioReceived` and is
+    indistinguishable, from here, from a genuinely bad request.
+
+    That killed a whole run: shot three of `orbit-the-pattern`, a script that
+    had recorded cleanly many times before, took down the synthesis step and
+    with it every one of the thirty-eight videos waiting behind it. Nothing was
+    wrong with the script. Losing an hour of rendering to one refused websocket
+    is not a flake to re-run past, it is a missing retry.
+
+    Backoff is exponential and deliberately slow to start: the usual cause is
+    rate limiting, and hammering it is what produced the limit. Four attempts,
+    and the last failure is raised — a line that genuinely cannot be spoken
+    must still stop the build, because a silent shot looks finished.
+    """
+    for attempt in range(RETRIES):
+        try:
+            return await stream_once(line, ad)
+        except Exception as error:  # noqa: BLE001 - the library raises several
+            if attempt == RETRIES - 1:
+                raise
+            wait = BACKOFF_SECONDS * (2**attempt)
+            print(
+                f"    retry {attempt + 1}/{RETRIES - 1} for {line['name']} "
+                f"in {wait}s -- {type(error).__name__}: {error}",
+                flush=True,
+            )
+            await asyncio.sleep(wait)
+    raise AssertionError("unreachable")
+
 
 async def speak(ad: dict) -> None:
     out_dir = AUDIO / ad["id"]
@@ -61,73 +107,87 @@ async def speak(ad: dict) -> None:
     for line in ad["lines"]:
         target = out_dir / f"{line['name']}.mp3"
         words_target = out_dir / f"{line['name']}.words.json"
-        communicate = edge_tts.Communicate(
-            line["text"],
-            ad["voice"],
-            rate=ad["rate"],
-            pitch=ad["pitch"],
-            # `boundary` defaults to "SentenceBoundary", and that default is
-            # the whole reason the first run of this failed: the stream came
-            # back with audio and not one word event, because the service was
-            # being asked for sentence marks. edge-tts sends exactly one of the
-            # two -- see `Communicate.__init__` and the `wd`/`sq` flags it
-            # writes into the config message -- so asking for words is not an
-            # addition, it is a choice. Words are what a caption needs; a
-            # sentence mark is the shot boundary, which the edit already knows.
-            boundary="WordBoundary",
-        )
-
-        # Assembled by hand rather than with `save()`, because `save()` drops
-        # the WordBoundary events and those are the whole point. The offsets
-        # arrive in 100-nanosecond ticks, which is the unit the Speech service
-        # speaks in; milliseconds are what everything downstream wants.
-        audio = bytearray()
-        words: list[dict] = []
-        async for chunk in communicate.stream():
-            if chunk["type"] == "audio":
-                audio.extend(chunk["data"])
-            elif chunk["type"] == "WordBoundary":
-                words.append(
-                    {
-                        "text": chunk["text"],
-                        "startMs": round(chunk["offset"] / 10_000, 1),
-                        "durationMs": round(chunk["duration"] / 10_000, 1),
-                    }
-                )
+        audio, words = await record(line, ad)
 
         target.write_bytes(bytes(audio))
         words_target.write_text(json.dumps(words, ensure_ascii=False))
 
         size = target.stat().st_size
-        if size < MIN_BYTES:
-            raise SystemExit(
-                f"{line['name']} came back {size} bytes — the speech service "
-                f"returned nothing. A silent shot must stop the build."
-            )
-        # A clip with no boundaries is a caption that cannot be synced, and it
-        # would fall back to the even spread that caused the bug. That is worth
-        # stopping the build for: it is silent damage, visible only by watching
-        # the finished film with the sound on.
-        if not words:
-            raise SystemExit(
-                f"{line['name']} came back with {size} bytes of audio and no "
-                f"word boundaries at all.\n\n"
-                f"The usual cause is the `boundary=` argument above. edge-tts "
-                f"sends WORD marks or SENTENCE marks, never both, and it "
-                f"defaults to sentences -- so a stream that carries audio and "
-                f"nothing else is the service answering the question it was "
-                f"actually asked. Check that `Communicate(...)` still passes "
-                f"boundary=\"WordBoundary\".\n\n"
-                f"Without these the captions fall back to spreading each line "
-                f"evenly across its shot, which never lines up with speech and "
-                f"is the desync this exists to fix."
-            )
         spoken = words[-1]["startMs"] + words[-1]["durationMs"]
         print(
             f"  {line['name']}  {size / 1024:5.0f}KB  "
             f"{len(words):2d} words  {spoken / 1000:5.2f}s  "
             f"\"{line['text'][:38]}\""
         )
+
+
+async def stream_once(line: dict, ad: dict) -> tuple[bytearray, list[dict]]:
+    """
+    One attempt at one line.
+
+    Everything it can be unhappy about is raised rather than exited, so
+    `record` can try again. That distinction is the point: a stream that comes
+    back empty is overwhelmingly the service refusing, and exiting on the first
+    one is what took a whole run down.
+    """
+    communicate = edge_tts.Communicate(
+        line["text"],
+        ad["voice"],
+        rate=ad["rate"],
+        pitch=ad["pitch"],
+        # `boundary` defaults to "SentenceBoundary", and that default is the
+        # whole reason the first run of this failed: the stream came back with
+        # audio and not one word event, because the service was being asked for
+        # sentence marks. edge-tts sends exactly one of the two -- see
+        # `Communicate.__init__` and the `wd`/`sq` flags it writes into the
+        # config message -- so asking for words is not an addition, it is a
+        # choice. Words are what a caption needs; a sentence mark is the shot
+        # boundary, which the edit already knows.
+        boundary="WordBoundary",
+    )
+
+    # Assembled by hand rather than with `save()`, because `save()` drops the
+    # WordBoundary events and those are the whole point. The offsets arrive in
+    # 100-nanosecond ticks, which is the unit the Speech service speaks in;
+    # milliseconds are what everything downstream wants.
+    audio = bytearray()
+    words: list[dict] = []
+    async for chunk in communicate.stream():
+        if chunk["type"] == "audio":
+            audio.extend(chunk["data"])
+        elif chunk["type"] == "WordBoundary":
+            words.append(
+                {
+                    "text": chunk["text"],
+                    "startMs": round(chunk["offset"] / 10_000, 1),
+                    "durationMs": round(chunk["duration"] / 10_000, 1),
+                }
+            )
+
+    if len(audio) < MIN_BYTES:
+        raise ThinStream(
+            f"{line['name']} came back {len(audio)} bytes -- the speech "
+            f"service returned nothing worth keeping."
+        )
+    # A clip with no boundaries is a caption that cannot be synced, and it
+    # would fall back to the even spread that caused the bug. That is worth
+    # stopping the build for: it is silent damage, visible only by watching the
+    # finished film with the sound on.
+    #
+    # The usual cause is the `boundary=` argument above. edge-tts sends WORD
+    # marks or SENTENCE marks, never both, and it defaults to sentences -- so a
+    # stream that carries audio and nothing else is the service answering the
+    # question it was actually asked.
+    if not words:
+        raise ThinStream(
+            f"{line['name']} came back with {len(audio)} bytes of audio and "
+            f"no word boundaries at all. Check that `Communicate(...)` still "
+            f"passes boundary=\"WordBoundary\" -- without the marks the "
+            f"captions fall back to spreading each line evenly across its "
+            f"shot, which never lines up with speech."
+        )
+
+    return audio, words
 
 
 async def main() -> None:

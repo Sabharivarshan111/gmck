@@ -21,6 +21,8 @@ import { reelProgress } from './reelProgress.ts';
 import { reelReminder } from './reelReminder.ts';
 import { reelYours } from './reelYours.ts';
 import { reelNotes } from './reelNotes.ts';
+import { reelThirdYear } from './reelThirdYear.ts';
+import { reelFinalYear } from './reelFinalYear.ts';
 
 /**
  * Every script that exists, in one list.
@@ -56,6 +58,8 @@ export const ALL_SCRIPTS: AdScript[] = [
   reelReminder,
   reelYours,
   reelNotes,
+  reelThirdYear,
+  reelFinalYear,
 ];
 
 /** The 60-second vertical cuts, which are the ones with fixed shot frames. */
@@ -84,6 +88,8 @@ export {
   reelReminder,
   reelYours,
   reelNotes,
+  reelThirdYear,
+  reelFinalYear,
 };
 
 /**

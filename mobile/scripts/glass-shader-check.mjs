@@ -167,8 +167,28 @@ check(
  * softest thing on screen.
  */
 check(
-  /filterMode\s*=\s*Shader\.FILTER_MODE_LINEAR/.test(view),
+  /filterMode\s*=\s*BitmapShader\.FILTER_MODE_LINEAR/.test(view),
   'the backdrop is sampled without linear filtering, so a third-scale capture is magnified back as hard blocks',
+);
+/*
+ * The constant is on BitmapShader, not on Shader.
+ *
+ * `Shader.FILTER_MODE_LINEAR` does not exist, and writing it cost a full CI
+ * cycle across three Android workflows: there is no kotlinc in the sandboxes
+ * this repo is written in, `check:kotlin` reads override signatures rather than
+ * resolving symbols, and the Gradle build is therefore the first thing in the
+ * world that can disagree with a Kotlin symbol here.
+ */
+check(
+  !/Shader\.FILTER_MODE_/.test(
+    // Comments stripped: the note above this line in GlassView.kt names the
+    // wrong constant in order to warn about it, and matched itself.
+    code('android/app/src/main/java/com/aistudio/mbbsqbank/aycxvd/GlassView.kt').replace(
+      /BitmapShader\.FILTER_MODE_/g,
+      '',
+    ),
+  ),
+  'FILTER_MODE_* is read off Shader; it is declared on BitmapShader and this will not compile',
 );
 
 /*
