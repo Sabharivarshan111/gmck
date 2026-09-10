@@ -820,3 +820,70 @@ retains one of them still errors however correct the new bundle is.
 **Never tick "I understand the ramifications… turn off release errors".** That
 declares the app ships WITHOUT the permission, which is no longer true, and it
 trades targeted-ad revenue for making a form go away.
+
+## 2026-09-10 — Claude Code — Razorpay is out of the app, and v18
+
+The app owner's decision, and the right one: **billing for in-app digital
+content outside Google Play Billing is grounds for removal of the app.** Ad-free
+and the notes unlocks are both digital content consumed in the app. ₹50 is not
+worth the listing, the reviews and the install base.
+
+### What was removed
+
+Deleted outright rather than switched off — a payment SDK that is merely
+unreferenced is one import away from being live again, and it is a native
+module and bytes in a shipped APK for nothing:
+
+* `mobile/src/lib/razorpay.ts`
+* `mobile/src/types/react-native-razorpay.d.ts`
+* `mobile/preview/shims/razorpay.ts` and its Vite alias and tsconfig path
+* the `react-native-razorpay` dependency
+
+`DailyAdConsent` was the app's ONLY purchase entry point, and it now shows a
+locked "Ad-free is coming soon — we are moving payments to Google Play. Nothing
+is for sale in the app until that is ready." A dialog that silently loses its
+offer reads as a bug, so it says why.
+
+### What was deliberately NOT removed
+
+**The entitlement.** `premium.ts`, `premium_subscriptions` and the admin
+panel's purchase history are untouched, so anyone who paid through Razorpay
+keeps their ad-free until it expires. `isPremiumCached()` still hides the
+locked card from them.
+
+An entitlement is orphaned by deleting the thing that READS it, not the thing
+that sold it. `check:billing`'s old section 8 said the opposite — "leave
+razorpay.ts for one release after Play Billing goes live" — and that reasoning
+was wrong; it has been replaced and the correction is written into the file.
+
+### Play Billing stays off
+
+`PLAY_BILLING_ENABLED = false`, which is what the owner asked for: the backend
+exists, and it must not work, because no Play Console product exists and no
+card has been set up. `check:billing` fails if that flag is ever true.
+**So the app currently sells nothing at all, on purpose.**
+
+### `check:payments` was inverted
+
+It used to guard the Razorpay flow (price on the server, HMAC verified before a
+row). It now enforces that flow's absence, which is a stronger rule. Verified
+by breaking the repo four ways and watching each fail: the dependency coming
+back, a file importing the SDK, `PLAY_BILLING_ENABLED` flipped true, and the
+"coming soon" explanation being dropped.
+
+Screenshotted the shipped dialog by forcing `ADS_ENABLED` true for one run —
+the prompt is unreachable in the preview otherwise, because `requestDailyAd`
+returns early when ads are off. The gate was restored immediately after.
+
+### v18
+
+versionCode 18 / 0.0.0.18, with its `app_releases` row saying plainly that
+ad-free is not for sale for now and that existing purchases are unaffected.
+
+### One pre-existing failure, not caused by this
+
+`npm run check:music` times out waiting for "Show the music player" to become
+stable. **It fails on a clean tree too** — confirmed by stashing this work and
+re-running. It looks like Playwright's stability wait never settling under this
+sandbox's heavily throttled clock rather than an app fault, but it has not been
+run to ground.

@@ -281,15 +281,29 @@ check(
 );
 
 // ---------------------------------------------------------------------------
-// 8. Razorpay is still here.
+// 8. Razorpay is gone, and what it sold is not.
 //
-//    The migration replaces it one release AFTER Play has taken a real payment,
-//    so an existing entitlement is never orphaned. Deleting it early is how
-//    somebody who paid last week stops being ad-free.
+//    This slot used to assert the opposite — "leave razorpay.ts in place for
+//    one release after Play Billing goes live, so an existing entitlement is
+//    never orphaned". That framing was wrong, and it was wrong in a way worth
+//    writing down: an entitlement is orphaned by deleting the thing that
+//    READS it, not the thing that sold it. `premium.ts` and
+//    `premium_subscriptions` are untouched, so everyone who paid keeps their
+//    ad-free until it expires whether or not the checkout still exists.
+//
+//    Meanwhile keeping the checkout had a real cost: billing for in-app
+//    digital content outside Play Billing is grounds for removal of the app,
+//    and the app owner decided — correctly — that ₹50 is not worth the
+//    listing. `check:payments` owns the detail; this asserts the two halves
+//    that must not drift apart.
 // ---------------------------------------------------------------------------
 check(
-  (await read('src/lib/razorpay.ts')) !== null,
-  'src/lib/razorpay.ts is gone; leave it for one release after Play Billing goes live',
+  (await read('src/lib/razorpay.ts')) === null,
+  'src/lib/razorpay.ts is back — billing for in-app digital content outside Play Billing risks removal',
+);
+check(
+  (await read('src/lib/premium.ts')) !== null,
+  'src/lib/premium.ts is gone; removing the ability to BUY must never remove what was already bought',
 );
 
 // ---------------------------------------------------------------------------
@@ -333,5 +347,5 @@ if (failures.length > 0) {
 console.log(
   'OK  OrbitBilling is a TurboModule; the client grants nothing and prices nothing; the server ' +
     'verifies against Play, upserts on the token and acknowledges after granting; RTDN is guarded; ' +
-    'the preview shim is absent and Razorpay is still the live path',
+    'the preview shim is absent, Razorpay is gone and the entitlement it sold still reads',
 );

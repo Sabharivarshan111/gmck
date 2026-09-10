@@ -1,10 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Dialog } from '@/components/Dialog';
 import { Text } from '@/components/Text';
-import { Touchable } from '@/components/Touchable';
 import { useTheme, withAlpha } from '@/theme';
-import { ADFREE_TIERS, buyAdFree } from '@/lib/razorpay';
+import { Lock } from 'lucide-react-native';
 import { isPremiumCached } from '@/lib/premium';
 import {
   confirmDailyAd,
@@ -25,9 +24,6 @@ export function DailyAdConsent() {
   const [prompt, setPrompt] = useState<DailyAdPrompt | null>(null);
   // Kept so the text does not vanish while the dialog animates out.
   const [shown, setShown] = useState<DailyAdPrompt | null>(null);
-  /** Which tier is mid-purchase, so only that row shows a spinner. */
-  const [buying, setBuying] = useState<string | null>(null);
-  const [purchaseError, setPurchaseError] = useState<string | null>(null);
 
   useEffect(() => subscribeDailyAd(setPrompt), []);
 
@@ -54,40 +50,6 @@ export function DailyAdConsent() {
     }
   }, [prompt]);
 
-  /**
-   * The offer, in the one place it is actually wanted: next to the ad the user
-   * is being asked to watch. Anywhere else it is an interruption; here it is
-   * the alternative to the thing on screen.
-   *
-   * It is not a third dialog action. "Not now" and "OK" answer the question
-   * being asked; paying is a different kind of act, and putting it in the same
-   * row would make a purchase one mis-tap away from a dismissal.
-   */
-  const buy = useCallback(
-    async (plan: string) => {
-      if (buying) {
-        return;
-      }
-      setBuying(plan);
-      setPurchaseError(null);
-      const outcome = await buyAdFree(plan).catch(() => ({
-        status: 'failed' as const,
-        message: 'Payment could not be started.',
-      }));
-      setBuying(null);
-      if (outcome.status === 'done') {
-        // Ads are off from here, so the prompt that triggered this is moot.
-        setPrompt(null);
-        return;
-      }
-      if (outcome.status === 'failed') {
-        setPurchaseError(outcome.message);
-      }
-      // A cancellation says nothing: the user closed the sheet on purpose.
-    },
-    [buying],
-  );
-
   return (
     <Dialog
       visible={prompt !== null}
@@ -95,60 +57,46 @@ export function DailyAdConsent() {
       title={shown?.title}
       message={shown?.message}
       footer={
+        /*
+         * Ad-free is not for sale right now, and this says so rather than
+         * hiding.
+         *
+         * It USED to open Razorpay's checkout from here. Google Play's
+         * Payments policy requires Play Billing for digital content consumed
+         * inside the app, and removing ads is exactly that — so taking the
+         * money through Razorpay put the whole listing at risk of removal, for
+         * fifty rupees. The Razorpay SDK, its plan table and every call to it
+         * are gone from this app; see `.agents/rules/42-play-billing.md`.
+         *
+         * The replacement is Google Play Billing, which is written and is
+         * deliberately switched off (`PLAY_BILLING_ENABLED = false`) until the
+         * products exist in Play Console and a licence tester has bought each
+         * of them once. Until then there is nothing to sell, and a button that
+         * cannot work is worse than a sentence that explains why.
+         *
+         * Someone who already paid keeps what they paid for: this is the only
+         * thing that changed, and every reader of the entitlement is untouched
+         * — which is why `isPremiumCached()` still hides this row.
+         */
         isPremiumCached() ? null : (
-          <View>
-            {/*
-              Three lengths, cheapest first, each its own row.
-
-              Not a picker and not a segmented control: this is already a
-              dialog answering a different question, and a control with a
-              *state* would need a second tap to commit. One tap per row means
-              the price the reader read is the price they pressed.
-
-              The month stays first because it is the one the prompt is really
-              offering — somebody irritated by an ad wants it gone now, not a
-              subscription decision. The longer rows carry what they work out
-              at per month, which is the only honest way to say they are
-              better value.
-            */}
-            {ADFREE_TIERS.map(tier => (
-              <Touchable
-                key={tier.plan}
-                onPress={() => buy(tier.plan)}
-                label={`Remove ads for ${tier.label}, ${tier.price}`}
-                disabled={buying !== null}
-                scaleTo={0.97}
-                style={[
-                  styles.offer,
-                  {
-                    borderColor: withAlpha(colors.accent, 0.5),
-                    backgroundColor: withAlpha(colors.accent, 0.1),
-                    opacity: buying !== null && buying !== tier.plan ? 0.5 : 1,
-                  },
-                ]}>
-                {buying === tier.plan ? (
-                  <ActivityIndicator size="small" color={colors.accent} />
-                ) : (
-                  <View style={styles.offerRow}>
-                    <Text style={[styles.offerText, { color: colors.accent }]}>
-                      No ads for {tier.label} — {tier.price}
-                    </Text>
-                    {tier.note ? (
-                      <Text style={[styles.offerNote, { color: colors.textMuted }]}>
-                        {tier.note}
-                      </Text>
-                    ) : null}
-                  </View>
-                )}
-              </Touchable>
-            ))}
-            {purchaseError ? (
-              <Text
-                accessibilityLiveRegion="polite"
-                style={[styles.offerError, { color: colors.danger }]}>
-                {purchaseError}
+          <View
+            style={[
+              styles.soon,
+              {
+                borderColor: withAlpha(colors.textMuted, 0.35),
+                backgroundColor: withAlpha(colors.textMuted, 0.08),
+              },
+            ]}>
+            <Lock size={14} color={colors.textMuted} />
+            <View style={styles.soonBody}>
+              <Text style={[styles.soonTitle, { color: colors.text }]}>
+                Ad-free is coming soon
               </Text>
-            ) : null}
+              <Text style={[styles.soonNote, { color: colors.textMuted }]}>
+                We are moving payments to Google Play. Nothing is for sale in the
+                app until that is ready.
+              </Text>
+            </View>
           </View>
         )
       }
@@ -161,30 +109,25 @@ export function DailyAdConsent() {
 }
 
 const styles = StyleSheet.create({
-  offer: {
+  soon: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 10,
     borderRadius: 12,
     borderWidth: StyleSheet.hairlineWidth,
     paddingVertical: 12,
     paddingHorizontal: 14,
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: 44,
-    marginBottom: 8,
   },
-  offerRow: {
-    alignItems: 'center',
+  soonBody: {
+    flex: 1,
+    gap: 2,
   },
-  offerNote: {
-    fontSize: 11,
-    marginTop: 2,
-  },
-  offerText: {
+  soonTitle: {
     fontSize: 14,
     fontWeight: '700',
   },
-  offerError: {
+  soonNote: {
     fontSize: 12,
     lineHeight: 17,
-    marginTop: 8,
   },
 });

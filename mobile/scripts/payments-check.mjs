@@ -1,16 +1,32 @@
-// Guards the parts of the purchase flow that must never move to the client.
+// Nothing in this app may take a payment.
 //
-// A payment is the one place in this app where a bug costs somebody money, and
-// every safe property of it lives on the server:
+// This check used to guard the Razorpay flow — that the price stayed on the
+// server, that the HMAC was verified before a row was written. That flow is
+// gone, and this now enforces its absence, which is a stronger rule than the
+// one it replaces.
 //
-//   • the price is in razorpay-create-order's PLANS table, not in the app
-//   • the order is created server-side against Razorpay's API
-//   • razorpay-verify-payment checks the HMAC signature before it writes a row
+// ## Why it was removed rather than tidied
 //
-// The client's whole job is to relay. This fails if it starts doing more than
-// that — building an order, naming an amount, or writing a subscription row
-// directly — and if the app ever claims a purchase succeeded on a response
-// that did not include a signature.
+// Google Play's Payments policy requires Google Play Billing for digital
+// content or features consumed inside the app. Removing ads and unlocking
+// notes are both exactly that. Taking that money through Razorpay is grounds
+// for removal of the app — and for a one-app developer account, removal is the
+// end of the listing, the reviews and the install base. The amounts involved
+// are ₹50 to ₹300. That is not a trade anybody should make, so the SDK, the
+// plan table, the checkout call and the preview shim are all deleted rather
+// than left switched off where a later change could switch them back on.
+//
+// The replacement, Google Play Billing, is written and is deliberately inert:
+// `PLAY_BILLING_ENABLED` is false and `check:billing` fails if it is not. So
+// the app currently sells nothing at all, on purpose, and says so.
+//
+// ## What must stay
+//
+// Reading an entitlement. Somebody who paid through Razorpay before it was
+// removed keeps what they paid for until it expires, so `premium.ts`, the
+// `premium_subscriptions` table and the admin panel's history are untouched.
+// Removing the ability to BUY is not the same as removing what was bought, and
+// confusing the two would take ad-free away from people who paid for it.
 //
 //   node scripts/payments-check.mjs
 import fs from 'node:fs/promises';
@@ -24,131 +40,115 @@ const check = (ok, message) => {
     failures.push(message);
   }
 };
+const read = file => fs.readFile(path.join(root, file), 'utf8').catch(() => null);
+/** Comments stripped: this file's own prose names everything it forbids. */
 const code = text =>
-  text.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/(^|[^:])\/\/.*$/gm, '$1');
+  (text ?? '').replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/(^|[^:])\/\/.*$/gm, '$1');
 
-const client = code(await fs.readFile(path.join(root, 'src/lib/razorpay.ts'), 'utf8'));
-
-// The client must go through the edge functions, both of them.
+// ---------------------------------------------------------------------------
+// 1. The Razorpay SDK is not in the app at all.
+//
+//    Not unused, not shimmed, not behind a flag — absent. A payment SDK that
+//    is merely unreferenced is one import away from being live again, and it
+//    is also bytes and a native module in a shipped APK for nothing.
+// ---------------------------------------------------------------------------
+const pkg = JSON.parse((await read('package.json')) ?? '{}');
+const deps = { ...pkg.dependencies, ...pkg.devDependencies };
 check(
-  client.includes("invoke<CreatedOrder>('razorpay-create-order'"),
-  'the app does not create its order through razorpay-create-order',
-);
-check(
-  client.includes("invoke('razorpay-verify-payment'"),
-  'the app never calls razorpay-verify-payment — an unverified payment would be trusted',
-);
-
-// It must not touch Razorpay's API or the subscriptions table itself.
-check(
-  !client.includes('api.razorpay.com'),
-  'the app calls Razorpay\'s API directly; order creation belongs to the edge function, which holds the key secret',
-);
-check(
-  !/from\(['"]premium_subscriptions['"]\)/.test(client),
-  'the app writes premium_subscriptions directly — only the verified server path may grant ad-free',
-);
-check(
-  !/key_secret|RAZORPAY_KEY_SECRET/.test(client),
-  'a Razorpay secret is referenced in client code',
+  !Object.keys(deps).some(name => /razorpay/i.test(name)),
+  'react-native-razorpay is back in package.json — Play removes apps that bill outside Play Billing',
 );
 
-// Success must require the fields the server verifies against.
-check(
-  /razorpay_payment_id\s*\|\|\s*!result\.razorpay_signature/.test(client) ||
-    (client.includes('razorpay_signature') && client.includes('razorpay_payment_id')),
-  'the app does not require a payment id and signature before treating a checkout as paid',
-);
-check(
-  client.includes("status: 'cancelled'"),
-  'a cancelled checkout is not distinguished from a failure — backing out would show an error nobody caused',
-);
-
-// The amount shown must be a label, never the charge.
-check(
-  !/amount:\s*\d/.test(client),
-  'the app hardcodes an amount; the price lives in razorpay-create-order so it cannot be edited by a client',
-);
-
-// The server side must still be the one holding the price and the signature.
-const fnRoot = path.join(root, '..', 'supabase/functions');
-const createOrder = await fs
-  .readFile(path.join(fnRoot, 'razorpay-create-order/index.ts'), 'utf8')
-  .catch(() => null);
-const verify = await fs
-  .readFile(path.join(fnRoot, 'razorpay-verify-payment/index.ts'), 'utf8')
-  .catch(() => null);
-check(createOrder !== null, 'razorpay-create-order is missing');
-check(verify !== null, 'razorpay-verify-payment is missing');
-if (createOrder) {
-  check(
-    /adfree_monthly:\s*\{\s*amount:\s*\d+/.test(createOrder),
-    'razorpay-create-order no longer fixes the adfree_monthly amount server-side',
-  );
+for (const gone of [
+  'src/lib/razorpay.ts',
+  'src/types/react-native-razorpay.d.ts',
+  'preview/shims/razorpay.ts',
+]) {
+  check((await read(gone)) === null, `${gone} is back; the Razorpay client was deleted deliberately`);
 }
-if (verify) {
-  check(
-    verify.includes('constantTimeEqual'),
-    'razorpay-verify-payment no longer compares the signature in constant time',
-  );
-  /*
-   * One entitlement, three prices.
-   *
-   * Every ad-free tier writes a row whose plan is `adfree_monthly` with
-   * `expires_at` further out, because that plan string IS the entitlement and
-   * both apps read it by name (`premium.ts` here, the web app's own check, and
-   * `admin_list_subscribers` in Postgres). Writing `adfree_yearly` instead
-   * would mean editing every one of those readers, and the one that got missed
-   * would be somebody who paid three hundred rupees and still saw ads — with a
-   * valid row in the table saying they should not.
-   *
-   * So the invariant is pinned here rather than worked around with a permissive
-   * matcher on each reader. Which tier was actually bought is not lost:
-   * `amount_paise` says, and the admin dashboard shows it.
-   */
-  for (const tier of ['adfree_6months', 'adfree_yearly']) {
-    check(
-      verify.includes(tier),
-      `razorpay-verify-payment does not know about ${tier} — that purchase would grant a month`,
-    );
+
+// ---------------------------------------------------------------------------
+// 2. Nothing imports it, and nothing starts a purchase.
+// ---------------------------------------------------------------------------
+async function walk(dir) {
+  const out = [];
+  for (const entry of await fs.readdir(path.join(root, dir), { withFileTypes: true })) {
+    if (entry.name === 'node_modules' || entry.name === 'dist') continue;
+    const rel = `${dir}/${entry.name}`;
+    if (entry.isDirectory()) out.push(...(await walk(rel)));
+    else if (/\.tsx?$/.test(entry.name)) out.push(rel);
   }
-  check(
-    /plan:\s*"adfree_monthly",\s*amount_paise:\s*adfreePaise/.test(verify),
-    'a longer ad-free tier no longer writes the adfree_monthly entitlement row — ' +
-      'every reader of the entitlement filters on that exact plan string by name',
-  );
-  check(
-    /base\.getTime\(\) \+ adfreeDays/.test(verify),
-    'buying again no longer extends from the existing expiry, so time already paid for is lost',
-  );
+  return out;
 }
-{
-  // The readers, from the other side: if one of them ever stops asking for the
-  // plan the function writes, the two halves have parted company.
-  const premium = code(await fs.readFile(path.join(root, 'src/lib/premium.ts'), 'utf8'));
+const sources = [...(await walk('src')), ...(await walk('preview'))];
+
+for (const file of sources) {
+  const body = code(await read(file));
   check(
-    /'plan',\s*'adfree_monthly'|'plan',\s*ADFREE_MONTHLY/.test(premium),
-    'premium.ts no longer looks for the plan string razorpay-verify-payment writes',
+    !/from ['"]react-native-razorpay['"]/.test(body),
+    `${file} imports react-native-razorpay`,
+  );
+  check(
+    !/from ['"]@\/lib\/razorpay['"]/.test(body),
+    `${file} imports the deleted Razorpay client`,
+  );
+  check(
+    !/invoke\(\s*['"]razorpay-(create-order|verify-payment|restore-purchase)['"]/.test(body),
+    `${file} still calls a Razorpay edge function`,
   );
 }
 
-// The preview must not be able to fake a success.
-const shim = await fs
-  .readFile(path.join(root, 'preview/shims/razorpay.ts'), 'utf8')
-  .catch(() => null);
-check(shim !== null, 'the preview has no Razorpay shim, so the preview build breaks');
-if (shim) {
-  check(
-    code(shim).includes('reject'),
-    'the preview shim resolves instead of rejecting — it would simulate a payment that never happened',
-  );
-}
+// ---------------------------------------------------------------------------
+// 3. Play Billing is written and switched off.
+//
+//    "The app sells nothing" is only true while BOTH halves hold: Razorpay
+//    gone, and Play Billing not yet enabled. check:billing owns the second
+//    half in detail; this asserts the one bit that matters here.
+// ---------------------------------------------------------------------------
+const play = await read('src/lib/playBilling.ts');
+check(play !== null, 'src/lib/playBilling.ts is missing — there is no payment path at all, even a future one');
+check(
+  /export const PLAY_BILLING_ENABLED = false/.test(play ?? ''),
+  'PLAY_BILLING_ENABLED is true, but no Play Console product exists and no test purchase has ever been taken',
+);
+
+// ---------------------------------------------------------------------------
+// 4. Where a purchase used to be offered, there is an explanation.
+//
+//    A dialog that silently loses its offer reads as a bug. The reader is told
+//    ad-free is coming and that nothing is for sale yet.
+// ---------------------------------------------------------------------------
+const consent = await read('src/components/DailyAdConsent.tsx');
+check(consent !== null, 'DailyAdConsent.tsx is missing');
+check(
+  /coming soon/i.test(consent ?? ''),
+  'the ad prompt no longer says ad-free is coming — a vanished offer reads as a broken screen',
+);
+
+// ---------------------------------------------------------------------------
+// 5. The entitlement still works.
+//
+//    This is the half that must NOT be removed with the buying. Anyone who
+//    paid before Razorpay was taken out keeps their ad-free until it expires.
+// ---------------------------------------------------------------------------
+const premium = await read('src/lib/premium.ts');
+check(premium !== null, 'src/lib/premium.ts is gone — everyone who already paid would start seeing ads');
+check(
+  /premium_subscriptions/.test(premium ?? ''),
+  'premium.ts no longer reads premium_subscriptions; an existing purchase would be invisible',
+);
+check(
+  /isPremiumCached/.test(consent ?? ''),
+  'the ad prompt no longer checks whether the reader is premium, so a paying reader is asked to buy again',
+);
 
 if (failures.length > 0) {
-  for (const failure of failures) {
-    process.stdout.write(`  FAIL  ${failure}\n`);
-  }
-  process.stdout.write(`\n${failures.length} problem(s) in the payment path.\n`);
+  console.error('payments check failed:\n');
+  for (const failure of failures) console.error(`  - ${failure}`);
   process.exit(1);
 }
-process.stdout.write('OK  price, order and signature all stay server-side\n');
+
+console.log(
+  'OK  no payment SDK ships, nothing can start a purchase, Play Billing is off, ' +
+    'and an entitlement bought earlier still reads',
+);
