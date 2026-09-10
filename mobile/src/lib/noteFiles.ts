@@ -57,6 +57,47 @@ export interface NoteFile {
   uri?: string;
 }
 
+/**
+ * The MIME type is a hint, and the extension is the second opinion.
+ *
+ * This is the same lesson `music.ts` already carries, and it had not been
+ * applied here: **content providers disagree about what a file is.** Plenty
+ * report `application/octet-stream` for a perfectly ordinary `.m4a`, `.mp4` or
+ * `.pdf`, and a LINKED file is where that bites hardest — a copy is described
+ * by the file Orbit wrote, while a link is described by whatever provider the
+ * reader picked it from.
+ *
+ * The consequence was the whole feature quietly not working: an octet-stream
+ * fell through to `'file'`, the note reader drew a plain row with a name and a
+ * "tap to save a copy" footer, and no player at all. Reported exactly that way
+ * — "if I link any file it doesn't show or play anything".
+ *
+ * The extension is only consulted when the MIME says nothing useful, so a
+ * provider that DOES know stays authoritative.
+ */
+const EXTENSION_KIND: Record<string, NoteFileKind> = {
+  jpg: 'image', jpeg: 'image', png: 'image', gif: 'image', webp: 'image',
+  bmp: 'image', heic: 'image', heif: 'image', avif: 'image',
+  mp4: 'video', m4v: 'video', mkv: 'video', mov: 'video', webm: 'video',
+  '3gp': 'video', avi: 'video', ts: 'video',
+  mp3: 'audio', m4a: 'audio', aac: 'audio', wav: 'audio', ogg: 'audio',
+  oga: 'audio', opus: 'audio', flac: 'audio', amr: 'audio', mid: 'audio',
+  pdf: 'pdf',
+};
+
+/** The last dot-suffix of a name, lowercased, or '' when there is none. */
+export function extensionOf(name: string): string {
+  // A content URI can carry a query string, and `?` is not part of a name.
+  const clean = name.split(/[?#]/)[0];
+  const dot = clean.lastIndexOf('.');
+  if (dot <= 0 || dot === clean.length - 1) {
+    return '';
+  }
+  const ext = clean.slice(dot + 1).toLowerCase();
+  // A "extension" longer than this is a sentence with a full stop in it.
+  return ext.length <= 5 ? ext : '';
+}
+
 /** What the note renderer should do with it. */
 export function kindOf(file: NoteFile): NoteFileKind {
   const mime = file.mime.toLowerCase();
@@ -64,6 +105,15 @@ export function kindOf(file: NoteFile): NoteFileKind {
   if (mime.startsWith('video/')) return 'video';
   if (mime.startsWith('audio/')) return 'audio';
   if (mime === 'application/pdf') return 'pdf';
+  /*
+   * Only now. `application/octet-stream` means "I do not know", and so does an
+   * empty type — both are worth a second opinion. Anything else is a provider
+   * making a positive claim, and overriding that with a filename would be
+   * guessing over the top of an answer.
+   */
+  if (mime === '' || mime === 'application/octet-stream' || mime === 'binary/octet-stream') {
+    return EXTENSION_KIND[extensionOf(file.name)] ?? 'file';
+  }
   return 'file';
 }
 

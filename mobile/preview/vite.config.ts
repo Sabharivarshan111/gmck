@@ -61,6 +61,10 @@ export default defineConfig({
         replacement: path.resolve(__dirname, 'shims', 'orbit-update.ts'),
       },
       {
+        find: 'react-native-webview',
+        replacement: path.resolve(__dirname, 'shims', 'webview.tsx'),
+      },
+      {
         find: '@/native/NativeOrbitBilling',
         replacement: path.resolve(__dirname, 'shims', 'orbit-billing.ts'),
       },

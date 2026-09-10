@@ -2178,6 +2178,68 @@ await step('notes highlight, and a picture opens a drawing canvas', async () => 
 });
 
 /**
+ * A YouTube link in a note, and it plays where it sits.
+ *
+ * The link is pasted in the shape people actually send each other —
+ * `youtu.be/…?t=90`, no scheme — because that is the shape a naive parser
+ * misses, and a feature that silently refuses half of what is pasted is one
+ * nobody trusts twice. `check:note-links` covers the other five shapes and the
+ * URLs that must never be opened.
+ *
+ * The player itself is a WebView, and the harness swaps in a shim: an iframe
+ * pointing at YouTube from a sandbox with no route to the internet is a grey
+ * rectangle that takes seconds to give up, and it would make every screenshot
+ * depend on whether YouTube was reachable from CI. What is proved here is the
+ * wiring — that the still comes first and the player replaces it on a tap.
+ */
+await step('a YouTube link is added to a note, and plays in it', async () => {
+  await open('screen=progress');
+  await declineAdPromptIfShown();
+  await byLabel('Notes').first().click({ force: true });
+  await page.waitForTimeout(700);
+  await byLabel('Create a new study note').click({ force: true });
+  await page.waitForTimeout(600);
+  await byLabel('Note title').fill('Krebs cycle lecture');
+
+  await byLabel('Add a link or a YouTube video to this note').click({ force: true });
+  await page.waitForTimeout(400);
+
+  // Refused in place, while the reader still has what they meant to paste.
+  await byLabel('Link address').fill('not a url');
+  await byLabel('Add this link').click({ force: true });
+  await page.waitForTimeout(400);
+  if (!/does not look like a web address/.test(await page.locator('body').innerText())) {
+    throw new Error('a non-URL was accepted as a link');
+  }
+
+  await byLabel('Link address').fill('youtu.be/dQw4w9WgXcQ?t=90');
+  await byLabel('What to call this link').fill('Krebs, worked through');
+  await byLabel('Add this link').click({ force: true });
+  await page.waitForTimeout(600);
+  if ((await page.locator('[aria-label^="Play "]').count()) === 0) {
+    throw new Error('the link was added but offers no way to play it');
+  }
+
+  await byLabel('Save note').click({ force: true });
+  await page.waitForTimeout(700);
+  if (!/1 video/.test(await page.locator('body').innerText())) {
+    throw new Error('the note card does not say it has a video in it');
+  }
+
+  await byLabel('Read Krebs cycle lecture').last().click({ force: true });
+  await page.waitForTimeout(700);
+  const reading = await page.locator('body').innerText();
+  if (/This note is empty/.test(reading)) {
+    throw new Error('a note whose whole content is a lecture link reads as empty');
+  }
+  await page.locator('[aria-label^="Play "]').first().click({ force: true });
+  await page.waitForTimeout(600);
+  if ((await page.locator('[aria-label="Video player"]').count()) === 0) {
+    throw new Error('tapping play did not mount the player');
+  }
+});
+
+/**
  * Attendance: the arithmetic a student would otherwise do wrong on paper.
  *
  * `check:attendance` pins the maths against worked examples; this proves the

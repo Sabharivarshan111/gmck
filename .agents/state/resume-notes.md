@@ -1014,3 +1014,43 @@ standing between the fix and production.
 YouTube links and an inline player in notes; linked note files not playing;
 verifying the "studying now" count; the Liquid Glass audit and the black circle
 behind the music player; and the ad scripts.
+
+### YouTube links in notes, and the linked-file bug underneath them
+
+**`kindOf` trusted the MIME type and nothing else.** A LINKED file is described
+by whatever provider the reader picked it from, and plenty report
+`application/octet-stream` for an ordinary `.m4a`, `.mp4` or `.pdf` — so the
+kind fell through to `'file'`, the reader drew a plain row with a name and a
+"tap to save a copy" footer, and no player at all. Reported as "if I link any
+file it doesn't show or play anything".
+
+`music.ts` already carries this exact lesson — *"the MIME type is a hint and the
+extension is the second opinion"* — and it had never been applied here. The
+extension is consulted **only** when the MIME says nothing (`''`,
+`application/octet-stream`), so a provider that does know stays authoritative.
+
+**Links are a new kind of attachment**, not a third mode of "Add file": a file
+is bytes to copy or point at, a link is a URL, and the copy/link question makes
+no sense for one. `lib/noteLinks.ts` + `components/NoteLinkCard.tsx`.
+
+`react-native-webview` is a **real new dependency** and the only one this
+needed. It is not optional: putting a YouTube video into the ExoPlayer already
+in the APK means extracting the stream, which breaches YouTube's terms. The
+IFrame player is the sanctioned route and it needs a browser.
+
+Three things worth keeping:
+
+* **The still comes first and the WebView mounts on tap.** A note with four
+  lectures would otherwise mount four browsers on open. It also means the
+  reader decides when anything reaches YouTube at all.
+* **`youtube-nocookie.com`**, and no fetch anywhere — the thumbnail is a static
+  URL, so nothing tells YouTube which videos a student is studying from beyond
+  the images requested.
+* **`hqdefault`, never `maxresdefault`** — the latter is missing for a great
+  many older videos, which is exactly the lectures students get sent.
+
+`npm run check:note-links` covers the six YouTube URL shapes, four look-alikes
+that must NOT match, `javascript:`/`file:` being refused, and timestamps. Its
+first version passed for the wrong reason: the "nothing is fetched" assertion
+matched this file's own comment saying "no fetch, no oEmbed lookup". Stripped
+comments, same as `check:native-update` had to.

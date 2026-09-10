@@ -45,6 +45,7 @@
     "check:native-update": "node scripts/native-update-check.mjs",
     "check:billing": "node scripts/billing-check.mjs",
     "check:attendance": "node scripts/attendance-check.mjs",
+    "check:note-links": "node scripts/note-links-check.mjs",
     "check:version": "node scripts/version-check.mjs",
     "check:xp": "node scripts/xp-check.mjs",
     "check:reminder": "node scripts/reminder-check.mjs",
@@ -102,7 +103,8 @@
     "react-native-screens": "^4.27.0",
     "react-native-svg": "^15.15.5",
     "react-native-url-polyfill": "^4.0.0",
-    "react-native-video": "^6.19.2"
+    "react-native-video": "^6.19.2",
+    "react-native-webview": "^14.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

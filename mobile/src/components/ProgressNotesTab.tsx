@@ -8,6 +8,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { KeyboardSafe } from "@/components/KeyboardSafe";
 import { NoteText, noteFontFamily, plainPreview } from "@/components/NoteText";
 import { InkedImage } from "@/components/InkedImage";
+import { NoteLinkCard } from "@/components/NoteLinkCard";
+import { makeNoteLink, type NoteLink } from "@/lib/noteLinks";
 import { TappableImage } from "@/components/ZoomableImage";
 import { DrawCanvas } from "@/components/DrawCanvas";
 import { NoteToolbar } from "@/components/NoteToolbar";
@@ -34,6 +36,7 @@ import {
   Plus,
   Trash2,
   X,
+  Link as LinkIcon,
 } from "lucide-react-native";
 import { getSubjects, type BankNode, type YearKey } from "@/lib/questionBank";
 import { flattenSubjectTopics } from "@/lib/handwrittenNotes";
@@ -106,6 +109,20 @@ function attachmentSummary(note: UserNote): string {
   for (const [kind, count] of counts) {
     const label = KIND_LABEL[kind] ?? "File";
     parts.push(`${count} ${count === 1 ? label.toLowerCase() : `${label.toLowerCase()}s`}`);
+  }
+  /*
+   * Videos counted separately from other links, because "1 video" is a
+   * different promise from "1 link" and the card has room to say which. A note
+   * whose whole content is a lecture would otherwise read as empty in the list.
+   */
+  const links = note.links ?? [];
+  const videos = links.filter(link => link.videoId).length;
+  if (videos > 0) {
+    parts.push(`${videos} video${videos === 1 ? "" : "s"}`);
+  }
+  if (links.length - videos > 0) {
+    const rest = links.length - videos;
+    parts.push(`${rest} link${rest === 1 ? "" : "s"}`);
   }
   return parts.join(" · ");
 }
@@ -307,9 +324,21 @@ function NoteReader({
       {/* Typed as text, read as a note: "1." and "-" become real lists. */}
       {note.content ? (
         <NoteText content={note.content} font={note.font} />
-      ) : (note.sheets?.length ?? 0) > 0 ? null : (
+      ) : (note.sheets?.length ?? 0) > 0 || (note.links?.length ?? 0) > 0 ? null : (
         <Text style={[styles.readerBody, { color: colors.textMuted }]}>This note is empty.</Text>
       )}
+
+      {/*
+        Links first, above the pictures.
+
+        A lecture link is the thing a reader came back to the note FOR, and a
+        note with three photographs of a page above it is a note where the
+        video is below the fold. The pictures are what was captured; the link
+        is what to do next.
+      */}
+      {(note.links ?? []).map(link => (
+        <NoteLinkCard key={link.id} link={link} />
+      ))}
 
       {/* Pages written by hand, then the pictures. */}
       {(note.sheets ?? []).map(id => (
@@ -538,6 +567,12 @@ export function ProgressNotesTab({ year }: Props) {
   const [editFiles, setEditFiles] = useState<NoteFile[]>([]);
   const [editFont, setEditFont] = useState<string | null>(null);
   const [editSheets, setEditSheets] = useState<string[]>([]);
+  const [editLinks, setEditLinks] = useState<NoteLink[]>([]);
+  /** The paste box, open only while a link is being added. */
+  const [linkOpen, setLinkOpen] = useState(false);
+  const [linkUrl, setLinkUrl] = useState("");
+  const [linkTitle, setLinkTitle] = useState("");
+  const [linkError, setLinkError] = useState<string | null>(null);
   /** The handwritten page open on the canvas — an existing id, or "new". */
   const [sheet, setSheet] = useState<string | null>(null);
   /** What is already on whichever canvas is open, so it is not started over. */
@@ -641,6 +676,7 @@ export function ProgressNotesTab({ year }: Props) {
       setEditFiles(note.files ?? []);
       setEditFont(note.font ?? null);
       setEditSheets(note.sheets ?? []);
+      setEditLinks(note.links ?? []);
       setSelection({ start: 0, end: 0 });
       setForcedSelection(null);
     } else {
@@ -654,6 +690,7 @@ export function ProgressNotesTab({ year }: Props) {
       setEditFiles([]);
       setEditFont(null);
       setEditSheets([]);
+      setEditLinks([]);
       setSelection({ start: 0, end: 0 });
       setForcedSelection(null);
     }
@@ -674,6 +711,7 @@ export function ProgressNotesTab({ year }: Props) {
       files: editFiles,
       font: editFont,
       sheets: editSheets,
+      links: editLinks,
     };
     if (editing.id === "new") {
       await createNote(patch);
@@ -837,7 +875,10 @@ export function ProgressNotesTab({ year }: Props) {
                             numberOfLines={3}>
                             {plainPreview(n.content)}
                           </Text>
-                        ) : (n.sheets?.length ?? 0) > 0 ? null : (
+                        ) : (n.sheets?.length ?? 0) > 0 || (n.links?.length ?? 0) > 0 ? null : (
+                          /* A note that is only a lecture link is not empty,
+                             which is the lesson the handwritten pages already
+                             taught this very branch. */
                           <Text style={[styles.noteEmpty, { color: colors.textMuted }]}>
                             (Empty note)
                           </Text>
@@ -1346,6 +1387,86 @@ export function ProgressNotesTab({ year }: Props) {
             </View>
           ) : null}
 
+          {editLinks.length > 0 ? (
+            <View style={styles.linkList}>
+              {editLinks.map(link => (
+                <NoteLinkCard
+                  key={link.id}
+                  link={link}
+                  onRemove={() =>
+                    setEditLinks(current => current.filter(one => one.id !== link.id))
+                  }
+                />
+              ))}
+            </View>
+          ) : null}
+
+          {linkOpen ? (
+            <View style={[styles.linkForm, { borderColor: colors.border }]}>
+              <TextInput
+                value={linkUrl}
+                onChangeText={value => {
+                  setLinkUrl(value);
+                  setLinkError(null);
+                }}
+                placeholder="Paste a link — youtu.be/…, a paper, a drive folder"
+                placeholderTextColor={colors.textMuted}
+                autoCapitalize="none"
+                autoCorrect={false}
+                keyboardType="url"
+                accessibilityLabel="Link address"
+                style={[styles.linkInput, { color: colors.text, borderColor: colors.border }]}
+              />
+              <TextInput
+                value={linkTitle}
+                onChangeText={setLinkTitle}
+                placeholder="What to call it (optional)"
+                placeholderTextColor={colors.textMuted}
+                accessibilityLabel="What to call this link"
+                style={[styles.linkInput, { color: colors.text, borderColor: colors.border }]}
+              />
+              {linkError ? (
+                <Text
+                  accessibilityLiveRegion="polite"
+                  style={[styles.noteEmpty, { color: colors.danger }]}>
+                  {linkError}
+                </Text>
+              ) : null}
+              <View style={styles.attachRow}>
+                <Touchable
+                  onPress={() => {
+                    setLinkOpen(false);
+                    setLinkUrl("");
+                    setLinkTitle("");
+                    setLinkError(null);
+                  }}
+                  label="Cancel adding a link"
+                  style={[styles.attachBtn, { borderColor: colors.border }]}>
+                  <Text style={[styles.subjectChipText, { color: colors.textMuted }]}>Cancel</Text>
+                </Touchable>
+                <Touchable
+                  onPress={() => {
+                    const made = makeNoteLink(linkUrl, linkTitle);
+                    if (!made) {
+                      // Said here rather than accepted and shown as a dead row
+                      // later: the reader still has the thing they meant to
+                      // paste, and this is the only moment they can fix it.
+                      setLinkError("That does not look like a web address.");
+                      return;
+                    }
+                    setEditLinks(current => [...current, made]);
+                    setLinkOpen(false);
+                    setLinkUrl("");
+                    setLinkTitle("");
+                  }}
+                  label="Add this link"
+                  style={[styles.attachBtn, { borderColor: colors.accent }]}>
+                  <Text style={[styles.subjectChipText, { color: colors.accent }]}>Add link</Text>
+                </Touchable>
+              </View>
+            </View>
+          ) : null}
+
           <View style={styles.attachRow}>
             <Touchable
               onPress={addImage}
@@ -1364,6 +1485,23 @@ export function ProgressNotesTab({ year }: Props) {
               style={[styles.attachBtn, { borderColor: colors.border }]}>
               <PenLine size={16} color={colors.accent} />
               <Text style={[styles.subjectChipText, { color: colors.accent }]}>Write by hand</Text>
+            </Touchable>
+            {/*
+              A link is its own kind of attachment, not a third mode of "Add
+              file". A file is bytes that are copied or pointed at; a link is a
+              URL, costs nothing either way, and the copy/link question the
+              attach sheet asks makes no sense for one.
+            */}
+            <Touchable
+              onPress={() => {
+                setLinkOpen(true);
+                setLinkError(null);
+              }}
+              label="Add a link or a YouTube video to this note"
+              hint="A YouTube link plays inside the note"
+              style={[styles.attachBtn, { borderColor: colors.border }]}>
+              <LinkIcon size={16} color={colors.accent} />
+              <Text style={[styles.subjectChipText, { color: colors.accent }]}>Add link</Text>
             </Touchable>
             {/* Hidden rather than disabled where the module is absent, which is
                 the preview harness: a control that cannot work is worse than
@@ -1426,6 +1564,22 @@ export function ProgressNotesTab({ year }: Props) {
 }
 
 const styles = StyleSheet.create({
+  linkList: { marginTop: 4 },
+  linkForm: {
+    borderWidth: StyleSheet.hairlineWidth,
+    borderRadius: 12,
+    padding: 12,
+    gap: 8,
+    marginTop: 8,
+  },
+  linkInput: {
+    borderWidth: StyleSheet.hairlineWidth,
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    fontSize: 14,
+    minHeight: 44,
+  },
   container: {
     gap: 14,
   },

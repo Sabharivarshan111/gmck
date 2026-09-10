@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import type { NoteLink } from '@/lib/noteLinks';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { removeNoteImages, removeNoteInks } from "@/lib/noteImages";
 import { removeNoteFiles, type NoteFile } from "@/lib/noteFiles";
@@ -48,6 +49,14 @@ export interface UserNote {
    * parse on a cheap phone.
    */
   images?: string[];
+  /**
+   * Links the reader pasted in — a lecture on YouTube, a paper, a drive folder.
+   *
+   * URLs and titles, nothing fetched. A YouTube one plays inside the note; see
+   * `lib/noteLinks.ts` for why that is a WebView rather than the video player
+   * already in the APK.
+   */
+  links?: NoteLink[];
   /**
    * Videos, recordings and PDFs, resolved through `lib/noteFiles`.
    *
