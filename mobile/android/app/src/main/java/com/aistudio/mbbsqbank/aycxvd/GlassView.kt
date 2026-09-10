@@ -320,7 +320,22 @@ class GlassView(context: android.content.Context) : View(context) {
            * magnification of a downscaled capture IS a cheap blur, which is
            * most of what Apple's material is doing behind its own panes.
            */
-          it.filterMode = Shader.FILTER_MODE_LINEAR
+          /*
+           * `BitmapShader.FILTER_MODE_LINEAR`, not `Shader`'s. It is declared
+           * on the subclass, and `Shader.FILTER_MODE_LINEAR` does not exist —
+           * which cost a whole CI cycle, because there is no kotlinc in the
+           * sandboxes this is written in and `check:kotlin` reads override
+           * signatures rather than resolving symbols. The first thing that can
+           * disagree with a Kotlin symbol here is the Gradle build.
+           *
+           * `setFilterMode` arrived in API 31 and this view is gated on 33, so
+           * the guard is never false where it is reached. It is written out
+           * anyway: lint does not follow the gate through `supported()`, and a
+           * NewApi error is the next way this file fails a build.
+           */
+          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            it.filterMode = BitmapShader.FILTER_MODE_LINEAR
+          }
           localShader = it
         }
       dirty = true
