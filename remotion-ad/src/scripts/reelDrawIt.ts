@@ -36,7 +36,7 @@ export const reelDrawIt: AdScript = {
   pitch: '-1Hz',
   music: 'audio/bed/bed-draw-it.wav',
   shots: [
-    { n: 1, frames: 129, screen: 'plateBrachial', camera: 'macro', text: 'You know the brachial plexus', silentText: 'Now draw it. From memory', vo: 'You know the brachial plexus.', accent: '#22D3A6' },
+    { n: 1, frames: 129, screen: 'plateBrachial', camera: 'macro', text: 'You still cannot draw it', silentText: 'You still cannot draw it', vo: 'You can name every branch. You still cannot draw it.', accent: '#22D3A6' },
     { n: 2, frames: 129, screen: 'plateBrachial', camera: 'macro', text: 'Draw it from memory', silentText: 'Four minutes. Most freeze', vo: 'Draw it from memory.', accent: '#22D3A6' },
     { n: 3, frames: 129, screen: 'plateUlnar', camera: 'trackRight', text: 'Where the marks are', silentText: 'This is where the marks are', vo: 'That is where the marks are.', accent: '#22D3A6' },
     { n: 4, frames: 129, screen: 'chapterDiagrams', camera: 'push', text: 'Already in the app', silentText: "It's already in the app", vo: 'This diagram is already in the app.', focus: 0.28, accent: '#7C5CFF' },

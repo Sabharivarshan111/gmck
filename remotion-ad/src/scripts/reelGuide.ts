@@ -74,10 +74,10 @@ export const reelGuide: AdScript = {
   pitch: '+0Hz',
   music: 'audio/bed/bed-guide.wav',
   shots: [
-    { n: 1, frames: 129, screen: null, mascot: 'hero', camera: 'settle', text: 'I live inside Orbit', silentText: 'Meet your study guide', vo: 'I live inside Orbit.', accent: '#7C5CFF' },
+    { n: 1, frames: 129, screen: null, mascot: 'hero', camera: 'settle', text: 'No time for another app', silentText: 'No time for another app', vo: 'You do not have time to learn another app.', accent: '#7C5CFF' },
     { n: 2, frames: 129, screen: 'browse', mascot: 'guide', camera: 'trackLeft', text: 'All four MBBS years', silentText: 'All four MBBS years', vo: 'I know all four MBBS years.', accent: '#7C5CFF' },
-    { n: 3, frames: 129, screen: 'questionsChapters', camera: 'push', text: 'Five thousand six hundred questions', silentText: '5,634 questions, sorted', vo: 'Five thousand six hundred questions, all sorted.', focus: 0.35, accent: '#4CC2FF' },
-    { n: 4, frames: 129, screen: 'questionsLeaf', camera: 'macro', text: 'Three thousand of them repeat', silentText: '3,463 have been asked before', vo: 'Over three thousand of them repeat.', focus: 0.28, accent: '#F5B301' },
+    { n: 3, frames: 129, screen: 'questionsChapters', camera: 'push', text: 'Sorted to your chapter', silentText: 'Sorted to your chapter', vo: 'Every past question, sorted down to your chapter.', focus: 0.35, accent: '#4CC2FF' },
+    { n: 4, frames: 129, screen: 'questionsLeaf', camera: 'macro', text: 'The ones that come back', silentText: 'The ones that come back', vo: 'And it marks the ones that keep coming back.', focus: 0.28, accent: '#F5B301' },
     { n: 5, frames: 129, screen: 'questionsLeaf', mascot: 'guide', camera: 'macro', text: 'Triple-tap any question', silentText: 'Triple-tap any question', vo: 'Triple-tap any question and watch.', focus: 0.28, accent: '#FF4D8D' },
     { n: 6, frames: 129, screen: 'noteHero', camera: 'push', text: 'A full handwritten answer', silentText: 'A full handwritten answer', vo: 'I write you a full handwritten answer.', accent: '#FF4D8D' },
     { n: 7, frames: 129, screen: 'plateBrachial', mascot: 'guide', camera: 'settle', text: 'Its own diagram', silentText: 'Its own diagram, every time', vo: 'Its own diagram comes with it.', accent: '#22D3A6' },

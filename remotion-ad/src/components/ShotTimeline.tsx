@@ -7,6 +7,8 @@ import { KineticWordCaption } from './KineticWordCaption';
 import { ReelHeadline } from './ReelHeadline';
 import { BeatCaption, BeatRoom } from './BeatCaption';
 import { MascotStage } from './MascotStage';
+import { EndCard } from './EndCard';
+import { HAS_PLAY_BADGE } from './playBadge';
 import type { BeatClock } from './beatGrid';
 import { beatEnergy } from './beatGrid';
 import { screenAsset } from './ScreenRegistry';
@@ -138,6 +140,20 @@ const ShotView: React.FC<ShotViewProps> = ({
   let customScreenContent: React.ReactNode = null;
   if (shot.screen === 'outroCard') {
     customScreenContent = <OutroScreen />;
+  }
+
+  // The closing shot of every ad is the end card: the app's mark, its name,
+  // and where to get it. Drawn INSTEAD of a screen, never over one — the
+  // viewer who has just decided they want this needs something to recognise
+  // in the store, and every ad used to end on whatever screenshot was last.
+  if (shot.endCard) {
+    return (
+      <EndCard
+        accent={accent}
+        durationInFrames={durationInFrames}
+        hasPlayBadge={HAS_PLAY_BADGE}
+      />
+    );
   }
 
   return (

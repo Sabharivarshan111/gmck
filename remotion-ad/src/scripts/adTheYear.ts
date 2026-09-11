@@ -38,7 +38,7 @@ export const adTheYear: AdScript = {
   pitch: '+0Hz',
   music: 'audio/bed/bed-guide-night.wav',
   shots: [
-    { n: 1, frames: 124, screen: 'glassHome', kicker: 'Orbit MBBS', text: 'One app, four years', silentText: 'One app, four years', vo: 'One app that knows which year you are in.', accent: '#7C5CFF' },
+    { n: 1, frames: 124, screen: 'glassHome', kicker: 'Orbit MBBS', text: 'Built for somebody else', silentText: 'Built for somebody else', vo: 'Every study app is built for somebody else’s year.', accent: '#7C5CFF' },
     { n: 2, frames: 124, screen: 'browseFirst', kicker: 'First year', text: 'Already broken into chapters', silentText: 'Anatomy, Physiology, Biochem', vo: 'All three subjects, broken into chapters.', accent: '#22D3A6' },
     { n: 3, frames: 124, screen: 'plateUlnar', kicker: 'First year', text: 'Labelled as you must draw it', silentText: 'Labelled as you must draw it', vo: 'So it is labelled the way you have to draw it.', accent: '#22D3A6' },
     { n: 4, frames: 124, screen: 'userNotesEdit', kicker: 'First year', text: 'Then draw it yourself', silentText: 'Then draw it yourself', vo: 'Then draw it yourself with a stylus.', accent: '#22D3A6' },

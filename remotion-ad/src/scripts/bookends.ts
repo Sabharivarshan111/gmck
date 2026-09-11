@@ -83,6 +83,14 @@ export const withBookends = (script: AdScript): AdScript => {
     text: CTA_TEXT,
     silentText: CTA_SILENT,
     accent: BRAND_ACCENT,
+    /*
+       The closing shot is the END CARD, not another screenshot with a line
+       over it. A viewer who has just decided they want this needs the mark
+       they will recognise in the store, and every ad used to end on whatever
+       screen happened to be last.
+    */
+    endCard: true,
+    screen: null,
   };
 
   return { ...script, shots: shots.map((shot, i) => ({ ...shot, n: i + 1 })) };

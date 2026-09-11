@@ -46,7 +46,7 @@ export const reelGuideAnswer: AdScript = {
   pitch: '+0Hz',
   music: 'audio/bed/bed-guide-answer.wav',
   shots: [
-    { n: 1, frames: 129, screen: null, mascot: 'hero', camera: 'settle', text: 'Ask me anything', silentText: 'Ask it anything', vo: 'Ask me anything.', accent: '#7C5CFF' },
+    { n: 1, frames: 129, screen: null, mascot: 'hero', camera: 'settle', text: 'Your mind goes blank', silentText: 'Your mind goes blank', vo: 'You read the question and your mind goes blank.', accent: '#7C5CFF' },
     { n: 2, frames: 129, screen: 'questionsLeaf', mascot: 'guide', camera: 'macro', text: 'Pick a question', silentText: 'Start with any question', vo: 'Pick a question. Any question.', focus: 0.28, accent: '#F5B301' },
     { n: 3, frames: 129, screen: 'noteHero', mascot: 'guide', camera: 'push', text: 'I write the answer', silentText: 'Triple-tap for the answer', vo: 'Triple tap. I write the answer.', accent: '#FF4D8D' },
     { n: 4, frames: 129, screen: 'noteBody', camera: 'glideDown', text: 'the years asked', silentText: 'Headings, points, years asked', vo: 'Headings, points, and the years asked.', accent: '#FF4D8D' },

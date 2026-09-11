@@ -13,6 +13,8 @@ import type { AdScript, Shot } from '../scripts/types';
 import { screenSrc } from './ScreenRegistry';
 import { SweptType } from './SweptType';
 import { TypedLine } from './TypedLine';
+import { EndCard, PLAY_BADGE_FILE } from './EndCard';
+import { HAS_PLAY_BADGE } from './playBadge';
 import { DYNAMIC_SCRIPT_TIMINGS } from '../dynamicScriptTimings';
 import { resolveShotFrames, scriptFrames } from '../scripts/types';
 
@@ -63,6 +65,17 @@ const PromptShot: React.FC<{ shot: Shot; duration: number; index: number }> = ({
   index,
 }) => {
   const frame = useCurrentFrame();
+
+  if (shot.endCard) {
+    return (
+      <EndCard
+        accent={shotAccent(shot, '#7C5CFF')}
+        durationInFrames={duration}
+        hasPlayBadge={HAS_PLAY_BADGE}
+        light={true}
+      />
+    );
+  }
   const accent = shotAccent(shot, '#2F6BFF');
 
   // The screen drifts a little so a still frame is never quite still. Small:
@@ -195,6 +208,17 @@ const KeynoteShot: React.FC<{ shot: Shot; duration: number; index: number }> = (
   index,
 }) => {
   const frame = useCurrentFrame();
+
+  if (shot.endCard) {
+    return (
+      <EndCard
+        accent={shotAccent(shot, '#7C5CFF')}
+        durationInFrames={duration}
+        hasPlayBadge={HAS_PLAY_BADGE}
+        light={false}
+      />
+    );
+  }
   const accent = shotAccent(shot, '#7C5CFF');
 
   const fade = interpolate(frame, [0, 7, duration - 7, duration], [0, 1, 1, 0], {

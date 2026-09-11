@@ -41,7 +41,7 @@ export const reelNotes: AdScript = {
   pitch: '+0Hz',
   music: 'audio/bed/bed-guide.wav',
   shots: [
-    { n: 1, frames: 129, screen: null, mascot: 'hero', camera: 'settle', text: 'Not in any book', silentText: 'Not in any book', vo: 'The thing your professor said that is in no book.', accent: '#22D3A6' },
+    { n: 1, frames: 129, screen: null, mascot: 'hero', camera: 'settle', text: 'In no book', silentText: 'In no book', vo: 'Your professor said something that is in no book.', accent: '#22D3A6' },
     { n: 2, frames: 129, screen: 'userNotes', mascot: 'guide', camera: 'push', text: 'Write them here', silentText: 'Write them in Orbit', vo: 'Write them here in the app you already have open.', accent: '#22D3A6' },
     { n: 3, frames: 129, screen: 'userNotesEdit', camera: 'macro', text: 'Headings, bullets, highlighter', silentText: 'Headings, bullets, highlighter', vo: 'It does headings, bullets and a highlighter.', accent: '#22D3A6' },
     { n: 4, frames: 129, screen: 'userNotesPreview', camera: 'settle', text: 'Reads like a document', silentText: 'Reads like a document', vo: 'It reads like a document afterwards.', accent: '#4CC2FF' },

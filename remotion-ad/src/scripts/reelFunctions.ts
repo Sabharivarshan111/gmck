@@ -68,8 +68,8 @@ export const reelFunctions: AdScript = {
   bpm: 100,
   music: 'audio/bed/bed-functions.wav',
   shots: [
-    { n: 1, beats: 4, screen: 'questionsLeaf', camera: 'macro', kicker: 'Question bank', text: '5,634 past exam questions', focus: 0.28, accent: '#F5B301' , silentText: '5,634 past exam questions', vo: 'Every past exam question already sorted.' },
-    { n: 2, beats: 4, screen: 'questionsLeaf', camera: 'macro', kicker: 'Repeat markers', text: '3,463 have been asked before', focus: 0.28, accent: '#F5B301' , silentText: '3,463 have been asked before', vo: '3,463 have been asked before.' },
+    { n: 1, beats: 4, screen: 'questionsLeaf', camera: 'macro', kicker: 'Question bank', text: 'Four apps, nothing started', focus: 0.28, accent: '#F5B301' , silentText: 'Four apps, nothing started', vo: 'You have four apps open and still have not started.' },
+    { n: 2, beats: 4, screen: 'questionsLeaf', camera: 'macro', kicker: 'Repeat markers', text: 'The ones that come back', focus: 0.28, accent: '#F5B301' , silentText: 'The ones that come back', vo: 'It marks the ones that keep coming back.' },
     { n: 3, beats: 6, screen: 'questionsChapters', camera: 'push', kicker: 'Subject and chapter', text: 'Broken down to the chapter', focus: 0.35, accent: '#7C5CFF' , silentText: 'Broken down to the chapter', vo: 'Broken down to the chapter.' },
     { n: 4, beats: 6, screen: 'questionsLeaf', camera: 'macro', kicker: 'Importance stars', text: 'Four stars, four exams', focus: 0.28, accent: '#F5B301' , silentText: 'Four stars, four exams', vo: 'Four stars, four exams. Start there.' },
     { n: 5, beats: 6, screen: 'noteHero', camera: 'push', kicker: 'Triple tap', text: 'A full answer, written out', accent: '#FF4D8D' , silentText: 'A full answer, written out', vo: 'A full answer written out in one gesture.' },

@@ -151,6 +151,11 @@ export interface Shot {
    */
   typed?: boolean;
   /**
+   * Draw the end card instead of a screen: the app's mark, its name, and where
+   * to get it. Set by `bookends.ts` on the final shot of every ad.
+   */
+  endCard?: boolean;
+  /**
    * Where the mascot stands in this shot.
    *
    * `hero` gives it the frame to itself — no device at all — which is what the
