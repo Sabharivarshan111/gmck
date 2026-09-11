@@ -1093,3 +1093,108 @@ foil, the gradient heading) under this sandbox's heavily throttled clock —
 Token expired while verifying the presence table, so the "studying now" count
 could NOT be checked against live data and the `generate-flashcards` deploy
 could not be attempted through the connector either. Both need it back.
+
+---
+
+## 2026-09-11 — Claude Code — glass where the surfaces actually are, the unlock link, attendance working days
+
+Eleven changes landed on `main` this session, each as its own PR because a
+direct push is blocked on this branch. What follows is the part worth reading
+before touching any of it again.
+
+### The Liquid Glass audit was looking at the wrong file
+
+The owner's verdict on the screenshots was blunt and correct: it did not look
+like Apple's material. I had spent the audit inside `GlassSurface.tsx`,
+improving a component that **is rendered in ten places**, while **98 surfaces
+hand-roll `colors.card` and `colors.border` directly**. Every fix I made was
+real and reached almost nothing.
+
+The fix that mattered was three lines in `theme/presets.ts`: under the glass
+material, `cardElevated` lifts 0.14 towards the text instead of 0.08 and
+`border` lifts 0.42 instead of 0.18. A palette reaches every surface in the app
+whether or not that surface knows what material it is. **Audit where a thing is
+used before auditing how it is drawn** — that is the whole lesson, and it cost
+most of a session.
+
+Four real shader bugs were also fixed in `GlassView.kt`, and one of them was
+mine: `Shader.FILTER_MODE_LINEAR` does not exist, the constant is on
+`BitmapShader`, and it failed all three Android builds. `check:glass-shader`
+now pins it — with comments stripped, because my own warning comment about the
+constant matched the assertion looking for it.
+
+### The wallpaper is Home-only on purpose
+
+I read the single mount point as a bug and was ready to fix it. It is the
+owner's decision: a wallpaper behind the question bank "coz distraction". The
+reasoning is now a long comment at the top of `WallpaperBackground.tsx` so the
+next reader does not re-open it.
+
+### Ad-free is bought on a website now
+
+`lib/unlock.ts`, `components/UnlockCard.tsx`. The Play Billing button is gone;
+the card links out to `mbbsqbank-questor.lovable.app/unlock` and the app only
+**honours** an entitlement it reads back. Nothing is priced, granted or
+acknowledged on the client, which is what `check:billing` and `check:payments`
+hold.
+
+This was researched badly first and then properly, and the difference matters:
+Google's **external payment links programme is Japan only**. India has *user
+choice billing*, which is a different thing — an alternative processor shown
+**beside** Play's, not a link out of the app. The "India by September 2027"
+date I first gave was not in any primary source I could reach. What settled it
+for the owner was a competitor doing exactly this and still being listed. That
+is evidence about enforcement, **not** a reading of the policy, and the file
+says so in both directions rather than pretending the risk is zero.
+
+### Attendance counts working days
+
+Taken from the competitor's tracker the owner sent — one idea, not the screen:
+*holidays reduce total working days count*. `remaining` was
+`totalDays - held`, so a 28-day block from a Monday claimed **eight days left
+where four is right**, and the "how many can I still miss" cap reads straight
+off that number. `workingDays()` counts Sundays rather than dividing by seven,
+because a 28-day block holds four or five depending on the weekday it starts.
+`dayOfRotation()` answers "Day 5 of 24" off the calendar, so it survives a week
+of not marking anything. The toggle is **off by default**: plenty of postings
+run through the weekend.
+
+Deliberately not taken: Timetable, Calendar tab, Logbook, semester filter. The
+Calendar tab was *replaced* by this feature; bringing it back undoes a decision.
+
+### One invented column gated an entire queue
+
+`sb-release-18` carried `insert into app_releases (..., live_on_play, ...)`.
+There is no such column — it was removed when the update prompt started asking
+Google Play directly, which is a better design for the reason
+`lib/appUpdate.ts` explains at length. The insert died `42703`, and because the
+queue step exits 1 on any failed job, **one wrong column name would have gated
+every job queued behind it**. `CLAUDE.md` and `40-releases.md` both still told
+you to set that flag, which is where I got it from. Both corrected.
+
+That rules file sits *hard* against Antigravity's 12,000-char cap and was
+already 54 over at HEAD, so `check:agent-docs` was failing before I touched it.
+Its own last section warns that adding a paragraph to it breaks the APK. If you
+add to it, take something out.
+
+### versionCode: ask the console, twice bitten
+
+**17 is what Play serves; the repo carries 18 and is pinned there** until the
+owner uploads. The repo had drifted to 23 because CI built 19-23 and none was
+ever uploaded. A green build is not a published one and the repo cannot tell
+the difference. This is the second time this number has been wrong in the same
+way.
+
+### Where things stand
+
+* All nine workflows are on `main`. `supabase-tasks` is green with zero pending
+  jobs. `ad-videos` run 16 finished green (45 videos); `ads-5` was dispatched
+  after the attendance reel's copy changed.
+* The `app_releases` row for 18 carries **17 notes** — the union of the drafts
+  written for 18, 19 and 20, since those were cumulative and only one is being
+  uploaded.
+* **The Patient Simulator must stay out of the native app** until the owner
+  says otherwise. `scripts/no-simulator-check.mjs` holds that, wired into all
+  three Android workflows.
+* The OpenAI key from commit `f50c8e8` is still live. **Only the owner can
+  revoke it** — never hand an agent a login there.
