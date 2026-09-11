@@ -250,6 +250,17 @@ jobs:
             file: orbit-reel-final-year.mp4
           - ad: orbit-reel-final-year-silent
             file: orbit-reel-final-year-silent.mp4
+          # The two flat, typographic ads. A different renderer (`HyperAd`) and
+          # a different argument — one is a question being answered, the other
+          # is the four years. Both ship in two cuts like everything else.
+          - ad: orbit-ask-it
+            file: orbit-ask-it.mp4
+          - ad: orbit-ask-it-silent
+            file: orbit-ask-it-silent.mp4
+          - ad: orbit-the-year
+            file: orbit-the-year.mp4
+          - ad: orbit-the-year-silent
+            file: orbit-the-year-silent.mp4
     steps:
       - uses: actions/checkout@v4
 

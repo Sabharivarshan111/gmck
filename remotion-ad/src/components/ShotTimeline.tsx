@@ -182,7 +182,7 @@ const ShotView: React.FC<ShotViewProps> = ({
         {asset?.kind === 'plate' && src ? (
           <PlateCard
             src={src}
-            move={shot.camera}
+            move={shot.camera ?? 'settle'}
             t={t}
             accent={accent}
             lift={reel ? REEL_DEVICE_LIFT : 0}
@@ -190,7 +190,7 @@ const ShotView: React.FC<ShotViewProps> = ({
         ) : (
           <LayeredCameraPhone
             src={src}
-            move={shot.camera}
+            move={shot.camera ?? 'settle'}
             t={t}
             accent={accent}
             focus={shot.focus}

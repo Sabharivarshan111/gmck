@@ -34,6 +34,14 @@ let shrunk = 0;
 let widest = 0;
 for (const script of [...ALL_SCRIPTS, ...SILENT_REELS]) {
   if (script.format !== 'reel') continue;
+
+  // The flat ads draw their own typography full-frame and never use
+  // `ReelHeadline`, so the band does not apply to them. They get their own
+  // arithmetic below — checking them against a band they do not use would be
+  // a check that passes for the wrong reason, which is the failure mode this
+  // whole file exists to catch.
+  if (script.look && script.look !== 'device') continue;
+
   for (const shot of script.shots) {
     // A voiced reel captions with the spoken line; a silent one with `text`.
     const caption = script.noVoice ? shot.text : shot.vo;
@@ -51,6 +59,45 @@ for (const script of [...ALL_SCRIPTS, ...SILENT_REELS]) {
     );
   }
 }
+
+
+/* ---- 1b. The flat ads' own type fits its column ------------------------ */
+//
+// `SweptType` is given a `maxWidth` and wraps; `TypedLine` is one inline run
+// with a caret and cannot be wrapped by flex, so it shrinks instead. Either
+// way the question is the same: does the text fit the column it is given, at
+// the size the composition asks for?
+//
+// The first typed line of the prompt ad is 39 characters, which at its 62px
+// ceiling is 1,451px inside a 912px column. Without a fit it ran off the frame.
+const FLAT_COLUMN = 1080 - 84 * 2;
+const FLAT_MAX_LINES = 3;
+for (const script of [...ALL_SCRIPTS, ...SILENT_REELS]) {
+  if (!script.look || script.look === 'device') continue;
+  for (const shot of script.shots) {
+    const text = script.noVoice ? shot.text : (shot.text ?? shot.vo);
+    if (!text) continue;
+
+    // The sizes HyperAd asks for, largest first: the opening shot is bigger.
+    const ceiling = shot.typed ? 62 : script.look === 'keynote' ? 112 : 96;
+    const perChar = shot.typed ? 0.6 : 0.52;
+    const lines = Math.ceil((text.length * ceiling * perChar) / FLAT_COLUMN);
+
+    check(
+      shot.typed || lines <= FLAT_MAX_LINES,
+      `${script.id} shot ${shot.n}: "${text}" wraps to ${lines} lines at ${ceiling}px ` +
+        `in a ${FLAT_COLUMN}px column, and ${FLAT_MAX_LINES} is the most a flat ad ` +
+        'holds before the words stop being a headline. Shorten it.',
+    );
+  }
+}
+
+const hyper = await fs.readFile(path.join(root, 'src/components/HyperAd.tsx'), 'utf8');
+check(
+  /maxWidth=\{912\}/.test(hyper),
+  'HyperAd no longer gives TypedLine a maxWidth, so a long prompt has nothing ' +
+    'to shrink against and will run off the frame.',
+);
 
 /* ---- 2. Nothing else is placed below the floor ------------------------- */
 //

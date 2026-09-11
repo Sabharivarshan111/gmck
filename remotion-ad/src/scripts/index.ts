@@ -25,6 +25,8 @@ import { reelYours } from './reelYours.ts';
 import { reelNotes } from './reelNotes.ts';
 import { reelThirdYear } from './reelThirdYear.ts';
 import { reelFinalYear } from './reelFinalYear.ts';
+import { adAskIt } from './adAskIt.ts';
+import { adTheYear } from './adTheYear.ts';
 
 /**
  * Every script that exists, in one list.
@@ -62,6 +64,10 @@ const AUTHORED: AdScript[] = [
   reelNotes,
   reelThirdYear,
   reelFinalYear,
+  // The two flat, typographic ads. Same pipeline, different renderer —
+  // `look` chooses, and `HyperAd` draws them.
+  adAskIt,
+  adTheYear,
 ];
 
 /**
@@ -102,6 +108,8 @@ export {
   reelNotes,
   reelThirdYear,
   reelFinalYear,
+  adAskIt,
+  adTheYear,
 };
 
 /** The reels somebody speaks over. */

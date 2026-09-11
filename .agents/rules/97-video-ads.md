@@ -187,3 +187,44 @@ silent reel is `noVoice`, cut to its beats, captioned from the separately
 authored `silentText` and `kicker`. A silent long-form cut borrows its twin's
 measurements through `voiceOf`, because those ads never had the bug: their
 shots were always measured, and their captions always typed out every word.
+
+## Two ads are flat and typographic, and they are not the device ads
+
+`adAskIt` (light, a question being typed and answered) and `adTheYear` (dark,
+one claim at a time over a full-bleed screen) are built on the techniques in
+`Tejashmakwana/astra-chatgpt-hyperframes`, at the owner's request. They render
+through `HyperAd`, not `ShotTimeline`, chosen by `script.look`.
+
+**Take the technique, never the assets.** That project's own code is MIT, and
+the four ideas worth having are in `SweptType` and `TypedLine`: a gradient
+whose bright stop travels through the glyphs, type that resolves out of blur,
+an exponential settle rather than a spring, and a typed line with a caret. Its
+**plates, soundtrack and font are not ours** — they are a third party's motion
+design supplied for that adaptation, and its `THIRD_PARTY.md` says publication
+"does not claim ownership of the reference artwork or grant permission to
+redistribute its soundtrack elsewhere". None are in this repo and none may be.
+
+Everything that is not the look is shared with the device ads on purpose: same
+bookends, same audio pacing, same budget, same silent twin. A new ad format
+that quietly opted out of those would be a new ad format that overran its
+voice.
+
+## The caption band is a number, not a comment
+
+`captionBand.ts` owns where a reel's caption sits and how tall it may get;
+`ReelHeadline` shrinks the type to fit it, and `MascotStage` and the device
+framing are placed against `CONTENT_FLOOR`.
+
+It was three comments quoting each other before — "the guide's feet are at
+470", "its lower edge at ~1409 against a headline block whose top edge is
+~1465" — all correct about a layout that then changed. Once the caption became
+the whole spoken line it wrapped to two lines for 257 of 294 captions and grew
+upward through the device and the mascot. `npm run check:reel-layout`
+recomputes it from the real scripts.
+
+**Every ad opens on "Welcome to Orbit" and closes on "Download Orbit on the
+Play Store".** Stamped once in `bookends.ts` over the one list that has them
+all, never typed into forty-eight places.
+
+**No ad counts diagrams or plates.** Say what the picture is for the argument
+that ad is making.

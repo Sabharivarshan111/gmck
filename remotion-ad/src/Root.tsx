@@ -10,6 +10,7 @@ import { SHOT_TIMINGS } from './shotTimings';
 import { DYNAMIC_SCRIPT_TIMINGS } from './dynamicScriptTimings';
 
 import { ShotTimeline } from './components/ShotTimeline';
+import { HyperAd } from './components/HyperAd';
 import { ALL_SCRIPTS, SILENT_REELS, VOICED_REELS } from './scripts/index';
 import { silentLongform } from './scripts/silent';
 import { scriptFrames } from './scripts/types';
@@ -110,7 +111,12 @@ export const Root: React.FC = () => {
         <Composition
           key={reel.id}
           id={reel.id}
-          component={ShotTimeline}
+          /*
+             `look` picks the renderer. The device ads fly a phone through 3D
+             space; the two flat ads make the type the film. One component
+             doing both would collapse them into one ad with two palettes.
+          */
+          component={reel.look && reel.look !== 'device' ? HyperAd : ShotTimeline}
           /*
              A spoken reel is as long as its own recordings came to, which
              `measure-audio` pins to REEL_FRAMES by giving the spare time to
@@ -143,7 +149,7 @@ export const Root: React.FC = () => {
         <Composition
           key={reel.id}
           id={reel.id}
-          component={ShotTimeline}
+          component={reel.look && reel.look !== 'device' ? HyperAd : ShotTimeline}
           durationInFrames={scriptFrames(reel)}
           fps={FPS}
           width={1080}
