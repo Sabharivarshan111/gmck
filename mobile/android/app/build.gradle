@@ -108,6 +108,19 @@ android {
         applicationId "com.aistudio.mbbsqbank.aycxvd"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
+        // ** 18 IS PINNED. DO NOT BUMP IT. **
+        //
+        // Standing instruction from the app's owner on 2026-09-11: every build
+        // stays at 18 until they have actually uploaded a version to the Play
+        // Store. The usual rule — bump on every upload — resumes the moment
+        // they say 18 is live, and not before.
+        //
+        // The reason it is a rule rather than a habit: a versionCode that
+        // climbs on every CI build burns numbers nobody uploaded, and the
+        // owner is then reading a console that says 17 while the repo says 23,
+        // which is exactly the confusion this file has already caused twice.
+        // Numbers are cheap to spend and awkward to explain.
+        //
         // 17 is the highest versionCode ever uploaded to Play, so 18 is next.
         //
         // The app's owner read that off their own console on 2026-09-11. This
