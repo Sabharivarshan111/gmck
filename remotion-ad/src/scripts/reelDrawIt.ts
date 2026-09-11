@@ -39,7 +39,7 @@ export const reelDrawIt: AdScript = {
     { n: 1, frames: 129, screen: 'plateBrachial', camera: 'macro', text: 'You know the brachial plexus', silentText: 'Now draw it. From memory', vo: 'You know the brachial plexus.', accent: '#22D3A6' },
     { n: 2, frames: 129, screen: 'plateBrachial', camera: 'macro', text: 'Draw it from memory', silentText: 'Four minutes. Most freeze', vo: 'Draw it from memory.', accent: '#22D3A6' },
     { n: 3, frames: 129, screen: 'plateUlnar', camera: 'trackRight', text: 'Where the marks are', silentText: 'This is where the marks are', vo: 'That is where the marks are.', accent: '#22D3A6' },
-    { n: 4, frames: 129, screen: 'questionsLeaf', camera: 'push', text: 'Already in the app', silentText: "It's already in the app", vo: 'This diagram is already in the app.', focus: 0.28, accent: '#7C5CFF' },
+    { n: 4, frames: 129, screen: 'chapterDiagrams', camera: 'push', text: 'Already in the app', silentText: "It's already in the app", vo: 'This diagram is already in the app.', focus: 0.28, accent: '#7C5CFF' },
     { n: 5, frames: 129, screen: 'questionsLeaf', camera: 'macro', text: 'Triple-tap the question', silentText: 'Triple-tap the question', vo: 'Triple-tap the question and it appears.', focus: 0.28, accent: '#FF4D8D' },
     { n: 6, frames: 129, screen: 'plateStomach', camera: 'macro', text: 'Drawn for that question', silentText: "Never a neighbour's picture", vo: "Drawn for that question, never a neighbour's.", accent: '#22D3A6' },
     { n: 7, frames: 129, screen: 'chapterDiagrams', camera: 'glideDown', text: 'Labelled for the examiner', silentText: 'Labelled as you must draw it', vo: 'Labelled the way the examiner wants it drawn.', accent: '#22D3A6' },

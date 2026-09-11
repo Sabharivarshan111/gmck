@@ -37,11 +37,11 @@ export const reelFirstYear: AdScript = {
   pitch: '+0Hz',
   music: 'audio/bed/bed-guide.wav',
   shots: [
-    { n: 1, frames: 129, screen: null, mascot: 'hero', camera: 'settle', text: 'First year is a drawing exam', silentText: 'First year is a drawing exam', vo: 'First year is a drawing exam.', accent: '#22D3A6' },
+    { n: 1, frames: 129, screen: null, mascot: 'hero', camera: 'settle', text: 'Now draw it', silentText: 'Now draw it from memory', vo: 'You can describe it perfectly. Now draw it.', accent: '#22D3A6' },
     { n: 2, frames: 129, screen: 'browseFirst', mascot: 'guide', camera: 'trackLeft', text: 'Anatomy, Physiology, Biochemistry', silentText: 'Anatomy, Physiology, Biochem', vo: 'Anatomy, Physiology and Biochemistry together.', accent: '#22D3A6' },
     { n: 3, frames: 129, screen: 'plateBrachial', camera: 'settle', text: 'The answer is a picture', silentText: 'The answer is a picture', vo: 'And half the time the answer is a picture.', accent: '#22D3A6' },
     { n: 4, frames: 129, screen: 'plateUlnar', camera: 'push', text: 'A real labelled plate', silentText: 'A real labelled plate', vo: 'A real labelled plate, not a stock drawing.', accent: '#22D3A6' },
-    { n: 5, frames: 129, screen: 'chapterDiagrams', camera: 'glideDown', text: 'Every chapter has its own', silentText: 'Every chapter has its own', vo: 'Every chapter has its own, never a neighbour’s.', accent: '#4CC2FF' },
+    { n: 5, frames: 129, screen: 'chapterDiagrams', camera: 'glideDown', text: 'Every chapter has its own', silentText: 'Every chapter has its own', vo: 'Every chapter has its own picture.', accent: '#4CC2FF' },
     { n: 6, frames: 129, screen: 'questionsChapters', camera: 'push', text: 'Sorted the way you revise', silentText: 'Sorted the way you revise', vo: 'The questions are sorted the way you revise.', focus: 0.35, accent: '#7C5CFF' },
     { n: 7, frames: 129, screen: 'questionsLeaf', camera: 'macro', text: 'Seven in ten have been asked before', silentText: '7 in 10 have repeated', vo: 'Seven in ten have been asked before.', focus: 0.28, accent: '#F5B301' },
     { n: 8, frames: 129, screen: 'questionsLeaf', mascot: 'guide', camera: 'push', text: 'The circle tells you how often', silentText: 'The circle tells you how often', vo: 'The circle tells you how often. Start there.', focus: 0.3, accent: '#F5B301' },

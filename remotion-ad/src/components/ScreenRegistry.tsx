@@ -56,12 +56,15 @@ export const SCREENS: Record<string, ScreenAsset> = {
   //     rather than behind a URL --------------------------------------------
   attendance: { kind: 'screen', file: 'app_screens/attendance.png' },
   attendancePostings: { kind: 'screen', file: 'app_screens/attendance-postings.png' },
+  attendanceEmpty: { kind: 'screen', file: 'app_screens/attendance-empty.png' },
+  attendanceCritical: { kind: 'screen', file: 'app_screens/attendance-critical.png' },
   settings: { kind: 'screen', file: 'app_screens/settings.png' },
   settingsNotifications: { kind: 'screen', file: 'app_screens/settings-bottom.png' },
   // First year, for the ad that is about first year. The default browse shot
   // is second year and naming the wrong subjects under a first-year claim is
   // the sort of thing a viewer notices and nobody else does.
   browseFirst: { kind: 'screen', file: 'app_screens/browse-first.png' },
+  browseSecond: { kind: 'screen', file: 'app_screens/browse-second.png' },
   browseThird: { kind: 'screen', file: 'app_screens/browse-third.png' },
   notesBottom: { kind: 'screen', file: 'app_screens/notes-bottom.png' },
   flashcardsBottom: { kind: 'screen', file: 'app_screens/flashcards-decks-bottom.png' },

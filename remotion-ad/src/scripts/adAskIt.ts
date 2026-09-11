@@ -37,7 +37,7 @@ export const adAskIt: AdScript = {
   pitch: '+0Hz',
   music: 'audio/bed/bed-guide-answer.wav',
   shots: [
-    { n: 1, frames: 124, screen: null, kicker: 'The question', typed: true, text: 'Pathogenesis of rheumatic heart disease', silentText: 'Ask it anything', vo: 'Every exam question starts this way.', accent: '#2F6BFF' },
+    { n: 1, frames: 124, screen: null, kicker: 'The question', typed: true, text: 'Pathogenesis of rheumatic heart disease', silentText: 'Ask it anything', vo: 'You have seen this one in a paper before.', accent: '#2F6BFF' },
     { n: 2, frames: 124, screen: 'questionsLeaf', focus: 0.28, kicker: 'The bank', text: 'It is already in here', silentText: 'It is already in here', vo: 'That one is already in the bank, with its own row.', accent: '#2F6BFF' },
     { n: 3, frames: 124, screen: 'questionsLeaf', focus: 0.28, kicker: 'How often', text: 'And it keeps coming back', silentText: 'And it keeps coming back', vo: 'The circle beside it counts how often it returns.', accent: '#F5B301' },
     { n: 4, frames: 124, screen: 'questionsLeaf', focus: 0.3, kicker: 'Three taps', text: 'Tap it three times', silentText: 'Tap it three times', vo: 'Tap the question three times and wait.', accent: '#FF4D8D' },

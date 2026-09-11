@@ -40,7 +40,7 @@ export const reelProgress: AdScript = {
   pitch: '+0Hz',
   music: 'audio/bed/bed-guide.wav',
   shots: [
-    { n: 1, frames: 129, screen: null, mascot: 'hero', camera: 'settle', text: 'Some weeks feel like nothing', silentText: 'Some weeks feel like nothing', vo: 'Some weeks feel like nothing happened.', accent: '#F5B301' },
+    { n: 1, frames: 129, screen: null, mascot: 'hero', camera: 'settle', text: 'A week you cannot account for', silentText: 'A week you cannot account for', vo: 'You studied all week and cannot name one thing.', accent: '#F5B301' },
     { n: 2, frames: 129, screen: 'progress', mascot: 'guide', camera: 'push', text: 'This tab disagrees', silentText: 'This tab disagrees', vo: 'This tab disagrees, with numbers.', accent: '#F5B301' },
     { n: 3, frames: 129, screen: 'progress', camera: 'macro', text: 'Your streak, counted in days', silentText: 'Your streak, in days', vo: 'Your streak, counted in days you turned up.', focus: 0.25, accent: '#F5B301' },
     { n: 4, frames: 129, screen: 'progress', camera: 'push', text: 'It needs no account', silentText: 'It needs no account', vo: 'It needs no account. Not one.', focus: 0.25, accent: '#22D3A6' },

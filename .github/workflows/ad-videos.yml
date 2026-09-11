@@ -102,6 +102,10 @@ jobs:
         working-directory: remotion-ad
         run: npm run check:reel-layout
 
+      - name: Every line matches the screenshot under it
+        working-directory: remotion-ad
+        run: npm run check:ad-truth
+
       # `public/audio` now carries a `shot_NN.words.json` beside every mp3 —
       # when each word of that line is actually spoken, straight from the
       # Speech service. The render jobs re-derive the timing tables from those,
@@ -298,6 +302,10 @@ jobs:
       - name: The caption fits its band, and nothing is drawn under it
         working-directory: remotion-ad
         run: npm run check:reel-layout
+
+      - name: Every line matches the screenshot under it
+        working-directory: remotion-ad
+        run: npm run check:ad-truth
 
       - name: Render
         working-directory: remotion-ad

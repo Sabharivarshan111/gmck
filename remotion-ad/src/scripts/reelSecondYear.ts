@@ -44,8 +44,8 @@ export const reelSecondYear: AdScript = {
   pitch: '+0Hz',
   music: 'audio/bed/bed-guide.wav',
   shots: [
-    { n: 1, frames: 129, screen: null, mascot: 'hero', camera: 'settle', text: 'Second year is the volume year', silentText: 'Second year is the volume year', vo: 'Second year is the volume year.', accent: '#FF4D8D' },
-    { n: 2, frames: 129, screen: 'browse', mascot: 'guide', camera: 'trackLeft', text: 'Four heavy subjects', silentText: 'Patho, Pharma, Micro, Forensic', vo: 'Four heavy subjects arriving all at once.', accent: '#FF4D8D' },
+    { n: 1, frames: 129, screen: null, mascot: 'hero', camera: 'settle', text: 'Patho and Pharma, same week', silentText: 'Patho and Pharma, same week', vo: 'Pathology and Pharmacology in the same week.', accent: '#FF4D8D' },
+    { n: 2, frames: 129, screen: 'browseSecond', mascot: 'guide', camera: 'trackLeft', text: 'Four heavy subjects', silentText: 'Patho, Pharma, Micro, Forensic', vo: 'Four heavy subjects arriving all at once.', accent: '#FF4D8D' },
     { n: 3, frames: 129, screen: 'questionsChapters', camera: 'push', text: 'Sorted by chapter', silentText: 'Sorted chapter by chapter', vo: 'Every one of them sorted by chapter.', focus: 0.35, accent: '#4CC2FF' },
     { n: 4, frames: 129, screen: 'questionsLeaf', camera: 'macro', text: 'The circle is how often', silentText: 'The circle counts the repeats', vo: 'The circle is how often that question repeats.', focus: 0.28, accent: '#F5B301' },
     { n: 5, frames: 129, screen: 'questionsLeaf', mascot: 'guide', camera: 'push', text: 'Study the fours first', silentText: 'Study the 4s before the 1s', vo: 'Study the fours before the ones.', focus: 0.3, accent: '#F5B301' },
