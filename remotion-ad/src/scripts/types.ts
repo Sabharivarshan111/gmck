@@ -156,6 +156,15 @@ export interface Shot {
    */
   endCard?: boolean;
   /**
+   * Draw the opening brand card: the mark and "Welcome to Orbit".
+   *
+   * Set by `bookends.ts` on the first shot of every ad. It replaced a line of
+   * copy trying to hook the viewer before they knew whose ad they were
+   * watching — the owner's call, and it makes twenty-six ads open identically,
+   * which is what makes the mark recognisable by the third one.
+   */
+  openCard?: boolean;
+  /**
    * Where the mascot stands in this shot.
    *
    * `hero` gives it the frame to itself — no device at all — which is what the
