@@ -601,11 +601,23 @@ try {
     if (script.format !== 'reel' || script.noVoice) continue;
     const spoken = script.shots.filter((s) => s.vo);
     const need = spoken.reduce((n, s) => n + estimate(s.vo) + AIR, 0);
-    const budget = RF / 30;
+
+    /*
+     * The budget is short of the reel's real length on purpose.
+     *
+     * This is an ESTIMATE with a median error of 0.45s and a p90 near 1.0s,
+     * and it is summed over fifteen shots. A script measured at 59.8s here is
+     * a coin toss once it is recorded, and losing that toss means finding out
+     * in CI, forty minutes into a render. Three seconds of margin costs a
+     * sentence and buys certainty.
+     */
+    const MARGIN = 3;
+    const budget = RF / 30 - MARGIN;
     if (need > budget) {
       problems.push(
         `${script.id} is written with about ${need.toFixed(1)}s of speech for a ` +
-          `${budget.toFixed(0)}s reel — roughly ${(need - budget).toFixed(1)}s too much ` +
+          `${budget.toFixed(0)}s budget (a ${RF / 30}s reel, less ${MARGIN}s of margin ` +
+          `for the estimate) — roughly ${(need - budget).toFixed(1)}s too much ` +
           `across ${spoken.length} shots. Shorten the lines, or cut shots: ` +
           'commas and full stops cost ~0.7s each, so a list is the most ' +
           'expensive thing a line can contain.',

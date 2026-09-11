@@ -1,6 +1,14 @@
 import React from 'react';
 import { useCurrentFrame, useVideoConfig, interpolate, spring, Easing } from 'remotion';
 import { lineFor, spanWordFrames } from './wordSync';
+import {
+  CAPTION_BOTTOM,
+  CAPTION_PAD_X,
+  CAPTION_PAD_Y,
+  CAPTION_SIDE,
+  LINE_HEIGHT,
+  fitCaption,
+} from './captionBand';
 
 interface ReelHeadlineProps {
   text: string;
@@ -42,9 +50,10 @@ interface ReelHeadlineProps {
  * The headline used to be unrelated to the words being spoken under it. Shot
  * one of "Already Asked" read "2,025 already asked" while the voice said "Your
  * university repeats its questions" — a viewer with the sound on read one
- * sentence and heard a different one, which is what the app's owner reported
- * as nothing syncing. The scripts now write the headline as a **verbatim span
- * of the spoken line** and `preflight` fails a render where that is not true.
+ * sentence and heard a different one. It was then made a verbatim **span** of
+ * the line, which fixed the disagreement and left a fragment on screen: 264 of
+ * 385 shots showed under three quarters of what was said. The caption is the
+ * whole line now, so there is only one string and nothing to keep in step.
  *
  * Given that, this can light each word at the moment it is said. The words
  * still all arrive within ten frames — the muted cut is the one that gets
@@ -63,7 +72,15 @@ export const ReelHeadline: React.FC<ReelHeadlineProps> = ({
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const words = text.trim().split(/\s+/).filter(Boolean);
+  /*
+     The type shrinks to fit the band rather than the band growing to fit the
+     type. At a fixed 58px the whole spoken line wrapped to two lines for 257
+     of 294 captions and three for eight more, and the block grows UPWARD from
+     `bottom` — straight through the device and the mascot, which is the
+     overlap that was reported. `captionBand.ts` owns the geometry all three
+     components are placed against.
+  */
+  const { size: fontSize, words } = fitCaption(text);
 
   // When each headline word is actually said. Null on a silent cut, and null
   // if the headline is not a span of the line — in both cases every word is
@@ -94,9 +111,9 @@ export const ReelHeadline: React.FC<ReelHeadlineProps> = ({
     <div
       style={{
         position: 'absolute',
-        bottom: '330px',
-        left: '64px',
-        right: '64px',
+        bottom: `${CAPTION_BOTTOM}px`,
+        left: `${CAPTION_SIDE}px`,
+        right: `${CAPTION_SIDE}px`,
         zIndex: 60,
         opacity,
         pointerEvents: 'none',
@@ -112,8 +129,8 @@ export const ReelHeadline: React.FC<ReelHeadlineProps> = ({
           flexWrap: 'wrap',
           justifyContent: 'center',
           alignItems: 'baseline',
-          gap: '0 18px',
-          padding: '18px 34px',
+          gap: `0 ${Math.round(fontSize * 0.31)}px`,
+          padding: `${CAPTION_PAD_Y}px ${CAPTION_PAD_X}px`,
           borderRadius: '28px',
           background: 'rgba(3, 7, 18, 0.82)',
           backdropFilter: 'blur(22px)',
@@ -137,10 +154,10 @@ export const ReelHeadline: React.FC<ReelHeadlineProps> = ({
               style={{
                 fontFamily:
                   '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif',
-                fontSize: '58px',
+                fontSize: `${fontSize}px`,
                 fontWeight: 900,
                 letterSpacing: '-0.025em',
-                lineHeight: 1.12,
+                lineHeight: LINE_HEIGHT,
                 color: said ? '#ffffff' : 'rgba(255, 255, 255, 0.42)',
                 textShadow: said
                   ? `0 4px 24px rgba(0,0,0,0.8), 0 0 34px ${accent}88`

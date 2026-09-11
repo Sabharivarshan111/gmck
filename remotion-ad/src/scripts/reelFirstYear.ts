@@ -47,7 +47,7 @@ export const reelFirstYear: AdScript = {
     { n: 8, frames: 129, screen: 'questionsLeaf', mascot: 'guide', camera: 'push', text: 'The circle tells you how often', silentText: 'The circle tells you how often', vo: 'The circle tells you how often. Start there.', focus: 0.3, accent: '#F5B301' },
     { n: 9, frames: 128, screen: 'noteHero', camera: 'push', text: 'Triple-tap for the written answer', silentText: 'Triple-tap for the written answer', vo: 'Triple-tap for the written answer.', accent: '#FF4D8D' },
     { n: 10, frames: 128, screen: 'noteBody', camera: 'glideDown', text: 'From a real textbook', silentText: 'From a real textbook', vo: 'Written from a real textbook, not made up.', accent: '#FF4D8D' },
-    { n: 11, frames: 128, screen: 'userNotesEdit', camera: 'macro', text: 'Draw it yourself', silentText: 'Draw it yourself', vo: 'Then draw it yourself, with a stylus or a finger.', accent: '#FF4D8D' },
+    { n: 11, frames: 128, screen: 'userNotesEdit', camera: 'macro', text: 'Draw it yourself', silentText: 'Draw it yourself', vo: 'Then draw it yourself with a stylus or a finger.', accent: '#FF4D8D' },
     { n: 12, frames: 128, screen: 'flashcards', mascot: 'guide', camera: 'orbit', text: 'Turn a chapter into flashcards', silentText: 'Turn a chapter into flashcards', vo: 'Turn a chapter into flashcards when you are done.', accent: '#4CC2FF' },
     { n: 13, frames: 128, screen: 'progress', camera: 'pull', text: 'Day one of the streak', silentText: 'Day one of the streak', vo: 'And day one of the streak needs no account.', accent: '#F5B301' },
     { n: 14, frames: 128, screen: 'home', camera: 'push', text: 'Orbit MBBS, free on Google Play', silentText: 'Orbit MBBS — on Google Play', vo: 'Orbit MBBS, free on Google Play.', accent: '#7C5CFF' },

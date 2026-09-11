@@ -98,6 +98,10 @@ jobs:
         working-directory: remotion-ad
         run: npm run preflight
 
+      - name: The caption fits its band, and nothing is drawn under it
+        working-directory: remotion-ad
+        run: npm run check:reel-layout
+
       # `public/audio` now carries a `shot_NN.words.json` beside every mp3 —
       # when each word of that line is actually spoken, straight from the
       # Speech service. The render jobs re-derive the timing tables from those,
@@ -279,6 +283,10 @@ jobs:
       - name: Preflight
         working-directory: remotion-ad
         run: npm run preflight
+
+      - name: The caption fits its band, and nothing is drawn under it
+        working-directory: remotion-ad
+        run: npm run check:reel-layout
 
       - name: Render
         working-directory: remotion-ad

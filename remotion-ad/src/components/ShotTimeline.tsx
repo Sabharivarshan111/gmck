@@ -20,13 +20,23 @@ const DEFAULT_ACCENT = '#7C5CFF';
 /**
  * How much of the frame a reel gives the device, and how far up.
  *
- * See `ReelHeadline` for the arithmetic. These are the two numbers that keep
- * the phone clear of a headline sitting above Instagram's own UI, and they are
- * only ever passed for `format: 'reel'` — the long-form ads pass nothing and
- * frame exactly as they always have.
+ * These keep the phone clear of `CONTENT_FLOOR` — the line the caption band
+ * can never be crossed above — and they are only ever passed for
+ * `format: 'reel'`; the long-form ads pass nothing and frame exactly as they
+ * always have.
+ *
+ * The arithmetic, because it is the kind that goes stale silently: at the
+ * widest zoom this engine reaches (1.62, on a bottom-nav shot) the device is
+ * 1,024 tall. At 0.86 and a lift of -70 its lower edge sat at ~1409, which was
+ * correct against a ONE-LINE caption whose top edge was ~1465. The caption is
+ * the whole spoken line now, wrapping to two lines or three, and its band top
+ * is `CAPTION_TOP` — 1360. So the device drops 70 further to clear it.
+ *
+ * `check:reel-layout` recomputes this rather than trusting the paragraph
+ * above, which is the only reason to believe it.
  */
 const REEL_DEVICE_SCALE = 0.86;
-const REEL_DEVICE_LIFT = -70;
+const REEL_DEVICE_LIFT = -140;
 
 /**
  * Music bed level, under a voice and on its own.
