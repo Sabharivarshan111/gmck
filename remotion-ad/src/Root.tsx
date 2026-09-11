@@ -18,37 +18,64 @@ import { scriptFrames } from './scripts/types';
 
 const FPS = 30;
 
+/**
+ * The three 90-second launch ads, and the frame count to fall back on.
+ *
+ * The fallback is what the composition is worth before `voice-manifest` has
+ * measured the real recordings — a render with no timings still has to have a
+ * length. Both mixes of an ad read the same number, so they cannot end at
+ * different frames.
+ */
+const LAUNCH_ADS = [
+  { id: 'orbit-the-pattern', script: thePattern, fallbackFrames: 3965 },
+  { id: 'orbit-2am', script: twoAM, fallbackFrames: 4302 },
+  { id: 'orbit-draw-it-from-memory', script: drawItFromMemory, fallbackFrames: 4813 },
+] as const;
+
 export const Root: React.FC = () => {
   return (
     <>
-      {/* --- STANDALONE THEMATIC LAUNCH ADS (Calm Audio-Paced & Responsive Focal Camera) --- */}
-      <Composition
-        id="orbit-the-pattern"
-        component={ShotTimeline}
-        durationInFrames={DYNAMIC_SCRIPT_TIMINGS['orbit-the-pattern']?.totalFrames ?? 3965}
-        fps={FPS}
-        width={1080}
-        height={1920}
-        defaultProps={{ script: thePattern }}
-      />
-      <Composition
-        id="orbit-2am"
-        component={ShotTimeline}
-        durationInFrames={DYNAMIC_SCRIPT_TIMINGS['orbit-2am']?.totalFrames ?? 4302}
-        fps={FPS}
-        width={1080}
-        height={1920}
-        defaultProps={{ script: twoAM }}
-      />
-      <Composition
-        id="orbit-draw-it-from-memory"
-        component={ShotTimeline}
-        durationInFrames={DYNAMIC_SCRIPT_TIMINGS['orbit-draw-it-from-memory']?.totalFrames ?? 4813}
-        fps={FPS}
-        width={1080}
-        height={1920}
-        defaultProps={{ script: drawItFromMemory }}
-      />
+      {/* --- STANDALONE THEMATIC LAUNCH ADS (Calm Audio-Paced & Responsive Focal Camera) ---
+
+          These ship in two mixes, exactly as the reels do. They were the three
+          that did not, and the gap was invisible from here: they were written
+          before the silent cut existed, registered by hand one `<Composition>`
+          each, and a hand-written list does not notice a rule it predates.
+          Looping the pair is what stops it happening again.
+
+          A muted long-form ad needs no `silentText`, which is the reel's
+          answer to the same problem. A reel's headline is a verbatim span of
+          the spoken line, so with no audio it reads as a fragment; these run
+          `KineticWordCaption`, which already types out every word of the line
+          in time with the recording. The words were always on screen. The
+          silent mix leaves out the voice and lifts the music bed to
+          `BED_ALONE`, and that is the whole difference.
+      */}
+      {LAUNCH_ADS.map(({ id, script, fallbackFrames }) => {
+        const durationInFrames = DYNAMIC_SCRIPT_TIMINGS[id]?.totalFrames ?? fallbackFrames;
+        return (
+          <React.Fragment key={id}>
+            <Composition
+              id={id}
+              component={ShotTimeline}
+              durationInFrames={durationInFrames}
+              fps={FPS}
+              width={1080}
+              height={1920}
+              defaultProps={{ script, withVoice: true }}
+            />
+            <Composition
+              id={`${id}-silent`}
+              component={ShotTimeline}
+              durationInFrames={durationInFrames}
+              fps={FPS}
+              width={1080}
+              height={1920}
+              defaultProps={{ script, withVoice: false }}
+            />
+          </React.Fragment>
+        );
+      })}
 
       {/* --- 60-SECOND INSTAGRAM REELS, IN TWO CUTS EACH ---
 
