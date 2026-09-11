@@ -80,7 +80,12 @@ jobs:
           case "$code" in 2*) ;; *) echo "::error::Unexpected response $code"; cat /tmp/buckets.json; exit 1;; esac
           echo "--- buckets before ---"; cat /tmp/buckets.json; echo
 
+      # Applied long ago and kept only because re-running it is a no-op.
+      # `continue-on-error` because a FINISHED one-off task must never stop
+      # the queue step at the bottom from running — which is precisely what
+      # it did on the first run after the queue step was added.
       - name: Make the textbooks bucket private
+        continue-on-error: true
         run: |
           set +eux
           case "$FOUND" in A) TOKEN="$TOK_A";; B) TOKEN="$TOK_B";; *) TOKEN="$TOK_C";; esac
@@ -105,7 +110,12 @@ jobs:
           fi
           echo "textbooks is private."
 
+      # Applied long ago and kept only because re-running it is a no-op.
+      # `continue-on-error` because a FINISHED one-off task must never stop
+      # the queue step at the bottom from running — which is precisely what
+      # it did on the first run after the queue step was added.
       - name: Delete the empty note-images bucket
+        continue-on-error: true
         run: |
           set +eux
           case "$FOUND" in A) TOKEN="$TOK_A";; B) TOKEN="$TOK_B";; *) TOKEN="$TOK_C";; esac
@@ -156,9 +166,22 @@ jobs:
             -H "Authorization: Bearer $SRK" -H "apikey: $SRK" \
             -X DELETE "https://$PROJECT_REF.supabase.co/storage/v1/bucket/note-images")
           echo "delete bucket: HTTP $code"
+          # "Already gone" is success — this task was applied on 2026-09-01.
+          #
+          # The Storage API does not say that with an HTTP 404. It answers
+          # **HTTP 400** with `{"statusCode":"404","code":"NoSuchBucket"}` in the
+          # BODY, so a check on the status line alone reads a finished task as a
+          # failure. That is exactly what happened: a one-off completed nine days
+          # ago failed the whole job and stopped every step after it from running.
           case "$code" in
             2*|404) ;;
-            *) echo "::error::Delete failed ($code)"; cat /tmp/del.json; exit 1;;
+            *)
+              if grep -q 'NoSuchBucket' /tmp/del.json; then
+                echo "note-images was already gone. Nothing to do."
+              else
+                echo "::error::Delete failed ($code)"; cat /tmp/del.json; exit 1
+              fi
+              ;;
           esac
 
           # The queue entry's own verify step.
