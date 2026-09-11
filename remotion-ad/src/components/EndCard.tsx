@@ -126,20 +126,36 @@ export const EndCard: React.FC<EndCardProps> = ({
         }}
       />
 
+      {/*
+         Three lines, in the order the app's owner asked for them: who it is
+         for, what it costs, and where to get it.
+
+         "Made for the medical community" first, because that is the claim a
+         medical student actually checks — an app written for everybody is an
+         app written for nobody, and this one's question bank came out of their
+         own university papers. "Completely free" second, because it is the
+         objection everybody arrives with. The store line last, because it is
+         the only one that asks for anything.
+      */}
       <div
         style={{
           opacity: wordmark,
           zIndex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '14px',
           fontFamily:
             '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif',
-          fontSize: '40px',
-          fontWeight: 600,
-          letterSpacing: '0.04em',
-          color: ink,
           textAlign: 'center',
         }}
       >
-        Free, for every MBBS year
+        <div style={{ fontSize: '46px', fontWeight: 700, letterSpacing: '-0.01em', color: ink }}>
+          Made for the medical community
+        </div>
+        <div style={{ fontSize: '40px', fontWeight: 500, color: accent }}>
+          Completely free
+        </div>
       </div>
 
       <div style={{ opacity: cta, zIndex: 1, display: 'flex', justifyContent: 'center' }}>
@@ -170,7 +186,7 @@ export const EndCard: React.FC<EndCardProps> = ({
               textAlign: 'center',
             }}
           >
-            On Google Play
+            Download on Play Store
           </div>
         )}
       </div>
