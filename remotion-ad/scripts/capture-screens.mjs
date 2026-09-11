@@ -32,18 +32,74 @@ const tmp = path.join(root, '.screens-tmp');
  */
 const plateSrc = path.join(root, 'public', 'app_screens');
 const plateDst = path.join(repo, 'mobile', 'preview', 'public', 'plates');
+
+/*
+ * The destination is CLEARED first, and that is the fix rather than tidiness.
+ *
+ * This used to copy the real plates in over whatever was already there, and
+ * `preview/public/plates/` had collected three 4,843-byte PNGs named `.jpg` —
+ * hand-made stand-ins from a session where the download had failed. A stale
+ * one is worse than a missing one: `plate-tca-cycle.jpg` existed, so the note
+ * screen asked for it, got a grey ramp, and photographed it. That capture is
+ * what every note shot in every ad is built on, and a grey ramp inside a card
+ * headed "High-Yield Visual Exam Diagram" reads as our diagrams being broken.
+ *
+ * Wiping the directory means the staged set is exactly what `fetch-plates`
+ * downloaded this run and nothing else, so a plate is either the real picture
+ * or absent — and absent draws the stand-in that says "Renderer stand-in" on
+ * its face, which nobody can mistake for a diagram.
+ */
+await fs.rm(plateDst, { recursive: true, force: true });
 await fs.mkdir(plateDst, { recursive: true });
+
+// A JPEG starts FF D8 FF. Anything else under this name is a stand-in wearing
+// a plate's filename, which is the whole failure above.
+const isJpeg = (buf) => buf.length > 3 && buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff;
+
 let staged = 0;
+const staged_names = new Set();
+const rejected = [];
 for (const name of await fs.readdir(plateSrc).catch(() => [])) {
   if (!name.startsWith('plate-') || !name.endsWith('.jpg')) continue;
-  await fs.copyFile(path.join(plateSrc, name), path.join(plateDst, name));
+  const buf = await fs.readFile(path.join(plateSrc, name));
+  if (!isJpeg(buf) || buf.length < 50_000) {
+    rejected.push(`${name} (${buf.length} bytes, ${isJpeg(buf) ? 'JPEG' : 'not a JPEG'})`);
+    continue;
+  }
+  await fs.writeFile(path.join(plateDst, name), buf);
+  staged_names.add(name);
   staged += 1;
 }
+for (const r of rejected) {
+  process.stdout.write(`  not a plate, left out: ${r}\n`);
+}
 process.stdout.write(`${staged} plate(s) staged for the preview harness\n`);
-if (staged === 0) {
+
+/*
+ * Every plate, or none of these screens are worth photographing.
+ *
+ * This used to accept any number above zero, and the gap it left is the bug
+ * the app's owner reported: `plate-tca-cycle.jpg` was not among the plates on
+ * disk, so the single-note screen asked for a file that was not there and
+ * photographed a grey rectangle inside a card headed "High-Yield Visual Exam
+ * Diagram". Three plates were staged, the check passed, and the capture went
+ * on to produce a screen no ad should ever use.
+ *
+ * The expected set is read out of `fetch-plates.mjs` rather than written here,
+ * so adding a plate there cannot leave this behind.
+ */
+const expected = [
+  ...(await fs.readFile(path.join(root, 'scripts', 'fetch-plates.mjs'), 'utf8'))
+    .matchAll(/'(plate-[a-z0-9-]+\.jpg)':/g),
+].map((m) => m[1]);
+const absent = expected.filter((name) => !staged_names.has(name));
+if (absent.length > 0) {
   process.stdout.write(
-    'No plates on disk. Run `npm run plates` first — without them the note\n' +
-      'screens fall back to the drawn stand-ins, which must not reach an ad.\n',
+    `\n${absent.length} plate(s) are not on disk: ${absent.join(', ')}\n` +
+      'Run `npm run plates` first. Without them the note screens photograph an\n' +
+      'empty picture box, and that capture is what every note shot in every ad\n' +
+      'is built on. The storage bucket is unreachable from an agent sandbox, so\n' +
+      'these screens can only be captured in CI.\n',
   );
   process.exit(1);
 }

@@ -1,0 +1,12 @@
+node_modules/
+
+# Everything below is build output, and none of it is committed for the same
+# reason `remotion-ad/public/app_screens` is not: a committed screenshot is a
+# UI the app may no longer have, and a committed composition is a script the
+# owner may since have rewritten. `npm run build` makes all of it from the
+# scripts and the captures that exist right now.
+assets/
+ask-it/
+the-year/
+renders/
+snapshots/

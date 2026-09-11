@@ -1,0 +1,19 @@
+{
+  "name": "orbit-mbbs-hyperframes-ads",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Two 60-second Orbit MBBS ads, authored as real HyperFrames compositions",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "lint": "npm run build && hyperframes lint the-year && hyperframes lint ask-it",
+    "check": "node scripts/check.mjs",
+    "render": "node scripts/render.mjs",
+    "preview": "hyperframes preview the-year"
+  },
+  "dependencies": {
+    "gsap": "3.13.0",
+    "hyperframes": "0.8.34"
+  }
+}

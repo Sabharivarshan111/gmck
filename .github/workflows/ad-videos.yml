@@ -413,6 +413,92 @@ jobs:
           echo "::error::could not upload ${{ matrix.file }} after four attempts"
           exit 1
 
+  # The two HyperFrames films.
+  #
+  # They are a second renderer, not a second copy of the ads: the words come
+  # out of the same scripts, and the pictures out of the same captures this
+  # workflow just made, but the film is authored as HTML with a GSAP timeline
+  # seeking over it rather than as React reading a frame number.
+  #
+  # It is its own job because it needs a different toolchain — Node 22, the
+  # HyperFrames CLI, Chrome and FFmpeg — and because a failure here should not
+  # take the thirteen Remotion renders down with it.
+  hyperframes:
+    name: Render the HyperFrames films
+    needs: assets
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install FFmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - name: Install the films' deps
+        working-directory: hyperframes-ad
+        run: npm install --no-audit --no-fund
+
+      # The screenshots and the recordings the `assets` job made. The build
+      # reads them straight out of the Remotion project, so they go back where
+      # that job put them.
+      - name: Pull the assets
+        uses: actions/download-artifact@v4
+        with:
+          name: ad-assets
+          path: remotion-ad/public
+
+      - name: Install Chrome for the renderer
+        working-directory: hyperframes-ad
+        run: npx hyperframes browser ensure
+
+      # Builds both films, then puts each through `hyperframes check`: lint,
+      # then a real browser seeking the timeline for runtime errors, failed
+      # requests, layout overflow and WCAG contrast. It is the only gate that
+      # can see a caption running out of its box.
+      - name: Build and check
+        working-directory: hyperframes-ad
+        env:
+          HYPERFRAMES_NO_TELEMETRY: '1'
+        run: npm run check
+
+      - name: Render both films
+        working-directory: hyperframes-ad
+        env:
+          HYPERFRAMES_NO_TELEMETRY: '1'
+        run: npm run render -- --high
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hyperframes-films
+          path: hyperframes-ad/renders/*.mp4
+          retention-days: 14
+
+      - name: Publish them to the release
+        working-directory: hyperframes-ad
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ inputs.tag }}
+        run: |
+          set -uo pipefail
+          gh release create "$TAG" \
+            --title "Launch ads ($TAG)" \
+            --notes "Renders are being published as each one finishes." \
+            || echo "release $TAG already exists — uploading into it"
+          for f in renders/*.mp4; do
+            for attempt in 1 2 3 4; do
+              if gh release upload "$TAG" "$f" --clobber; then
+                echo "published $f"
+                break
+              fi
+              echo "upload attempt $attempt failed for $f; retrying"
+              sleep $((attempt * 5))
+            done
+          done
+
   # Every ad has already been uploaded by its own render job. This job exists
   # to replace the placeholder notes with the real ones, and to say out loud
   # which files actually made it — a matrix entry that failed is a file that is
