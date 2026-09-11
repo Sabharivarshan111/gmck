@@ -43,6 +43,34 @@ export function useWallpaperText(): string {
   return solveWallpaper(wallpaper, colors.background, colors.text).text;
 }
 
+/**
+ * **This is mounted on the Home screen and nowhere else, on purpose.**
+ *
+ * It looks exactly like a bug — you set a wallpaper, it appears on Home, you
+ * open the Timer and it is gone — and it has already been reported as one
+ * internally, by an agent that had just finished photographing the glass and
+ * concluded the material "had nothing behind it on four of the five tabs".
+ * That reading is correct about the pixels and wrong about the intent.
+ *
+ * The app's owner's decision, in their words: a wallpaper everywhere "causes
+ * distraction". Home is a landing screen — a hero, four shortcuts, a grid of
+ * subjects — and a picture behind it reads as personalisation. The other four
+ * tabs are places you go to *work*: a five-hundred-row question list, a page
+ * of handwritten notes, a chat, a timer you are meant to stop looking at. A
+ * photograph behind any of those is competing with the thing the reader came
+ * to read.
+ *
+ * The consequence for Liquid Glass is real and is accepted: the AGSL shader
+ * gates on a full-page image or video being present, so off Home it stands
+ * down to the drawn bevel every time. That is the honest answer to refracting
+ * a flat colour, not a degraded one — see `GlassView.kt`.
+ *
+ * So: do not lift this to `RootNavigator`, and do not add a second mount on
+ * another screen. If the decision is ever revisited it has to come from the
+ * owner, and the screens would each need their opaque `colors.background` made
+ * transparent in the same commit or the wallpaper would be painted over
+ * anyway.
+ */
 export function WallpaperBackground({ children }: { children: React.ReactNode }) {
   const { colors } = useTheme();
   const { wallpaper, clear } = useWallpaper();

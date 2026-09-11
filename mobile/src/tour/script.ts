@@ -206,7 +206,8 @@ export const STEPS: TourStep[] = [
     title: 'And notes you write yourself',
     body:
       'Under My Progress → Notes. Headings, bullets and highlights, handwriting with a stylus, ' +
-      'and you can attach a photo, a video, a recording or a PDF to any note.',
+      'and you can attach a photo, a video, a recording or a PDF to any note. ' +
+      'Paste a video link and it plays inside the note rather than sending you to another app.',
   },
   {
     id: 'attachments',
@@ -316,8 +317,9 @@ export const STEPS: TourStep[] = [
     chapter: 'look',
     title: 'Your own wallpaper, photo or video',
     body:
-      'Behind the same button. Set a picture or a video from your phone and the cards turn to glass over it — ' +
-      'on Android 13 and up they actually bend what is behind them.',
+      'Behind the same button. Set a picture or a video from your phone and the Home cards turn to glass over it — ' +
+      'on Android 13 and up they actually bend what is behind them. ' +
+      'It stays on Home: a photo behind a question list competes with the question.',
     tab: 'Home',
   },
 
@@ -368,6 +370,29 @@ export const STEPS: TourStep[] = [
       'This stays on your phone too.',
     tab: 'Progress',
     target: 'Attendance',
+    tapToAdvance: true,
+  },
+  /*
+   * Spaced revision had no step, and it is the card at the top of My Progress
+   * — above the tabs, which is where it was deliberately moved so that a
+   * reader on Attendance or Notes can still see that something is due.
+   *
+   * It also needs explaining more than anything else on that screen, because
+   * the commonest misreading of it is that it does nothing: nothing is
+   * scheduled until you tick a question off, so a reader who has ticked
+   * nothing sees an empty Revise button and concludes the feature is broken.
+   * The card says "Tick a question off to start revising it" for that reason,
+   * and so does this.
+   */
+  {
+    id: 'spaced',
+    chapter: 'progress',
+    title: 'What to revise today',
+    body:
+      'Tick a question off and Orbit schedules it to come back — tomorrow, then in six days, then a week, then a month. ' +
+      'Miss one and it returns the next day. Nothing is scheduled until you tick something, so this sits empty until you do.',
+    tab: 'Progress',
+    target: 'Start revising',
     tapToAdvance: true,
   },
   {

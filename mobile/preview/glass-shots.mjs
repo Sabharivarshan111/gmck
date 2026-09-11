@@ -35,18 +35,34 @@ await server.listen();
 const browser = await chromium.launch({ executablePath: await findChromium() });
 const page = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2 });
 
-async function shot(name, { theme, screen, taps = [], settle = 1200 }) {
-  await page.addInitScript(key => {
-    try {
-      window.localStorage.setItem('orbit:theme-preference', key);
-      // Without a profile the app is on its onboarding screen, which is
-      // correct and is not what any of these shots are of.
-      window.localStorage.setItem(
-        'orbit-profile-v1',
-        JSON.stringify({ display_name: 'Orbit', year: 'second' }),
-      );
-    } catch {}
-  }, theme);
+const wallpaperUri = await (await import('node:fs/promises')).readFile('/tmp/wallpaper.b64', 'utf8');
+
+async function shot(name, { theme, screen, taps = [], settle = 1200, wallpaper = false }) {
+  await page.addInitScript(
+    ([key, uri]) => {
+      try {
+        window.localStorage.setItem('orbit:theme-preference', key);
+        // Without a profile the app is on its onboarding screen, which is
+        // correct and is not what any of these shots are of.
+        window.localStorage.setItem(
+          'orbit-profile-v1',
+          JSON.stringify({ display_name: 'Orbit', year: 'second' }),
+        );
+        if (uri) {
+          // A data: URI rather than a file, because the harness is a browser
+          // and a file:// wallpaper would never load. The app only cares that
+          // `uri` is something <Image> can take.
+          window.localStorage.setItem(
+            'orbit:wallpaper',
+            JSON.stringify({ uri, kind: 'image', dim: 0.55 }),
+          );
+        } else {
+          window.localStorage.removeItem('orbit:wallpaper');
+        }
+      } catch {}
+    },
+    [theme, wallpaper ? wallpaperUri : null],
+  );
   await page.goto(`http://localhost:5233/?screen=${screen}`, { waitUntil: 'networkidle' });
   await page.evaluate(() => { globalThis.__orbitPickFile = 'audio'; });
   await page.waitForTimeout(settle);
@@ -96,6 +112,27 @@ await shot('glass-06-music-playing', {
 await shot('glass-07-music-playing-dark', {
   theme: 'dark',
   screen: 'timer',
+  taps: ['Show the music player', 'Add music from this phone', 'Save a copy in Orbit'],
+});
+
+/*
+ * With a wallpaper, which is the case the material was designed for.
+ *
+ * Translucency over a flat colour gives back the flat colour; there is nothing
+ * behind a card to show through. A picture is the one thing four picked colours
+ * could never supply, which is why the shader gates on one and why Apple
+ * demonstrates this material over photographs.
+ */
+await shot('glass-08-wallpaper-home', { theme: 'liquidglass', screen: 'home', wallpaper: true });
+await shot('glass-09-wallpaper-progress', {
+  theme: 'liquidglass',
+  screen: 'progress',
+  wallpaper: true,
+});
+await shot('glass-10-wallpaper-music', {
+  theme: 'liquidglass',
+  screen: 'timer',
+  wallpaper: true,
   taps: ['Show the music player', 'Add music from this phone', 'Save a copy in Orbit'],
 });
 
