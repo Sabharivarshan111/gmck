@@ -1,3 +1,4 @@
+import { LINK_OUT, openUnlock } from '@/lib/unlock';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import {
@@ -211,12 +212,26 @@ export function HomeMenuSheet({
         like a mistake.
       */}
       <Touchable
-        onPress={adFreeUntil ? onClose : run(onRemoveAds)}
-        label={
-          adFreeUntil
-            ? `Ad-free until ${adFreeUntil}`
-            : 'Remove ads, from fifty rupees'
-        }
+        /*
+         * Straight to the unlock page rather than into Settings.
+         *
+         * This used to open the settings sheet, which was right while ad-free
+         * was "coming soon" and there was nothing to send anyone to. It is
+         * bought on the website now, so the row goes where the row says it
+         * goes.
+         */
+        onPress={adFreeUntil ? onClose : run(LINK_OUT ? openUnlock : onRemoveAds)}
+        /*
+         * No price in the label.
+         *
+         * It read "Remove ads, from fifty rupees" — a leftover from Razorpay,
+         * and the only place in the app that still quoted an amount. The app
+         * prices nothing: whatever the unlock page charges is the page's to
+         * say, in the reader's currency and after tax. A number compiled into
+         * an APK is a number that goes stale in a build nobody can update, and
+         * TalkBack would have read it out as fact.
+         */
+        label={adFreeUntil ? `Ad-free until ${adFreeUntil}` : 'Remove ads'}
         scaleTo={0.98}
         style={[
           styles.premium,
@@ -231,7 +246,7 @@ export function HomeMenuSheet({
             {adFreeUntil ? 'No ads' : 'Remove ads'}
           </Text>
           <Text style={[styles.premiumHint, { color: colors.textMuted }]}>
-            {adFreeUntil ? `Until ${adFreeUntil}` : 'One month, six months or a year'}
+            {adFreeUntil ? `Until ${adFreeUntil}` : 'Unlock it on the website'}
           </Text>
         </View>
         {adFreeUntil ? null : <ChevronRight size={18} color={colors.textMuted} />}

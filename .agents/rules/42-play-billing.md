@@ -97,3 +97,84 @@ so an empty catalogue and a hidden Buy button are the *correct* behaviour there,
 and indistinguishable from total breakage. That is the sound module's failure
 shape, which is why `check:billing` exists and why the preview shim exports
 `null` rather than a fake purchase.
+
+## Ad-free is bought on the website, and the app is consumption-only
+
+`mobile/src/lib/unlock.ts` and `mobile/src/components/UnlockCard.tsx`. No payment happens in this
+app, no card is collected, no price is shown, and **there is no button that
+leaves for a checkout page**. The card names the site in words.
+
+That last clause is the whole rule, and it was researched rather than guessed
+because the owner's friend pointed out that Netflix has a link. They had seen
+an iPhone. Apple gave reader apps an entitlement in 2022 for exactly one
+external account link and Netflix uses it; that is a different store.
+
+**On Android Netflix is a consumption-only app** — sign in, watch what you
+already pay for, no purchase and no checkout link anywhere in it. Google's own
+wording is that *any* app may be consumption-only: "any products or services,
+whether digital or physical, cannot be purchased from within the app." So the
+route is open to a question bank exactly as much as to a video service, and it
+is the route Netflix is actually on.
+
+Leading a user out to pay is a **separate programme**, and
+`developer.android.com/google/play/billing/externalpaymentlinks` sets four
+conditions this app fails all of:
+
+1. **"The external payments program lets you lead users in Japan"** — one
+   country, and not this app's.
+2. Enrolment: "complete the enrollment steps outlined in the program
+   requirements". This account is not enrolled.
+3. "Integrate Play Billing Library 8.3 or higher." `PLAY_BILLING_ENABLED` is
+   false and no Play Console product exists.
+4. **"When linking users to purchases, they must be given a side by side
+   choice of making the purchase with Google Play Billing or completing the
+   purchase on the developer's website."** A lone "open the unlock page" button
+   is not the sanctioned shape even where the programme applies.
+
+The integration guide adds that an app is expected to ask at runtime —
+`isBillingProgramAvailableAsync(BillingProgram.EXTERNAL_PAYMENTS, …)` — and that
+`BILLING_UNAVAILABLE` means the user is in the wrong country or the account is
+not enrolled. A hardcoded `openURL` is the thing that check exists to prevent.
+
+**An earlier version of this section said the programme was live in the US, UK
+and Europe and reached India on 30 September 2027.** Both were wrong. They came
+from articles about the Epic settlement's *service fee* rollout, which is a
+different schedule from the programme's availability, and were written down
+without being checked against the source. The conclusion survived; the reasoning
+did not, and a wrong reason recorded as fact is worse than none.
+
+Not verifiable from a sandbox: `support.google.com` is blocked by the egress
+proxy, so Google's consumption-only wording has only ever been read here in a
+search summary. The four points above were read on the page.
+
+`LINK_OUT` in `mobile/src/lib/unlock.ts` is the switch, and it is **`true`** —
+the owner's decision, taken with the four conditions above in front of them,
+after producing a live competitor doing exactly this: an Indian MBBS app on
+Google Play with an in-app plan picker, prices in rupees, and a button opening
+a Razorpay checkout on its own domain.
+
+**That is evidence about enforcement, not about the rule.** Play's payments
+enforcement is review- and complaint-driven and visibly uneven; an app can run
+in violation for a long time and then not. Both things are true at once and
+neither cancels the other. Do not re-argue this from memory — the decision is
+recorded, the risk is recorded, and only the owner moves it.
+
+**The one thing this deliberately does not copy** is the competitor's pricing
+UI. Their *app* shows the plans and the amounts and only the checkout is on the
+web; that is the half a reviewer reads as the app selling, and it is the least
+defensible part of the pattern. This app still prices nothing —
+`UnlockCard` names the destination and opens it, and every amount lives on the
+page. `check:payments` sweeps the purchase path for a currency figure and fails
+on one, which is what stops this drifting into the same shape later. It already
+caught a Razorpay-era "from fifty rupees" in a `HomeMenuSheet` accessibility
+label, which TalkBack had been reading out as a price for weeks after every
+visible price was deleted.
+
+Flipping to `false` gives the Netflix-on-Android behaviour: the card keeps its
+sentence, loses the button, no anti-steering exposure. One edit.
+
+Not verifiable from a sandbox: `support.google.com` and `play.google.com` are
+both blocked by the egress proxy, so Google's consumption-only wording and the
+competitor's listing have only been seen here in a search summary and in the
+owner's screenshots respectively. The four numbered conditions were read on
+`developer.android.com`.

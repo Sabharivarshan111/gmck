@@ -136,5 +136,9 @@ await shot('glass-10-wallpaper-music', {
   taps: ['Show the music player', 'Add music from this phone', 'Save a copy in Orbit'],
 });
 
+
+await shot('unlock-01-card', { theme: 'dark', screen: 'unlockdemo' });
+await shot('unlock-02-card-glass', { theme: 'liquidglass', screen: 'unlockdemo' });
+
 await browser.close();
 await server.close();
