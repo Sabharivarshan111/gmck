@@ -38,8 +38,9 @@ when picking up work that was last touched from the other tool.
 | `.agents/rules/94-textbook-grounded-diagram-engine.md` |  |
 | `.agents/rules/95-release-and-pipeline-engine.md` |  |
 | `.agents/rules/96-walkthrough.md` | The first-run walkthrough — how it finds a control by its accessibility label, why the scrim is four rectangles rather than one, and the one thing it may never name |
+| `.agents/rules/97-ad-copy.md` | Ad copy — why no line counts what the bank holds, why a drawing is a diagram and never a "plate", and the student's voice the owner rewrote all twenty-six scripts into |
 | `.agents/rules/97-diagram-rows.md` | Fixing question_diagrams rows — why a text rule may never bulk-fix them in either direction, and what to do when a plate is wrong |
-| `.agents/rules/97-video-ads.md` |  |
+| `.agents/rules/97-video-ads.md` | The ad pipeline — what it produces, why a cut made in an agent sandbox is never shippable, and the five rules a re-cut has already paid for |
 | `.agents/rules/98-page-references.md` | Community textbook pages — why three different readers have to agree before a page number is shown, and why that rule lives in Postgres rather than in the app |
 | `.agents/rules/99-admin.md` | The admin dashboard — why the gate is a role in the database and never an email compared in the client, and what deliberately stays in the web panel |
 <!-- rules:end -->

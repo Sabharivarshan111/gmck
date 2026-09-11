@@ -27,10 +27,10 @@ import type { AdScript } from './types';
  *   "2,025 show the years asked" did on screen, and why it is gone.
  * * **Plain ASCII apostrophes.** A curly one breaks the caption parser.
  *
- * Counts here are measured against the shipped bank: 5,634 questions, 3,463
- * of them carrying a repeat marker, and 250 distinct plates (which hang off
- * 922 questions — that larger number counts rows, not drawings, and must
- * never be attached to the word "plates").
+ * No line counts anything the bank holds, and no line calls a diagram a
+ * "plate". Both are the owner's instruction, and `check:ad-truth` enforces
+ * them: a tour of the features is a tour of what they do for the reader, not
+ * an inventory read out at them.
  *
  * ## Black, and why the room is still lit
  *
@@ -68,19 +68,19 @@ export const reelFunctions: AdScript = {
   bpm: 100,
   music: 'audio/bed/bed-functions.wav',
   shots: [
-    { n: 1, beats: 4, screen: 'questionsLeaf', camera: 'macro', kicker: 'Question bank', text: 'Four apps, nothing started', focus: 0.28, accent: '#F5B301' , silentText: 'Four apps, nothing started', vo: 'You have four apps open and still have not started.' },
-    { n: 2, beats: 4, screen: 'questionsLeaf', camera: 'macro', kicker: 'Repeat markers', text: 'The ones that come back', focus: 0.28, accent: '#F5B301' , silentText: 'The ones that come back', vo: 'It marks the ones that keep coming back.' },
-    { n: 3, beats: 6, screen: 'questionsChapters', camera: 'push', kicker: 'Subject and chapter', text: 'Broken down to the chapter', focus: 0.35, accent: '#7C5CFF' , silentText: 'Broken down to the chapter', vo: 'Broken down to the chapter.' },
-    { n: 4, beats: 6, screen: 'questionsLeaf', camera: 'macro', kicker: 'Importance stars', text: 'Four stars, four exams', focus: 0.28, accent: '#F5B301' , silentText: 'Four stars, four exams', vo: 'Four stars, four exams. Start there.' },
-    { n: 5, beats: 6, screen: 'noteHero', camera: 'push', kicker: 'Triple tap', text: 'A full answer, written out', accent: '#FF4D8D' , silentText: 'A full answer, written out', vo: 'A full answer written out in one gesture.' },
-    { n: 6, beats: 6, screen: 'noteBody', camera: 'glideDown', kicker: 'Written notes', text: 'The high-yield lines are marked', accent: '#FF4D8D' , silentText: 'The high-yield lines are marked', vo: 'The high-yield lines are marked for you.' },
-    { n: 7, beats: 6, screen: 'plateBrachial', camera: 'settle', kicker: 'Exam diagrams', text: 'Every part labelled', accent: '#22D3A6' , silentText: 'Every part labelled', vo: 'Every part labelled, drawn for that question.' },
-    { n: 8, beats: 6, screen: 'askai', camera: 'push', kicker: 'Ask AI', text: 'Ask any medical question', accent: '#7C5CFF' , silentText: 'Ask any medical question', vo: 'Ask any medical question, in plain words.' },
-    { n: 9, beats: 6, screen: 'flashcards', camera: 'orbit', kicker: 'Flashcards', text: 'Anki-style cards for any chapter', accent: '#4CC2FF' , silentText: 'Anki-style cards for any chapter', vo: 'Anki-style cards for any chapter.' },
-    { n: 10, beats: 4, screen: 'ankiStudy', camera: 'macro', kicker: 'Spaced repetition', text: 'Hard cards come back sooner', accent: '#4CC2FF' , silentText: 'Hard cards come back sooner', vo: 'Hard cards come back sooner.' },
-    { n: 11, beats: 6, screen: 'timer', camera: 'push', kicker: 'Focus timer', text: 'Tap play to plant an oak', accent: '#22D3A6' , silentText: 'Tap play to plant an oak', vo: 'Tap play to plant an oak.' },
-    { n: 12, beats: 4, screen: 'treegallery', camera: 'trackRight', kicker: 'Twelve species', text: 'Twelve species', accent: '#22D3A6' , silentText: '12 species, unlocked by focus', vo: 'Twelve species unlocked by the hours you focus.' },
-    { n: 13, beats: 4, screen: 'glassHome', camera: 'orbit', kicker: 'Themes', text: 'Four themes, or build your own', accent: '#4CC2FF' , silentText: 'Four themes, or build your own', vo: 'Four themes, or build your own.' },
-    { n: 14, beats: 4, screen: 'outroCard', camera: 'settle', kicker: 'Free on Google Play', text: 'Orbit MBBS', accent: '#7C5CFF' , silentText: 'Orbit MBBS', vo: 'Orbit MBBS. Free on Google Play.' },
+    { n: 1, beats: 4, screen: 'questionsLeaf', camera: 'macro', kicker: 'Question bank', text: 'Four apps. Still nothing.', focus: 0.28, accent: '#F5B301', silentText: 'Four apps. Still nothing.', vo: 'You’ve got four apps open and still haven’t started.' },
+    { n: 2, beats: 4, screen: 'questionsLeaf', camera: 'macro', kicker: 'Repeat markers', text: 'See the repeats', focus: 0.28, accent: '#F5B301', silentText: 'See the repeats', vo: 'Orbit shows you the questions that keep coming back.' },
+    { n: 3, beats: 6, screen: 'questionsChapters', camera: 'push', kicker: 'Subject and chapter', text: 'Down to the chapter', focus: 0.35, accent: '#7C5CFF', silentText: 'Down to the chapter', vo: 'And takes you straight down to the chapter.' },
+    { n: 4, beats: 6, screen: 'questionsLeaf', camera: 'macro', kicker: 'Importance stars', text: 'Stars = frequency', focus: 0.28, accent: '#F5B301', silentText: 'Stars = frequency', vo: 'The stars tell you how often they’ve been asked.' },
+    { n: 5, beats: 6, screen: 'noteHero', camera: 'push', kicker: 'Triple tap', text: 'Full answer', accent: '#FF4D8D', silentText: 'Full answer', vo: 'Triple-tap and the full answer opens.' },
+    { n: 6, beats: 6, screen: 'noteBody', camera: 'glideDown', kicker: 'Written notes', text: 'Important points', accent: '#FF4D8D', silentText: 'Important points', vo: 'The important bits are easy to pick out.' },
+    { n: 7, beats: 6, screen: 'plateBrachial', camera: 'settle', kicker: 'Exam diagrams', text: 'Diagram included', accent: '#22D3A6', silentText: 'Diagram included', vo: 'And the diagram is already there.' },
+    { n: 8, beats: 6, screen: 'askai', camera: 'push', kicker: 'Ask AI', text: 'Ask AI', accent: '#7C5CFF', silentText: 'Ask AI', vo: 'Got a question? Ask the AI in normal language.' },
+    { n: 9, beats: 6, screen: 'flashcards', camera: 'orbit', kicker: 'Flashcards', text: 'Chapter → cards', accent: '#4CC2FF', silentText: 'Chapter → cards', vo: 'Need cards? Make them from the chapter.' },
+    { n: 10, beats: 4, screen: 'ankiStudy', camera: 'macro', kicker: 'Spaced repetition', text: 'Hard cards first', accent: '#4CC2FF', silentText: 'Hard cards first', vo: 'Hard cards can come back sooner.' },
+    { n: 11, beats: 6, screen: 'timer', camera: 'push', kicker: 'Focus timer', text: 'Focus → tree', accent: '#22D3A6', silentText: 'Focus → tree', vo: 'Start the focus timer and plant a tree.' },
+    { n: 12, beats: 4, screen: 'treegallery', camera: 'trackRight', kicker: 'Twelve species', text: '12 species', accent: '#22D3A6', silentText: '12 species', vo: 'Keep studying and unlock more species.' },
+    { n: 13, beats: 4, screen: 'glassHome', camera: 'orbit', kicker: 'Themes', text: 'Make it yours', accent: '#4CC2FF', silentText: 'Make it yours', vo: 'And change the theme if you get bored of looking at it.' },
+    { n: 14, beats: 4, screen: 'outroCard', camera: 'settle', kicker: 'Free on Google Play', text: 'Download Orbit', accent: '#7C5CFF', silentText: 'Download Orbit', vo: 'Download Orbit on the Play Store.' },
   ],
 };

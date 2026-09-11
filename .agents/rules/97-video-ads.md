@@ -1,3 +1,7 @@
+---
+description: The ad pipeline — what it produces, why a cut made in an agent sandbox is never shippable, and the five rules a re-cut has already paid for
+---
+
 # 97 - Launch ad videos (Remotion)
 
 There is a **working, committed pipeline**. Do not start a new one, and do not
@@ -6,31 +10,31 @@ render ads by hand in another tool.
 | Thing | Where |
 |---|---|
 | Renderer | `remotion-ad/` |
-| Scripts as prose + hook rationale | `.agents/video/AD-SCRIPTS.md` |
+| Where the scripts live, and why no transcript is kept beside them | `.agents/video/AD-SCRIPTS.md` |
 | Scripts as data | `remotion-ad/src/scripts/` |
+| **What a line may say, and how it should sound** | `.agents/rules/97-ad-copy.md` |
 | CI render + release | `.github/workflows/ad-videos.yml` |
 | Full standard | `.claude/skills/cinematic-product-launch-video/SKILL.md` |
 
 ## What it produces
 
-Three **complete, standalone** 90-second vertical ads (1080x1920, 30fps, 2,700
-frames, **30 shots x exactly 90 frames**). Three different arguments — not three
-cuts of one film, and never six clips stitched into one:
+Twenty-six **complete, standalone** vertical ads (1080x1920, 30fps), each also
+cut silent, so forty-eight MP4s. Three are 90-second long-form films paced by
+their own recorded speech (`orbit-the-pattern`, `orbit-2am`,
+`orbit-draw-it-from-memory`); the rest are 60-second reels, of which two
+(`orbit-ask-it`, `orbit-the-year`) are flat typographic rather than device
+films. Different arguments for one app — never cuts of one film.
 
-- `orbit-the-pattern` — the repeats are already counted (`en-US-AvaNeural`)
-- `orbit-2am` — the night before the exam (`en-US-JennyNeural`)
-- `orbit-draw-it-from-memory` — the diagram is where the marks are (`en-US-AriaNeural`)
-
-One shared motion engine drives all three; the shot data is the only difference.
-**Do not fork the engine per ad** — that is how three ads drift into three
-different-looking products.
+One shared motion engine drives all of them; the shot data is the only
+difference. **Do not fork the engine per ad** — that is how a set of ads drifts
+into a set of different-looking products.
 
 ## Run it
 
 Actions -> **Ad videos** -> tag (e.g. `ads-1`). It captures the real screens,
-downloads the real plates, speaks the lines, renders the three in parallel and
-publishes the MP4s to a release. `workflow_dispatch` only appears for workflows
-on the **default branch**, so it must be on `main` first.
+downloads the real plates, speaks the lines, renders in parallel and publishes
+the MP4s to a release. `workflow_dispatch` only appears for workflows on the
+**default branch**, so it must be on `main` first.
 
 ## Rendering cannot finish in an agent sandbox
 
@@ -44,8 +48,7 @@ Policy blocks, verified by direct test — not guesses:
   screens capture with the literal text "This diagram could not be loaded".
   `tca-note.png` comes out fully black.
 
-So: review motion locally with
-`npx remotion still <id> out/f.png --frame=315 --props='{"withVoice":false}'`,
+So: review motion locally with `npx remotion still <id> out/f.png --frame=315`,
 and render the actual product in CI. Never ship a cut made in the sandbox.
 
 ## The five rules that are enforced in code
@@ -70,66 +73,6 @@ Each of these already cost a re-cut once.
 5. **No overlay rectangles.** Direct attention with the backlight, the
    accent-tinted room and focal emphasis.
 
-## Voice
-
-Python **edge-tts** (`pip install edge-tts`). `voice-manifest.mjs` dumps the 90
-lines to JSON, `synthesize.py` speaks them. A file under 2KB raises — edge-tts
-writes a zero-byte mp3 when the socket is refused, and a silent shot in a
-finished ad is worse than a crash.
-
-Voiceover lines are **7-11 words**, which lands in 1.8-2.4s and leaves ~0.6s of
-air before the cut.
-
-## Facts that may be claimed
-
-Re-measured 2026-09-05, because three of the four were wrong and had shipped:
-
-| | Claim | Was claimed |
-|---|---|---|
-| questions in the bank | **5,634** | 5,545 |
-| carrying a repeat marker | **3,463** (2,013 of them a year list) | "2,025" |
-| hand-drawn plates | **250**, attached to 922 questions | "915 plates" |
-| MBBS years / tree species | 4 / 12 | unchanged |
-
-"915" counted `question_diagrams` **rows** carrying a picture — the question
-count wearing the drawings' name. One plate answers many questions.
-
-**No quantity may be shaped like a year.** "2,025" on screen beside "the years
-asked" reads as 2025, and the owner reported it as such. `preflight` refuses any
-bare `19xx`/`20xx` or `1,xxx`/`2,xxx` in `text`, `vo` or `kicker`. Write it in
-words.
-
-**Never claim** a user count, a pass rate, that AI answers are exam-verified, or
-any university endorsement. "100% offline" is also refused — the bundled bank
-works offline; notes, plates and Ask AI do not.
-
-## The caption must be the words that are spoken
-
-Three separate bugs made the ads look unsynchronised, and all three are now
-enforced rather than remembered:
-
-1. **A voiced reel is captioned with `shot.vo` itself** — the whole line, not a
-   piece of it. The rule here was once that `text` had to be a verbatim *span*
-   of `vo`, written to stop "2,025 already asked" appearing over "Your
-   university repeats its questions". It fixed that and cost something worse:
-   a span of a sentence is a fragment, and 264 of 385 voiced shots ended up
-   showing under three quarters of what was said — "Every day you studied,
-   coloured in." reached the screen as "coloured in". Reading and hearing are
-   one string now, so they cannot disagree, and `ReelHeadline` still lights
-   each word as it is said.
-2. **Word timings come from the synthesiser.** `synthesize.py` passes
-   `boundary="WordBoundary"` (the edge-tts default is `SentenceBoundary`, which
-   returns audio and no word marks at all) and keeps every event.
-   `measure-audio.mjs` bakes them into `remotion-ad/src/generated/voiceTimings.ts`.
-3. **`remotion-ad/src/dynamicScriptTimings.ts` is generated, never edited.** It used to be
-   committed and unregenerated, so CI recorded new lines and laid them on
-   boundaries measured from an older script; the shots run end to end, so one
-   line that grew pushed every later shot out of step. `preflight` fails when a
-   row describes a line the script no longer contains.
-
-The committed `remotion-ad/src/generated/voiceTimings.ts` is deliberately EMPTY. A
-checked-in measurement is a measurement of an older recording.
-
 ## The mascot has three ads and one voice
 
 `reelGuide` (a tour), `reelGuideAnswer` (one question worked end to end) and
@@ -139,7 +82,7 @@ one character, and three voices would make it three characters. Mood is carried
 by the bed, not the voice.
 
 A new bed is a row in `TEMPOS`, `PROGRESSIONS` and a `sections()` branch in
-`make-beds.py`. `main()` walks `TEMPOS`; it used to walk a hardcoded tuple while
+`make-beds.py`. `main()` walks `TEMPOS`; it walked a hardcoded tuple while
 printing `len(TEMPOS)`, so a seventh bed reported success and was never built.
 
 ## Assets are never committed
@@ -150,18 +93,16 @@ plate goes stale the moment the diagram is regenerated.
 
 ## A reel is paced by speech, and its silent twin by music
 
-The bug this exists to prevent was in **every one of the twenty-one reels**.
+The bug this prevents was in **every one of the twenty-one reels**. Shot
+lengths came only from the music beat grid, which always sums to `REEL_FRAMES`,
+and nothing compared a shot against the recording it carried. Measured against
+the real mp3s they held **57 to 73 seconds of speech in a 60-second film**, and
+235 shots ran past their slot by up to 3.8s. The surplus plays under the next
+shot, whose own clip has started. That is the overlapping voice.
 
-Shot lengths came only from the music beat grid, which always sums to exactly
-`REEL_FRAMES`. Nothing ever compared a shot against the recording it carried.
-Measured against the real mp3s the reels held **57 to 73 seconds of speech in a
-60-second film**, and 235 individual shots ran past their slot — up to 3.8s
-each. The surplus does not vanish: it plays under the next shot, whose own clip
-has already started. That is the overlapping voice.
-
-A comment in `ShotTimeline` claimed "`preflight` still fails if a clip overruns
-by enough to talk over the next line". **No such check existed.** An asserted
-safety net nobody built is worse than no net, because it stops people looking.
+A comment in `ShotTimeline` claimed preflight already failed on an overrun.
+**No such check existed.** An asserted safety net nobody built is worse than
+none, because it stops people looking.
 
 Three rules now, and all three are enforced:
 
@@ -195,19 +136,18 @@ one claim at a time over a full-bleed screen) are built on the techniques in
 `Tejashmakwana/astra-chatgpt-hyperframes`, at the owner's request. They render
 through `HyperAd`, not `ShotTimeline`, chosen by `script.look`.
 
-**Take the technique, never the assets.** That project's own code is MIT, and
-the four ideas worth having are in `SweptType` and `TypedLine`: a gradient
-whose bright stop travels through the glyphs, type that resolves out of blur,
-an exponential settle rather than a spring, and a typed line with a caret. Its
-**plates, soundtrack and font are not ours** — they are a third party's motion
-design supplied for that adaptation, and its `THIRD_PARTY.md` says publication
-"does not claim ownership of the reference artwork or grant permission to
-redistribute its soundtrack elsewhere". None are in this repo and none may be.
+**Take the technique, never the assets.** Its code is MIT and the four ideas
+worth having are in `SweptType` and `TypedLine`: a gradient whose bright stop
+travels through the glyphs, type resolving out of blur, an exponential settle
+rather than a spring, and a typed line with a caret. Its **artwork, soundtrack
+and font are not ours** — its `THIRD_PARTY.md` says publication "does not claim
+ownership of the reference artwork or grant permission to redistribute its
+soundtrack elsewhere". None are in this repo and none may be.
 
-Everything that is not the look is shared with the device ads on purpose: same
-bookends, same audio pacing, same budget, same silent twin. A new ad format
-that quietly opted out of those would be a new ad format that overran its
-voice.
+On a `typed` shot `text` is the question being typed on screen, so `silentText`
+is what the muted viewer reads. Everything else is shared with the device ads
+on purpose — same bookends, pacing, budget and silent twin. A format that
+quietly opted out of those would be a format that overran its voice.
 
 ## The caption band is a number, not a comment
 
@@ -226,5 +166,5 @@ recomputes it from the real scripts.
 Play Store".** Stamped once in `bookends.ts` over the one list that has them
 all, never typed into forty-eight places.
 
-**No ad counts diagrams or plates.** Say what the picture is for the argument
-that ad is making.
+**No ad counts diagrams, and none says "plate".** Say what the picture is for
+in the argument that ad is making. `npm run check:ad-truth` fails on either.

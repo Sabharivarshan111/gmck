@@ -19,14 +19,18 @@ import type { AdScript } from './types';
  * ## Why it argues by year
  *
  * Every other ad in the set argues by feature — the notes, the flashcards, the
- * attendance. This one argues by the reader: first year is a drawing exam,
- * second year is volume, third year is two subjects done properly, final year
- * is six at once. It is the same app in all four, and saying so in one film is
- * the closest thing the set has to a brand ad.
+ * attendance. This one walks the four years in order and shows what each one
+ * is looking at — the subjects on screen, the diagram beside the question, the
+ * posting counting down. It is the same app in all four, and saying so in one
+ * film is the closest thing the set has to a brand ad.
  *
- * The numbers stay out of it. There are no counts of diagrams or plates here,
- * on the owner's instruction, and the lines about pictures say what the
- * picture IS rather than how many exist.
+ * What it does NOT do is tell a reader what their year IS. "First year is a
+ * drawing exam" was here, the owner's verdict on it was blunt, and they were
+ * right: a student does not need a stranger's characterisation of the year
+ * they are living in. `check:ad-truth` refuses that sentence shape now.
+ *
+ * No counts, and never the word "plate" — the lines about diagrams say what
+ * the diagram is for, not how many of them exist.
  */
 export const adTheYear: AdScript = {
   id: 'orbit-the-year',
@@ -38,19 +42,19 @@ export const adTheYear: AdScript = {
   pitch: '+0Hz',
   music: 'audio/bed/bed-guide-night.wav',
   shots: [
-    { n: 1, frames: 124, screen: 'glassHome', kicker: 'Orbit MBBS', text: 'Built for somebody else', silentText: 'Built for somebody else', vo: 'Every study app is built for somebody else’s year.', accent: '#7C5CFF' },
-    { n: 2, frames: 124, screen: 'browseFirst', kicker: 'First year', text: 'Already broken into chapters', silentText: 'Anatomy, Physiology, Biochem', vo: 'All three subjects, broken into chapters.', accent: '#22D3A6' },
-    { n: 3, frames: 124, screen: 'plateUlnar', kicker: 'First year', text: 'Labelled as you must draw it', silentText: 'Labelled as you must draw it', vo: 'So it is labelled the way you have to draw it.', accent: '#22D3A6' },
-    { n: 4, frames: 124, screen: 'userNotesEdit', kicker: 'First year', text: 'Then draw it yourself', silentText: 'Then draw it yourself', vo: 'Then draw it yourself with a stylus.', accent: '#22D3A6' },
-    { n: 5, frames: 124, screen: 'browse', kicker: 'Second year', text: 'Four at once, one list', silentText: 'Four subjects, one list', vo: 'Four subjects running at once, in one list.', accent: '#FF4D8D' },
-    { n: 6, frames: 124, screen: 'questionsChapters', focus: 0.35, kicker: 'Second year', text: 'Sorted down to the chapter', silentText: 'Sorted to the chapter', vo: 'All of it sorted down to the chapter you are on.', accent: '#FF4D8D' },
-    { n: 7, frames: 124, screen: 'questionsLeaf', focus: 0.28, kicker: 'Second year', text: 'Study the fours first', silentText: 'Study the 4s first', vo: 'The circle counts repeats so study the fours.', accent: '#F5B301' },
-    { n: 8, frames: 124, screen: 'browseThird', kicker: 'Third year', text: 'Chapter by chapter', silentText: 'Forensic + Community', vo: 'Forensic and Community, chapter by chapter.', accent: '#4CC2FF' },
-    { n: 9, frames: 124, screen: 'noteBody', kicker: 'Third year', text: 'From your own textbook', silentText: 'From your own textbook', vo: 'The answers are written from your own textbook.', accent: '#4CC2FF' },
-    { n: 10, frames: 124, screen: 'attendancePostings', focus: 0.4, kicker: 'Final year', text: 'It counts the days left', silentText: 'It counts the days left', vo: 'A posting has an end date, so it counts down.', accent: '#22D3A6' },
-    { n: 11, frames: 124, screen: 'attendance', focus: 0.42, kicker: 'Final year', text: 'It never rounds up', silentText: 'It never rounds up', vo: 'It works out what you can miss without rounding.', accent: '#22D3A6' },
-    { n: 12, frames: 124, screen: 'askai', kicker: 'Every year', text: 'Ask it anything', silentText: 'Ask it anything', vo: 'Ask it anything at all, in plain words.', accent: '#7C5CFF' },
-    { n: 13, frames: 124, screen: 'progress', kicker: 'Every year', text: 'No account needed', silentText: 'No account needed', vo: 'Your streak counts without an account.', accent: '#F5B301' },
-    { n: 14, frames: 124, screen: 'glassHome', kicker: 'Orbit MBBS', text: 'The year you are in', silentText: 'The year you are in', vo: 'Whichever year you are in, it starts today.', accent: '#7C5CFF' },
+    { n: 1, frames: 124, screen: 'glassHome', kicker: 'Orbit MBBS', text: 'Built around your year', silentText: 'Built around your year', vo: 'Most study apps aren’t built around your MBBS year.', accent: '#7C5CFF' },
+    { n: 2, frames: 124, screen: 'browseFirst', kicker: 'First year', text: 'Anatomy. Physiology. Biochem.', silentText: 'Anatomy. Physiology. Biochem.', vo: 'First year means Anatomy, Physiology and Biochem.', accent: '#22D3A6' },
+    { n: 3, frames: 124, screen: 'plateUlnar', kicker: 'First year', text: 'Diagrams included', silentText: 'Diagrams included', vo: 'And the diagrams are right there with the questions.', accent: '#22D3A6' },
+    { n: 4, frames: 124, screen: 'userNotesEdit', kicker: 'First year', text: 'Draw it yourself', silentText: 'Draw it yourself', vo: 'Then you can draw them yourself.', accent: '#22D3A6' },
+    { n: 5, frames: 124, screen: 'browse', kicker: 'Second year', text: 'Second year', silentText: 'Second year', vo: 'Second year has its own subjects and its own list.', accent: '#FF4D8D' },
+    { n: 6, frames: 124, screen: 'questionsChapters', focus: 0.35, kicker: 'Second year', text: 'Sorted by chapter', silentText: 'Sorted by chapter', vo: 'And everything is still broken down by chapter.', accent: '#FF4D8D' },
+    { n: 7, frames: 124, screen: 'questionsLeaf', focus: 0.28, kicker: 'Second year', text: 'Study the repeats', silentText: 'Study the repeats', vo: 'The circle shows you which questions repeat more.', accent: '#F5B301' },
+    { n: 8, frames: 124, screen: 'browseThird', kicker: 'Third year', text: 'Forensic + Community', silentText: 'Forensic + Community', vo: 'Third year brings Forensic and Community Medicine.', accent: '#4CC2FF' },
+    { n: 9, frames: 124, screen: 'noteBody', kicker: 'Third year', text: 'Based on the textbook', silentText: 'Based on the textbook', vo: 'Answers are based on the textbook for the subject.', accent: '#4CC2FF' },
+    { n: 10, frames: 124, screen: 'attendancePostings', focus: 0.4, kicker: 'Final year', text: 'Days left in posting', silentText: 'Days left in posting', vo: 'Final year postings can count down to the end date.', accent: '#22D3A6' },
+    { n: 11, frames: 124, screen: 'attendance', focus: 0.42, kicker: 'Final year', text: 'See what you can still miss', silentText: 'See what you can still miss', vo: 'And attendance can show you what you can still miss.', accent: '#22D3A6' },
+    { n: 12, frames: 124, screen: 'askai', kicker: 'Every year', text: 'Ask AI', silentText: 'Ask AI', vo: 'Whatever year you’re in, ask the AI.', accent: '#7C5CFF' },
+    { n: 13, frames: 124, screen: 'progress', kicker: 'Every year', text: 'No account needed', silentText: 'No account needed', vo: 'And keep your streak without creating another account.', accent: '#F5B301' },
+    { n: 14, frames: 124, screen: 'glassHome', kicker: 'Orbit MBBS', text: 'Download Orbit', silentText: 'Download Orbit', vo: 'Download Orbit on the Play Store.', accent: '#7C5CFF' },
   ],
 };

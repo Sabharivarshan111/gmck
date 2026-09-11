@@ -10,18 +10,19 @@ import type { AdScript } from './types';
  * answer to half of them is a labelled picture they have to be able to produce
  * from memory in a viva.
  *
- * So this ad leads on the plates rather than on the bank. The brachial plexus,
- * the ulnar nerve, the shoulder joint: real plates out of the app's own
- * storage, the same ones a first-year note draws. `npm run plates` fetches
+ * So this ad leads on the diagrams rather than on the bank. The brachial
+ * plexus, the ulnar nerve, the shoulder joint: real drawings out of the app's
+ * own storage, the same ones a first-year note draws. `npm run plates` fetches
  * them and preflight refuses to render a cut where one is a white rectangle,
  * which is a mistake this project has actually published before.
  *
- * ## The one number this year cares about
+ * ## Why the repeat circle is worth pointing at here
  *
- * Sixty-nine per cent of first-year questions carry a repeat marker. That is
- * lower than second and third year and much higher than final year, and it is
- * *the* reason the repeat circle is worth pointing at here — it works, and it
- * works often enough to plan around.
+ * First-year questions carry a repeat marker more often than final-year ones
+ * do, which is what makes the circle worth a shot in this ad and not in every
+ * ad. The proportion itself stays off screen: no line counts anything, on the
+ * owner's instruction, and "a lot of questions have come up before" is the
+ * claim in the form a student would make it.
  *
  * The screen is captured with the app set to first year (`browseFirst`), not
  * the six-subject final-year screen the general reels use. An ad about first
@@ -37,19 +38,19 @@ export const reelFirstYear: AdScript = {
   pitch: '+0Hz',
   music: 'audio/bed/bed-guide.wav',
   shots: [
-    { n: 1, frames: 129, screen: null, mascot: 'hero', camera: 'settle', text: 'Now draw it', silentText: 'Now draw it from memory', vo: 'You can describe it perfectly. Now draw it.', accent: '#22D3A6' },
-    { n: 2, frames: 129, screen: 'browseFirst', mascot: 'guide', camera: 'trackLeft', text: 'Anatomy, Physiology, Biochemistry', silentText: 'Anatomy, Physiology, Biochem', vo: 'Anatomy, Physiology and Biochemistry together.', accent: '#22D3A6' },
-    { n: 3, frames: 129, screen: 'plateBrachial', camera: 'settle', text: 'The answer is a picture', silentText: 'The answer is a picture', vo: 'And half the time the answer is a picture.', accent: '#22D3A6' },
-    { n: 4, frames: 129, screen: 'plateUlnar', camera: 'push', text: 'A real labelled plate', silentText: 'A real labelled plate', vo: 'A real labelled plate, not a stock drawing.', accent: '#22D3A6' },
-    { n: 5, frames: 129, screen: 'chapterDiagrams', camera: 'glideDown', text: 'Every chapter has its own', silentText: 'Every chapter has its own', vo: 'Every chapter has its own picture.', accent: '#4CC2FF' },
-    { n: 6, frames: 129, screen: 'questionsChapters', camera: 'push', text: 'Sorted the way you revise', silentText: 'Sorted the way you revise', vo: 'The questions are sorted the way you revise.', focus: 0.35, accent: '#7C5CFF' },
-    { n: 7, frames: 129, screen: 'questionsLeaf', camera: 'macro', text: 'Seven in ten have been asked before', silentText: 'Most have repeated', vo: 'Seven in ten have been asked before.', focus: 0.28, accent: '#F5B301' },
-    { n: 8, frames: 129, screen: 'questionsLeaf', mascot: 'guide', camera: 'push', text: 'The circle tells you how often', silentText: 'The circle tells you how often', vo: 'The circle tells you how often. Start there.', focus: 0.3, accent: '#F5B301' },
-    { n: 9, frames: 128, screen: 'noteHero', camera: 'push', text: 'Triple-tap for the written answer', silentText: 'Triple-tap for the written answer', vo: 'Triple-tap for the written answer.', accent: '#FF4D8D' },
-    { n: 10, frames: 128, screen: 'noteBody', camera: 'glideDown', text: 'From a real textbook', silentText: 'From a real textbook', vo: 'Written from a real textbook, not made up.', accent: '#FF4D8D' },
-    { n: 11, frames: 128, screen: 'userNotesEdit', camera: 'macro', text: 'Draw it yourself', silentText: 'Draw it yourself', vo: 'Then draw it yourself with a stylus or a finger.', accent: '#FF4D8D' },
-    { n: 12, frames: 128, screen: 'flashcards', mascot: 'guide', camera: 'orbit', text: 'Turn a chapter into flashcards', silentText: 'Turn a chapter into flashcards', vo: 'Turn a chapter into flashcards when you are done.', accent: '#4CC2FF' },
-    { n: 13, frames: 128, screen: 'progress', camera: 'pull', text: 'Day one of the streak', silentText: 'Day one of the streak', vo: 'And day one of the streak needs no account.', accent: '#F5B301' },
-    { n: 14, frames: 128, screen: 'home', camera: 'push', text: 'Orbit MBBS, free on Google Play', silentText: 'Orbit MBBS — on Google Play', vo: 'Orbit MBBS, free on Google Play.', accent: '#7C5CFF' },
+    { n: 1, frames: 129, screen: null, mascot: 'hero', camera: 'settle', text: 'Now draw it from memory', silentText: 'Now draw it from memory', vo: 'You can explain the topic. Now try drawing it without looking.', accent: '#22D3A6' },
+    { n: 2, frames: 129, screen: 'browseFirst', mascot: 'guide', camera: 'trackLeft', text: 'Anatomy. Physiology. Biochem.', silentText: 'Anatomy. Physiology. Biochem.', vo: 'Anatomy, Physiology and Biochemistry all at once.', accent: '#22D3A6' },
+    { n: 3, frames: 129, screen: 'plateBrachial', camera: 'settle', text: 'The answer is a picture', silentText: 'The answer is a picture', vo: 'And some questions are impossible to answer without a diagram.', accent: '#22D3A6' },
+    { n: 4, frames: 129, screen: 'plateUlnar', camera: 'push', text: 'Labelled diagram', silentText: 'Labelled diagram', vo: 'So the labelled diagram comes with it.', accent: '#22D3A6' },
+    { n: 5, frames: 129, screen: 'chapterDiagrams', camera: 'glideDown', text: 'Diagrams by chapter', silentText: 'Diagrams by chapter', vo: 'Each chapter has its own set of diagrams.', accent: '#4CC2FF' },
+    { n: 6, frames: 129, screen: 'questionsChapters', camera: 'push', text: 'Sorted by chapter', silentText: 'Sorted by chapter', vo: 'And the questions are organised the way you study.', focus: 0.35, accent: '#7C5CFF' },
+    { n: 7, frames: 129, screen: 'questionsLeaf', camera: 'macro', text: 'Repeated questions', silentText: 'Repeated questions', vo: 'A lot of questions have come up before.', focus: 0.28, accent: '#F5B301' },
+    { n: 8, frames: 129, screen: 'questionsLeaf', mascot: 'guide', camera: 'push', text: 'See the frequency', silentText: 'See the frequency', vo: 'The circle shows how often.', focus: 0.3, accent: '#F5B301' },
+    { n: 9, frames: 128, screen: 'noteHero', camera: 'push', text: 'Triple-tap for the answer', silentText: 'Triple-tap for the answer', vo: 'Triple-tap for the written answer.', accent: '#FF4D8D' },
+    { n: 10, frames: 128, screen: 'noteBody', camera: 'glideDown', text: 'Based on the textbook', silentText: 'Based on the textbook', vo: 'The answer is based on the textbook for the subject.', accent: '#FF4D8D' },
+    { n: 11, frames: 128, screen: 'userNotesEdit', camera: 'macro', text: 'Draw it yourself', silentText: 'Draw it yourself', vo: 'Then draw it yourself with a stylus or your finger.', accent: '#FF4D8D' },
+    { n: 12, frames: 128, screen: 'flashcards', mascot: 'guide', camera: 'orbit', text: 'Make flashcards', silentText: 'Make flashcards', vo: 'Finished? Turn the chapter into flashcards.', accent: '#4CC2FF' },
+    { n: 13, frames: 128, screen: 'progress', camera: 'pull', text: 'Start your streak', silentText: 'Start your streak', vo: 'And your streak starts without another account.', accent: '#F5B301' },
+    { n: 14, frames: 128, screen: 'home', camera: 'push', text: 'Download Orbit', silentText: 'Download Orbit', vo: 'Download Orbit on the Play Store.', accent: '#7C5CFF' },
   ],
 };

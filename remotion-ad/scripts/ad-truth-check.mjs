@@ -141,6 +141,64 @@ for (const script of ALL_SCRIPTS) {
   }
 }
 
+/*
+ * ---- A diagram is a diagram, and nobody counts them --------------------
+ *
+ * Two instructions from the app's owner, in their words: "i dont want any wird
+ * as plate just mention it has diagrams", and "please dont count how many
+ * diagrams or anything counting related".
+ *
+ * Both are right, and for different reasons.
+ *
+ * **"Plate"** is our word. It is what the storage calls a drawing and what the
+ * screen registry keys are named after (`plateBrachial`), and it leaked from
+ * there into the copy — "so you get the labelled plate with it". A student
+ * revising Anatomy says "diagram". An ad that uses the internal noun sounds
+ * like it was written by the people who built the database, which is exactly
+ * what it was.
+ *
+ * **The counts** are worse than jargon, because they invite a viewer to check
+ * them. "General Medicine alone is 660" reached a rendered frame, over a
+ * screenshot of Pathology, and the real figure was 680. A number nobody can
+ * verify by looking at the screen is a number that rots between the writing
+ * and the render — and a count of drawings is not why anybody installs
+ * anything. What the line has to say is that the question HAS a diagram.
+ *
+ * This checks the copy only: `screen` keys keep their names, because renaming
+ * the registry would rename the files it points at and is a different change.
+ */
+const PLATE_WORD = /\bplates?\b/i;
+const PICTURE_WORD = /\b(?:diagram|picture|drawing|image|plate)s?\b/i;
+// A quantity in front of, or just after, the thing being drawn.
+const COUNTED_PICTURE =
+  /\b(?:\d+|one|two|three|four|five|six|seven|eight|nine|ten|dozens?|hundreds?|thousands?)\s+(?:\w+\s+){0,2}(?:diagram|picture|drawing|image|plate)s?\b|\b(?:diagram|picture|drawing|image|plate)s?\s+(?:\w+\s+){0,2}\b(?:\d+|hundred|thousand)\b/i;
+
+for (const script of ALL_SCRIPTS) {
+  for (const shot of script.shots) {
+    for (const [field, value] of [
+      ['vo', shot.vo],
+      ['text', shot.text],
+      ['silentText', shot.silentText],
+      ['kicker', shot.kicker],
+    ]) {
+      if (!value) continue;
+
+      check(
+        !PLATE_WORD.test(value),
+        `${script.id} shot ${shot.n}: \`${field}\` says "plate". That is our ` +
+          `word for the file, not the reader's word for the drawing. Say ` +
+          `"diagram". "${value}"`,
+      );
+
+      check(
+        !(PICTURE_WORD.test(value) && COUNTED_PICTURE.test(value)),
+        `${script.id} shot ${shot.n}: \`${field}\` counts the drawings. A line ` +
+          `says the question HAS a diagram, never how many exist. "${value}"`,
+      );
+    }
+  }
+}
+
 /* ---- And no ad repeats a line to itself -------------------------------- */
 for (const script of ALL_SCRIPTS) {
   const seen = new Set();

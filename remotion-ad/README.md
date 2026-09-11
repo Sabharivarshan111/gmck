@@ -10,8 +10,10 @@ clips stitched into one.
 | `orbit-2am` | The night before the exam | `en-US-JennyNeural` |
 | `orbit-draw-it-from-memory` | The diagram is where the marks are | `en-US-AriaNeural` |
 
-Scripts, hook rationale and the claims that may **not** be made are in
-[`.agents/video/AD-SCRIPTS.md`](../.agents/video/AD-SCRIPTS.md).
+The scripts are `src/scripts/`, one file per ad. The rules they obey — what may
+never be claimed, why no line counts anything, and why a drawing is called a
+diagram and not a plate — are in
+[`.agents/rules/97-video-ads.md`](../.agents/rules/97-video-ads.md).
 
 ## Render it
 

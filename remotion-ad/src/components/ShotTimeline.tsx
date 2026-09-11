@@ -116,7 +116,15 @@ const ShotView: React.FC<ShotViewProps> = ({
   let touchPreset: any = undefined;
   let isTripleTap = false;
 
-  if (shot.text.toLowerCase().includes('triple-tap') || (shot.screen?.startsWith('questions') && shot.text.toLowerCase().includes('tap'))) {
+  // Read the spoken line as well as the caption. The caption used to BE a span
+  // of the line, so `text` alone found every "triple-tap"; now that the voiced
+  // cut captions with `vo` and `text` is the muted headline, a shot can say
+  // "Triple-tap a question" out loud with a two-word caption that does not —
+  // and the tap animation would quietly stop playing on the shot demonstrating
+  // the tap.
+  const spokenAndShown = `${shot.vo ?? ''} ${shot.text}`.toLowerCase();
+
+  if (spokenAndShown.includes('triple-tap') || (shot.screen?.startsWith('questions') && spokenAndShown.includes('tap'))) {
     touchPreset = 'tripleTap';
     isTripleTap = true;
   } else if (shot.screen === 'browse') {

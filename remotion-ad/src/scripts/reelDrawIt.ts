@@ -9,7 +9,7 @@ import type { AdScript } from './types';
  * highest-risk of the three and the highest-ceiling, because a viewer who
  * fails the challenge in their head cannot scroll past it.
  *
- * The opening frame is a real plate rather than the app, which is the one
+ * The opening frame is a real diagram rather than the app, which is the one
  * place these reels lead with something other than UI: the argument is about
  * the drawing, so the drawing has to be the first thing on screen. The app
  * arrives at shot 4 and stays.
@@ -21,9 +21,9 @@ import type { AdScript } from './types';
  * either of the others: the hook is a dare, and a dare that is worded one way
  * on screen and another in the ear is answered by nobody.
  *
- * The bank holds 250 distinct plates, attached to 922 questions. The number
- * that belongs next to the word "plates" is therefore 250 — an earlier cut
- * said 915, which was the question count wearing the drawings' name.
+ * No line counts the drawings and no line calls one a "plate", on the owner's
+ * instruction. The dare is that you cannot draw THIS one from memory; how many
+ * others exist is not part of it.
  *
  * `frames` sums to REEL_FRAMES (1800); preflight fails if it stops doing so.
  */
@@ -36,19 +36,19 @@ export const reelDrawIt: AdScript = {
   pitch: '-1Hz',
   music: 'audio/bed/bed-draw-it.wav',
   shots: [
-    { n: 1, frames: 129, screen: 'plateBrachial', camera: 'macro', text: 'You still cannot draw it', silentText: 'You still cannot draw it', vo: 'You can name every branch. You still cannot draw it.', accent: '#22D3A6' },
-    { n: 2, frames: 129, screen: 'plateBrachial', camera: 'macro', text: 'Draw it from memory', silentText: 'Four minutes. Most freeze', vo: 'Draw it from memory.', accent: '#22D3A6' },
-    { n: 3, frames: 129, screen: 'plateUlnar', camera: 'trackRight', text: 'Where the marks are', silentText: 'This is where the marks are', vo: 'That is where the marks are.', accent: '#22D3A6' },
-    { n: 4, frames: 129, screen: 'chapterDiagrams', camera: 'push', text: 'Already in the app', silentText: "It's already in the app", vo: 'This diagram is already in the app.', focus: 0.28, accent: '#7C5CFF' },
-    { n: 5, frames: 129, screen: 'questionsLeaf', camera: 'macro', text: 'Triple-tap the question', silentText: 'Triple-tap the question', vo: 'Triple-tap the question and it appears.', focus: 0.28, accent: '#FF4D8D' },
-    { n: 6, frames: 129, screen: 'plateStomach', camera: 'macro', text: 'Drawn for that question', silentText: "Never a neighbour's picture", vo: "Drawn for that question, never a neighbour's.", accent: '#22D3A6' },
-    { n: 7, frames: 129, screen: 'chapterDiagrams', camera: 'glideDown', text: 'Labelled for the examiner', silentText: 'Labelled as you must draw it', vo: 'Labelled the way the examiner wants it drawn.', accent: '#22D3A6' },
-    { n: 8, frames: 129, screen: 'userNotesEdit', camera: 'macro', text: 'Now draw it yourself', silentText: 'Now you draw it', vo: 'Now draw it yourself. Blank page.', focus: 0.35, accent: '#FF8A3D' },
-    { n: 9, frames: 128, screen: 'userNotesEdit', camera: 'macro', text: 'Rest your palm', silentText: 'Rest your palm on it', vo: 'Rest your palm. It takes the pen.', focus: 0.5, accent: '#FF8A3D' },
-    { n: 10, frames: 128, screen: 'userNotesPreview', camera: 'pull', text: 'Compare yours against the diagram', silentText: 'Yours against the diagram', vo: 'Then compare yours against the diagram.', accent: '#FF8A3D' },
-    { n: 11, frames: 128, screen: 'flashcards', camera: 'orbit', text: 'Make it a card', silentText: 'Drill it until automatic', vo: 'Make it a card. Drill it.', accent: '#4CC2FF' },
-    { n: 12, frames: 128, screen: 'ankiStudy', camera: 'push', text: 'It returns before you forget', silentText: 'Back before you forget', vo: 'It returns before you forget.', accent: '#4CC2FF' },
-    { n: 13, frames: 128, screen: 'treegallery', camera: 'trackLeft', text: 'Twelve species', silentText: 'Twelve species, earned in hours', vo: 'Twelve species, earned in focused hours.', accent: '#22D3A6' },
-    { n: 14, frames: 128, screen: 'outroCard', camera: 'settle', text: 'Free on Google Play', silentText: 'Orbit MBBS, free on Google Play', vo: 'Orbit MBBS. Free on Google Play.', accent: '#7C5CFF' },
+    { n: 1, frames: 129, screen: 'plateBrachial', camera: 'macro', text: 'You still have to draw it', silentText: 'You still have to draw it', vo: 'You can name every branch. Now try drawing it.', accent: '#22D3A6' },
+    { n: 2, frames: 129, screen: 'plateBrachial', camera: 'macro', text: '4 minutes. No notes.', silentText: '4 minutes. No notes.', vo: 'Give yourself four minutes. No notes.', accent: '#22D3A6' },
+    { n: 3, frames: 129, screen: 'plateUlnar', camera: 'trackRight', text: 'This is the test', silentText: 'This is the test', vo: 'Because this is where you find out if you really know it.', accent: '#22D3A6' },
+    { n: 4, frames: 129, screen: 'chapterDiagrams', camera: 'push', text: 'Already in the app', silentText: 'Already in the app', vo: 'The reference is already in Orbit.', focus: 0.28, accent: '#7C5CFF' },
+    { n: 5, frames: 129, screen: 'questionsLeaf', camera: 'macro', text: 'Triple-tap', silentText: 'Triple-tap', vo: 'Triple-tap the question and bring it up.', focus: 0.28, accent: '#FF4D8D' },
+    { n: 6, frames: 129, screen: 'plateStomach', camera: 'macro', text: 'The diagram is right there', silentText: 'The diagram is right there', vo: 'It belongs to that question.', accent: '#22D3A6' },
+    { n: 7, frames: 129, screen: 'chapterDiagrams', camera: 'glideDown', text: 'Clearly labelled', silentText: 'Clearly labelled', vo: 'And it’s labelled the way you need to see it.', accent: '#22D3A6' },
+    { n: 8, frames: 129, screen: 'userNotesEdit', camera: 'macro', text: 'Now you draw', silentText: 'Now you draw', vo: 'Now open a blank page and draw it.', focus: 0.35, accent: '#FF8A3D' },
+    { n: 9, frames: 128, screen: 'userNotesEdit', camera: 'macro', text: 'Palm rejection', silentText: 'Palm rejection', vo: 'Rest your palm down. Keep writing.', focus: 0.5, accent: '#FF8A3D' },
+    { n: 10, frames: 128, screen: 'userNotesPreview', camera: 'pull', text: 'Compare yours', silentText: 'Compare yours', vo: 'Then put yours next to the reference and compare.', accent: '#FF8A3D' },
+    { n: 11, frames: 128, screen: 'flashcards', camera: 'orbit', text: 'Drill it', silentText: 'Drill it', vo: 'Make it a card and keep testing yourself.', accent: '#4CC2FF' },
+    { n: 12, frames: 128, screen: 'ankiStudy', camera: 'push', text: 'Comes back again', silentText: 'Comes back again', vo: 'It comes back later.', accent: '#4CC2FF' },
+    { n: 13, frames: 128, screen: 'treegallery', camera: 'trackLeft', text: '12 species', silentText: '12 species', vo: 'Keep focusing and you unlock more trees.', accent: '#22D3A6' },
+    { n: 14, frames: 128, screen: 'outroCard', camera: 'settle', text: 'Download Orbit', silentText: 'Download Orbit', vo: 'Download Orbit on the Play Store.', accent: '#7C5CFF' },
   ],
 };

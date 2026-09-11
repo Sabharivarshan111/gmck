@@ -36,7 +36,7 @@ import type { AdScript } from './types';
  *
  * It is deliberately NOT in every shot. A presenter who never leaves is a
  * presenter competing with the product; the shots it sits out are the ones
- * where the screen is the argument — the written answer, the plate, the
+ * where the screen is the argument — the written answer, the diagram, the
  * scheduler.
  *
  * ## The headline is a span of the spoken line, always
@@ -74,19 +74,19 @@ export const reelGuide: AdScript = {
   pitch: '+0Hz',
   music: 'audio/bed/bed-guide.wav',
   shots: [
-    { n: 1, frames: 129, screen: null, mascot: 'hero', camera: 'settle', text: 'No time for another app', silentText: 'No time for another app', vo: 'You do not have time to learn another app.', accent: '#7C5CFF' },
-    { n: 2, frames: 129, screen: 'browse', mascot: 'guide', camera: 'trackLeft', text: 'All four MBBS years', silentText: 'All four MBBS years', vo: 'I know all four MBBS years.', accent: '#7C5CFF' },
-    { n: 3, frames: 129, screen: 'questionsChapters', camera: 'push', text: 'Sorted to your chapter', silentText: 'Sorted to your chapter', vo: 'Every past question, sorted down to your chapter.', focus: 0.35, accent: '#4CC2FF' },
-    { n: 4, frames: 129, screen: 'questionsLeaf', camera: 'macro', text: 'The ones that come back', silentText: 'The ones that come back', vo: 'And it marks the ones that keep coming back.', focus: 0.28, accent: '#F5B301' },
-    { n: 5, frames: 129, screen: 'questionsLeaf', mascot: 'guide', camera: 'macro', text: 'Triple-tap any question', silentText: 'Triple-tap any question', vo: 'Triple-tap any question and watch.', focus: 0.28, accent: '#FF4D8D' },
-    { n: 6, frames: 129, screen: 'noteHero', camera: 'push', text: 'A full handwritten answer', silentText: 'A full handwritten answer', vo: 'I write you a full handwritten answer.', accent: '#FF4D8D' },
-    { n: 7, frames: 129, screen: 'plateBrachial', mascot: 'guide', camera: 'settle', text: 'Its own diagram', silentText: 'Its own diagram, every time', vo: 'Its own diagram comes with it.', accent: '#22D3A6' },
-    { n: 8, frames: 129, screen: 'chapterDiagrams', camera: 'glideDown', text: 'Drawn for that question', silentText: 'Drawn for that question alone', vo: 'Labelled, and drawn for that question alone.', accent: '#22D3A6' },
-    { n: 9, frames: 128, screen: 'askai', mascot: 'guide', camera: 'push', text: 'Ask me anything', silentText: 'Stuck? Ask the AI', vo: 'Still stuck? Ask me anything at all.', accent: '#7C5CFF' },
-    { n: 10, frames: 128, screen: 'flashcards', mascot: 'guide', camera: 'orbit', text: 'Turn any chapter into flashcards', silentText: 'Any chapter to flashcards', vo: 'Turn any chapter into flashcards.', accent: '#4CC2FF' },
-    { n: 11, frames: 128, screen: 'ankiStudy', camera: 'macro', text: 'Before you forget', silentText: 'They return before you forget', vo: 'They come back before you forget.', accent: '#4CC2FF' },
-    { n: 12, frames: 128, screen: 'timer', mascot: 'guide', camera: 'push', text: 'A tree grows', silentText: 'Focus, and a tree grows', vo: 'Start a session and a tree grows.', accent: '#22D3A6' },
-    { n: 13, frames: 128, screen: 'progress', camera: 'pull', text: 'Your streak needs no account', silentText: 'Your streak needs no account', vo: 'Your streak needs no account.', accent: '#F5B301' },
-    { n: 14, frames: 128, screen: null, mascot: 'hero', camera: 'settle', text: 'Free on Google Play', silentText: 'Orbit MBBS, free on Google Play', vo: "That's Orbit. Free on Google Play.", accent: '#7C5CFF' },
+    { n: 1, frames: 129, screen: null, mascot: 'hero', camera: 'settle', text: 'You don’t need another app', silentText: 'You don’t need another app', vo: 'You do not need another app to organise your whole life.', accent: '#7C5CFF' },
+    { n: 2, frames: 129, screen: 'browse', mascot: 'guide', camera: 'trackLeft', text: 'Your MBBS year', silentText: 'Your MBBS year', vo: 'Just pick your year and start.', accent: '#7C5CFF' },
+    { n: 3, frames: 129, screen: 'questionsChapters', camera: 'push', text: 'Sorted to your chapter', silentText: 'Sorted to your chapter', vo: 'Every past question is sorted down to the chapter.', focus: 0.35, accent: '#4CC2FF' },
+    { n: 4, frames: 129, screen: 'questionsLeaf', camera: 'macro', text: 'See the repeats', silentText: 'See the repeats', vo: 'And you can see which ones keep coming back.', focus: 0.28, accent: '#F5B301' },
+    { n: 5, frames: 129, screen: 'questionsLeaf', mascot: 'guide', camera: 'macro', text: 'Triple-tap', silentText: 'Triple-tap', vo: 'Triple-tap a question.', focus: 0.28, accent: '#FF4D8D' },
+    { n: 6, frames: 129, screen: 'noteHero', camera: 'push', text: 'Full written answer', silentText: 'Full written answer', vo: 'The written answer opens.', accent: '#FF4D8D' },
+    { n: 7, frames: 129, screen: 'plateBrachial', mascot: 'guide', camera: 'settle', text: 'Its diagram', silentText: 'Its diagram', vo: 'And the diagram is there with it.', accent: '#22D3A6' },
+    { n: 8, frames: 129, screen: 'chapterDiagrams', camera: 'glideDown', text: 'Right beside the answer', silentText: 'Right beside the answer', vo: 'It’s made for that question.', accent: '#22D3A6' },
+    { n: 9, frames: 128, screen: 'askai', mascot: 'guide', camera: 'push', text: 'Stuck? Ask AI.', silentText: 'Stuck? Ask AI.', vo: 'Still stuck? Ask the AI.', accent: '#7C5CFF' },
+    { n: 10, frames: 128, screen: 'flashcards', mascot: 'guide', camera: 'orbit', text: 'Chapter → cards', silentText: 'Chapter → cards', vo: 'You can turn a whole chapter into cards.', accent: '#4CC2FF' },
+    { n: 11, frames: 128, screen: 'ankiStudy', camera: 'macro', text: 'Spaced revision', silentText: 'Spaced revision', vo: 'Then they come back later for revision.', accent: '#4CC2FF' },
+    { n: 12, frames: 128, screen: 'timer', mascot: 'guide', camera: 'push', text: 'Focus. Grow.', silentText: 'Focus. Grow.', vo: 'Start a focus session and the tree grows.', accent: '#22D3A6' },
+    { n: 13, frames: 128, screen: 'progress', camera: 'pull', text: 'Your streak', silentText: 'Your streak', vo: 'And your streak stays on your phone.', accent: '#F5B301' },
+    { n: 14, frames: 128, screen: null, mascot: 'hero', camera: 'settle', text: 'Download Orbit', silentText: 'Download Orbit', vo: 'Download Orbit on the Play Store.', accent: '#7C5CFF' },
   ],
 };

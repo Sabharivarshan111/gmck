@@ -49,7 +49,7 @@ export interface Shot {
   /** 1-30, for readability against the script document. */
   n: number;
   /**
-   * Key into the screen registry, or a plate filename. `null` renders the
+   * Key into the screen registry, or a diagram filename. `null` renders the
    * device dark — used only for the cold-open beats.
    */
   screen: string | null;
