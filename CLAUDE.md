@@ -113,17 +113,23 @@ Do not "fix" these without reading the reasoning:
    and OEM skins replace it — MIUI ships MiSans, One UI ships SamsungOne — which
    would silently re-typeset the app on those phones.
 
-6. **`versionCode` must increase on every Play upload.** **14 is live on Play**
-   and the repo carries 15.
+6. **`versionCode` must increase on every Play upload.** **17 is live on Play**
+   and the repo carries 18.
 
-   This file said 13 for weeks and it was wrong; the app's owner corrected it
-   on 2026-09-05, reading their own console. What produced the error is worth
-   knowing, because the same shape will produce it again: an upload of 14 was
-   refused with "your app could crash on 16 KB devices" naming
+   This file has now been wrong about that number twice, and both times the
+   same way. It said 13 for weeks; the owner corrected it to 14 on 2026-09-05,
+   reading their own console. It then drifted to 19-23 as CI built artifact
+   after artifact, none of which was ever uploaded — a built `.aab` is not a
+   published one, and the repo cannot tell the difference. The owner read the
+   console again on 2026-09-11: the highest versionCode Play has ever received
+   is 17, so 18 is the next one, and it is pinned there until they upload it.
+
+   What produced the first error is worth keeping, because the shape recurs: an
+   upload of 14 was refused with "your app could crash on 16 KB devices" naming
    `libzstd-jni-1.5.6-9.so`, that refusal was written down here as "14 was
    rejected, 13 is live", and nothing ever re-checked. A rejection of one
-   upload is not proof of what the listing serves. **Ask the console, not this
-   file.**
+   upload is not proof of what the listing serves, and neither is a green
+   build. **Ask the console, not this file.**
 
    The number now lives in two places that must agree: `build.gradle` and
    `src/lib/appVersion.ts`, which is how the app knows its own version without
@@ -133,8 +139,16 @@ Do not "fix" these without reading the reasoning:
    correct v15 build announced itself as the number Play had refused.
 
    Bumping is three edits and a row: both files, and an `app_releases` row so
-   older builds can offer the update and the new one can say what it fixed.
-   Leave `live_on_play` false until the listing actually serves it.
+   the new build can say what it fixed.
+
+   **There is no `live_on_play` column, and adding one back would undo a fix.**
+   "Is there a newer version" is asked of Google Play itself now, through
+   `NativeOrbitUpdate` — Play knows the answer for this reader on their track,
+   and knows it without a person remembering to flip a flag. The table is kept
+   only because Play will not hand release notes to a client. So a row may be
+   written the moment a build is cut, and a row for a version Play has not
+   served yet is harmless: nothing reads it until Play names that versionCode.
+   The reasoning is at the top of `mobile/src/lib/appUpdate.ts`.
 
 7. **Progress bars use `scaleX` + `transformOrigin: 'left'`, never an animated
    `width`.** Width is a layout property: animating it forces layout, paint and

@@ -4,17 +4,12 @@ description: Cutting builds — which of the four to use, how to trigger one, an
 
 # Releases
 
-Three build workflows, in `.github/workflows/`. All three are already wired to
-run on a **push to `claude/native-app-sync`**, so cutting a build is:
-
-```sh
-git push gmck claude/native-app-sync    # signed builds live here
-git push origin claude/native-app-sync  # mirror; its release run fails, see below
-```
-
-Then watch **Actions** on `gmck`. Every workflow publishes to a GitHub
-**Release**, not just an Actions artifact — an artifact needs a signed-in
-desktop browser, and the whole point is installing from the phone.
+Three build workflows, in `.github/workflows/`. All three run on a push to
+`main` or to `claude/native-app-sync`, so cutting a build is a push — then
+watch **Actions** on `gmck`, which is where the signed builds live. Every
+workflow publishes to a GitHub **Release** rather than only an Actions
+artifact: an artifact needs a signed-in desktop browser, and the whole point is
+installing from the phone.
 
 ## Which build
 
@@ -33,13 +28,11 @@ desktop browser, and the whole point is installing from the phone.
 **Push to `main`, and all three build and publish their releases.** That is the
 whole answer, and it is new as of 2026-09-03.
 
-Before that, the three workflows only fired on pushes to
-`claude/native-app-sync`, and `main` was in none of the lists. So a merge to
-`main` built nothing, and the only other route was calling `workflow_dispatch`
-through the GitHub API — which needs a token. Claude Code has one through its
-GitHub connector; **Antigravity does not**, which is the entire reason it could
-never cut a build while Claude Code could. It was never a permissions problem
-to argue about, just a branch missing from three lists.
+Before that, `main` was in none of the three trigger lists, so a merge built
+nothing and the only route was `workflow_dispatch` through the GitHub API —
+which needs a token. Claude Code has one; **Antigravity does not**, which is
+the whole reason it could never cut a build. Never a permissions problem to
+argue about, just a branch missing from three lists.
 
 The `paths:` filters on the debug and internal workflows are what keep this
 affordable — a commit that only moves documentation still burns no runner.
@@ -66,11 +59,15 @@ test build to ship development JavaScript to stay safe — several times slower
 than the shipped app, and the cause of most "the app lags" reports.
 
 **2. `versionCode` must increase on every Play upload.** Play rejects a repeat,
-and it rejects it *after* the upload. **14 is live, the repo carries 15** — and
-which number is live comes from the console, never from a file here (this said
-13 for weeks). The number is in `mobile/android/app/build.gradle` AND
-`mobile/src/lib/appVersion.ts`; `check:version` fails if they disagree, and a
-bump needs an `app_releases` row, `live_on_play` false until Play serves it.
+*after* the upload. **17 is live, the repo carries 18** — and which number is
+live comes from the console, never from a file here. Wrong twice already: it
+said 13 for weeks, then drifted to 23 as CI built artifacts nobody uploaded. A
+green build is not a published one. The number is in
+`mobile/android/app/build.gradle` AND `mobile/src/lib/appVersion.ts`;
+`check:version` fails if they disagree, and a bump needs an `app_releases` row
+for the What's New card. There is no `live_on_play` column: whether a newer
+version exists is Play's own answer now, so write the row when the build is
+cut.
 
 Do **not** change `applicationId` (`com.aistudio.mbbsqbank.aycxvd`): it matches
 the listing, and changing it publishes a *second app*.
