@@ -410,14 +410,14 @@ const page = ({ script, title, look, dark, scenes, audio, bed, tweens }) => {
         height: 1340px;
         display: grid;
         place-items: center;
-        padding: ${dark ? '0' : '96px 0 0'};
+        padding: ${dark ? '0' : '46px 0 0'};
       }
       .panel {
         position: relative;
         overflow: hidden;
         ${dark
           ? 'width: 1080px; height: 1340px; border-radius: 0;'
-          : 'width: 660px; height: 1140px; border-radius: 44px; box-shadow: 0 48px 120px rgba(16,20,24,0.18), 0 2px 0 rgba(255,255,255,0.7) inset;'}
+          : 'width: 790px; height: 1250px; border-radius: 48px; box-shadow: 0 48px 120px rgba(16,20,24,0.18), 0 2px 0 rgba(255,255,255,0.7) inset;'}
       }
       .shot-img {
         width: 100%;
