@@ -202,11 +202,70 @@ export function embedUrlFor(link: NoteLink): string {
     playsinline: '1',
     rel: '0',
     modestbranding: '1',
+    /*
+       The origin the player checks its embedder against.
+
+       This is half of the fix for **Error 153** below. YouTube's player reads
+       it and compares it with the document that framed it; without it, and
+       without the referrer that `baseUrl` supplies, the player has no embedder
+       it is willing to believe in.
+    */
+    origin: EMBED_ORIGIN,
   });
   if (link.startAt) {
     params.set('start', String(link.startAt));
   }
   return `https://www.youtube-nocookie.com/embed/${link.videoId}?${params.toString()}`;
+}
+
+/**
+ * The origin the player is told it is embedded in.
+ *
+ * It has to be a real https YouTube origin. `about:blank`, a `file://` path and
+ * the WebView's default empty base all read to YouTube as "no embedder", which
+ * is the failure below.
+ */
+export const EMBED_ORIGIN = 'https://www.youtube.com';
+
+/**
+ * The page the WebView loads, with the player inside an iframe on it.
+ *
+ * ## Error 153, which is what the reader actually saw
+ *
+ * The card used to point the WebView straight at the embed URL:
+ * `source={{ uri: embedUrlFor(link) }}`. That works by accident for a long
+ * time and then stops. A WebView navigating to `/embed/<id>` is a **top-level
+ * navigation**: the player is the document, not something a document framed,
+ * so the request carries no `Referer` and the player has no origin to check.
+ * YouTube's embedded player answers that with
+ *
+ *     Video player configuration error
+ *     Error 153
+ *
+ * which is what the app's owner photographed inside a note. Nothing in the app
+ * was broken and nothing in the log said anything; the player simply refused to
+ * start, and the still behind it had already been replaced by then.
+ *
+ * The fix is to give it an embedder. The WebView loads this HTML with
+ * `baseUrl` set to `EMBED_ORIGIN`, so the iframe's request for the player is a
+ * sub-resource of a page on `https://www.youtube.com` and carries that as its
+ * referrer — which, with the matching `origin` parameter, is exactly the pair
+ * the player is looking for. It is also what every library that does this
+ * properly does; `react-native-youtube-iframe` ships the same shape.
+ *
+ * ## Why the markup is this plain
+ *
+ * No script, no player API, no message bridge. The card has no controls of its
+ * own — play, pause, scrub and fullscreen are the player's — so there is
+ * nothing for JavaScript here to do, and an inline script would need a content
+ * security policy argument that a bare iframe does not.
+ */
+export function embedHtmlFor(link: NoteLink): string {
+  return `<!doctype html><html><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<style>html,body{margin:0;padding:0;background:#000;height:100%;overflow:hidden}
+iframe{border:0;display:block;width:100%;height:100%}</style></head>
+<body><iframe src="${embedUrlFor(link)}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen title="YouTube video"></iframe></body></html>`;
 }
 
 /** What the card calls it when the reader did not name it. */

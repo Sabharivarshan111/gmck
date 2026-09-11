@@ -6,7 +6,13 @@ import { Text } from '@/components/Text';
 import { Touchable } from '@/components/Touchable';
 import { useTheme, withAlpha } from '@/theme';
 import { typeScale } from '@/theme/typography';
-import { displayTitle, embedUrlFor, thumbnailFor, type NoteLink } from '@/lib/noteLinks';
+import {
+  EMBED_ORIGIN,
+  displayTitle,
+  embedHtmlFor,
+  thumbnailFor,
+  type NoteLink,
+} from '@/lib/noteLinks';
 
 /**
  * A link in a note. A YouTube one plays where it sits; anything else opens out.
@@ -30,6 +36,15 @@ import { displayTitle, embedUrlFor, thumbnailFor, type NoteLink } from '@/lib/no
  * means extracting the stream, which is a breach of YouTube's terms. The IFrame
  * player is the sanctioned route and it needs a browser. See `lib/noteLinks.ts`.
  */
+/** The host of a URL, or an empty string when it is not one we can parse. */
+const safeHost = (url: string): string => {
+  try {
+    return new URL(url).hostname;
+  } catch {
+    return '';
+  }
+};
+
 export function NoteLinkCard({
   link,
   onRemove,
@@ -55,7 +70,17 @@ export function NoteLinkCard({
       <View style={[styles.card, { borderColor: colors.border }]}>
         <View style={styles.stage}>
           <WebView
-            source={{ uri: embedUrlFor(link) }}
+            /*
+               HTML with a `baseUrl`, never the embed URL on its own.
+
+               Pointed straight at `/embed/<id>` the player is the top-level
+               document, sends no referrer, and answers with "Video player
+               configuration error, Error 153" — which is what the app's owner
+               photographed. Loading a page whose base is a real YouTube origin
+               makes the player a framed sub-resource with a referrer it
+               accepts. `lib/noteLinks.ts` has the long version.
+            */
+            source={{ html: embedHtmlFor(link), baseUrl: EMBED_ORIGIN }}
             style={styles.web}
             // The player needs both, and neither is a default: without
             // `allowsInlineMediaPlayback` iOS throws it fullscreen, and without
@@ -67,6 +92,25 @@ export function NoteLinkCard({
             allowsFullscreenVideo
             javaScriptEnabled
             domStorageEnabled
+            /*
+               A tap on the player's own "Watch on YouTube" asks for a new
+               window. With multiple windows supported that opens a second
+               WebView inside the card with no way back out of it; refused
+               here, the request arrives at `onShouldStartLoadWithRequest`
+               instead and leaves for the real app.
+            */
+            setSupportMultipleWindows={false}
+            onShouldStartLoadWithRequest={(req) => {
+              // The player's own navigations stay inside. Anything else — the
+              // channel, a recommendation, a link in a description — is the
+              // reader leaving, and it leaves through the system rather than
+              // stranding them in a browser with no chrome.
+              if (req.url.startsWith('about:') || /(^|\.)(youtube|youtube-nocookie|ytimg|googlevideo)\.com$/.test(safeHost(req.url))) {
+                return true;
+              }
+              Linking.openURL(req.url).catch(() => undefined);
+              return false;
+            }}
           />
         </View>
         <View style={styles.foot}>

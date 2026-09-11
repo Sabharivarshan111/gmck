@@ -42,7 +42,7 @@ const js = source
   .replace(/ as \w+/g, '');
 // eslint-disable-next-line no-new-func
 const fns = new Function(
-  `${js}; return { normaliseUrl, youTubeIdOf, makeNoteLink, parseStart, embedUrlFor, thumbnailFor, displayTitle };`,
+  `${js}; return { normaliseUrl, youTubeIdOf, makeNoteLink, parseStart, embedUrlFor, embedHtmlFor, EMBED_ORIGIN, thumbnailFor, displayTitle };`,
 )();
 
 const id = (url, want, what) => {
@@ -114,6 +114,56 @@ check(
 const code = source.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/(^|[^:])\/\/.*$/gm, '$1');
 check(!/fetch\(|oembed|XMLHttpRequest/i.test(code), 'noteLinks.ts fetches something');
 
+/* ------------------------------------------------------------------------
+ * Error 153: the player needs an embedder.
+ *
+ * The card pointed the WebView straight at the embed URL, which makes the
+ * player the top-level document — no referrer, no origin to check — and
+ * YouTube answers "Video player configuration error, Error 153" instead of
+ * playing. The app's owner photographed it inside a note. Nothing threw and
+ * nothing logged.
+ *
+ * The fix is a page with the player framed on it, loaded with a `baseUrl` on a
+ * real YouTube origin. These assertions are the reason it cannot quietly go
+ * back: the failure is invisible from here (no emulator, and the storage host
+ * is blocked), so the shape is what gets held.
+ * --------------------------------------------------------------------- */
+{
+  const html = fns.embedHtmlFor(link);
+  check(html.includes('<iframe'), 'the player is framed rather than being the document itself');
+  check(
+    html.includes(`src="${embed}"`),
+    'the iframe carries the embed URL the rest of this file builds',
+  );
+  check(html.includes('allowfullscreen'), 'the framed player can still go fullscreen');
+  check(
+    embed.includes(`origin=${encodeURIComponent(fns.EMBED_ORIGIN)}`),
+    `the embed declares the origin it expects to be framed in: ${embed}`,
+  );
+  check(
+    /^https:\/\/(www\.)?youtube\.com$/.test(fns.EMBED_ORIGIN),
+    `EMBED_ORIGIN has to be a real https YouTube origin, not ${fns.EMBED_ORIGIN}`,
+  );
+
+  const card = await fs.readFile(
+    path.join(root, 'src', 'components', 'NoteLinkCard.tsx'),
+    'utf8',
+  );
+  const cardCode = card.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/(^|[^:])\/\/.*$/gm, '$1');
+  check(
+    /source=\{\{\s*html:\s*embedHtmlFor\(link\),\s*baseUrl:\s*EMBED_ORIGIN\s*\}\}/.test(cardCode),
+    'NoteLinkCard no longer feeds the WebView framed HTML with a baseUrl — that is Error 153 coming back',
+  );
+  check(
+    !/source=\{\{\s*uri:\s*embedUrlFor/.test(cardCode),
+    'NoteLinkCard points the WebView straight at the embed URL again, which is what Error 153 was',
+  );
+  check(
+    /setSupportMultipleWindows=\{false\}/.test(cardCode),
+    'a "Watch on YouTube" tap can open a second WebView inside the card with no way back',
+  );
+}
+
 if (failures.length > 0) {
   console.error('note links check failed:\n');
   for (const failure of failures) console.error(`  - ${failure}`);
@@ -122,5 +172,6 @@ if (failures.length > 0) {
 
 console.log(
   'OK  the six YouTube shapes parse, four look-alikes do not, javascript:/file: are refused, ' +
-    'timestamps survive, and nothing is fetched',
+    'timestamps survive, nothing is fetched, and the player is framed on a real origin ' +
+    '(which is what Error 153 was)',
 );
