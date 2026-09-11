@@ -213,12 +213,38 @@ export function paletteFrom(
   const semantic = dark ? SEMANTIC_DARK : SEMANTIC_LIGHT;
   const hues = dark ? HUES_DARK : HUES_LIGHT;
 
+  /*
+   * A material has to be visible in the PALETTE, not only in the component.
+   *
+   * This is the thing the first Liquid Glass pass got wrong, and it is worth
+   * writing down because it is invisible from inside `GlassSurface.tsx`, where
+   * every fix looks like it worked. `GlassSurface` is rendered in **ten**
+   * places in this app — the music player and two spots on Home. **Ninety-eight**
+   * surfaces instead write `backgroundColor: colors.card, borderColor:
+   * colors.border` by hand. So the entire bevel, the specular, the
+   * counter-rim and the AGSL shader were reaching about a tenth of the screen,
+   * and "Liquid Glass" was, everywhere else, a dark palette with a hairline so
+   * dim you could not find it.
+   *
+   * The answer is not to put a rim round all ninety-eight — a rim on every
+   * list row is exactly what `bevel` is documented not to be for, and it would
+   * undo the distinction the hero surfaces draw. The answer is that the two
+   * derived values every one of those surfaces already reads should say what
+   * material this is.
+   *
+   * So under glass the border is lit rather than merely present, and an
+   * elevated surface separates more. A lit edge on a card is most of what the
+   * eye reads as glass at a glance, and it costs nothing anywhere: it is one
+   * mix factor, on a colour the whole app already asks for.
+   */
+  const glass = material === 'glass';
+
   return {
     background: custom.background,
     card: custom.card,
-    cardElevated: mix(custom.card, custom.text, 0.08),
+    cardElevated: mix(custom.card, custom.text, glass ? 0.14 : 0.08),
     muted: mix(custom.card, custom.text, 0.08),
-    border: mix(custom.card, custom.text, 0.18),
+    border: mix(custom.card, custom.text, glass ? 0.42 : 0.18),
     text: custom.text,
     textMuted: mix(custom.text, custom.background, 0.38),
     primary: custom.text,
