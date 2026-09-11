@@ -21,6 +21,7 @@ import { hydrateSettings } from '@/lib/settings';
 import { hydrateAttendance } from '@/lib/attendance';
 import { hydrateProfile, hydrateStreak } from '@/hooks/useProfile';
 import { DailyAdConsent } from '@/components/DailyAdConsent';
+import { UnlockCard } from '@/components/UnlockCard';
 import { XpToast } from '@/components/XpToast';
 import { TourOverlay } from '@/components/TourOverlay';
 import { FirstRun } from '@/components/FirstRun';
@@ -1188,6 +1189,23 @@ function Shell() {
   if (screen === 'usernotesdemo') {
     return <UserNotesDemo />;
   }
+  /*
+   * The unlock card on its own.
+   *
+   * It normally lives inside the daily ad prompt, and `requestDailyAd` returns
+   * early whenever ads are off — which they are in every build that is not the
+   * signed release. So the card was unreachable in a browser and the only way
+   * to see it was to flip `ADS_ENABLED`, a real gate rather than a screenshot
+   * switch. Rendering the component directly is the honest way round that.
+   */
+  if (screen === 'unlockdemo') {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', padding: 20 }}>
+        <UnlockCard />
+      </View>
+    );
+  }
+
   if (screen === 'botdemo') {
     return <BotDemo />;
   }

@@ -113,17 +113,79 @@ check(
 );
 
 // ---------------------------------------------------------------------------
-// 4. Where a purchase used to be offered, there is an explanation.
+// 4. Where a purchase used to be offered, there is somewhere to go.
 //
-//    A dialog that silently loses its offer reads as a bug. The reader is told
-//    ad-free is coming and that nothing is for sale yet.
+//    A dialog that silently loses its offer reads as a bug. It used to say
+//    ad-free was "coming soon", which was true while nothing was for sale.
+//    Ad-free is bought on the website now, so the card says that instead — and
+//    this asserts the guarantee rather than the sentence, because the sentence
+//    has already changed once.
 // ---------------------------------------------------------------------------
 const consent = await read('src/components/DailyAdConsent.tsx');
+const unlockCard = await read('src/components/UnlockCard.tsx');
 check(consent !== null, 'DailyAdConsent.tsx is missing');
+check(unlockCard !== null, 'UnlockCard.tsx is missing');
 check(
-  /coming soon/i.test(consent ?? ''),
-  'the ad prompt no longer says ad-free is coming — a vanished offer reads as a broken screen',
+  /<UnlockCard/.test(consent ?? ''),
+  'the ad prompt no longer renders the unlock card — a vanished offer reads as a broken screen',
 );
+check(
+  /website|mbbsqbank-questor/i.test(unlockCard ?? ''),
+  'the unlock card no longer tells the reader where ad-free is bought',
+);
+
+// ---------------------------------------------------------------------------
+// 4b. THE APP PRICES NOTHING. This is the rule Razorpay broke and the rule
+//     Play Billing was written to keep, and it survives the move to a web
+//     unlock unchanged — arguably more so, because a number compiled into an
+//     APK cannot be corrected without shipping a build.
+//
+//     `HomeMenuSheet` quoted "from fifty rupees" in an accessibility label
+//     long after Razorpay's plan table was deleted, so TalkBack read a price
+//     out as fact while no screen showed one. Labels are where this hides.
+// ---------------------------------------------------------------------------
+const PRICED = /₹\s*\d|\brupees?\b|\bRs\.?\s*\d|\$\s*\d/i;
+for (const file of [
+  'src/components/DailyAdConsent.tsx',
+  'src/components/HomeMenuSheet.tsx',
+  'src/components/UnlockCard.tsx',
+  'src/lib/unlock.ts',
+]) {
+  const text = await read(file);
+  if (text === null) continue;
+  // Comments explain the rule and have to be able to name what they forbid.
+  const body = text.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/(^|[^:])\/\/.*$/gm, '$1');
+  check(!PRICED.test(body), `${file} quotes a price. The app prices nothing — the unlock page does.`);
+}
+
+// ---------------------------------------------------------------------------
+// 4c. Leaving for the unlock page is ONE constant, in one module.
+//
+//     Play's anti-steering rules are about directing a user out of the app to
+//     pay, and Google's external-links programme that permits it is open to
+//     users in the United States only. The owner's call is to link out; the
+//     point of `LINK_OUT` is that the compliant alternative — say where it is
+//     bought, offer no link, which is what Netflix actually does — stays one
+//     edit away instead of a rewrite.
+// ---------------------------------------------------------------------------
+const unlock = await read('src/lib/unlock.ts');
+check(unlock !== null, 'src/lib/unlock.ts is missing');
+check(
+  /export const LINK_OUT/.test(unlock ?? ''),
+  'unlock.ts no longer exposes LINK_OUT, so turning the link off is no longer one edit',
+);
+for (const file of [
+  'src/components/DailyAdConsent.tsx',
+  'src/components/HomeMenuSheet.tsx',
+  'src/components/UnlockCard.tsx',
+]) {
+  const text = (await read(file)) ?? '';
+  const body = text.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/(^|[^:])\/\/.*$/gm, '$1');
+  check(
+    !/Linking\.openURL/.test(body),
+    `${file} opens a URL directly; the unlock destination belongs in lib/unlock.ts behind LINK_OUT`,
+  );
+}
 
 // ---------------------------------------------------------------------------
 // 5. The entitlement still works.

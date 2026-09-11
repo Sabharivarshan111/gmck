@@ -1,10 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+
 import { Dialog } from '@/components/Dialog';
-import { Text } from '@/components/Text';
-import { useTheme, withAlpha } from '@/theme';
-import { Lock } from 'lucide-react-native';
 import { isPremiumCached } from '@/lib/premium';
+import { UnlockCard } from '@/components/UnlockCard';
 import {
   confirmDailyAd,
   declineDailyAd,
@@ -20,7 +18,6 @@ import {
  * user has to answer, and "Not now" is a real option, not a formality.
  */
 export function DailyAdConsent() {
-  const { colors } = useTheme();
   const [prompt, setPrompt] = useState<DailyAdPrompt | null>(null);
   // Kept so the text does not vanish while the dialog animates out.
   const [shown, setShown] = useState<DailyAdPrompt | null>(null);
@@ -78,27 +75,7 @@ export function DailyAdConsent() {
          * thing that changed, and every reader of the entitlement is untouched
          * — which is why `isPremiumCached()` still hides this row.
          */
-        isPremiumCached() ? null : (
-          <View
-            style={[
-              styles.soon,
-              {
-                borderColor: withAlpha(colors.textMuted, 0.35),
-                backgroundColor: withAlpha(colors.textMuted, 0.08),
-              },
-            ]}>
-            <Lock size={14} color={colors.textMuted} />
-            <View style={styles.soonBody}>
-              <Text style={[styles.soonTitle, { color: colors.text }]}>
-                Ad-free is coming soon
-              </Text>
-              <Text style={[styles.soonNote, { color: colors.textMuted }]}>
-                We are moving payments to Google Play. Nothing is for sale in the
-                app until that is ready.
-              </Text>
-            </View>
-          </View>
-        )
+        isPremiumCached() ? null : <UnlockCard />
       }
       actions={[
         { label: 'Not now', onPress: decline, tone: 'secondary' },
@@ -108,26 +85,3 @@ export function DailyAdConsent() {
   );
 }
 
-const styles = StyleSheet.create({
-  soon: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: 10,
-    borderRadius: 12,
-    borderWidth: StyleSheet.hairlineWidth,
-    paddingVertical: 12,
-    paddingHorizontal: 14,
-  },
-  soonBody: {
-    flex: 1,
-    gap: 2,
-  },
-  soonTitle: {
-    fontSize: 14,
-    fontWeight: '700',
-  },
-  soonNote: {
-    fontSize: 12,
-    lineHeight: 17,
-  },
-});
