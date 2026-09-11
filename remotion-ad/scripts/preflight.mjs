@@ -577,7 +577,26 @@ try {
     [...workflow.matchAll(/^\s*- ad:\s*(\S+)/gm)].map(m => m[1]),
   );
 
-  const voiced = scripts.filter(s => !s.noVoice);
+  /*
+   * A `hyperOnly` script has no matrix entry and should not have one.
+   *
+   * It is rendered — by the `hyperframes` job in the same workflow, which
+   * builds both films from these scripts and publishes them to the same
+   * release — just not by the Remotion matrix. Requiring one here would be
+   * requiring a second, worse render of a film that already ships.
+   *
+   * Asserted rather than assumed: if that job is ever deleted, these scripts
+   * really would stop being rendered, and this is the only place that would
+   * notice.
+   */
+  if (!/^\s{2}hyperframes:$/m.test(workflow)) {
+    problems.push(
+      'ad-videos.yml has no `hyperframes` job, so the HyperFrames films are ' +
+        'never rendered. Either restore it or drop `hyperOnly` from the scripts.',
+    );
+  }
+
+  const voiced = scripts.filter(s => !s.noVoice && !s.hyperOnly);
 
   for (const script of voiced) {
     for (const id of [script.id, `${script.id}-silent`]) {

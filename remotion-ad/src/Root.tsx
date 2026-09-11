@@ -38,7 +38,7 @@ const LAUNCH_FALLBACK_FRAMES: Record<string, number> = {
  * without "Welcome to Orbit" in front of it — and the three long-form ads
  * would quietly be the only ads in the set that did not follow the rule.
  */
-const LAUNCH_ADS = ALL_SCRIPTS.filter((s) => s.format !== 'reel').map((script) => ({
+const LAUNCH_ADS = ALL_SCRIPTS.filter((s) => s.format !== 'reel' && !s.hyperOnly).map((script) => ({
   id: script.id,
   script,
   fallbackFrames: LAUNCH_FALLBACK_FRAMES[script.id] ?? 3965,

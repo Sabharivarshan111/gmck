@@ -27,6 +27,8 @@ import { reelThirdYear } from './reelThirdYear.ts';
 import { reelFinalYear } from './reelFinalYear.ts';
 import { adAskIt } from './adAskIt.ts';
 import { adTheYear } from './adTheYear.ts';
+import { hyperAsk } from './hyperAsk.ts';
+import { hyperAll } from './hyperAll.ts';
 
 /**
  * Every script that exists, in one list.
@@ -68,6 +70,13 @@ const AUTHORED: AdScript[] = [
   // `look` chooses, and `HyperAd` draws them.
   adAskIt,
   adTheYear,
+  // Written for the HyperFrames films: year-agnostic, cut at about two and a
+  // half seconds a shot, and leading on the drawings themselves rather than on
+  // a screenshot of a note with a diagram card in it. `hyperOnly` keeps them
+  // out of the Remotion compositions; every check in this repo still reads
+  // them, which is why they live here with the rest.
+  hyperAsk,
+  hyperAll,
 ];
 
 /**
@@ -81,7 +90,18 @@ const AUTHORED: AdScript[] = [
 export const ALL_SCRIPTS: AdScript[] = AUTHORED.map(withBookends);
 
 /** The 60-second vertical cuts, which are the ones with fixed shot frames. */
-export const REELS: AdScript[] = ALL_SCRIPTS.filter((s) => s.format === 'reel');
+/*
+ * The reels Remotion renders.
+ *
+ * `hyperOnly` scripts are reels too, and they are deliberately not here: they
+ * are authored for the HyperFrames renderer, and a flat film cut at two and a
+ * half seconds a shot would come through the device renderer as a worse
+ * version of an ad that already exists. They stay in `ALL_SCRIPTS`, so every
+ * check in this repo still reads them.
+ */
+export const REELS: AdScript[] = ALL_SCRIPTS.filter(
+  (s) => s.format === 'reel' && !s.hyperOnly,
+);
 
 export {
   thePattern,
@@ -110,6 +130,8 @@ export {
   reelFinalYear,
   adAskIt,
   adTheYear,
+  hyperAsk,
+  hyperAll,
 };
 
 /** The reels somebody speaks over. */

@@ -69,18 +69,33 @@ if (Object.keys(SCREENS).length < 20) {
 
 /* ---- The two films ----------------------------------------------------- */
 
+/*
+ * The two films, and they have their own scripts now.
+ *
+ * They were cut from `orbit-ask-it` and `orbit-the-year`, which are Remotion
+ * ads. The owner watched that result and named what was wrong with it: it
+ * walked the four MBBS years when these are meant to be for all of them, the
+ * diagram was an empty box, the Ask AI shot was the chat's empty state, and it
+ * was slow. `orbit-hyper-ask` and `orbit-hyper-all` are written for this
+ * renderer instead — year-agnostic, leading on the drawings themselves, and
+ * cut as fast as a voiced sixty seconds allows.
+ *
+ * They are still `remotion-ad/src/scripts/`, because that is where every check
+ * in this repo reads a script from. `hyperOnly` is what keeps them out of the
+ * Remotion compositions.
+ */
 const VARIATIONS = [
   {
-    scriptId: 'orbit-ask-it',
+    scriptId: 'orbit-hyper-ask',
     dir: 'ask-it',
     look: 'prompt',
-    title: 'Orbit MBBS — Ask it',
+    title: 'Orbit MBBS — One question, all the way through',
   },
   {
-    scriptId: 'orbit-the-year',
+    scriptId: 'orbit-hyper-all',
     dir: 'the-year',
     look: 'keynote',
-    title: 'Orbit MBBS — The year you are in',
+    title: 'Orbit MBBS — All of it, in one app',
   },
 ];
 
@@ -100,6 +115,46 @@ const captionSize = (text, look) => {
     ? [[16, 96], [26, 84], [34, 72], [46, 62], [999, 54]]
     : [[16, 84], [26, 74], [34, 64], [46, 56], [999, 48]];
   return ladder.find(([max]) => n <= max)[1];
+};
+
+/* ------------------------------------------------------------------------
+ * A kicker that can actually be read on a light ground.
+ *
+ * The kicker takes the shot's accent, which is right on the dark film and
+ * wrong on the light one: `#4CC2FF` and `#F5B301` are bright colours, and on a
+ * near-white page they land around 2:1 — `hyperframes check` measured one at
+ * 1.99 and WCAG wants 3 for large text. It is two words in the corner, so it
+ * fails quietly rather than obviously, which is exactly the kind of thing that
+ * ships.
+ *
+ * Darkened towards black until it clears the bar, rather than replaced with a
+ * neutral: the accent is what ties the kicker to the shot it labels, and a
+ * grey one would lose that to fix a number.
+ * --------------------------------------------------------------------- */
+const rgbOf = (hex) => {
+  const h = hex.replace('#', '');
+  return [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16));
+};
+const luminance = (rgb) => {
+  const [r, g, b] = rgb.map((v) => {
+    const c = v / 255;
+    return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+  });
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+};
+const contrast = (a, b) => {
+  const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
+  return (hi + 0.05) / (lo + 0.05);
+};
+const readableOn = (hex, groundHex, want = 3.2) => {
+  const ground = rgbOf(groundHex);
+  let rgb = rgbOf(hex);
+  // Twenty steps of 5% towards black is enough to take any of the accents used
+  // here past the bar, and stops rather than running to black if it cannot.
+  for (let i = 0; i < 20 && contrast(rgb, ground) < want; i += 1) {
+    rgb = rgb.map((v) => Math.round(v * 0.85));
+  }
+  return `#${rgb.map((v) => v.toString(16).padStart(2, '0')).join('')}`;
 };
 
 const esc = (s) =>
@@ -201,7 +256,7 @@ const build = async ({ scriptId, dir, look, title }) => {
       ? ''
       : `
         <div class="band">
-          ${shot.kicker ? `<p class="kicker" id="${id}-kicker" style="color:${accent}">${esc(shot.kicker)}</p>` : ''}
+          ${shot.kicker ? `<p class="kicker" id="${id}-kicker" style="color:${dark ? accent : readableOn(accent, '#F6F7F9')}">${esc(shot.kicker)}</p>` : ''}
           <p class="caption" id="${id}-cap" style="font-size:${size}px">${esc(caption)}</p>
         </div>`;
 
@@ -222,7 +277,7 @@ ${stage}${words}
     }
 
     /* ---- The motion ---------------------------------------------------- */
-    tweens.push(shotTweens({ id, start, dur, look, shot }));
+    tweens.push(shotTweens({ id, start, dur, look, shot, index: i }));
   }
 
   if (missingScreens.length) {
@@ -322,9 +377,32 @@ const typedPrompt = (id, shot, accent, dark) => {
 };
 
 /* ---- The motion for one shot ------------------------------------------ */
-const shotTweens = ({ id, start, dur, look, shot }) => {
+/**
+ * How each cut is made.
+ *
+ * There are four of them and they run in order, one per shot, so no two
+ * consecutive boundaries move the same way. That rotation is the whole fix for
+ * the owner's verdict on the first cut — "every frame is slow and the video is
+ * too slow and boring, it doesn't transition to next frames". The first cut
+ * cross-faded every shot over 0.6s and then held still, which is the shape of
+ * a slideshow whatever the shot length is.
+ *
+ * They are entries only. A HyperFrames clip's visibility window is half-open,
+ * so a shot is simply gone at its end frame and there is nothing left to
+ * animate out — the outgoing move has to be implied by how hard the incoming
+ * one arrives.
+ */
+const CUTS = [
+  { from: 'xPercent: 26', name: 'push from the right' },
+  { from: 'yPercent: 14, scale: 1.05', name: 'lift from below' },
+  { from: 'xPercent: -26', name: 'push from the left' },
+  { from: 'scale: 1.14', name: 'punch in' },
+];
+
+const shotTweens = ({ id, start, dur, look, shot, index }) => {
   const t = start.toFixed(3);
   const lines = [];
+  const cut = CUTS[index % CUTS.length];
 
   if (shot.openCard || shot.endCard) {
     lines.push(`tl.from("#${id} .brand-mark", { scale: 0.9, autoAlpha: 0, duration: 0.6, ease: "power3.out" }, ${t});`);
@@ -340,28 +418,46 @@ const shotTweens = ({ id, start, dur, look, shot }) => {
   if (shot.typed) {
     // Steps, one per character, so the line arrives a letter at a time.
     const n = Math.max(1, (shot.text ?? '').length);
-    const typeFor = Math.min(1.5, dur * 0.55);
+    const typeFor = Math.min(1.3, dur * 0.5);
     lines.push(`typeIn("#${id}-line", "#${id}-caret", ${n}, ${t}, ${typeFor.toFixed(3)});`);
-    lines.push(`tl.from("#${id}-prompt", { y: 24, autoAlpha: 0, duration: 0.45, ease: "power3.out" }, ${t});`);
+    lines.push(`tl.from("#${id}-prompt", { ${cut.from}, autoAlpha: 0, duration: 0.34, ease: "power4.out" }, ${t});`);
   } else if (shot.screen) {
     /*
-       The picture arrives and then drifts, and the drift is the only thing
-       moving for most of the shot. A still screenshot held for two seconds
-       reads as a slideshow; a slow, constant travel reads as a camera.
+       The picture ARRIVES — ${cut.name} — and then never stops moving.
+
+       Two separate things, and the first one is what was missing. The entry is
+       0.34s on a power4, which is fast enough to read as a cut rather than a
+       dissolve; the drift underneath runs the whole shot so the frame is never
+       static. A screenshot that lands and then sits still for three seconds is
+       a slide, however it got there.
     */
+    lines.push(`tl.from("#${id}-panel", { ${cut.from}, autoAlpha: 0, duration: 0.34, ease: "power4.out" }, ${t});`);
     if (look === 'keynote') {
-      lines.push(`tl.from("#${id}-panel", { scale: 1.06, autoAlpha: 0, duration: 0.6, ease: "power2.out" }, ${t});`);
-      lines.push(`tl.fromTo("#${id}-img", { scale: 1.0 }, { scale: 1.05, duration: ${dur.toFixed(3)}, ease: "none" }, ${t});`);
+      // Alternating direction, so a run of shots does not all drift the same
+      // way and settle into a rhythm the eye stops seeing.
+      const push = index % 2 === 0 ? [1.0, 1.07] : [1.07, 1.0];
+      lines.push(`tl.fromTo("#${id}-img", { scale: ${push[0]} }, { scale: ${push[1]}, duration: ${dur.toFixed(3)}, ease: "none" }, ${t});`);
     } else {
-      lines.push(`tl.from("#${id}-panel", { yPercent: 6, autoAlpha: 0, duration: 0.55, ease: "power3.out" }, ${t});`);
-      lines.push(`tl.fromTo("#${id}-img", { yPercent: 0 }, { yPercent: -2.2, duration: ${dur.toFixed(3)}, ease: "none" }, ${t});`);
+      const travel = index % 2 === 0 ? -3.2 : 2.4;
+      lines.push(`tl.fromTo("#${id}-img", { yPercent: 0 }, { yPercent: ${travel}, duration: ${dur.toFixed(3)}, ease: "none" }, ${t});`);
     }
   }
 
   if (shot.kicker) {
-    lines.push(`tl.from("#${id}-kicker", { y: 14, autoAlpha: 0, duration: 0.4, ease: "power2.out" }, ${(start + 0.1).toFixed(3)});`);
+    // Wiped in from the left rather than faded. A kicker is two words; a fade
+    // on two words is a thing you notice has finished rather than a thing you
+    // see happen.
+    lines.push(`tl.fromTo("#${id}-kicker", { clipPath: "inset(0 100% 0 0)", autoAlpha: 0 }, { clipPath: "inset(0 0% 0 0)", autoAlpha: 1, duration: 0.3, ease: "power3.out" }, ${(start + 0.06).toFixed(3)});`);
   }
-  lines.push(`tl.from("#${id}-cap", { y: 22, autoAlpha: 0, duration: 0.45, ease: "power3.out" }, ${(start + 0.18).toFixed(3)});`);
+  /*
+     The headline SLAMS.
+
+     From slightly too big and below, on a power4 over 0.28s — the caption is
+     the one element a muted viewer actually reads, and it has to have landed
+     before they have decided whether to keep watching. It used to ease in over
+     0.45s from 22px, which is a caption politely appearing.
+  */
+  lines.push(`tl.from("#${id}-cap", { y: 44, scale: 1.06, autoAlpha: 0, duration: 0.28, ease: "power4.out" }, ${(start + 0.12).toFixed(3)});`);
   if (look === 'keynote') {
     // The gradient sweep across the headline: the bright stop travels from one
     // edge to the other once, over the whole shot.
