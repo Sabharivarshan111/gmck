@@ -121,13 +121,21 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # The 90-second launch ads.
+          # The 90-second launch ads, each in two cuts like every reel. They
+          # were the only three shipping in one, because they were written
+          # before the silent cut existed and nothing re-checked them.
           - ad: orbit-the-pattern
             file: orbit-the-pattern.mp4
+          - ad: orbit-the-pattern-silent
+            file: orbit-the-pattern-silent.mp4
           - ad: orbit-2am
             file: orbit-2am.mp4
+          - ad: orbit-2am-silent
+            file: orbit-2am-silent.mp4
           - ad: orbit-draw-it-from-memory
             file: orbit-draw-it-from-memory.mp4
+          - ad: orbit-draw-it-from-memory-silent
+            file: orbit-draw-it-from-memory-silent.mp4
           # The 60-second Instagram reels, each in two cuts. The silent one is
           # not an afterthought: most reels are watched muted, so it is the cut
           # that has to work without a word being heard.

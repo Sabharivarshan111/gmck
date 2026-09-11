@@ -514,6 +514,68 @@ try {
   );
 }
 
+// ---- Every voiced ad ships in two cuts, and one list cannot know that ----
+//
+// The rule is simple: an ad with a voice is rendered twice, once with it and
+// once without, because a reel is watched muted. It held for every reel and
+// silently did not hold for the three 90-second launch ads — they were written
+// before the silent cut existed, registered by hand as one `<Composition>`
+// each, and listed by hand in the render matrix. Nothing compared the two
+// hand-written lists to the rule, so 24 voiced ads shipped against 21 silent
+// ones and the gap was only visible by counting the files in a release.
+//
+// Both lists are read as TEXT rather than imported. `Root.tsx` is JSX and the
+// workflow is YAML; parsing them is the point, since the failure being caught
+// is one list drifting from the other.
+{
+  const rootSource = await fs.readFile(path.join(root, 'src/Root.tsx'), 'utf8');
+  const workflow = await fs.readFile(
+    path.join(root, '..', '.github/workflows/ad-videos.yml'),
+    'utf8',
+  );
+
+  const rendered = new Set(
+    [...workflow.matchAll(/^\s*- ad:\s*(\S+)/gm)].map(m => m[1]),
+  );
+
+  // A reel with no voice is registered and rendered ONCE on purpose: a silent
+  // twin would be a byte-identical second file under a second name.
+  const voiced = scripts.filter(s => !s.noVoice);
+
+  for (const script of voiced) {
+    for (const id of [script.id, `${script.id}-silent`]) {
+      if (!rendered.has(id)) {
+        problems.push(
+          `${id} is never rendered — ad-videos.yml has no matrix entry for it. ` +
+            'An ad with a voice ships in two cuts; the muted one is the cut ' +
+            'most people watch.',
+        );
+      }
+    }
+  }
+
+  for (const script of scripts.filter(s => s.noVoice)) {
+    if (rendered.has(`${script.id}-silent`)) {
+      problems.push(
+        `${script.id}-silent is in the render matrix, but that script has no ` +
+          'voice to leave out — it would be a byte-identical duplicate under a ' +
+          'second name, which nobody downloading them could tell apart.',
+      );
+    }
+  }
+
+  // Both cuts come from one `<Composition>` pair built in a map. A hand-written
+  // pair is how the launch ads drifted, so the shape itself is pinned.
+  const silentRegistrations = (rootSource.match(/id=\{`\$\{[A-Za-z.]+\}-silent`\}/g) ?? []).length;
+  if (silentRegistrations < 2) {
+    problems.push(
+      'Root.tsx registers fewer than two families of `-silent` composition. ' +
+        'The reels and the launch ads each build their pair in a map; writing ' +
+        'one out by hand is how an ad ends up shipping in a single cut.',
+    );
+  }
+}
+
 if (problems.length) {
   process.stdout.write('PREFLIGHT FAILED\n');
   for (const p of problems) process.stdout.write(`  - ${p}\n`);
