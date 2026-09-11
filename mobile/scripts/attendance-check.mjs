@@ -35,12 +35,15 @@ const arithmetic = source
   .replace(/: string/g, '')
   .replace(/: AttendanceItem/g, '')
   .replace(/: AttendanceVerdict/g, '')
+  // `dayOfRotation(item, today: Date = new Date())` — the default stays, the
+  // annotation goes, same as every other one above.
+  .replace(/: Date/g, '')
   .replace(/\| null/g, '')
   .replace(/interface [\s\S]*?\n\}/g, '')
   .replace(/^\s*\/\*\*[\s\S]*?\*\/$/gm, '');
 
 // eslint-disable-next-line no-new-func
-const fns = new Function(`${arithmetic}; return { percentOf, canMiss, mustAttend, verdictFor, bestPossible };`)();
+const fns = new Function(`${arithmetic}; return { percentOf, canMiss, mustAttend, verdictFor, bestPossible, workingDays, dayOfRotation };`)();
 
 const eq = (got, want, what) =>
   check(got === want, `${what}: expected ${want}, got ${got}`);
@@ -137,6 +140,78 @@ check(
 check(
   /Math\.min\(held, Math\.max\(0/.test(source),
   'attended is no longer clamped to held; a stored file could make every percentage nonsense',
+);
+
+
+// ---------------------------------------------------------------------------
+// Sundays, and why they are worth their own arithmetic.
+//
+// A competitor's tracker states it plainly — "holidays reduce total working
+// days count" — and it is the one idea of theirs worth having, because without
+// it the most useful sentence this feature says is wrong. The DIRECTION of the
+// error is what makes it matter: leaving the Sundays in overstates how much of
+// the rotation is left, which overstates how many days somebody may still miss.
+//
+// Counted rather than divided by seven. A 28-day block holds four Sundays or
+// five depending on the weekday it starts, and that difference is a whole day
+// of somebody's margin.
+// ---------------------------------------------------------------------------
+
+// 2026-09-07 is a Monday.
+const monday = {
+  id: 'p',
+  name: 'Medicine',
+  kind: 'posting',
+  target: 75,
+  held: 0,
+  attended: 0,
+  totalDays: 28,
+  startDate: '2026-09-07',
+  skipSundays: true,
+};
+
+eq(fns.workingDays(monday), 24, '28 days from a Monday, Sundays off');
+eq(
+  fns.workingDays({ ...monday, skipSundays: undefined }),
+  28,
+  'the same block with Sundays left in',
+);
+eq(
+  fns.workingDays({ ...monday, startDate: '2026-09-06' }),
+  24,
+  '28 days from a Sunday is also 24 — the extra one at the start is offset at the end',
+);
+
+// The cap comes off the WORKING days. 20 marked of 24 leaves four, not eight.
+const late = { ...monday, held: 20, attended: 20 };
+eq(fns.verdictFor(late).remaining, 4, 'what is left counts working days');
+eq(fns.verdictFor(late).canMiss, 4, 'canMiss is capped by the days that remain');
+eq(
+  fns.verdictFor(late).cappedByEnd,
+  true,
+  'and the card is told the cap was the end of the rotation',
+);
+
+// Day-of-rotation is read off the calendar, so it survives a week of not
+// marking anything.
+eq(fns.dayOfRotation(monday, new Date('2026-09-07T09:00:00')), 1, 'the first day is day 1');
+eq(
+  fns.dayOfRotation(monday, new Date('2026-09-14T09:00:00')),
+  7,
+  'a week on is day 7, not 8 — the Sunday between does not count',
+);
+eq(
+  fns.dayOfRotation(monday, new Date('2026-09-01T09:00:00')),
+  null,
+  'before it starts there is no day number to show',
+);
+
+// bestPossible uses the same number, or somebody below target is told a
+// recovery the calendar does not allow.
+eq(
+  Math.round(fns.bestPossible({ ...monday, held: 20, attended: 12 })),
+  Math.round(((12 + 4) / 24) * 100),
+  'the best finish attends every working day left, not every calendar day',
 );
 
 if (failures.length > 0) {

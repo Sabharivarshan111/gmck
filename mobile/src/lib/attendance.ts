@@ -52,6 +52,21 @@ export interface AttendanceItem {
   totalDays?: number;
   /** ISO date the rotation started, for the same reason. */
   startDate?: string;
+  /**
+   * Postings only: Sundays are not working days, so they do not count.
+   *
+   * Taken from a competitor's tracker, which states it plainly — "holidays
+   * reduce total working days count" — and it is the one idea of theirs worth
+   * having, because without it the most useful sentence this feature can say is
+   * simply wrong. A 28-day block starting on a Monday contains four Sundays, so
+   * "only two days left" is out by four, in the direction that gets somebody
+   * short.
+   *
+   * Off by default: plenty of postings do run through the weekend, and a
+   * tracker that silently shortens a rotation nobody asked it to shorten is the
+   * same bug in the other direction.
+   */
+  skipSundays?: boolean;
 }
 
 export interface AttendanceState {
@@ -114,6 +129,74 @@ export function mustAttend(attended: number, held: number, target: number): numb
   return Math.ceil((t * held - attended) / (1 - t));
 }
 
+/**
+ * How many working days a rotation has, counting from its start.
+ *
+ * `totalDays` is what the reader typed, and what they typed is the length of
+ * the block as the college states it. Whether every one of those is a day they
+ * are expected to turn up is a separate question, and `skipSundays` is how they
+ * answer it.
+ *
+ * Counted rather than divided by seven. A 28-day block has four Sundays or
+ * five depending on the weekday it starts, and the difference is a whole day of
+ * somebody's margin.
+ */
+export function workingDays(item: AttendanceItem): number | null {
+  if (typeof item.totalDays !== 'number' || item.totalDays <= 0) {
+    return null;
+  }
+  if (!item.skipSundays || !item.startDate) {
+    return item.totalDays;
+  }
+  const start = new Date(`${item.startDate}T00:00:00`);
+  if (Number.isNaN(start.getTime())) {
+    return item.totalDays;
+  }
+  let working = 0;
+  for (let i = 0; i < item.totalDays; i += 1) {
+    const day = new Date(start);
+    day.setDate(start.getDate() + i);
+    if (day.getDay() !== 0) {
+      working += 1;
+    }
+  }
+  return working;
+}
+
+/**
+ * Which working day of the rotation today is, 1-based, or null.
+ *
+ * Null before it starts and after it ends, because "day 31 of 28" is not a
+ * thing to put on a card. Clamped rather than extrapolated for the same reason.
+ */
+export function dayOfRotation(item: AttendanceItem, today: Date = new Date()): number | null {
+  const total = workingDays(item);
+  if (total === null || !item.startDate) {
+    return null;
+  }
+  const start = new Date(`${item.startDate}T00:00:00`);
+  if (Number.isNaN(start.getTime())) {
+    return null;
+  }
+  const now = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  if (now < start) {
+    return null;
+  }
+  let working = 0;
+  for (let i = 0; i < (item.totalDays ?? 0); i += 1) {
+    const day = new Date(start);
+    day.setDate(start.getDate() + i);
+    if (item.skipSundays && day.getDay() === 0) {
+      continue;
+    }
+    working += 1;
+    if (day.getTime() >= now.getTime()) {
+      return working;
+    }
+  }
+  return null;
+}
+
 export interface AttendanceVerdict {
   percent: number;
   /** At or above the target right now. */
@@ -139,8 +222,17 @@ export function verdictFor(item: AttendanceItem): AttendanceVerdict {
   const pct = percentOf(item.attended, item.held);
   const safe = item.held === 0 || pct >= item.target;
   const spare = canMiss(item.attended, item.held, item.target);
-  const remaining =
-    typeof item.totalDays === 'number' ? Math.max(0, item.totalDays - item.held) : null;
+  /*
+   * What is LEFT of the rotation, in days somebody is expected to attend.
+   *
+   * This was `totalDays - held`, which is two assumptions stacked: that every
+   * calendar day is a working day, and that the reader has marked every one so
+   * far. Both are usually false. `workingDays` drops the Sundays when the
+   * rotation says to, and the count runs off the length rather than off how
+   * diligently the card has been tapped.
+   */
+  const total = workingDays(item);
+  const remaining = total === null ? null : Math.max(0, total - item.held);
   const capped = remaining !== null && spare > remaining;
   return {
     percent: pct,
@@ -161,10 +253,11 @@ export function verdictFor(item: AttendanceItem): AttendanceVerdict {
  * this is meant to prevent.
  */
 export function bestPossible(item: AttendanceItem): number | null {
-  if (typeof item.totalDays !== 'number' || item.totalDays <= 0) {
+  const total = workingDays(item);
+  if (total === null) {
     return null;
   }
-  const remaining = Math.max(0, item.totalDays - item.held);
+  const remaining = Math.max(0, total - item.held);
   return percentOf(item.attended + remaining, item.held + remaining);
 }
 
@@ -224,6 +317,7 @@ function sane(raw: unknown): AttendanceItem | null {
         ? Math.round(item.totalDays)
         : undefined,
     startDate: typeof item.startDate === 'string' ? item.startDate : undefined,
+    skipSundays: item.skipSundays === true ? true : undefined,
   };
 }
 
