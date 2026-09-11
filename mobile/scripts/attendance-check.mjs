@@ -37,13 +37,22 @@ const arithmetic = source
   .replace(/: AttendanceVerdict/g, '')
   // `dayOfRotation(item, today: Date = new Date())` — the default stays, the
   // annotation goes, same as every other one above.
+  .replace(/<string, AttendanceMonth>/g, '')
+  .replace(/: AttendanceMonth\[\]/g, '')
+  .replace(/: AttendanceMonth/g, '')
+  .replace(/: AttendanceMark\[\]/g, '')
+  .replace(/: Date\[\]/g, '')
   .replace(/: Date/g, '')
+  .replace(/: SaturdayRule/g, '')
+  .replace(/: boolean/g, '')
   .replace(/\| null/g, '')
   .replace(/interface [\s\S]*?\n\}/g, '')
   .replace(/^\s*\/\*\*[\s\S]*?\*\/$/gm, '');
 
 // eslint-disable-next-line no-new-func
-const fns = new Function(`${arithmetic}; return { percentOf, canMiss, mustAttend, verdictFor, bestPossible, workingDays, dayOfRotation };`)();
+const fns = new Function(
+  `${arithmetic}; return { percentOf, canMiss, mustAttend, verdictFor, bestPossible, workingDays, dayOfRotation, isOffDay, isoDay, monthsOf, saturdayOrdinal };`,
+)();
 
 const eq = (got, want, what) =>
   check(got === want, `${what}: expected ${want}, got ${got}`);
@@ -214,6 +223,148 @@ eq(
   'the best finish attends every working day left, not every calendar day',
 );
 
+/* ---------------------------------------------------------------------------
+ * Saturdays, holidays, and the month breakdown
+ *
+ * All three asked for by the app's owner. The arithmetic is the whole feature —
+ * "you can still miss four" is worth nothing if the four is counted off a
+ * calendar that thinks the college is open on Republic Day — so it is worked
+ * out here against dates somebody can check by looking at a calendar.
+ *
+ * March 2026 starts on a Sunday, which is the useful part: a 14-day block from
+ * the 1st contains Sundays on the 1st and 8th, and Saturdays on the 7th and
+ * 14th. Every combination therefore lands on a different number.
+ * ------------------------------------------------------------------------ */
+{
+  const base = { id: 'x', name: 'Block', kind: 'posting', target: 75, held: 0, attended: 0 };
+  const block = { ...base, totalDays: 14, startDate: '2026-03-01' };
+
+  eq(fns.workingDays({ ...block }), 14, 'no days excluded');
+  eq(fns.workingDays({ ...block, skipSundays: true }), 12, 'two Sundays off');
+  eq(fns.workingDays({ ...block, saturdays: 'all' }), 12, 'every Saturday off');
+  eq(
+    fns.workingDays({ ...block, skipSundays: true, saturdays: 'all' }),
+    10,
+    'both weekend days off, and they are separate controls',
+  );
+
+  /*
+     The second-Saturday rule, which is the one most Indian colleges run.
+
+     The owner named it: "every second saturday is automatic holiday". March
+     2026's Saturdays are the 7th, 14th, 21st and 28th, so the second is the
+     14th and the fourth is the 28th — and a 31-day block from the 1st is the
+     shortest span that contains all four of them.
+  */
+  const march = { ...base, totalDays: 31, startDate: '2026-03-01' };
+  eq(fns.workingDays({ ...march }), 31, 'no Saturday rule, nothing comes off');
+  eq(fns.workingDays({ ...march, saturdays: 'second' }), 30, 'only the 14th comes off');
+  eq(
+    fns.workingDays({ ...march, saturdays: 'second-fourth' }),
+    29,
+    'the 14th and the 28th come off, and the 7th and 21st do not',
+  );
+  eq(fns.workingDays({ ...march, saturdays: 'all' }), 27, 'all four Saturdays come off');
+  eq(
+    fns.isOffDay({ ...march, saturdays: 'second' }, new Date('2026-03-14T00:00:00')),
+    true,
+    'the second Saturday is off',
+  );
+  eq(
+    fns.isOffDay({ ...march, saturdays: 'second' }, new Date('2026-03-07T00:00:00')),
+    false,
+    'the first Saturday is a working day under that rule',
+  );
+  /*
+     "Second Saturday" means the second one IN THE MONTH, which is always the
+     8th to the 14th. Counting calendar weeks instead gets it wrong in every
+     month that starts late in a week — August 2026 begins on a Saturday, so
+     its Saturdays are the 1st, 8th, 15th, 22nd and 29th, and the second one is
+     the 8th rather than the 15th a week-counter would pick.
+  */
+  eq(fns.saturdayOrdinal(new Date('2026-08-01T00:00:00')), 1, 'the 1st is the first Saturday');
+  eq(fns.saturdayOrdinal(new Date('2026-08-08T00:00:00')), 2, 'the 8th is the second');
+  eq(fns.saturdayOrdinal(new Date('2026-08-22T00:00:00')), 4, 'the 22nd is the fourth');
+  eq(
+    fns.isOffDay({ ...base, saturdays: 'second' }, new Date('2026-08-08T00:00:00')),
+    true,
+    'a month starting on a Saturday still puts the second one on the 8th',
+  );
+  eq(
+    fns.workingDays({ ...block, holidays: ['2026-03-03', '2026-03-04'] }),
+    12,
+    'two holidays come off the count',
+  );
+  eq(
+    fns.workingDays({ ...block, skipSundays: true, holidays: ['2026-03-08', '2026-03-03'] }),
+    11,
+    'a holiday that falls on an already-excluded Sunday is not subtracted twice',
+  );
+  eq(
+    fns.workingDays({ ...block, holidays: ['2026-09-14'] }),
+    14,
+    'a holiday outside the block changes nothing, so one pasted list serves every subject',
+  );
+
+  // A block with a length but no start has no calendar to subtract from.
+  eq(
+    fns.workingDays({ ...base, totalDays: 30, skipSundays: true }),
+    30,
+    'no start date means the length is taken at its word rather than guessed at',
+  );
+
+  // Theory is no longer excluded from any of this — the owner asked for the
+  // run length there, and the arithmetic never cared which kind it was.
+  eq(
+    fns.workingDays({ ...block, kind: 'theory', skipSundays: true }),
+    12,
+    'a theory subject with a length counts its working days the same way',
+  );
+
+  eq(fns.isOffDay({ ...block, skipSundays: true }, new Date('2026-03-08T00:00:00')), true, 'Sunday is off');
+  eq(fns.isOffDay({ ...block, skipSundays: true }, new Date('2026-03-07T00:00:00')), false, 'Saturday is not off unless asked');
+  eq(fns.isoDay(new Date('2026-03-07T00:00:00')), '2026-03-07', 'a local date does not slip a day through UTC');
+
+  /*
+     The month view keeps the schedule and the record apart.
+
+     `working`/`off` come from the calendar and exist before anybody marks
+     anything; `held`/`attended` come from the log. Merging them would produce a
+     percentage made half of a plan and half of a record, which is a number
+     nobody can check against anything.
+  */
+  const across = {
+    ...base,
+    totalDays: 20,
+    startDate: '2026-03-25',
+    skipSundays: true,
+    log: [
+      { date: '2026-03-26', present: true },
+      { date: '2026-03-27', present: false },
+      { date: '2026-04-02', present: true },
+    ],
+  };
+  const months = fns.monthsOf(across);
+  eq(months.length, 2, 'a block that crosses a month boundary is two rows');
+  eq(months[0].key, '2026-03', 'the earlier month comes first');
+  eq(months[0].label, 'March 2026', 'the row is named for a human');
+  eq(months[0].working + months[0].off, 7, 'March holds the seven days from the 25th');
+  eq(months[0].off, 1, 'one Sunday falls in that week');
+  eq(months[0].held, 2, 'two marks were recorded in March');
+  eq(months[0].attended, 1, 'one of them was present');
+  eq(months[1].held, 1, 'and one in April');
+  eq(
+    fns.monthsOf({ ...base, totalDays: 10, startDate: '2026-03-01' }).every((m) => m.held === 0),
+    true,
+    'a subject with no log reports no marks rather than inventing them from the counters',
+  );
+  eq(
+    fns.monthsOf({ ...base }).length,
+    0,
+    'a subject with no length and no log has no months to show',
+  );
+}
+
 if (failures.length > 0) {
   console.error('attendance check failed:\n');
   for (const failure of failures) console.error(`  - ${failure}`);
@@ -221,6 +372,6 @@ if (failures.length > 0) {
 }
 
 console.log(
-  'OK  attendance arithmetic matches 18 worked examples, the rotation caps what can be missed, ' +
+  'OK  attendance arithmetic matches 52 worked examples, the rotation caps what can be missed, ' +
     'and nothing leaves the phone',
 );

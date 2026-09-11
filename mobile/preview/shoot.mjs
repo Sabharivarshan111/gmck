@@ -153,6 +153,64 @@ const SHOTS = [
    * exists for, and it is the one a demo full of comfortable subjects never
    * shows.
    */
+  /*
+   * The four things the app's owner asked attendance to grow, in one screen.
+   *
+   * A THEORY subject with a run length — which was postings-only and is the
+   * first of the four; Saturdays excluded SEPARATELY from Sundays, because in
+   * most Indian medical colleges Sunday is off and Saturday is not; government
+   * holidays coming off the working-day count; and a log of dated marks, which
+   * is what makes the month breakdown a record rather than a schedule.
+   *
+   * Seeded with real dates so the arithmetic on screen can be checked against
+   * a calendar: 90 days from Monday 5 January 2026, less its Sundays, less
+   * Republic Day and two festival days.
+   */
+  {
+    name: 'attendance-months',
+    query: 'screen=progress',
+    seed: {
+      'orbit:attendance-v1': [
+        {
+          id: 'm1',
+          name: 'Pathology',
+          kind: 'theory',
+          target: 75,
+          held: 41,
+          attended: 33,
+          totalDays: 90,
+          startDate: '2026-01-05',
+          skipSundays: true,
+          // The rule the owner named: the second Saturday of each month is a
+          // holiday whether anybody enters it or not.
+          saturdays: 'second',
+          holidays: ['2026-01-26', '2026-03-04', '2026-03-05'],
+          log: [
+            { date: '2026-01-07', present: true },
+            { date: '2026-01-08', present: false },
+            { date: '2026-01-09', present: true },
+            { date: '2026-02-03', present: true },
+            { date: '2026-02-04', present: true },
+            { date: '2026-02-05', present: false },
+            { date: '2026-03-10', present: true },
+          ],
+        },
+        {
+          id: 'm2',
+          name: 'Community Medicine',
+          kind: 'theory',
+          target: 80,
+          held: 22,
+          attended: 20,
+          totalDays: 60,
+          startDate: '2026-01-05',
+          skipSundays: true,
+          saturdays: 'second-fourth',
+        },
+      ],
+    },
+    tap: ['Attendance', 'See Pathology month by month'],
+  },
   {
     name: 'attendance-empty',
     query: 'screen=progress',

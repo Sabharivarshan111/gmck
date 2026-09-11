@@ -13,6 +13,9 @@ import {
   attendanceVersion,
   bestPossible,
   dayOfRotation,
+  isoDay,
+  monthsOf,
+  SATURDAY_RULES,
   workingDays,
   getAttendance,
   markAttendance,
@@ -23,6 +26,7 @@ import {
   verdictFor,
   type AttendanceItem,
   type AttendanceKind,
+  type SaturdayRule,
 } from '@/lib/attendance';
 
 /**
@@ -62,7 +66,21 @@ export function AttendanceTab() {
   const [name, setName] = useState('');
   const [days, setDays] = useState('');
   const [skipSundays, setSkipSundays] = useState(false);
+  /*
+     A switch of its own, not half of a "weekends" one.
+
+     The owner asked for it that way and the reason is the local timetable: in
+     most Indian medical colleges Sunday is off and Saturday is not — a half or
+     full day of theory, and clinical postings straight through it. One
+     "skip weekends" control would make the commonest case pick between two
+     wrong answers.
+  */
+  const [saturdays, setSaturdays] = useState<SaturdayRule>('none');
+  const [holidayDraft, setHolidayDraft] = useState('');
+  const [holidays, setHolidays] = useState<string[]>([]);
   const [target, setTarget] = useState(75);
+  /** Which card has its month breakdown open. One at a time. */
+  const [openMonths, setOpenMonths] = useState<string | null>(null);
   /** The last mark per item, so Undo knows what it is taking back. */
   const [lastMark, setLastMark] = useState<Record<string, boolean>>({});
 
@@ -78,15 +96,51 @@ export function AttendanceTab() {
       name: trimmed,
       kind,
       target,
-      totalDays: kind === 'posting' && Number.isFinite(total) && total > 0 ? total : undefined,
-      startDate: kind === 'posting' ? new Date().toISOString().slice(0, 10) : undefined,
-      skipSundays: kind === 'posting' && skipSundays ? true : undefined,
+      /*
+         The length is offered for a theory subject too now.
+
+         It was postings only, on the reasoning that nobody knows when a theory
+         block ends. The owner asked for it — "in theory how many days does it
+         run option not there" — and they are right: a term is a fixed block,
+         and somebody who knows theirs runs ninety days gets the same "and
+         there are only eleven left" that a posting gets. Still optional, so a
+         subject left blank behaves exactly as it did.
+      */
+      totalDays: Number.isFinite(total) && total > 0 ? total : undefined,
+      startDate: Number.isFinite(total) && total > 0 ? isoDay(new Date()) : undefined,
+      skipSundays: skipSundays ? true : undefined,
+      saturdays: saturdays === 'none' ? undefined : saturdays,
+      holidays: holidays.length > 0 ? holidays : undefined,
     });
     setName('');
     setDays('');
     setSkipSundays(false);
+    setSaturdays('none');
+    setHolidays([]);
+    setHolidayDraft('');
     setAdding(false);
-  }, [name, days, kind, target, skipSundays]);
+  }, [name, days, kind, target, skipSundays, saturdays, holidays]);
+
+  /*
+     A typed date, accepted only when it is a real one.
+
+     `new Date('2026-02-31')` rolls over to 3 March rather than throwing, so a
+     regex alone would let a day that does not exist onto the list, where it
+     would sit looking accepted and never match anything. Round-tripping it
+     through `isoDay` is what catches that.
+  */
+  const addHoliday = useCallback(() => {
+    const text = holidayDraft.trim();
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(text)) {
+      return;
+    }
+    const date = new Date(`${text}T00:00:00`);
+    if (Number.isNaN(date.getTime()) || isoDay(date) !== text) {
+      return;
+    }
+    setHolidays((current) => (current.includes(text) ? current : [...current, text].sort()));
+    setHolidayDraft('');
+  }, [holidayDraft]);
 
   const mark = useCallback(async (item: AttendanceItem, present: boolean) => {
     tick();
@@ -155,6 +209,10 @@ export function AttendanceTab() {
               await undoAttendance(item.id, was ?? true);
             }}
             onTarget={async next => updateAttendance(item.id, { target: next })}
+            monthsOpen={openMonths === item.id}
+            onToggleMonths={() =>
+              setOpenMonths(current => (current === item.id ? null : item.id))
+            }
             onRemove={async () => removeAttendance(item.id)}
           />
         ))}
@@ -169,17 +227,27 @@ export function AttendanceTab() {
               accessibilityLabel={kind === 'theory' ? 'Subject name' : 'Posting name'}
               style={[styles.input, { color: colors.text, borderColor: colors.border }]}
             />
-            {kind === 'posting' ? (
-              <TextInput
-                value={days}
-                onChangeText={setDays}
-                keyboardType="number-pad"
-                placeholder="How many days does it run?"
-                placeholderTextColor={colors.textMuted}
-                accessibilityLabel="Length of the posting in days"
-                style={[styles.input, { color: colors.text, borderColor: colors.border }]}
-              />
-            ) : null}
+            {/*
+              Offered for a subject as well as a posting.
+
+              This was `kind === 'posting'`, and the owner asked why a theory
+              subject could not say how long it runs. Nothing in the arithmetic
+              ever cared which kind it was — `workingDays` reads a length and a
+              start date — so the gate was the only thing stopping it.
+            */}
+            <TextInput
+              value={days}
+              onChangeText={setDays}
+              keyboardType="number-pad"
+              placeholder="How many days does it run? (optional)"
+              placeholderTextColor={colors.textMuted}
+              accessibilityLabel={
+                kind === 'theory'
+                  ? 'How many days the subject runs'
+                  : 'How many days the posting runs'
+              }
+              style={[styles.input, { color: colors.text, borderColor: colors.border }]}
+            />
             {/*
               Off by default, and that is deliberate.
 
@@ -190,27 +258,115 @@ export function AttendanceTab() {
               holds four Sundays, so leaving them in makes "only two days left"
               wrong by four, in the direction that gets somebody short.
             */}
-            {kind === 'posting' ? (
+            <Touchable
+              onPress={() => setSkipSundays(v => !v)}
+              label="Sundays are not working days"
+              role="checkbox"
+              state={{ checked: skipSundays }}
+              style={[styles.sundayRow, { borderColor: colors.border }]}>
+              <View
+                style={[
+                  styles.sundayBox,
+                  {
+                    borderColor: skipSundays ? colors.accent : colors.border,
+                    backgroundColor: skipSundays ? colors.accent : 'transparent',
+                  },
+                ]}>
+                {skipSundays ? <Check size={12} color={colors.onAccent} /> : null}
+              </View>
+              <Text style={[styles.sundayText, { color: colors.text }]}>
+                Sundays do not count
+              </Text>
+            </Touchable>
+            {/*
+              Saturdays are a rule, not a tick.
+
+              Its own control rather than half of a "weekends" one, because
+              Sunday off and Saturday on is the commonest timetable there is.
+              And four choices rather than two, because the owner named the
+              rule most colleges actually run: "every second saturday is
+              automatic holiday". Neither "all" nor "none" can say that, and
+              typing those dates into the holiday list by hand is six to twelve
+              entries a term, every term.
+            */}
+            <Text style={[styles.formLabel, { color: colors.textMuted }]}>SATURDAYS</Text>
+            <View style={styles.holidayWrap}>
+              {SATURDAY_RULES.map(rule => {
+                const active = rule.value === saturdays;
+                return (
+                  <Touchable
+                    key={rule.value}
+                    onPress={() => setSaturdays(rule.value)}
+                    label={rule.label}
+                    state={{ selected: active }}
+                    hitSlop={6}
+                    style={[
+                      styles.chip,
+                      {
+                        borderColor: active ? colors.accent : colors.border,
+                        backgroundColor: active ? withAlpha(colors.accent, 0.14) : 'transparent',
+                      },
+                    ]}>
+                    <Text
+                      style={[
+                        styles.chipText,
+                        { color: active ? colors.accent : colors.textMuted },
+                      ]}>
+                      {rule.label}
+                    </Text>
+                  </Touchable>
+                );
+              })}
+            </View>
+
+            {/*
+              Government holidays, festivals, a strike.
+
+              The other half of "holidays reduce total working days": a block
+              with Diwali and Republic Day in it is days shorter than its
+              calendar length, and without them the tracker hands somebody days
+              they have not got. A date outside the block never matches, so one
+              list of the college's holidays can be pasted at every subject
+              without pruning it first.
+            */}
+            <Text style={[styles.formLabel, { color: colors.textMuted }]}>
+              HOLIDAYS (OPTIONAL)
+            </Text>
+            <View style={styles.formRow}>
+              <TextInput
+                value={holidayDraft}
+                onChangeText={setHolidayDraft}
+                onSubmitEditing={addHoliday}
+                autoCapitalize="none"
+                placeholder="YYYY-MM-DD"
+                placeholderTextColor={colors.textMuted}
+                accessibilityLabel="Holiday date, year month day"
+                style={[styles.input, styles.inputGrow, { color: colors.text, borderColor: colors.border }]}
+              />
               <Touchable
-                onPress={() => setSkipSundays(v => !v)}
-                label="Sundays are not working days"
-                role="checkbox"
-                state={{ checked: skipSundays }}
-                style={[styles.sundayRow, { borderColor: colors.border }]}>
-                <View
-                  style={[
-                    styles.sundayBox,
-                    {
-                      borderColor: skipSundays ? colors.accent : colors.border,
-                      backgroundColor: skipSundays ? colors.accent : 'transparent',
-                    },
-                  ]}>
-                  {skipSundays ? <Check size={12} color={colors.onAccent} /> : null}
-                </View>
-                <Text style={[styles.sundayText, { color: colors.text }]}>
-                  Sundays do not count
-                </Text>
+                onPress={addHoliday}
+                label="Add this holiday"
+                style={[styles.formButton, { borderColor: colors.border }]}>
+                <Text style={[styles.formButtonText, { color: colors.text }]}>Add day</Text>
               </Touchable>
+            </View>
+            {holidays.length > 0 ? (
+              <View style={styles.holidayWrap}>
+                {holidays.map(day => (
+                  <Touchable
+                    key={day}
+                    onPress={() => setHolidays(current => current.filter(d => d !== day))}
+                    label={`Remove the holiday on ${day}`}
+                    hitSlop={6}
+                    style={[
+                      styles.chip,
+                      { borderColor: colors.border, backgroundColor: withAlpha(colors.accent, 0.12) },
+                    ]}>
+                    <Text style={[styles.chipText, { color: colors.text }]}>{day}</Text>
+                    <X size={11} color={colors.textMuted} />
+                  </Touchable>
+                ))}
+              </View>
             ) : null}
 
             <Text style={[styles.formLabel, { color: colors.textMuted }]}>
@@ -252,6 +408,9 @@ export function AttendanceTab() {
                   setName('');
                   setDays('');
                   setSkipSundays(false);
+                  setSaturdays('none');
+                  setHolidays([]);
+                  setHolidayDraft('');
                 }}
                 label="Cancel"
                 style={[styles.formButton, { borderColor: colors.border }]}>
@@ -287,15 +446,34 @@ function AttendanceCard({
   onUndo,
   onTarget,
   onRemove,
+  monthsOpen,
+  onToggleMonths,
 }: {
   item: AttendanceItem;
   onMark: (item: AttendanceItem, present: boolean) => void;
   onUndo: () => void;
   onTarget: (next: number) => void;
   onRemove: () => void;
+  monthsOpen: boolean;
+  onToggleMonths: () => void;
 }) {
   const { colors } = useTheme();
   const verdict = verdictFor(item);
+  /*
+     The block, month by month.
+
+     Asked for as "select option to see about each month", and it answers what
+     one percentage cannot: a rotation that looks fine overall can hold a month
+     where almost everything was missed, and a term with a long festival break
+     in it has far fewer classes that month than the average implies.
+
+     Two different things sit in a row and they stay apart. The working and off
+     days come from the CALENDAR and exist before anything is marked; the held
+     and attended come from the LOG, which only holds what has actually been
+     tapped. A single percentage made of both would be half a plan and half a
+     record.
+  */
+  const months = monthsOf(item);
   const best = bestPossible(item);
   const day = dayOfRotation(item);
   const total = workingDays(item);
@@ -329,6 +507,12 @@ function AttendanceCard({
             <Text style={[styles.cardCount, { color: colors.textMuted }]}>
               Day {day} of {total}
               {item.skipSundays ? ' · Sundays off' : ''}
+              {item.saturdays && item.saturdays !== 'none'
+                ? ` · ${SATURDAY_RULES.find(r => r.value === item.saturdays)?.label ?? ''}`
+                : ''}
+              {item.holidays && item.holidays.length > 0
+                ? ` · ${item.holidays.length === 1 ? '1 holiday' : `${item.holidays.length} holidays`}`
+                : ''}
             </Text>
           ) : null}
         </View>
@@ -389,6 +573,51 @@ function AttendanceCard({
           <Undo2 size={15} color={colors.textMuted} />
         </Touchable>
       </View>
+
+      {months.length > 0 ? (
+        <Touchable
+          onPress={onToggleMonths}
+          label={
+            monthsOpen
+              ? `Hide the month by month breakdown for ${item.name}`
+              : `See ${item.name} month by month`
+          }
+          role="button"
+          state={{ expanded: monthsOpen }}
+          hitSlop={6}
+          style={styles.monthRow}>
+          <Text style={[styles.monthName, { color: colors.accent }]}>
+            {monthsOpen ? 'Hide months' : 'See each month'}
+          </Text>
+          <Text style={[styles.monthFacts, { color: colors.textMuted }]}>
+            {months.length === 1 ? '1 month' : `${months.length} months`}
+          </Text>
+        </Touchable>
+      ) : null}
+
+      {monthsOpen ? (
+        <View style={[styles.monthTable, { borderTopColor: colors.border }]}>
+          {months.map(month => (
+            <View key={month.key} style={styles.monthRow}>
+              <Text style={[styles.monthName, { color: colors.text }]}>{month.label}</Text>
+              <Text style={[styles.monthFacts, { color: colors.textMuted }]}>
+                {month.working > 0
+                  ? `${month.working} working${month.off > 0 ? ` · ${month.off} off` : ''}`
+                  : 'no scheduled days'}
+                {month.held > 0 ? ` · marked ${month.attended}/${month.held}` : ''}
+              </Text>
+            </View>
+          ))}
+          {months.every(month => month.held === 0) ? (
+            // Said out loud rather than left as an empty column, because a
+            // subject marked before the log existed has counters and no dates,
+            // and a blank there reads as the feature being broken.
+            <Text style={[styles.monthFacts, { color: colors.textMuted }]}>
+              Marks are counted per month from the day you record them.
+            </Text>
+          ) : null}
+        </View>
+      ) : null}
 
       <View style={styles.footer}>
         <View style={styles.targets}>
@@ -540,6 +769,19 @@ const styles = StyleSheet.create({
     minHeight: 44,
   },
   formRow: { flexDirection: 'row', gap: 8 },
+  /** The date field takes the row and the button takes what it needs. */
+  inputGrow: { flex: 1, marginBottom: 0 },
+  holidayWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
+  monthRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 10,
+    paddingVertical: 7,
+  },
+  monthName: { ...typeScale.footnote, fontWeight: '700' },
+  monthFacts: { ...typeScale.caption },
+  monthTable: { borderTopWidth: StyleSheet.hairlineWidth, marginTop: 10, paddingTop: 4 },
   formButton: {
     flex: 1,
     alignItems: 'center',
