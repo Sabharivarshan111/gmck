@@ -83,8 +83,18 @@ export const EndCard: React.FC<EndCardProps> = ({
         alignItems: 'center',
         justifyContent: 'center',
         flexDirection: 'column',
-        gap: '40px',
-        paddingBottom: '120px',
+        /*
+           One gap for the whole stack.
+
+           The three lines used to sit in TWO boxes — the first two in a nested
+           group with `gap: 14px`, the store line outside it under the parent's
+           `gap: 40px`. So the space between line one and line two was a third
+           of the space between line two and line three, which reads as the
+           last line having drifted away from the other two. A single column
+           with a single gap cannot do that.
+        */
+        gap: '22px',
+        paddingBottom: '150px',
       }}
     >
       {/* The accent glow behind the mark, so the card belongs to the ad it ends. */}
@@ -141,21 +151,42 @@ export const EndCard: React.FC<EndCardProps> = ({
         style={{
           opacity: wordmark,
           zIndex: 1,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: '14px',
           fontFamily:
             '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif',
+          fontSize: '46px',
+          fontWeight: 700,
+          letterSpacing: '-0.01em',
+          color: ink,
           textAlign: 'center',
         }}
       >
-        <div style={{ fontSize: '46px', fontWeight: 700, letterSpacing: '-0.01em', color: ink }}>
-          Made for the medical community
-        </div>
-        <div style={{ fontSize: '40px', fontWeight: 500, color: accent }}>
-          Completely free
-        </div>
+        Made for the medical community
+      </div>
+
+      {/*
+         "Completely free" was set in the accent — a saturated violet under a
+         white line and above a white one, which made the middle line read as
+         a link rather than as part of the sentence. The three lines are one
+         thought, so they are one colour, and the hierarchy is carried by
+         weight and size instead. The accent stays where it is doing work: the
+         glow behind the mark.
+      */}
+      <div
+        style={{
+          // Faded against the line above it, so the two read as one sentence
+          // with a quieter second half rather than as two competing claims.
+          opacity: wordmark * 0.72,
+          zIndex: 1,
+          fontFamily:
+            '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif',
+          fontSize: '38px',
+          fontWeight: 400,
+          letterSpacing: '0.01em',
+          color: ink,
+          textAlign: 'center',
+        }}
+      >
+        Completely free
       </div>
 
       <div style={{ opacity: cta, zIndex: 1, display: 'flex', justifyContent: 'center' }}>
