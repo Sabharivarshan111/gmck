@@ -46,10 +46,35 @@ export const UNLOCK_URL = 'https://mbbsqbank-questor.lovable.app/unlock';
 /**
  * Whether the app offers a button that leaves for the unlock page.
  *
- * See the note above before changing this. It is the whole of the difference
- * between "we mention the website" and "we send you to it".
+ * **False, and the research is why.** The owner's friend said Netflix has a
+ * link, which is a reasonable thing to have seen — but it is an iPhone. Apple
+ * granted reader apps an entitlement in 2022 for exactly one external
+ * account-management link, and Netflix uses it. That is a different store with
+ * different rules and it says nothing about this one.
+ *
+ * On Android, Netflix is a **consumption-only app**: you sign in, you watch
+ * what you already pay for, and there is no purchase and no checkout link in
+ * the app at all. Google's own wording is that *any* app may be
+ * consumption-only — "any products or services, whether digital or physical,
+ * cannot be purchased from within the app" — so this route is open to a study
+ * app just as much as to a video one, and it is the route Netflix is actually
+ * on.
+ *
+ * Leading a user out to pay is a separate programme, it requires enrolment,
+ * and it is live in the US, UK and Europe. India is in the batch that does not
+ * land until **30 September 2027**. What India has today is *user choice
+ * billing*: an alternative payment sheet shown beside Play's, inside the app,
+ * with PCI DSS certification and transaction reporting. Not a link.
+ *
+ * So a button here would be a Payments policy violation for this app's readers
+ * for another year, and the outcome is a rejected update or removal of a
+ * listing that a one-app account cannot afford to lose. The card names the
+ * site in words instead, which is what a consumption-only app is allowed to do.
+ *
+ * Flip it to `true` the week India is covered, or sooner if the owner decides
+ * the risk is theirs to take. Nothing else has to change.
  */
-export const LINK_OUT = true;
+export const LINK_OUT = false;
 
 /**
  * Open the unlock page.

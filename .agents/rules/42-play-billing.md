@@ -97,3 +97,34 @@ so an empty catalogue and a hidden Buy button are the *correct* behaviour there,
 and indistinguishable from total breakage. That is the sound module's failure
 shape, which is why `check:billing` exists and why the preview shim exports
 `null` rather than a fake purchase.
+
+## Ad-free is bought on the website, and the app is consumption-only
+
+`mobile/src/lib/unlock.ts` and `mobile/src/components/UnlockCard.tsx`. No payment happens in this
+app, no card is collected, no price is shown, and **there is no button that
+leaves for a checkout page**. The card names the site in words.
+
+That last clause is the whole rule, and it was researched rather than guessed
+because the owner's friend pointed out that Netflix has a link. They had seen
+an iPhone. Apple gave reader apps an entitlement in 2022 for exactly one
+external account link and Netflix uses it; that is a different store.
+
+**On Android Netflix is a consumption-only app** — sign in, watch what you
+already pay for, no purchase and no checkout link anywhere in it. Google's own
+wording is that *any* app may be consumption-only: "any products or services,
+whether digital or physical, cannot be purchased from within the app." So the
+route is open to a question bank exactly as much as to a video service, and it
+is the route Netflix is actually on.
+
+Leading a user out to pay is a **separate programme with enrolment**, live in
+the US, UK and Europe. India is in the batch that does not land until
+**30 September 2027**. What India has today is *user choice billing*: an
+alternative payment sheet shown beside Play's, inside the app, with PCI DSS
+certification, transaction reporting and a service fee. Not a link.
+
+`LINK_OUT` in `mobile/src/lib/unlock.ts` is the switch, and it is `false`. Flip it the week
+India is covered. `check:payments` asserts the constant still exists, that no
+screen calls `Linking.openURL` for this, and that no file in the purchase path
+quotes a currency amount — that last one caught a Razorpay leftover in a
+`HomeMenuSheet` accessibility label, which TalkBack had been reading out as a
+price for weeks after every visible price was deleted.
