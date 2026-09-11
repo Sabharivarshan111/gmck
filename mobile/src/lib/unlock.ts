@@ -46,54 +46,59 @@ export const UNLOCK_URL = 'https://mbbsqbank-questor.lovable.app/unlock';
 /**
  * Whether the app offers a button that leaves for the unlock page.
  *
- * **False**, and this time the reasons are quoted from Google's own developer
- * documentation rather than from a search summary. An earlier version of this
- * comment said the programme was live in "the US, UK and Europe" and reached
- * India on 30 September 2027. Both were wrong: they came from articles about
- * the Epic settlement's *service fee* rollout, which is a different schedule
- * from the programme's availability, and neither was checked against the
- * source. The conclusion did not change. The reasoning was unsound.
+ * **True. The app owner's decision, made with the risk in front of them**, and
+ * the record of both sides is kept here rather than tidied away — because the
+ * next person to read this file deserves to know it was a judgement call and
+ * not an oversight.
  *
- * `developer.android.com/google/play/billing/externalpaymentlinks` says four
- * things, and this app fails all four:
+ * ## What the policy says
+ *
+ * `developer.android.com/google/play/billing/externalpaymentlinks` sets four
+ * conditions, read on the page rather than in a summary, and this app meets
+ * none of them:
  *
  * 1. **"The external payments program lets you lead users in Japan"** — one
- *    country, and not this app's.
+ *    country, and not this app's. Its readers are in India.
  * 2. Enrolment: "complete the enrollment steps outlined in the program
  *    requirements". This account is not enrolled.
  * 3. "Integrate Play Billing Library 8.3 or higher." `PLAY_BILLING_ENABLED` is
- *    false here and no product exists in Play Console.
+ *    false here and no Play Console product exists.
  * 4. **"When linking users to purchases, they must be given a side by side
  *    choice of making the purchase with Google Play Billing or completing the
- *    purchase on the developer's website."** So even where it is permitted, a
- *    bare "open the unlock page" button is not the sanctioned shape — and this
- *    app could not offer that choice, because it has no Play Billing side to
- *    put beside it.
+ *    purchase on the developer's website."**
  *
- * The integration guide adds that the app is expected to *ask* at runtime —
- * `isBillingProgramAvailableAsync(BillingProgram.EXTERNAL_PAYMENTS, …)` — and
- * that `BILLING_UNAVAILABLE` means "the user is not in an eligible country for
- * this program or your account has not been successfully enrolled". A
- * hardcoded `openURL` is not a lenient version of that; it is the thing the
- * check exists to prevent.
+ * The integration guide expects a runtime check —
+ * `isBillingProgramAvailableAsync(BillingProgram.EXTERNAL_PAYMENTS, …)` — whose
+ * `BILLING_UNAVAILABLE` means wrong country or unenrolled account.
  *
- * ## The Netflix question, since it is the one people ask
+ * ## What is actually happening on the store
  *
- * The owner's friend said Netflix has a link. They had seen an iPhone: Apple
- * gave reader apps an entitlement in 2022 for exactly one external
- * account-management link. Different store, different rules.
+ * The owner produced a live competitor doing exactly this: an Indian MBBS app
+ * on Google Play with an in-app plan picker, prices in rupees, and a button
+ * that opens a Razorpay checkout on its own domain in a Custom Tab. It is
+ * shipping today.
  *
- * On Android, Netflix sells nothing in the app — you sign in and watch what you
- * already pay for. **Caveat, stated because it was not verifiable from here:**
- * `support.google.com` is blocked by this sandbox's egress proxy, so Google's
- * consumption-only wording was read in a search summary rather than on the
- * page. The four numbered points above were read on the page.
+ * That is evidence about **enforcement**, not about the rule. Play's payments
+ * enforcement is review- and complaint-driven and plainly uneven; an app can
+ * run in violation for a long time and then not. It is a real datapoint and it
+ * is not a permission, and both of those are true at once.
  *
- * Flip this to `true` only once the Play Console says this account is enrolled
- * and this app's users are in an eligible country — and then give the reader
- * the side-by-side choice the page requires, rather than a lone button.
+ * ## The one thing this deliberately does NOT copy
+ *
+ * The competitor's *app* shows the plans and the prices — "₹499", "100/mo" —
+ * and only the checkout is on the web. That is the half a reviewer reads as
+ * the app selling, and it is the least defensible part of the pattern.
+ *
+ * This app still prices nothing. `UnlockCard` names the destination and opens
+ * it; every amount lives on the page. `check:payments` sweeps the purchase
+ * path for a currency figure and fails on one, which is what stops this drifting
+ * into the same shape by accident later.
+ *
+ * Flip to `false` for the Netflix-on-Android behaviour: the card keeps the
+ * sentence, loses the button, and there is no anti-steering exposure at all.
+ * One edit, nothing else changes.
  */
-export const LINK_OUT = false;
+export const LINK_OUT = true;
 
 /**
  * Open the unlock page.

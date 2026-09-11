@@ -147,9 +147,34 @@ Not verifiable from a sandbox: `support.google.com` is blocked by the egress
 proxy, so Google's consumption-only wording has only ever been read here in a
 search summary. The four points above were read on the page.
 
-`LINK_OUT` in `mobile/src/lib/unlock.ts` is the switch, and it is `false`. Flip it the week
-India is covered. `check:payments` asserts the constant still exists, that no
-screen calls `Linking.openURL` for this, and that no file in the purchase path
-quotes a currency amount — that last one caught a Razorpay leftover in a
-`HomeMenuSheet` accessibility label, which TalkBack had been reading out as a
-price for weeks after every visible price was deleted.
+`LINK_OUT` in `mobile/src/lib/unlock.ts` is the switch, and it is **`true`** —
+the owner's decision, taken with the four conditions above in front of them,
+after producing a live competitor doing exactly this: an Indian MBBS app on
+Google Play with an in-app plan picker, prices in rupees, and a button opening
+a Razorpay checkout on its own domain.
+
+**That is evidence about enforcement, not about the rule.** Play's payments
+enforcement is review- and complaint-driven and visibly uneven; an app can run
+in violation for a long time and then not. Both things are true at once and
+neither cancels the other. Do not re-argue this from memory — the decision is
+recorded, the risk is recorded, and only the owner moves it.
+
+**The one thing this deliberately does not copy** is the competitor's pricing
+UI. Their *app* shows the plans and the amounts and only the checkout is on the
+web; that is the half a reviewer reads as the app selling, and it is the least
+defensible part of the pattern. This app still prices nothing —
+`UnlockCard` names the destination and opens it, and every amount lives on the
+page. `check:payments` sweeps the purchase path for a currency figure and fails
+on one, which is what stops this drifting into the same shape later. It already
+caught a Razorpay-era "from fifty rupees" in a `HomeMenuSheet` accessibility
+label, which TalkBack had been reading out as a price for weeks after every
+visible price was deleted.
+
+Flipping to `false` gives the Netflix-on-Android behaviour: the card keeps its
+sentence, loses the button, no anti-steering exposure. One edit.
+
+Not verifiable from a sandbox: `support.google.com` and `play.google.com` are
+both blocked by the egress proxy, so Google's consumption-only wording and the
+competitor's listing have only been seen here in a search summary and in the
+owner's screenshots respectively. The four numbered conditions were read on
+`developer.android.com`.
