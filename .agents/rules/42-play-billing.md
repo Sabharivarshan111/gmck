@@ -116,11 +116,36 @@ whether digital or physical, cannot be purchased from within the app." So the
 route is open to a question bank exactly as much as to a video service, and it
 is the route Netflix is actually on.
 
-Leading a user out to pay is a **separate programme with enrolment**, live in
-the US, UK and Europe. India is in the batch that does not land until
-**30 September 2027**. What India has today is *user choice billing*: an
-alternative payment sheet shown beside Play's, inside the app, with PCI DSS
-certification, transaction reporting and a service fee. Not a link.
+Leading a user out to pay is a **separate programme**, and
+`developer.android.com/google/play/billing/externalpaymentlinks` sets four
+conditions this app fails all of:
+
+1. **"The external payments program lets you lead users in Japan"** — one
+   country, and not this app's.
+2. Enrolment: "complete the enrollment steps outlined in the program
+   requirements". This account is not enrolled.
+3. "Integrate Play Billing Library 8.3 or higher." `PLAY_BILLING_ENABLED` is
+   false and no Play Console product exists.
+4. **"When linking users to purchases, they must be given a side by side
+   choice of making the purchase with Google Play Billing or completing the
+   purchase on the developer's website."** A lone "open the unlock page" button
+   is not the sanctioned shape even where the programme applies.
+
+The integration guide adds that an app is expected to ask at runtime —
+`isBillingProgramAvailableAsync(BillingProgram.EXTERNAL_PAYMENTS, …)` — and that
+`BILLING_UNAVAILABLE` means the user is in the wrong country or the account is
+not enrolled. A hardcoded `openURL` is the thing that check exists to prevent.
+
+**An earlier version of this section said the programme was live in the US, UK
+and Europe and reached India on 30 September 2027.** Both were wrong. They came
+from articles about the Epic settlement's *service fee* rollout, which is a
+different schedule from the programme's availability, and were written down
+without being checked against the source. The conclusion survived; the reasoning
+did not, and a wrong reason recorded as fact is worse than none.
+
+Not verifiable from a sandbox: `support.google.com` is blocked by the egress
+proxy, so Google's consumption-only wording has only ever been read here in a
+search summary. The four points above were read on the page.
 
 `LINK_OUT` in `mobile/src/lib/unlock.ts` is the switch, and it is `false`. Flip it the week
 India is covered. `check:payments` asserts the constant still exists, that no
