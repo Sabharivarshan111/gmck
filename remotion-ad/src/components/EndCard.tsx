@@ -171,22 +171,41 @@ export const EndCard: React.FC<EndCardProps> = ({
           />
         ) : (
           /*
-             No badge artwork present. This is deliberately NOT a badge: no
-             pill, no Google wordmark, no triangle. Plain type, so nothing here
-             can be mistaken for Google's mark or accused of modifying it.
+             No badge artwork, so: the official Google Play LOGO beside our own
+             words.
+
+             The logo is Google's current four-colour triangle, downloaded
+             unmodified from `developer.android.com/static/images/logos/
+             google-play.svg` — same geometry, same brand colours, drawn at its
+             own 1:1 ratio and never recoloured or stretched. It is vector, so
+             it is sharp at any size, which the only reachable BADGE artwork
+             (129x45, and a design Google retired years ago) would not have
+             been.
+
+             This is a lockup rather than the badge, and the distinction is
+             worth keeping straight: Google asks that the badge be used for a
+             download call to action, and the badge is what supersedes this the
+             moment `public/google-play-badge.png` exists. What is not done
+             here, at all, is drawing either one.
           */
-          <div
-            style={{
-              fontFamily:
-                '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-              fontSize: '52px',
-              fontWeight: 800,
-              letterSpacing: '-0.02em',
-              color: accent,
-              textAlign: 'center',
-            }}
-          >
-            Download on Play Store
+          <div style={{ display: 'flex', alignItems: 'center', gap: '26px' }}>
+            <Img
+              src={staticFile('google-play-logo.svg')}
+              style={{ width: '76px', height: '76px' }}
+            />
+            <div
+              style={{
+                fontFamily:
+                  '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                fontSize: '52px',
+                fontWeight: 800,
+                letterSpacing: '-0.02em',
+                color: ink,
+                textAlign: 'left',
+              }}
+            >
+              Download on Play Store
+            </div>
           </div>
         )}
       </div>
