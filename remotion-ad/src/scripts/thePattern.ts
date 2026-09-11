@@ -23,9 +23,9 @@ export const thePattern: AdScript = {
   pitch: '+0Hz',
   shots: [
     { n: 1, screen: 'browse', camera: 'macro', text: 'Nobody counted them', vo: 'Your university repeats its questions. Nobody counted them.', focus: 0.35, accent: '#F5B301' },
-    { n: 2, screen: 'questions', camera: 'pull', text: '3,463 already asked', vo: 'We did. Three thousand four hundred and sixty-three of them repeat.', accent: '#F5B301' },
+    { n: 2, screen: 'questions', camera: 'pull', text: '3,463 already asked', vo: 'We did. Most of them have already been asked.', accent: '#F5B301' },
     { n: 3, screen: 'browse', camera: 'trackLeft', text: 'Four years, 25 subjects', vo: 'First year to final year. Twenty-five subjects. One bank.', accent: '#7C5CFF' },
-    { n: 4, screen: 'questionsChapters', camera: 'push', text: '5,634 questions', vo: 'Over five thousand six hundred questions, sorted by chapter.', focus: 0.35 },
+    { n: 4, screen: 'questionsChapters', camera: 'push', text: '5,634 questions', vo: 'Every past question, sorted down to your chapter.', focus: 0.35 },
     { n: 5, screen: 'questionsLeaf', camera: 'macro', text: 'Stars count the repeats', vo: 'Those stars are not decoration. They count the repeats.', focus: 0.28, accent: '#F5B301' },
     { n: 6, screen: 'questionsLeaf', camera: 'orbit', text: 'Every year it was asked', vo: 'Every year it was asked is printed on the question.', focus: 0.28 },
     { n: 7, screen: 'questionsLeaf', camera: 'macro', text: 'Triple-tap any question', vo: 'Triple-tap any question and watch what happens next.', focus: 0.28, accent: '#FF4D8D' },

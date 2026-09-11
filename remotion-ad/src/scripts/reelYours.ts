@@ -42,7 +42,7 @@ export const reelYours: AdScript = {
   pitch: '+0Hz',
   music: 'audio/bed/bed-guide.wav',
   shots: [
-    { n: 1, frames: 129, screen: null, mascot: 'hero', camera: 'settle', text: 'You will stare at this for hours', silentText: 'You stare at this for hours', vo: 'You will stare at this for hours.', accent: '#FF4D8D' },
+    { n: 1, frames: 129, screen: null, mascot: 'hero', camera: 'settle', text: 'More than your textbook', silentText: 'More than your textbook', vo: 'You will look at this screen more than your textbook.', accent: '#FF4D8D' },
     { n: 2, frames: 129, screen: 'home', mascot: 'guide', camera: 'push', text: 'So make it yours', silentText: 'So make it yours', vo: 'So make it yours, properly.', accent: '#FF4D8D' },
     { n: 3, frames: 129, screen: 'themeCustomizer', camera: 'trackRight', text: 'Four themes to start', silentText: 'Four themes to start with', vo: 'Four themes to start with.', accent: '#7C5CFF' },
     { n: 4, frames: 129, screen: 'homeLight', camera: 'settle', text: 'Light for the library', silentText: 'Light for the library', vo: 'Light for the library, dark for the hostel.', accent: '#7C5CFF' },

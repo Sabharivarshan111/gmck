@@ -44,7 +44,7 @@ export const reelFinalYear: AdScript = {
   music: 'audio/bed/bed-guide.wav',
   shots: [
     { n: 1, frames: 129, screen: null, mascot: 'hero', camera: 'settle', text: 'Ward now, exam in six weeks', silentText: 'Ward now, exam in six weeks', vo: 'Ward in the morning, exam in six weeks.', accent: '#FF4D8D' },
-    { n: 2, frames: 129, screen: 'browse', mascot: 'guide', camera: 'trackLeft', text: 'General Medicine alone', silentText: 'General Medicine: 680', vo: 'General Medicine alone runs to six hundred and eighty.', accent: '#FF4D8D' },
+    { n: 2, frames: 129, screen: 'browse', mascot: 'guide', camera: 'trackLeft', text: 'Down to the chapter', silentText: 'Every subject, every chapter', vo: 'Every subject in your year, down to the chapter.', accent: '#FF4D8D' },
     { n: 3, frames: 129, screen: 'questionsChapters', camera: 'push', text: 'sorted by chapter', silentText: 'Every one sorted by chapter', vo: 'Every one of them sorted by chapter.', focus: 0.35, accent: '#4CC2FF' },
     { n: 4, frames: 129, screen: 'questionsLeaf', camera: 'macro', text: 'How often it was asked', silentText: 'How often it was asked', vo: 'Each one shows how often it has been asked.', focus: 0.28, accent: '#4CC2FF' },
     { n: 5, frames: 129, screen: 'askai', mascot: 'guide', camera: 'push', text: 'Ask it in plain words', silentText: 'Ask it in plain words', vo: 'Stuck on one? Ask it in plain words.', accent: '#7C5CFF' },

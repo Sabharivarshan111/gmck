@@ -39,7 +39,7 @@ export const reelOneQuestion: AdScript = {
   bpm: 120,
   music: 'audio/bed/bed-one-question.wav',
   shots: [
-    { n: 1, beats: 6, screen: 'questionsLeaf', camera: 'macro', kicker: 'Question bank', text: 'Pick any question', focus: 0.28, accent: '#F5B301' , silentText: 'Pick any question', vo: 'Pick any question in the bank.' },
+    { n: 1, beats: 6, screen: 'questionsLeaf', camera: 'macro', kicker: 'Question bank', text: 'Read it twice. Closed it.', focus: 0.28, accent: '#F5B301' , silentText: 'Read it twice. Closed it.', vo: 'You open the question, read it twice, and close it.' },
     { n: 2, beats: 6, screen: 'questionsLeaf', camera: 'macro', kicker: 'Triple tap', text: 'Tap it three times', focus: 0.28, accent: '#FF4D8D' , silentText: 'Tap it three times', vo: 'Tap it three times and watch.' },
     { n: 3, beats: 8, screen: 'noteHero', camera: 'push', kicker: 'Written notes', text: 'A full answer, written out', accent: '#FF4D8D' , silentText: 'A full answer, written out', vo: 'A full answer, written out for you.' },
     { n: 4, beats: 6, screen: 'noteBody', camera: 'glideDown', kicker: 'Exam-shaped', text: 'High-yield facts at the top', accent: '#FF4D8D' , silentText: 'High-yield facts at the top', vo: 'High-yield facts at the top, always.' },

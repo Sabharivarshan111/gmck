@@ -39,9 +39,9 @@ export const reelRepeats: AdScript = {
   pitch: '+0Hz',
   music: 'audio/bed/bed-repeats.wav',
   shots: [
-    { n: 1, frames: 129, screen: 'questionsLeaf', camera: 'macro', text: 'Your university repeats its questions', silentText: '3,463 already asked', vo: 'Your university repeats its questions.', focus: 0.28, accent: '#F5B301' },
-    { n: 2, frames: 129, screen: 'questionsLeaf', camera: 'macro', text: 'Over three thousand', silentText: 'We counted every one', vo: 'Over three thousand repeat.', focus: 0.28, accent: '#F5B301' },
-    { n: 3, frames: 129, screen: 'questionsChapters', camera: 'push', text: 'Five thousand six hundred questions', silentText: '5,634 questions, sorted', vo: 'Five thousand six hundred questions, already sorted.', focus: 0.35, accent: '#7C5CFF' },
+    { n: 1, frames: 129, screen: 'questionsLeaf', camera: 'macro', text: 'Your examiner does not', silentText: 'Your examiner does not', vo: 'You revise all of them equally. Your examiner does not.', focus: 0.28, accent: '#F5B301' },
+    { n: 2, frames: 129, screen: 'questionsLeaf', camera: 'macro', text: 'Asked before', silentText: 'Most have been asked before', vo: 'Most of them have been asked before.', focus: 0.28, accent: '#F5B301' },
+    { n: 3, frames: 129, screen: 'questionsChapters', camera: 'push', text: 'Sorted to your chapter', silentText: 'Sorted to your chapter', vo: 'Every past question, sorted down to your chapter.', focus: 0.35, accent: '#7C5CFF' },
     { n: 4, frames: 129, screen: 'questionsLeaf', camera: 'macro', text: 'The stars are frequency', silentText: 'Stars mean frequency', vo: 'The stars are frequency, not decoration.', focus: 0.28, accent: '#F5B301' },
     { n: 5, frames: 129, screen: 'questionsLeaf', camera: 'macro', text: 'Triple-tap any question', silentText: 'Triple-tap any question', vo: 'Triple-tap any question and watch.', focus: 0.28, accent: '#FF4D8D' },
     { n: 6, frames: 129, screen: 'noteHero', camera: 'push', text: 'A full handwritten answer', silentText: 'A full handwritten answer', vo: 'A full handwritten answer appears, in seconds.', accent: '#FF4D8D' },

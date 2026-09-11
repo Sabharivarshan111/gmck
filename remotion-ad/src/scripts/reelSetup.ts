@@ -38,7 +38,7 @@ export const reelSetup: AdScript = {
   pitch: '+0Hz',
   music: 'audio/bed/bed-guide.wav',
   shots: [
-    { n: 1, frames: 129, screen: null, mascot: 'hero', camera: 'settle', text: 'No account, no card', silentText: 'No account. No card.', vo: 'No account and no card at all.', accent: '#7C5CFF' },
+    { n: 1, frames: 129, screen: null, mascot: 'hero', camera: 'settle', text: 'Email first, always', silentText: 'Email first, always', vo: 'Every other app wants your email first.', accent: '#7C5CFF' },
     { n: 2, frames: 129, screen: 'tourWelcome', mascot: 'guide', camera: 'push', text: 'It asks you two things', silentText: 'It asks you two things', vo: 'It asks you two things and then gets out of the way.', accent: '#7C5CFF' },
     { n: 3, frames: 129, screen: 'browse', camera: 'trackLeft', text: 'Your subjects are already there', silentText: 'Your subjects are already there', vo: 'Your subjects are already there waiting.', accent: '#4CC2FF' },
     { n: 4, frames: 129, screen: 'questionsChapters', camera: 'push', text: 'Straight into the question bank', silentText: 'Straight into the question bank', vo: 'Straight into the question bank. No wall.', focus: 0.35, accent: '#4CC2FF' },

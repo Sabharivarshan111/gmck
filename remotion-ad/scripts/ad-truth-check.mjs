@@ -152,6 +152,50 @@ for (const script of ALL_SCRIPTS) {
   }
 }
 
+
+/*
+ * ---- The Google Play badge is the official artwork or it is not a badge ---
+ *
+ * Google's guidelines are explicit: do not modify the badge's colour,
+ * proportions or spacing. A badge redrawn in CSS is a modified badge however
+ * carefully it is done, so `EndCard` either draws the real PNG or prints plain
+ * type that cannot be mistaken for one.
+ *
+ * The artwork is deliberately not committed — this sandbox cannot reach
+ * play.google.com to fetch it, and inventing one is worse than shipping
+ * without it. Drop the official file from the Play badge generator at
+ * `public/google-play-badge.png` and flip HAS_PLAY_BADGE.
+ */
+{
+  const endCard = await fs.readFile(path.join(root, 'src/components/EndCard.tsx'), 'utf8');
+  const code = endCard.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/(^|[^:])\/\/.*$/gm, '$1');
+
+  check(
+    !/borderRadius[\s\S]{0,400}?(Google Play|GET IT ON)/i.test(code),
+    'EndCard looks like it is DRAWING a Google Play badge. The badge may only ' +
+      'be the official artwork — redrawing it modifies its colour, proportions ' +
+      'or spacing, which the guidelines forbid.',
+  );
+  check(
+    /staticFile\(PLAY_BADGE_FILE\)/.test(code),
+    'EndCard no longer renders the official badge file when it is present.',
+  );
+
+  const badgePath = path.join(root, 'public', 'google-play-badge.png');
+  const present = await fs.stat(badgePath).then(() => true).catch(() => false);
+  const flagged = /HAS_PLAY_BADGE = true/.test(
+    await fs.readFile(path.join(root, 'src/components/playBadge.ts'), 'utf8'),
+  );
+  check(
+    present === flagged,
+    present
+      ? 'public/google-play-badge.png exists but HAS_PLAY_BADGE is false, so the ' +
+        'end card still prints plain text instead of the badge.'
+      : 'HAS_PLAY_BADGE is true but public/google-play-badge.png is missing — the ' +
+        'end card would render a broken image where the badge should be.',
+  );
+}
+
 if (problems.length > 0) {
   console.error('ad truth check failed:\n');
   for (const p of problems) console.error(`  - ${p}`);

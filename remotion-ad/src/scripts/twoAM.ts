@@ -25,7 +25,7 @@ export const twoAM: AdScript = {
     { n: 3, screen: 'home', camera: 'hero', text: 'Six hours left', vo: 'Six hours left. You cannot read two hundred pages.', accent: '#7C5CFF' },
     { n: 4, screen: 'browse', camera: 'push', text: 'Open Orbit', vo: 'Open Orbit. Pick your year, then your subject.', accent: '#7C5CFF' },
     { n: 5, screen: 'questionsLeaf', camera: 'glideDown', text: 'The repeats are marked', vo: 'The repeats are marked before you read a word.', accent: '#F5B301' },
-    { n: 6, screen: 'questionsLeaf', camera: 'macro', text: '3,463 already asked', vo: 'Three thousand four hundred of these have already been asked.', focus: 0.28, accent: '#F5B301' },
+    { n: 6, screen: 'questionsLeaf', camera: 'macro', text: '3,463 already asked', vo: 'Most of these have been asked in a paper before.', focus: 0.28, accent: '#F5B301' },
     { n: 7, screen: 'questionsLeaf', camera: 'macro', text: 'Triple-tap the first one', vo: 'So triple-tap the first one and start there.', focus: 0.28, accent: '#FF4D8D' },
     { n: 8, screen: 'noteHero', camera: 'push', text: 'A three-page answer', vo: 'A three-page answer opens, ready for you to write.', accent: '#FF4D8D' },
     { n: 9, screen: 'plateCalots', camera: 'settle', text: 'Already drawn', vo: 'The diagram is already drawn and already labelled.', accent: '#22D3A6' },
