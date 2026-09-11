@@ -14,7 +14,7 @@
 // on every phone the shader does not reach, which is most of them.
 //
 //   node scripts/glass-shader-check.mjs
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -34,6 +34,16 @@ const code = file =>
   read(file)
     .replace(/\/\*[\s\S]*?\*\//g, '')
     .replace(/^\s*\/\/.*$/gm, '');
+
+function listFiles(dir) {
+  const out = [];
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) out.push(...listFiles(full));
+    else out.push(full);
+  }
+  return out;
+}
 
 const failures = [];
 const check = (ok, what) => {
@@ -199,6 +209,29 @@ check(
 check(
   /lightDir/.test(view) && /dot\(normal, lightDir\)/.test(view),
   'the Fresnel rim lost its direction; an evenly lit edge reads as a border someone drew, and fights the bevel above it',
+);
+
+/*
+ * The wallpaper is mounted on Home and nowhere else, by the owner's decision:
+ * a picture behind a question list or a page of notes competes with the thing
+ * the reader came to read. It looks like a bug from the pixels alone and has
+ * already been "fixed" once by mistake, so it is asserted rather than trusted
+ * to a comment.
+ */
+const wallpaperMounts = [];
+for (const file of listFiles(path.join(root, 'src'))) {
+  if (!/\.tsx$/.test(file) || /WallpaperBackground\.tsx$/.test(file)) continue;
+  const text = code(path.relative(root, file));
+  if (/<WallpaperBackground[\s>]/.test(text)) {
+    wallpaperMounts.push(path.relative(root, file));
+  }
+}
+check(
+  wallpaperMounts.length === 1 && /HomeScreen\.tsx$/.test(wallpaperMounts[0] ?? ''),
+  `WallpaperBackground is rendered in ${wallpaperMounts.length} place(s) ` +
+    `(${wallpaperMounts.join(', ') || 'none'}). It belongs on Home and nowhere else — a ` +
+    'wallpaper behind a question list or a page of notes is a distraction, and that is ' +
+    "the owner's call, not a rendering bug to fix.",
 );
 
 /* ---- the native fallbacks ---- */
