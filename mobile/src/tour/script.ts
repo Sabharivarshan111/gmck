@@ -367,6 +367,7 @@ export const STEPS: TourStep[] = [
     body:
       'Add your subjects and clinical postings, then tap Present or Absent after each one. ' +
       'Orbit works out how many more you can miss and still be above your target — and it never rounds up. ' +
+      'Give a posting its length and it counts the days for you, Sundays off if they do not count. ' +
       'This stays on your phone too.',
     tab: 'Progress',
     target: 'Attendance',

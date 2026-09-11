@@ -108,7 +108,7 @@ const SHOTS = [
     },
     tap: ['Attendance'],
   },
-  {
+    {
     name: 'attendance-postings',
     query: 'screen=progress',
     seed: {
@@ -118,10 +118,14 @@ const SHOTS = [
           name: 'General Medicine',
           kind: 'posting',
           target: 75,
-          held: 18,
+          held: 20,
           attended: 15,
           totalDays: 28,
-          startDate: '2026-08-24',
+          // A Monday, so the block holds four Sundays. With them excluded it is
+          // 24 working days, and 20 marked leaves FOUR — not the eight a
+          // calendar count would have claimed.
+          startDate: '2026-09-07',
+          skipSundays: true,
         },
         {
           id: 'p2',
@@ -131,7 +135,7 @@ const SHOTS = [
           held: 12,
           attended: 8,
           totalDays: 28,
-          startDate: '2026-09-01',
+          startDate: '2026-09-07',
         },
       ],
     },

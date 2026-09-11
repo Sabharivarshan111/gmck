@@ -12,6 +12,8 @@ import {
   addAttendance,
   attendanceVersion,
   bestPossible,
+  dayOfRotation,
+  workingDays,
   getAttendance,
   markAttendance,
   removeAttendance,
@@ -59,6 +61,7 @@ export function AttendanceTab() {
   const [adding, setAdding] = useState(false);
   const [name, setName] = useState('');
   const [days, setDays] = useState('');
+  const [skipSundays, setSkipSundays] = useState(false);
   const [target, setTarget] = useState(75);
   /** The last mark per item, so Undo knows what it is taking back. */
   const [lastMark, setLastMark] = useState<Record<string, boolean>>({});
@@ -77,11 +80,13 @@ export function AttendanceTab() {
       target,
       totalDays: kind === 'posting' && Number.isFinite(total) && total > 0 ? total : undefined,
       startDate: kind === 'posting' ? new Date().toISOString().slice(0, 10) : undefined,
+      skipSundays: kind === 'posting' && skipSundays ? true : undefined,
     });
     setName('');
     setDays('');
+    setSkipSundays(false);
     setAdding(false);
-  }, [name, days, kind, target]);
+  }, [name, days, kind, target, skipSundays]);
 
   const mark = useCallback(async (item: AttendanceItem, present: boolean) => {
     tick();
@@ -175,6 +180,38 @@ export function AttendanceTab() {
                 style={[styles.input, { color: colors.text, borderColor: colors.border }]}
               />
             ) : null}
+            {/*
+              Off by default, and that is deliberate.
+
+              Plenty of postings run through the weekend, and a tracker that
+              silently shortens a rotation nobody asked it to shorten is the
+              same bug as one that forgets the Sundays — just pointing the other
+              way. What it changes is real: a 28-day block starting on a Monday
+              holds four Sundays, so leaving them in makes "only two days left"
+              wrong by four, in the direction that gets somebody short.
+            */}
+            {kind === 'posting' ? (
+              <Touchable
+                onPress={() => setSkipSundays(v => !v)}
+                label="Sundays are not working days"
+                role="checkbox"
+                state={{ checked: skipSundays }}
+                style={[styles.sundayRow, { borderColor: colors.border }]}>
+                <View
+                  style={[
+                    styles.sundayBox,
+                    {
+                      borderColor: skipSundays ? colors.accent : colors.border,
+                      backgroundColor: skipSundays ? colors.accent : 'transparent',
+                    },
+                  ]}>
+                  {skipSundays ? <Check size={12} color={colors.onAccent} /> : null}
+                </View>
+                <Text style={[styles.sundayText, { color: colors.text }]}>
+                  Sundays do not count
+                </Text>
+              </Touchable>
+            ) : null}
 
             <Text style={[styles.formLabel, { color: colors.textMuted }]}>
               REQUIRED ATTENDANCE
@@ -214,6 +251,7 @@ export function AttendanceTab() {
                   setAdding(false);
                   setName('');
                   setDays('');
+                  setSkipSundays(false);
                 }}
                 label="Cancel"
                 style={[styles.formButton, { borderColor: colors.border }]}>
@@ -259,6 +297,8 @@ function AttendanceCard({
   const { colors } = useTheme();
   const verdict = verdictFor(item);
   const best = bestPossible(item);
+  const day = dayOfRotation(item);
+  const total = workingDays(item);
 
   /*
    * Green when safe, red when not. These are the semantic colours and they do
@@ -279,6 +319,18 @@ function AttendanceCard({
             {item.attended} of {item.held} {item.kind === 'posting' ? 'days' : 'classes'}
             {verdict.remaining !== null ? ` · ${verdict.remaining} left` : ''}
           </Text>
+          {/*
+            Where you are in the rotation, which is the thing a posting student
+            asks first and the counter above cannot answer. "12 of 28" is read
+            off the calendar rather than off how many days have been tapped, so
+            it stays right through a week of forgetting to mark anything.
+          */}
+          {day !== null && total !== null ? (
+            <Text style={[styles.cardCount, { color: colors.textMuted }]}>
+              Day {day} of {total}
+              {item.skipSundays ? ' · Sundays off' : ''}
+            </Text>
+          ) : null}
         </View>
         <Text style={[styles.cardPct, { color: tone }]}>
           {item.held === 0 ? '—' : `${Math.round(verdict.percent)}%`}
@@ -380,6 +432,24 @@ function AttendanceCard({
 }
 
 const styles = StyleSheet.create({
+  sundayRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderRadius: 10,
+    paddingVertical: 11,
+    paddingHorizontal: 12,
+  },
+  sundayBox: {
+    width: 18,
+    height: 18,
+    borderRadius: 5,
+    borderWidth: 1.5,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  sundayText: { fontSize: 13, fontWeight: '600' },
   wrap: { gap: 10 },
   grow: { flex: 1 },
   switch: { flexDirection: 'row', borderRadius: 12, padding: 4, gap: 4 },
