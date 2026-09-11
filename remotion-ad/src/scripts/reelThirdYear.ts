@@ -39,7 +39,7 @@ export const reelThirdYear: AdScript = {
   pitch: '+0Hz',
   music: 'audio/bed/bed-guide.wav',
   shots: [
-    { n: 1, frames: 129, screen: null, mascot: 'hero', camera: 'settle', text: 'Two subjects, a lot of them', silentText: 'Third year: two subjects', vo: 'Third year is two subjects and a lot of them.', accent: '#F5B301' },
+    { n: 1, frames: 129, screen: null, mascot: 'hero', camera: 'settle', text: 'Two subjects, huge banks', silentText: 'Two subjects, huge banks', vo: 'Two subjects left, and both banks are enormous.', accent: '#F5B301' },
     { n: 2, frames: 129, screen: 'browseThird', mascot: 'guide', camera: 'trackLeft', text: 'Forensic and Community', silentText: 'Forensic + Community Medicine', vo: 'Forensic and Community Medicine chapter by chapter.', accent: '#F5B301' },
     { n: 3, frames: 129, screen: 'questionsLeaf', camera: 'macro', text: 'Almost every one has been asked before', silentText: '96% have been asked before', vo: 'And almost every one has been asked before.', focus: 0.28, accent: '#F5B301' },
     { n: 4, frames: 129, screen: 'questionsLeaf', mascot: 'guide', camera: 'push', text: 'The circle counts', silentText: 'The circle counts repeats', vo: 'The circle counts how many times it was asked.', focus: 0.3, accent: '#F5B301' },

@@ -43,10 +43,10 @@ export const reelFinalYear: AdScript = {
   pitch: '+0Hz',
   music: 'audio/bed/bed-guide.wav',
   shots: [
-    { n: 1, frames: 129, screen: null, mascot: 'hero', camera: 'settle', text: 'Final year is six subjects', silentText: 'Final year is six subjects', vo: 'Final year is six subjects at once.', accent: '#FF4D8D' },
-    { n: 2, frames: 129, screen: 'browse', mascot: 'guide', camera: 'trackLeft', text: 'Medicine through to Ophthal', silentText: 'Medicine, Surgery, O+G, Paeds, ENT, Ophthal', vo: 'Medicine and Surgery through to ENT and Ophthalmology.', accent: '#FF4D8D' },
+    { n: 1, frames: 129, screen: null, mascot: 'hero', camera: 'settle', text: 'Ward now, exam in six weeks', silentText: 'Ward now, exam in six weeks', vo: 'Ward in the morning, exam in six weeks.', accent: '#FF4D8D' },
+    { n: 2, frames: 129, screen: 'browse', mascot: 'guide', camera: 'trackLeft', text: 'General Medicine alone', silentText: 'General Medicine: 680', vo: 'General Medicine alone runs to six hundred and eighty.', accent: '#FF4D8D' },
     { n: 3, frames: 129, screen: 'questionsChapters', camera: 'push', text: 'sorted by chapter', silentText: 'Every one sorted by chapter', vo: 'Every one of them sorted by chapter.', focus: 0.35, accent: '#4CC2FF' },
-    { n: 4, frames: 129, screen: 'questionsLeaf', camera: 'macro', text: 'General Medicine alone is', silentText: 'General Medicine alone is 660', vo: 'General Medicine alone is six hundred and sixty.', focus: 0.28, accent: '#4CC2FF' },
+    { n: 4, frames: 129, screen: 'questionsLeaf', camera: 'macro', text: 'How often it was asked', silentText: 'How often it was asked', vo: 'Each one shows how often it has been asked.', focus: 0.28, accent: '#4CC2FF' },
     { n: 5, frames: 129, screen: 'askai', mascot: 'guide', camera: 'push', text: 'Ask it in plain words', silentText: 'Ask it in plain words', vo: 'Stuck on one? Ask it in plain words.', accent: '#7C5CFF' },
     { n: 6, frames: 129, screen: 'askai', camera: 'macro', text: 'A medical exam question', silentText: 'An exam answer, not a chatbot', vo: 'It answers as a medical exam question rather than a chatbot.', accent: '#7C5CFF' },
     { n: 7, frames: 129, screen: 'flashcards', camera: 'orbit', text: 'Turn a chapter into flashcards', silentText: 'Turn a chapter into flashcards', vo: 'Turn a chapter into flashcards for the drive in.', accent: '#4CC2FF' },

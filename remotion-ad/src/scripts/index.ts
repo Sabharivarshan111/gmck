@@ -1,5 +1,6 @@
 import type { AdScript } from './types.ts';
 import { silentReel } from './silent.ts';
+import { withBookends } from './bookends.ts';
 import { thePattern } from './thePattern.ts';
 import { twoAM } from './twoAM.ts';
 import { drawItFromMemory } from './drawItFromMemory.ts';
@@ -24,6 +25,8 @@ import { reelYours } from './reelYours.ts';
 import { reelNotes } from './reelNotes.ts';
 import { reelThirdYear } from './reelThirdYear.ts';
 import { reelFinalYear } from './reelFinalYear.ts';
+import { adAskIt } from './adAskIt.ts';
+import { adTheYear } from './adTheYear.ts';
 
 /**
  * Every script that exists, in one list.
@@ -36,7 +39,7 @@ import { reelFinalYear } from './reelFinalYear.ts';
  * Node 22 strips the TypeScript types natively, so those scripts can import
  * this file directly — the same file the bundler sees.
  */
-export const ALL_SCRIPTS: AdScript[] = [
+const AUTHORED: AdScript[] = [
   thePattern,
   twoAM,
   drawItFromMemory,
@@ -61,7 +64,21 @@ export const ALL_SCRIPTS: AdScript[] = [
   reelNotes,
   reelThirdYear,
   reelFinalYear,
+  // The two flat, typographic ads. Same pipeline, different renderer —
+  // `look` chooses, and `HyperAd` draws them.
+  adAskIt,
+  adTheYear,
 ];
+
+/**
+ * Every script, bookended.
+ *
+ * `AUTHORED` is what the script files say; this is what renders. Each ad opens
+ * on "Welcome to Orbit" and closes on "Download Orbit on the Play Store",
+ * stamped in one place rather than typed into twenty-four — see
+ * `bookends.ts`.
+ */
+export const ALL_SCRIPTS: AdScript[] = AUTHORED.map(withBookends);
 
 /** The 60-second vertical cuts, which are the ones with fixed shot frames. */
 export const REELS: AdScript[] = ALL_SCRIPTS.filter((s) => s.format === 'reel');
@@ -91,6 +108,8 @@ export {
   reelNotes,
   reelThirdYear,
   reelFinalYear,
+  adAskIt,
+  adTheYear,
 };
 
 /** The reels somebody speaks over. */

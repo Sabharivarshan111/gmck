@@ -28,7 +28,7 @@ export const drawItFromMemory: AdScript = {
     { n: 6, screen: 'questions', camera: 'push', text: 'Triple-tap', vo: 'Triple-tap the question and the diagram comes with it.', focus: 0.3, accent: '#FF4D8D' },
     { n: 7, screen: 'noteDiagram', camera: 'settle', text: 'Picture, then theory', vo: 'The picture first, then the answer that explains it.' },
     { n: 8, screen: 'plateUlnar', camera: 'trackLeft', text: 'Not a stock image', vo: "Drawn for that question. Never a neighbour's picture.", accent: '#22D3A6' },
-    { n: 9, screen: 'chapterDiagrams', camera: 'pull', text: '250 diagrams', vo: 'Two hundred and fifty diagrams across the whole bank.' },
+    { n: 9, screen: 'chapterDiagrams', camera: 'pull', text: 'Labelled for the examiner', vo: 'Labelled the way an examiner expects to see it.' },
     { n: 10, screen: 'plateShoulder', camera: 'orbit', text: '', vo: 'Shoulder joint, thyroid, pharynx, tongue, uterus and more.', accent: '#22D3A6' },
     { n: 11, screen: 'chapterDiagrams', camera: 'glideDown', text: 'Beside its own text', vo: 'Each one sits beside the paragraph it belongs to.' },
     { n: 12, screen: 'noteBody', camera: 'glideDown', text: 'No scrolling back', vo: 'You never scroll up hunting for the picture again.' },

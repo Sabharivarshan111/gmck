@@ -10,10 +10,8 @@ import { SHOT_TIMINGS } from './shotTimings';
 import { DYNAMIC_SCRIPT_TIMINGS } from './dynamicScriptTimings';
 
 import { ShotTimeline } from './components/ShotTimeline';
-import { thePattern } from './scripts/thePattern';
-import { twoAM } from './scripts/twoAM';
-import { drawItFromMemory } from './scripts/drawItFromMemory';
-import { SILENT_REELS, VOICED_REELS } from './scripts/index';
+import { HyperAd } from './components/HyperAd';
+import { ALL_SCRIPTS, SILENT_REELS, VOICED_REELS } from './scripts/index';
 import { silentLongform } from './scripts/silent';
 import { scriptFrames } from './scripts/types';
 
@@ -27,11 +25,24 @@ const FPS = 30;
  * length. Both mixes of an ad read the same number, so they cannot end at
  * different frames.
  */
-const LAUNCH_ADS = [
-  { id: 'orbit-the-pattern', script: thePattern, fallbackFrames: 3965 },
-  { id: 'orbit-2am', script: twoAM, fallbackFrames: 4302 },
-  { id: 'orbit-draw-it-from-memory', script: drawItFromMemory, fallbackFrames: 4813 },
-] as const;
+const LAUNCH_FALLBACK_FRAMES: Record<string, number> = {
+  'orbit-the-pattern': 3965,
+  'orbit-2am': 4302,
+  'orbit-draw-it-from-memory': 4813,
+};
+
+/*
+ * Read out of ALL_SCRIPTS rather than imported from the script files, because
+ * ALL_SCRIPTS is where the shared opening and closing are stamped on. Importing
+ * `thePattern` straight from its file gets the AUTHORED script — the one
+ * without "Welcome to Orbit" in front of it — and the three long-form ads
+ * would quietly be the only ads in the set that did not follow the rule.
+ */
+const LAUNCH_ADS = ALL_SCRIPTS.filter((s) => s.format !== 'reel').map((script) => ({
+  id: script.id,
+  script,
+  fallbackFrames: LAUNCH_FALLBACK_FRAMES[script.id] ?? 3965,
+}));
 
 export const Root: React.FC = () => {
   return (
@@ -100,7 +111,12 @@ export const Root: React.FC = () => {
         <Composition
           key={reel.id}
           id={reel.id}
-          component={ShotTimeline}
+          /*
+             `look` picks the renderer. The device ads fly a phone through 3D
+             space; the two flat ads make the type the film. One component
+             doing both would collapse them into one ad with two palettes.
+          */
+          component={reel.look && reel.look !== 'device' ? HyperAd : ShotTimeline}
           /*
              A spoken reel is as long as its own recordings came to, which
              `measure-audio` pins to REEL_FRAMES by giving the spare time to
@@ -133,7 +149,7 @@ export const Root: React.FC = () => {
         <Composition
           key={reel.id}
           id={reel.id}
-          component={ShotTimeline}
+          component={reel.look && reel.look !== 'device' ? HyperAd : ShotTimeline}
           durationInFrames={scriptFrames(reel)}
           fps={FPS}
           width={1080}

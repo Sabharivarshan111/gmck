@@ -31,6 +31,7 @@ const SHOTS = [
   // wide shot however true it is.
   { name: 'browse-final', query: 'screen=browse&year=final-year' },
   { name: 'browse-first', query: 'screen=browse&year=first-year' },
+  { name: 'browse-second', query: 'screen=browse&year=second-year' },
   { name: 'browse-third', query: 'screen=browse&year=third-year' },
   /*
    * The settings sheet, opened by its own button.
@@ -140,6 +141,37 @@ const SHOTS = [
       ],
     },
     tap: ['Attendance', 'Clinical postings'],
+  },
+  /*
+   * Two more states of the same screen, because the attendance reel was eight
+   * consecutive shots of ONE screenshot at different scroll positions — about
+   * thirty seconds of a still image, which reads as a broken video rather than
+   * as a feature.
+   *
+   * They are different DATA, not different crops: an empty tracker, and one
+   * sitting exactly on the line. The second is the state the whole feature
+   * exists for, and it is the one a demo full of comfortable subjects never
+   * shows.
+   */
+  {
+    name: 'attendance-empty',
+    query: 'screen=progress',
+    seed: { 'orbit:attendance-v1': [] },
+    tap: ['Attendance'],
+  },
+  {
+    name: 'attendance-critical',
+    query: 'screen=progress',
+    seed: {
+      'orbit:attendance-v1': [
+        // 30 of 40 is exactly 75%. The honest answer is that you cannot miss
+        // another one, and rounding is what would say otherwise.
+        { id: 'c1', name: 'Pathology', kind: 'theory', target: 75, held: 40, attended: 30 },
+        { id: 'c2', name: 'Pharmacology', kind: 'theory', target: 75, held: 40, attended: 28 },
+        { id: 'c3', name: 'Microbiology', kind: 'theory', target: 75, held: 40, attended: 36 },
+      ],
+    },
+    tap: ['Attendance'],
   },
   { name: 'timer-bottom', query: 'screen=timer', scroll: 'bottom' },
   { name: 'treegallery', query: 'screen=treegallery' },

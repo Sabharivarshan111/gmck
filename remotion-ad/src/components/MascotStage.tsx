@@ -1,4 +1,5 @@
 import React from 'react';
+import { CONTENT_FLOOR_BOTTOM } from './captionBand';
 import { AbsoluteFill, Easing, interpolate, spring, useCurrentFrame, useVideoConfig } from 'remotion';
 import { BotAvatar } from './BotAvatar';
 
@@ -39,9 +40,15 @@ interface MascotStageProps {
  *   moves by lean, by light and by the backlight already behind the device.
  *   The pointing rectangle is failure mode #5 in the skill.
  *
- * It sits above the device and below the caption. The caption band starts at
- * `bottom: 330`, so the guide's feet are at 470 — it never covers the words
- * the muted viewer is reading.
+ * It sits above the device and below the caption, with its feet on
+ * `CONTENT_FLOOR_BOTTOM` — so it can never cover the words the muted viewer is
+ * reading.
+ *
+ * That used to be the literal 470, chosen when the caption was a fragment one
+ * line tall. The caption is the whole spoken line now and wraps to two or
+ * three, growing upward from `bottom: 330` through the mascot's feet at 1450.
+ * The number is imported rather than quoted so the band can change once and
+ * everything placed against it follows.
  */
 export const MascotStage: React.FC<MascotStageProps> = ({
   mode,
@@ -122,7 +129,7 @@ export const MascotStage: React.FC<MascotStageProps> = ({
       <div
         style={{
           position: 'absolute',
-          bottom: '470px',
+          bottom: `${CONTENT_FLOOR_BOTTOM}px`,
           [side]: '54px',
           transform: `translateX(${slide}px) rotate(${lean}deg) scale(${interpolate(
             entrance,
