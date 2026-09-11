@@ -41,7 +41,7 @@ export const reelThirdYear: AdScript = {
   shots: [
     { n: 1, frames: 129, screen: null, mascot: 'hero', camera: 'settle', text: 'Not opened since term started', silentText: 'Not opened since term started', vo: 'You have not opened Forensic since the term started.', accent: '#F5B301' },
     { n: 2, frames: 129, screen: 'browseThird', mascot: 'guide', camera: 'trackLeft', text: 'Forensic and Community', silentText: 'Forensic + Community Medicine', vo: 'Forensic and Community Medicine chapter by chapter.', accent: '#F5B301' },
-    { n: 3, frames: 129, screen: 'questionsLeaf', camera: 'macro', text: 'Almost every one has been asked before', silentText: '96% have been asked before', vo: 'And almost every one has been asked before.', focus: 0.28, accent: '#F5B301' },
+    { n: 3, frames: 129, screen: 'questionsLeaf', camera: 'macro', text: 'Almost every one has been asked before', silentText: 'Almost all have repeated', vo: 'And almost every one has been asked before.', focus: 0.28, accent: '#F5B301' },
     { n: 4, frames: 129, screen: 'questionsLeaf', mascot: 'guide', camera: 'push', text: 'The circle counts', silentText: 'The circle counts repeats', vo: 'The circle counts how many times it was asked.', focus: 0.3, accent: '#F5B301' },
     { n: 5, frames: 129, screen: 'noteHero', camera: 'push', text: 'Triple-tap for a written answer', silentText: 'Triple-tap for a written answer', vo: 'Triple-tap for a written answer.', accent: '#7C5CFF' },
     { n: 6, frames: 129, screen: 'noteBody', mascot: 'guide', camera: 'glideDown', text: 'From your actual textbook', silentText: 'From your actual textbook', vo: 'Written from your actual textbook, not from nowhere.', accent: '#7C5CFF' },

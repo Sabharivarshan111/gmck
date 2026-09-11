@@ -32,7 +32,7 @@ export const reelSixHours: AdScript = {
   music: 'audio/bed/bed-six-hours.wav',
   shots: [
     { n: 1, frames: 129, screen: 'home', camera: 'macro', text: 'Exam at nine', silentText: "It's 2 AM. Exam at 9", vo: 'Two AM. Exam at nine.', focus: 0.2, accent: '#4CC2FF' },
-    { n: 2, frames: 129, screen: 'home', camera: 'macro', text: 'Four hundred questions', silentText: '400 questions unread', vo: 'Four hundred questions unread.', focus: 0.2, accent: '#4CC2FF' },
+    { n: 2, frames: 129, screen: 'home', camera: 'macro', text: 'Four hundred questions', silentText: 'Still unread', vo: 'Four hundred questions unread.', focus: 0.2, accent: '#4CC2FF' },
     { n: 3, frames: 129, screen: 'browse', camera: 'push', text: 'Six hours left', silentText: 'Here is what works', vo: 'Six hours left. Start here.', accent: '#7C5CFF' },
     { n: 4, frames: 129, screen: 'questionsLeaf', camera: 'macro', text: 'Start with the five-star ones', silentText: 'Five stars first', vo: 'Start with the five-star ones.', focus: 0.28, accent: '#F5B301' },
     { n: 5, frames: 129, screen: 'questionsLeaf', camera: 'orbit', text: 'Came back three times', silentText: 'This one came 3 times', vo: 'This one came back three times.', focus: 0.28, accent: '#F5B301' },
