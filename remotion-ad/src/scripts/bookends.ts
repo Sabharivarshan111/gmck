@@ -48,12 +48,13 @@ const welcomeShot = (script: AdScript): Shot => ({
   screen: null,
   // The mascot has the frame to itself for a title card, in the three ads it
   // hosts and in the ones it does not — it is the app's face either way.
-  mascot: 'hero',
   camera: 'settle',
   text: WELCOME_TEXT,
   silentText: WELCOME_TEXT,
   vo: WELCOME_VO,
   accent: BRAND_ACCENT,
+  // The mark, not the mascot. Every ad opens on the same frame.
+  openCard: true,
   /*
      Short — a title card that outstays a second is a second of the hook gone.
 

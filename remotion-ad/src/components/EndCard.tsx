@@ -2,7 +2,18 @@ import React from 'react';
 import { AbsoluteFill, Img, interpolate, staticFile, useCurrentFrame, Easing } from 'remotion';
 
 /**
- * The last shot of every ad: the app's mark, its name, and where to get it.
+ * The brand card. It opens every ad and it closes every ad.
+ *
+ * ## Opening
+ *
+ * The first shot is the mark and "Welcome to Orbit" — the app's owner's
+ * instruction, and it replaces what used to be there: a line of copy trying to
+ * hook the viewer before they knew whose ad this was. Twenty-six ads all
+ * starting the same way is the point. Somebody who sees three of these in a
+ * week should know by the first second whose they are, and the mark is what
+ * they will recognise again in the store.
+ *
+ * ## Closing
  *
  * ## Why it exists
  *
@@ -32,9 +43,13 @@ import { AbsoluteFill, Img, interpolate, staticFile, useCurrentFrame, Easing } f
 
 export const PLAY_BADGE_FILE = 'google-play-badge.png';
 
+export type BrandCardVariant = 'open' | 'close';
+
 export interface EndCardProps {
   accent: string;
   durationInFrames: number;
+  /** `open` is the mark and a greeting; `close` adds the claims and the store. */
+  variant?: BrandCardVariant;
   /** True when the official badge artwork is present in `public/`. */
   hasPlayBadge?: boolean;
   /** A dark ground, unless the ad it closes is a light one. */
@@ -44,9 +59,11 @@ export interface EndCardProps {
 export const EndCard: React.FC<EndCardProps> = ({
   accent,
   durationInFrames,
+  variant = 'close',
   hasPlayBadge = false,
   light = false,
 }) => {
+  const opening = variant === 'open';
   const frame = useCurrentFrame();
 
   // The mark settles once and stops. Nothing scales from zero — an entrance
@@ -149,20 +166,38 @@ export const EndCard: React.FC<EndCardProps> = ({
       */}
       <div
         style={{
-          opacity: wordmark,
+          // The fade in, times this line's own weight in the hierarchy.
+          opacity: wordmark * (opening ? 1 : 0.86),
           zIndex: 1,
           fontFamily:
             '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif',
-          fontSize: '46px',
-          fontWeight: 700,
+          /*
+             Sizes carry the hierarchy, and "Completely free" is the top of it.
+
+             It was the SMALLEST line on the card at 38px and 72% opacity — the
+             strongest claim the app has, set as a footnote between two louder
+             ones. This line supports it rather than competing with it, and on
+             the opening card it is the only line there, so it is the hero
+             instead.
+          */
+          fontSize: opening ? '58px' : '40px',
+          fontWeight: opening ? 800 : 600,
           letterSpacing: '-0.01em',
           color: ink,
           textAlign: 'center',
         }}
       >
-        Made for the medical community
+        {opening ? 'Welcome to Orbit' : 'Made for the medical community'}
       </div>
 
+      {/*
+         The rest of the card is the CLOSING one. An opening card is the mark
+         and the greeting and nothing else: a viewer one second into a reel is
+         not being asked for anything yet, and stacking the price and the store
+         on the first frame is how an ad announces that it is an ad.
+      */}
+      {opening ? null : (
+      <>
       {/*
          "Completely free" was set in the accent — a saturated violet under a
          white line and above a white one, which made the middle line read as
@@ -173,16 +208,23 @@ export const EndCard: React.FC<EndCardProps> = ({
       */}
       <div
         style={{
-          // Faded against the line above it, so the two read as one sentence
-          // with a quieter second half rather than as two competing claims.
-          opacity: wordmark * 0.72,
+          opacity: wordmark,
           zIndex: 1,
           fontFamily:
             '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif',
-          fontSize: '38px',
-          fontWeight: 400,
-          letterSpacing: '0.01em',
-          color: ink,
+          /*
+             The biggest words on the card, because "free" is the objection
+             every viewer arrives with and the one thing that answers it.
+             Drawn in the mark's own cyan rather than the shot accent: it is
+             the colour already on screen in the logo above it, so it reads as
+             part of the brand rather than as a link, which is what the violet
+             did.
+          */
+          fontSize: '62px',
+          fontWeight: 800,
+          letterSpacing: '-0.02em',
+          color: '#2BD9F2',
+          textShadow: '0 0 38px rgba(43,217,242,0.45)',
           textAlign: 'center',
         }}
       >
@@ -240,6 +282,8 @@ export const EndCard: React.FC<EndCardProps> = ({
           </div>
         )}
       </div>
+      </>
+      )}
     </AbsoluteFill>
   );
 };

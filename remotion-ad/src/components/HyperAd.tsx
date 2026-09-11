@@ -66,11 +66,12 @@ const PromptShot: React.FC<{ shot: Shot; duration: number; index: number }> = ({
 }) => {
   const frame = useCurrentFrame();
 
-  if (shot.endCard) {
+  if (shot.openCard || shot.endCard) {
     return (
       <EndCard
         accent={shotAccent(shot, '#7C5CFF')}
         durationInFrames={duration}
+        variant={shot.openCard ? 'open' : 'close'}
         hasPlayBadge={HAS_PLAY_BADGE}
         light={true}
       />
@@ -209,11 +210,12 @@ const KeynoteShot: React.FC<{ shot: Shot; duration: number; index: number }> = (
 }) => {
   const frame = useCurrentFrame();
 
-  if (shot.endCard) {
+  if (shot.openCard || shot.endCard) {
     return (
       <EndCard
         accent={shotAccent(shot, '#7C5CFF')}
         durationInFrames={duration}
+        variant={shot.openCard ? 'open' : 'close'}
         hasPlayBadge={HAS_PLAY_BADGE}
         light={false}
       />

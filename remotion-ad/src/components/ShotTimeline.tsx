@@ -146,11 +146,12 @@ const ShotView: React.FC<ShotViewProps> = ({
   // and where to get it. Drawn INSTEAD of a screen, never over one — the
   // viewer who has just decided they want this needs something to recognise
   // in the store, and every ad used to end on whatever screenshot was last.
-  if (shot.endCard) {
+  if (shot.openCard || shot.endCard) {
     return (
       <EndCard
         accent={accent}
         durationInFrames={durationInFrames}
+        variant={shot.openCard ? 'open' : 'close'}
         hasPlayBadge={HAS_PLAY_BADGE}
       />
     );
