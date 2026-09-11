@@ -108,10 +108,15 @@ works offline; notes, plates and Ask AI do not.
 Three separate bugs made the ads look unsynchronised, and all three are now
 enforced rather than remembered:
 
-1. **A voiced reel's `text` must be a verbatim span of its `vo`.** They used to
-   be written independently — "2,025 already asked" on screen over "Your
-   university repeats its questions" in the ear. `preflight` fails the render
-   otherwise, and `ReelHeadline` lights each word as it is said.
+1. **A voiced reel is captioned with `shot.vo` itself** — the whole line, not a
+   piece of it. The rule here was once that `text` had to be a verbatim *span*
+   of `vo`, written to stop "2,025 already asked" appearing over "Your
+   university repeats its questions". It fixed that and cost something worse:
+   a span of a sentence is a fragment, and 264 of 385 voiced shots ended up
+   showing under three quarters of what was said — "Every day you studied,
+   coloured in." reached the screen as "coloured in". Reading and hearing are
+   one string now, so they cannot disagree, and `ReelHeadline` still lights
+   each word as it is said.
 2. **Word timings come from the synthesiser.** `synthesize.py` passes
    `boundary="WordBoundary"` (the edge-tts default is `SentenceBoundary`, which
    returns audio and no word marks at all) and keeps every event.
@@ -142,3 +147,43 @@ printing `len(TEMPOS)`, so a seventh bed reported success and was never built.
 `public/app_screens/` and `public/audio/` are gitignored and rebuilt on every
 render. A committed screenshot is a UI the app may no longer have; a committed
 plate goes stale the moment the diagram is regenerated.
+
+## A reel is paced by speech, and its silent twin by music
+
+The bug this exists to prevent was in **every one of the twenty-one reels**.
+
+Shot lengths came only from the music beat grid, which always sums to exactly
+`REEL_FRAMES`. Nothing ever compared a shot against the recording it carried.
+Measured against the real mp3s the reels held **57 to 73 seconds of speech in a
+60-second film**, and 235 individual shots ran past their slot — up to 3.8s
+each. The surplus does not vanish: it plays under the next shot, whose own clip
+has already started. That is the overlapping voice.
+
+A comment in `ShotTimeline` claimed "`preflight` still fails if a clip overruns
+by enough to talk over the next line". **No such check existed.** An asserted
+safety net nobody built is worse than no net, because it stops people looking.
+
+Three rules now, and all three are enforced:
+
+1. **Audio paces what has audio; the beat grid paces what does not.**
+   `measure-audio.mjs` gives every spoken shot — reel or long-form — at least
+   its own audio plus air, so a shot can never be shorter than its line. Spare
+   time goes to the last shot, which pins a reel to exactly 60s.
+2. **A reel must be WRITTEN to fit.** `preflight` estimates each line from a
+   model fitted to 90 real clips of this voice
+   (`sec = 1.100 + 0.0339 x chars + 0.732 x punctuation`) and fails before
+   anything renders. **Commas and full stops cost ~0.7s each**, so a list is
+   the most expensive thing a line can hold: "Medicine, Surgery, O and G,
+   Paediatrics, ENT, Ophthal." spends 4.4 of its 7.3 seconds saying nothing.
+3. **14 shots, not 18.** At 18 shots a 60-second reel affords 35 characters a
+   line; at 22 it affords three words. 14 gives ~63 characters, which is the
+   7-11 word line the `vo` type has always documented and nothing enforced.
+
+**The silent cut is its own script** (`remotion-ad/src/scripts/silent.ts`), not the same
+edit rendered with `withVoice: false`. That prop is gone. One edit could not
+serve both, because the two are paced by clocks that disagree — and the grid
+was the only one anything computed, which is exactly why the voice overran. A
+silent reel is `noVoice`, cut to its beats, captioned from the separately
+authored `silentText` and `kicker`. A silent long-form cut borrows its twin's
+measurements through `voiceOf`, because those ads never had the bug: their
+shots were always measured, and their captions always typed out every word.

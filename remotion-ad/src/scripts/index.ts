@@ -1,4 +1,5 @@
 import type { AdScript } from './types.ts';
+import { silentReel } from './silent.ts';
 import { thePattern } from './thePattern.ts';
 import { twoAM } from './twoAM.ts';
 import { drawItFromMemory } from './drawItFromMemory.ts';
@@ -92,15 +93,25 @@ export {
   reelFinalYear,
 };
 
-/**
- * The reels that have nothing spoken in them at all.
- *
- * Not the same as the `-silent` MIX of a voiced reel, which has clips the
- * render leaves out. These were written without a voice — `Root.tsx` registers
- * them once rather than twice, and `voice-manifest` / `preflight` know not to
- * expect an mp3 that was never meant to exist.
- */
-export const SILENT_REELS: AdScript[] = REELS.filter((s) => Boolean(s.noVoice));
-
-/** The reels that do have a voice, and therefore ship in two mixes. */
+/** The reels somebody speaks over. */
 export const VOICED_REELS: AdScript[] = REELS.filter((s) => !s.noVoice);
+
+/**
+ * The silent reel that goes out beside each spoken one — a SCRIPT, not a mix.
+ *
+ * This used to be `REELS.filter(s => s.noVoice)` and it matched nothing,
+ * because no reel was written without a voice: the muted cut was the same
+ * script rendered again with `withVoice: false`. See `silent.ts` for why that
+ * one edit could not serve both, and which of the two clocks was silently
+ * winning.
+ *
+ * Built rather than hand-written, for the reason every other pair of lists in
+ * this repo is: a reel and its silent twin have to stage the same screens in
+ * the same order, and two files that must agree are two files that drift. What
+ * is AUTHORED separately is what differs — `silentText` and `kicker`, written
+ * for somebody who will never hear a word. What is derived is the staging.
+ */
+export const SILENT_REELS: AdScript[] = VOICED_REELS.map(silentReel);
+
+/** Everything that gets registered and rendered, both cuts of every reel. */
+export const ALL_COMPOSITIONS: AdScript[] = [...ALL_SCRIPTS, ...SILENT_REELS];

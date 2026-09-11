@@ -218,25 +218,26 @@ const ShotView: React.FC<ShotViewProps> = ({
           />
         ) : reel ? (
           /*
-             A voiced reel's headline is a verbatim span of its spoken line —
-             `preflight` enforces that — so it can arrive on the word that
-             starts it instead of at the cut. Before this, the headline said
-             one thing while the voice said another entirely ("2,025 already
-             asked" over "Your university repeats its questions"), which is the
-             half of the sync complaint you could see rather than hear.
+             A voiced reel shows THE WHOLE LINE it is speaking.
+
+             It used to show `shot.text`, a verbatim *span* of the line. The
+             span rule was written to fix a real bug — a headline that said
+             "2,025 already asked" while the voice said something else — and it
+             did fix it, by making the caption a piece of the sentence instead
+             of a different sentence. But a piece of a sentence is a fragment,
+             and it was measured: 264 of the 385 voiced shots showed less than
+             three quarters of what was said, and some showed a fifth of it.
+             "Every day you studied, coloured in." appeared on screen as
+             "coloured in".
+
+             Reading the line and hearing the line are now the same words. Sync
+             is not lost by doing this, because it never came from the caption
+             being short — `ReelHeadline` lights each word as the Speech
+             service says it, from the recorded word boundaries, so a longer
+             caption simply has more words to light.
           */
           <ReelHeadline
-            /*
-               The muted cut gets its own headline.
-
-               `shot.text` is a verbatim span of the spoken line, which is what
-               keeps the voiced cut in sync — and a span of a sentence is
-               usually a fragment. With no audio "The way examiners read" is
-               the tail of a line nobody heard. `silentText` is a standalone
-               claim written for exactly that viewer, and it is the one who
-               matters most: a reel is watched muted.
-            */
-            text={(scriptId ? shot.text : shot.silentText ?? shot.text) || shot.vo || ''}
+            text={shot.vo || shot.text || ''}
             accent={accent}
             durationInFrames={durationInFrames}
             scriptId={scriptId}
@@ -262,31 +263,52 @@ const ShotView: React.FC<ShotViewProps> = ({
 const voiceFile = (script: AdScript, shot: Shot) =>
   staticFile(`audio/${script.id}/shot_${String(shot.n).padStart(2, '0')}.mp3`);
 
-export const ShotTimeline: React.FC<{ script: AdScript; withVoice?: boolean }> = ({
-  script,
-  withVoice = true,
-}) => {
+export const ShotTimeline: React.FC<{ script: AdScript }> = ({ script }) => {
   const reel = script.format === 'reel';
-  const timingReport = DYNAMIC_SCRIPT_TIMINGS[script.id];
+  // A silent long-form cut plays none of its twin's clips but is the same edit
+  // frame for frame, so it reads the twin's measurements. `voiceOf` names it;
+  // a silent reel leaves it unset, because a reel is cut to music.
+  const timingId = script.voiceOf ?? script.id;
+  const timingReport = DYNAMIC_SCRIPT_TIMINGS[timingId];
 
-  // Two ways a shot knows how long it is, and they must not be mixed.
+  // One rule, and it replaces two that contradicted each other:
   //
-  // A long-form ad is paced by its own recording: `dynamicScriptTimings.ts`
-  // measured every mp3 and stretched each shot to fit, which is why those ads
-  // are as long as they are rather than a round number.
+  //   **Audio paces what has audio. The beat grid paces what does not.**
   //
-  // A reel is the other way round. The platform fixes the length at 60.0s, so
-  // the shots declare their frames and the voice is written to fit them. When
-  // `shot.frames` is set it wins; when it is not, nothing about the existing
-  // ads changes.
-  // `resolveShotFrames` is the one place that knows both dialects — raw
-  // `frames`, and `beats` against the script's `bpm`. A shot's length is never
-  // read off the shot here, so the beat grid cannot be bypassed by accident.
+  // The comment here used to say a reel was "the other way round — the
+  // platform fixes the length at 60.0s, so the shots declare their frames and
+  // the voice is written to fit them". The first half is true. The second half
+  // was an instruction to a human that nothing ever checked, and it was not
+  // followed: measured against the real recordings, every reel held between 57
+  // and 73 seconds of speech in a 60-second film. The beat grid does not
+  // stretch, so the surplus played on underneath the next shot while its clip
+  // was already speaking. That is the overlapping voice.
+  //
+  // So a spoken script — long-form or reel — takes its boundaries from
+  // `dynamicScriptTimings.ts`, which is measured from the same mp3s this will
+  // mux and gives every shot at least its own audio plus air. A shot can no
+  // longer be shorter than the line it carries.
+  //
+  // `resolveShotFrames` still owns the silent scripts, and there it is exactly
+  // right: with nothing spoken there is no duration to obey, and the music is
+  // the only clock in the room.
   const resolved = resolveShotFrames(script);
+  const spokenScript = !script.noVoice;
 
   let cursor = 0;
   const shotsWithTimings = script.shots.map((shot, i) => {
     const timing = timingReport?.shots.find((s) => s.n === shot.n);
+
+    if (spokenScript && timing) {
+      return {
+        shot,
+        timing,
+        startFrame: timing.startFrame,
+        durationInFrames: timing.shotFrames,
+        index: i,
+      };
+    }
+
     const fixed = resolved[i];
     if (fixed > 0) {
       const startFrame = cursor;
@@ -298,30 +320,42 @@ export const ShotTimeline: React.FC<{ script: AdScript; withVoice?: boolean }> =
     return { shot, timing, startFrame, durationInFrames, index: i };
   });
 
-  const total = reel ? scriptFrames(script) : (timingReport?.totalFrames ?? cursor);
+  // Same rule as the boundaries: the measurement wins wherever there is one,
+  // so a voiced reel's length is the length its own recordings came to (pinned
+  // to REEL_FRAMES by `measure-audio`), and a silent one is the sum of its
+  // beats.
+  const total = spokenScript
+    ? (timingReport?.totalFrames ?? scriptFrames(script))
+    : scriptFrames(script);
 
   // A cut written in beats carries its clock down to every shot, so the type,
   // the room light and the device all move on the same grid the cuts land on.
   const perBeat = script.bpm ? framesPerBeat(script.bpm) : null;
   const gridOrigin = script.beatOffsetFrames ?? 0;
 
-  // Two different silences.
+  // There is one silence now, and it is a property of the script.
   //
-  // `withVoice: false` is the muted MIX of a voiced reel — the clips exist and
-  // the render leaves them out. `script.noVoice` is an ad that was never
-  // written to be spoken, and its captions are carrying the product. Both sit
-  // on true black; only the second replaces the headline with the subtitle.
-  const black = reel && (!withVoice || Boolean(script.noVoice));
+  // There used to be two, and keeping them apart was the whole confusion:
+  // `withVoice: false` meant "the muted mix of a voiced reel" and
+  // `script.noVoice` meant "an ad written without a voice". The first was a
+  // prop, so the same edit served a listening viewer and a muted one — two
+  // audiences whose only clock disagrees. `withVoice` is gone; a silent cut is
+  // a script of its own, built in `scripts/silent.ts`.
   const subtitleLed = Boolean(script.noVoice);
-  const speaks = withVoice && !script.noVoice;
+  const speaks = !script.noVoice;
+
+  // A silent reel sits on true black — there is no film light to match, and
+  // the caption is the whole image. A silent LONG-FORM cut keeps its twin's
+  // ground, because it is the identical edit with the voice muted.
+  const black = reel && subtitleLed;
 
   return (
     <AbsoluteFill style={{ backgroundColor: black ? '#000000' : '#030712' }}>
       {/*
         The bed sits under everything and runs the whole composition. It is the
         first child so no shot's background can be drawn beneath it, and it is
-        the only audio in the silent cut — which is why that cut is a mix
-        decision rather than a missing track.
+        the only audio in a silent cut, which is why that cut is still a film
+        rather than a video with the sound broken.
       */}
       {script.music ? (
         <Audio
@@ -332,7 +366,7 @@ export const ShotTimeline: React.FC<{ script: AdScript; withVoice?: boolean }> =
               [0, 18, Math.max(19, total - 40), total],
               [0, 1, 1, 0],
               { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
-            ) * (withVoice ? BED_UNDER_VOICE : BED_ALONE)
+            ) * (speaks ? BED_UNDER_VOICE : BED_ALONE)
           }
         />
       ) : null}
@@ -355,7 +389,13 @@ export const ShotTimeline: React.FC<{ script: AdScript; withVoice?: boolean }> =
             clock={perBeat ? { perBeat, originFrame: startFrame - gridOrigin } : undefined}
             beats={perBeat ? Math.round(durationInFrames / perBeat) : undefined}
             subtitleLed={subtitleLed}
-            scriptId={speaks ? script.id : undefined}
+            /*
+               Which recording's WORD BOUNDARIES light this caption.
+               Independent of whether anything is played: a silent long-form
+               cut is the same edit with the voice muted, and its words should
+               still arrive when they were said rather than spread evenly.
+            */
+            scriptId={subtitleLed && reel ? undefined : timingId}
           />
         </Sequence>
       ))}
@@ -364,12 +404,23 @@ export const ShotTimeline: React.FC<{ script: AdScript; withVoice?: boolean }> =
         A reel's voice is mounted outside the shot it belongs to, with no
         duration of its own.
 
-        The shot is 3.5 seconds because the edit says so, and edge-tts decides
-        how long the line actually came out — those two never agree to the
-        frame. Inside the shot's Sequence a clip that runs 200ms long is cut
-        off mid-word; out here it simply laps a few frames into the next shot,
-        which is what a fast cut sounds like anyway. `preflight` still fails if
-        a clip overruns by enough to talk over the next line.
+        Mounted with no duration so a clip is never cut off mid-word: a
+        Sequence would trim it to the shot, and the last syllable of a line is
+        not a detail.
+
+        What this comment used to say was that a clip "simply laps a few frames
+        into the next shot, which is what a fast cut sounds like anyway", and
+        that "`preflight` still fails if a clip overruns by enough to talk over
+        the next line". Neither was true. No such check existed anywhere, and
+        the lapping was not a few frames: shots were cut to the music grid
+        without ever consulting the recordings, so lines ran up to 3.8 seconds
+        past their shot and every reel held more speech than it had room for.
+        Two voices talking at once is what that sounds like.
+
+        The safety is real now and it is upstream: `measure-audio` gives every
+        shot at least its own audio plus air, so the next shot cannot begin
+        until this line has finished, and `preflight` refuses a reel whose
+        speech will not fit in sixty seconds.
       */}
       {reel && speaks
         ? shotsWithTimings.map(({ shot, startFrame }) => (

@@ -14,6 +14,7 @@ import { thePattern } from './scripts/thePattern';
 import { twoAM } from './scripts/twoAM';
 import { drawItFromMemory } from './scripts/drawItFromMemory';
 import { SILENT_REELS, VOICED_REELS } from './scripts/index';
+import { silentLongform } from './scripts/silent';
 import { scriptFrames } from './scripts/types';
 
 const FPS = 30;
@@ -62,7 +63,7 @@ export const Root: React.FC = () => {
               fps={FPS}
               width={1080}
               height={1920}
-              defaultProps={{ script, withVoice: true }}
+              defaultProps={{ script }}
             />
             <Composition
               id={`${id}-silent`}
@@ -71,7 +72,12 @@ export const Root: React.FC = () => {
               fps={FPS}
               width={1080}
               height={1920}
-              defaultProps={{ script, withVoice: false }}
+              /*
+                 A SCRIPT, not the same one with the sound turned off. It
+                 borrows this ad's measurements through `voiceOf`, so it is the
+                 identical edit frame for frame with nothing spoken over it.
+              */
+              defaultProps={{ script: silentLongform(script) }}
             />
           </React.Fragment>
         );
@@ -91,36 +97,37 @@ export const Root: React.FC = () => {
           rather than at type-check.
       */}
       {VOICED_REELS.map((reel) => (
-        <React.Fragment key={reel.id}>
-          <Composition
-            id={reel.id}
-            component={ShotTimeline}
-            durationInFrames={scriptFrames(reel)}
-            fps={FPS}
-            width={1080}
-            height={1920}
-            defaultProps={{ script: reel, withVoice: true }}
-          />
-          <Composition
-            id={`${reel.id}-silent`}
-            component={ShotTimeline}
-            durationInFrames={scriptFrames(reel)}
-            fps={FPS}
-            width={1080}
-            height={1920}
-            defaultProps={{ script: reel, withVoice: false }}
-          />
-        </React.Fragment>
+        <Composition
+          key={reel.id}
+          id={reel.id}
+          component={ShotTimeline}
+          /*
+             A spoken reel is as long as its own recordings came to, which
+             `measure-audio` pins to REEL_FRAMES by giving the spare time to
+             the last shot. `scriptFrames` (the beat grid) is the fallback for
+             a local typecheck, where nothing has been recorded yet.
+          */
+          durationInFrames={DYNAMIC_SCRIPT_TIMINGS[reel.id]?.totalFrames ?? scriptFrames(reel)}
+          fps={FPS}
+          width={1080}
+          height={1920}
+          defaultProps={{ script: reel }}
+        />
       ))}
 
-      {/* --- THE SUBTITLE-LED REELS ---
+      {/* --- THE SILENT REELS ---
 
-          These are registered ONCE, not twice. A voiced reel ships in two
-          mixes because there is a voice to leave out; these were written with
-          no spoken track at all — the caption is the product — so a `-silent`
-          twin would be a byte-identical second render under a second name, and
-          the person downloading them would have no way to tell which was
-          which.
+          One composition each, because each of these IS the silent cut. They
+          used to be `REELS.filter(s => s.noVoice)`, which matched nothing: the
+          muted cut was the same script rendered again with `withVoice: false`,
+          so one edit was serving a listening viewer and a muted one. Those two
+          are paced by different clocks — speech and music — and only the music
+          was ever computed, which is why every spoken reel ran over its own
+          voice. `scripts/silent.ts` has the long version.
+
+          The beat grid is the right clock HERE, and only here: with nothing
+          spoken there is no duration to obey and the music is the only thing
+          keeping time.
       */}
       {SILENT_REELS.map((reel) => (
         <Composition
@@ -131,7 +138,7 @@ export const Root: React.FC = () => {
           fps={FPS}
           width={1080}
           height={1920}
-          defaultProps={{ script: reel, withVoice: false }}
+          defaultProps={{ script: reel }}
         />
       ))}
 

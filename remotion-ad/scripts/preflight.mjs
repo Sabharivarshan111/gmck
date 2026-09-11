@@ -332,24 +332,43 @@ for (const script of scripts) {
 }
 
 /* ------------------------------------------------------------------------
- * A voiced reel's headline must be words the voice actually says.
+ * A voiced reel shows the line it is speaking.
  *
- * This is the rule that makes the reels synchronisable at all. The headline
- * and the voiceover used to be written independently: shot one of "Already
- * Asked" put "2,025 already asked" on screen while the voice said "Your
- * university repeats its questions". A viewer with the sound on read one
- * sentence and heard a different one, and no amount of timing work can fix
- * that — there is nothing to line the words up with.
+ * The rule here used to be that the headline had to be a verbatim,
+ * consecutive SPAN of the spoken line. It was written to fix a real bug — shot
+ * one of "Already Asked" put "2,025 already asked" on screen while the voice
+ * said "Your university repeats its questions" — and as a way of making a
+ * caption agree with a voice it worked.
  *
- * So the headline is a verbatim, consecutive span of the spoken line, and
- * `ReelHeadline` lights each of its words at the moment it is said. If this
- * check is failing, the fix is in the script: shorten the headline until it is
- * a phrase the line contains, rather than loosening the comparison.
+ * What it could not do was leave the caption worth reading. A span of a
+ * sentence is a fragment: measured across the reels, 264 of 385 voiced shots
+ * showed less than three quarters of what was said and the worst showed a
+ * fifth of it, so "Every day you studied, coloured in." reached the screen as
+ * "coloured in".
  *
- * Comparison is on letters and digits only, so punctuation and case in either
- * place are free. A `noVoice` reel is exempt: its caption IS the argument and
- * there is no voice for it to agree with.
+ * The caption is now the line itself, so agreement is structural rather than
+ * checked — there is only one string. This asserts that, because the whole
+ * point is that no later edit can quietly go back to showing a fragment.
+ * Sync is unaffected: `ReelHeadline` lights each word as the Speech service
+ * says it, and a longer caption simply has more words to light.
  * --------------------------------------------------------------------- */
+{
+  const timeline = await fs.readFile(
+    path.join(root, 'src/components/ShotTimeline.tsx'),
+    'utf8',
+  );
+  const code = timeline
+    .replace(/\/\*[\s\S]*?\*\//g, ' ')
+    .replace(/(^|[^:])\/\/.*$/gm, '$1');
+
+  if (!/<ReelHeadline[\s\S]{0,200}?text=\{shot\.vo/.test(code)) {
+    problems.push(
+      'ShotTimeline no longer captions a voiced reel with `shot.vo`. The ' +
+        'caption has to BE the spoken line; showing a span of it is how 264 ' +
+        'of 385 shots ended up displaying a fragment of their own sentence.',
+    );
+  }
+}
 const wordsOf = text =>
   String(text ?? '')
     .split(/\s+/)
@@ -416,19 +435,6 @@ for (const script of scripts) {
   }
 }
 
-for (const script of scripts) {
-  if (script.format !== 'reel' || script.noVoice) continue;
-  for (const shot of script.shots) {
-    if (!shot.text) continue;
-    if (!isSpanOf(shot.text, shot.vo)) {
-      problems.push(
-        `${script.id} shot ${shot.n}: the headline "${shot.text}" is not a ` +
-          `phrase inside the spoken line "${shot.vo}" — the viewer would read ` +
-          'one thing and hear another',
-      );
-    }
-  }
-}
 
 /* ------------------------------------------------------------------------
  * The word timings have to be the ones for THESE lines.
@@ -538,8 +544,6 @@ try {
     [...workflow.matchAll(/^\s*- ad:\s*(\S+)/gm)].map(m => m[1]),
   );
 
-  // A reel with no voice is registered and rendered ONCE on purpose: a silent
-  // twin would be a byte-identical second file under a second name.
   const voiced = scripts.filter(s => !s.noVoice);
 
   for (const script of voiced) {
@@ -554,25 +558,111 @@ try {
     }
   }
 
-  for (const script of scripts.filter(s => s.noVoice)) {
-    if (rendered.has(`${script.id}-silent`)) {
+  // `withVoice` is how a cut used to be chosen, and it is why one edit was
+  // serving two audiences with opposite clocks. A silent cut is a script now.
+  if (/withVoice\s*[:=]/.test(rootSource.replace(/\/\*[\s\S]*?\*\//g, ' '))) {
+    problems.push(
+      'Root.tsx still passes `withVoice`. A silent cut is its own script — ' +
+        'see scripts/silent.ts — not the same edit rendered with the sound off.',
+    );
+  }
+}
+
+// ---- The same budget, before anything is recorded -------------------------
+//
+// The measured check below is the truth, and it can only run in CI: the mp3s
+// are synthesised there because the sandbox proxy blocks the speech host. That
+// makes it a poor place to LEARN you have written too much — the render is
+// already forty minutes in, and the person who wrote the line is gone.
+//
+// So the length is estimated here from the text, with a model fitted to the
+// ninety real clips of this exact voice that the long-form ads measured:
+//
+//     seconds = 1.100 + 0.0339 x characters + 0.732 x punctuation marks
+//
+// R^2 0.57, median error 0.45s. Too rough to time an edit with, which is why
+// it does not, and easily good enough to catch a reel holding seventy-three
+// seconds of speech.
+//
+// The punctuation term is the one worth understanding before writing a line:
+// every comma and full stop costs about three quarters of a second of pause.
+// A list — "Medicine, Surgery, O and G, Paediatrics, ENT, Ophthal." — spends
+// 4.4s of its 7.3s saying nothing at all. Lists are what made these reels
+// overrun more than long words did.
+{
+  const { REEL_FRAMES: RF } = await import(
+    pathToFileURL(path.join(root, 'src', 'scripts', 'types.ts')).href
+  );
+  const AIR = 0.3;
+  const estimate = (vo) =>
+    1.1 + 0.0339 * vo.length + 0.732 * (vo.match(/[.!?,;:—]/g) ?? []).length;
+
+  for (const script of scripts) {
+    if (script.format !== 'reel' || script.noVoice) continue;
+    const spoken = script.shots.filter((s) => s.vo);
+    const need = spoken.reduce((n, s) => n + estimate(s.vo) + AIR, 0);
+    const budget = RF / 30;
+    if (need > budget) {
       problems.push(
-        `${script.id}-silent is in the render matrix, but that script has no ` +
-          'voice to leave out — it would be a byte-identical duplicate under a ' +
-          'second name, which nobody downloading them could tell apart.',
+        `${script.id} is written with about ${need.toFixed(1)}s of speech for a ` +
+          `${budget.toFixed(0)}s reel — roughly ${(need - budget).toFixed(1)}s too much ` +
+          `across ${spoken.length} shots. Shorten the lines, or cut shots: ` +
+          'commas and full stops cost ~0.7s each, so a list is the most ' +
+          'expensive thing a line can contain.',
       );
     }
   }
+}
 
-  // Both cuts come from one `<Composition>` pair built in a map. A hand-written
-  // pair is how the launch ads drifted, so the shape itself is pinned.
-  const silentRegistrations = (rootSource.match(/id=\{`\$\{[A-Za-z.]+\}-silent`\}/g) ?? []).length;
-  if (silentRegistrations < 2) {
-    problems.push(
-      'Root.tsx registers fewer than two families of `-silent` composition. ' +
-        'The reels and the launch ads each build their pair in a map; writing ' +
-        'one out by hand is how an ad ends up shipping in a single cut.',
-    );
+// ---- A reel's speech has to fit inside the reel ---------------------------
+//
+// THE check this file was missing, and the one the bug needed.
+//
+// A comment in `ShotTimeline` asserted that "preflight still fails if a clip
+// overruns by enough to talk over the next line". No such check existed
+// anywhere. Meanwhile reels were cut to the music grid with the recordings
+// never consulted, so measured against the real mp3s every one of the
+// twenty-one held more speech than sixty seconds — between 57 and 73 seconds
+// of it — and 235 individual shots ran past their slot. The surplus does not
+// disappear: it plays under the next shot, whose own line has already started.
+//
+// `measure-audio` now gives every shot at least its own audio plus air, so a
+// shot can never be shorter than its line. That moves the failure rather than
+// removing it: the shots then sum past REEL_FRAMES, and a reel that is not
+// sixty seconds is one Instagram trims the call to action off. So the reel has
+// to be WRITTEN to fit, and this is what says so, in seconds, per script,
+// before anything renders.
+{
+  const { REEL_FRAMES } = await import(
+    pathToFileURL(path.join(root, 'src', 'scripts', 'types.ts')).href
+  );
+  const { VOICE_TIMINGS } = await import(
+    pathToFileURL(path.join(root, 'src', 'generated', 'voiceTimings.ts')).href
+  );
+
+  for (const script of scripts) {
+    if (script.format !== 'reel' || script.noVoice) continue;
+    const lines = VOICE_TIMINGS[script.id];
+    if (!lines) continue;
+
+    const REEL_AIR_FRAMES = 9;
+    let need = 0;
+    for (const shot of script.shots) {
+      const line = lines[shot.n];
+      if (!line) continue;
+      need += Math.ceil((line.audioMs / 1000) * 30) + REEL_AIR_FRAMES;
+    }
+
+    if (need > REEL_FRAMES) {
+      const over = (need - REEL_FRAMES) / 30;
+      problems.push(
+        `${script.id} holds ${(need / 30).toFixed(1)}s of speech and air in a ` +
+          `${(REEL_FRAMES / 30).toFixed(1)}s reel — ${over.toFixed(1)}s too much. ` +
+          'Shorten the `vo` lines. Nothing can absorb this: the shots cannot ' +
+          'be squeezed without a line playing over the next one, and the reel ' +
+          'cannot run long without the platform trimming the end off.',
+      );
+    }
   }
 }
 
