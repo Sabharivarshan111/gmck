@@ -168,6 +168,24 @@ export interface AdScript {
    */
   noVoice?: boolean;
   /**
+   * The script whose recordings describe this one's timing, when it plays none
+   * of them.
+   *
+   * A silent cut is its own script now rather than a `withVoice: false` prop,
+   * and that raises a question a mix never had to answer: a silent LONG-FORM
+   * ad has no music grid to cut to, because a long-form ad is paced by its own
+   * speech and has no `bpm` at all. Left to itself it would have no clock.
+   *
+   * So it borrows its twin's measurements — the same boundaries, the same word
+   * timings, the same edit frame for frame — while playing no audio. That is
+   * what the silent cut of a long-form ad IS: the identical film with the
+   * voice muted, where the captions were always carrying every word anyway.
+   *
+   * A silent REEL does not set this and must not: it is cut to music, and the
+   * beat grid is the right clock for a film nobody hears.
+   */
+  voiceOf?: string;
+  /**
    * `longform` is the 90-second standalone ad: audio-paced shots, karaoke
    * captions, no music bed. `reel` is the 60-second vertical cut: fixed
    * frames, one bold headline per shot in the platform's safe band, and a
@@ -251,7 +269,28 @@ export const framesPerBeat = (bpm: number): number => (FPS * 60) / bpm;
  */
 export const resolveShotFrames = (script: AdScript): number[] => {
   if (!script.bpm) {
-    return script.shots.map((shot) => shot.frames ?? 0);
+    const frames = script.shots.map((shot) => shot.frames ?? 0);
+
+    /*
+     * A reel written in raw frames is pinned to REEL_FRAMES, because the hard
+     * rule is the length and not the arithmetic.
+     *
+     * This used to hand back whatever the shots added up to, so a reel was
+     * exactly sixty seconds only while somebody kept the addition right by
+     * hand across eighteen numbers — and every edit to the running order is a
+     * chance to get it wrong by ten frames. A third of a second short is a cut
+     * that lands early; a third long is the platform trimming the end, which
+     * is where the call to action is.
+     *
+     * The difference goes on the LAST shot, which is the one holding the name
+     * of the app: it is the shot that can absorb a third of a second without
+     * anybody being able to tell.
+     */
+    const total = frames.reduce((a, b) => a + b, 0);
+    if (script.format === 'reel' && total > 0 && total !== REEL_FRAMES) {
+      frames[frames.length - 1] += REEL_FRAMES - total;
+    }
+    return frames;
   }
 
   const total = REEL_FRAMES;
