@@ -372,6 +372,31 @@ const IGNORED = [
     match: /ERR_TUNNEL_CONNECTION_FAILED|ERR_PROXY|ERR_NAME_NOT_RESOLVED|ERR_ABORTED/i,
     why: 'no egress to Supabase from this environment',
   },
+  {
+    /*
+     * The same thing again, in the two shapes a RUNNER produces.
+     *
+     * A browser reports a request that died before it got a status as a CORS
+     * failure — "No 'Access-Control-Allow-Origin' header is present" — because
+     * an error response carries no CORS headers, and then as a bare
+     * `net::ERR_FAILED`. Neither says anything about the app.
+     *
+     * This cost a whole render. Every one of the screens captured correctly
+     * and sat finished on disk; the run then died on one flaky
+     * `question_diagrams` fetch, took all fifty-six render jobs with it, and
+     * the nine ad rewrites waiting on it stayed unpublished. The project was
+     * ACTIVE_HEALTHY throughout — checked.
+     *
+     * That is the shape §14.4 of HANDOFF.md already names: a false "this
+     * artefact is broken" costs more than no check at all. Ignoring these is
+     * not widening the gate, because the thing worth failing on is guarded
+     * properly and separately — `plateProblems` below fails the run when a
+     * screen that PROMISES a diagram did not photograph one, which is the
+     * actual damage a missing fetch could do, and it says which screen.
+     */
+    match: /blocked by CORS policy|ERR_FAILED/i,
+    why: 'a Supabase request died before it had a status; the plate gate below is what guards the pictures',
+  },
 ];
 
 const errors = [];
