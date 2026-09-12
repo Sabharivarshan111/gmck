@@ -18,6 +18,33 @@ on:
         description: 'Release tag for the MP4s (e.g. ads-1)'
         required: true
         default: 'ads-1'
+  # A change to the ads renders the ads.
+  #
+  # This was dispatch-only, and that is how nine rewrites — a whole new end
+  # card with the Play logo, new hooks, the statistics taken out of the muted
+  # captions — sat on `main` for a day while the published MP4s were the cut
+  # from before any of them. Run 19 started at 07:18 and the first of those
+  # commits landed at 07:27, so the render was already stale when it finished.
+  #
+  # Nothing said so, and nothing could: a rendered video is not compared to
+  # anything, so "the ads are published" and "the ads are published FROM THIS
+  # CODE" looked identical from the outside. The Android builds have not had
+  # this problem because a push to `main` cuts one; the ads now work the same
+  # way. Documentation-only edits are excluded, since they change no frame.
+  push:
+    branches: [main]
+    paths:
+      - 'remotion-ad/**'
+      - '!remotion-ad/**.md'
+      - '.github/workflows/ad-videos.yml'
+
+# A burst of ad commits should produce ONE render, of the state they ended in.
+# Nine renders of nine intermediate states is most of a day of runner time to
+# publish eight videos nobody wanted. The newest push wins; a manual dispatch
+# is cancelled by a later push for the same reason.
+concurrency:
+  group: ad-videos
+  cancel-in-progress: true
 
 permissions:
   contents: write
@@ -246,6 +273,15 @@ jobs:
             file: orbit-reel-notes.mp4
           - ad: orbit-reel-notes-silent
             file: orbit-reel-notes-silent.mp4
+          # The walkthroughs: where a feature is and what to tap first.
+          - ad: orbit-reel-how-notes
+            file: orbit-reel-how-notes.mp4
+          - ad: orbit-reel-how-notes-silent
+            file: orbit-reel-how-notes-silent.mp4
+          - ad: orbit-reel-how-attendance
+            file: orbit-reel-how-attendance.mp4
+          - ad: orbit-reel-how-attendance-silent
+            file: orbit-reel-how-attendance-silent.mp4
           - ad: orbit-reel-third-year
             file: orbit-reel-third-year.mp4
           - ad: orbit-reel-third-year-silent
@@ -395,7 +431,8 @@ jobs:
         working-directory: remotion-ad
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAG: ${{ inputs.tag }}
+          # `inputs.tag` is empty on a push, so the run number names it.
+          TAG: ${{ inputs.tag || format('ads-r{0}', github.run_number) }}
         run: |
           set -uo pipefail
           gh release create "$TAG" \
@@ -436,8 +473,8 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ inputs.tag }}
-          name: Launch ads (${{ inputs.tag }})
+          tag_name: ${{ inputs.tag || format('ads-r{0}', github.run_number) }}
+          name: Launch ads (${{ inputs.tag || format('ads-r{0}', github.run_number) }})
           body: |
             Eleven ads, nineteen files. Every one is a standalone spot, not a cut
             of one longer film, and each was uploaded by its own render job as
