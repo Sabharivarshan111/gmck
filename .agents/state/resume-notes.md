@@ -1268,3 +1268,67 @@ that card instead of the summary. The summary carries a testID now.
   revocation, Play Billing console, OAuth SHA-1, repo deletion protection.
 * **The ad videos from run 19 expire 2026-09-25.** 48 files, all green. Nothing
   in the repo holds them.
+
+## 2026-09-12 (later) — Claude Code — why nine ad rewrites were never published
+
+The owner asked why yesterday's ad rewrites never shipped. There were **two
+independent causes**, and the second only became visible after fixing the first.
+
+### Cause one: nothing re-rendered them
+
+`ad-videos.yml` was `workflow_dispatch` only. Run 19 started 07:18 UTC from
+94d46a16; the nine ad commits landed 07:27 to 09:34. The render finished at
+08:30 having drawn code that was already nine commits old.
+
+Nothing compares a rendered MP4 to the script it came from, so "the ads are
+published" and "the ads are published FROM THIS CODE" look identical from
+outside. **A push to `main` touching `remotion-ad/` now renders the ads**, the
+way a push already cuts an Android build. `concurrency` with
+`cancel-in-progress` is what makes it affordable — those nine commits arrived
+inside two hours and would otherwise have been nine renders.
+
+### Cause two: one flaky fetch killed a 56-job render
+
+Dispatched ads-6; it died in `Capture the real app screens` with every screen
+already correct on disk:
+
+    blocked by CORS policy: No 'Access-Control-Allow-Origin' header
+    Failed to load resource: net::ERR_FAILED
+
+on one `question_diagrams` request. **The Supabase project was ACTIVE_HEALTHY
+throughout** — checked through the connector, not assumed. An error response
+carries no CORS headers, so a request that dies before it gets a status is
+reported as a CORS violation and then as a bare ERR_FAILED.
+
+`shoot.mjs`'s `IGNORED` already covered this for the sandbox, where the proxy
+refuses Supabase and it surfaces as ERR_ABORTED. It had never seen the two
+shapes a runner with egress produces. Added, with the reason.
+
+**That is not widening the gate**, and the distinction is the useful part:
+`plateProblems` is a separate, better check that fails the run when a screen
+which PROMISES a diagram did not photograph one, and names the screen. Proved
+by running the harness — the runtime-error section is gone and the plate gate
+still fires. §14.4's ffprobe lesson again: a false "this artefact is broken"
+costs more than no check at all.
+
+### Two walkthrough reels
+
+`reelHowNotes` and `reelHowAttendance` — "where is it and what do I tap",
+which is the question that loses people AFTER the pitch works. Two features
+here were reported as missing while shipped and on screen (reading a note, the
+stylus); both were findability.
+
+**Preflight caught that they had no matrix entry in `ad-videos.yml`** — an ad
+that exists and never renders. Four entries added, both cuts of both.
+
+The attendance walkthrough's four screens are real captures from
+`mobile/preview/attendance-shot.mjs`, registered in `ScreenRegistry.tsx` and
+staged by `capture-screens.mjs`.
+
+### Where it stands
+
+* **Run 21 is rendering from `claude/continue-previous-nqc5d4`**, tag `ads-7`,
+  because the shoot.mjs fix is on the branch and not yet on `main`. Dispatching
+  from `main` again would fail the same way. **The branch has to merge before a
+  push-triggered render on `main` can work.**
+* Run 19's 48 videos expire 2026-09-25 and are the pre-rewrite cut.
