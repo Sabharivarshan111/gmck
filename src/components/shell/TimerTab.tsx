@@ -29,7 +29,12 @@ export default function TimerTab() {
     switchMode,
     setCustomMinutes,
   } = usePomodoroCtx();
-  const { onlineCount } = useOnlinePresence();
+  // Publish the running session, so this device counts as studying rather
+  // than as an open tab. Same definition the phone uses.
+  const { onlineCount } = useOnlinePresence({
+    isRunning,
+    secondsLeft: minutes * 60 + seconds,
+  });
 
   useEffect(() => {
     window.dispatchEvent(new CustomEvent("orbit:hide-pomodoro"));

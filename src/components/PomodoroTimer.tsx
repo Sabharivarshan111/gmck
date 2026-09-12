@@ -41,7 +41,12 @@ const PomodoroTimer = () => {
 
   const ctx = usePomodoroCtx();
   const { settings, updateSettings, todayMinutes, factoryReset } = ctx;
-  const { onlineCount } = useOnlinePresence();
+  // Publish the running session, so this device counts as studying rather
+  // than as an open tab. Same definition the phone uses.
+  const { onlineCount } = useOnlinePresence({
+    isRunning: ctx.isRunning,
+    secondsLeft: ctx.minutes * 60 + ctx.seconds,
+  });
   const { userId, local } = useProfile();
   const year = local?.year ?? 'first';
   const { events: calendarEvents } = useCalendarEvents(userId);
