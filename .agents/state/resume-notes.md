@@ -1408,3 +1408,66 @@ Does not reach the Lovable copy.
 pass. It supersedes `ads-7`, which was queued at `b088ef71`, before the
 rewrite. **Both ran from the branch, because the shoot.mjs fix is not on `main`
 yet; a render dispatched from `main` still fails.**
+
+## 2026-09-12 (fourth) — Claude Code — four features, and two failures I misdiagnosed
+
+Built the owner's four open asks, then fixed what building them broke.
+
+### The features
+
+* **Exam pill on the Timer.** The strip it replaced only rendered once a date
+  was set, and the only place to set one is a card in another tab — so the
+  reader who had never set an exam saw nothing and could not discover the
+  feature. The pill is there either way and IS the control. It opens
+  `ExamCountdownCard`, the same component My Progress uses; two date editors is
+  two chances to write a different shape into a store shared with the web app.
+* **Exams, posting exams and seminars** typed into the Attendance tab, with
+  dates. They are not attendance items — no tally, so no Present/Absent — so
+  they are their own section. `reminderSync` picks the soonest of these and the
+  synced exam and puts it through the digest's EXISTING exam slot, so **no
+  Kotlin had to change**: the receiver already renders "three days to X".
+* **PDF annotation.** Android renders a page, the marks sit beside it as
+  geometry, the bytes are never touched. `DrawCanvas` already draws on
+  photographs, so pen, highlighter, erasers and colours came free.
+  `android.graphics.pdf.PdfRenderer` is in the platform — no dependency.
+  Typed text, bold and image stamps are NOT in it.
+* **The YouTube capture**, which unblocked two shots of the notes walkthrough.
+  Captured in CI, not committed, because the still comes from youtube-nocookie
+  and the sandboxes cannot reach it — a committed copy is a real card with an
+  empty grey rectangle in it.
+
+Plus, asked later: the **reminder lead** (`examLeadDays`, 1-30, was a hard
+seven inside the receiver) and **five walkthrough steps** for all of the above.
+
+### Three things the checks caught that I would not have
+
+* `check:kotlin` rejected `page: Int`. Codegen maps every TS `number` to
+  `Double`. That is a Gradle error six minutes into a release build.
+* `check:keyboard` caught the new TextInput immediately. Declared against the
+  ancestor that lifts it rather than silenced.
+* `check:smoke` caught the walkthrough dead-ending at step 29 of 30.
+
+### Two misdiagnoses worth remembering
+
+**I told the owner the smoke attendance failure was pre-existing. It was not.**
+I ruled out `AttendanceEvents` by deleting it and watching the failure persist,
+and concluded "not mine". The real cause was three lines further down: the step
+filled `Length of the posting in days`, an input the calendar replaced that
+morning. Every actionability check on the input ABOVE it passed, so it read as
+a mysterious timeout. **Deleting one suspect does not clear the change.**
+
+**A new capture hardcoded `/opt/pw-browsers`** — the sandbox's Chromium path.
+A runner has no such directory, so it died with ENOENT after every screenshot
+was already taken, and took a fifty-six-job render with it. `shoot.mjs` had
+always had the full fallback chain ending in `undefined`, which is the branch a
+runner takes. Now `preview/find-chromium.mjs`, used by all four harnesses.
+
+### Where it stands
+
+`ads-14`, `android-release` and `android-internal` dispatched at `94e17a8a`.
+Two earlier Android runs were dispatched at `cd751e87` and would have shipped
+WITHOUT the reminder slider and the tour updates — re-dispatched rather than
+left. Play Console strings for **versionCode 18** were given in chat; the
+`app_releases` row for 18 carries the seven new lines.
+
+**versionCode stays 18.** Still the next number Play has not received.
