@@ -15,6 +15,7 @@ import {
   X,
 } from 'lucide-react-native';
 import { Text } from '@/components/Text';
+import { Reveal } from '@/components/Reveal';
 import { Touchable } from '@/components/Touchable';
 import { GlassSurface } from '@/components/GlassSurface';
 import { Slider } from '@/components/Slider';
@@ -160,77 +161,18 @@ function VolumeBars({ playing }: { playing: boolean }) {
  * Nothing scales from 0 (house rule), and the whole thing is skipped under
  * reduced motion, where the card simply is or is not there.
  */
+/**
+ * The player, growing in under the button that opened it.
+ *
+ * The grow-and-enter logic moved to `Reveal` when the exam pill needed the
+ * identical behaviour. `check:music` still drives this one and asserts the
+ * card grew rather than appeared, which is what guards both callers.
+ */
 export function MusicPlayerReveal({ open, onClose }: { open: boolean; onClose: () => void }) {
-  const reduceMotion = useReducedMotion();
-  const [mounted, setMounted] = useState(open);
-  const [measured, setMeasured] = useState(0);
-  const grow = useRef(new Animated.Value(open ? 1 : 0)).current;
-  const enter = useRef(new Animated.Value(open ? 1 : 0)).current;
-
-  useEffect(() => {
-    if (open) {
-      setMounted(true);
-    }
-    if (reduceMotion) {
-      grow.setValue(open ? 1 : 0);
-      enter.setValue(open ? 1 : 0);
-      if (!open) {
-        setMounted(false);
-      }
-      return;
-    }
-    // Opening waits for the measurement; closing never does, because the card
-    // on screen has already been measured.
-    if (open && measured === 0) {
-      return;
-    }
-    const animation = Animated.parallel([
-      Animated.timing(grow, {
-        toValue: open ? 1 : 0,
-        duration: open ? DURATION.slow : DURATION.base,
-        easing: EASE.drawer,
-        useNativeDriver: false,
-      }),
-      Animated.timing(enter, {
-        toValue: open ? 1 : 0,
-        duration: open ? DURATION.slow : DURATION.fast,
-        easing: EASE.out,
-        useNativeDriver: true,
-      }),
-    ]);
-    animation.start(({ finished }) => {
-      if (finished && !open) {
-        setMounted(false);
-      }
-    });
-    return () => animation.stop();
-  }, [enter, grow, measured, open, reduceMotion]);
-
-  if (!mounted) {
-    return null;
-  }
-
   return (
-    <Animated.View
-      style={[
-        styles.reveal,
-        measured > 0 ? { height: grow.interpolate({ inputRange: [0, 1], outputRange: [0, measured] }) } : null,
-      ]}>
-      <Animated.View
-        onLayout={event => setMeasured(event.nativeEvent.layout.height)}
-        style={[
-          styles.revealBody,
-          {
-            opacity: enter,
-            transform: [
-              { translateY: enter.interpolate({ inputRange: [0, 1], outputRange: [-14, 0] }) },
-              { scale: enter.interpolate({ inputRange: [0, 1], outputRange: [0.94, 1] }) },
-            ],
-          },
-        ]}>
-        <MusicPlayer onClose={onClose} />
-      </Animated.View>
-    </Animated.View>
+    <Reveal open={open}>
+      <MusicPlayer onClose={onClose} />
+    </Reveal>
   );
 }
 

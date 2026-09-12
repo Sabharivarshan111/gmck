@@ -11,11 +11,10 @@ import { Text } from '@/components/Text';
 import { KeyboardSafe } from '@/components/KeyboardSafe';
 import { Touchable } from '@/components/Touchable';
 import { PomodoroSettingsSheet } from '@/components/PomodoroSettingsSheet';
-import { useExam } from '@/hooks/useExam';
-import { daysUntil } from '@/lib/exam';
+import { ExamPill } from '@/components/ExamPill';
 import { ProgressRing } from '@/components/ProgressRing';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { CalendarClock, Check, Music, Pencil, Play, Pause, RotateCcw, SlidersHorizontal, Sprout, Timer as TimerIcon, Users, X } from 'lucide-react-native';
+import { Check, Music, Pencil, Play, Pause, RotateCcw, SlidersHorizontal, Sprout, Timer as TimerIcon, Users, X } from 'lucide-react-native';
 import { typeScale } from '@/theme/typography';
 import { useTheme, withAlpha } from '@/theme';
 import { SPRING, springConfig, useReducedMotion } from '@/theme/motion';
@@ -43,15 +42,6 @@ export default function TimerScreen() {
   const insets = useSafeAreaInsets();
   const timer = usePomodoro();
   const { onlineCount } = useOnlinePresence(timer.isRunning, timer.remaining);
-  /**
-   * The exam, if one is set. Read here rather than passed down because the
-   * Timer and My Progress are different tabs — there is no common parent to
-   * hold it, which is why the store has its own listener set.
-   */
-  const exam = useExam();
-  // Derived at render: the count changes at midnight, and a stored one would
-  // be a day stale on a screen left open overnight.
-  const examDays = exam ? daysUntil(exam) : null;
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [musicOpen, setMusicOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -425,29 +415,15 @@ export default function TimerScreen() {
       {/* Above the stats, below the controls: the reason you are running a
           timer at all belongs next to the timer, and it is the one number here
           that is not about the session. */}
-      {exam && examDays !== null && examDays >= 0 ? (
-        <View
-          style={[
-            styles.examStrip,
-            {
-              backgroundColor: withAlpha(
-                examDays <= 7 ? colors.danger : colors.warning,
-                0.12,
-              ),
-              borderColor: withAlpha(examDays <= 7 ? colors.danger : colors.warning, 0.4),
-            },
-          ]}>
-          <CalendarClock
-            size={15}
-            color={examDays <= 7 ? colors.danger : colors.warning}
-          />
-          <Text style={[styles.examText, { color: colors.text }]} numberOfLines={1}>
-            {examDays === 0
-              ? `${exam.name} is today`
-              : `${examDays} ${examDays === 1 ? 'day' : 'days'} to ${exam.name}`}
-          </Text>
-        </View>
-      ) : null}
+      {/*
+        The exam, as a pill that opens.
+
+        This was a static strip that only existed once a date had been set, and
+        the only place to set one is a card in another tab — so the reader who
+        had never set one saw nothing and had no way to learn the feature was
+        there. The pill is present either way and is itself the control.
+      */}
+      <ExamPill />
 
       {/*
         Today's plot.
@@ -814,21 +790,6 @@ const styles = StyleSheet.create({
     height: 12,
     width: 12,
     borderRadius: 6,
-  },
-  examStrip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    borderRadius: 999,
-    borderWidth: StyleSheet.hairlineWidth,
-    paddingHorizontal: 16,
-    paddingVertical: 9,
-    marginBottom: 14,
-  },
-  examText: {
-    fontSize: 13,
-    fontWeight: '600',
   },
   statsRow: {
     flexDirection: 'row',
