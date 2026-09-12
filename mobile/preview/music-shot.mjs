@@ -47,6 +47,27 @@ const page = await browser.newPage({
 });
 await fs.mkdir(outDir, { recursive: true });
 
+/*
+ * The app boots into the year gate with no stored profile, and that gate is a
+ * full-screen panel: every control this script reaches for is behind it, so
+ * Playwright reported "element is visible, enabled and stable" and then timed
+ * out because an onboarding heading was intercepting the pointer.
+ *
+ * That was read once as the stability wait never settling against the app's
+ * continuous animations, with `force: true` as the fix. It is the opposite of
+ * a fix — forcing the click would drive straight through the gate and
+ * photograph the onboarding panel while every assertion passed. `shoot.mjs`
+ * has seeded this since it was written, for exactly this reason.
+ */
+await page.addInitScript(() => {
+  try {
+    window.localStorage.setItem(
+      'orbit-profile-v1',
+      JSON.stringify({ display_name: 'Orbit', year: 'second' }),
+    );
+  } catch {}
+});
+
 /** '' for the stored default, or a preset key to seed before the app boots. */
 const preset = process.env.MUSIC_SHOT_THEME ?? '';
 const tag = preset ? `-${preset}` : '';
