@@ -53,6 +53,6 @@ export const reelProgress: AdScript = {
     { n: 11, frames: 128, screen: 'treegallery', camera: 'trackRight', text: 'how many trees you’ve unlocked', silentText: 'Your unlocked trees', vo: 'And how many trees you’ve unlocked.', accent: '#22D3A6' },
     { n: 12, frames: 128, screen: 'settingsNotifications', mascot: 'guide', camera: 'macro', text: 'an evening reminder', silentText: 'Evening reminder', vo: 'There’s also an evening reminder when something needs your attention.', accent: '#7C5CFF' },
     { n: 13, frames: 128, screen: 'home', camera: 'pull', text: 'proof that you actually studied', silentText: 'Your month, in one place', vo: 'Basically, proof that you actually studied this month.', accent: '#F5B301' },
-    { n: 14, frames: 128, screen: 'home', camera: 'push', text: 'Orbit MBBS, free on Google Play', silentText: 'Orbit MBBS — on Google Play', vo: 'Orbit MBBS, free on Google Play.', accent: '#7C5CFF' },
+    { n: 14, frames: 128, screen: 'home', camera: 'push', text: 'Download Orbit', silentText: 'Download Orbit on Play Store', vo: 'Download Orbit on the Play Store.', accent: '#7C5CFF' },
   ],
 };

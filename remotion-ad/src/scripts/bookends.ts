@@ -18,14 +18,20 @@ import type { AdScript, Shot } from './types.ts';
  * each other. So it is applied in one place, to the one list that has them
  * all, and `check:reel-layout` asserts it held.
  *
- * ## What it costs, and why the hook still comes second
+ * ## There is no hook, and that is the decision
  *
- * The opening shot of a reel is the most valuable one: a viewer decides in
- * about 1.7 seconds. "Welcome to Orbit" is a greeting rather than a hook, so
- * putting it first does cost something real, and the mitigation is to keep it
- * SHORT — under a second of speech — and leave the script's own hook
- * immediately behind it, untouched, as shot two. It reads as a title card, not
- * as the first argument.
+ * An earlier version of this file argued that "Welcome to Orbit" costs
+ * something, because the opening shot is where a viewer decides, and that the
+ * script's own hook should sit immediately behind it as shot two.
+ *
+ * That is not what the app's owner wants and the note was explicit: **every
+ * video starts with "Welcome to Orbit"**, and the scripts do not open on a
+ * pain line trying to stop a thumb. Shot two is simply where the script
+ * begins. Nothing in this file should be read as protecting a hook, because
+ * there is not one to protect.
+ *
+ * It stays SHORT — under a second of speech — because it is a title card and
+ * a title card that outstays a second is a second of the film gone.
  *
  * The closing line replaces whatever sign-off the script had, because those
  * were already eight different phrasings of the same sentence ("Orbit MBBS.
@@ -56,7 +62,7 @@ const welcomeShot = (script: AdScript): Shot => ({
   // The mark, not the mascot. Every ad opens on the same frame.
   openCard: true,
   /*
-     Short — a title card that outstays a second is a second of the hook gone.
+     Short — a title card that outstays a second is a second of the film gone.
 
      Written in whichever dialect the script it is joining uses. A shot must
      never carry both: `beats` against a `bpm` and a raw `frames` are two

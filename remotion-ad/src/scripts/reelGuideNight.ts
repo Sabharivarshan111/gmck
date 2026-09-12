@@ -62,6 +62,6 @@ export const reelGuideNight: AdScript = {
     { n: 11, frames: 128, screen: 'music', camera: 'macro', text: 'Use your own music', silentText: 'Your own music', vo: 'Use your own music. Nothing needs to be streamed.', accent: '#22D3A6' },
     { n: 12, frames: 128, screen: 'progress', camera: 'pull', text: 'stays on your phone', silentText: 'No account needed', vo: 'And your progress stays on your phone.', accent: '#F5B301' },
     { n: 13, frames: 128, screen: 'progressBottom', camera: 'trackRight', text: 'the days you actually studied', silentText: 'Days you studied', vo: 'You can see the days you actually studied.', accent: '#F5B301' },
-    { n: 14, frames: 128, screen: null, mascot: 'hero', camera: 'settle', text: 'Free on Google Play', silentText: 'Orbit MBBS, free on Google Play', vo: 'I am Orbit. Free on Google Play.', accent: '#7C5CFF' },
+    { n: 14, frames: 128, screen: null, mascot: 'hero', camera: 'settle', text: 'Download Orbit', silentText: 'Download Orbit on Play Store', vo: 'Download Orbit on the Play Store.', accent: '#7C5CFF' },
   ],
 };

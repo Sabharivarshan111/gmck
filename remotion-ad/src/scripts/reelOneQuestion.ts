@@ -52,6 +52,6 @@ export const reelOneQuestion: AdScript = {
     { n: 11, beats: 6, screen: 'timerBottom', camera: 'macro', kicker: 'A tree grows', text: 'watch the tree grow', accent: '#22D3A6' , silentText: 'Grow while you study', vo: 'And watch the tree grow while you work.' },
     { n: 12, beats: 4, screen: 'music', camera: 'macro', kicker: 'Your own music', text: 'your own music', accent: '#22D3A6' , silentText: 'Your music', vo: 'Play your own music in the background.' },
     { n: 13, beats: 6, screen: 'progress', camera: 'pull', kicker: 'My progress', text: 'see what you actually did', accent: '#F5B301' , silentText: 'See your progress', vo: 'Then look back and see what you actually did.' },
-    { n: 14, beats: 6, screen: 'outroCard', camera: 'settle', kicker: 'Free on Google Play', text: 'Orbit MBBS', accent: '#7C5CFF' , silentText: 'Orbit MBBS', vo: 'Orbit MBBS. Free on Google Play.' },
+    { n: 14, beats: 6, screen: 'outroCard', camera: 'settle', text: 'Download Orbit', accent: '#7C5CFF' , silentText: 'Download Orbit on Play Store', vo: 'Download Orbit on the Play Store.' },
   ],
 };

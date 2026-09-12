@@ -49,6 +49,6 @@ export const reelDrawIt: AdScript = {
     { n: 11, frames: 128, screen: 'flashcards', camera: 'orbit', text: 'keep testing yourself', silentText: 'Drill it', vo: 'Make it a card and keep testing yourself.', accent: '#4CC2FF' },
     { n: 12, frames: 128, screen: 'ankiStudy', camera: 'push', text: 'It comes back later', silentText: 'Comes back again', vo: 'It comes back later.', accent: '#4CC2FF' },
     { n: 13, frames: 128, screen: 'treegallery', camera: 'trackLeft', text: 'you unlock more trees', silentText: 'Twelve species', vo: 'Keep focusing and you unlock more trees.', accent: '#22D3A6' },
-    { n: 14, frames: 128, screen: 'outroCard', camera: 'settle', text: 'Free on Google Play', silentText: 'Orbit MBBS, free on Google Play', vo: 'Orbit MBBS. Free on Google Play.', accent: '#7C5CFF' },
+    { n: 14, frames: 128, screen: 'outroCard', camera: 'settle', text: 'Download Orbit', silentText: 'Download Orbit on Play Store', vo: 'Download Orbit on the Play Store.', accent: '#7C5CFF' },
   ],
 };

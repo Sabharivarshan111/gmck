@@ -58,6 +58,6 @@ export const reelAttendance: AdScript = {
     { n: 11, frames: 130, screen: 'attendancePostings', camera: 'macro', text: 'see what’s left of the rotation', silentText: 'See what’s left', vo: 'You can actually see what’s left of the rotation.', focus: 0.35, accent: '#FF4D8D' },
     { n: 12, frames: 130, screen: 'attendancePostings', camera: 'glideDown', text: 'only the days you’ve told it to count', silentText: 'Only counted days', vo: 'And only the days you’ve told it to count are included.', focus: 0.5, accent: '#FF4D8D' },
     { n: 13, frames: 130, screen: 'progressBottom', mascot: 'guide', camera: 'settle', text: 'It stays on your phone', silentText: 'Stays on your phone', vo: 'It stays on your phone.', accent: '#22D3A6' },
-    { n: 14, frames: 125, screen: 'home', camera: 'push', text: 'Know before you skip', silentText: 'Orbit MBBS — on Google Play', vo: 'Know before you skip. Orbit MBBS on Google Play.', accent: '#7C5CFF' },
+    { n: 14, frames: 125, screen: 'home', camera: 'push', text: 'Download Orbit', silentText: 'Download Orbit on Play Store', vo: 'Download Orbit on the Play Store.', accent: '#7C5CFF' },
   ],
 };

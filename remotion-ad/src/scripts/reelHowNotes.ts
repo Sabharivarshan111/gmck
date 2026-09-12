@@ -52,6 +52,6 @@ export const reelHowNotes: AdScript = {
     { n: 11, frames: 128, screen: 'notesBottom', camera: 'push', text: 'dies if you move it', silentText: 'A link can break', vo: 'A link costs nothing but dies if you move it.', accent: '#FF4D8D' },
     { n: 12, frames: 128, screen: 'notesBottom', camera: 'glideDown', text: 'Orbit offers to copy it', silentText: 'A broken link is one tap', vo: 'If a link breaks, Orbit offers to copy it.', accent: '#22D3A6' },
     { n: 13, frames: 128, screen: 'userNotes', mascot: 'guide', camera: 'macro', text: 'None of it leaves your phone', silentText: 'No limit. Nothing leaves.', vo: 'None of it leaves your phone. No limit.', accent: '#22D3A6' },
-    { n: 14, frames: 128, screen: 'home', camera: 'push', text: 'Orbit MBBS, free on Google Play', silentText: 'Orbit MBBS — on Google Play', vo: 'Orbit MBBS, free on Google Play.', accent: '#7C5CFF' },
+    { n: 14, frames: 128, screen: 'home', camera: 'push', text: 'Download Orbit', silentText: 'Download Orbit on Play Store', vo: 'Download Orbit on the Play Store.', accent: '#7C5CFF' },
   ],
 };

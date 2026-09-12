@@ -54,6 +54,6 @@ export const reelNotes: AdScript = {
     { n: 11, frames: 128, screen: 'userNotes', mascot: 'guide', camera: 'push', text: 'Your notes stay on your phone', silentText: 'Stays on your phone', vo: 'Your notes stay on your phone.', accent: '#22D3A6' },
     { n: 12, frames: 128, screen: 'userNotes', camera: 'macro', text: 'No account. No upload', silentText: 'No account. No upload.', vo: 'No account. No upload.', accent: '#22D3A6' },
     { n: 13, frames: 128, screen: 'home', camera: 'pull', text: 'alongside the question bank', silentText: 'Notes and question bank', vo: 'And the notes sit alongside the question bank.', accent: '#4CC2FF' },
-    { n: 14, frames: 128, screen: 'home', camera: 'push', text: 'Orbit MBBS, free on Google Play', silentText: 'Orbit MBBS — on Google Play', vo: 'Orbit MBBS, free on Google Play.', accent: '#7C5CFF' },
+    { n: 14, frames: 128, screen: 'home', camera: 'push', text: 'Download Orbit', silentText: 'Download Orbit on Play Store', vo: 'Download Orbit on the Play Store.', accent: '#7C5CFF' },
   ],
 };

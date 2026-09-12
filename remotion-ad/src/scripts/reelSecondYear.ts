@@ -57,6 +57,6 @@ export const reelSecondYear: AdScript = {
     { n: 11, frames: 128, screen: 'attendance', camera: 'push', text: 'attendance in the same app', silentText: 'Attendance too', vo: 'And keep your attendance in the same app.', focus: 0.4, accent: '#22D3A6' },
     { n: 12, frames: 128, screen: 'timer', mascot: 'guide', camera: 'push', text: 'let the tree grow', silentText: 'Focus. Grow.', vo: 'Then focus for twenty-five minutes and let the tree grow.', accent: '#22D3A6' },
     { n: 13, frames: 128, screen: 'home', camera: 'pull', text: 'all in one place', silentText: 'One app for second year', vo: 'Second year, all in one place.', accent: '#FF4D8D' },
-    { n: 14, frames: 128, screen: 'home', camera: 'push', text: 'Orbit MBBS, free on Google Play', silentText: 'Orbit MBBS — on Google Play', vo: 'Orbit MBBS, free on Google Play.', accent: '#7C5CFF' },
+    { n: 14, frames: 128, screen: 'home', camera: 'push', text: 'Download Orbit', silentText: 'Download Orbit on Play Store', vo: 'Download Orbit on the Play Store.', accent: '#7C5CFF' },
   ],
 };

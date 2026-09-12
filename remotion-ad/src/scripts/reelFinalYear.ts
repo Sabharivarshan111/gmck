@@ -56,6 +56,6 @@ export const reelFinalYear: AdScript = {
     { n: 11, frames: 128, screen: 'userNotesEdit', camera: 'glideDown', text: 'your case notes', silentText: 'Write your case notes', vo: 'Write your case notes inside the app too.', accent: '#FF4D8D' },
     { n: 12, frames: 128, screen: 'userNotesMedia', mascot: 'guide', camera: 'macro', text: 'Attach photos, recordings or PDFs', silentText: 'Photos. Recordings. PDFs.', vo: 'Attach photos, recordings or PDFs.', accent: '#FF4D8D' },
     { n: 13, frames: 128, screen: 'userNotes', camera: 'push', text: 'keep your notes on the phone', silentText: 'Stays on your phone', vo: 'And keep your notes on the phone.', accent: '#22D3A6' },
-    { n: 14, frames: 128, screen: 'home', camera: 'push', text: 'Orbit MBBS, free on Google Play', silentText: 'Orbit MBBS — on Google Play', vo: 'Orbit MBBS, free on Google Play.', accent: '#7C5CFF' },
+    { n: 14, frames: 128, screen: 'home', camera: 'push', text: 'Download Orbit', silentText: 'Download Orbit on Play Store', vo: 'Download Orbit on the Play Store.', accent: '#7C5CFF' },
   ],
 };

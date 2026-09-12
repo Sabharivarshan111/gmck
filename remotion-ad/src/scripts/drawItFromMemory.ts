@@ -49,6 +49,6 @@ export const drawItFromMemory: AdScript = {
     { n: 27, screen: 'progress', camera: 'pull', text: 'there to look back on', vo: 'And your study for the year is there to look back on.', accent: '#F5B301' },
     { n: 28, screen: 'themeCustomizer', camera: 'orbit', text: 'make the app look like yours', vo: 'You can even make the app look like yours.', accent: '#4CC2FF' },
     { n: 29, screen: 'userNotesEdit', camera: 'pull', text: 'This time, you actually draw it', vo: 'Same question. Four minutes. This time, you actually draw it.', accent: '#FF4D8D' },
-    { n: 30, screen: 'outroCard', camera: 'settle', text: 'Orbit MBBS', vo: 'That is Orbit MBBS. Free on Google Play.', accent: '#7C5CFF' },
+    { n: 30, screen: 'outroCard', camera: 'settle', text: 'Download Orbit', vo: 'Download Orbit on the Play Store.', accent: '#7C5CFF' },
   ],
 };

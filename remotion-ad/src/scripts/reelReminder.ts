@@ -53,6 +53,6 @@ export const reelReminder: AdScript = {
     { n: 11, frames: 128, screen: 'home', camera: 'pull', text: 'it should stay quiet', silentText: 'Most evenings: silent', vo: 'Most evenings, it should stay quiet.', accent: '#7C5CFF' },
     { n: 12, frames: 128, screen: 'settings', camera: 'glideDown', text: 'You turn it on when you want it', silentText: 'Off by default', vo: 'It starts off. You turn it on when you want it.', accent: '#22D3A6' },
     { n: 13, frames: 128, screen: 'progress', camera: 'push', text: 'I’d actually leave on', silentText: 'A reminder worth keeping', vo: 'That’s the kind of reminder I’d actually leave on.', accent: '#22D3A6' },
-    { n: 14, frames: 128, screen: 'home', camera: 'push', text: 'Orbit MBBS, free on Google Play', silentText: 'Orbit MBBS — on Google Play', vo: 'Orbit MBBS, free on Google Play.', accent: '#7C5CFF' },
+    { n: 14, frames: 128, screen: 'home', camera: 'push', text: 'Download Orbit', silentText: 'Download Orbit on Play Store', vo: 'Download Orbit on the Play Store.', accent: '#7C5CFF' },
   ],
 };

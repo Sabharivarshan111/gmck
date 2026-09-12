@@ -51,6 +51,6 @@ export const thePattern: AdScript = {
     { n: 27, screen: 'themeCustomizer', camera: 'push', text: 'or make your own', vo: 'Pick one of the four themes, or make your own.', accent: '#4CC2FF' },
     { n: 28, screen: 'wallpaperCustomizer', camera: 'macro', text: 'set a wallpaper', vo: 'You can even set a wallpaper and change how the whole thing looks.', focus: 0.45, accent: '#4CC2FF' },
     { n: 29, screen: 'home', camera: 'hero', text: 'even when you’re offline', vo: 'And the question bank is there even when you’re offline.' },
-    { n: 30, screen: 'outroCard', camera: 'settle', text: 'Orbit MBBS', vo: 'Stop studying blind. Orbit MBBS, free on Google Play.', accent: '#7C5CFF' },
+    { n: 30, screen: 'outroCard', camera: 'settle', text: 'Download Orbit', vo: 'Download Orbit on the Play Store.', accent: '#7C5CFF' },
   ],
 };

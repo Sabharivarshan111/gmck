@@ -81,6 +81,6 @@ export const reelFunctions: AdScript = {
     { n: 11, beats: 6, screen: 'timer', camera: 'push', kicker: 'Focus timer', text: 'plant a tree', accent: '#22D3A6' , silentText: 'Focus into a tree', vo: 'Start the focus timer and plant a tree.' },
     { n: 12, beats: 4, screen: 'treegallery', camera: 'trackRight', kicker: 'Twelve species', text: 'unlock more species', accent: '#22D3A6' , silentText: 'Twelve species', vo: 'Keep studying and unlock more species.' },
     { n: 13, beats: 4, screen: 'glassHome', camera: 'orbit', kicker: 'Themes', text: 'change the theme', accent: '#4CC2FF' , silentText: 'Make it yours', vo: 'And change the theme if you get bored of looking at it.' },
-    { n: 14, beats: 4, screen: 'outroCard', camera: 'settle', kicker: 'Free on Google Play', text: 'Orbit MBBS', accent: '#7C5CFF' , silentText: 'Orbit MBBS', vo: 'Orbit MBBS. Free on Google Play.' },
+    { n: 14, beats: 4, screen: 'outroCard', camera: 'settle', text: 'Download Orbit', accent: '#7C5CFF' , silentText: 'Download Orbit on Play Store', vo: 'Download Orbit on the Play Store.' },
   ],
 };

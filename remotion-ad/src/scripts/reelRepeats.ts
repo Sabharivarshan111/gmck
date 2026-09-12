@@ -52,6 +52,6 @@ export const reelRepeats: AdScript = {
     { n: 11, frames: 128, screen: 'flashcards', camera: 'orbit', text: 'Turn it into flashcards', silentText: 'Chapter into flashcards', vo: 'Finished the chapter? Turn it into flashcards.', accent: '#4CC2FF' },
     { n: 12, frames: 128, screen: 'apkgHub', camera: 'push', text: 'Import the deck', silentText: 'Import your Anki deck', vo: 'Already have Anki? Import the deck.', accent: '#4CC2FF' },
     { n: 13, frames: 128, screen: 'timer', camera: 'push', text: 'the tree grows', silentText: 'Focus. Grow.', vo: 'And when you focus, the tree grows.', accent: '#22D3A6' },
-    { n: 14, frames: 128, screen: 'outroCard', camera: 'settle', text: 'Free on Google Play', silentText: 'Orbit MBBS, free on Google Play', vo: 'Orbit MBBS. Free on Google Play.', accent: '#7C5CFF' },
+    { n: 14, frames: 128, screen: 'outroCard', camera: 'settle', text: 'Download Orbit', silentText: 'Download Orbit on Play Store', vo: 'Download Orbit on the Play Store.', accent: '#7C5CFF' },
   ],
 };

@@ -51,6 +51,6 @@ export const reelSetup: AdScript = {
     { n: 11, frames: 128, screen: 'homeEditTaller', camera: 'macro', text: 'Hold a block, move it, resize it', silentText: 'Move or resize blocks', vo: 'Hold a block, move it, resize it.', accent: '#FF4D8D' },
     { n: 12, frames: 128, screen: 'themeCustomizer', camera: 'trackRight', text: 'a theme you can actually use at night', silentText: 'A theme that works at night', vo: 'And pick a theme you can actually use at night.', accent: '#FF4D8D' },
     { n: 13, frames: 128, screen: 'home', camera: 'push', text: 'Then get to studying', silentText: 'Two minutes. Then work.', vo: 'Two minutes of setup. Then get to studying.', accent: '#22D3A6' },
-    { n: 14, frames: 128, screen: 'home', camera: 'push', text: 'Orbit MBBS, free on Google Play', silentText: 'Orbit MBBS — on Google Play', vo: 'Orbit MBBS, free on Google Play.', accent: '#7C5CFF' },
+    { n: 14, frames: 128, screen: 'home', camera: 'push', text: 'Download Orbit', silentText: 'Download Orbit on Play Store', vo: 'Download Orbit on the Play Store.', accent: '#7C5CFF' },
   ],
 };

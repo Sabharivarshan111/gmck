@@ -50,6 +50,6 @@ export const adAskIt: AdScript = {
     { n: 11, frames: 124, screen: 'chatdemo', kicker: 'Properly', text: 'then you can test yourself', silentText: 'Explain. Then test.', vo: 'It explains it, then you can test yourself.', accent: '#7C5CFF' },
     { n: 12, frames: 124, screen: 'flashcards', kicker: 'Keep it', text: 'Turn the chapter into cards', silentText: 'Make flashcards', vo: 'Turn the chapter into cards when you’re done.', accent: '#4CC2FF' },
     { n: 13, frames: 124, screen: 'ankiStudy', kicker: 'Spacing', text: 'They come back later', silentText: 'Spaced revision', vo: 'They come back later for revision.', accent: '#4CC2FF' },
-    { n: 14, frames: 124, screen: 'home', kicker: 'No sign up', text: 'No account to make', silentText: 'No account to make', vo: 'There is no account to make and nothing to pay.', accent: '#22D3A6' },
+    { n: 14, frames: 124, screen: 'home', kicker: 'No sign up', text: 'Download Orbit', silentText: 'Download Orbit on Play Store', vo: 'Download Orbit on the Play Store.', accent: '#22D3A6' },
   ],
 };

@@ -49,6 +49,6 @@ export const twoAM: AdScript = {
     { n: 27, screen: 'home', camera: 'hero', text: 'still works offline', vo: 'Even if the hostel Wi-Fi disappears, the question bank still works offline.' },
     { n: 28, screen: 'themeCustomizer', camera: 'orbit', text: 'look the way you want', vo: 'And you can make the app look the way you want.', accent: '#4CC2FF' },
     { n: 29, screen: 'homeLight', camera: 'pull', text: 'you know what you’re walking in with', vo: 'It’s eight in the morning. At least now you know what you’re walking in with.' },
-    { n: 30, screen: 'outroCard', camera: 'settle', text: 'Orbit MBBS', vo: 'That is Orbit MBBS. Free on Google Play.', accent: '#7C5CFF' },
+    { n: 30, screen: 'outroCard', camera: 'settle', text: 'Download Orbit', vo: 'Download Orbit on the Play Store.', accent: '#7C5CFF' },
   ],
 };

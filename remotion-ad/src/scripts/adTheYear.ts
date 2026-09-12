@@ -51,6 +51,6 @@ export const adTheYear: AdScript = {
     { n: 11, frames: 124, screen: 'attendance', focus: 0.42, kicker: 'Final year', text: 'what you can still miss', silentText: 'See what you can still miss', vo: 'And attendance shows what you can still miss.', accent: '#22D3A6' },
     { n: 12, frames: 124, screen: 'askai', kicker: 'Every year', text: 'you can ask the AI', silentText: 'Ask AI', vo: 'Whatever year you’re in, you can ask the AI.', accent: '#7C5CFF' },
     { n: 13, frames: 124, screen: 'progress', kicker: 'Every year', text: 'without creating another account', silentText: 'No account needed', vo: 'And keep your streak without creating another account.', accent: '#F5B301' },
-    { n: 14, frames: 124, screen: 'glassHome', kicker: 'Orbit MBBS', text: 'The year you are in', silentText: 'The year you are in', vo: 'Whichever year you are in, it starts today.', accent: '#7C5CFF' },
+    { n: 14, frames: 124, screen: 'glassHome', kicker: 'Orbit MBBS', text: 'Download Orbit', silentText: 'Download Orbit on Play Store', vo: 'Download Orbit on the Play Store.', accent: '#7C5CFF' },
   ],
 };

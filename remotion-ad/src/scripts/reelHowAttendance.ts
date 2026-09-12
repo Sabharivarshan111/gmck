@@ -53,6 +53,6 @@ export const reelHowAttendance: AdScript = {
     { n: 11, frames: 128, screen: 'attendanceMarked', camera: 'glideDown', text: 'Mark any other day off yourself', silentText: 'Mark your own days off', vo: 'Mark any other day off yourself.', accent: '#F5B301' },
     { n: 12, frames: 128, screen: 'attendanceMarked', camera: 'macro', text: 'comes off the working days', silentText: 'They come off the count', vo: 'Every one of them comes off the working days.', accent: '#4CC2FF' },
     { n: 13, frames: 128, screen: 'attendanceCritical', mascot: 'guide', camera: 'push', text: 'how many you may miss', silentText: 'How many you can miss', vo: 'Now it can tell you how many you may miss.', accent: '#22D3A6' },
-    { n: 14, frames: 128, screen: 'home', camera: 'push', text: 'Orbit MBBS, free on Google Play', silentText: 'Orbit MBBS — on Google Play', vo: 'Orbit MBBS, free on Google Play.', accent: '#7C5CFF' },
+    { n: 14, frames: 128, screen: 'home', camera: 'push', text: 'Download Orbit', silentText: 'Download Orbit on Play Store', vo: 'Download Orbit on the Play Store.', accent: '#7C5CFF' },
   ],
 };

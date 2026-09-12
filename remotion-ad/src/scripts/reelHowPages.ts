@@ -52,6 +52,6 @@ export const reelHowPages: AdScript = {
     { n: 11, frames: 128, screen: 'pageRefQuorum', camera: 'settle', text: 'lives in the database, not in the app', silentText: 'The rule is shared', vo: 'That rule lives in the database, not in the app.', accent: '#22D3A6' },
     { n: 12, frames: 128, screen: 'questionsLeaf', camera: 'push', text: 'your year sees the page too', silentText: 'Your year sees it', vo: 'Once it agrees, your year sees the page too.', accent: '#4CC2FF' },
     { n: 13, frames: 128, screen: 'browse', mascot: 'guide', camera: 'trackLeft', text: 'whenever your book is open', silentText: 'Add one as you study', vo: 'Add one whenever your book is open.', accent: '#4CC2FF' },
-    { n: 14, frames: 128, screen: 'home', camera: 'push', text: 'Orbit MBBS, free on Google Play', silentText: 'Orbit MBBS — on Google Play', vo: 'Orbit MBBS, free on Google Play.', accent: '#7C5CFF' },
+    { n: 14, frames: 128, screen: 'home', camera: 'push', text: 'Download Orbit', silentText: 'Download Orbit on Play Store', vo: 'Download Orbit on the Play Store.', accent: '#7C5CFF' },
   ],
 };

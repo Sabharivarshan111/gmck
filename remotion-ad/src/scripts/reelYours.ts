@@ -55,6 +55,6 @@ export const reelYours: AdScript = {
     { n: 11, frames: 128, screen: 'settings', camera: 'macro', text: 'one settings screen', silentText: 'Settings in one place', vo: 'And the rest of the controls are in one settings screen.', accent: '#F5B301' },
     { n: 12, frames: 128, screen: 'settings', camera: 'glideDown', text: 'Text size, sounds, haptics', silentText: 'Text. Sound. Haptics.', vo: 'Text size, sounds, haptics. All there.', accent: '#F5B301' },
     { n: 13, frames: 128, screen: 'noteToolbar', camera: 'push', text: 'their own font and highlighter', silentText: 'Customise your notes', vo: 'Even your notes can have their own font and highlighter.', accent: '#FF4D8D' },
-    { n: 14, frames: 128, screen: 'glassHome', camera: 'push', text: 'Orbit MBBS, free on Google Play', silentText: 'Orbit MBBS — on Google Play', vo: 'Orbit MBBS, free on Google Play.', accent: '#7C5CFF' },
+    { n: 14, frames: 128, screen: 'glassHome', camera: 'push', text: 'Download Orbit', silentText: 'Download Orbit on Play Store', vo: 'Download Orbit on the Play Store.', accent: '#7C5CFF' },
   ],
 };

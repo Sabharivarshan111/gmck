@@ -54,7 +54,18 @@ Each is enforced, and the check that does it is named. Run all three from
 | A caption fits the **230px band** | Below it is the platform's own UI. | `check:reel-layout` |
 | Every ad has a **matrix entry** in `ad-videos.yml`, both cuts | Or it is a script that exists and never renders. | `preflight` |
 
-## What every ad opens and closes on
+## Every ad opens and closes the same way, and there is no hook
+
+The app's owner's instruction, in their words: **every video starts with
+"Welcome to Orbit"**. There is no pain line in front of it competing to stop a
+thumb, and shot two is simply where the script begins.
+
+An earlier version of `bookends.ts` argued the opposite — that the greeting
+cost something because a viewer decides in the first seconds, so the script's
+own hook should sit right behind it. That reasoning is gone. Do not
+reintroduce it, and do not write a script that opens on a hook.
+
+## What the bookends are
 
 Applied by `src/scripts/bookends.ts` as a transform, not by editing each file —
 there are twenty-nine of them and two cuts each, which is fifty-eight chances

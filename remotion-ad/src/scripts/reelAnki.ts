@@ -57,6 +57,6 @@ export const reelAnki: AdScript = {
     { n: 11, frames: 128, screen: 'questionsLeaf', mascot: 'guide', camera: 'macro', text: 'the question bank', silentText: 'Built from the question bank', vo: 'From the question bank you’re already studying.', focus: 0.3, accent: '#7C5CFF' },
     { n: 12, frames: 128, screen: 'progress', camera: 'push', text: 'come back on their schedule', silentText: 'Scheduled revision', vo: 'Then the cards come back on their schedule.', accent: '#22D3A6' },
     { n: 13, frames: 128, screen: null, mascot: 'hero', camera: 'settle', text: 'the deck you already use', silentText: 'Bring your existing deck', vo: 'So bring the deck you already use.', accent: '#4CC2FF' },
-    { n: 14, frames: 128, screen: 'home', camera: 'push', text: 'Orbit MBBS, free on Google Play', silentText: 'Orbit MBBS — on Google Play', vo: 'Orbit MBBS, free on Google Play.', accent: '#7C5CFF' },
+    { n: 14, frames: 128, screen: 'home', camera: 'push', text: 'Download Orbit', silentText: 'Download Orbit on Play Store', vo: 'Download Orbit on the Play Store.', accent: '#7C5CFF' },
   ],
 };

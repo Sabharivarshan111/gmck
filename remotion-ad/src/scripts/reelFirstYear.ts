@@ -50,6 +50,6 @@ export const reelFirstYear: AdScript = {
     { n: 11, frames: 128, screen: 'userNotesEdit', camera: 'macro', text: 'draw it yourself', silentText: 'Draw it yourself', vo: 'Then draw it yourself with a stylus or your finger.', accent: '#FF4D8D' },
     { n: 12, frames: 128, screen: 'flashcards', mascot: 'guide', camera: 'orbit', text: 'Turn the chapter into flashcards', silentText: 'Make flashcards', vo: 'Finished? Turn the chapter into flashcards.', accent: '#4CC2FF' },
     { n: 13, frames: 128, screen: 'progress', camera: 'pull', text: 'without making another account', silentText: 'Start your streak', vo: 'And your study streak can start without making another account.', accent: '#F5B301' },
-    { n: 14, frames: 128, screen: 'home', camera: 'push', text: 'Orbit MBBS, free on Google Play', silentText: 'Orbit MBBS — on Google Play', vo: 'Orbit MBBS, free on Google Play.', accent: '#7C5CFF' },
+    { n: 14, frames: 128, screen: 'home', camera: 'push', text: 'Download Orbit', silentText: 'Download Orbit on Play Store', vo: 'Download Orbit on the Play Store.', accent: '#7C5CFF' },
   ],
 };

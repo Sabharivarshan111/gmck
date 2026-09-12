@@ -87,6 +87,6 @@ export const reelGuide: AdScript = {
     { n: 11, frames: 128, screen: 'ankiStudy', camera: 'macro', text: 'come back later for revision', silentText: 'Spaced revision', vo: 'Then they come back later for revision.', accent: '#4CC2FF' },
     { n: 12, frames: 128, screen: 'timer', mascot: 'guide', camera: 'push', text: 'the tree grows', silentText: 'Focus. Grow.', vo: 'Start a focus session and the tree grows.', accent: '#22D3A6' },
     { n: 13, frames: 128, screen: 'progress', camera: 'pull', text: 'your streak stays on your phone', silentText: 'Your streak', vo: 'And your streak stays on your phone.', accent: '#F5B301' },
-    { n: 14, frames: 128, screen: null, mascot: 'hero', camera: 'settle', text: 'Free on Google Play', silentText: 'Orbit MBBS, free on Google Play', vo: "That's Orbit. Free on Google Play.", accent: '#7C5CFF' },
+    { n: 14, frames: 128, screen: null, mascot: 'hero', camera: 'settle', text: 'Download Orbit', silentText: 'Download Orbit on Play Store', vo: 'Download Orbit on the Play Store.', accent: '#7C5CFF' },
   ],
 };

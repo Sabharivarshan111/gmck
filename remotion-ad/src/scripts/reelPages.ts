@@ -50,6 +50,6 @@ export const reelPages: AdScript = {
     { n: 11, frames: 128, screen: 'browse', camera: 'trackLeft', text: 'one page at a time', silentText: 'One page at a time', vo: 'Do that across subjects, one page at a time.', accent: '#FF4D8D' },
     { n: 12, frames: 128, screen: 'pageRefSheet', camera: 'pull', text: 'Students build this together', silentText: 'Built by students', vo: 'Students build this together.', accent: '#F5B301' },
     { n: 13, frames: 128, screen: 'home', camera: 'pull', text: 'add the next one', silentText: 'Add one as you study', vo: 'Next time the book is open, add the next one.', accent: '#F5B301' },
-    { n: 14, frames: 128, screen: 'home', camera: 'push', text: 'Orbit MBBS, free on Google Play', silentText: 'Orbit MBBS — on Google Play', vo: 'Orbit MBBS, free on Google Play.', accent: '#7C5CFF' },
+    { n: 14, frames: 128, screen: 'home', camera: 'push', text: 'Download Orbit', silentText: 'Download Orbit on Play Store', vo: 'Download Orbit on the Play Store.', accent: '#7C5CFF' },
   ],
 };

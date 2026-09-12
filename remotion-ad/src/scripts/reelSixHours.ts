@@ -44,6 +44,6 @@ export const reelSixHours: AdScript = {
     { n: 11, frames: 128, screen: 'timer', camera: 'push', text: 'Phone down', silentText: 'Twenty-five minutes', vo: 'Twenty-five minutes. Phone down.', accent: '#22D3A6' },
     { n: 12, frames: 128, screen: 'music', camera: 'trackRight', text: 'Play your own music', silentText: 'Your music', vo: 'Play your own music. It stays on your phone.', accent: '#22D3A6' },
     { n: 13, frames: 128, screen: 'home', camera: 'hero', text: 'The question bank still works', silentText: 'Works offline', vo: 'Wi-Fi gone? The question bank still works.', accent: '#7C5CFF' },
-    { n: 14, frames: 128, screen: 'outroCard', camera: 'settle', text: 'Free on Google Play', silentText: 'Orbit MBBS, free on Google Play', vo: 'Orbit MBBS. Free on Google Play.', accent: '#7C5CFF' },
+    { n: 14, frames: 128, screen: 'outroCard', camera: 'settle', text: 'Download Orbit', silentText: 'Download Orbit on Play Store', vo: 'Download Orbit on the Play Store.', accent: '#7C5CFF' },
   ],
 };

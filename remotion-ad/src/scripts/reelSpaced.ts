@@ -54,6 +54,6 @@ export const reelSpaced: AdScript = {
     { n: 11, frames: 128, screen: 'progressBottom', camera: 'pull', text: 'the days you actually showed up', silentText: 'Your study streak', vo: 'Your streak is just the days you actually showed up.', accent: '#F5B301' },
     { n: 12, frames: 128, screen: 'timer', camera: 'push', text: 'keep the habit going', silentText: 'A short session is enough', vo: 'Even a short focused session can keep the habit going.', accent: '#22D3A6' },
     { n: 13, frames: 128, screen: null, mascot: 'hero', camera: 'settle', text: 'from scratch every time', silentText: 'Stop starting over', vo: 'Stop studying the same thing from scratch every time.', accent: '#7C5CFF' },
-    { n: 14, frames: 128, screen: 'home', camera: 'push', text: 'Orbit MBBS, free on Google Play', silentText: 'Orbit MBBS — on Google Play', vo: 'Orbit MBBS, free on Google Play.', accent: '#7C5CFF' },
+    { n: 14, frames: 128, screen: 'home', camera: 'push', text: 'Download Orbit', silentText: 'Download Orbit on Play Store', vo: 'Download Orbit on the Play Store.', accent: '#7C5CFF' },
   ],
 };

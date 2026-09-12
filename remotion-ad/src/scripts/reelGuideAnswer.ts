@@ -59,6 +59,6 @@ export const reelGuideAnswer: AdScript = {
     { n: 11, frames: 128, screen: 'timer', mascot: 'guide', camera: 'push', text: 'Let the tree grow', silentText: 'Focus. Grow.', vo: 'Set a focus session. Let the tree grow.', accent: '#22D3A6' },
     { n: 12, frames: 128, screen: 'progress', camera: 'pull', text: 'stays with you on the phone', silentText: 'Your streak', vo: 'Your streak stays with you on the phone.', accent: '#F5B301' },
     { n: 13, frames: 128, screen: 'glassHome', camera: 'orbit', text: 'look the way you want', silentText: 'Make it yours', vo: 'And you can make the app look the way you want.', accent: '#4CC2FF' },
-    { n: 14, frames: 128, screen: null, mascot: 'hero', camera: 'settle', text: 'Free on Google Play', silentText: 'Orbit MBBS, free on Google Play', vo: "That's Orbit. Free on Google Play.", accent: '#7C5CFF' },
+    { n: 14, frames: 128, screen: null, mascot: 'hero', camera: 'settle', text: 'Download Orbit', silentText: 'Download Orbit on Play Store', vo: 'Download Orbit on the Play Store.', accent: '#7C5CFF' },
   ],
 };
