@@ -99,6 +99,7 @@ const fromRepo = [
   'tour-01-welcome', 'tour-02-spotlight', 'tour-04-pomodoro',
   'homeedit-5-taller', 'glass-notes', 'notetoolbar-both-preview',
   // The rotation calendar walkthrough, from mobile/preview/attendance-shot.mjs.
+  'music-03-open', 'music-04-chooser',
   'attendance-01-calendar', 'attendance-02-range',
   'attendance-03-holiday', 'attendance-04-marked',
 ];

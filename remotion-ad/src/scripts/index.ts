@@ -26,6 +26,7 @@ import { reelNotes } from './reelNotes.ts';
 import { reelHowNotes } from './reelHowNotes.ts';
 import { reelHowAttendance } from './reelHowAttendance.ts';
 import { reelHowPages } from './reelHowPages.ts';
+import { reelHowTimer } from './reelHowTimer.ts';
 import { reelThirdYear } from './reelThirdYear.ts';
 import { reelFinalYear } from './reelFinalYear.ts';
 import { adAskIt } from './adAskIt.ts';
@@ -71,6 +72,7 @@ const AUTHORED: AdScript[] = [
   reelHowNotes,
   reelHowAttendance,
   reelHowPages,
+  reelHowTimer,
   reelThirdYear,
   reelFinalYear,
   // The two flat, typographic ads. Same pipeline, different renderer —

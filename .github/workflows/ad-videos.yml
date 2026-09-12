@@ -286,6 +286,10 @@ jobs:
             file: orbit-reel-how-pages.mp4
           - ad: orbit-reel-how-pages-silent
             file: orbit-reel-how-pages-silent.mp4
+          - ad: orbit-reel-how-timer
+            file: orbit-reel-how-timer.mp4
+          - ad: orbit-reel-how-timer-silent
+            file: orbit-reel-how-timer-silent.mp4
           - ad: orbit-reel-third-year
             file: orbit-reel-third-year.mp4
           - ad: orbit-reel-third-year-silent

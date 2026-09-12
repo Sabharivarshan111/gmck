@@ -48,6 +48,11 @@ export const SCREENS: Record<string, ScreenAsset> = {
   growth: { kind: 'screen', file: 'app_screens/growthshowcase.png' },
   treegallery: { kind: 'screen', file: 'app_screens/treegallery.png' },
   music: { kind: 'screen', file: 'app_screens/music-06-playing.png' },
+  // The two steps before a track is playing, captured by mobile/preview/
+  // music-shot.mjs. An ad that says "tap plus" needs the screen where the
+  // plus is, and the chooser is where copy-or-link is actually explained.
+  musicOpen: { kind: 'screen', file: 'app_screens/music-03-open.png' },
+  musicChooser: { kind: 'screen', file: 'app_screens/music-04-chooser.png' },
 
   progress: { kind: 'screen', file: 'app_screens/progress.png' },
   progressBottom: { kind: 'screen', file: 'app_screens/progress-bottom.png' },
