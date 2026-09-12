@@ -98,6 +98,9 @@ const fromRepo = [
   'pageref-2-toggle-on', 'pageref-3-sheet', 'pageref-4-add-book', 'pageref-6-quorum',
   'tour-01-welcome', 'tour-02-spotlight', 'tour-04-pomodoro',
   'homeedit-5-taller', 'glass-notes', 'notetoolbar-both-preview',
+  // The rotation calendar walkthrough, from mobile/preview/attendance-shot.mjs.
+  'attendance-01-calendar', 'attendance-02-range',
+  'attendance-03-holiday', 'attendance-04-marked',
 ];
 
 for (const name of fromShoot) {

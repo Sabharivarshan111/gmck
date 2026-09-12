@@ -58,6 +58,13 @@ export const SCREENS: Record<string, ScreenAsset> = {
   attendancePostings: { kind: 'screen', file: 'app_screens/attendance-postings.png' },
   attendanceEmpty: { kind: 'screen', file: 'app_screens/attendance-empty.png' },
   attendanceCritical: { kind: 'screen', file: 'app_screens/attendance-critical.png' },
+  // The rotation calendar, captured by `mobile/preview/attendance-shot.mjs`.
+  // Real runs of the real screen, not mockups — the same harness that asserts
+  // the working-day arithmetic on it produces these frames.
+  attendanceCalendar: { kind: 'screen', file: 'app_screens/attendance-01-calendar.png' },
+  attendanceRange: { kind: 'screen', file: 'app_screens/attendance-02-range.png' },
+  attendanceHoliday: { kind: 'screen', file: 'app_screens/attendance-03-holiday.png' },
+  attendanceMarked: { kind: 'screen', file: 'app_screens/attendance-04-marked.png' },
   settings: { kind: 'screen', file: 'app_screens/settings.png' },
   settingsNotifications: { kind: 'screen', file: 'app_screens/settings-bottom.png' },
   // First year, for the ad that is about first year. The default browse shot

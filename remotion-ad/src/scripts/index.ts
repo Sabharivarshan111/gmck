@@ -23,6 +23,8 @@ import { reelProgress } from './reelProgress.ts';
 import { reelReminder } from './reelReminder.ts';
 import { reelYours } from './reelYours.ts';
 import { reelNotes } from './reelNotes.ts';
+import { reelHowNotes } from './reelHowNotes.ts';
+import { reelHowAttendance } from './reelHowAttendance.ts';
 import { reelThirdYear } from './reelThirdYear.ts';
 import { reelFinalYear } from './reelFinalYear.ts';
 import { adAskIt } from './adAskIt.ts';
@@ -62,6 +64,11 @@ const AUTHORED: AdScript[] = [
   reelReminder,
   reelYours,
   reelNotes,
+  // The walkthroughs. These answer "where is it and what do I tap", which is
+  // the question that loses people AFTER the pitch has worked — two features
+  // here were reported as missing while shipped and on screen.
+  reelHowNotes,
+  reelHowAttendance,
   reelThirdYear,
   reelFinalYear,
   // The two flat, typographic ads. Same pipeline, different renderer —
