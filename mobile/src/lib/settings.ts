@@ -85,6 +85,16 @@ export interface Settings {
   /** Hour of day, 0–23, the reminder check runs. */
   reminderHour: number;
   /**
+   * How many days before a date its countdown starts being sent.
+   *
+   * Seven was hardcoded in the receiver, and seven is right for a written
+   * paper and wrong for a seminar somebody wants three days to prepare for.
+   * Clamped to a range rather than left open: a countdown that starts sixty
+   * days out is wallpaper, which is the state this whole reminder is built to
+   * avoid, and one that starts the same morning is not a warning.
+   */
+  examLeadDays: number;
+  /**
    * Which reminders are allowed, individually.
    *
    * Three switches rather than one, because they are three different bargains.
@@ -183,6 +193,7 @@ export const DEFAULT_SETTINGS: Settings = {
   dailyReminder: false,
   // Early evening: after classes, before the night's studying is decided.
   reminderHour: 19,
+  examLeadDays: 7,
   remindExam: true,
   remindStreak: true,
   remindRevision: true,
@@ -303,6 +314,10 @@ export async function hydrateSettings(): Promise<void> {
         typeof parsed.reminderHour === 'number' && Number.isFinite(parsed.reminderHour)
           ? Math.max(0, Math.min(23, Math.round(parsed.reminderHour)))
           : DEFAULT_SETTINGS.reminderHour,
+      examLeadDays:
+        typeof parsed.examLeadDays === 'number' && Number.isFinite(parsed.examLeadDays)
+          ? Math.max(1, Math.min(60, Math.round(parsed.examLeadDays)))
+          : DEFAULT_SETTINGS.examLeadDays,
       remindExam:
         typeof parsed.remindExam === 'boolean' ? parsed.remindExam : DEFAULT_SETTINGS.remindExam,
       remindStreak:

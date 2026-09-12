@@ -83,6 +83,40 @@ check(
   /formatHour\(/.test(settings),
   'the reminder time is not shown as a clock time — "19" is not a time anyone reads',
 );
+/*
+ * How far ahead a countdown starts is the reader's too.
+ *
+ * It was a hard seven INSIDE the Kotlin receiver, which is right for a written
+ * paper and wrong for a seminar somebody wants three days to prepare for. The
+ * receiver still defaults to seven when the digest does not carry the value,
+ * so an older build behaves exactly as it did.
+ *
+ * Pinned here rather than driven, because the preview harness has no
+ * NotificationManager and hides this whole block — the same reason every other
+ * assertion in this file is static.
+ */
+check(
+  /label="How many days before a date to start reminding"/.test(settings),
+  'the countdown lead is not settable — it was hardcoded at seven days in the receiver, ' +
+    'which is wrong for anything that is not a written paper',
+);
+check(
+  // The KEY being written, not just the word appearing — the first version of
+  // this matched `settings.examLeadDays` on the same line and passed while the
+  // digest field was renamed away.
+  /examLeadDays:\s*settings\.examLeadDays/.test(
+    code(read(path.join(mobile, 'src/lib/reminderSync.ts'))),
+  ),
+  'the digest does not carry the lead, so the receiver falls back to seven and the ' +
+    'slider changes nothing anybody can see',
+);
+check(
+  /optInt\("examLeadDays", 7\)/.test(
+    read(path.join(mobile, 'android/app/src/main/java/com/aistudio/mbbsqbank/aycxvd/NotifyReceiver.kt')),
+  ),
+  'the receiver no longer reads the lead with a default of seven — without the default, ' +
+    'a digest written by an older build would go silent',
+);
 check(
   /sendTestNotification\(\)/.test(settings),
   'there is no way to see a reminder without waiting for the evening',

@@ -50,6 +50,8 @@ export interface Digest {
    * a switch that only takes effect on the next launch is a switch that
    * appears not to work.
    */
+  /** How many days before a date its countdown starts. */
+  examLeadDays: number;
   allowExam: boolean;
   allowStreak: boolean;
   allowRevision: boolean;

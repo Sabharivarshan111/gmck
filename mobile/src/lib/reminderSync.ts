@@ -123,6 +123,9 @@ export async function syncReminders(): Promise<void> {
     streak,
     revisionDueDay: soonest === null ? -1 : epochDay(soonest),
     revisionDueCount: due.length,
+    // How many days before a date the countdown starts. The receiver defaults
+    // to seven when it is absent, so an older digest is unchanged.
+    examLeadDays: settings.examLeadDays ?? 7,
     allowExam: settings.remindExam,
     allowStreak: settings.remindStreak,
     allowRevision: settings.remindRevision,

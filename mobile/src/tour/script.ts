@@ -228,6 +228,19 @@ export const STEPS: TourStep[] = [
     target: 'Anki-style flashcards, browse decks by year',
     tapToAdvance: true,
   },
+  /*
+   * Drawing on a PDF is a second verb on a file that already had one, and the
+   * row that offers it is below the row that opens it — so it is easy to miss
+   * entirely if nothing says it is there.
+   */
+  {
+    id: 'pdf-draw',
+    chapter: 'notes',
+    title: 'Mark up a PDF',
+    body:
+      'A PDF in a note has a second row with a pencil on it. ' +
+      'Highlight, circle and write on the pages — the file itself is never changed.',
+  },
   {
     id: 'anki-import',
     chapter: 'notes',
@@ -360,6 +373,23 @@ export const STEPS: TourStep[] = [
     target: 'Stats',
     tapToAdvance: true,
   },
+  /*
+   * The exam pill went on the Timer, and a reader who has never set a date
+   * would not know the feature exists — the strip it replaced only appeared
+   * once one WAS set. A step that points at the control is the cheapest fix
+   * for that, and it is the same defect the note card had.
+   */
+  {
+    id: 'exam-pill',
+    chapter: 'progress',
+    title: 'Or set it from the Timer',
+    body:
+      'There is a pill under the timer controls that does the same thing. ' +
+      'Tap it to open, and there is a button to put it away again.',
+    tab: 'Timer',
+    target: 'Set an exam date',
+    tapToAdvance: true,
+  },
   {
     id: 'attendance',
     chapter: 'progress',
@@ -367,11 +397,36 @@ export const STEPS: TourStep[] = [
     body:
       'Add your subjects and clinical postings, then tap Present or Absent after each one. ' +
       'Orbit works out how many more you can miss and still be above your target — and it never rounds up. ' +
-      'Give a posting its length and it counts the days for you, Sundays off if they do not count. ' +
       'This stays on your phone too.',
     tab: 'Progress',
     target: 'Attendance',
     tapToAdvance: true,
+  },
+  /*
+   * The posting form stopped asking "how many days does it run?" and started
+   * asking for two dates on a calendar. Anybody who used the old one is
+   * looking for a box that is no longer there, which is exactly what a tour
+   * step is for.
+   */
+  {
+    id: 'posting-calendar',
+    chapter: 'progress',
+    title: 'A posting is two dates',
+    body:
+      'Tap the first day and the last day on the calendar, and Orbit counts the days between them. ' +
+      'Tick Sundays off if your posting does not run then, and tap any holiday to take it out too.',
+    tab: 'Progress',
+    target: 'Clinical postings',
+  },
+  {
+    id: 'attendance-dates',
+    chapter: 'progress',
+    title: 'Exams, posting exams and seminars',
+    body:
+      'Add anything with a date and Orbit counts down to it. ' +
+      'The evening reminder tells you about whichever one is soonest.',
+    tab: 'Progress',
+    target: 'Add an exam or seminar date',
   },
   /*
    * Spaced revision had no step, and it is the card at the top of My Progress
@@ -426,6 +481,15 @@ export const STEPS: TourStep[] = [
     target: 'Daily reminder (notifications)',
     tapToAdvance: true,
     cta: 'Finish',
+  },
+  {
+    id: 'reminder-timing',
+    chapter: 'progress',
+    title: 'And when it reaches you',
+    body:
+      'Pick the hour it checks, and how many days before a date it starts counting down. ' +
+      'Most evenings it stays quiet, which is the point.',
+    tab: 'Progress',
   },
 ];
 

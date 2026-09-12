@@ -466,6 +466,51 @@ export function SettingsSheet({
               </Text>
 
               {/*
+                How far ahead a countdown starts.
+
+                This was a hard seven inside the receiver, and seven is right
+                for a written paper and wrong for a seminar somebody wants
+                three days to prepare for. The receiver still defaults to seven
+                when the digest does not carry this, so an older build is
+                unchanged.
+
+                No `onCommit` alarm re-arm here: this changes what the receiver
+                SAYS when it wakes, not when it wakes, so the digest write on
+                the next sync is enough.
+              */}
+              <View style={styles.scaleRow}>
+                <Text style={[styles.rowDetail, { color: colors.textMuted }]}>
+                  Start counting down
+                </Text>
+                <Text style={[styles.value, { color: colors.text }]}>
+                  {settings.examLeadDays === 1
+                    ? '1 day before'
+                    : `${settings.examLeadDays} days before`}
+                </Text>
+              </View>
+              <Slider
+                value={settings.examLeadDays}
+                min={1}
+                max={30}
+                step={1}
+                onChange={next => setSetting('examLeadDays', Math.round(next))}
+                onCommit={() => {
+                  syncReminders().catch(() => {});
+                }}
+                label="How many days before a date to start reminding"
+                format={value =>
+                  Math.round(value) === 1 ? '1 day' : `${Math.round(value)} days`
+                }
+                ticks={[1, 7, 14, 30]}
+                detents={[7]}
+              />
+              <Text style={[styles.note, { color: withAlpha(colors.text, 0.5) }]}>
+                Applies to your exam date and to anything you added under
+                Attendance — an exam, a posting exam or a seminar. Whichever is
+                soonest is the one you hear about.
+              </Text>
+
+              {/*
                 And the way to find out it works.
 
                 Almost every rule in this feature is a rule about *not*

@@ -94,8 +94,19 @@ class NotifyReceiver : BroadcastReceiver() {
     val examName = digest.optString("examName", "your exam")
     if (digest.optBoolean("allowExam", true) && examDay > 0) {
       val days = (examDay - today).toInt()
-      // A countdown is only news near the end. Ninety days out it is wallpaper.
-      if (days in 0..7) {
+      /*
+       * How far out a countdown starts being news.
+       *
+       * A countdown is only news near the end — ninety days out it is
+       * wallpaper — so this was a hard seven. It is the reader's now, because
+       * seven is right for a written paper and wrong for a seminar somebody
+       * wants three days to prepare for, and wrong again for finals.
+       *
+       * The default IS seven, so a digest written by an older build behaves
+       * exactly as it did before rather than going silent or shouting.
+       */
+      val lead = digest.optInt("examLeadDays", 7).coerceIn(1, 60)
+      if (days in 0..lead) {
         val title = when (days) {
           0 -> "$examName is today"
           1 -> "$examName is tomorrow"
