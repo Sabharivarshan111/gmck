@@ -25,6 +25,7 @@ import { reelYours } from './reelYours.ts';
 import { reelNotes } from './reelNotes.ts';
 import { reelHowNotes } from './reelHowNotes.ts';
 import { reelHowAttendance } from './reelHowAttendance.ts';
+import { reelHowPages } from './reelHowPages.ts';
 import { reelThirdYear } from './reelThirdYear.ts';
 import { reelFinalYear } from './reelFinalYear.ts';
 import { adAskIt } from './adAskIt.ts';
@@ -69,6 +70,7 @@ const AUTHORED: AdScript[] = [
   // here were reported as missing while shipped and on screen.
   reelHowNotes,
   reelHowAttendance,
+  reelHowPages,
   reelThirdYear,
   reelFinalYear,
   // The two flat, typographic ads. Same pipeline, different renderer —

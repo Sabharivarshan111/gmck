@@ -282,6 +282,10 @@ jobs:
             file: orbit-reel-how-attendance.mp4
           - ad: orbit-reel-how-attendance-silent
             file: orbit-reel-how-attendance-silent.mp4
+          - ad: orbit-reel-how-pages
+            file: orbit-reel-how-pages.mp4
+          - ad: orbit-reel-how-pages-silent
+            file: orbit-reel-how-pages-silent.mp4
           - ad: orbit-reel-third-year
             file: orbit-reel-third-year.mp4
           - ad: orbit-reel-third-year-silent
