@@ -15,13 +15,18 @@ import { chromium } from 'playwright-core';
 import { createServer } from 'vite';
 import path from 'node:path';
 import fs from 'node:fs/promises';
+import { findChromium } from './find-chromium.mjs';
+
+/** Spread into `launch`, so "not found" means Playwright's own browser. */
+async function launchPath() {
+  const executablePath = await findChromium();
+  return executablePath ? { executablePath } : {};
+}
 const here = '/home/user/gmck/mobile/preview';
 const outDir = process.argv[2] ?? new URL('../../screenshots', import.meta.url).pathname;
-const entries = await fs.readdir('/opt/pw-browsers');
-const [dir] = entries.filter(e => e.startsWith('chromium-')).sort().reverse();
 const server = await createServer({ configFile: path.join(here, 'vite.config.ts'), server: { port: 5244, strictPort: true }, logLevel: 'error' });
 await server.listen();
-const browser = await chromium.launch({ executablePath: `/opt/pw-browsers/${dir}/chrome-linux/chrome` });
+const browser = await chromium.launch({ ...(await launchPath()) });
 const page = await browser.newPage({ viewport: { width: 412, height: 915 }, deviceScaleFactor: 2 });
 await page.addInitScript(() => {
   try { window.localStorage.setItem('orbit-profile-v1', JSON.stringify({ display_name: 'Orbit', year: 'second' })); } catch {}

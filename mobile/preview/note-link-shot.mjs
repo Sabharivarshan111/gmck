@@ -19,16 +19,17 @@ import { createServer } from 'vite';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import fs from 'node:fs/promises';
+import { findChromium } from './find-chromium.mjs';
+
+/** Spread into `launch`, so "not found" means Playwright's own browser. */
+async function launchPath() {
+  const executablePath = await findChromium();
+  return executablePath ? { executablePath } : {};
+}
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const outDir = path.resolve(process.argv[2] ?? path.join(here, '..', '..', 'screenshots'));
 
-async function findChromium() {
-  if (process.env.CHROME_PATH) return process.env.CHROME_PATH;
-  const entries = await fs.readdir('/opt/pw-browsers');
-  const [dir] = entries.filter(e => e.startsWith('chromium-')).sort().reverse();
-  return `/opt/pw-browsers/${dir}/chrome-linux/chrome`;
-}
 
 const server = await createServer({
   configFile: path.join(here, 'vite.config.ts'),
@@ -37,7 +38,7 @@ const server = await createServer({
 });
 await server.listen();
 
-const browser = await chromium.launch({ executablePath: await findChromium() });
+const browser = await chromium.launch({ ...(await launchPath()) });
 const page = await browser.newPage({ viewport: { width: 412, height: 915 }, deviceScaleFactor: 2 });
 
 await page.addInitScript(() => {
