@@ -626,6 +626,46 @@ try {
   }
 }
 
+/*
+ * ---- The call to action cannot be squeezed --------------------------------
+ *
+ * `resolveShotFrames` pins a reel to exactly REEL_FRAMES by putting the
+ * difference on the LAST shot, which is right: sixty seconds is the hard rule
+ * and a third of a second is invisible on a sign-off.
+ *
+ * What it also does is hide an author's arithmetic error, in the one place it
+ * costs the most. `orbit-reel-attendance` had two shots at 135 frames where
+ * every neighbour was 130, so its shots summed to 1,810 — and the ten-frame
+ * surplus came off the end card, dropping it from 2.2s to 1.8s. Nothing
+ * reported it. The end card is the mark, "made by the medical community for
+ * the medical community", "Completely free" and the Play badge, and 1.8
+ * seconds is not long enough to read that.
+ *
+ * So the resolved closing shot has a floor. It catches the absorption that
+ * matters while leaving the rounding the mechanism exists for.
+ */
+{
+  const { REEL_FRAMES, resolveShotFrames } = await import(
+    pathToFileURL(path.join(root, 'src', 'scripts', 'types.ts')).href
+  );
+  const CTA_FLOOR = 60; // 2.0s
+
+  for (const script of scripts) {
+    if (script.format !== 'reel') continue;
+    const frames = resolveShotFrames(script);
+    const closing = frames[frames.length - 1];
+    if (closing < CTA_FLOOR) {
+      const authored = script.shots.reduce((t, s) => t + (s.frames ?? 0), 0);
+      problems.push(
+        `${script.id}: the end card resolves to ${(closing / 30).toFixed(1)}s, ` +
+          `under the ${(CTA_FLOOR / 30).toFixed(1)}s floor. Its shots add up to ` +
+          `${authored} against ${REEL_FRAMES}, and the difference was taken off ` +
+          'the call to action. Fix the shot lengths rather than the end card.',
+      );
+    }
+  }
+}
+
 // ---- A reel's speech has to fit inside the reel ---------------------------
 //
 // THE check this file was missing, and the one the bug needed.
