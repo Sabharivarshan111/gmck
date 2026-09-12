@@ -10,6 +10,7 @@
     "plates": "node scripts/fetch-plates.mjs",
     "voice": "node scripts/voice-manifest.mjs && python3 scripts/synthesize.py && node scripts/measure-audio.mjs",
     "preflight": "node scripts/preflight.mjs",
+    "scripts:print": "node scripts/print-scripts.mjs",
     "render:pattern": "remotion render orbit-the-pattern out/orbit-the-pattern.mp4",
     "render:2am": "remotion render orbit-2am out/orbit-2am.mp4",
     "render:draw": "remotion render orbit-draw-it-from-memory out/orbit-draw-it-from-memory.mp4",

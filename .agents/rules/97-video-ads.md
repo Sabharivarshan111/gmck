@@ -6,7 +6,7 @@ render ads by hand in another tool.
 | Thing | Where |
 |---|---|
 | Renderer | `remotion-ad/` |
-| Scripts as prose + hook rationale | `.agents/video/AD-SCRIPTS.md` |
+| Script rules; scripts print from source | `.agents/video/AD-SCRIPTS.md`, `npm run scripts:print` |
 | Scripts as data | `remotion-ad/src/scripts/` |
 | CI render + release | `.github/workflows/ad-videos.yml` |
 | Full standard | `.claude/skills/cinematic-product-launch-video/SKILL.md` |
