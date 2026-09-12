@@ -3,6 +3,14 @@ import type { AdScript } from './types';
 /**
  * Reel — "How to use My Progress → Notes", as a walkthrough.
  *
+ * ## The YouTube half waited for a real screen
+ *
+ * It was left out of the first cut on purpose: the feature ships, but every
+ * committed notes screenshot was a fresh list with no link in it, and putting
+ * "paste a YouTube lecture" over a generic notes screen is the mismatch
+ * `check:ad-truth` exists to catch. `preview/note-link-shot.mjs` captures a
+ * real note carrying one, so the shots are honest now.
+ *
  * ## This is a different kind of ad from `reelNotes`, on purpose
  *
  * `reelNotes` argues: here is a thing you did not know Orbit does, and here is
@@ -48,8 +56,8 @@ export const reelHowNotes: AdScript = {
     { n: 7, frames: 129, screen: 'userNotesMedia', mascot: 'guide', camera: 'macro', text: 'Add a file', silentText: 'Add a file', vo: 'Add a file and pick what you want to attach.', accent: '#F5B301' },
     { n: 8, frames: 129, screen: 'userNotesMedia', camera: 'settle', text: 'a recording, a PDF', silentText: 'Photo, video, audio, PDF', vo: 'A photo, a video, a recording, a PDF.', accent: '#F5B301' },
     { n: 9, frames: 128, screen: 'userNotesMedia', camera: 'macro', text: 'keep a copy, or link it', silentText: 'Copy, or link', vo: 'Then it asks: keep a copy, or link it.', accent: '#FF4D8D' },
-    { n: 10, frames: 128, screen: 'notesBottom', mascot: 'guide', camera: 'glideDown', text: 'survives the original and costs space', silentText: 'A copy is safe', vo: 'A copy survives the original and costs space.', accent: '#FF4D8D' },
-    { n: 11, frames: 128, screen: 'notesBottom', camera: 'push', text: 'dies if you move it', silentText: 'A link can break', vo: 'A link costs nothing but dies if you move it.', accent: '#FF4D8D' },
+    { n: 10, frames: 128, screen: 'noteLink', mascot: 'guide', camera: 'glideDown', text: 'paste a YouTube lecture', silentText: 'Paste a lecture link', vo: 'You can also paste a YouTube lecture straight in.', accent: '#FF4D8D' },
+    { n: 11, frames: 128, screen: 'noteLink', camera: 'push', text: 'plays when you tap it', silentText: 'It plays in the note', vo: 'It sits in the note and plays when you tap it.', accent: '#FF4D8D' },
     { n: 12, frames: 128, screen: 'notesBottom', camera: 'glideDown', text: 'Orbit offers to copy it', silentText: 'A broken link is one tap', vo: 'If a link breaks, Orbit offers to copy it.', accent: '#22D3A6' },
     { n: 13, frames: 128, screen: 'userNotes', mascot: 'guide', camera: 'macro', text: 'None of it leaves your phone', silentText: 'No limit. Nothing leaves.', vo: 'None of it leaves your phone. No limit.', accent: '#22D3A6' },
     { n: 14, frames: 128, screen: 'home', camera: 'push', text: 'Download Orbit', silentText: 'Download Orbit on Play Store', vo: 'Download Orbit on the Play Store.', accent: '#7C5CFF' },

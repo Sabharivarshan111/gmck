@@ -51,6 +51,7 @@
     "check:admin": "node scripts/admin-check.mjs",
     "check:no-simulator": "node scripts/no-simulator-check.mjs",
     "check:note-links": "node scripts/note-links-check.mjs",
+    "shot:note-link": "node preview/note-link-shot.mjs",
     "check:version": "node scripts/version-check.mjs",
     "check:xp": "node scripts/xp-check.mjs",
     "check:reminder": "node scripts/reminder-check.mjs",

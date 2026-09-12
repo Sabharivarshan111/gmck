@@ -53,6 +53,10 @@ export const SCREENS: Record<string, ScreenAsset> = {
   // plus is, and the chooser is where copy-or-link is actually explained.
   musicOpen: { kind: 'screen', file: 'app_screens/music-03-open.png' },
   musicChooser: { kind: 'screen', file: 'app_screens/music-04-chooser.png' },
+  // A real note carrying a YouTube lecture link. Captured in CI rather than
+  // committed, because the still comes from youtube-nocookie and the sandboxes
+  // cannot reach it — see capture-screens.mjs.
+  noteLink: { kind: 'screen', file: 'app_screens/notelink-1-youtube.png' },
 
   progress: { kind: 'screen', file: 'app_screens/progress.png' },
   progressBottom: { kind: 'screen', file: 'app_screens/progress-bottom.png' },

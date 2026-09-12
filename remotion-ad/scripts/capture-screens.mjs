@@ -53,11 +53,31 @@ execFileSync('node', ['preview/shoot.mjs', tmp], {
   stdio: 'inherit',
 });
 
+/*
+ * The note carrying a YouTube link, captured HERE rather than committed.
+ *
+ * Every other harness capture in this file is a committed PNG copied out of
+ * `screenshots/`. This one cannot be, because the card draws its still from
+ * youtube-nocookie and the agent sandboxes deny that host — a committed copy
+ * is a real card with an empty grey rectangle where the video should be, and
+ * an ad is the last place that belongs.
+ *
+ * A runner has open network, which is the same reason the whole ad pipeline
+ * lives in CI. So it runs here and the still is real.
+ */
+execFileSync('node', ['preview/note-link-shot.mjs', tmp], {
+  cwd: path.join(repo, 'mobile'),
+  stdio: 'inherit',
+});
+
 const out = path.join(root, 'public', 'app_screens');
 await fs.mkdir(out, { recursive: true });
 
 // Freshly captured screens.
 const fromShoot = [
+  // Produced by preview/note-link-shot.mjs above, on a runner that can reach
+  // the thumbnail host.
+  'notelink-1-youtube',
   'home', 'home-light', 'browse', 'browse-final', 'questions', 'notes-renderer',
   'notes-renderer-bottom', 'askai', 'chatdemo', 'flashcards-decks',
   'anki-study', 'notes', 'usernotes-edit', 'usernotes-preview', 'timer',
