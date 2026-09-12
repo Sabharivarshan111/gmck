@@ -53,6 +53,34 @@ export interface AttendanceItem {
   /** ISO date the rotation started, for the same reason. */
   startDate?: string;
   /**
+   * Postings only: the ISO date the rotation ends.
+   *
+   * This replaced "how many days does it run?", which asked the reader to do
+   * a subtraction they do not have the numbers for. A college hands out a
+   * rotation as two dates on a noticeboard; turning that into a count means
+   * working out whether both ends are included, and getting it wrong by one
+   * is getting the whole margin wrong by one.
+   *
+   * It also fixes a quieter bug. `startDate` was stamped with TODAY whenever a
+   * posting was added, so anybody entering a rotation they were already three
+   * weeks into had every day of it counted from the wrong end.
+   *
+   * `totalDays` is still read for postings saved before this existed.
+   */
+  endDate?: string;
+  /**
+   * Postings only: ISO dates inside the rotation that are not working days.
+   *
+   * Public holidays, college holidays, a strike, a long weekend the department
+   * announced. They come off the working-day count exactly the way Sundays do,
+   * which is the whole reason the reader is being asked: a holiday nobody
+   * subtracted is a day of margin somebody thinks they have and does not.
+   *
+   * The reader marks them by tapping the calendar. Four are offered ready to
+   * accept, and only four — see `FIXED_HOLIDAYS`.
+   */
+  holidays?: string[];
+  /**
    * Postings only: Sundays are not working days, so they do not count.
    *
    * Taken from a competitor's tracker, which states it plainly — "holidays
@@ -130,37 +158,136 @@ export function mustAttend(attended: number, held: number, target: number): numb
 }
 
 /**
- * How many working days a rotation has, counting from its start.
+ * India's gazetted holidays that fall on the same date every year.
  *
- * `totalDays` is what the reader typed, and what they typed is the length of
- * the block as the college states it. Whether every one of those is a day they
- * are expected to turn up is a separate question, and `skipSundays` is how they
- * answer it.
+ * Four, and deliberately only four. Every other national holiday — Diwali,
+ * Holi, Eid, Good Friday — moves against the Gregorian calendar, and the ones
+ * that matter most to any given student are their own college's and their own
+ * state's, which no list here could know.
  *
- * Counted rather than divided by seven. A 28-day block has four Sundays or
- * five depending on the weekday it starts, and the difference is a whole day of
- * somebody's margin.
+ * So this offers the dates that are genuinely knowable and asks about the
+ * rest. Filling a calendar with guessed holidays would hand somebody a
+ * working-day count built on dates that are wrong, which is the same failure
+ * as inventing a repeat-count: a number that looks authoritative and is not.
+ *
+ * Nothing is marked automatically. These are proposed, and the reader accepts
+ * or ignores them — a college that works Republic Day is not unusual.
  */
-export function workingDays(item: AttendanceItem): number | null {
-  if (typeof item.totalDays !== 'number' || item.totalDays <= 0) {
+export const FIXED_HOLIDAYS = [
+  { month: 1, day: 26, name: 'Republic Day' },
+  { month: 8, day: 15, name: 'Independence Day' },
+  { month: 10, day: 2, name: 'Gandhi Jayanti' },
+  { month: 12, day: 25, name: 'Christmas' },
+];
+
+/** ISO `yyyy-mm-dd` for a date, in local time. */
+export function isoDate(day: Date): string {
+  const month = `${day.getMonth() + 1}`.padStart(2, '0');
+  const date = `${day.getDate()}`.padStart(2, '0');
+  return `${day.getFullYear()}-${month}-${date}`;
+}
+
+/** A local midnight Date from an ISO date, or null if it does not parse. */
+export function parseDate(iso: string): Date | null {
+  if (!iso) {
     return null;
   }
-  if (!item.skipSundays || !item.startDate) {
-    return item.totalDays;
+  const day = new Date(`${iso}T00:00:00`);
+  return Number.isNaN(day.getTime()) ? null : day;
+}
+
+/**
+ * How many calendar days the rotation covers, both ends included.
+ *
+ * Inclusive because that is how a noticeboard means it: a posting running
+ * "1 Jan to 7 Jan" is seven days, not six. Off by one here is off by one in
+ * every number this screen prints.
+ *
+ * Falls back to `totalDays` for postings saved before the range existed.
+ */
+export function spanDays(item: AttendanceItem): number | null {
+  const start = parseDate(item.startDate ?? '');
+  const end = parseDate(item.endDate ?? '');
+  if (start && end) {
+    const ms = end.getTime() - start.getTime();
+    if (ms < 0) {
+      return null;
+    }
+    // Rounded rather than floored: an hour of drift either way must not
+    // silently drop a day. India keeps no DST, but a phone that has travelled
+    // does not know that.
+    return Math.round(ms / 86400000) + 1;
   }
-  const start = new Date(`${item.startDate}T00:00:00`);
-  if (Number.isNaN(start.getTime())) {
-    return item.totalDays;
+  if (typeof item.totalDays === 'number' && item.totalDays > 0) {
+    return Math.round(item.totalDays);
+  }
+  return null;
+}
+
+/** Whether a given ISO date has been marked as not a working day. */
+export function isHoliday(item: AttendanceItem, iso: string): boolean {
+  return Array.isArray(item.holidays) && item.holidays.indexOf(iso) !== -1;
+}
+
+/**
+ * How many working days a rotation has.
+ *
+ * The span is the block as the college states it. Whether every one of those
+ * is a day the reader is expected to turn up is a separate question, and
+ * `skipSundays` and the marked holidays are how they answer it.
+ *
+ * Counted day by day rather than divided by seven. A 28-day block has four
+ * Sundays or five depending on the weekday it starts, holidays cluster rather
+ * than spread, and the difference is a whole day of somebody's margin.
+ */
+export function workingDays(item: AttendanceItem): number | null {
+  const total = spanDays(item);
+  if (total === null) {
+    return null;
+  }
+  const start = parseDate(item.startDate ?? '');
+  const marked = Array.isArray(item.holidays) ? item.holidays.length : 0;
+  // Nothing to subtract, so nothing to walk.
+  if (!start || (!item.skipSundays && marked === 0)) {
+    return total;
   }
   let working = 0;
-  for (let i = 0; i < item.totalDays; i += 1) {
+  for (let i = 0; i < total; i += 1) {
     const day = new Date(start);
     day.setDate(start.getDate() + i);
-    if (day.getDay() !== 0) {
-      working += 1;
+    if (item.skipSundays && day.getDay() === 0) {
+      continue;
     }
+    if (isHoliday(item, isoDate(day))) {
+      continue;
+    }
+    working += 1;
   }
   return working;
+}
+
+/**
+ * The fixed-date holidays that land inside a range, as `{ date, name }`.
+ *
+ * Every year the range touches is walked, so a rotation crossing New Year gets
+ * both sides. Nothing moveable is guessed — see `FIXED_HOLIDAYS`.
+ */
+export function fixedHolidaysBetween(startDate: string, endDate: string) {
+  const start = parseDate(startDate);
+  const end = parseDate(endDate);
+  if (!start || !end || end.getTime() < start.getTime()) {
+    return [];
+  }
+  const found = [];
+  for (let year = start.getFullYear(); year <= end.getFullYear(); year += 1) {
+    for (const holiday of FIXED_HOLIDAYS) {
+      const day = new Date(year, holiday.month - 1, holiday.day);
+      if (day.getTime() >= start.getTime() && day.getTime() <= end.getTime()) {
+        found.push({ date: isoDate(day), name: holiday.name });
+      }
+    }
+  }
+  return found.sort((a, b) => (a.date < b.date ? -1 : 1));
 }
 
 /**
@@ -170,23 +297,23 @@ export function workingDays(item: AttendanceItem): number | null {
  * thing to put on a card. Clamped rather than extrapolated for the same reason.
  */
 export function dayOfRotation(item: AttendanceItem, today: Date = new Date()): number | null {
-  const total = workingDays(item);
-  if (total === null || !item.startDate) {
-    return null;
-  }
-  const start = new Date(`${item.startDate}T00:00:00`);
-  if (Number.isNaN(start.getTime())) {
+  const span = spanDays(item);
+  const start = parseDate(item.startDate ?? '');
+  if (span === null || !start) {
     return null;
   }
   const now = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-  if (now < start) {
+  if (now.getTime() < start.getTime()) {
     return null;
   }
   let working = 0;
-  for (let i = 0; i < (item.totalDays ?? 0); i += 1) {
+  for (let i = 0; i < span; i += 1) {
     const day = new Date(start);
     day.setDate(start.getDate() + i);
     if (item.skipSundays && day.getDay() === 0) {
+      continue;
+    }
+    if (isHoliday(item, isoDate(day))) {
       continue;
     }
     working += 1;
@@ -317,6 +444,19 @@ function sane(raw: unknown): AttendanceItem | null {
         ? Math.round(item.totalDays)
         : undefined,
     startDate: typeof item.startDate === 'string' ? item.startDate : undefined,
+    endDate: typeof item.endDate === 'string' ? item.endDate : undefined,
+    // Deduplicated and sorted on the way in. A date marked twice would be
+    // subtracted twice, and a rotation would come back shorter than it is —
+    // silently, and only for whoever managed to double-tap.
+    holidays: Array.isArray(item.holidays)
+      ? Array.from(
+          new Set(
+            item.holidays.filter(
+              (day): day is string => typeof day === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(day),
+            ),
+          ),
+        ).sort()
+      : undefined,
     skipSundays: item.skipSundays === true ? true : undefined,
   };
 }
@@ -374,6 +514,30 @@ export async function updateAttendance(
       return next;
     }),
   );
+}
+
+/**
+ * Mark a date in the rotation as a holiday, or take the mark back.
+ *
+ * A toggle rather than add/remove because that is what a tap on a calendar
+ * cell means, and because the reader is the only authority here: a college
+ * that works Republic Day, and one that shuts for a week nobody outside it has
+ * heard of, are both ordinary.
+ *
+ * It never touches `held` or `attended`. Those are what happened; this is what
+ * was scheduled, and conflating them would let marking a holiday rewrite a
+ * register that has already been filled in.
+ */
+export async function toggleHoliday(id: string, iso: string): Promise<void> {
+  const item = state.items.find(entry => entry.id === id);
+  if (!item) {
+    return;
+  }
+  const current = Array.isArray(item.holidays) ? item.holidays : [];
+  const next = current.indexOf(iso) === -1
+    ? [...current, iso].sort()
+    : current.filter(day => day !== iso);
+  await updateAttendance(id, { holidays: next.length > 0 ? next : undefined });
 }
 
 /** One class happened, and you were there — or you were not. */

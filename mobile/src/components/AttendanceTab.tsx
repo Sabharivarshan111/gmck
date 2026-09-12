@@ -1,9 +1,10 @@
-import React, { useCallback, useState, useSyncExternalStore } from 'react';
+import React, { useCallback, useMemo, useState, useSyncExternalStore } from 'react';
 import { StyleSheet, TextInput, View } from 'react-native';
 import { Check, GraduationCap, Plus, Stethoscope, Trash2, Undo2, X } from 'lucide-react-native';
 import { Text } from '@/components/Text';
 import { Touchable } from '@/components/Touchable';
 import { KeyboardSafe } from '@/components/KeyboardSafe';
+import { RotationCalendar, type CalendarMode } from '@/components/RotationCalendar';
 import { useTheme, withAlpha } from '@/theme';
 import { onColor } from '@/theme/color';
 import { typeScale } from '@/theme/typography';
@@ -11,6 +12,8 @@ import { tick } from '@/lib/haptics';
 import {
   addAttendance,
   attendanceVersion,
+  fixedHolidaysBetween,
+  spanDays,
   bestPossible,
   dayOfRotation,
   workingDays,
@@ -60,7 +63,10 @@ export function AttendanceTab() {
   const [kind, setKind] = useState<AttendanceKind>('theory');
   const [adding, setAdding] = useState(false);
   const [name, setName] = useState('');
-  const [days, setDays] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [holidays, setHolidays] = useState<string[]>([]);
+  const [calMode, setCalMode] = useState<CalendarMode>('range');
   const [skipSundays, setSkipSundays] = useState(false);
   const [target, setTarget] = useState(75);
   /** The last mark per item, so Undo knows what it is taking back. */
@@ -73,20 +79,86 @@ export function AttendanceTab() {
     if (!trimmed) {
       return;
     }
-    const total = Number(days);
+    const posting = kind === 'posting';
+    /*
+     * A rotation with only one end chosen is stored with only that end. It is
+     * still useful — the card can say when it started — and it is far better
+     * than inventing the other date, which is what stamping TODAY on the start
+     * used to do to anybody entering a posting they were already weeks into.
+     */
+    const dated = posting && startDate !== '';
+    // Days off outside the range would never be walked, and would come back to
+    // confuse whoever next edits the dates.
+    const inside = holidays.filter(
+      day => startDate !== '' && endDate !== '' && day >= startDate && day <= endDate,
+    );
     await addAttendance({
       name: trimmed,
       kind,
       target,
-      totalDays: kind === 'posting' && Number.isFinite(total) && total > 0 ? total : undefined,
-      startDate: kind === 'posting' ? new Date().toISOString().slice(0, 10) : undefined,
-      skipSundays: kind === 'posting' && skipSundays ? true : undefined,
+      startDate: dated ? startDate : undefined,
+      endDate: dated && endDate !== '' ? endDate : undefined,
+      holidays: dated && inside.length > 0 ? inside : undefined,
+      skipSundays: posting && skipSundays ? true : undefined,
     });
     setName('');
-    setDays('');
+    setStartDate('');
+    setEndDate('');
+    setHolidays([]);
+    setCalMode('range');
     setSkipSundays(false);
     setAdding(false);
-  }, [name, days, kind, target, skipSundays]);
+  }, [name, startDate, endDate, holidays, kind, target, skipSundays]);
+
+  /*
+   * The working-day count for the range as it stands, phrased the way the card
+   * will phrase it. Built from the same `spanDays`/`workingDays` the stored
+   * item uses rather than counted again here — a second implementation of this
+   * arithmetic is a second chance to tell somebody they can miss more classes
+   * than they can.
+   */
+  const rangeSummary = useMemo(() => {
+    if (startDate === '') {
+      return 'Tap a date to set the first day.';
+    }
+    if (endDate === '') {
+      return `Starts ${startDate}. Tap the last day.`;
+    }
+    const draft: AttendanceItem = {
+      id: 'draft',
+      name: '',
+      kind: 'posting',
+      target,
+      held: 0,
+      attended: 0,
+      startDate,
+      endDate,
+      holidays,
+      skipSundays: skipSundays ? true : undefined,
+    };
+    const span = spanDays(draft) ?? 0;
+    const working = workingDays(draft) ?? span;
+    const off = span - working;
+    if (off === 0) {
+      return `${span} days, all of them working days.`;
+    }
+    return `${span} days, ${working} of them working — ${off} off.`;
+  }, [startDate, endDate, holidays, skipSundays, target]);
+
+  /** The fixed national holidays that land inside the chosen range. */
+  const suggested = useMemo(
+    () => (startDate !== '' && endDate !== '' ? fixedHolidaysBetween(startDate, endDate) : []),
+    [startDate, endDate],
+  );
+
+  /** Toggle a day off while the posting is still being written. */
+  const toggleDraftHoliday = useCallback((iso: string) => {
+    setHolidays(current =>
+      current.indexOf(iso) === -1
+        ? [...current, iso].sort()
+        : current.filter(day => day !== iso),
+    );
+  }, []);
 
   const mark = useCallback(async (item: AttendanceItem, present: boolean) => {
     tick();
@@ -140,7 +212,7 @@ export function AttendanceTab() {
             <Text style={[styles.emptyBody, { color: colors.textMuted }]}>
               {kind === 'theory'
                 ? 'Add a subject with the button below, then tap Present or Absent after each class. Orbit works out how many you can still miss.'
-                : 'Add a rotation and how many days it runs. Orbit counts down the days left and tells you how many you can safely bunk.'}
+                : 'Add a rotation and mark its dates on the calendar. Tick off Sundays and holidays, and Orbit counts down the working days left and tells you how many you can safely bunk.'}
             </Text>
           </View>
         ) : null}
@@ -170,15 +242,80 @@ export function AttendanceTab() {
               style={[styles.input, { color: colors.text, borderColor: colors.border }]}
             />
             {kind === 'posting' ? (
-              <TextInput
-                value={days}
-                onChangeText={setDays}
-                keyboardType="number-pad"
-                placeholder="How many days does it run?"
-                placeholderTextColor={colors.textMuted}
-                accessibilityLabel="Length of the posting in days"
-                style={[styles.input, { color: colors.text, borderColor: colors.border }]}
-              />
+              <>
+                <RotationCalendar
+                  startDate={startDate}
+                  endDate={endDate}
+                  holidays={holidays}
+                  onChangeRange={(from, to) => {
+                    setStartDate(from);
+                    setEndDate(to);
+                    // Days off are a property of a range. Moving the range and
+                    // keeping them would leave marks stranded outside it,
+                    // shortening a rotation by days nobody can see.
+                    setHolidays(current =>
+                      to === '' ? [] : current.filter(day => day >= from && day <= to),
+                    );
+                  }}
+                  onToggleHoliday={toggleDraftHoliday}
+                  mode={calMode}
+                  onChangeMode={setCalMode}
+                />
+                {/*
+                  What the dates actually came to, said in words.
+
+                  The calendar shows the shape; this is the number every other
+                  line on the card is derived from, and seeing it move as
+                  Sundays and days off are ticked is the only way to catch a
+                  range that is out by a week before it matters.
+                */}
+                <Text
+                  // Addressable, because `check:attendance-ui` has to read this
+                  // exact line. Matching it by its words picked up the empty
+                  // state above instead, which also says "days" and "working".
+                  testID="rotation-summary"
+                  style={[styles.rangeSummary, { color: colors.textMuted }]}>
+                  {rangeSummary}
+                </Text>
+                {/*
+                  Offered, never applied. Four fixed national holidays are all
+                  that can honestly be known — everything else moves, or belongs
+                  to one college — and plenty of places work straight through
+                  them. See FIXED_HOLIDAYS.
+                */}
+                {suggested.length > 0 ? (
+                  <View style={styles.suggestions}>
+                    {suggested.map(holiday => {
+                      const on = holidays.indexOf(holiday.date) !== -1;
+                      return (
+                        <Touchable
+                          key={holiday.date}
+                          onPress={() => toggleDraftHoliday(holiday.date)}
+                          label={`${holiday.name}, ${holiday.date}`}
+                          hint="Mark this as a day off"
+                          role="checkbox"
+                          state={{ checked: on }}
+                          style={[
+                            styles.chip,
+                            {
+                              borderColor: on ? colors.accent : colors.border,
+                              backgroundColor: on ? withAlpha(colors.accent, 0.14) : 'transparent',
+                            },
+                          ]}>
+                          <Text
+                            style={[
+                              styles.chipText,
+                              { color: on ? colors.accent : colors.textMuted },
+                            ]}>
+                            {on ? '✓ ' : '+ '}
+                            {holiday.name}
+                          </Text>
+                        </Touchable>
+                      );
+                    })}
+                  </View>
+                ) : null}
+              </>
             ) : null}
             {/*
               Off by default, and that is deliberate.
@@ -250,7 +387,10 @@ export function AttendanceTab() {
                 onPress={() => {
                   setAdding(false);
                   setName('');
-                  setDays('');
+                  setStartDate('');
+                  setEndDate('');
+                  setHolidays([]);
+                  setCalMode('range');
                   setSkipSundays(false);
                 }}
                 label="Cancel"
@@ -329,6 +469,15 @@ function AttendanceCard({
             <Text style={[styles.cardCount, { color: colors.textMuted }]}>
               Day {day} of {total}
               {item.skipSundays ? ' · Sundays off' : ''}
+              {/*
+                Days off are named on the card, not just silently subtracted.
+                "Day 12 of 24" with no explanation is the reader's own count
+                disagreeing with the app's, and the only way to tell which is
+                right is to know what came out of it.
+              */}
+              {item.holidays && item.holidays.length > 0
+                ? ` · ${item.holidays.length} ${item.holidays.length === 1 ? 'day' : 'days'} off`
+                : ''}
             </Text>
           ) : null}
         </View>
@@ -432,6 +581,8 @@ function AttendanceCard({
 }
 
 const styles = StyleSheet.create({
+  rangeSummary: { ...typeScale.footnote },
+  suggestions: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   sundayRow: {
     flexDirection: 'row',
     alignItems: 'center',

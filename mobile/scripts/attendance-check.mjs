@@ -32,6 +32,10 @@ const arithmetic = source
   .slice(source.indexOf('export function percentOf'), source.indexOf('// ------', source.indexOf('export function bestPossible')))
   .replace(/export /g, '')
   .replace(/: number/g, '')
+  // Before `: string`, or `: string[]` strips to a stray `[]` and the file
+  // stops parsing at the first function that returns one.
+  .replace(/: string\[\]/g, '')
+  .replace(/: boolean/g, '')
   .replace(/: string/g, '')
   .replace(/: AttendanceItem/g, '')
   .replace(/: AttendanceVerdict/g, '')
@@ -43,10 +47,13 @@ const arithmetic = source
   .replace(/^\s*\/\*\*[\s\S]*?\*\/$/gm, '');
 
 // eslint-disable-next-line no-new-func
-const fns = new Function(`${arithmetic}; return { percentOf, canMiss, mustAttend, verdictFor, bestPossible, workingDays, dayOfRotation };`)();
+const fns = new Function(`${arithmetic}; return { percentOf, canMiss, mustAttend, verdictFor, bestPossible, workingDays, dayOfRotation, spanDays, isoDate, isHoliday, fixedHolidaysBetween, FIXED_HOLIDAYS };`)();
 
-const eq = (got, want, what) =>
-  check(got === want, `${what}: expected ${want}, got ${got}`);
+let examples = 0;
+const eq = (got, want, what) => {
+  examples += 1;
+  return check(got === want, `${what}: expected ${want}, got ${got}`);
+};
 
 // ---------------------------------------------------------------------------
 // canMiss — how many more you may skip
@@ -214,6 +221,110 @@ eq(
   'the best finish attends every working day left, not every calendar day',
 );
 
+// ---------------------------------------------------------------------------
+// The rotation is two dates now, and holidays come off it
+// ---------------------------------------------------------------------------
+//
+// "How many days does it run?" asked the reader to do a subtraction they do
+// not have the numbers for — a college hands out a posting as two dates. Every
+// number below was worked out against a real calendar: 2026-09-07 is a Monday,
+// and 28 days from it ends on 2026-10-04.
+
+const ranged = { ...monday, totalDays: undefined, endDate: '2026-10-04' };
+
+eq(fns.spanDays(ranged), 28, 'a range counts both ends — 7 Sep to 4 Oct is 28 days');
+eq(
+  fns.workingDays(ranged),
+  fns.workingDays(monday),
+  'the range and the old day count describe the same block',
+);
+// Postings saved before the range existed must keep working, and there are
+// real ones on real phones.
+eq(fns.spanDays(monday), 28, 'a posting stored with only totalDays still measures');
+// An end before its start is a typo, not a negative rotation.
+eq(fns.spanDays({ ...ranged, endDate: '2026-09-01' }), null, 'an end before the start is nothing');
+eq(fns.workingDays({ ...ranged, endDate: '2026-09-01' }), null, 'and nothing propagates');
+
+// 2026-10-02 is Gandhi Jayanti and falls on a Friday that year, so it is a
+// working day the calendar would otherwise have counted.
+eq(
+  fns.workingDays({ ...ranged, holidays: ['2026-10-02'] }),
+  23,
+  'a marked holiday comes off the working days',
+);
+eq(
+  fns.workingDays({ ...ranged, holidays: ['2026-10-02', '2026-09-15', '2026-09-16'] }),
+  21,
+  'three of them come off three',
+);
+
+// 2026-09-13 is a Sunday. It is already not a working day, and subtracting it
+// twice would quietly shorten the rotation — margin somebody thinks they have
+// and does not.
+eq(
+  fns.workingDays({ ...ranged, holidays: ['2026-09-13'] }),
+  24,
+  'a holiday that lands on a Sunday is not subtracted twice',
+);
+// With Sundays counted, that same date IS a working day and does come off.
+eq(
+  fns.workingDays({ ...ranged, skipSundays: undefined, holidays: ['2026-09-13'] }),
+  27,
+  'the same date comes off when Sundays are worked',
+);
+
+// The verdict has to read the same number, or the cap is wrong in the
+// direction that gets somebody short.
+eq(
+  fns.verdictFor({ ...ranged, holidays: ['2026-10-02'], held: 20, attended: 20 }).remaining,
+  3,
+  'what is left of the rotation counts holidays out too',
+);
+
+// Day 1 is the first day somebody is expected to turn up, not the first date
+// on the noticeboard.
+eq(
+  fns.dayOfRotation(ranged, new Date(2026, 8, 8)),
+  2,
+  'the Tuesday of a Monday start is day 2',
+);
+eq(
+  fns.dayOfRotation({ ...ranged, holidays: ['2026-09-07'] }, new Date(2026, 8, 8)),
+  1,
+  'and day 1 when the Monday was a holiday',
+);
+
+// ---------------------------------------------------------------------------
+// The offered holidays are the knowable ones, and only those
+// ---------------------------------------------------------------------------
+//
+// Guessing Diwali or Eid would hand somebody a working-day count built on
+// dates that are wrong — authoritative-looking and false, which is the same
+// failure as inventing a repeat count.
+
+const offered = fns.fixedHolidaysBetween('2026-09-07', '2026-10-04');
+eq(offered.length, 1, 'one fixed holiday falls in this rotation');
+eq(offered[0].date, '2026-10-02', 'and it is Gandhi Jayanti');
+eq(
+  fns.fixedHolidaysBetween('2026-09-07', '2026-09-20').length,
+  0,
+  'a rotation with none in it is offered none',
+);
+// A block over New Year has to see both years, not just the first.
+eq(
+  fns.fixedHolidaysBetween('2026-12-20', '2027-02-01').length,
+  2,
+  'a rotation crossing New Year sees Christmas and Republic Day',
+);
+eq(
+  fns.FIXED_HOLIDAYS.every(h => typeof h.month === 'number' && typeof h.day === 'number'),
+  true,
+  'every offered holiday is a fixed Gregorian date',
+);
+eq(fns.FIXED_HOLIDAYS.length, 4, 'four of them, and nothing moveable is guessed');
+
+eq(fns.isoDate(new Date(2026, 0, 5)), '2026-01-05', 'ISO dates pad to two digits');
+
 if (failures.length > 0) {
   console.error('attendance check failed:\n');
   for (const failure of failures) console.error(`  - ${failure}`);
@@ -221,6 +332,6 @@ if (failures.length > 0) {
 }
 
 console.log(
-  'OK  attendance arithmetic matches 18 worked examples, the rotation caps what can be missed, ' +
-    'and nothing leaves the phone',
+  `OK  attendance arithmetic matches ${examples} worked examples, the rotation caps what can be ` +
+    'missed, holidays come off the working days, and nothing leaves the phone',
 );
