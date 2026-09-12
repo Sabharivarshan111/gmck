@@ -141,6 +141,59 @@ for (const script of ALL_SCRIPTS) {
   }
 }
 
+/*
+ * ---- No digit reaches the screen, and no "plate" reaches the script --------
+ *
+ * ## The numbers
+ *
+ * The statistics came out of the SPOKEN lines once, on the owner's
+ * instruction, and stayed in the captions — so a muted viewer, which is most
+ * of them, still read "3,463 already asked", "5,634 questions" and "Four
+ * years, 25 subjects" in the cut that gets watched more. That was fixed by
+ * editing five files and adding nothing to stop it.
+ *
+ * It came back the next day, the moment a new set of scripts was written, and
+ * nobody could have noticed: a caption is not compared to anything. A rule
+ * that lives in a commit message lasts one session, which this repo has
+ * written down in four other places and learned again here.
+ *
+ * So: no digit in anything a viewer reads or hears. A spoken line has to spell
+ * its numbers out anyway or the synthesiser reads "25" as a year, and a
+ * caption with a figure in it is a claim somebody has to be able to defend.
+ * Write "twelve species" if it must be said at all.
+ *
+ * ## The word "plate"
+ *
+ * `plate` is this repo's internal word for the image file behind a diagram,
+ * and it leaked into an ad: "A real labelled plate, not a stock drawing."
+ * No medical student calls it that — they call it a diagram, which is also
+ * what the app's own UI calls it. Screen KEYS like `plateBrachial` are fine;
+ * they are never spoken.
+ */
+for (const script of ALL_SCRIPTS) {
+  for (const shot of script.shots) {
+    for (const [field, value] of [
+      ['vo', shot.vo],
+      ['text', shot.text],
+      ['silentText', shot.silentText],
+    ]) {
+      if (!value) continue;
+      const digit = String(value).match(/\d/);
+      check(
+        !digit,
+        `${script.id} shot ${shot.n}: \`${field}\` is "${value}", which puts a ` +
+          'figure on screen. Spell it out, or cut it — a number in an ad is a ' +
+          'claim, and the muted cut is the one most people read.',
+      );
+      check(
+        !/\bplates?\b/i.test(String(value)),
+        `${script.id} shot ${shot.n}: \`${field}\` says "plate". Students call ` +
+          'it a diagram, and so does the app. `plate` is our word for the file.',
+      );
+    }
+  }
+}
+
 /* ---- And no ad repeats a line to itself -------------------------------- */
 for (const script of ALL_SCRIPTS) {
   const seen = new Set();
