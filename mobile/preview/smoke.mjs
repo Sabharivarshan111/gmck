@@ -2290,7 +2290,34 @@ await step('attendance counts classes, and says what is still spare', async () =
   await byLabel('Add a posting').click({ force: true });
   await page.waitForTimeout(500);
   await byLabel('Posting name').fill('Paediatrics');
-  await byLabel('Length of the posting in days').fill('30');
+  /*
+   * The rotation is two dates on a calendar now, not a number typed into a
+   * box. "How many days does it run?" asked the reader for a subtraction they
+   * do not have the numbers for — a college hands a posting out as two dates.
+   *
+   * This step used to fill `Length of the posting in days`, which no longer
+   * exists, and it failed here for thirty seconds while every actionability
+   * check on the input above it passed. Worth knowing: the label that vanished
+   * was three lines further down than the error pointed.
+   *
+   * Today plus twenty-nine days, so the block is thirty days INCLUSIVE and the
+   * assertion below is the same arithmetic it always was.
+   */
+  const first = new Date();
+  const last = new Date(first.getTime() + 29 * 86400000);
+  const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
+    'August', 'September', 'October', 'November', 'December'];
+  const cell = d => `${d.getDate()} ${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
+  await byLabel(cell(first)).click({ force: true });
+  await page.waitForTimeout(250);
+  // The end may be in the next month, so step forward until its cell is there.
+  for (let i = 0; i < 2; i += 1) {
+    if ((await page.locator(`[aria-label="${cell(last)}"]`).count()) > 0) break;
+    await byLabel('Next month').click({ force: true });
+    await page.waitForTimeout(250);
+  }
+  await byLabel(cell(last)).click({ force: true });
+  await page.waitForTimeout(300);
   await byLabel('Add this posting').click({ force: true });
   await page.waitForTimeout(600);
   await byLabel('Mark present for Paediatrics').click({ force: true });

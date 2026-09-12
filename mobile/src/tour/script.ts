@@ -470,6 +470,27 @@ export const STEPS: TourStep[] = [
     target: 'Settings',
     tapToAdvance: true,
   },
+  /*
+   * Before the bell, not after it.
+   *
+   * `reminders-bell` carries `cta: 'Finish'` because it was written as the
+   * LAST step, so its button reads "Finish: step N of M". Putting anything
+   * after it left that label matching nothing a reader — or `check:smoke` —
+   * recognises as a way forward, and the walkthrough dead-ended one step from
+   * the end.
+   *
+   * It also reads better here: open the settings, see what you can set, then
+   * turn it on. Finishing on the action is the right last beat.
+   */
+  {
+    id: 'reminder-timing',
+    chapter: 'progress',
+    title: 'And when it reaches you',
+    body:
+      'Two sliders: the hour it checks, and how many days before a date it starts counting down. ' +
+      'That second one covers your exam and anything you added under Attendance.',
+    tab: 'Home',
+  },
   {
     id: 'reminders-bell',
     chapter: 'progress',
@@ -481,15 +502,6 @@ export const STEPS: TourStep[] = [
     target: 'Daily reminder (notifications)',
     tapToAdvance: true,
     cta: 'Finish',
-  },
-  {
-    id: 'reminder-timing',
-    chapter: 'progress',
-    title: 'And when it reaches you',
-    body:
-      'Pick the hour it checks, and how many days before a date it starts counting down. ' +
-      'Most evenings it stays quiet, which is the point.',
-    tab: 'Progress',
   },
 ];
 
