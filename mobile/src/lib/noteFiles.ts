@@ -1,5 +1,6 @@
 import OrbitFiles from '@/native/NativeOrbitFiles';
 import { warn } from './log';
+import { forgetPdfInk } from './pdfPages';
 
 /**
  * Videos, recordings and PDFs kept beside a personal study note.
@@ -282,6 +283,16 @@ export function noteFileUri(file: NoteFile): string | null {
  */
 export function removeNoteFile(file: NoteFile): void {
   try {
+    /*
+     * Marks drawn on a PDF go with the PDF, whether it was copied or linked.
+     *
+     * Ink pointing at a document nobody can open is space the reader can only
+     * see as "Orbit is using 400MB" — the same rule the note media and the
+     * imported decks already follow. Fired and not awaited: detaching a file
+     * must not wait on storage, and a mark left behind costs bytes rather than
+     * correctness.
+     */
+    void forgetPdfInk(file.id);
     if (file.linked) {
       if (file.uri) {
         native?.release(file.uri);

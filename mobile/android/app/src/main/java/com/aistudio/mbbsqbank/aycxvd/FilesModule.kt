@@ -3,8 +3,12 @@ package com.aistudio.mbbsqbank.aycxvd
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Color
+import android.graphics.pdf.PdfRenderer
 import android.net.Uri
 import android.os.Build
+import android.os.ParcelFileDescriptor
 import android.provider.DocumentsContract
 import android.provider.OpenableColumns
 import com.facebook.react.bridge.ActivityEventListener
@@ -383,6 +387,104 @@ class FilesModule(reactContext: ReactApplicationContext) :
     } catch (_: Throwable) {
       // Never held, or already given up. Either way there is nothing to do —
       // and note that nothing here deletes the reader's file.
+    }
+  }
+
+  /**
+   * Where rendered PDF pages are cached.
+   *
+   * Beside the media rather than in the cache directory, because Android
+   * empties the cache when it wants the space — and a page the reader has
+   * drawn on must still be there next week. The ink is stored separately, so
+   * losing a render would not lose the annotation, but it would lose the thing
+   * the annotation sits on top of.
+   */
+  private fun pageDir(): File =
+    File(reactApplicationContext.filesDir, "pdf-pages").apply { mkdirs() }
+
+  /**
+   * Open a stored PDF for rendering, or null.
+   *
+   * `PdfRenderer` needs a seekable descriptor, which is why this goes through
+   * the copied file rather than the original content URI: a linked document
+   * lives behind a provider that may not offer one.
+   */
+  private fun openPdf(id: String): Pair<PdfRenderer, ParcelFileDescriptor>? {
+    val file = File(mediaDir(), sanitise(id))
+    if (!file.isFile) return null
+    return try {
+      val fd = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY)
+      Pair(PdfRenderer(fd), fd)
+    } catch (_: Throwable) {
+      // Encrypted, malformed, or not a PDF at all. The caller shows that.
+      null
+    }
+  }
+
+  override fun pdfPageCount(id: String, promise: Promise) {
+    val opened = openPdf(id)
+    if (opened == null) {
+      promise.resolve(0)
+      return
+    }
+    val (renderer, fd) = opened
+    try {
+      promise.resolve(renderer.pageCount)
+    } finally {
+      renderer.close()
+      fd.close()
+    }
+  }
+
+  override fun renderPdfPage(id: String, pageIndex: Double, width: Double, promise: Promise) {
+    // Codegen maps every TS `number` to Double, so the index arrives as one.
+    val page = pageIndex.toInt()
+    val opened = openPdf(id)
+    if (opened == null) {
+      promise.reject("no_pdf", "That file is not a PDF this device can open.")
+      return
+    }
+    val (renderer, fd) = opened
+    try {
+      if (page < 0 || page >= renderer.pageCount) {
+        promise.reject("no_page", "Page \$page is not in this document.")
+        return
+      }
+      val cached = File(pageDir(), "\${sanitise(id)}-\$page-\${width.toInt()}.png")
+      if (cached.isFile && cached.length() > 0L) {
+        promise.resolve("file://\${cached.absolutePath}")
+        return
+      }
+      renderer.openPage(page).use { pdfPage ->
+        /*
+         * The page's own aspect ratio, at the width the screen asked for.
+         * Deriving the height rather than taking one is what keeps the ink
+         * aligned: the annotation is stored as geometry over this bitmap's
+         * box, so a page rendered to the wrong shape puts every mark in the
+         * wrong place — the same trap the drawing canvas already documents.
+         */
+        val w = width.toInt().coerceIn(320, 2400)
+        val h = (w.toLong() * pdfPage.height / pdfPage.width).toInt().coerceAtLeast(1)
+        val bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
+        /*
+         * White first. A PDF page is transparent where it has no ink, and on
+         * this app's black theme an unfilled bitmap renders as black paper
+         * with black type on it — invisible, and indistinguishable from a
+         * failed render.
+         */
+        bitmap.eraseColor(Color.WHITE)
+        pdfPage.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
+        cached.outputStream().use { out ->
+          bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
+        }
+        bitmap.recycle()
+      }
+      promise.resolve("file://\${cached.absolutePath}")
+    } catch (error: Throwable) {
+      promise.reject("render_failed", error.message ?: "Could not draw that page.")
+    } finally {
+      renderer.close()
+      fd.close()
     }
   }
 

@@ -109,6 +109,32 @@ export interface Spec extends TurboModule {
   remove(id: string): void;
 
   /** Bytes currently held, so Settings can be honest about what this costs. */
+  /**
+   * How many pages a stored PDF has, or 0 when it cannot be opened.
+   *
+   * Zero rather than a rejection: a PDF that Android's own renderer will not
+   * open is a fact about the file, and the screen showing it needs to say so
+   * rather than crash on a promise nobody caught.
+   */
+  pdfPageCount(id: string): Promise<number>;
+
+  /**
+   * Render one page of a stored PDF to a PNG and hand back its `file://` path.
+   *
+   * Built on `android.graphics.pdf.PdfRenderer`, which has been in Android
+   * since API 21 — so annotating a PDF costs no new dependency at all, where
+   * every PDF library on npm is megabytes per ABI.
+   *
+   * A path rather than base64. A rendered A4 page at a readable width is
+   * several megabytes, and crossing the bridge as a string would be that much
+   * again in UTF-16 for something `Image` reads off disk anyway. Same reason
+   * `audioInfo` returns a path for cover art.
+   *
+   * Rendered pages are cached under `filesDir/pdf-pages/` and go when the note
+   * does, with the file they came from.
+   */
+  renderPdfPage(id: string, page: number, width: number): Promise<string>;
+
   totalBytes(): number;
 }
 

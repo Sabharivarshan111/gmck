@@ -15,6 +15,7 @@ import { DrawCanvas } from "@/components/DrawCanvas";
 import { NoteToolbar } from "@/components/NoteToolbar";
 import { useTheme } from "@/theme";
 import { NoteMediaPlayer } from "@/components/NoteMediaPlayer";
+import { PdfAnnotator } from "@/components/PdfAnnotator";
 import { typeScale } from "@/theme/typography";
 import { useUserNotes, type UserNote } from "@/hooks/useUserNotes";
 import {
@@ -149,6 +150,8 @@ function NoteAttachment({
 }) {
   const { colors } = useTheme();
   const [busy, setBusy] = useState(false);
+  // Only a PDF ever opens this, and only from the pencil below.
+  const [annotating, setAnnotating] = useState(false);
   const uri = noteFileUri(file);
   const kind = kindOf(file);
   /*
@@ -247,6 +250,38 @@ function NoteAttachment({
       </View>
       <ChevronRight size={14} color={colors.textMuted} />
     </Touchable>
+    {/*
+      A PDF gets a second verb.
+
+      Tapping the row still hands off to Android's own viewer, and that stays
+      the right answer for READING — it knows about search, selection and
+      reflow, and this app has no business reimplementing any of it.
+
+      Marking a diagram up is a different verb, and the system viewer cannot do
+      it. `PdfAnnotator` renders a page with Android's own `PdfRenderer` and
+      puts the app's existing canvas over it, so the handout's bytes are never
+      touched and the marks can always be taken off again.
+    */}
+    {kind === "pdf" ? (
+      <Touchable
+        onPress={() => setAnnotating(true)}
+        label={`Draw on ${file.name}`}
+        style={[styles.fileRow, { backgroundColor: colors.card, borderColor: colors.border }]}>
+        <Pencil size={15} color={colors.accent} />
+        <View style={styles.flex}>
+          <Text style={[styles.fileName, { color: colors.accent }]} numberOfLines={1}>
+            Draw on it
+          </Text>
+          <Text style={[styles.noteEmpty, { color: colors.textMuted }]}>
+            Highlight, circle and write on the pages
+          </Text>
+        </View>
+        <ChevronRight size={14} color={colors.textMuted} />
+      </Touchable>
+    ) : null}
+    {annotating ? (
+      <PdfAnnotator fileId={file.id} name={file.name} onClose={() => setAnnotating(false)} />
+    ) : null}
     {linkFooter}
     </View>
   );

@@ -168,5 +168,15 @@ export default {
       artwork: `data:image/png;base64,${COVER_PNG}`,
     });
   },
+  /*
+   * The harness is a browser: there is no PdfRenderer, so a PDF has no pages
+   * and no page can be drawn. Reporting zero is the same answer the real
+   * module gives for a file it cannot open, and `PdfAnnotator` already has to
+   * say so on screen — which means the empty state is exercised here rather
+   * than discovered on a phone.
+   */
+  pdfPageCount: async () => 0,
+  renderPdfPage: async () => '',
+
   totalBytes: () => 0,
 };
