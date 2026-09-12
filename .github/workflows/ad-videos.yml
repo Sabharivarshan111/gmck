@@ -298,6 +298,16 @@ jobs:
             file: orbit-reel-final-year.mp4
           - ad: orbit-reel-final-year-silent
             file: orbit-reel-final-year-silent.mp4
+          # The two untargeted reels — no year, no subject — for posting
+          # where the audience is every MBBS year at once.
+          - ad: orbit-reel-everything
+            file: orbit-reel-everything.mp4
+          - ad: orbit-reel-everything-silent
+            file: orbit-reel-everything-silent.mp4
+          - ad: orbit-reel-community
+            file: orbit-reel-community.mp4
+          - ad: orbit-reel-community-silent
+            file: orbit-reel-community-silent.mp4
           # The two flat, typographic ads. A different renderer (`HyperAd`) and
           # a different argument — one is a question being answered, the other
           # is the four years. Both ship in two cuts like everything else.

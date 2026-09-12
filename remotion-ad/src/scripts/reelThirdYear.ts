@@ -3,27 +3,41 @@ import type { AdScript } from './types';
 /**
  * Reel — "Third year".
  *
- * ## Third year is the year this app is best at, and the reason is data
+ * ## The repeat counter is strongest here, and the ad leads on it
  *
- * Ninety-six per cent of third-year questions carry a repeat marker. That is
- * the highest of the four years by a distance — first year is sixty-nine,
- * second eighty-eight, final year twenty-three — so the repeat counter is not
- * a nice-to-have here, it is close to a complete map of what gets asked. An ad
- * for this year can lead on it and be telling the truth about almost every
- * question on screen.
+ * Four fifths of third-year questions carry a repeat marker — behind second
+ * year and well ahead of final year, where it is closer to a quarter. So the
+ * circle on the right of a row is close to a map of what gets asked, and an ad
+ * for this year can lead on it and be telling the truth about most of the
+ * questions on screen. `npm run check:repeat-markers` prints the real table;
+ * do not copy a figure out of here, because this docstring has already been
+ * wrong about it once.
  *
- * The bank holds two third-year subjects: Forensic Medicine and Community
- * Medicine. That is a small number and the ad says it plainly rather than
- * implying six — a viewer who installs expecting Medicine and Surgery in third
- * year has been misled by the ad, not by the app.
+ * It said ninety-six per cent, which was true of a third year holding only
+ * Forensic and Community Medicine. **ENT and Ophthalmology are third year's
+ * too** — the same two subject nodes final year serves, because they are
+ * taught in third year and examined in final — and they carry fewer markers,
+ * so the figure moved the day they were added and nothing here noticed.
  *
- * ## Both subjects have a real book behind them
+ * ## Which is why shot 2 names no subject
  *
- * Forensic and Community Medicine were the first two textbooks uploaded, and
- * they are the ones the triple tap was originally built around: eight hundred
- * of the notes in the cache are third year. So "grounded in the actual
- * textbook" is a stronger claim here than in any other year's ad, and it is
- * the one thing this reel spends two shots on.
+ * It used to say "Forensic and Community Medicine, chapter by chapter" over a
+ * screenshot of the third-year list. That list now has four rows in it, so the
+ * line was naming half of what the viewer could see — the exact
+ * screenshot-contradicts-the-line defect `ad-truth-check` exists for, and one
+ * it cannot catch, because `DEPICTS.browseThird` records the year and not the
+ * subjects. Counting is the fix that lasts: a fifth subject changes one word.
+ *
+ * ## All four have a real book behind them
+ *
+ * Forensic and Community Medicine were the first two textbooks uploaded and
+ * the ones the triple tap was built around, which is why most of the notes
+ * already in the cache are third year. ENT and Ophthalmology have books of
+ * their own — `pickBookKey` is keyed on the subject and never on the year, so
+ * they arrived grounded the moment third year started serving them.
+ *
+ * So "grounded in the actual textbook" is a stronger claim here than in any
+ * other year's ad, and it is the one thing this reel spends two shots on.
  *
  * What it must never do is promise page numbers on demand. Those come from
  * readers and need three of them to agree — `orbit-reel-pages` is the ad for
@@ -40,7 +54,7 @@ export const reelThirdYear: AdScript = {
   music: 'audio/bed/bed-guide.wav',
   shots: [
     { n: 1, frames: 129, screen: null, mascot: 'hero', camera: 'settle', text: 'since the term started', silentText: 'Haven’t opened it in weeks?', vo: 'You haven’t touched Forensic since the term started.', accent: '#F5B301' },
-    { n: 2, frames: 129, screen: 'browseThird', mascot: 'guide', camera: 'trackLeft', text: 'chapter by chapter', silentText: 'Forensic and Community Medicine', vo: 'Forensic and Community Medicine, chapter by chapter.', accent: '#F5B301' },
+    { n: 2, frames: 129, screen: 'browseThird', mascot: 'guide', camera: 'trackLeft', text: 'chapter by chapter', silentText: 'Four subjects, chapter by chapter', vo: 'Your four subjects, chapter by chapter.', accent: '#F5B301' },
     { n: 3, frames: 129, screen: 'questionsLeaf', camera: 'macro', text: 'have already come up', silentText: 'Repeated questions', vo: 'And a lot of these questions have already come up.', focus: 0.28, accent: '#F5B301' },
     { n: 4, frames: 129, screen: 'questionsLeaf', mascot: 'guide', camera: 'push', text: 'The circle tells you how often', silentText: 'Repeat frequency', vo: 'The circle tells you how often.', focus: 0.3, accent: '#F5B301' },
     { n: 5, frames: 129, screen: 'noteHero', camera: 'push', text: 'Triple-tap for the answer', silentText: 'Triple-tap for the answer', vo: 'Triple-tap for the answer.', accent: '#7C5CFF' },

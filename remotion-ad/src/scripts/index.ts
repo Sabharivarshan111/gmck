@@ -29,6 +29,8 @@ import { reelHowPages } from './reelHowPages.ts';
 import { reelHowTimer } from './reelHowTimer.ts';
 import { reelThirdYear } from './reelThirdYear.ts';
 import { reelFinalYear } from './reelFinalYear.ts';
+import { reelEverything } from './reelEverything.ts';
+import { reelCommunity } from './reelCommunity.ts';
 import { adAskIt } from './adAskIt.ts';
 import { adTheYear } from './adTheYear.ts';
 
@@ -75,6 +77,12 @@ const AUTHORED: AdScript[] = [
   reelHowTimer,
   reelThirdYear,
   reelFinalYear,
+  // The two untargeted reels, for posting where the audience is every MBBS
+  // year at once. Neither names a year or a subject — "third year" in the
+  // first second loses three quarters of an Instagram feed, and the four year
+  // reels above are the ad for somebody who already knows which one they are.
+  reelEverything,
+  reelCommunity,
   // The two flat, typographic ads. Same pipeline, different renderer —
   // `look` chooses, and `HyperAd` draws them.
   adAskIt,
@@ -119,6 +127,8 @@ export {
   reelNotes,
   reelThirdYear,
   reelFinalYear,
+  reelEverything,
+  reelCommunity,
   adAskIt,
   adTheYear,
 };
