@@ -1,4 +1,12 @@
-import { getExam, hydrateExam, isHydrated as examHydrated } from '@/lib/exam';
+import { daysUntil, getExam, hydrateExam, isHydrated as examHydrated } from '@/lib/exam';
+import {
+  attendanceEventsHydrated,
+  daysToEvent,
+  getAttendanceEvents,
+  hydrateAttendanceEvents,
+  kindLabel,
+  nextEvent,
+} from '@/lib/attendanceEvents';
 import { dueCards, loadCards } from '@/lib/spacedRepetition';
 import { currentValue, loadStreak } from '@/lib/streak';
 import { getLastStudyDay } from '@/lib/progress';
@@ -74,9 +82,43 @@ export async function syncReminders(): Promise<void> {
     best: 0,
   })));
 
+  /*
+   * The soonest dated thing wins the one slot the receiver has.
+   *
+   * The digest carries a single exam, and the Kotlin already reads it as
+   * "three days to X". A posting exam or a seminar the reader typed into the
+   * Attendance tab is the same shape of fact, so it goes through that slot
+   * rather than through a new field — which would mean changing a receiver
+   * that cannot be run in these sandboxes, and an untested change there fails
+   * as an evening that stays silent, which is what this whole file exists to
+   * prevent.
+   *
+   * The typed events never reach `exam`, because that store syncs to
+   * `exam_targets` and a locally-typed seminar is not this app's to upload.
+   */
+  if (!attendanceEventsHydrated()) {
+    await hydrateAttendanceEvents();
+  }
+  const soonestEvent = nextEvent(getAttendanceEvents());
+  const eventDays = soonestEvent ? daysToEvent(soonestEvent) : null;
+  const examDays = exam ? daysUntil(exam) : null;
+  const eventWins =
+    soonestEvent !== null &&
+    eventDays !== null &&
+    eventDays >= 0 &&
+    (examDays === null || examDays < 0 || eventDays < examDays);
+
   updateDigest({
-    examDay: exam ? epochDay(exam.date) : -1,
-    examName: exam?.name ?? 'your exam',
+    examDay: eventWins
+      ? epochDay(new Date(`${soonestEvent!.date}T00:00:00`).getTime())
+      : exam
+        ? epochDay(exam.date)
+        : -1,
+    // Said out loud by the reminder, so it is the reader's own words plus
+    // what kind of thing it is: "Cardio seminar", not "your exam".
+    examName: eventWins
+      ? `${soonestEvent!.title} ${kindLabel(soonestEvent!.kind).toLowerCase()}`
+      : (exam?.name ?? 'your exam'),
     lastStudyDay: getLastStudyDay(),
     streak,
     revisionDueDay: soonest === null ? -1 : epochDay(soonest),

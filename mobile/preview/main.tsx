@@ -19,6 +19,7 @@ import RootNavigator from '@/navigation/RootNavigator';
 import { hydrateProgress } from '@/lib/progress';
 import { hydrateSettings } from '@/lib/settings';
 import { hydrateAttendance } from '@/lib/attendance';
+import { hydrateAttendanceEvents } from '@/lib/attendanceEvents';
 import { hydrateProfile, hydrateStreak } from '@/hooks/useProfile';
 import { DailyAdConsent } from '@/components/DailyAdConsent';
 import { UnlockCard } from '@/components/UnlockCard';
@@ -1111,6 +1112,7 @@ function Shell() {
     // tab renders from memory, so a card that had to wait for storage would
     // flash "no subjects yet" at somebody who has six.
     hydrateAttendance().catch(() => {});
+    hydrateAttendanceEvents().catch(() => {});
     hydrateProfile().catch(() => {});
     // Separate from the profile: this half must land even when the cloud
     // half cannot. See hydrateStreak.

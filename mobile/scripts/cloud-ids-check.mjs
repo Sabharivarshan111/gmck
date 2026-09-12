@@ -61,6 +61,10 @@ const HOOKS = [];
  * AsyncStorage key and must not learn to upload either.
  */
 const LOCAL_ONLY = [
+  {
+    file: 'src/lib/attendanceEvents.ts',
+    what: 'exam, posting-exam and seminar dates typed into the Attendance tab',
+  },
   { file: 'src/hooks/useUserNotes.ts', what: 'personal study notes' },
   { file: 'src/lib/noteImages.ts', what: 'pictures attached to a study note' },
   /*

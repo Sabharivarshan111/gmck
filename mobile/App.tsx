@@ -8,6 +8,7 @@ import RootNavigator from '@/navigation/RootNavigator';
 import { hydrateLastStudyDay, hydrateProgress, reconcileProgress } from '@/lib/progress';
 import { hydrateSettings } from '@/lib/settings';
 import { hydrateAttendance } from '@/lib/attendance';
+import { hydrateAttendanceEvents } from '@/lib/attendanceEvents';
 import { hydrateProfile, hydrateStreak } from '@/hooks/useProfile';
 import { initializeAds } from '@/lib/ads';
 import { hydratePremium, usePremiumSync } from '@/lib/premium';
@@ -35,6 +36,7 @@ function Shell() {
     // tab renders from memory, so a card that had to wait for storage would
     // flash "no subjects yet" at somebody who has six.
     hydrateAttendance().catch(() => {});
+    hydrateAttendanceEvents().catch(() => {});
     hydrateProgress().then(() => {
       reconcileProgress().catch(() => {});
       /*

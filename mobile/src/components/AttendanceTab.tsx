@@ -5,6 +5,7 @@ import { Text } from '@/components/Text';
 import { Touchable } from '@/components/Touchable';
 import { KeyboardSafe } from '@/components/KeyboardSafe';
 import { RotationCalendar, type CalendarMode } from '@/components/RotationCalendar';
+import { AttendanceEvents } from '@/components/AttendanceEvents';
 import { useTheme, withAlpha } from '@/theme';
 import { onColor } from '@/theme/color';
 import { typeScale } from '@/theme/typography';
@@ -416,6 +417,14 @@ export function AttendanceTab() {
             </Text>
           </Touchable>
         )}
+
+        {/*
+          Dated things with no tally: an exam, a posting exam, a seminar. They
+          have no Present or Absent, so they are their own section rather than
+          items in the list above — but they belong on this tab, because this
+          is where somebody already comes to ask about their timetable.
+        */}
+        <AttendanceEvents />
       </View>
     </KeyboardSafe>
   );
