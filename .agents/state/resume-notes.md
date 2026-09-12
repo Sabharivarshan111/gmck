@@ -1332,3 +1332,79 @@ staged by `capture-screens.mjs`.
   from `main` again would fail the same way. **The branch has to merge before a
   push-triggered render on `main` can work.**
 * Run 19's 48 videos expire 2026-09-25 and are the pre-rewrite cut.
+
+## 2026-09-12 (third) — Claude Code — the voice pass, and the doc that was undoing it
+
+### The scripts document was an instruction to reintroduce every fixed defect
+
+The owner asked about the scripts written down yesterday. `.agents/video/
+AD-SCRIPTS.md` — pointed at by `97-video-ads.md` as the canonical prose view —
+had not been touched since 2026-09-04. It described **three** ads against
+twenty-nine, prescribed three voices against one, and opened with a table
+headed **"Claim you may use"** listing `5,545 questions`, `2,025 markers` and
+`915 plates`.
+
+Those are the exact statistics removed from the ads twice, and "plates" is the
+word that leaked into a spoken line. **The reference file was telling the next
+reader to undo the fixes.**
+
+It is the RULES now, each naming the check that enforces it, and the scripts
+themselves are generated: `npm run scripts:print` renders them from
+`src/scripts/` as `[screen] / spoken / muted`. Nothing is stored, so nothing
+can drift.
+
+### Why the numbers came back in the first place
+
+Yesterday's commit took statistics out of the captions by editing five files
+and **adding no check**. Today's rewrite put thirteen figures straight back and
+nothing could have noticed. `check:ad-truth` now fails on any digit in a spoken
+line or either caption, and on the word "plate". Eighteen violations on its
+first run, five pre-dating today.
+
+**This is the fourth time this repo has been bitten by a rule that lived only in
+a commit message.** If a fix is worth making, the check is the fix.
+
+### The voice pass
+
+All twenty-eight ads rewritten to the owner's script — a student talking, not a
+marketer. Absolutes gone, including "never a neighbour's picture" from all four
+places. Four reels overran the 57s speech budget once conversational and were
+trimmed.
+
+**Verified separately that yesterday's pain-led hooks survived** — each is still
+pain-led, rephrased not replaced. Worth doing before claiming it.
+
+### Two bugs in my own tooling, both silent
+
+- The rewriter matched single-quoted fields only, so five double-quoted ones
+  were skipped **while reporting every shot as rewritten** — three were the
+  exact claims being removed. Found by grepping for the phrase, not by trusting
+  the count.
+- Trimming a line by swapping "and" for a comma made the reel LONGER: preflight
+  costs punctuation at ~0.7s and a comma is a pause the synthesiser takes.
+
+### Presence: the phone was right
+
+183 rows, **182 with `focus_until` NULL**, one live session and it was the
+owner's own phone. The web hook pinged `last_seen` on page load and counted
+devices in a 45s window — open tabs, not studying — and never wrote the column
+the phone reads. Both count sessions now. The number will be smaller and true.
+Does not reach the Lovable copy.
+
+### Still not done — the owner's open feature list
+
+1. Exam-date pill under Start a session on the Timer, expanding and minimising.
+2. Exam / posting exam / seminar entries in the attendance tracker, typed by
+   hand, surfaced in the daily notification.
+3. PDF editing in notes: draw, type, highlight, bold, images, circling.
+4. **A screenshot of a note carrying a YouTube link.** `noteLinks.ts` and
+   `NoteLinkCard.tsx` ship, but no capture exists, so the YouTube shots were
+   left OUT of `reelHowNotes` rather than put over a generic notes screen.
+   `ProgressNotesTab` renders the card; a seeded preview route would capture it.
+
+### Renders
+
+`ads-8` dispatched at the branch head — the first render carrying the voice
+pass. It supersedes `ads-7`, which was queued at `b088ef71`, before the
+rewrite. **Both ran from the branch, because the shoot.mjs fix is not on `main`
+yet; a render dispatched from `main` still fails.**
