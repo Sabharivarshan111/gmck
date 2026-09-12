@@ -1198,3 +1198,73 @@ way.
   three Android workflows.
 * The OpenAI key from commit `f50c8e8` is still live. **Only the owner can
   revoke it** — never hand an agent a login there.
+
+---
+
+## 2026-09-12 — Claude Code — the rotation is a calendar, and three checks were lying
+
+Four commits. The through-line: **three separate checks were green or red for
+reasons unrelated to what they check**, and each one had already cost a session.
+
+### `check:agent-docs` failed on every clean checkout
+
+It asserts every backticked repo path in the rules files still resolves. It was
+also matching `mobile/node_modules`, which `40-releases.md` names three times
+while *explaining* a build failure — prose about a gitignored directory, not a
+pointer at a file anybody opens.
+
+The worse half is why it passed in CI: that step runs after `npm ci`, so the
+directory happened to exist. Its own rules file §3 says a doc check gates all
+three Android builds, so reordering that step would have broken every APK while
+naming a markdown file. It now ignores `node_modules` and counts a path named
+twice as one dead pointer.
+
+### `check:music` and `check:page-refs` were behind the year gate
+
+The last session read these as Playwright's stability wait never settling
+against the app's continuous animations, and wrote down `force: true` as the
+fix. Playwright was saying the opposite, in the log, both times:
+
+    - element is visible, enabled and stable
+    - <div ...>YEAR — PICK ONE</div> ... intercepts pointer events
+
+With no stored profile the app boots into onboarding, which is a full-screen
+panel. `force: true` would have clicked straight **through** it — both checks
+green while photographing a screen the reader never reaches. `shoot.mjs` has
+seeded `orbit-profile-v1` since it was written; these two never did. Seeded,
+music passes 19 assertions and page-refs passes.
+
+**The committed screenshots for both were pictures of the gate.** Refreshed.
+
+### The attendance rotation is two dates now
+
+Owner's request, from a friend's idea. `endDate` and `holidays` are new on the
+item; `totalDays` is still read so postings on real phones keep working.
+
+"How many days does it run?" asked for a subtraction the reader does not have
+the numbers for, and it hid a worse bug: `startDate` was stamped with TODAY on
+every add, so a posting entered three weeks in was measured from the wrong end.
+
+**Four fixed Indian holidays are offered by name and left unticked; nothing
+else is guessed.** Everything else moves against the Gregorian calendar or
+belongs to one college or state — which is exactly the kind that closes a
+medical college. A pre-filled wrong date is the repeat-count failure again:
+authoritative-looking and false. It would also mean sending posting dates to a
+server, and nothing on this screen leaves the phone.
+
+`check:attendance` is 49 worked examples (was 18), and its count is read off
+the assertions rather than typed, so it cannot go stale. `check:attendance-ui`
+is new and drives the real screen. **It caught a bug in its own first run**: the
+reworded empty state also contains "days" and "working", so a text match read
+that card instead of the summary. The summary carries a testID now.
+
+### Still open
+
+* The wider Liquid Glass audit — the palette fix landed, the component work did
+  not (see yesterday's entry).
+* §14.6: the textbook-page design pass, "current textbook" selection, the 562
+  over-attached diagram rows, General Medicine repeat markers.
+* Everything under BLOCKED is the owner's: Lovable credits, the OpenAI key
+  revocation, Play Billing console, OAuth SHA-1, repo deletion protection.
+* **The ad videos from run 19 expire 2026-09-25.** 48 files, all green. Nothing
+  in the repo holds them.
