@@ -91,13 +91,33 @@ check(
 );
 
 // 5. Every repo path the rules point at must exist.
+//
+//    `node_modules` is not one of those paths, and treating it as one is how
+//    this check started failing on a clean checkout. 40-releases.md names
+//    `mobile/node_modules` three times while EXPLAINING a build failure —
+//    Metro resolving a shared module against the wrong one — which is prose
+//    about a directory, not a pointer at a file somebody has to be able to
+//    open. It is also gitignored, so whether it exists is a question about
+//    whether an install has run.
+//
+//    In CI it happened to exist, because this step runs after `npm ci`. That
+//    is the worse half: the check was passing for a reason unrelated to what
+//    it checks, and this file's own §3 says a doc check gates all three
+//    Android builds — so reordering that step would have broken every APK
+//    while naming a markdown file.
 const pointerPattern = /`((?:\.claude|\.agents|mobile|src|supabase)\/[A-Za-z0-9_./*-]+)`/g;
+const isBuildArtefact = pointer => pointer.split('/').includes('node_modules');
 for (const file of [...ruleFiles, 'GEMINI.md']) {
   const body = (await read(file)) ?? '';
-  for (const [, pointer] of body.matchAll(pointerPattern)) {
-    if (pointer.includes('*')) {
-      continue;
-    }
+  // A path named twice in one file is one dead pointer, not two. Reporting it
+  // per mention inflates the count the resume report prints, and a failure
+  // total nobody trusts is one nobody reads.
+  const pointers = new Set(
+    [...body.matchAll(pointerPattern)]
+      .map(([, pointer]) => pointer)
+      .filter(pointer => !pointer.includes('*') && !isBuildArtefact(pointer)),
+  );
+  for (const pointer of pointers) {
     // eslint-disable-next-line no-await-in-loop
     check(await exists(pointer), `${file} points at ${pointer}, which does not exist`);
   }
