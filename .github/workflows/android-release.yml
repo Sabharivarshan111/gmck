@@ -153,6 +153,14 @@ jobs:
         run: ./gradlew bundleRelease --no-daemon
         working-directory: mobile/android
 
+      - name: The permissions Play will actually read
+        # `check:billing` proves the repo DECLARES them; this proves the merge
+        # kept them. Play refused version 15 because those two disagreed about
+        # AD_ID, and com.android.vending.BILLING — which is what gates creating
+        # an in-app product at all — is now in the same position.
+        run: node scripts/merged-manifest-check.mjs
+        working-directory: mobile
+
       - name: Build APK (for direct install)
         if: ${{ github.event_name == 'push' || inputs.build_apk }}
         env:

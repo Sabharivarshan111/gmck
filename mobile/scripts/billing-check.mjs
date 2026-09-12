@@ -122,6 +122,39 @@ if (billingDep) {
 }
 
 // ---------------------------------------------------------------------------
+// 2b. The BILLING permission is in the app's OWN manifest.
+//
+//     This is the permission Play scans an uploaded bundle for, and two things
+//     the owner can see depend on it:
+//
+//     * the Play Console refuses to create a product or a subscription until
+//       an uploaded artifact declares it — the "Upload a new APK" button on an
+//       empty Subscriptions page is that refusal, not a request for a newer
+//       build;
+//     * the "In-app purchases" line under the app's name on the store listing
+//       comes from having active products, which cannot exist without it.
+//
+//     The billing AAR declares it and it would normally merge. That is exactly
+//     what was believed about `com.google.android.gms.permission.AD_ID`, and
+//     Play refused version 15 because the merged manifest of the real artifact
+//     did not carry it. Being right about the merge is not worth the second
+//     rejection, and this cannot be resolved away by a dependency bump.
+//
+//     Asserted here rather than left to a comment because losing it is
+//     invisible: every build still compiles, every test still passes, and the
+//     symptom arrives weeks later as a console that will not sell anything.
+// ---------------------------------------------------------------------------
+const manifest = await read('android/app/src/main/AndroidManifest.xml');
+check(manifest !== null, 'android/app/src/main/AndroidManifest.xml is missing');
+check(
+  /<uses-permission\s+android:name="com\.android\.vending\.BILLING"\s*\/>/.test(manifest ?? ''),
+  'the app manifest no longer declares com.android.vending.BILLING. Without it ' +
+    'Play will not let a product be created, so the listing can never show ' +
+    '"In-app purchases" — and relying on the billing AAR to merge it is the ' +
+    'assumption that cost version 15 a rejection over AD_ID.',
+);
+
+// ---------------------------------------------------------------------------
 // 3. The client grants nothing, prices nothing, and acknowledges nothing.
 //
 //    Each of these is a way to lose real money rather than a style rule.

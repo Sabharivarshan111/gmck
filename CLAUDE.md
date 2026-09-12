@@ -1717,6 +1717,7 @@ npm run check:contrast           # every built-in theme stays readable
 npm run check:subject-cards      # custom themes recolour the cards, readably
 npm run check:native-sound       # the sound module is reachable under the New Arch
 npm run check:billing            # Play Billing grants nothing on the client, prices nothing
+npm run check:merged-manifest    # AD_ID and BILLING survived Gradle's manifest merge
 npm run check:one-app            # the frozen web app has grown no second copy
 npm run check:flashcard-size     # the chapter list's card count is the one the server builds
 npm run check:streak             # the streak counts on a phone with no account

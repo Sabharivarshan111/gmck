@@ -85,6 +85,32 @@ registered the old way is *silently* absent, which for a payments module is a
 Buy button that does nothing. So it is the same four pieces every native module
 here has, and `npm run check:billing` asserts all four.
 
+## The BILLING permission is declared here, not inherited
+
+`com.android.vending.BILLING` is in the app's **own** `AndroidManifest.xml`, and
+the billing AAR declaring it too is not the reason it is there.
+
+It is what **Play scans an uploaded bundle for**, and two owner-visible things
+hang off it: the Console creates no in-app product or subscription until an
+uploaded artifact has it (that is the "Upload a new APK" button on an empty
+Subscriptions page — a refusal, not a request for a newer build), and the
+"In-app purchases" line on the store listing comes from having active products,
+which cannot exist without it.
+
+Leaving it to the AAR is exactly what was believed about
+`com.google.android.gms.permission.AD_ID`, and **Play refused version 15**
+because the merged manifest of the real artifact did not carry it: dependency
+present, merge absent, nothing in the build said so. So there are two checks and
+they assert different things — `check:billing` that the repo *declares* it,
+`check:merged-manifest` that Gradle's merge *kept* it, run in the release and
+internal workflows after the bundle. The second is the one version 15 did not
+have.
+
+The permission says the app is able to sell, not that it is selling.
+`PLAY_BILLING_ENABLED` is still false and the listing cannot tell the
+difference — the line follows active products in the Console, and nothing in a
+build produces it. `mobile/PLAY-BILLING-SETUP.md` has the four steps in order.
+
 Billing Library is pinned at **8+** (9.1.0 today): Google made 8 mandatory for
 new apps and updates from 31 August 2026, and `enableAutoServiceReconnection`
 arrived there.

@@ -57,6 +57,36 @@
     -->
     <uses-permission android:name="com.google.android.gms.permission.AD_ID" />
 
+    <!--
+      Google Play Billing, and why the app declares it rather than leaving it
+      to the billing AAR.
+
+      This is the permission **Play itself scans an uploaded bundle for**. Two
+      things hang off it and neither is code:
+
+      1. The Play Console will not let a product or a subscription be created
+         until an uploaded artifact declares it. That is the "Upload a new APK"
+         button on an empty Subscriptions page — it is not asking for a newer
+         build, it is saying the newest one it has cannot sell anything.
+      2. The "In-app purchases" line under the app's name on its store listing
+         is drawn from having active products. No permission, no products, no
+         line — which is the state the listing is in today, beside competitors
+         that have it.
+
+      `com.android.billingclient:billing` declares it in its own manifest and
+      it would normally merge. That is exactly what was believed about the
+      advertising ID above, and Play refused version 15 because the merged
+      manifest of the real artifact did not have it. One AAR getting it wrong
+      is a coincidence; the same assumption failing twice is a pattern, and
+      declaring it here costs nothing and cannot be resolved away by a
+      dependency bump.
+
+      Normal-level: no runtime prompt, nothing asked of the reader. It says the
+      app is *able* to sell, not that it is selling — `PLAY_BILLING_ENABLED` in
+      `src/lib/playBilling.ts` is still false and no Buy button calls Play yet.
+    -->
+    <uses-permission android:name="com.android.vending.BILLING" />
+
     <application
       android:name=".MainApplication"
       android:label="@string/app_name"

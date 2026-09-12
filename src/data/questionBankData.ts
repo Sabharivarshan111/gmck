@@ -47,9 +47,19 @@ export const QUESTION_BANK_DATA = {
   },
   "third-year": {
     name: "Third Year",
+    // ENT and Ophthalmology are taught in third year as well as being examined
+    // in final year, so third year serves the **same** two subject nodes rather
+    // than a copy of them. One object in two places is the whole point: the
+    // questions, the diagrams and the per-question progress keys are identical,
+    // so a question ticked in third year is ticked in final year too. Copying
+    // the data instead would be two banks to keep in step, and they would drift.
+    //
+    // Final year keeps both. Nothing was moved.
     subtopics: {
       "forensic-medicine": forensicMedicineData,
-      "community-medicine": communityMedicineData
+      "community-medicine": communityMedicineData,
+      "ent": entData,
+      "ophthalmology": ophthalmologyData
     }
   },
   "final-year": {

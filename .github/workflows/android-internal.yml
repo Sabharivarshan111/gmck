@@ -191,6 +191,14 @@ jobs:
           KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: ./gradlew assembleInternal --no-daemon --stacktrace
 
+      - name: The permissions Play will actually read
+        # The internal build is the one that gets sideloaded and tried, so it
+        # is the cheapest place to find out the merge dropped a permission.
+        # `check:billing` proves the repo declares them; this proves the merge
+        # kept them, which is the disagreement that cost version 15.
+        run: node scripts/merged-manifest-check.mjs
+        working-directory: mobile
+
       - name: Print what Google Sign-In has to be registered against
         run: |
           set -euo pipefail

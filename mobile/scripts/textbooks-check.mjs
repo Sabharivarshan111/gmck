@@ -93,7 +93,7 @@ const bank = await fs.readFile(path.join(root, '..', 'src/data/questionBankData.
 const EXPECTED = {
   'first-year': ['anatomy', 'physiology', 'biochemistry'],
   'second-year': ['pharmacology', 'pathology', 'microbiology'],
-  'third-year': ['forensic-medicine', 'community-medicine'],
+  'third-year': ['forensic-medicine', 'community-medicine', 'ent', 'ophthalmology'],
   'final-year': ['general-medicine', 'obstetrics-gynaecology', 'general-surgery', 'paediatrics', 'ent', 'ophthalmology'],
 };
 const matches = (subject) => {

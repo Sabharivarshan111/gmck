@@ -23,6 +23,7 @@ Same standing as `oauth-sha1-deployment` and `razorpay-untested` in
 | Kotlin module | `.../aycxvd/BillingModule.kt` | written, compiles in CI, never run |
 | Package + registration | `.../BillingPackage.kt`, `MainApplication.kt` | wired |
 | Gradle dependency | `android/app/build.gradle` — `billing:9.1.0` | added |
+| BILLING permission | `android/app/src/main/AndroidManifest.xml` | **declared in the app's own manifest**, not left to the AAR |
 | JS client | `mobile/src/lib/playBilling.ts` | written, **behind `PLAY_BILLING_ENABLED = false`** |
 | Preview shim | `mobile/preview/shims/orbit-billing.ts` | `export default null` — absent, not fake |
 | Verification function | `supabase/functions/play-verify-purchase/` | **deployed**, returns 500 until step 3 |
@@ -32,6 +33,84 @@ Same standing as `oauth-sha1-deployment` and `razorpay-untested` in
 
 **Razorpay is untouched and is still the live path.** It stays that way until a
 real Play purchase has been taken and a `source = 'play'` row has appeared.
+
+---
+
+## Step 0 — Why the Console will not let you create anything yet
+
+Two different things block the Subscriptions page, and they look like one
+problem. They are not, and only one of them is in this repo.
+
+### "Upload a new APK", on an empty Subscriptions page
+
+That button is not asking for a newer build. It is Play saying **the newest
+artifact it has cannot sell anything** — it scans an uploaded bundle for
+`com.android.vending.BILLING` and creates no products until it finds it.
+
+The billing library has been a dependency since 2026-09-06, before versionCode
+17 was cut, and a library's own manifest is supposed to merge that permission
+in. Whether it reached the artifact Play holds is not knowable from here — the
+proxy blocks `dl.google.com`, so the AAR's manifest cannot even be read — and
+it is the same assumption that cost version 15 a rejection over
+`com.google.android.gms.permission.AD_ID`: the dependency was right, the merge
+did not happen, and the first report was Play refusing the upload.
+
+So it is no longer an assumption:
+
+* the permission is declared in the app's **own** manifest, where no dependency
+  resolution can drop it;
+* `npm run check:billing` fails if that line is ever deleted;
+* `npm run check:merged-manifest` runs in the release and internal workflows
+  **after** Gradle has merged, and fails the build if the permission is not in
+  the manifest that goes into the `.aab`. That is the check version 15 did not
+  have.
+
+**versionCode 18 is the first build this is proven for.** Upload it, and the
+Subscriptions page stops asking.
+
+### "There is an issue with your payments profile"
+
+This one is entirely account-side and nothing in this repo can move it. A
+priced product cannot be created — and no badge can appear — until it is
+cleared. Play Console → the **Go to Payments settings** link in that red box,
+and expect one of:
+
+* an address, tax or identity field that needs completing;
+* identity verification that was started and not finished;
+* a bank account that needs adding or verifying before Google will pay out.
+
+Do this one **first**. Everything in Step 2 depends on it, and the build can be
+uploaded in parallel.
+
+---
+
+## How the "In-app purchases" line on the listing appears
+
+It is the line competitors show under the developer name, and it is not a
+setting, a declaration or a form. Play draws it when the app **has at least one
+active in-app product or subscription**. So it is the *output* of the steps
+below, in this order:
+
+1. Payments profile clear — the red box above gone.
+2. A bundle Play has that declares `com.android.vending.BILLING` — versionCode
+   18 or later.
+3. At least one product or base plan created and set to **Active**
+   (Step 2). Draft does not count.
+4. That version rolled out to a track Play serves, and the listing re-indexed.
+   The line follows the product, not the release, but it will not appear while
+   the only build with billing is sitting in an unreviewed draft.
+
+`PLAY_BILLING_ENABLED` stays `false` through all four. The line is about the
+app being *able* to sell; whether a Buy button calls Play is Step 8, and the
+listing does not know the difference.
+
+Two things that will not produce it, both of which look like they should:
+
+* **Uploading a build with the permission and no products.** The permission is
+  the gate on creating products, not the trigger for the line.
+* **Razorpay, or any link out to a web checkout.** Play has no way of knowing a
+  payment happened and would not advertise it if it did. The line means Play
+  Billing products exist.
 
 ---
 

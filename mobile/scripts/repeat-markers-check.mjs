@@ -53,7 +53,11 @@ function countStars(question) {
 const YEARS = {
   'first-year': ['anatomy', 'physiology', 'biochemistry'],
   'second-year': ['pharmacology', 'pathology', 'microbiology'],
-  'third-year': ['forensicMedicine', 'communityMedicine'],
+  // ENT and Ophthalmology are third year's as well as final year's — the same
+  // two subject nodes, served in both places. They are counted under both here
+  // for the same reason, so each year's row is the coverage a reader of that
+  // year actually meets rather than a partition of the bank.
+  'third-year': ['forensicMedicine', 'communityMedicine', 'ent', 'ophthalmology'],
   'final-year': [
     'generalMedicine',
     'obstetricsGynaecology',
