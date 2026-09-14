@@ -49,6 +49,7 @@ import { NotesAiEditBox } from '@/components/NotesAiEditBox';
 import { McqCard } from '@/components/McqCard';
 import { WaveformRiver } from '@/components/WaveformRiver';
 import FlashcardsScreen, { StudyView } from '@/screens/FlashcardsScreen';
+import HomeScreen from '@/screens/HomeScreen';
 import {
   NativeUpdateDemo,
   NativeNotesEditorDemo,
