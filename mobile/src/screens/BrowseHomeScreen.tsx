@@ -29,6 +29,7 @@ import { hasTextbook } from '@/lib/textbooks';
 import { noteQuestionText } from '@/lib/questionText';
 import { useCountDone } from '@/hooks/useProgress';
 import { useProfile } from '@/hooks/useProfile';
+import { KEY_TO_YEAR } from '@/lib/profile';
 import { QuestionRow } from '@/components/QuestionRow';
 import type { HomeStackParamList, RootTabParamList } from '@/navigation/types';
 import { SegmentedControl } from '@/components/ui';
@@ -45,10 +46,18 @@ export default function BrowseHomeScreen() {
   const route = useRoute<Route>();
   const countDone = useCountDone();
 
-  const { yearKey: profileYear } = useProfile();
+  const { yearKey: profileYear, setYear: setProfileYear } = useProfile();
   const [year, setYear] = useState<YearKey>(route.params?.year ?? profileYear);
   const [query, setQuery] = useState('');
   const [debounced, setDebounced] = useState('');
+
+  const handleYearChange = useCallback(
+    (next: YearKey) => {
+      setYear(next);
+      setProfileYear(KEY_TO_YEAR[next]);
+    },
+    [setProfileYear],
+  );
 
   // Follow the profile's year until the user picks one on this screen.
   useEffect(() => {
@@ -242,13 +251,14 @@ export default function BrowseHomeScreen() {
         <FlatList
           data={subjects}
           keyExtractor={item => item.key}
+          keyboardShouldPersistTaps="handled"
           contentContainerStyle={styles.listContent}
           ListHeaderComponent={
             <View style={styles.yearSelector}>
               <SegmentedControl
                 options={YEAR_KEYS.map(key => ({ key, label: YEAR_LABEL[key].replace(' Year', '') }))}
                 value={year}
-                onChange={setYear}
+                onChange={handleYearChange}
               />
             </View>
           }

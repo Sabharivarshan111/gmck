@@ -75,44 +75,60 @@ export async function hydrateStreak(): Promise<void> {
   emit();
 }
 
+let latestSaveSeq = 0;
+
 export function useProfile() {
   useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
 
   const save = useCallback(async (next: LocalProfile) => {
-    const cloud = await persistProfile(next);
+    // 1. Optimistic synchronous update so UI updates in 0ms without waiting for network.
     localProfile = next;
-    if (cloud) {
-      cloudProfile = cloud;
-      /**
-       * Back-fill everything ticked before this moment.
-       *
-       * Anonymous sign-in happens inside saveProfile and nowhere else, so on a
-       * fresh install there is no session at launch — App.tsx's
-       * reconcileProgress() correctly does nothing, and until this commit
-       * nothing ever re-ran it. A user who worked through questions before
-       * finishing onboarding kept that progress on the device: their XP,
-       * streak and leaderboard position did not reflect it.
-       *
-       * It self-healed on the next launch, or the next visit to My Progress,
-       * which is exactly why it was easy to miss.
-       *
-       * Gated on `cloud` because that is the proof the session AND the profile
-       * row both exist. record_questions_done reads the profile's year and
-       * returns 0 without it (its `IF _year IS NULL THEN RETURN 0`), so
-       * pushing any earlier is a silent no-op.
-       */
-      reconcileProgress().catch(() => {});
-    }
     emit();
+
+    const seq = ++latestSaveSeq;
+    try {
+      const cloud = await persistProfile(next);
+      // Discard stale out-of-order network responses if a newer save was initiated
+      if (seq !== latestSaveSeq) {
+        return;
+      }
+      if (cloud) {
+        cloudProfile = cloud;
+        /**
+         * Back-fill everything ticked before this moment.
+         *
+         * Anonymous sign-in happens inside saveProfile and nowhere else, so on a
+         * fresh install there is no session at launch — App.tsx's
+         * reconcileProgress() correctly does nothing, and until this commit
+         * nothing ever re-ran it. A user who worked through questions before
+         * finishing onboarding kept that progress on the device: their XP,
+         * streak and leaderboard position did not reflect it.
+         *
+         * It self-healed on the next launch, or the next visit to My Progress,
+         * which is exactly why it was easy to miss.
+         *
+         * Gated on `cloud` because that is the proof the session AND the profile
+         * row both exist. record_questions_done reads the profile's year and
+         * returns 0 without it (its `IF _year IS NULL THEN RETURN 0`), so
+         * pushing any earlier is a silent no-op.
+         */
+        reconcileProgress().catch(() => {});
+        emit();
+      }
+    } catch {
+      // Local write already succeeded in persistProfile
+    }
   }, []);
 
   const setYear = useCallback(
     async (year: Year) => {
       const base = localProfile ?? { display_name: '', year };
+      const next: LocalProfile = { ...base, year };
+      // Synchronously update local store immediately for single-tap responsiveness
+      localProfile = next;
+      emit();
       // Renaming is a separate, validated action; only the year moves here.
       if (!base.display_name) {
-        localProfile = { ...base, year };
-        emit();
         return;
       }
       await save({ ...base, year });

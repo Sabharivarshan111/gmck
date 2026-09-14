@@ -282,24 +282,28 @@ export function SortableGrid<Id extends string>({
              * all: a press that stays put is picking the card up, a flick is
              * scrolling the page. See dragArm.ts.
              */
-            onTouchStart={event => {
-              dragOwner.current = id;
-              const touch = event.nativeEvent.touches[0] ?? event.nativeEvent;
-              dragArm.begin(id, touch.pageX, touch.pageY);
-            }}
-            onTouchMove={event => {
-              const touch = event.nativeEvent.touches[0] ?? event.nativeEvent;
-              dragArm.moved(touch.pageX, touch.pageY);
-            }}
-            onTouchEnd={() => {
-              dragOwner.current = null;
-              dragArm.cancel();
-            }}
-            onTouchCancel={() => {
-              dragOwner.current = null;
-              dragArm.cancel();
-            }}
-            {...responders[id].panHandlers}>
+            {...(editing
+              ? {
+                  onTouchStart: event => {
+                    dragOwner.current = id;
+                    const touch = event.nativeEvent.touches[0] ?? event.nativeEvent;
+                    dragArm.begin(id, touch.pageX, touch.pageY);
+                  },
+                  onTouchMove: event => {
+                    const touch = event.nativeEvent.touches[0] ?? event.nativeEvent;
+                    dragArm.moved(touch.pageX, touch.pageY);
+                  },
+                  onTouchEnd: () => {
+                    dragOwner.current = null;
+                    dragArm.cancel();
+                  },
+                  onTouchCancel: () => {
+                    dragOwner.current = null;
+                    dragArm.cancel();
+                  },
+                  ...responders[id]?.panHandlers,
+                }
+              : null)}>
             {renderItem(id)}
           </Animated.View>
         );

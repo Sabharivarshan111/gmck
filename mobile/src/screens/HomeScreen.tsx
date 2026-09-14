@@ -361,6 +361,7 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
         // A block being dragged must not also be scrolling the page under
         // itself; the drag owns the vertical axis while it lasts.
         scrollEnabled={!dragging}
+        keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}>
       {/* Header */}
       <View style={styles.header}>

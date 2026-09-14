@@ -345,6 +345,7 @@ const styles = StyleSheet.create({
     left: 3,
     bottom: 3,
     borderRadius: 9,
+    zIndex: 0,
   },
   segmentItem: {
     flex: 1,
@@ -353,6 +354,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     minHeight: 36,
+    zIndex: 1,
   },
   segmentText: {
     fontSize: 13,
