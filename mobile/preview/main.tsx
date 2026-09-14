@@ -49,8 +49,12 @@ import { NotesAiEditBox } from '@/components/NotesAiEditBox';
 import { McqCard } from '@/components/McqCard';
 import { WaveformRiver } from '@/components/WaveformRiver';
 import FlashcardsScreen, { StudyView } from '@/screens/FlashcardsScreen';
-import HomeScreen from '@/screens/HomeScreen';
-import { NativeUpdateDemo, NativeNotesEditorDemo, NativePageRefDemo } from './NativeDemos';
+import {
+  NativeUpdateDemo,
+  NativeNotesEditorDemo,
+  NativePageRefDemo,
+  NativePdfViewerDemo,
+} from './NativeDemos';
 
 /**
  * Three cards, shaped exactly as generate-flashcards returns them: two theory
@@ -1339,6 +1343,12 @@ function Shell() {
   }
   if (screen === 'native-pageref') {
     return <NativePageRefDemo />;
+  }
+  if (screen === 'pdf-reader') {
+    return <NativePdfViewerDemo annotating={false} />;
+  }
+  if (screen === 'pdf-annotator') {
+    return <NativePdfViewerDemo annotating={true} />;
   }
 
   return (

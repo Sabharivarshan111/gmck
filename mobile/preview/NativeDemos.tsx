@@ -15,9 +15,14 @@ import {
   BookOpen,
   Trash2,
   ChevronLeft,
+  ChevronRight,
   ShieldCheck,
   UserCheck,
   Check,
+  ExternalLink,
+  X,
+  FileText,
+  Highlighter,
 } from 'lucide-react-native';
 
 /**
@@ -399,6 +404,333 @@ export function NativePageRefDemo() {
           </View>
         </View>
       </ScrollView>
+    </View>
+  );
+}
+
+/**
+ * Native PDF Viewer and Annotator demo matching PdfViewerModal.tsx.
+ */
+export function NativePdfViewerDemo({ annotating = false }: { annotating?: boolean }) {
+  return (
+    <View style={{ flex: 1, backgroundColor: '#020617' }}>
+      <AndroidHeader />
+
+      {/* Header bar matching PdfViewerModal */}
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          paddingHorizontal: 16,
+          paddingVertical: 12,
+          borderBottomWidth: StyleSheet.hairlineWidth,
+          borderBottomColor: 'rgba(255, 255, 255, 0.1)',
+          backgroundColor: '#090d16',
+        }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, flex: 1 }}>
+          <View
+            style={{
+              padding: 6,
+              borderRadius: 8,
+              backgroundColor: 'rgba(239, 68, 68, 0.15)',
+            }}>
+            <FileText size={18} color="#ef4444" />
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text
+              numberOfLines={1}
+              style={{ fontSize: 13, fontWeight: '700', color: '#f8fafc' }}>
+              Robbins_Pathology_Granuloma.pdf
+            </Text>
+            <Text style={{ fontSize: 11, color: '#94a3b8' }}>Page 1 of 4 · Native PDF Engine</Text>
+          </View>
+        </View>
+
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+          {/* Markup toggle */}
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: 4,
+              paddingVertical: 6,
+              paddingHorizontal: 10,
+              borderRadius: 20,
+              backgroundColor: annotating ? 'rgba(168, 85, 247, 0.25)' : 'rgba(255, 255, 255, 0.08)',
+              borderWidth: StyleSheet.hairlineWidth,
+              borderColor: annotating ? '#a855f7' : 'rgba(255, 255, 255, 0.12)',
+            }}>
+            <PenLine size={14} color={annotating ? '#d8b4fe' : '#cbd5e1'} />
+            <Text
+              style={{
+                fontSize: 11,
+                fontWeight: '700',
+                color: annotating ? '#d8b4fe' : '#cbd5e1',
+              }}>
+              {annotating ? 'Markup Active' : 'Annotate'}
+            </Text>
+          </View>
+
+          {/* External Viewer */}
+          <View
+            style={{
+              padding: 8,
+              borderRadius: 20,
+              backgroundColor: 'rgba(255, 255, 255, 0.08)',
+            }}>
+            <ExternalLink size={15} color="#cbd5e1" />
+          </View>
+
+          {/* Close */}
+          <View
+            style={{
+              padding: 8,
+              borderRadius: 20,
+              backgroundColor: 'rgba(255, 255, 255, 0.08)',
+            }}>
+            <X size={15} color="#cbd5e1" />
+          </View>
+        </View>
+      </View>
+
+      {/* Annotator toolbar if active */}
+      {annotating && (
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            paddingHorizontal: 16,
+            paddingVertical: 8,
+            backgroundColor: '#111827',
+            borderBottomWidth: StyleSheet.hairlineWidth,
+            borderBottomColor: 'rgba(255, 255, 255, 0.08)',
+          }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: 4,
+                paddingVertical: 4,
+                paddingHorizontal: 8,
+                borderRadius: 8,
+                backgroundColor: '#7c3aed',
+              }}>
+              <PenLine size={12} color="#ffffff" />
+              <Text style={{ fontSize: 11, fontWeight: '700', color: '#ffffff' }}>Pen</Text>
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: 4,
+                paddingVertical: 4,
+                paddingHorizontal: 8,
+                borderRadius: 8,
+                backgroundColor: 'rgba(255, 255, 255, 0.08)',
+              }}>
+              <Highlighter size={12} color="#cbd5e1" />
+              <Text style={{ fontSize: 11, fontWeight: '600', color: '#cbd5e1' }}>Highlighter</Text>
+            </View>
+
+            {/* Colors */}
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginLeft: 6 }}>
+              <View style={{ width: 14, height: 14, borderRadius: 7, backgroundColor: '#facc15' }} />
+              <View style={{ width: 16, height: 16, borderRadius: 8, backgroundColor: '#38bdf8', borderWidth: 1.5, borderColor: '#ffffff' }} />
+              <View style={{ width: 14, height: 14, borderRadius: 7, backgroundColor: '#f43f5e' }} />
+              <View style={{ width: 14, height: 14, borderRadius: 7, backgroundColor: '#4ade80' }} />
+            </View>
+          </View>
+
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <View
+              style={{
+                paddingVertical: 4,
+                paddingHorizontal: 8,
+                borderRadius: 6,
+                backgroundColor: 'rgba(255, 255, 255, 0.08)',
+              }}>
+              <Text style={{ fontSize: 11, color: '#94a3b8' }}>Undo</Text>
+            </View>
+            <View
+              style={{
+                paddingVertical: 4,
+                paddingHorizontal: 10,
+                borderRadius: 6,
+                backgroundColor: '#a855f7',
+              }}>
+              <Text style={{ fontSize: 11, fontWeight: '700', color: '#ffffff' }}>Done</Text>
+            </View>
+          </View>
+        </View>
+      )}
+
+      {/* PDF Document Page Viewport */}
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{ padding: 12, alignItems: 'center' }}>
+        <View
+          style={{
+            width: '100%',
+            maxWidth: 380,
+            minHeight: 520,
+            backgroundColor: '#ffffff',
+            borderRadius: 8,
+            padding: 20,
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.3,
+            shadowRadius: 10,
+            position: 'relative',
+          }}>
+          {/* Document Content */}
+          <Text
+            style={{
+              fontSize: 9,
+              fontWeight: '800',
+              letterSpacing: 1.2,
+              color: '#64748b',
+              marginBottom: 4,
+            }}>
+            ROBBINS BASIC PATHOLOGY · CHAPTER 2
+          </Text>
+          <Text
+            style={{
+              fontSize: 16,
+              fontWeight: '800',
+              color: '#0f172a',
+              marginBottom: 10,
+              borderBottomWidth: 1.5,
+              borderBottomColor: '#0f172a',
+              paddingBottom: 4,
+            }}>
+            Granulomatous Inflammation & Giant Cells
+          </Text>
+
+          <Text
+            style={{
+              fontSize: 11,
+              lineHeight: 16,
+              color: '#334155',
+              marginBottom: 8,
+            }}>
+            <Text style={{ fontWeight: '700', color: '#0f172a' }}>Definition: </Text>
+            A distinctive pattern of chronic inflammation characterized by aggregates of activated macrophages, often with scattered lymphocytes and central necrosis.
+          </Text>
+
+          {/* Callout box */}
+          <View
+            style={{
+              marginVertical: 8,
+              padding: 10,
+              backgroundColor: '#f8fafc',
+              borderLeftWidth: 3,
+              borderLeftColor: '#3b82f6',
+              borderRadius: 4,
+            }}>
+            <Text style={{ fontSize: 11, fontWeight: '700', color: '#1e3a8a', marginBottom: 2 }}>
+              Microscopic Hallmark
+            </Text>
+            <Text style={{ fontSize: 10, lineHeight: 15, color: '#334155' }}>
+              • <Text style={{ fontWeight: '700' }}>Epithelioid cells:</Text> Modified macrophages with slipper-shaped pale nuclei and abundant granular eosinophilic cytoplasm.{'\n'}
+              • <Text style={{ fontWeight: '700' }}>Langhans giant cells:</Text> Fusion of epithelioid cells with nuclei arranged peripherally in a horseshoe / collar pattern.
+            </Text>
+          </View>
+
+          {/* Highlighted text demonstration */}
+          <View
+            style={{
+              backgroundColor: 'rgba(250, 204, 21, 0.35)',
+              paddingHorizontal: 4,
+              paddingVertical: 2,
+              borderRadius: 3,
+              alignSelf: 'flex-start',
+              marginVertical: 4,
+            }}>
+            <Text style={{ fontSize: 11, fontWeight: '700', color: '#854d0e' }}>
+              ⭐ Caseous necrosis = Core feature of Tuberculosis Granulomas
+            </Text>
+          </View>
+
+          <Text
+            style={{
+              fontSize: 10,
+              lineHeight: 15,
+              color: '#475569',
+              marginTop: 6,
+            }}>
+            Non-caseating granulomas are classically seen in Sarcoidosis, Crohn disease, and foreign-body reactions.
+          </Text>
+
+          {/* Stylus Annotation Drawing Overlay (Handwriting & circles) */}
+          <View
+            style={{
+              position: 'absolute',
+              top: 150,
+              right: 20,
+              padding: 6,
+              borderWidth: 2,
+              borderColor: '#38bdf8',
+              borderRadius: 12,
+              backgroundColor: 'rgba(56, 189, 248, 0.08)',
+              transform: [{ rotate: '-3deg' }],
+            }}>
+            <Text style={{ fontSize: 10, fontWeight: '800', color: '#0284c7' }}>
+              ✎ High-yield exam question!
+            </Text>
+            <Text style={{ fontSize: 9, color: '#0369a1' }}>
+              Horseshoe nuclei = Langhans
+            </Text>
+          </View>
+        </View>
+      </ScrollView>
+
+      {/* Bottom Paging Bar */}
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          paddingHorizontal: 20,
+          paddingVertical: 12,
+          borderTopWidth: StyleSheet.hairlineWidth,
+          borderTopColor: 'rgba(255, 255, 255, 0.1)',
+          backgroundColor: '#090d16',
+        }}>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 4,
+            paddingVertical: 6,
+            paddingHorizontal: 12,
+            borderRadius: 8,
+            backgroundColor: 'rgba(255, 255, 255, 0.06)',
+          }}>
+          <ChevronLeft size={16} color="#94a3b8" />
+          <Text style={{ fontSize: 12, color: '#94a3b8' }}>Prev</Text>
+        </View>
+
+        <Text style={{ fontSize: 12, fontWeight: '700', color: '#f8fafc' }}>
+          Page 1 of 4
+        </Text>
+
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 4,
+            paddingVertical: 6,
+            paddingHorizontal: 12,
+            borderRadius: 8,
+            backgroundColor: 'rgba(255, 255, 255, 0.12)',
+          }}>
+          <Text style={{ fontSize: 12, fontWeight: '700', color: '#f8fafc' }}>Next</Text>
+          <ChevronRight size={16} color="#f8fafc" />
+        </View>
+      </View>
     </View>
   );
 }
