@@ -957,10 +957,11 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
         visible={yearPickerOpen}
         currentYear={year}
         onClose={() => setYearPickerOpen(false)}
-        onBrowse={(key, makeDefault) => {
-          if (makeDefault) {
-            pickYear(key);
-          }
+        onSelectYear={key => {
+          pickYear(key);
+        }}
+        onBrowse={key => {
+          pickYear(key);
           setYearPickerOpen(false);
           navigation.navigate('BrowseHome', { year: key });
         }}
@@ -983,22 +984,22 @@ function YearPickerSheet({
   visible,
   currentYear,
   onClose,
+  onSelectYear,
   onBrowse,
 }: {
   visible: boolean;
   currentYear: YearKey;
   onClose: () => void;
-  onBrowse: (year: YearKey, makeDefault: boolean) => void;
+  onSelectYear: (year: YearKey) => void;
+  onBrowse: (year: YearKey) => void;
 }) {
   const { colors } = useTheme();
   const [picked, setPicked] = useState<YearKey>(currentYear);
-  const [makeDefault, setMakeDefault] = useState(false);
 
   // Reopening always starts from the user's current year.
   useEffect(() => {
     if (visible) {
       setPicked(currentYear);
-      setMakeDefault(false);
     }
   }, [visible, currentYear]);
 
@@ -1015,7 +1016,10 @@ function YearPickerSheet({
           return (
             <Touchable
               key={key}
-              onPress={() => setPicked(key)}
+              onPress={() => {
+                setPicked(key);
+                onSelectYear(key);
+              }}
               role="radio"
               label={isDefault ? `${YEAR_LABEL[key]}, current default` : YEAR_LABEL[key]}
               state={{ checked: active }}
@@ -1042,27 +1046,7 @@ function YearPickerSheet({
       </View>
 
       <Touchable
-        style={styles.checkRow}
-        onPress={() => setMakeDefault(v => !v)}
-        role="checkbox"
-        label="Set as my default year"
-        state={{ checked: makeDefault }}
-        scale={false}>
-        <View
-          style={[
-            styles.checkbox,
-            {
-              borderColor: makeDefault ? colors.primary : colors.border,
-              backgroundColor: makeDefault ? colors.primary : 'transparent',
-            },
-          ]}>
-          {makeDefault ? <Check size={14} color={colors.primaryText} strokeWidth={3} /> : null}
-        </View>
-        <Text style={[styles.checkLabel, { color: colors.text }]}>Set as my default year</Text>
-      </Touchable>
-
-      <Touchable
-        onPress={() => onBrowse(picked, makeDefault)}
+        onPress={() => onBrowse(picked)}
         label={`Browse ${YEAR_LABEL[picked]}`}
         style={styles.browseButton}>
         <GradientFill from="#FFFFFF" to={colors.fuchsia} borderRadius={14} />

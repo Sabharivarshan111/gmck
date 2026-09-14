@@ -665,6 +665,9 @@ export function ProgressNotesTab({ year }: Props) {
     setImageError(null);
     setReading(null);
     setEditorMode('edit');
+    setLinkOpen(false);
+    setLinkUrl('');
+    setLinkTitle('');
     if (note) {
       setEditing(note);
       setEditTitle(note.title);
@@ -1401,6 +1404,65 @@ export function ProgressNotesTab({ year }: Props) {
             </View>
           ) : null}
 
+          {/*
+            Attachment rows: organized into a balanced 2-row grid.
+            Row 1: [Add picture] [Write by hand]
+            Row 2: [Add file / PDF] (directly below Add picture) [Add link] (directly below Write by hand)
+            Each button has flex: 1 so both rows take 100% width with zero overflow clipping.
+          */}
+          <View style={styles.attachGrid}>
+            <View style={styles.attachRow}>
+              <Touchable
+                onPress={addImage}
+                disabled={busyImage}
+                label="Add a picture to this note"
+                style={[styles.attachBtn, { borderColor: colors.border }]}>
+                <ImagePlus size={16} color={colors.accent} />
+                <Text style={[styles.subjectChipText, { color: colors.accent }]}>
+                  {busyImage ? "Adding…" : "Add picture"}
+                </Text>
+              </Touchable>
+              <Touchable
+                onPress={() => setSheet(NEW_SHEET)}
+                label="Write or draw this note by hand"
+                hint="Opens a blank page for a stylus or a finger"
+                style={[styles.attachBtn, { borderColor: colors.border }]}>
+                <PenLine size={16} color={colors.accent} />
+                <Text style={[styles.subjectChipText, { color: colors.accent }]}>Write by hand</Text>
+              </Touchable>
+            </View>
+
+            <View style={styles.attachRow}>
+              {/* Placed directly below Add picture as requested */}
+              {noteFilesAvailable ? (
+                <Touchable
+                  onPress={() => setAttachOpen(true)}
+                  disabled={busyImage}
+                  label="Add a video, recording or PDF to this note"
+                  style={[styles.attachBtn, { borderColor: colors.border }]}>
+                  <Paperclip size={16} color={colors.accent} />
+                  <Text style={[styles.subjectChipText, { color: colors.accent }]}>
+                    {busyImage ? "Adding…" : "Add file / PDF"}
+                  </Text>
+                </Touchable>
+              ) : null}
+
+              <Touchable
+                onPress={() => {
+                  setLinkOpen(v => !v);
+                  setLinkError(null);
+                }}
+                label="Add a link or a YouTube video to this note"
+                hint="A YouTube link plays inside the note"
+                style={[styles.attachBtn, { borderColor: colors.border }]}>
+                <LinkIcon size={16} color={colors.accent} />
+                <Text style={[styles.subjectChipText, { color: colors.accent }]}>
+                  {linkOpen ? "Cancel link" : "Add link"}
+                </Text>
+              </Touchable>
+            </View>
+          </View>
+
           {linkOpen ? (
             <View style={[styles.linkForm, { borderColor: colors.border }]}>
               <TextInput
@@ -1466,59 +1528,6 @@ export function ProgressNotesTab({ year }: Props) {
               </View>
             </View>
           ) : null}
-
-          <View style={styles.attachRow}>
-            <Touchable
-              onPress={addImage}
-              disabled={busyImage}
-              label="Add a picture to this note"
-              style={[styles.attachBtn, { borderColor: colors.border }]}>
-              <ImagePlus size={16} color={colors.accent} />
-              <Text style={[styles.subjectChipText, { color: colors.accent }]}>
-                {busyImage ? "Adding…" : "Add picture"}
-              </Text>
-            </Touchable>
-            <Touchable
-              onPress={() => setSheet(NEW_SHEET)}
-              label="Write or draw this note by hand"
-              hint="Opens a blank page for a stylus or a finger"
-              style={[styles.attachBtn, { borderColor: colors.border }]}>
-              <PenLine size={16} color={colors.accent} />
-              <Text style={[styles.subjectChipText, { color: colors.accent }]}>Write by hand</Text>
-            </Touchable>
-            {/*
-              A link is its own kind of attachment, not a third mode of "Add
-              file". A file is bytes that are copied or pointed at; a link is a
-              URL, costs nothing either way, and the copy/link question the
-              attach sheet asks makes no sense for one.
-            */}
-            <Touchable
-              onPress={() => {
-                setLinkOpen(true);
-                setLinkError(null);
-              }}
-              label="Add a link or a YouTube video to this note"
-              hint="A YouTube link plays inside the note"
-              style={[styles.attachBtn, { borderColor: colors.border }]}>
-              <LinkIcon size={16} color={colors.accent} />
-              <Text style={[styles.subjectChipText, { color: colors.accent }]}>Add link</Text>
-            </Touchable>
-            {/* Hidden rather than disabled where the module is absent, which is
-                the preview harness: a control that cannot work is worse than
-                one that is not offered. */}
-            {noteFilesAvailable ? (
-              <Touchable
-                onPress={() => setAttachOpen(true)}
-                disabled={busyImage}
-                label="Add a video, recording or PDF to this note"
-                style={[styles.attachBtn, { borderColor: colors.border }]}>
-                <Paperclip size={16} color={colors.accent} />
-                <Text style={[styles.subjectChipText, { color: colors.accent }]}>
-                  {busyImage ? "Adding…" : "Add file"}
-                </Text>
-              </Touchable>
-            ) : null}
-          </View>
           {noteFilesAvailable ? (
             <Text style={[styles.noteEmpty, { color: colors.textMuted }]}>
               Video, audio or PDF. No size limit — it is kept on this phone, so the only
@@ -1709,20 +1718,25 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  attachGrid: {
+    gap: 8,
+    marginBottom: 10,
+  },
   attachRow: {
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
-    marginBottom: 10,
   },
   attachBtn: {
+    flex: 1,
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
     gap: 6,
     borderWidth: 1,
     borderRadius: 10,
     paddingHorizontal: 10,
-    paddingVertical: 8,
+    paddingVertical: 9,
   },
   rowIcon: {
     width: 32,

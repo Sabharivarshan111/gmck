@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
+  Alert,
   Animated,
   Keyboard,
   StyleSheet,
@@ -16,10 +17,12 @@ import { useTheme } from '@/theme';
 import { setSetting, useSettings } from '@/lib/settings';
 import { DURATION, EASE, useReducedMotion } from '@/theme/motion';
 import { typeScale } from '@/theme/typography';
+import { supabase } from '@/lib/supabase';
 import {
   PAGE_REF_QUORUM,
   addBook,
   canContribute,
+  deleteReferenceBook,
   listBooks,
   pageRefsFor,
   submitPageRef,
@@ -68,11 +71,31 @@ export function PageRefSheet({
   const [error, setError] = useState<string | null>(null);
   const [mayContribute, setMayContribute] = useState(true);
 
-  // The "add a book" half, hidden until asked for: most readers are picking one
-  // that is already in the list, and two text fields above it is noise.
   const [adding, setAdding] = useState(false);
   const [newName, setNewName] = useState('');
   const [newEdition, setNewEdition] = useState('');
+  const [isAdminUser, setIsAdminUser] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const checkAdmin = async () => {
+      try {
+        const { data } = await supabase.auth.getUser();
+        const user = data.user;
+        const email = user?.email?.toLowerCase().trim();
+        setIsAdminUser(email === 'sabharivarshan111@gmail.com');
+        setCurrentUserId(user?.id ?? null);
+      } catch {
+        setIsAdminUser(false);
+        setCurrentUserId(null);
+      }
+    };
+    void checkAdmin();
+    const { data: sub } = supabase.auth.onAuthStateChange(() => {
+      void checkAdmin();
+    });
+    return () => sub.subscription.unsubscribe();
+  }, []);
 
   const refresh = useCallback(async () => {
     setLoading(true);
@@ -181,6 +204,42 @@ export function PageRefSheet({
     [question, refresh, onChanged],
   );
 
+  const handleDeleteBook = useCallback(
+    (book: ReferenceBook) => {
+      Alert.alert(
+        'Delete Book',
+        `Delete "${book.name}${book.edition ? ` · ${book.edition}` : ''}" and all its page references?`,
+        [
+          { text: 'Cancel', style: 'cancel' },
+          {
+            text: 'Delete',
+            style: 'destructive',
+            onPress: async () => {
+              setBusy(true);
+              try {
+                const err = await deleteReferenceBook(book.id);
+                if (err) {
+                  setError(err);
+                } else {
+                  if (bookId === book.id) {
+                    setBookId(null);
+                  }
+                  await refresh();
+                  onChanged?.();
+                }
+              } catch (e) {
+                setError(String(e));
+              } finally {
+                setBusy(false);
+              }
+            },
+          },
+        ],
+      );
+    },
+    [bookId, refresh, onChanged],
+  );
+
   const selected = books.find(b => b.id === bookId) ?? null;
 
   return (
@@ -231,42 +290,60 @@ export function PageRefSheet({
             <View style={styles.bookWrap}>
               {books.map(book => {
                 const on = book.id === bookId;
+                const canDelete =
+                  isAdminUser ||
+                  (Boolean(currentUserId) && Boolean(book.createdBy) && book.createdBy === currentUserId);
                 return (
-                  <Touchable
+                  <View
                     key={book.id}
-                    label={`Use ${book.name} ${book.edition} as your textbook`}
-                    state={{ selected: on }}
-                    onPress={() => {
-                      setBookId(book.id);
-                      // Remember it: this is the book the row chips will use.
-                      setSetting('myBookId', book.id);
-                      setSetting(
-                        'myBookLabel',
-                        book.edition ? `${book.name} ${book.edition}` : book.name,
-                      );
-                    }}
                     style={[
                       styles.bookChip,
                       {
                         backgroundColor: on ? colors.primary : colors.cardElevated,
                         borderColor: on ? colors.primary : colors.border,
+                        paddingRight: canDelete ? 8 : 12,
                       },
                     ]}
                   >
-                    <BookOpen
-                      size={13}
-                      color={on ? colors.primaryText : colors.textMuted}
-                    />
-                    <Text
-                      style={[
-                        styles.bookChipText,
-                        { color: on ? colors.primaryText : colors.text },
-                      ]}
+                    <Touchable
+                      label={`Use ${book.name} ${book.edition} as your textbook`}
+                      state={{ selected: on }}
+                      onPress={() => {
+                        setBookId(book.id);
+                        // Remember it: this is the book the row chips will use.
+                        setSetting('myBookId', book.id);
+                        setSetting(
+                          'myBookLabel',
+                          book.edition ? `${book.name} ${book.edition}` : book.name,
+                        );
+                      }}
+                      style={styles.bookChipBody}
                     >
-                      {book.name}
-                      {book.edition ? ` · ${book.edition}` : ''}
-                    </Text>
-                  </Touchable>
+                      <BookOpen
+                        size={13}
+                        color={on ? colors.primaryText : colors.textMuted}
+                      />
+                      <Text
+                        style={[
+                          styles.bookChipText,
+                          { color: on ? colors.primaryText : colors.text },
+                        ]}
+                      >
+                        {book.name}
+                        {book.edition ? ` · ${book.edition}` : ''}
+                      </Text>
+                    </Touchable>
+                    {canDelete ? (
+                      <Touchable
+                        label={`Delete ${book.name}`}
+                        onPress={() => handleDeleteBook(book)}
+                        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                        style={styles.bookDeleteBtn}
+                      >
+                        <Trash2 size={13} color={on ? colors.primaryText : colors.danger} />
+                      </Touchable>
+                    ) : null}
+                  </View>
                 );
               })}
               <Touchable
@@ -589,6 +666,15 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     paddingHorizontal: 12,
     paddingVertical: 8,
+  },
+  bookChipBody: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  bookDeleteBtn: {
+    marginLeft: 6,
+    padding: 2,
   },
   bookChipText: {
     ...typeScale.caption,

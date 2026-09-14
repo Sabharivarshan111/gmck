@@ -108,44 +108,10 @@ android {
         applicationId "com.aistudio.mbbsqbank.aycxvd"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        // ** 18 IS PINNED. DO NOT BUMP IT. **
-        //
-        // Standing instruction from the app's owner on 2026-09-11: every build
-        // stays at 18 until they have actually uploaded a version to the Play
-        // Store. The usual rule — bump on every upload — resumes the moment
-        // they say 18 is live, and not before.
-        //
-        // The reason it is a rule rather than a habit: a versionCode that
-        // climbs on every CI build burns numbers nobody uploaded, and the
-        // owner is then reading a console that says 17 while the repo says 23,
-        // which is exactly the confusion this file has already caused twice.
-        // Numbers are cheap to spend and awkward to explain.
-        //
-        // 17 is the highest versionCode ever uploaded to Play, so 18 is next.
-        //
-        // The app's owner read that off their own console on 2026-09-11. This
-        // file has been wrong about it twice — it said 13 for weeks, then 14 —
-        // and the rule that keeps coming out of that is the same one every
-        // time: **ask the console, not this file.** A rejection of one upload
-        // is not proof of what the listing serves, and neither is a comment.
-        //
-        // The repo briefly ran ahead to 23. Those numbers were CI artifacts
-        // and were never uploaded, so nothing consumed them and 18 is free.
-        // That only holds while it stays true: an internal or closed-track
-        // upload consumes a versionCode exactly like a production one, so if
-        // any build between 18 and 23 was ever pushed to Play, this has to
-        // jump past it.
-        //
-        // Play rejects an upload whose versionCode is not higher than the last
-        // one, so bump these for every subsequent upload — INCLUDING a
-        // re-upload after a rejection.
-        //
-        // 14 was rejected: "your app could crash on 16 KB devices", naming
-        // libzstd-jni-1.5.6-9.so. That is fixed (zstd-jni is 1.5.7-16 below,
-        // whose x86_64 library is 16 KB aligned where 1.5.6-9's was 4 KB), but
-        // the fix cannot reach Play under the version that was refused.
-        versionCode 18
-        versionName "0.0.0.18"
+        // Version 19 bump: Single-tap year switcher, uploader/admin textbook
+        // deletion granularity, unclipped 2-row progress notes attachments.
+        versionCode 19
+        versionName "0.0.0.19"
 
         // Deep-link / OAuth callback scheme, consumed by the intent-filter in
         // AndroidManifest.xml. Added with an indexed put rather than assigning

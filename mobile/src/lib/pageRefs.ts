@@ -34,6 +34,7 @@ export interface ReferenceBook {
   /** "10th edition", "2019 reprint" — free text, because readers say it their way. */
   edition: string;
   subject: string | null;
+  createdBy?: string | null;
 }
 
 export interface PageRef {
@@ -70,7 +71,7 @@ export async function canContribute(): Promise<boolean> {
 export async function listBooks(): Promise<ReferenceBook[]> {
   const { data, error } = await supabase
     .from('reference_books')
-    .select('id, name, edition, subject')
+    .select('id, name, edition, subject, created_by')
     .order('name');
   if (error) {
     warn('pageRefs.listBooks', error.message);
@@ -81,6 +82,7 @@ export async function listBooks(): Promise<ReferenceBook[]> {
     name: row.name as string,
     edition: (row.edition as string) ?? '',
     subject: (row.subject as string | null) ?? null,
+    createdBy: (row.created_by as string | null) ?? null,
   }));
 }
 
@@ -117,7 +119,7 @@ export async function addBook(
       subject: subject?.trim() || null,
       created_by: uid,
     })
-    .select('id, name, edition, subject')
+    .select('id, name, edition, subject, created_by')
     .single();
 
   if (!error && data) {
@@ -126,6 +128,7 @@ export async function addBook(
       name: data.name as string,
       edition: (data.edition as string) ?? '',
       subject: (data.subject as string | null) ?? null,
+      createdBy: (data.created_by as string | null) ?? uid,
     };
   }
 
@@ -313,4 +316,19 @@ export async function withdrawPageRef(
   if (error) {
     warn('pageRefs.withdrawPageRef', error.message);
   }
+}
+
+/**
+ * Delete a book from the catalogue.
+ * A regular user can delete their own uploaded books; an admin can delete any book.
+ */
+export async function deleteReferenceBook(bookId: string): Promise<string | null> {
+  const { error } = await supabase.rpc('delete_reference_book', {
+    _book_id: bookId,
+  });
+  if (error) {
+    warn('pageRefs.deleteReferenceBook', error.message);
+    return error.message;
+  }
+  return null;
 }
