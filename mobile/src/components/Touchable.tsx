@@ -238,6 +238,7 @@ export function Touchable({
       onLongPress={locked ? undefined : onLongPress}
       onPressIn={onPressIn}
       onPressOut={onPressOut}
+      pressRetentionOffset={{ top: 20, bottom: 20, left: 20, right: 20 }}
       disabled={isDisabled}
       hitSlop={hitSlop}
       testID={testID}

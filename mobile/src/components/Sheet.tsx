@@ -127,7 +127,7 @@ export function Sheet({
   const dragOrigin = useRef(0);
 
   const animateOut = useCallback(
-    (velocity?: number) => {
+    (_velocity?: number) => {
       const target = heightRef.current;
       Animated.parallel([
         reduceMotion
@@ -139,7 +139,7 @@ export function Sheet({
             })
           : Animated.timing(fade, {
               toValue: 0,
-              duration: DURATION.base,
+              duration: DURATION.fast,
               easing: EASE.out,
               useNativeDriver: true,
             }),
@@ -149,10 +149,11 @@ export function Sheet({
               duration: 0,
               useNativeDriver: true,
             })
-          : Animated.spring(translateY, {
+          : Animated.timing(translateY, {
               toValue: target,
-              ...springConfig(SPRING.dismiss),
-              ...(velocity === undefined ? null : { velocity }),
+              duration: DURATION.fast,
+              easing: EASE.out,
+              useNativeDriver: true,
             }),
       ]).start(({ finished }) => {
         if (finished) {
@@ -223,8 +224,8 @@ export function Sheet({
         // would be unreachable in a different way.
         onMoveShouldSetPanResponder: (_event, gesture) =>
           scrollOffset.current <= 0 &&
-          Math.abs(gesture.dy) > 8 &&
-          Math.abs(gesture.dy) > Math.abs(gesture.dx) * 2,
+          gesture.dy > 18 &&
+          gesture.dy > Math.abs(gesture.dx) * 2,
         onPanResponderGrant: () => {
           // Read the *presentation* value. If the sheet was mid-flight, the
           // drag continues from where it visibly is (SKILL §3).
@@ -303,7 +304,7 @@ export function Sheet({
         adjustResize is inert from Android 15. Fixing it here fixes all of
         them, which is the point of the sheet being a primitive.
       */}
-      <KeyboardSafe style={styles.root}>
+      <KeyboardSafe style={styles.root} pointerEvents={visible ? 'auto' : 'none'}>
         <Animated.View
           style={[
             StyleSheet.absoluteFill,

@@ -1005,7 +1005,7 @@ function YearPickerSheet({
   }, [visible, currentYear]);
 
   return (
-    <Sheet visible={visible} onClose={onClose} title="Select Year">
+    <Sheet visible={visible} onClose={onClose} title="Select Year" scrollable={false}>
       <Text style={[styles.sheetSub, { color: colors.textMuted }]}>
         Choose the year you want to browse
       </Text>
@@ -1025,6 +1025,7 @@ function YearPickerSheet({
               label={isDefault ? `${YEAR_LABEL[key]}, current default` : YEAR_LABEL[key]}
               state={{ checked: active }}
               scaleTo={0.97}
+              hitSlop={8}
               style={[
                 styles.sheetYear,
                 {

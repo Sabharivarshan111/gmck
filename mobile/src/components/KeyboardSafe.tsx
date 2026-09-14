@@ -28,12 +28,15 @@ import { KeyboardAvoidingView, StyleSheet, type ViewStyle, type StyleProp } from
 export function KeyboardSafe({
   children,
   style,
+  pointerEvents,
 }: {
   children: React.ReactNode;
   style?: StyleProp<ViewStyle>;
+  pointerEvents?: 'auto' | 'none' | 'box-none' | 'box-only';
 }) {
   return (
     <KeyboardAvoidingView
+      pointerEvents={pointerEvents}
       style={[styles.fill, style]}
       /*
        * `padding` on Android too, never `undefined`.
