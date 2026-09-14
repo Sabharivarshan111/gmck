@@ -50,6 +50,7 @@ import { McqCard } from '@/components/McqCard';
 import { WaveformRiver } from '@/components/WaveformRiver';
 import FlashcardsScreen, { StudyView } from '@/screens/FlashcardsScreen';
 import HomeScreen from '@/screens/HomeScreen';
+import { NativeUpdateDemo, NativeNotesEditorDemo, NativePageRefDemo } from './NativeDemos';
 
 /**
  * Three cards, shaped exactly as generate-flashcards returns them: two theory
@@ -1329,6 +1330,15 @@ function Shell() {
         />
       </ScrollView>
     );
+  }
+  if (screen === 'native-update') {
+    return <NativeUpdateDemo />;
+  }
+  if (screen === 'native-notes') {
+    return <NativeNotesEditorDemo />;
+  }
+  if (screen === 'native-pageref') {
+    return <NativePageRefDemo />;
   }
 
   return (
