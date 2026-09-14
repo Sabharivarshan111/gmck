@@ -110,6 +110,18 @@ export interface Spec extends TurboModule {
 
   /** Bytes currently held, so Settings can be honest about what this costs. */
   totalBytes(): number;
+
+  /**
+   * Hand a file off to an external viewer through FileProvider with a temporary
+   * read grant, preventing FileUriExposedException on Android 7+.
+   */
+  openExternal(idOrUri: string, mime: string): Promise<boolean>;
+
+  /**
+   * Render pages of a PDF to high-resolution images using Android's native
+   * android.graphics.pdf.PdfRenderer.
+   */
+  renderPdf(idOrUri: string, maxPages: number): Promise<string>;
 }
 
 export default TurboModuleRegistry.get<Spec>('OrbitFiles');

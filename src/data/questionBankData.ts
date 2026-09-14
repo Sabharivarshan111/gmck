@@ -49,7 +49,9 @@ export const QUESTION_BANK_DATA = {
     name: "Third Year",
     subtopics: {
       "forensic-medicine": forensicMedicineData,
-      "community-medicine": communityMedicineData
+      "community-medicine": communityMedicineData,
+      "ent": entData,
+      "ophthalmology": ophthalmologyData
     }
   },
   "final-year": {

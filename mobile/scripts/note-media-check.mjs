@@ -124,7 +124,7 @@ const tab = code(read(path.join(mobile, 'src/components/ProgressNotesTab.tsx')))
 for (const [kind, expectation] of [
   ['video', /kind === "video"/],
   ['audio', /kind === "audio"/],
-  ['pdf', /Linking\.openURL/],
+  ['pdf', /openFileExternal|PdfViewerModal|Linking\.openURL/],
 ]) {
   check(expectation.test(tab), `the note reader has no way to open a ${kind}`);
 }

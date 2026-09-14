@@ -169,4 +169,21 @@ export default {
     });
   },
   totalBytes: () => 0,
+  openExternal: async (_idOrUri: string, _mime?: string) => {
+    return true;
+  },
+  renderPdf: async (_idOrUri: string, _maxPages?: number) => {
+    return JSON.stringify({
+      pageCount: 1,
+      renderedCount: 1,
+      pages: [
+        {
+          page: 1,
+          width: 800,
+          height: 1100,
+          uri: `data:image/png;base64,${COVER_PNG}`,
+        },
+      ],
+    });
+  },
 };

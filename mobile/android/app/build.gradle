@@ -108,10 +108,10 @@ android {
         applicationId "com.aistudio.mbbsqbank.aycxvd"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        // Version 19 bump: Single-tap year switcher, uploader/admin textbook
-        // deletion granularity, unclipped 2-row progress notes attachments.
-        versionCode 19
-        versionName "0.0.0.19"
+        // Version 20 bump: Restored 3rd-year ENT & Ophthalmology, native PDF viewer
+        // and annotator with drawing tools, and FileProvider external handoff.
+        versionCode 20
+        versionName "0.0.0.20"
 
         // Deep-link / OAuth callback scheme, consumed by the intent-filter in
         // AndroidManifest.xml. Added with an indexed put rather than assigning

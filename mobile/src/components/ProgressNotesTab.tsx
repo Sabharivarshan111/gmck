@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Keyboard, Linking, Modal, ScrollView, StyleSheet, TextInput, View } from "react-native";
+import { Keyboard, Modal, ScrollView, StyleSheet, TextInput, View } from "react-native";
 import { Text } from "@/components/Text";
 import { Touchable } from "@/components/Touchable";
 import { Dialog } from "@/components/Dialog";
@@ -13,6 +13,7 @@ import { makeNoteLink, type NoteLink } from "@/lib/noteLinks";
 import { TappableImage } from "@/components/ZoomableImage";
 import { DrawCanvas } from "@/components/DrawCanvas";
 import { NoteToolbar } from "@/components/NoteToolbar";
+import { PdfViewerModal } from "@/components/PdfViewerModal";
 import { useTheme } from "@/theme";
 import { NoteMediaPlayer } from "@/components/NoteMediaPlayer";
 import { typeScale } from "@/theme/typography";
@@ -57,6 +58,7 @@ import {
   linkIsAlive,
   noteFilesAvailable,
   noteFileUri,
+  openFileExternal,
   removeNoteFile,
   type AttachMode,
   type NoteFile,
@@ -142,10 +144,12 @@ function attachmentSummary(note: UserNote): string {
 function NoteAttachment({
   file,
   onAdopted,
+  onOpenPdf,
 }: {
   file: NoteFile;
   /** A link that has just been copied in, so the note can store the new record. */
   onAdopted?: (was: NoteFile, now: NoteFile) => void;
+  onOpenPdf?: (file: NoteFile) => void;
 }) {
   const { colors } = useTheme();
   const [busy, setBusy] = useState(false);
@@ -229,9 +233,11 @@ function NoteAttachment({
     <View>
     <Touchable
       onPress={() => {
-        // Android's own document viewer. Rendering a PDF here would mean
-        // another dependency to do a job every phone already does.
-        Linking.openURL(uri).catch(() => {});
+        if (kind === "pdf" && onOpenPdf) {
+          onOpenPdf(file);
+        } else {
+          openFileExternal(file);
+        }
       }}
       label={`Open ${file.name}`}
       style={[styles.fileRow, { backgroundColor: colors.card, borderColor: colors.border }]}>
@@ -242,7 +248,8 @@ function NoteAttachment({
         </Text>
         <Text style={[styles.noteEmpty, { color: colors.textMuted }]}>
           {KIND_LABEL[kind]}
-          {formatBytes(file.size) ? ` · ${formatBytes(file.size)}` : ""} · tap to open
+          {formatBytes(file.size) ? ` · ${formatBytes(file.size)}` : ""} ·{" "}
+          {kind === "pdf" ? "tap to read & annotate" : "tap to open"}
         </Text>
       </View>
       <ChevronRight size={14} color={colors.textMuted} />
@@ -265,12 +272,14 @@ function NoteReader({
   onClose,
   onEdit,
   onFilesChanged,
+  onOpenPdf,
 }: {
   note: UserNote | null;
   onClose: () => void;
   onEdit: (note: UserNote) => void;
   /** A link that has just been copied in has to be written back to the note. */
   onFilesChanged: (note: UserNote, files: NoteFile[]) => void;
+  onOpenPdf?: (file: NoteFile) => void;
 }) {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
@@ -375,6 +384,7 @@ function NoteReader({
         <NoteAttachment
           key={file.id}
           file={file}
+          onOpenPdf={onOpenPdf}
           onAdopted={(was, now) =>
             onFilesChanged(
               note,
@@ -565,6 +575,7 @@ export function ProgressNotesTab({ year }: Props) {
   const [filingOpen, setFilingOpen] = useState(false);
   const [editImages, setEditImages] = useState<string[]>([]);
   const [editFiles, setEditFiles] = useState<NoteFile[]>([]);
+  const [pdfModalFile, setPdfModalFile] = useState<NoteFile | null>(null);
   const [editFont, setEditFont] = useState<string | null>(null);
   const [editSheets, setEditSheets] = useState<string[]>([]);
   const [editLinks, setEditLinks] = useState<NoteLink[]>([]);
@@ -921,6 +932,7 @@ export function ProgressNotesTab({ year }: Props) {
         note={reading}
         onClose={() => setReading(null)}
         onEdit={note => openEditor(note)}
+        onOpenPdf={setPdfModalFile}
         onFilesChanged={(note, files) => {
           // Persist, and keep the open sheet showing the new state rather than
           // the link it has just stopped being.
@@ -1357,17 +1369,28 @@ export function ProgressNotesTab({ year }: Props) {
                     styles.fileRow,
                     { backgroundColor: colors.cardElevated, borderColor: colors.border },
                   ]}>
-                  <FileKindIcon file={file} />
-                  <View style={styles.flex}>
-                    <Text style={[styles.fileName, { color: colors.text }]} numberOfLines={1}>
-                      {file.name}
-                    </Text>
-                    <Text style={[styles.noteEmpty, { color: colors.textMuted }]}>
-                      {KIND_LABEL[kindOf(file)]}
-                      {formatBytes(file.size) ? ` · ${formatBytes(file.size)}` : ""}
-                      {file.linked ? " · linked" : " · saved in Orbit"}
-                    </Text>
-                  </View>
+                  <Touchable
+                    onPress={() => {
+                      if (kindOf(file) === "pdf") {
+                        setPdfModalFile(file);
+                      } else {
+                        openFileExternal(file);
+                      }
+                    }}
+                    label={`Open ${file.name}`}
+                    style={[styles.flex, { flexDirection: "row", alignItems: "center", gap: 10 }]}>
+                    <FileKindIcon file={file} />
+                    <View style={styles.flex}>
+                      <Text style={[styles.fileName, { color: colors.text }]} numberOfLines={1}>
+                        {file.name}
+                      </Text>
+                      <Text style={[styles.noteEmpty, { color: colors.textMuted }]}>
+                        {KIND_LABEL[kindOf(file)]}
+                        {formatBytes(file.size) ? ` · ${formatBytes(file.size)}` : ""}
+                        {file.linked ? " · linked" : " · saved in Orbit"} · tap to open
+                      </Text>
+                    </View>
+                  </Touchable>
                   <Touchable
                     onPress={() => {
                       setEditFiles(current => current.filter(f => f.id !== file.id));
@@ -1567,6 +1590,12 @@ export function ProgressNotesTab({ year }: Props) {
             tone: "danger",
           },
         ]}
+      />
+
+      <PdfViewerModal
+        file={pdfModalFile}
+        visible={Boolean(pdfModalFile)}
+        onClose={() => setPdfModalFile(null)}
       />
     </View>
   );

@@ -306,3 +306,53 @@ export function removeNoteFiles(files: NoteFile[] | undefined): void {
     removeNoteFile(file);
   }
 }
+
+export interface RenderedPdfPage {
+  page: number;
+  width: number;
+  height: number;
+  uri: string;
+}
+
+export interface RenderedPdfResult {
+  pageCount: number;
+  renderedCount: number;
+  pages: RenderedPdfPage[];
+}
+
+/**
+ * Hand this file off to an external reader via Android FileProvider.
+ * Safe from FileUriExposedException on Android 7+.
+ */
+export async function openFileExternal(file: NoteFile): Promise<boolean> {
+  if (!native) return false;
+  try {
+    const target = file.linked ? (file.uri ?? '') : file.id;
+    if (!target) return false;
+    return await native.openExternal(target, file.mime || 'application/pdf');
+  } catch (error) {
+    warn('openFileExternal failed:', error);
+    return false;
+  }
+}
+
+/**
+ * Render PDF pages using on-device native PdfRenderer.
+ */
+export async function renderNotePdf(
+  file: NoteFile,
+  maxPages: number = 30,
+): Promise<RenderedPdfResult | null> {
+  if (!native) return null;
+  try {
+    const target = file.linked ? (file.uri ?? '') : file.id;
+    if (!target) return null;
+    const raw = await native.renderPdf(target, maxPages);
+    if (!raw) return null;
+    return JSON.parse(raw) as RenderedPdfResult;
+  } catch (error) {
+    warn('renderNotePdf failed:', error);
+    return null;
+  }
+}
+

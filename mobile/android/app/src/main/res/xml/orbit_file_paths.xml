@@ -11,4 +11,6 @@
 -->
 <paths>
     <cache-path name="apkg-share" path="apkg-share/" />
+    <files-path name="note-media" path="note-media/" />
+    <cache-path name="pdf-cache" path="pdf-pages/" />
 </paths>

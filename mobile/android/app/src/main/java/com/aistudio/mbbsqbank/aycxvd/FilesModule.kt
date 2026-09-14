@@ -406,6 +406,107 @@ class FilesModule(reactContext: ReactApplicationContext) :
       0.0
     }
 
+  override fun openExternal(idOrUri: String, mime: String, promise: Promise) {
+    try {
+      val contentUri: Uri = if (idOrUri.startsWith("content://")) {
+        Uri.parse(idOrUri)
+      } else {
+        val file = File(mediaDir(), sanitise(idOrUri))
+        if (!file.exists()) {
+          promise.resolve(false)
+          return
+        }
+        androidx.core.content.FileProvider.getUriForFile(
+          reactApplicationContext,
+          "${reactApplicationContext.packageName}.fileprovider",
+          file,
+        )
+      }
+
+      val intent = Intent(Intent.ACTION_VIEW).apply {
+        val mimeType = if (mime.isNotEmpty()) mime else "application/pdf"
+        setDataAndType(contentUri, mimeType)
+        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+      }
+
+      val chooser = Intent.createChooser(intent, "Open file").apply {
+        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+      }
+
+      reactApplicationContext.startActivity(chooser)
+      promise.resolve(true)
+    } catch (e: Throwable) {
+      promise.reject("open_failed", e.message ?: "Could not open file", e)
+    }
+  }
+
+  override fun renderPdf(idOrUri: String, maxPages: Double, promise: Promise) {
+    try {
+      val pfd: android.os.ParcelFileDescriptor? = if (idOrUri.startsWith("content://")) {
+        reactApplicationContext.contentResolver.openFileDescriptor(Uri.parse(idOrUri), "r")
+      } else {
+        val file = File(mediaDir(), sanitise(idOrUri))
+        if (!file.exists()) {
+          promise.reject("file_not_found", "PDF file does not exist")
+          return
+        }
+        android.os.ParcelFileDescriptor.open(file, android.os.ParcelFileDescriptor.MODE_READ_ONLY)
+      }
+
+      if (pfd == null) {
+        promise.reject("pfd_null", "Could not open descriptor for PDF")
+        return
+      }
+
+      pfd.use { descriptor ->
+        val renderer = android.graphics.pdf.PdfRenderer(descriptor)
+        try {
+          val totalPages = renderer.pageCount
+          val cacheDir = File(reactApplicationContext.cacheDir, "pdf-pages").apply { mkdirs() }
+          val pagesArray = org.json.JSONArray()
+          val limit = if (maxPages > 0) Math.min(totalPages, maxPages.toInt()) else totalPages
+
+          for (i in 0 until limit) {
+            val page = renderer.openPage(i)
+            val scale = 2
+            val width = page.width * scale
+            val height = page.height * scale
+            val bitmap = android.graphics.Bitmap.createBitmap(width, height, android.graphics.Bitmap.Config.ARGB_8888)
+            bitmap.eraseColor(android.graphics.Color.WHITE)
+            page.render(bitmap, null, null, android.graphics.pdf.PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
+            page.close()
+
+            val pageFile = File(cacheDir, "pdf_${idOrUri.hashCode().toUInt()}_p${i + 1}.png")
+            pageFile.outputStream().use { out ->
+              bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG, 90, out)
+            }
+            bitmap.recycle()
+
+            val pageObj = org.json.JSONObject().apply {
+              put("page", i + 1)
+              put("width", width)
+              put("height", height)
+              put("uri", "file://${pageFile.absolutePath}")
+            }
+            pagesArray.put(pageObj)
+          }
+
+          val result = org.json.JSONObject().apply {
+            put("pageCount", totalPages)
+            put("renderedCount", limit)
+            put("pages", pagesArray)
+          }
+          promise.resolve(result.toString())
+        } finally {
+          renderer.close()
+        }
+      }
+    } catch (e: Throwable) {
+      promise.reject("render_pdf_failed", e.message ?: "Failed to render PDF", e)
+    }
+  }
+
   private fun mediaDir(): File =
     File(reactApplicationContext.filesDir, "note-media").apply { mkdirs() }
 

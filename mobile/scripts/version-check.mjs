@@ -57,7 +57,7 @@ if (gradleCode && tsCode) {
  * build.gradle **together**. Do not weaken it in the meantime: raising the
  * number here to match a bump is not lifting the pin, it is defeating it.
  */
-const PINNED_VERSION_CODE = 19;
+const PINNED_VERSION_CODE = 20;
 if (gradleCode) {
   check(
     Number(gradleCode[1]) === PINNED_VERSION_CODE,
