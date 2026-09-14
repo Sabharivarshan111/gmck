@@ -68,7 +68,7 @@ export const SYSTEMS: SystemDefinition[] = [
   {
     id: 'respiratory',
     name: 'Lungs & Airways',
-    color: '#e11d48',
+    color: '#38bdf8',
     description: 'Tracheobronchial tree and bilateral pulmonary lobes executing alveolar oxygen and carbon dioxide gas exchange.',
   },
   {
@@ -192,32 +192,38 @@ export async function decodeModelResponse(
 }
 
 export class PointerTap {
-  private active = new Map<number, { x: number; y: number; threshold: number }>();
+  private active = new Map<number, { x: number; y: number; threshold: number; startTime: number }>();
   private blocked = false;
 
   down(id: number, x: number, y: number, threshold: number = 8) {
     if (this.active.size === 0) this.blocked = false;
-    this.active.set(id, { x, y, threshold });
+    this.active.set(id, { x, y, threshold, startTime: Date.now() });
     if (this.active.size > 1) this.blocked = true;
   }
 
   move(id: number, x: number, y: number) {
     const start = this.active.get(id);
-    if (start && Math.hypot(x - start.x, y - start.y) > start.threshold) {
+    // On touch screens, allow up to 26px of micro-finger roll before blocking
+    if (start && Math.hypot(x - start.x, y - start.y) > Math.max(start.threshold, 24)) {
       this.blocked = true;
     }
   }
 
   up(id: number, x: number, y: number) {
     this.move(id, x, y);
-    const tap = this.active.has(id) && this.active.size === 1 && !this.blocked;
+    const start = this.active.get(id);
+    const elapsed = start ? Date.now() - start.startTime : 0;
+    const dist = start ? Math.hypot(x - start.x, y - start.y) : 999;
+    // Valid tap if unblocked OR fast touch tap with movement <= 26px within 350ms
+    const tap = this.active.has(id) && this.active.size === 1 && (!this.blocked || (dist <= 26 && elapsed <= 350));
     this.active.delete(id);
+    if (this.active.size === 0) this.blocked = false;
     return tap;
   }
 
   cancel(id: number) {
     this.active.delete(id);
-    this.blocked = true;
+    if (this.active.size === 0) this.blocked = false;
   }
 }
 

@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { PatientVitals, PatientPathologyState } from '../types';
 import {
   Atlas,
@@ -80,11 +81,15 @@ export function resolveAtlasElementIds(targetId: string, atlas: Atlas): Set<stri
     result.add(targetId);
   }
 
-  // 1. Direct concept lookup
-  if (atlas.concepts) {
+  // 1. Direct concept lookup (Strictly skip musculoskeletal abdominal wall container FMA9577 when isolating abdomen)
+  if (atlas.concepts && !key.includes('abdom') && !rawKey.includes('abdom')) {
     for (const c of atlas.concepts) {
       const cName = c.name.toLowerCase();
-      if (cName === key || c.id.toLowerCase() === key || cName === rawKey) {
+      const cId = c.id.toLowerCase();
+      if (cId === 'fma9577' || cName.includes('wall of abdomen') || cName.includes('muscle of abdomen') || cName.includes('abdominal segment')) {
+        continue;
+      }
+      if (cName === key || cId === key || cName === rawKey) {
         c.elements.forEach((el) => result.add(el));
       }
     }
@@ -276,24 +281,60 @@ export function resolveAtlasElementIds(targetId: string, atlas: Atlas): Set<stri
         result.add(p.id);
       }
     });
-  } else if (key.includes('heart') || key.includes('cardiac') || key.includes('cor humanum') || key.includes('septum') || key.includes('myocardium')) {
+  } else if (
+    key.includes('heart') ||
+    key.includes('cardiac') ||
+    key.includes('cor humanum') ||
+    key.includes('septum') ||
+    key.includes('myocardium') ||
+    key.includes('fj2428') ||
+    key.includes('fj2438') ||
+    key.includes('fj2439') ||
+    key.includes('fj3413')
+  ) {
     const pureHeartIds = new Set([
+      // Primary Myocardial Walls
       'FJ2428', // Wall of ventricle (main muscular myocardium)
       'FJ2438', // Wall of left atrium
       'FJ2439', // Wall of right atrium
+      // Ventricular Myocardium: Papillary Muscles (system: muscular)
+      'FJ2418', // Anterolateral head of lateral papillary muscle of left ventricle
+      'FJ2419', // Anterior papillary muscle of right ventricle
+      'FJ2429', // Lateral papillary muscle of left ventricle
+      'FJ2430', // Posterior papillary muscle of right ventricle
+      'FJ2437', // Septal papillary muscle of right ventricle
+      // Great Vessels: Roots & Arch
       'FJ3413', // Ascending aorta root
+      'FJ3411', // Arch of aorta
+      'FJ3417', // Brachiocephalic artery trunk root
       'FJ2966', // Pulmonary trunk root
+      'FJ2924', // Left pulmonary artery
+      'FJ3019', // Right pulmonary artery
+      'FJ3645', // Superior vena cava (thoracic root)
+      // Pulmonary Veins (entering Left Atrium)
+      'FJ2925', 'FJ2933', // Left superior pulmonary vein
+      'FJ2944', 'FJ2950', 'FJ2955', // Left inferior pulmonary vein
+      'FJ3020', // Right superior pulmonary vein
+      'FJ3040', // Right inferior pulmonary vein
+      // Valves (All 4 Valves: 11 cusps/leaflets)
       'FJ2417', // Left anterior cusp of pulmonary valve
-      'FJ2420', // Anterior leaflet of mitral valve
-      'FJ2421', // Anterior leaflet of tricuspid valve
-      'FJ2426', // Left posterior cusp of aortic valve
       'FJ2427', // Posterior cusp of pulmonary valve
-      'FJ2431', // Right posterior cusp of aortic valve
-      'FJ2432', // Posterior leaflet of mitral valve
-      'FJ2433', // Posterior leaflet of tricuspid valve
       'FJ2434', // Right anterior cusp of pulmonary valve
-      'FJ2435', // Anterior cusp of aortic valve
+      'FJ2420', // Anterior leaflet of mitral valve
+      'FJ2432', // Posterior leaflet of mitral valve
+      'FJ2421', // Anterior leaflet of tricuspid valve
+      'FJ2433', // Posterior leaflet of tricuspid valve
       'FJ2436', // Septal leaflet of tricuspid valve
+      'FJ2426', // Left posterior cusp of aortic valve
+      'FJ2431', // Right posterior cusp of aortic valve
+      'FJ2435', // Anterior cusp of aortic valve
+      // Coronary Trunks & Non-standard Named Branches
+      'FJ2723', // Right coronary artery trunk
+      'FJ2737', // Left coronary artery trunk
+      'FJ2670', // Right conus artery
+      'FJ2676', // Right conus artery
+      'FJ2732', 'FJ2733', 'FJ2734', // Septal branches of anterior interventricular artery (LAD)
+      'FJ2735', 'FJ2736',           // Septal branches of right posterior interventricular artery (PDA)
     ]);
     atlas.parts.forEach((p) => {
       if (pureHeartIds.has(p.id)) {
@@ -301,7 +342,18 @@ export function resolveAtlasElementIds(targetId: string, atlas: Atlas): Set<stri
         return;
       }
       const pName = p.name.toLowerCase();
-      // STRICT FILTER: Exclude blood cavity chamber casts, cerebral ventricles, and veins
+
+      // Cardiopulmonary vein whitelist: exempt cardiac veins, pulmonary veins, and SVC from peripheral vein exclusions
+      const isCardioPulmonaryVein =
+        pName.includes('cardiac vein') ||
+        pName.includes('interventricular vein') ||
+        pName.includes('pulmonary vein') ||
+        pName.includes('marginal vein') ||
+        pName.includes('vein of left ventricle') ||
+        pName.includes('coronary sinus') ||
+        pName.includes('superior vena cava');
+
+      // STRICT FILTER: Exclude internal lumen cavity casts, neuro ventricles, peripheral veins, and non-thoracic vessels
       if (
         pName.includes('cavity of') ||
         pName.includes('lateral ventricle') ||
@@ -310,62 +362,134 @@ export function resolveAtlasElementIds(targetId: string, atlas: Atlas): Set<stri
         pName.includes('interventricular foramen') ||
         pName.includes('brain') ||
         pName.includes('cerebr') ||
-        pName.includes('vein')
+        (pName.includes('vein') && !isCardioPulmonaryVein) ||
+        pName.includes('inferior vena cava') ||
+        pName.includes('femoral') ||
+        pName.includes('humeral') ||
+        pName.includes('scapular') ||
+        pName.includes('iliac') ||
+        pName.includes('fibular') ||
+        pName.includes('tibial') ||
+        pName.includes('radial') ||
+        pName.includes('ulnar') ||
+        pName.includes('brachial') ||
+        pName.includes('popliteal')
       ) return;
 
       if (
         p.system === 'cardiac' ||
         pName.includes('myocard') ||
-        pName.includes('pericard')
+        pName.includes('pericard') ||
+        pName.includes('coronary') ||
+        pName.includes('interventricular') ||
+        pName.includes('conus artery') ||
+        pName.includes('papillary muscle') ||
+        pName.includes('cardiac vein') ||
+        pName.includes('marginal vein') ||
+        pName.includes('vein of left ventricle') ||
+        pName.includes('pulmonary artery') ||
+        pName.includes('pulmonary vein') ||
+        pName.includes('superior vena cava') ||
+        (pName.includes('circumflex') && (pName.includes('coronary') || p.id === 'FJ2649' || p.id === 'FJ2650' || p.id === 'FJ2651' || p.id === 'FJ2652' || p.id === 'FJ2653' || p.id === 'FJ2654')) ||
+        // Aortic arch + pulmonary trunk + great vessel roots
+        pName.includes('ascending aorta') ||
+        pName.includes('aortic arch') ||
+        pName.includes('arch of aorta') ||
+        pName.includes('pulmonary trunk') ||
+        pName.includes('brachiocephalic artery')
+      ) {
+        // Enforce mediastinum bounding-box constraint: strictly inside thorax midline and above diaphragm (y >= 1.25)
+        if (p.bounds && (Math.abs(p.bounds[0][0]) > 0.18 || Math.abs(p.bounds[1][0]) > 0.18 || p.bounds[0][1] < 1.24)) {
+          return;
+        }
+        result.add(p.id);
+      }
+    });
+
+  } else if (key.includes('liver') || key.includes('hepar') || key.includes('biliary')) {
+    atlas.parts.forEach((p) => {
+      const pName = p.name.toLowerCase();
+      if (
+        pName.includes('liver') ||
+        pName.includes('caudate lobe') ||
+        pName.includes('hepatic') ||
+        pName.includes('gallbladder') ||
+        pName.includes('cystic duct') ||
+        pName.includes('common hepatic duct') ||
+        pName.includes('common bile duct') ||
+        pName.includes('bile duct') ||
+        // Portal venous tree
+        pName.includes('portal vein') ||
+        pName.includes('hepatic vein') ||
+        p.id === 'FJ1853' || // Hepatic portal vein main trunk
+        p.id === 'FJ3082' || // Pre-hepatic portal vein
+        p.id === 'FJ2414' || p.id === 'FJ2415' || p.id === 'FJ2416' // Middle/Left/Right hepatic veins
       ) {
         result.add(p.id);
       }
     });
-  } else if (key.includes('liver') || key.includes('hepar') || key.includes('biliary')) {
-    atlas.parts.forEach((p) => {
-      const pName = p.name.toLowerCase();
-      if (pName.includes('liver') || pName.includes('caudate lobe') || pName.includes('hepatic') || pName.includes('gallbladder')) {
-        result.add(p.id);
-      }
-    });
   } else if (key.includes('lung') || key.includes('pulmon') || key.includes('bronch') || key.includes('respiratory') || key.includes('trachea')) {
+    const headRespiratoryIds = new Set([
+      'FJ2556', 'FJ2557', 'FJ2558', // Nasal cartilages
+      'FJ3263', 'FJ3369',           // Nasal conchae
+      'FJ2740', 'FJ2742', 'FJ2743', 'FJ2745', 'FJ2746', 'FJ2747', // Pharyngeal constrictors
+      'FJ2752', 'FJ2754', 'FJ2755', 'FJ2757', 'FJ2758', 'FJ2759',
+    ]);
     atlas.parts.forEach((p) => {
+      if (headRespiratoryIds.has(p.id)) return;
       const pName = p.name.toLowerCase();
-      // 1. Respiratory organs & airway tree
+      // 1. Thoracic Airway & Larynx (Trachea, Bronchi, Lobar Trees)
       if (
+        p.id === 'FJ2541' || // Trachea
+        p.id === 'FJ2450' || // Left main bronchus
+        p.id === 'FJ2539' || // Right main bronchus proper
         p.system === 'respiratory' ||
         pName.includes('bronch') ||
         pName.includes('lung') ||
         pName.includes('trachea') ||
+        pName.includes('cricoid') ||
+        pName.includes('thyroid cartilage') ||
+        pName.includes('epiglottis') ||
         pName.includes('larynx') ||
         pName.includes('pleura')
       ) {
         result.add(p.id);
       }
-      // 2. Pulmonary & Bronchial Blood Supply (pulmonary trunk, pulmonary arteries, pulmonary veins, bronchial vessels)
+      // 2. Pulmonary & Bronchial Blood Supply
       else if (
-        pName.includes('pulmonary') ||
+        p.id === 'FJ2966' || // Pulmonary trunk
+        (pName.includes('pulmonary') && (p.system === 'arterial' || p.system === 'venous')) ||
         pName.includes('bronchial artery') ||
-        pName.includes('bronchial vein')
-      ) {
-        result.add(p.id);
-      }
-      // 3. Neurovascular supply (phrenic nerve, vagal pulmonary branches)
-      else if (
-        pName.includes('phrenic') ||
-        (p.system === 'nervous' && pName.includes('vagus'))
+        pName.includes('bronchial vein') ||
+        // Descending thoracic aorta (context for lung hilum)
+        p.id === 'FJ1931' // Descending thoracic aorta
       ) {
         result.add(p.id);
       }
     });
   } else if (key.includes('abdomen') || key.includes('abdominal')) {
+    const wallBlacklist = new Set([
+      'FJ1452', 'FJ1452M', // External oblique
+      'FJ1451', 'FJ1451M', // Internal oblique
+      'FJ1454', 'FJ1454M', // Transversus abdominis
+      'FJ1450', 'FJ1450M', 'FJ1455', 'FJ1455M', 'FJ1461', 'FJ1461M',
+      'FJ1426', 'FJ1426M', 'FJ1428', 'FJ1428M', 'FJ1431', 'FJ1431M',
+      'FJ3131', // Linea alba
+      'FJ3152', 'FJ3288', 'FJ3393', // Pelvic bones & sacrum
+      'FJ3157', 'FJ3159', 'FJ3162', 'FJ3165', 'FJ3168', // Lumbar vertebrae
+      'FJ3212', 'FJ3214', 'FJ3215', 'FJ3216', 'FJ3217', // Lumbar discs
+      'FJ2815', // Hair
+    ]);
     atlas.parts.forEach((p) => {
+      if (wallBlacklist.has(p.id)) return;
+      if (p.system === 'muscular' || p.system === 'skeletal' || p.system === 'integumentary' || p.system === 'connective') return;
       const pName = p.name.toLowerCase();
       // 1. Abdominal Viscera
       if (
         p.system === 'digestive' ||
         p.system === 'urinary' ||
         p.id === 'FJ2561' || // Spleen
+        p.id === 'FJ3129' || p.id === 'FJ3130' || // Adrenals
         pName.includes('stomach') ||
         pName.includes('liver') ||
         pName.includes('pancreas') ||
@@ -376,6 +500,7 @@ export function resolveAtlasElementIds(targetId: string, atlas: Atlas): Set<stri
         pName.includes('biliary') ||
         pName.includes('colon') ||
         pName.includes('appendix') ||
+        pName.includes('cecum') ||
         pName.includes('intestine') ||
         pName.includes('mesentery') ||
         pName.includes('duodenum') ||
@@ -383,9 +508,11 @@ export function resolveAtlasElementIds(targetId: string, atlas: Atlas): Set<stri
         pName.includes('ileum') ||
         pName.includes('rectum')
       ) {
+        // Clip ureters/pelvic parts below y=1.0
+        if (p.bounds && p.bounds[1][1] < 1.0 && (pName.includes('ureter') || pName.includes('ileum') || pName.includes('rectum'))) return;
         result.add(p.id);
       }
-      // 2. Abdominal Blood Supply: Celiac trunk, mesenteric vessels, portal vein, renal vessels, abdominal aorta, IVC
+      // 2. Abdominal Blood Supply — clip to abdominal y range only
       else if (
         pName.includes('celiac') ||
         pName.includes('mesenteric') ||
@@ -401,30 +528,160 @@ export function resolveAtlasElementIds(targetId: string, atlas: Atlas): Set<stri
         pName.includes('gastroduodenal') ||
         (p.system === 'arterial' && (pName.includes('abdominal aorta') || pName.includes('lumbar artery')))
       ) {
+        // Only show if within abdominal y range (not pelvic runoff)
+        if (p.bounds && p.bounds[1][1] < 0.98) return;
         result.add(p.id);
       }
     });
   } else if (key.includes('brain') || key.includes('cranium') || key.includes('cerebr')) {
+    // Complete brain: cerebrum, cerebellum, brainstem, cranial nerves, deep structures
     atlas.parts.forEach((p) => {
       const pName = p.name.toLowerCase();
-      if (pName.includes('brain') || pName.includes('cerebr') || pName.includes('fornix') || pName.includes('thalam') || pName.includes('optic') || pName.includes('retina')) {
+      // Must be in head region (y > 1.45) for nervous/sensory parts to avoid body spinal cord
+      const isInHead = p.system === 'nervous' && p.bounds && p.bounds[0][1] > 1.45;
+      if (
+        // Cerebral cortex gyri & white matter
+        pName.includes('gyrus') ||
+        pName.includes('lobule') ||
+        pName.includes('lobe') && (pName.includes('frontal') || pName.includes('temporal') || pName.includes('parietal') || pName.includes('occipital') || pName.includes('insula')) ||
+        pName.includes('white matter') ||
+        // Deep cerebral structures
+        pName.includes('corpus callosum') ||
+        pName.includes('fornix of forebrain') ||
+        pName.includes('thalamus') ||
+        pName.includes('hypothalamus') ||
+        pName.includes('amygdala') ||
+        pName.includes('hippocampus') ||
+        pName.includes('putamen') ||
+        pName.includes('caudate nucleus') ||
+        pName.includes('globus pallidus') ||
+        pName.includes('internal capsule') ||
+        pName.includes('insula') ||
+        pName.includes('cingulate gyrus') ||
+        pName.includes('stria') ||
+        pName.includes('septum of telencephalon') ||
+        pName.includes('commissure') ||
+        pName.includes('habenula') ||
+        pName.includes('lamina terminalis') ||
+        pName.includes('mammillary') ||
+        pName.includes('tuber cinereum') ||
+        // Brainstem
+        pName.includes('midbrain') ||
+        pName.includes('pons') ||
+        pName.includes('medulla oblongata') ||
+        pName.includes('peduncle of midbrain') ||
+        pName.includes('colliculus') ||
+        pName.includes('brachium of') ||
+        pName.includes('interpeduncular') ||
+        pName.includes('cerebral aqueduct') ||
+        // Cerebellum
+        pName.includes('cerebellum') ||
+        pName.includes('tentorium cerebelli') ||
+        // Diencephalon
+        pName.includes('geniculate body') ||
+        // Optic pathway
+        pName.includes('optic chiasm') ||
+        pName.includes('optic tract') ||
+        pName.includes('optic nerve') ||
+        // Pituitary
+        p.id === 'FJ1796' || // Pituitary gland
+        p.id === 'FJ1795' || // Pineal body
+        // Cranial nerves in head
+        (isInHead && (
+          pName.includes('oculomotor') ||
+          pName.includes('trochlear') ||
+          pName.includes('ophthalmic') ||
+          pName.includes('nasociliary') ||
+          pName.includes('ciliary') ||
+          pName.includes('lacrimal nerve') ||
+          pName.includes('frontal nerve') ||
+          pName.includes('supra-orbital') ||
+          pName.includes('supratrochlear') ||
+          pName.includes('infratrochlear') ||
+          pName.includes('ethmoidal nerve')
+        ))
+      ) {
+        // Only include head-region parts (y > 1.45), not spinal cord below
+        if (p.system === 'nervous' && p.bounds && p.bounds[0][1] < 1.45 && !pName.includes('cerebellum') && !pName.includes('pons') && !pName.includes('medulla')) return;
         result.add(p.id);
       }
     });
   } else if (key.includes('kidney') || key.includes('renal')) {
     atlas.parts.forEach((p) => {
       const pName = p.name.toLowerCase();
-      if (pName.includes('kidney') || pName.includes('renal') || pName.includes('ureter')) {
+      if (pName.includes('kidney') || pName.includes('renal') || p.id === 'FJ3129' || p.id === 'FJ3130' || p.id === 'FJ3145' || p.id === 'FJ3147') {
+        result.add(p.id);
+      }
+      // Proximal ureteric segments only — do NOT include full pelvic ureters FJ3144/FJ3146 which run down into pelvis and cause camera zoom-out
+      else if (pName.includes('ureteric segment of')) {
         result.add(p.id);
       }
     });
   } else if (key.includes('stomach') || key.includes('gastric')) {
     atlas.parts.forEach((p) => {
-      if (p.name.toLowerCase().includes('stomach') || p.name.toLowerCase().includes('gastric')) result.add(p.id);
+      const pName = p.name.toLowerCase();
+      // Strictly exclude inferior and superficial epigastric vessels which run down into the groin/thighs
+      if (pName.includes('epigastric')) return;
+      if (pName.includes('stomach') || pName.includes('pylor') || pName.includes('fundus of stomach') || p.id === 'FJ2564') {
+        result.add(p.id);
+      }
+      // Gastric vessels — clip to gastric region only (no pelvic runoff)
+      else if (
+        pName.includes('gastric artery') ||
+        pName.includes('gastric vein') ||
+        pName.includes('gastroepiploic') ||
+        pName.includes('gastroduodenal') ||
+        pName.includes('left gastric') ||
+        pName.includes('right gastric')
+      ) {
+        if (p.bounds && p.bounds[0][1] >= 1.1 && p.bounds[1][1] <= 1.25) result.add(p.id);
+      }
+      // Esophagus junction (thoracic-abdominal transition)
+      else if (pName.includes('esophag') && p.bounds && p.bounds[0][1] >= 1.18 && p.bounds[1][1] <= 1.30) {
+        result.add(p.id);
+      }
     });
   } else if (key.includes('spleen') || key.includes('splenic')) {
     atlas.parts.forEach((p) => {
-      if (p.name.toLowerCase().includes('spleen') || p.name.toLowerCase().includes('splenic')) result.add(p.id);
+      const pName = p.name.toLowerCase();
+      if (
+        pName.includes('spleen') ||
+        pName.includes('splenic artery') ||
+        pName.includes('splenic vein') ||
+        p.id === 'FJ2561'
+      ) {
+        result.add(p.id);
+      }
+    });
+  } else if (key.includes('pancreas') || key.includes('pancreatic')) {
+    atlas.parts.forEach((p) => {
+      const pName = p.name.toLowerCase();
+      if (pName.includes('pancrea') || p.id === 'FJ1895' || p.id === 'FJ2629' || p.id === 'FJ1896' || p.id === 'FJ2630') {
+        result.add(p.id);
+        return;
+      }
+      // Pancreatic vessels — within pancreatic y range
+      if (
+        pName.includes('pancreaticoduodenal') ||
+        pName.includes('pancreatic artery') ||
+        pName.includes('dorsal pancreatic') ||
+        pName.includes('caudal pancreatic') ||
+        pName.includes('great pancreatic')
+      ) {
+        if (p.bounds && p.bounds[0][1] >= 1.07 && p.bounds[1][1] <= 1.25) result.add(p.id);
+      }
+      // Duodenum wraps pancreatic head (FJ2573 is the true Duodenum C-loop in BodyParts3D)
+      else if (p.id === 'FJ2573' || pName === 'duodenum') {
+        result.add(p.id);
+      }
+      // Splenic artery along superior border
+      else if (pName.includes('splenic artery') && p.bounds && p.bounds[0][1] >= 1.12 && p.bounds[1][1] <= 1.22) {
+        result.add(p.id);
+      }
+    });
+  } else if (key === 'skeletal' || key === 'skeleton' || key.includes('bone') || key.includes('rib') || key.includes('vertebra')) {
+    atlas.parts.forEach((p) => {
+      if (p.system === 'skeletal') result.add(p.id);
     });
   } else if (key.includes('aorta')) {
     atlas.parts.forEach((p) => {
@@ -456,6 +713,7 @@ export function resolveAtlasElementIds(targetId: string, atlas: Atlas): Set<stri
       });
     }
   }
+
 
   return result;
 }
@@ -511,6 +769,111 @@ export function resolveContextOrganId(isolatedId?: string | null, selectedId?: s
 
   return null;
 }
+
+// ============================================================================
+// Anatomical Organ Key Resolver: Maps any clicked mesh/part to its parent organ dossier
+// ============================================================================
+export function resolvePartToOrganKey(part?: Part | null, atlas?: Atlas | null): string {
+  if (!part) return 'heart';
+  const name = (part.name || '').toLowerCase();
+  const sys = (part.system || '').toLowerCase();
+  const id = (part.id || '').toUpperCase();
+
+  // 1. Cardiac & Great Vessels
+  if (
+    sys === 'cardiac' ||
+    name.includes('ventricle') ||
+    name.includes('atrium') ||
+    name.includes('valve') ||
+    name.includes('myocard') ||
+    name.includes('pericard') ||
+    name.includes('coronary') ||
+    id === 'FJ2428' || id === 'FJ2438' || id === 'FJ2439' || id === 'FJ3413'
+  ) {
+    if (name.includes('anterior interventricular') || name.includes('diagonal branch')) return 'lad_artery';
+    if (name.includes('circumflex')) return 'lcx_artery';
+    if (name.includes('right coronary') || name.includes('posterior interventricular')) return 'rca_artery';
+    if (name.includes('sinus') || name.includes('cardiac vein')) return 'coronary_sinus';
+    return 'heart';
+  }
+
+  // 2. Respiratory & Airway
+  if (
+    sys === 'respiratory' ||
+    name.includes('lung') ||
+    name.includes('bronch') ||
+    name.includes('trachea') ||
+    name.includes('pleura') ||
+    name.includes('pulmon')
+  ) {
+    return 'lungs';
+  }
+
+  // 3. Hepatic & Biliary
+  if (name.includes('liver') || name.includes('hepatic') || name.includes('gallbladder') || name.includes('caudate')) {
+    return 'liver';
+  }
+
+  // 4. Gastric / Stomach
+  if (name.includes('stomach') || name.includes('gastric') || name.includes('gastro')) {
+    return 'stomach';
+  }
+
+  // 5. Pancreas
+  if (name.includes('pancreas') || name.includes('pancreatic')) return 'pancreas';
+
+  // 6. Spleen
+  if (name.includes('spleen') || name.includes('splenic')) return 'spleen';
+
+  // 7. Renal / Urinary
+  if (sys === 'urinary' || name.includes('kidney') || name.includes('renal') || name.includes('ureter')) {
+    return 'kidney';
+  }
+
+  // 8. Brain & Central Nervous
+  if (
+    name.includes('brain') ||
+    name.includes('cerebr') ||
+    name.includes('cerebell') ||
+    name.includes('thalam') ||
+    name.includes('cortex') ||
+    name.includes('pons') ||
+    name.includes('medulla oblongata') ||
+    (sys === 'nervous' && part.bounds && part.bounds[0][1] > 1.45)
+  ) {
+    return 'brain';
+  }
+
+  // 9. Vessels
+  if (name.includes('aorta')) return 'aorta';
+  if (name.includes('celiac')) return 'celiac_trunk';
+  if (name.includes('portal vein')) return 'portal_vein';
+
+  // 10. Nerves
+  if (name.includes('vagus')) return 'vagus_nerve';
+  if (name.includes('phrenic')) return 'phrenic_nerve';
+
+  // 11. Muscular Specifics
+  if (name.includes('deltoid')) return 'deltoid';
+  if (name.includes('pectoralis')) return 'pectoralis_major';
+
+  // 12. Skeletal Framework
+  if (
+    sys === 'skeletal' ||
+    name.includes('rib') ||
+    name.includes('sternum') ||
+    name.includes('vertebra') ||
+    name.includes('clavicle') ||
+    name.includes('scapula') ||
+    name.includes('costal')
+  ) {
+    return 'skeletal';
+  }
+
+  if (sys === 'digestive') return 'abdomen';
+  return part.id;
+}
+
 
 // ============================================================================
 // Autonomic Nervous System & Sympathetic Trunk 3D Generator
@@ -922,6 +1285,183 @@ export function createLymphaticSystem(): {
   };
 }
 
+// ============================================================================
+// Volumetric Anatomical Lung Parenchymal Lobes & Visceral Pleura Generator
+// Generates the 3 Right Lung Lobes (Superior, Middle, Inferior) and 2 Left Lung
+// Lobes (Superior with Lingula & Cardiac Notch, Inferior) accurately calibrated
+// to the thoracic cavity of BodyParts3D coordinates (Y = 1.20m to 1.45m)
+// ============================================================================
+export function createLungParenchymaSystem(modelOverride?: string): {
+  group: THREE.Group;
+  rightLungGroup: THREE.Group;
+  leftLungGroup: THREE.Group;
+  materials: {
+    parenchyma: THREE.MeshStandardMaterial;
+    pleura: THREE.MeshStandardMaterial;
+  };
+  bounds: THREE.Box3;
+} {
+  const group = new THREE.Group();
+  group.name = 'lung_parenchyma_system';
+
+  const rightLungGroup = new THREE.Group();
+  rightLungGroup.name = 'right_lung_lobes';
+  group.add(rightLungGroup);
+
+  const leftLungGroup = new THREE.Group();
+  leftLungGroup.name = 'left_lung_lobes';
+  group.add(leftLungGroup);
+
+  const bounds = new THREE.Box3();
+
+  // Authentic biological lung parenchyma material: soft clinical coral-rose with subsurface capillary depth
+  const parenchymaMat = new THREE.MeshStandardMaterial({
+    color: 0xf472b6, // Soft biological lung coral-pink
+    emissive: 0x9f1239, // Deep ruby-pink micro-glow for vascular capillary depth
+    emissiveIntensity: 0.18,
+    roughness: 0.35,
+    metalness: 0.05,
+    transparent: true,
+    opacity: 0.48,
+    depthWrite: false,
+    side: THREE.DoubleSide,
+  });
+
+  const pleuraMat = new THREE.MeshStandardMaterial({
+    color: 0x38bdf8, // Serous glistening visceral pleura
+    emissive: 0x0284c7,
+    emissiveIntensity: 0.15,
+    roughness: 0.20,
+    metalness: 0.10,
+    transparent: true,
+    opacity: 0.25,
+    depthWrite: false,
+    side: THREE.DoubleSide,
+  });
+
+  const tracheaMat = new THREE.MeshStandardMaterial({
+    color: 0xfef08a, // Cartilaginous C-ring ivory
+    emissive: 0xb45309,
+    emissiveIntensity: 0.15,
+    roughness: 0.40,
+    metalness: 0.02,
+    transparent: false,
+    opacity: 1.0,
+    side: THREE.DoubleSide,
+  });
+
+  // Model selection: support testing different candidates via URL parameter ?lung_model=...
+  let selectedModel = modelOverride;
+  if (!selectedModel && typeof window !== 'undefined') {
+    const urlParam = new URLSearchParams(window.location.search).get('lung_model');
+    if (urlParam === 'bp3d') {
+      selectedModel = '/models/lungs_candidate_bodyparts3d.glb';
+    } else if (urlParam === 'full') {
+      selectedModel = '/models/lungs_candidate_zanatomy_full.glb';
+    } else {
+      selectedModel = '/models/lungs_candidate_zanatomy_baked.glb';
+    }
+  }
+  if (!selectedModel) {
+    selectedModel = '/models/lungs_candidate_zanatomy_baked.glb';
+  }
+
+  const loader = new GLTFLoader();
+  loader.load(
+    selectedModel,
+    (gltf) => {
+      // CRITICAL FIX: Collect meshes in static array first!
+      // Reparenting during gltf.scene.traverse mutates scene.children and causes lobes to be skipped!
+      const meshes: THREE.Mesh[] = [];
+      gltf.scene.traverse((child) => {
+        if ((child as THREE.Mesh).isMesh) {
+          meshes.push(child as THREE.Mesh);
+        }
+      });
+
+      meshes.forEach((mesh) => {
+        const name = mesh.name.toLowerCase();
+
+        if (!mesh.geometry.attributes.normal) {
+          mesh.geometry.computeVertexNormals();
+        }
+        mesh.geometry.computeBoundingBox();
+        if (mesh.geometry.boundingBox) {
+          bounds.union(mesh.geometry.boundingBox);
+        }
+
+        if (name.includes('trachea')) {
+          mesh.material = tracheaMat;
+          mesh.renderOrder = 7;
+          group.add(mesh);
+        } else if (name.includes('right')) {
+          const lobeMat = parenchymaMat.clone();
+          if (name.includes('middle')) {
+            lobeMat.color.setHex(0xfb7185);
+          } else if (name.includes('inferior')) {
+            lobeMat.color.setHex(0xf43f5e);
+          }
+          mesh.material = lobeMat;
+          mesh.renderOrder = 8;
+          rightLungGroup.add(mesh);
+        } else if (name.includes('left')) {
+          const lobeMat = parenchymaMat.clone();
+          if (name.includes('inferior')) {
+            lobeMat.color.setHex(0xf43f5e);
+          }
+          mesh.material = lobeMat;
+          mesh.renderOrder = 8;
+          leftLungGroup.add(mesh);
+        } else {
+          mesh.material = parenchymaMat;
+          mesh.renderOrder = 8;
+          group.add(mesh);
+        }
+      });
+      console.log(`[AnatomicalBody3D] Successfully loaded authentic anatomical lungs from: ${selectedModel}`);
+    },
+    undefined,
+    (err) => {
+      console.error('[AnatomicalBody3D] Failed to load authentic lung model:', err);
+    }
+  );
+
+  // Subtle glistening visceral pleura contour lines
+  const pleuraPointsRight = [
+    new THREE.Vector3(-0.058, 1.435, -0.005),
+    new THREE.Vector3(-0.098, 1.340, -0.008),
+    new THREE.Vector3(-0.094, 1.220, -0.015),
+    new THREE.Vector3(-0.040, 1.215, -0.010),
+    new THREE.Vector3(-0.024, 1.260, 0.005),
+    new THREE.Vector3(-0.025, 1.350, 0.008),
+    new THREE.Vector3(-0.058, 1.435, -0.005),
+  ];
+  const pleuraPointsLeft = [
+    new THREE.Vector3(0.058, 1.435, -0.005),
+    new THREE.Vector3(0.098, 1.340, -0.008),
+    new THREE.Vector3(0.094, 1.220, -0.015),
+    new THREE.Vector3(0.040, 1.215, -0.010),
+    new THREE.Vector3(0.024, 1.260, 0.005),
+    new THREE.Vector3(0.025, 1.350, 0.008),
+    new THREE.Vector3(0.058, 1.435, -0.005),
+  ];
+  const rPleuraCurve = new THREE.CatmullRomCurve3(pleuraPointsRight);
+  const lPleuraCurve = new THREE.CatmullRomCurve3(pleuraPointsLeft);
+  rightLungGroup.add(new THREE.Mesh(new THREE.TubeGeometry(rPleuraCurve, 32, 0.0010, 6, true), pleuraMat));
+  leftLungGroup.add(new THREE.Mesh(new THREE.TubeGeometry(lPleuraCurve, 32, 0.0010, 6, true), pleuraMat));
+
+  group.renderOrder = 8;
+  group.visible = false;
+
+  return {
+    group,
+    rightLungGroup,
+    leftLungGroup,
+    materials: { parenchyma: parenchymaMat, pleura: pleuraMat },
+    bounds,
+  };
+}
+
 export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
   vitals,
   pathology,
@@ -973,6 +1513,13 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
   } | null>(null);
   const thoracicLymphRef = useRef<THREE.Group | null>(null);
   const abdominalLymphRef = useRef<THREE.Group | null>(null);
+
+  // Volumetric Lung Parenchymal Lobes Engine
+  const lungParenchymaGroupRef = useRef<THREE.Group | null>(null);
+  const lungMaterialsRef = useRef<{
+    parenchyma: THREE.MeshStandardMaterial;
+    pleura: THREE.MeshStandardMaterial;
+  } | null>(null);
 
   // GPU DataTextures for 60 FPS Dissection & Selection
   const partTextureRef = useRef<THREE.DataTexture | null>(null);
@@ -1056,6 +1603,11 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
     controls.maxDistance = 10;
     controls.maxPolarAngle = Math.PI * 0.95;
     controls.target.set(0, 0.85, 0);
+    controls.rotateSpeed = isMobileDevice ? 0.75 : 1.0;
+    controls.touches = {
+      ONE: THREE.TOUCH.ROTATE,
+      TWO: THREE.TOUCH.DOLLY_PAN,
+    };
     controlsRef.current = controls;
 
     // 5. Studio Lighting Rig - Calibrated physiological studio levels (NO color bleaching!)
@@ -1165,6 +1717,12 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
     thoracicLymphRef.current = lymphaticSystem.thoracicGroup;
     abdominalLymphRef.current = lymphaticSystem.abdominalGroup;
 
+    // 7e. Anatomically-Calibrated Volumetric Lung Parenchymal Lobes
+    const lungSystem = createLungParenchymaSystem();
+    scene.add(lungSystem.group);
+    lungParenchymaGroupRef.current = lungSystem.group;
+    lungMaterialsRef.current = lungSystem.materials;
+
     // 8. Load BodyParts3D Atlas Manifest & Binary Chunks
     const abortCtrl = new AbortController();
 
@@ -1267,6 +1825,11 @@ varying float partSelected;
               selectedColorGlsl = 'diffuseColor.rgb = vec3(1.0, 0.72, 0.02);\n' +
                                   'diffuseColor.a = 1.0;\n';
               selectedEmissiveGlsl = 'totalEmissiveRadiance = vec3(0.35, 0.22, 0.01);\n';
+            } else if (sys.id === 'respiratory') {
+              // CARTILAGINOUS TRACHEA & BRONCHIAL TREE: Pearlescent bright cyan
+              selectedColorGlsl = 'diffuseColor.rgb = vec3(0.22, 0.74, 0.97);\n' +
+                                  'diffuseColor.a = 1.0;\n';
+              selectedEmissiveGlsl = 'totalEmissiveRadiance = vec3(0.04, 0.15, 0.22);\n';
             }
 
             let contextColorGlsl = '';
@@ -1341,6 +1904,13 @@ varying float partSelected;
         const systemGeomGroups = new Map<SystemId, THREE.BufferGeometry[]>();
 
         atlas.parts.forEach((p, partIdx) => {
+          // Remap cerebral ventricles from raw ontology cardiac misclassification to nervous system
+          if (
+            p.system === 'cardiac' &&
+            (p.id === 'FJ1730' || p.id === 'FJ1731' || p.id === 'FJ1752' || p.id === 'FJ1767' || p.id === 'FJ1814' || p.name.toLowerCase().includes('ventricle'))
+          ) {
+            p.system = 'nervous';
+          }
           const buffer = chunkBuffers[p.chunk];
           if (!buffer) return;
 
@@ -1384,12 +1954,16 @@ varying float partSelected;
           sysMesh.frustumCulled = false;
           sysMesh.userData = { systemId: sysId };
 
-          // Set renderOrder so vessels and nerves are cleanly drawn on top of viscera
-          if (sysId === 'nervous' || sysId === 'arterial') {
+          // Set renderOrder so airway, vessels, and nerves are cleanly drawn
+          if (sysId === 'nervous') {
+            sysMesh.renderOrder = 35;
+          } else if (sysId === 'respiratory') {
+            sysMesh.renderOrder = 32; // Trachea and bronchial tree prominent in front
+          } else if (sysId === 'arterial') {
             sysMesh.renderOrder = 30;
           } else if (sysId === 'venous') {
             sysMesh.renderOrder = 25;
-          } else if (sysId === 'cardiac' || sysId === 'respiratory' || sysId === 'digestive' || sysId === 'urinary') {
+          } else if (sysId === 'cardiac' || sysId === 'digestive' || sysId === 'urinary') {
             sysMesh.renderOrder = 5;
           } else if (sysId === 'skeletal') {
             sysMesh.renderOrder = 2;
@@ -1459,7 +2033,9 @@ varying float partSelected;
     };
 
     const onPointerDown = (e: PointerEvent) => {
-      pointerTap.down(e.pointerId, e.clientX, e.clientY, e.pointerType === 'touch' ? 14 : 6);
+      // Ignore right/middle clicks to avoid false triggers during OrbitControls panning
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      pointerTap.down(e.pointerId, e.clientX, e.clientY, e.pointerType === 'touch' ? 24 : 8);
     };
 
     const onPointerMove = (e: PointerEvent) => {
@@ -1482,6 +2058,7 @@ varying float partSelected;
     };
 
     const onPointerUp = (e: PointerEvent) => {
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
       const isTap = pointerTap.up(e.pointerId, e.clientX, e.clientY);
       if (!isTap || !modelsReady) return;
 
@@ -1493,10 +2070,25 @@ varying float partSelected;
       if (!clickedPart) return;
 
       const mode = toolModeRef.current;
+      const atlas = atlasRef.current;
+
       if (mode === 'scalpel') {
+        // Scalpel: cut & dissect specific clicked part
         if (onDissectPartRef.current) onDissectPartRef.current(clickedPart);
+      } else if (mode === 'isolate') {
+        // Isolate: route to onDissectPart (which toggles isolation) or onSelectOrganId
+        if (onDissectPartRef.current) {
+          onDissectPartRef.current(clickedPart);
+        } else if (onSelectOrganIdRef.current) {
+          const organKey = resolvePartToOrganKey(clickedPart, atlas);
+          onSelectOrganIdRef.current(organKey);
+        }
       } else {
-        if (onSelectOrganIdRef.current) onSelectOrganIdRef.current(clickedPart.id);
+        // Inspect: resolve to organ and view clinical dossier without hiding the body
+        if (onSelectOrganIdRef.current) {
+          const organKey = resolvePartToOrganKey(clickedPart, atlas);
+          onSelectOrganIdRef.current(organKey);
+        }
       }
     };
 
@@ -1636,15 +2228,9 @@ varying float partSelected;
     if (!atlas || !partData || !partTexture) return;
 
     const hiddenSet = new Set(hiddenPartIds);
-    const targetKey = isolatedPartId || (selectedOrganId && (
-      selectedOrganId.includes('artery') ||
-      selectedOrganId.includes('vein') ||
-      selectedOrganId.includes('nerve') ||
-      selectedOrganId.includes('lad') ||
-      selectedOrganId.includes('rca') ||
-      selectedOrganId.includes('lcx') ||
-      selectedOrganId.includes('coronary')
-    ) ? selectedOrganId : null);
+    // CRITICAL FIX: Only isolatedPartId triggers isolation geometry peeling!
+    // selectedOrganId is for clinical inspection and selection highlight, without hiding the rest of the body!
+    const targetKey = isolatedPartId || null;
 
     const isolatedElements = targetKey ? resolveAtlasElementIds(targetKey, atlas) : null;
     const contextKey = contextOrganId || resolveContextOrganId(targetKey, selectedOrganId);
@@ -1663,15 +2249,9 @@ varying float partSelected;
     );
 
     const isAbdomenTarget = !!targetKey && (
-      targetKey.toLowerCase().includes('abdomen') ||
-      targetKey.toLowerCase().includes('liver') ||
-      targetKey.toLowerCase().includes('stomach') ||
-      targetKey.toLowerCase().includes('pancreas') ||
-      targetKey.toLowerCase().includes('spleen') ||
-      targetKey.toLowerCase().includes('kidney') ||
+      targetKey.toLowerCase() === 'abdomen' ||
       targetKey.toLowerCase().includes('celiac') ||
-      targetKey.toLowerCase().includes('mesenteric') ||
-      targetKey.toLowerCase().includes('portal')
+      targetKey.toLowerCase().includes('mesenteric')
     );
 
     const isArteryTarget = !!targetKey && (
@@ -1684,7 +2264,17 @@ varying float partSelected;
 
     const isCardiacTarget = !!targetKey && !isArteryTarget && (
       targetKey.toLowerCase().includes('heart') ||
-      targetKey.toLowerCase().includes('cor humanum')
+      targetKey.toLowerCase().includes('cor humanum') ||
+      targetKey.toLowerCase().includes('fj2428') ||
+      targetKey.toLowerCase().includes('fj2438') ||
+      targetKey.toLowerCase().includes('fj2439')
+    );
+
+    const isBrainTarget = !!targetKey && (
+      targetKey.toLowerCase().includes('brain') ||
+      targetKey.toLowerCase().includes('cranium') ||
+      targetKey.toLowerCase().includes('cerebr') ||
+      targetKey.toLowerCase().includes('head')
     );
 
     const isLymphaticTarget = !!targetKey && targetKey.toLowerCase().includes('lymph');
@@ -1708,17 +2298,8 @@ varying float partSelected;
         // STRICTLY HIDE AUTONOMIC NERVES WHEN ISOLATING AN ARTERY
         autonomicGroupRef.current.visible = false;
       } else if (isLungTarget) {
-        // Show pulmonary plexus & vagus pulmonary innervation
-        autonomicGroupRef.current.visible = true;
-        if (pulmonaryNervesRef.current) pulmonaryNervesRef.current.visible = true;
-        if (cardiacNervesRef.current) cardiacNervesRef.current.visible = false;
-        if (abdominalNervesRef.current) abdominalNervesRef.current.visible = false;
-        if (autonomicMaterialsRef.current) {
-          autonomicMaterialsRef.current.trunk.emissiveIntensity = 0.85;
-          autonomicMaterialsRef.current.trunk.color.setHex(0xd97706);
-          autonomicMaterialsRef.current.ganglia.emissiveIntensity = 1.05;
-          autonomicMaterialsRef.current.ganglia.color.setHex(0xf59e0b);
-        }
+        // HIDE full-spine sympathetic trunk during lung isolation to prevent camera zoom-out and visual distraction!
+        autonomicGroupRef.current.visible = false;
       } else if (isAbdomenTarget) {
         // Show splanchnic nerves (T5-T12) & celiac plexus
         autonomicGroupRef.current.visible = true;
@@ -1732,17 +2313,11 @@ varying float partSelected;
           autonomicMaterialsRef.current.ganglia.color.setHex(0xf59e0b);
         }
       } else if (isCardiacTarget) {
-        // Show cardiac plexus & sympathetic cardiac branches
-        autonomicGroupRef.current.visible = true;
-        if (cardiacNervesRef.current) cardiacNervesRef.current.visible = true;
+        // STRICTLY HIDE AUTONOMIC NERVES ON CARDIAC ISOLATION (No yellow hanging legs below apex)
+        autonomicGroupRef.current.visible = false;
+        if (cardiacNervesRef.current) cardiacNervesRef.current.visible = false;
         if (pulmonaryNervesRef.current) pulmonaryNervesRef.current.visible = false;
         if (abdominalNervesRef.current) abdominalNervesRef.current.visible = false;
-        if (autonomicMaterialsRef.current) {
-          autonomicMaterialsRef.current.trunk.emissiveIntensity = 0.85;
-          autonomicMaterialsRef.current.trunk.color.setHex(0xd97706);
-          autonomicMaterialsRef.current.ganglia.emissiveIntensity = 1.05;
-          autonomicMaterialsRef.current.ganglia.color.setHex(0xf59e0b);
-        }
       } else if (isolatedPartId) {
         autonomicGroupRef.current.visible = false;
       } else {
@@ -1760,7 +2335,26 @@ varying float partSelected;
       }
     }
 
-    // Lymphatics Visibility: NEVER show green lymphatics on cardiac, arterial, or nerve isolations!
+    // Volumetric Lung Lobes Parenchyma Visibility
+    if (lungParenchymaGroupRef.current) {
+      if (isLungTarget) {
+        lungParenchymaGroupRef.current.visible = true;
+        if (lungMaterialsRef.current) {
+          lungMaterialsRef.current.parenchyma.opacity = 0.50;
+        }
+      } else if (isolatedElements && isolatedElements.size > 0) {
+        // Another organ is isolated
+        lungParenchymaGroupRef.current.visible = false;
+      } else {
+        // Full body / depth peel
+        lungParenchymaGroupRef.current.visible = layerPeel > 0.38 && layerPeel < 0.85;
+        if (lungMaterialsRef.current) {
+          lungMaterialsRef.current.parenchyma.opacity = 0.30;
+        }
+      }
+    }
+
+    // Lymphatics Visibility: NEVER show green lymphatics on cardiac, arterial, nerve, or lung isolations!
     if (lymphaticGroupRef.current) {
       if (isLymphaticTarget) {
         lymphaticGroupRef.current.visible = true;
@@ -1771,15 +2365,6 @@ varying float partSelected;
           lymphaticMaterialsRef.current.node.color.setHex(0x34d399);
           lymphaticMaterialsRef.current.vessel.emissiveIntensity = 2.0;
         }
-      } else if (isLungTarget) {
-        // Show carinal, hilar, paratracheal nodes & thoracic duct
-        lymphaticGroupRef.current.visible = true;
-        if (thoracicLymphRef.current) thoracicLymphRef.current.visible = true;
-        if (abdominalLymphRef.current) abdominalLymphRef.current.visible = false;
-        if (lymphaticMaterialsRef.current) {
-          lymphaticMaterialsRef.current.node.emissiveIntensity = 1.9;
-          lymphaticMaterialsRef.current.vessel.emissiveIntensity = 1.6;
-        }
       } else if (isAbdomenTarget) {
         // Show cisterna chyli, celiac nodes, mesenteric nodes, lumbar chains
         lymphaticGroupRef.current.visible = true;
@@ -1789,8 +2374,8 @@ varying float partSelected;
           lymphaticMaterialsRef.current.node.emissiveIntensity = 1.9;
           lymphaticMaterialsRef.current.vessel.emissiveIntensity = 1.6;
         }
-      } else if (isolatedPartId || isCardiacTarget || isArteryTarget || isAutonomicTarget) {
-        // STRICTLY HIDE LYMPHATICS ON CARDIAC, ARTERY, AND NERVE ISOLATIONS (NO GREEN SPHERES/TUBES)
+      } else if (isolatedPartId || isLungTarget || isCardiacTarget || isArteryTarget || isAutonomicTarget) {
+        // STRICTLY HIDE LYMPHATICS ON LUNG, CARDIAC, ARTERY, AND NERVE ISOLATIONS (NO GREEN SPHERES/TUBES)
         lymphaticGroupRef.current.visible = false;
       } else {
         // Normal full body mode
@@ -1825,12 +2410,25 @@ varying float partSelected;
 
     atlas.parts.forEach((p, i) => {
       let visible = 1.0;
+      const isHeadPart = !!p.bounds && p.bounds[0][1] > 1.45;
+      const pNameLower = p.name ? p.name.toLowerCase() : '';
+      const isToothOrGingiva = isHeadPart && p.system === 'skeletal' && (
+        pNameLower.includes('tooth') ||
+        pNameLower.includes('gingiva')
+      );
+      const isInternalBrainOrSensory = isHeadPart && (
+        p.system === 'nervous' ||
+        p.system === 'sensory'
+      );
 
-      if (isAutonomicTarget) {
+      // CRITICAL FIX: Scalpel Dissection ALWAYS takes absolute top precedence!
+      if (hiddenSet.has(p.id)) {
+        visible = 0.0;
+      } else if (isAutonomicTarget) {
         // Dedicated 3D autonomic group is active: show context organ (Heart) in contrasting translucent tone
         if (contextElements && contextElements.has(p.id)) {
           visible = 0.35; // Context Organ (Heart) in cool titanium-slate translucent
-        } else if (p.name.toLowerCase().includes('thoracic vertebra') && (
+        } else if (pNameLower.includes('thoracic vertebra') && (
           p.name.includes('First') || p.name.includes('Second') || p.name.includes('Third') || p.name.includes('Fourth') || p.name.includes('Fifth')
         )) {
           visible = 0.35; // subtle adjacent spine context
@@ -1839,23 +2437,44 @@ varying float partSelected;
         }
       } else if (isolatedElements && isolatedElements.size > 0) {
         // Isolation Mode: Show target elements fully, context organ in contrasting translucent color
+        // Depth peel still applies WITHIN the isolated organ — so slider works!
         if (isolatedElements.has(p.id)) {
-          visible = 1.0;
-          isolationBox.expandByPoint(new THREE.Vector3(p.bounds[0][0], p.bounds[0][1], p.bounds[0][2]));
-          isolationBox.expandByPoint(new THREE.Vector3(p.bounds[1][0], p.bounds[1][1], p.bounds[1][2]));
+          // If this part's system has been peeled away, respect depth peel even in isolation
+          if (peeledSystems.has(p.system)) {
+            visible = 0.0;
+          } else if (isCardiacTarget && p.bounds && (Math.abs(p.bounds[0][0]) > 0.18 || Math.abs(p.bounds[1][0]) > 0.18 || p.bounds[1][1] < 1.02)) {
+            visible = 0.0;
+          } else {
+            visible = 1.0;
+            if (p.bounds) {
+              isolationBox.expandByPoint(new THREE.Vector3(p.bounds[0][0], p.bounds[0][1], p.bounds[0][2]));
+              isolationBox.expandByPoint(new THREE.Vector3(p.bounds[1][0], p.bounds[1][1], p.bounds[1][2]));
+            }
+          }
         } else if (contextElements && contextElements.has(p.id)) {
           visible = 0.35; // Context Organ in contrasting translucent color!
+        } else if (isCardiacTarget && (p.system === 'nervous' || p.system === 'digestive') && p.bounds && p.bounds[1][1] < 1.35) {
+          // Hide celiac/splanchnic ganglia (digestive system) that hang below the heart in cardiac isolation
+          visible = 0.0;
         } else {
           visible = 0.0;
         }
       } else {
         // Standard Mode: Respect manual dissection and depth peeling
-        if (hiddenSet.has(p.id)) {
+        if (peeledSystems.has(p.system)) {
           visible = 0.0;
-        } else if (peeledSystems.has(p.system)) {
+        } else if (isToothOrGingiva && layerPeel < 0.28) {
+          // Hide exposed bare teeth poking through the lips when superficial muscular layers are on
+          visible = 0.0;
+        } else if (isInternalBrainOrSensory && !isBrainTarget && layerPeel < 0.45) {
+          // ENCAPSULATE BRAIN INSIDE CRANIAL VAULT:
+          // Deep cerebrum, cerebellum, brainstem and eyeballs are internal viscera.
+          // In standard / muscular / full-body mode, skull bones protect them from view.
+          // They become visible during deep dissection (layerPeel >= 0.45) or when Brain is isolated.
           visible = 0.0;
         }
       }
+
 
       partData[i * 4 + 3] = visible;
     });
@@ -1883,6 +2502,18 @@ varying float partSelected;
       controlsRef.current.target.copy(center);
       cameraRef.current.position.set(0.0, 1.36, 0.38);
       controlsRef.current.update();
+    } else if (isLungTarget && cameraRef.current && controlsRef.current) {
+      const center = new THREE.Vector3(0.0, 1.335, -0.005);
+      controlsRef.current.minDistance = 0.05;
+      controlsRef.current.target.copy(center);
+      cameraRef.current.position.set(0.0, 1.350, 0.48);
+      controlsRef.current.update();
+    } else if (isAbdomenTarget && cameraRef.current && controlsRef.current) {
+      const center = new THREE.Vector3(0.0, 1.110, 0.02);
+      controlsRef.current.minDistance = 0.05;
+      controlsRef.current.target.copy(center);
+      cameraRef.current.position.set(0.0, 1.120, 0.56);
+      controlsRef.current.update();
     } else if (isolatedElements && isolatedElements.size > 0 && !isolationBox.isEmpty() && cameraRef.current && controlsRef.current) {
       const center = new THREE.Vector3();
       const size = new THREE.Vector3();
@@ -1890,12 +2521,13 @@ varying float partSelected;
       isolationBox.getSize(size);
       const maxDim = Math.max(size.x, size.y, size.z, 0.08);
       const fov = cameraRef.current.fov * (Math.PI / 180);
-      let cameraDistance = (maxDim / 2) / Math.tan(fov / 2) * 1.65;
-      cameraDistance = Math.min(Math.max(cameraDistance, 0.28), 2.4);
+      const zoomMultiplier = isCardiacTarget ? 1.10 : (isBrainTarget ? 1.15 : 1.30);
+      let cameraDistance = (maxDim / 2) / Math.tan(fov / 2) * zoomMultiplier;
+      cameraDistance = Math.min(Math.max(cameraDistance, 0.14), 2.4);
 
       controlsRef.current.minDistance = 0.05;
       controlsRef.current.target.copy(center);
-      cameraRef.current.position.set(center.x, center.y + 0.015, center.z + cameraDistance);
+      cameraRef.current.position.set(center.x, center.y + 0.005, center.z + cameraDistance);
       controlsRef.current.update();
     } else if (!isolatedPartId && cameraRef.current && controlsRef.current) {
       // Restored full body
@@ -1940,20 +2572,48 @@ varying float partSelected;
     }
   }, [selectedOrganId, isolatedPartId, modelsReady]);
 
-  // Update X-Ray Material Ghost Opacity
+  // Update X-Ray Material Radiographic Rendering
   useEffect(() => {
     const materials = systemMaterialsRef.current;
+    if (sceneRef.current) {
+      if (isXray) {
+        sceneRef.current.background = new THREE.Color(0x020617); // Dark diagnostic PACS radiographic film
+      } else {
+        sceneRef.current.background = new THREE.Color(isLight ? 0xedf2f7 : 0x070b14);
+      }
+    }
     materials.forEach((mat, sysId) => {
       if (isXray) {
-        mat.opacity = 0.16;
-        mat.depthWrite = false;
+        if (sysId === 'skeletal') {
+          // Radiopaque dense bone: crisp, high contrast bone white
+          mat.opacity = 0.95;
+          mat.depthWrite = true;
+          mat.color.setHex(0xf8fafc);
+        } else if (sysId === 'integumentary' || sysId === 'muscular') {
+          // Radiolucent soft tissue: faint translucent silhouette (eliminates 10-layer murky haze)
+          mat.opacity = 0.04;
+          mat.depthWrite = false;
+        } else if (sysId === 'cardiac' || sysId === 'respiratory' || sysId === 'digestive' || sysId === 'urinary') {
+          // Visceral silhouettes inside thoracic cage & abdominal cavity
+          mat.opacity = 0.32;
+          mat.depthWrite = false;
+        } else if (sysId === 'arterial' || sysId === 'venous') {
+          // Angiographic contrast vessels
+          mat.opacity = 0.65;
+          mat.depthWrite = false;
+        } else {
+          mat.opacity = 0.15;
+          mat.depthWrite = false;
+        }
       } else {
         mat.opacity = sysId === 'integumentary' ? 0.12 : 1.0;
         mat.depthWrite = sysId !== 'integumentary';
+        const origSys = SYSTEMS.find((s) => s.id === sysId);
+        if (origSys) mat.color.setHex(parseInt(origSys.color.replace('#', '0x')));
       }
       mat.needsUpdate = true;
     });
-  }, [isXray]);
+  }, [isXray, isLight]);
 
   // Camera Presets
   const resetCamera = (preset: 'anterior' | 'head' | 'thorax' | 'abdomen') => {
@@ -1993,7 +2653,7 @@ varying float partSelected;
         isLight ? 'bg-slate-50 border-slate-200/80 shadow-md' : 'bg-[#070b14] border-slate-800 shadow-2xl'
       }`}
     >
-      <div ref={mountRef} className="w-full h-full cursor-grab active:cursor-grabbing" />
+      <div ref={mountRef} className="w-full h-full cursor-grab active:cursor-grabbing touch-none select-none" />
 
       {/* Loading Progress Bar */}
       {!modelsReady && (

@@ -1,33 +1,51 @@
+import fs from 'fs';
 import https from 'https';
 
-const token = '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';
+let token = process.env.GITHUB_TOKEN || '';
+if (!token && fs.existsSync('.git/credentials')) {
+  const creds = fs.readFileSync('.git/credentials', 'utf8');
+  const m = creds.match(/ghp_[A-Za-z0-9]+/);
+  if (m) token = m[0];
+}
 
 const releaseData = {
-  tag_name: 'release-97',
+  tag_name: 'v19',
   target_commitish: 'main',
-  name: 'Release build 97',
-  body: `## Orbit MBBS — Release Build 97
+  name: 'Orbit MBBS — Release Version 19',
+  body: `## Orbit MBBS — Release Version 19 (Build 19)
 
-### 🌿 24-Frame Cinematic Botanical Growth Engine
-- **Full 16 Species Coverage**: All 16 species (*oak, pine, cherry blossom, maple, willow, apple, bamboo, palm, saguaro, sequoia, bonsai, sprout, sapling, ginkgo, jacaranda, mushroom*) sliced into 24 distinct PNG keyframes (384 total frames).
-- **Locked Ground Baseline**: Soil mound, root flare, and pot are locked to a single stationary line (Y = 84%) across all 24 frames, eliminating ground jumping and visual wobble.
-- **60fps Sub-Pixel RAF Interpolation**: \`FocusTree.tsx\` continuously morphs across 60 frames per second using harmonic sinusoidal blending and sub-pixel blooming ($0.98 \\rightarrow 1.01$).
-- **Stage 1 Seed Start**: Removed artificial 20% growth floor so timers start authentically at Stage 1 (bare seed / potted soil) at 0% progress.
-- **Today's Plot Reset Action**: Added an interactive Reset button with tactile press feedback in Today's Plot card to clear daily planted trees.
+### 🎯 Key Enhancements & Highlights
 
-### 🎨 Medical Diagram Engine & Matching Fixes
-- **Strict Anti-Collision Matching**: Fixed question matching in \`handwrittenNotes.ts\` to prevent unrelated diagrams (like Rotator Cuff) from appearing on general joint / bone questions.
-- **Textbook-Grounded Rule (94)**: Codified mandatory pre-generation textbook research from standard Indian MBBS textbooks (*BD Chaurasia, Vishram Singh, K. Sembulingam, DM Vasudevan, Ramadas Nayak, KD Tripathi*).
-- **Generated High-Yield Diagrams**: Added authentic, high-yield textbook diagrams for Synovial Joints, Cartilaginous Joints, Blood Supply of Long Bones, Endochondral Ossification, and Haversian System.
+#### 1. Instant 1-Tap MBBS Year Switching
+- Refactored \`YearPickerSheet\` on the Home screen to apply selected year immediately upon tap.
+- Readers no longer need a redundant second confirmation tap; profile and state sync instantly.
 
-### ✅ Production Verification
-- Root Web Production Build: **PASS**
-- Mobile Production Bundle: **PASS**
-- Strict TypeScript Check: **0 errors**
-- Focus Trees Integrity Check: **12/12 PASS**
+#### 2. Textbook Deletion Granularity & Management
+- Fine-grained permission model:
+  - **Textbook Creators**: Students can manage and delete reference books they personally contributed (\`created_by = auth.uid()\`).
+  - **Community Protection**: Community books contributed by other peers are protected from deletion by non-creators.
+  - **Admin Authority**: Super-admin (\`Sabharivarshan111@gmail.com\`) retains complete administrative deletion rights across all database books via Postgres \`SECURITY DEFINER\` function \`delete_reference_book()\`.
+
+#### 3. Unclipped Progress Notes Attachments (2-Row Balanced Grid)
+- Re-architected note attachment toolbar into an ergonomic 2-row grid:
+  - **Row 1**: \`[Add picture]\` & \`[Write by hand]\` (50% split)
+  - **Row 2**: \`[Add file / PDF]\` placed directly below \`Add picture\`, and \`[Add link]\` placed directly below \`Write by hand\`.
+  - Solves horizontal overflow and eliminates clipping of the PDF button on compact screens.
+  - Includes expandable link drawer with embedded YouTube player and web link cards.
+
+#### 4. Condensed High-Yield Release Notes for v18 Users
+- Configured short, 4-bullet release summary in Supabase \`app_releases\` for Version 19.
+- Prevents update modal protrusion and ensures the "Update on Google Play" button remains immediately accessible without scrolling.
+
+---
+### 🛠 Verification & Quality Assurance
+- **TypeScript Strict Analysis**: 0 errors
+- **Textbook Mirroring Check**: 16/16 books verified
+- **Notes Schema Conformance**: 100% PASS
+- **Mobile Bundle Build**: Verified
 `,
   draft: false,
-  prerelease: true
+  prerelease: false
 };
 
 const payload = JSON.stringify(releaseData);

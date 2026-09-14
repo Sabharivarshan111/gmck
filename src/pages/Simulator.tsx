@@ -17,7 +17,7 @@ import {
 } from 'lucide-react';
 import { PhysiologyKernel, SCENARIOS } from '../simulator/engine/PhysiologyKernel';
 import { AnatomicalLayer, DiagnosticToolType, PatientPathologyState, PatientVitals } from '../simulator/types';
-import { AnatomicalBody3D } from '../simulator/view/AnatomicalBody3D';
+import { AnatomicalBody3D, resolvePartToOrganKey } from '../simulator/view/AnatomicalBody3D';
 import { IcuMonitor } from '../simulator/instruments/IcuMonitor';
 import { DiagnosticTools } from '../simulator/instruments/DiagnosticTools';
 import { InterventionPanel } from '../simulator/controls/InterventionPanel';
@@ -71,10 +71,12 @@ export const Simulator: React.FC = () => {
   // Dissection Handlers
   const handleDissectPart = (part: Part) => {
     if (toolMode === 'isolate') {
-      setIsolatedPartId((prev) => (prev === part.id ? null : part.id));
+      const organKey = resolvePartToOrganKey(part);
+      const target = organKey || part.id;
+      setIsolatedPartId((prev) => (prev === target ? null : target));
       setLogs((prev) => [
         ...prev,
-        `🔍 Isolated ${part.name} (${part.system}) — Contextual structures dimmed.`,
+        `🔍 Isolated ${part.name} (${part.system}) — Surrounding structures dimmed.`,
       ]);
       return;
     }
@@ -90,7 +92,10 @@ export const Simulator: React.FC = () => {
 
   const handleSelectToolMode = (mode: DissectionToolMode) => {
     setToolMode(mode);
-    if (mode === 'isolate' && selectedOrganId) {
+    if (mode === 'inspect') {
+      // Clear 3D isolation lock so full body is inspected in context
+      setIsolatedPartId(null);
+    } else if (mode === 'isolate' && selectedOrganId) {
       setIsolatedPartId(selectedOrganId);
       setLogs((prev) => [
         ...prev,
@@ -119,6 +124,23 @@ export const Simulator: React.FC = () => {
     setIsolatedPartId(null);
     setLogs((prev) => [...prev, 'Full anatomical reconstruction restored.']);
   };
+
+  const handleSelect3DOrgan = useCallback((organId: string) => {
+    if (toolMode === 'isolate') {
+      // In Isolate mode: Toggle isolation of clicked structure in 3D
+      setIsolatedPartId((prev) => (prev === organId ? null : organId));
+      setContextOrganId(null);
+    } else {
+      // In Inspect mode: Highlight structure in 3D & open clinical dossier without hiding the body!
+      setSelectedOrganId(organId);
+      setContextOrganId(null);
+    }
+
+    const lower = organId.toLowerCase();
+    if (lower.includes('brain') || lower.includes('head')) setCameraPreset('head');
+    else if (lower.includes('heart') || lower.includes('lung') || lower.includes('aorta')) setCameraPreset('thorax');
+    else if (lower.includes('liver') || lower.includes('abdomen') || lower.includes('kidney') || lower.includes('stomach') || lower.includes('spleen')) setCameraPreset('abdomen');
+  }, [toolMode]);
 
   // Keyboard shortcuts: Cmd+Z / Ctrl+Z to undo, Escape to clear
   useEffect(() => {
@@ -408,6 +430,13 @@ export const Simulator: React.FC = () => {
                     </span>
                   )}
                   <button
+                    onClick={() => setSelectedOrganId(isolatedPartId)}
+                    className="ml-1 text-[11px] font-bold px-2 py-0.5 rounded-md bg-sky-100 hover:bg-sky-200 text-sky-900 dark:bg-sky-950 dark:hover:bg-sky-900 dark:text-sky-200 transition-colors cursor-pointer"
+                    title="Open clinical anatomy dossier"
+                  >
+                    📖 Dossier
+                  </button>
+                  <button
                     onClick={() => {
                       setIsolatedPartId(null);
                       setContextOrganId(null);
@@ -427,7 +456,7 @@ export const Simulator: React.FC = () => {
                 theme={theme}
                 selectedOrganId={selectedOrganId}
                 contextOrganId={contextOrganId}
-                onSelectOrganId={(organId) => setSelectedOrganId(organId)}
+                onSelectOrganId={handleSelect3DOrgan}
                 toolMode={toolMode}
                 isXray={isXray}
                 layerPeel={layerPeel}
@@ -496,8 +525,7 @@ export const Simulator: React.FC = () => {
                     setCameraPreset('anterior');
                     return;
                   }
-                  // 1-Tap Isolate: Show that organ only along with its blood supply, lymphatics & nerves!
-                  setSelectedOrganId(item.id);
+                  // 1-Tap Isolate: Isolate in 3D viewport without forcing full-screen drawer on mobile!
                   setIsolatedPartId(item.id);
                   setContextOrganId(null);
 
@@ -550,24 +578,27 @@ export const Simulator: React.FC = () => {
               onRestoreAll={handleRestoreAll}
               theme={theme}
             />
-            <div className="h-[420px] w-full relative touch-none">
+            <div className="h-[420px] w-full relative">
               {isolatedPartId && (
-                <div className="absolute top-3 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2 px-3 py-1 rounded-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-amber-300 dark:border-amber-700 shadow-md">
+                <div className="absolute top-3 left-1/2 -translate-x-1/2 z-30 flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-amber-300 dark:border-amber-700 shadow-md pointer-events-auto touch-auto whitespace-nowrap">
                   <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
                   <span className="text-[11px] font-bold text-slate-800 dark:text-slate-200">
                     Isolated: {isolatedPartId.replace(/_/g, ' ').toUpperCase()}
                   </span>
-                  {contextOrganId && contextOrganId !== isolatedPartId && (
-                    <span className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 border-l border-slate-300 dark:border-slate-700 pl-1.5">
-                      Organ: {contextOrganId.replace(/_/g, ' ').toUpperCase()}
-                    </span>
-                  )}
+                  <button
+                    onClick={() => setSelectedOrganId(isolatedPartId)}
+                    className="ml-1 text-[10px] font-bold px-2 py-0.5 rounded-md bg-sky-100 text-sky-900 dark:bg-sky-950 dark:text-sky-200 cursor-pointer"
+                    title="Open clinical anatomy dossier"
+                  >
+                    📖 Dossier
+                  </button>
                   <button
                     onClick={() => {
                       setIsolatedPartId(null);
                       setContextOrganId(null);
+                      setSelectedOrganId(null);
                     }}
-                    className="ml-1 text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-100 text-amber-900 dark:bg-amber-950 dark:text-amber-200"
+                    className="ml-0.5 text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-100 text-amber-900 dark:bg-amber-950 dark:text-amber-200 cursor-pointer"
                   >
                     Restore
                   </button>
@@ -582,7 +613,7 @@ export const Simulator: React.FC = () => {
                 theme={theme}
                 selectedOrganId={selectedOrganId}
                 contextOrganId={contextOrganId}
-                onSelectOrganId={(organId) => setSelectedOrganId(organId)}
+                onSelectOrganId={handleSelect3DOrgan}
                 toolMode={toolMode}
                 isXray={isXray}
                 layerPeel={layerPeel}
@@ -628,9 +659,8 @@ export const Simulator: React.FC = () => {
         organId={selectedOrganId}
         isolatedPartId={isolatedPartId}
         onClose={() => {
+          // Close drawer but PRESERVE isolatedPartId in 3D viewport
           setSelectedOrganId(null);
-          setIsolatedPartId(null);
-          setContextOrganId(null);
         }}
         onFocusCamera={(preset) => setCameraPreset(preset)}
         onSelectOrgan={(newOrganId) => setSelectedOrganId(newOrganId)}

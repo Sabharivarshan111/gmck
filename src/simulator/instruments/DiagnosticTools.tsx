@@ -3,6 +3,7 @@ import { DiagnosticToolType, PatientPathologyState, PatientVitals } from '../typ
 import { StethoscopeAudioEngine, HeartSoundPreset, LungSoundPreset, AuscultationSite } from './StethoscopeSynthesizer';
 import { Ecg12LeadCanvas } from './Ecg12LeadCanvas';
 import { EcgIcuTutorialModal } from './EcgIcuTutorialModal';
+import { PocusCanvas } from './pocus/PocusCanvas';
 import { Volume2, VolumeX, Eye, Stethoscope, Radio, Activity, Sparkles, CheckCircle2, AlertTriangle, Info, GraduationCap } from 'lucide-react';
 
 interface DiagnosticToolsProps {
@@ -58,10 +59,21 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
   // ============================================================================
   const [stethSite, setStethSite] = useState<AuscultationSite>('mitral');
   const [stethMode, setStethMode] = useState<'bell' | 'diaphragm'>('diaphragm');
+  const [stethVolume, setStethVolume] = useState<number>(1.2);
   const [isListening, setIsListening] = useState<boolean>(false);
   const [customHeartOverride, setCustomHeartOverride] = useState<HeartSoundPreset | null>(null);
   const [isTutorialOpen, setIsTutorialOpen] = useState<boolean>(false);
   const audioEngineRef = useRef<StethoscopeAudioEngine | null>(null);
+
+  /**
+   * Synchronous AudioContext unlock helper for iOS/macOS WebKit autoplay enforcement.
+   */
+  const ensureAudioUnlocked = () => {
+    if (!audioEngineRef.current) {
+      audioEngineRef.current = new StethoscopeAudioEngine();
+    }
+    audioEngineRef.current.unlock();
+  };
 
   useEffect(() => {
     return () => {
@@ -72,28 +84,32 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
     };
   }, []);
 
+  useEffect(() => {
+    if (audioEngineRef.current) {
+      audioEngineRef.current.setVolume(stethVolume);
+    }
+  }, [stethVolume]);
+
   // Update auscultation audio whenever isListening, site, vitals, or pathology changes
   useEffect(() => {
     if (!isListening) {
       if (audioEngineRef.current) {
-        audioEngineRef.current.stopCardiacAuscultation();
-        audioEngineRef.current.stopPulmonaryAuscultation();
+        audioEngineRef.current.stopAll();
       }
       return;
     }
 
-    const startAudio = async () => {
-      if (!audioEngineRef.current) {
-        audioEngineRef.current = new StethoscopeAudioEngine();
-      }
-      await audioEngineRef.current.initialize();
-      audioEngineRef.current.setStethoscopeMode(stethMode);
+    const syncAudio = async () => {
+      ensureAudioUnlocked();
+      await audioEngineRef.current!.initialize();
+      audioEngineRef.current!.setStethoscopeMode(stethMode);
+      audioEngineRef.current!.setVolume(stethVolume);
 
       const isPulmonary =
         stethSite === 'lung_bases' || stethSite === 'lung_apices' || stethSite === 'trachea';
 
       if (isPulmonary) {
-        audioEngineRef.current.stopCardiacAuscultation();
+        audioEngineRef.current!.stopCardiacAuscultation();
         // Resolve lung sound preset
         let lungPreset: LungSoundPreset = 'vesicular';
         if (stethSite === 'trachea') {
@@ -107,9 +123,9 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
         } else if (pathology.lungSoundType === 'silent') {
           lungPreset = 'silent';
         }
-        audioEngineRef.current.startPulmonaryAuscultation(vitals.respiratoryRate, lungPreset);
+        audioEngineRef.current!.startPulmonaryAuscultation(vitals.respiratoryRate, lungPreset);
       } else {
-        audioEngineRef.current.stopPulmonaryAuscultation();
+        audioEngineRef.current!.stopPulmonaryAuscultation();
         // Resolve heart sound preset with clinical routing & manual audition override
         let heartPreset: HeartSoundPreset = customHeartOverride || 'normal';
         if (!customHeartOverride) {
@@ -131,216 +147,12 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
             heartPreset = 'friction_rub';
           }
         }
-        audioEngineRef.current.startCardiacAuscultation(vitals.heartRate, heartPreset);
+        audioEngineRef.current!.startCardiacAuscultation(vitals.heartRate, heartPreset);
       }
     };
 
-    startAudio();
+    syncAudio();
   }, [isListening, stethSite, stethMode, vitals.heartRate, vitals.respiratoryRate, pathology, customHeartOverride]);
-
-  // ============================================================================
-  // 3. POCUS ULTRASOUND CANVAS
-  // ============================================================================
-  const usCanvasRef = useRef<HTMLCanvasElement>(null);
-  const [usView, setUsView] = useState<'cardiac' | 'fast_morison' | 'lung'>('cardiac');
-
-  useEffect(() => {
-    if (tool !== 'ultrasound') return;
-    const canvas = usCanvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    let animId: number;
-    let t = 0;
-
-    const renderUS = () => {
-      animId = requestAnimationFrame(renderUS);
-      t += 0.05;
-
-      const w = canvas.width;
-      const h = canvas.height;
-
-      // Dark background
-      ctx.fillStyle = '#05070a';
-      ctx.fillRect(0, 0, w, h);
-
-      // Sector Cone Geometry
-      const originX = w / 2;
-      const originY = 24;
-      const radius = h - 40;
-
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(originX, originY);
-      ctx.arc(originX, originY, radius, Math.PI * 0.3, Math.PI * 0.7);
-      ctx.closePath();
-      ctx.clip();
-
-      // Deep tissue background with Rayleigh speckle
-      ctx.fillStyle = '#0a101d';
-      ctx.fill();
-
-      // Speckle noise dots
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.06)';
-      for (let i = 0; i < 60; i++) {
-        const sx = originX + (Math.random() - 0.5) * radius * 1.4;
-        const sy = originY + Math.random() * radius;
-        ctx.fillRect(sx, sy, 2, 2);
-      }
-
-      if (usView === 'cardiac') {
-        // Subxiphoid 4-Chamber Cardiac View
-        const hr = vitals.heartRate;
-        const beat = 1 + 0.14 * Math.sin(t * (hr / 60) * Math.PI * 2);
-        const hasTamponade = vitals.cvp > 10;
-
-        // Ventricular blood pool (Anechoic Jet Black)
-        ctx.fillStyle = '#020617';
-        ctx.beginPath();
-        ctx.ellipse(originX - 35, originY + 150, 48 * beat, 68 * beat, 0.35, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Myocardium / Interventricular Septum (Hyperechoic Gray-White)
-        ctx.strokeStyle = '#94a3b8';
-        ctx.lineWidth = 10;
-        ctx.stroke();
-
-        // Right Ventricular Free Wall (diastolic collapse in tamponade)
-        if (hasTamponade) {
-          // Circumferential Anechoic Pericardial Fluid Stripe
-          ctx.strokeStyle = '#000000';
-          ctx.lineWidth = 22;
-          ctx.beginPath();
-          ctx.arc(originX - 35, originY + 150, 78 * beat, 0, Math.PI * 2);
-          ctx.stroke();
-
-          // Fibrous Pericardium boundary (Echogenic bright white line)
-          ctx.strokeStyle = '#f8fafc';
-          ctx.lineWidth = 3;
-          ctx.stroke();
-
-          // Diastolic RV collapse marker
-          ctx.fillStyle = '#ef4444';
-          ctx.font = 'bold 11px monospace';
-          ctx.fillText('▲ DIASTOLIC RV COLLAPSE (TAMPONADE)', originX - 110, originY + 250);
-        } else {
-          ctx.fillStyle = '#10b981';
-          ctx.font = 'bold 11px monospace';
-          ctx.fillText('✓ NORMAL CARDIAC CONTRACTILITY', originX - 100, originY + 250);
-        }
-      } else if (usView === 'fast_morison') {
-        // eFAST: Hepatorenal Recess (Morison\'s Pouch)
-        // Liver Parenchyma (Medium gray echotexture)
-        ctx.fillStyle = '#334155';
-        ctx.beginPath();
-        ctx.ellipse(originX - 45, originY + 130, 110, 80, -0.2, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Right Kidney Parenchyma (Slightly darker with bright central sinus)
-        ctx.fillStyle = '#1e293b';
-        ctx.beginPath();
-        ctx.ellipse(originX + 55, originY + 165, 75, 50, 0.3, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Renal Pelvis / Central Sinus (Bright hyperechoic core)
-        ctx.fillStyle = '#cbd5e1';
-        ctx.beginPath();
-        ctx.ellipse(originX + 55, originY + 165, 30, 16, 0.3, 0, Math.PI * 2);
-        ctx.fill();
-
-        const hasFluid = pathology.ascites > 0.25 || vitals.lactate > 3.0;
-        if (hasFluid) {
-          // Free Anechoic Black Fluid Wedge in Morison's Pouch
-          ctx.fillStyle = '#000000';
-          ctx.beginPath();
-          ctx.moveTo(originX - 10, originY + 120);
-          ctx.lineTo(originX + 35, originY + 140);
-          ctx.lineTo(originX + 15, originY + 175);
-          ctx.closePath();
-          ctx.fill();
-
-          ctx.fillStyle = '#f59e0b';
-          ctx.font = 'bold 11px monospace';
-          ctx.fillText("▲ POSITIVE FAST: FREE FLUID IN MORISON'S POUCH", originX - 130, originY + 245);
-        } else {
-          ctx.fillStyle = '#10b981';
-          ctx.font = 'bold 11px monospace';
-          ctx.fillText('✓ NEGATIVE FAST: NO RETROPERITONEAL FREE FLUID', originX - 125, originY + 245);
-        }
-      } else {
-        // Lung Ultrasound
-        const isTensionPneumo = vitals.spo2 < 82 && vitals.cvp > 12;
-        const isEdema = pathology.lungSoundType === 'crackles';
-
-        // Pleural Line (Bright horizontal hyperechoic line)
-        ctx.strokeStyle = '#f8fafc';
-        ctx.lineWidth = 3.5;
-        ctx.beginPath();
-        ctx.moveTo(originX - 140, originY + 85);
-        ctx.lineTo(originX + 140, originY + 85);
-        ctx.stroke();
-
-        if (isTensionPneumo) {
-          // Absence of lung sliding (Stratosphere / Barcode Sign)
-          for (let y = originY + 95; y < originY + radius - 30; y += 8) {
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
-            ctx.lineWidth = 1.5;
-            ctx.beginPath();
-            ctx.moveTo(originX - 130, y);
-            ctx.lineTo(originX + 130, y);
-            ctx.stroke();
-          }
-          ctx.fillStyle = '#ef4444';
-          ctx.font = 'bold 11px monospace';
-          ctx.fillText('▲ ABSENT LUNG SLIDING: BARCODE SIGN (PNEUMOTHORAX)', originX - 145, originY + 235);
-        } else if (isEdema) {
-          // Multiple B-Lines (Lung Rockets: vertical hyperechoic beams)
-          for (let b = -80; b <= 80; b += 35) {
-            ctx.strokeStyle = 'rgba(56, 189, 248, 0.65)';
-            ctx.lineWidth = 2.5;
-            ctx.beginPath();
-            ctx.moveTo(originX + b, originY + 85);
-            ctx.lineTo(originX + b * 1.5, originY + radius);
-            ctx.stroke();
-          }
-          ctx.fillStyle = '#38bdf8';
-          ctx.font = 'bold 11px monospace';
-          ctx.fillText('▲ MULTIPLE CONFLUENT B-LINES (ALVEOLAR EDEMA)', originX - 135, originY + 235);
-        } else {
-          // Normal horizontal A-lines (Reverberation)
-          for (let a = 1; a <= 3; a++) {
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
-            ctx.lineWidth = 1.5;
-            ctx.beginPath();
-            ctx.moveTo(originX - 130, originY + 85 + a * 45);
-            ctx.lineTo(originX + 130, originY + 85 + a * 45);
-            ctx.stroke();
-          }
-          ctx.fillStyle = '#10b981';
-          ctx.font = 'bold 11px monospace';
-          ctx.fillText('✓ NORMAL LUNG SLIDING & PHYSIOLOGICAL A-LINES', originX - 130, originY + 235);
-        }
-      }
-
-      ctx.restore();
-
-      // Ultrasound Depth Scales
-      ctx.fillStyle = '#64748b';
-      ctx.font = '10px monospace';
-      for (let d = 4; d <= 18; d += 4) {
-        const dy = originY + (d / 18) * (radius - 20);
-        ctx.fillText(`${d}cm`, originX + 130, dy);
-        ctx.fillRect(originX + 122, dy - 3, 5, 1);
-      }
-    };
-
-    renderUS();
-
-    return () => {
-      cancelAnimationFrame(animId);
-    };
-  }, [tool, usView, vitals, pathology]);
 
   if (tool === 'none') return null;
 
@@ -516,7 +328,7 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-[11px] leading-relaxed">
                   <div>
-                    • <strong>Direct Light Reflex:</strong> Light entering the pupil stimulates the retinal ganglion cells $	o$ Optic Nerve (CN II) afferents travel to the pretectal nucleus in the midbrain $	o$ bilateral projection to Edinger-Westphal nuclei $	o$ Oculomotor Nerve (CN III) parasympathetic efferents constrict the ipsilateral pupillary sphincter.
+                    • <strong>Direct Light Reflex:</strong> Light entering the pupil stimulates retinal ganglion cells → Optic Nerve (CN II) afferents travel to the pretectal nucleus in the midbrain → bilateral projection to Edinger-Westphal nuclei → Oculomotor Nerve (CN III) parasympathetic efferents constrict the ipsilateral pupillary sphincter.
                   </div>
                   <div>
                     • <strong>Consensual Light Reflex:</strong> Axons decussate across the posterior commissure to the contralateral Edinger-Westphal nucleus, producing simultaneous equal constriction of the unilluminated eye.
@@ -535,7 +347,12 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
                   <span>Auscultation Site (Tap to Place Stethoscope):</span>
                   <div className="flex items-center gap-1">
                     <button
-                      onClick={() => setStethMode('bell')}
+                      onClick={() => {
+                        ensureAudioUnlocked();
+                        setStethMode('bell');
+                        audioEngineRef.current?.setStethoscopeMode('bell');
+                      }}
+                      onTouchStart={ensureAudioUnlocked}
                       className={`px-2.5 py-1 rounded-lg text-xs font-bold border transition-all cursor-pointer ${
                         stethMode === 'bell'
                           ? 'bg-amber-400 text-slate-950 border-amber-300 font-black'
@@ -545,7 +362,12 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
                       🔔 Bell (Low Pitch)
                     </button>
                     <button
-                      onClick={() => setStethMode('diaphragm')}
+                      onClick={() => {
+                        ensureAudioUnlocked();
+                        setStethMode('diaphragm');
+                        audioEngineRef.current?.setStethoscopeMode('diaphragm');
+                      }}
+                      onTouchStart={ensureAudioUnlocked}
                       className={`px-2.5 py-1 rounded-lg text-xs font-bold border transition-all cursor-pointer ${
                         stethMode === 'diaphragm'
                           ? 'bg-cyan-500 text-slate-950 border-cyan-400 font-black'
@@ -568,7 +390,11 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
                   ].map((site) => (
                     <button
                       key={site.id}
-                      onClick={() => setStethSite(site.id as AuscultationSite)}
+                      onClick={() => {
+                        ensureAudioUnlocked();
+                        setStethSite(site.id as AuscultationSite);
+                      }}
+                      onTouchStart={ensureAudioUnlocked}
                       className={`p-2.5 rounded-xl border text-left flex flex-col justify-between transition-all cursor-pointer ${
                         stethSite === site.id
                           ? 'bg-cyan-500/20 border-cyan-500 text-cyan-300 shadow-md'
@@ -590,7 +416,11 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
                     </span>
                     {customHeartOverride && (
                       <button
-                        onClick={() => setCustomHeartOverride(null)}
+                        onClick={() => {
+                          ensureAudioUnlocked();
+                          setCustomHeartOverride(null);
+                        }}
+                        onTouchStart={ensureAudioUnlocked}
                         className="text-[10px] text-amber-400 hover:underline cursor-pointer font-mono"
                       >
                         Reset to Case Default
@@ -610,7 +440,13 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
                     ].map((m) => (
                       <button
                         key={m.id}
-                        onClick={() => setCustomHeartOverride(m.id as HeartSoundPreset)}
+                        onClick={() => {
+                          ensureAudioUnlocked();
+                          setCustomHeartOverride(m.id as HeartSoundPreset);
+                          if (!isListening) setIsListening(true);
+                          audioEngineRef.current?.setHeartPreset(m.id as HeartSoundPreset);
+                        }}
+                        onTouchStart={ensureAudioUnlocked}
                         className={`p-2 rounded-xl border text-left flex flex-col justify-between transition-all cursor-pointer ${
                           customHeartOverride === m.id
                             ? 'bg-rose-500/20 border-rose-500 text-rose-300 shadow-sm'
@@ -626,9 +462,9 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
               </div>
 
               {/* Auscultation Player Display */}
-              <div className="bg-slate-950 p-6 rounded-2xl border border-slate-800 flex flex-col items-center justify-center space-y-4">
+              <div className="bg-slate-950 p-5 rounded-2xl border border-slate-800 flex flex-col items-center justify-center space-y-3.5">
                 <div
-                  className={`w-28 h-28 rounded-full border-4 flex items-center justify-center text-4xl transition-all ${
+                  className={`w-24 h-24 rounded-full border-4 flex items-center justify-center text-3xl transition-all ${
                     isListening
                       ? 'border-emerald-500 bg-emerald-950/40 animate-pulse shadow-lg shadow-emerald-500/30'
                       : 'border-slate-700 bg-slate-800/40 text-slate-500'
@@ -637,16 +473,40 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
                   🩺
                 </div>
 
-                <button
-                  onClick={() => setIsListening(!isListening)}
-                  className={`px-6 py-2.5 rounded-xl font-bold text-sm border shadow-lg transition-all cursor-pointer ${
-                    isListening
-                      ? 'bg-red-500 hover:bg-red-600 text-white border-red-400 shadow-red-500/30'
-                      : 'bg-emerald-500 hover:bg-emerald-600 text-slate-950 border-emerald-400 shadow-emerald-500/30'
-                  }`}
-                >
-                  {isListening ? '⏹ Stop Stethoscope' : '▶ Place Stethoscope & Listen Live'}
-                </button>
+                <div className="flex flex-col sm:flex-row items-center gap-3">
+                  <button
+                    onClick={() => {
+                      ensureAudioUnlocked();
+                      setIsListening(!isListening);
+                    }}
+                    onTouchStart={ensureAudioUnlocked}
+                    className={`px-6 py-2.5 rounded-xl font-bold text-sm border shadow-lg transition-all cursor-pointer ${
+                      isListening
+                        ? 'bg-red-500 hover:bg-red-600 text-white border-red-400 shadow-red-500/30'
+                        : 'bg-emerald-500 hover:bg-emerald-600 text-slate-950 border-emerald-400 shadow-emerald-500/30'
+                    }`}
+                  >
+                    {isListening ? '⏹ Stop Stethoscope' : '▶ Place Stethoscope & Listen Live'}
+                  </button>
+
+                  {/* Volume Slider */}
+                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs">
+                    <Volume2 className="w-4 h-4 text-slate-400" />
+                    <input
+                      type="range"
+                      min="0.2"
+                      max="1.8"
+                      step="0.1"
+                      value={stethVolume}
+                      onChange={(e) => setStethVolume(parseFloat(e.target.value))}
+                      className="w-20 accent-emerald-500 cursor-pointer"
+                      title="Stethoscope Volume"
+                    />
+                    <span className="text-[10px] font-mono text-slate-400 min-w-[32px]">
+                      {Math.round(stethVolume * 100)}%
+                    </span>
+                  </div>
+                </div>
 
                 <div className="font-mono text-xs text-slate-300 text-center space-y-1">
                   <div>
@@ -698,68 +558,7 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
 
           {/* ================= 3. POINT-OF-CARE ULTRASOUND (POCUS) ================= */}
           {tool === 'ultrasound' && (
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-xs text-slate-400 font-semibold">Probe & Scanning Preset:</span>
-                <button
-                  onClick={() => setUsView('cardiac')}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
-                    usView === 'cardiac'
-                      ? 'bg-cyan-500/20 border-cyan-500 text-cyan-300 shadow-xs'
-                      : 'bg-slate-800 hover:bg-slate-700 border-slate-700 text-slate-300'
-                  }`}
-                >
-                  Subxiphoid Cardiac
-                </button>
-                <button
-                  onClick={() => setUsView('fast_morison')}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
-                    usView === 'fast_morison'
-                      ? 'bg-cyan-500/20 border-cyan-500 text-cyan-300 shadow-xs'
-                      : 'bg-slate-800 hover:bg-slate-700 border-slate-700 text-slate-300'
-                  }`}
-                >
-                  eFAST Morison's Pouch
-                </button>
-                <button
-                  onClick={() => setUsView('lung')}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
-                    usView === 'lung'
-                      ? 'bg-cyan-500/20 border-cyan-500 text-cyan-300 shadow-xs'
-                      : 'bg-slate-800 hover:bg-slate-700 border-slate-700 text-slate-300'
-                  }`}
-                >
-                  Lung Ultrasound (Pleura & B-lines)
-                </button>
-              </div>
-
-              <div className="relative bg-[#05070a] rounded-2xl overflow-hidden border border-slate-800 p-2 flex items-center justify-center">
-                <canvas ref={usCanvasRef} width={620} height={340} className="rounded-xl w-full h-auto max-h-[340px]" />
-              </div>
-
-              <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800 text-xs text-slate-300 space-y-2">
-                <div className="font-bold text-cyan-400 flex items-center gap-1.5">
-                  <Radio className="w-4 h-4" />
-                  <span>Sonographic Interpretation:</span>
-                </div>
-                <p className="text-[11px] leading-relaxed">
-                  {usView === 'cardiac' &&
-                    (vitals.cvp > 10
-                      ? 'Significant anechoic (jet black) fluid stripe completely separating the visceral epicardium from parietal pericardium. Diastolic right ventricular free wall collapse confirms tamponade hemodynamics.'
-                      : 'Normal subxiphoid 4-chamber cardiac view. Biventricular wall thickening and contraction intact; no pericardial fluid collection.')}
-                  {usView === 'fast_morison' &&
-                    (pathology.ascites > 0.25 || vitals.lactate > 3.0
-                      ? 'Pathological anechoic fluid wedge detected in the dependent hepatorenal recess (Morison\'s Pouch). Indicates hemoperitoneum or decompensated peritoneal fluid.'
-                      : 'Clear, crisp hepatorenal interface with zero fluid collection in Morison\'s pouch.')}
-                  {usView === 'lung' &&
-                    (vitals.spo2 < 82 && vitals.cvp > 12
-                      ? 'Abolition of normal sliding pleural movement. M-mode displays the pathognomonic "Stratosphere / Barcode Sign" diagnostic of Tension Pneumothorax.'
-                      : pathology.lungSoundType === 'crackles'
-                      ? 'Multiple vertical laser-like reverberation artifacts (B-lines / "Lung Rockets") extending from the pleural line to the bottom of the screen, diagnostic of alveolar pulmonary edema.'
-                      : 'Normal physiological lung sliding with horizontal reverberation A-lines ("Seashore sign" on M-mode).')}
-                </p>
-              </div>
-            </div>
+            <PocusCanvas vitals={vitals} pathology={pathology} theme={theme} />
           )}
 
           {/* ================= 4. 12-LEAD ECG ================= */}

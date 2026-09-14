@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { AnatomicalLayer, DiagnosticToolType, ScenarioDefinition } from '../types';
+import { SCENARIOS } from '../engine/PhysiologyKernel';
 import { CLINICAL_DEPARTMENTS } from '../data/atlasTypes';
 import {
   Layers,
@@ -147,7 +148,7 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
             <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
               type="text"
-              placeholder="Search 36 cases, symptoms..."
+              placeholder={`Search ${SCENARIOS.length} cases, symptoms...`}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className={`w-full text-xs font-medium pl-8 pr-3 py-1.5 rounded-xl border transition-all focus:outline-none focus:ring-2 ${

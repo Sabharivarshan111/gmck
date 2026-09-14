@@ -517,3 +517,71 @@ A mathematically robust wrapper was implemented in `AnatomicalBody3D.tsx`:
 - `npm run build` passes with zero errors in 6.51s.
 - All 7 realistic GLB models integrated and verified in production preview.
 - All new screenshots committed and synchronized with GitHub remote `origin/main`.
+
+---
+
+## 14. 🩻 BodyParts3D & Z-Anatomy Full 1,840-Part Atlas Integration & Streaming glTF Engine
+- **Ontological Precision**: Integrated 1,840 segmented anatomical parts mapped directly to Foundational Model of Anatomy (FMA) IDs in `public/atlas/atlas.json`.
+- **Binary Chunk Streaming**: Chunked into 13 streamable binary files (`chunk-0.bin` to `chunk-12.bin`) loaded progressively via `fetchChunksWithLimit(2 for mobile, 4 for desktop)` with zero UI freezing or memory spikes.
+- **Dynamic Shader Discard**: Merged system geometries (`mergeGeometries`) with `partIndex` per vertex, passing dynamic visibility bitmasks to custom GLSL shaders for zero draw-call organ isolation.
+
+---
+
+## 15. 📱 Mobile Organ Isolation, Depth-Write Occlusion & Floating HUD Card
+- **Drawer Monopolization Fix**: Replaced the 95vh screen-blocking drawer on mobile with a sleek bottom floating pill / 20vh peek card with a "📖 View Clinical Dossier" button.
+- **Occlusion Peeling**: When an internal organ is selected (e.g. Heart), occluding superficial structures (pectoralis major, rectus abdominis, intercostals, ribs, sternum) are automatically peeled away or ghosted so internal viscera are 100% visible.
+- **WebGL DepthWrite Invariant**: In Three.js, translucent meshes (`opacity < 1.0`) with `depthWrite: true` occlude opaque meshes behind them. Calvarium and peeling chest wall layers must use `depthWrite: false` or complete mesh discard (`visible = false`).
+
+---
+
+## 16. 💓 Real-Time Wiggers Diagram, Pressure-Volume Loop & 3D Cardiac Cross-Section Engine
+- **Continuous Biophysical Physics**: Built `src/simulator/instruments/cardiac-engine/` featuring continuous real-time Left Ventricular Pressure (0-120 mmHg), Aortic Pressure (80-120 mmHg), and Left Atrial Pressure (2-12 mmHg) along with Ventricular Volume (50-120 mL).
+- **Synchronized Valve Actions**: Real-time cursor sweeping across all 7 Wiggers phases (Isovolumetric contraction, Rapid ejection, Reduced ejection, Isovolumetric relaxation, Rapid filling, Diastasis, Atrial systole) with 2.5D interactive myocardial cross-section contours and fluid velocity vectors.
+
+---
+
+## 17. 🩺 Bioacoustic Web Audio Stethoscope Hardening & WebKit Autoplay Policy
+- **Hardened Audio Graph**: In `StethoscopeSynthesizer.ts`, resolved sound dropouts and `InvalidStateError` crashes when switching valves or murmurs (Mitral Stenosis, Aortic Regurgitation, VSD pansystolic, etc.).
+- **Single Context Lifecycle**: Eliminated browser context exhaustion (6 max limit) by managing a single persistent `AudioContext`.
+- **WebKit Autoplay Compliance**: Guaranteed synchronous `AudioContext.resume()` within direct touch/click events to satisfy iOS/Android browser autoplay policies.
+
+---
+
+## 18. 📡 Dynamic 60 FPS Point-of-Care Ultrasound (POCUS) Engine
+- **Authentic B-Mode Simulation**: Built `src/simulator/instruments/pocus/` replacing flat static graphics with dynamic ultrasound physics: 60-90° acoustic cone, time-gain compensation (TGC), and procedural speckle noise.
+- **Clinical Modes**:
+  - Parasternal Long Axis (PLAX) with dynamic contracting LV and moving valve leaflets.
+  - Subxiphoid 4-Chamber with dynamic anechoic pericardial effusion stripe and RV diastolic collapse in Cardiac Tamponade.
+  - Lung Ultrasound (LUS) with pleural line shimmering "lung sliding", Bat sign, vertical "B-lines / lung rockets", and barcode/stratosphere sign in Pneumothorax.
+  - eFAST Morison's Pouch (hepatorenal recess) with accumulating free fluid / hemoperitoneum.
+
+---
+
+## 19. 🔪 Dissection Toolbar, Scalpel Mode, Organ Isolate & WebGL Radiographic X-Ray Shader
+- **Dissection Tools**: Fixed pointer raycasting and overlay z-index blocking for Inspect, Scalpel, and Isolate tools. Scalpel mode hides clicked parts by adding them to `hiddenSet`.
+- **Authentic Radiography**: Replaced flat 0.25 opacity with a true radiographic X-ray shader featuring Fresnel edge glow (`pow(1.0 - abs(dot(normal, viewDir)), power)`), high-density cortical bone luminescence, and inverted film monochrome styling.
+
+---
+
+## 20. 💊 42 Clinical Scenarios & Comprehensive Pharmacology Engine
+- **Expanded Case Database**: Upgraded from 4 to 42 fully realized clinical scenarios in `PhysiologyKernel.ts` spanning Cardiovascular, Emergency & Trauma, Toxicology, Pulmonology, GI/Hepatology, Neurology, Obstetrics, and Pediatrics.
+- **Dynamic Pharmacodynamics**: Full medication regimens, dosages, routes, and physiological receptor interactions (e.g. Nitroglycerin venodilation collapsing RV preload in inferior RV infarction).
+
+---
+
+## 21. 🔍 Multi-Organ 3D Completeness Audit & Artifact Eradication
+- **Heart & Aorta**: Added all 5 subvalvular papillary muscles, whitelisted 44 cardiac veins, conus arteries, septal perforators, and clamped abdominal IVC at $y \ge 1.24$ for tight, dramatic cardiac framing.
+- **Brain & Cranium**: Fixed calvarium occlusion (`depthWrite: false` on transparent bone meshes), expanded matching to all 116 cerebral gyri, deep nuclei (thalamus, basal ganglia, hippocampus, amygdala), cerebellum, brainstem, and cranial nerves.
+- **Liver & Biliary**: Added intrahepatic portal venous tree and hepatic veins; removed yellow sympathetic ganglia and lymph node legs.
+- **Stomach**: Pruned trailing epigastric vessel legs into thighs; preserved gastric arcades and clamped GE junction.
+- **Pancreas**: Cradled pancreatic head in Duodenum C-loop (`FJ2573`), removing accidental colon IDs.
+- **Spleen**: Bound parenchyma with tortuous splenic artery and hilar vein.
+- **Kidneys**: Excluded distal pelvic ureters from default bounding box to prevent pulling camera into pelvis.
+- **Skeleton**: Explicit `key === 'skeletal'` branch resolving all 296 bones. Verified with 29 Playwright WebGL screenshots (`cmp_01` to `cmp_29`).
+
+---
+
+## 22. 🎨 Autonomous Textbook-Grounded Medical Diagram Pipeline (Rule 94)
+- Standardized image generation conforming to Rule 94: centered bold headers, solid `#FFFFFF` paper background, colored-pencil university exam aesthetic, zero author watermarks.
+- Automated registration and Supabase database linking via `scripts/upload_new_anatomy_ent_opthal_diagrams.mjs`.
+

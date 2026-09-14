@@ -105,23 +105,33 @@ export const IcuMonitor: React.FC<IcuMonitorProps> = ({
         ecg = p + q + r + s + tw;
       }
 
-      // 2. Arterial line
+      // 2. Arterial line with authentic Pulse Transit Time (PTT = ~170ms post-QRS)
       const pSys = vitals.bpSystolic;
       const pDia = vitals.bpDiastolic;
       let art = pDia;
-      if (theta >= 1.15 && theta < 2.1) {
-        const prog = (theta - 1.15) / 0.95;
+      // Normal radial pulse upstroke begins ~1.05 rad after R-wave peak (theta = 1.22 -> 2.27)
+      if (theta >= 2.27 && theta < 3.25) {
+        // Systolic upstroke and ejection peak
+        const prog = (theta - 2.27) / 0.98;
         art = pDia + (pSys - pDia) * Math.sin(prog * Math.PI);
-      } else if (theta >= 2.1 && theta < 2.5) {
-        art = pDia + (pSys - pDia) * 0.36 + 7 * Math.sin((theta - 2.1) * 4 * Math.PI);
+      } else if (theta >= 3.25 && theta < 3.75) {
+        // Dicrotic notch (incisura) and secondary diastolic rebound
+        const notchProg = (theta - 3.25) / 0.50;
+        art = pDia + (pSys - pDia) * 0.38 + 6 * Math.sin(notchProg * 2 * Math.PI);
       } else {
-        const prog = theta < 1.15 ? theta + (2 * Math.PI - 2.5) : theta - 2.5;
+        // Diastolic runoff exponential decay
+        const prog = theta < 2.27 ? theta + (2 * Math.PI - 3.75) : theta - 3.75;
         art = pDia + (pSys - pDia) * 0.32 * Math.exp(-prog * 0.85);
       }
 
-      // 3. Plethysmogram
-      const delayed = (theta - 0.4 + 2 * Math.PI) % (2 * Math.PI);
-      const pleth = Math.max(0, Math.sin(delayed) * 0.85 + 0.15);
+      // 3. Plethysmogram (Finger Photoplethysmography lag ~220ms post-R)
+      const ppgTheta = (theta - 2.62 + 2 * Math.PI) % (2 * Math.PI);
+      let pleth = 0;
+      if (ppgTheta < 1.6) {
+        pleth = Math.sin((ppgTheta / 1.6) * Math.PI);
+      } else {
+        pleth = 0.25 * Math.exp(-(ppgTheta - 1.6) * 1.5);
+      }
 
       // 4. Capnography
       let capno = 0;

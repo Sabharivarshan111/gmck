@@ -50,6 +50,7 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
     'overview'
   );
   const [navHistory, setNavHistory] = useState<string[]>([]);
+  const [isMobileExpanded, setIsMobileExpanded] = useState<boolean>(false);
 
   // Sync initial organId into history
   useEffect(() => {
@@ -145,19 +146,26 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
       {/* Backdrop (tap to dismiss on mobile) */}
       <div
         onClick={onClose}
-        className="md:hidden absolute inset-0 bg-black/30 pointer-events-auto transition-opacity"
+        className={`md:hidden absolute inset-0 transition-opacity pointer-events-auto ${
+          isMobileExpanded ? 'bg-black/40' : 'bg-black/10'
+        }`}
       />
 
       {/* Drawer Container */}
       <aside
-        className={`pointer-events-auto w-full md:w-[500px] lg:w-[560px] h-[90vh] md:h-full mt-auto md:mt-0 ${
+        className={`pointer-events-auto w-full md:w-[500px] lg:w-[560px] ${
+          isMobileExpanded ? 'h-[88vh]' : 'h-[46vh]'
+        } md:h-full mt-auto md:mt-0 ${
           isLight
             ? 'bg-white/95 text-slate-900 border-l border-slate-200 shadow-2xl'
             : 'bg-slate-900/95 text-slate-100 border-l border-slate-800 shadow-2xl'
-        } backdrop-blur-2xl flex flex-col rounded-t-3xl md:rounded-none overflow-hidden transition-transform duration-300 ease-out z-10`}
+        } backdrop-blur-2xl flex flex-col rounded-t-3xl md:rounded-none overflow-hidden transition-all duration-300 ease-out z-10`}
       >
         {/* Mobile Drag Pill */}
-        <div className="md:hidden pt-3 pb-1 flex justify-center">
+        <div 
+          onClick={() => setIsMobileExpanded(!isMobileExpanded)}
+          className="md:hidden pt-3 pb-1 flex justify-center cursor-pointer"
+        >
           <div className={`w-12 h-1.5 rounded-full ${isLight ? 'bg-slate-300' : 'bg-slate-700'}`} />
         </div>
 
@@ -202,15 +210,24 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
             </div>
           </div>
 
-          <button
-            onClick={onClose}
-            className={`p-1.5 rounded-xl transition-colors min-w-[36px] min-h-[36px] flex items-center justify-center ${
-              isLight ? 'text-slate-400 hover:text-slate-800 hover:bg-slate-200/60' : 'text-slate-400 hover:text-white hover:bg-slate-800'
-            }`}
-            title="Close Drawer"
-          >
-            <X className="w-4 h-4" />
-          </button>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => setIsMobileExpanded(!isMobileExpanded)}
+              className="md:hidden p-1.5 rounded-xl text-slate-400 hover:text-slate-800 dark:hover:text-white transition-colors"
+              title={isMobileExpanded ? 'Collapse to half sheet' : 'Expand full sheet'}
+            >
+              {isMobileExpanded ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+            </button>
+            <button
+              onClick={onClose}
+              className={`p-1.5 rounded-xl transition-colors min-w-[36px] min-h-[36px] flex items-center justify-center ${
+                isLight ? 'text-slate-400 hover:text-slate-800 hover:bg-slate-200/60' : 'text-slate-400 hover:text-white hover:bg-slate-800'
+              }`}
+              title="Close Drawer"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
         </div>
 
         {/* Drawer Header: Title, Category, Action Buttons */}

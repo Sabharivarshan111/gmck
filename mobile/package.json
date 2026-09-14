@@ -144,5 +144,8 @@
     "android": {
       "javaPackageName": "com.aistudio.mbbsqbank.aycxvd"
     }
+  },
+  "overrides": {
+    "js-yaml": "^4.3.2"
   }
 }
