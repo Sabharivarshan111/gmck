@@ -1,0 +1,71 @@
+[
+  {
+    "priority": 1,
+    "imageName": "otitis_media_with_effusion_glue_ear",
+    "subject": "ENT",
+    "storagePath": "ent/otitis_media_with_effusion_glue_ear.jpg",
+    "targetQuestions": [
+      {
+        "id": "009bf79e-7c0e-4101-b5ad-bdaeda374c6c",
+        "questionText": "Give an account of etiology, clinical features and treatment of glue ear. (Page No: 75)***"
+      },
+      {
+        "id": "049b4fc1-0e60-4e21-b6e1-4dcbb025175c",
+        "questionText": "Enumerate the common causes of conductive deafness. Describe the etiology, clinical features and management of secretory Otitis media. (Page No: 75)"
+      }
+    ],
+    "rule94Prompt": "BOLD UPPERCASE TITLE CENTERED AT TOP: 'OTITIS MEDIA WITH EFFUSION (GLUE EAR) — OTOSCOPY & SIGNS'. Hand-drawn colored pencil medical textbook illustration style for university ENT examination. Solid pure white background (#FFFFFF). Main otoscopic view of the right tympanic membrane in secretory otitis media (glue ear): 1. Dull, amber-yellowish discoloration of the eardrum with complete absence/loss of the normal cone of light. 2. Severe retraction of the tympanic membrane: handle of the malleus appears foreshortened, more horizontal, and chalky white; prominent lateral process of malleus. 3. Characteristic hair-line fluid level with meniscus traversing horizontally across the membrane. 4. Distinct trapped round air bubbles visible through the translucent membrane within the sterile middle ear effusion. 5. Inset diagram in lower corner showing Myringotomy in the anteroinferior quadrant with insertion of a ventilation tube (Grommet). Crisp horizontal leader lines pointing to: Retracted & Foreshortened Malleus Handle, Prominent Lateral Process, Amber-Yellow Discoloration, Fluid Level with Meniscus, Trapped Middle Ear Air Bubbles, Absent Cone of Light, Anteroinferior Grommet Insertion. Exam-grade colored pencil line art, strictly zero watermark, zero signature, zero author names, zero copyright text."
+  },
+  {
+    "priority": 2,
+    "imageName": "jna_modes_of_spread_anatomy",
+    "subject": "ENT",
+    "storagePath": "ent/jna_modes_of_spread_anatomy.jpg",
+    "targetQuestions": [
+      {
+        "id": "0001adcd-80c2-4e6a-903b-bdeb852de927",
+        "questionText": "What are the modes of spread and clinical features of Juvenile Nasopharyngeal Angiofibroma? (Page No: 279)"
+      }
+    ],
+    "rule94Prompt": "BOLD UPPERCASE TITLE CENTERED AT TOP: 'JUVENILE NASOPHARYNGEAL ANGIOFIBROMA (JNA) — SPREAD & ANATOMY'. Hand-drawn colored pencil medical textbook illustration style for university ENT examination. Solid pure white background (#FFFFFF). Anatomical axial and coronal composite schematic showing the routes of spread of JNA: 1. Origin at superior margin of sphenopalatine foramen. 2. Anterior spread into nasal cavity and nasopharynx. 3. Lateral spread through sphenopalatine foramen into pterygopalatine fossa, causing anterior bowing of the posterior wall of the maxillary antrum (Holman-Miller / antral sign). 4. Further lateral spread through pterygomaxillary fissure into infratemporal fossa ('frog-face deformity' swelling). 5. Superior spread into sphenoid sinus, sella turcica, and middle cranial fossa. 6. Orbital invasion through superior and inferior orbital fissures causing proptosis. Clear anatomical leader lines, clean colored pencil line art, strictly zero watermark, zero signature, zero author names, zero copyright text."
+  },
+  {
+    "priority": 3,
+    "imageName": "peritonsillar_abscess_anatomy_signs",
+    "subject": "ENT",
+    "storagePath": "ent/peritonsillar_abscess_anatomy_signs.jpg",
+    "targetQuestions": [
+      {
+        "id": "13416249-2618-47bb-b4b5-508a339e0e88",
+        "questionText": "Describe the etiology, signs and symptoms of peritonsillar abscess. Mention the complications of the disease. (Page No: NA)"
+      }
+    ],
+    "rule94Prompt": "BOLD UPPERCASE TITLE CENTERED AT TOP: 'PERITONSILLAR ABSCESS (QUINSY) — CLINICAL ANATOMY'. Hand-drawn colored pencil medical textbook illustration style for university ENT examination. Solid pure white background (#FFFFFF). Oral cavity examination view showing classic features of unilateral peritonsillar abscess (Quinsy): 1. Marked unilateral swelling and congestion of the left peritonsillar space (anterior pillar and soft palate). 2. Left palatine tonsil pushed medially and downwards towards midline. 3. Marked deviation of the edematous uvula to the contralateral (right) side. 4. Bulging soft palate and trismus appearance. 5. Inset showing exact site of needle aspiration / incision & drainage at the point of maximum bulge (intersection of horizontal line from base of uvula and vertical line from anterior pillar). Crisp horizontal leader lines pointing to: Edematous Deviated Uvula, Bulging Soft Palate, Medially Displaced Tonsil, Incision & Drainage Site. Clean exam line art, strictly zero watermark, zero signature, zero author names, zero copyright text."
+  },
+  {
+    "priority": 4,
+    "imageName": "crvo_fundus_tomato_splash",
+    "subject": "Ophthalmology",
+    "storagePath": "ophthalmology/crvo_fundus_tomato_splash.jpg",
+    "targetQuestions": [
+      {
+        "id": "1690070f-93d2-4e3a-a896-cee51c4c4aa2",
+        "questionText": "What is Central retinal vein occlusion? (Page No: 253)**"
+      }
+    ],
+    "rule94Prompt": "BOLD UPPERCASE TITLE CENTERED AT TOP: 'CENTRAL RETINAL VEIN OCCLUSION (CRVO) — FUNDUS APPEARANCE'. Hand-drawn colored pencil medical textbook illustration style for university ophthalmology examination. Solid pure white background (#FFFFFF). Fundus biomicroscopy circular view showing the classic 'blood and thunder' or 'splashed tomato' fundus of ischemic Central Retinal Vein Occlusion: 1. Marked venous dilation and tortuosity in all four retinal quadrants. 2. Extensive, widespread flame-shaped and blot retinal hemorrhages scattered across the entire retina. 3. Marked optic disc swelling (hyperemia and blurred disc margins). 4. Multiple cotton-wool spots (nerve fiber layer infarcts / axoplasmic stasis). 5. Severe macular edema with subretinal fluid. Crisp horizontal leader lines pointing to: Markedly Dilated & Tortuous Veins, Flame-Shaped Retinal Hemorrhages, Swollen Optic Disc, Cotton-Wool Spots, Macular Edema. Exam-grade colored pencil line art, strictly zero watermark, zero signature, zero author names, zero copyright text."
+  },
+  {
+    "priority": 5,
+    "imageName": "ophthalmia_neonatorum_etiology_clinical",
+    "subject": "Ophthalmology",
+    "storagePath": "ophthalmology/ophthalmia_neonatorum_etiology_clinical.jpg",
+    "targetQuestions": [
+      {
+        "id": "055be426-3fb6-4e6a-8f21-fb6e06532eee",
+        "questionText": "What is ophthalmia neonatorum? (Page No: 73)*****"
+      }
+    ],
+    "rule94Prompt": "BOLD UPPERCASE TITLE CENTERED AT TOP: 'OPHTHALMIA NEONATORUM — CLINICAL PRESENTATION & ETIOLOGY'. Hand-drawn colored pencil medical textbook illustration style for university ophthalmology examination. Solid pure white background (#FFFFFF). Clinical and laboratory examination plate showing: 1. Clinical bilateral neonatal eye presentation: severe tense eyelid edema, marked chemosis, copious thick purulent/creamy discharge streaming from palpebral fissure, and corneal haze/ulcer risk. 2. Timeline comparison chart inset showing incubation periods: Chemical (within 24 hours / silver nitrate), Neisseria gonorrhoeae (days 2 to 5, hyperacute purulent), Chlamydia trachomatis (days 5 to 14, inclusion blennorrhea), Herpes simplex virus (days 5 to 14, vesicular lesions). 3. Microscopic inset showing Gram-negative intracellular kidney-shaped diplococci (N. gonorrhoeae). Crisp horizontal leader lines, clean colored pencil line art, strictly zero watermark, zero signature, zero author names, zero copyright text."
+  }
+]
