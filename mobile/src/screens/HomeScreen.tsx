@@ -959,7 +959,7 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
         currentYear={year}
         onClose={() => setYearPickerOpen(false)}
         onSelectYear={key => {
-          pickYear(key);
+          setYear(KEY_TO_YEAR[key]);
         }}
         onBrowse={key => {
           pickYear(key);
