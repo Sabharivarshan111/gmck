@@ -15,7 +15,6 @@ import {
   BookOpen,
   Trash2,
   ChevronLeft,
-  FileText,
   ShieldCheck,
   UserCheck,
   Check,
