@@ -1772,14 +1772,17 @@ export function StudyView({
 
   useEffect(() => {
     if (fixture) {
+      const activeKey = topic.key || 'preview::fixture';
       setDeck(fixture);
-      setDeckKey('preview::fixture');
-      setSchedule({});
-      setLoading(false);
+      setDeckKey(activeKey);
+      loadSchedule(activeKey).then(saved => {
+        setSchedule(saved);
+        setLoading(false);
+      });
       return;
     }
     load(false);
-  }, [fixture, load]);
+  }, [fixture, load, topic.key]);
 
   const cards = useMemo<Card[]>(
     () => (deck ? reconcile(deck, schedule) : []),
@@ -2062,9 +2065,32 @@ export function StudyView({
         <View style={styles.centered}>
           <Text style={[styles.doneTitle, { color: colors.text }]}>Nothing due right now</Text>
           <Text style={[styles.centeredText, { color: colors.textMuted }]}>
-            Every card in this chapter is scheduled for later. Come back when one falls due — that
-            gap is the part that makes it stick.
+            {deck && deck.length > 0
+              ? `All ${deck.length} cards in this deck are currently completed or scheduled for later review.`
+              : 'Every card in this chapter is scheduled for later. Come back when one falls due — that gap is the part that makes it stick.'}
           </Text>
+          {deck && deck.length > 0 ? (
+            <Touchable
+              onPress={() => {
+                setSchedule({});
+                setCardIndex(0);
+              }}
+              label="Practice all cards in this deck again"
+              style={[
+                styles.retry,
+                {
+                  borderColor: colors.accent,
+                  backgroundColor: withAlpha(colors.accent, 0.12),
+                  marginTop: 16,
+                  paddingHorizontal: 16,
+                },
+              ]}>
+              <RotateCw size={16} color={colors.accent} />
+              <Text style={[styles.retryText, { color: colors.accent, fontWeight: '700' }]}>
+                Practice all {deck.length} cards again
+              </Text>
+            </Touchable>
+          ) : null}
         </View>
       </>
     );

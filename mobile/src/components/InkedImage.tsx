@@ -66,35 +66,41 @@ export function InkedImage({
   }, [imageId]);
 
   /*
-   * For a page, the *wrapper* is the paper.
+   * For a page or an image, the wrapper is the display ground.
    *
-   * It used to be a paper View with the overlay as its sibling, and the two
-   * were not the same box: the ruling and any mark near the bottom were drawn
-   * below the card's rounded edge, hanging in the page like a rendering fault.
-   * One element means the overlay's `absoluteFill` can only ever be the paper
-   * exactly, and `overflow` clips both to the same corner radius.
+   * When an image uri is provided, the wrapper takes the requested style
+   * (including width, height, aspect ratio, and border radius) and provides
+   * a clean ground backing so PDF pages and document photos never collapse
+   * to zero height or display black transparent margins.
    */
   const paper: StyleProp<ViewStyle> = uri
-    ? null
+    ? [
+        styles.wrap,
+        style as StyleProp<ViewStyle>,
+        {
+          backgroundColor:
+            (StyleSheet.flatten(style)?.backgroundColor as string) ??
+            (colors.card ? colors.card : '#FFFFFF'),
+          overflow: 'hidden',
+        },
+      ]
     : [
+        styles.wrap,
         style as StyleProp<ViewStyle>,
         styles.paper,
         { backgroundColor: colors.card, borderColor: colors.border },
-        /*
-         * A page keeps the shape it was written on.
-         *
-         * A picture can be letterboxed inside a fixed box and still read
-         * correctly, because the photograph is the thing being looked at. A
-         * page is the *paper*: forced into a landscape box, a portrait page's
-         * writing shrinks into a column down the middle with empty card either
-         * side, which looks broken rather than like a page.
-         */
         ownShape && ink ? { height: undefined, aspectRatio: ink.width / ink.height } : null,
       ];
 
   const drawn = (
-    <View style={[styles.wrap, paper]}>
-      {uri ? <Image source={{ uri }} style={style} resizeMode="contain" /> : null}
+    <View style={paper}>
+      {uri ? (
+        <Image
+          source={{ uri }}
+          style={[styles.fullImage, style]}
+          resizeMode="contain"
+        />
+      ) : null}
       {ink && (ink.strokes.length > 0 || ink.paper) ? (
         <Ink ink={ink} colors={colors} hasPicture={Boolean(uri)} />
       ) : null}
@@ -139,6 +145,10 @@ const styles = StyleSheet.create({
   },
   paper: {
     borderWidth: StyleSheet.hairlineWidth,
+  },
+  fullImage: {
+    width: '100%',
+    height: '100%',
   },
 });
 

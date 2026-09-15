@@ -58,22 +58,21 @@ import { warn } from './log';
 const LIST_KEY = 'orbit:anki:imported-decks';
 
 /** One deck's cards. Read only when that deck is opened. */
-const cardsKey = (id: string) => `orbit:anki:imported-cards:${id}`;
+const legacyCardsKey = (id: string) => `orbit:anki:imported-cards:${id}`;
+const cardsChunkMetaKey = (id: string) => `orbit:anki:imported-cards-meta:${id}`;
+const cardsChunkKey = (id: string, index: number) => `orbit:anki:imported-cards:${id}:${index}`;
+
+const CHUNK_SIZE = 250;
 
 /**
  * How many cards one import may take.
  *
- * Not a limit of the format and not a guess: it is what one AsyncStorage value
- * can hold and still be read quickly. A card is a few hundred bytes of text,
- * so five thousand is a couple of megabytes — a slow read, but a read that
- * happens once when the deck is opened rather than on every screen.
- *
- * The right answer for a thirty-thousand-card package is not a bigger number,
- * it is choosing a deck out of it: `deckSummary` lists what is inside and the
- * import screen asks. A student wants the cardiology chapter, not all of
- * AnKing on a phone with 8GB of storage.
+ * Raised to 50,000 to accommodate large medical Anki decks (e.g. AnKing,
+ * Dope, Lightyear chapters). To prevent hitting Android's 2MB SQLite
+ * CursorWindow limit, cards are saved in chunks of 250 cards using
+ * AsyncStorage.multiSet and loaded with multiGet.
  */
-export const MAX_IMPORT_CARDS = 5000;
+export const MAX_IMPORT_CARDS = 50000;
 
 export interface ImportedDeck {
   id: string;
@@ -129,16 +128,56 @@ async function persistList(decks: ImportedDeck[]): Promise<void> {
   await AsyncStorage.setItem(LIST_KEY, JSON.stringify(decks));
 }
 
-/** One deck's cards, read only when it is opened. */
+/** Save imported cards in manageable chunks to bypass Android SQLite CursorWindow 2MB row limit */
+export async function saveImportedCards(id: string, cards: DeckCard[]): Promise<void> {
+  const numChunks = Math.max(1, Math.ceil(cards.length / CHUNK_SIZE));
+  const entries: Record<string, string> = {
+    [cardsChunkMetaKey(id)]: JSON.stringify({ chunks: numChunks, total: cards.length }),
+  };
+
+  for (let i = 0; i < numChunks; i += 1) {
+    const chunk = cards.slice(i * CHUNK_SIZE, (i + 1) * CHUNK_SIZE);
+    entries[cardsChunkKey(id, i)] = JSON.stringify(chunk);
+  }
+
+  await AsyncStorage.setMany(entries);
+  // Clean up legacy single key if it exists
+  await AsyncStorage.removeItem(legacyCardsKey(id)).catch(() => {});
+}
+
+/** One deck's cards, read only when it is opened. Supports chunked and legacy storage. */
 export async function loadImportedCards(id: string): Promise<DeckCard[]> {
   try {
-    const raw = await AsyncStorage.getItem(cardsKey(id));
+    // Check chunked storage first
+    const metaRaw = await AsyncStorage.getItem(cardsChunkMetaKey(id));
+    if (metaRaw) {
+      const meta = JSON.parse(metaRaw) as { chunks: number; total: number };
+      if (meta && typeof meta.chunks === 'number' && meta.chunks > 0) {
+        const keys = Array.from({ length: meta.chunks }, (_, i) => cardsChunkKey(id, i));
+        const entries = await AsyncStorage.getMany(keys);
+        const all: DeckCard[] = [];
+        for (const key of keys) {
+          const val = entries[key];
+          if (val) {
+            const parsed = JSON.parse(val) as DeckCard[];
+            if (Array.isArray(parsed)) {
+              all.push(...parsed);
+            }
+          }
+        }
+        return all;
+      }
+    }
+
+    // Fallback to legacy single-value key
+    const raw = await AsyncStorage.getItem(legacyCardsKey(id));
     if (!raw) {
       return [];
     }
     const parsed = JSON.parse(raw) as unknown;
     return Array.isArray(parsed) ? (parsed as DeckCard[]) : [];
-  } catch {
+  } catch (error) {
+    warn('[importedDecks] loadImportedCards failed:', error);
     return [];
   }
 }
@@ -163,7 +202,19 @@ export async function deleteImportedDeck(id: string): Promise<ImportedDeck[]> {
   const decks = await loadImportedDecks();
   const next = decks.filter(deck => deck.id !== id);
   await persistList(next);
-  await AsyncStorage.removeItem(cardsKey(id)).catch(() => {});
+
+  try {
+    const metaRaw = await AsyncStorage.getItem(cardsChunkMetaKey(id));
+    if (metaRaw) {
+      const meta = JSON.parse(metaRaw) as { chunks: number };
+      if (meta?.chunks) {
+        const keys = Array.from({ length: meta.chunks }, (_, i) => cardsChunkKey(id, i));
+        await AsyncStorage.removeMany([...keys, cardsChunkMetaKey(id)]).catch(() => {});
+      }
+    }
+  } catch {}
+
+  await AsyncStorage.removeItem(legacyCardsKey(id)).catch(() => {});
   await AsyncStorage.removeItem(`orbit:anki:${importedDeckKey(id)}`).catch(() => {});
   try {
     OrbitApkg?.forget(id);
@@ -475,7 +526,7 @@ export async function importPackage(
   report({ step: 'saving' });
   const deckCards = cards.map(card => toDeckCard(card, mediaDir));
 
-  await AsyncStorage.setItem(cardsKey(id), JSON.stringify(deckCards));
+  await saveImportedCards(id, deckCards);
 
   const decks = [...new Set(cards.map(card => card.deck))];
   const deck: ImportedDeck = {

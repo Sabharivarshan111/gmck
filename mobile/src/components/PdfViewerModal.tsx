@@ -4,6 +4,7 @@ import {
   Modal,
   ScrollView,
   StyleSheet,
+  useWindowDimensions,
   View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -93,6 +94,20 @@ export function PdfViewerModal({ file, visible, onClose }: PdfViewerModalProps) 
 
   const currentPageObj = pages.find(p => p.page === currentPage) ?? pages[0];
   const currentImageId = file ? `${file.id}_p${currentPage}` : '';
+
+  const { width: windowWidth, height: windowHeight } = useWindowDimensions();
+  const pageAspect =
+    currentPageObj && currentPageObj.width > 0 && currentPageObj.height > 0
+      ? currentPageObj.width / currentPageObj.height
+      : 1 / 1.414;
+
+  const maxContentWidth = Math.min(windowWidth - 24, 600);
+  const maxContentHeight = Math.max(320, windowHeight - 170 - insets.top - insets.bottom);
+  const displayWidth =
+    maxContentWidth / pageAspect > maxContentHeight
+      ? Math.round(maxContentHeight * pageAspect)
+      : Math.round(maxContentWidth);
+  const displayHeight = Math.round(displayWidth / pageAspect);
 
   // Load existing ink whenever current page or inkVersion changes
   useEffect(() => {
@@ -220,7 +235,7 @@ export function PdfViewerModal({ file, visible, onClose }: PdfViewerModalProps) 
                 uri={currentPageObj.uri}
                 imageId={currentImageId}
                 ownShape
-                style={styles.pageImage}
+                style={[styles.pageImage, { width: displayWidth, height: displayHeight }]}
                 title={`${file.name} - Page ${currentPage}`}
               />
             </ScrollView>
@@ -364,9 +379,13 @@ const styles = StyleSheet.create({
     padding: 12,
   },
   pageImage: {
-    width: '100%',
-    minHeight: 480,
+    backgroundColor: '#FFFFFF',
     borderRadius: 8,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.18,
+    shadowRadius: 6,
+    elevation: 3,
   },
   bottomNav: {
     flexDirection: 'row',

@@ -108,10 +108,10 @@ android {
         applicationId "com.aistudio.mbbsqbank.aycxvd"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        // Version 20 bump: Restored 3rd-year ENT & Ophthalmology, native PDF viewer
-        // and annotator with drawing tools, and FileProvider external handoff.
-        versionCode 20
-        versionName "0.0.0.20"
+        // Version 21 bump: Interactive rotation calendar, prepaid and rain/event holidays,
+        // enhanced theory attendance, ad engine playback fix, and Anki 50k chunked storage.
+        versionCode 21
+        versionName "0.0.0.21"
 
         // Deep-link / OAuth callback scheme, consumed by the intent-filter in
         // AndroidManifest.xml. Added with an indexed put rather than assigning

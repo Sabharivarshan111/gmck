@@ -160,7 +160,8 @@ export default function BrowseNodeScreen() {
    * thing you wanted to search. A control that is there on one tab has to be
    * there on the other; it is the same screen.
    */
-  const filterable = essayCount + shortNoteCount >= FILTER_THRESHOLD;
+  // Always enable question search across both Essays and Short Notes so students can quickly find any topic
+  const filterable = essayCount + shortNoteCount > 0;
 
   /**
    * Pairs, not strings, because the number shown on each row is its position
@@ -559,7 +560,7 @@ export default function BrowseNodeScreen() {
                 <FilterField
                   value={query}
                   onChange={setQuery}
-                  placeholder={`Filter ${questions.length} questions`}
+                  placeholder={`Search ${type === 'essay' ? 'essays' : 'short notes'} (${questions.length})…`}
                   label={`Filter questions in ${title}`}
                 />
                 {filtering ? (
@@ -685,8 +686,7 @@ export default function BrowseNodeScreen() {
   );
 }
 
-/** Below this, scanning the list by eye beats typing. */
-const FILTER_THRESHOLD = 12;
+
 
 /**
  * How long a searched question stays lit.

@@ -52,6 +52,8 @@ export interface AttendanceItem {
   totalDays?: number;
   /** ISO date the rotation started, for the same reason. */
   startDate?: string;
+  /** ISO date the rotation ends. */
+  endDate?: string;
   /**
    * Postings only: Sundays are not working days, so they do not count.
    *
@@ -67,11 +69,37 @@ export interface AttendanceItem {
    * same bug in the other direction.
    */
   skipSundays?: boolean;
+  /** Official / prepaid gazetted public holidays do not count as working days */
+  prepaidHolidays?: boolean;
+  /** Custom holiday dates (e.g. rain holidays, local college events, strikes) YYYY-MM-DD */
+  holidays?: string[];
 }
 
 export interface AttendanceState {
   items: AttendanceItem[];
   hydrated: boolean;
+}
+
+export const GAZETTED_HOLIDAYS: Record<string, string> = {
+  '01-14': 'Pongal / Makar Sankranti',
+  '01-15': 'Thiruvalluvar Day',
+  '01-26': 'Republic Day',
+  '04-14': 'Ambedkar Jayanti / Tamil New Year',
+  '05-01': 'May Day / Labour Day',
+  '08-15': 'Independence Day',
+  '10-02': 'Gandhi Jayanti',
+  '12-25': 'Christmas',
+  '2026-03-04': 'Holi',
+  '2026-03-20': 'Eid ul-Fitr',
+  '2026-04-03': 'Good Friday',
+  '2026-10-19': 'Ayudha Puja',
+  '2026-10-20': 'Vijaya Dashami',
+  '2026-11-08': 'Diwali / Deepavali',
+};
+
+export function getHolidayTitle(isoDate: string): string | null {
+  const mmdd = isoDate.slice(5);
+  return GAZETTED_HOLIDAYS[isoDate] || GAZETTED_HOLIDAYS[mmdd] || null;
 }
 
 // ---------------------------------------------------------------------------
@@ -145,7 +173,10 @@ export function workingDays(item: AttendanceItem): number | null {
   if (typeof item.totalDays !== 'number' || item.totalDays <= 0) {
     return null;
   }
-  if (!item.skipSundays || !item.startDate) {
+  if (!item.skipSundays && !item.prepaidHolidays && (!item.holidays || item.holidays.length === 0)) {
+    return item.totalDays;
+  }
+  if (!item.startDate) {
     return item.totalDays;
   }
   const start = new Date(`${item.startDate}T00:00:00`);
@@ -156,9 +187,35 @@ export function workingDays(item: AttendanceItem): number | null {
   for (let i = 0; i < item.totalDays; i += 1) {
     const day = new Date(start);
     day.setDate(start.getDate() + i);
-    if (day.getDay() !== 0) {
-      working += 1;
+    if (item.skipSundays && day.getDay() === 0) {
+      continue;
     }
+    const iso = day.toISOString().slice(0, 10);
+    const mmdd = iso.slice(5);
+    if (item.holidays && item.holidays.includes(iso)) {
+      continue;
+    }
+    if (
+      item.prepaidHolidays &&
+      (iso === '2026-10-02' ||
+        iso === '2026-03-04' ||
+        iso === '2026-03-20' ||
+        iso === '2026-04-03' ||
+        iso === '2026-10-19' ||
+        iso === '2026-10-20' ||
+        iso === '2026-11-08' ||
+        mmdd === '01-26' ||
+        mmdd === '08-15' ||
+        mmdd === '10-02' ||
+        mmdd === '12-25' ||
+        mmdd === '05-01' ||
+        mmdd === '01-14' ||
+        mmdd === '01-15' ||
+        mmdd === '04-14')
+    ) {
+      continue;
+    }
+    working += 1;
   }
   return working;
 }
@@ -186,7 +243,32 @@ export function dayOfRotation(item: AttendanceItem, today: Date = new Date()): n
   for (let i = 0; i < (item.totalDays ?? 0); i += 1) {
     const day = new Date(start);
     day.setDate(start.getDate() + i);
+    const iso = day.toISOString().slice(0, 10);
+    const mmdd = iso.slice(5);
     if (item.skipSundays && day.getDay() === 0) {
+      continue;
+    }
+    if (item.holidays && item.holidays.includes(iso)) {
+      continue;
+    }
+    if (
+      item.prepaidHolidays &&
+      (iso === '2026-10-02' ||
+        iso === '2026-03-04' ||
+        iso === '2026-03-20' ||
+        iso === '2026-04-03' ||
+        iso === '2026-10-19' ||
+        iso === '2026-10-20' ||
+        iso === '2026-11-08' ||
+        mmdd === '01-26' ||
+        mmdd === '08-15' ||
+        mmdd === '10-02' ||
+        mmdd === '12-25' ||
+        mmdd === '05-01' ||
+        mmdd === '01-14' ||
+        mmdd === '01-15' ||
+        mmdd === '04-14')
+    ) {
       continue;
     }
     working += 1;
@@ -317,7 +399,12 @@ function sane(raw: unknown): AttendanceItem | null {
         ? Math.round(item.totalDays)
         : undefined,
     startDate: typeof item.startDate === 'string' ? item.startDate : undefined,
+    endDate: typeof item.endDate === 'string' ? item.endDate : undefined,
     skipSundays: item.skipSundays === true ? true : undefined,
+    prepaidHolidays: item.prepaidHolidays === true ? true : undefined,
+    holidays: Array.isArray(item.holidays)
+      ? item.holidays.filter((h): h is string => typeof h === 'string')
+      : undefined,
   };
 }
 

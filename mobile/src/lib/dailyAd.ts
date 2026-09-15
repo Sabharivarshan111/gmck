@@ -170,15 +170,19 @@ export async function declineDailyAd(reason: DailyAdReason): Promise<void> {
   }
 }
 
-/** Called when the user accepts the prompt. Marks the bucket, then plays. */
+/** Called when the user accepts the prompt. Plays ad, then marks the bucket on success. */
 export async function confirmDailyAd(reason: DailyAdReason): Promise<void> {
   const bucket = REASON_TO_BUCKET[reason];
   try {
-    // Marked before showing, matching the web app: a failed or skipped ad
-    // still consumes the day's slot rather than re-prompting on every open.
-    await AsyncStorage.setItem(BUCKET_STORAGE_KEY[bucket], today());
+    const result = await showRewardedAd();
+    if (result.completed) {
+      await AsyncStorage.setItem(BUCKET_STORAGE_KEY[bucket], today());
+    } else {
+      // If ad failed to load or show, set a temporary cooldown rather than burning the whole day's slot
+      await AsyncStorage.setItem(DECLINE_STORAGE_KEY[bucket], String(Date.now()));
+    }
   } catch {
-    // Non-fatal.
+    // Non-fatal fallback
+    await AsyncStorage.setItem(DECLINE_STORAGE_KEY[bucket], String(Date.now())).catch(() => {});
   }
-  await showRewardedAd().catch(() => undefined);
 }

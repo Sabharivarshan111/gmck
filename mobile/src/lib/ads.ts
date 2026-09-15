@@ -55,17 +55,7 @@ export async function initializeAds(): Promise<void> {
   }
   initialized = true;
 
-  try {
-    // Google requires a UMP consent flow before serving personalised ads.
-    const consentInfo = await AdsConsent.requestInfoUpdate();
-    if (consentInfo.isConsentFormAvailable && consentInfo.status === 'REQUIRED') {
-      await AdsConsent.showForm();
-    }
-  } catch (error) {
-    // No consent form, or the user is outside a consent region.
-    warn('Ads consent flow skipped:', error);
-  }
-
+  // Initialize mobileAds immediately so ad requests are not delayed or blocked
   try {
     await mobileAds().initialize();
     preloadInterstitial();
@@ -73,7 +63,27 @@ export async function initializeAds(): Promise<void> {
   } catch (error) {
     warn('Ads initialization failed:', error);
     initialized = false;
+    return;
   }
+
+  // Run consent check concurrently with a safety timeout so it never stalls ads
+  void (async () => {
+    try {
+      const consentPromise = AdsConsent.requestInfoUpdate();
+      const timeoutPromise = new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error('Consent timeout')), 3500),
+      );
+      const consentInfo = (await Promise.race([consentPromise, timeoutPromise])) as {
+        isConsentFormAvailable?: boolean;
+        status?: string;
+      };
+      if (consentInfo?.isConsentFormAvailable && consentInfo?.status === 'REQUIRED') {
+        await AdsConsent.showForm();
+      }
+    } catch (error) {
+      warn('Ads consent flow skipped:', error);
+    }
+  })();
 }
 
 function preloadInterstitial(): void {
@@ -137,45 +147,79 @@ export function showRewardedAd(): Promise<RewardedResult> {
   if (!ADS_ENABLED) {
     return Promise.resolve({ completed: true, amount: 0 });
   }
-  return new Promise(resolve => {
-    if (!rewarded || !rewardedLoaded) {
-      // Nothing loaded — take the chance to warm one up for next time.
-      preloadRewarded();
-      resolve({ completed: false, amount: 0 });
-      return;
-    }
 
+  return new Promise(resolve => {
     let earned = 0;
     let settled = false;
+    let timer: ReturnType<typeof setTimeout> | null = null;
+
     const finish = (result: RewardedResult) => {
       if (!settled) {
         settled = true;
+        if (timer) {
+          clearTimeout(timer);
+          timer = null;
+        }
         resolve(result);
       }
     };
 
-    const unsubscribeEarned = rewarded.addAdEventListener(
-      RewardedAdEventType.EARNED_REWARD,
-      reward => {
-        earned = reward.amount;
-      },
-    );
-    const unsubscribeClosed = rewarded.addAdEventListener(AdEventType.CLOSED, () => {
-      unsubscribeEarned();
-      unsubscribeClosed();
-      finish({ completed: earned > 0, amount: earned });
-      preloadRewarded();
+    const playInstance = (adInstance: RewardedAd) => {
+      const unsubscribeEarned = adInstance.addAdEventListener(
+        RewardedAdEventType.EARNED_REWARD,
+        reward => {
+          earned = reward.amount;
+        },
+      );
+      const unsubscribeClosed = adInstance.addAdEventListener(AdEventType.CLOSED, () => {
+        unsubscribeEarned();
+        unsubscribeClosed();
+        finish({ completed: earned > 0, amount: earned });
+        preloadRewarded();
+      });
+
+      try {
+        adInstance.show();
+      } catch (error) {
+        warn('Rewarded show failed:', error);
+        unsubscribeEarned();
+        unsubscribeClosed();
+        finish({ completed: false, amount: 0 });
+        preloadRewarded();
+      }
+    };
+
+    if (rewarded && rewardedLoaded) {
+      playInstance(rewarded);
+      return;
+    }
+
+    // If not already loaded, create a fresh instance and wait up to 8s for it to load
+    const freshAd = RewardedAd.createForAdRequest(REWARDED_UNIT_ID);
+    rewarded = freshAd;
+    rewardedLoaded = false;
+
+    const unsubscribeLoaded = freshAd.addAdEventListener(RewardedAdEventType.LOADED, () => {
+      unsubscribeLoaded();
+      unsubscribeError();
+      rewardedLoaded = true;
+      playInstance(freshAd);
     });
 
-    try {
-      rewarded.show();
-    } catch (error) {
-      warn('Rewarded show failed:', error);
-      unsubscribeEarned();
-      unsubscribeClosed();
+    const unsubscribeError = freshAd.addAdEventListener(AdEventType.ERROR, () => {
+      unsubscribeLoaded();
+      unsubscribeError();
+      rewardedLoaded = false;
       finish({ completed: false, amount: 0 });
-      preloadRewarded();
-    }
+    });
+
+    timer = setTimeout(() => {
+      unsubscribeLoaded();
+      unsubscribeError();
+      finish({ completed: false, amount: 0 });
+    }, 8000);
+
+    freshAd.load();
   });
 }
 
