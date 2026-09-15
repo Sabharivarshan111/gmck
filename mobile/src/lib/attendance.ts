@@ -50,6 +50,8 @@ export interface AttendanceItem {
    * "you can miss four" into "you can miss four, and there are only two left".
    */
   totalDays?: number;
+  /** Theory only: total planned classes in the curriculum (e.g. 60, 80, 100, 120, 150). */
+  totalClasses?: number;
   /** ISO date the rotation started, for the same reason. */
   startDate?: string;
   /** ISO date the rotation ends. */
@@ -313,7 +315,10 @@ export function verdictFor(item: AttendanceItem): AttendanceVerdict {
    * rotation says to, and the count runs off the length rather than off how
    * diligently the card has been tapped.
    */
-  const total = workingDays(item);
+  const total =
+    item.kind === 'theory' && typeof item.totalClasses === 'number' && item.totalClasses > 0
+      ? item.totalClasses
+      : workingDays(item);
   const remaining = total === null ? null : Math.max(0, total - item.held);
   const capped = remaining !== null && spare > remaining;
   return {
@@ -335,7 +340,10 @@ export function verdictFor(item: AttendanceItem): AttendanceVerdict {
  * this is meant to prevent.
  */
 export function bestPossible(item: AttendanceItem): number | null {
-  const total = workingDays(item);
+  const total =
+    item.kind === 'theory' && typeof item.totalClasses === 'number' && item.totalClasses > 0
+      ? item.totalClasses
+      : workingDays(item);
   if (total === null) {
     return null;
   }
@@ -397,6 +405,10 @@ function sane(raw: unknown): AttendanceItem | null {
     totalDays:
       typeof item.totalDays === 'number' && item.totalDays > 0
         ? Math.round(item.totalDays)
+        : undefined,
+    totalClasses:
+      typeof item.totalClasses === 'number' && item.totalClasses > 0
+        ? Math.round(item.totalClasses)
         : undefined,
     startDate: typeof item.startDate === 'string' ? item.startDate : undefined,
     endDate: typeof item.endDate === 'string' ? item.endDate : undefined,

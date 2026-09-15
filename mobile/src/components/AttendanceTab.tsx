@@ -272,6 +272,7 @@ export function AttendanceTab() {
   const [kind, setKind] = useState<AttendanceKind>('theory');
   const [adding, setAdding] = useState(false);
   const [name, setName] = useState('');
+  const [totalClassesStr, setTotalClassesStr] = useState('');
   const [startDate, setStartDate] = useState(() => new Date().toISOString().slice(0, 10));
   const [days, setDays] = useState('28');
   const [skipSundays, setSkipSundays] = useState(true);
@@ -294,6 +295,10 @@ export function AttendanceTab() {
     }
     const total = Number(days);
     const hasTotal = kind === 'posting' && Number.isFinite(total) && total > 0;
+    const totalClassesNum =
+      kind === 'theory' && totalClassesStr.trim()
+        ? Math.max(1, Math.round(Number(totalClassesStr) || 0))
+        : undefined;
 
     let calculatedEnd: string | undefined;
     if (hasTotal && startDate) {
@@ -306,6 +311,7 @@ export function AttendanceTab() {
       name: trimmed,
       kind,
       target,
+      totalClasses: totalClassesNum,
       totalDays: hasTotal ? total : undefined,
       startDate: kind === 'posting' ? startDate : undefined,
       endDate: calculatedEnd,
@@ -314,24 +320,16 @@ export function AttendanceTab() {
       holidays: kind === 'posting' && customHolidays.length > 0 ? customHolidays : undefined,
     });
     setName('');
+    setTotalClassesStr('');
     setDays('28');
     setCustomHolidays([]);
     setAdding(false);
-  }, [name, days, kind, target, startDate, skipSundays, prepaidHolidays, customHolidays]);
+  }, [name, totalClassesStr, days, kind, target, startDate, skipSundays, prepaidHolidays, customHolidays]);
 
   const mark = useCallback(async (item: AttendanceItem, present: boolean) => {
     tick();
     setLastMark(current => ({ ...current, [item.id]: present }));
     await markAttendance(item.id, present);
-  }, []);
-
-  const markBatch = useCallback(async (item: AttendanceItem, count: number, present: boolean) => {
-    tick();
-    setLastMark(current => ({ ...current, [item.id]: present }));
-    await updateAttendance(item.id, {
-      held: item.held + count,
-      attended: item.attended + (present ? count : 0),
-    });
   }, []);
 
   return (
@@ -373,7 +371,7 @@ export function AttendanceTab() {
             </Text>
             <Text style={[styles.emptyBody, { color: colors.textMuted }]}>
               {kind === 'theory'
-                ? 'Add a subject below, then tap Present or Absent (+1 or +2) after class. Orbit calculates your safe bunks and exam eligibility.'
+                ? 'Add a subject below, then tap Present or Absent after class. Orbit calculates your safe bunks and exam eligibility.'
                 : 'Add a rotation with start date and duration. Orbit displays an interactive calendar, excludes Sundays and prepaid holidays, lets you mark rain days, and calculates safe bunks.'}
             </Text>
           </View>
@@ -384,7 +382,7 @@ export function AttendanceTab() {
             key={item.id}
             item={item}
             onMark={mark}
-            onMarkBatch={markBatch}
+            onSetTotalClasses={async next => updateAttendance(item.id, { totalClasses: next })}
             onUndo={async () => {
               const was = lastMark[item.id];
               await undoAttendance(item.id, was ?? true);
@@ -435,6 +433,52 @@ export function AttendanceTab() {
               accessibilityLabel={kind === 'theory' ? 'Subject name' : 'Posting name'}
               style={[styles.input, { color: colors.text, borderColor: colors.border }]}
             />
+
+            {kind === 'theory' ? (
+              <View style={styles.totalClassesSection}>
+                <Text style={[styles.formLabel, { color: colors.textMuted }]}>
+                  TOTAL CLASSES PLANNED (OPTIONAL)
+                </Text>
+                <View style={styles.totalPresets}>
+                  {['60', '80', '100', '120', '150'].map(cnt => {
+                    const active = totalClassesStr === cnt;
+                    return (
+                      <Touchable
+                        key={cnt}
+                        onPress={() => setTotalClassesStr(active ? '' : cnt)}
+                        label={`Set ${cnt} total classes`}
+                        style={[
+                          styles.totalPresetChip,
+                          {
+                            borderColor: active ? colors.accent : colors.border,
+                            backgroundColor: active ? withAlpha(colors.accent, 0.18) : 'transparent',
+                          },
+                        ]}>
+                        <Text
+                          style={[
+                            styles.totalPresetText,
+                            {
+                              color: active ? colors.accent : colors.textMuted,
+                              fontWeight: active ? '700' : '500',
+                            },
+                          ]}>
+                          {cnt}
+                        </Text>
+                      </Touchable>
+                    );
+                  })}
+                </View>
+                <TextInput
+                  value={totalClassesStr}
+                  onChangeText={setTotalClassesStr}
+                  keyboardType="number-pad"
+                  placeholder="e.g. 100 total classes"
+                  placeholderTextColor={colors.textMuted}
+                  accessibilityLabel="Total planned classes"
+                  style={[styles.input, { color: colors.text, borderColor: colors.border }]}
+                />
+              </View>
+            ) : null}
 
             {kind === 'posting' ? (
               <>
@@ -605,18 +649,18 @@ export function AttendanceTab() {
 function AttendanceCard({
   item,
   onMark,
-  onMarkBatch,
   onUndo,
   onTarget,
   onRemove,
+  onSetTotalClasses,
   onUpdateHolidays,
 }: {
   item: AttendanceItem;
   onMark: (item: AttendanceItem, present: boolean) => void;
-  onMarkBatch: (item: AttendanceItem, count: number, present: boolean) => void;
   onUndo: () => void;
   onTarget: (next: number) => void;
   onRemove: () => void;
+  onSetTotalClasses: (count?: number) => void;
   onUpdateHolidays: (holidays: string[]) => void;
 }) {
   const { colors } = useTheme();
@@ -645,7 +689,11 @@ function AttendanceCard({
           </Text>
           <Text style={[styles.cardCount, { color: colors.textMuted }]}>
             {item.attended} of {item.held} {item.kind === 'posting' ? 'days' : 'classes'}
-            {verdict.remaining !== null ? ` · ${verdict.remaining} left` : ''}
+            {item.kind === 'theory' && item.totalClasses
+              ? ` · ${item.totalClasses} total (${Math.max(0, item.totalClasses - item.held)} left)`
+              : verdict.remaining !== null
+                ? ` · ${verdict.remaining} left`
+                : ''}
           </Text>
           {day !== null && total !== null ? (
             <Text style={[styles.cardCount, { color: colors.textMuted }]}>
@@ -684,11 +732,11 @@ function AttendanceCard({
                 ? `You can miss all ${verdict.canMiss} remaining and still finish above ${item.target}%.`
                 : `You can safely miss ${verdict.canMiss} more.`
             : best !== null && best < item.target
-              ? `Below ${item.target}%, and attending every remaining day only reaches ${Math.round(best)}%.`
-              : `Below ${item.target}%. Attend the next ${verdict.mustAttend} without missing one.`}
+              ? `Even with 100% attendance from here, max finish is ${Math.round(best)}%.`
+              : `Attend the next ${verdict.mustAttend} classes to get back above ${item.target}%.`}
       </Text>
 
-      {/* Standard single class mark buttons */}
+      {/* Present / absent actions */}
       <View style={styles.actions}>
         <Touchable
           onPress={() => onMark(item, true)}
@@ -714,21 +762,41 @@ function AttendanceCard({
         </Touchable>
       </View>
 
-      {/* Theory attendance enhancement: Double-class / block lecture logging */}
+      {/* Theory enhancement: Option to select / change total number of classes */}
       {item.kind === 'theory' ? (
-        <View style={styles.batchActions}>
-          <Touchable
-            onPress={() => onMarkBatch(item, 2, true)}
-            label="Mark 2 hours present"
-            style={[styles.batchBtn, { borderColor: withAlpha(colors.success, 0.4) }]}>
-            <Text style={[styles.batchBtnText, { color: colors.success }]}>+2 Present (2hr block)</Text>
-          </Touchable>
-          <Touchable
-            onPress={() => onMarkBatch(item, 2, false)}
-            label="Mark 2 hours absent"
-            style={[styles.batchBtn, { borderColor: withAlpha(colors.danger, 0.4) }]}>
-            <Text style={[styles.batchBtnText, { color: colors.danger }]}>+2 Absent (2hr block)</Text>
-          </Touchable>
+        <View style={styles.totalClassesSection}>
+          <Text style={[styles.totalClassesLabel, { color: colors.textMuted }]}>
+            Total classes planned:
+          </Text>
+          <View style={styles.totalPresets}>
+            {[60, 80, 100, 120, 150].map(cnt => {
+              const active = item.totalClasses === cnt;
+              return (
+                <Touchable
+                  key={cnt}
+                  onPress={() => onSetTotalClasses(active ? undefined : cnt)}
+                  label={`Select ${cnt} total classes for ${item.name}`}
+                  style={[
+                    styles.totalPresetChip,
+                    {
+                      borderColor: active ? colors.accent : colors.border,
+                      backgroundColor: active ? withAlpha(colors.accent, 0.18) : 'transparent',
+                    },
+                  ]}>
+                  <Text
+                    style={[
+                      styles.totalPresetText,
+                      {
+                        color: active ? colors.accent : colors.textMuted,
+                        fontWeight: active ? '700' : '500',
+                      },
+                    ]}>
+                    {cnt}
+                  </Text>
+                </Touchable>
+              );
+            })}
+          </View>
         </View>
       ) : null}
 
@@ -754,11 +822,34 @@ function AttendanceCard({
 
           {showSimulator ? (
             <View style={[styles.simulatorBox, { borderColor: colors.border, backgroundColor: colors.cardElevated }]}>
-              <Text style={[styles.simulatorLead, { color: colors.text }]}>
-                {verdict.safe
-                  ? `🎉 You can safely bunk ${verdict.canMiss} classes and stay above ${item.target}%.`
-                  : `⚠️ Attend the next ${verdict.mustAttend} classes in a row to get back to ${item.target}%.`}
-              </Text>
+              {item.totalClasses ? (
+                <View style={styles.courseProjectionBox}>
+                  <Text style={[styles.courseProjectionTitle, { color: colors.accent }]}>
+                    Full Course Projection ({item.totalClasses} classes total)
+                  </Text>
+                  <Text style={[styles.simulatorLead, { color: colors.text, marginTop: 4 }]}>
+                    {(() => {
+                      const neededOverall = Math.ceil((item.totalClasses * item.target) / 100);
+                      const stillNeeded = Math.max(0, neededOverall - item.attended);
+                      const classesRemaining = Math.max(0, item.totalClasses - item.held);
+                      const canBunkRest = Math.max(0, classesRemaining - stillNeeded);
+                      if (item.attended >= neededOverall) {
+                        return `🎉 You already secured ${item.attended} classes! You met the ${item.target}% requirement for the entire course. You can safely bunk all remaining ${classesRemaining} classes.`;
+                      }
+                      if (stillNeeded > classesRemaining) {
+                        return `⚠️ Even attending all ${classesRemaining} remaining classes, max possible is ${Math.round(percentOf(item.attended + classesRemaining, item.totalClasses))}%. Attend all of them!`;
+                      }
+                      return `🎯 You need ${neededOverall} of ${item.totalClasses} classes (${stillNeeded} more). Out of ${classesRemaining} remaining classes, you can safely bunk ${canBunkRest}!`;
+                    })()}
+                  </Text>
+                </View>
+              ) : (
+                <Text style={[styles.simulatorLead, { color: colors.text }]}>
+                  {verdict.safe
+                    ? `🎉 You can safely bunk ${verdict.canMiss} classes and stay above ${item.target}%.`
+                    : `⚠️ Attend the next ${verdict.mustAttend} classes in a row to get back to ${item.target}%.`}
+                </Text>
+              )}
               <View style={styles.simTable}>
                 <Text style={[styles.simHeader, { color: colors.textMuted }]}>If you attend next:</Text>
                 <View style={styles.simRow}>
@@ -937,16 +1028,43 @@ const styles = StyleSheet.create({
     borderColor: 'transparent',
   },
 
-  batchActions: { flexDirection: 'row', gap: 8, marginTop: 2 },
-  batchBtn: {
-    flex: 1,
-    paddingVertical: 8,
+  totalClassesSection: {
+    gap: 4,
+    marginTop: 4,
+    marginBottom: 4,
+  },
+  totalClassesLabel: {
+    fontSize: 11,
+    fontWeight: '600',
+    textTransform: 'uppercase',
+  },
+  totalPresets: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 6,
+    marginVertical: 4,
+  },
+  totalPresetChip: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
     borderRadius: 8,
     borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  batchBtnText: { fontSize: 12, fontWeight: '700' },
+  totalPresetText: {
+    fontSize: 12,
+  },
+  courseProjectionBox: {
+    paddingBottom: 4,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: 'rgba(150,150,150,0.2)',
+  },
+  courseProjectionTitle: {
+    fontSize: 11,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+  },
 
   accordionWrap: { marginTop: 4, gap: 6 },
   accordionToggle: {
