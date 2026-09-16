@@ -127,6 +127,31 @@
             <data android:pathPattern=".*\\..*\\.apkg" />
             <data android:pathPattern=".*\\..*\\..*\\.apkg" />
         </intent-filter>
+
+        <!--
+          Open a PDF document from a file manager, WhatsApp, Telegram, or Downloads.
+          Shows Orbit MBBS in Android's "Open with" system chooser.
+        -->
+        <intent-filter android:label="@string/pdf_open_label">
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="content" />
+            <data android:scheme="file" />
+            <data android:mimeType="application/pdf" />
+        </intent-filter>
+        <intent-filter android:label="@string/pdf_open_label">
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="content" />
+            <data android:scheme="file" />
+            <data android:host="*" />
+            <data android:mimeType="application/octet-stream" />
+            <data android:pathPattern=".*\\.pdf" />
+            <data android:pathPattern=".*\\..*\\.pdf" />
+            <data android:pathPattern=".*\\..*\\..*\\.pdf" />
+        </intent-filter>
       </activity>
 
         <!--

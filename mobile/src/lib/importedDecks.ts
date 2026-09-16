@@ -22,6 +22,7 @@ import {
 } from '@shared/apkgFormat';
 import { buildExport } from '@shared/apkgExport';
 import { warn } from './log';
+import { setPendingLaunchPdf } from './noteFiles';
 
 /**
  * Decks imported from an Anki `.apkg`.
@@ -348,6 +349,17 @@ async function stageStaged(picked: string): Promise<StagedPackage | null> {
   }
   const file = JSON.parse(picked) as { path: string; name: string; size: number };
 
+  if (/\.pdf$/i.test(file.name) || /\.pdf$/i.test(file.path)) {
+    setPendingLaunchPdf({
+      id: file.path,
+      name: file.name,
+      mime: 'application/pdf',
+      size: file.size,
+      uri: file.path.startsWith('/') ? `file://${file.path}` : file.path,
+    });
+    return null;
+  }
+
   if (!/\.(apkg|colpkg)$/i.test(file.name)) {
     native.discard(file.path);
     throw new ApkgError(
@@ -563,6 +575,14 @@ function toDeckCard(card: ApkgCard, mediaDir: string): DeckCard {
   const toUri = (name: string) => `file://${mediaDir}/${safeMediaName(name)}`;
   const frontImages = mediaDir ? card.frontMedia.map(toUri) : [];
   const backImages = mediaDir ? card.backMedia.map(toUri) : [];
+
+  // If question references an image but image was attached to back, promote to front
+  if (frontImages.length === 0 && backImages.length > 0) {
+    if (/\b(image|picture|diagram|photo|photomicrograph|shown|marked|below|figure|ecg|ekg|x-?ray|xray|scan|ct|mri|arrow|identify|histology|lesion)\b/i.test(card.front)) {
+      frontImages.push(backImages[0]);
+    }
+  }
+
   return {
     id: card.id,
     kind: backImages.length > 0 || frontImages.length > 0 ? 'image' : 'theory',

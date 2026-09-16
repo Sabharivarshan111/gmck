@@ -211,8 +211,10 @@ class ApkgModule(reactContext: ReactApplicationContext) : NativeOrbitApkgSpec(re
       }
     }
 
+    val isPdf = name.endsWith(".pdf", ignoreCase = true) || resolver.getType(uri) == "application/pdf"
+    val ext = if (isPdf) ".pdf" else ".apkg"
     val staging = File(reactApplicationContext.cacheDir, STAGING).apply { mkdirs() }
-    val target = File(staging, "${System.currentTimeMillis().toString(36)}.apkg")
+    val target = File(staging, "${System.currentTimeMillis().toString(36)}$ext")
     resolver.openInputStream(uri).use { input ->
       requireNotNull(input) { "Could not read that file." }
       target.outputStream().use { output -> input.copyTo(output) }

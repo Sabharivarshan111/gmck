@@ -13,6 +13,7 @@
     "check:fanout": "node scripts/progress-fanout-check.mjs",
     "check:smoke": "node preview/smoke.mjs",
     "check:mcq": "node scripts/mcq-parse-check.mjs",
+    "check:mcq-card": "node --experimental-strip-types --no-warnings scripts/mcq-card-check.mjs",
     "check:notes-limits": "node scripts/notes-limits-check.mjs",
     "check:notes-schema": "node scripts/notes-schema-check.mjs",
     "notes:physio-flowchart": "node scripts/physio-flowchart-backfill.mjs",

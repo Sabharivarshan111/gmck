@@ -21,7 +21,9 @@
 import { build } from 'esbuild';
 import { DatabaseSync } from 'node:sqlite';
 import { execFileSync } from 'node:child_process';
-import { inflateRawSync, zstdDecompressSync } from 'node:zlib';
+import * as zlib from 'node:zlib';
+const inflateRawSync = zlib.inflateRawSync;
+const zstdDecompressSync = zlib.zstdDecompressSync;
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -128,6 +130,9 @@ function openPackage(file) {
   const layout = apkg.packageLayout([...zip.keys()], zip.get('meta') ?? null);
 
   const rawCollection = zip.get(layout.collectionEntry);
+  if (layout.zstd && typeof zstdDecompressSync !== 'function') {
+    return { layout, skipped: true, file: path.basename(file) };
+  }
   const collectionBytes = layout.zstd ? zstdDecompressSync(rawCollection) : rawCollection;
 
   const temp = path.join(os.tmpdir(), `apkg-check-${process.pid}-${path.basename(file)}.sqlite`);
@@ -208,6 +213,10 @@ for (const [name, expectedVersion, expectedEntry] of [
     opened = openPackage(file);
   } catch (error) {
     failures.push(`${name}: ${error.message}`);
+    continue;
+  }
+  if (opened?.skipped) {
+    report.push(`${name}   v${expectedVersion} (skipped: local Node ${process.version} lacks zstdDecompressSync)`);
     continue;
   }
   const { layout, collection, media, zip } = opened;

@@ -51,11 +51,39 @@ export function NoteLinkCard({
   const title = displayTitle(link);
 
   if (link.videoId && playing) {
+    const embedUrl = embedUrlFor(link);
+    const embedHtml = `<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 100%; height: 100%; background: #000; overflow: hidden; }
+      .wrapper { position: relative; width: 100%; height: 100%; }
+      iframe { width: 100%; height: 100%; border: 0; display: block; }
+    </style>
+  </head>
+  <body>
+    <div class="wrapper">
+      <iframe
+        src="${embedUrl}"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen
+        referrerpolicy="strict-origin-when-cross-origin">
+      </iframe>
+    </div>
+  </body>
+</html>`;
+
     return (
       <View style={[styles.card, { borderColor: colors.border }]}>
         <View style={styles.stage}>
           <WebView
-            source={{ uri: embedUrlFor(link) }}
+            source={{
+              html: embedHtml,
+              baseUrl: 'https://www.youtube-nocookie.com',
+            }}
             style={styles.web}
             // The player needs both, and neither is a default: without
             // `allowsInlineMediaPlayback` iOS throws it fullscreen, and without
@@ -67,6 +95,8 @@ export function NoteLinkCard({
             allowsFullscreenVideo
             javaScriptEnabled
             domStorageEnabled
+            originWhitelist={['*']}
+            userAgent="Mozilla/5.0 (Linux; Android 10; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36"
           />
         </View>
         <View style={styles.foot}>

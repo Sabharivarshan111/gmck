@@ -202,6 +202,9 @@ export function embedUrlFor(link: NoteLink): string {
     playsinline: '1',
     rel: '0',
     modestbranding: '1',
+    enablejsapi: '1',
+    origin: 'https://www.youtube-nocookie.com',
+    widget_referrer: 'https://www.youtube-nocookie.com',
   });
   if (link.startAt) {
     params.set('start', String(link.startAt));

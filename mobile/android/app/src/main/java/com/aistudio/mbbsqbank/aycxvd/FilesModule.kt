@@ -411,7 +411,11 @@ class FilesModule(reactContext: ReactApplicationContext) :
       val contentUri: Uri = if (idOrUri.startsWith("content://")) {
         Uri.parse(idOrUri)
       } else {
-        val file = File(mediaDir(), sanitise(idOrUri))
+        val file = if (idOrUri.startsWith("/") || idOrUri.startsWith("file://")) {
+          File(idOrUri.removePrefix("file://"))
+        } else {
+          File(mediaDir(), sanitise(idOrUri))
+        }
         if (!file.exists()) {
           promise.resolve(false)
           return
@@ -446,7 +450,11 @@ class FilesModule(reactContext: ReactApplicationContext) :
       val pfd: android.os.ParcelFileDescriptor? = if (idOrUri.startsWith("content://")) {
         reactApplicationContext.contentResolver.openFileDescriptor(Uri.parse(idOrUri), "r")
       } else {
-        val file = File(mediaDir(), sanitise(idOrUri))
+        val file = if (idOrUri.startsWith("/") || idOrUri.startsWith("file://")) {
+          File(idOrUri.removePrefix("file://"))
+        } else {
+          File(mediaDir(), sanitise(idOrUri))
+        }
         if (!file.exists()) {
           promise.reject("file_not_found", "PDF file does not exist")
           return

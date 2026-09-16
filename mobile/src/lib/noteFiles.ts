@@ -356,3 +356,31 @@ export async function renderNotePdf(
   }
 }
 
+let pendingLaunchPdf: NoteFile | null = null;
+const launchPdfListeners = new Set<(file: NoteFile | null) => void>();
+
+export function getPendingLaunchPdf(): NoteFile | null {
+  return pendingLaunchPdf;
+}
+
+export function setPendingLaunchPdf(file: NoteFile | null): void {
+  pendingLaunchPdf = file;
+  for (const listener of launchPdfListeners) {
+    listener(file);
+  }
+}
+
+export function subscribeLaunchPdf(listener: (file: NoteFile | null) => void): () => void {
+  launchPdfListeners.add(listener);
+  return () => {
+    launchPdfListeners.delete(listener);
+  };
+}
+
+export interface InsertedPdfPage {
+  id: string;
+  afterPage: number;
+  noteText?: string;
+  imageUrl?: string;
+  created: number;
+}

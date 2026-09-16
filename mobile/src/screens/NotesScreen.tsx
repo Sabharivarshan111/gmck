@@ -29,8 +29,16 @@ import { useTheme, withAlpha } from '@/theme';
 import { GradientFill } from '@/components/Gradient';
 import { NotesContentView } from '@/components/NotesContentView';
 import { ChapterNotes } from '@/components/ChapterNotes';
+import { ClinicalProformaModal } from '@/components/ClinicalProformaModal';
+import { PdfViewerModal } from '@/components/PdfViewerModal';
 import FlashcardsScreen from '@/screens/FlashcardsScreen';
 import { useProfile } from '@/hooks/useProfile';
+import {
+  getPendingLaunchPdf,
+  setPendingLaunchPdf,
+  subscribeLaunchPdf,
+  type NoteFile,
+} from '@/lib/noteFiles';
 import { getSubjects, YEAR_LABEL, type BankNode } from '@/lib/questionBank';
 import { YEAR_TO_KEY, type Year } from '@/lib/profile';
 import {
@@ -74,6 +82,16 @@ export default function NotesScreen() {
    * one Back button serving two unrelated ladders.
    */
   const [flashcards, setFlashcards] = useState(false);
+  const [proformasOpen, setProformasOpen] = useState(false);
+  const [activePdfFile, setActivePdfFile] = useState<NoteFile | null>(() => getPendingLaunchPdf());
+
+  useEffect(() => {
+    return subscribeLaunchPdf(file => {
+      if (file) {
+        setActivePdfFile(file);
+      }
+    });
+  }, []);
 
   const topicsViewFor = useCallback((current: Extract<View_, { kind: 'notes' }>): View_ => {
     const subjectKey = current.topic.key.split('::')[0];
@@ -158,6 +176,7 @@ export default function NotesScreen() {
           currentYear={profileYear}
           onPick={year => setView({ kind: 'subjects', year })}
           onFlashcards={() => setFlashcards(true)}
+          onOpenProformas={() => setProformasOpen(true)}
         />
       ) : null}
 
@@ -212,6 +231,20 @@ export default function NotesScreen() {
         <ArrowLeft size={20} color={colors.text} />
       </Touchable>
     ) : null}
+
+      <ClinicalProformaModal
+        visible={proformasOpen}
+        onClose={() => setProformasOpen(false)}
+      />
+
+      <PdfViewerModal
+        file={activePdfFile}
+        visible={activePdfFile != null}
+        onClose={() => {
+          setActivePdfFile(null);
+          setPendingLaunchPdf(null);
+        }}
+      />
     </View>
   );
 }
@@ -245,10 +278,12 @@ function YearsView({
   currentYear,
   onPick,
   onFlashcards,
+  onOpenProformas,
 }: {
   currentYear: Year;
   onPick: (year: Year) => void;
   onFlashcards: () => void;
+  onOpenProformas: () => void;
 }) {
   const { colors } = useTheme();
   return (
@@ -317,35 +352,22 @@ function YearsView({
         <ChevronRight size={18} color={colors.textMuted} />
       </Touchable>
 
-      {/*
-        Locked, and it says so rather than looking tappable and doing nothing.
-        A card that appears live and swallows a press is worse than one plainly
-        not ready: the reader tries it repeatedly and concludes the app is
-        broken. It is a View rather than a Touchable so there is no press to
-        swallow, and TalkBack announces the state instead of offering a control
-        that does not work.
-      */}
-      <View
-        style={[
-          styles.extraCard,
-          styles.extraLocked,
-          { backgroundColor: colors.card, borderColor: colors.border },
-        ]}
-        accessible
-        accessibilityLabel="Case proforma. Coming soon, not yet available."
-        aria-disabled>
-        <View style={[styles.extraIcon, { backgroundColor: withAlpha(colors.textMuted, 0.15) }]}>
-          <ClipboardList size={18} color={colors.textMuted} />
+      <Touchable
+        onPress={onOpenProformas}
+        label="Clinical case proformas, ward clerking sheets"
+        scaleTo={0.97}
+        style={[styles.extraCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+        <View style={[styles.extraIcon, { backgroundColor: withAlpha(colors.primary, 0.15) }]}>
+          <ClipboardList size={18} color={colors.primary} />
         </View>
         <View style={styles.flex}>
-          <Text style={[styles.extraTitle, { color: colors.textMuted }]}>Case proforma</Text>
+          <Text style={[styles.extraTitle, { color: colors.text }]}>Case proformas</Text>
           <Text style={[styles.extraSub, { color: colors.textMuted }]}>
-            Coming soon — clerking sheets for the wards
+            Master clerking sheets & clinical signs for medicine, surgery, pediatrics & allied
           </Text>
         </View>
-        <Lock size={16} color={colors.textMuted} />
-      </View>
-
+        <ChevronRight size={18} color={colors.textMuted} />
+      </Touchable>
     </>
   );
 }

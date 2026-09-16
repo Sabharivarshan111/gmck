@@ -8,4 +8,5 @@
       to the file, which is the only thing being decided at that moment.
     -->
     <string name="apkg_open_label">Import to Orbit flashcards</string>
+    <string name="pdf_open_label">Orbit MBBS</string>
 </resources>

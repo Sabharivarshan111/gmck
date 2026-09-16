@@ -12,6 +12,8 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
+  BookOpen,
+  Check,
   ChevronLeft,
   ChevronRight,
   Download,
@@ -78,6 +80,7 @@ import { tick, complete } from '@/lib/haptics';
 import { pickCardImage } from '@/lib/cardImage';
 import { PathwayFlow } from '@/components/PathwayFlow';
 import { CARD_MODE_LABEL, normalizePathway } from '@shared/pathwayCards';
+import { parseCardContent } from '@/lib/cardContent';
 import { Slider } from '@/components/Slider';
 import { Sheet } from '@/components/Sheet';
 import {
@@ -1954,12 +1957,27 @@ export function StudyView({
 
   const [cardIndex, setCardIndex] = useState(0);
   const [history, setHistory] = useState<Array<{ cardId: string; prevCard: Card }>>([]);
+  const [selectedOption, setSelectedOption] = useState<string | null>(null);
 
   const safeIndex = queue.length > 0 ? Math.min(cardIndex, queue.length - 1) : 0;
   const current = queue[safeIndex];
   const face = useMemo(
     () => (current && deck ? deck.find(c => c.id === current.id) ?? null : null),
     [current, deck],
+  );
+
+  const parsed = useMemo(
+    () =>
+      face
+        ? parseCardContent({
+            front: face.front,
+            back: face.back,
+            frontImages: face.frontImages,
+            backImages: face.backImages,
+            imageUrl: face.imageUrl,
+          })
+        : null,
+    [face],
   );
 
   const canGoNext = queue.length > 1;
@@ -1970,6 +1988,7 @@ export function StudyView({
     setCardIndex(i => (i + 1) % queue.length);
     setRevealed(false);
     setImageFailed(false);
+    setSelectedOption(null);
   }, [queue.length]);
 
   const onPrevious = useCallback(() => {
@@ -1977,6 +1996,7 @@ export function StudyView({
       setCardIndex(i => i - 1);
       setRevealed(false);
       setImageFailed(false);
+      setSelectedOption(null);
     } else if (history.length > 0) {
       const last = history[history.length - 1];
       setHistory(h => h.slice(0, -1));
@@ -1987,6 +2007,7 @@ export function StudyView({
       });
       setRevealed(false);
       setImageFailed(false);
+      setSelectedOption(null);
     }
   }, [safeIndex, deckKey, history]);
 
@@ -2011,6 +2032,7 @@ export function StudyView({
       });
       setRevealed(false);
       setImageFailed(false);
+      setSelectedOption(null);
       setCardIndex(0);
     },
     [current, deckKey],
@@ -2153,25 +2175,96 @@ export function StudyView({
           </View>
         ) : null}
 
-        <Text style={[styles.cardFront, { color: colors.text }]}>{face.front}</Text>
+        <Text style={[styles.cardFront, { color: colors.text }]}>
+          {parsed?.stem ?? face.front}
+        </Text>
 
         {/*
-          Pictures on the question side, which only an imported Anki card has.
-
-          The rule above — a diagram belongs on the back — is about *our* image
-          cards, where the diagram is the answer. An imported card is somebody
-          else's, its front is whatever they wrote, and an ECG strip above
-          "identify this rhythm" is the question rather than the answer to it.
-          Hiding it leaves a card asking about a picture that is not there.
+          Pictures on the question side, including promoted image for MCQs / diagram questions.
         */}
-        {(face.frontImages ?? []).map(uri => (
+        {(parsed?.frontImages ?? face.frontImages ?? []).map(uri => (
           <TappableImage
             key={uri}
             uri={uri}
             style={styles.cardImage}
-            label={`Picture on this card: ${face.front.slice(0, 60)}. Opens full screen`}
+            label={`Picture on this card: ${(parsed?.stem ?? face.front).slice(0, 60)}. Opens full screen`}
           />
         ))}
+
+        {/* Interactive MCQ Options */}
+        {parsed?.isMcq ? (
+          <View style={styles.mcqOptionsContainer}>
+            {parsed.options.map(opt => {
+              const isCorrect = revealed && opt.key === parsed.correctOption;
+              const isSelected = selectedOption === opt.key;
+              const isWrongSelection = revealed && isSelected && !isCorrect;
+
+              const borderColor = isCorrect
+                ? colors.success
+                : isWrongSelection
+                ? colors.danger
+                : isSelected
+                ? colors.primary
+                : colors.border;
+
+              const backgroundColor = isCorrect
+                ? withAlpha(colors.success, 0.12)
+                : isWrongSelection
+                ? withAlpha(colors.danger, 0.12)
+                : isSelected
+                ? withAlpha(colors.primary, 0.1)
+                : colors.cardElevated;
+
+              return (
+                <Touchable
+                  key={opt.key}
+                  onPress={() => {
+                    if (!revealed) {
+                      setSelectedOption(opt.key);
+                      setRevealed(true);
+                    }
+                  }}
+                  disabled={revealed}
+                  style={[styles.mcqOptionButton, { borderColor, backgroundColor }]}
+                  label={`Option ${opt.key}: ${opt.text}`}>
+                  <View
+                    style={[
+                      styles.mcqLetterBadge,
+                      {
+                        borderColor,
+                        backgroundColor: isCorrect
+                          ? colors.success
+                          : isWrongSelection
+                          ? colors.danger
+                          : withAlpha(colors.text, 0.08),
+                      },
+                    ]}>
+                    <Text
+                      style={[
+                        styles.mcqLetterText,
+                        {
+                          color:
+                            isCorrect || isWrongSelection
+                              ? colors.primaryText
+                              : colors.text,
+                        },
+                      ]}>
+                      {opt.key}
+                    </Text>
+                  </View>
+                  <Text style={[styles.mcqOptionText, { color: colors.text }]}>
+                    {opt.text}
+                  </Text>
+                  {isCorrect ? (
+                    <Check size={18} color={colors.success} strokeWidth={2.5} />
+                  ) : isWrongSelection ? (
+                    <X size={18} color={colors.danger} strokeWidth={2.5} />
+                  ) : null}
+                </Touchable>
+              );
+            })}
+          </View>
+        ) : null}
 
         {!revealed && face.hint ? (
           <Text style={[styles.hint, { color: colors.textMuted }]}>Hint: {face.hint}</Text>
@@ -2181,42 +2274,73 @@ export function StudyView({
           <>
             <View style={[styles.rule, { backgroundColor: colors.border }]} />
 
-            {/* The answer: the diagram, then the words. */}
-            {/*
-              `backImages` when the card has them and `imageUrl` otherwise, so
-              a generated or hand-written card is unaffected and an imported
-              one can answer with more than one picture — Anki cards routinely
-              do, and taking only the first would silently drop the rest.
-            */}
-            {(face.backImages ?? (face.imageUrl ? [face.imageUrl] : [])).map(uri =>
+            {/* The answer: diagram (excluding images already shown on front) */}
+            {(parsed?.backImages ?? face.backImages ?? (face.imageUrl ? [face.imageUrl] : [])).map(uri =>
               imageFailed ? null : (
                 <TappableImage
                   key={uri}
                   uri={uri}
                   style={styles.cardImage}
                   label={`Diagram: ${face.front}. Opens full screen`}
-                  // A diagram that will not load has to say so. A grey
-                  // rectangle looks identical to "this app does not show
-                  // diagrams", and from inside the app there is no way to
-                  // tell which it is.
                   onError={() => setImageFailed(true)}
                 />
               ),
             )}
 
-            {face.back ? (
-              <Text style={[styles.cardBack, { color: colors.text }]}>{face.back}</Text>
-            ) : null}
+            {/* For MCQ: Structured Explanation & Reference Card */}
+            {parsed?.isMcq ? (
+              parsed.explanation || parsed.reference || parsed.qId ? (
+                <View
+                  style={[
+                    styles.explanationCard,
+                    {
+                      backgroundColor: withAlpha(colors.accent, 0.06),
+                      borderColor: withAlpha(colors.accent, 0.25),
+                    },
+                  ]}>
+                  <View style={styles.explanationHeader}>
+                    <Sparkles size={16} color={colors.accent} />
+                    <Text style={[styles.explanationTitle, { color: colors.accent }]}>
+                      Explanation & Insights
+                    </Text>
+                    {parsed.qId ? (
+                      <View
+                        style={[
+                          styles.qIdBadge,
+                          { backgroundColor: withAlpha(colors.textMuted, 0.15) },
+                        ]}>
+                        <Text style={[styles.qIdText, { color: colors.textMuted }]}>
+                          QID {parsed.qId}
+                        </Text>
+                      </View>
+                    ) : null}
+                  </View>
+                  {parsed.explanation ? (
+                    <Text style={[styles.explanationBody, { color: colors.text }]}>
+                      {parsed.explanation}
+                    </Text>
+                  ) : null}
+                  {parsed.reference ? (
+                    <View style={styles.referenceRow}>
+                      <BookOpen size={14} color={colors.textMuted} />
+                      <Text style={[styles.referenceText, { color: colors.textMuted }]}>
+                        Ref: {parsed.reference}
+                      </Text>
+                    </View>
+                  ) : null}
+                </View>
+              ) : null
+            ) : (
+              /* Non-MCQ: clean back text */
+              (parsed?.cleanBack || face.back) ? (
+                <Text style={[styles.cardBack, { color: colors.text }]}>
+                  {parsed?.cleanBack || face.back}
+                </Text>
+              ) : null
+            )}
 
             {/*
               The chain the plate draws, under the plate.
-
-              Under, not instead: the picture is the shape of the pathway and
-              this is its content, and a first-year exam asks for both. It is
-              also what keeps the card worth answering when the plate does not
-              arrive — which is why the "could not be loaded" line below softens
-              when there is a chain to fall back on rather than reporting a dead
-              card.
             */}
             {face.pathway ? <PathwayFlow pathway={face.pathway} /> : null}
 
@@ -2668,5 +2792,80 @@ const styles = StyleSheet.create({
   },
   opacityDisabled: {
     opacity: 0.35,
+  },
+  mcqOptionsContainer: {
+    width: '100%',
+    marginTop: 16,
+    gap: 10,
+  },
+  mcqOptionButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    borderRadius: 12,
+    borderWidth: 1.5,
+    gap: 12,
+  },
+  mcqLetterBadge: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  mcqLetterText: {
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  mcqOptionText: {
+    flex: 1,
+    fontSize: 14,
+    fontWeight: '500',
+    lineHeight: 20,
+  },
+  explanationCard: {
+    width: '100%',
+    marginTop: 16,
+    borderRadius: 14,
+    borderWidth: 1,
+    padding: 14,
+    gap: 8,
+  },
+  explanationHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  explanationTitle: {
+    fontSize: 13,
+    fontWeight: '700',
+    letterSpacing: 0.3,
+    flex: 1,
+  },
+  explanationBody: {
+    fontSize: 13.5,
+    lineHeight: 20,
+  },
+  qIdBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 6,
+  },
+  qIdText: {
+    fontSize: 10,
+    fontWeight: '700',
+    letterSpacing: 0.5,
+  },
+  referenceRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginTop: 4,
+  },
+  referenceText: {
+    fontSize: 11.5,
+    fontStyle: 'italic',
   },
 });
