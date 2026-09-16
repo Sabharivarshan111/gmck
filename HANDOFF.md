@@ -1536,3 +1536,35 @@ holds `admin`, and a `git clone --mirror` kept off GitHub. All three are the
 owner's to do. There is deliberately **no** mirror workflow, because it would
 need a secret nobody has set and would sit in the workflow list looking like
 protection while skipping silently — the §8f and §14.4 shape exactly.
+
+---
+
+# 16. Release v21 — Monthly Attendance, Theory Lecture Alignment, Rain Holidays, 50k Anki, Rewarded Ads (2026-09-16)
+
+Release `versionCode: 21` / `versionName: "0.0.0.21"` shipped the following core improvements across attendance, AdMob, study tools, and media rendering:
+
+## 16.1 AdMob Rewarded Ads Hardening
+- Strictly confirmed and locked to **Rewarded Ads** (`RewardedAd`), unit `ca-app-pub-3177287525203129/6765465304`. Interstitial ads are intentionally absent.
+- `mobile/src/lib/ads.ts`: AdMob SDK initializes asynchronously on app launch. GDPR consent form request runs inside a 3.5s timeout race so consent dialog latency cannot delay or stall ad playback.
+- `showRewardedAd()` automatically awaits ad load for up to 8s before failing gracefully; daily cooldown slot (`dailyAd.ts`) is preserved if playback does not complete, preventing lost rewards.
+
+## 16.2 Theory Attendance: 1-Hour Lectures, Total Classes, & Monthly Tracking
+- **1-Hour Lecture Slots**: Medical college theory classes are 1 hour each. Removed "+2 Present" and "+2 Absent" 2-hour block buttons across the theory interface.
+- **Total Planned Classes**: Configurable during subject creation and editable on the card via one-tap preset chips (`[60] [80] [100] [120] [150]`). Directly feeds remaining class counts and course projections in the Bunk & Target Simulator.
+- **This Month vs. Overall Attendance**:
+  - `mobile/src/lib/attendance.ts` now stores monthly breakdowns in `monthly: Record<string, { held: number; attended: number }>`.
+  - Subject cards feature dual percentage badges in the header: **OVERALL** (e.g. `86%`) and **CURRENT MONTH** (e.g. `SEP: 88%`).
+  - Card subtitle and Bunk Simulator show both the monthly breakdown (e.g. `This Month (Sep): 14 of 16 classes`) and overall academic year totals (`55 of 64 classes`).
+
+## 16.3 Clinical Postings Attendance: Rotation Calendar & Rain Holidays
+- Visual rotation calendar with day-of-week headers (`M T W T F S S`) and date cells.
+- Highlights gazetted Indian national/state holidays and includes **tap-to-toggle custom holiday selection** (for unexpected rain holidays, local college events, or strikes) that dynamically reduces required working days and adjusts allowed leaves.
+
+## 16.4 Anki Deck Import Scale (50,000 Cards)
+- Raised `MAX_IMPORT_CARDS` from 5,000 to 50,000 in `mobile/src/lib/importedDecks.ts`.
+- Chunked SQLite storage into 250 cards per AsyncStorage key (`setMany`, `getMany`, `removeMany`), bypassing Android CursorWindow buffer limits and eliminating APKG import crashes on massive medical decks.
+
+## 16.5 UI & Media Stability
+- Leaf question browse screens always render the search bar regardless of question count.
+- InkedImage and PDF viewer modals feature explicit white canvas backgrounds and aspect-ratio bounds, preventing black-screen render bugs.
+

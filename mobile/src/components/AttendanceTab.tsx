@@ -27,6 +27,7 @@ import {
   dayOfRotation,
   getAttendance,
   getHolidayTitle,
+  getMonthlyAttendance,
   markAttendance,
   percentOf,
   removeAttendance,
@@ -668,6 +669,11 @@ function AttendanceCard({
   const best = bestPossible(item);
   const day = dayOfRotation(item);
   const total = workingDays(item);
+  const thisMonth = getMonthlyAttendance(item);
+  const monthPct = percentOf(thisMonth.attended, thisMonth.held);
+  const monthTone =
+    thisMonth.held === 0 || monthPct >= item.target ? colors.success : colors.danger;
+  const monthName = new Date().toLocaleString('en-US', { month: 'short' });
 
   const [showCalendar, setShowCalendar] = useState(false);
   const [showSimulator, setShowSimulator] = useState(false);
@@ -688,6 +694,7 @@ function AttendanceCard({
             {item.name}
           </Text>
           <Text style={[styles.cardCount, { color: colors.textMuted }]}>
+            {item.kind === 'theory' ? 'Overall: ' : ''}
             {item.attended} of {item.held} {item.kind === 'posting' ? 'days' : 'classes'}
             {item.kind === 'theory' && item.totalClasses
               ? ` · ${item.totalClasses} total (${Math.max(0, item.totalClasses - item.held)} left)`
@@ -695,6 +702,11 @@ function AttendanceCard({
                 ? ` · ${verdict.remaining} left`
                 : ''}
           </Text>
+          {item.kind === 'theory' ? (
+            <Text style={[styles.cardCountSub, { color: colors.accent }]}>
+              This Month ({monthName}): {thisMonth.attended} of {thisMonth.held} classes ({thisMonth.held === 0 ? '—' : `${Math.round(monthPct)}%`})
+            </Text>
+          ) : null}
           {day !== null && total !== null ? (
             <Text style={[styles.cardCount, { color: colors.textMuted }]}>
               Day {day} of {total}
@@ -704,9 +716,31 @@ function AttendanceCard({
             </Text>
           ) : null}
         </View>
-        <Text style={[styles.cardPct, { color: tone }]}>
-          {item.held === 0 ? '—' : `${Math.round(verdict.percent)}%`}
-        </Text>
+
+        <View style={styles.dualPctRow}>
+          <View
+            style={[
+              styles.dualPctBadge,
+              { borderColor: withAlpha(tone, 0.35), backgroundColor: withAlpha(tone, 0.08) },
+            ]}>
+            <Text style={[styles.dualPctLabel, { color: colors.textMuted }]}>OVERALL</Text>
+            <Text style={[styles.dualPctVal, { color: tone }]}>
+              {item.held === 0 ? '—' : `${Math.round(verdict.percent)}%`}
+            </Text>
+          </View>
+          {item.kind === 'theory' ? (
+            <View
+              style={[
+                styles.dualPctBadge,
+                { borderColor: withAlpha(monthTone, 0.35), backgroundColor: withAlpha(monthTone, 0.08) },
+              ]}>
+              <Text style={[styles.dualPctLabel, { color: colors.textMuted }]}>{monthName.toUpperCase()}</Text>
+              <Text style={[styles.dualPctVal, { color: monthTone }]}>
+                {thisMonth.held === 0 ? '—' : `${Math.round(monthPct)}%`}
+              </Text>
+            </View>
+          ) : null}
+        </View>
       </View>
 
       {/* The bar, against the target line. */}
@@ -851,7 +885,21 @@ function AttendanceCard({
                 </Text>
               )}
               <View style={styles.simTable}>
-                <Text style={[styles.simHeader, { color: colors.textMuted }]}>If you attend next:</Text>
+                {item.kind === 'theory' ? (
+                  <View style={styles.simMonthlySummary}>
+                    <Text style={[styles.simMonthlyText, { color: colors.text }]}>
+                      📅 <Text style={styles.boldText}>This Month ({monthName}):</Text>{' '}
+                      {thisMonth.attended} of {thisMonth.held} attended ({thisMonth.held === 0 ? '—' : `${Math.round(monthPct)}%`})
+                    </Text>
+                    <Text style={[styles.simMonthlyText, { color: colors.text }]}>
+                      📊 <Text style={styles.boldText}>Overall (All Months):</Text>{' '}
+                      {item.attended} of {item.held} attended ({item.held === 0 ? '—' : `${Math.round(verdict.percent)}%`})
+                    </Text>
+                  </View>
+                ) : null}
+                <Text style={[styles.simHeader, { color: colors.textMuted, marginTop: item.kind === 'theory' ? 6 : 0 }]}>
+                  If you attend next:
+                </Text>
                 <View style={styles.simRow}>
                   <Text style={[styles.simLabel, { color: colors.text }]}>+1 class</Text>
                   <Text style={[styles.simVal, { color: colors.accent }]}>
@@ -998,7 +1046,20 @@ const styles = StyleSheet.create({
   cardHead: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
   cardName: { ...typeScale.bodyStrong },
   cardCount: { ...typeScale.caption, marginTop: 2 },
+  cardCountSub: { ...typeScale.caption, marginTop: 2, fontWeight: '600' },
   cardPct: { ...typeScale.title3, fontWeight: '800' },
+  dualPctRow: { flexDirection: 'row', gap: 6, alignItems: 'center' },
+  dualPctBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minWidth: 54,
+  },
+  dualPctLabel: { fontSize: 9, fontWeight: '700', letterSpacing: 0.4 },
+  dualPctVal: { ...typeScale.footnote, fontWeight: '800' },
 
   track: { height: 8, borderRadius: 4, overflow: 'hidden', position: 'relative' },
   fill: { height: '100%', borderRadius: 4 },
@@ -1064,6 +1125,18 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '700',
     textTransform: 'uppercase',
+  },
+  simMonthlySummary: {
+    paddingBottom: 6,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: 'rgba(150,150,150,0.2)',
+    gap: 3,
+  },
+  simMonthlyText: {
+    fontSize: 12,
+  },
+  boldText: {
+    fontWeight: '700',
   },
 
   accordionWrap: { marginTop: 4, gap: 6 },

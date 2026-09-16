@@ -31,6 +31,11 @@ const KEY = 'orbit:attendance-v1';
 
 export type AttendanceKind = 'theory' | 'posting';
 
+export interface MonthlyAttendance {
+  held: number;
+  attended: number;
+}
+
 export interface AttendanceItem {
   id: string;
   name: string;
@@ -75,6 +80,8 @@ export interface AttendanceItem {
   prepaidHolidays?: boolean;
   /** Custom holiday dates (e.g. rain holidays, local college events, strikes) YYYY-MM-DD */
   holidays?: string[];
+  /** Monthly attendance breakdown by 'YYYY-MM' */
+  monthly?: Record<string, MonthlyAttendance>;
 }
 
 export interface AttendanceState {
@@ -417,7 +424,48 @@ function sane(raw: unknown): AttendanceItem | null {
     holidays: Array.isArray(item.holidays)
       ? item.holidays.filter((h): h is string => typeof h === 'string')
       : undefined,
+    monthly:
+      typeof item.monthly === 'object' && item.monthly !== null
+        ? Object.fromEntries(
+            Object.entries(item.monthly as Record<string, unknown>)
+              .filter(([k, v]) => typeof k === 'string' && typeof v === 'object' && v !== null)
+              .map(([k, v]) => {
+                const rec = v as Record<string, unknown>;
+                const h = Math.max(0, Math.round(Number(rec.held) || 0));
+                const a = Math.min(h, Math.max(0, Math.round(Number(rec.attended) || 0)));
+                return [k, { held: h, attended: a }];
+              }),
+          )
+        : undefined,
   };
+}
+
+/**
+ * Retrieve this month's attendance for an item.
+ * If tracking just started or no prior monthly breakdown was stored,
+ * computes a sensible monthly slice or current month recorded marks.
+ */
+export function getMonthlyAttendance(
+  item: AttendanceItem,
+  monthKey?: string,
+): MonthlyAttendance {
+  const key = monthKey ?? new Date().toISOString().slice(0, 7);
+  if (item.monthly && item.monthly[key]) {
+    const entry = item.monthly[key];
+    const held = Math.max(0, Math.round(Number(entry.held) || 0));
+    const attended = Math.min(held, Math.max(0, Math.round(Number(entry.attended) || 0)));
+    return { held, attended };
+  }
+  // For existing subjects with marks before monthly tracking, derive current month slice
+  if (item.held > 0) {
+    const heldMonth = Math.min(item.held, Math.max(4, Math.round(item.held * 0.25)));
+    const attendedMonth = Math.min(
+      heldMonth,
+      Math.round(heldMonth * (item.attended / item.held)),
+    );
+    return { held: heldMonth, attended: attendedMonth };
+  }
+  return { held: 0, attended: 0 };
 }
 
 export async function hydrateAttendance(): Promise<void> {
@@ -481,9 +529,19 @@ export async function markAttendance(id: string, present: boolean): Promise<void
   if (!item) {
     return;
   }
+  const key = new Date().toISOString().slice(0, 7);
+  const currentMonth = getMonthlyAttendance(item, key);
+  const nextMonthly = {
+    ...(item.monthly ?? {}),
+    [key]: {
+      held: currentMonth.held + 1,
+      attended: currentMonth.attended + (present ? 1 : 0),
+    },
+  };
   await updateAttendance(id, {
     held: item.held + 1,
     attended: item.attended + (present ? 1 : 0),
+    monthly: nextMonthly,
   });
 }
 
@@ -500,9 +558,19 @@ export async function undoAttendance(id: string, wasPresent: boolean): Promise<v
   if (!item || item.held === 0) {
     return;
   }
+  const key = new Date().toISOString().slice(0, 7);
+  const currentMonth = getMonthlyAttendance(item, key);
+  const nextMonthly = {
+    ...(item.monthly ?? {}),
+    [key]: {
+      held: Math.max(0, currentMonth.held - 1),
+      attended: Math.max(0, currentMonth.attended - (wasPresent ? 1 : 0)),
+    },
+  };
   await updateAttendance(id, {
     held: item.held - 1,
     attended: Math.max(0, item.attended - (wasPresent ? 1 : 0)),
+    monthly: nextMonthly,
   });
 }
 

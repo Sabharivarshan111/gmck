@@ -1198,3 +1198,33 @@ way.
   three Android workflows.
 * The OpenAI key from commit `f50c8e8` is still live. **Only the owner can
   revoke it** — never hand an agent a login there.
+
+---
+
+## 2026-09-16 — Antigravity — Release v21: monthly vs overall attendance, theory total classes, clinical holiday calendar, 50k anki, ads fix
+
+**DONE**
+- **Rewarded Ads Only**: Verified AdMob configuration uses strictly `RewardedAd` (`ca-app-pub-3177287525203129/6765465304`). Decoupled GDPR consent with 3.5s timeout race; `showRewardedAd()` awaits loaded ad up to 8s; daily cooldown slot preserved on playback failure.
+- **Theory Attendance Overhaul**:
+  - Medical college 1-hour lecture alignment: removed "+2" 2-hour block buttons.
+  - Total planned classes: configurable during Add Subject and via quick preset chips (`[60] [80] [100] [120] [150]`) on subject cards. Drives live "remaining classes" and target calculations.
+  - Monthly vs Overall Attendance: added monthly bucket storage (`monthly[YYYY-MM]`) to `mobile/src/lib/attendance.ts`. UI displays dual percentage badges (`OVERALL: 86%` and `SEP: 88%`) and distinct subtitle counters per subject, plus month vs overall projection in the Bunk & Target Simulator.
+- **Clinical Postings Attendance**:
+  - Interactive rotation calendar with weekday headers (Mon-Sun), official gazetted holidays, and tap-to-toggle rain/event holidays that dynamically reduce working days.
+- **Anki Deck Import**:
+  - Increased limit to 50,000 cards using chunked SQLite storage (`setMany`, `getMany`, `removeMany`) at 250 cards/chunk.
+- **Browse & Media Fixes**:
+  - Always-visible search bar in leaf question screen.
+  - InkedImage and PDF modal white backing prevents black screen rendering.
+- **Version 21 Bump**:
+  - Bumped to `versionCode: 21` / `versionName: "0.0.0.21"` in `mobile/android/app/build.gradle`, `appVersion.ts`, and `version-check.mjs`.
+  - Supabase `app_releases` table row 21 created with full changelog.
+  - Verified via `npm run check:version`, `npm run check:attendance` (all 18 worked examples pass), and `npm run typecheck`.
+
+**NEXT**
+- Monitor GitHub Actions release workflow for `main` build cutting production APK/AAB for versionCode 21.
+
+**DO NOT**
+- Do not re-add 2-hour theory block buttons; MBBS lectures in Indian medical colleges are scheduled strictly in 1-hour slots.
+- Do not modify `attendance.ts` above the `// ------` storage line without checking `scripts/attendance-check.mjs` regex stripper.
+
