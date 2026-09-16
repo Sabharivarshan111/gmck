@@ -185,8 +185,9 @@ for (const file of uiFiles) {
     .replace(/\/\*[\s\S]*?\*\//g, '')
     .replace(/^\s*\/\/.*$/gm, '');
   for (const name of NAMES) {
+    const pattern = new RegExp(`\\b${name.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\$&')}\\b`);
     check(
-      !withoutComments.includes(name),
+      !pattern.test(withoutComments),
       `${file} names a textbook ("${name}") outside a comment — the app never shows a book title to the reader`,
     );
   }
