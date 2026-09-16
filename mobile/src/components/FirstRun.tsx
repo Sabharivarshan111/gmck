@@ -4,12 +4,14 @@ import {
   Animated,
   Image,
   Modal,
+  Platform,
   ScrollView,
   StyleSheet,
   TextInput,
   View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { CheckCircle2, Lock, ShieldAlert } from 'lucide-react-native';
 import { Text } from '@/components/Text';
 import { KeyboardSafe } from '@/components/KeyboardSafe';
 import { Touchable } from '@/components/Touchable';
@@ -20,7 +22,11 @@ import { DURATION, EASE, SPRING, useReducedMotion } from '@/theme/motion';
 import { DisplayNameError, type LocalProfile, type Year } from '@/lib/profile';
 import { YEAR_LABEL } from '@/lib/questionBank';
 import { YEAR_TO_KEY } from '@/lib/profile';
-import { GoogleSignInCancelled, signInWithGoogle } from '@/lib/googleAuth';
+import {
+  GoogleSignInCancelled,
+  hasAuthenticatedGoogleOnce,
+  signInWithGoogle,
+} from '@/lib/googleAuth';
 import { useProfile } from '@/hooks/useProfile';
 import { setTourPaused } from '@/tour/store';
 /*
@@ -82,6 +88,16 @@ export function FirstRun() {
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [googling, setGoogling] = useState(false);
+  const isNative = Platform.OS === 'android';
+  const [googleAuthenticated, setGoogleAuthenticated] = useState(!isNative);
+
+  useEffect(() => {
+    if (isNative) {
+      hasAuthenticatedGoogleOnce().then(ok => {
+        if (ok) setGoogleAuthenticated(true);
+      });
+    }
+  }, [isNative]);
 
   const needed = hydrated && !local;
 
@@ -150,25 +166,26 @@ export function FirstRun() {
   );
 
   const start = useCallback(() => {
+    if (isNative && !googleAuthenticated) {
+      setError('Please sign in with Google above to safeguard your progress and unlock setup.');
+      return;
+    }
     if (!year) {
       setError('Choose your year — it decides which question bank you get.');
       return;
     }
     void submit({ display_name: name, year });
-  }, [name, year, submit]);
+  }, [isNative, googleAuthenticated, name, year, submit]);
 
   /**
-   * Google fills the name in; it does not finish onboarding.
-   *
-   * The year is the one thing the account cannot tell us, and it is the whole
-   * reason this screen exists — so signing in lands back here with one field
-   * left rather than guessing the other.
+   * Google fills the name in and unlocks onboarding.
    */
   const withGoogle = useCallback(async () => {
     setGoogling(true);
     setError(null);
     try {
       const account = await signInWithGoogle();
+      setGoogleAuthenticated(true);
       if (account?.name && !name.trim()) {
         setName(account.name.split(' ')[0] ?? account.name);
       }
@@ -258,18 +275,56 @@ export function FirstRun() {
               Your name shows on the leaderboard. Your year decides which questions you see.
             </Text>
 
+            {/* Anti-Spam Verification Notice */}
+            <View
+              style={[
+                styles.securityNotice,
+                {
+                  backgroundColor: withAlpha(googleAuthenticated ? colors.green : colors.accent, 0.08),
+                  borderColor: withAlpha(googleAuthenticated ? colors.green : colors.accent, 0.28),
+                },
+              ]}>
+              {googleAuthenticated ? (
+                <CheckCircle2 size={18} color={colors.green} style={{ marginTop: 2 }} />
+              ) : (
+                <ShieldAlert size={18} color={colors.accent} style={{ marginTop: 2 }} />
+              )}
+              <View style={{ flex: 1 }}>
+                <Text style={[styles.securityTitle, { color: colors.text }]}>
+                  {googleAuthenticated ? 'Verified with Google' : 'Google Sign-In Required'}
+                </Text>
+                <Text style={[styles.securityDesc, { color: colors.textMuted }]}>
+                  {googleAuthenticated
+                    ? 'Your account is verified. Your progress, leaderboard rank, and study notes will sync smoothly.'
+                    : 'To prevent spam attacks and safeguard your progress & rankings, please sign in with Google to continue.'}
+                </Text>
+              </View>
+            </View>
+
             <Touchable
-              label="Continue with Google"
+              label={googleAuthenticated ? 'Signed in with Google' : 'Continue with Google'}
               onPress={withGoogle}
-              disabled={googling || saving}
+              disabled={googling || saving || googleAuthenticated}
               state={{ busy: googling }}
               scaleTo={0.98}
               style={[
                 styles.google,
-                { borderColor: colors.border, backgroundColor: colors.cardElevated },
+                {
+                  borderColor: googleAuthenticated ? colors.green : colors.border,
+                  backgroundColor: googleAuthenticated
+                    ? withAlpha(colors.green, 0.1)
+                    : colors.cardElevated,
+                },
               ]}>
               {googling ? (
                 <ActivityIndicator size="small" color={colors.text} />
+              ) : googleAuthenticated ? (
+                <View style={styles.signedInRow}>
+                  <CheckCircle2 size={18} color={colors.green} />
+                  <Text style={[styles.googleText, { color: colors.green }]}>
+                    Signed in with Google
+                  </Text>
+                </View>
               ) : (
                 <Text style={[styles.googleText, { color: colors.text }]}>
                   Continue with Google
@@ -277,64 +332,86 @@ export function FirstRun() {
               )}
             </Touchable>
             <Text style={[styles.optional, { color: colors.textMuted }]}>
-              Optional — it carries your progress to another phone. Everything works without it.
+              {googleAuthenticated
+                ? 'One-time authentication verified. Works completely offline.'
+                : 'One-time authentication required to safeguard your profile against spam attacks.'}
             </Text>
 
-            <Text style={[styles.label, { color: colors.textMuted }]}>DISPLAY NAME</Text>
-            <TextInput
-              value={name}
-              onChangeText={setName}
-              placeholder="e.g. Phantom"
-              placeholderTextColor={colors.textMuted}
-              maxLength={40}
-              autoCorrect={false}
-              accessibilityLabel="Display name"
-              accessibilityHint={error ?? undefined}
-              style={[
-                styles.input,
-                {
-                  color: colors.text,
-                  backgroundColor: colors.cardElevated,
-                  borderColor: error ? colors.danger : colors.border,
-                },
-              ]}
-            />
+            {/* Profile Setup: Display Name & Year (Gated on Google Sign-In for native) */}
+            <View style={!googleAuthenticated && isNative ? styles.lockedSection : undefined}>
+              {!googleAuthenticated && isNative ? (
+                <View style={styles.lockNoticeRow}>
+                  <Lock size={14} color={colors.accent} />
+                  <Text style={[styles.lockNoticeText, { color: colors.accent }]}>
+                    Sign in with Google above to unlock profile setup
+                  </Text>
+                </View>
+              ) : null}
 
-            <Text style={[styles.label, { color: colors.textMuted }]}>
-              {year ? 'YEAR' : 'YEAR — PICK ONE'}
-            </Text>
-            <View style={styles.grid}>
-              {YEARS.map(option => {
-                const active = option === year;
-                const optionLabel = YEAR_LABEL[YEAR_TO_KEY[option]];
-                return (
-                  <Touchable
-                    key={option}
-                    onPress={() => setYear(option)}
-                    role="radio"
-                    label={optionLabel}
-                    state={{ checked: active }}
-                    scaleTo={0.97}
-                    style={[
-                      styles.yearCard,
-                      {
-                        backgroundColor: active
-                          ? withAlpha(colors.accent, 0.14)
-                          : colors.cardElevated,
-                        borderColor: active ? colors.accent : colors.border,
-                        borderWidth: active ? 1.5 : StyleSheet.hairlineWidth,
-                      },
-                    ]}>
-                    <Text
+              <Text style={[styles.label, { color: colors.textMuted }]}>DISPLAY NAME</Text>
+              <TextInput
+                value={name}
+                onChangeText={setName}
+                editable={googleAuthenticated || !isNative}
+                placeholder="e.g. Phantom"
+                placeholderTextColor={colors.textMuted}
+                maxLength={40}
+                autoCorrect={false}
+                accessibilityLabel="Display name"
+                accessibilityHint={error ?? undefined}
+                style={[
+                  styles.input,
+                  {
+                    color: colors.text,
+                    backgroundColor: colors.cardElevated,
+                    borderColor: error ? colors.danger : colors.border,
+                    opacity: !googleAuthenticated && isNative ? 0.6 : 1,
+                  },
+                ]}
+              />
+
+              <Text style={[styles.label, { color: colors.textMuted }]}>
+                {year ? 'YEAR' : 'YEAR — PICK ONE'}
+              </Text>
+              <View style={[styles.grid, !googleAuthenticated && isNative && { opacity: 0.6 }]}>
+                {YEARS.map(option => {
+                  const active = option === year;
+                  const optionLabel = YEAR_LABEL[YEAR_TO_KEY[option]];
+                  return (
+                    <Touchable
+                      key={option}
+                      onPress={() => {
+                        if (!googleAuthenticated && isNative) {
+                          setError('Please sign in with Google above first.');
+                          return;
+                        }
+                        setYear(option);
+                      }}
+                      role="radio"
+                      label={optionLabel}
+                      state={{ checked: active }}
+                      scaleTo={0.97}
                       style={[
-                        styles.yearName,
-                        { color: active ? colors.accent : colors.text },
+                        styles.yearCard,
+                        {
+                          backgroundColor: active
+                            ? withAlpha(colors.accent, 0.14)
+                            : colors.cardElevated,
+                          borderColor: active ? colors.accent : colors.border,
+                          borderWidth: active ? 1.5 : StyleSheet.hairlineWidth,
+                        },
                       ]}>
-                      {optionLabel}
-                    </Text>
-                  </Touchable>
-                );
-              })}
+                      <Text
+                        style={[
+                          styles.yearName,
+                          { color: active ? colors.accent : colors.text },
+                        ]}>
+                        {optionLabel}
+                      </Text>
+                    </Touchable>
+                  );
+                })}
+              </View>
             </View>
 
             {error ? (
@@ -435,6 +512,43 @@ const styles = StyleSheet.create({
   },
   googleText: {
     ...typeScale.bodyStrong,
+  },
+  securityNotice: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 10,
+    padding: 12,
+    borderRadius: 12,
+    borderWidth: StyleSheet.hairlineWidth,
+    marginBottom: 14,
+  },
+  securityTitle: {
+    fontSize: 13,
+    fontWeight: '700',
+    marginBottom: 2,
+  },
+  securityDesc: {
+    fontSize: 12,
+    lineHeight: 16,
+  },
+  signedInRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  lockedSection: {
+    position: 'relative',
+  },
+  lockNoticeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginTop: 14,
+    marginBottom: -8,
+  },
+  lockNoticeText: {
+    fontSize: 12,
+    fontWeight: '600',
   },
   optional: {
     ...typeScale.caption,

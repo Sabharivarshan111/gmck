@@ -841,11 +841,16 @@ export interface FlatSide {
  * lost is layout and colour; what is kept is every word the author wrote, and
  * every picture.
  */
-export function htmlToText(html: string): FlatSide {
+export function htmlToText(html: string, options: { question?: boolean } = {}): FlatSide {
   const images: string[] = [];
   const audio: string[] = [];
 
   let text = html;
+
+  // On question side, strip hidden elements (e.g. MCQ templates with inline display:none or hidden visibility)
+  if (options.question) {
+    text = text.replace(/<([a-z0-9]+)\b[^>]*style\s*=\s*["'][^"']*(?:display\s*:\s*none|visibility\s*:\s*hidden)[^"']*["'][^>]*>[\s\S]*?<\/\1>/gi, ' ');
+  }
 
   // `[sound:file.mp3]` is Anki's own markup rather than HTML, and it appears
   // in the field text itself.
@@ -858,11 +863,32 @@ export function htmlToText(html: string): FlatSide {
   // otherwise survive the tag strip below as a wall of CSS.
   text = text.replace(/<(style|script)\b[^>]*>[\s\S]*?<\/\1>/gi, ' ');
 
+  const addImage = (raw: string) => {
+    let name = decodeEntities(raw);
+    try {
+      name = decodeURIComponent(name);
+    } catch {
+      // keep decoded
+    }
+    if (name) {
+      images.push(name);
+    }
+  };
+
   text = text.replace(/<img\b[^>]*>/gi, tag => {
     const src = /\bsrc\s*=\s*("([^"]*)"|'([^']*)'|([^\s>]+))/i.exec(tag);
     const name = src ? (src[2] ?? src[3] ?? src[4] ?? '').trim() : '';
     if (name) {
-      images.push(decodeEntities(name));
+      addImage(name);
+    }
+    return ' ';
+  });
+
+  text = text.replace(/<image\b[^>]*>/gi, tag => {
+    const src = /\b(?:xlink:href|href)\s*=\s*("([^"]*)"|'([^']*)'|([^\s>]+))/i.exec(tag);
+    const name = src ? (src[2] ?? src[3] ?? src[4] ?? '').trim() : '';
+    if (name) {
+      addImage(name);
     }
     return ' ';
   });
@@ -978,9 +1004,11 @@ export function cardsFromCollection(
 
     const front = htmlToText(
       renderTemplate(template.qfmt, fields, { cloze, question: true, deck, tags: row.tags.trim() }),
+      { question: true },
     );
     const back = htmlToText(
       renderTemplate(template.afmt, fields, { cloze, question: false, deck, tags: row.tags.trim() }),
+      { question: false },
     );
 
     /*
@@ -1035,7 +1063,15 @@ export function mediaToExtract(
   entries: ApkgMediaEntry[],
   wanted: Set<string>,
 ): ApkgMediaEntry[] {
-  return entries.filter(entry => wanted.has(entry.name));
+  const norm = (s: string) => {
+    try {
+      return decodeURIComponent(s).toLowerCase().trim();
+    } catch {
+      return s.toLowerCase().trim();
+    }
+  };
+  const normalizedWanted = new Set([...wanted].map(norm));
+  return entries.filter(entry => wanted.has(entry.name) || normalizedWanted.has(norm(entry.name)));
 }
 
 /** A deck summary for the screen that asks which decks to take. */

@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   Modal,
+  Platform,
   ScrollView,
   StyleSheet,
   View,
@@ -22,6 +23,7 @@ import {
   Moon,
   Pencil,
   RefreshCw,
+  ShieldAlert,
   Snowflake,
   Sun,
   Trophy,
@@ -43,6 +45,7 @@ import { requestDailyAd } from '@/lib/dailyAd';
 import {
   GoogleSignInCancelled,
   getSignedInEmail,
+  hasAuthenticatedGoogleOnce,
   signInWithGoogle,
   signOutGoogle,
 } from '@/lib/googleAuth';
@@ -116,7 +119,8 @@ export default function ProgressScreen() {
   const [email, setEmail] = useState<string | null>(null);
   const [authBusy, setAuthBusy] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
-
+  const isNative = Platform.OS === 'android';
+  const [googleAuthenticated, setGoogleAuthenticated] = useState(!isNative);
 
   const subjects = useMemo(
     () =>
@@ -151,7 +155,10 @@ export default function ProgressScreen() {
 
   useEffect(() => {
     getSignedInEmail().then(setEmail);
-  }, []);
+    if (isNative) {
+      hasAuthenticatedGoogleOnce().then(setGoogleAuthenticated);
+    }
+  }, [isNative]);
 
   // Once-a-day rewarded ad for the "progress" bucket. Gated on an existing
   // profile, matching the web app — a first-run user is being onboarded and
@@ -168,6 +175,7 @@ export default function ProgressScreen() {
     try {
       const account = await signInWithGoogle();
       setEmail(account.email);
+      setGoogleAuthenticated(true);
       // Merge whatever this device recorded anonymously into the account.
       await reconcileProgress();
     } catch (err) {
@@ -455,8 +463,48 @@ export default function ProgressScreen() {
         <AttendanceTab />
       ) : (
         <>
+          {/* Anti-spam & Progress Safeguard Banner for Unauthenticated Users */}
+          {!googleAuthenticated && isNative ? (
+            <Touchable
+              onPress={signIn}
+              label="Sign in with Google to safeguard and sync progress"
+              style={[
+                styles.progressSecurityCard,
+                {
+                  backgroundColor: withAlpha(colors.accent, 0.08),
+                  borderColor: withAlpha(colors.accent, 0.3),
+                },
+              ]}>
+              <View style={styles.progressSecurityTop}>
+                <ShieldAlert size={18} color={colors.accent} />
+                <Text style={[styles.progressSecurityTitle, { color: colors.text }]}>
+                  Sign in with Google to Sync & Safeguard Progress
+                </Text>
+              </View>
+              <Text style={[styles.progressSecurityDesc, { color: colors.textMuted }]}>
+                To prevent spam attacks and safeguard your progress & rankings across devices, please sign in with Google once. (Your progress continues to work completely offline after one-time sign-in).
+              </Text>
+              <View
+                style={[
+                  styles.progressSecurityButton,
+                  { backgroundColor: colors.accent },
+                ]}>
+                <LogIn size={15} color="#FFFFFF" />
+                <Text style={styles.progressSecurityBtnText}>Continue with Google</Text>
+              </View>
+            </Touchable>
+          ) : null}
+
           {/* Year ring */}
-          <View style={[styles.ringCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+          <Touchable
+            onPress={() => {
+              if (!googleAuthenticated && isNative) {
+                void signIn();
+              }
+            }}
+            disabled={googleAuthenticated || !isNative}
+            label="Year progress metrics"
+            style={[styles.ringCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
             <Text style={[styles.ringKicker, { color: colors.textMuted }]}>YOUR YEAR</Text>
             <View style={styles.ringWrap}>
               <ProgressRing percent={yearPct}>
@@ -482,7 +530,7 @@ export default function ProgressScreen() {
                 <Text style={[styles.ringStatLabel, { color: colors.textMuted }]}>TOTAL</Text>
               </View>
             </View>
-          </View>
+          </Touchable>
 
           {/* Streak / level */}
           <View style={[styles.streakCard, { borderColor: colors.border }]}>
@@ -980,6 +1028,41 @@ const styles = StyleSheet.create({
   tabText: {
     fontSize: 15,
     fontWeight: '600',
+  },
+  progressSecurityCard: {
+    borderRadius: 16,
+    borderWidth: StyleSheet.hairlineWidth,
+    padding: 16,
+    marginBottom: 14,
+  },
+  progressSecurityTop: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 6,
+  },
+  progressSecurityTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    flex: 1,
+  },
+  progressSecurityDesc: {
+    fontSize: 12,
+    lineHeight: 18,
+    marginBottom: 12,
+  },
+  progressSecurityButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    paddingVertical: 10,
+    borderRadius: 10,
+  },
+  progressSecurityBtnText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#FFFFFF',
   },
   ringCard: {
     borderRadius: 16,

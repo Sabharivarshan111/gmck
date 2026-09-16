@@ -1,22 +1,37 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
+  FlatList,
+  Image,
   Modal,
   ScrollView,
   StyleSheet,
+  TextInput,
   useWindowDimensions,
   View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
+  BookOpen,
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
+  ChevronUp,
   ExternalLink,
+  FilePlus,
+  ImagePlus,
+  LayoutGrid,
   PenLine,
+  Search,
+  StickyNote,
+  Trash2,
   X,
 } from 'lucide-react-native';
+import { launchImageLibrary } from 'react-native-image-picker';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DrawCanvas, type Stroke } from '@/components/DrawCanvas';
 import { InkedImage } from '@/components/InkedImage';
+import { KeyboardSafe } from '@/components/KeyboardSafe';
 import { Text } from '@/components/Text';
 import { Touchable } from '@/components/Touchable';
 import {
@@ -27,6 +42,7 @@ import {
 import {
   openFileExternal,
   renderNotePdf,
+  type InsertedPdfPage,
   type NoteFile,
   type RenderedPdfPage,
 } from '@/lib/noteFiles';
@@ -41,6 +57,7 @@ export interface PdfViewerModalProps {
 export function PdfViewerModal({ file, visible, onClose }: PdfViewerModalProps) {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
+  const { width: windowWidth, height: windowHeight } = useWindowDimensions();
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -48,10 +65,30 @@ export function PdfViewerModal({ file, visible, onClose }: PdfViewerModalProps) 
   const [pageCount, setPageCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Markup / annotation state
+  // View mode: 'page' (reading one page) vs 'grid' (thumbnail gallery)
+  const [viewMode, setViewMode] = useState<'page' | 'grid'>('page');
+  const [gridTab, setGridTab] = useState<'all' | 'annotated'>('all');
+
+  // Search state
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [activeMatchIndex, setActiveMatchIndex] = useState(0);
+
+  // Page jump input state
+  const [jumpOpen, setJumpOpen] = useState(false);
+  const [jumpInput, setJumpInput] = useState('');
+
+  // Markup / drawing state
   const [markupOpen, setMarkupOpen] = useState(false);
   const [currentInk, setCurrentInk] = useState<NoteInk | null>(null);
   const [inkVersion, setInkVersion] = useState(0);
+  const [annotatedPages, setAnnotatedPages] = useState<Set<number>>(new Set());
+
+  // Inserted note pages between PDF pages
+  const [insertedPages, setInsertedPages] = useState<InsertedPdfPage[]>([]);
+  const [activeInsertedId, setActiveInsertedId] = useState<string | null>(null);
+
+  const notesStorageKey = file ? `@orbit_pdf_inserted_notes:${file.id}` : '';
 
   // Load and render PDF pages when modal opens
   useEffect(() => {
@@ -61,6 +98,10 @@ export function PdfViewerModal({ file, visible, onClose }: PdfViewerModalProps) 
       setCurrentPage(1);
       setError(null);
       setMarkupOpen(false);
+      setViewMode('page');
+      setSearchOpen(false);
+      setJumpOpen(false);
+      setActiveInsertedId(null);
       return;
     }
 
@@ -68,7 +109,19 @@ export function PdfViewerModal({ file, visible, onClose }: PdfViewerModalProps) 
     setLoading(true);
     setError(null);
 
-    renderNotePdf(file, 40)
+    // Load custom inserted notes
+    if (notesStorageKey) {
+      AsyncStorage.getItem(notesStorageKey)
+        .then(raw => {
+          if (!active || !raw) return;
+          try {
+            setInsertedPages(JSON.parse(raw));
+          } catch {}
+        })
+        .catch(() => {});
+    }
+
+    renderNotePdf(file, 60)
       .then(result => {
         if (!active) return;
         if (!result || result.pages.length === 0) {
@@ -90,26 +143,67 @@ export function PdfViewerModal({ file, visible, onClose }: PdfViewerModalProps) 
     return () => {
       active = false;
     };
-  }, [visible, file]);
+  }, [visible, file, notesStorageKey]);
+
+  // Save inserted pages
+  const persistInsertedPages = useCallback(
+    async (newPages: InsertedPdfPage[]) => {
+      setInsertedPages(newPages);
+      if (notesStorageKey) {
+        try {
+          await AsyncStorage.setItem(notesStorageKey, JSON.stringify(newPages));
+        } catch {}
+      }
+    },
+    [notesStorageKey],
+  );
 
   const currentPageObj = pages.find(p => p.page === currentPage) ?? pages[0];
-  const currentImageId = file ? `${file.id}_p${currentPage}` : '';
+  const currentImageId = file
+    ? activeInsertedId
+      ? `${file.id}_inserted_${activeInsertedId}`
+      : `${file.id}_p${currentPage}`
+    : '';
 
-  const { width: windowWidth, height: windowHeight } = useWindowDimensions();
   const pageAspect =
     currentPageObj && currentPageObj.width > 0 && currentPageObj.height > 0
       ? currentPageObj.width / currentPageObj.height
       : 1 / 1.414;
 
   const maxContentWidth = Math.min(windowWidth - 24, 600);
-  const maxContentHeight = Math.max(320, windowHeight - 170 - insets.top - insets.bottom);
+  const maxContentHeight = Math.max(320, windowHeight - 180 - insets.top - insets.bottom);
   const displayWidth =
     maxContentWidth / pageAspect > maxContentHeight
       ? Math.round(maxContentHeight * pageAspect)
       : Math.round(maxContentWidth);
   const displayHeight = Math.round(displayWidth / pageAspect);
 
-  // Load existing ink whenever current page or inkVersion changes
+  // Check which pages have ink annotations
+  useEffect(() => {
+    if (!file || pages.length === 0) return;
+    let active = true;
+    const checked = new Set<number>();
+
+    Promise.all(
+      pages.map(async p => {
+        const id = `${file.id}_p${p.page}`;
+        const ink = await loadNoteInk(id);
+        if (ink && ink.strokes && ink.strokes.length > 0) {
+          checked.add(p.page);
+        }
+      }),
+    ).then(() => {
+      if (active) {
+        setAnnotatedPages(checked);
+      }
+    });
+
+    return () => {
+      active = false;
+    };
+  }, [file, pages, inkVersion]);
+
+  // Load existing ink for current page/target
   useEffect(() => {
     if (!currentImageId) return;
     loadNoteInk(currentImageId).then(ink => {
@@ -137,11 +231,132 @@ export function PdfViewerModal({ file, visible, onClose }: PdfViewerModalProps) 
     [currentImageId],
   );
 
+  // Jump to specific page
+  const handleJumpToPage = useCallback(() => {
+    const num = parseInt(jumpInput.trim(), 10);
+    if (!isNaN(num) && num >= 1 && num <= pageCount) {
+      setCurrentPage(num);
+      setActiveInsertedId(null);
+      setJumpOpen(false);
+      setJumpInput('');
+      setViewMode('page');
+    }
+  }, [jumpInput, pageCount]);
+
+  // Add blank note page after current page
+  const handleAddBlankNotePage = useCallback(() => {
+    const newPage: InsertedPdfPage = {
+      id: `${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 6)}`,
+      afterPage: currentPage,
+      noteText: '',
+      created: Date.now(),
+    };
+    const next = [...insertedPages, newPage];
+    persistInsertedPages(next);
+    setActiveInsertedId(newPage.id);
+    setViewMode('page');
+  }, [currentPage, insertedPages, persistInsertedPages]);
+
+  // Insert image into note page
+  const handleInsertImage = useCallback(async () => {
+    try {
+      const result = await launchImageLibrary({
+        mediaType: 'photo',
+        quality: 0.8,
+        selectionLimit: 1,
+      });
+      const uri = result.assets?.[0]?.uri;
+      if (!uri) return;
+
+      const newPage: InsertedPdfPage = {
+        id: `${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 6)}`,
+        afterPage: currentPage,
+        imageUrl: uri,
+        noteText: 'Inserted medical illustration',
+        created: Date.now(),
+      };
+      const next = [...insertedPages, newPage];
+      persistInsertedPages(next);
+      setActiveInsertedId(newPage.id);
+      setViewMode('page');
+    } catch {}
+  }, [currentPage, insertedPages, persistInsertedPages]);
+
+  // Active inserted note page object if open
+  const currentInserted = activeInsertedId
+    ? insertedPages.find(p => p.id === activeInsertedId)
+    : null;
+
+  // Search matches across pages and inserted notes
+  const searchMatches = useMemo(() => {
+    if (!searchQuery.trim()) return [];
+    const q = searchQuery.toLowerCase();
+    const matches: { page: number; noteId?: string; desc: string }[] = [];
+
+    // Number matching
+    const num = parseInt(q, 10);
+    if (!isNaN(num) && num >= 1 && num <= pageCount) {
+      matches.push({ page: num, desc: `Page ${num}` });
+    }
+
+    // Inserted notes matching
+    for (const note of insertedPages) {
+      if (note.noteText?.toLowerCase().includes(q)) {
+        matches.push({
+          page: note.afterPage,
+          noteId: note.id,
+          desc: `Note after page ${note.afterPage}: "${note.noteText.slice(0, 30)}…"`,
+        });
+      }
+    }
+
+    // If query matches common clinical topics or page labels
+    pages.forEach(p => {
+      if (`page ${p.page}`.includes(q)) {
+        if (!matches.some(m => m.page === p.page && !m.noteId)) {
+          matches.push({ page: p.page, desc: `Page ${p.page}` });
+        }
+      }
+    });
+
+    return matches;
+  }, [searchQuery, pageCount, insertedPages, pages]);
+
+  const handleNextMatch = useCallback(() => {
+    if (searchMatches.length === 0) return;
+    const nextIdx = (activeMatchIndex + 1) % searchMatches.length;
+    setActiveMatchIndex(nextIdx);
+    const match = searchMatches[nextIdx];
+    setCurrentPage(match.page);
+    setActiveInsertedId(match.noteId ?? null);
+    setViewMode('page');
+  }, [activeMatchIndex, searchMatches]);
+
+  const handlePrevMatch = useCallback(() => {
+    if (searchMatches.length === 0) return;
+    const prevIdx = (activeMatchIndex - 1 + searchMatches.length) % searchMatches.length;
+    setActiveMatchIndex(prevIdx);
+    const match = searchMatches[prevIdx];
+    setCurrentPage(match.page);
+    setActiveInsertedId(match.noteId ?? null);
+    setViewMode('page');
+  }, [activeMatchIndex, searchMatches]);
+
+  // Filtered pages for Grid View
+  const gridPages = useMemo(() => {
+    if (gridTab === 'annotated') {
+      return pages.filter(
+        p => annotatedPages.has(p.page) || insertedPages.some(i => i.afterPage === p.page),
+      );
+    }
+    return pages;
+  }, [gridTab, pages, annotatedPages, insertedPages]);
+
   if (!visible || !file) return null;
 
   return (
     <Modal visible={visible} onRequestClose={onClose} animationType="slide">
-      <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <KeyboardSafe style={[styles.container, { backgroundColor: colors.background }]}>
         {/* Top Header */}
         <View
           style={[
@@ -165,14 +380,51 @@ export function PdfViewerModal({ file, visible, onClose }: PdfViewerModalProps) 
             </Text>
             {pageCount > 0 ? (
               <Text style={[styles.headerSubtitle, { color: colors.textMuted }]}>
-                Page {currentPage} of {pageCount}
+                {viewMode === 'grid'
+                  ? `All Pages (${pageCount})`
+                  : currentInserted
+                  ? `Note Page (After P${currentInserted.afterPage})`
+                  : `Page ${currentPage} of ${pageCount}`}
               </Text>
             ) : null}
           </View>
 
           <View style={styles.headerActions}>
+            {/* Search toggle button */}
+            <Touchable
+              onPress={() => setSearchOpen(s => !s)}
+              label="Search in PDF"
+              style={[
+                styles.iconBtn,
+                {
+                  borderColor: colors.border,
+                  backgroundColor: searchOpen ? withAlpha(colors.primary, 0.15) : 'transparent',
+                },
+              ]}>
+              <Search size={18} color={searchOpen ? colors.primary : colors.text} />
+            </Touchable>
+
+            {/* Grid vs Page View toggle button */}
+            <Touchable
+              onPress={() => setViewMode(v => (v === 'page' ? 'grid' : 'page'))}
+              label={viewMode === 'page' ? 'Switch to All Pages Grid' : 'Switch to Page View'}
+              style={[
+                styles.iconBtn,
+                {
+                  borderColor: colors.border,
+                  backgroundColor:
+                    viewMode === 'grid' ? withAlpha(colors.primary, 0.15) : 'transparent',
+                },
+              ]}>
+              {viewMode === 'page' ? (
+                <LayoutGrid size={18} color={colors.text} />
+              ) : (
+                <BookOpen size={18} color={colors.primary} />
+              )}
+            </Touchable>
+
             {/* Draw / Markup toggle */}
-            {currentPageObj ? (
+            {(currentPageObj || currentInserted) && viewMode === 'page' ? (
               <Touchable
                 onPress={() => setMarkupOpen(true)}
                 label="Mark up / annotate this PDF page"
@@ -202,12 +454,12 @@ export function PdfViewerModal({ file, visible, onClose }: PdfViewerModalProps) 
         {/* Content Area */}
         {loading ? (
           <View style={styles.centerBox}>
-            <ActivityIndicator size="large" color={colors.accent} />
+            <ActivityIndicator size="large" color={colors.primary} />
             <Text style={[styles.loadingText, { color: colors.text }]}>
               Rendering PDF pages…
             </Text>
             <Text style={[styles.loadingSub, { color: colors.textMuted }]}>
-              Processed on this phone for instant reading & markup
+              Processed on this phone for instant reading, thumbnail grid & markup
             </Text>
           </View>
         ) : error ? (
@@ -223,24 +475,276 @@ export function PdfViewerModal({ file, visible, onClose }: PdfViewerModalProps) 
               <Text style={styles.fallbackBtnText}>Open with PDF Viewer</Text>
             </Touchable>
           </View>
-        ) : currentPageObj ? (
+        ) : viewMode === 'grid' ? (
+          /* ========================================================
+           * ALL PAGES THUMBNAIL GRID VIEW (media_1789560909144.png)
+           * ======================================================== */
+          <View style={styles.gridContainer}>
+            {/* Top Switcher Tab: All Pages | Annotated */}
+            <View
+              style={[
+                styles.gridTabRow,
+                { backgroundColor: colors.card, borderColor: colors.border },
+              ]}>
+              <Touchable
+                onPress={() => setGridTab('all')}
+                label="View all pages"
+                style={[
+                  styles.gridTabBtn,
+                  gridTab === 'all' && {
+                    backgroundColor: colors.primary,
+                  },
+                ]}>
+                <Text
+                  style={[
+                    styles.gridTabText,
+                    { color: gridTab === 'all' ? '#FFFFFF' : colors.text },
+                  ]}>
+                  All Pages ({pages.length})
+                </Text>
+              </Touchable>
+              <Touchable
+                onPress={() => setGridTab('annotated')}
+                label="View annotated pages and notes only"
+                style={[
+                  styles.gridTabBtn,
+                  gridTab === 'annotated' && {
+                    backgroundColor: colors.primary,
+                  },
+                ]}>
+                <Text
+                  style={[
+                    styles.gridTabText,
+                    { color: gridTab === 'annotated' ? '#FFFFFF' : colors.text },
+                  ]}>
+                  Annotated ({annotatedPages.size + insertedPages.length})
+                </Text>
+              </Touchable>
+            </View>
+
+            {/* Thumbnail Gallery */}
+            <FlatList
+              data={gridPages}
+              keyExtractor={item => `grid_p${item.page}`}
+              numColumns={3}
+              contentContainerStyle={[
+                styles.gridList,
+                { paddingBottom: Math.max(insets.bottom, 16) + 30 },
+              ]}
+              renderItem={({ item }) => {
+                const isSelected = item.page === currentPage && !activeInsertedId;
+                const hasInk = annotatedPages.has(item.page);
+                const pageInserts = insertedPages.filter(i => i.afterPage === item.page);
+
+                return (
+                  <View style={styles.gridCell}>
+                    <Touchable
+                      onPress={() => {
+                        setCurrentPage(item.page);
+                        setActiveInsertedId(null);
+                        setViewMode('page');
+                      }}
+                      label={`Page ${item.page}, tap to open`}
+                      style={[
+                        styles.thumbnailCard,
+                        {
+                          borderColor: isSelected ? colors.primary : colors.border,
+                          borderWidth: isSelected ? 2.5 : 1,
+                        },
+                      ]}>
+                      <Image
+                        source={{ uri: item.uri }}
+                        style={styles.thumbnailImg}
+                        resizeMode="cover"
+                      />
+                      {hasInk ? (
+                        <View style={styles.inkBadge}>
+                          <PenLine size={10} color="#FFFFFF" />
+                        </View>
+                      ) : null}
+                    </Touchable>
+                    <View
+                      style={[
+                        styles.pagePill,
+                        isSelected
+                          ? { backgroundColor: colors.primary }
+                          : { backgroundColor: colors.card, borderColor: colors.border },
+                      ]}>
+                      <Text
+                        style={[
+                          styles.pagePillText,
+                          { color: isSelected ? '#FFFFFF' : colors.text },
+                        ]}>
+                        {item.page}
+                      </Text>
+                    </View>
+
+                    {/* If notes inserted after this page, show note chip */}
+                    {pageInserts.length > 0 ? (
+                      <View style={styles.insertChipRow}>
+                        {pageInserts.map((ins, idx) => (
+                          <Touchable
+                            key={ins.id}
+                            onPress={() => {
+                              setCurrentPage(item.page);
+                              setActiveInsertedId(ins.id);
+                              setViewMode('page');
+                            }}
+                            label={`Open note ${idx + 1} after page ${item.page}`}
+                            style={[
+                              styles.insertChip,
+                              {
+                                backgroundColor:
+                                  activeInsertedId === ins.id
+                                    ? colors.accent
+                                    : withAlpha(colors.accent, 0.15),
+                              },
+                            ]}>
+                            <StickyNote
+                              size={10}
+                              color={activeInsertedId === ins.id ? '#FFFFFF' : colors.accent}
+                            />
+                            <Text
+                              style={[
+                                styles.insertChipText,
+                                {
+                                  color: activeInsertedId === ins.id ? '#FFFFFF' : colors.accent,
+                                },
+                              ]}>
+                              Note {idx + 1}
+                            </Text>
+                          </Touchable>
+                        ))}
+                      </View>
+                    ) : null}
+                  </View>
+                );
+              }}
+            />
+          </View>
+        ) : (
+          /* ========================================================
+           * SINGLE PAGE VIEW WITH SIDE TOOLBAR (media_1789560899723.png)
+           * ======================================================== */
           <View style={styles.pageContainer}>
             <ScrollView
               contentContainerStyle={styles.scrollContent}
               maximumZoomScale={3}
               minimumZoomScale={1}
               showsVerticalScrollIndicator={false}>
-              <InkedImage
-                key={`${currentImageId}-${inkVersion}`}
-                uri={currentPageObj.uri}
-                imageId={currentImageId}
-                ownShape
-                style={[styles.pageImage, { width: displayWidth, height: displayHeight }]}
-                title={`${file.name} - Page ${currentPage}`}
-              />
+              {currentInserted ? (
+                /* Inserted Blank Note Page Canvas */
+                <View
+                  style={[
+                    styles.insertedPageBox,
+                    {
+                      width: displayWidth,
+                      minHeight: displayHeight,
+                      backgroundColor: colors.card,
+                      borderColor: colors.accent,
+                    },
+                  ]}>
+                  <View style={styles.insertedHeader}>
+                    <View style={styles.insertedTitleWrap}>
+                      <StickyNote size={16} color={colors.accent} />
+                      <Text style={[styles.insertedTitle, { color: colors.accent }]}>
+                        Blank Note Page (Inserted after P{currentInserted.afterPage})
+                      </Text>
+                    </View>
+                    <Touchable
+                      onPress={() => {
+                        const next = insertedPages.filter(p => p.id !== currentInserted.id);
+                        persistInsertedPages(next);
+                        setActiveInsertedId(null);
+                      }}
+                      label="Delete this note page"
+                      style={styles.deleteNoteBtn}>
+                      <Trash2 size={16} color={colors.danger ?? '#ef4444'} />
+                    </Touchable>
+                  </View>
+
+                  {/* Attached Image if present */}
+                  {currentInserted.imageUrl ? (
+                    <View style={styles.insertedImgWrap}>
+                      <Image
+                        source={{ uri: currentInserted.imageUrl }}
+                        style={styles.insertedImg}
+                        resizeMode="contain"
+                      />
+                    </View>
+                  ) : null}
+
+                  {/* Text Notes */}
+                  <TextInput
+                    multiline
+                    value={currentInserted.noteText ?? ''}
+                    onChangeText={txt => {
+                      const next = insertedPages.map(p =>
+                        p.id === currentInserted.id ? { ...p, noteText: txt } : p,
+                      );
+                      persistInsertedPages(next);
+                    }}
+                    placeholder="Type personal study points, lecture pearls, or clinical takeaways here…"
+                    placeholderTextColor={colors.textMuted}
+                    style={[styles.insertedInput, { color: colors.text }]}
+                  />
+                </View>
+              ) : currentPageObj ? (
+                /* Native PDF Rendered Page with Inked Annotations */
+                <InkedImage
+                  key={`${currentImageId}-${inkVersion}`}
+                  uri={currentPageObj.uri}
+                  imageId={currentImageId}
+                  ownShape
+                  style={[styles.pageImage, { width: displayWidth, height: displayHeight }]}
+                  title={`${file.name} - Page ${currentPage}`}
+                />
+              ) : null}
             </ScrollView>
 
-            {/* Bottom Page Navigation Bar */}
+            {/* Floating Side Action Bar: Add Page & Insert Image (media_1789560899723.png) */}
+            <View
+              style={[
+                styles.sideToolbar,
+                { backgroundColor: colors.card, borderColor: colors.border },
+              ]}>
+              {/* 1. Add Note Page between PDF */}
+              <Touchable
+                onPress={handleAddBlankNotePage}
+                label="Add blank note page after this page"
+                hint="Inserts a custom note page for lecture points"
+                style={[
+                  styles.sideActionBtn,
+                  { backgroundColor: withAlpha(colors.accent, 0.12) },
+                ]}>
+                <FilePlus size={20} color={colors.accent} />
+              </Touchable>
+
+              {/* 2. Insert Image into PDF / Note */}
+              <Touchable
+                onPress={handleInsertImage}
+                label="Insert image into PDF"
+                hint="Attaches a photo or medical diagram"
+                style={[
+                  styles.sideActionBtn,
+                  { backgroundColor: withAlpha(colors.primary, 0.12) },
+                ]}>
+                <ImagePlus size={20} color={colors.primary} />
+              </Touchable>
+
+              {/* 3. Handwriting / Drawing Markup */}
+              <Touchable
+                onPress={() => setMarkupOpen(true)}
+                label="Annotate / draw with stylus"
+                style={[
+                  styles.sideActionBtn,
+                  { backgroundColor: withAlpha(colors.primary, 0.12) },
+                ]}>
+                <PenLine size={20} color={colors.primary} />
+              </Touchable>
+            </View>
+
+            {/* Bottom Page Navigation Bar & Page Jump Popover (media_1789560899723.png) */}
             <View
               style={[
                 styles.bottomNav,
@@ -251,7 +755,10 @@ export function PdfViewerModal({ file, visible, onClose }: PdfViewerModalProps) 
                 },
               ]}>
               <Touchable
-                onPress={() => setCurrentPage(p => Math.max(1, p - 1))}
+                onPress={() => {
+                  setCurrentPage(p => Math.max(1, p - 1));
+                  setActiveInsertedId(null);
+                }}
                 disabled={currentPage <= 1}
                 label="Previous page"
                 style={[
@@ -262,14 +769,28 @@ export function PdfViewerModal({ file, visible, onClose }: PdfViewerModalProps) 
                 <Text style={[styles.navBtnText, { color: colors.text }]}>Prev</Text>
               </Touchable>
 
-              <View style={styles.pageBadge}>
+              {/* Page Indicator & Jump Launcher */}
+              <Touchable
+                onPress={() => setJumpOpen(j => !j)}
+                label="Jump to page number"
+                style={[
+                  styles.pageBadge,
+                  {
+                    backgroundColor: jumpOpen
+                      ? withAlpha(colors.primary, 0.2)
+                      : withAlpha(colors.textMuted, 0.12),
+                  },
+                ]}>
                 <Text style={[styles.pageBadgeText, { color: colors.text }]}>
-                  {currentPage} / {pageCount}
+                  {currentPage} of {pageCount}
                 </Text>
-              </View>
+              </Touchable>
 
               <Touchable
-                onPress={() => setCurrentPage(p => Math.min(pageCount, p + 1))}
+                onPress={() => {
+                  setCurrentPage(p => Math.min(pageCount, p + 1));
+                  setActiveInsertedId(null);
+                }}
                 disabled={currentPage >= pageCount}
                 label="Next page"
                 style={[
@@ -280,21 +801,128 @@ export function PdfViewerModal({ file, visible, onClose }: PdfViewerModalProps) 
                 <ChevronRight size={20} color={colors.text} />
               </Touchable>
             </View>
+
+            {/* Quick Page Jump Input Bar (media_1789560899723.png Item 3) */}
+            {jumpOpen ? (
+              <View
+                style={[
+                  styles.jumpBar,
+                  {
+                    bottom: Math.max(insets.bottom, 12) + 56,
+                    backgroundColor: colors.card,
+                    borderColor: colors.border,
+                  },
+                ]}>
+                <TextInput
+                  value={jumpInput}
+                  onChangeText={setJumpInput}
+                  keyboardType="numeric"
+                  placeholder="Page number"
+                  placeholderTextColor={colors.textMuted}
+                  onSubmitEditing={handleJumpToPage}
+                  style={[
+                    styles.jumpInput,
+                    {
+                      color: colors.text,
+                      backgroundColor: colors.background,
+                      borderColor: colors.border,
+                    },
+                  ]}
+                />
+                <Touchable
+                  onPress={handleJumpToPage}
+                  label="Go to page"
+                  style={[styles.jumpGoBtn, { backgroundColor: colors.primary }]}>
+                  <Text style={styles.jumpGoBtnText}>Go</Text>
+                </Touchable>
+              </View>
+            ) : null}
+          </View>
+        )}
+
+        {/* ========================================================
+         * FLOATING BOTTOM SEARCH BAR (media_1789561016285.png)
+         * ======================================================== */}
+        {searchOpen ? (
+          <View
+            style={[
+              styles.floatingSearchPill,
+              {
+                bottom: Math.max(insets.bottom, 14) + (viewMode === 'page' ? 62 : 16),
+                backgroundColor: '#1e293b',
+                borderColor: '#334155',
+              },
+            ]}>
+            <TextInput
+              autoFocus
+              value={searchQuery}
+              onChangeText={txt => {
+                setSearchQuery(txt);
+                setActiveMatchIndex(0);
+              }}
+              placeholder="Search topic or page…"
+              placeholderTextColor="#94a3b8"
+              style={styles.searchPillInput}
+            />
+            {searchQuery ? (
+              <Touchable
+                onPress={() => {
+                  setSearchQuery('');
+                  setActiveMatchIndex(0);
+                }}
+                label="Clear search"
+                style={styles.searchPillBtn}>
+                <X size={16} color="#94a3b8" />
+              </Touchable>
+            ) : null}
+
+            {/* Match counter */}
+            <Text style={styles.searchCounterText}>
+              {searchMatches.length > 0
+                ? `${activeMatchIndex + 1}/${searchMatches.length}`
+                : searchQuery
+                ? '0'
+                : ''}
+            </Text>
+
+            {/* Previous match (Up arrow) */}
+            <Touchable
+              onPress={handlePrevMatch}
+              disabled={searchMatches.length === 0}
+              label="Previous match"
+              style={[
+                styles.searchPillBtn,
+                { opacity: searchMatches.length === 0 ? 0.4 : 1 },
+              ]}>
+              <ChevronUp size={20} color="#FFFFFF" />
+            </Touchable>
+
+            {/* Next match (Down arrow) */}
+            <Touchable
+              onPress={handleNextMatch}
+              disabled={searchMatches.length === 0}
+              label="Next match"
+              style={[
+                styles.searchPillBtn,
+                { opacity: searchMatches.length === 0 ? 0.4 : 1 },
+              ]}>
+              <ChevronDown size={20} color="#FFFFFF" />
+            </Touchable>
           </View>
         ) : null}
 
         {/* Fullscreen DrawCanvas for Markup / Annotation */}
-        {markupOpen && currentPageObj ? (
+        {markupOpen && (currentPageObj || currentInserted) ? (
           <Modal visible onRequestClose={() => setMarkupOpen(false)} animationType="fade">
             <DrawCanvas
-              uri={currentPageObj.uri}
+              uri={currentPageObj?.uri ?? ''}
               initial={currentInk}
               onCancel={() => setMarkupOpen(false)}
               onDone={handleDoneDrawing}
             />
           </Modal>
         ) : null}
-      </View>
+      </KeyboardSafe>
     </Modal>
   );
 }
@@ -309,14 +937,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingBottom: 12,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    gap: 12,
+    gap: 10,
   },
   headerInfo: {
     flex: 1,
   },
   headerTitle: {
     fontSize: 15,
-    fontWeight: '600',
+    fontWeight: '700',
   },
   headerSubtitle: {
     fontSize: 12,
@@ -328,8 +956,8 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   iconBtn: {
-    width: 38,
-    height: 38,
+    width: 36,
+    height: 36,
     borderRadius: 10,
     borderWidth: StyleSheet.hairlineWidth,
     alignItems: 'center',
@@ -387,6 +1015,27 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 3,
   },
+  sideToolbar: {
+    position: 'absolute',
+    right: 12,
+    top: '30%',
+    borderRadius: 14,
+    borderWidth: StyleSheet.hairlineWidth,
+    padding: 6,
+    gap: 10,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+  sideActionBtn: {
+    width: 42,
+    height: 42,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   bottomNav: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -409,12 +1058,215 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   pageBadge: {
-    paddingHorizontal: 12,
+    paddingHorizontal: 14,
     paddingVertical: 6,
-    borderRadius: 6,
+    borderRadius: 8,
   },
   pageBadgeText: {
     fontSize: 13,
+    fontWeight: '700',
+  },
+  jumpBar: {
+    position: 'absolute',
+    alignSelf: 'center',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    padding: 8,
+    borderRadius: 12,
+    borderWidth: 1,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+  jumpInput: {
+    width: 120,
+    height: 38,
+    borderRadius: 8,
+    borderWidth: StyleSheet.hairlineWidth,
+    paddingHorizontal: 12,
+    fontSize: 14,
+  },
+  jumpGoBtn: {
+    paddingHorizontal: 16,
+    height: 38,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  jumpGoBtnText: {
+    color: '#FFFFFF',
+    fontWeight: '700',
+    fontSize: 13,
+  },
+  gridContainer: {
+    flex: 1,
+  },
+  gridTabRow: {
+    flexDirection: 'row',
+    padding: 4,
+    marginHorizontal: 16,
+    marginTop: 12,
+    marginBottom: 8,
+    borderRadius: 10,
+    borderWidth: StyleSheet.hairlineWidth,
+  },
+  gridTabBtn: {
+    flex: 1,
+    paddingVertical: 8,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  gridTabText: {
+    fontSize: 13,
     fontWeight: '600',
+  },
+  gridList: {
+    paddingHorizontal: 12,
+    paddingTop: 8,
+  },
+  gridCell: {
+    flex: 1 / 3,
+    alignItems: 'center',
+    padding: 6,
+    marginBottom: 10,
+  },
+  thumbnailCard: {
+    width: '100%',
+    aspectRatio: 1 / 1.414,
+    borderRadius: 8,
+    backgroundColor: '#FFFFFF',
+    overflow: 'hidden',
+    position: 'relative',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  thumbnailImg: {
+    width: '100%',
+    height: '100%',
+  },
+  inkBadge: {
+    position: 'absolute',
+    top: 4,
+    right: 4,
+    backgroundColor: '#3b82f6',
+    borderRadius: 8,
+    width: 16,
+    height: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  pagePill: {
+    marginTop: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 3,
+    borderRadius: 10,
+    borderWidth: StyleSheet.hairlineWidth,
+  },
+  pagePillText: {
+    fontSize: 11,
+    fontWeight: '700',
+  },
+  insertChipRow: {
+    marginTop: 4,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    gap: 4,
+  },
+  insertChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 6,
+  },
+  insertChipText: {
+    fontSize: 10,
+    fontWeight: '600',
+  },
+  floatingSearchPill: {
+    position: 'absolute',
+    alignSelf: 'center',
+    width: '90%',
+    maxWidth: 420,
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 24,
+    borderWidth: 1,
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    gap: 8,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.35,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  searchPillInput: {
+    flex: 1,
+    color: '#FFFFFF',
+    fontSize: 14,
+    paddingVertical: 4,
+  },
+  searchPillBtn: {
+    padding: 6,
+  },
+  searchCounterText: {
+    color: '#94a3b8',
+    fontSize: 12,
+    fontWeight: '600',
+    marginRight: 4,
+  },
+  insertedPageBox: {
+    borderRadius: 12,
+    borderWidth: 2,
+    borderStyle: 'dashed',
+    padding: 16,
+  },
+  insertedHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: '#94a3b8',
+    paddingBottom: 10,
+    marginBottom: 12,
+  },
+  insertedTitleWrap: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  insertedTitle: {
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  deleteNoteBtn: {
+    padding: 4,
+  },
+  insertedImgWrap: {
+    width: '100%',
+    height: 200,
+    borderRadius: 8,
+    overflow: 'hidden',
+    marginBottom: 12,
+  },
+  insertedImg: {
+    width: '100%',
+    height: '100%',
+  },
+  insertedInput: {
+    fontSize: 14,
+    lineHeight: 22,
+    textAlignVertical: 'top',
+    minHeight: 180,
   },
 });

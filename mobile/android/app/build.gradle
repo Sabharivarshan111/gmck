@@ -108,10 +108,10 @@ android {
         applicationId "com.aistudio.mbbsqbank.aycxvd"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        // Version 21 bump: Interactive rotation calendar, prepaid and rain/event holidays,
-        // enhanced theory attendance, ad engine playback fix, and Anki 50k chunked storage.
-        versionCode 21
-        versionName "0.0.0.21"
+        // Version 22 release: Clinical Proformas suite, Hernia/Thyroid/Breast long cases,
+        // local AsyncStorage clerking drafts, AI Case Auto-Fill, and Bedside Viva Q&A.
+        versionCode 22
+        versionName "0.0.0.22"
 
         // Deep-link / OAuth callback scheme, consumed by the intent-filter in
         // AndroidManifest.xml. Added with an indexed put rather than assigning

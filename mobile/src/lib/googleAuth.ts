@@ -1,9 +1,14 @@
+import { Platform } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   GoogleSignin,
   statusCodes,
   isErrorWithCode,
 } from '@react-native-google-signin/google-signin';
 import { supabase } from './supabase';
+
+export const GOOGLE_AUTH_FLAG_KEY = '@orbit:google_authenticated_v1';
+export const GOOGLE_AUTH_EMAIL_KEY = '@orbit:google_authenticated_email';
 
 /**
  * Google sign-in, exchanged for a Supabase session.
@@ -74,10 +79,18 @@ export async function signInWithGoogle(): Promise<GoogleAccount> {
       throw new Error(error.message);
     }
 
-    return {
-      email: response.data?.user?.email ?? null,
-      name: response.data?.user?.name ?? null,
-    };
+    const email = response.data?.user?.email ?? null;
+    const name = response.data?.user?.name ?? null;
+
+    // Persist authenticated flag in local phone storage so offline works forever after 1-time auth
+    try {
+      await AsyncStorage.setItem(GOOGLE_AUTH_FLAG_KEY, 'true');
+      if (email) {
+        await AsyncStorage.setItem(GOOGLE_AUTH_EMAIL_KEY, email);
+      }
+    } catch {}
+
+    return { email, name };
   } catch (error) {
     if (error instanceof GoogleSignInCancelled) {
       throw error;
@@ -105,6 +118,37 @@ export async function signOutGoogle(): Promise<void> {
 export async function getSignedInEmail(): Promise<string | null> {
   const { data } = await supabase.auth.getSession();
   const user = data.session?.user;
-  // Anonymous sessions have no email; they are not "signed in" for our purpose.
-  return user?.email ?? null;
+  // Anonymous sessions have no email; check local storage fallback for offline support
+  if (user?.email) {
+    return user.email;
+  }
+  try {
+    return await AsyncStorage.getItem(GOOGLE_AUTH_EMAIL_KEY);
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Returns true if the user has authenticated with Google at least once.
+ * On non-Android platforms (e.g. Vercel web, browser preview), returns true
+ * so web readers are not blocked by native Google sign-in.
+ * On native Android, reads local AsyncStorage so all features work 100% offline.
+ */
+export async function hasAuthenticatedGoogleOnce(): Promise<boolean> {
+  if (Platform.OS !== 'android') {
+    return true;
+  }
+  try {
+    const flag = await AsyncStorage.getItem(GOOGLE_AUTH_FLAG_KEY);
+    if (flag === 'true') {
+      return true;
+    }
+    const email = await getSignedInEmail();
+    if (email) {
+      await AsyncStorage.setItem(GOOGLE_AUTH_FLAG_KEY, 'true');
+      return true;
+    }
+  } catch {}
+  return false;
 }
