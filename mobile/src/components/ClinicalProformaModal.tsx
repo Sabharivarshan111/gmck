@@ -32,7 +32,6 @@ import {
   Sparkles,
   Stethoscope,
   Trash2,
-  User,
   X,
 } from 'lucide-react-native';
 import { Text } from '@/components/Text';
@@ -42,7 +41,6 @@ import { useTheme, withAlpha } from '@/theme';
 import {
   CLINICAL_PROFORMAS,
   type ClinicalProforma,
-  type VivaQuestion,
 } from '@/lib/clinicalProformas';
 import {
   autoFillClinicalCase,
@@ -147,7 +145,7 @@ export function ClinicalProformaModal({
     return () => {
       cancelled = true;
     };
-  }, [activeProforma?.id]);
+  }, [activeProforma]);
 
   // Update a single draft field and persist to AsyncStorage
   const updateDraft = useCallback(

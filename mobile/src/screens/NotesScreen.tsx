@@ -15,7 +15,6 @@ import {
   ClipboardList,
   GraduationCap,
   Layers,
-  Lock,
   RotateCw,
   Sparkles,
   Wand2,

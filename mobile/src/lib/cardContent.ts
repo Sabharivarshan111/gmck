@@ -89,8 +89,6 @@ export function parseCardContent(params: {
 
   // Also check if options are formatted in backLines if none found in frontLines
   if (parsedOptions.length < 2) {
-    let bFirst = -1;
-    let bLast = -1;
     const bOptions: McqOption[] = [];
     for (let i = 0; i < backLines.length; i++) {
       const line = backLines[i];
@@ -99,8 +97,6 @@ export function parseCardContent(params: {
         const letter = (match[1] || match[2] || match[3] || '').toUpperCase();
         const text = (match[4] || '').trim();
         if (letter && text) {
-          if (bFirst === -1) bFirst = i;
-          bLast = i;
           bOptions.push({ key: letter, text });
         }
       }
