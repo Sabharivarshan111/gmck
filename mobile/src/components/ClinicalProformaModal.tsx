@@ -2074,7 +2074,7 @@ const styles = StyleSheet.create({
   },
   normalValueLabel: {
     fontSize: 12.5,
-    fontWeight: '650',
+    fontWeight: '600',
   },
   normalValueSection: {
     fontSize: 10.5,
