@@ -1,39 +1,31 @@
 /**
  * Canonical Clinical Case Proformas for MBBS Practicals & Ward Clerking.
  * Synthesized from MMC, Stanley, AIIMS, Tito Sir, Das, Bailey & Love, and Indian Medical Universities.
+ *
+ * The twelve below are SYSTEM master sheets — one per examination system. The
+ * individual named cases (Lipoma, Fibroid uterus, CSOM, Previous LSCS …) live
+ * in per-subject files under `clinical/` and are appended at the bottom of this
+ * file, because a single module holding forty full proformas is a file nobody
+ * can navigate.
+ *
+ * The types now live in `clinical/types.ts` and are re-exported here, so every
+ * existing `import { ClinicalProforma } from '@/lib/clinicalProformas'` still
+ * resolves.
  */
 
-export interface ProformaSection {
-  title: string;
-  items: {
-    label: string;
-    description: string;
-    normal?: string;
-    clinicalSign?: string;
-    checklist?: string[];
-  }[];
-}
+import type {
+  CaseType,
+  ClinicalProforma,
+  ProformaSection,
+  ProformaSystem,
+  VivaQuestion,
+} from '@/lib/clinical/types';
 
-export interface VivaQuestion {
-  question: string;
-  answer: string;
-  examinerTip?: string;
-}
+export type { CaseType, ClinicalProforma, ProformaSection, ProformaSystem, VivaQuestion };
 
-export interface ClinicalProforma {
-  id: string;
-  title: string;
-  system: 'General Medicine' | 'General Surgery' | 'Pediatrics' | 'Orthopaedics' | 'Obstetrics & Gynaecology';
-  department: string;
-  summary: string;
-  examPearl: string;
-  diagramPath?: string;
-  diagramTitle?: string;
-  sections: ProformaSection[];
-  vivaQuestions: VivaQuestion[];
-}
+import { SURGERY_SHORT_CASES } from '@/lib/clinical/surgeryShortCases';
 
-export const CLINICAL_PROFORMAS: ClinicalProforma[] = [
+const SYSTEM_PROFORMAS: ClinicalProforma[] = [
   // 1. MEDICINE - CARDIOVASCULAR SYSTEM (CVS)
   {
     id: 'cvs_proforma',
@@ -3265,3 +3257,16 @@ export function resolveProformaDiagramUrl(path: string | undefined): string | un
   const cleanPath = path.replace(/^\/?diagrams\//, '').replace(/^\//, '');
   return `${SUPABASE_DIAGRAMS_BASE}/${cleanPath}`;
 }
+
+/**
+ * Everything the app shows, in the order a student browses it: the system
+ * master sheets first, then the individual named cases by subject.
+ *
+ * Assembled here rather than in one literal because forty full proformas in a
+ * single module is a file nobody can navigate, and because a per-subject file
+ * can be traced back to the case sheet it came from.
+ */
+export const CLINICAL_PROFORMAS: ClinicalProforma[] = [
+  ...SYSTEM_PROFORMAS,
+  ...SURGERY_SHORT_CASES,
+];

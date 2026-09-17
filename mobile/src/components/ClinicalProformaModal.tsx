@@ -63,7 +63,40 @@ const SYSTEMS = [
   'Pediatrics',
   'Orthopaedics',
   'Obstetrics & Gynaecology',
+  'ENT',
+  'Ophthalmology',
 ] as const;
+
+/**
+ * One hue per system, as a table rather than as a ternary ladder.
+ *
+ * It was a six-deep nested conditional written out twice — once for the tile
+ * and once for the icon — which is why adding ENT and Ophthalmology meant
+ * editing it in two places and getting a tenth branch. A record is one place.
+ *
+ * The hues are fixed rather than theme-derived on purpose: they are a
+ * CATEGORY encoding, and a reader who learns that surgery is amber should
+ * still find surgery amber after they change the theme. The subject cards on
+ * Home follow the opposite rule, and that is deliberate — those are six tiles
+ * filling a screen, where a clash with the theme reads as two apps stacked.
+ * Eight small icons do not.
+ */
+const SYSTEM_HUE: Record<string, string> = {
+  'General Medicine': '#38bdf8',
+  'General Surgery': '#f59e0b',
+  Pediatrics: '#8b5cf6',
+  Orthopaedics: '#10b981',
+  'Obstetrics & Gynaecology': '#ec4899',
+  ENT: '#f43f5e',
+  Ophthalmology: '#22d3ee',
+};
+
+/** Short label for the filter pill — the full names do not fit a chip row. */
+const SYSTEM_SHORT: Record<string, string> = {
+  'Obstetrics & Gynaecology': 'OBGYN',
+  'General Medicine': 'Medicine',
+  'General Surgery': 'Surgery',
+};
 
 type DetailTab = 'guide' | 'clerk' | 'viva';
 
@@ -1132,7 +1165,7 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                         styles.filterPillText,
                         { color: active ? colors.primaryText : colors.text },
                       ]}>
-                      {sys === 'Obstetrics & Gynaecology' ? 'OBGYN' : sys} ({count})
+                      {SYSTEM_SHORT[sys] ?? sys}{sys === 'All' ? '' : ` ${count}`}
                     </Text>
                   </Touchable>
                 );
@@ -1142,6 +1175,7 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
             {/* Proforma Cards */}
             {filteredProformas.map(proforma => {
               const vivaCount = proforma.vivaQuestions.length;
+              const hue = SYSTEM_HUE[proforma.system] ?? colors.primary;
               return (
                 <Touchable
                   key={proforma.id}
@@ -1150,52 +1184,45 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                     setActiveTab('guide');
                   }}
                   label={`Open ${proforma.title}`}
+                  hint={
+                    proforma.caseType
+                      ? `${proforma.caseType} case, ${proforma.department}`
+                      : proforma.department
+                  }
                   style={[
                     styles.proformaCard,
                     { backgroundColor: colors.card, borderColor: colors.border },
                   ]}>
-                  <View
-                    style={[
-                      styles.cardIconBox,
-                      {
-                        backgroundColor:
-                          proforma.system === 'General Surgery'
-                            ? withAlpha('#f59e0b', 0.15)
-                            : proforma.system === 'General Medicine'
-                            ? withAlpha(colors.primary, 0.15)
-                            : proforma.system === 'Pediatrics'
-                            ? withAlpha('#8b5cf6', 0.15)
-                            : proforma.system === 'Orthopaedics'
-                            ? withAlpha('#10b981', 0.15)
-                            : withAlpha('#ec4899', 0.15),
-                      },
-                    ]}>
-                    <GraduationCap
-                      size={22}
-                      color={
-                        proforma.system === 'General Surgery'
-                          ? '#d97706'
-                          : proforma.system === 'General Medicine'
-                          ? colors.primary
-                          : proforma.system === 'Pediatrics'
-                          ? '#8b5cf6'
-                          : proforma.system === 'Orthopaedics'
-                          ? '#10b981'
-                          : '#ec4899'
-                      }
-                    />
+                  <View style={[styles.cardIconBox, { backgroundColor: withAlpha(hue, 0.15) }]}>
+                    <GraduationCap size={20} color={hue} />
                   </View>
                   <View style={styles.cardContent}>
-                    <Text style={[styles.cardTitle, { color: colors.text }]}>
+                    <Text
+                      style={[styles.cardTitle, { color: colors.text }]}
+                      numberOfLines={2}>
                       {proforma.title}
                     </Text>
                     <View style={styles.cardMetaRow}>
-                      <Text style={[styles.cardDept, { color: colors.accent }]}>
+                      {/* Long or short case — the axis surgery finals are
+                          actually organised by, and the reason the uploaded
+                          case sheets come in two files. */}
+                      {proforma.caseType ? (
+                        <Text
+                          style={[
+                            styles.caseTypeBadge,
+                            { color: hue, borderColor: withAlpha(hue, 0.45) },
+                          ]}>
+                          {proforma.caseType === 'long' ? 'LONG' : 'SHORT'}
+                        </Text>
+                      ) : null}
+                      <Text
+                        style={[styles.cardDept, { color: colors.textMuted }]}
+                        numberOfLines={1}>
                         {proforma.department}
                       </Text>
                       {vivaCount > 0 ? (
-                        <Text style={[styles.cardVivaCount, { color: '#d97706' }]}>
-                          • {vivaCount} Viva Qs
+                        <Text style={[styles.cardVivaCount, { color: colors.warning }]}>
+                          {vivaCount} viva
                         </Text>
                       ) : null}
                     </View>
