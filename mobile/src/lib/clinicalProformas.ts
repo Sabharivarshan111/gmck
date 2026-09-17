@@ -2963,8 +2963,8 @@ export const CLINICAL_PROFORMAS: ClinicalProforma[] = [
     department: 'Pediatrics & Neonatology',
     summary: 'Master examination proforma for Protein Energy Malnutrition (PEM - Marasmus & Kwashiorkor), Thalassemia, Nephrotic Syndrome, Bronchiolitis, and Developmental Delay.',
     examPearl: 'Always calculate Anthropometry percentiles and classify malnutrition using IAP (Weight-for-Age) and WHO Z-score charts (Weight-for-Height for acute wasting, Height-for-Age for chronic stunting).',
-    diagramPath: '/diagrams/clinical/consolidation_vs_pleural_effusion.jpg',
-    diagramTitle: 'Pediatric Respiratory Assessment & Lung Signs',
+    diagramPath: '/diagrams/pediatrics/pediatric_respiratory_distress_silverman.jpg',
+    diagramTitle: 'Pediatric Respiratory Distress & Silverman-Anderson Retraction Score',
     sections: [
       {
         title: '1. Pediatric History & Birth Records',
