@@ -14,7 +14,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   ArrowLeft,
   BookOpen,
-  Bot,
   Check,
   CheckCircle2,
   ChevronDown,
@@ -26,10 +25,8 @@ import {
   Lightbulb,
   Maximize2,
   MessageSquare,
-  Minimize2,
-  RotateCcw,
+  Ruler,
   Search,
-  Send,
   Sparkles,
   Stethoscope,
   Trash2,
@@ -37,6 +34,8 @@ import {
 } from 'lucide-react-native';
 import { Text } from '@/components/Text';
 import { Touchable } from '@/components/Touchable';
+import { BedsideChatDrawer, type ChatBubble } from '@/components/BedsideChatDrawer';
+import { GeneralExamReference } from '@/components/GeneralExamReference';
 import { KeyboardSafe } from '@/components/KeyboardSafe';
 import { useTheme, withAlpha } from '@/theme';
 import {
@@ -68,12 +67,6 @@ const SYSTEMS = [
 
 type DetailTab = 'guide' | 'clerk' | 'viva';
 
-interface ChatBubble {
-  id: string;
-  role: 'user' | 'assistant';
-  text: string;
-}
-
 export function ClinicalProformaModal({
   visible,
   onClose,
@@ -92,6 +85,13 @@ export function ClinicalProformaModal({
   });
 
   const [activeTab, setActiveTab] = useState<DetailTab>('guide');
+  /**
+   * The clinical reference — general examination, normal values and scoring.
+   * It sits above the search rather than behind a tab, because it is what a
+   * student needs BEFORE they pick a case: every proforma below it opens with
+   * the same general survey.
+   */
+  const [referenceOpen, setReferenceOpen] = useState(false);
   const [fullscreenImage, setFullscreenImage] = useState<{ uri: string; title: string } | null>(
     null,
   );
@@ -112,7 +112,6 @@ export function ClinicalProformaModal({
   const [chatInput, setChatInput] = useState('');
   const [chatBusy, setChatBusy] = useState(false);
   const [chatMessages, setChatMessages] = useState<ChatBubble[]>([]);
-  const chatScrollRef = useRef<any>(null);
 
   // Load saved draft when activeProforma changes
   useEffect(() => {
@@ -265,10 +264,10 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
           { id: String(Date.now() + 1), role: 'assistant', text: reply },
         ]);
       } finally {
+        // Scrolling to the newest message belongs to the drawer now — it owns
+        // the transcript, and it does it on `messages.length` rather than on a
+        // timer, so it cannot fire before the bubble has laid out.
         setChatBusy(false);
-        setTimeout(() => {
-          chatScrollRef.current?.scrollToEnd({ animated: true });
-        }, 150);
       }
     },
     [activeProforma, chatBusy, chatInput, chatMessages, draft],
@@ -313,6 +312,31 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
   }, []);
 
   if (!visible) return null;
+
+  /**
+   * The reference replaces this modal's body rather than stacking a second
+   * <Modal> on top of it. A nested full-screen Modal is its own window outside
+   * the navigator's SafeAreaView, so it would start at pixel zero with the
+   * status bar drawn over its header — the defect `check:edges` exists to
+   * catch. Rendering it here inherits the inset handling already in place.
+   */
+  if (referenceOpen) {
+    return (
+      <Modal
+        visible={visible}
+        onRequestClose={() => setReferenceOpen(false)}
+        animationType="slide"
+        statusBarTranslucent>
+        <KeyboardSafe
+          style={[
+            styles.container,
+            { backgroundColor: colors.background, paddingTop: Math.max(insets.top, 12) + 6 },
+          ]}>
+          <GeneralExamReference onClose={() => setReferenceOpen(false)} />
+        </KeyboardSafe>
+      </Modal>
+    );
+  }
 
   return (
     <Modal visible={visible} onRequestClose={onClose} animationType="slide" statusBarTranslucent>
@@ -500,6 +524,7 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                           resizeMode="contain"
                         />
                         <View style={styles.maximizeBadge}>
+                          {/* over-black: ok — maximizeBadge is rgba(0,0,0,0.7) */}
                           <Maximize2 size={14} color="#FFFFFF" />
                           <Text style={styles.maximizeText}>Full View</Text>
                         </View>
@@ -1010,188 +1035,19 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
             {/* ===================================================================== */}
             {/* PERSISTENT BOTTOM AI CHATBOX                                          */}
             {/* ===================================================================== */}
-            <View
-              style={[
-                styles.chatDrawer,
-                {
-                  backgroundColor: colors.card,
-                  borderTopColor: colors.border,
-                  paddingBottom: Math.max(insets.bottom, 10),
-                },
-                chatOpen
-                  ? chatExpanded
-                    ? styles.chatDrawerExpanded
-                    : styles.chatDrawerOpen
-                  : styles.chatDrawerClosed,
-              ]}>
-              {/* Chat Header Bar */}
-              <Touchable
-                onPress={() => setChatOpen(prev => !prev)}
-                label={chatOpen ? 'Collapse AI chat' : 'Expand AI chat'}
-                style={styles.chatHeader}>
-                <View style={styles.chatHeaderLeft}>
-                  <View style={[styles.chatBotIcon, { backgroundColor: withAlpha(colors.primary, 0.15) }]}>
-                    <Bot size={16} color={colors.primary} />
-                  </View>
-                  <Text style={[styles.chatTitle, { color: colors.text }]}>
-                    Bedside Clinical AI Assistant
-                  </Text>
-                </View>
-
-                <View style={styles.chatHeaderRight}>
-                  {chatOpen ? (
-                    <>
-                      <Touchable
-                        onPress={() => setChatExpanded(exp => !exp)}
-                        label={chatExpanded ? 'Restore chat size' : 'Expand chat full screen'}
-                        style={styles.chatResetIcon}>
-                        {chatExpanded ? (
-                          <Minimize2 size={16} color={colors.textMuted} />
-                        ) : (
-                          <Maximize2 size={16} color={colors.textMuted} />
-                        )}
-                      </Touchable>
-                      <Touchable
-                        onPress={() => setChatMessages([])}
-                        label="Reset chat messages"
-                        style={styles.chatResetIcon}>
-                        <RotateCcw size={16} color={colors.textMuted} />
-                      </Touchable>
-                    </>
-                  ) : null}
-                  {chatOpen ? (
-                    <ChevronDown size={20} color={colors.textMuted} />
-                  ) : (
-                    <ChevronUp size={20} color={colors.textMuted} />
-                  )}
-                </View>
-              </Touchable>
-
-              {chatOpen ? (
-                <>
-                  {/* Suggested Prompt Chips */}
-                  <ScrollView
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    contentContainerStyle={styles.promptChipsRow}>
-                    <Touchable
-                      onPress={() =>
-                        handleSendMessage('What are the top viva questions professors ask on this case?')
-                      }
-                      label="Top viva questions chip"
-                      style={[styles.promptChip, { borderColor: colors.border }]}>
-                      <Text style={[styles.promptChipText, { color: colors.text }]}>
-                        🎓 Top Viva Qs
-                      </Text>
-                    </Touchable>
-
-                    <Touchable
-                      onPress={() =>
-                        handleSendMessage('Give me the complete differential diagnosis list for this case.')
-                      }
-                      label="Differential diagnosis chip"
-                      style={[styles.promptChip, { borderColor: colors.border }]}>
-                      <Text style={[styles.promptChipText, { color: colors.text }]}>
-                        🔍 Differentials
-                      </Text>
-                    </Touchable>
-
-                    <Touchable
-                      onPress={() =>
-                        handleSendMessage('How should I present this case summary to the external examiner?')
-                      }
-                      label="Presentation summary chip"
-                      style={[styles.promptChip, { borderColor: colors.border }]}>
-                      <Text style={[styles.promptChipText, { color: colors.text }]}>
-                        🗣️ Case Summary
-                      </Text>
-                    </Touchable>
-
-                    <Touchable
-                      onPress={() =>
-                        handleSendMessage('What clinical signs can examiners ask me to demonstrate on the patient?')
-                      }
-                      label="Clinical signs chip"
-                      style={[styles.promptChip, { borderColor: colors.border }]}>
-                      <Text style={[styles.promptChipText, { color: colors.text }]}>
-                        🩺 Clinical Signs
-                      </Text>
-                    </Touchable>
-                  </ScrollView>
-
-                  {/* Messages Transcript */}
-                  <ScrollView
-                    ref={chatScrollRef}
-                    style={styles.chatTranscript}
-                    contentContainerStyle={styles.chatTranscriptContent}
-                    keyboardShouldPersistTaps="handled">
-                    {chatMessages.length === 0 ? (
-                      <View style={styles.emptyChatBox}>
-                        <Text style={[styles.emptyChatText, { color: colors.textMuted }]}>
-                          Ask any question about this case, clinical signs, viva traps, or presentation
-                          nuances.
-                        </Text>
-                      </View>
-                    ) : null}
-
-                    {chatMessages.map(msg => (
-                      <View
-                        key={msg.id}
-                        style={[
-                          styles.chatBubble,
-                          msg.role === 'user'
-                            ? [styles.userBubble, { backgroundColor: colors.primary }]
-                            : [styles.botBubble, { backgroundColor: colors.background, borderColor: colors.border }],
-                        ]}>
-                        <Text
-                          style={[
-                            styles.chatBubbleText,
-                            { color: msg.role === 'user' ? colors.primaryText : colors.text },
-                          ]}>
-                          {msg.text}
-                        </Text>
-                      </View>
-                    ))}
-
-                    {chatBusy ? (
-                      <View style={[styles.botBubble, styles.busyBubble, { backgroundColor: colors.background }]}>
-                        <ActivityIndicator size="small" color={colors.primary} />
-                        <Text style={[styles.busyText, { color: colors.textMuted }]}>
-                          Consulting MBBS practical clinical guidelines…
-                        </Text>
-                      </View>
-                    ) : null}
-                  </ScrollView>
-
-                  {/* Chat Input Row */}
-                  <View style={[styles.chatInputRow, { borderTopColor: colors.border }]}>
-                    <TextInput
-                      value={chatInput}
-                      onChangeText={setChatInput}
-                      placeholder="Ask about this case or signs…"
-                      placeholderTextColor={colors.textMuted}
-                      onSubmitEditing={() => handleSendMessage()}
-                      style={[
-                        styles.chatTextInput,
-                        { color: colors.text, backgroundColor: colors.background, borderColor: colors.border },
-                      ]}
-                    />
-                    <Touchable
-                      onPress={() => handleSendMessage()}
-                      disabled={!chatInput.trim() || chatBusy}
-                      label="Send medical question"
-                      style={[
-                        styles.chatSendBtn,
-                        {
-                          backgroundColor: chatInput.trim() ? colors.primary : withAlpha(colors.primary, 0.4),
-                        },
-                      ]}>
-                      <Send size={16} color={colors.primaryText} />
-                    </Touchable>
-                  </View>
-                </>
-              ) : null}
-            </View>
+            <BedsideChatDrawer
+              open={chatOpen}
+              expanded={chatExpanded}
+              onToggleOpen={() => setChatOpen(prev => !prev)}
+              onToggleExpanded={() => setChatExpanded(prev => !prev)}
+              onReset={() => setChatMessages([])}
+              messages={chatMessages}
+              busy={chatBusy}
+              input={chatInput}
+              onChangeInput={setChatInput}
+              onSend={handleSendMessage}
+              bottomInset={insets.bottom}
+            />
           </View>
         ) : (
           /* ========================================================================= */
@@ -1203,6 +1059,34 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
               { paddingBottom: Math.max(insets.bottom, 20) + 24 },
             ]}
             keyboardShouldPersistTaps="handled">
+            {/* Clinical reference — above the search, because the general
+                examination is common to every case below it. */}
+            <Touchable
+              onPress={() => setReferenceOpen(true)}
+              label="Open general examination and normal lab values"
+              hint="PICCLE signs in depth, normal laboratory values and clinical scoring systems"
+              style={[
+                styles.referenceCard,
+                {
+                  backgroundColor: withAlpha(colors.accent, 0.1),
+                  borderColor: withAlpha(colors.accent, 0.35),
+                },
+              ]}>
+              <View
+                style={[styles.referenceIcon, { backgroundColor: withAlpha(colors.accent, 0.18) }]}>
+                <Ruler size={20} color={colors.accent} />
+              </View>
+              <View style={styles.referenceBody}>
+                <Text style={[styles.referenceTitle, { color: colors.text }]}>
+                  General Examination &amp; Normal Values
+                </Text>
+                <Text style={[styles.referenceSub, { color: colors.textMuted }]}>
+                  PICCLE in depth · lab reference ranges · 24 scoring systems
+                </Text>
+              </View>
+              <ChevronRight size={18} color={colors.accent} />
+            </Touchable>
+
             {/* Search Bar */}
             <View
               style={[
@@ -1342,6 +1226,7 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                   onPress={() => setFullscreenImage(null)}
                   label="Close image"
                   style={styles.fullscreenClose}>
+                  {/* over-black: ok — the lightbox container is #000000 */}
                   <X size={22} color="#FFFFFF" />
                 </Touchable>
               </View>
@@ -1447,6 +1332,25 @@ const styles = StyleSheet.create({
   listScroll: {
     padding: 16,
   },
+  referenceCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    padding: 14,
+    borderRadius: 14,
+    borderWidth: 1,
+    marginBottom: 14,
+  },
+  referenceIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  referenceBody: { flex: 1, gap: 3 },
+  referenceTitle: { fontSize: 14, fontWeight: '700' },
+  referenceSub: { fontSize: 11.5, lineHeight: 16 },
   searchBox: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -1603,6 +1507,7 @@ const styles = StyleSheet.create({
     borderRadius: 6,
   },
   maximizeText: {
+    // over-black: ok — sits on maximizeBadge's rgba(0,0,0,0.7)
     color: '#FFFFFF',
     fontSize: 11,
     fontWeight: '600',
@@ -1868,140 +1773,6 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   /* PERSISTENT BOTTOM AI CHATBOX */
-  chatDrawer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: -2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 8,
-  },
-  chatDrawerClosed: {
-    height: 52,
-  },
-  chatDrawerOpen: {
-    height: 280,
-  },
-  chatDrawerExpanded: {
-    height: 560,
-    maxHeight: '80%',
-  },
-  chatHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    height: 50,
-  },
-  chatHeaderLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  chatBotIcon: {
-    width: 28,
-    height: 28,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  chatTitle: {
-    fontSize: 13,
-    fontWeight: '700',
-  },
-  chatHeaderRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  chatResetIcon: {
-    padding: 4,
-  },
-  promptChipsRow: {
-    paddingHorizontal: 12,
-    gap: 8,
-    paddingBottom: 8,
-  },
-  promptChip: {
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 14,
-    borderWidth: StyleSheet.hairlineWidth,
-  },
-  promptChipText: {
-    fontSize: 11.5,
-    fontWeight: '600',
-  },
-  chatTranscript: {
-    flex: 1,
-    paddingHorizontal: 12,
-  },
-  chatTranscriptContent: {
-    paddingVertical: 8,
-    gap: 8,
-  },
-  emptyChatBox: {
-    padding: 12,
-    alignItems: 'center',
-  },
-  emptyChatText: {
-    fontSize: 12,
-    textAlign: 'center',
-    lineHeight: 17,
-  },
-  chatBubble: {
-    padding: 10,
-    borderRadius: 12,
-    maxWidth: '88%',
-  },
-  userBubble: {
-    alignSelf: 'flex-end',
-    borderBottomRightRadius: 2,
-  },
-  botBubble: {
-    alignSelf: 'flex-start',
-    borderBottomLeftRadius: 2,
-    borderWidth: StyleSheet.hairlineWidth,
-  },
-  chatBubbleText: {
-    fontSize: 12.5,
-    lineHeight: 18,
-  },
-  busyBubble: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  busyText: {
-    fontSize: 12,
-  },
-  chatInputRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 12,
-    paddingTop: 8,
-    gap: 8,
-    borderTopWidth: StyleSheet.hairlineWidth,
-  },
-  chatTextInput: {
-    flex: 1,
-    fontSize: 13,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 20,
-    borderWidth: StyleSheet.hairlineWidth,
-  },
-  chatSendBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   fullscreenContainer: {
     flex: 1,
     backgroundColor: '#000000',
@@ -2014,6 +1785,7 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
   },
   fullscreenTitle: {
+    // over-black: ok — the lightbox container is #000000
     color: '#FFFFFF',
     fontSize: 15,
     fontWeight: '600',

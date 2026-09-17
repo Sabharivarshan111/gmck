@@ -50,6 +50,7 @@
     "check:no-simulator": "node scripts/no-simulator-check.mjs",
     "check:note-links": "node scripts/note-links-check.mjs",
     "check:version": "node scripts/version-check.mjs",
+    "check:clinical-reference": "node scripts/clinical-reference-check.mjs",
     "check:xp": "node scripts/xp-check.mjs",
     "check:reminder": "node scripts/reminder-check.mjs",
     "check:note-media": "node scripts/note-media-check.mjs",
