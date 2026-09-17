@@ -20,7 +20,7 @@ import { syncReminders } from '@/lib/reminderSync';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { TourOverlay } from '@/components/TourOverlay';
 import { getTourState, hydrateTour, startTour } from '@/tour/store';
-import { getPendingLaunchDeck, setPendingLaunchDeck, stageLaunchPackage } from '@/lib/importedDecks';
+import { setPendingLaunchDeck, stageLaunchPackage } from '@/lib/importedDecks';
 import { getPendingLaunchPdf } from '@/lib/noteFiles';
 
 function Shell() {
