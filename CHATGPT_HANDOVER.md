@@ -271,3 +271,54 @@ When the user asks you to implement a feature or fix a bug:
    - Mobile: `npm --prefix mobile run typecheck`
 4. **Capture Automated Screenshots**: Run Playwright verification scripts in `scripts/` to confirm visual changes.
 5. **Update Documentation**: Keep `CHATGPT_HANDOVER.md` and `CLAUDE.md` synchronized whenever a major architectural milestone is completed.
+
+---
+
+## 7. Release v23 — Definitive General Medicine Case Proformas & Clinical Media Overhaul
+
+### 7.1 What Changed in v23
+The General Medicine case proforma was recognized as insufficient for post-graduate and final-year undergraduate MBBS clinical practical examinations. Grounded in the 4 authoritative college proforma materials (CVS, RS, Abdomen, and CNS) provided in Google Drive, `mobile/src/lib/clinicalProformas.ts` was expanded from 1,473 lines to 3,267 lines (+2,440 insertions):
+
+1. **Cardiovascular System (`cvs_proforma`)**:
+   - Comprehensive HPI with SOCRATES chest pain breakdown.
+   - Rigorous negative history (RHF, LHF, RF, CHD, PHT).
+   - All 10 arterial pulse characteristics and 4-limb blood pressure with postural drop.
+   - JVP waveform analysis: 'a', 'c', 'x', 'v', 'y' waves, cannon 'a', Kussmaul sign, abdominojugular reflux.
+   - All 12 peripheral signs of severe Aortic Regurgitation: Hill, Lighthouse, Locomotor brachii, Collapsing/Corrigan, Pulsus bisferiens, Landolfi, Müller, Quincke, Duroziez, Traube, Becker, Gerhardt/Sailer.
+   - Precordial inspection, palpation (tapping vs. heaving vs. hyperdynamic apex, parasternal heave grades I-III, thrills, palpable P2/S1), percussion, and dynamic auscultation maneuvers (bell in left lateral decubitus for MS; sitting forward in expiratory apnea for AR; Carvallo sign for TR).
+   - 5-part anatomical, valvular, functional (NYHA), rhythm, and complication diagnosis formulation rubric.
+
+2. **Respiratory System (`respiratory_proforma`)**:
+   - Detailed symptom profiling: cough, sputum (3-layered in bronchiectasis, rusty in pneumonia), mMRC dyspnea grading 0-4, hemoptysis (MS pulmonary apoplexy vs. TB vs. malignancy).
+   - Systematic negative history (TB B-symptoms, CVS, malignancy).
+   - Aspiration risk factors (ABCDEF mnemonic) and abdominal triggers for sympathetic effusion.
+   - Clubbing (grades 1-4, Lovibond, Schamroth; rule: absent in COPD alone), Horner syndrome, Hoover sign, Trail sign, Campbell sign.
+   - Objective tape chest expansion (>= 5 cm) and 9-region comparative TVF.
+   - Bilateral 9-region comparative percussion (+/- mapping), Traube space, tidal percussion.
+   - Auscultation across all 9 regions (vesicular, tubular/cavernous/amphoric bronchial breathing, fine/coarse crackles, wheezes, pleural rub, bronchophony, whispering pectoriloquy, egophony E-to-A, succussion splash, coin percussion test).
+   - Etiological, anatomical, pathological, and functional diagnostic formulation rubric.
+
+3. **Abdomen & Hepatobiliary (`abdomen_proforma`)**:
+   - SOCRATES abdominal pain, distension (6 Fs), jaundice, upper GI bleed, encephalopathy.
+   - Viral hepatitis risks & vaccines, metabolic liver diseases (Wilson, Hemochromatosis, AAT deficiency).
+   - Complete head-to-toe stigmata of chronic liver disease & portal HT (temporal wasting, KF ring, parotid enlargement, fetor hepaticus, spider angiomas in SVC territory, gynecomastia, asterixis, palmar erythema, Dupuytren, Terry nails, Muehrcke lines, caput medusae, testicular atrophy, Spider-man habitus).
+   - Supine, head-rising, and standing inspection. Two-finger milking test for venous flow direction.
+   - Liver span in MCL, spleen palpation from RIF with Hackett grading 0-5 and Middleton maneuver, bimanual kidney ballottement.
+   - Ascites evaluation: fluid thrill (> 1500 mL), shifting dullness (> 500 mL), puddle sign (~ 100 mL).
+   - Cruveilhier-Baumgarten venous hum, arterial bruits, friction rubs, succussion splash, and Child-Turcotte-Pugh scoring (PABAE criteria).
+
+4. **Central Nervous System (`cns_proforma` — M.D. Grade)**:
+   - Handedness & hemisphere dominance.
+   - Motor weakness functional task breakdown: upper limb proximal (combing hair) vs. distal (buttoning/writing); lower limb proximal (squatting) vs. distal (slipping chappals/tripping toes); neck flexion vs. extension; Beevor sign; single breath count < 20.
+   - ABCDEFM involuntary movements and sensory positive vs. negative symptoms.
+   - Folstein 30-point MMSE scoring rubric and aphasia/dysarthria evaluation.
+   - Bilateral Cranial Nerves I to XII testing protocol with UMN vs. LMN VII distinction.
+   - Circumferential tape measurements from fixed bony landmarks.
+   - Tone, MRC Grade 0-5 power, complete superficial and deep tendon reflexes (inverted supinator, pendular knee jerk), primitive/frontal release reflexes (glabellar tap, palmomental, snout, grasp, Hoffmann).
+   - Cerebellar VANISHED signs, gait analysis, sensory modalities, meningeal signs, peripheral nerve thickening.
+   - Dual-tier master diagnostic formulation (Anatomical localization + Pathological diagnosis).
+
+5. **Tooling & Release Gates**:
+   - `PdfViewerModal.tsx` aspect-ratio bounding and pinch-zoom stabilization.
+   - `NoteLinkCard.tsx` enhanced note preview rendering.
+   - All 7 verification checks pass: `typecheck`, `check:version` (v23), `check:apkg`, `check:anki`, `check:mcq-card`, `check:keyboard`, `check:repo-intact`.

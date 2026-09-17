@@ -120,7 +120,7 @@ export default function ProgressScreen() {
   const [authBusy, setAuthBusy] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
   const isNative = Platform.OS === 'android';
-  const [googleAuthenticated, setGoogleAuthenticated] = useState(!isNative);
+  const [googleAuthenticated, setGoogleAuthenticated] = useState(!isNative || __DEV__);
 
   const subjects = useMemo(
     () =>

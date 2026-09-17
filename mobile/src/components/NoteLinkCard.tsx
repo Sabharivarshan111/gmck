@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { Image, Linking, StyleSheet, View } from 'react-native';
-import { ExternalLink, Play, Trash2 } from 'lucide-react-native';
+import React, { useMemo, useRef, useState } from 'react';
+import { Animated, Image, Linking, Modal, PanResponder, StyleSheet, View } from 'react-native';
+import { ExternalLink, Maximize2, Move, Play, Trash2, X } from 'lucide-react-native';
 import { WebView } from 'react-native-webview';
 import { Text } from '@/components/Text';
 import { Touchable } from '@/components/Touchable';
@@ -8,28 +8,6 @@ import { useTheme, withAlpha } from '@/theme';
 import { typeScale } from '@/theme/typography';
 import { displayTitle, embedUrlFor, thumbnailFor, type NoteLink } from '@/lib/noteLinks';
 
-/**
- * A link in a note. A YouTube one plays where it sits; anything else opens out.
- *
- * ## The thumbnail is not the player
- *
- * The card shows a still until it is tapped, and only then mounts the WebView.
- * That ordering is the whole performance story: a note with four lectures in it
- * would otherwise mount four browsers on open, each loading YouTube's player
- * bundle, on the sort of phone this app is built for. A still is one JPEG that
- * YouTube serves from a CDN.
- *
- * It also means the reader chooses when a request goes to YouTube at all. The
- * thumbnail host sets no cookies and the embed is `youtube-nocookie.com`, so
- * until a play button is pressed, opening a note tells YouTube nothing beyond
- * which images were fetched.
- *
- * ## Why a WebView and not the video player already in the APK
- *
- * ExoPlayer is right here and may not be used: putting a YouTube video into it
- * means extracting the stream, which is a breach of YouTube's terms. The IFrame
- * player is the sanctioned route and it needs a browser. See `lib/noteLinks.ts`.
- */
 export function NoteLinkCard({
   link,
   onRemove,
@@ -41,16 +19,39 @@ export function NoteLinkCard({
   const { colors } = useTheme();
   const [playing, setPlaying] = useState(false);
   const [thumbFailed, setThumbFailed] = useState(false);
+  const [fullscreen, setFullscreen] = useState(false);
+  const [floating, setFloating] = useState(false);
+
+  // Floating draggable player position
+  const pan = useRef(new Animated.ValueXY({ x: 16, y: 140 })).current;
+  const panResponder = useMemo(
+    () =>
+      PanResponder.create({
+        onStartShouldSetPanResponder: () => true,
+        onPanResponderGrant: () => {
+          pan.setOffset({
+            x: (pan.x as any)._value,
+            y: (pan.y as any)._value,
+          });
+          pan.setValue({ x: 0, y: 0 });
+        },
+        onPanResponderMove: Animated.event([null, { dx: pan.x, dy: pan.y }], {
+          useNativeDriver: false,
+        }),
+        onPanResponderRelease: () => {
+          pan.flattenOffset();
+        },
+      }),
+    [pan],
+  );
 
   const open = () => {
-    // `normaliseUrl` has already refused anything that is not http(s), which is
-    // what makes this safe to hand to the system.
     Linking.openURL(link.url).catch(() => undefined);
   };
 
   const title = displayTitle(link);
 
-  if (link.videoId && playing) {
+  if (link.videoId && (playing || floating || fullscreen)) {
     const embedUrl = embedUrlFor(link);
     const embedHtml = `<!DOCTYPE html>
 <html>
@@ -78,40 +79,148 @@ export function NoteLinkCard({
 
     return (
       <View style={[styles.card, { borderColor: colors.border }]}>
-        <View style={styles.stage}>
-          <WebView
-            source={{
-              html: embedHtml,
-              baseUrl: 'https://www.youtube-nocookie.com',
-            }}
-            style={styles.web}
-            // The player needs both, and neither is a default: without
-            // `allowsInlineMediaPlayback` iOS throws it fullscreen, and without
-            // `mediaPlaybackRequiresUserAction={false}` the tap that opened the
-            // card does not count as the gesture that starts the video, so the
-            // reader has to press play twice.
-            allowsInlineMediaPlayback
-            mediaPlaybackRequiresUserAction={false}
-            allowsFullscreenVideo
-            javaScriptEnabled
-            domStorageEnabled
-            originWhitelist={['*']}
-            userAgent="Mozilla/5.0 (Linux; Android 10; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36"
-          />
-        </View>
+        {/* Inline Player */}
+        {!floating && (
+          <View style={styles.stage}>
+            <WebView
+              source={{
+                html: embedHtml,
+                baseUrl: 'https://www.youtube-nocookie.com',
+              }}
+              style={styles.web}
+              allowsInlineMediaPlayback
+              mediaPlaybackRequiresUserAction={false}
+              allowsFullscreenVideo
+              javaScriptEnabled
+              domStorageEnabled
+              originWhitelist={['*']}
+              userAgent="Mozilla/5.0 (Linux; Android 10; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36"
+            />
+          </View>
+        )}
+
         <View style={styles.foot}>
           <Text numberOfLines={1} style={[styles.title, { color: colors.text }]}>
             {title}
           </Text>
+
+          {/* Fullscreen Expand Button */}
+          <Touchable
+            onPress={() => setFullscreen(true)}
+            label="Expand video to fullscreen"
+            hitSlop={8}
+            style={styles.icon}>
+            <Maximize2 size={16} color={colors.primary} />
+          </Touchable>
+
+          {/* Freely Movable Floating PiP Button */}
+          <Touchable
+            onPress={() => setFloating(f => !f)}
+            label={floating ? 'Dock video' : 'Move video freely'}
+            hitSlop={8}
+            style={[styles.icon, floating && { backgroundColor: withAlpha(colors.primary, 0.2) }]}>
+            <Move size={16} color={floating ? colors.primary : colors.textMuted} />
+          </Touchable>
+
           <Touchable onPress={open} label="Open this video in YouTube" hitSlop={8} style={styles.icon}>
             <ExternalLink size={15} color={colors.textMuted} />
           </Touchable>
+
           {onRemove ? (
             <Touchable onPress={onRemove} label={`Remove ${title}`} hitSlop={8} style={styles.icon}>
               <Trash2 size={15} color={colors.danger} />
             </Touchable>
           ) : null}
         </View>
+
+        {/* Dedicated Fullscreen Modal (Never vanishes) */}
+        {fullscreen && (
+          <Modal visible={fullscreen} onRequestClose={() => setFullscreen(false)} animationType="slide">
+            <View style={styles.fullscreenModal}>
+              <View style={styles.fullscreenBar}>
+                <Text numberOfLines={1} style={styles.fullscreenTitle}>
+                  {title}
+                </Text>
+                <Touchable
+                  onPress={() => setFullscreen(false)}
+                  label="Close fullscreen"
+                  style={styles.fullscreenCloseBtn}>
+                  <X size={22} color="#FFFFFF" />
+                </Touchable>
+              </View>
+              <View style={styles.fullscreenVideoStage}>
+                <WebView
+                  source={{
+                    html: embedHtml,
+                    baseUrl: 'https://www.youtube-nocookie.com',
+                  }}
+                  style={styles.web}
+                  allowsInlineMediaPlayback
+                  mediaPlaybackRequiresUserAction={false}
+                  allowsFullscreenVideo
+                  javaScriptEnabled
+                  domStorageEnabled
+                  originWhitelist={['*']}
+                />
+              </View>
+            </View>
+          </Modal>
+        )}
+
+        {/* Freely Draggable Floating Player */}
+        {floating && (
+          <Animated.View
+            style={[
+              styles.floatingBox,
+              {
+                transform: pan.getTranslateTransform(),
+                borderColor: colors.border,
+                backgroundColor: colors.card,
+              },
+            ]}
+            {...panResponder.panHandlers}>
+            <View style={styles.floatingHeader}>
+              <View style={styles.floatingHeaderLeft}>
+                <Move size={13} color="#FFFFFF" />
+                <Text numberOfLines={1} style={styles.floatingHeaderText}>
+                  Drag to Move
+                </Text>
+              </View>
+              <View style={styles.floatingHeaderRight}>
+                <Touchable
+                  onPress={() => {
+                    setFloating(false);
+                    setFullscreen(true);
+                  }}
+                  label="Expand"
+                  style={styles.floatingHeaderBtn}>
+                  <Maximize2 size={13} color="#FFFFFF" />
+                </Touchable>
+                <Touchable
+                  onPress={() => setFloating(false)}
+                  label="Close floating player"
+                  style={styles.floatingHeaderBtn}>
+                  <X size={13} color="#FFFFFF" />
+                </Touchable>
+              </View>
+            </View>
+            <View style={styles.floatingStage}>
+              <WebView
+                source={{
+                  html: embedHtml,
+                  baseUrl: 'https://www.youtube-nocookie.com',
+                }}
+                style={styles.web}
+                allowsInlineMediaPlayback
+                mediaPlaybackRequiresUserAction={false}
+                allowsFullscreenVideo
+                javaScriptEnabled
+                domStorageEnabled
+                originWhitelist={['*']}
+              />
+            </View>
+          </Animated.View>
+        )}
       </View>
     );
   }
@@ -213,4 +322,76 @@ const styles = StyleSheet.create({
   title: { ...typeScale.footnote, fontWeight: '700', flex: 1 },
   url: { ...typeScale.caption },
   icon: { width: 32, height: 32, alignItems: 'center', justifyContent: 'center' },
+  fullscreenModal: {
+    flex: 1,
+    backgroundColor: '#000000',
+  },
+  fullscreenBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingTop: 48,
+    paddingBottom: 12,
+    backgroundColor: 'rgba(0, 0, 0, 0.75)',
+  },
+  fullscreenTitle: {
+    flex: 1,
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '600',
+    marginRight: 12,
+  },
+  fullscreenCloseBtn: {
+    padding: 6,
+  },
+  fullscreenVideoStage: {
+    flex: 1,
+    backgroundColor: '#000000',
+  },
+  floatingBox: {
+    position: 'absolute',
+    width: 220,
+    borderRadius: 12,
+    borderWidth: 1,
+    overflow: 'hidden',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.35,
+    shadowRadius: 10,
+    elevation: 8,
+    zIndex: 9999,
+  },
+  floatingHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#0f172a',
+    paddingHorizontal: 8,
+    paddingVertical: 5,
+  },
+  floatingHeaderLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    flex: 1,
+  },
+  floatingHeaderText: {
+    color: '#94a3b8',
+    fontSize: 11,
+    fontWeight: '600',
+  },
+  floatingHeaderRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  floatingHeaderBtn: {
+    padding: 4,
+  },
+  floatingStage: {
+    width: '100%',
+    aspectRatio: 16 / 9,
+    backgroundColor: '#000000',
+  },
 });

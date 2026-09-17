@@ -848,8 +848,12 @@ export function htmlToText(html: string, options: { question?: boolean } = {}): 
   let text = html;
 
   // On question side, strip hidden elements (e.g. MCQ templates with inline display:none or hidden visibility)
+  // but preserve any <img> tags inside them so question diagrams are not stripped!
   if (options.question) {
-    text = text.replace(/<([a-z0-9]+)\b[^>]*style\s*=\s*["'][^"']*(?:display\s*:\s*none|visibility\s*:\s*hidden)[^"']*["'][^>]*>[\s\S]*?<\/\1>/gi, ' ');
+    text = text.replace(/<([a-z0-9]+)\b[^>]*style\s*=\s*["'][^"']*(?:display\s*:\s*none|visibility\s*:\s*hidden)[^"']*["'][^>]*>([\s\S]*?)<\/\1>/gi, (_match, _tag, inner) => {
+      const imgTags = inner.match(/<img\b[^>]*>/gi);
+      return imgTags ? imgTags.join(' ') : ' ';
+    });
   }
 
   // `[sound:file.mp3]` is Anki's own markup rather than HTML, and it appears
@@ -1010,6 +1014,24 @@ export function cardsFromCollection(
       renderTemplate(template.afmt, fields, { cloze, question: false, deck, tags: row.tags.trim() }),
       { question: false },
     );
+
+    // If no images were extracted by the templates, scan all note fields in row.flds
+    if (front.images.length === 0 && back.images.length === 0) {
+      const allFieldImages: string[] = [];
+      const imgMatches = row.flds.matchAll(/<img\b[^>]*src\s*=\s*["']?([^"'\s>]+)["']?[^>]*>/gi);
+      for (const m of imgMatches) {
+        let name = decodeEntities(m[1] ?? '');
+        try {
+          name = decodeURIComponent(name);
+        } catch {}
+        if (name && !allFieldImages.includes(name)) {
+          allFieldImages.push(name);
+        }
+      }
+      if (allFieldImages.length > 0) {
+        front.images.push(...allFieldImages);
+      }
+    }
 
     /*
      * A card with nothing on the front is not answerable. Anki itself skips

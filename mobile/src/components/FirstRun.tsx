@@ -89,7 +89,7 @@ export function FirstRun() {
   const [saving, setSaving] = useState(false);
   const [googling, setGoogling] = useState(false);
   const isNative = Platform.OS === 'android';
-  const [googleAuthenticated, setGoogleAuthenticated] = useState(!isNative);
+  const [googleAuthenticated, setGoogleAuthenticated] = useState(!isNative || __DEV__);
 
   useEffect(() => {
     if (isNative) {

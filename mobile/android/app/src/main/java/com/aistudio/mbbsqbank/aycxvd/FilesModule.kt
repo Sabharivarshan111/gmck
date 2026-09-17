@@ -474,10 +474,30 @@ class FilesModule(reactContext: ReactApplicationContext) :
           val cacheDir = File(reactApplicationContext.cacheDir, "pdf-pages").apply { mkdirs() }
           val pagesArray = org.json.JSONArray()
           val limit = if (maxPages > 0) Math.min(totalPages, maxPages.toInt()) else totalPages
+          val hash = idOrUri.hashCode().toUInt()
 
           for (i in 0 until limit) {
-            val page = renderer.openPage(i)
+            val pageFile = File(cacheDir, "pdf_${hash}_p${i + 1}.jpg")
             val scale = 2
+
+            // Fast cache hit: if page is already rendered, reuse it without disk or CPU overhead
+            if (pageFile.exists() && pageFile.length() > 1024) {
+              val page = renderer.openPage(i)
+              val width = page.width * scale
+              val height = page.height * scale
+              page.close()
+
+              val pageObj = org.json.JSONObject().apply {
+                put("page", i + 1)
+                put("width", width)
+                put("height", height)
+                put("uri", "file://${pageFile.absolutePath}")
+              }
+              pagesArray.put(pageObj)
+              continue
+            }
+
+            val page = renderer.openPage(i)
             val width = page.width * scale
             val height = page.height * scale
             val bitmap = android.graphics.Bitmap.createBitmap(width, height, android.graphics.Bitmap.Config.ARGB_8888)
@@ -485,9 +505,8 @@ class FilesModule(reactContext: ReactApplicationContext) :
             page.render(bitmap, null, null, android.graphics.pdf.PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
             page.close()
 
-            val pageFile = File(cacheDir, "pdf_${idOrUri.hashCode().toUInt()}_p${i + 1}.png")
-            pageFile.outputStream().use { out ->
-              bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG, 90, out)
+            pageFile.outputStream().buffered(65536).use { out ->
+              bitmap.compress(android.graphics.Bitmap.CompressFormat.JPEG, 85, out)
             }
             bitmap.recycle()
 

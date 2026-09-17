@@ -382,5 +382,6 @@ export interface InsertedPdfPage {
   afterPage: number;
   noteText?: string;
   imageUrl?: string;
+  images?: string[];
   created: number;
 }

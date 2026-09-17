@@ -45,14 +45,17 @@ import { flattenSubjectTopics, type LeafTopic } from '@/lib/handwrittenNotes';
 import {
   deleteImportedDeck,
   discardPackage,
+  getPendingLaunchDeck,
   importedDeckKey,
   importPackage,
   loadImportedCards,
   loadImportedDecks,
   MAX_IMPORT_CARDS,
+  setPendingLaunchDeck,
   shareWrittenDeck,
   stageLaunchPackage,
   stagePackage,
+  subscribeLaunchDeck,
   type ImportedDeck,
   type StagedPackage,
 } from '@/lib/importedDecks';
@@ -566,9 +569,15 @@ function ImportDecksView({
   useEffect(() => {
     let live = true;
     const take = () => {
+      const pending = getPendingLaunchDeck();
+      if (pending) {
+        setPendingLaunchDeck(null);
+        offer(pending);
+        return;
+      }
       stageLaunchPackage()
         .then(next => {
-          if (live) {
+          if (live && next) {
             offer(next);
           }
         })
@@ -579,6 +588,12 @@ function ImportDecksView({
         });
     };
     take();
+    const unsubDeck = subscribeLaunchDeck(pkg => {
+      if (live && pkg) {
+        setPendingLaunchDeck(null);
+        offer(pkg);
+      }
+    });
     const sub = AppState.addEventListener('change', state => {
       if (state === 'active') {
         take();
@@ -586,6 +601,7 @@ function ImportDecksView({
     });
     return () => {
       live = false;
+      unsubDeck();
       sub.remove();
     };
   }, [offer]);

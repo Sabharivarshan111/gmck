@@ -26,6 +26,7 @@ import {
   Lightbulb,
   Maximize2,
   MessageSquare,
+  Minimize2,
   RotateCcw,
   Search,
   Send,
@@ -40,6 +41,7 @@ import { KeyboardSafe } from '@/components/KeyboardSafe';
 import { useTheme, withAlpha } from '@/theme';
 import {
   CLINICAL_PROFORMAS,
+  resolveProformaDiagramUrl,
   type ClinicalProforma,
 } from '@/lib/clinicalProformas';
 import {
@@ -106,6 +108,7 @@ export function ClinicalProformaModal({
 
   // Persistent Bottom AI Chatbox state
   const [chatOpen, setChatOpen] = useState(false);
+  const [chatExpanded, setChatExpanded] = useState(false);
   const [chatInput, setChatInput] = useState('');
   const [chatBusy, setChatBusy] = useState(false);
   const [chatMessages, setChatMessages] = useState<ChatBubble[]>([]);
@@ -480,16 +483,19 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                         </Text>
                       </View>
                       <Touchable
-                        onPress={() =>
-                          setFullscreenImage({
-                            uri: activeProforma.diagramPath!,
-                            title: activeProforma.diagramTitle || activeProforma.title,
-                          })
-                        }
+                        onPress={() => {
+                          const resolvedUri = resolveProformaDiagramUrl(activeProforma.diagramPath);
+                          if (resolvedUri) {
+                            setFullscreenImage({
+                              uri: resolvedUri,
+                              title: activeProforma.diagramTitle || activeProforma.title,
+                            });
+                          }
+                        }}
                         label="View clinical diagram full screen"
                         style={styles.diagramImageTouch}>
                         <Image
-                          source={{ uri: activeProforma.diagramPath }}
+                          source={{ uri: resolveProformaDiagramUrl(activeProforma.diagramPath) }}
                           style={styles.diagramImage}
                           resizeMode="contain"
                         />
@@ -1012,7 +1018,11 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                   borderTopColor: colors.border,
                   paddingBottom: Math.max(insets.bottom, 10),
                 },
-                chatOpen ? styles.chatDrawerOpen : styles.chatDrawerClosed,
+                chatOpen
+                  ? chatExpanded
+                    ? styles.chatDrawerExpanded
+                    : styles.chatDrawerOpen
+                  : styles.chatDrawerClosed,
               ]}>
               {/* Chat Header Bar */}
               <Touchable
@@ -1030,12 +1040,24 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
 
                 <View style={styles.chatHeaderRight}>
                   {chatOpen ? (
-                    <Touchable
-                      onPress={() => setChatMessages([])}
-                      label="Reset chat messages"
-                      style={styles.chatResetIcon}>
-                      <RotateCcw size={16} color={colors.textMuted} />
-                    </Touchable>
+                    <>
+                      <Touchable
+                        onPress={() => setChatExpanded(exp => !exp)}
+                        label={chatExpanded ? 'Restore chat size' : 'Expand chat full screen'}
+                        style={styles.chatResetIcon}>
+                        {chatExpanded ? (
+                          <Minimize2 size={16} color={colors.textMuted} />
+                        ) : (
+                          <Maximize2 size={16} color={colors.textMuted} />
+                        )}
+                      </Touchable>
+                      <Touchable
+                        onPress={() => setChatMessages([])}
+                        label="Reset chat messages"
+                        style={styles.chatResetIcon}>
+                        <RotateCcw size={16} color={colors.textMuted} />
+                      </Touchable>
+                    </>
                   ) : null}
                   {chatOpen ? (
                     <ChevronDown size={20} color={colors.textMuted} />
@@ -1864,6 +1886,10 @@ const styles = StyleSheet.create({
   },
   chatDrawerOpen: {
     height: 280,
+  },
+  chatDrawerExpanded: {
+    height: 560,
+    maxHeight: '80%',
   },
   chatHeader: {
     flexDirection: 'row',

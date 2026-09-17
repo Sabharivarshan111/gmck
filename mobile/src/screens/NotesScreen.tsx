@@ -33,6 +33,10 @@ import { PdfViewerModal } from '@/components/PdfViewerModal';
 import FlashcardsScreen from '@/screens/FlashcardsScreen';
 import { useProfile } from '@/hooks/useProfile';
 import {
+  getPendingLaunchDeck,
+  subscribeLaunchDeck,
+} from '@/lib/importedDecks';
+import {
   getPendingLaunchPdf,
   setPendingLaunchPdf,
   subscribeLaunchPdf,
@@ -80,16 +84,25 @@ export default function NotesScreen() {
    * back stack, and folding that into this screen's state machine would mean
    * one Back button serving two unrelated ladders.
    */
-  const [flashcards, setFlashcards] = useState(false);
+  const [flashcards, setFlashcards] = useState(() => getPendingLaunchDeck() != null);
   const [proformasOpen, setProformasOpen] = useState(false);
   const [activePdfFile, setActivePdfFile] = useState<NoteFile | null>(() => getPendingLaunchPdf());
 
   useEffect(() => {
-    return subscribeLaunchPdf(file => {
+    const unsubPdf = subscribeLaunchPdf(file => {
       if (file) {
         setActivePdfFile(file);
       }
     });
+    const unsubDeck = subscribeLaunchDeck(pkg => {
+      if (pkg) {
+        setFlashcards(true);
+      }
+    });
+    return () => {
+      unsubPdf();
+      unsubDeck();
+    };
   }, []);
 
   const topicsViewFor = useCallback((current: Extract<View_, { kind: 'notes' }>): View_ => {

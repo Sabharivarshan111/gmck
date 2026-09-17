@@ -136,7 +136,8 @@ export async function getSignedInEmail(): Promise<string | null> {
  * On native Android, reads local AsyncStorage so all features work 100% offline.
  */
 export async function hasAuthenticatedGoogleOnce(): Promise<boolean> {
-  if (Platform.OS !== 'android') {
+  // In debug builds (__DEV__) or on non-Android platforms, bypass mandatory Google Sign-In so testing works freely
+  if (__DEV__ || Platform.OS !== 'android') {
     return true;
   }
   try {

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { StatusBar, View } from 'react-native';
+import { AppState, StatusBar, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
-import { navigationRef } from '@/navigation/ref';
+import { goToTab, navigationRef } from '@/navigation/ref';
 import { ThemeProvider, useTheme } from '@/theme';
 import RootNavigator from '@/navigation/RootNavigator';
 import { hydrateLastStudyDay, hydrateProgress, reconcileProgress } from '@/lib/progress';
@@ -20,6 +20,8 @@ import { syncReminders } from '@/lib/reminderSync';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { TourOverlay } from '@/components/TourOverlay';
 import { getTourState, hydrateTour, startTour } from '@/tour/store';
+import { getPendingLaunchDeck, setPendingLaunchDeck, stageLaunchPackage } from '@/lib/importedDecks';
+import { getPendingLaunchPdf } from '@/lib/noteFiles';
 
 function Shell() {
   const { theme, colors, hydrated } = useTheme();
@@ -87,6 +89,30 @@ function Shell() {
         }
       })
       .catch(() => {});
+
+    // Inspect launch intent (when app is opened with a .pdf or .apkg from WhatsApp or Downloads)
+    const checkLaunchIntent = async () => {
+      try {
+        const staged = await stageLaunchPackage();
+        if (staged) {
+          setPendingLaunchDeck(staged);
+          goToTab('Notes');
+        } else if (getPendingLaunchPdf()) {
+          goToTab('Notes');
+        }
+      } catch {}
+    };
+
+    checkLaunchIntent();
+    const appStateSub = AppState.addEventListener('change', state => {
+      if (state === 'active') {
+        checkLaunchIntent();
+      }
+    });
+
+    return () => {
+      appStateSub.remove();
+    };
   }, []);
 
   /**

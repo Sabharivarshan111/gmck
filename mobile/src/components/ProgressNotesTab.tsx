@@ -1475,12 +1475,12 @@ export function ProgressNotesTab({ year }: Props) {
                   setLinkOpen(v => !v);
                   setLinkError(null);
                 }}
-                label="Add a link or a YouTube video to this note"
+                label="Add a YouTube video or Google Drive link to this note"
                 hint="A YouTube link plays inside the note"
                 style={[styles.attachBtn, { borderColor: colors.border }]}>
                 <LinkIcon size={16} color={colors.accent} />
                 <Text style={[styles.subjectChipText, { color: colors.accent }]}>
-                  {linkOpen ? "Cancel link" : "Add link"}
+                  {linkOpen ? "Cancel link" : "Add YouTube / Drive link"}
                 </Text>
               </Touchable>
             </View>

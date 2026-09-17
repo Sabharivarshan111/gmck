@@ -1568,3 +1568,101 @@ Release `versionCode: 21` / `versionName: "0.0.0.21"` shipped the following core
 - Leaf question browse screens always render the search bar regardless of question count.
 - InkedImage and PDF viewer modals feature explicit white canvas backgrounds and aspect-ratio bounds, preventing black-screen render bugs.
 
+
+---
+
+# 17. Release v23 — Examination-Grade General Medicine Proforma Overhaul & Clinical Case Master Suite (2026-09-17)
+
+Release `versionCode: 23` / `versionName: "0.0.0.23"` delivers an exhaustive overhaul of the Bedside Clinical Case Proformas for General Medicine and clinical media tooling, strictly grounded in post-graduate/undergraduate practical examination standards from definitive Indian medical college clinical materials (MMC / Dr. MGR / AIIMS).
+
+## 17.1 Definitive General Medicine Proformas Overhaul (CVS, RS, Abdomen, CNS)
+`mobile/src/lib/clinicalProformas.ts` expanded from 1,473 to 3,267 lines (+2,440 insertions), capturing every clinical nuance across all 4 internal medicine systems:
+
+### 1. Cardiovascular System (CVS)
+- **HPI & Systematic Negative History**: SOCRATES chest pain breakdown, dyspnea grading (NYHA I-IV), Right Heart Failure stigmata (RUQ pain, bilateral pedal edema, abdominal distension), Left Heart Failure stigmata (orthopnea, PND), Rheumatic Fever history (migratory polyarthritis, Sydenham chorea, subcutaneous nodules, erythema marginatum, sore throat), Congenital Heart Disease history (recurrent LRTIs, cyanotic spells, squatting episodes), Pulmonary HT features (syncope, pulmonary apoplexy, Ortner hoarseness).
+- **General Physical Signs**: Mitral facies, Down, Turner, Marfan habitus; Infective Endocarditis stigmata (Osler nodes, Janeway lesions, splinter hemorrhages, Roth spots); Clubbing (grades 1-4, differential/reverse differential); Central vs. peripheral cyanosis.
+- **Arterial Pulse**: Complete 10-point analysis: rate, rhythm (regularly irregular vs. irregularly irregular in AF), volume, character (pulsus parvus et tardus in AS, bisferiens in AR+AS, collapsing/Corrigan in AR, alternans in LVF, paradoxus in tamponade/constriction), vessel wall thickening, radio-radial delay (coarctation, dissection, Takayasu), radio-femoral delay, and peripheral pulses in all 4 extremities.
+- **Blood Pressure**: Bilateral upper limbs (supine & sitting), lower limbs; postural drop (orthostatic hypotension > 20/10 mmHg).
+- **JVP Waveform Analysis**: Bilateral IJV height in cm above sternal angle at 45°; systematic waveform breakdown ('a' wave, 'c' wave, 'x' descent, 'v' wave, 'y' descent; giant 'a', cannon 'a', absent 'a', steep 'y', slow 'y', Kussmaul sign, abdominojugular reflux).
+- **All 12 Peripheral Signs of Severe AR**: Hill sign, Lighthouse sign, Locomotor brachii, Collapsing pulse, Pulsus bisferiens, Landolfi sign, Müller sign, Quincke sign, Duroziez sign (systolic and diastolic murmurs on femoral compression), Traube sign (pistol shot), Becker sign, Gerhardt/Sailer sign.
+- **Precordial Examination**:
+  - Inspection: Chest wall deformities (pectus, kyphoscoliosis), visible apical impulse, abnormal pulsations (epigastric RVH, parasternal, 2nd right ICS aortic, 2nd left ICS pulmonary, suprasternal, left 3rd ICS).
+  - Palpation: Apex beat character (tapping in MS, heaving in AS/HTN, hyperdynamic in MR/AR, dyskinetic in LV aneurysm), parasternal heave (grades I-III RVH), thrills (diastolic at apex in MS, systolic at base in AS), palpable heart sounds (palpable S1, palpable P2 in 2nd left ICS).
+  - Percussion: Right border of cardiac dullness, left border, upper border.
+  - Auscultation: S1 (loud in MS, soft in MR), S2 splitting (physiological, wide fixed in ASD, paradoxical in AS/LBBB; loud P2 vs. loud A2), added sounds (S3 gallop, S4 gallop, opening snap with A2-OS interval, ejection clicks, mid-systolic clicks, pericardial knock).
+  - Murmur Auscultation & Dynamic Maneuvers: All 4 classical areas + Erb's point and radiation to axilla/carotids. Dynamic maneuvers: Mid-diastolic murmur (bell, left lateral decubitus, held expiratory apnea); Pansystolic murmur radiating to axilla; Early diastolic murmur (diaphragm, sitting forward in held expiratory apnea); Carvallo sign inspiratory augmentation for TR vs. MR; Valsalva strain vs. release; standing vs. squatting.
+- **Master Diagnostic Presentation Rubric**: 5-part anatomical, valvular, functional (NYHA), rhythm, and complication formulation.
+
+### 2. Respiratory System (RS)
+- **Detailed Symptom Breakdown**: Cough (dry vs. productive, paroxysmal, nocturnal), Sputum (rusty in lobar pneumonia, foul/putrid in lung abscess, 3-layered in bronchiectasis, pink frothy in pulmonary edema), Dyspnea (mMRC Grade 0-4), Chest pain (pleuritic vs. tracheobronchial), Hemoptysis (scanty vs. frank, distinction from hematemesis, pulmonary apoplexy), Wheeze, Hoarseness.
+- **Systematic Negative History**: TB constitutional B-symptoms (evening fever, night sweats, anorexia, weight loss), CVS failure symptoms (orthopnea, PND, pedal edema), Malignancy features.
+- **Aspiration & Environmental Risks**: ABCDEF pneumonia aspiration risk factors (Alcoholism, Brain disease/stroke, Coma/seizures, Dental hygiene poor/periodontitis, Esophageal motility disorders, Foreign body aspiration); Sympathetic pleural effusion triggers (subphrenic abscess, amoebic liver abscess, acute pancreatitis); Childhood infections (measles, pertussis).
+- **General Physical Signs**: Clubbing (Lovibond angle, Schamroth window, grades 1-4; rule: clubbing absent in uncomplicated COPD, presence demands search for bronchiectasis or bronchogenic carcinoma), Horner syndrome (Miosis, Anhidrosis, Ptosis, Enophthalmos from Pancoast tumor apical invasion), Tracheal tug, Campbell sign.
+- **Upper Airway & Chest Wall Inspection**: Upper respiratory tract (DNS, polyps, turbinates, dental caries, tonsils, posterior pharyngeal wall cobbling/PND); Chest shape (barrel, pectus, kyphoscoliosis), respiratory pattern (Cheyne-Stokes, Kussmaul), Hoover sign (paradoxical inward movement of lower lateral ribs during inspiration in hyperinflation/COPD).
+- **Chest Wall Palpation**: Trachea position (Trail sign, tracheal tug, deviation), apex beat shift, objective tape measurement of chest expansion at nipple level (>= 5 cm normal vs. restricted), Tactile Vocal Fremitus (TVF) compared bilaterally across 9 classical anatomical regions.
+- **Percussion**: Systematic 9-region bilateral comparative percussion (+ resonant, - dull/stony dull, hyperresonant), Tidal percussion of diaphragm excursion (4-6 cm normal), Traube's space percussion boundaries, Liver dullness upper border (5th right ICS MCL) & lower border, Shifting dullness and straight-line dullness in hydropneumothorax.
+- **Auscultation**: Breath sounds (vesicular, vesicular with prolonged expiration, tubular/cavernous/amphoric bronchial breathing), Added sounds (fine end-inspiratory vs. coarse pan-inspiratory crackles, monophonic vs. polyphonic wheezes, pleural friction rub), Vocal Resonance (tactile & whispered: bronchophony, whispering pectoriloquy, egophony E-to-A), Succussion splash, Coin percussion test.
+- **Master Diagnostic Presentation Rubric**: Etiology, anatomical site, pathology, and functional status (respiratory failure Type I vs. Type II).
+
+### 3. Abdomen & Hepatobiliary System
+- **Symptom & Negative History**: SOCRATES abdominal pain breakdown, distension (uniform vs. localized, 6 Fs: fat, fluid, feces, flatus, fetus, phantom tumor), Jaundice progression (dark urine, clay stools, pruritus), Upper GI bleeding (hematemesis, melena, syncope), Encephalopathy grading (sleep reversal, confusion, flap).
+- **Risk & Past History**: Blood transfusions, tattooing, IV drug use, STD, viral hepatitis vaccines (A, B, E), family history of Wilson disease, Hemochromatosis, Alpha-1-antitrypsin deficiency.
+- **Complete Head-to-Toe Stigmata of Chronic Liver Disease & Portal HT**:
+  - Head/Facies: Temporal wasting, alopecia, Bitot spots, subconjunctival icterus/pallor, Kayser-Fleischer (KF) ring, xanthelasma, medial supraciliary madarosis, bilateral parotid enlargement, bleeding gums, fetor hepaticus.
+  - Thorax & Upper Limbs: Spider angiomas in SVC territory (blanching on central punctum pressure), gynecomastia, breast atrophy, loss of pectoral/axillary hair, palmar erythema, bounding pulse, clubbing, Dupuytren contracture, asterixis (flapping tremor), Terry nails, Muehrcke lines.
+  - Abdomen & Lower Limbs: Caput medusae, testicular atrophy, scrotal edema, pedal edema, Spider-man habitus (central ascites with wasted limbs).
+- **Abdominal Inspection**: Supine, head-rising test (divarication of recti, ventral incisional hernia), standing position (cough impulse at hernial orifices, saphenofemoral junction). Dilated abdominal veins with two-finger milking test to determine venous blood flow direction (portal HT: away from umbilicus; IVC obstruction: upward from groin to chest).
+- **Abdominal Palpation**: Superficial (tenderness, guarding, rigidity); Deep: Liver palpation (margin, surface, consistency, tenderness, liver span in MCL, normal 12-15 cm); Spleen palpation from RIF toward left costal margin, splenic notch, Hackett's grading (Grade 0-5), Middleton maneuver; Bimanual kidney ballottement; Gallbladder (Courvoisier sign, Murphy sign).
+- **Ascites Examination**: Fluid thrill (> 1500-2000 mL), Shifting dullness (> 500-1000 mL), Puddle sign (~ 100-120 mL minimal ascites).
+- **Auscultation**: Bowel sounds, Cruveilhier-Baumgarten venous hum over epigastrium/umbilicus, hepatic arterial bruit, renal artery bruits, splenic/hepatic friction rubs, succussion splash.
+- **Child-Turcotte-Pugh (CTP) Scoring**: PABAE criteria (PT/INR, Ascites, Bilirubin, Albumin, Encephalopathy) Class A (5-6), Class B (7-9), Class C (10-15).
+- **Master Diagnostic Presentation Rubric**: Presentation formulation covering etiology, pathology, portal HT, liver decompensation, and CTP class.
+
+### 4. Central Nervous System (CNS) — Post-Graduate (M.D.) Grade
+- **Handedness & Hemisphere Dominance**: Explicit right vs. left handedness and cerebral lateralization.
+- **Motor Weakness Functional Task Breakdown**:
+  - Upper limb: Proximal (combing hair, lifting arms above head) vs. Distal (buttoning, writing, key turning).
+  - Lower limb: Proximal (getting up from squatting, climbing stairs, Gowers sign) vs. Distal (slipping of chappals, tripping over toes/rugs).
+  - Axial & Neck: Neck flexion vs. extension weakness, Beevor sign (umbilical movement in T10 vs. T12 spinal root lesions).
+  - Bulbar & Respiratory: Single breath count (< 20 indicates respiratory muscle fatigue), diurnal variation/fatigability (Myasthenia gravis).
+- **Spinomotor & Involuntary Movements**: Fasciculations, ABCDEFM classification (Athetosis, Ballismus, Chorea, Dystonia, Essential tremor, Fasciculations, Myoclonus, Tics).
+- **Sensory Symptoms**: Positive (paresthesias, Lhermitte sign, root pain, girdle sensation) vs. Negative (numbness, sensory ataxia in darkness).
+- **Sphincter & Bladder Function**: Urgency, precipitancy, overflow incontinence, sensation of bladder fullness.
+- **Higher Mental Functions**: GCS score, complete 30-point Folstein MMSE scoring rubric (Orientation 10, Registration 3, Attention & Calculation 5, Recall 3, Language & Praxis 9), Speech (Broca motor, Wernicke sensory, conduction, global aphasia; cerebellar, spastic, LMN, extrapyramidal dysarthria).
+- **Cranial Nerves I to XII Bilateral Examination Protocol**:
+  - CN I (Olfactory): Odor discrimination excluding ammonia/pungent trigeminal stimulants.
+  - CN II (Optic): Visual acuity (Snellen / Rosenbaum), confrontation visual fields, Ishihara color plates, fundoscopy.
+  - CN III, IV, VI: Palpebral fissure symmetry, ptosis, resting eye position, ocular movements in 6 cardinal gazes, diplopia charting, direct/consensual pupillary light reflexes, accommodation reflex, RAPD (Marcus Gunn pupil), Horner syndrome.
+  - CN V (Trigeminal): V1, V2, V3 sensory testing; temporalis/masseter motor bulk, pterygoid lateral movement, jaw jerk reflex, corneal reflex.
+  - CN VII (Facial): Forehead wrinkling, eye closure (Bell phenomenon), nasolabial folds, smiling, cheek puffing. Crucial UMN (forehead sparing) vs. LMN (complete hemi-facial) distinction. Taste on anterior 2/3 tongue.
+  - CN VIII (Vestibulocochlear): Finger friction, Rinne 512 Hz test (AC > BC vs. BC > AC), Weber 512 Hz test (lateralization), nystagmus evaluation, Hallpike maneuver.
+  - CN IX & X: Palatal elevation and uvula deviation on 'Aah' (deviates away from lesion), gag reflex, voice hoarseness/nasal twang, fluid vs. solid dysphagia.
+  - CN XI: Trapezius shrug and SCM head rotation against resistance.
+  - CN XII: Tongue inspection inside mouth (bulk, wasting, fasciculations), protrusion (deviates to lesion side), wiggling.
+- **Motor System**:
+  - Circumferential Tape Measurements from Bony Landmarks: Upper arm 10 cm above olecranon; Forearm 10 cm below; Thigh 18 cm above patella; Calf 10 cm below tibial tuberosity.
+  - Muscle Tone: Hypotonia/flaccidity vs. clasp-knife spasticity vs. lead-pipe/cogwheel rigidity.
+  - Muscle Power: Bilateral MRC Grade 0 to 5 across all major joints.
+  - Superficial Reflexes: Corneal, conjunctival, pharyngeal, palatal, abdominal (T8-T10, T10-T12), cremasteric (L1-L2), anal wink (S4-S5), plantar reflex (flexor vs. Babinski extensor + Chaddock, Oppenheim, Gordon, Schaeffer).
+  - Deep Tendon Reflexes: Jaw jerk, biceps (C5-C6), supinator with inverted supinator sign (C5-C6), triceps (C7-C8), knee (L3-L4) with pendular knee jerk, ankle (S1-S2), sustained vs. transient ankle/patellar clonus.
+  - Primitive / Frontal Release Reflexes: Glabellar tap (Myerson sign), palmomental, snout, sucking, grasp, Hoffmann sign.
+- **Sensory System**: Spinothalamic (pain, temperature, crude touch), Posterior column (fine touch, 128 Hz vibration over bony prominences, joint position sense), Cortical sensory (stereognosis, graphesthesia, two-point discrimination, tactile extinction).
+- **Cerebellar System**: VANISHED mnemonic (Vertigo, Ataxia, Nystagmus, Intention tremor, Slurred speech, Hypotonia, Exaggerated pendular jerks, Dysdiadochokinesia, Dysmetria on finger-nose and heel-knee-shin, Stewart-Holmes rebound, Titubation).
+- **Gait & Stance**: Romberg test, tandem walking, gait types (hemiplegic, spastic scissor, foot drop, sensory ataxic, cerebellar, Parkinsonian festinating, waddling).
+- **Meningeal Signs**: Neck stiffness, Kernig sign, Brudzinski neck & leg signs.
+- **Peripheral Nerve Thickening**: Systematic palpation of greater auricular, ulnar at epicondyle, common peroneal at fibular neck, superficial radial cutaneous.
+- **Master Diagnostic Presentation Rubric**: Dual-tier formulation: Anatomical Localization (cortex, internal capsule, brainstem, spinal cord, anterior horn cell, peripheral nerve, NMJ, muscle) + Pathological/Etiological Diagnosis.
+
+## 17.2 PDF Viewer & Note Link Card Upgrades
+- `mobile/src/components/PdfViewerModal.tsx`: Explicit aspect-ratio bounds, background canvas stabilization, page zoom/pinch navigation, and fast rendering of clinical case PDFs.
+- `mobile/src/components/NoteLinkCard.tsx`: Rich rendering of embedded clinical notes and linked references.
+
+## 17.3 Verification & Build Stability
+- Passed all 7 core quality gates:
+  - `npm --prefix mobile run typecheck` (0 errors)
+  - `npm --prefix mobile run check:version` (v23 verified across gradle and TypeScript constants)
+  - `npm --prefix mobile run check:apkg` (all 3 APKG schema variants import cleanly)
+  - `npm --prefix mobile run check:anki` (spaced repetition scheduler matches Anki desktop)
+  - `npm --prefix mobile run check:mcq-card` (question parser & front image promotion verified)
+  - `npm --prefix mobile run check:keyboard` (16 text input screens lifted above IME keyboard)
+  - `npm run check:repo-intact` (all 39 load-bearing repo paths strictly intact)

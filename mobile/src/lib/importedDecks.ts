@@ -317,6 +317,27 @@ export async function stagePackage(): Promise<StagedPackage | null> {
   return stageStaged(await available().pick());
 }
 
+let pendingLaunchDeck: StagedPackage | null = null;
+const launchDeckListeners = new Set<(pkg: StagedPackage | null) => void>();
+
+export function getPendingLaunchDeck(): StagedPackage | null {
+  return pendingLaunchDeck;
+}
+
+export function setPendingLaunchDeck(pkg: StagedPackage | null): void {
+  pendingLaunchDeck = pkg;
+  for (const listener of launchDeckListeners) {
+    listener(pkg);
+  }
+}
+
+export function subscribeLaunchDeck(listener: (pkg: StagedPackage | null) => void): () => void {
+  launchDeckListeners.add(listener);
+  return () => {
+    launchDeckListeners.delete(listener);
+  };
+}
+
 /**
  * The package the app was opened with, if a `.apkg` was tapped elsewhere.
  *
@@ -576,9 +597,11 @@ function toDeckCard(card: ApkgCard, mediaDir: string): DeckCard {
   const frontImages = mediaDir ? card.frontMedia.map(toUri) : [];
   const backImages = mediaDir ? card.backMedia.map(toUri) : [];
 
-  // If question references an image but image was attached to back, promote to front
+  // If question references an image, or is an MCQ, or has a short stem where the image was kept on back, promote to front
   if (frontImages.length === 0 && backImages.length > 0) {
-    if (/\b(image|picture|diagram|photo|photomicrograph|shown|marked|below|figure|ecg|ekg|x-?ray|xray|scan|ct|mri|arrow|identify|histology|lesion)\b/i.test(card.front)) {
+    const isMcqStem = /\b[A-Da-d][\.\)]\s+/.test(card.front) || /\([A-Da-d]\)/.test(card.front);
+    const mentionsVisual = /\b(image|picture|diagram|photo|photomicrograph|shown|marked|below|figure|ecg|ekg|x-?ray|xray|scan|ct|mri|arrow|identify|histology|lesion|feature|specimen|finding|condition|diagnosis|patient)\b/i.test(card.front);
+    if (isMcqStem || mentionsVisual || backImages.length === 1 || card.front.length < 350) {
       frontImages.push(backImages[0]);
     }
   }

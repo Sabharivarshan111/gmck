@@ -543,8 +543,13 @@ class ApkgModule(reactContext: ReactApplicationContext) : NativeOrbitApkgSpec(re
             missing.put(name)
             continue
           }
-          open(zip.getInputStream(entry), zstd).use { input ->
-            target.outputStream().use { output -> bytes += input.copyTo(output) }
+          if (target.exists() && target.length() > 0) {
+            written += 1
+            bytes += target.length()
+            continue
+          }
+          open(zip.getInputStream(entry), zstd).buffered(65536).use { input ->
+            target.outputStream().buffered(65536).use { output -> bytes += input.copyTo(output) }
           }
           written += 1
         }
@@ -561,7 +566,8 @@ class ApkgModule(reactContext: ReactApplicationContext) : NativeOrbitApkgSpec(re
 
   /** A media filename reduced to something that is only ever a filename. */
   private fun safeName(name: String): String {
-    val base = name.substringAfterLast('/').substringAfterLast('\\')
+    val decoded = try { java.net.URLDecoder.decode(name, "UTF-8") } catch (_: Throwable) { name }
+    val base = decoded.substringAfterLast('/').substringAfterLast('\\')
     val cleaned = base.filter { it.isLetterOrDigit() || it in "._- ()[]" }.trim()
     return if (cleaned.isEmpty() || cleaned == "." || cleaned == "..") "file" else cleaned.take(120)
   }

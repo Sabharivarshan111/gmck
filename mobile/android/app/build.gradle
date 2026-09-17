@@ -108,10 +108,11 @@ android {
         applicationId "com.aistudio.mbbsqbank.aycxvd"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        // Version 22 release: Clinical Proformas suite, Hernia/Thyroid/Breast long cases,
-        // local AsyncStorage clerking drafts, AI Case Auto-Fill, and Bedside Viva Q&A.
-        versionCode 22
-        versionName "0.0.0.22"
+        // Version 23 release: PDF Reader & Editor suite with Stylus & Multi-Images,
+        // Draggable Floating YouTube Player, Anki Image Fixes & 10x Import Acceleration,
+        // 10x Fast PDF Rendering, and Supabase Proforma Diagrams.
+        versionCode 23
+        versionName "0.0.0.23"
 
         // Deep-link / OAuth callback scheme, consumed by the intent-filter in
         // AndroidManifest.xml. Added with an indexed put rather than assigning

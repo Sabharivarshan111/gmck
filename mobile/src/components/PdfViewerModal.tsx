@@ -4,6 +4,7 @@ import {
   FlatList,
   Image,
   Modal,
+  PanResponder,
   ScrollView,
   StyleSheet,
   TextInput,
@@ -22,6 +23,7 @@ import {
   ImagePlus,
   LayoutGrid,
   PenLine,
+  RotateCcw,
   Search,
   StickyNote,
   Trash2,
@@ -80,6 +82,7 @@ export function PdfViewerModal({ file, visible, onClose }: PdfViewerModalProps) 
 
   // Markup / drawing state
   const [markupOpen, setMarkupOpen] = useState(false);
+  const [editBarOpen, setEditBarOpen] = useState(false);
   const [currentInk, setCurrentInk] = useState<NoteInk | null>(null);
   const [inkVersion, setInkVersion] = useState(0);
   const [annotatedPages, setAnnotatedPages] = useState<Set<number>>(new Set());
@@ -98,6 +101,7 @@ export function PdfViewerModal({ file, visible, onClose }: PdfViewerModalProps) 
       setCurrentPage(1);
       setError(null);
       setMarkupOpen(false);
+      setEditBarOpen(false);
       setViewMode('page');
       setSearchOpen(false);
       setJumpOpen(false);
@@ -257,35 +261,147 @@ export function PdfViewerModal({ file, visible, onClose }: PdfViewerModalProps) 
     setViewMode('page');
   }, [currentPage, insertedPages, persistInsertedPages]);
 
-  // Insert image into note page
+  // Insert image into note page (supports attaching up to 3 images per blank page)
   const handleInsertImage = useCallback(async () => {
     try {
       const result = await launchImageLibrary({
         mediaType: 'photo',
         quality: 0.8,
-        selectionLimit: 1,
+        selectionLimit: 3,
       });
-      const uri = result.assets?.[0]?.uri;
-      if (!uri) return;
+      const uris = result.assets?.map(a => a.uri).filter((u): u is string => !!u) ?? [];
+      if (uris.length === 0) return;
 
-      const newPage: InsertedPdfPage = {
-        id: `${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 6)}`,
-        afterPage: currentPage,
-        imageUrl: uri,
-        noteText: 'Inserted medical illustration',
-        created: Date.now(),
-      };
-      const next = [...insertedPages, newPage];
-      persistInsertedPages(next);
-      setActiveInsertedId(newPage.id);
+      if (activeInsertedId) {
+        // Add to currently active blank note page
+        const next = insertedPages.map(p => {
+          if (p.id === activeInsertedId) {
+            const existing =
+              p.images && p.images.length > 0 ? p.images : p.imageUrl ? [p.imageUrl] : [];
+            const merged = Array.from(new Set([...existing, ...uris])).slice(0, 4);
+            return {
+              ...p,
+              images: merged,
+              imageUrl: merged[0],
+            };
+          }
+          return p;
+        });
+        persistInsertedPages(next);
+      } else {
+        // Create new blank note page containing selected images
+        const newPage: InsertedPdfPage = {
+          id: `${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 6)}`,
+          afterPage: currentPage,
+          imageUrl: uris[0],
+          images: uris,
+          noteText: '',
+          created: Date.now(),
+        };
+        const next = [...insertedPages, newPage];
+        persistInsertedPages(next);
+        setActiveInsertedId(newPage.id);
+      }
       setViewMode('page');
     } catch {}
-  }, [currentPage, insertedPages, persistInsertedPages]);
+  }, [activeInsertedId, currentPage, insertedPages, persistInsertedPages]);
+
+  // Undo last stylus stroke for current page or blank note
+  const handleUndoInk = useCallback(async () => {
+    if (!currentImageId) return;
+    const ink = await loadNoteInk(currentImageId);
+    if (ink && ink.strokes && ink.strokes.length > 0) {
+      const nextStrokes = ink.strokes.slice(0, -1);
+      await saveNoteInk(currentImageId, {
+        ...ink,
+        strokes: nextStrokes,
+      });
+      setInkVersion(v => v + 1);
+    }
+  }, [currentImageId]);
 
   // Active inserted note page object if open
   const currentInserted = activeInsertedId
     ? insertedPages.find(p => p.id === activeInsertedId)
     : null;
+
+  // Unified page sequence: PDF pages and inserted notes in continuous sequence
+  type PageSequenceItem =
+    | { type: 'pdf'; page: number }
+    | { type: 'inserted'; note: InsertedPdfPage };
+
+  const pageSequence = useMemo<PageSequenceItem[]>(() => {
+    const seq: PageSequenceItem[] = [];
+    for (const p of pages) {
+      seq.push({ type: 'pdf', page: p.page });
+      const matchingNotes = insertedPages.filter(n => n.afterPage === p.page);
+      for (const note of matchingNotes) {
+        seq.push({ type: 'inserted', note });
+      }
+    }
+    return seq;
+  }, [pages, insertedPages]);
+
+  const currentSeqIndex = useMemo(() => {
+    if (activeInsertedId) {
+      const idx = pageSequence.findIndex(
+        item => item.type === 'inserted' && item.note.id === activeInsertedId,
+      );
+      if (idx >= 0) return idx;
+    }
+    const idx = pageSequence.findIndex(
+      item => item.type === 'pdf' && item.page === currentPage,
+    );
+    return idx >= 0 ? idx : 0;
+  }, [pageSequence, activeInsertedId, currentPage]);
+
+  const goToIndex = useCallback(
+    (index: number) => {
+      if (index < 0 || index >= pageSequence.length) return;
+      const target = pageSequence[index];
+      if (target.type === 'pdf') {
+        setCurrentPage(target.page);
+        setActiveInsertedId(null);
+      } else {
+        setCurrentPage(target.note.afterPage);
+        setActiveInsertedId(target.note.id);
+      }
+    },
+    [pageSequence],
+  );
+
+  const goToPrev = useCallback(() => {
+    if (currentSeqIndex > 0) {
+      goToIndex(currentSeqIndex - 1);
+    }
+  }, [currentSeqIndex, goToIndex]);
+
+  const goToNext = useCallback(() => {
+    if (currentSeqIndex < pageSequence.length - 1) {
+      goToIndex(currentSeqIndex + 1);
+    }
+  }, [currentSeqIndex, pageSequence.length, goToIndex]);
+
+  // Horizontal pan responder for page swiping
+  const panResponder = useMemo(
+    () =>
+      PanResponder.create({
+        onMoveShouldSetPanResponder: (_, gestureState) => {
+          return (
+            Math.abs(gestureState.dx) > 35 &&
+            Math.abs(gestureState.dx) > Math.abs(gestureState.dy) * 1.5
+          );
+        },
+        onPanResponderRelease: (_, gestureState) => {
+          if (gestureState.dx < -50) {
+            goToNext();
+          } else if (gestureState.dx > 50) {
+            goToPrev();
+          }
+        },
+      }),
+    [goToNext, goToPrev],
+  );
 
   // Search matches across pages and inserted notes
   const searchMatches = useMemo(() => {
@@ -423,17 +539,19 @@ export function PdfViewerModal({ file, visible, onClose }: PdfViewerModalProps) 
               )}
             </Touchable>
 
-            {/* Draw / Markup toggle */}
+            {/* Edit / Side Toolbar Toggle (media_1789648202880.png) */}
             {(currentPageObj || currentInserted) && viewMode === 'page' ? (
               <Touchable
-                onPress={() => setMarkupOpen(true)}
-                label="Mark up / annotate this PDF page"
-                hint="Opens pen, highlighter and drawing tools"
+                onPress={() => setEditBarOpen(b => !b)}
+                label="Toggle editing toolbar"
+                hint="Opens floating side bar with Add page, Insert image, Stylus tools"
                 style={[
                   styles.iconBtn,
                   {
                     borderColor: colors.border,
-                    backgroundColor: withAlpha(colors.accent, 0.12),
+                    backgroundColor: editBarOpen
+                      ? withAlpha(colors.accent, 0.25)
+                      : withAlpha(colors.accent, 0.12),
                   },
                 ]}>
                 <PenLine size={18} color={colors.accent} />
@@ -498,7 +616,7 @@ export function PdfViewerModal({ file, visible, onClose }: PdfViewerModalProps) 
                 <Text
                   style={[
                     styles.gridTabText,
-                    { color: gridTab === 'all' ? '#FFFFFF' : colors.text },
+                    { color: gridTab === 'all' ? colors.primaryText : colors.text },
                   ]}>
                   All Pages ({pages.length})
                 </Text>
@@ -515,7 +633,7 @@ export function PdfViewerModal({ file, visible, onClose }: PdfViewerModalProps) 
                 <Text
                   style={[
                     styles.gridTabText,
-                    { color: gridTab === 'annotated' ? '#FFFFFF' : colors.text },
+                    { color: gridTab === 'annotated' ? colors.primaryText : colors.text },
                   ]}>
                   Annotated ({annotatedPages.size + insertedPages.length})
                 </Text>
@@ -573,7 +691,7 @@ export function PdfViewerModal({ file, visible, onClose }: PdfViewerModalProps) 
                       <Text
                         style={[
                           styles.pagePillText,
-                          { color: isSelected ? '#FFFFFF' : colors.text },
+                          { color: isSelected ? colors.primaryText : colors.text },
                         ]}>
                         {item.page}
                       </Text>
@@ -626,7 +744,7 @@ export function PdfViewerModal({ file, visible, onClose }: PdfViewerModalProps) 
           /* ========================================================
            * SINGLE PAGE VIEW WITH SIDE TOOLBAR (media_1789560899723.png)
            * ======================================================== */
-          <View style={styles.pageContainer}>
+          <View style={styles.pageContainer} {...panResponder.panHandlers}>
             <ScrollView
               contentContainerStyle={styles.scrollContent}
               maximumZoomScale={3}
@@ -644,35 +762,116 @@ export function PdfViewerModal({ file, visible, onClose }: PdfViewerModalProps) 
                       borderColor: colors.accent,
                     },
                   ]}>
+                  {/* Note Page Header with Stylus & Undo Controls */}
                   <View style={styles.insertedHeader}>
                     <View style={styles.insertedTitleWrap}>
                       <StickyNote size={16} color={colors.accent} />
                       <Text style={[styles.insertedTitle, { color: colors.accent }]}>
-                        Blank Note Page (Inserted after P{currentInserted.afterPage})
+                        Note Page (After P{currentInserted.afterPage})
                       </Text>
                     </View>
-                    <Touchable
-                      onPress={() => {
-                        const next = insertedPages.filter(p => p.id !== currentInserted.id);
-                        persistInsertedPages(next);
-                        setActiveInsertedId(null);
-                      }}
-                      label="Delete this note page"
-                      style={styles.deleteNoteBtn}>
-                      <Trash2 size={16} color={colors.danger ?? '#ef4444'} />
-                    </Touchable>
+
+                    <View style={styles.insertedHeaderActions}>
+                      {/* Stylus Handwriting Trigger */}
+                      <Touchable
+                        onPress={() => setMarkupOpen(true)}
+                        label="Draw with stylus on this note page"
+                        style={[
+                          styles.noteActionBtn,
+                          { backgroundColor: withAlpha(colors.primary, 0.15) },
+                        ]}>
+                        <PenLine size={13} color={colors.primary} />
+                        <Text style={[styles.noteActionBtnText, { color: colors.primary }]}>
+                          Stylus
+                        </Text>
+                      </Touchable>
+
+                      {/* Undo Last Stroke */}
+                      <Touchable
+                        onPress={handleUndoInk}
+                        label="Undo last stylus stroke"
+                        style={[
+                          styles.noteActionBtn,
+                          { backgroundColor: withAlpha(colors.textMuted, 0.12) },
+                        ]}>
+                        <RotateCcw size={13} color={colors.text} />
+                        <Text style={[styles.noteActionBtnText, { color: colors.text }]}>Undo</Text>
+                      </Touchable>
+
+                      {/* Delete Note Page */}
+                      <Touchable
+                        onPress={() => {
+                          const next = insertedPages.filter(p => p.id !== currentInserted.id);
+                          persistInsertedPages(next);
+                          setActiveInsertedId(null);
+                        }}
+                        label="Delete this note page"
+                        style={styles.deleteNoteBtn}>
+                        <Trash2 size={16} color={colors.danger ?? '#ef4444'} />
+                      </Touchable>
+                    </View>
                   </View>
 
-                  {/* Attached Image if present */}
-                  {currentInserted.imageUrl ? (
-                    <View style={styles.insertedImgWrap}>
-                      <Image
-                        source={{ uri: currentInserted.imageUrl }}
-                        style={styles.insertedImg}
-                        resizeMode="contain"
-                      />
-                    </View>
-                  ) : null}
+                  {/* Attached Images (Supports 2-3 images per blank page) */}
+                  {(() => {
+                    const noteImages =
+                      currentInserted.images && currentInserted.images.length > 0
+                        ? currentInserted.images
+                        : currentInserted.imageUrl
+                        ? [currentInserted.imageUrl]
+                        : [];
+
+                    if (noteImages.length > 0) {
+                      return (
+                        <View style={styles.multiImgContainer}>
+                          {noteImages.map((uri, idx) => (
+                            <View key={`${uri}_${idx}`} style={styles.multiImgCard}>
+                              <InkedImage
+                                key={`${currentImageId}_${idx}-${inkVersion}`}
+                                uri={uri}
+                                imageId={idx === 0 ? currentImageId : `${currentImageId}_sub_${idx}`}
+                                ownShape
+                                style={styles.insertedImg}
+                                title={`Diagram ${idx + 1}`}
+                              />
+                              <Touchable
+                                onPress={() => {
+                                  const nextImages = noteImages.filter((_, i) => i !== idx);
+                                  const next = insertedPages.map(p =>
+                                    p.id === currentInserted.id
+                                      ? {
+                                          ...p,
+                                          images: nextImages,
+                                          imageUrl: nextImages[0] || undefined,
+                                        }
+                                      : p,
+                                  );
+                                  persistInsertedPages(next);
+                                }}
+                                label={`Delete image ${idx + 1}`}
+                                style={styles.deleteImgBadge}>
+                                <Trash2 size={12} color="#FFFFFF" />
+                              </Touchable>
+                            </View>
+                          ))}
+                        </View>
+                      );
+                    }
+
+                    return (
+                      /* Blank Stylus Canvas when no images attached */
+                      <View style={styles.blankCanvasBox}>
+                        <InkedImage
+                          key={`${currentImageId}-${inkVersion}`}
+                          uri=""
+                          imageId={currentImageId}
+                          ownShape
+                          style={[styles.blankInkedCanvas, { width: displayWidth - 36, height: 180 }]}
+                          title={`Stylus Canvas Note P${currentInserted.afterPage}`}
+                        />
+                      </View>
+                    );
+                  })()}
 
                   {/* Text Notes */}
                   <TextInput
@@ -702,49 +901,51 @@ export function PdfViewerModal({ file, visible, onClose }: PdfViewerModalProps) 
               ) : null}
             </ScrollView>
 
-            {/* Floating Side Action Bar: Add Page & Insert Image (media_1789560899723.png) */}
-            <View
-              style={[
-                styles.sideToolbar,
-                { backgroundColor: colors.card, borderColor: colors.border },
-              ]}>
-              {/* 1. Add Note Page between PDF */}
-              <Touchable
-                onPress={handleAddBlankNotePage}
-                label="Add blank note page after this page"
-                hint="Inserts a custom note page for lecture points"
+            {/* Floating Side Action Bar: Add Page, Insert Image, Stylus (only shown when edit button clicked) */}
+            {editBarOpen ? (
+              <View
                 style={[
-                  styles.sideActionBtn,
-                  { backgroundColor: withAlpha(colors.accent, 0.12) },
+                  styles.sideToolbar,
+                  { backgroundColor: colors.card, borderColor: colors.border },
                 ]}>
-                <FilePlus size={20} color={colors.accent} />
-              </Touchable>
+                {/* 1. Add Note Page between PDF */}
+                <Touchable
+                  onPress={handleAddBlankNotePage}
+                  label="Add blank note page after this page"
+                  hint="Inserts a custom note page for lecture points"
+                  style={[
+                    styles.sideActionBtn,
+                    { backgroundColor: withAlpha(colors.accent, 0.12) },
+                  ]}>
+                  <FilePlus size={20} color={colors.accent} />
+                </Touchable>
 
-              {/* 2. Insert Image into PDF / Note */}
-              <Touchable
-                onPress={handleInsertImage}
-                label="Insert image into PDF"
-                hint="Attaches a photo or medical diagram"
-                style={[
-                  styles.sideActionBtn,
-                  { backgroundColor: withAlpha(colors.primary, 0.12) },
-                ]}>
-                <ImagePlus size={20} color={colors.primary} />
-              </Touchable>
+                {/* 2. Insert Image into PDF / Note */}
+                <Touchable
+                  onPress={handleInsertImage}
+                  label="Insert image into PDF"
+                  hint="Attaches a photo or medical diagram"
+                  style={[
+                    styles.sideActionBtn,
+                    { backgroundColor: withAlpha(colors.primary, 0.12) },
+                  ]}>
+                  <ImagePlus size={20} color={colors.primary} />
+                </Touchable>
 
-              {/* 3. Handwriting / Drawing Markup */}
-              <Touchable
-                onPress={() => setMarkupOpen(true)}
-                label="Annotate / draw with stylus"
-                style={[
-                  styles.sideActionBtn,
-                  { backgroundColor: withAlpha(colors.primary, 0.12) },
-                ]}>
-                <PenLine size={20} color={colors.primary} />
-              </Touchable>
-            </View>
+                {/* 3. Handwriting / Drawing Markup */}
+                <Touchable
+                  onPress={() => setMarkupOpen(true)}
+                  label="Annotate / draw with stylus"
+                  style={[
+                    styles.sideActionBtn,
+                    { backgroundColor: withAlpha(colors.primary, 0.12) },
+                  ]}>
+                  <PenLine size={20} color={colors.primary} />
+                </Touchable>
+              </View>
+            ) : null}
 
-            {/* Bottom Page Navigation Bar & Page Jump Popover (media_1789560899723.png) */}
+            {/* Bottom Page Navigation Bar & Page Jump Popover (Unified Continuous Sequence) */}
             <View
               style={[
                 styles.bottomNav,
@@ -755,15 +956,12 @@ export function PdfViewerModal({ file, visible, onClose }: PdfViewerModalProps) 
                 },
               ]}>
               <Touchable
-                onPress={() => {
-                  setCurrentPage(p => Math.max(1, p - 1));
-                  setActiveInsertedId(null);
-                }}
-                disabled={currentPage <= 1}
-                label="Previous page"
+                onPress={goToPrev}
+                disabled={currentSeqIndex <= 0}
+                label="Previous page or note"
                 style={[
                   styles.navBtn,
-                  { borderColor: colors.border, opacity: currentPage <= 1 ? 0.35 : 1 },
+                  { borderColor: colors.border, opacity: currentSeqIndex <= 0 ? 0.35 : 1 },
                 ]}>
                 <ChevronLeft size={20} color={colors.text} />
                 <Text style={[styles.navBtnText, { color: colors.text }]}>Prev</Text>
@@ -782,20 +980,22 @@ export function PdfViewerModal({ file, visible, onClose }: PdfViewerModalProps) 
                   },
                 ]}>
                 <Text style={[styles.pageBadgeText, { color: colors.text }]}>
-                  {currentPage} of {pageCount}
+                  {currentInserted
+                    ? `Note (P${currentInserted.afterPage}+) [${currentSeqIndex + 1}/${pageSequence.length}]`
+                    : `Page ${currentPage} of ${pageCount}`}
                 </Text>
               </Touchable>
 
               <Touchable
-                onPress={() => {
-                  setCurrentPage(p => Math.min(pageCount, p + 1));
-                  setActiveInsertedId(null);
-                }}
-                disabled={currentPage >= pageCount}
-                label="Next page"
+                onPress={goToNext}
+                disabled={currentSeqIndex >= pageSequence.length - 1}
+                label="Next page or note"
                 style={[
                   styles.navBtn,
-                  { borderColor: colors.border, opacity: currentPage >= pageCount ? 0.35 : 1 },
+                  {
+                    borderColor: colors.border,
+                    opacity: currentSeqIndex >= pageSequence.length - 1 ? 0.35 : 1,
+                  },
                 ]}>
                 <Text style={[styles.navBtnText, { color: colors.text }]}>Next</Text>
                 <ChevronRight size={20} color={colors.text} />
@@ -915,7 +1115,11 @@ export function PdfViewerModal({ file, visible, onClose }: PdfViewerModalProps) 
         {markupOpen && (currentPageObj || currentInserted) ? (
           <Modal visible onRequestClose={() => setMarkupOpen(false)} animationType="fade">
             <DrawCanvas
-              uri={currentPageObj?.uri ?? ''}
+              uri={
+                currentInserted
+                  ? currentInserted.images?.[0] ?? currentInserted.imageUrl ?? ''
+                  : currentPageObj?.uri ?? ''
+              }
               initial={currentInk}
               onCancel={() => setMarkupOpen(false)}
               onDone={handleDoneDrawing}
@@ -1268,5 +1472,57 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     textAlignVertical: 'top',
     minHeight: 180,
+  },
+  insertedHeaderActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  noteActionBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+  },
+  noteActionBtnText: {
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  multiImgContainer: {
+    gap: 12,
+    marginBottom: 12,
+  },
+  multiImgCard: {
+    position: 'relative',
+    width: '100%',
+    height: 220,
+    borderRadius: 8,
+    overflow: 'hidden',
+    backgroundColor: '#000000',
+  },
+  deleteImgBadge: {
+    position: 'absolute',
+    top: 6,
+    right: 6,
+    backgroundColor: 'rgba(239, 68, 68, 0.85)',
+    borderRadius: 12,
+    padding: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 10,
+  },
+  blankCanvasBox: {
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 8,
+    overflow: 'hidden',
+    marginBottom: 12,
+  },
+  blankInkedCanvas: {
+    backgroundColor: 'transparent',
+    borderRadius: 8,
   },
 });

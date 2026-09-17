@@ -1,0 +1,271 @@
+Respiratory System
+Name
+Age
+Sex
+Occupation
+Address
+Chief
+complaints
+H/O Presenting complaints
+Cough
+Chest Pain
+Duration
+Onset
+Paroxysmal/persistent
+Dry/Productive
+Postural Variation
+Diurnal Variation
+Aggravating/relieving factor
+Associated with chest
+pain, syncope, wheeze
+Duration
+Site
+Onset
+Nature
+Continuo
+u
+s/Intermittent
+Radiation
+Postural Variation
+Aggravating/reliving factor
+Associated with Nausea, Vomiting, Sweating
+Associated with food intake
+Breathlessness
+Sputum
+Duration
+Onset
+Progression
+Grade
+Postural and Diurnal Variation
+Aggravating/relieving factor
+PND/
+Orthopnea
+Duration
+Quantity
+Odour
+Color
+Character
+Postural and Diurnal variation
+With or without blood
+Haemoptysis
+Wheeze
+Duration
+Episodes
+Fresh/Altered Blood
+Associated with purulent
+sputum or food particle
+Duration
+Diurnal variation
+Aggravating/relieving factor
+Negative History
+TB
+CVS
+H/O fever with
+evening rise of temperature
+H/O loss of weight
+H/O loss of appetite
+H/O night sweats
+H/O pedal edema
+H/O abdominal distention
+H/O right hypocondrial pain
+H/O puffiness of face
+H/O palpitation
+H/O syncope
+H/O hoarseness of voice
+H/O oliguria
+Malignancy
+H/O dysphagia
+H/O Hoarseness of voice
+Mode of onset
+H/O loss of weight
+Past History
+H/O previous similar episodes
+H/O DM, HT, BA
+H/O TB(Any contact, Age, Treatment failure)
+H/O suggestive of pneumonia
+Aspiration( Aspiration, Booze, Cough, Drowning,
+Epilepsy, Foreign Body
+-
+ABCDEF)
+Exanthematous fever
+Tooth extraction, Tonsillectomy, Allergy
+Trauma
+General anaesthesia
+H/O suggestive of Pleural effusion
+Acute abdominal distress( Subphrenic  abscess, Amoebic abscess, Pancreatitis)
+H/O s
+uggestive of past infections
+Measles, whooping cough
+Recurrent respiratory infection
+Family History
+Any other family members with similar complaints
+H/O TB
+Personal History
+Smoking
+Alcohol
+Exposure (Occupational and STD)
+Treatment History
+Examination
+General Examination
+Consciousness
+Comfortable
+Afebrile
+Built
+Pallor
+Jaundice
+Clubbing
+Cyanosis
+Pedal Edema
+Significant lymph
+adenopathy
+Halitosis
+-
+MAP: E
+-
+Enophthalmosis, M
+-
+Miosis, A
+-
+Anhydrosis, P
+-
+Ptosis)
+Markers
+of TB
+Phlyctern
+Scar/Sinus in the neck
+Tenia versicolor
+Lupus vulgaris
+Erythema nodosum
+Gynacomastia
+INH
+Markers of HIV
+Oral hairy leukoplakia
+Oral candidiasis
+Molluscum contagiosum
+Herpetic infection(Zooster)
+Generalized lymphadenopathy
+Vital Signs
+Pulse
+BP
+Temperature
+JVP
+Examination of Respiratory System
+Inspection
+Upper respiratory tract
+Nasal septum
+Polyp
+Oral hygiene
+Tonsils
+Post nasal
+drip
+Chest
+Symmetry
+Shape
+Moves equally with respiration or not
+Intercostal Fullness/Indrawing
+Crowding of
+ribs
+Sinus
+Scar
+Discharge
+Dilated veins
+Tracheal position
+Apical impulse
+Drooping of shoulder
+Supra/Infra
+clavicular hollowness
+Palpation
+Tracheal position
+Apical impulse
+Chest movement
+Chest exapansion measurements(Inspiration and Expiration)
+Intercostal tenderness
+Tactile fremitus
+Lymph nodes (Supra clavicular, infra clavicular and
+axillary)
+Percussion
+Lung
+Region
+Right
+Left
+Directly on clavicle
+Supra clavicular
+Infra clavicular
+Mammary
+Axillary
+Infra axillary
+Supra scapular
+Inter
+scapular
+Infra scapular
++/
+-
++/
+-
++/
+-
++/
+-
++/
+-
++/
+-
++/
+-
++/
+-
++/
+-
++/
+-
++/
+-
++/
+-
++/
+-
++/
+-
++/
+-
++/
+-
++/
+-
++/
+-
+Tidal percussion
+Shifting dullness
+Straight line dullness
+Cardiac dullness
+Auscultation
+In the above mentioned areas
+Breath sounds
+Normal
+Vesicular
+Bronchial
+Tubular
+Cavernous
+Amphoric
+Added sounds
+Crepitations
+Ronchi
+Pleural rub
+Vocal resonance
+Compared on both sides
+Bronchophony
+Egophony
+Whispering pectoriloquy
+Succession splash
+Coin percussion
+Other system
+CVS            : RHF,
+CCF
+CNS           : asterexis
+Abdomen : liver abscess
+-
+tenderness
+Diagnosis
+_______sided______(PE/Fibrosis
+/Consolidation) probably due to _________with/without signs
+of RHF.
