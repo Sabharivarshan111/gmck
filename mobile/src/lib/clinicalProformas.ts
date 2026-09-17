@@ -2727,8 +2727,8 @@ export const CLINICAL_PROFORMAS: ClinicalProforma[] = [
     department: 'General Surgery / Oncosurgery',
     summary: 'Master surgical examination proforma for Breast Lump, Fibroadenoma, Phyllodes Tumor, and Carcinoma Breast (TNM staging and Triple Assessment).',
     examPearl: 'Palpate the breast with the flat of the fingers against the underlying rib cage (not pinching the tissue between fingers, which makes normal breast tissue feel nodular). Always test mobility against Pectoralis Major by asking patient to press hands firmly against hips.',
-    diagramPath: '/diagrams/anatomy/axilla_boundaries_contents_artery.jpg',
-    diagramTitle: 'Axilla Boundaries, Contents & Surgical Anatomy (Levels I, II, III Lymph Nodes)',
+    diagramPath: '/diagrams/anatomy/breast_lymphatic_drainage_axillary_nodes.jpg',
+    diagramTitle: 'Breast Lymphatic Drainage & Axillary Nodal Levels I, II, III',
     sections: [
       {
         title: '1. Patient History & Risk Stratification',
@@ -2963,8 +2963,8 @@ export const CLINICAL_PROFORMAS: ClinicalProforma[] = [
     department: 'Pediatrics & Neonatology',
     summary: 'Master examination proforma for Protein Energy Malnutrition (PEM - Marasmus & Kwashiorkor), Thalassemia, Nephrotic Syndrome, Bronchiolitis, and Developmental Delay.',
     examPearl: 'Always calculate Anthropometry percentiles and classify malnutrition using IAP (Weight-for-Age) and WHO Z-score charts (Weight-for-Height for acute wasting, Height-for-Age for chronic stunting).',
-    diagramPath: '/diagrams/pediatrics/pediatric_respiratory_distress_silverman.jpg',
-    diagramTitle: 'Pediatric Respiratory Distress & Silverman-Anderson Retraction Score',
+    diagramPath: '/diagrams/community/growth_chart_road_to_health.jpg',
+    diagramTitle: 'Growth Chart (Road-to-Health) & PEM Grading',
     sections: [
       {
         title: '1. Pediatric History & Birth Records',

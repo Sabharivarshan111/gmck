@@ -610,11 +610,11 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                         { backgroundColor: colors.primary, opacity: isAutoFilling ? 0.7 : 1 },
                       ]}>
                       {isAutoFilling ? (
-                        <ActivityIndicator size="small" color="#FFFFFF" />
+                        <ActivityIndicator size="small" color={colors.primaryText} />
                       ) : (
-                        <Sparkles size={16} color="#FFFFFF" />
+                        <Sparkles size={16} color={colors.primaryText} />
                       )}
-                      <Text style={styles.autoFillBtnText}>
+                      <Text style={[styles.autoFillBtnText, { color: colors.primaryText }]}>
                         {isAutoFilling ? 'Synthesizing Textbook Findings…' : 'AI Auto-Fill Case'}
                       </Text>
                     </Touchable>
@@ -1146,7 +1146,7 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                         <Text
                           style={[
                             styles.chatBubbleText,
-                            { color: msg.role === 'user' ? '#FFFFFF' : colors.text },
+                            { color: msg.role === 'user' ? colors.primaryText : colors.text },
                           ]}>
                           {msg.text}
                         </Text>
@@ -1186,7 +1186,7 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                           backgroundColor: chatInput.trim() ? colors.primary : withAlpha(colors.primary, 0.4),
                         },
                       ]}>
-                      <Send size={16} color="#FFFFFF" />
+                      <Send size={16} color={colors.primaryText} />
                     </Touchable>
                   </View>
                 </>
@@ -1246,7 +1246,7 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                     <Text
                       style={[
                         styles.filterPillText,
-                        { color: active ? '#FFFFFF' : colors.text },
+                        { color: active ? colors.primaryText : colors.text },
                       ]}>
                       {sys === 'Obstetrics & Gynaecology' ? 'OBGYN' : sys} ({count})
                     </Text>
@@ -1726,7 +1726,6 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   autoFillBtnText: {
-    color: '#FFFFFF',
     fontSize: 13,
     fontWeight: '700',
   },
