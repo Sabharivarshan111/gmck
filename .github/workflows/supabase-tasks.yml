@@ -194,6 +194,150 @@ jobs:
           echo "note-images is gone."
 
       # -------------------------------------------------------------------
+      # Upload every plate in `public/diagrams/` that the bucket does not
+      # already hold.
+      #
+      # This exists because writing a row and uploading the bytes are done by
+      # two different routes, and only one of them works from a sandbox. An
+      # agent with the Supabase MCP connector can write `question_diagrams`
+      # rows all day; it cannot PUT a JPEG, because the egress gateway answers
+      # 403 to the CONNECT for the project host. So rows get written against a
+      # plate that was committed to the repo and never uploaded, and the
+      # picture 404s in all three apps.
+      #
+      # That is not hypothetical. On 2026-09-17 there were **25 plates behind
+      # 39 rows** in exactly that state — `ansa_cervicalis`, `azygos_vein`,
+      # `tuning_fork_tests`, `diabetic_retinopathy_fundus_signs` and twenty-two
+      # more — every one of them sitting in `public/diagrams/` in this repo
+      # while the reader got a broken image. A missing row shows nothing, which
+      # is the designed answer; a row pointing at nothing shows a failure.
+      #
+      # It uploads, it never overwrites: a path the bucket already has is
+      # skipped, so a plate regenerated on somebody's laptop and uploaded from
+      # there is never silently replaced by the repo's older copy. That also
+      # makes the step idempotent, which is what lets it live in a workflow
+      # and be re-dispatched without thought.
+      #
+      # The repo is a SUBSET of the bucket — most plates were generated on the
+      # Antigravity machine and never committed — so "in the bucket but not in
+      # the repo" is the ordinary case and is not reported as a problem.
+      - name: Upload repo plates the bucket is missing
+        run: |
+          set -euo pipefail
+          case "$FOUND" in A) TOKEN="$TOK_A";; B) TOKEN="$TOK_B";; *) TOKEN="$TOK_C";; esac
+          export TOKEN
+
+          # The Storage API needs a project key, not the personal access token.
+          # Masked the moment it arrives and never written to disk, same as the
+          # bucket-delete step above.
+          code=$(curl -s -o /tmp/keys.json -w '%{http_code}' \
+            -H "Authorization: Bearer $TOKEN" \
+            "https://api.supabase.com/v1/projects/$PROJECT_REF/api-keys")
+          case "$code" in 2*) ;; *) echo "::error::Could not read the project keys ($code)"; exit 1;; esac
+          SRK=$(python3 -c "import json;print(next((k.get('api_key','') for k in json.load(open('/tmp/keys.json')) if k.get('name')=='service_role'), ''))")
+          rm -f /tmp/keys.json
+          if [ -z "$SRK" ]; then
+            echo "::error::No service_role key came back from the Management API."
+            exit 1
+          fi
+          echo "::add-mask::$SRK"
+          export SRK
+
+          python3 - <<'PY'
+          import json, os, pathlib, subprocess, sys
+
+          ref   = os.environ['PROJECT_REF']
+          token = os.environ['TOKEN']
+          srk   = os.environ['SRK']
+
+          def query(sql):
+              out = subprocess.run(
+                  ['curl', '-s', '-o', '/tmp/q.json', '-w', '%{http_code}',
+                   '-H', f'Authorization: Bearer {token}',
+                   '-H', 'Content-Type: application/json',
+                   '-X', 'POST',
+                   f'https://api.supabase.com/v1/projects/{ref}/database/query',
+                   '-d', json.dumps({'query': sql})],
+                  capture_output=True, text=True, check=True)
+              if not out.stdout.strip().startswith('2'):
+                  print(open('/tmp/q.json').read()[:2000])
+                  sys.exit(f'::error::query failed (HTTP {out.stdout.strip()})')
+              return json.load(open('/tmp/q.json'))
+
+          have = {r['name'] for r in query(
+              "select name from storage.objects where bucket_id = 'diagrams';")}
+          print(f'bucket holds {len(have)} objects')
+
+          root  = pathlib.Path('public/diagrams')
+          local = sorted(p for p in root.rglob('*') if p.is_file())
+          print(f'repo holds {len(local)} plates')
+
+          TYPES = {'.jpg': 'image/jpeg', '.jpeg': 'image/jpeg',
+                   '.png': 'image/png',  '.webp': 'image/webp'}
+
+          missing = [p for p in local if str(p.relative_to(root)) not in have]
+          if not missing:
+              print('Every repo plate is already in the bucket. Nothing to upload.')
+          else:
+              print(f'\n{len(missing)} to upload:')
+
+          failed = []
+          for path in missing:
+              key = str(path.relative_to(root))
+              ctype = TYPES.get(path.suffix.lower())
+              if ctype is None:
+                  print(f'  SKIP  {key} (not an image)')
+                  continue
+              # POST, not PUT: POST refuses a key that already exists, which is
+              # the no-overwrite guarantee enforced by the server rather than
+              # only by the check above.
+              out = subprocess.run(
+                  ['curl', '-s', '-o', '/tmp/up.json', '-w', '%{http_code}',
+                   '-X', 'POST',
+                   '-H', f'Authorization: Bearer {srk}',
+                   '-H', f'apikey: {srk}',
+                   '-H', f'Content-Type: {ctype}',
+                   '--data-binary', f'@{path}',
+                   f'https://{ref}.supabase.co/storage/v1/object/diagrams/{key}'],
+                  capture_output=True, text=True, check=True)
+              code = out.stdout.strip()
+              if code.startswith('2'):
+                  print(f'  ok    {key}  ({path.stat().st_size // 1024} KB)')
+              else:
+                  body = open('/tmp/up.json').read()[:400]
+                  print(f'  FAIL  {key}  HTTP {code}  {body}')
+                  failed.append(key)
+
+          # The report that makes this step worth dispatching even when it
+          # uploads nothing: which rows still point at a plate the bucket does
+          # not hold. Anything left here is a broken picture in production, and
+          # the repo does not have the file to fix it with.
+          rows = query("""
+              with referenced as (
+                select distinct split_part(public_url, '/diagrams/', 2) as plate
+                from question_diagrams where public_url is not null
+              )
+              select r.plate,
+                     (select count(*) from question_diagrams q
+                       where q.public_url like '%/diagrams/' || r.plate) as rows
+              from referenced r
+              where r.plate not in (
+                select name from storage.objects where bucket_id = 'diagrams')
+              order by r.plate;""")
+
+          print('\n=== rows pointing at a plate the bucket does not hold ===')
+          if not rows:
+              print('  none — every referenced plate resolves.')
+          else:
+              for r in rows:
+                  print(f"  {r['rows']:>3} row(s)  {r['plate']}")
+              print('\nThese are broken pictures. The file is not in this repo either,')
+              print('so it has to be regenerated and committed before this step can fix it.')
+
+          if failed:
+              sys.exit(f'::error::{len(failed)} upload(s) failed')
+          PY
+      # -------------------------------------------------------------------
       # Apply every PENDING `sql` job in the queue.
       #
       # This is the general answer to a problem the repo has hit in every
