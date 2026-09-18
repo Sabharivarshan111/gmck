@@ -323,6 +323,280 @@ The General Medicine case proforma was recognized as insufficient for post-gradu
    - `NoteLinkCard.tsx` enhanced note preview rendering.
    - All 7 verification checks pass: `typecheck`, `check:version` (v23), `check:apkg`, `check:anki`, `check:mcq-card`, `check:keyboard`, `check:repo-intact`.
 
+---
+
+## 8. Handover to ChatGPT — 2026-09-18 (Claude Code session)
+
+Branch: `claude/continue-previous-z98gdv`. Everything below is committed and
+pushed. Read §8.5 before you trust any of it — a significant amount was not
+typechecked.
+
+### 8.1 What this session did
+
+| Area | Outcome |
+|---|---|
+| Case proformas | **12 → 45** across 7 departments |
+| General examination | 19 signs defined, **10 with real photographs** live in the bucket |
+| Rewarded ad | Four defects root-caused and fixed; `check:ads` added |
+| Broken diagrams | **39 questions were showing a broken image**; now 0 |
+| Picker UI | Grouped by department, empty state, two reference buttons above the search |
+| New checks | `check:ads`, `check:exam-signs`, `check:proformas` |
+| Fixed your v23 code | `NoteLinkCard.tsx` full-screen modal padded its bar by a hardcoded 48 |
+
+### 8.2 THE FIRST THING TO DO — the depth gap, measured
+
+**Your four system proformas are four times deeper than the other thirty-six,
+and that gap is now the main quality problem in this feature.**
+
+```
+cns_proforma           757 lines   49 checklists   6 viva
+abdomen_proforma       552         37              6
+respiratory_proforma   526         34              6
+cvs_proforma           498         31              6
+------------------------------------------------------ median 539
+csom_proforma          243         14              5
+cataract_proforma      206         10              4
+swelling_proforma      175         10              2
+...
+dermoid_cyst_proforma   69          3              1
+------------------------------------------------------ median 136
+```
+
+The 28 cases added this session are written to the standard of the EXISTING
+short proformas (thyroid 120, breast 116, hernia 164), not to the standard you
+set in v23. They are exam-correct and they carry the discriminating findings,
+but they do not have the "all 12 peripheral signs of AR, named" density.
+
+**Deepen them in this order** — commonest long cases first:
+
+1. `cld_portal_htn_proforma` (136) — commonest medicine long case with a big abdomen
+2. `dm_complications_proforma` (139)
+3. `ckd_nephrotic_proforma` (136)
+4. `stroke_hemiplegia_proforma` (140)
+5. `obstetrics_anc_proforma` (144)
+6. `ortho_fracture_proforma` (149) — the general trauma framework; the owner's
+   own six ortho cases are now separate, in `orthopaedics.ts`
+7. `anaemia_proforma` (115)
+8. `pyrexia_tb_proforma` (134)
+
+Run `npm run check:proformas` after each; it prints the per-department counts
+and validates structure, unique ids, the system union and every `diagramPath`.
+
+### 8.3 Two bug classes worth internalising, because both will recur
+
+**A row pointing at nothing.** 25 plates behind 39 `question_diagrams` rows had
+a `public_url` for a file the bucket did not hold. Cause: writing a row and
+uploading the plate go by **two different routes and only one works from a
+sandbox**. The MCP connector gives SQL; the egress gateway blocks the project
+host, so an agent writes a row for a URL it cannot create. `supabase-tasks.yml`
+now has a generic idempotent upload step — **dispatch it after any session that
+adds plates to `public/diagrams/`**. It reports every row still pointing at a
+missing plate whether or not it uploads anything.
+
+**A picture that is plausible and wrong.** The first sign-image fetch took the
+first freely-licensed Commons hit and was wrong for 5 of 19 — a portrait of a
+real filmmaker for "clubbing", a Roman bronze nail cleaner for "platonychia",
+hand-foot syndrome for "palmar erythema". Commons full-text search matches the
+file PAGE, so any page mentioning the word ranks. Every sign now carries
+`titleMustContain` and the gate runs BEFORE the licence check. **Do not loosen
+it**; `check:exam-signs` fails on a generic word ("nail", "hand", "eye") in a
+gate, and all five wrong hits would have passed a generic gate.
+
+This is the same lesson `CLAUDE.md` records for `question_diagrams`: a keyword
+search cannot choose a clinical picture, and a plausible wrong one is worse
+than a blank because the reader trusts it.
+
+### 8.4 Source material is now in the repo
+
+`.agents/sources/proformas/` holds the owner's 15 proforma PDFs extracted to
+**plain text** (not SVG — nothing here is a drawing), plus
+`extract-pdf-text.py`, a dependency-free extractor written because
+`pdftotext`, `pypdf` and `pip` are all unreachable from an agent sandbox. It
+decodes per-font ToUnicode CMaps, which is the part that matters — Word subsets
+its fonts, so one merged table turns "Breast" into "BreaVt".
+
+**The scanned sheets were read too, without OCR** — and the technique is worth
+knowing because it will come up again. `ortho_casesheets-1.pdf` is a CamScanner
+scan: 22 pages of handwriting, no text layer. tesseract, poppler-utils, pypdf
+and pip are all refused by the proxy. But a scanner embeds each page as a
+`/DCTDecode` image XObject, and **a DCTDecode stream is a JPEG byte for byte**,
+so the pages were written out verbatim and read as images:
+
+```sh
+python3 .agents/sources/proformas/extract-page-images.py scan.pdf outdir/
+```
+
+It yielded six orthopaedic cases that were not in the app at all — CTEV,
+chronic osteomyelitis, non-union, peripheral nerve injuries, osteoarthritis and
+malunion — now in `mobile/src/lib/proformas/orthopaedics.ts`. The transcription
+is **by eye, not machine OCR**, so it is faithful to structure and content but
+not character-exact, and **where a proforma disagrees with the owner's sheet,
+the sheet wins.**
+
+`proforma_medicine.pdf` is the one scan still unread. It can be read the same
+way; its four systems are already covered in depth by your own v23 proformas,
+which is the only reason it was left.
+
+### 8.4a Two references the picker now carries
+
+Under the search box in the case-sheet picker there are two buttons, because
+both are things a student needs WHILE clerking and neither was reachable
+without first opening a case sheet they did not want:
+
+- **General Examination** → `GeneralExamSheet.tsx`, which mounts the SAME
+  `GeneralExamSigns` component the Guide tab does. Not a second copy — nineteen
+  signs kept in step in two places is nineteen chances to drift.
+- **Normal Lab Values** → `LabValuesSheet.tsx` over `lib/labValues.ts`, which is
+  new: ~100 values across haematology, biochemistry, renal, liver, cardiac,
+  endocrine, ABG, urine, CSF/fluids and bedside vitals.
+
+Three rules `labValues.ts` keeps, each of which is how a reference table
+normally misleads: conventional **and** SI units (Indian labs report mg/dL, the
+textbooks use µmol/L, and a conversion at the bedside is a conversion nobody
+does); age and sex variants wherever they change the answer (a heart rate of 140
+is normal in a neonate and alarming at ten); and the **critical** value marked
+separately, because the number that means *act now* is not the number that
+means abnormal. The "reference intervals differ between laboratories"
+disclaimer is on the SCREEN, not only in the source.
+
+`check:proformas` fails if either button disappears, if the row moves out from
+under the search, or if `GeneralExamSheet` stops rendering the shared component.
+
+### 8.5 NOT VERIFIED — read before you build on this
+
+**Nothing this session was typechecked, linted or screenshotted.** `npm ci`
+fails here: the proxy returns 403 for registry tarballs, so `node_modules` does
+not exist and `tsc`, `eslint`, `check:smoke` and the preview harness could not
+run. Only the dependency-free checks ran, and those are green:
+`check:ads`, `check:exam-signs`, `check:proformas`, `check:edges`,
+`check:keyboard`, `check:repo-intact`, `check:agent-docs`,
+`check:supabase-queue`.
+
+**Your first command should be:**
+
+```sh
+cd mobile && npm ci && npx tsc --noEmit && npx eslint . --quiet
+```
+
+The three changes most worth a real typecheck:
+- `src/lib/ads.ts` — rewritten state machine
+- `src/components/ClinicalProformaModal.tsx` — regrouped list, two new sheets
+- `src/components/LabValuesSheet.tsx`, `GeneralExamSheet.tsx` — new files
+
+Then screenshot the picker: the quick-reference row, the grouped list and the
+two new pages have never been rendered.
+
+### 8.6 Still outstanding
+
+- **47 plates sit in the bucket with no `question_diagrams` row**, so they are
+  invisible in all three apps. Same class as the 2026-09-02 fix. Each needs
+  matching to its bank question BY HAND — never by keyword, never blind.
+- **9 of 19 signs have no photograph** because nothing passed the title gate.
+  That is the correct outcome. Re-dispatch `exam-sign-images.yml` with better
+  `search` terms if you want to try again; do not widen `titleMustContain`.
+- The depth gap in §8.2.
+
+### 8.7 Conventions this session added, which `CLAUDE.md` now assumes
+
+- **A department per file** under `mobile/src/lib/proformas/`, spread into
+  `CLINICAL_PROFORMAS`. `clinicalProformas.ts` had passed 290 KB in one array.
+  Import the type with `import type` — the cycle is then erased at compile time.
+- **The general examination is never repeated inside a proforma's `sections`.**
+  Every source sheet recites the same PICCKLE line; the app draws it once from
+  `generalExamSigns.ts`, with photographs. Fourteen copies is fourteen things
+  to keep in step.
+- **`swelling_proforma` holds the lump framework once.** Eight short cases are
+  the same examination on a different site.
+- **Readiness belongs to an instance, not to a module.** The ad bug was a
+  module-level boolean beside a module-level instance describing different ads.
+
+---
+
+## 9. RESUME POINT — written against a session limit, 2026-09-18
+
+Everything is committed and pushed to `claude/continue-previous-z98gdv`, HEAD
+`d1dd5018`, working tree clean. Nothing is half-finished in the tree. This
+section is the one to read first if you are picking this up cold.
+
+### 9.1 What I was doing when I stopped
+
+Nothing was in flight. The last completed task was reading the scanned
+orthopaedic case sheets and turning them into six proformas. The task I would
+have started next is **§8.2 — the depth gap**, and it is still the single
+biggest quality problem in this feature.
+
+### 9.2 Every PDF the owner sent, and exactly what came of each
+
+All extractions are committed in `.agents/sources/proformas/` so you never need
+the PDFs re-uploaded.
+
+| PDF | Read? | Cases built from it |
+|---|---|---|
+| `surgery_cases_final-2` | ✅ text | breast, thyroid, hernia, varicose veins, PVD/Buerger |
+| `Long_cases-1` | ✅ text | obstructive jaundice, ileocaecal TB, GOO, carcinoma caecum |
+| `Short_cases-1` | ✅ text | swelling framework, lipoma, sebaceous cyst, dermoid, hydrocele, UDT |
+| `ENT_DD` | ✅ text | CSOM, DNS + sinusitis, ethmoidal polyp, tonsillitis, stridor |
+| `PAEDIATRIC_CASE_PROFORMAS` | ✅ text | paed master framework, PEM, neonatal/NICU |
+| `Ophthalmology_Case_Profoma_-_Agam` | ✅ text | cataract, corneal ulcer |
+| `General_Proforma` (is ophthalmology, despite the name) | ✅ text | folded into the two eye cases |
+| `OBSTETRICS_AND_GYNAECOLOGY_CASE_PROFORMA` | ✅ text | obstetric ANC, gynaecology |
+| `Piccle_mnemonics` | ✅ text | the 19 general-examination signs (`generalExamSigns.ts`) |
+| `CLINICAL_CASES_GYNAECOLOGY` | ⚠️ 0 bytes | nothing — see 9.3 |
+| `CLINICAL_CASES_OBSTETRICS_1` | ⚠️ 0 bytes | nothing — see 9.3 |
+| `OG_cases`, `OG_cases-1` | ⚠️ 0 bytes | nothing — see 9.3 |
+| `ortho_casesheets-1` | ✅ **images** | CTEV, chronic osteomyelitis, non-union + malunion, peripheral nerve injuries, OA knee |
+| `proforma_medicine` | ❌ **not read** | nothing — see 9.3 |
+
+### 9.3 THE FIVE PDFs STILL UNREAD, and how to read them
+
+This is the most actionable thing left, and it is cheap.
+
+**Four gave 0 bytes** — `CLINICAL_CASES_GYNAECOLOGY`, `CLINICAL_CASES_OBSTETRICS_1`,
+`OG_cases`, `OG_cases-1`. They are NOT scans; `extract-pdf-text.py` returned
+nothing because it does not handle **PDF 1.5 object streams** (`/ObjStm`), where
+the objects are themselves inside a compressed stream. Teaching the extractor to
+inflate `/ObjStm` first would unlock all four. They are obstetrics and
+gynaecology, which is currently the thinnest department in the app at 3 cases,
+so this is the highest-yield hour of work available.
+
+**One is a scan** — `proforma_medicine.pdf`. Read it the way the ortho scan was
+read (§8.4): `extract-page-images.py`, then read the JPEGs. Its four systems are
+already the deepest proformas in the app, so it is low priority — but check it
+for anything the v23 set missed.
+
+### 9.4 State of the feature, in numbers
+
+45 cases: General Surgery 14, General Medicine 10, Orthopaedics 7, ENT 5,
+Paediatrics 4, OBG 3, Ophthalmology 2.
+
+19 general-examination signs, 10 with a verified-correct photograph live in the
+bucket under `signs/`. 9 have none because nothing passed the title gate, which
+is the correct outcome — **do not loosen the gate**.
+
+### 9.5 The four things to do, in order
+
+1. **Teach `extract-pdf-text.py` to inflate `/ObjStm`**, then build the four OBG
+   cases that unlocks. Highest yield, smallest effort.
+2. **Close the depth gap** (§8.2): your four v23 system proformas have a median
+   of 539 lines against 136 for the other 41. The eight commonest long cases are
+   listed there in the order to deepen them.
+3. **Typecheck everything** (§8.5). `npm ci` is blocked in this sandbox, so
+   NOTHING this session was typechecked, linted or screenshotted:
+   `cd mobile && npm ci && npx tsc --noEmit && npx eslint . --quiet`.
+4. **File the 47 orphan plates** (§8.6) — they sit in the bucket with no
+   `question_diagrams` row and are invisible in all three apps. By hand, never
+   by keyword.
+
+### 9.6 Do not undo these
+
+- `titleMustContain` on every sign, with no generic words in it. Five of
+  nineteen images were badly wrong without it.
+- The general examination is never repeated inside a proforma's `sections`.
+- A department per file under `mobile/src/lib/proformas/`, `import type` only.
+- Readiness belongs to an ad instance, not to a module-level boolean.
+- Dispatch `supabase-tasks.yml` after any session that adds plates to
+  `public/diagrams/`, or the rows will point at 404s.
+
 
 ---
 
@@ -354,3 +628,15 @@ Numeric/reference values are **not duplicated into a new hard-coded table**. The
 ### Required verification before merge
 Run the normal mobile gates, especially:
 `npx tsc --noEmit`, `npx eslint . --quiet`, `npm run check:keyboard`, `npm run check:edges`, `npm run check:version`, and the applicable smoke/preview checks. Do not claim native-device visual verification unless an emulator/device was actually used.
+
+
+---
+
+## Claude → ChatGPT integration — 2026-09-18
+
+Claude's explicit resume branch `claude/continue-previous-z98gdv` has been carried forward onto the newer v23 mainline while preserving the verified native Android screenshot harness and the decluttered Case Proforma UX. The integration intentionally keeps both layers:
+
+- Claude: 45 case proformas, 7 departments, shared General Examination signs, Normal Lab Values reference, grouped picker, source extraction/check tooling.
+- ChatGPT: progressive Guide sections, structured bedside GPE clerking, per-proforma normal references, collapsed optional AI assistance, native Android screenshot verification.
+
+The original Claude branch was never typechecked in its sandbox. CI on the integration branch is therefore the authority before merge.

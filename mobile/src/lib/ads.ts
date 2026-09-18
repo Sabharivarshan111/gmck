@@ -39,9 +39,46 @@ export interface RewardedResult {
 
 let initialized = false;
 let interstitial: InterstitialAd | null = null;
-let rewarded: RewardedAd | null = null;
 let interstitialLoaded = false;
-let rewardedLoaded = false;
+
+/*
+ * The rewarded ad's readiness is a PROPERTY OF AN INSTANCE, not of this
+ * module, and that distinction is the whole bug behind "the ad does not play
+ * when I tap OK, it plays later or not at all".
+ *
+ * It used to be one `rewarded` instance plus a separate `rewardedLoaded`
+ * boolean, and the two could describe different ads. `showRewardedAd` would
+ * replace `rewarded` with a fresh instance while the preloaded one was still
+ * in flight; the orphan's LOADED listener then set the flag to true, so the
+ * flag said "ready" about an ad nobody was holding any more, and the next
+ * `show()` was called on an unloaded instance and threw.
+ *
+ * So the loaded ad is held BY IDENTITY. `readyAd` is an ad that has actually
+ * reported LOADED and has not been shown; `pendingAd` is one still loading.
+ * There is never more than one request in flight, which is also what stops a
+ * tap from throwing away a preload that was seconds from arriving.
+ */
+let readyAd: RewardedAd | null = null;
+let pendingAd: RewardedAd | null = null;
+
+/*
+ * A failed preload used to be the end of it: the ERROR listener set the flag
+ * false and nothing ever tried again. One transient failure at launch — no
+ * network yet, no fill, or a request that beat the consent flow — left the
+ * session with no preloaded ad at all, so every later tap paid a cold load
+ * and the reader saw exactly what was reported: nothing immediate, then an
+ * ad some seconds later, or none.
+ *
+ * Bounded, because retrying a no-fill forever on a cheap phone is worse than
+ * the bug it fixes. Three attempts and it stops until something asks.
+ */
+const RETRY_DELAYS_MS = [5_000, 20_000, 60_000];
+
+/** How long a tap waits for an ad that was not preloaded. Past this the
+ *  reader is let through; the load carries on and becomes the next preload. */
+const LOAD_WAIT_MS = 8_000;
+let retryCount = 0;
+let retryTimer: ReturnType<typeof setTimeout> | null = null;
 
 /**
  * Ask for consent (required in the EEA/UK) and start the SDK. Safe to call
@@ -82,6 +119,19 @@ export async function initializeAds(): Promise<void> {
       }
     } catch (error) {
       warn('Ads consent flow skipped:', error);
+    } finally {
+      /*
+       * The preload above deliberately does NOT wait for this — consent is
+       * decoupled behind a 3.5s race precisely so a slow or absent consent
+       * service cannot stall ads, and re-serialising it would undo that.
+       *
+       * But a request issued before consent is resolved is the likeliest
+       * thing to come back with no fill, and until now that first failure
+       * was permanent. So once consent has settled, ask again: `preloadRewarded`
+       * returns immediately if the first attempt already succeeded, so on the
+       * ordinary path this costs one comparison.
+       */
+      preloadRewarded();
     }
   })();
 }
@@ -106,27 +156,86 @@ function preloadInterstitial(): void {
   }
 }
 
+/** Listeners waiting for the in-flight ad. Resolved with the loaded instance,
+ *  or null when the load failed, so a tap that arrives mid-load rides the
+ *  request already running instead of starting a second one. */
+type PendingWaiter = (ad: RewardedAd | null) => void;
+const waiters = new Set<PendingWaiter>();
+
+function settleWaiters(ad: RewardedAd | null): void {
+  const pending = [...waiters];
+  waiters.clear();
+  // One ad, one show. A rewarded unit can be shown exactly once, so only the
+  // first waiter is handed the instance; anyone else who tapped while it was
+  // loading is told there was none rather than being shown a consumed ad.
+  pending.forEach((waiter, index) => {
+    waiter(index === 0 ? ad : null);
+  });
+}
+
 function preloadRewarded(): void {
+  // One request at a time. A second `createForAdRequest` while the first is
+  // loading is what used to orphan a nearly-arrived ad.
+  if (pendingAd || readyAd) {
+    return;
+  }
+  if (retryTimer) {
+    clearTimeout(retryTimer);
+    retryTimer = null;
+  }
   try {
-    rewardedLoaded = false;
-    rewarded = RewardedAd.createForAdRequest(REWARDED_UNIT_ID);
-    rewarded.addAdEventListener(RewardedAdEventType.LOADED, () => {
-      rewardedLoaded = true;
+    const ad = RewardedAd.createForAdRequest(REWARDED_UNIT_ID);
+    pendingAd = ad;
+
+    const unsubscribeLoaded = ad.addAdEventListener(RewardedAdEventType.LOADED, () => {
+      unsubscribeLoaded();
+      unsubscribeError();
+      // Only adopt it if it is still the request we are waiting on. A late
+      // arrival from an abandoned attempt must not overwrite a newer one.
+      if (pendingAd === ad) {
+        pendingAd = null;
+        readyAd = ad;
+        retryCount = 0;
+      }
+      settleWaiters(ad);
     });
-    rewarded.addAdEventListener(AdEventType.ERROR, () => {
-      rewardedLoaded = false;
+
+    const unsubscribeError = ad.addAdEventListener(AdEventType.ERROR, () => {
+      unsubscribeLoaded();
+      unsubscribeError();
+      if (pendingAd === ad) {
+        pendingAd = null;
+      }
+      settleWaiters(null);
+      scheduleRetry();
     });
-    rewarded.load();
+
+    ad.load();
   } catch (error) {
     warn('Rewarded preload failed:', error);
+    pendingAd = null;
+    settleWaiters(null);
+    scheduleRetry();
   }
+}
+
+function scheduleRetry(): void {
+  if (retryTimer || retryCount >= RETRY_DELAYS_MS.length) {
+    return;
+  }
+  const delay = RETRY_DELAYS_MS[retryCount];
+  retryCount += 1;
+  retryTimer = setTimeout(() => {
+    retryTimer = null;
+    preloadRewarded();
+  }, delay);
 }
 
 export function isRewardedReady(): boolean {
   if (!ADS_ENABLED) {
     return false;
   }
-  return rewardedLoaded;
+  return readyAd !== null;
 }
 
 export function isInterstitialReady(): boolean {
@@ -149,22 +258,29 @@ export function showRewardedAd(): Promise<RewardedResult> {
   }
 
   return new Promise(resolve => {
-    let earned = 0;
     let settled = false;
     let timer: ReturnType<typeof setTimeout> | null = null;
 
     const finish = (result: RewardedResult) => {
-      if (!settled) {
-        settled = true;
-        if (timer) {
-          clearTimeout(timer);
-          timer = null;
-        }
-        resolve(result);
+      if (settled) {
+        return;
       }
+      settled = true;
+      if (timer) {
+        clearTimeout(timer);
+        timer = null;
+      }
+      resolve(result);
     };
 
     const playInstance = (adInstance: RewardedAd) => {
+      // It is being shown, so it is no longer a preloaded ad anybody else may
+      // pick up. A rewarded unit can only be shown once.
+      if (readyAd === adInstance) {
+        readyAd = null;
+      }
+
+      let earned = 0;
       const unsubscribeEarned = adInstance.addAdEventListener(
         RewardedAdEventType.EARNED_REWARD,
         reward => {
@@ -189,37 +305,43 @@ export function showRewardedAd(): Promise<RewardedResult> {
       }
     };
 
-    if (rewarded && rewardedLoaded) {
-      playInstance(rewarded);
+    // The ordinary path, and the one the reader is entitled to: an ad was
+    // preloaded at launch, so tapping OK plays it with no wait at all.
+    if (readyAd) {
+      playInstance(readyAd);
       return;
     }
 
-    // If not already loaded, create a fresh instance and wait up to 8s for it to load
-    const freshAd = RewardedAd.createForAdRequest(REWARDED_UNIT_ID);
-    rewarded = freshAd;
-    rewardedLoaded = false;
-
-    const unsubscribeLoaded = freshAd.addAdEventListener(RewardedAdEventType.LOADED, () => {
-      unsubscribeLoaded();
-      unsubscribeError();
-      rewardedLoaded = true;
-      playInstance(freshAd);
-    });
-
-    const unsubscribeError = freshAd.addAdEventListener(AdEventType.ERROR, () => {
-      unsubscribeLoaded();
-      unsubscribeError();
-      rewardedLoaded = false;
-      finish({ completed: false, amount: 0 });
-    });
+    /*
+     * Nothing preloaded. Wait for a load rather than starting a competing one
+     * — `preloadRewarded` is a no-op while a request is in flight, so this
+     * either joins the request already running or begins the only one.
+     *
+     * The timeout used to tear down the LOADED listener, which meant an ad
+     * arriving at 8.1s was thrown away AND the module was left believing no
+     * ad existed — so every subsequent tap paid the same cold load and the
+     * state never healed. The waiter is dropped now, but the load is left
+     * running and its result is adopted as the preload for next time. That
+     * turns "slow for ever" into "slow once".
+     */
+    const waiter: PendingWaiter = ad => {
+      if (settled) {
+        return;
+      }
+      if (ad) {
+        playInstance(ad);
+      } else {
+        finish({ completed: false, amount: 0 });
+      }
+    };
+    waiters.add(waiter);
 
     timer = setTimeout(() => {
-      unsubscribeLoaded();
-      unsubscribeError();
+      waiters.delete(waiter);
       finish({ completed: false, amount: 0 });
-    }, 8000);
+    }, LOAD_WAIT_MS);
 
-    freshAd.load();
+    preloadRewarded();
   });
 }
 

@@ -2,6 +2,7 @@ import React, { useMemo, useRef, useState } from 'react';
 import { Animated, Image, Linking, Modal, PanResponder, StyleSheet, View } from 'react-native';
 import { ExternalLink, Maximize2, Move, Play, Trash2, X } from 'lucide-react-native';
 import { WebView } from 'react-native-webview';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Text } from '@/components/Text';
 import { Touchable } from '@/components/Touchable';
 import { useTheme, withAlpha } from '@/theme';
@@ -17,6 +18,17 @@ export function NoteLinkCard({
   onRemove?: () => void;
 }) {
   const { colors } = useTheme();
+  /*
+   * A full-screen <Modal> is its OWN WINDOW, outside the navigator's
+   * SafeAreaView, so nothing insets it. This bar was padded by a hardcoded
+   * 48 — right on the phone it was written on, and wrong under a display
+   * cutout, where the title and the close button sit under the clock.
+   *
+   * That is the documented rule in CLAUDE.md and the reason check:edges
+   * exists; the drawing canvas shipped with its Keep button under the
+   * status bar for exactly this.
+   */
+  const insets = useSafeAreaInsets();
   const [playing, setPlaying] = useState(false);
   const [thumbFailed, setThumbFailed] = useState(false);
   const [fullscreen, setFullscreen] = useState(false);
@@ -137,7 +149,11 @@ export function NoteLinkCard({
         {fullscreen && (
           <Modal visible={fullscreen} onRequestClose={() => setFullscreen(false)} animationType="slide">
             <View style={styles.fullscreenModal}>
-              <View style={styles.fullscreenBar}>
+              <View
+                style={[
+                  styles.fullscreenBar,
+                  { paddingTop: Math.max(insets.top, 12) + 8 },
+                ]}>
                 <Text numberOfLines={1} style={styles.fullscreenTitle}>
                   {title}
                 </Text>
@@ -331,7 +347,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
-    paddingTop: 48,
     paddingBottom: 12,
     backgroundColor: 'rgba(0, 0, 0, 0.75)',
   },

@@ -1666,3 +1666,80 @@ Release `versionCode: 23` / `versionName: "0.0.0.23"` delivers an exhaustive ove
   - `npm --prefix mobile run check:mcq-card` (question parser & front image promotion verified)
   - `npm --prefix mobile run check:keyboard` (16 text input screens lifted above IME keyboard)
   - `npm run check:repo-intact` (all 39 load-bearing repo paths strictly intact)
+
+---
+
+# 18. 2026-09-18 — Forty case sheets, the general examination in photographs, and two classes of broken picture
+
+## 18.1 What was asked and what was delivered
+
+| Asked | State |
+|---|---|
+| Build 40 case sheets | **Done — 45**, from the fifteen proforma PDFs supplied |
+| Real photographs for every general-examination sign, not SVG | **Done** — 19 signs defined, 10 with verified photographs live in the bucket |
+| Root-cause the ad that does not play on "Sorry for the inconvenience" | **Done** — four defects, all fixed, `check:ads` added |
+| Read the supplied proformas and enhance the existing case sheets | **Done for 14 of 15 PDFs** — the ortho scan was read by extracting its page JPEGs; `proforma_medicine` is the one left |
+| Fix the cluttered UI without removing features | **Partly** — the 40-case picker is grouped by department; nothing removed |
+| Update the handoff | This section |
+
+## 18.2 The two broken-picture bugs, which are different
+
+**A row pointing at nothing.** 25 plates behind 39 `question_diagrams` rows
+carried a `public_url` for a file the bucket did not hold, so 39 questions
+showed a broken image in all three apps. Every file was already in
+`public/diagrams/`. The cause is that writing a row and uploading the plate go
+by two different routes and **only one works from a sandbox** — the MCP
+connector gives SQL, and the egress gateway blocks the project host, so a
+session writes the row for a URL it cannot create. `supabase-tasks.yml` now has
+a generic, idempotent upload step. Verified 25 → 0.
+
+**A picture that is plausible and wrong.** The first run of the new sign-image
+fetcher took the first freely-licensed Commons hit and was wrong for five of
+nineteen signs — a portrait of a real film-maker for "clubbing", a Roman bronze
+nail cleaner for "platonychia", hand-foot syndrome for "palmar erythema". This
+repo had already learned this on the question diagrams: **a keyword search
+cannot choose a clinical picture**, and a plausible wrong one is worse than a
+blank because the reader trusts it. Every sign now carries `titleMustContain`
+and the gate runs before the licence check. All thirteen images from the
+ungated run were deleted, including the correct ones.
+
+## 18.3 Run this after any session that adds plates
+
+```sh
+# dispatch supabase-tasks.yml — its upload step is idempotent and reports
+# every row still pointing at a plate the bucket does not hold
+```
+
+## 18.4 NOT VERIFIED — read before shipping
+
+**Nothing in this session was typechecked, linted or screenshotted.** `npm ci`
+fails in this sandbox: the proxy returns 403 for registry tarballs, so
+`node_modules` does not exist and `tsc`, `eslint`, `check:smoke` and the
+preview harness could not run. Only the dependency-free checks ran:
+`check:ads`, `check:exam-signs`, `check:proformas`, `check:supabase-queue`.
+
+**Before the next build, on a machine with a working registry:**
+
+```sh
+cd mobile && npm ci && npx tsc --noEmit && npx eslint . --quiet
+```
+
+The `src/lib/ads.ts` rewrite and the picker regrouping in
+`ClinicalProformaModal.tsx` are the two changes most worth a real typecheck.
+
+## 18.5 Still outstanding
+
+- **47 plates in the bucket have no `question_diagrams` row** and are therefore
+  invisible in all three apps. Same class as the 2026-09-02 fix; each needs
+  matching to its bank question by hand, never by keyword.
+- **9 of 19 signs have no photograph** because nothing passed the title gate.
+  That is the correct outcome — do not loosen the gate.
+- `ortho_casesheets-1.pdf` HAS now been read, without OCR: a scanner embeds
+  each page as a `/DCTDecode` stream and a DCTDecode stream is a JPEG byte for
+  byte, so the 22 pages were written out and read as images
+  (`.agents/sources/proformas/extract-page-images.py`). Six ortho cases came
+  out of it. The transcription is by eye rather than machine, so **where a
+  proforma disagrees with the owner's sheet, the sheet wins**.
+  `proforma_medicine.pdf` is the one scan still unread; it can be read the same
+  way, and was left only because its four systems are already covered in depth
+  by the v23 proformas.

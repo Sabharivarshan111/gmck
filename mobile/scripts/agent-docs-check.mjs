@@ -91,11 +91,24 @@ check(
 );
 
 // 5. Every repo path the rules point at must exist.
+//
+// A rule that points at a file somebody has since deleted is a rule that
+// cannot be followed, which is the whole reason this exists. But the pattern
+// below matches any backticked path, and a rule may legitimately NAME a path
+// while talking about it rather than pointing at it — `40-releases.md`
+// explains a CI bug caused by Metro resolving `mobile/node_modules` instead of
+// `/repo/node_modules`, and naming it is the point of the paragraph.
+//
+// Anything git does not track can never be asserted to exist: it is absent in
+// every fresh clone and in every sandbox, so requiring it turns this check
+// into a permanent failure that everyone learns to ignore — which is exactly
+// what had happened, in both of the reports this check produced.
 const pointerPattern = /`((?:\.claude|\.agents|mobile|src|supabase)\/[A-Za-z0-9_./*-]+)`/g;
+const UNTRACKED = /(^|\/)(node_modules|build|dist|\.gradle|Pods)(\/|$)/;
 for (const file of [...ruleFiles, 'GEMINI.md']) {
   const body = (await read(file)) ?? '';
   for (const [, pointer] of body.matchAll(pointerPattern)) {
-    if (pointer.includes('*')) {
+    if (pointer.includes('*') || UNTRACKED.test(pointer)) {
       continue;
     }
     // eslint-disable-next-line no-await-in-loop

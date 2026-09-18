@@ -1,0 +1,240 @@
+name: Exam sign images
+
+# Fetch a photograph for each general-examination sign.
+#
+# Every case sheet in this app opens with the same line — "Pallor, Icterus,
+# Cyanosis, Clubbing, Koilonychia, Lymphadenopathy, Edema" — and that part of
+# clerking cannot be taught in words. Nobody has learned what koilonychia looks
+# like by reading "spoon-shaped nails". The app's owner asked for photographs
+# rather than drawings for exactly that reason, and a drawing would be the
+# wrong answer here even though it is the right answer for the anatomy plates:
+# a clinical sign has to be RECOGNISED against a real hand in an exam hall.
+#
+# This runs on a runner rather than in an agent sandbox because the egress
+# gateway blocks commons.wikimedia.org outright, the same way it blocks the
+# Supabase project host. The agent decides WHICH picture each sign needs — that
+# is `search` in mobile/src/lib/generalExamSigns.ts — and the runner fetches it.
+# The uploader in supabase-tasks.yml then puts whatever lands in
+# public/diagrams/ into the bucket, so the two halves stay separate.
+#
+# ── The licence rule ───────────────────────────────────────────────────────
+#
+# This app ships on Play under a real developer account, and a clinical
+# photograph is usually of a real patient and usually somebody's copyrighted
+# work. So ONLY public domain or a Creative Commons licence permitting
+# commercial use is taken. Everything else is refused, and a sign whose search
+# finds nothing acceptable simply keeps no picture — the app already renders
+# that case as text alone. A missing picture is the correct outcome; a picture
+# with no licence is a takedown and possibly an account.
+#
+# Attribution is written to a manifest and shown under the picture in the app.
+# A CC-BY attribution that nobody displays is a licence nobody is keeping.
+
+on:
+  # workflow_dispatch alone is not enough while this file is only on a feature
+  # branch: GitHub will not accept a dispatch for a workflow that is not on the
+  # default branch, so the first run has to come from a push. Same shape as
+  # supabase-tasks.yml uses.
+  #
+  # The paths are the two files that DECIDE what gets fetched. What the run
+  # COMMITS — the pictures and the generated manifest — is deliberately not
+  # among them, so the push it makes cannot trigger it again.
+  push:
+    paths:
+      - '.github/workflows/exam-sign-images.yml'
+      - 'mobile/src/lib/generalExamSigns.ts'
+  workflow_dispatch:
+    inputs:
+      only:
+        description: 'Fetch only this sign id (blank = every sign with no picture yet)'
+        required: false
+        default: ''
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch a freely-licensed photograph for each sign
+        env:
+          ONLY: ${{ github.event.inputs.only }}
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, os, pathlib, re, sys, urllib.parse, urllib.request
+
+          API = 'https://commons.wikimedia.org/w/api.php'
+          # Commons asks for a real User-Agent naming the tool and a contact.
+          UA = 'OrbitMBBS-exam-signs/1.0 (https://github.com/Sabharivarshan111/gmck)'
+
+          OUT = pathlib.Path('public/diagrams/signs')
+          OUT.mkdir(parents=True, exist_ok=True)
+          MANIFEST = pathlib.Path('mobile/src/lib/examSignImages.ts')
+          HEADER = MANIFEST.read_text().split('export const SIGN_IMAGES')[0]
+
+          # Commercial use must be permitted. This is the whole gate.
+          OK_LICENCES = re.compile(
+              r'^(cc0|cc-zero|public domain|pd-|cc-by-(sa-)?[234](\.\d)?|cc by(-sa)? [234])',
+              re.I)
+          # Explicitly refused even though they look Creative Commons.
+          BAD = re.compile(r'(nc|non-?commercial|nd|no-?deriv|fair use|non-free)', re.I)
+
+          def api(**params):
+              params.setdefault('format', 'json')
+              params.setdefault('action', 'query')
+              url = API + '?' + urllib.parse.urlencode(params)
+              req = urllib.request.Request(url, headers={'User-Agent': UA})
+              with urllib.request.urlopen(req, timeout=45) as r:
+                  return json.load(r)
+
+          def acceptable(info):
+              ext = info.get('extmetadata', {})
+              short = (ext.get('LicenseShortName', {}).get('value') or '')
+              lic = (ext.get('License', {}).get('value') or '')
+              blob = f'{short} {lic}'
+              if BAD.search(blob):
+                  return None
+              if not (OK_LICENCES.search(short) or OK_LICENCES.search(lic)):
+                  return None
+              artist = re.sub(r'<[^>]+>', '', ext.get('Artist', {}).get('value') or '').strip()
+              return {
+                  'licence': short or lic,
+                  'credit': artist or 'Wikimedia Commons',
+                  'source': info.get('descriptionshorturl') or info.get('url'),
+              }
+
+          # The sign list is the TypeScript file's `search` arrays. Parsing it
+          # rather than duplicating it keeps one source of truth: a sign added
+          # in the app is fetched here with no second edit.
+          src = pathlib.Path('mobile/src/lib/generalExamSigns.ts').read_text()
+          signs = []
+          for block in re.findall(r"\{\s*id: '([a-z0-9-]+)',(.*?)\n  \},", src, re.S):
+              sid, body = block
+              m = re.search(r"search: \[(.*?)\]", body, re.S)
+              if not m:
+                  continue
+              terms = re.findall(r"'([^']+)'", m.group(1))
+              # The corroboration gate. Commons full-text search matches the
+              # file PAGE, not the subject, so the first freely-licensed hit for
+              # "clubbing" was a portrait of a film-maker and the first for
+              # "platonychia" was a Roman bronze nail cleaner. At least one of
+              # these words must be in the file TITLE or the hit is refused.
+              g = re.search(r"titleMustContain: \[(.*?)\]", body, re.S)
+              gate = re.findall(r"'([^']+)'", g.group(1)) if g else []
+              signs.append((sid, terms, gate))
+
+          only = os.environ.get('ONLY', '').strip()
+          if only:
+              signs = [s for s in signs if s[0] == only]
+
+          # Read back what previous runs found, so a re-dispatch tops up
+          # rather than starting over and re-downloading everything.
+          manifest = {}
+          m = re.search(r'export const SIGN_IMAGES[^=]*=\s*(\{.*\});\s*$',
+                        MANIFEST.read_text(), re.S)
+          if m and m.group(1).strip() != '{}':
+              manifest = json.loads(m.group(1))
+
+          for sid, terms, gate in signs:
+              if sid in manifest and not only:
+                  print(f'  skip  {sid} (already has a picture)')
+                  continue
+              chosen = None
+              for term in terms:
+                  try:
+                      res = api(list='search', srsearch=term, srnamespace='6', srlimit='12')
+                  except Exception as e:
+                      print(f'  warn  {sid}: search "{term}" failed: {e}')
+                      continue
+                  titles = [h['title'] for h in res.get('query', {}).get('search', [])]
+                  if not titles:
+                      continue
+                  try:
+                      info = api(prop='imageinfo', titles='|'.join(titles),
+                                 iiprop='url|extmetadata|mime|size', iiurlwidth='1200')
+                  except Exception as e:
+                      print(f'  warn  {sid}: imageinfo failed: {e}')
+                      continue
+                  for page in info.get('query', {}).get('pages', {}).values():
+                      ii = (page.get('imageinfo') or [None])[0]
+                      if not ii:
+                          continue
+                      if ii.get('mime') not in ('image/jpeg', 'image/png'):
+                          continue
+                      # Corroboration before licence: a wrong picture with a
+                      # perfect licence is still a wrong picture, and a
+                      # plausible wrong one is worse than none because the
+                      # reader trusts it.
+                      title_l = page['title'].lower()
+                      if gate and not any(w.lower() in title_l for w in gate):
+                          continue
+                      lic = acceptable(ii)
+                      if not lic:
+                          continue
+                      chosen = (page['title'], ii.get('thumburl') or ii['url'], lic)
+                      break
+                  if chosen:
+                      break
+
+              if not chosen:
+                  print(f'  NONE  {sid} — nothing passed the title gate {gate} with an '
+                        f'acceptable licence. It stays text-only, which is the '
+                        f'correct outcome, not a bug to loosen the gate for.')
+                  continue
+
+              title, url, lic = chosen
+              ext = '.png' if url.lower().endswith('.png') else '.jpg'
+              name = f'{sid}{ext}'
+              try:
+                  req = urllib.request.Request(url, headers={'User-Agent': UA})
+                  with urllib.request.urlopen(req, timeout=90) as r:
+                      data = r.read()
+              except Exception as e:
+                  print(f'  FAIL  {sid}: download failed: {e}')
+                  continue
+              (OUT / name).write_bytes(data)
+              manifest[sid] = {
+                  'file': f'signs/{name}',
+                  'credit': lic['credit'],
+                  'licence': lic['licence'],
+                  'source': lic['source'],
+                  'commonsTitle': title,
+              }
+              print(f'  ok    {sid}  {len(data)//1024} KB  {lic["licence"]}  ({title})')
+
+          # Generated TypeScript, not JSON: a JSON import would need
+          # resolveJsonModule, which comes from the React Native tsconfig
+          # preset and is a flag this repo does not own.
+          body = json.dumps(manifest, indent=2, sort_keys=True)
+          MANIFEST.write_text(
+              HEADER + 'export const SIGN_IMAGES: Record<string, FetchedSignImage> = '
+              + body + ';\n')
+          print(f'\n{len(manifest)} sign(s) have a picture.')
+          PY
+
+      - name: Commit what was fetched
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          if git diff --quiet -- public/diagrams/signs mobile/src/lib/examSignImages.ts; then
+            echo 'Nothing new. Not committing.'
+            exit 0
+          fi
+          git add public/diagrams/signs mobile/src/lib/examSignImages.ts
+          git commit -m 'chore(signs): fetch freely-licensed photographs for the general examination
+
+          Fetched by .github/workflows/exam-sign-images.yml from Wikimedia
+          Commons, public domain and commercial-use Creative Commons only.
+          Attribution is in mobile/src/lib/examSignImages.ts and is shown
+          under each picture in the app.'
+          git push origin HEAD:${{ github.ref_name }}
+          echo 'Run supabase-tasks.yml next — its upload step puts these in the bucket.'

@@ -7,6 +7,12 @@ on:
       - '.github/workflows/native-screenshots.yml'
       - 'mobile/scripts/native_screenshot_driver.py'
       - 'mobile/scripts/run_native_screenshot_apk.sh'
+      - 'mobile/src/components/ClinicalProformaModal.tsx'
+      - 'mobile/src/components/GeneralExamSheet.tsx'
+      - 'mobile/src/components/GeneralExamSigns.tsx'
+      - 'mobile/src/components/LabValuesSheet.tsx'
+      - 'mobile/src/lib/clinicalProformas.ts'
+      - 'mobile/src/lib/proformas/**'
   workflow_dispatch:
 
 permissions:

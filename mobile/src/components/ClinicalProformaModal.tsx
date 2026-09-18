@@ -22,6 +22,7 @@ import {
   ChevronUp,
   ClipboardList,
   Edit3,
+  FlaskConical,
   GraduationCap,
   Lightbulb,
   Maximize2,
@@ -38,6 +39,9 @@ import {
 import { Text } from '@/components/Text';
 import { Touchable } from '@/components/Touchable';
 import { KeyboardSafe } from '@/components/KeyboardSafe';
+import { GeneralExamSigns } from '@/components/GeneralExamSigns';
+import { GeneralExamSheet } from '@/components/GeneralExamSheet';
+import { LabValuesSheet } from '@/components/LabValuesSheet';
 import { useTheme, withAlpha } from '@/theme';
 import {
   CLINICAL_PROFORMAS,
@@ -64,7 +68,31 @@ const SYSTEMS = [
   'Pediatrics',
   'Orthopaedics',
   'Obstetrics & Gynaecology',
+  'ENT',
+  'Ophthalmology',
 ] as const;
+
+/**
+ * One colour per department, as a lookup.
+ *
+ * This was a five-deep nested ternary repeated twice — once for the tint and
+ * once for the ink — and adding a department meant editing both ladders in the
+ * right place or getting a card that silently rendered pink. A map is the same
+ * information with the failure mode removed.
+ *
+ * `null` means "use the theme's primary", because a custom theme's accent has
+ * to reach these cards the same way it reaches the subject cards; the fixed
+ * hues belong to departments that already had one.
+ */
+const SYSTEM_COLOUR: Record<string, string | null> = {
+  'General Medicine': null,
+  'General Surgery': '#d97706',
+  Pediatrics: '#8b5cf6',
+  Orthopaedics: '#10b981',
+  'Obstetrics & Gynaecology': '#ec4899',
+  ENT: '#0ea5e9',
+  Ophthalmology: '#14b8a6',
+};
 
 type DetailTab = 'guide' | 'clerk' | 'viva';
 
@@ -92,6 +120,14 @@ export function ClinicalProformaModal({
   });
 
   const [activeTab, setActiveTab] = useState<DetailTab>('guide');
+  /* Collapsed by default. Every proforma carries this same block, so left
+   * open it would push each case's own sections a screen and a half down —
+   * the general examination is the thing you already know how to find. */
+  const [signsOpen, setSignsOpen] = useState(false);
+  /* The two references a student needs WHILE clerking rather than after it,
+   * reachable without opening a case sheet they did not want. */
+  const [examSheetOpen, setExamSheetOpen] = useState(false);
+  const [labSheetOpen, setLabSheetOpen] = useState(false);
   const [fullscreenImage, setFullscreenImage] = useState<{ uri: string; title: string } | null>(
     null,
   );
@@ -103,7 +139,7 @@ export function ClinicalProformaModal({
   const [isAutoFilling, setIsAutoFilling] = useState(false);
   const [savedLocally, setSavedLocally] = useState(false);
 
-  // Progressive-disclosure state: keep the dense proforma readable on a phone.
+  // Progressive disclosure keeps long master proformas readable on a phone.
   const [expandedGuideSections, setExpandedGuideSections] = useState<Record<number, boolean>>({
     0: true,
   });
@@ -148,8 +184,8 @@ export function ClinicalProformaModal({
         }
       });
 
-    // Open the examination section first where available; everything else stays collapsed
-    // until the student asks for it. This keeps long master proformas usable at bedside.
+    // Prefer the General Physical Examination section when a case opens; keep
+    // every other long section collapsed until the student asks for it.
     const generalExamIndex = activeProforma.sections.findIndex(section =>
       /general\s+(physical\s+)?examination/i.test(section.title),
     );
@@ -319,6 +355,40 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
   }, [selectedSystem, searchQuery]);
 
   // System category counts
+  /**
+   * The filtered list, grouped by department.
+   *
+   * The picker was a flat list, and at twelve cases that was fine. At FORTY it
+   * is a wall: forty near-identical rows with no structure, so finding the case
+   * you are posted to means reading all of them. Grouping gives the eye
+   * something to skip by, and it costs nothing — the same cards, in the same
+   * order, with a heading every few rows.
+   *
+   * Headings are suppressed while a search is running. A search result is
+   * already a short list and the user is looking at relevance rather than at
+   * department, so headings there would be furniture around three rows.
+   */
+  const groupedProformas = useMemo(() => {
+    const order = SYSTEMS.filter(s => s !== 'All') as string[];
+    const groups = new Map<string, typeof filteredProformas>();
+    for (const proforma of filteredProformas) {
+      const list = groups.get(proforma.system);
+      if (list) {
+        list.push(proforma);
+      } else {
+        groups.set(proforma.system, [proforma]);
+      }
+    }
+    return order
+      .filter(sys => groups.has(sys))
+      .map(sys => ({ system: sys, items: groups.get(sys) ?? [] }));
+  }, [filteredProformas]);
+
+  /* One heading per department is noise when there is only one department on
+   * screen — which is exactly what the filter pills produce. */
+  const showGroupHeadings =
+    !searchQuery.trim() && selectedSystem === 'All' && groupedProformas.length > 1;
+
   const systemCounts = useMemo(() => {
     const counts: Record<string, number> = { All: CLINICAL_PROFORMAS.length };
     for (const sys of SYSTEMS) {
@@ -328,8 +398,8 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
     return counts;
   }, []);
 
-  // The quick-reference panel is generated from the proforma itself, so it never
-  // becomes a second hand-maintained list of clinical values that can drift.
+  // Per-proforma normal references remain separate from the global Lab Values
+  // sheet. They are generated from the canonical case data so they cannot drift.
   const activeNormalValues = useMemo(() => {
     if (!activeProforma) return [];
     return activeProforma.sections.flatMap((section, sectionIndex) =>
@@ -550,7 +620,53 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                     </View>
                   ) : null}
 
-                  {/* Sections and Items — progressive disclosure prevents a wall of text */}
+                  {/*
+                    * The general examination, with a photograph of each sign.
+                    *
+                    * It sits in every proforma in the repo as the same recited
+                    * line — "Pallor, Icterus, Cyanosis, Clubbing, Koilonychia,
+                    * Lymphadenopathy, Edema" — which is exactly the part of
+                    * clerking that words cannot teach. One shared block rather
+                    * than a copy per case: there is one general examination.
+                    */}
+                  <View
+                    style={[
+                      styles.sectionCard,
+                      { backgroundColor: colors.card, borderColor: colors.border },
+                    ]}>
+                    <Touchable
+                      label="General examination signs, with pictures"
+                      hint={
+                        signsOpen
+                          ? 'Collapse the general examination'
+                          : 'Show every sign with a photograph'
+                      }
+                      state={{ expanded: signsOpen }}
+                      onPress={() => setSignsOpen(v => !v)}
+                      style={styles.signsToggle}>
+                      <Stethoscope size={16} color={colors.primary} />
+                      <View style={styles.signsToggleText}>
+                        <Text style={[styles.sectionTitle, { color: colors.text }]}>
+                          General Examination — with pictures
+                        </Text>
+                        <Text style={[styles.itemDesc, { color: colors.textMuted }]}>
+                          PICCKLE and the nail signs, each with a clinical photograph
+                        </Text>
+                      </View>
+                      {signsOpen ? (
+                        <ChevronUp size={18} color={colors.textMuted} />
+                      ) : (
+                        <ChevronDown size={18} color={colors.textMuted} />
+                      )}
+                    </Touchable>
+                    {signsOpen ? (
+                      <View style={styles.signsBody}>
+                        <GeneralExamSigns onOpenImage={setFullscreenImage} />
+                      </View>
+                    ) : null}
+                  </View>
+
+                  {/* Case-specific sections — progressive disclosure prevents a wall of text. */}
                   {activeProforma.sections.map((section, sIdx) => {
                     const isOpen = Boolean(expandedGuideSections[sIdx]);
                     return (
@@ -568,6 +684,7 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                             }))
                           }
                           label={`${isOpen ? 'Collapse' : 'Expand'} ${section.title}`}
+                          state={{ expanded: isOpen }}
                           style={styles.sectionHeader}>
                           <View style={styles.sectionHeaderTextWrap}>
                             <Text style={[styles.sectionTitle, { color: colors.text }]}>
@@ -655,7 +772,7 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                     </Touchable>
                   </View>
 
-                  {/* AI assistance stays optional and collapsed so clerking remains the primary task. */}
+                  {/* AI help is optional; clerking stays visually primary. */}
                   <View
                     style={[
                       styles.aiAutoFillCard,
@@ -667,6 +784,7 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                     <Touchable
                       onPress={() => setAiAssistOpen(prev => !prev)}
                       label={aiAssistOpen ? 'Collapse AI case assistance' : 'Expand AI case assistance'}
+                      state={{ expanded: aiAssistOpen }}
                       style={styles.compactAssistHeader}>
                       <View style={styles.aiAutoFillHeader}>
                         <Sparkles size={17} color={colors.primary} />
@@ -702,11 +820,11 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                             { backgroundColor: colors.primary, opacity: isAutoFilling ? 0.7 : 1 },
                           ]}>
                           {isAutoFilling ? (
-                            <ActivityIndicator size="small" color="#FFFFFF" />
+                            <ActivityIndicator size="small" color={colors.primaryText} />
                           ) : (
-                            <Sparkles size={16} color="#FFFFFF" />
+                            <Sparkles size={16} color={colors.primaryText} />
                           )}
-                          <Text style={styles.autoFillBtnText}>
+                          <Text style={[styles.autoFillBtnText, { color: colors.primaryText }]}>
                             {isAutoFilling ? 'Organizing Findings…' : 'AI Assist This Case'}
                           </Text>
                         </Touchable>
@@ -961,7 +1079,7 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                     />
                   </View>
 
-                  {/* All normal values already authored in this proforma, one tap away. */}
+                  {/* Case-specific normals are separate from the global Lab Values reference. */}
                   <View
                     style={[
                       styles.normalValuesCard,
@@ -970,6 +1088,7 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                     <Touchable
                       onPress={() => setNormalValuesOpen(prev => !prev)}
                       label={normalValuesOpen ? 'Hide normal values' : 'Show normal values'}
+                      state={{ expanded: normalValuesOpen }}
                       style={styles.normalValuesHeader}>
                       <View style={styles.normalValuesHeaderLeft}>
                         <CheckCircle2 size={17} color={colors.accent} />
@@ -1358,7 +1477,7 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                         <Text
                           style={[
                             styles.chatBubbleText,
-                            { color: msg.role === 'user' ? '#FFFFFF' : colors.text },
+                            { color: msg.role === 'user' ? colors.primaryText : colors.text },
                           ]}>
                           {msg.text}
                         </Text>
@@ -1398,7 +1517,7 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                           backgroundColor: chatInput.trim() ? colors.primary : withAlpha(colors.primary, 0.4),
                         },
                       ]}>
-                      <Send size={16} color="#FFFFFF" />
+                      <Send size={16} color={colors.primaryText} />
                     </Touchable>
                   </View>
                 </>
@@ -1436,6 +1555,75 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
               ) : null}
             </View>
 
+            {/*
+              * Two references directly under the search, not buried in a case.
+              *
+              * Under rather than over is the owner's call: the search box is
+              * what the screen is FOR, and anything above it pushes the thing
+              * you came to do down the page.
+              *
+              * Both already existed but only INSIDE a proforma: the general
+              * examination in every Guide tab, and the normal values nowhere at
+              * all. A student on a ward round wants them without first opening
+              * a case sheet they did not want — and a reference you have to
+              * navigate into is a reference people stop opening.
+              *
+              * The general examination is the SAME component the Guide tab
+              * mounts, not a second copy. Nineteen signs kept in step in two
+              * places is nineteen chances to drift.
+              */}
+            <View style={styles.quickRefRow}>
+              <Touchable
+                onPress={() => setExamSheetOpen(true)}
+                label="General examination, with pictures"
+                hint="Opens PICCKLE and the nail signs"
+                style={[
+                  styles.quickRefCard,
+                  { backgroundColor: colors.card, borderColor: colors.border },
+                ]}>
+                <View
+                  style={[
+                    styles.quickRefIcon,
+                    { backgroundColor: withAlpha(colors.primary, 0.15) },
+                  ]}>
+                  <Stethoscope size={18} color={colors.primary} />
+                </View>
+                <View style={styles.quickRefText}>
+                  <Text style={[styles.quickRefTitle, { color: colors.text }]}>
+                    General Examination
+                  </Text>
+                  <Text style={[styles.quickRefSub, { color: colors.textMuted }]}>
+                    PICCKLE, with photographs
+                  </Text>
+                </View>
+              </Touchable>
+
+              <Touchable
+                onPress={() => setLabSheetOpen(true)}
+                label="Normal lab values"
+                hint="Opens the reference ranges"
+                style={[
+                  styles.quickRefCard,
+                  { backgroundColor: colors.card, borderColor: colors.border },
+                ]}>
+                <View
+                  style={[
+                    styles.quickRefIcon,
+                    { backgroundColor: withAlpha(colors.accent, 0.15) },
+                  ]}>
+                  <FlaskConical size={18} color={colors.accent} />
+                </View>
+                <View style={styles.quickRefText}>
+                  <Text style={[styles.quickRefTitle, { color: colors.text }]}>
+                    Normal Lab Values
+                  </Text>
+                  <Text style={[styles.quickRefSub, { color: colors.textMuted }]}>
+                    Ranges, critical values
+                  </Text>
+                </View>
+              </Touchable>
+            </View>
+
             {/* Subject Filter Pills */}
             <ScrollView
               horizontal
@@ -1467,8 +1655,25 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
               })}
             </ScrollView>
 
-            {/* Proforma Cards */}
-            {filteredProformas.map(proforma => {
+            {/* Proforma Cards, grouped by department */}
+            {groupedProformas.map(group => (
+              <View key={group.system}>
+                {showGroupHeadings ? (
+                  <View style={styles.groupHeadingRow}>
+                    <Text style={[styles.groupHeading, { color: colors.textMuted }]}>
+                      {group.system === 'Obstetrics & Gynaecology'
+                        ? 'OBSTETRICS & GYNAECOLOGY'
+                        : group.system.toUpperCase()}
+                    </Text>
+                    <View
+                      style={[styles.groupHeadingRule, { backgroundColor: colors.border }]}
+                    />
+                    <Text style={[styles.groupHeadingCount, { color: colors.textMuted }]}>
+                      {group.items.length}
+                    </Text>
+                  </View>
+                ) : null}
+                {group.items.map(proforma => {
               const vivaCount = proforma.vivaQuestions.length;
               return (
                 <Touchable
@@ -1486,31 +1691,15 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                     style={[
                       styles.cardIconBox,
                       {
-                        backgroundColor:
-                          proforma.system === 'General Surgery'
-                            ? withAlpha('#f59e0b', 0.15)
-                            : proforma.system === 'General Medicine'
-                            ? withAlpha(colors.primary, 0.15)
-                            : proforma.system === 'Pediatrics'
-                            ? withAlpha('#8b5cf6', 0.15)
-                            : proforma.system === 'Orthopaedics'
-                            ? withAlpha('#10b981', 0.15)
-                            : withAlpha('#ec4899', 0.15),
+                        backgroundColor: withAlpha(
+                          SYSTEM_COLOUR[proforma.system] ?? colors.primary,
+                          0.15,
+                        ),
                       },
                     ]}>
                     <GraduationCap
                       size={22}
-                      color={
-                        proforma.system === 'General Surgery'
-                          ? '#d97706'
-                          : proforma.system === 'General Medicine'
-                          ? colors.primary
-                          : proforma.system === 'Pediatrics'
-                          ? '#8b5cf6'
-                          : proforma.system === 'Orthopaedics'
-                          ? '#10b981'
-                          : '#ec4899'
-                      }
+                      color={SYSTEM_COLOUR[proforma.system] ?? colors.primary}
                     />
                   </View>
                   <View style={styles.cardContent}>
@@ -1534,9 +1723,33 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                   <ChevronRight size={20} color={colors.textMuted} />
                 </Touchable>
               );
-            })}
+                })}
+              </View>
+            ))}
+
+            {/* An empty result has to say so. A filter or a search that matches
+              * nothing otherwise looks exactly like a screen that failed to
+              * load, which is the report this kind of list always generates. */}
+            {filteredProformas.length === 0 ? (
+              <View style={styles.emptyState}>
+                <Text style={[styles.emptyTitle, { color: colors.text }]}>
+                  No case sheet matches
+                </Text>
+                <Text style={[styles.emptyBody, { color: colors.textMuted }]}>
+                  {searchQuery.trim()
+                    ? `Nothing found for “${searchQuery.trim()}”. Try a sign, a murmur or a department.`
+                    : 'Try another department.'}
+                </Text>
+              </View>
+            ) : null}
           </ScrollView>
         )}
+
+        <GeneralExamSheet
+          visible={examSheetOpen}
+          onClose={() => setExamSheetOpen(false)}
+        />
+        <LabValuesSheet visible={labSheetOpen} onClose={() => setLabSheetOpen(false)} />
 
         {/* Fullscreen Image Preview Modal */}
         {fullscreenImage ? (
@@ -1873,6 +2086,42 @@ const styles = StyleSheet.create({
     fontSize: 12,
     flex: 1,
   },
+  quickRefRow: { flexDirection: 'row', gap: 10, marginBottom: 14 },
+  quickRefCard: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    padding: 12,
+    borderRadius: 14,
+    borderWidth: StyleSheet.hairlineWidth,
+  },
+  quickRefIcon: {
+    width: 34,
+    height: 34,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  quickRefText: { flex: 1 },
+  quickRefTitle: { fontSize: 13, fontWeight: '600' },
+  quickRefSub: { fontSize: 11, marginTop: 1 },
+  groupHeadingRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    marginTop: 18,
+    marginBottom: 8,
+  },
+  groupHeading: { fontSize: 11, fontWeight: '700', letterSpacing: 0.9 },
+  groupHeadingRule: { flex: 1, height: StyleSheet.hairlineWidth },
+  groupHeadingCount: { fontSize: 11, fontWeight: '600' },
+  emptyState: { paddingVertical: 48, paddingHorizontal: 24, alignItems: 'center' },
+  emptyTitle: { fontSize: 16, fontWeight: '600', marginBottom: 6 },
+  emptyBody: { fontSize: 13, textAlign: 'center', lineHeight: 19 },
+  signsToggle: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  signsToggleText: { flex: 1 },
+  signsBody: { marginTop: 14 },
   checklistBox: {
     marginTop: 4,
     gap: 6,
@@ -1970,7 +2219,6 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   autoFillBtnText: {
-    color: '#FFFFFF',
     fontSize: 13,
     fontWeight: '700',
   },
