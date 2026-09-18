@@ -103,19 +103,34 @@ jobs:
           node-version: 22.x
           cache: npm
 
+      # Applied with GITIGNORE semantics, not shell-glob semantics.
+      #
+      # This step used to expand each pattern with a shell glob, which matches
+      # only the current directory — so `/*.mjs` removed the root's .mjs files
+      # and nothing deeper, and this job went green while Vercel removed
+      # `scripts/deploy-excludes.mjs` too and the build died before it started.
+      # A wildcard pattern is matched at EVERY depth here, which is the
+      # pessimistic reading and the one that would have caught it.
       - name: Apply .vercelignore to the checkout
         run: |
           set -eu
           test -f .vercelignore || { echo "no .vercelignore"; exit 1; }
-          # Strip comments and blanks, drop a leading slash (it anchors at the
-          # repo root, which is where we already are), and remove each path.
           grep -vE '^\s*(#|$)' .vercelignore | sed 's|^/||' | while read -r pattern; do
-            for path in $pattern; do
-              if [ -e "$path" ]; then
-                echo "removing $path"
-                rm -rf -- "$path"
-              fi
-            done
+            case "$pattern" in
+              *'*'*)
+                # Wildcard: match at any depth, the way gitignore does.
+                find . -path ./.git -prune -o -name "$pattern" -print 2>/dev/null | while read -r hit; do
+                  echo "removing $hit  (wildcard '$pattern')"
+                  rm -rf -- "$hit"
+                done
+                ;;
+              *)
+                if [ -e "$pattern" ]; then
+                  echo "removing $pattern"
+                  rm -rf -- "$pattern"
+                fi
+                ;;
+            esac
           done
           echo "--- what is left at the root ---"
           ls -A

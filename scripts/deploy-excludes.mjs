@@ -33,7 +33,13 @@
 //
 // `npm run check:deploy` is that measurement now.
 
-/** Directories and files a CLI deployment must not upload. */
+/**
+ * Directories and files a CLI deployment must not upload.
+ *
+ * NOTHING in the build imports this module — `npm run check:deploy` is its only
+ * reader. That is deliberate: a list of things an ignore file removes must not
+ * itself be removable by one.
+ */
 export const UPLOAD_EXCLUDES = [
   // Rendered video and its workspace. 238 MB, and the site embeds none of it.
   'remotion-ad',
@@ -54,54 +60,19 @@ export const UPLOAD_EXCLUDES = [
   // CI. (`scripts/` is NOT excluded: `vite.config.ts` imports this very file
   // from it, so an upload without it cannot build. It is 104 KB.)
   '.github',
-  // Handover and rules documents. Anchored at the root — an unanchored glob
-  // matches at any depth in this syntax, and `/scripts/*.mjs` has to survive.
+  // Handover and rules documents.
+  //
+  // `/*.mjs` and `/*.cjs` USED to be here for the root's one-off maintenance
+  // scripts. They are gone, and the reason is worth keeping: a leading slash
+  // anchors a pattern to the root in gitignore syntax, but the effective match
+  // took `scripts/deploy-excludes.mjs` with it — the file `vite.config.ts`
+  // imported — and every Vercel deployment on the branch died before the build
+  // started. Those root scripts are about 100 KB against a 37 MB upload. The
+  // list stays; the two patterns that could reach into a directory do not.
   '/*.md',
-  // One-off maintenance scripts that live at the repo root.
-  '/*.mjs',
-  '/*.cjs',
   // A second lockfile for a package manager this project does not build with.
   'bun.lock',
   'bun.lockb',
-];
-
-/**
- * Paths under `public/` that Vite would otherwise copy into `dist/` verbatim.
- *
- * These are excluded from BOTH routes, because a Git build serves them too.
- * Each one is here because nothing in `src/` fetches it — checked, not assumed;
- * `npm run check:deploy` greps for every one of them and fails if a reference
- * appears, which is what turns this from a guess into a rule.
- */
-export const PUBLIC_EXCLUDES = [
-  // 51 MB of exam plates. These are the staging area for the Supabase
-  // `diagrams` bucket — `.github/workflows/supabase-tasks.yml` uploads from
-  // here — and every app reads them back from the bucket's public URL. They
-  // have never been served from this site. They stay in the repo because the
-  // upload workflow reads them from exactly this path.
-  'diagrams',
-
-  // The v8.0 model engine, superseded by the 2,234-part BodyParts3D binary
-  // atlas that `AnatomicalBody3D` streams as `body-N.bin.gz`. 28 MB, and no
-  // file in `src/` has loaded any of them since. Kept in the repo, because
-  // `CLAUDE_HANDOVER.md` §13.4 describes them and deleting them would make
-  // that section unreadable.
-  'models/human_body.glb',
-  'models/heart.glb',
-  'models/lungs.glb',
-  'models/liver.glb',
-  'models/kidney.glb',
-  'models/brain.glb',
-  'models/skeletal.glb',
-  // Never referenced at all, not even by the retired engine.
-  'models/lungs_candidate_zanatomy.glb',
-
-  // 14.7 MB, reachable only by typing `?lung_model=bp3d`. That comparison is
-  // over — `lungs_candidate_zanatomy_baked.glb` is the default and has been —
-  // and 14.7 MB on the CDN for a query string nobody types is not a trade the
-  // reader should pay for. The two zanatomy candidates are 1.2 MB together and
-  // stay.
-  'models/lungs_candidate_bodyparts3d.glb',
 ];
 
 /** The upload budget, in megabytes. Vercel Hobby rejects a CLI deploy above 100. */

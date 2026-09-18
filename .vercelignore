@@ -39,13 +39,16 @@ supabase
 # scripts/deploy-excludes.mjs, so an upload without it cannot build.
 .github
 
-# Handover and rules documents. The leading slash matters — an unanchored glob
-# matches at every depth in this syntax, and scripts/*.mjs has to survive.
+# Handover and rules documents
 /*.md
 
-# One-off maintenance scripts that live at the repo root
-/*.mjs
-/*.cjs
+# `/*.mjs` and `/*.cjs` used to be here, for the one-off maintenance scripts at
+# the repo root. They are gone on purpose. A leading slash anchors a pattern to
+# the root in gitignore syntax, and the effective match still took
+# `scripts/deploy-excludes.mjs` — the file vite.config.ts imported — so every
+# Vercel deployment on this branch died before the build started. Those scripts
+# are about 100 KB against a 37 MB upload. Nothing here may contain a wildcard
+# that can reach into a directory; `npm run check:deploy` fails if one does.
 
 # A second lockfile, for a package manager this project does not build with
 bun.lock

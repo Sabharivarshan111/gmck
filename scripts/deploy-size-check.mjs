@@ -28,7 +28,29 @@ import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { UPLOAD_EXCLUDES, PUBLIC_EXCLUDES, UPLOAD_BUDGET_MB } from './deploy-excludes.mjs';
+import { UPLOAD_EXCLUDES, UPLOAD_BUDGET_MB } from './deploy-excludes.mjs';
+
+const root0 = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+
+/**
+ * `PUBLIC_EXCLUDES` is read out of `vite.config.ts` rather than imported.
+ *
+ * The build owns that list now, and must not import anything from `scripts/`:
+ * `.vercelignore` carried `/*.mjs`, the effective match took
+ * `scripts/deploy-excludes.mjs` with it, and every Vercel deployment on the
+ * branch died before the build started because the config could not load. So
+ * the dependency runs this way — the check reads the build, never the reverse.
+ */
+function readPublicExcludes() {
+  const src = fs.readFileSync(path.join(root0, 'vite.config.ts'), 'utf8');
+  const m = src.match(/const PUBLIC_EXCLUDES = \[([\s\S]*?)\n\];/);
+  if (!m) throw new Error('PUBLIC_EXCLUDES not found in vite.config.ts');
+  // Comments first: they contain apostrophes ("bucket's URL") that a naive
+  // string match reads as entries.
+  const body = m[1].replace(/\/\/.*$/gm, '');
+  return [...body.matchAll(/"([^"]+)"/g)].map((x) => x[1]);
+}
+const PUBLIC_EXCLUDES = readPublicExcludes();
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const failures = [];
@@ -37,13 +59,8 @@ const fail = (m) => failures.push(m);
 // -- 1. The two lists agree -------------------------------------------------
 
 const ignoreFile = path.join(root, '.vercelignore');
-// EXPERIMENT (PR #28), restored in the next commit: with .vercelignore renamed
-// away, this check reports rather than fails, so the Vercel deployment is the
-// only variable under test.
-const EXPERIMENT = fs.existsSync(path.join(root, '.vercelignore.experiment-off'));
 if (!fs.existsSync(ignoreFile)) {
-  if (EXPERIMENT) console.log('\n  .vercelignore is renamed away for one commit — deliberate, see PR #28\n');
-  else fail('.vercelignore is missing — every CLI deployment uploads the whole 728 MB working tree and is refused');
+  fail('.vercelignore is missing — every CLI deployment uploads the whole 728 MB working tree and is refused');
 } else {
   const listed = new Set(
     fs.readFileSync(ignoreFile, 'utf8')
@@ -59,6 +76,34 @@ if (!fs.existsSync(ignoreFile)) {
   }
   for (const entry of listed) {
     if (!required.includes(entry)) fail(`.vercelignore lists "${entry}", which scripts/deploy-excludes.mjs does not — add it there, with the reason`);
+  }
+}
+
+// -- 1b. No ignore pattern may reach a file the build needs -----------------
+//
+// This is the one that was missed. `/*.mjs` looks anchored to the repo root,
+// and the effective match still took `scripts/deploy-excludes.mjs` — which
+// `vite.config.ts` imported — so Vercel's build died before it started while a
+// CI job using a SHELL glob (current directory only) passed.
+//
+// Two rules now, and either alone would have caught it: the build config
+// imports nothing from a directory that appears in the ignore list, and no
+// pattern containing a wildcard is allowed to match at a depth its author did
+// not intend.
+{
+  const viteSrc = fs.readFileSync(path.join(root, 'vite.config.ts'), 'utf8');
+  const localImports = [...viteSrc.matchAll(/from\s+["'](\.[^"']+)["']/g)].map((m) => m[1]);
+  for (const spec of localImports) {
+    const rel = path.relative(root, path.resolve(root, spec));
+    for (const rule of UPLOAD_EXCLUDES) {
+      const bare = rule.replace(/^\//, '');
+      const reaches = bare.includes('*')
+        ? new RegExp(`(^|/)${bare.replace(/[.+^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '[^/]*')}$`).test(rel)
+        : rel === bare || rel.startsWith(`${bare}/`);
+      if (reaches) {
+        fail(`vite.config.ts imports "${spec}" (${rel}), and .vercelignore rule "${rule}" can match it — the build would not load. Declare the value in vite.config.ts instead.`);
+      }
+    }
   }
 }
 
@@ -164,7 +209,7 @@ for (const [k, v] of rows) {
 }
 console.log(`\n  ${files} files, ${mb.toFixed(1)} MB, budget ${UPLOAD_BUDGET_MB} MB (Vercel Hobby refuses above 100 MB)\n`);
 
-if (mb > UPLOAD_BUDGET_MB && !EXPERIMENT) {
+if (mb > UPLOAD_BUDGET_MB) {
   fail(`the upload is ${mb.toFixed(1)} MB, over the ${UPLOAD_BUDGET_MB} MB budget — add what grew to scripts/deploy-excludes.mjs, or take it out of the repo`);
 }
 

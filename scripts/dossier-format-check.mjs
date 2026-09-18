@@ -156,6 +156,70 @@ for (const [key, o] of organs) {
   }
 }
 
+// ---------------------------------------------------------------------------
+// How much of the body a dossier actually covers
+// ---------------------------------------------------------------------------
+//
+// A number, printed, that nobody has to go looking for. It is the same shape as
+// `npm run check:repeat-markers` in the native app: low coverage is a FACT
+// about the content, not a failure, and the check exists so it is a figure
+// somebody can act on rather than something a reader discovers.
+//
+// What it says today is that the 21 dossiers reach about half the atlas, and
+// that the muscles are where the hole is: 2 of 252 distinct muscles have one.
+// Writing the other 250 is real anatomy — an origin, an insertion, an action, a
+// nerve supply, an arterial supply and a venous drainage each, all of which
+// have to be RIGHT — and inventing them would be worse than the gap.
+//
+// It fails only if coverage DROPS, so a resolver change that quietly stops an
+// organ reaching its parts cannot pass unnoticed.
+const FLOORS = { total: 45, skeletal: 100, nervous: 100, digestive: 95, arterial: 38, venous: 27 };
+
+try {
+  const atlas = JSON.parse(
+    (await import('node:fs')).readFileSync(path.join(root, 'public/models/atlas.json'), 'utf8')
+  );
+  const resolver = await import(path.join(root, 'src/simulator/data/atlasResolver.ts'));
+  atlas.parts.forEach(resolver.correctPartSystem);
+
+  const covered = new Set();
+  for (const key of Object.keys(db)) {
+    for (const id of resolver.describeAtlasTarget(key, atlas).ids) covered.add(id);
+  }
+
+  const bySystem = {};
+  for (const p of atlas.parts) {
+    (bySystem[p.system] ??= { total: 0, covered: 0 }).total += 1;
+    if (covered.has(p.id)) bySystem[p.system].covered += 1;
+  }
+
+  const pct = (c, t) => (t === 0 ? 100 : (c / t) * 100);
+  console.log('\n  what a dossier reaches\n');
+  for (const [sys, v] of Object.entries(bySystem).sort((a, b) => b[1].total - a[1].total)) {
+    const p = pct(v.covered, v.total);
+    const floor = FLOORS[sys];
+    const note = floor !== undefined && p + 1e-9 < floor ? `  <-- was ${floor}%` : '';
+    console.log(`    ${sys.padEnd(15)} ${String(v.covered).padStart(4)} / ${String(v.total).padEnd(5)} ${p.toFixed(0).padStart(3)}%${note}`);
+    if (floor !== undefined && p + 1e-9 < floor) {
+      fail(`${sys} coverage fell to ${p.toFixed(0)}% from ${floor}% — a dossier has stopped reaching parts it used to`);
+    }
+  }
+  const totalPct = pct(covered.size, atlas.parts.length);
+  console.log(`\n    ${covered.size} of ${atlas.parts.length} parts reachable from a dossier (${totalPct.toFixed(0)}%)`);
+  if (totalPct + 1e-9 < FLOORS.total) {
+    fail(`overall dossier coverage fell to ${totalPct.toFixed(0)}% from ${FLOORS.total}%`);
+  }
+
+  const muscleNames = new Set(
+    atlas.parts.filter((p) => p.system === 'muscular')
+      .map((p) => p.name.replace(/^(Right|Left) /, '').replace(/^\w+ part of /, ''))
+  );
+  const muscleDossiers = Object.values(db).filter((o) => o.muscleGraph).length;
+  console.log(`    ${muscleDossiers} of ${muscleNames.size} distinct muscles have a dossier — the known gap, see CLAUDE.md\n`);
+} catch (err) {
+  fail(`could not measure dossier coverage: ${err.message}`);
+}
+
 console.log(`\n  ${organs.length} dossiers · ${prose} prose entries · ${labels} labels`);
 console.log('  sentences end with a stop, labels never do, and every vessel says where it comes from.\n');
 

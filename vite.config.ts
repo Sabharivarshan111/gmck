@@ -5,7 +5,40 @@ import fs from "fs";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
 import { mcpPlugin } from "@lovable.dev/mcp-js/stacks/supabase/vite";
-import { PUBLIC_EXCLUDES } from "./scripts/deploy-excludes.mjs";
+
+/**
+ * Paths under `public/` that the website does not serve.
+ *
+ * Declared HERE, in the build's own config, and deliberately not imported from
+ * `scripts/`. That import is what broke the Vercel deployment: `.vercelignore`
+ * carried `/*.mjs`, and while a leading slash anchors a pattern to the root in
+ * gitignore syntax, the effective match removed `scripts/deploy-excludes.mjs`
+ * — so this file could not load and the build died before it started. The CI
+ * job that was meant to catch it used a SHELL glob, which matches only the
+ * current directory, so it removed the root `.mjs` files and none deeper, and
+ * passed. A config with no imports outside itself cannot fail that way again.
+ *
+ * `npm run check:deploy` reads this list back out of this file, so the two
+ * still cannot drift.
+ */
+const PUBLIC_EXCLUDES = [
+  // 51 MB of exam plates: the staging area for the Supabase `diagrams` bucket,
+  // uploaded by .github/workflows/supabase-tasks.yml and read back from that
+  // bucket's URL. Never served from this site.
+  "diagrams",
+  // The v8.0 .glb engine, superseded by the BodyParts3D chunk atlas. 28 MB, and
+  // no file in src/ has loaded one since.
+  "models/human_body.glb",
+  "models/heart.glb",
+  "models/lungs.glb",
+  "models/liver.glb",
+  "models/kidney.glb",
+  "models/brain.glb",
+  "models/skeletal.glb",
+  "models/lungs_candidate_zanatomy.glb",
+  // 14.7 MB, reachable only by typing ?lung_model=bp3d.
+  "models/lungs_candidate_bodyparts3d.glb",
+];
 
 /**
  * Drop the parts of `public/` that the website does not serve.
@@ -52,8 +85,7 @@ export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
     mcpPlugin(),
-    // EXPERIMENT - restored in the next commit. See PR #28.
-    // pruneUnservedPublicAssets(),
+    pruneUnservedPublicAssets(),
     mode === 'development' &&
     componentTagger(),
   ].filter(Boolean),
