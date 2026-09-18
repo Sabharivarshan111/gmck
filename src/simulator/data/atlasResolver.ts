@@ -96,6 +96,29 @@ export function hasTerm(text: string, term: string): boolean {
   return termRegex(term).test(text);
 }
 
+const PREFIX_CACHE = new Map<string, RegExp>();
+
+/**
+ * Does a word in `text` START with `prefix`?
+ *
+ * Anatomy names are full of stems that only ever appear as prefixes — `cerebr`
+ * for cerebrum and cerebral, `myocard`, `pericard`, `bronch`, `pulmon`,
+ * `thalam` — so a whole-word test is the wrong tool for those and a plain
+ * `includes` is the wrong tool for everything. This is the middle: bounded at
+ * the start, free at the end.
+ *
+ * It is what stops `rib` matching **T**rib**utary of middle hepatic vein**, of
+ * which this atlas has forty-three, and which used to open the skeleton.
+ */
+export function startsWord(text: string, prefix: string): boolean {
+  let rx = PREFIX_CACHE.get(prefix);
+  if (!rx) {
+    rx = new RegExp(`\\b${prefix.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`, 'i');
+    PREFIX_CACHE.set(prefix, rx);
+  }
+  return rx.test(text);
+}
+
 function anyTerm(text: string, terms: readonly string[]): boolean {
   for (const t of terms) if (termRegex(t).test(text)) return true;
   return false;
@@ -104,6 +127,25 @@ function anyTerm(text: string, terms: readonly string[]): boolean {
 // ---------------------------------------------------------------------------
 // The rule table
 // ---------------------------------------------------------------------------
+
+/**
+ * The five CSF spaces BodyParts3D files under the CARDIAC system.
+ *
+ * They are the cerebral ventricles and the interventricular foramen (of Monro),
+ * and the ontology's `cardiac` label on them is simply wrong. Every place that
+ * reads `part.system` has to know, so the list lives here rather than being
+ * written out three times: the chunk loader remaps them to `nervous`,
+ * `selectBrain` claims them, `selectHeart` refuses them, and
+ * `resolvePartToOrganKey` opens the brain dossier for them — it used to open
+ * the heart, so tapping the third ventricle taught the wrong organ.
+ */
+export const CEREBRAL_CSF_IDS = new Set<string>([
+  'FJ1730', // Third ventricle
+  'FJ1731', // Fourth ventricle
+  'FJ1752', // Interventricular foramen (of Monro)
+  'FJ1767', // Left lateral ventricle
+  'FJ1814', // Right lateral ventricle
+]);
 
 type Selector = (p: Part, atlas: Atlas, key: string) => boolean;
 
@@ -398,6 +440,7 @@ const RULES: readonly AtlasRule[] = [
  * mediastinum, whatever it is called.
  */
 function selectHeart(p: Part): boolean {
+  if (CEREBRAL_CSF_IDS.has(p.id)) return false;
   if (PURE_HEART_IDS.has(p.id)) return true;
 
   const name = p.name;
@@ -587,6 +630,8 @@ function selectBrain(p: Part): boolean {
 
   const isGland = p.id === 'FJ1796' || p.id === 'FJ1795';
 
+  if (CEREBRAL_CSF_IDS.has(p.id)) return true;
+
   // The nerves of the orbit, but only the ones actually in the head — the
   // y > 1.45 floor is what keeps the spinal cord out.
   const inHead = p.system === 'nervous' && !!p.bounds && p.bounds[0][1] > 1.45;
@@ -767,4 +812,106 @@ export function describeAtlasTarget(targetId: string, atlas: Atlas): AtlasTarget
 /** The 3D view's lookup: the element ids for an organ, vessel or nerve key. */
 export function resolveAtlasElementIds(targetId: string, atlas: Atlas): Set<string> {
   return describeAtlasTarget(targetId, atlas).ids;
+}
+
+// ============================================================================
+// Anatomical Organ Key Resolver: Maps any clicked mesh/part to its parent organ dossier
+// ============================================================================
+export function resolvePartToOrganKey(part?: Part | null, atlas?: Atlas | null): string {
+  if (!part) return 'heart';
+  const name = part.name || '';
+  const sys = (part.system || '').toLowerCase();
+  const id = (part.id || '').toUpperCase();
+
+  const any = (...terms: string[]) => terms.some((t) => startsWord(name, t));
+
+  // The CSF spaces. They have to be settled first, because `ventricle` is also
+  // the word for a chamber of the heart and the cardiac test is below: tapping
+  // the third ventricle used to open the heart dossier. BodyParts3D even files
+  // them under `cardiac`, which is why the loader remaps them.
+  const isCerebralVentricle =
+    CEREBRAL_CSF_IDS.has(part.id) ||
+    ['lateral ventricle', 'third ventricle', 'fourth ventricle'].some((t) => hasTerm(name, t));
+
+  // 1. Cardiac & great vessels
+  if (
+    !isCerebralVentricle &&
+    (sys === 'cardiac' ||
+      any('ventricle', 'atrium', 'valve', 'myocard', 'pericard', 'coronary') ||
+      id === 'FJ2428' || id === 'FJ2438' || id === 'FJ2439' || id === 'FJ3413')
+  ) {
+    if (any('anterior interventricular', 'diagonal branch')) return 'lad_artery';
+    if (any('circumflex') && !any('humeral', 'femoral', 'scapular', 'iliac')) return 'lcx_artery';
+    if (any('right coronary', 'posterior interventricular')) return 'rca_artery';
+    if (any('coronary sinus', 'cardiac vein')) return 'coronary_sinus';
+    return 'heart';
+  }
+
+  // 2. Respiratory & airway
+  if (sys === 'respiratory' || any('lung', 'bronch', 'trachea', 'pleura', 'pulmon')) {
+    return 'lungs';
+  }
+
+  // 3. Hepatic & biliary.
+  //
+  // `caudate lobe` as a phrase, never `caudate` alone: the caudate NUCLEUS is
+  // in the basal ganglia, and four of them used to open the liver.
+  if (any('liver', 'hepatic', 'hepatovenous', 'gallbladder', 'bile duct') || hasTerm(name, 'caudate lobe')) {
+    return 'liver';
+  }
+
+  // 4. Stomach.
+  //
+  // Named vessels only, never the stem `gastro`: `gastrocnemius` is the calf,
+  // and all four heads of it used to open the stomach.
+  if (any('stomach', 'gastric', 'gastro-epiploic', 'gastroepiploic', 'gastroduodenal', 'pylor')) {
+    return 'stomach';
+  }
+
+  // 5-7. Pancreas, spleen, kidney
+  if (any('pancrea')) return 'pancreas';
+  if (any('spleen', 'splenic')) return 'spleen';
+  if (sys === 'urinary' || any('kidney', 'renal', 'suprarenal', 'adrenal', 'ureter')) return 'kidney';
+
+  // 8. Brain & central nervous system
+  if (
+    isCerebralVentricle ||
+    any('brain', 'cerebr', 'cerebell', 'thalam', 'pons', 'medulla oblongata', 'midbrain',
+        'gyrus', 'hippocamp', 'amygdala', 'putamen', 'caudate nucleus', 'globus pallidus',
+        'corpus callosum', 'colliculus', 'optic') ||
+    (sys === 'nervous' && part.bounds && part.bounds[0][1] > 1.45)
+  ) {
+    return 'brain';
+  }
+
+  // 9. Vessels
+  if (any('aorta')) return 'aorta';
+  if (any('celiac')) return 'celiac_trunk';
+  if (hasTerm(name, 'portal vein')) return 'portal_vein';
+
+  // 10. Nerves.
+  //
+  // The name has to BE a nerve. This atlas has no vagus and no phrenic nerve —
+  // what it has is the inferior phrenic and musculophrenic arteries and veins,
+  // and those used to open the phrenic NERVE dossier.
+  if (hasTerm(name, 'nerve')) {
+    if (any('vagus')) return 'vagus_nerve';
+    if (any('phrenic')) return 'phrenic_nerve';
+  }
+  if (any('phrenic', 'diaphragm')) return 'abdomen';
+
+  // 11. Muscles with a dossier of their own
+  if (any('deltoid') && sys === 'muscular') return 'deltoid';
+  if (any('pectoralis major')) return 'pectoralis_major';
+
+  // 12. Skeletal framework.
+  //
+  // `rib` bounded at the start of a word, or the forty-three parts whose names
+  // begin `Tributary of ...` open the skeleton.
+  if (sys === 'skeletal' || any('rib', 'sternum', 'vertebra', 'clavicle', 'scapula', 'costal')) {
+    return 'skeletal';
+  }
+
+  if (sys === 'digestive') return 'abdomen';
+  return part.id;
 }

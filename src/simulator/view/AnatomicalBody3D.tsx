@@ -14,7 +14,7 @@ import {
   PointerTap,
   DissectionToolMode,
 } from '../data/atlasTypes';
-import { describeAtlasTarget, resolveAtlasElementIds } from '../data/atlasResolver';
+import { CEREBRAL_CSF_IDS, describeAtlasTarget, resolveAtlasElementIds } from '../data/atlasResolver';
 import { Scissors, Hand, Focus, Eye, Sparkles, Maximize2, Compass, AlertCircle, Info } from 'lucide-react';
 
 interface AnatomicalBody3DProps {
@@ -121,110 +121,10 @@ export function resolveContextOrganId(isolatedId?: string | null, selectedId?: s
   return null;
 }
 
-// ============================================================================
-// Anatomical Organ Key Resolver: Maps any clicked mesh/part to its parent organ dossier
-// ============================================================================
-export function resolvePartToOrganKey(part?: Part | null, atlas?: Atlas | null): string {
-  if (!part) return 'heart';
-  const name = (part.name || '').toLowerCase();
-  const sys = (part.system || '').toLowerCase();
-  const id = (part.id || '').toUpperCase();
-
-  // 1. Cardiac & Great Vessels
-  if (
-    sys === 'cardiac' ||
-    name.includes('ventricle') ||
-    name.includes('atrium') ||
-    name.includes('valve') ||
-    name.includes('myocard') ||
-    name.includes('pericard') ||
-    name.includes('coronary') ||
-    id === 'FJ2428' || id === 'FJ2438' || id === 'FJ2439' || id === 'FJ3413'
-  ) {
-    if (name.includes('anterior interventricular') || name.includes('diagonal branch')) return 'lad_artery';
-    if (name.includes('circumflex')) return 'lcx_artery';
-    if (name.includes('right coronary') || name.includes('posterior interventricular')) return 'rca_artery';
-    if (name.includes('sinus') || name.includes('cardiac vein')) return 'coronary_sinus';
-    return 'heart';
-  }
-
-  // 2. Respiratory & Airway
-  if (
-    sys === 'respiratory' ||
-    name.includes('lung') ||
-    name.includes('bronch') ||
-    name.includes('trachea') ||
-    name.includes('pleura') ||
-    name.includes('pulmon')
-  ) {
-    return 'lungs';
-  }
-
-  // 3. Hepatic & Biliary
-  if (name.includes('liver') || name.includes('hepatic') || name.includes('gallbladder') || name.includes('caudate')) {
-    return 'liver';
-  }
-
-  // 4. Gastric / Stomach
-  if (name.includes('stomach') || name.includes('gastric') || name.includes('gastro')) {
-    return 'stomach';
-  }
-
-  // 5. Pancreas
-  if (name.includes('pancreas') || name.includes('pancreatic')) return 'pancreas';
-
-  // 6. Spleen
-  if (name.includes('spleen') || name.includes('splenic')) return 'spleen';
-
-  // 7. Renal / Urinary
-  if (sys === 'urinary' || name.includes('kidney') || name.includes('renal') || name.includes('ureter')) {
-    return 'kidney';
-  }
-
-  // 8. Brain & Central Nervous
-  if (
-    name.includes('brain') ||
-    name.includes('cerebr') ||
-    name.includes('cerebell') ||
-    name.includes('thalam') ||
-    name.includes('cortex') ||
-    name.includes('pons') ||
-    name.includes('medulla oblongata') ||
-    (sys === 'nervous' && part.bounds && part.bounds[0][1] > 1.45)
-  ) {
-    return 'brain';
-  }
-
-  // 9. Vessels
-  if (name.includes('aorta')) return 'aorta';
-  if (name.includes('celiac')) return 'celiac_trunk';
-  if (name.includes('portal vein')) return 'portal_vein';
-
-  // 10. Nerves
-  if (name.includes('vagus')) return 'vagus_nerve';
-  if (name.includes('phrenic')) return 'phrenic_nerve';
-
-  // 11. Muscular Specifics
-  if (name.includes('deltoid')) return 'deltoid';
-  if (name.includes('pectoralis')) return 'pectoralis_major';
-
-  // 12. Skeletal Framework
-  if (
-    sys === 'skeletal' ||
-    name.includes('rib') ||
-    name.includes('sternum') ||
-    name.includes('vertebra') ||
-    name.includes('clavicle') ||
-    name.includes('scapula') ||
-    name.includes('costal')
-  ) {
-    return 'skeletal';
-  }
-
-  if (sys === 'digestive') return 'abdomen';
-  return part.id;
-}
-
+// `resolvePartToOrganKey` moved to `../data/atlasResolver` for the same reason
+// the element lookup did: it is pure logic over a part's name and system, and
+// keeping it out of this file is what lets the check run the real function.
+export { resolvePartToOrganKey } from '../data/atlasResolver';
 
 // ============================================================================
 // Autonomic Nervous System & Sympathetic Trunk 3D Generator
@@ -1271,11 +1171,10 @@ varying float partSelected;
         const systemGeomGroups = new Map<SystemId, THREE.BufferGeometry[]>();
 
         atlas.parts.forEach((p, partIdx) => {
-          // Remap cerebral ventricles from raw ontology cardiac misclassification to nervous system
-          if (
-            p.system === 'cardiac' &&
-            (p.id === 'FJ1730' || p.id === 'FJ1731' || p.id === 'FJ1752' || p.id === 'FJ1767' || p.id === 'FJ1814' || p.name.toLowerCase().includes('ventricle'))
-          ) {
+          // The cerebral ventricles and the foramen of Monro are filed under
+          // `cardiac` by the ontology, which is simply wrong. One list, in
+          // atlasResolver, shared with everything else that has to know.
+          if (p.system === 'cardiac' && CEREBRAL_CSF_IDS.has(p.id)) {
             p.system = 'nervous';
           }
           const buffer = chunkBuffers[p.chunk];

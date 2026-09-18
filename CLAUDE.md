@@ -122,9 +122,31 @@ just does not pretend to draw it. **Do not loosen a rule to fill a blank**:
 a student cannot tell a wrong structure from a right one, which is why they are
 looking at it.
 
-`npm run check:simulator` runs the real resolver against the real
-`public/models/atlas.json` and names every one of those failures. Reverted to
-the old resolver, it fails nineteen ways.
+**Tapping a mesh opens a dossier, and `resolvePartToOrganKey` had the same
+disease.** It lives in the same module now, for the same reason, and every case
+below is a real part of this atlas that opened the wrong organ's notes:
+
+| Tapping | Opened | Why |
+|---|---|---|
+| Left caudate **nucleus** | the liver | `caudate` alone; only the caudate **lobe** is hepatic |
+| **gastro**cnemius, all four heads | the stomach | `gastro` as a stem, and that is the calf |
+| Tributary of plantar venous arch | the skeleton | `rib` in the middle of *T-rib-utary*, forty-three of them |
+| Third / fourth / lateral **ventricle**, foramen of Monro | the heart | `ventricle` is also a cardiac chamber, and BodyParts3D files all five CSF spaces under `cardiac` |
+| Left inferior **phrenic** artery | the phrenic **nerve** | an artery is not a nerve, and there is no phrenic nerve here |
+
+`startsWord` is the middle tool those need — bounded at the start of a word,
+free at the end — because anatomy is full of stems that only ever appear as
+prefixes (`cerebr`, `myocard`, `bronch`, `pulmon`). A whole-word test misses
+`cerebellum`; `includes` matches `Tributary`.
+
+**`CEREBRAL_CSF_IDS` is the one list of the five parts the ontology mislabels**
+— the chunk loader remaps them, `selectBrain` claims them, `selectHeart`
+refuses them, and the mesh mapper opens the brain for them. It was written out
+in three places and only one of them was complete.
+
+`npm run check:simulator` runs the real resolver and the real mapper against the
+real `public/models/atlas.json` and names every one of those failures. Reverted
+to the old code, it fails twenty-eight ways.
 
 ## The website is deployed two ways, and only one of them has a size limit
 

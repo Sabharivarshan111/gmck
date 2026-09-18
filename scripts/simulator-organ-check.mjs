@@ -40,7 +40,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const resolverPath = path.join(root, 'src/simulator/data/atlasResolver.ts');
-const { describeAtlasTarget } = await import(resolverPath);
+const { describeAtlasTarget, resolvePartToOrganKey } = await import(resolverPath);
 
 const atlas = JSON.parse(readFileSync(path.join(root, 'public/models/atlas.json'), 'utf8'));
 const byId = new Map(atlas.parts.map((p) => [p.id, p]));
@@ -156,6 +156,65 @@ for (const [key, floor] of Object.entries(FLOORS)) {
   const n = describeAtlasTarget(key, atlas).ids.size;
   if (n < floor) fail(`"${key}" resolves to ${n} parts, below the ${floor} it had — something stopped matching`);
 }
+
+// ---------------------------------------------------------------------------
+// Tapping a mesh opens the right dossier
+// ---------------------------------------------------------------------------
+//
+// `resolvePartToOrganKey` is the other half of the same job and had the same
+// disease. Every case below is a real part of this atlas that opened the wrong
+// organ's notes.
+
+const partByName = new Map(atlas.parts.map((p) => [p.name, p]));
+
+function mustOpen(partName, organ, why) {
+  const part = partByName.get(partName);
+  if (!part) {
+    fail(`"${partName}" is not in the atlas — this assertion has gone stale`);
+    return;
+  }
+  const got = resolvePartToOrganKey(part, atlas);
+  if (got !== organ) fail(`tapping "${partName}" opens "${got}", expected "${organ}" — ${why}`);
+}
+
+function mustNotOpen(partName, organ, why) {
+  const part = partByName.get(partName);
+  if (!part) {
+    fail(`"${partName}" is not in the atlas — this assertion has gone stale`);
+    return;
+  }
+  const got = resolvePartToOrganKey(part, atlas);
+  if (got === organ) fail(`tapping "${partName}" opens "${organ}" — ${why}`);
+}
+
+// `caudate` alone is the liver's caudate LOBE and the basal ganglia's caudate
+// NUCLEUS, and the liver test runs first.
+mustOpen('Left caudate nucleus', 'brain', 'the caudate nucleus is basal ganglia; only the caudate LOBE is hepatic');
+mustOpen('Caudate lobe of liver', 'liver', 'and the lobe must still reach the liver');
+
+// `gastro` is the stomach and it is also the calf.
+mustNotOpen('Medial head of right gastrocnemius', 'stomach', 'gastrocnemius is the calf muscle');
+mustOpen('Left gastric vein', 'stomach', 'the named gastric vessels must still reach the stomach');
+
+// `rib` is a bone and it is also the middle of forty-three names beginning
+// `Tributary of ...`.
+mustNotOpen('Tributary of plantar venous arch', 'skeletal', 'a tributary is not a rib');
+
+// `ventricle` is a chamber of the heart and it is also a CSF space, and
+// BodyParts3D files all five CSF spaces under the cardiac system.
+for (const csf of ['Third ventricle', 'Fourth ventricle', 'Left lateral ventricle', 'Right lateral ventricle', 'Interventricular foramen']) {
+  mustOpen(csf, 'brain', 'BodyParts3D files it as cardiac, which is simply wrong');
+}
+mustOpen('Wall of ventricle', 'heart', 'the myocardium must still reach the heart');
+
+// This atlas has no phrenic nerve. What it has is the phrenic arteries and
+// veins, and they used to open the phrenic NERVE dossier.
+mustNotOpen('Left inferior phrenic artery', 'phrenic_nerve', 'an artery is not a nerve');
+
+// And the ordinary cases still work.
+mustOpen('Coronary sinus', 'coronary_sinus', 'the cardiac venous return has its own dossier');
+mustOpen('Cerebellum', 'brain', 'cerebell- is a prefix, not a whole word');
+mustOpen('Spleen', 'spleen', 'the simplest case of all');
 
 // ---------------------------------------------------------------------------
 // Two invariants that are not about the resolver, and had each drifted
