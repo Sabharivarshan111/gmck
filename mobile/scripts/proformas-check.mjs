@@ -183,10 +183,13 @@ pick(
     'the search. Both are needed on a ward round without opening a case sheet.',
 );
 
+// Directly under the search, by the owner's choice: the search box is what
+// the screen is for, and anything above it pushes that down the page.
 pick(
-  modal.indexOf('styles.quickRefRow') < modal.indexOf('{/* Search Bar */}'),
-  'The quick-reference row has moved below the search box. It belongs above it ' +
-    '— these are things you reach for, not things you search for.',
+  modal.indexOf('{/* Search Bar */}') < modal.indexOf('styles.quickRefRow') &&
+    modal.indexOf('styles.quickRefRow') < modal.indexOf('{/* Subject Filter Pills */}'),
+  'The quick-reference row is no longer directly under the search box. It sits ' +
+    'between the search and the department filters.',
 );
 
 pick(

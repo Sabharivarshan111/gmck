@@ -1,44 +1,292 @@
-Scanned by CamScanner
+ORTHO CASE SHEETS — transcribed from the owner's handwritten notes
+====================================================================
 
-Scanned by CamScanner
+HOW THIS WAS READ, because it matters for trusting it
+-----------------------------------------------------
+`ortho_casesheets-1.pdf` is a CamScanner scan: 22 pages of handwriting, with no
+text layer at all. `extract-pdf-text.py` returned 506 bytes of the words
+"Scanned by CamScanner" repeated 22 times, which is what this file used to hold.
 
-Scanned by CamScanner
+OCR was not available — tesseract, poppler-utils, pypdf and pip are all refused
+by the sandbox's egress proxy. So the pages were read directly instead: the PDF
+embeds each page as a DCTDecode stream, and a DCTDecode stream IS a JPEG
+verbatim, so the 22 page images were written out byte-for-byte with a few lines
+of Python and read as images.
 
-Scanned by CamScanner
+That means this is a TRANSCRIPTION BY EYE, not machine OCR. It is faithful to
+the structure and the clinical content, but it is not character-exact, and the
+patient names, ages and localities in the original worked examples are left out
+deliberately — a proforma is the empty form, not one filled copy of it.
 
-Scanned by CamScanner
+**Where this disagrees with the owner's own sheet, the sheet wins.**
 
-Scanned by CamScanner
+The six cases
+-------------
+1. CTEV (congenital talipes equinovarus)      pages 1–3
+2. Chronic osteomyelitis                      pages 4–6
+3. Non-union                                  pages 7–9
+4. Peripheral nerve injuries                  pages 10–14
+5. Osteoarthritis (knee)                      pages 15–19
+6. Malunion                                   pages 20–22
 
-Scanned by CamScanner
 
-Scanned by CamScanner
+1. CTEV
+=======
+Chief complaint: deformity in (R) leg since birth. Child brought by mother,
+whose reliability is recorded.
 
-Scanned by CamScanner
+HOPI: deformity identified at birth. After 15 days, POP (below-knee cast)
+applied to both legs for 3 months. After 3 months the (L) side was corrected;
+only little improvement on the (R) leg. Then advised CTEV splint. Now referred.
 
-Scanned by CamScanner
+Past H/o: non-consanguineous marriage.
+Antenatal H/o: no oligohydramnios, no TORCH infections, no multiple pregnancy.
+Natal H/o: FTNVD, 1st child.
+Developmental H/o: attained as per age.
+Immunisation H/o: immunised up to age.
+Family H/o: no significant family history.
 
-Scanned by CamScanner
+General examination: alert and awake. No PICCLE. No kyphosis/scoliosis.
+Spine normal. Hip joint normal. Vitals.
 
-Scanned by CamScanner
+INSPECTION
+  Attitude — Hip: neutral. Knee: flexed. Ankle: equinus, plantar flexion.
+  Subtalar joint: varus — inverted.
+  Talo-navicular joint: adducted.
+  Medial border: concave, deep crease present.
+  Lateral border: convex, stretched, callosities on lateral malleolus.
+  Lateral malleolus and head of talus: prominent.
 
-Scanned by CamScanner
+PALPATION
+  Not warm, no tenderness. Inspectory findings confirmed.
+  Deformity — flexible or rigid.
 
-Scanned by CamScanner
+MOVEMENTS
+  Ankle: PF 40 degrees. DF restricted / not possible.
+  Subtalar: inversion 30 degrees. Eversion restricted.
+  Talonavicular: abduction —; adduction positive.
+  Left leg: normal, no deformity. Adequate correction with 10 degrees DF.
 
-Scanned by CamScanner
+MEASUREMENTS                  (R)         (L)
+  Thigh                       17 cm       17 cm
+  Leg                         15 cm       17 cm
+  → 2 cm shortening of (R) leg segment.
+  Distal neurovascular status normal. No lymphadenopathy.
+  Other joints normal, other limb normal.
 
-Scanned by CamScanner
+DIAGNOSIS: a case of partially corrected CTEV on (R) foot with shortening of leg.
 
-Scanned by CamScanner
+INVESTIGATIONS
+  X-ray AP view: tarso-metatarsal angle.
+  X-ray lateral view: TALO-CALCANEAL (KITE) ANGLE — normal > 35 degrees;
+  DECREASED in CTEV.
 
-Scanned by CamScanner
+TREATMENT — correction then maintenance; operative and non-operative.
 
-Scanned by CamScanner
+  Non-operative:
+    * Manipulation alone (minor deformity) — dorsiflexion and eversion held
+      5 seconds, repeated for 5 minutes, by the mother.
+    * Manipulation + POP (major deformity):
+        Kite's  → below-knee cast
+        Ponseti → above-knee cast
 
-Scanned by CamScanner
+  Operative:
+    1. Postero-medial soft tissue release (PMSTR)
+    2. Limited soft tissue release — equinus: posterior release;
+       adduction: medial release; cavus: plantar release
+    3. Tendon transfers (only after 5 years) → tibialis anterior tendon
+    4. Dwyer's osteotomy (wedge osteotomy of calcaneum, ≥ 3 years)
+    5. Dilwyn Evans procedure (PMSTR with calcaneo-cuboid fusion), 4–8 years
+    6. Wedge tarsectomy (8–11 years; wedge removed from mid-tarsal area)
+    7. Triple arthrodesis (> 12 years; fusion of subtalar, calcaneo-cuboid and
+       talo-navicular joints)
+    8. Ilizarov's technique (neglected cases; gradual stretching using external
+       fixation) → JESS fixation
 
-Scanned by CamScanner
+  Maintenance:
+    1. CTEV splints (plastic, moulded, tied with straps)
+    2. Dennis-Brown splint — until the child starts walking; used 24x7
+    3. CTEV shoes (during walking, < 5 years):
+         (i) straight inner border to prevent forefoot adduction
+         (ii) outer shoe raise to prevent foot inversion
+         (iii) no heel to prevent equinus
 
-Scanned by CamScanner
+  JESS: differential distraction — medial 1 mm, lateral 0.5 mm distraction.
+        1 to 4 years. Tibia. Educate parents. Pin size 4.5 mm.
 
+
+2. CHRONIC OSTEOMYELITIS
+========================
+Chief complaint: discharge from upper part of front of leg x 2 years.
+
+HOPI: apparently normal before 2 years, then sustained trauma to (R) leg for
+which he was operated. After 1 month, noticed throbbing pain and discharge at
+the site of operation.
+  Discharge (oozing from the surgical site):
+    - continuous, purulent, scanty, for 2 years
+    - not foul smelling, not blood stained
+    - H/o BONY SPICULES in the discharge
+    - pain aggravated on walking, relieved by rest
+
+Past H/o: known hypertensive. Not a known case of DM, TB, epilepsy, cardiac
+disorders.
+Personal H/o: mixed diet, bowel and bladder normal, alcohol and smoking.
+Treatment H/o.
+
+General examination: conscious, oriented, moderately built and nourished.
+No PICCLE. Pedal oedema diffuse from foot to knee. Skin hyperpigmented and
+thickened over front of leg. Smooth surface. No apparent muscle wasting or limb
+shortening. Vitals: PR, RR, BP.
+
+DIFFERENTIAL DIAGNOSIS: implant infection; tuberculous osteomyelitis; soft
+tissue infection; Ewing's sarcoma.
+
+INVESTIGATIONS
+  1. X-ray — thickening; patchy sclerosis; SEQUESTRUM (dense area, decreased
+     vascularity); INVOLUCRUM; CLOACA
+  2. Sinogram
+  3. CT, MRI
+  4. Blood (ESR raised)
+  5. Pus culture
+
+TREATMENT
+  1. Sequestrectomy
+  2. Saucerisation
+  3. Saline irrigation
+  4. Skin graft
+  5. Skeletal stabilisation
+
+COMPLICATIONS
+  * Acute exacerbation
+  * Growth abnormalities (shortening, lengthening, deformity)
+  * Pathological fracture
+  * SINUS TRACT MALIGNANCY (squamous cell carcinoma)
+  * Amyloidosis (rare)
+
+
+3. NON-UNION
+============
+Chief complaints: deformity of (R) upper limb for 1 month; pain during movement
+of limb for 1 month.
+
+HOPI: apparently normal before 12 years, then sustained a fracture of the (R)
+upper limb, treated elsewhere. Apparently normal until 1 month ago, then
+noticed a deformity of the (R) upper limb associated with:
+  Pain — pricking type, radiating towards (R) hand, aggravated by movements,
+  relieved by rest.
+  - H/o difficulty using the (R) arm for 1 month
+  - H/o ABNORMAL MOBILITY
+  - No H/o fever, open wound, discharge
+  - NO H/O NATIVE TREATMENT / OIL MASSAGE   ← asked explicitly
+
+Past H/o: not a known case of DM, HT, TB, epilepsy, cardiac disorders. No
+previous surgery.
+Personal H/o: mixed diet; not alcoholic, not a smoker.
+
+General examination: conscious, oriented, moderately built and nourished, no
+PICCLE, no deformities. Vitals: PR, RR, BP.
+Examination of upper limb: after consent, exposed from the shoulder, sitting.
+
+DIAGNOSIS: a case of post-traumatic non-union of (R) distal humerus with
+shortening of (R) arm.
+
+INVESTIGATIONS
+  X-ray — OBLITERATED MEDULLARY CAVITY, smooth and sclerotic fracture lines.
+
+TREATMENT
+  1. Open reduction, internal fixation and BONE GRAFTING
+  2. Excision of fragments (with replacement by artificial moulds)
+  3. Ilizarov's external fixation (rare)
+  4. If asymptomatic — no treatment
+
+
+4. PERIPHERAL NERVE INJURIES
+============================
+Chief complaints, by nerve:
+  RADIAL nerve (wrist joint): inability to hold or carry objects for ___ days
+  ULNAR and MEDIAN nerves (fingers): inability to grasp objects for ___
+  COMMON PERONEAL nerve: inability to lift the foot for ___
+
+HOPI: apparently normal before ___, following which she sustained a trauma,
+then developed:
+  → inability to hold/carry objects, or inability to use fingers, or inability
+    to lift the foot / climb stairs
+  H/o numbness and paraesthesia over ___ area
+  H/o skin changes (dry, wrinkled, moist)
+  H/o HYPOPIGMENTED PATCHES (leprosy)
+
+Past H/o: no similar illness. No H/o DM, HT, LEPROSY, SYPHILIS.
+Personal H/o: no smoking, no alcohol.
+Family H/o: no neurological illness in the family.
+
+DIAGNOSIS: a case of post-traumatic radial / ulnar / median / common peroneal
+nerve palsy of left / right limb with wrist drop / partial claw hand / foot drop.
+
+INVESTIGATIONS
+  * Blood
+  * NERVE CONDUCTION STUDY
+  * EMG
+
+TREATMENT
+  Deformity        — cock-up splint / knuckle-bender splint
+  Muscle atrophy   — electrical stimulation
+  Joint stiffness  — joint mobilisation / physiotherapy
+
+TENDON TRANSFERS
+  Pronator teres → ECRB    = wrist drop
+  FCR → ED                 = finger drop
+  APL → EPL                = thumb drop
+
+
+5. OSTEOARTHRITIS (KNEE)
+========================
+Chief complaints: pain and stiffness over (R) knee joint for 3 months; swelling
+over (R) knee joint for 4 months.
+
+HOPI: apparently normal before 4 months, after which developed:
+  Swelling — gradual in onset, present continuously.
+  Pain for 3 months — gradual in onset, progressive, unilateral, dull aching,
+    continuous, AGGRAVATED BY MOVEMENTS, RELIEVED BY REST.
+  Stiffness for 3 months — aggravated on sitting for a long duration,
+    NO EARLY MORNING STIFFNESS, relieved after walking.
+  H/o difficulty in squatting
+  H/o difficulty in sitting cross-legged
+  H/o difficulty in climbing stairs
+  H/o inability to bear weight on the affected side
+  H/o restricted movements
+  H/o CREPITUS on movement
+
+TREATMENT
+  Medical:
+    * Analgesics (diclofenac, COX-2 inhibitors, morphine)
+    * Chondroprotective agents (chondroitin sulphate, glucosamine) — rarely used
+    * Viscosupplements (rare)
+    * WEIGHT REDUCTION
+    * Avoid stress and strain to the joint
+    * Local heat — pain relief
+    * Exercises — QUADRICEPS STRENGTHENING
+  Surgical:
+    * High tibial osteotomy (mild cases, and for genu varum)
+    * Total knee replacement (severe cases)
+
+
+6. MALUNION
+===========
+Chief complaint: bending of (R) leg for 20 days.
+
+HOPI: apparently normal for 2 months, then while walking accidentally fell down.
+  - developed pain and swelling in the middle of the (R) leg, lasted 1 week,
+    treated with analgesics, subsided in 4 days
+  - before 20 days, while walking, her leg SUDDENLY BENT OUTWARD, with pain,
+    not radiating, dull aching, aggravated on walking
+  - H/o difficulty standing and walking on her own, but able to stand with
+    support
+  - H/o restriction of movements at the ankle joint
+  - NO H/O NATIVE TREATMENT
+  - NO H/O OIL MASSAGE
+  - No H/o operative interventions
+  - No H/o fever, discharge, open wounds
+
+Past H/o: no similar illness. Not a known case of DM, TB, bronchial asthma,
+epilepsy. No drug intake. No previous surgery.
+Personal H/o: mixed diet; bowel and bladder normal; alcohol, smoking.

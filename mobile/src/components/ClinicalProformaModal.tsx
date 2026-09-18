@@ -1319,8 +1319,33 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
               { paddingBottom: Math.max(insets.bottom, 20) + 24 },
             ]}
             keyboardShouldPersistTaps="handled">
+            {/* Search Bar */}
+            <View
+              style={[
+                styles.searchBox,
+                { backgroundColor: colors.card, borderColor: colors.border },
+              ]}>
+              <Search size={18} color={colors.textMuted} />
+              <TextInput
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+                placeholder="Search proformas, signs, murmurs, hernia…"
+                placeholderTextColor={colors.textMuted}
+                style={[styles.searchInput, { color: colors.text }]}
+              />
+              {searchQuery ? (
+                <Touchable onPress={() => setSearchQuery('')} label="Clear search">
+                  <X size={18} color={colors.textMuted} />
+                </Touchable>
+              ) : null}
+            </View>
+
             {/*
-              * Two references above the search, not buried in a case.
+              * Two references directly under the search, not buried in a case.
+              *
+              * Under rather than over is the owner's call: the search box is
+              * what the screen is FOR, and anything above it pushes the thing
+              * you came to do down the page.
               *
               * Both already existed but only INSIDE a proforma: the general
               * examination in every Guide tab, and the normal values nowhere at
@@ -1382,27 +1407,6 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                   </Text>
                 </View>
               </Touchable>
-            </View>
-
-            {/* Search Bar */}
-            <View
-              style={[
-                styles.searchBox,
-                { backgroundColor: colors.card, borderColor: colors.border },
-              ]}>
-              <Search size={18} color={colors.textMuted} />
-              <TextInput
-                value={searchQuery}
-                onChangeText={setSearchQuery}
-                placeholder="Search proformas, signs, murmurs, hernia…"
-                placeholderTextColor={colors.textMuted}
-                style={[styles.searchInput, { color: colors.text }]}
-              />
-              {searchQuery ? (
-                <Touchable onPress={() => setSearchQuery('')} label="Clear search">
-                  <X size={18} color={colors.textMuted} />
-                </Touchable>
-              ) : null}
             </View>
 
             {/* Subject Filter Pills */}

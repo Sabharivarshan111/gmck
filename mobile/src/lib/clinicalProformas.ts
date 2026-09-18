@@ -10,6 +10,7 @@ import { SURGERY_LONG_PROFORMAS } from '@/lib/proformas/surgeryLong';
 import { PAEDIATRIC_PROFORMAS } from '@/lib/proformas/paediatrics';
 import { ORTHO_OBG_PROFORMAS } from '@/lib/proformas/orthoObg';
 import { MEDICINE_PROFORMAS } from '@/lib/proformas/medicine';
+import { ORTHOPAEDIC_PROFORMAS } from '@/lib/proformas/orthopaedics';
 
 export interface ProformaSection {
   title: string;
@@ -3291,6 +3292,7 @@ export const CLINICAL_PROFORMAS: ClinicalProforma[] = [
   ...PAEDIATRIC_PROFORMAS,
   ...ORTHO_OBG_PROFORMAS,
   ...MEDICINE_PROFORMAS,
+  ...ORTHOPAEDIC_PROFORMAS,
 ];
 
 const SUPABASE_DIAGRAMS_BASE = 'https://pmtgeydtqypwrypshhsx.supabase.co/storage/v1/object/public/diagrams';

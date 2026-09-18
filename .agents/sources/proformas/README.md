@@ -31,17 +31,34 @@ materials and where a proforma disagrees with one of them, **the sheet wins**.
 | `OBSTETRICS_AND_GYNAECOLOGY_CASE_PROFORMA.txt` | Obstetric and gynaecological clerking |
 | `Piccle_mnemonics.txt` | PICCKLE — the general examination mnemonics |
 
-## Two files that could NOT be extracted, and why
+## The two scans with no text layer, and how one of them was read anyway
 
-`ortho_casesheets-1.txt` is 506 bytes of the words "Scanned by CamScanner"
-repeated, and `proforma_medicine` produced nothing at all. Both are **image-only
-scans with no text layer**. Extracting them needs OCR, which needs a package
-this sandbox cannot install — `poppler-utils` and `pypdf` are both refused by
+`ortho_casesheets-1.pdf` and `proforma_medicine.pdf` are **image-only
+CamScanner scans**. The extractor returns "Scanned by CamScanner" repeated,
+because there is no text to extract. OCR needs a package this sandbox cannot
+install — `tesseract`, `poppler-utils`, `pypdf` and `pip` are all refused by
 the egress proxy.
 
-So `ortho_fracture_proforma` was written from the standard examination sequence
-(Apley, Maheshwari, Ebnezar) rather than from the owner's sheet. **If his sheet
-differs, his sheet wins** — someone with OCR should read it and reconcile.
+**`ortho_casesheets-1` was read anyway, without OCR.** The PDF embeds each page
+as a `DCTDecode` stream, and a DCTDecode stream *is* a JPEG verbatim — so the
+22 page images were written out byte-for-byte with a few lines of Python and
+read as images rather than as text:
+
+```sh
+python3 .agents/sources/proformas/extract-page-images.py <scan.pdf> <outdir>
+```
+
+That is a **transcription by eye, not machine OCR**: faithful to the structure
+and the clinical content, not character-exact. It is in
+`ortho_casesheets-1.txt`, and the six cases it contains — CTEV, chronic
+osteomyelitis, non-union, peripheral nerve injuries, osteoarthritis and
+malunion — are now `mobile/src/lib/proformas/orthopaedics.ts`.
+
+`proforma_medicine.pdf` can be read the same way by anyone who wants to. Its
+four systems (CVS, RS, abdomen, CNS) are already covered in depth by the v23
+proformas, which is why it was left.
+
+**Where a proforma disagrees with the owner's own sheet, the sheet wins.**
 
 ## Regenerating
 

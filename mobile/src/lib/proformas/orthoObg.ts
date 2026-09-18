@@ -1,11 +1,18 @@
 /**
  * Orthopaedics and Obstetrics & Gynaecology case proformas.
  *
- * The orthopaedic sheets the app's owner sent are CamScanner scans with no text
- * layer, so these are written from the standard examination sequence
- * (Apley, Maheshwari, Ebnezar) rather than transcribed from them. That is worth
- * recording honestly: if the scanned sheets turn out to differ, they are the
- * owner's own material and they win.
+ * `ortho_fracture_proforma` here is the GENERAL trauma framework — mechanism,
+ * look-feel-move, the neurovascular step, how to describe a fracture on a film.
+ * It is written from the standard sequence (Apley, Maheshwari, Ebnezar) because
+ * the owner's own sheets do not cover it.
+ *
+ * His sheets HAVE since been read, though the first attempt could not: they are
+ * a CamScanner scan with no text layer, and OCR is unavailable in this sandbox.
+ * The pages were extracted as JPEGs from the PDF's DCTDecode streams and read
+ * as images instead. The six cases they contain — CTEV, chronic osteomyelitis,
+ * non-union, peripheral nerve injuries, osteoarthritis and malunion — are in
+ * `orthopaedics.ts`, built from the sheets, and the transcription is in
+ * `.agents/sources/proformas/ortho_casesheets-1.txt`.
  *
  * The obstetrics and gynaecology sheets did extract, and those cases follow
  * them.
