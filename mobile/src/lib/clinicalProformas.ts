@@ -6,6 +6,8 @@
 import { ENT_PROFORMAS } from '@/lib/proformas/ent';
 import { OPHTHALMOLOGY_PROFORMAS } from '@/lib/proformas/ophthalmology';
 import { SURGERY_SHORT_PROFORMAS } from '@/lib/proformas/surgeryShort';
+import { SURGERY_LONG_PROFORMAS } from '@/lib/proformas/surgeryLong';
+import { PAEDIATRIC_PROFORMAS } from '@/lib/proformas/paediatrics';
 
 export interface ProformaSection {
   title: string;
@@ -3283,6 +3285,8 @@ export const CLINICAL_PROFORMAS: ClinicalProforma[] = [
   ...ENT_PROFORMAS,
   ...OPHTHALMOLOGY_PROFORMAS,
   ...SURGERY_SHORT_PROFORMAS,
+  ...SURGERY_LONG_PROFORMAS,
+  ...PAEDIATRIC_PROFORMAS,
 ];
 
 const SUPABASE_DIAGRAMS_BASE = 'https://pmtgeydtqypwrypshhsx.supabase.co/storage/v1/object/public/diagrams';
