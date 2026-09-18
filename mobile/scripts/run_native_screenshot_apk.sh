@@ -4,7 +4,7 @@ set -euo pipefail
 SOURCE_APK="${1:-downloaded-apk/app-preview.apk}"
 WORK="${RUNNER_TEMP:-/tmp}/orbit-native-screenshot"
 JS="$WORK/index.android.js"
-HBC="$WORK/index.android.bundle"
+BUNDLE="$WORK/index.android.bundle"
 PATCHED="$WORK/app-patched-unsigned.apk"
 ALIGNED="$WORK/app-patched-aligned.apk"
 SIGNED="$WORK/app-screenshot.apk"
@@ -24,17 +24,16 @@ echo "Building screenshot-only dev JS bundle (production source remains unchange
     --assets-dest "$WORK/assets"
 )
 
-HERMESC="mobile/node_modules/react-native/sdks/hermesc/linux64-bin/hermesc"
-if [ ! -x "$HERMESC" ]; then
-  echo "Hermes compiler not found at $HERMESC" >&2
-  exit 1
-fi
-
-"$HERMESC" -O -emit-binary -out "$HBC" "$JS"
-file "$HBC" || true
+# Hermes can execute a plain Metro JavaScript bundle. The Gradle release
+# plugin precompiles one for startup performance, but screenshot verification
+# does not need that optimization. Keeping source JS here is deliberate:
+# it preserves --dev true (so __DEV__ remains true) without depending on a
+# hermesc binary whose npm package layout changes across React Native releases.
+cp "$JS" "$BUNDLE"
+file "$BUNDLE" || true
 
 cp "$SOURCE_APK" "$PATCHED"
-cp "$HBC" "$ASSET_DIR/index.android.bundle"
+cp "$BUNDLE" "$ASSET_DIR/index.android.bundle"
 
 # Replace only the JS bundle inside the already-built native APK.
 zip -dq "$PATCHED" assets/index.android.bundle
