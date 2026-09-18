@@ -1,3 +1,4 @@
+import { GOOGLE_SIGN_IN_ENABLED } from '@/lib/authMode';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
@@ -120,7 +121,7 @@ export default function ProgressScreen() {
   const [authBusy, setAuthBusy] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
   const isNative = Platform.OS === 'android';
-  const [googleAuthenticated, setGoogleAuthenticated] = useState(!isNative || __DEV__);
+  const [googleAuthenticated, setGoogleAuthenticated] = useState(!isNative || !GOOGLE_SIGN_IN_ENABLED);
 
   const subjects = useMemo(
     () =>
@@ -154,8 +155,9 @@ export default function ProgressScreen() {
   const level = useMemo(() => levelFor(xp), [xp]);
 
   useEffect(() => {
+    if (!GOOGLE_SIGN_IN_ENABLED) return;
     getSignedInEmail().then(setEmail);
-    if (isNative) {
+    if (isNative && GOOGLE_SIGN_IN_ENABLED) {
       hasAuthenticatedGoogleOnce().then(setGoogleAuthenticated);
     }
   }, [isNative]);
@@ -294,7 +296,7 @@ export default function ProgressScreen() {
       </View>
 
       {/* Sync state */}
-      {email ? (
+      {GOOGLE_SIGN_IN_ENABLED ? (email ? (
         <View
           style={[
             styles.syncCard,
@@ -349,9 +351,9 @@ export default function ProgressScreen() {
             </Text>
           </View>
         </Touchable>
-      )}
+      )) : null}
 
-      {authError ? (
+      {GOOGLE_SIGN_IN_ENABLED && authError ? (
         <Text accessibilityLiveRegion="polite" style={[styles.authError, { color: colors.danger }]}>
           {authError}
         </Text>
@@ -464,7 +466,7 @@ export default function ProgressScreen() {
       ) : (
         <>
           {/* Anti-spam & Progress Safeguard Banner for Unauthenticated Users */}
-          {!googleAuthenticated && isNative ? (
+          {GOOGLE_SIGN_IN_ENABLED && !googleAuthenticated && isNative ? (
             <Touchable
               onPress={signIn}
               label="Sign in with Google to safeguard and sync progress"

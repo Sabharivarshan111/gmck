@@ -1,3 +1,4 @@
+import { GOOGLE_SIGN_IN_ENABLED } from '@/lib/authMode';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
@@ -66,11 +67,9 @@ const YEARS: Year[] = ['first', 'second', 'third', 'final'];
  *   It is the single most load-bearing fact about this app — the questions in
  *   it were transcribed by students — and it belongs in the first sentence
  *   rather than in the credits.
- * * **Google is offered, never required.** `check:open-access` exists because
- *   a sign-in wall in front of the question bank was removed on the owner's
- *   instruction, and a wall on launch would be that decision undone with
- *   better manners. Signing in fills the name in and carries progress between
- *   devices; skipping it costs nothing that is not a second device.
+ * * Google authentication is retained in internal and release APKs. Debug
+ *   APKs and local Metro sessions bypass it through authMode.ts; their UI
+ *   must not claim that a skipped sign-in verified a Google account.
  */
 
 /** Long enough to read two lines, short enough not to be a loading screen. */
@@ -89,10 +88,10 @@ export function FirstRun() {
   const [saving, setSaving] = useState(false);
   const [googling, setGoogling] = useState(false);
   const isNative = Platform.OS === 'android';
-  const [googleAuthenticated, setGoogleAuthenticated] = useState(!isNative || __DEV__);
+  const [googleAuthenticated, setGoogleAuthenticated] = useState(!isNative || !GOOGLE_SIGN_IN_ENABLED);
 
   useEffect(() => {
-    if (isNative) {
+    if (isNative && GOOGLE_SIGN_IN_ENABLED) {
       hasAuthenticatedGoogleOnce().then(ok => {
         if (ok) setGoogleAuthenticated(true);
       });
@@ -275,67 +274,72 @@ export function FirstRun() {
               Your name shows on the leaderboard. Your year decides which questions you see.
             </Text>
 
-            {/* Anti-Spam Verification Notice */}
-            <View
-              style={[
-                styles.securityNotice,
-                {
-                  backgroundColor: withAlpha(googleAuthenticated ? colors.green : colors.accent, 0.08),
-                  borderColor: withAlpha(googleAuthenticated ? colors.green : colors.accent, 0.28),
-                },
-              ]}>
-              {googleAuthenticated ? (
-                <CheckCircle2 size={18} color={colors.green} style={{ marginTop: 2 }} />
-              ) : (
-                <ShieldAlert size={18} color={colors.accent} style={{ marginTop: 2 }} />
-              )}
-              <View style={{ flex: 1 }}>
-                <Text style={[styles.securityTitle, { color: colors.text }]}>
-                  {googleAuthenticated ? 'Verified with Google' : 'Google Sign-In Required'}
-                </Text>
-                <Text style={[styles.securityDesc, { color: colors.textMuted }]}>
-                  {googleAuthenticated
-                    ? 'Your account is verified. Your progress, leaderboard rank, and study notes will sync smoothly.'
-                    : 'To prevent spam attacks and safeguard your progress & rankings, please sign in with Google to continue.'}
-                </Text>
-              </View>
-            </View>
-
-            <Touchable
-              label={googleAuthenticated ? 'Signed in with Google' : 'Continue with Google'}
-              onPress={withGoogle}
-              disabled={googling || saving || googleAuthenticated}
-              state={{ busy: googling }}
-              scaleTo={0.98}
-              style={[
-                styles.google,
-                {
-                  borderColor: googleAuthenticated ? colors.green : colors.border,
-                  backgroundColor: googleAuthenticated
-                    ? withAlpha(colors.green, 0.1)
-                    : colors.cardElevated,
-                },
-              ]}>
-              {googling ? (
-                <ActivityIndicator size="small" color={colors.text} />
-              ) : googleAuthenticated ? (
-                <View style={styles.signedInRow}>
-                  <CheckCircle2 size={18} color={colors.green} />
-                  <Text style={[styles.googleText, { color: colors.green }]}>
-                    Signed in with Google
-                  </Text>
+            {GOOGLE_SIGN_IN_ENABLED ? (
+              <>
+                {/* Anti-Spam Verification Notice */}
+                <View
+                  style={[
+                    styles.securityNotice,
+                    {
+                      backgroundColor: withAlpha(googleAuthenticated ? colors.green : colors.accent, 0.08),
+                      borderColor: withAlpha(googleAuthenticated ? colors.green : colors.accent, 0.28),
+                    },
+                  ]}>
+                  {googleAuthenticated ? (
+                    <CheckCircle2 size={18} color={colors.green} style={{ marginTop: 2 }} />
+                  ) : (
+                    <ShieldAlert size={18} color={colors.accent} style={{ marginTop: 2 }} />
+                  )}
+                  <View style={{ flex: 1 }}>
+                    <Text style={[styles.securityTitle, { color: colors.text }]}>
+                      {googleAuthenticated ? 'Verified with Google' : 'Google Sign-In Required'}
+                    </Text>
+                    <Text style={[styles.securityDesc, { color: colors.textMuted }]}>
+                      {googleAuthenticated
+                        ? 'Your account is verified. Your progress, leaderboard rank, and study notes will sync smoothly.'
+                        : 'To prevent spam attacks and safeguard your progress & rankings, please sign in with Google to continue.'}
+                    </Text>
+                  </View>
                 </View>
-              ) : (
-                <Text style={[styles.googleText, { color: colors.text }]}>
-                  Continue with Google
+
+                <Touchable
+                  label={googleAuthenticated ? 'Signed in with Google' : 'Continue with Google'}
+                  onPress={withGoogle}
+                  disabled={googling || saving || googleAuthenticated}
+                  state={{ busy: googling }}
+                  scaleTo={0.98}
+                  style={[
+                    styles.google,
+                    {
+                      borderColor: googleAuthenticated ? colors.green : colors.border,
+                      backgroundColor: googleAuthenticated
+                        ? withAlpha(colors.green, 0.1)
+                        : colors.cardElevated,
+                    },
+                  ]}>
+                  {googling ? (
+                    <ActivityIndicator size="small" color={colors.text} />
+                  ) : googleAuthenticated ? (
+                    <View style={styles.signedInRow}>
+                      <CheckCircle2 size={18} color={colors.green} />
+                      <Text style={[styles.googleText, { color: colors.green }]}>
+                        Signed in with Google
+                      </Text>
+                    </View>
+                  ) : (
+                    <Text style={[styles.googleText, { color: colors.text }]}>
+                      Continue with Google
+                    </Text>
+                  )}
+                </Touchable>
+                <Text style={[styles.optional, { color: colors.textMuted }]}>
+                  {googleAuthenticated
+                    ? 'One-time authentication verified. Works completely offline.'
+                    : 'One-time authentication required to safeguard your profile against spam attacks.'}
                 </Text>
-              )}
-            </Touchable>
-            <Text style={[styles.optional, { color: colors.textMuted }]}>
-              {googleAuthenticated
-                ? 'One-time authentication verified. Works completely offline.'
-                : 'One-time authentication required to safeguard your profile against spam attacks.'}
-            </Text>
+
+              </>
+            ) : null}
 
             {/* Profile Setup: Display Name & Year (Gated on Google Sign-In for native) */}
             <View style={!googleAuthenticated && isNative ? styles.lockedSection : undefined}>

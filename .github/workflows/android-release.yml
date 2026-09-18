@@ -108,6 +108,7 @@ jobs:
           npm run check:streak
           npm run check:supabase-queue
           npm run check:keyboard
+          node scripts/auth-mode-check.mjs
           npm run check:version
           npm run check:preview-parity
           npm run check:native-update

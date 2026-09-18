@@ -1,3 +1,4 @@
+import { GOOGLE_SIGN_IN_ENABLED } from './authMode';
 import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
@@ -28,7 +29,7 @@ export const GOOGLE_WEB_CLIENT_ID =
 let configured = false;
 
 export function configureGoogleSignIn(): void {
-  if (configured) {
+  if (!GOOGLE_SIGN_IN_ENABLED || configured) {
     return;
   }
   GoogleSignin.configure({
@@ -55,6 +56,7 @@ export interface GoogleAccount {
  * identity. Progress already stored anonymously is reconciled by the caller.
  */
 export async function signInWithGoogle(): Promise<GoogleAccount> {
+  if (!GOOGLE_SIGN_IN_ENABLED) throw new GoogleSignInCancelled();
   configureGoogleSignIn();
 
   try {
@@ -136,8 +138,8 @@ export async function getSignedInEmail(): Promise<string | null> {
  * On native Android, reads local AsyncStorage so all features work 100% offline.
  */
 export async function hasAuthenticatedGoogleOnce(): Promise<boolean> {
-  // In debug builds (__DEV__) or on non-Android platforms, bypass mandatory Google Sign-In so testing works freely
-  if (__DEV__ || Platform.OS !== 'android') {
+  // Debug APKs bypass the gate without storing a fake authenticated flag.
+  if (!GOOGLE_SIGN_IN_ENABLED || Platform.OS !== 'android') {
     return true;
   }
   try {
