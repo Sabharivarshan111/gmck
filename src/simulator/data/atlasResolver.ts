@@ -91,9 +91,25 @@ function termRegex(term: string): RegExp {
   return rx;
 }
 
-/** Does `text` contain `term` as a whole word (or whole phrase)? */
+/**
+ * Does `text` contain `term` as a whole word (or whole phrase)?
+ *
+ * Tested against the text twice, the second time with hyphens removed, because
+ * BodyParts3D hyphenates the same word inconsistently and sometimes
+ * inconsistently *with itself*: the gastro-epiploic ARTERIES carry a hyphen and
+ * the gastroepiploic VEINS do not, so the stomach showed its venous drainage
+ * along both curvatures and only half its arterial supply. Twenty-three part
+ * names are hyphenated and every one of them has an unhyphenated spelling
+ * somewhere in the literature.
+ *
+ * The elastic separator in `termRegex` covers the other direction — a term
+ * written `thoraco acromial` matches both spellings — so between them a term
+ * can be written either way and still find the part.
+ */
 export function hasTerm(text: string, term: string): boolean {
-  return termRegex(term).test(text);
+  const rx = termRegex(term);
+  if (rx.test(text)) return true;
+  return text.includes('-') && rx.test(text.replace(/-/g, ''));
 }
 
 const PREFIX_CACHE = new Map<string, RegExp>();
@@ -120,7 +136,10 @@ export function startsWord(text: string, prefix: string): boolean {
 }
 
 function anyTerm(text: string, terms: readonly string[]): boolean {
-  for (const t of terms) if (termRegex(t).test(text)) return true;
+  // Through hasTerm, not termRegex directly: the hyphen fallback lives there,
+  // and bypassing it here is what kept the gastro-epiploic arteries out of the
+  // stomach after that fallback was written.
+  for (const t of terms) if (hasTerm(text, t)) return true;
   return false;
 }
 

@@ -40,7 +40,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const resolverPath = path.join(root, 'src/simulator/data/atlasResolver.ts');
-const { describeAtlasTarget, resolvePartToOrganKey, correctPartSystem } = await import(resolverPath);
+const { describeAtlasTarget, resolvePartToOrganKey, correctPartSystem, hasTerm } = await import(resolverPath);
 
 const atlas = JSON.parse(readFileSync(path.join(root, 'public/models/atlas.json'), 'utf8'));
 // The same correction the chunk loader applies: two groups of parts carry an
@@ -188,6 +188,20 @@ function mustBeComplete(key, pattern, why) {
     fail(`"${key}" is missing ${missing.length} of ${expected.length} parts matching ${pattern} — ${why}\n      e.g. ${[...new Set(missing.map((p) => p.name))].slice(0, 4).join(', ')}`);
   }
 }
+
+// BodyParts3D hyphenates inconsistently, and sometimes inconsistently with
+// itself: the gastro-epiploic ARTERIES carry a hyphen and the gastroepiploic
+// VEINS do not. So the stomach showed its venous drainage along both curvatures
+// and only half its arterial supply.
+for (const [text, term] of [
+  ['Left gastro-epiploic artery', 'gastroepiploic'],
+  ['Left gastroepiploic vein', 'gastro epiploic'],
+  ['Trunk of left thoraco-acromial artery', 'thoracoacromial'],
+  ['Left supra-orbital nerve', 'supraorbital'],
+]) {
+  if (!hasTerm(text, term)) fail(`hasTerm("${text}", "${term}") is false — a hyphen should not decide whether a part is found`);
+}
+mustBeComplete('stomach', /gastro-?epiploic (artery|vein)/i, 'both curvatures carry an artery AND a vein');
 
 mustBeComplete('liver', /^hepatovenous segment/i, 'the Couinaud segments ARE the liver parenchyma');
 mustBeComplete('abdomen', /^hepatovenous segment/i, 'the liver is the largest organ in the abdomen');

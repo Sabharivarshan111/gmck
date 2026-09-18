@@ -126,6 +126,19 @@
       "how": "Run the two commands above before cutting the next build. The ads rewrite (src/lib/ads.ts) and the proforma picker grouping (components/ClinicalProformaModal.tsx) are the two changes most worth a real typecheck.",
       "source": ".agents/state/resume-notes.md 2026-09-18",
       "since": "2026-09-18"
+    },
+    {
+      "id": "zanatomy-nerves",
+      "what": "The BodyParts3D atlas the simulator streams contains NO peripheral nerves at all \u2014 measured, not estimated: vagus, phrenic, splanchnic, sympathetic, recurrent laryngeal, intercostal, pectoral, axillary and every limb nerve return zero hits across all 2,234 part names. So vagus_nerve, phrenic_nerve, pectoral_nerves, splanchnic_nerves and axillary_nerve resolve to nothing and the 3D view says why. The dossier text still teaches them; the model cannot draw them.",
+      "blockedOn": "a route to the internet. The egress proxy refuses github.com, raw.githubusercontent.com (connection closed), codeload.github.com (403) and dbarchive.biosciencedbc.jp (connection closed), so no agent sandbox can fetch Z-Anatomy.",
+      "owner": "anyone who can run a workflow on this repo \u2014 a GitHub Actions runner HAS a route, which is how supabase-tasks.yml and exam-sign-images.yml do their network work. Or the app owner, with Blender and the Z-Anatomy .blend.",
+      "remedy": "Follow .agents/queue/zanatomy-peripheral-nerves.md. It has the source, the coordinate space, the triangle budget, the naming convention the resolver already matches, and the licence consequence (Z-Anatomy is CC BY-SA 4.0 where BodyParts3D is CC BY 4.0, so share-alike carries forward and ATTRIBUTION_BODYPARTS3D.md has to name it).",
+      "since": "2026-09-18",
+      "source": ".agents/skills/open-source-3d-anatomy/SKILL.md \u00a71a, docs/simulator-organ-sheets/system-nervous-anterior.png",
+      "clearsWhen": {
+        "kind": "pathMissing",
+        "path": ".agents/queue/zanatomy-peripheral-nerves.md"
+      }
     }
   ]
 }
