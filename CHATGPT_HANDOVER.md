@@ -509,3 +509,90 @@ two new pages have never been rendered.
   the same examination on a different site.
 - **Readiness belongs to an instance, not to a module.** The ad bug was a
   module-level boolean beside a module-level instance describing different ads.
+
+---
+
+## 9. RESUME POINT — written against a session limit, 2026-09-18
+
+Everything is committed and pushed to `claude/continue-previous-z98gdv`, HEAD
+`d1dd5018`, working tree clean. Nothing is half-finished in the tree. This
+section is the one to read first if you are picking this up cold.
+
+### 9.1 What I was doing when I stopped
+
+Nothing was in flight. The last completed task was reading the scanned
+orthopaedic case sheets and turning them into six proformas. The task I would
+have started next is **§8.2 — the depth gap**, and it is still the single
+biggest quality problem in this feature.
+
+### 9.2 Every PDF the owner sent, and exactly what came of each
+
+All extractions are committed in `.agents/sources/proformas/` so you never need
+the PDFs re-uploaded.
+
+| PDF | Read? | Cases built from it |
+|---|---|---|
+| `surgery_cases_final-2` | ✅ text | breast, thyroid, hernia, varicose veins, PVD/Buerger |
+| `Long_cases-1` | ✅ text | obstructive jaundice, ileocaecal TB, GOO, carcinoma caecum |
+| `Short_cases-1` | ✅ text | swelling framework, lipoma, sebaceous cyst, dermoid, hydrocele, UDT |
+| `ENT_DD` | ✅ text | CSOM, DNS + sinusitis, ethmoidal polyp, tonsillitis, stridor |
+| `PAEDIATRIC_CASE_PROFORMAS` | ✅ text | paed master framework, PEM, neonatal/NICU |
+| `Ophthalmology_Case_Profoma_-_Agam` | ✅ text | cataract, corneal ulcer |
+| `General_Proforma` (is ophthalmology, despite the name) | ✅ text | folded into the two eye cases |
+| `OBSTETRICS_AND_GYNAECOLOGY_CASE_PROFORMA` | ✅ text | obstetric ANC, gynaecology |
+| `Piccle_mnemonics` | ✅ text | the 19 general-examination signs (`generalExamSigns.ts`) |
+| `CLINICAL_CASES_GYNAECOLOGY` | ⚠️ 0 bytes | nothing — see 9.3 |
+| `CLINICAL_CASES_OBSTETRICS_1` | ⚠️ 0 bytes | nothing — see 9.3 |
+| `OG_cases`, `OG_cases-1` | ⚠️ 0 bytes | nothing — see 9.3 |
+| `ortho_casesheets-1` | ✅ **images** | CTEV, chronic osteomyelitis, non-union + malunion, peripheral nerve injuries, OA knee |
+| `proforma_medicine` | ❌ **not read** | nothing — see 9.3 |
+
+### 9.3 THE FIVE PDFs STILL UNREAD, and how to read them
+
+This is the most actionable thing left, and it is cheap.
+
+**Four gave 0 bytes** — `CLINICAL_CASES_GYNAECOLOGY`, `CLINICAL_CASES_OBSTETRICS_1`,
+`OG_cases`, `OG_cases-1`. They are NOT scans; `extract-pdf-text.py` returned
+nothing because it does not handle **PDF 1.5 object streams** (`/ObjStm`), where
+the objects are themselves inside a compressed stream. Teaching the extractor to
+inflate `/ObjStm` first would unlock all four. They are obstetrics and
+gynaecology, which is currently the thinnest department in the app at 3 cases,
+so this is the highest-yield hour of work available.
+
+**One is a scan** — `proforma_medicine.pdf`. Read it the way the ortho scan was
+read (§8.4): `extract-page-images.py`, then read the JPEGs. Its four systems are
+already the deepest proformas in the app, so it is low priority — but check it
+for anything the v23 set missed.
+
+### 9.4 State of the feature, in numbers
+
+45 cases: General Surgery 14, General Medicine 10, Orthopaedics 7, ENT 5,
+Paediatrics 4, OBG 3, Ophthalmology 2.
+
+19 general-examination signs, 10 with a verified-correct photograph live in the
+bucket under `signs/`. 9 have none because nothing passed the title gate, which
+is the correct outcome — **do not loosen the gate**.
+
+### 9.5 The four things to do, in order
+
+1. **Teach `extract-pdf-text.py` to inflate `/ObjStm`**, then build the four OBG
+   cases that unlocks. Highest yield, smallest effort.
+2. **Close the depth gap** (§8.2): your four v23 system proformas have a median
+   of 539 lines against 136 for the other 41. The eight commonest long cases are
+   listed there in the order to deepen them.
+3. **Typecheck everything** (§8.5). `npm ci` is blocked in this sandbox, so
+   NOTHING this session was typechecked, linted or screenshotted:
+   `cd mobile && npm ci && npx tsc --noEmit && npx eslint . --quiet`.
+4. **File the 47 orphan plates** (§8.6) — they sit in the bucket with no
+   `question_diagrams` row and are invisible in all three apps. By hand, never
+   by keyword.
+
+### 9.6 Do not undo these
+
+- `titleMustContain` on every sign, with no generic words in it. Five of
+  nineteen images were badly wrong without it.
+- The general examination is never repeated inside a proforma's `sections`.
+- A department per file under `mobile/src/lib/proformas/`, `import type` only.
+- Readiness belongs to an ad instance, not to a module-level boolean.
+- Dispatch `supabase-tasks.yml` after any session that adds plates to
+  `public/diagrams/`, or the rows will point at 404s.
