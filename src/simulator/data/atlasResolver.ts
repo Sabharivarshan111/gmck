@@ -281,8 +281,10 @@ const RULES: readonly AtlasRule[] = [
   },
   {
     id: 'azygos',
-    when: ['azygos', 'hemiazygos', 'azygos vein'],
-    select: (p) => hasTerm(p.name, 'azygos'),
+    when: ['azygos', 'hemiazygos', 'azygos vein', 'accessory hemiazygos'],
+    // `\bazygos\b` does not match "hemiazygos" — there is no word boundary in
+    // the middle of a word — so asking for the hemiazygos returned the azygos.
+    select: (p) => anyTerm(p.name, ['azygos', 'hemiazygos']),
   },
   {
     id: 'lymphatic',
@@ -364,7 +366,9 @@ const RULES: readonly AtlasRule[] = [
   },
   {
     id: 'lcx',
-    when: ['lcx', 'lcx artery', 'circumflex', 'circumflex coronary'],
+    // Never a bare `circumflex`: this body has circumflex femoral, humeral,
+    // scapular and iliac vessels, and all of them used to open the heart.
+    when: ['lcx', 'lcx artery', 'circumflex coronary', 'circumflex branch of left coronary', 'left circumflex'],
     select: (p) => {
       if (p.system !== 'arterial') return false;
       if (p.id === 'FJ2737') return true;
@@ -444,7 +448,10 @@ const RULES: readonly AtlasRule[] = [
   },
 
   // -- Organs ---------------------------------------------------------------
-  { id: 'heart', when: ['heart', 'cardiac', 'cor humanum', 'myocardium', 'septum'], select: selectHeart },
+  // `septum` is gone from the list: the only part in this atlas whose name
+  // contains it is the Septum of telencephalon, which is forebrain, and it
+  // opened the whole heart.
+  { id: 'heart', when: ['heart', 'cardiac', 'cor humanum', 'myocardium', 'interventricular septum'], select: selectHeart },
   { id: 'liver', when: ['liver', 'hepar', 'hepatic', 'biliary', 'gallbladder'], select: selectLiver },
   {
     id: 'lungs',
@@ -860,6 +867,7 @@ export function describeAtlasTarget(targetId: string, atlas: Atlas): AtlasTarget
   if (!targetId || !atlas) return { ids, status: 'unmatched', rule: 'none' };
 
   const key = normaliseKey(targetId);
+  const lowered = targetId.toLowerCase().trim();
 
   // An element id is its own answer.
   const direct = atlas.parts.find((p) => p.id === targetId);
@@ -868,6 +876,35 @@ export function describeAtlasTarget(targetId: string, atlas: Atlas): AtlasTarget
     return { ids, status: 'resolved', rule: 'direct-id' };
   }
 
+  /**
+   * Is the key the exact name of a part?
+   *
+   * This decides a real tension rather than a corner case. `stomach` is both a
+   * dossier key, meaning the stomach AND its vessels, and the name of a single
+   * mesh. `Anterior interventricular vein` is only ever a mesh — but the `lad`
+   * rule claims it on the words "anterior interventricular" and answers with
+   * twenty-two arteries.
+   *
+   * The test that separates them: **a rule may keep a key it can answer.** If
+   * the key names parts and the rule's answer contains them, the rule is
+   * talking about the same thing and its wider answer is the useful one. If the
+   * rule's answer LEAVES OUT the very part the key names, the rule has taken a
+   * key that is not its own, and the named part wins.
+   *
+   * Eighteen of the atlas's 772 named vessels and nerves could not be found by
+   * their own names before this, and each read as a different bug:
+   *
+   *   "Left lateral circumflex femoral artery"  -> the LEFT CORONARY circumflex
+   *   "Right circumflex scapular vein"          -> the same seven coronary parts
+   *   "Anterior interventricular vein"          -> the twenty-two LAD arteries
+   *   "Esophageal artery"                       -> the oesophagus
+   *   "Septum of telencephalon"                 -> the whole heart
+   *
+   * All 1,674 distinct part names now resolve to themselves, and
+   * `npm run check:simulator` walks every one of them.
+   */
+  const namedExactly = atlas.parts.filter((p) => p.name.toLowerCase() === key || p.name.toLowerCase() === lowered);
+
   const rule = ruleForTarget(targetId);
   if (rule) {
     if (rule.absent) return { ids, status: 'absent', rule: rule.id, reason: rule.absent };
@@ -875,7 +912,20 @@ export function describeAtlasTarget(targetId: string, atlas: Atlas): AtlasTarget
     atlas.parts.forEach((p) => {
       if (select(p, atlas, key)) ids.add(p.id);
     });
-    return { ids, status: ids.size > 0 ? 'resolved' : 'unmatched', rule: rule.id };
+    const keepsItsOwn = namedExactly.length === 0 || namedExactly.every((p) => ids.has(p.id));
+    if (keepsItsOwn && ids.size > 0) {
+      return { ids, status: 'resolved', rule: rule.id };
+    }
+    if (!keepsItsOwn) {
+      const own = new Set(namedExactly.map((p) => p.id));
+      return { ids: own, status: 'resolved', rule: 'exact-name' };
+    }
+    return { ids, status: 'unmatched', rule: rule.id };
+  }
+
+  if (namedExactly.length > 0) {
+    namedExactly.forEach((p) => ids.add(p.id));
+    return { ids, status: 'resolved', rule: 'exact-name' };
   }
 
   // -- Fallback, for keys no rule claims -----------------------------------

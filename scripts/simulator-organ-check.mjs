@@ -161,6 +161,41 @@ for (const [key, floor] of Object.entries(FLOORS)) {
 }
 
 // ---------------------------------------------------------------------------
+// Every named part can be found by its own name
+// ---------------------------------------------------------------------------
+//
+// All 1,674 of them, every artery, vein, nerve, muscle and bone in the atlas.
+// This is the assertion that catches a rule taking a key it cannot answer,
+// which is the single defect this whole file exists for. Eighteen named vessels
+// and nerves failed it, and each read as a separate bug until they were lined
+// up:
+//
+//   "Left lateral circumflex femoral artery"  -> the LEFT CORONARY circumflex
+//   "Right circumflex scapular vein"          -> the same seven coronary parts
+//   "Anterior interventricular vein"          -> the twenty-two LAD arteries
+//   "Esophageal artery"                       -> the oesophagus
+//   "Hemiazygos vein"                         -> the azygos vein
+//   "Septum of telencephalon"                 -> the whole heart
+//
+// A rule keeps a key only when its answer contains the part that key names.
+{
+  const byName = new Map();
+  for (const p of atlas.parts) {
+    if (!byName.has(p.name)) byName.set(p.name, []);
+    byName.get(p.name).push(p);
+  }
+  const unfindable = [];
+  for (const [name, parts] of byName) {
+    const found = describeAtlasTarget(name, atlas).ids;
+    if (!parts.some((p) => found.has(p.id))) unfindable.push(name);
+  }
+  if (unfindable.length) {
+    fail(`${unfindable.length} of ${byName.size} named parts cannot be found by their own name — a rule is claiming a key it cannot answer\n      e.g. ${unfindable.slice(0, 5).join(', ')}`);
+  }
+  console.log(`\n  ${byName.size} distinct part names, every one resolves to itself.`);
+}
+
+// ---------------------------------------------------------------------------
 // An organ contains the parts that ARE it
 // ---------------------------------------------------------------------------
 //
