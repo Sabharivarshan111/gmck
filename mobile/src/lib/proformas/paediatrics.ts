@@ -144,7 +144,7 @@ export const PAEDIATRIC_PROFORMAS: ClinicalProforma[] = [
           },
           {
             label: 'The general examination additions',
-            description: 'On top of PICCKLE, which is drawn with its photographs elsewhere in the app.',
+            description: 'On top of PICCLE, which is drawn with its photographs elsewhere in the app.',
             checklist: [
               'ANTERIOR FONTANELLE — open or closed, and its size; normally closes at 12–18 months. SUNKEN in dehydration, BULGING in raised intracranial pressure. Feel it with the child sitting up and calm',
               'Posterior fontanelle — closes by 6–8 weeks',

@@ -1,3 +1,4 @@
+import { guidePoints } from '@/lib/guidePoints';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
@@ -650,7 +651,7 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                           General Examination — with pictures
                         </Text>
                         <Text style={[styles.itemDesc, { color: colors.textMuted }]}>
-                          PICCKLE and the nail signs, each with a clinical photograph
+                          PICCLE and the nail signs, with clinical photographs where available
                         </Text>
                       </View>
                       {signsOpen ? (
@@ -708,6 +709,23 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                                 <Text style={[styles.itemLabel, { color: colors.accent }]}>
                                   {item.label}
                                 </Text>
+                                {item.checklist && item.checklist.length > 0 ? (
+                                  <View style={styles.checklistBox}>
+                                    {item.checklist.flatMap(guidePoints).map((check, cIdx) => (
+                                      <View key={cIdx} style={styles.checkItem}>
+                                        <CheckCircle2
+                                          size={15}
+                                          color={colors.accent}
+                                          style={styles.checkIcon}
+                                        />
+                                        <Text style={[styles.checkText, { color: colors.text }]}>
+                                          <Text style={{ textDecorationLine: 'underline', fontWeight: '600' }}>{check.prompt}</Text>
+                                          {check.explanation ? `\n${check.explanation}` : ''}
+                                        </Text>
+                                      </View>
+                                    ))}
+                                  </View>
+                                ) : null}
                                 <Text style={[styles.itemDesc, { color: colors.text }]}>
                                   {item.description}
                                 </Text>
@@ -724,22 +742,7 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                                     </Text>
                                   </View>
                                 ) : null}
-                                {item.checklist && item.checklist.length > 0 ? (
-                                  <View style={styles.checklistBox}>
-                                    {item.checklist.map((check, cIdx) => (
-                                      <View key={cIdx} style={styles.checkItem}>
-                                        <CheckCircle2
-                                          size={15}
-                                          color={colors.accent}
-                                          style={styles.checkIcon}
-                                        />
-                                        <Text style={[styles.checkText, { color: colors.text }]}>
-                                          {check}
-                                        </Text>
-                                      </View>
-                                    ))}
-                                  </View>
-                                ) : null}
+
                               </View>
                             ))}
                           </View>
@@ -1411,6 +1414,7 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                   {/* Suggested Prompt Chips */}
                   <ScrollView
                     horizontal
+                    style={styles.promptChipsScroll}
                     showsHorizontalScrollIndicator={false}
                     contentContainerStyle={styles.promptChipsRow}>
                     <Touchable
@@ -1420,7 +1424,7 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                       label="Top viva questions chip"
                       style={[styles.promptChip, { borderColor: colors.border }]}>
                       <Text style={[styles.promptChipText, { color: colors.text }]}>
-                        🎓 Top Viva Qs
+                        Top viva questions
                       </Text>
                     </Touchable>
 
@@ -1431,7 +1435,7 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                       label="Differential diagnosis chip"
                       style={[styles.promptChip, { borderColor: colors.border }]}>
                       <Text style={[styles.promptChipText, { color: colors.text }]}>
-                        🔍 Differentials
+                        Differentials
                       </Text>
                     </Touchable>
 
@@ -1442,7 +1446,7 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                       label="Presentation summary chip"
                       style={[styles.promptChip, { borderColor: colors.border }]}>
                       <Text style={[styles.promptChipText, { color: colors.text }]}>
-                        🗣️ Case Summary
+                        Case summary
                       </Text>
                     </Touchable>
 
@@ -1453,7 +1457,7 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                       label="Clinical signs chip"
                       style={[styles.promptChip, { borderColor: colors.border }]}>
                       <Text style={[styles.promptChipText, { color: colors.text }]}>
-                        🩺 Clinical Signs
+                        Clinical signs
                       </Text>
                     </Touchable>
                   </ScrollView>
@@ -1584,7 +1588,7 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
               <Touchable
                 onPress={() => setExamSheetOpen(true)}
                 label="General examination, with pictures"
-                hint="Opens PICCKLE and the nail signs"
+                hint="Opens PICCLE and the nail signs"
                 style={[
                   styles.quickRefCard,
                   { backgroundColor: colors.card, borderColor: colors.border },
@@ -1601,7 +1605,7 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                     General Examination
                   </Text>
                   <Text style={[styles.quickRefSub, { color: colors.textMuted }]}>
-                    PICCKLE, with photographs
+                    PICCLE, with photographs
                   </Text>
                 </View>
               </Touchable>
@@ -2055,7 +2059,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   sectionTitle: {
-    fontSize: 15,
+    fontSize: 18,
+    lineHeight: 26,
     fontWeight: '700',
   },
   sectionMeta: {
@@ -2072,13 +2077,15 @@ const styles = StyleSheet.create({
     marginBottom: 14,
   },
   itemLabel: {
-    fontSize: 13,
+    textDecorationLine: 'underline',
+    fontSize: 17,
+    lineHeight: 25,
     fontWeight: '700',
     marginBottom: 4,
   },
   itemDesc: {
-    fontSize: 13,
-    lineHeight: 18,
+    fontSize: 16,
+    lineHeight: 24,
     marginBottom: 6,
   },
   normalRow: {
@@ -2143,8 +2150,8 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   checkText: {
-    fontSize: 12.5,
-    lineHeight: 17,
+    fontSize: 16,
+    lineHeight: 24,
     flex: 1,
   },
   /* CLERK PATIENT MODE */
@@ -2530,19 +2537,25 @@ const styles = StyleSheet.create({
   chatResetIcon: {
     padding: 4,
   },
+  promptChipsScroll: { flexGrow: 0, flexShrink: 0, maxHeight: 56 },
   promptChipsRow: {
+    alignItems: 'center',
     paddingHorizontal: 12,
     gap: 8,
     paddingBottom: 8,
   },
   promptChip: {
+    alignSelf: 'center',
+    minHeight: 44,
+    justifyContent: 'center',
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 14,
     borderWidth: StyleSheet.hairlineWidth,
   },
   promptChipText: {
-    fontSize: 11.5,
+    fontSize: 13,
+    lineHeight: 18,
     fontWeight: '600',
   },
   chatTranscript: {

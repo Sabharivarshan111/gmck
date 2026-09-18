@@ -1,5 +1,7 @@
+import { BUNDLED_EXAM_PHOTOS } from '@/lib/bundledExamPhotos';
+import { CLUBBING_GRADES, OEDEMA_GRADES } from '@/lib/clinicalGradings';
 /**
- * The general examination, with a photograph of every sign.
+ * The general examination, with attributed clinical photographs where available.
  *
  * This is the part of clerking a student does on every patient and the part
  * that words cannot teach — "spoon-shaped nails" has never once made anybody
@@ -88,20 +90,21 @@ export function GeneralExamSigns({ onOpenImage, groups }: GeneralExamSignsProps)
       <View style={[styles.intro, { backgroundColor: withAlpha(colors.primary, 0.08) }]}>
         <Eye size={16} color={colors.primary} />
         <Text style={[styles.introText, { color: colors.textMuted }]}>
-          Every case sheet opens with this. Tap a sign to see what it actually looks like.
+          PICCLE: Pallor, Icterus, Cyanosis, Clubbing, Lymphadenopathy and Edema (oedema). Koilonychia belongs under Nails. Tap a sign for examination steps, grading and available photographs.
         </Text>
       </View>
 
       {shown.map(({ group, signs }) => (
         <View key={group} style={styles.group}>
           <Text style={[styles.groupTitle, { color: colors.textMuted }]}>
-            {group.toUpperCase()}
+            {group === 'PICCLE' ? 'PICCLE — GENERAL SIGNS' : group.toUpperCase()}
           </Text>
 
           {signs.map(sign => {
             const expanded = open === sign.id;
             const picture = imageFor(sign);
-            const uri = resolveProformaDiagramUrl(picture?.file);
+            const bundled = BUNDLED_EXAM_PHOTOS[sign.id];
+            const uri = bundled ? Image.resolveAssetSource(bundled)?.uri : resolveProformaDiagramUrl(picture?.file);
             const caption = examPhotoCaption(sign.id);
             const licenceUrl = examPhotoLicenceUrl(picture?.licence);
 
@@ -146,26 +149,19 @@ export function GeneralExamSigns({ onOpenImage, groups }: GeneralExamSignsProps)
                         }
                         style={styles.imageTouch}>
                         <Image
-                          source={{ uri }}
+                          source={bundled ?? { uri }}
                           onError={() => setFailedImages(prev => ({ ...prev, [sign.id]: true }))}
                           style={[styles.image, { backgroundColor: colors.cardElevated }]}
                           resizeMode="contain"
                           accessibilityLabel={`Clinical photograph of ${sign.name}`}
                         />
                       </Touchable>
+                    ) : uri ? (
+                      <Text style={[styles.credit, { color: colors.textMuted }]}>
+                        Photograph unavailable. Use the source link or retry below.
+                      </Text>
                     ) : (
-                      /* Deliberate, and explained: see the file header. A sign
-                       * with no freely-licensed photograph says so rather than
-                       * leaving an empty frame that reads as a failed load. */
-                      <View
-                        style={[
-                          styles.noImage,
-                          { borderColor: colors.border, backgroundColor: colors.cardElevated },
-                        ]}>
-                        <Text style={[styles.noImageText, { color: colors.textMuted }]}>
-                          {failedImages[sign.id] ? 'Photograph could not load. Check your connection and retry.' : 'No freely-licensed photograph for this sign yet'}
-                        </Text>
-                      </View>
+                      <Text style={[styles.credit, { color: colors.textMuted }]}>No freely-licensed photograph for this sign yet</Text>
                     )}
 
                     {failedImages[sign.id] && uri ? (
@@ -196,7 +192,18 @@ export function GeneralExamSigns({ onOpenImage, groups }: GeneralExamSignsProps)
 
                     <Field label="What it is" value={sign.definition} />
                     <Field label="Where to look" value={sign.whereToLook} />
-                    {sign.grading ? <Field label="Grading" value={sign.grading} /> : null}
+                    {sign.id === 'clubbing' || sign.id === 'edema' ? (
+                      <View style={styles.block}>
+                        <Text style={[styles.blockLabel, { color: colors.textMuted }]}>GRADING — WHAT TO RECORD</Text>
+                        {(sign.id === 'clubbing' ? CLUBBING_GRADES : OEDEMA_GRADES).variants?.map(grade => (
+                          <View key={grade.label} style={{ marginBottom: 10 }}>
+                            <Text style={[styles.blockValue, { color: colors.accent, fontWeight: '700' }]}>{grade.label}</Text>
+                            <Text style={[styles.blockValue, { color: colors.text }]}>{grade.value}</Text>
+                          </View>
+                        ))}
+                        <Text style={[styles.blockValue, { color: colors.textMuted }]}>{(sign.id === 'clubbing' ? CLUBBING_GRADES : OEDEMA_GRADES).note}</Text>
+                      </View>
+                    ) : sign.grading ? <Field label="Grading" value={sign.grading} /> : null}
 
                     {sign.mnemonic ? (
                       <View style={styles.block}>

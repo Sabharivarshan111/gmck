@@ -1753,3 +1753,15 @@ The `src/lib/ads.ts` rewrite and the picker regrouping in
 ## 2026-09-18 — debug-only Google sign-in policy
 
 Standing user instruction: no Google login at startup or in My Progress for the debug APK only. Internal and normal releases retain authentication. `mobile/src/lib/authMode.ts` is explicitly disabled by android-debug.yml because its optimized preview bundle has __DEV__ false. Both UI locations hide Google controls and bypass the gate; the Google service refuses SDK sign-in when disabled and does not save fake verification. Runtime auth-mode tests cover default production, local dev and optimized debug; TypeScript, ESLint, keyboard and edge checks pass. Device verification remains pending. Preserve this build distinction in future releases.
+
+## 2026-09-19 — screenshot-driven clinical UI fixes
+
+User requests: expand laboratory abbreviations; add grading references; compact the bedside AI suggestions; put underlined ask/examine/record prompts before guide theory with larger type; brighten My Progress; use PICCLE consistently; publish updated builds.
+
+Implemented: differential count has full cell names, ranges and roles; lab test names and units are expanded; shared clinical references cover New York Heart Association classes, clubbing, pitting oedema and Glasgow Coma Scale. Clubbing/oedema grades render as separate rows in General Examination. Clinical grading conventions and recording limitations are stated; primary reference links remain in the app. Guide checklist prompts precede explanation, use 16/24 type and underline the action; semicolon splitting respects parentheses and retains source text. AI chips use a non-growing horizontal row with 44dp targets. Progress ring is a static View rather than a disabled Touchable that applied 0.45 opacity. PICCLE has six headings; koilonychia is in Nails.
+
+Twelve attributed original photographs are bundled unchanged for offline use (nine existing repository photos plus the three already reviewed Commons originals); captions and attribution stay visible. Seven signs still lack a verified photograph: no fabricated substitutes were added. Missing-photo UI is a compact text line.
+
+Verification: TypeScript, ESLint, sign/keyboard/edge/version checks, guide parsing/unit expansion checks and production Android bundling passed during implementation. Screenshot workflow now waits for the exact commit's real debug APK instead of patching an older native shell: bundled image resources must match the APK. Driver additionally captures compact AI controls and My Progress. CI/device screenshots and final build outcomes must be checked after publishing. Debug-only Google exemption is preserved; internal/release retain sign-in. Version remains 23.
+
+Sources for added grading material: American Heart Association classes-of-heart-failure page; NCBI Bookshelf NBK539713 and NBK554452; glasgowcomascale.org/what-is-gcs/; MedlinePlus blood-differential page. This update does not claim an exhaustive revalidation of all older laboratory interpretation advice or of every PDF line.

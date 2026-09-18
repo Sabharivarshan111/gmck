@@ -247,7 +247,7 @@ export const EXAM_SIGNS: ExamSign[] = [
   {
     id: 'koilonychia',
     name: 'Koilonychia',
-    group: 'PICCLE',
+    group: 'Nails',
     definition:
       'Spoon-shaped nails — the nail plate is thinned, flattened and then concave, so that it would hold a drop of water.',
     whereToLook:
@@ -255,7 +255,7 @@ export const EXAM_SIGNS: ExamSign[] = [
     grading:
       'Water-drop test: a drop placed on the nail stays in the concavity instead of running off.',
     causes: [
-      'Iron deficiency anaemia — much the commonest, and the reason it is in PICCLE at all',
+      'Iron deficiency anaemia — an important association to look for during the nail examination',
       'Plummer-Vinson (Paterson-Brown-Kelly) syndrome',
       'Haemochromatosis and other disorders of iron handling',
       'Repeated exposure to detergents, oils and solvents — occupational',
@@ -578,8 +578,8 @@ export function findSign(id: string): ExamSign | undefined {
 }
 
 /**
- * The seven signs of PICCKLE, in the order every proforma in this repo recites
- * them: Pallor, Icterus, Cyanosis, Clubbing, Koilonychia, Lymphadenopathy,
+ * The six headings of PICCLE, in the order every proforma in this repo recites
+ * them: Pallor, Icterus, Cyanosis, Clubbing, Lymphadenopathy,
  * Edema. Cyanosis is split into central and peripheral here because they are
  * different findings with different causes, so this list names the central one
  * and the peripheral sits beside it in the same group.
@@ -589,7 +589,6 @@ export const PICCLE_ORDER = [
   'icterus',
   'cyanosis-central',
   'clubbing',
-  'koilonychia',
   'lymphadenopathy',
   'edema',
 ] as const;

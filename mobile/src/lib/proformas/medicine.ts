@@ -69,7 +69,7 @@ export const MEDICINE_PROFORMAS: ClinicalProforma[] = [
         items: [
           {
             label: 'The stigmata, head to toe',
-            description: 'The general examination of this case is longer than PICCKLE and is its own finding.',
+            description: 'The general examination of this case is longer than PICCLE and is its own finding.',
             checklist: [
               'FACE: temporal wasting, alopecia, icterus, pallor, xanthelasma, medial supraciliary madarosis, bilateral PAROTID enlargement, bleeding gums, FETOR HEPATICUS',
               'Kayser-Fleischer ring — looked for on slit lamp in any patient under 40',
@@ -207,7 +207,7 @@ export const MEDICINE_PROFORMAS: ClinicalProforma[] = [
         items: [
           {
             label: 'General and cardiovascular',
-            description: 'Beyond PICCKLE, aimed at the metabolic syndrome and the macrovascular disease.',
+            description: 'Beyond PICCLE, aimed at the metabolic syndrome and the macrovascular disease.',
             checklist: [
               'Height, weight, BMI, WAIST CIRCUMFERENCE (over 90 cm in men and 80 cm in women for South Asians)',
               'ACANTHOSIS NIGRICANS in the neck and axillae — insulin resistance; skin tags',
@@ -343,7 +343,7 @@ export const MEDICINE_PROFORMAS: ClinicalProforma[] = [
         items: [
           {
             label: 'General',
-            description: 'The specific findings of uraemia, over and above PICCKLE.',
+            description: 'The specific findings of uraemia, over and above PICCLE.',
             checklist: [
               'PERIORBITAL PUFFINESS; generalised oedema (anasarca); ascites; pleural effusion',
               'Pitting oedema — graded, and examined over the SACRUM in a bed-bound patient',

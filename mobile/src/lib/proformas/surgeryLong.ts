@@ -66,7 +66,7 @@ export const SURGERY_LONG_PROFORMAS: ClinicalProforma[] = [
         title: '2. Examination',
         items: [
           {
-            label: 'General — beyond PICCKLE',
+            label: 'General — beyond PICCLE',
             description: 'The specific findings of long-standing biliary obstruction.',
             checklist: [
               'Deep icterus, best seen in daylight; SCRATCH MARKS of pruritus',
@@ -216,7 +216,7 @@ export const SURGERY_LONG_PROFORMAS: ClinicalProforma[] = [
         items: [
           {
             label: 'General',
-            description: 'Beyond PICCKLE, the features of chronic infection and of malnutrition.',
+            description: 'Beyond PICCLE, the features of chronic infection and of malnutrition.',
             checklist: [
               'Built and nourishment — usually poorly built and poorly nourished',
               'Pallor; temperature chart',

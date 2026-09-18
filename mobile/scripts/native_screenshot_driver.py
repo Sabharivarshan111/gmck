@@ -225,6 +225,9 @@ def main() -> int:
     tap("Open Cardiovascular System")
     time.sleep(1.5)
     shot("04-cvs-guide-native")
+    tap("Expand AI chat")
+    shot("10-compact-ai-assistant-native")
+    tap("Collapse AI chat")
 
     tap("Clerk Patient")
     time.sleep(1.2)
@@ -248,6 +251,10 @@ def main() -> int:
     tap("Viva Q&A", required=False)
     time.sleep(1.0)
     shot("08-viva-native")
+
+    tap("Close proforma viewer")
+    tap("My Progress")
+    shot("11-progress-contrast-native")
 
     print("Native screenshots:")
     for p in sorted(OUT.glob("*.png")):

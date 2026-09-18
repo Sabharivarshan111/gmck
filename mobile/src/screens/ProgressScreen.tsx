@@ -498,15 +498,9 @@ export default function ProgressScreen() {
           ) : null}
 
           {/* Year ring */}
-          <Touchable
-            onPress={() => {
-              if (!googleAuthenticated && isNative) {
-                void signIn();
-              }
-            }}
-            disabled={googleAuthenticated || !isNative}
-            label="Year progress metrics"
-            style={[styles.ringCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+          <View
+            accessibilityLabel="Year progress metrics"
+            style={[styles.ringCard, { backgroundColor: colors.card, borderColor: withAlpha(colors.accent, 0.35) }]}>
             <Text style={[styles.ringKicker, { color: colors.textMuted }]}>YOUR YEAR</Text>
             <View style={styles.ringWrap}>
               <ProgressRing percent={yearPct}>
@@ -532,7 +526,7 @@ export default function ProgressScreen() {
                 <Text style={[styles.ringStatLabel, { color: colors.textMuted }]}>TOTAL</Text>
               </View>
             </View>
-          </Touchable>
+          </View>
 
           {/* Streak / level */}
           <View style={[styles.streakCard, { borderColor: colors.border }]}>
