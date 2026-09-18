@@ -701,17 +701,19 @@ export function createLungParenchymaSystem(modelOverride?: string): {
     side: THREE.DoubleSide,
   });
 
-  // Model selection: support testing different candidates via URL parameter ?lung_model=...
+  // Model selection: `?lung_model=full` still switches to the unbaked Z-Anatomy
+  // mesh for comparison. The third candidate, `?lung_model=bp3d`, is gone: it
+  // was a 14.7 MB BodyParts3D export, the comparison it existed for was settled
+  // in the baked mesh's favour, and every reader was paying for it on a CDN to
+  // serve a query string nobody types. `.vercelignore` and the Vite plugin keep
+  // the file out of the deploy; it is still in the repo if the question reopens.
   let selectedModel = modelOverride;
   if (!selectedModel && typeof window !== 'undefined') {
     const urlParam = new URLSearchParams(window.location.search).get('lung_model');
-    if (urlParam === 'bp3d') {
-      selectedModel = '/models/lungs_candidate_bodyparts3d.glb';
-    } else if (urlParam === 'full') {
-      selectedModel = '/models/lungs_candidate_zanatomy_full.glb';
-    } else {
-      selectedModel = '/models/lungs_candidate_zanatomy_baked.glb';
-    }
+    selectedModel =
+      urlParam === 'full'
+        ? '/models/lungs_candidate_zanatomy_full.glb'
+        : '/models/lungs_candidate_zanatomy_baked.glb';
   }
   if (!selectedModel) {
     selectedModel = '/models/lungs_candidate_zanatomy_baked.glb';
@@ -1238,8 +1240,11 @@ varying float partSelected;
         const isMobileDevice = width < 768 || /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
         const concurrencyLimit = isMobileDevice ? 2 : 4;
 
+        // Always the gzipped chunk: it is the only one the site ships, and
+        // `decodeModelResponse` handles both a browser without
+        // DecompressionStream and a host that has already decoded it.
         const chunkTasks = atlas.chunks.map((chunk) => async () => {
-          const hasGzip = !!chunk.gzip && typeof DecompressionStream !== 'undefined';
+          const hasGzip = !!chunk.gzip;
           const fetchUrl = hasGzip ? chunk.gzip! : chunk.url;
           const resp = await fetch(fetchUrl, { signal: abortCtrl.signal });
           return await decodeModelResponse(resp, chunk.bytes, hasGzip);

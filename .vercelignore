@@ -1,0 +1,74 @@
+# What a `vercel deploy` must not upload.
+#
+# The CLI uploads the working tree and Vercel caps that upload — 100 MB on
+# Hobby. This repo is 728 MB without `.git`, so before this file existed every
+# CLI deployment was rejected outright, while pushes to `main` kept working
+# because the Git integration clones on Vercel's side and uploads nothing. An
+# agent or an IDE publishing to Vercel uses the CLI, so it could never publish.
+#
+# The list is generated from `scripts/deploy-excludes.mjs`, which explains each
+# entry. `npm run check:deploy` fails if the two stop matching, or if what is
+# left goes back over budget.
+#
+# Paths under `public/` are excluded by the Vite plugin in `vite.config.ts`
+# instead, because a Git build serves `dist/` and never reads this file.
+
+# Rendered ad video and its workspace — 238 MB, none of it embedded in the site
+remotion-ad
+hyperframes-ad
+
+# Scanned clinical PDFs and the long-form documentation — 193 MB
+docs
+
+# Captured app screenshots — 70 MB
+screenshots
+
+# The native Android app. src/data is shared with it through an alias, so the
+# dependency runs the other way and the website needs none of this.
+mobile
+
+# Edge functions and migrations: these deploy to Supabase, never to Vercel
+supabase
+
+# Agent rules, skills, queues and state
+.agents
+.claude
+.lovable
+
+# CI. `scripts/` is deliberately NOT here: vite.config.ts imports
+# scripts/deploy-excludes.mjs, so an upload without it cannot build.
+.github
+
+# Handover and rules documents. The leading slash matters — an unanchored glob
+# matches at every depth in this syntax, and scripts/*.mjs has to survive.
+/*.md
+
+# One-off maintenance scripts that live at the repo root
+/*.mjs
+/*.cjs
+
+# A second lockfile, for a package manager this project does not build with
+bun.lock
+bun.lockb
+
+# --- Inside public/ -------------------------------------------------------
+# Vite copies public/ into dist/ verbatim, and these are not website assets.
+# vite.config.ts removes the same paths from dist/ on a Git build, which is the
+# route that never reads this file. scripts/deploy-excludes.mjs says why each.
+
+# The staging area for the Supabase `diagrams` bucket — 51 MB, uploaded by
+# .github/workflows/supabase-tasks.yml and read back from the bucket's URL
+public/diagrams
+
+# The retired v8.0 .glb model engine, replaced by the BodyParts3D chunk atlas
+public/models/human_body.glb
+public/models/heart.glb
+public/models/lungs.glb
+public/models/liver.glb
+public/models/kidney.glb
+public/models/brain.glb
+public/models/skeletal.glb
+public/models/lungs_candidate_zanatomy.glb
+
+# 14.7 MB reachable only by typing ?lung_model=bp3d
+public/models/lungs_candidate_bodyparts3d.glb

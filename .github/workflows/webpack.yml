@@ -51,6 +51,13 @@ jobs:
       - name: Every organ resolves to its own parts
         run: node scripts/simulator-organ-check.mjs
 
+      # And what a `vercel deploy` would upload, against a budget. Vercel caps
+      # that upload at 100 MB on Hobby; this repo had drifted to 728 MB with
+      # no .vercelignore, so the site could only ever be published by pushing
+      # here — never from a CLI, and so never from an agent or an IDE.
+      - name: A deployment still fits inside Vercel's upload limit
+        run: node scripts/deploy-size-check.mjs
+
       # --legacy-peer-deps is not optional here and is what every other
       # workflow in this repo already uses.
       - name: Install
