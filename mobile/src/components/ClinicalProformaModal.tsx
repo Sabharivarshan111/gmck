@@ -613,7 +613,7 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                           resizeMode="contain"
                         />
                         <View style={styles.maximizeBadge}>
-                          <Maximize2 size={14} color={colors.primaryText} />
+                          <Maximize2 size={14} color="#FFFFFF" />
                           <Text style={styles.maximizeText}>Full View</Text>
                         </View>
                       </Touchable>
@@ -1477,7 +1477,7 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                         <Text
                           style={[
                             styles.chatBubbleText,
-                            { color: msg.role === 'user' ? '#FFFFFF' : colors.text },
+                            { color: msg.role === 'user' ? colors.primaryText : colors.text },
                           ]}>
                           {msg.text}
                         </Text>
@@ -1767,7 +1767,7 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                   onPress={() => setFullscreenImage(null)}
                   label="Close image"
                   style={styles.fullscreenClose}>
-                  <X size={22} color={colors.primaryText} />
+                  <X size={22} color="#FFFFFF" />
                 </Touchable>
               </View>
               <Image
