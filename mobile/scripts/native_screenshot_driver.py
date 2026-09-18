@@ -127,11 +127,13 @@ def launch() -> None:
 
 
 def first_run() -> None:
-    tap("Continue", required=False)
-    time.sleep(2)
+    # The splash auto-advances after ~1.6s and launch() already waits longer than
+    # that. Do NOT search for the generic word "Continue" here: once the form is
+    # visible it can match "Continue with Google" and accidentally launch OAuth.
+    time.sleep(1)
 
-    # On the screenshot-only debug bundle __DEV__ is true, so Google verification
-    # is bypassed. Production builds are not modified.
+    # The screenshot-only dev Hermes bundle sets __DEV__ true, so the app's own
+    # testing bypass unlocks setup. Production builds are not modified.
     tap("Display name")
     adb("shell", "input", "text", "NativePreview")
     adb("shell", "input", "keyevent", "4")
