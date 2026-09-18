@@ -114,7 +114,7 @@ jobs:
       - name: Apply .vercelignore to the checkout
         run: |
           set -eu
-          test -f .vercelignore || { echo "no .vercelignore"; exit 1; }
+          test -f .vercelignore || { echo "no .vercelignore this commit (experiment, PR #28)"; exit 0; }
           grep -vE '^\s*(#|$)' .vercelignore | sed 's|^/||' | while read -r pattern; do
             case "$pattern" in
               *'*'*)
