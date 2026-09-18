@@ -17,7 +17,7 @@ concurrency:
 
 jobs:
   screenshots:
-    runs-on: macos-14
+    runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
@@ -40,6 +40,16 @@ jobs:
       - name: Disable ads in screenshot build
         working-directory: mobile
         run: printf 'export const ADS_ENABLED = false;\n' > src/lib/adsMode.ts
+
+      - name: Install Android build components
+        run: |
+          set -euo pipefail
+          SDK="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-/usr/local/lib/android/sdk}}"
+          SDKM="$SDK/cmdline-tools/latest/bin/sdkmanager"
+          yes | "$SDKM" --licenses >/dev/null 2>&1 || true
+          "$SDKM" "platforms;android-37.0" || "$SDKM" "platforms;android-37"
+          "$SDKM" "build-tools;37.0.0"
+          "$SDKM" "ndk;27.1.12297006"
 
       - name: Bundle dev JavaScript into native debug APK
         working-directory: mobile
@@ -67,161 +77,22 @@ jobs:
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -camera-front none
           script: |
             set -euo pipefail
-            PACKAGE="com.aistudio.mbbsqbank.aycxvd.debug"
             APK="$(find mobile/android/app/build/outputs/apk/debug -name '*.apk' | head -1)"
-            OUT="artifacts/native-screenshots/v23"
-            mkdir -p "$OUT"
-
             adb install -r "$APK"
-            adb shell settings put global window_animation_scale 0
-            adb shell settings put global transition_animation_scale 0
-            adb shell settings put global animator_duration_scale 0
-            adb shell pm clear "$PACKAGE" || true
-            adb shell monkey -p "$PACKAGE" -c android.intent.category.LAUNCHER 1 >/dev/null
-            sleep 4
-
-            dump_ui() {
-              adb shell uiautomator dump /sdcard/window.xml >/dev/null 2>&1 || true
-              adb pull /sdcard/window.xml /tmp/window.xml >/dev/null 2>&1 || true
-            }
-
-            find_and_tap() {
-              local needle="$1"
-              dump_ui
-              NEEDLE="$needle" python3 - <<'PY'
-import os, re, subprocess, sys, xml.etree.ElementTree as ET
-needle=os.environ["NEEDLE"].lower()
-try:
-    root=ET.parse("/tmp/window.xml").getroot()
-except Exception:
-    sys.exit(2)
-matches=[]
-for node in root.iter("node"):
-    text=(node.attrib.get("text","") + " " + node.attrib.get("content-desc","")).strip()
-    if needle in text.lower():
-        b=node.attrib.get("bounds","")
-        m=re.match(r"\[(\d+),(\d+)\]\[(\d+),(\d+)\]", b)
-        if m:
-            x1,y1,x2,y2=map(int,m.groups())
-            area=max(1,(x2-x1)*(y2-y1))
-            matches.append((area,(x1+x2)//2,(y1+y2)//2,text))
-if not matches:
-    sys.exit(1)
-matches.sort(key=lambda x:x[0])
-_,x,y,text=matches[0]
-print(f"tap {text!r} at {x},{y}")
-subprocess.check_call(["adb","shell","input","tap",str(x),str(y)])
-PY
-            }
-
-            tap_if_present() {
-              find_and_tap "$1" || true
-              sleep 1
-            }
-
-            scroll_until() {
-              local needle="$1"
-              local tries="${2:-7}"
-              for i in $(seq 1 "$tries"); do
-                if find_and_tap "__DO_NOT_TAP_A_REAL_LABEL__" 2>/dev/null; then :; fi
-                dump_ui
-                if NEEDLE="$needle" python3 - <<'PY'
-import os, xml.etree.ElementTree as ET, sys
-needle=os.environ["NEEDLE"].lower()
-try:
-    root=ET.parse("/tmp/window.xml").getroot()
-except Exception:
-    sys.exit(1)
-for n in root.iter("node"):
-    hay=(n.attrib.get("text","")+" "+n.attrib.get("content-desc","")).lower()
-    if needle in hay:
-        sys.exit(0)
-sys.exit(1)
-PY
-                then
-                  return 0
-                fi
-                adb shell input swipe 540 1780 540 620 550
-                sleep 1
-              done
-              return 1
-            }
-
-            shot() {
-              local name="$1"
-              adb exec-out screencap -p > "$OUT/$name.png"
-              test -s "$OUT/$name.png"
-            }
-
-            # First-run gate. Debug JS sets __DEV__ true, so Google verification is
-            # bypassed only for this local screenshot build; production behaviour is untouched.
-            tap_if_present "Continue"
-            sleep 2
-            find_and_tap "Display name"
-            adb shell input text "NativePreview"
-            adb shell input keyevent 4
-            sleep 1
-            tap_if_present "Final Year"
-            tap_if_present "Start studying"
-            sleep 3
-
-            # Dismiss the walkthrough if it starts after onboarding.
-            tap_if_present "Skip the walkthrough"
-            tap_if_present "Close the walkthrough"
-            sleep 2
-
-            shot "01-home-native"
-
-            # Notes is a real bottom-nav tab in the React Native app.
-            find_and_tap "Notes"
-            sleep 2
-            shot "02-notes-native"
-
-            # Case proformas sit below the year cards.
-            scroll_until "Clinical case proformas" 6
-            find_and_tap "Clinical case proformas"
-            sleep 2
-            shot "03-case-proforma-list-native"
-
-            # Open the real CVS proforma. General Physical Examination opens
-            # preferentially by the merged v23 implementation.
-            find_and_tap "Open Cardiovascular System"
-            sleep 2
-            shot "04-cvs-guide-native"
-
-            # Clerk Patient is the real segmented tab in ClinicalProformaModal.
-            find_and_tap "Clerk Patient"
-            sleep 2
-            shot "05-clerk-patient-top-native"
-
-            # Scroll the actual native ScrollView until GPE is on screen.
-            scroll_until "5. General Physical Examination" 9
-            sleep 1
-            shot "06-general-physical-exam-native"
-
-            # The Normal Values panel is directly below GPE.
-            scroll_until "Show normal values" 5
-            find_and_tap "Show normal values"
-            sleep 1
-            shot "07-normal-values-expanded-native"
-
-            # Also capture the real Viva tab.
-            adb shell input swipe 540 620 540 1780 450 || true
-            sleep 1
-            find_and_tap "Viva Q&A" || true
-            sleep 2
-            shot "08-viva-native"
-
-            ls -lh "$OUT"
+            ORBIT_PACKAGE="com.aistudio.mbbsqbank.aycxvd.debug" \
+            ORBIT_SCREENSHOT_OUT="artifacts/native-screenshots/v23" \
+              python3 mobile/scripts/native_screenshot_driver.py
 
       - name: Upload native screenshot artifact
         uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: orbit-native-android-screenshots-v23
           path: artifacts/native-screenshots/v23/*.png
-          if-no-files-found: error
+          if-no-files-found: warn
 
       - name: Commit screenshots to main
+        if: success()
         run: |
           if [ -n "$(git status --porcelain artifacts/native-screenshots/v23)" ]; then
             git config user.name "github-actions[bot]"
