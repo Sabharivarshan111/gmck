@@ -711,6 +711,9 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                                 <Text style={[styles.itemDesc, { color: colors.text }]}>
                                   {item.description}
                                 </Text>
+                                {item.clinicalSign ? (
+                                  <Text style={[styles.itemDesc, { color: colors.textMuted }]}>{item.clinicalSign}</Text>
+                                ) : null}
                                 {item.normal ? (
                                   <View style={styles.normalRow}>
                                     <Text style={[styles.normalLabel, { color: colors.textMuted }]}>
@@ -1099,7 +1102,7 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                           <Text style={[styles.normalValuesSubtitle, { color: colors.textMuted }]}>
                             {activeNormalValues.length > 0
                               ? `${activeNormalValues.length} references from this proforma`
-                              : 'No dedicated normal-value entries in this proforma'}
+                              : 'Open the shared laboratory reference'}
                           </Text>
                         </View>
                       </View>
@@ -1135,10 +1138,14 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                           ))
                         ) : (
                           <Text style={[styles.normalValuesEmpty, { color: colors.textMuted }]}>
-                            This proforma does not define separate normal-value fields. Use its examination
-                            checklist and record the patient’s observed findings.
+                            Use the laboratory reference below. Interpret results with age, pregnancy status
+                            and the reporting laboratory’s range.
                           </Text>
                         )}
+                        <Touchable label="Open normal laboratory values" onPress={() => setLabSheetOpen(true)} style={styles.normalValuesHeader}>
+                          <Text style={[styles.itemLabel, { color: colors.accent }]}>Open normal laboratory values</Text>
+                          <ChevronRight size={18} color={colors.accent} />
+                        </Touchable>
                       </View>
                     ) : null}
                   </View>
@@ -1354,6 +1361,7 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                     ? styles.chatDrawerExpanded
                     : styles.chatDrawerOpen
                   : styles.chatDrawerClosed,
+                { height: (chatOpen ? (chatExpanded ? 560 : 280) : 52) + Math.max(insets.bottom, 10) },
               ]}>
               {/* Chat Header Bar */}
               <Touchable

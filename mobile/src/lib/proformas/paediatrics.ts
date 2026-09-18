@@ -30,7 +30,7 @@ export const PAEDIATRIC_PROFORMAS: ClinicalProforma[] = [
     summary:
       'The framework behind every paediatric case: the informant, the birth and developmental histories that adults do not have, the immunisation record, the dietary history, and the anthropometry that turns "looks thin" into a number.',
     examPearl:
-      'PLOT the child on a growth chart and CLASSIFY the malnutrition before you present anything else. "Poorly nourished" is an impression; weight-for-height below minus 3 SD with a mid-arm circumference under 11.5 cm is severe acute malnutrition, and it changes the management on the spot.',
+      'PLOT the child on a growth chart and CLASSIFY the malnutrition before you present anything else. "Poorly nourished" is an impression; in children aged 6–59 months, weight-for-height/length below −3 SD OR MUAC below 11.5 cm OR bilateral nutritional pitting oedema identifies severe acute malnutrition. Assess acute illness and complications too.',
     diagramPath: '/diagrams/community/growth_chart_road_to_health.jpg',
     diagramTitle: 'Growth chart — road to health',
     sections: [
@@ -153,7 +153,7 @@ export const PAEDIATRIC_PROFORMAS: ClinicalProforma[] = [
               'SAM features: visible severe wasting, loss of the buccal pad of fat, baggy-pants appearance, flaky-paint dermatosis, sparse hypopigmented hair, hepatomegaly',
               'Dysmorphic features; the BCG scar',
               'Vitals with AGE-APPROPRIATE normal ranges — a heart rate of 140 is normal in a neonate and alarming in a ten-year-old',
-              'Blood pressure with a cuff covering two thirds of the upper arm',
+              'Blood pressure using an appropriate paediatric device and cuff sized to measured arm circumference; interpret for age, sex and height',
             ],
           },
         ],
@@ -163,7 +163,7 @@ export const PAEDIATRIC_PROFORMAS: ClinicalProforma[] = [
       {
         question: 'Define severe acute malnutrition and say how you would manage it on day one.',
         answer:
-          'SAM in a child of 6 to 59 months is defined by ANY ONE of: weight-for-height below −3 SD of the WHO standard; mid-upper arm circumference below 11.5 cm; or BILATERAL PITTING PEDAL OEDEMA. Day one management follows the WHO ten steps, and the first four are the ones that save the child: treat and prevent HYPOGLYCAEMIA (feed immediately, 10% dextrose if unable to feed), treat and prevent HYPOTHERMIA (keep warm, kangaroo care, cover the head), treat DEHYDRATION with ReSoMal given SLOWLY and orally — never standard ORS, because these children are sodium-overloaded and potassium-depleted — and correct ELECTROLYTES with potassium and magnesium while giving no iron in the first week. Then treat infection with broad-spectrum antibiotics even without signs, correct micronutrients, start cautious feeding with F-75, and only later move to catch-up growth with F-100 and add iron.',
+          'SAM in a child of 6 to 59 months is defined by ANY ONE of: weight-for-height below −3 SD of the WHO standard; mid-upper arm circumference below 11.5 cm; or BILATERAL PITTING PEDAL OEDEMA. Day one management follows the WHO ten steps, and the first four are the ones that save the child: treat and prevent HYPOGLYCAEMIA (feed immediately, 10% dextrose if unable to feed), treat and prevent HYPOTHERMIA (keep warm, kangaroo care, cover the head), treat dehydration without shock under the supervised WHO 2023 pathway: ReSoMal is preferred for ages 6–59 months, with low-osmolarity ORS allowed when unavailable. ReSoMal requires monitored facility care; shock needs a separate urgent protocol. Continue breastfeeding, and correct ELECTROLYTES with potassium and magnesium while giving no iron in the first week. Then treat infection with broad-spectrum antibiotics even without signs, correct micronutrients, start cautious feeding with F-75, and only later move to catch-up growth with F-100 and add iron.',
         examinerTip:
           'The two traps are intravenous fluids and early iron. Say that you would avoid both and why: IV fluids precipitate heart failure, and iron feeds free radical injury and infection.',
       },
@@ -254,6 +254,22 @@ export const PAEDIATRIC_PROFORMAS: ClinicalProforma[] = [
         ],
       },
       {
+        title: "Growth faltering with developmental or syndromic features",
+        items: [
+          {
+            label: "Additional assessment",
+            description: "Paediatrics_proforma.pdf, pages 65–71 and 104–110 (nutrition and Down syndrome examples).",
+            checklist: [
+              "Observe feeding and ask about chewing, swallowing, aspiration, prolonged feeds and caregiver difficulties",
+              "Plot serial growth and assess development; distinguish isolated low intake from associated medical/developmental disease",
+              "For suspected or established Down syndrome, review diagnostic records and cardiac, thyroid, hearing, vision and feeding needs through the appropriate service",
+              "Describe observed features without diagnosing a chromosomal condition solely from facial appearance",
+              "Agree accessible nutrition, developmental support and follow-up with the family"
+            ]
+          }
+        ]
+      },
+      {
         title: '3. Investigations and Management',
         items: [
           {
@@ -273,13 +289,13 @@ export const PAEDIATRIC_PROFORMAS: ClinicalProforma[] = [
             label: 'The WHO ten steps, in two phases',
             description: 'Stabilisation first, rehabilitation after, and the order is the examinable part.',
             checklist: [
-              'STABILISATION (days 1–7): 1 treat/prevent HYPOGLYCAEMIA; 2 treat/prevent HYPOTHERMIA; 3 treat/prevent DEHYDRATION with ReSoMal, orally and slowly; 4 correct ELECTROLYTES — potassium and magnesium, restrict sodium; 5 treat INFECTION with broad-spectrum antibiotics even in the absence of signs',
+              'STABILISATION (days 1–7): 1 treat/prevent HYPOGLYCAEMIA; 2 treat/prevent HYPOTHERMIA; 3 assess dehydration and shock separately using the supervised WHO 2023 rehydration pathway; 4 correct ELECTROLYTES — potassium and magnesium, restrict sodium; 5 treat INFECTION with broad-spectrum antibiotics even in the absence of signs',
               '6 correct MICRONUTRIENTS — vitamin A, zinc, folic acid, multivitamins, but NO IRON in the first week',
               '7 begin CAUTIOUS FEEDING with F-75, small frequent feeds, to maintain rather than to grow',
               'REHABILITATION (weeks 2–6): 8 achieve CATCH-UP GROWTH with F-100 or ready-to-use therapeutic food, and ADD IRON now; 9 provide sensory stimulation and emotional support; 10 prepare for FOLLOW-UP after discharge',
               'NEVER give routine intravenous fluids — the myocardium is compromised and fluid overload precipitates heart failure. IV fluids only for shock',
               'REFEEDING SYNDROME: watch for falling phosphate, potassium and magnesium as feeding starts',
-              'Discharge criteria and follow-up; link to the anganwadi; counsel the mother on feeding, which is the only thing that prevents the next episode',
+              'Discharge criteria and follow-up; link to the anganwadi; support caregivers with feeding, infection prevention, food access and follow-up to reduce recurrence',
             ],
           },
         ],
@@ -294,11 +310,10 @@ export const PAEDIATRIC_PROFORMAS: ClinicalProforma[] = [
           '"Free iron feeds bacteria and makes free radicals." Both halves, and it is the answer to why anaemia is not corrected first.',
       },
       {
-        question: 'Why is ReSoMal used rather than standard ORS?',
+        question: 'What does WHO 2023 recommend for dehydration without shock in severe wasting?',
         answer:
-          'A severely malnourished child has a high TOTAL body sodium despite a low serum sodium, and a severe potassium and magnesium deficit, because the sodium-potassium pump is impaired. Standard WHO ORS contains too much sodium for such a child and would worsen sodium overload and precipitate cardiac failure, and it contains too little potassium to replace what is missing. ReSoMal (Rehydration Solution for Malnutrition) has a LOWER sodium (about 45 mmol/L rather than 75), a HIGHER potassium (about 40 mmol/L), and added magnesium, zinc and copper. It is given slowly by mouth or nasogastric tube — 5 ml/kg every 30 minutes for the first 2 hours, then 5–10 ml/kg/hour — with the child monitored for rising pulse and respiratory rate, which signal overload.',
-        examinerTip:
-          'Low sodium, high potassium. Then say the monitoring: a rising pulse and respiratory rate means stop.',
+          'For children aged 6–59 months with severe wasting or nutritional oedema and dehydration without shock, WHO 2023 prefers ReSoMal and permits low-osmolarity ORS if ReSoMal is unavailable. ReSoMal requires supervision and monitoring in a health facility. Continue breastfeeding and assess shock separately.',
+        examinerTip: 'Do not repeat the outdated blanket claim that low-osmolarity ORS is never allowed.',
       },
     ],
   },
@@ -374,20 +389,37 @@ export const PAEDIATRIC_PROFORMAS: ClinicalProforma[] = [
               'KRAMER ZONES, progressing cephalocaudally: zone 1 head and neck (about 4–6 mg/dL); zone 2 upper trunk to the umbilicus (about 8–9); zone 3 lower trunk and thighs (about 12); zone 4 arms and legs below the knee (about 15); zone 5 PALMS AND SOLES (over 15, and always significant)',
               'Blanch the skin with finger pressure in natural light and look at the blanched area',
               'Pallor (haemolysis), plethora (polycythaemia), hepatosplenomegaly, cephalhaematoma or bruising (a bilirubin load)',
-              'Neurological signs of acute bilirubin encephalopathy: lethargy, poor feeding, high-pitched cry, hypertonia, retrocollis and opisthotonus, setting-sun sign, seizures',
+              'Neurological signs of acute bilirubin encephalopathy: lethargy, poor feeding, high-pitched cry, hypertonia, retrocollis and opisthotonus, seizures',
               'Kramer zones ESTIMATE and never replace a serum bilirubin — they are for deciding whom to test',
             ],
           },
         ],
       },
       {
+        title: "Preterm infant: maturity, growth and discharge review",
+        items: [
+          {
+            label: "Additional assessment",
+            description: "Paediatrics_proforma.pdf, pages 58–64; PAEDIATRIC CASE PROFORMAS.pdf, pages 25–30.",
+            checklist: [
+              "Record gestation and dating basis, birth weight, postnatal and postmenstrual age; classify size for gestation on an appropriate chart",
+              "If dating is uncertain, document physical and neuromuscular maturity assessment by a trained examiner; illness can limit interpretation",
+              "Review temperature control, apnoea/respiratory support, feeding route/tolerance, glucose, jaundice and infection",
+              "Track weight, length and head circumference; observe suck/feeding coordination and support breast milk feeding",
+              "Review retinopathy, hearing and developmental screening/follow-up according to gestation, illness and local protocol",
+              "Discharge plan: stability, feeding/growth, caregiver preparation, immunisation and a specific follow-up appointment"
+            ]
+          }
+        ]
+      },
+      {
         title: '3. Diagnosis and Management',
         items: [
           {
             label: 'Physiological versus pathological jaundice',
-            description: 'Five criteria, any one of which makes it pathological.',
+            description: 'Assess timing, measured bilirubin, gestation, clinical state and cholestasis features.',
             checklist: [
-              'PATHOLOGICAL if: onset within the FIRST 24 HOURS; total bilirubin rising faster than 5 mg/dL per day (or 0.5 mg/dL per hour); total bilirubin above 15 mg/dL in a term baby; CONJUGATED (direct) bilirubin above 2 mg/dL or more than 20% of the total; or jaundice PERSISTING beyond 14 days in a term and 21 days in a preterm baby',
+              'First-day jaundice, rapid rise, clinical illness, prolonged jaundice or conjugated hyperbilirubinaemia requires evaluation. Interpret measured bilirubin against gestation, age in hours and risk factors; a universal total-bilirubin cutoff is not a treatment rule.',
               'Also pathological: any jaundice with clinical illness, with pale stools and dark urine, or with hepatosplenomegaly',
               'PHYSIOLOGICAL: appears after 24 hours, peaks at day 3–5 in a term baby, unconjugated, and resolves by 10–14 days',
               'BREAST MILK jaundice (prolonged, well baby, from the end of the first week) is distinguished from BREASTFEEDING jaundice (early, from inadequate intake and dehydration — the treatment is more feeding, not less)',
@@ -402,9 +434,9 @@ export const PAEDIATRIC_PROFORMAS: ClinicalProforma[] = [
               'G6PD assay — particularly in a male infant',
               'SEPSIS SCREEN: total and differential count, immature to total neutrophil ratio, micro-ESR, C-reactive protein, and BLOOD CULTURE',
               'Thyroid function and urine for reducing substances in prolonged jaundice',
-              'PHOTOTHERAPY — plotted against the age in hours on the NNF or AAP nomogram, with the threshold lowered for prematurity and risk factors. Eyes and gonads covered, adequate hydration, temperature monitored',
+              'PHOTOTHERAPY — plotted against the age in hours on the NNF or AAP nomogram, using the applicable gestation and neurotoxicity-risk chart. Follow neonatal guidance for eye protection, exposed skin, hydration and temperature monitoring',
               'EXCHANGE TRANSFUSION for levels above the exchange line, for rapid rise despite phototherapy, or for any sign of encephalopathy',
-              'IVIG in immune haemolysis; treat sepsis; ensure adequate feeding',
+              'IVIG is not routine: specialist consideration for selected isoimmune haemolysis reaching escalation thresholds and rising despite intensive phototherapy; benefit is uncertain and adverse effects are possible. Treat infection and support feeding',
               'Counsel the mother: continue breastfeeding, and follow up after discharge — a baby discharged at 48 hours has not yet reached the peak',
             ],
           },

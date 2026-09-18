@@ -24,7 +24,7 @@
  *   nothing about which sign they are opening.
  */
 import React, { useCallback, useMemo, useState } from 'react';
-import { Image, StyleSheet, View } from 'react-native';
+import { Image, Linking, StyleSheet, View } from 'react-native';
 import { ChevronDown, ChevronRight, Eye, Lightbulb } from 'lucide-react-native';
 import { Text } from '@/components/Text';
 import { Touchable } from '@/components/Touchable';
@@ -38,13 +38,15 @@ import {
   type SignGroup,
 } from '@/lib/generalExamSigns';
 import { resolveProformaDiagramUrl } from '@/lib/clinicalProformas';
+import { CURATED_EXAM_PHOTOS, EXCLUDED_EXAM_PHOTOS, examPhotoCaption, examPhotoLicenceUrl } from '@/lib/curatedExamPhotos';
 import { SIGN_IMAGES, type FetchedSignImage } from '@/lib/examSignImages';
 
 /* The manifest the fetch workflow writes. Read through a lookup rather than
  * baked into the sign list, so a new batch of pictures is one generated file
  * with no edit to the sign definitions themselves. */
 function imageFor(sign: ExamSign): FetchedSignImage | undefined {
-  const found = SIGN_IMAGES[sign.id];
+  const found = CURATED_EXAM_PHOTOS[sign.id] ?? SIGN_IMAGES[sign.id];
+  if (found?.commonsTitle && EXCLUDED_EXAM_PHOTOS.has(found.commonsTitle)) return undefined;
   if (found?.file) {
     return found;
   }
@@ -68,6 +70,7 @@ export interface GeneralExamSignsProps {
 export function GeneralExamSigns({ onOpenImage, groups }: GeneralExamSignsProps) {
   const { colors } = useTheme();
   const [open, setOpen] = useState<string | null>(null);
+  const [failedImages, setFailedImages] = useState<Record<string, boolean>>({});
 
   const shown = useMemo(() => {
     const wanted = groups && groups.length > 0 ? groups : SIGN_GROUP_ORDER;
@@ -99,6 +102,8 @@ export function GeneralExamSigns({ onOpenImage, groups }: GeneralExamSignsProps)
             const expanded = open === sign.id;
             const picture = imageFor(sign);
             const uri = resolveProformaDiagramUrl(picture?.file);
+            const caption = examPhotoCaption(sign.id);
+            const licenceUrl = examPhotoLicenceUrl(picture?.licence);
 
             return (
               <View
@@ -132,7 +137,7 @@ export function GeneralExamSigns({ onOpenImage, groups }: GeneralExamSignsProps)
 
                 {expanded ? (
                   <View style={styles.body}>
-                    {uri ? (
+                    {uri && !failedImages[sign.id] ? (
                       <Touchable
                         label={`${sign.name}, photograph`}
                         hint="Opens the picture full screen"
@@ -142,6 +147,7 @@ export function GeneralExamSigns({ onOpenImage, groups }: GeneralExamSignsProps)
                         style={styles.imageTouch}>
                         <Image
                           source={{ uri }}
+                          onError={() => setFailedImages(prev => ({ ...prev, [sign.id]: true }))}
                           style={[styles.image, { backgroundColor: colors.cardElevated }]}
                           resizeMode="contain"
                           accessibilityLabel={`Clinical photograph of ${sign.name}`}
@@ -157,11 +163,29 @@ export function GeneralExamSigns({ onOpenImage, groups }: GeneralExamSignsProps)
                           { borderColor: colors.border, backgroundColor: colors.cardElevated },
                         ]}>
                         <Text style={[styles.noImageText, { color: colors.textMuted }]}>
-                          No freely-licensed photograph for this sign yet
+                          {failedImages[sign.id] ? 'Photograph could not load. Check your connection and retry.' : 'No freely-licensed photograph for this sign yet'}
                         </Text>
                       </View>
                     )}
 
+                    {failedImages[sign.id] && uri ? (
+                      <Touchable label={`Retry photograph of ${sign.name}`} onPress={() => setFailedImages(prev => ({ ...prev, [sign.id]: false }))} style={styles.header}>
+                        <Text style={{ color: colors.accent }}>Retry photograph</Text>
+                      </Touchable>
+                    ) : null}
+                    {uri && caption ? <Text style={[styles.credit, { color: colors.textMuted }]}>{caption}</Text> : null}
+                    <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+                      {picture?.source ? (
+                        <Touchable label={`View photograph source for ${sign.name}`} onPress={() => Linking.openURL(picture.source!).catch(() => {})} style={styles.header}>
+                          <Text style={{ color: colors.accent }}>Photograph source</Text>
+                        </Touchable>
+                      ) : null}
+                      {licenceUrl ? (
+                        <Touchable label={`View ${picture?.licence} licence`} onPress={() => Linking.openURL(licenceUrl).catch(() => {})} style={styles.header}>
+                          <Text style={{ color: colors.accent }}>{picture?.licence} licence</Text>
+                        </Touchable>
+                      ) : null}
+                    </View>
                     {/* Attribution sits with the picture, in the same
                      * component, so no later edit can separate them. */}
                     {uri && (picture?.credit || picture?.licence) ? (

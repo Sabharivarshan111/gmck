@@ -216,7 +216,12 @@ def main() -> int:
     scroll_until("Normal Values", tries=7)
     tap("Normal Values")
     time.sleep(0.8)
+    scroll_until("Open normal laboratory values", tries=5)
     shot("07-normal-values-expanded-native")
+    tap("Open normal laboratory values")
+    shot("09-normal-laboratory-reference-native")
+    adb("shell", "input", "keyevent", "4")
+    time.sleep(0.8)
 
     # The segmented tabs remain fixed above the ScrollView.
     tap("Viva Q&A", required=False)
