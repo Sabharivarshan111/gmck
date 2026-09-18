@@ -1458,7 +1458,7 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                     <Text
                       style={[
                         styles.filterPillText,
-                        { color: active ? '#FFFFFF' : colors.text },
+                        { color: active ? colors.primaryText : colors.text },
                       ]}>
                       {sys === 'Obstetrics & Gynaecology' ? 'OBGYN' : sys} ({count})
                     </Text>
