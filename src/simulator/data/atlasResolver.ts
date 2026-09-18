@@ -684,6 +684,10 @@ function selectBrain(p: Part): boolean {
   const isBrainstem = anyTerm(name, [
     'midbrain', 'pons', 'medulla oblongata', 'peduncle of midbrain', 'colliculus',
     'brachium of', 'interpeduncular', 'cerebral aqueduct',
+    // Continuous with the fourth ventricle, and modelled here only as far as
+    // the upper cord (y 1.537-1.572). It was the one nervous part in the whole
+    // atlas that no organ claimed.
+    'central canal',
   ]);
 
   const isCerebellum = anyTerm(name, ['cerebellum', 'tentorium cerebelli']);
@@ -693,6 +697,42 @@ function selectBrain(p: Part): boolean {
   const isGland = p.id === 'FJ1796' || p.id === 'FJ1795';
 
   if (CEREBRAL_CSF_IDS.has(p.id)) return true;
+
+  /**
+   * The cerebral circulation, which the brain used to show eight parts of out
+   * of a hundred and seven.
+   *
+   * This atlas carries a complete circle of Willis and the whole cerebral
+   * arterial tree — anterior, middle and posterior cerebral arteries with their
+   * cortical branches, both communicating arteries, the basilar and vertebrals,
+   * PICA, AICA and the superior cerebellar, the pontine arteries, the
+   * anterolateral central (lenticulostriate) branches, the choroidal arteries,
+   * the pericallosal and callosomarginal. That is the circle of Willis, the
+   * arterial territories and the vessels a stroke occludes: three of the most
+   * examined things in the whole of neuroanatomy, present in the data and
+   * invisible in the app.
+   *
+   * Every one of them sits above y = 1.47 already, and the common carotid tops
+   * out at 1.452 in the neck, so the head floor separates the intracranial
+   * supply from its origin without naming either.
+   *
+   * There are no dural venous sinuses and no cerebral veins in this atlas —
+   * searched, and the only `sinus` in it is the coronary sinus. So the venous
+   * side of the brain cannot be drawn, and the resolver does not pretend.
+   */
+  const isCerebralVessel =
+    (p.system === 'arterial' || p.system === 'venous') &&
+    !hasTerm(name, 'common carotid') &&
+    anyTerm(name, [
+      'cerebral artery', 'cerebellar artery', 'communicating artery',
+      'basilar artery', 'vertebral artery', 'internal carotid artery',
+      'ophthalmic artery', 'choroidal artery', 'pontine artery',
+      'callosomarginal artery', 'pericallosal artery', 'labyrinthine artery',
+      'artery of central sulcus', 'artery of postcentral sulcus',
+      'artery of precentral sulcus',
+    ]);
+
+  if (isCerebralVessel) return !!p.bounds && p.bounds[0][1] > 1.45;
 
   // The nerves of the orbit, but only the ones actually in the head — the
   // y > 1.45 floor is what keeps the spinal cord out.

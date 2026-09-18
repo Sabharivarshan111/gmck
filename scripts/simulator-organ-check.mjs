@@ -209,6 +209,25 @@ mustBeComplete('abdomen', /\bileum\b/i, 'the small bowel is abdominal content; a
 mustBeComplete('abdomen', /\b(jejunum|colon|duodenum|cecum|appendix)\b/i, 'the whole alimentary tract belongs to the abdomen');
 mustBeComplete('kidney', /\b(kidney|adrenal gland)\b/i, 'both kidneys and both adrenals');
 mustBeComplete('brain', /\bgyrus\b/i, 'every cortical gyrus is brain');
+
+// The circle of Willis and the cerebral arterial tree. This atlas carries 107
+// parts of it and the brain used to show eight: the arterial territories, the
+// lenticulostriate branches and the vessels a stroke occludes were all in the
+// data and none of them on screen.
+mustBeComplete('brain', /cerebral artery|cerebellar artery|communicating artery|basilar artery/i,
+  'the circle of Willis and the cortical arterial territories are neuroanatomy, not decoration');
+mustNotContain('brain', 'common carotid', 'the common carotid is in the neck; the head floor separates the intracranial supply from its origin');
+
+// Every nerve in the atlas must belong to something. There are 144 and one of
+// them — the central canal of the spinal cord — belonged to nothing at all.
+{
+  const targetsBySys = new Set();
+  for (const t of targets) for (const id of describeAtlasTarget(t, atlas).ids) targetsBySys.add(id);
+  const orphans = atlas.parts.filter((p) => p.system === 'nervous' && !targetsBySys.has(p.id));
+  if (orphans.length) {
+    fail(`${orphans.length} nervous part(s) are reachable from no isolation target at all: ${[...new Set(orphans.map((p) => p.name))].slice(0, 5).join(', ')}`);
+  }
+}
 mustBeComplete('lungs', /bronchial tree|bronchus|^trachea$/i, 'the whole tracheobronchial tree');
 mustBeComplete('skeletal', /\bvertebra\b/i, 'the vertebral column is skeleton');
 
@@ -321,7 +340,24 @@ if (intensities.length < 4) {
   if (over(darkTotal)) fail(`dark-theme studio rig totals ${darkTotal.toFixed(2)}, over the ${STUDIO_LIGHT_CEILING} ceiling — the tissue bleaches to clay above it`);
 }
 
-// 2. One 3D view per device.
+// 2. The phone is the device this is for, and the guards that protect it.
+//
+//    Every one of these was written down as a mobile rule and then undone
+//    somewhere else in the same file: the DPR clamp exists to stop a large
+//    backbuffer and MSAA allocated a multiple of it; the concurrency cap exists
+//    to stop a memory spike and `powerPreference: 'high-performance'` asked the
+//    driver for the profile that throttles.
+for (const [pattern, why] of [
+  [/antialias:\s*!isMobileDevice/, 'antialias must be OFF on mobile — a multisampled backbuffer undoes the DPR clamp that exists to avoid exactly that allocation'],
+  [/powerPreference:\s*isMobileDevice \? 'default'/, "powerPreference must be 'default' on mobile — 'high-performance' is heat, then throttling, then a slower frame rate than the default profile"],
+  [/setPixelRatio\([^)]*isMobileDevice \? 1\.0/, 'mobile devicePixelRatio must be clamped to 1.0 (GPU tile exhaustion)'],
+  [/const concurrencyLimit = isMobileDevice \? 2 :/, 'mobile chunk streaming must be capped at 2 concurrent fetches (WebKit Jetsam OOM)'],
+  [/chunkBuffers\.length = 0/, 'the decoded chunk buffers (59.5 MB) must be released once the geometry is merged'],
+]) {
+  if (!pattern.test(viewSrc)) fail(`AnatomicalBody3D: ${why}`);
+}
+
+// 3. One 3D view per device.
 //
 //    `hidden lg:grid` and `lg:hidden` hide a subtree with CSS, and a subtree
 //    hidden with CSS is still mounted. Simulator.tsx renders both a desktop and
@@ -337,6 +373,25 @@ if (mounts !== gates) {
 }
 if (!simulatorSrc.includes('useIsDesktopLayout()')) {
   fail('Simulator.tsx does not call useIsDesktopLayout() — the layout split would be CSS-only again');
+}
+
+// 4. The mobile stage fits the phone it is on.
+//
+//    It was a flat `h-[420px]`: the same box on a 640pt screen, where it runs
+//    under the fold, and on an 844pt one, where a third of the screen goes
+//    unused. And the tab bar was `sticky top-[53px]` — the header's height on
+//    one phone — while the header's title wraps and grows on a narrow one.
+// Comments are stripped first: this file explains the old values, and a check
+// that its own documentation trips is a check nobody keeps.
+const simulatorCode = simulatorSrc.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
+if (/h-\[420px\]/.test(simulatorCode)) {
+  fail('Simulator.tsx pins the MOBILE 3D stage to a fixed pixel height — it has to fit the viewport it is given');
+}
+if (/sticky\s+top-\[\d+px\]/.test(simulatorCode)) {
+  fail('Simulator.tsx positions a sticky element with a hardcoded header height; nest it in the header\'s own sticky block instead');
+}
+if (!simulatorSrc.includes('dvh')) {
+  fail('Simulator.tsx sizes the mobile stage without dvh — mobile `vh` counts the URL bar that is not there, so the canvas is taller than its space');
 }
 
 // ---------------------------------------------------------------------------

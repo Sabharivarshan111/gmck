@@ -835,7 +835,24 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
     cameraRef.current = camera;
 
     // 3. Renderer with Tone Mapping & Studio Environment (Hardened for Mobile)
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
+    //
+    // Two of these are off on a phone, and both were undoing the DPR clamp
+    // below rather than complementing it:
+    //
+    // - **antialias** allocates a multisampled backbuffer. The DPR clamp exists
+    //   precisely to stop this app allocating a large one, and then MSAA put a
+    //   multiple of it back. At DPR 1.0 on a 2,300,000-triangle scene, the fill
+    //   rate is what runs out first, and MSAA is paid on every pixel of it.
+    // - **powerPreference: 'high-performance'** asks the driver for the
+    //   power-hungry profile. On a desktop that is a discrete GPU. On a phone
+    //   it is heat, then thermal throttling, then a slower frame rate than the
+    //   default profile would have given — on a long anatomy session, which is
+    //   the only kind there is.
+    const renderer = new THREE.WebGLRenderer({
+      antialias: !isMobileDevice,
+      alpha: true,
+      powerPreference: isMobileDevice ? 'default' : 'high-performance',
+    });
     renderer.setSize(width, height);
     // Strict mobile DPR clamping to 1.0 prevents WebKit Jetsam OOM crashes
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isMobileDevice ? 1.0 : 1.75));
