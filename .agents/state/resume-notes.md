@@ -1363,3 +1363,46 @@ was the congestion the owner reported.
 - Do not put `rewardedLoaded`-style module flags back beside an ad instance.
   Readiness belongs to the instance.
 - Do not repeat the general examination inside a proforma's `sections`.
+
+### Later the same day — the scanned sheets, the two reference pages, 45 cases
+
+**The ortho scan was read after all, and the technique generalises.**
+`ortho_casesheets-1.pdf` is a CamScanner scan with no text layer, and OCR is
+unavailable here (tesseract, poppler-utils, pypdf, pip — all refused by the
+proxy). But a scanner embeds each page as a `/DCTDecode` image XObject, and **a
+DCTDecode stream is a JPEG byte for byte**, so the 22 pages come out verbatim
+and can simply be read as images.
+`.agents/sources/proformas/extract-page-images.py` does it and is committed.
+
+Six ortho cases came out: CTEV, chronic osteomyelitis, non-union + malunion,
+peripheral nerve injuries, OA knee. Orthopaedics went 2 → 7, total 40 → 45.
+The transcription is **by eye, not machine** — where a proforma disagrees with
+the owner's sheet, the sheet wins.
+
+**Four PDFs are still unread and they are NOT scans.**
+`CLINICAL_CASES_GYNAECOLOGY`, `CLINICAL_CASES_OBSTETRICS_1`, `OG_cases`,
+`OG_cases-1` all returned 0 bytes because `extract-pdf-text.py` does not handle
+**PDF 1.5 object streams** (`/ObjStm`) — the objects are inside a compressed
+stream and the regex never sees them. Teaching it to inflate `/ObjStm` first
+unlocks all four, and all four are OBG, the thinnest department at 3 cases.
+**That is the highest-yield small task left in this repo.**
+`proforma_medicine.pdf` is the one true scan still unread; use
+`extract-page-images.py`.
+
+**Two reference pages, under the search in the case picker** (the owner moved
+them there from above it): `GeneralExamSheet` mounts the SAME `GeneralExamSigns`
+component the Guide tab does — not a copy — and `LabValuesSheet` over the new
+`lib/labValues.ts`, ~100 values with conventional AND SI units, age variants,
+and critical values marked separately.
+
+**`check:edges` caught a real bug in ChatGPT's v23 `NoteLinkCard`** once the new
+modals made me run it: its full-screen modal padded by a hardcoded 48, so the
+title and close button sat under the clock on any cutout phone. Fixed.
+
+**The depth gap is measured and is the main remaining quality problem.**
+ChatGPT's four v23 system proformas: median 539 lines. The other 41: median 136.
+The eight commonest long cases are listed in deepening order in
+`CHATGPT_HANDOVER.md` §8.2.
+
+**Still nothing typechecked.** `npm ci` is blocked. See the
+`node-modules-unreachable` blocker in `blocked.json`.
