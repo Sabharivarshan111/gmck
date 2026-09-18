@@ -65,7 +65,31 @@ const SYSTEMS = [
   'Pediatrics',
   'Orthopaedics',
   'Obstetrics & Gynaecology',
+  'ENT',
+  'Ophthalmology',
 ] as const;
+
+/**
+ * One colour per department, as a lookup.
+ *
+ * This was a five-deep nested ternary repeated twice — once for the tint and
+ * once for the ink — and adding a department meant editing both ladders in the
+ * right place or getting a card that silently rendered pink. A map is the same
+ * information with the failure mode removed.
+ *
+ * `null` means "use the theme's primary", because a custom theme's accent has
+ * to reach these cards the same way it reaches the subject cards; the fixed
+ * hues belong to departments that already had one.
+ */
+const SYSTEM_COLOUR: Record<string, string | null> = {
+  'General Medicine': null,
+  'General Surgery': '#d97706',
+  Pediatrics: '#8b5cf6',
+  Orthopaedics: '#10b981',
+  'Obstetrics & Gynaecology': '#ec4899',
+  ENT: '#0ea5e9',
+  Ophthalmology: '#14b8a6',
+};
 
 type DetailTab = 'guide' | 'clerk' | 'viva';
 
@@ -1325,31 +1349,15 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                     style={[
                       styles.cardIconBox,
                       {
-                        backgroundColor:
-                          proforma.system === 'General Surgery'
-                            ? withAlpha('#f59e0b', 0.15)
-                            : proforma.system === 'General Medicine'
-                            ? withAlpha(colors.primary, 0.15)
-                            : proforma.system === 'Pediatrics'
-                            ? withAlpha('#8b5cf6', 0.15)
-                            : proforma.system === 'Orthopaedics'
-                            ? withAlpha('#10b981', 0.15)
-                            : withAlpha('#ec4899', 0.15),
+                        backgroundColor: withAlpha(
+                          SYSTEM_COLOUR[proforma.system] ?? colors.primary,
+                          0.15,
+                        ),
                       },
                     ]}>
                     <GraduationCap
                       size={22}
-                      color={
-                        proforma.system === 'General Surgery'
-                          ? '#d97706'
-                          : proforma.system === 'General Medicine'
-                          ? colors.primary
-                          : proforma.system === 'Pediatrics'
-                          ? '#8b5cf6'
-                          : proforma.system === 'Orthopaedics'
-                          ? '#10b981'
-                          : '#ec4899'
-                      }
+                      color={SYSTEM_COLOUR[proforma.system] ?? colors.primary}
                     />
                   </View>
                   <View style={styles.cardContent}>

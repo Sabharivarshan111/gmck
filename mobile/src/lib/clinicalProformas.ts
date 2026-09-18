@@ -3,6 +3,9 @@
  * Synthesized from MMC, Stanley, AIIMS, Tito Sir, Das, Bailey & Love, and Indian Medical Universities.
  */
 
+import { ENT_PROFORMAS } from '@/lib/proformas/ent';
+import { OPHTHALMOLOGY_PROFORMAS } from '@/lib/proformas/ophthalmology';
+
 export interface ProformaSection {
   title: string;
   items: {
@@ -20,10 +23,25 @@ export interface VivaQuestion {
   examinerTip?: string;
 }
 
+/**
+ * The departments a case can belong to. Named rather than inlined into the
+ * interface because the picker, the per-department colour and the counts all
+ * have to agree with it — three places that quietly disagreed while this was
+ * a union literal in one of them.
+ */
+export type ProformaSystem =
+  | 'General Medicine'
+  | 'General Surgery'
+  | 'Pediatrics'
+  | 'Orthopaedics'
+  | 'Obstetrics & Gynaecology'
+  | 'ENT'
+  | 'Ophthalmology';
+
 export interface ClinicalProforma {
   id: string;
   title: string;
-  system: 'General Medicine' | 'General Surgery' | 'Pediatrics' | 'Orthopaedics' | 'Obstetrics & Gynaecology';
+  system: ProformaSystem;
   department: string;
   summary: string;
   examPearl: string;
@@ -3252,6 +3270,17 @@ export const CLINICAL_PROFORMAS: ClinicalProforma[] = [
       },
     ],
   },
+  /*
+   * Departments added after this file passed 290 KB in one array.
+   *
+   * A department per file under `proformas/` rather than more entries here:
+   * the array was becoming the only thing anybody could edit at a time, and a
+   * merge conflict in it is unresolvable by reading. Spread rather than
+   * concatenated at the call site so CLINICAL_PROFORMAS stays one exported
+   * array and nothing that reads it changes.
+   */
+  ...ENT_PROFORMAS,
+  ...OPHTHALMOLOGY_PROFORMAS,
 ];
 
 const SUPABASE_DIAGRAMS_BASE = 'https://pmtgeydtqypwrypshhsx.supabase.co/storage/v1/object/public/diagrams';
