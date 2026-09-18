@@ -56,6 +56,13 @@ jobs:
       - name: Every organ resolves to its own parts
         run: node scripts/simulator-organ-check.mjs
 
+      # Every organ and muscle dossier: the arterial supply, the venous
+      # drainage and the innervation a student actually reads, and the house
+      # convention they are written in. Three of the 265 prose entries were a
+      # bare vessel name, and "Lateral Thoracic Artery." is half an exam answer.
+      - name: Every dossier says where its vessels come from
+        run: node scripts/dossier-format-check.mjs
+
       # And what a `vercel deploy` would upload, against a budget. Vercel caps
       # that upload at 100 MB on Hobby; this repo had drifted to 728 MB with
       # no .vercelignore, so the site could only ever be published by pushing

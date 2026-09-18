@@ -271,7 +271,7 @@ export const ORGAN_ANATOMY_DATABASE: Record<string, DetailedOrganAnatomy> = {
     dimensionsAndWeight: 'Broad, thick, fan-shaped muscle; thickness ~1.5 - 2.5 cm.',
     arterialSupply: [
       'Pectoral branch of Thoracoacromial Trunk (from 2nd part of axillary artery).',
-      'Lateral Thoracic Artery.',
+      'Lateral Thoracic Artery (from 2nd part of axillary artery): Descends along lateral border of pectoralis minor, supplying the pectoral muscles, serratus anterior and the lateral mammary branches.',
       'Perforating branches of Internal Thoracic Artery.',
     ],
     arterialNodes: [
@@ -287,7 +287,7 @@ export const ORGAN_ANATOMY_DATABASE: Record<string, DetailedOrganAnatomy> = {
     ],
     venousDrainage: [
       'Cephalic Vein (travels along lateral border in deltopectoral groove, piercing clavipectoral fascia).',
-      'Axillary Vein.',
+      'Axillary Vein (formed by union of brachial and basilic veins at lower border of teres major; becomes subclavian vein at the lateral border of the 1st rib).',
     ],
     innervation: {
       sympathetic: 'Vasomotor fibers to muscular arterioles.',
@@ -388,7 +388,7 @@ export const ORGAN_ANATOMY_DATABASE: Record<string, DetailedOrganAnatomy> = {
         cameraPreset: 'thorax',
       },
     ],
-    venousDrainage: ['Cephalic Vein', 'Posterior Circumflex Humeral Vein draining into Axillary Vein.'],
+    venousDrainage: ['Cephalic Vein (ascends in the deltopectoral groove between deltoid and pectoralis major, pierces clavipectoral fascia to join the axillary vein).', 'Posterior Circumflex Humeral Vein draining into Axillary Vein.'],
     innervation: {
       sympathetic: 'Vasomotor adrenergic fibers.',
       parasympathetic: 'None.',
@@ -703,7 +703,7 @@ export const ORGAN_ANATOMY_DATABASE: Record<string, DetailedOrganAnatomy> = {
     surfaceLandmarks: 'Descends in neck within carotid sheath between internal jugular vein and internal/common carotid artery.',
     dimensionsAndWeight: 'Longest cranial nerve; extends from medulla to splenic flexure of colon (~75 cm).',
     arterialSupply: ['Supplied by ascending pharyngeal artery, superior and inferior thyroid arteries, and bronchial arteries.'],
-    venousDrainage: ['Internal jugular vein, vertebral venous plexus.'],
+    venousDrainage: ['Venae nervorum drain into the Internal Jugular Vein within the carotid sheath in the neck, and into the vertebral venous plexus and azygos system within the thorax.'],
     innervation: {
       sympathetic: 'Modulated by postganglionic sympathetic fibers from superior cervical ganglion.',
       parasympathetic: 'Main parasympathetic conduit of thorax and foregut/midgut.',
