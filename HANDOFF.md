@@ -1675,10 +1675,10 @@ Release `versionCode: 23` / `versionName: "0.0.0.23"` delivers an exhaustive ove
 
 | Asked | State |
 |---|---|
-| Build 40 case sheets | **Done** — 12 → 40, from the fifteen proforma PDFs supplied |
+| Build 40 case sheets | **Done — 45**, from the fifteen proforma PDFs supplied |
 | Real photographs for every general-examination sign, not SVG | **Done** — 19 signs defined, 10 with verified photographs live in the bucket |
 | Root-cause the ad that does not play on "Sorry for the inconvenience" | **Done** — four defects, all fixed, `check:ads` added |
-| Read the supplied proformas and enhance the existing case sheets | **Done for 13 of 15 PDFs**; two are CamScanner scans with no text layer |
+| Read the supplied proformas and enhance the existing case sheets | **Done for 14 of 15 PDFs** — the ortho scan was read by extracting its page JPEGs; `proforma_medicine` is the one left |
 | Fix the cluttered UI without removing features | **Partly** — the 40-case picker is grouped by department; nothing removed |
 | Update the handoff | This section |
 
@@ -1734,6 +1734,12 @@ The `src/lib/ads.ts` rewrite and the picker regrouping in
   matching to its bank question by hand, never by keyword.
 - **9 of 19 signs have no photograph** because nothing passed the title gate.
   That is the correct outcome — do not loosen the gate.
-- `ortho_casesheets-1.pdf` and `proforma_medicine.pdf` could not be read (no
-  text layer). The orthopaedic proforma is written from the standard
-  examination sequence; if the owner's sheet differs, his sheet wins.
+- `ortho_casesheets-1.pdf` HAS now been read, without OCR: a scanner embeds
+  each page as a `/DCTDecode` stream and a DCTDecode stream is a JPEG byte for
+  byte, so the 22 pages were written out and read as images
+  (`.agents/sources/proformas/extract-page-images.py`). Six ortho cases came
+  out of it. The transcription is by eye rather than machine, so **where a
+  proforma disagrees with the owner's sheet, the sheet wins**.
+  `proforma_medicine.pdf` is the one scan still unread; it can be read the same
+  way, and was left only because its four systems are already covered in depth
+  by the v23 proformas.

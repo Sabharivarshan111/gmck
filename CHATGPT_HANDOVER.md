@@ -335,7 +335,7 @@ typechecked.
 
 | Area | Outcome |
 |---|---|
-| Case proformas | **12 → 40** across 7 departments |
+| Case proformas | **12 → 45** across 7 departments |
 | General examination | 19 signs defined, **10 with real photographs** live in the bucket |
 | Rewarded ad | Four defects root-caused and fixed; `check:ads` added |
 | Broken diagrams | **39 questions were showing a broken image**; now 0 |
@@ -374,7 +374,8 @@ but they do not have the "all 12 peripheral signs of AR, named" density.
 3. `ckd_nephrotic_proforma` (136)
 4. `stroke_hemiplegia_proforma` (140)
 5. `obstetrics_anc_proforma` (144)
-6. `ortho_fracture_proforma` (149) — **and see §8.4, its source could not be read**
+6. `ortho_fracture_proforma` (149) — the general trauma framework; the owner's
+   own six ortho cases are now separate, in `orthopaedics.ts`
 7. `anaemia_proforma` (115)
 8. `pyrexia_tb_proforma` (134)
 
@@ -414,12 +415,52 @@ than a blank because the reader trusts it.
 decodes per-font ToUnicode CMaps, which is the part that matters — Word subsets
 its fonts, so one merged table turns "Breast" into "BreaVt".
 
-**Two files could not be read**: `ortho_casesheets-1.pdf` and
-`proforma_medicine.pdf` are image-only CamScanner scans with no text layer, and
-OCR needs a package this sandbox cannot install. `ortho_fracture_proforma` was
-therefore written from the standard sequence (Apley, Maheshwari) rather than
-from the owner's sheet. **If you can OCR them, do — and if his sheet differs,
-his sheet wins.**
+**The scanned sheets were read too, without OCR** — and the technique is worth
+knowing because it will come up again. `ortho_casesheets-1.pdf` is a CamScanner
+scan: 22 pages of handwriting, no text layer. tesseract, poppler-utils, pypdf
+and pip are all refused by the proxy. But a scanner embeds each page as a
+`/DCTDecode` image XObject, and **a DCTDecode stream is a JPEG byte for byte**,
+so the pages were written out verbatim and read as images:
+
+```sh
+python3 .agents/sources/proformas/extract-page-images.py scan.pdf outdir/
+```
+
+It yielded six orthopaedic cases that were not in the app at all — CTEV,
+chronic osteomyelitis, non-union, peripheral nerve injuries, osteoarthritis and
+malunion — now in `mobile/src/lib/proformas/orthopaedics.ts`. The transcription
+is **by eye, not machine OCR**, so it is faithful to structure and content but
+not character-exact, and **where a proforma disagrees with the owner's sheet,
+the sheet wins.**
+
+`proforma_medicine.pdf` is the one scan still unread. It can be read the same
+way; its four systems are already covered in depth by your own v23 proformas,
+which is the only reason it was left.
+
+### 8.4a Two references the picker now carries
+
+Under the search box in the case-sheet picker there are two buttons, because
+both are things a student needs WHILE clerking and neither was reachable
+without first opening a case sheet they did not want:
+
+- **General Examination** → `GeneralExamSheet.tsx`, which mounts the SAME
+  `GeneralExamSigns` component the Guide tab does. Not a second copy — nineteen
+  signs kept in step in two places is nineteen chances to drift.
+- **Normal Lab Values** → `LabValuesSheet.tsx` over `lib/labValues.ts`, which is
+  new: ~100 values across haematology, biochemistry, renal, liver, cardiac,
+  endocrine, ABG, urine, CSF/fluids and bedside vitals.
+
+Three rules `labValues.ts` keeps, each of which is how a reference table
+normally misleads: conventional **and** SI units (Indian labs report mg/dL, the
+textbooks use µmol/L, and a conversion at the bedside is a conversion nobody
+does); age and sex variants wherever they change the answer (a heart rate of 140
+is normal in a neonate and alarming at ten); and the **critical** value marked
+separately, because the number that means *act now* is not the number that
+means abnormal. The "reference intervals differ between laboratories"
+disclaimer is on the SCREEN, not only in the source.
+
+`check:proformas` fails if either button disappears, if the row moves out from
+under the search, or if `GeneralExamSheet` stops rendering the shared component.
 
 ### 8.5 NOT VERIFIED — read before you build on this
 
