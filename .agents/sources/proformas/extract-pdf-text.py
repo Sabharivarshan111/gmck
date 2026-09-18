@@ -12,7 +12,7 @@ import re, sys, zlib
 def objects(data):
     """Return indirect objects, including PDF 1.5 compressed object streams."""
     out = {}
-    for m in re.finditer(rb'(\\d+)\\s+(\\d+)\\s+obj\\b', data):
+    for m in re.finditer(rb'(\d+)\s+(\d+)\s+obj\b', data):
         end = data.find(b'endobj', m.end())
         if end != -1:
             out[int(m.group(1))] = data[m.end():end]
@@ -22,11 +22,11 @@ def objects(data):
     # why the old extractor returned zero text for otherwise text-based PDFs.
     # The payload starts with N pairs: object-number and relative-offset.
     for _container_num, body in list(out.items()):
-        if not re.search(rb'/Type\\s*/ObjStm\\b|/ObjStm\\b', body):
+        if not re.search(rb'/Type\s*/ObjStm\b|/ObjStm\b', body):
             continue
 
-        n_match = re.search(rb'/N\\s+(\\d+)\\b', body)
-        first_match = re.search(rb'/First\\s+(\\d+)\\b', body)
+        n_match = re.search(rb'/N\s+(\d+)\b', body)
+        first_match = re.search(rb'/First\s+(\d+)\b', body)
         if not n_match or not first_match:
             continue
 
@@ -39,7 +39,7 @@ def objects(data):
         if count <= 0 or first < 0 or first > len(payload):
             continue
 
-        nums = [int(x) for x in re.findall(rb'\\d+', payload[:first])]
+        nums = [int(x) for x in re.findall(rb'\d+', payload[:first])]
         if len(nums) < count * 2:
             continue
 
