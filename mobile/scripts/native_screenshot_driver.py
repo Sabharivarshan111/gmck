@@ -70,7 +70,9 @@ def find_nodes(needle: str) -> list[tuple[int, int, int, str]]:
         m = re.match(r"\[(\d+),(\d+)\]\[(\d+),(\d+)\]", node.attrib.get("bounds", ""))
         assert m
         x1, y1, x2, y2 = map(int, m.groups())
-        area = max(1, (x2 - x1) * (y2 - y1))
+        if x2 <= x1 or y2 <= y1:
+            continue
+        area = (x2 - x1) * (y2 - y1)
         found.append((area, center[0], center[1], label))
     found.sort(key=lambda row: row[0])
     return found
@@ -144,6 +146,21 @@ def scroll_until(needle: str, tries: int = 8) -> None:
     raise RuntimeError(f"Could not scroll to UI element: {needle!r}")
 
 
+def scroll_to_tappable(needle: str, tries: int = 18) -> None:
+    # A node can appear in uiautomator while clipped or underneath the fixed
+    # bottom assistant bar. Bring its centre into the unobstructed form first.
+    _, height = screen_size()
+    for _ in range(tries + 1):
+        nodes = find_nodes(needle)
+        if nodes and height * 0.24 <= nodes[0][2] <= height * 0.70:
+            return
+        if nodes and nodes[0][2] < height * 0.24:
+            scroll_up()
+        else:
+            scroll_down()
+    raise RuntimeError(f"Could not bring UI control into tappable area: {needle!r}")
+
+
 def shot(name: str) -> None:
     path = OUT / f"{name}.png"
     with path.open("wb") as fh:
@@ -190,6 +207,9 @@ def main() -> int:
     adb("shell", "settings", "put", "global", "transition_animation_scale", "0", check=False)
     adb("shell", "settings", "put", "global", "animator_duration_scale", "0", check=False)
 
+    # Do not upload screenshots left by a previous successful checkout.
+    for previous in OUT.glob("*.png"):
+        previous.unlink()
     launch()
     first_run()
     shot("01-home-native")
@@ -213,10 +233,11 @@ def main() -> int:
     scroll_until("5. General Physical Examination", tries=10)
     shot("06-general-physical-exam-native")
 
-    scroll_until("Normal Values", tries=7)
-    tap("Normal Values")
-    time.sleep(0.8)
-    scroll_until("Open normal laboratory values", tries=5)
+    scroll_to_tappable("Show normal values")
+    tap("Show normal values")
+    if not visible("Hide normal values"):
+        raise RuntimeError("Normal-values panel did not expand after tapping its header")
+    scroll_to_tappable("Open normal laboratory values")
     shot("07-normal-values-expanded-native")
     tap("Open normal laboratory values")
     shot("09-normal-laboratory-reference-native")
