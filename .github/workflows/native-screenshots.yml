@@ -54,13 +54,8 @@ jobs:
           disable-animations: true
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -camera-front none
           script: |
-            set -eu
-            APK="$(find downloaded-apk -type f -name '*.apk' | head -1)"
-            test -n "$APK"
-            adb install -r "$APK"
-            ORBIT_PACKAGE="com.aistudio.mbbsqbank.aycxvd.debug" \
-            ORBIT_SCREENSHOT_OUT="artifacts/native-screenshots/v23" \
-              python3 mobile/scripts/native_screenshot_driver.py
+            adb install -r "$(find downloaded-apk -type f -name '*.apk' | head -1)"
+            ORBIT_PACKAGE="com.aistudio.mbbsqbank.aycxvd.debug" ORBIT_SCREENSHOT_OUT="artifacts/native-screenshots/v23" python3 mobile/scripts/native_screenshot_driver.py
 
       - name: Upload native screenshot artifact
         uses: actions/upload-artifact@v4
