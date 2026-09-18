@@ -28,4 +28,75 @@ export interface FetchedSignImage {
   commonsTitle?: string;
 }
 
-export const SIGN_IMAGES: Record<string, FetchedSignImage> = {};
+export const SIGN_IMAGES: Record<string, FetchedSignImage> = {
+  "clubbing": {
+    "commonsTitle": "File:Clubbed fingers.JPG",
+    "credit": "Bobjgalindo",
+    "file": "signs/clubbing.jpg",
+    "licence": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/w/index.php?curid=7279968"
+  },
+  "dupuytren": {
+    "commonsTitle": "File:Dupuytren's contracture.jpg",
+    "credit": "Smartie77",
+    "file": "signs/dupuytren.jpg",
+    "licence": "CC BY-SA 3.0",
+    "source": "https://commons.wikimedia.org/w/index.php?curid=17309958"
+  },
+  "edema": {
+    "commonsTitle": "File:Pitting Edema2008.jpg",
+    "credit": "James Heilman, MD",
+    "file": "signs/edema.jpg",
+    "licence": "CC BY-SA 3.0",
+    "source": "https://commons.wikimedia.org/w/index.php?curid=4646147"
+  },
+  "icterus": {
+    "commonsTitle": "File:Comparison of Cutaneous Jaundice and Scleral Icterus.jpg",
+    "credit": "James Heilman, MD",
+    "file": "signs/icterus.jpg",
+    "licence": "CC BY 3.0",
+    "source": "https://commons.wikimedia.org/w/index.php?curid=192212516"
+  },
+  "jvp": {
+    "commonsTitle": "File:Elevated JVP.JPG",
+    "credit": "James Heilman, MD",
+    "file": "signs/jvp.jpg",
+    "licence": "CC BY-SA 3.0",
+    "source": "https://commons.wikimedia.org/w/index.php?curid=11509072"
+  },
+  "koilonychia": {
+    "commonsTitle": "File:Koilonychia iron deficiency anemia.jpg",
+    "credit": "CHeitz",
+    "file": "signs/koilonychia.jpg",
+    "licence": "CC BY 2.0",
+    "source": "https://commons.wikimedia.org/w/index.php?curid=74757229"
+  },
+  "koplik-and-oral": {
+    "commonsTitle": "File:AngularCheilitis5.jpg",
+    "credit": "cevah",
+    "file": "signs/koplik-and-oral.jpg",
+    "licence": "CC BY-SA 2.5",
+    "source": "https://commons.wikimedia.org/w/index.php?curid=31780981"
+  },
+  "leukonychia": {
+    "commonsTitle": "File:Leukonychia2.jpg",
+    "credit": "Londonsista",
+    "file": "signs/leukonychia.jpg",
+    "licence": "Public domain",
+    "source": "https://commons.wikimedia.org/w/index.php?curid=12887962"
+  },
+  "lymphadenopathy": {
+    "commonsTitle": "File:Cervical lymphadenopathy right neck.png",
+    "credit": "Coronation Dental Specialty Group",
+    "file": "signs/lymphadenopathy.jpg",
+    "licence": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/w/index.php?curid=77245466"
+  },
+  "splinter-haemorrhages": {
+    "commonsTitle": "File:Splinter hemorrhage under the microscope.jpg",
+    "credit": "Dptfhpwlf",
+    "file": "signs/splinter-haemorrhages.jpg",
+    "licence": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/w/index.php?curid=75455617"
+  }
+};
