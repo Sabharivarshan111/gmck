@@ -141,6 +141,24 @@ for (const file of sources) {
   }
 }
 
+// These high-risk OBG cases come directly from the owner's uploaded college
+// case sheets. Keep them pinned: dropping a per-subject file from the aggregate
+// import otherwise looks like a perfectly healthy picker with missing cases.
+for (const id of [
+  'obg_anaemia_pregnancy_proforma',
+  'obg_preeclampsia_proforma',
+  'obg_previous_lscs_proforma',
+  'obg_rh_negative_proforma',
+  'obg_heart_disease_pregnancy_proforma',
+  'obg_twin_pregnancy_proforma',
+  'obg_fibroid_aub_proforma',
+  'obg_primary_infertility_pcod_proforma',
+]) {
+  if (!seen.has(id)) {
+    failures.push(`Source-grounded OBG case "${id}" is missing from the proforma sources.`);
+  }
+}
+
 if (warnings.length) {
   console.log('check:proformas notes\n');
   for (const w of warnings) console.log('  ? ' + w + '\n');
