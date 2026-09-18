@@ -70,3 +70,68 @@ jobs:
 
       - name: Build
         run: npm run build
+
+  # Build the way VERCEL builds, which the job above does not.
+  #
+  # That job runs `npm ci` over the whole repository. Vercel runs
+  # `npm install --legacy-peer-deps` over a tree with `.vercelignore` APPLIED,
+  # and those are two different builds — so a `.vercelignore` rule that removes
+  # something the build needs passes there and fails on the deploy, which is
+  # exactly what happened: `main` was green, every commit after the one that
+  # added `.vercelignore` had a failed Vercel deployment, and nothing in this
+  # repository could see it.
+  #
+  # Deleting the ignored paths before installing is the whole point. It is a
+  # throwaway checkout, so nothing is at risk.
+  vercel-shaped:
+    name: Build the way Vercel builds
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: npm
+
+      - name: Apply .vercelignore to the checkout
+        run: |
+          set -eu
+          test -f .vercelignore || { echo "no .vercelignore"; exit 1; }
+          # Strip comments and blanks, drop a leading slash (it anchors at the
+          # repo root, which is where we already are), and remove each path.
+          grep -vE '^\s*(#|$)' .vercelignore | sed 's|^/||' | while read -r pattern; do
+            for path in $pattern; do
+              if [ -e "$path" ]; then
+                echo "removing $path"
+                rm -rf -- "$path"
+              fi
+            done
+          done
+          echo "--- what is left at the root ---"
+          ls -A
+          echo "--- size of the upload ---"
+          du -sh --exclude=.git . || true
+
+      - name: Install the way Vercel installs
+        run: npm install --legacy-peer-deps
+
+      - name: Build
+        run: npm run build
+
+      - name: The site actually came out
+        run: |
+          set -eu
+          test -f dist/index.html || { echo "dist/index.html is missing"; exit 1; }
+          test -f dist/models/atlas.json || { echo "the anatomy atlas is not in dist/"; exit 1; }
+          for n in 0 7 14; do
+            test -f "dist/models/body-$n.bin.gz" || { echo "anatomy chunk $n is missing from dist/"; exit 1; }
+          done
+          # And the things the Vite plugin is supposed to have removed.
+          for gone in dist/diagrams dist/models/lungs.glb dist/models/lungs_candidate_bodyparts3d.glb; do
+            test ! -e "$gone" || { echo "$gone should have been pruned from dist/"; exit 1; }
+          done
+          echo "dist/ is $(du -sh dist | cut -f1), $(find dist -type f | wc -l) files"
+
