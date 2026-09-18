@@ -152,6 +152,51 @@ if (failures.length) {
   process.exit(1);
 }
 
+// ── The picker itself ──────────────────────────────────────────────────────
+// Forty cases in a flat list is a wall, and every department must have a
+// colour or its cards render in whatever the last branch of the lookup was.
+const modal = readFileSync(
+  new URL('../src/components/ClinicalProformaModal.tsx', import.meta.url),
+  'utf8',
+);
+
+const pickerFailures = [];
+const pick = (ok, message) => {
+  if (!ok) pickerFailures.push(message);
+};
+
+pick(
+  /groupedProformas/.test(modal) && /showGroupHeadings/.test(modal),
+  'The picker is a flat list again. Forty near-identical rows with no headings ' +
+    'means finding your case requires reading all of them.',
+);
+
+pick(
+  /filteredProformas\.length === 0/.test(modal),
+  'The empty state is gone. A filter or search matching nothing then looks ' +
+    'exactly like a screen that failed to load.',
+);
+
+const colourBlock = modal.slice(
+  modal.indexOf('const SYSTEM_COLOUR'),
+  modal.indexOf('};', modal.indexOf('const SYSTEM_COLOUR')),
+);
+for (const sys of ALLOWED_SYSTEMS) {
+  const key = /[^A-Za-z]/.test(sys) ? `'${sys}'` : sys;
+  pick(
+    colourBlock.includes(key),
+    `SYSTEM_COLOUR has no entry for "${sys}", so its cards fall through to the ` +
+      `default. This lookup replaced a five-deep nested ternary precisely because ` +
+      `a missing department rendered pink and nothing said so.`,
+  );
+}
+
+if (pickerFailures.length) {
+  console.error('check:proformas FAILED (picker)\n');
+  for (const f of pickerFailures) console.error('  - ' + f + '\n');
+  process.exit(1);
+}
+
 const bySystem = new Map();
 for (const file of sources) {
   const text = readFileSync(file, 'utf8');

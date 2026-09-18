@@ -332,6 +332,40 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
   }, [selectedSystem, searchQuery]);
 
   // System category counts
+  /**
+   * The filtered list, grouped by department.
+   *
+   * The picker was a flat list, and at twelve cases that was fine. At FORTY it
+   * is a wall: forty near-identical rows with no structure, so finding the case
+   * you are posted to means reading all of them. Grouping gives the eye
+   * something to skip by, and it costs nothing — the same cards, in the same
+   * order, with a heading every few rows.
+   *
+   * Headings are suppressed while a search is running. A search result is
+   * already a short list and the user is looking at relevance rather than at
+   * department, so headings there would be furniture around three rows.
+   */
+  const groupedProformas = useMemo(() => {
+    const order = SYSTEMS.filter(s => s !== 'All') as string[];
+    const groups = new Map<string, typeof filteredProformas>();
+    for (const proforma of filteredProformas) {
+      const list = groups.get(proforma.system);
+      if (list) {
+        list.push(proforma);
+      } else {
+        groups.set(proforma.system, [proforma]);
+      }
+    }
+    return order
+      .filter(sys => groups.has(sys))
+      .map(sys => ({ system: sys, items: groups.get(sys) ?? [] }));
+  }, [filteredProformas]);
+
+  /* One heading per department is noise when there is only one department on
+   * screen — which is exactly what the filter pills produce. */
+  const showGroupHeadings =
+    !searchQuery.trim() && selectedSystem === 'All' && groupedProformas.length > 1;
+
   const systemCounts = useMemo(() => {
     const counts: Record<string, number> = { All: CLINICAL_PROFORMAS.length };
     for (const sys of SYSTEMS) {
@@ -1330,8 +1364,25 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
               })}
             </ScrollView>
 
-            {/* Proforma Cards */}
-            {filteredProformas.map(proforma => {
+            {/* Proforma Cards, grouped by department */}
+            {groupedProformas.map(group => (
+              <View key={group.system}>
+                {showGroupHeadings ? (
+                  <View style={styles.groupHeadingRow}>
+                    <Text style={[styles.groupHeading, { color: colors.textMuted }]}>
+                      {group.system === 'Obstetrics & Gynaecology'
+                        ? 'OBSTETRICS & GYNAECOLOGY'
+                        : group.system.toUpperCase()}
+                    </Text>
+                    <View
+                      style={[styles.groupHeadingRule, { backgroundColor: colors.border }]}
+                    />
+                    <Text style={[styles.groupHeadingCount, { color: colors.textMuted }]}>
+                      {group.items.length}
+                    </Text>
+                  </View>
+                ) : null}
+                {group.items.map(proforma => {
               const vivaCount = proforma.vivaQuestions.length;
               return (
                 <Touchable
@@ -1381,7 +1432,25 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                   <ChevronRight size={20} color={colors.textMuted} />
                 </Touchable>
               );
-            })}
+                })}
+              </View>
+            ))}
+
+            {/* An empty result has to say so. A filter or a search that matches
+              * nothing otherwise looks exactly like a screen that failed to
+              * load, which is the report this kind of list always generates. */}
+            {filteredProformas.length === 0 ? (
+              <View style={styles.emptyState}>
+                <Text style={[styles.emptyTitle, { color: colors.text }]}>
+                  No case sheet matches
+                </Text>
+                <Text style={[styles.emptyBody, { color: colors.textMuted }]}>
+                  {searchQuery.trim()
+                    ? `Nothing found for “${searchQuery.trim()}”. Try a sign, a murmur or a department.`
+                    : 'Try another department.'}
+                </Text>
+              </View>
+            ) : null}
           </ScrollView>
         )}
 
@@ -1703,6 +1772,19 @@ const styles = StyleSheet.create({
     fontSize: 12,
     flex: 1,
   },
+  groupHeadingRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    marginTop: 18,
+    marginBottom: 8,
+  },
+  groupHeading: { fontSize: 11, fontWeight: '700', letterSpacing: 0.9 },
+  groupHeadingRule: { flex: 1, height: StyleSheet.hairlineWidth },
+  groupHeadingCount: { fontSize: 11, fontWeight: '600' },
+  emptyState: { paddingVertical: 48, paddingHorizontal: 24, alignItems: 'center' },
+  emptyTitle: { fontSize: 16, fontWeight: '600', marginBottom: 6 },
+  emptyBody: { fontSize: 13, textAlign: 'center', lineHeight: 19 },
   signsToggle: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   signsToggleText: { flex: 1 },
   signsBody: { marginTop: 14 },
