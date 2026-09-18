@@ -14,7 +14,7 @@ import {
   PointerTap,
   DissectionToolMode,
 } from '../data/atlasTypes';
-import { CEREBRAL_CSF_IDS, describeAtlasTarget, resolveAtlasElementIds } from '../data/atlasResolver';
+import { correctPartSystem, describeAtlasTarget, resolveAtlasElementIds } from '../data/atlasResolver';
 import { Scissors, Hand, Focus, Eye, Sparkles, Maximize2, Compass, AlertCircle, Info } from 'lucide-react';
 
 interface AnatomicalBody3DProps {
@@ -601,22 +601,39 @@ export function createLungParenchymaSystem(modelOverride?: string): {
     side: THREE.DoubleSide,
   });
 
-  // Model selection: `?lung_model=full` still switches to the unbaked Z-Anatomy
-  // mesh for comparison. The third candidate, `?lung_model=bp3d`, is gone: it
-  // was a 14.7 MB BodyParts3D export, the comparison it existed for was settled
-  // in the baked mesh's favour, and every reader was paying for it on a CDN to
-  // serve a query string nobody types. `.vercelignore` and the Vite plugin keep
-  // the file out of the deploy; it is still in the repo if the question reopens.
+  // The lung parenchyma comes from Z-Anatomy, not from the atlas, and that is
+  // not a shortcut: **this BodyParts3D export contains no lung tissue at all**.
+  // Its 119 respiratory parts are the tracheobronchial tree, the nasal
+  // cartilages, the pharyngeal constrictors and the epiglottis — there is no
+  // lobe and no pleural surface anywhere in it. Isolating the lungs without
+  // this shows an airway hanging in space.
+  //
+  // Three candidates were exported and measured, and the default was the worst
+  // of them:
+  //
+  //   zanatomy_baked  314 KB    6 meshes   17,064 tris   5 lobes + trachea
+  //   zanatomy_full   925 KB   34 meshes   48,332 tris   5 lobes + NAMED
+  //                                                      segmental bronchi
+  //   bodyparts3d    14.7 MB    5 meshes  204,408 tris   5 lobes, no airway
+  //
+  // `zanatomy_full` is the default now: three times the triangles of the baked
+  // mesh for 600 KB more, and it carries the bronchopulmonary segments by name
+  // — which is the thing an MBBS student is looking at a lung to learn. The
+  // BodyParts3D export is twelve times the triangles and sixteen times the
+  // bytes for smoother lobes and *less* anatomy, so it is excluded from the
+  // deploy (`.vercelignore`, and the Vite plugin) rather than served.
+  //
+  // `?lung_model=baked` still switches back for comparison.
   let selectedModel = modelOverride;
   if (!selectedModel && typeof window !== 'undefined') {
     const urlParam = new URLSearchParams(window.location.search).get('lung_model');
     selectedModel =
-      urlParam === 'full'
-        ? '/models/lungs_candidate_zanatomy_full.glb'
-        : '/models/lungs_candidate_zanatomy_baked.glb';
+      urlParam === 'baked'
+        ? '/models/lungs_candidate_zanatomy_baked.glb'
+        : '/models/lungs_candidate_zanatomy_full.glb';
   }
   if (!selectedModel) {
-    selectedModel = '/models/lungs_candidate_zanatomy_baked.glb';
+    selectedModel = '/models/lungs_candidate_zanatomy_full.glb';
   }
 
   const loader = new GLTFLoader();
@@ -1171,12 +1188,12 @@ varying float partSelected;
         const systemGeomGroups = new Map<SystemId, THREE.BufferGeometry[]>();
 
         atlas.parts.forEach((p, partIdx) => {
-          // The cerebral ventricles and the foramen of Monro are filed under
-          // `cardiac` by the ontology, which is simply wrong. One list, in
-          // atlasResolver, shared with everything else that has to know.
-          if (p.system === 'cardiac' && CEREBRAL_CSF_IDS.has(p.id)) {
-            p.system = 'nervous';
-          }
+          // Two groups of parts carry an ontology `system` that does not
+          // describe what they are — the cerebral ventricles under `cardiac`,
+          // and the whole liver under `venous`. One table, in atlasResolver,
+          // shared with everything else that reads `system`: the colour, this
+          // merge group, the isolation rules and the dossier mapper.
+          correctPartSystem(p);
           const buffer = chunkBuffers[p.chunk];
           if (!buffer) return;
 

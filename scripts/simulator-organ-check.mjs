@@ -34,15 +34,18 @@
 // a handful of meshes, and this atlas is a reference body rather than a
 // complete one. What fails is a structure resolving to *nothing* without the
 // resolver knowing it is absent, or resolving to something that is not it.
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const resolverPath = path.join(root, 'src/simulator/data/atlasResolver.ts');
-const { describeAtlasTarget, resolvePartToOrganKey } = await import(resolverPath);
+const { describeAtlasTarget, resolvePartToOrganKey, correctPartSystem } = await import(resolverPath);
 
 const atlas = JSON.parse(readFileSync(path.join(root, 'public/models/atlas.json'), 'utf8'));
+// The same correction the chunk loader applies: two groups of parts carry an
+// ontology `system` that does not describe what they are.
+atlas.parts.forEach(correctPartSystem);
 const byId = new Map(atlas.parts.map((p) => [p.id, p]));
 
 const failures = [];
@@ -155,6 +158,72 @@ const FLOORS = {
 for (const [key, floor] of Object.entries(FLOORS)) {
   const n = describeAtlasTarget(key, atlas).ids.size;
   if (n < floor) fail(`"${key}" resolves to ${n} parts, below the ${floor} it had — something stopped matching`);
+}
+
+// ---------------------------------------------------------------------------
+// An organ contains the parts that ARE it
+// ---------------------------------------------------------------------------
+//
+// The rules above stop an organ containing somebody else's parts. This is the
+// other half: every part whose NAME says it belongs must be in it. It is what
+// found the liver.
+//
+// There is no part called "Liver" in this atlas. The liver parenchyma is the
+// nine Couinaud hepatovenous segments, and the ontology files them under
+// `venous` — so the app painted the largest organ in the abdomen vein-blue, and
+// the abdomen rule (which takes the digestive and urinary systems and names the
+// vessels it wants) left it out altogether. Opening the abdomen showed a
+// stomach, a bowel and a spleen around a hole.
+
+/** Every part matching `pattern` must be in `key`'s answer. */
+function mustBeComplete(key, pattern, why) {
+  const ids = describeAtlasTarget(key, atlas).ids;
+  const expected = atlas.parts.filter((p) => pattern.test(p.name));
+  if (expected.length === 0) {
+    fail(`nothing in the atlas matches ${pattern} — the "${key}" completeness assertion has gone stale`);
+    return;
+  }
+  const missing = expected.filter((p) => !ids.has(p.id));
+  if (missing.length) {
+    fail(`"${key}" is missing ${missing.length} of ${expected.length} parts matching ${pattern} — ${why}\n      e.g. ${[...new Set(missing.map((p) => p.name))].slice(0, 4).join(', ')}`);
+  }
+}
+
+mustBeComplete('liver', /^hepatovenous segment/i, 'the Couinaud segments ARE the liver parenchyma');
+mustBeComplete('abdomen', /^hepatovenous segment/i, 'the liver is the largest organ in the abdomen');
+mustBeComplete('abdomen', /\bileum\b/i, 'the small bowel is abdominal content; a y-threshold clip used to cut seventeen loops of it');
+mustBeComplete('abdomen', /\b(jejunum|colon|duodenum|cecum|appendix)\b/i, 'the whole alimentary tract belongs to the abdomen');
+mustBeComplete('kidney', /\b(kidney|adrenal gland)\b/i, 'both kidneys and both adrenals');
+mustBeComplete('brain', /\bgyrus\b/i, 'every cortical gyrus is brain');
+mustBeComplete('lungs', /bronchial tree|bronchus|^trachea$/i, 'the whole tracheobronchial tree');
+mustBeComplete('skeletal', /\bvertebra\b/i, 'the vertebral column is skeleton');
+
+// The system labels that do not describe the part.
+{
+  const hep = atlas.parts.filter((p) => /^hepatovenous segment/i.test(p.name));
+  const wrong = hep.filter((p) => p.system !== 'digestive');
+  if (wrong.length) fail(`${wrong.length} hepatic segment(s) are still system "${wrong[0].system}" after correctPartSystem — the liver renders in vein blue`);
+  const csf = ['FJ1730', 'FJ1731', 'FJ1752', 'FJ1767', 'FJ1814'].map((id) => byId.get(id)).filter(Boolean);
+  const csfWrong = csf.filter((p) => p.system !== 'nervous');
+  if (csfWrong.length) fail(`${csfWrong.length} CSF space(s) are still system "${csfWrong[0].system}" after correctPartSystem`);
+}
+
+// This atlas has no lung tissue, so the parenchyma mesh has to exist and has to
+// be the one the view names. Without it, isolating the lungs shows an airway
+// hanging in space.
+{
+  const viewSrcForLungs = readFileSync(path.join(root, 'src/simulator/view/AnatomicalBody3D.tsx'), 'utf8');
+  const named = [...viewSrcForLungs.matchAll(/'(\/models\/[^']+\.glb)'/g)].map((m) => m[1]);
+  if (named.length === 0) fail('AnatomicalBody3D names no lung parenchyma mesh, and the atlas contains no lung tissue at all');
+  for (const rel of [...new Set(named)]) {
+    if (!existsSync(path.join(root, 'public', rel))) {
+      fail(`AnatomicalBody3D loads ${rel}, which is not in public/ — the lungs would be an airway with no lobes`);
+    }
+  }
+  const parenchyma = atlas.parts.filter((p) => /lobe of (left|right) lung/i.test(p.name));
+  if (parenchyma.length > 0) {
+    fail(`the atlas now has ${parenchyma.length} lung lobe mesh(es) of its own — the separate Z-Anatomy mesh may no longer be needed`);
+  }
 }
 
 // ---------------------------------------------------------------------------

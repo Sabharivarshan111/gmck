@@ -129,23 +129,60 @@ function anyTerm(text: string, terms: readonly string[]): boolean {
 // ---------------------------------------------------------------------------
 
 /**
- * The five CSF spaces BodyParts3D files under the CARDIAC system.
+ * Parts whose `system` in the ontology is wrong, and what it should be.
  *
- * They are the cerebral ventricles and the interventricular foramen (of Monro),
- * and the ontology's `cardiac` label on them is simply wrong. Every place that
- * reads `part.system` has to know, so the list lives here rather than being
- * written out three times: the chunk loader remaps them to `nervous`,
- * `selectBrain` claims them, `selectHeart` refuses them, and
- * `resolvePartToOrganKey` opens the brain dossier for them — it used to open
- * the heart, so tapping the third ventricle taught the wrong organ.
+ * BodyParts3D's system labels come from its own taxonomy, and two groups of
+ * them do not describe what the part IS. Everything that reads `part.system` —
+ * which is the colour, the merge group, the isolation rules and the dossier
+ * mapper — has to agree about this, so it is one table rather than a condition
+ * repeated in four files with only one of them complete.
+ *
+ * **The cerebral ventricles are filed under `cardiac`**, because `ventricle`.
+ * They are CSF spaces. Tapping the third ventricle used to open the heart.
+ *
+ * **The whole liver is filed under `venous`**, and that one is worth reading
+ * twice: there is no part named "Liver" in this atlas. The liver parenchyma is
+ * the nine Couinaud hepatovenous segments, II to IX, and because they are
+ * `venous` the app painted the liver in vein blue and the abdomen view left it
+ * out entirely — the abdominal rule takes the digestive and urinary systems and
+ * names the vessels it wants, and "Hepatovenous segment VII" is neither. So
+ * opening the abdomen showed a stomach, a bowel and a spleen with a hole where
+ * the largest organ in it should be. The liver is a digestive organ; calling it
+ * one fixes the colour and the omission together.
  */
-export const CEREBRAL_CSF_IDS = new Set<string>([
-  'FJ1730', // Third ventricle
-  'FJ1731', // Fourth ventricle
-  'FJ1752', // Interventricular foramen (of Monro)
-  'FJ1767', // Left lateral ventricle
-  'FJ1814', // Right lateral ventricle
+export const MISFILED_SYSTEMS = new Map<string, string>([
+  // CSF spaces, filed as cardiac
+  ['FJ1730', 'nervous'], // Third ventricle
+  ['FJ1731', 'nervous'], // Fourth ventricle
+  ['FJ1752', 'nervous'], // Interventricular foramen (of Monro)
+  ['FJ1767', 'nervous'], // Left lateral ventricle
+  ['FJ1814', 'nervous'], // Right lateral ventricle
 ]);
+
+/** Filled below from the atlas, so a renumbered export cannot silently drop a segment. */
+export const CEREBRAL_CSF_IDS = new Set<string>(
+  [...MISFILED_SYSTEMS].filter(([, sys]) => sys === 'nervous').map(([id]) => id)
+);
+
+/** Names that ARE the liver, whatever the ontology files them under. */
+const HEPATIC_PARENCHYMA = /^hepatovenous segment/i;
+
+/**
+ * Apply `MISFILED_SYSTEMS` plus the hepatic-parenchyma rule.
+ *
+ * Called by the chunk loader once per part before anything is merged, and by
+ * `scripts/render-organ-sheets.mjs` so the sheets show the same colours the app
+ * does. It mutates rather than copying: the atlas is one object held for the
+ * life of the page and 2,234 clones of it is not worth the purity.
+ */
+export function correctPartSystem(p: Part): Part {
+  const fixed = MISFILED_SYSTEMS.get(p.id);
+  if (fixed && p.system !== fixed) p.system = fixed as Part['system'];
+  else if (HEPATIC_PARENCHYMA.test(p.name) && p.system !== 'digestive') {
+    p.system = 'digestive' as Part['system'];
+  }
+  return p;
+}
 
 type Selector = (p: Part, atlas: Atlas, key: string) => boolean;
 
@@ -563,6 +600,7 @@ function selectAbdomen(p: Part): boolean {
     p.system === 'digestive' ||
     p.system === 'urinary' ||
     p.id === 'FJ2561' || p.id === 'FJ3129' || p.id === 'FJ3130' ||
+    hasTerm(name, 'hepatovenous segment') ||
     anyTerm(name, [
       'stomach', 'liver', 'pancreas', 'spleen', 'kidney', 'ureter', 'gallbladder',
       'biliary', 'colon', 'appendix', 'cecum', 'caecum', 'intestine', 'mesentery',
@@ -570,9 +608,14 @@ function selectAbdomen(p: Part): boolean {
     ]);
 
   if (isViscus) {
-    // Ureters, terminal ileum and rectum run down into the pelvis; clipping
-    // them keeps the camera on the abdomen.
-    if (p.bounds && p.bounds[1][1] < 1.0 && anyTerm(name, ['ureter', 'ileum', 'rectum'])) return false;
+    // The true pelvic organs, named. This was `bounds[1][1] < 1.0` over
+    // ureter/ileum/rectum, and the small bowel sits at y 0.88-1.03 — so it cut
+    // seventeen loops of ileum out of the abdomen to keep the bladder out.
+    // The ileum is abdominal content and its lower loops belong in the pelvis;
+    // the bladder, the rectum and the pelvic ureter are the ones that pull the
+    // camera down, and they can be named.
+    if (anyTerm(name, ['urinary bladder', 'rectum'])) return false;
+    if (hasTerm(name, 'ureter') && p.bounds && p.bounds[1][1] < 1.0) return false;
     return true;
   }
 

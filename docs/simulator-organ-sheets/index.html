@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Simulator organ sheets</title>
+<style>
+  :root { color-scheme: dark; }
+  body { margin:0; padding:24px; background:#0b0f16; color:#e2e8f0;
+         font:14px/1.6 ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif; }
+  h1 { font-size:22px; margin:0 0 4px; }
+  h2 { font-size:15px; letter-spacing:.08em; text-transform:uppercase; color:#7dd3fc;
+       margin:36px 0 10px; border-bottom:1px solid #1e293b; padding-bottom:6px; }
+  p.lede { max-width:70ch; color:#94a3b8; margin:0 0 8px; }
+  .grid { display:grid; gap:16px; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); }
+  figure { margin:0; background:#111827; border:1px solid #1f2937; border-radius:12px; overflow:hidden; }
+  .views { display:flex; background:#0c111a; }
+  .views img { width:50%; height:auto; display:block; }
+  .none { width:100%; padding:64px 12px; text-align:center; color:#64748b; font-style:italic; }
+  figcaption { padding:10px 12px; display:flex; flex-direction:column; gap:3px; }
+  figcaption b { font-size:14px; }
+  .n { color:#94a3b8; font-size:12px; font-variant-numeric:tabular-nums; }
+  .sys { color:#64748b; font-size:11px; display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+  .sw { width:9px; height:9px; border-radius:2px; display:inline-block; margin-right:4px;
+        vertical-align:-1px; }
+  figure.absent { border-style:dashed; }
+</style></head><body>
+<h1>Simulator organ sheets</h1>
+<p class="lede">Every isolation target the simulator has, drawn from the real
+BodyParts3D geometry in <code>public/models/</code> by the real resolver in
+<code>src/simulator/data/atlasResolver.ts</code>. Left is anterior, right is
+lateral. Colour is the anatomical system, matching the app.</p>
+<p class="lede">No lighting rig, no tone mapping, no shader: if a part is
+missing here the lookup is wrong, and if a sheet is right but the app is not
+the renderer is. Regenerate with <code>npm run sheets:simulator</code>.</p>
+
+  <h2>Whole body</h2>
+  <div class="grid">
+  <figure>
+    <div class="views"><img src="all-parts-anterior.png" alt="every part" loading="lazy"><img src="all-parts-lateral.png" alt="every part" loading="lazy"></div>
+    <figcaption>
+      <b>every part</b>
+      <span class="n">2234 parts &middot; 2,288,268 triangles</span>
+      <span class="sys"><span class="sw" style="background:rgb(220,38,38)"></span>arterial 639 <span class="sw" style="background:rgb(150,67,54)"></span>muscular 402 <span class="sw" style="background:rgb(37,99,235)"></span>venous 395 <span class="sw" style="background:rgb(226,217,186)"></span>skeletal 296 <span class="sw" style="background:rgb(234,179,8)"></span>nervous 144 <span class="sw" style="background:rgb(56,189,248)"></span>respiratory 119 <span class="sw" style="background:rgb(194,65,12)"></span>digestive 106 <span class="sw" style="background:rgb(2,132,199)"></span>sensory 45 <span class="sw" style="background:rgb(203,213,225)"></span>connective 40 <span class="sw" style="background:rgb(185,28,28)"></span>cardiac 18 <span class="sw" style="background:rgb(190,24,93)"></span>reproductive 12 <span class="sw" style="background:rgb(154,52,18)"></span>urinary 6 <span class="sw" style="background:rgb(214,158,133)"></span>integumentary 5 <span class="sw" style="background:rgb(217,70,239)"></span>endocrine 4 <span class="sw" style="background:rgb(22,163,74)"></span>lymphatic 3</span>
+    </figcaption>
+  </figure></div>
+
+  <h2>Isolation targets</h2>
+  <div class="grid">
+  <figure>
+    <div class="views"><img src="target-heart-anterior.png" alt="heart" loading="lazy"><img src="target-heart-lateral.png" alt="heart" loading="lazy"></div>
+    <figcaption>
+      <b>heart</b>
+      <span class="n">138 parts &middot; 80,324 triangles</span>
+      <span class="sys"><span class="sw" style="background:rgb(220,38,38)"></span>arterial 66 <span class="sw" style="background:rgb(37,99,235)"></span>venous 53 <span class="sw" style="background:rgb(185,28,28)"></span>cardiac 14 <span class="sw" style="background:rgb(150,67,54)"></span>muscular 5</span>
+    </figcaption>
+  </figure>
+  <figure>
+    <div class="views"><img src="target-lad_artery-anterior.png" alt="lad_artery" loading="lazy"><img src="target-lad_artery-lateral.png" alt="lad_artery" loading="lazy"></div>
+    <figcaption>
+      <b>lad_artery</b>
+      <span class="n">22 parts &middot; 7,554 triangles</span>
+      <span class="sys"><span class="sw" style="background:rgb(220,38,38)"></span>arterial 22</span>
+    </figcaption>
+  </figure>
+  <figure>
+    <div class="views"><img src="target-pectoralis_major-anterior.png" alt="pectoralis_major" loading="lazy"><img src="target-pectoralis_major-lateral.png" alt="pectoralis_major" loading="lazy"></div>
+    <figcaption>
+      <b>pectoralis_major</b>
+      <span class="n">6 parts &middot; 10,414 triangles</span>
+      <span class="sys"><span class="sw" style="background:rgb(150,67,54)"></span>muscular 6</span>
+    </figcaption>
+  </figure>
+  <figure>
+    <div class="views"><img src="target-deltoid-anterior.png" alt="deltoid" loading="lazy"><img src="target-deltoid-lateral.png" alt="deltoid" loading="lazy"></div>
+    <figcaption>
+      <b>deltoid</b>
+      <span class="n">6 parts &middot; 6,432 triangles</span>
+      <span class="sys"><span class="sw" style="background:rgb(150,67,54)"></span>muscular 6</span>
+    </figcaption>
+  </figure>
+  <figure>
+    <div class="views"><img src="target-liver-anterior.png" alt="liver" loading="lazy"><img src="target-liver-lateral.png" alt="liver" loading="lazy"></div>
+    <figcaption>
+      <b>liver</b>
+      <span class="n">84 parts &middot; 75,076 triangles</span>
+      <span class="sys"><span class="sw" style="background:rgb(37,99,235)"></span>venous 36 <span class="sw" style="background:rgb(194,65,12)"></span>digestive 28 <span class="sw" style="background:rgb(220,38,38)"></span>arterial 20</span>
+    </figcaption>
+  </figure>
+  <figure>
+    <div class="views"><img src="target-lungs-anterior.png" alt="lungs" loading="lazy"><img src="target-lungs-lateral.png" alt="lungs" loading="lazy"></div>
+    <figcaption>
+      <b>lungs</b>
+      <span class="n">118 parts &middot; 94,988 triangles</span>
+      <span class="sys"><span class="sw" style="background:rgb(56,189,248)"></span>respiratory 102 <span class="sw" style="background:rgb(37,99,235)"></span>venous 7 <span class="sw" style="background:rgb(220,38,38)"></span>arterial 6 <span class="sw" style="background:rgb(226,217,186)"></span>skeletal 3</span>
+    </figcaption>
+  </figure>
+  <figure>
+    <div class="views"><img src="target-rca_artery-anterior.png" alt="rca_artery" loading="lazy"><img src="target-rca_artery-lateral.png" alt="rca_artery" loading="lazy"></div>
+    <figcaption>
+      <b>rca_artery</b>
+      <span class="n">29 parts &middot; 9,572 triangles</span>
+      <span class="sys"><span class="sw" style="background:rgb(220,38,38)"></span>arterial 29</span>
+    </figcaption>
+  </figure>
+  <figure>
+    <div class="views"><img src="target-celiac_trunk-anterior.png" alt="celiac_trunk" loading="lazy"><img src="target-celiac_trunk-lateral.png" alt="celiac_trunk" loading="lazy"></div>
+    <figcaption>
+      <b>celiac_trunk</b>
+      <span class="n">9 parts &middot; 5,322 triangles</span>
+      <span class="sys"><span class="sw" style="background:rgb(220,38,38)"></span>arterial 9</span>
+    </figcaption>
+  </figure>
+  <figure>
+    <div class="views"><img src="target-portal_vein-anterior.png" alt="portal_vein" loading="lazy"><img src="target-portal_vein-lateral.png" alt="portal_vein" loading="lazy"></div>
+    <figcaption>
+      <b>portal_vein</b>
+      <span class="n">39 parts &middot; 24,228 triangles</span>
+      <span class="sys"><span class="sw" style="background:rgb(37,99,235)"></span>venous 39</span>
+    </figcaption>
+  </figure>
+  <figure>
+    <div class="views"><img src="target-brain-anterior.png" alt="brain" loading="lazy"><img src="target-brain-lateral.png" alt="brain" loading="lazy"></div>
+    <figcaption>
+      <b>brain</b>
+      <span class="n">155 parts &middot; 226,050 triangles</span>
+      <span class="sys"><span class="sw" style="background:rgb(234,179,8)"></span>nervous 143 <span class="sw" style="background:rgb(220,38,38)"></span>arterial 8 <span class="sw" style="background:rgb(2,132,199)"></span>sensory 2 <span class="sw" style="background:rgb(217,70,239)"></span>endocrine 2</span>
+    </figcaption>
+  </figure>
+  <figure>
+    <div class="views"><img src="target-kidney-anterior.png" alt="kidney" loading="lazy"><img src="target-kidney-lateral.png" alt="kidney" loading="lazy"></div>
+    <figcaption>
+      <b>kidney</b>
+      <span class="n">46 parts &middot; 28,912 triangles</span>
+      <span class="sys"><span class="sw" style="background:rgb(220,38,38)"></span>arterial 36 <span class="sw" style="background:rgb(37,99,235)"></span>venous 6 <span class="sw" style="background:rgb(217,70,239)"></span>endocrine 2 <span class="sw" style="background:rgb(154,52,18)"></span>urinary 2</span>
+    </figcaption>
+  </figure>
+  <figure>
+    <div class="views"><img src="target-skeletal-anterior.png" alt="skeletal" loading="lazy"><img src="target-skeletal-lateral.png" alt="skeletal" loading="lazy"></div>
+    <figcaption>
+      <b>skeletal</b>
+      <span class="n">296 parts &middot; 338,056 triangles</span>
+      <span class="sys"><span class="sw" style="background:rgb(226,217,186)"></span>skeletal 296</span>
+    </figcaption>
+  </figure>
+  <figure>
+    <div class="views"><img src="target-aorta-anterior.png" alt="aorta" loading="lazy"><img src="target-aorta-lateral.png" alt="aorta" loading="lazy"></div>
+    <figcaption>
+      <b>aorta</b>
+      <span class="n">7 parts &middot; 4,296 triangles</span>
+      <span class="sys"><span class="sw" style="background:rgb(220,38,38)"></span>arterial 7</span>
+    </figcaption>
+  </figure>
+  <figure>
+    <div class="views"><img src="target-stomach-anterior.png" alt="stomach" loading="lazy"><img src="target-stomach-lateral.png" alt="stomach" loading="lazy"></div>
+    <figcaption>
+      <b>stomach</b>
+      <span class="n">8 parts &middot; 5,432 triangles</span>
+      <span class="sys"><span class="sw" style="background:rgb(37,99,235)"></span>venous 4 <span class="sw" style="background:rgb(220,38,38)"></span>arterial 3 <span class="sw" style="background:rgb(194,65,12)"></span>digestive 1</span>
+    </figcaption>
+  </figure>
+  <figure>
+    <div class="views"><img src="target-pancreas-anterior.png" alt="pancreas" loading="lazy"><img src="target-pancreas-lateral.png" alt="pancreas" loading="lazy"></div>
+    <figcaption>
+      <b>pancreas</b>
+      <span class="n">21 parts &middot; 18,182 triangles</span>
+      <span class="sys"><span class="sw" style="background:rgb(220,38,38)"></span>arterial 13 <span class="sw" style="background:rgb(194,65,12)"></span>digestive 5 <span class="sw" style="background:rgb(37,99,235)"></span>venous 3</span>
+    </figcaption>
+  </figure>
+  <figure>
+    <div class="views"><img src="target-spleen-anterior.png" alt="spleen" loading="lazy"><img src="target-spleen-lateral.png" alt="spleen" loading="lazy"></div>
+    <figcaption>
+      <b>spleen</b>
+      <span class="n">6 parts &middot; 5,286 triangles</span>
+      <span class="sys"><span class="sw" style="background:rgb(220,38,38)"></span>arterial 4 <span class="sw" style="background:rgb(22,163,74)"></span>lymphatic 1 <span class="sw" style="background:rgb(37,99,235)"></span>venous 1</span>
+    </figcaption>
+  </figure>
+  <figure>
+    <div class="views"><img src="target-abdomen-anterior.png" alt="abdomen" loading="lazy"><img src="target-abdomen-lateral.png" alt="abdomen" loading="lazy"></div>
+    <figcaption>
+      <b>abdomen</b>
+      <span class="n">234 parts &middot; 199,774 triangles</span>
+      <span class="sys"><span class="sw" style="background:rgb(194,65,12)"></span>digestive 105 <span class="sw" style="background:rgb(220,38,38)"></span>arterial 74 <span class="sw" style="background:rgb(37,99,235)"></span>venous 47 <span class="sw" style="background:rgb(154,52,18)"></span>urinary 5 <span class="sw" style="background:rgb(217,70,239)"></span>endocrine 2 <span class="sw" style="background:rgb(22,163,74)"></span>lymphatic 1</span>
+    </figcaption>
+  </figure>
+  <figure>
+    <div class="views"><img src="target-lcx_artery-anterior.png" alt="lcx_artery" loading="lazy"><img src="target-lcx_artery-lateral.png" alt="lcx_artery" loading="lazy"></div>
+    <figcaption>
+      <b>lcx_artery</b>
+      <span class="n">7 parts &middot; 2,384 triangles</span>
+      <span class="sys"><span class="sw" style="background:rgb(220,38,38)"></span>arterial 7</span>
+    </figcaption>
+  </figure>
+  <figure>
+    <div class="views"><img src="target-coronary_sinus-anterior.png" alt="coronary_sinus" loading="lazy"><img src="target-coronary_sinus-lateral.png" alt="coronary_sinus" loading="lazy"></div>
+    <figcaption>
+      <b>coronary_sinus</b>
+      <span class="n">20 parts &middot; 7,212 triangles</span>
+      <span class="sys"><span class="sw" style="background:rgb(37,99,235)"></span>venous 20</span>
+    </figcaption>
+  </figure>
+  <figure>
+    <div class="views"><img src="target-thoracoacromial-anterior.png" alt="thoracoacromial" loading="lazy"><img src="target-thoracoacromial-lateral.png" alt="thoracoacromial" loading="lazy"></div>
+    <figcaption>
+      <b>thoracoacromial</b>
+      <span class="n">8 parts &middot; 3,832 triangles</span>
+      <span class="sys"><span class="sw" style="background:rgb(220,38,38)"></span>arterial 8</span>
+    </figcaption>
+  </figure>
+  <figure>
+    <div class="views"><img src="target-post_circumflex_humeral-anterior.png" alt="post_circumflex_humeral" loading="lazy"><img src="target-post_circumflex_humeral-lateral.png" alt="post_circumflex_humeral" loading="lazy"></div>
+    <figcaption>
+      <b>post_circumflex_humeral</b>
+      <span class="n">4 parts &middot; 1,368 triangles</span>
+      <span class="sys"><span class="sw" style="background:rgb(220,38,38)"></span>arterial 4</span>
+    </figcaption>
+  </figure>
+  <figure>
+    <div class="views"><img src="target-pulmonary_trunk-anterior.png" alt="pulmonary_trunk" loading="lazy"><img src="target-pulmonary_trunk-lateral.png" alt="pulmonary_trunk" loading="lazy"></div>
+    <figcaption>
+      <b>pulmonary_trunk</b>
+      <span class="n">13 parts &middot; 8,964 triangles</span>
+      <span class="sys"><span class="sw" style="background:rgb(37,99,235)"></span>venous 7 <span class="sw" style="background:rgb(185,28,28)"></span>cardiac 3 <span class="sw" style="background:rgb(220,38,38)"></span>arterial 3</span>
+    </figcaption>
+  </figure>
+  <figure>
+    <div class="views"><img src="target-pulmonary_veins-anterior.png" alt="pulmonary_veins" loading="lazy"><img src="target-pulmonary_veins-lateral.png" alt="pulmonary_veins" loading="lazy"></div>
+    <figcaption>
+      <b>pulmonary_veins</b>
+      <span class="n">13 parts &middot; 8,964 triangles</span>
+      <span class="sys"><span class="sw" style="background:rgb(37,99,235)"></span>venous 7 <span class="sw" style="background:rgb(185,28,28)"></span>cardiac 3 <span class="sw" style="background:rgb(220,38,38)"></span>arterial 3</span>
+    </figcaption>
+  </figure>
+  <figure>
+    <div class="views"><img src="target-superior_mesenteric_artery-anterior.png" alt="superior_mesenteric_artery" loading="lazy"><img src="target-superior_mesenteric_artery-lateral.png" alt="superior_mesenteric_artery" loading="lazy"></div>
+    <figcaption>
+      <b>superior_mesenteric_artery</b>
+      <span class="n">17 parts &middot; 7,120 triangles</span>
+      <span class="sys"><span class="sw" style="background:rgb(220,38,38)"></span>arterial 16 <span class="sw" style="background:rgb(37,99,235)"></span>venous 1</span>
+    </figcaption>
+  </figure></div>
+
+  <h2>Not in this atlas</h2><p class="lede">BodyParts3D models the CNS and the nerves of the orbit and holds
+   <b>no peripheral nerves at all</b>. These resolve to nothing on purpose — a plausible
+   substitute is worse than a blank, because a student cannot tell them apart.</p>
+  <div class="grid">
+  <figure class="absent">
+    <div class="views"><div class="none">not in this atlas</div></div>
+    <figcaption><b>vagus_nerve</b><span class="n">BodyParts3D models the brain, brainstem and the nerves of the orbit. It carries no peripheral nerves, so this one cannot be drawn — the notes beside the model still describe it in full.</span></figcaption>
+  </figure>
+  <figure class="absent">
+    <div class="views"><div class="none">not in this atlas</div></div>
+    <figcaption><b>phrenic_nerve</b><span class="n">BodyParts3D models the brain, brainstem and the nerves of the orbit. It carries no peripheral nerves, so this one cannot be drawn — the notes beside the model still describe it in full.</span></figcaption>
+  </figure>
+  <figure class="absent">
+    <div class="views"><div class="none">not in this atlas</div></div>
+    <figcaption><b>ascites</b><span class="n">This is a clinical state rather than a structure, so it has no mesh of its own. Pick an organ to isolate.</span></figcaption>
+  </figure>
+  <figure class="absent">
+    <div class="views"><div class="none">not in this atlas</div></div>
+    <figcaption><b>snakebite</b><span class="n">This is a clinical state rather than a structure, so it has no mesh of its own. Pick an organ to isolate.</span></figcaption>
+  </figure>
+  <figure class="absent">
+    <div class="views"><div class="none">not in this atlas</div></div>
+    <figcaption><b>pectoral_nerves</b><span class="n">BodyParts3D models the brain, brainstem and the nerves of the orbit. It carries no peripheral nerves, so this one cannot be drawn — the notes beside the model still describe it in full.</span></figcaption>
+  </figure>
+  <figure class="absent">
+    <div class="views"><div class="none">not in this atlas</div></div>
+    <figcaption><b>axillary_nerve</b><span class="n">BodyParts3D models the brain, brainstem and the nerves of the orbit. It carries no peripheral nerves, so this one cannot be drawn — the notes beside the model still describe it in full.</span></figcaption>
+  </figure>
+  <figure class="absent">
+    <div class="views"><div class="none">not in this atlas</div></div>
+    <figcaption><b>splanchnic_nerves</b><span class="n">BodyParts3D models the brain, brainstem and the nerves of the orbit. It carries no peripheral nerves, so this one cannot be drawn — the notes beside the model still describe it in full.</span></figcaption>
+  </figure></div>
+
+  <h2>Anatomical systems</h2>
+  <div class="grid">
+  <figure>
+    <div class="views"><img src="system-arterial-anterior.png" alt="arterial" loading="lazy"><img src="system-arterial-lateral.png" alt="arterial" loading="lazy"></div>
+    <figcaption>
+      <b>arterial</b>
+      <span class="n">639 parts &middot; 333,798 triangles</span>
+      <span class="sys"><span class="sw" style="background:rgb(220,38,38)"></span>arterial 639</span>
+    </figcaption>
+  </figure>
+  <figure>
+    <div class="views"><img src="system-muscular-anterior.png" alt="muscular" loading="lazy"><img src="system-muscular-lateral.png" alt="muscular" loading="lazy"></div>
+    <figcaption>
+      <b>muscular</b>
+      <span class="n">402 parts &middot; 656,120 triangles</span>
+      <span class="sys"><span class="sw" style="background:rgb(150,67,54)"></span>muscular 402</span>
+    </figcaption>
+  </figure>
+  <figure>
+    <div class="views"><img src="system-venous-anterior.png" alt="venous" loading="lazy"><img src="system-venous-lateral.png" alt="venous" loading="lazy"></div>
+    <figcaption>
+      <b>venous</b>
+      <span class="n">395 parts &middot; 274,250 triangles</span>
+      <span class="sys"><span class="sw" style="background:rgb(37,99,235)"></span>venous 395</span>
+    </figcaption>
+  </figure>
+  <figure>
+    <div class="views"><img src="system-skeletal-anterior.png" alt="skeletal" loading="lazy"><img src="system-skeletal-lateral.png" alt="skeletal" loading="lazy"></div>
+    <figcaption>
+      <b>skeletal</b>
+      <span class="n">296 parts &middot; 338,056 triangles</span>
+      <span class="sys"><span class="sw" style="background:rgb(226,217,186)"></span>skeletal 296</span>
+    </figcaption>
+  </figure>
+  <figure>
+    <div class="views"><img src="system-nervous-anterior.png" alt="nervous" loading="lazy"><img src="system-nervous-lateral.png" alt="nervous" loading="lazy"></div>
+    <figcaption>
+      <b>nervous</b>
+      <span class="n">144 parts &middot; 213,436 triangles</span>
+      <span class="sys"><span class="sw" style="background:rgb(234,179,8)"></span>nervous 144</span>
+    </figcaption>
+  </figure>
+  <figure>
+    <div class="views"><img src="system-respiratory-anterior.png" alt="respiratory" loading="lazy"><img src="system-respiratory-lateral.png" alt="respiratory" loading="lazy"></div>
+    <figcaption>
+      <b>respiratory</b>
+      <span class="n">119 parts &middot; 130,410 triangles</span>
+      <span class="sys"><span class="sw" style="background:rgb(56,189,248)"></span>respiratory 119</span>
+    </figcaption>
+  </figure>
+  <figure>
+    <div class="views"><img src="system-digestive-anterior.png" alt="digestive" loading="lazy"><img src="system-digestive-lateral.png" alt="digestive" loading="lazy"></div>
+    <figcaption>
+      <b>digestive</b>
+      <span class="n">106 parts &middot; 117,482 triangles</span>
+      <span class="sys"><span class="sw" style="background:rgb(194,65,12)"></span>digestive 106</span>
+    </figcaption>
+  </figure>
+  <figure>
+    <div class="views"><img src="system-sensory-anterior.png" alt="sensory" loading="lazy"><img src="system-sensory-lateral.png" alt="sensory" loading="lazy"></div>
+    <figcaption>
+      <b>sensory</b>
+      <span class="n">45 parts &middot; 109,348 triangles</span>
+      <span class="sys"><span class="sw" style="background:rgb(2,132,199)"></span>sensory 45</span>
+    </figcaption>
+  </figure>
+  <figure>
+    <div class="views"><img src="system-connective-anterior.png" alt="connective" loading="lazy"><img src="system-connective-lateral.png" alt="connective" loading="lazy"></div>
+    <figcaption>
+      <b>connective</b>
+      <span class="n">40 parts &middot; 45,524 triangles</span>
+      <span class="sys"><span class="sw" style="background:rgb(203,213,225)"></span>connective 40</span>
+    </figcaption>
+  </figure>
+  <figure>
+    <div class="views"><img src="system-cardiac-anterior.png" alt="cardiac" loading="lazy"><img src="system-cardiac-lateral.png" alt="cardiac" loading="lazy"></div>
+    <figcaption>
+      <b>cardiac</b>
+      <span class="n">18 parts &middot; 38,778 triangles</span>
+      <span class="sys"><span class="sw" style="background:rgb(185,28,28)"></span>cardiac 18</span>
+    </figcaption>
+  </figure>
+  <figure>
+    <div class="views"><img src="system-reproductive-anterior.png" alt="reproductive" loading="lazy"><img src="system-reproductive-lateral.png" alt="reproductive" loading="lazy"></div>
+    <figcaption>
+      <b>reproductive</b>
+      <span class="n">12 parts &middot; 6,386 triangles</span>
+      <span class="sys"><span class="sw" style="background:rgb(190,24,93)"></span>reproductive 12</span>
+    </figcaption>
+  </figure>
+  <figure>
+    <div class="views"><img src="system-urinary-anterior.png" alt="urinary" loading="lazy"><img src="system-urinary-lateral.png" alt="urinary" loading="lazy"></div>
+    <figcaption>
+      <b>urinary</b>
+      <span class="n">6 parts &middot; 5,100 triangles</span>
+      <span class="sys"><span class="sw" style="background:rgb(154,52,18)"></span>urinary 6</span>
+    </figcaption>
+  </figure>
+  <figure>
+    <div class="views"><img src="system-integumentary-anterior.png" alt="integumentary" loading="lazy"><img src="system-integumentary-lateral.png" alt="integumentary" loading="lazy"></div>
+    <figcaption>
+      <b>integumentary</b>
+      <span class="n">5 parts &middot; 60,362 triangles</span>
+      <span class="sys"><span class="sw" style="background:rgb(214,158,133)"></span>integumentary 5</span>
+    </figcaption>
+  </figure>
+  <figure>
+    <div class="views"><img src="system-endocrine-anterior.png" alt="endocrine" loading="lazy"><img src="system-endocrine-lateral.png" alt="endocrine" loading="lazy"></div>
+    <figcaption>
+      <b>endocrine</b>
+      <span class="n">4 parts &middot; 4,756 triangles</span>
+      <span class="sys"><span class="sw" style="background:rgb(217,70,239)"></span>endocrine 4</span>
+    </figcaption>
+  </figure>
+  <figure>
+    <div class="views"><img src="system-lymphatic-anterior.png" alt="lymphatic" loading="lazy"><img src="system-lymphatic-lateral.png" alt="lymphatic" loading="lazy"></div>
+    <figcaption>
+      <b>lymphatic</b>
+      <span class="n">3 parts &middot; 2,794 triangles</span>
+      <span class="sys"><span class="sw" style="background:rgb(22,163,74)"></span>lymphatic 3</span>
+    </figcaption>
+  </figure></div>
+<p class="lede" style="margin-top:32px">2234 parts &middot;
+2,288,268 triangles &middot; BodyParts3D 4.0 &middot; CC BY 4.0</p>
+</body></html>
