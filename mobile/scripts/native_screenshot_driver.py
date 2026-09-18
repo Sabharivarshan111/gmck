@@ -93,13 +93,46 @@ def tap(needle: str, required: bool = True) -> bool:
     return True
 
 
+def screen_size() -> tuple[int, int]:
+    out = adb("shell", "wm", "size", capture=True).stdout or ""
+    m = re.search(r"(\d+)x(\d+)", out)
+    if not m:
+        return (1080, 2400)
+    return int(m.group(1)), int(m.group(2))
+
+
 def scroll_down() -> None:
-    adb("shell", "input", "swipe", "540", "1780", "540", "620", "550")
+    # Swipe in the right-side gutter rather than through TextInputs. Starting a
+    # gesture over an editable field lets Android give it to the TextInput,
+    # which leaves the parent ScrollView completely stationary.
+    width, height = screen_size()
+    x = int(width * 0.94)
+    adb(
+        "shell",
+        "input",
+        "swipe",
+        str(x),
+        str(int(height * 0.74)),
+        str(x),
+        str(int(height * 0.28)),
+        "550",
+    )
     time.sleep(1.0)
 
 
 def scroll_up() -> None:
-    adb("shell", "input", "swipe", "540", "620", "540", "1780", "500")
+    width, height = screen_size()
+    x = int(width * 0.94)
+    adb(
+        "shell",
+        "input",
+        "swipe",
+        str(x),
+        str(int(height * 0.30)),
+        str(x),
+        str(int(height * 0.76)),
+        "500",
+    )
     time.sleep(1.0)
 
 
@@ -180,8 +213,8 @@ def main() -> int:
     scroll_until("5. General Physical Examination", tries=10)
     shot("06-general-physical-exam-native")
 
-    scroll_until("Show normal values", tries=5)
-    tap("Show normal values")
+    scroll_until("Normal Values", tries=7)
+    tap("Normal Values")
     time.sleep(0.8)
     shot("07-normal-values-expanded-native")
 
