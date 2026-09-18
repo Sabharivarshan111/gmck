@@ -171,6 +171,39 @@ pick(
     'means finding your case requires reading all of them.',
 );
 
+// The two references a student needs WHILE clerking. Both were reachable only
+// from inside a case before — the general examination in each Guide tab, the
+// normal values nowhere at all — and a reference you have to navigate into is
+// a reference people stop opening.
+pick(
+  /styles\.quickRefRow/.test(modal) &&
+    /setExamSheetOpen\(true\)/.test(modal) &&
+    /setLabSheetOpen\(true\)/.test(modal),
+  'The General Examination and Normal Lab Values buttons are gone from above ' +
+    'the search. Both are needed on a ward round without opening a case sheet.',
+);
+
+pick(
+  modal.indexOf('styles.quickRefRow') < modal.indexOf('{/* Search Bar */}'),
+  'The quick-reference row has moved below the search box. It belongs above it ' +
+    '— these are things you reach for, not things you search for.',
+);
+
+pick(
+  /from '@\/components\/GeneralExamSheet'/.test(modal),
+  'The standalone general-examination page is unmounted.',
+);
+
+const examSheet = readFileSync(
+  new URL('../src/components/GeneralExamSheet.tsx', import.meta.url),
+  'utf8',
+);
+pick(
+  /<GeneralExamSigns/.test(examSheet),
+  'GeneralExamSheet no longer renders the shared GeneralExamSigns component. A ' +
+    'second copy of the nineteen signs is nineteen chances to drift.',
+);
+
 pick(
   /filteredProformas\.length === 0/.test(modal),
   'The empty state is gone. A filter or search matching nothing then looks ' +

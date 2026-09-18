@@ -22,6 +22,7 @@ import {
   ChevronUp,
   ClipboardList,
   Edit3,
+  FlaskConical,
   GraduationCap,
   Lightbulb,
   Maximize2,
@@ -39,6 +40,8 @@ import { Text } from '@/components/Text';
 import { Touchable } from '@/components/Touchable';
 import { KeyboardSafe } from '@/components/KeyboardSafe';
 import { GeneralExamSigns } from '@/components/GeneralExamSigns';
+import { GeneralExamSheet } from '@/components/GeneralExamSheet';
+import { LabValuesSheet } from '@/components/LabValuesSheet';
 import { useTheme, withAlpha } from '@/theme';
 import {
   CLINICAL_PROFORMAS,
@@ -121,6 +124,10 @@ export function ClinicalProformaModal({
    * open it would push each case's own sections a screen and a half down —
    * the general examination is the thing you already know how to find. */
   const [signsOpen, setSignsOpen] = useState(false);
+  /* The two references a student needs WHILE clerking rather than after it,
+   * reachable without opening a case sheet they did not want. */
+  const [examSheetOpen, setExamSheetOpen] = useState(false);
+  const [labSheetOpen, setLabSheetOpen] = useState(false);
   const [fullscreenImage, setFullscreenImage] = useState<{ uri: string; title: string } | null>(
     null,
   );
@@ -1312,6 +1319,71 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
               { paddingBottom: Math.max(insets.bottom, 20) + 24 },
             ]}
             keyboardShouldPersistTaps="handled">
+            {/*
+              * Two references above the search, not buried in a case.
+              *
+              * Both already existed but only INSIDE a proforma: the general
+              * examination in every Guide tab, and the normal values nowhere at
+              * all. A student on a ward round wants them without first opening
+              * a case sheet they did not want — and a reference you have to
+              * navigate into is a reference people stop opening.
+              *
+              * The general examination is the SAME component the Guide tab
+              * mounts, not a second copy. Nineteen signs kept in step in two
+              * places is nineteen chances to drift.
+              */}
+            <View style={styles.quickRefRow}>
+              <Touchable
+                onPress={() => setExamSheetOpen(true)}
+                label="General examination, with pictures"
+                hint="Opens PICCKLE and the nail signs"
+                style={[
+                  styles.quickRefCard,
+                  { backgroundColor: colors.card, borderColor: colors.border },
+                ]}>
+                <View
+                  style={[
+                    styles.quickRefIcon,
+                    { backgroundColor: withAlpha(colors.primary, 0.15) },
+                  ]}>
+                  <Stethoscope size={18} color={colors.primary} />
+                </View>
+                <View style={styles.quickRefText}>
+                  <Text style={[styles.quickRefTitle, { color: colors.text }]}>
+                    General Examination
+                  </Text>
+                  <Text style={[styles.quickRefSub, { color: colors.textMuted }]}>
+                    PICCKLE, with photographs
+                  </Text>
+                </View>
+              </Touchable>
+
+              <Touchable
+                onPress={() => setLabSheetOpen(true)}
+                label="Normal lab values"
+                hint="Opens the reference ranges"
+                style={[
+                  styles.quickRefCard,
+                  { backgroundColor: colors.card, borderColor: colors.border },
+                ]}>
+                <View
+                  style={[
+                    styles.quickRefIcon,
+                    { backgroundColor: withAlpha(colors.accent, 0.15) },
+                  ]}>
+                  <FlaskConical size={18} color={colors.accent} />
+                </View>
+                <View style={styles.quickRefText}>
+                  <Text style={[styles.quickRefTitle, { color: colors.text }]}>
+                    Normal Lab Values
+                  </Text>
+                  <Text style={[styles.quickRefSub, { color: colors.textMuted }]}>
+                    Ranges, critical values
+                  </Text>
+                </View>
+              </Touchable>
+            </View>
+
             {/* Search Bar */}
             <View
               style={[
@@ -1453,6 +1525,12 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
             ) : null}
           </ScrollView>
         )}
+
+        <GeneralExamSheet
+          visible={examSheetOpen}
+          onClose={() => setExamSheetOpen(false)}
+        />
+        <LabValuesSheet visible={labSheetOpen} onClose={() => setLabSheetOpen(false)} />
 
         {/* Fullscreen Image Preview Modal */}
         {fullscreenImage ? (
@@ -1772,6 +1850,26 @@ const styles = StyleSheet.create({
     fontSize: 12,
     flex: 1,
   },
+  quickRefRow: { flexDirection: 'row', gap: 10, marginBottom: 14 },
+  quickRefCard: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    padding: 12,
+    borderRadius: 14,
+    borderWidth: StyleSheet.hairlineWidth,
+  },
+  quickRefIcon: {
+    width: 34,
+    height: 34,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  quickRefText: { flex: 1 },
+  quickRefTitle: { fontSize: 13, fontWeight: '600' },
+  quickRefSub: { fontSize: 11, marginTop: 1 },
   groupHeadingRow: {
     flexDirection: 'row',
     alignItems: 'center',
