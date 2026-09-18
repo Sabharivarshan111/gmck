@@ -15,9 +15,14 @@
 
 name: Web build
 
+# Also on the branches agents work from. `main` is a release channel for a live
+# website, and an agent sandbox cannot run this check itself — the egress proxy
+# refuses npm registry tarballs, so there is no `node_modules` and no way to run
+# `vite build` or `tsc` there at all. Without this, the first real build of an
+# agent's work happened after it had been merged to the branch that publishes.
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "claude/**", "chatgpt/**" ]
   pull_request:
     branches: [ "main" ]
 
