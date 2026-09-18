@@ -31,6 +31,18 @@ name: Exam sign images
 # A CC-BY attribution that nobody displays is a licence nobody is keeping.
 
 on:
+  # workflow_dispatch alone is not enough while this file is only on a feature
+  # branch: GitHub will not accept a dispatch for a workflow that is not on the
+  # default branch, so the first run has to come from a push. Same shape as
+  # supabase-tasks.yml uses.
+  #
+  # The paths are the two files that DECIDE what gets fetched. What the run
+  # COMMITS — the pictures and the generated manifest — is deliberately not
+  # among them, so the push it makes cannot trigger it again.
+  push:
+    paths:
+      - '.github/workflows/exam-sign-images.yml'
+      - 'mobile/src/lib/generalExamSigns.ts'
   workflow_dispatch:
     inputs:
       only:
