@@ -1228,3 +1228,181 @@ way.
 - Do not re-add 2-hour theory block buttons; MBBS lectures in Indian medical colleges are scheduled strictly in 1-hour slots.
 - Do not modify `attendance.ts` above the `// ------` storage line without checking `scripts/attendance-check.mjs` regex stripper.
 
+
+---
+
+## 2026-09-18 — Claude Code — 40 case sheets, the general examination in photographs, the rewarded ad, and 39 broken pictures
+
+**DONE**
+
+### 39 diagrams were pointing at files that did not exist
+
+25 plates behind 39 `question_diagrams` rows carried a `public_url` for a file
+the `diagrams` bucket did not hold. Every one of the files was already in
+`public/diagrams/` in this repo.
+
+The cause is structural and will recur unless the shape is understood: writing
+a row and uploading the plate go by **two different routes, and only one works
+from a sandbox**. The Supabase MCP connector hands an agent SQL; the egress
+gateway answers 403 to the CONNECT for the project host before any credential
+is offered, so nobody can PUT a JPEG from here. A session generates a plate,
+commits it, writes the row with the URL it is *going* to have — and the upload
+never happens.
+
+`supabase-tasks.yml` grew a step that uploads any plate in `public/diagrams/`
+the bucket lacks. Generic rather than a list of paths, idempotent, POSTs rather
+than PUTs so the no-overwrite rule is the server's too, and it prints the
+referenced-but-missing table whether or not it uploads anything. **Run it after
+any session that adds plates.** Verified: 310 → 351 objects, and the
+referenced-but-missing count went 25 → **0**.
+
+A missing row shows nothing, which is the designed answer. A row pointing at
+nothing shows a failure. Those are not the same bug.
+
+### The rewarded ad did not play when the reader tapped OK
+
+Reported as "ads not playing immediately or after sometime only playing". Four
+defects in `lib/ads.ts`, each of which typechecks, lints and bundles:
+
+1. Readiness was a module-level `rewardedLoaded` boolean beside a module-level
+   `rewarded` instance, and the two could describe **different ads**.
+   `showRewardedAd` replaced the instance mid-preload; the orphan's LOADED
+   listener then set the flag, so the flag said "ready" about an ad nobody held.
+2. A failed preload was **never retried** — one transient failure at launch and
+   the whole session paid a cold load on every tap.
+3. The 8s wait **tore down the LOADED listener**, so an ad arriving at 8.1s was
+   discarded *and* the module still believed none existed. Slow for ever.
+4. The first preload raced the consent flow and nothing re-preloaded after it.
+
+The loaded ad is held **by identity** now (`readyAd` / `pendingAd`), there is a
+bounded retry (5s, 20s, 60s), the late arrival becomes the next preload, and
+consent stays decoupled behind its 3.5s race — it is simply asked again
+afterwards. `npm run check:ads` pins all of it and says plainly that it reads
+the source, because nothing in a sandbox can reach AdMob.
+
+### The general examination now shows a photograph of every sign
+
+`lib/generalExamSigns.ts` (19 signs), `components/GeneralExamSigns.tsx`, and
+`.github/workflows/exam-sign-images.yml`. Rendered collapsed inside the Guide
+tab of **every** proforma — one shared block, because there is one general
+examination, and because every source sheet recites the same PICCKLE line.
+
+**The first fetch run was wrong for five of nineteen signs, and badly wrong.**
+"Clubbing" returned a portrait of a real, identifiable film-maker.
+"Platonychia" returned a Roman bronze nail cleaner. "Palmar erythema" returned
+chemotherapy hand-foot syndrome. Commons full-text search matches the file
+*page*, so any page mentioning the word ranks for it.
+
+This repo had already learned that lesson on the question diagrams — a keyword
+search cannot choose a clinical picture, and a plausible wrong one is worse
+than a blank. The fix is the same one: **the filename must corroborate**. Every
+sign carries `titleMustContain`, at least one word of which must be in the
+Commons file title, and the gate runs *before* the licence check because a
+wrong picture with a perfect licence is still wrong. All thirteen images from
+the ungated run were deleted, including the ones that happened to be right.
+
+10 of 19 signs now have a verified-correct photograph, in the bucket under
+`signs/`. The other 9 render as text that says so, which is correct. **Only
+public domain and commercial-use CC**; NC and ND refused; attribution stored
+and displayed under the picture.
+
+### 12 case sheets → 40
+
+`lib/proformas/{ent,ophthalmology,surgeryShort,surgeryLong,paediatrics,orthoObg,medicine}.ts`,
+spread into `CLINICAL_PROFORMAS`. General Surgery 14, General Medicine 10,
+ENT 5, Paediatrics 4, OBG 3, Orthopaedics 2, Ophthalmology 2.
+
+Built from the fifteen proforma PDFs the owner sent. A department per file
+because `clinicalProformas.ts` had passed 290 KB in one array and was becoming
+the only file anybody could edit at a time.
+
+Two structural decisions worth keeping:
+
+- **The general examination is not repeated per case.** Every source sheet
+  recites the same PICCKLE line; the app draws it once, with photographs.
+  Fourteen copies would be fourteen things to keep in step.
+- **`swelling_proforma` holds the lump framework once.** Eight short cases are
+  the same examination applied to a different site, and the source sheets
+  recite the identical thirty-line sequence each time.
+
+All 27 `diagramPath` values were checked against `storage.objects` directly.
+None is broken.
+
+The picker is grouped by department now with an empty state — forty flat rows
+was the congestion the owner reported.
+
+**BLOCKED / NOT DONE — read this before assuming it works**
+
+- **Nothing was typechecked, linted or screenshotted this session.** `npm ci`
+  fails: the proxy returns 403 for registry tarballs (`zod-validation-error`
+  and `zod` genuinely, then everything alphabetically once a throttle kicked
+  in). So `node_modules` does not exist, and `tsc`, `eslint`, `check:smoke` and
+  `preview/shoot.mjs` could not run. The checks that DID run are the
+  dependency-free ones: `check:ads`, `check:exam-signs`, `check:proformas`,
+  `check:supabase-queue`. **Run `npx tsc --noEmit` and `npx eslint . --quiet`
+  on a machine with a working registry before cutting a build.** The ads
+  rewrite and the picker grouping are the two changes most worth a real
+  typecheck.
+- `ortho_casesheets-1.pdf` and `proforma_medicine.pdf` are **CamScanner scans
+  with no text layer** and could not be read. The orthopaedic proforma is
+  written from the standard sequence (Apley, Maheshwari) rather than from the
+  owner's sheet. If his sheet differs, his sheet wins.
+- 47 plates sit in the bucket with **no `question_diagrams` row**, so they are
+  invisible in all three apps. Same class as the 2026-09-02 fix. Each needs
+  matching to its bank question by hand — never blind, never by keyword.
+- 9 signs still have no photograph because nothing passed the title gate.
+  That is the correct outcome. Do **not** loosen the gate.
+
+**DO NOT**
+
+- Do not loosen `titleMustContain`, and never put a generic word ("nail",
+  "hand", "eye") in one. `check:exam-signs` fails if you do. Every one of the
+  five wrong images would have passed a generic gate.
+- Do not write a `question_diagrams` row from a sandbox without queueing the
+  upload. The row will point at a 404 and nobody will notice for weeks.
+- Do not put `rewardedLoaded`-style module flags back beside an ad instance.
+  Readiness belongs to the instance.
+- Do not repeat the general examination inside a proforma's `sections`.
+
+### Later the same day — the scanned sheets, the two reference pages, 45 cases
+
+**The ortho scan was read after all, and the technique generalises.**
+`ortho_casesheets-1.pdf` is a CamScanner scan with no text layer, and OCR is
+unavailable here (tesseract, poppler-utils, pypdf, pip — all refused by the
+proxy). But a scanner embeds each page as a `/DCTDecode` image XObject, and **a
+DCTDecode stream is a JPEG byte for byte**, so the 22 pages come out verbatim
+and can simply be read as images.
+`.agents/sources/proformas/extract-page-images.py` does it and is committed.
+
+Six ortho cases came out: CTEV, chronic osteomyelitis, non-union + malunion,
+peripheral nerve injuries, OA knee. Orthopaedics went 2 → 7, total 40 → 45.
+The transcription is **by eye, not machine** — where a proforma disagrees with
+the owner's sheet, the sheet wins.
+
+**Four PDFs are still unread and they are NOT scans.**
+`CLINICAL_CASES_GYNAECOLOGY`, `CLINICAL_CASES_OBSTETRICS_1`, `OG_cases`,
+`OG_cases-1` all returned 0 bytes because `extract-pdf-text.py` does not handle
+**PDF 1.5 object streams** (`/ObjStm`) — the objects are inside a compressed
+stream and the regex never sees them. Teaching it to inflate `/ObjStm` first
+unlocks all four, and all four are OBG, the thinnest department at 3 cases.
+**That is the highest-yield small task left in this repo.**
+`proforma_medicine.pdf` is the one true scan still unread; use
+`extract-page-images.py`.
+
+**Two reference pages, under the search in the case picker** (the owner moved
+them there from above it): `GeneralExamSheet` mounts the SAME `GeneralExamSigns`
+component the Guide tab does — not a copy — and `LabValuesSheet` over the new
+`lib/labValues.ts`, ~100 values with conventional AND SI units, age variants,
+and critical values marked separately.
+
+**`check:edges` caught a real bug in ChatGPT's v23 `NoteLinkCard`** once the new
+modals made me run it: its full-screen modal padded by a hardcoded 48, so the
+title and close button sat under the clock on any cutout phone. Fixed.
+
+**The depth gap is measured and is the main remaining quality problem.**
+ChatGPT's four v23 system proformas: median 539 lines. The other 41: median 136.
+The eight commonest long cases are listed in deepening order in
+`CHATGPT_HANDOVER.md` §8.2.
+
+**Still nothing typechecked.** `npm ci` is blocked. See the
+`node-modules-unreachable` blocker in `blocked.json`.

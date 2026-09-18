@@ -57,6 +57,16 @@
       "queuedAt": "2026-09-10T23:51:16.354Z",
       "appliedAt": "2026-09-11T03:39:53.546Z",
       "appliedNote": "Applied through the Supabase MCP connector once it reconnected, not through this workflow. The row that is live carries 17 notes — the union of the drafts that had been written for 18, 19 and 20, since those three were cumulative and only one of them is being uploaded — plus the attendance working-days line added on 2026-09-11. The `sql` field above is kept as a SHAPE rather than as the text that ran: it shows the real column list, and its notes array is a single placeholder line so nobody re-runs it and overwrites seventeen notes with one. Read the row, not this field."
+    },
+    {
+      "id": "sb-upload-missing-diagram-plates",
+      "kind": "storage",
+      "summary": "Upload the repo plates the `diagrams` bucket does not hold — 25 of them are behind 39 rows that currently 404",
+      "why": "Writing a `question_diagrams` row and uploading the plate it points at go by two different routes, and only one of them works from a sandbox. The Supabase MCP connector gives an agent SQL; it gives nobody a way to PUT a JPEG, because the egress gateway answers 403 to the CONNECT for the project host before any credential is offered. So a session generates a plate, commits it to `public/diagrams/`, writes the row with the URL it is *going* to have — and the upload never happens.\n\nOn 2026-09-17 that had accumulated to 25 plates behind 39 rows: ansa cervicalis, azygos vein, the tuning fork tests, diabetic retinopathy fundus signs and twenty-one more. Every one of the files is in this repo. This is worse than the missing-row bug the 2026-09-02 note fixed: a question with no row shows nothing, which is the designed answer, but a row pointing at nothing shows a broken picture in all three apps.\n\nThe step in supabase-tasks.yml is generic and idempotent rather than a list of 25 paths — it uploads any plate in `public/diagrams/` the bucket lacks and skips every path the bucket already has, so a plate regenerated on somebody's laptop is never overwritten by the repo's older copy. It POSTs rather than PUTs, so the no-overwrite rule is the server's and not only ours. Re-dispatching it when nothing is missing is a no-op, and it prints the referenced-but-missing table either way, which is the report that makes this worth dispatching even on a quiet day.\n\nThe repo is a SUBSET of the bucket — 77 plates here against 310 there, because most were generated on the Antigravity machine and never committed — so 'in the bucket but not in the repo' is ordinary and is not reported.",
+      "verify": "The step's own report prints 'none — every referenced plate resolves.' Independently: select count(*) from (select distinct split_part(public_url,'/diagrams/',2) p from question_diagrams where public_url is not null) r where r.p not in (select name from storage.objects where bucket_id='diagrams') returns 0, where it returned 25 on 2026-09-17.",
+      "status": "done",
+      "queuedAt": "2026-09-17T23:09:59.646590Z",
+      "appliedAt": "2026-09-18T03:05:03.171Z"
     }
   ]
 }
