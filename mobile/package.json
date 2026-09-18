@@ -46,6 +46,7 @@
     "check:native-update": "node scripts/native-update-check.mjs",
     "check:billing": "node scripts/billing-check.mjs",
     "check:ads": "node scripts/ads-check.mjs",
+    "check:exam-signs": "node scripts/exam-signs-check.mjs",
     "check:attendance": "node scripts/attendance-check.mjs",
     "check:admin": "node scripts/admin-check.mjs",
     "check:no-simulator": "node scripts/no-simulator-check.mjs",

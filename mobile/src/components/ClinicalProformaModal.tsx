@@ -38,6 +38,7 @@ import {
 import { Text } from '@/components/Text';
 import { Touchable } from '@/components/Touchable';
 import { KeyboardSafe } from '@/components/KeyboardSafe';
+import { GeneralExamSigns } from '@/components/GeneralExamSigns';
 import { useTheme, withAlpha } from '@/theme';
 import {
   CLINICAL_PROFORMAS,
@@ -92,6 +93,10 @@ export function ClinicalProformaModal({
   });
 
   const [activeTab, setActiveTab] = useState<DetailTab>('guide');
+  /* Collapsed by default. Every proforma carries this same block, so left
+   * open it would push each case's own sections a screen and a half down —
+   * the general examination is the thing you already know how to find. */
+  const [signsOpen, setSignsOpen] = useState(false);
   const [fullscreenImage, setFullscreenImage] = useState<{ uri: string; title: string } | null>(
     null,
   );
@@ -506,6 +511,52 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                       </Touchable>
                     </View>
                   ) : null}
+
+                  {/*
+                    * The general examination, with a photograph of each sign.
+                    *
+                    * It sits in every proforma in the repo as the same recited
+                    * line — "Pallor, Icterus, Cyanosis, Clubbing, Koilonychia,
+                    * Lymphadenopathy, Edema" — which is exactly the part of
+                    * clerking that words cannot teach. One shared block rather
+                    * than a copy per case: there is one general examination.
+                    */}
+                  <View
+                    style={[
+                      styles.sectionCard,
+                      { backgroundColor: colors.card, borderColor: colors.border },
+                    ]}>
+                    <Touchable
+                      label="General examination signs, with pictures"
+                      hint={
+                        signsOpen
+                          ? 'Collapse the general examination'
+                          : 'Show every sign with a photograph'
+                      }
+                      state={{ expanded: signsOpen }}
+                      onPress={() => setSignsOpen(v => !v)}
+                      style={styles.signsToggle}>
+                      <Stethoscope size={16} color={colors.primary} />
+                      <View style={styles.signsToggleText}>
+                        <Text style={[styles.sectionTitle, { color: colors.text }]}>
+                          General Examination — with pictures
+                        </Text>
+                        <Text style={[styles.itemDesc, { color: colors.textMuted }]}>
+                          PICCKLE and the nail signs, each with a clinical photograph
+                        </Text>
+                      </View>
+                      {signsOpen ? (
+                        <ChevronUp size={18} color={colors.textMuted} />
+                      ) : (
+                        <ChevronDown size={18} color={colors.textMuted} />
+                      )}
+                    </Touchable>
+                    {signsOpen ? (
+                      <View style={styles.signsBody}>
+                        <GeneralExamSigns onOpenImage={setFullscreenImage} />
+                      </View>
+                    ) : null}
+                  </View>
 
                   {/* Sections and Items */}
                   {activeProforma.sections.map((section, sIdx) => (
@@ -1644,6 +1695,9 @@ const styles = StyleSheet.create({
     fontSize: 12,
     flex: 1,
   },
+  signsToggle: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  signsToggleText: { flex: 1 },
+  signsBody: { marginTop: 14 },
   checklistBox: {
     marginTop: 4,
     gap: 6,
