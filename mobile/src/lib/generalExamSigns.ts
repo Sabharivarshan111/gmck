@@ -62,6 +62,28 @@ export interface ExamSignImage {
   licence?: string;
   /** What the fetcher searches for. Ordered: the first acceptable hit wins. */
   search: string[];
+  /**
+   * The corroboration gate, and the reason it exists.
+   *
+   * The first run of the fetch workflow searched Commons and took the first
+   * freely-licensed hit, and it was wrong for five of nineteen signs — badly
+   * wrong, not nearly wrong. "Clubbing" returned a portrait of a film-maker,
+   * "platonychia" returned a Roman bronze nail cleaner, "palmar erythema"
+   * returned chemotherapy hand-foot syndrome. Commons full-text search matches
+   * the file PAGE, so a page that merely mentions a word ranks for it.
+   *
+   * This repo has already learned this lesson once, on the question diagrams:
+   * a keyword search cannot choose a clinical picture, and a plausible wrong
+   * one is worse than a blank because the reader trusts it. The fix there was
+   * that the filename has to corroborate — `audit:diagrams` is that idea. This
+   * is the same rule applied before the download rather than after it.
+   *
+   * At least one of these must appear in the Commons file TITLE. They are
+   * deliberately the sign's own distinctive words: "nail" or "hand" would let
+   * every one of the five wrong hits through. A sign whose gate nothing passes
+   * keeps no picture, and that is the correct outcome.
+   */
+  titleMustContain: string[];
 }
 
 export interface ExamSign {
@@ -106,6 +128,7 @@ export const EXAM_SIGNS: ExamSign[] = [
       'Pallor is a sign of anaemia, not a measurement of it. A normal-looking conjunctiva does not exclude anaemia, and the examiner is asking you to look in more than one place — say all four sites out loud.',
     image: {
       search: ['conjunctival pallor anaemia', 'pallor lower eyelid anemia', 'anemia palm pallor'],
+      titleMustContain: ['pallor'],
     },
   },
   {
@@ -138,6 +161,7 @@ export const EXAM_SIGNS: ExamSign[] = [
       'Carotenaemia spares the sclera — yellow palms and soles with white eyes is carrot and papaya, not liver. That is the commonest trap set on this sign.',
     image: {
       search: ['scleral icterus jaundice', 'jaundice eye sclera', 'icterus conjunctiva'],
+      titleMustContain: ['icterus', 'jaundice'],
     },
   },
   {
@@ -165,6 +189,7 @@ export const EXAM_SIGNS: ExamSign[] = [
       'Cyanosis needs ABSOLUTE reduced haemoglobin, so a severely anaemic patient can be profoundly hypoxic and never look blue, while a polycythaemic one looks blue easily. Never use colour to exclude hypoxia.',
     image: {
       search: ['central cyanosis tongue', 'cyanosis lips blue', 'cyanotic congenital heart disease child'],
+      titleMustContain: ['cyanosis', 'cyanotic'],
     },
   },
   {
@@ -186,6 +211,7 @@ export const EXAM_SIGNS: ExamSign[] = [
       'Warm the hand and peripheral cyanosis goes; central cyanosis does not. That is the bedside test, and it costs nothing.',
     image: {
       search: ['peripheral cyanosis fingers', 'acrocyanosis hands', 'cyanosis nail bed'],
+      titleMustContain: ['cyanosis', 'acrocyanosis'],
     },
   },
   {
@@ -215,6 +241,7 @@ export const EXAM_SIGNS: ExamSign[] = [
       'Clubbing is ABSENT in uncomplicated COPD. Finding it in a patient labelled COPD obliges you to go looking for bronchiectasis or a bronchogenic carcinoma — say that sentence in the viva and it is worth the whole case.',
     image: {
       search: ['digital clubbing fingers', 'nail clubbing schamroth', 'clubbing hypertrophic osteoarthropathy'],
+      titleMustContain: ['clubbing', 'clubbed', 'schamroth', 'osteoarthropathy'],
     },
   },
   {
@@ -238,6 +265,7 @@ export const EXAM_SIGNS: ExamSign[] = [
       'Koilonychia is a LATE sign of iron deficiency: the nail takes months to grow out, so it says the deficiency has been there a long time. A normal nail excludes nothing.',
     image: {
       search: ['koilonychia spoon nails', 'spoon shaped nail iron deficiency', 'koilonychia'],
+      titleMustContain: ['koilonychia', 'spoon nail', 'spoon-shaped'],
     },
   },
   {
@@ -263,6 +291,7 @@ export const EXAM_SIGNS: ExamSign[] = [
       "A hard, fixed left supraclavicular node is Virchow's node and it is a finding about the abdomen, not the neck — stomach, pancreas, gallbladder, testis or ovary. Never examine a node field and forget to name its drainage area.",
     image: {
       search: ['cervical lymphadenopathy neck', 'lymphadenopathy examination', 'enlarged lymph node neck'],
+      titleMustContain: ['lymphadenopathy', 'lymphadenitis', 'lymph node'],
     },
   },
   {
@@ -288,6 +317,7 @@ export const EXAM_SIGNS: ExamSign[] = [
       'Non-pitting oedema is a different differential — myxoedema, lymphoedema, filariasis — so always record whether it pitted, not just that it was there.',
     image: {
       search: ['pitting edema leg', 'pedal edema pitting', 'peripheral edema ankle'],
+      titleMustContain: ['edema', 'oedema'],
     },
   },
 
@@ -309,6 +339,7 @@ export const EXAM_SIGNS: ExamSign[] = [
       'Platonychia is the reason a student says "the nails look normal" and the examiner says "look again from the side". It is the step before koilonychia, and naming it is what separates a good general examination from a recited one.',
     image: {
       search: ['platonychia flat nails', 'flat nail plate', 'nail flattening iron deficiency'],
+      titleMustContain: ['platonychia'],
     },
   },
   {
@@ -329,6 +360,7 @@ export const EXAM_SIGNS: ExamSign[] = [
       'Muehrcke lines blanch and move with the nail bed; Mees lines do not blanch and grow OUT with the nail. One is albumin, the other is arsenic, and the pressure test tells them apart at the bedside.',
     image: {
       search: ['leukonychia white nails', 'terry nails liver', 'muehrcke lines nails'],
+      titleMustContain: ['leukonychia', 'leuconychia', 'terry nail', 'muehrcke', 'mees'],
     },
   },
   {
@@ -349,6 +381,7 @@ export const EXAM_SIGNS: ExamSign[] = [
       'In a febrile patient with a murmur, splinters belong to the endocarditis case and you should go straight on to look for Osler nodes, Janeway lesions, Roth spots and clubbing.',
     image: {
       search: ['splinter hemorrhage nail', 'splinter haemorrhages endocarditis', 'subungual splinter hemorrhage'],
+      titleMustContain: ['splinter'],
     },
   },
   {
@@ -368,6 +401,7 @@ export const EXAM_SIGNS: ExamSign[] = [
       'Onycholysis with a fine tremor, warm moist palms and a goitre is the thyrotoxicosis short case starting at the hand — the examination of a thyroid patient begins before you reach the neck.',
     image: {
       search: ['onycholysis nail separation', 'psoriatic nail onycholysis', 'plummer nail thyrotoxicosis'],
+      titleMustContain: ['onycholysis'],
     },
   },
 
@@ -389,6 +423,7 @@ export const EXAM_SIGNS: ExamSign[] = [
       'It belongs to a set: look on from palmar erythema to spider naevi in the SVC territory, gynaecomastia, loss of axillary hair, Dupuytren contracture and asterixis before you ever touch the abdomen.',
     image: {
       search: ['palmar erythema liver', 'liver palms erythema', 'palmar erythema hands'],
+      titleMustContain: ['palmar erythema', 'liver palm'],
     },
   },
   {
@@ -409,6 +444,7 @@ export const EXAM_SIGNS: ExamSign[] = [
       'Hold the position for a full half minute. Asterixis is intermittent, and the commonest reason a student reports it absent is that they gave up after five seconds.',
     image: {
       search: ['asterixis flapping tremor', 'hepatic encephalopathy asterixis hands', 'flapping tremor wrist'],
+      titleMustContain: ['asterixis', 'flapping tremor'],
     },
   },
   {
@@ -429,6 +465,7 @@ export const EXAM_SIGNS: ExamSign[] = [
       'It is the aponeurosis, not the tendon: the finger cannot be passively straightened and the skin is puckered and tethered, which is what distinguishes it from a trigger finger.',
     image: {
       search: ['dupuytren contracture hand', 'dupuytren palmar fascia', 'dupuytren disease fingers'],
+      titleMustContain: ['dupuytren'],
     },
   },
 
@@ -452,6 +489,7 @@ export const EXAM_SIGNS: ExamSign[] = [
       'Look at the undersurface of the tongue for icterus and the dorsum for cyanosis. They are two different surfaces answering two different questions, and students routinely look at only one.',
     image: {
       search: ['atrophic glossitis tongue', 'angular stomatitis cheilosis', 'oral examination tongue'],
+      titleMustContain: ['atrophic glossitis', 'angular stomatitis', 'cheilitis', 'cheilosis'],
     },
   },
   {
@@ -474,6 +512,7 @@ export const EXAM_SIGNS: ExamSign[] = [
       'Madarosis — loss of the lateral third of the eyebrow — belongs to both hypothyroidism and leprosy, and the rest of the face tells you which.',
     image: {
       search: ['myxedema facies hypothyroidism', 'moon facies cushing', 'mitral facies malar flush'],
+      titleMustContain: ['myxedema', 'myxoedema', 'cushingoid', 'moon face', 'facies'],
     },
   },
 
@@ -492,6 +531,7 @@ export const EXAM_SIGNS: ExamSign[] = [
       'Temporal wasting is the earliest visible marker of significant weight loss, and it is on the face you are already looking at during the facies.',
     image: {
       search: ['temporal wasting cachexia', 'muscle wasting malnutrition', 'cachexia clinical'],
+      titleMustContain: ['cachexia', 'marasmus', 'kwashiorkor', 'muscle wasting'],
     },
   },
   {
@@ -513,6 +553,7 @@ export const EXAM_SIGNS: ExamSign[] = [
       'Hepatojugular reflux: press firmly over the right hypochondrium for 15 seconds. A sustained rise of more than 3 cm that persists while you press is positive and points at the right ventricle.',
     image: {
       search: ['jugular venous pressure examination', 'raised JVP neck', 'jugular venous distension'],
+      titleMustContain: ['jugular venous', 'jvp', 'jugular vein disten'],
     },
   },
 ];

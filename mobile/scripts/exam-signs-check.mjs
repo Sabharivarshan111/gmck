@@ -42,6 +42,19 @@ for (const [, id, body] of blocks) {
     `Sign "${id}" has no search terms, so the fetch workflow can never find it a ` +
       `photograph and it will stay text-only for ever without anything saying so.`,
   );
+  check(
+    /titleMustContain: \[\s*'[^']+'/.test(body),
+    `Sign "${id}" has no titleMustContain gate. Commons full-text search matches ` +
+      `the file PAGE rather than the subject, so an ungated search returned a ` +
+      `portrait of a film-maker for "clubbing" and a Roman bronze nail cleaner ` +
+      `for "platonychia". A plausible wrong picture is worse than none.`,
+  );
+  check(
+    !/titleMustContain: \[[^\]]*'(nail|hand|eye|skin|face|finger)'/.test(body),
+    `Sign "${id}" has a generic word in its titleMustContain gate. "nail", ` +
+      `"hand" and the like let every one of the wrong hits through — the gate ` +
+      `has to be the sign's own distinctive vocabulary.`,
+  );
   check(/name: '/.test(body), `Sign "${id}" has no name.`);
   check(/definition:/.test(body), `Sign "${id}" has no definition.`);
   check(/whereToLook:/.test(body), `Sign "${id}" does not say where to look.`);

@@ -122,8 +122,14 @@ jobs:
               if not m:
                   continue
               terms = re.findall(r"'([^']+)'", m.group(1))
-              has_file = re.search(r"file: '", body)
-              signs.append((sid, terms, bool(has_file)))
+              # The corroboration gate. Commons full-text search matches the
+              # file PAGE, not the subject, so the first freely-licensed hit for
+              # "clubbing" was a portrait of a film-maker and the first for
+              # "platonychia" was a Roman bronze nail cleaner. At least one of
+              # these words must be in the file TITLE or the hit is refused.
+              g = re.search(r"titleMustContain: \[(.*?)\]", body, re.S)
+              gate = re.findall(r"'([^']+)'", g.group(1)) if g else []
+              signs.append((sid, terms, gate))
 
           only = os.environ.get('ONLY', '').strip()
           if only:
@@ -137,7 +143,7 @@ jobs:
           if m and m.group(1).strip() != '{}':
               manifest = json.loads(m.group(1))
 
-          for sid, terms, has_file in signs:
+          for sid, terms, gate in signs:
               if sid in manifest and not only:
                   print(f'  skip  {sid} (already has a picture)')
                   continue
@@ -163,6 +169,13 @@ jobs:
                           continue
                       if ii.get('mime') not in ('image/jpeg', 'image/png'):
                           continue
+                      # Corroboration before licence: a wrong picture with a
+                      # perfect licence is still a wrong picture, and a
+                      # plausible wrong one is worse than none because the
+                      # reader trusts it.
+                      title_l = page['title'].lower()
+                      if gate and not any(w.lower() in title_l for w in gate):
+                          continue
                       lic = acceptable(ii)
                       if not lic:
                           continue
@@ -172,8 +185,9 @@ jobs:
                       break
 
               if not chosen:
-                  print(f'  NONE  {sid} — no acceptably-licensed image found. '
-                        f'It stays text-only, which is the correct outcome.')
+                  print(f'  NONE  {sid} — nothing passed the title gate {gate} with an '
+                        f'acceptable licence. It stays text-only, which is the '
+                        f'correct outcome, not a bug to loosen the gate for.')
                   continue
 
               title, url, lic = chosen
