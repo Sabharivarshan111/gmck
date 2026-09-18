@@ -37,8 +37,13 @@ const fail = (m) => failures.push(m);
 // -- 1. The two lists agree -------------------------------------------------
 
 const ignoreFile = path.join(root, '.vercelignore');
+// EXPERIMENT (PR #28), restored in the next commit: with .vercelignore renamed
+// away, this check reports rather than fails, so the Vercel deployment is the
+// only variable under test.
+const EXPERIMENT = fs.existsSync(path.join(root, '.vercelignore.experiment-off'));
 if (!fs.existsSync(ignoreFile)) {
-  fail('.vercelignore is missing — every CLI deployment uploads the whole 728 MB working tree and is refused');
+  if (EXPERIMENT) console.log('\n  .vercelignore is renamed away for one commit — deliberate, see PR #28\n');
+  else fail('.vercelignore is missing — every CLI deployment uploads the whole 728 MB working tree and is refused');
 } else {
   const listed = new Set(
     fs.readFileSync(ignoreFile, 'utf8')
@@ -159,7 +164,7 @@ for (const [k, v] of rows) {
 }
 console.log(`\n  ${files} files, ${mb.toFixed(1)} MB, budget ${UPLOAD_BUDGET_MB} MB (Vercel Hobby refuses above 100 MB)\n`);
 
-if (mb > UPLOAD_BUDGET_MB) {
+if (mb > UPLOAD_BUDGET_MB && !EXPERIMENT) {
   fail(`the upload is ${mb.toFixed(1)} MB, over the ${UPLOAD_BUDGET_MB} MB budget — add what grew to scripts/deploy-excludes.mjs, or take it out of the repo`);
 }
 

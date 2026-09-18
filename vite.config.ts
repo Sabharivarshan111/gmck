@@ -52,7 +52,8 @@ export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
     mcpPlugin(),
-    pruneUnservedPublicAssets(),
+    // EXPERIMENT - restored in the next commit. See PR #28.
+    // pruneUnservedPublicAssets(),
     mode === 'development' &&
     componentTagger(),
   ].filter(Boolean),
