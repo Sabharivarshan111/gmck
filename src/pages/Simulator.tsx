@@ -18,6 +18,7 @@ import {
 import { PhysiologyKernel, SCENARIOS } from '../simulator/engine/PhysiologyKernel';
 import { AnatomicalLayer, DiagnosticToolType, PatientPathologyState, PatientVitals } from '../simulator/types';
 import { AnatomicalBody3D, resolvePartToOrganKey } from '../simulator/view/AnatomicalBody3D';
+import { useIsDesktopLayout } from '@/hooks/use-desktop-layout';
 import { IcuMonitor } from '../simulator/instruments/IcuMonitor';
 import { DiagnosticTools } from '../simulator/instruments/DiagnosticTools';
 import { InterventionPanel } from '../simulator/controls/InterventionPanel';
@@ -64,6 +65,8 @@ export const Simulator: React.FC = () => {
   const [isXray, setIsXray] = useState<boolean>(false);
   const [layerPeel, setLayerPeel] = useState<number>(0.0);
   const [hiddenPartIds, setHiddenPartIds] = useState<string[]>([]);
+  // Only one of the two layouts may hold a 3D view; see use-desktop-layout.ts.
+  const isDesktopLayout = useIsDesktopLayout();
   const [dissectedParts, setDissectedParts] = useState<Part[]>([]);
   const [isolatedPartId, setIsolatedPartId] = useState<string | null>(searchParams.get('isolate') || null);
   const [contextOrganId, setContextOrganId] = useState<string | null>(null);
@@ -447,23 +450,25 @@ export const Simulator: React.FC = () => {
                   </button>
                 </div>
               )}
-              <AnatomicalBody3D
-                vitals={vitals}
-                pathology={pathology}
-                layer={activeLayer}
-                scenarioId={currentScenarioId}
-                cameraPreset={cameraPreset}
-                theme={theme}
-                selectedOrganId={selectedOrganId}
-                contextOrganId={contextOrganId}
-                onSelectOrganId={handleSelect3DOrgan}
-                toolMode={toolMode}
-                isXray={isXray}
-                layerPeel={layerPeel}
-                hiddenPartIds={hiddenPartIds}
-                isolatedPartId={isolatedPartId}
-                onDissectPart={handleDissectPart}
-              />
+              {isDesktopLayout && (
+                <AnatomicalBody3D
+                  vitals={vitals}
+                  pathology={pathology}
+                  layer={activeLayer}
+                  scenarioId={currentScenarioId}
+                  cameraPreset={cameraPreset}
+                  theme={theme}
+                  selectedOrganId={selectedOrganId}
+                  contextOrganId={contextOrganId}
+                  onSelectOrganId={handleSelect3DOrgan}
+                  toolMode={toolMode}
+                  isXray={isXray}
+                  layerPeel={layerPeel}
+                  hiddenPartIds={hiddenPartIds}
+                  isolatedPartId={isolatedPartId}
+                  onDissectPart={handleDissectPart}
+                />
+              )}
             </div>
           </div>
 
@@ -604,23 +609,25 @@ export const Simulator: React.FC = () => {
                   </button>
                 </div>
               )}
-              <AnatomicalBody3D
-                vitals={vitals}
-                pathology={pathology}
-                layer={activeLayer}
-                scenarioId={currentScenarioId}
-                cameraPreset={cameraPreset}
-                theme={theme}
-                selectedOrganId={selectedOrganId}
-                contextOrganId={contextOrganId}
-                onSelectOrganId={handleSelect3DOrgan}
-                toolMode={toolMode}
-                isXray={isXray}
-                layerPeel={layerPeel}
-                hiddenPartIds={hiddenPartIds}
-                isolatedPartId={isolatedPartId}
-                onDissectPart={handleDissectPart}
-              />
+              {!isDesktopLayout && (
+                <AnatomicalBody3D
+                  vitals={vitals}
+                  pathology={pathology}
+                  layer={activeLayer}
+                  scenarioId={currentScenarioId}
+                  cameraPreset={cameraPreset}
+                  theme={theme}
+                  selectedOrganId={selectedOrganId}
+                  contextOrganId={contextOrganId}
+                  onSelectOrganId={handleSelect3DOrgan}
+                  toolMode={toolMode}
+                  isXray={isXray}
+                  layerPeel={layerPeel}
+                  hiddenPartIds={hiddenPartIds}
+                  isolatedPartId={isolatedPartId}
+                  onDissectPart={handleDissectPart}
+                />
+              )}
             </div>
           </div>
 

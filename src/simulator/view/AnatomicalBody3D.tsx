@@ -967,19 +967,26 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
     };
     controlsRef.current = controls;
 
-    // 5. Studio Lighting Rig - Calibrated physiological studio levels (NO color bleaching!)
-    const hemiLight = new THREE.HemisphereLight(0xffffff, 0x64748b, isLight ? 0.40 : 0.50);
+    // 5. Studio lighting rig.
+    //
+    // The four intensities must total no more than STUDIO_LIGHT_CEILING. Past
+    // it, ACESFilmic tone mapping blows the speculars out and the tissue
+    // bleaches towards chalk — a clay model rather than an organ, which is the
+    // one thing this view exists not to be. The light rig was at 2.20 and the
+    // dark one had drifted to 2.60; `npm run check:simulator` holds both now,
+    // because a ceiling written only in prose is a ceiling that drifts.
+    const hemiLight = new THREE.HemisphereLight(0xffffff, 0x64748b, isLight ? 0.40 : 0.44);
     scene.add(hemiLight);
 
-    const keyLight = new THREE.DirectionalLight(0xffffff, isLight ? 1.05 : 1.15);
+    const keyLight = new THREE.DirectionalLight(0xffffff, isLight ? 1.05 : 1.10);
     keyLight.position.set(-2.5, 4, 3.5);
     scene.add(keyLight);
 
-    const rimLight = new THREE.DirectionalLight(0xfff1f2, isLight ? 0.45 : 0.60);
+    const rimLight = new THREE.DirectionalLight(0xfff1f2, isLight ? 0.45 : 0.50);
     rimLight.position.set(2.5, 2.5, -3.5);
     scene.add(rimLight);
 
-    const fillLight = new THREE.DirectionalLight(0xffffff, isLight ? 0.30 : 0.35);
+    const fillLight = new THREE.DirectionalLight(0xffffff, isLight ? 0.30 : 0.26);
     fillLight.position.set(0, -1, 3);
     scene.add(fillLight);
 

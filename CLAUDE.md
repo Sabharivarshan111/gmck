@@ -72,6 +72,106 @@ The 3D Anatomy and Virtual Patient Simulator lives in `src/simulator/`. Full eng
 3. **Clamp mobile DPR to 1.0**: On touch devices, clamp `devicePixelRatio` to `1.0` to avoid GPU tile exhaustion.
 4. **Preserve canvas in DOM during mobile tab switches**: In `src/pages/Simulator.tsx`, toggle visibility via CSS (`display: none` / `display: flex`) rather than unmounting React tree.
 
+5. **But only one `AnatomicalBody3D` may be mounted at a time.** Rule 4 is
+   about the three mobile *tabs*, which share one view. It is not about the
+   desktop and mobile *layouts*, which are two different subtrees — and
+   `hidden lg:grid` / `lg:hidden` hide a subtree with CSS, which leaves it
+   mounted. So both instances existed on every device: two WebGL contexts, and
+   the whole 2,234-part atlas downloaded, decoded and merged into GPU buffers
+   twice, on the phones this is for. Each is gated on `useIsDesktopLayout()`
+   (`src/hooks/use-desktop-layout.ts`) in JS now, and `npm run check:simulator`
+   fails if a third mount appears or a gate is removed.
+
+`npm run check:simulator` holds rule 1 and rule 5, and is in the Web build
+workflow.
+
+### An organ is resolved by whole words, and a rule that claims a key owns it
+
+`src/simulator/data/atlasResolver.ts` maps an organ key to its BodyParts3D
+element ids. It is a **separate module from `AnatomicalBody3D.tsx` on purpose**:
+that file imports `three`, which no plain Node script can load, so the check
+would otherwise have to test a copy of the rules rather than the rules.
+
+Three things it must keep doing, each of which was a bug that shipped:
+
+- **A key selects a rule by whole words.** It was `key.includes('lad')`, so
+  `bladder` — and `gallbladder`, and `urinary bladder` — selected the left
+  anterior descending coronary artery, and isolating the gallbladder lit up
+  twenty-two branches of the LAD.
+- **A rule takes parts by whole words too.** The diaphragm rule also answered
+  for the key `tendon` and then matched any part named `… tendon`, so isolating
+  the diaphragm brought both calcaneal tendons up from the ankles.
+- **A matching rule owns the whole answer.** The set used to be filled from the
+  FMA concept table *and* the system table *and* the rule, in that order, with
+  no way to take anything back out — so the heart's careful exclusion of
+  `cavity of …` (the hollow lumen casts) did nothing, because the concept named
+  "heart" had already added all four chamber cavities. Every exclusion in that
+  file was advisory.
+
+**This atlas has no peripheral nerves.** Search the 2,234 part names for vagus,
+phrenic, splanchnic, sympathetic, recurrent laryngeal, intercostal, pectoral,
+axillary or any limb nerve and the count is zero; it models the CNS and the
+nerves of the orbit. So the vagus fell through to the ciliary ganglia and the
+oculomotor and trochlear nerves, the phrenic nerve to the phrenic *arteries and
+veins*, and `pectoral_nerves` to all 139 parts of the nervous system at once.
+
+A structure the atlas does not hold now resolves to **nothing**, and
+`describeAtlasTarget` returns the reason, which the view shows on screen. The
+dossier text beside it is unaffected — it still teaches the vagus nerve, it
+just does not pretend to draw it. **Do not loosen a rule to fill a blank**:
+a student cannot tell a wrong structure from a right one, which is why they are
+looking at it.
+
+`npm run check:simulator` runs the real resolver against the real
+`public/models/atlas.json` and names every one of those failures. Reverted to
+the old resolver, it fails nineteen ways.
+
+## The website is deployed two ways, and only one of them has a size limit
+
+A push to `main` goes through Vercel's **Git integration**: Vercel clones the
+repo on its own side, runs `npm run build`, and serves `dist/`. Nothing is
+uploaded, so no upload limit applies.
+
+`vercel deploy` — the **CLI**, and anything driving it, which is how an agent or
+an IDE publishes — uploads the working tree, and that upload is capped at
+**100 MB on Hobby**.
+
+This working tree was 728 MB without `.git` and there was no `.vercelignore`,
+so every CLI deployment was refused before it started while merges to `main`
+kept publishing. That is the whole of "the site is live but Antigravity cannot
+update it": not a build failure, not a credential, not a permission.
+
+| What | Why it is not uploaded |
+|---|---|
+| `remotion-ad/`, `hyperframes-ad/` | 238 MB of rendered ad video; the site embeds none of it |
+| `docs/` | 193 MB of scanned clinical PDFs and long-form docs |
+| `screenshots/` | 70 MB of captured app screens |
+| `mobile/` | the native app; `src/data` is shared through an alias, so the dependency runs the other way |
+| `public/diagrams/` | 51 MB staged for the Supabase `diagrams` bucket, read back from that bucket's URL and never served from here |
+| the v8.0 `.glb` engine | 28 MB replaced by the BodyParts3D chunk atlas; no file in `src/` has loaded one since |
+
+Three files hold that, and `npm run check:deploy` fails if they disagree:
+
+- **`.vercelignore`** covers the CLI route. `scripts/` is deliberately **not**
+  excluded — `vite.config.ts` imports `scripts/deploy-excludes.mjs`, and an
+  upload without it cannot build. The root globs are anchored (`/*.mjs`, not
+  `*.mjs`) because an unanchored glob matches at every depth and would take that
+  file with it.
+- **A Vite plugin** removes the same `public/` paths from `dist/`, which is the
+  Git route — it never reads `.vercelignore`.
+- **`scripts/deploy-excludes.mjs`** is the one list both read, with the reason
+  for each entry.
+
+**`public/models` ships one encoding per chunk, not two.** It carried both
+`body-N.bin` and `body-N.bin.gz` for all fifteen — the same 2.2 million
+triangles twice, 57 MB of it redundant. The loader always fetches the `.gz`
+now; `decodeModelResponse` sniffs the gzip magic bytes, so a host that serves it
+with `Content-Encoding: gzip` is handled, and a browser without
+`DecompressionStream` (Safari under 16.4, Firefox under 113 — the only readers
+the raw copy was for) gunzips with `fflate`, already a dependency.
+
+728 MB → 37.3 MB.
+
 
 ## Things that look like bugs but are deliberate
 
@@ -1740,6 +1840,18 @@ npm run check:notes-limits       # every topic still fits the notes function's s
 npm run check:smoke              # drives the real screens; 18 flows, 0 crashes
 npx react-native bundle --platform android --dev false \
   --entry-file index.js --bundle-output /tmp/b.js   # must succeed
+```
+
+The web app has two of its own, run from the **repo root** rather than `mobile/`.
+Both are plain Node with no dependencies, so they work in a sandbox where
+`npm ci` does not, and both are in the `Web build` workflow:
+
+```sh
+npm run check:simulator          # every organ resolves to its own parts, and
+                                 # the studio rig and the single 3D mount hold
+npm run check:deploy             # a `vercel deploy` still fits in the 100 MB
+                                 # upload limit, and .vercelignore has not drifted
+npm run build                    # the check that matters; `main` is a live site
 ```
 
 `check:smoke` selects controls by accessibility label, so a control it cannot

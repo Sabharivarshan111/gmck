@@ -158,6 +158,46 @@ for (const [key, floor] of Object.entries(FLOORS)) {
 }
 
 // ---------------------------------------------------------------------------
+// Two invariants that are not about the resolver, and had each drifted
+// ---------------------------------------------------------------------------
+
+const viewSrc = readFileSync(path.join(root, 'src/simulator/view/AnatomicalBody3D.tsx'), 'utf8');
+
+// 1. The studio rig. Past this, ACESFilmic tone mapping blows the speculars out
+//    and the tissue bleaches towards chalk. CLAUDE.md has said 2.3 since the
+//    view was written; the dark rig had drifted to 2.60 with nothing checking.
+const STUDIO_LIGHT_CEILING = 2.3;
+const intensities = [...viewSrc.matchAll(/new THREE\.(?:Hemisphere|Directional)Light\([^)]*?isLight \? ([\d.]+) : ([\d.]+)\)/g)];
+if (intensities.length < 4) {
+  fail(`only ${intensities.length} studio lights parsed from AnatomicalBody3D — the rig has changed shape and this check no longer measures it`);
+} else {
+  const lightTotal = intensities.reduce((s, m) => s + Number(m[1]), 0);
+  const darkTotal = intensities.reduce((s, m) => s + Number(m[2]), 0);
+  // Floating point: 0.44 + 1.10 + 0.50 + 0.26 is not exactly 2.3.
+  const over = (n) => n - STUDIO_LIGHT_CEILING > 1e-9;
+  if (over(lightTotal)) fail(`light-theme studio rig totals ${lightTotal.toFixed(2)}, over the ${STUDIO_LIGHT_CEILING} ceiling`);
+  if (over(darkTotal)) fail(`dark-theme studio rig totals ${darkTotal.toFixed(2)}, over the ${STUDIO_LIGHT_CEILING} ceiling — the tissue bleaches to clay above it`);
+}
+
+// 2. One 3D view per device.
+//
+//    `hidden lg:grid` and `lg:hidden` hide a subtree with CSS, and a subtree
+//    hidden with CSS is still mounted. Simulator.tsx renders both a desktop and
+//    a mobile layout, so both AnatomicalBody3D instances existed at once on
+//    every device: two WebGL contexts, and the whole 2,234-part atlas
+//    downloaded, decoded and merged into GPU buffers twice, on the phones this
+//    app is for. Each must now be gated on `useIsDesktopLayout()` in JS.
+const simulatorSrc = readFileSync(path.join(root, 'src/pages/Simulator.tsx'), 'utf8');
+const mounts = [...simulatorSrc.matchAll(/<AnatomicalBody3D\b/g)].length;
+const gates = [...simulatorSrc.matchAll(/\{!?isDesktopLayout && \(\s*<AnatomicalBody3D\b/g)].length;
+if (mounts !== gates) {
+  fail(`Simulator.tsx mounts AnatomicalBody3D ${mounts} time(s) but only ${gates} are gated on isDesktopLayout — a CSS-hidden instance still builds a WebGL context and streams the whole atlas`);
+}
+if (!simulatorSrc.includes('useIsDesktopLayout()')) {
+  fail('Simulator.tsx does not call useIsDesktopLayout() — the layout split would be CSS-only again');
+}
+
+// ---------------------------------------------------------------------------
 // Report
 // ---------------------------------------------------------------------------
 
