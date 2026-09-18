@@ -6,6 +6,7 @@ on:
     paths:
       - '.github/workflows/native-screenshots.yml'
       - 'mobile/scripts/native_screenshot_driver.py'
+      - 'mobile/scripts/run_native_screenshot_apk.sh'
   workflow_dispatch:
 
 permissions:
@@ -22,6 +23,16 @@ jobs:
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+
+      - name: Install JS dependencies
+        working-directory: mobile
+        run: npm ci --legacy-peer-deps
 
       # Reuse the already-successful native debug build from this exact v23 app
       # state instead of recompiling React Native a second time.
@@ -53,9 +64,7 @@ jobs:
           disable-linux-hw-accel: false
           disable-animations: true
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -camera-front none
-          script: |
-            adb install -r "$(find downloaded-apk -type f -name '*.apk' | head -1)"
-            ORBIT_PACKAGE="com.aistudio.mbbsqbank.aycxvd.debug" ORBIT_SCREENSHOT_OUT="artifacts/native-screenshots/v23" python3 mobile/scripts/native_screenshot_driver.py
+          script: bash mobile/scripts/run_native_screenshot_apk.sh downloaded-apk/app-preview.apk
 
       - name: Upload native screenshot artifact
         uses: actions/upload-artifact@v4
