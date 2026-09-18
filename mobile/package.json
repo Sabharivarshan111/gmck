@@ -88,7 +88,8 @@
     "shot:species": "node preview/species-shot.mjs",
     "shot:timerrun": "node preview/timer-run-shot.mjs",
     "shot:notetoolbar": "node preview/notetoolbar-shot.mjs",
-    "shot:apkg": "node preview/apkg-shot.mjs"
+    "shot:apkg": "node preview/apkg-shot.mjs",
+    "check:proforma-pdf-extractor": "python3 ../.agents/sources/proformas/extract-pdf-text.py --self-test"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^3.1.1",

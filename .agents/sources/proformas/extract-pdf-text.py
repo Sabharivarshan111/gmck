@@ -10,13 +10,52 @@ import re, sys, zlib
 
 
 def objects(data):
+    """Return indirect objects, including PDF 1.5 compressed object streams."""
     out = {}
     for m in re.finditer(rb'(\d+)\s+(\d+)\s+obj\b', data):
         end = data.find(b'endobj', m.end())
         if end != -1:
             out[int(m.group(1))] = data[m.end():end]
-    return out
 
+    # PDF 1.5 may store ordinary page/font/resource dictionaries inside an
+    # /ObjStm. They have no literal object marker in the raw file, which is
+    # why the old extractor returned zero text for otherwise text-based PDFs.
+    # The payload starts with N pairs: object-number and relative-offset.
+    for _container_num, body in list(out.items()):
+        if not re.search(rb'/Type\s*/ObjStm\b|/ObjStm\b', body):
+            continue
+
+        n_match = re.search(rb'/N\s+(\d+)\b', body)
+        first_match = re.search(rb'/First\s+(\d+)\b', body)
+        if not n_match or not first_match:
+            continue
+
+        payload = stream(body)
+        if payload is None:
+            continue
+
+        count = int(n_match.group(1))
+        first = int(first_match.group(1))
+        if count <= 0 or first < 0 or first > len(payload):
+            continue
+
+        nums = [int(x) for x in re.findall(rb'\d+', payload[:first])]
+        if len(nums) < count * 2:
+            continue
+
+        entries = [(nums[i * 2], nums[i * 2 + 1]) for i in range(count)]
+        for i, (obj_num, rel_offset) in enumerate(entries):
+            obj_start = first + rel_offset
+            obj_end = first + entries[i + 1][1] if i + 1 < len(entries) else len(payload)
+            if obj_start < first or obj_start > obj_end or obj_end > len(payload):
+                continue
+            embedded = payload[obj_start:obj_end].strip()
+            # Prefer a literal object when both copies exist; an incremental
+            # update may leave an older compressed copy behind.
+            if embedded and obj_num not in out:
+                out[obj_num] = embedded
+
+    return out
 
 def stream(body):
     m = re.search(rb'stream\r?\n', body)
@@ -150,4 +189,33 @@ def main(path):
             print()
 
 
-main(sys.argv[1])
+def self_test_objstm():
+    """Dependency-free regression test for compressed object streams."""
+    embedded_5 = b'<< /Type /Page /Contents 7 0 R >>'
+    embedded_6 = b'<< /Type /Font /ToUnicode 8 0 R >>'
+    header = b'5 0 6 ' + str(len(embedded_5) + 1).encode() + b' '
+    payload = header + embedded_5 + b' ' + embedded_6
+    compressed = zlib.compress(payload)
+    pdf = (
+        b'%PDF-1.5\n10 0 obj\n'
+        + b'<< /Type /ObjStm /N 2 /First '
+        + str(len(header)).encode()
+        + b' /Length '
+        + str(len(compressed)).encode()
+        + b' /Filter /FlateDecode >>\nstream\n'
+        + compressed
+        + b'\nendstream\nendobj\n%%EOF\n'
+    )
+    found = objects(pdf)
+    assert found.get(5) == embedded_5, found.get(5)
+    assert found.get(6) == embedded_6, found.get(6)
+    print('extract-pdf-text ObjStm self-test: OK')
+
+
+if __name__ == '__main__':
+    if len(sys.argv) == 2 and sys.argv[1] == '--self-test':
+        self_test_objstm()
+    elif len(sys.argv) == 2:
+        main(sys.argv[1])
+    else:
+        raise SystemExit('usage: extract-pdf-text.py <pdf> | --self-test')
