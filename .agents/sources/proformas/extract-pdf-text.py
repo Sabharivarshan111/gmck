@@ -197,14 +197,14 @@ def self_test_objstm():
     payload = header + embedded_5 + b' ' + embedded_6
     compressed = zlib.compress(payload)
     pdf = (
-        b'%PDF-1.5\\n10 0 obj\\n'
+        b'%PDF-1.5\n10 0 obj\n'
         + b'<< /Type /ObjStm /N 2 /First '
         + str(len(header)).encode()
         + b' /Length '
         + str(len(compressed)).encode()
-        + b' /Filter /FlateDecode >>\\nstream\\n'
+        + b' /Filter /FlateDecode >>\nstream\n'
         + compressed
-        + b'\\nendstream\\nendobj\\n%%EOF\\n'
+        + b'\nendstream\nendobj\n%%EOF\n'
     )
     found = objects(pdf)
     assert found.get(5) == embedded_5, found.get(5)
