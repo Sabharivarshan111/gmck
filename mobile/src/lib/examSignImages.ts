@@ -29,12 +29,33 @@ export interface FetchedSignImage {
 }
 
 export const SIGN_IMAGES: Record<string, FetchedSignImage> = {
+  "build-nourishment": {
+    "commonsTitle": "File:Ancient Egyptian Medicine-starvation-cachexia.JPG",
+    "credit": "Unknown authorUnknown author",
+    "file": "signs/build-nourishment.jpg",
+    "licence": "Public domain",
+    "source": "https://commons.wikimedia.org/w/index.php?curid=33888964"
+  },
   "clubbing": {
     "commonsTitle": "File:Clubbed fingers.JPG",
     "credit": "Bobjgalindo",
     "file": "signs/clubbing.jpg",
     "licence": "CC BY-SA 4.0",
     "source": "https://commons.wikimedia.org/w/index.php?curid=7279968"
+  },
+  "cyanosis-central": {
+    "commonsTitle": "File:Arterial thrombosis causing cyanosis.jpg",
+    "credit": "James Heilman, MD",
+    "file": "signs/cyanosis-central.jpg",
+    "licence": "CC BY-SA 3.0",
+    "source": "https://commons.wikimedia.org/w/index.php?curid=15335626"
+  },
+  "cyanosis-peripheral": {
+    "commonsTitle": "File:Arterial thrombosis causing cyanosis.jpg",
+    "credit": "James Heilman, MD",
+    "file": "signs/cyanosis-peripheral.jpg",
+    "licence": "CC BY-SA 3.0",
+    "source": "https://commons.wikimedia.org/w/index.php?curid=15335626"
   },
   "dupuytren": {
     "commonsTitle": "File:Dupuytren's contracture.jpg",
@@ -49,6 +70,13 @@ export const SIGN_IMAGES: Record<string, FetchedSignImage> = {
     "file": "signs/edema.jpg",
     "licence": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/w/index.php?curid=4646147"
+  },
+  "facies": {
+    "commonsTitle": "File:BASA-3K-7-529-35(7)-Myxedema.jpg",
+    "credit": "Unknown authorUnknown author",
+    "file": "signs/facies.jpg",
+    "licence": "Public domain",
+    "source": "https://commons.wikimedia.org/w/index.php?curid=73878960"
   },
   "icterus": {
     "commonsTitle": "File:Comparison of Cutaneous Jaundice and Scleral Icterus.jpg",
@@ -91,6 +119,27 @@ export const SIGN_IMAGES: Record<string, FetchedSignImage> = {
     "file": "signs/lymphadenopathy.jpg",
     "licence": "CC BY-SA 4.0",
     "source": "https://commons.wikimedia.org/w/index.php?curid=77245466"
+  },
+  "onycholysis": {
+    "commonsTitle": "File:Onycholysis.jpg",
+    "credit": "Alborz Fallah",
+    "file": "signs/onycholysis.jpg",
+    "licence": "CC BY-SA 3.0",
+    "source": "https://commons.wikimedia.org/w/index.php?curid=29036621"
+  },
+  "pallor": {
+    "commonsTitle": "File:P 451 Harper's vol121--Face assumed a deadly pallor.png",
+    "credit": "Elizabeth Shippen Green",
+    "file": "signs/pallor.jpg",
+    "licence": "Public domain",
+    "source": "https://commons.wikimedia.org/w/index.php?curid=126972801"
+  },
+  "palmar-erythema": {
+    "commonsTitle": "File:Palmar erythema.jpg",
+    "credit": "Jmarchn",
+    "file": "signs/palmar-erythema.jpg",
+    "licence": "CC BY-SA 3.0",
+    "source": "https://commons.wikimedia.org/w/index.php?curid=133856309"
   },
   "splinter-haemorrhages": {
     "commonsTitle": "File:Splinter hemorrhage under the microscope.jpg",
