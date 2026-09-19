@@ -31,6 +31,14 @@ export const CURATED_EXAM_PHOTOS: Record<string, CuratedExamPhoto> = {
 export const EXCLUDED_EXAM_PHOTOS = new Set([
   // A microscopic fragment cannot demonstrate the bedside appearance of a nail sign.
   'File:Splinter hemorrhage under the microscope.jpg',
+  // "Traditional bear pallor" — a mistranslation of beer parlour. Calabash
+  // bowls outside a village bar.
+  'File:Traditional bear pallor.jpg',
+  // A ring binder of admission paperwork, not a malnourished patient.
+  'File:Individual records for malnutrition (13897387422) (2).jpg',
+  // A grainy halftone portrait. Genuinely a myxoedema plate, but the facies
+  // is not legible in it, so it teaches nothing.
+  'File:Mild myxedema.jpg',
   // A magazine illustration of two men at a table, from a novel — the caption
   // reads "face assumed a deadly pallor". The words are right; it is a drawing.
   "File:P 451 Harper's vol121--Face assumed a deadly pallor.png",

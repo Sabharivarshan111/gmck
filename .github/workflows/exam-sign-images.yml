@@ -217,6 +217,56 @@ jobs:
                   })
               return out
 
+          # ── Open-i: PMC open-access clinical photographs ───────────────
+          #
+          # The source that should have been first. Commons is a volunteer
+          # media library and Openverse indexes Flickr and museums; neither is
+          # where clinical photographs live. Open-i is the US National Library
+          # of Medicine's image index over PubMed Central's OPEN ACCESS subset
+          # — case reports and journal figures — and it can filter to
+          # PHOTOGRAPHS specifically (`it=ph`), which no other source here can.
+          #
+          # Licences in the PMC OA subset vary per article, so the filter below
+          # is not optional: CC BY and CC0 are taken, everything carrying nc or
+          # nd is refused exactly as everywhere else. Open-i states the licence
+          # per result, and the article URL is kept for attribution.
+          OPENI = 'https://openi.nlm.nih.gov/api/search'
+          OPENI_BAD = re.compile(r'(\bnc\b|non-?commercial|\bnd\b|no-?deriv)', re.I)
+          OPENI_OK = re.compile(r'(cc0|public domain|creative commons attribution|cc.?by)', re.I)
+
+          def openi(term, limit=25):
+              url = OPENI + '?' + urllib.parse.urlencode({
+                  'query': term,
+                  'it': 'ph',      # photographs only — not charts, not graphs
+                  'coll': 'pmc',   # the open-access subset
+                  'm': '1',
+                  'n': str(limit),
+              })
+              req = urllib.request.Request(url, headers={'User-Agent': UA})
+              with urllib.request.urlopen(req, timeout=60) as r:
+                  data = json.load(r)
+              out = []
+              for hit in data.get('list', []):
+                  lic = (hit.get('license') or hit.get('licenseType') or '')
+                  if OPENI_BAD.search(lic) or not OPENI_OK.search(lic):
+                      continue
+                  img = hit.get('imgLarge') or hit.get('imgGrid150')
+                  if not img:
+                      continue
+                  if img.startswith('/'):
+                      img = 'https://openi.nlm.nih.gov' + img
+                  out.append({
+                      'title': (hit.get('image', {}) or {}).get('caption')
+                               or hit.get('title') or term,
+                      'url': img,
+                      'licence': lic.strip(),
+                      'credit': hit.get('journal_title') or 'PubMed Central (open access)',
+                      'source': hit.get('pmcid')
+                                and f"https://www.ncbi.nlm.nih.gov/pmc/articles/{hit['pmcid']}/"
+                                or hit.get('detailedQueryURL') or img,
+                  })
+              return out
+
           def api(**params):
               params.setdefault('format', 'json')
               params.setdefault('action', 'query')
@@ -454,6 +504,30 @@ jobs:
                       break
                   if chosen:
                       break
+
+              # 2b. Open-i first among the non-Commons sources: it is the only
+              #     one whose corpus is clinical and whose filter says
+              #     "photograph".
+              if not chosen:
+                  for term in terms[:3]:
+                      try:
+                          hits = openi(term)
+                      except Exception as e:
+                          print(f'  warn  {sid}: open-i "{term}" failed: {e}')
+                          continue
+                      print(f'  openi {sid}: "{term}" -> {len(hits)} usable-licence photo(s)')
+                      for hit in hits:
+                          cap = hit['title'].lower()
+                          if gate and not any(w.lower() in cap for w in gate):
+                              continue
+                          chosen = (hit['title'][:180], hit['url'],
+                                    {'licence': hit['licence'],
+                                     'credit': hit['credit'],
+                                     'source': hit['source']})
+                          print(f'  openi {sid}: taking "{hit["title"][:90]}"')
+                          break
+                      if chosen:
+                          break
 
               # 3. Openverse, which indexes far more than Commons does.
               if not chosen:

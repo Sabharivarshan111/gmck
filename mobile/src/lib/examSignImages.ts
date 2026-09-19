@@ -29,13 +29,6 @@ export interface FetchedSignImage {
 }
 
 export const SIGN_IMAGES: Record<string, FetchedSignImage> = {
-  "build-nourishment": {
-    "commonsTitle": "File:Individual records for malnutrition (13897387422) (2).jpg",
-    "credit": "Julien Harneis from Sana'a, Yemen",
-    "file": "signs/build-nourishment.jpg",
-    "licence": "CC BY-SA 2.0",
-    "source": "https://commons.wikimedia.org/w/index.php?curid=45248016"
-  },
   "clubbing": {
     "commonsTitle": "File:Clubbed fingers.JPG",
     "credit": "Bobjgalindo",
@@ -63,13 +56,6 @@ export const SIGN_IMAGES: Record<string, FetchedSignImage> = {
     "file": "signs/edema.jpg",
     "licence": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/w/index.php?curid=4646147"
-  },
-  "facies": {
-    "commonsTitle": "File:Mild myxedema.jpg",
-    "credit": "William Seaman Bainbridge",
-    "file": "signs/facies.jpg",
-    "licence": "Public domain",
-    "source": "https://commons.wikimedia.org/w/index.php?curid=114695024"
   },
   "icterus": {
     "commonsTitle": "File:Comparison of Cutaneous Jaundice and Scleral Icterus.jpg",
@@ -119,13 +105,6 @@ export const SIGN_IMAGES: Record<string, FetchedSignImage> = {
     "file": "signs/onycholysis.jpg",
     "licence": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/w/index.php?curid=29036621"
-  },
-  "pallor": {
-    "commonsTitle": "File:Traditional bear pallor.jpg",
-    "credit": "Atomsmex",
-    "file": "signs/pallor.jpg",
-    "licence": "CC BY-SA 4.0",
-    "source": "https://commons.wikimedia.org/w/index.php?curid=180479165"
   },
   "palmar-erythema": {
     "commonsTitle": "File:Palmar erythema.jpg",
