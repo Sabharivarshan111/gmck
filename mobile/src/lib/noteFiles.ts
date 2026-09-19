@@ -383,5 +383,22 @@ export interface InsertedPdfPage {
   noteText?: string;
   imageUrl?: string;
   images?: string[];
+  /**
+   * How tall each attached picture is drawn, in dp, parallel to `images`.
+   *
+   * Optional, and absent on every page written before this existed — a picture
+   * with no entry falls back to the original fixed 220. Storing a *height*
+   * rather than a scale is what lets the control mean what it draws: the grip
+   * is dragged down and the picture gets taller by that many points, with no
+   * divisor between the finger and the edge.
+   *
+   * The marks drawn on a picture are geometry replayed through an SVG
+   * `viewBox` (see `InkedImage`), so they rescale with it for free. That is
+   * the reason resizing is safe here and would not have been if the ink were
+   * pixels.
+   */
+  imageHeights?: number[];
+  /** The face the note's text is written in — see `NOTE_FONTS`. */
+  font?: string;
   created: number;
 }

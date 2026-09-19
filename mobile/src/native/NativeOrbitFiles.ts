@@ -122,6 +122,23 @@ export interface Spec extends TurboModule {
    * android.graphics.pdf.PdfRenderer.
    */
   renderPdf(idOrUri: string, maxPages: number): Promise<string>;
+
+  /**
+   * Put text on the system clipboard. True when it landed.
+   *
+   * This lives on the files module rather than in a module of its own, and
+   * rather than on a clipboard package, for one reason: React Native's own
+   * `Clipboard` is gone from core, and every community replacement is a native
+   * dependency — an AAR, an autolink entry and a ProGuard keep — bought to
+   * call two lines of `ClipboardManager`. This app already owns a registered
+   * TurboModule that does file-shaped work on the reader's behalf, and copying
+   * a note out of the app is the same kind of errand.
+   *
+   * `label` is what Android shows in the clipboard preview on 13+, so it is
+   * the section's own heading rather than the app's name — the reader pasting
+   * three things in a row can tell which is which.
+   */
+  copyText(label: string, text: string): Promise<boolean>;
 }
 
 export default TurboModuleRegistry.get<Spec>('OrbitFiles');

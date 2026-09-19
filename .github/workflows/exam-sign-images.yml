@@ -129,7 +129,12 @@ jobs:
               # these words must be in the file TITLE or the hit is refused.
               g = re.search(r"titleMustContain: \[(.*?)\]", body, re.S)
               gate = re.findall(r"'([^']+)'", g.group(1)) if g else []
-              signs.append((sid, terms, gate))
+              # Named files are tried before the search. Naming a file IS the
+              # corroboration, and a stronger one than a substring of a title,
+              # so the gate is not applied to them. The licence check still is.
+              n = re.search(r"commonsFiles: \[(.*?)\]", body, re.S)
+              named = re.findall(r"'([^']+)'", n.group(1)) if n else []
+              signs.append((sid, terms, gate, named))
 
           only = os.environ.get('ONLY', '').strip()
           if only:
@@ -143,12 +148,47 @@ jobs:
           if m and m.group(1).strip() != '{}':
               manifest = json.loads(m.group(1))
 
-          for sid, terms, gate in signs:
+          for sid, terms, gate, named in signs:
               if sid in manifest and not only:
                   print(f'  skip  {sid} (already has a picture)')
                   continue
               chosen = None
-              for term in terms:
+              # 1. The named files, in order. A title that does not exist comes
+              #    back as a page with 'missing' and is skipped, so a wrong
+              #    guess costs a log line and nothing else.
+              if named:
+                  try:
+                      info = api(prop='imageinfo', titles='|'.join(named),
+                                 iiprop='url|extmetadata|mime|size', iiurlwidth='1200')
+                      pages = info.get('query', {}).get('pages', {})
+                      by_title = {p.get('title'): p for p in pages.values()}
+                      for want in named:
+                          page = by_title.get(want)
+                          if not page or 'missing' in page:
+                              print(f'  miss  {sid}: no such file "{want}"')
+                              continue
+                          ii = (page.get('imageinfo') or [None])[0]
+                          if not ii:
+                              print(f'  miss  {sid}: "{want}" has no image info')
+                              continue
+                          if ii.get('mime') not in ('image/jpeg', 'image/png'):
+                              print(f'  skip  {sid}: "{want}" is {ii.get("mime")}')
+                              continue
+                          lic = acceptable(ii)
+                          if not lic:
+                              short = ii.get('extmetadata', {}).get(
+                                  'LicenseShortName', {}).get('value', '?')
+                              print(f'  deny  {sid}: "{want}" licence {short!r} '
+                                    f'is not commercial-use')
+                              continue
+                          chosen = (want, ii.get('thumburl') or ii['url'], lic)
+                          print(f'  named {sid}: taking "{want}"')
+                          break
+                  except Exception as e:
+                      print(f'  warn  {sid}: named lookup failed: {e}')
+
+              # 2. Only then the keyword search, unchanged.
+              for term in ([] if chosen else terms):
                   try:
                       res = api(list='search', srsearch=term, srnamespace='6', srlimit='12')
                   except Exception as e:
@@ -188,6 +228,35 @@ jobs:
                   print(f'  NONE  {sid} — nothing passed the title gate {gate} with an '
                         f'acceptable licence. It stays text-only, which is the '
                         f'correct outcome, not a bug to loosen the gate for.')
+                  # Say what WAS on offer, which is the difference between a
+                  # blank somebody can act on and one nobody can. A run that
+                  # only prints NONE leaves the next person repeating the same
+                  # search by hand to find out whether the problem is the gate,
+                  # the licence, or that Commons simply has no such picture.
+                  for term in terms[:2]:
+                      try:
+                          res = api(list='search', srsearch=term,
+                                    srnamespace='6', srlimit='8')
+                      except Exception:
+                          continue
+                      hits = [h['title'] for h in res.get('query', {}).get('search', [])]
+                      if not hits:
+                          print(f'        "{term}" -> no files at all')
+                          continue
+                      try:
+                          info = api(prop='imageinfo', titles='|'.join(hits),
+                                     iiprop='url|extmetadata|mime')
+                      except Exception:
+                          continue
+                      print(f'        "{term}" offered:')
+                      for page in info.get('query', {}).get('pages', {}).values():
+                          ii = (page.get('imageinfo') or [None])[0]
+                          short = (ii or {}).get('extmetadata', {}).get(
+                              'LicenseShortName', {}).get('value', '?') if ii else '?'
+                          passes = bool(gate) and any(
+                              w.lower() in page['title'].lower() for w in gate)
+                          print(f'          [{"title-ok" if passes else "gated  "}] '
+                                f'{short:<18} {page["title"]}')
                   continue
 
               title, url, lic = chosen

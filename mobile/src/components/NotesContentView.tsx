@@ -1,6 +1,9 @@
-import React, { memo } from 'react';
+import React, { memo, useCallback, useState } from 'react';
 import { StyleSheet, View, type StyleProp, type TextStyle, type ViewStyle } from 'react-native';
+import { Check, Copy } from 'lucide-react-native';
 import { Text } from '@/components/Text';
+import { Touchable } from '@/components/Touchable';
+import { clipboardAvailable, copyToClipboard } from '@/lib/clipboard';
 import { useTheme, withAlpha } from '@/theme';
 import { DiagramCard } from '@/components/DiagramCard';
 import type { NotesContent, Section } from '@/lib/handwrittenNotes';
@@ -175,8 +178,159 @@ function AskedRow({ years }: { years: string[] }) {
   );
 }
 
+/**
+ * A section as plain text, for the clipboard.
+ *
+ * The reader's friend asked for this on a flowchart and then for "the text,
+ * table or diagram" generally, and the reason is the obvious one: a note is
+ * the answer to a question they are about to write out by hand or paste into
+ * their own document, and until now the only way out of it was a screenshot.
+ *
+ * Two rules it keeps, both of which decide whether the paste is usable:
+ *
+ * - **The markers are stripped, not pasted.** `**bold**` and `==y:…==` are
+ *   this app's way of marking the examinable word; pasted into WhatsApp or a
+ *   Word document they are noise around it. What is copied is what is on
+ *   screen.
+ * - **A table stays a table.** Tab-separated, one row per line — which is what
+ *   every spreadsheet, and Google Docs' paste, reads back as cells. Joining a
+ *   row with spaces would hand over a paragraph that has to be re-split by
+ *   hand, which is most of the work the copy was meant to save.
+ */
+function sectionToText(section: Section): string {
+  const p = section.payload ?? {};
+  const lines: string[] = [section.title];
+  if (section.pyqYears?.length) {
+    lines.push(`Asked in: ${section.pyqYears.join(', ')}`);
+  }
+
+  const push = (text: string) => {
+    const clean = plainInline(text);
+    if (clean) lines.push(clean);
+  };
+
+  switch (section.type) {
+    case 'definition':
+    case 'text':
+    case 'outcome':
+      push(field(p, 'text', 'content', 'description'));
+      break;
+
+    case 'bullets':
+      itemsOf(p.items).forEach(item => {
+        const label = field(item, 'label', 'title');
+        const body = field(item, 'description', 'detail', 'text');
+        push(label && body ? `• ${label} — ${body}` : `• ${label || body}`);
+      });
+      break;
+
+    case 'steps':
+      itemsOf(p.steps).forEach((step, i) => {
+        const label = field(step, 'title', 'label');
+        const body = field(step, 'description', 'detail');
+        push(body ? `${i + 1}. ${label} — ${body}` : `${i + 1}. ${label}`);
+      });
+      break;
+
+    case 'flowchart':
+      itemsOf(p.steps).forEach((step, i, all) => {
+        const label = field(step, 'label', 'title');
+        const body = field(step, 'detail', 'description');
+        push(body ? `${label} — ${body}` : label);
+        if (i < all.length - 1) lines.push('↓');
+      });
+      break;
+
+    case 'comparison':
+      itemsOf(p.rows).forEach(row => {
+        push(
+          [
+            field(row, 'label', 'feature', 'title'),
+            field(row, 'left', 'a'),
+            field(row, 'right', 'b'),
+          ]
+            .filter(Boolean)
+            .join('\t'),
+        );
+      });
+      break;
+
+    case 'morphology':
+      itemsOf(p.items).forEach(item => {
+        push(field(item, 'label', 'title'));
+        detailsOf(item).forEach(d => push(`  • ${d}`));
+      });
+      break;
+
+    case 'table': {
+      const columns = itemsOf(p.columns).map(c => field(c, 'label', 'title'));
+      if (columns.length) push(columns.join('\t'));
+      itemsOf(p.rows).forEach(row => {
+        const cells = Array.isArray(row)
+          ? row.map(cell => field(cell, 'text', 'label'))
+          : itemsOf((row as Record<string, unknown>)?.cells).map(cell =>
+              field(cell, 'text', 'label'),
+            );
+        if (cells.length) push(cells.join('\t'));
+      });
+      break;
+    }
+
+    case 'revision':
+      itemsOf(p.items).forEach(item => push(`• ${field(item, 'text', 'label')}`));
+      break;
+
+    default:
+      /*
+       * An unknown section is not nothing.
+       *
+       * The edge function's vocabulary has grown before and will again, and a
+       * copy button that silently hands over only the heading for a shape this
+       * file has not learned yet is worse than one that hands over the strings
+       * it can find. Every string-valued field, in order, is a fair reading of
+       * "copy what is in this section".
+       */
+      Object.values(p).forEach(value => {
+        if (typeof value === 'string') push(value);
+        else itemsOf(value).forEach(item => push(field(item, 'label', 'title', 'text')));
+      });
+  }
+
+  return lines.filter(Boolean).join('\n');
+}
+
+/** The text with this app's own emphasis markers taken back off. */
+function plainInline(text: string): string {
+  return String(text ?? '')
+    .replace(/!?\[([^\]]*)\]\([^)]*\)/g, '$1') // an image or link keeps its words
+    .replace(/==[a-z]:([^=]+)==/gi, '$1')
+    .replace(/==([^=]+)==/g, '$1')
+    .replace(/\*\*([^*]+)\*\*/g, '$1')
+    .replace(/__([^_]+)__/g, '$1')
+    .replace(/~~([^~]+)~~/g, '$1')
+    .replace(/<\/?[a-z][^>]*>/gi, '')
+    .trim();
+}
+
 function SectionBlock({ section }: { section: Section }) {
   const { colors } = useTheme();
+  const [copied, setCopied] = useState(false);
+
+  /**
+   * "Copied" is shown for a moment and then taken away.
+   *
+   * Android 13 and up posts its own clipboard confirmation, but everything
+   * below it posts nothing at all — and this app's minSdk is 24. Without a
+   * word here, a reader on Android 12 presses copy and the screen does not
+   * change, which is indistinguishable from a button that does nothing. That
+   * exact failure is why `soundAvailable` exists in this codebase.
+   */
+  const onCopy = useCallback(async () => {
+    const ok = await copyToClipboard(section.title, sectionToText(section));
+    if (!ok) return;
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1600);
+  }, [section]);
   /**
    * Definitions and comparisons are marked in red, everything else in green.
    *
@@ -193,9 +347,32 @@ function SectionBlock({ section }: { section: Section }) {
   // so wrapping it in the standard card would frame it twice and title it
   // twice. The web app does the same.
   const isMnemonic = section.type === 'revision';
+  /*
+   * The button is hidden rather than disabled where there is no clipboard.
+   *
+   * That is the preview harness, where react-native-web has no TurboModule to
+   * reach. A visible control that cannot do its job is the thing this app has
+   * already shipped once, in the sound module, and the rule that came out of
+   * it was: absent is honest, present-and-dead is not.
+   */
+  const copyBtn = clipboardAvailable ? (
+    <Touchable
+      onPress={onCopy}
+      label={copied ? `${section.title} copied` : `Copy ${section.title}`}
+      hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+      style={styles.copyBtn}>
+      {copied ? (
+        <Check size={15} color={colors.success} />
+      ) : (
+        <Copy size={15} color={colors.textMuted} />
+      )}
+    </Touchable>
+  ) : null;
+
   if (isMnemonic) {
     return (
       <View>
+        <View style={styles.mnemonicCopyRow}>{copyBtn}</View>
         <AskedRow years={section.pyqYears ?? []} />
         <SectionBody section={section} />
       </View>
@@ -207,6 +384,7 @@ function SectionBlock({ section }: { section: Section }) {
         <View style={[styles.sectionRule, { backgroundColor: accent }]} />
         {section.icon ? <Text style={styles.sectionIcon}>{section.icon}</Text> : null}
         <Text style={[styles.sectionTitle, styles.flex, { color: accent }]}>{section.title}</Text>
+        {copyBtn}
       </View>
       <AskedRow years={section.pyqYears ?? []} />
       <SectionBody section={section} />
@@ -719,6 +897,16 @@ const styles = StyleSheet.create({
   },
   sectionIcon: {
     fontSize: 18,
+  },
+  copyBtn: {
+    minWidth: 30,
+    minHeight: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  mnemonicCopyRow: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
   },
   sectionTitle: {
     flex: 1,

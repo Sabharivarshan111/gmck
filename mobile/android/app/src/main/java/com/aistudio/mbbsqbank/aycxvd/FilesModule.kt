@@ -546,6 +546,39 @@ class FilesModule(reactContext: ReactApplicationContext) :
    */
   private fun sanitise(id: String): String = id.substringAfterLast('/').substringAfterLast('\\')
 
+  /**
+   * Put text on the clipboard.
+   *
+   * `ClipboardManager` has to be touched on the main thread — it talks to the
+   * system clipboard service, and calling it from the TurboModule's own thread
+   * throws on some OEM builds rather than failing quietly. `runOnUiQueueThread`
+   * is how every other main-thread errand in this app is dispatched.
+   *
+   * Android 13 and up shows its own "copied" toast, so posting one of ours as
+   * well would say it twice. The caller is told whether it landed and decides.
+   */
+  override fun copyText(label: String, text: String, promise: Promise) {
+    try {
+      reactApplicationContext.runOnUiQueueThread {
+        try {
+          val manager = reactApplicationContext.getSystemService(Context.CLIPBOARD_SERVICE)
+            as? android.content.ClipboardManager
+          if (manager == null) {
+            promise.resolve(false)
+            return@runOnUiQueueThread
+          }
+          val safeLabel = if (label.isBlank()) "Orbit" else label
+          manager.setPrimaryClip(android.content.ClipData.newPlainText(safeLabel, text))
+          promise.resolve(true)
+        } catch (e: Throwable) {
+          promise.resolve(false)
+        }
+      }
+    } catch (e: Throwable) {
+      promise.resolve(false)
+    }
+  }
+
   companion object {
     const val NAME = "OrbitFiles"
     private const val REQUEST_CODE = 4204

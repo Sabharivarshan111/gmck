@@ -63,6 +63,26 @@ export interface ExamSignImage {
   /** What the fetcher searches for. Ordered: the first acceptable hit wins. */
   search: string[];
   /**
+   * Named Commons files to try **before** searching, in order.
+   *
+   * Search is how most of these were found and it is the wrong tool for the
+   * last few. Commons full-text search ranks the file *page*, so a sign whose
+   * distinctive word is rare in filenames — pallor is the standing example —
+   * returns twelve pages that merely mention it and nothing that depicts it,
+   * and the title gate correctly refuses all twelve. The result is a blank
+   * that no amount of re-running fixes, because the input never changes.
+   *
+   * A named file changes the input. It does **not** change the rules: the
+   * licence check still runs, the MIME check still runs, and a title that does
+   * not exist is skipped and falls through to the search exactly as before. So
+   * naming a bad file costs a log line, and naming a good one is the only way
+   * a human's eyes get into a process that is otherwise a keyword match.
+   *
+   * The title gate is deliberately **not** applied to these — naming the file
+   * *is* the corroboration, and it is a stronger one than a substring test.
+   */
+  commonsFiles?: string[];
+  /**
    * The corroboration gate, and the reason it exists.
    *
    * The first run of the fetch workflow searched Commons and took the first
@@ -127,8 +147,30 @@ export const EXAM_SIGNS: ExamSign[] = [
     pearl:
       'Pallor is a sign of anaemia, not a measurement of it. A normal-looking conjunctiva does not exclude anaemia, and the examiner is asking you to look in more than one place — say all four sites out loud.',
     image: {
-      search: ['conjunctival pallor anaemia', 'pallor lower eyelid anemia', 'anemia palm pallor'],
-      titleMustContain: ['pallor'],
+      /*
+       * Candidates, not a claim. Each is checked on the runner for existence,
+       * MIME and licence before anything is downloaded, and every one that
+       * fails is a printed line rather than a broken picture. They are ordered
+       * by how well they show the sign where a student is told to look: the
+       * conjunctiva first, then the hand.
+       */
+      commonsFiles: [
+        'File:Anemia conjunctiva.jpg',
+        'File:Conjunctival pallor.jpg',
+        'File:Pallor of conjunctiva.jpg',
+        'File:Anemic pallor of the conjunctiva.jpg',
+        'File:Palmar pallor.jpg',
+        'File:Anaemia palmar pallor.jpg',
+        'File:Pale hand anemia.jpg',
+      ],
+      search: [
+        'conjunctival pallor anaemia',
+        'pallor lower eyelid anemia',
+        'anemia palm pallor',
+        'palmar pallor anaemia hand',
+        'pale conjunctiva anaemia clinical',
+      ],
+      titleMustContain: ['pallor', 'pale conjunctiva', 'conjunctival'],
     },
   },
   {

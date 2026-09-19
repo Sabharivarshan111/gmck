@@ -186,4 +186,23 @@ export default {
       ],
     });
   },
+  /**
+   * The browser's own clipboard, so the copy buttons are reachable in the
+   * preview and `check:smoke` can press one.
+   *
+   * It reports **present**, unlike a stub that returned nothing: a copy button
+   * hidden behind `clipboardAvailable` would then never render here, and the
+   * one thing worth checking — that the button exists, is labelled, and hands
+   * over the section's real text — would be unreachable. `writeText` needs a
+   * secure context and a focused document, neither of which is guaranteed in a
+   * headless shot, so a failure resolves false rather than throwing.
+   */
+  copyText: async (_label: string, text: string) => {
+    try {
+      await navigator.clipboard?.writeText(text);
+      return true;
+    } catch {
+      return false;
+    }
+  },
 };

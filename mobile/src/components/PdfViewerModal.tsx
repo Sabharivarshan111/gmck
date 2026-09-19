@@ -1,6 +1,7 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
+  Animated,
   FlatList,
   Image,
   Modal,
@@ -22,7 +23,9 @@ import {
   FilePlus,
   ImagePlus,
   LayoutGrid,
+  Minus,
   PenLine,
+  Plus,
   RotateCcw,
   Search,
   StickyNote,
@@ -41,6 +44,8 @@ import {
   saveNoteInk,
   type NoteInk,
 } from '@/lib/noteImages';
+import { NoteText } from '@/components/NoteText';
+import { NoteToolbar, type Selection } from '@/components/NoteToolbar';
 import {
   openFileExternal,
   renderNotePdf,
@@ -86,6 +91,24 @@ export function PdfViewerModal({ file, visible, onClose }: PdfViewerModalProps) 
   const [currentInk, setCurrentInk] = useState<NoteInk | null>(null);
   const [inkVersion, setInkVersion] = useState(0);
   const [annotatedPages, setAnnotatedPages] = useState<Set<number>>(new Set());
+
+  /**
+   * Which picture the stylus is about to write on.
+   *
+   * This exists because it did not, and the bug was reported from a phone: a
+   * note page may carry several pictures, each with its own ink id, but the
+   * markup canvas was opened with `images[0]` hardcoded. So the second and
+   * third picture could be attached, shown and deleted — and never drawn on.
+   * Every stylus press reopened the first one.
+   *
+   * `null` means the page itself (a PDF page, or a note page's blank sheet),
+   * which is what the header's Stylus button and the side bar still ask for.
+   */
+  const [markupTarget, setMarkupTarget] = useState<{ imageId: string; uri: string } | null>(null);
+
+  /** The caret and text of the note page's box, so the toolbar can edit them. */
+  const [noteSelection, setNoteSelection] = useState<Selection>({ start: 0, end: 0 });
+  const [notePreview, setNotePreview] = useState(false);
 
   // Inserted note pages between PDF pages
   const [insertedPages, setInsertedPages] = useState<InsertedPdfPage[]>([]);
@@ -220,10 +243,21 @@ export function PdfViewerModal({ file, visible, onClose }: PdfViewerModalProps) 
     await openFileExternal(file);
   }, [file]);
 
+  /**
+   * The ink id the stylus is writing to.
+   *
+   * A picture the reader picked owns its marks; with nothing picked the page
+   * itself does. Keeping this in one expression is what stops the canvas, the
+   * save and the undo from disagreeing about which of the three they meant —
+   * which is exactly how drawing on the second picture came to save onto the
+   * first.
+   */
+  const markupImageId = markupTarget?.imageId ?? currentImageId;
+
   const handleDoneDrawing = useCallback(
     async (strokes: Stroke[], size: { width: number; height: number }, paper: string) => {
-      if (!currentImageId) return;
-      await saveNoteInk(currentImageId, {
+      if (!markupImageId) return;
+      await saveNoteInk(markupImageId, {
         strokes,
         width: size.width,
         height: size.height,
@@ -231,9 +265,26 @@ export function PdfViewerModal({ file, visible, onClose }: PdfViewerModalProps) 
       });
       setInkVersion(v => v + 1);
       setMarkupOpen(false);
+      setMarkupTarget(null);
     },
-    [currentImageId],
+    [markupImageId],
   );
+
+  /**
+   * Open the canvas on one particular picture.
+   *
+   * Its existing marks are loaded first and handed to `DrawCanvas` as
+   * `initial`, because a canvas that opens empty over marks still visible on
+   * the page behind it will write that emptiness back over them the moment
+   * Keep is pressed. That is a bug this repo has already had once, on the note
+   * pictures, and the fix there was the same: seed the canvas.
+   */
+  const openMarkupOn = useCallback(async (imageId: string, uri: string) => {
+    const ink = await loadNoteInk(imageId);
+    setCurrentInk(ink);
+    setMarkupTarget({ imageId, uri });
+    setMarkupOpen(true);
+  }, []);
 
   // Jump to specific page
   const handleJumpToPage = useCallback(() => {
@@ -306,19 +357,19 @@ export function PdfViewerModal({ file, visible, onClose }: PdfViewerModalProps) 
     } catch {}
   }, [activeInsertedId, currentPage, insertedPages, persistInsertedPages]);
 
-  // Undo last stylus stroke for current page or blank note
+  // Undo last stylus stroke on whichever picture or page was last drawn on
   const handleUndoInk = useCallback(async () => {
-    if (!currentImageId) return;
-    const ink = await loadNoteInk(currentImageId);
+    if (!markupImageId) return;
+    const ink = await loadNoteInk(markupImageId);
     if (ink && ink.strokes && ink.strokes.length > 0) {
       const nextStrokes = ink.strokes.slice(0, -1);
-      await saveNoteInk(currentImageId, {
+      await saveNoteInk(markupImageId, {
         ...ink,
         strokes: nextStrokes,
       });
       setInkVersion(v => v + 1);
     }
-  }, [currentImageId]);
+  }, [markupImageId]);
 
   // Active inserted note page object if open
   const currentInserted = activeInsertedId
@@ -401,6 +452,54 @@ export function PdfViewerModal({ file, visible, onClose }: PdfViewerModalProps) 
         },
       }),
     [goToNext, goToPrev],
+  );
+
+  /**
+   * The floating Add / Insert / Stylus bar can be dragged out of the way.
+   *
+   * It is pinned to the right edge at 30% of the height, and the page under it
+   * is the reader's, not ours — on a note page carrying two pictures it landed
+   * on top of the second one. Moving the buttons that were underneath it is
+   * one fix and was applied; letting the reader move the *bar* is the other,
+   * and it is the one they asked for, because whatever is under it next time
+   * will be something else.
+   *
+   * The offset is an `Animated.ValueXY` written by the gesture on the native
+   * thread and read back through a ref at grant, which is the pattern the home
+   * block resize needed for the same reason: a responder rebuilt mid-gesture
+   * has never seen the grant that recorded where the finger started, and the
+   * drag stops after one frame. It is deliberately not persisted — a toolbar
+   * that reopens where it was last shoved, on a different page with different
+   * content under it, is a setting nobody asked to keep.
+   */
+  const barOffset = useRef(new Animated.ValueXY({ x: 0, y: 0 })).current;
+  const barAt = useRef({ x: 0, y: 0 });
+  const barPan = useMemo(
+    () =>
+      PanResponder.create({
+        onMoveShouldSetPanResponder: (_, g) => Math.abs(g.dx) > 4 || Math.abs(g.dy) > 4,
+        onPanResponderGrant: () => {
+          barOffset.setOffset({ x: barAt.current.x, y: barAt.current.y });
+          barOffset.setValue({ x: 0, y: 0 });
+        },
+        onPanResponderMove: Animated.event([null, { dx: barOffset.x, dy: barOffset.y }], {
+          useNativeDriver: false,
+        }),
+        onPanResponderRelease: (_, g) => {
+          /*
+           * Clamped so it cannot be thrown off the screen and lost. The bar is
+           * the only way back to Add page and Insert image, so a drag that put
+           * it behind the status bar or past the right edge would take those
+           * with it and leave no way to get them back but closing the file.
+           */
+          const x = Math.max(-(windowWidth - 90), Math.min(12, barAt.current.x + g.dx));
+          const y = Math.max(-windowHeight * 0.25, Math.min(windowHeight * 0.4, barAt.current.y + g.dy));
+          barAt.current = { x, y };
+          barOffset.flattenOffset();
+          barOffset.setValue({ x, y });
+        },
+      }),
+    [barOffset, windowWidth, windowHeight],
   );
 
   // Search matches across pages and inserted notes
@@ -822,38 +921,162 @@ export function PdfViewerModal({ file, visible, onClose }: PdfViewerModalProps) 
                         : [];
 
                     if (noteImages.length > 0) {
+                      const heights = currentInserted.imageHeights ?? [];
                       return (
                         <View style={styles.multiImgContainer}>
-                          {noteImages.map((uri, idx) => (
-                            <View key={`${uri}_${idx}`} style={styles.multiImgCard}>
-                              <InkedImage
-                                key={`${currentImageId}_${idx}-${inkVersion}`}
-                                uri={uri}
-                                imageId={idx === 0 ? currentImageId : `${currentImageId}_sub_${idx}`}
-                                ownShape
-                                style={styles.insertedImg}
-                                title={`Diagram ${idx + 1}`}
-                              />
-                              <Touchable
-                                onPress={() => {
-                                  const nextImages = noteImages.filter((_, i) => i !== idx);
-                                  const next = insertedPages.map(p =>
-                                    p.id === currentInserted.id
-                                      ? {
-                                          ...p,
-                                          images: nextImages,
-                                          imageUrl: nextImages[0] || undefined,
-                                        }
-                                      : p,
-                                  );
-                                  persistInsertedPages(next);
-                                }}
-                                label={`Delete image ${idx + 1}`}
-                                style={styles.deleteImgBadge}>
-                                <Trash2 size={12} color="#FFFFFF" />
-                              </Touchable>
-                            </View>
-                          ))}
+                          {noteImages.map((uri, idx) => {
+                            /*
+                             * The ink id, and why it is written out twice.
+                             *
+                             * The first picture is filed under the page's own
+                             * id and the rest under `_sub_N`. That is not a
+                             * shape anybody would choose, but it is the shape
+                             * the marks already on people's phones are filed
+                             * under, and changing it would orphan every one of
+                             * them silently. So it is kept, and named once
+                             * here rather than recomputed at each use.
+                             */
+                            const inkId =
+                              idx === 0 ? currentImageId : `${currentImageId}_sub_${idx}`;
+                            const imgHeight = heights[idx] ?? 220;
+                            const writePage = (patch: Partial<InsertedPdfPage>) => {
+                              persistInsertedPages(
+                                insertedPages.map(p =>
+                                  p.id === currentInserted.id ? { ...p, ...patch } : p,
+                                ),
+                              );
+                            };
+                            const reorder = (to: number) => {
+                              if (to < 0 || to >= noteImages.length) return;
+                              const imgs = [...noteImages];
+                              const hs = noteImages.map((_, i) => heights[i] ?? 220);
+                              [imgs[idx], imgs[to]] = [imgs[to], imgs[idx]];
+                              [hs[idx], hs[to]] = [hs[to], hs[idx]];
+                              writePage({
+                                images: imgs,
+                                imageHeights: hs,
+                                imageUrl: imgs[0] || undefined,
+                              });
+                            };
+                            const resize = (by: number) => {
+                              const hs = noteImages.map((_, i) => heights[i] ?? 220);
+                              hs[idx] = Math.max(120, Math.min(560, hs[idx] + by));
+                              writePage({ imageHeights: hs });
+                            };
+                            return (
+                              <View key={`${uri}_${idx}`}>
+                                <View style={[styles.multiImgCard, { height: imgHeight }]}>
+                                  <InkedImage
+                                    key={`${inkId}-${inkVersion}`}
+                                    uri={uri}
+                                    imageId={inkId}
+                                    ownShape
+                                    style={styles.insertedImg}
+                                    title={`Diagram ${idx + 1}`}
+                                  />
+                                </View>
+
+                                {/*
+                                  * The controls sit UNDER the picture, not on it.
+                                  *
+                                  * They were a red badge in the top-right corner of
+                                  * each card, and the floating Add/Insert/Stylus bar
+                                  * is pinned to `right: 12, top: '30%'` — so on a page
+                                  * with two pictures the bar landed squarely over the
+                                  * second one's delete button. It was reported exactly
+                                  * that way: "delete button is not visible for 2nd
+                                  * image". A row below the picture cannot be covered by
+                                  * something pinned to the right edge, and it also has
+                                  * room for the four controls a picture now has rather
+                                  * than the one it had.
+                                  */}
+                                <View style={styles.imgToolRow}>
+                                  <Touchable
+                                    onPress={() => openMarkupOn(inkId, uri)}
+                                    label={`Draw on image ${idx + 1} of ${noteImages.length}`}
+                                    style={[
+                                      styles.imgToolBtn,
+                                      { backgroundColor: withAlpha(colors.primary, 0.15) },
+                                    ]}>
+                                    <PenLine size={14} color={colors.primary} />
+                                    <Text style={[styles.imgToolText, { color: colors.primary }]}>
+                                      Draw
+                                    </Text>
+                                  </Touchable>
+
+                                  <Touchable
+                                    onPress={() => resize(-60)}
+                                    label={`Make image ${idx + 1} smaller`}
+                                    style={[
+                                      styles.imgToolBtn,
+                                      { backgroundColor: withAlpha(colors.textMuted, 0.12) },
+                                    ]}>
+                                    <Minus size={14} color={colors.text} />
+                                  </Touchable>
+                                  <Touchable
+                                    onPress={() => resize(60)}
+                                    label={`Make image ${idx + 1} bigger`}
+                                    style={[
+                                      styles.imgToolBtn,
+                                      { backgroundColor: withAlpha(colors.textMuted, 0.12) },
+                                    ]}>
+                                    <Plus size={14} color={colors.text} />
+                                  </Touchable>
+
+                                  {noteImages.length > 1 ? (
+                                    <>
+                                      <Touchable
+                                        onPress={() => reorder(idx - 1)}
+                                        disabled={idx === 0}
+                                        label={`Move image ${idx + 1} up`}
+                                        style={[
+                                          styles.imgToolBtn,
+                                          {
+                                            backgroundColor: withAlpha(colors.textMuted, 0.12),
+                                            opacity: idx === 0 ? 0.35 : 1,
+                                          },
+                                        ]}>
+                                        <ChevronUp size={14} color={colors.text} />
+                                      </Touchable>
+                                      <Touchable
+                                        onPress={() => reorder(idx + 1)}
+                                        disabled={idx === noteImages.length - 1}
+                                        label={`Move image ${idx + 1} down`}
+                                        style={[
+                                          styles.imgToolBtn,
+                                          {
+                                            backgroundColor: withAlpha(colors.textMuted, 0.12),
+                                            opacity: idx === noteImages.length - 1 ? 0.35 : 1,
+                                          },
+                                        ]}>
+                                        <ChevronDown size={14} color={colors.text} />
+                                      </Touchable>
+                                    </>
+                                  ) : null}
+
+                                  <Touchable
+                                    onPress={() => {
+                                      const imgs = noteImages.filter((_, i) => i !== idx);
+                                      const hs = noteImages
+                                        .map((_, i) => heights[i] ?? 220)
+                                        .filter((_, i) => i !== idx);
+                                      writePage({
+                                        images: imgs,
+                                        imageHeights: hs,
+                                        imageUrl: imgs[0] || undefined,
+                                      });
+                                    }}
+                                    label={`Delete image ${idx + 1} of ${noteImages.length}`}
+                                    style={[
+                                      styles.imgToolBtn,
+                                      { backgroundColor: withAlpha(colors.danger ?? '#ef4444', 0.15) },
+                                    ]}>
+                                    <Trash2 size={14} color={colors.danger ?? '#ef4444'} />
+                                  </Touchable>
+                                </View>
+                              </View>
+                            );
+                          })}
                         </View>
                       );
                     }
@@ -873,20 +1096,73 @@ export function PdfViewerModal({ file, visible, onClose }: PdfViewerModalProps) 
                     );
                   })()}
 
-                  {/* Text Notes */}
-                  <TextInput
-                    multiline
+                  {/*
+                    * Text notes, with the same toolbar the Notes tab has.
+                    *
+                    * This box was a bare `TextInput`. Everywhere else in the app
+                    * that a note is written — Progress → Notes — there is a row
+                    * of buttons above it for headings, bullets, numbers, bold,
+                    * italic and the highlighter, and the reader's friend asked,
+                    * reasonably, why the page inside a PDF did not have them.
+                    *
+                    * Nothing about the storage changes: the note is still the
+                    * text that was typed, markers and all, so a page written
+                    * before this still reads correctly and a page written now
+                    * still reads if this component is deleted tomorrow. That is
+                    * the same contract `NoteToolbar` was built on.
+                    */}
+                  <NoteToolbar
                     value={currentInserted.noteText ?? ''}
-                    onChangeText={txt => {
-                      const next = insertedPages.map(p =>
-                        p.id === currentInserted.id ? { ...p, noteText: txt } : p,
+                    selection={noteSelection}
+                    font={currentInserted.font ?? null}
+                    onFont={key => {
+                      persistInsertedPages(
+                        insertedPages.map(p =>
+                          p.id === currentInserted.id ? { ...p, font: key } : p,
+                        ),
                       );
-                      persistInsertedPages(next);
                     }}
-                    placeholder="Type personal study points, lecture pearls, or clinical takeaways here…"
-                    placeholderTextColor={colors.textMuted}
-                    style={[styles.insertedInput, { color: colors.text }]}
+                    isPreview={notePreview}
+                    onTogglePreview={() => setNotePreview(v => !v)}
+                    onChange={(text, cursor, select) => {
+                      persistInsertedPages(
+                        insertedPages.map(p =>
+                          p.id === currentInserted.id ? { ...p, noteText: text } : p,
+                        ),
+                      );
+                      setNoteSelection(select ?? { start: cursor, end: cursor });
+                    }}
                   />
+
+                  {notePreview ? (
+                    <View style={styles.notePreviewBox}>
+                      {(currentInserted.noteText ?? '').trim() ? (
+                        <NoteText
+                          content={currentInserted.noteText ?? ''}
+                          font={currentInserted.font ?? null}
+                        />
+                      ) : (
+                        <Text style={[styles.notePreviewEmpty, { color: colors.textMuted }]}>
+                          Nothing written yet — switch back to Edit and type.
+                        </Text>
+                      )}
+                    </View>
+                  ) : (
+                    <TextInput
+                      multiline
+                      value={currentInserted.noteText ?? ''}
+                      onChangeText={txt => {
+                        const next = insertedPages.map(p =>
+                          p.id === currentInserted.id ? { ...p, noteText: txt } : p,
+                        );
+                        persistInsertedPages(next);
+                      }}
+                      onSelectionChange={e => setNoteSelection(e.nativeEvent.selection)}
+                      placeholder="Type personal study points, lecture pearls, or clinical takeaways here…"
+                      placeholderTextColor={colors.textMuted}
+                      style={[styles.insertedInput, { color: colors.text }]}
+                    />
+                  )}
                 </View>
               ) : currentPageObj ? (
                 /* Native PDF Rendered Page with Inked Annotations */
@@ -903,11 +1179,16 @@ export function PdfViewerModal({ file, visible, onClose }: PdfViewerModalProps) 
 
             {/* Floating Side Action Bar: Add Page, Insert Image, Stylus (only shown when edit button clicked) */}
             {editBarOpen ? (
-              <View
+              <Animated.View
+                {...barPan.panHandlers}
                 style={[
                   styles.sideToolbar,
                   { backgroundColor: colors.card, borderColor: colors.border },
+                  { transform: barOffset.getTranslateTransform() },
                 ]}>
+                {/* The grip. Without something that looks draggable, a bar that
+                    can be dragged is a bar nobody drags. */}
+                <View style={[styles.barGrip, { backgroundColor: colors.border }]} />
                 {/* 1. Add Note Page between PDF */}
                 <Touchable
                   onPress={handleAddBlankNotePage}
@@ -942,7 +1223,7 @@ export function PdfViewerModal({ file, visible, onClose }: PdfViewerModalProps) 
                   ]}>
                   <PenLine size={20} color={colors.primary} />
                 </Touchable>
-              </View>
+              </Animated.View>
             ) : null}
 
             {/* Bottom Page Navigation Bar & Page Jump Popover (Unified Continuous Sequence) */}
@@ -1113,15 +1394,26 @@ export function PdfViewerModal({ file, visible, onClose }: PdfViewerModalProps) 
 
         {/* Fullscreen DrawCanvas for Markup / Annotation */}
         {markupOpen && (currentPageObj || currentInserted) ? (
-          <Modal visible onRequestClose={() => setMarkupOpen(false)} animationType="fade">
+          <Modal
+            visible
+            onRequestClose={() => {
+              setMarkupOpen(false);
+              setMarkupTarget(null);
+            }}
+            animationType="fade">
             <DrawCanvas
               uri={
-                currentInserted
+                markupTarget
+                  ? markupTarget.uri
+                  : currentInserted
                   ? currentInserted.images?.[0] ?? currentInserted.imageUrl ?? ''
                   : currentPageObj?.uri ?? ''
               }
               initial={currentInk}
-              onCancel={() => setMarkupOpen(false)}
+              onCancel={() => {
+                setMarkupOpen(false);
+                setMarkupTarget(null);
+              }}
               onDone={handleDoneDrawing}
             />
           </Modal>
@@ -1232,6 +1524,41 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 8,
     elevation: 6,
+  },
+  barGrip: {
+    width: 22,
+    height: 3,
+    borderRadius: 2,
+    alignSelf: 'center',
+    marginBottom: 2,
+  },
+  imgToolRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: 6,
+    marginTop: 6,
+  },
+  imgToolBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    minHeight: 32,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 8,
+  },
+  imgToolText: {
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  notePreviewBox: {
+    minHeight: 180,
+    paddingTop: 4,
+  },
+  notePreviewEmpty: {
+    fontSize: 13,
+    fontStyle: 'italic',
   },
   sideActionBtn: {
     width: 42,
@@ -1501,17 +1828,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     overflow: 'hidden',
     backgroundColor: '#000000',
-  },
-  deleteImgBadge: {
-    position: 'absolute',
-    top: 6,
-    right: 6,
-    backgroundColor: 'rgba(239, 68, 68, 0.85)',
-    borderRadius: 12,
-    padding: 6,
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 10,
   },
   blankCanvasBox: {
     width: '100%',

@@ -133,6 +133,25 @@ export function ClinicalProformaModal({
     null,
   );
 
+  /**
+   * The diagram's own proportions, so the card stops padding it with black.
+   *
+   * The plate was drawn into a fixed `width: '100%', height: 220` box with
+   * `resizeMode="contain"` over a `#000000` ground. Contain preserves the
+   * aspect ratio, so a *portrait* plate — the mitral stenosis heart, most of
+   * the anatomy ones — was scaled down until its height fitted 220dp and the
+   * remaining width on both sides was painted black. That is the gap the
+   * reader's friend circled and asked "Y is that space bro". It was not a
+   * misaligned image: it was the image being correct inside a box the wrong
+   * shape for it.
+   *
+   * `Image.getSize` is asked once per plate and the card then takes the
+   * picture's own ratio, bounded so a very tall plate cannot push the rest of
+   * the sheet off the screen. Until it answers the old 220 stands, so a slow
+   * network shows a sensible box rather than a collapsed one.
+   */
+  const [diagramAspect, setDiagramAspect] = useState<number | null>(null);
+
   // Clerking draft state for current proforma
   const [draft, setDraft] = useState<PatientClerkingDraft>(() =>
     activeProforma ? getCanonicalCaseDraft(activeProforma.id) : getCanonicalCaseDraft('cvs_proforma'),
@@ -197,6 +216,10 @@ export function ClinicalProformaModal({
     // Reset expanded viva to first item and clear active chat when changing proforma
     setExpandedViva({ 0: true });
     setChatMessages([]);
+    /* And forget the last plate's shape — keeping it would draw the new one
+       into the old one's box, which is the bug this measurement exists to fix,
+       just one proforma later. */
+    setDiagramAspect(null);
 
     return () => {
       cancelled = true;
@@ -607,11 +630,35 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                           }
                         }}
                         label="View clinical diagram full screen"
-                        style={styles.diagramImageTouch}>
+                        style={[
+                          styles.diagramImageTouch,
+                          /* The ground is the card, not black. A plate whose
+                             ratio is not quite the box's still letterboxes by a
+                             pixel or two, and against the card that is
+                             invisible where against black it is a frame. */
+                          { backgroundColor: colors.cardElevated },
+                        ]}>
                         <Image
                           source={{ uri: resolveProformaDiagramUrl(activeProforma.diagramPath) }}
-                          style={styles.diagramImage}
+                          style={[
+                            styles.diagramImage,
+                            diagramAspect
+                              ? { aspectRatio: diagramAspect, height: undefined }
+                              : null,
+                          ]}
                           resizeMode="contain"
+                          onLoad={e => {
+                            const source = e.nativeEvent?.source;
+                            const w = source?.width ?? 0;
+                            const h = source?.height ?? 0;
+                            if (!w || !h) return;
+                            /* Bounded: a panorama wider than 2.2 and a plate
+                               taller than 0.5 are both clamped, because the
+                               card sits in a scrolling sheet and a plate that
+                               fills the screen on its own buries the section
+                               under it. Full View is one tap away for those. */
+                            setDiagramAspect(Math.max(0.5, Math.min(2.2, w / h)));
+                          }}
                         />
                         <View style={styles.maximizeBadge}>
                           <Maximize2 size={14} color="#FFFFFF" />
