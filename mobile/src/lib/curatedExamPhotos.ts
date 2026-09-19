@@ -46,6 +46,8 @@ export const EXCLUDED_EXAM_PHOTOS = new Set([
   // A Victorian "medical curiosity" photograph whose title is a slur. Neither
   // the dignity nor the teaching value is acceptable in a modern app.
   'File:Microcephalic idiot with local myxedema.jpg',
+  // A statistical infographic about hospital stays. A chart is not a sign.
+  'File:Characteristics of Hospital Stays Involving Malnutrition, 2013 Infographic.jpg',
 ]);
 export function examPhotoCaption(id: string): string | undefined {
   if (id === 'koplik-and-oral') return 'Angular cheilitis — this example is not Koplik spots.';

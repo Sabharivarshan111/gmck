@@ -254,7 +254,16 @@ jobs:
                   'mobile/src/lib/curatedExamPhotos.ts').read_text()
               m_ban = re.search(r'EXCLUDED_EXAM_PHOTOS\s*=\s*new Set\(\[(.*?)\]\)',
                                 banned_src, re.S)
-              BANNED = set(re.findall(r"'([^']+)'", m_ban.group(1))) if m_ban else set()
+              # Match the CLOSING quote with a backreference, not "any quote".
+              #
+              # One of these titles contains an apostrophe — "File:P 451
+              # Harper's vol121--Face assumed a deadly pallor.png" — so it is
+              # written in double quotes, and a single-quote pattern latched
+              # onto that apostrophe and desynchronised every entry after it.
+              # The list silently shrank to one, and the wrestler this list
+              # exists to keep out was fetched again on the very next run.
+              BANNED = {t for _, t in
+                        re.findall(r"(['\"])(File:.*?)\1", m_ban.group(1))} if m_ban else set()
           except Exception:
               BANNED = set()
           print(f'{len(BANNED)} file(s) previously rejected by a human will be refused')
@@ -459,6 +468,8 @@ jobs:
                           if gate and not any(w.lower() in t_l for w in gate):
                               continue
                           if NOT_A_PHOTOGRAPH.search(hit['title']):
+                              continue
+                          if hit['title'] in BANNED:
                               continue
                           if any(v.get('commonsTitle') == hit['title']
                                  for v in manifest.values()):
