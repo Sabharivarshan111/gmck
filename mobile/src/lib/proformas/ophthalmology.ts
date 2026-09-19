@@ -6,7 +6,7 @@
  * the history, the full ocular examination sequence in the order it is
  * performed, and the viva differentials by mode of visual loss.
  *
- * The same rule as the ENT file: the general examination (PICCKLE) is not
+ * The same rule as the ENT file: the general examination (PICCLE) is not
  * repeated here. It is drawn once, with a photograph of each sign, from
  * `generalExamSigns.ts`.
  *

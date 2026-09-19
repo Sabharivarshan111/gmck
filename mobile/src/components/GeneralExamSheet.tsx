@@ -54,7 +54,7 @@ export function GeneralExamSheet({ visible, onClose }: GeneralExamSheetProps) {
           <View style={styles.headerText}>
             <Text style={[styles.title, { color: colors.text }]}>General Examination</Text>
             <Text style={[styles.subtitle, { color: colors.textMuted }]}>
-              PICCKLE and the nail signs, with photographs
+              PICCLE and the nail signs, with photographs
             </Text>
           </View>
         </View>

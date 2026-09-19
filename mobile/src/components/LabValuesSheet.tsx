@@ -1,3 +1,4 @@
+import { labDisplayText } from '@/lib/labDisplayText';
 /**
  * Normal laboratory values, as a full-screen reference.
  *
@@ -24,7 +25,7 @@
  * shipped once with its Keep button under the system clock for want of it.
  */
 import React, { useMemo, useState } from 'react';
-import { Modal, ScrollView, StyleSheet, TextInput, View } from 'react-native';
+import { Linking, Modal, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AlertTriangle, ArrowLeft, Search, X } from 'lucide-react-native';
 import { Text } from '@/components/Text';
@@ -50,6 +51,7 @@ export function LabValuesSheet({ visible, onClose }: LabValuesSheetProps) {
     }
     const matches = (v: LabValue) =>
       v.name.toLowerCase().includes(q) ||
+      (v.aliases ?? []).some(alias => alias.toLowerCase().includes(q)) ||
       v.conventional.toLowerCase().includes(q) ||
       (v.si ?? '').toLowerCase().includes(q) ||
       (v.note ?? '').toLowerCase().includes(q) ||
@@ -57,7 +59,7 @@ export function LabValuesSheet({ visible, onClose }: LabValuesSheetProps) {
         variant =>
           variant.label.toLowerCase().includes(q) || variant.value.toLowerCase().includes(q),
       );
-    return LAB_VALUES.map(s => ({ group: s.group, values: s.values.filter(matches) })).filter(
+    return LAB_VALUES.map(s => ({ group: s.group, values: s.group.toLowerCase().includes(q) ? s.values : s.values.filter(matches) })).filter(
       s => s.values.length > 0,
     );
   }, [query]);
@@ -78,9 +80,9 @@ export function LabValuesSheet({ visible, onClose }: LabValuesSheetProps) {
             <ArrowLeft size={22} color={colors.text} />
           </Touchable>
           <View style={styles.headerText}>
-            <Text style={[styles.title, { color: colors.text }]}>Normal Lab Values</Text>
+            <Text style={[styles.title, { color: colors.text }]}>Normal Values & Grading</Text>
             <Text style={[styles.subtitle, { color: colors.textMuted }]}>
-              Adult reference ranges unless stated
+              Laboratory ranges and bedside classifications
             </Text>
           </View>
         </View>
@@ -90,7 +92,7 @@ export function LabValuesSheet({ visible, onClose }: LabValuesSheetProps) {
           <TextInput
             value={query}
             onChangeText={setQuery}
-            placeholder="Sodium, haemoglobin, CSF, ABG…"
+            placeholder="Search a test, sign or grading system…"
             placeholderTextColor={colors.textMuted}
             style={[styles.searchInput, { color: colors.text }]}
           />
@@ -132,9 +134,9 @@ export function LabValuesSheet({ visible, onClose }: LabValuesSheetProps) {
                   key={value.name}
                   style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
                   <Text style={[styles.name, { color: colors.text }]}>{value.name}</Text>
-                  <Text style={[styles.value, { color: colors.accent }]}>{value.conventional}</Text>
+                  <Text style={[styles.value, { color: colors.accent }]}>{labDisplayText(value.conventional)}</Text>
                   {value.si ? (
-                    <Text style={[styles.si, { color: colors.textMuted }]}>{value.si}</Text>
+                    <Text style={[styles.si, { color: colors.textMuted }]}>{labDisplayText(value.si)}</Text>
                   ) : null}
 
                   {value.variants && value.variants.length > 0 ? (
@@ -145,7 +147,7 @@ export function LabValuesSheet({ visible, onClose }: LabValuesSheetProps) {
                             {variant.label}
                           </Text>
                           <Text style={[styles.variantValue, { color: colors.text }]}>
-                            {variant.value}
+                            {labDisplayText(variant.value)}
                           </Text>
                         </View>
                       ))}
@@ -167,13 +169,18 @@ export function LabValuesSheet({ visible, onClose }: LabValuesSheetProps) {
                         CRITICAL
                       </Text>
                       <Text style={[styles.criticalText, { color: colors.text }]}>
-                        {value.critical}
+                        {labDisplayText(value.critical)}
                       </Text>
                     </View>
                   ) : null}
 
+                  {value.source ? (
+                    <Touchable label={`Read reference for ${value.name}`} onPress={() => Linking.openURL(value.source!).catch(() => {})} style={{ minHeight: 44, justifyContent: 'center' }}>
+                      <Text style={{ color: colors.accent }}>Read clinical reference</Text>
+                    </Touchable>
+                  ) : null}
                   {value.note ? (
-                    <Text style={[styles.note, { color: colors.textMuted }]}>{value.note}</Text>
+                    <Text style={[styles.note, { color: colors.textMuted }]}>{labDisplayText(value.note)}</Text>
                   ) : null}
                 </View>
               ))}
@@ -230,7 +237,7 @@ const styles = StyleSheet.create({
     borderWidth: StyleSheet.hairlineWidth,
     marginBottom: 18,
   },
-  disclaimerText: { flex: 1, fontSize: 12, lineHeight: 17 },
+  disclaimerText: { flex: 1, fontSize: 15, lineHeight: 22 },
   section: { marginBottom: 20 },
   groupTitle: { fontSize: 11, fontWeight: '700', letterSpacing: 0.9, marginBottom: 8 },
   card: {
@@ -239,13 +246,13 @@ const styles = StyleSheet.create({
     padding: 13,
     marginBottom: 8,
   },
-  name: { fontSize: 14, fontWeight: '600' },
-  value: { fontSize: 14, fontWeight: '600', marginTop: 3 },
+  name: { fontSize: 16, lineHeight: 24, fontWeight: '600' },
+  value: { fontSize: 16, lineHeight: 24, fontWeight: '600', marginTop: 3 },
   si: { fontSize: 12, marginTop: 2 },
   variants: { marginTop: 8, gap: 3 },
-  variantRow: { flexDirection: 'row', gap: 8 },
-  variantLabel: { fontSize: 12, width: 132 },
-  variantValue: { flex: 1, fontSize: 12 },
+  variantRow: { gap: 3, paddingVertical: 6 },
+  variantLabel: { fontSize: 15, lineHeight: 22, fontWeight: '600' },
+  variantValue: { fontSize: 15, lineHeight: 22 },
   critical: {
     marginTop: 9,
     padding: 9,
@@ -253,8 +260,8 @@ const styles = StyleSheet.create({
     borderWidth: StyleSheet.hairlineWidth,
   },
   criticalLabel: { fontSize: 10, fontWeight: '700', letterSpacing: 0.7, marginBottom: 2 },
-  criticalText: { fontSize: 12, lineHeight: 17 },
-  note: { fontSize: 12, lineHeight: 17, marginTop: 8 },
+  criticalText: { fontSize: 15, lineHeight: 22 },
+  note: { fontSize: 15, lineHeight: 22, marginTop: 8 },
   empty: { paddingVertical: 48, alignItems: 'center' },
   emptyTitle: { fontSize: 16, fontWeight: '600', marginBottom: 6 },
   emptyBody: { fontSize: 13, textAlign: 'center' },

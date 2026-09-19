@@ -596,3 +596,47 @@ is the correct outcome — **do not loosen the gate**.
 - Readiness belongs to an ad instance, not to a module-level boolean.
 - Dispatch `supabase-tasks.yml` after any session that adds plates to
   `public/diagrams/`, or the rows will point at 404s.
+
+
+---
+
+## ChatGPT Session — v23 Case Proforma UX Repair
+
+**Active implementation owner:** ChatGPT. This section records the work performed after the previous Claude hand-off so a future ChatGPT session can resume from repository state rather than from chat history.
+
+### User requirement
+The v23 clinical case proforma contained substantially more medical content, but the bedside UI became congested and the General Physical Examination / normal-value workflow remained poor. The owner explicitly asked for a clean, non-cluttered bedside design, a prominent General Examination sequence, and an accessible normal-values area while keeping the release on **version 23**.
+
+### Source-grounded structure
+The attached clinical proforma material consistently places General Physical Examination after history and before systemic examination, with consciousness/orientation, build/nourishment, vitals, pallor, icterus, cyanosis, clubbing, edema and lymphadenopathy as the core sequence. Pediatrics additionally places anthropometry after the same general examination block. The UI follows that structure rather than inventing a new order.
+
+Numeric/reference values are **not duplicated into a new hard-coded table**. The Normal Values panel is generated from each proforma item's existing `normal` field in `clinicalProformas.ts`, preventing a second reference list from drifting away from the canonical content.
+
+### Implemented in `mobile/src/components/ClinicalProformaModal.tsx`
+- Replaced the Guide tab's always-expanded wall of text with progressive-disclosure section accordions.
+- When a proforma opens, the General Physical Examination section is opened preferentially; otherwise the first section opens.
+- Rebuilt Clerk Patient → General Physical Examination as a visually structured bedside sequence.
+- Added a clearly labelled **Insert normal GPE template** action with an explicit warning to use it only when the findings match the examined patient.
+- Added a compact expandable **Normal Values** panel below GPE. It automatically lists every `item.normal` reference from the active proforma.
+- Collapsed the AI case-assistance card by default so it no longer dominates the clerking workflow.
+- Preserved existing AsyncStorage draft format, AI integration, Viva tab and bottom clinical assistant to avoid migration/regression risk.
+- Version remains `versionCode 23` / `0.0.0.23`; this is a v23 repair, not a version bump.
+
+### Branch
+`chatgpt/v23-case-proforma-polish`
+
+### Required verification before merge
+Run the normal mobile gates, especially:
+`npx tsc --noEmit`, `npx eslint . --quiet`, `npm run check:keyboard`, `npm run check:edges`, `npm run check:version`, and the applicable smoke/preview checks. Do not claim native-device visual verification unless an emulator/device was actually used.
+
+
+---
+
+## Claude → ChatGPT integration — 2026-09-18
+
+Claude's explicit resume branch `claude/continue-previous-z98gdv` has been carried forward onto the newer v23 mainline while preserving the verified native Android screenshot harness and the decluttered Case Proforma UX. The integration intentionally keeps both layers:
+
+- Claude: 45 case proformas, 7 departments, shared General Examination signs, Normal Lab Values reference, grouped picker, source extraction/check tooling.
+- ChatGPT: progressive Guide sections, structured bedside GPE clerking, per-proforma normal references, collapsed optional AI assistance, native Android screenshot verification.
+
+The original Claude branch was never typechecked in its sandbox. CI on the integration branch is therefore the authority before merge.

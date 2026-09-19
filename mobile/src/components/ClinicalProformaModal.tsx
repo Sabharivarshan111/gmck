@@ -1,3 +1,4 @@
+import { guidePoints } from '@/lib/guidePoints';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
@@ -139,6 +140,13 @@ export function ClinicalProformaModal({
   const [isAutoFilling, setIsAutoFilling] = useState(false);
   const [savedLocally, setSavedLocally] = useState(false);
 
+  // Progressive disclosure keeps long master proformas readable on a phone.
+  const [expandedGuideSections, setExpandedGuideSections] = useState<Record<number, boolean>>({
+    0: true,
+  });
+  const [normalValuesOpen, setNormalValuesOpen] = useState(false);
+  const [aiAssistOpen, setAiAssistOpen] = useState(false);
+
   // Accordion state for Viva Questions
   const [expandedViva, setExpandedViva] = useState<Record<number, boolean>>({ 0: true });
 
@@ -176,6 +184,15 @@ export function ClinicalProformaModal({
           setDraft(getCanonicalCaseDraft(activeProforma.id));
         }
       });
+
+    // Prefer the General Physical Examination section when a case opens; keep
+    // every other long section collapsed until the student asks for it.
+    const generalExamIndex = activeProforma.sections.findIndex(section =>
+      /general\s+(physical\s+)?examination/i.test(section.title),
+    );
+    setExpandedGuideSections({ [generalExamIndex >= 0 ? generalExamIndex : 0]: true });
+    setNormalValuesOpen(false);
+    setAiAssistOpen(false);
 
     // Reset expanded viva to first item and clear active chat when changing proforma
     setExpandedViva({ 0: true });
@@ -381,6 +398,33 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
     }
     return counts;
   }, []);
+
+  // Per-proforma normal references remain separate from the global Lab Values
+  // sheet. They are generated from the canonical case data so they cannot drift.
+  const activeNormalValues = useMemo(() => {
+    if (!activeProforma) return [];
+    return activeProforma.sections.flatMap((section, sectionIndex) =>
+      section.items.flatMap((item, itemIndex) =>
+        item.normal
+          ? [
+              {
+                key: `${sectionIndex}-${itemIndex}`,
+                section: section.title,
+                label: item.label,
+                value: item.normal,
+              },
+            ]
+          : [],
+      ),
+    );
+  }, [activeProforma]);
+
+  const insertNormalGeneralExamTemplate = useCallback(() => {
+    updateDraft(
+      'generalExam',
+      'Conscious, cooperative and oriented to time, place and person. Moderately built and nourished. No pallor, icterus, cyanosis, clubbing, generalized lymphadenopathy or pedal edema.',
+    );
+  }, [updateDraft]);
 
   if (!visible) return null;
 
@@ -607,7 +651,7 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                           General Examination — with pictures
                         </Text>
                         <Text style={[styles.itemDesc, { color: colors.textMuted }]}>
-                          PICCKLE and the nail signs, each with a clinical photograph
+                          PICCLE and the nail signs, with clinical photographs where available
                         </Text>
                       </View>
                       {signsOpen ? (
@@ -623,51 +667,89 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                     ) : null}
                   </View>
 
-                  {/* Sections and Items */}
-                  {activeProforma.sections.map((section, sIdx) => (
-                    <View
-                      key={sIdx}
-                      style={[
-                        styles.sectionCard,
-                        { backgroundColor: colors.card, borderColor: colors.border },
-                      ]}>
-                      <Text style={[styles.sectionTitle, { color: colors.text }]}>
-                        {section.title}
-                      </Text>
-                      {section.items.map((item, iIdx) => (
-                        <View key={iIdx} style={styles.itemBlock}>
-                          <Text style={[styles.itemLabel, { color: colors.accent }]}>
-                            {item.label}
-                          </Text>
-                          <Text style={[styles.itemDesc, { color: colors.text }]}>
-                            {item.description}
-                          </Text>
-                          {item.normal ? (
-                            <View style={styles.normalRow}>
-                              <Text style={[styles.normalLabel, { color: colors.textMuted }]}>
-                                Normal:{' '}
-                              </Text>
-                              <Text style={[styles.normalVal, { color: colors.text }]}>
-                                {item.normal}
-                              </Text>
-                            </View>
-                          ) : null}
-                          {item.checklist && item.checklist.length > 0 ? (
-                            <View style={styles.checklistBox}>
-                              {item.checklist.map((check, cIdx) => (
-                                <View key={cIdx} style={styles.checkItem}>
-                                  <CheckCircle2 size={15} color={colors.accent} style={styles.checkIcon} />
-                                  <Text style={[styles.checkText, { color: colors.text }]}>
-                                    {check}
-                                  </Text>
-                                </View>
-                              ))}
-                            </View>
-                          ) : null}
-                        </View>
-                      ))}
-                    </View>
-                  ))}
+                  {/* Case-specific sections — progressive disclosure prevents a wall of text. */}
+                  {activeProforma.sections.map((section, sIdx) => {
+                    const isOpen = Boolean(expandedGuideSections[sIdx]);
+                    return (
+                      <View
+                        key={sIdx}
+                        style={[
+                          styles.sectionCard,
+                          { backgroundColor: colors.card, borderColor: colors.border },
+                        ]}>
+                        <Touchable
+                          onPress={() =>
+                            setExpandedGuideSections(prev => ({
+                              ...prev,
+                              [sIdx]: !prev[sIdx],
+                            }))
+                          }
+                          label={`${isOpen ? 'Collapse' : 'Expand'} ${section.title}`}
+                          state={{ expanded: isOpen }}
+                          style={styles.sectionHeader}>
+                          <View style={styles.sectionHeaderTextWrap}>
+                            <Text style={[styles.sectionTitle, { color: colors.text }]}>
+                              {section.title}
+                            </Text>
+                            <Text style={[styles.sectionMeta, { color: colors.textMuted }]}>
+                              {section.items.length} bedside points
+                            </Text>
+                          </View>
+                          {isOpen ? (
+                            <ChevronUp size={20} color={colors.textMuted} />
+                          ) : (
+                            <ChevronDown size={20} color={colors.textMuted} />
+                          )}
+                        </Touchable>
+
+                        {isOpen ? (
+                          <View style={styles.sectionBody}>
+                            {section.items.map((item, iIdx) => (
+                              <View key={iIdx} style={styles.itemBlock}>
+                                <Text style={[styles.itemLabel, { color: colors.accent }]}>
+                                  {item.label}
+                                </Text>
+                                {item.checklist && item.checklist.length > 0 ? (
+                                  <View style={styles.checklistBox}>
+                                    {item.checklist.flatMap(guidePoints).map((check, cIdx) => (
+                                      <View key={cIdx} style={styles.checkItem}>
+                                        <CheckCircle2
+                                          size={15}
+                                          color={colors.accent}
+                                          style={styles.checkIcon}
+                                        />
+                                        <Text style={[styles.checkText, { color: colors.text }]}>
+                                          <Text style={{ textDecorationLine: 'underline', fontWeight: '600' }}>{check.prompt}</Text>
+                                          {check.explanation ? `\n${check.explanation}` : ''}
+                                        </Text>
+                                      </View>
+                                    ))}
+                                  </View>
+                                ) : null}
+                                <Text style={[styles.itemDesc, { color: colors.text }]}>
+                                  {item.description}
+                                </Text>
+                                {item.clinicalSign ? (
+                                  <Text style={[styles.itemDesc, { color: colors.textMuted }]}>{item.clinicalSign}</Text>
+                                ) : null}
+                                {item.normal ? (
+                                  <View style={styles.normalRow}>
+                                    <Text style={[styles.normalLabel, { color: colors.textMuted }]}>
+                                      Normal:{' '}
+                                    </Text>
+                                    <Text style={[styles.normalVal, { color: colors.text }]}>
+                                      {item.normal}
+                                    </Text>
+                                  </View>
+                                ) : null}
+
+                              </View>
+                            ))}
+                          </View>
+                        ) : null}
+                      </View>
+                    );
+                  })}
                 </>
               ) : null}
 
@@ -696,44 +778,64 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                     </Touchable>
                   </View>
 
-                  {/* AI Auto-Fill Action Card (Tomorrow's Presentation Feature) */}
+                  {/* AI help is optional; clerking stays visually primary. */}
                   <View
                     style={[
                       styles.aiAutoFillCard,
                       {
-                        backgroundColor: withAlpha(colors.primary, 0.08),
-                        borderColor: withAlpha(colors.primary, 0.3),
+                        backgroundColor: withAlpha(colors.primary, 0.06),
+                        borderColor: withAlpha(colors.primary, 0.22),
                       },
                     ]}>
-                    <View style={styles.aiAutoFillHeader}>
-                      <Sparkles size={18} color={colors.primary} />
-                      <Text style={[styles.aiAutoFillTitle, { color: colors.primary }]}>
-                        Night-Before Presentation AI Auto-Fill
-                      </Text>
-                    </View>
-                    <Text style={[styles.aiAutoFillDesc, { color: colors.text }]}>
-                      Only completed half the case? Enter your patient's demographics and chief
-                      complaints, then tap below. The AI will automatically fill realistic negative
-                      history, vitals, physical findings, and presentation diagnosis.
-                    </Text>
-
                     <Touchable
-                      onPress={handleAutoFill}
-                      disabled={isAutoFilling}
-                      label="Auto-complete case presentation"
-                      style={[
-                        styles.autoFillBtn,
-                        { backgroundColor: colors.primary, opacity: isAutoFilling ? 0.7 : 1 },
-                      ]}>
-                      {isAutoFilling ? (
-                        <ActivityIndicator size="small" color="#FFFFFF" />
+                      onPress={() => setAiAssistOpen(prev => !prev)}
+                      label={aiAssistOpen ? 'Collapse AI case assistance' : 'Expand AI case assistance'}
+                      state={{ expanded: aiAssistOpen }}
+                      style={styles.compactAssistHeader}>
+                      <View style={styles.aiAutoFillHeader}>
+                        <Sparkles size={17} color={colors.primary} />
+                        <View style={styles.aiAssistHeaderText}>
+                          <Text style={[styles.aiAutoFillTitle, { color: colors.primary }]}>
+                            Optional AI case assistance
+                          </Text>
+                          <Text style={[styles.aiAssistHint, { color: colors.textMuted }]}>
+                            Keep the bedside form clean; open this only when needed.
+                          </Text>
+                        </View>
+                      </View>
+                      {aiAssistOpen ? (
+                        <ChevronUp size={19} color={colors.textMuted} />
                       ) : (
-                        <Sparkles size={16} color="#FFFFFF" />
+                        <ChevronDown size={19} color={colors.textMuted} />
                       )}
-                      <Text style={styles.autoFillBtnText}>
-                        {isAutoFilling ? 'Synthesizing Textbook Findings…' : 'AI Auto-Fill Case'}
-                      </Text>
                     </Touchable>
+
+                    {aiAssistOpen ? (
+                      <>
+                        <Text style={[styles.aiAutoFillDesc, { color: colors.text }]}>
+                          Enter the findings you actually obtained first. AI can then help organize a
+                          half-completed practice case into an examination-style presentation.
+                        </Text>
+
+                        <Touchable
+                          onPress={handleAutoFill}
+                          disabled={isAutoFilling}
+                          label="Auto-complete case presentation"
+                          style={[
+                            styles.autoFillBtn,
+                            { backgroundColor: colors.primary, opacity: isAutoFilling ? 0.7 : 1 },
+                          ]}>
+                          {isAutoFilling ? (
+                            <ActivityIndicator size="small" color={colors.primaryText} />
+                          ) : (
+                            <Sparkles size={16} color={colors.primaryText} />
+                          )}
+                          <Text style={[styles.autoFillBtnText, { color: colors.primaryText }]}>
+                            {isAutoFilling ? 'Organizing Findings…' : 'AI Assist This Case'}
+                          </Text>
+                        </Touchable>
+                      </>
+                    ) : null}
                   </View>
 
                   {/* Demographics Card */}
@@ -881,24 +983,79 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                     />
                   </View>
 
-                  {/* General Physical Examination (Vitals & Survey) */}
+                  {/* General Physical Examination — bedside sequence kept visible and structured */}
                   <View
                     style={[
                       styles.formSection,
                       { backgroundColor: colors.card, borderColor: colors.border },
                     ]}>
                     <Text style={[styles.formSectionTitle, { color: colors.text }]}>
-                      5. General Physical Examination & Vitals
+                      5. General Physical Examination
                     </Text>
+                    <Text style={[styles.gpeIntro, { color: colors.textMuted }]}>
+                      Bedside order: overall state → build/nourishment → vitals → pallor, icterus,
+                      cyanosis, clubbing, lymph nodes and edema.
+                    </Text>
+
+                    <View style={styles.gpeSequence}>
+                      {[
+                        'Conscious & oriented',
+                        'Build / nourishment',
+                        'Pulse',
+                        'BP',
+                        'Respiration',
+                        'Temperature',
+                        'Pallor',
+                        'Icterus',
+                        'Cyanosis',
+                        'Clubbing',
+                        'Lymph nodes',
+                        'Edema',
+                      ].map(label => (
+                        <View
+                          key={label}
+                          style={[
+                            styles.gpeChip,
+                            {
+                              backgroundColor: withAlpha(colors.accent, 0.08),
+                              borderColor: withAlpha(colors.accent, 0.22),
+                            },
+                          ]}>
+                          <Text style={[styles.gpeChipText, { color: colors.text }]}>{label}</Text>
+                        </View>
+                      ))}
+                    </View>
+
+                    <Touchable
+                      onPress={insertNormalGeneralExamTemplate}
+                      label="Insert normal general examination template"
+                      style={[
+                        styles.normalTemplateBtn,
+                        {
+                          backgroundColor: withAlpha(colors.accent, 0.08),
+                          borderColor: withAlpha(colors.accent, 0.25),
+                        },
+                      ]}>
+                      <CheckCircle2 size={15} color={colors.accent} />
+                      <View style={styles.normalTemplateTextWrap}>
+                        <Text style={[styles.normalTemplateText, { color: colors.accent }]}>
+                          Insert normal GPE template
+                        </Text>
+                        <Text style={[styles.normalTemplateHint, { color: colors.textMuted }]}>
+                          Use only when these findings match the patient you examined.
+                        </Text>
+                      </View>
+                    </Touchable>
+
                     <Text style={[styles.inputLabel, { color: colors.textMuted }]}>
-                      Vital Signs (Pulse, BP, RR, SpO2, Temp)
+                      Vital Signs
                     </Text>
                     <TextInput
                       multiline
                       numberOfLines={2}
                       value={draft.vitals}
                       onChangeText={t => updateDraft('vitals', t)}
-                      placeholder="Pulse: 76 bpm, BP: 124/82 mmHg, RR: 16/min, Temp: 98.4°F…"
+                      placeholder="Pulse, BP, respiratory rate, SpO₂ and temperature…"
                       placeholderTextColor={colors.textMuted}
                       style={[
                         styles.multilineInput,
@@ -912,20 +1069,88 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                     />
 
                     <Text style={[styles.inputLabel, { color: colors.textMuted }]}>
-                      General Survey (Pallor, Icterus, Cyanosis, Clubbing, Lymphadenopathy, Edema)
+                      General Survey & Head-to-Toe Findings
                     </Text>
                     <TextInput
                       multiline
-                      numberOfLines={3}
+                      numberOfLines={4}
                       value={draft.generalExam}
                       onChangeText={t => updateDraft('generalExam', t)}
-                      placeholder="No pallor, icterus, cyanosis, clubbing, generalized lymphadenopathy, or bilateral pedal edema…"
+                      placeholder="Consciousness, orientation, build, nourishment, pallor, icterus, cyanosis, clubbing, lymphadenopathy, edema and relevant head-to-toe signs…"
                       placeholderTextColor={colors.textMuted}
                       style={[
                         styles.multilineInput,
                         { color: colors.text, borderColor: colors.border, backgroundColor: colors.background },
                       ]}
                     />
+                  </View>
+
+                  {/* Case-specific normals are separate from the global Lab Values reference. */}
+                  <View
+                    style={[
+                      styles.normalValuesCard,
+                      { backgroundColor: colors.card, borderColor: colors.border },
+                    ]}>
+                    <Touchable
+                      onPress={() => setNormalValuesOpen(prev => !prev)}
+                      label={normalValuesOpen ? 'Hide normal values' : 'Show normal values'}
+                      state={{ expanded: normalValuesOpen }}
+                      style={styles.normalValuesHeader}>
+                      <View style={styles.normalValuesHeaderLeft}>
+                        <CheckCircle2 size={17} color={colors.accent} />
+                        <View style={styles.normalValuesTitleWrap}>
+                          <Text style={[styles.normalValuesTitle, { color: colors.text }]}>
+                            Normal Values
+                          </Text>
+                          <Text style={[styles.normalValuesSubtitle, { color: colors.textMuted }]}>
+                            {activeNormalValues.length > 0
+                              ? `${activeNormalValues.length} references from this proforma`
+                              : 'Open the shared laboratory reference'}
+                          </Text>
+                        </View>
+                      </View>
+                      {normalValuesOpen ? (
+                        <ChevronUp size={20} color={colors.textMuted} />
+                      ) : (
+                        <ChevronDown size={20} color={colors.textMuted} />
+                      )}
+                    </Touchable>
+
+                    {normalValuesOpen ? (
+                      <View style={styles.normalValuesList}>
+                        {activeNormalValues.length > 0 ? (
+                          activeNormalValues.map(entry => (
+                            <View
+                              key={entry.key}
+                              style={[
+                                styles.normalValueRow,
+                                { borderTopColor: withAlpha(colors.border, 0.65) },
+                              ]}>
+                              <View style={styles.normalValueLabelWrap}>
+                                <Text style={[styles.normalValueLabel, { color: colors.text }]}>
+                                  {entry.label}
+                                </Text>
+                                <Text style={[styles.normalValueSection, { color: colors.textMuted }]}>
+                                  {entry.section}
+                                </Text>
+                              </View>
+                              <Text style={[styles.normalValueText, { color: colors.accent }]}>
+                                {entry.value}
+                              </Text>
+                            </View>
+                          ))
+                        ) : (
+                          <Text style={[styles.normalValuesEmpty, { color: colors.textMuted }]}>
+                            Use the laboratory reference below. Interpret results with age, pregnancy status
+                            and the reporting laboratory’s range.
+                          </Text>
+                        )}
+                        <Touchable label="Open normal laboratory values" onPress={() => setLabSheetOpen(true)} style={styles.normalValuesHeader}>
+                          <Text style={[styles.itemLabel, { color: colors.accent }]}>Open normal laboratory values</Text>
+                          <ChevronRight size={18} color={colors.accent} />
+                        </Touchable>
+                      </View>
+                    ) : null}
                   </View>
 
                   {/* Systemic / Local Examination Findings */}
@@ -1139,6 +1364,7 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                     ? styles.chatDrawerExpanded
                     : styles.chatDrawerOpen
                   : styles.chatDrawerClosed,
+                { height: (chatOpen ? (chatExpanded ? 560 : 280) : 52) + Math.max(insets.bottom, 10) },
               ]}>
               {/* Chat Header Bar */}
               <Touchable
@@ -1188,6 +1414,7 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                   {/* Suggested Prompt Chips */}
                   <ScrollView
                     horizontal
+                    style={styles.promptChipsScroll}
                     showsHorizontalScrollIndicator={false}
                     contentContainerStyle={styles.promptChipsRow}>
                     <Touchable
@@ -1197,7 +1424,7 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                       label="Top viva questions chip"
                       style={[styles.promptChip, { borderColor: colors.border }]}>
                       <Text style={[styles.promptChipText, { color: colors.text }]}>
-                        🎓 Top Viva Qs
+                        Top viva questions
                       </Text>
                     </Touchable>
 
@@ -1208,7 +1435,7 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                       label="Differential diagnosis chip"
                       style={[styles.promptChip, { borderColor: colors.border }]}>
                       <Text style={[styles.promptChipText, { color: colors.text }]}>
-                        🔍 Differentials
+                        Differentials
                       </Text>
                     </Touchable>
 
@@ -1219,7 +1446,7 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                       label="Presentation summary chip"
                       style={[styles.promptChip, { borderColor: colors.border }]}>
                       <Text style={[styles.promptChipText, { color: colors.text }]}>
-                        🗣️ Case Summary
+                        Case summary
                       </Text>
                     </Touchable>
 
@@ -1230,7 +1457,7 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                       label="Clinical signs chip"
                       style={[styles.promptChip, { borderColor: colors.border }]}>
                       <Text style={[styles.promptChipText, { color: colors.text }]}>
-                        🩺 Clinical Signs
+                        Clinical signs
                       </Text>
                     </Touchable>
                   </ScrollView>
@@ -1262,7 +1489,7 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                         <Text
                           style={[
                             styles.chatBubbleText,
-                            { color: msg.role === 'user' ? '#FFFFFF' : colors.text },
+                            { color: msg.role === 'user' ? colors.primaryText : colors.text },
                           ]}>
                           {msg.text}
                         </Text>
@@ -1302,7 +1529,7 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                           backgroundColor: chatInput.trim() ? colors.primary : withAlpha(colors.primary, 0.4),
                         },
                       ]}>
-                      <Send size={16} color="#FFFFFF" />
+                      <Send size={16} color={colors.primaryText} />
                     </Touchable>
                   </View>
                 </>
@@ -1361,7 +1588,7 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
               <Touchable
                 onPress={() => setExamSheetOpen(true)}
                 label="General examination, with pictures"
-                hint="Opens PICCKLE and the nail signs"
+                hint="Opens PICCLE and the nail signs"
                 style={[
                   styles.quickRefCard,
                   { backgroundColor: colors.card, borderColor: colors.border },
@@ -1378,7 +1605,7 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                     General Examination
                   </Text>
                   <Text style={[styles.quickRefSub, { color: colors.textMuted }]}>
-                    PICCKLE, with photographs
+                    PICCLE, with photographs
                   </Text>
                 </View>
               </Touchable>
@@ -1431,7 +1658,7 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                     <Text
                       style={[
                         styles.filterPillText,
-                        { color: active ? '#FFFFFF' : colors.text },
+                        { color: active ? colors.primaryText : colors.text },
                       ]}>
                       {sys === 'Obstetrics & Gynaecology' ? 'OBGYN' : sys} ({count})
                     </Text>
@@ -1820,25 +2047,45 @@ const styles = StyleSheet.create({
   sectionCard: {
     borderRadius: 14,
     borderWidth: StyleSheet.hairlineWidth,
-    padding: 16,
-    marginBottom: 14,
+    padding: 14,
+    marginBottom: 12,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  sectionHeaderTextWrap: {
+    flex: 1,
   },
   sectionTitle: {
-    fontSize: 15,
+    fontSize: 18,
+    lineHeight: 26,
     fontWeight: '700',
-    marginBottom: 12,
+  },
+  sectionMeta: {
+    fontSize: 11.5,
+    marginTop: 3,
+  },
+  sectionBody: {
+    marginTop: 14,
+    paddingTop: 14,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: 'rgba(150,150,150,0.18)',
   },
   itemBlock: {
     marginBottom: 14,
   },
   itemLabel: {
-    fontSize: 13,
+    textDecorationLine: 'underline',
+    fontSize: 17,
+    lineHeight: 25,
     fontWeight: '700',
     marginBottom: 4,
   },
   itemDesc: {
-    fontSize: 13,
-    lineHeight: 18,
+    fontSize: 16,
+    lineHeight: 24,
     marginBottom: 6,
   },
   normalRow: {
@@ -1903,8 +2150,8 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   checkText: {
-    fontSize: 12.5,
-    lineHeight: 17,
+    fontSize: 16,
+    lineHeight: 24,
     flex: 1,
   },
   /* CLERK PATIENT MODE */
@@ -1953,6 +2200,21 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
+    flex: 1,
+  },
+  compactAssistHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 10,
+  },
+  aiAssistHeaderText: {
+    flex: 1,
+  },
+  aiAssistHint: {
+    fontSize: 11.5,
+    lineHeight: 16,
+    marginTop: 2,
   },
   aiAutoFillTitle: {
     fontSize: 14,
@@ -1972,7 +2234,6 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   autoFillBtnText: {
-    color: '#FFFFFF',
     fontSize: 13,
     fontWeight: '700',
   },
@@ -1986,6 +2247,114 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '700',
     marginBottom: 4,
+  },
+  gpeIntro: {
+    fontSize: 12.5,
+    lineHeight: 18,
+    marginBottom: 4,
+  },
+  gpeSequence: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 7,
+    marginVertical: 6,
+  },
+  gpeChip: {
+    paddingHorizontal: 9,
+    paddingVertical: 6,
+    borderRadius: 999,
+    borderWidth: StyleSheet.hairlineWidth,
+  },
+  gpeChipText: {
+    fontSize: 11.5,
+    fontWeight: '600',
+  },
+  normalTemplateBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 9,
+    marginBottom: 4,
+  },
+  normalTemplateTextWrap: {
+    flex: 1,
+  },
+  normalTemplateText: {
+    fontSize: 12.5,
+    fontWeight: '700',
+  },
+  normalTemplateHint: {
+    fontSize: 11,
+    lineHeight: 15,
+    marginTop: 1,
+  },
+  normalValuesCard: {
+    borderRadius: 14,
+    borderWidth: StyleSheet.hairlineWidth,
+    overflow: 'hidden',
+  },
+  normalValuesHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 10,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+  },
+  normalValuesHeaderLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 9,
+    flex: 1,
+  },
+  normalValuesTitleWrap: {
+    flex: 1,
+  },
+  normalValuesTitle: {
+    fontSize: 13.5,
+    fontWeight: '700',
+  },
+  normalValuesSubtitle: {
+    fontSize: 11.5,
+    marginTop: 2,
+  },
+  normalValuesList: {
+    paddingHorizontal: 14,
+    paddingBottom: 8,
+  },
+  normalValueRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 12,
+    paddingVertical: 10,
+    borderTopWidth: StyleSheet.hairlineWidth,
+  },
+  normalValueLabelWrap: {
+    flex: 1,
+  },
+  normalValueLabel: {
+    fontSize: 12.5,
+    fontWeight: '600',
+  },
+  normalValueSection: {
+    fontSize: 10.5,
+    lineHeight: 14,
+    marginTop: 2,
+  },
+  normalValueText: {
+    flex: 1,
+    fontSize: 12,
+    lineHeight: 17,
+    fontWeight: '600',
+    textAlign: 'right',
+  },
+  normalValuesEmpty: {
+    fontSize: 12,
+    lineHeight: 17,
+    paddingVertical: 10,
   },
   formRow: {
     flexDirection: 'row',
@@ -2168,19 +2537,25 @@ const styles = StyleSheet.create({
   chatResetIcon: {
     padding: 4,
   },
+  promptChipsScroll: { flexGrow: 0, flexShrink: 0, maxHeight: 56 },
   promptChipsRow: {
+    alignItems: 'center',
     paddingHorizontal: 12,
     gap: 8,
     paddingBottom: 8,
   },
   promptChip: {
+    alignSelf: 'center',
+    minHeight: 44,
+    justifyContent: 'center',
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 14,
     borderWidth: StyleSheet.hairlineWidth,
   },
   promptChipText: {
-    fontSize: 11.5,
+    fontSize: 13,
+    lineHeight: 18,
     fontWeight: '600',
   },
   chatTranscript: {

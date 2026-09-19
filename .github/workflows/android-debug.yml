@@ -176,6 +176,12 @@ jobs:
         working-directory: mobile
         run: printf 'export const ADS_ENABLED = false;\n' > src/lib/adsMode.ts
 
+      - name: Disable Google sign-in only in the debug APK
+        working-directory: mobile
+        run: |
+          printf 'export const GOOGLE_SIGN_IN_ENABLED = false;\n' > src/lib/authMode.ts
+          node scripts/auth-mode-check.mjs --debug-apk
+
       # Two runs died here, and both causes are worth writing down.
       #
       # API 37 is published with a **minor version**: the package is

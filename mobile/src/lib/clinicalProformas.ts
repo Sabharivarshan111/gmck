@@ -3,6 +3,8 @@
  * Synthesized from MMC, Stanley, AIIMS, Tito Sir, Das, Bailey & Love, and Indian Medical Universities.
  */
 
+import { PAEDIATRIC_SYSTEM_PROFORMAS } from '@/lib/proformas/paediatricSystems';
+import { OBG_ADDITIONAL_PROFORMAS } from '@/lib/proformas/obgAdditional';
 import { ENT_PROFORMAS } from '@/lib/proformas/ent';
 import { OPHTHALMOLOGY_PROFORMAS } from '@/lib/proformas/ophthalmology';
 import { SURGERY_SHORT_PROFORMAS } from '@/lib/proformas/surgeryShort';
@@ -11,6 +13,7 @@ import { PAEDIATRIC_PROFORMAS } from '@/lib/proformas/paediatrics';
 import { ORTHO_OBG_PROFORMAS } from '@/lib/proformas/orthoObg';
 import { MEDICINE_PROFORMAS } from '@/lib/proformas/medicine';
 import { ORTHOPAEDIC_PROFORMAS } from '@/lib/proformas/orthopaedics';
+import { OBG_HIGH_RISK_PROFORMAS } from '@/lib/proformas/obgHighRisk';
 
 export interface ProformaSection {
   title: string;
@@ -65,7 +68,7 @@ export const CLINICAL_PROFORMAS: ClinicalProforma[] = [
     system: 'General Medicine',
     department: 'Cardiology / General Medicine',
     summary: 'Postgraduate & MBBS examination-grade master proforma for Valvular Heart Diseases (Mitral Stenosis, Mitral Regurgitation, Aortic Stenosis, Aortic Regurgitation), Rheumatic Heart Disease, Congestive Heart Failure, Infective Endocarditis, and Ischemic Heart Disease.',
-    examPearl: 'Always palpate the carotid artery while auscultating the precordium to establish S1 definitively; count the pulse for 1 full minute with a simultaneous apical count to document pulse deficit in Atrial Fibrillation, and rigorously check all 12 peripheral signs before diagnosing Aortic Regurgitation.',
+    examPearl: 'Always palpate the carotid artery while auscultating the precordium to establish S1 definitively; count the pulse for 1 full minute with a simultaneous apical count to document pulse deficit in Atrial Fibrillation, and describe the murmur and relevant peripheral findings when assessing aortic regurgitation; echocardiography confirms the lesion and severity.',
     diagramPath: '/diagrams/clinical/mitral_stenosis_murmur.jpg',
     diagramTitle: 'Mitral Stenosis: Wiggers, PCG & Murmur Radiation',
     sections: [
@@ -3057,7 +3060,7 @@ export const CLINICAL_PROFORMAS: ClinicalProforma[] = [
       },
       {
         question: 'What are the 10 steps in the WHO management of Severe Acute Malnutrition?',
-        answer: 'Divided into Initial Stabilization (Days 1-7) and Rehabilitation (Weeks 2-6): 1) Treat/prevent Hypoglycemia (10% dextrose); 2) Treat/prevent Hypothermia (KMC, warm blankets); 3) Treat/prevent Dehydration (ReSoMal — rehydration solution for malnutrition; never use standard ORS due to high sodium!); 4) Correct electrolyte imbalance (potassium and magnesium supplementation, NO extra sodium); 5) Treat/prevent Infection (broad-spectrum parenteral antibiotics); 6) Correct micronutrient deficiencies (Vitamin A, Zinc, Folic acid; iron is WITHHELD until child starts gaining weight!); 7) Start cautious feeding (F-75 diet: 75 kcal/100 mL, 0.9 g protein); 8) Achieve catch-up growth (F-100 diet: 100 kcal, 2.9 g protein); 9) Sensory stimulation and emotional play; 10) Prepare for discharge and follow-up.',
+        answer: 'Divided into Initial Stabilization (Days 1-7) and Rehabilitation (Weeks 2-6): 1) Treat/prevent Hypoglycemia (10% dextrose); 2) Treat/prevent Hypothermia (KMC, warm blankets); 3) Treat/prevent Dehydration (WHO 2023 prefers ReSoMal for severe wasting/nutritional oedema with dehydration without shock in children aged 6–59 months; low-osmolarity ORS is allowed if ReSoMal is unavailable. ReSoMal requires supervised facility care; shock needs a separate urgent protocol); 4) Correct electrolyte imbalance (potassium and magnesium supplementation, NO extra sodium); 5) Treat/prevent Infection (broad-spectrum parenteral antibiotics); 6) Correct micronutrient deficiencies (Vitamin A, Zinc, Folic acid; iron is WITHHELD until child starts gaining weight!); 7) Start cautious feeding (F-75 diet: 75 kcal/100 mL, 0.9 g protein); 8) Achieve catch-up growth (F-100 diet: 100 kcal, 2.9 g protein); 9) Sensory stimulation and emotional play; 10) Prepare for discharge and follow-up.',
         examinerTip: 'Why is iron contraindicated in the initial stabilization phase of SAM? Answer: Free iron promotes bacterial proliferation (in free-iron saturated serum) and generates reactive oxygen species, precipitating fatal sepsis and heart failure!',
       },
       {
@@ -3293,6 +3296,9 @@ export const CLINICAL_PROFORMAS: ClinicalProforma[] = [
   ...ORTHO_OBG_PROFORMAS,
   ...MEDICINE_PROFORMAS,
   ...ORTHOPAEDIC_PROFORMAS,
+  ...OBG_HIGH_RISK_PROFORMAS,
+  ...PAEDIATRIC_SYSTEM_PROFORMAS,
+  ...OBG_ADDITIONAL_PROFORMAS,
 ];
 
 const SUPABASE_DIAGRAMS_BASE = 'https://pmtgeydtqypwrypshhsx.supabase.co/storage/v1/object/public/diagrams';

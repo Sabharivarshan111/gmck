@@ -599,3 +599,9 @@ A mathematically robust wrapper was implemented in `AnatomicalBody3D.tsx`:
   - `mobile/src/components/NoteLinkCard.tsx`: Rich rendering of embedded clinical notes and linked references.
 - **Verification Gates**:
   - All 7 core checks pass cleanly: `typecheck`, `check:version` (v23), `check:apkg`, `check:anki`, `check:mcq-card`, `check:keyboard`, `check:repo-intact`.
+
+## 2026-09-18 — v23 proforma expansion, unpublished
+
+76 cases (23 added), three licensed clinical photos, corrected teaching points, normal-lab sheet access and drawer/sign rendering fixes. See `PROFORMA_V23_AUDIT.md` for source mapping, validation and remaining PDF audit gaps. TypeScript, ESLint, targeted checks and Android JS bundle pass. No fresh native screenshots, APK or AAB. Automatic approval review blocked direct push to public main/release side effects; obtain explicit approval before publishing, and do not bypass through another API. A recovery patch is saved outside the ephemeral checkout. User requests main only; older branch instructions are superseded for this task.
+
+2026-09-18 follow-up: User explicitly approved pushing to public main and v23 release/screenshot workflows. Terminal push lacks credentials; connected GitHub publication follows. Duplicate audit confirms 76 entries with unique IDs/titles but overlapping general frameworks and focused cases; do not claim 76 unrelated conditions. See PROFORMA_V23_AUDIT.md.

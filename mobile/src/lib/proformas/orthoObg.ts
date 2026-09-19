@@ -242,7 +242,7 @@ export const ORTHO_OBG_PROFORMAS: ClinicalProforma[] = [
         items: [
           {
             label: 'General and systemic',
-            description: 'On top of PICCKLE, the obstetric-specific general findings.',
+            description: 'On top of PICCLE, the obstetric-specific general findings.',
             checklist: [
               'Height and weight, and the total weight gain in this pregnancy (about 10–12 kg is expected)',
               'PALLOR — assessed carefully; anaemia is the commonest medical complication of pregnancy in India',
@@ -375,7 +375,7 @@ export const ORTHO_OBG_PROFORMAS: ClinicalProforma[] = [
         items: [
           {
             label: 'General and abdominal',
-            description: 'Beyond PICCKLE, aimed at anaemia and at the mass.',
+            description: 'Beyond PICCLE, aimed at anaemia and at the mass.',
             checklist: [
               'Pallor — often marked and often underestimated; height, weight and BMI; hirsutism and acne (PCOS); acanthosis nigricans',
               'Thyroid; breasts; supraclavicular nodes',
