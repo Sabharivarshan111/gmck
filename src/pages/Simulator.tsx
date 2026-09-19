@@ -18,6 +18,7 @@ import {
 import { PhysiologyKernel, SCENARIOS } from '../simulator/engine/PhysiologyKernel';
 import { AnatomicalLayer, DiagnosticToolType, PatientPathologyState, PatientVitals } from '../simulator/types';
 import { AnatomicalBody3D, resolvePartToOrganKey } from '../simulator/view/AnatomicalBody3D';
+import { useIsDesktopLayout } from '@/hooks/use-desktop-layout';
 import { IcuMonitor } from '../simulator/instruments/IcuMonitor';
 import { DiagnosticTools } from '../simulator/instruments/DiagnosticTools';
 import { InterventionPanel } from '../simulator/controls/InterventionPanel';
@@ -64,6 +65,8 @@ export const Simulator: React.FC = () => {
   const [isXray, setIsXray] = useState<boolean>(false);
   const [layerPeel, setLayerPeel] = useState<number>(0.0);
   const [hiddenPartIds, setHiddenPartIds] = useState<string[]>([]);
+  // Only one of the two layouts may hold a 3D view; see use-desktop-layout.ts.
+  const isDesktopLayout = useIsDesktopLayout();
   const [dissectedParts, setDissectedParts] = useState<Part[]>([]);
   const [isolatedPartId, setIsolatedPartId] = useState<string | null>(searchParams.get('isolate') || null);
   const [contextOrganId, setContextOrganId] = useState<string | null>(null);
@@ -244,9 +247,16 @@ export const Simulator: React.FC = () => {
         isLight ? 'bg-[#f8fafc] text-slate-900' : 'bg-[#05070d] text-slate-100'
       }`}
     >
-      {/* 1. Header Bar (Responsive & Clean) */}
+      {/* 1. Header Bar (Responsive & Clean)
+          Header and the mobile tab bar are ONE sticky block. The tab bar used
+          to be stuck at a hardcoded 53-pixel offset, which is this header's
+          height on the phone it was written on — and the header's title wraps,
+          so on a narrow screen the header grows and the tab bar sat over the
+          content it was meant to sit under. Nesting them means neither has to
+          know the other's size. */}
+      <div className="sticky top-0 z-30">
       <header
-        className={`px-3 md:px-6 py-2.5 sticky top-0 z-30 backdrop-blur-xl border-b transition-colors ${
+        className={`px-3 md:px-6 py-2.5 backdrop-blur-xl border-b transition-colors ${
           isLight
             ? 'bg-white/85 border-slate-200/80 shadow-xs'
             : 'bg-slate-900/90 border-slate-800 shadow-md'
@@ -337,7 +347,7 @@ export const Simulator: React.FC = () => {
       </header>
 
       {/* 2. Mobile Segmented Tab Bar (Apple HIG Recessed Segmented Control) */}
-      <div className="lg:hidden px-3 pt-2 pb-1 sticky top-[53px] z-20">
+      <div className={`lg:hidden px-3 pt-2 pb-2 ${isLight ? 'bg-white/85' : 'bg-slate-900/90'} backdrop-blur-xl`}>
         <div
           className={`h-11 p-1 rounded-2xl border flex items-center justify-between gap-1 backdrop-blur-xl ${
             isLight
@@ -394,6 +404,7 @@ export const Simulator: React.FC = () => {
           </button>
         </div>
       </div>
+      </div>
 
       {/* 3. Main Stage Content */}
       <main className="flex-1 p-3 md:p-5 max-w-7xl mx-auto w-full flex flex-col space-y-4">
@@ -447,23 +458,25 @@ export const Simulator: React.FC = () => {
                   </button>
                 </div>
               )}
-              <AnatomicalBody3D
-                vitals={vitals}
-                pathology={pathology}
-                layer={activeLayer}
-                scenarioId={currentScenarioId}
-                cameraPreset={cameraPreset}
-                theme={theme}
-                selectedOrganId={selectedOrganId}
-                contextOrganId={contextOrganId}
-                onSelectOrganId={handleSelect3DOrgan}
-                toolMode={toolMode}
-                isXray={isXray}
-                layerPeel={layerPeel}
-                hiddenPartIds={hiddenPartIds}
-                isolatedPartId={isolatedPartId}
-                onDissectPart={handleDissectPart}
-              />
+              {isDesktopLayout && (
+                <AnatomicalBody3D
+                  vitals={vitals}
+                  pathology={pathology}
+                  layer={activeLayer}
+                  scenarioId={currentScenarioId}
+                  cameraPreset={cameraPreset}
+                  theme={theme}
+                  selectedOrganId={selectedOrganId}
+                  contextOrganId={contextOrganId}
+                  onSelectOrganId={handleSelect3DOrgan}
+                  toolMode={toolMode}
+                  isXray={isXray}
+                  layerPeel={layerPeel}
+                  hiddenPartIds={hiddenPartIds}
+                  isolatedPartId={isolatedPartId}
+                  onDissectPart={handleDissectPart}
+                />
+              )}
             </div>
           </div>
 
@@ -578,7 +591,16 @@ export const Simulator: React.FC = () => {
               onRestoreAll={handleRestoreAll}
               theme={theme}
             />
-            <div className="h-[420px] w-full relative">
+            {/* The stage was a flat `h-[420px]`: the same box on a 640pt phone,
+                where it overflows under the fold, and on an 844pt one, where a
+                third of the screen goes unused. `dvh` rather than `vh` because
+                mobile `vh` counts the URL bar that is not there, so the canvas
+                was taller than the space it had. The floor keeps it usable on a
+                small screen and in landscape. */}
+            <div
+              className="w-full relative"
+              style={{ height: 'max(300px, min(58dvh, 520px))' }}
+            >
               {isolatedPartId && (
                 <div className="absolute top-3 left-1/2 -translate-x-1/2 z-30 flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-amber-300 dark:border-amber-700 shadow-md pointer-events-auto touch-auto whitespace-nowrap">
                   <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
@@ -604,23 +626,25 @@ export const Simulator: React.FC = () => {
                   </button>
                 </div>
               )}
-              <AnatomicalBody3D
-                vitals={vitals}
-                pathology={pathology}
-                layer={activeLayer}
-                scenarioId={currentScenarioId}
-                cameraPreset={cameraPreset}
-                theme={theme}
-                selectedOrganId={selectedOrganId}
-                contextOrganId={contextOrganId}
-                onSelectOrganId={handleSelect3DOrgan}
-                toolMode={toolMode}
-                isXray={isXray}
-                layerPeel={layerPeel}
-                hiddenPartIds={hiddenPartIds}
-                isolatedPartId={isolatedPartId}
-                onDissectPart={handleDissectPart}
-              />
+              {!isDesktopLayout && (
+                <AnatomicalBody3D
+                  vitals={vitals}
+                  pathology={pathology}
+                  layer={activeLayer}
+                  scenarioId={currentScenarioId}
+                  cameraPreset={cameraPreset}
+                  theme={theme}
+                  selectedOrganId={selectedOrganId}
+                  contextOrganId={contextOrganId}
+                  onSelectOrganId={handleSelect3DOrgan}
+                  toolMode={toolMode}
+                  isXray={isXray}
+                  layerPeel={layerPeel}
+                  hiddenPartIds={hiddenPartIds}
+                  isolatedPartId={isolatedPartId}
+                  onDissectPart={handleDissectPart}
+                />
+              )}
             </div>
           </div>
 

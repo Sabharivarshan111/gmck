@@ -22,8 +22,78 @@ When architecting a production-grade 3D anatomical simulator for medical student
 
 ### Why BodyParts3D Was Chosen
 1. **Ontological Rigor**: Every part maps to an official FMA ID (e.g., FMA7088 for Left Ventricle), enabling direct database linkages to textbooks, clinical cases, and SNOMED-CT.
-2. **Modular Segmentation**: Allows independent isolation of blood supply (coronary arteries, portal vein), lymphatic drainage, and peripheral innervation without intersecting mesh tears.
+2. **Modular Segmentation**: Allows independent isolation of blood supply (coronary arteries, portal vein) and lymphatic drainage without intersecting mesh tears.
 3. **Streamable Topology**: Can be serialized into quantized Float32 position, normal, and partIndex arrays, reducing a 200MB 3D model into just ~12MB of compressed binary chunks.
+
+### What this export does NOT contain — measured, not assumed
+
+Point 2 above used to end "…lymphatic drainage, **and peripheral innervation**",
+and that sentence is the reason the element resolver was written as though
+nerves were there to find. They are not, and the resolver quietly substituted
+the nerves of the orbit for the vagus for months.
+
+Run the numbers against `public/models/atlas.json` before believing any claim
+about coverage. As shipped, of 2,234 meshes:
+
+| Expected | Present? | What is actually there |
+|---|---|---|
+| **Peripheral nerves** | **None at all** | Search the part names for vagus, phrenic, splanchnic, sympathetic, recurrent laryngeal, intercostal, pectoral, axillary, median, ulnar, radial, sciatic, femoral or peroneal: every count is **zero**. The 139 `nervous` parts are the cerebrum, cerebellum, brainstem, deep grey matter, the optic pathway and the nerves of the orbit (CN II, III, IV and the V1 branches). Nothing below the foramen magnum but a stub of cord. |
+| **Lung parenchyma** | **None** | The 119 `respiratory` parts are the tracheobronchial tree, the nasal cartilages and conchae, the pharyngeal constrictors and the epiglottis. No lobe, no pleural surface. Lobes are loaded separately from a Z-Anatomy mesh — see §1b. |
+| **Liver** | Yes, but not by that name | There is no part called "Liver". The parenchyma is the nine Couinaud **hepatovenous segments** (II–IX), and the ontology files them under the **venous** system, which painted the largest organ in the abdomen vein-blue and kept it out of the abdominal view entirely. `correctPartSystem` in `src/simulator/data/atlasResolver.ts` re-files them as digestive. |
+| **Cerebral ventricles** | Yes, filed as **cardiac** | Because `ventricle`. Same table corrects them to nervous. |
+| Muscles | Yes, 402 | A full musculature including the limbs. |
+| Skeleton | Yes, 296 | Skull to phalanges, with teeth. |
+| Arteries / veins | Yes, 639 / 395 | Named to segmental branches — the coronaries, the portal tree, the renal segments. |
+| Thyroid, parathyroid, uterus, ovary | **None** | Adrenals, thymus, prostate and testes are present. |
+
+`npm run check:simulator` asserts the ones that matter, and
+`npm run sheets:simulator` draws every organ from the real geometry so a gap is
+visible rather than argued about. **A structure this atlas does not hold must
+resolve to nothing** — a plausible substitute is worse than a blank, because
+the student looking at it is the one person who cannot tell them apart.
+
+### 1b. Where the lungs come from, and which candidate
+
+Because the atlas has no lung tissue, `createLungParenchymaSystem()` loads a
+Z-Anatomy mesh. Three candidates are in `public/models/`, measured with
+`scripts/lib/glb.mjs`:
+
+| File | Size | Meshes | Triangles | Anatomy |
+|---|---|---|---|---|
+| `lungs_candidate_zanatomy_baked.glb` | 314 KB | 6 | 17,064 | 5 lobes + trachea |
+| **`lungs_candidate_zanatomy_full.glb`** | **925 KB** | **34** | **48,332** | **5 lobes + named segmental bronchi** |
+| `lungs_candidate_bodyparts3d.glb` | 14.7 MB | 5 | 204,408 | 5 lobes, no airway |
+
+`zanatomy_full` is the default: three times the triangles of the baked mesh for
+600 KB more, and it carries the bronchopulmonary segments **by name**, which is
+what a student opens a lung to learn. The BodyParts3D export is twelve times
+the triangles and sixteen times the bytes for smoother lobes and *less*
+anatomy, so it is excluded from the deploy rather than served. `?lung_model=baked`
+switches back for comparison.
+
+### 1c. Filling the peripheral-nerve gap — the route, and why it is not done here
+
+**Z-Anatomy is the answer and it is already partly in use.** It is a modified,
+extended BodyParts3D that adds vessels and nerves (the nerves converted to
+curves), covering 5,000+ structures across skeleton, muscles, vessels and
+nerves, under **CC BY-SA 4.0** — share-alike, where BodyParts3D is
+attribution-only, so anything derived from it carries that forward and the
+attribution file has to say so.
+
+- Models: https://github.com/Z-Anatomy/Models-of-human-anatomy
+- Blender template: https://github.com/Z-Anatomy/The-blend
+- Project: https://simtk.org/projects/z-anatomy
+
+**No agent sandbox can fetch it.** The egress proxy refuses `github.com`,
+`raw.githubusercontent.com` (connection closed), `codeload.github.com` (403)
+and `dbarchive.biosciencedbc.jp` (connection closed). A GitHub Actions runner
+does have a route — that is how `supabase-tasks.yml` and
+`exam-sign-images.yml` do their network work — so the import belongs in a
+workflow, not in a session. It is queued in `.agents/queue/`.
+
+Do not approximate it in the meantime. A hand-drawn vagus is a line somebody
+invented, shown to a student who is looking at it precisely because they do not
+know where it runs.
 
 ---
 
@@ -32,7 +102,7 @@ When architecting a production-grade 3D anatomical simulator for medical student
 To run smoothly on both desktop and constrained mobile devices (smartphones with 2GB-4GB RAM), Orbit uses a specialized WebGL rendering architecture:
 
 ### A. Compressed Chunk Streaming (`fetchChunksWithLimit`)
-- Chunks are stored as `chunk_0.bin.gz` through `chunk_14.bin.gz`.
+- Chunks are stored as `body-0.bin.gz` through `body-14.bin.gz`, and **only** gzipped: the uncompressed `body-N.bin` beside them was the same 2.2M triangles twice and is gone (see `.vercelignore` and `npm run check:deploy`).
 - **Desktop**: Fetches 4 concurrent chunks.
 - **Mobile (`navigator.maxTouchPoints > 0`)**: Strictly bounded to **2 concurrent downloads and `DecompressionStream` pipelines** to prevent memory spikes that trigger mobile WebKit Jetsam OOM crashes.
 - Temporary `BufferGeometry` instances are immediately merged into system-level geometries (`mergeGeometries`) and disposed from CPU memory.

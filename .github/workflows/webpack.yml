@@ -15,9 +15,14 @@
 
 name: Web build
 
+# Also on the branches agents work from. `main` is a release channel for a live
+# website, and an agent sandbox cannot run this check itself — the egress proxy
+# refuses npm registry tarballs, so there is no `node_modules` and no way to run
+# `vite build` or `tsc` there at all. Without this, the first real build of an
+# agent's work happened after it had been merged to the branch that publishes.
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "claude/**", "chatgpt/**" ]
   pull_request:
     branches: [ "main" ]
 
@@ -44,6 +49,27 @@ jobs:
       - name: Nothing load-bearing has been deleted
         run: node mobile/scripts/repo-intact-check.mjs
 
+      # Also dependency-free, and also about the site this build publishes: it
+      # runs the simulator's real organ resolver against the real BodyParts3D
+      # atlas. Before it existed, isolating the gallbladder lit up the left
+      # anterior descending coronary artery and nothing anywhere said so.
+      - name: Every organ resolves to its own parts
+        run: node scripts/simulator-organ-check.mjs
+
+      # Every organ and muscle dossier: the arterial supply, the venous
+      # drainage and the innervation a student actually reads, and the house
+      # convention they are written in. Three of the 265 prose entries were a
+      # bare vessel name, and "Lateral Thoracic Artery." is half an exam answer.
+      - name: Every dossier says where its vessels come from
+        run: node scripts/dossier-format-check.mjs
+
+      # And what a `vercel deploy` would upload, against a budget. Vercel caps
+      # that upload at 100 MB on Hobby; this repo had drifted to 728 MB with
+      # no .vercelignore, so the site could only ever be published by pushing
+      # here — never from a CLI, and so never from an agent or an IDE.
+      - name: A deployment still fits inside Vercel's upload limit
+        run: node scripts/deploy-size-check.mjs
+
       # --legacy-peer-deps is not optional here and is what every other
       # workflow in this repo already uses.
       - name: Install
@@ -51,3 +77,65 @@ jobs:
 
       - name: Build
         run: npm run build
+
+  # Build the way VERCEL builds, which the job above does not.
+  #
+  # That job runs `npm ci` over the whole repository. Vercel runs
+  # `npm install --legacy-peer-deps` over a tree with `.vercelignore` APPLIED,
+  # and those are two different builds — so a `.vercelignore` rule that removes
+  # something the build needs passes there and fails on the deploy, which is
+  # exactly what happened: `main` was green, every commit after the one that
+  # added `.vercelignore` had a failed Vercel deployment, and nothing in this
+  # repository could see it.
+  #
+  # Deleting the ignored paths before installing is the whole point. It is a
+  # throwaway checkout, so nothing is at risk.
+  vercel-shaped:
+    name: Build the way Vercel builds
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: npm
+
+      # There is deliberately no .vercelignore in this repository — see
+      # scripts/deploy-excludes.mjs for the bisection that removed it. This job
+      # therefore builds the tree as Vercel receives it, with Vercel's own
+      # install and build commands, which is the part that still matters.
+      - name: Confirm no .vercelignore has come back
+        run: |
+          set -eu
+          if [ -e .vercelignore ]; then
+            echo "A .vercelignore is present. Its mere presence failed every Vercel"
+            echo "deployment on this repository - bisected, six trials. See"
+            echo "scripts/deploy-excludes.mjs before re-adding one."
+            exit 1
+          fi
+          echo "no .vercelignore, as intended"
+          du -sh --exclude=.git . || true
+
+      - name: Install the way Vercel installs
+        run: npm install --legacy-peer-deps
+
+      - name: Build
+        run: npm run build
+
+      - name: The site actually came out
+        run: |
+          set -eu
+          test -f dist/index.html || { echo "dist/index.html is missing"; exit 1; }
+          test -f dist/models/atlas.json || { echo "the anatomy atlas is not in dist/"; exit 1; }
+          for n in 0 7 14; do
+            test -f "dist/models/body-$n.bin.gz" || { echo "anatomy chunk $n is missing from dist/"; exit 1; }
+          done
+          # And the things the Vite plugin is supposed to have removed.
+          for gone in dist/diagrams dist/models/lungs.glb dist/models/lungs_candidate_bodyparts3d.glb; do
+            test ! -e "$gone" || { echo "$gone should have been pruned from dist/"; exit 1; }
+          done
+          echo "dist/ is $(du -sh dist | cut -f1), $(find dist -type f | wc -l) files"
+

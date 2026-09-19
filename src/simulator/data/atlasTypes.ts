@@ -166,6 +166,25 @@ export const DEFAULT_VISIBLE_SYSTEMS: SystemId[] = [
   'integumentary',
 ];
 
+/**
+ * Turn one downloaded chunk into the ArrayBuffer the geometry is built from.
+ *
+ * The site ships **only** the gzipped chunks. It used to ship both — 57 MB of
+ * `body-N.bin` beside 32 MB of `body-N.bin.gz`, the same 2.2 million triangles
+ * twice — and that duplication is most of why a deployment could not be
+ * uploaded at all (see `.vercelignore` and `npm run check:deploy`).
+ *
+ * Two things make dropping the raw copy safe:
+ *
+ * - **The gzip magic bytes are checked, not assumed.** If a CDN ever serves the
+ *   `.gz` with `Content-Encoding: gzip`, `fetch` decodes it before we see it,
+ *   the payload no longer starts `1f 8b`, and it is used as-is. That branch was
+ *   already here and is what makes "always fetch the .gz" safe on any host.
+ * - **`DecompressionStream` is not required.** It is missing on Safari below
+ *   16.4 and Firefox below 113, which is exactly who the raw `.bin` was for.
+ *   `fflate` — already a dependency, already used by the Anki importer — gunzips
+ *   in pure JS, so those browsers get the model rather than a 404.
+ */
 export async function decodeModelResponse(
   response: Response,
   expectedBytes: number,
@@ -177,12 +196,20 @@ export async function decodeModelResponse(
   const isGzip = compressed && signature[0] === 0x1f && signature[1] === 0x8b;
 
   let buffer: ArrayBuffer;
-  if (isGzip && typeof DecompressionStream !== 'undefined') {
+  if (!isGzip) {
+    buffer = payload;
+  } else if (typeof DecompressionStream !== 'undefined') {
     buffer = await new Response(
       new Blob([payload]).stream().pipeThrough(new DecompressionStream('gzip'))
     ).arrayBuffer();
   } else {
-    buffer = payload;
+    const { gunzipSync } = await import('fflate');
+    const out = gunzipSync(new Uint8Array(payload));
+    // A fresh ArrayBuffer: fflate may hand back a view into a larger buffer, and
+    // the geometry reads typed-array views at byte offsets from this one.
+    const copy = new Uint8Array(out.byteLength);
+    copy.set(out);
+    buffer = copy.buffer;
   }
 
   if (buffer.byteLength !== expectedBytes) {
