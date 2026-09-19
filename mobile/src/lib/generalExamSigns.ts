@@ -195,7 +195,12 @@ export const EXAM_SIGNS: ExamSign[] = [
         'pallor anemia',
         'pallor anaemia',
       ],
-      titleMustContain: ['pallor', 'conjunctiva', 'anemia palm', 'anaemia palm'],
+      /*
+       * 'conjunctiva' alone fetched a Loa loa worm on a ruler, extracted FROM
+       * a conjunctiva. A bare site name matches everything that ever came out
+       * of that site, so the gate names the SIGN at the site instead.
+       */
+      titleMustContain: ['pallor', 'conjunctival pallor', 'pale conjunctiva'],
     },
   },
   {

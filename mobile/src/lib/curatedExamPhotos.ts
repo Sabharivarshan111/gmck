@@ -31,6 +31,10 @@ export const CURATED_EXAM_PHOTOS: Record<string, CuratedExamPhoto> = {
 export const EXCLUDED_EXAM_PHOTOS = new Set([
   // A microscopic fragment cannot demonstrate the bedside appearance of a nail sign.
   'File:Splinter hemorrhage under the microscope.jpg',
+  // A Loa loa worm on a ruler. It matched because it was extracted FROM a
+  // conjunctiva — the gate word named the site, and the site is where the
+  // parasite came from, not what the picture shows.
+  "File:Adult female Loa loa filarial worm - Extracted from a patient's conjunctiva in the left eye.jpg",
   // "Traditional bear pallor" — a mistranslation of beer parlour. Calabash
   // bowls outside a village bar.
   'File:Traditional bear pallor.jpg',
