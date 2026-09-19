@@ -2,6 +2,17 @@
 import type { FetchedSignImage } from './examSignImages';
 export interface CuratedExamPhoto extends FetchedSignImage { caption: string }
 export const CURATED_EXAM_PHOTOS: Record<string, CuratedExamPhoto> = {
+  'build-nourishment': {
+    file: 'signs/build-nourishment.jpg',
+    commonsTitle: 'File:Kwashiorkor 6180.jpg',
+    credit: 'Centers for Disease Control and Prevention', licence: 'Public domain',
+    source: 'https://commons.wikimedia.org/wiki/File:Kwashiorkor_6180.jpg',
+    caption:
+      'Kwashiorkor: the moon face of oedema, sparse depigmented hair and the ' +
+      'perioral dermatosis. This is the oedematous form — marasmus is the wasted ' +
+      'one, and the two look nothing alike, which is the point of naming which ' +
+      'you are seeing.',
+  },
   pallor: {
     file: 'signs/pallor.jpg',
     commonsTitle: 'File:Anemia.JPG', credit: 'James Heilman, MD', licence: 'CC BY-SA 3.0',
@@ -100,6 +111,7 @@ export const REVIEWED_SIGNS = new Set<string>([
   'pallor',
   'palmar-erythema',
   'splinter-haemorrhages',
+  'build-nourishment',
 ]);
 
 export function examPhotoCaption(id: string): string | undefined {
