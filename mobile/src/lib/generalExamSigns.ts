@@ -83,6 +83,18 @@ export interface ExamSignImage {
    */
   commonsFiles?: string[];
   /**
+   * Commons **categories** to walk before searching.
+   *
+   * A category is human judgement that the file depicts the thing. Full-text
+   * search is not: it found a magazine engraving, a stone relief and a
+   * professional wrestler for the word "pallor", each of which passed every
+   * mechanical gate. Nobody has ever filed a wrestler under Category:Anemia.
+   *
+   * The title gate still applies, because a category can be broad —
+   * Category:Anemia holds blood films and charts as well as patients.
+   */
+  commonsCategories?: string[];
+  /**
    * The corroboration gate, and the reason it exists.
    *
    * The first run of the fetch workflow searched Commons and took the first
@@ -163,14 +175,19 @@ export const EXAM_SIGNS: ExamSign[] = [
         'File:Anaemia palmar pallor.jpg',
         'File:Pale hand anemia.jpg',
       ],
-      search: [
+            commonsCategories: [
+        'Category:Anemia',
+        'Category:Conjunctiva',
+        'Category:Pallor',
+      ],
+search: [
         'conjunctival pallor anaemia',
         'pallor lower eyelid anemia',
         'anemia palm pallor',
         'palmar pallor anaemia hand',
         'pale conjunctiva anaemia clinical',
       ],
-      titleMustContain: ['pallor', 'pale conjunctiva', 'conjunctival'],
+      titleMustContain: ['pallor', 'pale', 'conjunctiva'],
     },
   },
   {
@@ -230,7 +247,10 @@ export const EXAM_SIGNS: ExamSign[] = [
     pearl:
       'Cyanosis needs ABSOLUTE reduced haemoglobin, so a severely anaemic patient can be profoundly hypoxic and never look blue, while a polycythaemic one looks blue easily. Never use colour to exclude hypoxia.',
     image: {
-      search: ['central cyanosis tongue', 'cyanosis lips blue', 'cyanotic congenital heart disease child'],
+            commonsCategories: [
+        'Category:Cyanosis',
+      ],
+search: ['central cyanosis tongue', 'cyanosis lips blue', 'cyanotic congenital heart disease child'],
       /*
        * Central cyanosis is looked for on the TONGUE and LIPS, and the plain
        * word "cyanosis" does not say so. It fetched a photograph of one dusky
@@ -387,7 +407,10 @@ export const EXAM_SIGNS: ExamSign[] = [
     pearl:
       'Platonychia is the reason a student says "the nails look normal" and the examiner says "look again from the side". It is the step before koilonychia, and naming it is what separates a good general examination from a recited one.',
     image: {
-      search: ['platonychia flat nails', 'flat nail plate', 'nail flattening iron deficiency'],
+            commonsCategories: [
+        'Category:Nail diseases',
+      ],
+search: ['platonychia flat nails', 'flat nail plate', 'nail flattening iron deficiency'],
       titleMustContain: ['platonychia'],
     },
   },
@@ -492,7 +515,10 @@ export const EXAM_SIGNS: ExamSign[] = [
     pearl:
       'Hold the position for a full half minute. Asterixis is intermittent, and the commonest reason a student reports it absent is that they gave up after five seconds.',
     image: {
-      search: ['asterixis flapping tremor', 'hepatic encephalopathy asterixis hands', 'flapping tremor wrist'],
+            commonsCategories: [
+        'Category:Hepatic encephalopathy',
+      ],
+search: ['asterixis flapping tremor', 'hepatic encephalopathy asterixis hands', 'flapping tremor wrist'],
       titleMustContain: ['asterixis', 'flapping tremor'],
     },
   },
@@ -560,7 +586,12 @@ export const EXAM_SIGNS: ExamSign[] = [
     pearl:
       'Madarosis — loss of the lateral third of the eyebrow — belongs to both hypothyroidism and leprosy, and the rest of the face tells you which.',
     image: {
-      search: ['myxedema facies hypothyroidism', 'moon facies cushing', 'mitral facies malar flush'],
+            commonsCategories: [
+        'Category:Myxedema',
+        'Category:Cushing syndrome',
+        'Category:Acromegaly',
+      ],
+search: ['myxedema facies hypothyroidism', 'moon facies cushing', 'mitral facies malar flush'],
       titleMustContain: ['myxedema', 'myxoedema', 'cushingoid', 'moon face', 'facies'],
     },
   },
@@ -579,8 +610,14 @@ export const EXAM_SIGNS: ExamSign[] = [
     pearl:
       'Temporal wasting is the earliest visible marker of significant weight loss, and it is on the face you are already looking at during the facies.',
     image: {
-      search: ['temporal wasting cachexia', 'muscle wasting malnutrition', 'cachexia clinical'],
-      titleMustContain: ['cachexia', 'marasmus', 'kwashiorkor', 'muscle wasting'],
+            commonsCategories: [
+        'Category:Malnutrition',
+        'Category:Kwashiorkor',
+        'Category:Marasmus',
+        'Category:Cachexia',
+      ],
+search: ['temporal wasting cachexia', 'muscle wasting malnutrition', 'cachexia clinical'],
+      titleMustContain: ['cachexia', 'marasmus', 'kwashiorkor', 'muscle wasting', 'malnutrition', 'malnourish'],
     },
   },
   {

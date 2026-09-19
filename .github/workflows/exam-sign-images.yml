@@ -161,6 +161,62 @@ jobs:
               r'manuscript|book plate|bookplate|comic|cartoon|caricature|'
               r'diagram|clip ?art|icon|logo|harper|ancient|antiquit)', re.I)
 
+          # ── Commons is not the only place with free pictures ──────────
+          #
+          # Everything above searches ONE source, and that was a real limit
+          # rather than a safe default: Commons is a volunteer media library,
+          # not a clinical image bank, so for several signs it genuinely has
+          # nothing — and the fetcher reported "nothing acceptable exists"
+          # when what it meant was "nothing acceptable is HERE".
+          #
+          # Two more sources, both of which permit commercial use by
+          # construction, so nothing about the licence rule is relaxed:
+          #
+          #   Openverse  — the Creative Commons search index (Flickr, museums,
+          #                science archives, Commons itself). Its API filters
+          #                to commercially-usable licences server-side.
+          #   Categories — Commons CATEGORY membership rather than full text.
+          #                A person put the file in "Category:Anemia"; the
+          #                OCR'd text of a 1902 textbook did not. This is a
+          #                different and far better signal than a word search,
+          #                and it is the one thing that would have kept a
+          #                wrestler out of the results.
+          #
+          # What does NOT change: every candidate still has to be looked at by
+          # a human before the app will display it. More sources means more
+          # candidates worth looking at, not fewer eyes.
+          OPENVERSE = 'https://api.openverse.org/v1/images/'
+          # cc0 and the public-domain mark carry no conditions; by and by-sa
+          # require attribution, which the app shows. Everything else — nc in
+          # any form, nd in any form — is refused here as it is everywhere.
+          OPENVERSE_OK = {'cc0', 'pdm', 'by', 'by-sa'}
+
+          def openverse(term, limit=20):
+              url = OPENVERSE + '?' + urllib.parse.urlencode({
+                  'q': term,
+                  'license_type': 'commercial',
+                  'page_size': str(limit),
+              })
+              req = urllib.request.Request(url, headers={'User-Agent': UA})
+              with urllib.request.urlopen(req, timeout=45) as r:
+                  data = json.load(r)
+              out = []
+              for hit in data.get('results', []):
+                  lic = (hit.get('license') or '').lower()
+                  if lic not in OPENVERSE_OK:
+                      continue
+                  src = hit.get('url')
+                  if not src:
+                      continue
+                  out.append({
+                      'title': hit.get('title') or src.rsplit('/', 1)[-1],
+                      'url': src,
+                      'licence': f"CC {lic.upper()} {hit.get('license_version') or ''}".strip(),
+                      'credit': hit.get('creator') or hit.get('source') or 'Openverse',
+                      'source': hit.get('foreign_landing_url') or src,
+                  })
+              return out
+
           def api(**params):
               params.setdefault('format', 'json')
               params.setdefault('action', 'query')
@@ -223,7 +279,9 @@ jobs:
               # so the gate is not applied to them. The licence check still is.
               n = re.search(r"commonsFiles: \[(.*?)\]", body, re.S)
               named = re.findall(r"'([^']+)'", n.group(1)) if n else []
-              signs.append((sid, terms, gate, named))
+              c = re.search(r"commonsCategories: \[(.*?)\]", body, re.S)
+              cats = re.findall(r"'([^']+)'", c.group(1)) if c else []
+              signs.append((sid, terms, gate, named, cats))
 
           only = os.environ.get('ONLY', '').strip()
           if only:
@@ -237,7 +295,7 @@ jobs:
           if m and m.group(1).strip() != '{}':
               manifest = json.loads(m.group(1))
 
-          for sid, terms, gate, named in signs:
+          for sid, terms, gate, named, categories in signs:
               if sid in manifest and not only:
                   print(f'  skip  {sid} (already has a picture)')
                   continue
@@ -275,6 +333,59 @@ jobs:
                           break
                   except Exception as e:
                       print(f'  warn  {sid}: named lookup failed: {e}')
+
+              # 1b. Commons CATEGORIES. Membership is a human's judgement that
+              #     the file depicts the thing, which is exactly what a word
+              #     search cannot tell you. The title gate is still applied,
+              #     because a category can be broad ("Anemia" holds blood
+              #     smears and charts as well as patients).
+              for cat in ([] if chosen else categories):
+                  try:
+                      members = api(list='categorymembers', cmtitle=cat,
+                                    cmtype='file', cmlimit='50')
+                      titles = [m['title'] for m in
+                                members.get('query', {}).get('categorymembers', [])]
+                  except Exception as e:
+                      print(f'  warn  {sid}: category "{cat}" failed: {e}')
+                      continue
+                  if not titles:
+                      print(f'  cat   {sid}: "{cat}" is empty')
+                      continue
+                  print(f'  cat   {sid}: "{cat}" has {len(titles)} file(s)')
+                  for batch in [titles[i:i + 40] for i in range(0, len(titles), 40)]:
+                      try:
+                          info = api(prop='imageinfo|categories',
+                                     titles='|'.join(batch),
+                                     iiprop='url|extmetadata|mime|size',
+                                     iiurlwidth='1200', cllimit='max')
+                      except Exception:
+                          continue
+                      for page in info.get('query', {}).get('pages', {}).values():
+                          ii = (page.get('imageinfo') or [None])[0]
+                          if not ii or ii.get('mime') not in ('image/jpeg', 'image/png'):
+                              continue
+                          t_l = page['title'].lower()
+                          if gate and not any(w.lower() in t_l for w in gate):
+                              continue
+                          if page['title'] in BANNED:
+                              continue
+                          if any(v.get('commonsTitle') == page['title']
+                                 for v in manifest.values()):
+                              continue
+                          cat_blob = ' '.join(c.get('title', '')
+                                              for c in (page.get('categories') or []))
+                          if NOT_A_PHOTOGRAPH.search(page['title'] + ' ' + cat_blob):
+                              continue
+                          lic = acceptable(ii)
+                          if not lic:
+                              continue
+                          chosen = (page['title'], ii.get('thumburl') or ii['url'], lic)
+                          print(f'  cat   {sid}: taking "{page["title"]}" from {cat}')
+                          break
+                      if chosen:
+                          break
+                  if chosen:
+                      break
 
               # 2. Only then the searches: the title gate's own words first,
               #    then the free-text terms.
@@ -334,6 +445,33 @@ jobs:
                       break
                   if chosen:
                       break
+
+              # 3. Openverse, which indexes far more than Commons does.
+              if not chosen:
+                  for term in terms[:3]:
+                      try:
+                          hits = openverse(term)
+                      except Exception as e:
+                          print(f'  warn  {sid}: openverse "{term}" failed: {e}')
+                          continue
+                      for hit in hits:
+                          t_l = hit['title'].lower()
+                          if gate and not any(w.lower() in t_l for w in gate):
+                              continue
+                          if NOT_A_PHOTOGRAPH.search(hit['title']):
+                              continue
+                          if any(v.get('commonsTitle') == hit['title']
+                                 for v in manifest.values()):
+                              continue
+                          chosen = (hit['title'], hit['url'],
+                                    {'licence': hit['licence'],
+                                     'credit': hit['credit'],
+                                     'source': hit['source']})
+                          print(f'  open  {sid}: taking "{hit["title"]}" '
+                                f'({hit["licence"]}) from Openverse')
+                          break
+                      if chosen:
+                          break
 
               if not chosen:
                   print(f'  NONE  {sid} — nothing passed the title gate {gate} with an '
