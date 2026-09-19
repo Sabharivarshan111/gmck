@@ -95,6 +95,14 @@ def tap(needle: str, required: bool = True) -> bool:
     return True
 
 
+def wait_visible(needle: str, tries: int = 6) -> None:
+    for _ in range(tries):
+        if visible(needle):
+            return
+        time.sleep(1)
+    raise RuntimeError(f"Expected screen did not open: {needle!r}")
+
+
 def screen_size() -> tuple[int, int]:
     out = adb("shell", "wm", "size", capture=True).stdout or ""
     m = re.search(r"(\d+)x(\d+)", out)
@@ -243,7 +251,13 @@ def main() -> int:
     scroll_to_tappable("Open normal laboratory values")
     shot("07-normal-values-expanded-native")
     tap("Open normal laboratory values")
+    wait_visible("Normal Values & Grading")
     shot("09-normal-laboratory-reference-native")
+    tap("Search a test, sign or grading system")
+    adb("shell", "input", "text", "differential")
+    adb("shell", "input", "keyevent", "4")
+    wait_visible("Neutrophils")
+    shot("12-differential-count-native")
     adb("shell", "input", "keyevent", "4")
     time.sleep(0.8)
 
