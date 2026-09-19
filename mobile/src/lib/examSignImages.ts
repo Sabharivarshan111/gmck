@@ -29,6 +29,13 @@ export interface FetchedSignImage {
 }
 
 export const SIGN_IMAGES: Record<string, FetchedSignImage> = {
+  "build-nourishment": {
+    "commonsTitle": "File:Kwashiorkor 6180.jpg",
+    "credit": "Centers for Disease Control and Prevention",
+    "file": "signs/build-nourishment.jpg",
+    "licence": "Public domain",
+    "source": "https://commons.wikimedia.org/w/index.php?curid=2740884"
+  },
   "clubbing": {
     "commonsTitle": "File:Clubbed fingers.JPG",
     "credit": "Bobjgalindo",
