@@ -1430,3 +1430,14 @@ Twelve attributed original photographs are bundled unchanged for offline use (ni
 Verification: TypeScript, ESLint, sign/keyboard/edge/version checks, guide parsing/unit expansion checks and production Android bundling passed during implementation. Screenshot workflow now waits for the exact commit's real debug APK instead of patching an older native shell: bundled image resources must match the APK. Driver additionally captures compact AI controls and My Progress. CI/device screenshots and final build outcomes must be checked after publishing. Debug-only Google exemption is preserved; internal/release retain sign-in. Version remains 23.
 
 Sources for added grading material: American Heart Association classes-of-heart-failure page; NCBI Bookshelf NBK539713 and NBK554452; glasgowcomascale.org/what-is-gcs/; MedlinePlus blood-differential page. This update does not claim an exhaustive revalidation of all older laboratory interpretation advice or of every PDF line.
+
+
+## 2026-09-19 — v23 clinical UI release verified
+
+DONE: Clinical UI update c4c90c0 and screenshot assertion follow-up 403675e are published on main. Latest successful builds: debug-196 (35414415713), internal-206 (35414415653), release-280 APK/AAB (35414415656). Native screenshot run 35414415658 passed against the matching debug APK and committed captures as 64ac0e2. The first run's screenshot 09 captured the underlying form too early; the driver now waits for "Normal Values & Grading", searches differential count and requires "Neutrophils" before capture. The stronger run passed. Compact AI buttons and normal-opacity Progress card were visually verified. Saved screenshots are supplied in chat.
+
+HALF-DONE: No new implementation remains for this clinical UI request. Earlier full-PDF line-by-line auditing and unverified-photo gaps remain as documented; this update does not claim to close them.
+
+NEXT: Use release-280 for normal APK/AAB, internal-206 for signed internal testing, debug-196 for login-free preview. Keep version 23 until the next Play upload requires a bump. The same app changes were also successfully built as debug-194/internal-204/release-278 before the stricter screenshot assertions.
+
+DO NOT: Treat the old screenshot 09 as proof the lab sheet opened. Call the proformas 76 unique entries, not 76 unrelated diseases: master frameworks overlap focused cases. Keep Google sign-in disabled only in debug; internal/release retain it. Preserve main-only publication and the separately merged simulator/deployment work from fb8fbce. Twelve real attributed photos are bundled; seven signs still have no verified photo.
