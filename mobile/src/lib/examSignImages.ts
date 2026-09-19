@@ -106,6 +106,13 @@ export const SIGN_IMAGES: Record<string, FetchedSignImage> = {
     "licence": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/w/index.php?curid=29036621"
   },
+  "pallor": {
+    "commonsTitle": "File:Adult female Loa loa filarial worm - Extracted from a patient's conjunctiva in the left eye.jpg",
+    "credit": "Nathan Reading from Halesowen, UK",
+    "file": "signs/pallor.jpg",
+    "licence": "CC BY 2.0",
+    "source": "https://commons.wikimedia.org/w/index.php?curid=18916046"
+  },
   "palmar-erythema": {
     "commonsTitle": "File:Palmar erythema.jpg",
     "credit": "Jmarchn",
