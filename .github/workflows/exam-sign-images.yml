@@ -43,6 +43,10 @@ on:
         description: 'Fetch only this sign id (blank = every sign with no picture yet)'
         required: false
         default: ''
+      probe:
+        description: 'Show what every source offers for `only`, and commit NOTHING'
+        required: false
+        default: 'false'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -60,6 +64,7 @@ jobs:
       - name: Fetch a freely-licensed photograph for each sign
         env:
           ONLY: ${{ github.event.inputs.only }}
+          PROBE: ${{ github.event.inputs.probe }}
         run: |
           set -euo pipefail
           python3 - <<'PY'
@@ -342,7 +347,65 @@ jobs:
               cats = re.findall(r"'([^']+)'", c.group(1)) if c else []
               signs.append((sid, terms, gate, named, cats))
 
+          # ── Europe PMC: figures from open-access case reports ──────────
+          #
+          # The corpus Open-i indexes, reached directly and with a documented,
+          # stable API. A case report about anaemia contains a photograph of
+          # the patient's conjunctiva, captioned, and if the article is CC BY
+          # that figure is usable with attribution. This is the only source in
+          # the chain that finds a picture BECAUSE a doctor wrote about the
+          # sign rather than because somebody named a file after it.
+          EPMC = 'https://www.ebi.ac.uk/europepmc/webservices/rest/'
+
+          def europepmc(term, limit=25):
+              q = f'"{term}" AND OPEN_ACCESS:Y AND HAS_FT:Y'
+              url = EPMC + 'search?' + urllib.parse.urlencode({
+                  'query': q, 'format': 'json', 'pageSize': str(limit),
+                  'resultType': 'core',
+              })
+              req = urllib.request.Request(url, headers={'User-Agent': UA})
+              with urllib.request.urlopen(req, timeout=60) as r:
+                  data = json.load(r)
+              out = []
+              for art in data.get('resultList', {}).get('result', []):
+                  lic = (art.get('license') or '').lower()
+                  # cc-by and cc0 only. cc-by-nc / -nd are refused here as
+                  # everywhere else, and an article with no stated licence is
+                  # not an article with a permissive one.
+                  if not lic or 'nc' in lic or 'nd' in lic:
+                      continue
+                  if not ('cc' in lic and 'by' in lic or lic in ('cc0', 'pd')):
+                      continue
+                  pmcid = art.get('pmcid')
+                  if not pmcid:
+                      continue
+                  try:
+                      fx = urllib.request.Request(EPMC + f'{pmcid}/fullTextXML',
+                                                  headers={'User-Agent': UA})
+                      with urllib.request.urlopen(fx, timeout=60) as r2:
+                          xml = r2.read().decode('utf-8', 'replace')
+                  except Exception:
+                      continue
+                  # Each <fig> carries a caption and a graphic href. The caption
+                  # is what says whether the figure shows the sign; the article
+                  # title does not.
+                  for fig in re.findall(r'<fig\b.*?</fig>', xml, re.S):
+                      cap = re.sub(r'<[^>]+>', ' ', fig)
+                      cap = re.sub(r'\s+', ' ', cap).strip()
+                      href = re.search(r'xlink:href="([^"]+)"', fig)
+                      if not href:
+                          continue
+                      out.append({
+                          'title': cap[:200],
+                          'url': f'https://www.ncbi.nlm.nih.gov/pmc/articles/{pmcid}/bin/{href.group(1)}.jpg',
+                          'licence': art.get('license', 'CC BY'),
+                          'credit': (art.get('authorString') or 'PubMed Central')[:120],
+                          'source': f'https://www.ncbi.nlm.nih.gov/pmc/articles/{pmcid}/',
+                      })
+              return out
+
           only = os.environ.get('ONLY', '').strip()
+          probe = os.environ.get('PROBE', '').strip().lower() in ('true', '1', 'yes')
           if only:
               signs = [s for s in signs if s[0] == only]
 
@@ -353,6 +416,46 @@ jobs:
                         MANIFEST.read_text(), re.S)
           if m and m.group(1).strip() != '{}':
               manifest = json.loads(m.group(1))
+
+          # ── Probe: show what is out there, commit nothing ──────────────
+          #
+          # Added after four rounds of picking a wrong picture for "pallor" —
+          # an engraving, a wrestler, a beer parlour and a pale-winged
+          # starling. Each round was a blind guess followed by a download,
+          # because nothing ever printed the CANDIDATES, only the winner.
+          #
+          # This prints every source's offer for one sign so a person can
+          # choose from a list instead of re-running the whole thing and
+          # hoping. It writes nothing and commits nothing.
+          if probe:
+              for sid, terms, gate, named, categories in signs:
+                  print(f'\n=== {sid} ===  gate={gate}')
+                  for cat in categories:
+                      try:
+                          mem = api(list='categorymembers', cmtitle=cat,
+                                    cmtype='file', cmlimit='40')
+                          names = [m['title'] for m in
+                                   mem.get('query', {}).get('categorymembers', [])]
+                      except Exception as e:
+                          print(f'  [category] {cat}: FAILED {e}')
+                          continue
+                      print(f'  [category] {cat}: {len(names)} file(s)')
+                      for n in names[:25]:
+                          print(f'      {n}')
+                  for term in terms[:3]:
+                      for label, fn in (('open-i', openi), ('europepmc', europepmc),
+                                        ('openverse', openverse)):
+                          try:
+                              hits = fn(term)
+                          except Exception as e:
+                              print(f'  [{label}] "{term}": FAILED {e}')
+                              continue
+                          print(f'  [{label}] "{term}": {len(hits)} hit(s)')
+                          for h in hits[:12]:
+                              print(f'      {h["licence"]:<18} {h["title"][:110]}')
+                              print(f'         {h["url"][:150]}')
+              print('\nprobe only — nothing fetched, nothing committed.')
+              raise SystemExit(0)
 
           for sid, terms, gate, named, categories in signs:
               if sid in manifest and not only:
