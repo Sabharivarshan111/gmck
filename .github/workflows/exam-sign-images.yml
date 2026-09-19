@@ -357,7 +357,15 @@ jobs:
           # sign rather than because somebody named a file after it.
           EPMC = 'https://www.ebi.ac.uk/europepmc/webservices/rest/'
 
-          def europepmc(term, limit=25):
+          # Eight articles, and at most four figures from each.
+          #
+          # This fetches the FULL TEXT of every article it looks at, so the
+          # cost is one HTTP request per article on top of the search. At 25
+          # articles x 3 terms x 19 signs that is well over a thousand
+          # requests, and a probe of every sign ran for eighteen minutes
+          # without finishing. Eight is plenty: a figure that shows the sign is
+          # in the first few case reports or it is not there at all.
+          def europepmc(term, limit=8, max_figs=4):
               q = f'"{term}" AND OPEN_ACCESS:Y AND HAS_FT:Y'
               url = EPMC + 'search?' + urllib.parse.urlencode({
                   'query': q, 'format': 'json', 'pageSize': str(limit),
@@ -389,7 +397,7 @@ jobs:
                   # Each <fig> carries a caption and a graphic href. The caption
                   # is what says whether the figure shows the sign; the article
                   # title does not.
-                  for fig in re.findall(r'<fig\b.*?</fig>', xml, re.S):
+                  for fig in re.findall(r'<fig\b.*?</fig>', xml, re.S)[:max_figs]:
                       cap = re.sub(r'<[^>]+>', ' ', fig)
                       cap = re.sub(r'\s+', ' ', cap).strip()
                       href = re.search(r'xlink:href="([^"]+)"', fig)
