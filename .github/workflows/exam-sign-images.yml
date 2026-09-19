@@ -393,7 +393,32 @@ jobs:
                   except Exception as e:
                       print(f'  warn  {sid}: named lookup failed: {e}')
 
-              # 1b. Commons CATEGORIES. Membership is a human's judgement that
+              # 1b. Open-i FIRST. It is the only source here whose corpus is
+              #     clinical and whose filter says "photograph". It was last
+              #     in the chain, so Commons always answered before it was
+              #     asked — and Commons' answer for pallor was a bird.
+              if not chosen:
+                  for term in terms[:3]:
+                      try:
+                          hits = openi(term)
+                      except Exception as e:
+                          print(f'  warn  {sid}: open-i "{term}" failed: {e}')
+                          continue
+                      print(f'  openi {sid}: "{term}" -> {len(hits)} usable-licence photo(s)')
+                      for hit in hits:
+                          cap = hit['title'].lower()
+                          if gate and not any(w.lower() in cap for w in gate):
+                              continue
+                          chosen = (hit['title'][:180], hit['url'],
+                                    {'licence': hit['licence'],
+                                     'credit': hit['credit'],
+                                     'source': hit['source']})
+                          print(f'  openi {sid}: taking "{hit["title"][:90]}"')
+                          break
+                      if chosen:
+                          break
+
+              # 1c. Commons CATEGORIES. Membership is a human's judgement that
               #     the file depicts the thing, which is exactly what a word
               #     search cannot tell you. The title gate is still applied,
               #     because a category can be broad ("Anemia" holds blood
@@ -504,30 +529,6 @@ jobs:
                       break
                   if chosen:
                       break
-
-              # 2b. Open-i first among the non-Commons sources: it is the only
-              #     one whose corpus is clinical and whose filter says
-              #     "photograph".
-              if not chosen:
-                  for term in terms[:3]:
-                      try:
-                          hits = openi(term)
-                      except Exception as e:
-                          print(f'  warn  {sid}: open-i "{term}" failed: {e}')
-                          continue
-                      print(f'  openi {sid}: "{term}" -> {len(hits)} usable-licence photo(s)')
-                      for hit in hits:
-                          cap = hit['title'].lower()
-                          if gate and not any(w.lower() in cap for w in gate):
-                              continue
-                          chosen = (hit['title'][:180], hit['url'],
-                                    {'licence': hit['licence'],
-                                     'credit': hit['credit'],
-                                     'source': hit['source']})
-                          print(f'  openi {sid}: taking "{hit["title"][:90]}"')
-                          break
-                      if chosen:
-                          break
 
               # 3. Openverse, which indexes far more than Commons does.
               if not chosen:

@@ -187,7 +187,7 @@ search: [
         'palmar pallor anaemia hand',
         'pale conjunctiva anaemia clinical',
       ],
-      titleMustContain: ['pallor', 'pale', 'conjunctiva'],
+      titleMustContain: ['pallor', 'conjunctiva', 'anemia palm', 'anaemia palm'],
     },
   },
   {
