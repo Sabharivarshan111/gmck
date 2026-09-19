@@ -39,6 +39,13 @@ export const EXCLUDED_EXAM_PHOTOS = new Set([
   // A grainy archive snapshot of a woman outdoors. Even if the subject had
   // myxoedema, no student could learn the facies from it.
   'File:BASA-3K-7-529-35(7)-Myxedema.jpg',
+  // A photograph of a professional wrestler whose ring name is Pallor. It
+  // passed the licence check, the MIME check, the title gate and the artwork
+  // filter. The word is not evidence about the picture.
+  'File:Pallor (5687275766).jpg',
+  // A Victorian "medical curiosity" photograph whose title is a slur. Neither
+  // the dignity nor the teaching value is acceptable in a modern app.
+  'File:Microcephalic idiot with local myxedema.jpg',
 ]);
 export function examPhotoCaption(id: string): string | undefined {
   if (id === 'koplik-and-oral') return 'Angular cheilitis — this example is not Koplik spots.';

@@ -29,13 +29,6 @@ export interface FetchedSignImage {
 }
 
 export const SIGN_IMAGES: Record<string, FetchedSignImage> = {
-  "build-nourishment": {
-    "commonsTitle": "File:Cancer cachexia 1.jpg",
-    "credit": "Muscleatrophyyy",
-    "file": "signs/build-nourishment.jpg",
-    "licence": "CC BY-SA 4.0",
-    "source": "https://commons.wikimedia.org/w/index.php?curid=78609552"
-  },
   "clubbing": {
     "commonsTitle": "File:Clubbed fingers.JPG",
     "credit": "Bobjgalindo",
@@ -63,13 +56,6 @@ export const SIGN_IMAGES: Record<string, FetchedSignImage> = {
     "file": "signs/edema.jpg",
     "licence": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/w/index.php?curid=4646147"
-  },
-  "facies": {
-    "commonsTitle": "File:Microcephalic idiot with local myxedema.jpg",
-    "credit": "Henry J. Berkley, M.D.",
-    "file": "signs/facies.jpg",
-    "licence": "Public domain",
-    "source": "https://commons.wikimedia.org/w/index.php?curid=117998368"
   },
   "icterus": {
     "commonsTitle": "File:Comparison of Cutaneous Jaundice and Scleral Icterus.jpg",
@@ -119,13 +105,6 @@ export const SIGN_IMAGES: Record<string, FetchedSignImage> = {
     "file": "signs/onycholysis.jpg",
     "licence": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/w/index.php?curid=29036621"
-  },
-  "pallor": {
-    "commonsTitle": "File:Pallor (5687275766).jpg",
-    "credit": "istolethetv",
-    "file": "signs/pallor.jpg",
-    "licence": "CC BY 2.0",
-    "source": "https://commons.wikimedia.org/w/index.php?curid=106214319"
   },
   "palmar-erythema": {
     "commonsTitle": "File:Palmar erythema.jpg",

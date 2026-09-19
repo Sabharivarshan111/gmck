@@ -46,8 +46,42 @@ import { SIGN_IMAGES, type FetchedSignImage } from '@/lib/examSignImages';
 /* The manifest the fetch workflow writes. Read through a lookup rather than
  * baked into the sign list, so a new batch of pictures is one generated file
  * with no edit to the sign definitions themselves. */
+/**
+ * A picture is shown only if a human has looked at it.
+ *
+ * This is the rule that had to be inverted, and here is what inverted it.
+ *
+ * The fetcher searches Wikimedia Commons, and three rounds of tightening its
+ * gates produced three different wrong pictures for the single word "pallor",
+ * each of which passed every mechanical check — the licence, the MIME type,
+ * the title corroboration, and finally a filter that rejects artwork:
+ *
+ *   1. a Harper's magazine engraving of two men at a table, from a novel
+ *      captioned "face assumed a deadly pallor";
+ *   2. an Ancient Egyptian carved relief (for cachexia);
+ *   3. a photograph of a professional wrestler whose ring name is Pallor.
+ *
+ * None of these is a near miss that a cleverer regular expression would have
+ * caught. The word is simply not evidence about the picture, which is the
+ * lesson `question_diagrams` already taught this repo once — "a keyword search
+ * cannot choose a clinical picture, and a plausible wrong one is worse than a
+ * blank because the reader trusts it."
+ *
+ * So the generated manifest is now a list of **candidates**, not of pictures
+ * to display. `SIGN_IMAGES` is consulted only for a sign whose entry a person
+ * has since reviewed and promoted into `CURATED_EXAM_PHOTOS` or bundled into
+ * the APK. Everything else shows its text, which is the honest answer and the
+ * one the file header already asked for.
+ *
+ * The cost is that a genuinely good fetch waits for review. That is the right
+ * way round: a student cannot tell a wrong clinical photograph from a right
+ * one — that is precisely why they are looking at it.
+ */
 function imageFor(sign: ExamSign): FetchedSignImage | undefined {
-  const found = CURATED_EXAM_PHOTOS[sign.id] ?? SIGN_IMAGES[sign.id];
+  const reviewed = CURATED_EXAM_PHOTOS[sign.id] ?? (BUNDLED_EXAM_PHOTOS[sign.id]
+    ? SIGN_IMAGES[sign.id]
+    : undefined);
+  const found = reviewed;
   if (found?.commonsTitle && EXCLUDED_EXAM_PHOTOS.has(found.commonsTitle)) return undefined;
   if (found?.file) {
     return found;
