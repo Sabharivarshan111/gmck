@@ -148,41 +148,59 @@ in three places and only one of them was complete.
 real `public/models/atlas.json` and names every one of those failures. Reverted
 to the old code, it fails twenty-eight ways.
 
-## The website is deployed two ways, and only one of them has a size limit
+## The website is deployed two ways, and there must be no `.vercelignore`
 
 A push to `main` goes through Vercel's **Git integration**: Vercel clones the
 repo on its own side, runs `npm run build`, and serves `dist/`. Nothing is
-uploaded, so no upload limit applies.
+uploaded, so no upload limit applies. This is how the site has always been
+published and it works.
 
 `vercel deploy` — the **CLI**, and anything driving it, which is how an agent or
 an IDE publishes — uploads the working tree, and that upload is capped at
-**100 MB on Hobby**.
+**100 MB on Hobby**. The tree is ~728 MB without `.git`, so a `.vercelignore`
+looked obviously right.
 
-This working tree was 728 MB without `.git` and there was no `.vercelignore`,
-so every CLI deployment was refused before it started while merges to `main`
-kept publishing. That is the whole of "the site is live but Antigravity cannot
-update it": not a build failure, not a credential, not a permission.
+**It is not, and one may not be added.** Every Vercel deployment failed from
+the commit that introduced it, while `main` kept deploying. The failure could
+not be read from an agent sandbox — the Vercel connector authenticates as the
+owner but has no access to the team that owns the project, and `vercel.com` is
+refused by the egress proxy — so it was bisected by pushing:
 
-| What | Why it is not uploaded |
-|---|---|
-| `remotion-ad/`, `hyperframes-ad/` | 238 MB of rendered ad video; the site embeds none of it |
-| `docs/` | 193 MB of scanned clinical PDFs and long-form docs |
-| `screenshots/` | 70 MB of captured app screens |
-| `mobile/` | the native app; `src/data` is shared through an alias, so the dependency runs the other way |
-| `public/diagrams/` | 51 MB staged for the Supabase `diagrams` bucket, read back from that bucket's URL and never served from here |
-| the v8.0 `.glb` engine | 28 MB replaced by the BodyParts3D chunk atlas; no file in `src/` has loaded one since |
+| commit | `.vercelignore` | Vite `dist` prune | Vercel |
+|---|---|---|---|
+| `main` @ `6721b26c` | — | — | deployed |
+| `b674da3d` … `e212219d` | yes | yes | **failed ×5** |
+| `ca852434` | no | no | deployed |
+| `3eff5bce` | yes, minus `/*.mjs` | yes | **failed** |
+| `e4cae891` | no | yes | deployed |
 
-Three files hold that, and `npm run check:deploy` fails if they disagree:
+So the **Vite `dist` prune is innocent and stays** — it is what takes the
+published site from 186 MB to 39 MB. **The presence of `.vercelignore` is what
+failed the deployment.** Which pattern, or whether the file is read at all on
+this project's Git integration, was never established.
 
-- **`.vercelignore`** covers the CLI route. `scripts/` is deliberately **not**
-  excluded — `vite.config.ts` imports `scripts/deploy-excludes.mjs`, and an
-  upload without it cannot build. The root globs are anchored (`/*.mjs`, not
-  `*.mjs`) because an unanchored glob matches at every depth and would take that
-  file with it.
-- **A Vite plugin** removes the same `public/` paths from `dist/`, which is the
-  Git route — it never reads `.vercelignore`.
-- **`scripts/deploy-excludes.mjs`** is the one list both read, with the reason
-  for each entry.
+Not through the mechanism first suspected, either, and that is worth keeping:
+`/*.mjs` reaching `scripts/deploy-excludes.mjs`, which `vite.config.ts` used to
+import, was a real hazard — it was found, fixed, and the deployment failed
+anyway. `check:deploy` still refuses that shape (the build may not import from
+a directory an ignore rule can reach, and `PUBLIC_EXCLUDES` lives in
+`vite.config.ts` for that reason), because it would have been a bug even though
+it was not this one.
+
+**The CLI cap was never confirmed as the cause of anything.** It was inferred
+from the published limit and the size of the tree. It fits, and it is still the
+likeliest reason a CLI deploy fails — but no log was ever read that said so,
+and the fix for it broke the route that actually publishes the site. That is
+the wrong trade.
+
+`npm run check:deploy` fails if a `.vercelignore` comes back, prints what a
+deploy uploads today and what the list in `scripts/deploy-excludes.mjs` would
+trim it to, and keeps that list with the reason for each entry so whoever
+finally reads the build log does not have to derive it again:
+
+```sh
+npx vercel inspect <deployment-id> --logs
+```
 
 **`public/models` ships one encoding per chunk, not two.** It carried both
 `body-N.bin` and `body-N.bin.gz` for all fifteen — the same 2.2 million
@@ -192,8 +210,8 @@ with `Content-Encoding: gzip` is handled, and a browser without
 `DecompressionStream` (Safari under 16.4, Firefox under 113 — the only readers
 the raw copy was for) gunzips with `fflate`, already a dependency.
 
-728 MB → 37.3 MB.
-
+The published site is 39 MB rather than 186 MB, which is the part that reaches
+a reader.
 
 ## Things that look like bugs but are deliberate
 

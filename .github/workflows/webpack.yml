@@ -103,38 +103,20 @@ jobs:
           node-version: 22.x
           cache: npm
 
-      # Applied with GITIGNORE semantics, not shell-glob semantics.
-      #
-      # This step used to expand each pattern with a shell glob, which matches
-      # only the current directory — so `/*.mjs` removed the root's .mjs files
-      # and nothing deeper, and this job went green while Vercel removed
-      # `scripts/deploy-excludes.mjs` too and the build died before it started.
-      # A wildcard pattern is matched at EVERY depth here, which is the
-      # pessimistic reading and the one that would have caught it.
-      - name: Apply .vercelignore to the checkout
+      # There is deliberately no .vercelignore in this repository — see
+      # scripts/deploy-excludes.mjs for the bisection that removed it. This job
+      # therefore builds the tree as Vercel receives it, with Vercel's own
+      # install and build commands, which is the part that still matters.
+      - name: Confirm no .vercelignore has come back
         run: |
           set -eu
-          test -f .vercelignore || { echo "no .vercelignore this commit (experiment, PR #28)"; exit 0; }
-          grep -vE '^\s*(#|$)' .vercelignore | sed 's|^/||' | while read -r pattern; do
-            case "$pattern" in
-              *'*'*)
-                # Wildcard: match at any depth, the way gitignore does.
-                find . -path ./.git -prune -o -name "$pattern" -print 2>/dev/null | while read -r hit; do
-                  echo "removing $hit  (wildcard '$pattern')"
-                  rm -rf -- "$hit"
-                done
-                ;;
-              *)
-                if [ -e "$pattern" ]; then
-                  echo "removing $pattern"
-                  rm -rf -- "$pattern"
-                fi
-                ;;
-            esac
-          done
-          echo "--- what is left at the root ---"
-          ls -A
-          echo "--- size of the upload ---"
+          if [ -e .vercelignore ]; then
+            echo "A .vercelignore is present. Its mere presence failed every Vercel"
+            echo "deployment on this repository - bisected, six trials. See"
+            echo "scripts/deploy-excludes.mjs before re-adding one."
+            exit 1
+          fi
+          echo "no .vercelignore, as intended"
           du -sh --exclude=.git . || true
 
       - name: Install the way Vercel installs

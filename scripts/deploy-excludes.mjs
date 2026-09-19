@@ -1,79 +1,87 @@
-// What the website does not need, in one list, because it is enforced twice.
+// This repository must NOT have a `.vercelignore`, and this is why.
 //
-// Vercel deploys this repo two different ways and they read different things:
-//
-//   * a push to `main` goes through the Git integration, which clones the repo
-//     on Vercel's side and runs `npm run build`. What reaches the CDN is
-//     whatever `dist/` holds — so `PUBLIC_EXCLUDES` is applied by the Vite
-//     plugin in `vite.config.ts`, after the build.
-//   * `vercel deploy` from a machine — the CLI, and anything driving it, which
-//     is how an agent or an IDE publishes — UPLOADS the working tree, and
-//     that upload is capped (100 MB on Hobby, 1 GB on Pro). `.vercelignore` is
-//     what it reads.
-//
-// Both lists live here so the two cannot drift, and `npm run check:deploy`
-// fails if `.vercelignore` stops matching.
+// `npm run check:deploy` fails if one comes back. Read this before adding one.
 //
 // ---------------------------------------------------------------------------
-// Why this file exists at all
+// What happened
 // ---------------------------------------------------------------------------
 //
-// There was no `.vercelignore`, and the working tree is 728 MB without `.git`:
-// 238 MB of rendered ad videos under `remotion-ad/out/`, 193 MB of scanned
-// clinical PDFs under `docs/`, 70 MB of screenshots, and a `public/` that
-// carried both `body-N.bin` and `body-N.bin.gz` for all fifteen anatomy chunks
-// — the same 2.2 million triangles twice.
+// The working tree is ~728 MB without `.git`, and `vercel deploy` — the CLI,
+// which is how an agent or an IDE publishes — uploads that tree against a
+// 100 MB cap on Hobby. So a `.vercelignore` looked obviously right, and it was
+// added. Every Vercel deployment on the branch failed from that commit
+// onwards, while `main` kept deploying fine.
 //
-// So every CLI deployment was ~7x over the Hobby cap and was rejected before
-// it started, while pushes to `main` kept working because the Git integration
-// never uploads anything. That is the whole shape of "the site updates when
-// the owner merges but an agent cannot publish to it": not a build failure, not
-// a credential, not a permission. An upload limit, and a repo that grew past it
-// with nothing measuring.
+// The failure could not be read from an agent sandbox: the Vercel connector
+// authenticates as the owner but 403s on the team that owns the project, and
+// `vercel.com` is refused by the egress proxy. So it was bisected by pushing,
+// six trials:
 //
-// `npm run check:deploy` is that measurement now.
+//   main @ 6721b26c        no .vercelignore, no dist prune     DEPLOYED
+//   b674da3d .. e212219d   .vercelignore + dist prune          FAILED x5
+//   ca852434               neither                             DEPLOYED
+//   3eff5bce               .vercelignore (minus /*.mjs) + prune FAILED
+//   e4cae891               dist prune only                     DEPLOYED
+//
+// The Vite `dist` prune is innocent and stays — it is what takes the published
+// site from 186 MB to 39 MB. **The mere presence of `.vercelignore` is what
+// failed the deployment**, and not through the mechanism first suspected: the
+// `/*.mjs` pattern reaching `scripts/deploy-excludes.mjs`, which
+// `vite.config.ts` used to import, was a real hazard and was fixed, and the
+// deployment failed anyway. Which pattern, or whether the file is read at all
+// on this project's Git integration, is not established.
+//
+// ---------------------------------------------------------------------------
+// What this means for the thing it was meant to solve
+// ---------------------------------------------------------------------------
+//
+// **The 100 MB CLI cap was never confirmed as the cause of anything.** It was
+// inferred from the published limit and the size of the tree. It fits, and it
+// remains the most likely explanation for a CLI deploy failing — but no log
+// was ever read that said so, and the fix for it broke the route that actually
+// publishes this site. That is the wrong trade, so it is reverted.
+//
+// Pushing to `main` still publishes, which is how the site has always been
+// updated and is unaffected by any of this.
+//
+// **To settle it**, from anywhere with the Vercel CLI signed in:
+//
+//   npx vercel inspect <deployment-id> --logs
+//
+// A failed deployment id is in the `Vercel` commit status on any of the five
+// failing commits above. One line of that log would say which pattern it was,
+// and a `.vercelignore` could then be written that omits it.
+//
+// Until then: no `.vercelignore`. `UPLOAD_EXCLUDES` below is kept as the list
+// that WOULD go in one, with the reason for each entry, so whoever reads that
+// log does not have to derive it again.
 
-/**
- * Directories and files a CLI deployment must not upload.
- *
- * NOTHING in the build imports this module — `npm run check:deploy` is its only
- * reader. That is deliberate: a list of things an ignore file removes must not
- * itself be removable by one.
- */
+/** What a `.vercelignore` would exclude, if this project could have one. */
 export const UPLOAD_EXCLUDES = [
-  // Rendered video and its workspace. 238 MB, and the site embeds none of it.
+  // Rendered ad video and its workspace — 238 MB, none of it embedded
   'remotion-ad',
   'hyperframes-ad',
-  // The owner's scanned college PDFs and every long-form doc. 193 MB.
+  // Scanned clinical PDFs and the long-form documentation — 193 MB
   'docs',
-  // Captured app screenshots, for handovers and the Play listing. 70 MB.
+  // Captured app screenshots — 70 MB
   'screenshots',
-  // The native Android app. It shares `src/data` through an alias, so the
-  // dependency runs the other way and the website needs none of it.
+  // The native Android app. src/data is shared with it through an alias, so
+  // the dependency runs the other way and the website needs none of it.
   'mobile',
-  // Edge functions and migrations: deployed to Supabase, never to Vercel.
+  // Edge functions and migrations: these deploy to Supabase, never to Vercel
   'supabase',
-  // Agent rules, skills, queues and state.
+  // Agent rules, skills, queues and state
   '.agents',
   '.claude',
   '.lovable',
-  // CI. (`scripts/` is NOT excluded: `vite.config.ts` imports this very file
-  // from it, so an upload without it cannot build. It is 104 KB.)
+  // CI
   '.github',
-  // Handover and rules documents.
-  //
-  // `/*.mjs` and `/*.cjs` USED to be here for the root's one-off maintenance
-  // scripts. They are gone, and the reason is worth keeping: a leading slash
-  // anchors a pattern to the root in gitignore syntax, but the effective match
-  // took `scripts/deploy-excludes.mjs` with it — the file `vite.config.ts`
-  // imported — and every Vercel deployment on the branch died before the build
-  // started. Those root scripts are about 100 KB against a 37 MB upload. The
-  // list stays; the two patterns that could reach into a directory do not.
+  // Handover and rules documents
   '/*.md',
-  // A second lockfile for a package manager this project does not build with.
+  // A second lockfile, for a package manager this project does not build with
   'bun.lock',
   'bun.lockb',
 ];
 
-/** The upload budget, in megabytes. Vercel Hobby rejects a CLI deploy above 100. */
+/** The upload budget in megabytes, for the report `check:deploy` prints. */
 export const UPLOAD_BUDGET_MB = 60;

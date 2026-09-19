@@ -56,29 +56,16 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const failures = [];
 const fail = (m) => failures.push(m);
 
-// -- 1. The two lists agree -------------------------------------------------
+// -- 1. There is no .vercelignore, and that is deliberate --------------------
 
 const ignoreFile = path.join(root, '.vercelignore');
-const EXPERIMENT = fs.existsSync(path.join(root, '.vercelignore.experiment-off'));
-if (!fs.existsSync(ignoreFile)) {
-  if (EXPERIMENT) console.log('\n  .vercelignore renamed away for one commit — deliberate, see PR #28\n');
-  else fail('.vercelignore is missing — every CLI deployment uploads the whole 728 MB working tree and is refused');
-} else {
-  const listed = new Set(
-    fs.readFileSync(ignoreFile, 'utf8')
-      .split('\n')
-      .map((l) => l.trim())
-      .filter((l) => l && !l.startsWith('#'))
+if (fs.existsSync(ignoreFile)) {
+  fail(
+    'a .vercelignore is present. Its mere presence failed every Vercel deployment on this\n' +
+    '      repository — bisected over six trials, with the Vite dist prune ruled out. Read the\n' +
+    '      header of scripts/deploy-excludes.mjs before adding one back; it needs a line from\n' +
+    '      `npx vercel inspect <id> --logs` first.'
   );
-  // Both lists: the CLI uploads the working tree, so a path excluded from
-  // `dist/` by the Vite plugin still has to be kept out of the upload.
-  const required = [...UPLOAD_EXCLUDES, ...PUBLIC_EXCLUDES.map((p) => `public/${p}`)];
-  for (const entry of required) {
-    if (!listed.has(entry)) fail(`.vercelignore does not list "${entry}", which scripts/deploy-excludes.mjs says it must`);
-  }
-  for (const entry of listed) {
-    if (!required.includes(entry)) fail(`.vercelignore lists "${entry}", which scripts/deploy-excludes.mjs does not — add it there, with the reason`);
-  }
 }
 
 // -- 1b. No ignore pattern may reach a file the build needs -----------------
@@ -135,26 +122,38 @@ function matchGlob(name, glob) {
 const perTop = new Map();
 let total = 0;
 let files = 0;
+// And the tree as it actually stands, which is what a CLI deploy uploads today
+// now that there is no .vercelignore.
+let actualTotal = 0;
+let actualFiles = 0;
+
+/** Never in a deployment, whatever any list says. */
+const NEVER = (rel) =>
+  rel === '.git' || rel.startsWith('.git/') ||
+  rel.split('/').includes('node_modules') ||
+  rel === 'dist' || rel.startsWith('dist/');
 
 function walk(dir, rel) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
     const childRel = rel ? `${rel}/${entry.name}` : entry.name;
-    if (isExcluded(childRel)) continue;
+    if (NEVER(childRel)) continue;
     const abs = path.join(dir, entry.name);
-    if (entry.isDirectory()) {
-      walk(abs, childRel);
-    } else if (entry.isFile()) {
-      const { size } = fs.statSync(abs);
-      total += size;
-      files += 1;
-      const top = childRel.split('/').slice(0, 2).join('/');
-      perTop.set(top, (perTop.get(top) ?? 0) + size);
-    }
+    if (entry.isDirectory()) { walk(abs, childRel); continue; }
+    if (!entry.isFile()) continue;
+    const { size } = fs.statSync(abs);
+    actualTotal += size;
+    actualFiles += 1;
+    if (isExcluded(childRel)) continue;
+    total += size;
+    files += 1;
+    const top = childRel.split('/').slice(0, 2).join('/');
+    perTop.set(top, (perTop.get(top) ?? 0) + size);
   }
 }
 walk(root, '');
 
 const mb = total / 1024 / 1024;
+const actualMb = actualTotal / 1024 / 1024;
 
 // -- 3. Nothing asks for what the build deletes ------------------------------
 
@@ -205,14 +204,22 @@ if (fs.existsSync(atlasPath)) {
 
 const rows = [...perTop.entries()].sort((a, b) => b[1] - a[1]).slice(0, 10);
 const w = Math.max(...rows.map(([k]) => k.length));
-console.log('\n  what a `vercel deploy` would upload\n');
+console.log(`\n  a \`vercel deploy\` from this tree uploads ${actualFiles} files, ${actualMb.toFixed(0)} MB`);
+console.log('  — over the 100 MB Hobby cap, and there is no .vercelignore to trim it.\n');
+console.log('  With the list in scripts/deploy-excludes.mjs it would be:\n');
 for (const [k, v] of rows) {
-  console.log(`  ${k.padEnd(w)}  ${(v / 1024 / 1024).toFixed(1).padStart(7)} MB`);
+  console.log(`    ${k.padEnd(w)}  ${(v / 1024 / 1024).toFixed(1).padStart(7)} MB`);
 }
-console.log(`\n  ${files} files, ${mb.toFixed(1)} MB, budget ${UPLOAD_BUDGET_MB} MB (Vercel Hobby refuses above 100 MB)\n`);
+console.log(`\n    ${files} files, ${mb.toFixed(1)} MB (budget ${UPLOAD_BUDGET_MB} MB)\n`);
+console.log('  That list is NOT in a .vercelignore and must not be: its presence failed');
+console.log('  every Vercel deployment here, bisected over eight trials. The header of');
+console.log('  deploy-excludes.mjs has the table and the one command that would let it back.\n');
 
-if (mb > UPLOAD_BUDGET_MB && !EXPERIMENT) {
-  fail(`the upload is ${mb.toFixed(1)} MB, over the ${UPLOAD_BUDGET_MB} MB budget — add what grew to scripts/deploy-excludes.mjs, or take it out of the repo`);
+// Deliberately not a failure. There is no .vercelignore to fix the figure with,
+// so it is a fact to act on rather than a gate — the same shape as
+// check:repeat-markers in the native app.
+if (mb > UPLOAD_BUDGET_MB) {
+  console.log(`  note: even with the list applied this would be ${mb.toFixed(1)} MB, over the ${UPLOAD_BUDGET_MB} MB budget.\n`);
 }
 
 if (failures.length) {
