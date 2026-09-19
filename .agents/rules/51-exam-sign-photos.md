@@ -87,8 +87,17 @@ how the `filetype:bitmap` bug survived.
   matters: the peripheral-cyanosis plate is Raynaud's, not central cyanosis,
   and the oral one is angular cheilitis, not Koplik spots. Say so rather than
   letting the heading imply otherwise.
-- `mobile/src/lib/bundledExamPhotos.ts` — the same pictures bundled into the
-  APK so they work with no network.
+- **Nothing is bundled into the APK.** Fourteen photographs were, and that put
+  5.4 MB of JPEG into every install for pictures most readers open a handful of
+  times. They are served from the `diagrams` bucket like every other plate now;
+  React Native caches one on disk after the first view, so a sign is fetched
+  once per device instead of shipped to every device. Do not re-bundle them
+  without a reason that is worth 5.4 MB to every reader.
+
+- `REVIEWED_SIGNS` in `curatedExamPhotos.ts` is the list that decides what the
+  app displays. An id is in it because a person opened the image and confirmed
+  it shows the sign. Adding one without doing that defeats the whole
+  arrangement.
 
 ## A fetched picture is a candidate. Only a reviewed one is shown.
 

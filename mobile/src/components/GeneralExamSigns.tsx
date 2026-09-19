@@ -1,4 +1,3 @@
-import { BUNDLED_EXAM_PHOTOS } from '@/lib/bundledExamPhotos';
 import { CLUBBING_GRADES, OEDEMA_GRADES } from '@/lib/clinicalGradings';
 /**
  * The general examination, with attributed clinical photographs where available.
@@ -40,7 +39,8 @@ import {
   type SignGroup,
 } from '@/lib/generalExamSigns';
 import { resolveProformaDiagramUrl } from '@/lib/clinicalProformas';
-import { CURATED_EXAM_PHOTOS, EXCLUDED_EXAM_PHOTOS, examPhotoCaption, examPhotoLicenceUrl } from '@/lib/curatedExamPhotos';
+import { CURATED_EXAM_PHOTOS,
+  REVIEWED_SIGNS, EXCLUDED_EXAM_PHOTOS, examPhotoCaption, examPhotoLicenceUrl } from '@/lib/curatedExamPhotos';
 import { SIGN_IMAGES, type FetchedSignImage } from '@/lib/examSignImages';
 
 /* The manifest the fetch workflow writes. Read through a lookup rather than
@@ -78,10 +78,8 @@ import { SIGN_IMAGES, type FetchedSignImage } from '@/lib/examSignImages';
  * one — that is precisely why they are looking at it.
  */
 function imageFor(sign: ExamSign): FetchedSignImage | undefined {
-  const reviewed = CURATED_EXAM_PHOTOS[sign.id] ?? (BUNDLED_EXAM_PHOTOS[sign.id]
-    ? SIGN_IMAGES[sign.id]
-    : undefined);
-  const found = reviewed;
+  if (!REVIEWED_SIGNS.has(sign.id)) return undefined;
+  const found = CURATED_EXAM_PHOTOS[sign.id] ?? SIGN_IMAGES[sign.id];
   if (found?.commonsTitle && EXCLUDED_EXAM_PHOTOS.has(found.commonsTitle)) return undefined;
   if (found?.file) {
     return found;
@@ -137,8 +135,17 @@ export function GeneralExamSigns({ onOpenImage, groups }: GeneralExamSignsProps)
           {signs.map(sign => {
             const expanded = open === sign.id;
             const picture = imageFor(sign);
-            const bundled = BUNDLED_EXAM_PHOTOS[sign.id];
-            const uri = bundled ? Image.resolveAssetSource(bundled)?.uri : resolveProformaDiagramUrl(picture?.file);
+            /*
+             * From the Supabase `diagrams` bucket, not from the APK.
+             *
+             * These fourteen photographs were bundled, and that put 5.4 MB of
+             * JPEG into every install for pictures most readers open a handful
+             * of times. They are served like every other plate in this app
+             * now; React Native's image cache keeps one on disk after the
+             * first view, so a sign is fetched once per device rather than
+             * shipped to every device.
+             */
+            const uri = resolveProformaDiagramUrl(picture?.file);
             const caption = examPhotoCaption(sign.id);
             const licenceUrl = examPhotoLicenceUrl(picture?.licence);
 
@@ -183,7 +190,7 @@ export function GeneralExamSigns({ onOpenImage, groups }: GeneralExamSignsProps)
                         }
                         style={styles.imageTouch}>
                         <Image
-                          source={bundled ?? { uri }}
+                          source={{ uri }}
                           onError={() => setFailedImages(prev => ({ ...prev, [sign.id]: true }))}
                           style={[styles.image, { backgroundColor: colors.cardElevated }]}
                           resizeMode="contain"
