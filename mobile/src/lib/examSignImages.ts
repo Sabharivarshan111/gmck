@@ -29,6 +29,13 @@ export interface FetchedSignImage {
 }
 
 export const SIGN_IMAGES: Record<string, FetchedSignImage> = {
+  "build-nourishment": {
+    "commonsTitle": "File:Malnourished (24881211218).jpg",
+    "credit": "Billie Grace Ward from New York, USA",
+    "file": "signs/build-nourishment.jpg",
+    "licence": "CC BY 2.0",
+    "source": "https://commons.wikimedia.org/w/index.php?curid=74144687"
+  },
   "clubbing": {
     "commonsTitle": "File:Clubbed fingers.JPG",
     "credit": "Bobjgalindo",
@@ -56,6 +63,13 @@ export const SIGN_IMAGES: Record<string, FetchedSignImage> = {
     "file": "signs/edema.jpg",
     "licence": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/w/index.php?curid=4646147"
+  },
+  "facies": {
+    "commonsTitle": "File:Mild myxedema (paludism mother).jpg",
+    "credit": "William Seaman Bainbridge",
+    "file": "signs/facies.jpg",
+    "licence": "Public domain",
+    "source": "https://commons.wikimedia.org/w/index.php?curid=114695019"
   },
   "icterus": {
     "commonsTitle": "File:Comparison of Cutaneous Jaundice and Scleral Icterus.jpg",
@@ -105,6 +119,13 @@ export const SIGN_IMAGES: Record<string, FetchedSignImage> = {
     "file": "signs/onycholysis.jpg",
     "licence": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/w/index.php?curid=29036621"
+  },
+  "pallor": {
+    "commonsTitle": "File:Adult female Loa loa filarial worm - Extracted from a patient's conjunctiva in the left eye.jpg",
+    "credit": "Nathan Reading from Halesowen, UK",
+    "file": "signs/pallor.jpg",
+    "licence": "CC BY 2.0",
+    "source": "https://commons.wikimedia.org/w/index.php?curid=18916046"
   },
   "palmar-erythema": {
     "commonsTitle": "File:Palmar erythema.jpg",
