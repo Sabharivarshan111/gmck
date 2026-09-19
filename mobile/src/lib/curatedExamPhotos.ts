@@ -2,6 +2,17 @@
 import type { FetchedSignImage } from './examSignImages';
 export interface CuratedExamPhoto extends FetchedSignImage { caption: string }
 export const CURATED_EXAM_PHOTOS: Record<string, CuratedExamPhoto> = {
+  pallor: {
+    file: 'https://upload.wikimedia.org/wikipedia/commons/4/47/Anemia.JPG',
+    commonsTitle: 'File:Anemia.JPG', credit: 'James Heilman, MD', licence: 'CC BY-SA 3.0',
+    source: 'https://commons.wikimedia.org/wiki/File:Anemia.JPG',
+    caption:
+      'The hand of a person with anaemia (left) beside a normal hand (right). ' +
+      'The comparison is the point: pallor is judged against a normal, which is ' +
+      'why the examiner asks you to compare with your own hand. This shows ' +
+      'pallor of the skin and nail beds, not the conjunctival pallor the ' +
+      'proforma also asks you to look for.',
+  },
   'palmar-erythema': {
     file: 'https://upload.wikimedia.org/wikipedia/commons/3/3c/Palmar_erythema.jpg',
     commonsTitle: 'File:Palmar erythema.jpg', credit: 'Jmarchn', licence: 'CC BY-SA 3.0',

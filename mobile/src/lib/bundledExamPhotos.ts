@@ -14,6 +14,7 @@ import photo8 from '@/assets/exam-signs/leukonychia.jpg';
 import photo9 from '@/assets/exam-signs/lymphadenopathy.jpg';
 import photo10 from '@/assets/exam-signs/onycholysis.jpg';
 import photo11 from '@/assets/exam-signs/palmar-erythema.jpg';
+import photo12 from '@/assets/exam-signs/pallor.jpg';
 export const BUNDLED_EXAM_PHOTOS: Record<string, ImageSourcePropType> = {
   'clubbing': photo0,
   'cyanosis-peripheral': photo1,
@@ -27,4 +28,7 @@ export const BUNDLED_EXAM_PHOTOS: Record<string, ImageSourcePropType> = {
   'lymphadenopathy': photo9,
   'onycholysis': photo10,
   'palmar-erythema': photo11,
+  // The pale hand of an anaemic person beside a normal one. James Heilman MD,
+  // CC BY-SA 3.0 — the attribution is shown under the picture.
+  'pallor': photo12,
 };
