@@ -231,7 +231,14 @@ export const EXAM_SIGNS: ExamSign[] = [
       'Cyanosis needs ABSOLUTE reduced haemoglobin, so a severely anaemic patient can be profoundly hypoxic and never look blue, while a polycythaemic one looks blue easily. Never use colour to exclude hypoxia.',
     image: {
       search: ['central cyanosis tongue', 'cyanosis lips blue', 'cyanotic congenital heart disease child'],
-      titleMustContain: ['cyanosis', 'cyanotic'],
+      /*
+       * Central cyanosis is looked for on the TONGUE and LIPS, and the plain
+       * word "cyanosis" does not say so. It fetched a photograph of one dusky
+       * foot from an arterial thrombosis — a real sign, correctly named, and
+       * peripheral cyanosis, which is the other entry on this list. The gate
+       * has to carry the site, because the site is the difference.
+       */
+      titleMustContain: ['central cyanosis', 'cyanosis of the tongue', 'cyanotic tongue', 'cyanosis lips'],
     },
   },
   {

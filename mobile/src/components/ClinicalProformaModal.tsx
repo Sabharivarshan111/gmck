@@ -21,11 +21,13 @@ import {
   ChevronDown,
   ChevronRight,
   ChevronUp,
+  Camera,
   ClipboardList,
   Edit3,
   FlaskConical,
   GraduationCap,
   Lightbulb,
+  ImagePlus,
   Maximize2,
   MessageSquare,
   Minimize2,
@@ -49,6 +51,14 @@ import {
   resolveProformaDiagramUrl,
   type ClinicalProforma,
 } from '@/lib/clinicalProformas';
+import {
+  addFinding,
+  captionFinding,
+  loadFindings,
+  removeFinding,
+  type ProformaFinding,
+} from '@/lib/proformaFindings';
+import { loadNoteImage } from '@/lib/noteImages';
 import {
   autoFillClinicalCase,
   getCanonicalCaseDraft,
@@ -152,6 +162,12 @@ export function ClinicalProformaModal({
    */
   const [diagramAspect, setDiagramAspect] = useState<number | null>(null);
 
+  /** Photographs of findings on this student's own patient, for this case. */
+  const [findings, setFindings] = useState<ProformaFinding[]>([]);
+  const [findingError, setFindingError] = useState<string | null>(null);
+  /** Guards the buttons: two pickers open at once is two results to reconcile. */
+  const [addingFinding, setAddingFinding] = useState(false);
+
   // Clerking draft state for current proforma
   const [draft, setDraft] = useState<PatientClerkingDraft>(() =>
     activeProforma ? getCanonicalCaseDraft(activeProforma.id) : getCanonicalCaseDraft('cvs_proforma'),
@@ -220,11 +236,61 @@ export function ClinicalProformaModal({
        into the old one's box, which is the bug this measurement exists to fix,
        just one proforma later. */
     setDiagramAspect(null);
+    setFindingError(null);
+    setFindings([]);
+    loadFindings(activeProforma.id).then(found => {
+      if (!cancelled) setFindings(found);
+    });
 
     return () => {
       cancelled = true;
     };
   }, [activeProforma]);
+
+  const addProformaFinding = useCallback(
+    async (source: 'camera' | 'gallery') => {
+      if (!activeProforma || addingFinding) return;
+      setAddingFinding(true);
+      setFindingError(null);
+      try {
+        const result = await addFinding(activeProforma.id, source);
+        if (!result) return; // cancelled, which is not an error
+        if ('error' in result) {
+          setFindingError(result.error);
+          return;
+        }
+        setFindings(result.findings);
+      } finally {
+        setAddingFinding(false);
+      }
+    },
+    [activeProforma, addingFinding],
+  );
+
+  const captionProformaFinding = useCallback(
+    (imageId: string, caption: string) => {
+      if (!activeProforma) return;
+      /*
+       * Written straight through on every keystroke, and the state updated
+       * optimistically so the field does not lag the finger. The list is a
+       * handful of short strings; debouncing it would buy nothing and could
+       * lose the last word typed before the sheet closes.
+       */
+      setFindings(current =>
+        current.map(f => (f.imageId === imageId ? { ...f, caption } : f)),
+      );
+      captionFinding(activeProforma.id, imageId, caption).catch(() => {});
+    },
+    [activeProforma],
+  );
+
+  const removeProformaFinding = useCallback(
+    async (imageId: string) => {
+      if (!activeProforma) return;
+      setFindings(await removeFinding(activeProforma.id, imageId));
+    },
+    [activeProforma],
+  );
 
   // Update a single draft field and persist to AsyncStorage
   const updateDraft = useCallback(
@@ -712,6 +778,127 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                         <GeneralExamSigns onOpenImage={setFullscreenImage} />
                       </View>
                     ) : null}
+                  </View>
+
+                  {/*
+                    * Findings the student photographed on their own patient.
+                    *
+                    * It sits directly under the general examination on purpose:
+                    * that is the block they are reading while the sign is in
+                    * front of them, and a camera button three screens away is a
+                    * camera button nobody reaches for at a bedside.
+                    *
+                    * The line about this staying on the phone is not a footnote
+                    * and is not there for reassurance. A photograph of a patient
+                    * is identifiable health information about somebody who is
+                    * not the user, and the student needs to know before they
+                    * take one that this app is not sending it anywhere.
+                    */}
+                  <View
+                    style={[
+                      styles.sectionCard,
+                      { backgroundColor: colors.card, borderColor: colors.border },
+                    ]}>
+                    <View style={styles.findingsHeader}>
+                      <Camera size={16} color={colors.primary} />
+                      <Text style={[styles.sectionTitle, { color: colors.text }]}>
+                        Findings you photographed
+                      </Text>
+                    </View>
+                    <Text style={[styles.findingsNote, { color: colors.textMuted }]}>
+                      Stays on this phone — never uploaded, no account. Deleting the app
+                      deletes these.
+                    </Text>
+
+                    <View style={styles.findingsBtnRow}>
+                      <Touchable
+                        onPress={() => addProformaFinding('camera')}
+                        disabled={addingFinding}
+                        label="Take a photograph of a finding"
+                        hint="Opens the camera; the picture is kept with this case on this phone"
+                        style={[
+                          styles.findingsBtn,
+                          { backgroundColor: withAlpha(colors.primary, 0.14) },
+                        ]}>
+                        <Camera size={16} color={colors.primary} />
+                        <Text style={[styles.findingsBtnText, { color: colors.primary }]}>
+                          Take a photo
+                        </Text>
+                      </Touchable>
+                      <Touchable
+                        onPress={() => addProformaFinding('gallery')}
+                        disabled={addingFinding}
+                        label="Add a photograph from this phone"
+                        hint="Opens the picture chooser"
+                        style={[
+                          styles.findingsBtn,
+                          { backgroundColor: withAlpha(colors.accent, 0.14) },
+                        ]}>
+                        <ImagePlus size={16} color={colors.accent} />
+                        <Text style={[styles.findingsBtnText, { color: colors.accent }]}>
+                          From gallery
+                        </Text>
+                      </Touchable>
+                    </View>
+
+                    {findingError ? (
+                      <Text style={[styles.findingsError, { color: colors.danger }]}>
+                        {findingError}
+                      </Text>
+                    ) : null}
+
+                    {findings.length === 0 ? (
+                      <Text style={[styles.findingsEmpty, { color: colors.textMuted }]}>
+                        Nothing yet. Photograph a sign you see in OP or on the ward and it
+                        is filed against this case.
+                      </Text>
+                    ) : (
+                      findings.map((finding, index) => (
+                        <View
+                          key={finding.imageId}
+                          style={[styles.findingRow, { borderColor: colors.border }]}>
+                          <FindingThumb
+                            imageId={finding.imageId}
+                            onOpen={uri =>
+                              setFullscreenImage({
+                                uri,
+                                title: finding.caption || `Finding ${index + 1}`,
+                              })
+                            }
+                          />
+                          <View style={styles.findingBody}>
+                            {/*
+                              * The caption is the student's own words and is
+                              * never generated. An AI guess at what is in a
+                              * photograph of a real patient would be this app
+                              * putting a diagnosis it cannot support into
+                              * somebody's case sheet.
+                              */}
+                            <TextInput
+                              value={finding.caption}
+                              onChangeText={text => captionProformaFinding(finding.imageId, text)}
+                              placeholder="What is this? e.g. pitting oedema, right leg"
+                              placeholderTextColor={colors.textMuted}
+                              style={[
+                                styles.findingCaption,
+                                { color: colors.text, borderColor: colors.border },
+                              ]}
+                              multiline
+                            />
+                            <Touchable
+                              onPress={() => removeProformaFinding(finding.imageId)}
+                              label={`Delete finding ${index + 1}`}
+                              hint="Removes the photograph from this phone"
+                              style={styles.findingDelete}>
+                              <Trash2 size={14} color={colors.danger} />
+                              <Text style={[styles.findingDeleteText, { color: colors.danger }]}>
+                                Delete
+                              </Text>
+                            </Touchable>
+                          </View>
+                        </View>
+                      ))
+                    )}
                   </View>
 
                   {/* Case-specific sections — progressive disclosure prevents a wall of text. */}
@@ -1842,6 +2029,62 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
   );
 }
 
+/**
+ * One photographed finding's thumbnail.
+ *
+ * Its own component because the bytes live under their own AsyncStorage key
+ * and have to be read asynchronously — doing that in the parent would mean one
+ * effect per picture in a screen that already re-renders on every keystroke of
+ * the clerking form.
+ *
+ * A picture whose bytes have gone says so rather than showing an empty frame.
+ * These are the reader's own photographs and there is no copy anywhere to
+ * fall back to, so a blank box would leave them wondering whether the app lost
+ * it or never had it.
+ */
+function FindingThumb({
+  imageId,
+  onOpen,
+}: {
+  imageId: string;
+  onOpen: (uri: string) => void;
+}) {
+  const { colors } = useTheme();
+  const [uri, setUri] = useState<string | null>(null);
+  const [gone, setGone] = useState(false);
+
+  useEffect(() => {
+    let alive = true;
+    loadNoteImage(imageId).then(found => {
+      if (!alive) return;
+      if (found) setUri(found);
+      else setGone(true);
+    });
+    return () => {
+      alive = false;
+    };
+  }, [imageId]);
+
+  if (gone) {
+    return (
+      <View style={[styles.findingThumb, { borderColor: colors.border }]}>
+        <Text style={[styles.findingGone, { color: colors.textMuted }]}>Gone</Text>
+      </View>
+    );
+  }
+  if (!uri) {
+    return <View style={[styles.findingThumb, { borderColor: colors.border }]} />;
+  }
+  return (
+    <Touchable
+      onPress={() => onOpen(uri)}
+      label="Open this finding full screen"
+      scaleTo={0.95}>
+      <Image source={{ uri }} style={styles.findingThumb} resizeMode="cover" />
+    </Touchable>
+  );
+}
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -2047,6 +2290,86 @@ const styles = StyleSheet.create({
   pearlContent: {
     fontSize: 13,
     lineHeight: 19,
+  },
+  findingsHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 4,
+  },
+  findingsNote: {
+    fontSize: 11,
+    lineHeight: 16,
+    marginBottom: 10,
+  },
+  findingsBtnRow: {
+    flexDirection: 'row',
+    gap: 8,
+    marginBottom: 8,
+  },
+  findingsBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    minHeight: 44,
+    paddingHorizontal: 12,
+    borderRadius: 10,
+  },
+  findingsBtnText: {
+    fontSize: 13,
+    fontWeight: '600',
+  },
+  findingsError: {
+    fontSize: 12,
+    marginBottom: 8,
+  },
+  findingsEmpty: {
+    fontSize: 12,
+    lineHeight: 18,
+    fontStyle: 'italic',
+  },
+  findingRow: {
+    flexDirection: 'row',
+    gap: 10,
+    paddingTop: 10,
+    marginTop: 10,
+    borderTopWidth: StyleSheet.hairlineWidth,
+  },
+  findingThumb: {
+    width: 76,
+    height: 76,
+    borderRadius: 10,
+    borderWidth: StyleSheet.hairlineWidth,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  findingGone: {
+    fontSize: 10,
+  },
+  findingBody: {
+    flex: 1,
+    gap: 6,
+  },
+  findingCaption: {
+    fontSize: 13,
+    minHeight: 44,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    textAlignVertical: 'top',
+  },
+  findingDelete: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    alignSelf: 'flex-start',
+    minHeight: 32,
+    paddingHorizontal: 4,
+  },
+  findingDeleteText: {
+    fontSize: 12,
+    fontWeight: '600',
   },
   diagramCard: {
     borderRadius: 14,

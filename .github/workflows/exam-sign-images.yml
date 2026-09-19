@@ -138,6 +138,35 @@ jobs:
               for term in terms:
                   yield f'{term} {IMAGES_ONLY}'
 
+          # ── A clinical sign needs a PHOTOGRAPH of a patient ────────────
+          #
+          # `intitle:` found files at last, and four of the seven it found were
+          # unusable in a way the title could never have revealed:
+          #
+          #   pallor  -> "P 451 Harper's vol121--Face assumed a deadly pallor"
+          #              a magazine illustration of two men at a table, from a
+          #              novel. The words are perfect. It is a drawing.
+          #   build   -> "Ancient Egyptian Medicine-starvation-cachexia"
+          #              a carved stone relief.
+          #   facies  -> a grainy archive snapshot of a woman outdoors; even if
+          #              the subject had myxoedema, nobody could learn the
+          #              facies from it.
+          #
+          # A student cannot tell a wrong picture from a right one — that is
+          # why they are looking at it — so a Victorian engraving captioned
+          # with the right word is worse than a blank.
+          #
+          # Commons categories are the signal a title does not carry: artwork
+          # is categorised as artwork. This refuses anything whose categories
+          # or title say drawing, engraving, relief, painting or book plate.
+          # It cannot catch everything, which is why the human-reviewed list in
+          # curatedExamPhotos.ts exists and why new fetches get looked at.
+          NOT_A_PHOTOGRAPH = re.compile(
+              r'(illustration|drawing|engraving|etching|woodcut|lithograph|'
+              r'painting|artwork|relief|sculpture|statue|frieze|papyrus|'
+              r'manuscript|book plate|bookplate|comic|cartoon|caricature|'
+              r'diagram|clip ?art|icon|logo|harper|ancient|antiquit)', re.I)
+
           def api(**params):
               params.setdefault('format', 'json')
               params.setdefault('action', 'query')
@@ -165,6 +194,21 @@ jobs:
           # The sign list is the TypeScript file's `search` arrays. Parsing it
           # rather than duplicating it keeps one source of truth: a sign added
           # in the app is fetched here with no second edit.
+          # Files a human has already looked at and rejected. The list lives in
+          # the app because that is where the reasoning belongs ("a microscopic
+          # fragment cannot demonstrate the bedside appearance of a nail
+          # sign"), and the fetcher never read it — so a rejected file was free
+          # to come straight back on the next run.
+          try:
+              banned_src = pathlib.Path(
+                  'mobile/src/lib/curatedExamPhotos.ts').read_text()
+              m_ban = re.search(r'EXCLUDED_EXAM_PHOTOS\s*=\s*new Set\(\[(.*?)\]\)',
+                                banned_src, re.S)
+              BANNED = set(re.findall(r"'([^']+)'", m_ban.group(1))) if m_ban else set()
+          except Exception:
+              BANNED = set()
+          print(f'{len(BANNED)} file(s) previously rejected by a human will be refused')
+
           src = pathlib.Path('mobile/src/lib/generalExamSigns.ts').read_text()
           signs = []
           for block in re.findall(r"\{\s*id: '([a-z0-9-]+)',(.*?)\n  \},", src, re.S):
@@ -251,8 +295,9 @@ jobs:
                   if not titles:
                       continue
                   try:
-                      info = api(prop='imageinfo', titles='|'.join(titles),
-                                 iiprop='url|extmetadata|mime|size', iiurlwidth='1200')
+                      info = api(prop='imageinfo|categories', titles='|'.join(titles),
+                                 iiprop='url|extmetadata|mime|size', iiurlwidth='1200',
+                                 cllimit='max')
                   except Exception as e:
                       print(f'  warn  {sid}: imageinfo failed: {e}')
                       continue
@@ -268,6 +313,25 @@ jobs:
                       # reader trusts it.
                       title_l = page['title'].lower()
                       if gate and not any(w.lower() in title_l for w in gate):
+                          continue
+                      if page['title'] in BANNED:
+                          print(f'  bann  {sid}: "{page["title"]}" was rejected by a '
+                                f'human and stays rejected')
+                          continue
+                      # One picture may not serve two signs. The same
+                      # arterial-thrombosis photograph was taken for BOTH
+                      # cyanosis entries, and it shows peripheral cyanosis, so
+                      # it was right once and wrong once.
+                      if any(v.get('commonsTitle') == page['title']
+                             for v in manifest.values()):
+                          print(f'  dupe  {sid}: "{page["title"]}" already belongs '
+                                f'to another sign')
+                          continue
+                      cats = ' '.join(
+                          c.get('title', '') for c in (page.get('categories') or []))
+                      if NOT_A_PHOTOGRAPH.search(page['title'] + ' ' + cats):
+                          print(f'  art   {sid}: "{page["title"]}" is artwork or a '
+                                f'book illustration, not a clinical photograph')
                           continue
                       lic = acceptable(ii)
                       if not lic:

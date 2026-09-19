@@ -64,6 +64,18 @@ const LOCAL_ONLY = [
   { file: 'src/hooks/useUserNotes.ts', what: 'personal study notes' },
   { file: 'src/lib/noteImages.ts', what: 'pictures attached to a study note' },
   /*
+   * Photographs a student took of a finding on their own patient.
+   *
+   * Every other entry here is local because the app's owner decided a private
+   * thing is not ours to copy. This one is local because a clinical
+   * photograph is identifiable health information about somebody who is NOT
+   * the user — a patient in a hospital that has agreed to nothing. Uploading
+   * it would make this app the custodian of a stranger's medical record.
+   *
+   * Of every rule this check enforces, this is the one that may never bend.
+   */
+  { file: 'src/lib/proformaFindings.ts', what: 'photographs of a patient\'s signs' },
+  /*
    * Attendance replaced the calendar, and inherits its rule wholesale.
    *
    * A record of which days somebody turned up is a record of their movements.

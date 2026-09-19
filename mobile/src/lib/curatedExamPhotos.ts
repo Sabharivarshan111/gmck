@@ -21,8 +21,25 @@ export const CURATED_EXAM_PHOTOS: Record<string, CuratedExamPhoto> = {
     caption: 'Distal nail-plate separation; the source does not establish its cause.',
   },
 };
-// A microscopic fragment cannot demonstrate the bedside appearance of a nail sign.
-export const EXCLUDED_EXAM_PHOTOS = new Set(['File:Splinter hemorrhage under the microscope.jpg']);
+/**
+ * Files a human has looked at and rejected. The fetcher reads this list, so a
+ * rejection sticks instead of being re-fetched on the next run.
+ *
+ * Each of these was returned by a search whose words were perfect and whose
+ * picture was not a clinical photograph of the sign.
+ */
+export const EXCLUDED_EXAM_PHOTOS = new Set([
+  // A microscopic fragment cannot demonstrate the bedside appearance of a nail sign.
+  'File:Splinter hemorrhage under the microscope.jpg',
+  // A magazine illustration of two men at a table, from a novel — the caption
+  // reads "face assumed a deadly pallor". The words are right; it is a drawing.
+  "File:P 451 Harper's vol121--Face assumed a deadly pallor.png",
+  // A carved stone relief, not a photograph of a wasted patient.
+  'File:Ancient Egyptian Medicine-starvation-cachexia.JPG',
+  // A grainy archive snapshot of a woman outdoors. Even if the subject had
+  // myxoedema, no student could learn the facies from it.
+  'File:BASA-3K-7-529-35(7)-Myxedema.jpg',
+]);
 export function examPhotoCaption(id: string): string | undefined {
   if (id === 'koplik-and-oral') return 'Angular cheilitis — this example is not Koplik spots.';
   return CURATED_EXAM_PHOTOS[id]?.caption;

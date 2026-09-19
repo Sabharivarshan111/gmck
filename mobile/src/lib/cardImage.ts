@@ -1,4 +1,4 @@
-import { launchImageLibrary } from 'react-native-image-picker';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { warn } from './log';
 
 /**
@@ -75,6 +75,54 @@ export async function pickCardImage(): Promise<PickedImage> {
     return { uri: `data:${type};base64,${asset.base64}` };
   } catch (error) {
     warn('card image picker threw:', error);
+    return null;
+  }
+}
+
+/**
+ * Take one with the camera, at the same size and quality as a picked one.
+ *
+ * **No permission is requested and none may be added**, exactly as for the
+ * gallery picker. `launchCamera` fires `ACTION_IMAGE_CAPTURE`, which hands the
+ * job to whichever camera app the reader already has and returns the one
+ * picture they took. `android.permission.CAMERA` is only required if the
+ * manifest *declares* it — declaring it is what turns a no-prompt hand-off
+ * into a runtime prompt, so this app declares nothing and asks nothing.
+ *
+ * `saveToPhotos` is deliberately false. A photograph of a patient's sign is
+ * not something to drop into the reader's camera roll, where it would sync to
+ * whatever cloud backup their phone has and end up beside their holiday
+ * pictures. It stays inside the app, where deleting the case deletes it.
+ */
+export async function captureCardImage(): Promise<PickedImage> {
+  try {
+    const result = await launchCamera({
+      mediaType: 'photo',
+      maxWidth: 1200,
+      maxHeight: 1200,
+      quality: 0.6,
+      includeBase64: true,
+      saveToPhotos: false,
+    });
+
+    if (result.didCancel) {
+      return null;
+    }
+    if (result.errorCode) {
+      warn('camera error:', result.errorMessage);
+      return null;
+    }
+    const asset = result.assets?.[0];
+    if (!asset?.base64) {
+      return null;
+    }
+    if (asset.base64.length > MAX_CARD_IMAGE_BYTES) {
+      return { tooLarge: true };
+    }
+    const type = asset.type && asset.type.startsWith('image/') ? asset.type : 'image/jpeg';
+    return { uri: `data:${type};base64,${asset.base64}` };
+  } catch (error) {
+    warn('camera threw:', error);
     return null;
   }
 }
