@@ -106,6 +106,13 @@ export const SIGN_IMAGES: Record<string, FetchedSignImage> = {
     "licence": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/w/index.php?curid=29036621"
   },
+  "pallor": {
+    "commonsTitle": "File:Anemia.JPG",
+    "credit": "James Heilman, MD",
+    "file": "signs/pallor.jpg",
+    "licence": "CC BY-SA 3.0",
+    "source": "https://commons.wikimedia.org/w/index.php?curid=10313974"
+  },
   "palmar-erythema": {
     "commonsTitle": "File:Palmar erythema.jpg",
     "credit": "Jmarchn",
