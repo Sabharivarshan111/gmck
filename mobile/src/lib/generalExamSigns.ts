@@ -167,6 +167,13 @@ export const EXAM_SIGNS: ExamSign[] = [
        * conjunctiva first, then the hand.
        */
       commonsFiles: [
+        /*
+         * Found by probing Category:Pallor rather than by searching words.
+         * The category holds nine files; six are Victorian oil paintings of
+         * convalescents, one is the Harper's engraving and one is the
+         * wrestler. This is the only one whose name describes the sign.
+         */
+        'File:PallorSkinTones.jpg',
         'File:Anemia conjunctiva.jpg',
         'File:Conjunctival pallor.jpg',
         'File:Pallor of conjunctiva.jpg',
@@ -175,17 +182,18 @@ export const EXAM_SIGNS: ExamSign[] = [
         'File:Anaemia palmar pallor.jpg',
         'File:Pale hand anemia.jpg',
       ],
-            commonsCategories: [
-        'Category:Anemia',
-        'Category:Conjunctiva',
-        'Category:Pallor',
-      ],
-search: [
-        'conjunctival pallor anaemia',
-        'pallor lower eyelid anemia',
-        'anemia palm pallor',
-        'palmar pallor anaemia hand',
-        'pale conjunctiva anaemia clinical',
+      commonsCategories: ['Category:Pallor', 'Category:Anaemia', 'Category:Conjunctiva'],
+      /*
+       * Two words, not three. Open-i, Europe PMC and Openverse all read these
+       * as phrases, and "conjunctival pallor anaemia" is a phrase no article
+       * contains — all three returned ZERO hits for every term until this was
+       * shortened. "conjunctival pallor" is a phrase doctors actually write.
+       */
+      search: [
+        'conjunctival pallor',
+        'palmar pallor',
+        'pallor anemia',
+        'pallor anaemia',
       ],
       titleMustContain: ['pallor', 'conjunctiva', 'anemia palm', 'anaemia palm'],
     },
@@ -247,10 +255,10 @@ search: [
     pearl:
       'Cyanosis needs ABSOLUTE reduced haemoglobin, so a severely anaemic patient can be profoundly hypoxic and never look blue, while a polycythaemic one looks blue easily. Never use colour to exclude hypoxia.',
     image: {
-            commonsCategories: [
+      commonsCategories: [
         'Category:Cyanosis',
       ],
-search: ['central cyanosis tongue', 'cyanosis lips blue', 'cyanotic congenital heart disease child'],
+      search: ['central cyanosis tongue', 'cyanosis lips blue', 'cyanotic congenital heart disease child'],
       /*
        * Central cyanosis is looked for on the TONGUE and LIPS, and the plain
        * word "cyanosis" does not say so. It fetched a photograph of one dusky
@@ -407,10 +415,10 @@ search: ['central cyanosis tongue', 'cyanosis lips blue', 'cyanotic congenital h
     pearl:
       'Platonychia is the reason a student says "the nails look normal" and the examiner says "look again from the side". It is the step before koilonychia, and naming it is what separates a good general examination from a recited one.',
     image: {
-            commonsCategories: [
+      commonsCategories: [
         'Category:Nail diseases',
       ],
-search: ['platonychia flat nails', 'flat nail plate', 'nail flattening iron deficiency'],
+      search: ['platonychia flat nails', 'flat nail plate', 'nail flattening iron deficiency'],
       titleMustContain: ['platonychia'],
     },
   },
@@ -515,10 +523,10 @@ search: ['platonychia flat nails', 'flat nail plate', 'nail flattening iron defi
     pearl:
       'Hold the position for a full half minute. Asterixis is intermittent, and the commonest reason a student reports it absent is that they gave up after five seconds.',
     image: {
-            commonsCategories: [
+      commonsCategories: [
         'Category:Hepatic encephalopathy',
       ],
-search: ['asterixis flapping tremor', 'hepatic encephalopathy asterixis hands', 'flapping tremor wrist'],
+      search: ['asterixis flapping tremor', 'hepatic encephalopathy asterixis hands', 'flapping tremor wrist'],
       titleMustContain: ['asterixis', 'flapping tremor'],
     },
   },
@@ -586,12 +594,12 @@ search: ['asterixis flapping tremor', 'hepatic encephalopathy asterixis hands', 
     pearl:
       'Madarosis — loss of the lateral third of the eyebrow — belongs to both hypothyroidism and leprosy, and the rest of the face tells you which.',
     image: {
-            commonsCategories: [
+      commonsCategories: [
         'Category:Myxedema',
         'Category:Cushing syndrome',
         'Category:Acromegaly',
       ],
-search: ['myxedema facies hypothyroidism', 'moon facies cushing', 'mitral facies malar flush'],
+      search: ['myxedema facies hypothyroidism', 'moon facies cushing', 'mitral facies malar flush'],
       titleMustContain: ['myxedema', 'myxoedema', 'cushingoid', 'moon face', 'facies'],
     },
   },
@@ -610,13 +618,13 @@ search: ['myxedema facies hypothyroidism', 'moon facies cushing', 'mitral facies
     pearl:
       'Temporal wasting is the earliest visible marker of significant weight loss, and it is on the face you are already looking at during the facies.',
     image: {
-            commonsCategories: [
+      commonsCategories: [
         'Category:Malnutrition',
         'Category:Kwashiorkor',
         'Category:Marasmus',
         'Category:Cachexia',
       ],
-search: ['temporal wasting cachexia', 'muscle wasting malnutrition', 'cachexia clinical'],
+      search: ['temporal wasting cachexia', 'muscle wasting malnutrition', 'cachexia clinical'],
       titleMustContain: ['cachexia', 'marasmus', 'kwashiorkor', 'muscle wasting', 'malnutrition', 'malnourish'],
     },
   },
