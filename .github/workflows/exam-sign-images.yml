@@ -111,6 +111,33 @@ jobs:
           # is only that photographs are in the window at all.
           IMAGES_ONLY = 'filetype:bitmap'
 
+          # ── And why the queries are built from the title gate ──────────
+          #
+          # Adding filetype:bitmap alone was not enough, and the run that
+          # proved it is worth keeping. With the books gone, most searches
+          # returned "no files at all" — including "palmar erythema liver",
+          # for a sign whose picture File:Palmar erythema.jpg demonstrably
+          # exists and is CC BY-SA 3.0.
+          #
+          # The reason is that a CirrusSearch query is an AND over full text.
+          # "palmar erythema liver" demands all three words somewhere on the
+          # file page, and that page says nothing about the liver. Three
+          # descriptive words is a narrower query than any single photograph
+          # can satisfy, so the terms were fighting each other.
+          #
+          # `titleMustContain` already names exactly what has to be in the
+          # title, and `intitle:` searches that directly. So the first pass
+          # asks for what the gate is going to demand anyway — which means the
+          # search and the gate can no longer disagree, and a hit that comes
+          # back is one the gate will accept. The free-text terms stay as a
+          # second pass for the signs whose word is common enough to need
+          # them.
+          def queries(terms, gate):
+              for word in gate:
+                  yield f'intitle:"{word}" {IMAGES_ONLY}'
+              for term in terms:
+                  yield f'{term} {IMAGES_ONLY}'
+
           def api(**params):
               params.setdefault('format', 'json')
               params.setdefault('action', 'query')
@@ -211,10 +238,11 @@ jobs:
                   except Exception as e:
                       print(f'  warn  {sid}: named lookup failed: {e}')
 
-              # 2. Only then the keyword search, unchanged.
-              for term in ([] if chosen else terms):
+              # 2. Only then the searches: the title gate's own words first,
+              #    then the free-text terms.
+              for term in ([] if chosen else list(queries(terms, gate))):
                   try:
-                      res = api(list='search', srsearch=f'{term} {IMAGES_ONLY}',
+                      res = api(list='search', srsearch=term,
                                 srnamespace='6', srlimit='20')
                   except Exception as e:
                       print(f'  warn  {sid}: search "{term}" failed: {e}')
@@ -258,9 +286,9 @@ jobs:
                   # only prints NONE leaves the next person repeating the same
                   # search by hand to find out whether the problem is the gate,
                   # the licence, or that Commons simply has no such picture.
-                  for term in terms[:2]:
+                  for term in list(queries(terms, gate))[:4]:
                       try:
-                          res = api(list='search', srsearch=f'{term} {IMAGES_ONLY}',
+                          res = api(list='search', srsearch=term,
                                     srnamespace='6', srlimit='10')
                       except Exception:
                           continue
