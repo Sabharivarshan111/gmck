@@ -1798,3 +1798,10 @@ When Sabari asks for screenshots, **show the actual images inline inside the cha
 - No further implementation remains for this v23 clinical UI request.
 - The earlier complete line-by-line PDF audit and seven signs without a verified photograph remain separate documented work. Do not claim those are complete.
 - Keep release publication on `main`, preserve the concurrent simulator/deployment work, and update both this handoff and `.agents/state/resume-notes.md` after future sessions.
+
+
+## 2026-09-19 — Play Console advertising ID declaration checked
+
+Sabari supplied the Play Console Advertising ID screen. ORBIT already declares `com.google.android.gms.permission.AD_ID` directly in `mobile/android/app/src/main/AndroidManifest.xml`. Version 23 targets Android 36, and the release build serves live AdMob ads. All release, internal and debug workflows run `check:version`, which fails if the permission is absent or explicitly removed. Release `release-280` built successfully from commit `403675e` after that gate passed.
+
+Play Console action: keep “Does your app use advertising ID?” set to **Yes**. Leave the “I understand the ramifications … turn off release errors” checkbox **unchecked**; that checkbox is a waiver for apps that intentionally omit the permission. Save the declaration and send the pending change for review through Publishing overview. No app-code correction or new binary is required for this screen.
