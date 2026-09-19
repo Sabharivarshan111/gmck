@@ -1441,3 +1441,25 @@ HALF-DONE: No new implementation remains for this clinical UI request. Earlier f
 NEXT: Use release-280 for normal APK/AAB, internal-206 for signed internal testing, debug-196 for login-free preview. Keep version 23 until the next Play upload requires a bump. The same app changes were also successfully built as debug-194/internal-204/release-278 before the stricter screenshot assertions.
 
 DO NOT: Treat the old screenshot 09 as proof the lab sheet opened. Call the proformas 76 unique entries, not 76 unrelated diseases: master frameworks overlap focused cases. Keep Google sign-in disabled only in debug; internal/release retain it. Preserve main-only publication and the separately merged simulator/deployment work from fb8fbce. Twelve real attributed photos are bundled; seven signs still have no verified photo.
+
+
+## 2026-09-19 — ChatGPT/Codex — v23 clinical UI release, screenshots, and display preference
+
+### DONE
+
+- Published the v23 clinical UI improvements on `main`: expanded laboratory names and differential-count explanations; New York Heart Association, clubbing, pitting oedema and Glasgow Coma Scale grading; larger guide text with the ask/examine/record prompt underlined before its explanation; PICCLE spelling throughout; koilonychia under Nails; compact Bedside Clinical AI suggestion buttons; brighter My Progress card; and twelve attributed real clinical photographs bundled for offline use.
+- Preserved the authentication rule: **debug only** bypasses Google sign-in at startup and in My Progress. Internal and normal release builds retain Google sign-in.
+- Verified 76 proforma entries have unique IDs and titles. Some master frameworks overlap focused cases, so describe them as 76 unique entries, not 76 unrelated diseases.
+- Successful build releases: `debug-196`, `internal-206`, and `release-280` (APK and AAB). Native Android run `35414415658` passed using the matching debug APK.
+- Strengthened the native screenshot driver: it must see “Normal Values & Grading”, search for “differential”, and find “Neutrophils” before capturing. This fixed the earlier false-positive screenshot that showed the clerking page beneath the unopened sheet.
+- Visually verified and saved four user-facing screenshots: expanded differential count, clinical grading/NYHA, compact bedside AI controls, and the brighter My Progress card.
+
+### USER DISPLAY PREFERENCE — KEEP FOR CLAUDE CODE, ANTIGRAVITY, AND CODEX
+
+When Sabari asks for screenshots, **show the actual images inline inside the chat as visible image cards**, the same way Claude Code shows rendered previews. Do not provide only filenames, download links, sandbox links as prose, or say that screenshots exist elsewhere. Use rendered Markdown image embeds in the final response, with a short label above each image. Links may be included additionally for downloads.
+
+### NEXT / LIMITS
+
+- No further implementation remains for this v23 clinical UI request.
+- The earlier complete line-by-line PDF audit and seven signs without a verified photograph remain separate documented work. Do not claim those are complete.
+- Keep release publication on `main`, preserve the concurrent simulator/deployment work, and update both this handoff and `.agents/state/resume-notes.md` after future sessions.
