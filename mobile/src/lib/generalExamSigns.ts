@@ -173,6 +173,13 @@ export const EXAM_SIGNS: ExamSign[] = [
          * convalescents, one is the Harper's engraving and one is the
          * wrestler. This is the only one whose name describes the sign.
          */
+        /*
+         * Found by Openverse, not by a title search: it is the photograph
+         * Wikipedia's own Anaemia article uses, and its filename says nothing
+         * about pallor, so every title-gated search in this file missed it.
+         * That is the whole argument for searching more than one index.
+         */
+        'File:Anemia.JPG',
         'File:PallorSkinTones.jpg',
         'File:Anemia conjunctiva.jpg',
         'File:Conjunctival pallor.jpg',
