@@ -254,16 +254,28 @@ Do not "fix" these without reading the reasoning:
    and OEM skins replace it — MIUI ships MiSans, One UI ships SamsungOne — which
    would silently re-typeset the app on those phones.
 
-6. **`versionCode` must increase on every Play upload.** **17 is live on Play**
-   and the repo carries 18.
+6. **`versionCode` must increase on every Play upload.** **22 is live on Play**
+   and the repo carries **23**, confirmed by the owner from their own console
+   on **2026-09-19**. 23 is therefore the next upload and needs no bump.
 
-   This file has now been wrong about that number twice, and both times the
-   same way. It said 13 for weeks; the owner corrected it to 14 on 2026-09-05,
-   reading their own console. It then drifted to 19-23 as CI built artifact
-   after artifact, none of which was ever uploaded — a built `.aab` is not a
-   published one, and the repo cannot tell the difference. The owner read the
-   console again on 2026-09-11: the highest versionCode Play has ever received
-   is 17, so 18 is the next one, and it is pinned there until they upload it.
+   This file has now been wrong about that number **three** times, always the
+   same way and always in the same direction — it believed a number the repo
+   could see instead of the one only the console knows.
+
+   - It said 13 for weeks; the owner corrected it to 14 on 2026-09-05.
+   - It then drifted to 19-23 as CI built artifact after artifact, none of
+     which was ever uploaded. The owner read the console on 2026-09-11: the
+     highest Play had received was 17, so it was pinned at 18.
+   - On 2026-09-19 it still said 17/18 while the repo had moved to 23 and Play
+     had 22. An agent about to cut a release read this file, believed a bump to
+     24 was needed, and asked instead — which is the only reason 23 was not
+     skipped. **Asking cost one question; guessing would have burned a
+     versionCode that can never be reused.**
+
+   A built `.aab` is not a published one and the repo cannot tell the
+   difference, so this number goes stale every single time somebody builds
+   without uploading. Treat it as a note of when it was last checked, not as
+   fact.
 
    What produced the first error is worth keeping, because the shape recurs: an
    upload of 14 was refused with "your app could crash on 16 KB devices" naming

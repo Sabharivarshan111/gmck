@@ -52,10 +52,10 @@ files into `mobile/`; a second copy will drift.
 - **`applicationId` is `com.aistudio.mbbsqbank.aycxvd`.** It matches the
   published Play listing. Changing it publishes a *second app* instead of an
   update.
-- **`versionCode` must increase on every Play upload.** 14 is live, the repo
-  carries 15. It sits in `build.gradle` AND `mobile/src/lib/appVersion.ts`;
-  `check:version` fails if they disagree, and a bump needs an `app_releases`
-  row. Which number is LIVE comes from the console, not here.
+- **`versionCode` must increase on every Play upload.** 22 live, repo 23
+  (console, 2026-09-19). In `build.gradle` AND `mobile/src/lib/appVersion.ts`;
+  `check:version` fails if they disagree; a bump needs an `app_releases` row.
+  LIVE comes from the console. **Ask before bumping.**
 - **Never commit secrets** — keystore, passwords, certificates, API keys. The
   signing key lives only in GitHub Actions secrets.
 - **Test builds must serve no ads at all.** `mobile/src/lib/adsMode.ts` exports
