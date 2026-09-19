@@ -270,7 +270,7 @@ export const EXAM_SIGNS: ExamSign[] = [
       commonsCategories: [
         'Category:Cyanosis',
       ],
-      search: ['central cyanosis tongue', 'cyanosis lips blue', 'cyanotic congenital heart disease child'],
+      search: ['central cyanosis', 'cyanotic tongue', 'cyanosis lips', 'cyanotic heart disease'],
       /*
        * Central cyanosis is looked for on the TONGUE and LIPS, and the plain
        * word "cyanosis" does not say so. It fetched a photograph of one dusky
@@ -430,7 +430,7 @@ export const EXAM_SIGNS: ExamSign[] = [
       commonsCategories: [
         'Category:Nail diseases',
       ],
-      search: ['platonychia flat nails', 'flat nail plate', 'nail flattening iron deficiency'],
+      search: ['platonychia', 'flat nails', 'nail flattening'],
       titleMustContain: ['platonychia'],
     },
   },
@@ -538,7 +538,7 @@ export const EXAM_SIGNS: ExamSign[] = [
       commonsCategories: [
         'Category:Hepatic encephalopathy',
       ],
-      search: ['asterixis flapping tremor', 'hepatic encephalopathy asterixis hands', 'flapping tremor wrist'],
+      search: ['asterixis', 'flapping tremor', 'hepatic encephalopathy'],
       titleMustContain: ['asterixis', 'flapping tremor'],
     },
   },
@@ -611,7 +611,7 @@ export const EXAM_SIGNS: ExamSign[] = [
         'Category:Cushing syndrome',
         'Category:Acromegaly',
       ],
-      search: ['myxedema facies hypothyroidism', 'moon facies cushing', 'mitral facies malar flush'],
+      search: ['myxedema face', 'moon facies', 'cushingoid facies', 'acromegaly face'],
       titleMustContain: ['myxedema', 'myxoedema', 'cushingoid', 'moon face', 'facies'],
     },
   },
@@ -636,7 +636,7 @@ export const EXAM_SIGNS: ExamSign[] = [
         'Category:Marasmus',
         'Category:Cachexia',
       ],
-      search: ['temporal wasting cachexia', 'muscle wasting malnutrition', 'cachexia clinical'],
+      search: ['cachexia', 'kwashiorkor', 'marasmus', 'severe malnutrition'],
       titleMustContain: ['cachexia', 'marasmus', 'kwashiorkor', 'muscle wasting', 'malnutrition', 'malnourish'],
     },
   },

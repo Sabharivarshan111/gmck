@@ -40,7 +40,7 @@ on:
   workflow_dispatch:
     inputs:
       only:
-        description: 'Fetch only this sign id (blank = every sign with no picture yet)'
+        description: 'Sign id(s), comma separated (blank = every sign with no picture yet)'
         required: false
         default: ''
       probe:
@@ -412,10 +412,17 @@ jobs:
                       })
               return out
 
+          # A comma-separated list, not one id. Probing five blank signs one at
+          # a time is five dispatches and five waits, for a question that is
+          # one question: "is there anything out there for these?"
           only = os.environ.get('ONLY', '').strip()
+          wanted = {x.strip() for x in only.split(',') if x.strip()}
           probe = os.environ.get('PROBE', '').strip().lower() in ('true', '1', 'yes')
-          if only:
-              signs = [s for s in signs if s[0] == only]
+          if wanted:
+              signs = [s for s in signs if s[0] in wanted]
+              missing = wanted - {s[0] for s in signs}
+              if missing:
+                  print(f'  warn  no such sign id: {", ".join(sorted(missing))}')
 
           # Read back what previous runs found, so a re-dispatch tops up
           # rather than starting over and re-downloading everything.
@@ -466,7 +473,7 @@ jobs:
               raise SystemExit(0)
 
           for sid, terms, gate, named, categories in signs:
-              if sid in manifest and not only:
+              if sid in manifest and not wanted:
                   print(f'  skip  {sid} (already has a picture)')
                   continue
               chosen = None
