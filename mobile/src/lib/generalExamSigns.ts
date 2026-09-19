@@ -630,11 +630,26 @@ export const EXAM_SIGNS: ExamSign[] = [
     pearl:
       'Temporal wasting is the earliest visible marker of significant weight loss, and it is on the face you are already looking at during the facies.',
     image: {
+      /*
+       * Named from a probe of Category:Kwashiorkor and Category:Cachexia.
+       * The category listing is the only thing that surfaced a real clinical
+       * photograph for this sign. Every word search returns the wrong kind of
+       * thing: Europe PMC's cachexia hits are Kaplan-Meier curves, forest
+       * plots and PRISMA diagrams, and Openverse's eighteen hits for
+       * "marasmus" are all photographs of Marasmus oreades, a mushroom.
+       */
+      commonsFiles: [
+        'File:Kwashiorkor 6180.jpg',
+        'File:Kwashiorkor 6903.jpg',
+        'File:Starved child.jpg',
+        'File:Starved girl.jpg',
+        'File:Cancer cachexia 1.jpg',
+      ],
       commonsCategories: [
-        'Category:Malnutrition',
         'Category:Kwashiorkor',
-        'Category:Marasmus',
         'Category:Cachexia',
+        'Category:Marasmus',
+        'Category:Malnutrition',
       ],
       search: ['cachexia', 'kwashiorkor', 'marasmus', 'severe malnutrition'],
       titleMustContain: ['cachexia', 'marasmus', 'kwashiorkor', 'muscle wasting', 'malnutrition', 'malnourish'],
