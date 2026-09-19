@@ -50,6 +50,22 @@ export interface UserNote {
    */
   images?: string[];
   /**
+   * How tall each picture is drawn when the note is read, parallel to
+   * `images`.
+   *
+   * Absent on every note written before this existed, and absent for any
+   * picture nobody has resized, so the reader falls back to the original fixed
+   * 240 — which is what makes this safe to add to a store that already has
+   * people's notes in it.
+   *
+   * A height rather than a scale, for the same reason the PDF note pages store
+   * one: the control says "bigger" and the picture gets bigger by that many
+   * points, with nothing in between to disagree about. The marks drawn on a
+   * picture are geometry replayed through an SVG `viewBox`, so they rescale
+   * with it rather than being left behind at the old size.
+   */
+  imageHeights?: number[];
+  /**
    * Links the reader pasted in — a lecture on YouTube, a paper, a drive folder.
    *
    * URLs and titles, nothing fetched. A YouTube one plays inside the note; see

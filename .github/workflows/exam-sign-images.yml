@@ -87,6 +87,30 @@ jobs:
           # Explicitly refused even though they look Creative Commons.
           BAD = re.compile(r'(nc|non-?commercial|nd|no-?deriv|fair use|non-free)', re.I)
 
+          # ── Why every search says "filetype:bitmap" ────────────────────
+          #
+          # It did not, and that single omission is why seven signs had no
+          # picture. Namespace 6 is *files*, not images, and Commons is full of
+          # Internet Archive scans of 19th-century medical textbooks — which
+          # are files, in namespace 6, whose OCR'd text mentions every clinical
+          # word there is. So "palmar erythema liver" returned eight PDFs and
+          # no photograph, "moon facies cushing" returned a 1657 polyglot bible
+          # and a 1914 Billboard, and the twelve-result window was full before
+          # a single photograph could compete.
+          #
+          # The MIME check below then refused them all, correctly, and the sign
+          # was recorded as having nothing available. That conclusion was
+          # wrong: File:Palmar erythema.jpg exists, is CC BY-SA 3.0, and is
+          # already used by this app through curatedExamPhotos.ts. It simply
+          # never appeared in its own search.
+          #
+          # `filetype:bitmap` is a CirrusSearch keyword that restricts to
+          # raster images. It narrows the corpus; it does not weaken the title
+          # gate or the licence gate, both of which still run on whatever comes
+          # back. Nothing that was refused before is accepted now — the change
+          # is only that photographs are in the window at all.
+          IMAGES_ONLY = 'filetype:bitmap'
+
           def api(**params):
               params.setdefault('format', 'json')
               params.setdefault('action', 'query')
@@ -190,7 +214,8 @@ jobs:
               # 2. Only then the keyword search, unchanged.
               for term in ([] if chosen else terms):
                   try:
-                      res = api(list='search', srsearch=term, srnamespace='6', srlimit='12')
+                      res = api(list='search', srsearch=f'{term} {IMAGES_ONLY}',
+                                srnamespace='6', srlimit='20')
                   except Exception as e:
                       print(f'  warn  {sid}: search "{term}" failed: {e}')
                       continue
@@ -235,8 +260,8 @@ jobs:
                   # the licence, or that Commons simply has no such picture.
                   for term in terms[:2]:
                       try:
-                          res = api(list='search', srsearch=term,
-                                    srnamespace='6', srlimit='8')
+                          res = api(list='search', srsearch=f'{term} {IMAGES_ONLY}',
+                                    srnamespace='6', srlimit='10')
                       except Exception:
                           continue
                       hits = [h['title'] for h in res.get('query', {}).get('search', [])]

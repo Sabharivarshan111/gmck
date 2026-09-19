@@ -65,6 +65,19 @@ import {
 } from "@/lib/noteFiles";
 import { withAlpha } from "@/theme";
 
+/**
+ * How tall a picture is drawn in a note that nobody has resized.
+ *
+ * 240 is what the reader style has always used, so an existing note looks
+ * exactly as it did — the resize controls add a choice rather than changing
+ * everyone's notes underneath them.
+ */
+const DEFAULT_NOTE_IMAGE_HEIGHT = 240;
+/** The bounds a picture can be dragged between, and the step each tap moves. */
+const MIN_NOTE_IMAGE_HEIGHT = 120;
+const MAX_NOTE_IMAGE_HEIGHT = 560;
+const NOTE_IMAGE_STEP = 60;
+
 /** The bucket a note with no subject falls into. */
 const UNFILED = "Unfiled";
 
@@ -361,7 +374,7 @@ function NoteReader({
         />
       ))}
 
-      {/* Whatever was drawn on it comes with it. */}
+      {/* Whatever was drawn on it comes with it, at whatever size it was set to. */}
       {(note.images ?? []).map((id, index) =>
         urls[index] ? (
           <InkedImage
@@ -370,7 +383,10 @@ function NoteReader({
             imageId={id}
             zoomable
             title="Picture in this note"
-            style={styles.readerImage}
+            style={[
+              styles.readerImage,
+              { height: note.imageHeights?.[index] ?? DEFAULT_NOTE_IMAGE_HEIGHT },
+            ]}
           />
         ) : null,
       )}
@@ -574,6 +590,12 @@ export function ProgressNotesTab({ year }: Props) {
   const [editChapterName, setEditChapterName] = useState<string | null>(null);
   const [filingOpen, setFilingOpen] = useState(false);
   const [editImages, setEditImages] = useState<string[]>([]);
+  /**
+   * How tall each picture is drawn when the note is read, parallel to
+   * `editImages`. Kept as its own state rather than folded into the id list
+   * because the ids are what everything else in this file matches on.
+   */
+  const [editImageHeights, setEditImageHeights] = useState<number[]>([]);
   const [editFiles, setEditFiles] = useState<NoteFile[]>([]);
   const [pdfModalFile, setPdfModalFile] = useState<NoteFile | null>(null);
   const [editFont, setEditFont] = useState<string | null>(null);
@@ -687,6 +709,7 @@ export function ProgressNotesTab({ year }: Props) {
       setEditChapterKey(note.chapterKey ?? null);
       setEditChapterName(note.chapterName ?? null);
       setEditImages(note.images ?? []);
+      setEditImageHeights(note.imageHeights ?? []);
       setEditFiles(note.files ?? []);
       setEditFont(note.font ?? null);
       setEditSheets(note.sheets ?? []);
@@ -701,6 +724,7 @@ export function ProgressNotesTab({ year }: Props) {
       setEditChapterKey(null);
       setEditChapterName(null);
       setEditImages([]);
+      setEditImageHeights([]);
       setEditFiles([]);
       setEditFont(null);
       setEditSheets([]);
@@ -722,6 +746,7 @@ export function ProgressNotesTab({ year }: Props) {
       chapterKey: editChapterKey,
       chapterName: editChapterName,
       images: editImages,
+      imageHeights: editImageHeights,
       files: editFiles,
       font: editFont,
       sheets: editSheets,
@@ -752,6 +777,7 @@ export function ProgressNotesTab({ year }: Props) {
         setImageError(result.error);
       } else if (result) {
         setEditImages(current => [...current, result.id]);
+        setEditImageHeights(current => [...current, DEFAULT_NOTE_IMAGE_HEIGHT]);
       }
     } finally {
       setBusyImage(false);
@@ -1320,36 +1346,154 @@ export function ProgressNotesTab({ year }: Props) {
             </View>
           ) : null}
 
+          {/*
+            Each picture, with what can be done to it.
+
+            It was a 64dp thumbnail with a remove cross and nothing else, and
+            the reader's friend asked for the rest: how big it shows when the
+            note is read, and what order the pictures come in. Both are stored
+            on the note, so they survive the editor closing — a size that only
+            lasted the session would be a control that pretends to do
+            something.
+
+            The size is a number of points and is shown as one. "Bigger" and
+            "smaller" with no feedback is the sort of control people press four
+            times and then undo, because nothing tells them whether it worked
+            until they save and read the note.
+          */}
           {editImages.length > 0 ? (
-            <View style={styles.thumbRow}>
-              {editImages.map(path => (
-                <View key={path} style={styles.thumbWrap}>
-                  <Touchable
-                    onPress={() => setDrawing(path)}
-                    label="Draw on this picture"
-                    hint="Opens a pen, and a stylus can be used"
-                    scaleTo={0.95}>
-                    <NoteThumb path={path} ink={inkVersion} />
-                  </Touchable>
-                  <View style={[styles.thumbDraw, { backgroundColor: withAlpha("#000000", 0.55) }]}>
-                    <PenLine size={12} color="#FFFFFF" />
+            <View style={styles.imgEditList}>
+              {editImages.map((path, index) => {
+                const height =
+                  editImageHeights[index] ?? DEFAULT_NOTE_IMAGE_HEIGHT;
+                const resize = (by: number) => {
+                  setEditImageHeights(current => {
+                    const next = editImages.map(
+                      (_, i) => current[i] ?? DEFAULT_NOTE_IMAGE_HEIGHT,
+                    );
+                    next[index] = Math.max(
+                      MIN_NOTE_IMAGE_HEIGHT,
+                      Math.min(MAX_NOTE_IMAGE_HEIGHT, next[index] + by),
+                    );
+                    return next;
+                  });
+                };
+                const move = (to: number) => {
+                  if (to < 0 || to >= editImages.length) return;
+                  const heights = editImages.map(
+                    (_, i) => editImageHeights[i] ?? DEFAULT_NOTE_IMAGE_HEIGHT,
+                  );
+                  const ids = [...editImages];
+                  [ids[index], ids[to]] = [ids[to], ids[index]];
+                  [heights[index], heights[to]] = [heights[to], heights[index]];
+                  setEditImages(ids);
+                  setEditImageHeights(heights);
+                };
+                return (
+                  <View
+                    key={path}
+                    style={[styles.imgEditRow, { borderColor: colors.border }]}>
+                    <View style={styles.thumbWrap}>
+                      <Touchable
+                        onPress={() => setDrawing(path)}
+                        label={`Draw on picture ${index + 1} of ${editImages.length}`}
+                        hint="Opens a pen, and a stylus can be used"
+                        scaleTo={0.95}>
+                        <NoteThumb path={path} ink={inkVersion} />
+                      </Touchable>
+                      <View
+                        style={[
+                          styles.thumbDraw,
+                          { backgroundColor: withAlpha("#000000", 0.55) },
+                        ]}>
+                        <PenLine size={12} color="#FFFFFF" />
+                      </View>
+                    </View>
+
+                    <View style={styles.imgEditControls}>
+                      <Text style={[styles.imgEditSize, { color: colors.textMuted }]}>
+                        {`Shows ${height}pt tall`}
+                      </Text>
+                      <View style={styles.imgEditBtnRow}>
+                        <Touchable
+                          onPress={() => resize(-NOTE_IMAGE_STEP)}
+                          disabled={height <= MIN_NOTE_IMAGE_HEIGHT}
+                          label={`Show picture ${index + 1} smaller`}
+                          style={[
+                            styles.imgEditBtn,
+                            {
+                              backgroundColor: withAlpha(colors.text, 0.1),
+                              opacity: height <= MIN_NOTE_IMAGE_HEIGHT ? 0.35 : 1,
+                            },
+                          ]}>
+                          <Minus size={14} color={colors.text} />
+                        </Touchable>
+                        <Touchable
+                          onPress={() => resize(NOTE_IMAGE_STEP)}
+                          disabled={height >= MAX_NOTE_IMAGE_HEIGHT}
+                          label={`Show picture ${index + 1} bigger`}
+                          style={[
+                            styles.imgEditBtn,
+                            {
+                              backgroundColor: withAlpha(colors.text, 0.1),
+                              opacity: height >= MAX_NOTE_IMAGE_HEIGHT ? 0.35 : 1,
+                            },
+                          ]}>
+                          <Plus size={14} color={colors.text} />
+                        </Touchable>
+                        {editImages.length > 1 ? (
+                          <>
+                            <Touchable
+                              onPress={() => move(index - 1)}
+                              disabled={index === 0}
+                              label={`Move picture ${index + 1} earlier`}
+                              style={[
+                                styles.imgEditBtn,
+                                {
+                                  backgroundColor: withAlpha(colors.text, 0.1),
+                                  opacity: index === 0 ? 0.35 : 1,
+                                },
+                              ]}>
+                              <ChevronUp size={14} color={colors.text} />
+                            </Touchable>
+                            <Touchable
+                              onPress={() => move(index + 1)}
+                              disabled={index === editImages.length - 1}
+                              label={`Move picture ${index + 1} later`}
+                              style={[
+                                styles.imgEditBtn,
+                                {
+                                  backgroundColor: withAlpha(colors.text, 0.1),
+                                  opacity:
+                                    index === editImages.length - 1 ? 0.35 : 1,
+                                },
+                              ]}>
+                              <ChevronDown size={14} color={colors.text} />
+                            </Touchable>
+                          </>
+                        ) : null}
+                        <Touchable
+                          onPress={async () => {
+                            setEditImages(current => current.filter(p => p !== path));
+                            setEditImageHeights(current =>
+                              current.filter((_, i) => i !== index),
+                            );
+                            // Best effort: the row is the source of truth, and an
+                            // orphaned object costs bytes rather than correctness.
+                            await removeNoteImage(path);
+                          }}
+                          label={`Remove picture ${index + 1} of ${editImages.length}`}
+                          style={[
+                            styles.imgEditBtn,
+                            { backgroundColor: withAlpha(colors.danger, 0.15) },
+                          ]}>
+                          <X size={14} color={colors.danger} />
+                        </Touchable>
+                      </View>
+                    </View>
                   </View>
-                  <Touchable
-                    onPress={async () => {
-                      setEditImages(current => current.filter(p => p !== path));
-                      // Best effort: the row is the source of truth, and an
-                      // orphaned object costs bytes rather than correctness.
-                      await removeNoteImage(path);
-                    }}
-                    label="Remove this picture"
-                    style={[
-                      styles.thumbRemove,
-                      { backgroundColor: colors.card, borderColor: colors.border },
-                    ]}>
-                    <X size={12} color={colors.danger} />
-                  </Touchable>
-                </View>
-              ))}
+                );
+              })}
             </View>
           ) : null}
 
@@ -1722,6 +1866,38 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: "center",
     justifyContent: "center",
+  },
+  imgEditList: {
+    gap: 8,
+    marginBottom: 10,
+  },
+  imgEditRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    padding: 8,
+    borderRadius: 12,
+    borderWidth: StyleSheet.hairlineWidth,
+  },
+  imgEditControls: {
+    flex: 1,
+    gap: 6,
+  },
+  imgEditSize: {
+    fontSize: 11,
+    fontWeight: "600",
+  },
+  imgEditBtnRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 6,
+  },
+  imgEditBtn: {
+    minWidth: 34,
+    minHeight: 32,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 8,
   },
   thumbRow: {
     flexDirection: "row",
