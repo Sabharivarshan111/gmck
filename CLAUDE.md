@@ -26,6 +26,7 @@ when picking up work that was last touched from the other tool.
 | `.agents/rules/42-play-billing.md` | Google Play Billing — why Razorpay cannot stay, what is already built, and the rules a payment path has to keep (nothing granted, nothing priced, nothing acknowledged on the client) |
 | `.agents/rules/50-notes.md` | Handwritten notes — which textbook grounds which subject, and the two ways that goes silently wrong |
 | `.agents/rules/51-exam-sign-photos.md` |  |
+| `.agents/rules/52-proforma-findings.md` |  |
 | `.agents/rules/60-flashcards.md` | Anki flashcards — why the scheduler is not the app's other one, and what is still unverified |
 | `.agents/rules/61-own-decks.md` | Decks the reader makes — written by hand, generated for one phone, or carrying photos from the gallery |
 | `.agents/rules/62-own-notes.md` | Notes the reader writes — the markers that make a note a document, drawing on a picture with a stylus, and the one place Roboto is not pinned |

@@ -1463,3 +1463,44 @@ When Sabari asks for screenshots, **show the actual images inline inside the cha
 - No further implementation remains for this v23 clinical UI request.
 - The earlier complete line-by-line PDF audit and seven signs without a verified photograph remain separate documented work. Do not claim those are complete.
 - Keep release publication on `main`, preserve the concurrent simulator/deployment work, and update both this handoff and `.agents/state/resume-notes.md` after future sessions.
+
+## 2026-09-19 — Claude Code — the friend's report, proforma photos, and the sign pictures
+
+**DONE, and it passed a full release build** (`release-287`, v23 — typecheck,
+lint, 30 checks, signed AAB + APK). Everything the owner's friend reported from
+the v23 build: the stylus writing only on the first picture of a PDF note page
+(the canvas was opened with `images[0]` hardcoded while every picture already
+had its own ink id); the second picture's delete button sitting under the
+floating toolbar (controls moved below the picture, and the bar is draggable
+now); no note toolbar in a PDF note page; no way to resize or reorder pictures;
+no way to copy a worked answer; and the clinical diagram card letterboxing a
+portrait plate in black, which is what "Y is that space bro" was.
+
+New: **photograph a finding on your own patient**, filed against that case
+sheet. `.agents/rules/52-proforma-findings.md` is the rule and it is the one in
+this repo that may never bend — a clinical photograph is identifiable health
+information about somebody who is not the user.
+
+**HALF-DONE.** Five signs still have no photograph: facies,
+build/nourishment, central cyanosis, asterixis, platonychia. A probe of those
+five was running when this was written; its result is not in here.
+
+**NEXT.** Read the probe log for those five, open each candidate, and promote
+only what genuinely shows the sign. Then `supabase-tasks.yml` for the queued
+`app_releases` row, then the owner uploads `release-287` as versionCode 23.
+
+**DO NOT** trust automated image search for a clinical sign. Five rounds on the
+word "pallor" produced a Harper's engraving, an Egyptian stone relief, a
+professional wrestler, a village beer parlour and a pale-winged starling —
+every one of them passing the licence, MIME, title and artwork checks. The
+fetcher writes *candidates*; `REVIEWED_SIGNS` is what the app displays, and an
+id goes in it because a person opened the image.
+
+**DO NOT** write a three-word search term. Open-i, Europe PMC and Openverse
+each read a term as a phrase, so "conjunctival pallor anaemia" matched nothing
+and all three silently returned zero for every sign — which read as "the corpus
+is empty" for a long time.
+
+**DO NOT** bump `versionCode` from what a doc in this repo says. 22 is live and
+the repo carries 23 (owner's console, 2026-09-19). CLAUDE.md said 17/18 and
+AGENTS.md said 14/15 that same morning; believing either would have skipped 23.
