@@ -1,0 +1,23 @@
+{
+  "name": "orbit-video-ads",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "studio": "remotion studio src/index.ts",
+    "render:visual": "remotion render src/index.ts OrbitReel out/orbit-reel-visual.mp4 --codec h264 --crf 20",
+    "render:visual:captions": "remotion render src/index.ts OrbitReelCaptions out/orbit-reel-captioned.mp4 --codec h264 --crf 20",
+    "tts": "python3 scripts/generate_voiceover.py"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.526",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "remotion": "4.0.526"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "typescript": "^5.5.3"
+  }
+}
