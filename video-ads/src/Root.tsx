@@ -6,22 +6,22 @@ export const Root: React.FC = () => {
   return (
     <>
       <Composition
-        id="OrbitReel"
+        id="OrbitLaunchNoVoice"
         component={OrbitReel}
         durationInFrames={1800}
         fps={30}
         width={1080}
         height={1920}
-        defaultProps={{captions: false}}
+        defaultProps={{voiceover: false}}
       />
       <Composition
-        id="OrbitReelCaptions"
+        id="OrbitLaunchVoice"
         component={OrbitReel}
         durationInFrames={1800}
         fps={30}
         width={1080}
         height={1920}
-        defaultProps={{captions: true}}
+        defaultProps={{voiceover: true}}
       />
     </>
   );
