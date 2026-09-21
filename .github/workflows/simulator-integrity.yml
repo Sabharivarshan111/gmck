@@ -7,7 +7,8 @@ on:
       - "src/simulator/**"
       - "src/pages/Simulator.tsx"
       - "public/models/**"
-      - "scripts/simulator-organ-check.mjs"\n      - "scripts/simulator-model-asset-check.mjs"\n      - "scripts/simulator-model-asset-check.mjs"
+      - "scripts/simulator-organ-check.mjs"
+      - "scripts/simulator-model-asset-check.mjs"
       - ".github/workflows/simulator-integrity.yml"
   pull_request:
     paths:
@@ -15,6 +16,7 @@ on:
       - "src/pages/Simulator.tsx"
       - "public/models/**"
       - "scripts/simulator-organ-check.mjs"
+      - "scripts/simulator-model-asset-check.mjs"
       - ".github/workflows/simulator-integrity.yml"
   workflow_dispatch:
 
@@ -35,6 +37,8 @@ jobs:
         run: npm ci --legacy-peer-deps --ignore-scripts
       - name: Organ resolver regression suite
         run: npm run check:simulator
+      - name: Model asset integrity
+        run: npm run check:simulator-assets
       - name: Production build
         run: npm run build
       - name: Deploy-size guard
