@@ -27,3 +27,27 @@ Earlier repository revisions included female reference anatomy: Kristen Browne a
 Adaptations: translated native meter/Y-up coordinates onto the stage, coincident vertices welded and source normals averaged, geometry simplified with a 0.2% per-structure relative error bound, and normals quantized. Colors and display systems are curated for this interface. All 888 source meshes are represented, with 1,073 source nodes available as selectable individual or compound concepts.
 
 This is a reference assembly with whole-body surface and selected organs, including female reproductive anatomy. Its skeleton and muscle coverage is partial. It is not a complete model of every human structure or a single-person scan. Eight placenta/umbilical structures are classified under Pregnancy reference and hidden by default.
+
+
+## Z-Anatomy lung parenchyma supplement
+
+The runtime lung parenchyma used by the patient simulator is the separately
+exported `lungs_candidate_zanatomy_full.glb`. It supplements BodyParts3D
+because the BodyParts3D export in this repository contains the
+tracheobronchial tree but no pulmonary-lobe parenchyma.
+
+- Source project: Z-Anatomy — Models of Human Anatomy
+- Source repository: https://github.com/Z-Anatomy/Models-of-human-anatomy
+- Project: https://simtk.org/projects/z-anatomy
+- License: Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
+- License terms: https://creativecommons.org/licenses/by-sa/4.0/
+- Runtime adaptation: exported only the pulmonary structures needed by ORBIT,
+  converted/registered to the BodyParts3D metre/Y-up reference space, and
+  reduced to a mobile-friendly GLB while preserving the five lung lobes and
+  named segmental bronchi.
+
+The Z-Anatomy supplement remains separately identifiable from the BodyParts3D
+core so its CC BY-SA terms and provenance are not obscured. Do not replace
+missing atlas structures with synthetic geometry and present it as source
+anatomy; procedural anatomy in the simulator is an explicitly schematic
+overlay only.
