@@ -78,5 +78,8 @@ jobs:
             echo "No generated asset changes"
           else
             git commit -m "Add mobile Z-Anatomy peripheral nerve layer"
+            # Main may advance while Blender is exporting. Rebase the generated
+            # asset commit instead of losing unrelated simulator fixes.
+            git pull --rebase origin main
             git push origin HEAD:main
           fi
