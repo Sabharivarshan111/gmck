@@ -149,13 +149,18 @@ bpy.context.collection.objects.link(root)
 source_center_x = (mins.x + maxs.x) / 2.0
 source_center_y = (mins.y + maxs.y) / 2.0
 scale = 1.70 / height
-root.scale = (scale, scale, scale)
-root.location = (-source_center_x * scale, -source_center_y * scale, -mins.z * scale)
 
+# Parent at identity first and preserve each imported object's current world
+# transform. Only AFTER parenting do we normalize the whole supplement.
+# Setting the root transform before assigning matrix_world causes Blender to
+# compensate in every child's local transform and silently cancels the scale.
 for o in selected:
     world = o.matrix_world.copy()
     o.parent = root
     o.matrix_world = world
+
+root.scale = (scale, scale, scale)
+root.location = (-source_center_x * scale, -source_center_y * scale, -mins.z * scale)
 
 # Uniform clinical nerve material, small and GPU-cheap.
 mat = bpy.data.materials.new("ORBIT_Nerve_Gold")
