@@ -15,6 +15,7 @@ import {
   DissectionToolMode,
 } from '../data/atlasTypes';
 import { correctPartSystem, describeAtlasTarget, resolveAtlasElementIds } from '../data/atlasResolver';
+import { isPeripheralNerveTarget, meshMatchesPeripheralNerveTarget, PERIPHERAL_NERVE_MODEL_URL } from '../data/peripheralNerves';
 import { Scissors, Hand, Focus, Eye, Sparkles, Maximize2, Compass, AlertCircle, Info } from 'lucide-react';
 
 interface AnatomicalBody3DProps {
@@ -758,6 +759,8 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
   const [loadProgress, setLoadProgress] = useState<number>(0);
   const [modelsReady, setModelsReady] = useState<boolean>(false);
   const [hoveredPart, setHoveredPart] = useState<Part | null>(null);
+  const [peripheralNervesReady, setPeripheralNervesReady] = useState(false);
+  const [peripheralNervesFailed, setPeripheralNervesFailed] = useState(false);
   // Set when the structure being isolated is genuinely not one of the atlas's
   // 2,234 meshes. Saying so is the point: the model not moving, with no
   // explanation, reads as the app being broken.
@@ -779,6 +782,12 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
   const cardiacNervesRef = useRef<THREE.Group | null>(null);
   const pulmonaryNervesRef = useRef<THREE.Group | null>(null);
   const abdominalNervesRef = useRef<THREE.Group | null>(null);
+
+  // Real Z-Anatomy peripheral nerve supplement. Kept separate from the
+  // BodyParts3D atlas and loaded only when a peripheral nerve is requested.
+  const peripheralNerveGroupRef = useRef<THREE.Group | null>(null);
+  const peripheralNerveMeshesRef = useRef<THREE.Mesh[]>([]);
+  const peripheralNerveLoadStartedRef = useRef(false);
 
   const lymphaticGroupRef = useRef<THREE.Group | null>(null);
   const lymphaticMaterialsRef = useRef<{
@@ -1520,6 +1529,88 @@ varying float partSelected;
     }
   }, [isLight]);
 
+  // Lazy-load the Z-Anatomy peripheral nerve supplement only when the user
+  // actually requests a nerve. On ordinary simulator startup this adds zero
+  // network, decode, GPU-buffer or draw-call cost.
+  useEffect(() => {
+    const target = isolatedPartId || selectedOrganId;
+    if (
+      !modelsReady ||
+      !target ||
+      !isPeripheralNerveTarget(target) ||
+      peripheralNerveGroupRef.current ||
+      peripheralNerveLoadStartedRef.current
+    ) {
+      return;
+    }
+
+    peripheralNerveLoadStartedRef.current = true;
+    setPeripheralNervesFailed(false);
+
+    const loader = new GLTFLoader();
+    loader.load(
+      PERIPHERAL_NERVE_MODEL_URL,
+      (gltf) => {
+        const scene = sceneRef.current;
+        if (!scene) return;
+
+        const group = gltf.scene;
+        group.name = 'zanatomy_peripheral_nerves';
+        group.visible = false;
+
+        const material = new THREE.MeshStandardMaterial({
+          color: 0xf59e0b,
+          emissive: 0x92400e,
+          emissiveIntensity: 0.55,
+          roughness: 0.38,
+          metalness: 0.02,
+        });
+
+        const meshes: THREE.Mesh[] = [];
+        group.traverse((child) => {
+          const mesh = child as THREE.Mesh;
+          if (!mesh.isMesh) return;
+
+          // Drop imported FBX materials/textures immediately. One shared
+          // material is cheaper on mobile and the source asset needs no texture
+          // memory to teach nerve course/relations.
+          if (Array.isArray(mesh.material)) {
+            mesh.material.forEach((m) => m.dispose());
+          } else if (mesh.material) {
+            mesh.material.dispose();
+          }
+
+          mesh.material = material;
+          mesh.visible = false;
+          mesh.frustumCulled = true;
+          mesh.renderOrder = 18;
+          mesh.userData.isPeripheralNerve = true;
+          meshes.push(mesh);
+        });
+
+        if (meshes.length === 0) {
+          material.dispose();
+          setPeripheralNervesFailed(true);
+          peripheralNerveLoadStartedRef.current = false;
+          console.error('[AnatomicalBody3D] Peripheral nerve GLB contains no meshes');
+          return;
+        }
+
+        peripheralNerveGroupRef.current = group;
+        peripheralNerveMeshesRef.current = meshes;
+        scene.add(group);
+        setPeripheralNervesReady(true);
+        console.log(`[AnatomicalBody3D] Loaded Z-Anatomy peripheral nerve layer: ${meshes.length} meshes`);
+      },
+      undefined,
+      (err) => {
+        peripheralNerveLoadStartedRef.current = false;
+        setPeripheralNervesFailed(true);
+        console.error('[AnatomicalBody3D] Failed to load Z-Anatomy peripheral nerve layer:', err);
+      }
+    );
+  }, [modelsReady, isolatedPartId, selectedOrganId]);
+
   // Update GPU DataTexture when hiddenPartIds, isolatedPartId, contextOrganId, or layerPeel changes
   useEffect(() => {
     const atlas = atlasRef.current;
@@ -1541,16 +1632,32 @@ varying float partSelected;
     const isSympatheticTarget = !!targetKey && (targetKey.toLowerCase().includes('sympath') || targetKey.toLowerCase().includes('cardiac plexus'));
     const isVagusTarget = !!targetKey && (targetKey.toLowerCase().includes('vagus') || targetKey.toLowerCase().includes('parasympath'));
     const isAutonomicTarget = isSympatheticTarget || isVagusTarget;
+    const isSupplementalNerveTarget = !!targetKey && isPeripheralNerveTarget(targetKey);
+    const useRealNerveLayer = isSupplementalNerveTarget && peripheralNervesReady;
+    const nerveIsolationBox = new THREE.Box3();
 
     // The vagus and the sympathetic chain are drawn by this component's own
     // autonomic overlay rather than taken from the atlas, so their absence from
     // BodyParts3D is not something the reader needs told. Everything else that
     // the atlas does not hold is.
     setAbsentNotice(
-      isolatedTarget && isolatedTarget.status === 'absent' && !isAutonomicTarget
+      peripheralNervesFailed && isSupplementalNerveTarget
+        ? 'The Z-Anatomy peripheral nerve layer could not be loaded on this device. The simulator has not substituted a different structure.'
+        : isolatedTarget && isolatedTarget.status === 'absent' && !isAutonomicTarget && !isSupplementalNerveTarget
         ? isolatedTarget.reason ?? null
         : null
     );
+
+    // Real peripheral nerves: show only meshes that belong to the requested
+    // nerve, or the complete supplement for the Peripheral Nerves overview.
+    if (peripheralNerveGroupRef.current) {
+      peripheralNerveGroupRef.current.visible = useRealNerveLayer;
+      peripheralNerveMeshesRef.current.forEach((mesh) => {
+        const visible = useRealNerveLayer && meshMatchesPeripheralNerveTarget(mesh.name, targetKey);
+        mesh.visible = visible;
+        if (visible) nerveIsolationBox.expandByObject(mesh);
+      });
+    }
 
     const isLungTarget = !!targetKey && (
       targetKey.toLowerCase().includes('lung') ||
@@ -1592,7 +1699,13 @@ varying float partSelected;
 
     // Autonomic Nerves Visibility and Saturated High-Contrast Amber-Gold Styling
     if (autonomicGroupRef.current) {
-      if (isAutonomicTarget) {
+      if (useRealNerveLayer) {
+        // Real Z-Anatomy geometry supersedes the older schematic overlay.
+        autonomicGroupRef.current.visible = false;
+        if (cardiacNervesRef.current) cardiacNervesRef.current.visible = false;
+        if (pulmonaryNervesRef.current) pulmonaryNervesRef.current.visible = false;
+        if (abdominalNervesRef.current) abdominalNervesRef.current.visible = false;
+      } else if (isAutonomicTarget) {
         autonomicGroupRef.current.visible = true;
         if (cardiacNervesRef.current) cardiacNervesRef.current.visible = true;
         if (pulmonaryNervesRef.current) pulmonaryNervesRef.current.visible = true;
@@ -1735,6 +1848,10 @@ varying float partSelected;
       // CRITICAL FIX: Scalpel Dissection ALWAYS takes absolute top precedence!
       if (hiddenSet.has(p.id)) {
         visible = 0.0;
+      } else if (useRealNerveLayer) {
+        // Nerves are easiest to understand against a faint bony scaffold.
+        // Everything else is removed to avoid a dense translucent mobile scene.
+        visible = p.system === 'skeletal' ? 0.18 : 0.0;
       } else if (isAutonomicTarget) {
         // Dedicated 3D autonomic group is active: show context organ (Heart) in contrasting translucent tone
         if (contextElements && contextElements.has(p.id)) {
@@ -1795,7 +1912,7 @@ varying float partSelected;
     // Adjust depthWrite for context organ materials so overlay vessels/nerves render without occlusion
     const materials = systemMaterialsRef.current;
     if (materials) {
-      const isIsolationActive = (isolatedElements && isolatedElements.size > 0) || isAutonomicTarget;
+      const isIsolationActive = (isolatedElements && isolatedElements.size > 0) || isAutonomicTarget || useRealNerveLayer;
       const cardiacMat = materials.get('cardiac');
       if (cardiacMat) {
         cardiacMat.depthWrite = !isIsolationActive;
@@ -1807,7 +1924,20 @@ varying float partSelected;
     }
 
     // Automatic Camera Framing onto Isolated Organ / Vessel / Nerve
-    if (isAutonomicTarget && cameraRef.current && controlsRef.current) {
+    if (useRealNerveLayer && !nerveIsolationBox.isEmpty() && cameraRef.current && controlsRef.current) {
+      const center = new THREE.Vector3();
+      const size = new THREE.Vector3();
+      nerveIsolationBox.getCenter(center);
+      nerveIsolationBox.getSize(size);
+      const maxDim = Math.max(size.x, size.y, size.z, 0.10);
+      const fov = cameraRef.current.fov * (Math.PI / 180);
+      let cameraDistance = (maxDim / 2) / Math.tan(fov / 2) * 1.35;
+      cameraDistance = Math.min(Math.max(cameraDistance, 0.18), 2.8);
+      controlsRef.current.minDistance = 0.05;
+      controlsRef.current.target.copy(center);
+      cameraRef.current.position.set(center.x, center.y + 0.005, center.z + cameraDistance);
+      controlsRef.current.update();
+    } else if (isAutonomicTarget && cameraRef.current && controlsRef.current) {
       const center = new THREE.Vector3(0.0, 1.345, -0.005);
       controlsRef.current.minDistance = 0.05;
       controlsRef.current.target.copy(center);
@@ -1845,7 +1975,7 @@ varying float partSelected;
       controlsRef.current.minDistance = 0.3;
       resetCamera(cameraPreset || 'anterior');
     }
-  }, [hiddenPartIds, isolatedPartId, contextOrganId, selectedOrganId, layerPeel, modelsReady]);
+  }, [hiddenPartIds, isolatedPartId, contextOrganId, selectedOrganId, layerPeel, modelsReady, peripheralNervesReady, peripheralNervesFailed]);
 
   // Update GPU Selection DataTexture and 3D Selection Pointer when selectedOrganId or isolatedPartId changes
   useEffect(() => {
@@ -1860,7 +1990,8 @@ varying float partSelected;
       targetHighlight.toLowerCase().includes('cardiac plexus') ||
       targetHighlight.toLowerCase().includes('vagus')
     );
-    const selectedElements = (targetHighlight && !isAutonomic) ? resolveAtlasElementIds(targetHighlight, atlas) : null;
+    const isSupplementalNerve = isPeripheralNerveTarget(targetHighlight);
+    const selectedElements = (targetHighlight && !isAutonomic && !isSupplementalNerve) ? resolveAtlasElementIds(targetHighlight, atlas) : null;
 
     const box = new THREE.Box3();
     let count = 0;
@@ -2088,6 +2219,19 @@ varying float partSelected;
           )}
         </div>
       </div>
+
+      {isPeripheralNerveTarget(isolatedPartId || selectedOrganId) && !peripheralNervesReady && !peripheralNervesFailed && (
+        <div className="absolute top-16 left-3 right-3 z-20 flex justify-center pointer-events-none">
+          <div
+            role="status"
+            className={`px-3 py-2 rounded-2xl border backdrop-blur-xl text-xs font-semibold ${isLight
+              ? 'bg-amber-50/95 border-amber-300 text-amber-900 shadow-sm'
+              : 'bg-slate-900/90 border-amber-700/60 text-amber-300 shadow-lg'}`}
+          >
+            LOADING Z-ANATOMY NERVE LAYER…
+          </div>
+        </div>
+      )}
 
       {/* Not in this atlas — said out loud, because a model that does not move
           looks identical to one that is broken. */}
