@@ -17,7 +17,8 @@
     "check:simulator": "node scripts/simulator-organ-check.mjs",
     "check:deploy": "node scripts/deploy-size-check.mjs",
     "check:dossiers": "node scripts/dossier-format-check.mjs",
-    "sheets:simulator": "node scripts/render-organ-sheets.mjs"
+    "sheets:simulator": "node scripts/render-organ-sheets.mjs",
+    "check:simulator-assets": "node scripts/simulator-model-asset-check.mjs"
   },
   "dependencies": {
     "@capacitor/app": "^8.1.0",
