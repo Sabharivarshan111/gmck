@@ -93,7 +93,7 @@ if not (height > 0):
 selected = []
 rejected = []
 for o in all_objects:
-    n = o.name.replace(" ", "_")
+    n = re.sub(r"[_-]+", " ", o.name)
     if INCLUDE.search(n) and not EXCLUDE.search(n):
         selected.append(o)
     else:
