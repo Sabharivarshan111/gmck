@@ -28,10 +28,7 @@ if not src or not out or not manifest_path:
     raise SystemExit("--src, --out and --manifest are required")
 
 INCLUDE = re.compile(
-    r"(nerve|plexus|ganglion|ramus|rami|root|sympathetic|parasympathetic|"
-    r"splanchnic|vagus|phrenic|intercostal|median|ulnar|radial|"
-    r"musculocutaneous|axillary|sciatic|femoral|obturator|tibial|"
-    r"fibular|peroneal|brachial|lumbosacral)",
+    r"\b(?:nerve|nerves|plexus|ganglion|ganglia|root|roots|sympathetic|parasympathetic)\b",
     re.I,
 )
 
@@ -41,28 +38,29 @@ INCLUDE = re.compile(
 EXCLUDE = re.compile(
     r"(cerebr|cerebell|telenceph|dienceph|brainstem|brain_stem|medulla_oblongata|"
     r"pons\b|midbrain|spinal_cord|white_matter|grey_matter|gray_matter|"
-    r"ventricle|choroid_plexus|cochlea|vestibule|semicircular|tympanic|"
+    r"ventricle|choroid_plexus|nucleus|nuclei|cochlea|vestibule|semicircular|tympanic|"
     r"auditory_tube|hypophysis|pineal)",
     re.I,
 )
 
 TARGET_PATTERNS = {
-    "vagus_nerve": r"vagus",
-    "phrenic_nerve": r"phrenic",
-    "brachial_plexus": r"brachial.*plexus|plexus.*brachial",
-    "median_nerve": r"median.*nerve|nerve.*median",
-    "ulnar_nerve": r"ulnar.*nerve|nerve.*ulnar",
-    "radial_nerve": r"radial.*nerve|nerve.*radial",
-    "musculocutaneous_nerve": r"musculocutaneous",
-    "axillary_nerve": r"axillary.*nerve|nerve.*axillary",
-    "intercostal_nerves": r"intercostal",
-    "sympathetic_chain": r"sympathetic",
-    "splanchnic_nerves": r"splanchnic",
-    "femoral_nerve": r"femoral.*nerve|nerve.*femoral",
-    "obturator_nerve": r"obturator.*nerve|nerve.*obturator",
-    "sciatic_nerve": r"sciatic",
-    "tibial_nerve": r"tibial.*nerve|nerve.*tibial",
-    "common_fibular_nerve": r"(common.*(fibular|peroneal)|(fibular|peroneal).*common)",
+    "vagus_nerve": r"\bvagus nerve\b",
+    "phrenic_nerve": r"\bphrenic nerve\b",
+    "brachial_plexus": r"\bbrachial plexus\b",
+    "pectoral_nerves": r"\b(?:medial |lateral )?pectoral nerve\b",
+    "median_nerve": r"\bmedian nerve\b",
+    "ulnar_nerve": r"\bulnar nerve\b",
+    "radial_nerve": r"\bradial nerve\b",
+    "musculocutaneous_nerve": r"\bmusculocutaneous nerve\b",
+    "axillary_nerve": r"\baxillary nerve\b",
+    "intercostal_nerves": r"\bintercostal nerves?\b",
+    "sympathetic_chain": r"\bsympathetic (?:trunk|chain|ganglia|nerves?)\b",
+    "splanchnic_nerves": r"\bsplanchnic nerves?\b",
+    "femoral_nerve": r"\bfemoral nerve\b",
+    "obturator_nerve": r"\bobturator nerve\b",
+    "sciatic_nerve": r"\bsciatic nerve\b",
+    "tibial_nerve": r"\btibial nerve\b",
+    "common_fibular_nerve": r"\bcommon (?:fibular|peroneal) nerve\b",
 }
 
 bpy.ops.object.select_all(action="SELECT")
