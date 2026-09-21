@@ -97,3 +97,36 @@ export function meshMatchesPeripheralNerveTarget(meshName: string, targetId?: st
   const name = normaliseMeshName(meshName);
   return TARGETS[key].some((rx) => rx.test(name));
 }
+
+
+/**
+ * Resolve a visible Z-Anatomy mesh name back to the stable simulator nerve key.
+ * More specific targets are checked before broad autonomic groups.
+ */
+export function peripheralNerveKeyForMeshName(meshName: string): string | null {
+  const name = normaliseMeshName(meshName);
+  const priority = [
+    'vagus_nerve',
+    'phrenic_nerve',
+    'brachial_plexus',
+    'pectoral_nerves',
+    'musculocutaneous_nerve',
+    'axillary_nerve',
+    'median_nerve',
+    'ulnar_nerve',
+    'radial_nerve',
+    'intercostal_nerves',
+    'cardiac_plexus',
+    'splanchnic_nerves',
+    'femoral_nerve',
+    'obturator_nerve',
+    'sciatic_nerve',
+    'tibial_nerve',
+    'common_fibular_nerve',
+    'sympathetic_chain',
+  ];
+  for (const key of priority) {
+    if (TARGETS[key]?.some((rx) => rx.test(name))) return key;
+  }
+  return null;
+}
