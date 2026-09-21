@@ -31,6 +31,7 @@ jobs:
 
       - name: Export mobile peripheral nerve supplement
         run: |
+          rm -f public/models/zanatomy_peripheral_nerves.glb public/models/zanatomy_peripheral_nerves.manifest.json
           blender -b             --python scripts/export-zanatomy-peripheral-nerves.py --             --src /tmp/NervousSystem100.fbx             --out public/models/zanatomy_peripheral_nerves.glb             --manifest public/models/zanatomy_peripheral_nerves.manifest.json
           test -s public/models/zanatomy_peripheral_nerves.glb
           test -s public/models/zanatomy_peripheral_nerves.manifest.json
