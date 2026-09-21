@@ -24,6 +24,7 @@ import {
   VascularNodeReference,
   NerveNodeReference
 } from '../data/organAnatomyData';
+import { isPeripheralNerveTarget } from '../data/peripheralNerves';
 
 interface OrganDetailDrawerProps {
   organId: string | null;
@@ -67,12 +68,14 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
 
   // Resolve organ data, fallback to best match or heart
   const organKey =
-    Object.keys(ORGAN_ANATOMY_DATABASE).find(
-      (k) =>
-        k.toLowerCase() === currentNavId.toLowerCase() ||
-        ORGAN_ANATOMY_DATABASE[k].name.toLowerCase().includes(currentNavId.toLowerCase()) ||
-        currentNavId.toLowerCase().includes(k)
-    ) || 'heart';
+    (isPeripheralNerveTarget(currentNavId)
+      ? 'peripheral_nerves'
+      : Object.keys(ORGAN_ANATOMY_DATABASE).find(
+          (k) =>
+            k.toLowerCase() === currentNavId.toLowerCase() ||
+            ORGAN_ANATOMY_DATABASE[k].name.toLowerCase().includes(currentNavId.toLowerCase()) ||
+            currentNavId.toLowerCase().includes(k)
+        )) || 'heart';
 
   const organ: DetailedOrganAnatomy = ORGAN_ANATOMY_DATABASE[organKey] || ORGAN_ANATOMY_DATABASE.heart;
   const isLight = theme === 'light';
