@@ -60,6 +60,7 @@ export const PERIPHERAL_NERVE_KEYS = Object.freeze(Object.keys(TARGETS));
 
 export function normalisePeripheralNerveTarget(targetId?: string | null): string | null {
   if (!targetId) return null;
+  if (targetId.toLowerCase().startsWith('zanerve__')) return targetId.toLowerCase();
   const clean = targetId
     .toLowerCase()
     .replace(/\([^)]*\)/g, '')
@@ -90,12 +91,27 @@ function normaliseMeshName(name: string): string {
     .trim();
 }
 
+function genericPeripheralNerveKey(meshName: string): string {
+  const stem = meshName
+    .replace(/\.\d+$/i, '')
+    .replace(/\.(?:l|r)$/i, '')
+    .replace(/[._-]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .toLowerCase();
+  const slug = stem
+    .replace(/[^a-z0-9]+/g, '_')
+    .replace(/^_+|_+$/g, '');
+  return `zanerve__${slug}`;
+}
+
 export function meshMatchesPeripheralNerveTarget(meshName: string, targetId?: string | null): boolean {
   const key = normalisePeripheralNerveTarget(targetId);
   if (!key) return false;
   if (key === 'peripheral_nerves') return true;
+  if (key.startsWith('zanerve__')) return genericPeripheralNerveKey(meshName) === key;
   const name = normaliseMeshName(meshName);
-  return TARGETS[key].some((rx) => rx.test(name));
+  return TARGETS[key]?.some((rx) => rx.test(name)) ?? false;
 }
 
 
@@ -127,6 +143,13 @@ export function peripheralNerveKeyForMeshName(meshName: string): string | null {
   ];
   for (const key of priority) {
     if (TARGETS[key]?.some((rx) => rx.test(name))) return key;
+  }
+
+  // Every remaining source mesh is still inspectable. This preserves the
+  // source's smaller named branches without maintaining hundreds of hand-made
+  // aliases. The generic key is deterministic and pairs left/right copies.
+  if (/\b(?:nerve|nerves|plexus|ganglion|ganglia|root|roots)\b/i.test(name)) {
+    return genericPeripheralNerveKey(meshName);
   }
   return null;
 }
