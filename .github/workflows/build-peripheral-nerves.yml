@@ -42,16 +42,29 @@ jobs:
           const p = 'public/models/zanatomy_peripheral_nerves.manifest.json';
           const m = JSON.parse(fs.readFileSync(p, 'utf8'));
           const required = [
-            'vagus_nerve','phrenic_nerve','median_nerve','ulnar_nerve',
-            'radial_nerve','axillary_nerve','sciatic_nerve','femoral_nerve',
-            'tibial_nerve'
+            'vagus_nerve','brachial_plexus','median_nerve','ulnar_nerve',
+            'radial_nerve','musculocutaneous_nerve','axillary_nerve',
+            'intercostal_nerves','sympathetic_chain','sciatic_nerve',
+            'femoral_nerve','obturator_nerve','tibial_nerve','common_fibular_nerve'
           ];
           const missing = required.filter(k => !m.targets[k] || m.targets[k].length === 0);
-          if (missing.length) throw new Error('Missing essential nerves: ' + missing.join(', '));
+          if (missing.length) throw new Error('Missing required Z-Anatomy nerves: ' + missing.join(', '));
+
+          // The official NervousSystem100.fbx currently has no named phrenic
+          // or splanchnic mesh. Keep these explicit source gaps so nobody
+          // "fixes" the test by mapping unrelated anatomy to those names.
+          const knownSourceGaps = ['phrenic_nerve', 'splanchnic_nerves'];
+          for (const key of knownSourceGaps) {
+            if (!Array.isArray(m.targets[key])) throw new Error('Manifest lost known source gap: ' + key);
+            if (m.targets[key].length !== 0) {
+              console.log('Upstream now contains', key, '— review and remove it from knownSourceGaps after visual QA.');
+            }
+          }
           if (m.exportedTriangles > 220000) throw new Error('Triangle budget exceeded: ' + m.exportedTriangles);
           const bytes = fs.statSync('public/models/zanatomy_peripheral_nerves.glb').size;
           if (bytes > 12 * 1024 * 1024) throw new Error('12 MiB mobile asset budget exceeded: ' + bytes);
-          console.log('Essential nerves found:', required.map(k => k + '=' + m.targets[k].length).join(', '));
+          console.log('Required Z-Anatomy nerves found:', required.map(k => k + '=' + m.targets[k].length).join(', '));
+          console.log('Known source gaps:', knownSourceGaps.join(', '));
           console.log('Peripheral nerve layer:', m.exportedObjectCount, 'objects,', m.exportedTriangles, 'triangles,', (bytes/1048576).toFixed(2), 'MiB');
           NODE
 
