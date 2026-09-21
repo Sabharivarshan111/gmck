@@ -15,7 +15,7 @@ import {
   DissectionToolMode,
 } from '../data/atlasTypes';
 import { correctPartSystem, describeAtlasTarget, resolveAtlasElementIds } from '../data/atlasResolver';
-import { isPeripheralNerveTarget, meshMatchesPeripheralNerveTarget, PERIPHERAL_NERVE_MODEL_URL } from '../data/peripheralNerves';
+import { isPeripheralNerveTarget, meshMatchesPeripheralNerveTarget, peripheralNerveKeyForMeshName, PERIPHERAL_NERVE_MODEL_URL } from '../data/peripheralNerves';
 import { Scissors, Hand, Focus, Eye, Sparkles, Maximize2, Compass, AlertCircle, Info } from 'lucide-react';
 
 interface AnatomicalBody3DProps {
@@ -1341,6 +1341,44 @@ varying float partSelected;
       return null;
     };
 
+    type PeripheralNerveHit = { mesh: THREE.Mesh; key: string; part: Part };
+
+    const partFromPeripheralNerveMesh = (mesh: THREE.Mesh, key: string): Part => {
+      const box = new THREE.Box3().setFromObject(mesh);
+      const pos = mesh.geometry.getAttribute('position');
+      const idx = mesh.geometry.index;
+      return {
+        id: key,
+        name: mesh.name.replace(/[_-]+/g, ' ').trim() || key.replace(/_/g, ' '),
+        system: 'nervous' as Part['system'],
+        bounds: [
+          [box.min.x, box.min.y, box.min.z],
+          [box.max.x, box.max.y, box.max.z],
+        ],
+        vertexCount: pos?.count ?? 0,
+        indexCount: idx?.count ?? 0,
+        vertices: pos?.count ?? 0,
+        indices: idx?.count ?? 0,
+      };
+    };
+
+    const findTopmostPeripheralNerve = (
+      pointerCoords: THREE.Vector2,
+      cam: THREE.Camera
+    ): PeripheralNerveHit | null => {
+      const candidates = peripheralNerveMeshesRef.current.filter((m) => m.visible);
+      if (candidates.length === 0) return null;
+      raycaster.setFromCamera(pointerCoords, cam);
+      const hits = raycaster.intersectObjects(candidates, false);
+      for (const hit of hits) {
+        const mesh = hit.object as THREE.Mesh;
+        const key = peripheralNerveKeyForMeshName(mesh.name);
+        if (!key) continue;
+        return { mesh, key, part: partFromPeripheralNerveMesh(mesh, key) };
+      }
+      return null;
+    };
+
     const onPointerDown = (e: PointerEvent) => {
       // Ignore right/middle clicks to avoid false triggers during OrbitControls panning
       if (e.pointerType === 'mouse' && e.button !== 0) return;
@@ -1350,13 +1388,14 @@ varying float partSelected;
     const onPointerMove = (e: PointerEvent) => {
       pointerTap.move(e.pointerId, e.clientX, e.clientY);
       // Skip hover raycasting on touch drag to prevent mobile thermal throttle & stutter
-      if (e.pointerType === 'touch' || !modelsReady) return;
+      if (e.pointerType === 'touch' || !atlasRef.current) return;
 
       const rect = renderer.domElement.getBoundingClientRect();
       pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
       pointer.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
 
-      const hitPart = findTopmostVisiblePart(pointer, camera, Array.from(systemMeshesRef.current.values()));
+      const nerveHit = findTopmostPeripheralNerve(pointer, camera);
+      const hitPart = nerveHit?.part ?? findTopmostVisiblePart(pointer, camera, Array.from(systemMeshesRef.current.values()));
       if (hitPart) {
         setHoveredPart(hitPart);
         renderer.domElement.style.cursor = toolModeRef.current === 'scalpel' ? 'crosshair' : 'pointer';
@@ -1369,17 +1408,30 @@ varying float partSelected;
     const onPointerUp = (e: PointerEvent) => {
       if (e.pointerType === 'mouse' && e.button !== 0) return;
       const isTap = pointerTap.up(e.pointerId, e.clientX, e.clientY);
-      if (!isTap || !modelsReady) return;
+      if (!isTap || !atlasRef.current) return;
 
       const rect = renderer.domElement.getBoundingClientRect();
       pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
       pointer.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
 
-      const clickedPart = findTopmostVisiblePart(pointer, camera, Array.from(systemMeshesRef.current.values()));
+      const nerveHit = findTopmostPeripheralNerve(pointer, camera);
+      const clickedPart = nerveHit?.part ?? findTopmostVisiblePart(pointer, camera, Array.from(systemMeshesRef.current.values()));
       if (!clickedPart) return;
 
       const mode = toolModeRef.current;
       const atlas = atlasRef.current;
+
+      // Supplemental nerves carry their own stable simulator key. Do not send
+      // them through the BodyParts3D organ resolver: that atlas cannot know a
+      // structure it does not contain.
+      if (nerveHit) {
+        if (mode === 'scalpel') {
+          if (onDissectPartRef.current) onDissectPartRef.current(nerveHit.part);
+        } else if (onSelectOrganIdRef.current) {
+          onSelectOrganIdRef.current(nerveHit.key);
+        }
+        return;
+      }
 
       if (mode === 'scalpel') {
         // Scalpel: cut & dissect specific clicked part
@@ -1653,7 +1705,11 @@ varying float partSelected;
     if (peripheralNerveGroupRef.current) {
       peripheralNerveGroupRef.current.visible = useRealNerveLayer;
       peripheralNerveMeshesRef.current.forEach((mesh) => {
-        const visible = useRealNerveLayer && meshMatchesPeripheralNerveTarget(mesh.name, targetKey);
+        const nerveKey = peripheralNerveKeyForMeshName(mesh.name);
+        const visible =
+          useRealNerveLayer &&
+          meshMatchesPeripheralNerveTarget(mesh.name, targetKey) &&
+          (!nerveKey || !hiddenSet.has(nerveKey));
         mesh.visible = visible;
         if (visible) nerveIsolationBox.expandByObject(mesh);
       });
