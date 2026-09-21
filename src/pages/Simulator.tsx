@@ -26,6 +26,7 @@ import { OrganDetailDrawer } from '../simulator/controls/OrganDetailDrawer';
 import { WardExamModal } from '../simulator/controls/WardExamModal';
 import { DissectionToolbar } from '../simulator/controls/DissectionToolbar';
 import { DissectionToolMode, Part } from '../simulator/data/atlasTypes';
+import { isPeripheralNerveTarget } from '../simulator/data/peripheralNerves';
 
 export const Simulator: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -140,7 +141,8 @@ export const Simulator: React.FC = () => {
     }
 
     const lower = organId.toLowerCase();
-    if (lower.includes('brain') || lower.includes('head')) setCameraPreset('head');
+    if (isPeripheralNerveTarget(organId)) setCameraPreset('anterior');
+    else if (lower.includes('brain') || lower.includes('head')) setCameraPreset('head');
     else if (lower.includes('heart') || lower.includes('lung') || lower.includes('aorta')) setCameraPreset('thorax');
     else if (lower.includes('liver') || lower.includes('abdomen') || lower.includes('kidney') || lower.includes('stomach') || lower.includes('spleen')) setCameraPreset('abdomen');
   }, [toolMode]);
@@ -507,6 +509,7 @@ export const Simulator: React.FC = () => {
             { id: 'lungs', label: 'Lungs & Trachea', icon: '🫁' },
             { id: 'abdomen', label: 'Abdomen & GI', icon: '🥘' },
             { id: 'brain', label: 'Brain & Cranium', icon: '🧠' },
+            { id: 'peripheral_nerves', label: 'Peripheral Nerves', icon: '⚡' },
             { id: 'liver', label: 'Liver & Biliary', icon: '🩸' },
             { id: 'stomach', label: 'Stomach & Bed', icon: '🥣' },
             { id: 'pancreas', label: 'Pancreas', icon: '🥞' },
@@ -571,6 +574,53 @@ export const Simulator: React.FC = () => {
             );
           })}
         </div>
+
+        {/* Major named nerves — compact, horizontal and thumb-friendly on mobile.
+            The actual 3D layer is still lazy-loaded only after one of these is used. */}
+        {(isolatedPartId === 'peripheral_nerves' || isPeripheralNerveTarget(isolatedPartId)) && (
+          <div
+            className={`px-2.5 py-2 rounded-2xl border flex items-center gap-2 overflow-x-auto no-scrollbar ${isLight
+              ? 'bg-amber-50/80 border-amber-200/80'
+              : 'bg-amber-950/20 border-amber-900/50'}`}
+          >
+            <span className="text-[10px] font-black uppercase tracking-wider text-amber-700 dark:text-amber-400 whitespace-nowrap px-1">
+              Major nerves:
+            </span>
+            {[
+              ['vagus_nerve', 'Vagus'],
+              ['phrenic_nerve', 'Phrenic'],
+              ['brachial_plexus', 'Brachial plexus'],
+              ['axillary_nerve', 'Axillary'],
+              ['median_nerve', 'Median'],
+              ['ulnar_nerve', 'Ulnar'],
+              ['radial_nerve', 'Radial'],
+              ['sciatic_nerve', 'Sciatic'],
+              ['femoral_nerve', 'Femoral'],
+              ['tibial_nerve', 'Tibial'],
+              ['common_fibular_nerve', 'Common fibular'],
+            ].map(([id, label]) => (
+              <button
+                key={id}
+                onClick={() => {
+                  setIsolatedPartId(id);
+                  setSelectedOrganId(id);
+                  setContextOrganId('peripheral_nerves');
+                  setCameraPreset('anterior');
+                  setMobileTab('3d');
+                }}
+                className={`min-h-[40px] px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap flex-shrink-0 border transition-all ${isolatedPartId === id
+                  ? isLight
+                    ? 'bg-amber-500 border-amber-600 text-white shadow-sm'
+                    : 'bg-amber-400 border-amber-300 text-slate-950 shadow-sm'
+                  : isLight
+                  ? 'bg-white border-amber-200 text-amber-900 active:scale-95'
+                  : 'bg-slate-900 border-amber-800 text-amber-200 active:scale-95'}`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* MOBILE VIEW: Tab-driven clean single stage (Kept permanently mounted to prevent WebGL context destruction) */}
         <div className="lg:hidden flex flex-col space-y-3">
