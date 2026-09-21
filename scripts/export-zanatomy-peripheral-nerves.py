@@ -123,12 +123,12 @@ selected = [o for o in bpy.context.scene.objects if o.type == "MESH"]
 # to have redundant surface tessellation. The layer is lazy-loaded, but still
 # needs to stay comfortably below the main atlas payload on mobile.
 raw_tris = sum(len(o.data.polygons) for o in selected)
-TARGET_TRIS = 180_000
+TARGET_TRIS = 190_000
 if raw_tris > TARGET_TRIS:
-    global_ratio = max(0.45, TARGET_TRIS / raw_tris)
+    global_ratio = max(0.12, min(1.0, TARGET_TRIS / raw_tris))
     for o in selected:
         tris = len(o.data.polygons)
-        if tris < 800:
+        if tris < 220:
             continue
         # Several bilateral Z-Anatomy objects intentionally share one mesh
         # datablock. Modifiers cannot be applied to multi-user data, so detach
