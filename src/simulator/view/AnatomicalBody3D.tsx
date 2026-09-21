@@ -1683,9 +1683,19 @@ varying float partSelected;
     // Entity category checks
     const isSympatheticTarget = !!targetKey && (targetKey.toLowerCase().includes('sympath') || targetKey.toLowerCase().includes('cardiac plexus'));
     const isVagusTarget = !!targetKey && (targetKey.toLowerCase().includes('vagus') || targetKey.toLowerCase().includes('parasympath'));
-    const isAutonomicTarget = isSympatheticTarget || isVagusTarget;
+    const isSplanchnicTarget = !!targetKey && targetKey.toLowerCase().includes('splanchnic');
+    const isAutonomicTarget = isSympatheticTarget || isVagusTarget || isSplanchnicTarget;
     const isSupplementalNerveTarget = !!targetKey && isPeripheralNerveTarget(targetKey);
-    const useRealNerveLayer = isSupplementalNerveTarget && peripheralNervesReady;
+    const hasRealNerveMesh =
+      isSupplementalNerveTarget &&
+      peripheralNervesReady &&
+      (
+        targetKey === 'peripheral_nerves' ||
+        peripheralNerveMeshesRef.current.some((mesh) =>
+          meshMatchesPeripheralNerveTarget(mesh.name, targetKey)
+        )
+      );
+    const useRealNerveLayer = !!hasRealNerveMesh;
     const nerveIsolationBox = new THREE.Box3();
 
     // The vagus and the sympathetic chain are drawn by this component's own
@@ -1695,6 +1705,10 @@ varying float partSelected;
     setAbsentNotice(
       peripheralNervesFailed && isSupplementalNerveTarget
         ? 'The Z-Anatomy peripheral nerve layer could not be loaded on this device. The simulator has not substituted a different structure.'
+        : peripheralNervesReady && isSupplementalNerveTarget && !hasRealNerveMesh && isSplanchnicTarget
+        ? 'The official Z-Anatomy NervousSystem100 source has no named splanchnic-nerve mesh. ORBIT is showing its existing schematic autonomic overlay here; it is not presented as source-derived anatomy.'
+        : peripheralNervesReady && isSupplementalNerveTarget && !hasRealNerveMesh
+        ? 'This named nerve is not present in the vetted Z-Anatomy peripheral-nerve source used by ORBIT. No unrelated structure has been substituted.'
         : isolatedTarget && isolatedTarget.status === 'absent' && !isAutonomicTarget && !isSupplementalNerveTarget
         ? isolatedTarget.reason ?? null
         : null
@@ -1763,8 +1777,8 @@ varying float partSelected;
         if (abdominalNervesRef.current) abdominalNervesRef.current.visible = false;
       } else if (isAutonomicTarget) {
         autonomicGroupRef.current.visible = true;
-        if (cardiacNervesRef.current) cardiacNervesRef.current.visible = true;
-        if (pulmonaryNervesRef.current) pulmonaryNervesRef.current.visible = true;
+        if (cardiacNervesRef.current) cardiacNervesRef.current.visible = !isSplanchnicTarget;
+        if (pulmonaryNervesRef.current) pulmonaryNervesRef.current.visible = !isSplanchnicTarget;
         if (abdominalNervesRef.current) abdominalNervesRef.current.visible = true;
         if (autonomicMaterialsRef.current) {
           autonomicMaterialsRef.current.trunk.emissiveIntensity = 0.85;
@@ -1994,10 +2008,16 @@ varying float partSelected;
       cameraRef.current.position.set(center.x, center.y + 0.005, center.z + cameraDistance);
       controlsRef.current.update();
     } else if (isAutonomicTarget && cameraRef.current && controlsRef.current) {
-      const center = new THREE.Vector3(0.0, 1.345, -0.005);
+      const center = isSplanchnicTarget
+        ? new THREE.Vector3(0.0, 1.20, -0.01)
+        : new THREE.Vector3(0.0, 1.345, -0.005);
       controlsRef.current.minDistance = 0.05;
       controlsRef.current.target.copy(center);
-      cameraRef.current.position.set(0.0, 1.36, 0.38);
+      cameraRef.current.position.set(
+        center.x,
+        center.y + 0.015,
+        isSplanchnicTarget ? 0.46 : 0.38
+      );
       controlsRef.current.update();
     } else if (isLungTarget && cameraRef.current && controlsRef.current) {
       const center = new THREE.Vector3(0.0, 1.335, -0.005);
