@@ -130,6 +130,11 @@ if raw_tris > TARGET_TRIS:
         tris = len(o.data.polygons)
         if tris < 800:
             continue
+        # Several bilateral Z-Anatomy objects intentionally share one mesh
+        # datablock. Modifiers cannot be applied to multi-user data, so detach
+        # only the meshes we actually simplify.
+        if o.data.users > 1:
+            o.data = o.data.copy()
         mod = o.modifiers.new(name="ORBIT_mobile_decimate", type="DECIMATE")
         mod.decimate_type = "COLLAPSE"
         mod.ratio = global_ratio
