@@ -51,3 +51,29 @@ core so its CC BY-SA terms and provenance are not obscured. Do not replace
 missing atlas structures with synthetic geometry and present it as source
 anatomy; procedural anatomy in the simulator is an explicitly schematic
 overlay only.
+
+
+## Z-Anatomy peripheral nerve supplement
+
+The optional mobile peripheral-nerve layer is generated from:
+`LluisV/Z-Anatomy` → `PC-Version/Resources/Models/FBX/NervousSystem100.fbx`.
+
+- Z-Anatomy project / aggregate licence: CC BY-SA 4.0.
+- Runtime file: `public/models/zanatomy_peripheral_nerves.glb`.
+- Build manifest: `public/models/zanatomy_peripheral_nerves.manifest.json`.
+- ORBIT adaptation: only named nerve/plexus/ganglion structures are exported;
+  CNS tissue, inner-ear structures and other non-nerve geometry are excluded;
+  the remaining meshes are normalised to the BodyParts3D body scale, assigned
+  one lightweight clinical material and selectively decimated for mobile use.
+- The source FBX is not shipped in ORBIT. The runtime GLB is lazy-loaded only
+  when the learner opens Peripheral Nerves or an individual nerve.
+
+Z-Anatomy is an aggregate project. Component attribution must be preserved:
+cranial-nerve/foramina geometry in the upstream nervous-system file is credited
+to the University of Dundee / CAHID under CC BY 4.0. ORBIT intentionally
+excludes the separately identified inner-ear content from this export. Future
+changes to the filter must review upstream component licensing before adding
+new geometry.
+
+This supplement is educational reference anatomy, not a diagnostic or
+patient-specific anatomical model.
