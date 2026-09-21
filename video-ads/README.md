@@ -1,13 +1,30 @@
-# ORBIT Instagram Reel Ads
+# ORBIT Instagram Reel Launch Ads
 
-A self-contained Remotion project for the 60-second ORBIT MBBS QBank Instagram Reels.
+Remotion source for the upgraded 60-second ORBIT launch Reels.
 
-## Tooling
+## Format
 
-- Remotion 4.0.526 (exact version, including CLI)
-- React 18.3.1
-- Edge TTS 7.2.8
-- Output: 1080 × 1920, 30 fps, 60 seconds
+- 1080 × 1920 (native 9:16)
+- 30 fps
+- 60 seconds / 1800 frames
+- H.264 MP4
+- Key kinetic copy kept away from the Reels UI zones
+- No blurred background padding
+
+## Motion language
+
+The launch cut uses one consistent motion system rather than random effects:
+
+- slow 1–3% poster push-ins
+- subtle alternating parallax drift
+- spring-scale kinetic text cards
+- 17-frame directional cross-transitions
+- a crisp diagonal light sweep at scene boundaries
+- a faster feature montage in the first 15 seconds
+- longer hold on the Google Play / QR CTA
+
+The visual order is voice-aligned:
+Welcome → feature montage → Triple-tap full note → Ask AI → Flashcards → Attendance → Case Proformas → Progress → Download.
 
 ## Setup
 
@@ -17,40 +34,37 @@ npm install
 python3 -m pip install -r requirements.txt
 ```
 
-Generate the neural voiceover:
+Generate the Edge TTS narration:
 
 ```bash
 npm run tts
 ```
 
-By default it uses `en-IN-PrabhatNeural`. Override with:
+Default voice: `en-IN-PrabhatNeural`.
 
-```bash
-ORBIT_TTS_VOICE=en-IN-NeerjaNeural ORBIT_TTS_RATE=+8% npm run tts
-```
+## Required assets
 
-## Poster assets
+Put the final 9:16 artwork in `public/posters/`:
 
-Put these 9:16 poster files into `video-ads/public/posters/`:
+- `01-welcome.png`
+- `02-triple-tap.png`
+- `03-flashcards.png`
+- `04-ask-ai.png`
+- `05-attendance.png`
+- `06-progress.png`
+- `07-case-proformas.png`
+- `08-download.png`
 
-1. `01-welcome.png`
-2. `02-triple-tap.png`
-3. `03-flashcards.png`
-4. `04-ask-ai.png`
-5. `05-attendance.png`
-6. `06-progress.png`
-7. `07-case-proformas.png`
-8. `08-download.png`
+Put the audio bed at `public/audio/music.wav`.
+Run `npm run tts` to create `public/audio/voiceover.mp3`.
 
-The final download poster should use a machine-generated QR pointing to:
+The QR on `08-download.png` must encode exactly:
 `https://play.google.com/store/apps/details?id=com.aistudio.mbbsqbank.aycxvd`
 
-## Preview / render
+## Preview and render
 
 ```bash
 npm run studio
-npm run render:visual
-npm run render:visual:captions
+npm run render:no-voice
+npm run render:voice
 ```
-
-The compositions are fixed to Instagram Reels format: 1080×1920, 30 fps, 1800 frames (60 seconds).
