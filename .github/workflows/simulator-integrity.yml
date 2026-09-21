@@ -7,7 +7,7 @@ on:
       - "src/simulator/**"
       - "src/pages/Simulator.tsx"
       - "public/models/**"
-      - "scripts/simulator-organ-check.mjs"
+      - "scripts/simulator-organ-check.mjs"\n      - "scripts/simulator-model-asset-check.mjs"\n      - "scripts/simulator-model-asset-check.mjs"
       - ".github/workflows/simulator-integrity.yml"
   pull_request:
     paths:
