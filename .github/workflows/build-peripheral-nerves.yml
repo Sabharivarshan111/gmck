@@ -1,0 +1,67 @@
+name: Build Z-Anatomy peripheral nerves
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/export-zanatomy-peripheral-nerves.py"
+      - ".github/workflows/build-peripheral-nerves.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-nerves:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Blender
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends blender
+
+      - name: Download official Z-Anatomy nervous system source
+        run: |
+          set -euxo pipefail
+          curl -L --fail --retry 3             "https://raw.githubusercontent.com/LluisV/Z-Anatomy/PC-Version/Resources/Models/FBX/NervousSystem100.fbx"             -o /tmp/NervousSystem100.fbx
+          test "$(stat -c%s /tmp/NervousSystem100.fbx)" -gt 50000000
+
+      - name: Export mobile peripheral nerve supplement
+        run: |
+          blender -b             --python scripts/export-zanatomy-peripheral-nerves.py --             --src /tmp/NervousSystem100.fbx             --out public/models/zanatomy_peripheral_nerves.glb             --manifest public/models/zanatomy_peripheral_nerves.manifest.json
+
+      - name: Verify essential nerve coverage and size
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const p = 'public/models/zanatomy_peripheral_nerves.manifest.json';
+          const m = JSON.parse(fs.readFileSync(p, 'utf8'));
+          const required = [
+            'vagus_nerve','phrenic_nerve','median_nerve','ulnar_nerve',
+            'radial_nerve','axillary_nerve','sciatic_nerve','femoral_nerve',
+            'tibial_nerve'
+          ];
+          const missing = required.filter(k => !m.targets[k] || m.targets[k].length === 0);
+          if (missing.length) throw new Error('Missing essential nerves: ' + missing.join(', '));
+          if (m.exportedTriangles > 220000) throw new Error('Triangle budget exceeded: ' + m.exportedTriangles);
+          const bytes = fs.statSync('public/models/zanatomy_peripheral_nerves.glb').size;
+          if (bytes > 12 * 1024 * 1024) throw new Error('12 MiB mobile asset budget exceeded: ' + bytes);
+          console.log('Essential nerves found:', required.map(k => k + '=' + m.targets[k].length).join(', '));
+          console.log('Peripheral nerve layer:', m.exportedObjectCount, 'objects,', m.exportedTriangles, 'triangles,', (bytes/1048576).toFixed(2), 'MiB');
+          NODE
+
+      - name: Commit generated nerve asset
+        run: |
+          set -e
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/models/zanatomy_peripheral_nerves.glb public/models/zanatomy_peripheral_nerves.manifest.json
+          if git diff --cached --quiet; then
+            echo "No generated asset changes"
+          else
+            git commit -m "Add mobile Z-Anatomy peripheral nerve layer"
+            git push origin HEAD:main
+          fi
