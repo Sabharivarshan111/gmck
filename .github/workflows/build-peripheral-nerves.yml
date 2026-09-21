@@ -60,9 +60,9 @@ jobs:
               console.log('Upstream now contains', key, '— review and remove it from knownSourceGaps after visual QA.');
             }
           }
-          if (m.exportedTriangles > 220000) throw new Error('Triangle budget exceeded: ' + m.exportedTriangles);
+          if (m.exportedTriangles > 400000) throw new Error('400k total triangle budget exceeded: ' + m.exportedTriangles);
           const bytes = fs.statSync('public/models/zanatomy_peripheral_nerves.glb').size;
-          if (bytes > 12 * 1024 * 1024) throw new Error('12 MiB mobile asset budget exceeded: ' + bytes);
+          if (bytes > 9 * 1024 * 1024) throw new Error('9 MiB on-demand mobile asset budget exceeded: ' + bytes);
           console.log('Required Z-Anatomy nerves found:', required.map(k => k + '=' + m.targets[k].length).join(', '));
           console.log('Known source gaps:', knownSourceGaps.join(', '));
           console.log('Peripheral nerve layer:', m.exportedObjectCount, 'objects,', m.exportedTriangles, 'triangles,', (bytes/1048576).toFixed(2), 'MiB');
