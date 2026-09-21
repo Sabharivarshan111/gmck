@@ -1,12 +1,12 @@
 {
   "name": "orbit-video-ads",
   "private": true,
-  "version": "1.0.0",
+  "version": "2.0.0",
   "type": "module",
   "scripts": {
     "studio": "remotion studio src/index.ts",
-    "render:visual": "remotion render src/index.ts OrbitReel out/orbit-reel-visual.mp4 --codec h264 --crf 20",
-    "render:visual:captions": "remotion render src/index.ts OrbitReelCaptions out/orbit-reel-captioned.mp4 --codec h264 --crf 20",
+    "render:no-voice": "remotion render src/index.ts OrbitLaunchNoVoice out/orbit-launch-no-voice.mp4 --codec h264 --crf 18",
+    "render:voice": "remotion render src/index.ts OrbitLaunchVoice out/orbit-launch-voice.mp4 --codec h264 --crf 18",
     "tts": "python3 scripts/generate_voiceover.py"
   },
   "dependencies": {
