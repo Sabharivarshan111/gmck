@@ -269,8 +269,6 @@ export interface StagedPackage {
   /** The decks inside, largest first, for the reader to choose from. */
   decks: { id: string; name: string; cards: number }[];
   totalCards: number;
-  /** Present only for .txt/.csv/.tsv; packages are read lazily from SQLite. */
-  text?: string;
   /** Non-fatal import notes, chiefly media references a text file cannot carry. */
   warnings?: string[];
 }
@@ -396,8 +394,14 @@ async function stageStaged(picked: string): Promise<StagedPackage | null> {
   }
 
   if (/\.(txt|csv|tsv)$/i.test(file.name)) {
-    const text = await native.readText(file.path);
-    const parsed = parseAnkiText(text, file.name);
+    const parsed = parseAnkiText(await native.readText(file.path), file.name);
+    const counts = new Map<string, number>();
+    for (const card of parsed.cards) {
+      counts.set(card.deck, (counts.get(card.deck) ?? 0) + 1);
+    }
+    const decks = [...counts.entries()]
+      .map(([name, cards]) => ({ id: name, name, cards }))
+      .sort((a, b) => b.cards - a.cards || a.name.localeCompare(b.name));
     return {
       format: 'text',
       path: file.path,
@@ -407,9 +411,8 @@ async function stageStaged(picked: string): Promise<StagedPackage | null> {
       zstd: false,
       mediaListIsHashmap: false,
       version: 0,
-      decks: [{ id: 'text', name: parsed.deckName, cards: parsed.cards.length }],
+      decks,
       totalCards: parsed.cards.length,
-      text,
       warnings: parsed.warnings,
     };
   }
@@ -541,9 +544,15 @@ export async function importPackage(
 
   if (staged.format === 'text') {
     report({ step: 'reading' });
-    const parsed = parseAnkiText(staged.text ?? (await native.readText(staged.path)), staged.fileName);
-    const truncated = parsed.cards.length > MAX_IMPORT_CARDS;
-    const taken = truncated ? parsed.cards.slice(0, MAX_IMPORT_CARDS) : parsed.cards;
+    // Re-read the staged file rather than holding a second copy of a potentially
+    // large UTF-8 export in React state while the reader chooses subdecks.
+    const parsed = parseAnkiText(await native.readText(staged.path), staged.fileName);
+    const selected = options.deckIds?.length ? new Set(options.deckIds) : null;
+    const selectedCards = selected
+      ? parsed.cards.filter(card => selected.has(card.deck))
+      : parsed.cards;
+    const truncated = selectedCards.length > MAX_IMPORT_CARDS;
+    const taken = truncated ? selectedCards.slice(0, MAX_IMPORT_CARDS) : selectedCards;
 
     report({ step: 'cards' });
     const deckCards: DeckCard[] = taken.map(card => ({
