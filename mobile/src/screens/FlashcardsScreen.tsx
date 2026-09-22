@@ -500,9 +500,9 @@ function YearsView({
 }
 
 /**
- * Importing an Anki package.
+ * Importing an Anki package or text export.
  *
- * The tapping is the easy part; **where an .apkg comes from is what people get
+ * The tapping is the easy part; **where an Anki export comes from is what people get
  * stuck on**, so the instructions are on the screen rather than in a help page
  * nobody opens. Three routes cover essentially everybody: a deck somebody
  * shared with them, a deck off AnkiWeb, and a deck exported from their own
@@ -544,7 +544,7 @@ function ImportDecksView({
 
   const pick = useCallback(async () => {
     setError(null);
-    setBusy('Reading the package…');
+    setBusy('Reading the export…');
     try {
       offer(await stagePackage());
     } catch (err) {
@@ -675,6 +675,11 @@ function ImportDecksView({
             {staged.totalCards} cards in {staged.decks.length}{' '}
             {staged.decks.length === 1 ? 'deck' : 'decks'}
           </Text>
+          {staged.warnings?.map(warning => (
+            <Text key={warning} style={[styles.hint, { color: colors.warning, marginTop: 8 }]}>
+              {warning}
+            </Text>
+          ))}
 
           {/* Which decks to take. A package can hold thirty chapters and the
               reader usually wants one; taking all of them is how a phone ends
@@ -748,7 +753,7 @@ function ImportDecksView({
         <>
           <Touchable
             onPress={pick}
-            label="Choose an apkg file to import"
+            label="Choose an Anki deck or text export to import"
             disabled={busy !== null}
             scaleTo={0.97}
             style={[styles.row, { backgroundColor: colors.primary, borderColor: colors.primary }]}>
@@ -757,7 +762,7 @@ function ImportDecksView({
             </View>
             <View style={styles.flex}>
               <Text style={[styles.rowTitle, { color: colors.primaryText }]}>
-                {busy ?? 'Choose an .apkg file'}
+                {busy ?? 'Choose .apkg / .txt / .csv'}
               </Text>
               <Text style={[styles.rowSub, { color: withAlpha(colors.primaryText, 0.75) }]}>
                 Your files, Downloads, Drive — wherever you saved it
@@ -777,33 +782,32 @@ function ImportDecksView({
               { backgroundColor: colors.card, borderColor: colors.border },
             ]}>
             <Text style={[styles.rowTitle, { color: colors.text }]}>
-              Where do I get an .apkg?
+              Which Anki file should I use?
             </Text>
 
             <Text style={[styles.rowSub, { color: colors.textMuted, marginTop: 8 }]}>
-              <Text style={{ color: colors.text, fontWeight: '700' }}>From AnkiWeb. </Text>
-              Open ankiweb.net/shared/decks in your browser, search for the subject, and press
-              Download. The file lands in your Downloads folder — come back here and choose it.
+              <Text style={{ color: colors.text, fontWeight: '700' }}>.apkg / .colpkg. </Text>
+              Best for a full deck, especially one with pictures or audio. Download a shared deck
+              or export your own Anki deck package, then choose it here.
             </Text>
 
             <Text style={[styles.rowSub, { color: colors.textMuted, marginTop: 10 }]}>
-              <Text style={{ color: colors.text, fontWeight: '700' }}>From a friend. </Text>
-              A deck sent on WhatsApp or Telegram saves like any other file. Tap it once to
-              download it, then choose it here — you do not need to open it in anything first.
+              <Text style={{ color: colors.text, fontWeight: '700' }}>.txt / .csv / .tsv. </Text>
+              Anki text exports work too. They may contain HTML inside the card fields; Orbit
+              converts that markup to readable card text without executing scripts.
             </Text>
 
             <Text style={[styles.rowSub, { color: colors.textMuted, marginTop: 10 }]}>
-              <Text style={{ color: colors.text, fontWeight: '700' }}>From your own Anki. </Text>
-              On a computer: right-click the deck, Export, choose{' '}
-              <Text style={{ color: colors.text }}>Anki Deck Package (*.apkg)</Text>, and tick
-              Include media if it has pictures. Scheduling is not needed — this app keeps its own.
+              <Text style={{ color: colors.text, fontWeight: '700' }}>HTML is not a deck file. </Text>
+              In Anki, “allow HTML” means markup inside fields of a text/CSV import. A standalone
+              .html document is not an Anki deck format, so export it as text/CSV or .apkg instead.
             </Text>
 
             <Text style={[styles.hint, { color: colors.textMuted, marginTop: 12 }]}>
-              Both the old and the new package formats work, with or without media. Cloze
-              deletions, reversed cards and pictures all come across. What does not is the
-              styling: cards are shown as text here rather than as web pages, so a deck's own
-              fonts and colours are not kept.
+              Both old and new package formats work. Cloze deletions, reversed cards and packaged
+              pictures come across from .apkg/.colpkg. Text exports can carry HTML formatting, but
+              they do not contain the referenced media bytes, so use a package when pictures or
+              audio matter. Cards are shown as readable native text rather than executing web pages.
             </Text>
 
             {/*
@@ -817,8 +821,8 @@ function ImportDecksView({
             */}
             <Text style={[styles.hint, { color: colors.textMuted, marginTop: 12 }]}>
               Anki is a trademark of Ankitects Pty Ltd. Orbit is not affiliated with, endorsed
-              by or supported by Ankitects — it reads and writes the .apkg format so your decks
-              can move between the two.
+              by or supported by Ankitects — it reads Anki package and text-export formats so your
+              decks can move between the two.
             </Text>
           </View>
         </>
