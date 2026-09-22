@@ -26,9 +26,21 @@ const {
   ZANATOMY_REFERENCE_TARGETS,
   zAnatomyMeshMatchesTarget,
 } = await import(zReferencesSourcePath);
-const {
-  PREFERRED_ANATOMY_OVERVIEW_TARGETS,
-} = await import(preferredReferencesSourcePath);
+// Keep this audit executable under plain Node. Importing the runtime helper
+// directly would make Node resolve its extensionless TypeScript imports
+// (./hraHeart, ./hraOrgans, ...), which Vite understands but plain Node does not.
+// The preferred overview table is deliberately a simple string-to-string
+// object, so parse that declaration as audit data instead of executing runtime TS.
+const preferredReferencesSource = readFileSync(preferredReferencesSourcePath, 'utf8');
+const preferredBlock = preferredReferencesSource.match(
+  /PREFERRED_ANATOMY_OVERVIEW_TARGETS[^=]*=\s*\{([\s\S]*?)\n\};/
+)?.[1] || '';
+const PREFERRED_ANATOMY_OVERVIEW_TARGETS = Object.fromEntries(
+  [...preferredBlock.matchAll(/^\s*([a-zA-Z_][\w]*):\s*'([^']+)'\s*,?$/gm)].map((m) => [m[1], m[2]])
+);
+if (Object.keys(PREFERRED_ANATOMY_OVERVIEW_TARGETS).length === 0) {
+  throw new Error('Could not parse PREFERRED_ANATOMY_OVERVIEW_TARGETS from preferredAnatomyReferences.ts');
+}
 const {
   PERIPHERAL_NERVE_MODEL_URL,
   meshMatchesPeripheralNerveTarget,
