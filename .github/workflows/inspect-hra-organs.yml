@@ -22,7 +22,23 @@ jobs:
           set -euxo pipefail
           mkdir -p /tmp/hra-organs
           base="https://raw.githubusercontent.com/hubmapconsortium/ccf-releases/main/v1.3/models"
-          for f in             VH_M_Kidney_L.glb             VH_M_Kidney_R.glb             VH_M_Liver.glb             VH_M_Lung.glb             VH_M_Pancreas.glb             VH_M_Spleen.glb             VH_M_Small_Intestine.glb             VH_M_Urinary_Bladder.glb             VH_M_Thymus.glb             VH_M_Blood_Vasculature.glb
+          for f in             VH_M_Kidney_L.glb             VH_M_Kidney_R.glb             VH_M_Liver.glb             VH_M_Lung.glb             VH_M_Pancreas.glb             VH_M_Spleen.glb             VH_M_Small_Intestine.glb             VH_M_Urinary_Bladder.glb             VH_M_Thymus.glb             VH_M_Blood_Vasculature.glb \
+            VH_M_Eye_L.glb \
+            VH_M_Eye_R.glb \
+            VH_M_Ureter_L.glb \
+            VH_M_Ureter_R.glb \
+            VH_M_Spinal_Cord.glb \
+            VH_M_Pelvis.glb \
+            VH_M_Prostate.glb \
+            VH_M_Skin.glb \
+            VH_M_Knee_L.glb \
+            VH_M_Knee_R.glb \
+            VH_F_Uterus.glb \
+            VH_F_Ovary_L.glb \
+            VH_F_Ovary_R.glb \
+            VH_F_Fallopian_Tube_L.glb \
+            VH_F_Fallopian_Tube_R.glb \
+            VH_F_Placenta.glb
           do
             curl -L --fail --retry 3 "$base/$f" -o "/tmp/hra-organs/$f"
             test -s "/tmp/hra-organs/$f"
