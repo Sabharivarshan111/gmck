@@ -184,6 +184,11 @@ mustNotContain('celiac_trunk', 'ganglion', 'the celiac arterial tree must not in
 mustNotContain('superior_mesenteric_artery', 'vein', 'the SMA view must not include the SMV');
 mustNotContain('post_circumflex_humeral', 'vein', 'the posterior circumflex humeral artery view must not include its companion vein');
 
+mustUseOnlySystems('axillary artery', ['arterial'], 'the named axillary artery lookup must not include axillary veins');
+mustUseOnlySystems('axillary vein', ['venous'], 'the named axillary vein lookup must not include axillary arteries');
+mustContain('axillary artery', 'axillary artery', 'the axillary artery is present in BodyParts3D');
+mustContain('axillary vein', 'axillary vein', 'the axillary vein is present in BodyParts3D');
+
 // The portal tree, which is the reason anyone opens the portal vein.
 mustContain('portal_vein', 'splenic vein', 'the portal tributaries are the portosystemic anastomosis sites');
 mustContain('portal_vein', 'superior rectal vein', 'same');
