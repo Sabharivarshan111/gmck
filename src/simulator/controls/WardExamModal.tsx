@@ -147,8 +147,8 @@ export const WardExamModal: React.FC<WardExamModalProps> = ({
         <div className="sticky top-0 z-20 flex items-center justify-between gap-2 px-3 sm:px-5 py-2.5 sm:py-4 bg-slate-950/95 backdrop-blur-xl border-b border-slate-800">
           <div className="flex items-center gap-2.5 min-w-0">
             <span className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse" />
-            <div>
-              <h3 className="font-bold text-sm text-slate-100 tracking-wide">
+            <div className="min-w-0">
+              <h3 className="font-bold text-xs sm:text-sm text-slate-100 tracking-wide truncate">
                 Bedside Ward Clinical Examination ("PICCLED" & Fluid Status)
               </h3>
               <p className="hidden sm:block text-[11px] text-slate-400">
