@@ -99,6 +99,7 @@ check(
   `the embed uses the no-cookie host: ${embed}`,
 );
 check(embed.includes('playsinline=1'), 'the embed plays in the card rather than fullscreen');
+check(embed.includes('fs=0'), "YouTube's own fullscreen button is disabled — ORBIT owns fullscreen");
 check(embed.includes('start=42'), 'the embed carries the timestamp');
 check(
   fns.thumbnailFor('dQw4w9WgXcQ').includes('hqdefault'),
@@ -113,6 +114,18 @@ check(
 // doc comment explaining a rule contains every word the rule forbids.
 const code = source.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/(^|[^:])\/\/.*$/gm, '$1');
 check(!/fetch\(|oembed|XMLHttpRequest/i.test(code), 'noteLinks.ts fetches something');
+
+// The iframe itself must never be allowed to open Android's native WebView
+// fullscreen/custom view. ORBIT has a dedicated modal with an explicit close
+// control; letting YouTube open a second fullscreen path is what could tear
+// down an unsaved note editor on some devices.
+const cardSource = await fs.readFile(path.join(root, 'src/components/NoteLinkCard.tsx'), 'utf8');
+const cardCode = cardSource.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/(^|[^:])\/\/.*$/gm, '$1');
+check(!/\ballowfullscreen\b/i.test(cardCode), 'NoteLinkCard still gives the iframe native fullscreen permission');
+check(
+  (cardCode.match(/allowsFullscreenVideo=\{false\}/g) ?? []).length === 3,
+  'all three note video WebViews must refuse native fullscreen',
+);
 
 if (failures.length > 0) {
   console.error('note links check failed:\n');

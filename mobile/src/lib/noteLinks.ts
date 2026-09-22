@@ -200,6 +200,9 @@ export function thumbnailFor(videoId: string): string {
 export function embedUrlFor(link: NoteLink): string {
   const params = new URLSearchParams({
     playsinline: '1',
+    // ORBIT owns fullscreen in NoteLinkCard. YouTube's native iframe fullscreen
+    // can replace the Android WebView custom view and tear down the note editor.
+    fs: '0',
     rel: '0',
     modestbranding: '1',
     enablejsapi: '1',

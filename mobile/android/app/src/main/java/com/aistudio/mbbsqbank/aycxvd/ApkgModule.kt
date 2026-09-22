@@ -528,12 +528,14 @@ class ApkgModule(reactContext: ReactApplicationContext) : NativeOrbitApkgSpec(re
       var written = 0
       var bytes = 0L
       val missing = JSONArray()
+      val files = JSONObject()
 
       ZipFile(File(path)).use { zip ->
         for (i in 0 until wanted.length()) {
           val item = wanted.getJSONObject(i)
           val name = item.getString("name")
-          val entry = zip.getEntry(item.getString("index"))
+          val index = item.getString("index")
+          val entry = zip.getEntry(index)
           val target = File(folder, safeName(name))
           if (entry == null || target.canonicalFile.parentFile != folder.canonicalFile) {
             // A media name is author-supplied text. Anki normalises it on the
@@ -543,6 +545,10 @@ class ApkgModule(reactContext: ReactApplicationContext) : NativeOrbitApkgSpec(re
             missing.put(name)
             continue
           }
+          // Return the exact filename Android chose. JavaScript must not try to
+          // reconstruct this from the card text: URL decoding, Unicode and case
+          // differences are enough to point a valid card at a nonexistent file.
+          files.put(index, target.name)
           if (target.exists() && target.length() > 0) {
             written += 1
             bytes += target.length()
@@ -559,6 +565,7 @@ class ApkgModule(reactContext: ReactApplicationContext) : NativeOrbitApkgSpec(re
         put("written", written)
         put("bytes", bytes)
         put("missing", missing)
+        put("files", files)
         put("dir", folder.absolutePath)
       }.toString()
     }

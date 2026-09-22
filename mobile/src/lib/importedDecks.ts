@@ -547,17 +547,19 @@ export async function importPackage(
   let mediaDir = '';
   let mediaBytes = 0;
   let written = 0;
+  let extractedFiles: Record<string, string> = {};
   if (plan.length > 0) {
     const result = JSON.parse(
       await native.extractMedia(staged.path, id, JSON.stringify(plan), staged.zstd),
-    ) as { written: number; bytes: number; dir: string };
+    ) as { written: number; bytes: number; dir: string; files?: Record<string, string> };
     mediaDir = result.dir;
     mediaBytes = result.bytes;
     written = result.written;
+    extractedFiles = result.files ?? {};
   }
 
   report({ step: 'saving' });
-  const deckCards = cards.map(card => toDeckCard(card, mediaDir));
+  const deckCards = cards.map(card => toDeckCard(card, mediaDir, plan, extractedFiles));
 
   await saveImportedCards(id, deckCards);
 
@@ -592,8 +594,40 @@ export async function importPackage(
  * the diagram *is* the answer, while an Anki card's front is whatever its
  * author wrote — an ECG on the question side is the question.
  */
-function toDeckCard(card: ApkgCard, mediaDir: string): DeckCard {
-  const toUri = (name: string) => `file://${mediaDir}/${safeMediaName(name)}`;
+function mediaKey(name: string): string {
+  try {
+    return decodeURIComponent(name).toLowerCase().trim();
+  } catch {
+    return name.toLowerCase().trim();
+  }
+}
+
+/**
+ * The exact filename Android wrote for a media reference.
+ *
+ * Matching is exact first, then Anki-style decoded/case-insensitive. The
+ * extracted filename itself comes back from Kotlin by zip index, so this side
+ * never guesses how Android sanitised an author-supplied filename.
+ */
+export function storedMediaName(
+  reference: string,
+  entries: ApkgMediaEntry[],
+  extractedByIndex: Record<string, string>,
+): string {
+  const exact = entries.find(entry => entry.name === reference);
+  const key = mediaKey(reference);
+  const entry = exact ?? entries.find(candidate => mediaKey(candidate.name) === key);
+  return (entry && extractedByIndex[entry.index]) || safeMediaName(entry?.name ?? reference);
+}
+
+function toDeckCard(
+  card: ApkgCard,
+  mediaDir: string,
+  mediaEntries: ApkgMediaEntry[],
+  extractedByIndex: Record<string, string>,
+): DeckCard {
+  const toUri = (name: string) =>
+    `file://${mediaDir}/${storedMediaName(name, mediaEntries, extractedByIndex)}`;
   const frontImages = mediaDir ? card.frontMedia.map(toUri) : [];
   const backImages = mediaDir ? card.backMedia.map(toUri) : [];
 

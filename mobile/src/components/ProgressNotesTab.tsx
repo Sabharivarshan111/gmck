@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Keyboard, Modal, ScrollView, StyleSheet, TextInput, View } from "react-native";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { AppState, Keyboard, Modal, ScrollView, StyleSheet, TextInput, View } from "react-native";
 import { Text } from "@/components/Text";
 import { Touchable } from "@/components/Touchable";
 import { Dialog } from "@/components/Dialog";
@@ -64,6 +64,7 @@ import {
   type NoteFile,
 } from "@/lib/noteFiles";
 import { withAlpha } from "@/theme";
+import { clearNoteDraft, loadNoteDraft, saveNoteDraft, type NoteDraft } from "@/lib/noteDraft";
 
 /** The bucket a note with no subject falls into. */
 const UNFILED = "Unfiled";
@@ -608,6 +609,10 @@ export function ProgressNotesTab({ year }: Props) {
   const [editorMode, setEditorMode] = useState<'edit' | 'preview'>('edit');
   const [openSubjects, setOpenSubjects] = useState<Record<string, boolean>>({});
 
+  /** Latest editor state waiting to be persisted as a crash-safe local draft. */
+  const draftRef = useRef<NoteDraft | null>(null);
+  const draftTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   /**
    * Notes under their subject.
    *
@@ -672,42 +677,117 @@ export function ProgressNotesTab({ year }: Props) {
     };
   }, [drawing, sheet]);
 
-  const openEditor = (note?: UserNote) => {
+  /*
+   * Word-style draft recovery, but device-only.
+   *
+   * Every edit is written after a short debounce. Backgrounding, leaving the
+   * editor, and component teardown flush immediately. The draft is separate
+   * from the saved note, so autosave protects work without silently changing a
+   * note the reader has not committed with Save.
+   */
+  useEffect(() => {
+    if (!editing) {
+      draftRef.current = null;
+      if (draftTimer.current) {
+        clearTimeout(draftTimer.current);
+        draftTimer.current = null;
+      }
+      return;
+    }
+
+    const draft: NoteDraft = {
+      noteId: editing.id,
+      savedAt: Date.now(),
+      title: editTitle,
+      content: editContent,
+      subject: editSubject,
+      chapterKey: editChapterKey,
+      chapterName: editChapterName,
+      images: editImages,
+      files: editFiles,
+      font: editFont,
+      sheets: editSheets,
+      links: editLinks,
+    };
+    draftRef.current = draft;
+
+    if (draftTimer.current) clearTimeout(draftTimer.current);
+    draftTimer.current = setTimeout(() => {
+      draftTimer.current = null;
+      void saveNoteDraft(draft);
+    }, 400);
+
+    return () => {
+      if (draftTimer.current) {
+        clearTimeout(draftTimer.current);
+        draftTimer.current = null;
+      }
+    };
+  }, [
+    editing,
+    editTitle,
+    editContent,
+    editSubject,
+    editChapterKey,
+    editChapterName,
+    editImages,
+    editFiles,
+    editFont,
+    editSheets,
+    editLinks,
+  ]);
+
+  useEffect(() => {
+    const flush = () => {
+      const draft = draftRef.current;
+      if (draft) void saveNoteDraft({ ...draft, savedAt: Date.now() });
+    };
+    const sub = AppState.addEventListener("change", state => {
+      if (state !== "active") flush();
+    });
+    return () => {
+      sub.remove();
+      flush();
+    };
+  }, []);
+
+  const closeEditor = useCallback(() => {
+    Keyboard.dismiss();
+    if (draftTimer.current) {
+      clearTimeout(draftTimer.current);
+      draftTimer.current = null;
+    }
+    const draft = draftRef.current;
+    if (draft) void saveNoteDraft({ ...draft, savedAt: Date.now() });
+    setEditing(null);
+  }, []);
+
+  const openEditor = async (note?: UserNote) => {
     setImageError(null);
     setReading(null);
     setEditorMode('edit');
     setLinkOpen(false);
     setLinkUrl('');
     setLinkTitle('');
-    if (note) {
-      setEditing(note);
-      setEditTitle(note.title);
-      setEditContent(note.content);
-      setEditSubject(note.subject ?? null);
-      setEditChapterKey(note.chapterKey ?? null);
-      setEditChapterName(note.chapterName ?? null);
-      setEditImages(note.images ?? []);
-      setEditFiles(note.files ?? []);
-      setEditFont(note.font ?? null);
-      setEditSheets(note.sheets ?? []);
-      setEditLinks(note.links ?? []);
-      setSelection({ start: 0, end: 0 });
-      setForcedSelection(null);
-    } else {
-      setEditing({ id: "new", title: "", content: "", created_at: "", updated_at: "" });
-      setEditTitle("");
-      setEditContent("");
-      setEditSubject(null);
-      setEditChapterKey(null);
-      setEditChapterName(null);
-      setEditImages([]);
-      setEditFiles([]);
-      setEditFont(null);
-      setEditSheets([]);
-      setEditLinks([]);
-      setSelection({ start: 0, end: 0 });
-      setForcedSelection(null);
-    }
+
+    const noteId = note?.id ?? "new";
+    const draft = await loadNoteDraft(noteId);
+    const savedAt = note ? Date.parse(note.updated_at) || 0 : 0;
+    const recovered = draft && (noteId === "new" || draft.savedAt > savedAt) ? draft : null;
+
+    setEditing(note ?? { id: "new", title: "", content: "", created_at: "", updated_at: "" });
+    setEditTitle(recovered?.title ?? note?.title ?? "");
+    setEditContent(recovered?.content ?? note?.content ?? "");
+    setEditSubject(recovered?.subject ?? note?.subject ?? null);
+    setEditChapterKey(recovered?.chapterKey ?? note?.chapterKey ?? null);
+    setEditChapterName(recovered?.chapterName ?? note?.chapterName ?? null);
+    setEditImages(recovered?.images ?? note?.images ?? []);
+    setEditFiles(recovered?.files ?? note?.files ?? []);
+    setEditFont(recovered?.font ?? note?.font ?? null);
+    setEditSheets(recovered?.sheets ?? note?.sheets ?? []);
+    setEditLinks(recovered?.links ?? note?.links ?? []);
+    setSelection({ start: 0, end: 0 });
+    setForcedSelection(null);
   };
 
   const handleSave = async () => {
@@ -715,6 +795,14 @@ export function ProgressNotesTab({ year }: Props) {
     // The Save button sits under a focused field; without this the first tap
     // is spent dismissing the keyboard. See .agents/rules/80-keyboard.md.
     Keyboard.dismiss();
+    if (draftTimer.current) {
+      clearTimeout(draftTimer.current);
+      draftTimer.current = null;
+    }
+    const draftId = editing.id;
+    // Prevent the editor-closing render from scheduling the just-saved state
+    // back into the draft key after it has been cleared.
+    draftRef.current = null;
     const patch = {
       title: editTitle.trim() || "Untitled Note",
       content: editContent.trim(),
@@ -732,6 +820,7 @@ export function ProgressNotesTab({ year }: Props) {
     } else {
       await updateNote(editing.id, patch);
     }
+    await clearNoteDraft(draftId);
     setEditing(null);
   };
 
@@ -954,13 +1043,13 @@ export function ProgressNotesTab({ year }: Props) {
       <Modal
         visible={!!editing}
         animationType="slide"
-        onRequestClose={() => setEditing(null)}>
+        onRequestClose={closeEditor}>
         <KeyboardSafe>
           <View style={[styles.page, { backgroundColor: colors.background }]}>
             <View style={[styles.pageHeader, { paddingTop: insets.top + 8 }]}>
               <Touchable
-                onPress={() => setEditing(null)}
-                label="Close without saving"
+                onPress={closeEditor}
+                label="Close editor; draft is autosaved on this phone"
                 scaleTo={0.85}
                 hitSlop={12}>
                 <ChevronLeft size={24} color={colors.text} />
@@ -988,6 +1077,9 @@ export function ProgressNotesTab({ year }: Props) {
             onChangeText={setEditTitle}
             style={[styles.editorInput, { backgroundColor: colors.card, borderColor: colors.border, color: colors.text }]}
           />
+          <Text style={[styles.noteEmpty, { color: colors.textMuted }]}>
+            Draft autosaves on this phone while you type.
+          </Text>
           {/*
             Where this note belongs.
 
