@@ -139,21 +139,21 @@ await feature('mobile-shell-and-3d-anatomy', async () => {
   assert(!(await page.getByTestId('mobile-monitor-stage').isVisible()), 'Monitor stage should be hidden on initial 3D tab');
   assert(!(await page.getByTestId('intervention-panel').isVisible()), 'Intervention panel should be hidden on initial 3D tab');
 
-  const toolbar = page.getByTestId('dissection-toolbar');
-  await visible(toolbar, 'dissection toolbar');
+  const toolbar = stage.getByTestId('dissection-toolbar');
+  await visible(toolbar, 'mobile dissection toolbar');
 
   for (const id of ['inspect', 'scalpel', 'isolate']) {
-    const control = page.getByTestId('dissection-mode-' + id);
+    const control = toolbar.getByTestId('dissection-mode-' + id);
     await touchSafe(control, 'dissection mode ' + id);
     await control.click();
   }
 
-  const xray = page.getByTestId('dissection-xray');
+  const xray = toolbar.getByTestId('dissection-xray');
   await touchSafe(xray, 'X-Ray control');
   await xray.click();
   assert((await xray.getAttribute('class') || '').includes('bg-cyan-500'), 'X-Ray control did not enter active state');
 
-  const depth = page.getByTestId('dissection-depth');
+  const depth = toolbar.getByTestId('dissection-depth');
   await depth.evaluate((el) => {
     el.value = '0.68';
     el.dispatchEvent(new Event('input', { bubbles: true }));
@@ -179,10 +179,9 @@ await feature('stomach-uses-verified-z-anatomy', async () => {
   await visible(stomach, 'Stomach deep inspector button');
   await stomach.click();
 
-  await visible(
-    page.getByText('Isolated: ZA STOMACH OVERVIEW', { exact: true }),
-    'preferred stomach isolation status'
-  );
+  const stomachStage = page.getByTestId('mobile-anatomy-stage');
+  const stomachIsolationStatus = stomachStage.getByText('Isolated: ZA STOMACH OVERVIEW', { exact: true });
+  await visible(stomachIsolationStatus, 'preferred stomach isolation status');
 
   // The source model is local to the production build. A missing/corrupt GLB
   // must fail this feature instead of silently leaving the rough body-atlas
@@ -204,7 +203,7 @@ await feature('stomach-uses-verified-z-anatomy', async () => {
   // active isolation id is the source-specific za_stomach_overview target.
   await stomach.click();
   assert(
-    !(await page.getByText('Isolated: ZA STOMACH OVERVIEW', { exact: true }).isVisible()),
+    !(await stomachIsolationStatus.isVisible()),
     'Stomach inspector did not toggle the source-backed isolate off'
   );
 });
@@ -213,12 +212,13 @@ await feature('icu-monitor', async () => {
   await goto('/simulator');
   await page.getByTestId('simulator-tab-monitor').click();
 
-  const monitor = page.getByTestId('icu-monitor');
-  await visible(monitor, 'ICU monitor');
+  const monitorStage = page.getByTestId('mobile-monitor-stage');
+  const monitor = monitorStage.getByTestId('icu-monitor');
+  await visible(monitor, 'mobile ICU monitor');
   assert(!(await page.getByTestId('mobile-anatomy-stage').isVisible()), 'Anatomy stage should hide on Monitor tab');
 
   for (const label of ['ECG / HR', 'NIBP / ART', 'SPO2', 'RESP / ETCO2']) {
-    await visible(page.getByText(label, { exact: true }), 'ICU label ' + label);
+    await visible(monitor.getByText(label, { exact: true }), 'ICU label ' + label);
   }
   await visible(monitor.locator('canvas').first(), 'ICU waveform canvas');
 
@@ -381,12 +381,19 @@ await feature('stethoscope-and-auscultation', async () => {
   await touchSafe(stenosis, 'Aortic stenosis sound preset');
   await stenosis.click();
 
+  // Sound presets intentionally begin audition immediately. Verify that
+  // behavior first, then verify a separate manual start/stop cycle.
+  const stopAfterPreset = modal.getByRole('button', { name: /Stop Stethoscope/ });
+  await visible(stopAfterPreset, 'Aortic stenosis preset audition state');
+  await stopAfterPreset.click();
+
   const listen = modal.getByRole('button', { name: /Place Stethoscope & Listen Live/ });
   await touchSafe(listen, 'Live stethoscope control');
   await listen.click();
-  await visible(modal.getByRole('button', { name: /Stop Stethoscope/ }), 'Stethoscope listening state');
+  const stopManual = modal.getByRole('button', { name: /Stop Stethoscope/ });
+  await visible(stopManual, 'Stethoscope manual listening state');
   await page.waitForTimeout(250);
-  await modal.getByRole('button', { name: /Stop Stethoscope/ }).click();
+  await stopManual.click();
 
   await lungBases.click();
   const bodyText = (await modal.textContent()) || '';
@@ -484,6 +491,7 @@ await feature('organ-drawer-and-anatomy-dossier', async () => {
   const expand = page.getByTitle('Expand full sheet');
   await touchSafe(expand, 'Organ drawer expand');
   await expand.click();
+  await page.waitForTimeout(380);
   const expandedBox = await drawer.boundingBox();
   assert(expandedBox && expandedBox.height >= 700, 'Expanded organ drawer is too short on a 844px viewport');
 
@@ -544,7 +552,7 @@ fs.writeFileSync(path.join(outDir, 'report.json'), JSON.stringify(report, null, 
 console.log('\nORBIT patient simulator mobile E2E');
 for (const f of report.features) {
   console.log((f.status === 'passed' ? '  ✓ ' : '  ✗ ') + f.name + ' (' + f.durationMs + ' ms)');
-  if (f.error) console.log('    ' + f.error.split('\n')[0]);
+  if (f.error) console.log('    ' + f.error.replace(/\n/g, '\n    '));
 }
 if (report.warnings.length) console.log('  warnings: ' + report.warnings.length);
 console.log('  passed: ' + report.summary.passed + ', failed: ' + report.summary.failed);
