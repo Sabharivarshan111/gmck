@@ -69,6 +69,17 @@ const hraAliases = new Map([
   ['small_intestine', 'small_intestine'],
   ['urinary_bladder', 'urinary_bladder'],
   ['thymus', 'thymus'],
+  ['eye', 'eye'],
+  ['ureter', 'ureter'],
+  ['spinal_cord', 'spinal_cord'],
+  ['pelvis', 'pelvis'],
+  ['prostate', 'prostate'],
+  ['skin', 'skin'],
+  ['knee', 'knee'],
+  ['uterus', 'uterus'],
+  ['ovary', 'ovary'],
+  ['fallopian_tube', 'fallopian_tube'],
+  ['placenta', 'placenta'],
 ]);
 
 const report = {
