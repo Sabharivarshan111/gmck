@@ -1073,7 +1073,7 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
                   NMC MBBS Practical / Viva High-Yield Pearls
                 </h4>
                 <div className="space-y-2">
-                  {organ.nmcVivaQuestions.map((pearl, idx) => (
+                  {(organ.nmcMbbssVivaPearls ?? []).map((pearl, idx) => (
                     <div
                       key={idx}
                       className={`p-3 rounded-xl border text-xs leading-relaxed ${
