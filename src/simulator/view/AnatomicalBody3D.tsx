@@ -2698,8 +2698,10 @@ varying float partSelected;
     const nerveIsolationBox = new THREE.Box3();
     const normalizedNerveTarget = targetKey ? normalisePeripheralNerveTarget(targetKey) : null;
     const isPhrenicTarget = normalizedNerveTarget === 'phrenic_nerve';
-    const showDerivedPhrenic =
-      isPhrenicTarget || normalizedNerveTarget === 'peripheral_nerves';
+    // Keep the source-backed "Peripheral Nerves" overview source-pure.
+    // The derived phrenic course is shown only when the learner explicitly
+    // selects the phrenic nerve, where the UI labels it as a schematic.
+    const showDerivedPhrenic = isPhrenicTarget;
     const useNerveContext = useRealNerveLayer || showDerivedPhrenic;
 
     // The vagus and the sympathetic chain are drawn by this component's own
