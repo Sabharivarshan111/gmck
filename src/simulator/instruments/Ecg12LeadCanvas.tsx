@@ -513,7 +513,7 @@ export const Ecg12LeadCanvas: React.FC<Ecg12LeadProps> = ({
                 setIsAutoWalking(false);
                 setActiveSegment('all');
               }}
-              className="min-h-[40px] min-w-[40px] flex items-center justify-center text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 rounded-xl border border-slate-200 dark:border-slate-800"
+              className="min-h-[44px] min-w-[44px] flex items-center justify-center text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 rounded-xl border border-slate-200 dark:border-slate-800"
               title="Reset to Full Trace"
             >
               <RotateCcw className="w-3.5 h-3.5" />
@@ -528,7 +528,7 @@ export const Ecg12LeadCanvas: React.FC<Ecg12LeadProps> = ({
               setIsAutoWalking(false);
               setActiveSegment('all');
             }}
-            className={`min-h-[44px] shrink-0 px-3 rounded-xl text-[11px] sm:text-xs font-mono font-bold transition-all ${
+            className={`min-h-[44px] min-w-[44px] shrink-0 px-3 rounded-xl text-[11px] sm:text-xs font-mono font-bold transition-all ${
               activeSegment === 'all'
                 ? 'bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900 shadow-sm'
                 : 'bg-slate-100 text-slate-600 dark:bg-slate-800/70 dark:text-slate-400 hover:bg-slate-200'
@@ -547,7 +547,7 @@ export const Ecg12LeadCanvas: React.FC<Ecg12LeadProps> = ({
                 borderColor: activeSegment === seg.id ? seg.color : undefined,
                 backgroundColor: activeSegment === seg.id ? seg.bandColor : undefined,
               }}
-              className={`min-h-[44px] shrink-0 px-3 rounded-xl text-[11px] sm:text-xs font-mono font-bold border transition-all ${
+              className={`min-h-[44px] min-w-[44px] shrink-0 px-3 rounded-xl text-[11px] sm:text-xs font-mono font-bold border transition-all ${
                 activeSegment === seg.id
                   ? `${seg.textColor} border-2 font-bold shadow-sm scale-105`
                   : 'bg-slate-50 dark:bg-slate-800/40 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:bg-slate-100'
