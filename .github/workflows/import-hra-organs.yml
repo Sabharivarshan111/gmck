@@ -1,0 +1,54 @@
+name: Import HRA reference organs
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/import-hra-organs.yml"
+      - "docs/hra-organ-inventory.json"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download verified HRA male organ GLBs
+        run: |
+          set -euxo pipefail
+          mkdir -p public/models/hra
+          base="https://raw.githubusercontent.com/hubmapconsortium/ccf-releases/main/v1.3/models"
+          for f in             VH_M_Kidney_L.glb             VH_M_Kidney_R.glb             VH_M_Liver.glb             VH_M_Lung.glb             VH_M_Pancreas.glb             VH_M_Spleen.glb             VH_M_Small_Intestine.glb             VH_M_Urinary_Bladder.glb             VH_M_Thymus.glb             VH_M_Blood_Vasculature.glb
+          do
+            curl -L --fail --retry 3 "$base/$f" -o "public/models/hra/$f"
+            test -s "public/models/hra/$f"
+          done
+      - name: Verify against committed inventory
+        run: |
+          node <<'NODE'
+          const fs=require('fs');
+          const path=require('path');
+          const inv=JSON.parse(fs.readFileSync('docs/hra-organ-inventory.json','utf8'));
+          for(const [key,organ] of Object.entries(inv.organs)){
+            const file=path.join('public/models/hra',organ.fileName);
+            const actual=fs.statSync(file).size;
+            if(actual!==organ.bytes) throw new Error(key+': size '+actual+' != verified '+organ.bytes);
+          }
+          console.log('Verified',Object.keys(inv.organs).length,'HRA organ files by exact byte size.');
+          NODE
+      - name: Commit reference organs
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/models/hra
+          if git diff --cached --quiet; then
+            echo "HRA organ assets already current"
+          else
+            git commit -m "Add HRA multi-organ reference assets"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
