@@ -196,3 +196,51 @@ Credits:
 This ORBIT overlay is always labelled **SCHEMATIC CHORDAE**. It is not
 specimen-derived, patient-specific, or a replacement for real chordal
 segmentation.
+
+
+## HRA multi-organ reference set
+
+ORBIT includes a set of **on-demand** HuBMAP Human Reference Atlas male
+reference-organ GLBs for detailed source-derived teaching views. These files
+are never downloaded during normal simulator startup. They are fetched only
+after the learner opens an HRA reference target for that organ.
+
+Source:
+- Repository: `hubmapconsortium/ccf-releases`
+- Release: HRA v1.3, Visible Human male reference organs
+- License: Creative Commons Attribution 4.0 International (CC BY 4.0)
+- Source directory: `v1.3/models/`
+
+Runtime files under `public/models/hra/`:
+- `VH_M_Kidney_L.glb`
+- `VH_M_Kidney_R.glb`
+- `VH_M_Liver.glb`
+- `VH_M_Lung.glb`
+- `VH_M_Pancreas.glb`
+- `VH_M_Spleen.glb`
+- `VH_M_Small_Intestine.glb`
+- `VH_M_Urinary_Bladder.glb`
+- `VH_M_Thymus.glb`
+- `VH_M_Blood_Vasculature.glb`
+
+ORBIT exposes only structures verified as actual source meshes. Examples:
+- kidney: capsule, outer cortex, renal columns, pyramids, papillae and hilum;
+- liver: porta hepatis, caudate/quadrate lobes, segment meshes, impressions,
+  bare area and named ligaments;
+- lung: bronchopulmonary segments, trachea/carina, hila and named bronchi;
+- pancreas: head, neck, body, tail and uncinate process;
+- spleen: hilum and the gastric, renal, colic and diaphragmatic surfaces;
+- small intestine: duodenal portions, jejunum, ileum and terminal ileum;
+- bladder: trigone, neck, dome and bilateral ureteric orifices;
+- thymus: right and left lobes;
+- vasculature: 104 named arterial/venous structures including aorta,
+  coronaries, renal, mesenteric, splenic, hepatic, portal and pulmonary vessels.
+
+The exact source inventory is committed at
+`docs/hra-organ-inventory.json`. CI verifies every runtime GLB against that
+inventory and verifies that every source-derived ORBIT button matches at least
+one real HRA mesh.
+
+These HRA models are separate reference bodies from BodyParts3D. ORBIT shows
+them in their own internally consistent reference views and does not force
+their geometry onto BodyParts3D as if donor-level spatial registration existed.
