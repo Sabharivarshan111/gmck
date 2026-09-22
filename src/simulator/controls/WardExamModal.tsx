@@ -141,24 +141,24 @@ export const WardExamModal: React.FC<WardExamModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md animate-in fade-in overflow-y-auto">
-      <div className="relative w-full max-w-4xl bg-slate-900 border border-slate-700 rounded-3xl overflow-hidden shadow-2xl text-slate-100 flex flex-col my-auto max-h-[92vh]">
+    <div className="fixed inset-0 z-50 flex items-stretch sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-md animate-in fade-in overflow-hidden sm:overflow-y-auto">
+      <div className="relative w-full max-w-4xl h-[100dvh] sm:h-auto bg-slate-900 border-0 sm:border sm:border-slate-700 rounded-none sm:rounded-3xl overflow-hidden shadow-2xl text-slate-100 flex flex-col sm:my-auto max-h-[100dvh] sm:max-h-[92vh]">
         {/* Modal Header */}
-        <div className="flex items-center justify-between px-5 py-4 bg-slate-950 border-b border-slate-800">
-          <div className="flex items-center gap-2.5">
+        <div className="sticky top-0 z-20 flex items-center justify-between gap-2 px-3 sm:px-5 py-2.5 sm:py-4 bg-slate-950/95 backdrop-blur-xl border-b border-slate-800">
+          <div className="flex items-center gap-2.5 min-w-0">
             <span className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse" />
             <div>
               <h3 className="font-bold text-sm text-slate-100 tracking-wide">
                 Bedside Ward Clinical Examination ("PICCLED" & Fluid Status)
               </h3>
-              <p className="text-[11px] text-slate-400">
+              <p className="hidden sm:block text-[11px] text-slate-400">
                 NMC CBME Physical Diagnostics: Kundu Bedside Clinics & Bates Guide
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-white p-1.5 rounded-xl hover:bg-slate-800 transition-colors cursor-pointer"
+            className="min-h-[44px] min-w-[44px] flex items-center justify-center text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 transition-colors cursor-pointer shrink-0"
           >
             <X className="w-5 h-5" />
           </button>
@@ -176,7 +176,7 @@ export const WardExamModal: React.FC<WardExamModalProps> = ({
               <button
                 key={tab.id}
                 onClick={() => setActiveExamTab(tab.id as any)}
-                className={`py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-between gap-1 cursor-pointer ${
+                className={`min-h-[44px] shrink-0 sm:shrink py-2 px-3 rounded-xl text-[11px] sm:text-xs font-bold transition-all flex items-center justify-between gap-1 cursor-pointer ${
                   activeExamTab === tab.id
                     ? 'bg-emerald-500 text-slate-950 shadow-md font-black'
                     : 'bg-slate-900/90 hover:bg-slate-800 text-slate-300 border border-slate-800'
@@ -194,13 +194,13 @@ export const WardExamModal: React.FC<WardExamModalProps> = ({
         </div>
 
         {/* Modal Body */}
-        <div className="p-5 md:p-6 flex-1 overflow-y-auto space-y-4">
+        <div className="p-2.5 sm:p-4 md:p-6 flex-1 overflow-y-auto overscroll-contain space-y-3 sm:space-y-4 pb-[calc(16px+env(safe-area-inset-bottom))]">
           {/* ================= 1. PITTING EDEMA INTERACTIVE TESTER ================= */}
           {activeExamTab === 'edema' && (
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Interactive Thumb Press Pad */}
-                <div className="bg-slate-950 p-5 rounded-2xl border border-slate-800 flex flex-col items-center justify-center space-y-3.5 text-center">
+                <div className="bg-slate-950 p-3 sm:p-5 rounded-2xl border border-slate-800 flex flex-col items-center justify-center space-y-3.5 text-center">
                   <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">
                     Site: Right Medial Malleolus / Anterior Tibia
                   </div>
@@ -253,7 +253,7 @@ export const WardExamModal: React.FC<WardExamModalProps> = ({
                 </div>
 
                 {/* Starling Forces & Grading Breakdown */}
-                <div className="bg-slate-950 p-5 rounded-2xl border border-slate-800 flex flex-col justify-between space-y-3">
+                <div className="bg-slate-950 p-3 sm:p-5 rounded-2xl border border-slate-800 flex flex-col justify-between space-y-3">
                   <div>
                     <div className="text-xs font-bold text-slate-100 flex items-center gap-1.5 mb-2">
                       <Droplets className="w-4 h-4 text-sky-400" />
@@ -298,7 +298,7 @@ export const WardExamModal: React.FC<WardExamModalProps> = ({
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Visual Scleral Inspection Eye Diagram */}
-                <div className="bg-slate-950 p-5 rounded-2xl border border-slate-800 flex flex-col items-center justify-center space-y-3 text-center">
+                <div className="bg-slate-950 p-3 sm:p-5 rounded-2xl border border-slate-800 flex flex-col items-center justify-center space-y-3 text-center">
                   <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">
                     Inspection: Superior Bulbar Sclera in Natural Daylight
                   </div>
@@ -325,7 +325,7 @@ export const WardExamModal: React.FC<WardExamModalProps> = ({
                 </div>
 
                 {/* Diagnostic Criteria & Clinical Pearl */}
-                <div className="bg-slate-950 p-5 rounded-2xl border border-slate-800 flex flex-col justify-between space-y-3">
+                <div className="bg-slate-950 p-3 sm:p-5 rounded-2xl border border-slate-800 flex flex-col justify-between space-y-3">
                   <div className="space-y-2 text-xs">
                     <div className="font-bold text-slate-100 flex items-center gap-1.5">
                       <Eye className="w-4 h-4 text-amber-400" />
@@ -362,7 +362,7 @@ export const WardExamModal: React.FC<WardExamModalProps> = ({
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Pallor Inspection Card */}
-                <div className="bg-slate-950 p-5 rounded-2xl border border-slate-800 space-y-3">
+                <div className="bg-slate-950 p-3 sm:p-5 rounded-2xl border border-slate-800 space-y-3">
                   <div className="text-xs font-bold text-slate-100 flex items-center gap-1.5">
                     <Hand className="w-4 h-4 text-rose-400" />
                     <span>Palmar Crease & Conjunctival Pallor (Anemia):</span>
@@ -395,7 +395,7 @@ export const WardExamModal: React.FC<WardExamModalProps> = ({
                 </div>
 
                 {/* Cyanosis Inspection Card */}
-                <div className="bg-slate-950 p-5 rounded-2xl border border-slate-800 space-y-3">
+                <div className="bg-slate-950 p-3 sm:p-5 rounded-2xl border border-slate-800 space-y-3">
                   <div className="text-xs font-bold text-slate-100 flex items-center gap-1.5">
                     <Flame className="w-4 h-4 text-sky-400" />
                     <span>Cyanosis: Central vs Peripheral:</span>
@@ -435,12 +435,12 @@ export const WardExamModal: React.FC<WardExamModalProps> = ({
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Shifting Dullness Simulator */}
-                <div className="bg-slate-950 p-5 rounded-2xl border border-slate-800 space-y-3 text-center">
+                <div className="bg-slate-950 p-3 sm:p-5 rounded-2xl border border-slate-800 space-y-3 text-center">
                   <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">
                     Shifting Dullness Examination (&gt; 500 mL Fluid)
                   </div>
 
-                  <div className="relative p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-3">
+                  <div className="relative p-3 sm:p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-3">
                     <div className="flex items-center justify-around text-xs font-mono">
                       <div className="p-2 rounded-xl bg-slate-950 border border-slate-800">
                         Midline / Umbilicus: <strong className="text-emerald-400">Resonant (Air)</strong>
@@ -471,7 +471,7 @@ export const WardExamModal: React.FC<WardExamModalProps> = ({
                 </div>
 
                 {/* Fluid Wave / Thrill Test */}
-                <div className="bg-slate-950 p-5 rounded-2xl border border-slate-800 space-y-3">
+                <div className="bg-slate-950 p-3 sm:p-5 rounded-2xl border border-slate-800 space-y-3">
                   <div className="text-xs font-bold text-slate-100 flex items-center gap-1.5">
                     <Droplets className="w-4 h-4 text-sky-400" />
                     <span>Fluid Wave / Thrill Test (&gt; 2000 mL Tense Ascites):</span>
