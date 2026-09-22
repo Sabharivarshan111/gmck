@@ -853,6 +853,8 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
   const [hoveredPart, setHoveredPart] = useState<Part | null>(null);
   const [peripheralNervesReady, setPeripheralNervesReady] = useState(false);
   const [peripheralNervesFailed, setPeripheralNervesFailed] = useState(false);
+  const [hraHeartReady, setHraHeartReady] = useState(false);
+  const [hraHeartFailed, setHraHeartFailed] = useState(false);
   // Set when the structure being isolated is genuinely not one of the atlas's
   // 2,234 meshes. Saying so is the point: the model not moving, with no
   // explanation, reads as the app being broken.
@@ -882,6 +884,16 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
   const peripheralNerveGroupRef = useRef<THREE.Group | null>(null);
   const peripheralNerveMeshesRef = useRef<THREE.Mesh[]>([]);
   const peripheralNerveLoadStartedRef = useRef(false);
+
+  // HRA male heart reference. The ~4 MB source is kept completely off the
+  // startup path and is loaded only for HRA-specific internal-heart views.
+  const hraHeartGroupRef = useRef<THREE.Group | null>(null);
+  const hraHeartMeshesRef = useRef<THREE.Mesh[]>([]);
+  const hraHeartLoadStartedRef = useRef(false);
+  const hraHeartMaterialsRef = useRef<{
+    context: THREE.MeshStandardMaterial;
+    selected: THREE.MeshStandardMaterial;
+  } | null>(null);
 
   const lymphaticGroupRef = useRef<THREE.Group | null>(null);
   const lymphaticMaterialsRef = useRef<{
@@ -1779,6 +1791,108 @@ varying float partSelected;
     );
   }, [modelsReady, isolatedPartId, selectedOrganId]);
 
+  // Lazy-load the HRA male heart reference only for the source-derived
+  // interventricular-septum teaching view. HRA and BodyParts3D are different
+  // reference bodies, so this is an internally consistent HRA cutaway rather
+  // than a forced overlay on the BodyParts3D myocardium.
+  useEffect(() => {
+    const target = isolatedPartId || selectedOrganId;
+    const wantsHraHeart = target === 'hra_interventricular_septum';
+    if (
+      !modelsReady ||
+      !wantsHraHeart ||
+      hraHeartGroupRef.current ||
+      hraHeartLoadStartedRef.current
+    ) {
+      return;
+    }
+
+    hraHeartLoadStartedRef.current = true;
+    setHraHeartFailed(false);
+
+    const loader = new GLTFLoader();
+    loader.load(
+      '/models/hra_heart_male_v1.3.glb',
+      (gltf) => {
+        const scene = sceneRef.current;
+        if (!scene) return;
+
+        const group = gltf.scene;
+        group.name = 'hra_heart_male_reference';
+        group.visible = false;
+
+        const contextMaterial = new THREE.MeshStandardMaterial({
+          color: 0x9f1239,
+          emissive: 0x3f0718,
+          emissiveIntensity: 0.08,
+          roughness: 0.48,
+          metalness: 0.0,
+          transparent: true,
+          opacity: 0.18,
+          depthWrite: false,
+          side: THREE.DoubleSide,
+        });
+        const selectedMaterial = new THREE.MeshStandardMaterial({
+          color: 0xfb7185,
+          emissive: 0x881337,
+          emissiveIntensity: 0.62,
+          roughness: 0.28,
+          metalness: 0.0,
+          transparent: false,
+          opacity: 1.0,
+          side: THREE.DoubleSide,
+        });
+
+        const meshes: THREE.Mesh[] = [];
+        group.traverse((child) => {
+          const mesh = child as THREE.Mesh;
+          if (!mesh.isMesh) return;
+
+          if (Array.isArray(mesh.material)) {
+            mesh.material.forEach((m) => m.dispose());
+          } else if (mesh.material) {
+            mesh.material.dispose();
+          }
+
+          mesh.material = contextMaterial;
+          mesh.visible = true;
+          mesh.frustumCulled = true;
+          mesh.renderOrder = 16;
+          mesh.userData.isHraHeartReference = true;
+          meshes.push(mesh);
+        });
+
+        const hasSeptum = meshes.some((mesh) =>
+          mesh.name.toLowerCase().includes('interventricular_septum')
+        );
+        if (!hasSeptum) {
+          contextMaterial.dispose();
+          selectedMaterial.dispose();
+          setHraHeartFailed(true);
+          hraHeartLoadStartedRef.current = false;
+          console.error('[AnatomicalBody3D] HRA heart GLB lost VH_M_interventricular_septum');
+          return;
+        }
+
+        hraHeartGroupRef.current = group;
+        hraHeartMeshesRef.current = meshes;
+        hraHeartMaterialsRef.current = {
+          context: contextMaterial,
+          selected: selectedMaterial,
+        };
+        scene.add(group);
+        setHraHeartReady(true);
+        console.log(`[AnatomicalBody3D] Loaded HRA heart reference: ${meshes.length} meshes`);
+      },
+      undefined,
+      (err) => {
+        hraHeartLoadStartedRef.current = false;
+        setHraHeartFailed(true);
+        console.error('[AnatomicalBody3D] Failed to load HRA heart reference:', err);
+      }
+    );
+  }, [modelsReady, isolatedPartId, selectedOrganId]);
+
   // Update GPU DataTexture when hiddenPartIds, isolatedPartId, contextOrganId, or layerPeel changes
   useEffect(() => {
     const atlas = atlasRef.current;
@@ -1790,11 +1904,36 @@ varying float partSelected;
     // CRITICAL FIX: Only isolatedPartId triggers isolation geometry peeling!
     // selectedOrganId is for clinical inspection and selection highlight, without hiding the rest of the body!
     const targetKey = isolatedPartId || null;
+    const isHraInterventricularSeptumTarget = targetKey === 'hra_interventricular_septum';
+    const hraHeartBox = new THREE.Box3();
 
-    const isolatedTarget = targetKey ? describeAtlasTarget(targetKey, atlas) : null;
+    const isolatedTarget = isHraInterventricularSeptumTarget
+      ? null
+      : targetKey
+      ? describeAtlasTarget(targetKey, atlas)
+      : null;
     const isolatedElements = isolatedTarget ? isolatedTarget.ids : null;
     const contextKey = contextOrganId || resolveContextOrganId(targetKey, selectedOrganId);
     const contextElements = (contextKey && contextKey !== targetKey) ? resolveAtlasElementIds(contextKey, atlas) : null;
+
+    // HRA reference heart visibility. All meshes remain in their original HRA
+    // coordinate frame; the requested septum is highlighted while the rest of
+    // that SAME source heart provides translucent context.
+    if (hraHeartGroupRef.current && hraHeartMaterialsRef.current) {
+      hraHeartGroupRef.current.visible =
+        isHraInterventricularSeptumTarget && hraHeartReady;
+
+      if (hraHeartGroupRef.current.visible) {
+        hraHeartMeshesRef.current.forEach((mesh) => {
+          const isSeptum = mesh.name.toLowerCase().includes('interventricular_septum');
+          mesh.visible = true;
+          mesh.material = isSeptum
+            ? hraHeartMaterialsRef.current!.selected
+            : hraHeartMaterialsRef.current!.context;
+        });
+        hraHeartBox.setFromObject(hraHeartGroupRef.current);
+      }
+    }
 
     // Entity category checks
     const isSympatheticTarget = !!targetKey && (targetKey.toLowerCase().includes('sympath') || targetKey.toLowerCase().includes('cardiac plexus'));
@@ -1824,7 +1963,9 @@ varying float partSelected;
     // BodyParts3D is not something the reader needs told. Everything else that
     // the atlas does not hold is.
     setAbsentNotice(
-      isPhrenicTarget
+      isHraInterventricularSeptumTarget && hraHeartFailed
+        ? 'The HRA internal-heart reference failed to load on this device. ORBIT has not substituted a different septal structure.'
+        : isPhrenicTarget
         ? 'SCHEMATIC COURSE: no vetted source atlas used by ORBIT contains a captured phrenic-nerve mesh. This bilateral course is derived from named Z-Anatomy landmarks (C4/scalenus anterior/subclavian vessels/pericardium/diaphragm) and is explicitly not specimen geometry.'
         : peripheralNervesFailed && isSupplementalNerveTarget
         ? 'The Z-Anatomy peripheral nerve layer could not be loaded on this device. The simulator has not substituted a different structure.'
@@ -1882,6 +2023,7 @@ varying float partSelected;
     );
 
     const isCardiacTarget = !!targetKey && !isArteryTarget && (
+      isHraInterventricularSeptumTarget ||
       targetKey.toLowerCase().includes('heart') ||
       targetKey.toLowerCase().includes('cor humanum') ||
       targetKey.toLowerCase().includes('fj2428') ||
@@ -2050,6 +2192,10 @@ varying float partSelected;
       // CRITICAL FIX: Scalpel Dissection ALWAYS takes absolute top precedence!
       if (hiddenSet.has(p.id)) {
         visible = 0.0;
+      } else if (isHraInterventricularSeptumTarget) {
+        // The HRA heart is a different reference body. Do not overlay it on
+        // BodyParts3D and imply donor-level registration.
+        visible = 0.0;
       } else if (useNerveContext) {
         // Nerves are easiest to understand against a faint bony scaffold.
         // Everything else is removed to avoid a dense translucent mobile scene.
@@ -2114,7 +2260,11 @@ varying float partSelected;
     // Adjust depthWrite for context organ materials so overlay vessels/nerves render without occlusion
     const materials = systemMaterialsRef.current;
     if (materials) {
-      const isIsolationActive = (isolatedElements && isolatedElements.size > 0) || isAutonomicTarget || useNerveContext;
+      const isIsolationActive =
+        (isolatedElements && isolatedElements.size > 0) ||
+        isAutonomicTarget ||
+        useNerveContext ||
+        isHraInterventricularSeptumTarget;
       const cardiacMat = materials.get('cardiac');
       if (cardiacMat) {
         cardiacMat.depthWrite = !isIsolationActive;
@@ -2126,7 +2276,26 @@ varying float partSelected;
     }
 
     // Automatic Camera Framing onto Isolated Organ / Vessel / Nerve
-    if (useNerveContext && !nerveIsolationBox.isEmpty() && cameraRef.current && controlsRef.current) {
+    if (
+      isHraInterventricularSeptumTarget &&
+      hraHeartReady &&
+      !hraHeartBox.isEmpty() &&
+      cameraRef.current &&
+      controlsRef.current
+    ) {
+      const center = new THREE.Vector3();
+      const size = new THREE.Vector3();
+      hraHeartBox.getCenter(center);
+      hraHeartBox.getSize(size);
+      const maxDim = Math.max(size.x, size.y, size.z, 0.08);
+      const fov = cameraRef.current.fov * (Math.PI / 180);
+      let cameraDistance = (maxDim / 2) / Math.tan(fov / 2) * 1.38;
+      cameraDistance = Math.min(Math.max(cameraDistance, 0.15), 2.2);
+      controlsRef.current.minDistance = 0.04;
+      controlsRef.current.target.copy(center);
+      cameraRef.current.position.set(center.x, center.y + maxDim * 0.03, center.z + cameraDistance);
+      controlsRef.current.update();
+    } else     if (useNerveContext && !nerveIsolationBox.isEmpty() && cameraRef.current && controlsRef.current) {
       const center = new THREE.Vector3();
       const size = new THREE.Vector3();
       nerveIsolationBox.getCenter(center);
@@ -2183,7 +2352,18 @@ varying float partSelected;
       controlsRef.current.minDistance = 0.3;
       resetCamera(cameraPreset || 'anterior');
     }
-  }, [hiddenPartIds, isolatedPartId, contextOrganId, selectedOrganId, layerPeel, modelsReady, peripheralNervesReady, peripheralNervesFailed]);
+  }, [
+    hiddenPartIds,
+    isolatedPartId,
+    contextOrganId,
+    selectedOrganId,
+    layerPeel,
+    modelsReady,
+    peripheralNervesReady,
+    peripheralNervesFailed,
+    hraHeartReady,
+    hraHeartFailed,
+  ]);
 
   // Update GPU Selection DataTexture and 3D Selection Pointer when selectedOrganId or isolatedPartId changes
   useEffect(() => {
