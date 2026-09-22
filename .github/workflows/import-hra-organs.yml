@@ -65,6 +65,15 @@ jobs:
             echo "HRA organ assets already current"
           else
             git commit -m "Add HRA multi-organ reference assets"
-            git pull --rebase origin main
-            git push origin HEAD:main
+            pushed=0
+            for attempt in 1 2 3 4; do
+              git pull --rebase origin main
+              if git push origin HEAD:main; then
+                pushed=1
+                break
+              fi
+              echo "Push raced with another main update; retrying ($attempt/4)..."
+              sleep 2
+            done
+            test "$pushed" -eq 1
           fi
