@@ -1358,6 +1358,138 @@ export const ORGAN_ANATOMY_DATABASE: Record<string, DetailedOrganAnatomy> = {
   },
 
   // 21. ABDOMEN & GASTROINTESTINAL VISCERA
+  small_intestine: {
+    id: 'small_intestine',
+    name: 'Small Intestine',
+    latinName: 'Intestinum Tenue',
+    system: 'Gastrointestinal System',
+    quadrantOrCavity: 'Peritoneal cavity; duodenum is predominantly retroperitoneal, jejunum/ileum intraperitoneal',
+    surfaceLandmarks: 'Duodenum curves around pancreatic head; jejunum predominates upper left infracolic compartment, ileum lower right pelvis/RIF; terminal ileum approaches ileocecal junction.',
+    dimensionsAndWeight: 'Approx. 5–6 m in vivo overall; duodenum ~25 cm. Jejunum comprises proximal ~2/5 and ileum distal ~3/5 of mobile small bowel.',
+    arterialSupply: [
+      'Proximal duodenum: superior pancreaticoduodenal branches from gastroduodenal artery (celiac territory).',
+      'Distal duodenum, jejunum and ileum: inferior pancreaticoduodenal, jejunal and ileal branches from superior mesenteric artery with arterial arcades and vasa recta.',
+    ],
+    venousDrainage: [
+      'Jejunal and ileal veins drain to superior mesenteric vein.',
+      'Duodenal venous drainage reaches superior mesenteric and portal venous tributaries via pancreaticoduodenal veins.',
+    ],
+    innervation: {
+      sympathetic: 'Thoracic splanchnic fibers via celiac and superior mesenteric plexuses; generally reduce motility and vasoconstrict.',
+      parasympathetic: 'Vagus nerve provides parasympathetic supply to the small intestine.',
+      somaticOrSensory: 'Visceral afferents travel with autonomic pathways; parietal peritoneal irritation localizes pain via somatic nerves.',
+      referredPain: 'Midgut visceral pain commonly refers to the periumbilical region (approximately T10).',
+    },
+    lymphaticDrainage: [
+      'Lacteals → mesenteric lymphatics → juxtaintestinal/intermediate/central superior mesenteric nodes.',
+      'Duodenum drains via pancreaticoduodenal and pyloric nodes toward celiac/superior mesenteric nodes.',
+    ],
+    musculoskeletalRelations: [
+      'Mesentery root runs obliquely from duodenojejunal flexure to ileocecal region crossing major posterior abdominal structures.',
+      'Third part of duodenum lies anterior to aorta/IVC and posterior to superior mesenteric vessels.',
+    ],
+    histologyAndPhysiology: 'Mucosa has plicae circulares, villi and crypts. Jejunum has prominent folds and long vasa recta; ileum has more arterial arcades and Peyer patches. Major site of nutrient, water and electrolyte absorption.',
+    clinicalBedsideSigns: [
+      'Small-bowel obstruction: colicky central abdominal pain, vomiting, distension and high-pitched bowel sounds early.',
+      'Terminal ileal disease may cause right iliac fossa tenderness and B12/bile-salt malabsorption.',
+    ],
+    nmcMbbssVivaPearls: [
+      'Jejunum: thicker wall, wider lumen, fewer arcades, longer vasa recta, more plicae.',
+      'Ileum: thinner wall, more arcades, shorter vasa recta, more mesenteric fat and Peyer patches.',
+      'Ligament of Treitz marks the duodenojejunal junction.',
+    ],
+    radiologicalCorrelation: 'CT enterography demonstrates bowel wall, mesentery and transition points; contrast studies distinguish valvulae conniventes from colonic haustra.',
+    surgicalApproaches: 'Midline laparotomy/laparoscopy; mesenteric vascularity and bowel viability must be assessed before resection and anastomosis.',
+  },
+
+  urinary_bladder: {
+    id: 'urinary_bladder',
+    name: 'Urinary Bladder',
+    latinName: 'Vesica Urinaria',
+    system: 'Urinary System',
+    quadrantOrCavity: 'True pelvis when empty; rises into lower abdomen when distended',
+    surfaceLandmarks: 'Behind pubic symphysis; a distended bladder may become palpable/percussible above the symphysis.',
+    dimensionsAndWeight: 'Highly distensible muscular reservoir; functional adult capacity commonly ~300–500 mL.',
+    arterialSupply: [
+      'Superior vesical arteries from the patent proximal umbilical artery/internal iliac system.',
+      'Inferior vesical artery in males; vaginal/uterine arterial branches contribute in females.',
+    ],
+    venousDrainage: [
+      'Vesical venous plexus drains to internal iliac veins.',
+      'Communicates with prostatic plexus in males and pelvic venous networks.',
+    ],
+    innervation: {
+      sympathetic: 'T11–L2 via hypogastric plexus: relaxes detrusor and promotes bladder-neck/internal sphincter tone during storage.',
+      parasympathetic: 'Pelvic splanchnic nerves S2–S4 contract detrusor and facilitate voiding.',
+      somaticOrSensory: 'Pudendal nerve S2–S4 controls external urethral sphincter; visceral afferents convey bladder fullness.',
+      referredPain: 'Bladder pain may be suprapubic; trigonal/neck irritation can refer to perineal or urethral regions.',
+    },
+    lymphaticDrainage: [
+      'Superior bladder mainly to external iliac nodes.',
+      'Inferior bladder/neck mainly to internal iliac and sacral nodes.',
+    ],
+    musculoskeletalRelations: [
+      'Anterior relation: retropubic space and pubic symphysis.',
+      'Inferolateral surfaces rest on pelvic floor; posterior relations differ by sex.',
+    ],
+    histologyAndPhysiology: 'Urothelium overlies lamina propria and detrusor smooth muscle. Trigone is smooth and bounded by two ureteric orifices and internal urethral orifice.',
+    clinicalBedsideSigns: [
+      'Acute urinary retention: painful suprapubic fullness with a dull percussion note.',
+      'Suprapubic catheterization uses the distended bladder above the pubic symphysis to avoid peritoneum.',
+    ],
+    nmcMbbssVivaPearls: [
+      'Trigone is smooth and developmentally distinct from most bladder mucosa.',
+      'Parasympathetic S2–S4 drives detrusor contraction.',
+      'Bladder is extraperitoneal except for superior surface peritoneal covering.',
+    ],
+    radiologicalCorrelation: 'Ultrasound assesses bladder volume/post-void residual; CT cystography is used for suspected traumatic rupture.',
+    surgicalApproaches: 'Suprapubic extraperitoneal access; pelvic surgery must respect ureteric orifices, bladder neck and pelvic autonomic plexus.',
+  },
+
+  thymus: {
+    id: 'thymus',
+    name: 'Thymus',
+    latinName: 'Thymus',
+    system: 'Lymphatic / Immune System',
+    quadrantOrCavity: 'Anterior superior mediastinum extending into anterior mediastinum',
+    surfaceLandmarks: 'Lies posterior to manubrium and anterior to great vessels/pericardium; most prominent in children.',
+    dimensionsAndWeight: 'Relatively large in childhood, reaching maximal relative size around puberty, then undergoes fatty involution with age.',
+    arterialSupply: [
+      'Small branches from internal thoracic arteries.',
+      'Inferior thyroid and pericardiophrenic branches may contribute.',
+    ],
+    venousDrainage: [
+      'Small thymic veins drain mainly to left brachiocephalic vein.',
+      'Additional drainage may reach internal thoracic and inferior thyroid veins.',
+    ],
+    innervation: {
+      sympathetic: 'Postganglionic sympathetic fibers from cervical/thoracic sympathetic chain accompany vessels.',
+      parasympathetic: 'Vagal contributions are described but autonomic supply is predominantly vasomotor rather than secretomotor.',
+      somaticOrSensory: 'No major somatic sensory role; mediastinal pain is usually from adjacent pleura/pericardium rather than thymic parenchyma.',
+      referredPain: 'No characteristic thymus-specific referred pain pattern.',
+    },
+    lymphaticDrainage: [
+      'Efferent lymphatics drain to parasternal, brachiocephalic and tracheobronchial nodes.',
+      'Classically lacks afferent lymphatics entering the lobules.',
+    ],
+    musculoskeletalRelations: [
+      'Anterior: sternum and sternohyoid/sternothyroid origins superiorly.',
+      'Posterior: pericardium, ascending aorta, arch vessels and brachiocephalic veins.',
+    ],
+    histologyAndPhysiology: 'Lobules show dark cortex and pale medulla with Hassall corpuscles. It supports T-lymphocyte maturation, positive selection in cortex and negative selection largely in medulla.',
+    clinicalBedsideSigns: [
+      'Thymic enlargement is not usually diagnosed by bedside palpation; mediastinal mass symptoms may include cough, dyspnea or venous compression.',
+      'Association with myasthenia gravis makes thymic pathology clinically important.',
+    ],
+    nmcMbbssVivaPearls: [
+      'Primary lymphoid organ for T-cell maturation.',
+      'Hassall corpuscles are characteristic of thymic medulla.',
+      'Undergoes involution after puberty.',
+    ],
+    radiologicalCorrelation: 'CT/MRI distinguish normal thymic tissue, hyperplasia and thymic masses in the anterior mediastinum.',
+    surgicalApproaches: 'Thymectomy may be transsternal, transcervical or minimally invasive; phrenic nerves and brachiocephalic veins are key structures at risk.',
+  },
+
   abdomen: {
     id: 'abdomen',
     name: 'Abdominal Cavity & Gastrointestinal Viscera',
