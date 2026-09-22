@@ -23,6 +23,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: simulator-mobile-e2e-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   mobile-browser-e2e:
     runs-on: ubuntu-latest
