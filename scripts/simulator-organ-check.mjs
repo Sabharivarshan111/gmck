@@ -40,7 +40,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const resolverPath = path.join(root, 'src/simulator/data/atlasResolver.ts');
-const { describeAtlasTarget, resolvePartToOrganKey, correctPartSystem, hasTerm } = await import(resolverPath);
+const { describeAtlasTarget, resolveAtlasElementIds, resolvePartToOrganKey, correctPartSystem, hasTerm } = await import(resolverPath);
 
 const atlas = JSON.parse(readFileSync(path.join(root, 'public/models/atlas.json'), 'utf8'));
 // The same correction the chunk loader applies: two groups of parts carry an
