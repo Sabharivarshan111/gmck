@@ -293,8 +293,11 @@ console.log(
       if (manifest.exportedObjectCount !== manifest.objects.length) {
         fail(`${manifestRel} exportedObjectCount=${manifest.exportedObjectCount} but objects.length=${manifest.objects.length}`);
       }
-      if (Number(manifest.exportedTriangles || 0) < 300_000) {
-        fail(`${manifestRel} has only ${manifest.exportedTriangles || 0} triangles; detailed nerve geometry appears to have been replaced`);
+      // The canonical Blender exporter targets ~190k true loop-triangles
+      // after mobile decimation. Keep a floor well below that target but high
+      // enough to catch accidental replacement with marker/schematic geometry.
+      if (Number(manifest.exportedTriangles || 0) < 175_000) {
+        fail(`${manifestRel} has only ${manifest.exportedTriangles || 0} triangles; expected the ~190k detailed mobile nerve export`);
       }
       if (bytes > 14 * 1024 * 1024) {
         fail(`${nerveRel} exceeds the 14 MiB on-demand mobile budget: ${bytes}`);
