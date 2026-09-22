@@ -334,21 +334,21 @@ export const IcuMonitor: React.FC<IcuMonitorProps> = ({
 
   return (
     <div
-      className={`rounded-2xl md:rounded-3xl border overflow-hidden flex flex-col lg:flex-row shadow-2xl transition-all h-full ${
+      className={`rounded-2xl md:rounded-3xl border overflow-hidden flex flex-col lg:flex-row shadow-xl transition-all h-full min-h-0 ${
         isLight ? 'bg-slate-900 border-slate-800' : 'bg-[#050811] border-slate-800'
       }`}
     >
       {/* Waveform Sweep Screen (Left / Main Panel) */}
-      <div className="flex-1 p-3 flex flex-col">
+      <div className="flex-1 p-2 md:p-3 flex flex-col min-h-0">
         {/* Monitor Header Status Bar */}
         <div
-          className={`flex items-center justify-between px-3 py-1.5 rounded-xl border text-[11px] ${
+          className={`flex items-center justify-between gap-2 px-2.5 md:px-3 py-1.5 rounded-xl border text-[10px] md:text-[11px] overflow-x-auto no-scrollbar ${
             isLight
               ? 'bg-slate-900 text-slate-200 border-slate-800'
               : 'bg-slate-900/90 text-slate-300 border-slate-800'
           }`}
         >
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 md:gap-3 shrink-0">
             <span className="font-mono font-bold text-emerald-400 flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
               SWEEP 25 mm/s
@@ -370,10 +370,10 @@ export const IcuMonitor: React.FC<IcuMonitorProps> = ({
             </span>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 shrink-0">
             <button
               onClick={() => setIsTutorialOpen(true)}
-              className="flex items-center gap-1 px-2.5 py-1 rounded text-[10px] font-bold border border-rose-500/40 bg-rose-500/20 text-rose-300 hover:bg-rose-500/30 transition-all cursor-pointer shadow-sm shadow-rose-950/40"
+              className="min-h-[40px] flex items-center gap-1 px-2.5 rounded-xl text-[10px] font-bold border border-rose-500/40 bg-rose-500/20 text-rose-300 hover:bg-rose-500/30 transition-all cursor-pointer"
               title="Open 12-Lead ECG & ICU Telemetry Tutorial (LKG to Specialist)"
             >
               <GraduationCap className="w-3.5 h-3.5" />
@@ -381,7 +381,7 @@ export const IcuMonitor: React.FC<IcuMonitorProps> = ({
             </button>
             <button
               onClick={() => setAudioEnabled(!audioEnabled)}
-              className={`px-2.5 py-1 rounded text-[10px] font-semibold border transition-all ${
+              className={`min-h-[40px] px-2.5 rounded-xl text-[10px] font-semibold border transition-all ${
                 audioEnabled
                   ? 'bg-emerald-950/60 border-emerald-500 text-emerald-300'
                   : 'bg-slate-800 border-slate-700 text-slate-400 hover:text-slate-200'
@@ -394,7 +394,7 @@ export const IcuMonitor: React.FC<IcuMonitorProps> = ({
         </div>
 
         {/* Real-Time Canvas */}
-        <div className="relative flex-1 my-1.5 min-h-[260px]">
+        <div className="relative flex-1 my-1.5 min-h-[230px] sm:min-h-[260px]">
           <canvas
             ref={canvasRef}
             width={720}
@@ -423,9 +423,9 @@ export const IcuMonitor: React.FC<IcuMonitorProps> = ({
       </div>
 
       {/* Vital Numbers Display (Right Panel) */}
-      <div className="w-full lg:w-60 bg-[#080c14] border-t lg:border-t-0 lg:border-l border-slate-800 p-3 grid grid-cols-2 lg:grid-cols-1 gap-2.5">
+      <div className="w-full lg:w-60 bg-[#080c14] border-t lg:border-t-0 lg:border-l border-slate-800 p-2 md:p-3 grid grid-cols-2 lg:grid-cols-1 gap-1.5 md:gap-2.5">
         {/* Heart Rate */}
-        <div className="bg-slate-900/80 border border-emerald-900/60 p-2.5 rounded-lg flex items-center justify-between">
+        <div className="bg-slate-900/80 border border-emerald-900/60 p-2 rounded-xl flex items-center justify-between">
           <div>
             <div className="text-[10px] font-mono uppercase text-emerald-400 font-semibold tracking-wider">
               ECG / HR
