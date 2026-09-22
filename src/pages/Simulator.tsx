@@ -33,6 +33,11 @@ import {
   getHraTargetsForOrgan,
   isHraOrganTarget,
 } from '../simulator/data/hraOrgans';
+import {
+  getZAnatomyReferenceTarget,
+  getZAnatomyTargetsForOrgan,
+  isZAnatomyReferenceTarget,
+} from '../simulator/data/zanatomyReferences';
 
 export const Simulator: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -455,7 +460,12 @@ export const Simulator: React.FC = () => {
                         return;
                       }
                       const hraTarget = getHraOrganTarget(isolatedPartId);
-                      setSelectedOrganId(hraTarget?.organKey || isolatedPartId);
+                      if (hraTarget) {
+                        setSelectedOrganId(hraTarget.organKey);
+                        return;
+                      }
+                      const zTarget = getZAnatomyReferenceTarget(isolatedPartId);
+                      setSelectedOrganId(zTarget?.organKey || isolatedPartId);
                     }}
                     className="ml-1 text-[11px] font-bold px-2 py-0.5 rounded-md bg-sky-100 hover:bg-sky-200 text-sky-900 dark:bg-sky-950 dark:hover:bg-sky-900 dark:text-sky-200 transition-colors cursor-pointer"
                     title="Open clinical anatomy dossier"
@@ -761,6 +771,65 @@ export const Simulator: React.FC = () => {
                   : 'bg-slate-900 border-violet-800 text-violet-200'}`}
               >
                 HuBMAP HRA male v1.3 · source-derived
+              </span>
+            </div>
+          );
+        })()}
+
+        {/* Z-Anatomy reference strip for structures not covered well by HRA. */}
+        {(() => {
+          const activeZTarget = getZAnatomyReferenceTarget(isolatedPartId);
+          const sourceOrganKey =
+            activeZTarget?.organKey ||
+            contextOrganId ||
+            isolatedPartId ||
+            selectedOrganId;
+          const targets = getZAnatomyTargetsForOrgan(sourceOrganKey);
+          if (!targets.length) return null;
+
+          return (
+            <div
+              className={`px-2.5 py-2 rounded-2xl border flex items-center gap-2 overflow-x-auto no-scrollbar ${isLight
+                ? 'bg-teal-50/80 border-teal-200/80'
+                : 'bg-teal-950/20 border-teal-900/50'}`}
+            >
+              <span className="text-[10px] font-black uppercase tracking-wider text-teal-700 dark:text-teal-300 whitespace-nowrap px-1">
+                Z-Anatomy:
+              </span>
+              {targets.map((target) => (
+                <button
+                  key={target.id}
+                  onClick={() => {
+                    setIsolatedPartId(target.id);
+                    setSelectedOrganId(null);
+                    setContextOrganId(null);
+                    setCameraPreset(
+                      target.organKey === 'brain'
+                        ? 'head'
+                        : target.organKey === 'stomach'
+                        ? 'abdomen'
+                        : 'anterior'
+                    );
+                    setMobileTab('3d');
+                  }}
+                  className={`min-h-[40px] px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap flex-shrink-0 border transition-all active:scale-95 ${isolatedPartId === target.id
+                    ? isLight
+                      ? 'bg-teal-600 border-teal-700 text-white shadow-sm'
+                      : 'bg-teal-400 border-teal-300 text-slate-950 shadow-sm'
+                    : isLight
+                    ? 'bg-white border-teal-200 text-teal-900'
+                    : 'bg-slate-900 border-teal-800 text-teal-200'}`}
+                  title={target.label}
+                >
+                  {target.shortLabel}
+                </button>
+              ))}
+              <span
+                className={`min-h-[40px] px-3 py-1.5 rounded-xl text-[10px] font-semibold whitespace-nowrap flex items-center border ${isLight
+                  ? 'bg-white border-teal-200 text-teal-900'
+                  : 'bg-slate-900 border-teal-800 text-teal-200'}`}
+              >
+                Source-derived · CC BY-SA 4.0
               </span>
             </div>
           );
