@@ -94,6 +94,59 @@ check(/\[\.\.\.\]/.test(parsedCloze.cards[0]?.front ?? ''), 'cloze question did 
 check(/SA node/.test(parsedCloze.cards[0]?.back ?? ''), 'cloze answer did not reveal c1');
 check(/Normal physiology/.test(parsedCloze.cards[0]?.back ?? ''), 'cloze extra field was lost');
 
+// Current Anki exports can route special fields with one-based "column:N"
+// directives, and one file can mix built-in note types. This mirrors the shape
+// of a real public Anki import sample that CI downloads below independently.
+const mixed = [
+  '#separator:Tab',
+  '#html:true',
+  '#columns:Front\\tBack\\tExtra\\tNote Type\\tDeck\\tTags\\tGUID',
+  '#notetype column:4',
+  '#deck column:5',
+  '#tags column:6',
+  '#guid column:7',
+  'What starts normal cardiac conduction?\\tSA node\\t<em>Right atrium</em>\\tBasic\\tMedicine::Cardiology\\tcardio conduction\\tg1',
+  'Largest artery?\\tAorta\\tSystemic outflow\\tBasic (and reversed card)\\tMedicine::Cardiology\\tanatomy\\tg2',
+  '{{c1::Insulin}} lowers {{c2::blood glucose}}.\\tEndocrine\\tTwo clozes\\tCloze\\tMedicine::Endocrine\\thormones\\tg3',
+].join('\\n');
+const parsedMixed = mod.parseAnkiText(mixed, 'mixed.txt');
+check(parsedMixed.cards.length === 5, `mixed notetypes should make 5 cards, got ${parsedMixed.cards.length}`);
+check(
+  parsedMixed.cards.filter(card => card.deck === 'Medicine::Cardiology').length === 3,
+  '#deck column did not route Basic + reversed cards',
+);
+check(
+  parsedMixed.cards.filter(card => card.deck === 'Medicine::Endocrine').length === 2,
+  '#deck column did not route Cloze cards',
+);
+check(
+  parsedMixed.cards.some(card => card.id.endsWith('-rev') && /Aorta/.test(card.front)),
+  'built-in reversed note did not make a reverse card',
+);
+check(parsedMixed.cards.some(card => card.id.endsWith('-c1')), 'mixed Cloze row did not make c1');
+check(parsedMixed.cards.some(card => card.id.endsWith('-c2')), 'mixed Cloze row did not make c2');
+check(!parsedMixed.cards.some(card => /Basic|Cloze/.test(card.back)), 'notetype metadata leaked into card answers');
+check(!parsedMixed.cards.some(card => /g[123]/.test(card.back)), 'GUID metadata leaked into card answers');
+
+// Optional real-world fixture. CI downloads this from a pinned public commit so
+// the parser is checked against a file Orbit did not generate itself.
+const externalSample = process.env.ANKI_EXTERNAL_SAMPLE;
+if (externalSample) {
+  const externalText = fs.readFileSync(externalSample, 'utf8');
+  const external = mod.parseAnkiText(externalText, path.basename(externalSample));
+  check(external.cards.length === 6, `real Anki sample should render 6 cards, got ${external.cards.length}`);
+  const deckCounts = new Map();
+  for (const card of external.cards) {
+    deckCounts.set(card.deck, (deckCounts.get(card.deck) ?? 0) + 1);
+  }
+  check(deckCounts.size === 2, `real Anki sample should contain 2 decks, got ${deckCounts.size}`);
+  check([...deckCounts.values()].every(count => count === 3), 'real Anki sample deck routing/reversed/cloze counts drifted');
+  check(external.cards.some(card => card.id.endsWith('-rev')), 'real Anki sample lost its reversed card');
+  check(external.cards.some(card => card.id.endsWith('-c1')), 'real Anki sample lost cloze c1');
+  check(external.cards.some(card => card.id.endsWith('-c2')), 'real Anki sample lost cloze c2');
+}
+
+
 let htmlRejected = false;
 try {
   mod.parseAnkiText('<html><body>not a deck</body></html>', 'deck.html');
@@ -123,6 +176,6 @@ if (failures.length) {
   process.exit(1);
 }
 process.stdout.write(
-  'OK   Anki text import: TSV/CSV, quoted multiline fields, HTML flattening, cloze, tags,\n' +
-    '     media warning, standalone-HTML rejection, Android bridge and web/native picker wiring\n',
+  'OK   Anki text import: TSV/CSV, quoted multiline fields, HTML flattening, mixed note types,\n' +
+    '     column directives, cloze/reverse, media warning, standalone-HTML rejection and wiring\n',
 );
