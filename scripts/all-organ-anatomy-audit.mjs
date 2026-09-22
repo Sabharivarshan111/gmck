@@ -8,7 +8,7 @@ const hraOrgansPath = path.join(root, 'src/simulator/data/hraOrgans.ts');
 const hraHeartPath = path.join(root, 'src/simulator/data/hraHeart.ts');
 
 const { describeAtlasTarget, correctPartSystem } = await import(resolverPath);
-const { getHraTargetsForOrgan } = await import(hraOrgansPath);
+const { getHraReferenceSexForOrgan, getHraTargetsForOrgan } = await import(hraOrgansPath);
 const { HRA_HEART_TARGETS } = await import(hraHeartPath);
 
 const atlas = JSON.parse(readFileSync(path.join(root, 'public/models/atlas.json'), 'utf8'));
@@ -113,9 +113,15 @@ for (const target of targets) {
   } else if (hraKey) {
     const hraTargets = getHraTargetsForOrgan(hraKey);
     if (hraTargets.length) {
+      const hraSex = getHraReferenceSexForOrgan(hraKey);
       sources.push({
         type: 'source-supplement',
-        source: 'HRA male reference organs v1.3',
+        source:
+          hraSex === 'female'
+            ? 'HRA female reference organs v1.3'
+            : hraSex === 'mixed'
+            ? 'HRA mixed-reference organs v1.3'
+            : 'HRA male reference organs v1.3',
         targetCount: hraTargets.filter((t) => t.kind !== 'schematic').length,
       });
     }
