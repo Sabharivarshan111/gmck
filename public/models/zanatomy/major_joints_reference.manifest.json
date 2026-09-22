@@ -1,0 +1,161 @@
+{
+  "mode": "joints",
+  "sourceFile": "Joints100.fbx",
+  "source": "LluisV/Z-Anatomy PC-Version Resources/Models/FBX",
+  "license": "CC BY-SA 4.0 aggregate; keep source/component attribution",
+  "objectCount": 30,
+  "rawTriangles": 13552,
+  "exportedTriangles": 13552,
+  "objects": [
+    {
+      "name": "Acetabular labrum.l",
+      "triangles": 704,
+      "vertices": 704
+    },
+    {
+      "name": "Acetabular labrum.r",
+      "triangles": 704,
+      "vertices": 704
+    },
+    {
+      "name": "Anterior cruciate ligament.l",
+      "triangles": 808,
+      "vertices": 840
+    },
+    {
+      "name": "Anterior cruciate ligament.r",
+      "triangles": 808,
+      "vertices": 840
+    },
+    {
+      "name": "Anterior meniscotibial ligament (Lateral meniscus).l",
+      "triangles": 124,
+      "vertices": 126
+    },
+    {
+      "name": "Anterior meniscotibial ligament (Lateral meniscus).r",
+      "triangles": 124,
+      "vertices": 126
+    },
+    {
+      "name": "Anterior meniscotibial ligament (Medial meniscus).l",
+      "triangles": 64,
+      "vertices": 66
+    },
+    {
+      "name": "Anterior meniscotibial ligament (Medial meniscus).r",
+      "triangles": 64,
+      "vertices": 66
+    },
+    {
+      "name": "Articular capsule of glenohumeral joint.l",
+      "triangles": 1616,
+      "vertices": 1616
+    },
+    {
+      "name": "Articular capsule of glenohumeral joint.r",
+      "triangles": 1616,
+      "vertices": 1616
+    },
+    {
+      "name": "Articular capsule of hip joint.l",
+      "triangles": 560,
+      "vertices": 630
+    },
+    {
+      "name": "Articular capsule of hip joint.r",
+      "triangles": 560,
+      "vertices": 630
+    },
+    {
+      "name": "Articular capsule of knee joint.l",
+      "triangles": 1472,
+      "vertices": 1671
+    },
+    {
+      "name": "Articular capsule of knee joint.r",
+      "triangles": 1472,
+      "vertices": 1671
+    },
+    {
+      "name": "Inferior glenohumeral ligament.l",
+      "triangles": 160,
+      "vertices": 162
+    },
+    {
+      "name": "Inferior glenohumeral ligament.r",
+      "triangles": 160,
+      "vertices": 162
+    },
+    {
+      "name": "Lateral meniscus.l",
+      "triangles": 234,
+      "vertices": 236
+    },
+    {
+      "name": "Lateral meniscus.r",
+      "triangles": 234,
+      "vertices": 236
+    },
+    {
+      "name": "Medial meniscus.l",
+      "triangles": 142,
+      "vertices": 144
+    },
+    {
+      "name": "Medial meniscus.r",
+      "triangles": 142,
+      "vertices": 144
+    },
+    {
+      "name": "Middle glenohumeral ligament.l",
+      "triangles": 140,
+      "vertices": 144
+    },
+    {
+      "name": "Middle glenohumeral ligament.r",
+      "triangles": 140,
+      "vertices": 144
+    },
+    {
+      "name": "Posterior cruciate ligament.l",
+      "triangles": 404,
+      "vertices": 396
+    },
+    {
+      "name": "Posterior cruciate ligament.r",
+      "triangles": 404,
+      "vertices": 396
+    },
+    {
+      "name": "Posterior meniscotibial ligament (Lateral meniscus).l",
+      "triangles": 96,
+      "vertices": 98
+    },
+    {
+      "name": "Posterior meniscotibial ligament (Lateral meniscus).r",
+      "triangles": 96,
+      "vertices": 98
+    },
+    {
+      "name": "Posterior meniscotibial ligament (Medial meniscus).l",
+      "triangles": 152,
+      "vertices": 154
+    },
+    {
+      "name": "Posterior meniscotibial ligament (Medial meniscus).r",
+      "triangles": 152,
+      "vertices": 154
+    },
+    {
+      "name": "Superior glenohumeral ligament.l",
+      "triangles": 100,
+      "vertices": 102
+    },
+    {
+      "name": "Superior glenohumeral ligament.r",
+      "triangles": 100,
+      "vertices": 102
+    }
+  ]
+}

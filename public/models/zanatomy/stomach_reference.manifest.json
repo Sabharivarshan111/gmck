@@ -1,0 +1,31 @@
+{
+  "mode": "stomach",
+  "sourceFile": "VisceralSystem100.fbx",
+  "source": "LluisV/Z-Anatomy PC-Version Resources/Models/FBX",
+  "license": "CC BY-SA 4.0 aggregate; keep source/component attribution",
+  "objectCount": 4,
+  "rawTriangles": 47835,
+  "exportedTriangles": 78554,
+  "objects": [
+    {
+      "name": "Duodenum",
+      "triangles": 1462,
+      "vertices": 743
+    },
+    {
+      "name": "Greater omentum",
+      "triangles": 65196,
+      "vertices": 32600
+    },
+    {
+      "name": "Lesser omentum",
+      "triangles": 3980,
+      "vertices": 1992
+    },
+    {
+      "name": "Stomach",
+      "triangles": 7916,
+      "vertices": 4027
+    }
+  ]
+}

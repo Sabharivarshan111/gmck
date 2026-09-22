@@ -1,0 +1,41 @@
+{
+  "mode": "pectoralis_major",
+  "sourceFile": "MuscularSystem100.fbx",
+  "source": "LluisV/Z-Anatomy PC-Version Resources/Models/FBX",
+  "license": "CC BY-SA 4.0 aggregate; keep source/component attribution",
+  "objectCount": 6,
+  "rawTriangles": 11150,
+  "exportedTriangles": 11150,
+  "objects": [
+    {
+      "name": "(Abdominal part of pectoralis major muscle).l",
+      "triangles": 1508,
+      "vertices": 756
+    },
+    {
+      "name": "(Abdominal part of pectoralis major muscle).r",
+      "triangles": 1508,
+      "vertices": 756
+    },
+    {
+      "name": "Clavicular head of pectoralis major muscle.l",
+      "triangles": 850,
+      "vertices": 425
+    },
+    {
+      "name": "Clavicular head of pectoralis major muscle.r",
+      "triangles": 850,
+      "vertices": 425
+    },
+    {
+      "name": "Sternocostal head of pectoralis major muscle.l",
+      "triangles": 3217,
+      "vertices": 1611
+    },
+    {
+      "name": "Sternocostal head of pectoralis major muscle.r",
+      "triangles": 3217,
+      "vertices": 1611
+    }
+  ]
+}

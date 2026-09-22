@@ -1,0 +1,41 @@
+{
+  "mode": "deltoid",
+  "sourceFile": "MuscularSystem100.fbx",
+  "source": "LluisV/Z-Anatomy PC-Version Resources/Models/FBX",
+  "license": "CC BY-SA 4.0 aggregate; keep source/component attribution",
+  "objectCount": 6,
+  "rawTriangles": 20488,
+  "exportedTriangles": 20488,
+  "objects": [
+    {
+      "name": "Acromial part of deltoid muscle.l",
+      "triangles": 2964,
+      "vertices": 1482
+    },
+    {
+      "name": "Acromial part of deltoid muscle.r",
+      "triangles": 2964,
+      "vertices": 1482
+    },
+    {
+      "name": "Clavicular part of deltoid muscle.l",
+      "triangles": 2902,
+      "vertices": 1453
+    },
+    {
+      "name": "Clavicular part of deltoid muscle.r",
+      "triangles": 2902,
+      "vertices": 1453
+    },
+    {
+      "name": "Scapular spinal part of deltoid muscle.l",
+      "triangles": 4378,
+      "vertices": 2189
+    },
+    {
+      "name": "Scapular spinal part of deltoid muscle.r",
+      "triangles": 4378,
+      "vertices": 2189
+    }
+  ]
+}

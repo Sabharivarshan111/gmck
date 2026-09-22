@@ -1,0 +1,531 @@
+{
+  "mode": "brain",
+  "sourceFile": "NervousSystem100.fbx",
+  "source": "LluisV/Z-Anatomy PC-Version Resources/Models/FBX",
+  "license": "CC BY-SA 4.0 aggregate; keep source/component attribution",
+  "objectCount": 104,
+  "rawTriangles": 268308,
+  "exportedTriangles": 264126,
+  "objects": [
+    {
+      "name": "Amygdaloid body.l",
+      "triangles": 384,
+      "vertices": 194
+    },
+    {
+      "name": "Amygdaloid body.r",
+      "triangles": 384,
+      "vertices": 194
+    },
+    {
+      "name": "Angular gyrus.l",
+      "triangles": 1441,
+      "vertices": 759
+    },
+    {
+      "name": "Angular gyrus.r",
+      "triangles": 1441,
+      "vertices": 759
+    },
+    {
+      "name": "Anterior quadrangular lobule.l",
+      "triangles": 6318,
+      "vertices": 3169
+    },
+    {
+      "name": "Anterior quadrangular lobule.r",
+      "triangles": 6318,
+      "vertices": 3169
+    },
+    {
+      "name": "Aqueduct of midbrain",
+      "triangles": 460,
+      "vertices": 235
+    },
+    {
+      "name": "Biventral lobule.l",
+      "triangles": 8626,
+      "vertices": 4326
+    },
+    {
+      "name": "Biventral lobule.r",
+      "triangles": 8626,
+      "vertices": 4326
+    },
+    {
+      "name": "Caudate nucleus.l",
+      "triangles": 2490,
+      "vertices": 1247
+    },
+    {
+      "name": "Caudate nucleus.r",
+      "triangles": 2490,
+      "vertices": 1247
+    },
+    {
+      "name": "Central lobule",
+      "triangles": 1006,
+      "vertices": 505
+    },
+    {
+      "name": "Cingulate gyrus (Posteroventral part*).l",
+      "triangles": 247,
+      "vertices": 153
+    },
+    {
+      "name": "Cingulate gyrus (Posteroventral part*).r",
+      "triangles": 247,
+      "vertices": 153
+    },
+    {
+      "name": "Cingulate gyrus and sulcus (Middle anterior part).l",
+      "triangles": 687,
+      "vertices": 370
+    },
+    {
+      "name": "Cingulate gyrus and sulcus (Middle anterior part).r",
+      "triangles": 687,
+      "vertices": 370
+    },
+    {
+      "name": "Cingulate gyrus and sulcus (Middle posterior part).l",
+      "triangles": 545,
+      "vertices": 302
+    },
+    {
+      "name": "Cingulate gyrus and sulcus (Middle posterior part).r",
+      "triangles": 545,
+      "vertices": 302
+    },
+    {
+      "name": "Cingulate gyrus and sulcus (Posterior dorsal part).l",
+      "triangles": 401,
+      "vertices": 207
+    },
+    {
+      "name": "Cingulate gyrus and sulcus (Posterior dorsal part).r",
+      "triangles": 401,
+      "vertices": 207
+    },
+    {
+      "name": "Circular sulcus of insula.l",
+      "triangles": 720,
+      "vertices": 401
+    },
+    {
+      "name": "Circular sulcus of insula.r",
+      "triangles": 720,
+      "vertices": 401
+    },
+    {
+      "name": "Corpus callosum",
+      "triangles": 3872,
+      "vertices": 1938
+    },
+    {
+      "name": "Fourth ventricle",
+      "triangles": 5617,
+      "vertices": 2824
+    },
+    {
+      "name": "Globus pallidus.l",
+      "triangles": 5112,
+      "vertices": 2558
+    },
+    {
+      "name": "Globus pallidus.r",
+      "triangles": 5112,
+      "vertices": 2558
+    },
+    {
+      "name": "Gracile lobule.l",
+      "triangles": 6745,
+      "vertices": 3380
+    },
+    {
+      "name": "Gracile lobule.r",
+      "triangles": 6745,
+      "vertices": 3380
+    },
+    {
+      "name": "Hippocampal commissure",
+      "triangles": 9558,
+      "vertices": 4783
+    },
+    {
+      "name": "Hippocampus.l",
+      "triangles": 1020,
+      "vertices": 512
+    },
+    {
+      "name": "Hippocampus.r",
+      "triangles": 1020,
+      "vertices": 512
+    },
+    {
+      "name": "Hypothalamus",
+      "triangles": 4126,
+      "vertices": 2082
+    },
+    {
+      "name": "Inferior occipital gyrus and sulcus*.l",
+      "triangles": 813,
+      "vertices": 449
+    },
+    {
+      "name": "Inferior occipital gyrus and sulcus*.r",
+      "triangles": 813,
+      "vertices": 449
+    },
+    {
+      "name": "Inferior semilunar lobule.l",
+      "triangles": 7545,
+      "vertices": 3780
+    },
+    {
+      "name": "Inferior semilunar lobule.r",
+      "triangles": 7545,
+      "vertices": 3780
+    },
+    {
+      "name": "Inferior temporal gyrus.l",
+      "triangles": 1392,
+      "vertices": 750
+    },
+    {
+      "name": "Inferior temporal gyrus.r",
+      "triangles": 1392,
+      "vertices": 750
+    },
+    {
+      "name": "Insula (Subcentral gyrus and ant. and post. sulci*).l",
+      "triangles": 680,
+      "vertices": 372
+    },
+    {
+      "name": "Insula (Subcentral gyrus and ant. and post. sulci*).r",
+      "triangles": 680,
+      "vertices": 372
+    },
+    {
+      "name": "Lateral occipital gyrus (Middle occipital gyrus*).l",
+      "triangles": 756,
+      "vertices": 429
+    },
+    {
+      "name": "Lateral occipital gyrus (Middle occipital gyrus*).r",
+      "triangles": 756,
+      "vertices": 429
+    },
+    {
+      "name": "Lateral occipitotemporal gyrus.l",
+      "triangles": 805,
+      "vertices": 470
+    },
+    {
+      "name": "Lateral occipitotemporal gyrus.r",
+      "triangles": 805,
+      "vertices": 470
+    },
+    {
+      "name": "Lateral ventricle.l",
+      "triangles": 1456,
+      "vertices": 1451
+    },
+    {
+      "name": "Lateral ventricle.r",
+      "triangles": 1456,
+      "vertices": 1451
+    },
+    {
+      "name": "Lingual gyrus.l",
+      "triangles": 1605,
+      "vertices": 814
+    },
+    {
+      "name": "Lingual gyrus.r",
+      "triangles": 1605,
+      "vertices": 814
+    },
+    {
+      "name": "Lingula of cerebellum",
+      "triangles": 1028,
+      "vertices": 530
+    },
+    {
+      "name": "Medial occipitotemporal gyrus (Parahippocampal*).l",
+      "triangles": 774,
+      "vertices": 477
+    },
+    {
+      "name": "Medial occipitotemporal gyrus (Parahippocampal*).r",
+      "triangles": 774,
+      "vertices": 477
+    },
+    {
+      "name": "Medulla oblongata.l",
+      "triangles": 5890,
+      "vertices": 2947
+    },
+    {
+      "name": "Medulla oblongata.r",
+      "triangles": 5890,
+      "vertices": 2947
+    },
+    {
+      "name": "Midbrain.l",
+      "triangles": 5902,
+      "vertices": 2954
+    },
+    {
+      "name": "Midbrain.r",
+      "triangles": 5902,
+      "vertices": 2954
+    },
+    {
+      "name": "Middle frontal gyrus.l",
+      "triangles": 2205,
+      "vertices": 1105
+    },
+    {
+      "name": "Middle frontal gyrus.r",
+      "triangles": 2205,
+      "vertices": 1105
+    },
+    {
+      "name": "Middle temporal gyrus.l",
+      "triangles": 1184,
+      "vertices": 657
+    },
+    {
+      "name": "Middle temporal gyrus.r",
+      "triangles": 1184,
+      "vertices": 657
+    },
+    {
+      "name": "Opercular part of inferior frontal gyrus.l",
+      "triangles": 659,
+      "vertices": 372
+    },
+    {
+      "name": "Opercular part of inferior frontal gyrus.r",
+      "triangles": 659,
+      "vertices": 372
+    },
+    {
+      "name": "Orbital gyri (Frontomarginal gyrus and sulcus*).l",
+      "triangles": 593,
+      "vertices": 330
+    },
+    {
+      "name": "Orbital gyri (Frontomarginal gyrus and sulcus*).r",
+      "triangles": 593,
+      "vertices": 330
+    },
+    {
+      "name": "Orbital part of  inferior frontal gyrus.l",
+      "triangles": 156,
+      "vertices": 95
+    },
+    {
+      "name": "Orbital part of  inferior frontal gyrus.r",
+      "triangles": 156,
+      "vertices": 95
+    },
+    {
+      "name": "Paracentral gyrus and sulcus*.l",
+      "triangles": 715,
+      "vertices": 377
+    },
+    {
+      "name": "Paracentral gyrus and sulcus*.r",
+      "triangles": 715,
+      "vertices": 377
+    },
+    {
+      "name": "Pons.l",
+      "triangles": 9855,
+      "vertices": 4930
+    },
+    {
+      "name": "Pons.r",
+      "triangles": 9855,
+      "vertices": 4930
+    },
+    {
+      "name": "Postcentral gyrus.l",
+      "triangles": 1114,
+      "vertices": 578
+    },
+    {
+      "name": "Postcentral gyrus.r",
+      "triangles": 1114,
+      "vertices": 578
+    },
+    {
+      "name": "Posterior quadrangular lobule.l",
+      "triangles": 3504,
+      "vertices": 1759
+    },
+    {
+      "name": "Posterior quadrangular lobule.r",
+      "triangles": 3504,
+      "vertices": 1759
+    },
+    {
+      "name": "Precentral gyrus.l",
+      "triangles": 1481,
+      "vertices": 767
+    },
+    {
+      "name": "Precentral gyrus.r",
+      "triangles": 1481,
+      "vertices": 767
+    },
+    {
+      "name": "Putamen.l",
+      "triangles": 586,
+      "vertices": 577
+    },
+    {
+      "name": "Putamen.r",
+      "triangles": 586,
+      "vertices": 577
+    },
+    {
+      "name": "Pyramid of medulla oblongata.l",
+      "triangles": 512,
+      "vertices": 482
+    },
+    {
+      "name": "Pyramid of medulla oblongata.r",
+      "triangles": 512,
+      "vertices": 482
+    },
+    {
+      "name": "Straight gyrus (Gyrus rectus).l",
+      "triangles": 457,
+      "vertices": 256
+    },
+    {
+      "name": "Straight gyrus (Gyrus rectus).r",
+      "triangles": 457,
+      "vertices": 256
+    },
+    {
+      "name": "Superior cerebellar peduncle.l",
+      "triangles": 8210,
+      "vertices": 4212
+    },
+    {
+      "name": "Superior cerebellar peduncle.r",
+      "triangles": 8210,
+      "vertices": 4212
+    },
+    {
+      "name": "Superior frontal gyrus.l",
+      "triangles": 3619,
+      "vertices": 1814
+    },
+    {
+      "name": "Superior frontal gyrus.r",
+      "triangles": 3619,
+      "vertices": 1814
+    },
+    {
+      "name": "Superior parietal lobule.l",
+      "triangles": 1159,
+      "vertices": 603
+    },
+    {
+      "name": "Superior parietal lobule.r",
+      "triangles": 1159,
+      "vertices": 603
+    },
+    {
+      "name": "Superior semilunar lobule.l",
+      "triangles": 8418,
+      "vertices": 4233
+    },
+    {
+      "name": "Superior semilunar lobule.r",
+      "triangles": 8418,
+      "vertices": 4233
+    },
+    {
+      "name": "Superior temporal gyrus (Lateral part).l",
+      "triangles": 978,
+      "vertices": 538
+    },
+    {
+      "name": "Superior temporal gyrus (Lateral part).r",
+      "triangles": 978,
+      "vertices": 538
+    },
+    {
+      "name": "Supramarginal gyrus.l",
+      "triangles": 1389,
+      "vertices": 756
+    },
+    {
+      "name": "Supramarginal gyrus.r",
+      "triangles": 1389,
+      "vertices": 756
+    },
+    {
+      "name": "Thalamus.l",
+      "triangles": 758,
+      "vertices": 381
+    },
+    {
+      "name": "Thalamus.r",
+      "triangles": 758,
+      "vertices": 381
+    },
+    {
+      "name": "Third ventricle",
+      "triangles": 4181,
+      "vertices": 2091
+    },
+    {
+      "name": "Tonsil of cerebellum.l",
+      "triangles": 3524,
+      "vertices": 1764
+    },
+    {
+      "name": "Tonsil of cerebellum.r",
+      "triangles": 3524,
+      "vertices": 1764
+    },
+    {
+      "name": "Transverse frontopolar gyrus and sulcus*.l",
+      "triangles": 213,
+      "vertices": 123
+    },
+    {
+      "name": "Transverse frontopolar gyrus and sulcus*.r",
+      "triangles": 213,
+      "vertices": 123
+    },
+    {
+      "name": "Triangular part of inferior frontal gyrus.l",
+      "triangles": 450,
+      "vertices": 254
+    },
+    {
+      "name": "Triangular part of inferior frontal gyrus.r",
+      "triangles": 450,
+      "vertices": 254
+    },
+    {
+      "name": "Wing of central lobule.l",
+      "triangles": 3046,
+      "vertices": 1536
+    },
+    {
+      "name": "Wing of central lobule.r",
+      "triangles": 3046,
+      "vertices": 1536
+    }
+  ]
+}
