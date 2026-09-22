@@ -2608,6 +2608,19 @@ varying float partSelected;
         </div>
       </div>
 
+      {(isolatedPartId || selectedOrganId) === 'hra_interventricular_septum' && !hraHeartReady && !hraHeartFailed && (
+        <div className="absolute top-16 left-3 right-3 z-20 flex justify-center pointer-events-none">
+          <div
+            role="status"
+            className={`px-3 py-2 rounded-2xl border backdrop-blur-xl text-xs font-semibold ${isLight
+              ? 'bg-rose-50/95 border-rose-300 text-rose-900 shadow-sm'
+              : 'bg-slate-900/90 border-rose-700/60 text-rose-300 shadow-lg'}`}
+          >
+            LOADING HRA HEART REFERENCE…
+          </div>
+        </div>
+      )}
+
       {isPeripheralNerveTarget(isolatedPartId || selectedOrganId) && !peripheralNervesReady && !peripheralNervesFailed && (
         <div className="absolute top-16 left-3 right-3 z-20 flex justify-center pointer-events-none">
           <div
