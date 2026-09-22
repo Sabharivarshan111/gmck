@@ -183,6 +183,15 @@ await feature('stomach-uses-verified-z-anatomy', async () => {
   const stomachIsolationStatus = stomachStage.getByText('Isolated: ZA STOMACH OVERVIEW', { exact: true });
   await visible(stomachIsolationStatus, 'preferred stomach isolation status');
 
+  // Deep Inspector also opens the clinical dossier. Close only the dossier so
+  // the isolation remains active and the screenshot proves the actual 3D
+  // reference render instead of photographing a sheet over the viewport.
+  const stomachDrawer = page.getByTestId('organ-detail-drawer');
+  if (await stomachDrawer.isVisible()) {
+    await stomachDrawer.getByTitle('Close Drawer').click();
+    await stomachDrawer.waitFor({ state: 'detached' });
+  }
+
   // The source model is local to the production build. A missing/corrupt GLB
   // must fail this feature instead of silently leaving the rough body-atlas
   // stomach on screen.
