@@ -23,6 +23,12 @@ import {
   isHraOrganTarget,
 } from '../data/hraOrgans';
 import {
+  getZAnatomyReferenceModel,
+  getZAnatomyReferenceTarget,
+  isZAnatomyReferenceTarget,
+  zAnatomyMeshMatchesTarget,
+} from '../data/zanatomyReferences';
+import {
   HRA_HEART_MODEL_URL,
   HRA_HEART_REQUIRED_MESH_NAMES,
   getHraHeartTarget,
@@ -1213,6 +1219,7 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
   const [hraHeartReady, setHraHeartReady] = useState(false);
   const [hraHeartFailed, setHraHeartFailed] = useState(false);
   const [hraOrganRevision, setHraOrganRevision] = useState(0);
+  const [zReferenceRevision, setZReferenceRevision] = useState(0);
   // Set when the structure being isolated is genuinely not one of the atlas's
   // 2,234 meshes. Saying so is the point: the model not moving, with no
   // explanation, reads as the app being broken.
@@ -1263,6 +1270,16 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
   const hraOrganLoadStartedRef = useRef<Set<string>>(new Set());
   const hraOrganFailedRef = useRef<Set<string>>(new Set());
   const hraOrganMaterialsRef = useRef<{
+    context: THREE.MeshStandardMaterial;
+    selected: THREE.MeshStandardMaterial;
+    overview: THREE.MeshStandardMaterial;
+  } | null>(null);
+
+  const zReferenceGroupsRef = useRef<Map<string, THREE.Group>>(new Map());
+  const zReferenceMeshesRef = useRef<Map<string, THREE.Mesh[]>>(new Map());
+  const zReferenceLoadStartedRef = useRef<Set<string>>(new Set());
+  const zReferenceFailedRef = useRef<Set<string>>(new Set());
+  const zReferenceMaterialsRef = useRef<{
     context: THREE.MeshStandardMaterial;
     selected: THREE.MeshStandardMaterial;
     overview: THREE.MeshStandardMaterial;
@@ -2421,6 +2438,129 @@ varying float partSelected;
     }
   }, [modelsReady, isolatedPartId, selectedOrganId]);
 
+  // Lazy-load selective Z-Anatomy reference models for organs where HRA
+  // does not provide the needed anatomy. These remain source-separated from
+  // BodyParts3D and HRA.
+  useEffect(() => {
+    const targetId = isolatedPartId || selectedOrganId;
+    const target = getZAnatomyReferenceTarget(targetId);
+    if (!modelsReady || !target || !sceneRef.current) return;
+
+    if (!zReferenceMaterialsRef.current) {
+      zReferenceMaterialsRef.current = {
+        context: new THREE.MeshStandardMaterial({
+          color: 0x0f766e,
+          emissive: 0x042f2e,
+          emissiveIntensity: 0.06,
+          roughness: 0.48,
+          metalness: 0,
+          transparent: true,
+          opacity: 0.16,
+          depthWrite: false,
+          side: THREE.DoubleSide,
+        }),
+        selected: new THREE.MeshStandardMaterial({
+          color: 0x2dd4bf,
+          emissive: 0x115e59,
+          emissiveIntensity: 0.6,
+          roughness: 0.28,
+          metalness: 0,
+          transparent: false,
+          opacity: 1,
+          side: THREE.DoubleSide,
+        }),
+        overview: new THREE.MeshStandardMaterial({
+          color: 0x14b8a6,
+          emissive: 0x134e4a,
+          emissiveIntensity: 0.18,
+          roughness: 0.36,
+          metalness: 0,
+          transparent: true,
+          opacity: 0.78,
+          depthWrite: true,
+          side: THREE.DoubleSide,
+        }),
+      };
+    }
+
+    const modelKey = target.modelKey;
+    if (
+      zReferenceGroupsRef.current.has(modelKey) ||
+      zReferenceLoadStartedRef.current.has(modelKey) ||
+      zReferenceFailedRef.current.has(modelKey)
+    ) {
+      return;
+    }
+
+    const model = getZAnatomyReferenceModel(modelKey);
+    if (!model) {
+      zReferenceFailedRef.current.add(modelKey);
+      setZReferenceRevision((v) => v + 1);
+      return;
+    }
+
+    zReferenceLoadStartedRef.current.add(modelKey);
+    const loader = new GLTFLoader();
+    loader.load(
+      model.url,
+      (gltf) => {
+        const scene = sceneRef.current;
+        const materials = zReferenceMaterialsRef.current;
+        if (!scene || !materials) return;
+
+        const group = gltf.scene;
+        group.name = `zanatomy_reference_${modelKey}`;
+        group.visible = false;
+
+        const meshes: THREE.Mesh[] = [];
+        group.traverse((child) => {
+          const mesh = child as THREE.Mesh;
+          if (!mesh.isMesh) return;
+
+          if (Array.isArray(mesh.material)) {
+            mesh.material.forEach((m) => m.dispose());
+          } else if (mesh.material) {
+            mesh.material.dispose();
+          }
+
+          mesh.material = materials.context;
+          mesh.visible = true;
+          mesh.frustumCulled = true;
+          mesh.renderOrder = 15;
+          mesh.userData.isZAnatomyReference = true;
+          mesh.userData.zReferenceModelKey = modelKey;
+          meshes.push(mesh);
+        });
+
+        if (!meshes.length) {
+          zReferenceLoadStartedRef.current.delete(modelKey);
+          zReferenceFailedRef.current.add(modelKey);
+          setZReferenceRevision((v) => v + 1);
+          return;
+        }
+
+        zReferenceGroupsRef.current.set(modelKey, group);
+        zReferenceMeshesRef.current.set(modelKey, meshes);
+        zReferenceLoadStartedRef.current.delete(modelKey);
+        scene.add(group);
+        setZReferenceRevision((v) => v + 1);
+        console.log(
+          `[AnatomicalBody3D] Loaded Z-Anatomy reference ${modelKey}: ${meshes.length} meshes`
+        );
+      },
+      undefined,
+      (err) => {
+        zReferenceLoadStartedRef.current.delete(modelKey);
+        zReferenceFailedRef.current.add(modelKey);
+        setZReferenceRevision((v) => v + 1);
+        console.error(
+          `[AnatomicalBody3D] Failed to load Z-Anatomy reference ${modelKey}:`,
+          err
+        );
+      }
+    );
+  }, [modelsReady, isolatedPartId, selectedOrganId]);
+
   // Update GPU DataTexture when hiddenPartIds, isolatedPartId, contextOrganId, or layerPeel changes
   useEffect(() => {
     const atlas = atlasRef.current;
@@ -2438,6 +2578,9 @@ varying float partSelected;
     const isHraGenericOrganTarget = isHraOrganTarget(targetKey);
     const hraGenericTarget = getHraOrganTarget(targetKey);
     const hraGenericBox = new THREE.Box3();
+    const isZReferenceTarget = isZAnatomyReferenceTarget(targetKey);
+    const zReferenceTarget = getZAnatomyReferenceTarget(targetKey);
+    const zReferenceBox = new THREE.Box3();
 
     const isolatedTarget = isHraHeartReferenceTarget
       ? null
@@ -2514,6 +2657,28 @@ varying float partSelected;
       }
     }
 
+    // Selective Z-Anatomy reference visibility.
+    if (zReferenceMaterialsRef.current) {
+      for (const [modelKey, group] of zReferenceGroupsRef.current.entries()) {
+        const requested =
+          !!zReferenceTarget && zReferenceTarget.modelKey === modelKey;
+        group.visible = isZReferenceTarget && requested;
+        if (!group.visible) continue;
+
+        const meshes = zReferenceMeshesRef.current.get(modelKey) ?? [];
+        for (const mesh of meshes) {
+          const selected = zAnatomyMeshMatchesTarget(mesh.name, targetKey);
+          mesh.visible = true;
+          mesh.material = zReferenceTarget?.matchAll
+            ? zReferenceMaterialsRef.current.overview
+            : selected
+            ? zReferenceMaterialsRef.current.selected
+            : zReferenceMaterialsRef.current.context;
+        }
+        zReferenceBox.expandByObject(group);
+      }
+    }
+
     // Entity category checks
     const isSympatheticTarget = !!targetKey && (targetKey.toLowerCase().includes('sympath') || targetKey.toLowerCase().includes('cardiac plexus'));
     const isVagusTarget = !!targetKey && (targetKey.toLowerCase().includes('vagus') || targetKey.toLowerCase().includes('parasympath'));
@@ -2541,6 +2706,13 @@ varying float partSelected;
     // autonomic overlay rather than taken from the atlas, so their absence from
     // BodyParts3D is not something the reader needs told. Everything else that
     // the atlas does not hold is.
+    const zReferenceFailed =
+      !!zReferenceTarget &&
+      zReferenceFailedRef.current.has(zReferenceTarget.modelKey);
+    const zReferenceLoaded =
+      !!zReferenceTarget &&
+      zReferenceGroupsRef.current.has(zReferenceTarget.modelKey);
+
     const genericHraFailed =
       !!hraGenericTarget &&
       hraGenericTarget.modelKeys.every((key) => hraOrganFailedRef.current.has(key));
@@ -2549,7 +2721,9 @@ varying float partSelected;
       hraGenericTarget.modelKeys.every((key) => hraOrganGroupsRef.current.has(key));
 
     setAbsentNotice(
-      isHraGenericOrganTarget && genericHraFailed
+      isZReferenceTarget && zReferenceFailed
+        ? 'The Z-Anatomy reference model failed to load on this device. ORBIT has not substituted unrelated anatomy.'
+        : isHraGenericOrganTarget && genericHraFailed
         ? 'The HRA reference organ failed to load on this device. ORBIT has not substituted unrelated anatomy.'
         : isHraHeartReferenceTarget && hraHeartFailed
         ? 'The HRA internal-heart reference failed to load on this device. ORBIT has not substituted a different cardiac structure.'
@@ -2784,9 +2958,9 @@ varying float partSelected;
       // CRITICAL FIX: Scalpel Dissection ALWAYS takes absolute top precedence!
       if (hiddenSet.has(p.id)) {
         visible = 0.0;
-      } else if (isHraGenericOrganTarget || isHraHeartReferenceTarget) {
-        // HRA references are different reference bodies. Do not overlay them
-        // on BodyParts3D and imply donor-level registration.
+      } else if (isZReferenceTarget || isHraGenericOrganTarget || isHraHeartReferenceTarget) {
+        // External references are different reference bodies. Do not overlay
+        // them on BodyParts3D and imply donor-level registration.
         visible = 0.0;
       } else if (useNerveContext) {
         // Nerves are easiest to understand against a faint bony scaffold.
@@ -2857,7 +3031,8 @@ varying float partSelected;
         isAutonomicTarget ||
         useNerveContext ||
         isHraHeartReferenceTarget ||
-        isHraGenericOrganTarget;
+        isHraGenericOrganTarget ||
+        isZReferenceTarget;
       const cardiacMat = materials.get('cardiac');
       if (cardiacMat) {
         cardiacMat.depthWrite = !isIsolationActive;
@@ -2870,6 +3045,29 @@ varying float partSelected;
 
     // Automatic Camera Framing onto Isolated Organ / Vessel / Nerve
     if (
+      isZReferenceTarget &&
+      zReferenceLoaded &&
+      !zReferenceBox.isEmpty() &&
+      cameraRef.current &&
+      controlsRef.current
+    ) {
+      const center = new THREE.Vector3();
+      const size = new THREE.Vector3();
+      zReferenceBox.getCenter(center);
+      zReferenceBox.getSize(size);
+      const maxDim = Math.max(size.x, size.y, size.z, 0.08);
+      const fov = cameraRef.current.fov * (Math.PI / 180);
+      let cameraDistance = (maxDim / 2) / Math.tan(fov / 2) * 1.42;
+      cameraDistance = Math.min(Math.max(cameraDistance, 0.15), 4.2);
+      controlsRef.current.minDistance = Math.max(maxDim * 0.05, 0.02);
+      controlsRef.current.target.copy(center);
+      cameraRef.current.position.set(
+        center.x,
+        center.y + maxDim * 0.035,
+        center.z + cameraDistance
+      );
+      controlsRef.current.update();
+    } else     if (
       isHraGenericOrganTarget &&
       genericHraLoaded &&
       !hraGenericBox.isEmpty() &&
@@ -2980,6 +3178,7 @@ varying float partSelected;
     hraHeartReady,
     hraHeartFailed,
     hraOrganRevision,
+    zReferenceRevision,
   ]);
 
   // Update GPU Selection DataTexture and 3D Selection Pointer when selectedOrganId or isolatedPartId changes
@@ -3224,6 +3423,24 @@ varying float partSelected;
           )}
         </div>
       </div>
+
+      {isZAnatomyReferenceTarget(isolatedPartId || selectedOrganId) && (() => {
+        const target = getZAnatomyReferenceTarget(isolatedPartId || selectedOrganId);
+        const ready = !!target && zReferenceGroupsRef.current.has(target.modelKey);
+        const failed = !!target && zReferenceFailedRef.current.has(target.modelKey);
+        return !ready && !failed;
+      })() && (
+        <div className="absolute top-16 left-3 right-3 z-20 flex justify-center pointer-events-none">
+          <div
+            role="status"
+            className={`px-3 py-2 rounded-2xl border backdrop-blur-xl text-xs font-semibold ${isLight
+              ? 'bg-teal-50/95 border-teal-300 text-teal-900 shadow-sm'
+              : 'bg-slate-900/90 border-teal-700/60 text-teal-300 shadow-lg'}`}
+          >
+            LOADING Z-ANATOMY REFERENCE…
+          </div>
+        </div>
+      )}
 
       {isHraOrganTarget(isolatedPartId || selectedOrganId) && (() => {
         const target = getHraOrganTarget(isolatedPartId || selectedOrganId);
