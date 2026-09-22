@@ -344,9 +344,9 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
             <div className="space-y-4">
               {/* Auscultation Site Picker */}
               <div className="space-y-2">
-                <div className="text-xs text-slate-400 font-semibold flex items-center justify-between">
+                <div className="text-xs text-slate-400 font-semibold flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                   <span>Auscultation Site (Tap to Place Stethoscope):</span>
-                  <div className="flex items-center gap-1">
+                  <div className="-mx-1 px-1 flex items-center gap-1 overflow-x-auto no-scrollbar">
                     <button
                       onClick={() => {
                         ensureAudioUnlocked();
