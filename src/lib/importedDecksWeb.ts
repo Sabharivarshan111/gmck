@@ -298,11 +298,16 @@ export async function importPackage(
 export async function importTextDeck(
   parsed: ParsedAnkiText,
   source: string,
-  name?: string
+  options: string | ImportPackageOptions = {}
 ): Promise<ImportedDeck> {
+  const resolved: ImportPackageOptions =
+    typeof options === 'string' ? { name: options } : options;
+  const selectedCards = resolved.decks
+    ? parsed.cards.filter((card) => resolved.decks!.has(card.deck))
+    : parsed.cards;
   const id = newId();
-  const truncated = parsed.cards.length > MAX_IMPORT_CARDS;
-  const taken = truncated ? parsed.cards.slice(0, MAX_IMPORT_CARDS) : parsed.cards;
+  const truncated = selectedCards.length > MAX_IMPORT_CARDS;
+  const taken = truncated ? selectedCards.slice(0, MAX_IMPORT_CARDS) : selectedCards;
   const cards: DeckCard[] = taken.map((card) => ({
     id: card.id,
     kind: 'theory',
@@ -316,7 +321,10 @@ export async function importTextDeck(
   const deckNames = [...new Set(taken.map((card) => card.deck).filter(Boolean))];
   const deck: ImportedDeck = {
     id,
-    name: (name ?? (deckNames.length === 1 ? deckNames[0] : parsed.deckName)).trim() || 'Imported text',
+    name: (
+      resolved.name ??
+      (deckNames.length === 1 ? deckNames[0] : parsed.deckName)
+    ).trim() || 'Imported text',
     source,
     cardCount: cards.length,
     decks: deckNames.length ? deckNames : [parsed.deckName],
