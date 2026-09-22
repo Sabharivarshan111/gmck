@@ -1,0 +1,104 @@
+name: Native Anki import E2E
+
+on:
+  push:
+    branches: [ "main", "chatgpt/**" ]
+    paths:
+      - 'src/lib/ankiText.ts'
+      - 'src/lib/apkgFormat.ts'
+      - 'mobile/src/lib/importedDecks.ts'
+      - 'mobile/src/native/NativeOrbitApkg.ts'
+      - 'mobile/android/app/src/main/java/com/aistudio/mbbsqbank/aycxvd/ApkgModule.kt'
+      - 'mobile/src/screens/FlashcardsScreen.tsx'
+      - 'mobile/preview/fixtures/anki-text/**'
+      - 'mobile/scripts/native_anki_import_driver.py'
+      - 'mobile/scripts/native_screenshot_driver.py'
+      - '.github/workflows/android-debug.yml'
+      - '.github/workflows/native-anki-import-e2e.yml'
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - 'src/lib/ankiText.ts'
+      - 'src/lib/apkgFormat.ts'
+      - 'mobile/src/lib/importedDecks.ts'
+      - 'mobile/src/native/NativeOrbitApkg.ts'
+      - 'mobile/android/app/src/main/java/com/aistudio/mbbsqbank/aycxvd/ApkgModule.kt'
+      - 'mobile/src/screens/FlashcardsScreen.tsx'
+      - 'mobile/scripts/native_anki_import_driver.py'
+      - '.github/workflows/native-anki-import-e2e.yml'
+
+permissions:
+  actions: read
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  emulator-import:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Wait for the matching debug APK
+        id: debug
+        uses: actions/github-script@v7
+        with:
+          script: |
+            for (let attempt = 0; attempt < 120; attempt++) {
+              const { data } = await github.rest.actions.listWorkflowRuns({
+                ...context.repo,
+                workflow_id: 'android-debug.yml',
+                head_sha: context.sha,
+                per_page: 10,
+              });
+              const run = data.workflow_runs.find(r => r.head_sha === context.sha);
+              if (run?.status === 'completed') {
+                if (run.conclusion !== 'success') {
+                  throw new Error(`Matching debug APK failed: ${run.conclusion}`);
+                }
+                core.setOutput('run_id', run.id);
+                return;
+              }
+              await new Promise(resolve => setTimeout(resolve, 15000));
+            }
+            throw new Error('Timed out waiting for the matching debug APK');
+
+      - name: Download matching native debug APK
+        uses: actions/download-artifact@v4
+        with:
+          name: orbit-debug-apk
+          path: downloaded-apk
+          run-id: ${{ steps.debug.outputs.run_id }}
+          github-token: ${{ github.token }}
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Import HTML-enabled Anki text on a real Android emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 29
+          target: default
+          arch: x86_64
+          profile: pixel_7_pro
+          emulator-boot-timeout: 300
+          disable-linux-hw-accel: false
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -camera-front none
+          script: |
+            adb install -r downloaded-apk/app-preview.apk
+            ORBIT_SCREENSHOT_OUT=artifacts/anki-import-native python3 mobile/scripts/native_anki_import_driver.py
+
+      - name: Upload Android import screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: anki-import-native-screenshots
+          path: artifacts/anki-import-native/*.png
+          if-no-files-found: warn
