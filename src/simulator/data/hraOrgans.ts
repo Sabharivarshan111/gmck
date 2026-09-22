@@ -29,6 +29,22 @@ export const HRA_ORGAN_MODELS: readonly HraOrganModelSpec[] = [
   { key: 'urinary_bladder', organKey: 'urinary_bladder', url: '/models/hra/VH_M_Urinary_Bladder.glb', fileName: 'VH_M_Urinary_Bladder.glb' },
   { key: 'thymus', organKey: 'thymus', url: '/models/hra/VH_M_Thymus.glb', fileName: 'VH_M_Thymus.glb' },
   { key: 'blood_vasculature', organKey: 'aorta', url: '/models/hra/VH_M_Blood_Vasculature.glb', fileName: 'VH_M_Blood_Vasculature.glb' },
+  { key: 'eye_left', organKey: 'eye', url: '/models/hra/VH_M_Eye_L.glb', fileName: 'VH_M_Eye_L.glb' },
+  { key: 'eye_right', organKey: 'eye', url: '/models/hra/VH_M_Eye_R.glb', fileName: 'VH_M_Eye_R.glb' },
+  { key: 'ureter_left', organKey: 'ureter', url: '/models/hra/VH_M_Ureter_L.glb', fileName: 'VH_M_Ureter_L.glb' },
+  { key: 'ureter_right', organKey: 'ureter', url: '/models/hra/VH_M_Ureter_R.glb', fileName: 'VH_M_Ureter_R.glb' },
+  { key: 'spinal_cord', organKey: 'spinal_cord', url: '/models/hra/VH_M_Spinal_Cord.glb', fileName: 'VH_M_Spinal_Cord.glb' },
+  { key: 'pelvis_male', organKey: 'pelvis', url: '/models/hra/VH_M_Pelvis.glb', fileName: 'VH_M_Pelvis.glb' },
+  { key: 'prostate', organKey: 'prostate', url: '/models/hra/VH_M_Prostate.glb', fileName: 'VH_M_Prostate.glb' },
+  { key: 'skin', organKey: 'skin', url: '/models/hra/VH_M_Skin.glb', fileName: 'VH_M_Skin.glb' },
+  { key: 'knee_left', organKey: 'knee', url: '/models/hra/VH_M_Knee_L.glb', fileName: 'VH_M_Knee_L.glb' },
+  { key: 'knee_right', organKey: 'knee', url: '/models/hra/VH_M_Knee_R.glb', fileName: 'VH_M_Knee_R.glb' },
+  { key: 'uterus', organKey: 'uterus', url: '/models/hra/VH_F_Uterus.glb', fileName: 'VH_F_Uterus.glb' },
+  { key: 'ovary_left', organKey: 'ovary', url: '/models/hra/VH_F_Ovary_L.glb', fileName: 'VH_F_Ovary_L.glb' },
+  { key: 'ovary_right', organKey: 'ovary', url: '/models/hra/VH_F_Ovary_R.glb', fileName: 'VH_F_Ovary_R.glb' },
+  { key: 'fallopian_tube_left', organKey: 'fallopian_tube', url: '/models/hra/VH_F_Fallopian_Tube_L.glb', fileName: 'VH_F_Fallopian_Tube_L.glb' },
+  { key: 'fallopian_tube_right', organKey: 'fallopian_tube', url: '/models/hra/VH_F_Fallopian_Tube_R.glb', fileName: 'VH_F_Fallopian_Tube_R.glb' },
+  { key: 'placenta', organKey: 'placenta', url: '/models/hra/VH_F_Placenta.glb', fileName: 'VH_F_Placenta.glb' },
 ] as const;
 
 const kidneyModels = ['kidney_left', 'kidney_right'] as const;
@@ -109,6 +125,78 @@ export const HRA_ORGAN_TARGETS: readonly HraOrganTarget[] = [
   { id: 'hra_renal_vessels', organKey: 'kidney', label: 'Renal vessels · HRA', shortLabel: 'Renal vessels', modelKeys: ['blood_vasculature'], includes: ['renal_artery', 'renal_vein'] },
   { id: 'hra_mesenteric_vessels', organKey: 'abdomen', label: 'Mesenteric vessels · HRA', shortLabel: 'Mesenteric', modelKeys: ['blood_vasculature'], includes: ['mesenteric_artery', 'mesenteric_vein', 'colic_artery', 'colic_vein', 'ileocolic'] },
   { id: 'hra_pulmonary_vessels', organKey: 'lungs', label: 'Pulmonary vessels · HRA', shortLabel: 'Pulm vessels', modelKeys: ['blood_vasculature'], includes: ['pulmonary_artery', 'pulmonary_vein', 'pulmonary_trunk'] },
+
+  // Eye — bilateral detailed HRA reference.
+  { id: 'hra_eye_overview', organKey: 'eye', label: 'Eyes · HRA', shortLabel: 'Overview', modelKeys: ['eye_left','eye_right'], matchAll: true },
+  { id: 'hra_eye_cornea', organKey: 'eye', label: 'Cornea · HRA', shortLabel: 'Cornea', modelKeys: ['eye_left','eye_right'], includes: ['cornea_'] },
+  { id: 'hra_eye_lens', organKey: 'eye', label: 'Lens · HRA', shortLabel: 'Lens', modelKeys: ['eye_left','eye_right'], includes: ['lens_'] },
+  { id: 'hra_eye_retina', organKey: 'eye', label: 'Retina · HRA', shortLabel: 'Retina', modelKeys: ['eye_left','eye_right'], includes: ['retina_'] },
+  { id: 'hra_eye_iris', organKey: 'eye', label: 'Iris · HRA', shortLabel: 'Iris', modelKeys: ['eye_left','eye_right'], includes: ['iris_'] },
+  { id: 'hra_eye_sclera', organKey: 'eye', label: 'Sclera · HRA', shortLabel: 'Sclera', modelKeys: ['eye_left','eye_right'], includes: ['sclera_'] },
+  { id: 'hra_eye_ciliary', organKey: 'eye', label: 'Ciliary body/muscle · HRA', shortLabel: 'Ciliary', modelKeys: ['eye_left','eye_right'], includes: ['ciliary_body','ciliary_muscle','ciliary_processes'] },
+  { id: 'hra_eye_fovea', organKey: 'eye', label: 'Fovea · HRA', shortLabel: 'Fovea', modelKeys: ['eye_left','eye_right'], includes: ['fovea_'] },
+  { id: 'hra_eye_humors', organKey: 'eye', label: 'Aqueous/vitreous humors · HRA', shortLabel: 'Humors', modelKeys: ['eye_left','eye_right'], includes: ['aqueous_humor','vitreous_humor'] },
+
+  // Ureter and renal collecting system.
+  { id: 'hra_ureter_overview', organKey: 'ureter', label: 'Ureters & collecting systems · HRA', shortLabel: 'Overview', modelKeys: ['ureter_left','ureter_right'], matchAll: true },
+  { id: 'hra_ureter', organKey: 'ureter', label: 'Ureters · HRA', shortLabel: 'Ureter', modelKeys: ['ureter_left','ureter_right'], includes: ['ureter_'] },
+  { id: 'hra_renal_pelvis', organKey: 'ureter', label: 'Renal pelvis · HRA', shortLabel: 'Renal pelvis', modelKeys: ['ureter_left','ureter_right'], includes: ['renal_pelvis'] },
+  { id: 'hra_major_calyces', organKey: 'ureter', label: 'Major calyces · HRA', shortLabel: 'Major calyces', modelKeys: ['ureter_left','ureter_right'], includes: ['major_calyx'] },
+  { id: 'hra_minor_calyces', organKey: 'ureter', label: 'Minor calyces · HRA', shortLabel: 'Minor calyces', modelKeys: ['ureter_left','ureter_right'], includes: ['minor_calyx'] },
+
+  // Spinal cord.
+  { id: 'hra_spinal_cord_overview', organKey: 'spinal_cord', label: 'Spinal cord · HRA', shortLabel: 'Overview', modelKeys: ['spinal_cord'], matchAll: true },
+  { id: 'hra_spinal_cord_cervical', organKey: 'spinal_cord', label: 'Cervical cord · HRA', shortLabel: 'Cervical', modelKeys: ['spinal_cord'], includes: ['cervical_spinal_cord'] },
+  { id: 'hra_spinal_cord_thoracic', organKey: 'spinal_cord', label: 'Thoracic cord · HRA', shortLabel: 'Thoracic', modelKeys: ['spinal_cord'], includes: ['thoracic_spinal_cord'] },
+  { id: 'hra_spinal_cord_lumbar', organKey: 'spinal_cord', label: 'Lumbar cord · HRA', shortLabel: 'Lumbar', modelKeys: ['spinal_cord'], includes: ['lumbar_spinal_cord'] },
+  { id: 'hra_spinal_cord_sacral', organKey: 'spinal_cord', label: 'Sacral cord · HRA', shortLabel: 'Sacral', modelKeys: ['spinal_cord'], includes: ['sacral_spinal_cord'] },
+
+  // Bony pelvis.
+  { id: 'hra_pelvis_overview', organKey: 'pelvis', label: 'Bony pelvis · HRA', shortLabel: 'Overview', modelKeys: ['pelvis_male'], matchAll: true },
+  { id: 'hra_pelvis_sacrum', organKey: 'pelvis', label: 'Sacrum · HRA', shortLabel: 'Sacrum', modelKeys: ['pelvis_male'], includes: ['sacrum'] },
+  { id: 'hra_pelvis_coccyx', organKey: 'pelvis', label: 'Coccyx · HRA', shortLabel: 'Coccyx', modelKeys: ['pelvis_male'], includes: ['coccyx'] },
+  { id: 'hra_pelvis_ilium', organKey: 'pelvis', label: 'Ilium · HRA', shortLabel: 'Ilium', modelKeys: ['pelvis_male'], includes: ['ilium_'] },
+  { id: 'hra_pelvis_ischium', organKey: 'pelvis', label: 'Ischium · HRA', shortLabel: 'Ischium', modelKeys: ['pelvis_male'], includes: ['ischium_'] },
+  { id: 'hra_pelvis_pubis', organKey: 'pelvis', label: 'Pubis · HRA', shortLabel: 'Pubis', modelKeys: ['pelvis_male'], includes: ['pubis_'] },
+
+  // Prostate / male reproductive anatomy.
+  { id: 'hra_prostate_overview', organKey: 'prostate', label: 'Prostate & ducts · HRA', shortLabel: 'Overview', modelKeys: ['prostate'], matchAll: true },
+  { id: 'hra_prostate_zones', organKey: 'prostate', label: 'Prostatic zones · HRA', shortLabel: 'Zones', modelKeys: ['prostate'], includes: ['zone_of_prostate'] },
+  { id: 'hra_prostate_apex_base', organKey: 'prostate', label: 'Prostate apex/base · HRA', shortLabel: 'Apex/Base', modelKeys: ['prostate'], includes: ['apex_of_prostate','base_of_prostate'] },
+  { id: 'hra_seminal_vesicle', organKey: 'prostate', label: 'Seminal vesicle · HRA', shortLabel: 'Seminal vesicle', modelKeys: ['prostate'], includes: ['seminal_vesicle'] },
+  { id: 'hra_vas_deferens', organKey: 'prostate', label: 'Vas deferens · HRA', shortLabel: 'Vas deferens', modelKeys: ['prostate'], includes: ['vas_deferens'] },
+  { id: 'hra_ejaculatory_duct', organKey: 'prostate', label: 'Ejaculatory duct · HRA', shortLabel: 'Ejac duct', modelKeys: ['prostate'], includes: ['ejaculatory_duct'] },
+
+  // Skin.
+  { id: 'hra_skin_overview', organKey: 'skin', label: 'Skin · HRA', shortLabel: 'Skin', modelKeys: ['skin'], matchAll: true },
+
+  // Knee — bilateral source reference.
+  { id: 'hra_knee_overview', organKey: 'knee', label: 'Knees · HRA', shortLabel: 'Overview', modelKeys: ['knee_left','knee_right'], matchAll: true },
+  { id: 'hra_knee_menisci', organKey: 'knee', label: 'Menisci · HRA', shortLabel: 'Menisci', modelKeys: ['knee_left','knee_right'], includes: ['meniscus_'] },
+  { id: 'hra_knee_cartilage', organKey: 'knee', label: 'Articular cartilage · HRA', shortLabel: 'Cartilage', modelKeys: ['knee_left','knee_right'], includes: ['articular_cartilage_of_knee'] },
+  { id: 'hra_knee_bones', organKey: 'knee', label: 'Knee bones · HRA', shortLabel: 'Bones', modelKeys: ['knee_left','knee_right'], includes: ['femur_','tibia_','fibula_','patella_'] },
+  { id: 'hra_knee_cruciate_entheses', organKey: 'knee', label: 'Cruciate entheses · HRA', shortLabel: 'ACL/PCL entheses', modelKeys: ['knee_left','knee_right'], includes: ['anterior_cruciate_enthesis','posterior_cruciate_enthesis'] },
+
+  // Female reproductive organs.
+  { id: 'hra_uterus_overview', organKey: 'uterus', label: 'Uterus · HRA', shortLabel: 'Overview', modelKeys: ['uterus'], matchAll: true },
+  { id: 'hra_uterus_body', organKey: 'uterus', label: 'Body of uterus · HRA', shortLabel: 'Body', modelKeys: ['uterus'], includes: ['body_of_uterus'] },
+  { id: 'hra_uterus_fundus', organKey: 'uterus', label: 'Fundus of uterus · HRA', shortLabel: 'Fundus', modelKeys: ['uterus'], includes: ['fundus_of_uterus'] },
+  { id: 'hra_uterus_cervix', organKey: 'uterus', label: 'Cervix · HRA', shortLabel: 'Cervix', modelKeys: ['uterus'], includes: ['cervix','cervical_os'] },
+  { id: 'hra_uterus_walls', organKey: 'uterus', label: 'Uterine walls · HRA', shortLabel: 'Walls', modelKeys: ['uterus'], includes: ['wall_of_uterus'] },
+
+  { id: 'hra_ovary_overview', organKey: 'ovary', label: 'Ovaries · HRA', shortLabel: 'Ovaries', modelKeys: ['ovary_left','ovary_right'], matchAll: true },
+
+  { id: 'hra_fallopian_overview', organKey: 'fallopian_tube', label: 'Uterine tubes · HRA', shortLabel: 'Overview', modelKeys: ['fallopian_tube_left','fallopian_tube_right'], matchAll: true },
+  { id: 'hra_fallopian_ampulla', organKey: 'fallopian_tube', label: 'Ampulla · HRA', shortLabel: 'Ampulla', modelKeys: ['fallopian_tube_left','fallopian_tube_right'], includes: ['ampulla_of_uterine_tube'] },
+  { id: 'hra_fallopian_isthmus', organKey: 'fallopian_tube', label: 'Isthmus · HRA', shortLabel: 'Isthmus', modelKeys: ['fallopian_tube_left','fallopian_tube_right'], includes: ['isthmus_of_fallopian_tube'] },
+  { id: 'hra_fallopian_fimbriae', organKey: 'fallopian_tube', label: 'Fimbriae · HRA', shortLabel: 'Fimbriae', modelKeys: ['fallopian_tube_left','fallopian_tube_right'], includes: ['fibria_of_uterine_tube'] },
+  { id: 'hra_fallopian_infundibulum', organKey: 'fallopian_tube', label: 'Infundibulum · HRA', shortLabel: 'Infundibulum', modelKeys: ['fallopian_tube_left','fallopian_tube_right'], includes: ['uterine_tube_infundibulum'] },
+
+  { id: 'hra_placenta_overview', organKey: 'placenta', label: 'Placenta · HRA', shortLabel: 'Overview', modelKeys: ['placenta'], matchAll: true },
+  { id: 'hra_placenta_plates', organKey: 'placenta', label: 'Basal/chorionic plates · HRA', shortLabel: 'Plates', modelKeys: ['placenta'], includes: ['basal_plate','chorionic_plate'] },
+  { id: 'hra_placenta_vessels', organKey: 'placenta', label: 'Placental vessels · HRA', shortLabel: 'Vessels', modelKeys: ['placenta'], includes: ['placenta_vessels','umbilical_artery','umbilical_vein'] },
+  { id: 'hra_placenta_cord', organKey: 'placenta', label: 'Umbilical cord · HRA', shortLabel: 'Cord', modelKeys: ['placenta'], includes: ['umbilical_cord'] },
+  { id: 'hra_placenta_amnion', organKey: 'placenta', label: 'Amnion · HRA', shortLabel: 'Amnion', modelKeys: ['placenta'], includes: ['amnion'] },
 ] as const;
 
 const modelByKey = new Map(HRA_ORGAN_MODELS.map((model) => [model.key, model]));
