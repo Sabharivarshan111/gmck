@@ -2160,3 +2160,43 @@ production runtime errors.
 6. Keep desktop behavior intact with `sm:/md:/lg:` overrides.
 7. Never undo anatomy source/provenance rules while changing layout.
 8. Keep the mobile UI regression gate in CI.
+
+## 2026-09-22 — ChatGPT — notes autosave/fullscreen + native Anki media fix
+
+Product commit: `e2103260a933a51ac4d8e6567bad0c05b4d46ad6`.
+
+### Notes
+- The green ORBIT video controls remain unchanged.
+- YouTube's own iframe/native fullscreen path is disabled (`fs=0`, no iframe
+  `allowfullscreen`, and all note WebViews use `allowsFullscreenVideo={false}`).
+  ORBIT's dedicated fullscreen modal is now the only fullscreen path.
+- Notes keep a device-only crash/recreation draft under
+  `orbit:user-note-draft:v1:<noteId>`. Drafts debounce while typing, flush when
+  Android backgrounds/closes the editor, recover when reopened, and are cleared
+  after an intentional Save. They do not sync to a server.
+
+### Imported Anki media
+- `ApkgModule.extractMedia` now returns the exact filename Android wrote for
+  each media zip index.
+- `importedDecks.ts` consumes that index→filename map instead of reconstructing
+  the filename independently in JavaScript. This removes URL-decoding,
+  Unicode/case, and sanitisation disagreements that could leave cards pointing
+  at nonexistent local image paths.
+- The renderer already supported front/back Anki images and tap-to-zoom; this
+  fix is at the native extraction→stored URI boundary.
+- Existing decks imported before this fix may retain old saved URIs. Re-import
+  an affected deck with this build to regenerate its cards/media paths.
+- No image-bearing affected APKG was available in the connected files for a
+  real-device reproduction. CI proves compilation/checks; the specific media
+  behavior still needs confirmation by re-importing a real affected deck on
+  Android.
+
+### Published builds from the product commit
+- Signed Play/direct release: `release-515`, versionCode 23 / 0.0.0.23.
+  Assets: `app-release.aab`, `app-release.apk`. Live ads enabled.
+- Internal: `internal-316`, asset `app-internal.apk`. No ads.
+- Debug/preview: `debug-322`, asset `app-preview.apk`. No ads.
+- Android release run `35747164272`, internal run `35747164383`, and debug
+  run `35747164269` all completed successfully. Web run `35747164326` also
+  completed successfully.
+
