@@ -1473,9 +1473,9 @@ export const EcgIcuTutorialModal: React.FC<EcgIcuTutorialModalProps> = ({
   const isLight = theme === 'light';
 
   return (
-    <div className="fixed inset-0 z-[70] flex items-center justify-center p-3 sm:p-6 bg-black/75 backdrop-blur-md animate-fadeIn">
+    <div className="fixed inset-0 z-[70] flex items-stretch sm:items-center justify-center p-0 sm:p-6 bg-black/75 backdrop-blur-md animate-fadeIn overflow-hidden">
       <div
-        className={`relative w-full max-w-5xl max-h-[92vh] flex flex-col rounded-3xl border shadow-2xl overflow-hidden transition-all ${
+        className={`relative w-full max-w-5xl h-[100dvh] sm:h-auto max-h-[100dvh] sm:max-h-[92vh] flex flex-col rounded-none sm:rounded-3xl border-0 sm:border shadow-2xl overflow-hidden transition-all ${
           isLight
             ? 'bg-slate-50 border-slate-200 text-slate-900 shadow-slate-900/20'
             : 'bg-[#090e1a] border-slate-800 text-slate-100 shadow-cyan-950/30'
@@ -1483,24 +1483,24 @@ export const EcgIcuTutorialModal: React.FC<EcgIcuTutorialModalProps> = ({
       >
         {/* Modal Header */}
         <div
-          className={`flex items-center justify-between px-6 py-4 border-b ${
+          className={`sticky top-0 z-20 flex items-center justify-between gap-2 px-3 sm:px-6 py-2.5 sm:py-4 border-b ${
             isLight ? 'bg-white border-slate-200' : 'bg-slate-900/90 border-slate-800'
           }`}
         >
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-rose-500 to-amber-500 flex items-center justify-center text-white shadow-md">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+            <div className="hidden sm:flex w-10 h-10 rounded-2xl bg-gradient-to-tr from-rose-500 to-amber-500 items-center justify-center text-white shadow-md">
               <GraduationCap className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-lg font-bold tracking-tight">
+                <h2 className="text-sm sm:text-lg font-bold tracking-tight truncate">
                   12-Lead ECG & ICU Telemetry Masterclass
                 </h2>
                 <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20">
                   Visual Walkthrough
                 </span>
               </div>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <p className="hidden sm:block text-xs text-slate-500 dark:text-slate-400">
                 Intuitive interactive animations, biophysical vectors, and hospital telemetry from fundamentals to fellowship.
               </p>
             </div>
@@ -1508,7 +1508,7 @@ export const EcgIcuTutorialModal: React.FC<EcgIcuTutorialModalProps> = ({
 
           <button
             onClick={onClose}
-            className={`p-2 rounded-xl transition-all cursor-pointer ${
+            className={`min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl transition-all cursor-pointer shrink-0 ${
               isLight
                 ? 'hover:bg-slate-100 text-slate-500 hover:text-slate-900'
                 : 'hover:bg-slate-800 text-slate-400 hover:text-slate-100'
@@ -1520,7 +1520,7 @@ export const EcgIcuTutorialModal: React.FC<EcgIcuTutorialModalProps> = ({
 
         {/* 4-Tier Curriculum Selector */}
         <div
-          className={`flex items-center gap-2 px-6 py-3 border-b overflow-x-auto ${
+          className={`flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-6 py-2 sm:py-3 border-b overflow-x-auto no-scrollbar ${
             isLight ? 'bg-slate-100/80 border-slate-200' : 'bg-slate-950/70 border-slate-800/80'
           }`}
         >
@@ -1557,7 +1557,7 @@ export const EcgIcuTutorialModal: React.FC<EcgIcuTutorialModalProps> = ({
             <button
               key={tier.id}
               onClick={() => setActiveLevel(tier.id as TutorialLevel)}
-              className={`flex items-center gap-2.5 px-4 py-2 rounded-2xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+              className={`min-h-[44px] shrink-0 flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl sm:rounded-2xl text-[11px] sm:text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
                 activeLevel === tier.id
                   ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-md border border-slate-200 dark:border-slate-700 ring-2 ring-rose-500/20'
                   : 'text-slate-600 dark:text-slate-400 hover:bg-white/50 dark:hover:bg-slate-800/50'
@@ -1571,7 +1571,7 @@ export const EcgIcuTutorialModal: React.FC<EcgIcuTutorialModalProps> = ({
         </div>
 
         {/* Scrollable Content Body */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-6">
+        <div className="flex-1 overflow-y-auto overscroll-contain p-2.5 sm:p-4 md:p-6 space-y-3 sm:space-y-6 pb-[calc(16px+env(safe-area-inset-bottom))]">
           {/* ================================================================= */}
           {/* TIER 1: INTERACTIVE VISUAL WALKTHROUGH                            */}
           {/* ================================================================= */}
