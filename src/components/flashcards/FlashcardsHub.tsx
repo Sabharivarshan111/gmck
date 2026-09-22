@@ -31,7 +31,9 @@ import {
   MAX_IMPORT_CARDS,
   type ImportedDeck,
 } from "@/lib/importedDecksWeb";
-import { parseAnkiText } from "@/lib/ankiText";
+import { deckSummary } from "@/lib/apkgFormat";
+import type { ImportedApkg } from "@/lib/apkgWeb";
+import { parseAnkiText, type ParsedAnkiText } from "@/lib/ankiText";
 /*
  * Where sql.js finds its WASM, resolved by Vite at build time.
  *
@@ -355,6 +357,10 @@ function YearsView({
  *   the first five thousand of a thirty-thousand-card package is exactly the
  *   "it imported but half my deck is missing" report.
  */
+type StagedAnkiImport =
+  | { kind: "package"; fileName: string; pkg: ImportedApkg }
+  | { kind: "text"; fileName: string; parsed: ParsedAnkiText };
+
 function ImportPanel({
   decks,
   onDecks,
@@ -364,92 +370,240 @@ function ImportPanel({
   onDecks: (decks: ImportedDeck[]) => void;
   onStudy: (deck: ImportedDeck) => void;
 }) {
-  const [busy, setBusy] = useState(false);
+  const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [notice, setNotice] = useState<string | null>(null);
+  const [staged, setStaged] = useState<StagedAnkiImport | null>(null);
+  const [chosen, setChosen] = useState<Set<string>>(new Set());
 
-  const onFile = useCallback(
-    async (event: React.ChangeEvent<HTMLInputElement>) => {
-      const file = event.target.files?.[0];
-      // Clearing the input is what lets the same file be chosen twice. Without
-      // it a failed import cannot be retried without picking something else
-      // first, which reads as the button having stopped working.
-      event.target.value = "";
-      if (!file) return;
-
-      setBusy(true);
-      setError(null);
-      setNotice(null);
-      try {
-        if (/\.(txt|csv|tsv)$/i.test(file.name)) {
-          const parsed = parseAnkiText(await file.text(), file.name);
-          const deck = await importTextDeck(parsed, file.name);
-          onDecks(loadImportedDecks());
-          if (parsed.warnings.length > 0) {
-            setNotice(parsed.warnings.join(" "));
-          } else {
-            onStudy(deck);
-          }
-        } else if (/\.(apkg|colpkg)$/i.test(file.name)) {
-          const { readApkg, setSqlWasmUrl } = await import("@/lib/apkgWeb");
-          setSqlWasmUrl(sqlWasmUrl);
-          const pkg = await readApkg(file);
-          const deck = await importPackage(pkg, file.name);
-          onDecks(loadImportedDecks());
-          onStudy(deck);
-        } else if (/\.html?$/i.test(file.name)) {
-          throw new Error(
-            "Anki HTML import means HTML inside a .txt, .csv, or .tsv field. A standalone .html file is not an Anki deck; export text/CSV or .apkg instead."
-          );
-        } else {
-          throw new Error("Choose an .apkg, .colpkg, .txt, .csv, or .tsv Anki export.");
-        }
-      } catch (e) {
-        setError((e as Error).message || "That Anki export could not be opened.");
-      } finally {
-        setBusy(false);
-      }
-    },
-    [onDecks, onStudy]
+  const summaries = useMemo(() => {
+    if (!staged) return [];
+    if (staged.kind === "package") return deckSummary(staged.pkg.collection);
+    const counts = new Map<string, number>();
+    for (const card of staged.parsed.cards) {
+      counts.set(card.deck, (counts.get(card.deck) ?? 0) + 1);
+    }
+    return [...counts.entries()]
+      .map(([name, cards]) => ({ name, cards }))
+      .sort((a, b) => b.cards - a.cards || a.name.localeCompare(b.name));
+  }, [staged]);
+  const selectedCount = useMemo(
+    () =>
+      summaries.reduce(
+        (total, summary) => total + (chosen.has(summary.name) ? summary.cards : 0),
+        0
+      ),
+    [chosen, summaries]
   );
+
+  const onFile = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    // Clearing the input lets the same file be chosen again after a failed or
+    // cancelled attempt.
+    event.target.value = "";
+    if (!file) return;
+
+    setBusy("Reading the export…");
+    setError(null);
+    try {
+      if (/\.(txt|csv|tsv)$/i.test(file.name)) {
+        const parsed = parseAnkiText(await file.text(), file.name);
+        const names = [...new Set(parsed.cards.map((card) => card.deck).filter(Boolean))];
+        setStaged({ kind: "text", fileName: file.name, parsed });
+        setChosen(new Set(names));
+      } else if (/\.(apkg|colpkg)$/i.test(file.name)) {
+        const { readApkg, setSqlWasmUrl } = await import("@/lib/apkgWeb");
+        setSqlWasmUrl(sqlWasmUrl);
+        const pkg = await readApkg(file);
+        const inside = deckSummary(pkg.collection);
+        if (inside.length === 0 || pkg.cards.length === 0) {
+          throw new Error("Nothing in this package could be turned into a card.");
+        }
+        setStaged({ kind: "package", fileName: file.name, pkg });
+        // Native behaviour: take everything unless the reader narrows it.
+        setChosen(new Set(inside.map((deck) => deck.name)));
+      } else if (/\.html?$/i.test(file.name)) {
+        throw new Error(
+          "Anki HTML import means HTML inside a .txt, .csv, or .tsv field. A standalone .html file is not an Anki deck; export text/CSV or .apkg instead."
+        );
+      } else {
+        throw new Error("Choose an .apkg, .colpkg, .txt, .csv, or .tsv Anki export.");
+      }
+    } catch (e) {
+      setStaged(null);
+      setChosen(new Set());
+      setError((e as Error).message || "That Anki export could not be opened.");
+    } finally {
+      setBusy(null);
+    }
+  }, []);
+
+  const importChosen = useCallback(async () => {
+    if (!staged || selectedCount === 0) return;
+    setBusy("Saving the deck…");
+    setError(null);
+    try {
+      const deck =
+        staged.kind === "package"
+          ? await importPackage(staged.pkg, staged.fileName, { decks: chosen })
+          : await importTextDeck(staged.parsed, staged.fileName, { decks: chosen });
+      setStaged(null);
+      setChosen(new Set());
+      onDecks(loadImportedDecks());
+      onStudy(deck);
+    } catch (e) {
+      setError((e as Error).message || "That Anki export could not be imported.");
+    } finally {
+      setBusy(null);
+    }
+  }, [chosen, onDecks, onStudy, selectedCount, staged]);
+
+  const resetStaged = useCallback(() => {
+    setStaged(null);
+    setChosen(new Set());
+    setError(null);
+  }, []);
 
   return (
     <div className="rounded-xl border bg-card p-4 space-y-3">
       <div className="space-y-1">
-        <p className="text-sm font-medium">Import an Anki deck or text export</p>
+        <p className="text-sm font-medium">Import your Anki cards</p>
         <p className="text-xs text-muted-foreground">
-          .apkg/.colpkg carry full decks and media. .txt/.csv/.tsv can contain HTML in their
-          fields. Everything is read in this browser and stays here — nothing is uploaded.
+          Open .apkg/.colpkg packages or Anki .txt/.csv/.tsv text exports. Text fields can
+          contain HTML formatting. Everything is read in this browser and stays here — nothing
+          is uploaded.
         </p>
       </div>
 
-      <label className="block">
-        <input
-          type="file"
-          accept=".apkg,.colpkg,.txt,.csv,.tsv,application/zip,text/plain,text/csv,text/tab-separated-values"
-          className="sr-only"
-          disabled={busy}
-          onChange={onFile}
-          aria-label="Choose an Anki deck or text export to import"
-        />
-        <span
-          className={`flex items-center justify-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium ${
-            busy ? "opacity-60" : "cursor-pointer hover:bg-muted/60"
-          }`}
-        >
-          {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
-          {busy ? "Reading the export…" : "Choose .apkg / .txt / .csv"}
-        </span>
-      </label>
+      {!staged ? (
+        <label className="block">
+          <input
+            type="file"
+            accept=".apkg,.colpkg,.txt,.csv,.tsv,application/zip,application/octet-stream,text/plain,text/csv,text/tab-separated-values"
+            className="sr-only"
+            disabled={busy !== null}
+            onChange={onFile}
+            aria-label="Choose an Anki deck or text export to import"
+          />
+          <span
+            className={`flex items-center justify-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium ${
+              busy ? "opacity-60" : "cursor-pointer hover:bg-muted/60"
+            }`}
+          >
+            {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+            {busy ?? "Choose .apkg / .txt / .csv"}
+          </span>
+        </label>
+      ) : (
+        <div className="space-y-3 rounded-xl border bg-muted/20 p-3">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <p className="text-sm font-semibold truncate">{staged.fileName}</p>
+              <p className="text-xs text-muted-foreground">
+                Choose the decks to bring into Orbit.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={resetStaged}
+              disabled={busy !== null}
+              className="text-xs font-medium text-muted-foreground hover:text-foreground"
+            >
+              Choose another
+            </button>
+          </div>
+
+          <div className="flex items-center justify-between gap-2 text-xs">
+            <span className="text-muted-foreground">
+              {chosen.size} of {summaries.length} decks selected
+            </span>
+            <div className="flex gap-3">
+              <button
+                type="button"
+                className="font-medium text-primary"
+                onClick={() => setChosen(new Set(summaries.map((deck) => deck.name)))}
+              >
+                Select all
+              </button>
+              <button
+                type="button"
+                className="font-medium text-muted-foreground"
+                onClick={() => setChosen(new Set())}
+              >
+                Clear
+              </button>
+            </div>
+          </div>
+
+          <div className="max-h-64 space-y-2 overflow-y-auto pr-1">
+            {summaries.map((summary) => {
+              const checked = chosen.has(summary.name);
+              return (
+                <label
+                  key={summary.name}
+                  className="flex cursor-pointer items-center gap-3 rounded-lg border bg-card p-3"
+                >
+                  <input
+                    type="checkbox"
+                    checked={checked}
+                    onChange={() =>
+                      setChosen((previous) => {
+                        const next = new Set(previous);
+                        if (checked) next.delete(summary.name);
+                        else next.add(summary.name);
+                        return next;
+                      })
+                    }
+                    aria-label={`Include ${summary.name}`}
+                    className="h-4 w-4 accent-primary"
+                  />
+                  <span className="min-w-0 flex-1 text-sm font-medium break-words">
+                    {summary.name}
+                  </span>
+                  <span className="text-xs tabular-nums text-muted-foreground">
+                    {summary.cards.toLocaleString()}
+                  </span>
+                </label>
+              );
+            })}
+          </div>
+
+          <div className="flex items-center justify-between text-xs">
+            <span className="text-muted-foreground">Selected</span>
+            <span className="font-semibold">
+              {selectedCount.toLocaleString()} cards
+            </span>
+          </div>
+
+          {selectedCount > MAX_IMPORT_CARDS && (
+            <p className="text-xs text-amber-600 dark:text-amber-400">
+              This selection is larger than {MAX_IMPORT_CARDS.toLocaleString()} cards. Orbit
+              will import the first {MAX_IMPORT_CARDS.toLocaleString()} and mark the deck as
+              partial.
+            </p>
+          )}
+
+          <Button
+            className="w-full"
+            disabled={selectedCount === 0 || busy !== null}
+            onClick={() => void importChosen()}
+            aria-label={`Import ${Math.min(selectedCount, MAX_IMPORT_CARDS).toLocaleString()} selected Anki cards`}
+          >
+            {busy ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Upload className="mr-2 h-4 w-4" />}
+            {busy ?? `Import ${Math.min(selectedCount, MAX_IMPORT_CARDS).toLocaleString()} cards`}
+          </Button>
+        </div>
+      )}
+
+      {staged?.kind === "text" &&
+        staged.parsed.warnings.map((warning) => (
+          <p key={warning} className="text-xs text-amber-700 dark:text-amber-300" role="status">
+            {warning}
+          </p>
+        ))}
 
       {error && (
         <p className="text-xs text-red-600 dark:text-red-400" role="alert">
           {error}
-        </p>
-      )}
-      {notice && (
-        <p className="text-xs text-amber-700 dark:text-amber-300" role="status">
-          {notice}
         </p>
       )}
 
@@ -462,9 +616,14 @@ function ImportPanel({
           >
             <p className="text-sm font-medium truncate">{deck.name}</p>
             <p className="text-xs text-muted-foreground">
-              {deck.cardCount} cards
-              {deck.mediaCount > 0 && ` · ${deck.mediaCount} pictures`}
-              {deck.truncated && ` · first ${MAX_IMPORT_CARDS} of a larger package`}
+              {deck.cardCount.toLocaleString()} cards
+              {deck.mediaCount > 0 &&
+                ` · ${deck.mediaCount.toLocaleString()} pictures · ${Math.max(
+                  1,
+                  Math.round(deck.mediaBytes / 1e6)
+                )} MB`}
+              {deck.truncated &&
+                ` · first ${MAX_IMPORT_CARDS.toLocaleString()} of a larger selection`}
             </p>
           </button>
           <Button
@@ -482,8 +641,8 @@ function ImportPanel({
 
       <p className="text-[10px] text-muted-foreground">
         HTML support means HTML inside fields of an Anki text/CSV export; a standalone .html
-        document is not an Anki deck format. Use .apkg/.colpkg when pictures or audio need to
-        travel with the deck.
+        document is not an Anki deck format. Use .apkg/.colpkg when pictures, audio or scheduling
+        data need to travel with the deck.
       </p>
       <p className="text-[10px] text-muted-foreground">
         Anki is a trademark of Ankitects Pty Ltd. Orbit is not affiliated with, endorsed by
@@ -492,7 +651,6 @@ function ImportPanel({
     </div>
   );
 }
-
 function SubjectsView({
   year,
   onBack,
