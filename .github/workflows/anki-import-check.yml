@@ -1,0 +1,80 @@
+name: Anki import compatibility
+
+# Runs only when the importer itself changes. It covers both supported families:
+# packaged decks (.apkg/.colpkg) and UTF-8 text exports whose fields may contain
+# HTML (.txt/.csv/.tsv).
+on:
+  push:
+    branches: [ "main", "chatgpt/**" ]
+    paths:
+      - 'src/lib/apkgFormat.ts'
+      - 'src/lib/apkgWeb.ts'
+      - 'src/lib/ankiText.ts'
+      - 'src/lib/importedDecksWeb.ts'
+      - 'src/components/flashcards/FlashcardsHub.tsx'
+      - 'mobile/src/lib/importedDecks.ts'
+      - 'mobile/src/native/NativeOrbitApkg.ts'
+      - 'mobile/android/app/src/main/java/com/aistudio/mbbsqbank/aycxvd/ApkgModule.kt'
+      - 'mobile/src/screens/FlashcardsScreen.tsx'
+      - 'mobile/scripts/anki-text-check.mjs'
+      - 'mobile/scripts/apkg-check.mjs'
+      - 'mobile/preview/web-apkg-import-check.mjs'
+      - 'mobile/preview/fixtures/anki-text/**'
+      - '.github/workflows/anki-import-check.yml'
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - 'src/lib/**anki*'
+      - 'src/lib/apkg*'
+      - 'src/components/flashcards/FlashcardsHub.tsx'
+      - 'mobile/src/lib/importedDecks.ts'
+      - 'mobile/src/native/NativeOrbitApkg.ts'
+      - 'mobile/android/app/src/main/java/com/aistudio/mbbsqbank/aycxvd/ApkgModule.kt'
+      - 'mobile/src/screens/FlashcardsScreen.tsx'
+      - 'mobile/scripts/anki-text-check.mjs'
+      - 'mobile/preview/web-apkg-import-check.mjs'
+      - '.github/workflows/anki-import-check.yml'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  importer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install web dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Install browser runner without changing the lockfile
+        run: |
+          npm install --no-save --package-lock=false --legacy-peer-deps playwright@1.62.1
+          npx playwright install --with-deps chromium
+
+      - name: Shared text and HTML-field parser
+        run: node mobile/scripts/anki-text-check.mjs
+
+      - name: Build the production web app
+        run: npm run build
+
+      - name: Real browser imports APKG and HTML-enabled text
+        env:
+          PLAYWRIGHT_CHROMIUM: ${{ github.workspace }}/.cache/unused
+        run: |
+          export PLAYWRIGHT_CHROMIUM="$(node -e "const { chromium } = require('playwright'); process.stdout.write(chromium.executablePath())")"
+          node mobile/preview/web-apkg-import-check.mjs /tmp/anki-import-shots
+
+      - name: Upload importer screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: anki-import-browser-shots
+          path: /tmp/anki-import-shots
+          if-no-files-found: ignore
