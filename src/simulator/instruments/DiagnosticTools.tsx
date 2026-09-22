@@ -227,7 +227,7 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
                   </button>
                   <button
                     onClick={() => setFlashlightOn('none')}
-                    className="min-h-[44px] shrink-0 px-2.5 py-1.5 rounded-xl text-[11px] sm:text-xs font-semibold bg-slate-800/80 hover:bg-slate-700 text-slate-400 border border-slate-700 cursor-pointer"
+                    className="min-h-[44px] min-w-[44px] shrink-0 px-2.5 py-1.5 rounded-xl text-[11px] sm:text-xs font-semibold bg-slate-800/80 hover:bg-slate-700 text-slate-400 border border-slate-700 cursor-pointer"
                   >
                     Off
                   </button>
