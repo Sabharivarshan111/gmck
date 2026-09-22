@@ -237,6 +237,7 @@ export const PocusCanvas: React.FC<PocusCanvasProps> = ({
       {/* 2. CRT Ultrasound Machine Bezel & Screen */}
       <div className="relative bg-[#020408] rounded-2xl overflow-hidden border border-slate-800 p-2 shadow-2xl flex items-center justify-center">
         <canvas
+          data-testid="pocus-canvas"
           ref={canvasRef}
           onClick={handleCanvasClick}
           className={`w-full rounded-xl h-[46dvh] min-h-[300px] max-h-[420px] md:h-[380px] md:min-h-0 md:max-h-none select-none ${
