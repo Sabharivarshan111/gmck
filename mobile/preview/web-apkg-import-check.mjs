@@ -139,15 +139,30 @@ try {
 
   await importer.setInputFiles(fixture);
 
-  // The first import downloads ~1.5MB of SQLite WASM and then parses a
-  // database, so this waits on the outcome rather than on a duration.
+  // Reading a package now stops at the same chooser the native app uses. The
+  // package fixture contains ten cards; all sub-decks are selected by default.
+  const importSelected = page.getByRole('button', {
+    name: /^Import 10 selected Anki cards$/i,
+  });
+  await importSelected.waitFor({ timeout: 90_000 });
+  const deckChoices = page.getByRole('checkbox', { name: /^Include /i });
+  check(await deckChoices.count() > 0, 'the package opened without a sub-deck chooser');
+  for (let i = 0; i < (await deckChoices.count()); i += 1) {
+    check(await deckChoices.nth(i).isChecked(), 'a sub-deck was not selected by default');
+  }
+  await shot('web-anki-2-deck-chooser');
+
+  await importSelected.click();
+
+  // Saving cards and Blob media into IndexedDB can take a moment on a large
+  // package, so wait on the study-screen outcome rather than a fixed delay.
   await page.waitForFunction(
     () => /show answer|nothing due right now/i.test(document.body.innerText),
     null,
     { timeout: 90_000 },
   );
   await page.waitForTimeout(300);
-  await shot('web-anki-2-first-card');
+  await shot('web-anki-3-first-card');
 
   const studying = await page.evaluate(() => document.body.innerText);
 
@@ -170,7 +185,7 @@ try {
   check(await showAnswer.count() > 0, 'there is no way to reveal a card');
   await showAnswer.click();
   await page.waitForTimeout(200);
-  await shot('web-anki-3-answer');
+  await shot('web-anki-4-answer');
 
   const revealed = await page.evaluate(() => document.body.innerText);
   check(/ANSWER/.test(revealed), 'revealing a card shows no answer');
@@ -189,7 +204,7 @@ try {
     );
     check(!/ANSWER/.test(after), 'the next card opened with its answer already showing');
   }
-  await shot('web-anki-4-after-grading');
+  await shot('web-anki-5-after-grading');
 
   // The deck has to survive a reload — it is in IndexedDB, and the list that
   // names it is in localStorage. Two stores that have to agree.
@@ -198,7 +213,7 @@ try {
 
   const back = await page.evaluate(() => document.body.innerText);
   check(/10 cards/.test(back), 'the imported deck did not survive a reload');
-  await shot('web-anki-5-after-reload');
+  await shot('web-anki-6-after-reload');
 
   const studyAgain = page.getByRole('button', { name: /^Study .*10 cards$/i });
   check(await studyAgain.count() > 0, 'the imported deck cannot be reopened from the list');
@@ -211,7 +226,7 @@ try {
     const gone = await page.evaluate(() => document.body.innerText);
     check(!/10 cards/.test(gone), 'deleting the deck left it in the list');
   }
-  await shot('web-anki-6-deleted');
+  await shot('web-anki-7-deleted');
 } finally {
   await browser.close();
   server.close();
