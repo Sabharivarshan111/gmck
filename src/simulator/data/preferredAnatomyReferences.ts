@@ -17,7 +17,7 @@ export const PREFERRED_ANATOMY_OVERVIEW_TARGETS: Readonly<Record<string, string>
   lungs: 'hra_lung_overview',
   brain: 'za_brain_overview',
   liver: 'hra_liver_overview',
-  stomach: 'za_stomach_overview',
+  stomach: 'za_stomach',
   pancreas: 'hra_pancreas_overview',
   spleen: 'hra_spleen_overview',
   small_intestine: 'hra_small_intestine_overview',
