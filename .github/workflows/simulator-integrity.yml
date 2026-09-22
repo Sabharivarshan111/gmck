@@ -8,6 +8,7 @@ on:
       - "src/pages/Simulator.tsx"
       - "public/models/**"
       - "scripts/simulator-organ-check.mjs"
+      - "scripts/simulator-mobile-ui-check.mjs"
       - "scripts/simulator-model-asset-check.mjs"
       - "scripts/all-organ-anatomy-audit.mjs"
       - "scripts/heart-anatomy-audit.mjs"
@@ -20,6 +21,7 @@ on:
       - "src/pages/Simulator.tsx"
       - "public/models/**"
       - "scripts/simulator-organ-check.mjs"
+      - "scripts/simulator-mobile-ui-check.mjs"
       - "scripts/simulator-model-asset-check.mjs"
       - ".github/workflows/simulator-integrity.yml"
   workflow_dispatch:
@@ -41,6 +43,8 @@ jobs:
         run: npm ci --legacy-peer-deps --ignore-scripts
       - name: Organ resolver regression suite
         run: npm run check:simulator
+      - name: Mobile simulator UI regression suite
+        run: npm run check:simulator-mobile
       - name: Model asset integrity
         run: npm run check:simulator-assets
       - name: Heart anatomy completeness audit
