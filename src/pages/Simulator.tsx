@@ -700,7 +700,7 @@ export const Simulator: React.FC = () => {
                   setCameraPreset('thorax');
                   setMobileTab('3d');
                 }}
-                className={`min-h-[40px] px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap flex-shrink-0 border transition-all active:scale-95 ${isolatedPartId === id
+                className={`min-h-[44px] px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap flex-shrink-0 border transition-all active:scale-95 ${isolatedPartId === id
                   ? isLight
                     ? 'bg-rose-600 border-rose-700 text-white shadow-sm'
                     : 'bg-rose-400 border-rose-300 text-slate-950 shadow-sm'
@@ -712,7 +712,7 @@ export const Simulator: React.FC = () => {
               </button>
             ))}
             <span
-              className={`min-h-[40px] px-3 py-1.5 rounded-xl text-[10px] font-semibold whitespace-nowrap flex items-center border ${isLight
+              className={`min-h-[44px] px-3 py-1.5 rounded-xl text-[10px] font-semibold whitespace-nowrap flex items-center border ${isLight
                 ? 'bg-amber-50 border-amber-200 text-amber-900'
                 : 'bg-amber-950/50 border-amber-800 text-amber-200'}`}
               title="These structures are not represented as independent source meshes in the current atlas."
@@ -741,7 +741,7 @@ export const Simulator: React.FC = () => {
                   setCameraPreset('thorax');
                   setMobileTab('3d');
                 }}
-                className={`min-h-[40px] px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap flex-shrink-0 border transition-all active:scale-95 ${isolatedPartId === target.id
+                className={`min-h-[44px] px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap flex-shrink-0 border transition-all active:scale-95 ${isolatedPartId === target.id
                   ? isLight
                     ? 'bg-fuchsia-600 border-fuchsia-700 text-white shadow-sm'
                     : 'bg-fuchsia-400 border-fuchsia-300 text-slate-950 shadow-sm'
@@ -754,7 +754,7 @@ export const Simulator: React.FC = () => {
               </button>
             ))}
             <span
-              className={`min-h-[40px] px-3 py-1.5 rounded-xl text-[10px] font-semibold whitespace-nowrap flex items-center border ${isLight
+              className={`min-h-[44px] px-3 py-1.5 rounded-xl text-[10px] font-semibold whitespace-nowrap flex items-center border ${isLight
                 ? 'bg-white border-fuchsia-200 text-fuchsia-900'
                 : 'bg-slate-900 border-fuchsia-800 text-fuchsia-200'}`}
             >
@@ -801,7 +801,7 @@ export const Simulator: React.FC = () => {
                     );
                     setMobileTab('3d');
                   }}
-                  className={`min-h-[40px] px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap flex-shrink-0 border transition-all active:scale-95 ${isolatedPartId === target.id
+                  className={`min-h-[44px] px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap flex-shrink-0 border transition-all active:scale-95 ${isolatedPartId === target.id
                     ? isLight
                       ? 'bg-violet-600 border-violet-700 text-white shadow-sm'
                       : 'bg-violet-400 border-violet-300 text-slate-950 shadow-sm'
@@ -814,7 +814,7 @@ export const Simulator: React.FC = () => {
                 </button>
               ))}
               <span
-                className={`min-h-[40px] px-3 py-1.5 rounded-xl text-[10px] font-semibold whitespace-nowrap flex items-center border ${isLight
+                className={`min-h-[44px] px-3 py-1.5 rounded-xl text-[10px] font-semibold whitespace-nowrap flex items-center border ${isLight
                   ? 'bg-white border-violet-200 text-violet-900'
                   : 'bg-slate-900 border-violet-800 text-violet-200'}`}
               >
@@ -860,7 +860,7 @@ export const Simulator: React.FC = () => {
                     );
                     setMobileTab('3d');
                   }}
-                  className={`min-h-[40px] px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap flex-shrink-0 border transition-all active:scale-95 ${isolatedPartId === target.id
+                  className={`min-h-[44px] px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap flex-shrink-0 border transition-all active:scale-95 ${isolatedPartId === target.id
                     ? isLight
                       ? 'bg-teal-600 border-teal-700 text-white shadow-sm'
                       : 'bg-teal-400 border-teal-300 text-slate-950 shadow-sm'
@@ -873,7 +873,7 @@ export const Simulator: React.FC = () => {
                 </button>
               ))}
               <span
-                className={`min-h-[40px] px-3 py-1.5 rounded-xl text-[10px] font-semibold whitespace-nowrap flex items-center border ${isLight
+                className={`min-h-[44px] px-3 py-1.5 rounded-xl text-[10px] font-semibold whitespace-nowrap flex items-center border ${isLight
                   ? 'bg-white border-teal-200 text-teal-900'
                   : 'bg-slate-900 border-teal-800 text-teal-200'}`}
               >
@@ -916,7 +916,7 @@ export const Simulator: React.FC = () => {
                   setCameraPreset('anterior');
                   setMobileTab('3d');
                 }}
-                className={`min-h-[40px] px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap flex-shrink-0 border transition-all ${isolatedPartId === id
+                className={`min-h-[44px] px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap flex-shrink-0 border transition-all ${isolatedPartId === id
                   ? isLight
                     ? 'bg-amber-500 border-amber-600 text-white shadow-sm'
                     : 'bg-amber-400 border-amber-300 text-slate-950 shadow-sm'
