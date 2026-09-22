@@ -186,11 +186,11 @@ await feature('icu-monitor', async () => {
   await visible(monitor.locator('canvas').first(), 'ICU waveform canvas');
 
   const tone = monitor.getByRole('button', { name: /Muted|Tone ON/ });
-  await touchSafe(tone, 'ICU tone control', 39);
+  await touchSafe(tone, 'ICU tone control');
   await tone.click();
 
   const tutorial = monitor.getByRole('button', { name: /Tutorial/ }).first();
-  await touchSafe(tutorial, 'ICU tutorial control', 39);
+  await touchSafe(tutorial, 'ICU tutorial control');
   await tutorial.click();
   await visible(page.getByText('12-Lead ECG & ICU Telemetry Masterclass', { exact: true }), 'ICU tutorial modal');
   const closeTutorial = page.getByRole('button', { name: 'Close ECG tutorial' });
