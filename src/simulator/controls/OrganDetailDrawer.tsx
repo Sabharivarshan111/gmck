@@ -25,6 +25,8 @@ import {
   NerveNodeReference
 } from '../data/organAnatomyData';
 import { isPeripheralNerveTarget } from '../data/peripheralNerves';
+import { getHraOrganTarget } from '../data/hraOrgans';
+import { getHraHeartTarget } from '../data/hraHeart';
 
 interface OrganDetailDrawerProps {
   organId: string | null;
@@ -66,11 +68,16 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
 
   const currentNavId = navHistory[navHistory.length - 1] || organId || 'heart';
 
-  // Resolve organ data, fallback to best match or heart
+  // Resolve organ data, including source-specific HRA target ids.
+  const hraOrganTarget = getHraOrganTarget(currentNavId);
+  const hraHeartTarget = getHraHeartTarget(currentNavId);
   const organKey =
     (isPeripheralNerveTarget(currentNavId)
       ? 'peripheral_nerves'
-      : Object.keys(ORGAN_ANATOMY_DATABASE).find(
+      : hraHeartTarget
+      ? 'heart'
+      : hraOrganTarget?.organKey ||
+        Object.keys(ORGAN_ANATOMY_DATABASE).find(
           (k) =>
             k.toLowerCase() === currentNavId.toLowerCase() ||
             ORGAN_ANATOMY_DATABASE[k].name.toLowerCase().includes(currentNavId.toLowerCase()) ||
