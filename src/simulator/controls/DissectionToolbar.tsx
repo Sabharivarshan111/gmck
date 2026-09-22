@@ -76,7 +76,7 @@ export const DissectionToolbar: React.FC<DissectionToolbarProps> = ({
   };
 
   return (
-    <div className="w-full space-y-2">
+    <div data-testid="dissection-toolbar" className="w-full space-y-2">
       {/* Main Glass Control Strip */}
       <div
         className={`p-2 rounded-2xl border backdrop-blur-xl shadow-md flex flex-col sm:flex-row sm:flex-wrap sm:items-center sm:justify-between gap-1.5 sm:gap-2.5 transition-all ${
