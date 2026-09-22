@@ -191,12 +191,12 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
           {tool === 'pupil' && (
             <div className="space-y-4">
               {/* Penlight Control Selector */}
-              <div className="flex items-center justify-between flex-wrap gap-2 pb-2 border-b border-slate-800">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pb-2 border-b border-slate-800">
                 <span className="text-xs text-slate-400 font-semibold">Penlight Light Stimulus:</span>
-                <div className="flex items-center gap-1.5 flex-wrap">
+                <div className="-mx-1 px-1 flex items-center gap-1.5 overflow-x-auto no-scrollbar">
                   <button
                     onClick={() => setFlashlightOn(flashlightOn === 'left' ? 'none' : 'left')}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
+                    className={`min-h-[44px] shrink-0 px-3 py-1.5 rounded-xl text-[11px] sm:text-xs font-bold border transition-all cursor-pointer ${
                       flashlightOn === 'left'
                         ? 'bg-amber-400 text-slate-950 border-amber-300 shadow-md font-black'
                         : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700'
@@ -226,7 +226,7 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
                   </button>
                   <button
                     onClick={() => setFlashlightOn('none')}
-                    className="px-2.5 py-1.5 rounded-xl text-xs font-semibold bg-slate-800/80 hover:bg-slate-700 text-slate-400 border border-slate-700 cursor-pointer"
+                    className="min-h-[44px] shrink-0 px-2.5 py-1.5 rounded-xl text-[11px] sm:text-xs font-semibold bg-slate-800/80 hover:bg-slate-700 text-slate-400 border border-slate-700 cursor-pointer"
                   >
                     Off
                   </button>
@@ -234,7 +234,7 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
               </div>
 
               {/* Dual Eye Interactive Simulator */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-950 p-5 rounded-2xl border border-slate-800 text-center">
+              <div className="grid grid-cols-2 gap-2 sm:gap-4 bg-slate-950 p-3 sm:p-5 rounded-2xl border border-slate-800 text-center">
                 {/* Left Eye */}
                 <div className="flex flex-col items-center space-y-2.5">
                   <div className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
@@ -246,9 +246,9 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
                     )}
                   </div>
 
-                  <div className="relative w-40 h-40 rounded-full bg-slate-800 border-4 border-slate-700 flex items-center justify-center shadow-inner overflow-hidden">
+                  <div className="relative w-28 h-28 sm:w-40 sm:h-40 rounded-full bg-slate-800 border-4 border-slate-700 flex items-center justify-center shadow-inner overflow-hidden">
                     {/* Sclera & Iris */}
-                    <div className="w-32 h-32 rounded-full bg-amber-900 border border-amber-700 flex items-center justify-center relative">
+                    <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-amber-900 border border-amber-700 flex items-center justify-center relative">
                       {/* Pupil */}
                       <div
                         className="rounded-full bg-black transition-all duration-200 shadow-xl"
@@ -288,9 +288,9 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
                     )}
                   </div>
 
-                  <div className="relative w-40 h-40 rounded-full bg-slate-800 border-4 border-slate-700 flex items-center justify-center shadow-inner overflow-hidden">
+                  <div className="relative w-28 h-28 sm:w-40 sm:h-40 rounded-full bg-slate-800 border-4 border-slate-700 flex items-center justify-center shadow-inner overflow-hidden">
                     {/* Sclera & Iris */}
-                    <div className="w-32 h-32 rounded-full bg-amber-900 border border-amber-700 flex items-center justify-center relative">
+                    <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-amber-900 border border-amber-700 flex items-center justify-center relative">
                       {/* Pupil */}
                       <div
                         className="rounded-full bg-black transition-all duration-200 shadow-xl"
@@ -321,7 +321,7 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
               </div>
 
               {/* Clinical Teaching Card */}
-              <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800 text-xs text-slate-300 space-y-2">
+              <div className="bg-slate-950 p-3 sm:p-4 rounded-2xl border border-slate-800 text-xs text-slate-300 space-y-2">
                 <div className="font-bold text-slate-100 flex items-center gap-1.5">
                   <Info className="w-4 h-4 text-sky-400" />
                   <span>Neuroanatomy of Pupillary Light Reflex (CN II & CN III):</span>
@@ -563,21 +563,21 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
 
           {/* ================= 4. 12-LEAD ECG ================= */}
           {tool === 'ecg12' && (
-            <div className="space-y-4">
-              <div className="flex items-center justify-between text-xs text-slate-300 flex-wrap gap-2">
-                <div className="flex items-center gap-2">
-                  <span className="font-semibold">Standard 12-Lead Diagnostic Electrocardiograph:</span>
-                  <span className="font-mono text-cyan-400 font-bold">
-                    Rhythm: {pathology.ecgRhythm.toUpperCase().replace('_', ' ')}
+            <div className="space-y-2.5 sm:space-y-4">
+              <div className="flex items-center justify-between text-xs text-slate-300 gap-2">
+                <div className="min-w-0">
+                  <span className="hidden sm:block font-semibold mb-1">Standard 12-Lead Diagnostic Electrocardiograph</span>
+                  <span className="inline-flex max-w-full truncate rounded-full border border-cyan-500/30 bg-cyan-500/10 px-2.5 py-1 font-mono text-[11px] text-cyan-300 font-bold">
+                    Rhythm · {pathology.ecgRhythm.toUpperCase().replace('_', ' ')}
                   </span>
                 </div>
                 <button
                   type="button"
                   onClick={() => setIsTutorialOpen(true)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold text-xs shadow-md hover:shadow-cyan-500/25 transition-all cursor-pointer"
+                  className="min-h-[44px] shrink-0 flex items-center gap-1.5 px-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold text-[11px] sm:text-xs shadow-md transition-all cursor-pointer"
                 >
                   <GraduationCap className="w-4 h-4" />
-                  <span>🎓 12-Lead Master Tutorial</span>
+                  <span className="hidden sm:inline">12-Lead Master Tutorial</span><span className="sm:hidden">Tutorial</span>
                 </button>
               </div>
 
