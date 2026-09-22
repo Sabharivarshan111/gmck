@@ -58,7 +58,19 @@ jobs:
           npm install --no-save --package-lock=false --legacy-peer-deps playwright@1.62.1
           npx playwright install --with-deps chromium
 
+      # A small, public Anki-import sample from tamaina/fukushu. It is fetched
+      # from an immutable commit instead of copied into Orbit, so this check is
+      # against an independently-produced file and we do not redistribute it.
+      - name: Download a real Anki text-import sample
+        run: |
+          curl --fail --location --retry 3 --retry-delay 2 \
+            'https://raw.githubusercontent.com/tamaina/fukushu/0efee271a13f15096beb8cbaaea25092c5927b29/samples/import/sample-anki.txt' \
+            --output /tmp/sample-anki.txt
+          test -s /tmp/sample-anki.txt
+
       - name: Shared text and HTML-field parser
+        env:
+          ANKI_EXTERNAL_SAMPLE: /tmp/sample-anki.txt
         run: node mobile/scripts/anki-text-check.mjs
 
       - name: Build the production web app
