@@ -367,6 +367,7 @@ const RULES: readonly AtlasRule[] = [
     id: 'circumflex-humeral',
     when: ['post circumflex humeral', 'posterior circumflex humeral', 'anterior circumflex humeral', 'circumflex humeral'],
     select: (p, _atlas, key) => {
+      if (p.system !== 'arterial') return false;
       if (!hasTerm(p.name, 'circumflex humeral')) return false;
       if (hasTerm(key, 'posterior') || hasTerm(key, 'post')) return hasTerm(p.name, 'posterior');
       if (hasTerm(key, 'anterior')) return hasTerm(p.name, 'anterior');
@@ -394,16 +395,17 @@ const RULES: readonly AtlasRule[] = [
     id: 'celiac',
     when: ['celiac', 'coeliac', 'celiac trunk', 'celiac axis'],
     select: (p) =>
+      p.system === 'arterial' &&
       anyTerm(p.name, ['celiac', 'common hepatic artery', 'splenic artery', 'left gastric artery']),
   },
   {
     id: 'superior-mesenteric',
     when: ['superior mesenteric', 'superior mesenteric artery', 'sma'],
     select: (p) => {
+      // The dossier node is specifically arterial. Check the ontology system
+      // before the broad "superior mesenteric" name so the SMV cannot leak in.
+      if (p.system !== 'arterial') return false;
       if (hasTerm(p.name, 'superior mesenteric')) return true;
-      // Its branches are arteries; the matching veins are portal tributaries
-      // and belong to `portal-vein`, not here.
-      if (hasTerm(p.name, 'vein')) return false;
       return anyTerm(p.name, [
         'ileocolic', 'ileal artery', 'ileal branch',
         'right colic artery', 'middle colic artery', 'marginal colic artery',
