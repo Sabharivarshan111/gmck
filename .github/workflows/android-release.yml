@@ -112,6 +112,7 @@ jobs:
           npm run check:subject-cards
           npm run check:contrast
           npm run check:anki
+          npm run check:anki-text
           npm run check:textbooks
           npm run check:one-app
           npm run check:flashcard-size
