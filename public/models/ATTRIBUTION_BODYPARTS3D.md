@@ -113,9 +113,13 @@ atlas and is not presented as the same donor/reference body.
 - Source: HuBMAP / Human Reference Atlas `VH_M_Heart.glb`, HRA release v1.3
 - Source repository: `hubmapconsortium/ccf-releases`
 - License: Creative Commons Attribution 4.0 International (CC BY 4.0)
-- Visible Human male reference organ; the current ORBIT use is specifically
-  for the source-derived `VH_M_interventricular_septum` and its same-source
-  heart context.
+- Visible Human male reference organ. ORBIT exposes only structures that are
+  verified as real meshes in this source: both atria, both ventricles, the
+  interventricular septum, mitral/tricuspid/aortic/pulmonary valves, and the
+  five named papillary-muscle meshes.
+- These HRA structures are presented together as a same-source cutaway/reference
+  mode. They are not mixed with BodyParts3D geometry as if the two reference
+  bodies were spatially registered.
 - Mobile behavior: the ~4 MB GLB is lazy-loaded only when the learner opens an
   HRA internal-heart target. Ordinary simulator startup is unchanged.
 
