@@ -20,6 +20,7 @@ import {
   type ApkgMediaEntry,
   type ApkgNotetype,
 } from '@shared/apkgFormat';
+import { parseAnkiText } from '@shared/ankiText';
 import { buildExport } from '@shared/apkgExport';
 import { warn } from './log';
 import { setPendingLaunchPdf } from './noteFiles';
@@ -257,6 +258,7 @@ export async function shareWrittenDeck(deck: {
 
 /** A package that has been staged and read far enough to ask about. */
 export interface StagedPackage {
+  format: 'package' | 'text';
   path: string;
   fileName: string;
   bytes: number;
@@ -267,6 +269,10 @@ export interface StagedPackage {
   /** The decks inside, largest first, for the reader to choose from. */
   decks: { id: string; name: string; cards: number }[];
   totalCards: number;
+  /** Present only for .txt/.csv/.tsv; packages are read lazily from SQLite. */
+  text?: string;
+  /** Non-fatal import notes, chiefly media references a text file cannot carry. */
+  warnings?: string[];
 }
 
 function base64ToBytes(base64: string): Uint8Array {
@@ -381,11 +387,38 @@ async function stageStaged(picked: string): Promise<StagedPackage | null> {
     return null;
   }
 
+  if (/\.html?$/i.test(file.name)) {
+    native.discard(file.path);
+    throw new ApkgError(
+      'notAPackage',
+      'Anki HTML import means HTML inside a .txt, .csv, or .tsv field; a standalone .html file is not an Anki deck. Export as text/CSV or .apkg instead.',
+    );
+  }
+
+  if (/\.(txt|csv|tsv)$/i.test(file.name)) {
+    const text = await native.readText(file.path);
+    const parsed = parseAnkiText(text, file.name);
+    return {
+      format: 'text',
+      path: file.path,
+      fileName: file.name,
+      bytes: file.size,
+      entry: '',
+      zstd: false,
+      mediaListIsHashmap: false,
+      version: 0,
+      decks: [{ id: 'text', name: parsed.deckName, cards: parsed.cards.length }],
+      totalCards: parsed.cards.length,
+      text,
+      warnings: parsed.warnings,
+    };
+  }
+
   if (!/\.(apkg|colpkg)$/i.test(file.name)) {
     native.discard(file.path);
     throw new ApkgError(
       'notAPackage',
-      `${file.name} is not an Anki package. Look for a file ending in .apkg.`,
+      `${file.name} is not a supported Anki export. Choose .apkg, .colpkg, .txt, .csv, or .tsv.`,
     );
   }
 
@@ -434,6 +467,7 @@ async function stageStaged(picked: string): Promise<StagedPackage | null> {
   }
 
   return {
+    format: 'package',
     path: file.path,
     fileName: file.name,
     bytes: file.size,
@@ -504,6 +538,48 @@ export async function importPackage(
   const native = available();
   const report = options.onProgress ?? (() => {});
   const id = newId();
+
+  if (staged.format === 'text') {
+    report({ step: 'reading' });
+    const parsed = parseAnkiText(staged.text ?? (await native.readText(staged.path)), staged.fileName);
+    const truncated = parsed.cards.length > MAX_IMPORT_CARDS;
+    const taken = truncated ? parsed.cards.slice(0, MAX_IMPORT_CARDS) : parsed.cards;
+
+    report({ step: 'cards' });
+    const deckCards: DeckCard[] = taken.map(card => ({
+      id: card.id,
+      kind: 'theory',
+      front: card.front,
+      back: card.back,
+      ...(card.tags.length > 0 ? { tags: card.tags } : null),
+    }));
+    if (deckCards.length === 0) {
+      discardPackage(staged);
+      throw new ApkgError('empty', 'Nothing in this text export could be turned into a card.');
+    }
+
+    report({ step: 'saving' });
+    await saveImportedCards(id, deckCards);
+    const deckNames = [...new Set(taken.map(card => card.deck).filter(Boolean))];
+    const deck: ImportedDeck = {
+      id,
+      name:
+        options.name?.trim() ||
+        (deckNames.length === 1 ? deckNames[0] : parsed.deckName) ||
+        staged.fileName.replace(/\.(txt|csv|tsv)$/i, ''),
+      source: staged.fileName,
+      cardCount: deckCards.length,
+      decks: deckNames.length ? deckNames : [parsed.deckName],
+      mediaCount: 0,
+      mediaBytes: 0,
+      createdAt: Date.now(),
+      truncated,
+    };
+
+    await persistList([deck, ...(await loadImportedDecks())]);
+    discardPackage(staged);
+    return deck;
+  }
 
   report({ step: 'reading' });
   const raw = JSON.parse(
