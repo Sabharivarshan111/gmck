@@ -71,16 +71,37 @@ jobs:
 
       - name: Commit generated nerve asset
         run: |
-          set -e
+          set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add public/models/zanatomy_peripheral_nerves.glb public/models/zanatomy_peripheral_nerves.manifest.json
-          if git diff --cached --quiet; then
-            echo "No generated asset changes"
-          else
+
+          # Blender takes long enough that main often advances during export.
+          # Preserve the generated files, replay them onto the latest main, and
+          # retry a rejected push rather than rebasing a binary GLB/JSON commit
+          # and creating an unresolvable content conflict.
+          generated_dir="$(mktemp -d)"
+          cp public/models/zanatomy_peripheral_nerves.glb "$generated_dir/nerve.glb"
+          cp public/models/zanatomy_peripheral_nerves.manifest.json "$generated_dir/nerve.manifest.json"
+
+          for attempt in 1 2 3; do
+            git fetch origin main
+            git reset --hard origin/main
+            cp "$generated_dir/nerve.glb" public/models/zanatomy_peripheral_nerves.glb
+            cp "$generated_dir/nerve.manifest.json" public/models/zanatomy_peripheral_nerves.manifest.json
+            git add public/models/zanatomy_peripheral_nerves.glb public/models/zanatomy_peripheral_nerves.manifest.json
+
+            if git diff --cached --quiet; then
+              echo "No generated asset changes"
+              exit 0
+            fi
+
             git commit -m "Add mobile Z-Anatomy peripheral nerve layer"
-            # Main may advance while Blender is exporting. Rebase the generated
-            # asset commit instead of losing unrelated simulator fixes.
-            git pull --rebase origin main
-            git push origin HEAD:main
-          fi
+            if git push origin HEAD:main; then
+              exit 0
+            fi
+
+            echo "Main advanced during push; retrying generated files on latest main (attempt $attempt/3)"
+          done
+
+          echo "Could not publish generated nerve asset after 3 attempts"
+          exit 1
