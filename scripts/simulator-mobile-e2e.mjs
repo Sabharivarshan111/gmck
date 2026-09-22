@@ -172,6 +172,43 @@ await feature('mobile-shell-and-3d-anatomy', async () => {
   await shot('01-3d-anatomy');
 });
 
+await feature('stomach-uses-verified-z-anatomy', async () => {
+  await goto('/simulator');
+
+  const stomach = page.getByTestId('deep-inspector-stomach');
+  await visible(stomach, 'Stomach deep inspector button');
+  await stomach.click();
+
+  await visible(
+    page.getByText('Isolated: ZA STOMACH OVERVIEW', { exact: true }),
+    'preferred stomach isolation status'
+  );
+
+  // The source model is local to the production build. A missing/corrupt GLB
+  // must fail this feature instead of silently leaving the rough body-atlas
+  // stomach on screen.
+  await page.waitForFunction(
+    () => !document.body.innerText.includes('LOADING Z-ANATOMY REFERENCE…'),
+    { timeout: 15000 }
+  );
+  const bodyText = (await page.locator('body').textContent()) || '';
+  assert(
+    !/Z-Anatomy reference model failed to load/i.test(bodyText),
+    'Stomach Z-Anatomy reference failed to load'
+  );
+
+  await documentFits('Z-Anatomy stomach');
+  await shot('01b-stomach-zanatomy');
+
+  // The same inspector button must restore the full body even though the
+  // active isolation id is the source-specific za_stomach_overview target.
+  await stomach.click();
+  assert(
+    !(await page.getByText('Isolated: ZA STOMACH OVERVIEW', { exact: true }).isVisible()),
+    'Stomach inspector did not toggle the source-backed isolate off'
+  );
+});
+
 await feature('icu-monitor', async () => {
   await goto('/simulator');
   await page.getByTestId('simulator-tab-monitor').click();
