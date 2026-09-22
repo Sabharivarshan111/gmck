@@ -164,7 +164,7 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
       {/* Drawer Container */}
       <aside
         className={`pointer-events-auto w-full md:w-[500px] lg:w-[560px] ${
-          isMobileExpanded ? 'h-[88vh]' : 'h-[46vh]'
+          isMobileExpanded ? 'h-[92dvh]' : 'h-[52dvh]'
         } md:h-full mt-auto md:mt-0 ${
           isLight
             ? 'bg-white/95 text-slate-900 border-l border-slate-200 shadow-2xl'
@@ -174,14 +174,14 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
         {/* Mobile Drag Pill */}
         <div 
           onClick={() => setIsMobileExpanded(!isMobileExpanded)}
-          className="md:hidden pt-3 pb-1 flex justify-center cursor-pointer"
+          className="md:hidden pt-2.5 pb-1 flex justify-center cursor-pointer touch-manipulation"
         >
           <div className={`w-12 h-1.5 rounded-full ${isLight ? 'bg-slate-300' : 'bg-slate-700'}`} />
         </div>
 
         {/* Apple HIG Breadcrumbs Bar with Back Button */}
         <div
-          className={`px-4 py-2 border-b flex items-center justify-between gap-2 text-xs font-medium overflow-x-auto no-scrollbar ${
+          className={`px-2.5 sm:px-4 py-2 border-b flex items-center justify-between gap-2 text-xs font-medium overflow-x-auto no-scrollbar ${
             isLight ? 'bg-slate-50 border-slate-200/80 text-slate-600' : 'bg-slate-950/60 border-slate-800 text-slate-400'
           }`}
         >
@@ -242,7 +242,7 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
 
         {/* Drawer Header: Title, Category, Action Buttons */}
         <div
-          className={`p-4 md:p-5 border-b ${
+          className={`p-3 md:p-5 border-b ${
             isLight ? 'border-slate-100 bg-white' : 'border-slate-800/80 bg-slate-900/60'
           } flex items-start justify-between gap-3`}
         >
@@ -265,7 +265,7 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
                 {organ.latinName}
               </span>
             </div>
-            <h2 className="text-xl md:text-2xl font-black tracking-tight flex items-center gap-2 text-slate-900 dark:text-white">
+            <h2 className="text-lg sm:text-xl md:text-2xl font-black tracking-tight flex items-center gap-2 text-slate-900 dark:text-white leading-tight">
               {organ.name}
             </h2>
             <p className={`text-xs mt-0.5 ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>
@@ -327,7 +327,7 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
 
         {/* Tab Switcher Pills */}
         <div
-          className={`px-4 py-2.5 border-b flex items-center gap-1.5 overflow-x-auto no-scrollbar ${
+          className={`px-2.5 sm:px-4 py-2 border-b flex items-center gap-1.5 overflow-x-auto no-scrollbar ${
             isLight ? 'border-slate-100 bg-slate-50/70' : 'border-slate-800 bg-slate-950/40'
           }`}
         >
@@ -344,7 +344,7 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 whitespace-nowrap min-h-[40px] transition-all ${
+                className={`px-3 py-2 rounded-xl text-[11px] sm:text-xs font-bold flex items-center gap-1.5 whitespace-nowrap min-h-[40px] shrink-0 transition-all ${
                   isCurrent
                     ? isLight
                       ? 'bg-sky-600 text-white shadow-sm shadow-sky-500/20'
@@ -362,7 +362,7 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
         </div>
 
         {/* Scrollable Content Body */}
-        <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-5">
+        <div className="flex-1 overflow-y-auto overscroll-contain p-3 sm:p-4 md:p-6 space-y-3 sm:space-y-5 pb-[calc(16px+env(safe-area-inset-bottom))]">
           {/* TAB 1: OVERVIEW & MUSCLE GRAPH */}
           {activeTab === 'overview' && (
             <div className="space-y-4 animate-in fade-in duration-200">
