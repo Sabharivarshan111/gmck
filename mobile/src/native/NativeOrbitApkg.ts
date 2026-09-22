@@ -71,6 +71,14 @@ export interface Spec extends TurboModule {
   readEntry(path: string, entry: string, zstd: boolean): Promise<string>;
 
   /**
+   * Read a staged UTF-8 Anki text/CSV/TSV export.
+   *
+   * Parsing stays in shared TypeScript so Android and the web app agree about
+   * separators, headers, cloze fields and HTML flattening.
+   */
+  readText(path: string): Promise<string>;
+
+  /**
    * The notetypes, the decks and how many cards each deck holds.
    *
    * Cheap: it reads no card text at all. This is what the "which decks?"
