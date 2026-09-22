@@ -281,7 +281,7 @@ export const Simulator: React.FC = () => {
           <div className="flex items-center gap-2 md:gap-3 min-w-0">
             <Link
               to="/"
-              className={`p-1.5 rounded-xl border flex items-center gap-1 text-xs font-semibold transition-all ${
+              className={`min-h-[44px] min-w-[44px] px-2 sm:px-2.5 rounded-xl border flex items-center justify-center gap-1 text-xs font-semibold transition-all ${
                 isLight
                   ? 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200 shadow-2xs'
                   : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700'
@@ -322,9 +322,11 @@ export const Simulator: React.FC = () => {
           {/* Right: Quick Vitals Pill Bar & Theme Switcher */}
           <div className="flex items-center gap-1.5 md:gap-2">
             {/* Quick Vitals HUD (Mobile & Desktop) */}
-            <div
+            <button
+              type="button"
+              aria-label="Open ICU monitor"
               onClick={() => setMobileTab('telemetry')}
-              className={`flex items-center gap-2 px-2.5 py-1 rounded-xl border cursor-pointer transition-all ${
+              className={`min-h-[44px] flex items-center gap-2 px-2.5 rounded-xl border cursor-pointer transition-all ${
                 isLight
                   ? 'bg-slate-100/90 border-slate-200 text-slate-700 hover:bg-slate-200/80 shadow-2xs'
                   : 'bg-slate-800/80 border-slate-700 text-slate-200 hover:bg-slate-700'
@@ -342,13 +344,13 @@ export const Simulator: React.FC = () => {
               <div className="text-[11px] font-mono font-bold text-emerald-600 dark:text-emerald-400 hidden sm:flex items-center">
                 <span>{Math.round(vitals.spo2)}%</span>
               </div>
-            </div>
+            </button>
 
             {/* Light / Dark Mode Toggle */}
             <button
               onClick={() => setTheme(isLight ? 'dark' : 'light')}
               title={isLight ? 'Switch to ICU Dark Telemetry Mode' : 'Switch to Clean Medical Studio Mode'}
-              className={`p-2 rounded-xl border transition-all ${
+              className={`min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl border transition-all ${
                 isLight
                   ? 'bg-white hover:bg-slate-100 text-slate-700 border-slate-200 shadow-xs'
                   : 'bg-slate-800 hover:bg-slate-700 text-amber-400 border-slate-700'
@@ -363,7 +365,7 @@ export const Simulator: React.FC = () => {
       {/* 2. Mobile Segmented Tab Bar (Apple HIG Recessed Segmented Control) */}
       <div className={`lg:hidden px-3 pt-2 pb-2 ${isLight ? 'bg-white/85' : 'bg-slate-900/90'} backdrop-blur-xl`}>
         <div
-          className={`h-11 p-1 rounded-2xl border flex items-center justify-between gap-1 backdrop-blur-xl ${
+          className={`min-h-[52px] p-1 rounded-2xl border flex items-center justify-between gap-1 backdrop-blur-xl ${
             isLight
               ? 'bg-slate-200/80 border-slate-300/60 shadow-xs'
               : 'bg-slate-900/90 border-slate-800'
@@ -372,7 +374,7 @@ export const Simulator: React.FC = () => {
           <button
             data-testid="simulator-tab-3d"
             onClick={() => setMobileTab('3d')}
-            className={`flex-1 h-11 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all duration-200 ${
+            className={`flex-1 min-h-[44px] rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all duration-200 ${
               mobileTab === '3d'
                 ? isLight
                   ? 'bg-white text-slate-900 shadow-sm'
@@ -389,7 +391,7 @@ export const Simulator: React.FC = () => {
           <button
             data-testid="simulator-tab-monitor"
             onClick={() => setMobileTab('telemetry')}
-            className={`flex-1 h-11 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all duration-200 ${
+            className={`flex-1 min-h-[44px] rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all duration-200 ${
               mobileTab === 'telemetry'
                 ? isLight
                   ? 'bg-white text-slate-900 shadow-sm'
@@ -406,7 +408,7 @@ export const Simulator: React.FC = () => {
           <button
             data-testid="simulator-tab-case"
             onClick={() => setMobileTab('interventions')}
-            className={`flex-1 h-11 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all duration-200 ${
+            className={`flex-1 min-h-[44px] rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all duration-200 ${
               mobileTab === 'interventions'
                 ? isLight
                   ? 'bg-white text-slate-900 shadow-sm'
