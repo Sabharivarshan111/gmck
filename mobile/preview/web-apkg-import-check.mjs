@@ -33,6 +33,7 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 const repo = path.join(here, '..', '..');
 const dist = path.join(repo, 'dist');
 const fixture = path.join(here, 'fixtures', 'apkg', 'v3.apkg');
+const textFixture = path.join(here, 'fixtures', 'anki-text', 'html-fields.txt');
 const outDir = path.resolve(process.argv[2] ?? path.join(repo, 'screenshots', 'web-anki'));
 
 const problems = [];
@@ -122,7 +123,7 @@ try {
 
   await openHub(page);
 
-  const importer = page.getByLabel('Choose an Anki package to import');
+  const importer = page.getByLabel('Choose an Anki deck or text export to import');
   check(await importer.count() > 0, 'the flashcards hub offers no way to import a package');
   if (await importer.count() === 0) throw new Error('no import control');
 
@@ -212,6 +213,55 @@ try {
     check(!/10 cards/.test(gone), 'deleting the deck left it in the list');
   }
   await shot('web-anki-6-deleted');
+
+  // The second supported route: Anki's UTF-8 text importer with HTML enabled
+  // inside fields. This deliberately uses a real file input rather than
+  // calling parseAnkiText directly, so picker -> parser -> IndexedDB -> study
+  // view is one exercised path.
+  const textImporter = page.getByLabel('Choose an Anki deck or text export to import');
+  check(await textImporter.count() > 0, 'the text/CSV route disappeared after deleting an APKG');
+  if (await textImporter.count()) {
+    await textImporter.setInputFiles(textFixture);
+    await page.waitForFunction(
+      () => /Most common cause of myocardial infarction\?/i.test(document.body.innerText),
+      null,
+      { timeout: 30_000 },
+    );
+    await page.waitForTimeout(250);
+    await shot('web-anki-7-html-text-card');
+
+    const textStudy = await page.evaluate(() => document.body.innerText);
+    check(/1\s+of\s+2/.test(textStudy), 'the two-card HTML text fixture did not import as two cards');
+    check(
+      /Most common cause of myocardial infarction\?/i.test(textStudy),
+      'HTML tags were not flattened into readable front text',
+    );
+
+    const textAnswer = page.getByRole('button', { name: /show the answer/i });
+    check(await textAnswer.count() > 0, 'HTML text card has no answer control');
+    if (await textAnswer.count()) {
+      await textAnswer.click();
+      await page.waitForTimeout(150);
+      const shown = await page.evaluate(() => document.body.innerText);
+      check(/Atherosclerotic plaque/i.test(shown), 'HTML text answer lost its first line');
+      check(/rupture & thrombosis/i.test(shown), 'HTML entity or line-break handling is wrong');
+    }
+    await shot('web-anki-8-html-text-answer');
+
+    await page.goto('http://localhost:5233/', { waitUntil: 'networkidle' });
+    await openHub(page);
+    const persistedText = await page.evaluate(() => document.body.innerText);
+    check(/Orbit HTML Import Test/i.test(persistedText), 'text-imported deck did not survive reload');
+    check(/2 cards/.test(persistedText), 'text-imported deck card count was not persisted');
+
+    const deleteText = page.getByRole('button', { name: /^Delete Orbit HTML Import Test$/i });
+    check(await deleteText.count() > 0, 'text-imported deck cannot be deleted');
+    if (await deleteText.count()) {
+      await deleteText.click();
+      await page.waitForTimeout(350);
+    }
+    await shot('web-anki-9-html-text-deleted');
+  }
 } finally {
   await browser.close();
   server.close();
@@ -224,7 +274,6 @@ if (problems.length > 0) {
 }
 
 console.log(
-  '\nOK  the web app imports a real v3 package through its own file input,\n' +
-    '    takes the real collection rather than the decoy, studies and grades a\n' +
-    '    card, survives a reload, and deletes the deck again',
+  '\nOK  the web app imports both a real v3 APKG and an HTML-enabled Anki text export,\n' +
+    '    studies them through the real file input, persists them, and deletes them again',
 );
