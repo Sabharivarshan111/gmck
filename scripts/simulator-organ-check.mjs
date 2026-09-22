@@ -440,6 +440,27 @@ if (/const\s+showDerivedPhrenic\s*=\s*[^;\n]*peripheral_nerves/i.test(viewSrc)) 
   fail('Peripheral Nerves overview includes the derived phrenic schematic without its explicit schematic label');
 }
 
+// Procedural anatomy may exist as an explicitly labelled teaching schematic,
+ // but must never leak into ordinary source-anatomy views.
+if (!/autonomic_nervous_system[\s\S]{0,300}isDerivedSchematic\s*=\s*true/.test(viewSrc)) {
+  fail('Procedural autonomic geometry is not marked as a derived schematic');
+}
+if (!/lymphatic_system[\s\S]{0,300}isDerivedSchematic\s*=\s*true/.test(viewSrc)) {
+  fail('Procedural lymphatic geometry is not marked as a derived schematic');
+}
+if (/autonomicGroupRef\.current\.visible\s*=\s*layerPeel/.test(viewSrc)) {
+  fail('Procedural autonomic schematic is visible in ordinary full-body mode');
+}
+if (/lymphaticGroupRef\.current\.visible\s*=\s*layerPeel/.test(viewSrc)) {
+  fail('Procedural lymphatic schematic is visible in ordinary full-body mode');
+}
+if (/isAbdomenTarget[\s\S]{0,900}autonomicGroupRef\.current\.visible\s*=\s*true/.test(viewSrc)) {
+  fail('Procedural autonomic schematic leaks into ordinary abdomen isolation');
+}
+if (/isAbdomenTarget[\s\S]{0,900}lymphaticGroupRef\.current\.visible\s*=\s*true/.test(viewSrc)) {
+  fail('Procedural lymphatic schematic leaks into ordinary abdomen isolation');
+}
+
 // 3. One 3D view per device.
 //
 //    `hidden lg:grid` and `lg:hidden` hide a subtree with CSS, and a subtree
