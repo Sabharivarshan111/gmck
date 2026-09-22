@@ -15,6 +15,22 @@ const organFiles = [
   ['urinary_bladder', 'VH_M_Urinary_Bladder.glb'],
   ['thymus', 'VH_M_Thymus.glb'],
   ['blood_vasculature', 'VH_M_Blood_Vasculature.glb'],
+  ['placenta', 'VH_F_Placenta.glb'],
+  ['fallopian_tube_right', 'VH_F_Fallopian_Tube_R.glb'],
+  ['fallopian_tube_left', 'VH_F_Fallopian_Tube_L.glb'],
+  ['ovary_right', 'VH_F_Ovary_R.glb'],
+  ['ovary_left', 'VH_F_Ovary_L.glb'],
+  ['uterus', 'VH_F_Uterus.glb'],
+  ['knee_right', 'VH_M_Knee_R.glb'],
+  ['knee_left', 'VH_M_Knee_L.glb'],
+  ['skin', 'VH_M_Skin.glb'],
+  ['prostate', 'VH_M_Prostate.glb'],
+  ['pelvis_male', 'VH_M_Pelvis.glb'],
+  ['spinal_cord', 'VH_M_Spinal_Cord.glb'],
+  ['ureter_right', 'VH_M_Ureter_R.glb'],
+  ['ureter_left', 'VH_M_Ureter_L.glb'],
+  ['eye_right', 'VH_M_Eye_R.glb'],
+  ['eye_left', 'VH_M_Eye_L.glb'],
 ];
 
 function parseGlb(file) {
