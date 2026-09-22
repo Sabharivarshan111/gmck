@@ -56,7 +56,7 @@ jobs:
           npm run preview -- --host 127.0.0.1 > /tmp/orbit-vite-preview.log 2>&1 &
           echo $! > /tmp/orbit-vite-preview.pid
           for i in $(seq 1 60); do
-            if curl -fsS http://127.0.0.1:4173/ >/dev/null; then
+            if curl -fsS http://127.0.0.1:4180/ >/dev/null; then
               exit 0
             fi
             sleep 1
@@ -66,7 +66,7 @@ jobs:
 
       - name: Exercise every patient simulator feature on a phone viewport
         env:
-          SIMULATOR_E2E_BASE_URL: http://127.0.0.1:4173
+          SIMULATOR_E2E_BASE_URL: http://127.0.0.1:4180
         run: node scripts/simulator-mobile-e2e.mjs
 
       - name: Print preview log on failure
