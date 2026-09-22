@@ -46,6 +46,7 @@
  */
 import type { DeckCard } from './flashcards';
 import type { ImportedApkg } from './apkgWeb';
+import type { ParsedAnkiText } from './ankiText';
 
 /**
  * The deck list. Small, and read on every visit to the flashcards hub.
@@ -278,6 +279,49 @@ export async function importPackage(
     decks: selectedDeckNames,
     mediaCount,
     mediaBytes,
+    createdAt: Date.now(),
+    ...(truncated ? { truncated: true } : null),
+  };
+
+  saveList([deck, ...loadImportedDecks()]);
+  return deck;
+}
+
+/**
+ * Store a UTF-8 Anki text export (.txt/.csv/.tsv).
+ *
+ * HTML has already been flattened by `parseAnkiText`, exactly like the APKG
+ * path. Text exports contain media *references* but not media bytes, so there
+ * is deliberately no fake media record here; the importer warns the reader to
+ * use .apkg/.colpkg when pictures or audio need to travel with the deck.
+ */
+export async function importTextDeck(
+  parsed: ParsedAnkiText,
+  source: string,
+  name?: string
+): Promise<ImportedDeck> {
+  const id = newId();
+  const truncated = parsed.cards.length > MAX_IMPORT_CARDS;
+  const taken = truncated ? parsed.cards.slice(0, MAX_IMPORT_CARDS) : parsed.cards;
+  const cards: DeckCard[] = taken.map((card) => ({
+    id: card.id,
+    kind: 'theory',
+    front: card.front,
+    back: card.back,
+    ...(card.tags.length ? { tags: card.tags } : null),
+  }));
+
+  await tx(CARDS_STORE, 'readwrite', (store) => store.put(cards, id));
+
+  const deckNames = [...new Set(taken.map((card) => card.deck).filter(Boolean))];
+  const deck: ImportedDeck = {
+    id,
+    name: (name ?? (deckNames.length === 1 ? deckNames[0] : parsed.deckName)).trim() || 'Imported text',
+    source,
+    cardCount: cards.length,
+    decks: deckNames.length ? deckNames : [parsed.deckName],
+    mediaCount: 0,
+    mediaBytes: 0,
     createdAt: Date.now(),
     ...(truncated ? { truncated: true } : null),
   };
