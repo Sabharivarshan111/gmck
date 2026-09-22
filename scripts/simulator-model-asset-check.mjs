@@ -1,6 +1,7 @@
 import { existsSync, readFileSync, statSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { glbTriangles } from './lib/glb.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const publicDir = path.join(root, 'public');
@@ -302,6 +303,62 @@ console.log(
       const missingObjects = (manifest.objects || []).filter((name) => !uniqueNames.has(String(name)));
       if (missingObjects.length) {
         fail(`${nerveRel} lost ${missingObjects.length} manifest object(s): ${missingObjects.slice(0, 8).join(', ')}`);
+      }
+
+      // Read the actual indexed geometry with node transforms applied. Metadata
+      // alone cannot catch a re-export that keeps all names but moves/scales the
+      // nerves away from the body or drops most triangles.
+      const nervePrimitives = glbTriangles(nervePath);
+      const actualTriangles = nervePrimitives.reduce((sum, mesh) => sum + mesh.idx.length / 3, 0);
+      if (actualTriangles !== Number(manifest.exportedTriangles || 0)) {
+        fail(
+          `${nerveRel} contains ${actualTriangles.toLocaleString('en-GB')} triangles but the verified manifest declares ${Number(manifest.exportedTriangles || 0).toLocaleString('en-GB')}`
+        );
+      }
+
+      const nerveBounds = {
+        lo: [Infinity, Infinity, Infinity],
+        hi: [-Infinity, -Infinity, -Infinity],
+      };
+      for (const mesh of nervePrimitives) {
+        for (let i = 0; i < mesh.pos.length; i += 3) {
+          for (let axis = 0; axis < 3; axis++) {
+            nerveBounds.lo[axis] = Math.min(nerveBounds.lo[axis], mesh.pos[i + axis]);
+            nerveBounds.hi[axis] = Math.max(nerveBounds.hi[axis], mesh.pos[i + axis]);
+          }
+        }
+      }
+
+      const atlasBounds = {
+        lo: [Infinity, Infinity, Infinity],
+        hi: [-Infinity, -Infinity, -Infinity],
+      };
+      for (const part of atlas?.parts || []) {
+        if (!part.bounds) continue;
+        for (let axis = 0; axis < 3; axis++) {
+          atlasBounds.lo[axis] = Math.min(atlasBounds.lo[axis], Number(part.bounds[0][axis]));
+          atlasBounds.hi[axis] = Math.max(atlasBounds.hi[axis], Number(part.bounds[1][axis]));
+        }
+      }
+
+      const nerveHeight = nerveBounds.hi[1] - nerveBounds.lo[1];
+      const atlasHeight = atlasBounds.hi[1] - atlasBounds.lo[1];
+      if (!Number.isFinite(nerveHeight) || nerveHeight < 1.25 || nerveHeight > 1.9) {
+        fail(`${nerveRel} has implausible transformed Y span ${nerveHeight.toFixed(3)} m; expected a full-body nerve layer in metre/Y-up space`);
+      }
+      if (Number.isFinite(atlasHeight) && atlasHeight > 0 && nerveHeight < atlasHeight * 0.68) {
+        fail(`${nerveRel} spans only ${(100 * nerveHeight / atlasHeight).toFixed(0)}% of the BodyParts3D body height; likely scale/registration drift`);
+      }
+      for (let axis = 0; axis < 3; axis++) {
+        const tolerance = axis === 1 ? 0.18 : 0.28;
+        if (
+          nerveBounds.lo[axis] < atlasBounds.lo[axis] - tolerance ||
+          nerveBounds.hi[axis] > atlasBounds.hi[axis] + tolerance
+        ) {
+          fail(
+            `${nerveRel} axis ${axis} bounds [${nerveBounds.lo[axis].toFixed(3)}, ${nerveBounds.hi[axis].toFixed(3)}] sit outside the BodyParts3D envelope [${atlasBounds.lo[axis].toFixed(3)}, ${atlasBounds.hi[axis].toFixed(3)}] beyond tolerance; source registration may have drifted`
+          );
+        }
       }
 
       const requiredTargets = [
