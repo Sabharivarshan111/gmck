@@ -1,94 +1,123 @@
-# Import the peripheral nerves from Z-Anatomy
+# Z-Anatomy peripheral nerves — imported; two genuine source gaps remain
 
-**Blocked on:** a route to the internet. No agent sandbox has one for this —
-the egress proxy refuses `github.com`, `raw.githubusercontent.com` (connection
-closed), `codeload.github.com` (403) and `dbarchive.biosciencedbc.jp`
-(connection closed). A **GitHub Actions runner does**, which is how
-`supabase-tasks.yml` and `exam-sign-images.yml` do their network work.
+**Status:** the Z-Anatomy peripheral nerve import is complete and live on
+`main`. This file used to say the work was blocked on network access; that is
+no longer true.
 
-**Owner:** anyone who can run a workflow on this repo, or the app owner with a
-laptop and Blender.
+## What is in the repo now
 
-## What is missing, and how it is known
+Runtime asset:
 
-The BodyParts3D 4.0 export in `public/models/` has **no peripheral nerves at
-all**. Not "few" — none. Search the 2,234 part names for vagus, phrenic,
-splanchnic, sympathetic, recurrent laryngeal, intercostal, pectoral, axillary,
-median, ulnar, radial, sciatic, femoral or peroneal and every count is zero.
-Its 139 `nervous` parts are the cerebrum, cerebellum, brainstem, deep grey
-matter, the optic pathway and the nerves of the orbit.
+- `public/models/zanatomy_peripheral_nerves.glb`
+- `public/models/zanatomy_peripheral_nerves.manifest.json`
+- resolver/runtime mapping: `src/simulator/data/peripheralNerves.ts`
+
+Source recorded by the manifest:
+
+- Z-Anatomy `NervousSystem100.fbx`
+- source URL:
+  `https://github.com/LluisV/Z-Anatomy/blob/PC-Version/Resources/Models/FBX/NervousSystem100.fbx`
+- licence: **CC BY-SA 4.0 aggregate**; the cranial-nerve component credit is
+  documented separately in the attribution file.
+
+Current exported inventory:
+
+- 712 source objects inspected
+- 272 named nerve objects exported
+- 603,170 triangles before export processing
+- 376,397 triangles in the shipped peripheral-nerve GLB
+
+The supplement is lazy-loaded. BodyParts3D remains the core body atlas and is
+not falsely treated as containing these nerves.
+
+## Source-backed nerve targets now available
+
+The Z-Anatomy layer currently supplies real source geometry for:
+
+- vagus nerves
+- brachial plexus
+- medial and lateral pectoral nerves
+- musculocutaneous nerves
+- axillary nerves
+- median nerves and named branches
+- ulnar nerves and named branches
+- radial nerves and named branches
+- intercostal nerves
+- sympathetic trunks / ganglia / sympathetic nerves
+- femoral nerves and anterior cutaneous branches
+- obturator nerves and anterior/posterior branches
+- sciatic nerves
+- tibial nerves
+- common fibular (peroneal) nerves and sural communicating branches
+
+Smaller named source meshes remain inspectable through deterministic
+`zanerve__...` keys rather than being replaced with hand-authored aliases.
+
+## The two genuine gaps
+
+The shipped Z-Anatomy `NervousSystem100` source contains **no mesh named for**
+either of these targets:
+
+1. `phrenic_nerve`
+2. `splanchnic_nerves`
+
+The generated manifest therefore records empty target arrays for both.
+
+These are deliberately **not** resolved to a nearby artery, vein, autonomic
+trunk, ocular nerve, or other plausible-looking structure. A wrong anatomical
+answer is worse than a clearly labelled gap.
+
+Current simulator behavior:
+
+- `phrenic_nerve` may use the explicitly labelled
+  **HRA/Z-Anatomy landmark-derived phrenic schematic**.
+- `splanchnic_nerves` may use the explicitly labelled
+  **autonomic schematic overlay**.
+- Neither schematic is allowed to masquerade as source-derived mesh anatomy.
+
+The all-organ audit now fails closed: merely being absent from BodyParts3D is
+not enough to pass. Every target must have a verified source supplement, an
+explicit schematic classification, or an intentional non-anatomical clinical
+overlay.
+
+## What would close the remaining gaps
+
+Replace either schematic only when a genuine reusable 3D source is found that:
+
+1. explicitly contains the phrenic nerve and/or thoracic/abdominopelvic
+   splanchnic nerves as identifiable geometry;
+2. has a licence compatible with distribution in ORBIT and is attributed;
+3. can be registered to the same anatomical coordinate system without an
+   arbitrary visual fudge factor;
+4. preserves left/right course and major anatomical relations;
+5. passes the simulator integrity and visual checks after import.
+
+If a candidate needs an unexplained scale/translation/rotation to look right,
+treat the registration as unverified rather than forcing it into place.
+
+## Verification commands
 
 ```sh
-node -e "const a=require('./public/models/atlas.json');
-for (const w of ['vagus','phrenic','splanchnic','sympathetic','median nerve'])
-  console.log(w, a.parts.filter(p=>p.name.toLowerCase().includes(w)).length)"
+npm run check:simulator
+npm run check:simulator-assets
+node scripts/all-organ-anatomy-audit.mjs
+npm run check:deploy
 ```
 
-Look at `docs/simulator-organ-sheets/system-nervous-anterior.png`: the entire
-nervous system of this atlas is a brain on a stalk.
-
-Until this lands, `vagus_nerve`, `phrenic_nerve`, `pectoral_nerves`,
-`splanchnic_nerves` and `axillary_nerve` resolve to **nothing**, and the view
-says why. That is deliberate. The old resolver substituted the ciliary ganglia
-and the oculomotor nerve for the vagus, which is worse than a blank: the
-student looking at it is the one person who cannot tell.
-
-## The source
-
-**Z-Anatomy** — a modified, extended BodyParts3D that adds vessels and nerves
-(nerves converted to curves), 5,000+ structures, **CC BY-SA 4.0**.
-
-- Models: https://github.com/Z-Anatomy/Models-of-human-anatomy
-- Blender template: https://github.com/Z-Anatomy/The-blend
-- Project: https://simtk.org/projects/z-anatomy
-
-It is **already partly in use here**: `lungs_candidate_zanatomy_full.glb` is a
-Z-Anatomy export, because the atlas has no lung tissue either.
-
-## The licence consequence, which is not optional
-
-BodyParts3D is **CC BY 4.0** (attribution). Z-Anatomy is **CC BY-SA 4.0**
-(attribution *and* share-alike). Anything derived from a Z-Anatomy mesh carries
-share-alike forward, and `public/models/ATTRIBUTION_BODYPARTS3D.md` has to name
-Z-Anatomy, its licence and the adaptation — the same way it already names
-BodyParts3D and the HuBMAP female reference set. Check this with the app owner
-before shipping, because it is a term on the app's own assets and not a
-detail.
-
-## What to do
-
-1. Fetch the Z-Anatomy model repository on a runner (or locally, with Blender).
-2. Export **only the peripheral nerves** to `.glb`, in the same coordinate
-   space the atlas uses: **metres, Y-up, standing on the stage at y = 0**, body
-   height ≈ 1.73. `ATTRIBUTION_BODYPARTS3D.md` records the conversion
-   BodyParts3D needed (mm/Z-up → m/Y-up) — Z-Anatomy is itself derived from
-   BodyParts3D, so the two should register without a fudge factor. **If a
-   fudge factor seems necessary, the export is wrong**: check it against a
-   landmark both sets have, such as the manubrium or the hyoid.
-3. Decimate to a budget. The whole current atlas is 2.29M triangles and
-   34 MB gzipped; the nerve set must be a small fraction of that. Curves
-   tubed at low radial segments are cheap — aim under 150k triangles for the
-   whole peripheral nervous system.
-4. Name the meshes so the resolver can find them: the rules in
-   `src/simulator/data/atlasResolver.ts` match on whole words, so a mesh named
-   `Left vagus nerve` is found by the key `vagus_nerve` with no code change.
-5. Delete the `absent-peripheral-nerve` rule's `when` entries for whatever now
-   exists, add a rule that selects them, and run `npm run check:simulator` —
-   it asserts those keys are absent today, so it will fail and tell you which
-   ones to update. That failure is the handshake, not a problem.
-6. Re-run `npm run sheets:simulator` and look at
-   `system-nervous-anterior.png`. If the vagus does not run from the jugular
-   foramen to the abdomen, the import is wrong.
-7. `npm run check:deploy` — the upload budget is 60 MB and the deploy is
-   currently 37.3 MB, so there is about 20 MB of headroom and no more.
+The `ORBIT Simulator Integrity` GitHub Actions workflow runs these checks on
+relevant pushes to `main`.
 
 ## What NOT to do
 
-**Do not hand-draw a nerve.** `createAutonomicNervousSystem()` in
-`AnatomicalBody3D.tsx` already generates a synthetic sympathetic chain and
-cardiac plexus procedurally, and that is defensible for an *overlay* that is
-labelled as a schematic. It is not a substitute for anatomy, and it must never
-be returned by the element resolver as though it came from the atlas.
+**Do not hand-draw a nerve and call it anatomy.** Procedural lines are acceptable
+only as visibly labelled teaching schematics.
 
-**Do not loosen a resolver rule to fill the blank.** That is how the vagus
-became the nerves of the eye.
+**Do not loosen resolver matching to fill a blank.** The historical failure mode
+was exactly this: the vagus resolved to nerves of the orbit and the phrenic
+nerve could collide with phrenic vessels.
+
+**Do not merge male/female or unrelated donor reference models as though they
+were one internally registered body.** HRA reference sex is kept explicit.
+
+**Do not remove the Z-Anatomy share-alike attribution.** Derived Z-Anatomy mesh
+assets remain subject to CC BY-SA 4.0.
