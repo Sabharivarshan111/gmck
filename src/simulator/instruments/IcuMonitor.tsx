@@ -334,6 +334,7 @@ export const IcuMonitor: React.FC<IcuMonitorProps> = ({
 
   return (
     <div
+      data-testid="icu-monitor"
       className={`rounded-2xl md:rounded-3xl border overflow-hidden flex flex-col lg:flex-row shadow-xl transition-all h-full min-h-0 ${
         isLight ? 'bg-slate-900 border-slate-800' : 'bg-[#050811] border-slate-800'
       }`}
