@@ -1799,10 +1799,10 @@ varying float partSelected;
     );
   }, [modelsReady, isolatedPartId, selectedOrganId]);
 
-  // Lazy-load the HRA male heart reference only for the source-derived
-  // interventricular-septum teaching view. HRA and BodyParts3D are different
-  // reference bodies, so this is an internally consistent HRA cutaway rather
-  // than a forced overlay on the BodyParts3D myocardium.
+  // Lazy-load the HRA male heart reference only for HRA internal-heart views.
+  // HRA and BodyParts3D are different reference bodies, so this stays an
+  // internally consistent same-source cutaway rather than a forced overlay on
+  // the BodyParts3D myocardium.
   useEffect(() => {
     const target = isolatedPartId || selectedOrganId;
     const wantsHraHeart = isHraHeartTarget(target);
