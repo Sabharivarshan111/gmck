@@ -457,7 +457,7 @@ export const WardExamModal: React.FC<WardExamModalProps> = ({
 
                     <button
                       onClick={() => setIsTilted(!isTilted)}
-                      className={`px-4 py-2 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
+                      className={`min-h-[44px] px-4 py-2 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
                         isTilted
                           ? 'bg-cyan-500 text-slate-950 border-cyan-400 font-black'
                           : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-700'
