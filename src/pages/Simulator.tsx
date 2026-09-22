@@ -28,6 +28,11 @@ import { DissectionToolbar } from '../simulator/controls/DissectionToolbar';
 import { DissectionToolMode, Part } from '../simulator/data/atlasTypes';
 import { isPeripheralNerveTarget } from '../simulator/data/peripheralNerves';
 import { HRA_HEART_TARGETS, isHraHeartTarget } from '../simulator/data/hraHeart';
+import {
+  getHraOrganTarget,
+  getHraTargetsForOrgan,
+  isHraOrganTarget,
+} from '../simulator/data/hraOrgans';
 
 export const Simulator: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -444,7 +449,14 @@ export const Simulator: React.FC = () => {
                     </span>
                   )}
                   <button
-                    onClick={() => setSelectedOrganId(isolatedPartId)}
+                    onClick={() => {
+                      if (isHraHeartTarget(isolatedPartId)) {
+                        setSelectedOrganId('heart');
+                        return;
+                      }
+                      const hraTarget = getHraOrganTarget(isolatedPartId);
+                      setSelectedOrganId(hraTarget?.organKey || isolatedPartId);
+                    }}
                     className="ml-1 text-[11px] font-bold px-2 py-0.5 rounded-md bg-sky-100 hover:bg-sky-200 text-sky-900 dark:bg-sky-950 dark:hover:bg-sky-900 dark:text-sky-200 transition-colors cursor-pointer"
                     title="Open clinical anatomy dossier"
                   >
@@ -693,6 +705,66 @@ export const Simulator: React.FC = () => {
             </span>
           </div>
         )}
+
+        {/* Multi-organ HRA reference strip. This is source-driven: only
+            structures verified in the official HRA GLBs appear here. */}
+        {(() => {
+          const activeHraTarget = getHraOrganTarget(isolatedPartId);
+          const sourceOrganKey =
+            activeHraTarget?.organKey ||
+            contextOrganId ||
+            isolatedPartId ||
+            selectedOrganId;
+          const targets = getHraTargetsForOrgan(sourceOrganKey);
+          if (!targets.length) return null;
+
+          return (
+            <div
+              className={`px-2.5 py-2 rounded-2xl border flex items-center gap-2 overflow-x-auto no-scrollbar ${isLight
+                ? 'bg-violet-50/80 border-violet-200/80'
+                : 'bg-violet-950/20 border-violet-900/50'}`}
+            >
+              <span className="text-[10px] font-black uppercase tracking-wider text-violet-700 dark:text-violet-300 whitespace-nowrap px-1">
+                HRA reference:
+              </span>
+              {targets.map((target) => (
+                <button
+                  key={target.id}
+                  onClick={() => {
+                    setIsolatedPartId(target.id);
+                    setSelectedOrganId(null);
+                    setContextOrganId(null);
+                    setCameraPreset(
+                      target.organKey === 'lungs' || target.organKey === 'aorta'
+                        ? 'thorax'
+                        : target.organKey === 'brain'
+                        ? 'head'
+                        : 'abdomen'
+                    );
+                    setMobileTab('3d');
+                  }}
+                  className={`min-h-[40px] px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap flex-shrink-0 border transition-all active:scale-95 ${isolatedPartId === target.id
+                    ? isLight
+                      ? 'bg-violet-600 border-violet-700 text-white shadow-sm'
+                      : 'bg-violet-400 border-violet-300 text-slate-950 shadow-sm'
+                    : isLight
+                    ? 'bg-white border-violet-200 text-violet-900'
+                    : 'bg-slate-900 border-violet-800 text-violet-200'}`}
+                  title={target.label}
+                >
+                  {target.shortLabel}
+                </button>
+              ))}
+              <span
+                className={`min-h-[40px] px-3 py-1.5 rounded-xl text-[10px] font-semibold whitespace-nowrap flex items-center border ${isLight
+                  ? 'bg-white border-violet-200 text-violet-900'
+                  : 'bg-slate-900 border-violet-800 text-violet-200'}`}
+              >
+                HuBMAP HRA male v1.3 · source-derived
+              </span>
+            </div>
+          );
+        })()}
 
         {/* Major named nerves — compact, horizontal and thumb-friendly on mobile.
             The actual 3D layer is still lazy-loaded only after one of these is used. */}
