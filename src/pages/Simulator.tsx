@@ -382,7 +382,7 @@ export const Simulator: React.FC = () => {
             }`}
           >
             <Layers className="w-3.5 h-3.5" />
-            <span>3D Anatomy</span>
+            <span className="hidden min-[390px]:inline">3D Anatomy</span><span className="min-[390px]:hidden">3D</span>
           </button>
 
           <button
@@ -398,7 +398,7 @@ export const Simulator: React.FC = () => {
             }`}
           >
             <Monitor className="w-3.5 h-3.5" />
-            <span>ICU Monitor</span>
+            <span className="hidden min-[390px]:inline">ICU Monitor</span><span className="min-[390px]:hidden">Monitor</span>
           </button>
 
           <button
@@ -414,14 +414,14 @@ export const Simulator: React.FC = () => {
             }`}
           >
             <Sparkles className="w-3.5 h-3.5" />
-            <span>Rx & Case</span>
+            <span className="hidden min-[390px]:inline">Rx & Case</span><span className="min-[390px]:hidden">Case</span>
           </button>
         </div>
       </div>
       </div>
 
       {/* 3. Main Stage Content */}
-      <main className="flex-1 p-3 md:p-5 max-w-7xl mx-auto w-full flex flex-col space-y-4">
+      <main className="flex-1 p-2.5 sm:p-3 md:p-5 max-w-7xl mx-auto w-full flex flex-col space-y-3 md:space-y-4 pb-[calc(12px+env(safe-area-inset-bottom))]">
         {/* DESKTOP VIEW: Split View (Side-by-side) */}
         <div className="hidden lg:grid lg:grid-cols-12 gap-4">
           {/* 3D Anatomical Viewport with Interactive Dissection Engine (7 cols) */}
@@ -519,7 +519,7 @@ export const Simulator: React.FC = () => {
 
         {/* 1-Tap Organ Deep Inspector Strip (Desktop & Mobile 3D) */}
         <div
-          className={`p-2.5 rounded-2xl border flex items-center gap-2 overflow-x-auto no-scrollbar ${
+          className={`p-2 md:p-2.5 rounded-2xl border items-center gap-2 overflow-x-auto no-scrollbar ${mobileTab === '3d' ? 'flex' : 'hidden lg:flex'} ${
             isLight ? 'bg-white/95 border-slate-200/80 shadow-xs' : 'bg-slate-900/90 border-slate-800 shadow-md'
           }`}
         >
@@ -954,7 +954,7 @@ export const Simulator: React.FC = () => {
                 small screen and in landscape. */}
             <div
               className="w-full relative"
-              style={{ height: 'max(300px, min(58dvh, 520px))' }}
+              style={{ height: 'max(340px, min(66dvh, 560px))' }}
             >
               {isolatedPartId && (
                 <div className="absolute top-3 left-1/2 -translate-x-1/2 z-30 flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-amber-300 dark:border-amber-700 shadow-md pointer-events-auto touch-auto whitespace-nowrap">
@@ -1004,8 +1004,11 @@ export const Simulator: React.FC = () => {
           </div>
 
           <div
-            className="h-[520px] w-full pb-3"
-            style={{ display: mobileTab === 'telemetry' ? 'block' : 'none' }}
+            className="w-full pb-2"
+            style={{
+              display: mobileTab === 'telemetry' ? 'block' : 'none',
+              height: 'max(500px, min(72dvh, 620px))',
+            }}
           >
             <IcuMonitor
               vitals={vitals}
@@ -1018,7 +1021,7 @@ export const Simulator: React.FC = () => {
 
         {/* Bottom Panel: Interventions, Diagnostics & Case Scenarios */}
         {/* On desktop: always visible. On mobile: visible when interventions tab is selected OR under 3D stage */}
-        <div className={`w-full ${mobileTab === 'telemetry' ? 'hidden lg:block' : 'block'}`}>
+        <div className={`w-full ${mobileTab === 'interventions' ? 'block' : 'hidden lg:block'}`}>
           <InterventionPanel
             scenarios={SCENARIOS}
             currentScenarioId={currentScenarioId}
