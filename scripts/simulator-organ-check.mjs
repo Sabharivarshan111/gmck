@@ -105,6 +105,20 @@ function mustContain(key, word, why) {
   if (!hit) fail(`"${key}" returns nothing matching "${word}" — ${why}`);
 }
 
+/** Every resolved part for `key` must belong to one of the allowed atlas systems. */
+function mustUseOnlySystems(key, allowed, why) {
+  const r = describeAtlasTarget(key, atlas);
+  const bad = [...r.ids]
+    .map((id) => byId.get(id))
+    .filter(Boolean)
+    .filter((p) => !allowed.includes(p.system));
+  if (bad.length) {
+    fail(
+      `"${key}" returns ${bad.length} part(s) outside [${allowed.join(', ')}] — ${why}\n      e.g. ${[...new Set(bad.map((p) => `${p.name} [${p.system}]`))].slice(0, 4).join(', ')}`
+    );
+  }
+}
+
 /** `key` must resolve to nothing, because this atlas does not hold it. */
 function mustBeAbsent(key) {
   const r = describeAtlasTarget(key, atlas);
@@ -144,6 +158,31 @@ mustNotContain('pectoralis_major', 'pectoralis minor', 'pectoralis minor is a di
 mustNotContain('deltoid', 'artery', 'the deltoid is the muscle; the deltoid branch of the thoraco-acromial artery is an artery');
 mustNotContain('celiac_trunk', 'duct', 'the common hepatic DUCT is biliary; the common hepatic ARTERY is the celiac branch');
 mustNotContain('abdomen', 'epigastric', 'the epigastric arteries are anterior abdominal wall, and this rule strips the wall');
+
+// Dossier vessel nodes are type-specific. Never render a companion vein,
+ // ganglion or unrelated vessel just because it shares the regional name.
+for (const key of [
+  'lad_artery',
+  'lcx_artery',
+  'rca_artery',
+  'pulmonary_trunk',
+  'celiac_trunk',
+  'superior_mesenteric_artery',
+  'thoracoacromial',
+  'post_circumflex_humeral',
+]) {
+  mustUseOnlySystems(key, ['arterial'], 'this dossier node is an artery');
+}
+mustUseOnlySystems('pulmonary_veins', ['venous'], 'this dossier node is venous return to the left atrium');
+mustUseOnlySystems('portal_vein', ['venous'], 'the portal tree is venous');
+
+mustContain('pulmonary_trunk', 'pulmonary trunk', 'pulmonary arterial outflow must contain the RV outflow trunk');
+mustContain('pulmonary_veins', 'pulmonary vein', 'pulmonary venous return must contain the named pulmonary veins');
+mustNotContain('pulmonary_trunk', 'vein', 'pulmonary arterial outflow must not include pulmonary veins');
+mustNotContain('pulmonary_veins', 'artery', 'pulmonary venous return must not include pulmonary arteries');
+mustNotContain('celiac_trunk', 'ganglion', 'the celiac arterial tree must not include autonomic ganglia');
+mustNotContain('superior_mesenteric_artery', 'vein', 'the SMA view must not include the SMV');
+mustNotContain('post_circumflex_humeral', 'vein', 'the posterior circumflex humeral artery view must not include its companion vein');
 
 // The portal tree, which is the reason anyone opens the portal vein.
 mustContain('portal_vein', 'splenic vein', 'the portal tributaries are the portosystemic anastomosis sites');
