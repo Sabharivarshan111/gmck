@@ -433,6 +433,13 @@ for (const [pattern, why] of [
   if (!pattern.test(viewSrc)) fail(`AnatomicalBody3D: ${why}`);
 }
 
+// A source-backed nerve overview must not silently mix in a derived nerve.
+// Phrenic and splanchnic teaching geometry is allowed only when explicitly
+// selected and labelled as schematic.
+if (/const\s+showDerivedPhrenic\s*=\s*[^;\n]*peripheral_nerves/i.test(viewSrc)) {
+  fail('Peripheral Nerves overview includes the derived phrenic schematic without its explicit schematic label');
+}
+
 // 3. One 3D view per device.
 //
 //    `hidden lg:grid` and `lg:hidden` hide a subtree with CSS, and a subtree
