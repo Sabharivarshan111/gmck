@@ -133,10 +133,10 @@ export const PocusCanvas: React.FC<PocusCanvasProps> = ({
   };
 
   return (
-    <div className="space-y-3.5">
+    <div className="space-y-2.5 md:space-y-3.5">
       {/* 1. Transducer Probe & View Preset Selector */}
-      <div className="flex items-center justify-between flex-wrap gap-2">
-        <div className="flex items-center gap-1.5 flex-wrap">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+        <div className="-mx-1 px-1 flex items-stretch gap-1.5 overflow-x-auto no-scrollbar">
           {[
             { id: 'cardiac_plax', label: '🫀 Parasternal Long (PLAX)', sub: 'Phase Array 2.5MHz' },
             { id: 'subxiphoid', label: '🛡️ Subxiphoid 4-Chamber', sub: 'Tamponade / RV Collapse' },
@@ -153,7 +153,7 @@ export const PocusCanvas: React.FC<PocusCanvasProps> = ({
                   caliperPointB: null,
                 }))
               }
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer text-left ${
+              className={`min-h-[44px] shrink-0 px-3 py-1.5 rounded-xl text-[11px] md:text-xs font-bold border transition-all cursor-pointer text-left ${
                 settings.viewMode === v.id
                   ? 'bg-cyan-500/20 border-cyan-500 text-cyan-300 shadow-md font-black'
                   : 'bg-slate-950/80 hover:bg-slate-800/80 border-slate-800 text-slate-400'
@@ -166,13 +166,13 @@ export const PocusCanvas: React.FC<PocusCanvasProps> = ({
         </div>
 
         {/* Action Controls: Freeze, M-Mode, Caliper */}
-        <div className="flex items-center gap-1.5">
+        <div className="-mx-1 px-1 flex items-center gap-1.5 overflow-x-auto no-scrollbar">
           {/* Live / Freeze */}
           <button
             onClick={() =>
               setSettings((prev) => ({ ...prev, isFrozen: !prev.isFrozen }))
             }
-            className={`px-2.5 py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer flex items-center gap-1.5 ${
+            className={`min-h-[44px] shrink-0 px-2.5 py-1.5 rounded-xl text-[11px] font-bold border transition-all cursor-pointer flex items-center gap-1.5 ${
               settings.isFrozen
                 ? 'bg-red-500/20 text-red-300 border-red-500'
                 : 'bg-emerald-500/20 text-emerald-300 border-emerald-500'
@@ -203,7 +203,7 @@ export const PocusCanvas: React.FC<PocusCanvasProps> = ({
               onClick={() =>
                 setSettings((prev) => ({ ...prev, showColorDoppler: !prev.showColorDoppler }))
               }
-              className={`px-2.5 py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
+              className={`min-h-[44px] shrink-0 px-2.5 py-1.5 rounded-xl text-[11px] font-bold border transition-all cursor-pointer ${
                 settings.showColorDoppler
                   ? 'bg-blue-600 text-white border-blue-400'
                   : 'bg-slate-800 text-slate-400 border-slate-700'
@@ -222,7 +222,7 @@ export const PocusCanvas: React.FC<PocusCanvasProps> = ({
                 setCaliperActive(true);
               }
             }}
-            className={`px-2.5 py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer flex items-center gap-1 ${
+            className={`min-h-[44px] shrink-0 px-2.5 py-1.5 rounded-xl text-[11px] font-bold border transition-all cursor-pointer flex items-center gap-1 ${
               caliperActive
                 ? 'bg-sky-400 text-slate-950 border-sky-300 font-black'
                 : 'bg-slate-800 text-slate-300 border-slate-700'
@@ -239,7 +239,7 @@ export const PocusCanvas: React.FC<PocusCanvasProps> = ({
         <canvas
           ref={canvasRef}
           onClick={handleCanvasClick}
-          className={`w-full rounded-xl h-[330px] md:h-[380px] select-none ${
+          className={`w-full rounded-xl h-[46dvh] min-h-[300px] max-h-[420px] md:h-[380px] md:min-h-0 md:max-h-none select-none ${
             caliperActive ? 'cursor-crosshair' : 'cursor-default'
           }`}
           style={{ imageRendering: 'pixelated' }}
@@ -253,8 +253,8 @@ export const PocusCanvas: React.FC<PocusCanvasProps> = ({
       </div>
 
       {/* 3. Machine Gain & Depth Knobs */}
-      <div className="flex items-center justify-between bg-slate-950 px-4 py-2.5 rounded-xl border border-slate-800 text-xs text-slate-300 flex-wrap gap-3">
-        <div className="flex items-center gap-3">
+      <div className="grid grid-cols-1 sm:flex sm:items-center sm:justify-between bg-slate-950 px-3 md:px-4 py-2.5 rounded-xl border border-slate-800 text-xs text-slate-300 gap-2 sm:gap-3">
+        <div className="grid grid-cols-2 sm:flex sm:items-center gap-2 sm:gap-3">
           <div className="flex items-center gap-2">
             <span className="text-[11px] font-semibold text-slate-400">GAIN:</span>
             <input
