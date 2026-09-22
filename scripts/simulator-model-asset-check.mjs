@@ -97,11 +97,12 @@ if (!existsSync(hraHeartPath)) {
     }
 
     for (const target of HRA_HEART_TARGETS) {
+      if (target.kind === 'schematic') continue;
       const matches = (json.meshes || [])
         .map((m) => String(m.name || ''))
         .filter((name) => hraHeartMeshMatchesTarget(name, target.id));
       if (matches.length === 0) {
-        fail(`HRA UI target "${target.id}" matches no source mesh`);
+        fail(`HRA source UI target "${target.id}" matches no source mesh`);
       }
     }
 
