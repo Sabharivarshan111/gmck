@@ -212,7 +212,14 @@ class ApkgModule(reactContext: ReactApplicationContext) : NativeOrbitApkgSpec(re
     }
 
     val isPdf = name.endsWith(".pdf", ignoreCase = true) || resolver.getType(uri) == "application/pdf"
-    val ext = if (isPdf) ".pdf" else ".apkg"
+    val ext = when {
+      isPdf -> ".pdf"
+      name.endsWith(".csv", ignoreCase = true) -> ".csv"
+      name.endsWith(".tsv", ignoreCase = true) -> ".tsv"
+      name.endsWith(".txt", ignoreCase = true) -> ".txt"
+      name.endsWith(".colpkg", ignoreCase = true) -> ".colpkg"
+      else -> ".apkg"
+    }
     val staging = File(reactApplicationContext.cacheDir, STAGING).apply { mkdirs() }
     val target = File(staging, "${System.currentTimeMillis().toString(36)}$ext")
     resolver.openInputStream(uri).use { input ->
@@ -274,6 +281,18 @@ class ApkgModule(reactContext: ReactApplicationContext) : NativeOrbitApkgSpec(re
           Base64.encodeToString(it.readBytes(), Base64.NO_WRAP)
         }
       }
+    }
+  }
+
+  override fun readText(path: String, promise: Promise) {
+    promise.runCatching("text_failed") {
+      val file = File(path)
+      require(file.parentFile?.name == STAGING) { "That text file is outside the import staging area." }
+      require(file.exists()) { "That text export is no longer available." }
+      require(file.length() <= MAX_TEXT_BYTES) {
+        "That text export is too large to open safely. Export it as .apkg instead."
+      }
+      file.readText(Charsets.UTF_8)
     }
   }
 
@@ -768,6 +787,7 @@ class ApkgModule(reactContext: ReactApplicationContext) : NativeOrbitApkgSpec(re
     private const val REQUEST_CODE = 0x4150 // 'AP'
     private const val STAGING = "apkg-staging"
     private const val MEDIA = "anki-media"
+    private const val MAX_TEXT_BYTES = 50L * 1024L * 1024L
     /** Named in res/xml/orbit_file_paths.xml — the two must agree. */
     private const val SHARING = "apkg-share"
 
