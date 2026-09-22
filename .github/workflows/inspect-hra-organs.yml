@@ -1,0 +1,45 @@
+name: Inspect HRA organ sources
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/inspect-hra-organs.mjs"
+      - ".github/workflows/inspect-hra-organs.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  inventory:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download official HRA male reference organs
+        run: |
+          set -euxo pipefail
+          mkdir -p /tmp/hra-organs
+          base="https://raw.githubusercontent.com/hubmapconsortium/ccf-releases/main/v1.3/models"
+          for f in             VH_M_Kidney_L.glb             VH_M_Kidney_R.glb             VH_M_Liver.glb             VH_M_Lung.glb             VH_M_Pancreas.glb             VH_M_Spleen.glb             VH_M_Small_Intestine.glb             VH_M_Urinary_Bladder.glb             VH_M_Thymus.glb             VH_M_Blood_Vasculature.glb
+          do
+            curl -L --fail --retry 3 "$base/$f" -o "/tmp/hra-organs/$f"
+            test -s "/tmp/hra-organs/$f"
+          done
+      - name: Inventory actual GLB nodes and meshes
+        run: |
+          node scripts/inspect-hra-organs.mjs /tmp/hra-organs docs/hra-organ-inventory.json
+          test -s docs/hra-organ-inventory.json
+      - name: Commit source inventory
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/hra-organ-inventory.json
+          if git diff --cached --quiet; then
+            echo "No inventory changes"
+          else
+            git commit -m "Inventory HRA reference organ structures"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
