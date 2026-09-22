@@ -537,6 +537,9 @@ export const Simulator: React.FC = () => {
             { id: 'stomach', label: 'Stomach & Bed', icon: '🥣' },
             { id: 'pancreas', label: 'Pancreas', icon: '🥞' },
             { id: 'spleen', label: 'Spleen', icon: '🛡️' },
+            { id: 'small_intestine', label: 'Small Intestine', icon: '🌀' },
+            { id: 'urinary_bladder', label: 'Urinary Bladder', icon: '💧' },
+            { id: 'thymus', label: 'Thymus', icon: '🧫' },
             { id: 'kidney', label: 'Kidneys & Adrenals', icon: '🫘' },
             { id: 'skeletal', label: 'Skeleton & Ribs', icon: '🦴' },
             { id: 'snakebite', label: 'Snakebite Wound', icon: '🐍' },
@@ -564,8 +567,16 @@ export const Simulator: React.FC = () => {
                     setCameraPreset('anterior');
                     return;
                   }
-                  // 1-Tap Isolate: Isolate in 3D viewport without forcing full-screen drawer on mobile!
-                  setIsolatedPartId(item.id);
+                  // Source-backed organs with dedicated HRA models open directly
+                  // in their verified HRA overview instead of relying on a broad
+                  // BodyParts3D abdomen bucket.
+                  const directHraOverview: Record<string, string> = {
+                    small_intestine: 'hra_small_intestine_overview',
+                    urinary_bladder: 'hra_bladder_overview',
+                    thymus: 'hra_thymus_overview',
+                  };
+                  setIsolatedPartId(directHraOverview[item.id] || item.id);
+                  setSelectedOrganId(item.id);
                   setContextOrganId(null);
 
                   if (item.id === 'brain') setCameraPreset('head');
@@ -576,7 +587,10 @@ export const Simulator: React.FC = () => {
                     item.id === 'kidney' ||
                     item.id === 'stomach' ||
                     item.id === 'pancreas' ||
-                    item.id === 'spleen'
+                    item.id === 'spleen' ||
+                    item.id === 'small_intestine' ||
+                    item.id === 'urinary_bladder' ||
+                    item.id === 'thymus'
                   )
                     setCameraPreset('abdomen');
                   else setCameraPreset('anterior');
