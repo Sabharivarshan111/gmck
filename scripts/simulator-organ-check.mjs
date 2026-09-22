@@ -171,6 +171,37 @@ for (const [key, floor] of Object.entries(FLOORS)) {
 }
 
 // ---------------------------------------------------------------------------
+// Internal-heart mobile inspector targets
+// ---------------------------------------------------------------------------
+{
+  const requiredHeartTargets = [
+    ['Cavity of right atrium', ['FJ2424']],
+    ['Cavity of left atrium', ['FJ2425']],
+    ['Cavity of right ventricle', ['FJ2423']],
+    ['Cavity of left ventricle', ['FJ2422']],
+    ['tricuspid valve', ['FJ2421', 'FJ2433', 'FJ2436']],
+    ['mitral valve', ['FJ2420', 'FJ2432']],
+    ['aortic valve', ['FJ2426', 'FJ2431', 'FJ2435']],
+    ['pulmonary valve', ['FJ2417', 'FJ2427', 'FJ2434']],
+  ];
+
+  for (const [target, expected] of requiredHeartTargets) {
+    const ids = resolveAtlasElementIds(target, atlas);
+    const missing = expected.filter((id) => !ids.has(id));
+    if (missing.length) {
+      fail(`internal-heart target "${target}" missed expected atlas ids: ${missing.join(', ')}; resolved=${[...ids].join(',') || '(none)'}`);
+    }
+  }
+
+  const papillary = resolveAtlasElementIds('papillary muscle', atlas);
+  const expectedPapillary = ['FJ2418', 'FJ2419', 'FJ2429', 'FJ2430', 'FJ2437'];
+  const missingPapillary = expectedPapillary.filter((id) => !papillary.has(id));
+  if (missingPapillary.length) {
+    fail(`papillary muscle target missed: ${missingPapillary.join(', ')}`);
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Every named part can be found by its own name
 // ---------------------------------------------------------------------------
 //
