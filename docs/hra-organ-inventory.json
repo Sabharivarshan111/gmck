@@ -3479,6 +3479,2606 @@
         "VH_M_portal_vein",
         "VH_M_hepatic_portal_vein"
       ]
+    },
+    "placenta": {
+      "fileName": "VH_F_Placenta.glb",
+      "bytes": 4917240,
+      "nodeCount": 10,
+      "meshCount": 8,
+      "nodes": [
+        {
+          "i": 0,
+          "name": "VH_F_placenta"
+        },
+        {
+          "i": 1,
+          "name": "VH_F_basal_plate",
+          "mesh": 0
+        },
+        {
+          "i": 2,
+          "name": "VH_F_chorionic_plate",
+          "mesh": 1
+        },
+        {
+          "i": 3,
+          "name": "VH_F_placenta_vessels",
+          "mesh": 2
+        },
+        {
+          "i": 4,
+          "name": "VH_F_amnion",
+          "mesh": 3
+        },
+        {
+          "i": 5,
+          "name": "VH_F_umbilical"
+        },
+        {
+          "i": 6,
+          "name": "VH_F_umbilical_cord",
+          "mesh": 4
+        },
+        {
+          "i": 7,
+          "name": "VH_F_umbilical_artery_1",
+          "mesh": 5
+        },
+        {
+          "i": 8,
+          "name": "VH_F_umbilical_artery_2",
+          "mesh": 6
+        },
+        {
+          "i": 9,
+          "name": "VH_F_umbilical_vein",
+          "mesh": 7
+        }
+      ],
+      "meshes": [
+        {
+          "i": 0,
+          "name": "VH_F_basal_plate",
+          "primitives": 1
+        },
+        {
+          "i": 1,
+          "name": "VH_F_chorionic_plate",
+          "primitives": 1
+        },
+        {
+          "i": 2,
+          "name": "VH_F_placenta_vessels",
+          "primitives": 1
+        },
+        {
+          "i": 3,
+          "name": "VH_F_amnion",
+          "primitives": 1
+        },
+        {
+          "i": 4,
+          "name": "VH_F_umbilical_cord",
+          "primitives": 1
+        },
+        {
+          "i": 5,
+          "name": "VH_F_umbilical_artery_1",
+          "primitives": 1
+        },
+        {
+          "i": 6,
+          "name": "VH_F_umbilical_artery_2",
+          "primitives": 1
+        },
+        {
+          "i": 7,
+          "name": "VH_F_umbilical_vein",
+          "primitives": 1
+        }
+      ],
+      "namedMeshes": [
+        "VH_F_basal_plate",
+        "VH_F_chorionic_plate",
+        "VH_F_placenta_vessels",
+        "VH_F_amnion",
+        "VH_F_umbilical_cord",
+        "VH_F_umbilical_artery_1",
+        "VH_F_umbilical_artery_2",
+        "VH_F_umbilical_vein"
+      ]
+    },
+    "fallopian_tube_right": {
+      "fileName": "VH_F_Fallopian_Tube_R.glb",
+      "bytes": 327448,
+      "nodeCount": 5,
+      "meshCount": 4,
+      "nodes": [
+        {
+          "i": 0,
+          "name": "VH_F_fallopian_tube_R"
+        },
+        {
+          "i": 1,
+          "name": "VH_F_ampulla_of_uterine_tube_R",
+          "mesh": 0
+        },
+        {
+          "i": 2,
+          "name": "VH_F_isthmus_of_fallopian_tube_R",
+          "mesh": 1
+        },
+        {
+          "i": 3,
+          "name": "VH_F_fibria_of_uterine_tube_R",
+          "mesh": 2
+        },
+        {
+          "i": 4,
+          "name": "VH_F_uterine_tube_infundibulum_R",
+          "mesh": 3
+        }
+      ],
+      "meshes": [
+        {
+          "i": 0,
+          "name": "VH_F_ampulla_of_uterine_tube_R",
+          "primitives": 1
+        },
+        {
+          "i": 1,
+          "name": "VH_F_isthmus_of_fallopian_tube_R",
+          "primitives": 1
+        },
+        {
+          "i": 2,
+          "name": "VH_F_fibria_of_uterine_tube_R",
+          "primitives": 1
+        },
+        {
+          "i": 3,
+          "name": "VH_F_uterine_tube_infundibulum_R",
+          "primitives": 1
+        }
+      ],
+      "namedMeshes": [
+        "VH_F_ampulla_of_uterine_tube_R",
+        "VH_F_isthmus_of_fallopian_tube_R",
+        "VH_F_fibria_of_uterine_tube_R",
+        "VH_F_uterine_tube_infundibulum_R"
+      ]
+    },
+    "fallopian_tube_left": {
+      "fileName": "VH_F_Fallopian_Tube_L.glb",
+      "bytes": 336676,
+      "nodeCount": 5,
+      "meshCount": 4,
+      "nodes": [
+        {
+          "i": 0,
+          "name": "VH_F_fallopian_tube_L"
+        },
+        {
+          "i": 1,
+          "name": "VH_F_ampulla_of_uterine_tube_L",
+          "mesh": 0
+        },
+        {
+          "i": 2,
+          "name": "VH_F_isthmus_of_fallopian_tube_L",
+          "mesh": 1
+        },
+        {
+          "i": 3,
+          "name": "VH_F_fibria_of_uterine_tube_L",
+          "mesh": 2
+        },
+        {
+          "i": 4,
+          "name": "VH_F_uterine_tube_infundibulum_L",
+          "mesh": 3
+        }
+      ],
+      "meshes": [
+        {
+          "i": 0,
+          "name": "VH_F_ampulla_of_uterine_tube_L",
+          "primitives": 1
+        },
+        {
+          "i": 1,
+          "name": "VH_F_isthmus_of_fallopian_tube_L",
+          "primitives": 1
+        },
+        {
+          "i": 2,
+          "name": "VH_F_fibria_of_uterine_tube_L",
+          "primitives": 1
+        },
+        {
+          "i": 3,
+          "name": "VH_F_uterine_tube_infundibulum_L",
+          "primitives": 1
+        }
+      ],
+      "namedMeshes": [
+        "VH_F_ampulla_of_uterine_tube_L",
+        "VH_F_isthmus_of_fallopian_tube_L",
+        "VH_F_fibria_of_uterine_tube_L",
+        "VH_F_uterine_tube_infundibulum_L"
+      ]
+    },
+    "ovary_right": {
+      "fileName": "VH_F_Ovary_R.glb",
+      "bytes": 8744,
+      "nodeCount": 1,
+      "meshCount": 1,
+      "nodes": [
+        {
+          "i": 0,
+          "name": "VH_F_right_ovary",
+          "mesh": 0
+        }
+      ],
+      "meshes": [
+        {
+          "i": 0,
+          "name": "VH_F_right_ovary",
+          "primitives": 1
+        }
+      ],
+      "namedMeshes": [
+        "VH_F_right_ovary"
+      ]
+    },
+    "ovary_left": {
+      "fileName": "VH_F_Ovary_L.glb",
+      "bytes": 8984,
+      "nodeCount": 1,
+      "meshCount": 1,
+      "nodes": [
+        {
+          "i": 0,
+          "name": "VH_F_left_ovary",
+          "mesh": 0
+        }
+      ],
+      "meshes": [
+        {
+          "i": 0,
+          "name": "VH_F_left_ovary",
+          "primitives": 1
+        }
+      ],
+      "namedMeshes": [
+        "VH_F_left_ovary"
+      ]
+    },
+    "uterus": {
+      "fileName": "VH_F_Uterus.glb",
+      "bytes": 909772,
+      "nodeCount": 11,
+      "meshCount": 10,
+      "nodes": [
+        {
+          "i": 0,
+          "name": "VH_F_uterus"
+        },
+        {
+          "i": 1,
+          "name": "VH_F_abdominal_ostium_of_uterine_tube",
+          "mesh": 0
+        },
+        {
+          "i": 2,
+          "name": "VH_F_body_of_uterus",
+          "mesh": 1
+        },
+        {
+          "i": 3,
+          "name": "VH_F_fundus_of_uterus",
+          "mesh": 2
+        },
+        {
+          "i": 4,
+          "name": "VH_F_cornua",
+          "mesh": 3
+        },
+        {
+          "i": 5,
+          "name": "VH_F_lower_uterine_segment",
+          "mesh": 4
+        },
+        {
+          "i": 6,
+          "name": "VH_F_posterior_wall_of_uterus",
+          "mesh": 5
+        },
+        {
+          "i": 7,
+          "name": "VH_F_anterior_wall_of_uterus",
+          "mesh": 6
+        },
+        {
+          "i": 8,
+          "name": "VH_F_cervix",
+          "mesh": 7
+        },
+        {
+          "i": 9,
+          "name": "VH_F_internal_cervical_os",
+          "mesh": 8
+        },
+        {
+          "i": 10,
+          "name": "VH_F_external_cervical_os",
+          "mesh": 9
+        }
+      ],
+      "meshes": [
+        {
+          "i": 0,
+          "name": "VH_F_abdominal_ostium_of_uterine_tube",
+          "primitives": 1
+        },
+        {
+          "i": 1,
+          "name": "VH_F_body_of_uterus",
+          "primitives": 1
+        },
+        {
+          "i": 2,
+          "name": "VH_F_fundus_of_uterus",
+          "primitives": 1
+        },
+        {
+          "i": 3,
+          "name": "VH_F_cornua",
+          "primitives": 1
+        },
+        {
+          "i": 4,
+          "name": "VH_F_lower_uterine_segment",
+          "primitives": 1
+        },
+        {
+          "i": 5,
+          "name": "VH_F_posterior_wall_of_uterus",
+          "primitives": 1
+        },
+        {
+          "i": 6,
+          "name": "VH_F_anterior_wall_of_uterus",
+          "primitives": 1
+        },
+        {
+          "i": 7,
+          "name": "VH_F_cervix",
+          "primitives": 1
+        },
+        {
+          "i": 8,
+          "name": "VH_F_internal_cervical_os",
+          "primitives": 1
+        },
+        {
+          "i": 9,
+          "name": "VH_F_external_cervical_os",
+          "primitives": 1
+        }
+      ],
+      "namedMeshes": [
+        "VH_F_abdominal_ostium_of_uterine_tube",
+        "VH_F_body_of_uterus",
+        "VH_F_fundus_of_uterus",
+        "VH_F_cornua",
+        "VH_F_lower_uterine_segment",
+        "VH_F_posterior_wall_of_uterus",
+        "VH_F_anterior_wall_of_uterus",
+        "VH_F_cervix",
+        "VH_F_internal_cervical_os",
+        "VH_F_external_cervical_os"
+      ]
+    },
+    "knee_right": {
+      "fileName": "VH_M_Knee_R.glb",
+      "bytes": 439704,
+      "nodeCount": 22,
+      "meshCount": 20,
+      "nodes": [
+        {
+          "i": 0,
+          "name": "VH_M_knee_R"
+        },
+        {
+          "i": 1,
+          "name": "VH_M_knee_joint_R"
+        },
+        {
+          "i": 2,
+          "name": "VH_M_tibia_R",
+          "mesh": 0
+        },
+        {
+          "i": 3,
+          "name": "VH_M_fibula_R",
+          "mesh": 1
+        },
+        {
+          "i": 4,
+          "name": "VH_M_patella_R",
+          "mesh": 2
+        },
+        {
+          "i": 5,
+          "name": "VH_M_femur_R",
+          "mesh": 3
+        },
+        {
+          "i": 6,
+          "name": "VH_M_articular_cartilage_of_knee_R",
+          "mesh": 4
+        },
+        {
+          "i": 7,
+          "name": "VH_M_intercondylar_fossa_R",
+          "mesh": 5
+        },
+        {
+          "i": 8,
+          "name": "VH_M_anterior_cruciate_enthesis_R",
+          "mesh": 6
+        },
+        {
+          "i": 9,
+          "name": "VH_M_posterior_cruciate_enthesis_R",
+          "mesh": 7
+        },
+        {
+          "i": 10,
+          "name": "VH_M_lateral_condyle_of_femur_frontal_R",
+          "mesh": 8
+        },
+        {
+          "i": 11,
+          "name": "VH_M_lateral_condyle_of_femur_inf_R",
+          "mesh": 9
+        },
+        {
+          "i": 12,
+          "name": "VH_M_lateral_condyle_of_femur_sup_R",
+          "mesh": 10
+        },
+        {
+          "i": 13,
+          "name": "VH_M_lateral_epicondylar_enthesis_R",
+          "mesh": 11
+        },
+        {
+          "i": 14,
+          "name": "VH_M_lateral_perichondular_surface_R",
+          "mesh": 12
+        },
+        {
+          "i": 15,
+          "name": "VH_M_distal_most_point_of_medial_condyle_of_femur_R",
+          "mesh": 13
+        },
+        {
+          "i": 16,
+          "name": "VH_M_medial_condyle_of_right_femur_inf",
+          "mesh": 14
+        },
+        {
+          "i": 17,
+          "name": "VH_M_medial_condyle_of_right_femur_sup",
+          "mesh": 15
+        },
+        {
+          "i": 18,
+          "name": "VH_M_medial_epicondylar_enthesis_R",
+          "mesh": 16
+        },
+        {
+          "i": 19,
+          "name": "VH_M_medial_perichondular_surface_R",
+          "mesh": 17
+        },
+        {
+          "i": 20,
+          "name": "VH_M_patellar_surface_R",
+          "mesh": 18
+        },
+        {
+          "i": 21,
+          "name": "VH_M_meniscus_R",
+          "mesh": 19
+        }
+      ],
+      "meshes": [
+        {
+          "i": 0,
+          "name": "VH_M_tibia_R",
+          "primitives": 1
+        },
+        {
+          "i": 1,
+          "name": "VH_M_fibula_R",
+          "primitives": 1
+        },
+        {
+          "i": 2,
+          "name": "VH_M_patella_R",
+          "primitives": 1
+        },
+        {
+          "i": 3,
+          "name": "VH_M_femur_R",
+          "primitives": 1
+        },
+        {
+          "i": 4,
+          "name": "VH_M_articular_cartilage_of_knee_R",
+          "primitives": 1
+        },
+        {
+          "i": 5,
+          "name": "VH_M_intercondylar_fossa_R",
+          "primitives": 1
+        },
+        {
+          "i": 6,
+          "name": "VH_M_anterior_cruciate_enthesis_R",
+          "primitives": 1
+        },
+        {
+          "i": 7,
+          "name": "VH_M_posterior_cruciate_enthesis_R",
+          "primitives": 1
+        },
+        {
+          "i": 8,
+          "name": "VH_M_lateral_condyle_of_femur_frontal_R",
+          "primitives": 1
+        },
+        {
+          "i": 9,
+          "name": "VH_M_lateral_condyle_of_femur_inf_R",
+          "primitives": 1
+        },
+        {
+          "i": 10,
+          "name": "VH_M_lateral_condyle_of_femur_sup_R",
+          "primitives": 1
+        },
+        {
+          "i": 11,
+          "name": "VH_M_lateral_epicondylar_enthesis_R",
+          "primitives": 1
+        },
+        {
+          "i": 12,
+          "name": "VH_M_lateral_perichondular_surface_R",
+          "primitives": 1
+        },
+        {
+          "i": 13,
+          "name": "VH_M_distal_most_point_of_medial_condyle_of_femur_R",
+          "primitives": 1
+        },
+        {
+          "i": 14,
+          "name": "VH_M_medial_condyle_of_right_femur_inf",
+          "primitives": 1
+        },
+        {
+          "i": 15,
+          "name": "VH_M_medial_condyle_of_right_femur_sup",
+          "primitives": 1
+        },
+        {
+          "i": 16,
+          "name": "VH_M_medial_epicondylar_enthesis_R",
+          "primitives": 1
+        },
+        {
+          "i": 17,
+          "name": "VH_M_medial_perichondular_surface_R",
+          "primitives": 1
+        },
+        {
+          "i": 18,
+          "name": "VH_M_patellar_surface_R",
+          "primitives": 1
+        },
+        {
+          "i": 19,
+          "name": "VH_M_meniscus_R",
+          "primitives": 1
+        }
+      ],
+      "namedMeshes": [
+        "VH_M_tibia_R",
+        "VH_M_fibula_R",
+        "VH_M_patella_R",
+        "VH_M_femur_R",
+        "VH_M_articular_cartilage_of_knee_R",
+        "VH_M_intercondylar_fossa_R",
+        "VH_M_anterior_cruciate_enthesis_R",
+        "VH_M_posterior_cruciate_enthesis_R",
+        "VH_M_lateral_condyle_of_femur_frontal_R",
+        "VH_M_lateral_condyle_of_femur_inf_R",
+        "VH_M_lateral_condyle_of_femur_sup_R",
+        "VH_M_lateral_epicondylar_enthesis_R",
+        "VH_M_lateral_perichondular_surface_R",
+        "VH_M_distal_most_point_of_medial_condyle_of_femur_R",
+        "VH_M_medial_condyle_of_right_femur_inf",
+        "VH_M_medial_condyle_of_right_femur_sup",
+        "VH_M_medial_epicondylar_enthesis_R",
+        "VH_M_medial_perichondular_surface_R",
+        "VH_M_patellar_surface_R",
+        "VH_M_meniscus_R"
+      ]
+    },
+    "knee_left": {
+      "fileName": "VH_M_Knee_L.glb",
+      "bytes": 439648,
+      "nodeCount": 22,
+      "meshCount": 20,
+      "nodes": [
+        {
+          "i": 0,
+          "name": "VH_M_knee_L"
+        },
+        {
+          "i": 1,
+          "name": "VH_M_meniscus_L",
+          "mesh": 0
+        },
+        {
+          "i": 2,
+          "name": "VH_M_knee_joint_L"
+        },
+        {
+          "i": 3,
+          "name": "VH_M_fibula_L",
+          "mesh": 1
+        },
+        {
+          "i": 4,
+          "name": "VH_M_femur_L",
+          "mesh": 2
+        },
+        {
+          "i": 5,
+          "name": "VH_M_articular_cartilage_of_knee_L",
+          "mesh": 3
+        },
+        {
+          "i": 6,
+          "name": "VH_M_intercondylar_fossa_L",
+          "mesh": 4
+        },
+        {
+          "i": 7,
+          "name": "VH_M_anterior_cruciate_enthesis_L",
+          "mesh": 5
+        },
+        {
+          "i": 8,
+          "name": "VH_M_posterior_cruciate_enthesis_L",
+          "mesh": 6
+        },
+        {
+          "i": 9,
+          "name": "VH_M_lateral_condyle_of_femur_frontal_L",
+          "mesh": 7
+        },
+        {
+          "i": 10,
+          "name": "VH_M_lateral_condyle_of_femur_inf_L",
+          "mesh": 8
+        },
+        {
+          "i": 11,
+          "name": "VH_M_lateral_condyle_of_femur_sup_L",
+          "mesh": 9
+        },
+        {
+          "i": 12,
+          "name": "VH_M_lateral_epicondylar_enthesis_L",
+          "mesh": 10
+        },
+        {
+          "i": 13,
+          "name": "VH_M_lateral_perichondular_surface_L",
+          "mesh": 11
+        },
+        {
+          "i": 14,
+          "name": "VH_M_distal_most_point_of_medial_condyle_of_femur_L",
+          "mesh": 12
+        },
+        {
+          "i": 15,
+          "name": "VH_M_medial_condyle_of_left_femur_inf",
+          "mesh": 13
+        },
+        {
+          "i": 16,
+          "name": "VH_M_medial_condyle_of_left_femur_sup",
+          "mesh": 14
+        },
+        {
+          "i": 17,
+          "name": "VH_M_medial_epicondylar_enthesis_L",
+          "mesh": 15
+        },
+        {
+          "i": 18,
+          "name": "VH_M_medial_perichondular_surface_L",
+          "mesh": 16
+        },
+        {
+          "i": 19,
+          "name": "VH_M_patellar_surface_L",
+          "mesh": 17
+        },
+        {
+          "i": 20,
+          "name": "VH_M_tibia_L",
+          "mesh": 18
+        },
+        {
+          "i": 21,
+          "name": "VH_M_patella_L",
+          "mesh": 19
+        }
+      ],
+      "meshes": [
+        {
+          "i": 0,
+          "name": "VH_M_meniscus_L",
+          "primitives": 1
+        },
+        {
+          "i": 1,
+          "name": "VH_M_fibula_L",
+          "primitives": 1
+        },
+        {
+          "i": 2,
+          "name": "VH_M_femur_L",
+          "primitives": 1
+        },
+        {
+          "i": 3,
+          "name": "VH_M_articular_cartilage_of_knee_L",
+          "primitives": 1
+        },
+        {
+          "i": 4,
+          "name": "VH_M_intercondylar_fossa_L",
+          "primitives": 1
+        },
+        {
+          "i": 5,
+          "name": "VH_M_anterior_cruciate_enthesis_L",
+          "primitives": 1
+        },
+        {
+          "i": 6,
+          "name": "VH_M_posterior_cruciate_enthesis_L",
+          "primitives": 1
+        },
+        {
+          "i": 7,
+          "name": "VH_M_lateral_condyle_of_femur_frontal_L",
+          "primitives": 1
+        },
+        {
+          "i": 8,
+          "name": "VH_M_lateral_condyle_of_femur_inf_L",
+          "primitives": 1
+        },
+        {
+          "i": 9,
+          "name": "VH_M_lateral_condyle_of_femur_sup_L",
+          "primitives": 1
+        },
+        {
+          "i": 10,
+          "name": "VH_M_lateral_epicondylar_enthesis_L",
+          "primitives": 1
+        },
+        {
+          "i": 11,
+          "name": "VH_M_lateral_perichondular_surface_L",
+          "primitives": 1
+        },
+        {
+          "i": 12,
+          "name": "VH_M_distal_most_point_of_medial_condyle_of_femur_L",
+          "primitives": 1
+        },
+        {
+          "i": 13,
+          "name": "VH_M_medial_condyle_of_left_femur_inf",
+          "primitives": 1
+        },
+        {
+          "i": 14,
+          "name": "VH_M_medial_condyle_of_left_femur_sup",
+          "primitives": 1
+        },
+        {
+          "i": 15,
+          "name": "VH_M_medial_epicondylar_enthesis_L",
+          "primitives": 1
+        },
+        {
+          "i": 16,
+          "name": "VH_M_medial_perichondular_surface_L",
+          "primitives": 1
+        },
+        {
+          "i": 17,
+          "name": "VH_M_patellar_surface_L",
+          "primitives": 1
+        },
+        {
+          "i": 18,
+          "name": "VH_M_tibia_L",
+          "primitives": 1
+        },
+        {
+          "i": 19,
+          "name": "VH_M_patella_L",
+          "primitives": 1
+        }
+      ],
+      "namedMeshes": [
+        "VH_M_meniscus_L",
+        "VH_M_fibula_L",
+        "VH_M_femur_L",
+        "VH_M_articular_cartilage_of_knee_L",
+        "VH_M_intercondylar_fossa_L",
+        "VH_M_anterior_cruciate_enthesis_L",
+        "VH_M_posterior_cruciate_enthesis_L",
+        "VH_M_lateral_condyle_of_femur_frontal_L",
+        "VH_M_lateral_condyle_of_femur_inf_L",
+        "VH_M_lateral_condyle_of_femur_sup_L",
+        "VH_M_lateral_epicondylar_enthesis_L",
+        "VH_M_lateral_perichondular_surface_L",
+        "VH_M_distal_most_point_of_medial_condyle_of_femur_L",
+        "VH_M_medial_condyle_of_left_femur_inf",
+        "VH_M_medial_condyle_of_left_femur_sup",
+        "VH_M_medial_epicondylar_enthesis_L",
+        "VH_M_medial_perichondular_surface_L",
+        "VH_M_patellar_surface_L",
+        "VH_M_tibia_L",
+        "VH_M_patella_L"
+      ]
+    },
+    "skin": {
+      "fileName": "VH_M_Skin.glb",
+      "bytes": 5931700,
+      "nodeCount": 1,
+      "meshCount": 1,
+      "nodes": [
+        {
+          "i": 0,
+          "name": "VH_M_skin",
+          "mesh": 0
+        }
+      ],
+      "meshes": [
+        {
+          "i": 0,
+          "name": "VH_M_skin",
+          "primitives": 1
+        }
+      ],
+      "namedMeshes": [
+        "VH_M_skin"
+      ]
+    },
+    "prostate": {
+      "fileName": "VH_M_Prostate.glb",
+      "bytes": 4086328,
+      "nodeCount": 27,
+      "meshCount": 18,
+      "nodes": [
+        {
+          "i": 0,
+          "name": "VH_M_male_reproductive_system"
+        },
+        {
+          "i": 1,
+          "name": "VH_M_male_genital_duct"
+        },
+        {
+          "i": 2,
+          "name": "VH_M_vas_deferens"
+        },
+        {
+          "i": 3,
+          "name": "VH_M_vas_deferens_L",
+          "mesh": 0
+        },
+        {
+          "i": 4,
+          "name": "VH_M_vas_deferens_R",
+          "mesh": 1
+        },
+        {
+          "i": 5,
+          "name": "VH_M_seminal_vesicle",
+          "mesh": 2
+        },
+        {
+          "i": 6,
+          "name": "VH_M_ejaculatory_duct",
+          "mesh": 3
+        },
+        {
+          "i": 7,
+          "name": "VH_M_prostate_gland"
+        },
+        {
+          "i": 8,
+          "name": "VH_M_prostatic_utricle",
+          "mesh": 4
+        },
+        {
+          "i": 9,
+          "name": "VH_M_seminal_colliculus",
+          "mesh": 5
+        },
+        {
+          "i": 10,
+          "name": "VH_M_prostate_duct"
+        },
+        {
+          "i": 11,
+          "name": "VH_M_prostate_duct_R",
+          "mesh": 6
+        },
+        {
+          "i": 12,
+          "name": "VH_M_prostate_duct_L",
+          "mesh": 7
+        },
+        {
+          "i": 13,
+          "name": "VH_M_apex_of_prostate",
+          "mesh": 8
+        },
+        {
+          "i": 14,
+          "name": "VH_M_base_of_prostate",
+          "mesh": 9
+        },
+        {
+          "i": 15,
+          "name": "VH_M_peripheral_zone_of_prostate"
+        },
+        {
+          "i": 16,
+          "name": "VH_M_peripheral_zone_of_prostate_R",
+          "mesh": 10
+        },
+        {
+          "i": 17,
+          "name": "VH_M_peripheral_zone_of_prostate_L",
+          "mesh": 11
+        },
+        {
+          "i": 18,
+          "name": "VH_M_transition_zone_of_prostate"
+        },
+        {
+          "i": 19,
+          "name": "VH_M_transition_zone__of_prostate_L",
+          "mesh": 12
+        },
+        {
+          "i": 20,
+          "name": "VH_M_transition_zone_of_prostate_R",
+          "mesh": 13
+        },
+        {
+          "i": 21,
+          "name": "VH_M_central_zone_of_prostate"
+        },
+        {
+          "i": 22,
+          "name": "VH_M_central_zone_of_prostate_R",
+          "mesh": 14
+        },
+        {
+          "i": 23,
+          "name": "VH_M_central_zone_of_prostate_L",
+          "mesh": 15
+        },
+        {
+          "i": 24,
+          "name": "VH_M_anterior_fibromuscular_stroma"
+        },
+        {
+          "i": 25,
+          "name": "VH_M_anterior_fibromuscular_stroma_L",
+          "mesh": 16
+        },
+        {
+          "i": 26,
+          "name": "VH_M_anterior_fibromuscular_stroma_R",
+          "mesh": 17
+        }
+      ],
+      "meshes": [
+        {
+          "i": 0,
+          "name": "VH_M_vas_deferens_L",
+          "primitives": 1
+        },
+        {
+          "i": 1,
+          "name": "VH_M_vas_deferens_R",
+          "primitives": 1
+        },
+        {
+          "i": 2,
+          "name": "VH_M_seminal_vesicle",
+          "primitives": 1
+        },
+        {
+          "i": 3,
+          "name": "VH_M_ejaculatory_duct",
+          "primitives": 1
+        },
+        {
+          "i": 4,
+          "name": "VH_M_prostatic_utricle",
+          "primitives": 1
+        },
+        {
+          "i": 5,
+          "name": "VH_M_seminal_colliculus",
+          "primitives": 1
+        },
+        {
+          "i": 6,
+          "name": "VH_M_prostate_duct_R",
+          "primitives": 1
+        },
+        {
+          "i": 7,
+          "name": "VH_M_prostate_duct_L",
+          "primitives": 1
+        },
+        {
+          "i": 8,
+          "name": "VH_M_apex_of_prostate",
+          "primitives": 1
+        },
+        {
+          "i": 9,
+          "name": "VH_M_base_of_prostate",
+          "primitives": 1
+        },
+        {
+          "i": 10,
+          "name": "VH_M_peripheral_zone_of_prostate_R",
+          "primitives": 1
+        },
+        {
+          "i": 11,
+          "name": "VH_M_peripheral_zone_of_prostate_L",
+          "primitives": 1
+        },
+        {
+          "i": 12,
+          "name": "VH_M_transition_zone__of_prostate_L",
+          "primitives": 1
+        },
+        {
+          "i": 13,
+          "name": "VH_M_transition_zone_of_prostate_R",
+          "primitives": 1
+        },
+        {
+          "i": 14,
+          "name": "VH_M_central_zone_of_prostate_R",
+          "primitives": 1
+        },
+        {
+          "i": 15,
+          "name": "VH_M_central_zone_of_prostate_L",
+          "primitives": 1
+        },
+        {
+          "i": 16,
+          "name": "VH_M_anterior_fibromuscular_stroma_L",
+          "primitives": 1
+        },
+        {
+          "i": 17,
+          "name": "VH_M_anterior_fibromuscular_stroma_R",
+          "primitives": 1
+        }
+      ],
+      "namedMeshes": [
+        "VH_M_vas_deferens_L",
+        "VH_M_vas_deferens_R",
+        "VH_M_seminal_vesicle",
+        "VH_M_ejaculatory_duct",
+        "VH_M_prostatic_utricle",
+        "VH_M_seminal_colliculus",
+        "VH_M_prostate_duct_R",
+        "VH_M_prostate_duct_L",
+        "VH_M_apex_of_prostate",
+        "VH_M_base_of_prostate",
+        "VH_M_peripheral_zone_of_prostate_R",
+        "VH_M_peripheral_zone_of_prostate_L",
+        "VH_M_transition_zone__of_prostate_L",
+        "VH_M_transition_zone_of_prostate_R",
+        "VH_M_central_zone_of_prostate_R",
+        "VH_M_central_zone_of_prostate_L",
+        "VH_M_anterior_fibromuscular_stroma_L",
+        "VH_M_anterior_fibromuscular_stroma_R"
+      ]
+    },
+    "pelvis_male": {
+      "fileName": "VH_M_Pelvis.glb",
+      "bytes": 1348060,
+      "nodeCount": 24,
+      "meshCount": 14,
+      "nodes": [
+        {
+          "i": 0,
+          "name": "VH_M_pelvis"
+        },
+        {
+          "i": 1,
+          "name": "VH_M_sacrum",
+          "mesh": 0
+        },
+        {
+          "i": 2,
+          "name": "VH_M_coccyx",
+          "mesh": 1
+        },
+        {
+          "i": 3,
+          "name": "VH_M_pubis"
+        },
+        {
+          "i": 4,
+          "name": "VH_M_pubis_compact_bone"
+        },
+        {
+          "i": 5,
+          "name": "VH_M_pubis_compact_bone_L",
+          "mesh": 2
+        },
+        {
+          "i": 6,
+          "name": "VH_M_pubis_compact_bone_R",
+          "mesh": 3
+        },
+        {
+          "i": 7,
+          "name": "VH_M_pubis_spongy_bone"
+        },
+        {
+          "i": 8,
+          "name": "VH_M_pubis_spongy_bone_L",
+          "mesh": 4
+        },
+        {
+          "i": 9,
+          "name": "VH_M_pubis_spongy_bone_R",
+          "mesh": 5
+        },
+        {
+          "i": 10,
+          "name": "VH_M_ilium"
+        },
+        {
+          "i": 11,
+          "name": "VH_M_ilium_compact_bone"
+        },
+        {
+          "i": 12,
+          "name": "VH_M_ilium_compact_bone_L",
+          "mesh": 6
+        },
+        {
+          "i": 13,
+          "name": "VH_M_ilium_compact_bone_R",
+          "mesh": 7
+        },
+        {
+          "i": 14,
+          "name": "VH_M_ilium_spongy_bone"
+        },
+        {
+          "i": 15,
+          "name": "VH_M_ilium_spongy_bone_R",
+          "mesh": 8
+        },
+        {
+          "i": 16,
+          "name": "VH_M_ilium_spongy_bone_L",
+          "mesh": 9
+        },
+        {
+          "i": 17,
+          "name": "VH_M_ischium"
+        },
+        {
+          "i": 18,
+          "name": "VH_M_ischium_compact_bone"
+        },
+        {
+          "i": 19,
+          "name": "VH_M_ischium_compact_bone_L",
+          "mesh": 10
+        },
+        {
+          "i": 20,
+          "name": "VH_M_ischium_compact_bone_R",
+          "mesh": 11
+        },
+        {
+          "i": 21,
+          "name": "VH_M_ischium_spongy_bone"
+        },
+        {
+          "i": 22,
+          "name": "VH_M_ischium_spongy_bone_L",
+          "mesh": 12
+        },
+        {
+          "i": 23,
+          "name": "VH_M_ischium_spongy_bone_R",
+          "mesh": 13
+        }
+      ],
+      "meshes": [
+        {
+          "i": 0,
+          "name": "VH_M_sacrum",
+          "primitives": 1
+        },
+        {
+          "i": 1,
+          "name": "VH_M_coccyx",
+          "primitives": 1
+        },
+        {
+          "i": 2,
+          "name": "VH_M_pubis_compact_bone_L",
+          "primitives": 1
+        },
+        {
+          "i": 3,
+          "name": "VH_M_pubis_compact_bone_R",
+          "primitives": 1
+        },
+        {
+          "i": 4,
+          "name": "VH_M_pubis_spongy_bone_L",
+          "primitives": 1
+        },
+        {
+          "i": 5,
+          "name": "VH_M_pubis_spongy_bone_R",
+          "primitives": 1
+        },
+        {
+          "i": 6,
+          "name": "VH_M_ilium_compact_bone_L",
+          "primitives": 1
+        },
+        {
+          "i": 7,
+          "name": "VH_M_ilium_compact_bone_R",
+          "primitives": 1
+        },
+        {
+          "i": 8,
+          "name": "VH_M_ilium_spongy_bone_R",
+          "primitives": 1
+        },
+        {
+          "i": 9,
+          "name": "VH_M_ilium_spongy_bone_L",
+          "primitives": 1
+        },
+        {
+          "i": 10,
+          "name": "VH_M_ischium_compact_bone_L",
+          "primitives": 1
+        },
+        {
+          "i": 11,
+          "name": "VH_M_ischium_compact_bone_R",
+          "primitives": 1
+        },
+        {
+          "i": 12,
+          "name": "VH_M_ischium_spongy_bone_L",
+          "primitives": 1
+        },
+        {
+          "i": 13,
+          "name": "VH_M_ischium_spongy_bone_R",
+          "primitives": 1
+        }
+      ],
+      "namedMeshes": [
+        "VH_M_sacrum",
+        "VH_M_coccyx",
+        "VH_M_pubis_compact_bone_L",
+        "VH_M_pubis_compact_bone_R",
+        "VH_M_pubis_spongy_bone_L",
+        "VH_M_pubis_spongy_bone_R",
+        "VH_M_ilium_compact_bone_L",
+        "VH_M_ilium_compact_bone_R",
+        "VH_M_ilium_spongy_bone_R",
+        "VH_M_ilium_spongy_bone_L",
+        "VH_M_ischium_compact_bone_L",
+        "VH_M_ischium_compact_bone_R",
+        "VH_M_ischium_spongy_bone_L",
+        "VH_M_ischium_spongy_bone_R"
+      ]
+    },
+    "spinal_cord": {
+      "fileName": "VH_M_Spinal_Cord.glb",
+      "bytes": 489992,
+      "nodeCount": 31,
+      "meshCount": 30,
+      "nodes": [
+        {
+          "i": 0,
+          "name": "VH_M_spinal_cord"
+        },
+        {
+          "i": 1,
+          "name": "VH_M_C1_segment_of_cervical_spinal_cord",
+          "mesh": 0
+        },
+        {
+          "i": 2,
+          "name": "VH_M_C2_segment_of_cervical_spinal_cord",
+          "mesh": 1
+        },
+        {
+          "i": 3,
+          "name": "VH_M_C3_segment_of_cervical_spinal_cord",
+          "mesh": 2
+        },
+        {
+          "i": 4,
+          "name": "VH_M_C4_segment_of_cervical_spinal_cord",
+          "mesh": 3
+        },
+        {
+          "i": 5,
+          "name": "VH_M_C5_segment_of_cervical_spinal_cord",
+          "mesh": 4
+        },
+        {
+          "i": 6,
+          "name": "VH_M_C6_segment_of_cervical_spinal_cord",
+          "mesh": 5
+        },
+        {
+          "i": 7,
+          "name": "VH_M_C7_segment_of_cervical_spinal_cord",
+          "mesh": 6
+        },
+        {
+          "i": 8,
+          "name": "VH_M_C8_segment_of_cervical_spinal_cord",
+          "mesh": 7
+        },
+        {
+          "i": 9,
+          "name": "VH_M_first_thoracic_spinal_cord_segment",
+          "mesh": 8
+        },
+        {
+          "i": 10,
+          "name": "VH_M_second_thoracic_spinal_cord_segment",
+          "mesh": 9
+        },
+        {
+          "i": 11,
+          "name": "VH_M_third_thoracic_spinal_cord_segment",
+          "mesh": 10
+        },
+        {
+          "i": 12,
+          "name": "VH_M_fourth_thoracic_spinal_cord_segment",
+          "mesh": 11
+        },
+        {
+          "i": 13,
+          "name": "VH_M_fifth_thoracic_spinal_cord_segment",
+          "mesh": 12
+        },
+        {
+          "i": 14,
+          "name": "VH_M_sixth_thoracic_spinal_cord_segment",
+          "mesh": 13
+        },
+        {
+          "i": 15,
+          "name": "VH_M_seventh_thoracic_spinal_cord_segment",
+          "mesh": 14
+        },
+        {
+          "i": 16,
+          "name": "VH_M_eighth_thoracic_spinal_cord_segment",
+          "mesh": 15
+        },
+        {
+          "i": 17,
+          "name": "VH_M_ninth_thoracic_spinal_cord_segment",
+          "mesh": 16
+        },
+        {
+          "i": 18,
+          "name": "VH_M_tenth_thoracic_spinal_cord_segment",
+          "mesh": 17
+        },
+        {
+          "i": 19,
+          "name": "VH_M_eleventh_thoracic_spinal_cord_segment",
+          "mesh": 18
+        },
+        {
+          "i": 20,
+          "name": "VH_M_twelfth_thoracic_spinal_cord_segment",
+          "mesh": 19
+        },
+        {
+          "i": 21,
+          "name": "VH_M_first_lumbar_spinal_cord_segment",
+          "mesh": 20
+        },
+        {
+          "i": 22,
+          "name": "VH_M_second_lumbar_spinal_cord_segment",
+          "mesh": 21
+        },
+        {
+          "i": 23,
+          "name": "VH_M_third_lumbar_spinal_cord_segment",
+          "mesh": 22
+        },
+        {
+          "i": 24,
+          "name": "VH_M_fourth_lumbar_spinal_cord_segment",
+          "mesh": 23
+        },
+        {
+          "i": 25,
+          "name": "VH_M_fifth_lumbar_spinal_cord_segment",
+          "mesh": 24
+        },
+        {
+          "i": 26,
+          "name": "VH_M_first_sacral_spinal_cord_segment",
+          "mesh": 25
+        },
+        {
+          "i": 27,
+          "name": "VH_M_second_sacral_spinal_cord_segment",
+          "mesh": 26
+        },
+        {
+          "i": 28,
+          "name": "VH_M_third_sacral_spinal_cord_segment",
+          "mesh": 27
+        },
+        {
+          "i": 29,
+          "name": "VH_M_fourth_sacral_spinal_cord_segment",
+          "mesh": 28
+        },
+        {
+          "i": 30,
+          "name": "VH_M_fifth_sacral_spinal_cord_segment",
+          "mesh": 29
+        }
+      ],
+      "meshes": [
+        {
+          "i": 0,
+          "name": "VH_M_C1_segment_of_cervical_spinal_cord",
+          "primitives": 1
+        },
+        {
+          "i": 1,
+          "name": "VH_M_C2_segment_of_cervical_spinal_cord",
+          "primitives": 1
+        },
+        {
+          "i": 2,
+          "name": "VH_M_C3_segment_of_cervical_spinal_cord",
+          "primitives": 1
+        },
+        {
+          "i": 3,
+          "name": "VH_M_C4_segment_of_cervical_spinal_cord",
+          "primitives": 1
+        },
+        {
+          "i": 4,
+          "name": "VH_M_C5_segment_of_cervical_spinal_cord",
+          "primitives": 1
+        },
+        {
+          "i": 5,
+          "name": "VH_M_C6_segment_of_cervical_spinal_cord",
+          "primitives": 1
+        },
+        {
+          "i": 6,
+          "name": "VH_M_C7_segment_of_cervical_spinal_cord",
+          "primitives": 1
+        },
+        {
+          "i": 7,
+          "name": "VH_M_C8_segment_of_cervical_spinal_cord",
+          "primitives": 1
+        },
+        {
+          "i": 8,
+          "name": "VH_M_first_thoracic_spinal_cord_segment",
+          "primitives": 1
+        },
+        {
+          "i": 9,
+          "name": "VH_M_second_thoracic_spinal_cord_segment",
+          "primitives": 1
+        },
+        {
+          "i": 10,
+          "name": "VH_M_third_thoracic_spinal_cord_segment",
+          "primitives": 1
+        },
+        {
+          "i": 11,
+          "name": "VH_M_fourth_thoracic_spinal_cord_segment",
+          "primitives": 1
+        },
+        {
+          "i": 12,
+          "name": "VH_M_fifth_thoracic_spinal_cord_segment",
+          "primitives": 1
+        },
+        {
+          "i": 13,
+          "name": "VH_M_sixth_thoracic_spinal_cord_segment",
+          "primitives": 1
+        },
+        {
+          "i": 14,
+          "name": "VH_M_seventh_thoracic_spinal_cord_segment",
+          "primitives": 1
+        },
+        {
+          "i": 15,
+          "name": "VH_M_eighth_thoracic_spinal_cord_segment",
+          "primitives": 1
+        },
+        {
+          "i": 16,
+          "name": "VH_M_ninth_thoracic_spinal_cord_segment",
+          "primitives": 1
+        },
+        {
+          "i": 17,
+          "name": "VH_M_tenth_thoracic_spinal_cord_segment",
+          "primitives": 1
+        },
+        {
+          "i": 18,
+          "name": "VH_M_eleventh_thoracic_spinal_cord_segment",
+          "primitives": 1
+        },
+        {
+          "i": 19,
+          "name": "VH_M_twelfth_thoracic_spinal_cord_segment",
+          "primitives": 1
+        },
+        {
+          "i": 20,
+          "name": "VH_M_first_lumbar_spinal_cord_segment",
+          "primitives": 1
+        },
+        {
+          "i": 21,
+          "name": "VH_M_second_lumbar_spinal_cord_segment",
+          "primitives": 1
+        },
+        {
+          "i": 22,
+          "name": "VH_M_third_lumbar_spinal_cord_segment",
+          "primitives": 1
+        },
+        {
+          "i": 23,
+          "name": "VH_M_fourth_lumbar_spinal_cord_segment",
+          "primitives": 1
+        },
+        {
+          "i": 24,
+          "name": "VH_M_fifth_lumbar_spinal_cord_segment",
+          "primitives": 1
+        },
+        {
+          "i": 25,
+          "name": "VH_M_first_sacral_spinal_cord_segment",
+          "primitives": 1
+        },
+        {
+          "i": 26,
+          "name": "VH_M_second_sacral_spinal_cord_segment",
+          "primitives": 1
+        },
+        {
+          "i": 27,
+          "name": "VH_M_third_sacral_spinal_cord_segment",
+          "primitives": 1
+        },
+        {
+          "i": 28,
+          "name": "VH_M_fourth_sacral_spinal_cord_segment",
+          "primitives": 1
+        },
+        {
+          "i": 29,
+          "name": "VH_M_fifth_sacral_spinal_cord_segment",
+          "primitives": 1
+        }
+      ],
+      "namedMeshes": [
+        "VH_M_C1_segment_of_cervical_spinal_cord",
+        "VH_M_C2_segment_of_cervical_spinal_cord",
+        "VH_M_C3_segment_of_cervical_spinal_cord",
+        "VH_M_C4_segment_of_cervical_spinal_cord",
+        "VH_M_C5_segment_of_cervical_spinal_cord",
+        "VH_M_C6_segment_of_cervical_spinal_cord",
+        "VH_M_C7_segment_of_cervical_spinal_cord",
+        "VH_M_C8_segment_of_cervical_spinal_cord",
+        "VH_M_first_thoracic_spinal_cord_segment",
+        "VH_M_second_thoracic_spinal_cord_segment",
+        "VH_M_third_thoracic_spinal_cord_segment",
+        "VH_M_fourth_thoracic_spinal_cord_segment",
+        "VH_M_fifth_thoracic_spinal_cord_segment",
+        "VH_M_sixth_thoracic_spinal_cord_segment",
+        "VH_M_seventh_thoracic_spinal_cord_segment",
+        "VH_M_eighth_thoracic_spinal_cord_segment",
+        "VH_M_ninth_thoracic_spinal_cord_segment",
+        "VH_M_tenth_thoracic_spinal_cord_segment",
+        "VH_M_eleventh_thoracic_spinal_cord_segment",
+        "VH_M_twelfth_thoracic_spinal_cord_segment",
+        "VH_M_first_lumbar_spinal_cord_segment",
+        "VH_M_second_lumbar_spinal_cord_segment",
+        "VH_M_third_lumbar_spinal_cord_segment",
+        "VH_M_fourth_lumbar_spinal_cord_segment",
+        "VH_M_fifth_lumbar_spinal_cord_segment",
+        "VH_M_first_sacral_spinal_cord_segment",
+        "VH_M_second_sacral_spinal_cord_segment",
+        "VH_M_third_sacral_spinal_cord_segment",
+        "VH_M_fourth_sacral_spinal_cord_segment",
+        "VH_M_fifth_sacral_spinal_cord_segment"
+      ]
+    },
+    "ureter_right": {
+      "fileName": "VH_M_Ureter_R.glb",
+      "bytes": 540712,
+      "nodeCount": 17,
+      "meshCount": 13,
+      "nodes": [
+        {
+          "i": 0,
+          "name": "VH_M_renal_pelvis_ureter_R"
+        },
+        {
+          "i": 1,
+          "name": "VH_M_calyx_R"
+        },
+        {
+          "i": 2,
+          "name": "VH_M_major_calyx_R"
+        },
+        {
+          "i": 3,
+          "name": "VH_M_major_calyx_R_a",
+          "mesh": 0
+        },
+        {
+          "i": 4,
+          "name": "VH_M_major_calyx_R_b",
+          "mesh": 1
+        },
+        {
+          "i": 5,
+          "name": "VH_M_minor_calyx_R"
+        },
+        {
+          "i": 6,
+          "name": "VH_M_minor_calyx_R_a",
+          "mesh": 2
+        },
+        {
+          "i": 7,
+          "name": "VH_M_minor_calyx_R_b",
+          "mesh": 3
+        },
+        {
+          "i": 8,
+          "name": "VH_M_minor_calyx_R_c",
+          "mesh": 4
+        },
+        {
+          "i": 9,
+          "name": "VH_M_minor_calyx_R_d",
+          "mesh": 5
+        },
+        {
+          "i": 10,
+          "name": "VH_M_minor_calyx_R_e",
+          "mesh": 6
+        },
+        {
+          "i": 11,
+          "name": "VH_M_minor_calyx_R_f",
+          "mesh": 7
+        },
+        {
+          "i": 12,
+          "name": "VH_M_minor_calyx_R_g",
+          "mesh": 8
+        },
+        {
+          "i": 13,
+          "name": "VH_M_minor_calyx_R_h",
+          "mesh": 9
+        },
+        {
+          "i": 14,
+          "name": "VH_M_minor_calyx_R_i",
+          "mesh": 10
+        },
+        {
+          "i": 15,
+          "name": "VH_M_renal_pelvis_R",
+          "mesh": 11
+        },
+        {
+          "i": 16,
+          "name": "VH_M_ureter_R",
+          "mesh": 12
+        }
+      ],
+      "meshes": [
+        {
+          "i": 0,
+          "name": "VH_M_major_calyx_R_a",
+          "primitives": 1
+        },
+        {
+          "i": 1,
+          "name": "VH_M_major_calyx_R_b",
+          "primitives": 1
+        },
+        {
+          "i": 2,
+          "name": "VH_M_minor_calyx_R_a",
+          "primitives": 1
+        },
+        {
+          "i": 3,
+          "name": "VH_M_minor_calyx_R_b",
+          "primitives": 1
+        },
+        {
+          "i": 4,
+          "name": "VH_M_minor_calyx_R_c",
+          "primitives": 1
+        },
+        {
+          "i": 5,
+          "name": "VH_M_minor_calyx_R_d",
+          "primitives": 1
+        },
+        {
+          "i": 6,
+          "name": "VH_M_minor_calyx_R_e",
+          "primitives": 1
+        },
+        {
+          "i": 7,
+          "name": "VH_M_minor_calyx_R_f",
+          "primitives": 1
+        },
+        {
+          "i": 8,
+          "name": "VH_M_minor_calyx_R_g",
+          "primitives": 1
+        },
+        {
+          "i": 9,
+          "name": "VH_M_minor_calyx_R_h",
+          "primitives": 1
+        },
+        {
+          "i": 10,
+          "name": "VH_M_minor_calyx_R_i",
+          "primitives": 1
+        },
+        {
+          "i": 11,
+          "name": "VH_M_renal_pelvis_R",
+          "primitives": 1
+        },
+        {
+          "i": 12,
+          "name": "VH_M_ureter_R",
+          "primitives": 1
+        }
+      ],
+      "namedMeshes": [
+        "VH_M_major_calyx_R_a",
+        "VH_M_major_calyx_R_b",
+        "VH_M_minor_calyx_R_a",
+        "VH_M_minor_calyx_R_b",
+        "VH_M_minor_calyx_R_c",
+        "VH_M_minor_calyx_R_d",
+        "VH_M_minor_calyx_R_e",
+        "VH_M_minor_calyx_R_f",
+        "VH_M_minor_calyx_R_g",
+        "VH_M_minor_calyx_R_h",
+        "VH_M_minor_calyx_R_i",
+        "VH_M_renal_pelvis_R",
+        "VH_M_ureter_R"
+      ]
+    },
+    "ureter_left": {
+      "fileName": "VH_M_Ureter_L.glb",
+      "bytes": 682796,
+      "nodeCount": 18,
+      "meshCount": 14,
+      "nodes": [
+        {
+          "i": 0,
+          "name": "VH_M_renal_pelvis_ureter_L"
+        },
+        {
+          "i": 1,
+          "name": "VH_M_renal_pelvis_L",
+          "mesh": 0
+        },
+        {
+          "i": 2,
+          "name": "VH_M_kidney_calyx_L"
+        },
+        {
+          "i": 3,
+          "name": "VH_M_major_calyx_L"
+        },
+        {
+          "i": 4,
+          "name": "VH_M_major_calyx_L_a",
+          "mesh": 1
+        },
+        {
+          "i": 5,
+          "name": "VH_M_major_calyx_L_b",
+          "mesh": 2
+        },
+        {
+          "i": 6,
+          "name": "VH_M_major_calyx_L_c",
+          "mesh": 3
+        },
+        {
+          "i": 7,
+          "name": "VH_M_minor_calyx_L"
+        },
+        {
+          "i": 8,
+          "name": "VH_M_minor_calyx_L_a",
+          "mesh": 4
+        },
+        {
+          "i": 9,
+          "name": "VH_M_minor_calyx_L_b",
+          "mesh": 5
+        },
+        {
+          "i": 10,
+          "name": "VH_M_minor_calyx_L_c",
+          "mesh": 6
+        },
+        {
+          "i": 11,
+          "name": "VH_M_minor_calyx_L_d",
+          "mesh": 7
+        },
+        {
+          "i": 12,
+          "name": "VH_M_minor_calyx_L_e",
+          "mesh": 8
+        },
+        {
+          "i": 13,
+          "name": "VH_M_minor_calyx_L_f",
+          "mesh": 9
+        },
+        {
+          "i": 14,
+          "name": "VH_M_minor_calyx_L_g",
+          "mesh": 10
+        },
+        {
+          "i": 15,
+          "name": "VH_M_minor_calyx_L_h",
+          "mesh": 11
+        },
+        {
+          "i": 16,
+          "name": "VH_M_minor_calyx_L_i",
+          "mesh": 12
+        },
+        {
+          "i": 17,
+          "name": "VH_M_ureter_L",
+          "mesh": 13
+        }
+      ],
+      "meshes": [
+        {
+          "i": 0,
+          "name": "VH_M_renal_pelvis_L",
+          "primitives": 1
+        },
+        {
+          "i": 1,
+          "name": "VH_M_major_calyx_L_a",
+          "primitives": 1
+        },
+        {
+          "i": 2,
+          "name": "VH_M_major_calyx_L_b",
+          "primitives": 1
+        },
+        {
+          "i": 3,
+          "name": "VH_M_major_calyx_L_c",
+          "primitives": 1
+        },
+        {
+          "i": 4,
+          "name": "VH_M_minor_calyx_L_a",
+          "primitives": 1
+        },
+        {
+          "i": 5,
+          "name": "VH_M_minor_calyx_L_b",
+          "primitives": 1
+        },
+        {
+          "i": 6,
+          "name": "VH_M_minor_calyx_L_c",
+          "primitives": 1
+        },
+        {
+          "i": 7,
+          "name": "VH_M_minor_calyx_L_d",
+          "primitives": 1
+        },
+        {
+          "i": 8,
+          "name": "VH_M_minor_calyx_L_e",
+          "primitives": 1
+        },
+        {
+          "i": 9,
+          "name": "VH_M_minor_calyx_L_f",
+          "primitives": 1
+        },
+        {
+          "i": 10,
+          "name": "VH_M_minor_calyx_L_g",
+          "primitives": 1
+        },
+        {
+          "i": 11,
+          "name": "VH_M_minor_calyx_L_h",
+          "primitives": 1
+        },
+        {
+          "i": 12,
+          "name": "VH_M_minor_calyx_L_i",
+          "primitives": 1
+        },
+        {
+          "i": 13,
+          "name": "VH_M_ureter_L",
+          "primitives": 1
+        }
+      ],
+      "namedMeshes": [
+        "VH_M_renal_pelvis_L",
+        "VH_M_major_calyx_L_a",
+        "VH_M_major_calyx_L_b",
+        "VH_M_major_calyx_L_c",
+        "VH_M_minor_calyx_L_a",
+        "VH_M_minor_calyx_L_b",
+        "VH_M_minor_calyx_L_c",
+        "VH_M_minor_calyx_L_d",
+        "VH_M_minor_calyx_L_e",
+        "VH_M_minor_calyx_L_f",
+        "VH_M_minor_calyx_L_g",
+        "VH_M_minor_calyx_L_h",
+        "VH_M_minor_calyx_L_i",
+        "VH_M_ureter_L"
+      ]
+    },
+    "eye_right": {
+      "fileName": "VH_M_Eye_R.glb",
+      "bytes": 9511464,
+      "nodeCount": 25,
+      "meshCount": 23,
+      "nodes": [
+        {
+          "i": 0,
+          "name": "VH_M_eye_R"
+        },
+        {
+          "i": 1,
+          "name": "VH_M_palpebral_conjunctiva_R"
+        },
+        {
+          "i": 2,
+          "name": "VH_M_palpebral_conjunctiva_of_upper_eyelid_R",
+          "mesh": 0
+        },
+        {
+          "i": 3,
+          "name": "VH_M_palpebral_conjunctiva_of_lower_eyelid_R",
+          "mesh": 1
+        },
+        {
+          "i": 4,
+          "name": "VH_M_bulbar_conjunctiva_R",
+          "mesh": 2
+        },
+        {
+          "i": 5,
+          "name": "VH_M_sclera_R",
+          "mesh": 3
+        },
+        {
+          "i": 6,
+          "name": "VH_M_iris_R",
+          "mesh": 4
+        },
+        {
+          "i": 7,
+          "name": "VH_M_schlemms_canal_R",
+          "mesh": 5
+        },
+        {
+          "i": 8,
+          "name": "VH_M_trabecular_meshwork_R",
+          "mesh": 6
+        },
+        {
+          "i": 9,
+          "name": "VH_M_optic_choroid_R",
+          "mesh": 7
+        },
+        {
+          "i": 10,
+          "name": "VH_M_ciliary_body_R",
+          "mesh": 8
+        },
+        {
+          "i": 11,
+          "name": "VH_M_ciliary_muscle_R",
+          "mesh": 9
+        },
+        {
+          "i": 12,
+          "name": "VH_M_aqueous_humor_R",
+          "mesh": 10
+        },
+        {
+          "i": 13,
+          "name": "VH_M_cornea_R",
+          "mesh": 11
+        },
+        {
+          "i": 14,
+          "name": "VH_M_lens_R",
+          "mesh": 12
+        },
+        {
+          "i": 15,
+          "name": "VH_M_pupil_R",
+          "mesh": 13
+        },
+        {
+          "i": 16,
+          "name": "VH_M_corneo_scleral_junction_R",
+          "mesh": 14
+        },
+        {
+          "i": 17,
+          "name": "VH_M_ora_serrata_of_retina_R",
+          "mesh": 15
+        },
+        {
+          "i": 18,
+          "name": "VH_M_suspensory_ligament_of_lens_R",
+          "mesh": 16
+        },
+        {
+          "i": 19,
+          "name": "VH_M_ciliary_processes_R",
+          "mesh": 17
+        },
+        {
+          "i": 20,
+          "name": "VH_M_retina_R",
+          "mesh": 18
+        },
+        {
+          "i": 21,
+          "name": "VH_M_fovea_R",
+          "mesh": 19
+        },
+        {
+          "i": 22,
+          "name": "VH_M_macula_lutea_R",
+          "mesh": 20
+        },
+        {
+          "i": 23,
+          "name": "VH_M_optic_disc_R",
+          "mesh": 21
+        },
+        {
+          "i": 24,
+          "name": "VH_M_vitreous_humor_R",
+          "mesh": 22
+        }
+      ],
+      "meshes": [
+        {
+          "i": 0,
+          "name": "VH_M_palpebral_conjunctiva_of_upper_eyelid_R",
+          "primitives": 1
+        },
+        {
+          "i": 1,
+          "name": "VH_M_palpebral_conjunctiva_of_lower_eyelid_R",
+          "primitives": 1
+        },
+        {
+          "i": 2,
+          "name": "VH_M_bulbar_conjunctiva_R",
+          "primitives": 1
+        },
+        {
+          "i": 3,
+          "name": "VH_M_sclera_R",
+          "primitives": 1
+        },
+        {
+          "i": 4,
+          "name": "VH_M_iris_R",
+          "primitives": 1
+        },
+        {
+          "i": 5,
+          "name": "VH_M_schlemms_canal_R",
+          "primitives": 1
+        },
+        {
+          "i": 6,
+          "name": "VH_M_trabecular_meshwork_R",
+          "primitives": 1
+        },
+        {
+          "i": 7,
+          "name": "VH_M_optic_choroid_R",
+          "primitives": 1
+        },
+        {
+          "i": 8,
+          "name": "VH_M_ciliary_body_R",
+          "primitives": 1
+        },
+        {
+          "i": 9,
+          "name": "VH_M_ciliary_muscle_R",
+          "primitives": 1
+        },
+        {
+          "i": 10,
+          "name": "VH_M_aqueous_humor_R",
+          "primitives": 1
+        },
+        {
+          "i": 11,
+          "name": "VH_M_cornea_R",
+          "primitives": 1
+        },
+        {
+          "i": 12,
+          "name": "VH_M_lens_R",
+          "primitives": 1
+        },
+        {
+          "i": 13,
+          "name": "VH_M_pupil_R",
+          "primitives": 1
+        },
+        {
+          "i": 14,
+          "name": "VH_M_corneo_scleral_junction_R",
+          "primitives": 1
+        },
+        {
+          "i": 15,
+          "name": "VH_M_ora_serrata_of_retina_R",
+          "primitives": 1
+        },
+        {
+          "i": 16,
+          "name": "VH_M_suspensory_ligament_of_lens_R",
+          "primitives": 1
+        },
+        {
+          "i": 17,
+          "name": "VH_M_ciliary_processes_R",
+          "primitives": 1
+        },
+        {
+          "i": 18,
+          "name": "VH_M_retina_R",
+          "primitives": 1
+        },
+        {
+          "i": 19,
+          "name": "VH_M_fovea_R",
+          "primitives": 1
+        },
+        {
+          "i": 20,
+          "name": "VH_M_macula_lutea_R",
+          "primitives": 1
+        },
+        {
+          "i": 21,
+          "name": "VH_M_optic_disc_R",
+          "primitives": 1
+        },
+        {
+          "i": 22,
+          "name": "VH_M_vitreous_humor_R",
+          "primitives": 1
+        }
+      ],
+      "namedMeshes": [
+        "VH_M_palpebral_conjunctiva_of_upper_eyelid_R",
+        "VH_M_palpebral_conjunctiva_of_lower_eyelid_R",
+        "VH_M_bulbar_conjunctiva_R",
+        "VH_M_sclera_R",
+        "VH_M_iris_R",
+        "VH_M_schlemms_canal_R",
+        "VH_M_trabecular_meshwork_R",
+        "VH_M_optic_choroid_R",
+        "VH_M_ciliary_body_R",
+        "VH_M_ciliary_muscle_R",
+        "VH_M_aqueous_humor_R",
+        "VH_M_cornea_R",
+        "VH_M_lens_R",
+        "VH_M_pupil_R",
+        "VH_M_corneo_scleral_junction_R",
+        "VH_M_ora_serrata_of_retina_R",
+        "VH_M_suspensory_ligament_of_lens_R",
+        "VH_M_ciliary_processes_R",
+        "VH_M_retina_R",
+        "VH_M_fovea_R",
+        "VH_M_macula_lutea_R",
+        "VH_M_optic_disc_R",
+        "VH_M_vitreous_humor_R"
+      ]
+    },
+    "eye_left": {
+      "fileName": "VH_M_Eye_L.glb",
+      "bytes": 9610816,
+      "nodeCount": 25,
+      "meshCount": 23,
+      "nodes": [
+        {
+          "i": 0,
+          "name": "VH_M_eye_L"
+        },
+        {
+          "i": 1,
+          "name": "VH_M_bulbar_conjunctiva_L",
+          "mesh": 0
+        },
+        {
+          "i": 2,
+          "name": "VH_M_palpebral_conjunctiva_L"
+        },
+        {
+          "i": 3,
+          "name": "VH_M_palpebral_conjunctiva_of_upper_eyelid_L",
+          "mesh": 1
+        },
+        {
+          "i": 4,
+          "name": "VH_M_palpebral_conjunctiva_of_lower_eyelid_L",
+          "mesh": 2
+        },
+        {
+          "i": 5,
+          "name": "VH_M_ora_serrata_of_retina_L",
+          "mesh": 3
+        },
+        {
+          "i": 6,
+          "name": "VH_M_corneo_scleral_junction_L",
+          "mesh": 4
+        },
+        {
+          "i": 7,
+          "name": "VH_M_pupil_L",
+          "mesh": 5
+        },
+        {
+          "i": 8,
+          "name": "VH_M_cornea_L",
+          "mesh": 6
+        },
+        {
+          "i": 9,
+          "name": "VH_M_ciliary_body_L",
+          "mesh": 7
+        },
+        {
+          "i": 10,
+          "name": "VH_M_ciliary_muscle_L",
+          "mesh": 8
+        },
+        {
+          "i": 11,
+          "name": "VH_M_trabecular_meshwork_L",
+          "mesh": 9
+        },
+        {
+          "i": 12,
+          "name": "VH_M_aqueous_humor_L",
+          "mesh": 10
+        },
+        {
+          "i": 13,
+          "name": "VH_M_schlemms_canal_L",
+          "mesh": 11
+        },
+        {
+          "i": 14,
+          "name": "VH_M_optic_choroid_L",
+          "mesh": 12
+        },
+        {
+          "i": 15,
+          "name": "VH_M_iris_L",
+          "mesh": 13
+        },
+        {
+          "i": 16,
+          "name": "VH_M_lens_L",
+          "mesh": 14
+        },
+        {
+          "i": 17,
+          "name": "VH_M_vitreous_humor_L",
+          "mesh": 15
+        },
+        {
+          "i": 18,
+          "name": "VH_M_suspensory_ligament_of_lens_L",
+          "mesh": 16
+        },
+        {
+          "i": 19,
+          "name": "VH_M_ciliary_processes_L",
+          "mesh": 17
+        },
+        {
+          "i": 20,
+          "name": "VH_M_retina_L",
+          "mesh": 18
+        },
+        {
+          "i": 21,
+          "name": "VH_M_fovea_L",
+          "mesh": 19
+        },
+        {
+          "i": 22,
+          "name": "VH_M_macula_lutea_L",
+          "mesh": 20
+        },
+        {
+          "i": 23,
+          "name": "VH_M_optic_disc_L",
+          "mesh": 21
+        },
+        {
+          "i": 24,
+          "name": "VH_M_sclera_L",
+          "mesh": 22
+        }
+      ],
+      "meshes": [
+        {
+          "i": 0,
+          "name": "VH_M_bulbar_conjunctiva_L",
+          "primitives": 1
+        },
+        {
+          "i": 1,
+          "name": "VH_M_palpebral_conjunctiva_of_upper_eyelid_L",
+          "primitives": 1
+        },
+        {
+          "i": 2,
+          "name": "VH_M_palpebral_conjunctiva_of_lower_eyelid_L",
+          "primitives": 1
+        },
+        {
+          "i": 3,
+          "name": "VH_M_ora_serrata_of_retina_L",
+          "primitives": 1
+        },
+        {
+          "i": 4,
+          "name": "VH_M_corneo_scleral_junction_L",
+          "primitives": 1
+        },
+        {
+          "i": 5,
+          "name": "VH_M_pupil_L",
+          "primitives": 1
+        },
+        {
+          "i": 6,
+          "name": "VH_M_cornea_L",
+          "primitives": 1
+        },
+        {
+          "i": 7,
+          "name": "VH_M_ciliary_body_L",
+          "primitives": 1
+        },
+        {
+          "i": 8,
+          "name": "VH_M_ciliary_muscle_L",
+          "primitives": 1
+        },
+        {
+          "i": 9,
+          "name": "VH_M_trabecular_meshwork_L",
+          "primitives": 1
+        },
+        {
+          "i": 10,
+          "name": "VH_M_aqueous_humor_L",
+          "primitives": 1
+        },
+        {
+          "i": 11,
+          "name": "VH_M_schlemms_canal_L",
+          "primitives": 1
+        },
+        {
+          "i": 12,
+          "name": "VH_M_optic_choroid_L",
+          "primitives": 1
+        },
+        {
+          "i": 13,
+          "name": "VH_M_iris_L",
+          "primitives": 1
+        },
+        {
+          "i": 14,
+          "name": "VH_M_lens_L",
+          "primitives": 1
+        },
+        {
+          "i": 15,
+          "name": "VH_M_vitreous_humor_L",
+          "primitives": 1
+        },
+        {
+          "i": 16,
+          "name": "VH_M_suspensory_ligament_of_lens_L",
+          "primitives": 1
+        },
+        {
+          "i": 17,
+          "name": "VH_M_ciliary_processes_L",
+          "primitives": 1
+        },
+        {
+          "i": 18,
+          "name": "VH_M_retina_L",
+          "primitives": 1
+        },
+        {
+          "i": 19,
+          "name": "VH_M_fovea_L",
+          "primitives": 1
+        },
+        {
+          "i": 20,
+          "name": "VH_M_macula_lutea_L",
+          "primitives": 1
+        },
+        {
+          "i": 21,
+          "name": "VH_M_optic_disc_L",
+          "primitives": 1
+        },
+        {
+          "i": 22,
+          "name": "VH_M_sclera_L",
+          "primitives": 1
+        }
+      ],
+      "namedMeshes": [
+        "VH_M_bulbar_conjunctiva_L",
+        "VH_M_palpebral_conjunctiva_of_upper_eyelid_L",
+        "VH_M_palpebral_conjunctiva_of_lower_eyelid_L",
+        "VH_M_ora_serrata_of_retina_L",
+        "VH_M_corneo_scleral_junction_L",
+        "VH_M_pupil_L",
+        "VH_M_cornea_L",
+        "VH_M_ciliary_body_L",
+        "VH_M_ciliary_muscle_L",
+        "VH_M_trabecular_meshwork_L",
+        "VH_M_aqueous_humor_L",
+        "VH_M_schlemms_canal_L",
+        "VH_M_optic_choroid_L",
+        "VH_M_iris_L",
+        "VH_M_lens_L",
+        "VH_M_vitreous_humor_L",
+        "VH_M_suspensory_ligament_of_lens_L",
+        "VH_M_ciliary_processes_L",
+        "VH_M_retina_L",
+        "VH_M_fovea_L",
+        "VH_M_macula_lutea_L",
+        "VH_M_optic_disc_L",
+        "VH_M_sclera_L"
+      ]
     }
   }
 }
