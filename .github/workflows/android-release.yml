@@ -24,14 +24,24 @@ on:
   push:
     branches:
       # main included so a merge here cuts a release with no API access
-      # needed — see the note in android-debug.yml. This one keeps no
-      # paths filter on purpose: it is the artifact people wait for.
+      # needed — see the note in android-debug.yml.
       - main
       - claude/native-app-sync
+    # Documentation-only handoff commits must not cancel an AAB/APK that is
+    # already building. Rebuild only when code/assets that can reach the
+    # native artifact (or this workflow itself) change.
+    paths:
+      - 'mobile/**'
+      - 'src/**'
+      - 'public/**'
+      - '.github/workflows/android-release.yml'
 
-# One run per branch, and a new push cancels the one it supersedes.
+# One run per branch, and a new artifact-affecting push cancels the one it supersedes.
 #
-# Without this every push started a fresh build while the previous one — now
+# Documentation-only pushes are filtered above, so they cannot abort a valid
+# native build. Code/assets that change the artifact still supersede older runs.
+#
+# Without this every relevant push started a fresh build while the previous one — now
 # building code nobody will ship — kept a runner for its full twenty minutes.
 # Six workflows fire on each push across two remotes, so a few pushes in a row
 # saturated the queue and GitHub began answering `startup_failure`: a
