@@ -8,6 +8,7 @@ const atlasPath = path.join(publicDir, 'models', 'atlas.json');
 const hraHeartSourcePath = path.join(root, 'src', 'simulator', 'data', 'hraHeart.ts');
 const hraOrgansSourcePath = path.join(root, 'src', 'simulator', 'data', 'hraOrgans.ts');
 const zReferencesSourcePath = path.join(root, 'src', 'simulator', 'data', 'zanatomyReferences.ts');
+const peripheralNervesSourcePath = path.join(root, 'src', 'simulator', 'data', 'peripheralNerves.ts');
 const {
   HRA_HEART_REQUIRED_MESH_NAMES,
   HRA_HEART_TARGETS,
@@ -23,6 +24,10 @@ const {
   ZANATOMY_REFERENCE_TARGETS,
   zAnatomyMeshMatchesTarget,
 } = await import(zReferencesSourcePath);
+const {
+  PERIPHERAL_NERVE_MODEL_URL,
+  meshMatchesPeripheralNerveTarget,
+} = await import(peripheralNervesSourcePath);
 const failures = [];
 const fail = (m) => failures.push(m);
 
@@ -250,6 +255,112 @@ for (const target of ZANATOMY_REFERENCE_TARGETS) {
 console.log(
   `Selective Z-Anatomy references OK: ${ZANATOMY_REFERENCE_MODELS.length} files, ${ZANATOMY_REFERENCE_TARGETS.length} verified targets.`
 );
+
+// The peripheral nerve supplement is a separate, much larger Z-Anatomy layer.
+// The all-organ audit classifies these targets as source-backed, so verify the
+// actual shipped GLB and its source manifest here rather than trusting that
+// classification string.
+{
+  const nerveRel = PERIPHERAL_NERVE_MODEL_URL.replace(/^\//, '');
+  const nervePath = path.join(publicDir, nerveRel);
+  const manifestRel = 'models/zanatomy_peripheral_nerves.manifest.json';
+  const manifestPath = path.join(publicDir, manifestRel);
+
+  if (!existsSync(nervePath)) {
+    fail(`peripheral nerve supplement missing: ${nerveRel}`);
+  } else if (!existsSync(manifestPath)) {
+    fail(`peripheral nerve manifest missing: ${manifestRel}`);
+  } else {
+    try {
+      const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
+      const { json, bytes } = parseGlb(nervePath);
+      const names = [
+        ...(json.nodes || []).map((n) => String(n.name || '')),
+        ...(json.meshes || []).map((m) => String(m.name || '')),
+      ].filter(Boolean);
+      const uniqueNames = new Set(names);
+
+      if (!/Z-Anatomy/i.test(String(manifest.source || ''))) {
+        fail(`${manifestRel} does not identify Z-Anatomy as its source`);
+      }
+      if (!/CC BY-SA 4\.0/i.test(String(manifest.sourceLicense || ''))) {
+        fail(`${manifestRel} is missing the Z-Anatomy CC BY-SA 4.0 licence`);
+      }
+      if (!Array.isArray(manifest.objects) || manifest.objects.length < 250) {
+        fail(`${manifestRel} has only ${manifest.objects?.length ?? 0} exported objects; expected the verified peripheral-nerve layer`);
+      }
+      if (manifest.exportedObjectCount !== manifest.objects.length) {
+        fail(`${manifestRel} exportedObjectCount=${manifest.exportedObjectCount} but objects.length=${manifest.objects.length}`);
+      }
+      if (Number(manifest.exportedTriangles || 0) < 300_000) {
+        fail(`${manifestRel} has only ${manifest.exportedTriangles || 0} triangles; detailed nerve geometry appears to have been replaced`);
+      }
+      if (bytes > 14 * 1024 * 1024) {
+        fail(`${nerveRel} exceeds the 14 MiB on-demand mobile budget: ${bytes}`);
+      }
+
+      const missingObjects = (manifest.objects || []).filter((name) => !uniqueNames.has(String(name)));
+      if (missingObjects.length) {
+        fail(`${nerveRel} lost ${missingObjects.length} manifest object(s): ${missingObjects.slice(0, 8).join(', ')}`);
+      }
+
+      const requiredTargets = [
+        'vagus_nerve',
+        'brachial_plexus',
+        'pectoral_nerves',
+        'musculocutaneous_nerve',
+        'axillary_nerve',
+        'median_nerve',
+        'ulnar_nerve',
+        'radial_nerve',
+        'intercostal_nerves',
+        'sympathetic_chain',
+        'femoral_nerve',
+        'obturator_nerve',
+        'sciatic_nerve',
+        'tibial_nerve',
+        'common_fibular_nerve',
+      ];
+
+      for (const target of requiredTargets) {
+        const declared = manifest.targets?.[target] || [];
+        if (!declared.length) {
+          fail(`${manifestRel} declares no source objects for required target "${target}"`);
+          continue;
+        }
+        const actualMatches = names.filter((name) =>
+          meshMatchesPeripheralNerveTarget(name, target)
+        );
+        if (!actualMatches.length) {
+          fail(`peripheral nerve target "${target}" matches no mesh in the shipped GLB`);
+        }
+        const staleNames = declared.filter((name) => !uniqueNames.has(String(name)));
+        if (staleNames.length) {
+          fail(`peripheral nerve target "${target}" references missing mesh names: ${staleNames.join(', ')}`);
+        }
+      }
+
+      // These two are intentionally schematic today. If a future source adds
+      // real geometry, fail loudly so the simulator can stop labelling them
+      // schematic instead of quietly keeping the old classification.
+      for (const target of ['phrenic_nerve', 'splanchnic_nerves']) {
+        const declared = manifest.targets?.[target] || [];
+        const actualMatches = names.filter((name) =>
+          meshMatchesPeripheralNerveTarget(name, target)
+        );
+        if (declared.length || actualMatches.length) {
+          fail(`${target} now has source geometry; replace its schematic classification in the anatomy audit/runtime`);
+        }
+      }
+
+      console.log(
+        `Z-Anatomy peripheral nerves OK: ${manifest.objects.length} source-named objects, ${Number(manifest.exportedTriangles || 0).toLocaleString('en-GB')} triangles, 15 required nerve targets verified; phrenic/splanchnic remain explicit source gaps.`
+      );
+    } catch (e) {
+      fail(`cannot verify peripheral nerve supplement: ${e instanceof Error ? e.message : String(e)}`);
+    }
+  }
+}
 
 const attributionPath = path.join(publicDir, 'models', 'ATTRIBUTION_BODYPARTS3D.md');
 if (!existsSync(attributionPath)) {
