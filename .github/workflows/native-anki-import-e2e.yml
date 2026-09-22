@@ -12,6 +12,7 @@ on:
       - 'mobile/src/screens/FlashcardsScreen.tsx'
       - 'mobile/preview/fixtures/anki-text/**'
       - 'mobile/scripts/native_anki_import_driver.py'
+      - 'mobile/scripts/anki-text-check.mjs'
       - 'mobile/scripts/native_screenshot_driver.py'
       - '.github/workflows/android-debug.yml'
       - '.github/workflows/native-anki-import-e2e.yml'
@@ -25,6 +26,7 @@ on:
       - 'mobile/android/app/src/main/java/com/aistudio/mbbsqbank/aycxvd/ApkgModule.kt'
       - 'mobile/src/screens/FlashcardsScreen.tsx'
       - 'mobile/scripts/native_anki_import_driver.py'
+      - 'mobile/scripts/anki-text-check.mjs'
       - '.github/workflows/native-anki-import-e2e.yml'
 
 permissions:
