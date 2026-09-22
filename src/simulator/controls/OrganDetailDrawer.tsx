@@ -93,9 +93,9 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
       onFocusCamera(presetOverride);
       return;
     }
-    if (organKey.includes('brain') || organKey.includes('vagus')) onFocusCamera('head');
-    else if (organKey.includes('heart') || organKey.includes('lung') || organKey.includes('artery') || organKey.includes('sinus') || organKey.includes('phrenic') || organKey.includes('pectoralis')) onFocusCamera('thorax');
-    else if (organKey.includes('liver') || organKey.includes('kidney') || organKey.includes('celiac') || organKey.includes('portal') || organKey.includes('stomach') || organKey.includes('spleen') || organKey.includes('pancreas') || organKey.includes('small_intestine') || organKey.includes('urinary_bladder') || organKey.includes('thymus')) onFocusCamera('abdomen');
+    if (organKey.includes('brain') || organKey.includes('vagus') || organKey.includes('eye')) onFocusCamera('head');
+    else if (organKey.includes('heart') || organKey.includes('lung') || organKey.includes('artery') || organKey.includes('sinus') || organKey.includes('phrenic') || organKey.includes('pectoralis') || organKey.includes('thymus')) onFocusCamera('thorax');
+    else if (organKey.includes('liver') || organKey.includes('kidney') || organKey.includes('celiac') || organKey.includes('portal') || organKey.includes('stomach') || organKey.includes('spleen') || organKey.includes('pancreas') || organKey.includes('small_intestine') || organKey.includes('urinary_bladder') || organKey.includes('ureter') || organKey.includes('pelvis') || organKey.includes('prostate') || organKey.includes('uterus') || organKey.includes('ovary') || organKey.includes('fallopian') || organKey.includes('placenta')) onFocusCamera('abdomen');
     else onFocusCamera('anterior');
   };
 
