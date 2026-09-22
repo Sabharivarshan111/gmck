@@ -165,8 +165,8 @@ export const WardExamModal: React.FC<WardExamModalProps> = ({
         </div>
 
         {/* Apple HIG Segmented Navigation Tabs */}
-        <div className="p-3 bg-slate-950/60 border-b border-slate-800/80">
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+        <div className="px-2.5 sm:px-3 py-2 sm:py-3 bg-slate-950/60 border-b border-slate-800/80">
+          <div className="flex sm:grid sm:grid-cols-4 gap-1.5 overflow-x-auto no-scrollbar">
             {[
               { id: 'edema', label: '💧 Pitting Edema Test', badge: edemaResult.grade },
               { id: 'icterus', label: '👁️ Scleral Icterus', badge: `${estimatedBilirubinMgDl} mg%` },
