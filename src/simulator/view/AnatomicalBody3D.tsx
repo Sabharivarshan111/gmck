@@ -15,7 +15,7 @@ import {
   DissectionToolMode,
 } from '../data/atlasTypes';
 import { correctPartSystem, describeAtlasTarget, resolveAtlasElementIds } from '../data/atlasResolver';
-import { isPeripheralNerveTarget, meshMatchesPeripheralNerveTarget, peripheralNerveKeyForMeshName, PERIPHERAL_NERVE_MODEL_URL } from '../data/peripheralNerves';
+import { isPeripheralNerveTarget, meshMatchesPeripheralNerveTarget, normalisePeripheralNerveTarget, peripheralNerveKeyForMeshName, PERIPHERAL_NERVE_MODEL_URL } from '../data/peripheralNerves';
 import { Scissors, Hand, Focus, Eye, Sparkles, Maximize2, Compass, AlertCircle, Info } from 'lucide-react';
 
 interface AnatomicalBody3DProps {
@@ -1813,6 +1813,11 @@ varying float partSelected;
       );
     const useRealNerveLayer = !!hasRealNerveMesh;
     const nerveIsolationBox = new THREE.Box3();
+    const normalizedNerveTarget = targetKey ? normalisePeripheralNerveTarget(targetKey) : null;
+    const isPhrenicTarget = normalizedNerveTarget === 'phrenic_nerve';
+    const showDerivedPhrenic =
+      isPhrenicTarget || normalizedNerveTarget === 'peripheral_nerves';
+    const useNerveContext = useRealNerveLayer || showDerivedPhrenic;
 
     // The vagus and the sympathetic chain are drawn by this component's own
     // autonomic overlay rather than taken from the atlas, so their absence from
@@ -1831,12 +1836,6 @@ varying float partSelected;
         ? isolatedTarget.reason ?? null
         : null
     );
-
-    const normalizedNerveTarget = targetKey ? normalisePeripheralNerveTarget(targetKey) : null;
-    const isPhrenicTarget = normalizedNerveTarget === 'phrenic_nerve';
-    const showDerivedPhrenic =
-      isPhrenicTarget || normalizedNerveTarget === 'peripheral_nerves';
-    const useNerveContext = useRealNerveLayer || showDerivedPhrenic;
 
     if (phrenicGroupRef.current) {
       phrenicGroupRef.current.visible = showDerivedPhrenic;
