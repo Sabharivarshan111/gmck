@@ -15,6 +15,7 @@
     "resume:write": "npm --prefix mobile run resume:write",
     "check:repo-intact": "npm --prefix mobile run check:repo-intact",
     "check:simulator": "node scripts/simulator-organ-check.mjs",
+    "check:simulator-mobile": "node scripts/simulator-mobile-ui-check.mjs",
     "check:deploy": "node scripts/deploy-size-check.mjs",
     "check:dossiers": "node scripts/dossier-format-check.mjs",
     "sheets:simulator": "node scripts/render-organ-sheets.mjs",
