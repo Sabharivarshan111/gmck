@@ -117,6 +117,7 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
 
   return (
     <div
+      data-testid="intervention-panel"
       className={`rounded-2xl md:rounded-3xl border p-2.5 sm:p-3 md:p-5 space-y-3 md:space-y-5 transition-all ${
         isLight
           ? 'bg-white border-slate-200/80 shadow-sm text-slate-800'
