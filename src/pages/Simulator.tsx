@@ -370,6 +370,7 @@ export const Simulator: React.FC = () => {
           }`}
         >
           <button
+            data-testid="simulator-tab-3d"
             onClick={() => setMobileTab('3d')}
             className={`flex-1 h-11 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all duration-200 ${
               mobileTab === '3d'
@@ -386,6 +387,7 @@ export const Simulator: React.FC = () => {
           </button>
 
           <button
+            data-testid="simulator-tab-monitor"
             onClick={() => setMobileTab('telemetry')}
             className={`flex-1 h-11 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all duration-200 ${
               mobileTab === 'telemetry'
@@ -402,6 +404,7 @@ export const Simulator: React.FC = () => {
           </button>
 
           <button
+            data-testid="simulator-tab-case"
             onClick={() => setMobileTab('interventions')}
             className={`flex-1 h-11 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all duration-200 ${
               mobileTab === 'interventions'
@@ -1004,6 +1007,7 @@ export const Simulator: React.FC = () => {
           </div>
 
           <div
+            data-testid="mobile-monitor-stage"
             className="w-full pb-2"
             style={{
               display: mobileTab === 'telemetry' ? 'block' : 'none',
