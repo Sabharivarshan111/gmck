@@ -212,8 +212,11 @@ for (const model of ZANATOMY_REFERENCE_MODELS) {
     }
 
     const { json } = parseGlb(file);
-    const names = (json.meshes || []).map((m) => String(m.name || '')).filter(Boolean);
-    zNamesByModel.set(model.key, names);
+    const names = [
+      ...(json.nodes || []).map((n) => String(n.name || '')),
+      ...(json.meshes || []).map((m) => String(m.name || '')),
+    ].filter(Boolean);
+    zNamesByModel.set(model.key, [...new Set(names)]);
 
     const manifestNames = manifest.objects.map((o) => String(o.name || '')).filter(Boolean);
     const missingNames = manifestNames.filter((name) => !names.includes(name));
