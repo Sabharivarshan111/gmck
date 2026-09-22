@@ -27,6 +27,7 @@ import { WardExamModal } from '../simulator/controls/WardExamModal';
 import { DissectionToolbar } from '../simulator/controls/DissectionToolbar';
 import { DissectionToolMode, Part } from '../simulator/data/atlasTypes';
 import { isPeripheralNerveTarget } from '../simulator/data/peripheralNerves';
+import { HRA_HEART_TARGETS, isHraHeartTarget } from '../simulator/data/hraHeart';
 
 export const Simulator: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -592,7 +593,8 @@ export const Simulator: React.FC = () => {
             'pulmonary valve',
             'papillary muscle',
             'hra_interventricular_septum',
-          ].includes(isolatedPartId || '')
+          ].includes(isolatedPartId || '') ||
+          isHraHeartTarget(isolatedPartId)
         ) && (
           <div
             className={`px-2.5 py-2 rounded-2xl border flex items-center gap-2 overflow-x-auto no-scrollbar ${isLight
@@ -613,6 +615,7 @@ export const Simulator: React.FC = () => {
               ['aortic valve', 'Aortic'],
               ['pulmonary valve', 'Pulmonary'],
               ['papillary muscle', 'Papillary'],
+              ['hra_heart_overview', 'HRA cutaway'],
               ['hra_interventricular_septum', 'IV septum · HRA'],
             ].map(([id, label]) => (
               <button
@@ -646,6 +649,47 @@ export const Simulator: React.FC = () => {
               title="These structures are not represented as independent source meshes in the current atlas."
             >
               Source gaps: chordae • interatrial septum • conduction system
+            </span>
+          </div>
+        )}
+
+        {isHraHeartTarget(isolatedPartId) && (
+          <div
+            className={`px-2.5 py-2 rounded-2xl border flex items-center gap-2 overflow-x-auto no-scrollbar ${isLight
+              ? 'bg-fuchsia-50/80 border-fuchsia-200/80'
+              : 'bg-fuchsia-950/20 border-fuchsia-900/50'}`}
+          >
+            <span className="text-[10px] font-black uppercase tracking-wider text-fuchsia-700 dark:text-fuchsia-300 whitespace-nowrap px-1">
+              HRA reference:
+            </span>
+            {HRA_HEART_TARGETS.map((target) => (
+              <button
+                key={target.id}
+                onClick={() => {
+                  setIsolatedPartId(target.id);
+                  setSelectedOrganId(null);
+                  setContextOrganId(null);
+                  setCameraPreset('thorax');
+                  setMobileTab('3d');
+                }}
+                className={`min-h-[40px] px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap flex-shrink-0 border transition-all active:scale-95 ${isolatedPartId === target.id
+                  ? isLight
+                    ? 'bg-fuchsia-600 border-fuchsia-700 text-white shadow-sm'
+                    : 'bg-fuchsia-400 border-fuchsia-300 text-slate-950 shadow-sm'
+                  : isLight
+                  ? 'bg-white border-fuchsia-200 text-fuchsia-900'
+                  : 'bg-slate-900 border-fuchsia-800 text-fuchsia-200'}`}
+                title={target.label}
+              >
+                {target.shortLabel}
+              </button>
+            ))}
+            <span
+              className={`min-h-[40px] px-3 py-1.5 rounded-xl text-[10px] font-semibold whitespace-nowrap flex items-center border ${isLight
+                ? 'bg-white border-fuchsia-200 text-fuchsia-900'
+                : 'bg-slate-900 border-fuchsia-800 text-fuchsia-200'}`}
+            >
+              HuBMAP HRA male v1.3 · same-source cutaway
             </span>
           </div>
         )}
