@@ -9,6 +9,7 @@ const atlasPath = path.join(publicDir, 'models', 'atlas.json');
 const hraHeartSourcePath = path.join(root, 'src', 'simulator', 'data', 'hraHeart.ts');
 const hraOrgansSourcePath = path.join(root, 'src', 'simulator', 'data', 'hraOrgans.ts');
 const zReferencesSourcePath = path.join(root, 'src', 'simulator', 'data', 'zanatomyReferences.ts');
+const preferredReferencesSourcePath = path.join(root, 'src', 'simulator', 'data', 'preferredAnatomyReferences.ts');
 const peripheralNervesSourcePath = path.join(root, 'src', 'simulator', 'data', 'peripheralNerves.ts');
 const {
   HRA_HEART_REQUIRED_MESH_NAMES,
@@ -25,6 +26,9 @@ const {
   ZANATOMY_REFERENCE_TARGETS,
   zAnatomyMeshMatchesTarget,
 } = await import(zReferencesSourcePath);
+const {
+  PREFERRED_ANATOMY_OVERVIEW_TARGETS,
+} = await import(preferredReferencesSourcePath);
 const {
   PERIPHERAL_NERVE_MODEL_URL,
   meshMatchesPeripheralNerveTarget,
@@ -255,6 +259,77 @@ for (const target of ZANATOMY_REFERENCE_TARGETS) {
 }
 console.log(
   `Selective Z-Anatomy references OK: ${ZANATOMY_REFERENCE_MODELS.length} files, ${ZANATOMY_REFERENCE_TARGETS.length} verified targets.`
+);
+
+// Whole-organ isolation must never silently fall back to a rougher whole-body
+// mesh when a verified dedicated teaching model is already shipped.
+const expectedPreferredOrgans = [
+  'heart',
+  'lungs',
+  'brain',
+  'liver',
+  'stomach',
+  'pancreas',
+  'spleen',
+  'small_intestine',
+  'urinary_bladder',
+  'thymus',
+  'kidney',
+  'eye',
+  'ureter',
+  'spinal_cord',
+  'pelvis',
+  'prostate',
+  'skin',
+  'knee',
+  'uterus',
+  'ovary',
+  'fallopian_tube',
+  'placenta',
+];
+
+for (const organKey of expectedPreferredOrgans) {
+  const targetId = PREFERRED_ANATOMY_OVERVIEW_TARGETS[organKey];
+  if (!targetId) {
+    fail(`preferred anatomy overview missing for ${organKey}`);
+    continue;
+  }
+
+  const heartTarget = HRA_HEART_TARGETS.find((target) => target.id === targetId);
+  if (heartTarget) {
+    if (organKey !== 'heart' || targetId !== 'hra_heart_overview') {
+      fail(`preferred target ${organKey} -> ${targetId} is not the verified HRA heart overview`);
+    }
+    continue;
+  }
+
+  const hraTarget = HRA_ORGAN_TARGETS.find((target) => target.id === targetId);
+  if (hraTarget) {
+    if (hraTarget.organKey !== organKey) {
+      fail(`preferred target ${organKey} -> ${targetId} belongs to HRA organ ${hraTarget.organKey}`);
+    }
+    if (!hraTarget.matchAll) {
+      fail(`preferred HRA target ${targetId} is not an overview/matchAll target`);
+    }
+    continue;
+  }
+
+  const zTarget = ZANATOMY_REFERENCE_TARGETS.find((target) => target.id === targetId);
+  if (zTarget) {
+    if (zTarget.organKey !== organKey) {
+      fail(`preferred target ${organKey} -> ${targetId} belongs to Z-Anatomy organ ${zTarget.organKey}`);
+    }
+    if (!zTarget.matchAll) {
+      fail(`preferred Z-Anatomy target ${targetId} is not an overview/matchAll target`);
+    }
+    continue;
+  }
+
+  fail(`preferred anatomy target ${organKey} -> ${targetId} is not backed by a verified HRA/Z-Anatomy target`);
+}
+
+console.log(
+  `Preferred organ isolation OK: ${expectedPreferredOrgans.length} source-backed organ buttons route to verified overview geometry.`
 );
 
 // The peripheral nerve supplement is a separate, much larger Z-Anatomy layer.
