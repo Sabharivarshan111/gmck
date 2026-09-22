@@ -157,13 +157,13 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
   if (tool === 'none') return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md animate-in fade-in overflow-y-auto">
-      <div className="relative w-full max-w-4xl bg-slate-900 border border-slate-700 rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl text-slate-100 flex flex-col my-auto max-h-[92vh]">
+    <div className="fixed inset-0 z-50 flex items-stretch sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-md animate-in fade-in overflow-hidden sm:overflow-y-auto">
+      <div className="relative w-full max-w-4xl h-[100dvh] sm:h-auto bg-slate-900 border-0 sm:border sm:border-slate-700 rounded-none sm:rounded-3xl overflow-hidden shadow-2xl text-slate-100 flex flex-col sm:my-auto max-h-[100dvh] sm:max-h-[92vh]">
         {/* Header Bar */}
-        <div className="flex items-center justify-between px-5 py-3.5 bg-slate-950 border-b border-slate-800 flex-shrink-0">
-          <div className="flex items-center gap-2">
+        <div className="sticky top-0 z-20 flex items-center justify-between px-3 sm:px-5 py-2.5 sm:py-3.5 bg-slate-950/95 backdrop-blur-xl border-b border-slate-800 flex-shrink-0">
+          <div className="flex items-center gap-2 min-w-0">
             <span className="w-3 h-3 rounded-full bg-cyan-500 animate-pulse" />
-            <h3 className="font-bold text-sm text-cyan-400 tracking-wide uppercase">
+            <h3 className="min-w-0 truncate font-bold text-xs sm:text-sm text-cyan-400 tracking-wide uppercase">
               {tool === 'pupil' && '👁️ Bedside Pupillometer & Direct/Consensual Reflex Simulator'}
               {tool === 'ultrasound' && '📡 Virtual Point-of-Care Ultrasound (POCUS)'}
               {tool === 'stethoscope' && '🩺 Digital Auscultation Stethoscope & Sound Synthesizer'}
@@ -179,14 +179,14 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
               setIsListening(false);
               onClose();
             }}
-            className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition-colors cursor-pointer"
+            className="min-h-[44px] min-w-[44px] flex items-center justify-center text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 transition-colors cursor-pointer shrink-0"
           >
             ✕
           </button>
         </div>
 
         {/* Modal Body */}
-        <div className="p-4 md:p-6 flex-1 overflow-y-auto space-y-4">
+        <div className="p-2.5 sm:p-4 md:p-6 flex-1 overflow-y-auto overscroll-contain space-y-3 sm:space-y-4 pb-[calc(16px+env(safe-area-inset-bottom))]">
           {/* ================= 1. PUPILLOMETRY ================= */}
           {tool === 'pupil' && (
             <div className="space-y-4">
