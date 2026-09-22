@@ -244,3 +244,40 @@ one real HRA mesh.
 These HRA models are separate reference bodies from BodyParts3D. ORBIT shows
 them in their own internally consistent reference views and does not force
 their geometry onto BodyParts3D as if donor-level spatial registration existed.
+
+
+## Selective Z-Anatomy organ references
+
+For ORBIT anatomy targets that are not covered in sufficient detail by the HRA
+reference-organ set, ORBIT uses small **on-demand** exports from the official
+Z-Anatomy PC source FBXs.
+
+Source:
+- Repository: `LluisV/Z-Anatomy`, branch `PC-Version`
+- Source FBXs: `Resources/Models/FBX/`
+- Aggregate model licence: Creative Commons Attribution-ShareAlike 4.0
+  International (CC BY-SA 4.0)
+- Runtime exports remain separately identifiable from BodyParts3D/HRA and keep
+  their manifests beside the GLBs.
+
+Runtime files under `public/models/zanatomy/`:
+- `brain_reference.glb` — 104 substantial CNS/brain meshes selected from
+  `NervousSystem100.fbx`;
+- `stomach_reference.glb` — stomach, duodenum, greater omentum and lesser
+  omentum from `VisceralSystem100.fbx`;
+- `pectoralis_major_reference.glb` — bilateral clavicular, sternocostal and
+  abdominal pectoralis-major parts from `MuscularSystem100.fbx`;
+- `deltoid_reference.glb` — bilateral clavicular, acromial and scapular-spinal
+  deltoid parts from `MuscularSystem100.fbx`;
+- `major_joints_reference.glb` — source-derived shoulder, hip and knee
+  capsule/labrum/ligament/meniscal meshes from `Joints100.fbx`.
+
+The exporter rejects label/marker geometry by requiring substantive mesh
+polygon/vertex counts. ORBIT never treats Z-Anatomy `.j` marker cubes as
+anatomical surfaces. The committed manifests record every exported source name
+and triangle/vertex count; CI compares each GLB to those manifests and requires
+every source-derived UI target to match a real mesh.
+
+Mobile behavior: these files are lazy-loaded only after their corresponding
+reference view is opened. They are shown in their own same-source reference
+space instead of being forced onto the BodyParts3D reference body.
