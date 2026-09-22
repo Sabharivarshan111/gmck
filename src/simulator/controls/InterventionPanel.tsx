@@ -117,14 +117,14 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
 
   return (
     <div
-      className={`rounded-2xl md:rounded-3xl border p-4 md:p-5 space-y-4 md:space-y-5 transition-all ${
+      className={`rounded-2xl md:rounded-3xl border p-2.5 sm:p-3 md:p-5 space-y-3 md:space-y-5 transition-all ${
         isLight
           ? 'bg-white border-slate-200/80 shadow-sm text-slate-800'
           : 'bg-slate-900 border-slate-800 shadow-xl text-slate-100'
       }`}
     >
       {/* 1. Header & Department Filter Tabs */}
-      <div className="space-y-3 pb-3 border-b border-slate-200 dark:border-slate-800">
+      <div className="space-y-2.5 pb-2.5 md:pb-3 border-b border-slate-200 dark:border-slate-800">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
             <div
@@ -233,9 +233,9 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
       </div>
 
       {/* Case Details Badge Strip */}
-      <div className="flex flex-wrap items-center gap-2 text-xs">
+      <div className="-mx-1 px-1 flex flex-nowrap items-center gap-2 text-xs overflow-x-auto no-scrollbar">
         <span
-          className={`px-2.5 py-1 rounded-lg font-semibold border ${
+          className={`shrink-0 px-2.5 py-1.5 rounded-xl font-semibold border ${
             isLight
               ? 'bg-slate-100 border-slate-200 text-slate-700'
               : 'bg-slate-800 border-slate-700 text-slate-300'
@@ -244,7 +244,7 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
           Department: <strong>{currentScenario.category}</strong>
         </span>
         <span
-          className={`px-2.5 py-1 rounded-lg font-semibold border flex items-center gap-1 ${
+          className={`shrink-0 max-w-[78vw] sm:max-w-none px-2.5 py-1.5 rounded-xl font-semibold border flex items-center gap-1 ${
             isLight
               ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
               : 'bg-emerald-950/40 border-emerald-800/60 text-emerald-300'
@@ -286,7 +286,7 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
               5 layers
             </span>
           </div>
-          <div className="grid grid-cols-5 gap-1.5">
+          <div className="grid grid-cols-3 sm:grid-cols-5 gap-1.5">
             {(
               [
                 { id: 'glass', label: 'Glass' },
@@ -299,7 +299,7 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
               <button
                 key={l.id}
                 onClick={() => onSelectLayer(l.id)}
-                className={`py-2 px-1 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
+                className={`min-h-[44px] py-2 px-1 rounded-xl text-[11px] sm:text-xs font-bold border transition-all cursor-pointer ${
                   activeLayer === l.id
                     ? isLight
                       ? 'bg-sky-600 text-white border-sky-600 shadow-sm shadow-sky-500/20'
@@ -339,7 +339,7 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-1.5">
             <button
               onClick={() => onOpenTool('pupil')}
-              className={`py-2 px-1 rounded-xl text-xs font-bold border flex items-center justify-center gap-1 transition-all cursor-pointer ${
+              className={`min-h-[44px] py-2 px-1 rounded-xl text-[11px] sm:text-xs font-bold border flex items-center justify-center gap-1 transition-all cursor-pointer ${
                 isLight
                   ? 'bg-white hover:bg-slate-100 border-slate-200 text-slate-700 shadow-2xs'
                   : 'bg-slate-900 hover:bg-slate-800 border-slate-800 text-slate-300'
@@ -379,7 +379,7 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
             </button>
             <button
               onClick={() => onOpenTool('piccled')}
-              className={`py-2 px-1.5 rounded-xl text-xs font-bold border flex items-center justify-center gap-1 transition-all cursor-pointer ${
+              className={`min-h-[44px] py-2 px-1.5 rounded-xl text-[11px] sm:text-xs font-bold border flex items-center justify-center gap-1 transition-all cursor-pointer ${
                 isLight
                   ? 'bg-amber-50 hover:bg-amber-100 border-amber-200 text-amber-900 shadow-2xs'
                   : 'bg-amber-950/40 hover:bg-amber-900/60 border-amber-800 text-amber-300'
@@ -432,12 +432,12 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
         </div>
 
         {/* Interventions Button Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-1.5 sm:gap-2">
           {filteredInterventions.map((item) => (
             <button
               key={item.id}
               onClick={() => onApplyAction(item.id)}
-              className={`p-2.5 rounded-xl border text-xs font-bold flex flex-col items-center text-center transition-all cursor-pointer active:scale-95 ${
+              className={`min-h-[72px] p-2 rounded-xl border text-[11px] sm:text-xs font-bold flex flex-col items-center justify-center text-center transition-all cursor-pointer active:scale-95 ${
                 isLight
                   ? 'bg-white hover:bg-slate-100/90 border-slate-200 text-slate-800 shadow-2xs'
                   : 'bg-slate-900 hover:bg-slate-800 border-slate-800 text-slate-200'
