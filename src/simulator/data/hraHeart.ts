@@ -4,6 +4,7 @@ export interface HraHeartTarget {
   id: string;
   label: string;
   shortLabel: string;
+  kind?: 'source' | 'schematic';
   sourceNames?: readonly string[];
   sourcePrefix?: string;
 }
@@ -103,6 +104,12 @@ export const HRA_HEART_TARGETS: readonly HraHeartTarget[] = [
     label: 'Posteromedial papillary muscle · HRA',
     shortLabel: 'Pap · PM',
     sourceNames: ['VH_M_papillary_muscle_of_heart_posteromedial'],
+  },
+  {
+    id: 'hra_conduction_schematic',
+    label: 'Cardiac conduction · schematic',
+    shortLabel: '⚡ Conduction',
+    kind: 'schematic',
   },
 ] as const;
 
