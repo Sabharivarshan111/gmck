@@ -73,6 +73,7 @@ on:
       - 'mobile/**'
       - 'src/**'
       - '.github/workflows/android-debug.yml'
+      - '.github/workflows/native-anki-import-e2e.yml'
 
 # One run per branch, and a new push cancels the one it supersedes.
 #
