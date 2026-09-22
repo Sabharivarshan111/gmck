@@ -73,7 +73,7 @@ const MEDIA_STORE = 'media';
  * true in both places. The right answer to a thirty-thousand-card package is
  * still to choose a deck out of it rather than to raise this.
  */
-export const MAX_IMPORT_CARDS = 5000;
+export const MAX_IMPORT_CARDS = 50_000;
 
 export interface ImportedDeck {
   id: string;
@@ -175,51 +175,107 @@ const mediaKey = (deckId: string, name: string) => `${deckId}/${name}`;
  * where the diagram is the answer. An Anki card's front is whatever its author
  * wrote, and an ECG above "identify this rhythm" is the question.
  */
+export interface ImportPackageOptions {
+  /** Import only cards from these Anki deck names. Omit to take every deck. */
+  decks?: Set<string>;
+  /** Optional display name. A single selected sub-deck uses its own name by default. */
+  name?: string;
+}
+
+const normalizeMediaName = (value: string): string => {
+  try {
+    return decodeURIComponent(value).trim().toLowerCase();
+  } catch {
+    return value.trim().toLowerCase();
+  }
+};
+
+/**
+ * Native parity: some shared decks keep the only picture on the answer side
+ * even when the question explicitly asks the reader to identify a visual.
+ * Showing that picture on the front makes the question answerable while it
+ * remains on the back as authored.
+ */
+function shouldPromoteBackImage(front: string, frontImages: string[], backImages: string[]): boolean {
+  if (frontImages.length > 0 || backImages.length === 0) return false;
+  const isMcqStem = /\b[A-Da-d][\.\)]\s+/.test(front) || /\([A-Da-d]\)/.test(front);
+  const mentionsVisual =
+    /\b(image|picture|diagram|photo|photomicrograph|shown|marked|below|figure|ecg|ekg|x-?ray|xray|scan|ct|mri|arrow|identify|histology|lesion|feature|specimen|finding|condition|diagnosis|patient)\b/i.test(front);
+  return isMcqStem || mentionsVisual || backImages.length === 1 || front.length < 350;
+}
+
 export async function importPackage(
   pkg: ImportedApkg,
   source: string,
-  name?: string
+  options: string | ImportPackageOptions = {}
 ): Promise<ImportedDeck> {
+  const resolved: ImportPackageOptions =
+    typeof options === 'string' ? { name: options } : options;
+  const selectedCards = resolved.decks
+    ? pkg.cards.filter((card) => resolved.decks!.has(card.deck))
+    : pkg.cards;
   const id = newId();
-  const truncated = pkg.cards.length > MAX_IMPORT_CARDS;
-  const taken = truncated ? pkg.cards.slice(0, MAX_IMPORT_CARDS) : pkg.cards;
+  const truncated = selectedCards.length > MAX_IMPORT_CARDS;
+  const taken = truncated
+    ? selectedCards.slice(0, MAX_IMPORT_CARDS)
+    : selectedCards;
 
-  const cards: DeckCard[] = taken.map((c) => ({
-    id: c.id,
-    kind: c.frontMedia.length > 0 || c.backMedia.length > 0 ? 'image' : 'theory',
-    front: c.front,
-    back: c.back,
-    ...(c.frontMedia.length ? { frontImages: c.frontMedia } : null),
-    ...(c.backMedia.length ? { backImages: c.backMedia } : null),
-    ...(c.tags.length ? { tags: c.tags } : null),
-  }));
+  const cards: DeckCard[] = taken.map((c) => {
+    const frontImages = [...c.frontMedia];
+    const backImages = [...c.backMedia];
+    if (shouldPromoteBackImage(c.front, frontImages, backImages)) {
+      frontImages.push(backImages[0]);
+    }
+    return {
+      id: c.id,
+      kind: frontImages.length > 0 || backImages.length > 0 ? 'image' : 'theory',
+      front: c.front,
+      back: c.back,
+      ...(frontImages.length ? { frontImages } : null),
+      ...(backImages.length ? { backImages, imageUrl: backImages[0] } : null),
+      ...(c.tags.length ? { tags: c.tags } : null),
+    };
+  });
 
-  // Only the media those cards actually refer to. A package's media pile is
-  // whatever its author accumulated; storing a picture no card names is space
-  // the reader can never account for.
+  // Only the media those cards actually refer to. Match both exact and
+  // URI-decoded/case-normalized names because real decks are inconsistent
+  // about whether an <img src> is encoded while the media map is not.
   const wanted = new Set<string>();
   for (const c of taken) {
     for (const m of c.frontMedia) wanted.add(m);
     for (const m of c.backMedia) wanted.add(m);
   }
+  const wantedByNormalized = new Map<string, string>();
+  for (const name of wanted) {
+    if (!wantedByNormalized.has(normalizeMediaName(name))) {
+      wantedByNormalized.set(normalizeMediaName(name), name);
+    }
+  }
 
   let mediaCount = 0;
   let mediaBytes = 0;
   for (const [fileName, blob] of pkg.media) {
-    if (!wanted.has(fileName)) continue;
-    await tx(MEDIA_STORE, 'readwrite', (s) => s.put(blob, mediaKey(id, fileName)));
+    const storageName =
+      wanted.has(fileName)
+        ? fileName
+        : wantedByNormalized.get(normalizeMediaName(fileName));
+    if (!storageName) continue;
+    await tx(MEDIA_STORE, 'readwrite', (s) => s.put(blob, mediaKey(id, storageName)));
     mediaCount += 1;
     mediaBytes += blob.size;
   }
 
   await tx(CARDS_STORE, 'readwrite', (s) => s.put(cards, id));
 
+  const selectedDeckNames = [...new Set(taken.map((c) => c.deck).filter(Boolean))];
+  const defaultName =
+    selectedDeckNames.length === 1 ? selectedDeckNames[0] : pkg.deckName;
   const deck: ImportedDeck = {
     id,
-    name: (name ?? pkg.deckName ?? 'Imported deck').trim() || 'Imported deck',
+    name: (resolved.name ?? defaultName ?? 'Imported deck').trim() || 'Imported deck',
     source,
     cardCount: cards.length,
-    decks: [...new Set(taken.map((c) => c.deck).filter(Boolean))],
+    decks: selectedDeckNames,
     mediaCount,
     mediaBytes,
     createdAt: Date.now(),
