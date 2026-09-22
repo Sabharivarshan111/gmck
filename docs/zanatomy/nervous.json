@@ -1,0 +1,4279 @@
+{
+  "label": "nervous",
+  "sourceFile": "NervousSystem100.fbx",
+  "objectCount": 712,
+  "objects": [
+    {
+      "name": " Posterior transverse collateral sulcus.l",
+      "type": "MESH",
+      "polygons": 160,
+      "vertices": 102
+    },
+    {
+      "name": " Posterior transverse collateral sulcus.r",
+      "type": "MESH",
+      "polygons": 160,
+      "vertices": 102
+    },
+    {
+      "name": "(Communicating branch of median nerve with ulnar nerve).l",
+      "type": "MESH",
+      "polygons": 288,
+      "vertices": 300
+    },
+    {
+      "name": "(Communicating branch of median nerve with ulnar nerve).r",
+      "type": "MESH",
+      "polygons": 288,
+      "vertices": 300
+    },
+    {
+      "name": "Abducens nerve (VI).l",
+      "type": "MESH",
+      "polygons": 2488,
+      "vertices": 2520
+    },
+    {
+      "name": "Abducens nerve (VI).r",
+      "type": "MESH",
+      "polygons": 2488,
+      "vertices": 2520
+    },
+    {
+      "name": "Accessory nerve (XI).l",
+      "type": "MESH",
+      "polygons": 7752,
+      "vertices": 7848
+    },
+    {
+      "name": "Accessory nerve (XI).r",
+      "type": "MESH",
+      "polygons": 7752,
+      "vertices": 7848
+    },
+    {
+      "name": "Accessory nucleus of oculomotor nerve.l",
+      "type": "MESH",
+      "polygons": 384,
+      "vertices": 386
+    },
+    {
+      "name": "Accessory nucleus of oculomotor nerve.r",
+      "type": "MESH",
+      "polygons": 384,
+      "vertices": 386
+    },
+    {
+      "name": "Accessory visual structures.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Ampulla of lacrimal canaliculus.l",
+      "type": "MESH",
+      "polygons": 244,
+      "vertices": 124
+    },
+    {
+      "name": "Ampulla of lacrimal canaliculus.r",
+      "type": "MESH",
+      "polygons": 244,
+      "vertices": 124
+    },
+    {
+      "name": "Amygdaloid body.l",
+      "type": "MESH",
+      "polygons": 384,
+      "vertices": 194
+    },
+    {
+      "name": "Amygdaloid body.r",
+      "type": "MESH",
+      "polygons": 384,
+      "vertices": 194
+    },
+    {
+      "name": "Angular gyrus.l",
+      "type": "MESH",
+      "polygons": 1441,
+      "vertices": 759
+    },
+    {
+      "name": "Angular gyrus.r",
+      "type": "MESH",
+      "polygons": 1441,
+      "vertices": 759
+    },
+    {
+      "name": "Anterior bony ampulla.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Anterior branch of medial antebrachial cutaneous nerve.l",
+      "type": "MESH",
+      "polygons": 720,
+      "vertices": 732
+    },
+    {
+      "name": "Anterior branch of medial antebrachial cutaneous nerve.r",
+      "type": "MESH",
+      "polygons": 720,
+      "vertices": 732
+    },
+    {
+      "name": "Anterior branch of obturator nerve.l",
+      "type": "MESH",
+      "polygons": 864,
+      "vertices": 876
+    },
+    {
+      "name": "Anterior branch of obturator nerve.r",
+      "type": "MESH",
+      "polygons": 864,
+      "vertices": 876
+    },
+    {
+      "name": "Anterior chamber of eyeball.l",
+      "type": "MESH",
+      "polygons": 4352,
+      "vertices": 4354
+    },
+    {
+      "name": "Anterior chamber of eyeball.r",
+      "type": "MESH",
+      "polygons": 4352,
+      "vertices": 4354
+    },
+    {
+      "name": "Anterior cochlear nucleus.l",
+      "type": "MESH",
+      "polygons": 96,
+      "vertices": 98
+    },
+    {
+      "name": "Anterior cochlear nucleus.r",
+      "type": "MESH",
+      "polygons": 96,
+      "vertices": 98
+    },
+    {
+      "name": "Anterior commissure",
+      "type": "MESH",
+      "polygons": 800,
+      "vertices": 402
+    },
+    {
+      "name": "Anterior corticospinal tract",
+      "type": "MESH",
+      "polygons": 3636,
+      "vertices": 3672
+    },
+    {
+      "name": "Anterior cutaneous branches of femoral nerve.l",
+      "type": "MESH",
+      "polygons": 720,
+      "vertices": 732
+    },
+    {
+      "name": "Anterior cutaneous branches of femoral nerve.r",
+      "type": "MESH",
+      "polygons": 720,
+      "vertices": 732
+    },
+    {
+      "name": "Anterior division of inferior trunk of brachial plexus.l",
+      "type": "MESH",
+      "polygons": 288,
+      "vertices": 300
+    },
+    {
+      "name": "Anterior division of inferior trunk of brachial plexus.r",
+      "type": "MESH",
+      "polygons": 288,
+      "vertices": 300
+    },
+    {
+      "name": "Anterior division of mandibular nerve.l",
+      "type": "MESH",
+      "polygons": 308,
+      "vertices": 324
+    },
+    {
+      "name": "Anterior division of mandibular nerve.r",
+      "type": "MESH",
+      "polygons": 308,
+      "vertices": 324
+    },
+    {
+      "name": "Anterior division of middle trunk of brachial plexus.l",
+      "type": "MESH",
+      "polygons": 144,
+      "vertices": 156
+    },
+    {
+      "name": "Anterior division of middle trunk of brachial plexus.r",
+      "type": "MESH",
+      "polygons": 144,
+      "vertices": 156
+    },
+    {
+      "name": "Anterior division of superior trunk of brachial plexus.l",
+      "type": "MESH",
+      "polygons": 144,
+      "vertices": 156
+    },
+    {
+      "name": "Anterior division of superior trunk of brachial plexus.r",
+      "type": "MESH",
+      "polygons": 144,
+      "vertices": 156
+    },
+    {
+      "name": "Anterior fasciculus proprius",
+      "type": "MESH",
+      "polygons": 4646,
+      "vertices": 4692
+    },
+    {
+      "name": "Anterior funiculus.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Anterior horn of spinal cord",
+      "type": "MESH",
+      "polygons": 4444,
+      "vertices": 4488
+    },
+    {
+      "name": "Anterior horn of spinal cord.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Anterior interosseous nerve of forearm.l",
+      "type": "MESH",
+      "polygons": 720,
+      "vertices": 732
+    },
+    {
+      "name": "Anterior interosseous nerve of forearm.r",
+      "type": "MESH",
+      "polygons": 720,
+      "vertices": 732
+    },
+    {
+      "name": "Anterior median fissure of medulla oblongata.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Anterior occipital sulcus*.l",
+      "type": "MESH",
+      "polygons": 322,
+      "vertices": 184
+    },
+    {
+      "name": "Anterior occipital sulcus*.r",
+      "type": "MESH",
+      "polygons": 322,
+      "vertices": 184
+    },
+    {
+      "name": "Anterior pole of eyeball.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Anterior quadrangular lobule.l",
+      "type": "MESH",
+      "polygons": 6520,
+      "vertices": 3270
+    },
+    {
+      "name": "Anterior quadrangular lobule.r",
+      "type": "MESH",
+      "polygons": 6520,
+      "vertices": 3270
+    },
+    {
+      "name": "Anterior rami of lumbar nerves.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Anterior root of posterior femoral cutaneous nerve.l",
+      "type": "MESH",
+      "polygons": 720,
+      "vertices": 756
+    },
+    {
+      "name": "Anterior root of posterior femoral cutaneous nerve.r",
+      "type": "MESH",
+      "polygons": 720,
+      "vertices": 756
+    },
+    {
+      "name": "Anterior root of spinal nerve.l",
+      "type": "MESH",
+      "polygons": 3312,
+      "vertices": 3564
+    },
+    {
+      "name": "Anterior root of spinal nerve.r",
+      "type": "MESH",
+      "polygons": 3312,
+      "vertices": 3564
+    },
+    {
+      "name": "Anterior segment of eyeball.l",
+      "type": "MESH",
+      "polygons": 1664,
+      "vertices": 1664
+    },
+    {
+      "name": "Anterior segment of eyeball.r",
+      "type": "MESH",
+      "polygons": 1664,
+      "vertices": 1664
+    },
+    {
+      "name": "Anterior semicircular canal.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Anterior spinocerebellar tract",
+      "type": "MESH",
+      "polygons": 5858,
+      "vertices": 5916
+    },
+    {
+      "name": "Anterior spinothalamic tract",
+      "type": "MESH",
+      "polygons": 4040,
+      "vertices": 4080
+    },
+    {
+      "name": "Anterior surface of cornea.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Anterior surface of iris.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Anterolateral fasciculus.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Anterolateral sulcus of medulla oblongata.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Aqueduct of midbrain",
+      "type": "MESH",
+      "polygons": 460,
+      "vertices": 235
+    },
+    {
+      "name": "Auditory tube.l",
+      "type": "MESH",
+      "polygons": 920,
+      "vertices": 922
+    },
+    {
+      "name": "Auditory tube.r",
+      "type": "MESH",
+      "polygons": 920,
+      "vertices": 922
+    },
+    {
+      "name": "Autonomic division of peripheral nervous system.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Axillary nerve.l",
+      "type": "MESH",
+      "polygons": 576,
+      "vertices": 588
+    },
+    {
+      "name": "Axillary nerve.r",
+      "type": "MESH",
+      "polygons": 576,
+      "vertices": 588
+    },
+    {
+      "name": "Basal forebrain.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Base of cochlea.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Base of peduncle.l",
+      "type": "MESH",
+      "polygons": 5046,
+      "vertices": 2531
+    },
+    {
+      "name": "Base of peduncle.r",
+      "type": "MESH",
+      "polygons": 5046,
+      "vertices": 2531
+    },
+    {
+      "name": "Basilar part of pons.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Biventral lobule.l",
+      "type": "MESH",
+      "polygons": 8902,
+      "vertices": 4464
+    },
+    {
+      "name": "Biventral lobule.r",
+      "type": "MESH",
+      "polygons": 8902,
+      "vertices": 4464
+    },
+    {
+      "name": "Brachial plexus.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Brain.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Brainstem.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Branches of anterior part of lumbar plexus.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Branches of lateral cord of brachial plexus.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Branches of medial cord of brachial plexus.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Branches of posterior cord of brachial plexus.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Branches of posterior part of lumbar plexus.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Buccal nerve.l",
+      "type": "MESH",
+      "polygons": 1336,
+      "vertices": 1368
+    },
+    {
+      "name": "Buccal nerve.r",
+      "type": "MESH",
+      "polygons": 1336,
+      "vertices": 1368
+    },
+    {
+      "name": "Calcarine sulcus.l",
+      "type": "MESH",
+      "polygons": 779,
+      "vertices": 437
+    },
+    {
+      "name": "Calcarine sulcus.r",
+      "type": "MESH",
+      "polygons": 779,
+      "vertices": 437
+    },
+    {
+      "name": "Cauda equina",
+      "type": "MESH",
+      "polygons": 6912,
+      "vertices": 7128
+    },
+    {
+      "name": "Caudate nucleus.l",
+      "type": "MESH",
+      "polygons": 2570,
+      "vertices": 1287
+    },
+    {
+      "name": "Caudate nucleus.r",
+      "type": "MESH",
+      "polygons": 2570,
+      "vertices": 1287
+    },
+    {
+      "name": "Central canal",
+      "type": "MESH",
+      "polygons": 1616,
+      "vertices": 1632
+    },
+    {
+      "name": "Central canal'",
+      "type": "MESH",
+      "polygons": 288,
+      "vertices": 300
+    },
+    {
+      "name": "Central lobule",
+      "type": "MESH",
+      "polygons": 1006,
+      "vertices": 505
+    },
+    {
+      "name": "Central mesencephalic structures.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Central nervous system.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Central structures of spinal cord.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Central sulcus.l",
+      "type": "MESH",
+      "polygons": 1326,
+      "vertices": 722
+    },
+    {
+      "name": "Central sulcus.r",
+      "type": "MESH",
+      "polygons": 1326,
+      "vertices": 722
+    },
+    {
+      "name": "Cerebellar peduncles.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Cerebellum.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Cerebral hemisphere.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Cerebral peduncle.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Cerebrum.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Cervical nerves.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Cervical plexus.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Chorda tympani.l",
+      "type": "MESH",
+      "polygons": 884,
+      "vertices": 900
+    },
+    {
+      "name": "Chorda tympani.r",
+      "type": "MESH",
+      "polygons": 884,
+      "vertices": 900
+    },
+    {
+      "name": "Choroid plexus.l",
+      "type": "MESH",
+      "polygons": 2647,
+      "vertices": 1324
+    },
+    {
+      "name": "Choroid plexus.r",
+      "type": "MESH",
+      "polygons": 2647,
+      "vertices": 1324
+    },
+    {
+      "name": "Ciliary body-curve.r",
+      "type": "MESH",
+      "polygons": 0,
+      "vertices": 48
+    },
+    {
+      "name": "Cingulate gyrus (Posteroventral part*).l",
+      "type": "MESH",
+      "polygons": 247,
+      "vertices": 153
+    },
+    {
+      "name": "Cingulate gyrus (Posteroventral part*).r",
+      "type": "MESH",
+      "polygons": 247,
+      "vertices": 153
+    },
+    {
+      "name": "Cingulate gyrus and sulcus (Middle anterior part).l",
+      "type": "MESH",
+      "polygons": 687,
+      "vertices": 370
+    },
+    {
+      "name": "Cingulate gyrus and sulcus (Middle anterior part).r",
+      "type": "MESH",
+      "polygons": 687,
+      "vertices": 370
+    },
+    {
+      "name": "Cingulate gyrus and sulcus (Middle posterior part).l",
+      "type": "MESH",
+      "polygons": 545,
+      "vertices": 302
+    },
+    {
+      "name": "Cingulate gyrus and sulcus (Middle posterior part).r",
+      "type": "MESH",
+      "polygons": 545,
+      "vertices": 302
+    },
+    {
+      "name": "Cingulate gyrus and sulcus (Posterior dorsal part).l",
+      "type": "MESH",
+      "polygons": 401,
+      "vertices": 207
+    },
+    {
+      "name": "Cingulate gyrus and sulcus (Posterior dorsal part).r",
+      "type": "MESH",
+      "polygons": 401,
+      "vertices": 207
+    },
+    {
+      "name": "Cingulate sulcus (Marginal part*).l",
+      "type": "MESH",
+      "polygons": 491,
+      "vertices": 274
+    },
+    {
+      "name": "Cingulate sulcus (Marginal part*).r",
+      "type": "MESH",
+      "polygons": 491,
+      "vertices": 274
+    },
+    {
+      "name": "Circular sulcus of insula.l",
+      "type": "MESH",
+      "polygons": 720,
+      "vertices": 401
+    },
+    {
+      "name": "Circular sulcus of insula.r",
+      "type": "MESH",
+      "polygons": 720,
+      "vertices": 401
+    },
+    {
+      "name": "Cochlea.l",
+      "type": "MESH",
+      "polygons": 3084,
+      "vertices": 3110
+    },
+    {
+      "name": "Cochlea.r",
+      "type": "MESH",
+      "polygons": 3084,
+      "vertices": 3110
+    },
+    {
+      "name": "Cochlear cupula.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Cochlear nerve",
+      "type": "MESH",
+      "polygons": 879,
+      "vertices": 881
+    },
+    {
+      "name": "Cochlear nerve.l",
+      "type": "MESH",
+      "polygons": 452,
+      "vertices": 468
+    },
+    {
+      "name": "Collateral sulcus.l",
+      "type": "MESH",
+      "polygons": 1041,
+      "vertices": 575
+    },
+    {
+      "name": "Collateral sulcus.r",
+      "type": "MESH",
+      "polygons": 1041,
+      "vertices": 575
+    },
+    {
+      "name": "Commissural fibres of telencephalon.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Common bony limb.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Common fibular nerve.l",
+      "type": "MESH",
+      "polygons": 1008,
+      "vertices": 1020
+    },
+    {
+      "name": "Common fibular nerve.r",
+      "type": "MESH",
+      "polygons": 1008,
+      "vertices": 1020
+    },
+    {
+      "name": "Common palmar digital branches of median nerve.l",
+      "type": "MESH",
+      "polygons": 1152,
+      "vertices": 1188
+    },
+    {
+      "name": "Common palmar digital branches of median nerve.r",
+      "type": "MESH",
+      "polygons": 1152,
+      "vertices": 1188
+    },
+    {
+      "name": "Common palmar digital branches of ulnar nerve.l",
+      "type": "MESH",
+      "polygons": 864,
+      "vertices": 900
+    },
+    {
+      "name": "Common palmar digital branches of ulnar nerve.r",
+      "type": "MESH",
+      "polygons": 864,
+      "vertices": 900
+    },
+    {
+      "name": "Common plantar digital branches of lateral plantar nerve.l",
+      "type": "MESH",
+      "polygons": 720,
+      "vertices": 756
+    },
+    {
+      "name": "Common plantar digital branches of lateral plantar nerve.r",
+      "type": "MESH",
+      "polygons": 720,
+      "vertices": 756
+    },
+    {
+      "name": "Common plantar digital branches of medial plantar nerve",
+      "type": "MESH",
+      "polygons": 864,
+      "vertices": 900
+    },
+    {
+      "name": "Common plantar digital branches of medial plantar nerve.l",
+      "type": "MESH",
+      "polygons": 864,
+      "vertices": 900
+    },
+    {
+      "name": "Cornea.l",
+      "type": "MESH",
+      "polygons": 1344,
+      "vertices": 1346
+    },
+    {
+      "name": "Cornea.r",
+      "type": "MESH",
+      "polygons": 1344,
+      "vertices": 1346
+    },
+    {
+      "name": "Corneoscleral junction.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Corpus callosum",
+      "type": "MESH",
+      "polygons": 2020,
+      "vertices": 2000
+    },
+    {
+      "name": "Corpus striatum.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Cranial nerves.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Cross Section X.003",
+      "type": "MESH",
+      "polygons": 0,
+      "vertices": 4
+    },
+    {
+      "name": "Cross Section Y.003",
+      "type": "MESH",
+      "polygons": 0,
+      "vertices": 4
+    },
+    {
+      "name": "Cross Section Z.003",
+      "type": "MESH",
+      "polygons": 0,
+      "vertices": 4
+    },
+    {
+      "name": "Culmen",
+      "type": "MESH",
+      "polygons": 2378,
+      "vertices": 1194
+    },
+    {
+      "name": "Cuneate fasciculus",
+      "type": "MESH",
+      "polygons": 1512,
+      "vertices": 1584
+    },
+    {
+      "name": "Cuneate tubercle.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Cuneus.l",
+      "type": "MESH",
+      "polygons": 869,
+      "vertices": 475
+    },
+    {
+      "name": "Cuneus.r",
+      "type": "MESH",
+      "polygons": 869,
+      "vertices": 475
+    },
+    {
+      "name": "Declive",
+      "type": "MESH",
+      "polygons": 2125,
+      "vertices": 1067
+    },
+    {
+      "name": "Deep branch of radial nerve.l",
+      "type": "MESH",
+      "polygons": 1008,
+      "vertices": 1020
+    },
+    {
+      "name": "Deep branch of radial nerve.r",
+      "type": "MESH",
+      "polygons": 1008,
+      "vertices": 1020
+    },
+    {
+      "name": "Deep branch of ulnar nerve.l",
+      "type": "MESH",
+      "polygons": 720,
+      "vertices": 732
+    },
+    {
+      "name": "Deep branch of ulnar nerve.r",
+      "type": "MESH",
+      "polygons": 720,
+      "vertices": 732
+    },
+    {
+      "name": "Deep fibular nerve.l",
+      "type": "MESH",
+      "polygons": 2160,
+      "vertices": 2172
+    },
+    {
+      "name": "Deep fibular nerve.r",
+      "type": "MESH",
+      "polygons": 2160,
+      "vertices": 2172
+    },
+    {
+      "name": "Diencephalon.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Dilator pupillae.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Dorsal branch of ulnar nerve.l",
+      "type": "MESH",
+      "polygons": 720,
+      "vertices": 744
+    },
+    {
+      "name": "Dorsal branch of ulnar nerve.r",
+      "type": "MESH",
+      "polygons": 720,
+      "vertices": 744
+    },
+    {
+      "name": "Dorsal digital branches of deep fibular nerve.l",
+      "type": "MESH",
+      "polygons": 1584,
+      "vertices": 1608
+    },
+    {
+      "name": "Dorsal digital branches of deep fibular nerve.r",
+      "type": "MESH",
+      "polygons": 1584,
+      "vertices": 1608
+    },
+    {
+      "name": "Dorsal digital branches of radial nerve.l",
+      "type": "MESH",
+      "polygons": 6768,
+      "vertices": 6852
+    },
+    {
+      "name": "Dorsal digital branches of radial nerve.r",
+      "type": "MESH",
+      "polygons": 6768,
+      "vertices": 6852
+    },
+    {
+      "name": "Dorsal digital branches of superficial fibular nerve.l",
+      "type": "MESH",
+      "polygons": 4176,
+      "vertices": 4260
+    },
+    {
+      "name": "Dorsal digital branches of superficial fibular nerve.r",
+      "type": "MESH",
+      "polygons": 4176,
+      "vertices": 4260
+    },
+    {
+      "name": "Dorsal digital branches of ulnar nerve.l",
+      "type": "MESH",
+      "polygons": 2448,
+      "vertices": 2484
+    },
+    {
+      "name": "Dorsal digital branches of ulnar nerve.r",
+      "type": "MESH",
+      "polygons": 2448,
+      "vertices": 2484
+    },
+    {
+      "name": "Dorsal scapular nerve.l",
+      "type": "MESH",
+      "polygons": 1296,
+      "vertices": 1308
+    },
+    {
+      "name": "Dorsal scapular nerve.r",
+      "type": "MESH",
+      "polygons": 1296,
+      "vertices": 1308
+    },
+    {
+      "name": "Dorsal striatum.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Ear.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Ependyma.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Equator of eyeball.r",
+      "type": "MESH",
+      "polygons": 0,
+      "vertices": 64
+    },
+    {
+      "name": "External axis of eyeball",
+      "type": "MESH",
+      "polygons": 0,
+      "vertices": 5
+    },
+    {
+      "name": "External ear'.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Eyeball'.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Eyeball.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Facial nerve (VII).l",
+      "type": "MESH",
+      "polygons": 13776,
+      "vertices": 13968
+    },
+    {
+      "name": "Facial nerve (VII).r",
+      "type": "MESH",
+      "polygons": 13776,
+      "vertices": 13968
+    },
+    {
+      "name": "Falx cerebri",
+      "type": "MESH",
+      "polygons": 7362,
+      "vertices": 7091
+    },
+    {
+      "name": "Femoral branch of genitofemoral nerve.l",
+      "type": "MESH",
+      "polygons": 1296,
+      "vertices": 1320
+    },
+    {
+      "name": "Femoral branch of genitofemoral nerve.r",
+      "type": "MESH",
+      "polygons": 1296,
+      "vertices": 1320
+    },
+    {
+      "name": "Femoral nerve.l",
+      "type": "MESH",
+      "polygons": 2016,
+      "vertices": 2052
+    },
+    {
+      "name": "Femoral nerve.r",
+      "type": "MESH",
+      "polygons": 2016,
+      "vertices": 2052
+    },
+    {
+      "name": "Flocculus.l",
+      "type": "MESH",
+      "polygons": 3660,
+      "vertices": 1869
+    },
+    {
+      "name": "Flocculus.r",
+      "type": "MESH",
+      "polygons": 3660,
+      "vertices": 1869
+    },
+    {
+      "name": "Folds of iris.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Folium of vermis",
+      "type": "MESH",
+      "polygons": 812,
+      "vertices": 410
+    },
+    {
+      "name": "Fornix.l",
+      "type": "MESH",
+      "polygons": 1090,
+      "vertices": 1081
+    },
+    {
+      "name": "Fornix.r",
+      "type": "MESH",
+      "polygons": 1090,
+      "vertices": 1081
+    },
+    {
+      "name": "Fourth ventricle",
+      "type": "MESH",
+      "polygons": 5787,
+      "vertices": 2915
+    },
+    {
+      "name": "Frontal lobe.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Ganglia of sympathetic trunk.l",
+      "type": "MESH",
+      "polygons": 12672,
+      "vertices": 12708
+    },
+    {
+      "name": "Ganglia of sympathetic trunk.r",
+      "type": "MESH",
+      "polygons": 12672,
+      "vertices": 12708
+    },
+    {
+      "name": "Ganglia.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Genital branch of genitofemoral nerve.l",
+      "type": "MESH",
+      "polygons": 864,
+      "vertices": 876
+    },
+    {
+      "name": "Genital branch of genitofemoral nerve.r",
+      "type": "MESH",
+      "polygons": 864,
+      "vertices": 876
+    },
+    {
+      "name": "Genitofemoral nerve.l",
+      "type": "MESH",
+      "polygons": 432,
+      "vertices": 456
+    },
+    {
+      "name": "Genitofemoral nerve.r",
+      "type": "MESH",
+      "polygons": 432,
+      "vertices": 456
+    },
+    {
+      "name": "Globus pallidus.l",
+      "type": "MESH",
+      "polygons": 5276,
+      "vertices": 2640
+    },
+    {
+      "name": "Globus pallidus.r",
+      "type": "MESH",
+      "polygons": 5276,
+      "vertices": 2640
+    },
+    {
+      "name": "Glossopharyngeal nerve (IX).l",
+      "type": "MESH",
+      "polygons": 6764,
+      "vertices": 6876
+    },
+    {
+      "name": "Glossopharyngeal nerve (IX).r",
+      "type": "MESH",
+      "polygons": 6764,
+      "vertices": 6876
+    },
+    {
+      "name": "Gracile fasciculus",
+      "type": "MESH",
+      "polygons": 3838,
+      "vertices": 3876
+    },
+    {
+      "name": "Gracile lobule.l",
+      "type": "MESH",
+      "polygons": 6961,
+      "vertices": 3488
+    },
+    {
+      "name": "Gracile lobule.r",
+      "type": "MESH",
+      "polygons": 6961,
+      "vertices": 3488
+    },
+    {
+      "name": "Gracile tubercle.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Grey matter of medulla oblongata.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Grey matter of pontine tegmentum.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 11
+    },
+    {
+      "name": "Grey matter of spinal cord.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Grey matter of tegmentum of midbrain.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Grey matter.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Habenula",
+      "type": "MESH",
+      "polygons": 398,
+      "vertices": 204
+    },
+    {
+      "name": "Hippocampal commissure",
+      "type": "MESH",
+      "polygons": 9860,
+      "vertices": 4936
+    },
+    {
+      "name": "Hippocampus.l",
+      "type": "MESH",
+      "polygons": 1020,
+      "vertices": 512
+    },
+    {
+      "name": "Hippocampus.r",
+      "type": "MESH",
+      "polygons": 1020,
+      "vertices": 512
+    },
+    {
+      "name": "Hypoglossal nerve (XII).l",
+      "type": "MESH",
+      "polygons": 8224,
+      "vertices": 8352
+    },
+    {
+      "name": "Hypoglossal nerve (XII).r",
+      "type": "MESH",
+      "polygons": 8224,
+      "vertices": 8352
+    },
+    {
+      "name": "Hypothalamus",
+      "type": "MESH",
+      "polygons": 4258,
+      "vertices": 2148
+    },
+    {
+      "name": "Ilio-inguinal nerve.l",
+      "type": "MESH",
+      "polygons": 1872,
+      "vertices": 1884
+    },
+    {
+      "name": "Ilio-inguinal nerve.r",
+      "type": "MESH",
+      "polygons": 1872,
+      "vertices": 1884
+    },
+    {
+      "name": "Iliohypogastric nerve.l",
+      "type": "MESH",
+      "polygons": 864,
+      "vertices": 888
+    },
+    {
+      "name": "Iliohypogastric nerve.r",
+      "type": "MESH",
+      "polygons": 864,
+      "vertices": 888
+    },
+    {
+      "name": "Inferior alveolar nerve.l",
+      "type": "MESH",
+      "polygons": 8592,
+      "vertices": 8784
+    },
+    {
+      "name": "Inferior alveolar nerve.r",
+      "type": "MESH",
+      "polygons": 8592,
+      "vertices": 8784
+    },
+    {
+      "name": "Inferior colliculus.l",
+      "type": "MESH",
+      "polygons": 464,
+      "vertices": 236
+    },
+    {
+      "name": "Inferior colliculus.r",
+      "type": "MESH",
+      "polygons": 464,
+      "vertices": 236
+    },
+    {
+      "name": "Inferior frontal sulcus.l",
+      "type": "MESH",
+      "polygons": 642,
+      "vertices": 413
+    },
+    {
+      "name": "Inferior frontal sulcus.r",
+      "type": "MESH",
+      "polygons": 642,
+      "vertices": 413
+    },
+    {
+      "name": "Inferior lateral brachial cutaneous nerve.l",
+      "type": "MESH",
+      "polygons": 288,
+      "vertices": 300
+    },
+    {
+      "name": "Inferior lateral brachial cutaneous nerve.r",
+      "type": "MESH",
+      "polygons": 288,
+      "vertices": 300
+    },
+    {
+      "name": "Inferior medulla oblongata.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Inferior occipital gyrus and sulcus*.l",
+      "type": "MESH",
+      "polygons": 813,
+      "vertices": 449
+    },
+    {
+      "name": "Inferior occipital gyrus and sulcus*.r",
+      "type": "MESH",
+      "polygons": 813,
+      "vertices": 449
+    },
+    {
+      "name": "Inferior salivatory nucleus.l",
+      "type": "MESH",
+      "polygons": 384,
+      "vertices": 386
+    },
+    {
+      "name": "Inferior salivatory nucleus.r",
+      "type": "MESH",
+      "polygons": 384,
+      "vertices": 386
+    },
+    {
+      "name": "Inferior semilunar lobule.l",
+      "type": "MESH",
+      "polygons": 7787,
+      "vertices": 3901
+    },
+    {
+      "name": "Inferior semilunar lobule.r",
+      "type": "MESH",
+      "polygons": 7787,
+      "vertices": 3901
+    },
+    {
+      "name": "Inferior subscapular nerve.l",
+      "type": "MESH",
+      "polygons": 1008,
+      "vertices": 1032
+    },
+    {
+      "name": "Inferior subscapular nerve.r",
+      "type": "MESH",
+      "polygons": 1008,
+      "vertices": 1032
+    },
+    {
+      "name": "Inferior temporal gyrus.l",
+      "type": "MESH",
+      "polygons": 1392,
+      "vertices": 750
+    },
+    {
+      "name": "Inferior temporal gyrus.r",
+      "type": "MESH",
+      "polygons": 1392,
+      "vertices": 750
+    },
+    {
+      "name": "Inferior temporal sulcus.l",
+      "type": "MESH",
+      "polygons": 227,
+      "vertices": 125
+    },
+    {
+      "name": "Inferior temporal sulcus.r",
+      "type": "MESH",
+      "polygons": 227,
+      "vertices": 125
+    },
+    {
+      "name": "Inferior trunk of brachial plexus.l",
+      "type": "MESH",
+      "polygons": 288,
+      "vertices": 300
+    },
+    {
+      "name": "Inferior trunk of brachial plexus.r",
+      "type": "MESH",
+      "polygons": 288,
+      "vertices": 300
+    },
+    {
+      "name": "Infraclavicular part of brachial plexus.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Infrapatellar branch of saphenous nerve.l",
+      "type": "MESH",
+      "polygons": 288,
+      "vertices": 300
+    },
+    {
+      "name": "Infrapatellar branch of saphenous nerve.r",
+      "type": "MESH",
+      "polygons": 288,
+      "vertices": 300
+    },
+    {
+      "name": "Insula (Subcentral gyrus and ant. and post. sulci*).l",
+      "type": "MESH",
+      "polygons": 680,
+      "vertices": 372
+    },
+    {
+      "name": "Insula (Subcentral gyrus and ant. and post. sulci*).r",
+      "type": "MESH",
+      "polygons": 680,
+      "vertices": 372
+    },
+    {
+      "name": "Insula.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Intercostal nerves.l",
+      "type": "MESH",
+      "polygons": 25776,
+      "vertices": 25908
+    },
+    {
+      "name": "Intercostal nerves.r",
+      "type": "MESH",
+      "polygons": 25776,
+      "vertices": 25908
+    },
+    {
+      "name": "Interlobar sulci.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Intermediate dorsal cutaneous nerve of foot.l",
+      "type": "MESH",
+      "polygons": 1296,
+      "vertices": 1320
+    },
+    {
+      "name": "Intermediate dorsal cutaneous nerve of foot.r",
+      "type": "MESH",
+      "polygons": 1296,
+      "vertices": 1320
+    },
+    {
+      "name": "Intermediate zone of spinal cord.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Intermediolateral nucleus",
+      "type": "MESH",
+      "polygons": 2828,
+      "vertices": 2856
+    },
+    {
+      "name": "Intermediomedial nucleus",
+      "type": "MESH",
+      "polygons": 3232,
+      "vertices": 3264
+    },
+    {
+      "name": "Internal axis of eyeball.r",
+      "type": "MESH",
+      "polygons": 0,
+      "vertices": 3
+    },
+    {
+      "name": "Internal ear.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Interpeduncular fossa.l",
+      "type": "MESH",
+      "polygons": 58,
+      "vertices": 31
+    },
+    {
+      "name": "Interpeduncular fossa.r",
+      "type": "MESH",
+      "polygons": 58,
+      "vertices": 31
+    },
+    {
+      "name": "Intraparietal sulcus.l",
+      "type": "MESH",
+      "polygons": 781,
+      "vertices": 428
+    },
+    {
+      "name": "Intraparietal sulcus.r",
+      "type": "MESH",
+      "polygons": 781,
+      "vertices": 428
+    },
+    {
+      "name": "Iris.l",
+      "type": "MESH",
+      "polygons": 3248,
+      "vertices": 1734
+    },
+    {
+      "name": "Iris.r",
+      "type": "MESH",
+      "polygons": 3248,
+      "vertices": 1734
+    },
+    {
+      "name": "Lacrimal apparatus.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Lacrimal canaliculus.l",
+      "type": "MESH",
+      "polygons": 411,
+      "vertices": 210
+    },
+    {
+      "name": "Lacrimal canaliculus.r",
+      "type": "MESH",
+      "polygons": 411,
+      "vertices": 210
+    },
+    {
+      "name": "Lacrimal gland.l",
+      "type": "MESH",
+      "polygons": 1810,
+      "vertices": 907
+    },
+    {
+      "name": "Lacrimal gland.r",
+      "type": "MESH",
+      "polygons": 1810,
+      "vertices": 907
+    },
+    {
+      "name": "Lacrimal sac.l",
+      "type": "MESH",
+      "polygons": 384,
+      "vertices": 194
+    },
+    {
+      "name": "Lacrimal sac.r",
+      "type": "MESH",
+      "polygons": 384,
+      "vertices": 194
+    },
+    {
+      "name": "Lat_Fis-ant-Horizont.l",
+      "type": "MESH",
+      "polygons": 153,
+      "vertices": 89
+    },
+    {
+      "name": "Lat_Fis-ant-Horizont.r",
+      "type": "MESH",
+      "polygons": 153,
+      "vertices": 89
+    },
+    {
+      "name": "Lat_Fis-ant-Vertical.l",
+      "type": "MESH",
+      "polygons": 168,
+      "vertices": 99
+    },
+    {
+      "name": "Lat_Fis-ant-Vertical.r",
+      "type": "MESH",
+      "polygons": 168,
+      "vertices": 99
+    },
+    {
+      "name": "Lat_Fis-post.l",
+      "type": "MESH",
+      "polygons": 435,
+      "vertices": 242
+    },
+    {
+      "name": "Lat_Fis-post.r",
+      "type": "MESH",
+      "polygons": 435,
+      "vertices": 242
+    },
+    {
+      "name": "Lateral antebrachial cutaneous nerve.l",
+      "type": "MESH",
+      "polygons": 864,
+      "vertices": 876
+    },
+    {
+      "name": "Lateral antebrachial cutaneous nerve.r",
+      "type": "MESH",
+      "polygons": 864,
+      "vertices": 876
+    },
+    {
+      "name": "Lateral bony ampulla.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Lateral corticospinal tract",
+      "type": "MESH",
+      "polygons": 3838,
+      "vertices": 3876
+    },
+    {
+      "name": "Lateral fasciculus proprius",
+      "type": "MESH",
+      "polygons": 10100,
+      "vertices": 10200
+    },
+    {
+      "name": "Lateral femoral cutaneous nerve.l",
+      "type": "MESH",
+      "polygons": 2304,
+      "vertices": 2340
+    },
+    {
+      "name": "Lateral femoral cutaneous nerve.r",
+      "type": "MESH",
+      "polygons": 2304,
+      "vertices": 2340
+    },
+    {
+      "name": "Lateral funiculus of medulla oblongata.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Lateral funiculus.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Lateral geniculate body.l",
+      "type": "MESH",
+      "polygons": 604,
+      "vertices": 304
+    },
+    {
+      "name": "Lateral geniculate body.r",
+      "type": "MESH",
+      "polygons": 604,
+      "vertices": 304
+    },
+    {
+      "name": "Lateral intermediate substance",
+      "type": "MESH",
+      "polygons": 6666,
+      "vertices": 6732
+    },
+    {
+      "name": "Lateral occipital gyrus (Middle occipital gyrus*).l",
+      "type": "MESH",
+      "polygons": 756,
+      "vertices": 429
+    },
+    {
+      "name": "Lateral occipital gyrus (Middle occipital gyrus*).r",
+      "type": "MESH",
+      "polygons": 756,
+      "vertices": 429
+    },
+    {
+      "name": "Lateral occipitotemporal gyrus.l",
+      "type": "MESH",
+      "polygons": 805,
+      "vertices": 470
+    },
+    {
+      "name": "Lateral occipitotemporal gyrus.r",
+      "type": "MESH",
+      "polygons": 805,
+      "vertices": 470
+    },
+    {
+      "name": "Lateral pectoral nerve.l",
+      "type": "MESH",
+      "polygons": 3600,
+      "vertices": 3660
+    },
+    {
+      "name": "Lateral pectoral nerve.r",
+      "type": "MESH",
+      "polygons": 3600,
+      "vertices": 3660
+    },
+    {
+      "name": "Lateral plantar nerve.l",
+      "type": "MESH",
+      "polygons": 576,
+      "vertices": 588
+    },
+    {
+      "name": "Lateral plantar nerve.r",
+      "type": "MESH",
+      "polygons": 576,
+      "vertices": 588
+    },
+    {
+      "name": "Lateral reticulospinal tract",
+      "type": "MESH",
+      "polygons": 1616,
+      "vertices": 1632
+    },
+    {
+      "name": "Lateral semicircular canal.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Lateral spinothalamic tract",
+      "type": "MESH",
+      "polygons": 4444,
+      "vertices": 4488
+    },
+    {
+      "name": "Lateral ventricle.l",
+      "type": "MESH",
+      "polygons": 1456,
+      "vertices": 1451
+    },
+    {
+      "name": "Lateral ventricle.r",
+      "type": "MESH",
+      "polygons": 1456,
+      "vertices": 1451
+    },
+    {
+      "name": "Lateral vestibulospinal tract",
+      "type": "MESH",
+      "polygons": 4848,
+      "vertices": 4896
+    },
+    {
+      "name": "Lens.l",
+      "type": "MESH",
+      "polygons": 1598,
+      "vertices": 801
+    },
+    {
+      "name": "Lens.r",
+      "type": "MESH",
+      "polygons": 1598,
+      "vertices": 801
+    },
+    {
+      "name": "Lentiform nucleus.l",
+      "type": "MESH",
+      "polygons": 1087,
+      "vertices": 1074
+    },
+    {
+      "name": "Lentiform nucleus.r",
+      "type": "MESH",
+      "polygons": 1087,
+      "vertices": 1074
+    },
+    {
+      "name": "Limbic lobe.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Lingual gyrus.l",
+      "type": "MESH",
+      "polygons": 1525,
+      "vertices": 841
+    },
+    {
+      "name": "Lingual gyrus.r",
+      "type": "MESH",
+      "polygons": 1525,
+      "vertices": 841
+    },
+    {
+      "name": "Lingual nerve.l",
+      "type": "MESH",
+      "polygons": 1316,
+      "vertices": 1332
+    },
+    {
+      "name": "Lingual nerve.r",
+      "type": "MESH",
+      "polygons": 1316,
+      "vertices": 1332
+    },
+    {
+      "name": "Lingula of cerebellum",
+      "type": "MESH",
+      "polygons": 1028,
+      "vertices": 530
+    },
+    {
+      "name": "Long thoracic nerve.l",
+      "type": "MESH",
+      "polygons": 2016,
+      "vertices": 2040
+    },
+    {
+      "name": "Long thoracic nerve.r",
+      "type": "MESH",
+      "polygons": 2016,
+      "vertices": 2040
+    },
+    {
+      "name": "Lumbar nerves.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Lumbar plexus.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Lumbosacral plexus.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Lunate sulcus.l",
+      "type": "MESH",
+      "polygons": 338,
+      "vertices": 195
+    },
+    {
+      "name": "Lunate sulcus.r",
+      "type": "MESH",
+      "polygons": 338,
+      "vertices": 195
+    },
+    {
+      "name": "Mamillary body.l",
+      "type": "MESH",
+      "polygons": 220,
+      "vertices": 112
+    },
+    {
+      "name": "Mamillary body.r",
+      "type": "MESH",
+      "polygons": 220,
+      "vertices": 112
+    },
+    {
+      "name": "Mandibular nerve.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Maxillary nerve.l",
+      "type": "MESH",
+      "polygons": 3988,
+      "vertices": 4068
+    },
+    {
+      "name": "Maxillary nerve.r",
+      "type": "MESH",
+      "polygons": 3988,
+      "vertices": 4068
+    },
+    {
+      "name": "Medial antebrachial cutaneous nerve.l",
+      "type": "MESH",
+      "polygons": 864,
+      "vertices": 876
+    },
+    {
+      "name": "Medial antebrachial cutaneous nerve.r",
+      "type": "MESH",
+      "polygons": 864,
+      "vertices": 876
+    },
+    {
+      "name": "Medial brachial cutaneous nerve.l",
+      "type": "MESH",
+      "polygons": 864,
+      "vertices": 876
+    },
+    {
+      "name": "Medial brachial cutaneous nerve.r",
+      "type": "MESH",
+      "polygons": 864,
+      "vertices": 876
+    },
+    {
+      "name": "Medial crural cutaneous branches of saphenous nerve.l",
+      "type": "MESH",
+      "polygons": 288,
+      "vertices": 300
+    },
+    {
+      "name": "Medial crural cutaneous branches of saphenous nerve.r",
+      "type": "MESH",
+      "polygons": 288,
+      "vertices": 300
+    },
+    {
+      "name": "Medial dorsal cutaneous nerve of foot.l",
+      "type": "MESH",
+      "polygons": 2016,
+      "vertices": 2064
+    },
+    {
+      "name": "Medial dorsal cutaneous nerve of foot.r",
+      "type": "MESH",
+      "polygons": 2016,
+      "vertices": 2064
+    },
+    {
+      "name": "Medial geniculate body.l",
+      "type": "MESH",
+      "polygons": 198,
+      "vertices": 101
+    },
+    {
+      "name": "Medial geniculate body.r",
+      "type": "MESH",
+      "polygons": 198,
+      "vertices": 101
+    },
+    {
+      "name": "Medial occipitotemporal gyrus (Parahippocampal*).l",
+      "type": "MESH",
+      "polygons": 774,
+      "vertices": 477
+    },
+    {
+      "name": "Medial occipitotemporal gyrus (Parahippocampal*).r",
+      "type": "MESH",
+      "polygons": 774,
+      "vertices": 477
+    },
+    {
+      "name": "Medial pectoral nerve.l",
+      "type": "MESH",
+      "polygons": 1008,
+      "vertices": 1032
+    },
+    {
+      "name": "Medial pectoral nerve.r",
+      "type": "MESH",
+      "polygons": 1008,
+      "vertices": 1032
+    },
+    {
+      "name": "Medial plantar nerve.l",
+      "type": "MESH",
+      "polygons": 576,
+      "vertices": 600
+    },
+    {
+      "name": "Medial plantar nerve.r",
+      "type": "MESH",
+      "polygons": 576,
+      "vertices": 600
+    },
+    {
+      "name": "Medial reticulospinal tract",
+      "type": "MESH",
+      "polygons": 4040,
+      "vertices": 4080
+    },
+    {
+      "name": "Medial sural cutaneous nerve.l",
+      "type": "MESH",
+      "polygons": 144,
+      "vertices": 156
+    },
+    {
+      "name": "Medial sural cutaneous nerve.r",
+      "type": "MESH",
+      "polygons": 144,
+      "vertices": 156
+    },
+    {
+      "name": "Medial vestibulospinal tract",
+      "type": "MESH",
+      "polygons": 1616,
+      "vertices": 1632
+    },
+    {
+      "name": "Median nerve.l",
+      "type": "MESH",
+      "polygons": 2592,
+      "vertices": 2604
+    },
+    {
+      "name": "Median nerve.r",
+      "type": "MESH",
+      "polygons": 2592,
+      "vertices": 2604
+    },
+    {
+      "name": "Medulla oblongata.l",
+      "type": "MESH",
+      "polygons": 6078,
+      "vertices": 3042
+    },
+    {
+      "name": "Medulla oblongata.r",
+      "type": "MESH",
+      "polygons": 6078,
+      "vertices": 3042
+    },
+    {
+      "name": "Medulla-path",
+      "type": "MESH",
+      "polygons": 0,
+      "vertices": 506
+    },
+    {
+      "name": "Meningeal branch of maxillary nerve.l",
+      "type": "MESH",
+      "polygons": 3084,
+      "vertices": 3132
+    },
+    {
+      "name": "Meningeal branch of maxillary nerve.r",
+      "type": "MESH",
+      "polygons": 3084,
+      "vertices": 3132
+    },
+    {
+      "name": "Meninges.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Mental nerve.l",
+      "type": "MESH",
+      "polygons": 1356,
+      "vertices": 1404
+    },
+    {
+      "name": "Mental nerve.r",
+      "type": "MESH",
+      "polygons": 1356,
+      "vertices": 1404
+    },
+    {
+      "name": "Meridians of eyeball.r",
+      "type": "MESH",
+      "polygons": 0,
+      "vertices": 134
+    },
+    {
+      "name": "Midbrain.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Midbrain.l",
+      "type": "MESH",
+      "polygons": 6092,
+      "vertices": 3049
+    },
+    {
+      "name": "Midbrain.r",
+      "type": "MESH",
+      "polygons": 6092,
+      "vertices": 3049
+    },
+    {
+      "name": "Middle ear.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Middle frontal gyrus.l",
+      "type": "MESH",
+      "polygons": 2232,
+      "vertices": 1141
+    },
+    {
+      "name": "Middle frontal gyrus.r",
+      "type": "MESH",
+      "polygons": 2232,
+      "vertices": 1141
+    },
+    {
+      "name": "Middle temporal gyrus.l",
+      "type": "MESH",
+      "polygons": 1184,
+      "vertices": 657
+    },
+    {
+      "name": "Middle temporal gyrus.r",
+      "type": "MESH",
+      "polygons": 1184,
+      "vertices": 657
+    },
+    {
+      "name": "Middle trunk of brachial plexus.l",
+      "type": "MESH",
+      "polygons": 144,
+      "vertices": 156
+    },
+    {
+      "name": "Middle trunk of brachial plexus.r",
+      "type": "MESH",
+      "polygons": 144,
+      "vertices": 156
+    },
+    {
+      "name": "Motor nucleus of facial nerve.l",
+      "type": "MESH",
+      "polygons": 384,
+      "vertices": 386
+    },
+    {
+      "name": "Motor nucleus of facial nerve.r",
+      "type": "MESH",
+      "polygons": 384,
+      "vertices": 386
+    },
+    {
+      "name": "Motor root of trigeminal nerve.l",
+      "type": "MESH",
+      "polygons": 480,
+      "vertices": 482
+    },
+    {
+      "name": "Motor root of trigeminal nerve.r",
+      "type": "MESH",
+      "polygons": 480,
+      "vertices": 482
+    },
+    {
+      "name": "Muscular branches of axillary nerve.l",
+      "type": "MESH",
+      "polygons": 576,
+      "vertices": 588
+    },
+    {
+      "name": "Muscular branches of axillary nerve.r",
+      "type": "MESH",
+      "polygons": 576,
+      "vertices": 588
+    },
+    {
+      "name": "Muscular branches of deep fibular nerve.l",
+      "type": "MESH",
+      "polygons": 432,
+      "vertices": 444
+    },
+    {
+      "name": "Muscular branches of deep fibular nerve.r",
+      "type": "MESH",
+      "polygons": 432,
+      "vertices": 444
+    },
+    {
+      "name": "Muscular branches of median nerve.l",
+      "type": "MESH",
+      "polygons": 576,
+      "vertices": 624
+    },
+    {
+      "name": "Muscular branches of median nerve.r",
+      "type": "MESH",
+      "polygons": 576,
+      "vertices": 624
+    },
+    {
+      "name": "Muscular branches of radial nerve.l",
+      "type": "MESH",
+      "polygons": 1296,
+      "vertices": 1356
+    },
+    {
+      "name": "Muscular branches of radial nerve.r",
+      "type": "MESH",
+      "polygons": 1296,
+      "vertices": 1356
+    },
+    {
+      "name": "Muscular branches of ulnar nerve.l",
+      "type": "MESH",
+      "polygons": 288,
+      "vertices": 312
+    },
+    {
+      "name": "Muscular branches of ulnar nerve.r",
+      "type": "MESH",
+      "polygons": 288,
+      "vertices": 312
+    },
+    {
+      "name": "Musculocutaneous nerve.l",
+      "type": "MESH",
+      "polygons": 720,
+      "vertices": 732
+    },
+    {
+      "name": "Musculocutaneous nerve.r",
+      "type": "MESH",
+      "polygons": 720,
+      "vertices": 732
+    },
+    {
+      "name": "Nasolacrimal duct.l",
+      "type": "MESH",
+      "polygons": 444,
+      "vertices": 224
+    },
+    {
+      "name": "Nasolacrimal duct.r",
+      "type": "MESH",
+      "polygons": 444,
+      "vertices": 224
+    },
+    {
+      "name": "Nerve to mylohyoid muscle.l",
+      "type": "MESH",
+      "polygons": 1768,
+      "vertices": 1800
+    },
+    {
+      "name": "Nerve to mylohyoid muscle.r",
+      "type": "MESH",
+      "polygons": 1768,
+      "vertices": 1800
+    },
+    {
+      "name": "Nerve to piriformis muscle.l",
+      "type": "MESH",
+      "polygons": 720,
+      "vertices": 744
+    },
+    {
+      "name": "Nerve to piriformis muscle.r",
+      "type": "MESH",
+      "polygons": 720,
+      "vertices": 744
+    },
+    {
+      "name": "Nerve to quadratus femoris muscle.l",
+      "type": "MESH",
+      "polygons": 2160,
+      "vertices": 2208
+    },
+    {
+      "name": "Nerve to quadratus femoris muscle.r",
+      "type": "MESH",
+      "polygons": 2160,
+      "vertices": 2208
+    },
+    {
+      "name": "Nodule of vermis",
+      "type": "MESH",
+      "polygons": 1012,
+      "vertices": 512
+    },
+    {
+      "name": "Nucleus ambiguus.l",
+      "type": "MESH",
+      "polygons": 384,
+      "vertices": 386
+    },
+    {
+      "name": "Nucleus ambiguus.r",
+      "type": "MESH",
+      "polygons": 384,
+      "vertices": 386
+    },
+    {
+      "name": "Nucleus of abducens nerve.l",
+      "type": "MESH",
+      "polygons": 384,
+      "vertices": 386
+    },
+    {
+      "name": "Nucleus of abducens nerve.r",
+      "type": "MESH",
+      "polygons": 384,
+      "vertices": 386
+    },
+    {
+      "name": "Nucleus of accessory nerve.l",
+      "type": "MESH",
+      "polygons": 896,
+      "vertices": 898
+    },
+    {
+      "name": "Nucleus of accessory nerve.r",
+      "type": "MESH",
+      "polygons": 896,
+      "vertices": 898
+    },
+    {
+      "name": "Nucleus of hypoglossal nerve.l",
+      "type": "MESH",
+      "polygons": 384,
+      "vertices": 386
+    },
+    {
+      "name": "Nucleus of hypoglossal nerve.r",
+      "type": "MESH",
+      "polygons": 384,
+      "vertices": 386
+    },
+    {
+      "name": "Nucleus of oculomotor nerve.l",
+      "type": "MESH",
+      "polygons": 384,
+      "vertices": 386
+    },
+    {
+      "name": "Nucleus of oculomotor nerve.r",
+      "type": "MESH",
+      "polygons": 384,
+      "vertices": 386
+    },
+    {
+      "name": "Nucleus of solitary tract.l",
+      "type": "MESH",
+      "polygons": 672,
+      "vertices": 674
+    },
+    {
+      "name": "Nucleus of solitary tract.r",
+      "type": "MESH",
+      "polygons": 672,
+      "vertices": 674
+    },
+    {
+      "name": "Nucleus of trochlear nerve.l",
+      "type": "MESH",
+      "polygons": 384,
+      "vertices": 386
+    },
+    {
+      "name": "Nucleus of trochlear nerve.r",
+      "type": "MESH",
+      "polygons": 384,
+      "vertices": 386
+    },
+    {
+      "name": "Nucleus proprius",
+      "type": "MESH",
+      "polygons": 1616,
+      "vertices": 1632
+    },
+    {
+      "name": "Obturator nerve.l",
+      "type": "MESH",
+      "polygons": 1728,
+      "vertices": 1764
+    },
+    {
+      "name": "Obturator nerve.r",
+      "type": "MESH",
+      "polygons": 1728,
+      "vertices": 1764
+    },
+    {
+      "name": "Occipital lobe.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 12
+    },
+    {
+      "name": "Occipital pole.l",
+      "type": "MESH",
+      "polygons": 887,
+      "vertices": 479
+    },
+    {
+      "name": "Occipital pole.r",
+      "type": "MESH",
+      "polygons": 887,
+      "vertices": 479
+    },
+    {
+      "name": "Occipitotemporal sulcus (Lateral part*).l",
+      "type": "MESH",
+      "polygons": 439,
+      "vertices": 245
+    },
+    {
+      "name": "Occipitotemporal sulcus (Lateral part*).r",
+      "type": "MESH",
+      "polygons": 439,
+      "vertices": 245
+    },
+    {
+      "name": "Oculomotor complex.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Oculomotor nerve (III).l",
+      "type": "MESH",
+      "polygons": 4460,
+      "vertices": 4572
+    },
+    {
+      "name": "Oculomotor nerve (III).r",
+      "type": "MESH",
+      "polygons": 4460,
+      "vertices": 4572
+    },
+    {
+      "name": "Olfactory nerve (I).l",
+      "type": "MESH",
+      "polygons": 13708,
+      "vertices": 14076
+    },
+    {
+      "name": "Olfactory nerve (I).r",
+      "type": "MESH",
+      "polygons": 13708,
+      "vertices": 14076
+    },
+    {
+      "name": "Olfactory sulcus.l",
+      "type": "MESH",
+      "polygons": 487,
+      "vertices": 275
+    },
+    {
+      "name": "Olfactory sulcus.r",
+      "type": "MESH",
+      "polygons": 487,
+      "vertices": 275
+    },
+    {
+      "name": "Olive.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Olive.l",
+      "type": "MESH",
+      "polygons": 512,
+      "vertices": 482
+    },
+    {
+      "name": "Olive.r",
+      "type": "MESH",
+      "polygons": 512,
+      "vertices": 482
+    },
+    {
+      "name": "Opercular part of inferior frontal gyrus.l",
+      "type": "MESH",
+      "polygons": 659,
+      "vertices": 372
+    },
+    {
+      "name": "Opercular part of inferior frontal gyrus.r",
+      "type": "MESH",
+      "polygons": 659,
+      "vertices": 372
+    },
+    {
+      "name": "Ophthalmic nerve.l",
+      "type": "MESH",
+      "polygons": 3412,
+      "vertices": 3492
+    },
+    {
+      "name": "Ophthalmic nerve.r",
+      "type": "MESH",
+      "polygons": 3412,
+      "vertices": 3492
+    },
+    {
+      "name": "Optic axis.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Optic chiasm.l",
+      "type": "MESH",
+      "polygons": 890,
+      "vertices": 448
+    },
+    {
+      "name": "Optic chiasm.r",
+      "type": "MESH",
+      "polygons": 890,
+      "vertices": 448
+    },
+    {
+      "name": "Optic nerve (II).l",
+      "type": "MESH",
+      "polygons": 884,
+      "vertices": 900
+    },
+    {
+      "name": "Optic nerve (II).r",
+      "type": "MESH",
+      "polygons": 884,
+      "vertices": 900
+    },
+    {
+      "name": "Optic tract.l",
+      "type": "MESH",
+      "polygons": 2332,
+      "vertices": 1168
+    },
+    {
+      "name": "Optic tract.r",
+      "type": "MESH",
+      "polygons": 2332,
+      "vertices": 1168
+    },
+    {
+      "name": "Orbital gyri (Frontomarginal gyrus and sulcus*).l",
+      "type": "MESH",
+      "polygons": 593,
+      "vertices": 330
+    },
+    {
+      "name": "Orbital gyri (Frontomarginal gyrus and sulcus*).r",
+      "type": "MESH",
+      "polygons": 593,
+      "vertices": 330
+    },
+    {
+      "name": "Orbital gyri.l",
+      "type": "MESH",
+      "polygons": 1363,
+      "vertices": 756
+    },
+    {
+      "name": "Orbital gyri.r",
+      "type": "MESH",
+      "polygons": 1363,
+      "vertices": 756
+    },
+    {
+      "name": "Orbital part of  inferior frontal gyrus.l",
+      "type": "MESH",
+      "polygons": 156,
+      "vertices": 95
+    },
+    {
+      "name": "Orbital part of  inferior frontal gyrus.r",
+      "type": "MESH",
+      "polygons": 156,
+      "vertices": 95
+    },
+    {
+      "name": "Orbital sulci (H-shaped orbital sulci*).l",
+      "type": "MESH",
+      "polygons": 707,
+      "vertices": 383
+    },
+    {
+      "name": "Orbital sulci (H-shaped orbital sulci*).r",
+      "type": "MESH",
+      "polygons": 707,
+      "vertices": 383
+    },
+    {
+      "name": "Orbital sulci (Lateral Orbital sulcus*).l",
+      "type": "MESH",
+      "polygons": 173,
+      "vertices": 102
+    },
+    {
+      "name": "Orbital sulci (Lateral Orbital sulcus*).r",
+      "type": "MESH",
+      "polygons": 173,
+      "vertices": 102
+    },
+    {
+      "name": "Palmar branch of median nerve.l",
+      "type": "MESH",
+      "polygons": 576,
+      "vertices": 588
+    },
+    {
+      "name": "Palmar branch of median nerve.r",
+      "type": "MESH",
+      "polygons": 576,
+      "vertices": 588
+    },
+    {
+      "name": "Palmar branch of ulnar nerve.l",
+      "type": "MESH",
+      "polygons": 576,
+      "vertices": 588
+    },
+    {
+      "name": "Palmar branch of ulnar nerve.r",
+      "type": "MESH",
+      "polygons": 576,
+      "vertices": 588
+    },
+    {
+      "name": "Paracentral gyrus and sulcus*.l",
+      "type": "MESH",
+      "polygons": 715,
+      "vertices": 377
+    },
+    {
+      "name": "Paracentral gyrus and sulcus*.r",
+      "type": "MESH",
+      "polygons": 715,
+      "vertices": 377
+    },
+    {
+      "name": "Paracentral sulcus.l",
+      "type": "MESH",
+      "polygons": 587,
+      "vertices": 338
+    },
+    {
+      "name": "Paracentral sulcus.r",
+      "type": "MESH",
+      "polygons": 587,
+      "vertices": 338
+    },
+    {
+      "name": "Parietal lobe.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Parieto-occipital sulcus.l",
+      "type": "MESH",
+      "polygons": 1514,
+      "vertices": 824
+    },
+    {
+      "name": "Parieto-occipital sulcus.r",
+      "type": "MESH",
+      "polygons": 1514,
+      "vertices": 824
+    },
+    {
+      "name": "Peduncle of flocculus.l",
+      "type": "MESH",
+      "polygons": 2368,
+      "vertices": 1216
+    },
+    {
+      "name": "Peduncle of flocculus.r",
+      "type": "MESH",
+      "polygons": 2368,
+      "vertices": 1216
+    },
+    {
+      "name": "Peripheral nervous system.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Pons.l",
+      "type": "MESH",
+      "polygons": 10171,
+      "vertices": 5088
+    },
+    {
+      "name": "Pons.r",
+      "type": "MESH",
+      "polygons": 10171,
+      "vertices": 5088
+    },
+    {
+      "name": "Postcentral gyrus.l",
+      "type": "MESH",
+      "polygons": 1114,
+      "vertices": 578
+    },
+    {
+      "name": "Postcentral gyrus.r",
+      "type": "MESH",
+      "polygons": 1114,
+      "vertices": 578
+    },
+    {
+      "name": "Postcentral sulcus.l",
+      "type": "MESH",
+      "polygons": 1104,
+      "vertices": 595
+    },
+    {
+      "name": "Postcentral sulcus.r",
+      "type": "MESH",
+      "polygons": 1104,
+      "vertices": 595
+    },
+    {
+      "name": "Posterior antebrachial cutaneous nerve.l",
+      "type": "MESH",
+      "polygons": 1296,
+      "vertices": 1308
+    },
+    {
+      "name": "Posterior antebrachial cutaneous nerve.r",
+      "type": "MESH",
+      "polygons": 1296,
+      "vertices": 1308
+    },
+    {
+      "name": "Posterior bony ampulla.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Posterior branch of medial antebrachial cutaneous nerve.l",
+      "type": "MESH",
+      "polygons": 1152,
+      "vertices": 1164
+    },
+    {
+      "name": "Posterior branch of medial antebrachial cutaneous nerve.r",
+      "type": "MESH",
+      "polygons": 1152,
+      "vertices": 1164
+    },
+    {
+      "name": "Posterior branch of obturator nerve.l",
+      "type": "MESH",
+      "polygons": 576,
+      "vertices": 588
+    },
+    {
+      "name": "Posterior branch of obturator nerve.r",
+      "type": "MESH",
+      "polygons": 576,
+      "vertices": 588
+    },
+    {
+      "name": "Posterior cochlear nucleus.l",
+      "type": "MESH",
+      "polygons": 480,
+      "vertices": 482
+    },
+    {
+      "name": "Posterior cochlear nucleus.r",
+      "type": "MESH",
+      "polygons": 480,
+      "vertices": 482
+    },
+    {
+      "name": "Posterior commissure",
+      "type": "MESH",
+      "polygons": 864,
+      "vertices": 434
+    },
+    {
+      "name": "Posterior cord of brachial plexus.l",
+      "type": "MESH",
+      "polygons": 288,
+      "vertices": 300
+    },
+    {
+      "name": "Posterior cord of brachial plexus.r",
+      "type": "MESH",
+      "polygons": 288,
+      "vertices": 300
+    },
+    {
+      "name": "Posterior division of inferior trunk of brachial plexus.l",
+      "type": "MESH",
+      "polygons": 144,
+      "vertices": 156
+    },
+    {
+      "name": "Posterior division of inferior trunk of brachial plexus.r",
+      "type": "MESH",
+      "polygons": 144,
+      "vertices": 156
+    },
+    {
+      "name": "Posterior division of mandibular nerve.l",
+      "type": "MESH",
+      "polygons": 452,
+      "vertices": 468
+    },
+    {
+      "name": "Posterior division of mandibular nerve.r",
+      "type": "MESH",
+      "polygons": 452,
+      "vertices": 468
+    },
+    {
+      "name": "Posterior division of middle trunk of brachial plexus.l",
+      "type": "MESH",
+      "polygons": 144,
+      "vertices": 156
+    },
+    {
+      "name": "Posterior division of middle trunk of brachial plexus.r",
+      "type": "MESH",
+      "polygons": 144,
+      "vertices": 156
+    },
+    {
+      "name": "Posterior division of superior trunk of brachial plexus.l",
+      "type": "MESH",
+      "polygons": 144,
+      "vertices": 156
+    },
+    {
+      "name": "Posterior division of superior trunk of brachial plexus.r",
+      "type": "MESH",
+      "polygons": 144,
+      "vertices": 156
+    },
+    {
+      "name": "Posterior fasciculus proprius",
+      "type": "MESH",
+      "polygons": 6464,
+      "vertices": 6528
+    },
+    {
+      "name": "Posterior femoral cutaneous nerve.l",
+      "type": "MESH",
+      "polygons": 1296,
+      "vertices": 1332
+    },
+    {
+      "name": "Posterior femoral cutaneous nerve.r",
+      "type": "MESH",
+      "polygons": 1296,
+      "vertices": 1332
+    },
+    {
+      "name": "Posterior funiculus.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Posterior horn of spinal cord",
+      "type": "MESH",
+      "polygons": 6464,
+      "vertices": 6528
+    },
+    {
+      "name": "Posterior horn of spinal cord.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Posterior interosseous nerve of forearm.l",
+      "type": "MESH",
+      "polygons": 864,
+      "vertices": 876
+    },
+    {
+      "name": "Posterior interosseous nerve of forearm.r",
+      "type": "MESH",
+      "polygons": 864,
+      "vertices": 876
+    },
+    {
+      "name": "Posterior median sulcus of medulla oblongata.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Posterior nucleus of vagus nerve.l",
+      "type": "MESH",
+      "polygons": 384,
+      "vertices": 386
+    },
+    {
+      "name": "Posterior nucleus of vagus nerve.r",
+      "type": "MESH",
+      "polygons": 384,
+      "vertices": 386
+    },
+    {
+      "name": "Posterior pole of eyeball.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Posterior quadrangular lobule.l",
+      "type": "MESH",
+      "polygons": 3618,
+      "vertices": 1816
+    },
+    {
+      "name": "Posterior quadrangular lobule.r",
+      "type": "MESH",
+      "polygons": 3618,
+      "vertices": 1816
+    },
+    {
+      "name": "Posterior rami of lumbar nerves.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Posterior root of posterior femoral cutaneous nerve.l",
+      "type": "MESH",
+      "polygons": 2016,
+      "vertices": 2052
+    },
+    {
+      "name": "Posterior root of posterior femoral cutaneous nerve.r",
+      "type": "MESH",
+      "polygons": 2016,
+      "vertices": 2052
+    },
+    {
+      "name": "Posterior root of spinal nerve.l",
+      "type": "MESH",
+      "polygons": 3024,
+      "vertices": 3276
+    },
+    {
+      "name": "Posterior root of spinal nerve.r",
+      "type": "MESH",
+      "polygons": 3024,
+      "vertices": 3276
+    },
+    {
+      "name": "Posterior segment of eyeball.l",
+      "type": "MESH",
+      "polygons": 3264,
+      "vertices": 3266
+    },
+    {
+      "name": "Posterior segment of eyeball.r",
+      "type": "MESH",
+      "polygons": 3264,
+      "vertices": 3266
+    },
+    {
+      "name": "Posterior semicircular canal.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Posterior spinocerebellar tract",
+      "type": "MESH",
+      "polygons": 5858,
+      "vertices": 5916
+    },
+    {
+      "name": "Posterior surface of cornea.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Posterior surface of iris.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Posterolateral sulcus of medulla oblongata.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Posterolateral tract",
+      "type": "MESH",
+      "polygons": 4444,
+      "vertices": 4488
+    },
+    {
+      "name": "Precentral gyrus.l",
+      "type": "MESH",
+      "polygons": 1481,
+      "vertices": 767
+    },
+    {
+      "name": "Precentral gyrus.r",
+      "type": "MESH",
+      "polygons": 1481,
+      "vertices": 767
+    },
+    {
+      "name": "Precentral sulcus (inferior part)*.l",
+      "type": "MESH",
+      "polygons": 700,
+      "vertices": 391
+    },
+    {
+      "name": "Precentral sulcus (inferior part)*.r",
+      "type": "MESH",
+      "polygons": 700,
+      "vertices": 391
+    },
+    {
+      "name": "Precentral sulcus (Superior part)*.l",
+      "type": "MESH",
+      "polygons": 506,
+      "vertices": 286
+    },
+    {
+      "name": "Precentral sulcus (Superior part)*.r",
+      "type": "MESH",
+      "polygons": 506,
+      "vertices": 286
+    },
+    {
+      "name": "Precuneus.l",
+      "type": "MESH",
+      "polygons": 1194,
+      "vertices": 652
+    },
+    {
+      "name": "Precuneus.r",
+      "type": "MESH",
+      "polygons": 1194,
+      "vertices": 652
+    },
+    {
+      "name": "Projection fibres of telencephalon.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Proper palmar digital branches of median nerve.l",
+      "type": "MESH",
+      "polygons": 5472,
+      "vertices": 5556
+    },
+    {
+      "name": "Proper palmar digital branches of median nerve.r",
+      "type": "MESH",
+      "polygons": 5472,
+      "vertices": 5556
+    },
+    {
+      "name": "Proper palmar digital branches of ulnar nerve.l",
+      "type": "MESH",
+      "polygons": 2880,
+      "vertices": 2916
+    },
+    {
+      "name": "Proper palmar digital branches of ulnar nerve.r",
+      "type": "MESH",
+      "polygons": 2880,
+      "vertices": 2916
+    },
+    {
+      "name": "Proper plantar digital branches of lateral plantar nerve.l",
+      "type": "MESH",
+      "polygons": 3744,
+      "vertices": 3804
+    },
+    {
+      "name": "Proper plantar digital branches of lateral plantar nerve.r",
+      "type": "MESH",
+      "polygons": 3744,
+      "vertices": 3804
+    },
+    {
+      "name": "Proper plantar digital branches of medial plantar nerve.l",
+      "type": "MESH",
+      "polygons": 3168,
+      "vertices": 3228
+    },
+    {
+      "name": "Proper plantar digital branches of medial plantar nerve.r",
+      "type": "MESH",
+      "polygons": 3168,
+      "vertices": 3228
+    },
+    {
+      "name": "Pudendal nerve.l",
+      "type": "MESH",
+      "polygons": 1872,
+      "vertices": 1908
+    },
+    {
+      "name": "Pudendal nerve.r",
+      "type": "MESH",
+      "polygons": 1872,
+      "vertices": 1908
+    },
+    {
+      "name": "Pupil.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Pupillary margin of iris.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Putamen.l",
+      "type": "MESH",
+      "polygons": 586,
+      "vertices": 577
+    },
+    {
+      "name": "Putamen.r",
+      "type": "MESH",
+      "polygons": 586,
+      "vertices": 577
+    },
+    {
+      "name": "Pyramid of medulla oblongata.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Pyramid of medulla oblongata.l",
+      "type": "MESH",
+      "polygons": 512,
+      "vertices": 482
+    },
+    {
+      "name": "Pyramid of medulla oblongata.r",
+      "type": "MESH",
+      "polygons": 512,
+      "vertices": 482
+    },
+    {
+      "name": "Pyramis of vermis",
+      "type": "MESH",
+      "polygons": 1182,
+      "vertices": 593
+    },
+    {
+      "name": "Radial nerve.l",
+      "type": "MESH",
+      "polygons": 1152,
+      "vertices": 1164
+    },
+    {
+      "name": "Radial nerve.r",
+      "type": "MESH",
+      "polygons": 1152,
+      "vertices": 1164
+    },
+    {
+      "name": "Red nucleus.l",
+      "type": "MESH",
+      "polygons": 352,
+      "vertices": 354
+    },
+    {
+      "name": "Red nucleus.r",
+      "type": "MESH",
+      "polygons": 352,
+      "vertices": 354
+    },
+    {
+      "name": "Reticular formation.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Retina.l",
+      "type": "MESH",
+      "polygons": 3152,
+      "vertices": 3154
+    },
+    {
+      "name": "Retina.r",
+      "type": "MESH",
+      "polygons": 3152,
+      "vertices": 3154
+    },
+    {
+      "name": "Retro-olivary groove.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Roots of brachial plexus.l",
+      "type": "MESH",
+      "polygons": 2304,
+      "vertices": 2388
+    },
+    {
+      "name": "Roots of brachial plexus.r",
+      "type": "MESH",
+      "polygons": 2304,
+      "vertices": 2388
+    },
+    {
+      "name": "Roots of nerves.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Rubrospinal tract",
+      "type": "MESH",
+      "polygons": 3232,
+      "vertices": 3264
+    },
+    {
+      "name": "Sacral plexus.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Saphenous nerve.l",
+      "type": "MESH",
+      "polygons": 3312,
+      "vertices": 3360
+    },
+    {
+      "name": "Saphenous nerve.r",
+      "type": "MESH",
+      "polygons": 3312,
+      "vertices": 3360
+    },
+    {
+      "name": "Sciatic nerve.l",
+      "type": "MESH",
+      "polygons": 2448,
+      "vertices": 2484
+    },
+    {
+      "name": "Sciatic nerve.r",
+      "type": "MESH",
+      "polygons": 2448,
+      "vertices": 2484
+    },
+    {
+      "name": "Sclera.l",
+      "type": "MESH",
+      "polygons": 2272,
+      "vertices": 2305
+    },
+    {
+      "name": "Sclera.r",
+      "type": "MESH",
+      "polygons": 2272,
+      "vertices": 2305
+    },
+    {
+      "name": "Sensory root of trigeminal nerve.l",
+      "type": "MESH",
+      "polygons": 1376,
+      "vertices": 1378
+    },
+    {
+      "name": "Sensory root of trigeminal nerve.r",
+      "type": "MESH",
+      "polygons": 1376,
+      "vertices": 1378
+    },
+    {
+      "name": "Septal nuclei",
+      "type": "MESH",
+      "polygons": 548,
+      "vertices": 278
+    },
+    {
+      "name": "Septum pellucidum",
+      "type": "MESH",
+      "polygons": 2322,
+      "vertices": 1187
+    },
+    {
+      "name": "Simple bony limb.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Sphincter pupillae.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Spinal cord.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Spinal dura",
+      "type": "MESH",
+      "polygons": 17501,
+      "vertices": 18104
+    },
+    {
+      "name": "Spinal ganglion.l",
+      "type": "MESH",
+      "polygons": 1680,
+      "vertices": 882
+    },
+    {
+      "name": "Spinal ganglion.r",
+      "type": "MESH",
+      "polygons": 1680,
+      "vertices": 882
+    },
+    {
+      "name": "Spinal nerves.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Spinal reticular process",
+      "type": "MESH",
+      "polygons": 3434,
+      "vertices": 3468
+    },
+    {
+      "name": "Spinotectal tract",
+      "type": "MESH",
+      "polygons": 1616,
+      "vertices": 1632
+    },
+    {
+      "name": "Spiral canal of cochlea.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Straight gyrus (Gyrus rectus).l",
+      "type": "MESH",
+      "polygons": 457,
+      "vertices": 256
+    },
+    {
+      "name": "Straight gyrus (Gyrus rectus).r",
+      "type": "MESH",
+      "polygons": 457,
+      "vertices": 256
+    },
+    {
+      "name": "Stria medullaris thalami.l",
+      "type": "MESH",
+      "polygons": 842,
+      "vertices": 423
+    },
+    {
+      "name": "Stria medullaris thalami.r",
+      "type": "MESH",
+      "polygons": 842,
+      "vertices": 423
+    },
+    {
+      "name": "Stria terminalis.l",
+      "type": "MESH",
+      "polygons": 746,
+      "vertices": 381
+    },
+    {
+      "name": "Stria terminalis.r",
+      "type": "MESH",
+      "polygons": 746,
+      "vertices": 381
+    },
+    {
+      "name": "Subclavian nerve.l",
+      "type": "MESH",
+      "polygons": 432,
+      "vertices": 444
+    },
+    {
+      "name": "Subclavian nerve.r",
+      "type": "MESH",
+      "polygons": 432,
+      "vertices": 444
+    },
+    {
+      "name": "Subparietal sulcus.l",
+      "type": "MESH",
+      "polygons": 509,
+      "vertices": 283
+    },
+    {
+      "name": "Subparietal sulcus.r",
+      "type": "MESH",
+      "polygons": 509,
+      "vertices": 283
+    },
+    {
+      "name": "Sulcus interm_prim-Jensen.l",
+      "type": "MESH",
+      "polygons": 319,
+      "vertices": 182
+    },
+    {
+      "name": "Sulcus interm_prim-Jensen.r",
+      "type": "MESH",
+      "polygons": 319,
+      "vertices": 182
+    },
+    {
+      "name": "Sulcus sclerae.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Superficial branch of radial nerve.l",
+      "type": "MESH",
+      "polygons": 2160,
+      "vertices": 2208
+    },
+    {
+      "name": "Superficial branch of radial nerve.r",
+      "type": "MESH",
+      "polygons": 2160,
+      "vertices": 2208
+    },
+    {
+      "name": "Superficial branch of ulnar nerve.l",
+      "type": "MESH",
+      "polygons": 432,
+      "vertices": 444
+    },
+    {
+      "name": "Superficial branch of ulnar nerve.r",
+      "type": "MESH",
+      "polygons": 432,
+      "vertices": 444
+    },
+    {
+      "name": "Superficial fibular nerve.l",
+      "type": "MESH",
+      "polygons": 1584,
+      "vertices": 1596
+    },
+    {
+      "name": "Superficial fibular nerve.r",
+      "type": "MESH",
+      "polygons": 1584,
+      "vertices": 1596
+    },
+    {
+      "name": "Superior cerebellar peduncle.l",
+      "type": "MESH",
+      "polygons": 8474,
+      "vertices": 4344
+    },
+    {
+      "name": "Superior cerebellar peduncle.r",
+      "type": "MESH",
+      "polygons": 8474,
+      "vertices": 4344
+    },
+    {
+      "name": "Superior colliculus.l",
+      "type": "MESH",
+      "polygons": 458,
+      "vertices": 233
+    },
+    {
+      "name": "Superior colliculus.r",
+      "type": "MESH",
+      "polygons": 458,
+      "vertices": 233
+    },
+    {
+      "name": "Superior frontal gyrus.l",
+      "type": "MESH",
+      "polygons": 3684,
+      "vertices": 1872
+    },
+    {
+      "name": "Superior frontal gyrus.r",
+      "type": "MESH",
+      "polygons": 3684,
+      "vertices": 1872
+    },
+    {
+      "name": "Superior frontal sulcus.l",
+      "type": "MESH",
+      "polygons": 1189,
+      "vertices": 647
+    },
+    {
+      "name": "Superior frontal sulcus.r",
+      "type": "MESH",
+      "polygons": 1189,
+      "vertices": 647
+    },
+    {
+      "name": "Superior gluteal nerve.l",
+      "type": "MESH",
+      "polygons": 1728,
+      "vertices": 1764
+    },
+    {
+      "name": "Superior gluteal nerve.r",
+      "type": "MESH",
+      "polygons": 1728,
+      "vertices": 1764
+    },
+    {
+      "name": "Superior lateral brachial cutaneous nerve.l",
+      "type": "MESH",
+      "polygons": 1008,
+      "vertices": 1020
+    },
+    {
+      "name": "Superior lateral brachial cutaneous nerve.r",
+      "type": "MESH",
+      "polygons": 1008,
+      "vertices": 1020
+    },
+    {
+      "name": "Superior medulla oblongata.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Superior occipital gyri.l",
+      "type": "MESH",
+      "polygons": 610,
+      "vertices": 337
+    },
+    {
+      "name": "Superior occipital gyri.r",
+      "type": "MESH",
+      "polygons": 610,
+      "vertices": 337
+    },
+    {
+      "name": "Superior parietal lobule.l",
+      "type": "MESH",
+      "polygons": 1159,
+      "vertices": 603
+    },
+    {
+      "name": "Superior parietal lobule.r",
+      "type": "MESH",
+      "polygons": 1159,
+      "vertices": 603
+    },
+    {
+      "name": "Superior salivatory nucleus.l",
+      "type": "MESH",
+      "polygons": 384,
+      "vertices": 386
+    },
+    {
+      "name": "Superior salivatory nucleus.r",
+      "type": "MESH",
+      "polygons": 384,
+      "vertices": 386
+    },
+    {
+      "name": "Superior semilunar lobule.l",
+      "type": "MESH",
+      "polygons": 8688,
+      "vertices": 4368
+    },
+    {
+      "name": "Superior semilunar lobule.r",
+      "type": "MESH",
+      "polygons": 8688,
+      "vertices": 4368
+    },
+    {
+      "name": "Superior subscapular nerve.l",
+      "type": "MESH",
+      "polygons": 576,
+      "vertices": 588
+    },
+    {
+      "name": "Superior subscapular nerve.r",
+      "type": "MESH",
+      "polygons": 576,
+      "vertices": 588
+    },
+    {
+      "name": "Superior temporal gyrus (Lateral part).l",
+      "type": "MESH",
+      "polygons": 978,
+      "vertices": 538
+    },
+    {
+      "name": "Superior temporal gyrus (Lateral part).r",
+      "type": "MESH",
+      "polygons": 978,
+      "vertices": 538
+    },
+    {
+      "name": "Superior temporal sulcus.l",
+      "type": "MESH",
+      "polygons": 2216,
+      "vertices": 1189
+    },
+    {
+      "name": "Superior temporal sulcus.r",
+      "type": "MESH",
+      "polygons": 2216,
+      "vertices": 1189
+    },
+    {
+      "name": "Superior trunk of brachial plexus.l",
+      "type": "MESH",
+      "polygons": 144,
+      "vertices": 156
+    },
+    {
+      "name": "Superior trunk of brachial plexus.r",
+      "type": "MESH",
+      "polygons": 144,
+      "vertices": 156
+    },
+    {
+      "name": "Supraclavicular part of brachial plexus.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Supramarginal gyrus.l",
+      "type": "MESH",
+      "polygons": 1389,
+      "vertices": 756
+    },
+    {
+      "name": "Supramarginal gyrus.r",
+      "type": "MESH",
+      "polygons": 1389,
+      "vertices": 756
+    },
+    {
+      "name": "Suprascapular nerve.l",
+      "type": "MESH",
+      "polygons": 2448,
+      "vertices": 2508
+    },
+    {
+      "name": "Suprascapular nerve.r",
+      "type": "MESH",
+      "polygons": 2448,
+      "vertices": 2508
+    },
+    {
+      "name": "Sural communicating branch of common fibular nerve.l",
+      "type": "MESH",
+      "polygons": 576,
+      "vertices": 588
+    },
+    {
+      "name": "Sural communicating branch of common fibular nerve.r",
+      "type": "MESH",
+      "polygons": 576,
+      "vertices": 588
+    },
+    {
+      "name": "Sural nerve.l",
+      "type": "MESH",
+      "polygons": 2016,
+      "vertices": 2052
+    },
+    {
+      "name": "Sural nerve.r",
+      "type": "MESH",
+      "polygons": 2016,
+      "vertices": 2052
+    },
+    {
+      "name": "Suspensory ligament of eyeball.l",
+      "type": "MESH",
+      "polygons": 5502,
+      "vertices": 2755
+    },
+    {
+      "name": "Suspensory ligament of eyeball.r",
+      "type": "MESH",
+      "polygons": 5502,
+      "vertices": 2755
+    },
+    {
+      "name": "Sympathetic nerves.l",
+      "type": "MESH",
+      "polygons": 12240,
+      "vertices": 12468
+    },
+    {
+      "name": "Sympathetic nerves.r",
+      "type": "MESH",
+      "polygons": 12240,
+      "vertices": 12468
+    },
+    {
+      "name": "Sympathetic trunk.l",
+      "type": "MESH",
+      "polygons": 12672,
+      "vertices": 12684
+    },
+    {
+      "name": "Sympathetic trunk.r",
+      "type": "MESH",
+      "polygons": 12672,
+      "vertices": 12684
+    },
+    {
+      "name": "Tectospinal tract",
+      "type": "MESH",
+      "polygons": 1616,
+      "vertices": 1632
+    },
+    {
+      "name": "Tectum of midbrain.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Tegmentum of midbrain.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Tegmentum of pons.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Telencephalon.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Temporal lobe.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Temporal plane.l",
+      "type": "MESH",
+      "polygons": 498,
+      "vertices": 280
+    },
+    {
+      "name": "Temporal plane.r",
+      "type": "MESH",
+      "polygons": 498,
+      "vertices": 280
+    },
+    {
+      "name": "Temporal pole.l",
+      "type": "MESH",
+      "polygons": 488,
+      "vertices": 274
+    },
+    {
+      "name": "Temporal pole.r",
+      "type": "MESH",
+      "polygons": 488,
+      "vertices": 274
+    },
+    {
+      "name": "Tentorium cerebelli.l",
+      "type": "MESH",
+      "polygons": 2282,
+      "vertices": 2242
+    },
+    {
+      "name": "Tentorium cerebelli.r",
+      "type": "MESH",
+      "polygons": 2282,
+      "vertices": 2242
+    },
+    {
+      "name": "Thalamus.l",
+      "type": "MESH",
+      "polygons": 758,
+      "vertices": 381
+    },
+    {
+      "name": "Thalamus.r",
+      "type": "MESH",
+      "polygons": 758,
+      "vertices": 381
+    },
+    {
+      "name": "Third ventricle",
+      "type": "MESH",
+      "polygons": 4119,
+      "vertices": 2158
+    },
+    {
+      "name": "Thoracic nerves.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Thoracodorsal nerve.l",
+      "type": "MESH",
+      "polygons": 2304,
+      "vertices": 2340
+    },
+    {
+      "name": "Thoracodorsal nerve.r",
+      "type": "MESH",
+      "polygons": 2304,
+      "vertices": 2340
+    },
+    {
+      "name": "Tibial nerve.l",
+      "type": "MESH",
+      "polygons": 1296,
+      "vertices": 1308
+    },
+    {
+      "name": "Tibial nerve.r",
+      "type": "MESH",
+      "polygons": 1296,
+      "vertices": 1308
+    },
+    {
+      "name": "Tonsil of cerebellum.l",
+      "type": "MESH",
+      "polygons": 3638,
+      "vertices": 1821
+    },
+    {
+      "name": "Tonsil of cerebellum.r",
+      "type": "MESH",
+      "polygons": 3638,
+      "vertices": 1821
+    },
+    {
+      "name": "Transverse frontopolar gyrus and sulcus*.l",
+      "type": "MESH",
+      "polygons": 213,
+      "vertices": 123
+    },
+    {
+      "name": "Transverse frontopolar gyrus and sulcus*.r",
+      "type": "MESH",
+      "polygons": 213,
+      "vertices": 123
+    },
+    {
+      "name": "Transverse occipital sulcus.l",
+      "type": "MESH",
+      "polygons": 618,
+      "vertices": 345
+    },
+    {
+      "name": "Transverse occipital sulcus.r",
+      "type": "MESH",
+      "polygons": 618,
+      "vertices": 345
+    },
+    {
+      "name": "Transverse temporal gyri.l",
+      "type": "MESH",
+      "polygons": 203,
+      "vertices": 119
+    },
+    {
+      "name": "Transverse temporal gyri.r",
+      "type": "MESH",
+      "polygons": 203,
+      "vertices": 119
+    },
+    {
+      "name": "Triangular part of inferior frontal gyrus.l",
+      "type": "MESH",
+      "polygons": 450,
+      "vertices": 254
+    },
+    {
+      "name": "Triangular part of inferior frontal gyrus.r",
+      "type": "MESH",
+      "polygons": 450,
+      "vertices": 254
+    },
+    {
+      "name": "Trigeminal nerve (V).l",
+      "type": "MESH",
+      "polygons": 1192,
+      "vertices": 1224
+    },
+    {
+      "name": "Trigeminal nerve (V).r",
+      "type": "MESH",
+      "polygons": 1192,
+      "vertices": 1224
+    },
+    {
+      "name": "Trigeminal tubercle.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Trochlear nerve (IV).l",
+      "type": "MESH",
+      "polygons": 1892,
+      "vertices": 1908
+    },
+    {
+      "name": "Trochlear nerve (IV).r",
+      "type": "MESH",
+      "polygons": 1892,
+      "vertices": 1908
+    },
+    {
+      "name": "Tuber of vermis",
+      "type": "MESH",
+      "polygons": 1178,
+      "vertices": 591
+    },
+    {
+      "name": "Tympanic membrane.l",
+      "type": "MESH",
+      "polygons": 786,
+      "vertices": 788
+    },
+    {
+      "name": "Tympanic membrane.r",
+      "type": "MESH",
+      "polygons": 786,
+      "vertices": 788
+    },
+    {
+      "name": "Ulnar nerve.l",
+      "type": "MESH",
+      "polygons": 1584,
+      "vertices": 1596
+    },
+    {
+      "name": "Ulnar nerve.r",
+      "type": "MESH",
+      "polygons": 1584,
+      "vertices": 1596
+    },
+    {
+      "name": "Uvula of vermis",
+      "type": "MESH",
+      "polygons": 2176,
+      "vertices": 1118
+    },
+    {
+      "name": "Vagus nerve (X).l",
+      "type": "MESH",
+      "polygons": 7340,
+      "vertices": 7452
+    },
+    {
+      "name": "Vagus nerve (X).r",
+      "type": "MESH",
+      "polygons": 23172,
+      "vertices": 23508
+    },
+    {
+      "name": "Vestibular nerve.l",
+      "type": "MESH",
+      "polygons": 2384,
+      "vertices": 2448
+    },
+    {
+      "name": "Vestibular nerve.r",
+      "type": "MESH",
+      "polygons": 2384,
+      "vertices": 2448
+    },
+    {
+      "name": "Vestibular nuclei.l",
+      "type": "MESH",
+      "polygons": 784,
+      "vertices": 786
+    },
+    {
+      "name": "Vestibular nuclei.r",
+      "type": "MESH",
+      "polygons": 784,
+      "vertices": 786
+    },
+    {
+      "name": "Vestibule.l",
+      "type": "MESH",
+      "polygons": 4290,
+      "vertices": 4316
+    },
+    {
+      "name": "Vestibule.r",
+      "type": "MESH",
+      "polygons": 4290,
+      "vertices": 4316
+    },
+    {
+      "name": "Vestibulocochlear nerve (VIII).l",
+      "type": "MESH",
+      "polygons": 904,
+      "vertices": 936
+    },
+    {
+      "name": "Vestibulocochlear nerve (VIII).r",
+      "type": "MESH",
+      "polygons": 904,
+      "vertices": 936
+    },
+    {
+      "name": "Vitreous body.l",
+      "type": "MESH",
+      "polygons": 5436,
+      "vertices": 2775
+    },
+    {
+      "name": "Vitreous body.r",
+      "type": "MESH",
+      "polygons": 5436,
+      "vertices": 2775
+    },
+    {
+      "name": "Walls of lateral ventricle.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "White matter of diencephalon.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "White matter of spinal cord",
+      "type": "MESH",
+      "polygons": 7777,
+      "vertices": 7854
+    },
+    {
+      "name": "White matter of spinal cord.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "White matter of telencephalon.l",
+      "type": "MESH",
+      "polygons": 67644,
+      "vertices": 67646
+    },
+    {
+      "name": "White matter of telencephalon.r",
+      "type": "MESH",
+      "polygons": 67644,
+      "vertices": 67646
+    },
+    {
+      "name": "White matter.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Wing of central lobule.l",
+      "type": "MESH",
+      "polygons": 3144,
+      "vertices": 1585
+    },
+    {
+      "name": "Wing of central lobule.r",
+      "type": "MESH",
+      "polygons": 3144,
+      "vertices": 1585
+    },
+    {
+      "name": "Zonular fibers-curve.r",
+      "type": "MESH",
+      "polygons": 0,
+      "vertices": 48
+    },
+    {
+      "name": "Zonular fibres.l",
+      "type": "MESH",
+      "polygons": 352,
+      "vertices": 354
+    },
+    {
+      "name": "Zonular fibres.r",
+      "type": "MESH",
+      "polygons": 34144,
+      "vertices": 34338
+    }
+  ]
+}

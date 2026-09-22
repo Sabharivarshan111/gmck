@@ -1,0 +1,1345 @@
+{
+  "label": "lymphoid",
+  "sourceFile": "LymphoidOrgans100.fbx",
+  "objectCount": 223,
+  "objects": [
+    {
+      "name": "(Anterior tibial node).l",
+      "type": "MESH",
+      "polygons": 96,
+      "vertices": 86
+    },
+    {
+      "name": "(Anterior tibial node).r",
+      "type": "MESH",
+      "polygons": 96,
+      "vertices": 86
+    },
+    {
+      "name": "(Fibular node).l",
+      "type": "MESH",
+      "polygons": 96,
+      "vertices": 86
+    },
+    {
+      "name": "(Fibular node).r",
+      "type": "MESH",
+      "polygons": 96,
+      "vertices": 86
+    },
+    {
+      "name": "(Intermediate deep inguinal node).l",
+      "type": "MESH",
+      "polygons": 96,
+      "vertices": 86
+    },
+    {
+      "name": "(Intermediate deep inguinal node).r",
+      "type": "MESH",
+      "polygons": 96,
+      "vertices": 86
+    },
+    {
+      "name": "(Intermediate lacunar node).l",
+      "type": "MESH",
+      "polygons": 96,
+      "vertices": 86
+    },
+    {
+      "name": "(Intermediate lacunar node).r",
+      "type": "MESH",
+      "polygons": 96,
+      "vertices": 86
+    },
+    {
+      "name": "(Lateral lacunar node).l",
+      "type": "MESH",
+      "polygons": 96,
+      "vertices": 86
+    },
+    {
+      "name": "(Lateral lacunar node).r",
+      "type": "MESH",
+      "polygons": 96,
+      "vertices": 86
+    },
+    {
+      "name": "(Medial lacunar node).l",
+      "type": "MESH",
+      "polygons": 96,
+      "vertices": 86
+    },
+    {
+      "name": "(Medial lacunar node).r",
+      "type": "MESH",
+      "polygons": 96,
+      "vertices": 86
+    },
+    {
+      "name": "(Pancreatic impression of spleen).j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "(Posterior tibial node).l",
+      "type": "MESH",
+      "polygons": 96,
+      "vertices": 86
+    },
+    {
+      "name": "(Posterior tibial node).r",
+      "type": "MESH",
+      "polygons": 96,
+      "vertices": 86
+    },
+    {
+      "name": "(Proximal deep inguinal node).l",
+      "type": "MESH",
+      "polygons": 96,
+      "vertices": 86
+    },
+    {
+      "name": "(Proximal deep inguinal node).r",
+      "type": "MESH",
+      "polygons": 96,
+      "vertices": 86
+    },
+    {
+      "name": "(Retropyloric nodes)",
+      "type": "MESH",
+      "polygons": 96,
+      "vertices": 86
+    },
+    {
+      "name": "(Subpyloric nodes)",
+      "type": "MESH",
+      "polygons": 192,
+      "vertices": 172
+    },
+    {
+      "name": "(Suprapyloric node)",
+      "type": "MESH",
+      "polygons": 96,
+      "vertices": 86
+    },
+    {
+      "name": "Abdominal lymph nodes.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Anterior axillary nodes.l",
+      "type": "MESH",
+      "polygons": 576,
+      "vertices": 516
+    },
+    {
+      "name": "Anterior axillary nodes.r",
+      "type": "MESH",
+      "polygons": 576,
+      "vertices": 516
+    },
+    {
+      "name": "Anterior cervical nodes.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Anterior extremity of spleen.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Anterior inferior jugular nodes.l",
+      "type": "MESH",
+      "polygons": 576,
+      "vertices": 516
+    },
+    {
+      "name": "Anterior inferior jugular nodes.r",
+      "type": "MESH",
+      "polygons": 576,
+      "vertices": 516
+    },
+    {
+      "name": "Apical axillary nodes.l",
+      "type": "MESH",
+      "polygons": 192,
+      "vertices": 172
+    },
+    {
+      "name": "Apical axillary nodes.r",
+      "type": "MESH",
+      "polygons": 192,
+      "vertices": 172
+    },
+    {
+      "name": "Appendicular nodes",
+      "type": "MESH",
+      "polygons": 288,
+      "vertices": 258
+    },
+    {
+      "name": "Axillary nodes.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Brachial nodes.l",
+      "type": "MESH",
+      "polygons": 480,
+      "vertices": 430
+    },
+    {
+      "name": "Brachial nodes.r",
+      "type": "MESH",
+      "polygons": 480,
+      "vertices": 430
+    },
+    {
+      "name": "Brachiocephalic nodes",
+      "type": "MESH",
+      "polygons": 288,
+      "vertices": 258
+    },
+    {
+      "name": "Bucinator node.l",
+      "type": "MESH",
+      "polygons": 288,
+      "vertices": 258
+    },
+    {
+      "name": "Bucinator node.r",
+      "type": "MESH",
+      "polygons": 288,
+      "vertices": 258
+    },
+    {
+      "name": "Central axillary nodes.l",
+      "type": "MESH",
+      "polygons": 192,
+      "vertices": 172
+    },
+    {
+      "name": "Central axillary nodes.r",
+      "type": "MESH",
+      "polygons": 192,
+      "vertices": 172
+    },
+    {
+      "name": "Central superior mesenteric nodes",
+      "type": "MESH",
+      "polygons": 288,
+      "vertices": 258
+    },
+    {
+      "name": "Coeliac nodes",
+      "type": "MESH",
+      "polygons": 384,
+      "vertices": 344
+    },
+    {
+      "name": "Colic impression of spleen.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Common iliac nodes.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Cross Section X",
+      "type": "MESH",
+      "polygons": 0,
+      "vertices": 4
+    },
+    {
+      "name": "Cross Section Y",
+      "type": "MESH",
+      "polygons": 0,
+      "vertices": 4
+    },
+    {
+      "name": "Cross Section Z",
+      "type": "MESH",
+      "polygons": 0,
+      "vertices": 4
+    },
+    {
+      "name": "Cubital nodes.l",
+      "type": "MESH",
+      "polygons": 576,
+      "vertices": 516
+    },
+    {
+      "name": "Cubital nodes.r",
+      "type": "MESH",
+      "polygons": 576,
+      "vertices": 516
+    },
+    {
+      "name": "Cystic node",
+      "type": "MESH",
+      "polygons": 96,
+      "vertices": 86
+    },
+    {
+      "name": "Deep anterior cervical nodes.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Deep inguinal nodes.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Deep parotid nodes.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Deep popliteal nodes.l",
+      "type": "MESH",
+      "polygons": 192,
+      "vertices": 172
+    },
+    {
+      "name": "Deep popliteal nodes.r",
+      "type": "MESH",
+      "polygons": 192,
+      "vertices": 172
+    },
+    {
+      "name": "Diaphragmatic surface of spleen.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "External iliac nodes.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Facial nodes.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Gastric impression of spleen.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Gluteal nodes.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Hepatic nodes.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Hilum of spleen.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Ileocolic nodes",
+      "type": "MESH",
+      "polygons": 192,
+      "vertices": 172
+    },
+    {
+      "name": "Inferior border of spleen.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Inferior deep lateral cervical nodes.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Inferior deep lateral cervical nodes.l",
+      "type": "MESH",
+      "polygons": 384,
+      "vertices": 344
+    },
+    {
+      "name": "Inferior deep lateral cervical nodes.r",
+      "type": "MESH",
+      "polygons": 384,
+      "vertices": 344
+    },
+    {
+      "name": "Inferior diaphragmatic nodes",
+      "type": "MESH",
+      "polygons": 576,
+      "vertices": 516
+    },
+    {
+      "name": "Inferior epigastric nodes.l",
+      "type": "MESH",
+      "polygons": 192,
+      "vertices": 172
+    },
+    {
+      "name": "Inferior epigastric nodes.r",
+      "type": "MESH",
+      "polygons": 192,
+      "vertices": 172
+    },
+    {
+      "name": "Inferior gluteal nodes.l",
+      "type": "MESH",
+      "polygons": 384,
+      "vertices": 344
+    },
+    {
+      "name": "Inferior gluteal nodes.r",
+      "type": "MESH",
+      "polygons": 384,
+      "vertices": 344
+    },
+    {
+      "name": "Inferior mesenteric nodes.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Inferior pancreatic nodes",
+      "type": "MESH",
+      "polygons": 480,
+      "vertices": 430
+    },
+    {
+      "name": "Inferior superficial inguinal nodes.l",
+      "type": "MESH",
+      "polygons": 384,
+      "vertices": 344
+    },
+    {
+      "name": "Inferior superficial inguinal nodes.r",
+      "type": "MESH",
+      "polygons": 384,
+      "vertices": 344
+    },
+    {
+      "name": "Inferior tracheobronchial nodes",
+      "type": "MESH",
+      "polygons": 960,
+      "vertices": 860
+    },
+    {
+      "name": "Infra-auricular nodes.l",
+      "type": "MESH",
+      "polygons": 192,
+      "vertices": 172
+    },
+    {
+      "name": "Infra-auricular nodes.r",
+      "type": "MESH",
+      "polygons": 192,
+      "vertices": 172
+    },
+    {
+      "name": "Infraclavicular nodes.l",
+      "type": "MESH",
+      "polygons": 480,
+      "vertices": 430
+    },
+    {
+      "name": "Infraclavicular nodes.r",
+      "type": "MESH",
+      "polygons": 480,
+      "vertices": 430
+    },
+    {
+      "name": "Infrahyoid nodes.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Inguinal nodes.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Intercostal nodes.l",
+      "type": "MESH",
+      "polygons": 1152,
+      "vertices": 1032
+    },
+    {
+      "name": "Intercostal nodes.r",
+      "type": "MESH",
+      "polygons": 1152,
+      "vertices": 1032
+    },
+    {
+      "name": "Intermediate common iliac nodes",
+      "type": "MESH",
+      "polygons": 384,
+      "vertices": 344
+    },
+    {
+      "name": "Intermediate external iliac nodes.l",
+      "type": "MESH",
+      "polygons": 672,
+      "vertices": 602
+    },
+    {
+      "name": "Intermediate external iliac nodes.r",
+      "type": "MESH",
+      "polygons": 672,
+      "vertices": 602
+    },
+    {
+      "name": "Intermediate lumbar nodes",
+      "type": "MESH",
+      "polygons": 480,
+      "vertices": 430
+    },
+    {
+      "name": "Internal iliac nodes.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Interpectoral nodes.l",
+      "type": "MESH",
+      "polygons": 480,
+      "vertices": 430
+    },
+    {
+      "name": "Interpectoral nodes.r",
+      "type": "MESH",
+      "polygons": 480,
+      "vertices": 430
+    },
+    {
+      "name": "Intraglandular parotid nodes.l",
+      "type": "MESH",
+      "polygons": 288,
+      "vertices": 258
+    },
+    {
+      "name": "Intraglandular parotid nodes.r",
+      "type": "MESH",
+      "polygons": 288,
+      "vertices": 258
+    },
+    {
+      "name": "Intrapulmonary nodes",
+      "type": "MESH",
+      "polygons": 2208,
+      "vertices": 1978
+    },
+    {
+      "name": "Jugulodigastric node.l",
+      "type": "MESH",
+      "polygons": 96,
+      "vertices": 86
+    },
+    {
+      "name": "Jugulodigastric node.r",
+      "type": "MESH",
+      "polygons": 96,
+      "vertices": 86
+    },
+    {
+      "name": "Juxta-intestinal mesenteric nodes",
+      "type": "MESH",
+      "polygons": 1440,
+      "vertices": 1290
+    },
+    {
+      "name": "Juxta-oesophageal nodes",
+      "type": "MESH",
+      "polygons": 960,
+      "vertices": 860
+    },
+    {
+      "name": "Lateral aortic nodes",
+      "type": "MESH",
+      "polygons": 384,
+      "vertices": 344
+    },
+    {
+      "name": "Lateral axillary nodes.l",
+      "type": "MESH",
+      "polygons": 192,
+      "vertices": 172
+    },
+    {
+      "name": "Lateral axillary nodes.r",
+      "type": "MESH",
+      "polygons": 192,
+      "vertices": 172
+    },
+    {
+      "name": "Lateral caval nodes",
+      "type": "MESH",
+      "polygons": 480,
+      "vertices": 430
+    },
+    {
+      "name": "Lateral cervical nodes.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Lateral common iliac nodes",
+      "type": "MESH",
+      "polygons": 768,
+      "vertices": 688
+    },
+    {
+      "name": "Lateral pericardial nodes",
+      "type": "MESH",
+      "polygons": 384,
+      "vertices": 344
+    },
+    {
+      "name": "Lateral sacral nodes.l",
+      "type": "MESH",
+      "polygons": 480,
+      "vertices": 430
+    },
+    {
+      "name": "Lateral sacral nodes.r",
+      "type": "MESH",
+      "polygons": 480,
+      "vertices": 430
+    },
+    {
+      "name": "Lateral superior jugular node.l",
+      "type": "MESH",
+      "polygons": 480,
+      "vertices": 430
+    },
+    {
+      "name": "Lateral superior jugular node.r",
+      "type": "MESH",
+      "polygons": 480,
+      "vertices": 430
+    },
+    {
+      "name": "Lateral vesical nodes.l",
+      "type": "MESH",
+      "polygons": 576,
+      "vertices": 516
+    },
+    {
+      "name": "Lateral vesical nodes.r",
+      "type": "MESH",
+      "polygons": 576,
+      "vertices": 516
+    },
+    {
+      "name": "Left colic nodes",
+      "type": "MESH",
+      "polygons": 288,
+      "vertices": 258
+    },
+    {
+      "name": "Left lobe of thymus",
+      "type": "MESH",
+      "polygons": 9188,
+      "vertices": 4596
+    },
+    {
+      "name": "Left lumbar nodes.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Lymph node",
+      "type": "MESH",
+      "polygons": 96,
+      "vertices": 86
+    },
+    {
+      "name": "Lymph nodes of head.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Lymph nodes of lower limb.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Lymph nodes of neck.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Lymph nodes of upper limb.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Lymph nodes.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Mandibular node.l",
+      "type": "MESH",
+      "polygons": 288,
+      "vertices": 258
+    },
+    {
+      "name": "Mandibular node.r",
+      "type": "MESH",
+      "polygons": 288,
+      "vertices": 258
+    },
+    {
+      "name": "Mastoid nodes.l",
+      "type": "MESH",
+      "polygons": 480,
+      "vertices": 430
+    },
+    {
+      "name": "Mastoid nodes.r",
+      "type": "MESH",
+      "polygons": 480,
+      "vertices": 430
+    },
+    {
+      "name": "Medial common iliac nodes",
+      "type": "MESH",
+      "polygons": 576,
+      "vertices": 516
+    },
+    {
+      "name": "Medial external iliac nodes.l",
+      "type": "MESH",
+      "polygons": 768,
+      "vertices": 688
+    },
+    {
+      "name": "Medial external iliac nodes.r",
+      "type": "MESH",
+      "polygons": 768,
+      "vertices": 688
+    },
+    {
+      "name": "Median sacral nodes",
+      "type": "MESH",
+      "polygons": 384,
+      "vertices": 344
+    },
+    {
+      "name": "Mediastinal lymph nodes.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Middle colic nodes",
+      "type": "MESH",
+      "polygons": 288,
+      "vertices": 258
+    },
+    {
+      "name": "Nasolabial node.l",
+      "type": "MESH",
+      "polygons": 96,
+      "vertices": 86
+    },
+    {
+      "name": "Nasolabial node.r",
+      "type": "MESH",
+      "polygons": 96,
+      "vertices": 86
+    },
+    {
+      "name": "Node of arch of azygos vein",
+      "type": "MESH",
+      "polygons": 96,
+      "vertices": 86
+    },
+    {
+      "name": "Node of ligamentum arteriosum",
+      "type": "MESH",
+      "polygons": 96,
+      "vertices": 86
+    },
+    {
+      "name": "Obturator nodes.l",
+      "type": "MESH",
+      "polygons": 384,
+      "vertices": 344
+    },
+    {
+      "name": "Obturator nodes.r",
+      "type": "MESH",
+      "polygons": 384,
+      "vertices": 344
+    },
+    {
+      "name": "Occipital nodes.l",
+      "type": "MESH",
+      "polygons": 192,
+      "vertices": 172
+    },
+    {
+      "name": "Occipital nodes.r",
+      "type": "MESH",
+      "polygons": 192,
+      "vertices": 172
+    },
+    {
+      "name": "Palatine tonsil.l",
+      "type": "MESH",
+      "polygons": 96,
+      "vertices": 86
+    },
+    {
+      "name": "Palatine tonsil.r",
+      "type": "MESH",
+      "polygons": 96,
+      "vertices": 86
+    },
+    {
+      "name": "Pancreatic nodes.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Pancreaticoduodenal nodes.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Paracolic superior mesenteric nodes",
+      "type": "MESH",
+      "polygons": 1632,
+      "vertices": 1462
+    },
+    {
+      "name": "Pararectal nodes",
+      "type": "MESH",
+      "polygons": 576,
+      "vertices": 516
+    },
+    {
+      "name": "Parasternal nodes.l",
+      "type": "MESH",
+      "polygons": 768,
+      "vertices": 688
+    },
+    {
+      "name": "Parasternal nodes.r",
+      "type": "MESH",
+      "polygons": 768,
+      "vertices": 688
+    },
+    {
+      "name": "Paratracheal cervical nodes",
+      "type": "MESH",
+      "polygons": 576,
+      "vertices": 516
+    },
+    {
+      "name": "Paratracheal thoracic nodes",
+      "type": "MESH",
+      "polygons": 960,
+      "vertices": 860
+    },
+    {
+      "name": "Paravesical nodes.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Parietal abdominal lymph nodes.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Parietal pelvic lymph nodes.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Parietal thoracic lymph nodes.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Pelvic lymph nodes.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Pharyngeal lymphoid ring.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Popliteal nodes.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Posterior axillary nodes.l",
+      "type": "MESH",
+      "polygons": 576,
+      "vertices": 516
+    },
+    {
+      "name": "Posterior axillary nodes.r",
+      "type": "MESH",
+      "polygons": 576,
+      "vertices": 516
+    },
+    {
+      "name": "Posterior extremity of spleen.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Postvesical nodes",
+      "type": "MESH",
+      "polygons": 576,
+      "vertices": 516
+    },
+    {
+      "name": "Pre-aortic nodes",
+      "type": "MESH",
+      "polygons": 480,
+      "vertices": 430
+    },
+    {
+      "name": "Pre-auricular nodes.l",
+      "type": "MESH",
+      "polygons": 288,
+      "vertices": 258
+    },
+    {
+      "name": "Pre-auricular nodes.r",
+      "type": "MESH",
+      "polygons": 288,
+      "vertices": 258
+    },
+    {
+      "name": "Precaecal nodes",
+      "type": "MESH",
+      "polygons": 192,
+      "vertices": 172
+    },
+    {
+      "name": "Precaval nodes",
+      "type": "MESH",
+      "polygons": 480,
+      "vertices": 430
+    },
+    {
+      "name": "Prepericardial nodes",
+      "type": "MESH",
+      "polygons": 384,
+      "vertices": 344
+    },
+    {
+      "name": "Pretracheal nodes.l",
+      "type": "MESH",
+      "polygons": 288,
+      "vertices": 258
+    },
+    {
+      "name": "Pretracheal nodes.r",
+      "type": "MESH",
+      "polygons": 288,
+      "vertices": 258
+    },
+    {
+      "name": "Prevertebral nodes",
+      "type": "MESH",
+      "polygons": 960,
+      "vertices": 860
+    },
+    {
+      "name": "Prevesical nodes",
+      "type": "MESH",
+      "polygons": 288,
+      "vertices": 258
+    },
+    {
+      "name": "Primary lymphoid organs.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Pulmonary lymph nodes.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Pyloric nodes.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Renal impression of spleen.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Retro-aortic nodes",
+      "type": "MESH",
+      "polygons": 480,
+      "vertices": 430
+    },
+    {
+      "name": "Retrocaecal nodes",
+      "type": "MESH",
+      "polygons": 288,
+      "vertices": 258
+    },
+    {
+      "name": "Retrocaval nodes",
+      "type": "MESH",
+      "polygons": 480,
+      "vertices": 430
+    },
+    {
+      "name": "Retropharyngeal nodes.l",
+      "type": "MESH",
+      "polygons": 192,
+      "vertices": 172
+    },
+    {
+      "name": "Retropharyngeal nodes.r",
+      "type": "MESH",
+      "polygons": 192,
+      "vertices": 172
+    },
+    {
+      "name": "Right colic nodes",
+      "type": "MESH",
+      "polygons": 288,
+      "vertices": 258
+    },
+    {
+      "name": "Right gastric nodes",
+      "type": "MESH",
+      "polygons": 480,
+      "vertices": 430
+    },
+    {
+      "name": "Right gastro-omental nodes",
+      "type": "MESH",
+      "polygons": 672,
+      "vertices": 602
+    },
+    {
+      "name": "Right lobe of thymus",
+      "type": "MESH",
+      "polygons": 6452,
+      "vertices": 3228
+    },
+    {
+      "name": "Right lumbar nodes.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Secondary lymphoid organs.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Sigmoid nodes",
+      "type": "MESH",
+      "polygons": 576,
+      "vertices": 516
+    },
+    {
+      "name": "Spleen",
+      "type": "MESH",
+      "polygons": 1330,
+      "vertices": 667
+    },
+    {
+      "name": "Splenic nodes",
+      "type": "MESH",
+      "polygons": 288,
+      "vertices": 258
+    },
+    {
+      "name": "Subaortic nodes",
+      "type": "MESH",
+      "polygons": 288,
+      "vertices": 258
+    },
+    {
+      "name": "Submandibular nodes.l",
+      "type": "MESH",
+      "polygons": 288,
+      "vertices": 258
+    },
+    {
+      "name": "Submandibular nodes.r",
+      "type": "MESH",
+      "polygons": 288,
+      "vertices": 258
+    },
+    {
+      "name": "Submental nodes.l",
+      "type": "MESH",
+      "polygons": 384,
+      "vertices": 344
+    },
+    {
+      "name": "Submental nodes.r",
+      "type": "MESH",
+      "polygons": 384,
+      "vertices": 344
+    },
+    {
+      "name": "Superficial anterior cervical nodes",
+      "type": "MESH",
+      "polygons": 576,
+      "vertices": 516
+    },
+    {
+      "name": "Superficial inguinal nodes.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Superficial lateral cervical nodes.l",
+      "type": "MESH",
+      "polygons": 576,
+      "vertices": 516
+    },
+    {
+      "name": "Superficial lateral cervical nodes.r",
+      "type": "MESH",
+      "polygons": 576,
+      "vertices": 516
+    },
+    {
+      "name": "Superficial parotid nodes.l",
+      "type": "MESH",
+      "polygons": 288,
+      "vertices": 258
+    },
+    {
+      "name": "Superficial parotid nodes.r",
+      "type": "MESH",
+      "polygons": 288,
+      "vertices": 258
+    },
+    {
+      "name": "Superficial popliteal nodes.l",
+      "type": "MESH",
+      "polygons": 192,
+      "vertices": 172
+    },
+    {
+      "name": "Superficial popliteal nodes.r",
+      "type": "MESH",
+      "polygons": 192,
+      "vertices": 172
+    },
+    {
+      "name": "Superior border of spleen.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Superior deep lateral cervical nodes.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Superior diaphragmatic nodes",
+      "type": "MESH",
+      "polygons": 576,
+      "vertices": 516
+    },
+    {
+      "name": "Superior gluteal nodes.l",
+      "type": "MESH",
+      "polygons": 384,
+      "vertices": 344
+    },
+    {
+      "name": "Superior gluteal nodes.r",
+      "type": "MESH",
+      "polygons": 384,
+      "vertices": 344
+    },
+    {
+      "name": "Superior mesenteric nodes.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Superior pancreatic nodes",
+      "type": "MESH",
+      "polygons": 384,
+      "vertices": 344
+    },
+    {
+      "name": "Superior pancreaticoduodenal nodes",
+      "type": "MESH",
+      "polygons": 288,
+      "vertices": 258
+    },
+    {
+      "name": "Superior tracheobronchial nodes",
+      "type": "MESH",
+      "polygons": 480,
+      "vertices": 430
+    },
+    {
+      "name": "Superolateral superficial inguinal nodes.l",
+      "type": "MESH",
+      "polygons": 288,
+      "vertices": 258
+    },
+    {
+      "name": "Superolateral superficial inguinal nodes.r",
+      "type": "MESH",
+      "polygons": 288,
+      "vertices": 258
+    },
+    {
+      "name": "Superomedial superficial inguinal nodes.l",
+      "type": "MESH",
+      "polygons": 288,
+      "vertices": 258
+    },
+    {
+      "name": "Superomedial superficial inguinal nodes.r",
+      "type": "MESH",
+      "polygons": 288,
+      "vertices": 258
+    },
+    {
+      "name": "Supraclavicular nodes.l",
+      "type": "MESH",
+      "polygons": 384,
+      "vertices": 344
+    },
+    {
+      "name": "Supraclavicular nodes.r",
+      "type": "MESH",
+      "polygons": 384,
+      "vertices": 344
+    },
+    {
+      "name": "Supratrochlear nodes.l",
+      "type": "MESH",
+      "polygons": 480,
+      "vertices": 430
+    },
+    {
+      "name": "Supratrochlear nodes.r",
+      "type": "MESH",
+      "polygons": 480,
+      "vertices": 430
+    },
+    {
+      "name": "Thoracic lymph node.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Thymus.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Thyroid nodes.l",
+      "type": "MESH",
+      "polygons": 192,
+      "vertices": 172
+    },
+    {
+      "name": "Thyroid nodes.r",
+      "type": "MESH",
+      "polygons": 192,
+      "vertices": 172
+    },
+    {
+      "name": "Visceral abdominal lymph nodes.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Visceral pelvic lymph nodes.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Visceral surface of spleen.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    }
+  ]
+}

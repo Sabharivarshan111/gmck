@@ -1,0 +1,2503 @@
+{
+  "label": "joints",
+  "sourceFile": "Joints100.fbx",
+  "objectCount": 416,
+  "objects": [
+    {
+      "name": "Acetabular labrum.l",
+      "type": "MESH",
+      "polygons": 704,
+      "vertices": 704
+    },
+    {
+      "name": "Acetabular labrum.r",
+      "type": "MESH",
+      "polygons": 704,
+      "vertices": 704
+    },
+    {
+      "name": "Acromioclavicular ligament.l",
+      "type": "MESH",
+      "polygons": 160,
+      "vertices": 162
+    },
+    {
+      "name": "Acromioclavicular ligament.r",
+      "type": "MESH",
+      "polygons": 160,
+      "vertices": 162
+    },
+    {
+      "name": "Annular ligament of radius.l",
+      "type": "MESH",
+      "polygons": 188,
+      "vertices": 190
+    },
+    {
+      "name": "Annular ligament of radius.r",
+      "type": "MESH",
+      "polygons": 188,
+      "vertices": 190
+    },
+    {
+      "name": "Anterior cruciate ligament.l",
+      "type": "MESH",
+      "polygons": 808,
+      "vertices": 840
+    },
+    {
+      "name": "Anterior cruciate ligament.r",
+      "type": "MESH",
+      "polygons": 808,
+      "vertices": 840
+    },
+    {
+      "name": "Anterior ligament of fibular head.l",
+      "type": "MESH",
+      "polygons": 52,
+      "vertices": 54
+    },
+    {
+      "name": "Anterior ligament of fibular head.r",
+      "type": "MESH",
+      "polygons": 52,
+      "vertices": 54
+    },
+    {
+      "name": "Anterior longitudinal ligament",
+      "type": "MESH",
+      "polygons": 2464,
+      "vertices": 2466
+    },
+    {
+      "name": "Anterior meniscotibial ligament (Lateral meniscus).l",
+      "type": "MESH",
+      "polygons": 124,
+      "vertices": 126
+    },
+    {
+      "name": "Anterior meniscotibial ligament (Lateral meniscus).r",
+      "type": "MESH",
+      "polygons": 124,
+      "vertices": 126
+    },
+    {
+      "name": "Anterior meniscotibial ligament (Medial meniscus).l",
+      "type": "MESH",
+      "polygons": 64,
+      "vertices": 66
+    },
+    {
+      "name": "Anterior meniscotibial ligament (Medial meniscus).r",
+      "type": "MESH",
+      "polygons": 64,
+      "vertices": 66
+    },
+    {
+      "name": "Anterior sacro-iliac ligament.l",
+      "type": "MESH",
+      "polygons": 252,
+      "vertices": 254
+    },
+    {
+      "name": "Anterior sacro-iliac ligament.r",
+      "type": "MESH",
+      "polygons": 252,
+      "vertices": 254
+    },
+    {
+      "name": "Anterior sternoclavicular ligament.l",
+      "type": "MESH",
+      "polygons": 160,
+      "vertices": 162
+    },
+    {
+      "name": "Anterior sternoclavicular ligament.r",
+      "type": "MESH",
+      "polygons": 160,
+      "vertices": 162
+    },
+    {
+      "name": "Anterior talocalcaneal ligament.l",
+      "type": "MESH",
+      "polygons": 52,
+      "vertices": 54
+    },
+    {
+      "name": "Anterior talocalcaneal ligament.r",
+      "type": "MESH",
+      "polygons": 52,
+      "vertices": 54
+    },
+    {
+      "name": "Anterior talofibular ligament.l",
+      "type": "MESH",
+      "polygons": 16,
+      "vertices": 18
+    },
+    {
+      "name": "Anterior talofibular ligament.r",
+      "type": "MESH",
+      "polygons": 16,
+      "vertices": 18
+    },
+    {
+      "name": "Anterior tibiofibular ligament.l",
+      "type": "MESH",
+      "polygons": 124,
+      "vertices": 126
+    },
+    {
+      "name": "Anterior tibiofibular ligament.r",
+      "type": "MESH",
+      "polygons": 124,
+      "vertices": 126
+    },
+    {
+      "name": "Arcuate popliteal ligament.l",
+      "type": "MESH",
+      "polygons": 644,
+      "vertices": 648
+    },
+    {
+      "name": "Arcuate popliteal ligament.r",
+      "type": "MESH",
+      "polygons": 644,
+      "vertices": 648
+    },
+    {
+      "name": "Articular capsule of acromioclavicular joint.l",
+      "type": "MESH",
+      "polygons": 576,
+      "vertices": 576
+    },
+    {
+      "name": "Articular capsule of acromioclavicular joint.r",
+      "type": "MESH",
+      "polygons": 576,
+      "vertices": 576
+    },
+    {
+      "name": "Articular capsule of elbow joint.l",
+      "type": "MESH",
+      "polygons": 878,
+      "vertices": 864
+    },
+    {
+      "name": "Articular capsule of elbow joint.r",
+      "type": "MESH",
+      "polygons": 878,
+      "vertices": 864
+    },
+    {
+      "name": "Articular capsule of glenohumeral joint.l",
+      "type": "MESH",
+      "polygons": 1616,
+      "vertices": 1616
+    },
+    {
+      "name": "Articular capsule of glenohumeral joint.r",
+      "type": "MESH",
+      "polygons": 1616,
+      "vertices": 1616
+    },
+    {
+      "name": "Articular capsule of hip joint.l",
+      "type": "MESH",
+      "polygons": 560,
+      "vertices": 630
+    },
+    {
+      "name": "Articular capsule of hip joint.r",
+      "type": "MESH",
+      "polygons": 560,
+      "vertices": 630
+    },
+    {
+      "name": "Articular capsule of interphalangeal joint of great toe.l",
+      "type": "MESH",
+      "polygons": 192,
+      "vertices": 216
+    },
+    {
+      "name": "Articular capsule of interphalangeal joint of great toe.r",
+      "type": "MESH",
+      "polygons": 192,
+      "vertices": 216
+    },
+    {
+      "name": "Articular capsule of knee joint.l",
+      "type": "MESH",
+      "polygons": 1472,
+      "vertices": 1671
+    },
+    {
+      "name": "Articular capsule of knee joint.r",
+      "type": "MESH",
+      "polygons": 1472,
+      "vertices": 1671
+    },
+    {
+      "name": "Articular capsule of radiocarpal joint.l",
+      "type": "MESH",
+      "polygons": 671,
+      "vertices": 759
+    },
+    {
+      "name": "Articular capsule of radiocarpal joint.r",
+      "type": "MESH",
+      "polygons": 671,
+      "vertices": 759
+    },
+    {
+      "name": "Articular capsule of sternoclavicular joint.l",
+      "type": "MESH",
+      "polygons": 504,
+      "vertices": 504
+    },
+    {
+      "name": "Articular capsule of sternoclavicular joint.r",
+      "type": "MESH",
+      "polygons": 504,
+      "vertices": 504
+    },
+    {
+      "name": "Articular capsule of superior tibiofibular joint.l",
+      "type": "MESH",
+      "polygons": 280,
+      "vertices": 280
+    },
+    {
+      "name": "Articular capsule of superior tibiofibular joint.r",
+      "type": "MESH",
+      "polygons": 280,
+      "vertices": 280
+    },
+    {
+      "name": "Articular capsule of temporomandibular joint.l",
+      "type": "MESH",
+      "polygons": 900,
+      "vertices": 900
+    },
+    {
+      "name": "Articular capsule of temporomandibular joint.r",
+      "type": "MESH",
+      "polygons": 900,
+      "vertices": 900
+    },
+    {
+      "name": "Articular capsules of distal interphalangeal joints of foot.l",
+      "type": "MESH",
+      "polygons": 712,
+      "vertices": 796
+    },
+    {
+      "name": "Articular capsules of distal interphalangeal joints of foot.r",
+      "type": "MESH",
+      "polygons": 712,
+      "vertices": 796
+    },
+    {
+      "name": "Articular capsules of distal interphalangeal joints.l",
+      "type": "MESH",
+      "polygons": 752,
+      "vertices": 846
+    },
+    {
+      "name": "Articular capsules of distal interphalangeal joints.r",
+      "type": "MESH",
+      "polygons": 752,
+      "vertices": 846
+    },
+    {
+      "name": "Articular capsules of metacarpophalangeal joints.l",
+      "type": "MESH",
+      "polygons": 784,
+      "vertices": 880
+    },
+    {
+      "name": "Articular capsules of metacarpophalangeal joints.r",
+      "type": "MESH",
+      "polygons": 784,
+      "vertices": 880
+    },
+    {
+      "name": "Articular capsules of metatarsophalangeal joints.l",
+      "type": "MESH",
+      "polygons": 876,
+      "vertices": 984
+    },
+    {
+      "name": "Articular capsules of metatarsophalangeal joints.r",
+      "type": "MESH",
+      "polygons": 876,
+      "vertices": 984
+    },
+    {
+      "name": "Articular capsules of proximal interphalangeal joints of foot.l",
+      "type": "MESH",
+      "polygons": 732,
+      "vertices": 818
+    },
+    {
+      "name": "Articular capsules of proximal interphalangeal joints of foot.r",
+      "type": "MESH",
+      "polygons": 732,
+      "vertices": 818
+    },
+    {
+      "name": "Articular capsules of proximal interphalangeal joints.l",
+      "type": "MESH",
+      "polygons": 696,
+      "vertices": 778
+    },
+    {
+      "name": "Articular capsules of proximal interphalangeal joints.r",
+      "type": "MESH",
+      "polygons": 696,
+      "vertices": 778
+    },
+    {
+      "name": "Articular disc of acromioclavicular joint.l",
+      "type": "MESH",
+      "polygons": 88,
+      "vertices": 90
+    },
+    {
+      "name": "Articular disc of acromioclavicular joint.r",
+      "type": "MESH",
+      "polygons": 88,
+      "vertices": 90
+    },
+    {
+      "name": "Articular disc of distal radio-ulnar joint.l",
+      "type": "MESH",
+      "polygons": 15,
+      "vertices": 16
+    },
+    {
+      "name": "Articular disc of distal radio-ulnar joint.r",
+      "type": "MESH",
+      "polygons": 15,
+      "vertices": 16
+    },
+    {
+      "name": "Articular disc of sternoclavicular joint.l",
+      "type": "MESH",
+      "polygons": 88,
+      "vertices": 90
+    },
+    {
+      "name": "Articular disc of sternoclavicular joint.r",
+      "type": "MESH",
+      "polygons": 88,
+      "vertices": 90
+    },
+    {
+      "name": "Articular disc of temporomandibular joint.l",
+      "type": "MESH",
+      "polygons": 274,
+      "vertices": 146
+    },
+    {
+      "name": "Articular disc of temporomandibular joint.r",
+      "type": "MESH",
+      "polygons": 274,
+      "vertices": 146
+    },
+    {
+      "name": "Calcaneocuboid ligament.l",
+      "type": "MESH",
+      "polygons": 16,
+      "vertices": 18
+    },
+    {
+      "name": "Calcaneocuboid ligament.r",
+      "type": "MESH",
+      "polygons": 16,
+      "vertices": 18
+    },
+    {
+      "name": "Calcaneofibular ligament.l",
+      "type": "MESH",
+      "polygons": 16,
+      "vertices": 18
+    },
+    {
+      "name": "Calcaneofibular ligament.r",
+      "type": "MESH",
+      "polygons": 16,
+      "vertices": 18
+    },
+    {
+      "name": "Calcaneonavicular ligament.l",
+      "type": "MESH",
+      "polygons": 48,
+      "vertices": 50
+    },
+    {
+      "name": "Calcaneonavicular ligament.r",
+      "type": "MESH",
+      "polygons": 48,
+      "vertices": 50
+    },
+    {
+      "name": "Capitohamate interosseous ligament.l",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Capitohamate interosseous ligament.r",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Collateral interphalangeal ligaments of foot.l",
+      "type": "MESH",
+      "polygons": 1348,
+      "vertices": 1384
+    },
+    {
+      "name": "Collateral interphalangeal ligaments of foot.r",
+      "type": "MESH",
+      "polygons": 1348,
+      "vertices": 1384
+    },
+    {
+      "name": "Collateral interphalangeal ligaments of hand.l",
+      "type": "MESH",
+      "polygons": 984,
+      "vertices": 1020
+    },
+    {
+      "name": "Collateral interphalangeal ligaments of hand.r",
+      "type": "MESH",
+      "polygons": 984,
+      "vertices": 1020
+    },
+    {
+      "name": "Collateral metacarpophalangeal ligaments.l",
+      "type": "MESH",
+      "polygons": 520,
+      "vertices": 540
+    },
+    {
+      "name": "Collateral metacarpophalangeal ligaments.r",
+      "type": "MESH",
+      "polygons": 520,
+      "vertices": 540
+    },
+    {
+      "name": "Collateral metatarsophalangeal ligaments.l",
+      "type": "MESH",
+      "polygons": 808,
+      "vertices": 828
+    },
+    {
+      "name": "Collateral metatarsophalangeal ligaments.r",
+      "type": "MESH",
+      "polygons": 808,
+      "vertices": 828
+    },
+    {
+      "name": "Conoid ligament.l",
+      "type": "MESH",
+      "polygons": 28,
+      "vertices": 30
+    },
+    {
+      "name": "Conoid ligament.r",
+      "type": "MESH",
+      "polygons": 28,
+      "vertices": 30
+    },
+    {
+      "name": "Coraco-acromial ligament.l",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Coraco-acromial ligament.r",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Coracohumeral ligament.l",
+      "type": "MESH",
+      "polygons": 100,
+      "vertices": 102
+    },
+    {
+      "name": "Coracohumeral ligament.r",
+      "type": "MESH",
+      "polygons": 100,
+      "vertices": 102
+    },
+    {
+      "name": "Costoclavicular ligament.l",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Costoclavicular ligament.r",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Costotransverse ligament.l",
+      "type": "MESH",
+      "polygons": 198,
+      "vertices": 220
+    },
+    {
+      "name": "Costotransverse ligament.r",
+      "type": "MESH",
+      "polygons": 198,
+      "vertices": 220
+    },
+    {
+      "name": "Cricopharyngeal ligament.l",
+      "type": "MESH",
+      "polygons": 3119,
+      "vertices": 1540
+    },
+    {
+      "name": "Cricopharyngeal ligament.r",
+      "type": "MESH",
+      "polygons": 3119,
+      "vertices": 1540
+    },
+    {
+      "name": "Cross Section X",
+      "type": "MESH",
+      "polygons": 0,
+      "vertices": 4
+    },
+    {
+      "name": "Cross Section Y",
+      "type": "MESH",
+      "polygons": 0,
+      "vertices": 4
+    },
+    {
+      "name": "Cross Section Z",
+      "type": "MESH",
+      "polygons": 0,
+      "vertices": 4
+    },
+    {
+      "name": "Cuneocuboid interosseous ligament.l",
+      "type": "MESH",
+      "polygons": 40,
+      "vertices": 42
+    },
+    {
+      "name": "Cuneocuboid interosseous ligament.r",
+      "type": "MESH",
+      "polygons": 40,
+      "vertices": 42
+    },
+    {
+      "name": "Cuneometatarsal interosseous ligaments.l",
+      "type": "MESH",
+      "polygons": 18,
+      "vertices": 24
+    },
+    {
+      "name": "Cuneometatarsal interosseous ligaments.r",
+      "type": "MESH",
+      "polygons": 18,
+      "vertices": 24
+    },
+    {
+      "name": "Deep part of tibial collateral ligament.l",
+      "type": "MESH",
+      "polygons": 128,
+      "vertices": 132
+    },
+    {
+      "name": "Deep part of tibial collateral ligament.r",
+      "type": "MESH",
+      "polygons": 128,
+      "vertices": 132
+    },
+    {
+      "name": "Deep transverse metacarpal ligament.l",
+      "type": "MESH",
+      "polygons": 30,
+      "vertices": 36
+    },
+    {
+      "name": "Deep transverse metacarpal ligament.r",
+      "type": "MESH",
+      "polygons": 30,
+      "vertices": 36
+    },
+    {
+      "name": "Deep transverse metatarsal ligament.l",
+      "type": "MESH",
+      "polygons": 76,
+      "vertices": 84
+    },
+    {
+      "name": "Deep transverse metatarsal ligament.r",
+      "type": "MESH",
+      "polygons": 76,
+      "vertices": 84
+    },
+    {
+      "name": "Descending part of iliofemoral ligament.l",
+      "type": "MESH",
+      "polygons": 304,
+      "vertices": 306
+    },
+    {
+      "name": "Descending part of iliofemoral ligament.r",
+      "type": "MESH",
+      "polygons": 304,
+      "vertices": 306
+    },
+    {
+      "name": "Dorsal calcaneocuboid ligament.l",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Dorsal calcaneocuboid ligament.r",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Dorsal carpometacarpal ligaments.l",
+      "type": "MESH",
+      "polygons": 74,
+      "vertices": 86
+    },
+    {
+      "name": "Dorsal carpometacarpal ligaments.r",
+      "type": "MESH",
+      "polygons": 74,
+      "vertices": 86
+    },
+    {
+      "name": "Dorsal cuboideonavicular ligament.l",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Dorsal cuboideonavicular ligament.r",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Dorsal cuneocuboid ligament.l",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Dorsal cuneocuboid ligament.r",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Dorsal cuneonavicular ligaments.l",
+      "type": "MESH",
+      "polygons": 30,
+      "vertices": 36
+    },
+    {
+      "name": "Dorsal cuneonavicular ligaments.r",
+      "type": "MESH",
+      "polygons": 30,
+      "vertices": 36
+    },
+    {
+      "name": "Dorsal intercarpal ligaments.l",
+      "type": "MESH",
+      "polygons": 220,
+      "vertices": 222
+    },
+    {
+      "name": "Dorsal intercarpal ligaments.r",
+      "type": "MESH",
+      "polygons": 220,
+      "vertices": 222
+    },
+    {
+      "name": "Dorsal intercuneiform ligaments.l",
+      "type": "MESH",
+      "polygons": 12,
+      "vertices": 16
+    },
+    {
+      "name": "Dorsal intercuneiform ligaments.r",
+      "type": "MESH",
+      "polygons": 12,
+      "vertices": 16
+    },
+    {
+      "name": "Dorsal metacarpal ligaments.l",
+      "type": "MESH",
+      "polygons": 24,
+      "vertices": 32
+    },
+    {
+      "name": "Dorsal metacarpal ligaments.r",
+      "type": "MESH",
+      "polygons": 24,
+      "vertices": 32
+    },
+    {
+      "name": "Dorsal metatarsal ligaments.l",
+      "type": "MESH",
+      "polygons": 28,
+      "vertices": 36
+    },
+    {
+      "name": "Dorsal metatarsal ligaments.r",
+      "type": "MESH",
+      "polygons": 28,
+      "vertices": 36
+    },
+    {
+      "name": "Dorsal radio-ulnar ligament.l",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Dorsal radio-ulnar ligament.r",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Dorsal radiocarpal ligament.l",
+      "type": "MESH",
+      "polygons": 124,
+      "vertices": 126
+    },
+    {
+      "name": "Dorsal radiocarpal ligament.r",
+      "type": "MESH",
+      "polygons": 124,
+      "vertices": 126
+    },
+    {
+      "name": "Dorsal scaphotriquetral ligament.l",
+      "type": "MESH",
+      "polygons": 52,
+      "vertices": 54
+    },
+    {
+      "name": "Dorsal scaphotriquetral ligament.r",
+      "type": "MESH",
+      "polygons": 52,
+      "vertices": 54
+    },
+    {
+      "name": "Dorsal tarsometatarsal ligaments.l",
+      "type": "MESH",
+      "polygons": 196,
+      "vertices": 204
+    },
+    {
+      "name": "Dorsal tarsometatarsal ligaments.r",
+      "type": "MESH",
+      "polygons": 196,
+      "vertices": 204
+    },
+    {
+      "name": "Dorsal ulnocarpal ligament.l",
+      "type": "MESH",
+      "polygons": 60,
+      "vertices": 64
+    },
+    {
+      "name": "Dorsal ulnocarpal ligament.r",
+      "type": "MESH",
+      "polygons": 60,
+      "vertices": 64
+    },
+    {
+      "name": "External intercostal membrane.l",
+      "type": "MESH",
+      "polygons": 3368,
+      "vertices": 3384
+    },
+    {
+      "name": "External intercostal membrane.r",
+      "type": "MESH",
+      "polygons": 3368,
+      "vertices": 3384
+    },
+    {
+      "name": "Fibular collateral ligament.l",
+      "type": "MESH",
+      "polygons": 40,
+      "vertices": 42
+    },
+    {
+      "name": "Fibular collateral ligament.r",
+      "type": "MESH",
+      "polygons": 40,
+      "vertices": 42
+    },
+    {
+      "name": "Frenula capsulae.l",
+      "type": "MESH",
+      "polygons": 432,
+      "vertices": 495
+    },
+    {
+      "name": "Frenula capsulae.r",
+      "type": "MESH",
+      "polygons": 432,
+      "vertices": 495
+    },
+    {
+      "name": "Glenoid labrum.l",
+      "type": "MESH",
+      "polygons": 424,
+      "vertices": 424
+    },
+    {
+      "name": "Glenoid labrum.r",
+      "type": "MESH",
+      "polygons": 424,
+      "vertices": 424
+    },
+    {
+      "name": "Iliolumbar ligament.l",
+      "type": "MESH",
+      "polygons": 56,
+      "vertices": 60
+    },
+    {
+      "name": "Iliolumbar ligament.r",
+      "type": "MESH",
+      "polygons": 56,
+      "vertices": 60
+    },
+    {
+      "name": "Inferior glenohumeral ligament.l",
+      "type": "MESH",
+      "polygons": 160,
+      "vertices": 162
+    },
+    {
+      "name": "Inferior glenohumeral ligament.r",
+      "type": "MESH",
+      "polygons": 160,
+      "vertices": 162
+    },
+    {
+      "name": "Inferior pubic ligament",
+      "type": "MESH",
+      "polygons": 48,
+      "vertices": 50
+    },
+    {
+      "name": "Inferior transverse scapular ligament.l",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Inferior transverse scapular ligament.r",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Infrapatellar fat pad.l",
+      "type": "MESH",
+      "polygons": 384,
+      "vertices": 386
+    },
+    {
+      "name": "Infrapatellar fat pad.r",
+      "type": "MESH",
+      "polygons": 384,
+      "vertices": 386
+    },
+    {
+      "name": "Interclavicular ligament.l",
+      "type": "MESH",
+      "polygons": 40,
+      "vertices": 42
+    },
+    {
+      "name": "Interclavicular ligament.r",
+      "type": "MESH",
+      "polygons": 40,
+      "vertices": 42
+    },
+    {
+      "name": "Intercornual ligament.l",
+      "type": "MESH",
+      "polygons": 28,
+      "vertices": 30
+    },
+    {
+      "name": "Intercornual ligament.r",
+      "type": "MESH",
+      "polygons": 28,
+      "vertices": 30
+    },
+    {
+      "name": "Intercuneiform interosseous ligaments.l",
+      "type": "MESH",
+      "polygons": 12,
+      "vertices": 16
+    },
+    {
+      "name": "Intercuneiform interosseous ligaments.r",
+      "type": "MESH",
+      "polygons": 12,
+      "vertices": 16
+    },
+    {
+      "name": "Internal intercostal membrane.l",
+      "type": "MESH",
+      "polygons": 2360,
+      "vertices": 2380
+    },
+    {
+      "name": "Internal intercostal membrane.r",
+      "type": "MESH",
+      "polygons": 2360,
+      "vertices": 2380
+    },
+    {
+      "name": "Interosseous membrane of forearm.l",
+      "type": "MESH",
+      "polygons": 2766,
+      "vertices": 1385
+    },
+    {
+      "name": "Interosseous membrane of forearm.r",
+      "type": "MESH",
+      "polygons": 2766,
+      "vertices": 1385
+    },
+    {
+      "name": "Interosseous membrane of leg.l",
+      "type": "MESH",
+      "polygons": 12642,
+      "vertices": 6321
+    },
+    {
+      "name": "Interosseous membrane of leg.r",
+      "type": "MESH",
+      "polygons": 12642,
+      "vertices": 6321
+    },
+    {
+      "name": "Interosseous metacarpal ligaments.l",
+      "type": "MESH",
+      "polygons": 24,
+      "vertices": 32
+    },
+    {
+      "name": "Interosseous metacarpal ligaments.r",
+      "type": "MESH",
+      "polygons": 24,
+      "vertices": 32
+    },
+    {
+      "name": "Interosseous sacro-iliac ligament.l",
+      "type": "MESH",
+      "polygons": 100,
+      "vertices": 102
+    },
+    {
+      "name": "Interosseous sacro-iliac ligament.r",
+      "type": "MESH",
+      "polygons": 100,
+      "vertices": 102
+    },
+    {
+      "name": "Interpubic disc",
+      "type": "MESH",
+      "polygons": 208,
+      "vertices": 210
+    },
+    {
+      "name": "Intersesamoid ligament.l",
+      "type": "MESH",
+      "polygons": 28,
+      "vertices": 30
+    },
+    {
+      "name": "Intersesamoid ligament.r",
+      "type": "MESH",
+      "polygons": 28,
+      "vertices": 30
+    },
+    {
+      "name": "Interspinous ligaments",
+      "type": "MESH",
+      "polygons": 292,
+      "vertices": 294
+    },
+    {
+      "name": "Intertransverse ligaments.l",
+      "type": "MESH",
+      "polygons": 5720,
+      "vertices": 5722
+    },
+    {
+      "name": "Intertransverse ligaments.r",
+      "type": "MESH",
+      "polygons": 5720,
+      "vertices": 5722
+    },
+    {
+      "name": "Intervertebral disc C2-C3",
+      "type": "MESH",
+      "polygons": 810,
+      "vertices": 426
+    },
+    {
+      "name": "Intervertebral disc C3-C4",
+      "type": "MESH",
+      "polygons": 654,
+      "vertices": 346
+    },
+    {
+      "name": "Intervertebral disc C4-C5",
+      "type": "MESH",
+      "polygons": 822,
+      "vertices": 430
+    },
+    {
+      "name": "Intervertebral disc C5-C6",
+      "type": "MESH",
+      "polygons": 930,
+      "vertices": 486
+    },
+    {
+      "name": "Intervertebral disc C6-C7",
+      "type": "MESH",
+      "polygons": 800,
+      "vertices": 415
+    },
+    {
+      "name": "Intervertebral disc C7-T1",
+      "type": "MESH",
+      "polygons": 1140,
+      "vertices": 586
+    },
+    {
+      "name": "Intervertebral disc L1-L2",
+      "type": "MESH",
+      "polygons": 3058,
+      "vertices": 1568
+    },
+    {
+      "name": "Intervertebral disc L2-L3",
+      "type": "MESH",
+      "polygons": 3302,
+      "vertices": 1696
+    },
+    {
+      "name": "Intervertebral disc L3-L4",
+      "type": "MESH",
+      "polygons": 3040,
+      "vertices": 1560
+    },
+    {
+      "name": "Intervertebral disc L4-L5",
+      "type": "MESH",
+      "polygons": 3216,
+      "vertices": 1645
+    },
+    {
+      "name": "Intervertebral disc L5-S1",
+      "type": "MESH",
+      "polygons": 3498,
+      "vertices": 1795
+    },
+    {
+      "name": "Intervertebral disc T1-T2",
+      "type": "MESH",
+      "polygons": 1208,
+      "vertices": 628
+    },
+    {
+      "name": "Intervertebral disc T10-T11",
+      "type": "MESH",
+      "polygons": 2770,
+      "vertices": 1437
+    },
+    {
+      "name": "Intervertebral disc T11-T12",
+      "type": "MESH",
+      "polygons": 3300,
+      "vertices": 1698
+    },
+    {
+      "name": "Intervertebral disc T12-L1",
+      "type": "MESH",
+      "polygons": 3246,
+      "vertices": 1666
+    },
+    {
+      "name": "Intervertebral disc T2-T3",
+      "type": "MESH",
+      "polygons": 1272,
+      "vertices": 664
+    },
+    {
+      "name": "Intervertebral disc T3-T4",
+      "type": "MESH",
+      "polygons": 1310,
+      "vertices": 682
+    },
+    {
+      "name": "Intervertebral disc T4-T5",
+      "type": "MESH",
+      "polygons": 1600,
+      "vertices": 817
+    },
+    {
+      "name": "Intervertebral disc T5-T6",
+      "type": "MESH",
+      "polygons": 1684,
+      "vertices": 871
+    },
+    {
+      "name": "Intervertebral disc T6-T7",
+      "type": "MESH",
+      "polygons": 2326,
+      "vertices": 1196
+    },
+    {
+      "name": "Intervertebral disc T7-T8",
+      "type": "MESH",
+      "polygons": 2572,
+      "vertices": 1331
+    },
+    {
+      "name": "Intervertebral disc T8-T9",
+      "type": "MESH",
+      "polygons": 2786,
+      "vertices": 1447
+    },
+    {
+      "name": "Intervertebral disc T9-T10",
+      "type": "MESH",
+      "polygons": 1186,
+      "vertices": 626
+    },
+    {
+      "name": "Intra-articular ligament of head of rib",
+      "type": "MESH",
+      "polygons": 54,
+      "vertices": 72
+    },
+    {
+      "name": "Intra-articular ligament of head of rib.r",
+      "type": "MESH",
+      "polygons": 54,
+      "vertices": 72
+    },
+    {
+      "name": "Ischiofemoral ligament.l",
+      "type": "MESH",
+      "polygons": 336,
+      "vertices": 338
+    },
+    {
+      "name": "Ischiofemoral ligament.r",
+      "type": "MESH",
+      "polygons": 336,
+      "vertices": 338
+    },
+    {
+      "name": "Lateral meniscus.l",
+      "type": "MESH",
+      "polygons": 234,
+      "vertices": 236
+    },
+    {
+      "name": "Lateral meniscus.r",
+      "type": "MESH",
+      "polygons": 234,
+      "vertices": 236
+    },
+    {
+      "name": "Lateral talocalcaneal ligament.l",
+      "type": "MESH",
+      "polygons": 28,
+      "vertices": 30
+    },
+    {
+      "name": "Lateral talocalcaneal ligament.r",
+      "type": "MESH",
+      "polygons": 28,
+      "vertices": 30
+    },
+    {
+      "name": "Lateral temporomandibular ligament.l",
+      "type": "MESH",
+      "polygons": 38,
+      "vertices": 40
+    },
+    {
+      "name": "Lateral temporomandibular ligament.r",
+      "type": "MESH",
+      "polygons": 38,
+      "vertices": 40
+    },
+    {
+      "name": "Lateral thyrohyoid ligament.l",
+      "type": "MESH",
+      "polygons": 912,
+      "vertices": 458
+    },
+    {
+      "name": "Lateral thyrohyoid ligament.r",
+      "type": "MESH",
+      "polygons": 912,
+      "vertices": 458
+    },
+    {
+      "name": "Ligament of head of femur.l",
+      "type": "MESH",
+      "polygons": 390,
+      "vertices": 429
+    },
+    {
+      "name": "Ligament of head of femur.r",
+      "type": "MESH",
+      "polygons": 390,
+      "vertices": 429
+    },
+    {
+      "name": "Ligamenta flava",
+      "type": "MESH",
+      "polygons": 2364,
+      "vertices": 2366
+    },
+    {
+      "name": "Long plantar ligament.l",
+      "type": "MESH",
+      "polygons": 3486,
+      "vertices": 1741
+    },
+    {
+      "name": "Long plantar ligament.r",
+      "type": "MESH",
+      "polygons": 3486,
+      "vertices": 1741
+    },
+    {
+      "name": "Lunotriquetral interosseous ligament.l",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Lunotriquetral interosseous ligament.r",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Medial meniscus.l",
+      "type": "MESH",
+      "polygons": 142,
+      "vertices": 144
+    },
+    {
+      "name": "Medial meniscus.r",
+      "type": "MESH",
+      "polygons": 142,
+      "vertices": 144
+    },
+    {
+      "name": "Medial talocalcaneal ligament.l",
+      "type": "MESH",
+      "polygons": 68,
+      "vertices": 70
+    },
+    {
+      "name": "Medial talocalcaneal ligament.r",
+      "type": "MESH",
+      "polygons": 68,
+      "vertices": 70
+    },
+    {
+      "name": "Median cricothyroid ligament",
+      "type": "MESH",
+      "polygons": 1872,
+      "vertices": 1068
+    },
+    {
+      "name": "Median thyrohyoid ligament",
+      "type": "MESH",
+      "polygons": 2753,
+      "vertices": 1388
+    },
+    {
+      "name": "Meniscopatellar ligament.l",
+      "type": "MESH",
+      "polygons": 76,
+      "vertices": 80
+    },
+    {
+      "name": "Meniscopatellar ligament.r",
+      "type": "MESH",
+      "polygons": 76,
+      "vertices": 80
+    },
+    {
+      "name": "Metatarsal interosseous ligaments.l",
+      "type": "MESH",
+      "polygons": 24,
+      "vertices": 32
+    },
+    {
+      "name": "Metatarsal interosseous ligaments.r",
+      "type": "MESH",
+      "polygons": 24,
+      "vertices": 32
+    },
+    {
+      "name": "Middle glenohumeral ligament.l",
+      "type": "MESH",
+      "polygons": 140,
+      "vertices": 144
+    },
+    {
+      "name": "Middle glenohumeral ligament.r",
+      "type": "MESH",
+      "polygons": 140,
+      "vertices": 144
+    },
+    {
+      "name": "Nuchal ligament",
+      "type": "MESH",
+      "polygons": 324,
+      "vertices": 326
+    },
+    {
+      "name": "Nucleus pulposus C2-C3",
+      "type": "MESH",
+      "polygons": 512,
+      "vertices": 482
+    },
+    {
+      "name": "Nucleus pulposus C3-C4",
+      "type": "MESH",
+      "polygons": 512,
+      "vertices": 482
+    },
+    {
+      "name": "Nucleus pulposus C4-C5",
+      "type": "MESH",
+      "polygons": 512,
+      "vertices": 482
+    },
+    {
+      "name": "Nucleus pulposus C5-C6",
+      "type": "MESH",
+      "polygons": 512,
+      "vertices": 482
+    },
+    {
+      "name": "Nucleus pulposus C6-C7",
+      "type": "MESH",
+      "polygons": 512,
+      "vertices": 482
+    },
+    {
+      "name": "Nucleus pulposus C7-T1",
+      "type": "MESH",
+      "polygons": 512,
+      "vertices": 482
+    },
+    {
+      "name": "Nucleus pulposus L1-L2",
+      "type": "MESH",
+      "polygons": 512,
+      "vertices": 482
+    },
+    {
+      "name": "Nucleus pulposus L2-L3",
+      "type": "MESH",
+      "polygons": 512,
+      "vertices": 482
+    },
+    {
+      "name": "Nucleus pulposus L3-L4",
+      "type": "MESH",
+      "polygons": 512,
+      "vertices": 482
+    },
+    {
+      "name": "Nucleus pulposus L4-L5",
+      "type": "MESH",
+      "polygons": 512,
+      "vertices": 482
+    },
+    {
+      "name": "Nucleus pulposus L5-S1",
+      "type": "MESH",
+      "polygons": 512,
+      "vertices": 482
+    },
+    {
+      "name": "Nucleus pulposus T1-T2",
+      "type": "MESH",
+      "polygons": 512,
+      "vertices": 482
+    },
+    {
+      "name": "Nucleus pulposus T10-T11",
+      "type": "MESH",
+      "polygons": 512,
+      "vertices": 482
+    },
+    {
+      "name": "Nucleus pulposus T11-T12",
+      "type": "MESH",
+      "polygons": 512,
+      "vertices": 482
+    },
+    {
+      "name": "Nucleus pulposus T12-L1",
+      "type": "MESH",
+      "polygons": 512,
+      "vertices": 482
+    },
+    {
+      "name": "Nucleus pulposus T2-T3",
+      "type": "MESH",
+      "polygons": 512,
+      "vertices": 482
+    },
+    {
+      "name": "Nucleus pulposus T3-T4",
+      "type": "MESH",
+      "polygons": 512,
+      "vertices": 482
+    },
+    {
+      "name": "Nucleus pulposus T4-T5",
+      "type": "MESH",
+      "polygons": 512,
+      "vertices": 482
+    },
+    {
+      "name": "Nucleus pulposus T5-T6",
+      "type": "MESH",
+      "polygons": 512,
+      "vertices": 482
+    },
+    {
+      "name": "Nucleus pulposus T6-T7",
+      "type": "MESH",
+      "polygons": 512,
+      "vertices": 482
+    },
+    {
+      "name": "Nucleus pulposus T7-T8",
+      "type": "MESH",
+      "polygons": 512,
+      "vertices": 482
+    },
+    {
+      "name": "Nucleus pulposus T8-T9",
+      "type": "MESH",
+      "polygons": 512,
+      "vertices": 482
+    },
+    {
+      "name": "Nucleus pulposus T9-T10",
+      "type": "MESH",
+      "polygons": 512,
+      "vertices": 482
+    },
+    {
+      "name": "Oblique cord.l",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Oblique cord.r",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Oblique popliteal ligament.l",
+      "type": "MESH",
+      "polygons": 184,
+      "vertices": 186
+    },
+    {
+      "name": "Oblique popliteal ligament.r",
+      "type": "MESH",
+      "polygons": 184,
+      "vertices": 186
+    },
+    {
+      "name": "Obturator membrane.l",
+      "type": "MESH",
+      "polygons": 536,
+      "vertices": 538
+    },
+    {
+      "name": "Obturator membrane.r",
+      "type": "MESH",
+      "polygons": 536,
+      "vertices": 538
+    },
+    {
+      "name": "Palmar capitohamate ligament.l",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Palmar capitohamate ligament.r",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Palmar carpometacarpal ligaments.l",
+      "type": "MESH",
+      "polygons": 208,
+      "vertices": 220
+    },
+    {
+      "name": "Palmar carpometacarpal ligaments.r",
+      "type": "MESH",
+      "polygons": 208,
+      "vertices": 220
+    },
+    {
+      "name": "Palmar interphalangeal ligaments.l",
+      "type": "MESH",
+      "polygons": 432,
+      "vertices": 450
+    },
+    {
+      "name": "Palmar interphalangeal ligaments.r",
+      "type": "MESH",
+      "polygons": 432,
+      "vertices": 450
+    },
+    {
+      "name": "Palmar lunotriquetral ligament.l",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Palmar lunotriquetral ligament.r",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Palmar metacarpal ligaments.l",
+      "type": "MESH",
+      "polygons": 24,
+      "vertices": 32
+    },
+    {
+      "name": "Palmar metacarpal ligaments.r",
+      "type": "MESH",
+      "polygons": 24,
+      "vertices": 32
+    },
+    {
+      "name": "Palmar radio-ulnar ligament.l",
+      "type": "MESH",
+      "polygons": 40,
+      "vertices": 42
+    },
+    {
+      "name": "Palmar radio-ulnar ligament.r",
+      "type": "MESH",
+      "polygons": 40,
+      "vertices": 42
+    },
+    {
+      "name": "Palmar scaphotriquetral ligament.l",
+      "type": "MESH",
+      "polygons": 128,
+      "vertices": 130
+    },
+    {
+      "name": "Palmar scaphotriquetral ligament.r",
+      "type": "MESH",
+      "polygons": 128,
+      "vertices": 130
+    },
+    {
+      "name": "Palmar trapezoideocapitate ligament.l",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Palmar trapezoideocapitate ligament.r",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Pisohamate ligament.l",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Pisohamate ligament.r",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Pisometacarpal ligament.l",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Pisometacarpal ligament.r",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Pisotriquetral ligament.l",
+      "type": "MESH",
+      "polygons": 132,
+      "vertices": 140
+    },
+    {
+      "name": "Pisotriquetral ligament.r",
+      "type": "MESH",
+      "polygons": 132,
+      "vertices": 140
+    },
+    {
+      "name": "Plantar calcaneocuboid ligament.l",
+      "type": "MESH",
+      "polygons": 68,
+      "vertices": 70
+    },
+    {
+      "name": "Plantar calcaneocuboid ligament.r",
+      "type": "MESH",
+      "polygons": 68,
+      "vertices": 70
+    },
+    {
+      "name": "Plantar calcaneonavicular ligament.l",
+      "type": "MESH",
+      "polygons": 16,
+      "vertices": 18
+    },
+    {
+      "name": "Plantar calcaneonavicular ligament.r",
+      "type": "MESH",
+      "polygons": 16,
+      "vertices": 18
+    },
+    {
+      "name": "Plantar cuboideonavicular ligament.l",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Plantar cuboideonavicular ligament.r",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Plantar cuneocuboid ligament.l",
+      "type": "MESH",
+      "polygons": 48,
+      "vertices": 50
+    },
+    {
+      "name": "Plantar cuneocuboid ligament.r",
+      "type": "MESH",
+      "polygons": 48,
+      "vertices": 50
+    },
+    {
+      "name": "Plantar cuneonavicular ligaments.l",
+      "type": "MESH",
+      "polygons": 26,
+      "vertices": 32
+    },
+    {
+      "name": "Plantar cuneonavicular ligaments.r",
+      "type": "MESH",
+      "polygons": 26,
+      "vertices": 32
+    },
+    {
+      "name": "Plantar intercuneiform ligaments.l",
+      "type": "MESH",
+      "polygons": 12,
+      "vertices": 16
+    },
+    {
+      "name": "Plantar intercuneiform ligaments.r",
+      "type": "MESH",
+      "polygons": 12,
+      "vertices": 16
+    },
+    {
+      "name": "Plantar interphalangeal ligaments.l",
+      "type": "MESH",
+      "polygons": 808,
+      "vertices": 826
+    },
+    {
+      "name": "Plantar interphalangeal ligaments.r",
+      "type": "MESH",
+      "polygons": 808,
+      "vertices": 826
+    },
+    {
+      "name": "Plantar metatarsal ligaments.l",
+      "type": "MESH",
+      "polygons": 24,
+      "vertices": 32
+    },
+    {
+      "name": "Plantar metatarsal ligaments.r",
+      "type": "MESH",
+      "polygons": 24,
+      "vertices": 32
+    },
+    {
+      "name": "Plantar metatarsophalangeal ligaments.l",
+      "type": "MESH",
+      "polygons": 440,
+      "vertices": 450
+    },
+    {
+      "name": "Plantar metatarsophalangeal ligaments.r",
+      "type": "MESH",
+      "polygons": 440,
+      "vertices": 450
+    },
+    {
+      "name": "Plantar tarsometatarsal ligaments.l",
+      "type": "MESH",
+      "polygons": 50,
+      "vertices": 60
+    },
+    {
+      "name": "Plantar tarsometatarsal ligaments.r",
+      "type": "MESH",
+      "polygons": 50,
+      "vertices": 60
+    },
+    {
+      "name": "Popliteofibular ligament.l",
+      "type": "MESH",
+      "polygons": 448,
+      "vertices": 450
+    },
+    {
+      "name": "Popliteofibular ligament.r",
+      "type": "MESH",
+      "polygons": 448,
+      "vertices": 450
+    },
+    {
+      "name": "Posterior cruciate ligament.l",
+      "type": "MESH",
+      "polygons": 404,
+      "vertices": 396
+    },
+    {
+      "name": "Posterior cruciate ligament.r",
+      "type": "MESH",
+      "polygons": 404,
+      "vertices": 396
+    },
+    {
+      "name": "Posterior ligament of fibular head.l",
+      "type": "MESH",
+      "polygons": 88,
+      "vertices": 90
+    },
+    {
+      "name": "Posterior ligament of fibular head.r",
+      "type": "MESH",
+      "polygons": 88,
+      "vertices": 90
+    },
+    {
+      "name": "Posterior longitudinal ligament",
+      "type": "MESH",
+      "polygons": 3768,
+      "vertices": 3770
+    },
+    {
+      "name": "Posterior meniscotibial ligament (Lateral meniscus).l",
+      "type": "MESH",
+      "polygons": 96,
+      "vertices": 98
+    },
+    {
+      "name": "Posterior meniscotibial ligament (Lateral meniscus).r",
+      "type": "MESH",
+      "polygons": 96,
+      "vertices": 98
+    },
+    {
+      "name": "Posterior meniscotibial ligament (Medial meniscus).l",
+      "type": "MESH",
+      "polygons": 152,
+      "vertices": 154
+    },
+    {
+      "name": "Posterior meniscotibial ligament (Medial meniscus).r",
+      "type": "MESH",
+      "polygons": 152,
+      "vertices": 154
+    },
+    {
+      "name": "Posterior sacro-iliac ligament.l",
+      "type": "MESH",
+      "polygons": 2728,
+      "vertices": 2668
+    },
+    {
+      "name": "Posterior sacro-iliac ligament.r",
+      "type": "MESH",
+      "polygons": 2728,
+      "vertices": 2668
+    },
+    {
+      "name": "Posterior sternoclavicular ligament.l",
+      "type": "MESH",
+      "polygons": 68,
+      "vertices": 70
+    },
+    {
+      "name": "Posterior sternoclavicular ligament.r",
+      "type": "MESH",
+      "polygons": 68,
+      "vertices": 70
+    },
+    {
+      "name": "Posterior talocalcaneal ligament.l",
+      "type": "MESH",
+      "polygons": 40,
+      "vertices": 42
+    },
+    {
+      "name": "Posterior talocalcaneal ligament.r",
+      "type": "MESH",
+      "polygons": 40,
+      "vertices": 42
+    },
+    {
+      "name": "Posterior talofibular ligament.l",
+      "type": "MESH",
+      "polygons": 16,
+      "vertices": 18
+    },
+    {
+      "name": "Posterior talofibular ligament.r",
+      "type": "MESH",
+      "polygons": 16,
+      "vertices": 18
+    },
+    {
+      "name": "Posterior tibiofibular ligament.l",
+      "type": "MESH",
+      "polygons": 124,
+      "vertices": 126
+    },
+    {
+      "name": "Posterior tibiofibular ligament.r",
+      "type": "MESH",
+      "polygons": 124,
+      "vertices": 126
+    },
+    {
+      "name": "Posterior tibiotalar ligament.l",
+      "type": "MESH",
+      "polygons": 28,
+      "vertices": 30
+    },
+    {
+      "name": "Posterior tibiotalar ligament.r",
+      "type": "MESH",
+      "polygons": 28,
+      "vertices": 30
+    },
+    {
+      "name": "Pterygospinous ligament.l",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Pterygospinous ligament.r",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Pubic symphysis",
+      "type": "MESH",
+      "polygons": 208,
+      "vertices": 210
+    },
+    {
+      "name": "Pubofemoral ligament.l",
+      "type": "MESH",
+      "polygons": 196,
+      "vertices": 198
+    },
+    {
+      "name": "Pubofemoral ligament.r",
+      "type": "MESH",
+      "polygons": 196,
+      "vertices": 198
+    },
+    {
+      "name": "Quadrangular membrane.l",
+      "type": "MESH",
+      "polygons": 4592,
+      "vertices": 2296
+    },
+    {
+      "name": "Quadrangular membrane.r",
+      "type": "MESH",
+      "polygons": 4592,
+      "vertices": 2296
+    },
+    {
+      "name": "Quadrate ligament.l",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Quadrate ligament.r",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Radial collateral ligament of wrist joint.l",
+      "type": "MESH",
+      "polygons": 72,
+      "vertices": 70
+    },
+    {
+      "name": "Radial collateral ligament of wrist joint.r",
+      "type": "MESH",
+      "polygons": 72,
+      "vertices": 70
+    },
+    {
+      "name": "Radial collateral ligament.l",
+      "type": "MESH",
+      "polygons": 48,
+      "vertices": 50
+    },
+    {
+      "name": "Radial collateral ligament.r",
+      "type": "MESH",
+      "polygons": 48,
+      "vertices": 50
+    },
+    {
+      "name": "Radiate carpal ligament.l",
+      "type": "MESH",
+      "polygons": 204,
+      "vertices": 206
+    },
+    {
+      "name": "Radiate carpal ligament.r",
+      "type": "MESH",
+      "polygons": 204,
+      "vertices": 206
+    },
+    {
+      "name": "Radiate ligament of head of rib.l",
+      "type": "MESH",
+      "polygons": 1728,
+      "vertices": 1752
+    },
+    {
+      "name": "Radiate ligament of head of rib.r",
+      "type": "MESH",
+      "polygons": 1728,
+      "vertices": 1752
+    },
+    {
+      "name": "Radiocapitate ligament.l",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Radiocapitate ligament.r",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Radioscaphocapitate ligament.l",
+      "type": "MESH",
+      "polygons": 10,
+      "vertices": 12
+    },
+    {
+      "name": "Radioscaphocapitate ligament.r",
+      "type": "MESH",
+      "polygons": 10,
+      "vertices": 12
+    },
+    {
+      "name": "Sacrococcygeal symphysis",
+      "type": "MESH",
+      "polygons": 178,
+      "vertices": 96
+    },
+    {
+      "name": "Sacrospinous ligament.l",
+      "type": "MESH",
+      "polygons": 140,
+      "vertices": 142
+    },
+    {
+      "name": "Sacrospinous ligament.r",
+      "type": "MESH",
+      "polygons": 140,
+      "vertices": 142
+    },
+    {
+      "name": "Sacrotuberous ligament.l",
+      "type": "MESH",
+      "polygons": 328,
+      "vertices": 330
+    },
+    {
+      "name": "Sacrotuberous ligament.r",
+      "type": "MESH",
+      "polygons": 328,
+      "vertices": 330
+    },
+    {
+      "name": "Scaphocapitate ligament.l",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Scaphocapitate ligament.r",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Scapholunate interosseous ligament.l",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Scapholunate interosseous ligament.r",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Scaphotrapeziotrapezoidal ligament.l",
+      "type": "MESH",
+      "polygons": 72,
+      "vertices": 74
+    },
+    {
+      "name": "Scaphotrapeziotrapezoidal ligament.r",
+      "type": "MESH",
+      "polygons": 72,
+      "vertices": 74
+    },
+    {
+      "name": "Sphenomandibular ligament.l",
+      "type": "MESH",
+      "polygons": 144,
+      "vertices": 146
+    },
+    {
+      "name": "Sphenomandibular ligament.r",
+      "type": "MESH",
+      "polygons": 144,
+      "vertices": 146
+    },
+    {
+      "name": "Stylohyoid ligament.l",
+      "type": "MESH",
+      "polygons": 312,
+      "vertices": 314
+    },
+    {
+      "name": "Stylohyoid ligament.r",
+      "type": "MESH",
+      "polygons": 312,
+      "vertices": 314
+    },
+    {
+      "name": "Stylomandibular ligament.l",
+      "type": "MESH",
+      "polygons": 22,
+      "vertices": 24
+    },
+    {
+      "name": "Stylomandibular ligament.r",
+      "type": "MESH",
+      "polygons": 22,
+      "vertices": 24
+    },
+    {
+      "name": "Superficial part of tibial collateral ligament.l",
+      "type": "MESH",
+      "polygons": 76,
+      "vertices": 78
+    },
+    {
+      "name": "Superficial part of tibial collateral ligament.r",
+      "type": "MESH",
+      "polygons": 248,
+      "vertices": 250
+    },
+    {
+      "name": "Superior glenohumeral ligament.l",
+      "type": "MESH",
+      "polygons": 100,
+      "vertices": 102
+    },
+    {
+      "name": "Superior glenohumeral ligament.r",
+      "type": "MESH",
+      "polygons": 100,
+      "vertices": 102
+    },
+    {
+      "name": "Superior pubic ligament",
+      "type": "MESH",
+      "polygons": 48,
+      "vertices": 50
+    },
+    {
+      "name": "Superior transverse scapular ligament.l",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Superior transverse scapular ligament.r",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Supraspinous ligament",
+      "type": "MESH",
+      "polygons": 436,
+      "vertices": 436
+    },
+    {
+      "name": "Talocalcaneal interosseous ligament.l",
+      "type": "MESH",
+      "polygons": 212,
+      "vertices": 216
+    },
+    {
+      "name": "Talocalcaneal interosseous ligament.r",
+      "type": "MESH",
+      "polygons": 212,
+      "vertices": 216
+    },
+    {
+      "name": "Talonavicular ligament.l",
+      "type": "MESH",
+      "polygons": 68,
+      "vertices": 70
+    },
+    {
+      "name": "Talonavicular ligament.r",
+      "type": "MESH",
+      "polygons": 68,
+      "vertices": 70
+    },
+    {
+      "name": "Tibiocalcaneal ligament.l",
+      "type": "MESH",
+      "polygons": 28,
+      "vertices": 30
+    },
+    {
+      "name": "Tibiocalcaneal ligament.r",
+      "type": "MESH",
+      "polygons": 28,
+      "vertices": 30
+    },
+    {
+      "name": "Tibionavicular ligament.l",
+      "type": "MESH",
+      "polygons": 116,
+      "vertices": 120
+    },
+    {
+      "name": "Tibionavicular ligament.r",
+      "type": "MESH",
+      "polygons": 116,
+      "vertices": 120
+    },
+    {
+      "name": "Transverse acetabular ligament.l",
+      "type": "MESH",
+      "polygons": 284,
+      "vertices": 286
+    },
+    {
+      "name": "Transverse acetabular ligament.r",
+      "type": "MESH",
+      "polygons": 284,
+      "vertices": 286
+    },
+    {
+      "name": "Transverse humeral ligament.l",
+      "type": "MESH",
+      "polygons": 68,
+      "vertices": 70
+    },
+    {
+      "name": "Transverse humeral ligament.r",
+      "type": "MESH",
+      "polygons": 232,
+      "vertices": 234
+    },
+    {
+      "name": "Transverse ligament of knee.l",
+      "type": "MESH",
+      "polygons": 216,
+      "vertices": 218
+    },
+    {
+      "name": "Transverse ligament of knee.r",
+      "type": "MESH",
+      "polygons": 216,
+      "vertices": 218
+    },
+    {
+      "name": "Transverse part of iliofemoral ligament.l",
+      "type": "MESH",
+      "polygons": 232,
+      "vertices": 234
+    },
+    {
+      "name": "Transverse part of iliofemoral ligament.r",
+      "type": "MESH",
+      "polygons": 232,
+      "vertices": 234
+    },
+    {
+      "name": "Transverse tibiofibular ligament.l",
+      "type": "MESH",
+      "polygons": 52,
+      "vertices": 54
+    },
+    {
+      "name": "Transverse tibiofibular ligament.r",
+      "type": "MESH",
+      "polygons": 52,
+      "vertices": 54
+    },
+    {
+      "name": "Trapeziotrapezoidal interosseous ligament.l",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Trapeziotrapezoidal interosseous ligament.r",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Trapezoid ligament.l",
+      "type": "MESH",
+      "polygons": 28,
+      "vertices": 30
+    },
+    {
+      "name": "Trapezoid ligament.r",
+      "type": "MESH",
+      "polygons": 28,
+      "vertices": 30
+    },
+    {
+      "name": "Trapezoideocapitate interosseous ligament.l",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Trapezoideocapitate interosseous ligament.r",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Triquetrocapitate ligament.l",
+      "type": "MESH",
+      "polygons": 10,
+      "vertices": 12
+    },
+    {
+      "name": "Triquetrocapitate ligament.r",
+      "type": "MESH",
+      "polygons": 10,
+      "vertices": 12
+    },
+    {
+      "name": "Triquetrohamate ligament.l",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Triquetrohamate ligament.r",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Triradiate cartilage.l",
+      "type": "MESH",
+      "polygons": 802,
+      "vertices": 801
+    },
+    {
+      "name": "Triradiate cartilage.r",
+      "type": "MESH",
+      "polygons": 802,
+      "vertices": 801
+    },
+    {
+      "name": "Ulnar collateral ligament of wrist joint.l",
+      "type": "MESH",
+      "polygons": 64,
+      "vertices": 66
+    },
+    {
+      "name": "Ulnar collateral ligament of wrist joint.r",
+      "type": "MESH",
+      "polygons": 64,
+      "vertices": 66
+    },
+    {
+      "name": "Ulnar collateral ligament.l",
+      "type": "MESH",
+      "polygons": 76,
+      "vertices": 78
+    },
+    {
+      "name": "Ulnar collateral ligament.r",
+      "type": "MESH",
+      "polygons": 76,
+      "vertices": 78
+    },
+    {
+      "name": "Ulnocapitate ligament.l",
+      "type": "MESH",
+      "polygons": 64,
+      "vertices": 66
+    },
+    {
+      "name": "Ulnocapitate ligament.r",
+      "type": "MESH",
+      "polygons": 64,
+      "vertices": 66
+    },
+    {
+      "name": "Ulnolunate ligament.l",
+      "type": "MESH",
+      "polygons": 52,
+      "vertices": 54
+    },
+    {
+      "name": "Ulnolunate ligament.r",
+      "type": "MESH",
+      "polygons": 52,
+      "vertices": 54
+    },
+    {
+      "name": "Ulnopisiform ligament",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Ulnopisiform ligament.l",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Ulnotriquetral ligament.l",
+      "type": "MESH",
+      "polygons": 28,
+      "vertices": 30
+    },
+    {
+      "name": "Ulnotriquetral ligament.r",
+      "type": "MESH",
+      "polygons": 28,
+      "vertices": 30
+    },
+    {
+      "name": "Zona orbicularis.l",
+      "type": "MESH",
+      "polygons": 2368,
+      "vertices": 2368
+    },
+    {
+      "name": "Zona orbicularis.r",
+      "type": "MESH",
+      "polygons": 2368,
+      "vertices": 2368
+    }
+  ]
+}

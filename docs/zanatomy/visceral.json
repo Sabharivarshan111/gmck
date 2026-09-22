@@ -1,0 +1,1813 @@
+{
+  "label": "visceral",
+  "sourceFile": "VisceralSystem100.fbx",
+  "objectCount": 301,
+  "objects": [
+    {
+      "name": "(Accessory parotid gland).l",
+      "type": "MESH",
+      "polygons": 106,
+      "vertices": 108
+    },
+    {
+      "name": "(Accessory parotid gland).r",
+      "type": "MESH",
+      "polygons": 106,
+      "vertices": 108
+    },
+    {
+      "name": "(Anteromedial basal segmental bronchus of left lung)",
+      "type": "MESH",
+      "polygons": 1440,
+      "vertices": 1476
+    },
+    {
+      "name": "(Pyramidal lobe).j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Abdominopelvic cavity.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Accessory pancreatic duct",
+      "type": "MESH",
+      "polygons": 5688,
+      "vertices": 5688
+    },
+    {
+      "name": "Adenohypophysis",
+      "type": "MESH",
+      "polygons": 678,
+      "vertices": 369
+    },
+    {
+      "name": "Angular incisure.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Anterior basal segment of left lung (SVIII).j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Anterior basal segment of right lung (SVIII).j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Anterior basal segmental bronchus of left lung (BVIII)",
+      "type": "MESH",
+      "polygons": 720,
+      "vertices": 744
+    },
+    {
+      "name": "Anterior basal segmental bronchus of right lung (BVIII)",
+      "type": "MESH",
+      "polygons": 1440,
+      "vertices": 1476
+    },
+    {
+      "name": "Anterior border of lung.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Anterior border of pancreas.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Anterior border of testis.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Anterior lateral segment of liver (VI)",
+      "type": "MESH",
+      "polygons": 1676,
+      "vertices": 1678
+    },
+    {
+      "name": "Anterior lateral segment of liver (VI).j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Anterior medial segment of liver (V)",
+      "type": "MESH",
+      "polygons": 1769,
+      "vertices": 1773
+    },
+    {
+      "name": "Anterior medial segment of liver (V).j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Anterior segment of left lung (SIII).j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Anterior segment of right lung (SIII).j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Anterior segmental bronchus of left lung (BIII)",
+      "type": "MESH",
+      "polygons": 1728,
+      "vertices": 1788
+    },
+    {
+      "name": "Anterior segmental bronchus of right lung (BIII)",
+      "type": "MESH",
+      "polygons": 2448,
+      "vertices": 2532
+    },
+    {
+      "name": "Anterior surface of kidney.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Anterior surface of liver.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Anterior surface of suprarenal gland.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Anterior wall of stomach.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Antero-inferior surface of pancreas.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Anterosuperior surface of pancreas.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Apex of bladder.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Apex of lung.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Apical segment of right lung (SI).j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Apical segmental bronchus of right lung (BI)",
+      "type": "MESH",
+      "polygons": 3312,
+      "vertices": 3408
+    },
+    {
+      "name": "Apicoposterior segment of left lung (SI+SII).j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Apicoposterior segmental bronchus of left lung (BI+BII)",
+      "type": "MESH",
+      "polygons": 3744,
+      "vertices": 3852
+    },
+    {
+      "name": "Ascending colon",
+      "type": "MESH",
+      "polygons": 8756,
+      "vertices": 8758
+    },
+    {
+      "name": "Bare area of liver.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Base of lung.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Bile duct",
+      "type": "MESH",
+      "polygons": 1008,
+      "vertices": 1020
+    },
+    {
+      "name": "Body of bladder.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Body of gallbladder.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Body of pancreas.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Body of stomach.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Bronchi.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Cardia.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Cardiac impression of liver.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Cardiac impression of lung.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Cardiac notch of left lung.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Cardiac notch.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Caudate lobe.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Colic impression of liver.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Colon.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Corpus cavernosum of penis",
+      "type": "MESH",
+      "polygons": 1288,
+      "vertices": 646
+    },
+    {
+      "name": "Corpus spongiosum of penis",
+      "type": "MESH",
+      "polygons": 560,
+      "vertices": 282
+    },
+    {
+      "name": "Costal surface of lung.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Cross Section X",
+      "type": "MESH",
+      "polygons": 0,
+      "vertices": 4
+    },
+    {
+      "name": "Cross Section Y",
+      "type": "MESH",
+      "polygons": 0,
+      "vertices": 4
+    },
+    {
+      "name": "Cross Section Z",
+      "type": "MESH",
+      "polygons": 0,
+      "vertices": 4
+    },
+    {
+      "name": "Descending colon",
+      "type": "MESH",
+      "polygons": 12372,
+      "vertices": 12372
+    },
+    {
+      "name": "Diaphragmatic surface of liver.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Diaphragmatic surface of lung.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Digestive canal.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Digestive system.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Ductus deferens.l",
+      "type": "MESH",
+      "polygons": 2448,
+      "vertices": 2460
+    },
+    {
+      "name": "Ductus deferens.r",
+      "type": "MESH",
+      "polygons": 2448,
+      "vertices": 2460
+    },
+    {
+      "name": "Duodenal impression of liver.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Duodenum",
+      "type": "MESH",
+      "polygons": 1737,
+      "vertices": 887
+    },
+    {
+      "name": "Ejaculatory duct.l",
+      "type": "MESH",
+      "polygons": 432,
+      "vertices": 444
+    },
+    {
+      "name": "Ejaculatory duct.r",
+      "type": "MESH",
+      "polygons": 432,
+      "vertices": 444
+    },
+    {
+      "name": "Endocrine glands.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Epididymis.l",
+      "type": "MESH",
+      "polygons": 216,
+      "vertices": 218
+    },
+    {
+      "name": "Epididymis.r",
+      "type": "MESH",
+      "polygons": 216,
+      "vertices": 218
+    },
+    {
+      "name": "Epiglottis",
+      "type": "MESH",
+      "polygons": 3326,
+      "vertices": 1650
+    },
+    {
+      "name": "Extrahepatic bile ducts.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Fauces.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Fibrous appendix of liver.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Fissure for ligamentum teres.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Fissure for ligamentum venosum.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Fossa for gallbladder.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Free taenia",
+      "type": "MESH",
+      "polygons": 3356,
+      "vertices": 3358
+    },
+    {
+      "name": "Fundus of bladder.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Fundus of gallbladder.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Fundus of stomach.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Gallbladder",
+      "type": "MESH",
+      "polygons": 368,
+      "vertices": 363
+    },
+    {
+      "name": "Gastric impression of liver.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Genital systems.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Gingiva",
+      "type": "MESH",
+      "polygons": 12298,
+      "vertices": 12304
+    },
+    {
+      "name": "Glans penis",
+      "type": "MESH",
+      "polygons": 1391,
+      "vertices": 694
+    },
+    {
+      "name": "Greater curvature of stomach.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Greater omentum",
+      "type": "MESH",
+      "polygons": 38984,
+      "vertices": 38986
+    },
+    {
+      "name": "Head of pancreas.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Hilum of kidney.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Hilum of lung.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Hilum of suprarenal gland.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Horizontal fissure of right lung.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Hypophysis.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Inferior border of liver.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Inferior border of lung.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Inferior border of pancreas.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Inferior lingular segment of left lung (SV).j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Inferior lingular segmental bronchus of left lung (BV)",
+      "type": "MESH",
+      "polygons": 1008,
+      "vertices": 1044
+    },
+    {
+      "name": "Inferior lobe of left lung",
+      "type": "MESH",
+      "polygons": 4629,
+      "vertices": 4637
+    },
+    {
+      "name": "Inferior lobe of right lung",
+      "type": "MESH",
+      "polygons": 4226,
+      "vertices": 4231
+    },
+    {
+      "name": "Inferior parathyroid gland.l",
+      "type": "MESH",
+      "polygons": 64,
+      "vertices": 66
+    },
+    {
+      "name": "Inferior parathyroid gland.r",
+      "type": "MESH",
+      "polygons": 64,
+      "vertices": 66
+    },
+    {
+      "name": "Inferior pole of kidney.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Inferior pole of testis.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Infundibular stalk.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Infundibulum of gallbladder.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Interlobar surface of lung.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Intermediate bronchus.r",
+      "type": "MESH",
+      "polygons": 144,
+      "vertices": 156
+    },
+    {
+      "name": "Isthmus of thyroid gland.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Jejunum",
+      "type": "MESH",
+      "polygons": 13824,
+      "vertices": 13836
+    },
+    {
+      "name": "Kidney.l",
+      "type": "MESH",
+      "polygons": 2982,
+      "vertices": 1493
+    },
+    {
+      "name": "Kidney.r",
+      "type": "MESH",
+      "polygons": 2319,
+      "vertices": 1163
+    },
+    {
+      "name": "Large intestine.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Laryngopharynx",
+      "type": "MESH",
+      "polygons": 1238,
+      "vertices": 1238
+    },
+    {
+      "name": "Larynx.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Lateral basal segment of left lung (SIX).j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Lateral basal segment of right lung (SIX).j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Lateral basal segmental bronchus of left lung (BIX)",
+      "type": "MESH",
+      "polygons": 1152,
+      "vertices": 1176
+    },
+    {
+      "name": "Lateral basal segmental bronchus of right lung (BIX)",
+      "type": "MESH",
+      "polygons": 2304,
+      "vertices": 2352
+    },
+    {
+      "name": "Lateral border of kidney.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Lateral segment of right lung (SIV).j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Lateral segmental bronchus of right lung (BIV)",
+      "type": "MESH",
+      "polygons": 1584,
+      "vertices": 1632
+    },
+    {
+      "name": "Lateral surface of testis.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Left anterior lateral segment of liver (III)",
+      "type": "MESH",
+      "polygons": 1722,
+      "vertices": 1724
+    },
+    {
+      "name": "Left anterior lateral segment of liver (III).j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Left inferior lobar bronchus",
+      "type": "MESH",
+      "polygons": 432,
+      "vertices": 444
+    },
+    {
+      "name": "Left lateral division of liver.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Left lobe of liver.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Left lung.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Left main bronchus",
+      "type": "MESH",
+      "polygons": 288,
+      "vertices": 300
+    },
+    {
+      "name": "Left medial division of liver.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Left medial segment of liver (IV)",
+      "type": "MESH",
+      "polygons": 2386,
+      "vertices": 2410
+    },
+    {
+      "name": "Left medial segment of liver (IV).j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Left part of liver.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Left posterior lateral segment of liver (II)",
+      "type": "MESH",
+      "polygons": 1658,
+      "vertices": 1660
+    },
+    {
+      "name": "Left posterior lateral segment of liver (II).j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Left superior lobar bronchus",
+      "type": "MESH",
+      "polygons": 576,
+      "vertices": 600
+    },
+    {
+      "name": "Lesser curvature of stomach.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Lesser omentum",
+      "type": "MESH",
+      "polygons": 2380,
+      "vertices": 2382
+    },
+    {
+      "name": "Lingula of left lung.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Liver",
+      "type": "MESH",
+      "polygons": 6135,
+      "vertices": 6200
+    },
+    {
+      "name": "Lobe of lung.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Lobe of thyroid gland.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Lungs.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Main portal fissure.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Major salivary glands.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Male external genitalia.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Male genital system.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Male internal genitalia.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Medial basal segment of left lung (SVII).j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Medial basal segment of right lung (SVII).j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Medial basal segmental bronchus of left lung (BVII)",
+      "type": "MESH",
+      "polygons": 2880,
+      "vertices": 2940
+    },
+    {
+      "name": "Medial basal segmental bronchus of right lung (BVII)",
+      "type": "MESH",
+      "polygons": 864,
+      "vertices": 888
+    },
+    {
+      "name": "Medial border of kidney.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Medial border of suprarenal gland.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Medial segment of right lung (SV).j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Medial segmental bronchus of right lung (BV)",
+      "type": "MESH",
+      "polygons": 1584,
+      "vertices": 1632
+    },
+    {
+      "name": "Medial surface of lung.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Medial surface of testis.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Mediastinal surface of lung.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Meso-appendix",
+      "type": "MESH",
+      "polygons": 424,
+      "vertices": 236
+    },
+    {
+      "name": "Mesocolic taenia",
+      "type": "MESH",
+      "polygons": 3396,
+      "vertices": 3398
+    },
+    {
+      "name": "Mesocolon",
+      "type": "MESH",
+      "polygons": 7884,
+      "vertices": 7886
+    },
+    {
+      "name": "Middle lobar bronchus.r",
+      "type": "MESH",
+      "polygons": 144,
+      "vertices": 156
+    },
+    {
+      "name": "Middle lobe of right lung",
+      "type": "MESH",
+      "polygons": 3698,
+      "vertices": 3708
+    },
+    {
+      "name": "Mouth.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Mucosa of nasal cavity",
+      "type": "MESH",
+      "polygons": 4904,
+      "vertices": 4860
+    },
+    {
+      "name": "Mucosa of stomach",
+      "type": "MESH",
+      "polygons": 0,
+      "vertices": 0
+    },
+    {
+      "name": "Nasopharynx",
+      "type": "MESH",
+      "polygons": 976,
+      "vertices": 978
+    },
+    {
+      "name": "Neck of gallbladder.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Neck of pancreas.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Neurohypophysis",
+      "type": "MESH",
+      "polygons": 592,
+      "vertices": 325
+    },
+    {
+      "name": "Nose.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 73
+    },
+    {
+      "name": "Notch for ligamentum teres.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Oblique fissure of left lung.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Oblique fissure of right lung.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Oesophageal impression of liver.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Oesophagus",
+      "type": "MESH",
+      "polygons": 8160,
+      "vertices": 8160
+    },
+    {
+      "name": "Oesophagus-profile",
+      "type": "MESH",
+      "polygons": 0,
+      "vertices": 48
+    },
+    {
+      "name": "Omental eminence.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Omental taenia",
+      "type": "MESH",
+      "polygons": 3116,
+      "vertices": 3118
+    },
+    {
+      "name": "Omental tuberosity of liver.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Oropharynx",
+      "type": "MESH",
+      "polygons": 1272,
+      "vertices": 1274
+    },
+    {
+      "name": "Palate.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Pancreas",
+      "type": "MESH",
+      "polygons": 5056,
+      "vertices": 2613
+    },
+    {
+      "name": "Pancreas.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Pancreatic duct",
+      "type": "MESH",
+      "polygons": 27912,
+      "vertices": 27912
+    },
+    {
+      "name": "Pancreatic notch.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Papillary process.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 39
+    },
+    {
+      "name": "Paranasal sinuses.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Parathyroid gland.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Parotid duct.l",
+      "type": "MESH",
+      "polygons": 576,
+      "vertices": 588
+    },
+    {
+      "name": "Parotid duct.r",
+      "type": "MESH",
+      "polygons": 576,
+      "vertices": 588
+    },
+    {
+      "name": "Parotid gland.l",
+      "type": "MESH",
+      "polygons": 852,
+      "vertices": 854
+    },
+    {
+      "name": "Parotid gland.r",
+      "type": "MESH",
+      "polygons": 852,
+      "vertices": 854
+    },
+    {
+      "name": "Pars distalis of hypophysis.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Pars intermedia of hypophysis.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Pars nervosa of hypophysis.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Pars tubelaris of hypophysis.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Penis.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Peritoneal cavity.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Peritoneal structures.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Peritoneum.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Pharynx.j",
+      "type": "MESH",
+      "polygons": 20,
+      "vertices": 32
+    },
+    {
+      "name": "Pineal gland",
+      "type": "MESH",
+      "polygons": 592,
+      "vertices": 319
+    },
+    {
+      "name": "Pleura",
+      "type": "MESH",
+      "polygons": 56144,
+      "vertices": 56160
+    },
+    {
+      "name": "Porta hepatis.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Posterior basal segment of left lung (SX).j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Posterior basal segment of right lung (SX).j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Posterior basal segmental bronchus of left lung (BX)",
+      "type": "MESH",
+      "polygons": 576,
+      "vertices": 588
+    },
+    {
+      "name": "Posterior basal segmental bronchus of right lung (BX)",
+      "type": "MESH",
+      "polygons": 2160,
+      "vertices": 2208
+    },
+    {
+      "name": "Posterior border of testis.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Posterior lateral segment of liver (VII)",
+      "type": "MESH",
+      "polygons": 1194,
+      "vertices": 1196
+    },
+    {
+      "name": "Posterior medial segment of liver (VIII)",
+      "type": "MESH",
+      "polygons": 1780,
+      "vertices": 1782
+    },
+    {
+      "name": "Posterior medial segment of liver (VIII).j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Posterior part of liver.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Posterior segment of liver (I)",
+      "type": "MESH",
+      "polygons": 1304,
+      "vertices": 1306
+    },
+    {
+      "name": "Posterior segment of liver (I).j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Posterior segment of right lung (SII).j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Posterior segmental bronchus of right lung (BII)",
+      "type": "MESH",
+      "polygons": 2448,
+      "vertices": 2520
+    },
+    {
+      "name": "Posterior surface of kidney.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Posterior surface of liver.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Posterior surface of pancreas.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Posterior surface of suprarenal gland.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Posterior wall of stomach.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Prostate",
+      "type": "MESH",
+      "polygons": 468,
+      "vertices": 236
+    },
+    {
+      "name": "Pyloric antrum.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Pyloric part.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Quadrate lobe.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Renal impression of liver.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Renal pelvis.l",
+      "type": "MESH",
+      "polygons": 1450,
+      "vertices": 732
+    },
+    {
+      "name": "Renal pelvis.r",
+      "type": "MESH",
+      "polygons": 1262,
+      "vertices": 638
+    },
+    {
+      "name": "Renal sinus.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Renal surface of suprarenal gland.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Respiratory system.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Right inferior lobar bronchus",
+      "type": "MESH",
+      "polygons": 576,
+      "vertices": 588
+    },
+    {
+      "name": "Right lateral division of liver.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Right lobe of liver.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Right lung.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Right main bronchus",
+      "type": "MESH",
+      "polygons": 144,
+      "vertices": 156
+    },
+    {
+      "name": "Right medial division of liver.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Right part of liver.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Right portal fissure.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Right superior lobar bronchus",
+      "type": "MESH",
+      "polygons": 144,
+      "vertices": 156
+    },
+    {
+      "name": "Right surface of liver.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Root of lung.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Salivary glands.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Seminal gland.l",
+      "type": "MESH",
+      "polygons": 360,
+      "vertices": 182
+    },
+    {
+      "name": "Seminal gland.r",
+      "type": "MESH",
+      "polygons": 360,
+      "vertices": 182
+    },
+    {
+      "name": "Sigmoid colon",
+      "type": "MESH",
+      "polygons": 3377,
+      "vertices": 1716
+    },
+    {
+      "name": "Small intestine.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Soft palate",
+      "type": "MESH",
+      "polygons": 1882,
+      "vertices": 1884
+    },
+    {
+      "name": "Stomach",
+      "type": "MESH",
+      "polygons": 4734,
+      "vertices": 4803
+    },
+    {
+      "name": "Sublingual gland.l",
+      "type": "MESH",
+      "polygons": 324,
+      "vertices": 164
+    },
+    {
+      "name": "Sublingual gland.r",
+      "type": "MESH",
+      "polygons": 324,
+      "vertices": 164
+    },
+    {
+      "name": "Submandibular duct.l",
+      "type": "MESH",
+      "polygons": 576,
+      "vertices": 588
+    },
+    {
+      "name": "Submandibular duct.r",
+      "type": "MESH",
+      "polygons": 576,
+      "vertices": 588
+    },
+    {
+      "name": "Submandibular gland.l",
+      "type": "MESH",
+      "polygons": 392,
+      "vertices": 198
+    },
+    {
+      "name": "Submandibular gland.r",
+      "type": "MESH",
+      "polygons": 392,
+      "vertices": 198
+    },
+    {
+      "name": "Superior border of pancreas.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Superior border of suprarenal gland.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Superior lingular segment of left lung (SIV).j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Superior lingular segmental bronchus of left lung (BIV)",
+      "type": "MESH",
+      "polygons": 1008,
+      "vertices": 1044
+    },
+    {
+      "name": "Superior lobe of left lung",
+      "type": "MESH",
+      "polygons": 4645,
+      "vertices": 4662
+    },
+    {
+      "name": "Superior lobe of right lung",
+      "type": "MESH",
+      "polygons": 3874,
+      "vertices": 3902
+    },
+    {
+      "name": "Superior parathyroid gland.l",
+      "type": "MESH",
+      "polygons": 64,
+      "vertices": 66
+    },
+    {
+      "name": "Superior parathyroid gland.r",
+      "type": "MESH",
+      "polygons": 64,
+      "vertices": 66
+    },
+    {
+      "name": "Superior pole of kidney.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Superior pole of testis.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Superior segment of left lung (SVI).j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Superior segment of right lung (SVI).j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Superior segmental bronchus of left lung (BVI)",
+      "type": "MESH",
+      "polygons": 2160,
+      "vertices": 2232
+    },
+    {
+      "name": "Superior segmental bronchus of right lung (BVI)",
+      "type": "MESH",
+      "polygons": 4464,
+      "vertices": 4572
+    },
+    {
+      "name": "Superior surface of liver.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Suprarenal gland.l",
+      "type": "MESH",
+      "polygons": 3996,
+      "vertices": 2000
+    },
+    {
+      "name": "Suprarenal gland.r",
+      "type": "MESH",
+      "polygons": 2294,
+      "vertices": 1149
+    },
+    {
+      "name": "Suprarenal impression of liver.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Taeniae coli.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Tail of pancreas.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Testis.l",
+      "type": "MESH",
+      "polygons": 678,
+      "vertices": 680
+    },
+    {
+      "name": "Testis.r",
+      "type": "MESH",
+      "polygons": 678,
+      "vertices": 680
+    },
+    {
+      "name": "Thoracic cavity.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Thyroid gland",
+      "type": "MESH",
+      "polygons": 1300,
+      "vertices": 1302
+    },
+    {
+      "name": "Tongue",
+      "type": "MESH",
+      "polygons": 602,
+      "vertices": 343
+    },
+    {
+      "name": "Trachea",
+      "type": "MESH",
+      "polygons": 4516,
+      "vertices": 2400
+    },
+    {
+      "name": "Tracheobronchial tree.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Transverse colon",
+      "type": "MESH",
+      "polygons": 8308,
+      "vertices": 8308
+    },
+    {
+      "name": "Umbilical fissure.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Uncinate process of pancreas.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Ureter.l",
+      "type": "MESH",
+      "polygons": 1440,
+      "vertices": 1452
+    },
+    {
+      "name": "Ureter.r",
+      "type": "MESH",
+      "polygons": 1584,
+      "vertices": 1596
+    },
+    {
+      "name": "Urethra",
+      "type": "MESH",
+      "polygons": 1440,
+      "vertices": 1452
+    },
+    {
+      "name": "Urinary bladder",
+      "type": "MESH",
+      "polygons": 1518,
+      "vertices": 1520
+    },
+    {
+      "name": "Urinary system.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Uvula of palate",
+      "type": "MESH",
+      "polygons": 1502,
+      "vertices": 753
+    },
+    {
+      "name": "Vermiform appendix",
+      "type": "MESH",
+      "polygons": 442,
+      "vertices": 223
+    },
+    {
+      "name": "Visceral fasciae of abdominopelvic cavity.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    },
+    {
+      "name": "Visceral surface of liver.j",
+      "type": "MESH",
+      "polygons": 6,
+      "vertices": 8
+    }
+  ]
+}
