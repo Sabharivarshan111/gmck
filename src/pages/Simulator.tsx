@@ -575,6 +575,75 @@ export const Simulator: React.FC = () => {
           })}
         </div>
 
+        {/* Internal heart — source-derived BodyParts3D structures only.
+            This exposes the chambers, valves and papillary muscles that were
+            already in the atlas but previously buried behind the generic heart isolate. */}
+        {(
+          isolatedPartId === 'heart' ||
+          contextOrganId === 'heart' ||
+          [
+            'Cavity of right atrium',
+            'Cavity of left atrium',
+            'Cavity of right ventricle',
+            'Cavity of left ventricle',
+            'tricuspid valve',
+            'mitral valve',
+            'aortic valve',
+            'pulmonary valve',
+            'papillary muscle',
+          ].includes(isolatedPartId || '')
+        ) && (
+          <div
+            className={`px-2.5 py-2 rounded-2xl border flex items-center gap-2 overflow-x-auto no-scrollbar ${isLight
+              ? 'bg-rose-50/80 border-rose-200/80'
+              : 'bg-rose-950/20 border-rose-900/50'}`}
+          >
+            <span className="text-[10px] font-black uppercase tracking-wider text-rose-700 dark:text-rose-300 whitespace-nowrap px-1">
+              Internal heart:
+            </span>
+            {[
+              ['heart', 'External'],
+              ['Cavity of right atrium', 'RA'],
+              ['Cavity of left atrium', 'LA'],
+              ['Cavity of right ventricle', 'RV'],
+              ['Cavity of left ventricle', 'LV'],
+              ['tricuspid valve', 'Tricuspid'],
+              ['mitral valve', 'Mitral'],
+              ['aortic valve', 'Aortic'],
+              ['pulmonary valve', 'Pulmonary'],
+              ['papillary muscle', 'Papillary'],
+            ].map(([id, label]) => (
+              <button
+                key={id}
+                onClick={() => {
+                  setIsolatedPartId(id);
+                  setSelectedOrganId(id === 'heart' ? 'heart' : null);
+                  setContextOrganId(id === 'heart' ? null : 'heart');
+                  setCameraPreset('thorax');
+                  setMobileTab('3d');
+                }}
+                className={`min-h-[40px] px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap flex-shrink-0 border transition-all active:scale-95 ${isolatedPartId === id
+                  ? isLight
+                    ? 'bg-rose-600 border-rose-700 text-white shadow-sm'
+                    : 'bg-rose-400 border-rose-300 text-slate-950 shadow-sm'
+                  : isLight
+                  ? 'bg-white border-rose-200 text-rose-900'
+                  : 'bg-slate-900 border-rose-800 text-rose-200'}`}
+              >
+                {label}
+              </button>
+            ))}
+            <span
+              className={`min-h-[40px] px-3 py-1.5 rounded-xl text-[10px] font-semibold whitespace-nowrap flex items-center border ${isLight
+                ? 'bg-amber-50 border-amber-200 text-amber-900'
+                : 'bg-amber-950/50 border-amber-800 text-amber-200'}`}
+              title="These structures are not represented as independent source meshes in the current atlas."
+            >
+              Source gaps: chordae • septal detail • conduction system
+            </span>
+          </div>
+        )}
+
         {/* Major named nerves — compact, horizontal and thumb-friendly on mobile.
             The actual 3D layer is still lazy-loaded only after one of these is used. */}
         {(isolatedPartId === 'peripheral_nerves' || isPeripheralNerveTarget(isolatedPartId)) && (
