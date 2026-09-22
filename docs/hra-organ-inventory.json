@@ -1,0 +1,3484 @@
+{
+  "source": "https://github.com/hubmapconsortium/ccf-releases/tree/main/v1.3/models",
+  "license": "HuBMAP Human Reference Atlas reference organ models — CC BY 4.0",
+  "release": "v1.3",
+  "organs": {
+    "kidney_left": {
+      "fileName": "VH_M_Kidney_L.glb",
+      "bytes": 1536532,
+      "nodeCount": 27,
+      "meshCount": 22,
+      "nodes": [
+        {
+          "i": 0,
+          "name": "VH_M_left_kidney"
+        },
+        {
+          "i": 1,
+          "name": "VH_M_kidney_capsule_L",
+          "mesh": 0
+        },
+        {
+          "i": 2,
+          "name": "VH_M_hilum_of_kidney_L",
+          "mesh": 1
+        },
+        {
+          "i": 3,
+          "name": "VH_M_cortex_of_kidney_L"
+        },
+        {
+          "i": 4,
+          "name": "VH_M_renal_column_L",
+          "mesh": 2
+        },
+        {
+          "i": 5,
+          "name": "VH_M_outer_cortex_of_kidney_L",
+          "mesh": 3
+        },
+        {
+          "i": 6,
+          "name": "VH_M_renal_medulla_L"
+        },
+        {
+          "i": 7,
+          "name": "VH_M_renal_papilla_L"
+        },
+        {
+          "i": 8,
+          "name": "VH_M_renal_papilla_L_a",
+          "mesh": 4
+        },
+        {
+          "i": 9,
+          "name": "VH_M_renal_papilla_L_b",
+          "mesh": 5
+        },
+        {
+          "i": 10,
+          "name": "VH_M_renal_papilla_L_c",
+          "mesh": 6
+        },
+        {
+          "i": 11,
+          "name": "VH_M_renal_papilla_L_d",
+          "mesh": 7
+        },
+        {
+          "i": 12,
+          "name": "VH_M_renal_papilla_L_e",
+          "mesh": 8
+        },
+        {
+          "i": 13,
+          "name": "VH_M_renal_papilla_L_f",
+          "mesh": 9
+        },
+        {
+          "i": 14,
+          "name": "VH_M_renal_papilla_L_g",
+          "mesh": 10
+        },
+        {
+          "i": 15,
+          "name": "VH_M_renal_papilla_L_h",
+          "mesh": 11
+        },
+        {
+          "i": 16,
+          "name": "VH_M_renal_papilla_L_i",
+          "mesh": 12
+        },
+        {
+          "i": 17,
+          "name": "VH_M_renal_pyramid_L"
+        },
+        {
+          "i": 18,
+          "name": "VH_M_renal_pyramid_L_a",
+          "mesh": 13
+        },
+        {
+          "i": 19,
+          "name": "VH_M_renal_pyramid_L_b",
+          "mesh": 14
+        },
+        {
+          "i": 20,
+          "name": "VH_M_renal_pyramid_L_c",
+          "mesh": 15
+        },
+        {
+          "i": 21,
+          "name": "VH_M_renal_pyramid_L_d",
+          "mesh": 16
+        },
+        {
+          "i": 22,
+          "name": "VH_M_renal_pyramid_L_e",
+          "mesh": 17
+        },
+        {
+          "i": 23,
+          "name": "VH_M_renal_pyramid_L_f",
+          "mesh": 18
+        },
+        {
+          "i": 24,
+          "name": "VH_M_renal_pyramid_L_g",
+          "mesh": 19
+        },
+        {
+          "i": 25,
+          "name": "VH_M_renal_pyramid_L_h",
+          "mesh": 20
+        },
+        {
+          "i": 26,
+          "name": "VH_M_renal_pyramid_L_i",
+          "mesh": 21
+        }
+      ],
+      "meshes": [
+        {
+          "i": 0,
+          "name": "VH_M_kidney_capsule_L",
+          "primitives": 1
+        },
+        {
+          "i": 1,
+          "name": "VH_M_hilum_of_kidney_L",
+          "primitives": 1
+        },
+        {
+          "i": 2,
+          "name": "VH_M_renal_column_L",
+          "primitives": 1
+        },
+        {
+          "i": 3,
+          "name": "VH_M_outer_cortex_of_kidney_L",
+          "primitives": 1
+        },
+        {
+          "i": 4,
+          "name": "VH_M_renal_papilla_L_a",
+          "primitives": 1
+        },
+        {
+          "i": 5,
+          "name": "VH_M_renal_papilla_L_b",
+          "primitives": 1
+        },
+        {
+          "i": 6,
+          "name": "VH_M_renal_papilla_L_c",
+          "primitives": 1
+        },
+        {
+          "i": 7,
+          "name": "VH_M_renal_papilla_L_d",
+          "primitives": 1
+        },
+        {
+          "i": 8,
+          "name": "VH_M_renal_papilla_L_e",
+          "primitives": 1
+        },
+        {
+          "i": 9,
+          "name": "VH_M_renal_papilla_L_f",
+          "primitives": 1
+        },
+        {
+          "i": 10,
+          "name": "VH_M_renal_papilla_L_g",
+          "primitives": 1
+        },
+        {
+          "i": 11,
+          "name": "VH_M_renal_papilla_L_h",
+          "primitives": 1
+        },
+        {
+          "i": 12,
+          "name": "VH_M_renal_papilla_L_i",
+          "primitives": 1
+        },
+        {
+          "i": 13,
+          "name": "VH_M_renal_pyramid_L_a",
+          "primitives": 1
+        },
+        {
+          "i": 14,
+          "name": "VH_M_renal_pyramid_L_b",
+          "primitives": 1
+        },
+        {
+          "i": 15,
+          "name": "VH_M_renal_pyramid_L_c",
+          "primitives": 1
+        },
+        {
+          "i": 16,
+          "name": "VH_M_renal_pyramid_L_d",
+          "primitives": 1
+        },
+        {
+          "i": 17,
+          "name": "VH_M_renal_pyramid_L_e",
+          "primitives": 1
+        },
+        {
+          "i": 18,
+          "name": "VH_M_renal_pyramid_L_f",
+          "primitives": 1
+        },
+        {
+          "i": 19,
+          "name": "VH_M_renal_pyramid_L_g",
+          "primitives": 1
+        },
+        {
+          "i": 20,
+          "name": "VH_M_renal_pyramid_L_h",
+          "primitives": 1
+        },
+        {
+          "i": 21,
+          "name": "VH_M_renal_pyramid_L_i",
+          "primitives": 1
+        }
+      ],
+      "namedMeshes": [
+        "VH_M_kidney_capsule_L",
+        "VH_M_hilum_of_kidney_L",
+        "VH_M_renal_column_L",
+        "VH_M_outer_cortex_of_kidney_L",
+        "VH_M_renal_papilla_L_a",
+        "VH_M_renal_papilla_L_b",
+        "VH_M_renal_papilla_L_c",
+        "VH_M_renal_papilla_L_d",
+        "VH_M_renal_papilla_L_e",
+        "VH_M_renal_papilla_L_f",
+        "VH_M_renal_papilla_L_g",
+        "VH_M_renal_papilla_L_h",
+        "VH_M_renal_papilla_L_i",
+        "VH_M_renal_pyramid_L_a",
+        "VH_M_renal_pyramid_L_b",
+        "VH_M_renal_pyramid_L_c",
+        "VH_M_renal_pyramid_L_d",
+        "VH_M_renal_pyramid_L_e",
+        "VH_M_renal_pyramid_L_f",
+        "VH_M_renal_pyramid_L_g",
+        "VH_M_renal_pyramid_L_h",
+        "VH_M_renal_pyramid_L_i"
+      ]
+    },
+    "kidney_right": {
+      "fileName": "VH_M_Kidney_R.glb",
+      "bytes": 1546868,
+      "nodeCount": 29,
+      "meshCount": 24,
+      "nodes": [
+        {
+          "i": 0,
+          "name": "VH_M_right_kidney"
+        },
+        {
+          "i": 1,
+          "name": "VH_M_kidney_capsule_R",
+          "mesh": 0
+        },
+        {
+          "i": 2,
+          "name": "VH_M_hilum_of_kidney_R",
+          "mesh": 1
+        },
+        {
+          "i": 3,
+          "name": "VH_M_renal_medulla_R"
+        },
+        {
+          "i": 4,
+          "name": "VH_M_renal_papilla_R"
+        },
+        {
+          "i": 5,
+          "name": "VH_M_renal_papilla_R_j",
+          "mesh": 2
+        },
+        {
+          "i": 6,
+          "name": "VH_M_renal_papilla_R_i",
+          "mesh": 3
+        },
+        {
+          "i": 7,
+          "name": "VH_M_renal_papilla_R_h",
+          "mesh": 4
+        },
+        {
+          "i": 8,
+          "name": "VH_M_renal_papilla_R_g",
+          "mesh": 5
+        },
+        {
+          "i": 9,
+          "name": "VH_M_renal_papilla_R_f",
+          "mesh": 6
+        },
+        {
+          "i": 10,
+          "name": "VH_M_renal_papilla_R_e",
+          "mesh": 7
+        },
+        {
+          "i": 11,
+          "name": "VH_M_renal_papilla_R_d",
+          "mesh": 8
+        },
+        {
+          "i": 12,
+          "name": "VH_M_renal_papilla_R_c",
+          "mesh": 9
+        },
+        {
+          "i": 13,
+          "name": "VH_M_renal_papilla_R_b",
+          "mesh": 10
+        },
+        {
+          "i": 14,
+          "name": "VH_M_renal_papilla_R_a",
+          "mesh": 11
+        },
+        {
+          "i": 15,
+          "name": "VH_M_renal_pyramid_R"
+        },
+        {
+          "i": 16,
+          "name": "VH_M_renal_pyramid_a",
+          "mesh": 12
+        },
+        {
+          "i": 17,
+          "name": "VH_M_renal_pyramid_b",
+          "mesh": 13
+        },
+        {
+          "i": 18,
+          "name": "VH_M_renal_pyramid_c",
+          "mesh": 14
+        },
+        {
+          "i": 19,
+          "name": "VH_M_renal_pyramid_d",
+          "mesh": 15
+        },
+        {
+          "i": 20,
+          "name": "VH_M_renal_pyramid_e",
+          "mesh": 16
+        },
+        {
+          "i": 21,
+          "name": "VH_M_renal_pyramid_f",
+          "mesh": 17
+        },
+        {
+          "i": 22,
+          "name": "VH_M_renal_pyramid_g",
+          "mesh": 18
+        },
+        {
+          "i": 23,
+          "name": "VH_M_renal_pyramid_h",
+          "mesh": 19
+        },
+        {
+          "i": 24,
+          "name": "VH_M_renal_pyramid_i",
+          "mesh": 20
+        },
+        {
+          "i": 25,
+          "name": "VH_M_renal_pyramid_j",
+          "mesh": 21
+        },
+        {
+          "i": 26,
+          "name": "VH_M_cortex_of_kidney_R"
+        },
+        {
+          "i": 27,
+          "name": "VH_M_renal_column_R",
+          "mesh": 22
+        },
+        {
+          "i": 28,
+          "name": "VH_M_outer_cortex_of_kidney_R",
+          "mesh": 23
+        }
+      ],
+      "meshes": [
+        {
+          "i": 0,
+          "name": "VH_M_kidney_capsule_R",
+          "primitives": 1
+        },
+        {
+          "i": 1,
+          "name": "VH_M_hilum_of_kidney_R",
+          "primitives": 1
+        },
+        {
+          "i": 2,
+          "name": "VH_M_renal_papilla_R_j",
+          "primitives": 1
+        },
+        {
+          "i": 3,
+          "name": "VH_M_renal_papilla_R_i",
+          "primitives": 1
+        },
+        {
+          "i": 4,
+          "name": "VH_M_renal_papilla_R_h",
+          "primitives": 1
+        },
+        {
+          "i": 5,
+          "name": "VH_M_renal_papilla_R_g",
+          "primitives": 1
+        },
+        {
+          "i": 6,
+          "name": "VH_M_renal_papilla_R_f",
+          "primitives": 1
+        },
+        {
+          "i": 7,
+          "name": "VH_M_renal_papilla_R_e",
+          "primitives": 1
+        },
+        {
+          "i": 8,
+          "name": "VH_M_renal_papilla_R_d",
+          "primitives": 1
+        },
+        {
+          "i": 9,
+          "name": "VH_M_renal_papilla_R_c",
+          "primitives": 1
+        },
+        {
+          "i": 10,
+          "name": "VH_M_renal_papilla_R_b",
+          "primitives": 1
+        },
+        {
+          "i": 11,
+          "name": "VH_M_renal_papilla_R_a",
+          "primitives": 1
+        },
+        {
+          "i": 12,
+          "name": "VH_M_renal_pyramid_a",
+          "primitives": 1
+        },
+        {
+          "i": 13,
+          "name": "VH_M_renal_pyramid_b",
+          "primitives": 1
+        },
+        {
+          "i": 14,
+          "name": "VH_M_renal_pyramid_c",
+          "primitives": 1
+        },
+        {
+          "i": 15,
+          "name": "VH_M_renal_pyramid_d",
+          "primitives": 1
+        },
+        {
+          "i": 16,
+          "name": "VH_M_renal_pyramid_e",
+          "primitives": 1
+        },
+        {
+          "i": 17,
+          "name": "VH_M_renal_pyramid_f",
+          "primitives": 1
+        },
+        {
+          "i": 18,
+          "name": "VH_M_renal_pyramid_g",
+          "primitives": 1
+        },
+        {
+          "i": 19,
+          "name": "VH_M_renal_pyramid_h",
+          "primitives": 1
+        },
+        {
+          "i": 20,
+          "name": "VH_M_renal_pyramid_i",
+          "primitives": 1
+        },
+        {
+          "i": 21,
+          "name": "VH_M_renal_pyramid_j",
+          "primitives": 1
+        },
+        {
+          "i": 22,
+          "name": "VH_M_renal_column_R",
+          "primitives": 1
+        },
+        {
+          "i": 23,
+          "name": "VH_M_outer_cortex_of_kidney_R",
+          "primitives": 1
+        }
+      ],
+      "namedMeshes": [
+        "VH_M_kidney_capsule_R",
+        "VH_M_hilum_of_kidney_R",
+        "VH_M_renal_papilla_R_j",
+        "VH_M_renal_papilla_R_i",
+        "VH_M_renal_papilla_R_h",
+        "VH_M_renal_papilla_R_g",
+        "VH_M_renal_papilla_R_f",
+        "VH_M_renal_papilla_R_e",
+        "VH_M_renal_papilla_R_d",
+        "VH_M_renal_papilla_R_c",
+        "VH_M_renal_papilla_R_b",
+        "VH_M_renal_papilla_R_a",
+        "VH_M_renal_pyramid_a",
+        "VH_M_renal_pyramid_b",
+        "VH_M_renal_pyramid_c",
+        "VH_M_renal_pyramid_d",
+        "VH_M_renal_pyramid_e",
+        "VH_M_renal_pyramid_f",
+        "VH_M_renal_pyramid_g",
+        "VH_M_renal_pyramid_h",
+        "VH_M_renal_pyramid_i",
+        "VH_M_renal_pyramid_j",
+        "VH_M_renal_column_R",
+        "VH_M_outer_cortex_of_kidney_R"
+      ]
+    },
+    "liver": {
+      "fileName": "VH_M_Liver.glb",
+      "bytes": 1135892,
+      "nodeCount": 33,
+      "meshCount": 26,
+      "nodes": [
+        {
+          "i": 0,
+          "name": "VH_M_liver"
+        },
+        {
+          "i": 1,
+          "name": "VH_M_bare_area_of_liver",
+          "mesh": 0
+        },
+        {
+          "i": 2,
+          "name": "VH_M_liver_capsule",
+          "mesh": 1
+        },
+        {
+          "i": 3,
+          "name": "VH_M_diaphragmatic_surface",
+          "mesh": 2
+        },
+        {
+          "i": 4,
+          "name": "VH_M_suprarenal_impression_of_liver",
+          "mesh": 3
+        },
+        {
+          "i": 5,
+          "name": "VH_M_renal_impression_of_liver",
+          "mesh": 4
+        },
+        {
+          "i": 6,
+          "name": "VH_M_gastric_impression_of_liver",
+          "mesh": 5
+        },
+        {
+          "i": 7,
+          "name": "VH_M_colic_impression_of_liver",
+          "mesh": 6
+        },
+        {
+          "i": 8,
+          "name": "VH_M_esophageal_impression_of_liver",
+          "mesh": 7
+        },
+        {
+          "i": 9,
+          "name": "VH_M_duodenal_impression_of_liver",
+          "mesh": 8
+        },
+        {
+          "i": 10,
+          "name": "VH_M_porta_hepatis",
+          "mesh": 9
+        },
+        {
+          "i": 11,
+          "name": "VH_M_couinaud_liver_segment"
+        },
+        {
+          "i": 12,
+          "name": "VH_M_caudate_lobe_of_liver",
+          "mesh": 10
+        },
+        {
+          "i": 13,
+          "name": "VH_M_right_lobe_of_liver"
+        },
+        {
+          "i": 14,
+          "name": "VH_M_right_posteroinferior_segment",
+          "mesh": 11
+        },
+        {
+          "i": 15,
+          "name": "VH_M_right_posterosuperior_segment",
+          "mesh": 12
+        },
+        {
+          "i": 16,
+          "name": "VH_M_right_anterosuperior_segment",
+          "mesh": 13
+        },
+        {
+          "i": 17,
+          "name": "VH_M_right_anteroinferior_segment",
+          "mesh": 14
+        },
+        {
+          "i": 18,
+          "name": "VH_M_left_lobe_of_liver"
+        },
+        {
+          "i": 19,
+          "name": "VH_M_left_lateral_lobe"
+        },
+        {
+          "i": 20,
+          "name": "VH_M_left_anterolateral_segment",
+          "mesh": 15
+        },
+        {
+          "i": 21,
+          "name": "VH_M_left_posterolateral_segment",
+          "mesh": 16
+        },
+        {
+          "i": 22,
+          "name": "VH_M_left_medial_lobe"
+        },
+        {
+          "i": 23,
+          "name": "VH_M_left_superiomedial_segment",
+          "mesh": 17
+        },
+        {
+          "i": 24,
+          "name": "VH_M_left_inferomedial_segment",
+          "mesh": 18
+        },
+        {
+          "i": 25,
+          "name": "VH_M_quadrate_lobe_of_liver",
+          "mesh": 19
+        },
+        {
+          "i": 26,
+          "name": "VH_M_ligament_of_liver"
+        },
+        {
+          "i": 27,
+          "name": "VH_M_hepataduodenal_ligament",
+          "mesh": 20
+        },
+        {
+          "i": 28,
+          "name": "VH_M_ligamentum_venosum",
+          "mesh": 21
+        },
+        {
+          "i": 29,
+          "name": "VH_M_round_ligament_of_liver",
+          "mesh": 22
+        },
+        {
+          "i": 30,
+          "name": "VH_M_triangular_ligament_of_liver",
+          "mesh": 23
+        },
+        {
+          "i": 31,
+          "name": "VH_M_falciform_ligament",
+          "mesh": 24
+        },
+        {
+          "i": 32,
+          "name": "VH_M_coronary_ligament_of_liver",
+          "mesh": 25
+        }
+      ],
+      "meshes": [
+        {
+          "i": 0,
+          "name": "VH_M_bare_area_of_liver",
+          "primitives": 1
+        },
+        {
+          "i": 1,
+          "name": "VH_M_liver_capsule",
+          "primitives": 1
+        },
+        {
+          "i": 2,
+          "name": "VH_M_diaphragmatic_surface",
+          "primitives": 1
+        },
+        {
+          "i": 3,
+          "name": "VH_M_suprarenal_impression_of_liver",
+          "primitives": 1
+        },
+        {
+          "i": 4,
+          "name": "VH_M_renal_impression_of_liver",
+          "primitives": 1
+        },
+        {
+          "i": 5,
+          "name": "VH_M_gastric_impression_of_liver",
+          "primitives": 1
+        },
+        {
+          "i": 6,
+          "name": "VH_M_colic_impression_of_liver",
+          "primitives": 1
+        },
+        {
+          "i": 7,
+          "name": "VH_M_esophageal_impression_of_liver",
+          "primitives": 1
+        },
+        {
+          "i": 8,
+          "name": "VH_M_duodenal_impression_of_liver",
+          "primitives": 1
+        },
+        {
+          "i": 9,
+          "name": "VH_M_porta_hepatis",
+          "primitives": 1
+        },
+        {
+          "i": 10,
+          "name": "VH_M_caudate_lobe_of_liver",
+          "primitives": 1
+        },
+        {
+          "i": 11,
+          "name": "VH_M_right_posteroinferior_segment",
+          "primitives": 1
+        },
+        {
+          "i": 12,
+          "name": "VH_M_right_posterosuperior_segment",
+          "primitives": 1
+        },
+        {
+          "i": 13,
+          "name": "VH_M_right_anterosuperior_segment",
+          "primitives": 1
+        },
+        {
+          "i": 14,
+          "name": "VH_M_right_anteroinferior_segment",
+          "primitives": 1
+        },
+        {
+          "i": 15,
+          "name": "VH_M_left_anterolateral_segment",
+          "primitives": 1
+        },
+        {
+          "i": 16,
+          "name": "VH_M_left_posterolateral_segment",
+          "primitives": 1
+        },
+        {
+          "i": 17,
+          "name": "VH_M_left_superiomedial_segment",
+          "primitives": 1
+        },
+        {
+          "i": 18,
+          "name": "VH_M_left_inferomedial_segment",
+          "primitives": 1
+        },
+        {
+          "i": 19,
+          "name": "VH_M_quadrate_lobe_of_liver",
+          "primitives": 1
+        },
+        {
+          "i": 20,
+          "name": "VH_M_hepataduodenal_ligament",
+          "primitives": 1
+        },
+        {
+          "i": 21,
+          "name": "VH_M_ligamentum_venosum",
+          "primitives": 1
+        },
+        {
+          "i": 22,
+          "name": "VH_M_round_ligament_of_liver",
+          "primitives": 1
+        },
+        {
+          "i": 23,
+          "name": "VH_M_triangular_ligament_of_liver",
+          "primitives": 1
+        },
+        {
+          "i": 24,
+          "name": "VH_M_falciform_ligament",
+          "primitives": 1
+        },
+        {
+          "i": 25,
+          "name": "VH_M_coronary_ligament_of_liver",
+          "primitives": 1
+        }
+      ],
+      "namedMeshes": [
+        "VH_M_bare_area_of_liver",
+        "VH_M_liver_capsule",
+        "VH_M_diaphragmatic_surface",
+        "VH_M_suprarenal_impression_of_liver",
+        "VH_M_renal_impression_of_liver",
+        "VH_M_gastric_impression_of_liver",
+        "VH_M_colic_impression_of_liver",
+        "VH_M_esophageal_impression_of_liver",
+        "VH_M_duodenal_impression_of_liver",
+        "VH_M_porta_hepatis",
+        "VH_M_caudate_lobe_of_liver",
+        "VH_M_right_posteroinferior_segment",
+        "VH_M_right_posterosuperior_segment",
+        "VH_M_right_anterosuperior_segment",
+        "VH_M_right_anteroinferior_segment",
+        "VH_M_left_anterolateral_segment",
+        "VH_M_left_posterolateral_segment",
+        "VH_M_left_superiomedial_segment",
+        "VH_M_left_inferomedial_segment",
+        "VH_M_quadrate_lobe_of_liver",
+        "VH_M_hepataduodenal_ligament",
+        "VH_M_ligamentum_venosum",
+        "VH_M_round_ligament_of_liver",
+        "VH_M_triangular_ligament_of_liver",
+        "VH_M_falciform_ligament",
+        "VH_M_coronary_ligament_of_liver"
+      ]
+    },
+    "lung": {
+      "fileName": "VH_M_Lung.glb",
+      "bytes": 6355840,
+      "nodeCount": 87,
+      "meshCount": 67,
+      "nodes": [
+        {
+          "i": 0,
+          "name": "VH_M_respiratory_system"
+        },
+        {
+          "i": 1,
+          "name": "VH_M_lungs"
+        },
+        {
+          "i": 2,
+          "name": "VH_M_lungs_L"
+        },
+        {
+          "i": 3,
+          "name": "VH_M_hilum_L",
+          "mesh": 0
+        },
+        {
+          "i": 4,
+          "name": "VH_M_lungs_L_upper_lobe"
+        },
+        {
+          "i": 5,
+          "name": "VH_M_hilum_upper_L",
+          "mesh": 1
+        },
+        {
+          "i": 6,
+          "name": "VH_M_left_lingula_superior_bronchopulmonary_segment",
+          "mesh": 2
+        },
+        {
+          "i": 7,
+          "name": "VH_M_left_posterior_bronchopulmonary_segment",
+          "mesh": 3
+        },
+        {
+          "i": 8,
+          "name": "VH_M_left_anterior_bronchopulmonary_segment",
+          "mesh": 4
+        },
+        {
+          "i": 9,
+          "name": "VH_M_left_apical_bronchopulmonary_segment",
+          "mesh": 5
+        },
+        {
+          "i": 10,
+          "name": "VH_M_left_lingula_inferior_bronchopulmonary_segment",
+          "mesh": 6
+        },
+        {
+          "i": 11,
+          "name": "VH_M_lungs_L_lower_lobe"
+        },
+        {
+          "i": 12,
+          "name": "VH_M_hilum_lower_L",
+          "mesh": 7
+        },
+        {
+          "i": 13,
+          "name": "VH_M_left_anterior_basal_bronchopulmonary_segment",
+          "mesh": 8
+        },
+        {
+          "i": 14,
+          "name": "VH_M_left_lateral_basal_bronchopulmonary_segment",
+          "mesh": 9
+        },
+        {
+          "i": 15,
+          "name": "VH_M_left_medial_basal_bronchopulmonary_segment",
+          "mesh": 10
+        },
+        {
+          "i": 16,
+          "name": "VH_M_left_posetrior_basal_bronchopulmonary_segment",
+          "mesh": 11
+        },
+        {
+          "i": 17,
+          "name": "VH_M_left_superior_bronchopulmonary_segment",
+          "mesh": 12
+        },
+        {
+          "i": 18,
+          "name": "VH_M_lungs_R"
+        },
+        {
+          "i": 19,
+          "name": "VH_M_hilum_R",
+          "mesh": 13
+        },
+        {
+          "i": 20,
+          "name": "VH_M_lungs_R_middle_lobe"
+        },
+        {
+          "i": 21,
+          "name": "VH_M_right_lateral_bronchopulmonary_segment",
+          "mesh": 14
+        },
+        {
+          "i": 22,
+          "name": "VH_M_right_medial_bronchopulmonary_segment",
+          "mesh": 15
+        },
+        {
+          "i": 23,
+          "name": "VH_M_hilum_middle_R",
+          "mesh": 16
+        },
+        {
+          "i": 24,
+          "name": "VH_M_lungs_R_lower_lobe"
+        },
+        {
+          "i": 25,
+          "name": "VH_M_hilum_lower_R",
+          "mesh": 17
+        },
+        {
+          "i": 26,
+          "name": "VH_M_right_anterior_basal_bronchopulmonary_segment",
+          "mesh": 18
+        },
+        {
+          "i": 27,
+          "name": "VH_M_right_lateral_basal_bronchopulmonary_segment",
+          "mesh": 19
+        },
+        {
+          "i": 28,
+          "name": "VH_M_right_medial_basal_bronchopulmonary_segment",
+          "mesh": 20
+        },
+        {
+          "i": 29,
+          "name": "VH_M_right_posterior_basal_bronchopulmonary_segment",
+          "mesh": 21
+        },
+        {
+          "i": 30,
+          "name": "VH_M_right_superior_bronchopulmonary_segment",
+          "mesh": 22
+        },
+        {
+          "i": 31,
+          "name": "VH_M_lungs_R_upper_lobe"
+        },
+        {
+          "i": 32,
+          "name": "VH_M_right_apical_bronchopulmonary_segment",
+          "mesh": 23
+        },
+        {
+          "i": 33,
+          "name": "VH_M_right_posterior_bronchopulmonary_segment",
+          "mesh": 24
+        },
+        {
+          "i": 34,
+          "name": "VH_M_right_anterior_bronchopulmonary_segment",
+          "mesh": 25
+        },
+        {
+          "i": 35,
+          "name": "VH_M_hilum_upper_R",
+          "mesh": 26
+        },
+        {
+          "i": 36,
+          "name": "VH_M_tracheobronchial_tree"
+        },
+        {
+          "i": 37,
+          "name": "VH_M_trachea",
+          "mesh": 27
+        },
+        {
+          "i": 38,
+          "name": "VH_M_cartilage_of_tracheobronchial_tree"
+        },
+        {
+          "i": 39,
+          "name": "VH_M_bronchial_cartilage",
+          "mesh": 28
+        },
+        {
+          "i": 40,
+          "name": "VH_M_carina",
+          "mesh": 29
+        },
+        {
+          "i": 41,
+          "name": "VH_M_cricoid_cartilage",
+          "mesh": 30
+        },
+        {
+          "i": 42,
+          "name": "VH_M_epiglottic_cartilage",
+          "mesh": 31
+        },
+        {
+          "i": 43,
+          "name": "VH_M_thyroid_cartilage",
+          "mesh": 32
+        },
+        {
+          "i": 44,
+          "name": "VH_M_arytenoid_cartilage"
+        },
+        {
+          "i": 45,
+          "name": "VH_M_arytenoid_cartilage_L",
+          "mesh": 33
+        },
+        {
+          "i": 46,
+          "name": "VH_M_arytenoid_cartilage_R",
+          "mesh": 34
+        },
+        {
+          "i": 47,
+          "name": "VH_M_corniculate_cartilage"
+        },
+        {
+          "i": 48,
+          "name": "VH_M_corniculate_cartilage_L",
+          "mesh": 35
+        },
+        {
+          "i": 49,
+          "name": "VH_M_corniculate_cartilage_R",
+          "mesh": 36
+        },
+        {
+          "i": 50,
+          "name": "VH_M_tracheal_cartilage",
+          "mesh": 37
+        },
+        {
+          "i": 51,
+          "name": "VH_M_bronchi"
+        },
+        {
+          "i": 52,
+          "name": "VH_M_bronchi_L"
+        },
+        {
+          "i": 53,
+          "name": "VH_M_left_main_bronchus",
+          "mesh": 38
+        },
+        {
+          "i": 54,
+          "name": "VH_M_lobar_bronchus_L"
+        },
+        {
+          "i": 55,
+          "name": "VH_M_left_superior_lobar_bronchus",
+          "mesh": 39
+        },
+        {
+          "i": 56,
+          "name": "VH_M_left_inferior_lobar_bronchus",
+          "mesh": 40
+        },
+        {
+          "i": 57,
+          "name": "VH_M_tertiary_bronchi_L"
+        },
+        {
+          "i": 58,
+          "name": "VH_M_left_superior_bronchus",
+          "mesh": 41
+        },
+        {
+          "i": 59,
+          "name": "VH_M_left_posterior_basal_bronchus",
+          "mesh": 42
+        },
+        {
+          "i": 60,
+          "name": "VH_M_left_medial_basal_bronchus",
+          "mesh": 43
+        },
+        {
+          "i": 61,
+          "name": "VH_M_left_apical_bronchus",
+          "mesh": 44
+        },
+        {
+          "i": 62,
+          "name": "VH_M_left_anterior_bronchus",
+          "mesh": 45
+        },
+        {
+          "i": 63,
+          "name": "VH_M_left_lingular_bronchus",
+          "mesh": 46
+        },
+        {
+          "i": 64,
+          "name": "VH_M_left_lingula_superior_bronchus",
+          "mesh": 47
+        },
+        {
+          "i": 65,
+          "name": "VH_M_left_lingula_inferior_bronchus",
+          "mesh": 48
+        },
+        {
+          "i": 66,
+          "name": "VH_M_left_lateral_basal_bronchus",
+          "mesh": 49
+        },
+        {
+          "i": 67,
+          "name": "VH_M_left_anterior_basal_bronchus",
+          "mesh": 50
+        },
+        {
+          "i": 68,
+          "name": "VH_M_bronchi_R"
+        },
+        {
+          "i": 69,
+          "name": "VH_M_right_main_bronchus",
+          "mesh": 51
+        },
+        {
+          "i": 70,
+          "name": "VH_M_lobar_bronchi_R"
+        },
+        {
+          "i": 71,
+          "name": "VH_M_right_intermediate_bronchus",
+          "mesh": 52
+        },
+        {
+          "i": 72,
+          "name": "VH_M_right_middle_lobar_bronchus",
+          "mesh": 53
+        },
+        {
+          "i": 73,
+          "name": "VH_M_right_superior_lobar_bronchus",
+          "mesh": 54
+        },
+        {
+          "i": 74,
+          "name": "VH_M_tertiary_bronchi_R"
+        },
+        {
+          "i": 75,
+          "name": "VH_M_right_anterior_bronchus",
+          "mesh": 55
+        },
+        {
+          "i": 76,
+          "name": "VH_M_right_lateral_basal_bronchus",
+          "mesh": 56
+        },
+        {
+          "i": 77,
+          "name": "VH_M_right_lateral_bronchus",
+          "mesh": 57
+        },
+        {
+          "i": 78,
+          "name": "VH_M_right_lower_lobar_bronchus",
+          "mesh": 58
+        },
+        {
+          "i": 79,
+          "name": "VH_M_right_medial_basal_bronchus",
+          "mesh": 59
+        },
+        {
+          "i": 80,
+          "name": "VH_M_right_medial_bronchus",
+          "mesh": 60
+        },
+        {
+          "i": 81,
+          "name": "VH_M_right_posterior_basal",
+          "mesh": 61
+        },
+        {
+          "i": 82,
+          "name": "VH_M_right_posterior_bronchus",
+          "mesh": 62
+        },
+        {
+          "i": 83,
+          "name": "VH_M_right_superior_bronchus",
+          "mesh": 63
+        },
+        {
+          "i": 84,
+          "name": "VH_M_right_apical_bronchus",
+          "mesh": 64
+        },
+        {
+          "i": 85,
+          "name": "VH_M_right_anterior_basal_bronchus",
+          "mesh": 65
+        },
+        {
+          "i": 86,
+          "name": "VH_M_bronchus",
+          "mesh": 66
+        }
+      ],
+      "meshes": [
+        {
+          "i": 0,
+          "name": "VH_M_hilum_L",
+          "primitives": 1
+        },
+        {
+          "i": 1,
+          "name": "VH_M_hilum_upper_L",
+          "primitives": 1
+        },
+        {
+          "i": 2,
+          "name": "VH_M_left_lingula_superior_bronchopulmonary_segment",
+          "primitives": 1
+        },
+        {
+          "i": 3,
+          "name": "VH_M_left_posterior_bronchopulmonary_segment",
+          "primitives": 1
+        },
+        {
+          "i": 4,
+          "name": "VH_M_left_anterior_bronchopulmonary_segment",
+          "primitives": 1
+        },
+        {
+          "i": 5,
+          "name": "VH_M_left_apical_bronchopulmonary_segment",
+          "primitives": 1
+        },
+        {
+          "i": 6,
+          "name": "VH_M_left_lingula_inferior_bronchopulmonary_segment",
+          "primitives": 1
+        },
+        {
+          "i": 7,
+          "name": "VH_M_hilum_lower_L",
+          "primitives": 1
+        },
+        {
+          "i": 8,
+          "name": "VH_M_left_anterior_basal_bronchopulmonary_segment",
+          "primitives": 1
+        },
+        {
+          "i": 9,
+          "name": "VH_M_left_lateral_basal_bronchopulmonary_segment",
+          "primitives": 1
+        },
+        {
+          "i": 10,
+          "name": "VH_M_left_medial_basal_bronchopulmonary_segment",
+          "primitives": 1
+        },
+        {
+          "i": 11,
+          "name": "VH_M_left_posetrior_basal_bronchopulmonary_segment",
+          "primitives": 1
+        },
+        {
+          "i": 12,
+          "name": "VH_M_left_superior_bronchopulmonary_segment",
+          "primitives": 1
+        },
+        {
+          "i": 13,
+          "name": "VH_M_hilum_R",
+          "primitives": 1
+        },
+        {
+          "i": 14,
+          "name": "VH_M_right_lateral_bronchopulmonary_segment",
+          "primitives": 1
+        },
+        {
+          "i": 15,
+          "name": "VH_M_right_medial_bronchopulmonary_segment",
+          "primitives": 1
+        },
+        {
+          "i": 16,
+          "name": "VH_M_hilum_middle_R",
+          "primitives": 1
+        },
+        {
+          "i": 17,
+          "name": "VH_M_hilum_lower_R",
+          "primitives": 1
+        },
+        {
+          "i": 18,
+          "name": "VH_M_right_anterior_basal_bronchopulmonary_segment",
+          "primitives": 1
+        },
+        {
+          "i": 19,
+          "name": "VH_M_right_lateral_basal_bronchopulmonary_segment",
+          "primitives": 1
+        },
+        {
+          "i": 20,
+          "name": "VH_M_right_medial_basal_bronchopulmonary_segment",
+          "primitives": 1
+        },
+        {
+          "i": 21,
+          "name": "VH_M_right_posterior_basal_bronchopulmonary_segment",
+          "primitives": 1
+        },
+        {
+          "i": 22,
+          "name": "VH_M_right_superior_bronchopulmonary_segment",
+          "primitives": 1
+        },
+        {
+          "i": 23,
+          "name": "VH_M_right_apical_bronchopulmonary_segment",
+          "primitives": 1
+        },
+        {
+          "i": 24,
+          "name": "VH_M_right_posterior_bronchopulmonary_segment",
+          "primitives": 1
+        },
+        {
+          "i": 25,
+          "name": "VH_M_right_anterior_bronchopulmonary_segment",
+          "primitives": 1
+        },
+        {
+          "i": 26,
+          "name": "VH_M_hilum_upper_R",
+          "primitives": 1
+        },
+        {
+          "i": 27,
+          "name": "VH_M_trachea",
+          "primitives": 1
+        },
+        {
+          "i": 28,
+          "name": "VH_M_bronchial_cartilage",
+          "primitives": 1
+        },
+        {
+          "i": 29,
+          "name": "VH_M_carina",
+          "primitives": 1
+        },
+        {
+          "i": 30,
+          "name": "VH_M_cricoid_cartilage",
+          "primitives": 1
+        },
+        {
+          "i": 31,
+          "name": "VH_M_epiglottic_cartilage",
+          "primitives": 1
+        },
+        {
+          "i": 32,
+          "name": "VH_M_thyroid_cartilage",
+          "primitives": 1
+        },
+        {
+          "i": 33,
+          "name": "VH_M_arytenoid_cartilage_L",
+          "primitives": 1
+        },
+        {
+          "i": 34,
+          "name": "VH_M_arytenoid_cartilage_R",
+          "primitives": 1
+        },
+        {
+          "i": 35,
+          "name": "VH_M_corniculate_cartilage_L",
+          "primitives": 1
+        },
+        {
+          "i": 36,
+          "name": "VH_M_corniculate_cartilage_R",
+          "primitives": 1
+        },
+        {
+          "i": 37,
+          "name": "VH_M_tracheal_cartilage",
+          "primitives": 1
+        },
+        {
+          "i": 38,
+          "name": "VH_M_left_main_bronchus",
+          "primitives": 1
+        },
+        {
+          "i": 39,
+          "name": "VH_M_left_superior_lobar_bronchus",
+          "primitives": 1
+        },
+        {
+          "i": 40,
+          "name": "VH_M_left_inferior_lobar_bronchus",
+          "primitives": 1
+        },
+        {
+          "i": 41,
+          "name": "VH_M_left_superior_bronchus",
+          "primitives": 1
+        },
+        {
+          "i": 42,
+          "name": "VH_M_left_posterior_basal_bronchus",
+          "primitives": 1
+        },
+        {
+          "i": 43,
+          "name": "VH_M_left_medial_basal_bronchus",
+          "primitives": 1
+        },
+        {
+          "i": 44,
+          "name": "VH_M_left_apical_bronchus",
+          "primitives": 1
+        },
+        {
+          "i": 45,
+          "name": "VH_M_left_anterior_bronchus",
+          "primitives": 1
+        },
+        {
+          "i": 46,
+          "name": "VH_M_left_lingular_bronchus",
+          "primitives": 1
+        },
+        {
+          "i": 47,
+          "name": "VH_M_left_lingula_superior_bronchus",
+          "primitives": 1
+        },
+        {
+          "i": 48,
+          "name": "VH_M_left_lingula_inferior_bronchus",
+          "primitives": 1
+        },
+        {
+          "i": 49,
+          "name": "VH_M_left_lateral_basal_bronchus",
+          "primitives": 1
+        },
+        {
+          "i": 50,
+          "name": "VH_M_left_anterior_basal_bronchus",
+          "primitives": 1
+        },
+        {
+          "i": 51,
+          "name": "VH_M_right_main_bronchus",
+          "primitives": 1
+        },
+        {
+          "i": 52,
+          "name": "VH_M_right_intermediate_bronchus",
+          "primitives": 1
+        },
+        {
+          "i": 53,
+          "name": "VH_M_right_middle_lobar_bronchus",
+          "primitives": 1
+        },
+        {
+          "i": 54,
+          "name": "VH_M_right_superior_lobar_bronchus",
+          "primitives": 1
+        },
+        {
+          "i": 55,
+          "name": "VH_M_right_anterior_bronchus",
+          "primitives": 1
+        },
+        {
+          "i": 56,
+          "name": "VH_M_right_lateral_basal_bronchus",
+          "primitives": 1
+        },
+        {
+          "i": 57,
+          "name": "VH_M_right_lateral_bronchus",
+          "primitives": 1
+        },
+        {
+          "i": 58,
+          "name": "VH_M_right_lower_lobar_bronchus",
+          "primitives": 1
+        },
+        {
+          "i": 59,
+          "name": "VH_M_right_medial_basal_bronchus",
+          "primitives": 1
+        },
+        {
+          "i": 60,
+          "name": "VH_M_right_medial_bronchus",
+          "primitives": 1
+        },
+        {
+          "i": 61,
+          "name": "VH_M_right_posterior_basal",
+          "primitives": 1
+        },
+        {
+          "i": 62,
+          "name": "VH_M_right_posterior_bronchus",
+          "primitives": 1
+        },
+        {
+          "i": 63,
+          "name": "VH_M_right_superior_bronchus",
+          "primitives": 1
+        },
+        {
+          "i": 64,
+          "name": "VH_M_right_apical_bronchus",
+          "primitives": 1
+        },
+        {
+          "i": 65,
+          "name": "VH_M_right_anterior_basal_bronchus",
+          "primitives": 1
+        },
+        {
+          "i": 66,
+          "name": "VH_M_bronchus",
+          "primitives": 1
+        }
+      ],
+      "namedMeshes": [
+        "VH_M_hilum_L",
+        "VH_M_hilum_upper_L",
+        "VH_M_left_lingula_superior_bronchopulmonary_segment",
+        "VH_M_left_posterior_bronchopulmonary_segment",
+        "VH_M_left_anterior_bronchopulmonary_segment",
+        "VH_M_left_apical_bronchopulmonary_segment",
+        "VH_M_left_lingula_inferior_bronchopulmonary_segment",
+        "VH_M_hilum_lower_L",
+        "VH_M_left_anterior_basal_bronchopulmonary_segment",
+        "VH_M_left_lateral_basal_bronchopulmonary_segment",
+        "VH_M_left_medial_basal_bronchopulmonary_segment",
+        "VH_M_left_posetrior_basal_bronchopulmonary_segment",
+        "VH_M_left_superior_bronchopulmonary_segment",
+        "VH_M_hilum_R",
+        "VH_M_right_lateral_bronchopulmonary_segment",
+        "VH_M_right_medial_bronchopulmonary_segment",
+        "VH_M_hilum_middle_R",
+        "VH_M_hilum_lower_R",
+        "VH_M_right_anterior_basal_bronchopulmonary_segment",
+        "VH_M_right_lateral_basal_bronchopulmonary_segment",
+        "VH_M_right_medial_basal_bronchopulmonary_segment",
+        "VH_M_right_posterior_basal_bronchopulmonary_segment",
+        "VH_M_right_superior_bronchopulmonary_segment",
+        "VH_M_right_apical_bronchopulmonary_segment",
+        "VH_M_right_posterior_bronchopulmonary_segment",
+        "VH_M_right_anterior_bronchopulmonary_segment",
+        "VH_M_hilum_upper_R",
+        "VH_M_trachea",
+        "VH_M_bronchial_cartilage",
+        "VH_M_carina",
+        "VH_M_cricoid_cartilage",
+        "VH_M_epiglottic_cartilage",
+        "VH_M_thyroid_cartilage",
+        "VH_M_arytenoid_cartilage_L",
+        "VH_M_arytenoid_cartilage_R",
+        "VH_M_corniculate_cartilage_L",
+        "VH_M_corniculate_cartilage_R",
+        "VH_M_tracheal_cartilage",
+        "VH_M_left_main_bronchus",
+        "VH_M_left_superior_lobar_bronchus",
+        "VH_M_left_inferior_lobar_bronchus",
+        "VH_M_left_superior_bronchus",
+        "VH_M_left_posterior_basal_bronchus",
+        "VH_M_left_medial_basal_bronchus",
+        "VH_M_left_apical_bronchus",
+        "VH_M_left_anterior_bronchus",
+        "VH_M_left_lingular_bronchus",
+        "VH_M_left_lingula_superior_bronchus",
+        "VH_M_left_lingula_inferior_bronchus",
+        "VH_M_left_lateral_basal_bronchus",
+        "VH_M_left_anterior_basal_bronchus",
+        "VH_M_right_main_bronchus",
+        "VH_M_right_intermediate_bronchus",
+        "VH_M_right_middle_lobar_bronchus",
+        "VH_M_right_superior_lobar_bronchus",
+        "VH_M_right_anterior_bronchus",
+        "VH_M_right_lateral_basal_bronchus",
+        "VH_M_right_lateral_bronchus",
+        "VH_M_right_lower_lobar_bronchus",
+        "VH_M_right_medial_basal_bronchus",
+        "VH_M_right_medial_bronchus",
+        "VH_M_right_posterior_basal",
+        "VH_M_right_posterior_bronchus",
+        "VH_M_right_superior_bronchus",
+        "VH_M_right_apical_bronchus",
+        "VH_M_right_anterior_basal_bronchus",
+        "VH_M_bronchus"
+      ]
+    },
+    "pancreas": {
+      "fileName": "VH_M_Pancreas.glb",
+      "bytes": 265276,
+      "nodeCount": 6,
+      "meshCount": 5,
+      "nodes": [
+        {
+          "i": 0,
+          "name": "VH_M_pancreas"
+        },
+        {
+          "i": 1,
+          "name": "VH_M_body_of_pancreas",
+          "mesh": 0
+        },
+        {
+          "i": 2,
+          "name": "VH_M_tail_of_pancreas",
+          "mesh": 1
+        },
+        {
+          "i": 3,
+          "name": "VH_M_head_of_pancreas",
+          "mesh": 2
+        },
+        {
+          "i": 4,
+          "name": "VH_M_neck_of_pancreas",
+          "mesh": 3
+        },
+        {
+          "i": 5,
+          "name": "VH_M_uncinate_process_of_the_pancreas",
+          "mesh": 4
+        }
+      ],
+      "meshes": [
+        {
+          "i": 0,
+          "name": "VH_M_body_of_pancreas",
+          "primitives": 1
+        },
+        {
+          "i": 1,
+          "name": "VH_M_tail_of_pancreas",
+          "primitives": 1
+        },
+        {
+          "i": 2,
+          "name": "VH_M_head_of_pancreas",
+          "primitives": 1
+        },
+        {
+          "i": 3,
+          "name": "VH_M_neck_of_pancreas",
+          "primitives": 1
+        },
+        {
+          "i": 4,
+          "name": "VH_M_uncinate_process_of_the_pancreas",
+          "primitives": 1
+        }
+      ],
+      "namedMeshes": [
+        "VH_M_body_of_pancreas",
+        "VH_M_tail_of_pancreas",
+        "VH_M_head_of_pancreas",
+        "VH_M_neck_of_pancreas",
+        "VH_M_uncinate_process_of_the_pancreas"
+      ]
+    },
+    "spleen": {
+      "fileName": "VH_M_Spleen.glb",
+      "bytes": 540236,
+      "nodeCount": 6,
+      "meshCount": 5,
+      "nodes": [
+        {
+          "i": 0,
+          "name": "VH_M_spleen"
+        },
+        {
+          "i": 1,
+          "name": "VH_M_colic_surface_of_spleen",
+          "mesh": 0
+        },
+        {
+          "i": 2,
+          "name": "VH_M_diaphragmatic_surface_of_spleen",
+          "mesh": 1
+        },
+        {
+          "i": 3,
+          "name": "VH_M_gastric_surface_of_spleen",
+          "mesh": 2
+        },
+        {
+          "i": 4,
+          "name": "VH_M_hilum_of_spleen",
+          "mesh": 3
+        },
+        {
+          "i": 5,
+          "name": "VH_M_renal_surface_of_spleen",
+          "mesh": 4
+        }
+      ],
+      "meshes": [
+        {
+          "i": 0,
+          "name": "VH_M_colic_surface_of_spleen",
+          "primitives": 1
+        },
+        {
+          "i": 1,
+          "name": "VH_M_diaphragmatic_surface_of_spleen",
+          "primitives": 1
+        },
+        {
+          "i": 2,
+          "name": "VH_M_gastric_surface_of_spleen",
+          "primitives": 1
+        },
+        {
+          "i": 3,
+          "name": "VH_M_hilum_of_spleen",
+          "primitives": 1
+        },
+        {
+          "i": 4,
+          "name": "VH_M_renal_surface_of_spleen",
+          "primitives": 1
+        }
+      ],
+      "namedMeshes": [
+        "VH_M_colic_surface_of_spleen",
+        "VH_M_diaphragmatic_surface_of_spleen",
+        "VH_M_gastric_surface_of_spleen",
+        "VH_M_hilum_of_spleen",
+        "VH_M_renal_surface_of_spleen"
+      ]
+    },
+    "small_intestine": {
+      "fileName": "VH_M_Small_Intestine.glb",
+      "bytes": 618560,
+      "nodeCount": 12,
+      "meshCount": 10,
+      "nodes": [
+        {
+          "i": 0,
+          "name": "VH_M_small_intestine"
+        },
+        {
+          "i": 1,
+          "name": "VH_M_ileum",
+          "mesh": 0
+        },
+        {
+          "i": 2,
+          "name": "VH_M_ileum_terminal",
+          "mesh": 1
+        },
+        {
+          "i": 3,
+          "name": "VH_M_jejunum",
+          "mesh": 2
+        },
+        {
+          "i": 4,
+          "name": "VH_M_duodenum"
+        },
+        {
+          "i": 5,
+          "name": "VH_M_duodenum_ascending",
+          "mesh": 3
+        },
+        {
+          "i": 6,
+          "name": "VH_M_duodenum_descending",
+          "mesh": 4
+        },
+        {
+          "i": 7,
+          "name": "VH_M_duodenum_horizonal",
+          "mesh": 5
+        },
+        {
+          "i": 8,
+          "name": "VH_M_duodenum_superior",
+          "mesh": 6
+        },
+        {
+          "i": 9,
+          "name": "VH_M_duodenal_ampulla",
+          "mesh": 7
+        },
+        {
+          "i": 10,
+          "name": "VH_M_sphincter_of_hepatopancreatic_ampulla",
+          "mesh": 8
+        },
+        {
+          "i": 11,
+          "name": "VH_M_papilla_of_santorini",
+          "mesh": 9
+        }
+      ],
+      "meshes": [
+        {
+          "i": 0,
+          "name": "VH_M_ileum",
+          "primitives": 1
+        },
+        {
+          "i": 1,
+          "name": "VH_M_ileum_terminal",
+          "primitives": 1
+        },
+        {
+          "i": 2,
+          "name": "VH_M_jejunum",
+          "primitives": 1
+        },
+        {
+          "i": 3,
+          "name": "VH_M_duodenum_ascending",
+          "primitives": 1
+        },
+        {
+          "i": 4,
+          "name": "VH_M_duodenum_descending",
+          "primitives": 1
+        },
+        {
+          "i": 5,
+          "name": "VH_M_duodenum_horizonal",
+          "primitives": 1
+        },
+        {
+          "i": 6,
+          "name": "VH_M_duodenum_superior",
+          "primitives": 1
+        },
+        {
+          "i": 7,
+          "name": "VH_M_duodenal_ampulla",
+          "primitives": 1
+        },
+        {
+          "i": 8,
+          "name": "VH_M_sphincter_of_hepatopancreatic_ampulla",
+          "primitives": 1
+        },
+        {
+          "i": 9,
+          "name": "VH_M_papilla_of_santorini",
+          "primitives": 1
+        }
+      ],
+      "namedMeshes": [
+        "VH_M_ileum",
+        "VH_M_ileum_terminal",
+        "VH_M_jejunum",
+        "VH_M_duodenum_ascending",
+        "VH_M_duodenum_descending",
+        "VH_M_duodenum_horizonal",
+        "VH_M_duodenum_superior",
+        "VH_M_duodenal_ampulla",
+        "VH_M_sphincter_of_hepatopancreatic_ampulla",
+        "VH_M_papilla_of_santorini"
+      ]
+    },
+    "urinary_bladder": {
+      "fileName": "VH_M_Urinary_Bladder.glb",
+      "bytes": 198936,
+      "nodeCount": 9,
+      "meshCount": 6,
+      "nodes": [
+        {
+          "i": 0,
+          "name": "VH_M_urinary_bladder"
+        },
+        {
+          "i": 1,
+          "name": "VH_M_urinary_bladder_neck_smooth_muscle",
+          "mesh": 0
+        },
+        {
+          "i": 2,
+          "name": "VH_M_fundus_of_urinary_bladder_dome",
+          "mesh": 1
+        },
+        {
+          "i": 3,
+          "name": "VH_M_fundus_of_urinary_bladder"
+        },
+        {
+          "i": 4,
+          "name": "VH_M_ureteral_orifice"
+        },
+        {
+          "i": 5,
+          "name": "VH_M_ureteral_orifice_R",
+          "mesh": 2
+        },
+        {
+          "i": 6,
+          "name": "VH_M_ureteral_orifice_L",
+          "mesh": 3
+        },
+        {
+          "i": 7,
+          "name": "VH_M_fundus_of_urinary_bladder_base1",
+          "mesh": 4
+        },
+        {
+          "i": 8,
+          "name": "VH_M_trigone_of_urinary_bladder",
+          "mesh": 5
+        }
+      ],
+      "meshes": [
+        {
+          "i": 0,
+          "name": "VH_M_urinary_bladder_neck_smooth_muscle",
+          "primitives": 1
+        },
+        {
+          "i": 1,
+          "name": "VH_M_fundus_of_urinary_bladder_dome",
+          "primitives": 1
+        },
+        {
+          "i": 2,
+          "name": "VH_M_ureteral_orifice_R",
+          "primitives": 1
+        },
+        {
+          "i": 3,
+          "name": "VH_M_ureteral_orifice_L",
+          "primitives": 1
+        },
+        {
+          "i": 4,
+          "name": "VH_M_fundus_of_urinary_bladder_base1",
+          "primitives": 1
+        },
+        {
+          "i": 5,
+          "name": "VH_M_trigone_of_urinary_bladder",
+          "primitives": 1
+        }
+      ],
+      "namedMeshes": [
+        "VH_M_urinary_bladder_neck_smooth_muscle",
+        "VH_M_fundus_of_urinary_bladder_dome",
+        "VH_M_ureteral_orifice_R",
+        "VH_M_ureteral_orifice_L",
+        "VH_M_fundus_of_urinary_bladder_base1",
+        "VH_M_trigone_of_urinary_bladder"
+      ]
+    },
+    "thymus": {
+      "fileName": "VH_M_Thymus.glb",
+      "bytes": 74876,
+      "nodeCount": 3,
+      "meshCount": 2,
+      "nodes": [
+        {
+          "i": 0,
+          "name": "VH_M_thymus"
+        },
+        {
+          "i": 1,
+          "name": "VH_M_thymus_lobe_L",
+          "mesh": 0
+        },
+        {
+          "i": 2,
+          "name": "VH_M_thymus_lobe_R",
+          "mesh": 1
+        }
+      ],
+      "meshes": [
+        {
+          "i": 0,
+          "name": "VH_M_thymus_lobe_L",
+          "primitives": 1
+        },
+        {
+          "i": 1,
+          "name": "VH_M_thymus_lobe_R",
+          "primitives": 1
+        }
+      ],
+      "namedMeshes": [
+        "VH_M_thymus_lobe_L",
+        "VH_M_thymus_lobe_R"
+      ]
+    },
+    "blood_vasculature": {
+      "fileName": "VH_M_Blood_Vasculature.glb",
+      "bytes": 7436204,
+      "nodeCount": 153,
+      "meshCount": 104,
+      "nodes": [
+        {
+          "i": 0,
+          "name": "VH_M_blood_vasculature"
+        },
+        {
+          "i": 1,
+          "name": "VH_M_blood_vasculature_of_eye"
+        },
+        {
+          "i": 2,
+          "name": "VH_M_veins_of_eye"
+        },
+        {
+          "i": 3,
+          "name": "VH_M_ocular_veins_L"
+        },
+        {
+          "i": 4,
+          "name": "VH_M_inferior_ophthalmic_vein_L",
+          "mesh": 0
+        },
+        {
+          "i": 5,
+          "name": "VH_M_superior_ophthalmic_vein_L",
+          "mesh": 1
+        },
+        {
+          "i": 6,
+          "name": "VH_M_central_retinal_vein_L",
+          "mesh": 2
+        },
+        {
+          "i": 7,
+          "name": "VH_M_ophthalmic_vein_L",
+          "mesh": 3
+        },
+        {
+          "i": 8,
+          "name": "VH_M_ocular_veins_R"
+        },
+        {
+          "i": 9,
+          "name": "VH_M_superior_ophthalmic_vein_R",
+          "mesh": 4
+        },
+        {
+          "i": 10,
+          "name": "VH_M_ophthalmic_vein_R",
+          "mesh": 5
+        },
+        {
+          "i": 11,
+          "name": "VH_M_central_retinal_vein_R",
+          "mesh": 6
+        },
+        {
+          "i": 12,
+          "name": "VH_M_inferior_ophthalmic_vein_R",
+          "mesh": 7
+        },
+        {
+          "i": 13,
+          "name": "VH_M_arteries_of_eye"
+        },
+        {
+          "i": 14,
+          "name": "VH_M_ocular_arteries_R"
+        },
+        {
+          "i": 15,
+          "name": "VH_M_central_retinal_artery_R",
+          "mesh": 8
+        },
+        {
+          "i": 16,
+          "name": "VH_M_opthalmic_artery_R",
+          "mesh": 9
+        },
+        {
+          "i": 17,
+          "name": "VH_M_ocular_arteries_L"
+        },
+        {
+          "i": 18,
+          "name": "VH_M_opthalmic_artery_L",
+          "mesh": 10
+        },
+        {
+          "i": 19,
+          "name": "VH_M_central_retinal_artery_L",
+          "mesh": 11
+        },
+        {
+          "i": 20,
+          "name": "VH_M_blood_vasculature_of_large_intestine"
+        },
+        {
+          "i": 21,
+          "name": "VH_M_veins_of_large_intestine"
+        },
+        {
+          "i": 22,
+          "name": "VH_M_inferior_mesenteric_vein",
+          "mesh": 12
+        },
+        {
+          "i": 23,
+          "name": "VH_M_median_sacral_vein",
+          "mesh": 13
+        },
+        {
+          "i": 24,
+          "name": "VH_M_sigmoid_vein",
+          "mesh": 14
+        },
+        {
+          "i": 25,
+          "name": "VH_M_superior_mesenteric_vein",
+          "mesh": 15
+        },
+        {
+          "i": 26,
+          "name": "VH_M_superior_rectal_vein",
+          "mesh": 16
+        },
+        {
+          "i": 27,
+          "name": "VH_M_common_iliac_vein"
+        },
+        {
+          "i": 28,
+          "name": "VH_M_common_iliac_vein_L",
+          "mesh": 17
+        },
+        {
+          "i": 29,
+          "name": "VH_M_common_iliac_vein_R",
+          "mesh": 18
+        },
+        {
+          "i": 30,
+          "name": "VH_M_inferior_pancreaticoduodenal_vein",
+          "mesh": 19
+        },
+        {
+          "i": 31,
+          "name": "VH_M_external_iliac_vein"
+        },
+        {
+          "i": 32,
+          "name": "VH_M_external_iliac_vein_L",
+          "mesh": 20
+        },
+        {
+          "i": 33,
+          "name": "VH_M_external_iliac_vein_R",
+          "mesh": 21
+        },
+        {
+          "i": 34,
+          "name": "VH_M_inferior_rectal_vein"
+        },
+        {
+          "i": 35,
+          "name": "VH_M_inferior_rectal_vein_L",
+          "mesh": 22
+        },
+        {
+          "i": 36,
+          "name": "VH_M_inferior_rectal_vein_R",
+          "mesh": 23
+        },
+        {
+          "i": 37,
+          "name": "VH_M_internal_pudendal_vein"
+        },
+        {
+          "i": 38,
+          "name": "VH_M_internal_pudendal_vein_L",
+          "mesh": 24
+        },
+        {
+          "i": 39,
+          "name": "VH_M_internal_pudendal_vein_R",
+          "mesh": 25
+        },
+        {
+          "i": 40,
+          "name": "VH_M_internal_iliac_vein"
+        },
+        {
+          "i": 41,
+          "name": "VH_M_internal_iliac_vein_L",
+          "mesh": 26
+        },
+        {
+          "i": 42,
+          "name": "VH_M_internal_iliac_vein_R",
+          "mesh": 27
+        },
+        {
+          "i": 43,
+          "name": "VH_M_colic_vein"
+        },
+        {
+          "i": 44,
+          "name": "VH_M_left_colic_vein",
+          "mesh": 28
+        },
+        {
+          "i": 45,
+          "name": "VH_M_ileocolic_vein",
+          "mesh": 29
+        },
+        {
+          "i": 46,
+          "name": "VH_M_right_colic_vein",
+          "mesh": 30
+        },
+        {
+          "i": 47,
+          "name": "VH_M_middle_colic_vein",
+          "mesh": 31
+        },
+        {
+          "i": 48,
+          "name": "VH_M_middle_rectal_vein"
+        },
+        {
+          "i": 49,
+          "name": "VH_M_middle_rectal_vein_L",
+          "mesh": 32
+        },
+        {
+          "i": 50,
+          "name": "VH_M_middle_rectal_vein_R",
+          "mesh": 33
+        },
+        {
+          "i": 51,
+          "name": "VH_M_arteries_of_large_intestine"
+        },
+        {
+          "i": 52,
+          "name": "VH_M_colic_artery"
+        },
+        {
+          "i": 53,
+          "name": "VH_M_right_colic_artery",
+          "mesh": 34
+        },
+        {
+          "i": 54,
+          "name": "VH_M_middle_colic_artery",
+          "mesh": 35
+        },
+        {
+          "i": 55,
+          "name": "VH_M_left_colic_artery",
+          "mesh": 36
+        },
+        {
+          "i": 56,
+          "name": "VH_M_ileocolic_artery",
+          "mesh": 37
+        },
+        {
+          "i": 57,
+          "name": "VH_M_sigmoid_artery"
+        },
+        {
+          "i": 58,
+          "name": "VH_M_sigmoid_artery_a",
+          "mesh": 38
+        },
+        {
+          "i": 59,
+          "name": "VH_M_sigmoid_artery_b",
+          "mesh": 39
+        },
+        {
+          "i": 60,
+          "name": "VH_M_sigmoid_artery_c",
+          "mesh": 40
+        },
+        {
+          "i": 61,
+          "name": "VH_M_inferior_mesenteric_artery",
+          "mesh": 41
+        },
+        {
+          "i": 62,
+          "name": "VH_M_superior_mesenteric_artery",
+          "mesh": 42
+        },
+        {
+          "i": 63,
+          "name": "VH_M_marginal_artery_of_Drummond",
+          "mesh": 43
+        },
+        {
+          "i": 64,
+          "name": "VH_M_blood_vasculature_of_kidney"
+        },
+        {
+          "i": 65,
+          "name": "VH_M_veins_of_kidney"
+        },
+        {
+          "i": 66,
+          "name": "VH_M_renal_vein"
+        },
+        {
+          "i": 67,
+          "name": "VH_M_renal_vein_L",
+          "mesh": 44
+        },
+        {
+          "i": 68,
+          "name": "VH_M_renal_vein_R",
+          "mesh": 45
+        },
+        {
+          "i": 69,
+          "name": "VH_M_arteries_of_kidney"
+        },
+        {
+          "i": 70,
+          "name": "VH_M_renal_artery"
+        },
+        {
+          "i": 71,
+          "name": "VH_M_left_renal_artery",
+          "mesh": 46
+        },
+        {
+          "i": 72,
+          "name": "VH_M_right_renal_artery",
+          "mesh": 47
+        },
+        {
+          "i": 73,
+          "name": "VH_M_blood_vasculature_of_heart"
+        },
+        {
+          "i": 74,
+          "name": "VH_M_arteries_of_heart"
+        },
+        {
+          "i": 75,
+          "name": "VH_M_aorta"
+        },
+        {
+          "i": 76,
+          "name": "VH_M_aortic_arch",
+          "mesh": 48
+        },
+        {
+          "i": 77,
+          "name": "VH_M_ascending_aorta",
+          "mesh": 49
+        },
+        {
+          "i": 78,
+          "name": "VH_M_brachiocephalic_artery"
+        },
+        {
+          "i": 79,
+          "name": "VH_M_brachiocephalic_artery_b",
+          "mesh": 50
+        },
+        {
+          "i": 80,
+          "name": "VH_M_brachiocephalic_artery_a",
+          "mesh": 51
+        },
+        {
+          "i": 81,
+          "name": "VH_M_left_common_carotid_artery"
+        },
+        {
+          "i": 82,
+          "name": "VH_M_left_common_carotid_artery_a",
+          "mesh": 52
+        },
+        {
+          "i": 83,
+          "name": "VH_M_left_common_carotid_artery_b",
+          "mesh": 53
+        },
+        {
+          "i": 84,
+          "name": "VH_M_left_subclavian_artery"
+        },
+        {
+          "i": 85,
+          "name": "VH_M_left_subclavian_artery_a",
+          "mesh": 54
+        },
+        {
+          "i": 86,
+          "name": "VH_M_left_subclavian_artery_b",
+          "mesh": 55
+        },
+        {
+          "i": 87,
+          "name": "VH_M_descending_aorta"
+        },
+        {
+          "i": 88,
+          "name": "VH_M_descending_aorta_a",
+          "mesh": 56
+        },
+        {
+          "i": 89,
+          "name": "VH_M_descending_aorta_b",
+          "mesh": 57
+        },
+        {
+          "i": 90,
+          "name": "VH_M_cardiac_artery"
+        },
+        {
+          "i": 91,
+          "name": "VH_M_left_anterior_descending_artery",
+          "mesh": 58
+        },
+        {
+          "i": 92,
+          "name": "VH_M_right_marginal_artery",
+          "mesh": 59
+        },
+        {
+          "i": 93,
+          "name": "VH_M_right_posterior_descending_artery",
+          "mesh": 60
+        },
+        {
+          "i": 94,
+          "name": "VH_M_diagonal_branch_of_anterior_descending_branch_of_left_coronary_artery",
+          "mesh": 61
+        },
+        {
+          "i": 95,
+          "name": "VH_M_left_coronary_artery",
+          "mesh": 62
+        },
+        {
+          "i": 96,
+          "name": "VH_M_right_coronary_artery",
+          "mesh": 63
+        },
+        {
+          "i": 97,
+          "name": "VH_M_diagonal_branch_of_left_anterior_descending_artery",
+          "mesh": 64
+        },
+        {
+          "i": 98,
+          "name": "VH_M_left_marginal_branch",
+          "mesh": 65
+        },
+        {
+          "i": 99,
+          "name": "VH_M_pulmonary_artery"
+        },
+        {
+          "i": 100,
+          "name": "VH_M_pulmonary_artery_L",
+          "mesh": 66
+        },
+        {
+          "i": 101,
+          "name": "VH_M_pulmonary_artery_R",
+          "mesh": 67
+        },
+        {
+          "i": 102,
+          "name": "VH_M_pulmonary_trunk",
+          "mesh": 68
+        },
+        {
+          "i": 103,
+          "name": "VH_M_veins_of_heart"
+        },
+        {
+          "i": 104,
+          "name": "VH_M_cardiac_vein"
+        },
+        {
+          "i": 105,
+          "name": "VH_M_great_cardiac_vein",
+          "mesh": 69
+        },
+        {
+          "i": 106,
+          "name": "VH_M_middle_cardiac_vein",
+          "mesh": 70
+        },
+        {
+          "i": 107,
+          "name": "VH_M_oblique_vein_of_left_atrium",
+          "mesh": 71
+        },
+        {
+          "i": 108,
+          "name": "VH_M_anterior_cardiac_vein",
+          "mesh": 72
+        },
+        {
+          "i": 109,
+          "name": "VH_M_coronary_sinus",
+          "mesh": 73
+        },
+        {
+          "i": 110,
+          "name": "VH_M_posterior_vein_of_left_ventricle",
+          "mesh": 74
+        },
+        {
+          "i": 111,
+          "name": "VH_M_small_cardiac_vein",
+          "mesh": 75
+        },
+        {
+          "i": 112,
+          "name": "VH_M_pulmonary_vein"
+        },
+        {
+          "i": 113,
+          "name": "VH_M_pulmonary_vein_R_inf",
+          "mesh": 76
+        },
+        {
+          "i": 114,
+          "name": "VH_M_pulmonary_vein_R_sup",
+          "mesh": 77
+        },
+        {
+          "i": 115,
+          "name": "VH_M_pulmonary_vein_L_inf",
+          "mesh": 78
+        },
+        {
+          "i": 116,
+          "name": "VH_M_pulmonary_vein_L_sup",
+          "mesh": 79
+        },
+        {
+          "i": 117,
+          "name": "VH_M_brachiocephalic_vein"
+        },
+        {
+          "i": 118,
+          "name": "VH_M_brachiocephalic_vein_L",
+          "mesh": 80
+        },
+        {
+          "i": 119,
+          "name": "VH_M_brachiocephalic_vein_R",
+          "mesh": 81
+        },
+        {
+          "i": 120,
+          "name": "VH_M_vena_cava"
+        },
+        {
+          "i": 121,
+          "name": "VH_M_superior_vena_cava",
+          "mesh": 82
+        },
+        {
+          "i": 122,
+          "name": "VH_M_inferior_vena_cava"
+        },
+        {
+          "i": 123,
+          "name": "VH_M_inferior_vena_cava_b",
+          "mesh": 83
+        },
+        {
+          "i": 124,
+          "name": "VH_M_inferior_vena_cava_a",
+          "mesh": 84
+        },
+        {
+          "i": 125,
+          "name": "VH_M_blood_vasculature_of_spleen"
+        },
+        {
+          "i": 126,
+          "name": "VH_M_veins_of_spleen"
+        },
+        {
+          "i": 127,
+          "name": "VH_M_splenic_vein",
+          "mesh": 85
+        },
+        {
+          "i": 128,
+          "name": "VH_M_arteries_of_spleen"
+        },
+        {
+          "i": 129,
+          "name": "VH_M_splenic_artery",
+          "mesh": 86
+        },
+        {
+          "i": 130,
+          "name": "VH_M_blood_vasculature_of_gall_bladder"
+        },
+        {
+          "i": 131,
+          "name": "VH_M_veins_of_gallbladder"
+        },
+        {
+          "i": 132,
+          "name": "VH_M_cystic_vein",
+          "mesh": 87
+        },
+        {
+          "i": 133,
+          "name": "VH_M_arteries_of_gallbladder"
+        },
+        {
+          "i": 134,
+          "name": "VH_M_cystic_artery",
+          "mesh": 88
+        },
+        {
+          "i": 135,
+          "name": "VH_M_blood_vasculature_of_liver"
+        },
+        {
+          "i": 136,
+          "name": "VH_M_arteries_of_liver"
+        },
+        {
+          "i": 137,
+          "name": "VH_M_celiac_trunk",
+          "mesh": 89
+        },
+        {
+          "i": 138,
+          "name": "VH_M_left_hepatic_artery",
+          "mesh": 90
+        },
+        {
+          "i": 139,
+          "name": "VH_M_proper_hepatic_artery",
+          "mesh": 91
+        },
+        {
+          "i": 140,
+          "name": "VH_M_posterior_segmental_right_hepatic_artery",
+          "mesh": 92
+        },
+        {
+          "i": 141,
+          "name": "VH_M_right_hepatic_artery",
+          "mesh": 93
+        },
+        {
+          "i": 142,
+          "name": "VH_M_anterior_segmental_right_hepatic_artery",
+          "mesh": 94
+        },
+        {
+          "i": 143,
+          "name": "VH_M_common_hepatic_artery",
+          "mesh": 95
+        },
+        {
+          "i": 144,
+          "name": "VH_M_middle_hepatic_artery_branch_of_left_hepatic_artery",
+          "mesh": 96
+        },
+        {
+          "i": 145,
+          "name": "VH_M_veins_of_liver"
+        },
+        {
+          "i": 146,
+          "name": "VH_M_right_hepatic_vein",
+          "mesh": 97
+        },
+        {
+          "i": 147,
+          "name": "VH_M_left_hepatic_vein",
+          "mesh": 98
+        },
+        {
+          "i": 148,
+          "name": "VH_M_middle_hepatic_vein",
+          "mesh": 99
+        },
+        {
+          "i": 149,
+          "name": "VH_M_left_branch_of_portal_vein",
+          "mesh": 100
+        },
+        {
+          "i": 150,
+          "name": "VH_M_right_branch_of_portal_vein",
+          "mesh": 101
+        },
+        {
+          "i": 151,
+          "name": "VH_M_portal_vein",
+          "mesh": 102
+        },
+        {
+          "i": 152,
+          "name": "VH_M_hepatic_portal_vein",
+          "mesh": 103
+        }
+      ],
+      "meshes": [
+        {
+          "i": 0,
+          "name": "VH_M_inferior_ophthalmic_vein_L",
+          "primitives": 1
+        },
+        {
+          "i": 1,
+          "name": "VH_M_superior_ophthalmic_vein_L",
+          "primitives": 1
+        },
+        {
+          "i": 2,
+          "name": "VH_M_central_retinal_vein_L",
+          "primitives": 1
+        },
+        {
+          "i": 3,
+          "name": "VH_M_ophthalmic_vein_L",
+          "primitives": 1
+        },
+        {
+          "i": 4,
+          "name": "VH_M_superior_ophthalmic_vein_R",
+          "primitives": 1
+        },
+        {
+          "i": 5,
+          "name": "VH_M_ophthalmic_vein_R",
+          "primitives": 1
+        },
+        {
+          "i": 6,
+          "name": "VH_M_central_retinal_vein_R",
+          "primitives": 1
+        },
+        {
+          "i": 7,
+          "name": "VH_M_inferior_ophthalmic_vein_R",
+          "primitives": 1
+        },
+        {
+          "i": 8,
+          "name": "VH_M_central_retinal_artery_R",
+          "primitives": 1
+        },
+        {
+          "i": 9,
+          "name": "VH_M_opthalmic_artery_R",
+          "primitives": 1
+        },
+        {
+          "i": 10,
+          "name": "VH_M_opthalmic_artery_L",
+          "primitives": 1
+        },
+        {
+          "i": 11,
+          "name": "VH_M_central_retinal_artery_L",
+          "primitives": 1
+        },
+        {
+          "i": 12,
+          "name": "VH_M_inferior_mesenteric_vein",
+          "primitives": 1
+        },
+        {
+          "i": 13,
+          "name": "VH_M_median_sacral_vein",
+          "primitives": 1
+        },
+        {
+          "i": 14,
+          "name": "VH_M_sigmoid_vein",
+          "primitives": 1
+        },
+        {
+          "i": 15,
+          "name": "VH_M_superior_mesenteric_vein",
+          "primitives": 1
+        },
+        {
+          "i": 16,
+          "name": "VH_M_superior_rectal_vein",
+          "primitives": 1
+        },
+        {
+          "i": 17,
+          "name": "VH_M_common_iliac_vein_L",
+          "primitives": 1
+        },
+        {
+          "i": 18,
+          "name": "VH_M_common_iliac_vein_R",
+          "primitives": 1
+        },
+        {
+          "i": 19,
+          "name": "VH_M_inferior_pancreaticoduodenal_vein",
+          "primitives": 1
+        },
+        {
+          "i": 20,
+          "name": "VH_M_external_iliac_vein_L",
+          "primitives": 1
+        },
+        {
+          "i": 21,
+          "name": "VH_M_external_iliac_vein_R",
+          "primitives": 1
+        },
+        {
+          "i": 22,
+          "name": "VH_M_inferior_rectal_vein_L",
+          "primitives": 1
+        },
+        {
+          "i": 23,
+          "name": "VH_M_inferior_rectal_vein_R",
+          "primitives": 1
+        },
+        {
+          "i": 24,
+          "name": "VH_M_internal_pudendal_vein_L",
+          "primitives": 1
+        },
+        {
+          "i": 25,
+          "name": "VH_M_internal_pudendal_vein_R",
+          "primitives": 1
+        },
+        {
+          "i": 26,
+          "name": "VH_M_internal_iliac_vein_L",
+          "primitives": 1
+        },
+        {
+          "i": 27,
+          "name": "VH_M_internal_iliac_vein_R",
+          "primitives": 1
+        },
+        {
+          "i": 28,
+          "name": "VH_M_left_colic_vein",
+          "primitives": 1
+        },
+        {
+          "i": 29,
+          "name": "VH_M_ileocolic_vein",
+          "primitives": 1
+        },
+        {
+          "i": 30,
+          "name": "VH_M_right_colic_vein",
+          "primitives": 1
+        },
+        {
+          "i": 31,
+          "name": "VH_M_middle_colic_vein",
+          "primitives": 1
+        },
+        {
+          "i": 32,
+          "name": "VH_M_middle_rectal_vein_L",
+          "primitives": 1
+        },
+        {
+          "i": 33,
+          "name": "VH_M_middle_rectal_vein_R",
+          "primitives": 1
+        },
+        {
+          "i": 34,
+          "name": "VH_M_right_colic_artery",
+          "primitives": 1
+        },
+        {
+          "i": 35,
+          "name": "VH_M_middle_colic_artery",
+          "primitives": 1
+        },
+        {
+          "i": 36,
+          "name": "VH_M_left_colic_artery",
+          "primitives": 1
+        },
+        {
+          "i": 37,
+          "name": "VH_M_ileocolic_artery",
+          "primitives": 1
+        },
+        {
+          "i": 38,
+          "name": "VH_M_sigmoid_artery_a",
+          "primitives": 1
+        },
+        {
+          "i": 39,
+          "name": "VH_M_sigmoid_artery_b",
+          "primitives": 1
+        },
+        {
+          "i": 40,
+          "name": "VH_M_sigmoid_artery_c",
+          "primitives": 1
+        },
+        {
+          "i": 41,
+          "name": "VH_M_inferior_mesenteric_artery",
+          "primitives": 1
+        },
+        {
+          "i": 42,
+          "name": "VH_M_superior_mesenteric_artery",
+          "primitives": 1
+        },
+        {
+          "i": 43,
+          "name": "VH_M_marginal_artery_of_Drummond",
+          "primitives": 1
+        },
+        {
+          "i": 44,
+          "name": "VH_M_renal_vein_L",
+          "primitives": 1
+        },
+        {
+          "i": 45,
+          "name": "VH_M_renal_vein_R",
+          "primitives": 1
+        },
+        {
+          "i": 46,
+          "name": "VH_M_left_renal_artery",
+          "primitives": 1
+        },
+        {
+          "i": 47,
+          "name": "VH_M_right_renal_artery",
+          "primitives": 1
+        },
+        {
+          "i": 48,
+          "name": "VH_M_aortic_arch",
+          "primitives": 1
+        },
+        {
+          "i": 49,
+          "name": "VH_M_ascending_aorta",
+          "primitives": 1
+        },
+        {
+          "i": 50,
+          "name": "VH_M_brachiocephalic_artery_b",
+          "primitives": 1
+        },
+        {
+          "i": 51,
+          "name": "VH_M_brachiocephalic_artery_a",
+          "primitives": 1
+        },
+        {
+          "i": 52,
+          "name": "VH_M_left_common_carotid_artery_a",
+          "primitives": 1
+        },
+        {
+          "i": 53,
+          "name": "VH_M_left_common_carotid_artery_b",
+          "primitives": 1
+        },
+        {
+          "i": 54,
+          "name": "VH_M_left_subclavian_artery_a",
+          "primitives": 1
+        },
+        {
+          "i": 55,
+          "name": "VH_M_left_subclavian_artery_b",
+          "primitives": 1
+        },
+        {
+          "i": 56,
+          "name": "VH_M_descending_aorta_a",
+          "primitives": 1
+        },
+        {
+          "i": 57,
+          "name": "VH_M_descending_aorta_b",
+          "primitives": 1
+        },
+        {
+          "i": 58,
+          "name": "VH_M_left_anterior_descending_artery",
+          "primitives": 1
+        },
+        {
+          "i": 59,
+          "name": "VH_M_right_marginal_artery",
+          "primitives": 1
+        },
+        {
+          "i": 60,
+          "name": "VH_M_right_posterior_descending_artery",
+          "primitives": 1
+        },
+        {
+          "i": 61,
+          "name": "VH_M_diagonal_branch_of_anterior_descending_branch_of_left_coronary_artery",
+          "primitives": 1
+        },
+        {
+          "i": 62,
+          "name": "VH_M_left_coronary_artery",
+          "primitives": 1
+        },
+        {
+          "i": 63,
+          "name": "VH_M_right_coronary_artery",
+          "primitives": 1
+        },
+        {
+          "i": 64,
+          "name": "VH_M_diagonal_branch_of_left_anterior_descending_artery",
+          "primitives": 1
+        },
+        {
+          "i": 65,
+          "name": "VH_M_left_marginal_branch",
+          "primitives": 1
+        },
+        {
+          "i": 66,
+          "name": "VH_M_pulmonary_artery_L",
+          "primitives": 1
+        },
+        {
+          "i": 67,
+          "name": "VH_M_pulmonary_artery_R",
+          "primitives": 1
+        },
+        {
+          "i": 68,
+          "name": "VH_M_pulmonary_trunk",
+          "primitives": 1
+        },
+        {
+          "i": 69,
+          "name": "VH_M_great_cardiac_vein",
+          "primitives": 1
+        },
+        {
+          "i": 70,
+          "name": "VH_M_middle_cardiac_vein",
+          "primitives": 1
+        },
+        {
+          "i": 71,
+          "name": "VH_M_oblique_vein_of_left_atrium",
+          "primitives": 1
+        },
+        {
+          "i": 72,
+          "name": "VH_M_anterior_cardiac_vein",
+          "primitives": 1
+        },
+        {
+          "i": 73,
+          "name": "VH_M_coronary_sinus",
+          "primitives": 1
+        },
+        {
+          "i": 74,
+          "name": "VH_M_posterior_vein_of_left_ventricle",
+          "primitives": 1
+        },
+        {
+          "i": 75,
+          "name": "VH_M_small_cardiac_vein",
+          "primitives": 1
+        },
+        {
+          "i": 76,
+          "name": "VH_M_pulmonary_vein_R_inf",
+          "primitives": 1
+        },
+        {
+          "i": 77,
+          "name": "VH_M_pulmonary_vein_R_sup",
+          "primitives": 1
+        },
+        {
+          "i": 78,
+          "name": "VH_M_pulmonary_vein_L_inf",
+          "primitives": 1
+        },
+        {
+          "i": 79,
+          "name": "VH_M_pulmonary_vein_L_sup",
+          "primitives": 1
+        },
+        {
+          "i": 80,
+          "name": "VH_M_brachiocephalic_vein_L",
+          "primitives": 1
+        },
+        {
+          "i": 81,
+          "name": "VH_M_brachiocephalic_vein_R",
+          "primitives": 1
+        },
+        {
+          "i": 82,
+          "name": "VH_M_superior_vena_cava",
+          "primitives": 1
+        },
+        {
+          "i": 83,
+          "name": "VH_M_inferior_vena_cava_b",
+          "primitives": 1
+        },
+        {
+          "i": 84,
+          "name": "VH_M_inferior_vena_cava_a",
+          "primitives": 1
+        },
+        {
+          "i": 85,
+          "name": "VH_M_splenic_vein",
+          "primitives": 1
+        },
+        {
+          "i": 86,
+          "name": "VH_M_splenic_artery",
+          "primitives": 1
+        },
+        {
+          "i": 87,
+          "name": "VH_M_cystic_vein",
+          "primitives": 1
+        },
+        {
+          "i": 88,
+          "name": "VH_M_cystic_artery",
+          "primitives": 1
+        },
+        {
+          "i": 89,
+          "name": "VH_M_celiac_trunk",
+          "primitives": 1
+        },
+        {
+          "i": 90,
+          "name": "VH_M_left_hepatic_artery",
+          "primitives": 1
+        },
+        {
+          "i": 91,
+          "name": "VH_M_proper_hepatic_artery",
+          "primitives": 1
+        },
+        {
+          "i": 92,
+          "name": "VH_M_posterior_segmental_right_hepatic_artery",
+          "primitives": 1
+        },
+        {
+          "i": 93,
+          "name": "VH_M_right_hepatic_artery",
+          "primitives": 1
+        },
+        {
+          "i": 94,
+          "name": "VH_M_anterior_segmental_right_hepatic_artery",
+          "primitives": 1
+        },
+        {
+          "i": 95,
+          "name": "VH_M_common_hepatic_artery",
+          "primitives": 1
+        },
+        {
+          "i": 96,
+          "name": "VH_M_middle_hepatic_artery_branch_of_left_hepatic_artery",
+          "primitives": 1
+        },
+        {
+          "i": 97,
+          "name": "VH_M_right_hepatic_vein",
+          "primitives": 1
+        },
+        {
+          "i": 98,
+          "name": "VH_M_left_hepatic_vein",
+          "primitives": 1
+        },
+        {
+          "i": 99,
+          "name": "VH_M_middle_hepatic_vein",
+          "primitives": 1
+        },
+        {
+          "i": 100,
+          "name": "VH_M_left_branch_of_portal_vein",
+          "primitives": 1
+        },
+        {
+          "i": 101,
+          "name": "VH_M_right_branch_of_portal_vein",
+          "primitives": 1
+        },
+        {
+          "i": 102,
+          "name": "VH_M_portal_vein",
+          "primitives": 1
+        },
+        {
+          "i": 103,
+          "name": "VH_M_hepatic_portal_vein",
+          "primitives": 1
+        }
+      ],
+      "namedMeshes": [
+        "VH_M_inferior_ophthalmic_vein_L",
+        "VH_M_superior_ophthalmic_vein_L",
+        "VH_M_central_retinal_vein_L",
+        "VH_M_ophthalmic_vein_L",
+        "VH_M_superior_ophthalmic_vein_R",
+        "VH_M_ophthalmic_vein_R",
+        "VH_M_central_retinal_vein_R",
+        "VH_M_inferior_ophthalmic_vein_R",
+        "VH_M_central_retinal_artery_R",
+        "VH_M_opthalmic_artery_R",
+        "VH_M_opthalmic_artery_L",
+        "VH_M_central_retinal_artery_L",
+        "VH_M_inferior_mesenteric_vein",
+        "VH_M_median_sacral_vein",
+        "VH_M_sigmoid_vein",
+        "VH_M_superior_mesenteric_vein",
+        "VH_M_superior_rectal_vein",
+        "VH_M_common_iliac_vein_L",
+        "VH_M_common_iliac_vein_R",
+        "VH_M_inferior_pancreaticoduodenal_vein",
+        "VH_M_external_iliac_vein_L",
+        "VH_M_external_iliac_vein_R",
+        "VH_M_inferior_rectal_vein_L",
+        "VH_M_inferior_rectal_vein_R",
+        "VH_M_internal_pudendal_vein_L",
+        "VH_M_internal_pudendal_vein_R",
+        "VH_M_internal_iliac_vein_L",
+        "VH_M_internal_iliac_vein_R",
+        "VH_M_left_colic_vein",
+        "VH_M_ileocolic_vein",
+        "VH_M_right_colic_vein",
+        "VH_M_middle_colic_vein",
+        "VH_M_middle_rectal_vein_L",
+        "VH_M_middle_rectal_vein_R",
+        "VH_M_right_colic_artery",
+        "VH_M_middle_colic_artery",
+        "VH_M_left_colic_artery",
+        "VH_M_ileocolic_artery",
+        "VH_M_sigmoid_artery_a",
+        "VH_M_sigmoid_artery_b",
+        "VH_M_sigmoid_artery_c",
+        "VH_M_inferior_mesenteric_artery",
+        "VH_M_superior_mesenteric_artery",
+        "VH_M_marginal_artery_of_Drummond",
+        "VH_M_renal_vein_L",
+        "VH_M_renal_vein_R",
+        "VH_M_left_renal_artery",
+        "VH_M_right_renal_artery",
+        "VH_M_aortic_arch",
+        "VH_M_ascending_aorta",
+        "VH_M_brachiocephalic_artery_b",
+        "VH_M_brachiocephalic_artery_a",
+        "VH_M_left_common_carotid_artery_a",
+        "VH_M_left_common_carotid_artery_b",
+        "VH_M_left_subclavian_artery_a",
+        "VH_M_left_subclavian_artery_b",
+        "VH_M_descending_aorta_a",
+        "VH_M_descending_aorta_b",
+        "VH_M_left_anterior_descending_artery",
+        "VH_M_right_marginal_artery",
+        "VH_M_right_posterior_descending_artery",
+        "VH_M_diagonal_branch_of_anterior_descending_branch_of_left_coronary_artery",
+        "VH_M_left_coronary_artery",
+        "VH_M_right_coronary_artery",
+        "VH_M_diagonal_branch_of_left_anterior_descending_artery",
+        "VH_M_left_marginal_branch",
+        "VH_M_pulmonary_artery_L",
+        "VH_M_pulmonary_artery_R",
+        "VH_M_pulmonary_trunk",
+        "VH_M_great_cardiac_vein",
+        "VH_M_middle_cardiac_vein",
+        "VH_M_oblique_vein_of_left_atrium",
+        "VH_M_anterior_cardiac_vein",
+        "VH_M_coronary_sinus",
+        "VH_M_posterior_vein_of_left_ventricle",
+        "VH_M_small_cardiac_vein",
+        "VH_M_pulmonary_vein_R_inf",
+        "VH_M_pulmonary_vein_R_sup",
+        "VH_M_pulmonary_vein_L_inf",
+        "VH_M_pulmonary_vein_L_sup",
+        "VH_M_brachiocephalic_vein_L",
+        "VH_M_brachiocephalic_vein_R",
+        "VH_M_superior_vena_cava",
+        "VH_M_inferior_vena_cava_b",
+        "VH_M_inferior_vena_cava_a",
+        "VH_M_splenic_vein",
+        "VH_M_splenic_artery",
+        "VH_M_cystic_vein",
+        "VH_M_cystic_artery",
+        "VH_M_celiac_trunk",
+        "VH_M_left_hepatic_artery",
+        "VH_M_proper_hepatic_artery",
+        "VH_M_posterior_segmental_right_hepatic_artery",
+        "VH_M_right_hepatic_artery",
+        "VH_M_anterior_segmental_right_hepatic_artery",
+        "VH_M_common_hepatic_artery",
+        "VH_M_middle_hepatic_artery_branch_of_left_hepatic_artery",
+        "VH_M_right_hepatic_vein",
+        "VH_M_left_hepatic_vein",
+        "VH_M_middle_hepatic_vein",
+        "VH_M_left_branch_of_portal_vein",
+        "VH_M_right_branch_of_portal_vein",
+        "VH_M_portal_vein",
+        "VH_M_hepatic_portal_vein"
+      ]
+    }
+  }
+}
