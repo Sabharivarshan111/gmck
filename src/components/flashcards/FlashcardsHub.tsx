@@ -26,10 +26,12 @@ import {
 import {
   deleteImportedDeck,
   importPackage,
+  importTextDeck,
   loadImportedDecks,
   MAX_IMPORT_CARDS,
   type ImportedDeck,
 } from "@/lib/importedDecksWeb";
+import { parseAnkiText } from "@/lib/ankiText";
 /*
  * Where sql.js finds its WASM, resolved by Vite at build time.
  *
@@ -364,6 +366,7 @@ function ImportPanel({
 }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
 
   const onFile = useCallback(
     async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -376,15 +379,33 @@ function ImportPanel({
 
       setBusy(true);
       setError(null);
+      setNotice(null);
       try {
-        const { readApkg, setSqlWasmUrl } = await import("@/lib/apkgWeb");
-        setSqlWasmUrl(sqlWasmUrl);
-        const pkg = await readApkg(file);
-        const deck = await importPackage(pkg, file.name);
-        onDecks(loadImportedDecks());
-        onStudy(deck);
+        if (/\.(txt|csv|tsv)$/i.test(file.name)) {
+          const parsed = parseAnkiText(await file.text(), file.name);
+          const deck = await importTextDeck(parsed, file.name);
+          onDecks(loadImportedDecks());
+          if (parsed.warnings.length > 0) {
+            setNotice(parsed.warnings.join(" "));
+          } else {
+            onStudy(deck);
+          }
+        } else if (/\.(apkg|colpkg)$/i.test(file.name)) {
+          const { readApkg, setSqlWasmUrl } = await import("@/lib/apkgWeb");
+          setSqlWasmUrl(sqlWasmUrl);
+          const pkg = await readApkg(file);
+          const deck = await importPackage(pkg, file.name);
+          onDecks(loadImportedDecks());
+          onStudy(deck);
+        } else if (/\.html?$/i.test(file.name)) {
+          throw new Error(
+            "Anki HTML import means HTML inside a .txt, .csv, or .tsv field. A standalone .html file is not an Anki deck; export text/CSV or .apkg instead."
+          );
+        } else {
+          throw new Error("Choose an .apkg, .colpkg, .txt, .csv, or .tsv Anki export.");
+        }
       } catch (e) {
-        setError((e as Error).message || "That package could not be opened.");
+        setError((e as Error).message || "That Anki export could not be opened.");
       } finally {
         setBusy(false);
       }
@@ -395,21 +416,21 @@ function ImportPanel({
   return (
     <div className="rounded-xl border bg-card p-4 space-y-3">
       <div className="space-y-1">
-        <p className="text-sm font-medium">Import a .apkg</p>
+        <p className="text-sm font-medium">Import an Anki deck or text export</p>
         <p className="text-xs text-muted-foreground">
-          Your deck is read in this browser and stays in it — nothing is uploaded. A large
-          package takes a moment the first time.
+          .apkg/.colpkg carry full decks and media. .txt/.csv/.tsv can contain HTML in their
+          fields. Everything is read in this browser and stays here — nothing is uploaded.
         </p>
       </div>
 
       <label className="block">
         <input
           type="file"
-          accept=".apkg,application/zip"
+          accept=".apkg,.colpkg,.txt,.csv,.tsv,application/zip,text/plain,text/csv,text/tab-separated-values"
           className="sr-only"
           disabled={busy}
           onChange={onFile}
-          aria-label="Choose an Anki package to import"
+          aria-label="Choose an Anki deck or text export to import"
         />
         <span
           className={`flex items-center justify-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium ${
@@ -417,13 +438,18 @@ function ImportPanel({
           }`}
         >
           {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
-          {busy ? "Reading the package…" : "Choose a .apkg file"}
+          {busy ? "Reading the export…" : "Choose .apkg / .txt / .csv"}
         </span>
       </label>
 
       {error && (
         <p className="text-xs text-red-600 dark:text-red-400" role="alert">
           {error}
+        </p>
+      )}
+      {notice && (
+        <p className="text-xs text-amber-700 dark:text-amber-300" role="status">
+          {notice}
         </p>
       )}
 
@@ -454,6 +480,11 @@ function ImportPanel({
         </div>
       ))}
 
+      <p className="text-[10px] text-muted-foreground">
+        HTML support means HTML inside fields of an Anki text/CSV export; a standalone .html
+        document is not an Anki deck format. Use .apkg/.colpkg when pictures or audio need to
+        travel with the deck.
+      </p>
       <p className="text-[10px] text-muted-foreground">
         Anki is a trademark of Ankitects Pty Ltd. Orbit is not affiliated with, endorsed by
         or supported by Ankitects.
