@@ -344,6 +344,7 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
             return (
               <button
                 key={tab.id}
+                data-testid={`organ-drawer-tab-${tab.id}`}
                 onClick={() => setActiveTab(tab.id as any)}
                 className={`px-3 py-2 rounded-xl text-[11px] sm:text-xs font-bold flex items-center gap-1.5 whitespace-nowrap min-h-[44px] shrink-0 transition-all ${
                   isCurrent
