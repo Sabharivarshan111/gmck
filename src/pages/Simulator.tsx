@@ -542,6 +542,17 @@ export const Simulator: React.FC = () => {
             { id: 'thymus', label: 'Thymus', icon: '🧫' },
             { id: 'kidney', label: 'Kidneys & Adrenals', icon: '🫘' },
             { id: 'skeletal', label: 'Skeleton & Ribs', icon: '🦴' },
+            { id: 'eye', label: 'Eyes', icon: '👁️' },
+            { id: 'ureter', label: 'Ureters', icon: '〰️' },
+            { id: 'spinal_cord', label: 'Spinal Cord', icon: '🧠' },
+            { id: 'pelvis', label: 'Bony Pelvis', icon: '🦴' },
+            { id: 'prostate', label: 'Prostate', icon: '♂️' },
+            { id: 'skin', label: 'Skin', icon: '🧴' },
+            { id: 'knee', label: 'Knees', icon: '🦵' },
+            { id: 'uterus', label: 'Uterus', icon: '♀️' },
+            { id: 'ovary', label: 'Ovaries', icon: '⚪' },
+            { id: 'fallopian_tube', label: 'Uterine Tubes', icon: '↔️' },
+            { id: 'placenta', label: 'Placenta', icon: '🫧' },
             { id: 'snakebite', label: 'Snakebite Wound', icon: '🐍' },
           ].map((item) => {
             const isActive =
@@ -574,13 +585,24 @@ export const Simulator: React.FC = () => {
                     small_intestine: 'hra_small_intestine_overview',
                     urinary_bladder: 'hra_bladder_overview',
                     thymus: 'hra_thymus_overview',
+                    eye: 'hra_eye_overview',
+                    ureter: 'hra_ureter_overview',
+                    spinal_cord: 'hra_spinal_cord_overview',
+                    pelvis: 'hra_pelvis_overview',
+                    prostate: 'hra_prostate_overview',
+                    skin: 'hra_skin_overview',
+                    knee: 'hra_knee_overview',
+                    uterus: 'hra_uterus_overview',
+                    ovary: 'hra_ovary_overview',
+                    fallopian_tube: 'hra_fallopian_overview',
+                    placenta: 'hra_placenta_overview',
                   };
                   setIsolatedPartId(directHraOverview[item.id] || item.id);
                   setSelectedOrganId(item.id);
                   setContextOrganId(null);
 
-                  if (item.id === 'brain') setCameraPreset('head');
-                  else if (item.id === 'heart' || item.id === 'lungs') setCameraPreset('thorax');
+                  if (item.id === 'brain' || item.id === 'eye') setCameraPreset('head');
+                  else if (item.id === 'heart' || item.id === 'lungs' || item.id === 'thymus') setCameraPreset('thorax');
                   else if (
                     item.id === 'abdomen' ||
                     item.id === 'liver' ||
@@ -590,7 +612,14 @@ export const Simulator: React.FC = () => {
                     item.id === 'spleen' ||
                     item.id === 'small_intestine' ||
                     item.id === 'urinary_bladder' ||
-                    item.id === 'thymus'
+                    item.id === 'thymus' ||
+                    item.id === 'ureter' ||
+                    item.id === 'pelvis' ||
+                    item.id === 'prostate' ||
+                    item.id === 'uterus' ||
+                    item.id === 'ovary' ||
+                    item.id === 'fallopian_tube' ||
+                    item.id === 'placenta'
                   )
                     setCameraPreset('abdomen');
                   else setCameraPreset('anterior');
