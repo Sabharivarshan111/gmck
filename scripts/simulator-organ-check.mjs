@@ -160,6 +160,16 @@ for (const [key, floor] of Object.entries(FLOORS)) {
   if (n < floor) fail(`"${key}" resolves to ${n} parts, below the ${floor} it had — something stopped matching`);
 }
 
+// Cardiac anatomy must remain spatially registered. The myocardium, coronary
+// arteries/veins and aortic root are separate atlas systems, so isotropically
+// scaling only the merged cardiac mesh makes the vessels visibly detach.
+{
+  const viewSrc = readFileSync(path.join(root, 'src/simulator/view/AnatomicalBody3D.tsx'), 'utf8');
+  if (/cardiacScale|cardiacMesh\.scale\.set\([^)]*(?:sin|heartRate|cardiacScale)/i.test(viewSrc)) {
+    fail('cardiac mesh is being geometrically pulsed independently of its coronary/aortic vessels — this causes visible vessel detachment');
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Every named part can be found by its own name
 // ---------------------------------------------------------------------------
