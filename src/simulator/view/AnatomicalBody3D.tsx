@@ -165,6 +165,9 @@ export function createAutonomicNervousSystem(): {
 } {
   const group = new THREE.Group();
   group.name = 'autonomic_nervous_system';
+  group.visible = false;
+  group.userData.isDerivedSchematic = true;
+  group.userData.schematicLabel = 'Procedural autonomic teaching overlay';
 
   const cardiacGroup = new THREE.Group();
   cardiacGroup.name = 'cardiac_nerves';
@@ -475,6 +478,9 @@ export function createLymphaticSystem(): {
 } {
   const group = new THREE.Group();
   group.name = 'lymphatic_system';
+  group.visible = false;
+  group.userData.isDerivedSchematic = true;
+  group.userData.schematicLabel = 'Procedural lymphatic teaching overlay';
 
   const thoracicGroup = new THREE.Group();
   thoracicGroup.name = 'thoracic_lymphatics';
@@ -2704,10 +2710,9 @@ varying float partSelected;
     const showDerivedPhrenic = isPhrenicTarget;
     const useNerveContext = useRealNerveLayer || showDerivedPhrenic;
 
-    // The vagus and the sympathetic chain are drawn by this component's own
-    // autonomic overlay rather than taken from the atlas, so their absence from
-    // BodyParts3D is not something the reader needs told. Everything else that
-    // the atlas does not hold is.
+    // Vagus and sympathetic-chain views now come from the real Z-Anatomy
+    // peripheral-nerve supplement. The legacy procedural autonomic generator is
+    // retained only for the explicitly labelled splanchnic teaching schematic.
     const zReferenceFailed =
       !!zReferenceTarget &&
       zReferenceFailedRef.current.has(zReferenceTarget.modelKey);
@@ -2808,66 +2813,28 @@ varying float partSelected;
 
     const isLymphaticTarget = !!targetKey && targetKey.toLowerCase().includes('lymph');
 
-    // Autonomic Nerves Visibility and Saturated High-Contrast Amber-Gold Styling
+    // Legacy procedural autonomic geometry is a teaching schematic, not a
+    // specimen/source atlas. Keep it out of ordinary full-body, abdominal,
+    // cardiac and vascular views. The one remaining intentional use is the
+    // explicitly labelled splanchnic-nerve gap.
     if (autonomicGroupRef.current) {
-      if (useNerveContext) {
-        // Real Z-Anatomy geometry or the explicit phrenic schematic supersedes
-        // the older generic autonomic overlay for this selection.
-        autonomicGroupRef.current.visible = false;
-        if (cardiacNervesRef.current) cardiacNervesRef.current.visible = false;
-        if (pulmonaryNervesRef.current) pulmonaryNervesRef.current.visible = false;
-        if (abdominalNervesRef.current) abdominalNervesRef.current.visible = false;
-      } else if (isAutonomicTarget) {
-        autonomicGroupRef.current.visible = true;
-        if (cardiacNervesRef.current) cardiacNervesRef.current.visible = !isSplanchnicTarget;
-        if (pulmonaryNervesRef.current) pulmonaryNervesRef.current.visible = !isSplanchnicTarget;
-        if (abdominalNervesRef.current) abdominalNervesRef.current.visible = true;
-        if (autonomicMaterialsRef.current) {
-          autonomicMaterialsRef.current.trunk.emissiveIntensity = 0.85;
-          autonomicMaterialsRef.current.trunk.color.setHex(0xd97706); // Deep rich amber-gold
-          autonomicMaterialsRef.current.trunk.emissive.setHex(0x92400e);
-          autonomicMaterialsRef.current.ganglia.emissiveIntensity = 1.05;
-          autonomicMaterialsRef.current.ganglia.color.setHex(0xf59e0b); // Warm honey-gold
-          autonomicMaterialsRef.current.ganglia.emissive.setHex(0xb45309);
-        }
-      } else if (isArteryTarget) {
-        // STRICTLY HIDE AUTONOMIC NERVES WHEN ISOLATING AN ARTERY
-        autonomicGroupRef.current.visible = false;
-      } else if (isLungTarget) {
-        // HIDE full-spine sympathetic trunk during lung isolation to prevent camera zoom-out and visual distraction!
-        autonomicGroupRef.current.visible = false;
-      } else if (isAbdomenTarget) {
-        // Show splanchnic nerves (T5-T12) & celiac plexus
-        autonomicGroupRef.current.visible = true;
-        if (abdominalNervesRef.current) abdominalNervesRef.current.visible = true;
-        if (pulmonaryNervesRef.current) pulmonaryNervesRef.current.visible = false;
-        if (cardiacNervesRef.current) cardiacNervesRef.current.visible = false;
-        if (autonomicMaterialsRef.current) {
-          autonomicMaterialsRef.current.trunk.emissiveIntensity = 0.85;
-          autonomicMaterialsRef.current.trunk.color.setHex(0xd97706);
-          autonomicMaterialsRef.current.ganglia.emissiveIntensity = 1.05;
-          autonomicMaterialsRef.current.ganglia.color.setHex(0xf59e0b);
-        }
-      } else if (isCardiacTarget) {
-        // STRICTLY HIDE AUTONOMIC NERVES ON CARDIAC ISOLATION (No yellow hanging legs below apex)
-        autonomicGroupRef.current.visible = false;
-        if (cardiacNervesRef.current) cardiacNervesRef.current.visible = false;
-        if (pulmonaryNervesRef.current) pulmonaryNervesRef.current.visible = false;
-        if (abdominalNervesRef.current) abdominalNervesRef.current.visible = false;
-      } else if (isolatedPartId) {
-        autonomicGroupRef.current.visible = false;
-      } else {
-        // Normal full body mode
-        autonomicGroupRef.current.visible = layerPeel <= 0.68;
-        if (cardiacNervesRef.current) cardiacNervesRef.current.visible = true;
-        if (pulmonaryNervesRef.current) pulmonaryNervesRef.current.visible = true;
-        if (abdominalNervesRef.current) abdominalNervesRef.current.visible = true;
-        if (autonomicMaterialsRef.current) {
-          autonomicMaterialsRef.current.trunk.emissiveIntensity = 0.75;
-          autonomicMaterialsRef.current.trunk.color.setHex(0xd97706);
-          autonomicMaterialsRef.current.ganglia.emissiveIntensity = 0.90;
-          autonomicMaterialsRef.current.ganglia.color.setHex(0xf59e0b);
-        }
+      const showSplanchnicSchematic =
+        isSplanchnicTarget && !useRealNerveLayer && !peripheralNervesFailed;
+
+      autonomicGroupRef.current.visible = showSplanchnicSchematic;
+      if (cardiacNervesRef.current) cardiacNervesRef.current.visible = false;
+      if (pulmonaryNervesRef.current) pulmonaryNervesRef.current.visible = false;
+      if (abdominalNervesRef.current) {
+        abdominalNervesRef.current.visible = showSplanchnicSchematic;
+      }
+
+      if (showSplanchnicSchematic && autonomicMaterialsRef.current) {
+        autonomicMaterialsRef.current.trunk.emissiveIntensity = 0.85;
+        autonomicMaterialsRef.current.trunk.color.setHex(0xd97706);
+        autonomicMaterialsRef.current.trunk.emissive.setHex(0x92400e);
+        autonomicMaterialsRef.current.ganglia.emissiveIntensity = 1.05;
+        autonomicMaterialsRef.current.ganglia.color.setHex(0xf59e0b);
+        autonomicMaterialsRef.current.ganglia.emissive.setHex(0xb45309);
       }
     }
 
@@ -2890,39 +2857,14 @@ varying float partSelected;
       }
     }
 
-    // Lymphatics Visibility: NEVER show green lymphatics on cardiac, arterial, nerve, or lung isolations!
+    // The old hand-positioned lymphatic spheres/tubes are not source anatomy.
+    // Keep that generator dormant rather than mixing it with BodyParts3D. A
+    // vetted Z-Anatomy lymph-node source exists in the repo inventory and can
+    // replace this later; until then ORBIT prefers an honest gap to fake mesh.
     if (lymphaticGroupRef.current) {
-      if (isLymphaticTarget) {
-        lymphaticGroupRef.current.visible = true;
-        if (thoracicLymphRef.current) thoracicLymphRef.current.visible = true;
-        if (abdominalLymphRef.current) abdominalLymphRef.current.visible = true;
-        if (lymphaticMaterialsRef.current) {
-          lymphaticMaterialsRef.current.node.emissiveIntensity = 2.4;
-          lymphaticMaterialsRef.current.node.color.setHex(0x34d399);
-          lymphaticMaterialsRef.current.vessel.emissiveIntensity = 2.0;
-        }
-      } else if (isAbdomenTarget) {
-        // Show cisterna chyli, celiac nodes, mesenteric nodes, lumbar chains
-        lymphaticGroupRef.current.visible = true;
-        if (abdominalLymphRef.current) abdominalLymphRef.current.visible = true;
-        if (thoracicLymphRef.current) thoracicLymphRef.current.visible = false;
-        if (lymphaticMaterialsRef.current) {
-          lymphaticMaterialsRef.current.node.emissiveIntensity = 1.9;
-          lymphaticMaterialsRef.current.vessel.emissiveIntensity = 1.6;
-        }
-      } else if (isolatedPartId || isLungTarget || isCardiacTarget || isArteryTarget || isAutonomicTarget) {
-        // STRICTLY HIDE LYMPHATICS ON LUNG, CARDIAC, ARTERY, AND NERVE ISOLATIONS (NO GREEN SPHERES/TUBES)
-        lymphaticGroupRef.current.visible = false;
-      } else {
-        // Normal full body mode
-        lymphaticGroupRef.current.visible = layerPeel <= 0.68;
-        if (thoracicLymphRef.current) thoracicLymphRef.current.visible = true;
-        if (abdominalLymphRef.current) abdominalLymphRef.current.visible = true;
-        if (lymphaticMaterialsRef.current) {
-          lymphaticMaterialsRef.current.node.emissiveIntensity = 0.9;
-          lymphaticMaterialsRef.current.vessel.emissiveIntensity = 0.7;
-        }
-      }
+      lymphaticGroupRef.current.visible = false;
+      if (thoracicLymphRef.current) thoracicLymphRef.current.visible = false;
+      if (abdominalLymphRef.current) abdominalLymphRef.current.visible = false;
     }
 
     // Ordered depth stages for Layer Peeling
