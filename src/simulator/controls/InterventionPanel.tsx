@@ -214,6 +214,7 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
           </label>
           <div className="relative flex-1 min-w-0">
             <select
+              data-testid="scenario-select"
               value={currentScenarioId}
               onChange={(e) => onSelectScenario(e.target.value)}
               className={`w-full truncate text-xs font-semibold rounded-xl pl-3 pr-8 py-2 border transition-all focus:outline-none focus:ring-2 appearance-none cursor-pointer ${
@@ -299,6 +300,7 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
             ).map((l) => (
               <button
                 key={l.id}
+                data-testid={`layer-${l.id}`}
                 onClick={() => onSelectLayer(l.id)}
                 className={`min-h-[44px] py-2 px-1 rounded-xl text-[11px] sm:text-xs font-bold border transition-all cursor-pointer ${
                   activeLayer === l.id
@@ -339,6 +341,7 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-1.5">
             <button
+              data-testid="open-tool-pupil"
               onClick={() => onOpenTool('pupil')}
               className={`min-h-[44px] py-2 px-1 rounded-xl text-[11px] sm:text-xs font-bold border flex items-center justify-center gap-1 transition-all cursor-pointer ${
                 isLight
@@ -349,6 +352,7 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
               👁️ Pupil
             </button>
             <button
+              data-testid="open-tool-pocus"
               onClick={() => onOpenTool('ultrasound')}
               className={`py-2 px-1 rounded-xl text-xs font-bold border flex items-center justify-center gap-1 transition-all cursor-pointer ${
                 isLight
@@ -359,6 +363,7 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
               📡 POCUS
             </button>
             <button
+              data-testid="open-tool-stethoscope"
               onClick={() => onOpenTool('stethoscope')}
               className={`py-2 px-1 rounded-xl text-xs font-bold border flex items-center justify-center gap-1 transition-all cursor-pointer ${
                 isLight
@@ -369,6 +374,7 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
               🩺 Steth
             </button>
             <button
+              data-testid="open-tool-ecg"
               onClick={() => onOpenTool('ecg12')}
               className={`py-2 px-1 rounded-xl text-xs font-bold border flex items-center justify-center gap-1 transition-all cursor-pointer ${
                 isLight
@@ -379,6 +385,7 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
               📈 12-Lead
             </button>
             <button
+              data-testid="open-tool-piccled"
               onClick={() => onOpenTool('piccled')}
               className={`min-h-[44px] py-2 px-1.5 rounded-xl text-[11px] sm:text-xs font-bold border flex items-center justify-center gap-1 transition-all cursor-pointer ${
                 isLight
@@ -437,6 +444,7 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
           {filteredInterventions.map((item) => (
             <button
               key={item.id}
+              data-testid={`intervention-${item.id}`}
               onClick={() => onApplyAction(item.id)}
               className={`min-h-[72px] p-2 rounded-xl border text-[11px] sm:text-xs font-bold flex flex-col items-center justify-center text-center transition-all cursor-pointer active:scale-95 ${
                 isLight
@@ -474,7 +482,7 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
           </span>
         </div>
 
-        <div className="space-y-1.5 max-h-36 overflow-y-auto pr-1">
+        <div data-testid="clinical-event-log" className="space-y-1.5 max-h-36 overflow-y-auto pr-1">
           {logs.slice(-6).map((log, idx) => (
             <div
               key={idx}
