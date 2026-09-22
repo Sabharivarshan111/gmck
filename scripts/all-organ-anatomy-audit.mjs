@@ -30,6 +30,11 @@ const explicitSchematics = new Map([
 
 const zAnatomySupplements = new Map([
   ['lungs', ['Z-Anatomy lung parenchyma / lobar-segmental supplement']],
+  ['brain', ['Selective Z-Anatomy brain/CNS reference']],
+  ['stomach', ['Selective Z-Anatomy stomach/duodenum/omental reference']],
+  ['pectoralis_major', ['Selective Z-Anatomy pectoralis-major reference']],
+  ['deltoid', ['Selective Z-Anatomy deltoid reference']],
+  ['skeletal', ['Selective Z-Anatomy shoulder/hip/knee joint reference']],
   ['peripheral_nerves', ['Z-Anatomy NervousSystem100 peripheral nerve layer']],
   ['vagus_nerve', ['Z-Anatomy peripheral nerve layer']],
   ['brachial_plexus', ['Z-Anatomy peripheral nerve layer']],
