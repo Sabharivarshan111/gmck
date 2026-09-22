@@ -348,6 +348,98 @@ export function createAutonomicNervousSystem(): {
 }
 
 // ============================================================================
+// Derived Phrenic Nerves — explicit schematic supplement
+//
+// No vetted source atlas used by ORBIT contains a captured phrenic-nerve mesh.
+// This course is therefore NOT presented as specimen/source geometry.  It is a
+// lightweight educational tube derived from the open Clinical Neuroanatomy
+// Atlas landmark course (Apache-2.0 pipeline; generated data CC BY-SA 4.0),
+// whose waypoints were read from named Z-Anatomy structures.  Source frame is
+// Z-Anatomy X/Y/Z (+Z up); Three.js/ORBIT uses Y-up, so [x,y,z] -> [x,z,-y].
+// ============================================================================
+export function createDerivedPhrenicNerveSystem(): {
+  group: THREE.Group;
+  meshes: THREE.Mesh[];
+  material: THREE.MeshStandardMaterial;
+  bounds: THREE.Box3;
+} {
+  const group = new THREE.Group();
+  group.name = 'derived_phrenic_nerves';
+  group.visible = false;
+
+  const material = new THREE.MeshStandardMaterial({
+    color: 0xf6d365,
+    emissive: 0x8a5a00,
+    emissiveIntensity: 0.58,
+    roughness: 0.42,
+    metalness: 0.0,
+  });
+
+  const sourceLeft: [number, number, number][] = [
+    [0.0150, 0.0155, 1.5040],
+    [0.0180, 0.0130, 1.4960],
+    [0.0250, 0.0020, 1.4870],
+    [0.0285, -0.0028, 1.4730],
+    [0.0300, -0.0058, 1.4590],
+    [0.0315, -0.0090, 1.4430],
+    [0.0300, -0.0100, 1.4270],
+    [0.0270, -0.0075, 1.4110],
+    [0.0235, -0.0125, 1.4020],
+    [0.0255, -0.0075, 1.3830],
+    [0.0330, -0.0170, 1.3550],
+    [0.0388, -0.0190, 1.3360],
+    [0.0511, -0.0272, 1.3075],
+    [0.0734, -0.0375, 1.2830],
+    [0.0746, -0.0441, 1.2589],
+    [0.0671, -0.0387, 1.2381],
+  ];
+  const sourceRight: [number, number, number][] = [
+    [-0.0150, 0.0155, 1.5040],
+    [-0.0180, 0.0130, 1.4960],
+    [-0.0250, 0.0020, 1.4870],
+    [-0.0285, -0.0028, 1.4730],
+    [-0.0300, -0.0058, 1.4590],
+    [-0.0315, -0.0090, 1.4430],
+    [-0.0300, -0.0100, 1.4270],
+    [-0.0270, -0.0075, 1.4110],
+    [-0.0235, -0.0125, 1.4020],
+    [-0.0230, -0.0165, 1.3830],
+    [-0.0270, -0.0140, 1.3550],
+    [-0.0339, -0.0118, 1.3298],
+    [-0.0397, -0.0095, 1.3001],
+    [-0.0371, -0.0120, 1.2706],
+    [-0.0375, -0.0236, 1.2581],
+  ];
+
+  const convert = ([x, y, z]: [number, number, number]) =>
+    new THREE.Vector3(x, z, -y);
+
+  const bounds = new THREE.Box3();
+  const meshes: THREE.Mesh[] = [];
+  const addSide = (name: string, points: [number, number, number][]) => {
+    const curvePoints = points.map(convert);
+    const curve = new THREE.CatmullRomCurve3(curvePoints, false, 'centripetal', 0.5);
+    // ~1.5 mm anatomical radius, six radial segments = very small GPU cost.
+    const geometry = new THREE.TubeGeometry(curve, 64, 0.0015, 6, false);
+    geometry.computeBoundingBox();
+    const mesh = new THREE.Mesh(geometry, material);
+    mesh.name = name;
+    mesh.frustumCulled = true;
+    mesh.renderOrder = 36;
+    mesh.userData.isPeripheralNerve = true;
+    mesh.userData.isDerivedSchematic = true;
+    mesh.userData.peripheralNerveKey = 'phrenic_nerve';
+    group.add(mesh);
+    meshes.push(mesh);
+    bounds.expandByObject(mesh);
+  };
+
+  addSide('Derived phrenic nerve left', sourceLeft);
+  addSide('Derived phrenic nerve right', sourceRight);
+  return { group, meshes, material, bounds };
+}
+
+// ============================================================================
 // Lymphatic System 3D Generator
 // Models Thoracic Duct, Tracheobronchial & Hilar Lymph Nodes, Cisterna Chyli,
 // Celiac, Mesenteric, and Lumbar Para-Aortic Lymph Node Chains
@@ -782,6 +874,8 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
   const cardiacNervesRef = useRef<THREE.Group | null>(null);
   const pulmonaryNervesRef = useRef<THREE.Group | null>(null);
   const abdominalNervesRef = useRef<THREE.Group | null>(null);
+  const phrenicGroupRef = useRef<THREE.Group | null>(null);
+  const phrenicMeshesRef = useRef<THREE.Mesh[]>([]);
 
   // Real Z-Anatomy peripheral nerve supplement. Kept separate from the
   // BodyParts3D atlas and loaded only when a peripheral nerve is requested.
@@ -1015,6 +1109,12 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
     cardiacNervesRef.current = autonomicSystem.cardiacGroup;
     pulmonaryNervesRef.current = autonomicSystem.pulmonaryGroup;
     abdominalNervesRef.current = autonomicSystem.abdominalGroup;
+
+    // 7c2. Explicitly schematic phrenic nerve course from open landmark data.
+    const phrenicSystem = createDerivedPhrenicNerveSystem();
+    scene.add(phrenicSystem.group);
+    phrenicGroupRef.current = phrenicSystem.group;
+    phrenicMeshesRef.current = phrenicSystem.meshes;
 
     // 7d. Anatomically-Calibrated 3D Lymphatic System
     const lymphaticSystem = createLymphaticSystem();
@@ -1366,13 +1466,18 @@ varying float partSelected;
       pointerCoords: THREE.Vector2,
       cam: THREE.Camera
     ): PeripheralNerveHit | null => {
-      const candidates = peripheralNerveMeshesRef.current.filter((m) => m.visible);
+      const candidates = [
+        ...peripheralNerveMeshesRef.current,
+        ...phrenicMeshesRef.current,
+      ].filter((m) => m.visible);
       if (candidates.length === 0) return null;
       raycaster.setFromCamera(pointerCoords, cam);
       const hits = raycaster.intersectObjects(candidates, false);
       for (const hit of hits) {
         const mesh = hit.object as THREE.Mesh;
-        const key = peripheralNerveKeyForMeshName(mesh.name);
+        const key =
+          (mesh.userData.peripheralNerveKey as string | undefined) ??
+          peripheralNerveKeyForMeshName(mesh.name);
         if (!key) continue;
         return { mesh, key, part: partFromPeripheralNerveMesh(mesh, key) };
       }
@@ -1714,7 +1819,9 @@ varying float partSelected;
     // BodyParts3D is not something the reader needs told. Everything else that
     // the atlas does not hold is.
     setAbsentNotice(
-      peripheralNervesFailed && isSupplementalNerveTarget
+      isPhrenicTarget
+        ? 'SCHEMATIC COURSE: no vetted source atlas used by ORBIT contains a captured phrenic-nerve mesh. This bilateral course is derived from named Z-Anatomy landmarks (C4/scalenus anterior/subclavian vessels/pericardium/diaphragm) and is explicitly not specimen geometry.'
+        : peripheralNervesFailed && isSupplementalNerveTarget
         ? 'The Z-Anatomy peripheral nerve layer could not be loaded on this device. The simulator has not substituted a different structure.'
         : peripheralNervesReady && isSupplementalNerveTarget && !hasRealNerveMesh && isSplanchnicTarget
         ? 'The official Z-Anatomy NervousSystem100 source has no named splanchnic-nerve mesh. ORBIT is showing its existing schematic autonomic overlay here; it is not presented as source-derived anatomy.'
@@ -1724,6 +1831,20 @@ varying float partSelected;
         ? isolatedTarget.reason ?? null
         : null
     );
+
+    const normalizedNerveTarget = targetKey ? normalisePeripheralNerveTarget(targetKey) : null;
+    const isPhrenicTarget = normalizedNerveTarget === 'phrenic_nerve';
+    const showDerivedPhrenic =
+      isPhrenicTarget || normalizedNerveTarget === 'peripheral_nerves';
+    const useNerveContext = useRealNerveLayer || showDerivedPhrenic;
+
+    if (phrenicGroupRef.current) {
+      phrenicGroupRef.current.visible = showDerivedPhrenic;
+      phrenicMeshesRef.current.forEach((mesh) => {
+        mesh.visible = showDerivedPhrenic && !hiddenSet.has('phrenic_nerve');
+        if (mesh.visible && isPhrenicTarget) nerveIsolationBox.expandByObject(mesh);
+      });
+    }
 
     // Real peripheral nerves: show only meshes that belong to the requested
     // nerve, or the complete supplement for the Peripheral Nerves overview.
@@ -1780,8 +1901,9 @@ varying float partSelected;
 
     // Autonomic Nerves Visibility and Saturated High-Contrast Amber-Gold Styling
     if (autonomicGroupRef.current) {
-      if (useRealNerveLayer) {
-        // Real Z-Anatomy geometry supersedes the older schematic overlay.
+      if (useNerveContext) {
+        // Real Z-Anatomy geometry or the explicit phrenic schematic supersedes
+        // the older generic autonomic overlay for this selection.
         autonomicGroupRef.current.visible = false;
         if (cardiacNervesRef.current) cardiacNervesRef.current.visible = false;
         if (pulmonaryNervesRef.current) pulmonaryNervesRef.current.visible = false;
@@ -1929,7 +2051,7 @@ varying float partSelected;
       // CRITICAL FIX: Scalpel Dissection ALWAYS takes absolute top precedence!
       if (hiddenSet.has(p.id)) {
         visible = 0.0;
-      } else if (useRealNerveLayer) {
+      } else if (useNerveContext) {
         // Nerves are easiest to understand against a faint bony scaffold.
         // Everything else is removed to avoid a dense translucent mobile scene.
         visible = p.system === 'skeletal' ? 0.18 : 0.0;
@@ -1993,7 +2115,7 @@ varying float partSelected;
     // Adjust depthWrite for context organ materials so overlay vessels/nerves render without occlusion
     const materials = systemMaterialsRef.current;
     if (materials) {
-      const isIsolationActive = (isolatedElements && isolatedElements.size > 0) || isAutonomicTarget || useRealNerveLayer;
+      const isIsolationActive = (isolatedElements && isolatedElements.size > 0) || isAutonomicTarget || useNerveContext;
       const cardiacMat = materials.get('cardiac');
       if (cardiacMat) {
         cardiacMat.depthWrite = !isIsolationActive;
@@ -2005,7 +2127,7 @@ varying float partSelected;
     }
 
     // Automatic Camera Framing onto Isolated Organ / Vessel / Nerve
-    if (useRealNerveLayer && !nerveIsolationBox.isEmpty() && cameraRef.current && controlsRef.current) {
+    if (useNerveContext && !nerveIsolationBox.isEmpty() && cameraRef.current && controlsRef.current) {
       const center = new THREE.Vector3();
       const size = new THREE.Vector3();
       nerveIsolationBox.getCenter(center);
