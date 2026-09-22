@@ -1,0 +1,56 @@
+name: Build Z-Anatomy heart supplement
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/export-zanatomy-heart-supplement.py"
+      - ".github/workflows/build-heart-supplement.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-heart-supplement:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Blender
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends blender python3-numpy
+      - name: Download official Z-Anatomy cardiovascular source
+        run: |
+          set -euxo pipefail
+          curl -L --fail --retry 3             "https://raw.githubusercontent.com/LluisV/Z-Anatomy/PC-Version/Resources/Models/FBX/CardioVascular41.fbx"             -o /tmp/CardioVascular41.fbx
+          test "$(stat -c%s /tmp/CardioVascular41.fbx)" -gt 60000000
+      - name: Export registered internal-heart supplement
+        run: |
+          rm -f public/models/zanatomy_heart_internal.glb public/models/zanatomy_heart_internal.manifest.json
+          blender -b             --python scripts/export-zanatomy-heart-supplement.py --             --src /tmp/CardioVascular41.fbx             --out public/models/zanatomy_heart_internal.glb             --manifest public/models/zanatomy_heart_internal.manifest.json
+          test -s public/models/zanatomy_heart_internal.glb
+          test -s public/models/zanatomy_heart_internal.manifest.json
+      - name: Verify supplement
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const m = JSON.parse(fs.readFileSync('public/models/zanatomy_heart_internal.manifest.json','utf8'));
+          if (!m.exported.some(x => x.key === 'interatrial_septum')) throw new Error('Interatrial septum missing');
+          const bytes = fs.statSync('public/models/zanatomy_heart_internal.glb').size;
+          if (bytes > 2 * 1024 * 1024) throw new Error('Heart supplement exceeds 2 MiB: ' + bytes);
+          console.log('Heart supplement OK:', m.exported, bytes, 'bytes');
+          NODE
+      - name: Commit generated supplement
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/models/zanatomy_heart_internal.glb public/models/zanatomy_heart_internal.manifest.json
+          if git diff --cached --quiet; then
+            echo "No generated heart supplement changes"
+          else
+            git commit -m "Add Z-Anatomy interatrial septum supplement"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
