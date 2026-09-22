@@ -8,6 +8,7 @@ interface IcuMonitorProps {
   sampleWaveforms: () => TelemetryWaveformSample;
   ecgRhythm: string;
   theme?: 'light' | 'dark';
+  active?: boolean;
 }
 
 export const IcuMonitor: React.FC<IcuMonitorProps> = ({
@@ -15,6 +16,7 @@ export const IcuMonitor: React.FC<IcuMonitorProps> = ({
   sampleWaveforms,
   ecgRhythm,
   theme = 'light',
+  active = true,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [audioEnabled, setAudioEnabled] = useState<boolean>(false);
@@ -59,6 +61,7 @@ export const IcuMonitor: React.FC<IcuMonitorProps> = ({
   };
 
   useEffect(() => {
+    if (!active) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
@@ -328,7 +331,7 @@ export const IcuMonitor: React.FC<IcuMonitorProps> = ({
     return () => {
       cancelAnimationFrame(animId);
     };
-  }, [vitals, ecgRhythm]);
+  }, [vitals, ecgRhythm, active]);
 
   const isLight = theme === 'light';
 
