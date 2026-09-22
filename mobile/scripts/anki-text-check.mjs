@@ -100,15 +100,15 @@ check(/Normal physiology/.test(parsedCloze.cards[0]?.back ?? ''), 'cloze extra f
 const mixed = [
   '#separator:Tab',
   '#html:true',
-  '#columns:Front\\tBack\\tExtra\\tNote Type\\tDeck\\tTags\\tGUID',
+  '#columns:Front\tBack\tExtra\tNote Type\tDeck\tTags\tGUID',
   '#notetype column:4',
   '#deck column:5',
   '#tags column:6',
   '#guid column:7',
-  'What starts normal cardiac conduction?\\tSA node\\t<em>Right atrium</em>\\tBasic\\tMedicine::Cardiology\\tcardio conduction\\tg1',
-  'Largest artery?\\tAorta\\tSystemic outflow\\tBasic (and reversed card)\\tMedicine::Cardiology\\tanatomy\\tg2',
-  '{{c1::Insulin}} lowers {{c2::blood glucose}}.\\tEndocrine\\tTwo clozes\\tCloze\\tMedicine::Endocrine\\thormones\\tg3',
-].join('\\n');
+  'What starts normal cardiac conduction?\tSA node\t<em>Right atrium</em>\tBasic\tMedicine::Cardiology\tcardio conduction\tg1',
+  'Largest artery?\tAorta\tSystemic outflow\tBasic (and reversed card)\tMedicine::Cardiology\tanatomy\tg2',
+  '{{c1::Insulin}} lowers {{c2::blood glucose}}.\tEndocrine\tTwo clozes\tCloze\tMedicine::Endocrine\thormones\tg3',
+].join('\n');
 const parsedMixed = mod.parseAnkiText(mixed, 'mixed.txt');
 check(parsedMixed.cards.length === 5, `mixed notetypes should make 5 cards, got ${parsedMixed.cards.length}`);
 check(
