@@ -1500,7 +1500,10 @@ varying float partSelected;
       // animated in the monitor/UI, while the anatomical meshes stay perfectly
       // registered in 3D.
       const cardiacMesh = systemMeshesRef.current.get('cardiac');
-      if (cardiacMesh && !cardiacMesh.scale.equals(new THREE.Vector3(1, 1, 1))) {
+      if (
+        cardiacMesh &&
+        (cardiacMesh.scale.x !== 1 || cardiacMesh.scale.y !== 1 || cardiacMesh.scale.z !== 1)
+      ) {
         cardiacMesh.scale.set(1, 1, 1);
         cardiacMesh.updateMatrixWorld(true);
       }
