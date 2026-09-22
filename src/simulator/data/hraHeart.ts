@@ -111,6 +111,12 @@ export const HRA_HEART_TARGETS: readonly HraHeartTarget[] = [
     shortLabel: '⚡ Conduction',
     kind: 'schematic',
   },
+  {
+    id: 'hra_chordae_schematic',
+    label: 'Chordae tendineae · schematic',
+    shortLabel: '〰 Chordae',
+    kind: 'schematic',
+  },
 ] as const;
 
 const HRA_TARGET_BY_ID = new Map(HRA_HEART_TARGETS.map((target) => [target.id, target]));
