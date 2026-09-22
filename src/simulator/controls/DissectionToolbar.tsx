@@ -94,7 +94,7 @@ export const DissectionToolbar: React.FC<DissectionToolbarProps> = ({
                 key={t.id}
                 onClick={() => onSelectToolMode(t.id)}
                 title={t.hint}
-                className={`min-h-[40px] shrink-0 flex items-center gap-1.5 px-2.5 sm:px-3 rounded-lg text-[11px] sm:text-xs font-semibold transition-all cursor-pointer ${
+                className={`min-h-[44px] shrink-0 flex items-center gap-1.5 px-2.5 sm:px-3 rounded-lg text-[11px] sm:text-xs font-semibold transition-all cursor-pointer ${
                   active
                     ? isLight
                       ? 'bg-white text-slate-900 shadow-xs font-bold'
@@ -148,7 +148,7 @@ export const DissectionToolbar: React.FC<DissectionToolbarProps> = ({
           {/* Dissected Count / Open Tray Button */}
           <button
             onClick={() => setTrayOpen(!trayOpen)}
-            className={`min-h-[40px] shrink-0 flex items-center gap-1.5 px-2.5 sm:px-3 rounded-xl border text-[11px] sm:text-xs font-semibold transition-all cursor-pointer ${
+            className={`min-h-[44px] shrink-0 flex items-center gap-1.5 px-2.5 sm:px-3 rounded-xl border text-[11px] sm:text-xs font-semibold transition-all cursor-pointer ${
               dissectedParts.length > 0
                 ? isLight
                   ? 'bg-rose-50 border-rose-200 text-rose-700 font-bold shadow-xs'
@@ -168,7 +168,7 @@ export const DissectionToolbar: React.FC<DissectionToolbarProps> = ({
             onClick={onUndoLastDissect}
             disabled={dissectedParts.length === 0}
             title="Undo last dissected structure (Ctrl+Z)"
-            className={`min-h-[40px] shrink-0 flex items-center gap-1 px-2.5 rounded-xl border text-[11px] sm:text-xs font-medium transition-all ${
+            className={`min-h-[44px] shrink-0 flex items-center gap-1 px-2.5 rounded-xl border text-[11px] sm:text-xs font-medium transition-all ${
               dissectedParts.length > 0
                 ? isLight
                   ? 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100 cursor-pointer'
