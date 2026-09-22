@@ -116,7 +116,7 @@ check(/readText\(path: string\)/.test(nativeSpec), 'TurboModule spec has no UTF-
 check(/override fun readText/.test(kotlin) && /MAX_TEXT_BYTES/.test(kotlin), 'Kotlin text reader or safety limit is missing');
 check(/\.txt \/ \.csv/.test(screen) && /HTML is not a deck file/.test(screen), 'native picker does not explain text/HTML support');
 check(/importTextDeck/.test(web) && /\.txt,\.csv,\.tsv/.test(web), 'web picker does not accept text exports');
-check(/MAX_IMPORT_CARDS = 50000/.test(fs.readFileSync(path.join(repo, 'src/lib/importedDecksWeb.ts'), 'utf8')), 'web/native import caps drifted');
+check(/MAX_IMPORT_CARDS = 50_?000/.test(fs.readFileSync(path.join(repo, 'src/lib/importedDecksWeb.ts'), 'utf8')), 'web/native import caps drifted');
 
 if (failures.length) {
   process.stderr.write(`FAIL anki text import (${failures.length})\n- ${failures.join('\n- ')}\n`);
