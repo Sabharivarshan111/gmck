@@ -141,9 +141,16 @@ for (const target of targets) {
     });
   }
 
-  const hasAcceptableCoverage = sources.length > 0 || core.status === 'absent';
-  if (!hasAcceptableCoverage && core.status === 'unmatched') {
-    failures.push(`${target}: unmatched and has no verified supplement/schematic classification`);
+  // Absence in BodyParts3D is not, by itself, acceptable coverage. A missing
+  // structure must be explicitly backed by another source, labelled as a
+  // schematic, or classified as a non-anatomical clinical overlay. This keeps
+  // future gaps from silently passing merely because the core resolver knows
+  // that BodyParts3D does not contain them.
+  const hasAcceptableCoverage = sources.length > 0;
+  if (!hasAcceptableCoverage) {
+    failures.push(
+      `${target}: ${core.status} in BodyParts3D and has no verified source supplement, explicit schematic, or clinical-overlay classification`
+    );
   }
 
   report.targets[target] = {
@@ -157,8 +164,6 @@ for (const target of targets) {
         ? 'schematic-only'
         : sources.some((s) => s.type === 'clinical-overlay')
         ? 'clinical-overlay'
-        : core.status === 'absent'
-        ? 'known-source-gap'
         : 'uncovered',
   };
 }
@@ -175,13 +180,25 @@ writeFileSync(
 );
 
 console.log('\nORBIT ALL-ANATOMY COVERAGE AUDIT\n');
-for (const key of organKeys) {
+// Print every target, not only top-level organs. Vessel and nerve nodes are
+// independently selectable in Deep Inspector and must be visible in CI logs.
+for (const key of targets) {
   const item = report.targets[key];
   console.log(
     `${item.coverage.padEnd(17)} ${key.padEnd(22)} core=${item.bodyParts3DStatus} sources=${item.sources
       .map((s) => s.source)
       .join(' | ')}`
   );
+}
+const nonSourceBacked = targets.filter((key) => report.targets[key].coverage !== 'source-backed');
+if (nonSourceBacked.length) {
+  console.log('\nExplicit non-source-backed targets:');
+  for (const key of nonSourceBacked) {
+    const item = report.targets[key];
+    console.log(
+      `  ${item.coverage.padEnd(17)} ${key.padEnd(22)} ${item.sources.map((s) => s.source).join(' | ') || 'NO CLASSIFICATION'}`
+    );
+  }
 }
 console.log('\nSummary:', counts);
 
@@ -190,4 +207,4 @@ if (failures.length) {
   failures.forEach((f) => console.error('  ✗', f));
   process.exit(1);
 }
-console.log('Every simulator anatomy target is source-backed, explicitly schematic, a known source gap, or an intentional clinical overlay.');
+console.log('Every simulator anatomy target is source-backed, explicitly schematic, or an intentional clinical overlay. Unclassified source gaps fail this audit.');
