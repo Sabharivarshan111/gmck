@@ -224,14 +224,14 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
           <div className="flex items-center gap-1">
             <button
               onClick={() => setIsMobileExpanded(!isMobileExpanded)}
-              className="md:hidden p-1.5 rounded-xl text-slate-400 hover:text-slate-800 dark:hover:text-white transition-colors"
+              className="md:hidden min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl text-slate-400 hover:text-slate-800 dark:hover:text-white transition-colors"
               title={isMobileExpanded ? 'Collapse to half sheet' : 'Expand full sheet'}
             >
               {isMobileExpanded ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
             </button>
             <button
               onClick={onClose}
-              className={`p-1.5 rounded-xl transition-colors min-w-[36px] min-h-[36px] flex items-center justify-center ${
+              className={`min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl transition-colors ${
                 isLight ? 'text-slate-400 hover:text-slate-800 hover:bg-slate-200/60' : 'text-slate-400 hover:text-white hover:bg-slate-800'
               }`}
               title="Close Drawer"
