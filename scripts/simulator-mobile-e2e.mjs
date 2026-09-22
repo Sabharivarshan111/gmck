@@ -500,7 +500,14 @@ await feature('organ-drawer-and-anatomy-dossier', async () => {
   const expand = page.getByTitle('Expand full sheet');
   await touchSafe(expand, 'Organ drawer expand');
   await expand.click();
-  await page.waitForTimeout(380);
+  await page.waitForFunction(
+    () => {
+      const el = document.querySelector('[data-testid="organ-detail-drawer"]');
+      return !!el && el.getBoundingClientRect().height >= 700;
+    },
+    undefined,
+    { timeout: 2500 }
+  );
   const expandedBox = await drawer.boundingBox();
   assert(expandedBox && expandedBox.height >= 700, 'Expanded organ drawer is too short on a 844px viewport');
 
