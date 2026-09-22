@@ -25,9 +25,9 @@ export const HRA_ORGAN_MODELS: readonly HraOrganModelSpec[] = [
   { key: 'lung', organKey: 'lungs', url: '/models/hra/VH_M_Lung.glb', fileName: 'VH_M_Lung.glb' },
   { key: 'pancreas', organKey: 'pancreas', url: '/models/hra/VH_M_Pancreas.glb', fileName: 'VH_M_Pancreas.glb' },
   { key: 'spleen', organKey: 'spleen', url: '/models/hra/VH_M_Spleen.glb', fileName: 'VH_M_Spleen.glb' },
-  { key: 'small_intestine', organKey: 'abdomen', url: '/models/hra/VH_M_Small_Intestine.glb', fileName: 'VH_M_Small_Intestine.glb' },
-  { key: 'urinary_bladder', organKey: 'abdomen', url: '/models/hra/VH_M_Urinary_Bladder.glb', fileName: 'VH_M_Urinary_Bladder.glb' },
-  { key: 'thymus', organKey: 'abdomen', url: '/models/hra/VH_M_Thymus.glb', fileName: 'VH_M_Thymus.glb' },
+  { key: 'small_intestine', organKey: 'small_intestine', url: '/models/hra/VH_M_Small_Intestine.glb', fileName: 'VH_M_Small_Intestine.glb' },
+  { key: 'urinary_bladder', organKey: 'urinary_bladder', url: '/models/hra/VH_M_Urinary_Bladder.glb', fileName: 'VH_M_Urinary_Bladder.glb' },
+  { key: 'thymus', organKey: 'thymus', url: '/models/hra/VH_M_Thymus.glb', fileName: 'VH_M_Thymus.glb' },
   { key: 'blood_vasculature', organKey: 'aorta', url: '/models/hra/VH_M_Blood_Vasculature.glb', fileName: 'VH_M_Blood_Vasculature.glb' },
 ] as const;
 
@@ -78,24 +78,24 @@ export const HRA_ORGAN_TARGETS: readonly HraOrganTarget[] = [
   { id: 'hra_spleen_diaphragmatic_surface', organKey: 'spleen', label: 'Diaphragmatic surface · HRA', shortLabel: 'Diaphragm', modelKeys: ['spleen'], includes: ['diaphragmatic_surface_of_spleen'] },
 
   // Small intestine / duodenum.
-  { id: 'hra_small_intestine_overview', organKey: 'abdomen', label: 'Small intestine · HRA', shortLabel: 'Small bowel', modelKeys: ['small_intestine'], matchAll: true },
-  { id: 'hra_duodenum', organKey: 'abdomen', label: 'Duodenum · HRA', shortLabel: 'Duodenum', modelKeys: ['small_intestine'], includes: ['duodenum_', 'duodenal_'] },
-  { id: 'hra_jejunum', organKey: 'abdomen', label: 'Jejunum · HRA', shortLabel: 'Jejunum', modelKeys: ['small_intestine'], includes: ['jejunum'] },
-  { id: 'hra_ileum', organKey: 'abdomen', label: 'Ileum · HRA', shortLabel: 'Ileum', modelKeys: ['small_intestine'], includes: ['ileum'] },
-  { id: 'hra_terminal_ileum', organKey: 'abdomen', label: 'Terminal ileum · HRA', shortLabel: 'Terminal ileum', modelKeys: ['small_intestine'], includes: ['ileum_terminal'] },
-  { id: 'hra_hepatopancreatic_sphincter', organKey: 'abdomen', label: 'Hepatopancreatic sphincter · HRA', shortLabel: 'Oddi', modelKeys: ['small_intestine'], includes: ['sphincter_of_hepatopancreatic_ampulla'] },
+  { id: 'hra_small_intestine_overview', organKey: 'small_intestine', label: 'Small intestine · HRA', shortLabel: 'Small bowel', modelKeys: ['small_intestine'], matchAll: true },
+  { id: 'hra_duodenum', organKey: 'small_intestine', label: 'Duodenum · HRA', shortLabel: 'Duodenum', modelKeys: ['small_intestine'], includes: ['duodenum_', 'duodenal_'] },
+  { id: 'hra_jejunum', organKey: 'small_intestine', label: 'Jejunum · HRA', shortLabel: 'Jejunum', modelKeys: ['small_intestine'], includes: ['jejunum'] },
+  { id: 'hra_ileum', organKey: 'small_intestine', label: 'Ileum · HRA', shortLabel: 'Ileum', modelKeys: ['small_intestine'], includes: ['ileum'] },
+  { id: 'hra_terminal_ileum', organKey: 'small_intestine', label: 'Terminal ileum · HRA', shortLabel: 'Terminal ileum', modelKeys: ['small_intestine'], includes: ['ileum_terminal'] },
+  { id: 'hra_hepatopancreatic_sphincter', organKey: 'small_intestine', label: 'Hepatopancreatic sphincter · HRA', shortLabel: 'Oddi', modelKeys: ['small_intestine'], includes: ['sphincter_of_hepatopancreatic_ampulla'] },
 
   // Urinary bladder.
-  { id: 'hra_bladder_overview', organKey: 'abdomen', label: 'Urinary bladder · HRA', shortLabel: 'Bladder', modelKeys: ['urinary_bladder'], matchAll: true },
-  { id: 'hra_bladder_trigone', organKey: 'abdomen', label: 'Bladder trigone · HRA', shortLabel: 'Trigone', modelKeys: ['urinary_bladder'], includes: ['trigone_of_urinary_bladder'] },
-  { id: 'hra_bladder_orifices', organKey: 'abdomen', label: 'Ureteric orifices · HRA', shortLabel: 'Ureteric orifices', modelKeys: ['urinary_bladder'], includes: ['ureteral_orifice'] },
-  { id: 'hra_bladder_neck', organKey: 'abdomen', label: 'Bladder neck · HRA', shortLabel: 'Neck', modelKeys: ['urinary_bladder'], includes: ['urinary_bladder_neck'] },
-  { id: 'hra_bladder_dome', organKey: 'abdomen', label: 'Bladder dome · HRA', shortLabel: 'Dome', modelKeys: ['urinary_bladder'], includes: ['fundus_of_urinary_bladder_dome'] },
+  { id: 'hra_bladder_overview', organKey: 'urinary_bladder', label: 'Urinary bladder · HRA', shortLabel: 'Bladder', modelKeys: ['urinary_bladder'], matchAll: true },
+  { id: 'hra_bladder_trigone', organKey: 'urinary_bladder', label: 'Bladder trigone · HRA', shortLabel: 'Trigone', modelKeys: ['urinary_bladder'], includes: ['trigone_of_urinary_bladder'] },
+  { id: 'hra_bladder_orifices', organKey: 'urinary_bladder', label: 'Ureteric orifices · HRA', shortLabel: 'Ureteric orifices', modelKeys: ['urinary_bladder'], includes: ['ureteral_orifice'] },
+  { id: 'hra_bladder_neck', organKey: 'urinary_bladder', label: 'Bladder neck · HRA', shortLabel: 'Neck', modelKeys: ['urinary_bladder'], includes: ['urinary_bladder_neck'] },
+  { id: 'hra_bladder_dome', organKey: 'urinary_bladder', label: 'Bladder dome · HRA', shortLabel: 'Dome', modelKeys: ['urinary_bladder'], includes: ['fundus_of_urinary_bladder_dome'] },
 
   // Thymus.
-  { id: 'hra_thymus_overview', organKey: 'abdomen', label: 'Thymus · HRA', shortLabel: 'Thymus', modelKeys: ['thymus'], matchAll: true },
-  { id: 'hra_thymus_left', organKey: 'abdomen', label: 'Left thymic lobe · HRA', shortLabel: 'Thymus L', modelKeys: ['thymus'], includes: ['thymus_lobe_L'] },
-  { id: 'hra_thymus_right', organKey: 'abdomen', label: 'Right thymic lobe · HRA', shortLabel: 'Thymus R', modelKeys: ['thymus'], includes: ['thymus_lobe_R'] },
+  { id: 'hra_thymus_overview', organKey: 'thymus', label: 'Thymus · HRA', shortLabel: 'Thymus', modelKeys: ['thymus'], matchAll: true },
+  { id: 'hra_thymus_left', organKey: 'thymus', label: 'Left thymic lobe · HRA', shortLabel: 'Thymus L', modelKeys: ['thymus'], includes: ['thymus_lobe_L'] },
+  { id: 'hra_thymus_right', organKey: 'thymus', label: 'Right thymic lobe · HRA', shortLabel: 'Thymus R', modelKeys: ['thymus'], includes: ['thymus_lobe_R'] },
 
   // Blood vasculature reference.
   { id: 'hra_vessels_overview', organKey: 'aorta', label: 'Major vasculature · HRA', shortLabel: 'Vessels', modelKeys: ['blood_vasculature'], matchAll: true },
