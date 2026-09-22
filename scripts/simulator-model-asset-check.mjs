@@ -71,6 +71,29 @@ if (!existsSync(lungPath)) {
   }
 }
 
+const hraHeartRel = 'models/hra_heart_male_v1.3.glb';
+const hraHeartPath = path.join(publicDir, hraHeartRel);
+if (!existsSync(hraHeartPath)) {
+  fail(`${hraHeartRel} is missing; the HRA interventricular-septum inspector cannot work`);
+} else {
+  try {
+    const { json, bytes } = parseGlb(hraHeartPath);
+    const names = [
+      ...(json.nodes || []).map((n) => String(n.name || '')),
+      ...(json.meshes || []).map((m) => String(m.name || '')),
+    ];
+    if (bytes < 3_000_000 || bytes > 5_000_000) {
+      fail(`HRA heart GLB is ${bytes} bytes; expected the verified ~4.07 MB v1.3 source`);
+    }
+    if (!names.includes('VH_M_interventricular_septum')) {
+      fail('HRA heart GLB no longer contains VH_M_interventricular_septum');
+    }
+    console.log(`HRA heart reference OK: ${(bytes / 1024 / 1024).toFixed(2)} MiB, interventricular septum present.`);
+  } catch (e) {
+    fail(`cannot parse ${hraHeartRel}: ${e instanceof Error ? e.message : String(e)}`);
+  }
+}
+
 const attributionPath = path.join(publicDir, 'models', 'ATTRIBUTION_BODYPARTS3D.md');
 if (!existsSync(attributionPath)) {
   fail('anatomy attribution file is missing');
@@ -81,6 +104,9 @@ if (!existsSync(attributionPath)) {
   }
   if (!/Z-Anatomy/i.test(attribution) || !/CC BY-SA 4\.0|Attribution-ShareAlike 4\.0/i.test(attribution)) {
     fail('Z-Anatomy lung provenance / CC BY-SA 4.0 attribution is missing');
+  }
+  if (!/HRA internal-heart reference/i.test(attribution) || !/CC BY 4\.0/i.test(attribution)) {
+    fail('HRA internal-heart provenance / CC BY 4.0 attribution is missing');
   }
 }
 
