@@ -998,6 +998,184 @@ function createHraConductionOverlay(meshes: THREE.Mesh[]): {
   return { group, bounds };
 }
 
+function createHraChordaeOverlay(meshes: THREE.Mesh[]): {
+  group: THREE.Group;
+  bounds: THREE.Box3;
+} | null {
+  const byName = new Map(meshes.map((mesh) => [mesh.name, mesh]));
+  const mitral = byName.get('VH_M_mitral_valve');
+  const tricuspid = byName.get('VH_M_tricuspid_valve');
+  const papAnterior = byName.get('VH_M_papillary_muscle_of_heart_anterior');
+  const papAnterolateral = byName.get('VH_M_papillary_muscle_of_heart_anterolateral');
+  const papMedial = byName.get('VH_M_papillary_muscle_of_heart_medial');
+  const papPosterior = byName.get('VH_M_papillary_muscle_of_heart_posterior');
+  const papPosteromedial = byName.get('VH_M_papillary_muscle_of_heart_posteromedial');
+
+  if (
+    !mitral ||
+    !tricuspid ||
+    !papAnterior ||
+    !papAnterolateral ||
+    !papMedial ||
+    !papPosterior ||
+    !papPosteromedial
+  ) {
+    return null;
+  }
+
+  meshes.forEach((mesh) => mesh.updateWorldMatrix(true, false));
+
+  const allHeartBox = new THREE.Box3();
+  meshes.forEach((mesh) => allHeartBox.expandByObject(mesh));
+  const allHeartSize = allHeartBox.getSize(new THREE.Vector3());
+  const maxDim = Math.max(allHeartSize.x, allHeartSize.y, allHeartSize.z, 0.001);
+
+  const sampledWorldVertices = (mesh: THREE.Mesh, maxSamples = 2400): THREE.Vector3[] => {
+    const position = mesh.geometry.getAttribute('position');
+    if (!position) return [];
+    const stride = Math.max(1, Math.floor(position.count / maxSamples));
+    const points: THREE.Vector3[] = [];
+    const v = new THREE.Vector3();
+    for (let i = 0; i < position.count; i += stride) {
+      v.fromBufferAttribute(position, i).applyMatrix4(mesh.matrixWorld);
+      points.push(v.clone());
+    }
+    return points;
+  };
+
+  const closestMeshPoint = (mesh: THREE.Mesh, target: THREE.Vector3): THREE.Vector3 => {
+    const points = sampledWorldVertices(mesh, 1800);
+    if (!points.length) return new THREE.Box3().setFromObject(mesh).getCenter(new THREE.Vector3());
+    let best = points[0];
+    let bestD = best.distanceToSquared(target);
+    for (let i = 1; i < points.length; i++) {
+      const d = points[i].distanceToSquared(target);
+      if (d < bestD) {
+        best = points[i];
+        bestD = d;
+      }
+    }
+    return best.clone();
+  };
+
+  const spreadValveEndpoints = (
+    valve: THREE.Mesh,
+    papillaryTip: THREE.Vector3,
+    count = 3
+  ): THREE.Vector3[] => {
+    const vertices = sampledWorldVertices(valve, 2600);
+    if (!vertices.length) return [];
+
+    vertices.sort(
+      (a, b) => a.distanceToSquared(papillaryTip) - b.distanceToSquared(papillaryTip)
+    );
+    // Keep the ventricular-facing neighborhood, then spread endpoints across it.
+    const candidates = vertices.slice(0, Math.min(260, vertices.length));
+    const selected: THREE.Vector3[] = [candidates[0].clone()];
+
+    while (selected.length < count && selected.length < candidates.length) {
+      let best: THREE.Vector3 | null = null;
+      let bestScore = -Infinity;
+      for (const candidate of candidates) {
+        const minSeparation = Math.min(
+          ...selected.map((chosen) => candidate.distanceToSquared(chosen))
+        );
+        // Candidate list is already distance-limited to the papillary muscle,
+        // so maximizing separation gives a small fan along the leaflet edge.
+        if (minSeparation > bestScore) {
+          bestScore = minSeparation;
+          best = candidate;
+        }
+      }
+      if (!best) break;
+      selected.push(best.clone());
+    }
+
+    return selected;
+  };
+
+  const group = new THREE.Group();
+  group.name = 'hra_chordae_tendineae_schematic';
+  group.visible = false;
+  group.renderOrder = 41;
+  group.userData.isSchematic = true;
+  group.userData.method =
+    'Papillary-tip to AV-valve branching derived from HRA geometry; SlicerHeart-inspired teaching approximation';
+
+  const chordMaterial = new THREE.MeshStandardMaterial({
+    color: 0xf8fafc,
+    emissive: 0x64748b,
+    emissiveIntensity: 0.28,
+    roughness: 0.46,
+    metalness: 0.0,
+    transparent: false,
+    depthTest: true,
+  });
+
+  const trunkRadius = maxDim * 0.0033;
+  const branchRadius = maxDim * 0.0021;
+
+  const addTube = (
+    name: string,
+    points: THREE.Vector3[],
+    radius: number
+  ) => {
+    if (points.length < 2) return;
+    const curve = new THREE.CatmullRomCurve3(points, false, 'centripetal', 0.5);
+    const geometry = new THREE.TubeGeometry(curve, 18, radius, 6, false);
+    const mesh = new THREE.Mesh(geometry, chordMaterial);
+    mesh.name = name;
+    mesh.renderOrder = 41;
+    mesh.userData.isSchematic = true;
+    mesh.userData.chordaeStructure = name;
+    group.add(mesh);
+  };
+
+  const buildBundle = (
+    bundleName: string,
+    valve: THREE.Mesh,
+    papillary: THREE.Mesh
+  ) => {
+    const valveCenter = new THREE.Box3().setFromObject(valve).getCenter(new THREE.Vector3());
+    const tip = closestMeshPoint(papillary, valveCenter);
+    const endpoints = spreadValveEndpoints(valve, tip, 3);
+    if (!endpoints.length) return;
+
+    const endpointMean = endpoints
+      .reduce((sum, point) => sum.add(point), new THREE.Vector3())
+      .multiplyScalar(1 / endpoints.length);
+    const branchPoint = tip.clone().lerp(endpointMean, 0.58);
+
+    addTube(`${bundleName} primary trunk — schematic`, [tip, branchPoint], trunkRadius);
+    endpoints.forEach((endpoint, index) => {
+      const slightBow = branchPoint.clone().lerp(endpoint, 0.52);
+      slightBow.y += maxDim * 0.004;
+      addTube(
+        `${bundleName} fan branch ${index + 1} — schematic`,
+        [branchPoint, slightBow, endpoint],
+        branchRadius
+      );
+    });
+  };
+
+  // Mitral apparatus: two HRA papillary groups.
+  buildBundle('Mitral anterolateral chordae', mitral, papAnterolateral);
+  buildBundle('Mitral posteromedial chordae', mitral, papPosteromedial);
+
+  // Tricuspid apparatus: anterior, medial/septal and posterior HRA groups.
+  buildBundle('Tricuspid anterior chordae', tricuspid, papAnterior);
+  buildBundle('Tricuspid medial chordae', tricuspid, papMedial);
+  buildBundle('Tricuspid posterior chordae', tricuspid, papPosterior);
+
+  if (group.children.length === 0) {
+    chordMaterial.dispose();
+    return null;
+  }
+
+  const bounds = new THREE.Box3().setFromObject(group);
+  return { group, bounds };
+}
+
 export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
   vitals,
   pathology,
@@ -1064,6 +1242,7 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
   const hraHeartMeshesRef = useRef<THREE.Mesh[]>([]);
   const hraHeartLoadStartedRef = useRef(false);
   const hraConductionGroupRef = useRef<THREE.Group | null>(null);
+  const hraChordaeGroupRef = useRef<THREE.Group | null>(null);
   const hraHeartMaterialsRef = useRef<{
     context: THREE.MeshStandardMaterial;
     selected: THREE.MeshStandardMaterial;
@@ -2081,6 +2260,12 @@ varying float partSelected;
           scene.add(conduction.group);
         }
 
+        const chordae = createHraChordaeOverlay(meshes);
+        if (chordae) {
+          hraChordaeGroupRef.current = chordae.group;
+          scene.add(chordae.group);
+        }
+
         setHraHeartReady(true);
         console.log(`[AnatomicalBody3D] Loaded HRA heart reference: ${meshes.length} meshes`);
       },
@@ -2151,6 +2336,15 @@ varying float partSelected;
       if (showConduction) hraHeartBox.expandByObject(hraConductionGroupRef.current);
     }
 
+    if (hraChordaeGroupRef.current) {
+      const showChordae =
+        isHraHeartReferenceTarget &&
+        hraHeartTarget?.id === 'hra_chordae_schematic' &&
+        hraHeartReady;
+      hraChordaeGroupRef.current.visible = showChordae;
+      if (showChordae) hraHeartBox.expandByObject(hraChordaeGroupRef.current);
+    }
+
     // Entity category checks
     const isSympatheticTarget = !!targetKey && (targetKey.toLowerCase().includes('sympath') || targetKey.toLowerCase().includes('cardiac plexus'));
     const isVagusTarget = !!targetKey && (targetKey.toLowerCase().includes('vagus') || targetKey.toLowerCase().includes('parasympath'));
@@ -2183,6 +2377,8 @@ varying float partSelected;
         ? 'The HRA internal-heart reference failed to load on this device. ORBIT has not substituted a different cardiac structure.'
         : hraHeartTarget?.id === 'hra_conduction_schematic'
         ? 'SCHEMATIC CONDUCTION: the HRA heart contains no captured SA node, AV node, His bundle, bundle-branch or Purkinje meshes. ORBIT draws this teaching overlay from the verified HRA chamber and interventricular-septum bounds; it is not specimen/source conduction anatomy.'
+        : hraHeartTarget?.id === 'hra_chordae_schematic'
+        ? 'SCHEMATIC CHORDAE: the HRA heart contains AV valves and five papillary-muscle meshes but no captured chordae tendineae. ORBIT derives a branching teaching approximation from HRA papillary tips to nearby mitral/tricuspid leaflet-surface points; it is not specimen/source chordal anatomy.'
         : isPhrenicTarget
         ? 'SCHEMATIC COURSE: no vetted source atlas used by ORBIT contains a captured phrenic-nerve mesh. This bilateral course is derived from named Z-Anatomy landmarks (C4/scalenus anterior/subclavian vessels/pericardium/diaphragm) and is explicitly not specimen geometry.'
         : peripheralNervesFailed && isSupplementalNerveTarget
