@@ -485,7 +485,7 @@ const RULES: readonly AtlasRule[] = [
   {
     id: 'thoraco-acromial',
     when: ['thoracoacromial', 'thoraco-acromial', 'thoracoacromial artery'],
-    select: (p) => hasTerm(p.name, 'thoraco acromial'),
+    select: (p) => p.system === 'arterial' && hasTerm(p.name, 'thoraco acromial'),
   },
   {
     id: 'axillary-vessels',
