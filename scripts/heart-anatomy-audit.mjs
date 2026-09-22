@@ -1,10 +1,32 @@
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const atlas = JSON.parse(readFileSync(path.join(root, 'public/models/atlas.json'), 'utf8'));
 const names = atlas.parts.map((p) => ({ id: p.id, name: String(p.name || ''), system: p.system }));
+
+function parseGlbJson(file) {
+  const b = readFileSync(file);
+  if (b.toString('ascii', 0, 4) !== 'glTF') throw new Error('bad GLB magic');
+  const jsonLength = b.readUInt32LE(12);
+  const jsonType = b.readUInt32LE(16);
+  if (jsonType !== 0x4E4F534A) throw new Error('first GLB chunk is not JSON');
+  return JSON.parse(b.toString('utf8', 20, 20 + jsonLength).replace(/\0+$/g, '').trim());
+}
+
+const hraHeartPath = path.join(root, 'public/models/hra_heart_male_v1.3.glb');
+const hraNames = existsSync(hraHeartPath)
+  ? (() => {
+      const gltf = parseGlbJson(hraHeartPath);
+      return [
+        ...(gltf.nodes || []).map((n) => String(n.name || '')),
+        ...(gltf.meshes || []).map((m) => String(m.name || '')),
+      ]
+        .filter(Boolean)
+        .map((name) => ({ name, normalized: name.replace(/_/g, ' ') }));
+    })()
+  : [];
 
 const checks = [
   ['Right atrium', /\bright atr(?:ium|ial)\b/i],
@@ -49,11 +71,29 @@ const checks = [
 console.log('\nORBIT HEART ANATOMY AUDIT\n');
 let present=0;
 for (const [label, rx] of checks) {
-  const hits = names.filter((p) => rx.test(p.name));
-  if (hits.length) present++;
-  console.log(`${hits.length ? '✓' : '✗'} ${label}`);
-  for (const h of hits.slice(0, 8)) console.log(`    [${h.system}] ${h.name} (${h.id})`);
-  if (hits.length > 8) console.log(`    … +${hits.length - 8} more`);
+  const bodyPartsHits = names.filter((p) => rx.test(p.name));
+  const hraHits = hraNames.filter((p) => rx.test(p.normalized));
+  const hasAny = bodyPartsHits.length > 0 || hraHits.length > 0;
+  if (hasAny) present++;
+
+  const source =
+    bodyPartsHits.length && hraHits.length
+      ? 'BodyParts3D + HRA'
+      : bodyPartsHits.length
+      ? 'BodyParts3D'
+      : hraHits.length
+      ? 'HRA supplement'
+      : 'missing';
+
+  console.log(`${hasAny ? '✓' : '✗'} ${label} [${source}]`);
+  for (const h of bodyPartsHits.slice(0, 6)) {
+    console.log(`    [BodyParts3D/${h.system}] ${h.name} (${h.id})`);
+  }
+  for (const h of hraHits.slice(0, 6)) {
+    console.log(`    [HRA] ${h.name}`);
+  }
+  if (bodyPartsHits.length > 6) console.log(`    … +${bodyPartsHits.length - 6} more BodyParts3D`);
+  if (hraHits.length > 6) console.log(`    … +${hraHits.length - 6} more HRA`);
 }
 
 const relevant = names.filter((p) =>
@@ -82,16 +122,20 @@ const mustForInternal = [
   /papillary.*muscl/i, /chordae|tendin(?:eae|ous).*cord/i,
   /interventricular sept/i, /interatrial sept/i,
 ];
-const missingInternal = mustForInternal.filter((rx) => !names.some((p) => rx.test(p.name))).length;
+const missingInternal = mustForInternal.filter(
+  (rx) =>
+    !names.some((p) => rx.test(p.name)) &&
+    !hraNames.some((p) => rx.test(p.normalized))
+).length;
 
 console.log(`\nExternal gross-heart essential groups missing: ${missingExternal}`);
-console.log(`Internal chamber/valve essential groups missing: ${missingInternal}`);
+console.log(`Internal chamber/valve essential groups missing across verified sources: ${missingInternal}`);
 
 if (missingExternal > 0) {
   console.error('HEART AUDIT: external gross anatomy is incomplete.');
   process.exitCode = 2;
 } else if (missingInternal > 0) {
-  console.log('HEART AUDIT: external gross anatomy is broadly present, but internal chamber/valve anatomy is incomplete.');
+  console.log('HEART AUDIT: external BodyParts3D anatomy is broadly present, but verified combined-source internal anatomy still has explicit gaps.');
 } else {
-  console.log('HEART AUDIT: external and internal MBBS gross-anatomy essentials are represented by named atlas parts.');
+  console.log('HEART AUDIT: external BodyParts3D and verified supplemental internal MBBS essentials are represented by named source meshes.');
 }
