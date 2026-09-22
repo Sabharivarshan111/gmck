@@ -30,6 +30,7 @@ import { isPeripheralNerveTarget } from '../simulator/data/peripheralNerves';
 import { HRA_HEART_TARGETS, isHraHeartTarget } from '../simulator/data/hraHeart';
 import {
   getHraOrganTarget,
+  getHraReferenceSexForOrgan,
   getHraTargetsForOrgan,
   isHraOrganTarget,
 } from '../simulator/data/hraOrgans';
@@ -770,6 +771,7 @@ export const Simulator: React.FC = () => {
             selectedOrganId;
           const targets = getHraTargetsForOrgan(sourceOrganKey);
           if (!targets.length) return null;
+          const referenceSex = getHraReferenceSexForOrgan(sourceOrganKey);
 
           return (
             <div
@@ -813,7 +815,7 @@ export const Simulator: React.FC = () => {
                   ? 'bg-white border-violet-200 text-violet-900'
                   : 'bg-slate-900 border-violet-800 text-violet-200'}`}
               >
-                HuBMAP HRA male v1.3 · source-derived
+                HuBMAP HRA {referenceSex === 'female' ? 'female' : referenceSex === 'mixed' ? 'mixed-reference' : 'male'} v1.3 · source-derived
               </span>
             </div>
           );
