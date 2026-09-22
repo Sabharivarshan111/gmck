@@ -486,14 +486,14 @@ export const Ecg12LeadCanvas: React.FC<Ecg12LeadProps> = ({
   const activeMeta = SEGMENTS.find((s) => s.id === activeSegment);
 
   return (
-    <div className="w-full flex flex-col items-center gap-3">
+    <div className="w-full flex flex-col items-center gap-2.5 md:gap-3">
       {/* Interactive 12-Lead ECG Wave Segmentation Controller */}
-      <div className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-3 shadow-md">
-        <div className="flex flex-wrap items-center justify-between gap-2 mb-2.5">
+      <div className="order-2 md:order-1 w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-2.5 md:p-3 shadow-sm">
+        <div className="flex items-center justify-between gap-2 mb-2">
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-red-600 animate-pulse" />
             <h3 className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-slate-100 font-mono">
-              12-Lead Real-Time Wave Segmentation Walkthrough
+              Wave Guide
             </h3>
           </div>
           <div className="flex items-center gap-2">
@@ -506,14 +506,14 @@ export const Ecg12LeadCanvas: React.FC<Ecg12LeadProps> = ({
               }`}
             >
               {isAutoWalking ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
-              <span>{isAutoWalking ? 'Pause Tour' : '▶ Step-by-Step Tour'}</span>
+              <span>{isAutoWalking ? 'Pause' : 'Tour'}</span>
             </button>
             <button
               onClick={() => {
                 setIsAutoWalking(false);
                 setActiveSegment('all');
               }}
-              className="text-xs text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 px-2 py-1 rounded border border-slate-200 dark:border-slate-800"
+              className="min-h-[40px] min-w-[40px] flex items-center justify-center text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 rounded-xl border border-slate-200 dark:border-slate-800"
               title="Reset to Full Trace"
             >
               <RotateCcw className="w-3.5 h-3.5" />
@@ -522,7 +522,7 @@ export const Ecg12LeadCanvas: React.FC<Ecg12LeadProps> = ({
         </div>
 
         {/* Wave Segment Selection Pills */}
-        <div className="flex flex-wrap gap-1.5">
+        <div className="-mx-1 px-1 flex flex-nowrap gap-1.5 overflow-x-auto no-scrollbar pb-0.5">
           <button
             onClick={() => {
               setIsAutoWalking(false);
@@ -534,7 +534,7 @@ export const Ecg12LeadCanvas: React.FC<Ecg12LeadProps> = ({
                 : 'bg-slate-100 text-slate-600 dark:bg-slate-800/70 dark:text-slate-400 hover:bg-slate-200'
             }`}
           >
-            All Waves (Standard)
+            All
           </button>
           {SEGMENTS.map((seg) => (
             <button
@@ -553,19 +553,24 @@ export const Ecg12LeadCanvas: React.FC<Ecg12LeadProps> = ({
                   : 'bg-slate-50 dark:bg-slate-800/40 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:bg-slate-100'
               }`}
             >
-              {seg.name}
+              {seg.shortName}
             </button>
           ))}
         </div>
       </div>
 
+      <div className="order-1 md:order-2 w-full flex items-center justify-between gap-2 px-1 md:hidden">
+        <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">ECG first · swipe to inspect all 12 leads</span>
+        <span className="text-[10px] font-mono text-red-700 dark:text-red-300">25 mm/s · 10 mm/mV</span>
+      </div>
+
       {/* Calibrated Pink 12-Lead Millimeter Grid Canvas */}
-      <div className="w-full overflow-x-auto rounded-xl border-2 border-red-300 shadow-lg bg-[#fff5f5]">
+      <div className="order-1 md:order-2 w-full overflow-x-auto overscroll-x-contain rounded-xl border border-red-300/80 shadow-md bg-[#fff5f5]">
         <canvas
           ref={canvasRef}
           width={840}
           height={490}
-          className="w-full min-w-[760px] h-auto block cursor-crosshair"
+          className="w-[720px] min-w-[720px] md:w-full md:min-w-0 h-auto block cursor-crosshair"
         />
       </div>
 
@@ -573,7 +578,7 @@ export const Ecg12LeadCanvas: React.FC<Ecg12LeadProps> = ({
       {activeMeta && (
         <div
           style={{ borderColor: activeMeta.color }}
-          className="w-full bg-white dark:bg-slate-900 border-2 rounded-2xl p-4 shadow-xl transition-all animate-in fade-in slide-in-from-bottom-2 duration-300"
+          className="order-3 w-full bg-white dark:bg-slate-900 border rounded-2xl p-3 md:p-4 shadow-md transition-all animate-in fade-in slide-in-from-bottom-2 duration-300"
         >
           <div className="flex flex-wrap items-center justify-between gap-2 mb-3 pb-2 border-b border-slate-200 dark:border-slate-800">
             <div className="flex items-center gap-2">
