@@ -1960,3 +1960,203 @@ assessing a future change.
 3. Continue visual/runtime checks after any new atlas import; source coverage
    alone does not prove registration. Keep the transformed-bounds guard and
    source-purity checks intact.
+
+
+---
+
+## 2026-09-22 — ChatGPT mobile-first patient simulator refactor
+
+Verified runtime/source commit for this pass:
+**36d37cbf62ca3dfceb2cdb63e63f9615596ac830**
+
+This pass was triggered by a real phone screenshot of the 12-lead ECG modal showing
+desktop-style layout on a narrow screen: a tall padded modal, a multi-row wave
+control deck, and a hard 760 px ECG canvas pushing the clinically important
+tracing far below the fold.
+
+### Mobile design rule now used across the simulator
+
+On phones the simulator should prioritize the active clinical surface first:
+3D anatomy, telemetry, ECG, POCUS, or bedside examination. Controls become
+compact horizontal decks/sheets instead of wrapping desktop panels.
+
+Do not regress to a "desktop card squeezed into a phone" layout.
+
+### Root simulator navigation
+
+`src/pages/Simulator.tsx`
+
+- Main mobile padding/spacing is tighter and respects the bottom safe area.
+- The 3D stage uses adaptive height:
+  `max(340px, min(66dvh, 560px))`.
+- Telemetry uses an adaptive phone stage:
+  `max(500px, min(72dvh, 620px))`.
+- The Deep Inspector strip appears on mobile only while the **3D** tab is active.
+- The Intervention/Case library appears on mobile only while the **Case** tab is
+  active; it no longer sits underneath the 3D viewport and creates a huge page.
+- Small phones get compact tab labels: `3D`, `Monitor`, `Case`.
+
+### Diagnostic tool shell
+
+`src/simulator/instruments/DiagnosticTools.tsx`
+
+- Phone layout is now an edge-to-edge **100dvh** sheet.
+- Desktop retains the centered/max-width modal.
+- Header is sticky and compact.
+- Close action uses a 44x44 minimum touch target.
+- Content uses overscroll containment and bottom safe-area padding.
+- Pupil stimulus actions use a horizontally scrolling control lane rather than
+  wrapping into multiple rows.
+- The dual-eye simulator uses a compact two-column phone layout.
+- The ECG status row is compact: rhythm pill + short Tutorial action.
+
+### 12-lead ECG
+
+`src/simulator/instruments/Ecg12LeadCanvas.tsx`
+
+- The tracing is **first on mobile**, controls second.
+- The old `min-w-[760px]` regression was removed.
+- Mobile ECG preserves readable lead labels through a pannable ~720 px tracing,
+  with an explicit "swipe to inspect all 12 leads" hint instead of silently
+  overflowing the modal.
+- Wave selection is now one horizontally scrolling chip row:
+  `All / P / PR / QRS / ST / T / QT`.
+- The previous multi-row "12-Lead Real-Time Wave Segmentation Walkthrough"
+  block is reduced to a compact **Wave Guide**.
+- Tour/reset actions are compact.
+- Detailed electrophysiology cards stay below the tracing and only appear for a
+  selected wave.
+
+### POCUS
+
+`src/simulator/instruments/pocus/PocusCanvas.tsx`
+
+- View presets and machine actions scroll horizontally on phones.
+- Important actions have touch-safe sizing.
+- Ultrasound image is the primary surface, using approximately
+  `46dvh` with reasonable min/max constraints.
+- Gain/depth controls reflow instead of creating a wide desktop control row.
+
+### ICU monitor
+
+`src/simulator/instruments/IcuMonitor.tsx`
+
+- Compact phone padding and status bar.
+- Header controls scroll safely and use larger touch targets.
+- Waveform area keeps a useful mobile minimum height.
+- Vital-number grid is denser without changing physiology/wave generation.
+
+### Case / interventions
+
+`src/simulator/controls/InterventionPanel.tsx`
+
+- Mobile container and case header are more compact.
+- Case status/target/lethal-error badges use horizontal scrolling instead of
+  long wrapping rows.
+- Anatomical layer controls use 3 columns on narrow phones, 5 at larger sizes.
+- Diagnostic tools use touch-safe buttons.
+- Intervention cards are denser while preserving labels and drug/dose text.
+
+### 3D anatomy controls and organ details
+
+`src/simulator/controls/DissectionToolbar.tsx`
+
+- Mode switcher, X-ray and action controls reflow into mobile decks.
+- Mode/actions scroll horizontally instead of wrapping into tall stacks.
+- Depth peel gets the full phone width.
+
+`src/simulator/controls/OrganDetailDrawer.tsx`
+
+- Bottom sheet uses dynamic viewport units:
+  - collapsed: **52dvh**
+  - expanded: **92dvh**
+- Header/tabs/content padding are reduced on phones.
+- Tabs remain horizontal and scrollable.
+- Bottom content respects the phone safe area.
+
+### PICCLED / bedside examination
+
+`src/simulator/controls/WardExamModal.tsx`
+
+- Full-height 100dvh phone sheet.
+- Sticky compact header with overflow-safe/truncated title.
+- 44 px close action.
+- Examination tabs are a horizontal touch-safe strip on phones instead of a
+  2-column desktop-style grid.
+- Main bedside cards use smaller mobile padding.
+
+### ECG / ICU tutorial
+
+`src/simulator/instruments/EcgIcuTutorialModal.tsx`
+
+- Full-height 100dvh phone sheet.
+- Sticky compact header.
+- Desktop-only explanatory header content is hidden on narrow screens.
+- Four curriculum tiers scroll horizontally and remain touch-safe.
+- Tutorial body uses smaller mobile padding and bottom safe-area spacing.
+
+### Automated mobile UI regression gate
+
+New:
+`scripts/simulator-mobile-ui-check.mjs`
+
+Command:
+`npm run check:simulator-mobile`
+
+It fails if any of these regressions return:
+
+- 760 px forced ECG minimum width;
+- ECG controls ordered above the tracing on mobile;
+- wave buttons wrapping instead of horizontal scrolling;
+- diagnostic/PICCLED/tutorial returning to padded desktop modal shells;
+- loss of 100dvh/safe-area behavior;
+- POCUS or 3D adaptive stage heights removed;
+- InterventionPanel visible underneath the wrong mobile tab;
+- Deep Inspector visible outside the 3D mobile tab;
+- organ drawer dynamic bottom-sheet sizing removed;
+- critical mobile dismiss actions below 44x44.
+
+`.github/workflows/simulator-integrity.yml` now runs this regression gate on
+every relevant simulator change.
+
+### Verification
+
+For **36d37cbf**:
+
+- ORBIT Simulator Integrity: **SUCCESS**
+- Mobile simulator UI regression suite: **SUCCESS**
+- Web build: **SUCCESS**
+- Existing anatomy/source/provenance audits: **SUCCESS**
+- Android release/debug/internal builds entered the native pipeline after
+  TypeScript/typecheck/lint/simulator checks passed; check the exact workflow
+  run when assessing artifact completion.
+
+### Vercel production state
+
+The code is correct on `main`, but Vercel rejected deployment of the final
+commit with the explicit GitHub status:
+
+> Deployment rate limited — retry in 24 hours.
+
+At this handoff the public production alias is still on:
+`26da91c0a6cf9415ac852c743fac19b6ecd34512`
+("Optimize ICU monitor for phone screens").
+
+Therefore **do not claim the public alias already contains the complete final
+mobile pass** until Vercel promotes a commit at or after `36d37cbf`.
+
+An automated retry/check has been scheduled for approximately 24 hours after
+this handoff. It should compare current Vercel production with latest main,
+deploy/promote when the rate limit clears, then verify `/simulator` and
+production runtime errors.
+
+### Preserve these principles
+
+1. Mobile clinical content first; controls second.
+2. No desktop modal margins on narrow phones for dense simulator tools.
+3. Dense control sets scroll horizontally instead of growing vertically.
+4. Use dynamic viewport/safe-area units for phone sheets.
+5. Maintain >=44 px critical tap targets.
+6. Keep desktop behavior intact with `sm:/md:/lg:` overrides.
+7. Never undo anatomy source/provenance rules while changing layout.
+8. Keep the mobile UI regression gate in CI.
