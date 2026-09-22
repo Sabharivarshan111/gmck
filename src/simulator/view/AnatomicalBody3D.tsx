@@ -1489,12 +1489,20 @@ varying float partSelected;
 
       const elapsed = clock.getElapsedTime();
 
-      // Cardiac pulsation
-      const hr = vitals.heartRate;
-      const cardiacScale = 1.0 + 0.035 * Math.sin(elapsed * ((hr / 60) * Math.PI * 2));
+      // IMPORTANT — do not geometrically pulse the merged cardiac mesh.
+      //
+      // Coronary arteries/veins and the aortic root are rendered from separate
+      // atlas systems. Scaling only the myocardium makes those vessels appear
+      // to detach and float during every beat (clearly visible on mobile).
+      // A medically credible contraction needs a rigged/deformation model that
+      // moves myocardium + attached vessels coherently; isotropic mesh scaling
+      // is both visually wrong and anatomically misleading. Heart rate remains
+      // animated in the monitor/UI, while the anatomical meshes stay perfectly
+      // registered in 3D.
       const cardiacMesh = systemMeshesRef.current.get('cardiac');
-      if (cardiacMesh) {
-        cardiacMesh.scale.set(cardiacScale, cardiacScale, cardiacScale);
+      if (cardiacMesh && !cardiacMesh.scale.equals(new THREE.Vector3(1, 1, 1))) {
+        cardiacMesh.scale.set(1, 1, 1);
+        cardiacMesh.updateMatrixWorld(true);
       }
 
       // Trauma marker visibility and pulse
