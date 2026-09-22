@@ -1507,6 +1507,7 @@ export const EcgIcuTutorialModal: React.FC<EcgIcuTutorialModalProps> = ({
           </div>
 
           <button
+            aria-label="Close ECG tutorial"
             onClick={onClose}
             className={`min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl transition-all cursor-pointer shrink-0 ${
               isLight
