@@ -187,7 +187,7 @@ export const PocusCanvas: React.FC<PocusCanvasProps> = ({
             onClick={() =>
               setSettings((prev) => ({ ...prev, showMMode: !prev.showMMode }))
             }
-            className={`px-2.5 py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer flex items-center gap-1.5 ${
+            className={`min-h-[44px] shrink-0 px-2.5 rounded-xl text-[11px] sm:text-xs font-bold border transition-all cursor-pointer flex items-center gap-1.5 ${
               settings.showMMode
                 ? 'bg-amber-400 text-slate-950 border-amber-300 font-black'
                 : 'bg-slate-800 text-slate-300 border-slate-700'
