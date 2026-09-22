@@ -518,6 +518,7 @@ export const Simulator: React.FC = () => {
               sampleWaveforms={handleSampleWaveforms}
               ecgRhythm={pathology.ecgRhythm}
               theme={theme}
+              active={isDesktopLayout}
             />
           </div>
         </div>
@@ -1022,6 +1023,7 @@ export const Simulator: React.FC = () => {
               sampleWaveforms={handleSampleWaveforms}
               ecgRhythm={pathology.ecgRhythm}
               theme={theme}
+              active={!isDesktopLayout && mobileTab === 'telemetry'}
             />
           </div>
         </div>
