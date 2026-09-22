@@ -24,8 +24,8 @@ Current exported inventory:
 
 - 712 source objects inspected
 - 272 named nerve objects exported
-- 603,170 triangles before export processing
-- 378,833 triangles in the shipped peripheral-nerve GLB
+- 1,192,806 true source loop-triangles before mobile decimation
+- 193,875 true triangulated faces in the mobile-decimated shipped peripheral-nerve GLB
 
 The supplement is lazy-loaded. BodyParts3D remains the core body atlas and is
 not falsely treated as containing these nerves.
