@@ -105,6 +105,7 @@ export default function ImportedStudyView({
   const [revealed, setRevealed] = useState(false);
   const [cardIndex, setCardIndex] = useState(0);
   const [history, setHistory] = useState<Array<{ cardId: string; prevCard: Card }>>([]);
+  const [zoomedImage, setZoomedImage] = useState<string | null>(null);
 
   useEffect(() => {
     let live = true;
@@ -139,19 +140,23 @@ export default function ImportedStudyView({
     [current, cards]
   );
 
-  const frontUrls = useMediaUrls(deck.id, revealed ? undefined : face?.frontImages);
+  // Keep question media mounted after reveal. An ECG or radiograph is part
+  // of the question and should not disappear just as the answer appears.
+  const frontUrls = useMediaUrls(deck.id, face?.frontImages);
   const backUrls = useMediaUrls(deck.id, revealed ? face?.backImages : undefined);
 
   const onNext = useCallback(() => {
     if (queue.length <= 1) return;
     setCardIndex((i) => (i + 1) % queue.length);
     setRevealed(false);
+    setZoomedImage(null);
   }, [queue.length]);
 
   const onPrevious = useCallback(() => {
     if (safeIndex > 0) {
       setCardIndex((i) => i - 1);
       setRevealed(false);
+    setZoomedImage(null);
       return;
     }
     if (history.length === 0) return;
@@ -163,6 +168,7 @@ export default function ImportedStudyView({
       return updated;
     });
     setRevealed(false);
+    setZoomedImage(null);
   }, [safeIndex, deckKey, history]);
 
   const onGrade = useCallback(
@@ -176,6 +182,7 @@ export default function ImportedStudyView({
         return updated;
       });
       setRevealed(false);
+    setZoomedImage(null);
       setCardIndex(0);
     },
     [current, deckKey]
@@ -229,12 +236,19 @@ export default function ImportedStudyView({
         <div className="flex-1 space-y-3">
           <p className="text-xs tracking-widest text-muted-foreground">QUESTION</p>
           {frontUrls.map((url, i) => (
-            <img
+            <button
               key={url}
-              src={url}
-              alt={`Question picture ${i + 1} of ${frontUrls.length}`}
-              className="max-h-56 w-auto mx-auto rounded-lg"
-            />
+              type="button"
+              onClick={() => setZoomedImage(url)}
+              className="block w-full rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+              aria-label={`Open question picture ${i + 1} full screen`}
+            >
+              <img
+                src={url}
+                alt={`Question picture ${i + 1} of ${frontUrls.length}`}
+                className="max-h-64 max-w-full w-auto mx-auto rounded-lg object-contain"
+              />
+            </button>
           ))}
           <p className="text-lg font-medium whitespace-pre-wrap">{face.front}</p>
 
@@ -243,12 +257,19 @@ export default function ImportedStudyView({
               <div className="border-t pt-3" />
               <p className="text-xs tracking-widest text-muted-foreground">ANSWER</p>
               {backUrls.map((url, i) => (
-                <img
+                <button
                   key={url}
-                  src={url}
-                  alt={`Answer picture ${i + 1} of ${backUrls.length}`}
-                  className="max-h-56 w-auto mx-auto rounded-lg"
-                />
+                  type="button"
+                  onClick={() => setZoomedImage(url)}
+                  className="block w-full rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                  aria-label={`Open answer picture ${i + 1} full screen`}
+                >
+                  <img
+                    src={url}
+                    alt={`Answer picture ${i + 1} of ${backUrls.length}`}
+                    className="max-h-72 max-w-full w-auto mx-auto rounded-lg object-contain"
+                  />
+                </button>
               ))}
               <p className="whitespace-pre-wrap">{face.back}</p>
             </>
@@ -299,6 +320,30 @@ export default function ImportedStudyView({
               </span>
             </button>
           ))}
+        </div>
+      )}
+
+      {zoomedImage && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Flashcard image preview"
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 p-4"
+          onClick={() => setZoomedImage(null)}
+        >
+          <button
+            type="button"
+            className="absolute right-4 top-[calc(1rem+env(safe-area-inset-top))] rounded-full bg-white/15 px-3 py-2 text-sm font-semibold text-white"
+            onClick={() => setZoomedImage(null)}
+            aria-label="Close image preview"
+          >
+            Close
+          </button>
+          <img
+            src={zoomedImage}
+            alt="Enlarged flashcard media"
+            className="max-h-[88vh] max-w-full object-contain"
+          />
         </div>
       )}
     </div>
