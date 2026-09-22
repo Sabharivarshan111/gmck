@@ -77,3 +77,26 @@ new geometry.
 
 This supplement is educational reference anatomy, not a diagnostic or
 patient-specific anatomical model.
+
+
+## Derived phrenic nerve course
+
+ORBIT includes a tiny, explicitly **schematic** bilateral phrenic-nerve course
+for teaching because neither BodyParts3D nor the Z-Anatomy
+`NervousSystem100.fbx` used by this project contains a captured phrenic nerve.
+
+The course is adapted from the open Clinical Neuroanatomy Atlas
+(`aycibatuhan/nervous-system-atlas`), whose pipeline code is Apache-2.0 and
+whose generated public atlas data is CC BY-SA 4.0. Its
+`pipeline/config/derived_nerves.yaml` documents waypoints read from named
+Z-Anatomy landmarks: the C4 spinal ganglion, scalenus anterior, subclavian
+vessels, brachiocephalic vein, aortic arch/SVC, atrial/ventricular surfaces and
+the diaphragm. ORBIT converts those Z-Anatomy Z-up coordinates into its
+Three.js Y-up frame and sweeps each side as a ~1.5 mm radius tube.
+
+This geometry is always labelled **SCHEMATIC COURSE** in the UI. It is not
+presented as specimen-derived or patient-specific anatomy.
+
+Credits:
+- Clinical Neuroanatomy Atlas, Batuhan Ayci — Apache-2.0 code / CC BY-SA 4.0 generated data.
+- Z-Anatomy — CC BY-SA 4.0 aggregate anatomy source used for the referenced landmarks.
