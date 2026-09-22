@@ -3,6 +3,7 @@ export interface HraOrganModelSpec {
   organKey: string;
   url: string;
   fileName: string;
+  referenceSex: 'male' | 'female';
 }
 
 export interface HraOrganTarget {
@@ -19,32 +20,32 @@ export interface HraOrganTarget {
 }
 
 export const HRA_ORGAN_MODELS: readonly HraOrganModelSpec[] = [
-  { key: 'kidney_left', organKey: 'kidney', url: '/models/hra/VH_M_Kidney_L.glb', fileName: 'VH_M_Kidney_L.glb' },
-  { key: 'kidney_right', organKey: 'kidney', url: '/models/hra/VH_M_Kidney_R.glb', fileName: 'VH_M_Kidney_R.glb' },
-  { key: 'liver', organKey: 'liver', url: '/models/hra/VH_M_Liver.glb', fileName: 'VH_M_Liver.glb' },
-  { key: 'lung', organKey: 'lungs', url: '/models/hra/VH_M_Lung.glb', fileName: 'VH_M_Lung.glb' },
-  { key: 'pancreas', organKey: 'pancreas', url: '/models/hra/VH_M_Pancreas.glb', fileName: 'VH_M_Pancreas.glb' },
-  { key: 'spleen', organKey: 'spleen', url: '/models/hra/VH_M_Spleen.glb', fileName: 'VH_M_Spleen.glb' },
-  { key: 'small_intestine', organKey: 'small_intestine', url: '/models/hra/VH_M_Small_Intestine.glb', fileName: 'VH_M_Small_Intestine.glb' },
-  { key: 'urinary_bladder', organKey: 'urinary_bladder', url: '/models/hra/VH_M_Urinary_Bladder.glb', fileName: 'VH_M_Urinary_Bladder.glb' },
-  { key: 'thymus', organKey: 'thymus', url: '/models/hra/VH_M_Thymus.glb', fileName: 'VH_M_Thymus.glb' },
-  { key: 'blood_vasculature', organKey: 'aorta', url: '/models/hra/VH_M_Blood_Vasculature.glb', fileName: 'VH_M_Blood_Vasculature.glb' },
-  { key: 'eye_left', organKey: 'eye', url: '/models/hra/VH_M_Eye_L.glb', fileName: 'VH_M_Eye_L.glb' },
-  { key: 'eye_right', organKey: 'eye', url: '/models/hra/VH_M_Eye_R.glb', fileName: 'VH_M_Eye_R.glb' },
-  { key: 'ureter_left', organKey: 'ureter', url: '/models/hra/VH_M_Ureter_L.glb', fileName: 'VH_M_Ureter_L.glb' },
-  { key: 'ureter_right', organKey: 'ureter', url: '/models/hra/VH_M_Ureter_R.glb', fileName: 'VH_M_Ureter_R.glb' },
-  { key: 'spinal_cord', organKey: 'spinal_cord', url: '/models/hra/VH_M_Spinal_Cord.glb', fileName: 'VH_M_Spinal_Cord.glb' },
-  { key: 'pelvis_male', organKey: 'pelvis', url: '/models/hra/VH_M_Pelvis.glb', fileName: 'VH_M_Pelvis.glb' },
-  { key: 'prostate', organKey: 'prostate', url: '/models/hra/VH_M_Prostate.glb', fileName: 'VH_M_Prostate.glb' },
-  { key: 'skin', organKey: 'skin', url: '/models/hra/VH_M_Skin.glb', fileName: 'VH_M_Skin.glb' },
-  { key: 'knee_left', organKey: 'knee', url: '/models/hra/VH_M_Knee_L.glb', fileName: 'VH_M_Knee_L.glb' },
-  { key: 'knee_right', organKey: 'knee', url: '/models/hra/VH_M_Knee_R.glb', fileName: 'VH_M_Knee_R.glb' },
-  { key: 'uterus', organKey: 'uterus', url: '/models/hra/VH_F_Uterus.glb', fileName: 'VH_F_Uterus.glb' },
-  { key: 'ovary_left', organKey: 'ovary', url: '/models/hra/VH_F_Ovary_L.glb', fileName: 'VH_F_Ovary_L.glb' },
-  { key: 'ovary_right', organKey: 'ovary', url: '/models/hra/VH_F_Ovary_R.glb', fileName: 'VH_F_Ovary_R.glb' },
-  { key: 'fallopian_tube_left', organKey: 'fallopian_tube', url: '/models/hra/VH_F_Fallopian_Tube_L.glb', fileName: 'VH_F_Fallopian_Tube_L.glb' },
-  { key: 'fallopian_tube_right', organKey: 'fallopian_tube', url: '/models/hra/VH_F_Fallopian_Tube_R.glb', fileName: 'VH_F_Fallopian_Tube_R.glb' },
-  { key: 'placenta', organKey: 'placenta', url: '/models/hra/VH_F_Placenta.glb', fileName: 'VH_F_Placenta.glb' },
+  { key: 'kidney_left', organKey: 'kidney', url: '/models/hra/VH_M_Kidney_L.glb', fileName: 'VH_M_Kidney_L.glb' , referenceSex: 'male' },
+  { key: 'kidney_right', organKey: 'kidney', url: '/models/hra/VH_M_Kidney_R.glb', fileName: 'VH_M_Kidney_R.glb' , referenceSex: 'male' },
+  { key: 'liver', organKey: 'liver', url: '/models/hra/VH_M_Liver.glb', fileName: 'VH_M_Liver.glb' , referenceSex: 'male' },
+  { key: 'lung', organKey: 'lungs', url: '/models/hra/VH_M_Lung.glb', fileName: 'VH_M_Lung.glb' , referenceSex: 'male' },
+  { key: 'pancreas', organKey: 'pancreas', url: '/models/hra/VH_M_Pancreas.glb', fileName: 'VH_M_Pancreas.glb' , referenceSex: 'male' },
+  { key: 'spleen', organKey: 'spleen', url: '/models/hra/VH_M_Spleen.glb', fileName: 'VH_M_Spleen.glb' , referenceSex: 'male' },
+  { key: 'small_intestine', organKey: 'small_intestine', url: '/models/hra/VH_M_Small_Intestine.glb', fileName: 'VH_M_Small_Intestine.glb' , referenceSex: 'male' },
+  { key: 'urinary_bladder', organKey: 'urinary_bladder', url: '/models/hra/VH_M_Urinary_Bladder.glb', fileName: 'VH_M_Urinary_Bladder.glb' , referenceSex: 'male' },
+  { key: 'thymus', organKey: 'thymus', url: '/models/hra/VH_M_Thymus.glb', fileName: 'VH_M_Thymus.glb' , referenceSex: 'male' },
+  { key: 'blood_vasculature', organKey: 'aorta', url: '/models/hra/VH_M_Blood_Vasculature.glb', fileName: 'VH_M_Blood_Vasculature.glb' , referenceSex: 'male' },
+  { key: 'eye_left', organKey: 'eye', url: '/models/hra/VH_M_Eye_L.glb', fileName: 'VH_M_Eye_L.glb' , referenceSex: 'male' },
+  { key: 'eye_right', organKey: 'eye', url: '/models/hra/VH_M_Eye_R.glb', fileName: 'VH_M_Eye_R.glb' , referenceSex: 'male' },
+  { key: 'ureter_left', organKey: 'ureter', url: '/models/hra/VH_M_Ureter_L.glb', fileName: 'VH_M_Ureter_L.glb' , referenceSex: 'male' },
+  { key: 'ureter_right', organKey: 'ureter', url: '/models/hra/VH_M_Ureter_R.glb', fileName: 'VH_M_Ureter_R.glb' , referenceSex: 'male' },
+  { key: 'spinal_cord', organKey: 'spinal_cord', url: '/models/hra/VH_M_Spinal_Cord.glb', fileName: 'VH_M_Spinal_Cord.glb' , referenceSex: 'male' },
+  { key: 'pelvis_male', organKey: 'pelvis', url: '/models/hra/VH_M_Pelvis.glb', fileName: 'VH_M_Pelvis.glb' , referenceSex: 'male' },
+  { key: 'prostate', organKey: 'prostate', url: '/models/hra/VH_M_Prostate.glb', fileName: 'VH_M_Prostate.glb' , referenceSex: 'male' },
+  { key: 'skin', organKey: 'skin', url: '/models/hra/VH_M_Skin.glb', fileName: 'VH_M_Skin.glb' , referenceSex: 'male' },
+  { key: 'knee_left', organKey: 'knee', url: '/models/hra/VH_M_Knee_L.glb', fileName: 'VH_M_Knee_L.glb' , referenceSex: 'male' },
+  { key: 'knee_right', organKey: 'knee', url: '/models/hra/VH_M_Knee_R.glb', fileName: 'VH_M_Knee_R.glb' , referenceSex: 'male' },
+  { key: 'uterus', organKey: 'uterus', url: '/models/hra/VH_F_Uterus.glb', fileName: 'VH_F_Uterus.glb' , referenceSex: 'female' },
+  { key: 'ovary_left', organKey: 'ovary', url: '/models/hra/VH_F_Ovary_L.glb', fileName: 'VH_F_Ovary_L.glb' , referenceSex: 'female' },
+  { key: 'ovary_right', organKey: 'ovary', url: '/models/hra/VH_F_Ovary_R.glb', fileName: 'VH_F_Ovary_R.glb' , referenceSex: 'female' },
+  { key: 'fallopian_tube_left', organKey: 'fallopian_tube', url: '/models/hra/VH_F_Fallopian_Tube_L.glb', fileName: 'VH_F_Fallopian_Tube_L.glb' , referenceSex: 'female' },
+  { key: 'fallopian_tube_right', organKey: 'fallopian_tube', url: '/models/hra/VH_F_Fallopian_Tube_R.glb', fileName: 'VH_F_Fallopian_Tube_R.glb' , referenceSex: 'female' },
+  { key: 'placenta', organKey: 'placenta', url: '/models/hra/VH_F_Placenta.glb', fileName: 'VH_F_Placenta.glb' , referenceSex: 'female' },
 ] as const;
 
 const kidneyModels = ['kidney_left', 'kidney_right'] as const;
@@ -230,4 +231,37 @@ export function hraOrganMeshMatchesTarget(meshName: string, targetId: string | n
   if (target.prefixes?.some((prefix) => meshName.startsWith(prefix))) return true;
   if (target.includes?.some((piece) => normalized.includes(piece.toLowerCase()))) return true;
   return false;
+}
+
+
+export function getHraReferenceSexForTarget(
+  targetId: string | null | undefined
+): 'male' | 'female' | 'mixed' | null {
+  const target = getHraOrganTarget(targetId);
+  if (!target) return null;
+  const sexes = new Set(
+    target.modelKeys
+      .map((key) => getHraOrganModel(key)?.referenceSex)
+      .filter((sex): sex is 'male' | 'female' => !!sex)
+  );
+  if (sexes.size === 1) return [...sexes][0];
+  if (sexes.size > 1) return 'mixed';
+  return null;
+}
+
+export function getHraReferenceSexForOrgan(
+  organKey: string | null | undefined
+): 'male' | 'female' | 'mixed' | null {
+  if (!organKey) return null;
+  const targets = getHraTargetsForOrgan(organKey);
+  const sexes = new Set(
+    targets.flatMap((target) =>
+      target.modelKeys
+        .map((key) => getHraOrganModel(key)?.referenceSex)
+        .filter((sex): sex is 'male' | 'female' => !!sex)
+    )
+  );
+  if (sexes.size === 1) return [...sexes][0];
+  if (sexes.size > 1) return 'mixed';
+  return null;
 }
