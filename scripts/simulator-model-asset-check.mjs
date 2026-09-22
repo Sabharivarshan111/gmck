@@ -6,11 +6,17 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const publicDir = path.join(root, 'public');
 const atlasPath = path.join(publicDir, 'models', 'atlas.json');
 const hraHeartSourcePath = path.join(root, 'src', 'simulator', 'data', 'hraHeart.ts');
+const hraOrgansSourcePath = path.join(root, 'src', 'simulator', 'data', 'hraOrgans.ts');
 const {
   HRA_HEART_REQUIRED_MESH_NAMES,
   HRA_HEART_TARGETS,
   hraHeartMeshMatchesTarget,
 } = await import(hraHeartSourcePath);
+const {
+  HRA_ORGAN_MODELS,
+  HRA_ORGAN_TARGETS,
+  hraOrganMeshMatchesTarget,
+} = await import(hraOrgansSourcePath);
 const failures = [];
 const fail = (m) => failures.push(m);
 
@@ -114,6 +120,63 @@ if (!existsSync(hraHeartPath)) {
   }
 }
 
+const hraInventoryPath = path.join(root, 'docs', 'hra-organ-inventory.json');
+if (!existsSync(hraInventoryPath)) {
+  fail('docs/hra-organ-inventory.json is missing');
+} else {
+  try {
+    const inventory = JSON.parse(readFileSync(hraInventoryPath, 'utf8'));
+    const meshNamesByModel = new Map();
+
+    for (const model of HRA_ORGAN_MODELS) {
+      const inv = inventory.organs?.[model.key];
+      if (!inv) {
+        fail(`HRA inventory has no entry for ${model.key}`);
+        continue;
+      }
+
+      const rel = model.url.replace(/^\//, '');
+      const file = path.join(publicDir, rel);
+      if (!existsSync(file)) {
+        fail(`HRA organ file missing: ${rel}`);
+        continue;
+      }
+
+      const actualBytes = statSync(file).size;
+      if (actualBytes !== inv.bytes) {
+        fail(`${rel} is ${actualBytes} bytes; verified HRA source is ${inv.bytes}`);
+      }
+
+      const { json } = parseGlb(file);
+      const names = (json.meshes || []).map((m) => String(m.name || '')).filter(Boolean);
+      meshNamesByModel.set(model.key, names);
+
+      const missingNames = (inv.namedMeshes || []).filter((name) => !names.includes(name));
+      if (missingNames.length) {
+        fail(`${rel} lost verified meshes: ${missingNames.join(', ')}`);
+      }
+    }
+
+    for (const target of HRA_ORGAN_TARGETS) {
+      const candidateNames = target.modelKeys.flatMap(
+        (modelKey) => meshNamesByModel.get(modelKey) || []
+      );
+      const matches = candidateNames.filter((name) =>
+        hraOrganMeshMatchesTarget(name, target.id)
+      );
+      if (matches.length === 0) {
+        fail(`HRA organ UI target "${target.id}" matches no verified source mesh`);
+      }
+    }
+
+    console.log(
+      `Multi-organ HRA references OK: ${HRA_ORGAN_MODELS.length} source files, ${HRA_ORGAN_TARGETS.length} verified UI targets.`
+    );
+  } catch (e) {
+    fail(`multi-organ HRA verification failed: ${e instanceof Error ? e.message : String(e)}`);
+  }
+}
+
 const attributionPath = path.join(publicDir, 'models', 'ATTRIBUTION_BODYPARTS3D.md');
 if (!existsSync(attributionPath)) {
   fail('anatomy attribution file is missing');
@@ -127,6 +190,9 @@ if (!existsSync(attributionPath)) {
   }
   if (!/HRA internal-heart reference/i.test(attribution) || !/CC BY 4\.0/i.test(attribution)) {
     fail('HRA internal-heart provenance / CC BY 4.0 attribution is missing');
+  }
+  if (!/HRA multi-organ reference set/i.test(attribution)) {
+    fail('HRA multi-organ reference provenance is missing');
   }
 }
 
