@@ -1,0 +1,26 @@
+{
+  "source": "https://github.com/LluisV/Z-Anatomy/blob/PC-Version/Resources/Models/FBX/CardioVascular41.fbx",
+  "license": "Z-Anatomy models CC BY-SA 4.0 aggregate; component attribution reviewed in ORBIT model attribution",
+  "canonicalHeightM": 1.7,
+  "sourceObjectCount": 717,
+  "sourceBounds": {
+    "min": [
+      -0.40072304010391235,
+      -0.22000014781951904,
+      -0.08937976509332657
+    ],
+    "max": [
+      0.40072304010391235,
+      0.22000014781951904,
+      1.7899999618530273
+    ]
+  },
+  "exported": [
+    {
+      "key": "interatrial_septum",
+      "sourceName": "Interatrial septum.j",
+      "triangles": 0,
+      "vertices": 2
+    }
+  ]
+}
