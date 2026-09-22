@@ -190,7 +190,7 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
             {navHistory.length > 1 && (
               <button
                 onClick={handleGoBack}
-                className={`flex items-center gap-1 px-2.5 py-1 rounded-lg font-semibold transition-colors min-h-[32px] ${
+                className={`flex items-center gap-1 px-2.5 py-1 rounded-lg font-semibold transition-colors min-h-[44px] ${
                   isLight ? 'bg-white text-slate-800 hover:bg-slate-100 border border-slate-200 shadow-xs' : 'bg-slate-800 text-slate-200 hover:bg-slate-700'
                 }`}
                 title="Return to parent structure"
