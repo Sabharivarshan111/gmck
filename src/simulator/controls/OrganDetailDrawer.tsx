@@ -344,7 +344,7 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`px-3 py-2 rounded-xl text-[11px] sm:text-xs font-bold flex items-center gap-1.5 whitespace-nowrap min-h-[40px] shrink-0 transition-all ${
+                className={`px-3 py-2 rounded-xl text-[11px] sm:text-xs font-bold flex items-center gap-1.5 whitespace-nowrap min-h-[44px] shrink-0 transition-all ${
                   isCurrent
                     ? isLight
                       ? 'bg-sky-600 text-white shadow-sm shadow-sky-500/20'
