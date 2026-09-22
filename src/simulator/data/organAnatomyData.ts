@@ -1412,11 +1412,11 @@ export const ORGAN_ANATOMY_DATABASE: Record<string, DetailedOrganAnatomy> = {
     dimensionsAndWeight: 'Highly distensible muscular reservoir; functional adult capacity commonly ~300–500 mL.',
     arterialSupply: [
       'Superior vesical arteries from the patent proximal umbilical artery/internal iliac system.',
-      'Inferior vesical artery in males; vaginal/uterine arterial branches contribute in females.',
+      'Inferior vesical artery arises from the anterior division of the internal iliac artery in males; vaginal and uterine branches from the internal iliac arterial system contribute in females.',
     ],
     venousDrainage: [
       'Vesical venous plexus drains to internal iliac veins.',
-      'Communicates with prostatic plexus in males and pelvic venous networks.',
+      'The vesical venous plexus communicates with the prostatic plexus in males and other pelvic venous networks, then drains chiefly to the internal iliac veins.',
     ],
     innervation: {
       sympathetic: 'T11–L2 via hypogastric plexus: relaxes detrusor and promotes bladder-neck/internal sphincter tone during storage.',
@@ -1456,11 +1456,11 @@ export const ORGAN_ANATOMY_DATABASE: Record<string, DetailedOrganAnatomy> = {
     dimensionsAndWeight: 'Relatively large in childhood, reaching maximal relative size around puberty, then undergoes fatty involution with age.',
     arterialSupply: [
       'Small branches from internal thoracic arteries.',
-      'Inferior thyroid and pericardiophrenic branches may contribute.',
+      'Inferior thyroid branches from the thyrocervical trunk and pericardiophrenic branches from the internal thoracic artery may also supply the thymus.',
     ],
     venousDrainage: [
       'Small thymic veins drain mainly to left brachiocephalic vein.',
-      'Additional drainage may reach internal thoracic and inferior thyroid veins.',
+      'Additional thymic veins drain to the internal thoracic and inferior thyroid veins, which ultimately return toward the brachiocephalic venous system.',
     ],
     innervation: {
       sympathetic: 'Postganglionic sympathetic fibers from cervical/thoracic sympathetic chain accompany vessels.',
