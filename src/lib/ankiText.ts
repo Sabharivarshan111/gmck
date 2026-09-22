@@ -41,6 +41,10 @@ export class AnkiTextError extends Error {
 
 const SPECIAL_COLUMNS = new Set(['tags', 'deck', 'notetype', 'guid']);
 
+function compactColumnName(value: string): string {
+  return value.trim().toLowerCase().replace(/[\s_-]+/g, '');
+}
+
 function separatorFromHeader(value: string | undefined): string | null {
   if (!value) return null;
   const raw = value.trim();
@@ -218,6 +222,18 @@ function boolHeader(value: string | undefined): boolean | null {
   return null;
 }
 
+/** Anki's "deck column:5" style directives are one-based. */
+function directiveColumnIndex(
+  headers: Map<string, string>,
+  name: 'deck' | 'tags' | 'notetype' | 'guid',
+  maxFields: number,
+): number {
+  const raw = headers.get(`${name} column`)?.trim();
+  if (!raw || !/^\d+$/.test(raw)) return -1;
+  const index = Number(raw) - 1;
+  return index >= 0 && index < maxFields ? index : -1;
+}
+
 function looksLikeHtml(value: string): boolean {
   return /<\/?[a-z][^>]*>/i.test(value) || /&#?[a-z0-9]+;/i.test(value);
 }
@@ -280,20 +296,30 @@ export function parseAnkiText(text: string, sourceName = 'deck.txt'): ParsedAnki
   }
 
   const normalizedColumns = columns?.map(column => column.trim().toLowerCase()) ?? null;
-  const specialIndex = (name: string): number =>
-    normalizedColumns?.findIndex(column => column === name || column.startsWith(`${name}:`)) ?? -1;
+  const namedSpecialIndex = (name: string): number =>
+    normalizedColumns?.findIndex(column => compactColumnName(column.split(':')[0]) === name) ?? -1;
+  const directedOrNamed = (name: 'deck' | 'tags' | 'notetype' | 'guid'): number => {
+    const directed = directiveColumnIndex(headers, name, maxFields);
+    return directed >= 0 ? directed : namedSpecialIndex(name);
+  };
 
-  const tagsIndex = specialIndex('tags');
-  const deckIndex = specialIndex('deck');
+  const tagsIndex = directedOrNamed('tags');
+  const deckIndex = directedOrNamed('deck');
+  const notetypeIndex = directedOrNamed('notetype');
+  const guidIndex = directedOrNamed('guid');
+  const specialIndices = new Set(
+    [tagsIndex, deckIndex, notetypeIndex, guidIndex].filter(index => index >= 0),
+  );
   const regularIndices = Array.from({ length: maxFields }, (_, index) => index).filter(index => {
+    if (specialIndices.has(index)) return false;
     const column = normalizedColumns?.[index];
-    return !column || !SPECIAL_COLUMNS.has(column.split(':')[0]);
+    return !column || !SPECIAL_COLUMNS.has(compactColumnName(column.split(':')[0]));
   });
 
   const namedFront =
     normalizedColumns?.findIndex(column => /^(front|question|prompt)$/.test(column)) ?? -1;
   const namedBack =
-    normalizedColumns?.findIndex(column => /^(back|answer|extra)$/.test(column)) ?? -1;
+    normalizedColumns?.findIndex(column => /^(back|answer)$/.test(column)) ?? -1;
   const frontIndex = namedFront >= 0 ? namedFront : (regularIndices[0] ?? 0);
   const backIndex = namedBack >= 0 ? namedBack : (regularIndices[1] ?? -1);
 
@@ -302,7 +328,7 @@ export function parseAnkiText(text: string, sourceName = 'deck.txt'): ParsedAnki
   const allowHtml = headerHtml ?? looksLikeHtml(sample);
   const defaultDeck = (headers.get('deck') ?? '').trim() || sourceDeckName(sourceName);
   const defaultTags = (headers.get('tags') ?? '').split(/\s+/).filter(Boolean);
-  const cloze = /cloze/i.test(headers.get('notetype') ?? '');
+  const defaultNotetype = (headers.get('notetype') ?? '').trim();
   const missingMedia = new Set<string>();
   const warnings: string[] = [];
   const cards: ApkgCard[] = [];
@@ -316,24 +342,15 @@ export function parseAnkiText(text: string, sourceName = 'deck.txt'): ParsedAnki
         : combineRaw(otherRegular.map(index => row[index] ?? ''), allowHtml);
     const deck = (deckIndex >= 0 ? row[deckIndex] : '')?.trim() || defaultDeck;
     const tags = rowTags(tagsIndex >= 0 ? row[tagsIndex] ?? '' : '', defaultTags);
+    const notetype = (notetypeIndex >= 0 ? row[notetypeIndex] : defaultNotetype)?.trim() || '';
+    const isCloze = /cloze/i.test(notetype);
 
-    const clozeNumbers = cloze ? clozeOrdinals(rawFront) : [];
-    const ordinals = clozeNumbers.length > 0 ? clozeNumbers : [0];
-
-    for (const ordinal of ordinals) {
-      const qRaw = ordinal > 0 ? revealCloze(rawFront, ordinal, true) : rawFront;
-      const revealed = ordinal > 0 ? revealCloze(rawFront, ordinal, false) : rawFront;
-      const aRaw =
-        ordinal > 0
-          ? combineRaw([revealed, rawBack], allowHtml)
-          : rawBack;
-
-      const front = flatten(qRaw, allowHtml, true, missingMedia);
-      const back = flatten(aRaw, allowHtml, false, missingMedia);
-      if (!front) continue;
-
+    const pushCard = (suffix: string, questionRaw: string, answerRaw: string) => {
+      const front = flatten(questionRaw, allowHtml, true, missingMedia);
+      const back = flatten(answerRaw, allowHtml, false, missingMedia);
+      if (!front) return;
       cards.push({
-        id: `text-${rowIndex + 1}${ordinal > 0 ? `-c${ordinal}` : ''}`,
+        id: `text-${rowIndex + 1}${suffix}`,
         deck,
         front,
         back,
@@ -344,6 +361,33 @@ export function parseAnkiText(text: string, sourceName = 'deck.txt'): ParsedAnki
         backMedia: [],
         audio: [],
       });
+    };
+
+    if (isCloze) {
+      const ordinals = clozeOrdinals(rawFront);
+      // A malformed Cloze row with no deletion is still useful as one ordinary
+      // card instead of vanishing from the import.
+      if (ordinals.length === 0) {
+        pushCard('', rawFront, rawBack);
+      } else {
+        for (const ordinal of ordinals) {
+          const qRaw = revealCloze(rawFront, ordinal, true);
+          const revealed = revealCloze(rawFront, ordinal, false);
+          pushCard(`-c${ordinal}`, qRaw, combineRaw([revealed, rawBack], allowHtml));
+        }
+      }
+      return;
+    }
+
+    pushCard('', rawFront, rawBack);
+
+    // Anki's built-in "Basic (and reversed card)" is common in exported text.
+    // Text files contain note fields, not rendered templates, so this is the
+    // only reversed template we can reproduce without guessing at a custom
+    // notetype. Optional-reversed and custom templates intentionally stay one
+    // card unless their rendered cards arrive in an APKG.
+    if (/^basic\s*\(and reversed card\)$/i.test(notetype) && rawBack.trim()) {
+      pushCard('-rev', row[backIndex] ?? rawBack, combineRaw([rawFront, ...otherRegular.map(index => row[index] ?? '')], allowHtml));
     }
   });
 
