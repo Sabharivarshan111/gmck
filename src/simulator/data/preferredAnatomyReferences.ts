@@ -1,6 +1,6 @@
-import { isHraHeartTarget } from './hraHeart';
-import { getHraOrganTarget } from './hraOrgans';
-import { getZAnatomyReferenceTarget } from './zanatomyReferences';
+import { isHraHeartTarget } from './hraHeart.ts';
+import { getHraOrganTarget } from './hraOrgans.ts';
+import { getZAnatomyReferenceTarget } from './zanatomyReferences.ts';
 
 /**
  * Canonical source-backed overview used when a student asks to isolate a whole
