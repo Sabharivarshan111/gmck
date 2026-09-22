@@ -374,7 +374,7 @@ export const IcuMonitor: React.FC<IcuMonitorProps> = ({
           <div className="flex items-center gap-1.5 shrink-0">
             <button
               onClick={() => setIsTutorialOpen(true)}
-              className="min-h-[40px] flex items-center gap-1 px-2.5 rounded-xl text-[10px] font-bold border border-rose-500/40 bg-rose-500/20 text-rose-300 hover:bg-rose-500/30 transition-all cursor-pointer"
+              className="min-h-[44px] flex items-center gap-1 px-2.5 rounded-xl text-[10px] font-bold border border-rose-500/40 bg-rose-500/20 text-rose-300 hover:bg-rose-500/30 transition-all cursor-pointer"
               title="Open 12-Lead ECG & ICU Telemetry Tutorial (LKG to Specialist)"
             >
               <GraduationCap className="w-3.5 h-3.5" />
@@ -382,7 +382,7 @@ export const IcuMonitor: React.FC<IcuMonitorProps> = ({
             </button>
             <button
               onClick={() => setAudioEnabled(!audioEnabled)}
-              className={`min-h-[40px] px-2.5 rounded-xl text-[10px] font-semibold border transition-all ${
+              className={`min-h-[44px] px-2.5 rounded-xl text-[10px] font-semibold border transition-all ${
                 audioEnabled
                   ? 'bg-emerald-950/60 border-emerald-500 text-emerald-300'
                   : 'bg-slate-800 border-slate-700 text-slate-400 hover:text-slate-200'
