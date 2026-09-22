@@ -79,14 +79,14 @@ export const DissectionToolbar: React.FC<DissectionToolbarProps> = ({
     <div className="w-full space-y-2">
       {/* Main Glass Control Strip */}
       <div
-        className={`p-2 rounded-2xl border backdrop-blur-xl shadow-lg flex flex-wrap items-center justify-between gap-2.5 transition-all ${
+        className={`p-2 rounded-2xl border backdrop-blur-xl shadow-md flex flex-col sm:flex-row sm:flex-wrap sm:items-center sm:justify-between gap-1.5 sm:gap-2.5 transition-all ${
           isLight
             ? 'bg-white/95 border-slate-200/90 text-slate-800'
             : 'bg-slate-900/95 border-slate-800 text-slate-200 shadow-slate-950/50'
         }`}
       >
         {/* Left: Mode Switcher Pills */}
-        <div className="flex items-center gap-1 p-1 bg-slate-100/90 dark:bg-slate-800/90 rounded-xl border border-slate-200/60 dark:border-slate-700/60">
+        <div className="w-full sm:w-auto flex items-center gap-1 p-1 bg-slate-100/90 dark:bg-slate-800/90 rounded-xl border border-slate-200/60 dark:border-slate-700/60 overflow-x-auto no-scrollbar">
           {toolLabels.map((t) => {
             const active = toolMode === t.id;
             return (
@@ -94,7 +94,7 @@ export const DissectionToolbar: React.FC<DissectionToolbarProps> = ({
                 key={t.id}
                 onClick={() => onSelectToolMode(t.id)}
                 title={t.hint}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                className={`min-h-[40px] shrink-0 flex items-center gap-1.5 px-2.5 sm:px-3 rounded-lg text-[11px] sm:text-xs font-semibold transition-all cursor-pointer ${
                   active
                     ? isLight
                       ? 'bg-white text-slate-900 shadow-xs font-bold'
@@ -124,7 +124,7 @@ export const DissectionToolbar: React.FC<DissectionToolbarProps> = ({
         </div>
 
         {/* Center: Anatomical Depth Peeler Slider */}
-        <div className="flex-1 min-w-[220px] max-w-[360px] flex items-center gap-2 px-2">
+        <div className="w-full sm:flex-1 sm:min-w-[220px] sm:max-w-[360px] flex items-center gap-2 px-1.5 sm:px-2 py-1">
           <Layers className="w-4 h-4 text-sky-500 shrink-0" />
           <div className="flex-1 flex flex-col gap-0.5">
             <div className="flex items-center justify-between text-[11px] font-mono">
@@ -144,11 +144,11 @@ export const DissectionToolbar: React.FC<DissectionToolbarProps> = ({
         </div>
 
         {/* Right: Dissection Tray & Undo Controls */}
-        <div className="flex items-center gap-1.5">
+        <div className="w-full sm:w-auto flex items-center justify-end gap-1.5 overflow-x-auto no-scrollbar">
           {/* Dissected Count / Open Tray Button */}
           <button
             onClick={() => setTrayOpen(!trayOpen)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-semibold transition-all cursor-pointer ${
+            className={`min-h-[40px] shrink-0 flex items-center gap-1.5 px-2.5 sm:px-3 rounded-xl border text-[11px] sm:text-xs font-semibold transition-all cursor-pointer ${
               dissectedParts.length > 0
                 ? isLight
                   ? 'bg-rose-50 border-rose-200 text-rose-700 font-bold shadow-xs'
@@ -168,7 +168,7 @@ export const DissectionToolbar: React.FC<DissectionToolbarProps> = ({
             onClick={onUndoLastDissect}
             disabled={dissectedParts.length === 0}
             title="Undo last dissected structure (Ctrl+Z)"
-            className={`flex items-center gap-1 px-2.5 py-1.5 rounded-xl border text-xs font-medium transition-all ${
+            className={`min-h-[40px] shrink-0 flex items-center gap-1 px-2.5 rounded-xl border text-[11px] sm:text-xs font-medium transition-all ${
               dissectedParts.length > 0
                 ? isLight
                   ? 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100 cursor-pointer'
