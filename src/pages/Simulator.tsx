@@ -371,7 +371,7 @@ export const Simulator: React.FC = () => {
         >
           <button
             onClick={() => setMobileTab('3d')}
-            className={`flex-1 h-9 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all duration-200 ${
+            className={`flex-1 h-11 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all duration-200 ${
               mobileTab === '3d'
                 ? isLight
                   ? 'bg-white text-slate-900 shadow-sm'
@@ -387,7 +387,7 @@ export const Simulator: React.FC = () => {
 
           <button
             onClick={() => setMobileTab('telemetry')}
-            className={`flex-1 h-9 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all duration-200 ${
+            className={`flex-1 h-11 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all duration-200 ${
               mobileTab === 'telemetry'
                 ? isLight
                   ? 'bg-white text-slate-900 shadow-sm'
@@ -403,7 +403,7 @@ export const Simulator: React.FC = () => {
 
           <button
             onClick={() => setMobileTab('interventions')}
-            className={`flex-1 h-9 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all duration-200 ${
+            className={`flex-1 h-11 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all duration-200 ${
               mobileTab === 'interventions'
                 ? isLight
                   ? 'bg-white text-slate-900 shadow-sm'
