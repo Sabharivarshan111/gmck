@@ -430,6 +430,18 @@ const RULES: readonly AtlasRule[] = [
     },
   },
   {
+    // Valve targets must beat the broader aorta/pulmonary-vessel rules.
+    // These ids are the three source cusps in BodyParts3D.
+    id: 'aortic-valve',
+    when: ['aortic valve'],
+    select: (p) => ['FJ2426', 'FJ2431', 'FJ2435'].includes(p.id),
+  },
+  {
+    id: 'pulmonary-valve',
+    when: ['pulmonary valve', 'pulmonic valve'],
+    select: (p) => ['FJ2417', 'FJ2427', 'FJ2434'].includes(p.id),
+  },
+  {
     id: 'pulmonary-vessels',
     when: ['pulmonary trunk', 'pulmonary artery', 'pulmonary veins', 'pulmonary vein'],
     select: (p) => hasTerm(p.name, 'pulmonary') || p.id === 'FJ2966',
