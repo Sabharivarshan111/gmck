@@ -9,6 +9,8 @@ on:
       - "public/models/**"
       - "scripts/simulator-organ-check.mjs"
       - "scripts/simulator-model-asset-check.mjs"
+      - "scripts/heart-anatomy-audit.mjs"
+      - "scripts/heart-anatomy-audit.mjs"
       - ".github/workflows/simulator-integrity.yml"
   pull_request:
     paths:
@@ -39,6 +41,8 @@ jobs:
         run: npm run check:simulator
       - name: Model asset integrity
         run: npm run check:simulator-assets
+      - name: Heart anatomy completeness audit
+        run: node scripts/heart-anatomy-audit.mjs
       - name: Production build
         run: npm run build
       - name: Deploy-size guard
