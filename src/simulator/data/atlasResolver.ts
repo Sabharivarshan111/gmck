@@ -450,7 +450,26 @@ const RULES: readonly AtlasRule[] = [
   {
     id: 'pulmonary-vessels',
     when: ['pulmonary trunk', 'pulmonary artery', 'pulmonary veins', 'pulmonary vein'],
-    select: (p) => hasTerm(p.name, 'pulmonary') || p.id === 'FJ2966',
+    select: (p, _atlas, key) => {
+      const request = key.toLowerCase();
+
+      // The dossier exposes pulmonary arterial outflow and pulmonary venous
+      // return as separate nodes. A shared "pulmonary" substring rule used to
+      // return the same 13 meshes for both, mixing veins into the pulmonary
+      // trunk view and arteries into the pulmonary-vein view.
+      if (hasTerm(request, 'vein')) {
+        return p.system === 'venous' && hasTerm(p.name, 'pulmonary vein');
+      }
+
+      return (
+        p.system === 'arterial' &&
+        (
+          p.id === 'FJ2966' ||
+          hasTerm(p.name, 'pulmonary trunk') ||
+          hasTerm(p.name, 'pulmonary artery')
+        )
+      );
+    },
   },
   {
     id: 'aorta',
