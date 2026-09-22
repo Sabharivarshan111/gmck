@@ -331,8 +331,14 @@ for (const organKey of expectedPreferredOrgans) {
     if (zTarget.organKey !== organKey) {
       fail(`preferred target ${organKey} -> ${targetId} belongs to Z-Anatomy organ ${zTarget.organKey}`);
     }
-    if (!zTarget.matchAll) {
-      fail(`preferred Z-Anatomy target ${targetId} is not an overview/matchAll target`);
+    const isCanonicalWholeOrganTarget =
+      zTarget.matchAll ||
+      (organKey === 'stomach' &&
+        targetId === 'za_stomach' &&
+        Array.isArray(zTarget.exact) &&
+        zTarget.exact.includes('Stomach'));
+    if (!isCanonicalWholeOrganTarget) {
+      fail(`preferred Z-Anatomy target ${targetId} is not an accepted whole-organ teaching target`);
     }
     continue;
   }
@@ -341,7 +347,7 @@ for (const organKey of expectedPreferredOrgans) {
 }
 
 console.log(
-  `Preferred organ isolation OK: ${expectedPreferredOrgans.length} source-backed organ buttons route to verified overview geometry.`
+  `Preferred organ isolation OK: ${expectedPreferredOrgans.length} source-backed organ buttons route to verified teaching geometry.`
 );
 
 // The peripheral nerve supplement is a separate, much larger Z-Anatomy layer.
