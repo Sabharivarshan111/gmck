@@ -5,6 +5,12 @@ import { fileURLToPath } from 'node:url';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const publicDir = path.join(root, 'public');
 const atlasPath = path.join(publicDir, 'models', 'atlas.json');
+const hraHeartSourcePath = path.join(root, 'src', 'simulator', 'data', 'hraHeart.ts');
+const {
+  HRA_HEART_REQUIRED_MESH_NAMES,
+  HRA_HEART_TARGETS,
+  hraHeartMeshMatchesTarget,
+} = await import(hraHeartSourcePath);
 const failures = [];
 const fail = (m) => failures.push(m);
 
@@ -85,10 +91,23 @@ if (!existsSync(hraHeartPath)) {
     if (bytes < 3_000_000 || bytes > 5_000_000) {
       fail(`HRA heart GLB is ${bytes} bytes; expected the verified ~4.07 MB v1.3 source`);
     }
-    if (!names.includes('VH_M_interventricular_septum')) {
-      fail('HRA heart GLB no longer contains VH_M_interventricular_septum');
+    const missingRequired = HRA_HEART_REQUIRED_MESH_NAMES.filter((name) => !names.includes(name));
+    if (missingRequired.length > 0) {
+      fail(`HRA heart GLB is missing verified source meshes: ${missingRequired.join(', ')}`);
     }
-    console.log(`HRA heart reference OK: ${(bytes / 1024 / 1024).toFixed(2)} MiB, interventricular septum present.`);
+
+    for (const target of HRA_HEART_TARGETS) {
+      const matches = (json.meshes || [])
+        .map((m) => String(m.name || ''))
+        .filter((name) => hraHeartMeshMatchesTarget(name, target.id));
+      if (matches.length === 0) {
+        fail(`HRA UI target "${target.id}" matches no source mesh`);
+      }
+    }
+
+    console.log(
+      `HRA heart reference OK: ${(bytes / 1024 / 1024).toFixed(2)} MiB, ${HRA_HEART_REQUIRED_MESH_NAMES.length} verified meshes and ${HRA_HEART_TARGETS.length} inspectable targets.`
+    );
   } catch (e) {
     fail(`cannot parse ${hraHeartRel}: ${e instanceof Error ? e.message : String(e)}`);
   }
