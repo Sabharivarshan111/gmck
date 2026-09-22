@@ -591,6 +591,7 @@ export const Simulator: React.FC = () => {
             'aortic valve',
             'pulmonary valve',
             'papillary muscle',
+            'hra_interventricular_septum',
           ].includes(isolatedPartId || '')
         ) && (
           <div
@@ -612,13 +613,18 @@ export const Simulator: React.FC = () => {
               ['aortic valve', 'Aortic'],
               ['pulmonary valve', 'Pulmonary'],
               ['papillary muscle', 'Papillary'],
+              ['hra_interventricular_septum', 'IV septum · HRA'],
             ].map(([id, label]) => (
               <button
                 key={id}
                 onClick={() => {
                   setIsolatedPartId(id);
                   setSelectedOrganId(id === 'heart' ? 'heart' : null);
-                  setContextOrganId(id === 'heart' ? null : 'heart');
+                  setContextOrganId(
+                    id === 'heart' || id === 'hra_interventricular_septum'
+                      ? null
+                      : 'heart'
+                  );
                   setCameraPreset('thorax');
                   setMobileTab('3d');
                 }}
@@ -639,7 +645,7 @@ export const Simulator: React.FC = () => {
                 : 'bg-amber-950/50 border-amber-800 text-amber-200'}`}
               title="These structures are not represented as independent source meshes in the current atlas."
             >
-              Source gaps: chordae • septal detail • conduction system
+              Source gaps: chordae • interatrial septum • conduction system
             </span>
           </div>
         )}
