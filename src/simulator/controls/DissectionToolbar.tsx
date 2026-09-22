@@ -92,6 +92,7 @@ export const DissectionToolbar: React.FC<DissectionToolbarProps> = ({
             return (
               <button
                 key={t.id}
+                data-testid={`dissection-mode-${t.id}`}
                 onClick={() => onSelectToolMode(t.id)}
                 title={t.hint}
                 className={`min-h-[44px] shrink-0 flex items-center gap-1.5 px-2.5 sm:px-3 rounded-lg text-[11px] sm:text-xs font-semibold transition-all cursor-pointer ${
@@ -110,6 +111,7 @@ export const DissectionToolbar: React.FC<DissectionToolbarProps> = ({
 
           {/* X-Ray Ghost Mode Toggle */}
           <button
+            data-testid="dissection-xray"
             onClick={onToggleXray}
             title="Toggle translucent X-Ray ghosting"
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
@@ -132,6 +134,7 @@ export const DissectionToolbar: React.FC<DissectionToolbarProps> = ({
               <span className="text-sky-600 dark:text-sky-400 font-bold">{getPeelLabel(layerPeel)}</span>
             </div>
             <input
+              data-testid="dissection-depth"
               type="range"
               min="0"
               max="1"
@@ -147,6 +150,7 @@ export const DissectionToolbar: React.FC<DissectionToolbarProps> = ({
         <div className="w-full sm:w-auto flex items-center justify-end gap-1.5 overflow-x-auto no-scrollbar">
           {/* Dissected Count / Open Tray Button */}
           <button
+            data-testid="dissection-tray"
             onClick={() => setTrayOpen(!trayOpen)}
             className={`min-h-[44px] shrink-0 flex items-center gap-1.5 px-2.5 sm:px-3 rounded-xl border text-[11px] sm:text-xs font-semibold transition-all cursor-pointer ${
               dissectedParts.length > 0
