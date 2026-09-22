@@ -63,6 +63,9 @@ const hraAliases = new Map([
   ['lad_artery', 'aorta'],
   ['rca_artery', 'aorta'],
   ['abdomen', 'abdomen'],
+  ['small_intestine', 'small_intestine'],
+  ['urinary_bladder', 'urinary_bladder'],
+  ['thymus', 'thymus'],
 ]);
 
 const report = {
