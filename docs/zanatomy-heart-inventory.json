@@ -1,0 +1,606 @@
+{
+  "source": "https://github.com/LluisV/Z-Anatomy/blob/PC-Version/Resources/Models/FBX/CardioVascular41.fbx",
+  "license": "Z-Anatomy models CC BY-SA 4.0 aggregate; review component attribution before runtime import",
+  "objectCount": 717,
+  "heartRelatedObjectCount": 48,
+  "heartRelatedObjects": [
+    {
+      "name": "Right atrium",
+      "type": "MESH",
+      "polygons": 9298,
+      "vertices": 4756
+    },
+    {
+      "name": "Inferior papillary muscle of right ventricle",
+      "type": "MESH",
+      "polygons": 446,
+      "vertices": 225
+    },
+    {
+      "name": "Anterior papillary muscle of right ventricle",
+      "type": "MESH",
+      "polygons": 632,
+      "vertices": 318
+    },
+    {
+      "name": "Septal papillary muscle of right ventricle",
+      "type": "MESH",
+      "polygons": 346,
+      "vertices": 175
+    },
+    {
+      "name": "Right ventricle",
+      "type": "MESH",
+      "polygons": 9152,
+      "vertices": 4726
+    },
+    {
+      "name": "Left atrium",
+      "type": "MESH",
+      "polygons": 2088,
+      "vertices": 1092
+    },
+    {
+      "name": "Inferior papillary muscle of left ventricle",
+      "type": "MESH",
+      "polygons": 638,
+      "vertices": 321
+    },
+    {
+      "name": "Left ventricle",
+      "type": "MESH",
+      "polygons": 9122,
+      "vertices": 4718
+    },
+    {
+      "name": "Valvular complex of heart.j",
+      "type": "MESH",
+      "polygons": 0,
+      "vertices": 2
+    },
+    {
+      "name": "Aortic valve.j",
+      "type": "MESH",
+      "polygons": 0,
+      "vertices": 2
+    },
+    {
+      "name": "Left coronary leaflet",
+      "type": "MESH",
+      "polygons": 374,
+      "vertices": 189
+    },
+    {
+      "name": "Non-coronary leaflet",
+      "type": "MESH",
+      "polygons": 128,
+      "vertices": 66
+    },
+    {
+      "name": "Right coronary leaflet",
+      "type": "MESH",
+      "polygons": 376,
+      "vertices": 190
+    },
+    {
+      "name": "Anterior semilunar leaflet of pulmonary valve",
+      "type": "MESH",
+      "polygons": 1039,
+      "vertices": 523
+    },
+    {
+      "name": "Left semilunar leaflet of pulmonary valve",
+      "type": "MESH",
+      "polygons": 816,
+      "vertices": 410
+    },
+    {
+      "name": "Right semilunar leaflet of pulmonary valve",
+      "type": "MESH",
+      "polygons": 1121,
+      "vertices": 565
+    },
+    {
+      "name": "Pulmonary valve.j",
+      "type": "MESH",
+      "polygons": 0,
+      "vertices": 2
+    },
+    {
+      "name": "Inferior leaflet of right atrioventricular valve",
+      "type": "MESH",
+      "polygons": 4038,
+      "vertices": 2005
+    },
+    {
+      "name": "Septal leaflet of right atrioventricular valve",
+      "type": "MESH",
+      "polygons": 3706,
+      "vertices": 1839
+    },
+    {
+      "name": "Posterior leaflet of left atrioventricular valve",
+      "type": "MESH",
+      "polygons": 3132,
+      "vertices": 1544
+    },
+    {
+      "name": "Right atrioventricular valve.j",
+      "type": "MESH",
+      "polygons": 0,
+      "vertices": 2
+    },
+    {
+      "name": "Left atrioventricular valve.j",
+      "type": "MESH",
+      "polygons": 0,
+      "vertices": 2
+    },
+    {
+      "name": "Base of heart.j",
+      "type": "MESH",
+      "polygons": 0,
+      "vertices": 2
+    },
+    {
+      "name": "Left surface of heart.j",
+      "type": "MESH",
+      "polygons": 0,
+      "vertices": 2
+    },
+    {
+      "name": "Interatrial septum.j",
+      "type": "MESH",
+      "polygons": 0,
+      "vertices": 2
+    },
+    {
+      "name": "Inferior surface of heart.j",
+      "type": "MESH",
+      "polygons": 0,
+      "vertices": 2
+    },
+    {
+      "name": "Right surface of heart.j",
+      "type": "MESH",
+      "polygons": 0,
+      "vertices": 2
+    },
+    {
+      "name": "Inferior border of heart.j",
+      "type": "MESH",
+      "polygons": 0,
+      "vertices": 2
+    },
+    {
+      "name": "Apex of heart.j",
+      "type": "MESH",
+      "polygons": 0,
+      "vertices": 2
+    },
+    {
+      "name": "Anterior surface of heart.j",
+      "type": "MESH",
+      "polygons": 0,
+      "vertices": 2
+    },
+    {
+      "name": "Right border of heart.j",
+      "type": "MESH",
+      "polygons": 0,
+      "vertices": 2
+    },
+    {
+      "name": "Notch of cardiac apex.j",
+      "type": "MESH",
+      "polygons": 0,
+      "vertices": 2
+    },
+    {
+      "name": "Anterior interventricular sulcus.j",
+      "type": "MESH",
+      "polygons": 0,
+      "vertices": 2
+    },
+    {
+      "name": "Inferior interventricular sulcus.j",
+      "type": "MESH",
+      "polygons": 0,
+      "vertices": 2
+    },
+    {
+      "name": "Coronary sulcus.j",
+      "type": "MESH",
+      "polygons": 0,
+      "vertices": 2
+    },
+    {
+      "name": "Right inferolateral branch of right coronary artery",
+      "type": "MESH",
+      "polygons": 7556,
+      "vertices": 3874
+    },
+    {
+      "name": "Right coronary artery",
+      "type": "MESH",
+      "polygons": 11098,
+      "vertices": 5717
+    },
+    {
+      "name": "Circumflex artery of heart",
+      "type": "MESH",
+      "polygons": 6730,
+      "vertices": 3437
+    },
+    {
+      "name": "Septal branches of anterior interventricular artery",
+      "type": "MESH",
+      "polygons": 2832,
+      "vertices": 1488
+    },
+    {
+      "name": "Anterior interventricular artery",
+      "type": "MESH",
+      "polygons": 4722,
+      "vertices": 2433
+    },
+    {
+      "name": "Left coronary artery",
+      "type": "MESH",
+      "polygons": 236,
+      "vertices": 130
+    },
+    {
+      "name": "Arteries of heart.j",
+      "type": "MESH",
+      "polygons": 0,
+      "vertices": 2
+    },
+    {
+      "name": "Great cardiac vein",
+      "type": "MESH",
+      "polygons": 6021,
+      "vertices": 3103
+    },
+    {
+      "name": "Middle cardiac vein",
+      "type": "MESH",
+      "polygons": 13106,
+      "vertices": 6709
+    },
+    {
+      "name": "Inferior vein of left ventricle (//Posterior '')",
+      "type": "MESH",
+      "polygons": 9092,
+      "vertices": 4642
+    },
+    {
+      "name": "Inferior vein of left ventricle",
+      "type": "MESH",
+      "polygons": 4840,
+      "vertices": 2468
+    },
+    {
+      "name": "Coronary sinus",
+      "type": "MESH",
+      "polygons": 590,
+      "vertices": 307
+    },
+    {
+      "name": "Cardiac veins.j",
+      "type": "MESH",
+      "polygons": 0,
+      "vertices": 2
+    }
+  ],
+  "matches": {
+    "chordae_tendineae": [],
+    "interatrial_septum": [
+      {
+        "name": "Interatrial septum.j",
+        "type": "MESH",
+        "polygons": 0,
+        "vertices": 2
+      }
+    ],
+    "interventricular_septum": [
+      {
+        "name": "Septal branches of anterior interventricular artery",
+        "type": "MESH",
+        "polygons": 2832,
+        "vertices": 1488
+      }
+    ],
+    "trabeculae_carneae": [],
+    "moderator_band": [],
+    "fossa_ovalis": [],
+    "crista_terminalis": [],
+    "right_auricle": [],
+    "left_auricle": [],
+    "pericardium": [],
+    "sa_node": [],
+    "av_node": [],
+    "bundle_of_his": [],
+    "purkinje": [],
+    "valve": [
+      {
+        "name": "Aortic valve.j",
+        "type": "MESH",
+        "polygons": 0,
+        "vertices": 2
+      },
+      {
+        "name": "Left coronary leaflet",
+        "type": "MESH",
+        "polygons": 374,
+        "vertices": 189
+      },
+      {
+        "name": "Non-coronary leaflet",
+        "type": "MESH",
+        "polygons": 128,
+        "vertices": 66
+      },
+      {
+        "name": "Right coronary leaflet",
+        "type": "MESH",
+        "polygons": 376,
+        "vertices": 190
+      },
+      {
+        "name": "Anterior semilunar leaflet of pulmonary valve",
+        "type": "MESH",
+        "polygons": 1039,
+        "vertices": 523
+      },
+      {
+        "name": "Left semilunar leaflet of pulmonary valve",
+        "type": "MESH",
+        "polygons": 816,
+        "vertices": 410
+      },
+      {
+        "name": "Right semilunar leaflet of pulmonary valve",
+        "type": "MESH",
+        "polygons": 1121,
+        "vertices": 565
+      },
+      {
+        "name": "Pulmonary valve.j",
+        "type": "MESH",
+        "polygons": 0,
+        "vertices": 2
+      },
+      {
+        "name": "Inferior leaflet of right atrioventricular valve",
+        "type": "MESH",
+        "polygons": 4038,
+        "vertices": 2005
+      },
+      {
+        "name": "Septal leaflet of right atrioventricular valve",
+        "type": "MESH",
+        "polygons": 3706,
+        "vertices": 1839
+      },
+      {
+        "name": "Posterior leaflet of left atrioventricular valve",
+        "type": "MESH",
+        "polygons": 3132,
+        "vertices": 1544
+      },
+      {
+        "name": "Right atrioventricular valve.j",
+        "type": "MESH",
+        "polygons": 0,
+        "vertices": 2
+      },
+      {
+        "name": "Left atrioventricular valve.j",
+        "type": "MESH",
+        "polygons": 0,
+        "vertices": 2
+      }
+    ],
+    "papillary": [
+      {
+        "name": "Inferior papillary muscle of right ventricle",
+        "type": "MESH",
+        "polygons": 446,
+        "vertices": 225
+      },
+      {
+        "name": "Anterior papillary muscle of right ventricle",
+        "type": "MESH",
+        "polygons": 632,
+        "vertices": 318
+      },
+      {
+        "name": "Septal papillary muscle of right ventricle",
+        "type": "MESH",
+        "polygons": 346,
+        "vertices": 175
+      },
+      {
+        "name": "Inferior papillary muscle of left ventricle",
+        "type": "MESH",
+        "polygons": 638,
+        "vertices": 321
+      }
+    ],
+    "atrium": [
+      {
+        "name": "Right atrium",
+        "type": "MESH",
+        "polygons": 9298,
+        "vertices": 4756
+      },
+      {
+        "name": "Left atrium",
+        "type": "MESH",
+        "polygons": 2088,
+        "vertices": 1092
+      },
+      {
+        "name": "Interatrial septum.j",
+        "type": "MESH",
+        "polygons": 0,
+        "vertices": 2
+      }
+    ],
+    "ventricle": [
+      {
+        "name": "Inferior papillary muscle of right ventricle",
+        "type": "MESH",
+        "polygons": 446,
+        "vertices": 225
+      },
+      {
+        "name": "Anterior papillary muscle of right ventricle",
+        "type": "MESH",
+        "polygons": 632,
+        "vertices": 318
+      },
+      {
+        "name": "Septal papillary muscle of right ventricle",
+        "type": "MESH",
+        "polygons": 346,
+        "vertices": 175
+      },
+      {
+        "name": "Right ventricle",
+        "type": "MESH",
+        "polygons": 9152,
+        "vertices": 4726
+      },
+      {
+        "name": "Inferior papillary muscle of left ventricle",
+        "type": "MESH",
+        "polygons": 638,
+        "vertices": 321
+      },
+      {
+        "name": "Left ventricle",
+        "type": "MESH",
+        "polygons": 9122,
+        "vertices": 4718
+      },
+      {
+        "name": "Inferior leaflet of right atrioventricular valve",
+        "type": "MESH",
+        "polygons": 4038,
+        "vertices": 2005
+      },
+      {
+        "name": "Septal leaflet of right atrioventricular valve",
+        "type": "MESH",
+        "polygons": 3706,
+        "vertices": 1839
+      },
+      {
+        "name": "Posterior leaflet of left atrioventricular valve",
+        "type": "MESH",
+        "polygons": 3132,
+        "vertices": 1544
+      },
+      {
+        "name": "Right atrioventricular valve.j",
+        "type": "MESH",
+        "polygons": 0,
+        "vertices": 2
+      },
+      {
+        "name": "Left atrioventricular valve.j",
+        "type": "MESH",
+        "polygons": 0,
+        "vertices": 2
+      },
+      {
+        "name": "Anterior interventricular sulcus.j",
+        "type": "MESH",
+        "polygons": 0,
+        "vertices": 2
+      },
+      {
+        "name": "Inferior interventricular sulcus.j",
+        "type": "MESH",
+        "polygons": 0,
+        "vertices": 2
+      },
+      {
+        "name": "Septal branches of anterior interventricular artery",
+        "type": "MESH",
+        "polygons": 2832,
+        "vertices": 1488
+      },
+      {
+        "name": "Anterior interventricular artery",
+        "type": "MESH",
+        "polygons": 4722,
+        "vertices": 2433
+      },
+      {
+        "name": "Inferior vein of left ventricle (//Posterior '')",
+        "type": "MESH",
+        "polygons": 9092,
+        "vertices": 4642
+      },
+      {
+        "name": "Inferior vein of left ventricle",
+        "type": "MESH",
+        "polygons": 4840,
+        "vertices": 2468
+      }
+    ],
+    "coronary": [
+      {
+        "name": "Left coronary leaflet",
+        "type": "MESH",
+        "polygons": 374,
+        "vertices": 189
+      },
+      {
+        "name": "Non-coronary leaflet",
+        "type": "MESH",
+        "polygons": 128,
+        "vertices": 66
+      },
+      {
+        "name": "Right coronary leaflet",
+        "type": "MESH",
+        "polygons": 376,
+        "vertices": 190
+      },
+      {
+        "name": "Coronary sulcus.j",
+        "type": "MESH",
+        "polygons": 0,
+        "vertices": 2
+      },
+      {
+        "name": "Right inferolateral branch of right coronary artery",
+        "type": "MESH",
+        "polygons": 7556,
+        "vertices": 3874
+      },
+      {
+        "name": "Right coronary artery",
+        "type": "MESH",
+        "polygons": 11098,
+        "vertices": 5717
+      },
+      {
+        "name": "Left coronary artery",
+        "type": "MESH",
+        "polygons": 236,
+        "vertices": 130
+      },
+      {
+        "name": "Coronary sinus",
+        "type": "MESH",
+        "polygons": 590,
+        "vertices": 307
+      }
+    ]
+  }
+}
