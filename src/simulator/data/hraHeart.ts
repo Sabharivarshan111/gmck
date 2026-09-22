@@ -74,6 +74,36 @@ export const HRA_HEART_TARGETS: readonly HraHeartTarget[] = [
     shortLabel: 'Papillary',
     sourcePrefix: 'VH_M_papillary_muscle_of_heart_',
   },
+  {
+    id: 'hra_papillary_anterior',
+    label: 'Anterior papillary muscle · HRA',
+    shortLabel: 'Pap · Ant',
+    sourceNames: ['VH_M_papillary_muscle_of_heart_anterior'],
+  },
+  {
+    id: 'hra_papillary_anterolateral',
+    label: 'Anterolateral papillary muscle · HRA',
+    shortLabel: 'Pap · AL',
+    sourceNames: ['VH_M_papillary_muscle_of_heart_anterolateral'],
+  },
+  {
+    id: 'hra_papillary_medial',
+    label: 'Medial papillary muscle · HRA',
+    shortLabel: 'Pap · Med',
+    sourceNames: ['VH_M_papillary_muscle_of_heart_medial'],
+  },
+  {
+    id: 'hra_papillary_posterior',
+    label: 'Posterior papillary muscle · HRA',
+    shortLabel: 'Pap · Post',
+    sourceNames: ['VH_M_papillary_muscle_of_heart_posterior'],
+  },
+  {
+    id: 'hra_papillary_posteromedial',
+    label: 'Posteromedial papillary muscle · HRA',
+    shortLabel: 'Pap · PM',
+    sourceNames: ['VH_M_papillary_muscle_of_heart_posteromedial'],
+  },
 ] as const;
 
 const HRA_TARGET_BY_ID = new Map(HRA_HEART_TARGETS.map((target) => [target.id, target]));
