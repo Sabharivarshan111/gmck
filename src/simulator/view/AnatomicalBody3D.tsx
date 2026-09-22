@@ -16,6 +16,13 @@ import {
 } from '../data/atlasTypes';
 import { correctPartSystem, describeAtlasTarget, resolveAtlasElementIds } from '../data/atlasResolver';
 import { isPeripheralNerveTarget, meshMatchesPeripheralNerveTarget, normalisePeripheralNerveTarget, peripheralNerveKeyForMeshName, PERIPHERAL_NERVE_MODEL_URL } from '../data/peripheralNerves';
+import {
+  HRA_HEART_MODEL_URL,
+  HRA_HEART_REQUIRED_MESH_NAMES,
+  getHraHeartTarget,
+  hraHeartMeshMatchesTarget,
+  isHraHeartTarget,
+} from '../data/hraHeart';
 import { Scissors, Hand, Focus, Eye, Sparkles, Maximize2, Compass, AlertCircle, Info } from 'lucide-react';
 
 interface AnatomicalBody3DProps {
@@ -893,6 +900,7 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
   const hraHeartMaterialsRef = useRef<{
     context: THREE.MeshStandardMaterial;
     selected: THREE.MeshStandardMaterial;
+    overview: THREE.MeshStandardMaterial;
   } | null>(null);
 
   const lymphaticGroupRef = useRef<THREE.Group | null>(null);
@@ -1797,7 +1805,7 @@ varying float partSelected;
   // than a forced overlay on the BodyParts3D myocardium.
   useEffect(() => {
     const target = isolatedPartId || selectedOrganId;
-    const wantsHraHeart = target === 'hra_interventricular_septum';
+    const wantsHraHeart = isHraHeartTarget(target);
     if (
       !modelsReady ||
       !wantsHraHeart ||
@@ -1812,7 +1820,7 @@ varying float partSelected;
 
     const loader = new GLTFLoader();
     loader.load(
-      '/models/hra_heart_male_v1.3.glb',
+      HRA_HEART_MODEL_URL,
       (gltf) => {
         const scene = sceneRef.current;
         if (!scene) return;
@@ -1842,6 +1850,17 @@ varying float partSelected;
           opacity: 1.0,
           side: THREE.DoubleSide,
         });
+        const overviewMaterial = new THREE.MeshStandardMaterial({
+          color: 0xbe123c,
+          emissive: 0x4c0519,
+          emissiveIntensity: 0.16,
+          roughness: 0.36,
+          metalness: 0.0,
+          transparent: true,
+          opacity: 0.74,
+          depthWrite: true,
+          side: THREE.DoubleSide,
+        });
 
         const meshes: THREE.Mesh[] = [];
         group.traverse((child) => {
@@ -1862,15 +1881,20 @@ varying float partSelected;
           meshes.push(mesh);
         });
 
-        const hasSeptum = meshes.some((mesh) =>
-          mesh.name.toLowerCase().includes('interventricular_septum')
+        const meshNames = new Set(meshes.map((mesh) => mesh.name));
+        const missingRequired = HRA_HEART_REQUIRED_MESH_NAMES.filter(
+          (name) => !meshNames.has(name)
         );
-        if (!hasSeptum) {
+        if (missingRequired.length > 0) {
           contextMaterial.dispose();
           selectedMaterial.dispose();
+          overviewMaterial.dispose();
           setHraHeartFailed(true);
           hraHeartLoadStartedRef.current = false;
-          console.error('[AnatomicalBody3D] HRA heart GLB lost VH_M_interventricular_septum');
+          console.error(
+            '[AnatomicalBody3D] HRA heart GLB lost verified meshes:',
+            missingRequired
+          );
           return;
         }
 
@@ -1879,6 +1903,7 @@ varying float partSelected;
         hraHeartMaterialsRef.current = {
           context: contextMaterial,
           selected: selectedMaterial,
+          overview: overviewMaterial,
         };
         scene.add(group);
         setHraHeartReady(true);
@@ -1904,10 +1929,11 @@ varying float partSelected;
     // CRITICAL FIX: Only isolatedPartId triggers isolation geometry peeling!
     // selectedOrganId is for clinical inspection and selection highlight, without hiding the rest of the body!
     const targetKey = isolatedPartId || null;
-    const isHraInterventricularSeptumTarget = targetKey === 'hra_interventricular_septum';
+    const isHraHeartReferenceTarget = isHraHeartTarget(targetKey);
+    const hraHeartTarget = getHraHeartTarget(targetKey);
     const hraHeartBox = new THREE.Box3();
 
-    const isolatedTarget = isHraInterventricularSeptumTarget
+    const isolatedTarget = isHraHeartReferenceTarget
       ? null
       : targetKey
       ? describeAtlasTarget(targetKey, atlas)
@@ -1921,13 +1947,16 @@ varying float partSelected;
     // that SAME source heart provides translucent context.
     if (hraHeartGroupRef.current && hraHeartMaterialsRef.current) {
       hraHeartGroupRef.current.visible =
-        isHraInterventricularSeptumTarget && hraHeartReady;
+        isHraHeartReferenceTarget && hraHeartReady;
 
       if (hraHeartGroupRef.current.visible) {
         hraHeartMeshesRef.current.forEach((mesh) => {
-          const isSeptum = mesh.name.toLowerCase().includes('interventricular_septum');
+          const isOverview = hraHeartTarget?.id === 'hra_heart_overview';
+          const isSelected = hraHeartMeshMatchesTarget(mesh.name, targetKey);
           mesh.visible = true;
-          mesh.material = isSeptum
+          mesh.material = isOverview
+            ? hraHeartMaterialsRef.current!.overview
+            : isSelected
             ? hraHeartMaterialsRef.current!.selected
             : hraHeartMaterialsRef.current!.context;
         });
@@ -1963,8 +1992,8 @@ varying float partSelected;
     // BodyParts3D is not something the reader needs told. Everything else that
     // the atlas does not hold is.
     setAbsentNotice(
-      isHraInterventricularSeptumTarget && hraHeartFailed
-        ? 'The HRA internal-heart reference failed to load on this device. ORBIT has not substituted a different septal structure.'
+      isHraHeartReferenceTarget && hraHeartFailed
+        ? 'The HRA internal-heart reference failed to load on this device. ORBIT has not substituted a different cardiac structure.'
         : isPhrenicTarget
         ? 'SCHEMATIC COURSE: no vetted source atlas used by ORBIT contains a captured phrenic-nerve mesh. This bilateral course is derived from named Z-Anatomy landmarks (C4/scalenus anterior/subclavian vessels/pericardium/diaphragm) and is explicitly not specimen geometry.'
         : peripheralNervesFailed && isSupplementalNerveTarget
@@ -2023,7 +2052,7 @@ varying float partSelected;
     );
 
     const isCardiacTarget = !!targetKey && !isArteryTarget && (
-      isHraInterventricularSeptumTarget ||
+      isHraHeartReferenceTarget ||
       targetKey.toLowerCase().includes('heart') ||
       targetKey.toLowerCase().includes('cor humanum') ||
       targetKey.toLowerCase().includes('fj2428') ||
@@ -2192,7 +2221,7 @@ varying float partSelected;
       // CRITICAL FIX: Scalpel Dissection ALWAYS takes absolute top precedence!
       if (hiddenSet.has(p.id)) {
         visible = 0.0;
-      } else if (isHraInterventricularSeptumTarget) {
+      } else if (isHraHeartReferenceTarget) {
         // The HRA heart is a different reference body. Do not overlay it on
         // BodyParts3D and imply donor-level registration.
         visible = 0.0;
@@ -2264,7 +2293,7 @@ varying float partSelected;
         (isolatedElements && isolatedElements.size > 0) ||
         isAutonomicTarget ||
         useNerveContext ||
-        isHraInterventricularSeptumTarget;
+        isHraHeartReferenceTarget;
       const cardiacMat = materials.get('cardiac');
       if (cardiacMat) {
         cardiacMat.depthWrite = !isIsolationActive;
@@ -2277,7 +2306,7 @@ varying float partSelected;
 
     // Automatic Camera Framing onto Isolated Organ / Vessel / Nerve
     if (
-      isHraInterventricularSeptumTarget &&
+      isHraHeartReferenceTarget &&
       hraHeartReady &&
       !hraHeartBox.isEmpty() &&
       cameraRef.current &&
@@ -2608,7 +2637,7 @@ varying float partSelected;
         </div>
       </div>
 
-      {(isolatedPartId || selectedOrganId) === 'hra_interventricular_septum' && !hraHeartReady && !hraHeartFailed && (
+      {isHraHeartTarget(isolatedPartId || selectedOrganId) && !hraHeartReady && !hraHeartFailed && (
         <div className="absolute top-16 left-3 right-3 z-20 flex justify-center pointer-events-none">
           <div
             role="status"
