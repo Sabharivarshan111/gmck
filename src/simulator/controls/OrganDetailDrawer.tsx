@@ -95,7 +95,7 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
     }
     if (organKey.includes('brain') || organKey.includes('vagus')) onFocusCamera('head');
     else if (organKey.includes('heart') || organKey.includes('lung') || organKey.includes('artery') || organKey.includes('sinus') || organKey.includes('phrenic') || organKey.includes('pectoralis')) onFocusCamera('thorax');
-    else if (organKey.includes('liver') || organKey.includes('kidney') || organKey.includes('celiac') || organKey.includes('portal') || organKey.includes('stomach') || organKey.includes('spleen') || organKey.includes('pancreas')) onFocusCamera('abdomen');
+    else if (organKey.includes('liver') || organKey.includes('kidney') || organKey.includes('celiac') || organKey.includes('portal') || organKey.includes('stomach') || organKey.includes('spleen') || organKey.includes('pancreas') || organKey.includes('small_intestine') || organKey.includes('urinary_bladder') || organKey.includes('thymus')) onFocusCamera('abdomen');
     else onFocusCamera('anterior');
   };
 
