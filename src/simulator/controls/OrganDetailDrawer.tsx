@@ -163,6 +163,7 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
 
       {/* Drawer Container */}
       <aside
+        data-testid="organ-detail-drawer"
         className={`pointer-events-auto w-full md:w-[500px] lg:w-[560px] ${
           isMobileExpanded ? 'h-[92dvh]' : 'h-[52dvh]'
         } md:h-full mt-auto md:mt-0 ${
