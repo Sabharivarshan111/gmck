@@ -567,6 +567,7 @@ export const Ecg12LeadCanvas: React.FC<Ecg12LeadProps> = ({
       {/* Calibrated Pink 12-Lead Millimeter Grid Canvas */}
       <div className="order-1 md:order-2 w-full overflow-x-auto overscroll-x-contain rounded-xl border border-red-300/80 shadow-md bg-[#fff5f5]">
         <canvas
+          data-testid="ecg-12lead-canvas"
           ref={canvasRef}
           width={840}
           height={490}
