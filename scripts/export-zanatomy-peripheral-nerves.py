@@ -120,7 +120,9 @@ selected = [o for o in bpy.context.scene.objects if o.type == "MESH"]
 # Geometry budget: preserve fine nerves by simplifying only meshes large enough
 # to have redundant surface tessellation. The layer is lazy-loaded, but still
 # needs to stay comfortably below the main atlas payload on mobile.
-raw_tris = sum(len(o.data.polygons) for o in selected)
+for o in selected:
+    o.data.calc_loop_triangles()
+raw_tris = sum(len(o.data.loop_triangles) for o in selected)
 TARGET_TRIS = 190_000
 if raw_tris > TARGET_TRIS:
     global_ratio = max(0.12, min(1.0, TARGET_TRIS / raw_tris))
@@ -176,7 +178,9 @@ for key, pattern in TARGET_PATTERNS.items():
     rx = re.compile(pattern, re.I)
     targets[key] = [n for n in names if rx.search(n.replace("_", " "))]
 
-final_tris = sum(len(o.data.polygons) for o in selected)
+for o in selected:
+    o.data.calc_loop_triangles()
+final_tris = sum(len(o.data.loop_triangles) for o in selected)
 manifest = {
     "source": "https://github.com/LluisV/Z-Anatomy/blob/PC-Version/Resources/Models/FBX/NervousSystem100.fbx",
     "sourceLicense": "CC BY-SA 4.0 aggregate; cranial-nerve component credit documented separately",
