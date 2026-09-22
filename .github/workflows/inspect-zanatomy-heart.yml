@@ -1,0 +1,45 @@
+name: Inspect Z-Anatomy cardiovascular source
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/inspect-zanatomy-cardiovascular.py"
+      - ".github/workflows/inspect-zanatomy-heart.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  inspect-heart:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Blender
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends blender python3-numpy
+      - name: Download official Z-Anatomy cardiovascular source
+        run: |
+          set -euxo pipefail
+          curl -L --fail --retry 3             "https://raw.githubusercontent.com/LluisV/Z-Anatomy/PC-Version/Resources/Models/FBX/CardioVascular41.fbx"             -o /tmp/CardioVascular41.fbx
+          test "$(stat -c%s /tmp/CardioVascular41.fbx)" -gt 60000000
+      - name: Inventory source heart structures
+        run: |
+          rm -f docs/zanatomy-heart-inventory.json
+          blender -b             --python scripts/inspect-zanatomy-cardiovascular.py --             --src /tmp/CardioVascular41.fbx             --out docs/zanatomy-heart-inventory.json
+          test -s docs/zanatomy-heart-inventory.json
+      - name: Commit inventory
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/zanatomy-heart-inventory.json
+          if git diff --cached --quiet; then
+            echo "No inventory changes"
+          else
+            git commit -m "Inventory Z-Anatomy cardiovascular structures"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
