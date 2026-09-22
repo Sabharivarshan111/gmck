@@ -1,0 +1,73 @@
+name: Build Z-Anatomy reference supplements
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/export-zanatomy-reference.py"
+      - ".github/workflows/build-zanatomy-references.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Blender
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends blender python3-numpy
+      - name: Download official Z-Anatomy source FBXs
+        run: |
+          set -euxo pipefail
+          mkdir -p /tmp/zanatomy
+          base="https://raw.githubusercontent.com/LluisV/Z-Anatomy/PC-Version/Resources/Models/FBX"
+          for f in NervousSystem100.fbx VisceralSystem100.fbx MuscularSystem100.fbx Joints100.fbx; do
+            curl -L --fail --retry 3 "$base/$f" -o "/tmp/zanatomy/$f"
+            test -s "/tmp/zanatomy/$f"
+          done
+      - name: Export selective mobile references
+        run: |
+          set -euxo pipefail
+          mkdir -p public/models/zanatomy
+          export_one () {
+            src="$1"; mode="$2"; stem="$3"
+            rm -f "public/models/zanatomy/$stem.glb" "public/models/zanatomy/$stem.manifest.json"
+            blender -b --python scripts/export-zanatomy-reference.py --               --src "/tmp/zanatomy/$src"               --mode "$mode"               --out "public/models/zanatomy/$stem.glb"               --manifest "public/models/zanatomy/$stem.manifest.json"
+            test -s "public/models/zanatomy/$stem.glb"
+            test -s "public/models/zanatomy/$stem.manifest.json"
+          }
+          export_one NervousSystem100.fbx brain brain_reference
+          export_one VisceralSystem100.fbx stomach stomach_reference
+          export_one MuscularSystem100.fbx pectoralis_major pectoralis_major_reference
+          export_one MuscularSystem100.fbx deltoid deltoid_reference
+          export_one Joints100.fbx joints major_joints_reference
+      - name: Verify exported references
+        run: |
+          node <<'NODE'
+          const fs=require('fs');
+          const dir='public/models/zanatomy';
+          for(const stem of ['brain_reference','stomach_reference','pectoralis_major_reference','deltoid_reference','major_joints_reference']){
+            const m=JSON.parse(fs.readFileSync(`${dir}/${stem}.manifest.json`,'utf8'));
+            if(!m.objectCount || !m.exportedTriangles) throw new Error(stem+' empty manifest');
+            const bytes=fs.statSync(`${dir}/${stem}.glb`).size;
+            if(bytes>14*1024*1024) throw new Error(stem+' over mobile budget');
+            console.log(stem,m.objectCount,m.exportedTriangles,bytes);
+          }
+          NODE
+      - name: Commit generated references
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/models/zanatomy
+          if git diff --cached --quiet; then
+            echo "Z-Anatomy reference assets already current"
+          else
+            git commit -m "Add selective Z-Anatomy organ references"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
