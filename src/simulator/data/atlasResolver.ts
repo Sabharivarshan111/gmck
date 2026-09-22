@@ -459,7 +459,11 @@ const RULES: readonly AtlasRule[] = [
       // return as separate nodes. A shared "pulmonary" substring rule used to
       // return the same 13 meshes for both, mixing veins into the pulmonary
       // trunk view and arteries into the pulmonary-vein view.
-      if (hasTerm(request, 'vein')) {
+      // `request` is our normalized internal dossier key, so a stem check is
+      // appropriate here: it intentionally treats "pulmonary vein" and
+      // "pulmonary veins" as the same venous request. Keep whole-word matching
+      // for anatomy mesh names below.
+      if (request.includes('vein')) {
         return p.system === 'venous' && hasTerm(p.name, 'pulmonary vein');
       }
 
