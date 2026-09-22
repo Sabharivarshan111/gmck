@@ -832,6 +832,172 @@ export function createLungParenchymaSystem(modelOverride?: string): {
   };
 }
 
+function createHraConductionOverlay(meshes: THREE.Mesh[]): {
+  group: THREE.Group;
+  bounds: THREE.Box3;
+} | null {
+  const byName = new Map(meshes.map((mesh) => [mesh.name, mesh]));
+  const ra = byName.get('VH_M_right_cardiac_atrium');
+  const la = byName.get('VH_M_left_cardiac_atrium');
+  const rv = byName.get('VH_M_heart_right_ventricle');
+  const lv = byName.get('VH_M_heart_left_ventricle');
+  const septum = byName.get('VH_M_interventricular_septum');
+
+  if (!ra || !la || !rv || !lv || !septum) return null;
+
+  const boxOf = (mesh: THREE.Mesh) => new THREE.Box3().setFromObject(mesh);
+  const centerOf = (box: THREE.Box3) => box.getCenter(new THREE.Vector3());
+  const sizeOf = (box: THREE.Box3) => box.getSize(new THREE.Vector3());
+
+  const raBox = boxOf(ra);
+  const laBox = boxOf(la);
+  const rvBox = boxOf(rv);
+  const lvBox = boxOf(lv);
+  const septumBox = boxOf(septum);
+
+  const heartBox = new THREE.Box3()
+    .copy(raBox)
+    .union(laBox)
+    .union(rvBox)
+    .union(lvBox)
+    .union(septumBox);
+  const heartSize = heartBox.getSize(new THREE.Vector3());
+  const maxDim = Math.max(heartSize.x, heartSize.y, heartSize.z, 0.001);
+
+  const raCenter = centerOf(raBox);
+  const laCenter = centerOf(laBox);
+  const rvCenter = centerOf(rvBox);
+  const lvCenter = centerOf(lvBox);
+  const septumCenter = centerOf(septumBox);
+
+  const raSize = sizeOf(raBox);
+  const laSize = sizeOf(laBox);
+  const rvSize = sizeOf(rvBox);
+  const lvSize = sizeOf(lvBox);
+  const septumSize = sizeOf(septumBox);
+
+  // Lateral directions are inferred from the actual HRA chamber placement,
+  // which keeps the schematic robust if the source model is re-oriented.
+  const towardRight = raCenter.clone().sub(laCenter);
+  towardRight.y = 0;
+  if (towardRight.lengthSq() < 1e-10) towardRight.set(1, 0, 0);
+  towardRight.normalize();
+
+  const towardLeft = towardRight.clone().multiplyScalar(-1);
+
+  const san = raCenter
+    .clone()
+    .addScaledVector(towardRight, maxDim * 0.045);
+  san.y = THREE.MathUtils.lerp(raBox.min.y, raBox.max.y, 0.84);
+
+  const avNode = raCenter.clone().lerp(laCenter, 0.46);
+  avNode.y = THREE.MathUtils.lerp(
+    Math.min(raBox.min.y, laBox.min.y),
+    Math.max(raBox.max.y, laBox.max.y),
+    0.28
+  );
+
+  const hisTop = septumCenter.clone();
+  hisTop.y = THREE.MathUtils.lerp(septumBox.min.y, septumBox.max.y, 0.86);
+
+  const septumMid = septumCenter.clone();
+  septumMid.y = THREE.MathUtils.lerp(septumBox.min.y, septumBox.max.y, 0.56);
+
+  const septumLow = septumCenter.clone();
+  septumLow.y = THREE.MathUtils.lerp(septumBox.min.y, septumBox.max.y, 0.18);
+
+  const lvApex = lvCenter.clone();
+  lvApex.y = THREE.MathUtils.lerp(lvBox.min.y, lvBox.max.y, 0.12);
+
+  const rvApex = rvCenter.clone();
+  rvApex.y = THREE.MathUtils.lerp(rvBox.min.y, rvBox.max.y, 0.14);
+
+  const group = new THREE.Group();
+  group.name = 'hra_cardiac_conduction_schematic';
+  group.visible = false;
+  group.renderOrder = 40;
+  group.userData.isSchematic = true;
+  group.userData.sourceFrame = 'HRA male heart v1.3 chamber/septum bounds';
+
+  const tractMaterial = new THREE.MeshStandardMaterial({
+    color: 0xfacc15,
+    emissive: 0x854d0e,
+    emissiveIntensity: 0.95,
+    roughness: 0.26,
+    metalness: 0.0,
+    depthTest: true,
+  });
+  const nodeMaterial = new THREE.MeshStandardMaterial({
+    color: 0xfef08a,
+    emissive: 0xca8a04,
+    emissiveIntensity: 1.2,
+    roughness: 0.2,
+    metalness: 0.0,
+  });
+
+  const tubeRadius = maxDim * 0.006;
+  const nodeRadius = maxDim * 0.018;
+
+  const addTube = (name: string, points: THREE.Vector3[], radius = tubeRadius) => {
+    const curve = new THREE.CatmullRomCurve3(points, false, 'centripetal', 0.5);
+    const geometry = new THREE.TubeGeometry(curve, 32, radius, 7, false);
+    const mesh = new THREE.Mesh(geometry, tractMaterial);
+    mesh.name = name;
+    mesh.userData.isSchematic = true;
+    mesh.userData.conductionStructure = name;
+    group.add(mesh);
+  };
+
+  const addNode = (name: string, point: THREE.Vector3) => {
+    const mesh = new THREE.Mesh(
+      new THREE.SphereGeometry(nodeRadius, 14, 10),
+      nodeMaterial
+    );
+    mesh.name = name;
+    mesh.position.copy(point);
+    mesh.userData.isSchematic = true;
+    mesh.userData.conductionStructure = name;
+    group.add(mesh);
+  };
+
+  addNode('Sinoatrial node — schematic', san);
+  addNode('Atrioventricular node — schematic', avNode);
+  addTube('Atrial conduction pathway — schematic', [san, raCenter.clone().lerp(avNode, 0.35), avNode]);
+  addTube('Bundle of His — schematic', [avNode, hisTop, septumMid], tubeRadius * 1.05);
+
+  const leftBranchMid = septumMid.clone().addScaledVector(towardLeft, maxDim * 0.025);
+  const rightBranchMid = septumMid.clone().addScaledVector(towardRight, maxDim * 0.025);
+  addTube('Left bundle branch — schematic', [hisTop, leftBranchMid, lvApex]);
+  addTube('Right bundle branch — schematic', [hisTop, rightBranchMid, rvApex]);
+
+  const lvWallUpper = lvCenter.clone().addScaledVector(towardLeft, maxDim * 0.075);
+  lvWallUpper.y = THREE.MathUtils.lerp(lvBox.min.y, lvBox.max.y, 0.58);
+  const lvWallLower = lvCenter.clone().addScaledVector(towardLeft, maxDim * 0.085);
+  lvWallLower.y = THREE.MathUtils.lerp(lvBox.min.y, lvBox.max.y, 0.28);
+
+  const rvWallUpper = rvCenter.clone().addScaledVector(towardRight, maxDim * 0.075);
+  rvWallUpper.y = THREE.MathUtils.lerp(rvBox.min.y, rvBox.max.y, 0.58);
+  const rvWallLower = rvCenter.clone().addScaledVector(towardRight, maxDim * 0.085);
+  rvWallLower.y = THREE.MathUtils.lerp(rvBox.min.y, rvBox.max.y, 0.30);
+
+  addTube('Left Purkinje network — schematic', [septumLow, lvApex, lvWallLower, lvWallUpper], tubeRadius * 0.68);
+  addTube('Right Purkinje network — schematic', [septumLow, rvApex, rvWallLower, rvWallUpper], tubeRadius * 0.68);
+
+  // A few short endocardial fans make the terminal arborisation readable
+  // without pretending to reproduce microscopic Purkinje anatomy.
+  [
+    [lvApex, lvWallLower],
+    [lvApex, lvCenter.clone().addScaledVector(towardLeft, maxDim * 0.055)],
+    [rvApex, rvWallLower],
+    [rvApex, rvCenter.clone().addScaledVector(towardRight, maxDim * 0.055)],
+  ].forEach((pair, index) =>
+    addTube(`Purkinje terminal fan ${index + 1} — schematic`, pair, tubeRadius * 0.48)
+  );
+
+  const bounds = new THREE.Box3().setFromObject(group);
+  return { group, bounds };
+}
+
 export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
   vitals,
   pathology,
@@ -897,6 +1063,7 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
   const hraHeartGroupRef = useRef<THREE.Group | null>(null);
   const hraHeartMeshesRef = useRef<THREE.Mesh[]>([]);
   const hraHeartLoadStartedRef = useRef(false);
+  const hraConductionGroupRef = useRef<THREE.Group | null>(null);
   const hraHeartMaterialsRef = useRef<{
     context: THREE.MeshStandardMaterial;
     selected: THREE.MeshStandardMaterial;
@@ -1906,6 +2073,14 @@ varying float partSelected;
           overview: overviewMaterial,
         };
         scene.add(group);
+        group.updateMatrixWorld(true);
+
+        const conduction = createHraConductionOverlay(meshes);
+        if (conduction) {
+          hraConductionGroupRef.current = conduction.group;
+          scene.add(conduction.group);
+        }
+
         setHraHeartReady(true);
         console.log(`[AnatomicalBody3D] Loaded HRA heart reference: ${meshes.length} meshes`);
       },
@@ -1952,16 +2127,28 @@ varying float partSelected;
       if (hraHeartGroupRef.current.visible) {
         hraHeartMeshesRef.current.forEach((mesh) => {
           const isOverview = hraHeartTarget?.id === 'hra_heart_overview';
+          const isSchematic = hraHeartTarget?.kind === 'schematic';
           const isSelected = hraHeartMeshMatchesTarget(mesh.name, targetKey);
           mesh.visible = true;
           mesh.material = isOverview
             ? hraHeartMaterialsRef.current!.overview
+            : isSchematic
+            ? hraHeartMaterialsRef.current!.context
             : isSelected
             ? hraHeartMaterialsRef.current!.selected
             : hraHeartMaterialsRef.current!.context;
         });
         hraHeartBox.setFromObject(hraHeartGroupRef.current);
       }
+    }
+
+    if (hraConductionGroupRef.current) {
+      const showConduction =
+        isHraHeartReferenceTarget &&
+        hraHeartTarget?.id === 'hra_conduction_schematic' &&
+        hraHeartReady;
+      hraConductionGroupRef.current.visible = showConduction;
+      if (showConduction) hraHeartBox.expandByObject(hraConductionGroupRef.current);
     }
 
     // Entity category checks
@@ -1994,6 +2181,8 @@ varying float partSelected;
     setAbsentNotice(
       isHraHeartReferenceTarget && hraHeartFailed
         ? 'The HRA internal-heart reference failed to load on this device. ORBIT has not substituted a different cardiac structure.'
+        : hraHeartTarget?.id === 'hra_conduction_schematic'
+        ? 'SCHEMATIC CONDUCTION: the HRA heart contains no captured SA node, AV node, His bundle, bundle-branch or Purkinje meshes. ORBIT draws this teaching overlay from the verified HRA chamber and interventricular-septum bounds; it is not specimen/source conduction anatomy.'
         : isPhrenicTarget
         ? 'SCHEMATIC COURSE: no vetted source atlas used by ORBIT contains a captured phrenic-nerve mesh. This bilateral course is derived from named Z-Anatomy landmarks (C4/scalenus anterior/subclavian vessels/pericardium/diaphragm) and is explicitly not specimen geometry.'
         : peripheralNervesFailed && isSupplementalNerveTarget
