@@ -160,3 +160,39 @@ Reference frame / landmarks:
 
 The conduction course follows standard gross teaching relationships only; it
 must not be interpreted as a microscopic conduction-system reconstruction.
+
+
+## HRA-anchored schematic chordae tendineae
+
+ORBIT includes an explicitly **schematic** chordae-tendineae teaching overlay
+inside the HRA internal-heart reference mode.
+
+The HRA male heart v1.3 provides the mitral and tricuspid valve meshes and five
+papillary-muscle meshes but does not provide captured chordae tendineae. ORBIT
+therefore does not present the generated cords as HRA source anatomy.
+
+Runtime method:
+- use the HRA mitral/tricuspid valve meshes and the five verified HRA
+  papillary-muscle meshes;
+- infer each papillary tip as the papillary-surface point closest to its AV
+  valve;
+- sample ventricular-facing valve surface points;
+- generate a short primary trunk and small fan of terminal branches from each
+  papillary tip toward those valve-surface points;
+- generate chordae only for the atrioventricular valves. No chordae are drawn
+  for the aortic or pulmonary semilunar valves.
+
+The branching concept is inspired by SlicerHeart's open Valve FEM Export
+workflow, which generates chordae from papillary-muscle tips to leaflet
+surfaces with fan/radial branching.
+
+Credits:
+- HuBMAP Human Reference Atlas male heart v1.3 — CC BY 4.0, used for the
+  source chamber/valve/papillary geometry and spatial landmarks.
+- SlicerHeart contributors — BSD 3-Clause software; algorithmic inspiration
+  from the Valve FEM Export chord-generation workflow.
+  Repository: https://github.com/SlicerHeart/SlicerHeart
+
+This ORBIT overlay is always labelled **SCHEMATIC CHORDAE**. It is not
+specimen-derived, patient-specific, or a replacement for real chordal
+segmentation.
