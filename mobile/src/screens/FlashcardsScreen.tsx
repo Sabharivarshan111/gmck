@@ -481,7 +481,7 @@ function YearsView({
       */}
       <Touchable
         onPress={onImport}
-        label="Import your Anki cards from an apkg file"
+        label="Import your Anki cards from a package or text export"
         scaleTo={0.97}
         style={[styles.row, { backgroundColor: colors.card, borderColor: colors.border }]}>
         <View style={[styles.rowIcon, { backgroundColor: withAlpha(colors.fuchsia, 0.15) }]}>
@@ -490,7 +490,7 @@ function YearsView({
         <View style={styles.flex}>
           <Text style={[styles.rowTitle, { color: colors.text }]}>Import your Anki cards</Text>
           <Text style={[styles.rowSub, { color: colors.textMuted }]}>
-            Open an .apkg deck from Anki or AnkiWeb — it stays on this phone
+            Open .apkg/.colpkg or Anki .txt/.csv/.tsv exports — they stay on this phone
           </Text>
         </View>
         <ChevronRight size={20} color={colors.textMuted} />
