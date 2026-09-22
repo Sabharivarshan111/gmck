@@ -176,6 +176,7 @@ export const WardExamModal: React.FC<WardExamModalProps> = ({
             ].map((tab) => (
               <button
                 key={tab.id}
+                data-testid={`ward-tab-${tab.id}`}
                 onClick={() => setActiveExamTab(tab.id as any)}
                 className={`min-h-[44px] shrink-0 sm:shrink py-2 px-3 rounded-xl text-[11px] sm:text-xs font-bold transition-all flex items-center justify-between gap-1 cursor-pointer ${
                   activeExamTab === tab.id
