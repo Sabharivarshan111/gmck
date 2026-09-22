@@ -7,6 +7,7 @@ const publicDir = path.join(root, 'public');
 const atlasPath = path.join(publicDir, 'models', 'atlas.json');
 const hraHeartSourcePath = path.join(root, 'src', 'simulator', 'data', 'hraHeart.ts');
 const hraOrgansSourcePath = path.join(root, 'src', 'simulator', 'data', 'hraOrgans.ts');
+const zReferencesSourcePath = path.join(root, 'src', 'simulator', 'data', 'zanatomyReferences.ts');
 const {
   HRA_HEART_REQUIRED_MESH_NAMES,
   HRA_HEART_TARGETS,
@@ -17,6 +18,11 @@ const {
   HRA_ORGAN_TARGETS,
   hraOrganMeshMatchesTarget,
 } = await import(hraOrgansSourcePath);
+const {
+  ZANATOMY_REFERENCE_MODELS,
+  ZANATOMY_REFERENCE_TARGETS,
+  zAnatomyMeshMatchesTarget,
+} = await import(zReferencesSourcePath);
 const failures = [];
 const fail = (m) => failures.push(m);
 
@@ -177,6 +183,71 @@ if (!existsSync(hraInventoryPath)) {
   }
 }
 
+const zNamesByModel = new Map();
+for (const model of ZANATOMY_REFERENCE_MODELS) {
+  const rel = model.url.replace(/^\//, '');
+  const manifestRel = model.manifestUrl.replace(/^\//, '');
+  const file = path.join(publicDir, rel);
+  const manifestFile = path.join(publicDir, manifestRel);
+
+  if (!existsSync(file)) {
+    fail(`Z-Anatomy reference missing: ${rel}`);
+    continue;
+  }
+  if (!existsSync(manifestFile)) {
+    fail(`Z-Anatomy manifest missing: ${manifestRel}`);
+    continue;
+  }
+
+  try {
+    const manifest = JSON.parse(readFileSync(manifestFile, 'utf8'));
+    if (!manifest.objectCount || !Array.isArray(manifest.objects) || !manifest.objects.length) {
+      fail(`${manifestRel} has no exported objects`);
+      continue;
+    }
+
+    const bytes = statSync(file).size;
+    if (bytes > 14 * 1024 * 1024) {
+      fail(`${rel} exceeds the 14 MiB on-demand mobile budget: ${bytes}`);
+    }
+
+    const { json } = parseGlb(file);
+    const names = (json.meshes || []).map((m) => String(m.name || '')).filter(Boolean);
+    zNamesByModel.set(model.key, names);
+
+    const manifestNames = manifest.objects.map((o) => String(o.name || '')).filter(Boolean);
+    const missingNames = manifestNames.filter((name) => !names.includes(name));
+    if (missingNames.length) {
+      fail(`${rel} lost manifest meshes: ${missingNames.join(', ')}`);
+    }
+
+    const markerOnly = manifest.objects.filter(
+      (o) => Number(o.triangles || 0) <= 20 || Number(o.vertices || 0) <= 20
+    );
+    if (markerOnly.length) {
+      fail(`${manifestRel} contains marker-like geometry: ${markerOnly.map((o) => o.name).join(', ')}`);
+    }
+  } catch (e) {
+    fail(`cannot verify ${rel}: ${e instanceof Error ? e.message : String(e)}`);
+  }
+}
+
+for (const target of ZANATOMY_REFERENCE_TARGETS) {
+  const model = ZANATOMY_REFERENCE_MODELS.find((m) => m.key === target.modelKey);
+  if (!model) {
+    fail(`Z-Anatomy UI target "${target.id}" references unknown model "${target.modelKey}"`);
+    continue;
+  }
+  const names = zNamesByModel.get(target.modelKey) || [];
+  const matches = names.filter((name) => zAnatomyMeshMatchesTarget(name, target.id));
+  if (!matches.length) {
+    fail(`Z-Anatomy UI target "${target.id}" matches no verified source mesh`);
+  }
+}
+console.log(
+  `Selective Z-Anatomy references OK: ${ZANATOMY_REFERENCE_MODELS.length} files, ${ZANATOMY_REFERENCE_TARGETS.length} verified targets.`
+);
+
 const attributionPath = path.join(publicDir, 'models', 'ATTRIBUTION_BODYPARTS3D.md');
 if (!existsSync(attributionPath)) {
   fail('anatomy attribution file is missing');
@@ -193,6 +264,9 @@ if (!existsSync(attributionPath)) {
   }
   if (!/HRA multi-organ reference set/i.test(attribution)) {
     fail('HRA multi-organ reference provenance is missing');
+  }
+  if (!/Selective Z-Anatomy organ references/i.test(attribution)) {
+    fail('Selective Z-Anatomy reference provenance is missing');
   }
 }
 
