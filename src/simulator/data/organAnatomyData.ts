@@ -1480,7 +1480,7 @@ export const ORGAN_ANATOMY_DATABASE: Record<string, DetailedOrganAnatomy> = {
       'Distributed neural network rather than a single organ. The mobile 3D supplement preserves named nerve meshes and is loaded only when a peripheral nerve is requested.',
     arterialSupply: [
       'Peripheral nerves receive segmental vasa nervorum from nearby regional arteries; there is no single arterial trunk supplying the peripheral nervous system.',
-      'Long nerves depend on longitudinal anastomoses between vasa nervorum, making them vulnerable to ischemia in vasculitis, diabetes and severe compression.',
+      'Longitudinal vasa nervorum arise from recurrent branches of neighboring regional arteries and anastomose along the nerve, making long nerves vulnerable to ischemia in vasculitis, diabetes and severe compression.',
     ],
     venousDrainage: [
       'Small venules accompanying the vasa nervorum drain into adjacent regional veins.',
