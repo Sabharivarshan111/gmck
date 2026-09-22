@@ -1805,3 +1805,158 @@ When Sabari asks for screenshots, **show the actual images inline inside the cha
 Sabari supplied the Play Console Advertising ID screen. ORBIT already declares `com.google.android.gms.permission.AD_ID` directly in `mobile/android/app/src/main/AndroidManifest.xml`. Version 23 targets Android 36, and the release build serves live AdMob ads. All release, internal and debug workflows run `check:version`, which fails if the permission is absent or explicitly removed. Release `release-280` built successfully from commit `403675e` after that gate passed.
 
 Play Console action: keep “Does your app use advertising ID?” set to **Yes**. Leave the “I understand the ramifications … turn off release errors” checkbox **unchecked**; that checkbox is a waiver for apps that intentionally omit the permission. Save the declaration and send the pending change for review through Publishing overview. No app-code correction or new binary is required for this screen.
+
+
+---
+
+## 2026-09-22 — ChatGPT continuation: fail-closed organ verification, nerve rebuild, and vessel-purity pass
+
+Verified runtime head before this handoff: **7d49d795e66b96b5d29acc01462b4160fa475e8c**.
+
+### Current anatomy coverage truth
+
+The simulator anatomy audit is now fail-closed. A structure that is merely absent
+from BodyParts3D does **not** count as acceptable coverage. Every isolation target
+must be one of:
+
+- verified source-backed geometry;
+- an explicitly labelled teaching schematic; or
+- an intentional non-structural clinical overlay.
+
+Latest verified audit summary:
+
+- **53 source-backed targets**
+- **2 schematic-only targets:** `phrenic_nerve`, `splanchnic_nerves`
+- **2 clinical overlays:** `ascites`, `snakebite`
+- **0 unclassified source gaps**
+
+Primary/source inventory currently checked in CI:
+
+- BodyParts3D: **2,234 atlas parts**, 15 chunks.
+- HRA multi-organ references: **26 source files**, **111 verified UI targets**.
+- Selective Z-Anatomy organ references: 5 GLBs, 26 verified targets.
+- Z-Anatomy peripheral nerve layer:
+  - **272 source-named objects**
+  - **1,192,806** true source loop-triangles before mobile decimation
+  - **193,875** true triangles in the shipped mobile GLB
+  - roughly **4.46 MiB**
+  - 15 required source-backed nerve groups verified
+  - phrenic/splanchnic target arrays intentionally empty because that source
+    does not contain genuine named meshes for them.
+
+### Peripheral nerves
+
+The old queue note that said the Z-Anatomy import was blocked was stale and has
+been replaced. The current runtime supplement source is the official
+Z-Anatomy `NervousSystem100.fbx`, with CC BY-SA 4.0 aggregate attribution
+preserved.
+
+Source-backed groups currently verified in the shipped GLB include vagus,
+brachial plexus, pectoral, musculocutaneous, axillary, median, ulnar, radial,
+intercostal, sympathetic chain, femoral, obturator, sciatic, tibial, and common
+fibular nerves.
+
+Important display rule:
+
+- the generic **Peripheral Nerves** overview is source-pure;
+- the derived phrenic course appears only when `phrenic_nerve` itself is
+  selected and the UI labels it **SCHEMATIC COURSE**;
+- the procedural autonomic generator is hidden in ordinary body/abdomen/heart/
+  vascular views and is retained only for the explicitly labelled
+  `splanchnic_nerves` schematic;
+- the old hand-positioned procedural lymphatic spheres/tubes are disabled
+  rather than shown as if they were atlas anatomy.
+
+There is a real Z-Anatomy lymphoid inventory in
+`docs/zanatomy/lymphoid.json` with named lymph-node meshes (tracheobronchial,
+paratracheal, coeliac, mesenteric, lumbar, inguinal, etc.). It has **not** yet
+been turned into a runtime supplement. No genuine thoracic-duct/cisterna-chyli
+mesh was verified in that inventory, so do not restore the old synthetic
+lymphatic geometry as a substitute.
+
+### Nerve asset pipeline fixes
+
+The exporter used to label Blender polygon counts as “triangles”. It now calls
+`calc_loop_triangles()` and records true triangulated geometry.
+
+The canonical rebuild produced the current **193,875-triangle / 272-object**
+mobile layer. Asset integrity independently checks:
+
+- source + CC BY-SA attribution metadata;
+- object-count and manifest-name consistency;
+- actual indexed triangle count vs manifest;
+- all 15 required real nerve groups;
+- mobile asset budget;
+- transformed full-body bounds against the BodyParts3D envelope;
+- continued absence of phrenic/splanchnic source meshes.
+
+The GitHub Actions nerve-build workflow is also race-safe now: Blender output is
+preserved, replayed onto the newest `main`, and retried instead of rebasing a
+binary GLB/JSON commit and producing conflicts when main advances during export.
+
+Canonical generated asset commit:
+`e1407c11429aa6e18dc2d27148a0c2261090d036`.
+
+### Vessel-isolation bugs found and fixed
+
+Several target nodes looked plausible but were not system-pure. These are now
+fixed at the resolver and protected by CI:
+
+- `pulmonary_trunk` and `pulmonary_veins` used to return the same broad
+  “pulmonary” set. They are now split:
+  - pulmonary trunk/outflow: arterial only, currently 3 BodyParts3D meshes;
+  - pulmonary veins: venous only, currently 7 meshes.
+- `superior_mesenteric_artery` used to admit the SMV because the broad name
+  check occurred before the vein exclusion. It is now arterial-only.
+- `celiac_trunk` is arterial-only; autonomic/ganglion structures cannot enter
+  the arterial target.
+- `post_circumflex_humeral` is arterial-only and cannot include its companion
+  vein.
+- `thoracoacromial` is arterial-only.
+- `axillary artery` and `axillary vein` are now key-aware and resolve only
+  to their own vascular system; the generic `axillary vessels` query may
+  intentionally contain both.
+- the heart LCx audit regex no longer treats left circumflex scapular vessels as
+  evidence of coronary LCx coverage. The runtime LCx rule already excluded
+  scapular/femoral/humeral/iliac circumflex vessels.
+
+CI now explicitly asserts arterial/venous system purity for the coronary,
+pulmonary, celiac, SMA, thoracoacromial, posterior circumflex humeral, portal,
+and axillary targets.
+
+### Procedural anatomy policy
+
+Do not let procedurally generated geometry silently appear in source-anatomy
+views. A teaching overlay is allowed only when it is explicitly marked and
+labelled as schematic. CI contains leakage guards for the autonomic and
+lymphatic procedural groups.
+
+The historical heart/vessel detachment rule remains in force: do not scale or
+pulse only the merged cardiac myocardium independently of its registered
+coronary/aortic vessel geometry.
+
+### Verification state
+
+For runtime commit `7d49d795e66b96b5d29acc01462b4160fa475e8c`:
+
+- **ORBIT Simulator Integrity:** success
+- **Web build:** success
+- canonical 193,875-triangle Z-Anatomy nerve asset verified by CI
+- all-organ coverage summary remains 53 source-backed / 2 schematic / 2
+  clinical-overlay.
+
+Android jobs may be superseded/cancelled when newer main commits arrive; those
+cancellations are not anatomy-test failures. Use the ORBIT Simulator Integrity
+workflow plus web/native build status for the relevant exact commit when
+assessing a future change.
+
+### Remaining honest gaps / next anatomy work
+
+1. Find a genuinely reusable 3D source for the **phrenic nerve** and
+   **splanchnic nerves** before replacing their labelled schematics.
+2. Consider exporting the already inventoried real Z-Anatomy lymph nodes as a
+   lazy-loaded source supplement. Do not claim a thoracic duct/cisterna chyli
+   unless a real source mesh is verified.
+3. Continue visual/runtime checks after any new atlas import; source coverage
+   alone does not prove registration. Keep the transformed-bounds guard and
+   source-purity checks intact.
