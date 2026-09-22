@@ -353,7 +353,7 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
                         audioEngineRef.current?.setStethoscopeMode('bell');
                       }}
                       onTouchStart={ensureAudioUnlocked}
-                      className={`px-2.5 py-1 rounded-lg text-xs font-bold border transition-all cursor-pointer ${
+                      className={`min-h-[44px] shrink-0 px-2.5 rounded-xl text-[11px] sm:text-xs font-bold border transition-all cursor-pointer ${
                         stethMode === 'bell'
                           ? 'bg-amber-400 text-slate-950 border-amber-300 font-black'
                           : 'bg-slate-800 text-slate-400 border-slate-700'
@@ -368,7 +368,7 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
                         audioEngineRef.current?.setStethoscopeMode('diaphragm');
                       }}
                       onTouchStart={ensureAudioUnlocked}
-                      className={`px-2.5 py-1 rounded-lg text-xs font-bold border transition-all cursor-pointer ${
+                      className={`min-h-[44px] shrink-0 px-2.5 rounded-xl text-[11px] sm:text-xs font-bold border transition-all cursor-pointer ${
                         stethMode === 'diaphragm'
                           ? 'bg-cyan-500 text-slate-950 border-cyan-400 font-black'
                           : 'bg-slate-800 text-slate-400 border-slate-700'
@@ -395,7 +395,7 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
                         setStethSite(site.id as AuscultationSite);
                       }}
                       onTouchStart={ensureAudioUnlocked}
-                      className={`p-2.5 rounded-xl border text-left flex flex-col justify-between transition-all cursor-pointer ${
+                      className={`min-h-[52px] p-2.5 rounded-xl border text-left flex flex-col justify-between transition-all cursor-pointer ${
                         stethSite === site.id
                           ? 'bg-cyan-500/20 border-cyan-500 text-cyan-300 shadow-md'
                           : 'bg-slate-950/80 hover:bg-slate-800/80 border-slate-800 text-slate-300'
@@ -447,7 +447,7 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
                           audioEngineRef.current?.setHeartPreset(m.id as HeartSoundPreset);
                         }}
                         onTouchStart={ensureAudioUnlocked}
-                        className={`p-2 rounded-xl border text-left flex flex-col justify-between transition-all cursor-pointer ${
+                        className={`min-h-[52px] p-2 rounded-xl border text-left flex flex-col justify-between transition-all cursor-pointer ${
                           customHeartOverride === m.id
                             ? 'bg-rose-500/20 border-rose-500 text-rose-300 shadow-sm'
                             : 'bg-slate-950/80 hover:bg-slate-800/80 border-slate-800 text-slate-400'
@@ -480,7 +480,7 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
                       setIsListening(!isListening);
                     }}
                     onTouchStart={ensureAudioUnlocked}
-                    className={`px-6 py-2.5 rounded-xl font-bold text-sm border shadow-lg transition-all cursor-pointer ${
+                    className={`min-h-[48px] px-5 sm:px-6 rounded-xl font-bold text-sm border shadow-lg transition-all cursor-pointer ${
                       isListening
                         ? 'bg-red-500 hover:bg-red-600 text-white border-red-400 shadow-red-500/30'
                         : 'bg-emerald-500 hover:bg-emerald-600 text-slate-950 border-emerald-400 shadow-emerald-500/30'
