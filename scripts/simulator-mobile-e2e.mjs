@@ -520,6 +520,7 @@ await feature('organ-drawer-and-anatomy-dossier', async () => {
   ];
   for (const name of tabs) {
     const tab = drawer.getByRole('button', { name });
+    await tab.scrollIntoViewIfNeeded();
     await touchSafe(tab, 'Organ drawer tab ' + name);
     await tab.click();
   }
