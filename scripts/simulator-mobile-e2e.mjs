@@ -180,7 +180,7 @@ await feature('stomach-uses-verified-z-anatomy', async () => {
   await stomach.click();
 
   const stomachStage = page.getByTestId('mobile-anatomy-stage');
-  const stomachIsolationStatus = stomachStage.getByText('Isolated: ZA STOMACH OVERVIEW', { exact: true });
+  const stomachIsolationStatus = stomachStage.getByText('Isolated: ZA STOMACH', { exact: true });
   await visible(stomachIsolationStatus, 'preferred stomach isolation status');
 
   // Deep Inspector also opens the clinical dossier. Close only the dossier so
@@ -209,7 +209,7 @@ await feature('stomach-uses-verified-z-anatomy', async () => {
   await shot('01b-stomach-zanatomy');
 
   // The same inspector button must restore the full body even though the
-  // active isolation id is the source-specific za_stomach_overview target.
+  // active isolation id is the source-specific za_stomach target.
   await stomach.click();
   assert(
     !(await stomachIsolationStatus.isVisible()),
