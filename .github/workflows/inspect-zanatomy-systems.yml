@@ -1,0 +1,64 @@
+name: Inspect Z-Anatomy systems
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/inspect-zanatomy-system.py"
+      - ".github/workflows/inspect-zanatomy-systems.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  inventory:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Blender
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends blender python3-numpy
+      - name: Download official Z-Anatomy system FBXs
+        run: |
+          set -euxo pipefail
+          mkdir -p /tmp/zanatomy
+          base="https://raw.githubusercontent.com/LluisV/Z-Anatomy/PC-Version/Resources/Models/FBX"
+          declare -A files=(
+            [visceral]="VisceralSystem100.fbx"
+            [skeletal]="SkeletalSystem100.fbx"
+            [muscular]="MuscularSystem100.fbx"
+            [nervous]="NervousSystem100.fbx"
+            [lymphoid]="LymphoidOrgans100.fbx"
+            [joints]="Joints100.fbx"
+          )
+          for key in "${!files[@]}"; do
+            f="${files[$key]}"
+            curl -L --fail --retry 3 "$base/$f" -o "/tmp/zanatomy/$f"
+            test -s "/tmp/zanatomy/$f"
+          done
+      - name: Inventory actual source objects
+        run: |
+          set -euxo pipefail
+          mkdir -p docs/zanatomy
+          blender -b --python scripts/inspect-zanatomy-system.py -- --src /tmp/zanatomy/VisceralSystem100.fbx --label visceral --out docs/zanatomy/visceral.json
+          blender -b --python scripts/inspect-zanatomy-system.py -- --src /tmp/zanatomy/SkeletalSystem100.fbx --label skeletal --out docs/zanatomy/skeletal.json
+          blender -b --python scripts/inspect-zanatomy-system.py -- --src /tmp/zanatomy/MuscularSystem100.fbx --label muscular --out docs/zanatomy/muscular.json
+          blender -b --python scripts/inspect-zanatomy-system.py -- --src /tmp/zanatomy/NervousSystem100.fbx --label nervous --out docs/zanatomy/nervous.json
+          blender -b --python scripts/inspect-zanatomy-system.py -- --src /tmp/zanatomy/LymphoidOrgans100.fbx --label lymphoid --out docs/zanatomy/lymphoid.json
+          blender -b --python scripts/inspect-zanatomy-system.py -- --src /tmp/zanatomy/Joints100.fbx --label joints --out docs/zanatomy/joints.json
+          for f in docs/zanatomy/*.json; do test -s "$f"; done
+      - name: Commit inventories
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/zanatomy
+          if git diff --cached --quiet; then
+            echo "No Z-Anatomy inventory changes"
+          else
+            git commit -m "Inventory Z-Anatomy organ systems"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
