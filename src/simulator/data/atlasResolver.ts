@@ -490,7 +490,19 @@ const RULES: readonly AtlasRule[] = [
   {
     id: 'axillary-vessels',
     when: ['axillary artery', 'axillary vein', 'axillary vessels'],
-    select: (p) => hasTerm(p.name, 'axillary'),
+    select: (p, _atlas, key) => {
+      const request = key.toLowerCase();
+      if (request.includes('artery')) {
+        return p.system === 'arterial' && hasTerm(p.name, 'axillary');
+      }
+      if (request.includes('vein')) {
+        return p.system === 'venous' && hasTerm(p.name, 'axillary');
+      }
+      return (
+        (p.system === 'arterial' || p.system === 'venous') &&
+        hasTerm(p.name, 'axillary')
+      );
+    },
   },
 
   // -- Organs ---------------------------------------------------------------
