@@ -39,6 +39,11 @@ import {
   getZAnatomyTargetsForOrgan,
   isZAnatomyReferenceTarget,
 } from '../simulator/data/zanatomyReferences';
+import {
+  getPreferredAnatomyIsolationTarget,
+  getVerifiedReferenceOrganKey,
+  isolationTargetBelongsToOrgan,
+} from '../simulator/data/preferredAnatomyReferences';
 
 export const Simulator: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -81,14 +86,17 @@ export const Simulator: React.FC = () => {
   // Only one of the two layouts may hold a 3D view; see use-desktop-layout.ts.
   const isDesktopLayout = useIsDesktopLayout();
   const [dissectedParts, setDissectedParts] = useState<Part[]>([]);
-  const [isolatedPartId, setIsolatedPartId] = useState<string | null>(searchParams.get('isolate') || null);
+  const [isolatedPartId, setIsolatedPartId] = useState<string | null>(
+    getPreferredAnatomyIsolationTarget(searchParams.get('isolate'))
+  );
   const [contextOrganId, setContextOrganId] = useState<string | null>(null);
 
   // Dissection Handlers
   const handleDissectPart = (part: Part) => {
     if (toolMode === 'isolate') {
       const organKey = resolvePartToOrganKey(part);
-      const target = organKey || part.id;
+      const target =
+        getPreferredAnatomyIsolationTarget(organKey || part.id) || part.id;
       setIsolatedPartId((prev) => (prev === target ? null : target));
       setLogs((prev) => [
         ...prev,
@@ -112,7 +120,7 @@ export const Simulator: React.FC = () => {
       // Clear 3D isolation lock so full body is inspected in context
       setIsolatedPartId(null);
     } else if (mode === 'isolate' && selectedOrganId) {
-      setIsolatedPartId(selectedOrganId);
+      setIsolatedPartId(getPreferredAnatomyIsolationTarget(selectedOrganId));
       setLogs((prev) => [
         ...prev,
         `🔍 Isolated ${selectedOrganId.toUpperCase()} — Surrounding structures dimmed.`,
@@ -143,8 +151,13 @@ export const Simulator: React.FC = () => {
 
   const handleSelect3DOrgan = useCallback((organId: string) => {
     if (toolMode === 'isolate') {
-      // In Isolate mode: Toggle isolation of clicked structure in 3D
-      setIsolatedPartId((prev) => (prev === organId ? null : organId));
+      // In Isolate mode, whole-organ requests prefer a verified dedicated
+      // source model (HRA/Z-Anatomy) over the lower-detail whole-body mesh.
+      const preferredTarget =
+        getPreferredAnatomyIsolationTarget(organId) || organId;
+      setIsolatedPartId((prev) =>
+        prev === preferredTarget || prev === organId ? null : preferredTarget
+      );
       setContextOrganId(null);
     } else {
       // In Inspect mode: Highlight structure in 3D & open clinical dossier without hiding the body!
@@ -199,7 +212,7 @@ export const Simulator: React.FC = () => {
     const organ = searchParams.get('organ');
     if (organ) setSelectedOrganId(organ);
     const isolate = searchParams.get('isolate');
-    if (isolate) setIsolatedPartId(isolate);
+    if (isolate) setIsolatedPartId(getPreferredAnatomyIsolationTarget(isolate));
   }, [searchParams]);
 
   // Simulation Clock Tick Loop (60 Hz UI sync)
@@ -565,10 +578,12 @@ export const Simulator: React.FC = () => {
             const isActive =
               item.id === 'full'
                 ? !isolatedPartId && !selectedOrganId
-                : isolatedPartId === item.id || selectedOrganId === item.id;
+                : isolationTargetBelongsToOrgan(isolatedPartId, item.id) ||
+                  selectedOrganId === item.id;
             return (
               <button
                 key={item.id}
+                data-testid={`deep-inspector-${item.id}`}
                 onClick={() => {
                   if (item.id === 'full') {
                     setIsolatedPartId(null);
@@ -577,34 +592,16 @@ export const Simulator: React.FC = () => {
                     setCameraPreset('anterior');
                     return;
                   }
-                  if (isolatedPartId === item.id) {
-                    // Toggle off back to full body
+                  if (isolationTargetBelongsToOrgan(isolatedPartId, item.id)) {
+                    // Toggle off back to full body even when the active isolate
+                    // is a source-specific target such as za_stomach_overview.
                     setIsolatedPartId(null);
                     setSelectedOrganId(null);
                     setContextOrganId(null);
                     setCameraPreset('anterior');
                     return;
                   }
-                  // Source-backed organs with dedicated HRA models open directly
-                  // in their verified HRA overview instead of relying on a broad
-                  // BodyParts3D abdomen bucket.
-                  const directHraOverview: Record<string, string> = {
-                    small_intestine: 'hra_small_intestine_overview',
-                    urinary_bladder: 'hra_bladder_overview',
-                    thymus: 'hra_thymus_overview',
-                    eye: 'hra_eye_overview',
-                    ureter: 'hra_ureter_overview',
-                    spinal_cord: 'hra_spinal_cord_overview',
-                    pelvis: 'hra_pelvis_overview',
-                    prostate: 'hra_prostate_overview',
-                    skin: 'hra_skin_overview',
-                    knee: 'hra_knee_overview',
-                    uterus: 'hra_uterus_overview',
-                    ovary: 'hra_ovary_overview',
-                    fallopian_tube: 'hra_fallopian_overview',
-                    placenta: 'hra_placenta_overview',
-                  };
-                  setIsolatedPartId(directHraOverview[item.id] || item.id);
+                  setIsolatedPartId(getPreferredAnatomyIsolationTarget(item.id));
                   setSelectedOrganId(item.id);
                   setContextOrganId(null);
 
@@ -970,7 +967,11 @@ export const Simulator: React.FC = () => {
                     Isolated: {isolatedPartId.replace(/_/g, ' ').toUpperCase()}
                   </span>
                   <button
-                    onClick={() => setSelectedOrganId(isolatedPartId)}
+                    onClick={() =>
+                      setSelectedOrganId(
+                        getVerifiedReferenceOrganKey(isolatedPartId) || isolatedPartId
+                      )
+                    }
                     className="ml-1 text-[10px] font-bold px-2 py-0.5 rounded-md bg-sky-100 text-sky-900 dark:bg-sky-950 dark:text-sky-200 cursor-pointer"
                     title="Open clinical anatomy dossier"
                   >
@@ -1056,7 +1057,7 @@ export const Simulator: React.FC = () => {
         onFocusCamera={(preset) => setCameraPreset(preset)}
         onSelectOrgan={(newOrganId) => setSelectedOrganId(newOrganId)}
         onIsolateStructure={(structureId, parentOrganId) => {
-          setIsolatedPartId(structureId);
+          setIsolatedPartId(getPreferredAnatomyIsolationTarget(structureId));
           setContextOrganId(parentOrganId || null);
         }}
         onDissectOrgan={(organKey) => {
