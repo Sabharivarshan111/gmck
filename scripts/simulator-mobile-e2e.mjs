@@ -512,16 +512,16 @@ await feature('organ-drawer-and-anatomy-dossier', async () => {
   assert(expandedBox && expandedBox.height >= 700, 'Expanded organ drawer is too short on a 844px viewport');
 
   const tabs = [
-    /Overview & Graph/,
-    /Vessels & Nerves/,
-    /6-Vector Relations/,
-    /Bedside & NMC Viva/,
-    /Lymph & Surgery/,
+    ['overview', 'Overview & Graph'],
+    ['vascular', 'Vessels & Nerves'],
+    ['relations', '6-Vector Relations'],
+    ['clinical', 'Bedside & NMC Viva'],
+    ['lymphatics', 'Lymph & Surgery'],
   ];
-  for (const name of tabs) {
-    const tab = drawer.getByRole('button', { name });
+  for (const [id, label] of tabs) {
+    const tab = drawer.getByTestId('organ-drawer-tab-' + id);
     await tab.scrollIntoViewIfNeeded();
-    await touchSafe(tab, 'Organ drawer tab ' + name);
+    await touchSafe(tab, 'Organ drawer tab ' + label);
     await tab.click();
   }
 
