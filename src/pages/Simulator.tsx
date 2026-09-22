@@ -933,6 +933,7 @@ export const Simulator: React.FC = () => {
         {/* MOBILE VIEW: Tab-driven clean single stage (Kept permanently mounted to prevent WebGL context destruction) */}
         <div className="lg:hidden flex flex-col space-y-3">
           <div
+            data-testid="mobile-anatomy-stage"
             className="flex flex-col space-y-2 w-full"
             style={{ display: mobileTab === '3d' ? 'flex' : 'none' }}
           >
