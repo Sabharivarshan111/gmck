@@ -1,0 +1,7 @@
+#separator:Tab
+#html:true
+#deck:Orbit HTML Import Test
+#tags:medicine html-import
+#columns:Front	Back
+<b>Most common cause</b> of myocardial infarction?	<div>Atherosclerotic plaque<br>rupture &amp; thrombosis</div>
+Which chamber pumps blood into the pulmonary artery?	<strong>Right ventricle</strong>
