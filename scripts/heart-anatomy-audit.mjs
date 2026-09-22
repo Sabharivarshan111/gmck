@@ -56,7 +56,10 @@ const checks = [
   ['Pulmonary veins', /pulmonary vein/i],
   ['Left coronary artery / LMCA', /left coronary artery|left main coronary/i],
   ['LAD', /anterior interventricular.*arter|left anterior descending|\bLAD\b/i],
-  ['LCx', /circumflex.*coronary|left circumflex|\bLCx\b/i],
+  // Keep this coronary-specific. "Left circumflex" by itself also matches
+  // the left circumflex scapular vessels and previously made this audit print
+  // non-cardiac anatomy as evidence for LCx coverage.
+  ['LCx', /circumflex branch of left coronary|left circumflex coronary|\bLCx\b/i],
   ['RCA', /right coronary artery|\bRCA\b/i],
   ['PDA', /posterior interventricular.*arter|posterior descending.*arter/i],
   ['Coronary sinus', /coronary sinus/i],
