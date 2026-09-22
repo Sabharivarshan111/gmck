@@ -100,3 +100,25 @@ presented as specimen-derived or patient-specific anatomy.
 Credits:
 - Clinical Neuroanatomy Atlas, Batuhan Ayci — Apache-2.0 code / CC BY-SA 4.0 generated data.
 - Z-Anatomy — CC BY-SA 4.0 aggregate anatomy source used for the referenced landmarks.
+
+
+## HRA internal-heart reference
+
+ORBIT uses the HuBMAP / Human Reference Atlas male heart reference only as an
+**on-demand internal-heart supplement** for structures that are not separately
+represented by the BodyParts3D heart. It is not merged into the normal startup
+atlas and is not presented as the same donor/reference body.
+
+- Runtime file: `public/models/hra_heart_male_v1.3.glb`
+- Source: HuBMAP / Human Reference Atlas `VH_M_Heart.glb`, HRA release v1.3
+- Source repository: `hubmapconsortium/ccf-releases`
+- License: Creative Commons Attribution 4.0 International (CC BY 4.0)
+- Visible Human male reference organ; the current ORBIT use is specifically
+  for the source-derived `VH_M_interventricular_septum` and its same-source
+  heart context.
+- Mobile behavior: the ~4 MB GLB is lazy-loaded only when the learner opens an
+  HRA internal-heart target. Ordinary simulator startup is unchanged.
+
+Because HRA and BodyParts3D are different reference bodies, ORBIT does not
+force HRA internal meshes to overlay the BodyParts3D myocardium. HRA structures
+are shown in their own internally consistent reference view.
