@@ -1,0 +1,79 @@
+name: ORBIT Simulator Mobile Browser E2E
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/pages/Simulator.tsx"
+      - "src/simulator/**"
+      - "scripts/simulator-mobile-e2e.mjs"
+      - ".github/workflows/simulator-mobile-e2e.yml"
+      - "package.json"
+      - "package-lock.json"
+  pull_request:
+    paths:
+      - "src/pages/Simulator.tsx"
+      - "src/simulator/**"
+      - "scripts/simulator-mobile-e2e.mjs"
+      - ".github/workflows/simulator-mobile-e2e.yml"
+      - "package.json"
+      - "package-lock.json"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  mobile-browser-e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install app dependencies
+        run: npm ci --legacy-peer-deps --ignore-scripts
+
+      - name: Install Playwright browser runner
+        run: |
+          npm install --no-save --package-lock=false playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Build production app
+        run: npm run build
+
+      - name: Start local production preview
+        run: |
+          npm run preview -- --host 127.0.0.1 > /tmp/orbit-vite-preview.log 2>&1 &
+          echo $! > /tmp/orbit-vite-preview.pid
+          for i in $(seq 1 60); do
+            if curl -fsS http://127.0.0.1:4173/simulator >/dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/orbit-vite-preview.log
+          exit 1
+
+      - name: Exercise every patient simulator feature on a phone viewport
+        env:
+          SIMULATOR_E2E_BASE_URL: http://127.0.0.1:4173
+        run: node scripts/simulator-mobile-e2e.mjs
+
+      - name: Print preview log on failure
+        if: failure()
+        run: cat /tmp/orbit-vite-preview.log || true
+
+      - name: Upload mobile verification screenshots and report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: simulator-mobile-e2e-${{ github.sha }}
+          path: artifacts/simulator-mobile-e2e/
+          if-no-files-found: warn
+          retention-days: 14
