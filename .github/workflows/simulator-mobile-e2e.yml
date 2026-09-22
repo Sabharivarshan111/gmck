@@ -48,6 +48,12 @@ jobs:
           npm install --no-save --package-lock=false --legacy-peer-deps playwright@1.55.0
           npx playwright install --with-deps chromium
 
+      - name: Verify simulator anatomy sources and organ routing
+        run: npm run check:simulator-assets
+
+      - name: Verify simulator resolver and completeness
+        run: npm run check:simulator
+
       - name: Build production app
         run: npm run build
 
