@@ -57,6 +57,7 @@ on:
       - main
       - claude/android-react-native-app-o54cjj
       - claude/native-app-sync
+      - 'chatgpt/**'
     # Only when something that reaches the APK changes.
     #
     # This used to fire on every push. Three Android builds ran per push, per
@@ -147,6 +148,7 @@ jobs:
           npm run check:native-sound
           npm run check:subject-cards
           npm run check:anki
+          npm run check:anki-text
           npm run check:textbooks
           npm run check:one-app
           npm run check:flashcard-size
