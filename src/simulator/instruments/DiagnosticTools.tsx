@@ -197,7 +197,7 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
                 <div className="-mx-1 px-1 flex items-center gap-1.5 overflow-x-auto no-scrollbar">
                   <button
                     onClick={() => setFlashlightOn(flashlightOn === 'left' ? 'none' : 'left')}
-                    className={`min-h-[44px] shrink-0 px-3 py-1.5 rounded-xl text-[11px] sm:text-xs font-bold border transition-all cursor-pointer ${
+                    className={`min-h-[44px] shrink-0 whitespace-nowrap px-3 py-1.5 rounded-xl text-[11px] sm:text-xs font-bold border transition-all cursor-pointer ${
                       flashlightOn === 'left'
                         ? 'bg-amber-400 text-slate-950 border-amber-300 shadow-md font-black'
                         : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700'
@@ -207,7 +207,7 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
                   </button>
                   <button
                     onClick={() => setFlashlightOn(flashlightOn === 'right' ? 'none' : 'right')}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
+                    className={`min-h-[44px] shrink-0 whitespace-nowrap px-3 py-1.5 rounded-xl text-[11px] sm:text-xs font-bold border transition-all cursor-pointer ${
                       flashlightOn === 'right'
                         ? 'bg-amber-400 text-slate-950 border-amber-300 shadow-md font-black'
                         : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700'
@@ -217,7 +217,7 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
                   </button>
                   <button
                     onClick={() => setFlashlightOn(flashlightOn === 'both' ? 'none' : 'both')}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
+                    className={`min-h-[44px] shrink-0 whitespace-nowrap px-3 py-1.5 rounded-xl text-[11px] sm:text-xs font-bold border transition-all cursor-pointer ${
                       flashlightOn === 'both'
                         ? 'bg-amber-400 text-slate-950 border-amber-300 shadow-md font-black'
                         : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700'
@@ -227,7 +227,7 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
                   </button>
                   <button
                     onClick={() => setFlashlightOn('none')}
-                    className="min-h-[44px] min-w-[44px] shrink-0 px-2.5 py-1.5 rounded-xl text-[11px] sm:text-xs font-semibold bg-slate-800/80 hover:bg-slate-700 text-slate-400 border border-slate-700 cursor-pointer"
+                    className="min-h-[44px] min-w-[44px] shrink-0 whitespace-nowrap px-2.5 py-1.5 rounded-xl text-[11px] sm:text-xs font-semibold bg-slate-800/80 hover:bg-slate-700 text-slate-400 border border-slate-700 cursor-pointer"
                   >
                     Off
                   </button>
