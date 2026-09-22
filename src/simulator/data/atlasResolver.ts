@@ -247,7 +247,13 @@ const RULES: readonly AtlasRule[] = [
     id: 'absent-organ',
     when: ['thyroid gland', 'uterus', 'ovary', 'ovaries', 'parathyroid'],
     absent:
-      'This organ is not one of the 2,234 meshes in the BodyParts3D male reference body, so there is nothing to isolate.',
+      'This organ is not one of the 2,234 meshes in the BodyParts3D male reference body, so the primary atlas does not substitute another structure.',
+  },
+  {
+    id: 'hra-reference-organ',
+    when: ['eye', 'knee', 'fallopian tube', 'fallopian_tube', 'uterine tube', 'placenta'],
+    absent:
+      'This Deep Inspector target is supplied by ORBIT’s verified HuBMAP Human Reference Atlas reference model rather than by the BodyParts3D primary body. No unrelated BodyParts3D structure is substituted.',
   },
   {
     id: 'absent-not-a-structure',
