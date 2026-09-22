@@ -17,6 +17,12 @@ import {
 import { correctPartSystem, describeAtlasTarget, resolveAtlasElementIds } from '../data/atlasResolver';
 import { isPeripheralNerveTarget, meshMatchesPeripheralNerveTarget, normalisePeripheralNerveTarget, peripheralNerveKeyForMeshName, PERIPHERAL_NERVE_MODEL_URL } from '../data/peripheralNerves';
 import {
+  getHraOrganModel,
+  getHraOrganTarget,
+  hraOrganMeshMatchesTarget,
+  isHraOrganTarget,
+} from '../data/hraOrgans';
+import {
   HRA_HEART_MODEL_URL,
   HRA_HEART_REQUIRED_MESH_NAMES,
   getHraHeartTarget,
@@ -1206,6 +1212,7 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
   const [peripheralNervesFailed, setPeripheralNervesFailed] = useState(false);
   const [hraHeartReady, setHraHeartReady] = useState(false);
   const [hraHeartFailed, setHraHeartFailed] = useState(false);
+  const [hraOrganRevision, setHraOrganRevision] = useState(0);
   // Set when the structure being isolated is genuinely not one of the atlas's
   // 2,234 meshes. Saying so is the point: the model not moving, with no
   // explanation, reads as the app being broken.
@@ -1244,6 +1251,18 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
   const hraConductionGroupRef = useRef<THREE.Group | null>(null);
   const hraChordaeGroupRef = useRef<THREE.Group | null>(null);
   const hraHeartMaterialsRef = useRef<{
+    context: THREE.MeshStandardMaterial;
+    selected: THREE.MeshStandardMaterial;
+    overview: THREE.MeshStandardMaterial;
+  } | null>(null);
+
+  // Generic HRA organ reference layer. Each model is fetched only after the
+  // learner opens an HRA target for that organ.
+  const hraOrganGroupsRef = useRef<Map<string, THREE.Group>>(new Map());
+  const hraOrganMeshesRef = useRef<Map<string, THREE.Mesh[]>>(new Map());
+  const hraOrganLoadStartedRef = useRef<Set<string>>(new Set());
+  const hraOrganFailedRef = useRef<Set<string>>(new Set());
+  const hraOrganMaterialsRef = useRef<{
     context: THREE.MeshStandardMaterial;
     selected: THREE.MeshStandardMaterial;
     overview: THREE.MeshStandardMaterial;
@@ -2278,6 +2297,130 @@ varying float partSelected;
     );
   }, [modelsReady, isolatedPartId, selectedOrganId]);
 
+  // Lazy-load generic HRA organ references. The files are independent HRA
+  // reference organs in a shared source frame and are never forced onto the
+  // BodyParts3D donor/reference body.
+  useEffect(() => {
+    const targetId = isolatedPartId || selectedOrganId;
+    const target = getHraOrganTarget(targetId);
+    if (!modelsReady || !target || !sceneRef.current) return;
+
+    if (!hraOrganMaterialsRef.current) {
+      hraOrganMaterialsRef.current = {
+        context: new THREE.MeshStandardMaterial({
+          color: 0x7c3aed,
+          emissive: 0x2e1065,
+          emissiveIntensity: 0.06,
+          roughness: 0.48,
+          metalness: 0,
+          transparent: true,
+          opacity: 0.16,
+          depthWrite: false,
+          side: THREE.DoubleSide,
+        }),
+        selected: new THREE.MeshStandardMaterial({
+          color: 0xc084fc,
+          emissive: 0x6b21a8,
+          emissiveIntensity: 0.56,
+          roughness: 0.28,
+          metalness: 0,
+          transparent: false,
+          opacity: 1,
+          side: THREE.DoubleSide,
+        }),
+        overview: new THREE.MeshStandardMaterial({
+          color: 0xa855f7,
+          emissive: 0x3b0764,
+          emissiveIntensity: 0.16,
+          roughness: 0.36,
+          metalness: 0,
+          transparent: true,
+          opacity: 0.76,
+          depthWrite: true,
+          side: THREE.DoubleSide,
+        }),
+      };
+    }
+
+    const loader = new GLTFLoader();
+    for (const modelKey of target.modelKeys) {
+      if (
+        hraOrganGroupsRef.current.has(modelKey) ||
+        hraOrganLoadStartedRef.current.has(modelKey) ||
+        hraOrganFailedRef.current.has(modelKey)
+      ) {
+        continue;
+      }
+
+      const model = getHraOrganModel(modelKey);
+      if (!model) {
+        hraOrganFailedRef.current.add(modelKey);
+        setHraOrganRevision((v) => v + 1);
+        continue;
+      }
+
+      hraOrganLoadStartedRef.current.add(modelKey);
+      loader.load(
+        model.url,
+        (gltf) => {
+          const scene = sceneRef.current;
+          const materials = hraOrganMaterialsRef.current;
+          if (!scene || !materials) return;
+
+          const group = gltf.scene;
+          group.name = `hra_reference_${modelKey}`;
+          group.visible = false;
+
+          const meshes: THREE.Mesh[] = [];
+          group.traverse((child) => {
+            const mesh = child as THREE.Mesh;
+            if (!mesh.isMesh) return;
+
+            if (Array.isArray(mesh.material)) {
+              mesh.material.forEach((m) => m.dispose());
+            } else if (mesh.material) {
+              mesh.material.dispose();
+            }
+
+            mesh.material = materials.context;
+            mesh.visible = true;
+            mesh.frustumCulled = true;
+            mesh.renderOrder = 15;
+            mesh.userData.isHraOrganReference = true;
+            mesh.userData.hraModelKey = modelKey;
+            meshes.push(mesh);
+          });
+
+          if (meshes.length === 0) {
+            hraOrganFailedRef.current.add(modelKey);
+            hraOrganLoadStartedRef.current.delete(modelKey);
+            setHraOrganRevision((v) => v + 1);
+            return;
+          }
+
+          hraOrganGroupsRef.current.set(modelKey, group);
+          hraOrganMeshesRef.current.set(modelKey, meshes);
+          hraOrganLoadStartedRef.current.delete(modelKey);
+          scene.add(group);
+          setHraOrganRevision((v) => v + 1);
+          console.log(
+            `[AnatomicalBody3D] Loaded HRA organ reference ${modelKey}: ${meshes.length} meshes`
+          );
+        },
+        undefined,
+        (err) => {
+          hraOrganLoadStartedRef.current.delete(modelKey);
+          hraOrganFailedRef.current.add(modelKey);
+          setHraOrganRevision((v) => v + 1);
+          console.error(
+            `[AnatomicalBody3D] Failed to load HRA organ reference ${modelKey}:`,
+            err
+          );
+        }
+      );
+    }
+  }, [modelsReady, isolatedPartId, selectedOrganId]);
+
   // Update GPU DataTexture when hiddenPartIds, isolatedPartId, contextOrganId, or layerPeel changes
   useEffect(() => {
     const atlas = atlasRef.current;
@@ -2292,6 +2435,9 @@ varying float partSelected;
     const isHraHeartReferenceTarget = isHraHeartTarget(targetKey);
     const hraHeartTarget = getHraHeartTarget(targetKey);
     const hraHeartBox = new THREE.Box3();
+    const isHraGenericOrganTarget = isHraOrganTarget(targetKey);
+    const hraGenericTarget = getHraOrganTarget(targetKey);
+    const hraGenericBox = new THREE.Box3();
 
     const isolatedTarget = isHraHeartReferenceTarget
       ? null
@@ -2345,6 +2491,29 @@ varying float partSelected;
       if (showChordae) hraHeartBox.expandByObject(hraChordaeGroupRef.current);
     }
 
+    // Generic HRA reference-organ visibility. Only the requested source files
+    // are shown; all previously loaded HRA organs are hidden.
+    if (hraOrganMaterialsRef.current) {
+      for (const [modelKey, group] of hraOrganGroupsRef.current.entries()) {
+        const isRequested =
+          !!hraGenericTarget && hraGenericTarget.modelKeys.includes(modelKey);
+        group.visible = isHraGenericOrganTarget && isRequested;
+
+        if (!group.visible) continue;
+        const meshes = hraOrganMeshesRef.current.get(modelKey) ?? [];
+        for (const mesh of meshes) {
+          const selected = hraOrganMeshMatchesTarget(mesh.name, targetKey);
+          mesh.visible = true;
+          mesh.material = hraGenericTarget?.matchAll
+            ? hraOrganMaterialsRef.current.overview
+            : selected
+            ? hraOrganMaterialsRef.current.selected
+            : hraOrganMaterialsRef.current.context;
+        }
+        hraGenericBox.expandByObject(group);
+      }
+    }
+
     // Entity category checks
     const isSympatheticTarget = !!targetKey && (targetKey.toLowerCase().includes('sympath') || targetKey.toLowerCase().includes('cardiac plexus'));
     const isVagusTarget = !!targetKey && (targetKey.toLowerCase().includes('vagus') || targetKey.toLowerCase().includes('parasympath'));
@@ -2372,8 +2541,17 @@ varying float partSelected;
     // autonomic overlay rather than taken from the atlas, so their absence from
     // BodyParts3D is not something the reader needs told. Everything else that
     // the atlas does not hold is.
+    const genericHraFailed =
+      !!hraGenericTarget &&
+      hraGenericTarget.modelKeys.every((key) => hraOrganFailedRef.current.has(key));
+    const genericHraLoaded =
+      !!hraGenericTarget &&
+      hraGenericTarget.modelKeys.every((key) => hraOrganGroupsRef.current.has(key));
+
     setAbsentNotice(
-      isHraHeartReferenceTarget && hraHeartFailed
+      isHraGenericOrganTarget && genericHraFailed
+        ? 'The HRA reference organ failed to load on this device. ORBIT has not substituted unrelated anatomy.'
+        : isHraHeartReferenceTarget && hraHeartFailed
         ? 'The HRA internal-heart reference failed to load on this device. ORBIT has not substituted a different cardiac structure.'
         : hraHeartTarget?.id === 'hra_conduction_schematic'
         ? 'SCHEMATIC CONDUCTION: the HRA heart contains no captured SA node, AV node, His bundle, bundle-branch or Purkinje meshes. ORBIT draws this teaching overlay from the verified HRA chamber and interventricular-septum bounds; it is not specimen/source conduction anatomy.'
@@ -2606,9 +2784,9 @@ varying float partSelected;
       // CRITICAL FIX: Scalpel Dissection ALWAYS takes absolute top precedence!
       if (hiddenSet.has(p.id)) {
         visible = 0.0;
-      } else if (isHraHeartReferenceTarget) {
-        // The HRA heart is a different reference body. Do not overlay it on
-        // BodyParts3D and imply donor-level registration.
+      } else if (isHraGenericOrganTarget || isHraHeartReferenceTarget) {
+        // HRA references are different reference bodies. Do not overlay them
+        // on BodyParts3D and imply donor-level registration.
         visible = 0.0;
       } else if (useNerveContext) {
         // Nerves are easiest to understand against a faint bony scaffold.
@@ -2678,7 +2856,8 @@ varying float partSelected;
         (isolatedElements && isolatedElements.size > 0) ||
         isAutonomicTarget ||
         useNerveContext ||
-        isHraHeartReferenceTarget;
+        isHraHeartReferenceTarget ||
+        isHraGenericOrganTarget;
       const cardiacMat = materials.get('cardiac');
       if (cardiacMat) {
         cardiacMat.depthWrite = !isIsolationActive;
@@ -2691,6 +2870,29 @@ varying float partSelected;
 
     // Automatic Camera Framing onto Isolated Organ / Vessel / Nerve
     if (
+      isHraGenericOrganTarget &&
+      genericHraLoaded &&
+      !hraGenericBox.isEmpty() &&
+      cameraRef.current &&
+      controlsRef.current
+    ) {
+      const center = new THREE.Vector3();
+      const size = new THREE.Vector3();
+      hraGenericBox.getCenter(center);
+      hraGenericBox.getSize(size);
+      const maxDim = Math.max(size.x, size.y, size.z, 0.08);
+      const fov = cameraRef.current.fov * (Math.PI / 180);
+      let cameraDistance = (maxDim / 2) / Math.tan(fov / 2) * 1.42;
+      cameraDistance = Math.min(Math.max(cameraDistance, 0.15), 4.2);
+      controlsRef.current.minDistance = Math.max(maxDim * 0.05, 0.02);
+      controlsRef.current.target.copy(center);
+      cameraRef.current.position.set(
+        center.x,
+        center.y + maxDim * 0.035,
+        center.z + cameraDistance
+      );
+      controlsRef.current.update();
+    } else     if (
       isHraHeartReferenceTarget &&
       hraHeartReady &&
       !hraHeartBox.isEmpty() &&
@@ -2777,6 +2979,7 @@ varying float partSelected;
     peripheralNervesFailed,
     hraHeartReady,
     hraHeartFailed,
+    hraOrganRevision,
   ]);
 
   // Update GPU Selection DataTexture and 3D Selection Pointer when selectedOrganId or isolatedPartId changes
@@ -3021,6 +3224,24 @@ varying float partSelected;
           )}
         </div>
       </div>
+
+      {isHraOrganTarget(isolatedPartId || selectedOrganId) && (() => {
+        const target = getHraOrganTarget(isolatedPartId || selectedOrganId);
+        const ready = !!target && target.modelKeys.every((key) => hraOrganGroupsRef.current.has(key));
+        const failed = !!target && target.modelKeys.every((key) => hraOrganFailedRef.current.has(key));
+        return !ready && !failed;
+      })() && (
+        <div className="absolute top-16 left-3 right-3 z-20 flex justify-center pointer-events-none">
+          <div
+            role="status"
+            className={`px-3 py-2 rounded-2xl border backdrop-blur-xl text-xs font-semibold ${isLight
+              ? 'bg-violet-50/95 border-violet-300 text-violet-900 shadow-sm'
+              : 'bg-slate-900/90 border-violet-700/60 text-violet-300 shadow-lg'}`}
+          >
+            LOADING HRA ORGAN REFERENCE…
+          </div>
+        </div>
+      )}
 
       {isHraHeartTarget(isolatedPartId || selectedOrganId) && !hraHeartReady && !hraHeartFailed && (
         <div className="absolute top-16 left-3 right-3 z-20 flex justify-center pointer-events-none">
