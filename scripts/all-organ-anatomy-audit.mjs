@@ -81,7 +81,7 @@ const failures = [];
 for (const target of targets) {
   const core = describeAtlasTarget(target, atlas);
   const sources = [];
-  if (core.status === 'present' && core.ids.size > 0) {
+  if (core.status === 'resolved' && core.ids.size > 0) {
     sources.push({
       type: 'source',
       source: 'BodyParts3D',
