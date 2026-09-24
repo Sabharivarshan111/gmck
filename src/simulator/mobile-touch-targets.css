@@ -1,0 +1,5 @@
+/* Keep compact simulator controls at a reliable mobile touch size even when flex rows tighten. */
+button[title="Center and zoom 3D Viewport"] {
+  min-width: 44px;
+  flex-shrink: 0;
+}
