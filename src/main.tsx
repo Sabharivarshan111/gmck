@@ -2,6 +2,7 @@
 import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
+import './simulator/mobile-touch-targets.css'
 import { registerNativeAuthListener } from './lib/native-auth'
 
 // Register service worker for offline functionality
