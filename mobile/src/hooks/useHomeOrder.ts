@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 /**
@@ -208,6 +208,11 @@ export function useHomeOrder() {
    * agree because only one of them is ever in charge.
    */
   const [rendered, setRendered] = useState<HomeSection[]>([...HOME_SECTIONS]);
+  // A position save can be queued in the same gesture as an order save.
+  // React runs the position state updater later; reading a render's `order`
+  // there overwrote the freshly saved order with the one before the drag.
+  const orderRef = useRef(order);
+  orderRef.current = order;
 
   useEffect(() => {
     AsyncStorage.getItem(KEY)
@@ -218,6 +223,7 @@ export function useHomeOrder() {
         try {
           const parsed = JSON.parse(value);
           const next = reconcileOrder(Array.isArray(parsed) ? parsed : parsed?.order);
+          orderRef.current = next;
           setOrder(next);
           setRendered(next);
           setScales(reconcileScales(Array.isArray(parsed) ? null : parsed?.scales));
@@ -252,6 +258,7 @@ export function useHomeOrder() {
 
   const save = useCallback(
     (next: HomeSection[]) => {
+      orderRef.current = next;
       setOrder(next);
       setRendered(next);
       persist(next, scales, heights, aligns);
@@ -262,6 +269,7 @@ export function useHomeOrder() {
   const removeSection = useCallback(
     (id: HomeSection) => {
       const next = order.filter(key => key !== id);
+      orderRef.current = next;
       setOrder(next);
       setRendered(next);
       persist(next, scales, heights, aligns);
@@ -300,7 +308,7 @@ export function useHomeOrder() {
       setAligns(previous => {
         const next = { ...previous, [section]: clampAlign(align) };
         if (commit) {
-          persist(order, scales, heights, next);
+          persist(orderRef.current, scales, heights, next);
         }
         return next;
       });
@@ -308,11 +316,12 @@ export function useHomeOrder() {
     // Not `aligns`: this reads the previous value through the updater, which is
     // what keeps the identity stable while a finger is dragging the block —
     // a new callback every frame would replace the responder mid-gesture.
-    [heights, order, persist, scales],
+    [heights, persist, scales],
   );
 
   const reset = useCallback(() => {
     const next = [...HOME_SECTIONS];
+    orderRef.current = next;
     setOrder(next);
     setRendered(next);
     const defScales = defaultScales();

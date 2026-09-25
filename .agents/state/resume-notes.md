@@ -1562,3 +1562,16 @@ so a physical-device re-import/photo check is still outstanding.
   native-files shim. `.github/workflows/customization-visual.yml` captures
   before/after screenshots and checks touch movement/persistence. Device gesture
   feel remains unverified until installed on Android.
+
+## 2026-09-25 — version 24 for Claude and Antigravity
+
+- Owner says version 23 was uploaded; requested versionCode 24. Gradle,
+  appVersion and version-check are 24 / 0.0.0.24. Supabase app_releases row 24
+  exists with four notes; no Play Console upload was performed here.
+- CI touch run 36111594836 found the actual Home reorder save race. The card
+  moved but the position setter wrote the previous order to storage afterward.
+  `useHomeOrder` now reads a synchronously updated order ref in that setter.
+- Ignore builds from commit 82441c46 (release 36111594805, internal
+  36111594830, debug 36111594851): they do not include the persistence fix.
+  Use only a subsequent v24 build from the follow-up commit after its visual
+  workflow passes, and capture its exact release tags here.

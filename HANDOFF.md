@@ -2237,6 +2237,24 @@ Product commit: `e2103260a933a51ac4d8e6567bad0c05b4d46ad6`.
   behavior still needs confirmation by re-importing a real affected deck on
   Android.
 
+## 2026-09-25 — version 24 cut and Home persistence follow-up
+
+- Sabari confirmed version 23 was uploaded to Play and requested version 24.
+  Android Gradle, the JavaScript app version, and the version-check assertion
+  now agree on 24 / 0.0.0.24. The live Supabase `app_releases` row for 24 was
+  inserted and queried back with four release notes. This does not itself
+  upload the AAB to Play.
+- The actual touch screenshot CI exposed a second Home drag bug: the Welcome
+  card moved, but the horizontal-position state updater persisted the old
+  order after the reorder save. `useHomeOrder` now keeps a current order ref
+  across the gesture and uses it for the deferred position persist.
+- The first v24 source commit `82441c46` triggers debug run 36111594851,
+  internal 36111594830, release 36111594805 and screenshot 36111594836.
+  Those runs PRECEDE the Home persistence fix; publish/use only a later v24
+  build whose tag points to the fix commit. Screenshot 36111594836 failed
+  correctly on the old-order save and its artifact contains before/after Home.
+  Do not call the PDF drag verified until the next visual run passes.
+
 ### Published builds from the product commit
 - Signed Play/direct release: `release-515`, versionCode 23 / 0.0.0.23.
   Assets: `app-release.aab`, `app-release.apk`. Live ads enabled.
