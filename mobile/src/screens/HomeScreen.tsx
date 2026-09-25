@@ -624,8 +624,8 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
               /></> : <>
                 <QuickAction icon={<BookOpen size={18} color={colors.primary} />} label="Resume" sub="Last studied question" color={colors.primary} compact={scales.quick < 0.85} style={scales.quick < 0.75 ? { flex: 0, flexBasis: '48%' } : undefined} onPress={resumeQuestion} />
                 <QuickAction icon={<BookOpen size={18} color={colors.fuchsia} />} label="Note" sub="Write a study note" color={colors.fuchsia} compact={scales.quick < 0.85} style={scales.quick < 0.75 ? { flex: 0, flexBasis: '48%' } : undefined} onPress={() => openProgress('notes', true)} />
-                <QuickAction icon={<CalendarCheck size={18} color={colors.cyan} />} label="Attendance" sub="Track postings" color={colors.cyan} compact={scales.quick < 0.85} style={scales.quick < 0.75 ? { flex: 0, flexBasis: '48%' } : undefined} onPress={() => openProgress('attendance')} />
-                <QuickAction icon={<BellRing size={18} color={colors.emerald} />} label="Reminders" sub="Daily attendance reminders" color={colors.emerald} compact={scales.quick < 0.85} style={scales.quick < 0.75 ? { flex: 0, flexBasis: '48%' } : undefined} onPress={() => setSettingsOpen(true)} />
+                <QuickAction icon={<CalendarCheck size={18} color={colors.cyan} />} label="Posting" accessibilityLabel="Attendance" sub="Track postings" color={colors.cyan} compact={scales.quick < 0.85} style={scales.quick < 0.75 ? { flex: 0, flexBasis: '48%' } : undefined} onPress={() => openProgress('attendance')} />
+                <QuickAction icon={<BellRing size={18} color={colors.emerald} />} label="Alerts" accessibilityLabel="Reminders" sub="Daily attendance reminders" color={colors.emerald} compact={scales.quick < 0.85} style={scales.quick < 0.75 ? { flex: 0, flexBasis: '48%' } : undefined} onPress={() => setSettingsOpen(true)} />
               </>}
             </View>
             <View style={[styles.pager, styles.quickPager]}>
@@ -1106,6 +1106,7 @@ function RoundButton({ children, label }: { children: React.ReactNode; label: st
 function QuickAction({
   icon,
   label,
+  accessibilityLabel,
   sub,
   color,
   compact,
@@ -1114,6 +1115,7 @@ function QuickAction({
 }: {
   icon: React.ReactNode;
   label: string;
+  accessibilityLabel?: string;
   sub: string;
   color: string;
   compact?: boolean;
@@ -1123,7 +1125,7 @@ function QuickAction({
   return (
     <Touchable
       onPress={onPress}
-      label={label}
+      label={accessibilityLabel ?? label}
       // The description survives here rather than on screen: TalkBack has room
       // for it, a quarter of a 390dp row does not.
       hint={sub}
