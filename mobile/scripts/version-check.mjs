@@ -47,17 +47,11 @@ if (gradleCode && tsCode) {
   );
 }
 /*
- * 18 is pinned, by standing instruction from the app's owner (2026-09-11):
- * every build stays at 18 until they have actually uploaded a version to Play.
- *
- * A comment saying so lasts until the next agent skims past it, which is how
- * this repo reached 23 while the console said 17. So it is an assertion.
- *
- * When the owner says 18 is live, delete this block and the PINNED note in
- * build.gradle **together**. Do not weaken it in the meantime: raising the
- * number here to match a bump is not lifting the pin, it is defeating it.
+ * The owner confirmed version 23 has been uploaded to Play and explicitly
+ * requested 24 for the next build (2026-09-25). Keep the build and this pin
+ * together until the owner confirms another upload.
  */
-const PINNED_VERSION_CODE = 23;
+const PINNED_VERSION_CODE = 24;
 if (gradleCode) {
   check(
     Number(gradleCode[1]) === PINNED_VERSION_CODE,

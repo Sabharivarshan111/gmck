@@ -61,10 +61,11 @@ try {
   const box = await hero.boundingBox();
   if (!box) throw new Error('Could not find the Welcome section');
   // The open card between the header and footer controls, away from buttons.
-  await touchDrag({ x: 75, y: box.y + box.height + 66 }, -42, 125);
+  await touchDrag({ x: 75, y: box.y + box.height + 66 }, -42, 250);
   const savedHome = await page.evaluate(() => JSON.parse(localStorage.getItem('orbit:home-order-v1') || '{}'));
   if (!savedHome.order || savedHome.order[0] === 'hero') {
-    throw new Error('Welcome section did not save the new order after touch drag');
+    await page.screenshot({ path: path.join(output, 'home-customization-after.png') });
+    throw new Error(`Welcome section did not save the new order after touch drag: ${JSON.stringify(savedHome)}`);
   }
   await page.screenshot({ path: path.join(output, 'home-customization-after.png') });
 
