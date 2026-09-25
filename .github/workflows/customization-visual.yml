@@ -7,6 +7,7 @@ on:
       - 'mobile/src/components/Reorderable.tsx'
       - 'mobile/src/components/SortableGrid.tsx'
       - 'mobile/src/components/dragArm.ts'
+      - 'mobile/src/hooks/useHomeOrder.ts'
       - 'mobile/src/components/PdfViewerModal.tsx'
       - 'mobile/preview/**'
       - '.github/workflows/customization-visual.yml'
