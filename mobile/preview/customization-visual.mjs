@@ -109,6 +109,13 @@ try {
   await page.screenshot({ path: path.join(output, 'home-widgets-attendance.png') });
   await page.getByLabel('Next quick actions').click();
   await page.getByLabel('Reminders', { exact: true }).waitFor();
+  for (const label of ['Posting', 'Alerts']) {
+    const visible = page.getByText(label, { exact: true });
+    await visible.waitFor();
+    if (!(await visible.evaluate(element => element.scrollWidth <= element.clientWidth + 1))) {
+      throw new Error(`Quick action label is clipped: ${label}`);
+    }
+  }
   await page.screenshot({ path: path.join(output, 'home-quick-page-two.png') });
   if (failures.length) throw new Error('Preview errors: ' + failures.slice(0, 3).join(' | '));
   console.log('Home and PDF toolbar screenshots saved to', output);
