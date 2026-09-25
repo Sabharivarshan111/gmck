@@ -91,12 +91,15 @@ export function PdfViewerModal({ file, visible, onClose }: PdfViewerModalProps) 
   // Markup / drawing state
   const [markupOpen, setMarkupOpen] = useState(false);
   const [editBarOpen, setEditBarOpen] = useState(false);
-  const toolPosition = useRef(new Animated.ValueXY({
+  const initialToolPoint = useRef({
     x: Math.max(0, windowWidth - 66),
     y: windowHeight * 0.25,
-  })).current;
-  const toolPoint = useRef({ x: 0, y: 0 });
-  const toolBounds = useRef({ width: 0, height: 0 });
+  }).current;
+  const toolPosition = useRef(new Animated.ValueXY(initialToolPoint)).current;
+  // Keep the gesture's starting point in sync with the rendered default.
+  // The page's layout callback may arrive only after the toolbar is opened.
+  const toolPoint = useRef(initialToolPoint);
+  const toolBounds = useRef({ width: windowWidth, height: Math.max(0, windowHeight - 120) });
   const toolSize = useRef({ width: 54, height: 190 });
   const savedToolPosition = useRef<{ x: number; y: number } | null>(null);
   const [toolLayout, setToolLayout] = useState({ width: 0, height: 0 });

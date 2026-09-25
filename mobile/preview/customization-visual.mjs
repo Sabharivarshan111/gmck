@@ -85,9 +85,11 @@ try {
   await page.screenshot({ path: path.join(output, 'pdf-tools-moved.png') });
   await page.reload({ waitUntil: 'networkidle' });
   await page.getByLabel('Toggle editing toolbar').click();
+  await page.waitForTimeout(350);
   const restored = await page.getByLabel('Move PDF editing tools').boundingBox();
   if (!restored || Math.abs(restored.x - after.x) > 15 || Math.abs(restored.y - after.y) > 15) {
-    throw new Error('PDF tools lost their saved position after reopening');
+    const stored = await page.evaluate(() => localStorage.getItem('orbit:pdf-tools-position-v1'));
+    throw new Error(`PDF tools lost their saved position after reopening: after=${JSON.stringify(after)} restored=${JSON.stringify(restored)} stored=${stored}`);
   }
   if (failures.length) throw new Error('Preview errors: ' + failures.slice(0, 3).join(' | '));
   console.log('Home and PDF toolbar screenshots saved to', output);
