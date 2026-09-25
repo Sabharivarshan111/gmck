@@ -2205,6 +2205,14 @@ Product commit: `e2103260a933a51ac4d8e6567bad0c05b4d46ad6`.
   manifest XML parsing passed. Android CI/build and Samsung My Files chooser
   confirmation should be recorded after release; simulator compilation cannot
   establish the actual Samsung provider MIME/URI behavior.
+- Published product commit `2b6258e39c019c7bc27ad93352cee34e523da3f5`.
+  Android release run `36096381296` succeeded: tag `release-523` has signed
+  `app-release.aab` and `app-release.apk`. Internal run `36096381267`
+  succeeded: `internal-324` / `app-internal.apk`. Debug run `36096381253`
+  succeeded: `debug-330` / `app-preview.apk`. Web run `36096381287`
+  succeeded. Every Android tag resolves to that exact product commit. The
+  versionCode remains pinned at 23. Physical Samsung My Files chooser, PDF
+  opening and APKG re-import with media still need real-device confirmation.
 - No image-bearing affected APKG was available in the connected files for a
   real-device reproduction. CI proves compilation/checks; the specific media
   behavior still needs confirmation by re-importing a real affected deck on

@@ -1542,3 +1542,8 @@ so a physical-device re-import/photo check is still outstanding.
   `check:apkg` passes all v1/v2/v3 fixtures. Previously imported image decks
   require re-import, and appearance of a real affected deck is not device
   verified. VersionCode remains 23.
+- Product commit `2b6258e39c019c7bc27ad93352cee34e523da3f5` built cleanly:
+  release `release-523` (AAB + APK; run 36096381296), internal `internal-324`
+  (APK; run 36096381267), debug `debug-330` (APK; run 36096381253), and web
+  run 36096381287. All three Android tags resolve to the same product commit.
+  Physical Samsung chooser / PDF viewer / imported image deck remain to check.
