@@ -1,0 +1,36 @@
+name: Mobile customization visual check
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'mobile/src/components/Reorderable.tsx'
+      - 'mobile/src/components/SortableGrid.tsx'
+      - 'mobile/src/components/dragArm.ts'
+      - 'mobile/src/components/PdfViewerModal.tsx'
+      - 'mobile/preview/**'
+      - '.github/workflows/customization-visual.yml'
+
+jobs:
+  screenshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+      - run: npm ci
+        working-directory: mobile
+      - name: Install Chromium for phone viewport touch checks
+        run: ./node_modules/.bin/playwright-core install --with-deps chromium
+        working-directory: mobile
+      - name: Verify gestures and capture the actual components
+        run: node preview/customization-visual.mjs screenshots/customization
+        working-directory: mobile
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mobile-customization-screenshots
+          path: mobile/screenshots/customization/

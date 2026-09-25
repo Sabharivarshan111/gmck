@@ -1,6 +1,7 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
+  Animated,
   FlatList,
   Image,
   Modal,
@@ -56,6 +57,13 @@ export interface PdfViewerModalProps {
   onClose: () => void;
 }
 
+const PDF_TOOLS_POSITION_KEY = 'orbit:pdf-tools-position-v1';
+const PDF_TOOLS_BOTTOM_CLEARANCE = 72;
+
+function clampTool(value: number, max: number): number {
+  return Math.max(0, Math.min(max, value));
+}
+
 export function PdfViewerModal({ file, visible, onClose }: PdfViewerModalProps) {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
@@ -83,6 +91,81 @@ export function PdfViewerModal({ file, visible, onClose }: PdfViewerModalProps) 
   // Markup / drawing state
   const [markupOpen, setMarkupOpen] = useState(false);
   const [editBarOpen, setEditBarOpen] = useState(false);
+  const toolPosition = useRef(new Animated.ValueXY({
+    x: Math.max(0, windowWidth - 66),
+    y: windowHeight * 0.25,
+  })).current;
+  const toolPoint = useRef({ x: 0, y: 0 });
+  const toolBounds = useRef({ width: 0, height: 0 });
+  const toolSize = useRef({ width: 54, height: 190 });
+  const savedToolPosition = useRef<{ x: number; y: number } | null>(null);
+  const [toolLayout, setToolLayout] = useState({ width: 0, height: 0 });
+
+  useEffect(() => {
+    let active = true;
+    AsyncStorage.getItem(PDF_TOOLS_POSITION_KEY).then(raw => {
+      if (!active || !raw) return;
+      try {
+        const saved = JSON.parse(raw) as { x: number; y: number };
+        if (Number.isFinite(saved.x) && Number.isFinite(saved.y)) {
+          savedToolPosition.current = saved;
+          const { width, height } = toolBounds.current;
+          if (width && height) {
+            const freeX = Math.max(0, width - toolSize.current.width);
+            const freeY = Math.max(0, height - toolSize.current.height - PDF_TOOLS_BOTTOM_CLEARANCE);
+            const point = {
+              x: clampTool(saved.x * freeX, freeX),
+              y: clampTool(saved.y * freeY, freeY),
+            };
+            toolPoint.current = point;
+            toolPosition.setValue(point);
+          }
+        }
+      } catch {}
+    }).catch(() => {});
+    return () => { active = false; };
+  }, [toolPosition]);
+
+  useEffect(() => {
+    if (!toolLayout.width || !toolLayout.height) return;
+    toolBounds.current = toolLayout;
+    const freeX = Math.max(0, toolLayout.width - toolSize.current.width);
+    const freeY = Math.max(0, toolLayout.height - toolSize.current.height - PDF_TOOLS_BOTTOM_CLEARANCE);
+    const saved = savedToolPosition.current;
+    const point = {
+      x: saved ? clampTool(saved.x * freeX, freeX) : Math.max(0, freeX - 12),
+      y: saved ? clampTool(saved.y * freeY, freeY) : freeY * 0.3,
+    };
+    toolPoint.current = point;
+    toolPosition.setValue(point);
+  }, [toolLayout, toolPosition]);
+
+  const toolDrag = useMemo(() => {
+    let start = { x: 0, y: 0 };
+    const move = (dx: number, dy: number) => {
+      const freeX = Math.max(0, toolBounds.current.width - toolSize.current.width);
+      const freeY = Math.max(0, toolBounds.current.height - toolSize.current.height - PDF_TOOLS_BOTTOM_CLEARANCE);
+      const point = { x: clampTool(start.x + dx, freeX), y: clampTool(start.y + dy, freeY) };
+      toolPoint.current = point;
+      toolPosition.setValue(point);
+    };
+    const save = () => {
+      const freeX = Math.max(0, toolBounds.current.width - toolSize.current.width);
+      const freeY = Math.max(0, toolBounds.current.height - toolSize.current.height - PDF_TOOLS_BOTTOM_CLEARANCE);
+      const saved = { x: freeX ? toolPoint.current.x / freeX : 0, y: freeY ? toolPoint.current.y / freeY : 0 };
+      savedToolPosition.current = saved;
+      AsyncStorage.setItem(PDF_TOOLS_POSITION_KEY, JSON.stringify(saved)).catch(() => {});
+    };
+    return PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder: () => true,
+      onPanResponderGrant: () => { start = toolPoint.current; },
+      onPanResponderMove: (_, gesture) => move(gesture.dx, gesture.dy),
+      onPanResponderRelease: save,
+      onPanResponderTerminate: save,
+      onPanResponderTerminationRequest: () => false,
+    });
+  }, [toolPosition]);
   const [currentInk, setCurrentInk] = useState<NoteInk | null>(null);
   const [inkVersion, setInkVersion] = useState(0);
   const [annotatedPages, setAnnotatedPages] = useState<Set<number>>(new Set());
@@ -744,7 +827,15 @@ export function PdfViewerModal({ file, visible, onClose }: PdfViewerModalProps) 
           /* ========================================================
            * SINGLE PAGE VIEW WITH SIDE TOOLBAR (media_1789560899723.png)
            * ======================================================== */
-          <View style={styles.pageContainer} {...panResponder.panHandlers}>
+          <View
+            style={styles.pageContainer}
+            onLayout={event => {
+              const { width, height } = event.nativeEvent.layout;
+              if (width !== toolLayout.width || height !== toolLayout.height) {
+                setToolLayout({ width, height });
+              }
+            }}
+            {...panResponder.panHandlers}>
             <ScrollView
               contentContainerStyle={styles.scrollContent}
               maximumZoomScale={3}
@@ -903,11 +994,37 @@ export function PdfViewerModal({ file, visible, onClose }: PdfViewerModalProps) 
 
             {/* Floating Side Action Bar: Add Page, Insert Image, Stylus (only shown when edit button clicked) */}
             {editBarOpen ? (
-              <View
+              <Animated.View
+                onLayout={event => {
+                  const { width, height } = event.nativeEvent.layout;
+                  toolSize.current = { width, height };
+                  const freeX = Math.max(0, toolBounds.current.width - width);
+                  const freeY = Math.max(0, toolBounds.current.height - height - PDF_TOOLS_BOTTOM_CLEARANCE);
+                  const point = {
+                    x: clampTool(toolPoint.current.x, freeX),
+                    y: clampTool(toolPoint.current.y, freeY),
+                  };
+                  if (point.x !== toolPoint.current.x || point.y !== toolPoint.current.y) {
+                    toolPoint.current = point;
+                    toolPosition.setValue(point);
+                  }
+                }}
                 style={[
                   styles.sideToolbar,
                   { backgroundColor: colors.card, borderColor: colors.border },
+                  { transform: [{ translateX: toolPosition.x }, { translateY: toolPosition.y }] },
                 ]}>
+                <View
+                  accessible
+                  accessibilityRole="button"
+                  accessibilityLabel="Move PDF editing tools"
+                  accessibilityHint="Drag these three lines to place the tools on the page"
+                  style={styles.sideDragHandle}
+                  {...toolDrag.panHandlers}>
+                  <View style={[styles.sideDragLine, { backgroundColor: colors.textMuted }]} />
+                  <View style={[styles.sideDragLine, { backgroundColor: colors.textMuted }]} />
+                  <View style={[styles.sideDragLine, { backgroundColor: colors.textMuted }]} />
+                </View>
                 {/* 1. Add Note Page between PDF */}
                 <Touchable
                   onPress={handleAddBlankNotePage}
@@ -942,7 +1059,7 @@ export function PdfViewerModal({ file, visible, onClose }: PdfViewerModalProps) 
                   ]}>
                   <PenLine size={20} color={colors.primary} />
                 </Touchable>
-              </View>
+              </Animated.View>
             ) : null}
 
             {/* Bottom Page Navigation Bar & Page Jump Popover (Unified Continuous Sequence) */}
@@ -1221,17 +1338,29 @@ const styles = StyleSheet.create({
   },
   sideToolbar: {
     position: 'absolute',
-    right: 12,
-    top: '30%',
+    left: 0,
+    top: 0,
     borderRadius: 14,
     borderWidth: StyleSheet.hairlineWidth,
     padding: 6,
-    gap: 10,
+    gap: 6,
     shadowColor: '#000000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 8,
     elevation: 6,
+  },
+  sideDragHandle: {
+    width: 42,
+    height: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 4,
+  },
+  sideDragLine: {
+    width: 22,
+    height: 2.5,
+    borderRadius: 2,
   },
   sideActionBtn: {
     width: 42,

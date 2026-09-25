@@ -2213,6 +2213,25 @@ Product commit: `e2103260a933a51ac4d8e6567bad0c05b4d46ad6`.
   succeeded. Every Android tag resolves to that exact product commit. The
   versionCode remains pinned at 23. Physical Samsung My Files chooser, PDF
   opening and APKG re-import with media still need real-device confirmation.
+
+## 2026-09-25 — ChatGPT — Home drag and PDF tool placement
+
+- User's screenshot shows the PDF inserted-note editing palette fixed to the
+  right with a tiny single mark. `PdfViewerModal` now exposes a 40dp high,
+  three-line drag grip, moves on both axes within the reading area, keeps clear
+  of the page navigation, and persists a normalized position across PDFs and
+  reopenings. PDF page swipe cannot take the handle's gesture.
+- Home `Reorderable` previously rebuilt its PanResponder when sideways drag
+  changed alignment (because the `save` callback changed with `aligns`). It
+  now reads callbacks through stable refs, clears drag/scroll lock on gesture
+  termination, and arms the same held finger when edit mode begins.
+- A subject tile's touch could be overwritten by its parent section's arm.
+  `SortableGrid` claims tile ownership before the parent row can arm, including
+  the hold that enters edit mode, and resets its offsets on interruption.
+- Added a preview route to the *real* PDF reader and a browser touch script
+  plus GitHub visual workflow to check Home reorder, palette movement and
+  saved position and collect before/after screenshots. These are web preview
+  checks of native components; a Samsung touch check is still needed.
 - No image-bearing affected APKG was available in the connected files for a
   real-device reproduction. CI proves compilation/checks; the specific media
   behavior still needs confirmation by re-importing a real affected deck on

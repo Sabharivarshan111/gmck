@@ -68,6 +68,12 @@ export const dragArm = {
     }, ARM_MS);
   },
 
+  /** A full long press already entered edit mode; keep that same finger armed. */
+  arm(id: string) {
+    dragArm.cancel();
+    armedId = id;
+  },
+
   /**
    * The finger moved. Before the press has counted out this means a scroll,
    * and the drag is abandoned; after it, the drag is already armed and this

@@ -139,6 +139,8 @@ export function Reorderable<Id extends string>({
   heightRangeRef.current = heightRange;
   const onDragChangeRef = useRef(onDragChange);
   onDragChangeRef.current = onDragChange;
+  const onOrderChangeRef = useRef(onOrderChange);
+  onOrderChangeRef.current = onOrderChange;
   const holdTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const holdStart = useRef({ x: 0, y: 0 });
 
@@ -402,7 +404,7 @@ export function Reorderable<Id extends string>({
           valueFor(shifts, id).stopAnimation();
           valueFor(shifts, id).setValue(startShift);
           setHeld(id);
-          onDragChange?.(true);
+          onDragChangeRef.current?.(true);
           if (!reduceMotion) {
             Animated.spring(valueFor(lifts, id), {
               toValue: 1,
@@ -485,7 +487,7 @@ export function Reorderable<Id extends string>({
         },
         onPanResponderRelease: () => {
           setHeld(null);
-          onDragChange?.(false);
+          onDragChangeRef.current?.(false);
           // Store the placement once, on release, rather than once per frame.
           if (onAlignRef.current) {
             onAlignRef.current(id, alignsRef.current?.[id] ?? 0.5, true);
@@ -506,13 +508,25 @@ export function Reorderable<Id extends string>({
              * happened on screen by then. Springing it to a computed offset
              * instead is what left it one displacement out.
              */
-            onOrderChange(tentative);
+            onOrderChangeRef.current(tentative);
           } else {
             // Nothing moved, so there is no re-render coming to zero this.
             springTo(valueFor(shifts, id), 0, {
               spring: SPRING.momentum,
               reduceMotion,
             }).start();
+          }
+        },
+        onPanResponderTerminate: () => {
+          setHeld(null);
+          onDragChangeRef.current?.(false);
+          valueFor(lifts, id).setValue(0);
+          springTo(valueFor(shifts, id), 0, {
+            spring: SPRING.momentum,
+            reduceMotion,
+          }).start();
+          if (onAlignRef.current) {
+            onAlignRef.current(id, alignsRef.current?.[id] ?? 0.5, true);
           }
         },
         onPanResponderTerminationRequest: () => false,
@@ -523,8 +537,8 @@ export function Reorderable<Id extends string>({
     editing,
     heights,
     lifts,
-    onDragChange,
-    onOrderChange,
+    onDragChangeRef,
+    onOrderChangeRef,
     order,
     reduceMotion,
     rendered,
@@ -591,6 +605,9 @@ export function Reorderable<Id extends string>({
               const touch = event.nativeEvent.touches[0] ?? event.nativeEvent;
               holdStart.current = { x: touch.pageX, y: touch.pageY };
               if (editing) {
+                // A subject tile owns its own drag. Re-arming its parent here
+                // replaces the tile ID just before the first move.
+                if (dragOwner.current !== null && dragOwner.current !== id) return;
                 // Already rearranging: a press that stays put arms *this*
                 // block's drag, and a flick is left to the ScrollView.
                 dragArm.begin(String(id), touch.pageX, touch.pageY);
@@ -599,6 +616,10 @@ export function Reorderable<Id extends string>({
               cancelHold();
               holdTimer.current = setTimeout(() => {
                 holdTimer.current = null;
+                // A tile inside this section can be the one held. It gets the
+                // first move after edit mode opens, instead of moving its
+                // entire subject grid.
+                dragArm.arm(dragOwner.current ?? String(id));
                 onRequestEdit();
               }, HOLD_MS);
             }}

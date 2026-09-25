@@ -50,6 +50,7 @@ import { McqCard } from '@/components/McqCard';
 import { WaveformRiver } from '@/components/WaveformRiver';
 import FlashcardsScreen, { StudyView } from '@/screens/FlashcardsScreen';
 import HomeScreen from '@/screens/HomeScreen';
+import { PdfViewerModal } from '@/components/PdfViewerModal';
 import {
   NativeUpdateDemo,
   NativeNotesEditorDemo,
@@ -1350,6 +1351,15 @@ function Shell() {
   }
   if (screen === 'pdf-annotator') {
     return <NativePdfViewerDemo annotating={true} />;
+  }
+  if (screen === 'pdf-tools-demo') {
+    return (
+      <PdfViewerModal
+        visible
+        file={{ id: 'preview-pdf-tools', name: 'Clinical lecture notes.pdf', mime: 'application/pdf', size: 1024 }}
+        onClose={() => {}}
+      />
+    );
   }
 
   return (

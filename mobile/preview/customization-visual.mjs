@@ -1,0 +1,96 @@
+// The real native components, rendered in the React Native web preview.
+// Drive touch events at a phone viewport and keep before/after screenshots.
+import { chromium } from 'playwright-core';
+import { createServer } from 'vite';
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
+import fs from 'node:fs/promises';
+
+const here = path.dirname(fileURLToPath(import.meta.url));
+const output = path.resolve(process.argv[2] ?? path.join(here, '..', '..', 'screenshots', 'customization'));
+await fs.mkdir(output, { recursive: true });
+const server = await createServer({
+  configFile: path.join(here, 'vite.config.ts'),
+  server: { port: 5226, strictPort: true },
+  logLevel: 'error',
+});
+await server.listen();
+let browser;
+try {
+  browser = await chromium.launch({
+    headless: true,
+    ...(process.env.CHROME_PATH ? { executablePath: process.env.CHROME_PATH } : {}),
+    args: ['--no-sandbox'],
+  });
+  const context = await browser.newContext({
+    viewport: { width: 412, height: 915 },
+    deviceScaleFactor: 2,
+    hasTouch: true,
+  });
+  await context.addInitScript(() => {
+    localStorage.setItem('orbit-profile-v1', JSON.stringify({ display_name: 'Preview', year: 'second' }));
+  });
+  const page = await context.newPage();
+  const cdp = await context.newCDPSession(page);
+  const failures = [];
+  page.on('pageerror', err => failures.push(err.message));
+
+  const touchDrag = async (point, dx, dy) => {
+    await cdp.send('Input.dispatchTouchEvent', {
+      type: 'touchStart', touchPoints: [{ x: point.x, y: point.y }],
+    });
+    await page.waitForTimeout(320);
+    for (let i = 1; i <= 14; i += 1) {
+      await cdp.send('Input.dispatchTouchEvent', {
+        type: 'touchMove',
+        touchPoints: [{ x: point.x + dx * i / 14, y: point.y + dy * i / 14 }],
+      });
+      await page.waitForTimeout(18);
+    }
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+    await page.waitForTimeout(450);
+  };
+
+  await page.goto('http://localhost:5226/?screen=homeedit', { waitUntil: 'networkidle' });
+  await page.getByLabel('Move Welcome card down', { exact: true }).waitFor();
+  await page.screenshot({ path: path.join(output, 'home-customization-before.png') });
+  const minus = page.getByLabel('Make Welcome card smaller', { exact: true });
+  await minus.click();
+  await minus.click();
+  const hero = page.getByLabel('Move Welcome card down', { exact: true });
+  const box = await hero.boundingBox();
+  if (!box) throw new Error('Could not find the Welcome section');
+  // The open card between the header and footer controls, away from buttons.
+  await touchDrag({ x: 75, y: box.y + box.height + 66 }, -42, 125);
+  const savedHome = await page.evaluate(() => JSON.parse(localStorage.getItem('orbit:home-order-v1') || '{}'));
+  if (!savedHome.order || savedHome.order[0] === 'hero') {
+    throw new Error('Welcome section did not save the new order after touch drag');
+  }
+  await page.screenshot({ path: path.join(output, 'home-customization-after.png') });
+
+  await page.goto('http://localhost:5226/?screen=pdf-tools-demo', { waitUntil: 'networkidle' });
+  await page.getByLabel('Toggle editing toolbar').click();
+  const handle = page.getByLabel('Move PDF editing tools');
+  await handle.waitFor();
+  await page.getByLabel('Add blank note page after this page').click();
+  await page.screenshot({ path: path.join(output, 'pdf-tools-before.png') });
+  const before = await handle.boundingBox();
+  if (!before) throw new Error('PDF drag handle missing');
+  await touchDrag({ x: before.x + before.width / 2, y: before.y + before.height / 2 }, -110, 105);
+  const after = await handle.boundingBox();
+  if (!after || Math.abs(after.x - before.x) < 45 || Math.abs(after.y - before.y) < 45) {
+    throw new Error('PDF tools did not follow the drag on both axes');
+  }
+  await page.screenshot({ path: path.join(output, 'pdf-tools-moved.png') });
+  await page.reload({ waitUntil: 'networkidle' });
+  await page.getByLabel('Toggle editing toolbar').click();
+  const restored = await page.getByLabel('Move PDF editing tools').boundingBox();
+  if (!restored || Math.abs(restored.x - after.x) > 15 || Math.abs(restored.y - after.y) > 15) {
+    throw new Error('PDF tools lost their saved position after reopening');
+  }
+  if (failures.length) throw new Error('Preview errors: ' + failures.slice(0, 3).join(' | '));
+  console.log('Home and PDF toolbar screenshots saved to', output);
+} finally {
+  await browser?.close();
+  await server.close();
+}

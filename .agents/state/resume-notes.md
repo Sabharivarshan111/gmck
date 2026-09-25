@@ -1547,3 +1547,18 @@ so a physical-device re-import/photo check is still outstanding.
   (APK; run 36096381267), debug `debug-330` (APK; run 36096381253), and web
   run 36096381287. All three Android tags resolve to the same product commit.
   Physical Samsung chooser / PDF viewer / imported image deck remain to check.
+
+## 2026-09-25 — Home and PDF customization follow-up
+
+- Implemented draggable PDF editing palette with three-line 40dp handle,
+  normalized persisted placement, bottom navigation clearance, and bounds on
+  orientation/layout changes. The attached screenshot's single mark was never
+  attached to a drag handler before this change.
+- `Reorderable` now keeps its drag responder stable through per-frame horizontal
+  alignment updates, releases scroll lock on termination, and continues a long
+  press into the same-finger move. Subject tile touch ownership no longer gets
+  overwritten by its parent; interrupted grid drags reset their offsets.
+- `?screen=pdf-tools-demo` mounts the actual PDF reader under the preview's
+  native-files shim. `.github/workflows/customization-visual.yml` captures
+  before/after screenshots and checks touch movement/persistence. Device gesture
+  feel remains unverified until installed on Android.
