@@ -1598,3 +1598,32 @@ so a physical-device re-import/photo check is still outstanding.
   all tags point to product commit `6c80453bb232999070aeeb45338c41c6aef0eff0`.
   Web and visual checks also passed. AAB is ready for owner Play upload; this
   task did not submit it to Play.
+
+## 2026-09-25 — v24 Home widgets (newer product commit)
+
+- `b9fb2359551777b26665134a0b2ec2470d1ba0cd` adds a five-page swipeable
+  Home card for Welcome, question progress, resume/note, focus time/sessions,
+  and posting attendance/reminders, plus a second quick-action page. Previous
+  and next buttons work alongside swipes; Home refreshes focus data on focus.
+- Completed focus sessions are newly counted starting v24. Existing recorded
+  total minutes are retained; time spent outside completed Pomodoro sessions
+  is not counted. Last question is saved only on deliberate interaction.
+- Daily attendance reminder is opt-in under the existing notification master
+  switch, defaults off, uses the chosen hour, and is capped at one per day.
+  The v24 `app_releases` row now has five notes covering Home and prior fixes.
+- Visual run `36169940679` and release/internal/debug runs
+  `36169940786 / 36169940683 / 36169940717` target this commit. Confirm
+  success and capture final asset links; prior `release-527`, `internal-328`,
+  `debug-334` do not contain the Home widget follow-up. No Play upload done.
+
+### Verified latest v24 artifacts
+
+- Release `release-530` (run `36169940786`) succeeded:
+  https://github.com/Sabharivarshan111/gmck/releases/download/release-530/app-release.aab
+  and https://github.com/Sabharivarshan111/gmck/releases/download/release-530/app-release.apk
+- Internal `internal-331` (run `36169940683`) succeeded:
+  https://github.com/Sabharivarshan111/gmck/releases/download/internal-331/app-internal.apk
+- Debug `debug-337` (run `36169940717`) succeeded:
+  https://github.com/Sabharivarshan111/gmck/releases/download/debug-337/app-preview.apk
+- All tags resolve to `b9fb2359551777b26665134a0b2ec2470d1ba0cd`.
+  Visual `36169940679` and web `36169940725` passed. AAB not uploaded to Play.

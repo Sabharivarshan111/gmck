@@ -2329,3 +2329,51 @@ Product commit: `e2103260a933a51ac4d8e6567bad0c05b4d46ad6`.
 - The owner still has to upload the AAB to Play Console. Do not claim it is
   published on Play or that device-specific Samsung picker/Anki images were
   tested on a real phone here.
+
+## 2026-09-25 — v24 Home study widgets (latest product)
+
+- Latest product commit `b9fb2359551777b26665134a0b2ec2470d1ba0cd` keeps
+  `versionCode 24` and adds five swipeable Home card pages with previous/next
+  arrow buttons: Welcome, year question progress, last interacted question and
+  personal notes entry, completed Pomodoro time and session count, posting
+  attendance and reminder settings. The quick-action tiles have a second page
+  with Resume, Note, Posting and Alerts. The shorter visible tile labels keep
+  the full accessible names Attendance and Reminders.
+- Home refreshes the persisted focus totals and last question on focus;
+  completed-session count starts in v24 because older sessions did not save a
+  count. The study total is intentionally labelled completed focus time, not
+  time spent reading elsewhere in the app. Attendance is device-local.
+- Optional daily attendance reminder uses the existing master notification
+  permission and hour. When enabled, native Android can prompt even after
+  questions were studied; it still sends at most one notification per day,
+  prioritizes an imminent exam or due revision otherwise, and does not claim
+  the app knows the ward timetable. Off by default.
+- The release-note row for v24 now describes these features (five bullets).
+  Visual check run `36169940679` captures actual React Native Web components
+  at a phone viewport, checks arrow/swipe navigation and quick-label clipping.
+  Screenshots available as CI artifact `mobile-customization-screenshots` on
+  that run (`home-widgets-progress.png`, `home-widgets-resume.png`,
+  `home-widgets-study.png`, `home-widgets-attendance.png`,
+  `home-quick-page-two.png`); all five were also shared in ChatGPT.
+  Android release/internal/debug runs from this commit are
+  `36169940786 / 36169940683 / 36169940717`. Verify final success, release
+  tags, and assets before handing the new APK or AAB to the owner; earlier v24
+  tags `release-527`, `internal-328`, `debug-334` predate these widgets.
+- This work did not upload an AAB to Google Play. Native notification delivery,
+  personal device layout and Anki images need testing on an Android phone.
+
+### Verified final widget build artifacts
+
+- Release run `36169940786` passed: `release-530` has signed Play
+  [AAB](https://github.com/Sabharivarshan111/gmck/releases/download/release-530/app-release.aab)
+  and [APK](https://github.com/Sabharivarshan111/gmck/releases/download/release-530/app-release.apk).
+- Internal run `36169940683` passed: `internal-331` has
+  [app-internal.apk](https://github.com/Sabharivarshan111/gmck/releases/download/internal-331/app-internal.apk),
+  normal Google sign-in and no ads.
+- Debug run `36169940717` passed: `debug-337` has
+  [app-preview.apk](https://github.com/Sabharivarshan111/gmck/releases/download/debug-337/app-preview.apk),
+  debug-only sign-in bypass and no ads.
+- All three Git tag refs resolve exactly to product commit
+  `b9fb2359551777b26665134a0b2ec2470d1ba0cd`; visual run
+  `36169940679` and web run `36169940725` also passed. VersionCode remains
+  24. AAB remains to be uploaded by the owner to Play Console.
