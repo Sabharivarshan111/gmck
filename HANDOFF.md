@@ -2220,3 +2220,15 @@ Product commit: `e2103260a933a51ac4d8e6567bad0c05b4d46ad6`.
   reconstruct a safe automatic repair. Confirm with a real image-bearing deck
   on Android before claiming device-level media validation.
 - VersionCode stays pinned at 23 under the standing Play-upload rule.
+
+### Verified build outputs for `f612990f0cd0b124cc55b13494e61a415781eee6`
+
+- Release run `36086530864` passed; `release-522` contains
+  `app-release.aab` and `app-release.apk`.
+- Internal run `36086530867` passed; `internal-323` contains
+  `app-internal.apk`.
+- Debug run `36086530872` passed; `debug-329` contains
+  `app-preview.apk`. Debug-only sign-in bypass remains as shipped.
+- Web run `36086530893` passed. The three Android release tags all point to
+  the same product commit. No real phone import of the affected MF5429 deck
+  was available for visual confirmation.

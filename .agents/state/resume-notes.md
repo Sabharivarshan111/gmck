@@ -1519,3 +1519,8 @@ Product commit: `e2103260a933a51ac4d8e6567bad0c05b4d46ad6`.
   not silently delete existing cards or study progress.
 - Native image appearance still needs device verification with a real deck.
 - Retain pinned versionCode 23 until the owner confirms Play upload.
+
+Builds from `f612990f0cd0b124cc55b13494e61a415781eee6` all passed:
+release `release-522` (AAB + APK), internal `internal-323` (APK), debug
+`debug-329` (APK); web CI passed too. The real MF5429 deck was not supplied,
+so a physical-device re-import/photo check is still outstanding.
