@@ -10,6 +10,7 @@ const functionText = source.match(/export function safeMediaName\(name: string\)
 assert.ok(functionText, 'safeMediaName must remain testable');
 const javascript = functionText.replace('export function safeMediaName(name: string): string', 'function safeMediaName(name)');
 // This pure function has no React Native imports or filesystem side effects.
+// eslint-disable-next-line no-new-func
 const safeMediaName = new Function(javascript + '\nreturn safeMediaName;')();
 
 assert.equal(safeMediaName('photo.jpg'), 'photo.jpg');
