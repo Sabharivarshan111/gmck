@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { AppState, StatusBar, View } from 'react-native';
+import { Alert, AppState, DeviceEventEmitter, StatusBar, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { goToTab, navigationRef } from '@/navigation/ref';
@@ -20,7 +20,7 @@ import { syncReminders } from '@/lib/reminderSync';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { TourOverlay } from '@/components/TourOverlay';
 import { getTourState, hydrateTour, startTour } from '@/tour/store';
-import { setPendingLaunchDeck, stageLaunchPackage } from '@/lib/importedDecks';
+import { getPendingLaunchDeck, setPendingLaunchDeck, stageLaunchPackage } from '@/lib/importedDecks';
 import { getPendingLaunchPdf } from '@/lib/noteFiles';
 
 function Shell() {
@@ -100,7 +100,9 @@ function Shell() {
         } else if (getPendingLaunchPdf()) {
           goToTab('Notes');
         }
-      } catch {}
+      } catch (error) {
+        Alert.alert('Could not open file', error instanceof Error ? error.message : 'Check that this is a PDF or Anki package.');
+      }
     };
 
     checkLaunchIntent();
@@ -109,9 +111,11 @@ function Shell() {
         checkLaunchIntent();
       }
     });
+    const incomingSub = DeviceEventEmitter.addListener('OrbitIncomingFile', checkLaunchIntent);
 
     return () => {
       appStateSub.remove();
+      incomingSub.remove();
     };
   }, []);
 
@@ -148,7 +152,12 @@ function Shell() {
   };
 
   return (
-    <NavigationContainer theme={navTheme} ref={navigationRef}>
+    <NavigationContainer
+      theme={navTheme}
+      ref={navigationRef}
+      onReady={() => {
+        if (getPendingLaunchDeck() || getPendingLaunchPdf()) goToTab('Notes');
+      }}>
       {/* Android draws edge-to-edge in RN 0.87, so the bar is translucent and
           only the icon style is ours to set. */}
       <StatusBar barStyle={theme === 'dark' ? 'light-content' : 'dark-content'} />

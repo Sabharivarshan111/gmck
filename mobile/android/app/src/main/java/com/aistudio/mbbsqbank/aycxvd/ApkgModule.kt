@@ -9,6 +9,7 @@ import android.util.Base64
 import com.facebook.react.bridge.ActivityEventListener
 import com.facebook.react.bridge.BaseActivityEventListener
 import com.facebook.react.bridge.Promise
+import com.facebook.react.modules.core.DeviceEventManagerModule
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.module.annotations.ReactModule
 import com.github.luben.zstd.ZstdInputStream
@@ -70,6 +71,13 @@ class ApkgModule(reactContext: ReactApplicationContext) : NativeOrbitApkgSpec(re
 
   private val activityListener: ActivityEventListener =
     object : BaseActivityEventListener() {
+      override fun onNewIntent(intent: Intent) {
+        if (intent.action == Intent.ACTION_VIEW || intent.action == Intent.ACTION_SEND) {
+          reactApplicationContext
+            .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+            .emit("OrbitIncomingFile", null)
+        }
+      }
       // `activity` is non-null here. Declaring it nullable makes this override
       // nothing, which is a compile error only the six-minute Gradle step ever
       // sees — the same trap FilesModule and NotifyModule document.
@@ -169,18 +177,27 @@ class ApkgModule(reactContext: ReactApplicationContext) : NativeOrbitApkgSpec(re
       return
     }
     val intent = activity.intent
-    val uri = if (intent?.action == Intent.ACTION_VIEW) intent.data else null
-    if (uri == null) {
+    val uri = when (intent?.action) {
+      Intent.ACTION_VIEW -> intent.data
+      Intent.ACTION_SEND -> {
+        @Suppress("DEPRECATION")
+        intent.getParcelableExtra<Uri>(Intent.EXTRA_STREAM)
+      }
+      else -> null
+    }
+    if (uri == null || (uri.scheme != "content" && uri.scheme != "file")) {
       promise.resolve("")
       return
     }
+    val mimeHint = intent.type
     // Cleared BEFORE the copy, not after: staging a large package can throw,
     // and a failure that leaves the intent in place re-opens the same broken
     // file every time the app is resumed.
     intent.data = null
+    intent.removeExtra(Intent.EXTRA_STREAM)
     intent.action = Intent.ACTION_MAIN
     try {
-      promise.resolve(stage(uri).toString())
+      promise.resolve(stage(uri, mimeHint).toString())
     } catch (error: Throwable) {
       promise.reject("unreadable", "That file could not be opened.", error)
     }
@@ -194,9 +211,9 @@ class ApkgModule(reactContext: ReactApplicationContext) : NativeOrbitApkgSpec(re
    * once. The staged copy is in `cacheDir`, not `filesDir`: it is wanted for
    * the length of one import and Android is welcome to reclaim it afterwards.
    */
-  private fun stage(uri: Uri): JSONObject {
+  private fun stage(uri: Uri, mimeHint: String? = null): JSONObject {
     val resolver = reactApplicationContext.contentResolver
-    var name = "deck.apkg"
+    var name = uri.lastPathSegment?.substringAfterLast('/') ?: "deck.apkg"
     var size = 0L
     resolver.query(uri, null, null, null, null)?.use { cursor ->
       if (cursor.moveToFirst()) {
@@ -211,7 +228,9 @@ class ApkgModule(reactContext: ReactApplicationContext) : NativeOrbitApkgSpec(re
       }
     }
 
-    val isPdf = name.endsWith(".pdf", ignoreCase = true) || resolver.getType(uri) == "application/pdf"
+    val isPdf = name.endsWith(".pdf", ignoreCase = true) ||
+      resolver.getType(uri) == "application/pdf" || mimeHint == "application/pdf"
+    if (isPdf && !name.endsWith(".pdf", ignoreCase = true)) name = "document.pdf"
     val ext = if (isPdf) ".pdf" else ".apkg"
     val staging = File(reactApplicationContext.cacheDir, STAGING).apply { mkdirs() }
     val target = File(staging, "${System.currentTimeMillis().toString(36)}$ext")

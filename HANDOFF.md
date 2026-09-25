@@ -2186,6 +2186,25 @@ Product commit: `e2103260a933a51ac4d8e6567bad0c05b4d46ad6`.
   fix is at the native extraction→stored URI boundary.
 - Existing decks imported before this fix may retain old saved URIs. Re-import
   an affected deck with this build to regenerate its cards/media paths.
+
+## 2026-09-25 — ChatGPT — external APKG/PDF opening
+
+- Android manifest now advertises Orbit for APKG providers whose content URI
+  has an opaque ID, with binary/ZIP/Anki MIME types, and for PDF/APKG shares.
+  Android filters cannot inspect a provider's display filename; accepting
+  generic binary MIME types can show Orbit for unrelated files. Import rejects
+  filenames other than `.apkg`/`.colpkg` and reports an error.
+- `ApkgModule.takeLaunchFile()` consumes VIEW or SEND exactly once, reads the
+  shared URI, preserves the MIME hint for PDFs, and ignores OAuth URI schemes.
+  `onNewIntent` signals JS even if Orbit was already in the foreground.
+- App Shell alone stages incoming files; navigation waits for a ready navigator.
+  External APKGs open the import screen and immediately import all decks, then
+  open study. Internal file picker keeps its existing deck selection step.
+  External PDFs open the existing Notes PDF viewer directly.
+- Local `typecheck`, `lint` (warnings only), `check:apkg`, `check:version` and
+  manifest XML parsing passed. Android CI/build and Samsung My Files chooser
+  confirmation should be recorded after release; simulator compilation cannot
+  establish the actual Samsung provider MIME/URI behavior.
 - No image-bearing affected APKG was available in the connected files for a
   real-device reproduction. CI proves compilation/checks; the specific media
   behavior still needs confirmation by re-importing a real affected deck on

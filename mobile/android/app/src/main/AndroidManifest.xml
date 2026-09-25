@@ -128,6 +128,23 @@
             <data android:pathPattern=".*\\..*\\..*\\.apkg" />
         </intent-filter>
 
+        <!-- Many document providers expose a content URI whose path is an
+             opaque ID, so an extension pathPattern cannot match it. Match the
+             MIME types those providers use, then check DISPLAY_NAME in the
+             importer. Generic binary/ZIP files can also show Orbit here. -->
+        <intent-filter android:label="@string/apkg_open_label">
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <data android:scheme="content" />
+            <data android:scheme="file" />
+            <data android:mimeType="application/octet-stream" />
+            <data android:mimeType="application/zip" />
+            <data android:mimeType="application/x-zip-compressed" />
+            <data android:mimeType="application/apkg" />
+            <data android:mimeType="application/x-apkg" />
+            <data android:mimeType="application/vnd.anki" />
+        </intent-filter>
+
         <!--
           Open a PDF document from a file manager, WhatsApp, Telegram, or Downloads.
           Shows Orbit MBBS in Android's "Open with" system chooser.
@@ -138,6 +155,21 @@
             <category android:name="android.intent.category.BROWSABLE" />
             <data android:scheme="content" />
             <data android:scheme="file" />
+            <data android:mimeType="application/pdf" />
+        </intent-filter>
+        <intent-filter android:label="@string/apkg_open_label">
+            <action android:name="android.intent.action.SEND" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <data android:mimeType="application/octet-stream" />
+            <data android:mimeType="application/zip" />
+            <data android:mimeType="application/x-zip-compressed" />
+            <data android:mimeType="application/apkg" />
+            <data android:mimeType="application/x-apkg" />
+            <data android:mimeType="application/vnd.anki" />
+        </intent-filter>
+        <intent-filter android:label="@string/pdf_open_label">
+            <action android:name="android.intent.action.SEND" />
+            <category android:name="android.intent.category.DEFAULT" />
             <data android:mimeType="application/pdf" />
         </intent-filter>
         <intent-filter android:label="@string/pdf_open_label">

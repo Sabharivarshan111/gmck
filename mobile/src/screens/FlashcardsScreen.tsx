@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
-  AppState,
   Animated,
   Image,
   Keyboard,
@@ -53,7 +52,6 @@ import {
   MAX_IMPORT_CARDS,
   setPendingLaunchDeck,
   shareWrittenDeck,
-  stageLaunchPackage,
   stagePackage,
   subscribeLaunchDeck,
   type ImportedDeck,
@@ -144,7 +142,12 @@ type Screen =
 export default function FlashcardsScreen({ onExit }: { onExit: () => void }) {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
-  const [view, setView] = useState<Screen>({ kind: 'years' });
+  const [view, setView] = useState<Screen>(() =>
+    getPendingLaunchDeck() ? { kind: 'importDecks' } : { kind: 'years' },
+  );
+  useEffect(() => subscribeLaunchDeck(pkg => {
+    if (pkg) setView({ kind: 'importDecks' });
+  }), []);
 
   const back = useCallback(() => {
     setView(current => {
@@ -526,13 +529,14 @@ function ImportDecksView({
   const [chosen, setChosen] = useState<Set<string>>(new Set());
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const autoImportRef = useRef<string | null>(null);
 
   useEffect(() => {
     loadImportedDecks().then(setDecks);
   }, []);
 
   /** Put a staged package on screen for the reader to confirm. */
-  const offer = useCallback((next: StagedPackage | null) => {
+  const offer = useCallback((next: StagedPackage | null, automatic = false) => {
     if (!next) {
       return;
     }
@@ -540,6 +544,7 @@ function ImportDecksView({
     // Everything, unless the reader narrows it. A package with one deck in
     // it — which most shared decks are — then needs no choice at all.
     setChosen(new Set(next.decks.map(deck => deck.id)));
+    if (automatic) autoImportRef.current = next.path;
   }, []);
 
   const pick = useCallback(async () => {
@@ -561,10 +566,8 @@ function ImportDecksView({
    * on this screen having done nothing with the file, which is worse than not
    * appearing in the chooser at all.
    *
-   * Run on mount AND on every return to the foreground, because Android
-   * delivers the file by starting or resuming the Activity and this screen may
-   * already have been mounted. `takeLaunchFile` clears the intent as it hands
-   * the file over, so the repeat calls cost one bridge hop and return nothing.
+   * The app shell stages the Android intent exactly once; the import view
+   * receives the staged package here even if it was already mounted.
    */
   useEffect(() => {
     let live = true;
@@ -572,37 +575,19 @@ function ImportDecksView({
       const pending = getPendingLaunchDeck();
       if (pending) {
         setPendingLaunchDeck(null);
-        offer(pending);
-        return;
+        offer(pending, true);
       }
-      stageLaunchPackage()
-        .then(next => {
-          if (live && next) {
-            offer(next);
-          }
-        })
-        .catch(err => {
-          if (live) {
-            setError(err instanceof Error ? err.message : 'That file could not be read.');
-          }
-        });
     };
     take();
     const unsubDeck = subscribeLaunchDeck(pkg => {
       if (live && pkg) {
         setPendingLaunchDeck(null);
-        offer(pkg);
-      }
-    });
-    const sub = AppState.addEventListener('change', state => {
-      if (state === 'active') {
-        take();
+        offer(pkg, true);
       }
     });
     return () => {
       live = false;
       unsubDeck();
-      sub.remove();
     };
   }, [offer]);
 
@@ -633,6 +618,13 @@ function ImportDecksView({
       setBusy(null);
     }
   }, [chosen, onStudy, staged]);
+
+  useEffect(() => {
+    if (staged && autoImportRef.current === staged.path) {
+      autoImportRef.current = null;
+      void run();
+    }
+  }, [staged, run]);
 
   const cancel = useCallback(() => {
     if (staged) {

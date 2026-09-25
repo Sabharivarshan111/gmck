@@ -1524,3 +1524,21 @@ Builds from `f612990f0cd0b124cc55b13494e61a415781eee6` all passed:
 release `release-522` (AAB + APK), internal `internal-323` (APK), debug
 `debug-329` (APK); web CI passed too. The real MF5429 deck was not supplied,
 so a physical-device re-import/photo check is still outstanding.
+
+## 2026-09-25 — external file entry handoff
+
+- Samsung My Files screenshots: PDF chooser already offers Orbit, APKG file
+  manager entry requested. Added MIME-only VIEW filters for opaque content URIs
+  (binary, ZIP, Anki) and SEND filters for APKG/PDF. Generic binary MIME may
+  surface Orbit for unrelated files; filename is checked during import.
+- Native launch handler now consumes VIEW/SEND with read grant, captures PDF
+  MIME, ignores OAuth callback schemes, and emits foreground incoming-file
+  event. MainActivity updates its intent before notifying native listeners.
+- App Shell owns staging; ready navigator routes to Notes; incoming APKG auto
+  imports all included decks and starts studying; PDF opens the Notes viewer.
+  In-app APKG picker still permits selection. Follow up with on-device tests of
+  Samsung My Files and shared APKG/PDF, including warm launch.
+- Earlier v3 import/media and note draft fixes are included in this source tree;
+  `check:apkg` passes all v1/v2/v3 fixtures. Previously imported image decks
+  require re-import, and appearance of a real affected deck is not device
+  verified. VersionCode remains 23.
