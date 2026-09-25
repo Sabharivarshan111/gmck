@@ -84,5 +84,6 @@ export async function syncReminders(): Promise<void> {
     allowExam: settings.remindExam,
     allowStreak: settings.remindStreak,
     allowRevision: settings.remindRevision,
+    allowAttendance: settings.remindAttendance,
   });
 }

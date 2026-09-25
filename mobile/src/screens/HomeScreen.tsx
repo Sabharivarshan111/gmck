@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Animated, Linking, ScrollView, StyleSheet, View } from 'react-native';
+import React, { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
+import { Animated, Linking, PanResponder, ScrollView, StyleSheet, View } from 'react-native';
 import { Text } from '@/components/Text';
 import { Touchable } from '@/components/Touchable';
 import { Sheet } from '@/components/Sheet';
@@ -26,15 +26,18 @@ import { ThemeEditor } from '@/components/ThemeEditor';
 import { GlassSurface } from '@/components/GlassSurface';
 import { WallpaperBackground, useWallpaperText } from '@/components/WallpaperBackground';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { Dialog } from '@/components/Dialog';
 import { subjectMediaUri, useSubjectBackgrounds } from '@/hooks/useSubjectBackgrounds';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import {
   ArrowRight,
   Check,
+  BellRing,
+  BookOpen,
+  CalendarCheck,
+  ChevronLeft,
   ChevronRight,
-  Flag,
   Flame,
   ImagePlus,
   Menu,
@@ -73,7 +76,10 @@ import {
   YEAR_LABEL as WHATSAPP_YEAR_LABEL,
   type WhatsAppGroup,
 } from '@shared/whatsappGroups';
-import { readFocusMinutes, formatFocusTime } from '@/lib/focusStats';
+import { formatFocusTime, readFocusSummary, type FocusSummary } from '@/lib/focusStats';
+import { readLastQuestion, type LastQuestion } from '@/lib/homeResume';
+import { attendanceVersion, getAttendance, hydrateAttendance, subscribeAttendance } from '@/lib/attendance';
+import { useSettings } from '@/lib/settings';
 import type { HomeStackParamList, RootTabParamList } from '@/navigation/types';
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 
@@ -86,20 +92,8 @@ type Nav = NativeStackNavigationProp<HomeStackParamList, 'HomeMain'>;
  */
 const HERO_FADE_FLOOR = 0.35;
 
-const HERO_SLIDES = [
-  {
-    title: 'Welcome to Orbit!',
-    body: "Every great journey begins with a single step. Stay consistent, stay curious, and you'll achieve greatness.",
-  },
-  {
-    title: 'AI-Powered Learning',
-    body: 'Triple-tap any question to instantly ask AI. Double-tap to generate MCQs from any topic.',
-  },
-  {
-    title: 'Track Your Journey',
-    body: 'Handwritten notes, spaced revision, and progress rings — everything you need in one orbit.',
-  },
-];
+const HERO_PAGES = ['Welcome', 'Progress', 'Pick up where you left off', 'Study time', 'Attendance'] as const;
+const QUICK_PAGES = 2;
 
 /** One card's height, and its width as a fraction of the grid. */
 const SUBJECT_CARD_HEIGHT = 160;
@@ -164,6 +158,22 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
     [scales],
   );
   const [editing, setEditing] = useState(initialEditing);
+  const heroSwipe = useMemo(() => PanResponder.create({
+    onMoveShouldSetPanResponder: (_, gesture) =>
+      !editing && Math.abs(gesture.dx) > 22 && Math.abs(gesture.dx) > Math.abs(gesture.dy) * 1.4,
+    onPanResponderRelease: (_, gesture) => {
+      if (Math.abs(gesture.dx) > 48) {
+        setSlide(current => (current + (gesture.dx < 0 ? 1 : HERO_PAGES.length - 1)) % HERO_PAGES.length);
+      }
+    },
+  }), [editing]);
+  const quickSwipe = useMemo(() => PanResponder.create({
+    onMoveShouldSetPanResponder: (_, gesture) =>
+      !editing && Math.abs(gesture.dx) > 22 && Math.abs(gesture.dx) > Math.abs(gesture.dy) * 1.4,
+    onPanResponderRelease: (_, gesture) => {
+      if (Math.abs(gesture.dx) > 48) setQuickPage(current => (current + 1) % QUICK_PAGES);
+    },
+  }), [editing]);
   /**
    * Whether the settings sheet is open. Text size used to have its own circle
    * in the header; a header that grows a button per preference is a toolbar
@@ -194,7 +204,12 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
    * single choice is a tap nobody asked for.
    */
   const [groupChoice, setGroupChoice] = useState<WhatsAppGroup[] | null>(null);
-  const [focusMinutes, setFocusMinutes] = useState(0);
+  const [focus, setFocus] = useState<FocusSummary>({ total: 0, today: 0, sessions: 0 });
+  const [lastQuestion, setLastQuestion] = useState<LastQuestion | null>(null);
+  const [quickPage, setQuickPage] = useState(0);
+  useSyncExternalStore(subscribeAttendance, attendanceVersion, attendanceVersion);
+  const attendance = getAttendance();
+  const reminderSettings = useSettings();
   const [yearPickerOpen, setYearPickerOpen] = useState(false);
   const [themeOpen, setThemeOpen] = useState(false);
   const [editorOpen, setEditorOpen] = useState(false);
@@ -208,24 +223,18 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
   const [anchor, setAnchor] = useState<Anchor | null>(null);
   const themeButton = useRef<React.ComponentRef<typeof View>>(null);
 
-  useEffect(() => {
-    readFocusMinutes().then(setFocusMinutes);
-  }, []);
+  useFocusEffect(useCallback(() => {
+    let active = true;
+    readFocusSummary().then(value => { if (active) setFocus(value); });
+    readLastQuestion().then(value => { if (active) setLastQuestion(value); });
+    if (!getAttendance().hydrated) hydrateAttendance().catch(() => {});
+    return () => { active = false; };
+  }, []));
 
   const reduceMotion = useReducedMotion();
   const heroFade = useRef(new Animated.Value(1)).current;
 
-  useEffect(() => {
-    // A 6-second loop is a ~0.17 Hz oscillation, which is exactly the kind of
-    // slow repeating motion reduced-motion users ask to be spared (SKILL §14).
-    // The dots stay tappable, so nothing becomes unreachable — the carousel
-    // simply stops driving itself.
-    if (reduceMotion) {
-      return;
-    }
-    const id = setInterval(() => setSlide(s => (s + 1) % HERO_SLIDES.length), 6000);
-    return () => clearInterval(id);
-  }, [reduceMotion]);
+  // Widget pages stay put until the reader swipes or presses an arrow.
 
   /**
    * Cross-fade between slides. A hard cut mid-sentence reads as a glitch; the
@@ -292,6 +301,8 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
         const done = countDone(all);
         return {
           ...subject,
+          total: all.length,
+          done,
           pct: all.length ? Math.round((done / all.length) * 100) : 0,
           icon: SUBJECT_ICON[subject.key] ?? '📘',
           gradient: SUBJECT_GRADIENT[subject.key] ?? DEFAULT_GRADIENT,
@@ -344,7 +355,23 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
     [setYear],
   );
 
-  const hero = HERO_SLIDES[slide];
+  const totalQuestions = subjects.reduce((sum, subject) => sum + subject.total, 0);
+  const completedQuestions = subjects.reduce((sum, subject) => sum + subject.done, 0);
+  const progressPercent = totalQuestions ? Math.round(completedQuestions / totalQuestions * 100) : 0;
+  const postings = attendance.items.filter(item => item.kind === 'posting');
+  const attendedPostings = postings.reduce((sum, item) => sum + item.attended, 0);
+  const heldPostings = postings.reduce((sum, item) => sum + item.held, 0);
+  const openProgress = (tab: 'stats' | 'attendance' | 'notes' = 'stats', openNotes = false) =>
+    navigation.getParent<BottomTabNavigationProp<RootTabParamList>>()?.navigate('Progress', {
+      tab, openNotes, nonce: Date.now(),
+    });
+  const resumeQuestion = () => {
+    if (lastQuestion) navigation.navigate('BrowseNode', {
+      year: lastQuestion.year, path: lastQuestion.path, title: lastQuestion.title,
+      highlight: lastQuestion.question, highlightType: lastQuestion.type,
+    });
+    else navigation.navigate('BrowseHome', {});
+  };
 
   return (
     /**
@@ -500,57 +527,47 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
                 style={[styles.heroGlow, { backgroundColor: withAlpha(colors.fuchsia, 0.12) }]}
                 pointerEvents="none"
               />
-              <Animated.View style={{ opacity: heroFade }}>
-                <Text
-                  accessibilityRole="header"
-                  style={[
-                    styles.heroTitle,
-                    { color: colors.fuchsia },
-                    scales.hero < 0.75 && { fontSize: 18, lineHeight: 22 },
-                  ]}>
-                  {hero.title}
-                </Text>
-                {/* The sentence is the first thing to go: the headline is
-                    what carries the block, and three lines of encouragement is
-                    exactly the sort of thing someone shrinking their home
-                    screen wants back. */}
-                {scales.hero < 0.85 ? null : (
-                  <Text style={[styles.heroBody, { color: colors.textMuted }]}>{hero.body}</Text>
-                )}
-              </Animated.View>
-
-              {scales.hero < 0.85 ? null : (
-              <View style={[styles.credit, { borderColor: colors.border }]}>
-                <View>
-                  <Text style={[styles.creditLabel, { color: colors.textMuted }]}>CREATED BY</Text>
-                  <Text style={[styles.creditName, { color: colors.text }]}>Sabharivarshan S</Text>
-                </View>
-                <Flag size={16} color={colors.textMuted} />
+              <View {...heroSwipe.panHandlers}>
+                <Animated.View style={[styles.heroPage, { opacity: heroFade }]}>
+                  <Text style={[styles.widgetEyebrow, { color: colors.fuchsia }]}>
+                    {HERO_PAGES[slide].toUpperCase()}
+                  </Text>
+                  {slide === 0 ? <>
+                    <Text accessibilityRole="header" style={[styles.heroTitle, { color: colors.text }]}>Welcome to Orbit</Text>
+                    {scales.hero < 0.85 ? null : <Text style={[styles.heroBody, { color: colors.textMuted }]}>Your study space, at a glance. Swipe or tap the arrows to see what matters today.</Text>}
+                  </> : null}
+                  {slide === 1 ? <>
+                    <Text accessibilityRole="header" style={[styles.widgetNumber, { color: colors.fuchsia }]}>{progressPercent}% <Text style={styles.widgetUnit}>complete</Text></Text>
+                    <Text style={[styles.widgetDetail, { color: colors.textMuted }]}>{completedQuestions.toLocaleString()} of {totalQuestions.toLocaleString()} questions in {YEAR_LABEL[year]}</Text>
+                    <Touchable onPress={() => openProgress()} label="Open my progress" style={styles.widgetLink}><Text style={{ color: colors.fuchsia, fontWeight: '700' }}>View progress →</Text></Touchable>
+                  </> : null}
+                  {slide === 2 ? <>
+                    <Text accessibilityRole="header" style={[styles.widgetHeading, { color: colors.text }]} numberOfLines={2}>{lastQuestion?.question || 'What is on your mind today?'}</Text>
+                    <Text style={[styles.widgetDetail, { color: colors.textMuted }]}>{lastQuestion ? `Last question · ${lastQuestion.title}` : 'Open a question or start a personal study note.'}</Text>
+                    <View style={styles.widgetLinks}>
+                      <Touchable onPress={resumeQuestion} label={lastQuestion ? 'Resume last question' : 'Browse questions'} style={styles.widgetLink}><Text style={{ color: colors.fuchsia, fontWeight: '700' }}>{lastQuestion ? 'Resume question →' : 'Browse questions →'}</Text></Touchable>
+                      <Touchable onPress={() => openProgress('notes', true)} label="Write a study note" style={styles.widgetLink}><Text style={{ color: colors.text, fontWeight: '700' }}>Write a note →</Text></Touchable>
+                    </View>
+                  </> : null}
+                  {slide === 3 ? <>
+                    <Text accessibilityRole="header" style={[styles.widgetNumber, { color: colors.emerald }]}>{formatFocusTime(focus.today)} <Text style={styles.widgetUnit}>today</Text></Text>
+                    <Text style={[styles.widgetDetail, { color: colors.textMuted }]}>{formatFocusTime(focus.total)} completed focus time · {focus.sessions} {focus.sessions === 1 ? 'session' : 'sessions'} since v24</Text>
+                    <Touchable onPress={() => goToTab('Timer')} label="Start a focus timer" style={styles.widgetLink}><Text style={{ color: colors.emerald, fontWeight: '700' }}>Start a focus session →</Text></Touchable>
+                  </> : null}
+                  {slide === 4 ? <>
+                    <Text accessibilityRole="header" style={[styles.widgetNumber, { color: colors.cyan }]}>{postings.length ? `${heldPostings ? Math.round(attendedPostings / heldPostings * 100) : 0}%` : 'Set up'} <Text style={styles.widgetUnit}>{postings.length ? 'posting attendance' : 'attendance'}</Text></Text>
+                    <Text style={[styles.widgetDetail, { color: colors.textMuted }]}>{postings.length ? `${attendedPostings} of ${heldPostings} posting days attended` : 'Add a posting to track your attendance.'}{reminderSettings.remindAttendance ? ' · Daily reminder on' : ''}</Text>
+                    <View style={styles.widgetLinks}>
+                      <Touchable onPress={() => openProgress('attendance')} label="Open attendance tracker" style={styles.widgetLink}><Text style={{ color: colors.cyan, fontWeight: '700' }}>Attendance tracker →</Text></Touchable>
+                      <Touchable onPress={() => setSettingsOpen(true)} label="Open reminder settings" style={styles.widgetLink}><Text style={{ color: colors.text, fontWeight: '700' }}>Reminder settings →</Text></Touchable>
+                    </View>
+                  </> : null}
+                </Animated.View>
               </View>
-              )}
-
-              {/* Tappable, so the carousel is something the reader controls rather
-                  than something that happens to them (SKILL §16 Agency). */}
-              <View style={[styles.dots, scales.hero < 0.75 && { marginTop: 8 }]}>
-                {HERO_SLIDES.map((item, index) => (
-                  <Touchable
-                    key={item.title}
-                    onPress={() => setSlide(index)}
-                    label={item.title}
-                    role="tab"
-                    state={{ selected: index === slide }}
-                    hitSlop={12}
-                    scale={false}>
-                    <View
-                      style={[
-                        styles.dot,
-                        index === slide
-                          ? { width: 20, backgroundColor: colors.primary }
-                          : { width: 6, backgroundColor: colors.cardElevated },
-                      ]}
-                    />
-                  </Touchable>
-                ))}
+              <View style={styles.pager}>
+                <Touchable onPress={() => setSlide(current => (current + HERO_PAGES.length - 1) % HERO_PAGES.length)} label="Previous home widget" style={styles.pagerArrow}><ChevronLeft size={21} color={colors.text} /></Touchable>
+                <View style={styles.dots}>{HERO_PAGES.map((item, index) => <Touchable key={item} onPress={() => setSlide(index)} label={`${item} widget`} role="tab" state={{ selected: index === slide }} hitSlop={12} scale={false}><View style={[styles.dot, { width: index === slide ? 20 : 6, backgroundColor: index === slide ? colors.fuchsia : colors.border }]} /></Touchable>)}</View>
+                <Touchable onPress={() => setSlide(current => (current + 1) % HERO_PAGES.length)} label="Next home widget" style={styles.pagerArrow}><ChevronRight size={21} color={colors.text} /></Touchable>
               </View>
             </GlassSurface>
               </>
@@ -558,6 +575,7 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
             quick: (
               <>
             {/* Quick actions */}
+            <View {...quickSwipe.panHandlers}>
             <View
               style={[
                 styles.quickRow,
@@ -568,7 +586,7 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
                   gap: 8,
                 },
               ]}>
-              <QuickAction
+              {quickPage === 0 ? <><QuickAction
                 icon={<TrendingUp size={18} color={colors.primary} />}
                 label="Progress"
                 sub="Track your learning"
@@ -603,7 +621,18 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
                 compact={scales.quick < 0.85}
                 style={scales.quick < 0.75 ? { width: '48%', flex: 0, flexBasis: '48%' } : undefined}
                 onPress={() => goToTab('AskAI')}
-              />
+              /></> : <>
+                <QuickAction icon={<BookOpen size={18} color={colors.primary} />} label="Resume" sub="Last studied question" color={colors.primary} compact={scales.quick < 0.85} style={scales.quick < 0.75 ? { flex: 0, flexBasis: '48%' } : undefined} onPress={resumeQuestion} />
+                <QuickAction icon={<BookOpen size={18} color={colors.fuchsia} />} label="Note" sub="Write a study note" color={colors.fuchsia} compact={scales.quick < 0.85} style={scales.quick < 0.75 ? { flex: 0, flexBasis: '48%' } : undefined} onPress={() => openProgress('notes', true)} />
+                <QuickAction icon={<CalendarCheck size={18} color={colors.cyan} />} label="Attendance" sub="Track postings" color={colors.cyan} compact={scales.quick < 0.85} style={scales.quick < 0.75 ? { flex: 0, flexBasis: '48%' } : undefined} onPress={() => openProgress('attendance')} />
+                <QuickAction icon={<BellRing size={18} color={colors.emerald} />} label="Reminders" sub="Daily attendance reminders" color={colors.emerald} compact={scales.quick < 0.85} style={scales.quick < 0.75 ? { flex: 0, flexBasis: '48%' } : undefined} onPress={() => setSettingsOpen(true)} />
+              </>}
+            </View>
+            <View style={[styles.pager, styles.quickPager]}>
+              <Touchable onPress={() => setQuickPage(current => (current + 1) % QUICK_PAGES)} label="Previous quick actions" style={styles.pagerArrow}><ChevronLeft size={19} color={colors.text} /></Touchable>
+              <Text style={{ color: colors.textMuted, fontSize: 12 }}>{quickPage + 1} / {QUICK_PAGES} · Swipe for more</Text>
+              <Touchable onPress={() => setQuickPage(current => (current + 1) % QUICK_PAGES)} label="Next quick actions" style={styles.pagerArrow}><ChevronRight size={19} color={colors.text} /></Touchable>
+            </View>
             </View>
               </>
             ),
@@ -844,12 +873,12 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
                   <Trophy size={20} color={colors.primary} />
                 </View>
                 <View>
-                  <Text style={[styles.statLabel, { color: colors.textMuted }]}>Total Study Time</Text>
+                  <Text style={[styles.statLabel, { color: colors.textMuted }]}>Completed Focus Time</Text>
                   <Text style={[styles.statValueSmall, { color: colors.text }]}>
-                    {formatFocusTime(focusMinutes)}
+                    {formatFocusTime(focus.total)}
                   </Text>
                   {compact.stats ? null : (
-                    <Text style={[styles.statHint, { color: colors.primary }]}>Keep going!</Text>
+                    <Text style={[styles.statHint, { color: colors.primary }]}>Today: {formatFocusTime(focus.today)}</Text>
                   )}
                 </View>
               </View>
@@ -1283,6 +1312,17 @@ const styles = StyleSheet.create({
     borderRadius: 105,
   },
   heroTitle: typeScale.title1,
+  heroPage: { minHeight: 128, justifyContent: 'center' },
+  widgetEyebrow: { ...typeScale.overline, fontWeight: '800', letterSpacing: 1.2, marginBottom: 7 },
+  widgetHeading: { ...typeScale.title3, fontWeight: '700' },
+  widgetNumber: { ...typeScale.title1, fontWeight: '800' },
+  widgetUnit: { ...typeScale.callout, fontWeight: '600' },
+  widgetDetail: { ...typeScale.footnote, marginTop: 7 },
+  widgetLinks: { flexDirection: 'row', gap: 16, flexWrap: 'wrap' },
+  widgetLink: { marginTop: 12, minHeight: 28, justifyContent: 'center' },
+  pager: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 8 },
+  pagerArrow: { width: 42, height: 34, alignItems: 'center', justifyContent: 'center' },
+  quickPager: { marginTop: -14, marginBottom: space.sm },
   heroBody: {
     ...typeScale.callout,
     marginTop: space.md,
@@ -1307,7 +1347,7 @@ const styles = StyleSheet.create({
   dots: {
     flexDirection: 'row',
     gap: 6,
-    marginTop: 14,
+    alignItems: 'center',
   },
   dot: {
     height: 6,

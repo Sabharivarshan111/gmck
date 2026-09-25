@@ -6,6 +6,7 @@ import { playChime } from '@/lib/sound';
 import { warn } from '@/lib/log';
 import { plantTree } from '@/lib/forest';
 import { DEFAULT_SPECIES } from '@/lib/trees';
+import { FOCUS_SESSIONS_KEY } from '@/lib/focusStats';
 
 export type PomodoroMode = 'focus' | 'short' | 'long';
 
@@ -249,6 +250,10 @@ export function usePomodoro() {
         ).catch(() => {});
         return updated;
       });
+      // Lifetime completed blocks, independent of whether tree planting is on.
+      AsyncStorage.getItem(FOCUS_SESSIONS_KEY)
+        .then(raw => AsyncStorage.setItem(FOCUS_SESSIONS_KEY, String((Number(raw) || 0) + 1)))
+        .catch(() => {});
 
       const nextMode: PomodoroMode =
         done % settingsRef.current.longEvery === 0 ? 'long' : 'short';

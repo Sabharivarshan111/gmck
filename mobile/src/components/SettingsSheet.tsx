@@ -387,9 +387,9 @@ export function SettingsSheet({
               app onto their lock screen deserves to know what it will do
               before they find out. */}
           <Text style={[styles.note, { color: withAlpha(colors.text, 0.5) }]}>
-            At most one a day, in the evening. Nothing if you have already studied that day,
-            and it stops asking for a week after three you ignore. Exam countdowns, a streak
-            about to break, and revision that is due — never "come back and play".
+            At most one a day at the hour you choose. Exam, streak and revision
+            reminders stay quiet after you study; the optional attendance prompt
+            can still remind you to check your next posting.
           </Text>
           {settings.dailyReminder && !notifyAllowed ? (
             <Text style={[styles.note, { color: colors.warning }]}>
@@ -421,8 +421,17 @@ export function SettingsSheet({
                 value={settings.remindRevision}
                 onChange={next => setSetting('remindRevision', next)}
               />
+              <Switchable
+                label="Daily attendance check"
+                detail="A short posting reminder each day, even if you studied questions"
+                value={settings.remindAttendance}
+                onChange={next => {
+                  setSetting('remindAttendance', next);
+                  syncReminders().catch(() => {});
+                }}
+              />
               <Text style={[styles.note, { color: withAlpha(colors.text, 0.5) }]}>
-                Turning all three off is the same as turning the reminder off.
+                Keep attendance off if you prefer reminders only when something is due.
               </Text>
 
               {/*

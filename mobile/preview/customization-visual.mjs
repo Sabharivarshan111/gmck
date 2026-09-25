@@ -91,6 +91,25 @@ try {
     const stored = await page.evaluate(() => localStorage.getItem('orbit:pdf-tools-position-v1'));
     throw new Error(`PDF tools lost their saved position after reopening: after=${JSON.stringify(after)} restored=${JSON.stringify(restored)} stored=${stored}`);
   }
+  await page.evaluate(() => localStorage.removeItem('orbit:home-order-v1'));
+  await page.goto('http://localhost:5226/?screen=homeresized', { waitUntil: 'networkidle' });
+  const homeHero = await page.getByLabel('Next home widget').boundingBox();
+  if (!homeHero) throw new Error('Home widget pager is missing');
+  await page.getByLabel('Next home widget').click();
+  await page.getByText('complete', { exact: true }).waitFor();
+  await page.screenshot({ path: path.join(output, 'home-widgets-progress.png') });
+  await touchDrag({ x: 320, y: homeHero.y - 75 }, -210, 0);
+  await page.getByText('PICK UP WHERE YOU LEFT OFF').waitFor();
+  await page.screenshot({ path: path.join(output, 'home-widgets-resume.png') });
+  await page.getByLabel('Next home widget').click();
+  await page.getByText('STUDY TIME').waitFor();
+  await page.screenshot({ path: path.join(output, 'home-widgets-study.png') });
+  await page.getByLabel('Next home widget').click();
+  await page.getByText('ATTENDANCE', { exact: true }).first().waitFor();
+  await page.screenshot({ path: path.join(output, 'home-widgets-attendance.png') });
+  await page.getByLabel('Next quick actions').click();
+  await page.getByLabel('Reminders', { exact: true }).waitFor();
+  await page.screenshot({ path: path.join(output, 'home-quick-page-two.png') });
   if (failures.length) throw new Error('Preview errors: ' + failures.slice(0, 3).join(' | '));
   console.log('Home and PDF toolbar screenshots saved to', output);
 } finally {

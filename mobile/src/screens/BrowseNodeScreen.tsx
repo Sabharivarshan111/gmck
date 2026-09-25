@@ -45,6 +45,7 @@ import { usePageRefs, pageFor } from '@/hooks/usePageRefs';
 import { setSetting, useSettings } from '@/lib/settings';
 import { useCountDone } from '@/hooks/useProgress';
 import { requestDailyAd } from '@/lib/dailyAd';
+import { rememberQuestion } from '@/lib/homeResume';
 import type { HomeStackParamList, RootTabParamList } from '@/navigation/types';
 
 type Nav = NativeStackNavigationProp<HomeStackParamList, 'BrowseNode'>;
@@ -74,6 +75,9 @@ export default function BrowseNodeScreen() {
   // Open on the tab the searched question is actually on, or a reader who
   // arrives from a search sees the other tab and an unhighlighted list.
   const [type, setType] = useState<QuestionType>(highlightType ?? 'essay');
+  const remember = useCallback((question: string) => {
+    rememberQuestion({ year, path, title, question, type });
+  }, [year, path, title, type]);
   const [query, setQuery] = useState('');
 
   /**
@@ -477,6 +481,7 @@ export default function BrowseNodeScreen() {
                   <QuestionRow
                     key={`${index}-${question.slice(0, 24)}`}
                     question={question}
+                    onInteract={remember}
                     index={index}
                     onAskAi={askAi}
                     onNote={onNote}
@@ -660,6 +665,7 @@ export default function BrowseNodeScreen() {
           // question sits in the topic, which does not change when filtered.
           <QuestionRow
             question={item.question}
+            onInteract={remember}
             index={item.index}
             onAskAi={askAi}
             onNote={onNote}

@@ -53,6 +53,8 @@ export interface Digest {
   allowExam: boolean;
   allowStreak: boolean;
   allowRevision: boolean;
+  /** Optional daily posting prompt; the default for existing users is off. */
+  allowAttendance: boolean;
 }
 
 /** Local midnight as a day number, matching what the receiver computes. */

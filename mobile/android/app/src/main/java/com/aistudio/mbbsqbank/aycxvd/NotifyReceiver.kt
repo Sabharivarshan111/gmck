@@ -52,14 +52,16 @@ class NotifyReceiver : BroadcastReceiver() {
 
     val digest = NotifyStore.digest(context)
 
-    // Already studied today. Nothing to prompt.
-    if (digest.optLong("lastStudyDay", -1L) == today) {
+    // Attendance is an independently opted-in daily posting check. Studying
+    // questions today does not mean someone remembered tomorrow's posting.
+    val attendance = digest.optBoolean("allowAttendance", false)
+    if (!attendance && digest.optLong("lastStudyDay", -1L) == today) {
       return
     }
 
     // Ignored three in a row: once a week from here, not once a day.
     val ignored = prefs.getInt(NotifyStore.KEY_IGNORED, 0)
-    if (ignored >= 3) {
+    if (!attendance && ignored >= 3) {
       val last = prefs.getLong(NotifyStore.KEY_LAST_POSTED, -1L)
       if (last > 0 && today - last < 7) {
         return
@@ -87,6 +89,7 @@ class NotifyReceiver : BroadcastReceiver() {
    * work that is due today.
    */
   internal fun compose(digest: org.json.JSONObject, today: Long): Pair<String, String>? {
+    if (digest.optLong("lastStudyDay", -1L) == today) return attendanceMessage(digest, today)
     // optBoolean defaults true so a digest written by an older build — one
     // that predates these switches — behaves as it did before rather than
     // going silent on every kind at once.
@@ -117,7 +120,18 @@ class NotifyReceiver : BroadcastReceiver() {
       return "$what due for revision" to "Spaced revision only works on the day it comes up."
     }
 
-    return null
+    return attendanceMessage(digest, today)
+  }
+
+  private fun attendanceMessage(digest: org.json.JSONObject, today: Long): Pair<String, String>? {
+    if (!digest.optBoolean("allowAttendance", false)) return null
+    // A generic check: Orbit does not know the student's ward timetable.
+    val lines = arrayOf(
+      "Check your next clinical posting. One attended day at a time.",
+      "Plan for your next posting today. A little preparation goes a long way.",
+      "Keep showing up for the ward. Your future self gets the benefit.",
+    )
+    return "Keep your posting on track" to lines[(today % lines.size).toInt()]
   }
 
   internal fun epochDay(): Long {

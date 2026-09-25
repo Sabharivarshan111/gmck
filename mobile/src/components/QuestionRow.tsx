@@ -58,6 +58,8 @@ interface Props {
    * something a reader can act on.
    */
   myBook?: boolean;
+  /** Remember a question the reader actually opened or marked. */
+  onInteract?: (question: string) => void;
 }
 
 /**
@@ -88,6 +90,7 @@ function QuestionRowBase({
   onPageRef,
   communityPage,
   myBook = false,
+  onInteract,
 }: Props) {
   const { colors } = useTheme();
   const reduceMotion = useReducedMotion();
@@ -135,8 +138,9 @@ function QuestionRowBase({
     ]).start();
   }, [highlighted, reduceMotion, glow]);
   const toggle = useCallback(() => {
+    onInteract?.(question);
     toggleQuestionDone(question);
-  }, [question]);
+  }, [onInteract, question]);
 
   // Both prompts are built in src/lib/askAi.ts, which owns the markers and
   // intent flags the edge function needs. Hand-writing the prose here is what
@@ -176,6 +180,7 @@ function QuestionRowBase({
   );
 
   const onRowTap = useCallback(() => {
+    onInteract?.(question);
     const now = Date.now();
     if (timer.current) {
       clearTimeout(timer.current);
@@ -197,7 +202,7 @@ function QuestionRowBase({
       taps.current = 0;
       timer.current = null;
     }, TAP_WINDOW_MS);
-  }, [askAnswer, askMcq]);
+  }, [askAnswer, askMcq, onInteract, question]);
 
   const importanceColor =
     importance === 'must-know'

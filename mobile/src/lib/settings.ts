@@ -99,6 +99,8 @@ export interface Settings {
   remindExam: boolean;
   remindStreak: boolean;
   remindRevision: boolean;
+  /** An explicitly opted-in daily nudge to check the next clinical posting. */
+  remindAttendance: boolean;
   /**
    * Whether question rows show a textbook page reference.
    *
@@ -186,6 +188,7 @@ export const DEFAULT_SETTINGS: Settings = {
   remindExam: true,
   remindStreak: true,
   remindRevision: true,
+  remindAttendance: false,
   // Off: only useful to a reader holding that particular book, and it is what
   // gates the network call.
   showPageRefs: false,
@@ -313,6 +316,10 @@ export async function hydrateSettings(): Promise<void> {
         typeof parsed.remindRevision === 'boolean'
           ? parsed.remindRevision
           : DEFAULT_SETTINGS.remindRevision,
+      remindAttendance:
+        typeof parsed.remindAttendance === 'boolean'
+          ? parsed.remindAttendance
+          : DEFAULT_SETTINGS.remindAttendance,
       showPageRefs:
         typeof parsed.showPageRefs === 'boolean'
           ? parsed.showPageRefs

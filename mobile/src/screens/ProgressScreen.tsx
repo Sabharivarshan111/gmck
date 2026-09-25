@@ -1,5 +1,7 @@
 import { GOOGLE_SIGN_IN_ENABLED } from '@/lib/authMode';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useRoute, type RouteProp } from '@react-navigation/native';
+import type { RootTabParamList } from '@/navigation/types';
 import {
   ActivityIndicator,
   Modal,
@@ -98,6 +100,7 @@ const THEME_OPTIONS: { key: ThemePreference; label: string }[] = [
 ];
 
 export default function ProgressScreen() {
+  const route = useRoute<RouteProp<RootTabParamList, 'Progress'>>();
   const { colors, preference, setPreference } = useTheme();
   const insets = useSafeAreaInsets();
   const countDone = useCountDone();
@@ -115,6 +118,10 @@ export default function ProgressScreen() {
   const [editOpen, setEditOpen] = useState(false);
   const [tab, setTab] = useState<Tab>('stats');
   const [notesOpen, setNotesOpen] = useState(false);
+  useEffect(() => {
+    if (route.params?.tab && route.params.tab !== 'notes') setTab(route.params.tab);
+    if (route.params?.openNotes || route.params?.tab === 'notes') setNotesOpen(true);
+  }, [route.params?.nonce, route.params?.tab, route.params?.openNotes]);
   const [rewardsOpen, setRewardsOpen] = useState(true);
   const [syncing, setSyncing] = useState(false);
   const [email, setEmail] = useState<string | null>(null);
@@ -263,6 +270,7 @@ export default function ProgressScreen() {
     reminderSettings.remindExam,
     reminderSettings.remindStreak,
     reminderSettings.remindRevision,
+    reminderSettings.remindAttendance,
   ]);
 
   return (

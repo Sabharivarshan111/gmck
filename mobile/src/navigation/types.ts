@@ -26,5 +26,5 @@ export type RootTabParamList = {
   Notes: undefined;
   Timer: undefined;
   AskAI: { question?: string; nonce?: number } | undefined;
-  Progress: undefined;
+  Progress: { tab?: 'stats' | 'attendance' | 'notes'; openNotes?: boolean; nonce?: number } | undefined;
 };
