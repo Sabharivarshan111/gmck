@@ -626,8 +626,9 @@ function toDeckCard(
   mediaEntries: ApkgMediaEntry[],
   extractedByIndex: Record<string, string>,
 ): DeckCard {
+  // Escape reserved URI characters in the final filename, such as '#' and '?'.
   const toUri = (name: string) =>
-    `file://${mediaDir}/${storedMediaName(name, mediaEntries, extractedByIndex)}`;
+    `file://${mediaDir}/${encodeURIComponent(storedMediaName(name, mediaEntries, extractedByIndex))}`;
   const frontImages = mediaDir ? card.frontMedia.map(toUri) : [];
   const backImages = mediaDir ? card.backMedia.map(toUri) : [];
 
@@ -661,10 +662,17 @@ function toDeckCard(
  * at nothing.
  */
 export function safeMediaName(name: string): string {
-  const base = name.split('/').pop()?.split('\\').pop() ?? '';
+  let decoded = name;
+  try {
+    // Android's URLDecoder turns '+' into a space as well as decoding '%xx'.
+    decoded = decodeURIComponent(name.replace(/\+/g, ' '));
+  } catch {
+    // A malformed percent sequence is still a usable literal filename.
+  }
+  const base = decoded.split('/').pop()?.split('\\').pop() ?? '';
   const cleaned = base
     .split('')
-    .filter(char => /[A-Za-z0-9._\-() []\]]/.test(char))
+    .filter(char => /[A-Za-z0-9._()[\] -]/.test(char))
     .join('')
     .trim();
   if (!cleaned || cleaned === '.' || cleaned === '..') {

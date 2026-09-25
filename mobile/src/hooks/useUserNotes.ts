@@ -120,12 +120,8 @@ export function useUserNotes() {
   const [loading, setLoading] = useState(true);
 
   const saveLocal = useCallback(async (list: UserNote[]) => {
-    try {
-      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-    } catch {
-      // Best effort, like every other store in this app. A note that fails to
-      // persist is a note lost on the next launch; a launch that fails is worse.
-    }
+    // The editor must know when persistence fails so it can retain the draft.
+    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(list));
   }, []);
 
   const load = useCallback(async () => {
@@ -166,8 +162,8 @@ export function useUserNotes() {
       updated_at: now,
     };
     const next = [note, ...notes];
-    setNotes(next);
     await saveLocal(next);
+    setNotes(next);
     return note;
   };
 
@@ -175,15 +171,15 @@ export function useUserNotes() {
     const next = notes.map(note =>
       note.id === id ? { ...note, ...patch, updated_at: new Date().toISOString() } : note,
     );
-    setNotes(next);
     await saveLocal(next);
+    setNotes(next);
   };
 
   const deleteNote = async (id: string) => {
     const going = notes.find(note => note.id === id);
     const next = notes.filter(note => note.id !== id);
-    setNotes(next);
     await saveLocal(next);
+    setNotes(next);
     // The pictures and files go with it. Nothing else references them, so
     // leaving them behind is storage the reader can never account for or
     // reclaim — and a forgotten video is a great deal of it.

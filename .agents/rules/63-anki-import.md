@@ -37,12 +37,13 @@ as 1 card and the check fails eighteen ways.
   the way out.
 - **A media file's zip entry is named for its *position* in the media list** —
   `"0"`, `"1"` — and nothing else knows which is which.
-- **Never `ORDER BY` or `WHERE` a name column.** Every `name` in a schema 15+
-  collection is `COLLATE unicase`, which only Anki's Rust backend registers.
-  SQLite resolves collations lazily, so plain `SELECT`s work and `ORDER BY
-  name` throws `no such collation sequence: unicase` on a device and nowhere a
-  desktop Anki would ever show it. The queries live in `SQL` in
-  `apkgFormat.ts`; `check:apkg` greps the Kotlin for the same strings.
+- **Anki's unicase collation makes schema 15+ tables unreadable on stock
+  SQLite.** Even a plain scan of the WITHOUT ROWID fields/templates tables
+  can fail with "no query solution". Android rewrites only the collation
+  declaration in its disposable extracted database and reopens it; the APKG
+  itself is untouched. The fixture check applies the same change before
+  comparing all three package versions. Do not order or filter on Anki name
+  columns: the keys used here are numeric ids and ordinals.
 
 ## The `cards` table says how many cards a note has
 

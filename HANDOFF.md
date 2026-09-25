@@ -2200,3 +2200,23 @@ Product commit: `e2103260a933a51ac4d8e6567bad0c05b4d46ad6`.
   run `35747164269` all completed successfully. Web run `35747164326` also
   completed successfully.
 
+## 2026-09-25 — ChatGPT — Anki v3 and note recovery follow-up
+
+- The first media fix left a broken `safeMediaName` fallback: its character
+  class removed every ordinary letter. Fixed and added a filename regression
+  check, including escaped characters in file URIs.
+- The real schema 18 / v3 APKG fixture failed with `no query solution`:
+  Anki's WITHOUT ROWID fields/templates require its private unicase collation,
+  even for a plain scan. Android now rewrites only the collation declaration
+  in the temporary extracted SQLite database, then reopens it. The APKG itself
+  is unchanged. The fixture harness mirrors this step and all three package
+  versions now pass `npm run check:apkg`.
+- Note storage errors now propagate to the editor; note state updates only
+  after persistence. Failed Save keeps the editor and draft open with an
+  error. Draft writes/removal are serialized to prevent a delayed autosave
+  recreating a draft after Save.
+- Existing cards imported with the old broken file URIs need their original
+  APKG re-imported. The saved cards have no original media filenames to
+  reconstruct a safe automatic repair. Confirm with a real image-bearing deck
+  on Android before claiming device-level media validation.
+- VersionCode stays pinned at 23 under the standing Play-upload rule.

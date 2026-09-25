@@ -78,7 +78,7 @@
     "check:single-note": "node scripts/single-note-diagram-check.mjs",
     "check:web-note": "node scripts/web-note-diagram-check.mjs",
     "check:open-access": "node scripts/open-access-check.mjs",
-    "check:apkg": "node scripts/apkg-check.mjs",
+    "check:apkg": "node scripts/apkg-check.mjs && node scripts/apkg-media-names-check.mjs",
     "check:apkg-web": "node preview/web-apkg-check.mjs",
     "check:apkg-web-import": "node preview/web-apkg-import-check.mjs",
     "fixtures:apkg": "python3 scripts/make-apkg-fixtures.py",

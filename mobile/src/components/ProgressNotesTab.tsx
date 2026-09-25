@@ -568,6 +568,9 @@ export function ProgressNotesTab({ year }: Props) {
   const { notes, createNote, updateNote, deleteNote } = useUserNotes();
 
   const [editing, setEditing] = useState<UserNote | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [draftError, setDraftError] = useState(false);
+  const savingRef = useRef(false);
   const [editTitle, setEditTitle] = useState("");
   const [editContent, setEditContent] = useState("");
   const [editSubject, setEditSubject] = useState<string | null>(null);
@@ -686,7 +689,7 @@ export function ProgressNotesTab({ year }: Props) {
    * note the reader has not committed with Save.
    */
   useEffect(() => {
-    if (!editing) {
+    if (!editing || savingRef.current) {
       draftRef.current = null;
       if (draftTimer.current) {
         clearTimeout(draftTimer.current);
@@ -714,7 +717,10 @@ export function ProgressNotesTab({ year }: Props) {
     if (draftTimer.current) clearTimeout(draftTimer.current);
     draftTimer.current = setTimeout(() => {
       draftTimer.current = null;
-      void saveNoteDraft(draft);
+      void saveNoteDraft(draft).then(
+        () => setDraftError(false),
+        () => setDraftError(true),
+      );
     }, 400);
 
     return () => {
@@ -740,7 +746,7 @@ export function ProgressNotesTab({ year }: Props) {
   useEffect(() => {
     const flush = () => {
       const draft = draftRef.current;
-      if (draft) void saveNoteDraft({ ...draft, savedAt: Date.now() });
+      if (draft) void saveNoteDraft({ ...draft, savedAt: Date.now() }).catch(() => setDraftError(true));
     };
     const sub = AppState.addEventListener("change", state => {
       if (state !== "active") flush();
@@ -758,12 +764,14 @@ export function ProgressNotesTab({ year }: Props) {
       draftTimer.current = null;
     }
     const draft = draftRef.current;
-    if (draft) void saveNoteDraft({ ...draft, savedAt: Date.now() });
+    if (draft) void saveNoteDraft({ ...draft, savedAt: Date.now() }).catch(() => setDraftError(true));
     setEditing(null);
   }, []);
 
   const openEditor = async (note?: UserNote) => {
     setImageError(null);
+    setSaveError(null);
+    setDraftError(false);
     setReading(null);
     setEditorMode('edit');
     setLinkOpen(false);
@@ -791,7 +799,8 @@ export function ProgressNotesTab({ year }: Props) {
   };
 
   const handleSave = async () => {
-    if (!editing) return;
+    if (!editing || savingRef.current) return;
+    savingRef.current = true;
     // The Save button sits under a focused field; without this the first tap
     // is spent dismissing the keyboard. See .agents/rules/80-keyboard.md.
     Keyboard.dismiss();
@@ -800,9 +809,11 @@ export function ProgressNotesTab({ year }: Props) {
       draftTimer.current = null;
     }
     const draftId = editing.id;
-    // Prevent the editor-closing render from scheduling the just-saved state
-    // back into the draft key after it has been cleared.
-    draftRef.current = null;
+    // Keep the final keystroke in the recovery draft until the note persists.
+    const lastDraft = draftRef.current;
+    if (lastDraft) {
+      await saveNoteDraft({ ...lastDraft, savedAt: Date.now() }).catch(() => setDraftError(true));
+    }
     const patch = {
       title: editTitle.trim() || "Untitled Note",
       content: editContent.trim(),
@@ -815,13 +826,23 @@ export function ProgressNotesTab({ year }: Props) {
       sheets: editSheets,
       links: editLinks,
     };
-    if (editing.id === "new") {
-      await createNote(patch);
-    } else {
-      await updateNote(editing.id, patch);
+    try {
+      if (editing.id === "new") {
+        await createNote(patch);
+      } else {
+        await updateNote(editing.id, patch);
+      }
+      // The note is now durable. A failure to remove its backup must not
+      // invite a second tap on Save (which creates a duplicate new note).
+      await clearNoteDraft(draftId).catch(() => undefined);
+      draftRef.current = null;
+      setEditing(null);
+      setSaveError(null);
+    } catch {
+      setSaveError("Could not save this note. Your editor is still open; please try again.");
+    } finally {
+      savingRef.current = false;
     }
-    await clearNoteDraft(draftId);
-    setEditing(null);
   };
 
   /**
@@ -1080,6 +1101,11 @@ export function ProgressNotesTab({ year }: Props) {
           <Text style={[styles.noteEmpty, { color: colors.textMuted }]}>
             Draft autosaves on this phone while you type.
           </Text>
+          {draftError || saveError ? (
+            <Text accessibilityLiveRegion="polite" style={[styles.noteEmpty, { color: colors.danger }]}>
+              {saveError ?? "Draft backup failed. Check available phone storage before closing."}
+            </Text>
+          ) : null}
           {/*
             Where this note belongs.
 

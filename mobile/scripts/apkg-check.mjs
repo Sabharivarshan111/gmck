@@ -137,7 +137,29 @@ function openPackage(file) {
 
   const temp = path.join(os.tmpdir(), `apkg-check-${process.pid}-${path.basename(file)}.sqlite`);
   fs.writeFileSync(temp, collectionBytes);
-  const db = new DatabaseSync(temp, { readOnly: true });
+  let db = new DatabaseSync(temp, { readOnly: true });
+  // Android does this to the extracted temporary copy before it reads schema
+  // 15+ fields/templates. Anki's private unicase collation is unavailable in
+  // both stock Android SQLite and node:sqlite. WITHOUT ROWID tables cannot
+  // even be scanned until their schema declarations are made readable.
+  const needsCollation = db.prepare(
+    "SELECT 1 FROM sqlite_master WHERE type='table' AND sql LIKE '%COLLATE unicase%' LIMIT 1",
+  ).get();
+  if (needsCollation) {
+    db.close();
+    // node:sqlite turns defensive mode on by default; Android's database
+    // connection for this disposable file does not expose that setting.
+    db = new DatabaseSync(temp, { defensive: false });
+    db.exec('PRAGMA writable_schema=ON');
+    db.exec(
+      "UPDATE sqlite_master SET sql=replace(sql, 'COLLATE unicase', 'COLLATE BINARY ') " +
+      "WHERE type='table' AND name IN ('fields','templates','notetypes','decks') " +
+      "AND sql LIKE '%COLLATE unicase%'",
+    );
+    db.exec('PRAGMA writable_schema=OFF');
+    db.close();
+    db = new DatabaseSync(temp, { readOnly: true });
+  }
 
   const schema = db.prepare(apkg.SQL.version).get()?.ver ?? 0;
   const modern = db.prepare(apkg.SQL.hasNotetypeTables).all().length > 0;

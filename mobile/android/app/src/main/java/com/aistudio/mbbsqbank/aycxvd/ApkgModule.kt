@@ -305,11 +305,48 @@ class ApkgModule(reactContext: ReactApplicationContext) : NativeOrbitApkgSpec(re
           temp.outputStream().use { output -> input.copyTo(output) }
         }
       }
-      val db = SQLiteDatabase.openDatabase(
+      var db = SQLiteDatabase.openDatabase(
         temp.absolutePath,
         null,
-        SQLiteDatabase.OPEN_READONLY or SQLiteDatabase.NO_LOCALIZED_COLLATORS,
+        SQLiteDatabase.OPEN_READWRITE or SQLiteDatabase.NO_LOCALIZED_COLLATORS,
       )
+      // Anki's schema 15+ uses a private "unicase" collation in its table
+      // definitions. Android's SQLite cannot register that collation, and
+      // reading WITHOUT ROWID tables (fields/templates) then fails with
+      // "no query solution". Change only the schema declaration in our
+      // disposable extracted copy; the imported archive is never modified.
+      // Those tables' primary keys are integer (ntid, ord), so this does not
+      // change the order or equality of the keys we read.
+      val needsCollation = db.rawQuery(
+        "SELECT 1 FROM sqlite_master WHERE type='table' AND sql LIKE '%COLLATE unicase%' LIMIT 1",
+        null,
+      ).use { it.moveToFirst() }
+      if (needsCollation) {
+        try {
+          db.execSQL("PRAGMA writable_schema=ON")
+          db.beginTransaction()
+          try {
+            db.execSQL(
+              "UPDATE sqlite_master SET sql=replace(sql, 'COLLATE unicase', 'COLLATE BINARY ') " +
+                "WHERE type='table' AND name IN ('fields','templates','notetypes','decks') " +
+                "AND sql LIKE '%COLLATE unicase%'",
+            )
+            db.setTransactionSuccessful()
+          } finally {
+            db.endTransaction()
+            db.execSQL("PRAGMA writable_schema=OFF")
+          }
+        } finally {
+          db.close()
+        }
+        // Reopen to make SQLite parse the updated schema instead of keeping
+        // its cached version from the previous connection.
+        db = SQLiteDatabase.openDatabase(
+          temp.absolutePath,
+          null,
+          SQLiteDatabase.OPEN_READONLY or SQLiteDatabase.NO_LOCALIZED_COLLATORS,
+        )
+      }
       return db.use(body)
     } finally {
       temp.delete()

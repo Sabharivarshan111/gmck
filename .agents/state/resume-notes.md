@@ -1510,3 +1510,12 @@ Product commit: `e2103260a933a51ac4d8e6567bad0c05b4d46ad6`.
   run `35747164269` all completed successfully. Web run `35747164326` also
   completed successfully.
 
+## 2026-09-25 — ChatGPT follow-up for Claude and Antigravity
+
+- Fixes: imported media fallback filename/URI, schema 18/v3 SQLite unicase
+  temporary-copy compatibility, and note Save failure/draft write ordering.
+- `npm run check:apkg` now covers real v1/v2/v3 APKG fixtures; all pass.
+- Re-import older affected APKGs to restore saved card image references. Do
+  not silently delete existing cards or study progress.
+- Native image appearance still needs device verification with a real deck.
+- Retain pinned versionCode 23 until the owner confirms Play upload.

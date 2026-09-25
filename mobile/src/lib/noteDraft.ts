@@ -26,6 +26,20 @@ export interface NoteDraft {
 }
 
 const PREFIX = 'orbit:user-note-draft:v1:';
+// Multiple rapid edits and a Save may overlap across the native bridge.
+// Serialize operations for each note so a late autosave cannot recreate a
+// draft after Save has removed it.
+const pending = new Map<string, Promise<void>>();
+
+function inOrder(noteId: string, write: () => Promise<void>): Promise<void> {
+  const previous = pending.get(noteId) ?? Promise.resolve();
+  const current = previous.catch(() => undefined).then(write);
+  pending.set(noteId, current);
+  void current.finally(() => {
+    if (pending.get(noteId) === current) pending.delete(noteId);
+  }).catch(() => undefined);
+  return current;
+}
 
 function keyFor(noteId: string): string {
   return `${PREFIX}${noteId}`;
@@ -33,6 +47,9 @@ function keyFor(noteId: string): string {
 
 export async function loadNoteDraft(noteId: string): Promise<NoteDraft | null> {
   try {
+    // Closing and immediately reopening the editor must see its last queued
+    // write, rather than an older draft still in AsyncStorage.
+    await pending.get(noteId)?.catch(() => undefined);
     const raw = await AsyncStorage.getItem(keyFor(noteId));
     if (!raw) return null;
     const parsed = JSON.parse(raw) as Partial<NoteDraft>;
@@ -68,17 +85,11 @@ export async function loadNoteDraft(noteId: string): Promise<NoteDraft | null> {
 }
 
 export async function saveNoteDraft(draft: NoteDraft): Promise<void> {
-  try {
-    await AsyncStorage.setItem(keyFor(draft.noteId), JSON.stringify(draft));
-  } catch {
-    // Recovery is best effort. The normal Save path still owns the note.
-  }
+  return inOrder(draft.noteId, () =>
+    AsyncStorage.setItem(keyFor(draft.noteId), JSON.stringify(draft)),
+  );
 }
 
 export async function clearNoteDraft(noteId: string): Promise<void> {
-  try {
-    await AsyncStorage.removeItem(keyFor(noteId));
-  } catch {
-    // A stale draft is ignored when it is older than a saved note.
-  }
+  return inOrder(noteId, () => AsyncStorage.removeItem(keyFor(noteId)));
 }
