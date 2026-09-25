@@ -2296,3 +2296,36 @@ Product commit: `e2103260a933a51ac4d8e6567bad0c05b4d46ad6`.
 - Web run `36086530893` passed. The three Android release tags all point to
   the same product commit. No real phone import of the affected MF5429 deck
   was available for visual confirmation.
+
+## 2026-09-25 — Version 24 verified customization
+
+- Owner confirmed Play upload of versionCode 23 and requested versionCode 24.
+  Gradle, appVersion and version-check agree on 24 / 0.0.0.24. The live
+  `app_releases` row for 24 was inserted and queried back with four notes.
+- The visual touch check exposed and then verified fixes for two real bugs:
+  a moved Home card had its new order overwritten by an asynchronous position
+  save; and the PDF floating toolbar started dragging from a stale point before
+  page layout arrived. `useHomeOrder` now saves with its latest order ref and
+  `PdfViewerModal` starts with synchronized bounds and position.
+- Visual workflow run 36112331283 passed on product commit
+  `6c80453bb232999070aeeb45338c41c6aef0eff0`. It captured Home before
+  and after and the PDF tools before and after; it also checks position after
+  reload. Browser preview is the real React Native component but Android
+  touch behavior and imported Anki media still warrant physical-device checks.
+- Release/internal/debug workflows triggered from the same product commit:
+  36112331297 / 36112331268 / 36112331244. Record their final published tags
+  and asset links before handing a build to the owner. Older v24 runs from
+  82441c and fd39467 predate the final PDF fix.
+
+### Final version 24 artifacts (all green, same commit)
+
+- Play AAB: https://github.com/Sabharivarshan111/gmck/releases/download/release-527/app-release.aab
+- Signed direct release APK: https://github.com/Sabharivarshan111/gmck/releases/download/release-527/app-release.apk
+- Internal APK with normal package and Google sign-in: https://github.com/Sabharivarshan111/gmck/releases/download/internal-328/app-internal.apk
+- Debug/preview APK with debug-only login bypass: https://github.com/Sabharivarshan111/gmck/releases/download/debug-334/app-preview.apk
+- Successful runs: release 36112331297, internal 36112331268, debug
+  36112331244, web 36112331314, visual 36112331283. All three Android
+  tags point to `6c80453bb232999070aeeb45338c41c6aef0eff0`.
+- The owner still has to upload the AAB to Play Console. Do not claim it is
+  published on Play or that device-specific Samsung picker/Anki images were
+  tested on a real phone here.

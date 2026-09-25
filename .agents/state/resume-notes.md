@@ -1575,3 +1575,26 @@ so a physical-device re-import/photo check is still outstanding.
   36111594830, debug 36111594851): they do not include the persistence fix.
   Use only a subsequent v24 build from the follow-up commit after its visual
   workflow passes, and capture its exact release tags here.
+
+## 2026-09-25 — Version 24 verified customization (current handoff)
+
+- Product commit `6c80453bb232999070aeeb45338c41c6aef0eff0` includes
+  versionCode 24 and its live app_releases row with four notes, Home order
+  persistence fix, PDF toolbar initial-position fix and visual check.
+- Browser touch workflow 36112331283 passed on that commit and has four
+  before/after screenshots. It verifies saved Home order, PDF move and PDF
+  position after reopening. Still check an Android phone's gesture feel.
+- Only use Android artifacts from release run 36112331297, internal run
+  36112331268 and debug run 36112331244 (verify successful tags/assets).
+  Previous v24 runs predate the final PDF fix. App has not been uploaded to
+  Play Console by this task.
+
+### Final v24 build links
+
+- `release-527`: AAB https://github.com/Sabharivarshan111/gmck/releases/download/release-527/app-release.aab ; APK https://github.com/Sabharivarshan111/gmck/releases/download/release-527/app-release.apk
+- `internal-328`: https://github.com/Sabharivarshan111/gmck/releases/download/internal-328/app-internal.apk
+- `debug-334`: https://github.com/Sabharivarshan111/gmck/releases/download/debug-334/app-preview.apk
+- Runs 36112331297 / 36112331268 / 36112331244 all completed green and
+  all tags point to product commit `6c80453bb232999070aeeb45338c41c6aef0eff0`.
+  Web and visual checks also passed. AAB is ready for owner Play upload; this
+  task did not submit it to Play.
