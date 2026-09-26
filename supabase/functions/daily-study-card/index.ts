@@ -33,7 +33,9 @@ async function generate(year: string, kind: string, slot: number): Promise<Card>
   const parts: Array<Record<string, unknown>> = [];
   let row: { subject: string; question_text: string; public_url: string } | null = null;
   for (let attempt = 0; attempt < Math.min(6, count); attempt++) {
-    const position = (slot * 17 + (kind === 'picture' ? 7 : 0) + attempt) % count;
+    // All reviewed year pools have at least 78 rows. Consecutive slots must
+    // visit different pictures even when a pool size shares factors with 17.
+    const position = (slot + (kind === 'picture' ? 47 : 0) + attempt) % count;
     const picked = await base().order('id').range(position, position);
     if (picked.error || !picked.data?.[0]) continue;
     const candidate = picked.data[0];
