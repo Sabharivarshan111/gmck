@@ -1631,3 +1631,7 @@ so a physical-device re-import/photo check is still outstanding.
 ### Daily Home card continuation (2026-09-26)
 
 Current product commit `fe03a978bfa2f4c88cd8f850fffc46c08bc4d5bb`. Shared Supabase 42-slot/year/kind cache deployed (private `daily_study_cards`, Edge `daily-study-card` v2). Home carousel includes MCQ, picture, Resume (year validation fixed), progress, study, attendance; small Bank tile replaces duplicate Resume. First live Second Year cards generated; latest visual and Android builds still require verification. See HANDOFF.md.
+
+### Final daily Home visual and builds
+
+Native source `d4e0dd2d3fedfa1b9fde7553dcae4e867660ebd4`, Edge v3, screenshots commit `7458277e6a50a43e4f7bfe6c93183e625d369e92`; visual run `36213138445` passed expanded picture. Final release/internal/debug runs `36213138345 / 36213138347 / 36213138460` still compiling, verify assets. Supabase storage/cache figures and v24 Play text in HANDOFF.md. No Play upload.

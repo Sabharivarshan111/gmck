@@ -644,3 +644,7 @@ The original Claude branch was never typechecked in its sandbox. CI on the integ
 ## 2026-09-26 Home daily cards continuation
 
 Product commit `fe03a978bfa2f4c88cd8f850fffc46c08bc4d5bb`. See `HANDOFF.md` 2026-09-26 section for precise design, backend pool and verification. The current screenshot job supersedes first visual run `36211791675`. User specifically wants actual screenshots displayed inline in chat; publish reviewed PNGs and use Markdown image tags. Shared 42-slot per-year/kind Supabase cache avoids Gemini calls per user and eventually stops generation after all slots fill. The first live Second Year MCQ and picture are ready. VersionCode 24, no Play upload.
+
+### Final daily Home v24 verification
+
+Use source `d4e0dd2d3fedfa1b9fde7553dcae4e867660ebd4`, Edge function v3, and screenshots under `screenshots/home-daily-v24/` committed at `7458277e6a50a43e4f7bfe6c93183e625d369e92`. Final visual run `36213138445` passed, including opaque full-screen image. HANDOFF.md records exact Supabase use: 2 cards/32 KiB new cache, 407 objects/~277 MiB existing Storage, ~63.5 MiB database. Final Android runs `36213138345 / 36213138347 / 36213138460` are compiling; do not substitute old v24 tags. No Play upload.

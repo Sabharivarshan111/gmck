@@ -609,3 +609,7 @@ A mathematically robust wrapper was implemented in `AnatomicalBody3D.tsx`:
 ## 2026-09-26 Home daily cards handoff
 
 Read the appended 2026-09-26 section in `HANDOFF.md`. Current product commit is `fe03a978bfa2f4c88cd8f850fffc46c08bc4d5bb`. New `daily-study-card` Supabase Edge Function v2 and private `daily_study_cards` shared 42-slot pool are deployed; year-specific MCQ and picture cards, local date/answer cache, resume YearKey bug fix, and a new large Home carousel are in `mobile/src`. The picture uses only approved/reviewed question diagrams. First live smoke produced and cached both Second Year kinds. Confirm latest screenshot CI and build releases before claiming shipped assets. There is no Play upload in this work.
+
+### Final daily Home v24 verification
+
+Current app source `d4e0dd2d3fedfa1b9fde7553dcae4e867660ebd4`, Edge v3, screenshots commit `7458277e6a50a43e4f7bfe6c93183e625d369e92`. See HANDOFF.md final daily Home section for storage measurements and final build run IDs. Full-screen diagram visual run `36213138445` passed. Builds still compiling at handoff update; verify before linking release assets. App release notes row v24 updated. No Play upload.
