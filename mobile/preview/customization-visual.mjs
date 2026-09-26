@@ -124,6 +124,11 @@ try {
   await page.screenshot({ path: path.join(output, 'home-daily-picture.png') });
   await page.getByLabel('Enlarge daily picture').click();
   await page.getByLabel('Close enlarged picture').waitFor();
+  await page.waitForFunction(() => {
+    const image = document.querySelector('img[alt="Enlarged study diagram for Microbiology"]');
+    return image?.complete && image.naturalWidth > 0;
+  });
+  await page.waitForTimeout(350);
   await page.screenshot({ path: path.join(output, 'home-daily-picture-expanded.png') });
   await page.getByLabel('Close enlarged picture').click();
   await page.getByLabel('Next home widget').click();
