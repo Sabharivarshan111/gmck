@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
-import { Animated, Image, Linking, PanResponder, ScrollView, StyleSheet, View } from 'react-native';
+import { Animated, Image, Linking, Modal, PanResponder, ScrollView, StyleSheet, View } from 'react-native';
 import { Text } from '@/components/Text';
 import { Touchable } from '@/components/Touchable';
 import { Sheet } from '@/components/Sheet';
@@ -1054,6 +1054,8 @@ function DailyQuestion({ kind, card, loading, error, onRetry, onAnswer, colors }
   onAnswer: (index: number) => void;
   colors: ReturnType<typeof useTheme>['colors'];
 }) {
+  const [imageExpanded, setImageExpanded] = useState(false);
+  const insets = useSafeAreaInsets();
   if (!card) return <View style={styles.dailyEmpty}>
     <Text style={[styles.widgetHeading, { color: colors.text }]}>{loading ? 'Preparing today’s question…' : error ?? 'Your daily question is ready to load.'}</Text>
     {!loading ? <Touchable onPress={onRetry} label={`Retry ${kind === 'mcq' ? 'daily MCQ' : 'daily picture'}`} style={styles.widgetLink}>
@@ -1062,12 +1064,24 @@ function DailyQuestion({ kind, card, loading, error, onRetry, onAnswer, colors }
   </View>;
 
   return <View>
-    {kind === 'picture' && card.imageUrl ? <Image
+    {kind === 'picture' && card.imageUrl ? <Touchable onPress={() => setImageExpanded(true)} label="Enlarge daily picture">
+      <Image
       source={{ uri: card.imageUrl }}
       resizeMode="contain"
       accessibilityLabel={`Study diagram for ${card.subject}`}
       style={[styles.dailyImage, { backgroundColor: withAlpha(colors.text, 0.05) }]}
-    /> : null}
+      />
+      <Text style={[styles.dailyImageHint, { color: colors.fuchsia }]}>Tap to enlarge</Text>
+    </Touchable> : null}
+    {kind === 'picture' && card.imageUrl ? <Modal visible={imageExpanded} transparent animationType="fade" onRequestClose={() => setImageExpanded(false)} statusBarTranslucent>
+      <View style={styles.dailyImageModal}>
+        <Touchable onPress={() => setImageExpanded(false)} label="Close enlarged picture" style={[styles.dailyImageClose, { marginTop: insets.top + 12 }]}>
+          <X size={24} color="#fff" />
+          <Text style={styles.dailyImageCloseText}>Close</Text>
+        </Touchable>
+        <Image source={{ uri: card.imageUrl }} resizeMode="contain" accessibilityLabel={`Enlarged study diagram for ${card.subject}`} style={styles.dailyImageFull} />
+      </View>
+    </Modal> : null}
     <Text style={[styles.dailySubject, { color: colors.textMuted }]}>{card.subject}</Text>
     <Text accessibilityRole="header" style={[styles.dailyQuestion, { color: colors.text }]}>{card.question}</Text>
     <View style={styles.dailyOptions}>{card.options.map((option, index) => {
@@ -1397,6 +1411,11 @@ const styles = StyleSheet.create({
   heroPage: { minHeight: 128, justifyContent: 'center' },
   dailyEmpty: { minHeight: 138, justifyContent: 'center' },
   dailyImage: { width: '100%', height: 166, borderRadius: radius.md, marginBottom: space.sm },
+  dailyImageHint: { ...typeScale.footnote, fontWeight: '700', textAlign: 'right', marginBottom: 6 },
+  dailyImageModal: { flex: 1, backgroundColor: '#07070A', paddingHorizontal: 12 },
+  dailyImageClose: { minHeight: 48, flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-end', gap: 8, paddingHorizontal: 12 },
+  dailyImageCloseText: { ...typeScale.callout, color: '#fff', fontWeight: '700' },
+  dailyImageFull: { flex: 1, width: '100%' },
   dailySubject: { ...typeScale.overline, marginBottom: 5 },
   dailyQuestion: { ...typeScale.callout, fontWeight: '700', marginBottom: 8 },
   dailyOptions: { gap: 6 },

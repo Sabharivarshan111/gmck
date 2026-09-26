@@ -122,6 +122,10 @@ try {
     return image?.complete && image.naturalWidth > 0;
   }, { timeout: 15000 });
   await page.screenshot({ path: path.join(output, 'home-daily-picture.png') });
+  await page.getByLabel('Enlarge daily picture').click();
+  await page.getByLabel('Close enlarged picture').waitFor();
+  await page.screenshot({ path: path.join(output, 'home-daily-picture-expanded.png') });
+  await page.getByLabel('Close enlarged picture').click();
   await page.getByLabel('Next home widget').click();
   await page.getByText('RESUME WHERE YOU LEFT OFF').waitFor();
   await page.getByText('Describe the microscopic features of seminoma of the testis').waitFor();
