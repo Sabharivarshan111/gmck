@@ -39,11 +39,11 @@ try {
       correctIndex: 0, explanation: 'Classical seminoma has large cells with clear cytoplasm and central nuclei.',
     }));
     localStorage.setItem(`orbit:daily-study-v1:picture:second-year:${date}`, JSON.stringify({
-      subject: 'Pathology', sourceQuestion: 'Seminoma of testis',
-      imageUrl: 'https://pmtgeydtqypwrypshhsx.supabase.co/storage/v1/object/public/diagrams/pathology/seminoma_testis_histology.jpg',
-      question: 'Which tumour is depicted in this histology image?',
-      options: ['Seminoma', 'Lipoma', 'Papilloma', 'Leiomyoma'],
-      correctIndex: 0, explanation: 'The diagram depicts the cellular morphology of seminoma.',
+      subject: 'Microbiology', sourceQuestion: 'Endospore structure',
+      imageUrl: 'https://pmtgeydtqypwrypshhsx.supabase.co/storage/v1/object/public/diagrams/microbiology/bacterial_growth_curve_and_endospore_structure.jpg',
+      question: 'Which structure provides endospores with heat resistance?',
+      options: ['The spore core', 'The flagellum', 'The capsule', 'The cytoplasmic membrane'],
+      correctIndex: 0, explanation: 'The spore core contains calcium dipicolinate and has very low water content.',
     }));
   });
   const page = await context.newPage();
@@ -115,7 +115,12 @@ try {
   await page.getByText('Which cell is characteristic of classical seminoma?').waitFor();
   await page.screenshot({ path: path.join(output, 'home-daily-mcq.png') });
   await page.getByLabel('Next home widget').click();
-  await page.getByText('Which tumour is depicted in this histology image?').waitFor();
+  await page.getByText('Which structure provides endospores with heat resistance?').waitFor();
+  await page.getByRole('img', { name: 'Study diagram for Microbiology' }).waitFor();
+  await page.waitForFunction(() => {
+    const image = document.querySelector('img[alt="Study diagram for Microbiology"]');
+    return image instanceof HTMLImageElement && image.complete && image.naturalWidth > 0;
+  }, { timeout: 15000 });
   await page.screenshot({ path: path.join(output, 'home-daily-picture.png') });
   await page.getByLabel('Next home widget').click();
   await page.getByText('RESUME WHERE YOU LEFT OFF').waitFor();
@@ -132,7 +137,7 @@ try {
   await page.screenshot({ path: path.join(output, 'home-widgets-attendance.png') });
   await page.getByLabel('Next quick actions').click();
   await page.getByLabel('Reminders', { exact: true }).waitFor();
-  for (const label of ['Posting', 'Alerts']) {
+  for (const label of ['Bank', 'Posting', 'Alerts']) {
     const visible = page.getByText(label, { exact: true });
     await visible.waitFor();
     if (!(await visible.evaluate(element => element.scrollWidth <= element.clientWidth + 1))) {
