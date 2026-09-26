@@ -12,6 +12,7 @@ export interface DailyCard {
   sourceQuestion: string;
   imageUrl?: string;
   answer?: number;
+  revealed?: boolean;
 }
 
 export const localStudyDate = (now = new Date()) =>
@@ -26,7 +27,8 @@ function isCard(value: unknown): value is DailyCard {
     card.options.every(option => typeof option === 'string' && option.length > 0) &&
     Number.isInteger(card.correctIndex) && card.correctIndex >= 0 && card.correctIndex < 4 &&
     typeof card.explanation === 'string' && typeof card.subject === 'string' &&
-    (card.answer === undefined || Number.isInteger(card.answer) && card.answer >= 0 && card.answer < 4);
+    (card.answer === undefined || Number.isInteger(card.answer) && card.answer >= 0 && card.answer < 4) &&
+    (card.revealed === undefined || typeof card.revealed === 'boolean');
 }
 
 export async function readDailyCard(kind: DailyKind, year: YearKey, date = localStudyDate()): Promise<DailyCard | null> {
@@ -50,9 +52,9 @@ export async function createDailyCard(kind: DailyKind, year: YearKey, date = loc
   return card;
 }
 
-export async function saveDailyAnswer(kind: DailyKind, year: YearKey, card: DailyCard, answer: number, date = localStudyDate()): Promise<DailyCard> {
-  if (card.answer !== undefined) return card;
-  const updated = { ...card, answer };
+export async function saveDailyAnswer(kind: DailyKind, year: YearKey, card: DailyCard, answer?: number, date = localStudyDate()): Promise<DailyCard> {
+  if (card.revealed || card.answer !== undefined) return card;
+  const updated = { ...card, revealed: true, ...(answer !== undefined ? { answer } : {}) };
   await AsyncStorage.setItem(dailyKey(kind, year, date), JSON.stringify(updated));
   return updated;
 }

@@ -111,9 +111,21 @@ try {
   await page.goto('http://localhost:5226/?screen=homeresized', { waitUntil: 'networkidle' });
   const homeHero = await page.getByLabel('Next home widget').boundingBox();
   if (!homeHero) throw new Error('Home widget pager is missing');
+  const assertFixedHero = async label => {
+    const current = await page.getByLabel('Next home widget').boundingBox();
+    if (!current || Math.abs(current.y - homeHero.y) > 2) {
+      throw new Error(`${label} changed the Welcome card height: ${homeHero.y} → ${current?.y}`);
+    }
+  };
   await page.getByLabel('Next home widget').click();
   await page.getByText('Which cell is characteristic of classical seminoma?').waitFor();
+  await assertFixedHero('MCQ front');
   await page.screenshot({ path: path.join(output, 'home-daily-mcq.png') });
+  await page.getByLabel('Select A: Clear cell with a central nucleus').click();
+  await page.getByLabel('Reveal daily answer').click();
+  await page.getByText('Full explanation →').waitFor();
+  await assertFixedHero('MCQ answer');
+  await page.screenshot({ path: path.join(output, 'home-daily-mcq-answer.png') });
   await page.getByLabel('Next home widget').click();
   await page.getByText('Which structure provides endospores with heat resistance?').waitFor();
   await page.getByRole('img', { name: 'Study diagram for Microbiology' }).waitFor();
@@ -121,7 +133,12 @@ try {
     const image = document.querySelector('img[alt="Study diagram for Microbiology"]');
     return image?.complete && image.naturalWidth > 0;
   }, { timeout: 15000 });
+  await assertFixedHero('Picture front');
   await page.screenshot({ path: path.join(output, 'home-daily-picture.png') });
+  await page.getByLabel('Reveal daily answer').click();
+  await page.getByText('Full explanation →').waitFor();
+  await assertFixedHero('Picture answer');
+  await page.screenshot({ path: path.join(output, 'home-daily-picture-answer.png') });
   await page.getByLabel('Enlarge daily picture').click();
   await page.getByLabel('Close enlarged picture').waitFor();
   await page.waitForFunction(() => {

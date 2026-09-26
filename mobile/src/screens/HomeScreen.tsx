@@ -308,10 +308,10 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
     const kind = slide === 1 ? 'mcq' : slide === 2 ? 'picture' : null;
     if (kind && !dailyCards[kind] && !dailyError[kind] && !dailyLoading[kind]) loadDaily(kind);
   }, [slide, dailyCards, dailyError, dailyLoading, loadDaily]);
-  const answerDaily = (kind: DailyKind, answer: number) => {
+  const answerDaily = (kind: DailyKind, answer?: number) => {
     const card = dailyCards[kind];
-    if (!card || card.answer !== undefined) return;
-    setDailyCards(previous => ({ ...previous, [kind]: { ...card, answer } }));
+    if (!card || card.revealed || card.answer !== undefined) return;
+    setDailyCards(previous => ({ ...previous, [kind]: { ...card, revealed: true, ...(answer !== undefined ? { answer } : {}) } }));
     saveDailyAnswer(kind, year, card, answer, dailyDate).catch(() => {});
   };
   /*
@@ -1067,11 +1067,14 @@ function DailyQuestion({ kind, card, loading, error, onRetry, onAnswer, colors }
   loading: boolean;
   error?: string;
   onRetry: () => void;
-  onAnswer: (index: number) => void;
+  onAnswer: (index?: number) => void;
   colors: ReturnType<typeof useTheme>['colors'];
 }) {
   const [imageExpanded, setImageExpanded] = useState(false);
+  const [detailExpanded, setDetailExpanded] = useState(false);
+  const [selected, setSelected] = useState<number | null>(null);
   const insets = useSafeAreaInsets();
+  useEffect(() => setSelected(null), [card?.question, card?.imageUrl]);
   if (!card) return <View style={styles.dailyEmpty}>
     <Text style={[styles.widgetHeading, { color: colors.text }]}>{loading ? 'Preparing today’s question…' : error ?? 'Your daily question is ready to load.'}</Text>
     {!loading ? <Touchable onPress={onRetry} label={`Retry ${kind === 'mcq' ? 'daily MCQ' : 'daily picture'}`} style={styles.widgetLink}>
@@ -1079,16 +1082,16 @@ function DailyQuestion({ kind, card, loading, error, onRetry, onAnswer, colors }
     </Touchable> : null}
   </View>;
 
-  return <View>
-    {kind === 'picture' && card.imageUrl ? <Touchable onPress={() => setImageExpanded(true)} label="Enlarge daily picture">
-      <Image
-      source={{ uri: card.imageUrl }}
-      resizeMode="contain"
-      accessibilityLabel={`Study diagram for ${card.subject}`}
-      style={[styles.dailyImage, { backgroundColor: withAlpha(colors.text, 0.05) }]}
-      />
-      <Text style={[styles.dailyImageHint, { color: colors.fuchsia }]}>Tap to enlarge</Text>
-    </Touchable> : null}
+  const revealed = card.revealed || card.answer !== undefined;
+  return <View style={styles.dailyFlashcard}>
+    <View style={styles.dailyTopRow}>
+      {kind === 'picture' && card.imageUrl ? <Touchable onPress={() => setImageExpanded(true)} label="Enlarge daily picture" style={styles.dailyThumbnailButton}>
+        <Image source={{ uri: card.imageUrl }} resizeMode="contain" accessibilityLabel={`Study diagram for ${card.subject}`} style={[styles.dailyThumbnail, { backgroundColor: withAlpha(colors.text, 0.06) }]} />
+      </Touchable> : null}
+      <Touchable onPress={() => setDetailExpanded(true)} label="Read full daily question" style={styles.dailyQuestionTouch}>
+        <Text accessibilityRole="header" numberOfLines={3} style={[styles.dailyQuestion, { color: colors.text }]}>{card.question}</Text>
+      </Touchable>
+    </View>
     {kind === 'picture' && card.imageUrl && imageExpanded ? <Modal visible animationType="fade" onRequestClose={() => setImageExpanded(false)} statusBarTranslucent>
       <View style={styles.dailyImageModal}>
         <Touchable onPress={() => setImageExpanded(false)} label="Close enlarged picture" style={[styles.dailyImageClose, { marginTop: insets.top + 12 }]}>
@@ -1098,25 +1101,38 @@ function DailyQuestion({ kind, card, loading, error, onRetry, onAnswer, colors }
         <Image source={{ uri: card.imageUrl }} resizeMode="contain" accessibilityLabel={`Enlarged study diagram for ${card.subject}`} style={styles.dailyImageFull} />
       </View>
     </Modal> : null}
-    <Text style={[styles.dailySubject, { color: colors.textMuted }]}>{card.subject}</Text>
-    <Text accessibilityRole="header" style={[styles.dailyQuestion, { color: colors.text }]}>{card.question}</Text>
-    <View style={styles.dailyOptions}>{card.options.map((option, index) => {
-      const revealed = card.answer !== undefined;
-      const correct = index === card.correctIndex;
-      const tint = revealed && correct ? colors.emerald : revealed && card.answer === index ? colors.danger : colors.border;
-      return <Touchable
+    {revealed ? <View style={styles.dailyBack}>
+      <Text numberOfLines={2} style={[styles.dailyCorrect, { color: colors.emerald }]}>
+        {card.answer === card.correctIndex ? 'Correct · ' : ''}{String.fromCharCode(65 + card.correctIndex)}. {card.options[card.correctIndex]}
+      </Text>
+      <Text numberOfLines={2} style={[styles.dailyExplanation, { color: colors.textMuted }]}>{card.explanation}</Text>
+      <Touchable onPress={() => setDetailExpanded(true)} label="Read full daily answer" style={styles.dailyDetailLink}>
+        <Text style={{ color: colors.fuchsia, fontWeight: '700', fontSize: 12 }}>Full explanation →</Text>
+      </Touchable>
+    </View> : <>
+      <View style={styles.dailyCompactOptions}>{card.options.map((option, index) => <Touchable
         key={`${index}-${option}`}
-        onPress={() => onAnswer(index)}
-        label={`Answer ${String.fromCharCode(65 + index)}: ${option}`}
-        state={{ disabled: revealed, selected: card.answer === index }}
-        disabled={revealed}
-        style={[styles.dailyOption, { borderColor: tint, backgroundColor: revealed && (correct || card.answer === index) ? withAlpha(tint, 0.14) : withAlpha(colors.text, 0.035) }]}>
-        <Text style={[styles.dailyOptionText, { color: colors.text }]}>{String.fromCharCode(65 + index)}. {option}</Text>
-      </Touchable>;
-    })}</View>
-    {card.answer !== undefined ? <Text style={[styles.dailyExplanation, { color: colors.text }]}>
-      {card.answer === card.correctIndex ? 'Correct. ' : `Answer: ${String.fromCharCode(65 + card.correctIndex)}. `}{card.explanation}
-    </Text> : null}
+        onPress={() => setSelected(index)}
+        label={`Select ${String.fromCharCode(65 + index)}: ${option}`}
+        state={{ selected: selected === index }}
+        style={[styles.dailyCompactOption, { borderColor: selected === index ? colors.fuchsia : colors.border, backgroundColor: selected === index ? withAlpha(colors.fuchsia, 0.13) : withAlpha(colors.text, 0.035) }]}>
+        <Text numberOfLines={1} style={[styles.dailyOptionText, { color: colors.text }]}>{String.fromCharCode(65 + index)}. {option}</Text>
+      </Touchable>)}</View>
+      <Touchable onPress={() => onAnswer(selected ?? undefined)} label="Reveal daily answer" style={[styles.dailyRevealButton, { backgroundColor: withAlpha(colors.fuchsia, 0.16), borderColor: withAlpha(colors.fuchsia, 0.4) }]}>
+        <Text style={{ color: colors.text, fontWeight: '700', fontSize: 13 }}>Reveal answer</Text>
+      </Touchable>
+    </>}
+    {detailExpanded ? <Modal visible animationType="fade" onRequestClose={() => setDetailExpanded(false)} statusBarTranslucent>
+      <View style={[styles.dailyDetailModal, { paddingTop: insets.top + 24 }]}>
+        <Touchable onPress={() => setDetailExpanded(false)} label="Close daily answer" style={styles.dailyDetailClose}><X size={24} color="#fff" /><Text style={styles.dailyImageCloseText}>Close</Text></Touchable>
+        <ScrollView contentContainerStyle={styles.dailyDetailContent}>
+          <Text style={[styles.dailySubject, { color: colors.fuchsia }]}>{card.subject}</Text>
+          <Text style={styles.dailyDetailQuestion}>{card.question}</Text>
+          {card.options.map((option, index) => <Text key={`${index}-${option}`} style={[styles.dailyDetailOption, { color: index === card.correctIndex ? colors.emerald : '#ddd' }]}>{String.fromCharCode(65 + index)}. {option}</Text>)}
+          {revealed ? <Text style={styles.dailyDetailExplanation}>{card.explanation}</Text> : null}
+        </ScrollView>
+      </View>
+    </Modal> : null}
   </View>;
 }
 
@@ -1424,20 +1440,33 @@ const styles = StyleSheet.create({
     borderRadius: 105,
   },
   heroTitle: typeScale.title1,
-  heroPage: { minHeight: 128, justifyContent: 'center' },
-  dailyEmpty: { minHeight: 138, justifyContent: 'center' },
-  dailyImage: { width: '100%', height: 166, borderRadius: radius.md, marginBottom: space.sm },
-  dailyImageHint: { ...typeScale.footnote, fontWeight: '700', textAlign: 'right', marginBottom: 6 },
+  heroPage: { height: 184, justifyContent: 'center' },
+  dailyEmpty: { minHeight: 145, justifyContent: 'center' },
+  dailyFlashcard: { justifyContent: 'center' },
+  dailyTopRow: { minHeight: 55, flexDirection: 'row', alignItems: 'center', gap: 9 },
+  dailyQuestionTouch: { flex: 1, justifyContent: 'center' },
+  dailyThumbnailButton: { width: 57, height: 57, borderRadius: radius.sm, overflow: 'hidden' },
+  dailyThumbnail: { width: 57, height: 57 },
   dailyImageModal: { flex: 1, backgroundColor: '#07070A', paddingHorizontal: 12 },
   dailyImageClose: { minHeight: 48, flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-end', gap: 8, paddingHorizontal: 12 },
   dailyImageCloseText: { ...typeScale.callout, color: '#fff', fontWeight: '700' },
   dailyImageFull: { flex: 1, width: '100%' },
   dailySubject: { ...typeScale.overline, marginBottom: 5 },
-  dailyQuestion: { ...typeScale.callout, fontWeight: '700', marginBottom: 8 },
-  dailyOptions: { gap: 6 },
-  dailyOption: { minHeight: 43, borderWidth: 1, borderRadius: radius.md, paddingHorizontal: 12, paddingVertical: 9, justifyContent: 'center' },
-  dailyOptionText: { ...typeScale.footnote },
-  dailyExplanation: { ...typeScale.footnote, marginTop: 10, fontWeight: '600' },
+  dailyQuestion: { ...typeScale.footnote, fontWeight: '700' },
+  dailyCompactOptions: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', gap: 4, marginTop: 4 },
+  dailyCompactOption: { width: '49%', minHeight: 25, borderWidth: 1, borderRadius: radius.sm, paddingHorizontal: 7, justifyContent: 'center' },
+  dailyOptionText: { fontSize: 11, lineHeight: 15 },
+  dailyRevealButton: { alignSelf: 'flex-start', minHeight: 29, borderWidth: 1, borderRadius: radius.md, paddingHorizontal: 12, justifyContent: 'center', marginTop: 5 },
+  dailyBack: { minHeight: 90, justifyContent: 'center' },
+  dailyCorrect: { ...typeScale.footnote, fontWeight: '800' },
+  dailyExplanation: { fontSize: 12, lineHeight: 17, marginTop: 4 },
+  dailyDetailLink: { minHeight: 26, justifyContent: 'center' },
+  dailyDetailModal: { flex: 1, backgroundColor: '#0B0B12', paddingHorizontal: 24 },
+  dailyDetailClose: { minHeight: 42, alignSelf: 'flex-end', flexDirection: 'row', alignItems: 'center', gap: 8 },
+  dailyDetailContent: { paddingTop: 22, paddingBottom: 48, gap: 12 },
+  dailyDetailQuestion: { ...typeScale.title3, color: '#fff', fontWeight: '700' },
+  dailyDetailOption: { ...typeScale.callout },
+  dailyDetailExplanation: { ...typeScale.callout, color: '#fff', marginTop: 12 },
   widgetEyebrow: { ...typeScale.overline, fontWeight: '800', letterSpacing: 1.2, marginBottom: 7 },
   widgetHeading: { ...typeScale.title3, fontWeight: '700' },
   widgetNumber: { ...typeScale.title1, fontWeight: '800' },
