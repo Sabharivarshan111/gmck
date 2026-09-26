@@ -1647,3 +1647,7 @@ The owner rejected the tall daily slide. Source `30e5b00f4f78811a6250b172349825e
 ### Three-line release notes and offline upgrade retry (2026-09-26)
 
 Main product commit `a5eea5d6b431b204276107d0c0e7b1a70f79e170` caps the in-app note card at three single-line bullets and keeps a failed Supabase read from permanently consuming the What's New card. The v24 cloud row has three notes. Local `check:native-update` and diff check passed; verify Android release/internal/debug workflows from the final handoff commit, their tags and assets, and share only those links. VersionCode is still 24, Play reportedly has 23, and no Play upload occurred. See HANDOFF.md.
+
+### Final verified release-note build artifacts
+
+Runs release `36238458143`, internal `36238458212`, debug `36238458158` all passed. Tags `release-541`, `internal-342`, `debug-348` point to `d4da88d4c6548807772ae2e627cb59961fa73a5f`, containing the release-note fix and handoff. Assets and sizes are in HANDOFF.md. Version 24 AAB was not uploaded to Play Console; the owner reported Play at version 23.

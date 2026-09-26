@@ -2421,3 +2421,9 @@ Product commit: `e2103260a933a51ac4d8e6567bad0c05b4d46ad6`.
 - `UpdateNotice.tsx` displays at most three single-line bullets from the matching Supabase `app_releases` row. The v24 row has exactly three notes. Google Play still decides whether an update exists; a fresh install does not show a What's New card.
 - A failed Supabase read after an upgrade (for example, offline) was treated as a missing row, and the version was marked seen forever. `appUpdate.ts` now distinguishes a failed read from a genuinely missing row; the card retries on the next launch after a failure. The update offer still works without fetched notes.
 - Product commit `a5eea5d6b431b204276107d0c0e7b1a70f79e170` on `main`; `check:native-update` and `git diff --check` passed locally. Android release/internal/debug runs from the final handoff commit need verification of typecheck, lint, packaging, tags and assets. VersionCode remains 24 because the owner reported 23 on Play. No AAB was uploaded to Play Console.
+
+#### Verified build assets
+
+- Android runs release `36238458143`, internal `36238458212`, and debug `36238458158` all succeeded with CI checks and packaging. Their tags point to `d4da88d4c6548807772ae2e627cb59961fa73a5f`, which contains the product fix and handoff text.
+- Play AAB: https://github.com/Sabharivarshan111/gmck/releases/download/release-541/app-release.aab (80,118,260 bytes). Direct release APK: https://github.com/Sabharivarshan111/gmck/releases/download/release-541/app-release.apk (101,252,940 bytes). Normal sign-in and release ads.
+- Internal APK: https://github.com/Sabharivarshan111/gmck/releases/download/internal-342/app-internal.apk (108,888,220 bytes), normal sign-in with no ads. Debug APK: https://github.com/Sabharivarshan111/gmck/releases/download/debug-348/app-preview.apk (108,888,236 bytes), sign-in bypass and no ads. These are versionCode 24; the AAB has not been uploaded to Play Console.
