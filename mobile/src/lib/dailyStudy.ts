@@ -29,18 +29,17 @@ function isCard(value: unknown): value is DailyCard {
     (card.answer === undefined || Number.isInteger(card.answer) && card.answer >= 0 && card.answer < 4);
 }
 
-export async function readDailyCard(kind: DailyKind, year: YearKey): Promise<DailyCard | null> {
+export async function readDailyCard(kind: DailyKind, year: YearKey, date = localStudyDate()): Promise<DailyCard | null> {
   try {
-    const raw = await AsyncStorage.getItem(dailyKey(kind, year));
+    const raw = await AsyncStorage.getItem(dailyKey(kind, year, date));
     const value: unknown = raw && JSON.parse(raw);
     return isCard(value) ? value : null;
   } catch { return null; }
 }
 
-export async function createDailyCard(kind: DailyKind, year: YearKey): Promise<DailyCard> {
-  const cached = await readDailyCard(kind, year);
+export async function createDailyCard(kind: DailyKind, year: YearKey, date = localStudyDate()): Promise<DailyCard> {
+  const cached = await readDailyCard(kind, year, date);
   if (cached) return cached;
-  const date = localStudyDate();
   const { data, error } = await supabase.functions.invoke('daily-study-card', {
     body: { kind, year, date },
   });
@@ -51,9 +50,9 @@ export async function createDailyCard(kind: DailyKind, year: YearKey): Promise<D
   return card;
 }
 
-export async function saveDailyAnswer(kind: DailyKind, year: YearKey, card: DailyCard, answer: number): Promise<DailyCard> {
+export async function saveDailyAnswer(kind: DailyKind, year: YearKey, card: DailyCard, answer: number, date = localStudyDate()): Promise<DailyCard> {
   if (card.answer !== undefined) return card;
   const updated = { ...card, answer };
-  await AsyncStorage.setItem(dailyKey(kind, year), JSON.stringify(updated));
+  await AsyncStorage.setItem(dailyKey(kind, year, date), JSON.stringify(updated));
   return updated;
 }

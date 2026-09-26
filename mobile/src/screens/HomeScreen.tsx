@@ -208,7 +208,7 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
   const [focus, setFocus] = useState<FocusSummary>({ total: 0, today: 0, sessions: 0 });
   const [lastQuestion, setLastQuestion] = useState<LastQuestion | null>(null);
   const [dailyCards, setDailyCards] = useState<Partial<Record<DailyKind, DailyCard>>>({});
-  const [dailyLoading, setDailyLoading] = useState<DailyKind | null>(null);
+  const [dailyLoading, setDailyLoading] = useState<Partial<Record<DailyKind, boolean>>>({});
   const [dailyError, setDailyError] = useState<Partial<Record<DailyKind, string>>>({});
   const [dailyDate, setDailyDate] = useState(localStudyDate);
   const [quickPage, setQuickPage] = useState(0);
@@ -275,28 +275,44 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
   }, [slide, heroFade, reduceMotion]);
 
   const { yearKey: year, streak, setYear } = useProfile();
+  const dailyRequestScope = `${year}:${dailyDate}`;
+  const dailyRequestScopeRef = useRef(dailyRequestScope);
+  dailyRequestScopeRef.current = dailyRequestScope;
+  const dailyInFlight = useRef(new Set<string>());
   useEffect(() => {
     setDailyCards({});
     setDailyError({});
+    setDailyLoading({});
   }, [year, dailyDate]);
   const loadDaily = useCallback((kind: DailyKind) => {
-    setDailyLoading(kind);
+    const scope = dailyRequestScope;
+    const requestKey = `${scope}:${kind}`;
+    if (dailyInFlight.current.has(requestKey)) return;
+    dailyInFlight.current.add(requestKey);
+    setDailyLoading(previous => ({ ...previous, [kind]: true }));
     setDailyError(previous => ({ ...previous, [kind]: undefined }));
-    createDailyCard(kind, year).then(card => {
+    createDailyCard(kind, year, dailyDate).then(card => {
+      if (dailyRequestScopeRef.current !== scope) return;
       setDailyCards(previous => ({ ...previous, [kind]: card }));
     }).catch(error => {
+      if (dailyRequestScopeRef.current !== scope) return;
       setDailyError(previous => ({ ...previous, [kind]: error instanceof Error ? error.message : 'Please retry.' }));
-    }).finally(() => setDailyLoading(current => current === kind ? null : current));
-  }, [year]);
+    }).finally(() => {
+      dailyInFlight.current.delete(requestKey);
+      if (dailyRequestScopeRef.current === scope) {
+        setDailyLoading(previous => ({ ...previous, [kind]: false }));
+      }
+    });
+  }, [year, dailyDate, dailyRequestScope]);
   useEffect(() => {
     const kind = slide === 1 ? 'mcq' : slide === 2 ? 'picture' : null;
-    if (kind && !dailyCards[kind] && !dailyError[kind] && dailyLoading !== kind) loadDaily(kind);
+    if (kind && !dailyCards[kind] && !dailyError[kind] && !dailyLoading[kind]) loadDaily(kind);
   }, [slide, dailyCards, dailyError, dailyLoading, loadDaily]);
   const answerDaily = (kind: DailyKind, answer: number) => {
     const card = dailyCards[kind];
     if (!card || card.answer !== undefined) return;
     setDailyCards(previous => ({ ...previous, [kind]: { ...card, answer } }));
-    saveDailyAnswer(kind, year, card, answer).catch(() => {});
+    saveDailyAnswer(kind, year, card, answer, dailyDate).catch(() => {});
   };
   /*
    * The profile's short year code is what the shared group list is keyed by —
@@ -566,10 +582,10 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
                     {scales.hero < 0.85 ? null : <Text style={[styles.heroBody, { color: colors.textMuted }]}>A question and a clinical picture each day, drawn from your studies.</Text>}
                   </> : null}
                   {slide === 1 ? <>
-                    <DailyQuestion kind="mcq" card={dailyCards.mcq} loading={dailyLoading === 'mcq'} error={dailyError.mcq} onRetry={() => loadDaily('mcq')} onAnswer={answer => answerDaily('mcq', answer)} colors={colors} />
+                    <DailyQuestion kind="mcq" card={dailyCards.mcq} loading={!!dailyLoading.mcq} error={dailyError.mcq} onRetry={() => loadDaily('mcq')} onAnswer={answer => answerDaily('mcq', answer)} colors={colors} />
                   </> : null}
                   {slide === 2 ? <>
-                    <DailyQuestion kind="picture" card={dailyCards.picture} loading={dailyLoading === 'picture'} error={dailyError.picture} onRetry={() => loadDaily('picture')} onAnswer={answer => answerDaily('picture', answer)} colors={colors} />
+                    <DailyQuestion kind="picture" card={dailyCards.picture} loading={!!dailyLoading.picture} error={dailyError.picture} onRetry={() => loadDaily('picture')} onAnswer={answer => answerDaily('picture', answer)} colors={colors} />
                   </> : null}
                   {slide === 4 ? <>
                     <Text accessibilityRole="header" style={[styles.widgetNumber, { color: colors.fuchsia }]}>{progressPercent}% <Text style={styles.widgetUnit}>complete</Text></Text>
