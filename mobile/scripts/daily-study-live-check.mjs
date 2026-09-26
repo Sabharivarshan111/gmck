@@ -11,7 +11,7 @@ for (const [kind, body] of [
 ]) {
   const response = await fetch(endpoint, {
     method: 'POST', headers: { 'Content-Type': 'application/json', apikey: anon, Authorization: `Bearer ${anon}` },
-    body: JSON.stringify(body), signal: AbortSignal.timeout(55000),
+    body: JSON.stringify(body), signal: globalThis.AbortSignal.timeout(55000),
   });
   const data = await response.json();
   if (!response.ok || typeof data.question !== 'string' || !Array.isArray(data.options) || data.options.length !== 4 ||

@@ -119,7 +119,7 @@ try {
   await page.getByRole('img', { name: 'Study diagram for Microbiology' }).waitFor();
   await page.waitForFunction(() => {
     const image = document.querySelector('img[alt="Study diagram for Microbiology"]');
-    return image instanceof HTMLImageElement && image.complete && image.naturalWidth > 0;
+    return image?.complete && image.naturalWidth > 0;
   }, { timeout: 15000 });
   await page.screenshot({ path: path.join(output, 'home-daily-picture.png') });
   await page.getByLabel('Next home widget').click();
