@@ -77,27 +77,40 @@ const toNotes = (row: Row): ReleaseNotes => ({
   notes: row.notes ?? [],
 });
 
-/** The words for one versionCode, or null. */
-export async function notesFor(versionCode: number): Promise<ReleaseNotes | null> {
-  if (!versionCode) {
-    return null;
-  }
-  const { data, error } = await supabase
-    .from('app_releases')
-    .select(COLUMNS)
-    .eq('version_code', versionCode)
-    .maybeSingle();
-  if (error) {
-    // supabase-js returns errors rather than throwing them, so this is the only
-    // place one can be noticed. Offline is ordinary; the card copes without.
-    warn('notesFor failed:', error);
-    return null;
-  }
-  return data ? toNotes(data as Row) : null;
+interface NotesLookup {
+  notes: ReleaseNotes | null;
+  failed: boolean;
 }
 
-/** This build's own notes, for the card shown after an update lands. */
-export const ownNotes = () => notesFor(APP_VERSION_CODE);
+/** Keep a failed read distinct from a version that genuinely has no row. */
+async function lookupNotes(versionCode: number): Promise<NotesLookup> {
+  if (!versionCode) {
+    return { notes: null, failed: false };
+  }
+  try {
+    const { data, error } = await supabase
+      .from('app_releases')
+      .select(COLUMNS)
+      .eq('version_code', versionCode)
+      .maybeSingle();
+    if (error) {
+      warn('notesFor failed:', error);
+      return { notes: null, failed: true };
+    }
+    return { notes: data ? toNotes(data as Row) : null, failed: false };
+  } catch (error) {
+    warn('notesFor failed:', error);
+    return { notes: null, failed: true };
+  }
+}
+
+/** The update offer can show without notes if the read failed. */
+export async function notesFor(versionCode: number): Promise<ReleaseNotes | null> {
+  return (await lookupNotes(versionCode)).notes;
+}
+
+/** This build's notes need the failure state so an offline launch can retry. */
+export const ownNotes = () => lookupNotes(APP_VERSION_CODE);
 
 /** Ask Play. Null when the module is absent — the preview, and any non-Play build. */
 export async function playStatus(): Promise<UpdateStatus | null> {

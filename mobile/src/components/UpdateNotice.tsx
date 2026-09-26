@@ -107,10 +107,16 @@ export function UpdateNotice() {
         // Ordered, not raced: what's new wins, and Play is not even asked when
         // it applies. See the header.
         if (await upgradedThisLaunch()) {
-          const notes = await ownNotes();
+          const lookup = await ownNotes();
           if (cancelled) {
             return;
           }
+          // Offline on the first launch after an upgrade must not consume the
+          // What's New card. Try again on the next launch instead.
+          if (lookup.failed) {
+            return;
+          }
+          const notes = lookup.notes;
           if (notes && notes.notes.length > 0) {
             setOwn(notes);
             setMode('whatsnew');
