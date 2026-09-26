@@ -1116,7 +1116,7 @@ function DailyQuestion({ kind, card, loading, error, onRetry, onAnswer, colors }
         label={`Select ${String.fromCharCode(65 + index)}: ${option}`}
         state={{ selected: selected === index }}
         style={[styles.dailyCompactOption, { borderColor: selected === index ? colors.fuchsia : colors.border, backgroundColor: selected === index ? withAlpha(colors.fuchsia, 0.13) : withAlpha(colors.text, 0.035) }]}>
-        <Text numberOfLines={1} style={[styles.dailyOptionText, { color: colors.text }]}>{String.fromCharCode(65 + index)}. {option}</Text>
+        <Text numberOfLines={2} style={[styles.dailyOptionText, { color: colors.text }]}>{String.fromCharCode(65 + index)}. {option}</Text>
       </Touchable>)}</View>
       <Touchable onPress={() => onAnswer(selected ?? undefined)} label="Reveal daily answer" style={[styles.dailyRevealButton, { backgroundColor: withAlpha(colors.fuchsia, 0.16), borderColor: withAlpha(colors.fuchsia, 0.4) }]}>
         <Text style={{ color: colors.text, fontWeight: '700', fontSize: 13 }}>Reveal answer</Text>
@@ -1454,7 +1454,7 @@ const styles = StyleSheet.create({
   dailySubject: { ...typeScale.overline, marginBottom: 5 },
   dailyQuestion: { ...typeScale.footnote, fontWeight: '700' },
   dailyCompactOptions: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', gap: 4, marginTop: 4 },
-  dailyCompactOption: { width: '49%', minHeight: 25, borderWidth: 1, borderRadius: radius.sm, paddingHorizontal: 7, justifyContent: 'center' },
+  dailyCompactOption: { width: '49%', minHeight: 32, borderWidth: 1, borderRadius: radius.sm, paddingHorizontal: 7, justifyContent: 'center' },
   dailyOptionText: { fontSize: 11, lineHeight: 15 },
   dailyRevealButton: { alignSelf: 'flex-start', minHeight: 29, borderWidth: 1, borderRadius: radius.md, paddingHorizontal: 12, justifyContent: 'center', marginTop: 5 },
   dailyBack: { minHeight: 90, justifyContent: 'center' },

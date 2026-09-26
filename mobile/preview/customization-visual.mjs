@@ -122,6 +122,7 @@ try {
   await assertFixedHero('MCQ front');
   await page.screenshot({ path: path.join(output, 'home-daily-mcq.png') });
   await page.getByLabel('Select A: Clear cell with a central nucleus').click();
+  await page.screenshot({ path: path.join(output, 'home-daily-mcq-selected.png') });
   await page.getByLabel('Reveal daily answer').click();
   await page.getByText('Full explanation →').waitFor();
   await assertFixedHero('MCQ answer');
