@@ -24,6 +24,9 @@ jobs:
           cache-dependency-path: mobile/package-lock.json
       - run: npm ci
         working-directory: mobile
+      - name: Verify live daily text and picture questions
+        run: node scripts/daily-study-live-check.mjs
+        working-directory: mobile
       - name: Install Chromium for phone viewport touch checks
         run: ./node_modules/.bin/playwright-core install --with-deps chromium
         working-directory: mobile

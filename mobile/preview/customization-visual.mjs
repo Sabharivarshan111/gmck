@@ -29,6 +29,22 @@ try {
   });
   await context.addInitScript(() => {
     localStorage.setItem('orbit-profile-v1', JSON.stringify({ display_name: 'Preview', year: 'second' }));
+    const now = new Date();
+    const date = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    localStorage.setItem('orbit:last-question-v1', JSON.stringify({ year: 'second-year', path: ['pathology'], title: 'Pathology', question: 'Describe the microscopic features of seminoma of the testis', type: 'essay' }));
+    localStorage.setItem(`orbit:daily-study-v1:mcq:second-year:${date}`, JSON.stringify({
+      subject: 'Pathology', sourceQuestion: 'Seminoma of testis',
+      question: 'Which cell is characteristic of classical seminoma?',
+      options: ['Clear cell with a central nucleus', 'Reed–Sternberg cell', 'Small oat cell', 'Signet ring cell'],
+      correctIndex: 0, explanation: 'Classical seminoma has large cells with clear cytoplasm and central nuclei.',
+    }));
+    localStorage.setItem(`orbit:daily-study-v1:picture:second-year:${date}`, JSON.stringify({
+      subject: 'Pathology', sourceQuestion: 'Seminoma of testis',
+      imageUrl: 'https://pmtgeydtqypwrypshhsx.supabase.co/storage/v1/object/public/diagrams/pathology/seminoma_testis_histology.jpg',
+      question: 'Which tumour is depicted in this histology image?',
+      options: ['Seminoma', 'Lipoma', 'Papilloma', 'Leiomyoma'],
+      correctIndex: 0, explanation: 'The diagram depicts the cellular morphology of seminoma.',
+    }));
   });
   const page = await context.newPage();
   const cdp = await context.newCDPSession(page);
@@ -96,11 +112,18 @@ try {
   const homeHero = await page.getByLabel('Next home widget').boundingBox();
   if (!homeHero) throw new Error('Home widget pager is missing');
   await page.getByLabel('Next home widget').click();
+  await page.getByText('Which cell is characteristic of classical seminoma?').waitFor();
+  await page.screenshot({ path: path.join(output, 'home-daily-mcq.png') });
+  await page.getByLabel('Next home widget').click();
+  await page.getByText('Which tumour is depicted in this histology image?').waitFor();
+  await page.screenshot({ path: path.join(output, 'home-daily-picture.png') });
+  await page.getByLabel('Next home widget').click();
+  await page.getByText('RESUME WHERE YOU LEFT OFF').waitFor();
+  await page.getByText('Describe the microscopic features of seminoma of the testis').waitFor();
+  await page.screenshot({ path: path.join(output, 'home-widgets-resume.png') });
+  await page.getByLabel('Next home widget').click();
   await page.getByText('complete', { exact: true }).waitFor();
   await page.screenshot({ path: path.join(output, 'home-widgets-progress.png') });
-  await touchDrag({ x: 320, y: homeHero.y - 75 }, -210, 0);
-  await page.getByText('PICK UP WHERE YOU LEFT OFF').waitFor();
-  await page.screenshot({ path: path.join(output, 'home-widgets-resume.png') });
   await page.getByLabel('Next home widget').click();
   await page.getByText('STUDY TIME').waitFor();
   await page.screenshot({ path: path.join(output, 'home-widgets-study.png') });

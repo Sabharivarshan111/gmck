@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
-import { Animated, Linking, PanResponder, ScrollView, StyleSheet, View } from 'react-native';
+import { Animated, Image, Linking, PanResponder, ScrollView, StyleSheet, View } from 'react-native';
 import { Text } from '@/components/Text';
 import { Touchable } from '@/components/Touchable';
 import { Sheet } from '@/components/Sheet';
@@ -78,6 +78,7 @@ import {
 } from '@shared/whatsappGroups';
 import { formatFocusTime, readFocusSummary, type FocusSummary } from '@/lib/focusStats';
 import { readLastQuestion, type LastQuestion } from '@/lib/homeResume';
+import { createDailyCard, localStudyDate, saveDailyAnswer, type DailyCard, type DailyKind } from '@/lib/dailyStudy';
 import { attendanceVersion, getAttendance, hydrateAttendance, subscribeAttendance } from '@/lib/attendance';
 import { useSettings } from '@/lib/settings';
 import type { HomeStackParamList, RootTabParamList } from '@/navigation/types';
@@ -92,7 +93,7 @@ type Nav = NativeStackNavigationProp<HomeStackParamList, 'HomeMain'>;
  */
 const HERO_FADE_FLOOR = 0.35;
 
-const HERO_PAGES = ['Welcome', 'Progress', 'Pick up where you left off', 'Study time', 'Attendance'] as const;
+const HERO_PAGES = ['Welcome', 'MCQ of the day', 'Picture of the day', 'Resume where you left off', 'Progress', 'Study time', 'Attendance'] as const;
 const QUICK_PAGES = 2;
 
 /** One card's height, and its width as a fraction of the grid. */
@@ -206,6 +207,10 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
   const [groupChoice, setGroupChoice] = useState<WhatsAppGroup[] | null>(null);
   const [focus, setFocus] = useState<FocusSummary>({ total: 0, today: 0, sessions: 0 });
   const [lastQuestion, setLastQuestion] = useState<LastQuestion | null>(null);
+  const [dailyCards, setDailyCards] = useState<Partial<Record<DailyKind, DailyCard>>>({});
+  const [dailyLoading, setDailyLoading] = useState<DailyKind | null>(null);
+  const [dailyError, setDailyError] = useState<Partial<Record<DailyKind, string>>>({});
+  const [dailyDate, setDailyDate] = useState(localStudyDate);
   const [quickPage, setQuickPage] = useState(0);
   useSyncExternalStore(subscribeAttendance, attendanceVersion, attendanceVersion);
   const attendance = getAttendance();
@@ -225,6 +230,7 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
 
   useFocusEffect(useCallback(() => {
     let active = true;
+    setDailyDate(localStudyDate());
     readFocusSummary().then(value => { if (active) setFocus(value); });
     readLastQuestion().then(value => { if (active) setLastQuestion(value); });
     if (!getAttendance().hydrated) hydrateAttendance().catch(() => {});
@@ -269,6 +275,29 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
   }, [slide, heroFade, reduceMotion]);
 
   const { yearKey: year, streak, setYear } = useProfile();
+  useEffect(() => {
+    setDailyCards({});
+    setDailyError({});
+  }, [year, dailyDate]);
+  const loadDaily = useCallback((kind: DailyKind) => {
+    setDailyLoading(kind);
+    setDailyError(previous => ({ ...previous, [kind]: undefined }));
+    createDailyCard(kind, year).then(card => {
+      setDailyCards(previous => ({ ...previous, [kind]: card }));
+    }).catch(error => {
+      setDailyError(previous => ({ ...previous, [kind]: error instanceof Error ? error.message : 'Please retry.' }));
+    }).finally(() => setDailyLoading(current => current === kind ? null : current));
+  }, [year]);
+  useEffect(() => {
+    const kind = slide === 1 ? 'mcq' : slide === 2 ? 'picture' : null;
+    if (kind && !dailyCards[kind] && !dailyError[kind] && dailyLoading !== kind) loadDaily(kind);
+  }, [slide, dailyCards, dailyError, dailyLoading, loadDaily]);
+  const answerDaily = (kind: DailyKind, answer: number) => {
+    const card = dailyCards[kind];
+    if (!card || card.answer !== undefined) return;
+    setDailyCards(previous => ({ ...previous, [kind]: { ...card, answer } }));
+    saveDailyAnswer(kind, year, card, answer).catch(() => {});
+  };
   /*
    * The profile's short year code is what the shared group list is keyed by —
    * the same code `orbit-profile-v1` stores, so the phone and the web app agree
@@ -534,14 +563,20 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
                   </Text>
                   {slide === 0 ? <>
                     <Text accessibilityRole="header" style={[styles.heroTitle, { color: colors.text }]}>Welcome to Orbit</Text>
-                    {scales.hero < 0.85 ? null : <Text style={[styles.heroBody, { color: colors.textMuted }]}>Your study space, at a glance. Swipe or tap the arrows to see what matters today.</Text>}
+                    {scales.hero < 0.85 ? null : <Text style={[styles.heroBody, { color: colors.textMuted }]}>A question and a clinical picture each day, drawn from your studies.</Text>}
                   </> : null}
                   {slide === 1 ? <>
+                    <DailyQuestion kind="mcq" card={dailyCards.mcq} loading={dailyLoading === 'mcq'} error={dailyError.mcq} onRetry={() => loadDaily('mcq')} onAnswer={answer => answerDaily('mcq', answer)} colors={colors} />
+                  </> : null}
+                  {slide === 2 ? <>
+                    <DailyQuestion kind="picture" card={dailyCards.picture} loading={dailyLoading === 'picture'} error={dailyError.picture} onRetry={() => loadDaily('picture')} onAnswer={answer => answerDaily('picture', answer)} colors={colors} />
+                  </> : null}
+                  {slide === 4 ? <>
                     <Text accessibilityRole="header" style={[styles.widgetNumber, { color: colors.fuchsia }]}>{progressPercent}% <Text style={styles.widgetUnit}>complete</Text></Text>
                     <Text style={[styles.widgetDetail, { color: colors.textMuted }]}>{completedQuestions.toLocaleString()} of {totalQuestions.toLocaleString()} questions in {YEAR_LABEL[year]}</Text>
                     <Touchable onPress={() => openProgress()} label="Open my progress" style={styles.widgetLink}><Text style={{ color: colors.fuchsia, fontWeight: '700' }}>View progress →</Text></Touchable>
                   </> : null}
-                  {slide === 2 ? <>
+                  {slide === 3 ? <>
                     <Text accessibilityRole="header" style={[styles.widgetHeading, { color: colors.text }]} numberOfLines={2}>{lastQuestion?.question || 'What is on your mind today?'}</Text>
                     <Text style={[styles.widgetDetail, { color: colors.textMuted }]}>{lastQuestion ? `Last question · ${lastQuestion.title}` : 'Open a question or start a personal study note.'}</Text>
                     <View style={styles.widgetLinks}>
@@ -549,12 +584,12 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
                       <Touchable onPress={() => openProgress('notes', true)} label="Write a study note" style={styles.widgetLink}><Text style={{ color: colors.text, fontWeight: '700' }}>Write a note →</Text></Touchable>
                     </View>
                   </> : null}
-                  {slide === 3 ? <>
+                  {slide === 5 ? <>
                     <Text accessibilityRole="header" style={[styles.widgetNumber, { color: colors.emerald }]}>{formatFocusTime(focus.today)} <Text style={styles.widgetUnit}>today</Text></Text>
                     <Text style={[styles.widgetDetail, { color: colors.textMuted }]}>{formatFocusTime(focus.total)} completed focus time · {focus.sessions} {focus.sessions === 1 ? 'session' : 'sessions'} since v24</Text>
                     <Touchable onPress={() => goToTab('Timer')} label="Start a focus timer" style={styles.widgetLink}><Text style={{ color: colors.emerald, fontWeight: '700' }}>Start a focus session →</Text></Touchable>
                   </> : null}
-                  {slide === 4 ? <>
+                  {slide === 6 ? <>
                     <Text accessibilityRole="header" style={[styles.widgetNumber, { color: colors.cyan }]}>{postings.length ? `${heldPostings ? Math.round(attendedPostings / heldPostings * 100) : 0}%` : 'Set up'} <Text style={styles.widgetUnit}>{postings.length ? 'posting attendance' : 'attendance'}</Text></Text>
                     <Text style={[styles.widgetDetail, { color: colors.textMuted }]}>{postings.length ? `${attendedPostings} of ${heldPostings} posting days attended` : 'Add a posting to track your attendance.'}{reminderSettings.remindAttendance ? ' · Daily reminder on' : ''}</Text>
                     <View style={styles.widgetLinks}>
@@ -622,7 +657,7 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
                 style={scales.quick < 0.75 ? { width: '48%', flex: 0, flexBasis: '48%' } : undefined}
                 onPress={() => goToTab('AskAI')}
               /></> : <>
-                <QuickAction icon={<BookOpen size={18} color={colors.primary} />} label="Resume" sub="Last studied question" color={colors.primary} compact={scales.quick < 0.85} style={scales.quick < 0.75 ? { flex: 0, flexBasis: '48%' } : undefined} onPress={resumeQuestion} />
+                <QuickAction icon={<BookOpen size={18} color={colors.primary} />} label="Question bank" sub="Browse your syllabus" color={colors.primary} compact={scales.quick < 0.85} style={scales.quick < 0.75 ? { flex: 0, flexBasis: '48%' } : undefined} onPress={() => navigation.navigate('BrowseHome', {})} />
                 <QuickAction icon={<BookOpen size={18} color={colors.fuchsia} />} label="Note" sub="Write a study note" color={colors.fuchsia} compact={scales.quick < 0.85} style={scales.quick < 0.75 ? { flex: 0, flexBasis: '48%' } : undefined} onPress={() => openProgress('notes', true)} />
                 <QuickAction icon={<CalendarCheck size={18} color={colors.cyan} />} label="Posting" accessibilityLabel="Attendance" sub="Track postings" color={colors.cyan} compact={scales.quick < 0.85} style={scales.quick < 0.75 ? { flex: 0, flexBasis: '48%' } : undefined} onPress={() => openProgress('attendance')} />
                 <QuickAction icon={<BellRing size={18} color={colors.emerald} />} label="Alerts" accessibilityLabel="Reminders" sub="Daily attendance reminders" color={colors.emerald} compact={scales.quick < 0.85} style={scales.quick < 0.75 ? { flex: 0, flexBasis: '48%' } : undefined} onPress={() => setSettingsOpen(true)} />
@@ -630,7 +665,7 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
             </View>
             <View style={[styles.pager, styles.quickPager]}>
               <Touchable onPress={() => setQuickPage(current => (current + 1) % QUICK_PAGES)} label="Previous quick actions" style={styles.pagerArrow}><ChevronLeft size={19} color={colors.text} /></Touchable>
-              <Text style={{ color: colors.textMuted, fontSize: 12 }}>{quickPage + 1} / {QUICK_PAGES} · Swipe for more</Text>
+              <View style={styles.dots}>{Array.from({ length: QUICK_PAGES }, (_, index) => <View key={index} style={[styles.dot, { width: index === quickPage ? 16 : 6, backgroundColor: index === quickPage ? colors.fuchsia : colors.border }]} />)}</View>
               <Touchable onPress={() => setQuickPage(current => (current + 1) % QUICK_PAGES)} label="Next quick actions" style={styles.pagerArrow}><ChevronRight size={19} color={colors.text} /></Touchable>
             </View>
             </View>
@@ -1010,6 +1045,51 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
 }
 
 /** "Select Year" bottom sheet, opened from "View all". */
+function DailyQuestion({ kind, card, loading, error, onRetry, onAnswer, colors }: {
+  kind: DailyKind;
+  card?: DailyCard;
+  loading: boolean;
+  error?: string;
+  onRetry: () => void;
+  onAnswer: (index: number) => void;
+  colors: ReturnType<typeof useTheme>['colors'];
+}) {
+  if (!card) return <View style={styles.dailyEmpty}>
+    <Text style={[styles.widgetHeading, { color: colors.text }]}>{loading ? 'Preparing today’s question…' : error ?? 'Your daily question is ready to load.'}</Text>
+    {!loading ? <Touchable onPress={onRetry} label={`Retry ${kind === 'mcq' ? 'daily MCQ' : 'daily picture'}`} style={styles.widgetLink}>
+      <Text style={{ color: colors.fuchsia, fontWeight: '700' }}>Try again →</Text>
+    </Touchable> : null}
+  </View>;
+
+  return <View>
+    {kind === 'picture' && card.imageUrl ? <Image
+      source={{ uri: card.imageUrl }}
+      resizeMode="contain"
+      accessibilityLabel={`Study diagram for ${card.subject}`}
+      style={[styles.dailyImage, { backgroundColor: withAlpha(colors.text, 0.05) }]}
+    /> : null}
+    <Text style={[styles.dailySubject, { color: colors.textMuted }]}>{card.subject}</Text>
+    <Text accessibilityRole="header" style={[styles.dailyQuestion, { color: colors.text }]}>{card.question}</Text>
+    <View style={styles.dailyOptions}>{card.options.map((option, index) => {
+      const revealed = card.answer !== undefined;
+      const correct = index === card.correctIndex;
+      const tint = revealed && correct ? colors.emerald : revealed && card.answer === index ? colors.danger : colors.border;
+      return <Touchable
+        key={`${index}-${option}`}
+        onPress={() => onAnswer(index)}
+        label={`Answer ${String.fromCharCode(65 + index)}: ${option}`}
+        state={{ disabled: revealed, selected: card.answer === index }}
+        disabled={revealed}
+        style={[styles.dailyOption, { borderColor: tint, backgroundColor: revealed && (correct || card.answer === index) ? withAlpha(tint, 0.14) : withAlpha(colors.text, 0.035) }]}>
+        <Text style={[styles.dailyOptionText, { color: colors.text }]}>{String.fromCharCode(65 + index)}. {option}</Text>
+      </Touchable>;
+    })}</View>
+    {card.answer !== undefined ? <Text style={[styles.dailyExplanation, { color: colors.text }]}>
+      {card.answer === card.correctIndex ? 'Correct. ' : `Answer: ${String.fromCharCode(65 + card.correctIndex)}. `}{card.explanation}
+    </Text> : null}
+  </View>;
+}
+
 function YearPickerSheet({
   visible,
   currentYear,
@@ -1315,6 +1395,14 @@ const styles = StyleSheet.create({
   },
   heroTitle: typeScale.title1,
   heroPage: { minHeight: 128, justifyContent: 'center' },
+  dailyEmpty: { minHeight: 138, justifyContent: 'center' },
+  dailyImage: { width: '100%', height: 166, borderRadius: radius.md, marginBottom: space.sm },
+  dailySubject: { ...typeScale.overline, marginBottom: 5 },
+  dailyQuestion: { ...typeScale.callout, fontWeight: '700', marginBottom: 8 },
+  dailyOptions: { gap: 6 },
+  dailyOption: { minHeight: 43, borderWidth: 1, borderRadius: radius.md, paddingHorizontal: 12, paddingVertical: 9, justifyContent: 'center' },
+  dailyOptionText: { ...typeScale.footnote },
+  dailyExplanation: { ...typeScale.footnote, marginTop: 10, fontWeight: '600' },
   widgetEyebrow: { ...typeScale.overline, fontWeight: '800', letterSpacing: 1.2, marginBottom: 7 },
   widgetHeading: { ...typeScale.title3, fontWeight: '700' },
   widgetNumber: { ...typeScale.title1, fontWeight: '800' },

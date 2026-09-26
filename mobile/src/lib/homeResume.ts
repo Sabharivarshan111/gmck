@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import type { YearKey } from '@/lib/questionBank';
+import { YEAR_KEYS, type YearKey } from '@/lib/questionBank';
 
 const KEY = 'orbit:last-question-v1';
 
@@ -23,7 +23,7 @@ export async function readLastQuestion(): Promise<LastQuestion | null> {
     const item = JSON.parse(raw) as LastQuestion;
     return typeof item.title === 'string' && typeof item.question === 'string' &&
       Array.isArray(item.path) && item.path.every(part => typeof part === 'string') &&
-      ['first', 'second', 'third', 'final'].includes(item.year) &&
+      YEAR_KEYS.includes(item.year) &&
       (item.type === 'essay' || item.type === 'short-notes') ? item : null;
   } catch {
     return null;
