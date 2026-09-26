@@ -1073,7 +1073,7 @@ function DailyQuestion({ kind, card, loading, error, onRetry, onAnswer, colors }
       />
       <Text style={[styles.dailyImageHint, { color: colors.fuchsia }]}>Tap to enlarge</Text>
     </Touchable> : null}
-    {kind === 'picture' && card.imageUrl ? <Modal visible={imageExpanded} transparent animationType="fade" onRequestClose={() => setImageExpanded(false)} statusBarTranslucent>
+    {kind === 'picture' && card.imageUrl && imageExpanded ? <Modal visible animationType="fade" onRequestClose={() => setImageExpanded(false)} statusBarTranslucent>
       <View style={styles.dailyImageModal}>
         <Touchable onPress={() => setImageExpanded(false)} label="Close enlarged picture" style={[styles.dailyImageClose, { marginTop: insets.top + 12 }]}>
           <X size={24} color="#fff" />
