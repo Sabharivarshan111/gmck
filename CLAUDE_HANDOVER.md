@@ -613,3 +613,7 @@ Read the appended 2026-09-26 section in `HANDOFF.md`. Current product commit is 
 ### Final daily Home v24 verification
 
 Current app source `d4e0dd2d3fedfa1b9fde7553dcae4e867660ebd4`, Edge v3, screenshots commit `7458277e6a50a43e4f7bfe6c93183e625d369e92`. See HANDOFF.md final daily Home section for storage measurements and final build run IDs. Full-screen diagram visual run `36213138445` passed. Builds still compiling at handoff update; verify before linking release assets. App release notes row v24 updated. No Play upload.
+
+### Verified final v24 daily-card builds
+
+All passed: release `36213138345` → `release-536` AAB/APK; internal `36213138347` → `internal-337` APK; debug `36213138460` → `debug-343` APK. All tags at `49e52ed9490ecd181b893cfc4252831af36d6b60`, same mobile code as source `d4e0dd2d3fedfa1b9fde7553dcae4e867660ebd4`. URLs and sizes are in HANDOFF.md. VersionCode 24, no Play upload. Supabase cache only 32 KiB now; see HANDOFF.

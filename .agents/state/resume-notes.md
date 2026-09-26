@@ -1635,3 +1635,7 @@ Current product commit `fe03a978bfa2f4c88cd8f850fffc46c08bc4d5bb`. Shared Supaba
 ### Final daily Home visual and builds
 
 Native source `d4e0dd2d3fedfa1b9fde7553dcae4e867660ebd4`, Edge v3, screenshots commit `7458277e6a50a43e4f7bfe6c93183e625d369e92`; visual run `36213138445` passed expanded picture. Final release/internal/debug runs `36213138345 / 36213138347 / 36213138460` still compiling, verify assets. Supabase storage/cache figures and v24 Play text in HANDOFF.md. No Play upload.
+
+### Verified v24 daily-card artifacts
+
+All final Android runs passed: release `36213138345` → `release-536`; internal `36213138347` → `internal-337`; debug `36213138460` → `debug-343`. All tags `49e52ed9490ecd181b893cfc4252831af36d6b60`, only docs/screenshots after source commit. Direct URLs and Play text in HANDOFF.md and CHATGPT_HANDOVER.md. No Play upload.

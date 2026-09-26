@@ -648,3 +648,20 @@ Product commit `fe03a978bfa2f4c88cd8f850fffc46c08bc4d5bb`. See `HANDOFF.md` 2026
 ### Final daily Home v24 verification
 
 Use source `d4e0dd2d3fedfa1b9fde7553dcae4e867660ebd4`, Edge function v3, and screenshots under `screenshots/home-daily-v24/` committed at `7458277e6a50a43e4f7bfe6c93183e625d369e92`. Final visual run `36213138445` passed, including opaque full-screen image. HANDOFF.md records exact Supabase use: 2 cards/32 KiB new cache, 407 objects/~277 MiB existing Storage, ~63.5 MiB database. Final Android runs `36213138345 / 36213138347 / 36213138460` are compiling; do not substitute old v24 tags. No Play upload.
+
+### Verified final v24 daily-card builds and Play text
+
+Release `release-536` AAB/APK, internal `internal-337` APK, debug `debug-343` APK all passed from final source. Direct URLs and exact bytes in HANDOFF.md. All tags point `49e52ed9490ecd181b893cfc4252831af36d6b60`, whose delta from build source is only screenshots/docs. Play release name `24 (0.0.0.24)`. Paste these 382-character English notes:
+
+<en-US>
+New
+• Answer a daily MCQ and picture question for your year from Home. Your answers are saved.
+• Resume your last question, and see progress, study time and attendance in the Home card.
+• Enable daily posting reminders.
+
+Fixed
+• Open APKG decks and PDFs directly in Orbit. Reimport affected decks to restore images.
+• Notes recover drafts, and Home cards and PDF tools can be moved.
+</en-US>
+
+No Play upload was done.
