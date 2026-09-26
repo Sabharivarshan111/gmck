@@ -1643,3 +1643,7 @@ All final Android runs passed: release `36213138345` → `release-536`; internal
 ### Owner-corrected compact daily cards
 
 The owner rejected the tall daily slide. Source `30e5b00f4f78811a6250b172349825e55e2a0341` keeps every Home carousel page at the same compact height, shows a small picture/question/options, and reveals the answer within that card. Tap diagram/question/full explanation for details. It also includes duplicate-request/stale-year protection. Phone-size component visual `36226028426`, web `36226028520`, and final Android release/internal/debug `36226028404 / 36226028480 / 36226028434` all passed. Use `release-539` AAB/APK, `internal-340` APK, `debug-346` APK; all tags point exactly to compact source. Old release-536/internal-337/debug-343 contain the rejected tall card. See HANDOFF.md for direct links and storage context. No Play upload.
+
+### Three-line release notes and offline upgrade retry (2026-09-26)
+
+Main product commit `a5eea5d6b431b204276107d0c0e7b1a70f79e170` caps the in-app note card at three single-line bullets and keeps a failed Supabase read from permanently consuming the What's New card. The v24 cloud row has three notes. Local `check:native-update` and diff check passed; verify Android release/internal/debug workflows from the final handoff commit, their tags and assets, and share only those links. VersionCode is still 24, Play reportedly has 23, and no Play upload occurred. See HANDOFF.md.

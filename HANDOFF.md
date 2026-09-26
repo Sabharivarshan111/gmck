@@ -2415,3 +2415,9 @@ Product commit: `e2103260a933a51ac4d8e6567bad0c05b4d46ad6`.
 - Internal `internal-340`: [APK](https://github.com/Sabharivarshan111/gmck/releases/download/internal-340/app-internal.apk) (108,887,160 bytes), normal Google sign-in and no ads.
 - Debug `debug-346`: [preview APK](https://github.com/Sabharivarshan111/gmck/releases/download/debug-346/app-preview.apk) (108,887,176 bytes), debug-only sign-in bypass and no ads. VersionCode/name remain 24/0.0.0.24.
 - Supabase `app_releases` v24 row now says compact flashcards and in-card reveal, replacing the old "large Home card" wording. The owner has not uploaded the new AAB to Play Console from this work.
+
+### 2026-09-26 — Three-line in-app release notes and offline retry
+
+- `UpdateNotice.tsx` displays at most three single-line bullets from the matching Supabase `app_releases` row. The v24 row has exactly three notes. Google Play still decides whether an update exists; a fresh install does not show a What's New card.
+- A failed Supabase read after an upgrade (for example, offline) was treated as a missing row, and the version was marked seen forever. `appUpdate.ts` now distinguishes a failed read from a genuinely missing row; the card retries on the next launch after a failure. The update offer still works without fetched notes.
+- Product commit `a5eea5d6b431b204276107d0c0e7b1a70f79e170` on `main`; `check:native-update` and `git diff --check` passed locally. Android release/internal/debug runs from the final handoff commit need verification of typecheck, lint, packaging, tags and assets. VersionCode remains 24 because the owner reported 23 on Play. No AAB was uploaded to Play Console.
