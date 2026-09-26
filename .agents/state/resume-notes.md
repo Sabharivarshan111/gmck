@@ -1639,3 +1639,7 @@ Native source `d4e0dd2d3fedfa1b9fde7553dcae4e867660ebd4`, Edge v3, screenshots c
 ### Verified v24 daily-card artifacts
 
 All final Android runs passed: release `36213138345` → `release-536`; internal `36213138347` → `internal-337`; debug `36213138460` → `debug-343`. All tags `49e52ed9490ecd181b893cfc4252831af36d6b60`, only docs/screenshots after source commit. Direct URLs and Play text in HANDOFF.md and CHATGPT_HANDOVER.md. No Play upload.
+
+### Owner-corrected compact daily cards
+
+The owner rejected the tall daily slide. Source `30e5b00f4f78811a6250b172349825e55e2a0341` keeps every Home carousel page at the same compact height, shows a small picture/question/options, and reveals the answer within that card. Tap diagram/question/full explanation for details. It also includes duplicate-request/stale-year protection. Phone-size component visual `36226028426`, web `36226028520`, and final Android release/internal/debug `36226028404 / 36226028480 / 36226028434` all passed. Use `release-539` AAB/APK, `internal-340` APK, `debug-346` APK; all tags point exactly to compact source. Old release-536/internal-337/debug-343 contain the rejected tall card. See HANDOFF.md for direct links and storage context. No Play upload.

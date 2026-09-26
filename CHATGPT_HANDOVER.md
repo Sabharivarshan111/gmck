@@ -665,3 +665,9 @@ Fixed
 </en-US>
 
 No Play upload was done.
+
+### Owner's compact-card correction, 2026-09-26
+
+The owner rejected the tall daily card shown in chat. Source `30e5b00f4f78811a6250b172349825e55e2a0341` now keeps Welcome, MCQ and Picture fronts/answers, Resume, progress, study time and attendance at one compact height. MCQ and picture show a flashcard front with two-line options and Reveal answer; answer stays inside the card. Tap question for full text, diagram to enlarge, Full explanation for the complete teaching text. Selected answers and no-selection reveals persist locally. The preceding source `46420e7ec2b6fa91f665be1c2594f73e3d5174c1` also removed duplicate daily requests and stale year/date results. Actual React Native Web Home component phone screenshots and fixed-card-height checks passed run `36226028426`, artifact `10900163262`. Show the new images inline in chat, not the tall old screenshots. Android release/internal/debug builds from this compact source are `36226028404 / 36226028480 / 36226028434`; verify assets and replace old release-536/internal-337/debug-343 links in the final handoff. No Play upload.
+
+Verified compact downloads: release-539 signed AAB/APK, internal-340 APK, debug-346 APK. All three runs succeeded and tags point `30e5b00f...`; HANDOFF.md has direct URLs and sizes. Supabase v24 release description now says compact flashcards. Play name remains `24 (0.0.0.24)`; use updated concise English notes that say “compact Home card,” “choose an option,” and “reveal the answer.” No Play upload.

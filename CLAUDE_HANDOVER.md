@@ -617,3 +617,9 @@ Current app source `d4e0dd2d3fedfa1b9fde7553dcae4e867660ebd4`, Edge v3, screensh
 ### Verified final v24 daily-card builds
 
 All passed: release `36213138345` → `release-536` AAB/APK; internal `36213138347` → `internal-337` APK; debug `36213138460` → `debug-343` APK. All tags at `49e52ed9490ecd181b893cfc4252831af36d6b60`, same mobile code as source `d4e0dd2d3fedfa1b9fde7553dcae4e867660ebd4`. URLs and sizes are in HANDOFF.md. VersionCode 24, no Play upload. Supabase cache only 32 KiB now; see HANDOFF.
+
+### Compact daily flashcard correction
+
+Owner reviewed the chat screenshot and rejected the tall Home daily card. Source `30e5b00f4f78811a6250b172349825e55e2a0341` uses one fixed compact carousel height for all slides, tappable small diagram, question and selectable two-line options, then Reveal answer inside the same card. Full question and explanation remain available in a modal. MCQ and Picture front/back screenshots and fixed-height assertions passed visual run `36226028426`; see HANDOFF.md. An earlier same-turn fix also prevents duplicate requests and stale year/date results. New Android runs `36226028404 / 36226028480 / 36226028434` supersede release-536/internal-337/debug-343. Verify their final assets before distribution. No Play upload.
+
+Verified: all three compact runs passed and tags `release-539`, `internal-340`, `debug-346` point to `30e5b00f...`. Direct signed files and byte counts are in HANDOFF.md. Supabase v24 release description was corrected to say compact flashcards. The owner must still upload the AAB to Play.
