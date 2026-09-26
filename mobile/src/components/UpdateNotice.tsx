@@ -227,10 +227,15 @@ export function UpdateNotice() {
                 {mode === 'whatsnew' ? 'Fixed in this version' : 'What this update fixes'}
               </Text>
             </View>
-            {release.notes.map((note, i) => (
+            {release.notes.slice(0, 3).map((note, i) => (
               <View key={i} style={styles.noteRow}>
                 <Text style={[styles.bullet, { color: colors.accent }]}>•</Text>
-                <Text style={[styles.noteText, { color: colors.text }]}>{note}</Text>
+                <Text
+                  style={[styles.noteText, { color: colors.text }]}
+                  numberOfLines={1}
+                  ellipsizeMode="tail">
+                  {note}
+                </Text>
               </View>
             ))}
           </View>
