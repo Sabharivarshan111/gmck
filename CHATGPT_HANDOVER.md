@@ -640,3 +640,7 @@ Claude's explicit resume branch `claude/continue-previous-z98gdv` has been carri
 - ChatGPT: progressive Guide sections, structured bedside GPE clerking, per-proforma normal references, collapsed optional AI assistance, native Android screenshot verification.
 
 The original Claude branch was never typechecked in its sandbox. CI on the integration branch is therefore the authority before merge.
+
+## 2026-09-26 Home daily cards continuation
+
+Product commit `fe03a978bfa2f4c88cd8f850fffc46c08bc4d5bb`. See `HANDOFF.md` 2026-09-26 section for precise design, backend pool and verification. The current screenshot job supersedes first visual run `36211791675`. User specifically wants actual screenshots displayed inline in chat; publish reviewed PNGs and use Markdown image tags. Shared 42-slot per-year/kind Supabase cache avoids Gemini calls per user and eventually stops generation after all slots fill. The first live Second Year MCQ and picture are ready. VersionCode 24, no Play upload.

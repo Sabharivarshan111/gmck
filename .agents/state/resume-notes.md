@@ -1627,3 +1627,7 @@ so a physical-device re-import/photo check is still outstanding.
   https://github.com/Sabharivarshan111/gmck/releases/download/debug-337/app-preview.apk
 - All tags resolve to `b9fb2359551777b26665134a0b2ec2470d1ba0cd`.
   Visual `36169940679` and web `36169940725` passed. AAB not uploaded to Play.
+
+### Daily Home card continuation (2026-09-26)
+
+Current product commit `fe03a978bfa2f4c88cd8f850fffc46c08bc4d5bb`. Shared Supabase 42-slot/year/kind cache deployed (private `daily_study_cards`, Edge `daily-study-card` v2). Home carousel includes MCQ, picture, Resume (year validation fixed), progress, study, attendance; small Bank tile replaces duplicate Resume. First live Second Year cards generated; latest visual and Android builds still require verification. See HANDOFF.md.
