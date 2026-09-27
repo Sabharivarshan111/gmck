@@ -30,6 +30,7 @@ try {
   const title = (await section.getAttribute('aria-label')).replace(/^Copy entire /, '').replace(/ section$/, '');
   await section.click();
   await page.waitForFunction(title => navigator.clipboard.readText().then(text => text.includes(title) && text.includes('Airway, breathing, circulation')), title);
+  await section.evaluate(element => element.scrollIntoView({ block: 'center' }));
   await page.screenshot({ path: path.join(output, '01-full-section-copy.png') });
   console.log('OK section button copied its title and body:', title);
 
@@ -69,6 +70,8 @@ try {
   await page.getByLabel('Choose a song from 2 tracks in your playlist').click();
   const choices = page.getByLabel(/^Play Nocturne in E flat by Study Session$/);
   if (await choices.count() !== 2) throw new Error('Playlist did not show both added tracks');
+  await page.getByText('Your study music').waitFor();
+  await page.waitForTimeout(700); // Let the sheet finish rising before photographing it.
   await page.screenshot({ path: path.join(output, '04-music-playlist.png') });
   await choices.nth(0).click();
   await page.getByLabel('Pause music').waitFor();
