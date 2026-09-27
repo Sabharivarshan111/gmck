@@ -122,17 +122,17 @@ try {
   if (!(await storedHome()).order?.includes('quick')) throw new Error('Reset did not restore hidden block');
   await page.screenshot({ path: path.join(output, 'home-customization-reset.png') });
   const firstSubject = page.getByLabel(/^Move .* later$/).first();
-  await firstSubject.scrollIntoViewIfNeeded();
+  await firstSubject.evaluate(element => element.scrollIntoView({ block: 'center' }));
   const beforeSubject = await page.evaluate(() => localStorage.getItem('orbit:subject-order-v1'));
-  await firstSubject.click();
+  await firstSubject.click({ force: true });
   const movedSubject = await page.evaluate(() => localStorage.getItem('orbit:subject-order-v1'));
   if (!movedSubject || movedSubject === beforeSubject) throw new Error('Move subject later did not save order');
   await page.screenshot({ path: path.join(output, 'home-subject-reordered.png') });
-  await page.getByLabel(/^Move .* earlier$/).nth(1).click();
+  await page.getByLabel(/^Move .* earlier$/).nth(1).click({ force: true });
   await page.screenshot({ path: path.join(output, 'home-subject-restored.png') });
   await page.evaluate(() => { globalThis.__orbitPickImage = true; });
   const upload = page.getByLabel(/^Upload picture for /).first();
-  await upload.scrollIntoViewIfNeeded();
+  await upload.evaluate(element => element.scrollIntoView({ block: 'center' }));
   const photoBounds = await upload.boundingBox();
   if (!photoBounds) throw new Error('Subject photo button is missing');
   await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: photoBounds.x + photoBounds.width / 2, y: photoBounds.y + photoBounds.height / 2 }] });
@@ -140,7 +140,7 @@ try {
   await page.waitForFunction(() => !!localStorage.getItem('orbit:subject-backgrounds-v1'));
   await page.screenshot({ path: path.join(output, 'home-subject-picture-added.png') });
   const removePhoto = page.getByLabel(/^Remove picture for /).first();
-  await removePhoto.click();
+  await removePhoto.click({ force: true });
   if (await page.getByLabel(/^Remove picture for /).count()) throw new Error('Remove subject picture did not clear it');
   await page.screenshot({ path: path.join(output, 'home-subject-picture-removed.png') });
 

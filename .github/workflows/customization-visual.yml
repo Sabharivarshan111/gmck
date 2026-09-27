@@ -40,6 +40,7 @@ jobs:
         run: node preview/customization-visual.mjs screenshots/customization
         working-directory: mobile
       - name: Verify friend feedback and capture note, PDF and music screens
+        if: always()
         run: node preview/friend-feedback-visual.mjs screenshots/customization
         working-directory: mobile
       - uses: actions/upload-artifact@v4
