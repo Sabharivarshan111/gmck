@@ -1372,7 +1372,9 @@ export function ProgressNotesTab({ year }: Props) {
                 onChangeText={text => {
                   const continuation = continueListOnEnter(editContent, text);
                   setEditContent(continuation?.text ?? text);
-                  setForcedSelection(continuation ? { start: continuation.cursor, end: continuation.cursor } : null);
+                  const caret = continuation ? { start: continuation.cursor, end: continuation.cursor } : null;
+                  if (caret) setSelection(caret);
+                  setForcedSelection(caret);
                 }}
                 onSelectionChange={event => {
                   const next = event.nativeEvent.selection;

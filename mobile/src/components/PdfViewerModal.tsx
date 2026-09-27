@@ -1011,7 +1011,9 @@ export function PdfViewerModal({ file, visible, onClose }: PdfViewerModalProps) 
                         p.id === currentInserted.id ? { ...p, noteText: continuation?.text ?? txt } : p,
                       );
                       persistInsertedPages(next);
-                      setForcedNoteSelection(continuation ? { start: continuation.cursor, end: continuation.cursor } : null);
+                      const caret = continuation ? { start: continuation.cursor, end: continuation.cursor } : null;
+                      if (caret) setNoteSelection(caret);
+                      setForcedNoteSelection(caret);
                     }}
                     onSelectionChange={event => {
                       const next = event.nativeEvent.selection;
