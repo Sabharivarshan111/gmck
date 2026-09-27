@@ -6,6 +6,7 @@ import {
   Image,
   Modal,
   PanResponder,
+  Platform,
   ScrollView,
   StyleSheet,
   TextInput,
@@ -987,7 +988,14 @@ export function PdfViewerModal({ file, visible, onClose }: PdfViewerModalProps) 
                       const next = select ?? { start: cursor, end: cursor };
                       setNoteSelection(next);
                       setForcedNoteSelection(next);
-                      requestAnimationFrame(() => noteInputRef.current?.focus());
+                      requestAnimationFrame(() => {
+                        const input = noteInputRef.current;
+                        input?.focus();
+                        input?.setNativeProps({ selection: next });
+                        if (Platform.OS === 'web') {
+                          (input as unknown as { setSelectionRange(start: number, end: number): void } | null)?.setSelectionRange(next.start, next.end);
+                        }
+                      });
                     }}
                   />
                   <TextInput

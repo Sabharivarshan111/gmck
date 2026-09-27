@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { AppState, Keyboard, Modal, ScrollView, StyleSheet, TextInput, View } from "react-native";
+import { AppState, Keyboard, Modal, Platform, ScrollView, StyleSheet, TextInput, View } from "react-native";
 import { Text } from "@/components/Text";
 import { Touchable } from "@/components/Touchable";
 import { Dialog } from "@/components/Dialog";
@@ -1350,7 +1350,14 @@ export function ProgressNotesTab({ year }: Props) {
                   const next = select ?? { start: cursor, end: cursor };
                   setSelection(next);
                   setForcedSelection(next);
-                  requestAnimationFrame(() => noteInputRef.current?.focus());
+                  requestAnimationFrame(() => {
+                    const input = noteInputRef.current;
+                    input?.focus();
+                    input?.setNativeProps({ selection: next });
+                    if (Platform.OS === 'web') {
+                      (input as unknown as { setSelectionRange(start: number, end: number): void } | null)?.setSelectionRange(next.start, next.end);
+                    }
+                  });
                 }}
               />
               <TextInput
