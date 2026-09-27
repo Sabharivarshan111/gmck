@@ -991,9 +991,12 @@ export function PdfViewerModal({ file, visible, onClose }: PdfViewerModalProps) 
                       requestAnimationFrame(() => {
                         const input = noteInputRef.current;
                         input?.focus();
-                        input?.setNativeProps({ selection: next });
                         if (Platform.OS === 'web') {
-                          (input as unknown as { setSelectionRange(start: number, end: number): void } | null)?.setSelectionRange(next.start, next.end);
+                          setTimeout(() => {
+                            (input as unknown as { setSelectionRange(start: number, end: number): void } | null)?.setSelectionRange(next.start, next.end);
+                          }, 0);
+                        } else {
+                          input?.setNativeProps({ selection: next });
                         }
                       });
                     }}

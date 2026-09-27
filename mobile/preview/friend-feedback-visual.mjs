@@ -45,8 +45,6 @@ try {
   const note = page.getByLabel('What the note says');
   await note.click();
   await page.getByLabel('Numbered point').click();
-  await page.waitForTimeout(300);
-  console.log('Personal marker state:', JSON.stringify(await note.evaluate(element => ({ value: element.value, start: element.selectionStart, end: element.selectionEnd, active: document.activeElement === element }))));
   await page.waitForFunction(() => document.querySelector('[aria-label="What the note says"]')?.selectionStart === 3);
   await note.pressSequentially('First point');
   console.log('Personal note before Enter:', JSON.stringify(await note.inputValue()));
