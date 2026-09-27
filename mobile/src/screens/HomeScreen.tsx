@@ -38,6 +38,8 @@ import {
   CalendarCheck,
   ChevronLeft,
   ChevronRight,
+  ChevronUp,
+  ChevronDown,
   Flame,
   ImagePlus,
   Menu,
@@ -774,6 +776,14 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
                   return null;
                 }
                 const customBg = getBackground(subject.key);
+                const subjectIndex = subjectOrder.indexOf(subject.key);
+                const moveSubject = (direction: -1 | 1) => {
+                  const target = subjectIndex + direction;
+                  if (subjectIndex < 0 || target < 0 || target >= subjectOrder.length) return;
+                  const next = [...subjectOrder];
+                  [next[subjectIndex], next[target]] = [next[target], next[subjectIndex]];
+                  saveSubjectOrder(next);
+                };
                 return (
                   <HoloCard
                     index={subjects.indexOf(subject)}
@@ -835,6 +845,26 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
                         </ReorderLockContext.Provider>
                       ) : null}
                     </View>
+                    {editing ? (
+                      <ReorderLockContext.Provider value={false}>
+                        <View style={styles.subjectMoveActions}>
+                          <Touchable
+                            onPress={() => moveSubject(-1)}
+                            label={`Move ${subject.name} earlier`}
+                            disabled={subjectIndex <= 0}
+                            style={[styles.cardPicBtn, { backgroundColor: withAlpha('#000000', 0.7) }]}>
+                            <ChevronUp size={16} color="#FFFFFF" />
+                          </Touchable>
+                          <Touchable
+                            onPress={() => moveSubject(1)}
+                            label={`Move ${subject.name} later`}
+                            disabled={subjectIndex >= subjectOrder.length - 1}
+                            style={[styles.cardPicBtn, { backgroundColor: withAlpha('#000000', 0.7) }]}>
+                            <ChevronDown size={16} color="#FFFFFF" />
+                          </Touchable>
+                        </View>
+                      </ReorderLockContext.Provider>
+                    ) : null}
                     <View style={styles.subjectFooter}>
                       {/*
                         The name gets a two-line box whether it needs one or not.
@@ -1720,6 +1750,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
+  },
+  subjectMoveActions: {
+    position: 'absolute',
+    top: 47,
+    right: 12,
+    flexDirection: 'row',
+    gap: 5,
+    zIndex: 2,
   },
   cardPicBtn: {
     width: 28,

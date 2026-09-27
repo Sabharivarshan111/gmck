@@ -81,9 +81,10 @@ try {
   const minus = page.getByLabel('Make Welcome card smaller', { exact: true });
   await minus.click();
   await minus.click();
-  if ((await storedHome()).scales?.hero >= 1) throw new Error('Smaller button did not save width');
+  const smallerWidth = (await storedHome()).scales?.hero;
+  if (smallerWidth >= 1) throw new Error('Smaller button did not save width');
   await page.getByLabel('Make Welcome card bigger', { exact: true }).click();
-  if ((await storedHome()).scales?.hero >= 0.95) throw new Error('Bigger button did not save width');
+  if ((await storedHome()).scales?.hero <= smallerWidth) throw new Error('Bigger button did not save width');
   await page.getByLabel('Move Welcome card left', { exact: true }).click();
   if ((await storedHome()).aligns?.hero >= 0.5) throw new Error('Move left did not save placement');
   await page.getByLabel('Move Welcome card right', { exact: true }).click();
@@ -120,6 +121,15 @@ try {
   await page.getByLabel('Reset home layout', { exact: true }).click();
   if (!(await storedHome()).order?.includes('quick')) throw new Error('Reset did not restore hidden block');
   await page.screenshot({ path: path.join(output, 'home-customization-reset.png') });
+  const firstSubject = page.getByLabel(/^Move .* later$/).first();
+  await firstSubject.scrollIntoViewIfNeeded();
+  const beforeSubject = await page.evaluate(() => localStorage.getItem('orbit:subject-order-v1'));
+  await firstSubject.click();
+  const movedSubject = await page.evaluate(() => localStorage.getItem('orbit:subject-order-v1'));
+  if (!movedSubject || movedSubject === beforeSubject) throw new Error('Move subject later did not save order');
+  await page.screenshot({ path: path.join(output, 'home-subject-reordered.png') });
+  await page.getByLabel(/^Move .* earlier$/).nth(1).click();
+  await page.screenshot({ path: path.join(output, 'home-subject-restored.png') });
   await page.evaluate(() => { globalThis.__orbitPickImage = true; });
   const upload = page.getByLabel(/^Upload picture for /).first();
   await upload.scrollIntoViewIfNeeded();
