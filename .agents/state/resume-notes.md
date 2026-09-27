@@ -1655,3 +1655,10 @@ Runs release `36238458143`, internal `36238458212`, debug `36238458158` all pass
 ### 2026-09-27 friend feedback
 
 Native Notes and PDF note pages now continue numbered/bulleted lists on Enter; the PDF note page has formatting controls. Generated notes copy an entire section, and the focus player has a selectable playlist. See HANDOFF.md for the local checks and CI/build status. VersionCode stays 24; Play reportedly has 23.
+
+### 2026-09-27 follow-up screenshots
+
+- Home edit resize grips now live within touchable bounds; subject cards expose accessible move arrows and picture controls, with room so arrows do not cover titles. `SortableGrid` visually settles after arrow-driven order changes.
+- Personal and PDF note editors release the controlled caret after list continuation and retain its position when an empty list item ends the list. Four numbered entries followed by four bullets were checked in each editor.
+- Study music exposes a named playlist with row reorder/removal, shuffle, and repeat off/all/one. Reordering persists in `orbit:music:tracks`; removal respects copied versus linked file handling.
+- The phone-viewport visual workflow on `feedback-visual` captures before/after screenshots and exercises saved layout, subject order/picture controls, list editing, and playlist options. This is React Native Web; native Android audio completion and device gesture feel still need an installed-device check. VersionCode remains pinned to 24 while Play reportedly has 23. No Play Console upload is part of this work.

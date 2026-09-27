@@ -111,9 +111,13 @@ try {
     await page.getByLabel(/^Save a copy in Orbit/).click();
     await page.getByLabel(new RegExp(`Choose a song from ${i + 1} tracks? in your playlist`)).waitFor();
   }
+  await page.evaluate(() => { Math.random = () => 0; });
   await page.getByLabel('Shuffle off. Tap to turn on').click();
   await page.getByLabel('Shuffle on. Tap to turn off').waitFor();
   await page.screenshot({ path: path.join(output, '04a-music-shuffle-on.png') });
+  await page.getByLabel('Next track').click();
+  await page.getByText('Micro paper 1', { exact: true }).first().waitFor();
+  await page.screenshot({ path: path.join(output, '04a-music-shuffled-next.png') });
   await page.getByLabel('Shuffle on. Tap to turn off').click();
   await page.getByLabel('Repeat off. Tap to change').click();
   await page.getByLabel('Repeat all. Tap to change').waitFor();
