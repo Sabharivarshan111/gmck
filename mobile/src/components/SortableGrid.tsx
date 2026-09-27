@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Animated,
   PanResponder,
@@ -124,6 +124,13 @@ export function SortableGrid<Id extends string>({
     },
     [offsetFor, reduceMotion, rendered, slotAt],
   );
+
+  // Dragging animates neighbours while the finger moves. The accessible move
+  // buttons change `order` directly, so they need the same visual settle or
+  // storage changes while the cards appear to stay in their old slots.
+  useEffect(() => {
+    if (width > 0) settle(order);
+  }, [order, settle, width]);
 
   const responders = useMemo(() => {
     const map = {} as Record<Id, ReturnType<typeof PanResponder.create>>;

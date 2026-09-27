@@ -15,6 +15,8 @@
 declare global {
   // eslint-disable-next-line no-var
   var __orbitPickFile: 'audio' | 'video' | 'pdf' | undefined;
+  // eslint-disable-next-line no-var
+  var __orbitMusicDistinctTitles: boolean | undefined;
 }
 
 /** 0.4s of 440Hz, mono, 8kHz. Small enough to be free, real enough to decode. */
@@ -55,6 +57,7 @@ const COVER_PNG =
   'iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAIAAABvFaqvAAAAhUlEQVR42q3V6wnAIAxG0TtBp+uvTtLpukF3aqEgYjUmXwTFFxxETeS8r1K2Y5cLNZSxWki2OpBm8dYlFl+Ttyi9pEU9yFg0Y9niP6VZdGcFi9FC1MJYC1nYG/ZbTE/RaeG5Wo+F871NLfxBYFuEItOwiKaLkYWQw7oWWmJdBv0tMl9QDT02x25j6boaPwAAAABJRU5ErkJggg==';
 
 const kept = new Map<string, string>();
+const musicTitles = new Map<string, string>();
 /** Linked originals the harness pretends still exist. Deleting one breaks it. */
 const linked = new Map<string, string>();
 
@@ -160,8 +163,11 @@ export default {
     if (!kept.has(id)) {
       return '';
     }
+    if (globalThis.__orbitMusicDistinctTitles && !musicTitles.has(id)) {
+      musicTitles.set(id, ['Skin care', 'Micro paper 1', 'Micro mcq discussion'][musicTitles.size] ?? `Study track ${musicTitles.size + 1}`);
+    }
     return JSON.stringify({
-      title: 'Nocturne in E flat',
+      title: globalThis.__orbitMusicDistinctTitles ? musicTitles.get(id) : 'Nocturne in E flat',
       artist: 'Study Session',
       album: 'Piano for Revision',
       durationMs: 214_000,

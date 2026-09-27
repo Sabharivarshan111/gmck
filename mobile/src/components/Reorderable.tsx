@@ -696,6 +696,7 @@ export function Reorderable<Id extends string>({
               <View
                 style={[
                   styles.cardContainer,
+                  editing ? styles.cardEditing : null,
                   {
                     width: zoom >= 0.99 ? '100%' : `${Math.round(zoom * 100)}%`,
                     /*
@@ -998,25 +999,10 @@ export function Reorderable<Id extends string>({
   );
 }
 
-/**
- * Height of the lane above a block that the toolbar sits in, in edit mode.
- *
- * Tight against the 32dp pill on purpose. At 38 the lanes added 60dp of empty
- * vertical to *every* block, which across five blocks is most of a screen of
- * nothing — the report was that the page had "so much space" and that a block
- * was hard to get hold of, and a small block ended up with its grip apparently
- * floating on its own in the gap below it. The chrome still has its own lane,
- * which is what stops a toolbar covering the block above it; it is just no
- * longer given more room than the pill inside it needs.
- */
-const TOOLBAR_LANE = 26;
-/**
- * And the lanes below and to the right, for the width and height grips. A grip
- * drawn over the card it resizes covers the thing being resized — the width bar
- * used to sit across "Ask AI" — and a grip drawn *outside* the row lands in the
- * next block's touch area, where its responder claims the drag.
- */
-const GRIP_LANE = 14;
+/** Full height of the toolbar plus its border, so it stays above the card. */
+const TOOLBAR_LANE = 38;
+/** Space inside the card's parent for each resize target to receive touches. */
+const GRIP_LANE = 36;
 
 const styles = StyleSheet.create({
   /** A column container that can hand its extra height to its child. */
@@ -1028,22 +1014,18 @@ const styles = StyleSheet.create({
     // block that owns it rather than being redistributed on every reorder.
     position: 'relative',
   },
-  /**
-   * Edit mode's two lanes. `TOOLBAR_LANE` is tall enough for the 32dp pill
-   * plus air; `GRIP_LANE` for the height bar and the corner dot. They exist so
-   * the chrome has somewhere of its own to be drawn — with the chrome hanging
-   * outside the row instead, every toolbar covered the block above it and
-   * every grip sat in the next block's touch area.
-   */
+  /** Reserve the toolbar above the card. Resize lanes live inside it. */
   rowEditing: {
     paddingTop: TOOLBAR_LANE,
-    paddingBottom: GRIP_LANE,
-    paddingRight: GRIP_LANE,
   },
   cardContainer: {
     position: 'relative',
     borderRadius: 20,
   },
+  // Keep every resize target inside its parent's measured and hit-testable
+  // bounds. Negative offsets looked right but Android cannot hit a child
+  // outside the View that owns it.
+  cardEditing: { paddingRight: GRIP_LANE, paddingBottom: GRIP_LANE },
   controls: {
     position: 'absolute',
     top: 0,
@@ -1067,7 +1049,7 @@ const styles = StyleSheet.create({
   },
   verticalResizeZone: {
     position: 'absolute',
-    bottom: -GRIP_LANE,
+    bottom: 0,
     left: '50%',
     marginLeft: -34,
     width: 68,
@@ -1119,7 +1101,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: '50%',
     marginTop: -34,
-    right: -GRIP_LANE,
+    right: 0,
     width: GRIP_LANE,
     height: 68,
     zIndex: 10,
@@ -1129,10 +1111,10 @@ const styles = StyleSheet.create({
 
   cornerResizeZone: {
     position: 'absolute',
-    bottom: -GRIP_LANE,
-    right: -GRIP_LANE,
-    width: 28,
-    height: 28,
+    bottom: 0,
+    right: 0,
+    width: GRIP_LANE,
+    height: GRIP_LANE,
     zIndex: 11,
     alignItems: 'center',
     justifyContent: 'center',

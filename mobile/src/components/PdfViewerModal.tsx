@@ -1011,9 +1011,17 @@ export function PdfViewerModal({ file, visible, onClose }: PdfViewerModalProps) 
                         p.id === currentInserted.id ? { ...p, noteText: continuation?.text ?? txt } : p,
                       );
                       persistInsertedPages(next);
-                      setForcedNoteSelection(continuation ? { start: continuation.cursor, end: continuation.cursor } : null);
+                      const caret = continuation ? { start: continuation.cursor, end: continuation.cursor } : null;
+                      if (caret) setNoteSelection(caret);
+                      setForcedNoteSelection(caret);
                     }}
-                    onSelectionChange={event => setNoteSelection(event.nativeEvent.selection)}
+                    onSelectionChange={event => {
+                      const next = event.nativeEvent.selection;
+                      setNoteSelection(next);
+                      if (forcedNoteSelection && next.start === forcedNoteSelection.start && next.end === forcedNoteSelection.end) {
+                        setForcedNoteSelection(null);
+                      }
+                    }}
                     selection={forcedNoteSelection ?? undefined}
                     placeholder="Type personal study points, lecture pearls, or clinical takeaways here…"
                     placeholderTextColor={colors.textMuted}

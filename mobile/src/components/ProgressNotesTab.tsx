@@ -1372,9 +1372,17 @@ export function ProgressNotesTab({ year }: Props) {
                 onChangeText={text => {
                   const continuation = continueListOnEnter(editContent, text);
                   setEditContent(continuation?.text ?? text);
-                  setForcedSelection(continuation ? { start: continuation.cursor, end: continuation.cursor } : null);
+                  const caret = continuation ? { start: continuation.cursor, end: continuation.cursor } : null;
+                  if (caret) setSelection(caret);
+                  setForcedSelection(caret);
                 }}
-                onSelectionChange={event => setSelection(event.nativeEvent.selection)}
+                onSelectionChange={event => {
+                  const next = event.nativeEvent.selection;
+                  setSelection(next);
+                  if (forcedSelection && next.start === forcedSelection.start && next.end === forcedSelection.end) {
+                    setForcedSelection(null);
+                  }
+                }}
                 // Controlled only for the frame after a toolbar press. Pinning it
                 // permanently would fight every tap the reader makes in the text.
                 selection={forcedSelection ?? undefined}

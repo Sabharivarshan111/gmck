@@ -70,9 +70,39 @@ try {
   await page.goto('http://localhost:5226/?screen=homeedit', { waitUntil: 'networkidle' });
   await page.getByLabel('Move Welcome card down', { exact: true }).waitFor();
   await page.screenshot({ path: path.join(output, 'home-customization-before.png') });
+  const storedHome = () => page.evaluate(() => JSON.parse(localStorage.getItem('orbit:home-order-v1') || '{}'));
+  const dragControl = async (label, dx, dy) => {
+    const control = page.getByLabel(label, { exact: true });
+    await control.scrollIntoViewIfNeeded();
+    const bounds = await control.boundingBox();
+    if (!bounds) throw new Error(`${label} has no touch target`);
+    await touchDrag({ x: bounds.x + bounds.width / 2, y: bounds.y + bounds.height / 2 }, dx, dy);
+  };
   const minus = page.getByLabel('Make Welcome card smaller', { exact: true });
   await minus.click();
   await minus.click();
+  const smallerWidth = (await storedHome()).scales?.hero;
+  if (smallerWidth >= 1) throw new Error('Smaller button did not save width');
+  await page.getByLabel('Make Welcome card bigger', { exact: true }).click();
+  if ((await storedHome()).scales?.hero <= smallerWidth) throw new Error('Bigger button did not save width');
+  await page.getByLabel('Move Welcome card left', { exact: true }).click();
+  if ((await storedHome()).aligns?.hero >= 0.5) throw new Error('Move left did not save placement');
+  await page.getByLabel('Move Welcome card right', { exact: true }).click();
+  if ((await storedHome()).aligns?.hero < 0.5) throw new Error('Move right did not save placement');
+  await page.screenshot({ path: path.join(output, 'home-customization-size-and-place.png') });
+  await dragControl('Height of Welcome card', 0, 95);
+  if ((await storedHome()).heights?.hero <= 1) throw new Error('Bottom height grip did not grow Welcome card');
+  const widthBefore = (await storedHome()).scales.hero;
+  await dragControl('Width of Welcome card', -65, 0);
+  if ((await storedHome()).scales?.hero >= widthBefore) throw new Error('Side width grip did not shrink Welcome card');
+  const cornerBefore = await storedHome();
+  await dragControl('Width and height of Welcome card', -25, 50);
+  const cornerAfter = await storedHome();
+  if (cornerAfter.scales?.hero >= cornerBefore.scales.hero || cornerAfter.heights?.hero <= cornerBefore.heights.hero) {
+    throw new Error('Corner grip did not change both width and height');
+  }
+  await page.screenshot({ path: path.join(output, 'home-customization-grips.png') });
+  await page.getByLabel('Reset home layout', { exact: true }).click();
   const hero = page.getByLabel('Move Welcome card down', { exact: true });
   const box = await hero.boundingBox();
   if (!box) throw new Error('Could not find the Welcome section');
@@ -84,6 +114,58 @@ try {
     throw new Error(`Welcome section did not save the new order after touch drag: ${JSON.stringify(savedHome)}`);
   }
   await page.screenshot({ path: path.join(output, 'home-customization-after.png') });
+  await page.getByLabel('Move Welcome card up', { exact: true }).click();
+  await page.getByLabel('Remove Quick actions', { exact: true }).click();
+  if ((await storedHome()).order?.includes('quick')) throw new Error('Remove block did not hide it');
+  await page.screenshot({ path: path.join(output, 'home-customization-removed.png') });
+  await page.getByLabel('Reset home layout', { exact: true }).click();
+  if (!(await storedHome()).order?.includes('quick')) throw new Error('Reset did not restore hidden block');
+  await page.screenshot({ path: path.join(output, 'home-customization-reset.png') });
+  const firstSubject = page.getByLabel(/^Move .* later$/).first();
+  await firstSubject.evaluate(element => element.scrollIntoView({ block: 'center' }));
+  const beforeSubject = await page.evaluate(() => localStorage.getItem('orbit:subject-order-v1'));
+  await firstSubject.click({ force: true });
+  const movedSubject = await page.evaluate(() => localStorage.getItem('orbit:subject-order-v1'));
+  if (!movedSubject || movedSubject === beforeSubject) throw new Error('Move subject later did not save order');
+  await page.waitForTimeout(500);
+  const firstName = page.getByText('PHARMACOLOGY', { exact: true });
+  const secondName = page.getByText('PATHOLOGY', { exact: true });
+  const movedFirstBox = await firstName.boundingBox();
+  const movedSecondBox = await secondName.boundingBox();
+  if (!movedFirstBox || !movedSecondBox || movedFirstBox.x <= movedSecondBox.x) throw new Error('Subject order saved but cards did not visibly move');
+  await page.screenshot({ path: path.join(output, 'home-subject-reordered.png') });
+  await page.getByLabel('Move Pharmacology earlier', { exact: true }).click({ force: true });
+  await page.waitForTimeout(500);
+  const restoredFirstBox = await firstName.boundingBox();
+  const restoredSecondBox = await secondName.boundingBox();
+  if (!restoredFirstBox || !restoredSecondBox || restoredFirstBox.x >= restoredSecondBox.x) throw new Error('Move subject earlier did not visibly restore order');
+  await page.screenshot({ path: path.join(output, 'home-subject-restored.png') });
+  await page.evaluate(() => { globalThis.__orbitPickImage = true; });
+  const upload = page.getByLabel(/^Upload picture for /).first();
+  await upload.evaluate(element => element.scrollIntoView({ block: 'center' }));
+  const photoBounds = await upload.boundingBox();
+  if (!photoBounds) throw new Error('Subject photo button is missing');
+  await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: photoBounds.x + photoBounds.width / 2, y: photoBounds.y + photoBounds.height / 2 }] });
+  await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+  await page.waitForFunction(() => !!localStorage.getItem('orbit:subject-backgrounds-v1'));
+  await page.screenshot({ path: path.join(output, 'home-subject-picture-added.png') });
+  const removePhoto = page.getByLabel(/^Remove picture for /).first();
+  await removePhoto.click({ force: true });
+  if (await page.getByLabel(/^Remove picture for /).count()) throw new Error('Remove subject picture did not clear it');
+  await page.screenshot({ path: path.join(output, 'home-subject-picture-removed.png') });
+  const uploadButtons = page.getByLabel(/^Upload picture for /);
+  for (let index = 0; index < await uploadButtons.count(); index += 1) {
+    const button = uploadButtons.nth(index);
+    const label = await button.getAttribute('aria-label');
+    const subject = label.replace('Upload picture for ', '');
+    await button.evaluate(element => element.scrollIntoView({ block: 'center' }));
+    await button.click({ force: true });
+    const remove = page.getByLabel(`Remove picture for ${subject}`, { exact: true });
+    await remove.waitFor();
+    await page.screenshot({ path: path.join(output, `home-subject-picture-${index + 1}.png`) });
+    await remove.click({ force: true });
+    await remove.waitFor({ state: 'detached' });
+  }
 
   await page.goto('http://localhost:5226/?screen=pdf-tools-demo', { waitUntil: 'networkidle' });
   await page.getByLabel('Toggle editing toolbar').click();

@@ -94,6 +94,17 @@ async function persist(tracks: Track[]): Promise<void> {
   await AsyncStorage.setItem(KEY, JSON.stringify(tracks));
 }
 
+/** Persist a new playlist order without touching any of the audio files. */
+export async function reorderTracks(tracks: Track[], id: string, direction: -1 | 1): Promise<Track[]> {
+  const from = tracks.findIndex(track => track.id === id);
+  const to = from + direction;
+  if (from < 0 || to < 0 || to >= tracks.length) return tracks;
+  const next = [...tracks];
+  [next[from], next[to]] = [next[to], next[from]];
+  await persist(next);
+  return next;
+}
+
 /**
  * The uri that plays a track, or empty if the file is gone.
  *
