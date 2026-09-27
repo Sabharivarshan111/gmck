@@ -40,8 +40,9 @@ try {
   await note.fill('1. First point');
   await note.press('End');
   await note.press('Enter');
-  await page.waitForFunction(() => document.querySelector('[aria-label="What the note says"]')?.value === '1. First point\n2. ');
   await page.screenshot({ path: path.join(output, '02-notes-auto-number.png') });
+  const noteValue = await note.inputValue();
+  if (noteValue !== '1. First point\n2. ') throw new Error(`Personal note Enter produced ${JSON.stringify(noteValue)}`);
   console.log('OK personal note Enter continued 1 to 2');
 
   await page.goto('http://localhost:5233/?screen=pdf-tools-demo', { waitUntil: 'networkidle' });
