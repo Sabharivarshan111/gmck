@@ -63,7 +63,10 @@ try {
   await page.screenshot({ path: path.join(output, '02b-notes-four-numbers.png') });
   await note.press('Enter');
   if ((await note.inputValue()).endsWith('5. ')) throw new Error('Empty numbered item did not end the list');
+  await note.press('ControlOrMeta+End');
+  await page.waitForFunction(() => { const input = document.querySelector('[aria-label="What the note says"]'); return input?.selectionStart === input?.value.length; });
   await page.getByLabel('Bullet point').click();
+  await page.waitForFunction(() => { const input = document.querySelector('[aria-label="What the note says"]'); return input?.selectionStart === input?.value.length; });
   await note.pressSequentially('First bullet');
   for (const word of ['Second bullet', 'Third bullet', 'Fourth bullet']) {
     await note.press('Enter');
@@ -94,7 +97,10 @@ try {
   }
   await page.screenshot({ path: path.join(output, '03b-pdf-note-four-numbers.png') });
   await pdfNote.press('Enter');
+  await pdfNote.press('ControlOrMeta+End');
+  await page.waitForFunction(() => { const input = document.querySelector('textarea[placeholder^="Type personal study points"]'); return input?.selectionStart === input?.value.length; });
   await page.getByLabel('Bullet point').click();
+  await page.waitForFunction(() => { const input = document.querySelector('textarea[placeholder^="Type personal study points"]'); return input?.selectionStart === input?.value.length; });
   await pdfNote.pressSequentially('First bullet');
   for (const word of ['Second bullet', 'Third bullet', 'Fourth bullet']) {
     await pdfNote.press('Enter');
