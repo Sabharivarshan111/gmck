@@ -696,6 +696,7 @@ export function Reorderable<Id extends string>({
               <View
                 style={[
                   styles.cardContainer,
+                  editing ? styles.cardEditing : null,
                   {
                     width: zoom >= 0.99 ? '100%' : `${Math.round(zoom * 100)}%`,
                     /*
@@ -1009,14 +1010,14 @@ export function Reorderable<Id extends string>({
  * which is what stops a toolbar covering the block above it; it is just no
  * longer given more room than the pill inside it needs.
  */
-const TOOLBAR_LANE = 26;
+const TOOLBAR_LANE = 38;
 /**
  * And the lanes below and to the right, for the width and height grips. A grip
  * drawn over the card it resizes covers the thing being resized — the width bar
  * used to sit across "Ask AI" — and a grip drawn *outside* the row lands in the
  * next block's touch area, where its responder claims the drag.
  */
-const GRIP_LANE = 14;
+const GRIP_LANE = 36;
 
 const styles = StyleSheet.create({
   /** A column container that can hand its extra height to its child. */
@@ -1037,13 +1038,15 @@ const styles = StyleSheet.create({
    */
   rowEditing: {
     paddingTop: TOOLBAR_LANE,
-    paddingBottom: GRIP_LANE,
-    paddingRight: GRIP_LANE,
   },
   cardContainer: {
     position: 'relative',
     borderRadius: 20,
   },
+  // Keep every resize target inside its parent's measured and hit-testable
+  // bounds. Negative offsets looked right but Android cannot hit a child
+  // outside the View that owns it.
+  cardEditing: { paddingRight: GRIP_LANE, paddingBottom: GRIP_LANE },
   controls: {
     position: 'absolute',
     top: 0,
@@ -1067,7 +1070,7 @@ const styles = StyleSheet.create({
   },
   verticalResizeZone: {
     position: 'absolute',
-    bottom: -GRIP_LANE,
+    bottom: 0,
     left: '50%',
     marginLeft: -34,
     width: 68,
@@ -1119,7 +1122,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: '50%',
     marginTop: -34,
-    right: -GRIP_LANE,
+    right: 0,
     width: GRIP_LANE,
     height: 68,
     zIndex: 10,
@@ -1129,10 +1132,10 @@ const styles = StyleSheet.create({
 
   cornerResizeZone: {
     position: 'absolute',
-    bottom: -GRIP_LANE,
-    right: -GRIP_LANE,
-    width: 28,
-    height: 28,
+    bottom: 0,
+    right: 0,
+    width: GRIP_LANE,
+    height: GRIP_LANE,
     zIndex: 11,
     alignItems: 'center',
     justifyContent: 'center',

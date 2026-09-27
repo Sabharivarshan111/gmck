@@ -216,26 +216,11 @@ export function HoloCard({
       style={[style, tilt]}
       onLayout={(event: LayoutChangeEvent) => setWidth(event.nativeEvent.layout.width)}>
       {disabled ? (
-        /*
-         * Still labelled, and still a thing TalkBack can find.
-         *
-         * A disabled card was a bare `View`, so in rearrange mode — which is
-         * the only time `disabled` is set — every subject card lost its name
-         * entirely: unreachable to a screen reader at exactly the moment the
-         * reader is trying to move them, and invisible to `check:smoke`, which
-         * finds cards by their label and had been failing on this for weeks
-         * while being read as a known-flaky step.
-         *
-         * `accessibilityRole` stays unset rather than "button": it is not one
-         * here. It is a thing being rearranged, and saying "button" would
-         * promise a press that `disabled` exists to prevent.
-         */
-        <View
-          accessible
-          accessibilityLabel={label}
-          accessibilityState={{ disabled: true }}
-          aria-disabled
-          style={[innerStyle, { borderColor }]}>
+        /* The edit controls are children of this View. Marking the whole card
+         * accessible groups those children on Android, hiding the picture
+         * button from TalkBack and sometimes swallowing its press. The title
+         * remains visible in the card; each active control labels itself. */
+        <View style={[innerStyle, { borderColor }]}>
           {content}
         </View>
       ) : (

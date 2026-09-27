@@ -70,9 +70,38 @@ try {
   await page.goto('http://localhost:5226/?screen=homeedit', { waitUntil: 'networkidle' });
   await page.getByLabel('Move Welcome card down', { exact: true }).waitFor();
   await page.screenshot({ path: path.join(output, 'home-customization-before.png') });
+  const storedHome = () => page.evaluate(() => JSON.parse(localStorage.getItem('orbit:home-order-v1') || '{}'));
+  const dragControl = async (label, dx, dy) => {
+    const control = page.getByLabel(label, { exact: true });
+    await control.scrollIntoViewIfNeeded();
+    const bounds = await control.boundingBox();
+    if (!bounds) throw new Error(`${label} has no touch target`);
+    await touchDrag({ x: bounds.x + bounds.width / 2, y: bounds.y + bounds.height / 2 }, dx, dy);
+  };
   const minus = page.getByLabel('Make Welcome card smaller', { exact: true });
   await minus.click();
   await minus.click();
+  if ((await storedHome()).scales?.hero >= 1) throw new Error('Smaller button did not save width');
+  await page.getByLabel('Make Welcome card bigger', { exact: true }).click();
+  if ((await storedHome()).scales?.hero >= 0.95) throw new Error('Bigger button did not save width');
+  await page.getByLabel('Move Welcome card left', { exact: true }).click();
+  if ((await storedHome()).aligns?.hero >= 0.5) throw new Error('Move left did not save placement');
+  await page.getByLabel('Move Welcome card right', { exact: true }).click();
+  if ((await storedHome()).aligns?.hero < 0.5) throw new Error('Move right did not save placement');
+  await page.screenshot({ path: path.join(output, 'home-customization-size-and-place.png') });
+  await dragControl('Height of Welcome card', 0, 95);
+  if ((await storedHome()).heights?.hero <= 1) throw new Error('Bottom height grip did not grow Welcome card');
+  const widthBefore = (await storedHome()).scales.hero;
+  await dragControl('Width of Welcome card', -65, 0);
+  if ((await storedHome()).scales?.hero >= widthBefore) throw new Error('Side width grip did not shrink Welcome card');
+  const cornerBefore = await storedHome();
+  await dragControl('Width and height of Welcome card', -25, 50);
+  const cornerAfter = await storedHome();
+  if (cornerAfter.scales?.hero >= cornerBefore.scales.hero || cornerAfter.heights?.hero <= cornerBefore.heights.hero) {
+    throw new Error('Corner grip did not change both width and height');
+  }
+  await page.screenshot({ path: path.join(output, 'home-customization-grips.png') });
+  await page.getByLabel('Reset home layout', { exact: true }).click();
   const hero = page.getByLabel('Move Welcome card down', { exact: true });
   const box = await hero.boundingBox();
   if (!box) throw new Error('Could not find the Welcome section');
@@ -84,6 +113,26 @@ try {
     throw new Error(`Welcome section did not save the new order after touch drag: ${JSON.stringify(savedHome)}`);
   }
   await page.screenshot({ path: path.join(output, 'home-customization-after.png') });
+  await page.getByLabel('Move Welcome card up', { exact: true }).click();
+  await page.getByLabel('Remove Quick actions', { exact: true }).click();
+  if ((await storedHome()).order?.includes('quick')) throw new Error('Remove block did not hide it');
+  await page.screenshot({ path: path.join(output, 'home-customization-removed.png') });
+  await page.getByLabel('Reset home layout', { exact: true }).click();
+  if (!(await storedHome()).order?.includes('quick')) throw new Error('Reset did not restore hidden block');
+  await page.screenshot({ path: path.join(output, 'home-customization-reset.png') });
+  await page.evaluate(() => { globalThis.__orbitPickImage = true; });
+  const upload = page.getByLabel(/^Upload picture for /).first();
+  await upload.scrollIntoViewIfNeeded();
+  const photoBounds = await upload.boundingBox();
+  if (!photoBounds) throw new Error('Subject photo button is missing');
+  await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: photoBounds.x + photoBounds.width / 2, y: photoBounds.y + photoBounds.height / 2 }] });
+  await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+  await page.waitForFunction(() => !!localStorage.getItem('orbit:subject-backgrounds-v1'));
+  await page.screenshot({ path: path.join(output, 'home-subject-picture-added.png') });
+  const removePhoto = page.getByLabel(/^Remove picture for /).first();
+  await removePhoto.click();
+  if (await page.getByLabel(/^Remove picture for /).count()) throw new Error('Remove subject picture did not clear it');
+  await page.screenshot({ path: path.join(output, 'home-subject-picture-removed.png') });
 
   await page.goto('http://localhost:5226/?screen=pdf-tools-demo', { waitUntil: 'networkidle' });
   await page.getByLabel('Toggle editing toolbar').click();

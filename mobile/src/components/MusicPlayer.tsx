@@ -9,9 +9,14 @@ import {
   Pause,
   Play,
   Plus,
+  Repeat,
+  Repeat1,
+  Shuffle,
   SkipBack,
   SkipForward,
   Trash2,
+  ChevronUp,
+  ChevronDown,
   X,
 } from 'lucide-react-native';
 import { Text } from '@/components/Text';
@@ -32,6 +37,7 @@ import {
   pickTrack,
   previousTrack,
   removeTrack,
+  reorderTracks,
   trackArtist,
   trackIsAlive,
   trackTitle,
@@ -245,6 +251,9 @@ export function MusicPlayer({ onClose }: { onClose: () => void }) {
   const [busy, setBusy] = useState(false);
   const [chooserOpen, setChooserOpen] = useState(false);
   const [playlistOpen, setPlaylistOpen] = useState(false);
+  const [shuffle, setShuffle] = useState(false);
+  const [repeat, setRepeat] = useState<'off' | 'all' | 'one'>('off');
+  const [shuffledIds, setShuffledIds] = useState<string[]>([]);
   /*
    * Progress is ignored while a finger is down, and until the seek lands.
    * Both, for the reason `NoteMediaPlayer` documents: `seek()` is
@@ -289,31 +298,82 @@ export function MusicPlayer({ onClose }: { onClose: () => void }) {
     }
   }, []);
 
-  const drop = useCallback(async () => {
-    if (!current) {
-      return;
+  const drop = useCallback(async (target: Track) => {
+    setBusy(true);
+    try {
+      const list = await removeTrack(target);
+      setTracks(list);
+      setShuffledIds(ids => ids.filter(id => id !== target.id));
+      if (target.id === currentId) {
+        setCurrentId(list[0]?.id ?? null);
+        setPlaying(false);
+        setPosition(0);
+      }
+    } finally {
+      setBusy(false);
     }
-    const list = await removeTrack(current);
-    setTracks(list);
-    setCurrentId(list[0]?.id ?? null);
-    setPlaying(false);
-    setPosition(0);
-  }, [current]);
+  }, [currentId]);
+
+  const changeOrder = useCallback(async (id: string, direction: -1 | 1) => {
+    if (!tracks) return;
+    setBusy(true);
+    try {
+      setTracks(await reorderTracks(tracks, id, direction));
+    } finally {
+      setBusy(false);
+    }
+  }, [tracks]);
+
+  const toggleShuffle = useCallback(() => {
+    if (!tracks) return;
+    if (!shuffle) {
+      const remaining = tracks.filter(track => track.id !== currentId).map(track => track.id);
+      for (let i = remaining.length - 1; i > 0; i -= 1) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [remaining[i], remaining[j]] = [remaining[j], remaining[i]];
+      }
+      setShuffledIds(currentId ? [currentId, ...remaining] : remaining);
+    }
+    setShuffle(value => !value);
+  }, [currentId, shuffle, tracks]);
+
+  const playOrder = useMemo(() => {
+    if (!tracks) return [];
+    if (!shuffle) return tracks;
+    const byId = new Map(tracks.map(track => [track.id, track]));
+    return [...shuffledIds.map(id => byId.get(id)).filter((track): track is Track => !!track),
+      ...tracks.filter(track => !shuffledIds.includes(track.id))];
+  }, [tracks, shuffle, shuffledIds]);
 
   const step = useCallback(
     (direction: 1 | -1) => {
-      if (!tracks) {
+      if (playOrder.length === 0) {
         return;
       }
       const target =
-        direction === 1 ? nextTrack(tracks, currentId) : previousTrack(tracks, currentId);
+        direction === 1 ? nextTrack(playOrder, currentId) : previousTrack(playOrder, currentId);
       if (target) {
         setCurrentId(target.id);
         setPosition(0);
       }
     },
-    [currentId, tracks],
+    [currentId, playOrder],
   );
+
+  const onEnd = useCallback(() => {
+    if (repeat === 'one') {
+      player.current?.seek(0);
+      setPosition(0);
+      return;
+    }
+    if (repeat === 'off' && currentId === playOrder[playOrder.length - 1]?.id) {
+      setPlaying(false);
+      setPosition(0);
+      player.current?.seek(0);
+      return;
+    }
+    step(1);
+  }, [currentId, playOrder, repeat, step]);
 
   const onProgress = useCallback((data: OnProgressData) => {
     if (scrubbing.current || seeking.current) {
@@ -362,12 +422,13 @@ export function MusicPlayer({ onClose }: { onClose: () => void }) {
           ref={player}
           source={{ uri }}
           paused={!playing}
+          repeat={repeat === 'one'}
           onProgress={onProgress}
           onLoad={onLoad}
           onSeek={() => {
             seeking.current = false;
           }}
-          onEnd={() => step(1)}
+          onEnd={onEnd}
           onError={() => setNotice('That track could not be played.')}
           progressUpdateInterval={250}
           // Keeps playing while the phone is in a pocket, which is the entire
@@ -504,7 +565,7 @@ export function MusicPlayer({ onClose }: { onClose: () => void }) {
 
         {current ? (
           <Touchable
-            onPress={drop}
+            onPress={() => drop(current)}
             label={
               current.linked
                 ? `Remove ${trackTitle(current)} from the playlist. Your file is not deleted`
@@ -518,6 +579,26 @@ export function MusicPlayer({ onClose }: { onClose: () => void }) {
           </Touchable>
         ) : null}
       </View>
+
+      {tracks && tracks.length > 0 ? (
+        <View style={styles.playModes}>
+          <Touchable
+            onPress={toggleShuffle}
+            label={`Shuffle ${shuffle ? 'on' : 'off'}. Tap to ${shuffle ? 'turn off' : 'turn on'}`}
+            state={{ selected: shuffle }}
+            style={[styles.modePill, { backgroundColor: shuffle ? withAlpha(colors.accent, 0.18) : colors.card, borderColor: colors.border }]}>
+            <Shuffle size={15} color={shuffle ? colors.accent : colors.textMuted} />
+            <Text style={[styles.modeLabel, { color: shuffle ? colors.accent : colors.textMuted }]}>Shuffle {shuffle ? 'on' : 'off'}</Text>
+          </Touchable>
+          <Touchable
+            onPress={() => setRepeat(value => value === 'off' ? 'all' : value === 'all' ? 'one' : 'off')}
+            label={`Repeat ${repeat}. Tap to change`}
+            style={[styles.modePill, { backgroundColor: repeat !== 'off' ? withAlpha(colors.accent, 0.18) : colors.card, borderColor: colors.border }]}>
+            {repeat === 'one' ? <Repeat1 size={15} color={colors.accent} /> : <Repeat size={15} color={repeat === 'all' ? colors.accent : colors.textMuted} />}
+            <Text style={[styles.modeLabel, { color: repeat !== 'off' ? colors.accent : colors.textMuted }]}>Repeat {repeat}</Text>
+          </Touchable>
+        </View>
+      ) : null}
 
       {notice ? (
         <Text style={[styles.notice, { color: colors.warning }]}>{notice}</Text>
@@ -548,28 +629,35 @@ export function MusicPlayer({ onClose }: { onClose: () => void }) {
       <Sheet visible={playlistOpen} onClose={() => setPlaylistOpen(false)} title="Your study music">
         <View style={styles.playlistItems}>
           {(tracks ?? []).map((track, index) => (
-            <Touchable
-              key={track.id}
-              onPress={() => {
-                setCurrentId(track.id);
-                setPosition(0);
-                setPlaying(true);
-                setNotice(null);
-                setPlaylistOpen(false);
-              }}
-              label={`Play ${trackTitle(track)} by ${trackArtist(track)}`}
-              state={{ selected: track.id === currentId }}
-              style={[styles.playlistItem, {
+            <View key={track.id} style={[styles.playlistItem, {
                 backgroundColor: track.id === currentId ? withAlpha(colors.accent, 0.15) : colors.card,
                 borderColor: colors.border,
               }]}>
               <Text style={[styles.playlistIndex, { color: colors.accent }]}>{index + 1}</Text>
-              <View style={styles.playlistMeta}>
+              <Touchable
+                onPress={() => {
+                  setCurrentId(track.id);
+                  setPosition(0);
+                  setPlaying(true);
+                  setNotice(null);
+                  setPlaylistOpen(false);
+                }}
+                label={`Play ${trackTitle(track)} by ${trackArtist(track)}`}
+                state={{ selected: track.id === currentId }}
+                style={styles.playlistMeta}>
                 <Text numberOfLines={1} style={[styles.rowTitle, { color: colors.text }]}>{trackTitle(track)}</Text>
                 <Text numberOfLines={1} style={[styles.rowSub, { color: colors.textMuted }]}>{trackArtist(track)}</Text>
-              </View>
-              {track.id === currentId ? <Play size={15} color={colors.accent} /> : null}
-            </Touchable>
+              </Touchable>
+              <Touchable onPress={() => changeOrder(track.id, -1)} label={`Move ${trackTitle(track)} up in playlist`} disabled={busy || index === 0} style={styles.songAction}>
+                <ChevronUp size={17} color={index === 0 ? colors.textMuted : colors.text} />
+              </Touchable>
+              <Touchable onPress={() => changeOrder(track.id, 1)} label={`Move ${trackTitle(track)} down in playlist`} disabled={busy || index === (tracks?.length ?? 0) - 1} style={styles.songAction}>
+                <ChevronDown size={17} color={index === (tracks?.length ?? 0) - 1 ? colors.textMuted : colors.text} />
+              </Touchable>
+              <Touchable onPress={() => drop(track)} label={`Remove ${trackTitle(track)} from playlist`} disabled={busy} style={styles.songAction}>
+                <Trash2 size={16} color={colors.danger} />
+              </Touchable>
+            </View>
           ))}
         </View>
       </Sheet>
@@ -692,6 +780,10 @@ const styles = StyleSheet.create({
   },
   playlistIndex: { ...typeScale.caption, width: 22, textAlign: 'center' },
   playlistMeta: { flex: 1 },
+  songAction: { width: 34, height: 40, alignItems: 'center', justifyContent: 'center' },
+  playModes: { flexDirection: 'row', gap: space.sm },
+  modePill: { flexDirection: 'row', gap: 6, alignItems: 'center', paddingHorizontal: 10, paddingVertical: 7, borderRadius: radius.md, borderWidth: StyleSheet.hairlineWidth },
+  modeLabel: { ...typeScale.caption },
   tip: {
     flexDirection: 'row',
     gap: space.sm,
