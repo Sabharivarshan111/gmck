@@ -25,11 +25,11 @@ try {
   page.on('pageerror', error => errors.push(error.message));
 
   await page.goto('http://localhost:5233/?screen=notesdemo', { waitUntil: 'networkidle' });
-  const section = page.getByLabel(/^Copy entire .* section$/).first();
+  const section = page.getByLabel('Copy entire Immediate management section');
   await section.waitFor();
   const title = (await section.getAttribute('aria-label')).replace(/^Copy entire /, '').replace(/ section$/, '');
   await section.click();
-  await page.waitForFunction(title => navigator.clipboard.readText().then(text => text.includes(title) && text.length > title.length + 20), title);
+  await page.waitForFunction(title => navigator.clipboard.readText().then(text => text.includes(title) && text.includes('Airway, breathing, circulation')), title);
   await page.screenshot({ path: path.join(output, '01-full-section-copy.png') });
   console.log('OK section button copied its title and body:', title);
 
@@ -37,8 +37,9 @@ try {
   await page.getByLabel('Notes').first().click();
   await page.getByLabel('Create a new study note').click();
   const note = page.getByLabel('What the note says');
-  await note.fill('1. First point');
-  await note.press('End');
+  await note.click();
+  await note.pressSequentially('1. First point');
+  console.log('Personal note before Enter:', JSON.stringify(await note.inputValue()));
   await note.press('Enter');
   await page.screenshot({ path: path.join(output, '02-notes-auto-number.png') });
   const noteValue = await note.inputValue();
