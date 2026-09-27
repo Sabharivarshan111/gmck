@@ -35,6 +35,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DrawCanvas, type Stroke } from '@/components/DrawCanvas';
 import { InkedImage } from '@/components/InkedImage';
 import { KeyboardSafe } from '@/components/KeyboardSafe';
+import { NoteToolbar } from '@/components/NoteToolbar';
+import { continueListOnEnter } from '@/lib/noteList';
 import { Text } from '@/components/Text';
 import { Touchable } from '@/components/Touchable';
 import {
@@ -175,7 +177,13 @@ export function PdfViewerModal({ file, visible, onClose }: PdfViewerModalProps) 
 
   // Inserted note pages between PDF pages
   const [insertedPages, setInsertedPages] = useState<InsertedPdfPage[]>([]);
+  const [noteSelection, setNoteSelection] = useState({ start: 0, end: 0 });
+  const [forcedNoteSelection, setForcedNoteSelection] = useState<{ start: number; end: number } | null>(null);
   const [activeInsertedId, setActiveInsertedId] = useState<string | null>(null);
+  useEffect(() => {
+    setNoteSelection({ start: 0, end: 0 });
+    setForcedNoteSelection(null);
+  }, [activeInsertedId]);
 
   const notesStorageKey = file ? `@orbit_pdf_inserted_notes:${file.id}` : '';
 
@@ -968,15 +976,31 @@ export function PdfViewerModal({ file, visible, onClose }: PdfViewerModalProps) 
                   })()}
 
                   {/* Text Notes */}
+                  <NoteToolbar
+                    value={currentInserted.noteText ?? ''}
+                    selection={noteSelection}
+                    onChange={(text, cursor, select) => {
+                      persistInsertedPages(insertedPages.map(p =>
+                        p.id === currentInserted.id ? { ...p, noteText: text } : p,
+                      ));
+                      const next = select ?? { start: cursor, end: cursor };
+                      setNoteSelection(next);
+                      setForcedNoteSelection(next);
+                    }}
+                  />
                   <TextInput
                     multiline
                     value={currentInserted.noteText ?? ''}
                     onChangeText={txt => {
+                      const continuation = continueListOnEnter(currentInserted.noteText ?? '', txt);
                       const next = insertedPages.map(p =>
-                        p.id === currentInserted.id ? { ...p, noteText: txt } : p,
+                        p.id === currentInserted.id ? { ...p, noteText: continuation?.text ?? txt } : p,
                       );
                       persistInsertedPages(next);
+                      setForcedNoteSelection(continuation ? { start: continuation.cursor, end: continuation.cursor } : null);
                     }}
+                    onSelectionChange={event => setNoteSelection(event.nativeEvent.selection)}
+                    selection={forcedNoteSelection ?? undefined}
                     placeholder="Type personal study points, lecture pearls, or clinical takeaways here…"
                     placeholderTextColor={colors.textMuted}
                     style={[styles.insertedInput, { color: colors.text }]}

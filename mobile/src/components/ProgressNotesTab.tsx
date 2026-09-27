@@ -13,6 +13,7 @@ import { makeNoteLink, type NoteLink } from "@/lib/noteLinks";
 import { TappableImage } from "@/components/ZoomableImage";
 import { DrawCanvas } from "@/components/DrawCanvas";
 import { NoteToolbar } from "@/components/NoteToolbar";
+import { continueListOnEnter } from "@/lib/noteList";
 import { PdfViewerModal } from "@/components/PdfViewerModal";
 import { useTheme } from "@/theme";
 import { NoteMediaPlayer } from "@/components/NoteMediaPlayer";
@@ -1356,8 +1357,9 @@ export function ProgressNotesTab({ year }: Props) {
                 placeholderTextColor={colors.textMuted}
                 value={editContent}
                 onChangeText={text => {
-                  setEditContent(text);
-                  setForcedSelection(null);
+                  const continuation = continueListOnEnter(editContent, text);
+                  setEditContent(continuation?.text ?? text);
+                  setForcedSelection(continuation ? { start: continuation.cursor, end: continuation.cursor } : null);
                 }}
                 onSelectionChange={event => setSelection(event.nativeEvent.selection)}
                 // Controlled only for the frame after a toolbar press. Pinning it

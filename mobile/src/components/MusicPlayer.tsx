@@ -244,6 +244,7 @@ export function MusicPlayer({ onClose }: { onClose: () => void }) {
   const [notice, setNotice] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [chooserOpen, setChooserOpen] = useState(false);
+  const [playlistOpen, setPlaylistOpen] = useState(false);
   /*
    * Progress is ignored while a finger is down, and until the seek lands.
    * Both, for the reason `NoteMediaPlayer` documents: `seek()` is
@@ -524,17 +525,54 @@ export function MusicPlayer({ onClose }: { onClose: () => void }) {
         <Text style={[styles.notice, { color: colors.warning }]}>
           The original has been moved or deleted. Add it again to keep a copy.
         </Text>
-      ) : (
+      ) : null}
+      {tracks && tracks.length > 0 ? (
+        <Touchable
+          onPress={() => setPlaylistOpen(true)}
+          label={`Choose a song from ${tracks.length} tracks in your playlist`}
+          style={styles.playlistTrigger}>
+          <Text style={[styles.notice, { color: colors.textMuted }]}>
+            {tracks.length} {tracks.length === 1 ? 'track' : 'tracks'} in this playlist · tap to choose
+          </Text>
+        </Touchable>
+      ) : !notice && !dead ? (
         <Text style={[styles.notice, { color: colors.textMuted }]}>
           {/* The empty state has to say what to press. There is no catalogue
               to browse and nothing to sign into, so a player with an empty
               list and no instruction reads as broken rather than as waiting
               for a file. */}
-          {!tracks || tracks.length === 0
-            ? 'Tap the + button to select music from your phone.'
-            : `${tracks.length} ${tracks.length === 1 ? 'track' : 'tracks'} in this playlist`}
+          Tap the + button to select music from your phone.
         </Text>
-      )}
+      ) : null}
+
+      <Sheet visible={playlistOpen} onClose={() => setPlaylistOpen(false)} title="Your study music">
+        <View style={styles.playlistItems}>
+          {(tracks ?? []).map((track, index) => (
+            <Touchable
+              key={track.id}
+              onPress={() => {
+                setCurrentId(track.id);
+                setPosition(0);
+                setPlaying(true);
+                setNotice(null);
+                setPlaylistOpen(false);
+              }}
+              label={`Play ${trackTitle(track)} by ${trackArtist(track)}`}
+              state={{ selected: track.id === currentId }}
+              style={[styles.playlistItem, {
+                backgroundColor: track.id === currentId ? withAlpha(colors.accent, 0.15) : colors.card,
+                borderColor: colors.border,
+              }]}>
+              <Text style={[styles.playlistIndex, { color: colors.accent }]}>{index + 1}</Text>
+              <View style={styles.playlistMeta}>
+                <Text numberOfLines={1} style={[styles.rowTitle, { color: colors.text }]}>{trackTitle(track)}</Text>
+                <Text numberOfLines={1} style={[styles.rowSub, { color: colors.textMuted }]}>{trackArtist(track)}</Text>
+              </View>
+              {track.id === currentId ? <Play size={15} color={colors.accent} /> : null}
+            </Touchable>
+          ))}
+        </View>
+      </Sheet>
 
       {/*
         Copy or link, asked before the picker opens rather than after.
@@ -646,6 +684,14 @@ const styles = StyleSheet.create({
   },
   spacer: { flex: 1 },
   notice: { ...typeScale.caption },
+  playlistTrigger: { alignSelf: 'flex-start', paddingVertical: 4 },
+  playlistItems: { gap: space.xs },
+  playlistItem: {
+    flexDirection: 'row', alignItems: 'center', gap: space.sm,
+    borderWidth: StyleSheet.hairlineWidth, borderRadius: radius.md, padding: space.sm,
+  },
+  playlistIndex: { ...typeScale.caption, width: 22, textAlign: 'center' },
+  playlistMeta: { flex: 1 },
   tip: {
     flexDirection: 'row',
     gap: space.sm,

@@ -1,9 +1,13 @@
-import React, { memo } from 'react';
+import React, { memo, useState } from 'react';
 import { StyleSheet, View, type StyleProp, type TextStyle, type ViewStyle } from 'react-native';
+import Clipboard from '@react-native-clipboard/clipboard';
+import { Check, Copy } from 'lucide-react-native';
 import { Text } from '@/components/Text';
+import { Touchable } from '@/components/Touchable';
 import { useTheme, withAlpha } from '@/theme';
 import { DiagramCard } from '@/components/DiagramCard';
 import type { NotesContent, Section } from '@/lib/handwrittenNotes';
+import { sectionClipboardText } from '@/lib/notesClipboard';
 
 /**
  * Renders the section vocabulary the notes edge function emits — the same ten
@@ -177,6 +181,18 @@ function AskedRow({ years }: { years: string[] }) {
 
 function SectionBlock({ section }: { section: Section }) {
   const { colors } = useTheme();
+  const [copied, setCopied] = useState(false);
+  const copyButton = (
+    <Touchable
+      onPress={() => {
+        Clipboard.setString(sectionClipboardText(section));
+        setCopied(true);
+      }}
+      label={`Copy entire ${section.title} section`}
+      hitSlop={8}>
+      {copied ? <Check size={16} color={colors.success} /> : <Copy size={16} color={colors.textMuted} />}
+    </Touchable>
+  );
   /**
    * Definitions and comparisons are marked in red, everything else in green.
    *
@@ -196,6 +212,7 @@ function SectionBlock({ section }: { section: Section }) {
   if (isMnemonic) {
     return (
       <View>
+        <View style={styles.copyCorner}>{copyButton}</View>
         <AskedRow years={section.pyqYears ?? []} />
         <SectionBody section={section} />
       </View>
@@ -207,6 +224,7 @@ function SectionBlock({ section }: { section: Section }) {
         <View style={[styles.sectionRule, { backgroundColor: accent }]} />
         {section.icon ? <Text style={styles.sectionIcon}>{section.icon}</Text> : null}
         <Text style={[styles.sectionTitle, styles.flex, { color: accent }]}>{section.title}</Text>
+        {copyButton}
       </View>
       <AskedRow years={section.pyqYears ?? []} />
       <SectionBody section={section} />
@@ -665,6 +683,7 @@ function TableSection({ columns, rows }: { columns: string[]; rows: unknown[] })
 }
 
 const styles = StyleSheet.create({
+  copyCorner: { alignItems: 'flex-end', paddingHorizontal: 12, paddingTop: 8 },
   root: {
     gap: 12,
   },

@@ -271,7 +271,7 @@ export function NoteToolbar({
   onChange: (text: string, cursor: number, select?: Selection) => void;
   /** The face this note is written in — see `NOTE_FONTS`. */
   font?: string | null;
-  onFont: (key: string) => void;
+  onFont?: (key: string) => void;
   /** Toggle live preview mode */
   onTogglePreview?: () => void;
   isPreview?: boolean;
@@ -356,7 +356,7 @@ export function NoteToolbar({
           setPalette(open => !open);
         },
       },
-      {
+      ...(onFont ? [{
         key: 'font',
         label: 'Typeface',
         hint: 'Writes this note in a different face',
@@ -366,7 +366,7 @@ export function NoteToolbar({
           setPalette(false);
           setFaces(open => !open);
         },
-      },
+      }] : []),
     ];
 
   if (onTogglePreview) {
@@ -416,7 +416,7 @@ export function NoteToolbar({
             <Touchable
               key={face.key}
               onPress={() => {
-                onFont(face.key);
+                onFont?.(face.key);
                 setFaces(false);
               }}
               label={`${face.name} typeface`}

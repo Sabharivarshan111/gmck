@@ -85,6 +85,10 @@ export default defineConfig({
         replacement: path.resolve(__dirname, 'shims', 'async-storage.ts'),
       },
       {
+        find: '@react-native-clipboard/clipboard',
+        replacement: path.resolve(__dirname, 'shims', 'clipboard.ts'),
+      },
+      {
         find: '@react-native/assets-registry/registry',
         replacement: path.resolve(__dirname, 'shims', 'assets-registry.ts'),
       },

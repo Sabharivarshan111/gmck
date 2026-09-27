@@ -1651,3 +1651,7 @@ Main product commit `a5eea5d6b431b204276107d0c0e7b1a70f79e170` caps the in-app n
 ### Final verified release-note build artifacts
 
 Runs release `36238458143`, internal `36238458212`, debug `36238458158` all passed. Tags `release-541`, `internal-342`, `debug-348` point to `d4da88d4c6548807772ae2e627cb59961fa73a5f`, containing the release-note fix and handoff. Assets and sizes are in HANDOFF.md. Version 24 AAB was not uploaded to Play Console; the owner reported Play at version 23.
+
+### 2026-09-27 friend feedback
+
+Native Notes and PDF note pages now continue numbered/bulleted lists on Enter; the PDF note page has formatting controls. Generated notes copy an entire section, and the focus player has a selectable playlist. See HANDOFF.md for the local checks and CI/build status. VersionCode stays 24; Play reportedly has 23.
