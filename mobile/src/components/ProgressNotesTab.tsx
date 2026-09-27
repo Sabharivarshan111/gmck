@@ -574,6 +574,7 @@ export function ProgressNotesTab({ year }: Props) {
   const savingRef = useRef(false);
   const [editTitle, setEditTitle] = useState("");
   const [editContent, setEditContent] = useState("");
+  const noteInputRef = useRef<React.ElementRef<typeof TextInput>>(null);
   const [editSubject, setEditSubject] = useState<string | null>(null);
   const [editChapterKey, setEditChapterKey] = useState<string | null>(null);
   const [editChapterName, setEditChapterName] = useState<string | null>(null);
@@ -1349,9 +1350,11 @@ export function ProgressNotesTab({ year }: Props) {
                   const next = select ?? { start: cursor, end: cursor };
                   setSelection(next);
                   setForcedSelection(next);
+                  requestAnimationFrame(() => noteInputRef.current?.focus());
                 }}
               />
               <TextInput
+                ref={noteInputRef}
                 placeholder={"Write your notes here…\n\nUse the buttons above for headings, bold text, highlights, and bullet points."}
                 accessibilityLabel="What the note says"
                 placeholderTextColor={colors.textMuted}
