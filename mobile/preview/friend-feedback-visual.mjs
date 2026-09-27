@@ -33,13 +33,19 @@ try {
   await section.evaluate(element => element.scrollIntoView({ block: 'center' }));
   await page.screenshot({ path: path.join(output, '01-full-section-copy.png') });
   console.log('OK section button copied its title and body:', title);
+  const definition = page.getByLabel('Copy entire Definition section');
+  await definition.click();
+  await page.waitForFunction(() => navigator.clipboard.readText().then(text => text.includes('Definition') && text.includes('irreversible necrosis of heart muscle')));
+  await page.screenshot({ path: path.join(output, '01b-red-definition-copy.png') });
+  console.log('OK red definition button copied its title and body');
 
   await page.goto('http://localhost:5233/?screen=progress', { waitUntil: 'networkidle' });
   await page.getByLabel('Notes').first().click();
   await page.getByLabel('Create a new study note').click();
   const note = page.getByLabel('What the note says');
   await note.click();
-  await note.pressSequentially('1. First point');
+  await page.getByLabel('Numbered point').click();
+  await note.pressSequentially('First point');
   console.log('Personal note before Enter:', JSON.stringify(await note.inputValue()));
   await note.press('Enter');
   await page.screenshot({ path: path.join(output, '02-notes-auto-number.png') });
@@ -51,8 +57,9 @@ try {
   await page.getByLabel('Toggle editing toolbar').click();
   await page.getByLabel('Add blank note page after this page').click();
   const pdfNote = page.getByPlaceholder(/Type personal study points/);
-  await pdfNote.fill('1. First point');
-  await pdfNote.press('End');
+  await pdfNote.click();
+  await page.getByLabel('Numbered point').click();
+  await pdfNote.pressSequentially('First point');
   await pdfNote.press('Enter');
   await page.waitForFunction(() => document.querySelector('textarea[placeholder^="Type personal study points"]')?.value === '1. First point\n2. ');
   await page.getByLabel('Numbered point').waitFor();
