@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { AppState, Keyboard, Modal, ScrollView, StyleSheet, TextInput, View } from "react-native";
+import { AppState, Keyboard, Modal, Platform, ScrollView, StyleSheet, TextInput, View } from "react-native";
 import { Text } from "@/components/Text";
 import { Touchable } from "@/components/Touchable";
 import { Dialog } from "@/components/Dialog";
@@ -574,6 +574,7 @@ export function ProgressNotesTab({ year }: Props) {
   const savingRef = useRef(false);
   const [editTitle, setEditTitle] = useState("");
   const [editContent, setEditContent] = useState("");
+  const noteInputRef = useRef<React.ElementRef<typeof TextInput>>(null);
   const [editSubject, setEditSubject] = useState<string | null>(null);
   const [editChapterKey, setEditChapterKey] = useState<string | null>(null);
   const [editChapterName, setEditChapterName] = useState<string | null>(null);
@@ -1349,9 +1350,21 @@ export function ProgressNotesTab({ year }: Props) {
                   const next = select ?? { start: cursor, end: cursor };
                   setSelection(next);
                   setForcedSelection(next);
+                  requestAnimationFrame(() => {
+                    const input = noteInputRef.current;
+                    input?.focus();
+                    if (Platform.OS === 'web') {
+                      setTimeout(() => {
+                        (input as unknown as { setSelectionRange(start: number, end: number): void } | null)?.setSelectionRange(next.start, next.end);
+                      }, 0);
+                    } else {
+                      input?.setNativeProps({ selection: next });
+                    }
+                  });
                 }}
               />
               <TextInput
+                ref={noteInputRef}
                 placeholder={"Write your notes here…\n\nUse the buttons above for headings, bold text, highlights, and bullet points."}
                 accessibilityLabel="What the note says"
                 placeholderTextColor={colors.textMuted}

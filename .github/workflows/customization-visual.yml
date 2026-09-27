@@ -2,7 +2,7 @@ name: Mobile customization visual check
 on:
   workflow_dispatch:
   push:
-    branches: [main]
+    branches: [main, feedback-visual]
     paths:
       - 'mobile/src/components/Reorderable.tsx'
       - 'mobile/src/components/SortableGrid.tsx'
@@ -32,6 +32,9 @@ jobs:
         working-directory: mobile
       - name: Verify gestures and capture the actual components
         run: node preview/customization-visual.mjs screenshots/customization
+        working-directory: mobile
+      - name: Verify friend feedback and capture note, PDF and music screens
+        run: node preview/friend-feedback-visual.mjs screenshots/customization
         working-directory: mobile
       - uses: actions/upload-artifact@v4
         if: always()

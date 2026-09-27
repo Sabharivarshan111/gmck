@@ -6,6 +6,7 @@ import {
   Image,
   Modal,
   PanResponder,
+  Platform,
   ScrollView,
   StyleSheet,
   TextInput,
@@ -178,6 +179,7 @@ export function PdfViewerModal({ file, visible, onClose }: PdfViewerModalProps) 
   // Inserted note pages between PDF pages
   const [insertedPages, setInsertedPages] = useState<InsertedPdfPage[]>([]);
   const [noteSelection, setNoteSelection] = useState({ start: 0, end: 0 });
+  const noteInputRef = useRef<React.ElementRef<typeof TextInput>>(null);
   const [forcedNoteSelection, setForcedNoteSelection] = useState<{ start: number; end: number } | null>(null);
   const [activeInsertedId, setActiveInsertedId] = useState<string | null>(null);
   useEffect(() => {
@@ -986,9 +988,21 @@ export function PdfViewerModal({ file, visible, onClose }: PdfViewerModalProps) 
                       const next = select ?? { start: cursor, end: cursor };
                       setNoteSelection(next);
                       setForcedNoteSelection(next);
+                      requestAnimationFrame(() => {
+                        const input = noteInputRef.current;
+                        input?.focus();
+                        if (Platform.OS === 'web') {
+                          setTimeout(() => {
+                            (input as unknown as { setSelectionRange(start: number, end: number): void } | null)?.setSelectionRange(next.start, next.end);
+                          }, 0);
+                        } else {
+                          input?.setNativeProps({ selection: next });
+                        }
+                      });
                     }}
                   />
                   <TextInput
+                    ref={noteInputRef}
                     multiline
                     value={currentInserted.noteText ?? ''}
                     onChangeText={txt => {
