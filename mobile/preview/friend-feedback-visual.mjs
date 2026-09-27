@@ -45,6 +45,7 @@ try {
   const note = page.getByLabel('What the note says');
   await note.click();
   await page.getByLabel('Numbered point').click();
+  await page.waitForFunction(() => document.querySelector('[aria-label="What the note says"]')?.selectionStart === 3);
   await note.pressSequentially('First point');
   console.log('Personal note before Enter:', JSON.stringify(await note.inputValue()));
   await note.press('Enter');
@@ -59,6 +60,7 @@ try {
   const pdfNote = page.getByPlaceholder(/Type personal study points/);
   await pdfNote.click();
   await page.getByLabel('Numbered point').click();
+  await page.waitForFunction(() => document.querySelector('textarea[placeholder^="Type personal study points"]')?.selectionStart === 3);
   await pdfNote.pressSequentially('First point');
   await pdfNote.press('Enter');
   await page.waitForFunction(() => document.querySelector('textarea[placeholder^="Type personal study points"]')?.value === '1. First point\n2. ');
