@@ -100,6 +100,9 @@ const QUICK_PAGES = 2;
 
 /** One card's height, and its width as a fraction of the grid. */
 const SUBJECT_CARD_HEIGHT = 160;
+// Edit mode adds a row of move controls between the picture button and title.
+// Give that row its own vertical space, including on compact cards.
+const SUBJECT_EDIT_EXTRA = 44;
 /**
  * The compact card keeps the emoji, the name and the percentage — everything
  * that identifies the subject and says how far along it is. What goes is the
@@ -766,7 +769,7 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
               onOrderChange={saveSubjectOrder}
               editing={editing}
               columns={2}
-              itemHeight={compact.subjects ? SUBJECT_CARD_COMPACT : SUBJECT_CARD_HEIGHT}
+              itemHeight={(compact.subjects ? SUBJECT_CARD_COMPACT : SUBJECT_CARD_HEIGHT) + (editing ? SUBJECT_EDIT_EXTRA : 0)}
               rowGap={12}
               widthRatio={SUBJECT_CARD_RATIO}
               style={styles.subjectGrid}

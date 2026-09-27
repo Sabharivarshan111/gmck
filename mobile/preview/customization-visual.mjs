@@ -127,8 +127,18 @@ try {
   await firstSubject.click({ force: true });
   const movedSubject = await page.evaluate(() => localStorage.getItem('orbit:subject-order-v1'));
   if (!movedSubject || movedSubject === beforeSubject) throw new Error('Move subject later did not save order');
+  await page.waitForTimeout(500);
+  const firstName = page.getByText('PHARMACOLOGY', { exact: true });
+  const secondName = page.getByText('PATHOLOGY', { exact: true });
+  const movedFirstBox = await firstName.boundingBox();
+  const movedSecondBox = await secondName.boundingBox();
+  if (!movedFirstBox || !movedSecondBox || movedFirstBox.x <= movedSecondBox.x) throw new Error('Subject order saved but cards did not visibly move');
   await page.screenshot({ path: path.join(output, 'home-subject-reordered.png') });
-  await page.getByLabel(/^Move .* earlier$/).nth(1).click({ force: true });
+  await page.getByLabel('Move Pharmacology earlier', { exact: true }).click({ force: true });
+  await page.waitForTimeout(500);
+  const restoredFirstBox = await firstName.boundingBox();
+  const restoredSecondBox = await secondName.boundingBox();
+  if (!restoredFirstBox || !restoredSecondBox || restoredFirstBox.x >= restoredSecondBox.x) throw new Error('Move subject earlier did not visibly restore order');
   await page.screenshot({ path: path.join(output, 'home-subject-restored.png') });
   await page.evaluate(() => { globalThis.__orbitPickImage = true; });
   const upload = page.getByLabel(/^Upload picture for /).first();
@@ -143,6 +153,19 @@ try {
   await removePhoto.click({ force: true });
   if (await page.getByLabel(/^Remove picture for /).count()) throw new Error('Remove subject picture did not clear it');
   await page.screenshot({ path: path.join(output, 'home-subject-picture-removed.png') });
+  const uploadButtons = page.getByLabel(/^Upload picture for /);
+  for (let index = 0; index < await uploadButtons.count(); index += 1) {
+    const button = uploadButtons.nth(index);
+    const label = await button.getAttribute('aria-label');
+    const subject = label.replace('Upload picture for ', '');
+    await button.evaluate(element => element.scrollIntoView({ block: 'center' }));
+    await button.click({ force: true });
+    const remove = page.getByLabel(`Remove picture for ${subject}`, { exact: true });
+    await remove.waitFor();
+    await page.screenshot({ path: path.join(output, `home-subject-picture-${index + 1}.png`) });
+    await remove.click({ force: true });
+    await remove.waitFor({ state: 'detached' });
+  }
 
   await page.goto('http://localhost:5226/?screen=pdf-tools-demo', { waitUntil: 'networkidle' });
   await page.getByLabel('Toggle editing toolbar').click();

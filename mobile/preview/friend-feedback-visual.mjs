@@ -93,9 +93,18 @@ try {
     if (!(await pdfNote.inputValue()).endsWith(expected)) throw new Error(`PDF note stopped numbering after ${word}`);
   }
   await page.screenshot({ path: path.join(output, '03b-pdf-note-four-numbers.png') });
+  await pdfNote.press('Enter');
+  await page.getByLabel('Bullet point').click();
+  await pdfNote.pressSequentially('First bullet');
+  for (const word of ['Second bullet', 'Third bullet', 'Fourth bullet']) {
+    await pdfNote.press('Enter');
+    await pdfNote.pressSequentially(word);
+    if (!(await pdfNote.inputValue()).endsWith(`- ${word}`)) throw new Error(`PDF note stopped bullets at ${word}`);
+  }
+  await page.screenshot({ path: path.join(output, '03c-pdf-note-four-bullets.png') });
 
   await page.goto('http://localhost:5233/?screen=timer', { waitUntil: 'networkidle' });
-  await page.evaluate(() => { globalThis.__orbitPickFile = 'audio'; });
+  await page.evaluate(() => { globalThis.__orbitPickFile = 'audio'; globalThis.__orbitMusicDistinctTitles = true; });
   await page.getByLabel('Show the music player').click();
   for (let i = 0; i < 3; i++) {
     await page.getByLabel('Add music from this phone').click();
@@ -114,20 +123,20 @@ try {
   await page.getByLabel('Repeat one. Tap to change').click();
   await page.getByLabel('Repeat off. Tap to change').waitFor();
   await page.getByLabel('Choose a song from 3 tracks in your playlist').click();
-  const choices = page.getByLabel(/^Play Nocturne in E flat by Study Session$/);
+  const choices = page.getByLabel(/^Play .* by Study Session$/);
   if (await choices.count() !== 3) throw new Error('Playlist did not show all three added tracks');
   await page.getByText('Your study music').waitFor();
   await page.waitForTimeout(700); // Let the sheet finish rising before photographing it.
   await page.screenshot({ path: path.join(output, '04-music-playlist.png') });
   const beforeIds = await page.evaluate(() => JSON.parse(localStorage.getItem('orbit:music:tracks') || '[]').map(track => track.id));
-  await page.getByLabel('Move Nocturne in E flat down in playlist').first().click();
+  await page.getByLabel('Move Skin care down in playlist').click();
   const reorderedIds = await page.evaluate(() => JSON.parse(localStorage.getItem('orbit:music:tracks') || '[]').map(track => track.id));
   if (reorderedIds[0] !== beforeIds[1] || reorderedIds[1] !== beforeIds[0]) throw new Error('Move down did not persist playlist order');
   await page.screenshot({ path: path.join(output, '04c-music-reordered.png') });
-  await page.getByLabel('Move Nocturne in E flat up in playlist').nth(1).click();
+  await page.getByLabel('Move Skin care up in playlist').click();
   const restoredIds = await page.evaluate(() => JSON.parse(localStorage.getItem('orbit:music:tracks') || '[]').map(track => track.id));
   if (restoredIds.join() !== beforeIds.join()) throw new Error('Move up did not persist playlist order');
-  await page.getByLabel('Remove Nocturne in E flat from playlist').nth(1).click();
+  await page.getByLabel('Remove Micro paper 1 from playlist').click();
   await page.getByLabel('Choose a song from 2 tracks in your playlist').waitFor();
   await page.screenshot({ path: path.join(output, '04d-music-one-removed.png') });
   await choices.first().click();
