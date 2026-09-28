@@ -173,11 +173,11 @@ try {
     }
     if (id === 'stats') {
       const [first, second] = await Promise.all([
-        page.getByText('Study Streak').boundingBox(),
-        page.getByText('Completed Focus Time').boundingBox(),
+        page.getByText('Study Streak').evaluate(el => el.parentElement?.parentElement?.getBoundingClientRect().toJSON()),
+        page.getByText('Completed Focus Time').evaluate(el => el.parentElement?.parentElement?.getBoundingClientRect().toJSON()),
       ]);
-      if (!first || !second || second.y <= first.y + first.height) {
-        throw new Error('Narrow stats labels overlap rather than stacking');
+      if (!first || !second || second.y < first.y + first.height + 4) {
+        throw new Error(`Narrow stats rows overlap: ${JSON.stringify({ first, second })}`);
       }
     }
     await page.screenshot({ path: path.join(output, `width-${id}-narrower.png`) });

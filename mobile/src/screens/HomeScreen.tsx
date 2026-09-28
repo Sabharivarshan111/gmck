@@ -1861,7 +1861,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 12,
   },
-  statCompact: { flex: 0, minWidth: 0 },
+  statCompact: { flexGrow: 0, flexShrink: 0, flexBasis: 'auto', minWidth: 0, minHeight: 64 },
   statText: { flexShrink: 1, minWidth: 0 },
   statDivider: {
     width: StyleSheet.hairlineWidth,
