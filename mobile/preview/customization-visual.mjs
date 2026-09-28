@@ -73,7 +73,7 @@ try {
   const storedHome = () => page.evaluate(() => JSON.parse(localStorage.getItem('orbit:home-order-v1') || '{}'));
   const dragControl = async (label, dx, dy) => {
     const control = page.getByLabel(label, { exact: true });
-    await control.scrollIntoViewIfNeeded();
+    await control.evaluate(element => element.scrollIntoView({ block: 'center' }));
     const bounds = await control.boundingBox();
     if (!bounds) throw new Error(`${label} has no touch target`);
     await touchDrag({ x: bounds.x + bounds.width / 2, y: bounds.y + bounds.height / 2 }, dx, dy);
@@ -125,6 +125,80 @@ try {
   await page.getByLabel('Expand Your subjects', { exact: true }).click();
   if ((await storedHome()).heights?.subjects !== 1) throw new Error('Subject grid did not expand again');
   await page.screenshot({ path: path.join(output, 'home-subjects-expanded.png') });
+
+  // Check both directions on every section, plus its corner and move buttons.
+  // Previous checks only grew Welcome, so a grow-only height clamp passed while
+  // the reported "minimise" interaction remained broken for every widget.
+  for (const [id, label, moveDirection] of [
+    ['hero', 'Welcome card', 'down'],
+    ['quick', 'Quick actions', 'down'],
+    ['whatsapp', 'WhatsApp community', 'down'],
+    ['subjects', 'Your subjects', 'down'],
+    ['stats', 'Study stats', 'up'],
+  ]) {
+    await page.getByLabel('Reset home layout', { exact: true }).click();
+    const size = () => page.getByLabel(`Height of ${label}`, { exact: true }).evaluate(element => {
+      const card = element.parentElement?.getBoundingClientRect();
+      return { height: card?.height ?? 0, width: card?.width ?? 0 };
+    });
+    const original = await size();
+    await dragControl(`Height of ${label}`, 0, 70);
+    const taller = await size();
+    if (taller.height <= original.height + 15 || (await storedHome()).heights?.[id] <= 1) {
+      throw new Error(`${label} did not visibly grow with downward drag: ${original.height} → ${taller.height}`);
+    }
+    await page.screenshot({ path: path.join(output, `height-${id}-larger.png`) });
+    await dragControl(`Height of ${label}`, 0, -70);
+    const shorter = await size();
+    if (shorter.height >= taller.height - 15) throw new Error(`${label} did not reduce with upward drag`);
+    await dragControl(`Height of ${label}`, 0, -70);
+    if ((await storedHome()).heights?.[id] >= 1) throw new Error(`${label} cannot minimise below natural height`);
+    await page.screenshot({ path: path.join(output, `height-${id}-smaller.png`) });
+    await page.getByLabel(`Expand ${label}`, { exact: true }).click();
+    if ((await storedHome()).heights?.[id] !== 1) throw new Error(`${label} Expand did not restore height`);
+
+    await dragControl(`Width of ${label}`, -65, 0);
+    const narrow = await size();
+    if (narrow.width >= original.width - 20 || (await storedHome()).scales?.[id] >= 1) {
+      throw new Error(`${label} did not get narrower when dragging left`);
+    }
+    if (id === 'subjects') {
+      const [first, second] = await Promise.all([
+        page.getByText('PHARMACOLOGY', { exact: true }).boundingBox(),
+        page.getByText('PATHOLOGY', { exact: true }).boundingBox(),
+      ]);
+      if (!first || !second || Math.abs(first.x - second.x) > 15 || second.y <= first.y) {
+        throw new Error('Narrow subject grid did not reflow to one readable column');
+      }
+    }
+    if (id === 'stats') {
+      const [first, second] = await Promise.all([
+        page.getByText('Study Streak').evaluate(el => el.parentElement?.parentElement?.getBoundingClientRect().toJSON()),
+        page.getByText('Completed Focus Time').evaluate(el => el.parentElement?.parentElement?.getBoundingClientRect().toJSON()),
+      ]);
+      if (!first || !second || second.y < first.y + first.height + 4) {
+        throw new Error(`Narrow stats rows overlap: ${JSON.stringify({ first, second })}`);
+      }
+    }
+    await page.screenshot({ path: path.join(output, `width-${id}-narrower.png`) });
+    await dragControl(`Width of ${label}`, 65, 0);
+    if ((await size()).width <= narrow.width + 20) throw new Error(`${label} did not widen when dragging right`);
+
+    await dragControl(`Width and height of ${label}`, -35, -45);
+    const cornerSmall = await storedHome();
+    if (cornerSmall.scales?.[id] >= 1 || cornerSmall.heights?.[id] >= 1) throw new Error(`${label} corner did not shrink both axes`);
+    await dragControl(`Width and height of ${label}`, 35, 45);
+    const cornerLarge = await storedHome();
+    if (cornerLarge.scales?.[id] <= cornerSmall.scales[id] || cornerLarge.heights?.[id] <= cornerSmall.heights[id]) {
+      throw new Error(`${label} corner did not grow both axes`);
+    }
+    const beforeMove = (await storedHome()).order.join();
+    await page.getByLabel(`Move ${label} ${moveDirection}`, { exact: true }).click();
+    if ((await storedHome()).order.join() === beforeMove) throw new Error(`${label} did not move ${moveDirection}`);
+    await page.screenshot({ path: path.join(output, `moved-${id}.png`) });
+    await page.getByLabel(`Move ${label} ${moveDirection === 'down' ? 'up' : 'down'}`, { exact: true }).click();
+    if ((await storedHome()).order.join() !== beforeMove) throw new Error(`${label} did not move back`);
+  }
   await page.getByLabel('Reset home layout', { exact: true }).click();
   const hero = page.getByLabel('Move Welcome card down', { exact: true });
   const box = await hero.boundingBox();
