@@ -768,10 +768,10 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
               order={subjectOrder}
               onOrderChange={saveSubjectOrder}
               editing={editing}
-              columns={2}
+              columns={compact.subjects ? 1 : 2}
               itemHeight={(compact.subjects ? SUBJECT_CARD_COMPACT : SUBJECT_CARD_HEIGHT) + (editing ? SUBJECT_EDIT_EXTRA : 0)}
               rowGap={12}
-              widthRatio={SUBJECT_CARD_RATIO}
+              widthRatio={compact.subjects ? 1 : SUBJECT_CARD_RATIO}
               style={styles.subjectGrid}
               renderItem={key => {
                 const subject = subjectByKey.get(key);
@@ -936,14 +936,15 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
             <View
               style={[
                 styles.stats,
+                compact.stats && styles.statsCompact,
                 heights.stats > 1 && styles.grow,
                 { backgroundColor: colors.card, borderColor: colors.border },
               ]}>
-              <View style={styles.stat}>
+              <View style={[styles.stat, compact.stats && styles.statCompact]}>
                 <View style={[styles.statIcon, { backgroundColor: withAlpha(colors.primary, 0.15) }]}>
                   <Flame size={20} color={colors.primary} />
                 </View>
-                <View>
+                <View style={styles.statText}>
                   <Text style={[styles.statLabel, { color: colors.textMuted }]}>Study Streak</Text>
                   <Text style={[styles.statValue, { color: colors.text }]}>
                     {streak}
@@ -951,12 +952,12 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
                   </Text>
                 </View>
               </View>
-              <View style={[styles.statDivider, { backgroundColor: colors.border }]} />
-              <View style={styles.stat}>
+              <View style={[styles.statDivider, compact.stats && styles.statDividerCompact, { backgroundColor: colors.border }]} />
+              <View style={[styles.stat, compact.stats && styles.statCompact]}>
                 <View style={[styles.statIcon, { backgroundColor: withAlpha(colors.primary, 0.15) }]}>
                   <Trophy size={20} color={colors.primary} />
                 </View>
-                <View>
+                <View style={styles.statText}>
                   <Text style={[styles.statLabel, { color: colors.textMuted }]}>Completed Focus Time</Text>
                   <Text style={[styles.statValueSmall, { color: colors.text }]}>
                     {formatFocusTime(focus.total)}
@@ -1831,6 +1832,11 @@ const styles = StyleSheet.create({
     // used to be last and needed none.
     marginBottom: space.lg,
   },
+  statsCompact: {
+    flexDirection: 'column',
+    alignItems: 'stretch',
+    gap: 12,
+  },
   editBanner: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -1855,10 +1861,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 12,
   },
+  statCompact: { flex: 0, minWidth: 0 },
+  statText: { flexShrink: 1, minWidth: 0 },
   statDivider: {
     width: StyleSheet.hairlineWidth,
     alignSelf: 'stretch',
     marginHorizontal: 12,
+  },
+  statDividerCompact: {
+    width: '100%',
+    height: StyleSheet.hairlineWidth,
+    marginHorizontal: 0,
   },
   statIcon: {
     height: 44,

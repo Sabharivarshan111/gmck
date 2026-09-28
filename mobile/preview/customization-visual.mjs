@@ -162,6 +162,24 @@ try {
     if (narrow.width >= original.width - 20 || (await storedHome()).scales?.[id] >= 1) {
       throw new Error(`${label} did not get narrower when dragging left`);
     }
+    if (id === 'subjects') {
+      const [first, second] = await Promise.all([
+        page.getByText('PHARMACOLOGY', { exact: true }).boundingBox(),
+        page.getByText('PATHOLOGY', { exact: true }).boundingBox(),
+      ]);
+      if (!first || !second || Math.abs(first.x - second.x) > 15 || second.y <= first.y) {
+        throw new Error('Narrow subject grid did not reflow to one readable column');
+      }
+    }
+    if (id === 'stats') {
+      const [first, second] = await Promise.all([
+        page.getByText('Study Streak').boundingBox(),
+        page.getByText('Completed Focus Time').boundingBox(),
+      ]);
+      if (!first || !second || second.y <= first.y + first.height) {
+        throw new Error('Narrow stats labels overlap rather than stacking');
+      }
+    }
     await page.screenshot({ path: path.join(output, `width-${id}-narrower.png`) });
     await dragControl(`Width of ${label}`, 65, 0);
     if ((await size()).width <= narrow.width + 20) throw new Error(`${label} did not widen when dragging right`);
