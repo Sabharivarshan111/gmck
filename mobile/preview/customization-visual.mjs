@@ -213,9 +213,23 @@ try {
     if (!box) throw new Error(`No drag start for ${id}`);
     const before = (await storedHome()).order.indexOf(id);
     await touchDrag({ x: box.x + box.width / 2, y: box.y + box.height / 2 }, 0, dy);
-    const after = (await storedHome()).order.indexOf(id);
+    await page.waitForTimeout(1100);
+    const saved = await storedHome();
+    const after = saved.order.indexOf(id);
     if (after === before) throw new Error(`${id} did not move by touch drag`);
+    if (new Set(saved.order).size !== saved.order.length) throw new Error(`Duplicate section in saved order after ${id} drag`);
+    const whatsappCount = await page.getByText('Join our WhatsApp community', { exact: true }).count();
+    if (whatsappCount !== 1) throw new Error(`WhatsApp card rendered ${whatsappCount} times after ${id} drag`);
     await page.screenshot({ path: path.join(output, `dragged-${id}.png`) });
+    if (id === 'whatsapp') {
+      await page.reload({ waitUntil: 'networkidle' });
+      await page.waitForTimeout(500);
+      const persisted = await storedHome();
+      if (persisted.order.indexOf('whatsapp') !== after) throw new Error('WhatsApp position changed after reload');
+      if (await page.getByText('Join our WhatsApp community', { exact: true }).count() !== 1) throw new Error('WhatsApp card duplicated after reload');
+      await page.getByText('Join our WhatsApp community', { exact: true }).scrollIntoViewIfNeeded();
+      await page.screenshot({ path: path.join(output, 'dragged-whatsapp-reloaded.png') });
+    }
   }
   await page.getByLabel('Reset home layout', { exact: true }).click();
   const hero = page.getByLabel('Move Welcome card down', { exact: true });
