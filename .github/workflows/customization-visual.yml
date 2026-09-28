@@ -34,9 +34,11 @@ jobs:
         run: node scripts/daily-study-live-check.mjs
         working-directory: mobile
       - name: Install Chromium for phone viewport touch checks
+        if: always()
         run: ./node_modules/.bin/playwright-core install --with-deps chromium
         working-directory: mobile
       - name: Verify gestures and capture the actual components
+        if: always()
         run: node preview/customization-visual.mjs screenshots/customization
         working-directory: mobile
       - name: Verify friend feedback and capture note, PDF and music screens
