@@ -511,7 +511,7 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
               { backgroundColor: withAlpha(colors.accent, 0.14), borderColor: colors.accent },
             ]}>
             <Text style={[styles.editBannerText, { color: colors.text }]}>
-              Drag the side bar (↔) for width, the bottom bar (↕) for height, or
+              Drag the side bar (↔) for width, the bottom bar (↕) for height, or tap the bottom bar to minimise or restore. Drag
               the corner for both. Hold and drag a block to move it — up and down
               to reorder, sideways to place it anywhere across the page. 🗑️ hides
               one; Reset brings everything back.
