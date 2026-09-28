@@ -199,6 +199,24 @@ try {
     await page.getByLabel(`Move ${label} ${moveDirection === 'down' ? 'up' : 'down'}`, { exact: true }).click();
     if ((await storedHome()).order.join() !== beforeMove) throw new Error(`${label} did not move back`);
   }
+  for (const [id, text, dy] of [
+    ['hero', 'Welcome to Orbit', 220],
+    ['quick', 'Search', 230],
+    ['whatsapp', 'Join our WhatsApp community', 380],
+    ['subjects', 'Your Subjects', 260],
+    ['stats', 'Study Streak', -380],
+  ]) {
+    await page.getByLabel('Reset home layout', { exact: true }).click();
+    const target = page.getByText(text, { exact: true }).first();
+    await target.evaluate(element => element.scrollIntoView({ block: 'center' }));
+    const box = await target.boundingBox();
+    if (!box) throw new Error(`No drag start for ${id}`);
+    const before = (await storedHome()).order.indexOf(id);
+    await touchDrag({ x: box.x + box.width / 2, y: box.y + box.height / 2 }, 0, dy);
+    const after = (await storedHome()).order.indexOf(id);
+    if (after === before) throw new Error(`${id} did not move by touch drag`);
+    await page.screenshot({ path: path.join(output, `dragged-${id}.png`) });
+  }
   await page.getByLabel('Reset home layout', { exact: true }).click();
   const hero = page.getByLabel('Move Welcome card down', { exact: true });
   const box = await hero.boundingBox();
