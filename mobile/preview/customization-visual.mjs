@@ -78,6 +78,16 @@ try {
     if (!bounds) throw new Error(`${label} has no touch target`);
     await touchDrag({ x: bounds.x + bounds.width / 2, y: bounds.y + bounds.height / 2 }, dx, dy);
   };
+  const tapControl = async label => {
+    const control = page.getByLabel(label, { exact: true });
+    await control.scrollIntoViewIfNeeded();
+    const bounds = await control.boundingBox();
+    if (!bounds) throw new Error(`${label} has no touch target`);
+    const point = { x: bounds.x + bounds.width / 2, y: bounds.y + bounds.height / 2 };
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [point] });
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+    await page.waitForTimeout(300);
+  };
   const minus = page.getByLabel('Make Welcome card smaller', { exact: true });
   await minus.click();
   await minus.click();
@@ -92,6 +102,12 @@ try {
   await page.screenshot({ path: path.join(output, 'home-customization-size-and-place.png') });
   await dragControl('Height of Welcome card', 0, 95);
   if ((await storedHome()).heights?.hero <= 1) throw new Error('Bottom height grip did not grow Welcome card');
+  await dragControl('Height of Welcome card', 0, -150);
+  if ((await storedHome()).heights?.hero >= 1) throw new Error('Bottom height grip did not shrink Welcome card');
+  await page.getByLabel('Expand Welcome card', { exact: true }).waitFor();
+  await page.screenshot({ path: path.join(output, 'home-customization-height-reduced.png') });
+  await page.getByLabel('Expand Welcome card', { exact: true }).click();
+  if ((await storedHome()).heights?.hero !== 1) throw new Error('Expand did not restore Welcome card');
   const widthBefore = (await storedHome()).scales.hero;
   await dragControl('Width of Welcome card', -65, 0);
   if ((await storedHome()).scales?.hero >= widthBefore) throw new Error('Side width grip did not shrink Welcome card');
@@ -102,6 +118,13 @@ try {
     throw new Error('Corner grip did not change both width and height');
   }
   await page.screenshot({ path: path.join(output, 'home-customization-grips.png') });
+  await tapControl('Height of Your subjects');
+  if ((await storedHome()).heights?.subjects !== 0.35) throw new Error('Tapping circled subject bar did not minimise grid');
+  await page.getByLabel('Expand Your subjects', { exact: true }).waitFor();
+  await page.screenshot({ path: path.join(output, 'home-subjects-minimised.png') });
+  await page.getByLabel('Expand Your subjects', { exact: true }).click();
+  if ((await storedHome()).heights?.subjects !== 1) throw new Error('Subject grid did not expand again');
+  await page.screenshot({ path: path.join(output, 'home-subjects-expanded.png') });
   await page.getByLabel('Reset home layout', { exact: true }).click();
   const hero = page.getByLabel('Move Welcome card down', { exact: true });
   const box = await hero.boundingBox();
