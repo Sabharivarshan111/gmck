@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { GoogleGenerativeAI } from "npm:@google/generative-ai@0.2.0";
 import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
+import { createClient } from "npm:@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -272,8 +273,52 @@ serve(async (req) => {
     });
   }
 
-  // Get client IP or some identifier for rate limiting
-  const clientId = req.headers.get('x-forwarded-for') || 'anonymous';
+  // Authenticate the caller before any paid model call. Anonymous Supabase
+  // sessions are valid for the free app, but every request has an accountable uid.
+  const bearer = req.headers.get("Authorization") ?? "";
+  const token = bearer.startsWith("Bearer ") ? bearer.slice(7) : "";
+  if (!token) return new Response(JSON.stringify({ error: "Sign in to use AI" }), {
+    status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+  });
+  const url = Deno.env.get("SUPABASE_URL")!;
+  const anonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+  const authClient = createClient(url, anonKey, { auth: { persistSession: false } });
+  const { data: userData, error: authError } = await authClient.auth.getUser(token);
+  const user = userData.user;
+  if (authError || !user) return new Response(JSON.stringify({ error: "Invalid session" }), {
+    status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+  });
+
+  const admin = createClient(url, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, {
+    auth: { persistSession: false },
+  });
+  const hash = async (input: string) => Array.from(new Uint8Array(
+    await crypto.subtle.digest("SHA-256", new TextEncoder().encode(input))
+  )).map(b => b.toString(16).padStart(2, "0")).join("");
+  const now = new Date();
+  const minute = new Date(Math.floor(now.getTime() / 60000) * 60000).toISOString();
+  const day = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())).toISOString();
+  const ip = req.headers.get("cf-connecting-ip") ?? req.headers.get("x-forwarded-for") ?? "unknown";
+  const checks = [
+    { subject: await hash("user:" + user.id), action: "ai_minute", bucket: minute, limit: 10 },
+    { subject: await hash("user:" + user.id), action: "ai_day", bucket: day, limit: 150 },
+    { subject: await hash("ip:" + ip), action: "ip_day", bucket: day, limit: 500 },
+  ];
+  for (const check of checks) {
+    const { data: allowed, error: quotaError } = await admin.rpc("consume_edge_quota", {
+      _subject_hash: check.subject, _action: check.action,
+      _bucket_start: check.bucket, _limit: check.limit,
+    });
+    if (quotaError) return new Response(JSON.stringify({ error: "AI quota temporarily unavailable" }), {
+      status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+    if (!allowed) return new Response(JSON.stringify({ error: "AI usage limit reached. Try again later.", isRateLimit: true }), {
+      status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+
+  // Keep the existing short-window backoff, keyed to the verified user.
+  const clientId = user.id;
   
   // Check rate limiting with enhanced logic
   const rateLimitResult = isRateLimited(clientId);
