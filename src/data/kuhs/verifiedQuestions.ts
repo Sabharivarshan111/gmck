@@ -17,6 +17,8 @@ export interface VerifiedKuhsQuestion {
   pdfPage: number;
 }
 
+import { REVIEWED_MORE } from './reviewedMore.ts';
+
 type Row = Omit<VerifiedKuhsQuestion, 'year' | 'subjectKey' | 'pdfPage'>;
 const firstAnatomy = (row: Row): VerifiedKuhsQuestion =>
   ({ ...row, year: 'first', subjectKey: 'anatomy', pdfPage: 3 });
@@ -210,7 +212,7 @@ export const VERIFIED_KUHS_QUESTIONS: VerifiedKuhsQuestion[] = [
   firstAnatomyPage8({ id: 'kuhs-1-anat-p8-25', topicKey: 'hand', kind: 'short-notes', question: 'Claw hand', examRefs: ['Nov 23'] }),
   firstAnatomyPage8({ id: 'kuhs-1-anat-p8-26', topicKey: 'hand', kind: 'short-notes', question: 'Flexor retinaculum of hand', examRefs: ['Jul 23'] }),
   firstAnatomyPage8({ id: 'kuhs-1-anat-p8-27', topicKey: 'hand', kind: 'short-notes', question: 'Anatomical basis of claw hand', examRefs: ['May 23'] }),
-  firstAnatomyPage8({ id: 'kuhs-1-anat-p8-28', topicKey: 'hand', kind: 'short-notes', question: 'Palmar aponeurosis', examRefs: ['Feb 22'] }),
+  firstAnatomyPage8({ id: 'kuhs-1-anat-p8-28', topicKey: 'hand', kind: 'short-notes', question: 'Palmar aponeurosis', examRefs: ['Feb 22', 'Sep 21', 'Jan 19', 'Jan 18'] }),
 
   secondPharmacology({ id: 'kuhs-2-pharm-p7-01', topicKey: 'pharmacokinetics', kind: 'short-notes', question: 'Plasma half life and its clinical relevance', examRefs: ['KU14', 'KU16', 'KU18'] }),
   secondPharmacology({ id: 'kuhs-2-pharm-p7-02', topicKey: 'pharmacokinetics', kind: 'short-notes', question: 'Microsomal enzyme induction', examRefs: ['KU13'] }),
@@ -228,6 +230,7 @@ export const VERIFIED_KUHS_QUESTIONS: VerifiedKuhsQuestion[] = [
   secondPharmacology({ id: 'kuhs-2-pharm-p7-14', topicKey: 'pharmacotherapy-and-adverse-drug-effects', kind: 'short-notes', question: 'Tachyphylaxis with examples', examRefs: ['KU18'] }),
   secondPharmacology({ id: 'kuhs-2-pharm-p7-15', topicKey: 'pharmacotherapy-and-adverse-drug-effects', kind: 'short-notes', question: 'Pharmacovigilance. Describe the basis and grading of causality assessment', examRefs: ['KU15'] }),
   secondPharmacology({ id: 'kuhs-2-pharm-p7-16', topicKey: 'pharmacotherapy-and-adverse-drug-effects', kind: 'short-notes', question: 'Define Teratogenicity, mention four teratogenic drugs', examRefs: ['KU15'] }),
+  ...REVIEWED_MORE,
 ];
 
 export function kuhsRepeatCount(row: VerifiedKuhsQuestion): number {
