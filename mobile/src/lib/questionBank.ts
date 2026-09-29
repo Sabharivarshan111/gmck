@@ -1,6 +1,8 @@
 // The entire question bank is shared with the web app via the `@data` alias
 // (see metro.config.js / babel.config.js). Nothing is duplicated here.
 import { QUESTION_BANK_DATA } from '@data/questionBankData';
+import { KUHS_REVIEW_BANK_DATA } from '@data/kuhs/questionBankData';
+import type { University } from '@shared/university';
 
 export { QUESTION_BANK_DATA };
 
@@ -49,12 +51,13 @@ export const SUBJECT_ICON: Record<string, string> = {
 /** Keys that hold question arrays rather than further topics. */
 const LEAF_KEYS = new Set(['essay', 'short-notes', 'short-note']);
 
-export function getYearNode(year: YearKey): BankNode {
-  return (QUESTION_BANK_DATA as Record<string, BankNode>)[year];
+export function getYearNode(year: YearKey, university: University = 'tnmgr'): BankNode {
+  const bank = university === 'kuhs' ? KUHS_REVIEW_BANK_DATA : QUESTION_BANK_DATA;
+  return (bank as Record<string, BankNode>)[year];
 }
 
-export function getSubjects(year: YearKey) {
-  const node = getYearNode(year);
+export function getSubjects(year: YearKey, university: University = 'tnmgr') {
+  const node = getYearNode(year, university);
   return Object.entries(node?.subtopics ?? {}).map(([key, value]) => ({
     key,
     name: (value.name as string) ?? key,
@@ -66,8 +69,8 @@ export function getSubjects(year: YearKey) {
  * Walk from a year down a list of subtopic keys. Used by the browse stack,
  * which carries the path in route params so deep screens stay serialisable.
  */
-export function resolveNode(year: YearKey, path: string[]): BankNode | undefined {
-  let node: BankNode | undefined = getYearNode(year);
+export function resolveNode(year: YearKey, path: string[], university: University = 'tnmgr'): BankNode | undefined {
+  let node: BankNode | undefined = getYearNode(year, university);
   for (const key of path) {
     const subs = node?.subtopics as Record<string, BankNode> | undefined;
     node = subs?.[key];
@@ -240,7 +243,7 @@ interface IndexEntry extends SearchHit {
   haystack: string;
 }
 
-let searchIndex: IndexEntry[] | null = null;
+const searchIndexes: Partial<Record<University, IndexEntry[]>> = {};
 
 /**
  * Walk one subject, recording the route to every question.
@@ -300,11 +303,11 @@ function indexSubject(
   }
 }
 
-function buildSearchIndex(): IndexEntry[] {
+function buildSearchIndex(university: University): IndexEntry[] {
   const entries: IndexEntry[] = [];
   for (const year of YEAR_KEYS) {
     const yearLabel = YEAR_LABEL[year];
-    for (const subject of getSubjects(year)) {
+    for (const subject of getSubjects(year, university)) {
       for (const type of ['essay', 'short-notes'] as QuestionType[]) {
         const found: { question: string; path: string[]; topicName: string }[] = [];
         indexSubject(subject.node, type, [subject.key], subject.name, found);
@@ -335,14 +338,12 @@ function buildSearchIndex(): IndexEntry[] {
  * results afterwards so the limit counts questions the reader can actually
  * reach — filtering after the cut would return 60 hits and then show four.
  */
-export function searchQuestions(query: string, year?: YearKey, limit = 60): SearchHit[] {
+export function searchQuestions(query: string, year?: YearKey, limit = 60, university: University = 'tnmgr'): SearchHit[] {
   const needle = query.trim().toLowerCase();
   if (needle.length < 2) {
     return [];
   }
-  if (!searchIndex) {
-    searchIndex = buildSearchIndex();
-  }
+  const searchIndex = searchIndexes[university] ??= buildSearchIndex(university);
   const hits: SearchHit[] = [];
   for (const entry of searchIndex) {
     if (year && entry.year !== year) {
@@ -367,19 +368,14 @@ export function searchQuestions(query: string, year?: YearKey, limit = 60): Sear
  * and it cannot do that through searchQuestions(), which needs a query of at
  * least two characters and so can never ask for "all of it".
  */
-export function allSearchHits(): SearchHit[] {
-  if (!searchIndex) {
-    searchIndex = buildSearchIndex();
-  }
-  return searchIndex;
+export function allSearchHits(university: University = 'tnmgr'): SearchHit[] {
+  return searchIndexes[university] ??= buildSearchIndex(university);
 }
 
 /**
  * Warm the search index off the critical path. Called when the browse screen
  * mounts, so the first keystroke does not pay for the build.
  */
-export function warmSearchIndex(): void {
-  if (!searchIndex) {
-    searchIndex = buildSearchIndex();
-  }
+export function warmSearchIndex(university: University = 'tnmgr'): void {
+  searchIndexes[university] ??= buildSearchIndex(university);
 }

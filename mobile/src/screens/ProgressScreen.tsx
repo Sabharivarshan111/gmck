@@ -54,6 +54,7 @@ import {
 } from '@/lib/googleAuth';
 import { useCountDone } from '@/hooks/useProgress';
 import { useProfile } from '@/hooks/useProfile';
+import { KUHS_BANK_READY } from '@/lib/kuhsAvailability';
 import { ProfileSheet } from '@/components/ProfileSheet';
 import { Leaderboard } from '@/components/Leaderboard';
 import { ExamCountdownCard } from '@/components/ExamCountdownCard';
@@ -109,12 +110,14 @@ export default function ProgressScreen() {
     local: profile,
     cloud,
     yearKey: year,
+    university,
     year: shortYear,
     displayName,
     streak,
     freezes,
     save,
   } = useProfile();
+  const bankUniversity = university === 'kuhs' && KUHS_BANK_READY ? 'kuhs' : 'tnmgr';
   const [editOpen, setEditOpen] = useState(false);
   const [tab, setTab] = useState<Tab>('stats');
   const [notesOpen, setNotesOpen] = useState(false);
@@ -132,7 +135,7 @@ export default function ProgressScreen() {
 
   const subjects = useMemo(
     () =>
-      getSubjects(year).map(subject => {
+      getSubjects(year, bankUniversity).map(subject => {
         const all = collectAllQuestions(subject.node);
         const done = countDone(all);
         return {
@@ -142,7 +145,7 @@ export default function ProgressScreen() {
           pct: all.length ? Math.round((done / all.length) * 100) : 0,
         };
       }),
-    [year, countDone],
+    [year, countDone, bankUniversity],
   );
 
   const totals = useMemo(

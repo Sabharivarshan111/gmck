@@ -19,6 +19,7 @@ import { SortableGrid } from '@/components/SortableGrid';
 import { useSubjectOrder } from '@/hooks/useSubjectOrder';
 import { SettingsSheet } from '@/components/SettingsSheet';
 import { UniversityChoice } from '@/components/UniversityChoice';
+import { KUHS_BANK_READY } from '@/lib/kuhsAvailability';
 import { UNIVERSITY_LABEL } from '@shared/university';
 import { ThemeMenu, type Anchor } from '@/components/ThemeMenu';
 import { HomeMenuSheet } from '@/components/HomeMenuSheet';
@@ -282,6 +283,7 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
   }, [slide, heroFade, reduceMotion]);
 
   const { yearKey: year, streak, setYear, university, setUniversity } = useProfile();
+  const bankUniversity = university === 'kuhs' && KUHS_BANK_READY ? 'kuhs' : 'tnmgr';
   const [universityOpen, setUniversityOpen] = useState(false);
   const dailyRequestScope = `${year}:${dailyDate}`;
   const dailyRequestScopeRef = useRef(dailyRequestScope);
@@ -349,7 +351,7 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
 
   const subjects = useMemo(
     () =>
-      getSubjects(year).map(subject => {
+      getSubjects(year, bankUniversity).map(subject => {
         const all = collectAllQuestions(subject.node);
         const done = countDone(all);
         return {
@@ -361,7 +363,7 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
           gradient: SUBJECT_GRADIENT[subject.key] ?? DEFAULT_GRADIENT,
         };
       }),
-    [year, countDone],
+    [year, countDone, bankUniversity],
   );
 
   const subjectKeys = useMemo(() => subjects.map(subject => subject.key), [subjects]);

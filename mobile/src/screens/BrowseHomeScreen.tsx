@@ -30,6 +30,7 @@ import { noteQuestionText } from '@/lib/questionText';
 import { useCountDone } from '@/hooks/useProgress';
 import { useProfile } from '@/hooks/useProfile';
 import { KEY_TO_YEAR } from '@/lib/profile';
+import { KUHS_BANK_READY } from '@/lib/kuhsAvailability';
 import { QuestionRow } from '@/components/QuestionRow';
 import type { HomeStackParamList, RootTabParamList } from '@/navigation/types';
 import { SegmentedControl } from '@/components/ui';
@@ -46,7 +47,8 @@ export default function BrowseHomeScreen() {
   const route = useRoute<Route>();
   const countDone = useCountDone();
 
-  const { yearKey: profileYear, setYear: setProfileYear } = useProfile();
+  const { yearKey: profileYear, setYear: setProfileYear, university } = useProfile();
+  const bankUniversity = university === 'kuhs' && KUHS_BANK_READY ? 'kuhs' : 'tnmgr';
   const [year, setYear] = useState<YearKey>(route.params?.year ?? profileYear);
   const [query, setQuery] = useState('');
   const [debounced, setDebounced] = useState('');
@@ -69,8 +71,8 @@ export default function BrowseHomeScreen() {
   // Build the search index while the user is still reading the screen, so the
   // first keystroke does not pay for it.
   useEffect(() => {
-    warmSearchIndex();
-  }, []);
+    warmSearchIndex(bankUniversity);
+  }, [bankUniversity]);
 
   // The bank is large; debounce so the walk does not run on every keystroke.
   useEffect(() => {
@@ -99,17 +101,17 @@ export default function BrowseHomeScreen() {
    */
   const [noted, setNoted] = useState<SearchHit | null>(null);
   const results = useMemo(
-    () => searchQuestions(debounced, searchYear ?? undefined),
-    [debounced, searchYear],
+    () => searchQuestions(debounced, searchYear ?? undefined, 60, bankUniversity),
+    [debounced, searchYear, bankUniversity],
   );
   const isSearching = debounced.trim().length >= 2;
 
   const subjects = useMemo(() => {
-    return getSubjects(year).map(subject => {
+    return getSubjects(year, bankUniversity).map(subject => {
       const all = collectAllQuestions(subject.node);
       return { ...subject, total: all.length, done: countDone(all) };
     });
-  }, [year, countDone]);
+  }, [year, countDone, bankUniversity]);
 
   /**
    * Open the topic a result lives in, and light the question up on arrival.
@@ -297,6 +299,7 @@ export default function BrowseHomeScreen() {
         subjectKey={noted?.subjectKey ?? ''}
         subjectName={noted?.subjectName ?? ''}
         yearLabel={noted?.yearLabel ?? ''}
+        university={bankUniversity}
         onClose={() => setNoted(null)}
       />
     </View>
