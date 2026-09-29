@@ -15,6 +15,9 @@ import tempfile
 import numpy as np
 from PIL import Image, ImageOps
 
+# The supplied first-year scan has these photographed spreads upside down.
+# OCR must rotate the image before splitting its printed columns.
+UPSIDE_DOWN = {'Decipher 1st year(3).pdf': {76, 77}}
 
 def page_count(pdf):
     result = subprocess.run(['pdfinfo', str(pdf)], check=True, capture_output=True, text=True)
@@ -39,6 +42,8 @@ def process_page(pdf, destination, page):
                         '-singlefile', '-png', str(pdf), str(prefix)],
                        check=True, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
         with Image.open(prefix.with_suffix('.png')) as image:
+            if page in UPSIDE_DOWN.get(pdf.name, set()):
+                image = image.rotate(180, expand=True)
             width, height = image.size
             for name, half in (('left', image.crop((0, 0, width // 2 + 16, height))),
                                ('right', image.crop((width // 2 - 16, 0, width, height)))):

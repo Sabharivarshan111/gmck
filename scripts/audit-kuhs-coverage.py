@@ -54,7 +54,7 @@ def main():
               f'{sum(not row["first_ocr_markers"] and not row["clean_ocr_markers"] for row in subset)} zero-marker pages')
     destination.parent.mkdir(parents=True, exist_ok=True)
     with destination.open('w', newline='') as stream:
-        writer = csv.DictWriter(stream, fieldnames=list(rows[0]), delimiter='\t')
+        writer = csv.DictWriter(stream, fieldnames=list(rows[0]), delimiter='\t', lineterminator='\n')
         writer.writeheader()
         writer.writerows(rows)
     print(f'{len(rows)} page audit rows: {destination}')
