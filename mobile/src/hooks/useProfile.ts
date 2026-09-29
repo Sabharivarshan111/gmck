@@ -10,6 +10,7 @@ import {
   type Year,
 } from '@/lib/profile';
 import type { YearKey } from '@/lib/questionBank';
+import type { University } from '@shared/university';
 import { reconcileProgress } from '@/lib/progress';
 import { currentValue, recordToday, type StreakState } from '@/lib/streak';
 
@@ -136,6 +137,10 @@ export function useProfile() {
     [save],
   );
 
+  const setUniversity = useCallback(async (university: University) => {
+    if (localProfile) await save({ ...localProfile, university });
+  }, [save]);
+
   const year: Year = localProfile?.year ?? 'second';
 
   return {
@@ -145,6 +150,7 @@ export function useProfile() {
     /** Convenience: the year in the app's internal key form. */
     yearKey: YEAR_TO_KEY[year] as YearKey,
     year,
+    university: localProfile?.university ?? null,
     displayName: localProfile?.display_name ?? '',
     /*
      * The larger of the two, which is the only merge that cannot lose a day.
@@ -158,5 +164,6 @@ export function useProfile() {
     needsOnboarding: hydrated && !localProfile,
     save,
     setYear,
+    setUniversity,
   };
 }

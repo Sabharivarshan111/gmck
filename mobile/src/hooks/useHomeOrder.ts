@@ -37,11 +37,9 @@ export const COMPACT_BELOW = 0.85;
  * made the block narrower and never taller, and the control did the opposite
  * of what it showed.
  *
- * **Grow-only, and deliberately.** Height is applied as a `minHeight`, so the
- * block can be given more room than its content needs but never less — there
- * is no honest way to make a card shorter than the words inside it except by
- * cutting them off, and "I want less of this" is what the width axis and the
- * bin are for.
+ * Above 1 the block grows to fill extra room. Below 1 it becomes a clipped
+ * preview with an explicit Expand control, so a smaller block never traps its
+ * contents or silently ignores an upward drag on the bottom grip.
  */
 /**
  * Where a block sits across the width: 0 hard left, 0.5 centred, 1 hard right.
@@ -57,7 +55,7 @@ export const COMPACT_BELOW = 0.85;
  */
 export const HOME_ALIGN_DEFAULT = 0.5;
 
-export const HOME_HEIGHT_MIN = 1;
+export const HOME_HEIGHT_MIN = 0.35;
 export const HOME_HEIGHT_MAX = 1.8;
 export const HOME_HEIGHT_DEFAULT = 1;
 
@@ -258,10 +256,12 @@ export function useHomeOrder() {
 
   const save = useCallback(
     (next: HomeSection[]) => {
-      orderRef.current = next;
-      setOrder(next);
-      setRendered(next);
-      persist(next, scales, heights, aligns);
+      // A racing drag must never render the same section twice.
+      const unique = Array.from(new Set(next.filter(id => HOME_SECTIONS.includes(id))));
+      orderRef.current = unique;
+      setOrder(unique);
+      setRendered(unique);
+      persist(unique, scales, heights, aligns);
     },
     [aligns, heights, persist, scales],
   );

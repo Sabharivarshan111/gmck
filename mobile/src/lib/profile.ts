@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { validateDisplayName } from '@shared/profanity';
+import { isUniversity, type University } from '@shared/university';
 import { supabase } from './supabase';
 import type { YearKey } from './questionBank';
 import { warn } from '@/lib/log';
@@ -19,6 +20,8 @@ export type Year = 'first' | 'second' | 'third' | 'final';
 export interface LocalProfile {
   display_name: string;
   year: Year;
+  /** Missing on older installs until the reader chooses on Home. */
+  university?: University;
 }
 
 export interface CloudProfile extends LocalProfile {
@@ -87,7 +90,8 @@ export async function readLocalProfile(): Promise<LocalProfile | null> {
       // syllabus that would otherwise be wrong for as long as they use the app.
       return null;
     }
-    return { display_name: parsed.display_name, year };
+    return { display_name: parsed.display_name, year,
+      ...(isUniversity(parsed.university) ? { university: parsed.university } : {}) };
   } catch {
     return null;
   }
@@ -125,6 +129,7 @@ export async function saveProfile(profile: LocalProfile): Promise<CloudProfile |
   const clean: LocalProfile = {
     display_name: profile.display_name.trim(),
     year: profile.year,
+    ...(isUniversity(profile.university) ? { university: profile.university } : {}),
   };
   await writeLocalProfile(clean);
 
@@ -160,6 +165,14 @@ export async function saveProfile(profile: LocalProfile): Promise<CloudProfile |
       });
     }
 
+    // Leave the old name/year merge RPC compatible with published clients.
+    // The optional university is an additive write after that merge.
+    if (clean.university) {
+      const { error: universityError } = await supabase.from('profiles')
+        .update({ university: clean.university }).eq('id', userId);
+      if (universityError) warn('University cloud sync failed:', universityError.message);
+    }
+
     return (merged as CloudProfile | null) ?? (await fetchCloudProfile());
   } catch (error) {
     warn('saveProfile cloud sync failed:', error);
@@ -176,7 +189,7 @@ export async function fetchCloudProfile(): Promise<CloudProfile | null> {
     }
     const { data } = await supabase
       .from('profiles')
-      .select('id, display_name, year, xp, streak, last_active_date, streak_freezes_available')
+      .select('id, display_name, year, university, xp, streak, last_active_date, streak_freezes_available')
       .eq('id', userId)
       .maybeSingle();
     return (data as CloudProfile | null) ?? null;

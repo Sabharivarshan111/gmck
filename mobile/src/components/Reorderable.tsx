@@ -17,6 +17,7 @@ import {
   Trash2,
 } from 'lucide-react-native';
 import { Touchable } from '@/components/Touchable';
+import { Text } from '@/components/Text';
 import { ReorderLockContext } from '@/components/ReorderLock';
 import { dragOwner } from '@/components/dragOwner';
 import { dragArm } from '@/components/dragArm';
@@ -243,7 +244,7 @@ export function Reorderable<Id extends string>({
   /** The same, for the height axis, which only the bottom grip drives. */
   const stepHeight = useCallback(
     (id: Id, delta: number) => {
-      const min = heightRangeRef.current?.min ?? 1;
+      const min = heightRangeRef.current?.min ?? 0.35;
       const max = heightRangeRef.current?.max ?? 1.8;
       const next = (heightScalesRef.current?.[id] ?? 1) + delta;
       onHeightScaleRef.current?.(id, Math.min(max, Math.max(min, next)), true);
@@ -306,7 +307,7 @@ export function Reorderable<Id extends string>({
             const natural = naturals.get(id) || heights.get(id) || 200;
             const min = scaleRangeRef.current?.min ?? 0.5;
             const max = scaleRangeRef.current?.max ?? 1.0;
-            const hMin = heightRangeRef.current?.min ?? 1;
+            const hMin = heightRangeRef.current?.min ?? 0.35;
             const hMax = heightRangeRef.current?.max ?? 1.8;
 
             if (axis === 'y' || axis === 'both') {
@@ -323,9 +324,14 @@ export function Reorderable<Id extends string>({
               onScaleRef.current?.(id, latest, false);
             }
           },
-          onPanResponderRelease: () => {
+          onPanResponderRelease: (_event, gesture) => {
             dragOwner.current = null;
             onDragChangeRef.current?.(false);
+            // A tap on the bottom pill is a reliable minimize/restore action;
+            // dragging it remains the continuous height control.
+            if (axis === 'y' && Math.abs(gesture.dy) < 8 && Math.abs(gesture.dx) < 8) {
+              latestHeight = startHeight < 0.99 ? 1 : startHeight > 1.01 ? 1 : heightRangeRef.current?.min ?? 0.35;
+            }
             if (axis === 'y' || axis === 'both') {
               onHeightScaleRef.current?.(id, latestHeight, true);
             }
@@ -715,12 +721,9 @@ export function Reorderable<Id extends string>({
                 ]}>
                 <View
                   /*
-                   * Height is a floor, not a transform. `minHeight` gives the
-                   * block more room than its content needs and never less, so
-                   * nothing is squashed or clipped and the blocks below move
-                   * down by exactly what was added — a `scaleY` would have
-                   * changed nothing about layout and drawn this block straight
-                   * over the next one.
+                   * Grow with minHeight; shrink with a clipped preview and a
+                   * visible Expand action. A transform changes no layout and
+                   * would overlap the next block.
                    *
                    * It goes on the card itself rather than on the wrapper
                    * around it. On the wrapper the extra height was real but the
@@ -731,17 +734,18 @@ export function Reorderable<Id extends string>({
                   style={
                     natural > 0 && tall > 1
                       ? { minHeight: natural * tall, ...styles.growable }
-                      : undefined
+                      : natural > 0 && tall < 1
+                        ? { height: Math.max(64, natural * tall), overflow: 'hidden' }
+                        : undefined
                   }
                   onLayout={event => {
                     const next = event.nativeEvent.layout.height;
                     /*
-                     * Only while nothing is being added, or the measurement
-                     * feeds itself: minHeight raises the height, the new height
-                     * is recorded as "natural", and the next multiply is
-                     * against a number that already includes it.
+                     * Record the natural content height only at full size.
+                     * Recording the resized wrapper would feed its own value
+                     * back into the next resize and make the grip drift.
                      */
-                    if (tall > 1 && naturals.has(id)) {
+                    if (tall !== 1 && naturals.has(id)) {
                       return;
                     }
                     if (naturals.get(id) !== next) {
@@ -777,6 +781,17 @@ export function Reorderable<Id extends string>({
                   </ReorderLockContext.Provider>
                 </View>
 
+                {tall < 1 ? (
+                  <Touchable
+                    onPress={() => onHeightScale?.(id, 1, true)}
+                    label={`Expand ${labels[id]}`}
+                    scaleTo={0.95}
+                    style={[styles.expandPreview, { bottom: editing ? 44 : 8, backgroundColor: colors.cardElevated, borderColor: colors.border }]}>
+                    <ChevronDown size={16} color={colors.text} />
+                    <Text style={{ color: colors.text }}>Expand {labels[id]}</Text>
+                  </Touchable>
+                ) : null}
+
                 {editing && onScale ? (
                   <>
                     {/* The bottom bar makes the block taller. */}
@@ -785,12 +800,13 @@ export function Reorderable<Id extends string>({
                       accessibilityRole="adjustable"
                       accessibilityLabel={`Height of ${labels[id]}`}
                       accessibilityValue={{
-                        min: 100,
+                        min: Math.round((heightRange?.min ?? 0.35) * 100),
                         max: 180,
                         now: Math.round(tall * 100),
                         text: `${Math.round(tall * 100)} percent tall`,
                       }}
                       accessibilityActions={[{ name: 'increment' }, { name: 'decrement' }]}
+                      accessibilityHint="Drag up or down to resize. Tap to minimize or restore."
                       onAccessibilityAction={event => {
                         stepHeight(id, event.nativeEvent.actionName === 'increment' ? 0.1 : -0.1);
                       }}
@@ -1026,6 +1042,18 @@ const styles = StyleSheet.create({
   // bounds. Negative offsets looked right but Android cannot hit a child
   // outside the View that owns it.
   cardEditing: { paddingRight: GRIP_LANE, paddingBottom: GRIP_LANE },
+  expandPreview: {
+    position: 'absolute',
+    alignSelf: 'center',
+    zIndex: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 12,
+    minHeight: 36,
+    borderRadius: 18,
+    borderWidth: StyleSheet.hairlineWidth,
+  },
   controls: {
     position: 'absolute',
     top: 0,
