@@ -37,10 +37,27 @@ def counts(path):
 def main():
     source_dir, destination = map(Path, sys.argv[1:3])
     verified = reviewed_counts()
+    previous = {}
+    if destination.exists():
+        with destination.open(newline='') as stream:
+            previous = {(row['year'], int(row['pdf_page'])): row
+                        for row in csv.DictReader(stream, delimiter='\t')}
     rows = []
     for year, page_count in PAGE_COUNTS.items():
         original = counts(source_dir / f'{year}-columns.tsv')
-        clean = counts(source_dir / f'{year}-clean-candidates.tsv')
+        clean_path = source_dir / f'{year}-clean-candidates.tsv'
+        if clean_path.exists():
+            clean = counts(clean_path)
+        else:
+            # A workspace reset may remove the costly clean OCR pass. Preserve
+            # the prior, source-matched audit values until it is regenerated.
+            if any((year, page) not in previous or
+                   int(previous[year, page]['first_ocr_markers']) != original[page]
+                   for page in range(1, page_count + 1)):
+                raise SystemExit(f'{clean_path} missing and no matching prior audit')
+            clean = Counter({page: int(previous[year, page]['clean_ocr_markers'])
+                             for page in range(1, page_count + 1)})
+            print(f'{year}: clean OCR absent; retained source-matched prior marker counts')
         for page in range(1, page_count + 1):
             rows.append(dict(year=year, pdf_page=page, first_ocr_markers=original[page],
                              clean_ocr_markers=clean[page],
