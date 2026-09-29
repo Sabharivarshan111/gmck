@@ -24,6 +24,12 @@ const firstAnatomyPage4 = (row: Row): VerifiedKuhsQuestion =>
   ({ ...row, year: 'first', subjectKey: 'anatomy', pdfPage: 4 });
 const firstAnatomyPage5 = (row: Row): VerifiedKuhsQuestion =>
   ({ ...row, year: 'first', subjectKey: 'anatomy', pdfPage: 5 });
+const firstAnatomyPage6 = (row: Row): VerifiedKuhsQuestion =>
+  ({ ...row, year: 'first', subjectKey: 'anatomy', pdfPage: 6 });
+const firstAnatomyPage7 = (row: Row): VerifiedKuhsQuestion =>
+  ({ ...row, year: 'first', subjectKey: 'anatomy', pdfPage: 7 });
+const firstAnatomyPage8 = (row: Row): VerifiedKuhsQuestion =>
+  ({ ...row, year: 'first', subjectKey: 'anatomy', pdfPage: 8 });
 const secondPharmacology = (row: Row): VerifiedKuhsQuestion =>
   ({ ...row, year: 'second', subjectKey: 'pharmacology', pdfPage: 7 });
 
@@ -126,6 +132,85 @@ export const VERIFIED_KUHS_QUESTIONS: VerifiedKuhsQuestion[] = [
   firstAnatomyPage5({ id: 'kuhs-1-anat-p5-30', topicKey: 'general-histology', kind: 'essay', question: 'Classify muscular tissue with suitable examples. Describe the structure of skeletal muscle.', examRefs: ['Mar 21'] }),
   firstAnatomyPage5({ id: 'kuhs-1-anat-p5-31', topicKey: 'general-histology', kind: 'short-notes', question: 'Transitional epithelium', examRefs: ['Jul 24', 'Jan 20'] }),
   firstAnatomyPage5({ id: 'kuhs-1-anat-p5-32', topicKey: 'general-histology', kind: 'short-notes', question: 'Microscopic structure of peripheral nerve', examRefs: ['Jul 24'] }),
+
+  // PDF page 6: the left leaf finishes general histology; the right leaf
+  // starts the upper limb. MCQs and old one-mark questions are not included.
+  firstAnatomyPage6({ id: 'kuhs-1-anat-p6-01', topicKey: 'general-histology', kind: 'short-notes', question: 'Histologic difference between cardiac and skeletal muscles', examRefs: ['Jan 24'] }),
+  firstAnatomyPage6({ id: 'kuhs-1-anat-p6-02', topicKey: 'general-histology', kind: 'short-notes', question: 'Microscopic structure of spleen', examRefs: ['Nov 23', 'Aug 21'] }),
+  firstAnatomyPage6({ id: 'kuhs-1-anat-p6-03', topicKey: 'general-histology', kind: 'short-notes', question: 'Microscopic structure of hyaline cartilage', examRefs: ['Jul 23'] }),
+  firstAnatomyPage6({ id: 'kuhs-1-anat-p6-04', topicKey: 'general-histology', kind: 'short-notes', question: 'Microscopic structure of large artery and correlate with its function', examRefs: ['Feb 23'] }),
+  firstAnatomyPage6({ id: 'kuhs-1-anat-p6-05', topicKey: 'general-histology', kind: 'short-notes', question: 'Microscopic structure of compact bone', examRefs: ['Feb 23', 'Mar 21', 'Aug 18'] }),
+  firstAnatomyPage6({ id: 'kuhs-1-anat-p6-06', topicKey: 'general-histology', kind: 'short-notes', question: 'Microscopic structure of elastic artery', examRefs: ['Feb 23'] }),
+  firstAnatomyPage6({ id: 'kuhs-1-anat-p6-07', topicKey: 'general-histology', kind: 'short-notes', question: 'Labelled diagram of histology of hyaline cartilage', examRefs: ['Sep 21'] }),
+  firstAnatomyPage6({ id: 'kuhs-1-anat-p6-08', topicKey: 'general-histology', kind: 'short-notes', question: 'Microscopic structure of skeletal muscle', examRefs: ['Aug 19'] }),
+  firstAnatomyPage6({ id: 'kuhs-1-anat-p6-09', topicKey: 'general-histology', kind: 'short-notes', question: 'Large artery', examRefs: ['Jan 19'] }),
+  firstAnatomyPage6({ id: 'kuhs-1-anat-p6-10', topicKey: 'general-histology', kind: 'short-notes', question: 'Lymph node', examRefs: ['Feb 17'] }),
+  firstAnatomyPage6({ id: 'kuhs-1-anat-p6-11', topicKey: 'general-histology', kind: 'short-notes', question: 'Muscular artery', examRefs: ['Aug 15', 'Feb 16'] }),
+  firstAnatomyPage6({ id: 'kuhs-1-anat-p6-12', topicKey: 'general-histology', kind: 'short-notes', question: 'Bone', examRefs: ['Aug 14'] }),
+  firstAnatomyPage6({ id: 'kuhs-1-anat-p6-13', topicKey: 'general-histology', kind: 'short-notes', question: 'Spinal ganglion', examRefs: ['Feb 14'] }),
+  firstAnatomyPage6({ id: 'kuhs-1-anat-p6-14', topicKey: 'general-histology', kind: 'short-notes', question: 'Hyaline cartilage', examRefs: ['Aug 11', 'Jan 18'] }),
+  firstAnatomyPage6({ id: 'kuhs-1-anat-p6-15', topicKey: 'general-histology', kind: 'short-notes', question: 'Hyaline cartilage and locations', examRefs: ['Aug 12'] }),
+  firstAnatomyPage6({ id: 'kuhs-1-anat-p6-16', topicKey: 'pectoral-region', kind: 'essay', question: 'Describe the mammary gland under the following headings: extent, deep relations, gross structure, arterial supply and lymphatics.', examRefs: ['Jul 24'] }),
+  firstAnatomyPage6({ id: 'kuhs-1-anat-p6-17', topicKey: 'pectoral-region', kind: 'essay', question: 'A 55-year-old woman has pain in the left axilla, swelling of the upper limb, enlarged axillary nodes and a swelling in the upper lateral quadrant of the left breast. Which group of axillary nodes could be enlarged? Describe the anatomical groups and drainage areas of axillary nodes, lymphatic drainage of the mammary gland, and boundaries and contents of the axilla.', examRefs: ['Feb 23'] }),
+  firstAnatomyPage6({ id: 'kuhs-1-anat-p6-18', topicKey: 'pectoral-region', kind: 'essay', question: 'A painter has difficulty raising his right arm and a prominent medial border and inferior angle of the scapula on pushing against a wall. Name the muscle and injured nerve, the deformity, the origin and root value of the nerve, how it is damaged, and the muscle attachments and actions.', examRefs: ['Feb 22'] }),
+  firstAnatomyPage6({ id: 'kuhs-1-anat-p6-19', topicKey: 'pectoral-region', kind: 'essay', question: 'A woman with palpable left axillary nodules undergoes left mastectomy. Give the probable diagnosis, explain the axillary nodules, and describe the blood supply, lymphatic drainage, development and developmental anomalies of the breast.', examRefs: ['Jan 20'] }),
+  firstAnatomyPage6({ id: 'kuhs-1-anat-p6-20', topicKey: 'pectoral-region', kind: 'essay', question: 'Lymphatic drainage of mammary gland', examRefs: ['Jul 24', 'Aug 19', 'Aug 11'] }),
+  firstAnatomyPage6({ id: 'kuhs-1-anat-p6-21', topicKey: 'pectoral-region', kind: 'essay', question: 'Serratus anterior', examRefs: ['Jan 24'] }),
+  firstAnatomyPage6({ id: 'kuhs-1-anat-p6-22', topicKey: 'pectoral-region', kind: 'essay', question: 'Lymphatic drainage of mammary gland and its applied significance', examRefs: ['Feb 22'] }),
+  firstAnatomyPage6({ id: 'kuhs-1-anat-p6-23', topicKey: 'pectoral-region', kind: 'short-notes', question: 'Name four structures piercing clavipectoral fascia', examRefs: ['Sep 21'] }),
+  firstAnatomyPage6({ id: 'kuhs-1-anat-p6-24', topicKey: 'pectoral-region', kind: 'short-notes', question: 'Pectoralis minor', examRefs: ['Mar 21'] }),
+  firstAnatomyPage6({ id: 'kuhs-1-anat-p6-25', topicKey: 'pectoral-region', kind: 'short-notes', question: 'Lymphatic drainage of breast', examRefs: ['Nov 20'] }),
+
+  // PDF page 7: axilla, deltoid/scapular region, and shoulder joint.
+  firstAnatomyPage7({ id: 'kuhs-1-anat-p7-01', topicKey: 'axilla', kind: 'essay', question: 'An assisted delivery caused an upper brachial plexus injury in a neonate. Describe the formation and branches of the brachial plexus and explain the anatomical basis of the lesion.', examRefs: ['Jul 17'] }),
+  firstAnatomyPage7({ id: 'kuhs-1-anat-p7-02', topicKey: 'axilla', kind: 'essay', question: 'Describe the brachial plexus: formation, relations, branches and applied anatomy.', examRefs: ['Mar 21'] }),
+  firstAnatomyPage7({ id: 'kuhs-1-anat-p7-03', topicKey: 'axilla', kind: 'essay', question: 'Axillary artery', examRefs: ['Feb 15', 'Feb 17'] }),
+  firstAnatomyPage7({ id: 'kuhs-1-anat-p7-04', topicKey: 'axilla', kind: 'essay', question: 'Brachial plexus', examRefs: ['Feb 14', 'Jan 19'] }),
+  firstAnatomyPage7({ id: 'kuhs-1-anat-p7-05', topicKey: 'axilla', kind: 'short-notes', question: 'Axillary lymph nodes', examRefs: ['Feb 17', 'Aug 13'] }),
+  firstAnatomyPage7({ id: 'kuhs-1-anat-p7-06', topicKey: 'axilla', kind: 'short-notes', question: 'Axillary artery', examRefs: ['Aug 15', 'Aug 12', 'Nov 20'] }),
+  firstAnatomyPage7({ id: 'kuhs-1-anat-p7-07', topicKey: 'axilla', kind: 'short-notes', question: 'Erb’s point', examRefs: ['Jan 18'] }),
+  firstAnatomyPage7({ id: 'kuhs-1-anat-p7-08', topicKey: 'axilla', kind: 'short-notes', question: 'Erb’s paralysis', examRefs: ['Feb 15'] }),
+  firstAnatomyPage7({ id: 'kuhs-1-anat-p7-09', topicKey: 'deltoid-and-scapular-region', kind: 'essay', question: 'Axillary nerve', examRefs: ['Feb 23'] }),
+  firstAnatomyPage7({ id: 'kuhs-1-anat-p7-10', topicKey: 'deltoid-and-scapular-region', kind: 'essay', question: 'Intramuscular spaces of scapular region', examRefs: ['Aug 14'] }),
+  firstAnatomyPage7({ id: 'kuhs-1-anat-p7-11', topicKey: 'deltoid-and-scapular-region', kind: 'essay', question: 'Deltoid muscle and its deep relations', examRefs: ['Aug 13'] }),
+  firstAnatomyPage7({ id: 'kuhs-1-anat-p7-12', topicKey: 'deltoid-and-scapular-region', kind: 'short-notes', question: 'Trapezius muscle', examRefs: ['Jul 24'] }),
+  firstAnatomyPage7({ id: 'kuhs-1-anat-p7-13', topicKey: 'deltoid-and-scapular-region', kind: 'short-notes', question: 'Quadrangular intermuscular space', examRefs: ['Jul 23'] }),
+  firstAnatomyPage7({ id: 'kuhs-1-anat-p7-14', topicKey: 'deltoid-and-scapular-region', kind: 'short-notes', question: 'Biceps brachii muscle', examRefs: ['Feb 23'] }),
+  firstAnatomyPage7({ id: 'kuhs-1-anat-p7-15', topicKey: 'deltoid-and-scapular-region', kind: 'short-notes', question: 'Axillary nerve', examRefs: ['Mar 21'] }),
+  firstAnatomyPage7({ id: 'kuhs-1-anat-p7-16', topicKey: 'shoulder-joint', kind: 'essay', question: 'Describe the shoulder joint: articular surfaces, stabilising structures, movements and muscles producing each movement, and applied importance.', examRefs: ['Oct 24'] }),
+  firstAnatomyPage7({ id: 'kuhs-1-anat-p7-17', topicKey: 'shoulder-joint', kind: 'essay', question: 'A patient cannot abduct the right arm and has a bulge in the upper arm. Name the joint involved and describe its ligaments, relations, movements and muscles producing them.', examRefs: ['Jan 24'] }),
+  firstAnatomyPage7({ id: 'kuhs-1-anat-p7-18', topicKey: 'shoulder-joint', kind: 'essay', question: 'A man has pain at the shoulder joint. Name the bones forming the joint and describe its ligaments, movements and muscles, blood and nerve supply, and applied aspects.', examRefs: ['Sep 21'] }),
+  firstAnatomyPage7({ id: 'kuhs-1-anat-p7-19', topicKey: 'shoulder-joint', kind: 'essay', question: 'A football player has shoulder dislocation, flattening of the shoulder and difficulty abducting the arm. Explain why the joint is prone to dislocation, the cause of flattening and impaired abduction, the movements and their muscles, and why the humeral head is often displaced downwards.', examRefs: ['Feb 16'] }),
+
+  // PDF page 8: continuation of shoulder joint, arm, forearm and hand.
+  firstAnatomyPage8({ id: 'kuhs-1-anat-p8-01', topicKey: 'shoulder-joint', kind: 'essay', question: 'A football player dislocated his shoulder and subsequently has a flattened shoulder and difficulty abducting the arm. Explain why the joint dislocates, its most stabilising structure and downward displacement, the cause of flattening and impaired abduction, and its ligaments and muscles.', examRefs: ['Aug 12'] }),
+  firstAnatomyPage8({ id: 'kuhs-1-anat-p8-02', topicKey: 'shoulder-joint', kind: 'essay', question: 'Ligaments of shoulder joint', examRefs: ['Jul 23'] }),
+  firstAnatomyPage8({ id: 'kuhs-1-anat-p8-03', topicKey: 'shoulder-joint', kind: 'essay', question: 'Rotator cuff of shoulder joint', examRefs: ['Feb 16', 'Aug 12', 'Aug 11'] }),
+  firstAnatomyPage8({ id: 'kuhs-1-anat-p8-04', topicKey: 'shoulder-joint', kind: 'short-notes', question: 'Rotator cuff of shoulder joint', examRefs: ['Nov 20', 'Jul 17'] }),
+  firstAnatomyPage8({ id: 'kuhs-1-anat-p8-05', topicKey: 'arm', kind: 'essay', question: 'A patient with high blood pressure is examined. Name the artery used for measurement and the fossa where the stethoscope is placed; describe the boundaries and contents of the fossa.', examRefs: ['Jul 23'] }),
+  firstAnatomyPage8({ id: 'kuhs-1-anat-p8-06', topicKey: 'arm', kind: 'essay', question: 'A deep cut in the middle of the back of the arm causes bleeding. Identify the nerve and artery at risk, the origin and termination of the artery, how to assess the nerve, and its brachial plexus origin and associated branches.', examRefs: ['May 23'] }),
+  firstAnatomyPage8({ id: 'kuhs-1-anat-p8-07', topicKey: 'arm', kind: 'essay', question: 'Describe the cubital fossa: boundaries, contents and clinical importance.', examRefs: ['Aug 21'] }),
+  firstAnatomyPage8({ id: 'kuhs-1-anat-p8-08', topicKey: 'arm', kind: 'essay', question: 'Cubital fossa', examRefs: ['Aug 18'] }),
+  firstAnatomyPage8({ id: 'kuhs-1-anat-p8-09', topicKey: 'arm', kind: 'short-notes', question: 'Boundaries and contents of cubital fossa', examRefs: ['Jul 24'] }),
+  firstAnatomyPage8({ id: 'kuhs-1-anat-p8-10', topicKey: 'arm', kind: 'short-notes', question: 'Cephalic vein', examRefs: ['Feb 22'] }),
+  firstAnatomyPage8({ id: 'kuhs-1-anat-p8-11', topicKey: 'arm', kind: 'short-notes', question: 'Brachial artery', examRefs: ['Aug 18'] }),
+  firstAnatomyPage8({ id: 'kuhs-1-anat-p8-12', topicKey: 'arm', kind: 'short-notes', question: 'Median cubital vein', examRefs: ['Aug 18', 'Aug 16'] }),
+  firstAnatomyPage8({ id: 'kuhs-1-anat-p8-13', topicKey: 'forearm', kind: 'essay', question: 'Movements and the muscles involved in causing each movement at the wrist joint', examRefs: ['Nov 23'] }),
+  firstAnatomyPage8({ id: 'kuhs-1-anat-p8-14', topicKey: 'forearm', kind: 'essay', question: 'Radio-ulnar joints', examRefs: ['May 22'] }),
+  firstAnatomyPage8({ id: 'kuhs-1-anat-p8-15', topicKey: 'forearm', kind: 'essay', question: 'Supination and pronation', examRefs: ['Feb 22'] }),
+  firstAnatomyPage8({ id: 'kuhs-1-anat-p8-16', topicKey: 'forearm', kind: 'short-notes', question: 'Posterior interosseous nerve', examRefs: ['Jul 24', 'Aug 11'] }),
+  firstAnatomyPage8({ id: 'kuhs-1-anat-p8-17', topicKey: 'forearm', kind: 'short-notes', question: 'Extensor retinaculum of hand', examRefs: ['Jan 24'] }),
+  firstAnatomyPage8({ id: 'kuhs-1-anat-p8-18', topicKey: 'forearm', kind: 'short-notes', question: 'Supination and pronation', examRefs: ['Feb 16'] }),
+  firstAnatomyPage8({ id: 'kuhs-1-anat-p8-19', topicKey: 'hand', kind: 'essay', question: 'Flexor retinaculum of hand and its clinical implications', examRefs: ['Aug 21', 'Aug 18'] }),
+  firstAnatomyPage8({ id: 'kuhs-1-anat-p8-20', topicKey: 'hand', kind: 'essay', question: 'Carpometacarpal joint of thumb', examRefs: ['Nov 20'] }),
+  firstAnatomyPage8({ id: 'kuhs-1-anat-p8-21', topicKey: 'hand', kind: 'essay', question: 'Ulnar nerve in hand', examRefs: ['Aug 19', 'Feb 15'] }),
+  firstAnatomyPage8({ id: 'kuhs-1-anat-p8-22', topicKey: 'hand', kind: 'essay', question: 'Palmar fascial spaces', examRefs: ['Feb 17', 'Aug 16'] }),
+  firstAnatomyPage8({ id: 'kuhs-1-anat-p8-23', topicKey: 'hand', kind: 'essay', question: 'Superficial palmar arch', examRefs: ['Aug 15'] }),
+  firstAnatomyPage8({ id: 'kuhs-1-anat-p8-24', topicKey: 'hand', kind: 'short-notes', question: 'Describe boundaries and contents of anatomical snuff box', examRefs: ['Oct 24'] }),
+  firstAnatomyPage8({ id: 'kuhs-1-anat-p8-25', topicKey: 'hand', kind: 'short-notes', question: 'Claw hand', examRefs: ['Nov 23'] }),
+  firstAnatomyPage8({ id: 'kuhs-1-anat-p8-26', topicKey: 'hand', kind: 'short-notes', question: 'Flexor retinaculum of hand', examRefs: ['Jul 23'] }),
+  firstAnatomyPage8({ id: 'kuhs-1-anat-p8-27', topicKey: 'hand', kind: 'short-notes', question: 'Anatomical basis of claw hand', examRefs: ['May 23'] }),
+  firstAnatomyPage8({ id: 'kuhs-1-anat-p8-28', topicKey: 'hand', kind: 'short-notes', question: 'Palmar aponeurosis', examRefs: ['Feb 22'] }),
 
   secondPharmacology({ id: 'kuhs-2-pharm-p7-01', topicKey: 'pharmacokinetics', kind: 'short-notes', question: 'Plasma half life and its clinical relevance', examRefs: ['KU14', 'KU16', 'KU18'] }),
   secondPharmacology({ id: 'kuhs-2-pharm-p7-02', topicKey: 'pharmacokinetics', kind: 'short-notes', question: 'Microsomal enzyme induction', examRefs: ['KU13'] }),
