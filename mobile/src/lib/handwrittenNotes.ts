@@ -1,4 +1,5 @@
 import { supabase } from './supabase';
+import { stripKuhsQuestionMarker, type University } from '@shared/university';
 import { collectQuestions, type BankNode } from './questionBank';
 import { clampQuestions } from './notesLimits';
 import { getQuestionId } from './progress';
@@ -318,6 +319,8 @@ export interface SingleNoteRequest {
   subjectKey: string;
   subjectName: string;
   yearLabel: string;
+  /** Missing means the existing TNMGR cache identity, including older notes. */
+  university?: University;
   /**
    * The bank's string for this question, before the leading `"12. "` was
    * removed — used for the diagram lookup and for nothing else.
@@ -336,10 +339,15 @@ export interface SingleNoteRequest {
  * has to carry the identical body, or the edge function looks at a different
  * cache row than the one on screen. Built in one place for that reason.
  */
+function singleNoteCacheKey(request: SingleNoteRequest): string {
+  const base = `${request.subjectKey}::${hashKey(request.question.trim())}`;
+  return request.university === 'kuhs' ? `single::kuhs::${base}` : `single::${base}`;
+}
+
 function singleNoteBody(request: SingleNoteRequest): Record<string, unknown> {
   const clean = request.question.trim();
   return {
-    subtopicKey: `single::${request.subjectKey}::${hashKey(clean)}`,
+    subtopicKey: singleNoteCacheKey(request),
     year: request.yearLabel,
     /*
      * No fallback subject. This read `|| 'Community Medicine'`, which was
@@ -501,7 +509,7 @@ function questionIdentities(...forms: Array<string | null | undefined>): string[
     }
   };
   for (const form of forms) {
-    const clean = (form ?? '').trim();
+    const clean = stripKuhsQuestionMarker((form ?? '').trim());
     if (!clean) continue;
     push(clean);
     push(clean.replace(LEADING_NUMBER, ''));
@@ -1134,7 +1142,7 @@ export async function ensureSingleNoteDiagram(
     try {
       const clean = request.question.trim();
       await supabase.from('handwritten_notes').upsert({
-        subtopic_key: `single::${request.subjectKey}::${hashKey(clean)}`,
+        subtopic_key: singleNoteCacheKey(request),
         year: request.yearLabel,
         subject: request.subjectName || request.subjectKey || 'Medical Science',
         subtopic_name: clean.slice(0, 80),

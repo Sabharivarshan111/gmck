@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { supabase } from './supabase';
 import { warn } from '@/lib/log';
+import { kuhsQuestionId } from '@shared/university';
 
 /**
  * Completion state for individual questions.
@@ -134,6 +135,8 @@ export function isHydrated(): boolean {
 }
 
 export function getQuestionId(question: string): string {
+  const kuhsId = kuhsQuestionId(question);
+  if (kuhsId) return `${KEY_PREFIX}${kuhsId}`;
   return `${KEY_PREFIX}${question.slice(0, 50).replace(/\s+/g, '-')}`;
 }
 

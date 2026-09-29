@@ -3,6 +3,7 @@
  * These helpers match src/components/QuestionCard.tsx so the native app
  * renders the same badges the web app does.
  */
+import { stripKuhsQuestionMarker } from '@shared/university';
 
 const STAR_PATTERN = /[*★☆⭐]/g;
 const DATE_PATTERN =
@@ -45,17 +46,17 @@ export function extractPageNumber(question: string): string | null {
  * anything a person will see.
  */
 export function noteQuestionText(question: string): string {
-  return question.replace(/^\d+\.\s/, '');
+  return stripKuhsQuestionMarker(question.replace(/^\d+\.\s/, ''));
 }
 
 /** Body text with the trailing markers stripped, for display and for the AI. */
 export function getCleanQuestionText(question: string): string {
-  return question
+  return stripKuhsQuestionMarker(question
     .replace(/^\d+\.\s/, '')
     .replace(STAR_PATTERN, '')
     .replace(/\((?:Pg\.No|Page No):[^)]*\)/gi, '')
     .replace(/\s{2,}/g, ' ')
-    .trim();
+    .trim());
 }
 
 /** Bucket used to colour the importance badge. */
