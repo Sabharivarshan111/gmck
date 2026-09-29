@@ -32,7 +32,7 @@ first	30	21	16	0	manual_page_review_required
 first	31	29	28	0	manual_page_review_required
 first	32	0	0	6	manual_page_review_required
 first	33	1	0	5	manual_page_review_required
-first	34	11	10	0	manual_page_review_required
+first	34	11	10	19	manual_page_review_required
 first	35	15	15	0	manual_page_review_required
 first	36	12	20	0	manual_page_review_required
 first	37	10	14	0	manual_page_review_required
@@ -188,7 +188,7 @@ second	100	11	11	0	manual_page_review_required
 second	101	7	10	0	manual_page_review_required
 second	102	0	0	0	manual_page_review_required
 second	103	0	0	0	manual_page_review_required
-second	104	9	11	0	manual_page_review_required
+second	104	9	11	12	manual_page_review_required
 second	105	12	11	0	manual_page_review_required
 second	106	11	8	0	manual_page_review_required
 second	107	10	10	0	manual_page_review_required
@@ -245,7 +245,7 @@ third	8	0	0	0	manual_page_review_required
 third	9	0	0	0	manual_page_review_required
 third	10	0	0	0	manual_page_review_required
 third	11	6	16	17	manual_page_review_required
-third	12	10	10	0	manual_page_review_required
+third	12	10	10	21	manual_page_review_required
 third	13	1	0	0	manual_page_review_required
 third	14	5	5	0	manual_page_review_required
 third	15	11	10	0	manual_page_review_required
@@ -386,7 +386,7 @@ final	54	17	17	0	manual_page_review_required
 final	55	14	14	0	manual_page_review_required
 final	56	0	0	0	manual_page_review_required
 final	57	0	0	0	manual_page_review_required
-final	58	16	16	0	manual_page_review_required
+final	58	16	16	16	manual_page_review_required
 final	59	9	11	0	manual_page_review_required
 final	60	10	10	0	manual_page_review_required
 final	61	8	8	0	manual_page_review_required
