@@ -37,8 +37,8 @@ first	35	15	15	26	manual_page_review_required
 first	36	12	20	32	manual_page_review_required
 first	37	10	14	26	manual_page_review_required
 first	38	17	19	18	manual_page_review_required
-first	39	11	7	0	manual_page_review_required
-first	40	7	14	0	manual_page_review_required
+first	39	11	7	29	manual_page_review_required
+first	40	7	14	34	manual_page_review_required
 first	41	15	20	0	manual_page_review_required
 first	42	19	16	0	manual_page_review_required
 first	43	14	13	0	manual_page_review_required
@@ -149,8 +149,8 @@ second	61	22	21	12	manual_page_review_required
 second	62	15	14	15	manual_page_review_required
 second	63	16	14	15	manual_page_review_required
 second	64	14	14	19	manual_page_review_required
-second	65	10	9	0	manual_page_review_required
-second	66	7	8	0	manual_page_review_required
+second	65	10	9	10	manual_page_review_required
+second	66	7	8	14	manual_page_review_required
 second	67	3	4	0	manual_page_review_required
 second	68	15	12	0	manual_page_review_required
 second	69	11	12	0	manual_page_review_required
@@ -250,8 +250,8 @@ third	13	1	0	7	manual_page_review_required
 third	14	5	5	4	manual_page_review_required
 third	15	11	10	10	manual_page_review_required
 third	16	6	5	6	manual_page_review_required
-third	17	2	2	0	manual_page_review_required
-third	18	7	7	0	manual_page_review_required
+third	17	2	2	8	manual_page_review_required
+third	18	7	7	21	manual_page_review_required
 third	19	13	20	0	manual_page_review_required
 third	20	9	9	0	manual_page_review_required
 third	21	4	7	0	manual_page_review_required
@@ -391,8 +391,8 @@ final	59	9	11	11	manual_page_review_required
 final	60	10	10	6	manual_page_review_required
 final	61	8	8	7	manual_page_review_required
 final	62	10	9	5	manual_page_review_required
-final	63	11	12	0	manual_page_review_required
-final	64	11	12	0	manual_page_review_required
+final	63	11	12	8	manual_page_review_required
+final	64	11	12	12	manual_page_review_required
 final	65	10	8	0	manual_page_review_required
 final	66	7	7	0	manual_page_review_required
 final	67	7	8	0	manual_page_review_required
