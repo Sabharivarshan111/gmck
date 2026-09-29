@@ -2,6 +2,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
+import { createClient } from "npm:@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -52,9 +53,34 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders, status: 204 });
   }
 
-  // Get client IP or some identifier for rate limiting
-  // For demo, using a placeholder - in production use a real client identifier
-  const clientId = req.headers.get('x-forwarded-for') || 'anonymous';
+  // This legacy MCP endpoint has no user session. Bound spend across
+  // instances with an atomic database quota keyed to the gateway IP.
+  const ip = req.headers.get("cf-connecting-ip") ?? req.headers.get("x-forwarded-for") ?? "unknown";
+  const subject = Array.from(new Uint8Array(await crypto.subtle.digest(
+    "SHA-256", new TextEncoder().encode("mcp-ip:" + ip)
+  ))).map(b => b.toString(16).padStart(2, "0")).join("");
+  const now = new Date();
+  const minute = new Date(Math.floor(now.getTime() / 60000) * 60000).toISOString();
+  const day = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())).toISOString();
+  const admin = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, {
+    auth: { persistSession: false },
+  });
+  for (const check of [
+    { action: "ai_minute", bucket: minute, limit: 5 },
+    { action: "ip_day", bucket: day, limit: 200 },
+  ]) {
+    const { data: allowed, error: quotaError } = await admin.rpc("consume_edge_quota", {
+      _subject_hash: subject, _action: check.action,
+      _bucket_start: check.bucket, _limit: check.limit,
+    });
+    if (quotaError) return new Response(JSON.stringify({ error: "AI quota temporarily unavailable" }), {
+      status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+    if (!allowed) return new Response(JSON.stringify({ error: "AI usage limit reached", isRateLimit: true }), {
+      status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+  const clientId = subject;
   
   // Check rate limiting
   if (isRateLimited(clientId)) {
