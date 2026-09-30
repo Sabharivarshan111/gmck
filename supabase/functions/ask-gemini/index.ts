@@ -273,8 +273,8 @@ serve(async (req) => {
     });
   }
 
-  // Authenticate the caller before any paid model call. Anonymous Supabase
-  // sessions are valid for the free app, but every request has an accountable uid.
+  // Keep the public client-key path for visitors; verify actual user tokens.
+  // Guests share an IP budget. A public anon key is not a user identity.
   const bearer = req.headers.get("Authorization") ?? "";
   const token = bearer.startsWith("Bearer ") ? bearer.slice(7) : "";
   if (!token) return new Response(JSON.stringify({ error: "Sign in to use AI" }), {
@@ -283,11 +283,14 @@ serve(async (req) => {
   const url = Deno.env.get("SUPABASE_URL")!;
   const anonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
   const authClient = createClient(url, anonKey, { auth: { persistSession: false } });
-  const { data: userData, error: authError } = await authClient.auth.getUser(token);
-  const user = userData.user;
-  if (authError || !user) return new Response(JSON.stringify({ error: "Invalid session" }), {
-    status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
-  });
+  let userId: string | null = null;
+  if (token !== anonKey) {
+    const { data: userData, error: authError } = await authClient.auth.getUser(token);
+    if (authError || !userData.user) return new Response(JSON.stringify({ error: "Invalid session" }), {
+      status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+    userId = userData.user.id;
+  }
 
   const admin = createClient(url, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, {
     auth: { persistSession: false },
@@ -299,9 +302,10 @@ serve(async (req) => {
   const minute = new Date(Math.floor(now.getTime() / 60000) * 60000).toISOString();
   const day = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())).toISOString();
   const ip = req.headers.get("cf-connecting-ip") ?? req.headers.get("x-forwarded-for") ?? "unknown";
+  const subject = userId ? "user:" + userId : "guest:" + ip;
   const checks = [
-    { subject: await hash("user:" + user.id), action: "ai_minute", bucket: minute, limit: 10 },
-    { subject: await hash("user:" + user.id), action: "ai_day", bucket: day, limit: 150 },
+    { subject: await hash(subject), action: "ai_minute", bucket: minute, limit: 10 },
+    { subject: await hash(subject), action: "ai_day", bucket: day, limit: 150 },
     { subject: await hash("ip:" + ip), action: "ip_day", bucket: day, limit: 500 },
   ];
   for (const check of checks) {
@@ -318,7 +322,7 @@ serve(async (req) => {
   }
 
   // Keep the existing short-window backoff, keyed to the verified user.
-  const clientId = user.id;
+  const clientId = await hash(subject);
   
   // Check rate limiting with enhanced logic
   const rateLimitResult = isRateLimited(clientId);

@@ -489,6 +489,26 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
   try {
+    const url = Deno.env.get("SUPABASE_URL")!;
+    const anonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+    const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const token = (req.headers.get("Authorization") ?? "").replace(/^Bearer /, "");
+    const internal = token === serviceKey;
+    let userId: string | null = null;
+    if (!token) return new Response(JSON.stringify({ error: "Missing authorization." }), {
+      status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+    if (!internal && token !== anonKey) {
+      const caller = createClient(url, anonKey, { auth: { persistSession: false } });
+      const { data, error } = await caller.auth.getUser(token);
+      if (error || !data.user) return new Response(JSON.stringify({ error: "Invalid session." }), {
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+      userId = data.user.id;
+    }
+    const hash = async (value: string) => Array.from(new Uint8Array(
+      await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value))
+    )).map(b => b.toString(16).padStart(2, "0")).join("");
     const admin = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
@@ -514,15 +534,26 @@ serve(async (req) => {
       limit ??
       Math.max(MIN_CARDS, Math.min(MAX_CARDS, Math.round(questions.length * CARDS_PER_QUESTION)));
     const deckKey = `${year}::${subject}::${subtopicKey}`;
+    // Bind every new shared cache entry to the exact prompt inputs. A caller
+    // cannot poison another chapter by supplying its key with different questions.
+    const cacheKey = deckKey + "::input:" + await hash(JSON.stringify({
+      year, subject, subtopicKey, subtopicName, questions, limit: limit ?? null,
+    }));
 
     // A personal deck neither reads nor writes the shared cache: reading it
     // would hand back the very deck this is meant to be an alternative to.
     if (!regenerate && !noCache) {
-      const { data: cached } = await admin
+      let { data: cached } = await admin
         .from("flashcards")
         .select("cards, deck_target")
-        .eq("deck_key", deckKey)
+        .eq("deck_key", cacheKey)
         .maybeSingle();
+      if (!cached?.cards) {
+        // Existing curated cache remains readable and cannot be overwritten here.
+        const legacy = await admin.from("flashcards").select("cards, deck_target")
+          .eq("deck_key", deckKey).maybeSingle();
+        cached = legacy.data;
+      }
       /*
        * Serve the cache unless it was built before this sizing existed and is
        * smaller than what today's algorithm would produce.
@@ -826,6 +857,26 @@ serve(async (req) => {
       (isFirstYear ? FIRST_YEAR_SYSTEM_PROMPT : "") +
       (pathwayIndices.size > 0 ? PATHWAY_SYSTEM_PROMPT : "");
 
+    if (!internal) {
+      const now = new Date();
+      const minute = new Date(Math.floor(now.getTime() / 60000) * 60000).toISOString();
+      const day = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())).toISOString();
+      const ip = req.headers.get("cf-connecting-ip") ?? req.headers.get("x-forwarded-for") ?? "unknown";
+      const quotaSubject = userId ? "user:" + userId : "guest:" + ip;
+      for (const check of [
+        { subject: await hash(quotaSubject), action: "ai_minute", bucket: minute, limit: 10 },
+        { subject: await hash(quotaSubject), action: "ai_day", bucket: day, limit: 150 },
+        { subject: await hash("ip:" + ip), action: "ip_day", bucket: day, limit: 500 },
+      ]) {
+        const { data: allowed, error } = await admin.rpc("consume_edge_quota", {
+          _subject_hash: check.subject, _action: check.action,
+          _bucket_start: check.bucket, _limit: check.limit,
+        });
+        if (error || !allowed) return new Response(JSON.stringify({
+          error: error ? "AI usage checks temporarily unavailable." : "AI usage limit reached. Try again later.",
+        }), { status: error ? 503 : 429, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
+    }
     const raw = await callGemini(geminiKey, userPrompt, systemPrompt);
     const generated = parseJson(raw);
 
@@ -926,7 +977,7 @@ serve(async (req) => {
 
     if (!noCache) {
       await admin.from("flashcards").upsert({
-        deck_key: deckKey,
+        deck_key: cacheKey,
         year,
         subject,
         subtopic_key: subtopicKey,

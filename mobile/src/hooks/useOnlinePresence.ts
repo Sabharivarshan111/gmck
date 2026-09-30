@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { AppState } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { supabase } from '@/lib/supabase';
+import { ensureAnonymousSession } from '@/lib/anonymousSession';
 
 /**
  * How many people are in a focus session right now.
@@ -110,8 +111,7 @@ export function useOnlinePresence(isStudying = false, remainingSeconds = 0) {
     };
 
     const beat = async () => {
-      const deviceId = deviceIdRef.current ?? (await getOrCreateDeviceId());
-      deviceIdRef.current = deviceId;
+      const baseDeviceId = await getOrCreateDeviceId();
 
       /*
        * Only a running timer is presence. Anyone who has the Timer tab open is
@@ -120,6 +120,10 @@ export function useOnlinePresence(isStudying = false, remainingSeconds = 0) {
        * people.
        */
       if (studyingRef.current) {
+        const session = await ensureAnonymousSession();
+        if (cancelled) return;
+        const deviceId = `${session.user.id}:${baseDeviceId}`;
+        deviceIdRef.current = deviceId;
         /*
          * `focus_until` is what makes this survive the phone being put down.
          *

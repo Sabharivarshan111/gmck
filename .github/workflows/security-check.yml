@@ -1,0 +1,25 @@
+name: Security regression checks
+on:
+  push:
+    branches: [main, 'chatgpt/**']
+    paths: ['supabase/**', 'scripts/security-*', '.github/workflows/security-check.yml', 'src/lib/anonymousSession.ts', 'mobile/src/lib/anonymousSession.ts']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: security-check-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  guards:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: npm
+      - run: npm ci --legacy-peer-deps
+      - run: node scripts/security-edge-guards.cjs
+      - run: node scripts/security-notes-isolation.cjs
+      - run: node scripts/security-flashcard-security.cjs
+      - run: node scripts/security-live-check.mjs
