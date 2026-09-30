@@ -1669,3 +1669,10 @@ Native Notes and PDF note pages now continue numbered/bulleted lists on Enter; t
 - **HALF-DONE** — Lovable presence/env and notes/quiz source sync landed, then credits exhausted. Its automatic deployment reverted older AI/admin code; restored immediately through connector. Remaining Lovable source must sync before any publish. Shared textbook helpers now preserve BOTH production algorithms; 69 baseline comparisons and existing textbook gate pass; Android release rerun pending.
 - **NEXT** — Watch latest CI. Owner adds Lovable credits, then sync all protected sources/config atomically and read back live functions. Owner verifies historical OpenAI-key revocation and enables leaked-password protection. Continue nickname-suggest, IP/bot controls, account merge/purchase/device audit.
 - **DO NOT** — Do not publish stale Lovable source; it demonstrably redeploys unsafe functions. Do not blanket close intentional open Gemini/leaderboard. Do not use old public.http_* recipes: HTTP is server-only in server_http. Do not claim a device test or released APK from a JS bundle.
+
+## 2026-09-30 — Codex — nickname budgets and native release gates
+
+- **DONE** — Nickname endpoint v15 now checks durable budgets/verified user tokens and returns existing fallback names on denial or failure. 5 mocked cases pass. All prior security checks pass; shared textbook retrieval gate fixed without changing either production algorithm (69 baseline comparisons). Latest Android run 36659193780 passes all type/lint/check gates and is building signed artifacts. Web builds pass. Source at gmck main.
+- **HALF-DONE** — Signed build completion pending; actual device and purchase flows untested. Lovable remaining source synchronization still blocked on credits, including nickname-suggest.
+- **NEXT** — Check final Actions status, then complete credit-blocked Lovable sync before any edit/publish. Historical key revocation and leaked-password protection need owner action.
+- **DO NOT** — Do not redeploy stale Lovable source; do not claim a Play upload/device test. Do not use public.http_*; the verified protected schema is server_http.

@@ -23,4 +23,5 @@ jobs:
       - run: node scripts/security-notes-isolation.cjs
       - run: node scripts/security-flashcard-security.cjs
       - run: node mobile/scripts/presence-session-check.cjs
+      - run: node scripts/security-nickname-check.cjs
       - run: node scripts/security-live-check.mjs
