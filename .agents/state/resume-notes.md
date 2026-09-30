@@ -1676,3 +1676,11 @@ Native Notes and PDF note pages now continue numbered/bulleted lists on Enter; t
 - **HALF-DONE** — Signed build completion pending; actual device and purchase flows untested. Lovable remaining source synchronization still blocked on credits, including nickname-suggest.
 - **NEXT** — Check final Actions status, then complete credit-blocked Lovable sync before any edit/publish. Historical key revocation and leaked-password protection need owner action.
 - **DO NOT** — Do not redeploy stale Lovable source; do not claim a Play upload/device test. Do not use public.http_*; the verified protected schema is server_http.
+
+
+## 2026-09-30 — Codex — final security build verification
+
+- **DONE** — Release/internal/debug runs 36659193780 / 36659193742 / 36659193735 all completed successfully. Assets release-549, internal-350 and debug-356 exist; tags resolve to 3df5009, build checkout was 882bb3, native source/config unchanged between these commits. Latest web/security CI on 3df5009 passed: 38 regressions and 11 live validation/no-write cases. Read back all 11 repaired live entrypoints and both textbook helpers: exact repo match. Private-table RLS/grants and server_http restrictions rechecked. Downloads and evidence recorded in docs/security-audit-2026-09-30.md.
+- **HALF-DONE** — Lovable source remains at 8d7d561 with previously reported exhausted credits. Remaining protected source sync is pending; physical Android testing and real purchase flows untested. Score remains provisional 6/10.
+- **NEXT** — Owner restores Lovable credits, then synchronize every remaining protected source/config before edits/publish and read back deployments. Owner verifies historical provider-key revocation and enables leaked-password protection. Continue deeper account-merge, payment, bot/spend and native security audit.
+- **DO NOT** — Do not publish stale Lovable sources, claim physical-device/Play verification, change app identity or uninstall to bypass signing mismatch. Build release tags reflect moving main, so cite the actual run checkout for artifact provenance. No user content was removed.

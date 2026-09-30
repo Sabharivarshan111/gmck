@@ -22,19 +22,30 @@ Lovable: 89df4dbc-89e6-4e44-a7b1-76b9de94066e.
 - Edge authorization modes are explicit in supabase/config.toml, including custom-auth payment/MCP endpoints.
 
 ## Verification
-- 27 handler regression cases passed locally and in GitHub Actions; 6 presence-session cases also passed. A further 5 nickname budget/fallback cases passed locally and are being added to CI. They mock authentication, storage and providers; they are not end-to-end paid model tests.
-- 10 live HTTP validation/no-write cases passed on a GitHub runner, including admin rejection, retired endpoints and guest notes no-write. No paid content was requested.
+- 38 regression cases passed (27 handler cases, 6 presence-session cases and 5 nickname budget/fallback cases). Latest security CI passed on source 3df5009bde86861863210d354646d40812197f90. These mock authentication, storage and providers; they are not end-to-end paid model tests.
+- 11 live HTTP validation/no-write cases passed on a GitHub runner, including admin rejection, retired endpoints and guest notes no-write. No paid content was requested.
 - Actual database transaction tests: own presence insert allowed with correct owner default; another uid's update/delete affected zero rows. Quota test returned [true,true,false]. Test transactions were rolled back.
 - The live guest-save fixture was absent from handwritten_notes afterward.
 - Personal cache and quota tables: RLS enabled; anon/authenticated cannot read them; service_role can write.
 - HTTP schema usage: anon=false, authenticated=false, service_role=true; public.http_get is absent.
-- All 10 protected/retired live function sources were read back and compared exactly after restoring an automatic redeploy regression.
+- All 11 protected/retired function entrypoints and both textbook helpers were read back on continuation and exactly match gmck main. Authorization modes remain protected; personal-note/quota tables remain RLS enabled and unreadable by anon/authenticated, and HTTP schema privileges remain server-only.
 - Both web CI builds passed. Android CI typecheck and lint passed. A local production Android JS bundle passed; no physical-device behavior was tested.
-- The Android release gate initially failed because production notes/flashcard textbook helpers had diverged. A single shared source now retains both original retrieval implementations; 69 comparisons against captured production implementations passed. The existing textbook gate passes. The subsequent Android rerun passed all gates and is building signed artifacts: https://github.com/Sabharivarshan111/gmck/actions/runs/36659193780 . Physical-device testing remains unperformed.
+- The Android release gate initially failed because production notes/flashcard textbook helpers had diverged. A single shared source now retains both original retrieval implementations; 69 comparisons against captured production implementations passed. The existing textbook gate passes. All three Android runs completed successfully: release 36659193780, internal 36659193742 and debug 36659193735. They checked out 882bb3bd6f6c6448bda66db4f1657abb1dcd1fd8; comparison with current product main 3df5009bde86861863210d354646d40812197f90 confirms no native source/config changes. Physical-device testing remains unperformed. No Play Console upload occurred.
 
-Initial passing CI:
-https://github.com/Sabharivarshan111/gmck/actions/runs/36657962660
-https://github.com/Sabharivarshan111/gmck/actions/runs/36657962686
+Latest passing checks:
+- Security: https://github.com/Sabharivarshan111/gmck/actions/runs/36660007225
+- Web: https://github.com/Sabharivarshan111/gmck/actions/runs/36660007259
+- Release: https://github.com/Sabharivarshan111/gmck/actions/runs/36659193780
+- Internal: https://github.com/Sabharivarshan111/gmck/actions/runs/36659193742
+- Debug: https://github.com/Sabharivarshan111/gmck/actions/runs/36659193735
+
+## Verified Android build downloads
+- Ad-free internal APK (production package, upload-key signed): https://github.com/Sabharivarshan111/gmck/releases/download/internal-350/app-internal.apk
+- Debug preview APK: https://github.com/Sabharivarshan111/gmck/releases/download/debug-356/app-preview.apk
+- Release AAB: https://github.com/Sabharivarshan111/gmck/releases/download/release-549/app-release.aab
+- Release APK: https://github.com/Sabharivarshan111/gmck/releases/download/release-549/app-release.apk
+
+Release builds retain live ads; internal/debug builds disable them. These release tags resolve to 3df5009, while the build run checkout was 882bb3; the intervening commit changes only server nickname code, security tests/workflow and documentation. Android source/config are identical. Existing Play-installed apps use Play's signing certificate; do not uninstall to work around a sideload signature mismatch. VersionCode was not bumped for this security repair.
 
 ## Lovable deployment risk and owner actions
 Lovable successfully updated presence/env handling and synchronized notes/quiz source, then exhausted workspace credits. Its edits automatically redeployed other older functions: the live readback detected loss of quotas/admin checks, and those functions were immediately restored through the Supabase connector. Do not publish or edit Lovable until ALL remaining protected function sources and authorization settings have been synchronized from gmck/current Supabase. Its stale source can undo the protections again.
