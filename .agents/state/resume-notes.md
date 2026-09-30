@@ -1699,3 +1699,10 @@ Native Notes and PDF note pages now continue numbered/bulleted lists on Enter; t
 - **HALF-DONE** — Full native CI compilation/signed artifacts pending. Device/Play purchase validation remains unperformed; existing PLAY_BILLING_ENABLED=false gate preserved.
 - **NEXT** — Check CI, resolve any native compilation/test failure, then record final artifact/run links. Owner device/licence tests and historical secret/password settings remain separate.
 - **DO NOT** — Anki import/export must remain untouched at owner's request. Lovable stays paused. Do not change app ID/version/ads or claim a Play upload. Preserve legitimate legacy restores only for their existing recorded owner; new unbound purchases need controlled recovery.
+
+
+## 2026-09-30 — Codex — Android security repair builds verified
+- **DONE** — Source b0557dee55ba197f7d371170b4d78dea3d2f586e: release/internal/debug runs 36701352810 / 36701352840 / 36701352865 all success, producing release-550, internal-351 and debug-357, each tag verified against that exact source. Web and browser regression passed. Security CI 36701353078 passed 60 regressions + 12 live no-write checks; 8 actual SQL rollback checks passed. Native Kotlin/codegen compiled. Final service-only RPC privileges verified and no fixture rows remain. Audit score now provisional 7/10 for Android; audit contains evidence/downloads.
+- **HALF-DONE** — Physical-device session migration/sign-in and real Play purchases remain untested. Play billing remains disabled per existing gate. Anki archive bounds deliberately untouched. Historical key/password settings are owner actions; Lovable paused.
+- **NEXT** — Owner reviews/installs the appropriate test build without deleting a Play installation, verifies retained sessions/progress and sign-out, and runs Play licence-test purchase/restore/refund before enabling Play billing or uploading a version-bumped Play release.
+- **DO NOT** — Do not change Anki import/export, app identity, ads, version or claim a Play upload/device pentest. Do not redeploy stale Lovable code. New unbound legacy purchases require controlled recovery; never assign an existing token to another uid.
