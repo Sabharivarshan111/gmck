@@ -1684,3 +1684,11 @@ Native Notes and PDF note pages now continue numbered/bulleted lists on Enter; t
 - **HALF-DONE** — Lovable source remains at 8d7d561 with previously reported exhausted credits. Remaining protected source sync is pending; physical Android testing and real purchase flows untested. Score remains provisional 6/10.
 - **NEXT** — Owner restores Lovable credits, then synchronize every remaining protected source/config before edits/publish and read back deployments. Owner verifies historical provider-key revocation and enables leaked-password protection. Continue deeper account-merge, payment, bot/spend and native security audit.
 - **DO NOT** — Do not publish stale Lovable sources, claim physical-device/Play verification, change app identity or uninstall to bypass signing mismatch. Build release tags reflect moving main, so cite the actual run checkout for artifact provenance. No user content was removed.
+
+
+## 2026-09-30 — Codex — Android-only security audit
+
+- **DONE** — Owner paused Lovable. Native/source audit at c253bcd382d1bd098d25a6f88b824898643320d2 gives provisional 5/10, separate from shared backend 6/10. Findings: conditional unbound Play-token ownership reassignment (live source matches), repeatable notes-purchase bonus extension, AsyncStorage session tokens, unbounded archive byte/decompression reads, stale signed-out identity cache, local release debug-key fallback. Evidence and preservation-aware repair order in docs/android-security-audit-2026-09-30.md.
+- **HALF-DONE** — Code review only; no physical-device penetration test, real purchase, dependency CVE scan or complete WebView/intent audit. No code fixes in this pass.
+- **NEXT** — Prioritize atomic purchase ownership and idempotent bonuses with regression tests, then token-storage migration and bounded archive reads. Preserve valid restores, anonymous progress and large decks.
+- **DO NOT** — Resume Lovable without owner steering; do not confuse public anon key with a secret, claim rooted-data risk means ordinary apps can read tokens, or claim device/payment tests passed.
