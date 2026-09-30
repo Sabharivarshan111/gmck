@@ -10,6 +10,7 @@
     "preview:build": "vite build --config preview/vite.config.ts",
     "preview:shoot": "node preview/shoot.mjs",
     "typecheck": "tsc --noEmit",
+    "check:security": "node scripts/android-security-check.mjs",
     "check:fanout": "node scripts/progress-fanout-check.mjs",
     "check:smoke": "node preview/smoke.mjs",
     "check:mcq": "node scripts/mcq-parse-check.mjs",

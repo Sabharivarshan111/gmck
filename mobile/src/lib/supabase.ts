@@ -1,5 +1,5 @@
 import 'react-native-url-polyfill/auto';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { secureStorage } from './secureStorage';
 import { createClient } from '@supabase/supabase-js';
 
 // Same project the web app talks to — the anon key is a public client key.
@@ -9,8 +9,8 @@ const SUPABASE_ANON_KEY =
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
   auth: {
-    // React Native has no localStorage; sessions live in AsyncStorage instead.
-    storage: AsyncStorage,
+    // Android sessions migrate to verified Keystore-backed encrypted storage.
+    storage: secureStorage,
     autoRefreshToken: true,
     persistSession: true,
     // There is no URL to parse a session out of in a native app.

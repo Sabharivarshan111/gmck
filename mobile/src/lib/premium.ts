@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { AppState, type AppStateStatus } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { secureStorage } from './secureStorage';
 import { supabase } from './supabase';
 
 /**
@@ -14,6 +14,9 @@ import { supabase } from './supabase';
  * The storage key matches the web app's, so a user who paid on the web is
  * ad-free in the native app without buying again.
  */
+
+const OWNER_KEY = 'orbit:premium-owner-v1';
+let cachedOwner: string | null = null;
 
 const STORAGE_KEY = 'orbit:premium-until';
 
@@ -31,13 +34,16 @@ export function premiumExpiresAt(): string | null {
   return isPremiumCached() ? expiresAt : null;
 }
 
-async function cache(value: string | null): Promise<void> {
+async function cache(value: string | null, userId: string | null = null): Promise<void> {
   expiresAt = value;
+  cachedOwner = value ? userId : null;
   try {
     if (value) {
-      await AsyncStorage.setItem(STORAGE_KEY, value);
+      await secureStorage.setItem(OWNER_KEY, userId!);
+      await secureStorage.setItem(STORAGE_KEY, value);
     } else {
-      await AsyncStorage.removeItem(STORAGE_KEY);
+      await secureStorage.removeItem(STORAGE_KEY);
+      await secureStorage.removeItem(OWNER_KEY);
     }
   } catch {
     // In-memory value still applies for this session.
@@ -47,7 +53,12 @@ async function cache(value: string | null): Promise<void> {
 /** Load the last known expiry so the first ad check is correct offline. */
 export async function hydratePremium(): Promise<void> {
   try {
-    expiresAt = await AsyncStorage.getItem(STORAGE_KEY);
+    const { data } = await supabase.auth.getSession();
+    const owner = await secureStorage.getItem(OWNER_KEY);
+    // A legacy unbound expiry is refreshed from the server before it is trusted.
+    cachedOwner = owner;
+    expiresAt = owner && owner === data.session?.user.id
+      ? await secureStorage.getItem(STORAGE_KEY) : null;
   } catch {
     expiresAt = null;
   }
@@ -68,6 +79,10 @@ export async function syncPremiumCache(): Promise<string | null> {
       return null;
     }
 
+    if (cachedOwner !== userId) {
+      expiresAt = null;
+      cachedOwner = userId;
+    }
     const { data, error } = await supabase
       .from('premium_subscriptions')
       .select('expires_at')
@@ -84,7 +99,9 @@ export async function syncPremiumCache(): Promise<string | null> {
 
     const expiry = (data as { expires_at?: string } | null)?.expires_at ?? null;
     const active = !!expiry && new Date(expiry).getTime() > Date.now();
-    await cache(active ? expiry : null);
+    const current = (await supabase.auth.getSession()).data.session?.user.id;
+    if (current !== userId) return null;
+    await cache(active ? expiry : null, userId);
     return active ? expiry : null;
   } catch {
     return premiumExpiresAt();

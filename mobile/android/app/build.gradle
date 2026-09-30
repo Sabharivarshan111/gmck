@@ -262,14 +262,19 @@ android {
             matchingFallbacks = ["release"]
         }
         release {
-            // Falls back to the debug key so `assembleRelease` still works
-            // before the keystore is configured — that build is NOT
-            // publishable and Play will reject it.
-            signingConfig System.getenv("KEYSTORE_PATH")
-                ? signingConfigs.release
-                : signingConfigs.debug
+            // A release must carry the real key; missing credentials fail below.
+            signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+        }
+    }
+}
+
+gradle.taskGraph.whenReady { graph ->
+    def releaseTasks = ["assembleRelease", "bundleRelease", "packageRelease", "validateSigningRelease"]
+    if (graph.allTasks.any { it.project == project && it.name in releaseTasks }) {
+        if (!System.getenv("KEYSTORE_PATH") || !System.getenv("STORE_PASSWORD") || !System.getenv("KEY_PASSWORD")) {
+            throw new GradleException("Release signing credentials are required. Use the preview variant for an unsigned test build.")
         }
     }
 }

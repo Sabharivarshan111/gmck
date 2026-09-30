@@ -76,6 +76,10 @@ export default defineConfig({
         find: '@/native/OrbitGlass',
         replacement: path.resolve(__dirname, 'shims', 'orbit-glass.tsx'),
       },
+      {
+        find: '@/native/NativeOrbitSecureStorage',
+        replacement: path.resolve(__dirname, 'shims', 'secure-storage.ts'),
+      },
       { find: '@', replacement: path.resolve(root, 'src') },
       // lucide-react-native needs react-native-svg; the DOM build is equivalent
       // and exports the same icon names.

@@ -123,6 +123,7 @@ jobs:
           npm run check:preview-parity
           npm run check:native-update
           npm run check:billing
+          npm run check:security
           npm run check:attendance
           npm run check:admin
           npm run check:no-simulator

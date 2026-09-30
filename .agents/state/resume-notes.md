@@ -1692,3 +1692,10 @@ Native Notes and PDF note pages now continue numbered/bulleted lists on Enter; t
 - **HALF-DONE** — Code review only; no physical-device penetration test, real purchase, dependency CVE scan or complete WebView/intent audit. No code fixes in this pass.
 - **NEXT** — Prioritize atomic purchase ownership and idempotent bonuses with regression tests, then token-storage migration and bounded archive reads. Preserve valid restores, anonymous progress and large decks.
 - **DO NOT** — Resume Lovable without owner steering; do not confuse public anon key with a secret, claim rooted-data risk means ordinary apps can read tokens, or claim device/payment tests passed.
+
+
+## 2026-09-30 — Codex — Android security repairs except Anki
+- **DONE** — Live Play verification v2 uses a service-only atomic token-owner RPC; 8 rolled-back SQL checks and 9 mocked handlers pass. Partial unique-index predicate corrected in a second migration. Android Keystore AES-GCM TurboModule and verified session migration added; failed migration retains old session, no new plaintext writes. Premium cache encrypted/account-bound, Google identity cleared on successful sign-out, local release signing fails closed. 13 Android regression cases pass; local typecheck/lint and native schema parse pass.
+- **HALF-DONE** — Full native CI compilation/signed artifacts pending. Device/Play purchase validation remains unperformed; existing PLAY_BILLING_ENABLED=false gate preserved.
+- **NEXT** — Check CI, resolve any native compilation/test failure, then record final artifact/run links. Owner device/licence tests and historical secret/password settings remain separate.
+- **DO NOT** — Anki import/export must remain untouched at owner's request. Lovable stays paused. Do not change app ID/version/ads or claim a Play upload. Preserve legitimate legacy restores only for their existing recorded owner; new unbound purchases need controlled recovery.

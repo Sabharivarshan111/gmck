@@ -84,6 +84,8 @@ interface Verified {
   accountId: string;
   /** Play has not been told yet that this was honoured. */
   needsAcknowledgement: boolean;
+  /** Original one-time purchase timestamp supplied by Google Play. */
+  purchasedAt: number | null;
   /** The subscription id acknowledgement has to be addressed to. */
   subscriptionId: string;
 }
@@ -120,6 +122,9 @@ async function verifySubscription(token: string, bearer: string): Promise<Verifi
   }
 
   const lineItems = Array.isArray(body?.lineItems) ? body.lineItems as Record<string, unknown>[] : [];
+  if (!lineItems.length || lineItems.some(item => item.productId !== ADFREE_SUBSCRIPTION)) {
+    throw new Error("Unknown subscription product.");
+  }
   // The furthest expiry across the line items. A single-product subscription
   // has exactly one; taking the max is what keeps this correct if a second is
   // ever added rather than silently entitling to the shorter one.
@@ -135,14 +140,14 @@ async function verifySubscription(token: string, bearer: string): Promise<Verifi
       basePlanId = offer.basePlanId;
     }
   }
-  if (!expiry) {
+  if (!expiry || expiry <= Date.now()) {
     throw new Error("Play reported no expiry for this subscription.");
   }
 
   return {
     // Every tier writes the `adfree_monthly` ENTITLEMENT -- see the long comment
     // in razorpay-verify-payment. The base plan only says which was bought.
-    planKey: BASE_PLAN_TO_KEY[basePlanId] ?? "adfree_monthly",
+    planKey: BASE_PLAN_TO_KEY[basePlanId] ?? (() => { throw new Error("Unknown subscription base plan."); })(),
     expiresAt: new Date(expiry).toISOString(),
     orderId: String(body?.latestOrderId ?? ""),
     state,
@@ -154,6 +159,7 @@ async function verifySubscription(token: string, bearer: string): Promise<Verifi
     needsAcknowledgement: String(body?.acknowledgementState ?? "") ===
       "ACKNOWLEDGEMENT_STATE_PENDING",
     subscriptionId: ADFREE_SUBSCRIPTION,
+    purchasedAt: null,
   };
 }
 
@@ -175,6 +181,10 @@ async function verifyProduct(token: string, productId: string, bearer: string): 
   if (purchaseState !== 0) {
     throw new Error(purchaseState === 2 ? "This payment has not completed yet." : "This purchase was cancelled.");
   }
+  const purchasedAt = Number(body?.purchaseTimeMillis);
+  if (!Number.isFinite(purchasedAt) || purchasedAt <= 0 || purchasedAt > Date.now() + 60_000) {
+    throw new Error("Play reported an invalid purchase time.");
+  }
   return {
     planKey: productId,
     expiresAt: null,
@@ -185,6 +195,7 @@ async function verifyProduct(token: string, productId: string, bearer: string): 
     // 0 = yet to be acknowledged.
     needsAcknowledgement: Number(body?.acknowledgementState ?? 1) === 0,
     subscriptionId: "",
+    purchasedAt,
   };
 }
 
@@ -241,6 +252,7 @@ Deno.serve(async (req) => {
     const { data: userData } = await supabase.auth.getUser();
     if (!userData?.user) return json({ error: "Session expired. Sign in again." }, 401);
     const user = userData.user;
+    if (user.is_anonymous) return json({ error: "Sign in to your account before restoring a purchase." }, 403);
 
     const bearer = await playAccessToken();
     const verified = kind === "subs"
@@ -281,12 +293,8 @@ Deno.serve(async (req) => {
      * Computing our own would drift the moment Play granted a grace period, a
      * refund or a free trial, and ours would be the one on screen.
      */
-    const adfreeAt = isAdfree ? verified.expiresAt! : (() => {
-      // A notes purchase carries a free month, as it does on Razorpay. This one
-      // IS computed, because there is no subscription behind it to ask.
-      const base = new Date();
-      return new Date(base.getTime() + 30 * 24 * 60 * 60 * 1000).toISOString();
-    })();
+    let adfreeAt = isAdfree ? verified.expiresAt! :
+      new Date(verified.purchasedAt! + 30 * 24 * 60 * 60 * 1000).toISOString();
 
     const common = {
       user_id: user.id,
@@ -323,23 +331,23 @@ Deno.serve(async (req) => {
         { ...common, plan: "adfree_monthly", expires_at: adfreeAt, play_purchase_token: `${token}:adfree` },
       ];
 
-    let saved = 0;
-    for (const row of rows) {
-      /*
-       * Upsert, not insert. A subscription reports the SAME token for its whole
-       * life, so this row is written once and updated on every renewal; and
-       * `restore()` posts every token Play knows about on every launch, so an
-       * insert would collide on the second call of the first day.
-       */
-      const { error } = await admin
-        .from("premium_subscriptions")
-        .upsert(row, { onConflict: "play_purchase_token" });
-      if (error) console.error("play subscription upsert failed", row.plan, error);
-      else saved++;
+    // Database transaction locks this token and refuses owner changes. Both
+    // rows commit together; existing bonus expiries cannot be reset by restore.
+    const { data: saved, error: saveError } = await admin.rpc("save_verified_play_purchase", {
+      _user_id: user.id,
+      _token: token,
+      _account_bound: verified.accountId === user.id,
+      _rows: rows,
+    });
+    if (saveError) {
+      const ownership = saveError.code === "42501";
+      return json({ error: ownership
+        ? "This purchase cannot be restored to this account. Contact support for account recovery."
+        : "Purchase verified but the plan could not be saved. Try again or contact support." }, ownership ? 403 : 503);
     }
-    if (saved === 0) {
-      return json({ error: "Purchase verified but the plan could not be saved. Contact support." }, 500);
-    }
+    const entitlements = saved as { plan: string; expires_at: string }[];
+    const savedAdfree = entitlements.find(row => row.plan === "adfree_monthly");
+    if (savedAdfree) adfreeAt = savedAdfree.expires_at;
 
     await acknowledge(verified, token, bearer);
 

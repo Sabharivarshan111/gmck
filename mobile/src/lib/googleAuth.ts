@@ -114,7 +114,12 @@ export async function signOutGoogle(): Promise<void> {
   } catch {
     // Signing out of Supabase is what actually matters.
   }
-  await supabase.auth.signOut();
+  const { error } = await supabase.auth.signOut();
+  if (error) throw error;
+  await Promise.all([
+    AsyncStorage.removeItem(GOOGLE_AUTH_FLAG_KEY),
+    AsyncStorage.removeItem(GOOGLE_AUTH_EMAIL_KEY),
+  ]);
 }
 
 export async function getSignedInEmail(): Promise<string | null> {

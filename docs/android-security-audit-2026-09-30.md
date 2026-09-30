@@ -43,3 +43,15 @@ Physical-device penetration testing, installed production APK merged manifest/si
 4. Bound hostile archive input without dropping legitimate deck support.
 5. Clear signed-out identity caches and fail closed for local release signing.
 Then test an actual Android device and Play licence-test purchase/restore/refund before rescoring. Lovable is paused at the owner's request.
+
+## Repairs — 2026-09-30
+Owner authorized fixes except Anki; Anki import/export source is unchanged and Lovable remains paused.
+
+- play-verify-purchase v2 verifies the original purchase timestamp/product, rejects anonymous purchases and saves through service-only save_verified_play_purchase. Same-token grants serialize in one transaction; existing owners cannot change. Same-owner recorded legacy purchases can restore. New unbound tokens require support recovery rather than unsafe first-claim ownership. Bonus expiries are retained on restore; new bonuses use Google's original purchase date. Existing entitlements are not deleted or retrospectively shortened.
+- Atomic purchase save tested in a rolled-back database transaction: 8 checks cover owner rejection, same-owner legacy restore, unbound first claim rejection, bonus stability, subscription renewal, bonus-note retention and failed-second-row rollback. anon/authenticated EXECUTE=false, service_role=true.
+- The first migration's test exposed a partial unique index; a second migration adds the required ON CONFLICT predicate. Both live migration versions are committed.
+- Android sessions now migrate to an AES-GCM Android Keystore TurboModule. The key is not exported; encrypted preferences include fresh IVs and storage-key AAD. Existing plaintext is removed only after successful readback. Failed migration preserves the old session for retry; new writes never fall back to plaintext. Unreadable ciphertext is an error, not silently an empty session.
+- Offline premium cache uses encrypted storage and an account binding. A legacy cache without an owner is refreshed from the server before use. Rooted/runtime-compromised devices can still tamper with local behavior; this is not a promise of DRM.
+- Successful sign-out clears the old Google email/auth flag. Release tasks require all signing credentials and cannot silently use the debug key.
+- Added 9 mocked Play handler cases and 13 Android storage/sign-out/cache cases, plus the existing checks. Local TypeScript and changed-file lint pass; native schema parses. Full Android CI compilation/build verification is pending.
+- No device security test or real licence-test purchase was performed; Play billing remains disabled in the app pending its existing owner setup/testing gate. No version/applicationId/ads changes. No Play upload.

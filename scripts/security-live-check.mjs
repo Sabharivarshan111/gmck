@@ -6,6 +6,7 @@ const key = client.match(/const SUPABASE_PUBLISHABLE_KEY = "([^"]+)"/)?.[1];
 assert.ok(url && key, 'Public client configuration missing');
 const cases = [
   ['nickname-suggest', {}, 200, 'invalid-token-audit-fixture'],
+  ['play-verify-purchase', {}, 400],
   ['ask-gemini', {}, 200],
   ['quiz-from-subtopic', {}, 400],
   ['generate-handwritten-notes', {}, 400],
@@ -34,4 +35,4 @@ for (const [slug, body, status, bearer = key] of cases) {
   else assert.ok(result.error,slug+' must reject fixture without generation');
   console.log('PASS '+slug+' '+status);
 }
-console.log('11 live validation/no-write cases passed');
+console.log('12 live validation/no-write cases passed');
