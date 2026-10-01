@@ -18,6 +18,10 @@ import {
 import { SortableGrid } from '@/components/SortableGrid';
 import { useSubjectOrder } from '@/hooks/useSubjectOrder';
 import { SettingsSheet } from '@/components/SettingsSheet';
+import { UniversityConfirmation } from '@/components/UniversityConfirmation';
+import { UniversityChoice } from '@/components/UniversityChoice';
+import { availableBankUniversity } from '@/lib/kuhsAvailability';
+import { UNIVERSITY_LABEL } from '@shared/university';
 import { ThemeMenu, type Anchor } from '@/components/ThemeMenu';
 import { HomeMenuSheet } from '@/components/HomeMenuSheet';
 import { premiumExpiresAt } from '@/lib/premium';
@@ -279,7 +283,9 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
     }).start();
   }, [slide, heroFade, reduceMotion]);
 
-  const { yearKey: year, streak, setYear } = useProfile();
+  const { yearKey: year, streak, setYear, university, setUniversity } = useProfile();
+  const bankUniversity = availableBankUniversity(university);
+  const [universityOpen, setUniversityOpen] = useState(false);
   const dailyRequestScope = `${year}:${dailyDate}`;
   const dailyRequestScopeRef = useRef(dailyRequestScope);
   dailyRequestScopeRef.current = dailyRequestScope;
@@ -346,7 +352,7 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
 
   const subjects = useMemo(
     () =>
-      getSubjects(year).map(subject => {
+      getSubjects(year, bankUniversity).map(subject => {
         const all = collectAllQuestions(subject.node);
         const done = countDone(all);
         return {
@@ -358,7 +364,7 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
           gradient: SUBJECT_GRADIENT[subject.key] ?? DEFAULT_GRADIENT,
         };
       }),
-    [year, countDone],
+    [year, countDone, bankUniversity],
   );
 
   const subjectKeys = useMemo(() => subjects.map(subject => subject.key), [subjects]);
@@ -503,6 +509,20 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
           </View>
         </View>
       </View>
+
+      {!editing ? (
+        <Touchable
+          onPress={() => setUniversityOpen(true)}
+          label={university ? `Question bank: ${UNIVERSITY_LABEL[university]}. Change university` : 'Choose your question bank university'}
+          style={{ borderWidth: 1, borderColor: university ? colors.border : colors.accent,
+            backgroundColor: university ? colors.card : withAlpha(colors.accent, 0.1),
+            borderRadius: 14, paddingHorizontal: 16, paddingVertical: 12, marginBottom: 16 }}>
+          <Text style={{ color: colors.text, fontWeight: '700' }}>
+            {university ? `Question bank · ${university.toUpperCase()}` : 'Choose your university · TNMGR or KUHS'}
+          </Text>
+          {!university ? <Text style={{ color: colors.textMuted, marginTop: 3 }}>Select the university for your past papers.</Text> : null}
+        </Touchable>
+      ) : null}
 
         {editing ? (
           <View
@@ -1061,12 +1081,24 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
         </View>
       </Sheet>
 
+      <UniversityConfirmation />
+
       <SettingsSheet
         visible={settingsOpen}
         onClose={() => setSettingsOpen(false)}
         textSize={textSize}
         onTextSizeChange={setTextSize}
       />
+
+      <Sheet visible={universityOpen} onClose={() => setUniversityOpen(false)} title="Question bank university">
+        <Text style={{ color: colors.textMuted, marginBottom: 14 }}>
+          Choose the university whose past papers you want to study. You can change this later in Settings.
+        </Text>
+        <UniversityChoice value={university} onChange={option => {
+          void setUniversity(option);
+          setUniversityOpen(false);
+        }} />
+      </Sheet>
 
       <YearPickerSheet
         visible={yearPickerOpen}

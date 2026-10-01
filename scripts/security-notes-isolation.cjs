@@ -6,10 +6,13 @@ async function run(token, mode) {
   const content={highYieldTip:'Fixture',pyqYears:[],sections:[{type:'bullets',title:'Fixture',payload:{items:[{label:'Test',description:'Fixture'}]}}]};
   const body={subtopicKey:'fixture',year:'first',subject:'Anatomy',subtopicName:'Fixture',questions:['Fixture'],batchIndex:0,saveContent:mode==='save',content};
   const schema=new Proxy(function(){},{get:(_t,k)=>k==='safeParse'?()=>({success:true,data:body}):schema,apply:()=>schema});
-  const context={Request,Response,TextEncoder,crypto:webcrypto,console:{log(){},error(){}},z:schema,serve:fn=>{handler=fn},
+  const context={Request,Response,Headers,TextEncoder,exports:{},crypto:webcrypto,console:{log(){},error(){}},z:schema,serve:fn=>{handler=fn},
     Deno:{env:{get:k=>({SUPABASE_URL:'https://fixture.invalid',SUPABASE_ANON_KEY:'public-key',SUPABASE_SERVICE_ROLE_KEY:'server-key'})[k]}},
     createClient:()=>({auth:{getUser:async t=>({data:{user:t==='valid-user'?{id:'user-a'}:null},error:t==='valid-user'?null:new Error('Invalid')})},
       from:table=>({upsert:async row=>{writes.push({table,row});return {error:null}},select:()=>{const chain={eq:()=>chain,maybeSingle:async()=>{reads.push(table);return {data:{content},error:null}}};return chain}})})};
+  const guard=fs.readFileSync('supabase/functions/_shared/endpointSecurity.ts','utf8');
+  vm.runInNewContext(ts.transpileModule(guard,{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.CommonJS}}).outputText,context);
+  context.secureEndpoint=context.exports.secureEndpoint;
   let code=fs.readFileSync('supabase/functions/generate-handwritten-notes/index.ts','utf8').replace(/^import .*;\s*$/gm,'');
   vm.runInNewContext(ts.transpileModule(code,{compilerOptions:{target:ts.ScriptTarget.ES2022}}).outputText,context);
   const res=await handler(new Request('https://fixture.invalid',{method:'POST',headers:{authorization:'Bearer '+token,'content-type':'application/json'},body:JSON.stringify(body)}));

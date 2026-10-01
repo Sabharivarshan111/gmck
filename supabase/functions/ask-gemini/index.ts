@@ -1,3 +1,4 @@
+import { secureEndpoint } from '../_shared/endpointSecurity.ts';
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { GoogleGenerativeAI } from "npm:@google/generative-ai@0.2.0";
 import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
@@ -260,7 +261,7 @@ function logWithTimestamp(message: string, data?: any) {
   }
 }
 
-serve(async (req) => {
+serve(secureEndpoint(async (req) => {
   const requestId = crypto.randomUUID().substring(0, 8);
   const startTime = Date.now();
   logWithTimestamp(`[${requestId}] Request received`);
@@ -752,7 +753,7 @@ Again, make sure all URLs are complete, correct, and from reputable medical sour
       return new Response(
         JSON.stringify({ 
           error: "The AI service is temporarily unavailable. Please try again in a moment.", 
-          details: modelError.message 
+          details: "AI service unavailable"
         }),
         {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -775,4 +776,4 @@ Again, make sure all URLs are complete, correct, and from reputable medical sour
       }
     );
   }
-});
+}));

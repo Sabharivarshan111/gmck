@@ -26,4 +26,6 @@ jobs:
       - run: node scripts/security-nickname-check.cjs
       - run: node scripts/security-play-purchases.cjs
       - run: node mobile/scripts/android-security-check.mjs
+      - run: node scripts/security-checklist-repairs.cjs
+      - run: node scripts/security-secret-scan.mjs
       - run: node scripts/security-live-check.mjs

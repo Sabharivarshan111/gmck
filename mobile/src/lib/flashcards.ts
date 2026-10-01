@@ -261,6 +261,12 @@ export async function saveSchedule(deckKey: string, schedule: Schedule): Promise
  * and carrying a schedule for a card nobody can see would leave the queue
  * permanently one card short with nothing to show for it.
  */
+/** Build default states once per open deck, rather than once per answer. */
+export function createDeckReconciler(deck: readonly DeckCard[], now = Date.now()) {
+  const defaults = deck.map(card => newCard(card.id, now));
+  return (schedule: Schedule): Card[] => defaults.map(card => schedule[card.id] ?? card);
+}
+
 export function reconcile(cards: DeckCard[], schedule: Schedule, now = Date.now()): Card[] {
   return cards.map(card => schedule[card.id] ?? newCard(card.id, now));
 }

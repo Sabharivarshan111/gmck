@@ -5,7 +5,7 @@
 // soft failure the client can recover from. Two of its limits are bounded by
 // data rather than by anything the client controls:
 //
-//   questions: z.array(z.string().max(1000)).min(1).max(400)
+//   questions: z.array(z.string().max(4000)).min(1).max(400)
 //
 // So one oversized subtopic anywhere in ~750KB of question bank makes Notes
 // permanently broken for that topic, with no symptom anywhere else. That is

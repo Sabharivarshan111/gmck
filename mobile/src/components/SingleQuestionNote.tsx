@@ -20,6 +20,7 @@ import { getCleanQuestionText } from '@/lib/questionText';
 import { useTheme, withAlpha } from '@/theme';
 import { typeScale } from '@/theme/typography';
 import { RotateCw, X } from 'lucide-react-native';
+import type { University } from '@shared/university';
 
 /**
  * The reader a third-year triple tap opens.
@@ -43,6 +44,7 @@ export function SingleQuestionNote({
   subjectKey,
   subjectName,
   yearLabel,
+  university,
   onClose,
 }: {
   /** Null closes the reader. Changing it starts a new note. */
@@ -58,6 +60,7 @@ export function SingleQuestionNote({
   subjectKey: string;
   subjectName: string;
   yearLabel: string;
+  university?: University;
   onClose: () => void;
 }) {
   const { colors } = useTheme();
@@ -92,6 +95,7 @@ export function SingleQuestionNote({
             subjectKey,
             subjectName,
             yearLabel,
+            university,
           },
           regenerate,
         );
@@ -108,7 +112,7 @@ export function SingleQuestionNote({
         }
       }
     },
-    [question, rawQuestion, subjectKey, subjectName, yearLabel],
+    [question, rawQuestion, subjectKey, subjectName, yearLabel, university],
   );
 
   useEffect(() => {
@@ -243,6 +247,7 @@ export function SingleQuestionNote({
                 subjectKey,
                 subjectName,
                 yearLabel,
+                university,
               }}
               content={content}
               onApply={setContent}

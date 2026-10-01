@@ -8,7 +8,7 @@ async function scenario(mode) {
   const user = mode === 'invalid' ? null : { id: 'user-a', email: 'a@example.invalid', is_anonymous: mode === 'anonymous' };
   const product = { purchaseState: 0, purchaseTimeMillis: String(purchasedAt), obfuscatedExternalAccountId: mode === 'mismatch' ? 'user-b' : mode === 'unbound' ? '' : 'user-a', acknowledgementState: 0 };
   const sub = { subscriptionState: 'SUBSCRIPTION_STATE_ACTIVE', acknowledgementState: 'ACKNOWLEDGEMENT_STATE_PENDING', externalAccountIdentifiers: { obfuscatedExternalAccountId: 'user-a' }, lineItems: [{ productId: mode === 'sub-unknown' ? 'other-app-product' : 'orbit_adfree', expiryTime: expiry, offerDetails: { basePlanId: 'adfree-monthly' } }] };
-  const context = { Request, Response, console: { log() {}, error() {}, warn() {} },
+  const context = { secureEndpoint: handler => handler, ensureLongEssay: value => value, Request, Response, console: { log() {}, error() {}, warn() {} },
     Deno: { serve: fn => { handler = fn; }, env: { get: k => k === 'SUPABASE_URL' ? 'https://fixture.invalid' : 'fixture-key' } },
     playAccessToken: async () => 'play-bearer',
     fetch: async (url) => { providerCalls++; if (url.endsWith(':acknowledge')) { acknowledgements++; return new Response('{}'); } return new Response(JSON.stringify(subscription ? sub : product)); },

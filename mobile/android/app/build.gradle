@@ -110,8 +110,8 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         // Version 24 follows the owner's uploaded version 23. Includes the
         // note, imported deck, file chooser and customization fixes.
-        versionCode 24
-        versionName "0.0.0.24"
+        versionCode 25
+        versionName "0.0.0.25"
 
         // Deep-link / OAuth callback scheme, consumed by the intent-filter in
         // AndroidManifest.xml. Added with an indexed put rather than assigning

@@ -1663,6 +1663,153 @@ Native Notes and PDF note pages now continue numbered/bulleted lists on Enter; t
 - Study music exposes a named playlist with row reorder/removal, shuffle, and repeat off/all/one. Reordering persists in `orbit:music:tracks`; removal respects copied versus linked file handling.
 - The phone-viewport visual workflow on `feedback-visual` captures before/after screenshots and exercises saved layout, subject order/picture controls, list editing, and playlist options. This is React Native Web; native Android audio completion and device gesture feel still need an installed-device check. VersionCode remains pinned to 24 while Play reportedly has 23. No Play Console upload is part of this work.
 
+### 2026-09-29 KUHS source review continuation
+
+- Review branch `kuhs-source-review` on GitHub now contains source-checked offline KUHS rows through local commit `3f4e360` (remote equivalent `49a19fc3b0d26807bd27ff29b179040d9bc0a37b`). The latest pass manually inspected PDF pages 6–8 of the first-year book and added 72 Anatomy I essay/short-note rows, including distinct month/year sittings. Catalog total: 181 rows, 165 first-year and 16 second-year. PDF text/metadata were not uploaded to Supabase.
+- `KUHS_BANK_READY` remains false: these rows are a review seed, not a complete four-year bank. The user wants first-run and existing-user university selection, offline question bank, and on-demand Supabase note/diagram cache. Continue visual source review of the four Decipher PDFs before enabling KUHS or cutting a signed release.
+- Checks passed: `tsc --noEmit`, `check:search-index` (6166 combined hits), `check:repeat-markers`, unique IDs/exam-ref audit, and Android production Metro bundle. GitHub review branch file matches the local committed file after fetch. No emulator/connected device exists here, so do not claim native gesture verification or provide a device screenshot. Existing unrelated dirty music asset and `mobile/preview/customization-visual.mjs` were left untouched.
+
+### 2026-09-30T07:59:51Z — KUHS 50-page checkpoint
+
+DONE: Restored the durable 3,054-entry patch after scratch pruning. Preparation now defaults to 50 total pages, checkpoints OCR/manifest after each page and supports legacy per-year --count. Compared eligible selections against all 50 selected images; added 607 entries. Ledger now 3,661 entries across 237 entry-bearing pages. All 611 coverage rows validated; mobile typecheck/search-index/repeat-marker checks passed.
+
+HALF-DONE: Full whole-page reconciliation remains pending on every page. The third-year page-62 image-only triangle question remains deferred; second-year page-115/116 essay continuation needs reconciliation. KUHS_BANK_READY remains false.
+
+NEXT: Use scripts/kuhs-review-progress.md queue (first gaps from 1, second 119, third 69, final 115) and --total 50. Visually compare source images, never promote OCR automatically. Save and commit between batches and refresh the durable recovery patch.
+
+DO NOT: Upload the source PDFs to Supabase, include TU/RGU-only references, treat 237 entry-bearing pages as fully reviewed, release the incomplete bank, or retry/route around the automatic approval rejection of direct GitHub push.
+
+### 2026-09-30T09:18:35Z — KUHS second 50-page checkpoint
+
+DONE: All 50 source images compared; added 581 entries, totaling 4,242 across 281 entry-bearing pages. Typecheck/search-index/repeat-marker checks passed. Portable manifest records hashes and zero-entry checks. Preparation skips previous selection checks and supports --list-only.
+
+HALF-DONE: All 611 pages require final reconciliation. KUHS_BANK_READY remains false. Continuations/deferred cases are in scripts/kuhs-review-progress.md. No build/release.
+
+NEXT: --total 50, starts first:22 second:132 third:84 final:127. Compare source images, save frequently and refresh durable recovery patch.
+
+DO NOT: Upload PDFs to Supabase, include TU/RGU-only or objective/old one-mark rows, claim 281 pages complete, enable the bank, or retry/route around the automatic approval review rejection of GitHub push.
+
+### 2026-09-30T09:54:29+00:00 — KUHS batch 03 intermediate save
+
+DONE: First 22–31 and second 132–145 source selections checked; 343 entries added, total 4,585 on 305 entry-bearing pages. Structural coverage/ID checkpoint passed. App checks deferred until batch end.
+
+HALF-DONE: Third 84–95 and final 127–140 prepared but not yet viewed. All pages need final reconciliation. Fold-obscured first-year references deferred (22 rows 4/9/15/16/17, 23 rows 12/13, 26 rows 7/8); page 22 posterior mediastinum row 3 has no clear tag. Second 141 satellitism duplicates 136 and is skipped; 144 untagged neurocysticercosis essay deferred. Second 145 joins cryptococcal question from 144 and gonococcal/UTI essays onto supporting image of 146; other 146 rows not entered.
+
+NEXT: Finish third 84–95, final 127–140, then portable 50-page manifest and app checks.
+
+DO NOT: Enable or release KUHS, infer obscured years, upload PDFs to Supabase, or retry blocked GitHub push.
+
+## 2026-09-30T10:08:31.211294+00:00 — KUHS batch 03
+DONE: All 50 selected images compared; +566 rows, 4,808 entries on 327 entry-bearing pages. Batch manifest/progress saved; app checks passed. Final 137–140 front matter zero rows.
+HALF: All 611 page statuses still manual_page_review_required. KUHS_BANK_READY false.
+NEXT: Prepare 50 with --start second:146 --start final:141; later zero-entry front matter and complete reconciliation. Do not mistake ledger-bearing pages for fully reviewed pages.
+DO NOT: Upload PDFs to Supabase, enable/release KUHS, retry GitHub push rejected as unverified external egress. Recovery patch version17 after this commit.
+
+## 2026-09-30T10:30:34.884526+00:00 — KUHS batch 04
+DONE: 50 selection-checked source images: second 146–149, third 1–10, final 141–176. +365 rows; 5,173 entries on 359 entry-bearing pages. Manifest and coverage saved; type/search/repeat checks passed.
+HALF-DONE: All 611 statuses remain manual_page_review_required; KUHS_BANK_READY=false. Final 156–157 untagged scrub typhus essay deferred. Complete page reconciliation pending.
+NEXT: Continue final 177 with --total 50 --jobs 2 --ocr; preparation may fill earlier zero-entry gaps. Save checkpoints, verify printed KU references and case continuations.
+DO NOT: Release/enable KUHS, upload PDFs to Supabase, infer unclear exam tags or retry rejected GitHub push. Refresh durable recovery patch version19 after commit.
+
+## 2026-09-30T12:49:11.388171+00:00 — KUHS batch 05 recovery intermediate
+DONE: Restored durable v19 patch after maintenance; 55 visually compared rows from final 177–182, total 5228 on 365 entry-bearing pages. Structural checks passed.
+HALF-DONE: Batch05 44 selected pages remain: second 1–6,10–28 and final 183–201. App typecheck lacked tsc after cleanup; mobile npm ci started. All611 final reconciliation pending.
+NEXT: Continue final183; use restored final PDF. Restore second PDF from Library when needed. Rebuild missing image manifest.
+DO NOT: Enable/release KUHS, upload PDFs to Supabase, infer missing years or retry rejected GitHub push.
+
+## 2026-09-30T12:51:23.945195+00:00 — KUHS batch 05 intermediate through185
+DONE: 94 rows added from final177–185; 5267 entries on368 entry-bearing pages. Source images compared; no year invented for181 KU-only case. Dependencies restored.
+HALF-DONE: 41 batch05 pages remain: second1–6,10–28 and final186–201. All611 final reconciliation pending.
+NEXT: Continue final186 using restored PDF; images186–188 already rendered. Restore second-year PDF from Library before finishing batch05.
+DO NOT: Enable/release KUHS, upload PDFs to Supabase, infer exam dates or retry blocked GitHub push. Durable patch next version21.
+
+## 2026-09-30T18:13:16.880988+00:00 — KUHS batch05 completion
+DONE: Restored v21 recovery patch into clean review checkout; compared final186–201 and second1–6,10–28 source images. Added385 entries, total5652 on404 entry-bearing pages. Batch05 all50 selection checked across checkpoints, portable hashes saved. Ledger611 coverage/unique IDs, typecheck, search-index, repeat-marker and diff checks pass.
+HALF-DONE: All611 page statuses still manual_page_review_required; deferred source ambiguities in scripts/kuhs-review-progress.md. KUHS_BANK_READY=false; no build/release.
+NEXT: final202, 50-page batch; sources at ../restored (final) and /workspace/scratch/d60ed2b4552d/restored (second). Recovery patch saved after local commit.
+DO NOT: Upload PDFs to Supabase, infer missing dates, claim whole-page completion, enable/release KUHS, or retry/route around rejected GitHub push.
+
+
+## 2026-09-30 KUHS sixth source-selection batch
+Visually checked final-year PDF pages 202–251 (50 pages), adding 536 KU-tagged entries. Ledger 6,188 entries on 450 entry-bearing pages; all 611 page statuses remain manual_page_review_required. App typecheck/search-index/repeat-marker checks passed. Manifest scripts/kuhs-batches/2026-09-30-50-pages-06.json contains source image hashes/counts. Deferred ascending weakness case 210–211 lacks visible reference. Cross-page breast cases 238–239 joined. Source typos on 216 (DEXA) and 226 (stages of wound) preserved as printed; bare KU tags on 231/237/245 preserved without inferred years. Next final 252–281, then deferred cases/full reconciliation. KUHS_BANK_READY=false. No release, Supabase PDF upload or external push. Prior automatic approval rejection of GitHub egress still applies; do not retry or route around. Refresh recovery patch against origin/kuhs-source-review and save new version after local commit.
+
+Normalized medicine and surgery subject keys to general-medicine/general-surgery (existing catalog keys), preserving all question IDs and source provenance.
+
+2026-10-01: restored recovery patch v23 into fresh kuhs-source-review clone at /workspace/scratch/d60ed2b4552d/gmck-kuhs. Checked final PDF 252–281, added 343, total 6531 on 478 entry-bearing pages. Batch07 manifest saved. Next deferred cases and whole-page reconciliation, first-year page1 onward. All611 statuses pending and readiness false. Checks passed. Do not push: prior automatic egress rejection still applies. Current PDF restored/decipher final year mbbs 2026 (2)(2).pdf is actual281pages.
+
+2026-10-01 reconciliation01:19 source page images checked;6532 entries/478 entry-bearing pages. +1 first68 Oct24 galactosemia case; corrected final88 wrong neighbouring-case KU24 attribution and third63 flood-team KU21. First1–3 fully reconciled with hashes/row fingerprints in scripts/kuhs-reconciled-pages.json; coverage now3 complete/608 pending. Validator permits only evidence-backed completion and rejects changed rows. Next first4 onward. All4 actualPDFs restored locally in ../restored. Third62 blackC has no question text and remains unresolved. Read scripts/kuhs-review-progress.md and reconciliation01 manifest for exclusions. Readiness false; prior no-push block remains.
+
+2026-10-01: all4 PDFs converted into611-page OCR TXT bundle at ../questionbank-txt. Durable bundle libfile_f83fa80191508191afe628f8936dd571,file_00000000e6c08211a737e38b751974ec. Combined TXT libfile_e64f3c86babc81919240579946d15cdd; reviewed KUHS TXT libfile_f82e571e9764819189b129262b0838ae. Report libfile_1c716d7a3da0819196b2bb56f0d9817b. The ZIP includes4individualTXT,all-yearTXT,reviewedledgerTXT,qualityCSV,questioncomparisonCSV,sourcehashes,perpageTXT/JSON,conversion/verification scripts. Structuralconversion checks passed,361pagequality flags,1131questionmatching flags; no exacttext or yearaccuracy claim. Use as search aid for remaining first4onward visual reconciliation. Still6532entries,3complete/608pending,readinessfalse. No push.
+
+## 2026-10-01T03:02:00Z — KUHS development sections
+
+**DONE:** Enabled KUHS selection only in __DEV__ while KUHS_BANK_READY stays false. Home, Browse, topic navigation and Progress use one availability resolver; Browse displays review notice. Existing 6,532-entry shared catalog powers search and progress. Typecheck, changed-file lint, search round trips (12,517 total both banks), repeat markers, development/release gate assertions, preview build and diff check passed.
+
+**HALF-DONE:** No browser interaction or Android device check yet. No published build. OCR conversion of 611 pages is complete but is not source accuracy verification; 1,131 ledger comparison flags remain.
+
+**NEXT:** Exercise KUHS selection, year/subject/topic navigation and search in preview; continue targeted image checks from comparison flags and full source reconciliation.
+
+**DO NOT:** Mark the bank release-ready from OCR coverage. Do not push or route around the earlier external egress rejection.
+
+## 2026-10-01T03:05:00Z — TXT-backed KUHS question provenance
+
+**DONE:** Added exam-reference and source-PDF-page captions to KUHS QuestionRow, with matching accessible label and under-review status. O(1) source lookup preserves raw question/progress/cache keys. Added mobile/scripts/kuhs-txt-check.mjs: all 6,532 reviewed TXT entries exactly match app wording, year, subject, topic, type, page and references. Typecheck, focused lint, progress fanout, preview build and diff check passed.
+
+**HALF-DONE:** Source accuracy review remains separate; raw all-university OCR is not imported into the KUHS bank. No browser/device interaction verification or published build.
+
+**NEXT:** Exercise preview selection and question provenance display; use OCR flags to locate targeted source checks.
+
+**DO NOT:** Infer complete/accurate KUHS coverage from exact TXT/app equality. Do not push through the previously rejected external egress action.
+
+## 2026-10-01T03:16:00Z — KUHS preview screenshots and offline flow
+
+**DONE:** Captured 10 phone-size screenshots from real native components through React Native Web: onboarding, Home university sheet, Settings, all four years, question provenance, completion tick, search. Inspected contact sheet. All external network requests were blocked during flow; selection persisted locally, questions/search/progress rendered. Saved screenshot composites and original PNG zip; libfiles 80099b16605881918a02d020360cda07,30d43fb1b1888191b9327b7137c9f68f,cf39df006a94819182ca01e2a55a47a6,551ba3eb44588191876f5182b6c174b1 (prepend libfile_). Harness mobile/preview/kuhs-capture.mjs serves preview build itself, CHROME_PATH selects browser.
+
+**HALF-DONE:** These are browser previews, not Android emulator/device screenshots. Google sign-in is native-only and does not render in browser onboarding. No automatic existing-user pop-up added; current chooser opens from Home card.
+
+**NEXT:** Continue source reconciliation before release availability.
+
+**DO NOT:** Claim installed app/device verified. Vite dev server failed uv_interface_addresses; used static preview build. agent-browser daemon would not start; Playwright captured successfully with npm-provided Chromium.
+
+## 2026-10-01T03:22:00Z — Existing-user university confirmation
+
+**DONE:** Added UniversityConfirmation centered dialog on Home for hydrated existing profiles missing university, enabled when both banks are available. Selecting persists via existing local profile path and closes immediately; Later dismisses this session. First-run users continue onboarding; chosen profiles are not asked again. Offline browser harness verified prompt, KUHS selection, local persistence/reload, and all existing browse/search/progress captures. Typecheck, changed-file lint, preview build, search/repeat checks passed. Screenshot saved as libfile_a96de146dd948191850824685d8e070a. Whole first-year PDF page4 visually reconciled: all43 rows match. 4pages complete,607pending; entries remain6532.
+
+**HALF-DONE:** Full-bank reconciliation is not complete; keep review label and release gate. Dialog is development-only until KUHS_BANK_READY flips. Not tested on Android device; no release published.
+
+**NEXT:** Reconcile first5 onward using TXT as locator, resolve source errors before release.
+
+**DO NOT:** Remove review labels as a substitute for verification. Do not retry rejected GitHub egress.
+
+## 2026-10-01T03:30:00Z — Owner switches to TXT verification
+
+**DONE:** Follow explicit TXT-only workflow; stop restarting PDF reconciliation. Preserved all6532 entries. Exact TXT/app comparison passes, zero differences; search index all12517 both banks round trips. KUHS availability true after TXT/offline integration checks; removed review preview and source PDF pages in native UI. Automatic existing-user choice verified offline/reload, all4years/questions/search/tick captured. Typecheck, changed-file lint, notes schema limits, preview build passed. Independent raw OCR comparison still5401located/1131uncertain; exact reviewedTXT equality is export integrity, not lossless transcription proof. Comparison report libfile_76ce591754088191a7c807cceb7b5093, clean chooser image libfile_44b2b9c34d388191bb0b2928ad0c9898, question image libfile_2f56c8716d4081918305e9d84c26a937.
+
+**HALF-DONE:** Raw OCR ambiguities remain documented; no guess corrections. No published updated APK or device verification.
+
+**NEXT:** Continue from saved TXT and preserved bank; work on text-supported discrepancies if requested.
+
+**DO NOT:** Restart PDF page count, claim work lost, claim perfect OCR, or retry rejected remote GitHub egress.
+
+## 2026-10-01T03:45:00Z — TXT-only comparison normalization
+
+**DONE:** Audited all6532 saved TXT entries without PDF/image access. Unicode/dehyphenation, singular/plural, -isation/-ization and full month parsing located119 oldflags. 5520 text/reference locations,1012 uncertain; no medical wording/year edits. Created readable canonical TXT without page metadata and separate remaining uncertainty queue, durable IDs in kuhs-review-progress.md. Extended mobile TXT checker to both formats: original and new cleanTXT each match all6532 app rows. Diff check passed.
+
+**HALF-DONE:** Remaining1012 cannot be treated as transcription fixes from locator heuristics. No app UI change this batch; no new APK.
+
+**NEXT:** Use cleanTXT and remaining queue; preserve stable IDs and uncertainty.
+
+**DO NOT:** Claim119 source errors corrected; these are text-location false flags resolved by normalization. No PDF restart or remote egress retry.
+
+## 2026-10-01T03:50:00Z — KUHS repeat counts and clean screenshots
+
+**DONE:** KUHS row count now derives from distinct dated references, not inline stars. Ignores bare KU and duplicate references, normalizes KU/month tags, keeps original question/progress/cache strings unchanged. Explicit recorded-reference caption;36 entries lack dates and show count unspecified. Added check:kuhs-repeats independently parses references and checks all6532 metadata rows (max7), including duplicates/unknown/month variants. Title names selected university. Typecheck, focused lint, fanout, search12517 round trips, TXT/app6532 exact comparison, preview build passed. Offline browser captures onboarding, legacy-user prompt/local persistence, Settings,4years, question refs/tick/search, six-reference badge and search-to-topic navigation; no review/work-in-progress/PDF captions. Inspected screenshots; composite libfile_f4c74240d1cc8191b97308f4e9f2edd8 and full repeat screenshot libfile_248db4e2cf808191af26cc8571a2881f.
+
+**HALF-DONE:** Browser/native component layout verified, not Android device. No updated APK published. Counts are recorded references; year-only tags do not prove separate sittings. TXT uncertainty queue1012 remains, no lossless OCR claim.
+
+**NEXT:** Continue from preserved cleanTXT if further text-supported corrections are available.
+
+**DO NOT:** Count bare KU as one occurrence, inflate repeat frequency, alter raw question IDs/strings just to correct display, restart PDF review, or retry rejected GitHub egress.
 ## 2026-09-30 — Codex — security repairs and source synchronization
 
 - **DONE** — Live Supabase protections restored and read back; 27 mock handler cases + 10 live validation/no-write cases pass. Actual RLS/quota tests rolled back and passed. Web CI builds pass; native tsc/lint and local Android JS bundle pass. See docs/security-audit-2026-09-30.md.
@@ -1707,8 +1854,38 @@ Native Notes and PDF note pages now continue numbered/bulleted lists on Enter; t
 - **NEXT** — Owner reviews/installs the appropriate test build without deleting a Play installation, verifies retained sessions/progress and sign-out, and runs Play licence-test purchase/restore/refund before enabling Play billing or uploading a version-bumped Play release.
 - **DO NOT** — Do not change Anki import/export, app identity, ads, version or claim a Play upload/device pentest. Do not redeploy stale Lovable code. New unbound legacy purchases require controlled recovery; never assign an existing token to another uid.
 
+### 2026-10-01 — version 25 prepared; release blocked
+Owner requested version25, repeated handwritten notes repair and slow Anki repair. Pure notesDedup cleanup merges same-type/topic headings and exact repeats, retaining distinct descriptions, diagram URLs and ordered algorithm steps. Applied to batch merging and rendering cached notes; merge no longer mutates originals. Imported Anki loads eight 250-card chunks per batch with event-loop yields and a one-deck cache; overwrite/delete invalidate it. Study reuses unscheduled states, indexes card lookup, and avoids the second sorted due queue. Scheduler itself unchanged. Regression covers frozen/idempotent AF inputs, unique details, 50k cards, scheduling equality, bounded reads, reopen/overwrite/delete. Merged latest origin main FETCH_HEAD af2c8d50, preserving all security fixes; only conflict was append-only resume notes, both sides retained.
+Version25/0.0.0.25 synchronized Gradle/app constants/check. Supabase project pmtgeydtqypwrypshhsx app_releases row25 inserted and returned successfully (three notes). Native and preview typecheck, full mobile lint (0 errors;425 existing warnings), notes schema, Anki, APKG import/export, version, security, KUHS repeat and all6532 TXT comparisons pass. Vite preview and Metro production Android bundle+432 assets built. Browser fixture checks AF headings once preserving unique facts; offline KUHS selection/reload/search/completion/six-exam badge pass. Screenshots ../v25/screenshots; these are browser previews, NOT installed Android or server generation evidence. APK/AAB NOT built/published: no local Android SDK; prior automatic approval rejection of GitHub push (unverified external egress) remains; do NOT retry or route around rejection. Prepared code committed locally, recovery patch saved next version34.
+
+### 2026-10-01 — cardiology depth follow-up; upstream quota blocks final generation
+Restored durable patch34 in fresh workspace /workspace/scratch/9e22d9931618/gmck-kuhs; checkpoint c81898b9. User concerned AF screenshot was short. Actual shared cardiology cache has63 sections/5256 words; cleanup retains63 sections/4478 words and all818 string values (duplicates removed). Pre-repair fresh AF returned10 sections/573 words, unchanged by cleanup: generator-depth issue confirmed. Added explicit LeafTopic questionKinds (cardiology25 essays/59 short notes); increased question char cap to4000 to keep1061-char cardiology case intact; removed contradictory one-page prompt; single long essays below900 distinct words expand once and reject still-brief output before persisting. Repeated paragraphs cannot pad guard. Clinical table columns preserved separately in cleanup. Supabase generate-handwritten-notes deployed version64, verify_jwt=true, same security and quota logic; live files/metadata verified. Tests depth/labels/full-case/v25/types/lint/schema/limits pass.
+Authored separate AF educational reference16 sections/1746 words; all149 text values preserved and headings renderonce in app browser preview. Not a production generation or installedAPK. Artifact bundle includes cache, partial batch, rawAF, authoredAF, fullTXT, auditJSON, screenshots, source export and README. New wholechapter generation attempt onlybatch1/9 succeeded, batch2 HTTP timeout; post-repairAF request429 dailyGeminiquota. DO NOT claim fresh84-question generation complete or clinical accuracy universally verified. Existing shared/personal notes untouched. Do not bypass quota. Prior GitHub push auto-review rejection remains: do NOT retry/routearound. Native version25 still not released. Refresh recovery patch against origin/kuhs-source-review, save version35; separate cardiology ZIP preserves expensive proof.
+Durable cardiology ZIP: libfile_94dbdea4d40c8191997b7492aaa9ea7e. Full AF TXT: libfile_47d75ebc5f988191b59e29d297b745e3. Preserved chapter TXT: libfile_4d1d7cd4d1f48191802162cc6b7d3d66. Preview images libfile_42fc10b417e48191a1ffa6f5f6ab2b8c and libfile_a075f8d6a1e08191bfb08ad9a0fbce3e. These artifacts preserve all before/after proof, partial generation and authored reference for the next session.
+
+### 2026-10-01 — continuation: false quota diagnosis repaired
+Saved state intact. Logs reveal the prior AF429 was a misclassified depth rejection: catch /rate/ matched inside "generated". Only typed UpstreamError.kind===quota now returns429; five regression cases distinguish depth/generation/timeouts from real provider quota. Live notes v65 JWTrequired, full source byte-match readback. One fresh anonymous AF long-essay request returns500 with correct too-brief safeguard, not quota; no shared/personal write. Correct prior claims: actual daily-provider quota not established by these AF tests. Fresh successful long output and whole84-question chapter regeneration remain unfinished. Do not blindly retry; next work must improve actual model depth and verify output while preserving existing notes.
+Latest native production JS bundle +432assets passes after depth/metadata/full-case fixes; not signedAPK/device evidence. Content-preservation/depth/v25/version and8 notes-isolation regressions pass. Cardiology ZIP/README corrected with continuation-check.json; recovery patch refresh version36. Prior GitHub push automatic-review rejection remains, do not retry or routearound.
 ## 2026-10-01 — Android 21-item security audit (audit only)
 - **DONE** — Audited main af2c8d501e28eed314bc6c55a865bddc5a08c274, release-550 APK (asset SHA256 matched), all 19 live functions and public DB policies/RPCs. Published docs/android-security-checklist-audit-2026-10-01.md. Revised qualitative Android/backend/repository score to 6/10 after deeper findings. 60 regressions and 12 live rejection cases pass. Synthetic rolled-back SQL demonstrates guest merge with a spoofed known device ID and writable own XP/reward counters; role/admin checks deny escalation. Two actual-source mocks show legacy Razorpay grant validation gaps. No real user data or paid provider call used.
 - **HALF-DONE** — Findings are not repaired by this audit: merge authorization, hardcoded GitHub token in list_releases.mjs (value never printed/used, validity unknown), legacy Razorpay plan/buyer/state binding, reward columns, attachment/PDF/Anki resource bounds, compatible dependency updates, errors/body/WebView hardening. Auth configuration/native CVE/device/purchase testing and broad historical scan remain incomplete.
 - **NEXT** — Follow the new report's prioritized repairs. Token revocation/activity review is owner action; do not merely remove the line and claim revocation. Merge repair must preserve guest progress and prove old-session possession. Scope current native local notes separately from legacy cloud notes.
 - **DO NOT** — No product changes, build, Play upload or Lovable publish occurred. Keep Lovable paused and Anki unchanged under existing owner exclusion. Never expose/use the committed token. Do not repeat the old 7/10 assessment as current or describe dependency tooling advisories as proven Android exploits. Do not treat raw Hermes prefix matches as secrets: sb_secret_ decoded to a literal SDK prefix; the APK JWT role is anon.
+
+### 2026-10-01 — release preparation preserved latest GitHub audit
+Owner urgently requested connector push/release again. Read-only connector verified Sabharivarshan111/gmck installed repository, public visibility, push permission, main ea1dc5ca. This does not lift prior automatic-review egress rejection: no write/push/build dispatch attempted. Read-only fetch and local merge preserve newer main audit, HANDOFF and prior security changes. Conflicts resolved by retaining local depth/input/metadata fixes and both audit histories. Native TypeScript, depth/v25/version/repeat checks and8 notes-isolation cases pass. list_releases.mjs now uses optional GITHUB_TOKEN environment value instead of embedded credential; public listing works without authorization. No credential was used or printed. Historical credential revocation remains owner action. All notes saved; fresh successful cardiology generation still unverified; no signed version25 release. Recovery patch refresh version37.
+
+### 2026-10-01 — fresh full AF generation verified, release still blocked
+Owner requested continued fixes and release. Focused replacement prompt alone failed live at554/750 words. Reconsidered strategy: single supplement call adds missing explanations while preserving the initial answer; repeated strings cannot pad900word guard. Live68 successfully generated AF HTTP200,16sections/1427words(1408unique guard), all157strings retained by client cleanup. Raw and cleaned outputs preserved. Selected clinical corrections made in separate reviewed sample: warfarin/bridging, cardioversion/TTE/TEE, pre-excitation, rhythm-selection and missing tachyarrhythmia classification;17sections/1673unique words. All17preview headings once with externalrequestsblocked. Not whole84question regeneration or universalmedicalcertification; not persisted in shared/personal notes.
+Concurrent security deployment detected before overwrite; preserved its endpointSecurity.ts wrapper and generic unexpectederror redaction. Final live69 files byte-match/JWTtrue;4MB transportlimit/origin/headers remain. Typed NotesDepthError safe422message retains savedanswer; quota typedonly. Depth/limits/schema/version/native-previewtypes,8 isolation and4 transport regressions pass. No GitHubwrite/push/dispatch attempted; prior approvalreview egressblock still applies. Version25notreleased. Durably save corrected ZIPnextv2, reviewedTXT/images, recoverypatchnextv38.
+
+
+## 2026-10-01T10:32:49.131887+00:00 — v25 restored with newer local security work; publication restriction remains
+
+**DONE:** Latest recovery patch38 applied with index at exact base29d13a5033ee1b2150d0ba6a412de2538ba1e621; restored Git tree exactly matches114a19b2. Read-only GitHub confirms main remains ea1dc5ca. Isolated local merge preserves newer unpushed security checkout through cc0bce3b: guest proof authorization, payment binding, endpoint/body/error guards, native link validation and dependency updates. Conflicts preserve university sync plus proof-authorized guest retry and notes typed422 depth safeguards. Live source readback:20 functions/46 file instances agree ignoring whitespace; notes69 four files byte-match/JWTtrue. Two CI harness failures repaired: lint-safe quota expression evaluation and auth guest-merge mocks with proof-before-session-replacement assertion. All55 local release/security checks now pass, including native/preview typechecks, lint,6532 TXT comparison, repeats,50k-card scheduler and APKG. Preview build, offline KUHS flows, reviewed AF17 unique headings, and Android production JS bundle/432 assets pass. No PDF review restarted or user notes rewritten.
+
+**HALF-DONE:** Signed v25 APK/AAB and installed-device/payment tests not performed. Whole84-question fresh cardiology regeneration remains unfinished; saved partial batch and AF evidence preserved. No remote deployment or write attempted here. Existing GitHub release550 predates v25.
+
+**NEXT:** Preserve this combined checkout in a sanitized restore checkpoint with exact base, source hashes, tests and evidence. GitHub publication requires legitimate clearance of the prior automatic-review egress restriction; repository push permission alone does not clear it. Once permitted, recheck latest main, merge safely, push through authorized connector and verify exact run checkout/signatures/assets.
+
+**DO NOT:** Retry or route around the rejection, force-push, restart PDF review, remove existing Anki/progress, deploy stale Lovable or notes sources, use exposed historical tokens, claim v25 released/Play uploaded/device-tested, or enable Play billing.

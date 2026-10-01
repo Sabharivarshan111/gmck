@@ -1,3 +1,4 @@
+import { secureEndpoint } from '../_shared/endpointSecurity.ts';
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { playAccessToken } from "./googlePlayAuth.ts";
 
@@ -225,7 +226,7 @@ async function acknowledge(verified: Verified, token: string, bearer: string): P
   }
 }
 
-Deno.serve(async (req) => {
+Deno.serve(secureEndpoint(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
   try {
@@ -403,6 +404,6 @@ Deno.serve(async (req) => {
     });
   } catch (err) {
     console.error("play-verify-purchase failure", err);
-    return json({ error: (err as Error).message ?? "Unknown error" }, 500);
+    return json({ error: "Unable to complete request" }, 500);
   }
-});
+}));

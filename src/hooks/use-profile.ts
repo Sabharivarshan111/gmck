@@ -4,10 +4,12 @@ import type { Year } from "@/lib/year-subjects";
 import { validateDisplayName } from "@/lib/profanity";
 import { syncLocalProgressToCloud, reconcileProgressWithCloud } from "@/lib/question-progress";
 import { toast } from "@/components/ui/use-toast";
+import { isUniversity, type University } from "@/lib/university";
 
 export interface LocalProfile {
   display_name: string;
   year: Year;
+  university?: University;
 }
 
 const LS_KEY = "orbit-profile-v1";
@@ -121,7 +123,8 @@ export function useProfile() {
           const row = payload.new;
           if (!row) return;
           setCloud((c) => (c ? { ...c, ...row } : (row as CloudProfile)));
-          const next = { display_name: row.display_name, year: row.year as Year };
+          const next: LocalProfile = { display_name: row.display_name, year: row.year as Year,
+            ...(isUniversity(row.university) ? { university: row.university } : {}) };
           setLocal(next);
           writeLocal(next);
         }
@@ -140,16 +143,23 @@ export function useProfile() {
       const anon = !!sess.session?.user?.is_anonymous;
       const { data } = await supabase
         .from("profiles")
-        .select("id, display_name, year, xp, streak, last_active_date, streak_freezes_available")
+        .select("id, display_name, year, university, xp, streak, last_active_date, streak_freezes_available")
         .eq("id", userId)
         .maybeSingle();
       if (data) {
         setCloud(data as CloudProfile);
-        const cloudP: LocalProfile = { display_name: data.display_name, year: data.year as Year };
+        const cloudP: LocalProfile = { display_name: data.display_name, year: data.year as Year,
+          ...(isUniversity(data.university) ? { university: data.university } : {}) };
         const localP = readLocal();
+        if (!cloudP.university && localP?.university) {
+          cloudP.university = localP.university;
+          const { error } = await supabase.from("profiles").update({ university: localP.university }).eq("id", userId);
+          if (error) console.warn("University cloud sync failed:", error.message);
+        }
         const differs = !!localP && (
           localP.display_name.trim().toLowerCase() !== cloudP.display_name.trim().toLowerCase()
           || localP.year !== cloudP.year
+          || (!!localP.university && !!cloudP.university && localP.university !== cloudP.university)
         );
         if (!anon && differs && localP) {
           setPendingConflict({ cloud: cloudP, local: localP });
@@ -191,10 +201,12 @@ export function useProfile() {
       } else if (userId) {
         const { error } = await supabase
           .from("profiles")
-          .update({ display_name: c.local.display_name, year: c.local.year })
+          .update({ display_name: c.local.display_name, year: c.local.year,
+            ...(c.local.university ? { university: c.local.university } : {}) })
           .eq("id", userId);
         if (!error) {
-          setCloud((cur) => cur ? { ...cur, display_name: c.local.display_name, year: c.local.year } : cur);
+          setCloud((cur) => cur ? { ...cur, display_name: c.local.display_name, year: c.local.year,
+            university: c.local.university } : cur);
           writeLocal(c.local);
           setLocal(c.local);
         }
@@ -224,7 +236,9 @@ export function useProfile() {
       setLoading(true);
       try {
         const cleanName = p.display_name.trim();
-        const cleanProfile = { display_name: cleanName, year: p.year };
+        const university = p.university ?? readLocal()?.university;
+        const cleanProfile: LocalProfile = { display_name: cleanName, year: p.year,
+          ...(isUniversity(university) ? { university } : {}) };
         writeLocal(cleanProfile);
         setLocal(cleanProfile);
         setNeedsOnboarding(false);
@@ -262,10 +276,15 @@ export function useProfile() {
               device_id: deviceId,
             });
           }
+          if (cleanProfile.university) {
+            const { error: universityError } = await supabase.from("profiles")
+              .update({ university: cleanProfile.university }).eq("id", uid);
+            if (universityError) console.warn("University cloud sync failed:", universityError.message);
+          }
           const profileRow = merged ?? (
             await supabase
               .from("profiles")
-              .select("id, display_name, year, xp, streak, last_active_date")
+              .select("id, display_name, year, university, xp, streak, last_active_date")
               .eq("id", uid)
               .maybeSingle()
           ).data;

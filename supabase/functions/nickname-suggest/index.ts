@@ -1,3 +1,4 @@
+import { secureEndpoint } from '../_shared/endpointSecurity.ts';
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 import { createClient } from "npm:@supabase/supabase-js@2.45.0";
 
@@ -14,7 +15,7 @@ const FALLBACK = [
   "Neuro Ninja", "Dr. Alveoli", "Pharma Pro", "Dr. Mitochondria",
 ];
 
-Deno.serve(async (req) => {
+Deno.serve(secureEndpoint(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
   try {
@@ -99,4 +100,4 @@ Deno.serve(async (req) => {
     console.error("nickname-suggest failure", err);
     return json({ names: FALLBACK.slice(0, 6) });
   }
-});
+}, { publicCors: true }));

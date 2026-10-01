@@ -30,6 +30,8 @@ import {
 } from '@/lib/googleAuth';
 import { useProfile } from '@/hooks/useProfile';
 import { setTourPaused } from '@/tour/store';
+import { UniversityChoice } from '@/components/UniversityChoice';
+import type { University } from '@shared/university';
 /*
  * Imported, not `require`d.
  *
@@ -84,6 +86,7 @@ export function FirstRun() {
   const [stage, setStage] = useState<'splash' | 'you'>('splash');
   const [name, setName] = useState('');
   const [year, setYear] = useState<Year | null>(null);
+  const [university, setUniversity] = useState<University | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [googling, setGoogling] = useState(false);
@@ -173,8 +176,12 @@ export function FirstRun() {
       setError('Choose your year — it decides which question bank you get.');
       return;
     }
-    void submit({ display_name: name, year });
-  }, [isNative, googleAuthenticated, name, year, submit]);
+    if (!university) {
+      setError('Choose your university — it decides which past papers you see.');
+      return;
+    }
+    void submit({ display_name: name, year, university });
+  }, [isNative, googleAuthenticated, name, year, university, submit]);
 
   /**
    * Google fills the name in and unlocks onboarding.
@@ -268,10 +275,10 @@ export function FirstRun() {
               accessibilityLabel="Orbit"
             />
             <Text accessibilityRole="header" style={[styles.title, { color: colors.text }]}>
-              Two things and you're in
+              Set up your studies
             </Text>
             <Text style={[styles.subtitle, { color: colors.textMuted }]}>
-              Your name shows on the leaderboard. Your year decides which questions you see.
+              Choose your year and university to get the right past papers.
             </Text>
 
             {GOOGLE_SIGN_IN_ENABLED ? (
@@ -416,6 +423,8 @@ export function FirstRun() {
                   );
                 })}
               </View>
+              <Text style={[styles.label, { color: colors.textMuted }]}>UNIVERSITY — PICK ONE</Text>
+              <UniversityChoice value={university} onChange={setUniversity} />
             </View>
 
             {error ? (
@@ -433,8 +442,8 @@ export function FirstRun() {
               // one who would press this. It says what is missing instead.
               disabled={saving}
               state={{ busy: saving }}
-              label={year ? 'Start studying' : 'Choose your year first, then start studying'}
-              style={[styles.startButton, !year && styles.startPending]}>
+              label={!year ? 'Choose your year first' : !university ? 'Choose your university first' : 'Start studying'}
+              style={[styles.startButton, (!year || !university) && styles.startPending]}>
               <GradientFill from="#FFFFFF" to={colors.fuchsia} borderRadius={14} />
               {saving ? (
                 <ActivityIndicator color="#1A0A1F" />
@@ -443,7 +452,7 @@ export function FirstRun() {
               )}
             </Touchable>
             <Text style={[styles.footnote, { color: colors.textMuted }]}>
-              You can change either of these later in My Progress.
+              You can change your year and university later in Settings.
             </Text>
           </ScrollView>
         )}

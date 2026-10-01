@@ -1,0 +1,119 @@
+{
+  "checked_pages": 19,
+  "added_entries": 1,
+  "corrected_entries": 2,
+  "total_ledger_entries": 6532,
+  "whole_pages_completed": [
+    [
+      "first",
+      1
+    ],
+    [
+      "first",
+      2
+    ],
+    [
+      "first",
+      3
+    ]
+  ],
+  "remaining_pages": 608,
+  "decisions": [
+    {
+      "year": "final",
+      "pages": [
+        87,
+        88
+      ],
+      "decision": "Corrected KU24 reference attribution: 35-year-old infertile woman evaluation short essay, not the unreferenced neighbouring couple essay.",
+      "image_sha256": {
+        "87": "80e75b29b65efce023f62acedddbeeee5d751916cd8750ec946b6868b3238fb8",
+        "88": "a438304cc5a8f6347060b568a407853ea538a3de5cd282a57a6bc16187753e34"
+      }
+    },
+    {
+      "year": "final",
+      "pages": [
+        95,
+        96
+      ],
+      "decision": "Ovarian cancer KU17 continuation is already represented on final96. No extra row added.",
+      "image_sha256": {
+        "95": "6c6a9a6c7d46b5f5e13380d3fb2807f45a272731e5570f38042787f649bd6d8e",
+        "96": "312536e30edc236a1a4bfbe30d3632d35d69b3b79d2788c74090fc6e2a6a175f"
+      }
+    },
+    {
+      "year": "final",
+      "pages": [
+        156,
+        157
+      ],
+      "decision": "Scrub-typhus forest-worker essay has no printed exam reference on either page; excluded.",
+      "image_sha256": {
+        "156": "0d5477ef3c2acfd39b7f9923328045aca23d8ef91158647394a6e690bc7ffeed",
+        "157": "bc12bf180aed5d13e0751844cc5d185ffeda52809a31be354aab3d56358a1328"
+      }
+    },
+    {
+      "year": "final",
+      "pages": [
+        210,
+        211
+      ],
+      "decision": "35-year-old ascending-weakness essay has no printed exam reference; excluded. KU22 belongs only to adjacent 30-year-old case already represented.",
+      "image_sha256": {
+        "210": "c85d921f0c21e26fd0c899de4a401a7f2af715949108f87236484964d0890218",
+        "211": "6b1664da1b665feb4ecc939ea8f2bb1ff537b93d195a8d15d4094c46985396bf"
+      }
+    },
+    {
+      "year": "first",
+      "pages": [
+        67,
+        68
+      ],
+      "decision": "Added complete galactosemia short-answer case, Oct24, as row68-43; source continuation joined.",
+      "image_sha256": {
+        "67": "83beaf7ab8e372edbe450ba6d485ec00761fb05d8a8ee45a377ec79e5d830153",
+        "68": "a0c763f66a58155be4464ea328cc0613240d086a11c8c5dd303cc21a222b52e6"
+      }
+    },
+    {
+      "year": "third",
+      "pages": [
+        48,
+        49
+      ],
+      "decision": "Breastfeeding continuation RGU/TU only and school-health continuation TU only; excluded.",
+      "image_sha256": {
+        "48": "4211df0b857b457d7b6a557e8c2f7bf409e87feff3e49c942aa21e2d8fb02e55",
+        "49": "83c52a5abb223815620ba78ca15f2de1ce9f56c1f7fcc31a879d8f61ef8269d4"
+      }
+    },
+    {
+      "year": "third",
+      "pages": [
+        62,
+        63
+      ],
+      "decision": "Corrected flood-team short essay sitting KU22 to printed KU21. Black C triangle KU24 remains unresolved because no question text is printed.",
+      "image_sha256": {
+        "62": "6b7d2b3edb1890e15c2594637201d49e2c7276799858dc904496e2b720466793",
+        "63": "3f24ff09c0578af7951d7f4150b6f4cd041d1a69669eaf5a7859abe7fca7b9d5"
+      }
+    },
+    {
+      "year": "second",
+      "pages": [
+        144,
+        145
+      ],
+      "decision": "Neurocysticercosis essay has no exam reference; excluded. Cryptococcal KU22 continuation already represented145.",
+      "image_sha256": {
+        "144": "5a281152c63cb4288fe8f6cf23ad625a92be2592d3844ff74fc172cdae739fa8",
+        "145": "f3d1a7bb1c704746ef5a6fe48617a42efdb37c05a44311cfc6be2e2020c5baa5"
+      }
+    }
+  ]
+}

@@ -1,3 +1,4 @@
+import { secureEndpoint } from '../_shared/endpointSecurity.ts';
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 import { z } from "npm:zod";
 import { createClient } from "npm:@supabase/supabase-js@2.45.0";
@@ -113,7 +114,7 @@ const mapGeminiError = (status: number, text: string) => {
   return providerMsg ? providerMsg.slice(0, 220) : `Gemini service error (${status}).`;
 };
 
-Deno.serve(async (req) => {
+Deno.serve(secureEndpoint(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
   const bearer = req.headers.get("Authorization") ?? "";
@@ -250,4 +251,4 @@ Required JSON shape:
   }
 
   return json({ mcqs });
-});
+}));

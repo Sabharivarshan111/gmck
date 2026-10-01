@@ -1,3 +1,4 @@
+import { secureEndpoint } from '../_shared/endpointSecurity.ts';
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
@@ -141,7 +142,7 @@ function buildPrompt(items: z.infer<typeof ItemSchema>[]): string {
   return `Analyze these ${items.length} MBBS questions and return a JSON array of classification objects in the same order.\n\n${lines.join("\n")}`;
 }
 
-serve(async (req) => {
+serve(secureEndpoint(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
@@ -241,9 +242,9 @@ serve(async (req) => {
     });
   } catch (err) {
     const status = (err as UpstreamError).status ?? 500;
-    return new Response(JSON.stringify({ error: (err as Error).message }), {
+    return new Response(JSON.stringify({ error: "Unable to complete request" }), {
       status,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
-});
+}));

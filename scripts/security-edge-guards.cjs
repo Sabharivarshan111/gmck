@@ -8,7 +8,7 @@ async function run(file, token, quota, expected) {
   const schema = new Proxy(function () {}, { get: (_t, key) => key === 'safeParse'
     ? () => ({success:false,error:{issues:[{message:'invalid fixture'}],flatten:()=>({fieldErrors:{}})}})
     : schema, apply: () => schema });
-  const context = { Request, Response, TextEncoder, crypto:webcrypto, URL, console:{log(){},error(){}},
+  const context = { secureEndpoint: handler => handler, ensureLongEssay: value => value, Request, Response, TextEncoder, crypto:webcrypto, URL, console:{log(){},error(){}},
     z:schema, corsHeaders:{'Access-Control-Allow-Origin':'*'}, serve: fn => {handler=fn},
     Deno:{env:{get:key=>({SUPABASE_URL:'https://fixture.invalid',SUPABASE_ANON_KEY:'public-key',SUPABASE_SERVICE_ROLE_KEY:'server-key',GEMINI_API_KEY:'fixture'})[key]},serve:fn=>{handler=fn}},
     GoogleGenerativeAI:class{constructor(){modelCalls++;throw new Error('Unexpected model call')}},

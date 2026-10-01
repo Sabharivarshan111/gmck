@@ -17,6 +17,7 @@ import {
 } from '@/lib/questionText';
 import { useQuestionDone } from '@/hooks/useProgress';
 import { doubleTapPrompt, tripleTapPrompt } from '@/lib/askAi';
+import { kuhsQuestionSource, kuhsRecordedExamCount } from '@/lib/kuhsQuestionSource';
 import type { ConfirmedPage } from '@/lib/pageRefs';
 
 interface Props {
@@ -98,7 +99,8 @@ function QuestionRowBase({
   // every other row mounted in the list.
   const done = useQuestionDone(question);
 
-  const stars = countStars(question);
+  const kuhsSource = kuhsQuestionSource(question);
+  const stars = kuhsSource ? kuhsRecordedExamCount(kuhsSource.examRefs) : countStars(question);
   const page = extractPageNumber(question);
   const importance = importanceLabel(stars);
   const text = getCleanQuestionText(question);
@@ -214,7 +216,7 @@ function QuestionRowBase({
   return (
     <Touchable
       onPress={onRowTap}
-      label={text}
+      label={kuhsSource ? `${text}. Printed exam references: ${kuhsSource.examRefs.join(', ')}. ${stars > 0 ? `${stars} recorded exam references` : 'Exam count not specified'}.` : text}
       hint="Double tap twice for MCQs, three times for a written answer"
       // The gestures above are unreachable with a screen reader; these are.
       accessibilityActions={[
@@ -306,6 +308,13 @@ function QuestionRowBase({
               </Text>
             ) : null}
           </View>
+
+          {kuhsSource ? (
+            <Text style={[typeScale.caption, { color: colors.textMuted }]}>
+              Printed exams: {kuhsSource.examRefs.join(' · ')}{'\n'}
+              {stars > 0 ? `${stars} recorded exam reference${stars === 1 ? '' : 's'}` : 'Exam count not specified in source'}
+            </Text>
+          ) : null}
 
           {/* A page other readers agreed on, in a book they named.
             *

@@ -48,60 +48,60 @@ const {
 } = bank;
 
 const failures = [];
-
-// The index itself, not a search over it: searchQuestions() needs a two-letter
-// query, so there is no query that means "everything".
-const everything = allSearchHits();
-
 let checked = 0;
-const seen = new Set();
-for (const hit of everything) {
-  const key = `${hit.year}|${hit.path.join('/')}|${hit.type}|${hit.question}`;
-  if (seen.has(key)) {
-    continue;
-  }
-  seen.add(key);
+for (const university of ['tnmgr', 'kuhs']) {
+  // The index itself, not a search over it: searchQuestions() needs a
+  // two-letter query, so there is no query that means "everything".
+  const everything = allSearchHits(university);
+  const seen = new Set();
+  for (const hit of everything) {
+    const key = `${hit.year}|${hit.path.join('/')}|${hit.type}|${hit.question}`;
+    if (seen.has(key)) {
+      continue;
+    }
+    seen.add(key);
 
-  if (!Array.isArray(hit.path) || hit.path.length === 0) {
-    failures.push(`"${hit.question.slice(0, 48)}…" has no path — it cannot be navigated to`);
-    continue;
-  }
-  const node = resolveNode(hit.year, hit.path);
-  if (!node) {
-    failures.push(`${hit.year}/${hit.path.join('/')} does not resolve to a node`);
-    continue;
-  }
-  const there = findTypeQuestions(node, hit.type);
-  if (!there.includes(hit.question)) {
-    failures.push(
-      `${hit.year}/${hit.path.join('/')} (${hit.type}) does not contain the question the ` +
-        `index filed under it: "${hit.question.slice(0, 48)}…"`,
-    );
-    continue;
-  }
-  if (!hit.topicName) {
-    failures.push(`${hit.year}/${hit.path.join('/')} has no topic name for its breadcrumb`);
-  }
-  checked += 1;
-  if (failures.length > 8) {
-    break;
-  }
-}
-
-// Completeness: the index must hold every question the counters can see.
-for (const year of YEAR_KEYS) {
-  for (const subject of getSubjects(year)) {
-    for (const type of ['essay', 'short-notes']) {
-      const flat = collectQuestions(subject.node, type);
-      const indexed = everything.filter(
-        h => h.year === year && h.subjectKey === subject.key && h.type === type,
+    if (!Array.isArray(hit.path) || hit.path.length === 0) {
+      failures.push(`"${hit.question.slice(0, 48)}…" has no path — it cannot be navigated to`);
+      continue;
+    }
+    const node = resolveNode(hit.year, hit.path, university);
+    if (!node) {
+      failures.push(`${hit.year}/${hit.path.join('/')} does not resolve to a node`);
+      continue;
+    }
+    const there = findTypeQuestions(node, hit.type);
+    if (!there.includes(hit.question)) {
+      failures.push(
+        `${hit.year}/${hit.path.join('/')} (${hit.type}) does not contain the question the ` +
+          `index filed under it: "${hit.question.slice(0, 48)}…"`,
       );
-      const missing = flat.filter(q => !indexed.some(h => h.question === q));
-      if (missing.length > 0) {
-        failures.push(
-          `${year}/${subject.key} (${type}): ${missing.length} question(s) the index never ` +
-            `found, e.g. "${missing[0].slice(0, 48)}…"`,
+      continue;
+    }
+    if (!hit.topicName) {
+      failures.push(`${hit.year}/${hit.path.join('/')} has no topic name for its breadcrumb`);
+    }
+    checked += 1;
+    if (failures.length > 8) {
+      break;
+    }
+  }
+
+  // Completeness: the index must hold every question the counters can see.
+  for (const year of YEAR_KEYS) {
+    for (const subject of getSubjects(year, university)) {
+      for (const type of ['essay', 'short-notes']) {
+        const flat = collectQuestions(subject.node, type);
+        const indexed = everything.filter(
+          h => h.year === year && h.subjectKey === subject.key && h.type === type,
         );
+        const missing = flat.filter(q => !indexed.some(h => h.question === q));
+        if (missing.length > 0) {
+          failures.push(
+            `${year}/${subject.key} (${type}): ${missing.length} question(s) the index never ` +
+              `found, e.g. "${missing[0].slice(0, 48)}…"`,
+          );
+        }
       }
     }
   }
@@ -115,5 +115,5 @@ if (failures.length > 0) {
   process.exit(1);
 }
 process.stdout.write(
-  `OK  ${checked} search hits resolve back to a topic that contains them, index complete\n`,
+  `OK  ${checked} TNMGR and KUHS search hits resolve back to their own topics\n`,
 );

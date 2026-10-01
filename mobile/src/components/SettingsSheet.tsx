@@ -38,6 +38,8 @@ import {
   type TestResult,
 } from '@/lib/notifications';
 import { syncReminders } from '@/lib/reminderSync';
+import { UniversityChoice } from '@/components/UniversityChoice';
+import { useProfile } from '@/hooks/useProfile';
 
 /**
  * Everything the user can change, in one place.
@@ -131,6 +133,7 @@ export function SettingsSheet({
 }) {
   const { colors } = useTheme();
   const settings = useSettings();
+  const { university, setUniversity } = useProfile();
 
   /**
    * Re-read every time the sheet opens.
@@ -178,6 +181,8 @@ export function SettingsSheet({
 
   return (
     <Sheet visible={visible} onClose={onClose} title="Settings">
+      <Text style={[styles.section, { color: colors.textMuted }]}>QUESTION BANK UNIVERSITY</Text>
+      <UniversityChoice value={university} onChange={option => { void setUniversity(option); }} />
       <Text style={[styles.section, { color: colors.textMuted }]}>
         TEXT SIZE
       </Text>

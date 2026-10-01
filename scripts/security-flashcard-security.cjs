@@ -11,7 +11,7 @@ async function run(token,quota,cached,expected) {
   if(k==='upsert')return async row=>{writes.push({table,row});return {error:null}};
   return ()=>chain;
  }});return chain};
- const context={Request,Response,TextEncoder,crypto:webcrypto,AbortController,setTimeout,clearTimeout,console:{log(){},error(){},warn(){}},z:schema,serve:fn=>{handler=fn},
+ const context={secureEndpoint:handler=>handler, ensureLongEssay:value=>value,Request,Response,TextEncoder,crypto:webcrypto,AbortController,setTimeout,clearTimeout,console:{log(){},error(){},warn(){}},z:schema,serve:fn=>{handler=fn},
   pickBookKeys:()=>[],buildTextbookContext:async()=>'',
   Deno:{env:{get:k=>({SUPABASE_URL:'https://fixture.invalid',SUPABASE_ANON_KEY:'public-key',SUPABASE_SERVICE_ROLE_KEY:'server-key',GEMINI_API_KEY:'fixture'})[k]}},
   fetch:async()=>{calls++;return new Response(JSON.stringify({candidates:[{content:{parts:[{text:JSON.stringify({theoryCards:[{front:'Fixture question',back:'Fixture answer',tags:[]}],diagramCards:[]})}]}}]}))},

@@ -58,3 +58,6 @@ verify_jwt = false
 [functions.ingest-textbook-sign]
 verify_jwt = false
 
+
+[functions.merge-guest-account]
+verify_jwt = true

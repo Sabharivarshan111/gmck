@@ -1,13 +1,13 @@
 import https from 'https';
 
-const token = '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';
+const token = process.env.GITHUB_TOKEN;
 const options = {
   hostname: 'api.github.com',
   path: '/repos/Sabharivarshan111/gmck/releases?per_page=10',
   method: 'GET',
   headers: {
     'User-Agent': 'Node.js',
-    'Authorization': `Bearer ${token}`,
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
     'Accept': 'application/vnd.github+json'
   }
 };

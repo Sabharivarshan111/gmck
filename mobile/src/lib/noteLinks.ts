@@ -88,6 +88,7 @@ export function parseStart(value: string | null): number | undefined {
  * app choosing a worse connection on the reader's behalf.
  */
 export function normaliseUrl(raw: string): string | null {
+  if (typeof raw !== 'string' || raw.length > 8192) return null;
   const trimmed = raw.trim();
   if (!trimmed) {
     return null;
@@ -101,7 +102,7 @@ export function normaliseUrl(raw: string): string | null {
     if (url.protocol !== 'http:' && url.protocol !== 'https:') {
       return null;
     }
-    if (!url.hostname.includes('.')) {
+    if (url.username || url.password || !url.hostname.includes('.')) {
       return null;
     }
     return url.toString();
@@ -182,6 +183,7 @@ export function makeNoteLink(raw: string, title?: string): NoteLink | null {
  * image for exactly the lectures a student is most likely to be sent.
  */
 export function thumbnailFor(videoId: string): string {
+  if (!VIDEO_ID.test(videoId)) return '';
   return `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
 }
 
@@ -198,6 +200,7 @@ export function thumbnailFor(videoId: string): string {
  * of recommending whatever the algorithm has today.
  */
 export function embedUrlFor(link: NoteLink): string {
+  if (!VIDEO_ID.test(link.videoId ?? '') || youTubeIdOf(link.url) !== link.videoId) return 'about:blank';
   const params = new URLSearchParams({
     playsinline: '1',
     // ORBIT owns fullscreen in NoteLinkCard. YouTube's native iframe fullscreen
@@ -209,7 +212,7 @@ export function embedUrlFor(link: NoteLink): string {
     origin: 'https://www.youtube-nocookie.com',
     widget_referrer: 'https://www.youtube-nocookie.com',
   });
-  if (link.startAt) {
+  if (Number.isSafeInteger(link.startAt) && (link.startAt ?? 0) > 0 && (link.startAt ?? 0) <= 604800) {
     params.set('start', String(link.startAt));
   }
   return `https://www.youtube-nocookie.com/embed/${link.videoId}?${params.toString()}`;
@@ -226,4 +229,14 @@ export function displayTitle(link: NoteLink): string {
   } catch {
     return link.url;
   }
+}
+
+/** Only HTTPS YouTube player frames may navigate inside the embedded browser. */
+export function allowYouTubeNavigation(url: string): boolean {
+  if (url === 'about:blank') return true;
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === 'https:' && !parsed.username && !parsed.password &&
+      ['www.youtube-nocookie.com', 'youtube-nocookie.com', 'www.youtube.com', 'youtube.com'].includes(parsed.hostname);
+  } catch { return false; }
 }

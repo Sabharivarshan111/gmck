@@ -44,6 +44,9 @@ import { typeScale } from '@/theme/typography';
 import { getSubjects, type YearKey } from '@/lib/questionBank';
 import { flattenSubjectTopics, ensureSingleNoteDiagram, type NotesContent } from '@/lib/handwrittenNotes';
 import { SAMPLE_NOTES, sampleNotes } from './notesSample';
+import { REPEATED_AF_NOTES } from './notesRepeatSample';
+import { AF_LONG_NOTES } from './afLongSample';
+import { AF_GENERATED_NOTES } from './afGeneratedSample';
 import { TCA_DIAGRAMS, TCA_NOTE, TCA_QUESTION } from './diagramSample';
 import { NotesAiEditBox } from '@/components/NotesAiEditBox';
 import { McqCard } from '@/components/McqCard';
@@ -260,7 +263,7 @@ function TreeGallery() {
         <Text style={{ color: colors.text, fontSize: 18, fontWeight: '800' }}>
           🌿 24-Frame Cinematic Botanical Growth Engine
         </Text>
-        <Text style={{ color: colors.textSecondary, fontSize: 12, marginTop: 2 }}>
+        <Text style={{ color: colors.textMuted, fontSize: 12, marginTop: 2 }}>
           Dual-layer optical cross-dissolve across all 24 sliced keyframes
         </Text>
       </View>
@@ -283,7 +286,7 @@ function TreeGallery() {
                   size={64}
                   sway={false}
                 />
-                <Text style={{ color: colors.textSecondary, fontSize: 10, fontWeight: '600' }}>
+                <Text style={{ color: colors.textMuted, fontSize: 10, fontWeight: '600' }}>
                   {Math.round(growth * 100)}%
                 </Text>
               </View>
@@ -318,7 +321,7 @@ function GrowthShowcase() {
         <Text style={{ color: colors.text, fontSize: 20, fontWeight: '800' }}>
           Real-Time Procedural Interpolation
         </Text>
-        <Text style={{ color: colors.textSecondary, fontSize: 13, marginTop: 4 }}>
+        <Text style={{ color: colors.textMuted, fontSize: 13, marginTop: 4 }}>
           Continuous dual-layer cross-dissolve & sub-pixel scale morphing
         </Text>
       </View>
@@ -399,7 +402,7 @@ function GrowthShowcase() {
                 padding: 2,
               }}>
               <FocusTree species={activeSpecies} growth={(stageNum - 1) / 23} size={42} sway={false} />
-              <Text style={{ color: colors.textSecondary, fontSize: 9, fontWeight: '700' }}>
+              <Text style={{ color: colors.textMuted, fontSize: 9, fontWeight: '700' }}>
                 F{stageNum}
               </Text>
             </View>
@@ -525,7 +528,7 @@ function NotesRendererDemo() {
    * cannot fail. Neither path touches the network at capture time.
    */
   const content = React.useMemo(
-    () => (useRealPlates
+    () => (params.get('repetition') === 'generated' ? AF_GENERATED_NOTES : params.get('repetition') === 'full' ? AF_LONG_NOTES : params.get('repetition') === '1' ? REPEATED_AF_NOTES : useRealPlates
         ? sampleNotes(
             realPlate('tca-cycle'),
             'TCA cycle: amphibolic role and anaplerotic reactions',
@@ -736,7 +739,7 @@ function TcaNoteDemo() {
   if (!content) {
     return (
       <View style={{ flex: 1, backgroundColor: colors.background, alignItems: 'center', justifyContent: 'center' }}>
-        <Text style={{ color: colors.textSecondary }}>Loading TCA Cycle Notes…</Text>
+        <Text style={{ color: colors.textMuted }}>Loading TCA Cycle Notes…</Text>
       </View>
     );
   }
