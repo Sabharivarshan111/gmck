@@ -1,3 +1,5 @@
+> **Assessment update, 2026-10-01:** The deeper [21-item audit](android-security-checklist-audit-2026-10-01.md) revises the current provisional score to **6/10** after additional confirmed findings. The 7/10 below records the earlier, narrower repair assessment.
+
 # Native Android security audit — 2026-09-30
 
 ## Assessment
