@@ -290,7 +290,22 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
   const { yearKey: year, streak, setYear, university, setUniversity } = useProfile();
   const bankUniversity = availableBankUniversity(university);
   const [universityOpen, setUniversityOpen] = useState(false);
-  const dailyRequestScope = `${year}:${dailyDate}`;
+  const dailySourceQuestions = useMemo(
+    () =>
+      getSubjects(year, bankUniversity)
+        .flatMap(subject =>
+          collectAllQuestions(subject.node).map(question => ({
+            subject: subject.name,
+            question,
+          })),
+        )
+        // Stable sample across devices for the same bank/year, while keeping
+        // the request small enough for an Edge Function body.
+        .filter((_, index) => index % 7 === 0)
+        .slice(0, 60),
+    [bankUniversity, year],
+  );
+  const dailyRequestScope = `${bankUniversity}:${year}:${dailyDate}`;
   const dailyRequestScopeRef = useRef(dailyRequestScope);
   dailyRequestScopeRef.current = dailyRequestScope;
   const dailyInFlight = useRef(new Set<string>());
@@ -298,7 +313,7 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
     setDailyCards({});
     setDailyError({});
     setDailyLoading({});
-  }, [year, dailyDate]);
+  }, [bankUniversity, year, dailyDate]);
   const loadDaily = useCallback((kind: DailyKind) => {
     const scope = dailyRequestScope;
     const requestKey = `${scope}:${kind}`;
@@ -306,7 +321,7 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
     dailyInFlight.current.add(requestKey);
     setDailyLoading(previous => ({ ...previous, [kind]: true }));
     setDailyError(previous => ({ ...previous, [kind]: undefined }));
-    createDailyCard(kind, year, dailyDate).then(card => {
+    createDailyCard(kind, bankUniversity, year, dailyDate, dailySourceQuestions).then(card => {
       if (dailyRequestScopeRef.current !== scope) return;
       setDailyCards(previous => ({ ...previous, [kind]: card }));
     }).catch(error => {
@@ -318,7 +333,7 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
         setDailyLoading(previous => ({ ...previous, [kind]: false }));
       }
     });
-  }, [year, dailyDate, dailyRequestScope]);
+  }, [bankUniversity, year, dailyDate, dailyRequestScope, dailySourceQuestions]);
   useEffect(() => {
     const kind = slide === 1 ? 'mcq' : slide === 2 ? 'picture' : null;
     if (kind && !dailyCards[kind] && !dailyError[kind] && !dailyLoading[kind]) loadDaily(kind);
@@ -327,7 +342,7 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
     const card = dailyCards[kind];
     if (!card || card.revealed || card.answer !== undefined) return;
     setDailyCards(previous => ({ ...previous, [kind]: { ...card, revealed: true, ...(answer !== undefined ? { answer } : {}) } }));
-    saveDailyAnswer(kind, year, card, answer, dailyDate).catch(() => {});
+    saveDailyAnswer(kind, bankUniversity, year, card, answer, dailyDate).catch(() => {});
   };
   /*
    * The profile's short year code is what the shared group list is keyed by —
