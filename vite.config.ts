@@ -84,10 +84,9 @@ export default defineConfig(({ mode }) => ({
   },
   plugins: [
     react(),
-    mcpPlugin(),
+    mode === "development" && mcpPlugin(),
     pruneUnservedPublicAssets(),
-    mode === 'development' &&
-    componentTagger(),
+    mode === "development" && componentTagger(),
   ].filter(Boolean),
   optimizeDeps: {
     entries: ["index.html"],
