@@ -22,6 +22,7 @@ import { TourOverlay } from '@/components/TourOverlay';
 import { getTourState, hydrateTour, startTour } from '@/tour/store';
 import { getPendingLaunchDeck, setPendingLaunchDeck, stageLaunchPackage } from '@/lib/importedDecks';
 import { getPendingLaunchPdf } from '@/lib/noteFiles';
+import { retryGuestMerge } from '@/lib/guestMerge';
 
 function Shell() {
   const { theme, colors, hydrated } = useTheme();
@@ -57,6 +58,10 @@ function Shell() {
     hydrateLastStudyDay().catch(() => {});
     // Profile, streak and XP; all cloud steps are best-effort.
     hydrateProfile().catch(() => {});
+    // A Google upgrade can finish while the progress-transfer request is
+    // offline. The proof is encrypted on-device and the backend is idempotent,
+    // so retrying at launch safely completes that transfer later.
+    retryGuestMerge().catch(() => {});
     // Separate from the profile: this half must land even when the cloud
     // half cannot. See hydrateStreak.
     hydrateStreak().catch(() => {});
