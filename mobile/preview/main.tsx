@@ -53,6 +53,7 @@ import { McqCard } from '@/components/McqCard';
 import { WaveformRiver } from '@/components/WaveformRiver';
 import FlashcardsScreen, { StudyView } from '@/screens/FlashcardsScreen';
 import HomeScreen from '@/screens/HomeScreen';
+import { GuestAccountUpgrade } from '@/components/GuestAccountUpgrade';
 import { PdfViewerModal } from '@/components/PdfViewerModal';
 import {
   NativeUpdateDemo,
@@ -1218,6 +1219,13 @@ function Shell() {
 
   if (screen === 'botdemo') {
     return <BotDemo />;
+  }
+  if (screen === 'guestupgrade') {
+    return (
+      <View style={{ flex: 1, paddingTop: 72, paddingHorizontal: 18 }}>
+        <GuestAccountUpgrade forceVisible />
+      </View>
+    );
   }
   if (screen === 'homeedit') {
     return (
