@@ -22,9 +22,9 @@ def extract_guess(line: str, first_year: bool) -> tuple[str, list[str]]:
     reasons: list[str] = []
     if not marker:
         return '', ['missing_marker_in_line']
-    # Questions in the source end at their Kerala/date marker. Restrict the
-    # draft to the text BEFORE that marker: trailing RGU/TU columns are never
-    # question content for this university.
+    # Questions in the source end at their first printed university/date marker.
+    # University tags (KU/RGU/TU) are metadata and are preserved separately by
+    # the candidate extractor; none of them belong inside the question text.
     prefix = line[:marker.start()].strip()
     prefix = LEADING_NUMBER.sub('', prefix)
     prefix = re.sub(r"^[\s|_~.'‘“*\\-]+", '', prefix)
