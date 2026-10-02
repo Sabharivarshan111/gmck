@@ -44,6 +44,8 @@ import {
 } from '@/lib/noteFiles';
 import { getSubjects, YEAR_LABEL, type BankNode } from '@/lib/questionBank';
 import { YEAR_TO_KEY, type Year } from '@/lib/profile';
+import { availableBankUniversity } from '@/lib/kuhsAvailability';
+import type { University } from '@shared/university';
 import {
   applyNotesEdit,
   applyTopicDiagrams,
@@ -76,7 +78,8 @@ type View_ =
 export default function NotesScreen() {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
-  const { year: profileYear } = useProfile();
+  const { year: profileYear, university } = useProfile();
+  const bankUniversity = availableBankUniversity(university);
   const [view, setView] = useState<View_>({ kind: 'years' });
   /*
    * Flashcards take over the whole tab rather than becoming another `view`
@@ -103,11 +106,13 @@ export default function NotesScreen() {
       unsubPdf();
       unsubDeck();
     };
-  }, []);
+  }, [bankUniversity]);
 
   const topicsViewFor = useCallback((current: Extract<View_, { kind: 'notes' }>): View_ => {
     const subjectKey = current.topic.key.split('::')[0];
-    const subject = getSubjects(YEAR_TO_KEY[current.year]).find(s => s.key === subjectKey);
+    const subject = getSubjects(YEAR_TO_KEY[current.year], bankUniversity).find(
+      s => s.key === subjectKey,
+    );
     return {
       kind: 'topics',
       year: current.year,
@@ -195,6 +200,7 @@ export default function NotesScreen() {
       {view.kind === 'subjects' ? (
         <SubjectsView
           year={view.year}
+          university={bankUniversity}
           onPick={(subjectKey, subjectName, node) =>
             setView({ kind: 'topics', year: view.year, subjectKey, subjectName, node })
           }
@@ -386,13 +392,18 @@ function YearsView({
 
 function SubjectsView({
   year,
+  university,
   onPick,
 }: {
   year: Year;
+  university: University;
   onPick: (key: string, name: string, node: BankNode) => void;
 }) {
   const { colors } = useTheme();
-  const subjects = useMemo(() => getSubjects(YEAR_TO_KEY[year]), [year]);
+  const subjects = useMemo(
+    () => getSubjects(YEAR_TO_KEY[year], university),
+    [year, university],
+  );
 
   return (
     <>
