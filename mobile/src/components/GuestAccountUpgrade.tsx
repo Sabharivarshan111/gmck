@@ -21,7 +21,7 @@ import {
  * guest-account merge when that Google identity already belongs to another
  * Orbit account.
  */
-export function GuestAccountUpgrade() {
+export function GuestAccountUpgrade({ forceVisible = false }: { forceVisible?: boolean } = {}) {
   const { colors } = useTheme();
   const [anonymous, setAnonymous] = useState(false);
   const [checking, setChecking] = useState(true);
@@ -31,6 +31,13 @@ export function GuestAccountUpgrade() {
   useFocusEffect(
     useCallback(() => {
       let active = true;
+      if (forceVisible) {
+        setChecking(false);
+        setAnonymous(true);
+        return () => {
+          active = false;
+        };
+      }
       if (Platform.OS !== 'android' || !GOOGLE_SIGN_IN_ENABLED) {
         setChecking(false);
         setAnonymous(false);
@@ -54,7 +61,7 @@ export function GuestAccountUpgrade() {
       return () => {
         active = false;
       };
-    }, []),
+    }, [forceVisible]),
   );
 
   const protect = useCallback(async () => {
