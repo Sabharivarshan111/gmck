@@ -80,8 +80,8 @@ export default function BrowseNodeScreen() {
   // arrives from a search sees the other tab and an unhighlighted list.
   const [type, setType] = useState<QuestionType>(highlightType ?? 'essay');
   const remember = useCallback((question: string) => {
-    rememberQuestion({ year, path, title, question, type });
-  }, [year, path, title, type]);
+    rememberQuestion({ university: bankUniversity, year, path, title, question, type });
+  }, [bankUniversity, year, path, title, type]);
   const [query, setQuery] = useState('');
 
   /**
