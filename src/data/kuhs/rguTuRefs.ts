@@ -1,7 +1,7 @@
 // Generated from Decipher OCR cross-check on 2026-10-02.
 // These are additional university references for already-verified question IDs.
 // Question text, topic, type and progress IDs are unchanged.
-export const RGU_TU_EXTRA_REFS: Record<string, readonly string[]> = {
+export const RGU_TU_REFS: Record<string, readonly string[]> = {
   "kuhs-2-micro-p104-01": ["RGU", "TU"],
   "kuhs-2-micro-p104-03": ["RGU", "TU"],
   "kuhs-2-micro-p104-04": ["RGU", "TU"],
@@ -998,3 +998,4 @@ export const RGU_TU_EXTRA_REFS: Record<string, readonly string[]> = {
   "kuhs-4-med-p185-04": ["TU"],
   "kuhs-4-med-p185-05": ["TU"],
   "kuhs-4-med-p185-06": ["RGU", "TU"],
+};
