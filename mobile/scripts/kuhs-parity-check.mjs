@@ -72,6 +72,19 @@ const pageRefs = read('src/lib/pageRefs.ts');
 assert.match(pageRefs, /getQuestionId\(question\)/,
   'Page refs must use the same stable progress/question identity');
 
+
+const notesScreen = read('src/screens/NotesScreen.tsx');
+assert.match(notesScreen, /getSubjects\(YEAR_TO_KEY\[year\], university\)/,
+  'Notes tab must browse subjects from the selected university');
+assert.match(notesScreen, /getSubjects\(YEAR_TO_KEY\[current\.year\], bankUniversity\)/,
+  'Notes back-navigation must resolve the selected university tree');
+
+const progressNotes = read('src/components/ProgressNotesTab.tsx');
+assert.match(progressNotes, /getSubjects\(year, university\)/,
+  'Progress Notes filing must browse the selected university');
+assert.match(progressNotes, /university=\{bankUniversity\}/,
+  'Progress Notes filing sheet must receive the selected university');
+
 const flashcards = read('src/lib/flashcards.ts');
 assert.match(flashcards, /university: University = 'tnmgr'/,
   'Deck identity must accept a university');
@@ -123,5 +136,5 @@ assert.ok(searchHits.length >= rows.length,
   `KUHS search index too small: ${searchHits.length} for ${rows.length} rows`);
 
 console.log(
-  `OK KUHS parity: ${rows.length} questions; browse/search/progress/source refs, triple-tap notes, double-tap MCQs, Anki, resume, custom decks and daily cards are university-scoped. Acute Medicine = 3 essays + 24 short notes.`,
+  `OK KUHS parity: ${rows.length} questions; browse/search/progress/source refs, triple-tap notes, chapter notes, double-tap MCQs, Anki, resume, custom decks and daily cards are university-scoped. Acute Medicine = 3 essays + 24 short notes.`,
 );
