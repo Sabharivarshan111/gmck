@@ -40,6 +40,9 @@ import { EASE, useReducedMotion } from '@/theme/motion';
 import { useTheme, withAlpha } from '@/theme';
 import { getSubjects, YEAR_LABEL, type BankNode } from '@/lib/questionBank';
 import { YEAR_TO_KEY, type Year } from '@/lib/profile';
+import { useProfile } from '@/hooks/useProfile';
+import { availableBankUniversity } from '@/lib/kuhsAvailability';
+import type { University } from '@shared/university';
 import { flattenSubjectTopics, type LeafTopic } from '@/lib/handwrittenNotes';
 import {
   deleteImportedDeck,
@@ -141,6 +144,8 @@ type Screen =
 export default function FlashcardsScreen({ onExit }: { onExit: () => void }) {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
+  const { university } = useProfile();
+  const bankUniversity = availableBankUniversity(university);
   const [view, setView] = useState<Screen>(() =>
     getPendingLaunchDeck() ? { kind: 'importDecks' } : { kind: 'years' },
   );
@@ -175,10 +180,13 @@ export default function FlashcardsScreen({ onExit }: { onExit: () => void }) {
         year: current.year,
         subjectKey: current.subjectKey,
         subjectName: current.subjectName,
-        node: getSubjects(YEAR_TO_KEY[current.year]).find(s => s.key === current.subjectKey)?.node ?? {},
+        node:
+          getSubjects(YEAR_TO_KEY[current.year], bankUniversity).find(
+            s => s.key === current.subjectKey,
+          )?.node ?? {},
       };
     });
-  }, [onExit]);
+  }, [bankUniversity, onExit]);
 
   return (
     <KeyboardSafe>
@@ -225,6 +233,7 @@ export default function FlashcardsScreen({ onExit }: { onExit: () => void }) {
       {view.kind === 'subjects' ? (
         <SubjectsView
           year={view.year}
+          university={bankUniversity}
           onBack={back}
           onPick={(subjectKey, subjectName, node) =>
             setView({ kind: 'topics', year: view.year, subjectKey, subjectName, node })
@@ -254,6 +263,7 @@ export default function FlashcardsScreen({ onExit }: { onExit: () => void }) {
       {view.kind === 'study' ? (
         <StudyView
           year={view.year}
+          university={bankUniversity}
           subjectName={view.subjectName}
           subjectKey={view.subjectKey}
           topic={view.topic}
@@ -1348,15 +1358,20 @@ function CustomStudyView({ deckId, onBack }: { deckId: string; onBack: () => voi
 
 function SubjectsView({
   year,
+  university,
   onPick,
   onBack,
 }: {
   year: Year;
+  university: University;
   onPick: (key: string, name: string, node: BankNode) => void;
   onBack: () => void;
 }) {
   const { colors } = useTheme();
-  const subjects = useMemo(() => getSubjects(YEAR_TO_KEY[year]), [year]);
+  const subjects = useMemo(
+    () => getSubjects(YEAR_TO_KEY[year], university),
+    [year, university],
+  );
   return (
     <>
       <Header title={`${YEAR_LABEL[YEAR_TO_KEY[year]]} • Subjects`} onBack={onBack} />
@@ -1705,6 +1720,7 @@ function ChapterAddSheet({
 
 export function StudyView({
   year,
+  university = 'tnmgr',
   subjectName,
   subjectKey,
   topic,
@@ -1714,6 +1730,7 @@ export function StudyView({
   fixture,
 }: {
   year: Year;
+  university?: University;
   subjectName: string;
   subjectKey?: string;
   topic: LeafTopic;
@@ -1765,6 +1782,7 @@ export function StudyView({
           subtopicKey,
           subtopicName: topic.name,
           questions: topic.questions,
+          university,
           regenerate,
         });
         const saved = await loadSchedule(built.deckKey);
@@ -1777,7 +1795,7 @@ export function StudyView({
         setLoading(false);
       }
     },
-    [subjectName, subtopicKey, topic.name, topic.questions, yearLabel],
+    [subjectName, subtopicKey, topic.name, topic.questions, university, yearLabel],
   );
 
   useEffect(() => {
@@ -1833,6 +1851,7 @@ export function StudyView({
         subtopicKey: personalDeckKey(subtopicKey),
         subtopicName: topic.name,
         questions: topic.questions,
+        university,
         regenerate: true,
         noCache: true,
       });
@@ -1849,7 +1868,7 @@ export function StudyView({
     } finally {
       setGenerating(false);
     }
-  }, [chapter, onOpenOwn, subjectName, subtopicKey, topic.name, topic.questions, yearLabel]);
+  }, [chapter, onOpenOwn, subjectName, subtopicKey, topic.name, topic.questions, university, yearLabel]);
 
   const writeOwn = useCallback(async () => {
     const made = await createDeck(`${topic.name} — your deck`, { chapter, source: 'hand' });
