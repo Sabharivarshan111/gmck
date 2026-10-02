@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { supabase } from './supabase';
 import { type Card, newCard } from '@shared/anki';
+import { stripKuhsQuestionMarker, type University } from '@shared/university';
 import { type CardMode, type CardPathway } from '@shared/pathwayCards';
 
 /**
@@ -118,8 +119,14 @@ export function personalDeckKey(topicKey: string, at = Date.now()): string {
 }
 
 /** Same shape the function builds, so a cache hit and a fresh build agree. */
-export function deckKeyFor(year: string, subject: string, subtopicKey: string): string {
-  return `${year}::${subject}::${subtopicKey}`;
+export function deckKeyFor(
+  year: string,
+  subject: string,
+  subtopicKey: string,
+  university: University = 'tnmgr',
+): string {
+  const base = `${year}::${subject}::${subtopicKey}`;
+  return university === 'kuhs' ? `kuhs::${base}` : base;
 }
 
 function isDeckCard(value: unknown): value is DeckCard {
@@ -166,6 +173,7 @@ export async function fetchDeck(request: {
   subtopicKey: string;
   subtopicName: string;
   questions: string[];
+  university?: University;
   regenerate?: boolean;
   /**
    * Ask the server not to keep this deck.
@@ -216,7 +224,14 @@ export async function fetchDeck(request: {
     throw new Error('This chapter produced no usable cards.');
   }
   return {
-    deckKey: payload.deckKey ?? deckKeyFor(request.year, request.subject, request.subtopicKey),
+    deckKey:
+      payload.deckKey ??
+      deckKeyFor(
+        request.year,
+        request.subject,
+        request.subtopicKey,
+        request.university ?? 'tnmgr',
+      ),
     cards,
     cached: Boolean(payload.cached),
   };
