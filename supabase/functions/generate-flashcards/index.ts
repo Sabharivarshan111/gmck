@@ -55,6 +55,7 @@ const BodySchema = z.object({
   subject: z.string().min(1).max(120),
   subtopicKey: z.string().min(1).max(300),
   subtopicName: z.string().min(1).max(200),
+  university: z.enum(["tnmgr", "kuhs"]).default("tnmgr"),
   questions: z.array(z.string().max(1000)).min(1).max(400),
   regenerate: z.boolean().optional(),
   limit: z.number().int().min(6).max(60).optional(),
@@ -522,8 +523,17 @@ serve(secureEndpoint(async (req) => {
         status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
-    const { year, subject, subtopicKey, subtopicName, questions, regenerate, limit, noCache } =
-      parsed.data;
+    const {
+      year,
+      subject,
+      subtopicKey,
+      subtopicName,
+      university,
+      questions,
+      regenerate,
+      limit,
+      noCache,
+    } = parsed.data;
 
     /*
      * The floor applies before anything else, so a small chapter is a full deck
@@ -534,11 +544,12 @@ serve(secureEndpoint(async (req) => {
     const target =
       limit ??
       Math.max(MIN_CARDS, Math.min(MAX_CARDS, Math.round(questions.length * CARDS_PER_QUESTION)));
-    const deckKey = `${year}::${subject}::${subtopicKey}`;
+    const baseDeckKey = `${year}::${subject}::${subtopicKey}`;
+    const deckKey = university === "kuhs" ? `kuhs::${baseDeckKey}` : baseDeckKey;
     // Bind every new shared cache entry to the exact prompt inputs. A caller
     // cannot poison another chapter by supplying its key with different questions.
     const cacheKey = deckKey + "::input:" + await hash(JSON.stringify({
-      year, subject, subtopicKey, subtopicName, questions, limit: limit ?? null,
+      university, year, subject, subtopicKey, subtopicName, questions, limit: limit ?? null,
     }));
 
     // A personal deck neither reads nor writes the shared cache: reading it
@@ -549,10 +560,12 @@ serve(secureEndpoint(async (req) => {
         .select("cards, deck_target")
         .eq("deck_key", cacheKey)
         .maybeSingle();
-      if (!cached?.cards) {
-        // Existing curated cache remains readable and cannot be overwritten here.
+      if (!cached?.cards && university === "tnmgr") {
+        // Existing TNMGR curated cache remains readable and cannot be overwritten here.
+        // KUHS must never fall back to that legacy key because the chapter names overlap
+        // while the source questions are different.
         const legacy = await admin.from("flashcards").select("cards, deck_target")
-          .eq("deck_key", deckKey).maybeSingle();
+          .eq("deck_key", baseDeckKey).maybeSingle();
         cached = legacy.data;
       }
       /*
