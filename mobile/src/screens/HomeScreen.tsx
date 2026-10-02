@@ -245,10 +245,10 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
     let active = true;
     setDailyDate(localStudyDate());
     readFocusSummary().then(value => { if (active) setFocus(value); });
-    readLastQuestion().then(value => { if (active) setLastQuestion(value); });
+    readLastQuestion(bankUniversity).then(value => { if (active) setLastQuestion(value); });
     if (!getAttendance().hydrated) hydrateAttendance().catch(() => {});
     return () => { active = false; };
-  }, []));
+  }, [bankUniversity]));
 
   const reduceMotion = useReducedMotion();
   const heroFade = useRef(new Animated.Value(1)).current;
