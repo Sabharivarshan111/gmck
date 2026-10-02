@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { DeckCard } from './flashcards';
 import type { Year } from './profile';
+import type { University } from '@shared/university';
 
 /**
  * Decks you write yourself.
@@ -31,6 +32,7 @@ const KEY = 'orbit:anki:custom-decks';
  * for a chapter can be looked up together.
  */
 export interface DeckChapter {
+  university?: University;
   year: Year;
   subjectKey: string;
   subjectName: string;
@@ -160,8 +162,16 @@ export async function createDeck(
 }
 
 /** The decks filed under one chapter, newest first. */
-export function decksForChapter(decks: CustomDeck[], topicKey: string): CustomDeck[] {
-  return decks.filter(deck => deck.chapter?.topicKey === topicKey);
+export function decksForChapter(
+  decks: CustomDeck[],
+  topicKey: string,
+  university: University = 'tnmgr',
+): CustomDeck[] {
+  return decks.filter(
+    deck =>
+      deck.chapter?.topicKey === topicKey &&
+      (deck.chapter?.university ?? 'tnmgr') === university,
+  );
 }
 
 /**
