@@ -19,6 +19,7 @@ export interface VerifiedKuhsQuestion {
 
 import { REVIEWED_MORE } from './reviewedMore.ts';
 import { RGU_TU_REFS } from './rguTuRefs.ts';
+import { RGU_TU_ADDITIONAL } from './rguTuAdditional.ts';
 
 type Row = Omit<VerifiedKuhsQuestion, 'year' | 'subjectKey' | 'pdfPage'>;
 const firstAnatomy = (row: Row): VerifiedKuhsQuestion =>
@@ -232,6 +233,7 @@ export const VERIFIED_KUHS_QUESTIONS: VerifiedKuhsQuestion[] = [
   secondPharmacology({ id: 'kuhs-2-pharm-p7-15', topicKey: 'pharmacotherapy-and-adverse-drug-effects', kind: 'short-notes', question: 'Pharmacovigilance. Describe the basis and grading of causality assessment', examRefs: ['KU15'] }),
   secondPharmacology({ id: 'kuhs-2-pharm-p7-16', topicKey: 'pharmacotherapy-and-adverse-drug-effects', kind: 'short-notes', question: 'Define Teratogenicity, mention four teratogenic drugs', examRefs: ['KU15'] }),
   ...REVIEWED_MORE,
+  ...RGU_TU_ADDITIONAL,
 ].map(row => {
   const extra = RGU_TU_REFS[row.id];
   if (!extra?.length) return row;
