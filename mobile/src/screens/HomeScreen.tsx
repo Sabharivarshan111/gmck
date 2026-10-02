@@ -20,6 +20,7 @@ import { useSubjectOrder } from '@/hooks/useSubjectOrder';
 import { SettingsSheet } from '@/components/SettingsSheet';
 import { UniversityConfirmation } from '@/components/UniversityConfirmation';
 import { UniversityChoice } from '@/components/UniversityChoice';
+import { GuestAccountUpgrade } from '@/components/GuestAccountUpgrade';
 import { availableBankUniversity } from '@/lib/kuhsAvailability';
 import { UNIVERSITY_LABEL } from '@shared/university';
 import { ThemeMenu, type Anchor } from '@/components/ThemeMenu';
@@ -512,6 +513,8 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
           </View>
         </View>
       </View>
+
+      {!editing ? <GuestAccountUpgrade /> : null}
 
       {!editing ? (
         <Touchable
