@@ -7,7 +7,7 @@ import {
   isErrorWithCode,
 } from '@react-native-google-signin/google-signin';
 import { supabase } from './supabase';
-import { rememberGuestSession } from './guestMerge';
+import { rememberGuestSession, retryGuestMerge } from './guestMerge';
 
 export const GOOGLE_AUTH_FLAG_KEY = '@orbit:google_authenticated_v1';
 export const GOOGLE_AUTH_EMAIL_KEY = '@orbit:google_authenticated_email';
@@ -52,9 +52,20 @@ export interface GoogleAccount {
   name: string | null;
 }
 
+/** True only for a live Supabase anonymous session on this device. */
+export async function isCurrentUserAnonymous(): Promise<boolean> {
+  const { data } = await supabase.auth.getSession();
+  return data.session?.user?.is_anonymous === true;
+}
+
 /**
- * Runs the Google flow and upgrades the current Supabase session to that
- * identity. Progress already stored anonymously is reconciled by the caller.
+ * Runs the Google flow and upgrades the current Supabase session.
+ *
+ * For an anonymous account we first attempt Supabase's native identity-linking
+ * flow, which keeps the same user id and therefore needs no data move. If
+ * manual linking is unavailable or the Google identity already belongs to an
+ * existing Orbit account, we fall back to a normal Google sign-in and the
+ * verified guest-merge backend transfers progress into that account.
  */
 export async function signInWithGoogle(): Promise<GoogleAccount> {
   if (!GOOGLE_SIGN_IN_ENABLED) throw new GoogleSignInCancelled();
@@ -74,13 +85,57 @@ export async function signInWithGoogle(): Promise<GoogleAccount> {
       throw new Error('Google did not return an ID token.');
     }
 
-    await rememberGuestSession();
+    const { data: before } = await supabase.auth.getSession();
+    const wasAnonymous = before.session?.user?.is_anonymous === true;
+
+    if (wasAnonymous) {
+      await rememberGuestSession();
+
+      // Native linking keeps the same Supabase user id when manual linking is
+      // enabled. GoogleSignin.getTokens() supplies the access token required by
+      // Supabase's native ID-token linking API.
+      try {
+        const googleTokens = await GoogleSignin.getTokens();
+        const linked = await supabase.auth.linkIdentity({
+          provider: 'google',
+          token: idToken,
+          access_token: googleTokens.accessToken,
+        });
+
+        if (!linked.error) {
+          // Refresh so is_anonymous and identities reflect the linked account
+          // immediately in the UI and in RLS checks.
+          await supabase.auth.refreshSession();
+          const { data: linkedUser } = await supabase.auth.getUser();
+          if (linkedUser.user?.is_anonymous === false) {
+            const email = response.data?.user?.email ?? linkedUser.user.email ?? null;
+            const name = response.data?.user?.name ?? null;
+            try {
+              await AsyncStorage.setItem(GOOGLE_AUTH_FLAG_KEY, 'true');
+              if (email) await AsyncStorage.setItem(GOOGLE_AUTH_EMAIL_KEY, email);
+            } catch {}
+            return { email, name };
+          }
+        }
+      } catch {
+        // Fall through to verified sign-in + merge. This also covers projects
+        // where manual identity linking has not been enabled yet.
+      }
+    }
+
     const { error } = await supabase.auth.signInWithIdToken({
       provider: 'google',
       token: idToken,
     });
     if (error) {
       throw new Error(error.message);
+    }
+
+    // If this started as an anonymous session, rememberGuestSession() stored a
+    // one-time proof before the account switch. The Edge Function validates
+    // both identities before moving any rows.
+    if (wasAnonymous) {
+      await retryGuestMerge();
     }
 
     const email = response.data?.user?.email ?? null;
