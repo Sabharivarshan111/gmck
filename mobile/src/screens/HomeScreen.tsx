@@ -241,6 +241,10 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
   const [anchor, setAnchor] = useState<Anchor | null>(null);
   const themeButton = useRef<React.ComponentRef<typeof View>>(null);
 
+  const { yearKey: year, streak, setYear, university, setUniversity } = useProfile();
+  const bankUniversity = availableBankUniversity(university);
+  const [universityOpen, setUniversityOpen] = useState(false);
+
   useFocusEffect(useCallback(() => {
     let active = true;
     setDailyDate(localStudyDate());
@@ -287,9 +291,6 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
     }).start();
   }, [slide, heroFade, reduceMotion]);
 
-  const { yearKey: year, streak, setYear, university, setUniversity } = useProfile();
-  const bankUniversity = availableBankUniversity(university);
-  const [universityOpen, setUniversityOpen] = useState(false);
   const dailySourceQuestions = useMemo(
     () =>
       getSubjects(year, bankUniversity)
