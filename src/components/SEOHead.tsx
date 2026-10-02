@@ -1,63 +1,67 @@
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
 interface SEOHeadProps {
   title: string;
   description: string;
   keywords?: string;
   canonical?: string;
+  image?: string;
 }
 
-export const SEOHead = ({ title, description, keywords, canonical }: SEOHeadProps) => {
+export const SEOHead = ({ title, description, keywords, canonical, image }: SEOHeadProps) => {
   useEffect(() => {
-    // Update document title
     document.title = title;
 
-    // Update or create meta description
-    let metaDescription = document.querySelector('meta[name="description"]');
-    if (!metaDescription) {
-      metaDescription = document.createElement('meta');
-      metaDescription.setAttribute('name', 'description');
-      document.head.appendChild(metaDescription);
-    }
-    metaDescription.setAttribute('content', description);
-
-    // Update or create meta keywords
-    if (keywords) {
-      let metaKeywords = document.querySelector('meta[name="keywords"]');
-      if (!metaKeywords) {
-        metaKeywords = document.createElement('meta');
-        metaKeywords.setAttribute('name', 'keywords');
-        document.head.appendChild(metaKeywords);
+    const updateNamedMeta = (name: string, content: string) => {
+      let tag = document.querySelector(`meta[name="${name}"]`);
+      if (!tag) {
+        tag = document.createElement("meta");
+        tag.setAttribute("name", name);
+        document.head.appendChild(tag);
       }
-      metaKeywords.setAttribute('content', keywords);
-    }
+      tag.setAttribute("content", content);
+    };
 
-    // Update or create canonical link
+    const updatePropertyMeta = (property: string, content: string) => {
+      let tag = document.querySelector(`meta[property="${property}"]`);
+      if (!tag) {
+        tag = document.createElement("meta");
+        tag.setAttribute("property", property);
+        document.head.appendChild(tag);
+      }
+      tag.setAttribute("content", content);
+    };
+
+    updateNamedMeta("description", description);
+    updateNamedMeta("robots", "index,follow,max-image-preview:large");
+
+    // Kept for backwards compatibility with existing pages that still pass keywords.
+    if (keywords) updateNamedMeta("keywords", keywords);
+
     if (canonical) {
       let canonicalLink = document.querySelector('link[rel="canonical"]');
       if (!canonicalLink) {
-        canonicalLink = document.createElement('link');
-        canonicalLink.setAttribute('rel', 'canonical');
+        canonicalLink = document.createElement("link");
+        canonicalLink.setAttribute("rel", "canonical");
         document.head.appendChild(canonicalLink);
       }
-      canonicalLink.setAttribute('href', canonical);
+      canonicalLink.setAttribute("href", canonical);
     }
 
-    // Update Open Graph tags
-    const updateOGTag = (property: string, content: string) => {
-      let ogTag = document.querySelector(`meta[property="${property}"]`);
-      if (!ogTag) {
-        ogTag = document.createElement('meta');
-        ogTag.setAttribute('property', property);
-        document.head.appendChild(ogTag);
-      }
-      ogTag.setAttribute('content', content);
-    };
+    const resolvedImage = image ?? "https://mbbsqbank-questor.lovable.app/og-image.png";
 
-    updateOGTag('og:title', title);
-    updateOGTag('og:description', description);
-    updateOGTag('og:type', 'website');
-  }, [title, description, keywords, canonical]);
+    updatePropertyMeta("og:title", title);
+    updatePropertyMeta("og:description", description);
+    updatePropertyMeta("og:type", "website");
+    updatePropertyMeta("og:site_name", "ORBIT MBBS QBANK");
+    if (canonical) updatePropertyMeta("og:url", canonical);
+    updatePropertyMeta("og:image", resolvedImage);
+
+    updateNamedMeta("twitter:card", "summary_large_image");
+    updateNamedMeta("twitter:title", title);
+    updateNamedMeta("twitter:description", description);
+    updateNamedMeta("twitter:image", resolvedImage);
+  }, [title, description, keywords, canonical, image]);
 
   return null;
 };

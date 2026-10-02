@@ -91,9 +91,9 @@ const Index = () => {
   return (
     <div className="bg-background min-h-screen overflow-x-hidden relative">
       <SEOHead
-        title="ORBIT MBBS QBANK - Free Medical Question Bank with AI Assistant"
-        description="Free comprehensive MBBS question bank covering Anatomy, Physiology, Biochemistry, Pathology, Pharmacology, and more with an AI study assistant."
-        keywords="MBBS question bank, medical MCQ, NEET PG preparation, anatomy questions, pharmacology MCQ, pathology questions"
+        title="ORBIT MBBS QBANK | TNMGRMU Question Bank & PYQs"
+        description="Free TNMGRMU MBBS question bank with previous year questions, MCQs, AI answers and revision tools for 1st, 2nd, 3rd and Final Year MBBS students."
+        canonical="https://mbbsqbank-questor.lovable.app/"
       />
       <InstallPrompt />
 

@@ -11,6 +11,7 @@ import About from "./pages/About";
 import Blog from "./pages/Blog";
 import FAQ from "./pages/FAQ";
 import StudyTips from "./pages/StudyTips";
+import TnmgrmuQuestionBank from "./pages/TnmgrmuQuestionBank";
 import HowToStudyAnatomy from "./pages/articles/HowToStudyAnatomy";
 import PharmacologyStudyGuide from "./pages/articles/PharmacologyStudyGuide";
 import PathologyBasics from "./pages/articles/PathologyBasics";
@@ -76,6 +77,7 @@ const App = () => (
               <Route path="/blog" element={<Blog />} />
               <Route path="/faq" element={<FAQ />} />
               <Route path="/study-tips" element={<StudyTips />} />
+              <Route path="/tnmgrmu-mbbs-question-bank" element={<TnmgrmuQuestionBank />} />
               <Route path="/articles/anatomy-guide" element={<HowToStudyAnatomy />} />
               <Route path="/articles/pharmacology-guide" element={<PharmacologyStudyGuide />} />
               <Route path="/articles/pathology-basics" element={<PathologyBasics />} />

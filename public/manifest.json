@@ -1,13 +1,16 @@
 {
-  "name": "MBBS Question Bank",
-  "short_name": "MBBS QB",
-  "description": "Medical Question Bank for MBBS Students",
+  "name": "ORBIT MBBS QBANK",
+  "short_name": "ORBIT",
+  "description": "TNMGRMU-focused MBBS question bank with PYQs, MCQs, AI-assisted explanations and medical study tools.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#2563eb",
   "orientation": "portrait",
-  "categories": ["education", "medical"],
+  "categories": [
+    "education",
+    "medical"
+  ],
   "icons": [
     {
       "src": "/icon-192.png",

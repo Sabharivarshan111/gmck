@@ -180,6 +180,25 @@ export default function HomeTab({ onNavigate }: { onNavigate: (tab: ShellTab, me
       {/* WhatsApp community */}
       <WhatsAppMiniButton />
 
+      {/* TNMGRMU SEO / discovery link */}
+      <Link
+        to="/tnmgrmu-mbbs-question-bank"
+        className="block rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/10 via-card to-fuchsia-500/5 p-4 hover:border-primary/60 transition-colors"
+      >
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-primary">TNMGRMU Exam Prep</p>
+            <h3 className="mt-1 text-base font-bold text-foreground">
+              TNMGRMU MBBS Question Bank & Previous Year Questions
+            </h3>
+            <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+              Explore university-focused PYQs, MCQs, AI-assisted revision and study tools for Tamil Nadu Dr. M.G.R. Medical University MBBS exams.
+            </p>
+          </div>
+          <ArrowRight className="mt-1 h-5 w-5 shrink-0 text-primary" />
+        </div>
+      </Link>
+
 
       {/* Your Subjects */}
       <section>
