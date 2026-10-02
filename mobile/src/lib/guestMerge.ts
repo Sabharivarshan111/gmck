@@ -22,7 +22,16 @@ export async function retryGuestMerge(): Promise<void> {
     if (!raw) return;
     const guest = JSON.parse(raw);
     const { data } = await supabase.auth.getSession();
-    if (!data.session || data.session.user.is_anonymous || data.session.user.id === guest.id) return;
+    if (!data.session || data.session.user.is_anonymous) return;
+
+    // Native identity linking upgrades the anonymous user in place, so the
+    // user id remains identical and there is nothing to transfer. Discard the
+    // one-time proof once Auth confirms that account is no longer anonymous.
+    if (data.session.user.id === guest.id) {
+      await secureStorage.removeItem(KEY);
+      return;
+    }
+
     const { data: result, error } = await supabase.functions.invoke('merge-guest-account', { body: { guest_access_token: guest.access, guest_proof: guest.proof } });
     if (!error && result?.success === true) await secureStorage.removeItem(KEY);
     // Never discard progress or overwrite a different account when offline/expired.
