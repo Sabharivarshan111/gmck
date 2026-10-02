@@ -1276,6 +1276,7 @@ export function ProgressNotesTab({ year }: Props) {
       <NoteFilingSheet
             visible={filingOpen}
             year={year}
+            university={bankUniversity}
             onClose={() => setFilingOpen(false)}
             onPick={picked => {
               setEditSubject(picked?.subject ?? null);
