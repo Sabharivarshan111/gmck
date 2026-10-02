@@ -106,7 +106,7 @@ export default function NotesScreen() {
       unsubPdf();
       unsubDeck();
     };
-  }, [bankUniversity]);
+  }, []);
 
   const topicsViewFor = useCallback((current: Extract<View_, { kind: 'notes' }>): View_ => {
     const subjectKey = current.topic.key.split('::')[0];
@@ -120,7 +120,7 @@ export default function NotesScreen() {
       subjectName: current.subject,
       node: subject?.node ?? {},
     };
-  }, []);
+  }, [bankUniversity]);
 
   // Hardware back steps up one level before leaving the tab. Android only —
   // BackHandler is a no-op elsewhere and warns in the web preview.
