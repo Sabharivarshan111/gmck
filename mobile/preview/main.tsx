@@ -1222,9 +1222,11 @@ function Shell() {
   }
   if (screen === 'guestupgrade') {
     return (
-      <View style={{ flex: 1, paddingTop: 72, paddingHorizontal: 18 }}>
-        <GuestAccountUpgrade forceVisible />
-      </View>
+      <NavigationContainer theme={navTheme}>
+        <View style={{ flex: 1, paddingTop: 72, paddingHorizontal: 18 }}>
+          <GuestAccountUpgrade forceVisible />
+        </View>
+      </NavigationContainer>
     );
   }
   if (screen === 'homeedit') {
