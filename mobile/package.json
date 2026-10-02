@@ -93,7 +93,8 @@
     "check:proforma-pdf-extractor": "python3 ../.agents/sources/proformas/extract-pdf-text.py --self-test",
     "check:kuhs-repeats": "node scripts/kuhs-repeat-check.mjs",
     "check:v25": "node scripts/v25-regression-check.mjs",
-    "check:notes-depth": "node --experimental-strip-types --no-warnings scripts/notes-depth-check.mjs"
+    "check:notes-depth": "node --experimental-strip-types --no-warnings scripts/notes-depth-check.mjs",
+    "check:kuhs-parity": "node scripts/kuhs-parity-check.mjs"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^3.1.1",
