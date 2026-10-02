@@ -192,9 +192,11 @@ export async function fetchDeck(request: {
       subject: request.subject,
       subtopicKey: request.subtopicKey,
       subtopicName: request.subtopicName,
+      university: request.university ?? 'tnmgr',
       // The function caps at 400; sending the whole chapter of a big topic
-      // would 400 the request the way the notes function does.
-      questions: request.questions.slice(0, 300),
+      // would 400 the request the way the notes function does. KUHS[...] is an
+      // internal progress/source marker and must never become AI study text.
+      questions: request.questions.slice(0, 300).map(stripKuhsQuestionMarker),
       regenerate: request.regenerate ?? false,
       ...(request.noCache ? { noCache: true } : null),
       /*
