@@ -3,7 +3,7 @@
 
 This deliberately does not turn OCR into a published question bank. Tables,
 two-column layouts and mixed university labels need visual review of each row.
-Only KU/KUHS labels are candidates; TU and RGU alone are never imported.
+KU/KUHS, RGU and TU labels are all candidates and are preserved for review.
 
 Usage: python3 scripts/extract-kuhs-candidates.py OCR_DIR OUT_TSV
 """
@@ -21,7 +21,7 @@ TAG = re.compile(r"[\[{(]\s*(?:KUHS|KU)\s*([0-9][0-9\s,;/.-]*)(?=\s*(?:[,;/]?\s*
 BARE_TAG = re.compile(r"(?<![A-Za-z])(?:KUHS|KU)\s*((?:20)?[12][0-9](?:\s*[,;/.-]\s*(?:20)?[12][0-9])*)(?!\d)", re.I)
 UNDATED_TAG = re.compile(r"[\[{(]\s*(?:KUHS|KU)\s*[\]})]", re.I)
 YEAR = re.compile(r"(?<!\d)(?:20)?(1[0-9]|2[0-9])(?=\D|$)")
-OTHER = re.compile(r"\b(?:RGU|TU|TNU)\b", re.I)
+OTHER = re.compile(r"\b(?:RGU|TU|TNU)\b", re.I)\nUNIVERSITY_TAG = re.compile(r"\b(?:KUHS|KU|RGU|TU|TNU)\b", re.I)
 
 
 def kerala_years(line: str) -> tuple[str, ...]:
@@ -41,7 +41,14 @@ def candidates(folder: pathlib.Path):
         for index, line in enumerate(lines):
             years = kerala_years(line)
             undated = bool(UNDATED_TAG.search(line))
-            if not years and not undated:
+            universities = []
+            for tag in UNIVERSITY_TAG.findall(line):
+                normal = tag.upper()
+                if normal == 'KUHS':
+                    normal = 'KU'
+                if normal not in universities:
+                    universities.append(normal)
+            if not years and not undated and not universities:
                 continue
             # Retain context for wrapped text and case-based essay questions.
             # A reviewer must compare it with the page before publication.
@@ -65,6 +72,7 @@ def candidates(folder: pathlib.Path):
                 "line": index + 1,
                 "ku_years": ",".join(years),
                 "ku_count": len(years),
+                "universities": ",".join(universities),
                 "review_flags": ",".join(reasons),
                 "ocr_line": line.strip(),
                 "context": context,
@@ -93,10 +101,10 @@ def main():
     rows = list(candidates(folder))
     destination.parent.mkdir(parents=True, exist_ok=True)
     with destination.open("w", newline="") as out:
-        writer = csv.DictWriter(out, fieldnames=["page", "column", "line", "ku_years", "ku_count", "review_flags", "ocr_line", "context"], delimiter="\t")
+        writer = csv.DictWriter(out, fieldnames=["page", "column", "line", "ku_years", "ku_count", "universities", "review_flags", "ocr_line", "context"], delimiter="\t")
         writer.writeheader()
         writer.writerows(rows)
-    print(f"{folder.name}: {len(rows)} KU/KUHS tagged OCR lines; all require source-page review")
+    print(f"{folder.name}: {len(rows)} KU/RGU/TU tagged OCR lines; all require source-page review")
 
 
 if __name__ == "__main__":
