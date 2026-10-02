@@ -12,6 +12,7 @@ const poolSize = 42;
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 const db = createClient(Deno.env.get('SUPABASE_URL') ?? '', Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '', { auth: { persistSession: false } });
 type Card = { question: string; options: string[]; correctIndex: number; explanation: string; subject: string; sourceQuestion: string; imageUrl?: string };
+type SourceQuestion = { subject: string; question: string };
 
 async function loadPicture(url: string) {
   if (!url.startsWith(imagePrefix)) throw new Error('Unexpected diagram URL');
@@ -26,29 +27,46 @@ async function loadPicture(url: string) {
   return { inlineData: { mimeType: mime, data: btoa(binary) } };
 }
 
-async function generate(year: string, kind: string, slot: number): Promise<Card> {
-  const base = () => db.from('question_diagrams').select('id,subject,question_text,public_url', { count: 'exact' })
-    .eq('year', labels[year]).eq('status', 'approved').eq('reviewed', true).not('public_url', 'is', null);
-  const { count, error } = await base().limit(1);
-  if (error || !count) throw new Error('No reviewed diagrams for this year');
+async function generate(
+  university: 'tnmgr' | 'kuhs',
+  year: string,
+  kind: string,
+  slot: number,
+  sourceQuestions: SourceQuestion[],
+): Promise<Card> {
   const parts: Array<Record<string, unknown>> = [];
-  let row: { subject: string; question_text: string; public_url: string } | null = null;
-  for (let attempt = 0; attempt < Math.min(6, count); attempt++) {
-    // All reviewed year pools have at least 78 rows. Consecutive slots must
-    // visit different pictures even when a pool size shares factors with 17.
-    const position = (slot + (kind === 'picture' ? 47 : 0) + attempt) % count;
-    const picked = await base().order('id').range(position, position);
-    if (picked.error || !picked.data?.[0]) continue;
-    const candidate = picked.data[0];
-    if (kind === 'picture') {
-      try { parts.push(await loadPicture(candidate.public_url)); }
-      catch { continue; }
+  let row: { subject: string; question_text: string; public_url?: string } | null = null;
+
+  // KUHS MCQs come from the KUHS question-bank sample the client sends. The
+  // source sample contains no answers or private data — just bundled PYQ text.
+  if (university === 'kuhs' && kind === 'mcq' && sourceQuestions.length > 0) {
+    const picked = sourceQuestions[slot % sourceQuestions.length];
+    row = { subject: picked.subject, question_text: picked.question };
+  } else {
+    const base = () => db.from('question_diagrams').select('id,subject,question_text,public_url', { count: 'exact' })
+      .eq('year', labels[year]).eq('status', 'approved').eq('reviewed', true).not('public_url', 'is', null);
+    const { count, error } = await base().limit(1);
+    if (error || !count) throw new Error('No reviewed diagrams for this year');
+    for (let attempt = 0; attempt < Math.min(6, count); attempt++) {
+      // Picture of the Day is a reviewed visual pool. It is university-neutral
+      // medical content, but its cache identity is university-specific below so
+      // switching banks never reuses the other bank's saved card.
+      const position = (slot + (kind === 'picture' ? 47 : 0) + attempt) % count;
+      const picked = await base().order('id').range(position, position);
+      if (picked.error || !picked.data?.[0]) continue;
+      const candidate = picked.data[0];
+      if (kind === 'picture') {
+        try { parts.push(await loadPicture(candidate.public_url)); }
+        catch { continue; }
+      }
+      row = candidate;
+      break;
     }
-    row = candidate;
-    break;
   }
-  if (!row) throw new Error('Could not load a reviewed diagram');
+
+  if (!row) throw new Error('Could not choose a daily study source');
   parts.push({ text: `You are an undergraduate medical examiner. Create ONE accurate single-best-answer MCQ for ${labels[year]} MBBS.
+University bank: ${university === 'kuhs' ? 'KUHS' : 'TNMGR'}.
 Subject: ${row.subject}. Study topic: ${row.question_text.slice(0, 700)}.
 ${kind === 'picture' ? 'The student sees the attached diagram. Test something visible in that image; do not assume details not visible.' : 'Test one concrete concept in the study topic.'}
 Use exactly four concise options, one unequivocal correctIndex from 0 to 3, and a short teaching explanation. Return JSON only.` });
@@ -77,7 +95,7 @@ Use exactly four concise options, one unequivocal correctIndex from 0 to 3, and 
   }
   return { question: card.question, options: card.options, correctIndex: card.correctIndex,
     explanation: card.explanation, subject: row.subject, sourceQuestion: row.question_text,
-    ...(kind === 'picture' ? { imageUrl: row.public_url } : {}) };
+    ...(kind === 'picture' && row.public_url ? { imageUrl: row.public_url } : {}) };
 }
 
 Deno.serve(secureEndpoint(async req => {
@@ -86,13 +104,22 @@ Deno.serve(secureEndpoint(async req => {
   let input: Record<string, unknown>;
   try { input = await req.json(); } catch { return json({ error: 'Invalid request.' }, 400); }
   const { year, kind, date } = input;
-  if (typeof year !== 'string' || !labels[year] || (kind !== 'mcq' && kind !== 'picture') ||
+  const university = input.university === 'kuhs' ? 'kuhs' : input.university === 'tnmgr' || input.university === undefined ? 'tnmgr' : null;
+  const rawSources = Array.isArray(input.sourceQuestions) ? input.sourceQuestions.slice(0, 60) : [];
+  const sourceQuestions: SourceQuestion[] = rawSources
+    .filter((item): item is Record<string, unknown> => !!item && typeof item === 'object')
+    .map(item => ({
+      subject: typeof item.subject === 'string' ? item.subject.slice(0, 120) : '',
+      question: typeof item.question === 'string' ? item.question.slice(0, 1000) : '',
+    }))
+    .filter(item => item.subject.length > 0 && item.question.length > 3);
+  if (!university || typeof year !== 'string' || !labels[year] || (kind !== 'mcq' && kind !== 'picture') ||
       typeof date !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(date)) return json({ error: 'Invalid daily request.' }, 400);
   const day = Date.parse(date + 'T00:00:00Z');
   if (!Number.isFinite(day) || new Date(day).toISOString().slice(0, 10) !== date ||
       Math.abs(day - Date.now()) > 2 * 86400_000) return json({ error: 'Invalid study date.' }, 400);
   const slot = Math.floor(day / 86400_000) % poolSize;
-  const identity = { year, kind, slot };
+  const identity = { university, year, kind, slot };
   let claim = '';
   for (let attempt = 0; attempt < 20; attempt++) {
     const { data: existing, error } = await db.from('daily_study_cards').select('status,card,claim_token,claimed_at').match(identity).maybeSingle();
@@ -112,7 +139,7 @@ Deno.serve(secureEndpoint(async req => {
   }
   if (!claim) return json({ error: 'Today’s question is being prepared. Please retry shortly.' }, 503);
   try {
-    const card = await generate(year, kind, slot);
+    const card = await generate(university, year, kind, slot, sourceQuestions);
     const { data: saved, error } = await db.from('daily_study_cards')
       .update({ card, image_url: card.imageUrl ?? null, status: 'ready' })
       .match(identity).eq('claim_token', claim).select('card').single();
