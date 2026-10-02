@@ -223,7 +223,7 @@ export default function FlashcardsScreen({ onExit }: { onExit: () => void }) {
       ) : null}
 
       {view.kind === 'editDeck' ? (
-        <EditDeckView deckId={view.deckId} onBack={back} />
+        <EditDeckView deckId={view.deckId} university={bankUniversity} onBack={back} />
       ) : null}
 
       {view.kind === 'studyCustom' ? (
@@ -1108,7 +1108,15 @@ function MyDecksView({
 }
 
 /** Add and remove cards in one of your decks. */
-function EditDeckView({ deckId, onBack }: { deckId: string; onBack: () => void }) {
+function EditDeckView({
+  deckId,
+  university,
+  onBack,
+}: {
+  deckId: string;
+  university: University;
+  onBack: () => void;
+}) {
   const { colors } = useTheme();
   const [decks, setDecks] = useState<CustomDeck[] | null>(null);
   const [front, setFront] = useState('');
@@ -1224,6 +1232,7 @@ function EditDeckView({ deckId, onBack }: { deckId: string; onBack: () => void }
       <FilingSheet
         visible={filingOpen}
         deck={deck}
+        university={university}
         onClose={() => setFilingOpen(false)}
         onPick={async chapter => {
           setDecks(await setDeckChapter(deckId, chapter));
@@ -1460,11 +1469,13 @@ function TopicsView({
 function FilingSheet({
   visible,
   deck,
+  university,
   onClose,
   onPick,
 }: {
   visible: boolean;
   deck: CustomDeck;
+  university: University;
   onClose: () => void;
   onPick: (chapter: DeckChapter | undefined) => void;
 }) {
@@ -1482,8 +1493,8 @@ function FilingSheet({
   }, [visible]);
 
   const subjects = useMemo(
-    () => (year ? getSubjects(YEAR_TO_KEY[year]) : []),
-    [year],
+    () => (year ? getSubjects(YEAR_TO_KEY[year], university) : []),
+    [year, university],
   );
   const topics = useMemo(
     () => (subject ? flattenSubjectTopics(subject.key, subject.node) : []),
@@ -1560,6 +1571,7 @@ function FilingSheet({
             key={topic.key}
             onPress={() =>
               onPick({
+                university,
                 year: year,
                 subjectKey: subject.key,
                 subjectName: subject.name,
@@ -1824,13 +1836,14 @@ export function StudyView({
 
   const chapter = useMemo(
     () => ({
+      university,
       year,
       subjectKey: subjectKey ?? subjectName,
       subjectName,
       topicKey: topic.key,
       topicName: topic.name,
     }),
-    [subjectKey, subjectName, topic.key, topic.name, year],
+    [subjectKey, subjectName, topic.key, topic.name, university, year],
   );
 
   /**
@@ -1898,13 +1911,13 @@ export function StudyView({
     let alive = true;
     loadCustomDecks().then(all => {
       if (alive) {
-        setOwnDecks(decksForChapter(all, topic.key));
+        setOwnDecks(decksForChapter(all, topic.key, university));
       }
     });
     return () => {
       alive = false;
     };
-  }, [addOpen, topic.key]);
+  }, [addOpen, topic.key, university]);
 
   const ownDeckList =
     ownDecks.length > 0 && onOpenOwn ? (
