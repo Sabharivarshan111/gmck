@@ -1,5 +1,7 @@
+import { secureEndpoint } from '../_shared/endpointSecurity.ts';
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 import { z } from "npm:zod";
+import { createClient } from "npm:@supabase/supabase-js@2.45.0";
 
 const Body = z.object({
   subject: z.string().min(1).max(120),
@@ -112,8 +114,42 @@ const mapGeminiError = (status: number, text: string) => {
   return providerMsg ? providerMsg.slice(0, 220) : `Gemini service error (${status}).`;
 };
 
-Deno.serve(async (req) => {
+Deno.serve(secureEndpoint(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+
+  const bearer = req.headers.get("Authorization") ?? "";
+  const token = bearer.startsWith("Bearer ") ? bearer.slice(7) : "";
+  if (!token) return json({ error: "Sign in to create a quiz." }, 401);
+  const url = Deno.env.get("SUPABASE_URL")!;
+  const anonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+  const authClient = createClient(url, anonKey, { auth: { persistSession: false } });
+  let userId: string | null = null;
+  if (token !== anonKey) {
+    const { data: userData, error: authError } = await authClient.auth.getUser(token);
+    if (authError || !userData.user) return json({ error: "Invalid session." }, 401);
+    userId = userData.user.id;
+  }
+  const admin = createClient(url, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, { auth: { persistSession: false } });
+  const hash = async (value: string) => Array.from(new Uint8Array(
+    await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value))
+  )).map(b => b.toString(16).padStart(2, "0")).join("");
+  const now = new Date();
+  const minute = new Date(Math.floor(now.getTime() / 60000) * 60000).toISOString();
+  const day = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())).toISOString();
+  const ip = req.headers.get("cf-connecting-ip") ?? req.headers.get("x-forwarded-for") ?? "unknown";
+  const quotaSubject = userId ? "user:" + userId : "guest:" + ip;
+  for (const check of [
+    { subject: await hash(quotaSubject), action: "ai_minute", bucket: minute, limit: 10 },
+    { subject: await hash(quotaSubject), action: "ai_day", bucket: day, limit: 150 },
+    { subject: await hash("ip:" + ip), action: "ip_day", bucket: day, limit: 500 },
+  ]) {
+    const { data: allowed, error } = await admin.rpc("consume_edge_quota", {
+      _subject_hash: check.subject, _action: check.action,
+      _bucket_start: check.bucket, _limit: check.limit,
+    });
+    if (error) return json({ error: "AI quota temporarily unavailable." }, 503);
+    if (!allowed) return json({ error: "AI usage limit reached. Try again later." }, 429);
+  }
 
   const apiKey = Deno.env.get("GEMINI_API_KEY");
   if (!apiKey) {
@@ -215,4 +251,4 @@ Required JSON shape:
   }
 
   return json({ mcqs });
-});
+}));

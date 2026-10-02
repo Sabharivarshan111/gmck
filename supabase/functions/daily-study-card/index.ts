@@ -1,3 +1,4 @@
+import { secureEndpoint } from '../_shared/endpointSecurity.ts';
 import { createClient } from 'npm:@supabase/supabase-js@2';
 
 // A 42-slot pool per year and kind. A slot is generated once for everyone,
@@ -79,7 +80,7 @@ Use exactly four concise options, one unequivocal correctIndex from 0 to 3, and 
     ...(kind === 'picture' ? { imageUrl: row.public_url } : {}) };
 }
 
-Deno.serve(async req => {
+Deno.serve(secureEndpoint(async req => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers });
   if (req.method !== 'POST') return json({ error: 'Method not allowed.' }, 405);
   let input: Record<string, unknown>;
@@ -122,4 +123,4 @@ Deno.serve(async req => {
     await db.from('daily_study_cards').delete().match(identity).eq('claim_token', claim);
     return json({ error: 'Could not prepare today’s question. Please retry later.' }, 503);
   }
-});
+}));

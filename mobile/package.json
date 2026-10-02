@@ -10,6 +10,7 @@
     "preview:build": "vite build --config preview/vite.config.ts",
     "preview:shoot": "node preview/shoot.mjs",
     "typecheck": "tsc --noEmit",
+    "check:security": "node scripts/android-security-check.mjs",
     "check:fanout": "node scripts/progress-fanout-check.mjs",
     "check:smoke": "node preview/smoke.mjs",
     "check:mcq": "node scripts/mcq-parse-check.mjs",
@@ -89,7 +90,10 @@
     "shot:timerrun": "node preview/timer-run-shot.mjs",
     "shot:notetoolbar": "node preview/notetoolbar-shot.mjs",
     "shot:apkg": "node preview/apkg-shot.mjs",
-    "check:proforma-pdf-extractor": "python3 ../.agents/sources/proformas/extract-pdf-text.py --self-test"
+    "check:proforma-pdf-extractor": "python3 ../.agents/sources/proformas/extract-pdf-text.py --self-test",
+    "check:kuhs-repeats": "node scripts/kuhs-repeat-check.mjs",
+    "check:v25": "node scripts/v25-regression-check.mjs",
+    "check:notes-depth": "node --experimental-strip-types --no-warnings scripts/notes-depth-check.mjs"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^3.1.1",
@@ -97,6 +101,7 @@
     "@react-native-google-signin/google-signin": "^16.1.4",
     "@react-native/new-app-screen": "0.87.0",
     "@react-navigation/bottom-tabs": "^7.18.16",
+    "@react-navigation/core": "^7.23.0",
     "@react-navigation/native": "^7.3.16",
     "@react-navigation/native-stack": "^7.18.8",
     "@supabase/supabase-js": "^2.112.3",
@@ -152,6 +157,7 @@
     }
   },
   "overrides": {
-    "js-yaml": "^4.3.2"
+    "js-yaml": "^4.3.2",
+    "phin": "3.7.1"
   }
 }

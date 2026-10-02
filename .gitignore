@@ -26,3 +26,11 @@ scratch/
 remotion-ad/out/
 *.mp4
 
+
+# Local secrets; public client keys are configuration, not server credentials.
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.jks
+*.keystore

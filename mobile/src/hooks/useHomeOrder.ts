@@ -256,10 +256,12 @@ export function useHomeOrder() {
 
   const save = useCallback(
     (next: HomeSection[]) => {
-      orderRef.current = next;
-      setOrder(next);
-      setRendered(next);
-      persist(next, scales, heights, aligns);
+      // A racing drag must never render the same section twice.
+      const unique = Array.from(new Set(next.filter(id => HOME_SECTIONS.includes(id))));
+      orderRef.current = unique;
+      setOrder(unique);
+      setRendered(unique);
+      persist(unique, scales, heights, aligns);
     },
     [aligns, heights, persist, scales],
   );

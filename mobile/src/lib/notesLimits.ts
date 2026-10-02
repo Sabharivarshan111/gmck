@@ -20,7 +20,7 @@
  * They are legitimate multi-part essay questions with a "Probable Cases" list
  * appended, not corrupt data, so the fix belongs here rather than in the bank.
  */
-export const MAX_QUESTION_CHARS = 1000;
+export const MAX_QUESTION_CHARS = 4000;
 export const MAX_QUESTIONS = 400;
 
 /**

@@ -1,0 +1,70 @@
+# ORBIT security audit and repairs — 2026-09-30
+
+## Status
+Provisional security score: **6/10** (initial read-only assessment: 2/10).
+This is an engineering assessment of inspected code, database policies and tested request paths, not a complete penetration test or a guarantee.
+
+Repository: Sabharivarshan111/gmck. Supabase: pmtgeydtqypwrypshhsx.
+Lovable: 89df4dbc-89e6-4e44-a7b1-76b9de94066e.
+
+## Repairs deployed
+- Retired ingest-textbook-sign and migrate-textbooks return 410 without privileged mutations.
+- Removed public diagram upload/update and public textbook object-read policies.
+- Presence writes now require auth.uid() ownership. Both client hooks silently establish/reuse anonymous sessions and scope device IDs by user, avoiding old null-owner row conflicts.
+- Three diagram administration functions verify a user token and require is_admin() before privileged work.
+- Paid AI requests use durable service-only PostgreSQL quotas. Public visitor access remains intentional: a public client key uses a guest/IP budget; actual user tokens are verified.
+- Submitted, edited and newly generated notes from users are stored in service-only personal_handwritten_notes by verified uid. Existing shared notes remain readable; visitor submissions return saved:false and do not modify shared cache.
+- Flashcard writes use a SHA-256 fingerprint of prompt inputs, retaining the stable deckKey returned to clients and legacy cache reads. Supplying another chapter key with different content cannot overwrite that chapter's shared row.
+- Nickname suggestions now use the same durable AI budgets and verified user tokens; over-budget, invalid-token or unavailable-quota requests return the existing local nickname fallback without a paid call.
+- Book-deletion RPC now has a fixed search_path. Notification administration RPCs are no longer callable by anon.
+- http 1.6 was recreated in server_http, without CASCADE, after finding no application/cron dependencies. anon/authenticated have no schema usage; the public HTTP RPCs are gone. The preceding attempt to revoke extension function grants was ineffective because those grants were owned by supabase_admin; the schema isolation is the verified effective fix.
+- Git ignores local env/signing files. The inspected tracked .env contains only public Supabase configuration. PEM-marker scan hits in Google Play helpers are parsing expressions, not embedded private keys. Git history and all external secret stores were not exhaustively scanned.
+- Edge authorization modes are explicit in supabase/config.toml, including custom-auth payment/MCP endpoints.
+
+## Verification
+- 38 regression cases passed (27 handler cases, 6 presence-session cases and 5 nickname budget/fallback cases). Latest security CI passed on source 3df5009bde86861863210d354646d40812197f90. These mock authentication, storage and providers; they are not end-to-end paid model tests.
+- 11 live HTTP validation/no-write cases passed on a GitHub runner, including admin rejection, retired endpoints and guest notes no-write. No paid content was requested.
+- Actual database transaction tests: own presence insert allowed with correct owner default; another uid's update/delete affected zero rows. Quota test returned [true,true,false]. Test transactions were rolled back.
+- The live guest-save fixture was absent from handwritten_notes afterward.
+- Personal cache and quota tables: RLS enabled; anon/authenticated cannot read them; service_role can write.
+- HTTP schema usage: anon=false, authenticated=false, service_role=true; public.http_get is absent.
+- All 11 protected/retired function entrypoints and both textbook helpers were read back on continuation and exactly match gmck main. Authorization modes remain protected; personal-note/quota tables remain RLS enabled and unreadable by anon/authenticated, and HTTP schema privileges remain server-only.
+- Both web CI builds passed. Android CI typecheck and lint passed. A local production Android JS bundle passed; no physical-device behavior was tested.
+- The Android release gate initially failed because production notes/flashcard textbook helpers had diverged. A single shared source now retains both original retrieval implementations; 69 comparisons against captured production implementations passed. The existing textbook gate passes. All three Android runs completed successfully: release 36659193780, internal 36659193742 and debug 36659193735. They checked out 882bb3bd6f6c6448bda66db4f1657abb1dcd1fd8; comparison with current product main 3df5009bde86861863210d354646d40812197f90 confirms no native source/config changes. Physical-device testing remains unperformed. No Play Console upload occurred.
+
+Latest passing checks:
+- Security: https://github.com/Sabharivarshan111/gmck/actions/runs/36660007225
+- Web: https://github.com/Sabharivarshan111/gmck/actions/runs/36660007259
+- Release: https://github.com/Sabharivarshan111/gmck/actions/runs/36659193780
+- Internal: https://github.com/Sabharivarshan111/gmck/actions/runs/36659193742
+- Debug: https://github.com/Sabharivarshan111/gmck/actions/runs/36659193735
+
+## Verified Android build downloads
+- Ad-free internal APK (production package, upload-key signed): https://github.com/Sabharivarshan111/gmck/releases/download/internal-350/app-internal.apk
+- Debug preview APK: https://github.com/Sabharivarshan111/gmck/releases/download/debug-356/app-preview.apk
+- Release AAB: https://github.com/Sabharivarshan111/gmck/releases/download/release-549/app-release.aab
+- Release APK: https://github.com/Sabharivarshan111/gmck/releases/download/release-549/app-release.apk
+
+Release builds retain live ads; internal/debug builds disable them. These release tags resolve to 3df5009, while the build run checkout was 882bb3; the intervening commit changes only server nickname code, security tests/workflow and documentation. Android source/config are identical. Existing Play-installed apps use Play's signing certificate; do not uninstall to work around a sideload signature mismatch. VersionCode was not bumped for this security repair.
+
+## Lovable deployment risk and owner actions
+Lovable successfully updated presence/env handling and synchronized notes/quiz source, then exhausted workspace credits. Its edits automatically redeployed other older functions: the live readback detected loss of quotas/admin checks, and those functions were immediately restored through the Supabase connector. Do not publish or edit Lovable until ALL remaining protected function sources and authorization settings have been synchronized from gmck/current Supabase. Its stale source can undo the protections again.
+Add workspace credits: https://lovable.dev/settings/billing
+Remaining Lovable sync includes ask-ai, ask-gemini, generate-flashcards, all three diagram admin endpoints and both retired endpoints, plus nickname-suggest and the latest shared textbook helper.
+
+A prior handoff records an exposed OpenAI key in another repository's history; revocation is still unverified. The owner must revoke that historical key in its provider account. Removing a file/history does not establish revocation.
+Leaked-password protection remains disabled; the available connector has no Auth configuration write operation.
+https://supabase.com/dashboard/project/pmtgeydtqypwrypshhsx/auth/providers
+https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection
+
+## Remaining audit limits
+- IP headers have not been proven unspoofable at the gateway. IP/guest quotas are a budget control, not bot protection; multiple accounts/IPs can bypass individual budgets. Anonymous signup CAPTCHA/device integrity and an overall provider spend ceiling need separate configuration/verification.
+- Public paid-provider paths retain guest/IP budget controls; gateway header trust and bot resistance remain unverified.
+- Profile account merging, purchase lifecycle, token revocation, Android device storage/network hardening and dependency advisories require deeper verification. No real purchase was performed.
+- User-edited notes are tied to uid; restoring/linking accounts needs explicit review of personal cache migration. Old shared notes are unchanged.
+- Some public/SECURITY DEFINER advisor notices are intentional (open leaderboard, anonymous own-data access and guarded RPCs). These are not individually proven exploits. Do not blanket revoke them.
+- Public question_diagrams includes pending material. Removing it needs a content-publication decision to avoid hiding existing diagrams.
+- An existing note-key check fails on the newer university-aware key builder; this repair did not change those keys.
+
+## Preservation
+No question-bank files, user profiles, study progress, purchase records or textbook objects were deleted. Android applicationId, version/signing configuration and ads mode were not changed. Old installed APKs need an update to receive the presence hook fix.

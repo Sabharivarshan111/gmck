@@ -1,4 +1,6 @@
+import { secureEndpoint } from '../_shared/endpointSecurity.ts';
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
+import { createClient } from "npm:@supabase/supabase-js@2.45.0";
 
 const GEMINI_MODEL = "gemini-3.1-flash-lite";
 
@@ -13,7 +15,7 @@ const FALLBACK = [
   "Neuro Ninja", "Dr. Alveoli", "Pharma Pro", "Dr. Mitochondria",
 ];
 
-Deno.serve(async (req) => {
+Deno.serve(secureEndpoint(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
   try {
@@ -23,6 +25,41 @@ Deno.serve(async (req) => {
 
     const apiKey = Deno.env.get("GEMINI_API_KEY");
     if (!apiKey) return json({ names: FALLBACK.slice(0, 6) });
+
+    // Keep onboarding open; excess usage or unavailable checks use the existing
+    // local names instead of spending provider quota or blocking profile creation.
+    const url = Deno.env.get("SUPABASE_URL")!;
+    const anonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+    const token = (req.headers.get("Authorization") ?? "").replace(/^Bearer /, "");
+    let userId: string | null = null;
+    if (token && token !== anonKey) {
+      const caller = createClient(url, anonKey, { auth: { persistSession: false } });
+      const { data, error } = await caller.auth.getUser(token);
+      if (error || !data.user) return json({ names: FALLBACK.slice(0, 6) });
+      userId = data.user.id;
+    }
+    const admin = createClient(url, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, {
+      auth: { persistSession: false },
+    });
+    const hash = async (value: string) => Array.from(new Uint8Array(
+      await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value))
+    )).map(b => b.toString(16).padStart(2, "0")).join("");
+    const now = new Date();
+    const minute = new Date(Math.floor(now.getTime() / 60000) * 60000).toISOString();
+    const day = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())).toISOString();
+    const ip = req.headers.get("cf-connecting-ip") ?? req.headers.get("x-forwarded-for") ?? "unknown";
+    const quotaSubject = userId ? "user:" + userId : "guest:" + ip;
+    for (const check of [
+      { subject: await hash(quotaSubject), action: "ai_minute", bucket: minute, limit: 10 },
+      { subject: await hash(quotaSubject), action: "ai_day", bucket: day, limit: 150 },
+      { subject: await hash("ip:" + ip), action: "ip_day", bucket: day, limit: 500 },
+    ]) {
+      const { data: allowed, error } = await admin.rpc("consume_edge_quota", {
+        _subject_hash: check.subject, _action: check.action,
+        _bucket_start: check.bucket, _limit: check.limit,
+      });
+      if (error || !allowed) return json({ names: FALLBACK.slice(0, 6) });
+    }
 
     const prompt =
       `Suggest 6 short, fun, clean medical-student nicknames for an MBBS ${year || ""} student` +
@@ -63,4 +100,4 @@ Deno.serve(async (req) => {
     console.error("nickname-suggest failure", err);
     return json({ names: FALLBACK.slice(0, 6) });
   }
-});
+}, { publicCors: true }));

@@ -9,6 +9,8 @@ import { DisplayNameError, type LocalProfile, type Year } from '@/lib/profile';
 import { YEAR_LABEL } from '@/lib/questionBank';
 import { YEAR_TO_KEY } from '@/lib/profile';
 import { setTourPaused } from '@/tour/store';
+import { UniversityChoice } from '@/components/UniversityChoice';
+import type { University } from '@shared/university';
 
 const YEARS: Year[] = ['first', 'second', 'third', 'final'];
 
@@ -64,6 +66,7 @@ export function ProfileSheet({
    * because there the reader has already answered.
    */
   const [year, setYear] = useState<Year | null>(null);
+  const [university, setUniversity] = useState<University | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
@@ -71,6 +74,7 @@ export function ProfileSheet({
     if (visible) {
       setName(profile?.display_name ?? '');
       setYear(profile?.year ?? null);
+      setUniversity(profile?.university ?? null);
       setError(null);
     }
   }, [visible, profile]);
@@ -82,10 +86,14 @@ export function ProfileSheet({
       setError('Choose your year — it decides which question bank you get.');
       return;
     }
+    if (!university && !profile) {
+      setError('Choose your university — it decides which past papers you see.');
+      return;
+    }
     setSaving(true);
     setError(null);
     try {
-      await onSave({ display_name: name, year });
+      await onSave({ display_name: name, year, ...(university ? { university } : {}) });
       onClose();
     } catch (err) {
       setError(
@@ -169,6 +177,9 @@ export function ProfileSheet({
           );
         })}
       </View>
+
+      <Text style={[styles.label, { color: colors.textMuted }]}>UNIVERSITY</Text>
+      <UniversityChoice value={university} onChange={setUniversity} />
 
       {error ? (
         <Text

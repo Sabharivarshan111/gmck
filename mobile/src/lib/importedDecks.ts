@@ -64,6 +64,8 @@ const cardsChunkMetaKey = (id: string) => `orbit:anki:imported-cards-meta:${id}`
 const cardsChunkKey = (id: string, index: number) => `orbit:anki:imported-cards:${id}:${index}`;
 
 const CHUNK_SIZE = 250;
+const READ_CHUNKS_PER_BATCH = 8;
+let lastLoaded: { id: string; cards: DeckCard[] } | undefined;
 
 /**
  * How many cards one import may take.
@@ -142,12 +144,14 @@ export async function saveImportedCards(id: string, cards: DeckCard[]): Promise<
   }
 
   await AsyncStorage.setMany(entries);
+  lastLoaded = { id, cards };
   // Clean up legacy single key if it exists
   await AsyncStorage.removeItem(legacyCardsKey(id)).catch(() => {});
 }
 
 /** One deck's cards, read only when it is opened. Supports chunked and legacy storage. */
 export async function loadImportedCards(id: string): Promise<DeckCard[]> {
+  if (lastLoaded?.id === id) return lastLoaded.cards;
   try {
     // Check chunked storage first
     const metaRaw = await AsyncStorage.getItem(cardsChunkMetaKey(id));
@@ -155,17 +159,21 @@ export async function loadImportedCards(id: string): Promise<DeckCard[]> {
       const meta = JSON.parse(metaRaw) as { chunks: number; total: number };
       if (meta && typeof meta.chunks === 'number' && meta.chunks > 0) {
         const keys = Array.from({ length: meta.chunks }, (_, i) => cardsChunkKey(id, i));
-        const entries = await AsyncStorage.getMany(keys);
         const all: DeckCard[] = [];
-        for (const key of keys) {
-          const val = entries[key];
-          if (val) {
-            const parsed = JSON.parse(val) as DeckCard[];
-            if (Array.isArray(parsed)) {
-              all.push(...parsed);
+        // Keep bridge payloads and JSON parsing bounded for large medical decks.
+        for (let offset = 0; offset < keys.length; offset += READ_CHUNKS_PER_BATCH) {
+          const batch = keys.slice(offset, offset + READ_CHUNKS_PER_BATCH);
+          const entries = await AsyncStorage.getMany(batch);
+          for (const key of batch) {
+            const val = entries[key];
+            if (val) {
+              const parsed = JSON.parse(val) as DeckCard[];
+              if (Array.isArray(parsed)) all.push(...parsed);
             }
           }
+          if (offset + READ_CHUNKS_PER_BATCH < keys.length) await new Promise<void>(resolve => setTimeout(resolve, 0));
         }
+        lastLoaded = { id, cards: all };
         return all;
       }
     }
@@ -176,7 +184,9 @@ export async function loadImportedCards(id: string): Promise<DeckCard[]> {
       return [];
     }
     const parsed = JSON.parse(raw) as unknown;
-    return Array.isArray(parsed) ? (parsed as DeckCard[]) : [];
+    const cards = Array.isArray(parsed) ? (parsed as DeckCard[]) : [];
+    lastLoaded = { id, cards };
+    return cards;
   } catch (error) {
     warn('[importedDecks] loadImportedCards failed:', error);
     return [];
@@ -200,6 +210,7 @@ export async function renameImportedDeck(id: string, name: string): Promise<Impo
  * would see it only as "Orbit is using 400MB" in Android's settings.
  */
 export async function deleteImportedDeck(id: string): Promise<ImportedDeck[]> {
+  if (lastLoaded?.id === id) lastLoaded = undefined;
   const decks = await loadImportedDecks();
   const next = decks.filter(deck => deck.id !== id);
   await persistList(next);

@@ -51,7 +51,7 @@ if (gradleCode && tsCode) {
  * requested 24 for the next build (2026-09-25). Keep the build and this pin
  * together until the owner confirms another upload.
  */
-const PINNED_VERSION_CODE = 24;
+const PINNED_VERSION_CODE = 25;
 if (gradleCode) {
   check(
     Number(gradleCode[1]) === PINNED_VERSION_CODE,

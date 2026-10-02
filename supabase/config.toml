@@ -1,1 +1,63 @@
 project_id = "pmtgeydtqypwrypshhsx"
+
+# Mirror live authorization modes; custom-auth public endpoints remain compatible.
+[functions.ask-gemini]
+verify_jwt = true
+
+[functions.quiz-from-subtopic]
+verify_jwt = true
+
+[functions.generate-handwritten-notes]
+verify_jwt = true
+
+[functions.generate-flashcards]
+verify_jwt = true
+
+[functions.tag-diagram-questions]
+verify_jwt = true
+
+[functions.generate-svg-diagram]
+verify_jwt = true
+
+[functions.generate-ai-diagram]
+verify_jwt = true
+
+[functions.play-verify-purchase]
+verify_jwt = true
+
+[functions.daily-study-card]
+verify_jwt = true
+
+[functions.ask-ai]
+verify_jwt = false
+
+[functions.wiki-image]
+verify_jwt = false
+
+[functions.mcp]
+verify_jwt = false
+
+[functions.razorpay-create-order]
+verify_jwt = false
+
+[functions.razorpay-verify-payment]
+verify_jwt = false
+
+[functions.razorpay-restore-purchase]
+verify_jwt = false
+
+[functions.nickname-suggest]
+verify_jwt = false
+
+[functions.play-rtdn]
+verify_jwt = false
+
+[functions.migrate-textbooks]
+verify_jwt = false
+
+[functions.ingest-textbook-sign]
+verify_jwt = false
+
+
+[functions.merge-guest-account]
+verify_jwt = true

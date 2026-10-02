@@ -7,6 +7,7 @@ import {
   isErrorWithCode,
 } from '@react-native-google-signin/google-signin';
 import { supabase } from './supabase';
+import { rememberGuestSession } from './guestMerge';
 
 export const GOOGLE_AUTH_FLAG_KEY = '@orbit:google_authenticated_v1';
 export const GOOGLE_AUTH_EMAIL_KEY = '@orbit:google_authenticated_email';
@@ -73,6 +74,7 @@ export async function signInWithGoogle(): Promise<GoogleAccount> {
       throw new Error('Google did not return an ID token.');
     }
 
+    await rememberGuestSession();
     const { error } = await supabase.auth.signInWithIdToken({
       provider: 'google',
       token: idToken,
@@ -114,7 +116,12 @@ export async function signOutGoogle(): Promise<void> {
   } catch {
     // Signing out of Supabase is what actually matters.
   }
-  await supabase.auth.signOut();
+  const { error } = await supabase.auth.signOut();
+  if (error) throw error;
+  await Promise.all([
+    AsyncStorage.removeItem(GOOGLE_AUTH_FLAG_KEY),
+    AsyncStorage.removeItem(GOOGLE_AUTH_EMAIL_KEY),
+  ]);
 }
 
 export async function getSignedInEmail(): Promise<string | null> {

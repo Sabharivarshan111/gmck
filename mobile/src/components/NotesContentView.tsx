@@ -1,4 +1,4 @@
-import React, { memo, useState } from 'react';
+import React, { memo, useMemo, useState } from 'react';
 import { StyleSheet, View, type StyleProp, type TextStyle, type ViewStyle } from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
 import { Check, Copy } from 'lucide-react-native';
@@ -7,6 +7,7 @@ import { Touchable } from '@/components/Touchable';
 import { useTheme, withAlpha } from '@/theme';
 import { DiagramCard } from '@/components/DiagramCard';
 import type { NotesContent, Section } from '@/lib/handwrittenNotes';
+import { deduplicateNotes } from '@/lib/notesDedup';
 import { sectionClipboardText } from '@/lib/notesClipboard';
 
 /**
@@ -22,7 +23,8 @@ import { sectionClipboardText } from '@/lib/notesClipboard';
  * expensive thing on screen re-rendering repeatedly on the cheap phones this
  * app targets, for a number that changes in a label above it.
  */
-function NotesContentViewBase({ content }: { content: NotesContent }) {
+function NotesContentViewBase({ content: rawContent }: { content: NotesContent }) {
+  const content = useMemo(() => deduplicateNotes(rawContent), [rawContent]);
   const { colors } = useTheme();
 
   return (

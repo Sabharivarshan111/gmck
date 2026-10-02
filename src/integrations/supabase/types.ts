@@ -187,6 +187,7 @@ export type Database = {
           streak_freezes_available: number
           streak_freezes_granted_week: string | null
           updated_at: string
+          university: string | null
           xp: number
           year: Database["public"]["Enums"]["app_year"]
         }
@@ -203,6 +204,7 @@ export type Database = {
           streak_freezes_available?: number
           streak_freezes_granted_week?: string | null
           updated_at?: string
+          university?: string | null
           xp?: number
           year: Database["public"]["Enums"]["app_year"]
         }
@@ -219,6 +221,7 @@ export type Database = {
           streak_freezes_available?: number
           streak_freezes_granted_week?: string | null
           updated_at?: string
+          university?: string | null
           xp?: number
           year?: Database["public"]["Enums"]["app_year"]
         }

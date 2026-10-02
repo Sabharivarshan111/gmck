@@ -1,4 +1,6 @@
+import { deduplicateNotes } from './notesDedup';
 import { supabase } from './supabase';
+import { stripKuhsQuestionMarker, type University } from '@shared/university';
 import { collectQuestions, type BankNode } from './questionBank';
 import { clampQuestions } from './notesLimits';
 import { getQuestionId } from './progress';
@@ -35,6 +37,7 @@ export interface LeafTopic {
   name: string;
   breadcrumb: string;
   questions: string[];
+  questionKinds?: ('essay' | 'short')[];
 }
 
 export const NOTES_BATCH_SIZE = 10;
@@ -71,6 +74,7 @@ export function flattenSubjectTopics(
     if (!current || typeof current !== 'object') {
       return;
     }
+    const essayQuestions = new Set(collectQuestions(current, 'essay'));
     const unique = Array.from(
       new Set([
         ...collectQuestions(current, 'essay'),
@@ -90,6 +94,7 @@ export function flattenSubjectTopics(
         name: namePath[namePath.length - 1] ?? current.name ?? 'Topic',
         breadcrumb: namePath.join(' › '),
         questions: unique,
+        questionKinds: unique.map(question => essayQuestions.has(question) ? 'essay' : 'short'),
       });
       return;
     }
@@ -109,62 +114,14 @@ export function flattenSubjectTopics(
   );
 }
 
-/** Combine per-batch results, folding same-titled sections together. */
+/** Merge every batch without mutating cached input or repeating its content. */
 export function mergeNotes(parts: (NotesContent | null)[]): NotesContent {
-  const merged: NotesContent = { highYieldTip: '', pyqYears: [], sections: [] };
-  const extraTips: string[] = [];
-  const years = new Set<string>();
-  const byTitle = new Map<string, Section>();
-
-  for (const part of parts) {
-    if (!part) {
-      continue;
-    }
-    if (part.highYieldTip) {
-      if (!merged.highYieldTip) {
-        merged.highYieldTip = part.highYieldTip;
-      } else {
-        extraTips.push(part.highYieldTip);
-      }
-    }
-    if (Array.isArray(part.pyqYears)) {
-      for (const year of part.pyqYears) {
-        if (year) {
-          years.add(String(year));
-        }
-      }
-    }
-    if (Array.isArray(part.sections)) {
-      for (const section of part.sections) {
-        const key = (section?.title ?? '').toLowerCase().trim();
-        if (!key) {
-          merged.sections.push(section);
-          continue;
-        }
-        const existing = byTitle.get(key);
-        if (!existing) {
-          byTitle.set(key, section);
-          merged.sections.push(section);
-        } else if (
-          Array.isArray(existing.payload?.items) &&
-          Array.isArray(section.payload?.items)
-        ) {
-          existing.payload.items = [
-            ...(existing.payload.items as unknown[]),
-            ...(section.payload.items as unknown[]),
-          ];
-        }
-      }
-    }
-  }
-
-  if (extraTips.length) {
-    merged.highYieldTip = `${merged.highYieldTip} ${extraTips.join(
-      ' ',
-    )}`.trim();
-  }
-  merged.pyqYears = Array.from(years).sort();
-  return merged;
+  const valid = parts.filter((part): part is NotesContent => !!part);
+  return deduplicateNotes({
+    highYieldTip: [...new Set(valid.map(part => part.highYieldTip).filter(Boolean))].join(' '),
+    pyqYears: [...new Set(valid.flatMap(part => part.pyqYears ?? []))].sort(),
+    sections: valid.flatMap(part => part.sections ?? []),
+  });
 }
 
 export interface BatchResult {
@@ -222,6 +179,7 @@ function baseBody({ topic, yearLabel, subject }: TopicRequest) {
     subject,
     subtopicName: topic.name,
     questions: clampQuestions(topic.questions),
+    questionKinds: topic.questionKinds?.slice(0, 400),
   };
 }
 
@@ -318,6 +276,8 @@ export interface SingleNoteRequest {
   subjectKey: string;
   subjectName: string;
   yearLabel: string;
+  /** Missing means the existing TNMGR cache identity, including older notes. */
+  university?: University;
   /**
    * The bank's string for this question, before the leading `"12. "` was
    * removed — used for the diagram lookup and for nothing else.
@@ -336,10 +296,15 @@ export interface SingleNoteRequest {
  * has to carry the identical body, or the edge function looks at a different
  * cache row than the one on screen. Built in one place for that reason.
  */
+function singleNoteCacheKey(request: SingleNoteRequest): string {
+  const base = `${request.subjectKey}::${hashKey(request.question.trim())}`;
+  return request.university === 'kuhs' ? `single::kuhs::${base}` : `single::${base}`;
+}
+
 function singleNoteBody(request: SingleNoteRequest): Record<string, unknown> {
   const clean = request.question.trim();
   return {
-    subtopicKey: `single::${request.subjectKey}::${hashKey(clean)}`,
+    subtopicKey: singleNoteCacheKey(request),
     year: request.yearLabel,
     /*
      * No fallback subject. This read `|| 'Community Medicine'`, which was
@@ -501,7 +466,7 @@ function questionIdentities(...forms: Array<string | null | undefined>): string[
     }
   };
   for (const form of forms) {
-    const clean = (form ?? '').trim();
+    const clean = stripKuhsQuestionMarker((form ?? '').trim());
     if (!clean) continue;
     push(clean);
     push(clean.replace(LEADING_NUMBER, ''));
@@ -1134,7 +1099,7 @@ export async function ensureSingleNoteDiagram(
     try {
       const clean = request.question.trim();
       await supabase.from('handwritten_notes').upsert({
-        subtopic_key: `single::${request.subjectKey}::${hashKey(clean)}`,
+        subtopic_key: singleNoteCacheKey(request),
         year: request.yearLabel,
         subject: request.subjectName || request.subjectKey || 'Medical Science',
         subtopic_name: clean.slice(0, 80),

@@ -62,14 +62,13 @@ import {
   fetchDeck,
   loadSchedule,
   personalDeckKey,
-  reconcile,
+  createDeckReconciler,
   saveSchedule,
   type DeckCard,
   type Schedule,
 } from '@/lib/flashcards';
 import {
   answer,
-  counts,
   dueQueue,
   GRADES,
   intervalLabel,
@@ -1795,10 +1794,9 @@ export function StudyView({
     load(false);
   }, [fixture, load, topic.key]);
 
-  const cards = useMemo<Card[]>(
-    () => (deck ? reconcile(deck, schedule) : []),
-    [deck, schedule],
-  );
+  const reconcileStudy = useMemo(() => createDeckReconciler(deck ?? []), [deck]);
+  const cards = useMemo<Card[]>(() => reconcileStudy(schedule), [reconcileStudy, schedule]);
+  const cardById = useMemo(() => new Map((deck ?? []).map(card => [card.id, card])), [deck]);
   const { newCardsPerDay, cardSeconds } = useSettings();
 
   // The "+" in the corner, and what it is doing.
@@ -1942,7 +1940,11 @@ export function StudyView({
   );
 
   const queue = useMemo(() => dueQueue(cards, Date.now(), newCardsPerDay), [cards, newCardsPerDay]);
-  const tally = useMemo(() => counts(cards, Date.now(), newCardsPerDay), [cards, newCardsPerDay]);
+  const tally = useMemo(() => ({
+    fresh: queue.filter(card => card.type === 'new').length,
+    review: queue.filter(card => card.type === 'review').length,
+    learning: cards.filter(card => card.type === 'learning' || card.type === 'relearning').length,
+  }), [cards, queue]);
   /**
    * The three counts, plus what is being held back.
    *
@@ -1970,8 +1972,8 @@ export function StudyView({
   const safeIndex = queue.length > 0 ? Math.min(cardIndex, queue.length - 1) : 0;
   const current = queue[safeIndex];
   const face = useMemo(
-    () => (current && deck ? deck.find(c => c.id === current.id) ?? null : null),
-    [current, deck],
+    () => (current ? cardById.get(current.id) ?? null : null),
+    [current, cardById],
   );
 
   const parsed = useMemo(

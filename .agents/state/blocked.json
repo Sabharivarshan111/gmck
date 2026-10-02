@@ -23,7 +23,7 @@
     "Add an entry the moment you are stopped by something, not at the end of the session.",
     "Set status to 'cleared' rather than deleting: a blocker that vanishes gets rediscovered."
   ],
-  "updated": "2026-09-18",
+  "updated": "2026-09-30",
   "blockers": [
     {
       "id": "supabase-route",
@@ -138,6 +138,29 @@
       "clearsWhen": {
         "kind": "pathMissing",
         "path": ".agents/queue/zanatomy-peripheral-nerves.md"
+      }
+    },
+    {
+      "id": "lovable-security-source-sync",
+      "what": "Lovable still has older AI/admin/flashcard function source that can undo live protections on automatic deployment.",
+      "blockedOn": "Lovable workspace credits are exhausted; send_message rejected the remaining exact-source package.",
+      "owner": "Lovable workspace billing owner",
+      "remedy": "Add credits at https://lovable.dev/settings/billing. Then synchronize current protected function source and config from gmck/Supabase before publishing; verify live code after deployment. See docs/security-audit-2026-09-30.md.",
+      "since": "2026-09-30",
+      "clearsWhen": {
+        "kind": "manual"
+      }
+    },
+    {
+      "id": "v25-github-publication-review",
+      "what": "Signed GitHub v25 publication is unavailable while the recorded automatic-review GitHub push egress rejection remains.",
+      "blockedOn": "Prior automatic approval review rejection: unverified external egress. User authorization and repository push permission do not clear it.",
+      "owner": "Environment policy/approval administrator; agent cannot clear or route around this restriction.",
+      "remedy": "Obtain legitimate policy clearance for the exact authorized gmck write; then recheck main and publish the preserved verified checkpoint.",
+      "since": "2026-10-01",
+      "source": "ORBIT_V25_RELEASE_HANDOFF.md and latest resume notes",
+      "clearsWhen": {
+        "kind": "manual"
       }
     }
   ]

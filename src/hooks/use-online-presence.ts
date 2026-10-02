@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { ensureAnonymousSession } from '@/lib/anonymousSession';
 
 const HEARTBEAT_MS = 15_000;
 const ACTIVE_WINDOW_SECONDS = 45;
@@ -24,12 +25,16 @@ export function useOnlinePresence() {
   useEffect(() => {
     const deviceId = getDeviceId();
     let cancelled = false;
+    let presenceId: string | null = null;
 
     const ping = async () => {
       try {
+        const session = await ensureAnonymousSession();
+        if (cancelled) return;
+        presenceId = `${session.user.id}:${deviceId}`;
         await supabase
           .from('study_presence')
-          .upsert({ device_id: deviceId, last_seen: new Date().toISOString() });
+          .upsert({ device_id: presenceId, last_seen: new Date().toISOString() });
       } catch {
         /* ignore */
       }
@@ -58,7 +63,7 @@ export function useOnlinePresence() {
 
     const cleanup = async () => {
       try {
-        await supabase.from('study_presence').delete().eq('device_id', deviceId);
+        if (presenceId) await supabase.from('study_presence').delete().eq('device_id', presenceId);
       } catch {
         /* ignore */
       }

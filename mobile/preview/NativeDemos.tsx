@@ -266,7 +266,7 @@ export function NativePageRefDemo() {
           <Text style={[typeScale.title2, { color: colors.text, fontWeight: '800' }]}>
             Textbook page
           </Text>
-          <Text style={[typeScale.subhead, { color: colors.textMuted }]}>
+          <Text style={[typeScale.body, { color: colors.textMuted }]}>
             A page number appears for everyone once 3 readers have entered the same one for the same book and edition.
           </Text>
         </View>

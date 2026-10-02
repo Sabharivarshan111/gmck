@@ -1,0 +1,357 @@
+{
+  "prepared_pages": 50,
+  "added_entries": 607,
+  "final_page_reconciliation_complete": false,
+  "pages": [
+    {
+      "year": "first",
+      "pdf_page": 79,
+      "image_sha256": "56002bf1d49322a3e0bd8b35893c99e3dde8adfadfe614d1b7a99f29f4421430",
+      "status": "selection_checked_final_page_reconciliation_pending",
+      "ledger_entries": 24
+    },
+    {
+      "year": "first",
+      "pdf_page": 80,
+      "image_sha256": "e37970abcaa01e4706bb1dbc968ae00975bbcf84dbaefe199cf24f2b83c6ff92",
+      "status": "selection_checked_final_page_reconciliation_pending",
+      "ledger_entries": 21
+    },
+    {
+      "year": "first",
+      "pdf_page": 81,
+      "image_sha256": "7b4df8cf0eb04c8a938e992e0f3b9864f1ed0b476d5d2f9f2f6076c84811a93c",
+      "status": "selection_checked_final_page_reconciliation_pending",
+      "ledger_entries": 14
+    },
+    {
+      "year": "first",
+      "pdf_page": 82,
+      "image_sha256": "9599126a1627e8690e650cdb07ce6dc2d35b7f2a9c579011063b660aa2dcaf3e",
+      "status": "selection_checked_final_page_reconciliation_pending",
+      "ledger_entries": 31
+    },
+    {
+      "year": "first",
+      "pdf_page": 83,
+      "image_sha256": "e5d7618a619b910ad55eed57158c94faed6ced19060e8d2908e9679cea5400ee",
+      "status": "selection_checked_final_page_reconciliation_pending",
+      "ledger_entries": 34
+    },
+    {
+      "year": "first",
+      "pdf_page": 84,
+      "image_sha256": "6f1c89e9893d205ba273ede09d38bf42641e83f5af8f86e9b2ad346552b9ee05",
+      "status": "selection_checked_final_page_reconciliation_pending",
+      "ledger_entries": 26
+    },
+    {
+      "year": "first",
+      "pdf_page": 85,
+      "image_sha256": "6f43c6f3cd8d2709cb826dea8a05da0741fd1e29756b2a41cc6f631743fc54a2",
+      "status": "selection_checked_final_page_reconciliation_pending",
+      "ledger_entries": 34
+    },
+    {
+      "year": "first",
+      "pdf_page": 86,
+      "image_sha256": "5ff9739092a74684d2f70ad37b7259cd30ec08533ac542f58749ee3e5fa3bb57",
+      "status": "selection_checked_final_page_reconciliation_pending",
+      "ledger_entries": 21
+    },
+    {
+      "year": "second",
+      "pdf_page": 103,
+      "image_sha256": "8ebf2ffc61b42169d74a37823b93c831645dc574f1c7da818f6528c818f2018d",
+      "status": "selection_checked_final_page_reconciliation_pending",
+      "ledger_entries": 0
+    },
+    {
+      "year": "second",
+      "pdf_page": 105,
+      "image_sha256": "a5f0b4847982cd8661fb009efd1e0f0ff82ae8fbb8a23a641815954fa9ce3e72",
+      "status": "selection_checked_final_page_reconciliation_pending",
+      "ledger_entries": 11
+    },
+    {
+      "year": "second",
+      "pdf_page": 106,
+      "image_sha256": "74c7c90a044799f7e37e464ce77d1ce10024590052038ddfbc3e9e46a040547a",
+      "status": "selection_checked_final_page_reconciliation_pending",
+      "ledger_entries": 13
+    },
+    {
+      "year": "second",
+      "pdf_page": 107,
+      "image_sha256": "9b51b37f3c51a8689d7f46c8cb4ba337db3d1fda8b196dc623781c4265f64174",
+      "status": "selection_checked_final_page_reconciliation_pending",
+      "ledger_entries": 3
+    },
+    {
+      "year": "second",
+      "pdf_page": 108,
+      "image_sha256": "02e8a70c9fc5bb4fe07cad14cd2e8f0771795925ccf57956db3ae3bb0023a09e",
+      "status": "selection_checked_final_page_reconciliation_pending",
+      "ledger_entries": 18
+    },
+    {
+      "year": "second",
+      "pdf_page": 109,
+      "image_sha256": "26dcdfad5e029bc761128c724ffe7a65499bb241ba8850ecf0fb3e1d39206c8f",
+      "status": "selection_checked_final_page_reconciliation_pending",
+      "ledger_entries": 5
+    },
+    {
+      "year": "second",
+      "pdf_page": 110,
+      "image_sha256": "c6a2281098109b4fe17665dfda8910083fbb8902390f00f735fc4271391c6a2d",
+      "status": "selection_checked_final_page_reconciliation_pending",
+      "ledger_entries": 14
+    },
+    {
+      "year": "second",
+      "pdf_page": 111,
+      "image_sha256": "bd0b8a3f1eb35d2d61c03f12fce8c72198a8568e613a93924a9db0916803813d",
+      "status": "selection_checked_final_page_reconciliation_pending",
+      "ledger_entries": 13
+    },
+    {
+      "year": "second",
+      "pdf_page": 112,
+      "image_sha256": "1398513180678e411ac38ad384fd01f65433481b8dee9547e67761e6ae8e3676",
+      "status": "selection_checked_final_page_reconciliation_pending",
+      "ledger_entries": 3
+    },
+    {
+      "year": "second",
+      "pdf_page": 113,
+      "image_sha256": "bb0c1c03868a1eb5ba099c00441886583ae01fcfa4515dd50493845140a9d4f2",
+      "status": "selection_checked_final_page_reconciliation_pending",
+      "ledger_entries": 15
+    },
+    {
+      "year": "second",
+      "pdf_page": 114,
+      "image_sha256": "c31f883e938e71c55996a205cb3483e572d92424240766904a764ca2d6f294fa",
+      "status": "selection_checked_final_page_reconciliation_pending",
+      "ledger_entries": 5
+    },
+    {
+      "year": "second",
+      "pdf_page": 116,
+      "image_sha256": "0c21c4f2f065cd111f3200357d35bc82c1d6e94c0852b3adec22974c58bcc6cf",
+      "status": "selection_checked_final_page_reconciliation_pending",
+      "ledger_entries": 8
+    },
+    {
+      "year": "second",
+      "pdf_page": 117,
+      "image_sha256": "07e4714195916e6eb3868b304b2c9a2c94766a658dfce8d503d235be38016b80",
+      "status": "selection_checked_final_page_reconciliation_pending",
+      "ledger_entries": 0
+    },
+    {
+      "year": "second",
+      "pdf_page": 118,
+      "image_sha256": "c725d578c726d392bf399c21f40d4352f881680e586df735bc308355c4fe14c3",
+      "status": "selection_checked_final_page_reconciliation_pending",
+      "ledger_entries": 4
+    },
+    {
+      "year": "third",
+      "pdf_page": 55,
+      "image_sha256": "b6cebe44eeb8e1a698a53b106cdd2de7365f702e291b1594e92f6d7384aa36fa",
+      "status": "selection_checked_final_page_reconciliation_pending",
+      "ledger_entries": 13
+    },
+    {
+      "year": "third",
+      "pdf_page": 56,
+      "image_sha256": "cedea0503d57d4292e042f48998640bcfb8721fa6aa9c1f7fb394d97b08309db",
+      "status": "selection_checked_final_page_reconciliation_pending",
+      "ledger_entries": 13
+    },
+    {
+      "year": "third",
+      "pdf_page": 57,
+      "image_sha256": "17eeea37e7fd03572be3c813a0bc73b8bfffcf1da547d77ce6b3eb5be4ff5259",
+      "status": "selection_checked_final_page_reconciliation_pending",
+      "ledger_entries": 13
+    },
+    {
+      "year": "third",
+      "pdf_page": 58,
+      "image_sha256": "ee2591b957a7360f24ef019dfd87c7b52f370ca80afa2015736706a53578b31e",
+      "status": "selection_checked_final_page_reconciliation_pending",
+      "ledger_entries": 10
+    },
+    {
+      "year": "third",
+      "pdf_page": 59,
+      "image_sha256": "5849c326b59bf6efc506e54ae674966993ceddeba123f754f8941cfae7c5a0a2",
+      "status": "selection_checked_final_page_reconciliation_pending",
+      "ledger_entries": 6
+    },
+    {
+      "year": "third",
+      "pdf_page": 60,
+      "image_sha256": "5d88c03ccc8ff70960261bd2c2d517f17a70741481e512fbb3abe2c36c1cfad3",
+      "status": "selection_checked_final_page_reconciliation_pending",
+      "ledger_entries": 9
+    },
+    {
+      "year": "third",
+      "pdf_page": 61,
+      "image_sha256": "7da1cb3d0c280391c539b1b795ea253163d5222cd91708e140b1eb177c09cbc7",
+      "status": "selection_checked_final_page_reconciliation_pending",
+      "ledger_entries": 19
+    },
+    {
+      "year": "third",
+      "pdf_page": 62,
+      "image_sha256": "25483102987be3084272aa31cd85683c74a4c6348fd03c94bc3221eeb0311f23",
+      "status": "selection_checked_final_page_reconciliation_pending",
+      "ledger_entries": 13
+    },
+    {
+      "year": "third",
+      "pdf_page": 63,
+      "image_sha256": "fee585618a3cf1354a71b1ec9d1a61dbd509e903e2569546094d4b65d73d9551",
+      "status": "selection_checked_final_page_reconciliation_pending",
+      "ledger_entries": 17
+    },
+    {
+      "year": "third",
+      "pdf_page": 64,
+      "image_sha256": "32328551efa755dd29951774c0c17b7dccdb1e040636dfbc64fb139ac05a55a2",
+      "status": "selection_checked_final_page_reconciliation_pending",
+      "ledger_entries": 13
+    },
+    {
+      "year": "third",
+      "pdf_page": 65,
+      "image_sha256": "0ed19a40e5f520bbf043caefc78132f629b180538ad71ecbdeedade34abebaa1",
+      "status": "selection_checked_final_page_reconciliation_pending",
+      "ledger_entries": 19
+    },
+    {
+      "year": "third",
+      "pdf_page": 66,
+      "image_sha256": "e99e2c85b3d70dcaac88e4768a52024229bb40f758ba73d672f7819cb4959c34",
+      "status": "selection_checked_final_page_reconciliation_pending",
+      "ledger_entries": 14
+    },
+    {
+      "year": "third",
+      "pdf_page": 67,
+      "image_sha256": "fda0741aeadf71516532fa78423ccdccae6e6a2bd4f897987cc69dffe820f645",
+      "status": "selection_checked_final_page_reconciliation_pending",
+      "ledger_entries": 8
+    },
+    {
+      "year": "third",
+      "pdf_page": 68,
+      "image_sha256": "81ac1367fc759dcdacfcc3c282e99a8c9f9efa27bc3b3ac3012727460cb80937",
+      "status": "selection_checked_final_page_reconciliation_pending",
+      "ledger_entries": 16
+    },
+    {
+      "year": "final",
+      "pdf_page": 101,
+      "image_sha256": "96dd5cbb2e03592ca2cf5ef4f3675604ded3cef7e25a6e718ca5f0d6c0b6b319",
+      "status": "selection_checked_final_page_reconciliation_pending",
+      "ledger_entries": 4
+    },
+    {
+      "year": "final",
+      "pdf_page": 102,
+      "image_sha256": "2c170b5bf04bf7a612a9013c21fb21c1446fae5612ce5f134b35b36af44d73e9",
+      "status": "selection_checked_final_page_reconciliation_pending",
+      "ledger_entries": 0
+    },
+    {
+      "year": "final",
+      "pdf_page": 103,
+      "image_sha256": "7891850e6143ff7e5c746e665616f5a70d3ed91b795a655f6dd206bdc40f27d9",
+      "status": "selection_checked_final_page_reconciliation_pending",
+      "ledger_entries": 0
+    },
+    {
+      "year": "final",
+      "pdf_page": 104,
+      "image_sha256": "67a4981e98a60f58a31447d7fc0b70030e1f5f5b689a638c8a7d424bcf9d0907",
+      "status": "selection_checked_final_page_reconciliation_pending",
+      "ledger_entries": 0
+    },
+    {
+      "year": "final",
+      "pdf_page": 105,
+      "image_sha256": "c3d2cc74996312c7ce466be21c283d2eb05267f30c0ac1514876c050bcf05c95",
+      "status": "selection_checked_final_page_reconciliation_pending",
+      "ledger_entries": 0
+    },
+    {
+      "year": "final",
+      "pdf_page": 106,
+      "image_sha256": "23f7ad1fbeb2224176ac6d137718d44d6078cbd43481bcc807aa393f82da95fe",
+      "status": "selection_checked_final_page_reconciliation_pending",
+      "ledger_entries": 10
+    },
+    {
+      "year": "final",
+      "pdf_page": 107,
+      "image_sha256": "ac3104799808f890c3913727e399d41fbe1a0dac56a6a40c1dae93922a4006c2",
+      "status": "selection_checked_final_page_reconciliation_pending",
+      "ledger_entries": 10
+    },
+    {
+      "year": "final",
+      "pdf_page": 108,
+      "image_sha256": "f83f16c14c9a8a2917271c4749fb0a00443aebbe4ccd7a62010254494f53c686",
+      "status": "selection_checked_final_page_reconciliation_pending",
+      "ledger_entries": 7
+    },
+    {
+      "year": "final",
+      "pdf_page": 109,
+      "image_sha256": "223af1233f1070909612b9cdf6bff6117e6827eefadc36af5e59aafb2d0aae5f",
+      "status": "selection_checked_final_page_reconciliation_pending",
+      "ledger_entries": 16
+    },
+    {
+      "year": "final",
+      "pdf_page": 110,
+      "image_sha256": "2b7578c7132b1237c4839025e6b96564d263302116694e4868d1d23d09fc9959",
+      "status": "selection_checked_final_page_reconciliation_pending",
+      "ledger_entries": 17
+    },
+    {
+      "year": "final",
+      "pdf_page": 111,
+      "image_sha256": "5352a13ff906695bfd67624474af8ef5c5436ab97c874c103985f5234154de9a",
+      "status": "selection_checked_final_page_reconciliation_pending",
+      "ledger_entries": 8
+    },
+    {
+      "year": "final",
+      "pdf_page": 112,
+      "image_sha256": "1e36c808d8fbcaf198b35a7c1a603a06d5988bb2ddeeca2571f4b3b8429f5183",
+      "status": "selection_checked_final_page_reconciliation_pending",
+      "ledger_entries": 7
+    },
+    {
+      "year": "final",
+      "pdf_page": 113,
+      "image_sha256": "51a73c6ad0d71d8faaefc9d71c0902e1f5985b53b46638f7eb9c034fecb7bbb3",
+      "status": "selection_checked_final_page_reconciliation_pending",
+      "ledger_entries": 13
+    },
+    {
+      "year": "final",
+      "pdf_page": 114,
+      "image_sha256": "43762bb97f6ad75a10e92e91284ca513868f5281eb001b9ae9d8db1358ec6727",
+      "status": "selection_checked_final_page_reconciliation_pending",
+      "ledger_entries": 15
+    }
+  ]
+}

@@ -1,3 +1,4 @@
+import { secureEndpoint } from '../_shared/endpointSecurity.ts';
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
@@ -201,7 +202,7 @@ async function lookupTerm(term: string): Promise<ImageResult[]> {
   return out;
 }
 
-serve(async (req) => {
+serve(secureEndpoint(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders, status: 204 });
   }
@@ -236,4 +237,4 @@ serve(async (req) => {
       status: 200,
     });
   }
-});
+}, { publicCors: true }));

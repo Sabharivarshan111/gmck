@@ -45,6 +45,8 @@ import { usePageRefs, pageFor } from '@/hooks/usePageRefs';
 import { setSetting, useSettings } from '@/lib/settings';
 import { useCountDone } from '@/hooks/useProgress';
 import { requestDailyAd } from '@/lib/dailyAd';
+import { useProfile } from '@/hooks/useProfile';
+import { availableBankUniversity } from '@/lib/kuhsAvailability';
 import { rememberQuestion } from '@/lib/homeResume';
 import type { HomeStackParamList, RootTabParamList } from '@/navigation/types';
 
@@ -70,6 +72,8 @@ export default function BrowseNodeScreen() {
   const navigation = useNavigation<Nav>();
   const route = useRoute<Route>();
   const countDone = useCountDone();
+  const { university } = useProfile();
+  const bankUniversity = availableBankUniversity(university);
   const { year, path, title, highlight, highlightType } = route.params;
 
   // Open on the tab the searched question is actually on, or a reader who
@@ -103,14 +107,14 @@ export default function BrowseNodeScreen() {
   }, [navigation]);
 
   // Opening a leaf topic is the "questions" bucket's trigger.
-  const isLeaf = getTopicChildren(resolveNode(year, path)).length === 0;
+  const isLeaf = getTopicChildren(resolveNode(year, path, bankUniversity)).length === 0;
   useEffect(() => {
     if (isLeaf) {
       requestDailyAd('questions').catch(() => undefined);
     }
   }, [isLeaf]);
 
-  const node = useMemo(() => resolveNode(year, path), [year, path]);
+  const node = useMemo(() => resolveNode(year, path, bankUniversity), [year, path, bankUniversity]);
   const children = useMemo(() => getTopicChildren(node), [node]);
   const questions = useMemo(() => findTypeQuestions(node, type), [node, type]);
 
@@ -244,8 +248,8 @@ export default function BrowseNodeScreen() {
    */
   const subjectKey = path[0] ?? '';
   const subjectName = useMemo(
-    () => getSubjects(year).find(s => s.key === subjectKey)?.name ?? subjectKey,
-    [year, subjectKey],
+    () => getSubjects(year, bankUniversity).find(s => s.key === subjectKey)?.name ?? subjectKey,
+    [year, subjectKey, bankUniversity],
   );
   const notesAvailable = subjectKey !== '' && hasTextbook(subjectKey, subjectName);
   const [notedQuestion, setNotedQuestion] = useState<string | null>(null);
@@ -267,6 +271,7 @@ export default function BrowseNodeScreen() {
       subjectKey={subjectKey}
       subjectName={subjectName}
       yearLabel={YEAR_LABEL[year]}
+      university={bankUniversity}
       onClose={closeNote}
     />
   );

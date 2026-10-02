@@ -26,24 +26,13 @@ const check = (ok, message) => {
  * Evaluated from the shipped text rather than imported, so this checks the real
  * lines. Nothing here touches React Native, so stripping the types is enough.
  */
-const js = source
-  .replace(/^import[\s\S]*?;$/gm, '')
-  .replace(/export interface [\s\S]*?\n\}/g, '')
-  .replace(/export /g, '')
-  .replace(/: NoteLink \| null/g, '')
-  .replace(/: NoteLink/g, '')
-  .replace(/: string \| null/g, '')
-  .replace(/: number \| undefined/g, '')
-  .replace(/: string \| undefined/g, '')
-  .replace(/\?: string/g, '')
-  .replace(/: string/g, '')
-  .replace(/: number/g, '')
-  .replace(/: URL/g, '')
-  .replace(/ as \w+/g, '');
+const ts = await import('typescript');
+const exports = {};
 // eslint-disable-next-line no-new-func
-const fns = new Function(
-  `${js}; return { normaliseUrl, youTubeIdOf, makeNoteLink, parseStart, embedUrlFor, thumbnailFor, displayTitle };`,
-)();
+new Function('exports', ts.default.transpileModule(source, { compilerOptions: {
+  target: ts.default.ScriptTarget.ES2022, module: ts.default.ModuleKind.CommonJS,
+} }).outputText)(exports);
+const fns = exports;
 
 const id = (url, want, what) => {
   const got = fns.youTubeIdOf(fns.normaliseUrl(url) ?? '');
@@ -137,3 +126,10 @@ console.log(
   'OK  the six YouTube shapes parse, four look-alikes do not, javascript:/file: are refused, ' +
     'timestamps survive, and nothing is fetched',
 );
+
+check(fns.embedUrlFor({ url: 'https://youtube.com/watch?v=dQw4w9WgXcQ', videoId: '\"><script>alert(1)</script>' }) === 'about:blank', 'tampered stored ID is refused');
+check(!fns.allowYouTubeNavigation('https://www.youtube.com.evil.invalid'), 'lookalike navigation refused');
+check(!fns.allowYouTubeNavigation('file:///data/data/app'), 'local navigation refused');
+check(!fns.allowYouTubeNavigation('https://evil.invalid'), 'unrelated navigation refused');
+check(fns.allowYouTubeNavigation('https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ'), 'YouTube iframe navigation retained');
+if (failures.length) { console.error(failures.join('\n')); process.exitCode = 1; }

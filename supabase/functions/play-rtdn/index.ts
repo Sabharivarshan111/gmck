@@ -1,3 +1,4 @@
+import { secureEndpoint } from '../_shared/endpointSecurity.ts';
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { playAccessToken } from "./googlePlayAuth.ts";
 
@@ -146,7 +147,7 @@ async function voidPurchase(token: string): Promise<string> {
   return "voided";
 }
 
-Deno.serve(async (req) => {
+Deno.serve(secureEndpoint(async (req) => {
   try {
     const expected = Deno.env.get("PLAY_RTDN_SECRET");
     if (!expected) {
@@ -219,6 +220,6 @@ Deno.serve(async (req) => {
      * notification, and a missed renewal is invisible until a paying reader
      * starts seeing ads.
      */
-    return json({ error: (err as Error).message ?? "Unknown error" }, 500);
+    return json({ error: "Unable to complete request" }, 500);
   }
-});
+}));

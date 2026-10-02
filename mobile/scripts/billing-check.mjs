@@ -203,15 +203,14 @@ if (verify) {
     'the function does not use purchases.subscriptionsv2; v1 does not report subscriptionState',
   );
   check(
-    /onConflict:\s*['"]play_purchase_token['"]/.test(body),
-    'the row is not upserted on play_purchase_token — a subscription reuses one token for life, ' +
-      'so an insert collides on the second call and a renewal never extends anything',
+    /rpc\("save_verified_play_purchase"/.test(body),
+    'verified purchases must use the atomic owner-bound database transaction',
   );
   // The CALL site, not the function definition — the definition sits above the
   // handler, so comparing against it would compare against the wrong thing and
   // pass whatever the order really was.
   check(
-    body.indexOf('upsert(') < body.indexOf('await acknowledge(verified'),
+    body.indexOf('rpc("save_verified_play_purchase"') < body.indexOf('await acknowledge(verified'),
     'acknowledgement happens before the grant is written; if the grant then fails the reader has ' +
       'paid, cannot be auto-refunded, and has nothing',
   );

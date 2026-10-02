@@ -7,7 +7,7 @@ import { Text } from '@/components/Text';
 import { Touchable } from '@/components/Touchable';
 import { useTheme, withAlpha } from '@/theme';
 import { typeScale } from '@/theme/typography';
-import { displayTitle, embedUrlFor, thumbnailFor, type NoteLink } from '@/lib/noteLinks';
+import { displayTitle, embedUrlFor, thumbnailFor, normaliseUrl, youTubeIdOf, allowYouTubeNavigation, type NoteLink } from '@/lib/noteLinks';
 
 export function NoteLinkCard({
   link,
@@ -58,16 +58,18 @@ export function NoteLinkCard({
   );
 
   const open = () => {
-    Linking.openURL(link.url).catch(() => undefined);
+    const safe = normaliseUrl(link.url);
+    if (safe) Linking.openURL(safe).catch(() => undefined);
   };
 
   const title = displayTitle(link);
 
-  if (link.videoId && (playing || floating || fullscreen)) {
+  if (link.videoId && youTubeIdOf(link.url) === link.videoId && (playing || floating || fullscreen)) {
     const embedUrl = embedUrlFor(link);
     const embedHtml = `<!DOCTYPE html>
 <html>
   <head>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; frame-src https://www.youtube-nocookie.com; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -104,7 +106,15 @@ export function NoteLinkCard({
               allowsFullscreenVideo={false}
               javaScriptEnabled
               domStorageEnabled
-              originWhitelist={['*']}
+              originWhitelist={['*']} // Required for static HTML; callback restricts navigation.
+              onShouldStartLoadWithRequest={request => allowYouTubeNavigation(request.url)}
+              mixedContentMode="never"
+              allowFileAccess={false}
+              allowFileAccessFromFileURLs={false}
+              allowUniversalAccessFromFileURLs={false}
+              sharedCookiesEnabled={false}
+              thirdPartyCookiesEnabled={false}
+              setSupportMultipleWindows={false}
               userAgent="Mozilla/5.0 (Linux; Android 10; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36"
             />
           </View>
@@ -175,7 +185,15 @@ export function NoteLinkCard({
                   allowsFullscreenVideo={false}
                   javaScriptEnabled
                   domStorageEnabled
-                  originWhitelist={['*']}
+                  originWhitelist={['*']} // Required for static HTML; callback restricts navigation.
+              onShouldStartLoadWithRequest={request => allowYouTubeNavigation(request.url)}
+              mixedContentMode="never"
+              allowFileAccess={false}
+              allowFileAccessFromFileURLs={false}
+              allowUniversalAccessFromFileURLs={false}
+              sharedCookiesEnabled={false}
+              thirdPartyCookiesEnabled={false}
+              setSupportMultipleWindows={false}
                 />
               </View>
             </View>
@@ -231,7 +249,15 @@ export function NoteLinkCard({
                 allowsFullscreenVideo={false}
                 javaScriptEnabled
                 domStorageEnabled
-                originWhitelist={['*']}
+                originWhitelist={['*']} // Required for static HTML; callback restricts navigation.
+              onShouldStartLoadWithRequest={request => allowYouTubeNavigation(request.url)}
+              mixedContentMode="never"
+              allowFileAccess={false}
+              allowFileAccessFromFileURLs={false}
+              allowUniversalAccessFromFileURLs={false}
+              sharedCookiesEnabled={false}
+              thirdPartyCookiesEnabled={false}
+              setSupportMultipleWindows={false}
               />
             </View>
           </Animated.View>
