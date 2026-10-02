@@ -67,6 +67,10 @@ try {
     await page.waitForTimeout(450);
   };
 
+  await page.goto('http://localhost:5226/?screen=guestupgrade', { waitUntil: 'networkidle' });
+  await page.getByLabel('Protect progress with Google', { exact: true }).waitFor();
+  await page.screenshot({ path: path.join(output, 'guest-account-upgrade.png') });
+
   await page.goto('http://localhost:5226/?screen=homeedit', { waitUntil: 'networkidle' });
   await page.getByLabel('Move Welcome card down', { exact: true }).waitFor();
   await page.screenshot({ path: path.join(output, 'home-customization-before.png') });
