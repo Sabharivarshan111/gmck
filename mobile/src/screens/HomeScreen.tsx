@@ -85,6 +85,7 @@ import {
 import { formatFocusTime, readFocusSummary, type FocusSummary } from '@/lib/focusStats';
 import { readLastQuestion, type LastQuestion } from '@/lib/homeResume';
 import { createDailyCard, localStudyDate, saveDailyAnswer, type DailyCard, type DailyKind } from '@/lib/dailyStudy';
+import { motivationForDate } from '@/lib/dailyMotivation';
 import { attendanceVersion, getAttendance, hydrateAttendance, subscribeAttendance } from '@/lib/attendance';
 import { useSettings } from '@/lib/settings';
 import type { HomeStackParamList, RootTabParamList } from '@/navigation/types';
@@ -101,6 +102,7 @@ const HERO_FADE_FLOOR = 0.35;
 
 const HERO_PAGES = ['Welcome', 'MCQ of the day', 'Picture of the day', 'Resume where you left off', 'Progress', 'Study time', 'Attendance'] as const;
 const QUICK_PAGES = 2;
+const CREATOR_INSTAGRAM_URL = 'https://www.instagram.com/_varshann_s?stkn=MW9wdXozOW5yeDRydA==';
 
 /** One card's height, and its width as a fraction of the grid. */
 const SUBJECT_CARD_HEIGHT = 160;
@@ -220,6 +222,7 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
   const [dailyLoading, setDailyLoading] = useState<Partial<Record<DailyKind, boolean>>>({});
   const [dailyError, setDailyError] = useState<Partial<Record<DailyKind, string>>>({});
   const [dailyDate, setDailyDate] = useState(localStudyDate);
+  const motivation = useMemo(() => motivationForDate(dailyDate), [dailyDate]);
   const [quickPage, setQuickPage] = useState(0);
   useSyncExternalStore(subscribeAttendance, attendanceVersion, attendanceVersion);
   const attendance = getAttendance();
@@ -603,8 +606,23 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
                     {HERO_PAGES[slide].toUpperCase()}
                   </Text>
                   {slide === 0 ? <>
-                    <Text accessibilityRole="header" style={[styles.heroTitle, { color: colors.text }]}>Welcome to Orbit</Text>
-                    {scales.hero < 0.85 ? null : <Text style={[styles.heroBody, { color: colors.textMuted }]}>A question and a clinical picture each day, drawn from your studies.</Text>}
+                    <Text accessibilityRole="header" style={[styles.heroTitle, { color: colors.text }]}>Welcome to Orbit!</Text>
+                    {scales.hero < 0.85 ? null : (
+                      <Text style={[styles.heroBody, { color: colors.textMuted }]}>
+                        “{motivation}”
+                      </Text>
+                    )}
+                    <Touchable
+                      onPress={() => Linking.openURL(CREATOR_INSTAGRAM_URL).catch(() => {})}
+                      label="Created by Sabharivarshan S"
+                      hint="Tap to report an issue on Instagram"
+                      style={[styles.credit, { borderColor: colors.border, backgroundColor: withAlpha(colors.text, 0.035) }]}>
+                      <View>
+                        <Text style={[styles.creditLabel, { color: colors.textMuted }]}>CREATED BY</Text>
+                        <Text style={[styles.creditName, { color: colors.text }]}>Sabharivarshan S</Text>
+                        <Text style={[styles.creditHint, { color: colors.fuchsia }]}>Tap my name to report any issues</Text>
+                      </View>
+                    </Touchable>
                   </> : null}
                   {slide === 1 ? <>
                     <DailyQuestion kind="mcq" card={dailyCards.mcq} loading={!!dailyLoading.mcq} error={dailyError.mcq} onRetry={() => loadDaily('mcq')} onAnswer={answer => answerDaily('mcq', answer)} colors={colors} />
@@ -1149,13 +1167,18 @@ function DailyQuestion({ kind, card, loading, error, onRetry, onAnswer, colors }
   </View>;
 
   const revealed = card.revealed || card.answer !== undefined;
+  const questionFit = card.question.length > 220
+    ? styles.dailyQuestionVeryLong
+    : card.question.length > 140
+      ? styles.dailyQuestionLong
+      : null;
   return <View style={styles.dailyFlashcard}>
     <View style={styles.dailyTopRow}>
       {kind === 'picture' && card.imageUrl ? <Touchable onPress={() => setImageExpanded(true)} label="Enlarge daily picture" style={styles.dailyThumbnailButton}>
         <Image source={{ uri: card.imageUrl }} resizeMode="contain" accessibilityLabel={`Study diagram for ${card.subject}`} style={[styles.dailyThumbnail, { backgroundColor: withAlpha(colors.text, 0.06) }]} />
       </Touchable> : null}
       <Touchable onPress={() => setDetailExpanded(true)} label="Read full daily question" style={styles.dailyQuestionTouch}>
-        <Text accessibilityRole="header" numberOfLines={3} style={[styles.dailyQuestion, { color: colors.text }]}>{card.question}</Text>
+        <Text accessibilityRole="header" style={[styles.dailyQuestion, questionFit, { color: colors.text }]}>{card.question}</Text>
       </Touchable>
     </View>
     {kind === 'picture' && card.imageUrl && imageExpanded ? <Modal visible animationType="fade" onRequestClose={() => setImageExpanded(false)} statusBarTranslucent>
@@ -1506,11 +1529,11 @@ const styles = StyleSheet.create({
     borderRadius: 105,
   },
   heroTitle: typeScale.title1,
-  heroPage: { height: 184, justifyContent: 'center' },
+  heroPage: { minHeight: 184, justifyContent: 'center' },
   dailyEmpty: { minHeight: 145, justifyContent: 'center' },
   dailyFlashcard: { justifyContent: 'center' },
-  dailyTopRow: { minHeight: 55, flexDirection: 'row', alignItems: 'center', gap: 9 },
-  dailyQuestionTouch: { flex: 1, justifyContent: 'center' },
+  dailyTopRow: { minHeight: 55, flexDirection: 'row', alignItems: 'flex-start', gap: 9 },
+  dailyQuestionTouch: { flex: 1, justifyContent: 'center', paddingVertical: 2 },
   dailyThumbnailButton: { width: 57, height: 57, borderRadius: radius.sm, overflow: 'hidden' },
   dailyThumbnail: { width: 57, height: 57 },
   dailyImageModal: { flex: 1, backgroundColor: '#07070A', paddingHorizontal: 12 },
@@ -1518,7 +1541,9 @@ const styles = StyleSheet.create({
   dailyImageCloseText: { ...typeScale.callout, color: '#fff', fontWeight: '700' },
   dailyImageFull: { flex: 1, width: '100%' },
   dailySubject: { ...typeScale.overline, marginBottom: 5 },
-  dailyQuestion: { ...typeScale.footnote, fontWeight: '700' },
+  dailyQuestion: { ...typeScale.footnote, fontWeight: '700', flexShrink: 1 },
+  dailyQuestionLong: { fontSize: 12, lineHeight: 16 },
+  dailyQuestionVeryLong: { fontSize: 11, lineHeight: 15 },
   dailyCompactOptions: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', gap: 4, marginTop: 4 },
   dailyCompactOption: { width: '49%', minHeight: 32, borderWidth: 1, borderRadius: radius.sm, paddingHorizontal: 7, justifyContent: 'center' },
   dailyOptionText: { fontSize: 11, lineHeight: 15 },
@@ -1563,6 +1588,12 @@ const styles = StyleSheet.create({
     ...typeScale.footnote,
     fontWeight: '700',
     marginTop: 2,
+  },
+  creditHint: {
+    fontSize: 11,
+    lineHeight: 15,
+    fontWeight: '600',
+    marginTop: 3,
   },
   dots: {
     flexDirection: 'row',
