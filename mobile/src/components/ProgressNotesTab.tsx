@@ -41,6 +41,9 @@ import {
   Link as LinkIcon,
 } from "lucide-react-native";
 import { getSubjects, type BankNode, type YearKey } from "@/lib/questionBank";
+import { useProfile } from "@/hooks/useProfile";
+import { availableBankUniversity } from "@/lib/kuhsAvailability";
+import type { University } from "@shared/university";
 import { flattenSubjectTopics } from "@/lib/handwrittenNotes";
 import {
   attachNoteImage,
@@ -437,11 +440,13 @@ interface Filing {
 function NoteFilingSheet({
   visible,
   year,
+  university,
   onClose,
   onPick,
 }: {
   visible: boolean;
   year: YearKey;
+  university: University;
   onClose: () => void;
   onPick: (filing: Filing | null) => void;
 }) {
@@ -454,7 +459,7 @@ function NoteFilingSheet({
     if (visible) setSubject(null);
   }, [visible]);
 
-  const subjects = useMemo(() => getSubjects(year), [year]);
+  const subjects = useMemo(() => getSubjects(year, university), [year, university]);
   const chapters = useMemo(
     () => (subject ? flattenSubjectTopics(subject.key, subject.node) : []),
     [subject],
@@ -565,6 +570,8 @@ interface Props {
 
 export function ProgressNotesTab({ year }: Props) {
   const { colors } = useTheme();
+  const { university } = useProfile();
+  const bankUniversity = availableBankUniversity(university);
   const insets = useSafeAreaInsets();
   const { notes, createNote, updateNote, deleteNote } = useUserNotes();
 
