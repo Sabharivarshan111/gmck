@@ -112,6 +112,7 @@ jobs:
           npm run check:notes-limits
           npm run check:notes-schema
           npm run check:v25
+          npm run check:kuhs-parity
           npm run check:notes-depth
           npm run check:sync
           npm run check:cloud-ids
