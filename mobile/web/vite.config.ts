@@ -39,7 +39,8 @@ export default defineConfig({
         if (id.endsWith('/mobile/src/theme/typography.ts')) return code.replace("default: undefined", "default: 'Roboto Variable, Apple Color Emoji, Segoe UI Emoji, sans-serif'");
         if (id.endsWith('/mobile/src/lib/supabase.ts')) return code.replace('detectSessionInUrl: false', 'detectSessionInUrl: true');
         if (id.endsWith('/mobile/src/lib/importedDecks.ts')) return code.replace('`file://${mediaDir}/', '`${mediaDir}/');
-        if (id.endsWith('/mobile/src/components/HomeMenuSheet.tsx')) return "import { Stethoscope } from 'lucide-react-native';\n" + code.replace('items: [', `items: [
+        if (id.endsWith('/mobile/src/components/HomeMenuSheet.tsx')) return "import { openInstallHelp } from '" + path.resolve(__dirname, 'install.tsx') + "';\nimport { Download, Stethoscope } from 'lucide-react-native';\n" + code.replace('items: [', `items: [
+          { key: 'install-web', icon: <Download size={18} color={colors.text} />, label: 'Install ORBIT', hint: 'Add the app to your iPhone or Android Home Screen', onPress: run(openInstallHelp) },
           { key: 'simulator', icon: <Stethoscope size={18} color={colors.text} />, label: 'Patient simulator', hint: 'Clinical cases, anatomy and bedside practice', onPress: run(() => location.assign('/simulator')) },`);
         if (id.endsWith('/mobile/src/components/FirstRun.tsx')) return code
           .replace('useState(!isNative || !GOOGLE_SIGN_IN_ENABLED)', 'useState(!GOOGLE_SIGN_IN_ENABLED)')

@@ -8,7 +8,7 @@
 // the new HTML anyway — but one that ever fell back to the cached shell keeps
 // being served the asset hashes that shell names, and those ARE cached. Bumping
 // this is the one lever that empties the old cache for everybody.
-const SW_VERSION = 'v4-native-web-2026-10-03';
+const SW_VERSION = 'v5-install-web-2026-10-03';
 const CACHE_NAME = `mbbs-qb-${SW_VERSION}`;
 
 const PRECACHE_URLS = [
@@ -17,6 +17,8 @@ const PRECACHE_URLS = [
   '/manifest.json',
   '/icon-192.png',
   '/icon-512.png',
+  '/icon-maskable-512.png',
+  '/apple-touch-icon.png',
 ];
 
 self.addEventListener('install', (event) => {

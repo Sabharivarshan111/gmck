@@ -39,3 +39,22 @@ checks saved media/progress, history, offline question browsing, timer,
 fresh guest onboarding, and the unchanged simulator shell. External requests
 are deliberately blocked in this local test. It does not certify Google
 login, paid AI generation, payment, or simulator WebGL rendering.
+
+### Install ORBIT on a phone
+
+The production page offers an install banner and a permanent **Menu → Install
+ORBIT** action. Chromium's `beforeinstallprompt` is captured early and invoked
+only after a tap; cancellation never reports a successful install. iPhone and
+iPad show Safari Share → Add to Home Screen instructions. Standalone mode and
+`appinstalled` hide the banner. Dismissal lasts seven days and does not hide the
+menu action. The manifest has a stable ID, scope, standalone launch mode and
+real branded PNGs (192/512, separate maskable 512, Apple touch 180). The missing
+icons previously made Android offer a generic shortcut. No Android source or
+simulator components were modified.
+
+`node mobile/web/install-check.mjs` checks Chromium manifest parsing, real icon
+dimensions, install help/menu/dismiss persistence, a simulated native prompt,
+cancellation and installed events, and iPhone instructions. The simulated prompt
+and user agent checks do not certify actual iOS Home Screen or Android WebAPK
+installation; those need a physical device/browser. Chrome decides when its
+native prompt is available. Offline AI/cloud sync still require internet.

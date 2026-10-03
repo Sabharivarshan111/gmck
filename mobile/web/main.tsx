@@ -1,5 +1,6 @@
 import '@fontsource-variable/roboto';
 import './platform';
+import { InstallApp } from './install';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import App from '../App';
@@ -12,7 +13,7 @@ async function boot() {
   }
   await hydrateFiles();
   await completeBrowserAuth().catch(() => {});
-  createRoot(document.getElementById('root')!).render(<App />);
+  createRoot(document.getElementById('root')!).render(<><InstallApp /><App /></>);
 }
 boot().catch(error => {
   const root = document.getElementById('root')!;
