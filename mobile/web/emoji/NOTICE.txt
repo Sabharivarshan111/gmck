@@ -1,0 +1,1 @@
+Noto emoji artwork Copyright Google LLC, Apache License 2.0. Selected from @svgmoji/noto 3.2.0 (MIT packaging). Source: https://github.com/googlefonts/noto-emoji

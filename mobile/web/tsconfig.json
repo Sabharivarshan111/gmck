@@ -1,0 +1,6 @@
+{
+  "extends": "../preview/tsconfig.json",
+  "compilerOptions": { "types": ["react-dom", "vite/client"] },
+  "include": ["**/*.ts", "**/*.tsx", "../src/declarations.d.ts"],
+  "exclude": ["**/node_modules"]
+}
