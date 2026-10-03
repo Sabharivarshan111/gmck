@@ -49,6 +49,12 @@ export default defineConfig({
           .replace('One-time authentication required to safeguard your profile against spam attacks.', 'Google sign-in is optional for local study. Sign in to sync across devices.')
           .replace('One-time authentication verified. Works completely offline.', 'Signed in. Cached question banks are available offline.');
         if (id.endsWith('/mobile/src/components/SettingsSheet.tsx')) return code.replace('At most one a day at the hour you choose.', 'Browser reminders run while Orbit is open, at the hour you choose.').replace('Android is blocking notifications for Orbit. Turn them on in system settings.', 'Your browser is blocking notifications for Orbit. Enable them in site settings.');
+        if (id.endsWith('/mobile/src/components/MusicPlayer.tsx') || id.endsWith('/mobile/src/components/ProgressNotesTab.tsx')) return code
+          .replace(/<Touchable\s+onPress=\{\(\) => (?:add|addFile)\(["']link["']\)\}[\s\S]*?<\/Touchable>/, '')
+          .replace(/Copy the (song|file), or just link to it\?/, 'Keep a private copy in this browser')
+          .replace('with either option below', 'with the file picker below')
+          .replace(/Not sure\? Choose Save a copy\. Either way the (music|file) stays on this phone — nothing is\s+uploaded\./, 'The copy stays in this browser. Nothing is uploaded. Clearing site data removes local files.')
+          .replaceAll('your phone', 'your device').replaceAll('this phone', 'this device');
       },
     },
     react(),
