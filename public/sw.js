@@ -8,7 +8,7 @@
 // the new HTML anyway — but one that ever fell back to the cached shell keeps
 // being served the asset hashes that shell names, and those ARE cached. Bumping
 // this is the one lever that empties the old cache for everybody.
-const SW_VERSION = 'v3-2026-09-04';
+const SW_VERSION = 'v4-native-web-2026-10-03';
 const CACHE_NAME = `mbbs-qb-${SW_VERSION}`;
 
 const PRECACHE_URLS = [
@@ -25,6 +25,14 @@ self.addEventListener('install', (event) => {
       const cache = await caches.open(CACHE_NAME);
       // Don't fail the whole install if one URL is missing.
       await Promise.allSettled(PRECACHE_URLS.map((url) => cache.add(url)));
+      // Cache emitted browser code, fonts and bundled question-bank images.
+      // A failed asset never prevents online use or a later cache retry.
+      try {
+        const urls = await (await fetch('/orbit-offline-assets.json')).json();
+        for (let index = 0; index < urls.length; index += 20) {
+          await Promise.allSettled(urls.slice(index, index + 20).map(url => cache.add(url)));
+        }
+      } catch { /* older deploys and local dev may have no manifest */ }
       await self.skipWaiting();
     })(),
   );
@@ -113,8 +121,16 @@ self.addEventListener('fetch', (event) => {
   if (url.origin !== self.location.origin) return;
   if (url.pathname.startsWith('/~oauth')) return;
 
+  if (url.pathname.startsWith('/_orbit/files/')) {
+    event.respondWith(readPrivateFile(url, request));
+    return;
+  }
+
   if (isNavigationRequest(request)) {
-    event.respondWith(networkFirst(request, '/index.html'));
+    // Each route keeps its own shell; the simulator must never fall back to
+    // the native homepage, and its existing BrowserRouter still sees /simulator.
+    const nativeRoute = /^\/(?:index\.html|notes|timer|ask-ai|progress|browse(?:\/.*)?)?$/.test(url.pathname);
+    event.respondWith(networkFirst(request, nativeRoute ? '/index.html' : '/legacy.html'));
     return;
   }
 
@@ -125,6 +141,39 @@ self.addEventListener('fetch', (event) => {
 
   event.respondWith(networkFirst(request));
 });
+
+async function readPrivateFile(url, request) {
+  const id = url.pathname.slice('/_orbit/files/'.length).split('/').map(decodeURIComponent).join('/');
+  const file = await new Promise((resolve, reject) => {
+    const request = indexedDB.open('orbit-browser-v1', 1);
+    request.onupgradeneeded = () => { request.result.createObjectStore('strings'); request.result.createObjectStore('files'); };
+    request.onerror = () => reject(request.error);
+    request.onsuccess = () => {
+      const db = request.result;
+      const read = db.transaction('files', 'readonly').objectStore('files').get(id);
+      read.onsuccess = () => { resolve(read.result); db.close(); };
+      read.onerror = () => { reject(read.error); db.close(); };
+    };
+  });
+  if (!file?.blob) return new Response('File is unavailable', { status: 404 });
+  const headers = {
+    'Content-Type': file.mime || 'application/octet-stream',
+    'Cache-Control': 'no-store',
+    'Accept-Ranges': 'bytes',
+    'Content-Security-Policy': "sandbox; default-src 'none'; style-src 'unsafe-inline'",
+  };
+  const range = request.headers.get('range');
+  if (range) {
+    const match = /^bytes=(\d*)-(\d*)$/.exec(range);
+    if (!match) return new Response(null, { status: 416 });
+    const size = file.blob.size;
+    const start = match[1] ? Number(match[1]) : Math.max(0, size - Number(match[2]));
+    const end = match[1] && match[2] ? Math.min(size - 1, Number(match[2])) : size - 1;
+    if (start > end || start >= size) return new Response(null, { status: 416, headers: { 'Content-Range': `bytes */${size}` } });
+    return new Response(file.blob.slice(start, end + 1), { status: 206, headers: { ...headers, 'Content-Range': `bytes ${start}-${end}/${size}`, 'Content-Length': String(end - start + 1) } });
+  }
+  return new Response(file.blob, { headers });
+}
 
 // Allow the app to trigger an immediate update.
 self.addEventListener('message', (event) => {

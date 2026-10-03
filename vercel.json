@@ -1,12 +1,36 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "npm run build",
+  "buildCommand": "npm run build:vercel",
   "outputDirectory": "dist",
-  "installCommand": "npm install --legacy-peer-deps",
+  "installCommand": "npm ci --legacy-peer-deps && npm --prefix mobile ci --legacy-peer-deps",
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/",
       "destination": "/index.html"
+    },
+    {
+      "source": "/notes",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/timer",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/ask-ai",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/progress",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/browse/:path*",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/legacy.html"
     }
   ],
   "ignoreCommand": "node scripts/vercel-ignore-build.mjs"

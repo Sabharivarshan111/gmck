@@ -2457,3 +2457,9 @@ Read [docs/android-security-checklist-audit-2026-10-01.md](docs/android-security
 **NEXT:** Preserve this combined checkout in a sanitized restore checkpoint with exact base, source hashes, tests and evidence. GitHub publication requires legitimate clearance of the prior automatic-review egress restriction; repository push permission alone does not clear it. Once permitted, recheck latest main, merge safely, push through authorized connector and verify exact run checkout/signatures/assets.
 
 **DO NOT:** Retry or route around the rejection, force-push, restart PDF review, remove existing Anki/progress, deploy stale Lovable or notes sources, use exposed historical tokens, claim v25 released/Play uploaded/device-tested, or enable Play billing.
+
+### 2026-10-03: Android-component production web port
+
+The owner requested Vercel parity with Android while preserving the patient simulator. `mobile/web/` is the production browser entry for the actual `mobile/App.tsx`, with real adapters for browser storage/files/PDF/audio/video/Anki/auth. Native source screens and simulator source/assets are unchanged. `npm run build:vercel` assembles the native study shell and legacy simulator/document shell; `vercel.json` routes them separately. Native themes, components and motion stay shared. See `mobile/web/README.md` and the 2026-10-03 resume entry for verified checks and browser limits.
+
+Build/type/lint/Anki/security/KUHS/simulator checks passed, as did production UI/offline/import persistence checks and real PDF/export adapter checks. Cloud login/generation/payment and simulator WebGL/device rendering remain unverified. Vercel's advertised deploy connector returned `Tool deploy_to_vercel not found`, so production publication is pending. This new web port is distinct from the previously rejected signed Android v25 publication; do not replay that denied action or mistake the current older READY Vercel deployment for this change.

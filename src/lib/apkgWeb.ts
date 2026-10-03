@@ -188,7 +188,7 @@ const id = (value: unknown) => String(value ?? '');
  * modern collection with no notetypes at all, imports nothing, and says
  * nothing about why.
  */
-function readCollection(db: never, schema: number): ApkgCollection {
+function readCollection(db: { exec: (sql: string) => { columns: string[]; values: unknown[][] }[] }, schema: number): ApkgCollection {
   const cards = query(db as never, SQL.cards).map(row => ({
     id: id(row.id),
     nid: id(row.nid),
