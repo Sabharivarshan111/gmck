@@ -67,7 +67,23 @@ const files = {
     audio.removeAttribute('src'); audio.load();
     return JSON.stringify({ title: record.name.replace(/\.[^.]+$/, ''), artist: '', album: '', durationMs, artwork: '' });
   },
-  async openExternal(idOrUri: string) { const uri = pathFor(idOrUri) || idOrUri; return !!window.open(uri, '_blank', 'noopener'); },
+  async openExternal(idOrUri: string) {
+    const record = records.get(idOrUri);
+    const controlled = !!navigator.serviceWorker?.controller;
+    const uri = record ? (controlled ? fileUrl(idOrUri) : pathFor(idOrUri)) : idOrUri;
+    if (!record && !/^https?:\/\//i.test(uri)) return false;
+    // Private HTML/SVG must not execute with the app's origin. The service
+    // worker adds a sandbox CSP; before it controls the page, download files
+    // that are not a browser PDF/audio/video/raster viewer format.
+    if (record && !controlled && !/^(application\/pdf|audio\/|video\/|image\/(png|jpeg|gif|webp|avif))/i.test(record.mime)) {
+      const link = document.createElement('a'); link.href = uri; link.download = record.name; link.click(); return true;
+    }
+    // `noopener` makes window.open return null even after a successful open.
+    // Obtain the blank window first so failures report accurately, then
+    // sever its opener before navigating to the sandboxed/private file.
+    const tab = window.open('about:blank', '_blank'); if (!tab) return false;
+    tab.opener = null; tab.location.href = uri; return true;
+  },
   async renderPdf(idOrUri: string, maxPages: number) {
     const pdfjs = await import('pdfjs-dist');
     pdfjs.GlobalWorkerOptions.workerSrc = (await import('pdfjs-dist/build/pdf.worker.min.mjs?url')).default;
