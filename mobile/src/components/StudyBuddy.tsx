@@ -1,5 +1,5 @@
 import { useIsFocused } from '@react-navigation/native';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, TextInput, View } from 'react-native';
 import { Text } from '@/components/Text';
 import { Touchable } from '@/components/Touchable';
@@ -157,8 +157,11 @@ export function StudyBuddyPanel({
     void syncReminders();
   };
   const [nameDraft, setNameDraft] = useState(buddy.name);
+  const editingName = useRef(false);
+  const focused = useIsFocused();
+  const [petInteraction, reactToPet] = useState(0);
   useEffect(() => {
-    setNameDraft(buddy.name);
+    if (!editingName.current) setNameDraft(buddy.name);
   }, [buddy.name]);
   const plan = studyPlan(buddy.minutes, buddy.topic);
   const done = buddy.day === todayKey() ? buddy.completed : [];
@@ -171,7 +174,17 @@ export function StudyBuddyPanel({
   return (
     <View style={styles.panel}>
       <View style={styles.reaction}>
-        <BuddyAvatar size={60} state={done.length === 3 ? 'wink' : 'idle'} />
+        <Touchable
+          label={`Pet ${buddy.name}`}
+          onPress={() => reactToPet(n => n + 1)}
+        >
+          <BuddyAvatar
+            size={60}
+            active={focused}
+            interaction={petInteraction}
+            state={done.length === 3 ? 'wink' : 'idle'}
+          />
+        </Touchable>
         <View style={styles.flex}>
           <Text style={[typeScale.title3, { color: colors.text }]}>
             Your Study Buddy
@@ -277,8 +290,19 @@ export function StudyBuddyPanel({
         accessibilityLabel="Study Buddy name"
         value={nameDraft}
         maxLength={24}
-        onChangeText={setNameDraft}
-        onEndEditing={() => change({ name: nameDraft })}
+        onFocus={() => {
+          editingName.current = true;
+        }}
+        onChangeText={name => {
+          setNameDraft(name);
+          setBuddy({ name });
+        }}
+        onBlur={() => {
+          editingName.current = false;
+          change({ name: nameDraft });
+          setNameDraft(nameDraft.trim() || 'Orbit');
+        }}
+        onSubmitEditing={() => change({ name: nameDraft })}
         style={[
           styles.input,
           { color: colors.text, borderColor: colors.border },
