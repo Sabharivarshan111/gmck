@@ -36,6 +36,8 @@ import { GradientFill } from '@/components/Gradient';
 import { McqCard } from '@/components/McqCard';
 import { DiagramCard } from '@/components/DiagramCard';
 import { NoteText } from '@/components/NoteText';
+import { ChatLanguagePresets } from '@/components/ChatLanguagePresets';
+import { initialChatLanguage, languagePrompt, type ChatLanguage } from '@/lib/chatPresets';
 // A poke is a commit — the reader deliberately touched the face — so it earns
 // `tick` rather than the weaker press feedback `Touchable` already gives.
 import { tick } from '@/lib/haptics';
@@ -57,6 +59,7 @@ import {
 } from '@/lib/askAi';
 import type { RootTabParamList } from '@/navigation/types';
 
+interface ChatVariant { text: string; diagrams?: ChatDiagram[]; }
 interface ChatMessage {
   id: string;
   role: 'user' | 'assistant';
@@ -65,6 +68,9 @@ interface ChatMessage {
   mcqs?: Mcq[];
   diagrams?: ChatDiagram[];
   retryPrompt?: string;
+  language?: ChatLanguage;
+  variants?: Partial<Record<ChatLanguage, ChatVariant>>;
+  presetError?: string;
   /** The question this answer replies to — what the follow-ups refer to. */
   about?: string;
   /** Reveal only on arrival, never again on a later re-render. */
@@ -267,6 +273,8 @@ export default function AskAiScreen() {
             mcqs: result.mcqs,
             diagrams: result.diagrams,
             retryPrompt: prompt,
+            language: initialChatLanguage(prompt),
+            variants: { [initialChatLanguage(prompt)]: { text: result.text, diagrams: result.diagrams } },
             about: shown,
             fresh: true,
           },
@@ -297,6 +305,36 @@ export default function AskAiScreen() {
     },
     [loading, messages],
   );
+
+  const switchLanguage = useCallback(async (item: ChatMessage, language: ChatLanguage) => {
+    if (loading || !item.about || item.failed || item.mcqs || language === item.language) return;
+    const cached = item.variants?.[language];
+    if (cached) {
+      setMessages(prev => prev.map(message => message.id === item.id
+        ? { ...message, ...cached, language, fresh: false, presetError: undefined } : message));
+      return;
+    }
+    setLoading(true);
+    setMessages(prev => prev.map(message => message.id === item.id ? { ...message, presetError: undefined } : message));
+    try {
+      const result = await askAi(languagePrompt(item.about, language), [
+        { role: 'user', content: item.about.slice(0, MAX_HISTORY_CONTENT) },
+        { role: 'assistant', content: item.text.slice(0, MAX_HISTORY_CONTENT) },
+      ]);
+      if (result.sourceStatus === 'needs_review' || result.sourceStatus === 'insufficient_sources') {
+        throw new Error('This language version could not be source checked. Your previous answer is still available; try again.');
+      }
+      const variant: ChatVariant = { text: result.text, diagrams: result.diagrams?.length ? result.diagrams : item.diagrams };
+      setMessages(prev => prev.map(message => message.id === item.id ? {
+        ...message, ...variant, language, fresh: false, presetError: undefined,
+        variants: { ...message.variants, [language]: variant },
+      } : message));
+    } catch (err) {
+      setMessages(prev => prev.map(message => message.id === item.id ? {
+        ...message, presetError: err instanceof Error ? err.message : 'Could not change the answer language. Try again.',
+      } : message));
+    } finally { setLoading(false); }
+  }, [loading]);
 
   // A question sent over from a browse screen.
   const handledNonce = useRef<number | undefined>(undefined);
@@ -551,9 +589,13 @@ export default function AskAiScreen() {
                   {!mine && (!item.fresh || revealed.has(item.id)) ? item.diagrams?.map(diagram => (
                     <DiagramCard key={diagram.url} imageUrl={diagram.url} title={diagram.title} />
                   )) : null}
-                  {!mine && item.about && revealed.has(item.id) ? (
+                  {!mine && !item.failed && item.about && (!item.fresh || revealed.has(item.id)) ? (
+                    <ChatLanguagePresets selected={item.language ?? 'English'} disabled={loading}
+                      error={item.presetError} onPick={language => switchLanguage(item, language)} />
+                  ) : null}
+                  {!mine && item.about && (!item.fresh || revealed.has(item.id)) ? (
                     <AnswerActions
-                      followUps={item.failed ? [] : followUpsFor(item.about)}
+                      followUps={item.failed ? [] : followUpsFor(item.about, item.language ?? 'English')}
                       onPick={send}
                       onRetry={() => send(item.retryPrompt ?? item.about!)}
                       disabled={loading}

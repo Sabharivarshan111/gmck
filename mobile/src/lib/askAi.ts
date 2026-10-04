@@ -43,6 +43,7 @@ export interface AskResult {
   /** Parsed MCQs, when this was an MCQ request and the JSON came back valid. */
   mcqs?: Mcq[];
   diagrams?: ChatDiagram[];
+  sourceStatus?: string;
 }
 
 export interface ChatDiagram { url: string; title: string; }
@@ -228,7 +229,7 @@ export async function askAi(prompt: string, history: HistoryEntry[]): Promise<As
         item.url.startsWith('https://pmtgeydtqypwrypshhsx.supabase.co/storage/v1/object/public/diagrams/') &&
         typeof item.title === 'string').slice(0, 2)
       : [];
-    return { text, diagrams };
+    return { text, diagrams, sourceStatus: data?.sourceCheck?.status };
   }
 
   const mcqs = parseMcqs(text);
