@@ -45,6 +45,8 @@ on:
       # only moves documentation still burns no runner.
       - main
       - claude/native-app-sync
+      # Shared Android/iPhone web UI changes also get an ad-free APK.
+      - codex/native-web-parity
     # Only when something that reaches the APK changes.
     #
     # This used to fire on every push. Three Android builds ran per push, per
