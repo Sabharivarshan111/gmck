@@ -34,6 +34,8 @@ import { DURATION, EASE, useReducedMotion } from '@/theme/motion';
 import { useTheme, withAlpha } from '@/theme';
 import { GradientFill } from '@/components/Gradient';
 import { McqCard } from '@/components/McqCard';
+import { DiagramCard } from '@/components/DiagramCard';
+import { NoteText } from '@/components/NoteText';
 // A poke is a commit — the reader deliberately touched the face — so it earns
 // `tick` rather than the weaker press feedback `Touchable` already gives.
 import { tick } from '@/lib/haptics';
@@ -51,6 +53,7 @@ import {
   MAX_HISTORY_CONTENT,
   MAX_PROMPT,
   type Mcq,
+  type ChatDiagram,
 } from '@/lib/askAi';
 import type { RootTabParamList } from '@/navigation/types';
 
@@ -60,6 +63,8 @@ interface ChatMessage {
   text: string;
   /** Present when this turn produced answerable practice questions. */
   mcqs?: Mcq[];
+  diagrams?: ChatDiagram[];
+  retryPrompt?: string;
   /** The question this answer replies to — what the follow-ups refer to. */
   about?: string;
   /** Reveal only on arrival, never again on a later re-render. */
@@ -260,6 +265,8 @@ export default function AskAiScreen() {
             role: 'assistant',
             text: result.text,
             mcqs: result.mcqs,
+            diagrams: result.diagrams,
+            retryPrompt: prompt,
             about: shown,
             fresh: true,
           },
@@ -273,6 +280,7 @@ export default function AskAiScreen() {
             text: err instanceof Error ? err.message : String(err),
             about: shown,
             failed: true,
+            retryPrompt: prompt,
           },
         ]);
       } finally {
@@ -294,11 +302,11 @@ export default function AskAiScreen() {
   const handledNonce = useRef<number | undefined>(undefined);
   useEffect(() => {
     const { question, nonce } = route.params ?? {};
-    if (question && nonce && nonce !== handledNonce.current) {
+    if (focused && !loading && question && nonce && nonce !== handledNonce.current) {
       handledNonce.current = nonce;
       send(question);
     }
-  }, [route.params, send]);
+  }, [route.params, send, focused, loading]);
 
   useEffect(() => {
     if (messages.length > 0) {
@@ -529,6 +537,8 @@ export default function AskAiScreen() {
                     ]}>
                     {mine ? (
                       <Text style={[styles.bubbleText, { color: colors.text }]}>{item.text}</Text>
+                    ) : !item.fresh || revealed.has(item.id) ? (
+                      <NoteText content={item.text.replace(/\[\[(?:dis|drug|anat|inv|val):([^\]]+)\]\]/g, '$1')} />
                     ) : (
                       <RevealText
                         text={item.text}
@@ -538,11 +548,14 @@ export default function AskAiScreen() {
                       />
                     )}
                   </View>
+                  {!mine && (!item.fresh || revealed.has(item.id)) ? item.diagrams?.map(diagram => (
+                    <DiagramCard key={diagram.url} imageUrl={diagram.url} title={diagram.title} />
+                  )) : null}
                   {!mine && item.about && revealed.has(item.id) ? (
                     <AnswerActions
                       followUps={item.failed ? [] : followUpsFor(item.about)}
                       onPick={send}
-                      onRetry={() => send(item.about!)}
+                      onRetry={() => send(item.retryPrompt ?? item.about!)}
                       disabled={loading}
                     />
                   ) : null}

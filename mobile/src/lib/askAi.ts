@@ -42,7 +42,10 @@ export interface AskResult {
   text: string;
   /** Parsed MCQs, when this was an MCQ request and the JSON came back valid. */
   mcqs?: Mcq[];
+  diagrams?: ChatDiagram[];
 }
+
+export interface ChatDiagram { url: string; title: string; }
 
 export interface HistoryEntry {
   role: 'user' | 'assistant';
@@ -220,7 +223,12 @@ export async function askAi(prompt: string, history: HistoryEntry[]): Promise<As
   }
 
   if (!isMCQRequest) {
-    return { text };
+    const diagrams: ChatDiagram[] = Array.isArray(data?.diagrams)
+      ? data.diagrams.filter((item: ChatDiagram) => typeof item?.url === 'string' &&
+        item.url.startsWith('https://pmtgeydtqypwrypshhsx.supabase.co/storage/v1/object/public/diagrams/') &&
+        typeof item.title === 'string').slice(0, 2)
+      : [];
+    return { text, diagrams };
   }
 
   const mcqs = parseMcqs(text);
