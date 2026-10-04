@@ -2,6 +2,13 @@ import React, { useEffect, useRef, useState } from 'react';
 import { View, type StyleProp, type ViewStyle } from 'react-native';
 import Svg, { Circle, Path, G } from 'react-native-svg';
 import { BotEngine, HALF_BOX, RADIUS, type BotFrame } from '@/bot/engine';
+import {
+  BUDDY_ANIMALS,
+  type BuddyKind,
+  type BuddyVariant,
+} from '@/lib/studyBuddy';
+import { AnimalBot } from '@/components/AnimalBot';
+import type { AnimalArtworkKey } from '@/bot/animalArtwork';
 import type { StateId } from '@/bot/states';
 import { useReducedMotion } from '@/theme/motion';
 import { useTheme } from '@/theme';
@@ -45,6 +52,10 @@ const FPS = 24;
 export interface BotProps {
   /** What the bot is doing. Changing it starts a morph from wherever it was. */
   state: StateId;
+  interaction?: number;
+  bodyColor?: string;
+  kind?: BuddyKind;
+  variant?: BuddyVariant;
   /** Diameter in dp. */
   size?: number;
   /**
@@ -65,7 +76,17 @@ export interface BotProps {
   style?: StyleProp<ViewStyle>;
 }
 
-export function Bot({ state, size = 56, active = true, watchingInput = false, style }: BotProps) {
+export function Bot({
+  state,
+  size = 56,
+  active = true,
+  watchingInput = false,
+  style,
+  bodyColor,
+  kind = 'orb',
+  variant = 'classic',
+  interaction = 0,
+}: BotProps) {
   const { colors } = useTheme();
   const reduceMotion = useReducedMotion();
 
@@ -82,8 +103,8 @@ export function Bot({ state, size = 56, active = true, watchingInput = false, st
     engine.current!.setState(state, now);
     // Draw the first frame of the new state immediately rather than waiting
     // for the next tick, so a state change is never up to 40ms late.
-    setFrame(engine.current!.sample(now));
-  }, [state]);
+    setFrame(engine.current!.sample(active ? now : now + 1));
+  }, [state, active]);
 
   useEffect(() => {
     // Down and slightly in, towards where the composer sits. Small, because a
@@ -93,7 +114,7 @@ export function Bot({ state, size = 56, active = true, watchingInput = false, st
   }, [watchingInput]);
 
   useEffect(() => {
-    if (!active) {
+    if (!active || kind !== 'orb') {
       return;
     }
     if (reduceMotion) {
@@ -130,10 +151,11 @@ export function Bot({ state, size = 56, active = true, watchingInput = false, st
         clearTimeout(timer);
       }
     };
-  }, [active, reduceMotion, state, watchingInput]);
+  }, [active, reduceMotion, state, watchingInput, kind]);
 
-  const body = colors.accent;
+  const body = bodyColor ?? colors.accent;
   const eye = onColor(body);
+  const animal = BUDDY_ANIMALS.find(item => item.id === kind);
 
   return (
     <View
@@ -145,15 +167,31 @@ export function Bot({ state, size = 56, active = true, watchingInput = false, st
        * announcing "thinking face" adds nothing and interrupts the answer.
        */
       accessibilityElementsHidden
-      importantForAccessibility="no-hide-descendants">
-      <Svg width={size} height={size} viewBox={`0 0 ${HALF_BOX * 2} ${HALF_BOX * 2}`}>
-        <Circle cx={frame.cx} cy={frame.cy} r={frame.r} fill={body} />
-        {frame.eyes.map((it, index) => (
-          <G key={index} transform={it.transform} opacity={it.opacity}>
-            <Path d={it.d} fill={eye} />
-          </G>
-        ))}
-      </Svg>
+      importantForAccessibility="no-hide-descendants"
+    >
+      {animal ? (
+        <AnimalBot
+          artwork={`${animal.id}-${variant}` as AnimalArtworkKey}
+          state={state}
+          size={size}
+          active={active}
+          watchingInput={watchingInput}
+          interaction={interaction}
+        />
+      ) : (
+        <Svg
+          width={size}
+          height={size}
+          viewBox={`0 0 ${HALF_BOX * 2} ${HALF_BOX * 2}`}
+        >
+          <Circle cx={frame.cx} cy={frame.cy} r={frame.r} fill={body} />
+          {frame.eyes.map((it, index) => (
+            <G key={index} transform={it.transform} opacity={it.opacity}>
+              <Path d={it.d} fill={eye} />
+            </G>
+          ))}
+        </Svg>
+      )}
     </View>
   );
 }

@@ -8,7 +8,7 @@
 // the new HTML anyway — but one that ever fell back to the cached shell keeps
 // being served the asset hashes that shell names, and those ARE cached. Bumping
 // this is the one lever that empties the old cache for everybody.
-const SW_VERSION = 'v5-install-web-2026-10-03';
+const SW_VERSION = 'v6-study-buddy-2026-10-04';
 const CACHE_NAME = `mbbs-qb-${SW_VERSION}`;
 
 const PRECACHE_URLS = [
@@ -180,4 +180,17 @@ async function readPrivateFile(url, request) {
 // Allow the app to trigger an immediate update.
 self.addEventListener('message', (event) => {
   if (event.data === 'SKIP_WAITING') self.skipWaiting();
+});
+
+// Local browser reminders and future push use the same safe in-app destinations.
+self.addEventListener('notificationclick', event => {
+  event.notification.close();
+  const destination = event.notification.data?.url;
+  const safe = ['/ask-ai', '/progress', '/'].includes(destination) ? destination : '/';
+  event.waitUntil((async () => {
+    const windows = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+    const existing = windows.find(client => new URL(client.url).origin === self.location.origin);
+    if (existing) { await existing.navigate(safe); return existing.focus(); }
+    return self.clients.openWindow(safe);
+  })());
 });

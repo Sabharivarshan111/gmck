@@ -487,6 +487,7 @@ async function persist(items: AttendanceItem[]): Promise<void> {
   emit();
   try {
     await AsyncStorage.setItem(KEY, JSON.stringify(items));
+    void import('./reminderSync').then(({ syncReminders }) => syncReminders()).catch(() => {});
   } catch {
     // The in-memory list still applies for this session. Losing a tap is
     // better than losing the screen.

@@ -14,6 +14,7 @@ import { ThemeProvider, useTheme } from '@/theme';
 import { ClaimRow } from '@/components/PageRefSheet';
 import type { PageRef } from '@/lib/pageRefs';
 import { Bot } from '@/components/Bot';
+import { BUDDY_ANIMALS, BUDDY_VARIANTS } from '@/lib/studyBuddy';
 import type { StateId } from '@/bot/states';
 import RootNavigator from '@/navigation/RootNavigator';
 import { hydrateProgress } from '@/lib/progress';
@@ -905,6 +906,17 @@ function ChatMotionDemo() {
 function BotDemo() {
   const { colors } = useTheme();
   const states: StateId[] = ['idle', 'thinking', 'wide', 'wink', 'exclaim', 'sleep'];
+  const animalMode = params.get('animals') === '1';
+  if (animalMode) return <View style={{padding: 24, backgroundColor: colors.background}}>
+    <Text style={{color: colors.text, fontSize: 22}}>27 original reactive mascots</Text>
+    <Text style={{color: colors.textMuted}}>Tap a face to wink and bounce</Text>
+    <View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 20}}>
+      {BUDDY_ANIMALS.flatMap(animal => BUDDY_VARIANTS.map(variant => <View key={`${animal.id}-${variant}`} testID={`${animal.id}-${variant}`}>
+        <Bot kind={animal.id} variant={variant} size={112} state={(params.get('state') || 'idle') as StateId} active={params.get('quiet') !== '1'} watchingInput={params.get('typing') === '1'} />
+        <Text style={{color: colors.textMuted}}>{animal.label} · {variant}</Text>
+      </View>))}
+    </View>
+  </View>;
   return (
     <View style={{ flex: 1, backgroundColor: colors.background, padding: 24 }}>
       <Text style={{ color: colors.text, fontSize: 22, fontWeight: '800', marginBottom: 20 }}>

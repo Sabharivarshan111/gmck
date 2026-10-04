@@ -1,5 +1,6 @@
+import { StudyBuddyPanel } from '@/components/StudyBuddy';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text as RNText, View } from 'react-native';
+import { Platform, StyleSheet, Text as RNText, View } from 'react-native';
 import { Text } from '@/components/Text';
 import { Touchable } from '@/components/Touchable';
 import { Sheet } from '@/components/Sheet';
@@ -151,6 +152,7 @@ export function SettingsSheet({
    * over a permission that has been taken away is a switch that lies.
    */
   const [notifyAllowed, setNotifyAllowed] = useState(false);
+  const [permissionMessage, setPermissionMessage] = useState('');
   /** null before anything is sent, 'sending' while in flight, then the result. */
   const [testState, setTestState] = useState<TestResult | 'sending' | null>(null);
   useEffect(() => {
@@ -181,6 +183,7 @@ export function SettingsSheet({
 
   return (
     <Sheet visible={visible} onClose={onClose} title="Settings">
+      <StudyBuddyPanel />
       <Text style={[styles.section, { color: colors.textMuted }]}>QUESTION BANK UNIVERSITY</Text>
       <UniversityChoice value={university} onChange={option => { void setUniversity(option); }} />
       <Text style={[styles.section, { color: colors.textMuted }]}>
@@ -358,6 +361,8 @@ export function SettingsSheet({
             </Text>
           </View>
 
+          {Platform.OS === 'web' ? <Text style={[styles.note, { color: colors.textMuted }]}>Browser reminders currently require ORBIT to stay open. On iPhone, add ORBIT to your Home Screen before enabling notifications.</Text> : null}
+          {permissionMessage ? <Text accessibilityLiveRegion="polite" style={[styles.note, { color: colors.warning }]}>{permissionMessage}</Text> : null}
           <Switchable
             label="Daily reminder (notifications)"
             detail="Let Orbit send you a notification — one a day, and only when there is something worth saying"
@@ -373,6 +378,7 @@ export function SettingsSheet({
                 : await requestNotificationPermission();
               const allowed = granted || hasNotificationPermission();
               setNotifyAllowed(allowed);
+              setPermissionMessage(allowed ? '' : 'Notification permission was not granted. Enable notifications for ORBIT in device or browser settings.');
               if (!allowed) {
                 // Asked and refused. Leaving the switch off is the honest
                 // outcome — showing it on over a denied permission is a

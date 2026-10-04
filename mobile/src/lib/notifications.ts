@@ -55,6 +55,13 @@ export interface Digest {
   allowRevision: boolean;
   /** Optional daily posting prompt; the default for existing users is off. */
   allowAttendance: boolean;
+  buddyName?: string;
+  attendanceSummary?: string;
+  allowPlan?: boolean;
+  planSummary?: string;
+  allowMcq?: boolean;
+  mcqDay?: number;
+  mcqPreview?: string;
 }
 
 /** Local midnight as a day number, matching what the receiver computes. */

@@ -1,3 +1,5 @@
+import { BuddyAvatar, BuddyCoach, StudyBuddyPanel } from '@/components/StudyBuddy';
+import { Sheet } from '@/components/Sheet';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Animated,
@@ -46,7 +48,6 @@ import { ThinkingDots } from '@/components/ThinkingDots';
 import { RevealText } from '@/components/RevealText';
 import { AnswerActions, followUpsFor } from '@/components/AnswerActions';
 import { WaveformRiver } from '@/components/WaveformRiver';
-import { Bot } from '@/components/Bot';
 import type { StateId } from '@/bot/states';
 import {
   askAi,
@@ -93,6 +94,7 @@ export default function AskAiScreen() {
 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
+  const [buddyOpen, setBuddyOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   /*
    * The bot reads the screen rather than being told.
@@ -467,16 +469,16 @@ export default function AskAiScreen() {
             stops on its own, and src/bot/ for the engine.
           */}
           <Touchable
-            onPress={poke}
-            label="The assistant"
-            hint="Tap to say hello"
+            onPress={() => { poke(); setBuddyOpen(true); }}
+            label="Customize Study Buddy"
+            hint="Choose your buddy and plan your studies"
             scaleTo={0.92}
             hitSlop={6}
             style={[styles.avatar, { backgroundColor: withAlpha(colors.accent, 0.16) }]}>
-            <Bot state={botState} size={34} active={focused} watchingInput={typing} />
+            <BuddyAvatar state={botState} size={34} active={focused} watchingInput={typing} />
           </Touchable>
           <Text style={[styles.assistantName, { color: colors.text }]}>
-            Medical <Text style={{ color: colors.fuchsia }}>Assistant</Text>
+            Study <Text style={{ color: colors.fuchsia }}>Buddy</Text>
           </Text>
           <View style={[styles.onlineDot, { backgroundColor: colors.green }]} />
           <View style={styles.headerSpacer} />
@@ -552,7 +554,7 @@ export default function AskAiScreen() {
                           key={`${item.id}-${i}`}
                           item={mcq}
                           index={i}
-                          onAnswer={correct => react(correct ? 'wink' : 'dismay', 2200)}
+                          onReview={() => send(`Explain why the correct answer to this MBBS MCQ is right and why the other options are wrong: ${mcq.question}. Options: ${JSON.stringify(mcq.options)}. Correct option: ${mcq.correct}. Verified explanation: ${mcq.explanation}`)}
                         />
                       ))}
                     </View>
@@ -586,6 +588,7 @@ export default function AskAiScreen() {
                       />
                     )}
                   </View>
+                  {!mine && (!item.fresh || revealed.has(item.id)) && item.id === messages[messages.length - 1]?.id ? <BuddyCoach failed={item.failed} onRecall={item.about ? () => send(`Double-tapped: ${item.about}`) : undefined} /> : null}
                   {!mine && (!item.fresh || revealed.has(item.id)) ? item.diagrams?.map(diagram => (
                     <DiagramCard key={diagram.url} imageUrl={diagram.url} title={diagram.title} />
                   )) : null}
@@ -605,11 +608,12 @@ export default function AskAiScreen() {
               );
             }}
             ListFooterComponent={
-              loading ? <ThinkingDots label="Thinking…" /> : undefined
+              loading ? <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}><BuddyAvatar state="thinking" active={focused} /><ThinkingDots label="Thinking…" /></View> : undefined
             }
           />
         )}
 
+        <Sheet visible={buddyOpen} onClose={() => setBuddyOpen(false)} title="Study Buddy"><StudyBuddyPanel onStudy={prompt => { setBuddyOpen(false); send(prompt); }} /></Sheet>
         {/* Composer */}
         <View style={[styles.composerWrap, { borderTopColor: colors.border }]}>
           {listening ? (

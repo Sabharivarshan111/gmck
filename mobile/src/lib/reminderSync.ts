@@ -1,3 +1,7 @@
+import { getBuddy, hydrateBuddy, todayKey } from '@/lib/studyBuddy';
+import { getAttendance, hydrateAttendance } from '@/lib/attendance';
+import { readDailyCard } from '@/lib/dailyStudy';
+import { readLocalProfile, YEAR_TO_KEY } from '@/lib/profile';
 import { getExam, hydrateExam, isHydrated as examHydrated } from '@/lib/exam';
 import { dueCards, loadCards } from '@/lib/spacedRepetition';
 import { currentValue, loadStreak } from '@/lib/streak';
@@ -54,7 +58,8 @@ export async function syncReminders(): Promise<void> {
   const cards = await loadCards().catch(() => []);
   const due = dueCards(cards);
   const soonest = cards.reduce<number | null>(
-    (earliest, card) => (earliest === null || card.due < earliest ? card.due : earliest),
+    (earliest, card) =>
+      earliest === null || card.due < earliest ? card.due : earliest,
     null,
   );
 
@@ -68,13 +73,56 @@ export async function syncReminders(): Promise<void> {
    * value can only be larger, and being quiet about a streak someone still has
    * is the cheaper mistake.
    */
-  const streak = currentValue(await loadStreak().catch(() => ({
-    lastActiveDay: '',
-    current: 0,
-    best: 0,
-  })));
+  const streak = currentValue(
+    await loadStreak().catch(() => ({
+      lastActiveDay: '',
+      current: 0,
+      best: 0,
+    })),
+  );
 
+  await Promise.all([hydrateBuddy(), hydrateAttendance()]);
+  const buddy = getBuddy();
+  const attendance = getAttendance().items;
+  const held = attendance.reduce((sum, item) => sum + item.held, 0);
+  const attended = attendance.reduce((sum, item) => sum + item.attended, 0);
+  const attendanceSummary =
+    held > 0
+      ? `Recorded total attendance: ${((100 * attended) / held).toFixed(
+          1,
+        )}% (${attended}/${held}). Check each subject's target in Attendance.`
+      : 'No attendance recorded yet. Log your classes and postings to see your percentage.';
+  let mcqPreview = '';
+  if (buddy.remindMcq) {
+    const profile = await readLocalProfile();
+    if (profile) {
+      const card = await readDailyCard(
+        'mcq',
+        profile.university ?? 'tnmgr',
+        YEAR_TO_KEY[profile.year],
+      );
+      if (card && !card.revealed && card.answer === undefined) {
+        const full = `${card.question} ${card.options
+          .map((option, i) => `${'ABCD'[i]}. ${option}`)
+          .join(' ')} Tap ORBIT to answer.`;
+        mcqPreview =
+          full.length <= 700
+            ? full
+            : 'Your MCQ of the day is ready. Open ORBIT to read the complete question and answer it.';
+      }
+    }
+  }
   updateDigest({
+    buddyName: buddy.enabled ? buddy.name : 'ORBIT',
+    attendanceSummary,
+    allowPlan: buddy.remindPlan,
+    planSummary:
+      buddy.topic && (buddy.day !== todayKey() || buddy.completed.length < 3)
+        ? `${buddy.minutes}-minute plan: ${buddy.topic}. Understand, recall, then review.`
+        : '',
+    allowMcq: buddy.remindMcq,
+    mcqDay: epochDay(),
+    mcqPreview,
     examDay: exam ? epochDay(exam.date) : -1,
     examName: exam?.name ?? 'your exam',
     lastStudyDay: getLastStudyDay(),

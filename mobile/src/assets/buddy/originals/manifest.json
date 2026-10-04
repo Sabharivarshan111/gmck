@@ -1,0 +1,218 @@
+[
+  {
+    "animal": "cat",
+    "variant": "classic",
+    "name": "Turkish Angora Cat",
+    "file": "cat-classic.png",
+    "source": "https://cdn.ipaslogo.com/logos/4dff0eb23d1785bf-turkish-angora-cat.png",
+    "bytes": 116657
+  },
+  {
+    "animal": "cat",
+    "variant": "soft",
+    "name": "Cream Tabby Cat",
+    "file": "cat-soft.png",
+    "source": "https://cdn.ipaslogo.com/logos/6dfeb299da3cf287-cream-tabby-cat.png",
+    "bytes": 115759
+  },
+  {
+    "animal": "cat",
+    "variant": "bold",
+    "name": "Black Cat",
+    "file": "cat-bold.png",
+    "source": "https://cdn.ipaslogo.com/logos/31842ec74cbcec28-black-cat-2.png",
+    "bytes": 122227
+  },
+  {
+    "animal": "dog",
+    "variant": "classic",
+    "name": "Pembroke Corgi Dog",
+    "file": "dog-classic.png",
+    "source": "https://cdn.ipaslogo.com/logos/560855000879c861-pembroke-corgi-dog.png",
+    "bytes": 114752
+  },
+  {
+    "animal": "dog",
+    "variant": "soft",
+    "name": "Miniature Schnauzer Dog",
+    "file": "dog-soft.png",
+    "source": "https://cdn.ipaslogo.com/logos/6891c8570c66e825-miniature-schnauzer-dog-2.png",
+    "bytes": 124474
+  },
+  {
+    "animal": "dog",
+    "variant": "bold",
+    "name": "Miniature Poodle Dog",
+    "file": "dog-bold.png",
+    "source": "https://cdn.ipaslogo.com/logos/2da11f4d45433496-miniature-poodle-dog.png",
+    "bytes": 111501
+  },
+  {
+    "animal": "fox",
+    "variant": "classic",
+    "name": "Smooth Cheek Fox",
+    "file": "fox-classic.png",
+    "source": "https://cdn.ipaslogo.com/logos/7d03ca5a86639f00-smooth-cheek-fox.png",
+    "bytes": 123724
+  },
+  {
+    "animal": "fox",
+    "variant": "soft",
+    "name": "Sleepy Fox",
+    "file": "fox-soft.png",
+    "source": "https://cdn.ipaslogo.com/logos/98d34f1f1d91f6dd-sleepy-fox.png",
+    "bytes": 117068
+  },
+  {
+    "animal": "fox",
+    "variant": "bold",
+    "name": "Fennec Fox",
+    "file": "fox-bold.png",
+    "source": "https://cdn.ipaslogo.com/logos/4f01350cbdc508bb-fennec-fox-4.png",
+    "bytes": 122175
+  },
+  {
+    "animal": "panda",
+    "variant": "classic",
+    "name": "Baby Panda",
+    "file": "panda-classic.png",
+    "source": "https://cdn.ipaslogo.com/logos/ce0f8c2934f50cd7-baby-panda.png",
+    "bytes": 123170
+  },
+  {
+    "animal": "panda",
+    "variant": "soft",
+    "name": "Panda Content Closed Eyes Left",
+    "file": "panda-soft.png",
+    "source": "https://cdn.ipaslogo.com/logos/94692733c1015bc5-panda-content-closed-eyes-left.png",
+    "bytes": 122738
+  },
+  {
+    "animal": "panda",
+    "variant": "bold",
+    "name": "Curious Panda",
+    "file": "panda-bold.png",
+    "source": "https://cdn.ipaslogo.com/logos/611c78b65d5636c0-curious-panda.png",
+    "bytes": 120270
+  },
+  {
+    "animal": "rabbit",
+    "variant": "classic",
+    "name": "Fluffy Cream Rabbit",
+    "file": "rabbit-classic.png",
+    "source": "https://cdn.ipaslogo.com/logos/e4a814eb9f5c8bf6-fluffy-cream-rabbit.png",
+    "bytes": 118823
+  },
+  {
+    "animal": "rabbit",
+    "variant": "soft",
+    "name": "Gray Upright Rabbit",
+    "file": "rabbit-soft.png",
+    "source": "https://cdn.ipaslogo.com/logos/f16d6c786db16d6f-gray-upright-rabbit.png",
+    "bytes": 115503
+  },
+  {
+    "animal": "rabbit",
+    "variant": "bold",
+    "name": "White Lop Rabbit",
+    "file": "rabbit-bold.png",
+    "source": "https://cdn.ipaslogo.com/logos/c66e740001b9f795-white-lop-rabbit.png",
+    "bytes": 113965
+  },
+  {
+    "animal": "otter",
+    "variant": "classic",
+    "name": "Gentle Otter",
+    "file": "otter-classic.png",
+    "source": "https://cdn.ipaslogo.com/logos/706cdbe22ba651d9-gentle-otter.png",
+    "bytes": 115773
+  },
+  {
+    "animal": "otter",
+    "variant": "soft",
+    "name": "Curious Otter",
+    "file": "otter-soft.png",
+    "source": "https://cdn.ipaslogo.com/logos/29e28542dc3c0b70-curious-otter.png",
+    "bytes": 116661
+  },
+  {
+    "animal": "otter",
+    "variant": "bold",
+    "name": "Round Face Otter",
+    "file": "otter-bold.png",
+    "source": "https://cdn.ipaslogo.com/logos/f035f99fc439ebce-round-face-otter.png",
+    "bytes": 116197
+  },
+  {
+    "animal": "penguin",
+    "variant": "classic",
+    "name": "Baby Penguin",
+    "file": "penguin-classic.png",
+    "source": "https://cdn.ipaslogo.com/logos/d5ae06131a75419e-baby-penguin.png",
+    "bytes": 120613
+  },
+  {
+    "animal": "penguin",
+    "variant": "soft",
+    "name": "Penguin Playful Close Eyes Right",
+    "file": "penguin-soft.png",
+    "source": "https://cdn.ipaslogo.com/logos/d9d3a08b542adcc5-penguin-playful-close-eyes-right.png",
+    "bytes": 121928
+  },
+  {
+    "animal": "penguin",
+    "variant": "bold",
+    "name": "Wide Cheek Penguin",
+    "file": "penguin-bold.png",
+    "source": "https://cdn.ipaslogo.com/logos/512c856ea7365849-wide-cheek-penguin.png",
+    "bytes": 119087
+  },
+  {
+    "animal": "bear",
+    "variant": "classic",
+    "name": "Bear Large Ears Left",
+    "file": "bear-classic.png",
+    "source": "https://cdn.ipaslogo.com/logos/b0cb8880bc5988a5-bear-large-ears-left.png",
+    "bytes": 121846
+  },
+  {
+    "animal": "bear",
+    "variant": "soft",
+    "name": "Polar Bear",
+    "file": "bear-soft.png",
+    "source": "https://cdn.ipaslogo.com/logos/afeee038b50f63a1-polar-bear-2.png",
+    "bytes": 116224
+  },
+  {
+    "animal": "bear",
+    "variant": "bold",
+    "name": "Happy Brown Bear",
+    "file": "bear-bold.png",
+    "source": "https://cdn.ipaslogo.com/logos/60b65b9e1fa6357e-happy-brown-bear.png",
+    "bytes": 115172
+  },
+  {
+    "animal": "squirrel",
+    "variant": "classic",
+    "name": "Round Ear Squirrel",
+    "file": "squirrel-classic.png",
+    "source": "https://cdn.ipaslogo.com/logos/579cd012291d8ae7-round-ear-squirrel.png",
+    "bytes": 121449
+  },
+  {
+    "animal": "squirrel",
+    "variant": "soft",
+    "name": "Curious Squirrel",
+    "file": "squirrel-soft.png",
+    "source": "https://cdn.ipaslogo.com/logos/ccd1a0e5ff456382-curious-squirrel.png",
+    "bytes": 121218
+  },
+  {
+    "animal": "squirrel",
+    "variant": "bold",
+    "name": "Squirrel Calm Round Face Left",
+    "file": "squirrel-bold.png",
+    "source": "https://cdn.ipaslogo.com/logos/6047cc0e014e9e90-squirrel-calm-round-face-left.png",
+    "bytes": 123708
+  }
+]

@@ -55,7 +55,7 @@ class NotifyReceiver : BroadcastReceiver() {
     // Attendance is an independently opted-in daily posting check. Studying
     // questions today does not mean someone remembered tomorrow's posting.
     val attendance = digest.optBoolean("allowAttendance", false)
-    if (!attendance && digest.optLong("lastStudyDay", -1L) == today) {
+    if (!attendance && !digest.optBoolean("allowMcq", false) && digest.optLong("lastStudyDay", -1L) == today) {
       return
     }
 
@@ -70,7 +70,8 @@ class NotifyReceiver : BroadcastReceiver() {
 
     val message = compose(digest, today) ?: return
 
-    if (!post(context, message.first, message.second)) {
+    val buddy = digest.optString("buddyName", "ORBIT").take(24)
+    if (!post(context, "$buddy · ${message.first}", message.second)) {
       return
     }
 
@@ -89,6 +90,10 @@ class NotifyReceiver : BroadcastReceiver() {
    * work that is due today.
    */
   internal fun compose(digest: org.json.JSONObject, today: Long): Pair<String, String>? {
+    val quiz = digest.optString("mcqPreview", "")
+    if (digest.optBoolean("allowMcq", false) && digest.optLong("mcqDay", -1L) == today && quiz.isNotBlank()) {
+      return "MCQ of the day" to quiz.take(750)
+    }
     if (digest.optLong("lastStudyDay", -1L) == today) return attendanceMessage(digest, today)
     // optBoolean defaults true so a digest written by an older build — one
     // that predates these switches — behaves as it did before rather than
@@ -120,6 +125,10 @@ class NotifyReceiver : BroadcastReceiver() {
       return "$what due for revision" to "Spaced revision only works on the day it comes up."
     }
 
+    val plan = digest.optString("planSummary", "")
+    if (digest.optBoolean("allowPlan", false) && plan.isNotBlank()) {
+      return "Your study plan" to plan.take(250)
+    }
     return attendanceMessage(digest, today)
   }
 
@@ -131,7 +140,8 @@ class NotifyReceiver : BroadcastReceiver() {
       "Plan for your next posting today. A little preparation goes a long way.",
       "Keep showing up for the ward. Your future self gets the benefit.",
     )
-    return "Keep your posting on track" to lines[(today % lines.size).toInt()]
+    val summary = digest.optString("attendanceSummary", "")
+    return "Do not miss your class attendance" to "${lines[(today % lines.size).toInt()]} $summary"
   }
 
   internal fun epochDay(): Long {

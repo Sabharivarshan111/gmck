@@ -9,14 +9,17 @@ async function post() {
   if (!permitted()) return 'blocked';
   const today = Math.floor(new Date().setHours(0, 0, 0, 0) / 86400000);
   let body = '';
-  if (digest.lastStudyDay === today) body = digest.allowAttendance ? 'Check your next clinical posting. One attended day at a time.' : '';
+  if (digest.allowMcq && digest.mcqDay === today && digest.mcqPreview) body = digest.mcqPreview;
+  else if (digest.lastStudyDay === today) body = digest.allowAttendance ? 'Check your next clinical posting. One attended day at a time.' : '';
   else if (digest.allowExam !== false && digest.examDay > 0 && digest.examDay >= today && digest.examDay - today <= 7) body = 'Your exam is approaching. Make time for a short revision session.';
   else if (digest.allowStreak !== false && digest.streak >= 2) body = 'Keep your study streak going with a few questions today.';
   else if (digest.allowRevision !== false && digest.revisionDueCount > 0 && digest.revisionDueDay >= 0 && digest.revisionDueDay <= today) body = `${digest.revisionDueCount} questions are ready for revision.`;
   else if (digest.allowAttendance) body = 'Check your next clinical posting. One attended day at a time.';
+  if (!body && digest.allowPlan && digest.planSummary) body = digest.planSummary;
+  if (digest.allowAttendance && body) body += ` ${digest.attendanceSummary || ''}`;
   if (!body) return 'quiet';
   const registration = await navigator.serviceWorker.ready;
-  await registration.showNotification('ORBIT study reminder', { body, icon: '/icon-192.png', tag: 'orbit-daily' });
+  await registration.showNotification(`${digest.buddyName || 'ORBIT'} · ${digest.allowMcq && digest.mcqDay === today && digest.mcqPreview ? 'MCQ of the day' : 'study reminder'}`, { body, icon: '/icon-192.png', tag: 'orbit-daily', data: { url: digest.allowMcq && digest.mcqDay === today && digest.mcqPreview ? '/' : digest.allowAttendance ? '/progress' : '/ask-ai' } });
   return 'posted';
 }
 const notifications = {
