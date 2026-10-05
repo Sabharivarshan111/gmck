@@ -32,6 +32,7 @@ import {
 export interface ClinicalCaseLibraryModalProps {
   visible: boolean;
   onClose: () => void;
+  mode?: 'practice' | 'library';
 }
 
 function plainItem(value: unknown): string {
@@ -67,6 +68,7 @@ function plainItem(value: unknown): string {
 export function ClinicalCaseLibraryModal({
   visible,
   onClose,
+  mode = 'practice',
 }: ClinicalCaseLibraryModalProps) {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
@@ -146,6 +148,7 @@ export function ClinicalCaseLibraryModal({
       ),
     [selected],
   );
+  const debriefVisible = mode === 'library' || revealed;
 
   return (
     <Modal
@@ -177,10 +180,16 @@ export function ClinicalCaseLibraryModal({
           </Touchable>
           <View style={styles.headerText}>
             <Text style={[styles.headerTitle, { color: colors.text }]}>
-              {selected ? selected.name : 'Patient simulator cases'}
+              {selected
+                ? selected.name
+                : mode === 'practice'
+                  ? 'Patient simulator cases'
+                  : 'Clinical case library'}
             </Text>
             <Text style={[styles.headerSub, { color: colors.textMuted }]} numberOfLines={1}>
-              Curated synthetic cases for MBBS practice
+              {mode === 'practice'
+                ? 'Curated synthetic cases for MBBS practice'
+                : 'Browse searchable clinical teaching cases'}
             </Text>
           </View>
           <View style={[styles.reviewedBadge, { backgroundColor: withAlpha(colors.primary, 0.12) }]}>
@@ -220,10 +229,12 @@ export function ClinicalCaseLibraryModal({
               <AlertTriangle size={18} color="#B45309" />
               <View style={styles.flex}>
                 <Text style={[styles.safetyTitle, { color: colors.text }]}>
-                  Simulated case for exam practice
+                  {mode === 'practice' ? 'Simulated case for exam practice' : 'Educational case reference'}
                 </Text>
                 <Text style={[styles.safetyBody, { color: colors.textMuted }]}>
-                  Educational synthetic case, not clinical guidance. External dataset rows appear only after review.
+                  {mode === 'practice'
+                    ? 'Educational synthetic case, not clinical guidance. External dataset rows appear only after review.'
+                    : 'Browse the complete teaching record. This is educational content, not patient-specific clinical guidance.'}
                 </Text>
               </View>
             </View>
@@ -250,7 +261,7 @@ export function ClinicalCaseLibraryModal({
               </View>
             </View>
 
-            {!revealed ? (
+            {!debriefVisible ? (
               <View style={[styles.caseCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
                 <Text style={[styles.practiceTitle, { color: colors.text }]}>Before you reveal</Text>
                 <Text style={[styles.body, { color: colors.textMuted }]}>
@@ -386,10 +397,13 @@ export function ClinicalCaseLibraryModal({
                 ]}>
                 <Stethoscope size={20} color={colors.primary} />
                 <View style={styles.flex}>
-                  <Text style={[styles.infoTitle, { color: colors.text }]}>Clinical case library</Text>
+                  <Text style={[styles.infoTitle, { color: colors.text }]}>
+                    {mode === 'practice' ? 'Patient simulator source bank' : 'Clinical case library'}
+                  </Text>
                   <Text style={[styles.infoBody, { color: colors.textMuted }]}>
-                    ORBIT-curated starter cases are live now. Search by disease, alias or ICD-10.
-                    External Opus 5.5 cases stay behind review and provenance checks.
+                    {mode === 'practice'
+                      ? 'Choose a case, take the history and commit to your diagnosis before revealing the debrief.'
+                      : 'Browse cases directly by disease, alias, symptom, presentation or ICD-10. External Opus 5.5 cases can feed this same library after review.'}
                   </Text>
                 </View>
               </View>
@@ -440,7 +454,7 @@ export function ClinicalCaseLibraryModal({
                   <Touchable
                     key={item.id}
                     onPress={() => openCase(item)}
-                    label={`${item.name}, open simulated clinical case`}
+                    label={`${item.name}, ${mode === 'practice' ? 'start simulated clinical case' : 'open case record'}`}
                     scaleTo={0.985}
                     style={[
                       styles.row,
