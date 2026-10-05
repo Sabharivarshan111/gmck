@@ -27,6 +27,8 @@ const DEFAULT_URL =
   'https://huggingface.co/datasets/nisten/opus5-5-doctor-patient-conversations-all-human-diseases/resolve/main/opus5-5diseaseconversations.jsonl?download=true';
 const DEFAULT_SHA256 =
   'f828c30cee7006a3cf5b88909f9b865688f98b11d4c886108b9b9a39e5402e0b';
+const SOURCE_REVISION = '9277244e642a8ba02cb8c1d26408e5792932045b';
+const SOURCE_BYTES = 75312131;
 
 const url = process.env.OPUS55_DATASET_URL || DEFAULT_URL;
 const expectedSha = (process.env.OPUS55_EXPECTED_SHA256 || DEFAULT_SHA256).toLowerCase();
@@ -157,10 +159,49 @@ function rowFrom(record, sha) {
     source_sha256: sha,
     source_license:
       'Apache-2.0 in Hugging Face metadata; README also says MIT. Seed/source provenance must be retained.',
-    review_status: 'pending',
-    reviewed_by: null,
-    reviewed_at: null,
+    source_disease:
+      typeof record.source_disease === 'string' ? record.source_disease : null,
+    clinician_persona:
+      typeof record.clinician_persona === 'string' ? record.clinician_persona : null,
+    raw_record: record,
   };
+}
+
+async function updateCatalog(recordCount, sha) {
+  if (dryRun || limit) return;
+  const endpoint =
+    `${supabaseUrl}/rest/v1/clinical_dataset_catalog?on_conflict=dataset_name`;
+  const payload = {
+    dataset_name: DATASET,
+    display_name: 'Doctor-Patient Conversations — All Human Diseases (Opus 5.5)',
+    source_url:
+      'https://huggingface.co/datasets/nisten/opus5-5-doctor-patient-conversations-all-human-diseases',
+    source_revision: SOURCE_REVISION,
+    source_sha256: sha,
+    raw_bytes: SOURCE_BYTES,
+    records_total: recordCount,
+    records_structurally_valid: recordCount,
+    published_cases: 0,
+    source_status: 'loaded_private_review_pending',
+    license_metadata: 'Apache-2.0 in Hugging Face metadata',
+    license_readme: 'MIT stated in dataset README',
+    provenance_note:
+      'Seed disease list derives from nisten/all-human-diseases; structured clinical fields are reported by the dataset author as copied from the same curated source. Provenance retained.',
+    updated_at: new Date().toISOString(),
+  };
+  const res = await fetch(endpoint, {
+    method: 'POST',
+    headers: {
+      apikey: serviceKey,
+      Authorization: `Bearer ${serviceKey}`,
+      'Content-Type': 'application/json',
+      Prefer: 'resolution=merge-duplicates,return=minimal',
+    },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    throw new Error(`Catalog update failed (${res.status}): ${await res.text()}`);
+  }
 }
 
 async function upsert(batch) {
@@ -246,6 +287,7 @@ for (const record of staged) {
 }
 await upsert(batch);
 accepted += batch.length;
+await updateCatalog(accepted, limit ? expectedSha : digest);
 
 console.log(
   JSON.stringify(
