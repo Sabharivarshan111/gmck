@@ -86,7 +86,7 @@ export async function fetchClinicalDatasetCatalog(): Promise<ClinicalDatasetCata
     return null;
   }
 
-  const row = data as Record<string, unknown>;
+  const row = data as unknown as Record<string, unknown>;
   return {
     datasetName: String(row.dataset_name ?? OPUS55_DATASET),
     displayName: String(row.display_name ?? 'Opus 5.5 clinical source corpus'),
@@ -191,7 +191,7 @@ export async function fetchApprovedClinicalCase(
     return null;
   }
 
-  const row = data as Record<string, unknown>;
+  const row = data as unknown as Record<string, unknown>;
   const dialogue = asObjectArray(row.conversation)
     .map(item => {
       if (!item || typeof item !== 'object') {
