@@ -144,13 +144,17 @@ export async function fetchApprovedClinicalCase(
         return null;
       }
       const ref = item as Record<string, unknown>;
-      return {
-        ...(typeof ref.pmid === 'string' ? { pmid: ref.pmid } : null),
-        ...(typeof ref.title === 'string' ? { title: ref.title } : null),
-        ...(typeof ref.year === 'string' || typeof ref.year === 'number'
-          ? { year: ref.year }
-          : null),
-      } satisfies ClinicalDatasetReference;
+      const normalized: ClinicalDatasetReference = {};
+      if (typeof ref.pmid === 'string') {
+        normalized.pmid = ref.pmid;
+      }
+      if (typeof ref.title === 'string') {
+        normalized.title = ref.title;
+      }
+      if (typeof ref.year === 'string' || typeof ref.year === 'number') {
+        normalized.year = ref.year;
+      }
+      return normalized;
     })
     .filter((item): item is ClinicalDatasetReference => item != null);
 
