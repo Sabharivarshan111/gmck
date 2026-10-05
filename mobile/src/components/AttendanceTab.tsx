@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState, useSyncExternalStore } from 'react';
+import React, { useCallback, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import { StyleSheet, TextInput, View } from 'react-native';
 import {
   CalendarClock,
@@ -26,9 +26,13 @@ import {
   bestPossible,
   dayOfRotation,
   getAttendance,
+  formatLocalIsoDate,
   getHolidayTitle,
   getMonthlyAttendance,
   markAttendance,
+  parseLocalIsoDate,
+  postingDurationDays,
+  postingEndDate,
   percentOf,
   removeAttendance,
   subscribeAttendance,
@@ -72,45 +76,56 @@ const POSTING_SUGGESTIONS = [
 
 const WEEKDAY_NAMES = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
-/** Interactive Mini-Calendar for Postings to view and toggle custom rain/event holidays */
+/** Interactive Mini-Calendar for postings and college-specific holiday overrides. */
 function RotationCalendar({
   startDateStr,
   totalDays,
   skipSundays,
+  skipSaturdays,
   prepaidHolidays,
   customHolidays = [],
+  gazettedWorkingDays = [],
   onToggleHoliday,
+  onToggleGazettedWorkingDay,
   editable = true,
 }: {
   startDateStr: string;
   totalDays: number;
   skipSundays: boolean;
+  skipSaturdays: boolean;
   prepaidHolidays: boolean;
   customHolidays?: string[];
+  gazettedWorkingDays?: string[];
   onToggleHoliday?: (isoDate: string) => void;
+  onToggleGazettedWorkingDay?: (isoDate: string) => void;
   editable?: boolean;
 }) {
   const { colors } = useTheme();
+  const officialTap = useRef<Record<string, number>>({});
 
   const days = useMemo(() => {
-    if (!startDateStr || !totalDays || totalDays <= 0) {
-      return [];
-    }
-    const start = new Date(`${startDateStr}T00:00:00`);
-    if (Number.isNaN(start.getTime())) {
-      return [];
-    }
+    if (!startDateStr || !totalDays || totalDays <= 0) return [];
+    const start = parseLocalIsoDate(startDateStr);
+    if (!start) return [];
+
     const items = [];
     for (let i = 0; i < totalDays; i += 1) {
       const d = new Date(start);
       d.setDate(start.getDate() + i);
-      const iso = d.toISOString().slice(0, 10);
-      const dayOfWeek = d.getDay(); // 0 is Sun, 1 is Mon...
+      const iso = formatLocalIsoDate(d);
+      const dayOfWeek = d.getDay();
       const isSun = dayOfWeek === 0;
+      const isSat = dayOfWeek === 6;
       const holidayTitle = getHolidayTitle(iso);
       const isGazetted = Boolean(holidayTitle);
+      const isGazettedOverride = gazettedWorkingDays.includes(iso);
+      const activeGazetted = prepaidHolidays && isGazetted && !isGazettedOverride;
       const isCustomHoliday = customHolidays.includes(iso);
-      const isOff = (skipSundays && isSun) || (prepaidHolidays && isGazetted) || isCustomHoliday;
+      const isOff =
+        (skipSundays && isSun) ||
+        (skipSaturdays && isSat) ||
+        activeGazetted ||
+        isCustomHoliday;
       items.push({
         iso,
         date: d,
@@ -118,25 +133,65 @@ function RotationCalendar({
         monthShort: d.toLocaleString('en-US', { month: 'short' }),
         dayOfWeek,
         isSun,
+        isSat,
         isGazetted,
+        isGazettedOverride,
+        activeGazetted,
         holidayTitle,
         isCustomHoliday,
         isOff,
       });
     }
     return items;
-  }, [startDateStr, totalDays, skipSundays, prepaidHolidays, customHolidays]);
+  }, [
+    startDateStr,
+    totalDays,
+    skipSundays,
+    skipSaturdays,
+    prepaidHolidays,
+    customHolidays,
+    gazettedWorkingDays,
+  ]);
 
-  if (days.length === 0) {
-    return null;
-  }
+  if (days.length === 0) return null;
 
   const sundaysCount = days.filter(d => d.isSun).length;
-  const gazettedCount = days.filter(d => (!d.isSun || !skipSundays) && d.isGazetted).length;
+  const saturdaysCount = days.filter(d => d.isSat).length;
+  const gazettedCount = days.filter(
+    d =>
+      d.activeGazetted &&
+      (!d.isSun || !skipSundays) &&
+      (!d.isSat || !skipSaturdays),
+  ).length;
+  const overriddenCount = days.filter(d => d.isGazetted && d.isGazettedOverride).length;
   const rainCount = days.filter(
-    d => (!d.isSun || !skipSundays) && (!d.isGazetted || !prepaidHolidays) && d.isCustomHoliday,
+    d =>
+      (!d.isSun || !skipSundays) &&
+      (!d.isSat || !skipSaturdays) &&
+      !d.activeGazetted &&
+      d.isCustomHoliday,
   ).length;
   const workingCount = days.filter(d => !d.isOff).length;
+
+  const toggleOfficial = (iso: string) => {
+    if (!editable) return;
+    onToggleGazettedWorkingDay?.(iso);
+  };
+
+  const handlePress = (d: (typeof days)[number]) => {
+    if (!editable) return;
+    if (d.isGazetted && prepaidHolidays) {
+      const now = Date.now();
+      const previous = officialTap.current[d.iso] ?? 0;
+      officialTap.current[d.iso] = now;
+      if (now - previous <= 450) {
+        officialTap.current[d.iso] = 0;
+        toggleOfficial(d.iso);
+      }
+      return;
+    }
+    onToggleHoliday?.(d.iso);
+  };
 
   return (
     <View style={[styles.calendarContainer, { borderColor: colors.border, backgroundColor: colors.cardElevated }]}>
@@ -150,7 +205,6 @@ function RotationCalendar({
         </Text>
       </View>
 
-      {/* Weekday labels */}
       <View style={styles.calendarWeekRow}>
         {WEEKDAY_NAMES.map((name, i) => (
           <Text key={i} style={[styles.calendarWeekCol, { color: i === 6 ? colors.danger : colors.textMuted }]}>
@@ -159,47 +213,64 @@ function RotationCalendar({
         ))}
       </View>
 
-      {/* Day tiles */}
       <View style={styles.calendarGrid}>
         {days.map(d => {
-          const isSelectedHoliday = d.isCustomHoliday;
+          const selected = d.isCustomHoliday;
+          const official = d.activeGazetted;
+          const overridden = d.isGazetted && d.isGazettedOverride;
+          const weekendOff = (d.isSun && skipSundays) || (d.isSat && skipSaturdays);
           return (
             <Touchable
               key={d.iso}
-              onPress={() => editable && onToggleHoliday?.(d.iso)}
+              onPress={() => handlePress(d)}
               disabled={!editable}
-              label={`${d.monthShort} ${d.dayNum}${d.isOff ? ' - Holiday' : ' - Working day'}`}
+              label={`${d.monthShort} ${d.dayNum}${d.holidayTitle ? ` - ${d.holidayTitle}` : ''}${d.isOff ? ' - Holiday' : ' - Working day'}`}
+              hint={
+                d.isGazetted && prepaidHolidays
+                  ? 'Double tap to switch this official holiday between holiday and working day for this posting'
+                  : 'Tap to add or remove a college-specific holiday'
+              }
+              accessibilityActions={
+                d.isGazetted && prepaidHolidays
+                  ? [{ name: 'toggleOfficialHoliday', label: overridden ? 'Restore government holiday' : 'Treat as working day' }]
+                  : undefined
+              }
+              onAccessibilityAction={name => {
+                if (name === 'toggleOfficialHoliday') toggleOfficial(d.iso);
+              }}
               style={[
                 styles.calendarCell,
                 {
-                  borderColor: isSelectedHoliday
+                  borderColor: selected
                     ? colors.accent
-                    : d.isGazetted && prepaidHolidays
+                    : official || overridden
                       ? colors.warning
                       : d.isSun && skipSundays
                         ? withAlpha(colors.danger, 0.4)
                         : colors.border,
-                  backgroundColor: isSelectedHoliday
+                  backgroundColor: selected
                     ? withAlpha(colors.accent, 0.22)
-                    : d.isGazetted && prepaidHolidays
+                    : official
                       ? withAlpha(colors.warning, 0.16)
                       : d.isSun && skipSundays
                         ? withAlpha(colors.danger, 0.08)
-                        : colors.card,
+                        : weekendOff
+                          ? withAlpha(colors.textMuted, 0.06)
+                          : colors.card,
                 },
               ]}>
               <Text
                 style={[
                   styles.calendarCellText,
                   {
-                    color: isSelectedHoliday
+                    color: selected
                       ? colors.accent
-                      : d.isGazetted && prepaidHolidays
+                      : official || overridden
                         ? colors.warning
                         : d.isSun && skipSundays
                           ? colors.danger
                           : colors.text,
-                    fontWeight: isSelectedHoliday || d.isGazetted ? '700' : '500',
+                    fontWeight: selected || d.isGazetted ? '700' : '500',
                   },
                 ]}>
                 {d.dayNum}
@@ -209,41 +280,54 @@ function RotationCalendar({
                 style={[
                   styles.calendarCellTag,
                   {
-                    color: isSelectedHoliday
+                    color: selected
                       ? colors.accent
-                      : d.isGazetted && prepaidHolidays
+                      : official || overridden
                         ? colors.warning
                         : d.isSun && skipSundays
                           ? colors.danger
                           : colors.textMuted,
                   },
                 ]}>
-                {isSelectedHoliday
+                {selected
                   ? 'Rain/Event'
-                  : d.isGazetted && prepaidHolidays
-                    ? 'Holiday'
-                    : d.isSun && skipSundays
-                      ? 'Sun'
-                      : d.monthShort}
+                  : overridden
+                    ? 'Working*'
+                    : official
+                      ? 'TN Govt'
+                      : d.isSun && skipSundays
+                        ? 'Sun'
+                        : d.isSat && skipSaturdays
+                          ? 'Sat'
+                          : d.monthShort}
               </Text>
             </Touchable>
           );
         })}
       </View>
 
-      {/* Breakdown chips */}
       <View style={styles.calendarLegend}>
         {skipSundays ? (
           <View style={[styles.legendChip, { backgroundColor: withAlpha(colors.danger, 0.1) }]}>
-            <Text style={[styles.legendText, { color: colors.danger }]}>
-              {sundaysCount} Sundays off
-            </Text>
+            <Text style={[styles.legendText, { color: colors.danger }]}>{sundaysCount} Sundays off</Text>
+          </View>
+        ) : null}
+        {skipSaturdays ? (
+          <View style={[styles.legendChip, { backgroundColor: withAlpha(colors.textMuted, 0.1) }]}>
+            <Text style={[styles.legendText, { color: colors.textMuted }]}>{saturdaysCount} Saturdays off</Text>
           </View>
         ) : null}
         {prepaidHolidays && gazettedCount > 0 ? (
           <View style={[styles.legendChip, { backgroundColor: withAlpha(colors.warning, 0.12) }]}>
             <Text style={[styles.legendText, { color: colors.warning }]}>
-              {gazettedCount} Gazetted holiday{gazettedCount > 1 ? 's' : ''}
+              {gazettedCount} TN Govt holiday{gazettedCount > 1 ? 's' : ''}
+            </Text>
+          </View>
+        ) : null}
+        {overriddenCount > 0 ? (
+          <View style={[styles.legendChip, { backgroundColor: withAlpha(colors.warning, 0.07) }]}>
+            <Text style={[styles.legendText, { color: colors.warning }]}>
+              {overriddenCount} govt holiday{overriddenCount > 1 ? 's' : ''} treated as working
             </Text>
           </View>
         ) : null}
@@ -258,7 +342,7 @@ function RotationCalendar({
 
       {editable ? (
         <Text style={[styles.calendarHint, { color: colors.textMuted }]}>
-          💡 Tap any date to add or remove rain holidays, college fests, or strike days.
+          💡 Tap a normal date for a college closure. Double-tap a yellow TN Govt date to treat it as working; double-tap again to restore it.
         </Text>
       ) : null}
     </View>
@@ -274,11 +358,16 @@ export function AttendanceTab() {
   const [adding, setAdding] = useState(false);
   const [name, setName] = useState('');
   const [totalClassesStr, setTotalClassesStr] = useState('');
-  const [startDate, setStartDate] = useState(() => new Date().toISOString().slice(0, 10));
+  const [startDate, setStartDate] = useState(() => formatLocalIsoDate(new Date()));
   const [days, setDays] = useState('28');
+  const [endDate, setEndDate] = useState(
+    () => postingEndDate(formatLocalIsoDate(new Date()), 28) ?? formatLocalIsoDate(new Date()),
+  );
   const [skipSundays, setSkipSundays] = useState(true);
+  const [skipSaturdays, setSkipSaturdays] = useState(false);
   const [prepaidHolidays, setPrepaidHolidays] = useState(true);
   const [customHolidays, setCustomHolidays] = useState<string[]>([]);
+  const [gazettedWorkingDays, setGazettedWorkingDays] = useState<string[]>([]);
   const [target, setTarget] = useState(75);
   /** The last mark per item, so Undo knows what it is taking back. */
   const [lastMark, setLastMark] = useState<Record<string, boolean>>({});
@@ -288,6 +377,30 @@ export function AttendanceTab() {
   const toggleFormHoliday = useCallback((iso: string) => {
     setCustomHolidays(prev => (prev.includes(iso) ? prev.filter(x => x !== iso) : [...prev, iso]));
   }, []);
+
+  const toggleFormGazettedWorkingDay = useCallback((iso: string) => {
+    setGazettedWorkingDays(prev =>
+      prev.includes(iso) ? prev.filter(x => x !== iso) : [...prev, iso],
+    );
+  }, []);
+
+  const changeStartDate = useCallback((next: string) => {
+    setStartDate(next);
+    const calculated = postingEndDate(next, Number(days));
+    if (calculated) setEndDate(calculated);
+  }, [days]);
+
+  const changeDays = useCallback((next: string) => {
+    setDays(next);
+    const calculated = postingEndDate(startDate, Number(next));
+    if (calculated) setEndDate(calculated);
+  }, [startDate]);
+
+  const changeEndDate = useCallback((next: string) => {
+    setEndDate(next);
+    const calculated = postingDurationDays(startDate, next);
+    if (calculated) setDays(String(calculated));
+  }, [startDate]);
 
   const submit = useCallback(async () => {
     const trimmed = name.trim();
@@ -301,12 +414,8 @@ export function AttendanceTab() {
         ? Math.max(1, Math.round(Number(totalClassesStr) || 0))
         : undefined;
 
-    let calculatedEnd: string | undefined;
-    if (hasTotal && startDate) {
-      const d = new Date(`${startDate}T00:00:00`);
-      d.setDate(d.getDate() + total - 1);
-      calculatedEnd = d.toISOString().slice(0, 10);
-    }
+    const calculatedEnd =
+      hasTotal && startDate ? postingEndDate(startDate, total) ?? undefined : undefined;
 
     await addAttendance({
       name: trimmed,
@@ -317,15 +426,33 @@ export function AttendanceTab() {
       startDate: kind === 'posting' ? startDate : undefined,
       endDate: calculatedEnd,
       skipSundays: kind === 'posting' && skipSundays ? true : undefined,
+      skipSaturdays: kind === 'posting' && skipSaturdays ? true : undefined,
       prepaidHolidays: kind === 'posting' && prepaidHolidays ? true : undefined,
+      gazettedWorkingDays:
+        kind === 'posting' && gazettedWorkingDays.length > 0 ? gazettedWorkingDays : undefined,
       holidays: kind === 'posting' && customHolidays.length > 0 ? customHolidays : undefined,
     });
     setName('');
     setTotalClassesStr('');
     setDays('28');
+    setEndDate(postingEndDate(startDate, 28) ?? endDate);
     setCustomHolidays([]);
+    setGazettedWorkingDays([]);
     setAdding(false);
-  }, [name, totalClassesStr, days, kind, target, startDate, skipSundays, prepaidHolidays, customHolidays]);
+  }, [
+    name,
+    totalClassesStr,
+    days,
+    kind,
+    target,
+    startDate,
+    endDate,
+    skipSundays,
+    skipSaturdays,
+    prepaidHolidays,
+    customHolidays,
+    gazettedWorkingDays,
+  ]);
 
   const mark = useCallback(async (item: AttendanceItem, present: boolean) => {
     tick();
@@ -373,7 +500,7 @@ export function AttendanceTab() {
             <Text style={[styles.emptyBody, { color: colors.textMuted }]}>
               {kind === 'theory'
                 ? 'Add a subject below, then tap Present or Absent after class. Orbit calculates your safe bunks and exam eligibility.'
-                : 'Add a rotation with start date and duration. Orbit displays an interactive calendar, excludes Sundays and prepaid holidays, lets you mark rain days, and calculates safe bunks.'}
+                : 'Add a rotation with start and end dates. Orbit can exclude Sundays, optional Saturdays and Tamil Nadu government holidays, lets you mark college closures, and calculates safe bunks.'}
             </Text>
           </View>
         ) : null}
@@ -392,6 +519,9 @@ export function AttendanceTab() {
             onRemove={async () => removeAttendance(item.id)}
             onUpdateHolidays={async nextHolidays =>
               updateAttendance(item.id, { holidays: nextHolidays })
+            }
+            onUpdateGazettedWorkingDays={async nextDays =>
+              updateAttendance(item.id, { gazettedWorkingDays: nextDays })
             }
           />
         ))}
@@ -488,23 +618,36 @@ export function AttendanceTab() {
                     <Text style={[styles.formLabel, { color: colors.textMuted }]}>START DATE (YYYY-MM-DD)</Text>
                     <TextInput
                       value={startDate}
-                      onChangeText={setStartDate}
+                      onChangeText={changeStartDate}
                       placeholder="YYYY-MM-DD"
                       placeholderTextColor={colors.textMuted}
+                      accessibilityLabel="Posting start date"
                       style={[styles.input, { color: colors.text, borderColor: colors.border }]}
                     />
                   </View>
                   <View style={styles.flexOne}>
-                    <Text style={[styles.formLabel, { color: colors.textMuted }]}>DURATION (DAYS)</Text>
+                    <Text style={[styles.formLabel, { color: colors.textMuted }]}>END DATE (YYYY-MM-DD)</Text>
                     <TextInput
-                      value={days}
-                      onChangeText={setDays}
-                      keyboardType="number-pad"
-                      placeholder="e.g. 28"
+                      value={endDate}
+                      onChangeText={changeEndDate}
+                      placeholder="YYYY-MM-DD"
                       placeholderTextColor={colors.textMuted}
+                      accessibilityLabel="Posting end date"
                       style={[styles.input, { color: colors.text, borderColor: colors.border }]}
                     />
                   </View>
+                </View>
+                <View>
+                  <Text style={[styles.formLabel, { color: colors.textMuted }]}>DURATION (CALENDAR DAYS)</Text>
+                  <TextInput
+                    value={days}
+                    onChangeText={changeDays}
+                    keyboardType="number-pad"
+                    placeholder="e.g. 28"
+                    placeholderTextColor={colors.textMuted}
+                    accessibilityLabel="Posting duration in calendar days"
+                    style={[styles.input, { color: colors.text, borderColor: colors.border }]}
+                  />
                 </View>
 
                 {/* Sunday toggle */}
@@ -534,10 +677,36 @@ export function AttendanceTab() {
                   </View>
                 </Touchable>
 
-                {/* Prepaid / Gazetted Holiday toggle */}
+                <Touchable
+                  onPress={() => setSkipSaturdays(v => !v)}
+                  label="Saturdays do not count"
+                  role="checkbox"
+                  state={{ checked: skipSaturdays }}
+                  style={[styles.checkboxRow, { borderColor: colors.border }]}>
+                  <View
+                    style={[
+                      styles.checkboxBox,
+                      {
+                        borderColor: skipSaturdays ? colors.accent : colors.border,
+                        backgroundColor: skipSaturdays ? colors.accent : 'transparent',
+                      },
+                    ]}>
+                    {skipSaturdays ? <Check size={12} color={colors.onAccent} /> : null}
+                  </View>
+                  <View style={styles.flexOne}>
+                    <Text style={[styles.checkboxTitle, { color: colors.text }]}>
+                      Saturdays do not count
+                    </Text>
+                    <Text style={[styles.checkboxSub, { color: colors.textMuted }]}>
+                      Optional — turn this on only when your posting has Saturdays off
+                    </Text>
+                  </View>
+                </Touchable>
+
+                {/* Tamil Nadu Government Holiday toggle */}
                 <Touchable
                   onPress={() => setPrepaidHolidays(v => !v)}
-                  label="Official gazetted holidays do not count"
+                  label="Tamil Nadu government holidays do not count"
                   role="checkbox"
                   state={{ checked: prepaidHolidays }}
                   style={[styles.checkboxRow, { borderColor: colors.border }]}>
@@ -553,10 +722,10 @@ export function AttendanceTab() {
                   </View>
                   <View style={styles.flexOne}>
                     <Text style={[styles.checkboxTitle, { color: colors.text }]}>
-                      Prepaid / Gazetted holidays do not count
+                      Tamil Nadu government holidays do not count
                     </Text>
                     <Text style={[styles.checkboxSub, { color: colors.textMuted }]}>
-                      Auto-excludes official holidays (Republic Day, Pongal, May Day, Diwali, etc.)
+                      Uses the Tamil Nadu Government 2026 public-holiday calendar
                     </Text>
                   </View>
                 </Touchable>
@@ -567,9 +736,12 @@ export function AttendanceTab() {
                     startDateStr={startDate}
                     totalDays={Number(days)}
                     skipSundays={skipSundays}
+                    skipSaturdays={skipSaturdays}
                     prepaidHolidays={prepaidHolidays}
                     customHolidays={customHolidays}
+                    gazettedWorkingDays={gazettedWorkingDays}
                     onToggleHoliday={toggleFormHoliday}
+                    onToggleGazettedWorkingDay={toggleFormGazettedWorkingDay}
                     editable={true}
                   />
                 ) : null}
@@ -614,7 +786,9 @@ export function AttendanceTab() {
                   setAdding(false);
                   setName('');
                   setDays('28');
+                  setEndDate(postingEndDate(startDate, 28) ?? endDate);
                   setCustomHolidays([]);
+                  setGazettedWorkingDays([]);
                 }}
                 label="Cancel"
                 style={[styles.formButton, { borderColor: colors.border }]}>
@@ -655,6 +829,7 @@ function AttendanceCard({
   onRemove,
   onSetTotalClasses,
   onUpdateHolidays,
+  onUpdateGazettedWorkingDays,
 }: {
   item: AttendanceItem;
   onMark: (item: AttendanceItem, present: boolean) => void;
@@ -663,6 +838,7 @@ function AttendanceCard({
   onRemove: () => void;
   onSetTotalClasses: (count?: number) => void;
   onUpdateHolidays: (holidays: string[]) => void;
+  onUpdateGazettedWorkingDays: (dates: string[]) => void;
 }) {
   const { colors } = useTheme();
   const verdict = verdictFor(item);
@@ -686,6 +862,12 @@ function AttendanceCard({
     onUpdateHolidays(next);
   };
 
+  const toggleGazettedWorkingDay = (isoDate: string) => {
+    const list = item.gazettedWorkingDays ?? [];
+    const next = list.includes(isoDate) ? list.filter(x => x !== isoDate) : [...list, isoDate];
+    onUpdateGazettedWorkingDays(next);
+  };
+
   return (
     <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
       <View style={styles.cardHead}>
@@ -702,6 +884,11 @@ function AttendanceCard({
                 ? ` · ${verdict.remaining} left`
                 : ''}
           </Text>
+          {item.kind === 'posting' && item.startDate ? (
+            <Text style={[styles.cardCountSub, { color: colors.accent }]}>
+              {item.startDate} → {item.endDate ?? postingEndDate(item.startDate, item.totalDays ?? 0) ?? '—'}
+            </Text>
+          ) : null}
           {item.kind === 'theory' ? (
             <Text style={[styles.cardCountSub, { color: colors.accent }]}>
               This Month ({monthName}): {thisMonth.attended} of {thisMonth.held} classes ({thisMonth.held === 0 ? '—' : `${Math.round(monthPct)}%`})
@@ -711,7 +898,9 @@ function AttendanceCard({
             <Text style={[styles.cardCount, { color: colors.textMuted }]}>
               Day {day} of {total}
               {item.skipSundays ? ' · Sundays off' : ''}
-              {item.prepaidHolidays ? ' · Gazetted off' : ''}
+              {item.skipSaturdays ? ' · Saturdays off' : ''}
+              {item.prepaidHolidays ? ' · TN Govt holidays off' : ''}
+              {item.gazettedWorkingDays?.length ? ` · ${item.gazettedWorkingDays.length} govt override` : ''}
               {item.holidays?.length ? ` · ${item.holidays.length} rain/event off` : ''}
             </Text>
           ) : null}
@@ -962,9 +1151,12 @@ function AttendanceCard({
               startDateStr={item.startDate}
               totalDays={item.totalDays}
               skipSundays={Boolean(item.skipSundays)}
+              skipSaturdays={Boolean(item.skipSaturdays)}
               prepaidHolidays={Boolean(item.prepaidHolidays)}
               customHolidays={item.holidays ?? []}
+              gazettedWorkingDays={item.gazettedWorkingDays ?? []}
               onToggleHoliday={toggleHoliday}
+              onToggleGazettedWorkingDay={toggleGazettedWorkingDay}
               editable={true}
             />
           ) : null}
