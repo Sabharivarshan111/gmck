@@ -33,8 +33,13 @@ export interface ClinicalDatasetCaseDetail extends ClinicalDatasetCaseSummary {
   commonMistakes: unknown[];
   differentialDiagnosis: unknown[];
   relatedDiseases: unknown[];
+  relatedDrugs: unknown[];
+  drugInteractions: unknown[];
+  foodInteractions: unknown[];
   pubmedRefs: ClinicalDatasetReference[];
   sourceLicense: string;
+  clinicianPersona: string | null;
+  sourceDisease: string | null;
 }
 
 export interface ClinicalDatasetCatalog {
@@ -166,8 +171,13 @@ export async function fetchApprovedClinicalCase(
         'common_mistakes',
         'differential_diagnosis',
         'related_diseases',
+        'related_drugs',
+        'drug_interactions',
+        'food_interactions',
         'pubmed_refs',
         'source_license',
+        'clinician_persona',
+        'source_disease',
       ].join(','),
     )
     .eq('id', id)
@@ -224,7 +234,12 @@ export async function fetchApprovedClinicalCase(
     commonMistakes: asObjectArray(row.common_mistakes),
     differentialDiagnosis: asObjectArray(row.differential_diagnosis),
     relatedDiseases: asObjectArray(row.related_diseases),
+    relatedDrugs: asObjectArray(row.related_drugs),
+    drugInteractions: asObjectArray(row.drug_interactions),
+    foodInteractions: asObjectArray(row.food_interactions),
     pubmedRefs: refs,
     sourceLicense: String(row.source_license ?? ''),
+    clinicianPersona: typeof row.clinician_persona === 'string' ? row.clinician_persona : null,
+    sourceDisease: typeof row.source_disease === 'string' ? row.source_disease : null,
   };
 }
