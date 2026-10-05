@@ -27,6 +27,7 @@ on:
       # needed — see the note in android-debug.yml.
       - main
       - claude/native-app-sync
+      - codex/native-web-parity
     # Documentation-only handoff commits must not cancel an AAB/APK that is
     # already building. Rebuild only when code/assets that can reach the
     # native artifact (or this workflow itself) change.
