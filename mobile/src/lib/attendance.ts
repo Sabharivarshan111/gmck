@@ -515,15 +515,9 @@ export function getMonthlyAttendance(
         : undefined;
     return { held, attended, totalClasses };
   }
-  // For existing subjects with marks before monthly tracking, derive current month slice
-  if (item.held > 0) {
-    const heldMonth = Math.min(item.held, Math.max(4, Math.round(item.held * 0.25)));
-    const attendedMonth = Math.min(
-      heldMonth,
-      Math.round(heldMonth * (item.attended / item.held)),
-    );
-    return { held: heldMonth, attended: attendedMonth };
-  }
+  // Do not invent a monthly split for legacy overall-only records. Once a
+  // month is shown/editable, every number on it must come from marks actually
+  // recorded in that month.
   return { held: 0, attended: 0 };
 }
 
