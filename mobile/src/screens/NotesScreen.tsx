@@ -11,6 +11,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   ArrowLeft,
+  BookOpen,
   ChevronRight,
   ClipboardList,
   GraduationCap,
@@ -92,6 +93,7 @@ export default function NotesScreen() {
   const [flashcards, setFlashcards] = useState(() => getPendingLaunchDeck() != null);
   const [proformasOpen, setProformasOpen] = useState(false);
   const [datasetCasesOpen, setDatasetCasesOpen] = useState(false);
+  const [caseLibraryOpen, setCaseLibraryOpen] = useState(false);
   const [activePdfFile, setActivePdfFile] = useState<NoteFile | null>(() => getPendingLaunchPdf());
 
   useEffect(() => {
@@ -197,6 +199,7 @@ export default function NotesScreen() {
           onPick={year => setView({ kind: 'subjects', year })}
           onFlashcards={() => setFlashcards(true)}
           onOpenDatasetCases={() => setDatasetCasesOpen(true)}
+          onOpenCaseLibrary={() => setCaseLibraryOpen(true)}
           onOpenProformas={() => setProformasOpen(true)}
         />
       ) : null}
@@ -262,6 +265,13 @@ export default function NotesScreen() {
       <ClinicalCaseLibraryModal
         visible={datasetCasesOpen}
         onClose={() => setDatasetCasesOpen(false)}
+        mode="practice"
+      />
+
+      <ClinicalCaseLibraryModal
+        visible={caseLibraryOpen}
+        onClose={() => setCaseLibraryOpen(false)}
+        mode="library"
       />
 
       <PdfViewerModal
@@ -306,12 +316,14 @@ function YearsView({
   onPick,
   onFlashcards,
   onOpenDatasetCases,
+  onOpenCaseLibrary,
   onOpenProformas,
 }: {
   currentYear: Year;
   onPick: (year: Year) => void;
   onFlashcards: () => void;
   onOpenDatasetCases: () => void;
+  onOpenCaseLibrary: () => void;
   onOpenProformas: () => void;
 }) {
   const { colors } = useTheme();
@@ -393,6 +405,23 @@ function YearsView({
           <Text style={[styles.extraTitle, { color: colors.text }]}>Patient simulator cases</Text>
           <Text style={[styles.extraSub, { color: colors.textMuted }]}>
             Reviewed synthetic cases for history, diagnosis, differentials and viva debrief
+          </Text>
+        </View>
+        <ChevronRight size={18} color={colors.textMuted} />
+      </Touchable>
+
+      <Touchable
+        onPress={onOpenCaseLibrary}
+        label="Clinical case library, browse searchable teaching cases"
+        scaleTo={0.97}
+        style={[styles.extraCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+        <View style={[styles.extraIcon, { backgroundColor: withAlpha(colors.accent, 0.15) }]}>
+          <BookOpen size={18} color={colors.accent} />
+        </View>
+        <View style={styles.flex}>
+          <Text style={[styles.extraTitle, { color: colors.text }]}>Clinical case library</Text>
+          <Text style={[styles.extraSub, { color: colors.textMuted }]}>
+            Browse cases directly with presentations, differentials, management debrief and references
           </Text>
         </View>
         <ChevronRight size={18} color={colors.textMuted} />
