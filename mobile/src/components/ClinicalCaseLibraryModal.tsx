@@ -48,6 +48,30 @@ function plainItem(value: unknown): string {
     return '';
   }
   const item = value as Record<string, unknown>;
+
+  if (typeof item.ingredient === 'string' || typeof item.brand_name === 'string') {
+    const ingredient = typeof item.ingredient === 'string' ? item.ingredient.trim() : '';
+    const brand = typeof item.brand_name === 'string' ? item.brand_name.trim() : '';
+    const role = typeof item.role === 'string' ? item.role.trim() : '';
+    const label = brand && ingredient && brand.toLowerCase() !== ingredient.toLowerCase()
+      ? `${brand} (${ingredient})`
+      : brand || ingredient;
+    return role ? `${label} — ${role}` : label;
+  }
+
+  if (typeof item.drug_a === 'string' || typeof item.drug_b === 'string') {
+    const pair = [item.drug_a, item.drug_b]
+      .filter(candidate => typeof candidate === 'string' && candidate.trim())
+      .join(' + ');
+    const severity = typeof item.severity === 'string' && item.severity.trim()
+      ? ` [${item.severity.trim()}]`
+      : '';
+    const description = typeof item.description === 'string' && item.description.trim()
+      ? `: ${item.description.trim()}`
+      : '';
+    return `${pair}${severity}${description}`;
+  }
+
   for (const key of [
     'diagnosis',
     'name',
@@ -362,6 +386,26 @@ export function ClinicalCaseLibraryModal({
                   empty="No common-mistake list was retained for this record."
                 />
 
+                <TeachingList
+                  title="Related medicines"
+                  items={selected.relatedDrugs}
+                  empty="No related-medicine list is attached to this case."
+                />
+
+                <TeachingList
+                  title="Drug interactions"
+                  items={selected.drugInteractions}
+                  empty="No drug-interaction list is attached to this case."
+                />
+
+                {selected.foodInteractions.length ? (
+                  <TeachingList
+                    title="Food interactions"
+                    items={selected.foodInteractions}
+                    empty="No food-interaction list is attached to this case."
+                  />
+                ) : null}
+
                 <View
                   style={[styles.caseCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
                   <View style={styles.sectionHeading}>
@@ -433,6 +477,11 @@ export function ClinicalCaseLibraryModal({
                   </>
                 ) : null}
 
+                {selected.clinicianPersona ? (
+                  <Text style={[styles.provenance, { color: colors.textMuted }]}>
+                    Synthetic source clinician: {selected.clinicianPersona}
+                  </Text>
+                ) : null}
                 <Text style={[styles.provenance, { color: colors.textMuted }]}>
                   Source: {selected.sourceDataset}. Content note: {selected.sourceLicense}
                 </Text>
