@@ -123,6 +123,9 @@ function rowFrom(record, sha) {
     ...searchTerms,
     typeof record.icd10 === 'string' ? record.icd10 : '',
     ...bodySystems,
+    typeof record.description === 'string' ? record.description : '',
+    typeof record.patient_scenario === 'string' ? record.patient_scenario : '',
+    typeof record.executive_summary === 'string' ? record.executive_summary : '',
   ]
     .join(' ')
     .toLowerCase()
