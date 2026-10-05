@@ -18,6 +18,74 @@ Deno.test('quiet by default and after studying, allowed reminders only', () => {
  assert(!('examName' in cleanDigest({examName:'private',allowExam:'true'})));
  assert(cleanDigest({allowExam:'true'}).allowExam===false);
 });
+Deno.test('attendance snapshot survives cleaning without class history', () => {
+ const cleaned=cleanDigest({
+  allowAttendance:true,
+  attendanceActive:true,
+  attendanceTodayWorking:true,
+  attendanceMarkedAbsentToday:true,
+  attendanceUrgent:true,
+  attendanceName:'General Medicine',
+  attendancePercent:74.6,
+  attendanceOverallPercent:81.2,
+  attendanceTarget:75,
+  attendanceAttended:35,
+  attendanceHeld:47,
+  lastMarkedDate:'2026-10-05',
+  monthly:{'2026-10':{held:12,attended:9}},
+ });
+ assert(cleaned.attendanceName==='General Medicine');
+ assert(cleaned.attendancePercent===75);
+ assert(cleaned.attendanceOverallPercent===81);
+ assert(cleaned.attendanceTarget===75);
+ assert(cleaned.attendanceMarkedAbsentToday===true);
+ assert(!('lastMarkedDate' in cleaned));
+ assert(!('monthly' in cleaned));
+});
+Deno.test('iOS web push matches Android attendance warning priority', () => {
+ const at=new Date('2026-10-05T03:30:00Z');
+ const urgent=compose({
+  allowAttendance:true,
+  attendanceActive:true,
+  attendanceTodayWorking:true,
+  attendanceUrgent:true,
+  attendanceName:'General Medicine',
+  attendancePercent:75,
+  attendanceTarget:75,
+  attendanceAttended:30,
+  attendanceHeld:40,
+  attendanceOverallPercent:78,
+  allowMcq:true,
+ },'Asia/Kolkata',at);
+ assert(urgent?.title.includes('Do not miss General Medicine today'));
+ assert(urgent?.body.includes('75% (30/40), target 75%'));
+ assert(urgent?.body.includes('All recorded attendance: 78%'));
+ assert(urgent?.url==='/progress');
+
+ const absent=compose({
+  allowAttendance:true,
+  attendanceActive:true,
+  attendanceTodayWorking:true,
+  attendanceUrgent:true,
+  attendanceMarkedAbsentToday:true,
+  attendanceName:'General Surgery',
+  attendancePercent:70,
+  attendanceTarget:75,
+  attendanceAttended:14,
+  attendanceHeld:20,
+ },'Asia/Kolkata',at);
+ assert(absent?.title.includes('Attendance warning'));
+ assert(absent?.body.includes('You marked today absent'));
+
+ assert(compose({
+  allowAttendance:true,
+  attendanceActive:true,
+  attendanceTodayWorking:false,
+  attendanceUrgent:true,
+  attendanceName:'Medicine',
+ },'Asia/Kolkata',at)===null);
+});
+
 Deno.test('push endpoints cannot send to arbitrary servers or credential URLs', () => {
  const value=(endpoint:string)=>({endpoint,keys:{p256dh:'A'.repeat(87),auth:'A'.repeat(22)}});
  assert(validSubscription(value('https://fcm.googleapis.com/fcm/send/example')));
