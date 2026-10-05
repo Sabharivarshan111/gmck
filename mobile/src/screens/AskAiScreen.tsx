@@ -1,3 +1,5 @@
+import { BuddyAvatar, BuddyCoach, StudyBuddyPanel } from '@/components/StudyBuddy';
+import { Sheet } from '@/components/Sheet';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Animated,
@@ -34,6 +36,10 @@ import { DURATION, EASE, useReducedMotion } from '@/theme/motion';
 import { useTheme, withAlpha } from '@/theme';
 import { GradientFill } from '@/components/Gradient';
 import { McqCard } from '@/components/McqCard';
+import { DiagramCard } from '@/components/DiagramCard';
+import { NoteText } from '@/components/NoteText';
+import { ChatLanguagePresets } from '@/components/ChatLanguagePresets';
+import { initialChatLanguage, languagePrompt, type ChatLanguage } from '@/lib/chatPresets';
 // A poke is a commit — the reader deliberately touched the face — so it earns
 // `tick` rather than the weaker press feedback `Touchable` already gives.
 import { tick } from '@/lib/haptics';
@@ -42,7 +48,6 @@ import { ThinkingDots } from '@/components/ThinkingDots';
 import { RevealText } from '@/components/RevealText';
 import { AnswerActions, followUpsFor } from '@/components/AnswerActions';
 import { WaveformRiver } from '@/components/WaveformRiver';
-import { Bot } from '@/components/Bot';
 import type { StateId } from '@/bot/states';
 import {
   askAi,
@@ -51,15 +56,22 @@ import {
   MAX_HISTORY_CONTENT,
   MAX_PROMPT,
   type Mcq,
+  type ChatDiagram,
 } from '@/lib/askAi';
 import type { RootTabParamList } from '@/navigation/types';
 
+interface ChatVariant { text: string; diagrams?: ChatDiagram[]; }
 interface ChatMessage {
   id: string;
   role: 'user' | 'assistant';
   text: string;
   /** Present when this turn produced answerable practice questions. */
   mcqs?: Mcq[];
+  diagrams?: ChatDiagram[];
+  retryPrompt?: string;
+  language?: ChatLanguage;
+  variants?: Partial<Record<ChatLanguage, ChatVariant>>;
+  presetError?: string;
   /** The question this answer replies to — what the follow-ups refer to. */
   about?: string;
   /** Reveal only on arrival, never again on a later re-render. */
@@ -82,6 +94,7 @@ export default function AskAiScreen() {
 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
+  const [buddyOpen, setBuddyOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   /*
    * The bot reads the screen rather than being told.
@@ -260,6 +273,10 @@ export default function AskAiScreen() {
             role: 'assistant',
             text: result.text,
             mcqs: result.mcqs,
+            diagrams: result.diagrams,
+            retryPrompt: prompt,
+            language: initialChatLanguage(prompt),
+            variants: { [initialChatLanguage(prompt)]: { text: result.text, diagrams: result.diagrams } },
             about: shown,
             fresh: true,
           },
@@ -273,6 +290,7 @@ export default function AskAiScreen() {
             text: err instanceof Error ? err.message : String(err),
             about: shown,
             failed: true,
+            retryPrompt: prompt,
           },
         ]);
       } finally {
@@ -290,15 +308,45 @@ export default function AskAiScreen() {
     [loading, messages],
   );
 
+  const switchLanguage = useCallback(async (item: ChatMessage, language: ChatLanguage) => {
+    if (loading || !item.about || item.failed || item.mcqs || language === item.language) return;
+    const cached = item.variants?.[language];
+    if (cached) {
+      setMessages(prev => prev.map(message => message.id === item.id
+        ? { ...message, ...cached, language, fresh: false, presetError: undefined } : message));
+      return;
+    }
+    setLoading(true);
+    setMessages(prev => prev.map(message => message.id === item.id ? { ...message, presetError: undefined } : message));
+    try {
+      const result = await askAi(languagePrompt(item.about, language), [
+        { role: 'user', content: item.about.slice(0, MAX_HISTORY_CONTENT) },
+        { role: 'assistant', content: item.text.slice(0, MAX_HISTORY_CONTENT) },
+      ]);
+      if (result.sourceStatus === 'needs_review' || result.sourceStatus === 'insufficient_sources') {
+        throw new Error('This language version could not be source checked. Your previous answer is still available; try again.');
+      }
+      const variant: ChatVariant = { text: result.text, diagrams: result.diagrams?.length ? result.diagrams : item.diagrams };
+      setMessages(prev => prev.map(message => message.id === item.id ? {
+        ...message, ...variant, language, fresh: false, presetError: undefined,
+        variants: { ...message.variants, [language]: variant },
+      } : message));
+    } catch (err) {
+      setMessages(prev => prev.map(message => message.id === item.id ? {
+        ...message, presetError: err instanceof Error ? err.message : 'Could not change the answer language. Try again.',
+      } : message));
+    } finally { setLoading(false); }
+  }, [loading]);
+
   // A question sent over from a browse screen.
   const handledNonce = useRef<number | undefined>(undefined);
   useEffect(() => {
     const { question, nonce } = route.params ?? {};
-    if (question && nonce && nonce !== handledNonce.current) {
+    if (focused && !loading && question && nonce && nonce !== handledNonce.current) {
       handledNonce.current = nonce;
       send(question);
     }
-  }, [route.params, send]);
+  }, [route.params, send, focused, loading]);
 
   useEffect(() => {
     if (messages.length > 0) {
@@ -421,16 +469,16 @@ export default function AskAiScreen() {
             stops on its own, and src/bot/ for the engine.
           */}
           <Touchable
-            onPress={poke}
-            label="The assistant"
-            hint="Tap to say hello"
+            onPress={() => { poke(); setBuddyOpen(true); }}
+            label="Customize Study Buddy"
+            hint="Choose your buddy and plan your studies"
             scaleTo={0.92}
             hitSlop={6}
             style={[styles.avatar, { backgroundColor: withAlpha(colors.accent, 0.16) }]}>
-            <Bot state={botState} size={34} active={focused} watchingInput={typing} />
+            <BuddyAvatar state={botState} size={34} active={focused} watchingInput={typing} />
           </Touchable>
           <Text style={[styles.assistantName, { color: colors.text }]}>
-            Medical <Text style={{ color: colors.fuchsia }}>Assistant</Text>
+            Study <Text style={{ color: colors.fuchsia }}>Buddy</Text>
           </Text>
           <View style={[styles.onlineDot, { backgroundColor: colors.green }]} />
           <View style={styles.headerSpacer} />
@@ -506,7 +554,7 @@ export default function AskAiScreen() {
                           key={`${item.id}-${i}`}
                           item={mcq}
                           index={i}
-                          onAnswer={correct => react(correct ? 'wink' : 'dismay', 2200)}
+                          onReview={() => send(`Explain why the correct answer to this MBBS MCQ is right and why the other options are wrong: ${mcq.question}. Options: ${JSON.stringify(mcq.options)}. Correct option: ${mcq.correct}. Verified explanation: ${mcq.explanation}`)}
                         />
                       ))}
                     </View>
@@ -529,6 +577,8 @@ export default function AskAiScreen() {
                     ]}>
                     {mine ? (
                       <Text style={[styles.bubbleText, { color: colors.text }]}>{item.text}</Text>
+                    ) : !item.fresh || revealed.has(item.id) ? (
+                      <NoteText content={item.text.replace(/\[\[(?:dis|drug|anat|inv|val):([^\]]+)\]\]/g, '$1')} />
                     ) : (
                       <RevealText
                         text={item.text}
@@ -538,11 +588,19 @@ export default function AskAiScreen() {
                       />
                     )}
                   </View>
-                  {!mine && item.about && revealed.has(item.id) ? (
+                  {!mine && (!item.fresh || revealed.has(item.id)) && item.id === messages[messages.length - 1]?.id ? <BuddyCoach failed={item.failed} onRecall={item.about ? () => send(`Double-tapped: ${item.about}`) : undefined} /> : null}
+                  {!mine && (!item.fresh || revealed.has(item.id)) ? item.diagrams?.map(diagram => (
+                    <DiagramCard key={diagram.url} imageUrl={diagram.url} title={diagram.title} />
+                  )) : null}
+                  {!mine && !item.failed && item.about && (!item.fresh || revealed.has(item.id)) ? (
+                    <ChatLanguagePresets selected={item.language ?? 'English'} disabled={loading}
+                      error={item.presetError} onPick={language => switchLanguage(item, language)} />
+                  ) : null}
+                  {!mine && item.about && (!item.fresh || revealed.has(item.id)) ? (
                     <AnswerActions
-                      followUps={item.failed ? [] : followUpsFor(item.about)}
+                      followUps={item.failed ? [] : followUpsFor(item.about, item.language ?? 'English')}
                       onPick={send}
-                      onRetry={() => send(item.about!)}
+                      onRetry={() => send(item.retryPrompt ?? item.about!)}
                       disabled={loading}
                     />
                   ) : null}
@@ -550,11 +608,12 @@ export default function AskAiScreen() {
               );
             }}
             ListFooterComponent={
-              loading ? <ThinkingDots label="Thinking…" /> : undefined
+              loading ? <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}><BuddyAvatar state="thinking" active={focused} /><ThinkingDots label="Thinking…" /></View> : undefined
             }
           />
         )}
 
+        <Sheet visible={buddyOpen} onClose={() => setBuddyOpen(false)} title="Study Buddy"><StudyBuddyPanel onStudy={prompt => { setBuddyOpen(false); send(prompt); }} /></Sheet>
         {/* Composer */}
         <View style={[styles.composerWrap, { borderTopColor: colors.border }]}>
           {listening ? (

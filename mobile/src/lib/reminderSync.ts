@@ -1,3 +1,14 @@
+import { getBuddy, hydrateBuddy, todayKey } from '@/lib/studyBuddy';
+import {
+  formatLocalIsoDate,
+  getAttendance,
+  hydrateAttendance,
+  isPostingWorkingDate,
+  percentOf,
+  postingEndDate,
+} from '@/lib/attendance';
+import { readDailyCard } from '@/lib/dailyStudy';
+import { readLocalProfile, YEAR_TO_KEY } from '@/lib/profile';
 import { getExam, hydrateExam, isHydrated as examHydrated } from '@/lib/exam';
 import { dueCards, loadCards } from '@/lib/spacedRepetition';
 import { currentValue, loadStreak } from '@/lib/streak';
@@ -54,7 +65,8 @@ export async function syncReminders(): Promise<void> {
   const cards = await loadCards().catch(() => []);
   const due = dueCards(cards);
   const soonest = cards.reduce<number | null>(
-    (earliest, card) => (earliest === null || card.due < earliest ? card.due : earliest),
+    (earliest, card) =>
+      earliest === null || card.due < earliest ? card.due : earliest,
     null,
   );
 
@@ -68,13 +80,96 @@ export async function syncReminders(): Promise<void> {
    * value can only be larger, and being quiet about a streak someone still has
    * is the cheaper mistake.
    */
-  const streak = currentValue(await loadStreak().catch(() => ({
-    lastActiveDay: '',
-    current: 0,
-    best: 0,
-  })));
+  const streak = currentValue(
+    await loadStreak().catch(() => ({
+      lastActiveDay: '',
+      current: 0,
+      best: 0,
+    })),
+  );
 
+  await Promise.all([hydrateBuddy(), hydrateAttendance()]);
+  const buddy = getBuddy();
+  const attendance = getAttendance().items;
+  const held = attendance.reduce((sum, item) => sum + item.held, 0);
+  const attended = attendance.reduce((sum, item) => sum + item.attended, 0);
+  const overallPercent = held > 0 ? Math.round(percentOf(attended, held)) : -1;
+  const attendanceSummary =
+    held > 0
+      ? `All recorded attendance: ${overallPercent}% (${attended}/${held}).`
+      : 'No attendance recorded yet.';
+
+  const today = new Date();
+  const todayIso = formatLocalIsoDate(today);
+  const activePosting = attendance
+    .filter(item => item.kind === 'posting' && item.startDate && item.totalDays)
+    .filter(item => {
+      const end = item.endDate ?? postingEndDate(item.startDate ?? '', item.totalDays ?? 0);
+      return Boolean(end && item.startDate && item.startDate <= todayIso && todayIso <= end);
+    })
+    .sort((a, b) => (b.startDate ?? '').localeCompare(a.startDate ?? ''))[0];
+
+  const postingPercent =
+    activePosting && activePosting.held > 0
+      ? Math.round(percentOf(activePosting.attended, activePosting.held))
+      : -1;
+  const projectedIfAbsent =
+    activePosting && activePosting.held >= 0
+      ? percentOf(activePosting.attended, activePosting.held + 1)
+      : 100;
+  const attendanceTodayWorking =
+    activePosting ? isPostingWorkingDate(activePosting, today) : false;
+  const attendanceMarkedAbsentToday =
+    Boolean(activePosting) &&
+    activePosting?.lastMarkedDate === todayIso &&
+    activePosting?.lastMarkedPresent === false;
+  const attendanceUrgent =
+    Boolean(activePosting) &&
+    attendanceTodayWorking &&
+    (attendanceMarkedAbsentToday ||
+      (postingPercent >= 0 && postingPercent < (activePosting?.target ?? 75)) ||
+      projectedIfAbsent < (activePosting?.target ?? 75));
+  let mcqPreview = '';
+  if (buddy.remindMcq) {
+    const profile = await readLocalProfile();
+    if (profile) {
+      const card = await readDailyCard(
+        'mcq',
+        profile.university ?? 'tnmgr',
+        YEAR_TO_KEY[profile.year],
+      );
+      if (card && !card.revealed && card.answer === undefined) {
+        const full = `${card.question} ${card.options
+          .map((option, i) => `${'ABCD'[i]}. ${option}`)
+          .join(' ')} Tap ORBIT to answer.`;
+        mcqPreview =
+          full.length <= 700
+            ? full
+            : 'Your MCQ of the day is ready. Open ORBIT to read the complete question and answer it.';
+      }
+    }
+  }
   updateDigest({
+    buddyName: buddy.enabled ? buddy.name : 'ORBIT',
+    attendanceSummary,
+    attendanceActive: Boolean(activePosting),
+    attendanceName: activePosting?.name ?? '',
+    attendancePercent: postingPercent,
+    attendanceOverallPercent: overallPercent,
+    attendanceTarget: activePosting?.target ?? 75,
+    attendanceAttended: activePosting?.attended ?? 0,
+    attendanceHeld: activePosting?.held ?? 0,
+    attendanceTodayWorking,
+    attendanceMarkedAbsentToday,
+    attendanceUrgent,
+    allowPlan: buddy.remindPlan,
+    planSummary:
+      buddy.topic && (buddy.day !== todayKey() || buddy.completed.length < 3)
+        ? `${buddy.minutes}-minute plan: ${buddy.topic}. Understand, recall, then review.`
+        : '',
+    allowMcq: buddy.remindMcq,
+    mcqDay: epochDay(),
+    mcqPreview,
     examDay: exam ? epochDay(exam.date) : -1,
     examName: exam?.name ?? 'your exam',
     lastStudyDay: getLastStudyDay(),

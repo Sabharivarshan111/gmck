@@ -1,5 +1,6 @@
+import { StudyBuddyPanel } from '@/components/StudyBuddy';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text as RNText, View } from 'react-native';
+import { Platform, StyleSheet, Text as RNText, View } from 'react-native';
 import { Text } from '@/components/Text';
 import { Touchable } from '@/components/Touchable';
 import { Sheet } from '@/components/Sheet';
@@ -151,6 +152,7 @@ export function SettingsSheet({
    * over a permission that has been taken away is a switch that lies.
    */
   const [notifyAllowed, setNotifyAllowed] = useState(false);
+  const [permissionMessage, setPermissionMessage] = useState('');
   /** null before anything is sent, 'sending' while in flight, then the result. */
   const [testState, setTestState] = useState<TestResult | 'sending' | null>(null);
   useEffect(() => {
@@ -358,6 +360,8 @@ export function SettingsSheet({
             </Text>
           </View>
 
+          {Platform.OS === 'web' ? <Text style={[styles.note, { color: colors.textMuted }]}>Browser reminders currently require ORBIT to stay open. On iPhone, add ORBIT to your Home Screen before enabling notifications.</Text> : null}
+          {permissionMessage ? <Text accessibilityLiveRegion="polite" style={[styles.note, { color: colors.warning }]}>{permissionMessage}</Text> : null}
           <Switchable
             label="Daily reminder (notifications)"
             detail="Let Orbit send you a notification — one a day, and only when there is something worth saying"
@@ -373,6 +377,7 @@ export function SettingsSheet({
                 : await requestNotificationPermission();
               const allowed = granted || hasNotificationPermission();
               setNotifyAllowed(allowed);
+              setPermissionMessage(allowed ? '' : 'Notification permission was not granted. Enable notifications for ORBIT in device or browser settings.');
               if (!allowed) {
                 // Asked and refused. Leaving the switch off is the honest
                 // outcome — showing it on over a denied permission is a
@@ -427,8 +432,8 @@ export function SettingsSheet({
                 onChange={next => setSetting('remindRevision', next)}
               />
               <Switchable
-                label="Daily attendance check"
-                detail="A short posting reminder each day, even if you studied questions"
+                label="Daily attendance warning"
+                detail="Shows today's active posting, current percentage and target; warns after an absence or when one more miss would put you below target"
                 value={settings.remindAttendance}
                 onChange={next => {
                   setSetting('remindAttendance', next);
@@ -436,7 +441,7 @@ export function SettingsSheet({
                 }}
               />
               <Text style={[styles.note, { color: withAlpha(colors.text, 0.5) }]}>
-                Keep attendance off if you prefer reminders only when something is due.
+                Attendance reminders are sent only on working posting days. Choose a morning reminder time if you want a “go to class today” warning before college.
               </Text>
 
               {/*
@@ -557,6 +562,8 @@ export function SettingsSheet({
           </Touchable>
         ))}
       </View>
+
+      <StudyBuddyPanel />
 
       <Text style={[styles.footnote, { color: withAlpha(colors.text, 0.45) }]}>
         Themes and wallpaper live behind the moon button, next door.

@@ -34,3 +34,5 @@ remotion-ad/out/
 !.env.*.example
 *.jks
 *.keystore
+
+/dist-native/

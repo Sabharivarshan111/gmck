@@ -16,6 +16,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const source = await fs.readFile(path.join(root, 'src/lib/attendance.ts'), 'utf8');
+const attendanceUi = await fs.readFile(path.join(root, 'src/components/AttendanceTab.tsx'), 'utf8');
 
 const failures = [];
 const check = (ok, message) => {
@@ -29,21 +30,36 @@ const check = (ok, message) => {
  * lines instead of a copy that can drift.
  */
 const arithmetic = source
-  .slice(source.indexOf('export function percentOf'), source.indexOf('// ------', source.indexOf('export function bestPossible')))
+  .slice(source.indexOf('export const GAZETTED_HOLIDAYS'), source.indexOf('// ------', source.indexOf('export function bestPossible')))
   .replace(/export /g, '')
+  .replace(/: Record<string, string>/g, '')
   .replace(/: number/g, '')
   .replace(/: string/g, '')
+  .replace(/: boolean/g, '')
   .replace(/: AttendanceItem/g, '')
   .replace(/: AttendanceVerdict/g, '')
   // `dayOfRotation(item, today: Date = new Date())` — the default stays, the
   // annotation goes, same as every other one above.
   .replace(/: Date/g, '')
-  .replace(/\| null/g, '')
+  .replace(/ \| null(?=\s*\{)/g, '')
   .replace(/interface [\s\S]*?\n\}/g, '')
   .replace(/^\s*\/\*\*[\s\S]*?\*\/$/gm, '');
 
 // eslint-disable-next-line no-new-func
-const fns = new Function(`${arithmetic}; return { percentOf, canMiss, mustAttend, verdictFor, bestPossible, workingDays, dayOfRotation };`)();
+const fns = new Function(`${arithmetic}; return {
+  getHolidayTitle,
+  formatLocalIsoDate,
+  postingEndDate,
+  postingDurationDays,
+  isPostingWorkingDate,
+  percentOf,
+  canMiss,
+  mustAttend,
+  verdictFor,
+  bestPossible,
+  workingDays,
+  dayOfRotation,
+};`)();
 
 const eq = (got, want, what) =>
   check(got === want, `${what}: expected ${want}, got ${got}`);
@@ -125,6 +141,82 @@ const doomed = fns.bestPossible({
 });
 check(Math.abs(doomed - 63.333) < 0.01, `best possible: expected 63.33, got ${doomed}`);
 check(doomed < 75, 'and it is below the target, which is the point of showing it');
+
+// ---------------------------------------------------------------------------
+// Tamil Nadu 2026 government holidays + local-date integrity
+// ---------------------------------------------------------------------------
+
+eq(fns.getHolidayTitle('2026-10-19'), 'Ayutha Pooja', '19 Oct is Ayutha Pooja');
+eq(fns.getHolidayTitle('2026-10-20'), 'Vijaya Dasami', '20 Oct is Vijaya Dasami');
+eq(fns.getHolidayTitle('2026-10-21'), null, '21 Oct is not a Tamil Nadu government holiday');
+eq(fns.getHolidayTitle('2026-03-21'), "Ramzan (Idu'l Fitr)", 'Ramzan follows the TN notification');
+eq(fns.getHolidayTitle('2026-03-04'), null, 'Holi is not auto-excluded by the TN 2026 list');
+eq(fns.postingEndDate('2026-10-05', 28), '2026-11-01', '28-day posting end date');
+eq(fns.postingDurationDays('2026-10-05', '2026-11-01'), 28, 'end date converts back to duration');
+
+const october = {
+  id: 'oct',
+  name: 'Medicine',
+  kind: 'posting',
+  target: 75,
+  held: 0,
+  attended: 0,
+  totalDays: 28,
+  startDate: '2026-10-05',
+  endDate: '2026-11-01',
+  skipSundays: true,
+  prepaidHolidays: true,
+};
+eq(fns.workingDays(october), 22, 'Oct 5-Nov 1 excludes four Sundays plus Oct 19/20');
+eq(
+  fns.workingDays({ ...october, skipSaturdays: true }),
+  18,
+  'Saturday toggle removes the four Saturdays too',
+);
+eq(
+  fns.workingDays({ ...october, gazettedWorkingDays: ['2026-10-19'] }),
+  23,
+  'a college override can treat one official holiday as a working day',
+);
+check(
+  !fns.isPostingWorkingDate(october, new Date(2026, 9, 19, 12)),
+  'Ayutha Pooja must be off for the default TN government calendar',
+);
+check(
+  fns.isPostingWorkingDate(
+    { ...october, gazettedWorkingDays: ['2026-10-19'] },
+    new Date(2026, 9, 19, 12),
+  ),
+  'the official-holiday override must make the selected date working',
+);
+check(
+  !source.slice(0, source.indexOf('// Storage')).includes('toISOString().slice(0, 10)'),
+  'posting calendar arithmetic uses UTC dates again — India can shift a local day backwards',
+);
+
+// ---------------------------------------------------------------------------
+// Theory monthly totals — real month data, never a guessed "average"
+// ---------------------------------------------------------------------------
+check(
+  /totalClasses\?: number;/.test(source.slice(source.indexOf('export interface MonthlyAttendance'), source.indexOf('export interface AttendanceItem'))),
+  'monthly theory records lost their per-month total class count',
+);
+check(
+  /setMonthlyTotalClasses/.test(source),
+  'there is no way to edit the expected class count for one month',
+);
+check(
+  !/Math\.round\(item\.held \* 0\.25\)/.test(source),
+  'monthly theory attendance is being estimated from overall attendance again',
+);
+check(
+  /TOTAL NUMBER OF CLASSES — ALL MONTHS/.test(attendanceUi),
+  'theory total is not clearly labelled as the all-month total',
+);
+check(
+  /Classes per month/.test(attendanceUi) && /This is not an average/.test(attendanceUi),
+  'the per-month class editor or its no-average explanation disappeared',
+);
 
 // ---------------------------------------------------------------------------
 // It stays on the phone
@@ -221,6 +313,5 @@ if (failures.length > 0) {
 }
 
 console.log(
-  'OK  attendance arithmetic matches 18 worked examples, the rotation caps what can be missed, ' +
-    'and nothing leaves the phone',
+  'OK  attendance arithmetic, TN 2026 holidays, monthly theory totals, Saturday/Sunday rules, local-date handling and overrides are pinned; nothing leaves the phone',
 );

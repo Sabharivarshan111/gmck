@@ -34,6 +34,8 @@ export type AttendanceKind = 'theory' | 'posting';
 export interface MonthlyAttendance {
   held: number;
   attended: number;
+  /** Theory only: expected total number of classes for this calendar month. */
+  totalClasses?: number;
 }
 
 export interface AttendanceItem {
@@ -76,10 +78,21 @@ export interface AttendanceItem {
    * same bug in the other direction.
    */
   skipSundays?: boolean;
-  /** Official / prepaid gazetted public holidays do not count as working days */
+  /** Postings only: optionally exclude Saturdays too. */
+  skipSaturdays?: boolean;
+  /** Official Tamil Nadu Government public holidays do not count as working days. */
   prepaidHolidays?: boolean;
+  /**
+   * Exact official-holiday dates that this college/posting still treats as working.
+   * Kept separate from custom closures so correcting one local timetable never
+   * mutates the official Tamil Nadu holiday calendar.
+   */
+  gazettedWorkingDays?: string[];
   /** Custom holiday dates (e.g. rain holidays, local college events, strikes) YYYY-MM-DD */
   holidays?: string[];
+  /** Last attendance mark, so a reminder can react to an absence without guessing. */
+  lastMarkedDate?: string;
+  lastMarkedPresent?: boolean;
   /** Monthly attendance breakdown by 'YYYY-MM' */
   monthly?: Record<string, MonthlyAttendance>;
 }
@@ -90,25 +103,109 @@ export interface AttendanceState {
 }
 
 export const GAZETTED_HOLIDAYS: Record<string, string> = {
-  '01-14': 'Pongal / Makar Sankranti',
-  '01-15': 'Thiruvalluvar Day',
+  // Fixed-date public holidays. Exact 2026 entries below take precedence.
+  '01-01': "New Year's Day",
   '01-26': 'Republic Day',
-  '04-14': 'Ambedkar Jayanti / Tamil New Year',
-  '05-01': 'May Day / Labour Day',
+  '04-14': 'Tamil New Year / Dr. B.R. Ambedkar Birthday',
+  '05-01': 'May Day',
   '08-15': 'Independence Day',
-  '10-02': 'Gandhi Jayanti',
+  '10-02': 'Gandhi Jayanthi',
   '12-25': 'Christmas',
-  '2026-03-04': 'Holi',
-  '2026-03-20': 'Eid ul-Fitr',
+
+  // Government of Tamil Nadu 2026 public-holiday notification.
+  // 01 April is intentionally absent: Annual Closing of Accounts applies to
+  // commercial/co-operative banks, not a blanket medical-college closure.
+  '2026-01-01': "New Year's Day",
+  '2026-01-15': 'Pongal',
+  '2026-01-16': 'Thiruvalluvar Day',
+  '2026-01-17': 'Uzhavar Thirunal',
+  '2026-01-26': 'Republic Day',
+  '2026-02-01': 'Thai Poosam',
+  '2026-03-19': "Telugu New Year's Day",
+  '2026-03-21': "Ramzan (Idu'l Fitr)",
+  '2026-03-31': 'Mahaveer Jayanthi',
   '2026-04-03': 'Good Friday',
-  '2026-10-19': 'Ayudha Puja',
-  '2026-10-20': 'Vijaya Dashami',
-  '2026-11-08': 'Diwali / Deepavali',
+  '2026-04-14': 'Tamil New Year / Dr. B.R. Ambedkar Birthday',
+  '2026-05-01': 'May Day',
+  '2026-05-28': 'Bakrid (Id-ul-Azha)',
+  '2026-06-26': 'Muharram',
+  '2026-08-15': 'Independence Day',
+  '2026-08-26': 'Milad-un-Nabi',
+  '2026-09-04': 'Krishna Jayanthi',
+  '2026-09-14': 'Vinayakar Chathurthi',
+  '2026-10-02': 'Gandhi Jayanthi',
+  '2026-10-19': 'Ayutha Pooja',
+  '2026-10-20': 'Vijaya Dasami',
+  '2026-11-08': 'Deepavali',
+  '2026-12-25': 'Christmas',
 };
 
 export function getHolidayTitle(isoDate: string): string | null {
   const mmdd = isoDate.slice(5);
   return GAZETTED_HOLIDAYS[isoDate] || GAZETTED_HOLIDAYS[mmdd] || null;
+}
+
+/**
+ * A calendar date in the phone's local timezone.
+ *
+ * Never use toISOString() for a day the user picked. In India, local midnight
+ * is the previous UTC date, which is exactly how 19/20 October appeared as
+ * 20/21 in the posting calendar even though the holiday table itself was right.
+ */
+export function formatLocalIsoDate(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+export function parseLocalIsoDate(isoDate: string): Date | null {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(isoDate);
+  if (!match) return null;
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+  // Noon avoids the midnight edge used by a handful of timezone transitions.
+  const date = new Date(year, month - 1, day, 12, 0, 0, 0);
+  if (
+    date.getFullYear() !== year ||
+    date.getMonth() !== month - 1 ||
+    date.getDate() !== day
+  ) {
+    return null;
+  }
+  return date;
+}
+
+export function postingEndDate(startIso: string, totalDays: number): string | null {
+  const start = parseLocalIsoDate(startIso);
+  if (!start || !Number.isFinite(totalDays) || totalDays <= 0) return null;
+  const end = new Date(start);
+  end.setDate(start.getDate() + Math.round(totalDays) - 1);
+  return formatLocalIsoDate(end);
+}
+
+export function postingDurationDays(startIso: string, endIso: string): number | null {
+  const start = parseLocalIsoDate(startIso);
+  const end = parseLocalIsoDate(endIso);
+  if (!start || !end) return null;
+  const startUtc = Date.UTC(start.getFullYear(), start.getMonth(), start.getDate());
+  const endUtc = Date.UTC(end.getFullYear(), end.getMonth(), end.getDate());
+  const days = Math.floor((endUtc - startUtc) / 86400000) + 1;
+  return days > 0 ? days : null;
+}
+
+/** True only when this posting expects the student to attend on this date. */
+export function isPostingWorkingDate(item: AttendanceItem, day: Date): boolean {
+  const iso = formatLocalIsoDate(day);
+  if (item.skipSundays && day.getDay() === 0) return false;
+  if (item.skipSaturdays && day.getDay() === 6) return false;
+  if (item.holidays?.includes(iso)) return false;
+  const officialHolidayIsWorking = item.gazettedWorkingDays?.includes(iso) ?? false;
+  if (item.prepaidHolidays && getHolidayTitle(iso) && !officialHolidayIsWorking) {
+    return false;
+  }
+  return true;
 }
 
 // ---------------------------------------------------------------------------
@@ -182,49 +279,26 @@ export function workingDays(item: AttendanceItem): number | null {
   if (typeof item.totalDays !== 'number' || item.totalDays <= 0) {
     return null;
   }
-  if (!item.skipSundays && !item.prepaidHolidays && (!item.holidays || item.holidays.length === 0)) {
+  if (
+    !item.skipSundays &&
+    !item.skipSaturdays &&
+    !item.prepaidHolidays &&
+    (!item.holidays || item.holidays.length === 0)
+  ) {
     return item.totalDays;
   }
   if (!item.startDate) {
     return item.totalDays;
   }
-  const start = new Date(`${item.startDate}T00:00:00`);
-  if (Number.isNaN(start.getTime())) {
+  const start = parseLocalIsoDate(item.startDate);
+  if (!start) {
     return item.totalDays;
   }
   let working = 0;
   for (let i = 0; i < item.totalDays; i += 1) {
     const day = new Date(start);
     day.setDate(start.getDate() + i);
-    if (item.skipSundays && day.getDay() === 0) {
-      continue;
-    }
-    const iso = day.toISOString().slice(0, 10);
-    const mmdd = iso.slice(5);
-    if (item.holidays && item.holidays.includes(iso)) {
-      continue;
-    }
-    if (
-      item.prepaidHolidays &&
-      (iso === '2026-10-02' ||
-        iso === '2026-03-04' ||
-        iso === '2026-03-20' ||
-        iso === '2026-04-03' ||
-        iso === '2026-10-19' ||
-        iso === '2026-10-20' ||
-        iso === '2026-11-08' ||
-        mmdd === '01-26' ||
-        mmdd === '08-15' ||
-        mmdd === '10-02' ||
-        mmdd === '12-25' ||
-        mmdd === '05-01' ||
-        mmdd === '01-14' ||
-        mmdd === '01-15' ||
-        mmdd === '04-14')
-    ) {
-      continue;
-    }
-    working += 1;
+    if (isPostingWorkingDate(item, day)) working += 1;
   }
   return working;
 }
@@ -237,55 +311,25 @@ export function workingDays(item: AttendanceItem): number | null {
  */
 export function dayOfRotation(item: AttendanceItem, today: Date = new Date()): number | null {
   const total = workingDays(item);
-  if (total === null || !item.startDate) {
+  if (total === null || !item.startDate || !item.totalDays) {
     return null;
   }
-  const start = new Date(`${item.startDate}T00:00:00`);
-  if (Number.isNaN(start.getTime())) {
-    return null;
-  }
-  const now = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-  if (now < start) {
-    return null;
-  }
+  const start = parseLocalIsoDate(item.startDate);
+  if (!start) return null;
+  const now = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 12);
+  const end = new Date(start);
+  end.setDate(start.getDate() + item.totalDays - 1);
+  if (now < start || now > end) return null;
+
   let working = 0;
-  for (let i = 0; i < (item.totalDays ?? 0); i += 1) {
+  for (let i = 0; i < item.totalDays; i += 1) {
     const day = new Date(start);
     day.setDate(start.getDate() + i);
-    const iso = day.toISOString().slice(0, 10);
-    const mmdd = iso.slice(5);
-    if (item.skipSundays && day.getDay() === 0) {
-      continue;
-    }
-    if (item.holidays && item.holidays.includes(iso)) {
-      continue;
-    }
-    if (
-      item.prepaidHolidays &&
-      (iso === '2026-10-02' ||
-        iso === '2026-03-04' ||
-        iso === '2026-03-20' ||
-        iso === '2026-04-03' ||
-        iso === '2026-10-19' ||
-        iso === '2026-10-20' ||
-        iso === '2026-11-08' ||
-        mmdd === '01-26' ||
-        mmdd === '08-15' ||
-        mmdd === '10-02' ||
-        mmdd === '12-25' ||
-        mmdd === '05-01' ||
-        mmdd === '01-14' ||
-        mmdd === '01-15' ||
-        mmdd === '04-14')
-    ) {
-      continue;
-    }
+    if (!isPostingWorkingDate(item, day)) continue;
     working += 1;
-    if (day.getTime() >= now.getTime()) {
-      return working;
-    }
+    if (day.getTime() >= now.getTime()) return working;
   }
-  return null;
+  return working > 0 ? working : null;
 }
 
 export interface AttendanceVerdict {
@@ -415,15 +459,22 @@ function sane(raw: unknown): AttendanceItem | null {
         : undefined,
     totalClasses:
       typeof item.totalClasses === 'number' && item.totalClasses > 0
-        ? Math.round(item.totalClasses)
+        ? Math.max(held, Math.round(item.totalClasses))
         : undefined,
     startDate: typeof item.startDate === 'string' ? item.startDate : undefined,
     endDate: typeof item.endDate === 'string' ? item.endDate : undefined,
     skipSundays: item.skipSundays === true ? true : undefined,
+    skipSaturdays: item.skipSaturdays === true ? true : undefined,
     prepaidHolidays: item.prepaidHolidays === true ? true : undefined,
+    gazettedWorkingDays: Array.isArray(item.gazettedWorkingDays)
+      ? item.gazettedWorkingDays.filter((h): h is string => typeof h === 'string')
+      : undefined,
     holidays: Array.isArray(item.holidays)
       ? item.holidays.filter((h): h is string => typeof h === 'string')
       : undefined,
+    lastMarkedDate: typeof item.lastMarkedDate === 'string' ? item.lastMarkedDate : undefined,
+    lastMarkedPresent:
+      typeof item.lastMarkedPresent === 'boolean' ? item.lastMarkedPresent : undefined,
     monthly:
       typeof item.monthly === 'object' && item.monthly !== null
         ? Object.fromEntries(
@@ -433,7 +484,11 @@ function sane(raw: unknown): AttendanceItem | null {
                 const rec = v as Record<string, unknown>;
                 const h = Math.max(0, Math.round(Number(rec.held) || 0));
                 const a = Math.min(h, Math.max(0, Math.round(Number(rec.attended) || 0)));
-                return [k, { held: h, attended: a }];
+                const totalClasses =
+                  typeof rec.totalClasses === 'number' && rec.totalClasses > 0
+                    ? Math.max(h, Math.round(rec.totalClasses))
+                    : undefined;
+                return [k, { held: h, attended: a, totalClasses }];
               }),
           )
         : undefined,
@@ -449,22 +504,20 @@ export function getMonthlyAttendance(
   item: AttendanceItem,
   monthKey?: string,
 ): MonthlyAttendance {
-  const key = monthKey ?? new Date().toISOString().slice(0, 7);
+  const key = monthKey ?? formatLocalIsoDate(new Date()).slice(0, 7);
   if (item.monthly && item.monthly[key]) {
     const entry = item.monthly[key];
     const held = Math.max(0, Math.round(Number(entry.held) || 0));
     const attended = Math.min(held, Math.max(0, Math.round(Number(entry.attended) || 0)));
-    return { held, attended };
+    const totalClasses =
+      typeof entry.totalClasses === 'number' && entry.totalClasses > 0
+        ? Math.max(held, Math.round(entry.totalClasses))
+        : undefined;
+    return { held, attended, totalClasses };
   }
-  // For existing subjects with marks before monthly tracking, derive current month slice
-  if (item.held > 0) {
-    const heldMonth = Math.min(item.held, Math.max(4, Math.round(item.held * 0.25)));
-    const attendedMonth = Math.min(
-      heldMonth,
-      Math.round(heldMonth * (item.attended / item.held)),
-    );
-    return { held: heldMonth, attended: attendedMonth };
-  }
+  // Do not invent a monthly split for legacy overall-only records. Once a
+  // month is shown/editable, every number on it must come from marks actually
+  // recorded in that month.
   return { held: 0, attended: 0 };
 }
 
@@ -487,6 +540,7 @@ async function persist(items: AttendanceItem[]): Promise<void> {
   emit();
   try {
     await AsyncStorage.setItem(KEY, JSON.stringify(items));
+    void import('./reminderSync').then(({ syncReminders }) => syncReminders()).catch(() => {});
   } catch {
     // The in-memory list still applies for this session. Losing a tap is
     // better than losing the screen.
@@ -518,9 +572,54 @@ export async function updateAttendance(
       const next = { ...item, ...patch };
       next.held = Math.max(0, Math.round(next.held));
       next.attended = Math.min(next.held, Math.max(0, Math.round(next.attended)));
+      if (
+        next.kind === 'theory' &&
+        typeof next.totalClasses === 'number' &&
+        Number.isFinite(next.totalClasses)
+      ) {
+        next.totalClasses = Math.max(next.held, Math.round(next.totalClasses));
+      }
       return next;
     }),
   );
+}
+
+/**
+ * Set the expected number of theory classes for one calendar month.
+ *
+ * This is intentionally independent from item.totalClasses:
+ * - monthly total = classes expected in that month
+ * - item.totalClasses = total number of classes across the whole course
+ */
+export async function setMonthlyTotalClasses(
+  id: string,
+  monthKey: string,
+  totalClasses?: number,
+): Promise<void> {
+  const item = state.items.find(entry => entry.id === id);
+  if (!item || item.kind !== 'theory') return;
+  const current = getMonthlyAttendance(item, monthKey);
+  const clean =
+    typeof totalClasses === 'number' && Number.isFinite(totalClasses) && totalClasses > 0
+      ? Math.max(current.held, Math.round(totalClasses))
+      : undefined;
+  const nextMonthly = {
+    ...(item.monthly ?? {}),
+    [monthKey]: {
+      held: current.held,
+      attended: current.attended,
+      totalClasses: clean,
+    },
+  };
+  const monthlyTotalSum = Object.values(nextMonthly).reduce(
+    (sum, entry) => sum + (entry.totalClasses ?? 0),
+    0,
+  );
+  const overallTotal =
+    monthlyTotalSum > 0 || item.totalClasses
+      ? Math.max(item.held, item.totalClasses ?? 0, monthlyTotalSum)
+      : undefined;
+  await updateAttendance(id, { monthly: nextMonthly, totalClasses: overallTotal });
 }
 
 /** One class happened, and you were there — or you were not. */
@@ -529,18 +628,25 @@ export async function markAttendance(id: string, present: boolean): Promise<void
   if (!item) {
     return;
   }
-  const key = new Date().toISOString().slice(0, 7);
+  const today = formatLocalIsoDate(new Date());
+  const key = today.slice(0, 7);
   const currentMonth = getMonthlyAttendance(item, key);
   const nextMonthly = {
     ...(item.monthly ?? {}),
     [key]: {
       held: currentMonth.held + 1,
       attended: currentMonth.attended + (present ? 1 : 0),
+      totalClasses:
+        typeof currentMonth.totalClasses === 'number'
+          ? Math.max(currentMonth.totalClasses, currentMonth.held + 1)
+          : undefined,
     },
   };
   await updateAttendance(id, {
     held: item.held + 1,
     attended: item.attended + (present ? 1 : 0),
+    lastMarkedDate: today,
+    lastMarkedPresent: present,
     monthly: nextMonthly,
   });
 }
@@ -558,18 +664,21 @@ export async function undoAttendance(id: string, wasPresent: boolean): Promise<v
   if (!item || item.held === 0) {
     return;
   }
-  const key = new Date().toISOString().slice(0, 7);
+  const key = formatLocalIsoDate(new Date()).slice(0, 7);
   const currentMonth = getMonthlyAttendance(item, key);
   const nextMonthly = {
     ...(item.monthly ?? {}),
     [key]: {
       held: Math.max(0, currentMonth.held - 1),
       attended: Math.max(0, currentMonth.attended - (wasPresent ? 1 : 0)),
+      totalClasses: currentMonth.totalClasses,
     },
   };
   await updateAttendance(id, {
     held: item.held - 1,
     attended: Math.max(0, item.attended - (wasPresent ? 1 : 0)),
+    lastMarkedDate: undefined,
+    lastMarkedPresent: undefined,
     monthly: nextMonthly,
   });
 }

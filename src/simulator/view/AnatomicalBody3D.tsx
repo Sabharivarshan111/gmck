@@ -14,7 +14,7 @@ import {
   PointerTap,
   DissectionToolMode,
 } from '../data/atlasTypes';
-import { correctPartSystem, describeAtlasTarget, resolveAtlasElementIds } from '../data/atlasResolver';
+import { correctPartSystem, describeAtlasTarget, resolveAtlasElementIds, resolvePartToOrganKey } from '../data/atlasResolver';
 import { isPeripheralNerveTarget, meshMatchesPeripheralNerveTarget, normalisePeripheralNerveTarget, peripheralNerveKeyForMeshName, PERIPHERAL_NERVE_MODEL_URL } from '../data/peripheralNerves';
 import {
   getHraOrganModel,
@@ -41,6 +41,7 @@ interface AnatomicalBody3DProps {
   vitals: PatientVitals;
   pathology: PatientPathologyState;
   scenarioId: string;
+  layer?: import('../types').AnatomicalLayer;
   cameraPreset?: 'anterior' | 'head' | 'thorax' | 'abdomen';
   theme?: 'light' | 'dark';
   selectedOrganId?: string | null;
@@ -1218,6 +1219,8 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
   const controlsRef = useRef<OrbitControls | null>(null);
 
   const [loadProgress, setLoadProgress] = useState<number>(0);
+  const [graphicsError, setGraphicsError] = useState<string | null>(null);
+  const [contextLost, setContextLost] = useState(false);
   const [modelsReady, setModelsReady] = useState<boolean>(false);
   const [hoveredPart, setHoveredPart] = useState<Part | null>(null);
   const [peripheralNervesReady, setPeripheralNervesReady] = useState(false);
@@ -1359,11 +1362,19 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
     //   it is heat, then thermal throttling, then a slower frame rate than the
     //   default profile would have given — on a long anatomy session, which is
     //   the only kind there is.
-    const renderer = new THREE.WebGLRenderer({
-      antialias: !isMobileDevice,
-      alpha: true,
-      powerPreference: isMobileDevice ? 'default' : 'high-performance',
-    });
+    let renderer: THREE.WebGLRenderer;
+    try {
+      renderer = new THREE.WebGLRenderer({
+        antialias: !isMobileDevice,
+        alpha: true,
+        powerPreference: isMobileDevice ? 'default' : 'high-performance',
+      });
+    } catch {
+      sceneRef.current = null;
+      cameraRef.current = null;
+      setGraphicsError('3D graphics are unavailable in this browser. You can still use the ICU monitor and clinical cases.');
+      return;
+    }
     renderer.setSize(width, height);
     // Strict mobile DPR clamping to 1.0 prevents WebKit Jetsam OOM crashes
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isMobileDevice ? 1.0 : 1.75));
@@ -1378,11 +1389,15 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
     const handleContextLost = (e: Event) => {
       e.preventDefault(); // Required: prevents browser from permanently destroying WebGL context
       isContextLost = true;
+      setContextLost(true);
+      cancelAnimationFrame(animationFrameId);
       console.warn('[WebGL] Context lost due to system pressure. Pausing render loop.');
     };
     const handleContextRestored = () => {
       console.info('[WebGL] Context restored. Re-uploading GPU resources...');
       isContextLost = false;
+      setContextLost(false);
+      resumeRendering();
       if (partTextureRef.current) partTextureRef.current.needsUpdate = true;
       if (selectionTextureRef.current) selectionTextureRef.current.needsUpdate = true;
     };
@@ -1801,6 +1816,7 @@ varying float partSelected;
       } catch (err: any) {
         if (!disposed && err.name !== 'AbortError') {
           console.error('Failed to load BodyParts3D atlas:', err);
+          setGraphicsError('The anatomy model could not be downloaded. Check your connection and reload; ICU and clinical cases remain available.');
         }
       }
     };
@@ -1863,10 +1879,13 @@ varying float partSelected;
           [box.min.x, box.min.y, box.min.z],
           [box.max.x, box.max.y, box.max.z],
         ],
+        conceptId: key,
+        chunk: -1,
+        positions: 0,
+        normals: 0,
+        indices: 0,
         vertexCount: pos?.count ?? 0,
         indexCount: idx?.count ?? 0,
-        vertices: pos?.count ?? 0,
-        indices: idx?.count ?? 0,
       };
     };
 
@@ -1990,16 +2009,22 @@ varying float partSelected;
     };
     window.addEventListener('resize', handleResize);
     window.addEventListener('orientationchange', handleResize);
+    const resizeObserver = new ResizeObserver(handleResize);
+    resizeObserver.observe(container);
 
     // 11. Animation Loop
     const clock = new THREE.Clock();
-    const animate = () => {
-      if (disposed || isContextLost) return;
+    let lastRenderTime = 0;
+    const animate = (now = performance.now()) => {
+      if (disposed || isContextLost || document.hidden) return;
       animationFrameId = requestAnimationFrame(animate);
 
       // Skip render if container is hidden (e.g. mobile tab switched to telemetry)
       if (container.offsetWidth === 0 || container.offsetHeight === 0) return;
 
+      // Bound the expensive atlas draw to 30 fps on phones.
+      if (isMobileDevice && now - lastRenderTime < 1000 / 30) return;
+      lastRenderTime = now;
       const elapsed = clock.getElapsedTime();
 
       // IMPORTANT — do not geometrically pulse the merged cardiac mesh.
@@ -2044,10 +2069,17 @@ varying float partSelected;
       controls.update();
       renderer.render(scene, camera);
     };
-    animate();
+    const resumeRendering = () => {
+      cancelAnimationFrame(animationFrameId);
+      if (!disposed && !isContextLost && !document.hidden) animationFrameId = requestAnimationFrame(animate);
+    };
+    document.addEventListener('visibilitychange', resumeRendering);
+    resumeRendering();
 
     return () => {
       disposed = true;
+      resizeObserver.disconnect();
+      document.removeEventListener('visibilitychange', resumeRendering);
       abortCtrl.abort();
       cancelAnimationFrame(animationFrameId);
       window.removeEventListener('resize', handleResize);
@@ -3245,8 +3277,16 @@ varying float partSelected;
     >
       <div ref={mountRef} className="w-full h-full cursor-grab active:cursor-grabbing touch-none select-none" />
 
+      {(graphicsError || contextLost) && (
+        <div role="alert" className={`absolute inset-0 z-40 flex flex-col items-center justify-center gap-4 p-6 text-center ${isLight ? 'bg-slate-50 text-slate-800' : 'bg-slate-950 text-slate-200'}`}>
+          <strong>{contextLost ? 'Restoring 3D graphics…' : '3D view unavailable'}</strong>
+          <p className="max-w-sm text-sm">{graphicsError || 'The browser paused graphics to free memory. The view will resume when graphics are restored. ICU and clinical cases remain available.'}</p>
+          <button type="button" onClick={() => window.location.reload()} className="min-h-11 rounded-xl bg-sky-600 px-5 py-3 font-semibold text-white">Reload simulator</button>
+        </div>
+      )}
+
       {/* Loading Progress Bar */}
-      {!modelsReady && (
+      {!modelsReady && !graphicsError && !contextLost && (
         <div
           className={`absolute inset-0 z-20 backdrop-blur-md flex flex-col items-center justify-center space-y-3 ${
             isLight ? 'bg-white/90 text-slate-800' : 'bg-slate-950/85 text-cyan-300'

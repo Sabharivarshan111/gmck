@@ -1,3 +1,4 @@
+import { BuddyReaction } from '@/components/StudyBuddy';
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { Animated, StyleSheet, View } from 'react-native';
 import { Text } from '@/components/Text';
@@ -27,6 +28,7 @@ function McqCardBase({
   item,
   index,
   onAnswer,
+  onReview,
 }: {
   item: Mcq;
   index: number;
@@ -40,6 +42,7 @@ function McqCardBase({
    * question and must not subscribe to anything.
    */
   onAnswer?: (correct: boolean) => void;
+  onReview?: () => void;
 }) {
   const { colors } = useTheme();
   const reduceMotion = useReducedMotion();
@@ -179,6 +182,7 @@ function McqCardBase({
         <Animated.View
           style={[
             styles.result,
+            { backgroundColor: withAlpha(correct ? colors.success : colors.warning, 0.07), padding: 10, borderRadius: 10 },
             {
               opacity: reveal,
               // Rises a few dp into place. Small enough to read as the text
@@ -190,6 +194,7 @@ function McqCardBase({
               ],
             },
           ]}>
+          <BuddyReaction correct={correct} onReview={onReview} />
           <Text
             style={[styles.verdict, { color: correct ? colors.success : colors.danger }]}
             accessibilityLiveRegion="polite">

@@ -27,7 +27,7 @@ export interface PatientPathologyState {
   pupilRight: number;       // diameter in mm (normal ~3.5mm)
   pupilReactLeft: boolean;  // light reactive
   pupilReactRight: boolean; // light reactive
-  heartSoundType: 'normal' | 's3_gallop' | 'mitral_stenosis' | 'mitral_regurg' | 'aortic_stenosis';
+  heartSoundType: 'normal' | 's3_gallop' | 's4_gallop' | 'mitral_stenosis' | 'mitral_regurg' | 'aortic_stenosis' | 'aortic_regurg' | 'murmur_systolic' | 'friction_rub';
   lungSoundType: 'vesicular' | 'crackles' | 'wheeze' | 'bronchial' | 'silent';
   ecgRhythm: 'sinus' | 'stemi_inferior' | 'stemi_anterior' | 'afib' | 'vtach' | 'vfib' | 'asystole' | 'hyperkalemia';
 }

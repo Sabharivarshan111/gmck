@@ -55,6 +55,23 @@ export interface Digest {
   allowRevision: boolean;
   /** Optional daily posting prompt; the default for existing users is off. */
   allowAttendance: boolean;
+  buddyName?: string;
+  attendanceSummary?: string;
+  attendanceActive?: boolean;
+  attendanceName?: string;
+  attendancePercent?: number;
+  attendanceOverallPercent?: number;
+  attendanceTarget?: number;
+  attendanceAttended?: number;
+  attendanceHeld?: number;
+  attendanceTodayWorking?: boolean;
+  attendanceMarkedAbsentToday?: boolean;
+  attendanceUrgent?: boolean;
+  allowPlan?: boolean;
+  planSummary?: string;
+  allowMcq?: boolean;
+  mcqDay?: number;
+  mcqPreview?: string;
 }
 
 /** Local midnight as a day number, matching what the receiver computes. */

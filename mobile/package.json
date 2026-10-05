@@ -56,6 +56,7 @@
     "check:version": "node scripts/version-check.mjs",
     "check:xp": "node scripts/xp-check.mjs",
     "check:reminder": "node scripts/reminder-check.mjs",
+    "check:study-buddy": "node scripts/study-buddy-check.mjs",
     "check:note-media": "node scripts/note-media-check.mjs",
     "check:kotlin": "node scripts/kotlin-overrides-check.mjs",
     "check:supabase-queue": "node scripts/supabase-queue.mjs check",
@@ -94,7 +95,10 @@
     "check:kuhs-repeats": "node scripts/kuhs-repeat-check.mjs",
     "check:v25": "node scripts/v25-regression-check.mjs",
     "check:notes-depth": "node --experimental-strip-types --no-warnings scripts/notes-depth-check.mjs",
-    "check:kuhs-parity": "node scripts/kuhs-parity-check.mjs"
+    "check:kuhs-parity": "node scripts/kuhs-parity-check.mjs",
+    "web:build": "vite build --config web/vite.config.ts",
+    "web:dev": "vite --config web/vite.config.ts",
+    "typecheck:web": "tsc --noEmit -p web/tsconfig.json"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^3.1.1",
@@ -139,6 +143,7 @@
     "esbuild": "^0.28.2",
     "eslint": "^8.19.0",
     "lucide-react": "^1.31.0",
+    "pdfjs-dist": "^6.3.289",
     "playwright-core": "^1.62.1",
     "prettier": "2.8.8",
     "react-dom": "^19.2.3",

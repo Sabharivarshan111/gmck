@@ -1,0 +1,5 @@
+# Notes simulator shortcut — 2026-10-05
+
+User requested Patient simulator in the Vercel Notes section. Runtime commit 225205b6c8397cd1a4230eeb4a721f5208a0a3f9 deployed READY as dpl_9pfqQPEAfb88mfyew3YoBYv8Bq2E; canonical orbitmbbs.vercel.app alias reassigned. Browser-only NotesScreen transform adds a themed accessible card under ALSO HERE before flashcards, opens existing /simulator; SW version v8-notes-simulator-2026-10-05. Native Android and simulator source unchanged.
+
+Web typecheck, production build and repo integrity passed. Live Notes shows Patient simulator, Clinical cases, anatomy and bedside practice. Clicking navigates to https://orbitmbbs.vercel.app/simulator. That existing 3D renderer fails in cloud Chrome because GL_VENDOR/GL_RENDERER are Disabled; do not claim simulator rendering or physical iPhone was tested. No attempt to bypass GPU restrictions. Screenshot of live card: ORBIT-Notes-Simulator-20261005.jpg, libfile_994768a6fd788191a1a12ad550d7ea5e. This supersedes the prior publication/live verification pending entry in resume notes.

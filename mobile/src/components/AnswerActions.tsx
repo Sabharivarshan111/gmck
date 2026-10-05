@@ -28,12 +28,14 @@ export interface FollowUp {
 }
 
 /** The follow-ups for a given question. */
-export function followUpsFor(question: string): FollowUp[] {
-  const topic = question.trim();
+export function followUpsFor(question: string, language = 'English'): FollowUp[] {
+  const topic = `${question.trim()}\n\nAnswer in ${language}.`;
   return [
     { label: 'Test me on this', prompt: `Double-tapped: ${topic}` },
     { label: 'Explain it simply', prompt: `Explain this in simpler terms, as if teaching a junior:\n\n${topic}` },
-    { label: 'What gets asked in exams', prompt: `For this medical topic, list the specific sub-questions most often asked in MBBS university exams, and what an examiner looks for in each:\n\n${topic}` },
+    { label: '5-mark answer', prompt: `Write a structured MBBS 5-mark answer with essential points and brief explanations:\n\n${topic}` },
+    { label: '15-mark essay', prompt: `Write a full detailed structured MBBS 15-mark essay with an introduction, clear headings, complete explanations, relevant clinical points, and a conclusion, explaining every requested part without repetition:\n\n${topic}` },
+    { label: 'Key revision points', prompt: `Give concise key revision points for this topic, preserving important distinctions:\n\n${topic}` },
   ];
 }
 

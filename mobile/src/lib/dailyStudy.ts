@@ -78,6 +78,7 @@ export async function createDailyCard(
   const card: DailyCard = data;
   if (!isCard(card)) throw new Error('The daily question was incomplete. Please retry.');
   await AsyncStorage.setItem(dailyKey(kind, university, year, date), JSON.stringify(card));
+  void import('./reminderSync').then(({ syncReminders }) => syncReminders()).catch(() => {});
   return card;
 }
 
@@ -92,5 +93,6 @@ export async function saveDailyAnswer(
   if (card.revealed || card.answer !== undefined) return card;
   const updated = { ...card, revealed: true, ...(answer !== undefined ? { answer } : {}) };
   await AsyncStorage.setItem(dailyKey(kind, university, year, date), JSON.stringify(updated));
+  void import('./reminderSync').then(({ syncReminders }) => syncReminders()).catch(() => {});
   return updated;
 }

@@ -1,0 +1,27 @@
+import fs from 'node:fs/promises';
+import http from 'node:http';
+import path from 'node:path';
+import assert from 'node:assert/strict';
+import { chromium } from 'playwright-core';
+const root=path.resolve(import.meta.dirname,'../../dist');
+const server=http.createServer(async(req,res)=>{try{const rel=req.url.split('?')[0];const file=path.join(root,rel==='/'||rel==='/progress'?'/index.html':rel);const ext=path.extname(file);res.setHeader('Content-Type',({'.html':'text/html','.js':'application/javascript','.json':'application/manifest+json','.png':'image/png','.css':'text/css','.woff2':'font/woff2','.wasm':'application/wasm'}[ext])||'application/octet-stream');res.end(await fs.readFile(file));}catch{res.writeHead(404).end();}});
+await new Promise(r=>server.listen(5228,'127.0.0.1',r));
+const browser=await chromium.launch({executablePath:process.env.CHROME_PATH||'/tmp/orbit-chromium',headless:true,args:['--no-sandbox','--disable-dev-shm-usage']});
+try{
+ const context=await browser.newContext({viewport:{width:390,height:844},reducedMotion:'reduce'});
+ await context.route('**/*',r=>r.request().url().startsWith('http://127.0.0.1:5228')?r.continue():r.abort());
+ await context.addInitScript(()=>{localStorage.setItem('orbit-profile-v1',JSON.stringify({display_name:'Install check',year:'first',university:'kuhs'}));localStorage.setItem('orbit:tour-v1',JSON.stringify({seen:1}));});
+ const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto('http://127.0.0.1:5228/');await page.getByRole('button',{name:'Install',exact:true}).waitFor();
+ const session=await context.newCDPSession(page);const manifest=await session.send('Page.getAppManifest');assert.equal(manifest.errors.length,0);const data=JSON.parse(manifest.data);assert.equal(data.display,'standalone');assert.equal(data.id,'/');
+ for(const icon of data.icons){const response=await page.request.get('http://127.0.0.1:5228'+icon.src);assert.equal(response.status(),200);const bytes=await response.body();assert.equal(bytes.readUInt32BE(16),Number(icon.sizes.split('x')[0]));assert.equal(bytes.readUInt32BE(20),Number(icon.sizes.split('x')[1]));}
+ console.log('PASS Chrome parses install manifest and all real PNG icon dimensions');
+ await page.getByRole('button',{name:'Install',exact:true}).click();await page.getByRole('dialog',{name:'Install ORBIT',exact:true}).waitFor();assert.ok(await page.getByText('iPhone & iPad',{exact:true}).isVisible());assert.ok(await page.getByText('Android & desktop',{exact:true}).isVisible());await page.screenshot({path:'/tmp/orbit-install-help.png'});await page.getByRole('dialog',{name:'Install ORBIT',exact:true}).getByRole('button',{name:'Done',exact:true}).click();
+ await page.getByRole('button',{name:'Dismiss install suggestion',exact:true}).click();await page.reload();assert.equal(await page.getByRole('button',{name:'Install',exact:true}).count(),0);
+ await page.getByRole('button',{name:'Menu',exact:true}).click();await page.getByRole('button',{name:'Install ORBIT',exact:true}).click();await page.getByRole('dialog',{name:'Install ORBIT',exact:true}).waitFor();console.log('PASS install help, dismiss persistence, and permanent native menu access');
+ await page.getByRole('dialog',{name:'Install ORBIT',exact:true}).getByRole('button',{name:'Done',exact:true}).click();
+ await page.evaluate(()=>{const event=new Event('beforeinstallprompt',{cancelable:true});event.prompt=async()=>{window.__promptCalled=(window.__promptCalled||0)+1};event.userChoice=Promise.resolve({outcome:'dismissed'});window.dispatchEvent(event);});
+ await page.getByRole('button',{name:'Menu',exact:true}).click();await page.getByRole('button',{name:'Install ORBIT',exact:true}).click();await page.getByRole('button',{name:'Install on this device',exact:true}).click();await page.getByRole('status').waitFor();assert.equal(await page.evaluate(()=>window.__promptCalled),1);console.log('PASS deferred Chromium install prompt invoked once; cancellation stays truthful');
+ await page.evaluate(()=>window.dispatchEvent(new Event('appinstalled')));assert.equal(await page.getByRole('dialog',{name:'Install ORBIT',exact:true}).isVisible(),false);await page.getByRole('button',{name:'Menu',exact:true}).click();await page.getByRole('button',{name:'Install ORBIT',exact:true}).click();assert.ok(await page.getByRole('heading',{name:'ORBIT is installed',exact:true}).isVisible());assert.deepEqual(errors,[]);
+ const ios=await browser.newContext({viewport:{width:390,height:844},userAgent:'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 Version/18.0 Mobile/15E148 Safari/604.1'});await ios.route('**/*',r=>r.request().url().startsWith('http://127.0.0.1:5228')?r.continue():r.abort());await ios.addInitScript(()=>{localStorage.setItem('orbit-profile-v1',JSON.stringify({display_name:'iPhone check',year:'first',university:'kuhs'}));localStorage.setItem('orbit:tour-v1',JSON.stringify({seen:1}));});const phone=await ios.newPage();await phone.goto('http://127.0.0.1:5228/');await phone.getByRole('button',{name:'Install',exact:true}).click();assert.ok(await phone.getByText('iPhone & iPad',{exact:true}).isVisible());assert.equal(await phone.getByText('Android & desktop',{exact:true}).count(),0);assert.equal(await phone.locator('link[rel="apple-touch-icon"]').getAttribute('href'),'/apple-touch-icon.png');console.log('PASS iPhone instructions, Apple icon metadata and installed-state behavior');
+}finally{await browser.close();await new Promise(r=>server.close(r));}

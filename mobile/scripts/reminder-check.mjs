@@ -48,6 +48,17 @@ check(
   'reminderSync no longer re-arms the alarm — an Android alarm does not survive a force-stop',
 );
 
+for (const fact of [
+  'attendanceActive',
+  'attendancePercent',
+  'attendanceOverallPercent',
+  'attendanceTodayWorking',
+  'attendanceMarkedAbsentToday',
+  'attendanceUrgent',
+]) {
+  check(sync.includes(fact), `reminderSync no longer writes ${fact}; attendance alerts would be generic or stale`);
+}
+
 const app = code(read(path.join(mobile, 'App.tsx')));
 check(
   /syncReminders\(\)/.test(app),
@@ -92,6 +103,17 @@ check(
   'the test sends before refreshing the digest, so it reports on stale facts',
 );
 
+check(
+  /label="Daily attendance warning"/.test(settings),
+  'Settings no longer exposes the percentage-aware daily attendance warning',
+);
+const buddyAt = settings.indexOf('<StudyBuddyPanel');
+const walkthroughAt = settings.indexOf('WALKTHROUGH');
+check(
+  buddyAt > walkthroughAt && walkthroughAt >= 0,
+  'Study Buddy moved back to the top of Settings and can cover/push down the core controls',
+);
+
 // ---------------------------------------------------------------------------
 // 3. The test posts the real thing.
 // ---------------------------------------------------------------------------
@@ -119,6 +141,19 @@ check(
   /fun post\(context: Context/.test(receiver),
   'the posting path is no longer shared between the daily check and the test',
 );
+
+check(
+  /attendanceUrgent/.test(receiver) && /attendanceTodayWorking/.test(receiver),
+  'attendance warnings are no longer gated by urgency and a real working posting day',
+);
+check(
+  /You marked today absent/.test(receiver),
+  'the receiver no longer warns after an attendance mark is recorded absent',
+);
+check(
+  /attendancePercent/.test(receiver) && /attendanceTarget/.test(receiver),
+  'the attendance reminder no longer includes the current percentage and target',
+);
 // The frequency rules stay in the receiver, where the alarm lands. Losing any
 // of them is how an app that respects people becomes one they mute.
 for (const [rule, pattern] of [
@@ -130,7 +165,31 @@ for (const [rule, pattern] of [
 }
 
 // ---------------------------------------------------------------------------
-// 4. The native surface is complete and matches the spec.
+// 4. iPhone / installed-web reminders carry the same actionable attendance facts.
+// ---------------------------------------------------------------------------
+const webPush = read(path.join(mobile, '../supabase/functions/web-push/reminders.ts'));
+for (const fact of [
+  'attendanceActive',
+  'attendancePercent',
+  'attendanceOverallPercent',
+  'attendanceTarget',
+  'attendanceTodayWorking',
+  'attendanceMarkedAbsentToday',
+  'attendanceUrgent',
+]) {
+  check(webPush.includes(fact), `web push drops ${fact}; iPhone reminders would diverge from Android`);
+}
+check(
+  /Attendance warning/.test(webPush) && /Do not miss/.test(webPush),
+  'iPhone web push no longer sends absence / below-target attendance warnings',
+);
+check(
+  /No attendance history/.test(webPush) && !/lastMarkedDate/.test(webPush),
+  'web push started storing detailed attendance history instead of the minimal reminder snapshot',
+);
+
+// ---------------------------------------------------------------------------
+// 5. The native surface is complete and matches the spec.
 // ---------------------------------------------------------------------------
 const spec = read(path.join(mobile, 'src/native/NativeOrbitNotify.ts'));
 for (const method of [
@@ -192,4 +251,4 @@ if (failures.length > 0) {
   process.exit(1);
 }
 
-console.log('OK  digest written at launch, hour settable, test posts the real message');
+console.log('OK  Android + iPhone reminders carry actionable attendance facts, hour is settable, and tests post the real message');

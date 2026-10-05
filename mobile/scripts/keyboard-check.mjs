@@ -31,6 +31,7 @@ const SRC = path.join(root, 'src');
  * is the note that says what to re-verify.
  */
 const LIFTED_BY_ANCESTOR = {
+  'components/StudyBuddy.tsx': 'StudyBuddyPanel is presented only inside Sheet: AskAiScreen buddy sheet and SettingsSheet; Sheet wraps its scrollable body in KeyboardSafe',
   'components/ProfileSheet.tsx': 'Sheet wraps its body in KeyboardSafe',
   'components/ColorPicker.tsx': 'Sheet (ThemeEditor is presented in one) wraps its body in KeyboardSafe',
   'components/ExamCountdownCard.tsx': 'ProgressScreen wraps its ScrollView in KeyboardSafe',

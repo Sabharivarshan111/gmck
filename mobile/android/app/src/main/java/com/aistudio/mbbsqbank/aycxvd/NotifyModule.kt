@@ -141,7 +141,7 @@ class NotifyModule(reactContext: ReactApplicationContext) :
     val digest = NotifyStore.digest(context)
     val message = receiver.compose(digest, receiver.epochDay())
     val posted = if (message != null) {
-      NotifyReceiver.post(context, message.first, message.second)
+      NotifyReceiver.post(context, "${digest.optString("buddyName", "ORBIT").take(24)} · ${message.first}", message.second)
     } else {
       NotifyReceiver.post(
         context,
