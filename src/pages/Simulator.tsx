@@ -15,6 +15,7 @@ import {
   ChevronDown,
   Info,
 } from 'lucide-react';
+import { startVisibleFrameLoop } from '../simulator/engine/visibleFrameLoop';
 import { PhysiologyKernel, SCENARIOS } from '../simulator/engine/PhysiologyKernel';
 import { AnatomicalLayer, DiagnosticToolType, PatientPathologyState, PatientVitals } from '../simulator/types';
 import { AnatomicalBody3D, resolvePartToOrganKey } from '../simulator/view/AnatomicalBody3D';
@@ -47,7 +48,8 @@ import {
 
 export const Simulator: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const initialScenario = searchParams.get('scenario') || 'snakebite';
+  const requestedScenario = searchParams.get('scenario');
+  const initialScenario = SCENARIOS.some(scenario => scenario.id === requestedScenario) ? requestedScenario! : 'snakebite';
   const initialTool = (searchParams.get('tool') as DiagnosticToolType) || 'none';
   const initialLayer = (searchParams.get('layer') as AnatomicalLayer) || 'glass';
 
@@ -215,28 +217,18 @@ export const Simulator: React.FC = () => {
     if (isolate) setIsolatedPartId(getPreferredAnatomyIsolationTarget(isolate));
   }, [searchParams]);
 
-  // Simulation Clock Tick Loop (60 Hz UI sync)
+  // Keep physiology advancing each visible frame; publish UI snapshots at 10 Hz.
+  // Canvas instruments animate independently, so this avoids full-tree 60 Hz renders.
   useEffect(() => {
-    let animId: number;
-    let lastTime = performance.now();
-
-    const loop = (currentTime: number) => {
-      animId = requestAnimationFrame(loop);
-      const dt = Math.min(0.05, (currentTime - lastTime) / 1000);
-      lastTime = currentTime;
-
-      if (kernelRef.current) {
-        kernelRef.current.tick(dt);
-        setVitals({ ...kernelRef.current.getLiveVitals() });
-        setPathology({ ...kernelRef.current.pathology });
-      }
-    };
-
-    animId = requestAnimationFrame(loop);
-
-    return () => {
-      cancelAnimationFrame(animId);
-    };
+    let lastPublish = -Infinity;
+    return startVisibleFrameLoop((currentTime, dt) => {
+      if (!kernelRef.current) return;
+      kernelRef.current.tick(dt);
+      if (currentTime - lastPublish < 100) return;
+      lastPublish = currentTime;
+      setVitals({ ...kernelRef.current.getLiveVitals() });
+      setPathology({ ...kernelRef.current.pathology });
+    });
   }, []);
 
   // Scenario switch handler
@@ -1066,10 +1058,13 @@ export const Simulator: React.FC = () => {
             name: organKey.charAt(0).toUpperCase() + organKey.slice(1),
             system: 'viscera' as any,
             bounds: [[0, 0, 0], [0, 0, 0]],
+            conceptId: organKey,
+            chunk: -1,
+            positions: 0,
+            normals: 0,
+            indices: 0,
             vertexCount: 0,
             indexCount: 0,
-            vertices: 0,
-            indices: 0,
           };
           setHiddenPartIds((prev) => (prev.includes(organKey) ? prev : [...prev, organKey]));
           setDissectedParts((prev) => (prev.some((p) => p.id === organKey) ? prev : [...prev, fakePart]));

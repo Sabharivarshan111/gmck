@@ -1932,3 +1932,10 @@ User asked to fix YouTube, uploaded video/PDF reader and notifications. Isolated
 
 ## 2026-10-05 — Codex — Patient simulator shortcut in web Notes
 Owner asked to add the existing Vercel patient simulator to Notes. Browser-only NotesScreen transform adds a themed accessible Patient simulator card under ALSO HERE before flashcards; it opens existing /simulator. Bumped SW cache version so installed apps update. Native Android and simulator source unchanged. Web TypeScript and production build passed; publication/live shortcut verification next.
+
+
+## 2026-10-05 — Patient Simulator lifecycle and mobile performance
+
+Owner explicitly requested fixing/optimising the simulator. Added a visible-frame loop that pauses in background tabs, deduplicates resume and discards hidden time. Physiology still ticks every visible frame; UI snapshots publish at 10 Hz. ICU waveform rendering no longer restarts with each vitals update; sweep speed uses elapsed time; sound enable resumes AudioContext during the user gesture and closes it on unmount. Anatomy now handles renderer creation/download failures locally instead of blanking the app, restarts after WebGL context recovery, responds to container resize, and caps phone GPU draws at 30 fps. Fixed the missing local organ resolver import, malformed synthetic Part metadata and outdated simulator sound types. Service worker cache version advanced.
+
+Verified: build:vercel, mobile typecheck:web, simulator organ/asset/mobile/dossier checks, deploy-size check and repo-intact; simulator-lifecycle-check covers pause/resume/cleanup. Root TypeScript has one pre-existing src/lib/apkgWeb.ts callable-union error; simulator files are clean. This cloud browser has WebGL disabled; anatomy rendering/context recovery and iPhone audio still require real-device verification. No medical scenario or treatment calibration changed.

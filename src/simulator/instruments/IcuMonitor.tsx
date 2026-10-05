@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { startVisibleFrameLoop } from '../engine/visibleFrameLoop';
 import { PatientVitals, TelemetryWaveformSample } from '../types';
 import { GraduationCap } from 'lucide-react';
 import { EcgIcuTutorialModal } from './EcgIcuTutorialModal';
@@ -19,6 +20,9 @@ export const IcuMonitor: React.FC<IcuMonitorProps> = ({
   active = true,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const liveRef = useRef({ vitals, ecgRhythm });
+  liveRef.current = { vitals, ecgRhythm };
+
   const [audioEnabled, setAudioEnabled] = useState<boolean>(false);
   const [isTutorialOpen, setIsTutorialOpen] = useState<boolean>(false);
   const audioCtxRef = useRef<AudioContext | null>(null);
@@ -60,6 +64,14 @@ export const IcuMonitor: React.FC<IcuMonitorProps> = ({
     }
   };
 
+  const beepRef = useRef(playHeartBeep);
+  beepRef.current = playHeartBeep;
+  useEffect(() => () => {
+    const context = audioCtxRef.current;
+    audioCtxRef.current = null;
+    if (context) void context.close().catch(() => {});
+  }, []);
+
   useEffect(() => {
     if (!active) return;
     const canvas = canvasRef.current;
@@ -67,8 +79,7 @@ export const IcuMonitor: React.FC<IcuMonitorProps> = ({
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    let animId: number;
-    const sweepSpeed = 2.5; // pixels per frame
+    const sweepSpeed = 150; // pixels per second, independent of display refresh rate
     const eraseWidth = 20;
     const w = canvas.width;
     const h = canvas.height;
@@ -80,6 +91,7 @@ export const IcuMonitor: React.FC<IcuMonitorProps> = ({
 
     // Helper: calculate analytical waveform coordinate at absolute time t
     const calculatePoint = (t: number) => {
+      const { vitals, ecgRhythm } = liveRef.current;
       const hr = Math.max(35, vitals.heartRate);
       const cardiacPeriod = 60 / hr;
       const theta = ((t / cardiacPeriod) * 2 * Math.PI) % (2 * Math.PI);
@@ -155,7 +167,7 @@ export const IcuMonitor: React.FC<IcuMonitorProps> = ({
     ctx.fillStyle = '#080c15';
     ctx.fillRect(0, 0, w, h);
 
-    const totalCanvasSec = (w / sweepSpeed) * 0.016; // Time equivalent across screen
+    const totalCanvasSec = w / sweepSpeed; // Time equivalent across screen
     let prev = calculatePoint(0);
     for (let x = 1; x < w; x++) {
       const t = (x / w) * totalCanvasSec;
@@ -202,16 +214,12 @@ export const IcuMonitor: React.FC<IcuMonitorProps> = ({
       capno: prev.capnoY,
     };
 
-    let lastTime = performance.now();
-
-    const render = (currentTime: number) => {
-      animId = requestAnimationFrame(render);
-      const dt = Math.min(0.05, (currentTime - lastTime) / 1000);
-      lastTime = currentTime;
+    const render = (currentTime: number, dt: number) => {
+      if (dt === 0) return;
       timeOffsetRef.current += dt;
 
       const curX = sweepXRef.current;
-      const nextX = (curX + sweepSpeed) % w;
+      const nextX = (curX + sweepSpeed * dt) % w;
 
       // Erase band ahead of sweep
       ctx.fillStyle = '#080c15';
@@ -274,7 +282,7 @@ export const IcuMonitor: React.FC<IcuMonitorProps> = ({
 
         if (pt.rawEcg > 1.0 && currentTime - lastBeepTimeRef.current > 400) {
           lastBeepTimeRef.current = currentTime;
-          playHeartBeep(780);
+          beepRef.current(780);
         }
       }
 
@@ -326,12 +334,8 @@ export const IcuMonitor: React.FC<IcuMonitorProps> = ({
       sweepXRef.current = nextX;
     };
 
-    animId = requestAnimationFrame(render);
-
-    return () => {
-      cancelAnimationFrame(animId);
-    };
-  }, [vitals, ecgRhythm, active]);
+    return startVisibleFrameLoop(render);
+  }, [active]);
 
   const isLight = theme === 'light';
 
@@ -384,7 +388,15 @@ export const IcuMonitor: React.FC<IcuMonitorProps> = ({
               <span>🎓 Tutorial</span>
             </button>
             <button
-              onClick={() => setAudioEnabled(!audioEnabled)}
+              onClick={() => {
+                if (!audioEnabled) {
+                  try {
+                    if (!audioCtxRef.current) audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+                    void audioCtxRef.current.resume().catch(() => {});
+                  } catch { return; }
+                }
+                setAudioEnabled(!audioEnabled);
+              }}
               className={`min-h-[44px] px-2.5 rounded-xl text-[10px] font-semibold border transition-all ${
                 audioEnabled
                   ? 'bg-emerald-950/60 border-emerald-500 text-emerald-300'

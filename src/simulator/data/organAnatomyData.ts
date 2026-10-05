@@ -44,6 +44,7 @@ export interface OrthogonalRelations {
 }
 
 export interface DetailedOrganAnatomy {
+  cameraPreset?: 'anterior' | 'head' | 'thorax' | 'abdomen';
   id: string;
   name: string;
   latinName: string;
