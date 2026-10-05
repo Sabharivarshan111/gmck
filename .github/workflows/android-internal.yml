@@ -141,6 +141,8 @@ jobs:
           npm run check:billing
           npm run check:security
           npm run check:attendance
+          npm run check:reminder
+          npm run check:study-buddy
           npm run check:admin
           npm run check:no-simulator
           npm run check:note-links
