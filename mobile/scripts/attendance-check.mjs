@@ -40,7 +40,7 @@ const arithmetic = source
   // `dayOfRotation(item, today: Date = new Date())` — the default stays, the
   // annotation goes, same as every other one above.
   .replace(/: Date/g, '')
-  .replace(/\| null/g, '')
+  .replace(/ \| null(?=\s*\{)/g, '')
   .replace(/interface [\s\S]*?\n\}/g, '')
   .replace(/^\s*\/\*\*[\s\S]*?\*\/$/gm, '');
 
