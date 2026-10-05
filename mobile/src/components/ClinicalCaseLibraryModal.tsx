@@ -219,12 +219,16 @@ export function ClinicalCaseLibraryModal({
           <View style={[styles.reviewedBadge, { backgroundColor: withAlpha(colors.primary, 0.12) }]}>
             <Text style={[styles.reviewedBadgeText, { color: colors.primary }]}>
               {selected
-                ? selected.sourceDataset === 'orbit-curated-v1'
-                  ? 'ORBIT CURATED'
-                  : 'REVIEWED'
+                ? selected.reviewStatus === 'source'
+                  ? 'OPUS SOURCE'
+                  : selected.sourceDataset === 'orbit-curated-v1'
+                    ? 'ORBIT CURATED'
+                    : 'REVIEWED'
                 : loading
                   ? 'LOADING'
-                  : `${cases.length} CASES`}
+                  : catalog
+                    ? `${(catalog.publishedCases + cases.filter(item => item.reviewStatus === 'approved').length).toLocaleString()}+ CASES`
+                    : `${cases.length} CASES`}
             </Text>
           </View>
         </View>
@@ -256,9 +260,11 @@ export function ClinicalCaseLibraryModal({
                   {mode === 'practice' ? 'Simulated case for exam practice' : 'Educational case reference'}
                 </Text>
                 <Text style={[styles.safetyBody, { color: colors.textMuted }]}>
-                  {mode === 'practice'
-                    ? 'Educational synthetic case, not clinical guidance. External dataset rows appear only after review.'
-                    : 'Browse the complete teaching record. This is educational content, not patient-specific clinical guidance.'}
+                  {selected.reviewStatus === 'source'
+                    ? 'External synthetic source case. It is published for education but has not been clinically reviewed by ORBIT; verify important facts against primary sources.'
+                    : mode === 'practice'
+                      ? 'Educational synthetic case, not clinical guidance.'
+                      : 'Browse the complete teaching record. This is educational content, not patient-specific clinical guidance.'}
                 </Text>
               </View>
             </View>
@@ -431,9 +437,10 @@ export function ClinicalCaseLibraryModal({
                   </Text>
                   {catalog ? (
                     <Text style={[styles.sourceStatus, { color: colors.textMuted }]}>
-                      {catalog.recordsTotal.toLocaleString()} Opus 5.5 source cases loaded privately
+                      {catalog.recordsTotal.toLocaleString()} Opus 5.5 source cases loaded
                       {' • '}{catalog.recordsStructurallyValid.toLocaleString()} structurally validated
-                      {' • '}{cases.length} live cases currently visible
+                      {' • '}{catalog.publishedCases.toLocaleString()} published as external source cases
+                      {' • '}25 ORBIT-curated cases
                     </Text>
                   ) : null}
                 </View>
@@ -504,7 +511,11 @@ export function ClinicalCaseLibraryModal({
                         style={[styles.rowSub, { color: colors.textMuted }]}
                         numberOfLines={2}>
                         {[
-                          item.sourceDataset === 'orbit-curated-v1' ? 'ORBIT curated' : 'Reviewed external',
+                          item.reviewStatus === 'source'
+                            ? 'Opus source • not ORBIT-reviewed'
+                            : item.sourceDataset === 'orbit-curated-v1'
+                              ? 'ORBIT curated'
+                              : 'Reviewed external',
                           item.icd10,
                           item.bodySystems.slice(0, 2).join(' • '),
                           item.aliases[0],
