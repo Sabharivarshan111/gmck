@@ -12,6 +12,7 @@ export interface ClinicalDatasetCaseSummary {
   description: string | null;
   prevalence: string | null;
   sourceDataset: string;
+  reviewStatus: 'source' | 'approved' | string;
 }
 
 export interface ClinicalDialogueTurn {
@@ -61,6 +62,7 @@ const normalizeSummary = (row: Record<string, unknown>): ClinicalDatasetCaseSumm
   description: typeof row.description === 'string' ? row.description : null,
   prevalence: typeof row.prevalence === 'string' ? row.prevalence : null,
   sourceDataset: String(row.source_dataset ?? OPUS55_DATASET),
+  reviewStatus: String(row.review_status ?? 'approved'),
 });
 
 export async function fetchClinicalDatasetCatalog(): Promise<ClinicalDatasetCatalog | null> {
@@ -108,9 +110,9 @@ export async function searchApprovedClinicalCases(
   let request = supabase
     .from('clinical_dataset_cases')
     .select(
-      'id,source_dataset,canonical_name,aliases,icd10,body_systems,description,prevalence',
+      'id,source_dataset,review_status,canonical_name,aliases,icd10,body_systems,description,prevalence',
     )
-    .eq('review_status', 'approved')
+    .in('review_status', ['approved', 'source'])
     .order('canonical_name', { ascending: true })
     .limit(safeLimit);
 
@@ -137,6 +139,7 @@ export async function fetchApprovedClinicalCase(
       [
         'id',
         'source_dataset',
+        'review_status',
         'canonical_name',
         'aliases',
         'icd10',
@@ -154,7 +157,7 @@ export async function fetchApprovedClinicalCase(
       ].join(','),
     )
     .eq('id', id)
-    .eq('review_status', 'approved')
+    .in('review_status', ['approved', 'source'])
     .maybeSingle();
 
   if (error) {
