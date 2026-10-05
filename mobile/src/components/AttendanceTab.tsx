@@ -35,6 +35,7 @@ import {
   postingEndDate,
   percentOf,
   removeAttendance,
+  setMonthlyTotalClasses,
   subscribeAttendance,
   undoAttendance,
   updateAttendance,
@@ -519,6 +520,9 @@ export function AttendanceTab() {
             item={item}
             onMark={mark}
             onSetTotalClasses={async next => updateAttendance(item.id, { totalClasses: next })}
+            onSetMonthlyTotalClasses={async (monthKey, next) =>
+              setMonthlyTotalClasses(item.id, monthKey, next)
+            }
             onUndo={async () => {
               const was = lastMark[item.id];
               await undoAttendance(item.id, was ?? true);
@@ -576,7 +580,7 @@ export function AttendanceTab() {
             {kind === 'theory' ? (
               <View style={styles.totalClassesSection}>
                 <Text style={[styles.formLabel, { color: colors.textMuted }]}>
-                  TOTAL CLASSES PLANNED (OPTIONAL)
+                  TOTAL NUMBER OF CLASSES — ALL MONTHS (OPTIONAL)
                 </Text>
                 <View style={styles.totalPresets}>
                   {['60', '80', '100', '120', '150'].map(cnt => {
@@ -611,9 +615,9 @@ export function AttendanceTab() {
                   value={totalClassesStr}
                   onChangeText={setTotalClassesStr}
                   keyboardType="number-pad"
-                  placeholder="e.g. 100 total classes"
+                  placeholder="e.g. 100 classes in total"
                   placeholderTextColor={colors.textMuted}
-                  accessibilityLabel="Total planned classes"
+                  accessibilityLabel="Total number of theory classes across all months"
                   style={[styles.input, { color: colors.text, borderColor: colors.border }]}
                 />
               </View>
@@ -836,6 +840,7 @@ function AttendanceCard({
   onTarget,
   onRemove,
   onSetTotalClasses,
+  onSetMonthlyTotalClasses,
   onUpdateHolidays,
   onUpdateGazettedWorkingDays,
 }: {
@@ -845,6 +850,7 @@ function AttendanceCard({
   onTarget: (next: number) => void;
   onRemove: () => void;
   onSetTotalClasses: (count?: number) => void;
+  onSetMonthlyTotalClasses: (monthKey: string, count?: number) => void;
   onUpdateHolidays: (holidays: string[]) => void;
   onUpdateGazettedWorkingDays: (dates: string[]) => void;
 }) {
@@ -853,11 +859,31 @@ function AttendanceCard({
   const best = bestPossible(item);
   const day = dayOfRotation(item);
   const total = workingDays(item);
-  const thisMonth = getMonthlyAttendance(item);
+  const currentMonthKey = formatLocalIsoDate(new Date()).slice(0, 7);
+  const thisMonth = getMonthlyAttendance(item, currentMonthKey);
   const monthPct = percentOf(thisMonth.attended, thisMonth.held);
   const monthTone =
     thisMonth.held === 0 || monthPct >= item.target ? colors.success : colors.danger;
   const monthName = new Date().toLocaleString('en-US', { month: 'short' });
+  const monthOptions = Array.from(
+    new Set([currentMonthKey, ...Object.keys(item.monthly ?? {})]),
+  ).sort().reverse();
+  const [selectedMonth, setSelectedMonth] = useState(currentMonthKey);
+  const selectedMonthly = getMonthlyAttendance(item, selectedMonth);
+  const selectedMonthLabel = (() => {
+    const [year, month] = selectedMonth.split('-').map(Number);
+    return new Date(year, Math.max(0, month - 1), 1).toLocaleString('en-US', {
+      month: 'short',
+      year: 'numeric',
+    });
+  })();
+  const [monthlyTotalInput, setMonthlyTotalInput] = useState(
+    selectedMonthly.totalClasses ? String(selectedMonthly.totalClasses) : '',
+  );
+  const monthlyTotals = Object.values(item.monthly ?? {})
+    .map(entry => Number(entry.totalClasses) || 0)
+    .filter(value => value > 0);
+  const monthlyTotalSum = monthlyTotals.reduce((sum, value) => sum + value, 0);
 
   const [showCalendar, setShowCalendar] = useState(false);
   const [showSimulator, setShowSimulator] = useState(false);
@@ -884,10 +910,10 @@ function AttendanceCard({
             {item.name}
           </Text>
           <Text style={[styles.cardCount, { color: colors.textMuted }]}>
-            {item.kind === 'theory' ? 'Overall: ' : ''}
+            {item.kind === 'theory' ? 'Overall attendance: ' : ''}
             {item.attended} of {item.held} {item.kind === 'posting' ? 'days' : 'classes'}
             {item.kind === 'theory' && item.totalClasses
-              ? ` · ${item.totalClasses} total (${Math.max(0, item.totalClasses - item.held)} left)`
+              ? ` · Total classes: ${item.totalClasses} · ${Math.max(0, item.totalClasses - item.held)} left`
               : verdict.remaining !== null
                 ? ` · ${verdict.remaining} left`
                 : ''}
@@ -899,7 +925,10 @@ function AttendanceCard({
           ) : null}
           {item.kind === 'theory' ? (
             <Text style={[styles.cardCountSub, { color: colors.accent }]}>
-              This Month ({monthName}): {thisMonth.attended} of {thisMonth.held} classes ({thisMonth.held === 0 ? '—' : `${Math.round(monthPct)}%`})
+              This Month ({monthName}): {thisMonth.attended} of {thisMonth.held} attended
+              {thisMonth.totalClasses ? ` · ${thisMonth.totalClasses} total classes this month` : ''}
+              {' · '}
+              {thisMonth.held === 0 ? '—' : `${Math.round(monthPct)}%`}
             </Text>
           ) : null}
           {day !== null && total !== null ? (
@@ -997,7 +1026,7 @@ function AttendanceCard({
       {item.kind === 'theory' ? (
         <View style={styles.totalClassesSection}>
           <Text style={[styles.totalClassesLabel, { color: colors.textMuted }]}>
-            Total classes planned:
+            Total number of classes (all months):
           </Text>
           <View style={styles.totalPresets}>
             {[60, 80, 100, 120, 150].map(cnt => {
@@ -1028,6 +1057,113 @@ function AttendanceCard({
               );
             })}
           </View>
+        </View>
+      ) : null}
+
+      {item.kind === 'theory' ? (
+        <View style={styles.totalClassesSection}>
+          <Text style={[styles.totalClassesLabel, { color: colors.textMuted }]}>
+            Classes per month
+          </Text>
+          <Text style={[styles.cardCountSub, { color: colors.textMuted }]}>
+            Set the total number of classes separately for each month. This is not an average.
+            {monthlyTotalSum > 0
+              ? ` Monthly totals entered so far: ${monthlyTotalSum} classes across ${monthlyTotals.length} month${monthlyTotals.length === 1 ? '' : 's'}.`
+              : ''}
+          </Text>
+
+          <View style={styles.totalPresets}>
+            {monthOptions.map(key => {
+              const active = selectedMonth === key;
+              const [year, month] = key.split('-').map(Number);
+              const label = new Date(year, Math.max(0, month - 1), 1).toLocaleString('en-US', {
+                month: 'short',
+                year: '2-digit',
+              });
+              const monthly = getMonthlyAttendance(item, key);
+              return (
+                <Touchable
+                  key={key}
+                  onPress={() => {
+                    setSelectedMonth(key);
+                    setMonthlyTotalInput(monthly.totalClasses ? String(monthly.totalClasses) : '');
+                  }}
+                  label={`Edit ${label} class total`}
+                  state={{ selected: active }}
+                  style={[
+                    styles.totalPresetChip,
+                    {
+                      borderColor: active ? colors.accent : colors.border,
+                      backgroundColor: active ? withAlpha(colors.accent, 0.18) : 'transparent',
+                    },
+                  ]}>
+                  <Text
+                    style={[
+                      styles.totalPresetText,
+                      { color: active ? colors.accent : colors.textMuted },
+                    ]}>
+                    {label}{monthly.totalClasses ? ` · ${monthly.totalClasses}` : ''}
+                  </Text>
+                </Touchable>
+              );
+            })}
+          </View>
+
+          <Text style={[styles.formLabel, { color: colors.textMuted }]}>
+            {selectedMonthLabel.toUpperCase()} — TOTAL CLASSES
+          </Text>
+          <View style={styles.totalPresets}>
+            {[10, 15, 20, 25, 30, 40].map(count => {
+              const active = selectedMonthly.totalClasses === count;
+              return (
+                <Touchable
+                  key={count}
+                  onPress={() => {
+                    const next = active ? undefined : count;
+                    setMonthlyTotalInput(next ? String(next) : '');
+                    onSetMonthlyTotalClasses(selectedMonth, next);
+                  }}
+                  label={`Set ${selectedMonthLabel} total to ${count} classes`}
+                  style={[
+                    styles.totalPresetChip,
+                    {
+                      borderColor: active ? colors.accent : colors.border,
+                      backgroundColor: active ? withAlpha(colors.accent, 0.18) : 'transparent',
+                    },
+                  ]}>
+                  <Text
+                    style={[
+                      styles.totalPresetText,
+                      { color: active ? colors.accent : colors.textMuted },
+                    ]}>
+                    {count}
+                  </Text>
+                </Touchable>
+              );
+            })}
+          </View>
+          <TextInput
+            value={monthlyTotalInput}
+            onChangeText={setMonthlyTotalInput}
+            onEndEditing={() => {
+              const value = Number(monthlyTotalInput);
+              const next =
+                monthlyTotalInput.trim() && Number.isFinite(value) && value > 0
+                  ? Math.round(value)
+                  : undefined;
+              onSetMonthlyTotalClasses(selectedMonth, next);
+            }}
+            keyboardType="number-pad"
+            placeholder={`e.g. 24 classes in ${selectedMonthLabel}`}
+            placeholderTextColor={colors.textMuted}
+            accessibilityLabel={`Total number of classes in ${selectedMonthLabel}`}
+            style={[styles.input, { color: colors.text, borderColor: colors.border }]}
+          />
+          {selectedMonthly.totalClasses ? (
+            <Text style={[styles.cardCountSub, { color: colors.accent }]}>
+              {selectedMonthly.held} held so far · {Math.max(0, selectedMonthly.totalClasses - selectedMonthly.held)} classes left in {selectedMonthLabel}
+            </Text>
+          ) : null}
         </View>
       ) : null}
 
