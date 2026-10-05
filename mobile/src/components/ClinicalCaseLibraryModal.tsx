@@ -23,6 +23,7 @@ import { Touchable } from '@/components/Touchable';
 import { KeyboardSafe } from '@/components/KeyboardSafe';
 import { useTheme, withAlpha } from '@/theme';
 import {
+  countReadableClinicalCases,
   fetchApprovedClinicalCase,
   fetchClinicalDatasetCatalog,
   searchApprovedClinicalCases,
@@ -77,6 +78,7 @@ export function ClinicalCaseLibraryModal({
   const [query, setQuery] = useState('');
   const [cases, setCases] = useState<ClinicalDatasetCaseSummary[]>([]);
   const [catalog, setCatalog] = useState<ClinicalDatasetCatalog | null>(null);
+  const [totalCases, setTotalCases] = useState(0);
   const [selected, setSelected] = useState<ClinicalDatasetCaseDetail | null>(null);
   const [loading, setLoading] = useState(false);
   const [detailLoading, setDetailLoading] = useState(false);
@@ -89,15 +91,17 @@ export function ClinicalCaseLibraryModal({
       return;
     }
     let cancelled = false;
-    fetchClinicalDatasetCatalog()
-      .then(row => {
+    Promise.all([fetchClinicalDatasetCatalog(), countReadableClinicalCases()])
+      .then(([row, count]) => {
         if (!cancelled) {
           setCatalog(row);
+          setTotalCases(count);
         }
       })
       .catch(() => {
         if (!cancelled) {
           setCatalog(null);
+          setTotalCases(0);
         }
       });
     return () => {
@@ -226,8 +230,8 @@ export function ClinicalCaseLibraryModal({
                     : 'REVIEWED'
                 : loading
                   ? 'LOADING'
-                  : catalog
-                    ? `${(catalog.publishedCases + cases.filter(item => item.reviewStatus === 'approved').length).toLocaleString()}+ CASES`
+                  : totalCases
+                    ? `${totalCases.toLocaleString()} CASES`
                     : `${cases.length} CASES`}
             </Text>
           </View>
@@ -440,7 +444,7 @@ export function ClinicalCaseLibraryModal({
                       {catalog.recordsTotal.toLocaleString()} Opus 5.5 source cases loaded
                       {' • '}{catalog.recordsStructurallyValid.toLocaleString()} structurally validated
                       {' • '}{catalog.publishedCases.toLocaleString()} published as external source cases
-                      {' • '}25 ORBIT-curated cases
+                      {' • '}{Math.max(0, totalCases - catalog.publishedCases).toLocaleString()} ORBIT-curated cases
                     </Text>
                   ) : null}
                 </View>
