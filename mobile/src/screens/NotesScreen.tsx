@@ -17,6 +17,7 @@ import {
   Layers,
   RotateCw,
   Sparkles,
+  Stethoscope,
   Wand2,
 } from 'lucide-react-native';
 import { Text } from '@/components/Text';
@@ -29,6 +30,7 @@ import { GradientFill } from '@/components/Gradient';
 import { NotesContentView } from '@/components/NotesContentView';
 import { ChapterNotes } from '@/components/ChapterNotes';
 import { ClinicalProformaModal } from '@/components/ClinicalProformaModal';
+import { ClinicalCaseLibraryModal } from '@/components/ClinicalCaseLibraryModal';
 import { PdfViewerModal } from '@/components/PdfViewerModal';
 import FlashcardsScreen from '@/screens/FlashcardsScreen';
 import { useProfile } from '@/hooks/useProfile';
@@ -89,6 +91,7 @@ export default function NotesScreen() {
    */
   const [flashcards, setFlashcards] = useState(() => getPendingLaunchDeck() != null);
   const [proformasOpen, setProformasOpen] = useState(false);
+  const [datasetCasesOpen, setDatasetCasesOpen] = useState(false);
   const [activePdfFile, setActivePdfFile] = useState<NoteFile | null>(() => getPendingLaunchPdf());
 
   useEffect(() => {
@@ -193,6 +196,7 @@ export default function NotesScreen() {
           currentYear={profileYear}
           onPick={year => setView({ kind: 'subjects', year })}
           onFlashcards={() => setFlashcards(true)}
+          onOpenDatasetCases={() => setDatasetCasesOpen(true)}
           onOpenProformas={() => setProformasOpen(true)}
         />
       ) : null}
@@ -255,6 +259,11 @@ export default function NotesScreen() {
         onClose={() => setProformasOpen(false)}
       />
 
+      <ClinicalCaseLibraryModal
+        visible={datasetCasesOpen}
+        onClose={() => setDatasetCasesOpen(false)}
+      />
+
       <PdfViewerModal
         file={activePdfFile}
         visible={activePdfFile != null}
@@ -296,11 +305,13 @@ function YearsView({
   currentYear,
   onPick,
   onFlashcards,
+  onOpenDatasetCases,
   onOpenProformas,
 }: {
   currentYear: Year;
   onPick: (year: Year) => void;
   onFlashcards: () => void;
+  onOpenDatasetCases: () => void;
   onOpenProformas: () => void;
 }) {
   const { colors } = useTheme();
@@ -365,6 +376,23 @@ function YearsView({
           <Text style={[styles.extraTitle, { color: colors.text }]}>Anki-style flashcards</Text>
           <Text style={[styles.extraSub, { color: colors.textMuted }]}>
             Theory and diagram cards for any chapter, scheduled the way Anki does it
+          </Text>
+        </View>
+        <ChevronRight size={18} color={colors.textMuted} />
+      </Touchable>
+
+      <Touchable
+        onPress={onOpenDatasetCases}
+        label="Patient simulator cases, reviewed synthetic clinical encounters"
+        scaleTo={0.97}
+        style={[styles.extraCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+        <View style={[styles.extraIcon, { backgroundColor: withAlpha(colors.primary, 0.15) }]}>
+          <Stethoscope size={18} color={colors.primary} />
+        </View>
+        <View style={styles.flex}>
+          <Text style={[styles.extraTitle, { color: colors.text }]}>Patient simulator cases</Text>
+          <Text style={[styles.extraSub, { color: colors.textMuted }]}>
+            Reviewed synthetic cases for history, diagnosis, differentials and viva debrief
           </Text>
         </View>
         <ChevronRight size={18} color={colors.textMuted} />
