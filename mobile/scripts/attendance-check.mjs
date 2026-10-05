@@ -16,6 +16,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const source = await fs.readFile(path.join(root, 'src/lib/attendance.ts'), 'utf8');
+const attendanceUi = await fs.readFile(path.join(root, 'src/components/AttendanceTab.tsx'), 'utf8');
 
 const failures = [];
 const check = (ok, message) => {
@@ -194,6 +195,30 @@ check(
 );
 
 // ---------------------------------------------------------------------------
+// Theory monthly totals — real month data, never a guessed "average"
+// ---------------------------------------------------------------------------
+check(
+  /totalClasses\?: number;/.test(source.slice(source.indexOf('export interface MonthlyAttendance'), source.indexOf('export interface AttendanceItem'))),
+  'monthly theory records lost their per-month total class count',
+);
+check(
+  /setMonthlyTotalClasses/.test(source),
+  'there is no way to edit the expected class count for one month',
+);
+check(
+  !/Math\.round\(item\.held \* 0\.25\)/.test(source),
+  'monthly theory attendance is being estimated from overall attendance again',
+);
+check(
+  /TOTAL NUMBER OF CLASSES — ALL MONTHS/.test(attendanceUi),
+  'theory total is not clearly labelled as the all-month total',
+);
+check(
+  /Classes per month/.test(attendanceUi) && /This is not an average/.test(attendanceUi),
+  'the per-month class editor or its no-average explanation disappeared',
+);
+
+// ---------------------------------------------------------------------------
 // It stays on the phone
 // ---------------------------------------------------------------------------
 check(
@@ -288,5 +313,5 @@ if (failures.length > 0) {
 }
 
 console.log(
-  'OK  attendance arithmetic, TN 2026 holidays, Saturday/Sunday rules, local-date handling and overrides are pinned; nothing leaves the phone',
+  'OK  attendance arithmetic, TN 2026 holidays, monthly theory totals, Saturday/Sunday rules, local-date handling and overrides are pinned; nothing leaves the phone',
 );
