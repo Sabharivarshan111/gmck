@@ -57,6 +57,16 @@ export interface Digest {
   allowAttendance: boolean;
   buddyName?: string;
   attendanceSummary?: string;
+  attendanceActive?: boolean;
+  attendanceName?: string;
+  attendancePercent?: number;
+  attendanceOverallPercent?: number;
+  attendanceTarget?: number;
+  attendanceAttended?: number;
+  attendanceHeld?: number;
+  attendanceTodayWorking?: boolean;
+  attendanceMarkedAbsentToday?: boolean;
+  attendanceUrgent?: boolean;
   allowPlan?: boolean;
   planSummary?: string;
   allowMcq?: boolean;
