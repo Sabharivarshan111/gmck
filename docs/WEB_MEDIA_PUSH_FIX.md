@@ -20,3 +20,12 @@ On iPhone/iPad, Web Push requires iOS/iPadOS 16.4+ and opening the Home Screen i
 - Edge Function deployed ACTIVE; five-minute cron installed. Signing secrets initialized in Vault.
 - Cloud browser cannot access the local test server. Testing proceeds on the hosted build.
 - Physical iPhone Home Screen notification receipt is not verified. Do not equate a push-provider accepted response with device receipt.
+
+## Hosted verification and remaining limits
+
+- Published commit 9aea12073d899870a661ea674280e7c12a6c5206, deployment dpl_5oUGAxCmxbroovbYCJLBm24pzCok READY; canonical orbitmbbs.vercel.app alias reassigned to it.
+- Live YouTube insertion and save passed. The embed now loads title, controls and duration without the previous JavaScript execution error. Expanded player opens. Media remained at time 0 / readyState 0 in the cloud browser, so actual streamed playback is NOT verified.
+- Live anonymous-auth subscribe and unsubscribe returned 200; invalid provider endpoint returned 400; authorized dispatcher returned 200 with no due devices; unauthorized dispatcher returned 401. Synthetic account and subscription cleaned up.
+- Deployed Edge source was read back byte-identical. Service-worker push display, malformed payload, bounded title/body and safe closed-window click unit checks passed.
+- Notification switch in cloud Chrome did not connect and correctly stayed off with a setup failure message. Device subscription and receipt remain unverified; do not claim end-to-end push delivery works from server-only checks.
+- PDF filechooser.setFiles stalled beyond its requested timeout and reset the scratch/browser environment. Stop repeating this tool path. PDF and uploaded-video reader/playback/persistence remain unverified; no new PDF defect was established, so the PDF adapter was preserved.
