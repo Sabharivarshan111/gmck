@@ -165,7 +165,31 @@ for (const [rule, pattern] of [
 }
 
 // ---------------------------------------------------------------------------
-// 4. The native surface is complete and matches the spec.
+// 4. iPhone / installed-web reminders carry the same actionable attendance facts.
+// ---------------------------------------------------------------------------
+const webPush = read(path.join(mobile, '../supabase/functions/web-push/reminders.ts'));
+for (const fact of [
+  'attendanceActive',
+  'attendancePercent',
+  'attendanceOverallPercent',
+  'attendanceTarget',
+  'attendanceTodayWorking',
+  'attendanceMarkedAbsentToday',
+  'attendanceUrgent',
+]) {
+  check(webPush.includes(fact), `web push drops ${fact}; iPhone reminders would diverge from Android`);
+}
+check(
+  /Attendance warning/.test(webPush) && /Do not miss/.test(webPush),
+  'iPhone web push no longer sends absence / below-target attendance warnings',
+);
+check(
+  /No attendance history/.test(webPush) && !/lastMarkedDate/.test(webPush),
+  'web push started storing detailed attendance history instead of the minimal reminder snapshot',
+);
+
+// ---------------------------------------------------------------------------
+// 5. The native surface is complete and matches the spec.
 // ---------------------------------------------------------------------------
 const spec = read(path.join(mobile, 'src/native/NativeOrbitNotify.ts'));
 for (const method of [
@@ -227,4 +251,4 @@ if (failures.length > 0) {
   process.exit(1);
 }
 
-console.log('OK  digest written at launch, hour settable, test posts the real message');
+console.log('OK  Android + iPhone reminders carry actionable attendance facts, hour is settable, and tests post the real message');
