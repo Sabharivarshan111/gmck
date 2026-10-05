@@ -42,6 +42,27 @@ export default defineConfig({
         if (id.endsWith('/mobile/src/components/HomeMenuSheet.tsx')) return "import { openInstallHelp } from '" + path.resolve(__dirname, 'install.tsx') + "';\nimport { Download, Stethoscope } from 'lucide-react-native';\n" + code.replace('items: [', `items: [
           { key: 'install-web', icon: <Download size={18} color={colors.text} />, label: 'Install ORBIT', hint: 'Add the app to your iPhone or Android Home Screen', onPress: run(openInstallHelp) },
           { key: 'simulator', icon: <Stethoscope size={18} color={colors.text} />, label: 'Patient simulator', hint: 'Clinical cases, anatomy and bedside practice', onPress: run(() => location.assign('/simulator')) },`);
+        if (id.endsWith('/mobile/src/screens/NotesScreen.tsx')) {
+          const anchor = '      <Touchable\n        onPress={onFlashcards}';
+          if (!code.includes(anchor)) throw new Error('Notes simulator shortcut anchor is missing.');
+          const shortcut = `      <Touchable
+        onPress={() => location.assign('/simulator')}
+        label="Patient simulator, clinical cases and bedside practice"
+        scaleTo={0.97}
+        style={[styles.extraCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+        <View style={[styles.extraIcon, { backgroundColor: withAlpha(colors.accent, 0.15) }]}>
+          <Stethoscope size={18} color={colors.accent} />
+        </View>
+        <View style={styles.flex}>
+          <Text style={[styles.extraTitle, { color: colors.text }]}>Patient simulator</Text>
+          <Text style={[styles.extraSub, { color: colors.textMuted }]}>Clinical cases, anatomy and bedside practice</Text>
+        </View>
+        <ChevronRight size={18} color={colors.textMuted} />
+      </Touchable>
+
+`;
+          return "import { Stethoscope } from 'lucide-react-native';\n" + code.replace(anchor, shortcut + anchor);
+        }
         if (id.endsWith('/mobile/src/components/FirstRun.tsx')) return code
           .replace('useState(!isNative || !GOOGLE_SIGN_IN_ENABLED)', 'useState(!GOOGLE_SIGN_IN_ENABLED)')
           .replace('if (isNative && GOOGLE_SIGN_IN_ENABLED)', 'if (GOOGLE_SIGN_IN_ENABLED)')
