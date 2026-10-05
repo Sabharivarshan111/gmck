@@ -24,7 +24,9 @@ import { KeyboardSafe } from '@/components/KeyboardSafe';
 import { useTheme, withAlpha } from '@/theme';
 import {
   fetchApprovedClinicalCase,
+  fetchClinicalDatasetCatalog,
   searchApprovedClinicalCases,
+  type ClinicalDatasetCatalog,
   type ClinicalDatasetCaseDetail,
   type ClinicalDatasetCaseSummary,
 } from '@/lib/clinicalDataset';
@@ -74,12 +76,34 @@ export function ClinicalCaseLibraryModal({
   const insets = useSafeAreaInsets();
   const [query, setQuery] = useState('');
   const [cases, setCases] = useState<ClinicalDatasetCaseSummary[]>([]);
+  const [catalog, setCatalog] = useState<ClinicalDatasetCatalog | null>(null);
   const [selected, setSelected] = useState<ClinicalDatasetCaseDetail | null>(null);
   const [loading, setLoading] = useState(false);
   const [detailLoading, setDetailLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [revealed, setRevealed] = useState(false);
   const [transcriptOpen, setTranscriptOpen] = useState(false);
+
+  useEffect(() => {
+    if (!visible) {
+      return;
+    }
+    let cancelled = false;
+    fetchClinicalDatasetCatalog()
+      .then(row => {
+        if (!cancelled) {
+          setCatalog(row);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setCatalog(null);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [visible]);
 
   useEffect(() => {
     if (!visible) {
@@ -402,9 +426,16 @@ export function ClinicalCaseLibraryModal({
                   </Text>
                   <Text style={[styles.infoBody, { color: colors.textMuted }]}>
                     {mode === 'practice'
-                      ? 'Choose a case, take the history and commit to your diagnosis before revealing the debrief.'
-                      : 'Browse cases directly by disease, alias, symptom, presentation or ICD-10. External Opus 5.5 cases can feed this same library after review.'}
+                      ? 'Choose a live case, take the history and commit to your diagnosis before revealing the debrief.'
+                      : 'Browse live cases directly by disease, alias, symptom, presentation or ICD-10.'}
                   </Text>
+                  {catalog ? (
+                    <Text style={[styles.sourceStatus, { color: colors.textMuted }]}>
+                      {catalog.recordsTotal.toLocaleString()} Opus 5.5 source cases loaded privately
+                      {' • '}{catalog.recordsStructurallyValid.toLocaleString()} structurally validated
+                      {' • '}{cases.length} live cases currently visible
+                    </Text>
+                  ) : null}
                 </View>
               </View>
 
@@ -569,6 +600,7 @@ const styles = StyleSheet.create({
   },
   infoTitle: { fontSize: 15, fontWeight: '800' },
   infoBody: { marginTop: 4, fontSize: 12.5, lineHeight: 18 },
+  sourceStatus: { marginTop: 8, fontSize: 11.5, lineHeight: 17, fontWeight: '600' },
   searchBox: {
     height: 50,
     borderRadius: 15,
