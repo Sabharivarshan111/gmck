@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, BookOpen, Loader2, RefreshCw, Sparkles, GraduationCap, Layers, Send, Wand2, RotateCw, Activity, Lock, ClipboardList, ChevronRight } from "lucide-react";
+import { ArrowLeft, BookOpen, Loader2, RefreshCw, Sparkles, GraduationCap, Layers, Send, Wand2, RotateCw, Activity, Lock, ClipboardList, ChevronRight, Stethoscope } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,6 +8,7 @@ import { YEAR_LABELS, getYearSubjects, type Year } from "@/lib/year-subjects";
 import { flattenSubjectTopics, type LeafTopic } from "@/lib/leaf-topics";
 import HandwrittenNotesView, { type NotesContent } from "./HandwrittenNotesView";
 import NotesAiEditBox from "./NotesAiEditBox";
+import ClinicalCaseLibraryDialog from "@/components/clinical/ClinicalCaseLibraryDialog";
 
 type View =
   | { kind: "years" }
@@ -17,11 +18,15 @@ type View =
 
 export default function HandwrittenNotesHub() {
   const [view, setView] = useState<View>({ kind: "years" });
+  const [clinicalCasesOpen, setClinicalCasesOpen] = useState(false);
 
   return (
     <div className="animate-fade-in">
       {view.kind === "years" && (
-        <YearsView onPick={(year) => setView({ kind: "subjects", year })} />
+        <YearsView
+          onPick={(year) => setView({ kind: "subjects", year })}
+          onOpenClinicalCases={() => setClinicalCasesOpen(true)}
+        />
       )}
       {view.kind === "subjects" && (
         <SubjectsView
@@ -52,6 +57,10 @@ export default function HandwrittenNotesHub() {
           }
         />
       )}
+      <ClinicalCaseLibraryDialog
+        open={clinicalCasesOpen}
+        onOpenChange={setClinicalCasesOpen}
+      />
     </div>
   );
 }
@@ -61,7 +70,13 @@ export default function HandwrittenNotesHub() {
 const YEARS: Year[] = ["first", "second", "third", "final"];
 const YEAR_ICONS: Record<Year, string> = { first: "🩺", second: "💊", third: "⚖️", final: "🏥" };
 
-function YearsView({ onPick }: { onPick: (y: Year) => void }) {
+function YearsView({
+  onPick,
+  onOpenClinicalCases,
+}: {
+  onPick: (y: Year) => void;
+  onOpenClinicalCases: () => void;
+}) {
   return (
     <div className="space-y-4">
       <div className="rounded-2xl bg-gradient-to-br from-indigo-900 via-blue-800 to-blue-950 text-white p-5">
@@ -114,6 +129,31 @@ function YearsView({ onPick }: { onPick: (y: Year) => void }) {
           </div>
           <Lock className="w-4 h-4 text-muted-foreground" />
         </div>
+
+        {/* Reviewed synthetic clinical cases */}
+        <button
+          type="button"
+          onClick={onOpenClinicalCases}
+          className="w-full rounded-2xl border-2 border-primary/25 bg-gradient-to-r from-primary/5 via-card to-violet-500/5 p-4 flex items-center justify-between hover:border-primary/50 hover:shadow-md transition-all group text-left"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+              <Stethoscope className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <p className="font-bold text-sm">Patient simulator cases</p>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+                  REVIEWED
+                </span>
+              </div>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Synthetic history-taking cases with hidden debrief, differentials and viva pitfalls
+              </p>
+            </div>
+          </div>
+          <ChevronRight className="w-5 h-5 text-primary group-hover:translate-x-1 transition-transform" />
+        </button>
 
         {/* 3D Patient Simulator Card */}
         <Link
