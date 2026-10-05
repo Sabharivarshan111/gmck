@@ -36,6 +36,17 @@ export interface ClinicalDatasetCaseDetail extends ClinicalDatasetCaseSummary {
   sourceLicense: string;
 }
 
+export interface ClinicalDatasetCatalog {
+  datasetName: string;
+  displayName: string;
+  recordsTotal: number;
+  recordsStructurallyValid: number;
+  publishedCases: number;
+  sourceStatus: string;
+  rawBytes: number | null;
+  sourceRevision: string | null;
+}
+
 const asStringArray = (value: unknown): string[] =>
   Array.isArray(value) ? value.filter((item): item is string => typeof item === 'string') : [];
 
@@ -51,6 +62,35 @@ const normalizeSummary = (row: Record<string, unknown>): ClinicalDatasetCaseSumm
   prevalence: typeof row.prevalence === 'string' ? row.prevalence : null,
   sourceDataset: String(row.source_dataset ?? OPUS55_DATASET),
 });
+
+export async function fetchClinicalDatasetCatalog(): Promise<ClinicalDatasetCatalog | null> {
+  const { data, error } = await supabase
+    .from('clinical_dataset_catalog')
+    .select(
+      'dataset_name,display_name,records_total,records_structurally_valid,published_cases,source_status,raw_bytes,source_revision',
+    )
+    .eq('dataset_name', OPUS55_DATASET)
+    .maybeSingle();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+  if (!data) {
+    return null;
+  }
+
+  const row = data as Record<string, unknown>;
+  return {
+    datasetName: String(row.dataset_name ?? OPUS55_DATASET),
+    displayName: String(row.display_name ?? 'Opus 5.5 clinical source corpus'),
+    recordsTotal: Number(row.records_total ?? 0),
+    recordsStructurallyValid: Number(row.records_structurally_valid ?? 0),
+    publishedCases: Number(row.published_cases ?? 0),
+    sourceStatus: String(row.source_status ?? ''),
+    rawBytes: typeof row.raw_bytes === 'number' ? row.raw_bytes : Number(row.raw_bytes ?? 0) || null,
+    sourceRevision: typeof row.source_revision === 'string' ? row.source_revision : null,
+  };
+}
 
 export async function searchApprovedClinicalCases(
   query = '',
