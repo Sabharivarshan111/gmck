@@ -110,8 +110,10 @@ export async function searchApprovedClinicalCases(
   query = '',
   bodySystem?: string,
   limit = 40,
+  offset = 0,
 ): Promise<ClinicalDatasetCaseSummary[]> {
   const safeLimit = Math.max(1, Math.min(80, Math.round(limit)));
+  const safeOffset = Math.max(0, Math.round(offset));
   const needle = query
     .replace(/[%_]/g, ' ')
     .replace(/\s+/g, ' ')
@@ -126,7 +128,7 @@ export async function searchApprovedClinicalCases(
     )
     .in('review_status', ['approved', 'source'])
     .order('canonical_name', { ascending: true })
-    .limit(safeLimit);
+    .range(safeOffset, safeOffset + safeLimit - 1);
 
   if (needle) {
     request = request.ilike('search_text', `%${needle}%`);
