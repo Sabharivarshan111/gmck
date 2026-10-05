@@ -38,6 +38,8 @@ export interface ClinicalCaseLibraryModalProps {
   mode?: 'practice' | 'library';
 }
 
+const PAGE_SIZE = 50;
+
 function plainItem(value: unknown): string {
   if (typeof value === 'string') {
     return value;
@@ -81,6 +83,8 @@ export function ClinicalCaseLibraryModal({
   const [totalCases, setTotalCases] = useState(0);
   const [selected, setSelected] = useState<ClinicalDatasetCaseDetail | null>(null);
   const [loading, setLoading] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(false);
   const [detailLoading, setDetailLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [revealed, setRevealed] = useState(false);
@@ -117,10 +121,11 @@ export function ClinicalCaseLibraryModal({
     const timer = setTimeout(() => {
       setLoading(true);
       setError(null);
-      searchApprovedClinicalCases(query, undefined, 50)
+      searchApprovedClinicalCases(query, undefined, PAGE_SIZE, 0)
         .then(rows => {
           if (!cancelled) {
             setCases(rows);
+            setHasMore(rows.length === PAGE_SIZE);
           }
         })
         .catch(err => {
@@ -149,6 +154,26 @@ export function ClinicalCaseLibraryModal({
       setTranscriptOpen(false);
     }
   }, [visible]);
+
+  const loadMore = async () => {
+    if (loading || loadingMore || !hasMore) {
+      return;
+    }
+    setLoadingMore(true);
+    setError(null);
+    try {
+      const rows = await searchApprovedClinicalCases(query, undefined, PAGE_SIZE, cases.length);
+      setCases(current => {
+        const seen = new Set(current.map(item => item.id));
+        return [...current, ...rows.filter(item => !seen.has(item.id))];
+      });
+      setHasMore(rows.length === PAGE_SIZE);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Could not load more clinical cases.');
+    } finally {
+      setLoadingMore(false);
+    }
+  };
 
   const openCase = async (item: ClinicalDatasetCaseSummary) => {
     setDetailLoading(true);
@@ -492,45 +517,65 @@ export function ClinicalCaseLibraryModal({
                   <Text style={[styles.centerText, { color: colors.textMuted }]}>Loading cases…</Text>
                 </View>
               ) : cases.length ? (
-                cases.map(item => (
-                  <Touchable
-                    key={item.id}
-                    onPress={() => openCase(item)}
-                    label={`${item.name}, ${mode === 'practice' ? 'start simulated clinical case' : 'open case record'}`}
-                    scaleTo={0.985}
-                    style={[
-                      styles.row,
-                      { backgroundColor: colors.card, borderColor: colors.border },
-                    ]}>
-                    <View
+                <>
+                  {cases.map(item => (
+                    <Touchable
+                      key={item.id}
+                      onPress={() => openCase(item)}
+                      label={`${item.name}, ${mode === 'practice' ? 'start simulated clinical case' : 'open case record'}`}
+                      scaleTo={0.985}
                       style={[
-                        styles.rowIcon,
-                        { backgroundColor: withAlpha(colors.primary, 0.12) },
+                        styles.row,
+                        { backgroundColor: colors.card, borderColor: colors.border },
                       ]}>
-                      <Stethoscope size={18} color={colors.primary} />
-                    </View>
-                    <View style={styles.flex}>
-                      <Text style={[styles.rowTitle, { color: colors.text }]}>{item.name}</Text>
-                      <Text
-                        style={[styles.rowSub, { color: colors.textMuted }]}
-                        numberOfLines={2}>
-                        {[
-                          item.reviewStatus === 'source'
-                            ? 'Opus source • not ORBIT-reviewed'
-                            : item.sourceDataset === 'orbit-curated-v1'
-                              ? 'ORBIT curated'
-                              : 'Reviewed external',
-                          item.icd10,
-                          item.bodySystems.slice(0, 2).join(' • '),
-                          item.aliases[0],
-                        ]
-                          .filter(Boolean)
-                          .join('  ·  ')}
-                      </Text>
-                    </View>
-                    <ChevronRight size={18} color={colors.textMuted} />
-                  </Touchable>
-                ))
+                      <View
+                        style={[
+                          styles.rowIcon,
+                          { backgroundColor: withAlpha(colors.primary, 0.12) },
+                        ]}>
+                        <Stethoscope size={18} color={colors.primary} />
+                      </View>
+                      <View style={styles.flex}>
+                        <Text style={[styles.rowTitle, { color: colors.text }]}>{item.name}</Text>
+                        <Text
+                          style={[styles.rowSub, { color: colors.textMuted }]}
+                          numberOfLines={2}>
+                          {[
+                            item.reviewStatus === 'source'
+                              ? 'Opus source • not ORBIT-reviewed'
+                              : item.sourceDataset === 'orbit-curated-v1'
+                                ? 'ORBIT curated'
+                                : 'Reviewed external',
+                            item.icd10,
+                            item.bodySystems.slice(0, 2).join(' • '),
+                            item.aliases[0],
+                          ]
+                            .filter(Boolean)
+                            .join('  ·  ')}
+                        </Text>
+                      </View>
+                      <ChevronRight size={18} color={colors.textMuted} />
+                    </Touchable>
+                  ))}
+                  {hasMore ? (
+                    <Touchable
+                      onPress={loadMore}
+                      disabled={loadingMore}
+                      state={{ busy: loadingMore }}
+                      label="Load more clinical cases"
+                      scaleTo={0.98}
+                      style={[
+                        styles.loadMoreButton,
+                        { backgroundColor: colors.card, borderColor: colors.border },
+                      ]}>
+                      {loadingMore ? (
+                        <ActivityIndicator color={colors.primary} />
+                      ) : (
+                        <Text style={[styles.loadMoreText, { color: colors.text }]}>Load 50 more cases</Text>
+                      )}
+                    </Touchable>
+                  ) : null}
+                </>
               ) : (
                 <View
                   style={[styles.emptyCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
@@ -644,6 +689,15 @@ const styles = StyleSheet.create({
   },
   rowTitle: { fontSize: 15, fontWeight: '800' },
   rowSub: { marginTop: 4, fontSize: 11.5, lineHeight: 16 },
+  loadMoreButton: {
+    minHeight: 48,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 14,
+  },
+  loadMoreText: { fontSize: 13.5, fontWeight: '800' },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 10 },
   centerText: { fontSize: 13 },
   inlineLoading: {
