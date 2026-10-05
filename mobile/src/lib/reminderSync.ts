@@ -1,5 +1,12 @@
 import { getBuddy, hydrateBuddy, todayKey } from '@/lib/studyBuddy';
-import { getAttendance, hydrateAttendance } from '@/lib/attendance';
+import {
+  formatLocalIsoDate,
+  getAttendance,
+  hydrateAttendance,
+  isPostingWorkingDate,
+  percentOf,
+  postingEndDate,
+} from '@/lib/attendance';
 import { readDailyCard } from '@/lib/dailyStudy';
 import { readLocalProfile, YEAR_TO_KEY } from '@/lib/profile';
 import { getExam, hydrateExam, isHydrated as examHydrated } from '@/lib/exam';
@@ -86,12 +93,42 @@ export async function syncReminders(): Promise<void> {
   const attendance = getAttendance().items;
   const held = attendance.reduce((sum, item) => sum + item.held, 0);
   const attended = attendance.reduce((sum, item) => sum + item.attended, 0);
+  const overallPercent = held > 0 ? Math.round(percentOf(attended, held)) : -1;
   const attendanceSummary =
     held > 0
-      ? `Recorded total attendance: ${((100 * attended) / held).toFixed(
-          1,
-        )}% (${attended}/${held}). Check each subject's target in Attendance.`
-      : 'No attendance recorded yet. Log your classes and postings to see your percentage.';
+      ? `All recorded attendance: ${overallPercent}% (${attended}/${held}).`
+      : 'No attendance recorded yet.';
+
+  const today = new Date();
+  const todayIso = formatLocalIsoDate(today);
+  const activePosting = attendance
+    .filter(item => item.kind === 'posting' && item.startDate && item.totalDays)
+    .filter(item => {
+      const end = item.endDate ?? postingEndDate(item.startDate ?? '', item.totalDays ?? 0);
+      return Boolean(end && item.startDate && item.startDate <= todayIso && todayIso <= end);
+    })
+    .sort((a, b) => (b.startDate ?? '').localeCompare(a.startDate ?? ''))[0];
+
+  const postingPercent =
+    activePosting && activePosting.held > 0
+      ? Math.round(percentOf(activePosting.attended, activePosting.held))
+      : -1;
+  const projectedIfAbsent =
+    activePosting && activePosting.held >= 0
+      ? percentOf(activePosting.attended, activePosting.held + 1)
+      : 100;
+  const attendanceTodayWorking =
+    activePosting ? isPostingWorkingDate(activePosting, today) : false;
+  const attendanceMarkedAbsentToday =
+    Boolean(activePosting) &&
+    activePosting?.lastMarkedDate === todayIso &&
+    activePosting?.lastMarkedPresent === false;
+  const attendanceUrgent =
+    Boolean(activePosting) &&
+    attendanceTodayWorking &&
+    (attendanceMarkedAbsentToday ||
+      (postingPercent >= 0 && postingPercent < (activePosting?.target ?? 75)) ||
+      projectedIfAbsent < (activePosting?.target ?? 75));
   let mcqPreview = '';
   if (buddy.remindMcq) {
     const profile = await readLocalProfile();
@@ -115,6 +152,16 @@ export async function syncReminders(): Promise<void> {
   updateDigest({
     buddyName: buddy.enabled ? buddy.name : 'ORBIT',
     attendanceSummary,
+    attendanceActive: Boolean(activePosting),
+    attendanceName: activePosting?.name ?? '',
+    attendancePercent: postingPercent,
+    attendanceOverallPercent: overallPercent,
+    attendanceTarget: activePosting?.target ?? 75,
+    attendanceAttended: activePosting?.attended ?? 0,
+    attendanceHeld: activePosting?.held ?? 0,
+    attendanceTodayWorking,
+    attendanceMarkedAbsentToday,
+    attendanceUrgent,
     allowPlan: buddy.remindPlan,
     planSummary:
       buddy.topic && (buddy.day !== todayKey() || buddy.completed.length < 3)
