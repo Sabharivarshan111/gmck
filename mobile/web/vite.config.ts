@@ -49,7 +49,21 @@ export default defineConfig({
           .replace('To prevent spam attacks and safeguard your progress & rankings, please sign in with Google to continue.', 'Sign in to sync your progress and rankings, or set up your studies below to continue on this browser.')
           .replace('One-time authentication required to safeguard your profile against spam attacks.', 'Google sign-in is optional for local study. Sign in to sync across devices.')
           .replace('One-time authentication verified. Works completely offline.', 'Signed in. Cached question banks are available offline.');
-        if (id.endsWith('/mobile/src/components/SettingsSheet.tsx')) return code.replace('At most one a day at the hour you choose.', 'Browser reminders run while Orbit is open, at the hour you choose.').replace('Android is blocking notifications for Orbit. Turn them on in system settings.', 'Your browser is blocking notifications for Orbit. Enable them in site settings.');
+        if (id.endsWith('/mobile/src/components/SettingsSheet.tsx')) return code
+          .replace('  const [permissionMessage, setPermissionMessage]', `  useEffect(() => {
+    const refresh = () => setNotifyAllowed(hasNotificationPermission());
+    const failed = (event: Event) => { refresh(); setPermissionMessage((event as CustomEvent<string>).detail); };
+    window.addEventListener('orbit-push-status', refresh);
+    window.addEventListener('orbit-push-error', failed);
+    return () => { window.removeEventListener('orbit-push-status', refresh); window.removeEventListener('orbit-push-error', failed); };
+  }, []);
+  const [permissionMessage, setPermissionMessage]`)
+          .replace('Browser reminders currently require ORBIT to stay open. On iPhone, add ORBIT to your Home Screen before enabling notifications.', 'Reminders can arrive while ORBIT is closed. On iPhone (iOS 16.4+), add ORBIT to your Home Screen and open it there before allowing notifications. Your reminder preferences are saved securely for delivery.')
+          .replace('Android is blocking notifications for Orbit. Turn them on in system settings.', 'Background notifications are not connected. Re-enable Daily reminder while online. On iPhone, open the installed Home Screen app first.')
+          .replace('Android is not letting Orbit post. Turn notifications on for Orbit in system settings.', 'Background notifications could not be sent. Check your connection and device notification permission, then try again.')
+          .replace('Sent — check your notification shade. That is the message tonight would carry.', 'Sent through the background push service. Check your device notifications.')
+          .replace('Notification permission was not granted. Enable notifications for ORBIT in device or browser settings.', 'Could not connect background reminders. On iPhone, install ORBIT on your Home Screen and open it there. Allow notifications and try again while online.')
+          .replace('Give or take a few minutes — the alarm is inexact so Android can\n                batch it with whatever else it was waking for, which is most of\n                what a daily alarm costs a battery.', 'Delivery can take a few minutes. Your device needs an internet connection and notification permission; Focus mode may silence alerts.');
         if (id.endsWith('/mobile/src/components/MusicPlayer.tsx') || id.endsWith('/mobile/src/components/ProgressNotesTab.tsx')) return code
           .replace(/<Touchable\s+onPress=\{\(\) => (?:add|addFile)\(["']link["']\)\}[\s\S]*?<\/Touchable>/, '')
           .replace(/Copy the (song|file), or just link to it\?/, 'Keep a private copy in this browser')

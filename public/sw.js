@@ -8,7 +8,7 @@
 // the new HTML anyway — but one that ever fell back to the cached shell keeps
 // being served the asset hashes that shell names, and those ARE cached. Bumping
 // this is the one lever that empties the old cache for everybody.
-const SW_VERSION = 'v6-study-buddy-2026-10-04';
+const SW_VERSION = 'v7-media-push-2026-10-05';
 const CACHE_NAME = `mbbs-qb-${SW_VERSION}`;
 
 const PRECACHE_URLS = [
@@ -182,7 +182,19 @@ self.addEventListener('message', (event) => {
   if (event.data === 'SKIP_WAITING') self.skipWaiting();
 });
 
-// Local browser reminders and future push use the same safe in-app destinations.
+// A push wakes the worker even when the Home Screen app has no open window.
+self.addEventListener('push', event => {
+  let message = {};
+  try { message = event.data?.json() || {}; } catch { /* still show a user-visible alert */ }
+  const url = ['/', '/ask-ai', '/progress'].includes(message.url) ? message.url : '/';
+  event.waitUntil(self.registration.showNotification(
+    typeof message.title === 'string' ? message.title.slice(0, 100) : 'ORBIT · study reminder',
+    { body: typeof message.body === 'string' ? message.body.slice(0, 500) : 'Open ORBIT for your study reminder.',
+      icon: '/icon-192.png', badge: '/icon-192.png', tag: message.tag === 'orbit-test' ? 'orbit-test' : 'orbit-daily', data: { url } },
+  ));
+});
+
+// Notifications navigate only to safe destinations inside ORBIT.
 self.addEventListener('notificationclick', event => {
   event.notification.close();
   const destination = event.notification.data?.url;

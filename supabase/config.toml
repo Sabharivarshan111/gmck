@@ -61,3 +61,7 @@ verify_jwt = false
 
 [functions.merge-guest-account]
 verify_jwt = true
+
+# Browser actions validate Supabase JWTs inside the handler; cron uses a Vault secret.
+[functions.web-push]
+verify_jwt = false
