@@ -34,6 +34,8 @@ export type AttendanceKind = 'theory' | 'posting';
 export interface MonthlyAttendance {
   held: number;
   attended: number;
+  /** Theory only: expected total number of classes for this calendar month. */
+  totalClasses?: number;
 }
 
 export interface AttendanceItem {
@@ -482,7 +484,11 @@ function sane(raw: unknown): AttendanceItem | null {
                 const rec = v as Record<string, unknown>;
                 const h = Math.max(0, Math.round(Number(rec.held) || 0));
                 const a = Math.min(h, Math.max(0, Math.round(Number(rec.attended) || 0)));
-                return [k, { held: h, attended: a }];
+                const totalClasses =
+                  typeof rec.totalClasses === 'number' && rec.totalClasses > 0
+                    ? Math.max(h, Math.round(rec.totalClasses))
+                    : undefined;
+                return [k, { held: h, attended: a, totalClasses }];
               }),
           )
         : undefined,
@@ -503,7 +509,11 @@ export function getMonthlyAttendance(
     const entry = item.monthly[key];
     const held = Math.max(0, Math.round(Number(entry.held) || 0));
     const attended = Math.min(held, Math.max(0, Math.round(Number(entry.attended) || 0)));
-    return { held, attended };
+    const totalClasses =
+      typeof entry.totalClasses === 'number' && entry.totalClasses > 0
+        ? Math.max(held, Math.round(entry.totalClasses))
+        : undefined;
+    return { held, attended, totalClasses };
   }
   // For existing subjects with marks before monthly tracking, derive current month slice
   if (item.held > 0) {
@@ -573,6 +583,36 @@ export async function updateAttendance(
   );
 }
 
+/**
+ * Set the expected number of theory classes for one calendar month.
+ *
+ * This is intentionally independent from item.totalClasses:
+ * - monthly total = classes expected in that month
+ * - item.totalClasses = total number of classes across the whole course
+ */
+export async function setMonthlyTotalClasses(
+  id: string,
+  monthKey: string,
+  totalClasses?: number,
+): Promise<void> {
+  const item = state.items.find(entry => entry.id === id);
+  if (!item || item.kind !== 'theory') return;
+  const current = getMonthlyAttendance(item, monthKey);
+  const clean =
+    typeof totalClasses === 'number' && Number.isFinite(totalClasses) && totalClasses > 0
+      ? Math.max(current.held, Math.round(totalClasses))
+      : undefined;
+  const nextMonthly = {
+    ...(item.monthly ?? {}),
+    [monthKey]: {
+      held: current.held,
+      attended: current.attended,
+      totalClasses: clean,
+    },
+  };
+  await updateAttendance(id, { monthly: nextMonthly });
+}
+
 /** One class happened, and you were there — or you were not. */
 export async function markAttendance(id: string, present: boolean): Promise<void> {
   const item = state.items.find(entry => entry.id === id);
@@ -587,6 +627,10 @@ export async function markAttendance(id: string, present: boolean): Promise<void
     [key]: {
       held: currentMonth.held + 1,
       attended: currentMonth.attended + (present ? 1 : 0),
+      totalClasses:
+        typeof currentMonth.totalClasses === 'number'
+          ? Math.max(currentMonth.totalClasses, currentMonth.held + 1)
+          : undefined,
     },
   };
   await updateAttendance(id, {
@@ -618,6 +662,7 @@ export async function undoAttendance(id: string, wasPresent: boolean): Promise<v
     [key]: {
       held: Math.max(0, currentMonth.held - 1),
       attended: Math.max(0, currentMonth.attended - (wasPresent ? 1 : 0)),
+      totalClasses: currentMonth.totalClasses,
     },
   };
   await updateAttendance(id, {
