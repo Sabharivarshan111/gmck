@@ -1029,7 +1029,7 @@ function AttendanceCard({
             Total number of classes (all months):
           </Text>
           <View style={styles.totalPresets}>
-            {[60, 80, 100, 120, 150].map(cnt => {
+            {[60, 80, 100, 120, 150].filter(cnt => cnt >= item.held).map(cnt => {
               const active = item.totalClasses === cnt;
               return (
                 <Touchable
@@ -1113,13 +1113,13 @@ function AttendanceCard({
             {selectedMonthLabel.toUpperCase()} — TOTAL CLASSES
           </Text>
           <View style={styles.totalPresets}>
-            {[10, 15, 20, 25, 30, 40].map(count => {
+            {[10, 15, 20, 25, 30, 40].filter(count => count >= selectedMonthly.held).map(count => {
               const active = selectedMonthly.totalClasses === count;
               return (
                 <Touchable
                   key={count}
                   onPress={() => {
-                    const next = active ? undefined : count;
+                    const next = active ? undefined : Math.max(count, selectedMonthly.held);
                     setMonthlyTotalInput(next ? String(next) : '');
                     onSetMonthlyTotalClasses(selectedMonth, next);
                   }}
@@ -1149,8 +1149,9 @@ function AttendanceCard({
               const value = Number(monthlyTotalInput);
               const next =
                 monthlyTotalInput.trim() && Number.isFinite(value) && value > 0
-                  ? Math.round(value)
+                  ? Math.max(selectedMonthly.held, Math.round(value))
                   : undefined;
+              setMonthlyTotalInput(next ? String(next) : '');
               onSetMonthlyTotalClasses(selectedMonth, next);
             }}
             keyboardType="number-pad"
