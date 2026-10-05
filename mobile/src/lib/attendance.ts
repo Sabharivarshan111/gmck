@@ -459,7 +459,7 @@ function sane(raw: unknown): AttendanceItem | null {
         : undefined,
     totalClasses:
       typeof item.totalClasses === 'number' && item.totalClasses > 0
-        ? Math.round(item.totalClasses)
+        ? Math.max(held, Math.round(item.totalClasses))
         : undefined,
     startDate: typeof item.startDate === 'string' ? item.startDate : undefined,
     endDate: typeof item.endDate === 'string' ? item.endDate : undefined,
@@ -572,6 +572,13 @@ export async function updateAttendance(
       const next = { ...item, ...patch };
       next.held = Math.max(0, Math.round(next.held));
       next.attended = Math.min(next.held, Math.max(0, Math.round(next.attended)));
+      if (
+        next.kind === 'theory' &&
+        typeof next.totalClasses === 'number' &&
+        Number.isFinite(next.totalClasses)
+      ) {
+        next.totalClasses = Math.max(next.held, Math.round(next.totalClasses));
+      }
       return next;
     }),
   );
@@ -604,7 +611,15 @@ export async function setMonthlyTotalClasses(
       totalClasses: clean,
     },
   };
-  await updateAttendance(id, { monthly: nextMonthly });
+  const monthlyTotalSum = Object.values(nextMonthly).reduce(
+    (sum, entry) => sum + (entry.totalClasses ?? 0),
+    0,
+  );
+  const overallTotal =
+    monthlyTotalSum > 0 || item.totalClasses
+      ? Math.max(item.held, item.totalClasses ?? 0, monthlyTotalSum)
+      : undefined;
+  await updateAttendance(id, { monthly: nextMonthly, totalClasses: overallTotal });
 }
 
 /** One class happened, and you were there — or you were not. */
