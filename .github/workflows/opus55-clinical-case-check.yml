@@ -1,7 +1,21 @@
 name: Opus 5.5 clinical case integration check
 on:
   push:
-    branches: ['feat/opus55-clinical-case-library']
+    branches: ['main']
+    paths:
+      - 'mobile/src/components/ClinicalCaseLibraryModal.tsx'
+      - 'mobile/src/lib/clinicalDataset.ts'
+      - 'mobile/src/screens/NotesScreen.tsx'
+      - 'scripts/import-opus55-clinical-cases.mjs'
+      - 'supabase/migrations/**'
+      - '.github/workflows/opus55-clinical-case-check.yml'
+  pull_request:
+    paths:
+      - 'mobile/src/components/ClinicalCaseLibraryModal.tsx'
+      - 'mobile/src/lib/clinicalDataset.ts'
+      - 'mobile/src/screens/NotesScreen.tsx'
+      - 'scripts/import-opus55-clinical-cases.mjs'
+      - 'supabase/migrations/**'
   workflow_dispatch:
 
 permissions:
