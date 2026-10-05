@@ -94,6 +94,18 @@ export async function fetchClinicalDatasetCatalog(): Promise<ClinicalDatasetCata
   };
 }
 
+export async function countReadableClinicalCases(): Promise<number> {
+  const { count, error } = await supabase
+    .from('clinical_dataset_cases')
+    .select('id', { count: 'exact', head: true })
+    .in('review_status', ['approved', 'source']);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+  return count ?? 0;
+}
+
 export async function searchApprovedClinicalCases(
   query = '',
   bodySystem?: string,
