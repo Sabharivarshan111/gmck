@@ -1,0 +1,30 @@
+name: Opus 5.5 clinical case integration check
+on:
+  push:
+    branches: ['feat/opus55-clinical-case-library']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  mobile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+      - name: Install mobile dependencies
+        working-directory: mobile
+        run: npm ci --legacy-peer-deps
+      - name: Typecheck native app
+        working-directory: mobile
+        run: npm run typecheck
+      - name: Check case proformas
+        working-directory: mobile
+        run: npm run check:proformas
+      - name: Check importer syntax
+        run: node --check scripts/import-opus55-clinical-cases.mjs
