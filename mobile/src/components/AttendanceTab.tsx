@@ -243,8 +243,10 @@ function RotationCalendar({
                 {
                   borderColor: selected
                     ? colors.accent
-                    : official || overridden
+                    : official
                       ? colors.warning
+                      : overridden
+                        ? colors.success
                       : d.isSun && skipSundays
                         ? withAlpha(colors.danger, 0.4)
                         : colors.border,
@@ -252,6 +254,8 @@ function RotationCalendar({
                     ? withAlpha(colors.accent, 0.22)
                     : official
                       ? withAlpha(colors.warning, 0.16)
+                      : overridden
+                        ? withAlpha(colors.success, 0.08)
                       : d.isSun && skipSundays
                         ? withAlpha(colors.danger, 0.08)
                         : weekendOff
@@ -265,8 +269,10 @@ function RotationCalendar({
                   {
                     color: selected
                       ? colors.accent
-                      : official || overridden
+                      : official
                         ? colors.warning
+                        : overridden
+                          ? colors.success
                         : d.isSun && skipSundays
                           ? colors.danger
                           : colors.text,
@@ -282,8 +288,10 @@ function RotationCalendar({
                   {
                     color: selected
                       ? colors.accent
-                      : official || overridden
+                      : official
                         ? colors.warning
+                        : overridden
+                          ? colors.success
                         : d.isSun && skipSundays
                           ? colors.danger
                           : colors.textMuted,
@@ -325,8 +333,8 @@ function RotationCalendar({
           </View>
         ) : null}
         {overriddenCount > 0 ? (
-          <View style={[styles.legendChip, { backgroundColor: withAlpha(colors.warning, 0.07) }]}>
-            <Text style={[styles.legendText, { color: colors.warning }]}>
+          <View style={[styles.legendChip, { backgroundColor: withAlpha(colors.success, 0.08) }]}>
+            <Text style={[styles.legendText, { color: colors.success }]}>
               {overriddenCount} govt holiday{overriddenCount > 1 ? 's' : ''} treated as working
             </Text>
           </View>
