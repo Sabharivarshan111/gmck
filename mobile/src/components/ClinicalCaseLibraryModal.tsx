@@ -180,11 +180,19 @@ export function ClinicalCaseLibraryModal({
               {selected ? selected.name : 'Patient simulator cases'}
             </Text>
             <Text style={[styles.headerSub, { color: colors.textMuted }]} numberOfLines={1}>
-              Reviewed synthetic clinical encounters
+              Curated synthetic cases for MBBS practice
             </Text>
           </View>
           <View style={[styles.reviewedBadge, { backgroundColor: withAlpha(colors.primary, 0.12) }]}>
-            <Text style={[styles.reviewedBadgeText, { color: colors.primary }]}>REVIEWED</Text>
+            <Text style={[styles.reviewedBadgeText, { color: colors.primary }]}>
+              {selected
+                ? selected.sourceDataset === 'orbit-curated-v1'
+                  ? 'ORBIT CURATED'
+                  : 'REVIEWED'
+                : loading
+                  ? 'LOADING'
+                  : `${cases.length} CASES`}
+            </Text>
           </View>
         </View>
 
@@ -215,7 +223,7 @@ export function ClinicalCaseLibraryModal({
                   Simulated case for exam practice
                 </Text>
                 <Text style={[styles.safetyBody, { color: colors.textMuted }]}>
-                  Not clinical guidance. ORBIT only shows cases that have passed the review gate.
+                  Educational synthetic case, not clinical guidance. External dataset rows appear only after review.
                 </Text>
               </View>
             </View>
@@ -301,7 +309,9 @@ export function ClinicalCaseLibraryModal({
                     ))
                   ) : (
                     <Text style={[styles.body, { color: colors.textMuted }]}>
-                      No references are attached to this reviewed row.
+                      {selected.sourceDataset === 'orbit-curated-v1'
+                        ? 'This ORBIT starter case does not have attached primary references yet.'
+                        : 'No references are attached to this reviewed external row.'}
                     </Text>
                   )}
                   <Text style={[styles.referenceNote, { color: colors.textMuted }]}>
@@ -310,48 +320,51 @@ export function ClinicalCaseLibraryModal({
                   </Text>
                 </View>
 
-                <Touchable
-                  onPress={() => setTranscriptOpen(open => !open)}
-                  label={transcriptOpen ? 'Hide teaching transcript' : 'Show teaching transcript'}
-                  scaleTo={0.98}
-                  style={[styles.outlineButton, { borderColor: colors.border, backgroundColor: colors.card }]}>
-                  <Text style={[styles.outlineButtonText, { color: colors.text }]}>
-                    {transcriptOpen ? 'Hide teaching transcript' : 'Show teaching transcript'}
-                  </Text>
-                  <ChevronRight
-                    size={18}
-                    color={colors.textMuted}
-                    style={{ transform: [{ rotate: transcriptOpen ? '90deg' : '0deg' }] }}
-                  />
-                </Touchable>
+                {visibleTurns.length ? (
+                  <>
+                    <Touchable
+                      onPress={() => setTranscriptOpen(open => !open)}
+                      label={transcriptOpen ? 'Hide teaching transcript' : 'Show teaching transcript'}
+                      scaleTo={0.98}
+                      style={[styles.outlineButton, { borderColor: colors.border, backgroundColor: colors.card }]}>
+                      <Text style={[styles.outlineButtonText, { color: colors.text }]}>
+                        {transcriptOpen ? 'Hide teaching transcript' : 'Show teaching transcript'}
+                      </Text>
+                      <ChevronRight
+                        size={18}
+                        color={colors.textMuted}
+                        style={{ transform: [{ rotate: transcriptOpen ? '90deg' : '0deg' }] }}
+                      />
+                    </Touchable>
 
-                {transcriptOpen ? (
-                  <View
-                    style={[styles.caseCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
-                    {visibleTurns.map((turn, index) => (
+                    {transcriptOpen ? (
                       <View
-                        key={`${turn.role}-${index}`}
-                        style={[
-                          styles.turn,
-                          {
-                            backgroundColor:
-                              turn.role === 'assistant'
-                                ? withAlpha(colors.primary, 0.08)
-                                : withAlpha(colors.textMuted, 0.07),
-                          },
-                        ]}>
-                        <Text style={[styles.turnRole, { color: colors.textMuted }]}>
-                          {turn.role === 'assistant' ? 'CLINICIAN' : 'PATIENT'}
-                        </Text>
-                        <Text style={[styles.body, { color: colors.text }]}>{turn.content}</Text>
+                        style={[styles.caseCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+                        {visibleTurns.map((turn, index) => (
+                          <View
+                            key={`${turn.role}-${index}`}
+                            style={[
+                              styles.turn,
+                              {
+                                backgroundColor:
+                                  turn.role === 'assistant'
+                                    ? withAlpha(colors.primary, 0.08)
+                                    : withAlpha(colors.textMuted, 0.07),
+                              },
+                            ]}>
+                            <Text style={[styles.turnRole, { color: colors.textMuted }]}>
+                              {turn.role === 'assistant' ? 'CLINICIAN' : 'PATIENT'}
+                            </Text>
+                            <Text style={[styles.body, { color: colors.text }]}>{turn.content}</Text>
+                          </View>
+                        ))}
                       </View>
-                    ))}
-                  </View>
+                    ) : null}
+                  </>
                 ) : null}
 
                 <Text style={[styles.provenance, { color: colors.textMuted }]}>
-                  Source: {selected.sourceDataset}. License field stored with this reviewed record:
-                  {' '}{selected.sourceLicense}
+                  Source: {selected.sourceDataset}. Content note: {selected.sourceLicense}
                 </Text>
               </>
             )}
@@ -373,10 +386,10 @@ export function ClinicalCaseLibraryModal({
                 ]}>
                 <Stethoscope size={20} color={colors.primary} />
                 <View style={styles.flex}>
-                  <Text style={[styles.infoTitle, { color: colors.text }]}>Opus 5.5 case library</Text>
+                  <Text style={[styles.infoTitle, { color: colors.text }]}>Clinical case library</Text>
                   <Text style={[styles.infoBody, { color: colors.textMuted }]}>
-                    External synthetic cases are imported server-side and remain invisible until they are
-                    reviewed. The raw 75 MB corpus is never bundled in the app.
+                    ORBIT-curated starter cases are live now. Search by disease, alias or ICD-10.
+                    External Opus 5.5 cases stay behind review and provenance checks.
                   </Text>
                 </View>
               </View>
@@ -420,7 +433,7 @@ export function ClinicalCaseLibraryModal({
               {loading ? (
                 <View style={styles.inlineLoading}>
                   <ActivityIndicator color={colors.primary} />
-                  <Text style={[styles.centerText, { color: colors.textMuted }]}>Loading reviewed cases…</Text>
+                  <Text style={[styles.centerText, { color: colors.textMuted }]}>Loading cases…</Text>
                 </View>
               ) : cases.length ? (
                 cases.map(item => (
@@ -446,6 +459,7 @@ export function ClinicalCaseLibraryModal({
                         style={[styles.rowSub, { color: colors.textMuted }]}
                         numberOfLines={2}>
                         {[
+                          item.sourceDataset === 'orbit-curated-v1' ? 'ORBIT curated' : 'Reviewed external',
                           item.icd10,
                           item.bodySystems.slice(0, 2).join(' • '),
                           item.aliases[0],
@@ -462,11 +476,12 @@ export function ClinicalCaseLibraryModal({
                   style={[styles.emptyCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
                   <BookOpen size={28} color={colors.textMuted} />
                   <Text style={[styles.emptyTitle, { color: colors.text }]}>
-                    {query ? 'No reviewed case matches this search' : 'No reviewed dataset cases published yet'}
+                    {query ? 'No case matches this search' : 'No cases published yet'}
                   </Text>
                   <Text style={[styles.emptyBody, { color: colors.textMuted }]}>
-                    Imported cases start as pending by design. This screen will populate only after a
-                    clinical review marks rows approved.
+                    {query
+                      ? 'Try a disease name, common abbreviation, symptom keyword or ICD-10 code.'
+                      : 'ORBIT starter cases should appear here. External imports remain hidden until reviewed.'}
                   </Text>
                 </View>
               )}
