@@ -90,11 +90,18 @@ class NotifyReceiver : BroadcastReceiver() {
    * work that is due today.
    */
   internal fun compose(digest: org.json.JSONObject, today: Long): Pair<String, String>? {
+    val attendance = attendanceMessage(digest, today)
+    // A below-target posting or an absence is a real attendance risk, so it
+    // outranks optional engagement reminders. Still only one notification.
+    if (digest.optBoolean("attendanceUrgent", false) && attendance != null) {
+      return attendance
+    }
+
     val quiz = digest.optString("mcqPreview", "")
     if (digest.optBoolean("allowMcq", false) && digest.optLong("mcqDay", -1L) == today && quiz.isNotBlank()) {
       return "MCQ of the day" to quiz.take(750)
     }
-    if (digest.optLong("lastStudyDay", -1L) == today) return attendanceMessage(digest, today)
+    if (digest.optLong("lastStudyDay", -1L) == today) return attendance
     // optBoolean defaults true so a digest written by an older build — one
     // that predates these switches — behaves as it did before rather than
     // going silent on every kind at once.
@@ -129,19 +136,47 @@ class NotifyReceiver : BroadcastReceiver() {
     if (digest.optBoolean("allowPlan", false) && plan.isNotBlank()) {
       return "Your study plan" to plan.take(250)
     }
-    return attendanceMessage(digest, today)
+    return attendance
   }
 
   private fun attendanceMessage(digest: org.json.JSONObject, today: Long): Pair<String, String>? {
     if (!digest.optBoolean("allowAttendance", false)) return null
-    // A generic check: Orbit does not know the student's ward timetable.
-    val lines = arrayOf(
-      "Check your next clinical posting. One attended day at a time.",
-      "Plan for your next posting today. A little preparation goes a long way.",
-      "Keep showing up for the ward. Your future self gets the benefit.",
-    )
-    val summary = digest.optString("attendanceSummary", "")
-    return "Do not miss your class attendance" to "${lines[(today % lines.size).toInt()]} $summary"
+    if (!digest.optBoolean("attendanceActive", false)) return null
+    if (!digest.optBoolean("attendanceTodayWorking", false)) return null
+
+    val name = digest.optString("attendanceName", "your posting").ifBlank { "your posting" }.take(60)
+    val percent = digest.optInt("attendancePercent", -1)
+    val overall = digest.optInt("attendanceOverallPercent", -1)
+    val target = digest.optInt("attendanceTarget", 75)
+    val attended = digest.optInt("attendanceAttended", 0)
+    val held = digest.optInt("attendanceHeld", 0)
+    val absentToday = digest.optBoolean("attendanceMarkedAbsentToday", false)
+
+    val postingNumbers =
+      if (percent >= 0 && held > 0) "$percent% ($attended/$held), target $target%."
+      else "No attendance has been logged for this posting yet."
+    val overallNumbers =
+      if (overall >= 0) " All recorded attendance: $overall%." else ""
+
+    if (absentToday) {
+      return "Attendance warning — $name" to
+        "You marked today absent. $postingNumbers$overallNumbers Attend the next working posting day."
+    }
+
+    if (percent >= 0 && percent < target) {
+      return "Go to $name today" to
+        "You are below your attendance target. $postingNumbers$overallNumbers"
+    }
+
+    val projectedIfMiss =
+      if (held >= 0) ((attended.toDouble() / (held + 1).coerceAtLeast(1)) * 100.0) else 100.0
+    if (percent >= 0 && projectedIfMiss < target) {
+      return "Do not miss $name today" to
+        "One absence would put you below $target%. $postingNumbers$overallNumbers"
+    }
+
+    return "$name today" to
+      "Keep the attendance buffer. $postingNumbers$overallNumbers"
   }
 
   internal fun epochDay(): Long {
