@@ -183,7 +183,6 @@ export function SettingsSheet({
 
   return (
     <Sheet visible={visible} onClose={onClose} title="Settings">
-      <StudyBuddyPanel />
       <Text style={[styles.section, { color: colors.textMuted }]}>QUESTION BANK UNIVERSITY</Text>
       <UniversityChoice value={university} onChange={option => { void setUniversity(option); }} />
       <Text style={[styles.section, { color: colors.textMuted }]}>
@@ -433,8 +432,8 @@ export function SettingsSheet({
                 onChange={next => setSetting('remindRevision', next)}
               />
               <Switchable
-                label="Daily attendance check"
-                detail="A short posting reminder each day, even if you studied questions"
+                label="Daily attendance warning"
+                detail="Shows today's active posting, current percentage and target; warns after an absence or when one more miss would put you below target"
                 value={settings.remindAttendance}
                 onChange={next => {
                   setSetting('remindAttendance', next);
@@ -442,7 +441,7 @@ export function SettingsSheet({
                 }}
               />
               <Text style={[styles.note, { color: withAlpha(colors.text, 0.5) }]}>
-                Keep attendance off if you prefer reminders only when something is due.
+                Attendance reminders are sent only on working posting days. Choose a morning reminder time if you want a “go to class today” warning before college.
               </Text>
 
               {/*
@@ -563,6 +562,8 @@ export function SettingsSheet({
           </Touchable>
         ))}
       </View>
+
+      <StudyBuddyPanel />
 
       <Text style={[styles.footnote, { color: withAlpha(colors.text, 0.45) }]}>
         Themes and wallpaper live behind the moon button, next door.
