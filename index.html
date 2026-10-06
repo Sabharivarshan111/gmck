@@ -9,7 +9,14 @@
 
     <title>ORBIT MBBS | TNMGRMU &amp; KUHS Question Bank + AI</title>
     <meta name="description" content="Free ORBIT MBBS question bank for TNMGRMU and KUHS students with previous-year questions, MCQs, AI answers and revision tools." />
-    <link rel="canonical" href="https://orbitmbbs.vercel.app/" />
+    <script>
+      (() => {
+        const canonical = document.createElement('link');
+        canonical.rel = 'canonical';
+        canonical.href = window.location.origin + window.location.pathname;
+        document.head.appendChild(canonical);
+      })();
+    </script>
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="ORBIT MBBS" />
