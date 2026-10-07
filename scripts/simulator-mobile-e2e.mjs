@@ -33,7 +33,7 @@ const report = {
 
 const organDbSource = fs.readFileSync(path.resolve('src/simulator/data/organAnatomyData.ts'), 'utf8');
 const organDbBody = organDbSource.slice(organDbSource.indexOf('export const ORGAN_ANATOMY_DATABASE'));
-const allOrganKeys = [...organDbBody.matchAll(/^  ([a-zA-Z_][\\w]*):\\s*\\{/gm)].map((match) => match[1]);
+const allOrganKeys = [...organDbBody.matchAll(/^  ([a-zA-Z_][\w]*):\s*\{/gm)].map((match) => match[1]);
 if (allOrganKeys.length < 30) throw new Error('Could not enumerate the complete ORGAN_ANATOMY_DATABASE for exhaustive E2E');
 
 let activeFeature = 'bootstrap';
