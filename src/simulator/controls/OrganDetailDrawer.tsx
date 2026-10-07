@@ -132,6 +132,15 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
   // Resolve organ data, including source-specific HRA target ids.
   const hraOrganTarget = getHraOrganTarget(currentNavId);
   const hraHeartTarget = getHraHeartTarget(currentNavId);
+  const nodeOwnerOrganKey = Object.keys(ORGAN_ANATOMY_DATABASE).find((key) => {
+    const dossier = ORGAN_ANATOMY_DATABASE[key];
+    return [
+      ...(dossier.arterialNodes || []),
+      ...(dossier.venousNodes || []),
+      ...(dossier.nerveNodes || []),
+    ].some((node) => node.id.toLowerCase() === currentNavId.toLowerCase());
+  });
+
   const organKey =
     (isPeripheralNerveTarget(currentNavId)
       ? 'peripheral_nerves'
@@ -143,7 +152,8 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
             k.toLowerCase() === currentNavId.toLowerCase() ||
             ORGAN_ANATOMY_DATABASE[k].name.toLowerCase().includes(currentNavId.toLowerCase()) ||
             currentNavId.toLowerCase().includes(k)
-        )) || 'heart';
+        ) ||
+        nodeOwnerOrganKey) || 'heart';
 
   const organ: DetailedOrganAnatomy = ORGAN_ANATOMY_DATABASE[organKey] || ORGAN_ANATOMY_DATABASE.heart;
   const isLight = theme === 'light';
