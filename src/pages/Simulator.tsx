@@ -950,35 +950,37 @@ export const Simulator: React.FC = () => {
                 small screen and in landscape. */}
             <div
               className="w-full relative"
-              style={{ height: 'max(340px, min(66dvh, 560px))' }}
+              style={{ height: 'max(400px, min(70dvh, 620px))' }}
             >
               {isolatedPartId && (
-                <div className="absolute top-3 left-1/2 -translate-x-1/2 z-30 flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-amber-300 dark:border-amber-700 shadow-md pointer-events-auto touch-auto whitespace-nowrap">
+                <div data-testid="mobile-isolation-banner" className="absolute top-3 left-3 right-3 z-30 flex items-center justify-between gap-2 px-3 py-2 rounded-2xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-amber-300 dark:border-amber-700 shadow-md pointer-events-auto touch-auto">
                   <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
-                  <span className="text-[11px] font-bold text-slate-800 dark:text-slate-200">
+                  <span className="min-w-0 flex-1 truncate text-[11px] font-bold text-slate-800 dark:text-slate-200">
                     Isolated: {isolatedPartId.replace(/_/g, ' ').toUpperCase()}
                   </span>
-                  <button
-                    onClick={() =>
-                      setSelectedOrganId(
-                        getVerifiedReferenceOrganKey(isolatedPartId) || isolatedPartId
-                      )
-                    }
-                    className="ml-1 text-[10px] font-bold px-2 py-0.5 rounded-md bg-sky-100 text-sky-900 dark:bg-sky-950 dark:text-sky-200 cursor-pointer"
-                    title="Open clinical anatomy dossier"
-                  >
-                    📖 Dossier
-                  </button>
-                  <button
-                    onClick={() => {
-                      setIsolatedPartId(null);
-                      setContextOrganId(null);
-                      setSelectedOrganId(null);
-                    }}
-                    className="ml-0.5 text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-100 text-amber-900 dark:bg-amber-950 dark:text-amber-200 cursor-pointer"
-                  >
-                    Restore
-                  </button>
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <button
+                      onClick={() =>
+                        setSelectedOrganId(
+                          getVerifiedReferenceOrganKey(isolatedPartId) || isolatedPartId
+                        )
+                      }
+                      className="min-h-[36px] text-[10px] font-bold px-2.5 rounded-xl bg-sky-100 text-sky-900 dark:bg-sky-950 dark:text-sky-200 cursor-pointer"
+                      title="Open clinical anatomy dossier"
+                    >
+                      Dossier
+                    </button>
+                    <button
+                      onClick={() => {
+                        setIsolatedPartId(null);
+                        setContextOrganId(null);
+                        setSelectedOrganId(null);
+                      }}
+                      className="min-h-[36px] text-[10px] font-bold px-2.5 rounded-xl bg-amber-100 text-amber-900 dark:bg-amber-950 dark:text-amber-200 cursor-pointer"
+                    >
+                      Restore
+                    </button>
+                  </div>
                 </div>
               )}
               {!isDesktopLayout && (
@@ -1000,6 +1002,12 @@ export const Simulator: React.FC = () => {
                   onDissectPart={handleDissectPart}
                 />
               )}
+              <div
+                data-testid="mobile-gesture-hint"
+                className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 md:hidden pointer-events-none max-w-[calc(100%-24px)] px-3 py-1.5 rounded-full bg-slate-950/72 text-white/95 backdrop-blur-md text-[10px] font-semibold tracking-wide whitespace-nowrap shadow-lg"
+              >
+                1-finger drag: rotate · pinch: zoom · 2 fingers: pan
+              </div>
             </div>
           </div>
 
@@ -1047,10 +1055,16 @@ export const Simulator: React.FC = () => {
           setSelectedOrganId(null);
         }}
         onFocusCamera={(preset) => setCameraPreset(preset)}
+        onEnter3D={() => {
+          setMobileTab('3d');
+          if (!isDesktopLayout) setSelectedOrganId(null);
+        }}
         onSelectOrgan={(newOrganId) => setSelectedOrganId(newOrganId)}
         onIsolateStructure={(structureId, parentOrganId) => {
           setIsolatedPartId(getPreferredAnatomyIsolationTarget(structureId));
           setContextOrganId(parentOrganId || null);
+          setMobileTab('3d');
+          if (!isDesktopLayout) setSelectedOrganId(null);
         }}
         onDissectOrgan={(organKey) => {
           const fakePart: Part = {
