@@ -128,6 +128,24 @@ await check('spread-anatomy-inventory-and-clickable-labels', async () => {
   await setRangeValue(spread, 0.48);
   await page.waitForTimeout(850);
   assert(Number(await spread.inputValue()) > 0.45, 'Spread slider did not enter separated-system range');
+  assert(
+    (await stage.getByTestId('dissection-toolbar').count()) === 0,
+    'Dissection/depth toolbar should leave the mobile stage while Spread anatomy is active'
+  );
+  assert(
+    !(await stage.getByTestId('mobile-gesture-hint').isVisible().catch(() => false)),
+    'Duplicate gesture hint should be hidden while Spread anatomy owns the stage'
+  );
+  const cameraControls = stage.getByTestId('anatomy-camera-controls');
+  assert(
+    !(await cameraControls.isVisible().catch(() => false)),
+    'Regional camera controls should be hidden on mobile while Spread anatomy is active'
+  );
+  const expandedCanvasBox = await canvas.boundingBox();
+  assert(
+    expandedCanvasBox && expandedCanvasBox.height >= 470,
+    'Spread mode did not reclaim enough mobile vertical space for the anatomy'
+  );
   const separated = await canvas.screenshot();
   assert(!assembled.equals(separated), 'Moving Spread anatomy did not change the rendered atlas');
   assert(separated.length > 8000, 'Separated anatomy canvas rendered suspiciously blank');
@@ -143,7 +161,7 @@ await check('spread-anatomy-inventory-and-clickable-labels', async () => {
   const labels = stage.locator('[data-testid^="anatomy-label-"]:visible');
   const labelCount = await labels.count();
   assert(labelCount >= 3, 'Expected at least three collision-safe anatomy labels at full spread; got ' + labelCount);
-  assert(labelCount <= 7, 'Mobile floating labels exceeded the clutter budget: ' + labelCount);
+  assert(labelCount <= 5, 'Mobile floating labels exceeded the focused spread-mode clutter budget: ' + labelCount);
   for (let index = 0; index < labelCount; index += 1) {
     const box = await labels.nth(index).boundingBox();
     assert(box, 'Visible anatomy label had no layout box');

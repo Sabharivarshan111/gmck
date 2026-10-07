@@ -482,19 +482,21 @@ export const Simulator: React.FC = () => {
           {/* 3D Anatomical Viewport with Interactive Dissection Engine (7 cols) */}
           <div className="lg:col-span-7 flex flex-col space-y-2">
             {/* Dissection & Peeler Toolbar */}
-            <DissectionToolbar
-              toolMode={toolMode}
-              onSelectToolMode={handleSelectToolMode}
-              isXray={isXray}
-              onToggleXray={() => setIsXray(!isXray)}
-              layerPeel={layerPeel}
-              onChangeLayerPeel={handleLayerPeelChange}
-              dissectedParts={dissectedParts}
-              onRestorePart={handleRestorePart}
-              onUndoLastDissect={handleUndoLastDissect}
-              onRestoreAll={handleRestoreAll}
-              theme={theme}
-            />
+            {explodeAmount <= 0.02 && (
+              <DissectionToolbar
+                toolMode={toolMode}
+                onSelectToolMode={handleSelectToolMode}
+                isXray={isXray}
+                onToggleXray={() => setIsXray(!isXray)}
+                layerPeel={layerPeel}
+                onChangeLayerPeel={handleLayerPeelChange}
+                dissectedParts={dissectedParts}
+                onRestorePart={handleRestorePart}
+                onUndoLastDissect={handleUndoLastDissect}
+                onRestoreAll={handleRestoreAll}
+                theme={theme}
+              />
+            )}
 
             {/* Viewport Canvas */}
             <div className="h-[490px] w-full relative">
@@ -1002,7 +1004,12 @@ export const Simulator: React.FC = () => {
                 small screen and in landscape. */}
             <div
               className="w-full relative"
-              style={{ height: 'max(400px, min(70dvh, 620px))' }}
+              style={{
+                height:
+                  explodeAmount > 0.02
+                    ? 'max(480px, min(76dvh, 690px))'
+                    : 'max(400px, min(70dvh, 620px))',
+              }}
             >
               {isolatedPartId && (
                 <div data-testid="mobile-isolation-banner" className="absolute top-3 left-3 right-3 z-30 flex items-center justify-between gap-2 px-3 py-2 rounded-2xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-amber-300 dark:border-amber-700 shadow-md pointer-events-auto touch-auto">
@@ -1057,14 +1064,14 @@ export const Simulator: React.FC = () => {
                   onDissectPart={handleDissectPart}
                 />
               )}
-              <div
-                data-testid="mobile-gesture-hint"
-                className="absolute bottom-[92px] left-1/2 -translate-x-1/2 z-20 md:hidden pointer-events-none max-w-[calc(100%-24px)] px-3 py-1.5 rounded-full bg-slate-950/72 text-white/95 backdrop-blur-md text-[9px] font-semibold tracking-wide whitespace-nowrap shadow-lg"
-              >
-                {explodeAmount > 0.81
-                  ? '1-finger drag: pan · pinch: zoom · tap label: inspect'
-                  : '1-finger drag: rotate · pinch: zoom · tap label: inspect'}
-              </div>
+              {explodeAmount <= 0.02 && (
+                <div
+                  data-testid="mobile-gesture-hint"
+                  className="absolute bottom-[92px] left-1/2 -translate-x-1/2 z-20 md:hidden pointer-events-none max-w-[calc(100%-24px)] px-3 py-1.5 rounded-full bg-slate-950/75 text-white/95 backdrop-blur-md text-[9px] font-semibold tracking-wide whitespace-nowrap shadow-lg"
+                >
+                  1-finger drag: rotate · pinch: zoom · 2 fingers: pan
+                </div>
+              )}
               <AnatomySpreadControl
                 value={explodeAmount}
                 onChange={handleSpreadChange}

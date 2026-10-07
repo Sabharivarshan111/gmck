@@ -24,14 +24,20 @@ export const AnatomySpreadControl: React.FC<AnatomySpreadControlProps> = ({
       : value < 0.9
       ? 'Exploded anatomy'
       : 'Every piece';
+  const interactionHint =
+    value < 0.03
+      ? 'Separate systems and individual structures'
+      : value < 0.82
+      ? 'Drag to rotate · pinch to zoom · tap label'
+      : 'Drag to pan · pinch to zoom · tap label';
 
   return (
     <div
       data-testid="anatomy-spread-control"
       className={`pointer-events-auto rounded-2xl border backdrop-blur-xl shadow-lg px-3 py-2.5 ${className} ${
         isLight
-          ? 'bg-white/94 border-slate-200/90 text-slate-800'
-          : 'bg-slate-950/88 border-slate-700/90 text-slate-100'
+          ? 'bg-white/95 border-slate-200/90 text-slate-800'
+          : 'bg-slate-950/90 border-slate-700/90 text-slate-100'
       }`}
     >
       <div className="flex items-center gap-2">
@@ -48,7 +54,7 @@ export const AnatomySpreadControl: React.FC<AnatomySpreadControlProps> = ({
             <div className="min-w-0">
               <div className="text-[11px] sm:text-xs font-extrabold tracking-wide">Spread anatomy</div>
               <div className="text-[9px] sm:text-[10px] text-slate-500 dark:text-slate-400 truncate">
-                {phase} · tap a label to inspect
+                {phase} · {interactionHint}
               </div>
             </div>
             <output className="font-mono text-[11px] font-black text-violet-600 dark:text-violet-300">

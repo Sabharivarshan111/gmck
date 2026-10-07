@@ -1514,12 +1514,33 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
 
         const button = document.createElement('button');
         button.type = 'button';
-        button.textContent = spec.label;
         button.setAttribute('data-testid', `anatomy-label-${spec.key}`);
+        button.setAttribute('data-anatomy-key', spec.key);
         button.setAttribute('aria-label', `Open ${spec.label} anatomy details`);
         button.title = `Open ${spec.label} anatomy details`;
         button.className =
-          'absolute left-0 top-0 hidden min-h-[34px] max-w-[150px] -translate-x-1/2 -translate-y-1/2 rounded-xl border border-slate-600/70 bg-slate-950/84 px-2.5 py-1 text-[10px] sm:text-[11px] font-bold text-white shadow-lg backdrop-blur-md pointer-events-auto whitespace-nowrap overflow-hidden text-ellipsis transition-[opacity,transform] duration-100';
+          'absolute left-0 top-0 hidden min-h-[38px] max-w-[150px] -translate-x-1/2 -translate-y-1/2 rounded-xl border bg-slate-950/90 px-2.5 py-1 text-[10px] sm:text-[11px] font-bold text-white shadow-lg backdrop-blur-md pointer-events-auto whitespace-nowrap overflow-hidden text-ellipsis transition-[opacity,transform,box-shadow] duration-100 flex items-center gap-1.5';
+
+        const sourcePart = atlas.parts[bestIndex];
+        const systemColor =
+          SYSTEMS.find((system) => system.id === sourcePart.system)?.color || '#38bdf8';
+        button.style.borderColor = `${systemColor}aa`;
+
+        const dot = document.createElement('span');
+        dot.setAttribute('aria-hidden', 'true');
+        dot.style.width = '7px';
+        dot.style.height = '7px';
+        dot.style.borderRadius = '9999px';
+        dot.style.flex = '0 0 auto';
+        dot.style.background = systemColor;
+        dot.style.boxShadow = `0 0 0 2px ${systemColor}22`;
+
+        const text = document.createElement('span');
+        text.textContent = spec.label;
+        text.style.overflow = 'hidden';
+        text.style.textOverflow = 'ellipsis';
+
+        button.append(dot, text);
         button.addEventListener('pointerdown', (event) => event.stopPropagation());
         button.addEventListener('click', (event) => {
           event.preventDefault();
@@ -1559,9 +1580,13 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
 
       const spread = explodeAmountRef.current;
       const maxVisible = isMobileDevice
-        ? spread > 0.45
-          ? 7
-          : 5
+        ? spread > 0.82
+          ? 5
+          : spread > 0.45
+          ? 6
+          : 4
+        : spread > 0.82
+        ? 10
         : spread > 0.45
         ? 12
         : 8;
@@ -3769,7 +3794,12 @@ varying float partSelected;
       )}
 
       {/* Top Floating Control Bar */}
-      <div className="absolute top-3 left-3 right-3 z-10 flex items-center justify-between pointer-events-none gap-2">
+      <div
+        data-testid="anatomy-camera-controls"
+        className={`absolute top-3 left-3 right-3 z-10 items-center justify-between pointer-events-none gap-2 ${
+          explodeAmount > 0.02 ? 'hidden md:flex' : 'flex'
+        }`}
+      >
         {/* Camera Presets Segmented Pill */}
         <div
           className={`pointer-events-auto flex items-center gap-1 p-1 rounded-2xl border backdrop-blur-xl text-xs transition-all ${
