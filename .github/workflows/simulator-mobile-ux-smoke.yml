@@ -29,7 +29,17 @@ jobs:
 
       - name: Install Chromium runner
         run: |
-          npm install --no-save --package-lock=false --legacy-peer-deps playwright@1.55.0
+          set -euo pipefail
+          for attempt in 1 2 3; do
+            if npm install --no-save --package-lock=false --legacy-peer-deps playwright@1.55.0; then
+              break
+            fi
+            if [ "$attempt" = "3" ]; then
+              exit 1
+            fi
+            echo "Playwright dependency install hit a transient registry error; retrying..."
+            sleep $((attempt * 5))
+          done
           npx playwright install --with-deps chromium
 
       - name: Exercise the live mobile anatomy UX
