@@ -138,6 +138,7 @@ await check('spread-anatomy-inventory-and-clickable-labels', async () => {
   const inventory = await canvas.screenshot();
   assert(!separated.equals(inventory), '100% spread did not transition to every-piece inventory');
   assert(inventory.length > 8000, 'Every-piece anatomy inventory rendered suspiciously blank');
+  fs.writeFileSync(path.join(outDir, '02b-spread-every-piece.png'), inventory);
 
   const labels = stage.locator('[data-testid^="anatomy-label-"]:visible');
   const labelCount = await labels.count();

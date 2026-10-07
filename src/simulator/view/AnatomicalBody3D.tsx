@@ -2416,9 +2416,9 @@ varying float partSelected;
       const cz = centers[index * 3 + 2];
       const angle = angles[index];
 
-      const radialX = Math.sin(angle) * 0.52 + cx * 0.18;
-      const radialY = (cy - 0.9) * 0.30;
-      const radialZ = Math.cos(angle) * 0.44 + cz * 0.08;
+      const radialX = Math.sin(angle) * 0.30 + cx * 0.10;
+      const radialY = (cy - 0.9) * 0.16;
+      const radialZ = Math.cos(angle) * 0.26 + cz * 0.05;
 
       let dx = 0;
       let dy = 0;
@@ -2494,7 +2494,7 @@ varying float partSelected;
         const inventoryEase = inventoryT * inventoryT * (3 - 2 * inventoryT);
         const bodyScale = THREE.MathUtils.lerp(
           1,
-          1.34,
+          1.14,
           THREE.MathUtils.clamp(next / separatedEnd, 0, 1)
         );
 
@@ -2518,7 +2518,7 @@ varying float partSelected;
         const distanceScale =
           next <= separatedEnd
             ? bodyScale
-            : THREE.MathUtils.lerp(1.34, inventoryScale, inventoryEase);
+            : THREE.MathUtils.lerp(1.14, inventoryScale, inventoryEase);
         const frontBlend = THREE.MathUtils.clamp((next - 0.60) / 0.32, 0, 1);
         const direction = base.direction
           .clone()

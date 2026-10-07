@@ -117,7 +117,7 @@ export function buildExplodedInventoryTargets(
   const totalHeight = Math.max(0.1, cursorY + rowHeight);
   const width = Math.max(0.1, usedWidth);
   const targets = new Float32Array(parts.length * 3);
-  const centerY = 0.92;
+  const centerY = 0.96;
 
   parts.forEach((_, index) => {
     const placement = placements[index] || { x: width * 0.5, y: totalHeight * 0.5 };
