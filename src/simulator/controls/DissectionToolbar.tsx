@@ -79,14 +79,14 @@ export const DissectionToolbar: React.FC<DissectionToolbarProps> = ({
     <div data-testid="dissection-toolbar" className="w-full space-y-2">
       {/* Main Glass Control Strip */}
       <div
-        className={`p-2 rounded-2xl border backdrop-blur-xl shadow-md flex flex-col sm:flex-row sm:flex-wrap sm:items-center sm:justify-between gap-1.5 sm:gap-2.5 transition-all ${
+        className={`p-1.5 sm:p-2 rounded-2xl border backdrop-blur-xl shadow-md grid grid-cols-[minmax(0,1fr)_auto] sm:flex sm:flex-row sm:flex-wrap sm:items-center sm:justify-between gap-1.5 sm:gap-2.5 transition-all ${
           isLight
             ? 'bg-white/95 border-slate-200/90 text-slate-800'
             : 'bg-slate-900/95 border-slate-800 text-slate-200 shadow-slate-950/50'
         }`}
       >
         {/* Left: Mode Switcher Pills */}
-        <div className="w-full sm:w-auto flex items-center gap-1 p-1 bg-slate-100/90 dark:bg-slate-800/90 rounded-xl border border-slate-200/60 dark:border-slate-700/60 overflow-x-auto no-scrollbar">
+        <div className="col-span-2 w-full sm:w-auto grid grid-cols-4 sm:flex items-center gap-1 p-1 bg-slate-100/90 dark:bg-slate-800/90 rounded-xl border border-slate-200/60 dark:border-slate-700/60 overflow-hidden sm:overflow-x-auto no-scrollbar">
           {toolLabels.map((t) => {
             const active = toolMode === t.id;
             return (
@@ -95,7 +95,7 @@ export const DissectionToolbar: React.FC<DissectionToolbarProps> = ({
                 data-testid={`dissection-mode-${t.id}`}
                 onClick={() => onSelectToolMode(t.id)}
                 title={t.hint}
-                className={`min-h-[44px] shrink-0 flex items-center gap-1.5 px-2.5 sm:px-3 rounded-lg text-[11px] sm:text-xs font-semibold transition-all cursor-pointer ${
+                className={`min-h-[42px] sm:min-h-[44px] min-w-0 shrink-0 flex items-center justify-center gap-1 px-1.5 sm:px-3 rounded-lg text-[10px] sm:text-xs font-semibold transition-all cursor-pointer ${
                   active
                     ? isLight
                       ? 'bg-white text-slate-900 shadow-xs font-bold'
@@ -114,7 +114,7 @@ export const DissectionToolbar: React.FC<DissectionToolbarProps> = ({
             data-testid="dissection-xray"
             onClick={onToggleXray}
             title="Toggle translucent X-Ray ghosting"
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+            className={`min-h-[42px] sm:min-h-[44px] min-w-0 flex items-center justify-center gap-1 px-1.5 sm:px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-semibold transition-all cursor-pointer ${
               isXray
                 ? 'bg-cyan-500 text-slate-950 font-bold shadow-xs'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
@@ -126,10 +126,10 @@ export const DissectionToolbar: React.FC<DissectionToolbarProps> = ({
         </div>
 
         {/* Center: Anatomical Depth Peeler Slider */}
-        <div className="w-full sm:flex-1 sm:min-w-[220px] sm:max-w-[360px] flex items-center gap-2 px-1.5 sm:px-2 py-1">
+        <div className="min-w-0 w-full sm:flex-1 sm:min-w-[220px] sm:max-w-[360px] flex items-center gap-1.5 px-1 sm:px-2 py-0.5 sm:py-1">
           <Layers className="w-4 h-4 text-sky-500 shrink-0" />
           <div className="flex-1 flex flex-col gap-0.5">
-            <div className="flex items-center justify-between text-[11px] font-mono">
+            <div className="flex items-center justify-between gap-2 text-[10px] sm:text-[11px] font-mono">
               <span className="text-slate-500 dark:text-slate-400 font-medium">Depth Peel:</span>
               <span className="text-sky-600 dark:text-sky-400 font-bold">{getPeelLabel(layerPeel)}</span>
             </div>
@@ -147,12 +147,12 @@ export const DissectionToolbar: React.FC<DissectionToolbarProps> = ({
         </div>
 
         {/* Right: Dissection Tray & Undo Controls */}
-        <div className="w-full sm:w-auto flex items-center justify-end gap-1.5 overflow-x-auto no-scrollbar">
+        <div className="w-auto flex items-center justify-end gap-1 overflow-x-auto no-scrollbar">
           {/* Dissected Count / Open Tray Button */}
           <button
             data-testid="dissection-tray"
             onClick={() => setTrayOpen(!trayOpen)}
-            className={`min-h-[44px] shrink-0 flex items-center gap-1.5 px-2.5 sm:px-3 rounded-xl border text-[11px] sm:text-xs font-semibold transition-all cursor-pointer ${
+            className={`min-h-[40px] sm:min-h-[44px] shrink-0 flex items-center gap-1 px-2 sm:px-3 rounded-xl border text-[10px] sm:text-xs font-semibold transition-all cursor-pointer ${
               dissectedParts.length > 0
                 ? isLight
                   ? 'bg-rose-50 border-rose-200 text-rose-700 font-bold shadow-xs'
