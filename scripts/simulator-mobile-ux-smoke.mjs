@@ -167,7 +167,7 @@ await check('spread-anatomy-inventory-and-clickable-labels', async () => {
   const labels = stage.locator('[data-testid^="anatomy-label-"]:visible');
   const labelCount = await labels.count();
   assert(labelCount >= 3, 'Expected at least three collision-safe anatomy labels at full spread; got ' + labelCount);
-  assert(labelCount <= 5, 'Mobile floating labels exceeded the focused spread-mode clutter budget: ' + labelCount);
+  assert(labelCount <= 4, 'Mobile floating labels exceeded the focused spread-mode clutter budget: ' + labelCount);
   for (let index = 0; index < labelCount; index += 1) {
     const box = await labels.nth(index).boundingBox();
     assert(box, 'Visible anatomy label had no layout box');
