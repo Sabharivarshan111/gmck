@@ -1475,6 +1475,7 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
       priority: number;
       partIndex: number;
       button: HTMLButtonElement;
+      widthHint: number;
     };
     let floatingLabelTargets: FloatingLabelTarget[] = [];
 
@@ -1532,6 +1533,10 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
           priority: spec.priority,
           partIndex: bestIndex,
           button,
+          // Tailwind caps labels at 150px. A deterministic hint lets us clamp
+          // before layout without forcing a DOM measurement every animation
+          // tick; the font is 10–11px plus 20px horizontal padding.
+          widthHint: Math.min(150, Math.max(64, spec.label.length * 6.4 + 24)),
         });
       }
     };
@@ -1574,29 +1579,43 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
           if (projectedLabelPoint.z < -1 || projectedLabelPoint.z > 1) return null;
           const x = (projectedLabelPoint.x * 0.5 + 0.5) * w;
           const y = (-projectedLabelPoint.y * 0.5 + 0.5) * h;
-          if (x < 28 || x > w - 28 || y < 72 || y > h - 105) return null;
+          // A structure may sit close to the edge while its label still fits
+          // perfectly once clamped inward. Only discard points genuinely
+          // outside the stage; horizontal safe-area clamping happens below.
+          if (x < -32 || x > w + 32 || y < 72 || y > h - 105) return null;
           return { target, x, y };
         })
         .filter(Boolean)
         .sort((a: any, b: any) => b.target.priority - a.target.priority);
 
-      const placed: Array<{ x: number; y: number }> = [];
+      const placed: Array<{ x: number; y: number; width: number }> = [];
       const shown = new Set<HTMLButtonElement>();
       for (const candidate of candidates as Array<{ target: FloatingLabelTarget; x: number; y: number }>) {
         if (placed.length >= maxVisible) break;
+
+        const halfWidth = candidate.target.widthHint * 0.5;
+        const safeX = THREE.MathUtils.clamp(
+          candidate.x,
+          halfWidth + 8,
+          Math.max(halfWidth + 8, w - halfWidth - 8)
+        );
         const collides = placed.some(
           (point) =>
-            Math.abs(point.x - candidate.x) < (isMobileDevice ? 74 : 86) &&
+            Math.abs(point.x - safeX) <
+              Math.max(
+                isMobileDevice ? 70 : 82,
+                (point.width + candidate.target.widthHint) * 0.5 + 8
+              ) &&
             Math.abs(point.y - candidate.y) < 34
         );
         if (collides) continue;
 
         candidate.target.button.style.display = 'block';
         candidate.target.button.style.transform =
-          `translate3d(${candidate.x}px, ${candidate.y}px, 0) translate(-50%, -50%)`;
+          `translate3d(${safeX}px, ${candidate.y}px, 0) translate(-50%, -50%)`;
         candidate.target.button.style.opacity = spread > 0.65 ? '0.96' : '0.88';
         shown.add(candidate.target.button);
-        placed.push({ x: candidate.x, y: candidate.y });
+        placed.push({ x: safeX, y: candidate.y, width: candidate.target.widthHint });
       }
 
       floatingLabelTargets.forEach((target) => {

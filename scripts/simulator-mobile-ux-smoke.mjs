@@ -144,6 +144,15 @@ await check('spread-anatomy-inventory-and-clickable-labels', async () => {
   const labelCount = await labels.count();
   assert(labelCount >= 3, 'Expected at least three collision-safe anatomy labels at full spread; got ' + labelCount);
   assert(labelCount <= 7, 'Mobile floating labels exceeded the clutter budget: ' + labelCount);
+  for (let index = 0; index < labelCount; index += 1) {
+    const box = await labels.nth(index).boundingBox();
+    assert(box, 'Visible anatomy label had no layout box');
+    assert(box.x >= 4, 'Anatomy label clipped past the left mobile safe area');
+    assert(
+      box.x + box.width <= 386,
+      'Anatomy label clipped past the right mobile safe area'
+    );
+  }
   await shot('02b-spread-every-piece-inventory');
 
   const heartLabel = stage.getByTestId('anatomy-label-heart');
