@@ -39,6 +39,65 @@ interface OrganDetailDrawerProps {
   theme?: 'light' | 'dark';
 }
 
+type AnatomyCameraPreset = 'anterior' | 'head' | 'thorax' | 'abdomen';
+type Innervation3DTarget = { targetId: string; cameraPreset: AnatomyCameraPreset };
+
+const PARASYMPATHETIC_3D_TARGETS: Partial<Record<string, Innervation3DTarget>> = {
+  heart: { targetId: 'vagus_nerve', cameraPreset: 'thorax' },
+  lad_artery: { targetId: 'vagus_nerve', cameraPreset: 'thorax' },
+  rca_artery: { targetId: 'vagus_nerve', cameraPreset: 'thorax' },
+  lungs: { targetId: 'vagus_nerve', cameraPreset: 'thorax' },
+  vagus_nerve: { targetId: 'vagus_nerve', cameraPreset: 'head' },
+  liver: { targetId: 'vagus_nerve', cameraPreset: 'abdomen' },
+  celiac_trunk: { targetId: 'vagus_nerve', cameraPreset: 'abdomen' },
+  portal_vein: { targetId: 'vagus_nerve', cameraPreset: 'abdomen' },
+  kidney: { targetId: 'vagus_nerve', cameraPreset: 'abdomen' },
+  stomach: { targetId: 'vagus_nerve', cameraPreset: 'abdomen' },
+  pancreas: { targetId: 'vagus_nerve', cameraPreset: 'abdomen' },
+  small_intestine: { targetId: 'vagus_nerve', cameraPreset: 'abdomen' },
+  abdomen: { targetId: 'vagus_nerve', cameraPreset: 'abdomen' },
+};
+
+const SENSORY_3D_TARGETS: Partial<Record<string, Innervation3DTarget>> = {
+  heart: { targetId: 'sympathetic', cameraPreset: 'thorax' },
+  lad_artery: { targetId: 'sympathetic', cameraPreset: 'thorax' },
+  rca_artery: { targetId: 'sympathetic', cameraPreset: 'thorax' },
+  aorta: { targetId: 'sympathetic', cameraPreset: 'thorax' },
+  pectoralis_major: { targetId: 'pectoral_nerves', cameraPreset: 'thorax' },
+  deltoid: { targetId: 'axillary_nerve', cameraPreset: 'anterior' },
+  lungs: { targetId: 'intercostal_nerves', cameraPreset: 'thorax' },
+  vagus_nerve: { targetId: 'vagus_nerve', cameraPreset: 'head' },
+  phrenic_nerve: { targetId: 'phrenic_nerve', cameraPreset: 'thorax' },
+  liver: { targetId: 'sympathetic', cameraPreset: 'abdomen' },
+  celiac_trunk: { targetId: 'sympathetic', cameraPreset: 'abdomen' },
+  portal_vein: { targetId: 'sympathetic', cameraPreset: 'abdomen' },
+  kidney: { targetId: 'sympathetic', cameraPreset: 'abdomen' },
+  stomach: { targetId: 'sympathetic', cameraPreset: 'abdomen' },
+  pancreas: { targetId: 'sympathetic', cameraPreset: 'abdomen' },
+  spleen: { targetId: 'sympathetic', cameraPreset: 'abdomen' },
+  small_intestine: { targetId: 'sympathetic', cameraPreset: 'abdomen' },
+  abdomen: { targetId: 'sympathetic', cameraPreset: 'abdomen' },
+  skeletal: { targetId: 'peripheral_nerves', cameraPreset: 'anterior' },
+  snakebite: { targetId: 'peripheral_nerves', cameraPreset: 'anterior' },
+  spinal_cord: { targetId: 'peripheral_nerves', cameraPreset: 'anterior' },
+  pelvis: { targetId: 'peripheral_nerves', cameraPreset: 'anterior' },
+  skin: { targetId: 'peripheral_nerves', cameraPreset: 'anterior' },
+  knee: { targetId: 'peripheral_nerves', cameraPreset: 'anterior' },
+  peripheral_nerves: { targetId: 'peripheral_nerves', cameraPreset: 'anterior' },
+};
+
+function sympatheticCameraForOrgan(organKey: string): AnatomyCameraPreset {
+  if (['brain', 'eye', 'vagus_nerve'].includes(organKey)) return 'head';
+  if (['heart', 'lad_artery', 'rca_artery', 'lungs', 'aorta', 'pectoralis_major', 'deltoid', 'thymus', 'phrenic_nerve'].includes(organKey)) return 'thorax';
+  if (['liver', 'celiac_trunk', 'portal_vein', 'kidney', 'stomach', 'pancreas', 'spleen', 'small_intestine', 'urinary_bladder', 'ureter', 'prostate', 'uterus', 'ovary', 'fallopian_tube', 'abdomen'].includes(organKey)) return 'abdomen';
+  return 'anterior';
+}
+
+function hasSourceMatchedSympatheticTarget(text: string): boolean {
+  const value = text.trim().toLowerCase();
+  return !(value.startsWith('none') || value.startsWith('not applicable') || value.startsWith('no specific') || value.startsWith('placental parenchyma lacks'));
+}
+
 export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
   organId,
   isolatedPartId,
@@ -86,6 +145,12 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
 
   const organ: DetailedOrganAnatomy = ORGAN_ANATOMY_DATABASE[organKey] || ORGAN_ANATOMY_DATABASE.heart;
   const isLight = theme === 'light';
+
+  const sympathetic3DTarget: Innervation3DTarget | null = hasSourceMatchedSympatheticTarget(organ.innervation.sympathetic)
+    ? { targetId: 'sympathetic', cameraPreset: sympatheticCameraForOrgan(organKey) }
+    : null;
+  const parasympathetic3DTarget = PARASYMPATHETIC_3D_TARGETS[organKey] || null;
+  const sensory3DTarget = SENSORY_3D_TARGETS[organKey] || null;
 
   const handleCameraJump = (presetOverride?: 'anterior' | 'head' | 'thorax' | 'abdomen') => {
     if (!onFocusCamera) return;
@@ -759,17 +824,21 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
                         {organ.innervation.sympathetic}
                       </span>
                     </div>
-                    <button
-                      onClick={() => {
-                        navigateToStructure('sympathetic', 'thorax');
-                        if (onIsolateStructure) onIsolateStructure('sympathetic', organKey);
-                      }}
-                      className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-amber-500 hover:bg-amber-600 text-white flex items-center gap-1 shrink-0 cursor-pointer shadow-xs transition-colors"
-                      title="Isolate sympathetic nerve supply in 3D"
-                    >
-                      <span>Inspect 3D</span>
-                      <ArrowRight className="w-3 h-3" />
-                    </button>
+                    {sympathetic3DTarget ? (
+                      <button
+                        data-testid="innervation-sympathetic-3d"
+                        onClick={() => {
+                          navigateToStructure(sympathetic3DTarget.targetId, sympathetic3DTarget.cameraPreset);
+                          if (onIsolateStructure) onIsolateStructure(sympathetic3DTarget.targetId, organKey);
+                        }}
+                        className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-amber-500 hover:bg-amber-600 text-white flex items-center gap-1 shrink-0 cursor-pointer shadow-xs transition-colors"
+                        title="Inspect the verified sympathetic 3D target"
+                      >
+                        <span>Inspect 3D</span><ArrowRight className="w-3 h-3" />
+                      </button>
+                    ) : (
+                      <span className="text-[10px] font-semibold text-slate-400 shrink-0">No source-matched 3D target</span>
+                    )}
                   </div>
 
                   <div className={`p-3 rounded-xl flex items-center justify-between gap-2 ${isLight ? 'bg-white border border-amber-100' : 'bg-slate-900/60'}`}>
@@ -779,17 +848,21 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
                         {organ.innervation.parasympathetic}
                       </span>
                     </div>
-                    <button
-                      onClick={() => {
-                        navigateToStructure('vagus_nerve', organKey === 'heart' ? 'thorax' : 'head');
-                        if (onIsolateStructure) onIsolateStructure('vagus_nerve', organKey);
-                      }}
-                      className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-amber-500 hover:bg-amber-600 text-white flex items-center gap-1 shrink-0 cursor-pointer shadow-xs transition-colors"
-                      title="Isolate parasympathetic / vagal nerve supply in 3D"
-                    >
-                      <span>Inspect 3D</span>
-                      <ArrowRight className="w-3 h-3" />
-                    </button>
+                    {parasympathetic3DTarget ? (
+                      <button
+                        data-testid="innervation-parasympathetic-3d"
+                        onClick={() => {
+                          navigateToStructure(parasympathetic3DTarget.targetId, parasympathetic3DTarget.cameraPreset);
+                          if (onIsolateStructure) onIsolateStructure(parasympathetic3DTarget.targetId, organKey);
+                        }}
+                        className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-amber-500 hover:bg-amber-600 text-white flex items-center gap-1 shrink-0 cursor-pointer shadow-xs transition-colors"
+                        title="Inspect the source-matched parasympathetic 3D target"
+                      >
+                        <span>Inspect 3D</span><ArrowRight className="w-3 h-3" />
+                      </button>
+                    ) : (
+                      <span className="text-[10px] font-semibold text-slate-400 shrink-0">No source-matched 3D target</span>
+                    )}
                   </div>
 
                   <div className={`p-3 rounded-xl flex items-center justify-between gap-2 ${isLight ? 'bg-white border border-amber-100' : 'bg-slate-900/60'}`}>
@@ -799,17 +872,21 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
                         {organ.innervation.somaticOrSensory}
                       </span>
                     </div>
-                    <button
-                      onClick={() => {
-                        navigateToStructure('somatic_nerve', 'head');
-                        if (onIsolateStructure) onIsolateStructure('somatic_nerve');
-                      }}
-                      className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-amber-500 hover:bg-amber-600 text-white flex items-center gap-1 shrink-0 cursor-pointer shadow-xs transition-colors"
-                      title="Isolate somatic / sensory nerves in 3D"
-                    >
-                      <span>Inspect 3D</span>
-                      <ArrowRight className="w-3 h-3" />
-                    </button>
+                    {sensory3DTarget ? (
+                      <button
+                        data-testid="innervation-sensory-3d"
+                        onClick={() => {
+                          navigateToStructure(sensory3DTarget.targetId, sensory3DTarget.cameraPreset);
+                          if (onIsolateStructure) onIsolateStructure(sensory3DTarget.targetId, organKey);
+                        }}
+                        className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-amber-500 hover:bg-amber-600 text-white flex items-center gap-1 shrink-0 cursor-pointer shadow-xs transition-colors"
+                        title="Inspect the source-matched sensory / somatic 3D target"
+                      >
+                        <span>Inspect 3D</span><ArrowRight className="w-3 h-3" />
+                      </button>
+                    ) : (
+                      <span className="text-[10px] font-semibold text-slate-400 shrink-0">No source-matched 3D target</span>
+                    )}
                   </div>
 
                   <div className={`p-2.5 rounded-xl ${isLight ? 'bg-amber-100/60 text-amber-900' : 'bg-amber-950/40 text-amber-200'}`}>

@@ -31,6 +31,11 @@ const report = {
   warnings: [],
 };
 
+const organDbSource = fs.readFileSync(path.resolve('src/simulator/data/organAnatomyData.ts'), 'utf8');
+const organDbBody = organDbSource.slice(organDbSource.indexOf('export const ORGAN_ANATOMY_DATABASE'));
+const allOrganKeys = [...organDbBody.matchAll(/^  ([a-zA-Z_][\\w]*):\\s*\\{/gm)].map((match) => match[1]);
+if (allOrganKeys.length < 30) throw new Error('Could not enumerate the complete ORGAN_ANATOMY_DATABASE for exhaustive E2E');
+
 let activeFeature = 'bootstrap';
 let pageErrors = [];
 
@@ -555,6 +560,60 @@ await feature('representative-organ-routes', async () => {
     await documentFits(organ + ' dossier');
   }
   await shot('10-representative-organs');
+});
+
+await feature('every-organ-dossier-innervation-and-3d-target', async () => {
+  const actionIds = ['innervation-sympathetic-3d', 'innervation-parasympathetic-3d', 'innervation-sensory-3d'];
+  let innervationActionClicks = 0;
+  let screenshots = 0;
+
+  const openOrgan = async (organ) => {
+    await goto('/simulator?organ=' + encodeURIComponent(organ) + '&isolate=' + encodeURIComponent(organ));
+    const drawer = page.getByTestId('organ-detail-drawer');
+    await visible(drawer, organ + ' anatomy dossier');
+    const vascularTab = drawer.getByTestId('organ-drawer-tab-vascular');
+    await vascularTab.scrollIntoViewIfNeeded();
+    await vascularTab.click();
+    const nerveHeading = drawer.getByText('Peripheral & Autonomic Nerves', { exact: true });
+    await nerveHeading.scrollIntoViewIfNeeded();
+    await visible(nerveHeading, organ + ' innervation section');
+    const text = (await drawer.textContent()) || '';
+    for (const required of ['Sympathetic:', 'Parasympathetic:', 'Sensory/Somatic:', 'Referred Pain Pattern:']) {
+      assert(text.includes(required), organ + ' is missing innervation field ' + required);
+    }
+    return drawer;
+  };
+
+  for (const organ of allOrganKeys) {
+    let drawer = await openOrgan(organ);
+    await shot('organ-' + organ + '-innervation');
+    screenshots++;
+
+    for (const testId of actionIds) {
+      const action = drawer.getByTestId(testId);
+      if ((await action.count()) === 0 || !(await action.isVisible())) continue;
+      await action.scrollIntoViewIfNeeded();
+      await action.click();
+      innervationActionClicks++;
+      await page.waitForTimeout(250);
+      const bodyText = ((await page.locator('body').textContent()) || '').toLowerCase();
+      assert(!bodyText.includes('reference model failed to load'), organ + ' ' + testId + ' triggered a model-load failure');
+      assert(!bodyText.includes('unable to load'), organ + ' ' + testId + ' triggered an unable-to-load state');
+      drawer = await openOrgan(organ);
+    }
+
+    const close = drawer.getByTitle('Close Drawer');
+    await close.scrollIntoViewIfNeeded();
+    await close.click();
+    await drawer.waitFor({ state: 'detached' });
+    await page.waitForTimeout(350);
+    await visible(page.getByTestId('mobile-anatomy-stage'), organ + ' isolated 3D stage');
+    await shot('organ-' + organ + '-3d');
+    screenshots++;
+  }
+  report.organAudit = { organCount: allOrganKeys.length, innervationActionClicks, screenshots };
+  assert(allOrganKeys.length >= 30, 'Exhaustive organ audit unexpectedly covered too few dossiers');
+  assert(innervationActionClicks >= 25, 'Too few source-matched innervation 3D actions were exercised: ' + innervationActionClicks);
 });
 
 report.finishedAt = new Date().toISOString();

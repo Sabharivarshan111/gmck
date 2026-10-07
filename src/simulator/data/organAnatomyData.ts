@@ -501,8 +501,8 @@ export const ORGAN_ANATOMY_DATABASE: Record<string, DetailedOrganAnatomy> = {
     innervation: {
       sympathetic: 'Celiac plexus (T7-T10 splanchnic nerves).',
       parasympathetic: 'Anterior and Posterior Vagal Trunks (CN X).',
-      somaticOrSensory: 'Right Phrenic Nerve (C3-C5) sensory fibers supply Glisson\'s capsule and peritoneal covering.',
-      referredPain: 'Pain referred to right shoulder tip (dermatomes C3-C5) in hepatic distension, abscess, or cholecystitis.',
+      somaticOrSensory: 'Visceral afferents from the liver and its capsule travel mainly with autonomic fibers through the hepatic/celiac plexus. The central diaphragmatic peritoneum is somatically innervated by the phrenic nerve (C3-C5); the peripheral diaphragmatic and other parietal peritoneum is supplied by lower intercostal nerves.',
+      referredPain: 'Shoulder-tip referral occurs when the central diaphragmatic peritoneum is irritated by subphrenic or adjacent hepatobiliary pathology via phrenic afferents C3-C5. Capsular distension more typically causes right upper-quadrant visceral discomfort.',
     },
     nerveNodes: [
       {
@@ -793,7 +793,7 @@ export const ORGAN_ANATOMY_DATABASE: Record<string, DetailedOrganAnatomy> = {
       sympathetic: 'Greater splanchnic nerve (T5-T9) via celiac ganglion.',
       parasympathetic: 'Posterior vagal trunk.',
       somaticOrSensory: 'Visceral epigastric afferents.',
-      referredPain: 'Deep boring epigastric pain radiating directly to back (T12-L1) in pancreatitis or peptic ulcer perforation.'
+      referredPain: 'Celiac-plexus visceral pain is poorly localized to the upper abdomen. Radiation to the back depends on the diseased foregut organ, classically the pancreas, rather than the celiac trunk itself.'
     },
     lymphaticDrainage: ['Celiac lymph nodes surrounding the trunk, thence to cisterna chyli.'],
     musculoskeletalRelations: ['Surrounded by celiac plexus of nerves, retroperitoneal behind lesser sac.'],
@@ -882,7 +882,7 @@ export const ORGAN_ANATOMY_DATABASE: Record<string, DetailedOrganAnatomy> = {
     ],
     innervation: {
       sympathetic: 'Superior cervical ganglion postganglionic sympathetic fibers along internal and external carotid plexuses.',
-      parasympathetic: 'Greater petrosal nerve (CN VII) and otic ganglion branches to cerebral vessels.',
+      parasympathetic: 'Cranial parasympathetic vasodilator fibers reach meningeal/anterior cerebral vessels mainly through CN VII greater petrosal fibers synapsing in the pterygopalatine ganglion; additional pathways including the otic ganglion are described.',
       somaticOrSensory: 'Brain parenchyma is insensate. Dural meninges are innervated by Ophthalmic (V1), Maxillary (V2), Mandibular (V3) branches of Trigeminal nerve, and upper cervical nerves (C2-C3).',
       referredPain: 'Tentorium cerebelli inflammation refers pain to forehead and behind eyes (V1 ophthalmic distribution); posterior fossa dural irritation refers pain to occiput and nape of neck (C2-C3).',
     },
@@ -934,7 +934,7 @@ export const ORGAN_ANATOMY_DATABASE: Record<string, DetailedOrganAnatomy> = {
       sympathetic: 'T10-L1 spinal segments via renal plexus and least splanchnic nerve (causes vasoconstriction of afferent arterioles and stimulates renin release via Beta-1 receptors on juxtaglomerular cells).',
       parasympathetic: 'Vagus nerve (CN X) branches via coeliac plexus (physiological role minor).',
       somaticOrSensory: 'Renal capsule and pelvic sensory afferents enter T10-L1 spinal dorsal root ganglia.',
-      referredPain: 'Renal colic radiates from the loin (renal angle) to the groin, scrotum/labia majora, and inner thigh along dermatome T10-L1 ("Loin to Groin").',
+      referredPain: 'Renal capsular or parenchymal pain is typically a dull flank/loin ache. The classic colicky "loin-to-groin" pattern is usually ureteric obstruction, with visceral afferents entering roughly T10-L2 as the stone descends.',
     },
     lymphaticDrainage: [
       'Renal lymphatics follow renal vessels to Para-aortic (Lumbar) lymph nodes situated around aorta and IVC.',
@@ -1055,7 +1055,7 @@ export const ORGAN_ANATOMY_DATABASE: Record<string, DetailedOrganAnatomy> = {
     ],
     innervation: {
       sympathetic: 'Aorticorenal and thoracic sympathetic plexuses governing smooth muscle tone.',
-      parasympathetic: 'Vagus nerve sensory baroreceptors in aortic arch (Cyon nerve) responding to systemic mean arterial pressure.',
+      parasympathetic: 'No major parasympathetic motor supply to the aortic wall is emphasized clinically; aortic-arch baroreceptor afferents travel centrally in the vagus nerve as visceral sensory input.',
       somaticOrSensory: 'Aortic dissection tears media, causing excruciating tearing or ripping pain radiating to back between scapulae.',
       referredPain: 'Interscapular back pain (thoracic aorta) or severe mid-lumbar back/flank pain (abdominal aortic aneurysm leakage/rupture).',
     },
@@ -1149,8 +1149,8 @@ export const ORGAN_ANATOMY_DATABASE: Record<string, DetailedOrganAnatomy> = {
     innervation: {
       sympathetic: 'Vasomotor hyperactivation and severe sympathetic pain response.',
       parasympathetic: 'None.',
-      somaticOrSensory: 'Superficial peroneal and sural nerves (severe burning somatic pain, hyperesthesia).',
-      referredPain: 'Excruciating pain extending up the limb following ascending lymphangitis to tender inguinal lymphadenitis.',
+      somaticOrSensory: 'Local pain is carried by somatic sensory fibers at the actual bite site; the named peripheral nerve depends on bite location. Neurotoxic envenoming affects neuromuscular transmission rather than one fixed limb nerve.',
+      referredPain: 'Pain and swelling may extend proximally with tissue inflammation or lymphatic spread; there is no single fixed referred-pain nerve distribution for snakebite.',
     },
     lymphaticDrainage: [
       'Superficial and deep lymphatic channels of lower limb draining sequentially into Popliteal nodes and Superficial/Deep Inguinal lymph node basin.',
@@ -1320,7 +1320,7 @@ export const ORGAN_ANATOMY_DATABASE: Record<string, DetailedOrganAnatomy> = {
     ],
     innervation: {
       sympathetic: 'T6-T8 spinal segments via celiac plexus (governs splenic capsular smooth muscle contraction and arteriolar vasomotor tone).',
-      parasympathetic: 'Vagus nerve (CN X) branches via celiac plexus.',
+      parasympathetic: 'Direct parasympathetic/vagal innervation of the human spleen is controversial; demonstrated hilar nerves are predominantly sympathetic/catecholaminergic, so a direct vagal supply should not be presented as established anatomy.',
       somaticOrSensory: 'Splenic capsule innervated by pain fibers; splenic parenchyma is insensitive.',
       referredPain: 'Kehr Sign: Sharp referred pain to tip of left shoulder caused by blood in the left subdiaphragmatic space irritating the diaphragmatic peritoneum (C3-C5 phrenic nerve dermatome).',
     },
