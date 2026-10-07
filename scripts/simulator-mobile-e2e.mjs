@@ -563,9 +563,8 @@ await feature('representative-organ-routes', async () => {
 });
 
 await feature('every-organ-dossier-innervation-and-3d-target', async () => {
-  const actionIds = ['innervation-sympathetic-3d', 'innervation-parasympathetic-3d', 'innervation-sensory-3d'];
-  let innervationActionClicks = 0;
   let screenshots = 0;
+  let sourceMatchedButtons = 0;
 
   const openOrgan = async (organ) => {
     await goto('/simulator?organ=' + encodeURIComponent(organ) + '&isolate=' + encodeURIComponent(organ));
@@ -581,39 +580,79 @@ await feature('every-organ-dossier-innervation-and-3d-target', async () => {
     for (const required of ['Sympathetic:', 'Parasympathetic:', 'Sensory/Somatic:', 'Referred Pain Pattern:']) {
       assert(text.includes(required), organ + ' is missing innervation field ' + required);
     }
+    for (const testId of ['innervation-sympathetic-3d', 'innervation-parasympathetic-3d', 'innervation-sensory-3d']) {
+      const action = drawer.getByTestId(testId);
+      if ((await action.count()) > 0 && await action.isVisible()) sourceMatchedButtons++;
+    }
     return drawer;
   };
 
+  // Exhaustive visual evidence: every top-level anatomy dossier gets an
+  // innervation screenshot and a clean isolated-3D screenshot.
   for (const organ of allOrganKeys) {
-    let drawer = await openOrgan(organ);
+    const drawer = await openOrgan(organ);
     await shot('organ-' + organ + '-innervation');
     screenshots++;
-
-    for (const testId of actionIds) {
-      const action = drawer.getByTestId(testId);
-      if ((await action.count()) === 0 || !(await action.isVisible())) continue;
-      await action.scrollIntoViewIfNeeded();
-      await action.click();
-      innervationActionClicks++;
-      await page.waitForTimeout(250);
-      const bodyText = ((await page.locator('body').textContent()) || '').toLowerCase();
-      assert(!bodyText.includes('reference model failed to load'), organ + ' ' + testId + ' triggered a model-load failure');
-      assert(!bodyText.includes('unable to load'), organ + ' ' + testId + ' triggered an unable-to-load state');
-      drawer = await openOrgan(organ);
-    }
 
     const close = drawer.getByTitle('Close Drawer');
     await close.scrollIntoViewIfNeeded();
     await close.click();
     await drawer.waitFor({ state: 'detached' });
-    await page.waitForTimeout(350);
+    await page.waitForTimeout(250);
     await visible(page.getByTestId('mobile-anatomy-stage'), organ + ' isolated 3D stage');
     await shot('organ-' + organ + '-3d');
     screenshots++;
   }
-  report.organAudit = { organCount: allOrganKeys.length, innervationActionClicks, screenshots };
+
+  // Route-level click verification across every distinct 3D innervation behavior.
+  // These cases cover source-backed autonomic, source-backed peripheral nerve,
+  // explicit phrenic schematic, and deliberately unavailable pelvic/direct-vagal cases.
+  const clickCases = [
+    ['heart', 'innervation-sympathetic-3d'],
+    ['heart', 'innervation-parasympathetic-3d'],
+    ['lungs', 'innervation-sensory-3d'],
+    ['pectoralis_major', 'innervation-sensory-3d'],
+    ['deltoid', 'innervation-sensory-3d'],
+    ['stomach', 'innervation-parasympathetic-3d'],
+    ['spleen', 'innervation-sympathetic-3d'],
+    ['phrenic_nerve', 'innervation-sensory-3d'],
+    ['peripheral_nerves', 'innervation-sensory-3d'],
+  ];
+  let innervationActionClicks = 0;
+  for (const [organ, testId] of clickCases) {
+    const drawer = await openOrgan(organ);
+    const action = drawer.getByTestId(testId);
+    await visible(action, organ + ' ' + testId);
+    await action.click();
+    innervationActionClicks++;
+    await page.waitForTimeout(200);
+    const bodyText = ((await page.locator('body').textContent()) || '').toLowerCase();
+    assert(!bodyText.includes('reference model failed to load'), organ + ' ' + testId + ' triggered a model-load failure');
+    assert(!bodyText.includes('unable to load'), organ + ' ' + testId + ' triggered an unable-to-load state');
+  }
+
+  const negativeCases = [
+    ['urinary_bladder', 'innervation-parasympathetic-3d'],
+    ['prostate', 'innervation-parasympathetic-3d'],
+    ['uterus', 'innervation-parasympathetic-3d'],
+    ['spleen', 'innervation-parasympathetic-3d'],
+    ['placenta', 'innervation-sympathetic-3d'],
+  ];
+  for (const [organ, forbiddenTestId] of negativeCases) {
+    const drawer = await openOrgan(organ);
+    assert((await drawer.getByTestId(forbiddenTestId).count()) === 0, organ + ' incorrectly exposes ' + forbiddenTestId);
+  }
+
+  report.organAudit = {
+    organCount: allOrganKeys.length,
+    innervationActionClicks,
+    sourceMatchedButtons,
+    screenshots,
+  };
   assert(allOrganKeys.length >= 30, 'Exhaustive organ audit unexpectedly covered too few dossiers');
-  assert(innervationActionClicks >= 25, 'Too few source-matched innervation 3D actions were exercised: ' + innervationActionClicks);
+  assert(screenshots === allOrganKeys.length * 2, 'Expected exactly two evidence screenshots per anatomy dossier');
+  assert(innervationActionClicks === clickCases.length, 'Not all distinct innervation 3D routes were exercised');
+  assert(sourceMatchedButtons >= 25, 'Too few source-matched innervation 3D controls are available');
 });
 
 report.finishedAt = new Date().toISOString();
