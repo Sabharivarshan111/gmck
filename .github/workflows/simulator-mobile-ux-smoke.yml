@@ -1,0 +1,43 @@
+name: ORBIT Mobile UX Production Smoke
+
+on:
+  push:
+    paths:
+      - 'scripts/simulator-mobile-ux-smoke.mjs'
+      - '.github/workflows/simulator-mobile-ux-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  production-mobile-ux:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts --no-audit --no-fund
+
+      - name: Install Chromium runner
+        run: npx playwright install --with-deps chromium
+
+      - name: Exercise the live mobile anatomy UX
+        env:
+          SIMULATOR_E2E_BASE_URL: https://orbitmbbs.vercel.app
+        run: node scripts/simulator-mobile-ux-smoke.mjs
+
+      - name: Upload focused mobile UX screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: simulator-mobile-ux-${{ github.sha }}
+          path: artifacts/simulator-mobile-ux
+          if-no-files-found: error
+          retention-days: 14

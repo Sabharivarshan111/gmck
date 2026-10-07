@@ -1,0 +1,191 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import { chromium } from 'playwright';
+
+const baseURL = process.env.SIMULATOR_E2E_BASE_URL || 'https://orbitmbbs.vercel.app';
+const outDir = path.resolve('artifacts/simulator-mobile-ux');
+fs.mkdirSync(outDir, { recursive: true });
+
+const browser = await chromium.launch({
+  headless: true,
+  args: ['--enable-webgl', '--ignore-gpu-blocklist', '--use-angle=swiftshader'],
+});
+const context = await browser.newContext({
+  viewport: { width: 390, height: 844 },
+  deviceScaleFactor: 1,
+  isMobile: true,
+  hasTouch: true,
+  userAgent:
+    'Mozilla/5.0 (Linux; Android 14; SM-S918B) AppleWebKit/537.36 Chrome/152.0 Mobile Safari/537.36',
+});
+const page = await context.newPage();
+page.setDefaultTimeout(15000);
+
+const report = {
+  baseURL,
+  viewport: { width: 390, height: 844 },
+  startedAt: new Date().toISOString(),
+  checks: [],
+  warnings: [],
+};
+
+page.on('console', (msg) => {
+  if (msg.type() === 'error') {
+    report.warnings.push({ type: 'console-error', message: msg.text() });
+  }
+});
+page.on('pageerror', (err) => {
+  report.warnings.push({ type: 'page-error', message: String(err?.message || err) });
+});
+
+const assert = (condition, message) => {
+  if (!condition) throw new Error(message);
+};
+const visible = async (locator, label) => {
+  await locator.waitFor({ state: 'visible' });
+  const box = await locator.boundingBox();
+  assert(box && box.width > 0 && box.height > 0, label + ' has no visible box');
+  return box;
+};
+const touchSafe = async (locator, label, min = 43) => {
+  const box = await visible(locator, label);
+  assert(box.width >= min && box.height >= min,
+    label + ' touch target is ' + Math.round(box.width) + 'x' + Math.round(box.height) + 'px');
+  return box;
+};
+const documentFits = async (label) => {
+  const dims = await page.evaluate(() => ({
+    innerWidth: window.innerWidth,
+    html: document.documentElement.scrollWidth,
+    body: document.body.scrollWidth,
+  }));
+  assert(dims.html <= dims.innerWidth + 2 && dims.body <= dims.innerWidth + 2,
+    label + ' has horizontal overflow: ' + JSON.stringify(dims));
+};
+const shot = async (name) => {
+  await page.screenshot({ path: path.join(outDir, name + '.png'), fullPage: false });
+};
+const goto = async (urlPath) => {
+  await page.goto(baseURL + urlPath, { waitUntil: 'domcontentloaded', timeout: 60000 });
+  await page.locator('body').waitFor({ state: 'visible' });
+  await page.waitForTimeout(1200);
+};
+const check = async (name, fn) => {
+  const started = Date.now();
+  try {
+    await fn();
+    report.checks.push({ name, status: 'passed', durationMs: Date.now() - started });
+  } catch (error) {
+    report.checks.push({
+      name,
+      status: 'failed',
+      durationMs: Date.now() - started,
+      error: error instanceof Error ? error.stack || error.message : String(error),
+    });
+    try { await shot('FAIL-' + name.replace(/[^a-z0-9]+/gi, '-').toLowerCase()); } catch {}
+  }
+};
+
+await check('compact-toolbar-and-visible-canvas', async () => {
+  await goto('/simulator');
+  const stage = page.getByTestId('mobile-anatomy-stage');
+  const toolbar = stage.getByTestId('dissection-toolbar');
+  await visible(stage, 'mobile anatomy stage');
+  const toolbarBox = await visible(toolbar, 'compact dissection toolbar');
+  assert(toolbarBox.height <= 180, 'Mobile dissection toolbar is still too tall: ' + Math.round(toolbarBox.height) + 'px');
+  for (const id of ['inspect', 'scalpel', 'isolate']) {
+    await touchSafe(toolbar.getByTestId('dissection-mode-' + id), id + ' mode');
+  }
+  await touchSafe(toolbar.getByTestId('dissection-xray'), 'X-Ray');
+  const canvas = stage.locator('canvas').first();
+  const canvasBox = await visible(canvas, '3D anatomy canvas');
+  assert(canvasBox.height >= 390, '3D canvas is too short: ' + Math.round(canvasBox.height) + 'px');
+  await visible(page.getByTestId('mobile-gesture-hint'), 'mobile gesture hint');
+  await documentFits('3D stage');
+  await shot('01-compact-toolbar-visible-canvas');
+});
+
+await check('drawer-peek-does-not-block-3d', async () => {
+  await goto('/simulator?organ=pectoralis_major');
+  const drawer = page.getByTestId('organ-detail-drawer');
+  const drawerBox = await visible(drawer, 'Pectoralis Major drawer');
+  assert(drawerBox.height <= 360, 'Collapsed anatomy drawer covers too much of the phone: ' + Math.round(drawerBox.height) + 'px');
+  assert((await page.locator('[aria-label="Collapse anatomy details"]').count()) === 0,
+    'Collapsed drawer still has a full-screen backdrop that can intercept rotation gestures');
+  await visible(drawer.getByRole('heading', { name: /Pectoralis Major/i }).first(), 'Pectoralis Major heading');
+  await touchSafe(drawer.getByTitle('Open the 3D viewport and center this structure'), 'View 3D');
+  await touchSafe(drawer.getByTestId('drawer-isolate-btn'), 'Isolate 3D');
+  await documentFits('drawer peek');
+  await shot('02-drawer-peek');
+});
+
+await check('view-3d-handoff-and-rotation', async () => {
+  await goto('/simulator?organ=pectoralis_major');
+  const drawer = page.getByTestId('organ-detail-drawer');
+  await visible(drawer, 'drawer before View 3D');
+  await drawer.getByTitle('Open the 3D viewport and center this structure').click();
+  await drawer.waitFor({ state: 'detached' });
+  const stage = page.getByTestId('mobile-anatomy-stage');
+  await visible(page.getByTestId('mobile-gesture-hint'), 'gesture hint after View 3D');
+  const canvas = stage.locator('canvas').first();
+  const box = await visible(canvas, 'exposed 3D canvas');
+  const before = await canvas.screenshot();
+  const x = box.x + box.width * 0.5;
+  const y = box.y + box.height * 0.45;
+  await page.mouse.move(x, y);
+  await page.mouse.down();
+  await page.mouse.move(x + 90, y + 30, { steps: 10 });
+  await page.mouse.up();
+  await page.waitForTimeout(500);
+  const after = await canvas.screenshot();
+  assert(!before.equals(after), 'Dragging the exposed canvas did not change the 3D render');
+  await shot('03-view-3d-after-rotation');
+});
+
+await check('isolate-handoff', async () => {
+  await goto('/simulator?organ=pectoralis_major');
+  const drawer = page.getByTestId('organ-detail-drawer');
+  await visible(drawer, 'drawer before isolate');
+  await drawer.getByTestId('drawer-isolate-btn').click();
+  await drawer.waitFor({ state: 'detached' });
+  const banner = page.getByTestId('mobile-isolation-banner');
+  await visible(banner, 'isolation banner');
+  await visible(banner.getByRole('button', { name: 'Dossier' }), 'Dossier action');
+  await visible(banner.getByRole('button', { name: 'Restore' }), 'Restore action');
+  await shot('04-isolate-focus');
+});
+
+await check('thoracoacromial-reopens-pectoralis-not-heart', async () => {
+  await goto('/simulator?organ=pectoralis_major');
+  let drawer = page.getByTestId('organ-detail-drawer');
+  await visible(drawer, 'Pectoralis dossier');
+  await drawer.getByTestId('organ-drawer-tab-vascular').click();
+  const inspect = drawer.getByRole('button', { name: /Inspect in 3D/i }).first();
+  await visible(inspect, 'Thoracoacromial Inspect in 3D');
+  await inspect.click();
+  await drawer.waitFor({ state: 'detached' });
+  const banner = page.getByTestId('mobile-isolation-banner');
+  await visible(banner, 'Thoracoacromial isolation banner');
+  const bannerText = ((await banner.textContent()) || '').toLowerCase();
+  assert(bannerText.includes('thoracoacromial'), 'Expected thoracoacromial child isolation, got: ' + bannerText);
+  await banner.getByRole('button', { name: 'Dossier' }).click();
+  drawer = page.getByTestId('organ-detail-drawer');
+  await visible(drawer, 'reopened parent dossier');
+  const heading = drawer.getByRole('heading').first();
+  await visible(heading, 'parent dossier heading');
+  const text = ((await heading.textContent()) || '').trim();
+  assert(/Pectoralis Major/i.test(text), 'Child structure reopened wrong dossier: ' + text);
+  await shot('05-thoracoacromial-parent-dossier');
+});
+
+report.finishedAt = new Date().toISOString();
+report.summary = {
+  passed: report.checks.filter((x) => x.status === 'passed').length,
+  failed: report.checks.filter((x) => x.status === 'failed').length,
+  warnings: report.warnings.length,
+};
+fs.writeFileSync(path.join(outDir, 'report.json'), JSON.stringify(report, null, 2));
+await browser.close();
+
+console.log(JSON.stringify(report.summary));
+if (report.summary.failed > 0) process.exit(1);
