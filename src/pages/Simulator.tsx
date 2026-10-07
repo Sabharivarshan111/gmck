@@ -130,6 +130,19 @@ export const Simulator: React.FC = () => {
     }
   };
 
+  const handleLayerPeelChange = (value: number) => {
+    // Depth Peel is a global whole-body exploration control. If a structure is
+    // isolated, changing the slider must leave isolation first; otherwise the
+    // selected structure can be peeled out of its own system and the viewport
+    // becomes visually empty while the layer label keeps changing.
+    if (isolatedPartId) {
+      setIsolatedPartId(null);
+      setContextOrganId(null);
+      if (toolMode === 'isolate') setToolMode('inspect');
+    }
+    setLayerPeel(value);
+  };
+
   const handleRestorePart = (partId: string) => {
     setHiddenPartIds((prev) => prev.filter((id) => id !== partId));
     setDissectedParts((prev) => prev.filter((p) => p.id !== partId));
@@ -443,7 +456,7 @@ export const Simulator: React.FC = () => {
               isXray={isXray}
               onToggleXray={() => setIsXray(!isXray)}
               layerPeel={layerPeel}
-              onChangeLayerPeel={setLayerPeel}
+              onChangeLayerPeel={handleLayerPeelChange}
               dissectedParts={dissectedParts}
               onRestorePart={handleRestorePart}
               onUndoLastDissect={handleUndoLastDissect}
@@ -935,7 +948,7 @@ export const Simulator: React.FC = () => {
               isXray={isXray}
               onToggleXray={() => setIsXray(!isXray)}
               layerPeel={layerPeel}
-              onChangeLayerPeel={setLayerPeel}
+              onChangeLayerPeel={handleLayerPeelChange}
               dissectedParts={dissectedParts}
               onRestorePart={handleRestorePart}
               onUndoLastDissect={handleUndoLastDissect}

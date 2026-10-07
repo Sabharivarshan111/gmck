@@ -2979,13 +2979,13 @@ varying float partSelected;
           visible = 0.0;
         }
       } else if (isolatedElements && isolatedElements.size > 0) {
-        // Isolation Mode: Show target elements fully, context organ in contrasting translucent color
-        // Depth peel still applies WITHIN the isolated organ — so slider works!
+        // Isolation Mode: an isolated target is an explicit visibility lock.
+        // Global depth peeling belongs to whole-body exploration, so it must
+        // never erase the structure that the learner just isolated. The page
+        // handler exits isolation before applying a user-driven peel change;
+        // this renderer rule is the defensive invariant for programmatic state.
         if (isolatedElements.has(p.id)) {
-          // If this part's system has been peeled away, respect depth peel even in isolation
-          if (peeledSystems.has(p.system)) {
-            visible = 0.0;
-          } else if (isCardiacTarget && p.bounds && (Math.abs(p.bounds[0][0]) > 0.18 || Math.abs(p.bounds[1][0]) > 0.18 || p.bounds[1][1] < 1.02)) {
+          if (isCardiacTarget && p.bounds && (Math.abs(p.bounds[0][0]) > 0.18 || Math.abs(p.bounds[1][0]) > 0.18 || p.bounds[1][1] < 1.02)) {
             visible = 0.0;
           } else {
             visible = 1.0;

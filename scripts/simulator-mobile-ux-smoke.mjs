@@ -155,6 +155,38 @@ await check('isolate-handoff', async () => {
   await shot('04-isolate-focus');
 });
 
+await check('depth-peel-exits-isolation-and-shows-requested-layer', async () => {
+  await goto('/simulator?organ=pectoralis_major');
+  const drawer = page.getByTestId('organ-detail-drawer');
+  await visible(drawer, 'Pectoralis dossier before depth peel');
+  await drawer.getByTestId('drawer-isolate-btn').click();
+  await drawer.waitFor({ state: 'detached' });
+
+  const banner = page.getByTestId('mobile-isolation-banner');
+  await visible(banner, 'Pectoralis isolation banner before depth peel');
+
+  const depth = page.getByTestId('dissection-depth');
+  await depth.evaluate((el) => {
+    el.value = '0.96';
+    el.dispatchEvent(new Event('input', { bubbles: true }));
+    el.dispatchEvent(new Event('change', { bubbles: true }));
+  });
+
+  await banner.waitFor({ state: 'detached' });
+  assert(Number(await depth.inputValue()) > 0.9, 'Depth peel slider did not move to skeletal layer');
+  await visible(page.getByText('Skeletal Framework', { exact: true }), 'Skeletal Framework label');
+  assert(
+    (await page.getByTestId('mobile-isolation-banner').count()) === 0,
+    'Isolation banner remained active after moving the global depth peel slider'
+  );
+
+  const canvas = page.getByTestId('mobile-anatomy-stage').locator('canvas').first();
+  const canvasBox = await visible(canvas, 'skeletal framework canvas after leaving isolation');
+  assert(canvasBox.height >= 390, 'Skeletal framework canvas collapsed after depth peel');
+  await page.waitForTimeout(500);
+  await shot('05-depth-peel-restores-global-layer');
+});
+
 await check('thoracoacromial-reopens-pectoralis-not-heart', async () => {
   await goto('/simulator?organ=pectoralis_major');
   let drawer = page.getByTestId('organ-detail-drawer');
@@ -175,7 +207,7 @@ await check('thoracoacromial-reopens-pectoralis-not-heart', async () => {
   await visible(heading, 'parent dossier heading');
   const text = ((await heading.textContent()) || '').trim();
   assert(/Pectoralis Major/i.test(text), 'Child structure reopened wrong dossier: ' + text);
-  await shot('05-thoracoacromial-parent-dossier');
+  await shot('06-thoracoacromial-parent-dossier');
 });
 
 report.finishedAt = new Date().toISOString();
