@@ -593,8 +593,7 @@ await feature('organ-drawer-and-anatomy-dossier', async () => {
   await visible(drawer, 'pectoralis major dossier');
   const vascularTab = drawer.getByTestId('organ-drawer-tab-vascular');
   await vascularTab.click();
-  const thoracoCard = drawer.getByText(/Thoracoacromial Trunk/i).first().locator('..').locator('..');
-  const inspectChild = thoracoCard.getByRole('button', { name: /Inspect in 3D/i });
+  const inspectChild = drawer.getByTestId('arterial-node-thoracoacromial-3d');
   await visible(inspectChild, 'thoracoacromial Inspect in 3D');
   await inspectChild.click();
   await drawer.waitFor({ state: 'detached' });
