@@ -660,6 +660,7 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
                             )}
                           </div>
                           <button
+                            data-testid={`arterial-node-${art.id}-3d`}
                             onClick={() => {
                               navigateToStructure(art.id, art.cameraPreset);
                               if (onIsolateStructure) onIsolateStructure(art.id, organKey);
