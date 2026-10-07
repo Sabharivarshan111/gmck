@@ -174,7 +174,10 @@ await check('depth-peel-exits-isolation-and-shows-requested-layer', async () => 
 
   await banner.waitFor({ state: 'detached' });
   assert(Number(await depth.inputValue()) > 0.9, 'Depth peel slider did not move to skeletal layer');
-  await visible(page.getByText('Skeletal Framework', { exact: true }), 'Skeletal Framework label');
+  await visible(
+    page.getByTestId('mobile-anatomy-stage').getByText('Skeletal Framework', { exact: true }),
+    'Skeletal Framework label'
+  );
   assert(
     (await page.getByTestId('mobile-isolation-banner').count()) === 0,
     'Isolation banner remained active after moving the global depth peel slider'
