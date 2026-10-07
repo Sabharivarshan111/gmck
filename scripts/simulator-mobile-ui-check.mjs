@@ -86,8 +86,23 @@ requireText(
 );
 requireText(
   simulator,
-  "height: 'max(400px, min(70dvh, 620px))'",
-  '3D anatomy stage lost its adaptive mobile height.'
+  "'max(400px, min(70dvh, 620px))'",
+  '3D anatomy stage lost its assembled-mode adaptive mobile height.'
+);
+requireText(
+  simulator,
+  "'max(480px, min(76dvh, 690px))'",
+  'Spread anatomy no longer reclaims vertical space for the mobile 3D stage.'
+);
+requireText(
+  simulator,
+  'explodeAmount <= 0.02 && (',
+  'Spread anatomy no longer suppresses competing mobile controls.'
+);
+requireText(
+  anatomy3d,
+  "explodeAmount > 0.02 ? 'hidden md:flex' : 'flex'",
+  'Regional camera controls are no longer hidden during focused mobile spread mode.'
 );
 
 // Dense secondary surfaces must behave like sheets/decks instead of desktop
@@ -172,7 +187,7 @@ if (failures.length) {
 console.log('\nORBIT mobile simulator UI check OK');
 console.log('  ECG: tracing-first mobile order, horizontally scrolling wave controls, no 760px regression');
 console.log('  Diagnostics/PICCLED/Tutorial: 100dvh mobile sheets with touch-safe controls');
-console.log('  3D/POCUS: adaptive viewport heights');
+console.log('  3D/POCUS: adaptive viewport heights, including expanded focused spread mode');
 console.log('  Mobile tabs: anatomy, telemetry, and interventions stay mutually focused');
 console.log('  Organ drawer/dissection controls: compact non-blocking mobile sheet and horizontal-control behavior preserved');
-console.log('  Spread anatomy: GPU exploded inventory + touch selection + collision-safe floating labels preserved');
+console.log('  Spread anatomy: focused mobile mode + GPU exploded inventory + touch selection + collision-safe labels preserved');
