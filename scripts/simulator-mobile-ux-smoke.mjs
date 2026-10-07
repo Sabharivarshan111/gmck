@@ -128,9 +128,10 @@ await check('spread-anatomy-inventory-and-clickable-labels', async () => {
   await setRangeValue(spread, 0.48);
   await page.waitForTimeout(850);
   assert(Number(await spread.inputValue()) > 0.45, 'Spread slider did not enter separated-system range');
+  const toolbarShell = stage.getByTestId('mobile-dissection-toolbar-shell');
   assert(
-    (await stage.getByTestId('dissection-toolbar').count()) === 0,
-    'Dissection/depth toolbar should leave the mobile stage while Spread anatomy is active'
+    !(await toolbarShell.isVisible().catch(() => false)),
+    'Dissection/depth toolbar should be visually hidden while Spread anatomy is active'
   );
   assert(
     !(await stage.getByTestId('mobile-gesture-hint').isVisible().catch(() => false)),

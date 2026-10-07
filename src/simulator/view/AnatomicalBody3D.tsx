@@ -3805,6 +3805,15 @@ varying float partSelected;
       {/* Top Floating Control Bar */}
       <div
         data-testid="anatomy-camera-controls"
+        aria-hidden={explodeAmount > 0.02}
+        style={{
+          display:
+            explodeAmount > 0.02 &&
+            typeof window !== 'undefined' &&
+            window.innerWidth < 768
+              ? 'none'
+              : undefined,
+        }}
         className={`absolute top-3 left-3 right-3 z-10 items-center justify-between pointer-events-none gap-2 ${
           explodeAmount > 0.02 ? 'hidden md:flex' : 'flex'
         }`}

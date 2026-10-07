@@ -482,7 +482,11 @@ export const Simulator: React.FC = () => {
           {/* 3D Anatomical Viewport with Interactive Dissection Engine (7 cols) */}
           <div className="lg:col-span-7 flex flex-col space-y-2">
             {/* Dissection & Peeler Toolbar */}
-            {explodeAmount <= 0.02 && (
+            <div
+              data-testid="mobile-dissection-toolbar-shell"
+              aria-hidden={explodeAmount > 0.02}
+              style={{ display: explodeAmount > 0.02 ? 'none' : 'block' }}
+            >
               <DissectionToolbar
                 toolMode={toolMode}
                 onSelectToolMode={handleSelectToolMode}
@@ -496,7 +500,7 @@ export const Simulator: React.FC = () => {
                 onRestoreAll={handleRestoreAll}
                 theme={theme}
               />
-            )}
+            </div>
 
             {/* Viewport Canvas */}
             <div className="h-[490px] w-full relative">
@@ -1069,14 +1073,14 @@ export const Simulator: React.FC = () => {
                   onDissectPart={handleDissectPart}
                 />
               )}
-              {explodeAmount <= 0.02 && (
-                <div
-                  data-testid="mobile-gesture-hint"
-                  className="absolute bottom-[92px] left-1/2 -translate-x-1/2 z-20 md:hidden pointer-events-none max-w-[calc(100%-24px)] px-3 py-1.5 rounded-full bg-slate-950/75 text-white/95 backdrop-blur-md text-[9px] font-semibold tracking-wide whitespace-nowrap shadow-lg"
-                >
-                  1-finger drag: rotate · pinch: zoom · 2 fingers: pan
-                </div>
-              )}
+              <div
+                data-testid="mobile-gesture-hint"
+                aria-hidden={explodeAmount > 0.02}
+                style={{ display: explodeAmount > 0.02 ? 'none' : undefined }}
+                className="absolute bottom-[92px] left-1/2 -translate-x-1/2 z-20 md:hidden pointer-events-none max-w-[calc(100%-24px)] px-3 py-1.5 rounded-full bg-slate-950/75 text-white/95 backdrop-blur-md text-[9px] font-semibold tracking-wide whitespace-nowrap shadow-lg"
+              >
+                1-finger drag: rotate · pinch: zoom · 2 fingers: pan
+              </div>
               <AnatomySpreadControl
                 value={explodeAmount}
                 onChange={handleSpreadChange}

@@ -96,8 +96,13 @@ requireText(
 );
 requireText(
   simulator,
-  'explodeAmount <= 0.02 && (',
+  'data-testid="mobile-dissection-toolbar-shell"',
   'Spread anatomy no longer suppresses competing mobile controls.'
+);
+requireText(
+  simulator,
+  "style={{ display: explodeAmount > 0.02 ? 'none' : 'block' }}",
+  'Spread anatomy lost its explicit mobile toolbar visibility rule.'
 );
 
 requireText(
