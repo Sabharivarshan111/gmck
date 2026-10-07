@@ -84,7 +84,7 @@ requireText(
 );
 requireText(
   simulator,
-  "height: 'max(340px, min(66dvh, 560px))'",
+  "height: 'max(400px, min(70dvh, 620px))'",
   '3D anatomy stage lost its adaptive mobile height.'
 );
 
@@ -112,7 +112,7 @@ requireText(
 );
 requireText(
   drawer,
-  "isMobileExpanded ? 'h-[92dvh]' : 'h-[52dvh]'",
+  "isMobileExpanded ? 'h-[88dvh]' : 'h-[38dvh]'",
   'Organ detail drawer lost its dvh-based mobile bottom-sheet sizing.'
 );
 
@@ -138,4 +138,4 @@ console.log('  ECG: tracing-first mobile order, horizontally scrolling wave cont
 console.log('  Diagnostics/PICCLED/Tutorial: 100dvh mobile sheets with touch-safe controls');
 console.log('  3D/POCUS: adaptive viewport heights');
 console.log('  Mobile tabs: anatomy, telemetry, and interventions stay mutually focused');
-console.log('  Organ drawer/dissection controls: mobile bottom-sheet and horizontal-control behavior preserved');
+console.log('  Organ drawer/dissection controls: compact non-blocking mobile sheet and horizontal-control behavior preserved');

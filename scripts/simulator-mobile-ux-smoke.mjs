@@ -139,7 +139,8 @@ await check('view-3d-handoff-and-rotation', async () => {
   await page.waitForTimeout(500);
   const after = await canvas.screenshot();
   assert(!before.equals(after), 'Dragging the exposed canvas did not change the 3D render');
-  await shot('03-view-3d-after-rotation');
+  assert(after.length > 8000, 'Rotated 3D canvas rendered suspiciously blank');
+  fs.writeFileSync(path.join(outDir, '03-view-3d-after-rotation.png'), after);
 });
 
 await check('isolate-handoff', async () => {
@@ -186,8 +187,13 @@ await check('depth-peel-exits-isolation-and-shows-requested-layer', async () => 
   const canvas = page.getByTestId('mobile-anatomy-stage').locator('canvas').first();
   const canvasBox = await visible(canvas, 'skeletal framework canvas after leaving isolation');
   assert(canvasBox.height >= 390, 'Skeletal framework canvas collapsed after depth peel');
-  await page.waitForTimeout(500);
-  await shot('05-depth-peel-restores-global-layer');
+  await page.waitForTimeout(700);
+  const skeletalFrame = await canvas.screenshot();
+  assert(
+    skeletalFrame.length > 8000,
+    'Skeletal Framework canvas rendered suspiciously blank after leaving Pectoralis isolation'
+  );
+  fs.writeFileSync(path.join(outDir, '05-depth-peel-restores-global-layer.png'), skeletalFrame);
 });
 
 await check('thoracoacromial-reopens-pectoralis-not-heart', async () => {
