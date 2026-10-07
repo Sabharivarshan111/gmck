@@ -81,8 +81,8 @@ requireText(
 );
 requireText(
   simulator,
-  "mobileTab === '3d' ? 'flex' : 'hidden lg:flex'",
-  'Deep Inspector is no longer scoped to the mobile 3D tab.'
+  "mobileTab === '3d' && explodeAmount <= 0.02 ? 'flex' : 'hidden'",
+  'Deep Inspector is no longer scoped to assembled mobile 3D mode.'
 );
 requireText(
   simulator,
@@ -99,11 +99,7 @@ requireText(
   'explodeAmount <= 0.02 && (',
   'Spread anatomy no longer suppresses competing mobile controls.'
 );
-requireText(
-  simulator,
-  "mobileTab === '3d' && explodeAmount <= 0.02 ? 'flex' : 'hidden'",
-  'Deep Inspector no longer yields the mobile viewport to Spread anatomy.'
-);
+
 requireText(
   anatomy3d,
   "explodeAmount > 0.02 ? 'hidden md:flex' : 'flex'",
