@@ -100,9 +100,19 @@ requireText(
   'Spread anatomy no longer suppresses competing mobile controls.'
 );
 requireText(
+  simulator,
+  "mobileTab === '3d' && explodeAmount <= 0.02 ? 'flex' : 'hidden'",
+  'Deep Inspector no longer yields the mobile viewport to Spread anatomy.'
+);
+requireText(
   anatomy3d,
   "explodeAmount > 0.02 ? 'hidden md:flex' : 'flex'",
   'Regional camera controls are no longer hidden during focused mobile spread mode.'
+);
+requireText(
+  anatomy3d,
+  'portraitInventory ? 0.78 : 0.92',
+  'Portrait exploded-inventory framing lost its bottom-dock compensation.'
 );
 
 // Dense secondary surfaces must behave like sheets/decks instead of desktop

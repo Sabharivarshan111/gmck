@@ -141,6 +141,11 @@ await check('spread-anatomy-inventory-and-clickable-labels', async () => {
     !(await cameraControls.isVisible().catch(() => false)),
     'Regional camera controls should be hidden on mobile while Spread anatomy is active'
   );
+  const deepInspector = page.getByTestId('deep-inspector-strip');
+  assert(
+    !(await deepInspector.isVisible().catch(() => false)),
+    'Deep Inspector strip should leave the mobile viewport while Spread anatomy is active'
+  );
   const expandedCanvasBox = await canvas.boundingBox();
   assert(
     expandedCanvasBox && expandedCanvasBox.height >= 470,

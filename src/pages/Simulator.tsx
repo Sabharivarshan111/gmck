@@ -584,7 +584,10 @@ export const Simulator: React.FC = () => {
 
         {/* 1-Tap Organ Deep Inspector Strip (Desktop & Mobile 3D) */}
         <div
-          className={`p-2 md:p-2.5 rounded-2xl border items-center gap-2 overflow-x-auto no-scrollbar ${mobileTab === '3d' ? 'flex' : 'hidden lg:flex'} ${
+          data-testid="deep-inspector-strip"
+          className={`p-2 md:p-2.5 rounded-2xl border items-center gap-2 overflow-x-auto no-scrollbar ${
+            mobileTab === '3d' && explodeAmount <= 0.02 ? 'flex' : 'hidden'
+          } lg:flex ${
             isLight ? 'bg-white/95 border-slate-200/80 shadow-xs' : 'bg-slate-900/90 border-slate-800 shadow-md'
           }`}
         >

@@ -2568,7 +2568,16 @@ varying float partSelected;
           .clone()
           .lerp(new THREE.Vector3(0, 0.02, 1).normalize(), frontBlend)
           .normalize();
-        const inventoryTarget = new THREE.Vector3(0, 0.92, 0);
+        // On portrait phones the bottom Spread dock owns ~90px of the canvas.
+        // Bias the camera target downward in world space so the exploded board
+        // is framed higher in the *remaining* visible area instead of looking
+        // like it has a large empty ceiling above it.
+        const portraitInventory = camera.aspect < 0.8;
+        const inventoryTarget = new THREE.Vector3(
+          0,
+          portraitInventory ? 0.78 : 0.92,
+          0
+        );
         const target = base.target
           .clone()
           .lerp(inventoryTarget, inventoryEase);
