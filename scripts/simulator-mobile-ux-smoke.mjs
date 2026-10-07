@@ -166,11 +166,11 @@ await check('depth-peel-exits-isolation-and-shows-requested-layer', async () => 
   await visible(banner, 'Pectoralis isolation banner before depth peel');
 
   const depth = page.getByTestId('mobile-anatomy-stage').getByTestId('dissection-depth');
-  await depth.evaluate((el) => {
-    el.value = '0.96';
-    el.dispatchEvent(new Event('input', { bubbles: true }));
-    el.dispatchEvent(new Event('change', { bubbles: true }));
-  });
+  await depth.scrollIntoViewIfNeeded();
+  await depth.focus();
+  // Use the native range interaction path rather than mutating DOM value
+  // directly. This fires the same React onChange path as a real drag/tap.
+  await depth.press('End');
 
   await banner.waitFor({ state: 'detached' });
   assert(Number(await depth.inputValue()) > 0.9, 'Depth peel slider did not move to skeletal layer');
