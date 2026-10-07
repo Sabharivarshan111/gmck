@@ -585,6 +585,38 @@ await feature('organ-drawer-and-anatomy-dossier', async () => {
   await isolationBanner.getByRole('button', { name: 'Restore' }).click();
   await isolationBanner.waitFor({ state: 'detached' });
 
+  // Regression for the exact mobile bug reported from the pectoralis dossier:
+  // tapping the thoracoacromial child must isolate it, then Dossier must reopen
+  // Pectoralis Major rather than falling through to the generic Heart dossier.
+  await goto('/simulator?organ=pectoralis_major');
+  drawer = page.getByTestId('organ-detail-drawer');
+  await visible(drawer, 'pectoralis major dossier');
+  const vascularTab = drawer.getByTestId('organ-drawer-tab-vascular');
+  await vascularTab.click();
+  const thoracoCard = drawer.getByText(/Thoracoacromial Trunk/i).first().locator('..').locator('..');
+  const inspectChild = thoracoCard.getByRole('button', { name: /Inspect in 3D/i });
+  await visible(inspectChild, 'thoracoacromial Inspect in 3D');
+  await inspectChild.click();
+  await drawer.waitFor({ state: 'detached' });
+  const childBanner = page.getByTestId('mobile-isolation-banner');
+  await visible(childBanner, 'thoracoacromial isolation banner');
+  assert(
+    ((await childBanner.textContent()) || '').toLowerCase().includes('thoracoacromial'),
+    'Child isolation banner did not identify thoracoacromial structure'
+  );
+  await childBanner.getByRole('button', { name: 'Dossier' }).click();
+  drawer = page.getByTestId('organ-detail-drawer');
+  await visible(drawer, 'parent dossier reopened from child isolation');
+  await visible(
+    drawer.getByRole('heading', { name: /Pectoralis Major/i }).first(),
+    'correct Pectoralis Major parent dossier'
+  );
+  assert(
+    !((await drawer.getByRole('heading').first().textContent()) || '').match(/^Heart$/i),
+    'Thoracoacromial child incorrectly reopened Heart dossier'
+  );
+  await shot('09d-thoracoacromial-parent-dossier');
+
   await documentFits('Organ dossier mobile handoff');
 });
 
