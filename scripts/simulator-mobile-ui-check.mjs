@@ -112,8 +112,13 @@ requireText(
 );
 requireText(
   anatomy3d,
-  'portraitInventory ? 0.78 : 0.92',
+  'portraitInventory ? 0.62 : 0.92',
   'Portrait exploded-inventory framing lost its bottom-dock compensation.'
+);
+requireText(
+  anatomy3d,
+  'portraitInventory ? fitDistance * 0.78 : fitDistance',
+  'Portrait full-spread view lost its readable tighter-fit behavior.'
 );
 
 // Dense secondary surfaces must behave like sheets/decks instead of desktop
