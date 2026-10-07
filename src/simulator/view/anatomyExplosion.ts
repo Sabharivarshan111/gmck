@@ -55,7 +55,9 @@ export function buildExplodedInventoryTargets(
   }
 
   const safeAspect = clamp(aspect || 1, 0.42, 1.8);
-  const padding = safeAspect < 0.75 ? 0.010 : 0.014;
+  // Portrait phones need a tighter inventory packing density so the final
+  // slider state remains legible without an extreme camera zoom-out.
+  const padding = safeAspect < 0.75 ? 0.006 : 0.012;
   const cards = parts.map((part, index) => {
     const min = part.bounds[0];
     const max = part.bounds[1];
@@ -81,7 +83,7 @@ export function buildExplodedInventoryTargets(
     safeAspect < 0.8 ? 1.18 : safeAspect < 1.2 ? 1.35 : 1.55;
   const desiredWidth = Math.max(
     maxCardWidth * 1.6,
-    Math.sqrt(totalArea * inventoryAspect) * 1.04
+    Math.sqrt(totalArea * inventoryAspect) * (safeAspect < 0.75 ? 1.0 : 1.04)
   );
 
   // The slider's first half already teaches system separation. At 100%
