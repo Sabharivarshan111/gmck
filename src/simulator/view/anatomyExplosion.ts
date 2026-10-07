@@ -75,9 +75,17 @@ export function buildExplodedInventoryTargets(
 
   const totalArea = cards.reduce((sum, card) => sum + card.width * card.height, 0);
   const maxCardWidth = Math.max(...cards.map((card) => card.width));
+
+  // The source pieces themselves are tall/narrow (ribs, vessels, long bones).
+  // Packing to the phone's raw portrait aspect makes the final inventory look
+  // like a vertical stripe. Use a wider atlas-board aspect instead: the camera
+  // will fit that board inside the portrait viewport, producing the broad
+  // matrix students expect from an anatomy inventory.
+  const inventoryAspect =
+    safeAspect < 0.8 ? 1.18 : safeAspect < 1.2 ? 1.35 : 1.55;
   const desiredWidth = Math.max(
-    maxCardWidth * 1.08,
-    Math.sqrt(totalArea * safeAspect) * (safeAspect < 0.75 ? 0.98 : 1.10)
+    maxCardWidth * 1.6,
+    Math.sqrt(totalArea * inventoryAspect) * 1.04
   );
 
   // Grouping by system keeps the inventory visually learnable; descending

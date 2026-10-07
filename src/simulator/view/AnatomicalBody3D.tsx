@@ -3619,12 +3619,17 @@ varying float partSelected;
     }
   }, [selectedOrganId, isolatedPartId, modelsReady]);
 
-  // Update X-Ray Material Radiographic Rendering
+  // Update X-Ray Material Radiographic Rendering and the spread-mode
+  // studio contrast. BodyParts3D bone is intentionally ivory; on the normal
+  // white studio it becomes low-contrast once 2,234 pieces are separated.
   useEffect(() => {
     const materials = systemMaterialsRef.current;
+    const spreadActive = explodeAmount > 0.08 && !isolatedPartId;
     if (sceneRef.current) {
       if (isXray) {
         sceneRef.current.background = new THREE.Color(0x020617); // Dark diagnostic PACS radiographic film
+      } else if (isLight && spreadActive) {
+        sceneRef.current.background = new THREE.Color(0xdbe4ec);
       } else {
         sceneRef.current.background = new THREE.Color(isLight ? 0xedf2f7 : 0x070b14);
       }
@@ -3655,12 +3660,18 @@ varying float partSelected;
       } else {
         mat.opacity = sysId === 'integumentary' ? 0.12 : 1.0;
         mat.depthWrite = sysId !== 'integumentary';
-        const origSys = SYSTEMS.find((s) => s.id === sysId);
-        if (origSys) mat.color.setHex(parseInt(origSys.color.replace('#', '0x')));
+        if (sysId === 'skeletal' && isLight && spreadActive) {
+          // Warm teaching-atlas bone keeps individual ribs/vertebrae visible
+          // against the light mobile studio without changing source geometry.
+          mat.color.setHex(0xcdb88e);
+        } else {
+          const origSys = SYSTEMS.find((s) => s.id === sysId);
+          if (origSys) mat.color.setHex(parseInt(origSys.color.replace('#', '0x')));
+        }
       }
       mat.needsUpdate = true;
     });
-  }, [isXray, isLight]);
+  }, [isXray, isLight, explodeAmount, isolatedPartId]);
 
   // Camera Presets
   const resetCamera = (preset: 'anterior' | 'head' | 'thorax' | 'abdomen') => {
