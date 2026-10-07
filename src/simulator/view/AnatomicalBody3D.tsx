@@ -1556,9 +1556,34 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
     // 8. Load BodyParts3D Atlas Manifest & Binary Chunks
     const abortCtrl = new AbortController();
 
+    // Mobile networks can briefly drop a large same-origin asset request when
+    // Chrome is also decoding WebGL resources. A single fetch failure used to
+    // leave the anatomy canvas permanently blank until a manual reload. Retry
+    // only transport/HTTP failures; AbortError still exits immediately during
+    // unmount/navigation so this never keeps a dead WebGL view alive.
+    const fetchAtlasAsset = async (url: string, attempts = 3): Promise<Response> => {
+      let lastError: unknown = null;
+      for (let attempt = 0; attempt < attempts; attempt += 1) {
+        try {
+          const response = await fetch(url, { signal: abortCtrl.signal });
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status} while loading ${url}`);
+          }
+          return response;
+        } catch (error: any) {
+          if (error?.name === 'AbortError' || abortCtrl.signal.aborted || disposed) throw error;
+          lastError = error;
+          if (attempt < attempts - 1) {
+            await new Promise((resolve) => window.setTimeout(resolve, 300 * (attempt + 1)));
+          }
+        }
+      }
+      throw lastError instanceof Error ? lastError : new Error(`Failed to load ${url}`);
+    };
+
     const loadAtlas = async () => {
       try {
-        const res = await fetch('/models/atlas.json', { signal: abortCtrl.signal });
+        const res = await fetchAtlasAsset('/models/atlas.json');
         const atlas: Atlas = await res.json();
         if (disposed) return;
         atlasRef.current = atlas;
@@ -1719,7 +1744,7 @@ varying float partSelected;
         const chunkTasks = atlas.chunks.map((chunk) => async () => {
           const hasGzip = !!chunk.gzip;
           const fetchUrl = hasGzip ? chunk.gzip! : chunk.url;
-          const resp = await fetch(fetchUrl, { signal: abortCtrl.signal });
+          const resp = await fetchAtlasAsset(fetchUrl);
           return await decodeModelResponse(resp, chunk.bytes, hasGzip);
         });
 
