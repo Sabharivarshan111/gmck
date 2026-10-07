@@ -23,10 +23,12 @@ jobs:
           cache: npm
 
       - name: Install dependencies
-        run: npm ci --ignore-scripts --no-audit --no-fund
+        run: npm ci --legacy-peer-deps --ignore-scripts --no-audit --no-fund
 
       - name: Install Chromium runner
-        run: npx playwright install --with-deps chromium
+        run: |
+          npm install --no-save --package-lock=false --legacy-peer-deps playwright@1.55.0
+          npx playwright install --with-deps chromium
 
       - name: Exercise the live mobile anatomy UX
         env:
