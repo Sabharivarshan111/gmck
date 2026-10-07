@@ -962,7 +962,9 @@ export const Simulator: React.FC = () => {
                     <button
                       onClick={() =>
                         setSelectedOrganId(
-                          getVerifiedReferenceOrganKey(isolatedPartId) || isolatedPartId
+                          contextOrganId ||
+                            getVerifiedReferenceOrganKey(isolatedPartId) ||
+                            isolatedPartId
                         )
                       }
                       className="min-h-[36px] text-[10px] font-bold px-2.5 rounded-xl bg-sky-100 text-sky-900 dark:bg-sky-950 dark:text-sky-200 cursor-pointer"
