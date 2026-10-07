@@ -1581,9 +1581,9 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
       const spread = explodeAmountRef.current;
       const maxVisible = isMobileDevice
         ? spread > 0.82
-          ? 5
+          ? 4
           : spread > 0.45
-          ? 6
+          ? 5
           : 4
         : spread > 0.82
         ? 10
@@ -1607,7 +1607,7 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
           // A structure may sit close to the edge while its label still fits
           // perfectly once clamped inward. Only discard points genuinely
           // outside the stage; horizontal safe-area clamping happens below.
-          if (x < -32 || x > w + 32 || y < 72 || y > h - 105) return null;
+          if (x < -24 || x > w + 24 || y < 88 || y > h - 128) return null;
           return { target, x, y };
         })
         .filter(Boolean)
@@ -1621,17 +1621,17 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
         const halfWidth = candidate.target.widthHint * 0.5;
         const safeX = THREE.MathUtils.clamp(
           candidate.x,
-          halfWidth + 8,
-          Math.max(halfWidth + 8, w - halfWidth - 8)
+          halfWidth + 14,
+          Math.max(halfWidth + 14, w - halfWidth - 14)
         );
         const collides = placed.some(
           (point) =>
             Math.abs(point.x - safeX) <
               Math.max(
-                isMobileDevice ? 70 : 82,
-                (point.width + candidate.target.widthHint) * 0.5 + 8
+                isMobileDevice ? 76 : 82,
+                (point.width + candidate.target.widthHint) * 0.5 + 12
               ) &&
-            Math.abs(point.y - candidate.y) < 34
+            Math.abs(point.y - candidate.y) < 40
         );
         if (collides) continue;
 
@@ -2542,6 +2542,7 @@ varying float partSelected;
           THREE.MathUtils.clamp(next / separatedEnd, 0, 1)
         );
 
+        const portraitInventory = camera.aspect < 0.8;
         let inventoryScale = 2.2;
         if (layout) {
           const verticalFov = THREE.MathUtils.degToRad(camera.fov);
@@ -2552,10 +2553,16 @@ varying float partSelected;
           const horizontalDistance =
             layout.width / Math.max(0.15, 2 * Math.tan(horizontalFov / 2));
           const fitDistance = Math.max(verticalDistance * 1.22, horizontalDistance * 1.16);
+          // A phone cannot show all 2,234 atlas meshes at once and keep them
+          // educationally readable. At the final slider stop we intentionally
+          // fit a slightly tighter crop and switch one-finger touch to pan,
+          // preserving large source structures instead of shrinking the atlas
+          // into confetti. Desktop still receives the full-board fit.
+          const readableFitDistance = portraitInventory ? fitDistance * 0.78 : fitDistance;
           inventoryScale = THREE.MathUtils.clamp(
-            fitDistance / Math.max(0.1, base.distance),
-            1.75,
-            6.2
+            readableFitDistance / Math.max(0.1, base.distance),
+            portraitInventory ? 1.6 : 1.75,
+            portraitInventory ? 4.2 : 6.2
           );
         }
 
@@ -2572,10 +2579,9 @@ varying float partSelected;
         // Bias the camera target downward in world space so the exploded board
         // is framed higher in the *remaining* visible area instead of looking
         // like it has a large empty ceiling above it.
-        const portraitInventory = camera.aspect < 0.8;
         const inventoryTarget = new THREE.Vector3(
           0,
-          portraitInventory ? 0.78 : 0.92,
+          portraitInventory ? 0.62 : 0.92,
           0
         );
         const target = base.target
