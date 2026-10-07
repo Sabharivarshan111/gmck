@@ -15,6 +15,12 @@ import {
   DissectionToolMode,
 } from '../data/atlasTypes';
 import { correctPartSystem, describeAtlasTarget, resolveAtlasElementIds, resolvePartToOrganKey } from '../data/atlasResolver';
+import {
+  buildExplodedInventoryTargets,
+  buildPartCenters,
+  buildSystemAngles,
+  type ExplosionLayout,
+} from './anatomyExplosion';
 import { isPeripheralNerveTarget, meshMatchesPeripheralNerveTarget, normalisePeripheralNerveTarget, peripheralNerveKeyForMeshName, PERIPHERAL_NERVE_MODEL_URL } from '../data/peripheralNerves';
 import {
   getHraOrganModel,
@@ -51,6 +57,7 @@ interface AnatomicalBody3DProps {
   toolMode?: DissectionToolMode;
   isXray?: boolean;
   layerPeel?: number;
+  explodeAmount?: number;
   hiddenPartIds?: string[];
   isolatedPartId?: string | null;
   onDissectPart?: (part: Part) => void;
@@ -146,6 +153,23 @@ export function resolveContextOrganId(isolatedId?: string | null, selectedId?: s
 // the element lookup did: it is pure logic over a part's name and system, and
 // keeping it out of this file is what lets the check run the real function.
 export { resolvePartToOrganKey } from '../data/atlasResolver';
+
+const FLOATING_ANATOMY_LABELS = [
+  { key: 'brain', label: 'Brain', priority: 100 },
+  { key: 'heart', label: 'Heart', priority: 99 },
+  { key: 'lungs', label: 'Lungs', priority: 98 },
+  { key: 'liver', label: 'Liver', priority: 97 },
+  { key: 'kidney', label: 'Kidney', priority: 94 },
+  { key: 'stomach', label: 'Stomach', priority: 93 },
+  { key: 'pancreas', label: 'Pancreas', priority: 90 },
+  { key: 'spleen', label: 'Spleen', priority: 89 },
+  { key: 'small_intestine', label: 'Small intestine', priority: 88 },
+  { key: 'urinary_bladder', label: 'Urinary bladder', priority: 87 },
+  { key: 'aorta', label: 'Aorta', priority: 86 },
+  { key: 'pectoralis_major', label: 'Pectoralis major', priority: 84 },
+  { key: 'deltoid', label: 'Deltoid', priority: 82 },
+  { key: 'spinal_cord', label: 'Spinal cord', priority: 80 },
+] as const;
 
 // ============================================================================
 // Autonomic Nervous System & Sympathetic Trunk 3D Generator
@@ -1207,12 +1231,14 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
   toolMode = 'inspect',
   isXray = false,
   layerPeel = 0,
+  explodeAmount = 0,
   hiddenPartIds = [],
   isolatedPartId = null,
   onDissectPart,
   onAtlasLoaded,
 }) => {
   const mountRef = useRef<HTMLDivElement>(null);
+  const labelLayerRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<THREE.Scene | null>(null);
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
@@ -1314,6 +1340,22 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
   const partDataRef = useRef<Float32Array | null>(null);
   const selectionTextureRef = useRef<THREE.DataTexture | null>(null);
   const selectionDataRef = useRef<Uint8Array | null>(null);
+
+  // Exploded-view state is kept in flat typed arrays so moving the slider only
+  // updates one small GPU texture instead of creating 2,234 Three.js objects.
+  const partCentersRef = useRef<Float32Array | null>(null);
+  const systemAnglesRef = useRef<Float32Array | null>(null);
+  const explosionLayoutRef = useRef<ExplosionLayout | null>(null);
+  const explodeAmountRef = useRef(explodeAmount);
+  explodeAmountRef.current = explodeAmount;
+  const isolatedPartIdRef = useRef(isolatedPartId);
+  isolatedPartIdRef.current = isolatedPartId;
+  const lastExplodeAmountRef = useRef(0);
+  const explodeCameraBaseRef = useRef<{
+    target: THREE.Vector3;
+    direction: THREE.Vector3;
+    distance: number;
+  } | null>(null);
 
   const isLight = theme === 'light';
 
@@ -1426,6 +1468,141 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
       TWO: THREE.TOUCH.DOLLY_PAN,
     };
     controlsRef.current = controls;
+
+    type FloatingLabelTarget = {
+      key: string;
+      label: string;
+      priority: number;
+      partIndex: number;
+      button: HTMLButtonElement;
+    };
+    let floatingLabelTargets: FloatingLabelTarget[] = [];
+
+    const hideFloatingLabels = () => {
+      floatingLabelTargets.forEach((target) => {
+        target.button.style.display = 'none';
+      });
+    };
+
+    const prepareFloatingLabels = (atlas: Atlas) => {
+      const root = labelLayerRef.current;
+      if (!root) return;
+      root.replaceChildren();
+      floatingLabelTargets = [];
+
+      for (const spec of FLOATING_ANATOMY_LABELS) {
+        const ids = resolveAtlasElementIds(spec.key, atlas);
+        if (!ids || ids.size === 0) continue;
+
+        let bestIndex = -1;
+        let bestVolume = -1;
+        atlas.parts.forEach((part, index) => {
+          if (!ids.has(part.id)) return;
+          const min = part.bounds[0];
+          const max = part.bounds[1];
+          const volume =
+            Math.max(0.001, max[0] - min[0]) *
+            Math.max(0.001, max[1] - min[1]) *
+            Math.max(0.001, max[2] - min[2]);
+          if (volume > bestVolume) {
+            bestVolume = volume;
+            bestIndex = index;
+          }
+        });
+        if (bestIndex < 0) continue;
+
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.textContent = spec.label;
+        button.setAttribute('data-testid', `anatomy-label-${spec.key}`);
+        button.setAttribute('aria-label', `Open ${spec.label} anatomy details`);
+        button.title = `Open ${spec.label} anatomy details`;
+        button.className =
+          'absolute left-0 top-0 hidden min-h-[34px] max-w-[150px] -translate-x-1/2 -translate-y-1/2 rounded-xl border border-slate-600/70 bg-slate-950/84 px-2.5 py-1 text-[10px] sm:text-[11px] font-bold text-white shadow-lg backdrop-blur-md pointer-events-auto whitespace-nowrap overflow-hidden text-ellipsis transition-[opacity,transform] duration-100';
+        button.addEventListener('pointerdown', (event) => event.stopPropagation());
+        button.addEventListener('click', (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          onSelectOrganIdRef.current?.(spec.key);
+        });
+        root.appendChild(button);
+        floatingLabelTargets.push({
+          key: spec.key,
+          label: spec.label,
+          priority: spec.priority,
+          partIndex: bestIndex,
+          button,
+        });
+      }
+    };
+
+    const projectedLabelPoint = new THREE.Vector3();
+    const updateFloatingLabels = () => {
+      const atlas = atlasRef.current;
+      const centers = partCentersRef.current;
+      const partData = partDataRef.current;
+      if (!atlas || !centers || !partData || !floatingLabelTargets.length) return;
+
+      if (isolatedPartIdRef.current) {
+        hideFloatingLabels();
+        return;
+      }
+
+      const w = container.clientWidth;
+      const h = container.clientHeight;
+      if (!w || !h) return;
+
+      const spread = explodeAmountRef.current;
+      const maxVisible = isMobileDevice
+        ? spread > 0.45
+          ? 7
+          : 5
+        : spread > 0.45
+        ? 12
+        : 8;
+
+      const candidates = floatingLabelTargets
+        .map((target) => {
+          const index = target.partIndex;
+          if (partData[index * 4 + 3] < 0.1) return null;
+          projectedLabelPoint.set(
+            centers[index * 3] + partData[index * 4],
+            centers[index * 3 + 1] + partData[index * 4 + 1],
+            centers[index * 3 + 2] + partData[index * 4 + 2]
+          );
+          projectedLabelPoint.project(camera);
+          if (projectedLabelPoint.z < -1 || projectedLabelPoint.z > 1) return null;
+          const x = (projectedLabelPoint.x * 0.5 + 0.5) * w;
+          const y = (-projectedLabelPoint.y * 0.5 + 0.5) * h;
+          if (x < 28 || x > w - 28 || y < 72 || y > h - 105) return null;
+          return { target, x, y };
+        })
+        .filter(Boolean)
+        .sort((a: any, b: any) => b.target.priority - a.target.priority);
+
+      const placed: Array<{ x: number; y: number }> = [];
+      const shown = new Set<HTMLButtonElement>();
+      for (const candidate of candidates as Array<{ target: FloatingLabelTarget; x: number; y: number }>) {
+        if (placed.length >= maxVisible) break;
+        const collides = placed.some(
+          (point) =>
+            Math.abs(point.x - candidate.x) < (isMobileDevice ? 74 : 86) &&
+            Math.abs(point.y - candidate.y) < 34
+        );
+        if (collides) continue;
+
+        candidate.target.button.style.display = 'block';
+        candidate.target.button.style.transform =
+          `translate3d(${candidate.x}px, ${candidate.y}px, 0) translate(-50%, -50%)`;
+        candidate.target.button.style.opacity = spread > 0.65 ? '0.96' : '0.88';
+        shown.add(candidate.target.button);
+        placed.push({ x: candidate.x, y: candidate.y });
+      }
+
+      floatingLabelTargets.forEach((target) => {
+        if (!shown.has(target.button)) target.button.style.display = 'none';
+      });
+    };
 
     // 5. Studio lighting rig.
     //
@@ -1589,7 +1766,17 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
         atlasRef.current = atlas;
         if (onAtlasLoaded) onAtlasLoaded(atlas);
 
+        // Normalize the few source ontology mismatches before both rendering
+        // and exploded-layout grouping.
+        atlas.parts.forEach(correctPartSystem);
         const totalParts = atlas.parts.length;
+        partCentersRef.current = buildPartCenters(atlas.parts);
+        systemAnglesRef.current = buildSystemAngles(atlas.parts);
+        explosionLayoutRef.current = buildExplodedInventoryTargets(
+          atlas.parts,
+          Math.max(0.42, container.clientWidth / Math.max(1, container.clientHeight))
+        );
+        prepareFloatingLabels(atlas);
         const width = THREE.MathUtils.ceilPowerOfTwo(totalParts); // 2048
 
         // Allocate GPU DataTextures for 60 FPS Dissection & Selection
@@ -1762,12 +1949,6 @@ varying float partSelected;
         const systemGeomGroups = new Map<SystemId, THREE.BufferGeometry[]>();
 
         atlas.parts.forEach((p, partIdx) => {
-          // Two groups of parts carry an ontology `system` that does not
-          // describe what they are — the cerebral ventricles under `cardiac`,
-          // and the whole liver under `venous`. One table, in atlasResolver,
-          // shared with everything else that reads `system`: the colour, this
-          // merge group, the isolation rules and the dossier mapper.
-          correctPartSystem(p);
           const buffer = chunkBuffers[p.chunk];
           if (!buffer) return;
 
@@ -1936,6 +2117,45 @@ varying float partSelected;
       return null;
     };
 
+    const explodedPoint = new THREE.Vector3();
+    const findNearestExplodedPart = (
+      clientX: number,
+      clientY: number,
+      pointerType: string
+    ): Part | null => {
+      const atlas = atlasRef.current;
+      const centers = partCentersRef.current;
+      const partData = partDataRef.current;
+      if (!atlas || !centers || !partData) return null;
+
+      const rect = renderer.domElement.getBoundingClientRect();
+      const localX = clientX - rect.left;
+      const localY = clientY - rect.top;
+      const radius = pointerType === 'touch' ? 38 : 24;
+      let bestIndex = -1;
+      let bestDistance = Infinity;
+
+      atlas.parts.forEach((part, index) => {
+        if (partData[index * 4 + 3] < 0.1) return;
+        explodedPoint.set(
+          centers[index * 3] + partData[index * 4],
+          centers[index * 3 + 1] + partData[index * 4 + 1],
+          centers[index * 3 + 2] + partData[index * 4 + 2]
+        );
+        explodedPoint.project(camera);
+        if (explodedPoint.z < -1 || explodedPoint.z > 1) return;
+        const x = (explodedPoint.x * 0.5 + 0.5) * rect.width;
+        const y = (-explodedPoint.y * 0.5 + 0.5) * rect.height;
+        const distance = Math.hypot(x - localX, y - localY);
+        if (distance < radius && distance < bestDistance) {
+          bestDistance = distance;
+          bestIndex = index;
+        }
+      });
+
+      return bestIndex >= 0 ? atlas.parts[bestIndex] : null;
+    };
+
     const onPointerDown = (e: PointerEvent) => {
       // Ignore right/middle clicks to avoid false triggers during OrbitControls panning
       if (e.pointerType === 'mouse' && e.button !== 0) return;
@@ -1971,8 +2191,13 @@ varying float partSelected;
       pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
       pointer.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
 
-      const nerveHit = findTopmostPeripheralNerve(pointer, camera);
-      const clickedPart = nerveHit?.part ?? findTopmostVisiblePart(pointer, camera, Array.from(systemMeshesRef.current.values()));
+      const spread = explodeAmountRef.current;
+      const nerveHit = spread > 0.08 ? null : findTopmostPeripheralNerve(pointer, camera);
+      const clickedPart =
+        spread > 0.08
+          ? findNearestExplodedPart(e.clientX, e.clientY, e.pointerType)
+          : nerveHit?.part ??
+            findTopmostVisiblePart(pointer, camera, Array.from(systemMeshesRef.current.values()));
       if (!clickedPart) return;
 
       const mode = toolModeRef.current;
@@ -2031,6 +2256,13 @@ varying float partSelected;
       const isMob = w < 768 || /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isMob ? 1.0 : 1.75));
       renderer.setSize(w, h);
+      const atlas = atlasRef.current;
+      if (atlas) {
+        explosionLayoutRef.current = buildExplodedInventoryTargets(
+          atlas.parts,
+          Math.max(0.42, w / Math.max(1, h))
+        );
+      }
     };
     window.addEventListener('resize', handleResize);
     window.addEventListener('orientationchange', handleResize);
@@ -2040,6 +2272,7 @@ varying float partSelected;
     // 11. Animation Loop
     const clock = new THREE.Clock();
     let lastRenderTime = 0;
+    let lastLabelUpdate = 0;
     const animate = (now = performance.now()) => {
       if (disposed || isContextLost || document.hidden) return;
       animationFrameId = requestAnimationFrame(animate);
@@ -2091,7 +2324,15 @@ varying float partSelected;
         }
       }
 
+      const spread = explodeAmountRef.current;
+      platform.visible = spread < 0.06 && !isolatedPartIdRef.current;
+      ring.visible = spread < 0.06 && !isolatedPartIdRef.current;
+
       controls.update();
+      if (now - lastLabelUpdate > (isMobileDevice ? 90 : 65)) {
+        updateFloatingLabels();
+        lastLabelUpdate = now;
+      }
       renderer.render(scene, camera);
     };
     const resumeRendering = () => {
@@ -2117,6 +2358,8 @@ varying float partSelected;
       dom.removeEventListener('webglcontextrestored', handleContextRestored);
 
       controls.dispose();
+      if (labelLayerRef.current) labelLayerRef.current.replaceChildren();
+      floatingLabelTargets = [];
 
       // Dispose DataTextures
       if (partTextureRef.current) {
@@ -2151,6 +2394,117 @@ varying float partSelected;
       renderer.dispose();
     };
   }, []);
+
+  // Spread Anatomy: write per-structure translation into the RGB channels of
+  // the same GPU texture already used for visibility. This keeps draw calls
+  // constant while all 2,234 source meshes move independently.
+  useEffect(() => {
+    const atlas = atlasRef.current;
+    const partData = partDataRef.current;
+    const texture = partTextureRef.current;
+    const centers = partCentersRef.current;
+    const angles = systemAnglesRef.current;
+    const layout = explosionLayoutRef.current;
+    if (!modelsReady || !atlas || !partData || !texture || !centers || !angles || !layout) return;
+
+    const amount = isolatedPartId ? 0 : THREE.MathUtils.clamp(explodeAmount, 0, 1);
+    const radialEnd = 0.55;
+
+    atlas.parts.forEach((_, index) => {
+      const cx = centers[index * 3];
+      const cy = centers[index * 3 + 1];
+      const cz = centers[index * 3 + 2];
+      const angle = angles[index];
+
+      const radialX = Math.sin(angle) * 0.52 + cx * 0.18;
+      const radialY = (cy - 0.9) * 0.30;
+      const radialZ = Math.cos(angle) * 0.44 + cz * 0.08;
+
+      let dx = 0;
+      let dy = 0;
+      let dz = 0;
+
+      if (amount <= radialEnd) {
+        const t = amount / radialEnd;
+        dx = radialX * t;
+        dy = radialY * t;
+        dz = radialZ * t;
+      } else {
+        const t = (amount - radialEnd) / (1 - radialEnd);
+        const targetX = layout.targets[index * 3] - cx;
+        const targetY = layout.targets[index * 3 + 1] - cy;
+        const targetZ = layout.targets[index * 3 + 2] - cz;
+        dx = THREE.MathUtils.lerp(radialX, targetX, t);
+        dy = THREE.MathUtils.lerp(radialY, targetY, t);
+        dz = THREE.MathUtils.lerp(radialZ, targetZ, t);
+      }
+
+      partData[index * 4] = dx;
+      partData[index * 4 + 1] = dy;
+      partData[index * 4 + 2] = dz;
+    });
+
+    texture.needsUpdate = true;
+  }, [explodeAmount, isolatedPartId, modelsReady]);
+
+  // Preserve the learner's view while spreading. The camera zooms out with the
+  // layout and only eases toward front view for the final inventory, avoiding
+  // the abrupt camera jump reported by other exploded-atlas implementations.
+  useEffect(() => {
+    const camera = cameraRef.current;
+    const controls = controlsRef.current;
+    if (!camera || !controls || !modelsReady) return;
+
+    const next = isolatedPartId ? 0 : THREE.MathUtils.clamp(explodeAmount, 0, 1);
+    const previous = lastExplodeAmountRef.current;
+
+    if (previous <= 0.01 && next > 0.01) {
+      const direction = camera.position.clone().sub(controls.target);
+      const distance = Math.max(0.1, direction.length());
+      direction.normalize();
+      explodeCameraBaseRef.current = {
+        target: controls.target.clone(),
+        direction,
+        distance,
+      };
+    }
+
+    const base = explodeCameraBaseRef.current;
+    if (base) {
+      if (next <= 0.01) {
+        controls.target.copy(base.target);
+        camera.position.copy(base.target).addScaledVector(base.direction, base.distance);
+        controls.enableRotate = true;
+        controls.touches.ONE = THREE.TOUCH.ROTATE;
+        controls.maxDistance = 10;
+        controls.update();
+        explodeCameraBaseRef.current = null;
+      } else {
+        const layout = explosionLayoutRef.current;
+        const extent = layout
+          ? Math.max(1, layout.width / 1.2, layout.height / 1.75)
+          : 2.2;
+        const maxScale = THREE.MathUtils.clamp(extent * 1.18, 2.0, 5.6);
+        const distanceScale = THREE.MathUtils.lerp(1, maxScale, next);
+        const frontBlend = THREE.MathUtils.clamp((next - 0.68) / 0.32, 0, 1);
+        const direction = base.direction
+          .clone()
+          .lerp(new THREE.Vector3(0, 0.02, 1).normalize(), frontBlend)
+          .normalize();
+
+        controls.target.copy(base.target);
+        camera.position
+          .copy(base.target)
+          .addScaledVector(direction, base.distance * distanceScale);
+        controls.enableRotate = next < 0.82;
+        controls.touches.ONE = next < 0.82 ? THREE.TOUCH.ROTATE : THREE.TOUCH.PAN;
+        controls.maxDistance = Math.max(10, base.distance * maxScale * 1.25);
+        controls.update();
+      }
+    }
+
+    lastExplodeAmountRef.current = next;
+  }, [explodeAmount, isolatedPartId, modelsReady]);
 
   // Update Theme & Background
   useEffect(() => {
@@ -3162,8 +3516,14 @@ varying float partSelected;
       controlsRef.current.target.copy(center);
       cameraRef.current.position.set(center.x, center.y + 0.005, center.z + cameraDistance);
       controlsRef.current.update();
-    } else if (!isolatedPartId && cameraRef.current && controlsRef.current) {
-      // Restored full body
+    } else if (
+      !isolatedPartId &&
+      explodeAmountRef.current <= 0.08 &&
+      cameraRef.current &&
+      controlsRef.current
+    ) {
+      // Restored full body. While the anatomy is spread, preserve the current
+      // spatial exploration view when a floating label opens its dossier.
       controlsRef.current.minDistance = 0.3;
       resetCamera(cameraPreset || 'anterior');
     }
@@ -3301,6 +3661,11 @@ varying float partSelected;
       }`}
     >
       <div ref={mountRef} className="w-full h-full cursor-grab active:cursor-grabbing touch-none select-none" />
+      <div
+        ref={labelLayerRef}
+        data-testid="anatomy-floating-label-layer"
+        className="absolute inset-0 z-[8] pointer-events-none overflow-hidden"
+      />
 
       {(graphicsError || contextLost) && (
         <div role="alert" className={`absolute inset-0 z-40 flex flex-col items-center justify-center gap-4 p-6 text-center ${isLight ? 'bg-slate-50 text-slate-800' : 'bg-slate-950 text-slate-200'}`}>

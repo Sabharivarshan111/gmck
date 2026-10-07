@@ -13,6 +13,8 @@ const ward = read('src/simulator/controls/WardExamModal.tsx');
 const tutorial = read('src/simulator/instruments/EcgIcuTutorialModal.tsx');
 const toolbar = read('src/simulator/controls/DissectionToolbar.tsx');
 const drawer = read('src/simulator/controls/OrganDetailDrawer.tsx');
+const anatomy3d = read('src/simulator/view/AnatomicalBody3D.tsx');
+const spreadControl = read('src/simulator/controls/AnatomySpreadControl.tsx');
 
 const failures = [];
 const fail = (message) => failures.push(message);
@@ -116,6 +118,40 @@ requireText(
   'Organ detail drawer lost its dvh-based mobile bottom-sheet sizing.'
 );
 
+// Competitor-inspired anatomy exploration stays GPU-driven and mobile-safe:
+// one bottom slider, per-source-mesh translation in the existing atlas texture,
+// and a deliberately small clickable label pool rather than thousands of DOM nodes.
+requireText(
+  simulator,
+  '<AnatomySpreadControl',
+  'Simulator lost the Spread anatomy exploration control.'
+);
+requireText(
+  spreadControl,
+  'data-testid="anatomy-spread"',
+  'Spread anatomy control lost its range input.'
+);
+requireText(
+  anatomy3d,
+  'buildExplodedInventoryTargets',
+  '3D anatomy lost its real-mesh exploded inventory layout.'
+);
+requireText(
+  anatomy3d,
+  'transformed += state.xyz',
+  'Atlas shader lost per-structure GPU translation.'
+);
+requireText(
+  anatomy3d,
+  'findNearestExplodedPart',
+  'Exploded structures are no longer touch-selectable on mobile.'
+);
+requireText(
+  anatomy3d,
+  'anatomy-label-',
+  'Clickable floating anatomy labels were removed.'
+);
+
 // Touch target floor for critical dismiss/navigation actions.
 for (const [name, source] of [
   ['DiagnosticTools', diagnostics],
@@ -139,3 +175,4 @@ console.log('  Diagnostics/PICCLED/Tutorial: 100dvh mobile sheets with touch-saf
 console.log('  3D/POCUS: adaptive viewport heights');
 console.log('  Mobile tabs: anatomy, telemetry, and interventions stay mutually focused');
 console.log('  Organ drawer/dissection controls: compact non-blocking mobile sheet and horizontal-control behavior preserved');
+console.log('  Spread anatomy: GPU exploded inventory + touch selection + collision-safe floating labels preserved');

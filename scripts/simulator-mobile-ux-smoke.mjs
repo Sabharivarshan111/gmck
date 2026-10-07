@@ -65,6 +65,14 @@ const documentFits = async (label) => {
 const shot = async (name) => {
   await page.screenshot({ path: path.join(outDir, name + '.png'), fullPage: false, timeout: 30000 });
 };
+const setRangeValue = async (locator, value) => {
+  await locator.evaluate((element, nextValue) => {
+    const descriptor = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value');
+    descriptor?.set?.call(element, String(nextValue));
+    element.dispatchEvent(new Event('input', { bubbles: true }));
+    element.dispatchEvent(new Event('change', { bubbles: true }));
+  }, value);
+};
 const goto = async (urlPath) => {
   await page.goto(baseURL + urlPath, { waitUntil: 'domcontentloaded', timeout: 60000 });
   await page.locator('body').waitFor({ state: 'visible' });
@@ -105,6 +113,50 @@ await check('compact-toolbar-and-visible-canvas', async () => {
   await shot('01-compact-toolbar-visible-canvas');
 });
 
+await check('spread-anatomy-inventory-and-clickable-labels', async () => {
+  await goto('/simulator');
+  const stage = page.getByTestId('mobile-anatomy-stage');
+  const spreadControl = stage.getByTestId('anatomy-spread-control');
+  const spread = stage.getByTestId('anatomy-spread');
+  await visible(spreadControl, 'Spread anatomy control');
+  await visible(spread, 'Spread anatomy slider');
+
+  const canvas = stage.locator('canvas').first();
+  await visible(canvas, '3D canvas before spread');
+  const assembled = await canvas.screenshot();
+
+  await setRangeValue(spread, 0.48);
+  await page.waitForTimeout(850);
+  assert(Number(await spread.inputValue()) > 0.45, 'Spread slider did not enter separated-system range');
+  const separated = await canvas.screenshot();
+  assert(!assembled.equals(separated), 'Moving Spread anatomy did not change the rendered atlas');
+  assert(separated.length > 8000, 'Separated anatomy canvas rendered suspiciously blank');
+  await shot('02a-spread-separated-systems');
+
+  await setRangeValue(spread, 1);
+  await page.waitForTimeout(1000);
+  const inventory = await canvas.screenshot();
+  assert(!separated.equals(inventory), '100% spread did not transition to every-piece inventory');
+  assert(inventory.length > 8000, 'Every-piece anatomy inventory rendered suspiciously blank');
+
+  const labels = stage.locator('[data-testid^="anatomy-label-"]:visible');
+  const labelCount = await labels.count();
+  assert(labelCount >= 3, 'Expected at least three collision-safe anatomy labels at full spread; got ' + labelCount);
+  assert(labelCount <= 7, 'Mobile floating labels exceeded the clutter budget: ' + labelCount);
+
+  const heartLabel = stage.getByTestId('anatomy-label-heart');
+  await visible(heartLabel, 'Heart floating label');
+  await touchSafe(heartLabel, 'Heart floating label', 32);
+  await heartLabel.click();
+
+  const drawer = page.getByTestId('organ-detail-drawer');
+  await visible(drawer, 'Heart dossier from floating label');
+  await visible(drawer.getByRole('heading', { name: /Heart/i }).first(), 'Heart heading from floating label');
+  await shot('02b-spread-every-piece-label-details');
+
+  await documentFits('Spread anatomy mobile inventory');
+});
+
 await check('drawer-peek-does-not-block-3d', async () => {
   await goto('/simulator?organ=pectoralis_major');
   const drawer = page.getByTestId('organ-detail-drawer');
@@ -116,7 +168,7 @@ await check('drawer-peek-does-not-block-3d', async () => {
   await touchSafe(drawer.getByTitle('Open the 3D viewport and center this structure'), 'View 3D');
   await touchSafe(drawer.getByTestId('drawer-isolate-btn'), 'Isolate 3D');
   await documentFits('drawer peek');
-  await shot('02-drawer-peek');
+  await shot('03-drawer-peek');
 });
 
 await check('view-3d-handoff-and-rotation', async () => {
@@ -140,7 +192,7 @@ await check('view-3d-handoff-and-rotation', async () => {
   const after = await canvas.screenshot();
   assert(!before.equals(after), 'Dragging the exposed canvas did not change the 3D render');
   assert(after.length > 8000, 'Rotated 3D canvas rendered suspiciously blank');
-  fs.writeFileSync(path.join(outDir, '03-view-3d-after-rotation.png'), after);
+  fs.writeFileSync(path.join(outDir, '04-view-3d-after-rotation.png'), after);
 });
 
 await check('isolate-handoff', async () => {
@@ -153,7 +205,7 @@ await check('isolate-handoff', async () => {
   await visible(banner, 'isolation banner');
   await visible(banner.getByRole('button', { name: 'Dossier' }), 'Dossier action');
   await visible(banner.getByRole('button', { name: 'Restore' }), 'Restore action');
-  await shot('04-isolate-focus');
+  await shot('05-isolate-focus');
 });
 
 await check('depth-peel-exits-isolation-and-shows-requested-layer', async () => {
@@ -193,7 +245,7 @@ await check('depth-peel-exits-isolation-and-shows-requested-layer', async () => 
     skeletalFrame.length > 8000,
     'Skeletal Framework canvas rendered suspiciously blank after leaving Pectoralis isolation'
   );
-  fs.writeFileSync(path.join(outDir, '05-depth-peel-restores-global-layer.png'), skeletalFrame);
+  fs.writeFileSync(path.join(outDir, '06-depth-peel-restores-global-layer.png'), skeletalFrame);
 });
 
 await check('thoracoacromial-reopens-pectoralis-not-heart', async () => {
@@ -216,7 +268,7 @@ await check('thoracoacromial-reopens-pectoralis-not-heart', async () => {
   await visible(heading, 'parent dossier heading');
   const text = ((await heading.textContent()) || '').trim();
   assert(/Pectoralis Major/i.test(text), 'Child structure reopened wrong dossier: ' + text);
-  await shot('06-thoracoacromial-parent-dossier');
+  await shot('07-thoracoacromial-parent-dossier');
 });
 
 report.finishedAt = new Date().toISOString();

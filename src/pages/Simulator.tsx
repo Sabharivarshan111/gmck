@@ -26,6 +26,7 @@ import { InterventionPanel } from '../simulator/controls/InterventionPanel';
 import { OrganDetailDrawer } from '../simulator/controls/OrganDetailDrawer';
 import { WardExamModal } from '../simulator/controls/WardExamModal';
 import { DissectionToolbar } from '../simulator/controls/DissectionToolbar';
+import { AnatomySpreadControl } from '../simulator/controls/AnatomySpreadControl';
 import { DissectionToolMode, Part } from '../simulator/data/atlasTypes';
 import { isPeripheralNerveTarget } from '../simulator/data/peripheralNerves';
 import { HRA_HEART_TARGETS, isHraHeartTarget } from '../simulator/data/hraHeart';
@@ -84,6 +85,7 @@ export const Simulator: React.FC = () => {
   const [toolMode, setToolMode] = useState<DissectionToolMode>('inspect');
   const [isXray, setIsXray] = useState<boolean>(false);
   const [layerPeel, setLayerPeel] = useState<number>(0.0);
+  const [explodeAmount, setExplodeAmount] = useState<number>(0.0);
   const [hiddenPartIds, setHiddenPartIds] = useState<string[]>([]);
   // Only one of the two layouts may hold a 3D view; see use-desktop-layout.ts.
   const isDesktopLayout = useIsDesktopLayout();
@@ -140,7 +142,24 @@ export const Simulator: React.FC = () => {
       setContextOrganId(null);
       if (toolMode === 'isolate') setToolMode('inspect');
     }
+    if (explodeAmount > 0.01) setExplodeAmount(0);
     setLayerPeel(value);
+  };
+
+  const handleSpreadChange = (value: number) => {
+    const next = Math.max(0, Math.min(1, value));
+    if (next > 0.01) {
+      // Spread is a global anatomy exploration mode. It deliberately leaves
+      // isolation/depth-peel so every visible source mesh can move in one
+      // coherent scene instead of mixing incompatible spatial states.
+      if (isolatedPartId) {
+        setIsolatedPartId(null);
+        setContextOrganId(null);
+      }
+      if (toolMode === 'isolate') setToolMode('inspect');
+      if (layerPeel > 0) setLayerPeel(0);
+    }
+    setExplodeAmount(next);
   };
 
   const handleRestorePart = (partId: string) => {
@@ -161,6 +180,7 @@ export const Simulator: React.FC = () => {
     setHiddenPartIds([]);
     setDissectedParts([]);
     setIsolatedPartId(null);
+    setExplodeAmount(0);
     setLogs((prev) => [...prev, 'Full anatomical reconstruction restored.']);
   };
 
@@ -180,12 +200,24 @@ export const Simulator: React.FC = () => {
       setContextOrganId(null);
     }
 
-    const lower = organId.toLowerCase();
-    if (isPeripheralNerveTarget(organId)) setCameraPreset('anterior');
-    else if (lower.includes('brain') || lower.includes('head')) setCameraPreset('head');
-    else if (lower.includes('heart') || lower.includes('lung') || lower.includes('aorta')) setCameraPreset('thorax');
-    else if (lower.includes('liver') || lower.includes('abdomen') || lower.includes('kidney') || lower.includes('stomach') || lower.includes('spleen')) setCameraPreset('abdomen');
-  }, [toolMode]);
+    // While the anatomy is spread, preserve the learner's current spatial
+    // orientation. Clicking a floating label should open the dossier, not snap
+    // the camera back to a regional preset.
+    if (explodeAmount <= 0.08) {
+      const lower = organId.toLowerCase();
+      if (isPeripheralNerveTarget(organId)) setCameraPreset('anterior');
+      else if (lower.includes('brain') || lower.includes('head')) setCameraPreset('head');
+      else if (lower.includes('heart') || lower.includes('lung') || lower.includes('aorta')) setCameraPreset('thorax');
+      else if (lower.includes('liver') || lower.includes('abdomen') || lower.includes('kidney') || lower.includes('stomach') || lower.includes('spleen')) setCameraPreset('abdomen');
+    }
+  }, [toolMode, explodeAmount]);
+
+  // Isolation and full exploded inventory are mutually exclusive interaction
+  // modes. Any isolate request from the dossier/deep-inspector reassembles the
+  // body first so the UI slider never lies about the 3D state.
+  useEffect(() => {
+    if (isolatedPartId && explodeAmount > 0.01) setExplodeAmount(0);
+  }, [isolatedPartId, explodeAmount]);
 
   // Keyboard shortcuts: Cmd+Z / Ctrl+Z to undo, Escape to clear
   useEffect(() => {
@@ -521,11 +553,18 @@ export const Simulator: React.FC = () => {
                   toolMode={toolMode}
                   isXray={isXray}
                   layerPeel={layerPeel}
+                  explodeAmount={explodeAmount}
                   hiddenPartIds={hiddenPartIds}
                   isolatedPartId={isolatedPartId}
                   onDissectPart={handleDissectPart}
                 />
               )}
+              <AnatomySpreadControl
+                value={explodeAmount}
+                onChange={handleSpreadChange}
+                theme={theme}
+                className="absolute bottom-3 left-1/2 z-30 w-[min(390px,calc(100%-24px))] -translate-x-1/2"
+              />
             </div>
           </div>
 
@@ -1012,6 +1051,7 @@ export const Simulator: React.FC = () => {
                   toolMode={toolMode}
                   isXray={isXray}
                   layerPeel={layerPeel}
+                  explodeAmount={explodeAmount}
                   hiddenPartIds={hiddenPartIds}
                   isolatedPartId={isolatedPartId}
                   onDissectPart={handleDissectPart}
@@ -1019,10 +1059,18 @@ export const Simulator: React.FC = () => {
               )}
               <div
                 data-testid="mobile-gesture-hint"
-                className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 md:hidden pointer-events-none max-w-[calc(100%-24px)] px-3 py-1.5 rounded-full bg-slate-950/72 text-white/95 backdrop-blur-md text-[10px] font-semibold tracking-wide whitespace-nowrap shadow-lg"
+                className="absolute bottom-[92px] left-1/2 -translate-x-1/2 z-20 md:hidden pointer-events-none max-w-[calc(100%-24px)] px-3 py-1.5 rounded-full bg-slate-950/72 text-white/95 backdrop-blur-md text-[9px] font-semibold tracking-wide whitespace-nowrap shadow-lg"
               >
-                1-finger drag: rotate · pinch: zoom · 2 fingers: pan
+                {explodeAmount > 0.81
+                  ? '1-finger drag: pan · pinch: zoom · tap label: inspect'
+                  : '1-finger drag: rotate · pinch: zoom · tap label: inspect'}
               </div>
+              <AnatomySpreadControl
+                value={explodeAmount}
+                onChange={handleSpreadChange}
+                theme={theme}
+                className="absolute bottom-3 left-3 right-3 z-30"
+              />
             </div>
           </div>
 
