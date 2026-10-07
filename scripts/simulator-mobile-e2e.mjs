@@ -498,9 +498,19 @@ await feature('bedside-piccled-examination', async () => {
 
 await feature('organ-drawer-and-anatomy-dossier', async () => {
   await goto('/simulator?organ=heart');
-  const drawer = page.getByTestId('organ-detail-drawer');
+  let drawer = page.getByTestId('organ-detail-drawer');
   await visible(drawer, 'organ detail drawer');
   await visible(drawer.getByRole('heading', { name: /Heart/i }).first(), 'Heart dossier heading');
+
+  // The default mobile sheet is intentionally a compact, non-modal peek.
+  const peekBox = await drawer.boundingBox();
+  assert(peekBox && peekBox.height <= 360, 'Collapsed organ drawer is still obscuring too much of the 844px mobile viewport');
+  assert(
+    (await page.locator('[aria-label="Collapse anatomy details"]').count()) === 0,
+    'Collapsed organ drawer still installs a full-screen touch-blocking backdrop'
+  );
+  await visible(page.getByTestId('mobile-gesture-hint'), 'mobile rotate/zoom/pan hint');
+  await shot('09a-organ-drawer-peek');
 
   const expand = page.getByTitle('Expand full sheet');
   await touchSafe(expand, 'Organ drawer expand');
@@ -515,6 +525,7 @@ await feature('organ-drawer-and-anatomy-dossier', async () => {
   );
   const expandedBox = await drawer.boundingBox();
   assert(expandedBox && expandedBox.height >= 700, 'Expanded organ drawer is too short on a 844px viewport');
+  await visible(page.locator('[aria-label="Collapse anatomy details"]'), 'expanded drawer backdrop');
 
   const tabs = [
     ['overview', 'Overview & Graph'],
@@ -530,23 +541,51 @@ await feature('organ-drawer-and-anatomy-dossier', async () => {
     await tab.click();
   }
 
-  const focus3d = drawer.getByTitle('Center and zoom 3D Viewport');
-  await touchSafe(focus3d, 'Focus 3D control');
-  await focus3d.click();
+  // Collapse again, then View 3D must dismiss the sheet and return touch
+  // control to the canvas instead of leaving the model hidden underneath it.
+  const collapse = page.getByTitle('Collapse to half sheet');
+  await collapse.click();
+  await page.waitForTimeout(150);
 
-  const isolate = page.locator('#drawer-isolate-btn');
+  const view3d = drawer.getByTitle('Open the 3D viewport and center this structure');
+  await touchSafe(view3d, 'View 3D control');
+  await view3d.click();
+  await drawer.waitFor({ state: 'detached' });
+  await visible(page.getByTestId('mobile-gesture-hint'), '3D gesture hint after View 3D');
+
+  const stage = page.getByTestId('mobile-anatomy-stage');
+  const canvas = stage.locator('canvas').first();
+  const canvasBox = await visible(canvas, '3D canvas after View 3D');
+  const beforeDrag = await canvas.screenshot();
+  const dragX = canvasBox.x + canvasBox.width * 0.5;
+  const dragY = Math.min(canvasBox.y + canvasBox.height * 0.35, 760);
+  await page.mouse.move(dragX, dragY);
+  await page.mouse.down();
+  await page.mouse.move(dragX + 70, dragY + 25, { steps: 8 });
+  await page.mouse.up();
+  await page.waitForTimeout(250);
+  const afterDrag = await canvas.screenshot();
+  assert(!beforeDrag.equals(afterDrag), 'Dragging the exposed 3D canvas did not produce a changed rendered view');
+  await shot('09b-mobile-view-3d');
+
+  // Isolate is also a one-tap handoff to the model on mobile.
+  await goto('/simulator?organ=heart');
+  drawer = page.getByTestId('organ-detail-drawer');
+  await visible(drawer, 'heart dossier before isolate');
+  const isolate = drawer.getByTestId('drawer-isolate-btn');
   await touchSafe(isolate, 'Organ isolate control');
   await isolate.click();
-  assert((await isolate.getAttribute('title') || '').includes('Restore full anatomy view'), 'Organ isolation did not enter active state');
-  await isolate.click();
-
-  const close = drawer.getByTitle('Close Drawer');
-  await touchSafe(close, 'Organ drawer close');
-  await close.click();
   await drawer.waitFor({ state: 'detached' });
+  const isolationBanner = page.getByTestId('mobile-isolation-banner');
+  await visible(isolationBanner, 'mobile isolation banner');
+  await visible(isolationBanner.getByRole('button', { name: 'Dossier' }), 'isolation dossier action');
+  await visible(isolationBanner.getByRole('button', { name: 'Restore' }), 'isolation restore action');
+  await shot('09c-mobile-isolate-focus');
 
-  await documentFits('Organ dossier');
-  await shot('09-organ-dossier');
+  await isolationBanner.getByRole('button', { name: 'Restore' }).click();
+  await isolationBanner.waitFor({ state: 'detached' });
+
+  await documentFits('Organ dossier mobile handoff');
 });
 
 await feature('representative-organ-routes', async () => {
