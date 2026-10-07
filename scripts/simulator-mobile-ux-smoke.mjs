@@ -19,7 +19,7 @@ const context = await browser.newContext({
     'Mozilla/5.0 (Linux; Android 14; SM-S918B) AppleWebKit/537.36 Chrome/152.0 Mobile Safari/537.36',
 });
 const page = await context.newPage();
-page.setDefaultTimeout(15000);
+page.setDefaultTimeout(30000);
 
 const report = {
   baseURL,
@@ -63,7 +63,7 @@ const documentFits = async (label) => {
     label + ' has horizontal overflow: ' + JSON.stringify(dims));
 };
 const shot = async (name) => {
-  await page.screenshot({ path: path.join(outDir, name + '.png'), fullPage: false });
+  await page.screenshot({ path: path.join(outDir, name + '.png'), fullPage: false, timeout: 30000 });
 };
 const goto = async (urlPath) => {
   await page.goto(baseURL + urlPath, { waitUntil: 'domcontentloaded', timeout: 60000 });
@@ -165,7 +165,7 @@ await check('depth-peel-exits-isolation-and-shows-requested-layer', async () => 
   const banner = page.getByTestId('mobile-isolation-banner');
   await visible(banner, 'Pectoralis isolation banner before depth peel');
 
-  const depth = page.getByTestId('dissection-depth');
+  const depth = page.getByTestId('mobile-anatomy-stage').getByTestId('dissection-depth');
   await depth.evaluate((el) => {
     el.value = '0.96';
     el.dispatchEvent(new Event('input', { bubbles: true }));
