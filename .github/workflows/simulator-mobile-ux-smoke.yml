@@ -3,6 +3,8 @@ name: ORBIT Mobile UX Production Smoke
 on:
   push:
     paths:
+      - 'src/pages/Simulator.tsx'
+      - 'src/simulator/**'
       - 'scripts/simulator-mobile-ux-smoke.mjs'
       - '.github/workflows/simulator-mobile-ux-smoke.yml'
   workflow_dispatch:
