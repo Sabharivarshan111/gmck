@@ -56,20 +56,16 @@ export function buildExplodedInventoryTargets(
 
   const safeAspect = clamp(aspect || 1, 0.42, 1.8);
   const padding = safeAspect < 0.75 ? 0.010 : 0.014;
-  const systemIndex = new Map(SYSTEMS.map((system, index) => [system.id, index]));
-
   const cards = parts.map((part, index) => {
     const min = part.bounds[0];
     const max = part.bounds[1];
     const width = Math.max(0.018, max[0] - min[0]) + padding;
     const height = Math.max(0.018, max[1] - min[1]) + padding;
-    const centerY = (min[1] + max[1]) * 0.5;
     return {
+      id: part.id,
       index,
       width,
       height,
-      centerY,
-      system: systemIndex.get(part.system) ?? 0,
     };
   });
 
@@ -88,9 +84,17 @@ export function buildExplodedInventoryTargets(
     Math.sqrt(totalArea * inventoryAspect) * 1.04
   );
 
-  // Grouping by system keeps the inventory visually learnable; descending
-  // cranio-caudal order inside each system gives the rows anatomical rhythm.
-  cards.sort((a, b) => a.system - b.system || b.centerY - a.centerY || a.index - b.index);
+  // The slider's first half already teaches system separation. At 100%
+  // spread we instead optimize the inventory board itself: tallest/largest
+  // source meshes are packed first, preventing long bones and ribs from
+  // inflating every row and collapsing the phone layout into a narrow column.
+  // System colour still communicates category without wasting horizontal space.
+  cards.sort(
+    (a, b) =>
+      b.height - a.height ||
+      b.width - a.width ||
+      a.id.localeCompare(b.id)
+  );
 
   const placements = new Array<{ x: number; y: number }>(parts.length);
   let cursorX = 0;
