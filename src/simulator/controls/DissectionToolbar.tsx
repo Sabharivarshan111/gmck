@@ -95,7 +95,7 @@ export const DissectionToolbar: React.FC<DissectionToolbarProps> = ({
                 data-testid={`dissection-mode-${t.id}`}
                 onClick={() => onSelectToolMode(t.id)}
                 title={t.hint}
-                className={`min-h-[42px] sm:min-h-[44px] min-w-0 shrink-0 flex items-center justify-center gap-1 px-1.5 sm:px-3 rounded-lg text-[10px] sm:text-xs font-semibold transition-all cursor-pointer ${
+                className={`min-h-[44px] min-w-0 shrink-0 flex items-center justify-center gap-1 px-1.5 sm:px-3 rounded-lg text-[10px] sm:text-xs font-semibold transition-all cursor-pointer ${
                   active
                     ? isLight
                       ? 'bg-white text-slate-900 shadow-xs font-bold'
@@ -114,7 +114,7 @@ export const DissectionToolbar: React.FC<DissectionToolbarProps> = ({
             data-testid="dissection-xray"
             onClick={onToggleXray}
             title="Toggle translucent X-Ray ghosting"
-            className={`min-h-[42px] sm:min-h-[44px] min-w-0 flex items-center justify-center gap-1 px-1.5 sm:px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-semibold transition-all cursor-pointer ${
+            className={`min-h-[44px] min-w-0 flex items-center justify-center gap-1 px-1.5 sm:px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-semibold transition-all cursor-pointer ${
               isXray
                 ? 'bg-cyan-500 text-slate-950 font-bold shadow-xs'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
@@ -152,7 +152,7 @@ export const DissectionToolbar: React.FC<DissectionToolbarProps> = ({
           <button
             data-testid="dissection-tray"
             onClick={() => setTrayOpen(!trayOpen)}
-            className={`min-h-[40px] sm:min-h-[44px] shrink-0 flex items-center gap-1 px-2 sm:px-3 rounded-xl border text-[10px] sm:text-xs font-semibold transition-all cursor-pointer ${
+            className={`min-h-[44px] shrink-0 flex items-center gap-1 px-2 sm:px-3 rounded-xl border text-[10px] sm:text-xs font-semibold transition-all cursor-pointer ${
               dissectedParts.length > 0
                 ? isLight
                   ? 'bg-rose-50 border-rose-200 text-rose-700 font-bold shadow-xs'
