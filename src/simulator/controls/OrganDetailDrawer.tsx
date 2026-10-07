@@ -35,6 +35,7 @@ interface OrganDetailDrawerProps {
   onFocusCamera?: (preset: 'anterior' | 'head' | 'thorax' | 'abdomen') => void;
   onSelectOrgan?: (organId: string) => void;
   onIsolateStructure?: (structureId: string | null, parentOrganId?: string | null) => void;
+  onEnter3D?: () => void;
   onDissectOrgan?: (organId: string) => void;
   theme?: 'light' | 'dark';
 }
@@ -105,6 +106,7 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
   onFocusCamera,
   onSelectOrgan,
   onIsolateStructure,
+  onEnter3D,
   onDissectOrgan,
   theme = 'light',
 }) => {
@@ -218,19 +220,22 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 pointer-events-none flex justify-end">
-      {/* Backdrop (tap to dismiss on mobile) */}
-      <div
-        onClick={onClose}
-        className={`md:hidden absolute inset-0 transition-opacity pointer-events-auto ${
-          isMobileExpanded ? 'bg-black/40' : 'bg-black/10'
-        }`}
-      />
+      {/* Only an expanded sheet owns the space behind it. The collapsed mobile
+          sheet deliberately leaves the 3D viewport touchable so learners can
+          keep rotating/zooming while reading the dossier. */}
+      {isMobileExpanded && (
+        <div
+          onClick={() => setIsMobileExpanded(false)}
+          className="md:hidden absolute inset-0 bg-black/35 transition-opacity pointer-events-auto"
+          aria-label="Collapse anatomy details"
+        />
+      )}
 
       {/* Drawer Container */}
       <aside
         data-testid="organ-detail-drawer"
         className={`pointer-events-auto w-full md:w-[500px] lg:w-[560px] ${
-          isMobileExpanded ? 'h-[92dvh]' : 'h-[52dvh]'
+          isMobileExpanded ? 'h-[88dvh]' : 'h-[38dvh]'
         } md:h-full mt-auto md:mt-0 ${
           isLight
             ? 'bg-white/95 text-slate-900 border-l border-slate-200 shadow-2xl'
@@ -310,7 +315,7 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
         <div
           className={`p-3 md:p-5 border-b ${
             isLight ? 'border-slate-100 bg-white' : 'border-slate-800/80 bg-slate-900/60'
-          } flex items-start justify-between gap-3`}
+          } flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3`}
         >
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2 mb-1 flex-wrap">
@@ -340,18 +345,22 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
           </div>
 
           {/* Quick 3D Actions */}
-          <div className="flex items-center gap-1.5 flex-shrink-0">
+          <div className="w-full sm:w-auto grid grid-cols-3 sm:flex items-center gap-1.5 flex-shrink-0">
             <button
-              onClick={() => handleCameraJump()}
-              title="Center and zoom 3D Viewport"
-              className={`p-2 rounded-xl border text-xs font-semibold flex items-center gap-1.5 transition-all min-h-[44px] px-3 ${
+              onClick={() => {
+                handleCameraJump();
+                setIsMobileExpanded(false);
+                if (onEnter3D) onEnter3D();
+              }}
+              title="Open the 3D viewport and center this structure"
+              className={`p-2 rounded-xl border text-xs font-semibold flex items-center justify-center gap-1.5 transition-all min-h-[44px] px-3 ${
                 isLight
                   ? 'bg-sky-50 hover:bg-sky-100 text-sky-700 border-sky-200 shadow-xs'
                   : 'bg-slate-800 hover:bg-cyan-950/60 text-cyan-300 border-slate-700'
               }`}
             >
               <Compass className="w-4 h-4 text-sky-600 dark:text-cyan-400" />
-              <span className="hidden sm:inline">Focus 3D</span>
+              <span>View 3D</span>
             </button>
 
             <button
@@ -359,7 +368,7 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
               id="drawer-isolate-btn"
               data-testid="drawer-isolate-btn"
               title={isStructureIsolated ? 'Restore full anatomy view' : 'Isolate this structure in 3D viewport'}
-              className={`p-2 rounded-xl border text-xs font-semibold flex items-center gap-1.5 transition-all min-h-[44px] px-3.5 cursor-pointer ${
+              className={`p-2 rounded-xl border text-xs font-semibold flex items-center justify-center gap-1.5 transition-all min-h-[44px] px-3.5 cursor-pointer ${
                 isStructureIsolated
                   ? 'bg-amber-500 hover:bg-amber-600 text-white border-amber-600 shadow-md ring-2 ring-amber-400/40 font-bold'
                   : isLight
@@ -368,7 +377,7 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
               }`}
             >
               <Eye className="w-4 h-4 text-inherit" />
-              <span className="font-bold">{isStructureIsolated ? 'Isolated' : 'Isolate'}</span>
+              <span className="font-bold">{isStructureIsolated ? 'Restore 3D' : 'Isolate 3D'}</span>
             </button>
 
             {onDissectOrgan && (
@@ -378,14 +387,14 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
                   onClose();
                 }}
                 title="Dissect / Remove structure from 3D model"
-                className={`p-2 rounded-xl border text-xs font-semibold flex items-center gap-1.5 transition-all min-h-[44px] px-3 ${
+                className={`p-2 rounded-xl border text-xs font-semibold flex items-center justify-center gap-1.5 transition-all min-h-[44px] px-3 ${
                   isLight
                     ? 'bg-rose-50 hover:bg-rose-100 text-rose-700 border-rose-200'
                     : 'bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border-rose-800/60'
                 }`}
               >
                 <Scissors className="w-4 h-4 text-rose-500" />
-                <span className="hidden sm:inline">Dissect</span>
+                <span>Dissect</span>
               </button>
             )}
           </div>
