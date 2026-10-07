@@ -2481,24 +2481,64 @@ varying float partSelected;
         explodeCameraBaseRef.current = null;
       } else {
         const layout = explosionLayoutRef.current;
-        const extent = layout
-          ? Math.max(1, layout.width / 1.2, layout.height / 1.75)
-          : 2.2;
-        const maxScale = THREE.MathUtils.clamp(extent * 1.18, 2.0, 5.6);
-        const distanceScale = THREE.MathUtils.lerp(1, maxScale, next);
-        const frontBlend = THREE.MathUtils.clamp((next - 0.68) / 0.32, 0, 1);
+        const separatedEnd = 0.55;
+        const inventoryT = THREE.MathUtils.clamp(
+          (next - separatedEnd) / (1 - separatedEnd),
+          0,
+          1
+        );
+        // Smoothstep prevents the camera from racing away from the body as soon
+        // as the learner starts dragging. The first half should feel like an
+        // exploded *body*, not a thumbnail. Only the inventory half needs a
+        // large fit distance.
+        const inventoryEase = inventoryT * inventoryT * (3 - 2 * inventoryT);
+        const bodyScale = THREE.MathUtils.lerp(
+          1,
+          1.34,
+          THREE.MathUtils.clamp(next / separatedEnd, 0, 1)
+        );
+
+        let inventoryScale = 2.2;
+        if (layout) {
+          const verticalFov = THREE.MathUtils.degToRad(camera.fov);
+          const horizontalFov =
+            2 * Math.atan(Math.tan(verticalFov / 2) * Math.max(0.42, camera.aspect));
+          const verticalDistance =
+            layout.height / Math.max(0.15, 2 * Math.tan(verticalFov / 2));
+          const horizontalDistance =
+            layout.width / Math.max(0.15, 2 * Math.tan(horizontalFov / 2));
+          const fitDistance = Math.max(verticalDistance * 1.22, horizontalDistance * 1.16);
+          inventoryScale = THREE.MathUtils.clamp(
+            fitDistance / Math.max(0.1, base.distance),
+            1.75,
+            6.2
+          );
+        }
+
+        const distanceScale =
+          next <= separatedEnd
+            ? bodyScale
+            : THREE.MathUtils.lerp(1.34, inventoryScale, inventoryEase);
+        const frontBlend = THREE.MathUtils.clamp((next - 0.60) / 0.32, 0, 1);
         const direction = base.direction
           .clone()
           .lerp(new THREE.Vector3(0, 0.02, 1).normalize(), frontBlend)
           .normalize();
+        const inventoryTarget = new THREE.Vector3(0, 0.92, 0);
+        const target = base.target
+          .clone()
+          .lerp(inventoryTarget, inventoryEase);
 
-        controls.target.copy(base.target);
+        controls.target.copy(target);
         camera.position
-          .copy(base.target)
+          .copy(target)
           .addScaledVector(direction, base.distance * distanceScale);
         controls.enableRotate = next < 0.82;
         controls.touches.ONE = next < 0.82 ? THREE.TOUCH.ROTATE : THREE.TOUCH.PAN;
-        controls.maxDistance = Math.max(10, base.distance * maxScale * 1.25);
+        controls.maxDistance = Math.max(
+          10,
+          base.distance * Math.max(2.0, inventoryScale) * 1.25
+        );
         controls.update();
       }
     }

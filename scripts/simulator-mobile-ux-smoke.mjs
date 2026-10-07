@@ -143,6 +143,7 @@ await check('spread-anatomy-inventory-and-clickable-labels', async () => {
   const labelCount = await labels.count();
   assert(labelCount >= 3, 'Expected at least three collision-safe anatomy labels at full spread; got ' + labelCount);
   assert(labelCount <= 7, 'Mobile floating labels exceeded the clutter budget: ' + labelCount);
+  await shot('02b-spread-every-piece-inventory');
 
   const heartLabel = stage.getByTestId('anatomy-label-heart');
   await visible(heartLabel, 'Heart floating label');
@@ -152,7 +153,7 @@ await check('spread-anatomy-inventory-and-clickable-labels', async () => {
   const drawer = page.getByTestId('organ-detail-drawer');
   await visible(drawer, 'Heart dossier from floating label');
   await visible(drawer.getByRole('heading', { name: /Heart/i }).first(), 'Heart heading from floating label');
-  await shot('02b-spread-every-piece-label-details');
+  await shot('02c-spread-heart-label-details');
 
   await documentFits('Spread anatomy mobile inventory');
 });
