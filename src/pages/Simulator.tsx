@@ -983,19 +983,21 @@ export const Simulator: React.FC = () => {
             className="flex flex-col space-y-2 w-full"
             style={{ display: mobileTab === '3d' ? 'flex' : 'none' }}
           >
-            <DissectionToolbar
-              toolMode={toolMode}
-              onSelectToolMode={handleSelectToolMode}
-              isXray={isXray}
-              onToggleXray={() => setIsXray(!isXray)}
-              layerPeel={layerPeel}
-              onChangeLayerPeel={handleLayerPeelChange}
-              dissectedParts={dissectedParts}
-              onRestorePart={handleRestorePart}
-              onUndoLastDissect={handleUndoLastDissect}
-              onRestoreAll={handleRestoreAll}
-              theme={theme}
-            />
+            {explodeAmount <= 0.02 && (
+              <DissectionToolbar
+                toolMode={toolMode}
+                onSelectToolMode={handleSelectToolMode}
+                isXray={isXray}
+                onToggleXray={() => setIsXray(!isXray)}
+                layerPeel={layerPeel}
+                onChangeLayerPeel={handleLayerPeelChange}
+                dissectedParts={dissectedParts}
+                onRestorePart={handleRestorePart}
+                onUndoLastDissect={handleUndoLastDissect}
+                onRestoreAll={handleRestoreAll}
+                theme={theme}
+              />
+            )}
             {/* The stage was a flat `h-[420px]`: the same box on a 640pt phone,
                 where it overflows under the fold, and on an 844pt one, where a
                 third of the screen goes unused. `dvh` rather than `vh` because
