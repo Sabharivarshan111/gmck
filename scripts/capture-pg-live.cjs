@@ -26,25 +26,32 @@ fs.mkdirSync(out, { recursive:true });
     await page.getByRole('button',{name:'Start studying'}).click();
     await page.waitForTimeout(2200);
   }
-  // ORBIT launches a guided feature walkthrough after first-run setup.
-  // Close it so Playwright clicks the real Notes tab, not the dark overlay.
-  for(let i=0;i<5;i++) {
-    const gotIt=page.getByText('Got it',{exact:true}).first();
-    if(await gotIt.isVisible().catch(()=>false)) {
-      await gotIt.click({timeout:6000});
+  // ORBIT's first-launch tutorial overlays the native navbar. Use its
+  // visible Close control rather than pretending the app has no tutorial.
+  for(let i=0;i<12;i++) {
+    const close=page.getByText('Close',{exact:true}).last();
+    if(await close.isVisible().catch(()=>false)) {
+      await close.dispatchEvent('click');
+      await page.waitForTimeout(600);
+      continue;
+    }
+    const skip=page.getByText('Skip',{exact:true}).first();
+    if(await skip.isVisible().catch(()=>false)) {
+      await skip.dispatchEvent('click');
       await page.waitForTimeout(500);
       continue;
     }
-    const close=page.getByText('Close',{exact:true}).first();
-    if(await close.isVisible().catch(()=>false)) {
-      await close.click({timeout:6000}).catch(()=>{});
-      await page.waitForTimeout(400);
+    const gotIt=page.getByText('Got it',{exact:true}).first();
+    if(await gotIt.isVisible().catch(()=>false)) {
+      await gotIt.dispatchEvent('click');
+      await page.waitForTimeout(350);
+      continue;
     }
     break;
   }
   const notesTab=page.getByText('Notes',{exact:true}).last();
   if(await notesTab.isVisible().catch(()=>false)) {
-    await notesTab.click({timeout:12000});
+    await notesTab.dispatchEvent('click');
     await page.waitForTimeout(2500);
   }
   let entry=page.getByText('PG Entrance Questions & Sources',{exact:false}).first();
@@ -61,7 +68,7 @@ fs.mkdirSync(out, { recursive:true });
     fs.writeFileSync(out+'/debug.txt','Current URL: '+page.url()+'\nVisible text:\n'+(await page.locator('body').innerText()).slice(0,9000)+'\nJS errors:\n'+errors.join('\n'));
     throw new Error('PG Notes entry missing: '+page.url());
   }
-  await entry.click({timeout:15000});
+  await entry.dispatchEvent('click');
   await page.getByText('PG Entrance Questions',{exact:true}).first().waitFor({timeout:20000});
   await page.getByText('Offline medical question practice',{exact:true}).waitFor({timeout:20000});
   await page.waitForTimeout(6500);
