@@ -140,7 +140,7 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
                 onPress={() => { setPanel(p); setExpandedAnswer(null); }}
                 style={[styles.switchButton, { backgroundColor: panel === p ? withAlpha(colors.primary, 0.22) : colors.card, borderColor: panel === p ? colors.primary : colors.border }]}>
                 <Text style={[styles.switchText, { color: colors.text }]}>
-                  {p === 'sources' ? 'Source directory' : p === 'recent' ? '2023–26 Textbook AI' : 'Practice MCQs'}
+                  {p === 'sources' ? 'Year sources' : p === 'recent' ? 'Textbook AI' : 'Offline MCQs'}
                 </Text>
               </Touchable>
             ))}
@@ -299,7 +299,7 @@ const styles = StyleSheet.create({
   chipText: { fontWeight: '700', fontSize: 13 },
   switchRow: { flexDirection: 'row', gap: 8 },
   switchButton: { flex: 1, alignItems: 'center', borderRadius: 10, borderWidth: 1, paddingVertical: 12, paddingHorizontal: 4 },
-  switchText: { fontSize: 12, fontWeight: '700' },
+  switchText: { fontSize: 11, fontWeight: '700', textAlign: 'center' },
   filters: { flexDirection: 'row', gap: 8 },
   searchBox: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 7, paddingHorizontal: 10, borderWidth: 1, borderRadius: 10, minHeight: 44 },
   searchInput: { flex: 1, paddingVertical: 8, minWidth: 0, fontSize: 13 },
