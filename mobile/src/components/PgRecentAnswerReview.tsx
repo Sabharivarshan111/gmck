@@ -21,7 +21,7 @@ type Exam = 'ALL' | PgExam;
 /**
  * An optional server-backed aid for students with *their own* recalled MCQs.
  * An AI suggestion is never added to the distributed PYQ corpus. No book text
- * leaves the server. PgEntranceBankModal's KeyboardSafe lifts these inputs.
+ * leaves the server. The parent modal's keyboard-lifting wrapper handles these inputs.
  */
 export function PgRecentAnswerReview({
   exam, year, onYear,
