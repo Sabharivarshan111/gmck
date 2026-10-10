@@ -285,6 +285,96 @@ export const PG_ORIGINAL_PRACTICE: PgQuestion[] = [
     ],
     "answer": "C",
     "explanation": "Naloxone is an opioid receptor antagonist used for suspected opioid overdose."
-  }
+  },
+{
+  "id": "orbit-original-5",
+  "exam": "ORIGINAL",
+  "year": null,
+  "subject": "Anatomy",
+  "question": "In most individuals, which coronary artery supplies the sinoatrial node?",
+  "options": [
+    "Right coronary artery",
+    "Left anterior descending artery",
+    "Posterior descending artery only",
+    "Posterior cerebral artery"
+  ],
+  "answer": "A",
+  "explanation": "The sinoatrial nodal artery usually arises from the right coronary artery, although a left circumflex origin is an important anatomical variant."
+},
+{
+  "id": "orbit-original-6",
+  "exam": "ORIGINAL",
+  "year": null,
+  "subject": "Pathology",
+  "question": "Which iron-study pattern most strongly supports iron-deficiency anaemia?",
+  "options": [
+    "High ferritin with low TIBC",
+    "Low ferritin with high TIBC",
+    "High ferritin with low transferrin",
+    "High vitamin B12 with normal ferritin"
+  ],
+  "answer": "B",
+  "explanation": "Low ferritin indicates depleted iron stores and total iron-binding capacity commonly increases. Inflammation may raise ferritin and complicate interpretation."
+},
+{
+  "id": "orbit-original-7",
+  "exam": "ORIGINAL",
+  "year": null,
+  "subject": "Obstetrics & Gynaecology",
+  "question": "Which antihypertensive drug class should be avoided during pregnancy because of fetal renal toxicity?",
+  "options": [
+    "Labetalol",
+    "Nifedipine",
+    "ACE inhibitors",
+    "Methyldopa"
+  ],
+  "answer": "C",
+  "explanation": "ACE inhibitors interfere with the fetal renin–angiotensin system and can cause fetal kidney injury, oligohydramnios and other fetal harms."
+},
+{
+  "id": "orbit-original-8",
+  "exam": "ORIGINAL",
+  "year": null,
+  "subject": "Surgery",
+  "question": "A patient has suspected tension pneumothorax with haemodynamic instability. What must happen immediately?",
+  "options": [
+    "Wait for chest radiography",
+    "Urgent pleural decompression",
+    "Discharge with analgesia",
+    "Start oral diuretics"
+  ],
+  "answer": "B",
+  "explanation": "Tension pneumothorax is a clinical emergency; urgent pleural decompression must not be delayed to obtain imaging in an unstable patient."
+},
+{
+  "id": "orbit-original-9",
+  "exam": "ORIGINAL",
+  "year": null,
+  "subject": "Medicine",
+  "question": "What is the first-line medication for anaphylaxis?",
+  "options": [
+    "Oral antihistamine",
+    "Intramuscular adrenaline (epinephrine)",
+    "Oral corticosteroid",
+    "Intravenous furosemide"
+  ],
+  "answer": "B",
+  "explanation": "Intramuscular adrenaline is the first-line emergency treatment for anaphylaxis; adjunctive antihistamines and corticosteroids do not replace it."
+},
+{
+  "id": "orbit-original-10",
+  "exam": "ORIGINAL",
+  "year": null,
+  "subject": "Community Medicine",
+  "question": "Which epidemiological statistic compares the risk of disease among exposed and unexposed groups?",
+  "options": [
+    "Relative risk",
+    "Specificity",
+    "Sensitivity",
+    "Positive predictive value"
+  ],
+  "answer": "A",
+  "explanation": "Relative risk is the incidence proportion in the exposed group divided by the incidence proportion in the unexposed group."
+}
 ];
 export const PG_SOURCE_REVIEW_DATE = '2026-10-10';
