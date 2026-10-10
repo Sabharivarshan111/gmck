@@ -133,7 +133,7 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
     setActiveTab('overview'); setIsMobileExpanded(false);
   }, [organId]);
 
-  if (!organId && navHistory.length === 0) return null;
+  if (!organId) return null;
 
   const currentNavId = navHistory[navHistory.length - 1] || organId || 'heart';
 
@@ -150,7 +150,7 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
   });
 
   const organKey =
-    (sourcePart ? resolvePartToOrganKey(sourcePart) : isPeripheralNerveTarget(currentNavId)
+    (sourcePart ? sourcePart.source === 'Z-Anatomy' ? 'peripheral_nerves' : resolvePartToOrganKey(sourcePart) : isPeripheralNerveTarget(currentNavId)
       ? 'peripheral_nerves'
       : hraHeartTarget
       ? 'heart'
@@ -367,7 +367,7 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
               {sourcePart?.name || organ.name}
             </h2>
             <p className={`text-xs mt-0.5 ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>
-              {sourcePart ? `${sourcePart.conceptId} · ${sourcePart.system} · BodyParts3D` : organ.quadrantOrCavity}
+              {sourcePart ? `${sourcePart.conceptId} · ${sourcePart.system} · ${sourcePart.source || 'BodyParts3D'}` : organ.quadrantOrCavity}
             </p>
           </div>
 

@@ -22,7 +22,7 @@ import {
   buildSystemAngles,
   type ExplosionLayout,
 } from './anatomyExplosion';
-import { isPeripheralNerveTarget, meshMatchesPeripheralNerveTarget, normalisePeripheralNerveTarget, peripheralNerveKeyForMeshName, PERIPHERAL_NERVE_MODEL_URL } from '../data/peripheralNerves';
+import { isPeripheralNerveTarget, meshMatchesPeripheralNerveTarget, normalisePeripheralNerveTarget, peripheralNerveKeyForMeshName, genericPeripheralNerveKey, PERIPHERAL_NERVE_MODEL_URL } from '../data/peripheralNerves';
 import {
   getHraOrganModel,
   getHraOrganTarget,
@@ -3309,7 +3309,7 @@ varying float partSelected;
         const visible =
           useRealNerveLayer &&
           meshMatchesPeripheralNerveTarget(mesh.name, targetKey) &&
-          (!nerveKey || !hiddenSet.has(nerveKey));
+          (!nerveKey || !hiddenSet.has(nerveKey)) && !hiddenSet.has(genericPeripheralNerveKey(mesh.name));
         mesh.visible = visible;
         if (visible) nerveIsolationBox.expandByObject(mesh);
       });
@@ -3765,6 +3765,18 @@ varying float partSelected;
     });
   }, [isXray, isLight, explodeAmount, isolatedPartId]);
 
+  const setCameraDirection = (direction: 'front' | 'back' | 'side') => {
+    const camera = cameraRef.current;
+    const controls = controlsRef.current;
+    if (!camera || !controls) return;
+    // Preserve the current structure focus and zoom when changing orientation.
+    const distance = Math.max(camera.position.distanceTo(controls.target), 0.1);
+    const offset = direction === 'side' ? new THREE.Vector3(distance, 0, 0)
+      : new THREE.Vector3(0, 0, direction === 'back' ? -distance : distance);
+    camera.position.copy(controls.target).add(offset);
+    controls.update();
+  };
+
   // Camera Presets
   const resetCamera = (preset: 'anterior' | 'head' | 'thorax' | 'abdomen') => {
     if (!cameraRef.current || !controlsRef.current) return;
@@ -3865,7 +3877,7 @@ varying float partSelected;
           <button
             aria-pressed={cameraPreset === 'anterior'}
             onClick={() => { onChangeRegion?.('anterior'); resetCamera('anterior'); }}
-            className={`px-2.5 py-1 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+            className={`min-h-11 sm:min-h-0 px-2.5 py-1 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
               cameraPreset === 'anterior'
                 ? isLight
                   ? 'bg-sky-600 text-white shadow-xs font-bold'
@@ -3880,7 +3892,7 @@ varying float partSelected;
           <button
             aria-pressed={cameraPreset === 'head'}
             onClick={() => { onChangeRegion?.('head'); resetCamera('head'); }}
-            className={`px-2.5 py-1 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+            className={`min-h-11 sm:min-h-0 px-2.5 py-1 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
               cameraPreset === 'head'
                 ? isLight
                   ? 'bg-sky-600 text-white shadow-xs font-bold'
@@ -3895,7 +3907,7 @@ varying float partSelected;
           <button
             aria-pressed={cameraPreset === 'thorax'}
             onClick={() => { onChangeRegion?.('thorax'); resetCamera('thorax'); }}
-            className={`px-2.5 py-1 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+            className={`min-h-11 sm:min-h-0 px-2.5 py-1 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
               cameraPreset === 'thorax'
                 ? isLight
                   ? 'bg-sky-600 text-white shadow-xs font-bold'
@@ -3910,7 +3922,7 @@ varying float partSelected;
           <button
             aria-pressed={cameraPreset === 'abdomen'}
             onClick={() => { onChangeRegion?.('abdomen'); resetCamera('abdomen'); }}
-            className={`px-2.5 py-1 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+            className={`min-h-11 sm:min-h-0 px-2.5 py-1 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
               cameraPreset === 'abdomen'
                 ? isLight
                   ? 'bg-sky-600 text-white shadow-xs font-bold'
@@ -3947,6 +3959,17 @@ varying float partSelected;
           )}
         </div>
       </div>
+
+      {!graphicsError && !contextLost && (
+        <div className="absolute top-[76px] sm:top-14 left-3 z-20 flex gap-1 rounded-xl bg-slate-900/90 p-1 text-white backdrop-blur-xl" aria-label="View direction">
+          {(['front', 'back', 'side'] as const).map(direction => (
+            <button key={direction} onClick={() => setCameraDirection(direction)}
+              className="min-h-11 min-w-11 px-2 text-xs capitalize rounded-lg hover:bg-slate-700 focus-visible:ring-2 focus-visible:ring-sky-400">
+              {direction}
+            </button>
+          ))}
+        </div>
+      )}
 
       {isZAnatomyReferenceTarget(isolatedPartId || selectedOrganId) && (() => {
         const target = getZAnatomyReferenceTarget(isolatedPartId || selectedOrganId);

@@ -179,7 +179,7 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
             <span>All ({scenarios.length})</span>
           </button>
 
-          {CLINICAL_DEPARTMENTS.map((dept) => {
+          {CLINICAL_DEPARTMENTS.filter((dept) => dept.id !== 'all').map((dept) => {
             const count = scenarios.filter(
               (sc) => (sc as any).departmentId === dept.id || sc.category === dept.name
             ).length;

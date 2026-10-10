@@ -25,7 +25,7 @@ export const RegionStructureBrowser = memo(function RegionStructureBrowser({ atl
       </div>
       <input aria-label="Search structures in selected region" placeholder="Search this region…" value={query} onChange={e => setQuery(e.target.value)} className="w-full min-h-11 rounded-xl border px-3 text-sm bg-transparent" />
       <div className="max-h-[32dvh] overflow-y-auto grid grid-cols-2 gap-2" aria-label="Regional structures">
-        {matches.slice(0, 80).map(p => <button key={p.id} type="button" onClick={() => onSelect(p.id)} className="min-h-11 rounded-xl border p-2 text-left text-xs leading-relaxed break-words">{p.name}</button>)}
+        {matches.slice(0, 80).map(p => <button key={p.id} type="button" onClick={() => onSelect(p.id)} className="min-h-11 rounded-xl border p-2 text-left text-xs leading-relaxed break-words">{p.name}{p.source && <span className="block text-[10px] text-amber-600">{p.source} nerve reference</span>}</button>)}
       </div>
       {!matches.length && <p role="status" className="text-sm">No matching structures in this region. Choose another system or clear the search.</p>}
       {matches.length > 80 && <p className="text-xs text-slate-500">Showing 80 of {matches.length}. Search or choose a system to narrow the list.</p>}

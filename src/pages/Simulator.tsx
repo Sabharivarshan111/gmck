@@ -84,7 +84,11 @@ export const Simulator: React.FC = () => {
   const [atlasCatalog, setAtlasCatalog] = useState<Atlas | null>(null);
   useEffect(() => {
     const controller = new AbortController();
-    fetch('/models/atlas.json', { signal: controller.signal }).then(r => { if (!r.ok) throw new Error('Atlas catalog unavailable'); return r.json(); }).then((atlas: Atlas) => { atlas.parts = atlas.parts.map(correctPartSystem); setAtlasCatalog(atlas); }).catch(() => {});
+    fetch('/models/atlas.json', { signal: controller.signal }).then(r => { if (!r.ok) throw new Error('Atlas catalog unavailable'); return r.json(); }).then((atlas: Atlas) => {
+      const base = { ...atlas, parts: atlas.parts.map(correctPartSystem) };
+      setAtlasCatalog(base);
+      return fetch('/models/nerve_catalog.json', { signal: controller.signal }).then(r => { if (!r.ok) throw new Error('Nerve catalog unavailable'); return r.json(); }).then((parts: Part[]) => setAtlasCatalog({ ...base, parts: [...base.parts, ...parts] }));
+    }).catch(() => {});
     return () => controller.abort();
   }, []);
   const [cameraPreset, setCameraPreset] = useState<'anterior' | 'head' | 'thorax' | 'abdomen'>('anterior');

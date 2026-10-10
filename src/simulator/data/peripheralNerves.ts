@@ -91,7 +91,7 @@ function normaliseMeshName(name: string): string {
     .trim();
 }
 
-function genericPeripheralNerveKey(meshName: string): string {
+export function genericPeripheralNerveKey(meshName: string): string {
   const stem = meshName
     .replace(/\.\d+$/i, '')
     .replace(/\.(?:l|r)$/i, '')
