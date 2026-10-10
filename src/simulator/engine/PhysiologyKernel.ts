@@ -1752,6 +1752,25 @@ export class PhysiologyKernel {
       return feedback;
     }
 
+    // These existing effects describe specific case findings. Do not invent
+    // those findings (e.g. snake venom or compartment pressure) in other cases.
+    const modeledCases: Record<string, string[]> = {
+      antivenom: ['snakebite'], pralidoxime: ['op_poisoning'], nac: ['pcm_toxicity'],
+      needle_decomp: ['tension_pneumo'], pericardiocentesis: ['tamponade'],
+      rtpa: ['stroke'], lorazepam: ['status_epilepticus'], oxytocin: ['atonic_pph'],
+      fasciotomy: ['compartment_syndrome'], traction_splint: ['femoral_neck_fracture'],
+      ors_fluids: ['peds_gastro_shock'], magnesium_sulfate: ['eclampsia'],
+      calcium_gluconate: ['aki_uremia'],
+      laparotomy: ['splenic_rupture', 'perforated_peptic_ulcer', 'appendicitis_peritonitis', 'strangulated_hernia', 'ectopic_rupture'],
+      surgical_consult: ['splenic_rupture', 'perforated_peptic_ulcer', 'appendicitis_peritonitis', 'strangulated_hernia', 'ectopic_rupture'],
+    };
+    const supportedCases = modeledCases[actionId];
+    if (supportedCases && !supportedCases.includes(this.currentScenario.id)) {
+      feedback = `No case-specific effect is modeled for ${actionId.replace(/_/g, ' ')} in this scenario. Patient state is unchanged; this is a simulation coverage limit, not a clinical contraindication.`;
+      this.logs.push(feedback);
+      return feedback;
+    }
+
     switch (actionId) {
       case 'saline':
         this.targetSBP = Math.min(130, this.vitals.bpSystolic + 18);

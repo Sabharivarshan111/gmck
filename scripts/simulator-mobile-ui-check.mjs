@@ -107,8 +107,8 @@ requireText(
 
 requireText(
   anatomy3d,
-  "explodeAmount > 0.02 ? 'hidden md:flex' : 'flex'",
-  'Regional camera controls are no longer hidden during focused mobile spread mode.'
+  'onChangeRegion?.(',
+  'Regional camera controls must update the selected region, including during spread mode.'
 );
 requireText(
   anatomy3d,

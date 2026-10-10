@@ -154,7 +154,7 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
     syncAudio();
   }, [isListening, stethSite, stethMode, vitals.heartRate, vitals.respiratoryRate, pathology, customHeartOverride]);
 
-  if (tool === 'none') return null;
+  if (tool === 'none' || tool === 'piccled') return null;
 
   return (
     <div data-testid={`diagnostic-${tool}`} className="fixed inset-0 z-50 flex items-stretch sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-md animate-in fade-in overflow-hidden sm:overflow-y-auto">
@@ -391,6 +391,7 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
                   ].map((site) => (
                     <button
                       key={site.id}
+                      aria-pressed={stethSite === site.id}
                       onClick={() => {
                         ensureAudioUnlocked();
                         setStethSite(site.id as AuscultationSite);
@@ -413,7 +414,7 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
                   <div className="flex items-center justify-between text-xs text-slate-300">
                     <span className="font-semibold flex items-center gap-1.5 text-slate-200">
                       <Volume2 className="w-3.5 h-3.5 text-emerald-400" />
-                      <span>Clinically Verified Murmurs & Sounds (Medical-Grade DSP):</span>
+                      <span>Educational Murmurs & Synthesized Sounds:</span>
                     </span>
                     {customHeartOverride && (
                       <button
@@ -441,9 +442,11 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
                     ].map((m) => (
                       <button
                         key={m.id}
+                        aria-pressed={customHeartOverride === m.id}
                         onClick={() => {
                           ensureAudioUnlocked();
                           setCustomHeartOverride(m.id as HeartSoundPreset);
+                          setStethSite(m.id.startsWith('aortic_') ? 'aortic' : 'mitral');
                           if (!isListening) setIsListening(true);
                           audioEngineRef.current?.setHeartPreset(m.id as HeartSoundPreset);
                         }}
@@ -525,9 +528,10 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
               <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800 text-xs text-slate-300 space-y-2">
                 <div className="font-bold text-slate-100 flex items-center gap-1.5">
                   <Activity className="w-4 h-4 text-emerald-400" />
-                  <span>Auscultation Clinical Finding:</span>
+                  <span>{customHeartOverride ? 'Selected Sound Demonstration:' : 'Auscultation Clinical Finding:'}</span>
                 </div>
                 <p className="text-[11px] leading-relaxed text-slate-300">
+                  {customHeartOverride ? `Manual sound preset: ${customHeartOverride.replace(/_/g, ' ')}. Reset to Case Default to return to this patient's findings.` : <>
                   {stethSite === 'mitral' &&
                     (pathology.heartSoundType === 's3_gallop'
                       ? 'S1 + S2 + S3 Ventricular Gallop (Ken-tuck-y cadence). Early diastolic low-frequency filling sound indicative of acute ventricular volume overload in congestive heart failure.'
@@ -552,6 +556,7 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
                     (pathology.cyanosis > 0.4
                       ? 'Harsh monophonic inspiratory stridor over anterior neck indicating critical upper airway laryngeal obstruction in anaphylaxis.'
                       : 'Normal bronchial tubular breath sounds with distinct expiratory pause.')}
+                  </>}
                 </p>
               </div>
             </div>

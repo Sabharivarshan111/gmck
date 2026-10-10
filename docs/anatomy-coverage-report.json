@@ -1,0 +1,839 @@
+{
+  "generatedBy": "scripts/all-organ-anatomy-audit.mjs",
+  "bodyParts3DPartCount": 2234,
+  "organKeys": [
+    "heart",
+    "lad_artery",
+    "pectoralis_major",
+    "deltoid",
+    "liver",
+    "lungs",
+    "rca_artery",
+    "vagus_nerve",
+    "phrenic_nerve",
+    "celiac_trunk",
+    "portal_vein",
+    "brain",
+    "kidney",
+    "skeletal",
+    "aorta",
+    "ascites",
+    "snakebite",
+    "stomach",
+    "pancreas",
+    "spleen",
+    "small_intestine",
+    "urinary_bladder",
+    "thymus",
+    "eye",
+    "ureter",
+    "spinal_cord",
+    "pelvis",
+    "prostate",
+    "skin",
+    "knee",
+    "uterus",
+    "ovary",
+    "fallopian_tube",
+    "placenta",
+    "abdomen",
+    "peripheral_nerves"
+  ],
+  "targetCount": 57,
+  "targets": {
+    "heart": {
+      "bodyParts3DStatus": "resolved",
+      "bodyParts3DReason": null,
+      "sources": [
+        {
+          "type": "source",
+          "source": "BodyParts3D",
+          "meshCount": 138
+        },
+        {
+          "type": "source-supplement",
+          "source": "HRA male heart v1.3",
+          "targetCount": 16
+        }
+      ],
+      "coverage": "source-backed"
+    },
+    "lad_artery": {
+      "bodyParts3DStatus": "resolved",
+      "bodyParts3DReason": null,
+      "sources": [
+        {
+          "type": "source",
+          "source": "BodyParts3D",
+          "meshCount": 22
+        },
+        {
+          "type": "source-supplement",
+          "source": "HRA male reference organs v1.3",
+          "targetCount": 4
+        }
+      ],
+      "coverage": "source-backed"
+    },
+    "pectoralis_major": {
+      "bodyParts3DStatus": "resolved",
+      "bodyParts3DReason": null,
+      "sources": [
+        {
+          "type": "source",
+          "source": "BodyParts3D",
+          "meshCount": 6
+        },
+        {
+          "type": "source-supplement",
+          "source": "Selective Z-Anatomy pectoralis-major reference"
+        }
+      ],
+      "coverage": "source-backed"
+    },
+    "deltoid": {
+      "bodyParts3DStatus": "resolved",
+      "bodyParts3DReason": null,
+      "sources": [
+        {
+          "type": "source",
+          "source": "BodyParts3D",
+          "meshCount": 6
+        },
+        {
+          "type": "source-supplement",
+          "source": "Selective Z-Anatomy deltoid reference"
+        }
+      ],
+      "coverage": "source-backed"
+    },
+    "liver": {
+      "bodyParts3DStatus": "resolved",
+      "bodyParts3DReason": null,
+      "sources": [
+        {
+          "type": "source",
+          "source": "BodyParts3D",
+          "meshCount": 84
+        },
+        {
+          "type": "source-supplement",
+          "source": "HRA male reference organs v1.3",
+          "targetCount": 9
+        }
+      ],
+      "coverage": "source-backed"
+    },
+    "lungs": {
+      "bodyParts3DStatus": "resolved",
+      "bodyParts3DReason": null,
+      "sources": [
+        {
+          "type": "source",
+          "source": "BodyParts3D",
+          "meshCount": 118
+        },
+        {
+          "type": "source-supplement",
+          "source": "HRA male reference organs v1.3",
+          "targetCount": 7
+        },
+        {
+          "type": "source-supplement",
+          "source": "Z-Anatomy lung parenchyma / lobar-segmental supplement"
+        }
+      ],
+      "coverage": "source-backed"
+    },
+    "rca_artery": {
+      "bodyParts3DStatus": "resolved",
+      "bodyParts3DReason": null,
+      "sources": [
+        {
+          "type": "source",
+          "source": "BodyParts3D",
+          "meshCount": 29
+        },
+        {
+          "type": "source-supplement",
+          "source": "HRA male reference organs v1.3",
+          "targetCount": 4
+        }
+      ],
+      "coverage": "source-backed"
+    },
+    "vagus_nerve": {
+      "bodyParts3DStatus": "absent",
+      "bodyParts3DReason": "BodyParts3D models the brain, brainstem and the nerves of the orbit. It carries no peripheral nerves, so this one cannot be drawn — the notes beside the model still describe it in full.",
+      "sources": [
+        {
+          "type": "source-supplement",
+          "source": "Z-Anatomy peripheral nerve layer"
+        }
+      ],
+      "coverage": "source-backed"
+    },
+    "phrenic_nerve": {
+      "bodyParts3DStatus": "absent",
+      "bodyParts3DReason": "BodyParts3D models the brain, brainstem and the nerves of the orbit. It carries no peripheral nerves, so this one cannot be drawn — the notes beside the model still describe it in full.",
+      "sources": [
+        {
+          "type": "schematic",
+          "source": "HRA/Z-Anatomy landmark-derived phrenic schematic"
+        }
+      ],
+      "coverage": "schematic-only"
+    },
+    "celiac_trunk": {
+      "bodyParts3DStatus": "resolved",
+      "bodyParts3DReason": null,
+      "sources": [
+        {
+          "type": "source",
+          "source": "BodyParts3D",
+          "meshCount": 9
+        },
+        {
+          "type": "source-supplement",
+          "source": "HRA male reference organs v1.3",
+          "targetCount": 1
+        }
+      ],
+      "coverage": "source-backed"
+    },
+    "portal_vein": {
+      "bodyParts3DStatus": "resolved",
+      "bodyParts3DReason": null,
+      "sources": [
+        {
+          "type": "source",
+          "source": "BodyParts3D",
+          "meshCount": 39
+        },
+        {
+          "type": "source-supplement",
+          "source": "HRA male reference organs v1.3",
+          "targetCount": 1
+        }
+      ],
+      "coverage": "source-backed"
+    },
+    "brain": {
+      "bodyParts3DStatus": "resolved",
+      "bodyParts3DReason": null,
+      "sources": [
+        {
+          "type": "source",
+          "source": "BodyParts3D",
+          "meshCount": 255
+        },
+        {
+          "type": "source-supplement",
+          "source": "Selective Z-Anatomy brain/CNS reference"
+        }
+      ],
+      "coverage": "source-backed"
+    },
+    "kidney": {
+      "bodyParts3DStatus": "resolved",
+      "bodyParts3DReason": null,
+      "sources": [
+        {
+          "type": "source",
+          "source": "BodyParts3D",
+          "meshCount": 46
+        },
+        {
+          "type": "source-supplement",
+          "source": "HRA male reference organs v1.3",
+          "targetCount": 8
+        }
+      ],
+      "coverage": "source-backed"
+    },
+    "skeletal": {
+      "bodyParts3DStatus": "resolved",
+      "bodyParts3DReason": null,
+      "sources": [
+        {
+          "type": "source",
+          "source": "BodyParts3D",
+          "meshCount": 296
+        },
+        {
+          "type": "source-supplement",
+          "source": "Selective Z-Anatomy shoulder/hip/knee joint reference"
+        }
+      ],
+      "coverage": "source-backed"
+    },
+    "aorta": {
+      "bodyParts3DStatus": "resolved",
+      "bodyParts3DReason": null,
+      "sources": [
+        {
+          "type": "source",
+          "source": "BodyParts3D",
+          "meshCount": 7
+        },
+        {
+          "type": "source-supplement",
+          "source": "HRA male reference organs v1.3",
+          "targetCount": 4
+        }
+      ],
+      "coverage": "source-backed"
+    },
+    "ascites": {
+      "bodyParts3DStatus": "absent",
+      "bodyParts3DReason": "This is a clinical state rather than a structure, so it has no mesh of its own. Pick an organ to isolate.",
+      "sources": [
+        {
+          "type": "clinical-overlay",
+          "source": "ORBIT physiology/pathology simulation; no anatomical mesh required"
+        }
+      ],
+      "coverage": "clinical-overlay"
+    },
+    "snakebite": {
+      "bodyParts3DStatus": "absent",
+      "bodyParts3DReason": "This is a clinical state rather than a structure, so it has no mesh of its own. Pick an organ to isolate.",
+      "sources": [
+        {
+          "type": "clinical-overlay",
+          "source": "ORBIT physiology/pathology simulation; no anatomical mesh required"
+        }
+      ],
+      "coverage": "clinical-overlay"
+    },
+    "stomach": {
+      "bodyParts3DStatus": "resolved",
+      "bodyParts3DReason": null,
+      "sources": [
+        {
+          "type": "source",
+          "source": "BodyParts3D",
+          "meshCount": 10
+        },
+        {
+          "type": "source-supplement",
+          "source": "Selective Z-Anatomy stomach/duodenum/omental reference"
+        }
+      ],
+      "coverage": "source-backed"
+    },
+    "pancreas": {
+      "bodyParts3DStatus": "resolved",
+      "bodyParts3DReason": null,
+      "sources": [
+        {
+          "type": "source",
+          "source": "BodyParts3D",
+          "meshCount": 21
+        },
+        {
+          "type": "source-supplement",
+          "source": "HRA male reference organs v1.3",
+          "targetCount": 6
+        }
+      ],
+      "coverage": "source-backed"
+    },
+    "spleen": {
+      "bodyParts3DStatus": "resolved",
+      "bodyParts3DReason": null,
+      "sources": [
+        {
+          "type": "source",
+          "source": "BodyParts3D",
+          "meshCount": 6
+        },
+        {
+          "type": "source-supplement",
+          "source": "HRA male reference organs v1.3",
+          "targetCount": 7
+        }
+      ],
+      "coverage": "source-backed"
+    },
+    "small_intestine": {
+      "bodyParts3DStatus": "resolved",
+      "bodyParts3DReason": null,
+      "sources": [
+        {
+          "type": "source",
+          "source": "BodyParts3D",
+          "meshCount": 57
+        },
+        {
+          "type": "source-supplement",
+          "source": "HRA male reference organs v1.3",
+          "targetCount": 6
+        }
+      ],
+      "coverage": "source-backed"
+    },
+    "urinary_bladder": {
+      "bodyParts3DStatus": "resolved",
+      "bodyParts3DReason": null,
+      "sources": [
+        {
+          "type": "source",
+          "source": "BodyParts3D",
+          "meshCount": 1
+        },
+        {
+          "type": "source-supplement",
+          "source": "HRA male reference organs v1.3",
+          "targetCount": 5
+        }
+      ],
+      "coverage": "source-backed"
+    },
+    "thymus": {
+      "bodyParts3DStatus": "resolved",
+      "bodyParts3DReason": null,
+      "sources": [
+        {
+          "type": "source",
+          "source": "BodyParts3D",
+          "meshCount": 2
+        },
+        {
+          "type": "source-supplement",
+          "source": "HRA male reference organs v1.3",
+          "targetCount": 3
+        }
+      ],
+      "coverage": "source-backed"
+    },
+    "eye": {
+      "bodyParts3DStatus": "absent",
+      "bodyParts3DReason": "This Deep Inspector target is supplied by ORBIT’s verified HuBMAP Human Reference Atlas reference model rather than by the BodyParts3D primary body. No unrelated BodyParts3D structure is substituted.",
+      "sources": [
+        {
+          "type": "source-supplement",
+          "source": "HRA male reference organs v1.3",
+          "targetCount": 9
+        }
+      ],
+      "coverage": "source-backed"
+    },
+    "ureter": {
+      "bodyParts3DStatus": "resolved",
+      "bodyParts3DReason": null,
+      "sources": [
+        {
+          "type": "source",
+          "source": "BodyParts3D",
+          "meshCount": 2
+        },
+        {
+          "type": "source-supplement",
+          "source": "HRA male reference organs v1.3",
+          "targetCount": 5
+        }
+      ],
+      "coverage": "source-backed"
+    },
+    "spinal_cord": {
+      "bodyParts3DStatus": "resolved",
+      "bodyParts3DReason": null,
+      "sources": [
+        {
+          "type": "source",
+          "source": "BodyParts3D",
+          "meshCount": 1
+        },
+        {
+          "type": "source-supplement",
+          "source": "HRA male reference organs v1.3",
+          "targetCount": 5
+        }
+      ],
+      "coverage": "source-backed"
+    },
+    "pelvis": {
+      "bodyParts3DStatus": "resolved",
+      "bodyParts3DReason": null,
+      "sources": [
+        {
+          "type": "source",
+          "source": "BodyParts3D",
+          "meshCount": 8
+        },
+        {
+          "type": "source-supplement",
+          "source": "HRA male reference organs v1.3",
+          "targetCount": 6
+        }
+      ],
+      "coverage": "source-backed"
+    },
+    "prostate": {
+      "bodyParts3DStatus": "resolved",
+      "bodyParts3DReason": null,
+      "sources": [
+        {
+          "type": "source",
+          "source": "BodyParts3D",
+          "meshCount": 1
+        },
+        {
+          "type": "source-supplement",
+          "source": "HRA male reference organs v1.3",
+          "targetCount": 6
+        }
+      ],
+      "coverage": "source-backed"
+    },
+    "skin": {
+      "bodyParts3DStatus": "resolved",
+      "bodyParts3DReason": null,
+      "sources": [
+        {
+          "type": "source",
+          "source": "BodyParts3D",
+          "meshCount": 1
+        },
+        {
+          "type": "source-supplement",
+          "source": "HRA male reference organs v1.3",
+          "targetCount": 1
+        }
+      ],
+      "coverage": "source-backed"
+    },
+    "knee": {
+      "bodyParts3DStatus": "absent",
+      "bodyParts3DReason": "This Deep Inspector target is supplied by ORBIT’s verified HuBMAP Human Reference Atlas reference model rather than by the BodyParts3D primary body. No unrelated BodyParts3D structure is substituted.",
+      "sources": [
+        {
+          "type": "source-supplement",
+          "source": "HRA male reference organs v1.3",
+          "targetCount": 5
+        }
+      ],
+      "coverage": "source-backed"
+    },
+    "uterus": {
+      "bodyParts3DStatus": "absent",
+      "bodyParts3DReason": "This organ is not one of the 2,234 meshes in the BodyParts3D male reference body, so the primary atlas does not substitute another structure.",
+      "sources": [
+        {
+          "type": "source-supplement",
+          "source": "HRA female reference organs v1.3",
+          "targetCount": 5
+        }
+      ],
+      "coverage": "source-backed"
+    },
+    "ovary": {
+      "bodyParts3DStatus": "absent",
+      "bodyParts3DReason": "This organ is not one of the 2,234 meshes in the BodyParts3D male reference body, so the primary atlas does not substitute another structure.",
+      "sources": [
+        {
+          "type": "source-supplement",
+          "source": "HRA female reference organs v1.3",
+          "targetCount": 1
+        }
+      ],
+      "coverage": "source-backed"
+    },
+    "fallopian_tube": {
+      "bodyParts3DStatus": "absent",
+      "bodyParts3DReason": "This Deep Inspector target is supplied by ORBIT’s verified HuBMAP Human Reference Atlas reference model rather than by the BodyParts3D primary body. No unrelated BodyParts3D structure is substituted.",
+      "sources": [
+        {
+          "type": "source-supplement",
+          "source": "HRA female reference organs v1.3",
+          "targetCount": 5
+        }
+      ],
+      "coverage": "source-backed"
+    },
+    "placenta": {
+      "bodyParts3DStatus": "absent",
+      "bodyParts3DReason": "This Deep Inspector target is supplied by ORBIT’s verified HuBMAP Human Reference Atlas reference model rather than by the BodyParts3D primary body. No unrelated BodyParts3D structure is substituted.",
+      "sources": [
+        {
+          "type": "source-supplement",
+          "source": "HRA female reference organs v1.3",
+          "targetCount": 5
+        }
+      ],
+      "coverage": "source-backed"
+    },
+    "abdomen": {
+      "bodyParts3DStatus": "resolved",
+      "bodyParts3DReason": null,
+      "sources": [
+        {
+          "type": "source",
+          "source": "BodyParts3D",
+          "meshCount": 236
+        },
+        {
+          "type": "source-supplement",
+          "source": "HRA male reference organs v1.3",
+          "targetCount": 1
+        }
+      ],
+      "coverage": "source-backed"
+    },
+    "peripheral_nerves": {
+      "bodyParts3DStatus": "absent",
+      "bodyParts3DReason": "BodyParts3D models the brain, brainstem and the nerves of the orbit. It carries no peripheral nerves, so this one cannot be drawn — the notes beside the model still describe it in full.",
+      "sources": [
+        {
+          "type": "source-supplement",
+          "source": "Z-Anatomy NervousSystem100 peripheral nerve layer"
+        }
+      ],
+      "coverage": "source-backed"
+    },
+    "lcx_artery": {
+      "bodyParts3DStatus": "resolved",
+      "bodyParts3DReason": null,
+      "sources": [
+        {
+          "type": "source",
+          "source": "BodyParts3D",
+          "meshCount": 7
+        }
+      ],
+      "coverage": "source-backed"
+    },
+    "coronary_sinus": {
+      "bodyParts3DStatus": "resolved",
+      "bodyParts3DReason": null,
+      "sources": [
+        {
+          "type": "source",
+          "source": "BodyParts3D",
+          "meshCount": 20
+        }
+      ],
+      "coverage": "source-backed"
+    },
+    "thoracoacromial": {
+      "bodyParts3DStatus": "resolved",
+      "bodyParts3DReason": null,
+      "sources": [
+        {
+          "type": "source",
+          "source": "BodyParts3D",
+          "meshCount": 8
+        }
+      ],
+      "coverage": "source-backed"
+    },
+    "pectoral_nerves": {
+      "bodyParts3DStatus": "absent",
+      "bodyParts3DReason": "BodyParts3D models the brain, brainstem and the nerves of the orbit. It carries no peripheral nerves, so this one cannot be drawn — the notes beside the model still describe it in full.",
+      "sources": [
+        {
+          "type": "source-supplement",
+          "source": "Z-Anatomy peripheral nerve layer"
+        }
+      ],
+      "coverage": "source-backed"
+    },
+    "post_circumflex_humeral": {
+      "bodyParts3DStatus": "resolved",
+      "bodyParts3DReason": null,
+      "sources": [
+        {
+          "type": "source",
+          "source": "BodyParts3D",
+          "meshCount": 4
+        }
+      ],
+      "coverage": "source-backed"
+    },
+    "axillary_nerve": {
+      "bodyParts3DStatus": "absent",
+      "bodyParts3DReason": "BodyParts3D models the brain, brainstem and the nerves of the orbit. It carries no peripheral nerves, so this one cannot be drawn — the notes beside the model still describe it in full.",
+      "sources": [
+        {
+          "type": "source-supplement",
+          "source": "Z-Anatomy peripheral nerve layer"
+        }
+      ],
+      "coverage": "source-backed"
+    },
+    "pulmonary_trunk": {
+      "bodyParts3DStatus": "resolved",
+      "bodyParts3DReason": null,
+      "sources": [
+        {
+          "type": "source",
+          "source": "BodyParts3D",
+          "meshCount": 3
+        }
+      ],
+      "coverage": "source-backed"
+    },
+    "pulmonary_veins": {
+      "bodyParts3DStatus": "resolved",
+      "bodyParts3DReason": null,
+      "sources": [
+        {
+          "type": "source",
+          "source": "BodyParts3D",
+          "meshCount": 7
+        }
+      ],
+      "coverage": "source-backed"
+    },
+    "superior_mesenteric_artery": {
+      "bodyParts3DStatus": "resolved",
+      "bodyParts3DReason": null,
+      "sources": [
+        {
+          "type": "source",
+          "source": "BodyParts3D",
+          "meshCount": 16
+        }
+      ],
+      "coverage": "source-backed"
+    },
+    "splanchnic_nerves": {
+      "bodyParts3DStatus": "absent",
+      "bodyParts3DReason": "BodyParts3D models the brain, brainstem and the nerves of the orbit. It carries no peripheral nerves, so this one cannot be drawn — the notes beside the model still describe it in full.",
+      "sources": [
+        {
+          "type": "schematic",
+          "source": "explicit autonomic schematic overlay"
+        }
+      ],
+      "coverage": "schematic-only"
+    },
+    "brachial_plexus": {
+      "bodyParts3DStatus": "absent",
+      "bodyParts3DReason": "BodyParts3D models the brain, brainstem and the nerves of the orbit. It carries no peripheral nerves, so this one cannot be drawn — the notes beside the model still describe it in full.",
+      "sources": [
+        {
+          "type": "source-supplement",
+          "source": "Z-Anatomy peripheral nerve layer"
+        }
+      ],
+      "coverage": "source-backed"
+    },
+    "musculocutaneous_nerve": {
+      "bodyParts3DStatus": "absent",
+      "bodyParts3DReason": "BodyParts3D models the brain, brainstem and the nerves of the orbit. It carries no peripheral nerves, so this one cannot be drawn — the notes beside the model still describe it in full.",
+      "sources": [
+        {
+          "type": "source-supplement",
+          "source": "Z-Anatomy peripheral nerve layer"
+        }
+      ],
+      "coverage": "source-backed"
+    },
+    "radial_nerve": {
+      "bodyParts3DStatus": "absent",
+      "bodyParts3DReason": "BodyParts3D models the brain, brainstem and the nerves of the orbit. It carries no peripheral nerves, so this one cannot be drawn — the notes beside the model still describe it in full.",
+      "sources": [
+        {
+          "type": "source-supplement",
+          "source": "Z-Anatomy peripheral nerve layer"
+        }
+      ],
+      "coverage": "source-backed"
+    },
+    "median_nerve": {
+      "bodyParts3DStatus": "absent",
+      "bodyParts3DReason": "BodyParts3D models the brain, brainstem and the nerves of the orbit. It carries no peripheral nerves, so this one cannot be drawn — the notes beside the model still describe it in full.",
+      "sources": [
+        {
+          "type": "source-supplement",
+          "source": "Z-Anatomy peripheral nerve layer"
+        }
+      ],
+      "coverage": "source-backed"
+    },
+    "ulnar_nerve": {
+      "bodyParts3DStatus": "absent",
+      "bodyParts3DReason": "BodyParts3D models the brain, brainstem and the nerves of the orbit. It carries no peripheral nerves, so this one cannot be drawn — the notes beside the model still describe it in full.",
+      "sources": [
+        {
+          "type": "source-supplement",
+          "source": "Z-Anatomy peripheral nerve layer"
+        }
+      ],
+      "coverage": "source-backed"
+    },
+    "intercostal_nerves": {
+      "bodyParts3DStatus": "absent",
+      "bodyParts3DReason": "BodyParts3D models the brain, brainstem and the nerves of the orbit. It carries no peripheral nerves, so this one cannot be drawn — the notes beside the model still describe it in full.",
+      "sources": [
+        {
+          "type": "source-supplement",
+          "source": "Z-Anatomy peripheral nerve layer"
+        }
+      ],
+      "coverage": "source-backed"
+    },
+    "femoral_nerve": {
+      "bodyParts3DStatus": "absent",
+      "bodyParts3DReason": "BodyParts3D models the brain, brainstem and the nerves of the orbit. It carries no peripheral nerves, so this one cannot be drawn — the notes beside the model still describe it in full.",
+      "sources": [
+        {
+          "type": "source-supplement",
+          "source": "Z-Anatomy peripheral nerve layer"
+        }
+      ],
+      "coverage": "source-backed"
+    },
+    "obturator_nerve": {
+      "bodyParts3DStatus": "absent",
+      "bodyParts3DReason": "BodyParts3D models the brain, brainstem and the nerves of the orbit. It carries no peripheral nerves, so this one cannot be drawn — the notes beside the model still describe it in full.",
+      "sources": [
+        {
+          "type": "source-supplement",
+          "source": "Z-Anatomy peripheral nerve layer"
+        }
+      ],
+      "coverage": "source-backed"
+    },
+    "sciatic_nerve": {
+      "bodyParts3DStatus": "absent",
+      "bodyParts3DReason": "BodyParts3D models the brain, brainstem and the nerves of the orbit. It carries no peripheral nerves, so this one cannot be drawn — the notes beside the model still describe it in full.",
+      "sources": [
+        {
+          "type": "source-supplement",
+          "source": "Z-Anatomy peripheral nerve layer"
+        }
+      ],
+      "coverage": "source-backed"
+    },
+    "tibial_nerve": {
+      "bodyParts3DStatus": "absent",
+      "bodyParts3DReason": "BodyParts3D models the brain, brainstem and the nerves of the orbit. It carries no peripheral nerves, so this one cannot be drawn — the notes beside the model still describe it in full.",
+      "sources": [
+        {
+          "type": "source-supplement",
+          "source": "Z-Anatomy peripheral nerve layer"
+        }
+      ],
+      "coverage": "source-backed"
+    },
+    "common_fibular_nerve": {
+      "bodyParts3DStatus": "absent",
+      "bodyParts3DReason": "BodyParts3D models the brain, brainstem and the nerves of the orbit. It carries no peripheral nerves, so this one cannot be drawn — the notes beside the model still describe it in full.",
+      "sources": [
+        {
+          "type": "source-supplement",
+          "source": "Z-Anatomy peripheral nerve layer"
+        }
+      ],
+      "coverage": "source-backed"
+    }
+  },
+  "summary": {
+    "source-backed": 53,
+    "schematic-only": 2,
+    "clinical-overlay": 2
+  }
+}

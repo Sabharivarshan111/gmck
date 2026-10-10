@@ -27,7 +27,9 @@ import { OrganDetailDrawer } from '../simulator/controls/OrganDetailDrawer';
 import { WardExamModal } from '../simulator/controls/WardExamModal';
 import { DissectionToolbar } from '../simulator/controls/DissectionToolbar';
 import { AnatomySpreadControl } from '../simulator/controls/AnatomySpreadControl';
-import { DissectionToolMode, Part } from '../simulator/data/atlasTypes';
+import { RegionStructureBrowser } from '../simulator/controls/RegionStructureBrowser';
+import { correctPartSystem } from '../simulator/data/atlasResolver';
+import { DissectionToolMode, Part, Atlas } from '../simulator/data/atlasTypes';
 import { isPeripheralNerveTarget } from '../simulator/data/peripheralNerves';
 import { HRA_HEART_TARGETS, isHraHeartTarget } from '../simulator/data/hraHeart';
 import {
@@ -79,6 +81,16 @@ export const Simulator: React.FC = () => {
   const [selectedOrganId, setSelectedOrganId] = useState<string | null>(searchParams.get('organ') || null);
 
   // Active Camera Preset
+  const [atlasCatalog, setAtlasCatalog] = useState<Atlas | null>(null);
+  useEffect(() => {
+    const controller = new AbortController();
+    fetch('/models/atlas.json', { signal: controller.signal }).then(r => { if (!r.ok) throw new Error('Atlas catalog unavailable'); return r.json(); }).then((atlas: Atlas) => {
+      const base = { ...atlas, parts: atlas.parts.map(correctPartSystem) };
+      setAtlasCatalog(base);
+      return fetch('/models/nerve_catalog.json', { signal: controller.signal }).then(r => { if (!r.ok) throw new Error('Nerve catalog unavailable'); return r.json(); }).then((parts: Part[]) => setAtlasCatalog({ ...base, parts: [...base.parts, ...parts] }));
+    }).catch(() => {});
+    return () => controller.abort();
+  }, []);
   const [cameraPreset, setCameraPreset] = useState<'anterior' | 'head' | 'thorax' | 'abdomen'>('anterior');
 
   // Interactive Dissection Engine State
@@ -182,6 +194,14 @@ export const Simulator: React.FC = () => {
     setIsolatedPartId(null);
     setExplodeAmount(0);
     setLogs((prev) => [...prev, 'Full anatomical reconstruction restored.']);
+  };
+
+  const handleSelectCatalogPart = useCallback((id: string) => {
+    setIsolatedPartId(id); setSelectedOrganId(id); setContextOrganId(null); setExplodeAmount(0); setToolMode('inspect');
+  }, []);
+
+  const handleChangeRegion = (region: 'anterior' | 'head' | 'thorax' | 'abdomen') => {
+    setCameraPreset(region); setIsolatedPartId(null); setSelectedOrganId(null); setContextOrganId(null); setExplodeAmount(0); setToolMode('inspect');
   };
 
   const handleSelect3DOrgan = useCallback((organId: string) => {
@@ -307,6 +327,7 @@ export const Simulator: React.FC = () => {
 
   return (
     <div
+      data-simulator-root
       className={`min-h-screen flex flex-col font-sans transition-colors duration-300 ${
         isLight ? 'bg-[#f8fafc] text-slate-900' : 'bg-[#05070d] text-slate-100'
       }`}
@@ -552,6 +573,7 @@ export const Simulator: React.FC = () => {
                   layer={activeLayer}
                   scenarioId={currentScenarioId}
                   cameraPreset={cameraPreset}
+                  onChangeRegion={handleChangeRegion}
                   theme={theme}
                   selectedOrganId={selectedOrganId}
                   contextOrganId={contextOrganId}
@@ -627,7 +649,11 @@ export const Simulator: React.FC = () => {
             { id: 'fallopian_tube', label: 'Uterine Tubes', icon: '↔️' },
             { id: 'placenta', label: 'Placenta', icon: '🫧' },
             { id: 'snakebite', label: 'Snakebite Wound', icon: '🐍' },
-          ].map((item) => {
+          ].filter(item => {
+            if (cameraPreset === 'anterior' || item.id === 'full') return true;
+            const regions: Record<string, string[]> = { head: ['brain', 'eye'], thorax: ['heart', 'lungs', 'thymus'], abdomen: ['abdomen', 'liver', 'stomach', 'pancreas', 'spleen', 'small_intestine', 'urinary_bladder', 'kidney', 'ureter', 'pelvis', 'prostate', 'uterus', 'ovary', 'fallopian_tube', 'placenta'] };
+            return regions[cameraPreset]?.includes(item.id);
+          }).map((item) => {
             const isActive =
               item.id === 'full'
                 ? !isolatedPartId && !selectedOrganId
@@ -983,6 +1009,8 @@ export const Simulator: React.FC = () => {
           </div>
         )}
 
+        {mobileTab === '3d' && <RegionStructureBrowser atlas={atlasCatalog} region={cameraPreset} theme={theme} onSelect={handleSelectCatalogPart} />}
+
         {/* MOBILE VIEW: Tab-driven clean single stage (Kept permanently mounted to prevent WebGL context destruction) */}
         <div className="lg:hidden flex flex-col space-y-3">
           <div
@@ -1060,6 +1088,7 @@ export const Simulator: React.FC = () => {
                   layer={activeLayer}
                   scenarioId={currentScenarioId}
                   cameraPreset={cameraPreset}
+                  onChangeRegion={handleChangeRegion}
                   theme={theme}
                   selectedOrganId={selectedOrganId}
                   contextOrganId={contextOrganId}
@@ -1128,6 +1157,7 @@ export const Simulator: React.FC = () => {
       {/* 4. Apple-Style Deep Organ Anatomical Drawer (Slide-up on mobile, slide-in on desktop) */}
       <OrganDetailDrawer
         organId={selectedOrganId}
+        sourcePart={atlasCatalog?.parts.find(p => p.id === selectedOrganId)}
         isolatedPartId={isolatedPartId}
         onClose={() => {
           // Close drawer but PRESERVE isolatedPartId in 3D viewport
@@ -1146,7 +1176,7 @@ export const Simulator: React.FC = () => {
           if (!isDesktopLayout) setSelectedOrganId(null);
         }}
         onDissectOrgan={(organKey) => {
-          const fakePart: Part = {
+          const fakePart: Part = atlasCatalog?.parts.find(p => p.id === organKey) || {
             id: organKey,
             name: organKey.charAt(0).toUpperCase() + organKey.slice(1),
             system: 'viscera' as any,

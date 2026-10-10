@@ -46,7 +46,11 @@ async function loadDeps() {
   const [fflate, fzstd, initSqlJs] = await Promise.all([
     import('fflate'),
     import('fzstd'),
-    import('sql.js').then(m => m.default ?? m),
+    import('sql.js').then(m => {
+      const initializer: unknown = m.default ?? m;
+      if (typeof initializer !== 'function') throw new Error('SQL.js initializer is unavailable');
+      return initializer as typeof import('sql.js').default;
+    }),
   ]);
   return { fflate, fzstd, initSqlJs };
 }

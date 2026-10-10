@@ -116,6 +116,7 @@ export const SYSTEMS: SystemDefinition[] = [
 ];
 
 export interface Part {
+  source?: 'Z-Anatomy';
   id: string;
   name: string;
   conceptId: string;

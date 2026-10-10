@@ -4,6 +4,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { partBelongsToRegion, restoreSourceNodeNames } from '../data/anatomyRegions';
 import { PatientVitals, PatientPathologyState } from '../types';
 import {
   Atlas,
@@ -21,7 +22,7 @@ import {
   buildSystemAngles,
   type ExplosionLayout,
 } from './anatomyExplosion';
-import { isPeripheralNerveTarget, meshMatchesPeripheralNerveTarget, normalisePeripheralNerveTarget, peripheralNerveKeyForMeshName, PERIPHERAL_NERVE_MODEL_URL } from '../data/peripheralNerves';
+import { isPeripheralNerveTarget, meshMatchesPeripheralNerveTarget, normalisePeripheralNerveTarget, peripheralNerveKeyForMeshName, genericPeripheralNerveKey, PERIPHERAL_NERVE_MODEL_URL } from '../data/peripheralNerves';
 import {
   getHraOrganModel,
   getHraOrganTarget,
@@ -49,6 +50,7 @@ interface AnatomicalBody3DProps {
   scenarioId: string;
   layer?: import('../types').AnatomicalLayer;
   cameraPreset?: 'anterior' | 'head' | 'thorax' | 'abdomen';
+  onChangeRegion?: (region: 'anterior' | 'head' | 'thorax' | 'abdomen') => void;
   theme?: 'light' | 'dark';
   selectedOrganId?: string | null;
   contextOrganId?: string | null;
@@ -786,6 +788,7 @@ export function createLungParenchymaSystem(modelOverride?: string): {
       // CRITICAL FIX: Collect meshes in static array first!
       // Reparenting during gltf.scene.traverse mutates scene.children and causes lobes to be skipped!
       const meshes: THREE.Mesh[] = [];
+      restoreSourceNodeNames(gltf.scene);
       gltf.scene.traverse((child) => {
         if ((child as THREE.Mesh).isMesh) {
           meshes.push(child as THREE.Mesh);
@@ -1224,6 +1227,7 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
   pathology,
   scenarioId,
   cameraPreset = 'anterior',
+  onChangeRegion,
   theme = 'light',
   selectedOrganId,
   contextOrganId,
@@ -1239,6 +1243,7 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
 }) => {
   const mountRef = useRef<HTMLDivElement>(null);
   const labelLayerRef = useRef<HTMLDivElement>(null);
+  const prepareLabelsRef = useRef<((atlas: Atlas) => void) | null>(null);
   const sceneRef = useRef<THREE.Scene | null>(null);
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
@@ -1350,6 +1355,8 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
   explodeAmountRef.current = explodeAmount;
   const isolatedPartIdRef = useRef(isolatedPartId);
   isolatedPartIdRef.current = isolatedPartId;
+  const regionRef = useRef(cameraPreset);
+  regionRef.current = cameraPreset;
   const lastExplodeAmountRef = useRef(0);
   const explodeCameraBaseRef = useRef<{
     target: THREE.Vector3;
@@ -1414,7 +1421,7 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
     } catch {
       sceneRef.current = null;
       cameraRef.current = null;
-      setGraphicsError('3D graphics are unavailable in this browser. You can still use the ICU monitor and clinical cases.');
+      setGraphicsError('3D graphics are unavailable in this browser. You can still browse regional structures, read anatomy details, and use the ICU monitor and clinical cases.');
       return;
     }
     renderer.setSize(width, height);
@@ -1491,7 +1498,12 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
       root.replaceChildren();
       floatingLabelTargets = [];
 
-      for (const spec of FLOATING_ANATOMY_LABELS) {
+      const regionalParts = regionRef.current === 'anterior' ? [] : atlas.parts
+        .filter(part => partBelongsToRegion(part, regionRef.current))
+        .sort((a, b) => (b.bounds[1][0] - b.bounds[0][0]) * (b.bounds[1][1] - b.bounds[0][1]) - (a.bounds[1][0] - a.bounds[0][0]) * (a.bounds[1][1] - a.bounds[0][1]))
+        .slice(0, 80);
+      const specs = [...FLOATING_ANATOMY_LABELS, ...regionalParts.map(part => ({ key: part.id, label: part.name, priority: 70 }))];
+      for (const spec of specs) {
         const ids = resolveAtlasElementIds(spec.key, atlas);
         if (!ids || ids.size === 0) continue;
 
@@ -1519,7 +1531,7 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
         button.setAttribute('aria-label', `Open ${spec.label} anatomy details`);
         button.title = `Open ${spec.label} anatomy details`;
         button.className =
-          'absolute left-0 top-0 hidden min-h-[38px] max-w-[150px] -translate-x-1/2 -translate-y-1/2 rounded-xl border bg-slate-950/90 px-2.5 py-1 text-[10px] sm:text-[11px] font-bold text-white shadow-lg backdrop-blur-md pointer-events-auto whitespace-nowrap overflow-hidden text-ellipsis transition-[opacity,transform,box-shadow] duration-100 flex items-center gap-1.5';
+          'absolute left-0 top-0 hidden min-h-[44px] max-w-[150px] -translate-x-1/2 -translate-y-1/2 rounded-xl border bg-slate-950/90 px-2.5 py-1 text-[10px] sm:text-[11px] font-bold text-white shadow-lg backdrop-blur-md pointer-events-auto whitespace-nowrap overflow-hidden text-ellipsis transition-[opacity,transform,box-shadow] duration-100 flex items-center gap-1.5';
 
         const sourcePart = atlas.parts[bestIndex];
         const systemColor =
@@ -1562,6 +1574,8 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
       }
     };
 
+    prepareLabelsRef.current = prepareFloatingLabels;
+
     const projectedLabelPoint = new THREE.Vector3();
     const updateFloatingLabels = () => {
       const atlas = atlasRef.current;
@@ -1594,6 +1608,7 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
       const candidates = floatingLabelTargets
         .map((target) => {
           const index = target.partIndex;
+          if (!partBelongsToRegion(atlas.parts[index], regionRef.current)) return null;
           if (partData[index * 4 + 3] < 0.1) return null;
           projectedLabelPoint.set(
             centers[index * 3] + partData[index * 4],
@@ -2404,6 +2419,7 @@ varying float partSelected;
       controls.dispose();
       if (labelLayerRef.current) labelLayerRef.current.replaceChildren();
       floatingLabelTargets = [];
+      prepareLabelsRef.current = null;
 
       // Dispose DataTextures
       if (partTextureRef.current) {
@@ -2438,6 +2454,17 @@ varying float partSelected;
       renderer.dispose();
     };
   }, []);
+
+  useEffect(() => {
+    const atlas = atlasRef.current;
+    if (!modelsReady || !atlas || !cameraRef.current) return;
+    prepareLabelsRef.current?.(atlas);
+    const included = atlas.parts.map((part, index) => ({ part, index })).filter(({ part }) => partBelongsToRegion(part, cameraPreset));
+    const regional = buildExplodedInventoryTargets(included.map(({ part }) => part), cameraRef.current.aspect);
+    const targets = new Float32Array(atlas.parts.length * 3);
+    included.forEach(({ index }, i) => targets.set(regional.targets.subarray(i * 3, i * 3 + 3), index * 3));
+    explosionLayoutRef.current = { ...regional, targets };
+  }, [cameraPreset, modelsReady]);
 
   // Spread Anatomy: write per-structure translation into the RGB channels of
   // the same GPU texture already used for visibility. This keeps draw calls
@@ -2489,7 +2516,7 @@ varying float partSelected;
     });
 
     texture.needsUpdate = true;
-  }, [explodeAmount, isolatedPartId, modelsReady]);
+  }, [explodeAmount, isolatedPartId, cameraPreset, modelsReady]);
 
   // Preserve the learner's view while spreading. The camera zooms out with the
   // layout and only eases toward front view for the final inventory, avoiding
@@ -2603,7 +2630,7 @@ varying float partSelected;
     }
 
     lastExplodeAmountRef.current = next;
-  }, [explodeAmount, isolatedPartId, modelsReady]);
+  }, [explodeAmount, isolatedPartId, cameraPreset, modelsReady]);
 
   // Update Theme & Background
   useEffect(() => {
@@ -2641,6 +2668,7 @@ varying float partSelected;
         if (!scene) return;
 
         const group = gltf.scene;
+        restoreSourceNodeNames(group);
         group.name = 'zanatomy_peripheral_nerves';
         group.visible = false;
 
@@ -2724,6 +2752,7 @@ varying float partSelected;
         if (!scene) return;
 
         const group = gltf.scene;
+        restoreSourceNodeNames(group);
         group.name = 'hra_heart_male_reference';
         group.visible = false;
 
@@ -2901,6 +2930,7 @@ varying float partSelected;
           if (!scene || !materials) return;
 
           const group = gltf.scene;
+        restoreSourceNodeNames(group);
           group.name = `hra_reference_${modelKey}`;
           group.visible = false;
 
@@ -3025,6 +3055,7 @@ varying float partSelected;
         if (!scene || !materials) return;
 
         const group = gltf.scene;
+        restoreSourceNodeNames(group);
         group.name = `zanatomy_reference_${modelKey}`;
         group.visible = false;
 
@@ -3278,7 +3309,7 @@ varying float partSelected;
         const visible =
           useRealNerveLayer &&
           meshMatchesPeripheralNerveTarget(mesh.name, targetKey) &&
-          (!nerveKey || !hiddenSet.has(nerveKey));
+          (!nerveKey || !hiddenSet.has(nerveKey)) && !hiddenSet.has(genericPeripheralNerveKey(mesh.name));
         mesh.visible = visible;
         if (visible) nerveIsolationBox.expandByObject(mesh);
       });
@@ -3472,6 +3503,7 @@ varying float partSelected;
       }
 
 
+      if (!isolatedPartId && !partBelongsToRegion(p, cameraPreset)) visible = 0;
       partData[i * 4 + 3] = visible;
     });
 
@@ -3628,6 +3660,7 @@ varying float partSelected;
     }
   }, [
     hiddenPartIds,
+    cameraPreset,
     isolatedPartId,
     contextOrganId,
     selectedOrganId,
@@ -3732,6 +3765,18 @@ varying float partSelected;
     });
   }, [isXray, isLight, explodeAmount, isolatedPartId]);
 
+  const setCameraDirection = (direction: 'front' | 'back' | 'side') => {
+    const camera = cameraRef.current;
+    const controls = controlsRef.current;
+    if (!camera || !controls) return;
+    // Preserve the current structure focus and zoom when changing orientation.
+    const distance = Math.max(camera.position.distanceTo(controls.target), 0.1);
+    const offset = direction === 'side' ? new THREE.Vector3(distance, 0, 0)
+      : new THREE.Vector3(0, 0, direction === 'back' ? -distance : distance);
+    camera.position.copy(controls.target).add(offset);
+    controls.update();
+  };
+
   // Camera Presets
   const resetCamera = (preset: 'anterior' | 'head' | 'thorax' | 'abdomen') => {
     if (!cameraRef.current || !controlsRef.current) return;
@@ -3803,7 +3848,7 @@ varying float partSelected;
             />
           </div>
           <div className="text-[10px] text-slate-500 font-mono">
-            2,234 Anatomically Registered Parts • CC BY 4.0
+            2,234 Anatomically Registered Parts • BodyParts3D
           </div>
         </div>
       )}
@@ -3811,18 +3856,7 @@ varying float partSelected;
       {/* Top Floating Control Bar */}
       <div
         data-testid="anatomy-camera-controls"
-        aria-hidden={explodeAmount > 0.02}
-        style={{
-          display:
-            explodeAmount > 0.02 &&
-            typeof window !== 'undefined' &&
-            window.innerWidth < 768
-              ? 'none'
-              : undefined,
-        }}
-        className={`absolute top-3 left-3 right-3 z-10 items-center justify-between pointer-events-none gap-2 ${
-          explodeAmount > 0.02 ? 'hidden md:flex' : 'flex'
-        }`}
+        className="absolute top-3 left-3 right-3 z-50 flex items-center justify-between pointer-events-none gap-2"
       >
         {/* Camera Presets Segmented Pill */}
         <div
@@ -3841,8 +3875,9 @@ varying float partSelected;
             <span className="hidden sm:inline">Camera:</span>
           </div>
           <button
-            onClick={() => resetCamera('anterior')}
-            className={`px-2.5 py-1 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+            aria-pressed={cameraPreset === 'anterior'}
+            onClick={() => { onChangeRegion?.('anterior'); resetCamera('anterior'); }}
+            className={`min-h-11 sm:min-h-0 px-2.5 py-1 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
               cameraPreset === 'anterior'
                 ? isLight
                   ? 'bg-sky-600 text-white shadow-xs font-bold'
@@ -3855,8 +3890,9 @@ varying float partSelected;
             Full
           </button>
           <button
-            onClick={() => resetCamera('head')}
-            className={`px-2.5 py-1 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+            aria-pressed={cameraPreset === 'head'}
+            onClick={() => { onChangeRegion?.('head'); resetCamera('head'); }}
+            className={`min-h-11 sm:min-h-0 px-2.5 py-1 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
               cameraPreset === 'head'
                 ? isLight
                   ? 'bg-sky-600 text-white shadow-xs font-bold'
@@ -3869,8 +3905,9 @@ varying float partSelected;
             Head
           </button>
           <button
-            onClick={() => resetCamera('thorax')}
-            className={`px-2.5 py-1 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+            aria-pressed={cameraPreset === 'thorax'}
+            onClick={() => { onChangeRegion?.('thorax'); resetCamera('thorax'); }}
+            className={`min-h-11 sm:min-h-0 px-2.5 py-1 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
               cameraPreset === 'thorax'
                 ? isLight
                   ? 'bg-sky-600 text-white shadow-xs font-bold'
@@ -3883,8 +3920,9 @@ varying float partSelected;
             Thorax
           </button>
           <button
-            onClick={() => resetCamera('abdomen')}
-            className={`px-2.5 py-1 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+            aria-pressed={cameraPreset === 'abdomen'}
+            onClick={() => { onChangeRegion?.('abdomen'); resetCamera('abdomen'); }}
+            className={`min-h-11 sm:min-h-0 px-2.5 py-1 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
               cameraPreset === 'abdomen'
                 ? isLight
                   ? 'bg-sky-600 text-white shadow-xs font-bold'
@@ -3921,6 +3959,17 @@ varying float partSelected;
           )}
         </div>
       </div>
+
+      {!graphicsError && !contextLost && (
+        <div className="absolute top-[76px] sm:top-14 left-3 z-20 flex gap-1 rounded-xl bg-slate-900/90 p-1 text-white backdrop-blur-xl" aria-label="View direction">
+          {(['front', 'back', 'side'] as const).map(direction => (
+            <button key={direction} onClick={() => setCameraDirection(direction)}
+              className="min-h-11 min-w-11 px-2 text-xs capitalize rounded-lg hover:bg-slate-700 focus-visible:ring-2 focus-visible:ring-sky-400">
+              {direction}
+            </button>
+          ))}
+        </div>
+      )}
 
       {isZAnatomyReferenceTarget(isolatedPartId || selectedOrganId) && (() => {
         const target = getZAnatomyReferenceTarget(isolatedPartId || selectedOrganId);
