@@ -45,7 +45,8 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
   const [searchText, setSearchText] = useState('');
   const [published, setPublished] = useState<PgQuestion[]>([]);
   const [loading, setLoading] = useState(false);
-  const [loadedCount, setLoadedCount] = useState(0);\n  const [loadError, setLoadError] = useState<string | null>(null);
+  const [loadedCount, setLoadedCount] = useState(0);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [expandedAnswer, setExpandedAnswer] = useState<string | null>(null);
 
   const year = /^\d{4}$/.test(yearText) ? Number(yearText) : null;
