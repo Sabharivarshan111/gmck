@@ -1,0 +1,20 @@
+name: PG 25 MB complete-record compression verification
+on:
+  push:
+    paths:
+      - scripts/benchmark-pg-25mb-probe.py
+      - .github/workflows/pg-25mb-proof.yml
+  workflow_dispatch:
+jobs:
+  check-full-dataset-compression:
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install pyarrow huggingface_hub brotli zstandard
+      - run: python scripts/benchmark-pg-25mb-probe.py
