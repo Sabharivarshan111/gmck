@@ -108,7 +108,7 @@ const data: PgQuestion[] = ROWS.map(r => ({{
   answer_reference: REFERENCES[Number(r[11])],
   record_type: RECORD_TYPES[Number(r[12])],
   exam_session: SESSIONS[Number(r[13])],
-}));
+}}));
 export default data;
 '''
     return rendered
