@@ -50,6 +50,10 @@ const byId = new Map(atlas.parts.map((p) => [p.id, p]));
 
 const failures = [];
 const fail = (msg) => failures.push(msg);
+for (const [id, expected] of [['FJ1252','digestive'], ['FJ1253','digestive'], ['FJ1532','muscular'], ['FJ1532M','muscular']]) {
+  if (byId.get(id)?.system !== expected) fail(`${id} must be classified as ${expected}, not skeletal`);
+}
+
 
 // ---------------------------------------------------------------------------
 // Every target the dossier database can hand the 3D view

@@ -682,6 +682,7 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
                             )}
                           </div>
                           <button
+                            aria-label={`Inspect ${art.name} in 3D`}
                             data-testid={`arterial-node-${art.id}-3d`}
                             onClick={() => {
                               navigateToStructure(art.id, art.cameraPreset);
@@ -689,7 +690,7 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
                             }}
                             className="px-3 py-1.5 rounded-xl text-xs font-bold bg-rose-500 hover:bg-rose-600 text-white flex items-center gap-1 min-h-[44px] shadow-xs transition-all flex-shrink-0 cursor-pointer"
                           >
-                            <span>Inspect in 3D</span>
+                            <span className="hidden sm:inline">Inspect in 3D</span><span className="sm:hidden">3D</span>
                             <ArrowRight className="w-3 h-3" />
                           </button>
                         </div>
@@ -762,13 +763,14 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
                             )}
                           </div>
                           <button
+                            aria-label={`Inspect ${vein.name} in 3D`}
                             onClick={() => {
                               navigateToStructure(vein.id, vein.cameraPreset);
                               if (onIsolateStructure) onIsolateStructure(vein.id, organKey);
                             }}
                             className="px-3 py-1.5 rounded-xl text-xs font-bold bg-blue-500 hover:bg-blue-600 text-white flex items-center gap-1 min-h-[44px] shadow-xs transition-all flex-shrink-0 cursor-pointer"
                           >
-                            <span>Inspect in 3D</span>
+                            <span className="hidden sm:inline">Inspect in 3D</span><span className="sm:hidden">3D</span>
                             <ArrowRight className="w-3 h-3" />
                           </button>
                         </div>
@@ -839,13 +841,14 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
                             </div>
                           </div>
                           <button
+                            aria-label={`Inspect ${nerve.name} in 3D`}
                             onClick={() => {
                               navigateToStructure(nerve.id, nerve.cameraPreset);
                               if (onIsolateStructure) onIsolateStructure(nerve.id, organKey);
                             }}
                             className="px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-600 text-white flex items-center gap-1 min-h-[44px] shadow-xs transition-all flex-shrink-0 cursor-pointer"
                           >
-                            <span>Inspect in 3D</span>
+                            <span className="hidden sm:inline">Inspect in 3D</span><span className="sm:hidden">3D</span>
                             <ArrowRight className="w-3 h-3" />
                           </button>
                         </div>
