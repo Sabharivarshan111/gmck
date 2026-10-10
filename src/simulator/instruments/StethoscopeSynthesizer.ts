@@ -1,5 +1,5 @@
 // ============================================================================
-// STETHOSCOPE SYNTHESIZER ENGINE (Medical-Grade Web Audio API)
+// STETHOSCOPE SYNTHESIZER ENGINE (Simplified educational Web Audio)
 // Real-time procedural DSP synthesis of physiological and pathological
 // cardiac and pulmonary acoustics for clinical education.
 // ============================================================================
@@ -14,6 +14,7 @@ export type AuscultationSite =
   | 'trachea';
 
 export type HeartSoundPreset =
+  | 'silent'
   | 'normal'
   | 's3_gallop'
   | 's4_gallop'
@@ -52,6 +53,26 @@ export class StethoscopeAudioEngine {
   private currentHeartPreset: HeartSoundPreset = 'normal';
   private currentLungPreset: LungSoundPreset = 'vesicular';
   private currentMode: 'bell' | 'diaphragm' = 'diaphragm';
+  private atrialContraction = true;
+  private sourceGroup: 'cardiac' | 'pulmonary' = 'cardiac';
+  private activeSources = new Map<AudioScheduledSourceNode, 'cardiac' | 'pulmonary'>();
+
+  private trackSource<T extends AudioScheduledSourceNode>(source: T): T {
+    this.activeSources.set(source, this.sourceGroup);
+    source.onended = () => { this.activeSources.delete(source); source.disconnect(); };
+    return source;
+  }
+
+  private stopSources(group?: 'cardiac' | 'pulmonary'): void {
+    for (const [source, category] of this.activeSources) {
+      if (!group || category === group) {
+        try { source.stop(); } catch { /* Already stopped. */ }
+        source.disconnect();
+        this.activeSources.delete(source);
+      }
+    }
+  }
+
   private isCardiacActive = false;
   private isPulmonaryActive = false;
 
@@ -81,7 +102,7 @@ export class StethoscopeAudioEngine {
     try {
       if (this.ctx) {
         const buffer = this.ctx.createBuffer(1, 1, 22050);
-        const source = this.ctx.createBufferSource();
+        const source = this.trackSource(this.ctx.createBufferSource());
         source.buffer = buffer;
         source.connect(this.ctx.destination);
         source.start(0);
@@ -206,10 +227,13 @@ export class StethoscopeAudioEngine {
   // --------------------------------------------------------------------------
   // LOOKAHEAD TIMING SCHEDULER
   // --------------------------------------------------------------------------
-  public startCardiacAuscultation(hr: number, preset: HeartSoundPreset): void {
-    this.currentHr = hr;
+  public startCardiacAuscultation(hr: number, preset: HeartSoundPreset, atrialContraction = true): void {
+    if (preset !== this.currentHeartPreset || atrialContraction !== this.atrialContraction) this.stopSources('cardiac');
+    this.atrialContraction = atrialContraction;
+    this.currentHr = Number.isFinite(hr) ? Math.max(30, Math.min(220, hr)) : 72;
     this.currentHeartPreset = preset;
-    this.isCardiacActive = true;
+    this.isCardiacActive = preset !== 'silent';
+    if (!this.isCardiacActive) { this.stopSources('cardiac'); if (!this.isPulmonaryActive) this.checkStopScheduler(); return; }
     if (this.ctx && this.nextBeatTime < this.ctx.currentTime) {
       this.nextBeatTime = this.ctx.currentTime + 0.02;
     }
@@ -224,7 +248,8 @@ export class StethoscopeAudioEngine {
 
   public setHeartPreset(preset: HeartSoundPreset): void {
     this.currentHeartPreset = preset;
-    this.isCardiacActive = true;
+    this.isCardiacActive = preset !== 'silent';
+    if (!this.isCardiacActive) { this.stopSources('cardiac'); if (!this.isPulmonaryActive) this.checkStopScheduler(); return; }
     if (this.ctx && this.nextBeatTime < this.ctx.currentTime) {
       this.nextBeatTime = this.ctx.currentTime + 0.02;
     }
@@ -239,6 +264,7 @@ export class StethoscopeAudioEngine {
   }
 
   public stopCardiacAuscultation(): void {
+    this.stopSources('cardiac');
     this.isCardiacActive = false;
     if (!this.isPulmonaryActive) {
       this.checkStopScheduler();
@@ -246,7 +272,8 @@ export class StethoscopeAudioEngine {
   }
 
   public startPulmonaryAuscultation(rr: number, preset: LungSoundPreset): void {
-    this.currentRr = rr;
+    if (preset !== this.currentLungPreset) this.stopSources('pulmonary');
+    this.currentRr = Number.isFinite(rr) ? Math.max(6, Math.min(60, rr)) : 14;
     this.currentLungPreset = preset;
     this.isPulmonaryActive = preset !== 'silent';
     if (this.ctx && this.nextBreathTime < this.ctx.currentTime) {
@@ -278,6 +305,7 @@ export class StethoscopeAudioEngine {
   }
 
   public stopPulmonaryAuscultation(): void {
+    this.stopSources('pulmonary');
     this.isPulmonaryActive = false;
     this.currentLungPreset = 'silent';
     if (!this.isCardiacActive) {
@@ -286,6 +314,7 @@ export class StethoscopeAudioEngine {
   }
 
   public stopAll(): void {
+    this.stopSources();
     this.isCardiacActive = false;
     this.isPulmonaryActive = false;
     this.currentLungPreset = 'silent';
@@ -319,6 +348,7 @@ export class StethoscopeAudioEngine {
       if (this.isCardiacActive) {
         const beatDuration = 60 / Math.max(30, this.currentHr);
         while (this.nextBeatTime < now + lookahead) {
+          this.sourceGroup = 'cardiac';
           this.renderCardiacBeat(this.nextBeatTime, beatDuration, this.currentHeartPreset);
           this.nextBeatTime += beatDuration;
         }
@@ -326,8 +356,9 @@ export class StethoscopeAudioEngine {
 
       // 2. Schedule Respiratory Breaths
       if (this.isPulmonaryActive && this.currentLungPreset !== 'silent') {
-        const breathDuration = 60 / Math.max(8, this.currentRr);
+        const breathDuration = 60 / Math.max(6, this.currentRr);
         while (this.nextBreathTime < now + lookahead) {
+          this.sourceGroup = 'pulmonary';
           this.renderBreathCycle(this.nextBreathTime, breathDuration, this.currentLungPreset);
           this.nextBreathTime += breathDuration;
         }
@@ -339,7 +370,7 @@ export class StethoscopeAudioEngine {
   // CARDIAC DSP SYNTHESIS
   // --------------------------------------------------------------------------
   private renderCardiacBeat(t: number, cycleDuration: number, preset: HeartSoundPreset): void {
-    if (!this.ctx || !this.chestWallResonance) return;
+    if (!this.ctx || !this.chestWallResonance || preset === 'silent') return;
 
     const systolicTime = 0.38 * Math.sqrt(cycleDuration);
     const isTamponade = preset === 'tamponade_muffled';
@@ -372,6 +403,7 @@ export class StethoscopeAudioEngine {
       }
 
       case 's4_gallop': {
+        if (!this.atrialContraction) break;
         // S4: Late diastolic presystolic kick (85 ms prior to S1)
         const s4Time = t + cycleDuration - 0.085;
         this.synthesizeGallopThud(s4Time, 58, 42, 0.065, 0.65 * masterAttn);
@@ -390,7 +422,7 @@ export class StethoscopeAudioEngine {
 
         // 3. Presystolic accentuation (crescendo into S1)
         const presysTime = t + cycleDuration - 0.12;
-        this.synthesizePresystolicCrescendo(presysTime, 0.11, 0.85);
+        if (this.atrialContraction) this.synthesizePresystolicCrescendo(presysTime, 0.11, 0.85);
         break;
       }
 
@@ -443,7 +475,7 @@ export class StethoscopeAudioEngine {
     const st = this.safe(t);
 
     // 1. Fundamental Component
-    const osc = this.ctx.createOscillator();
+    const osc = this.trackSource(this.ctx.createOscillator());
     const gain = this.ctx.createGain();
     osc.type = 'sine';
     osc.frequency.setValueAtTime(fStart, st);
@@ -459,7 +491,7 @@ export class StethoscopeAudioEngine {
     osc.stop(st + duration + 0.01);
 
     // 2. Psychoacoustic 2nd Harmonic (Audible on MacBook & smartphone speakers!)
-    const osc2 = this.ctx.createOscillator();
+    const osc2 = this.trackSource(this.ctx.createOscillator());
     const gain2 = this.ctx.createGain();
     osc2.type = 'sine';
     osc2.frequency.setValueAtTime(fStart * 2.2, st);
@@ -475,7 +507,7 @@ export class StethoscopeAudioEngine {
     osc2.stop(st + duration + 0.01);
 
     // 3. Psychoacoustic 3rd Harmonic Formant Click (gives tactile snap)
-    const osc3 = this.ctx.createOscillator();
+    const osc3 = this.trackSource(this.ctx.createOscillator());
     const gain3 = this.ctx.createGain();
     osc3.type = 'triangle';
     osc3.frequency.setValueAtTime(fStart * 3.4, st);
@@ -500,7 +532,7 @@ export class StethoscopeAudioEngine {
   ): void {
     if (!this.ctx || !this.chestWallResonance) return;
     const st = this.safe(t);
-    const osc = this.ctx.createOscillator();
+    const osc = this.trackSource(this.ctx.createOscillator());
     const gain = this.ctx.createGain();
 
     osc.type = 'sine';
@@ -521,7 +553,7 @@ export class StethoscopeAudioEngine {
   private synthesizeCrispSnap(t: number, freq: number, duration: number, peakGain: number): void {
     if (!this.ctx || !this.chestWallResonance || !this.noiseBuffer) return;
     const st = this.safe(t);
-    const source = this.ctx.createBufferSource();
+    const source = this.trackSource(this.ctx.createBufferSource());
     source.buffer = this.noiseBuffer;
 
     const bpf = this.ctx.createBiquadFilter();
@@ -551,8 +583,8 @@ export class StethoscopeAudioEngine {
   ): void {
     if (!this.ctx || !this.chestWallResonance) return;
     const st = this.safe(t);
-    const osc = this.ctx.createOscillator();
-    const harmonicOsc = this.ctx.createOscillator();
+    const osc = this.trackSource(this.ctx.createOscillator());
+    const harmonicOsc = this.trackSource(this.ctx.createOscillator());
     const gain = this.ctx.createGain();
 
     osc.type = 'sine';
@@ -581,7 +613,7 @@ export class StethoscopeAudioEngine {
   private synthesizeOpeningSnap(t: number, peakGain: number): void {
     if (!this.ctx || !this.chestWallResonance) return;
     const st = this.safe(t);
-    const osc = this.ctx.createOscillator();
+    const osc = this.trackSource(this.ctx.createOscillator());
     const gain = this.ctx.createGain();
 
     osc.type = 'sine';
@@ -602,7 +634,7 @@ export class StethoscopeAudioEngine {
   private synthesizeMitralRumble(t: number, duration: number, gainVal: number): void {
     if (!this.ctx || !this.chestWallResonance || !this.noiseBuffer) return;
     const st = this.safe(t);
-    const source = this.ctx.createBufferSource();
+    const source = this.trackSource(this.ctx.createBufferSource());
     source.buffer = this.noiseBuffer;
     source.loop = true;
 
@@ -619,12 +651,12 @@ export class StethoscopeAudioEngine {
     peak.gain.setValueAtTime(8.0, st);
 
     // Modulated rough mechanical shudder oscillator (14 Hz tremor characteristic of stenotic orifice)
-    const shudderOsc = this.ctx.createOscillator();
+    const shudderOsc = this.trackSource(this.ctx.createOscillator());
     const shudderGain = this.ctx.createGain();
     shudderOsc.type = 'sawtooth';
     shudderOsc.frequency.setValueAtTime(85, st); // 85 Hz rumble with 170 Hz / 255 Hz harmonics
 
-    const lfo = this.ctx.createOscillator();
+    const lfo = this.trackSource(this.ctx.createOscillator());
     const lfoGain = this.ctx.createGain();
     lfo.frequency.setValueAtTime(14, st);
     lfoGain.gain.setValueAtTime(25, st);
@@ -657,7 +689,7 @@ export class StethoscopeAudioEngine {
   private synthesizePresystolicCrescendo(t: number, duration: number, peakGain: number): void {
     if (!this.ctx || !this.chestWallResonance || !this.noiseBuffer) return;
     const st = this.safe(t);
-    const source = this.ctx.createBufferSource();
+    const source = this.trackSource(this.ctx.createBufferSource());
     source.buffer = this.noiseBuffer;
     source.loop = true;
 
@@ -681,7 +713,7 @@ export class StethoscopeAudioEngine {
   private synthesizeAorticStenosisMurmur(t: number, duration: number, peakGain: number): void {
     if (!this.ctx || !this.chestWallResonance || !this.noiseBuffer) return;
     const st = this.safe(t);
-    const source = this.ctx.createBufferSource();
+    const source = this.trackSource(this.ctx.createBufferSource());
     source.buffer = this.noiseBuffer;
     source.loop = true;
 
@@ -719,7 +751,7 @@ export class StethoscopeAudioEngine {
   private synthesizeMitralRegurgMurmur(t: number, duration: number, peakGain: number): void {
     if (!this.ctx || !this.chestWallResonance || !this.noiseBuffer) return;
     const st = this.safe(t);
-    const source = this.ctx.createBufferSource();
+    const source = this.trackSource(this.ctx.createBufferSource());
     source.buffer = this.noiseBuffer;
     source.loop = true;
 
@@ -752,7 +784,7 @@ export class StethoscopeAudioEngine {
   private synthesizeAorticRegurgMurmur(t: number, duration: number, peakGain: number): void {
     if (!this.ctx || !this.chestWallResonance || !this.noiseBuffer) return;
     const st = this.safe(t);
-    const source = this.ctx.createBufferSource();
+    const source = this.trackSource(this.ctx.createBufferSource());
     source.buffer = this.noiseBuffer;
     source.loop = true;
 
@@ -783,7 +815,7 @@ export class StethoscopeAudioEngine {
   private synthesizePericardialScratch(t: number, duration: number, peakGain: number): void {
     if (!this.ctx || !this.chestWallResonance || !this.noiseBuffer) return;
     const st = this.safe(t);
-    const source = this.ctx.createBufferSource();
+    const source = this.trackSource(this.ctx.createBufferSource());
     source.buffer = this.noiseBuffer;
     source.loop = true;
 
@@ -829,9 +861,11 @@ export class StethoscopeAudioEngine {
     if (!this.ctx || !this.chestWallResonance || !this.noiseBuffer) return;
 
     const isBronchial = preset === 'bronchial';
-    const inspRatio = isBronchial ? 0.45 : 0.65;
-    const inspDuration = cycleDuration * inspRatio;
-    const expDuration = cycleDuration * (1 - inspRatio) * 0.85;
+    const pauseDuration = Math.min(isBronchial ? 0.2 : 0.05, cycleDuration * 0.1);
+    const audibleDuration = cycleDuration - pauseDuration;
+    const inspRatio = isBronchial ? 0.4 : 0.65;
+    const inspDuration = audibleDuration * inspRatio;
+    const expDuration = audibleDuration * (1 - inspRatio) * 0.85;
 
     // Inspiratory airflow
     this.playAirflowPhase(t, inspDuration, true, preset);
@@ -849,7 +883,6 @@ export class StethoscopeAudioEngine {
     }
 
     // Expiratory airflow
-    const pauseDuration = isBronchial ? 0.2 : 0.05;
     const expStart = t + inspDuration + pauseDuration;
     this.playAirflowPhase(expStart, expDuration, false, preset);
 
@@ -868,7 +901,7 @@ export class StethoscopeAudioEngine {
     if (!this.ctx || !this.chestWallResonance || !this.noiseBuffer) return;
     const st = this.safe(t);
 
-    const source = this.ctx.createBufferSource();
+    const source = this.trackSource(this.ctx.createBufferSource());
     source.buffer = this.noiseBuffer;
     source.loop = true;
 
@@ -886,7 +919,7 @@ export class StethoscopeAudioEngine {
     }
 
     const gain = this.ctx.createGain();
-    const peakGain = isInsp ? 0.35 : isBronchial ? 0.32 : 0.12;
+    const peakGain = isBronchial ? (isInsp ? 0.32 : 0.35) : (isInsp ? 0.35 : 0.12);
 
     gain.gain.setValueAtTime(0.001, st);
     gain.gain.linearRampToValueAtTime(peakGain, st + duration * 0.45);
@@ -918,13 +951,13 @@ export class StethoscopeAudioEngine {
     const st = this.safe(t);
     const wheezeFreqs = [360, 480, 640, 790];
     wheezeFreqs.forEach((freq, idx) => {
-      const osc = this.ctx!.createOscillator();
+      const osc = this.trackSource(this.ctx!.createOscillator());
       const gain = this.ctx!.createGain();
 
       osc.type = 'sine';
       osc.frequency.setValueAtTime(freq + (Math.random() * 10 - 5), st);
 
-      const lfo = this.ctx!.createOscillator();
+      const lfo = this.trackSource(this.ctx!.createOscillator());
       const lfoGain = this.ctx!.createGain();
       lfo.frequency.setValueAtTime(4.2 + idx * 0.4, st);
       lfoGain.gain.setValueAtTime(14, st);
@@ -948,7 +981,7 @@ export class StethoscopeAudioEngine {
   private playStridorTone(t: number, duration: number): void {
     if (!this.ctx || !this.chestWallResonance) return;
     const st = this.safe(t);
-    const osc = this.ctx.createOscillator();
+    const osc = this.trackSource(this.ctx.createOscillator());
     const gain = this.ctx.createGain();
 
     osc.type = 'sawtooth';
@@ -980,5 +1013,12 @@ export class StethoscopeAudioEngine {
       this.ctx.close();
       this.ctx = null;
     }
+    this.masterGain = null;
+    this.compressor = null;
+    this.chestWallResonance = null;
+    this.stethFilterStage1 = null;
+    this.stethFilterStage2 = null;
+    this.noiseBuffer = null;
+    this.waveShaperCurve = null;
   }
 }

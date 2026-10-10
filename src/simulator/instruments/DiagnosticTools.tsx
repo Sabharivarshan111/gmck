@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { DiagnosticToolType, PatientPathologyState, PatientVitals } from '../types';
 import { StethoscopeAudioEngine, HeartSoundPreset, LungSoundPreset, AuscultationSite } from './StethoscopeSynthesizer';
+import { resolveAuscultation, HEART_SOUND_DESCRIPTIONS, LUNG_SOUND_DESCRIPTIONS } from './auscultationRouting';
 import { Ecg12LeadCanvas } from './Ecg12LeadCanvas';
 import { EcgIcuTutorialModal } from './EcgIcuTutorialModal';
 import { PocusCanvas } from './pocus/PocusCanvas';
@@ -8,6 +9,7 @@ import { Volume2, VolumeX, Eye, Stethoscope, Radio, Activity, Sparkles, CheckCir
 
 interface DiagnosticToolsProps {
   tool: DiagnosticToolType;
+  scenarioId?: string;
   pathology: PatientPathologyState;
   vitals: PatientVitals;
   onClose: () => void;
@@ -16,6 +18,7 @@ interface DiagnosticToolsProps {
 
 export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
   tool,
+  scenarioId = '',
   pathology,
   vitals,
   onClose,
@@ -60,6 +63,7 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
   const [stethSite, setStethSite] = useState<AuscultationSite>('mitral');
   const [stethMode, setStethMode] = useState<'bell' | 'diaphragm'>('diaphragm');
   const [stethVolume, setStethVolume] = useState<number>(1.2);
+  const [audioError, setAudioError] = useState<string | null>(null);
   const [isListening, setIsListening] = useState<boolean>(false);
   const [customHeartOverride, setCustomHeartOverride] = useState<HeartSoundPreset | null>(null);
   const [isTutorialOpen, setIsTutorialOpen] = useState<boolean>(false);
@@ -99,60 +103,34 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
       return;
     }
 
+    let cancelled = false;
+    const engine = audioEngineRef.current;
     const syncAudio = async () => {
-      ensureAudioUnlocked();
-      await audioEngineRef.current!.initialize();
-      audioEngineRef.current!.setStethoscopeMode(stethMode);
-      audioEngineRef.current!.setVolume(stethVolume);
-
-      const isPulmonary =
-        stethSite === 'lung_bases' || stethSite === 'lung_apices' || stethSite === 'trachea';
-
-      if (isPulmonary) {
-        audioEngineRef.current!.stopCardiacAuscultation();
-        // Resolve lung sound preset
-        let lungPreset: LungSoundPreset = 'vesicular';
-        if (stethSite === 'trachea') {
-          lungPreset = pathology.cyanosis > 0.4 ? 'stridor' : 'bronchial';
-        } else if (pathology.lungSoundType === 'crackles') {
-          lungPreset = 'crackles';
-        } else if (pathology.lungSoundType === 'wheeze') {
-          lungPreset = 'wheeze';
-        } else if (pathology.lungSoundType === 'bronchial') {
-          lungPreset = 'bronchial';
-        } else if (pathology.lungSoundType === 'silent') {
-          lungPreset = 'silent';
+      if (!engine) return;
+      try {
+        await engine.initialize();
+        if (cancelled) return;
+        engine.setStethoscopeMode(stethMode);
+        engine.setVolume(stethVolume);
+        const sound = resolveAuscultation(pathology, vitals, stethSite, scenarioId, customHeartOverride);
+        if (sound.pulmonary) {
+          engine.stopCardiacAuscultation();
+          engine.startPulmonaryAuscultation(vitals.respiratoryRate, sound.lung);
+        } else {
+          engine.stopPulmonaryAuscultation();
+          engine.startCardiacAuscultation(vitals.heartRate, sound.heart, sound.atrialContraction);
         }
-        audioEngineRef.current!.startPulmonaryAuscultation(vitals.respiratoryRate, lungPreset);
-      } else {
-        audioEngineRef.current!.stopPulmonaryAuscultation();
-        // Resolve heart sound preset with clinical routing & manual audition override
-        let heartPreset: HeartSoundPreset = customHeartOverride || 'normal';
-        if (!customHeartOverride) {
-          if (vitals.cvp > 12 && vitals.meanArterialPressure < 65) {
-            heartPreset = 'tamponade_muffled';
-          } else if (pathology.heartSoundType === 's3_gallop') {
-            heartPreset = 's3_gallop';
-          } else if (pathology.heartSoundType === 's4_gallop') {
-            heartPreset = 's4_gallop';
-          } else if (pathology.heartSoundType === 'aortic_stenosis' || pathology.heartSoundType === 'murmur_systolic') {
-            heartPreset = 'aortic_stenosis';
-          } else if (pathology.heartSoundType === 'mitral_regurg') {
-            heartPreset = 'mitral_regurg';
-          } else if (pathology.heartSoundType === 'aortic_regurg') {
-            heartPreset = 'aortic_regurg';
-          } else if (pathology.heartSoundType === 'mitral_stenosis') {
-            heartPreset = 'mitral_stenosis';
-          } else if (pathology.heartSoundType === 'friction_rub') {
-            heartPreset = 'friction_rub';
-          }
+        setAudioError(null);
+      } catch {
+        if (!cancelled) {
+          setAudioError('Audio could not start. Tap Listen again to retry.');
+          setIsListening(false);
         }
-        audioEngineRef.current!.startCardiacAuscultation(vitals.heartRate, heartPreset);
       }
     };
-
-    syncAudio();
-  }, [isListening, stethSite, stethMode, vitals.heartRate, vitals.respiratoryRate, pathology, customHeartOverride]);
+    void syncAudio();
+    return () => { cancelled = true; };
+  }, [isListening, stethSite, stethMode, vitals.heartRate, vitals.respiratoryRate, vitals.cvp, pathology, customHeartOverride, scenarioId]);
 
   if (tool === 'none' || tool === 'piccled') return null;
 
@@ -419,7 +397,7 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
                   ))}
                 </div>
 
-                {/* Medical-Grade Murmur Verification & Audition Suite */}
+                {/* Synthesized educational demonstrations, not recorded patient audio. */}
                 <div className="pt-2 border-t border-slate-800 space-y-1.5">
                   <div className="flex items-center justify-between text-xs text-slate-300">
                     <span className="font-semibold flex items-center gap-1.5 text-slate-200">
@@ -458,7 +436,6 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
                           setCustomHeartOverride(m.id as HeartSoundPreset);
                           setStethSite(m.id.startsWith('aortic_') ? 'aortic' : 'mitral');
                           if (!isListening) setIsListening(true);
-                          audioEngineRef.current?.setHeartPreset(m.id as HeartSoundPreset);
                         }}
                         onTouchStart={ensureAudioUnlocked}
                         className={`min-h-[52px] p-2 rounded-xl border text-left flex flex-col justify-between transition-all cursor-pointer ${
@@ -534,6 +511,8 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
                 </div>
               </div>
 
+              {audioError && <p role="alert" className="text-sm text-amber-300">{audioError}</p>}
+              <p className="text-[11px] text-slate-400">Synthesized teaching sounds. Rhythm and acoustic detail are simplified; headphones help with low-pitched sounds.</p>
               {/* Auscultation Diagnostic Summary */}
               <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800 text-xs text-slate-300 space-y-2">
                 <div className="font-bold text-slate-100 flex items-center gap-1.5">
@@ -541,33 +520,11 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
                   <span>{customHeartOverride ? 'Selected Sound Demonstration:' : 'Auscultation Clinical Finding:'}</span>
                 </div>
                 <p className="text-[11px] leading-relaxed text-slate-300">
-                  {customHeartOverride ? `Manual sound preset: ${customHeartOverride.replace(/_/g, ' ')}. Reset to Case Default to return to this patient's findings.` : <>
-                  {stethSite === 'mitral' &&
-                    (pathology.heartSoundType === 's3_gallop'
-                      ? 'S1 + S2 + S3 Ventricular Gallop (Ken-tuck-y cadence). Early diastolic low-frequency filling sound indicative of acute ventricular volume overload in congestive heart failure.'
-                      : pathology.heartSoundType === 'murmur_systolic'
-                      ? 'Loud, snapping S1 followed by an Opening Snap (OS) and a rough, rumbling mid-diastolic murmur with presystolic accentuation (Mitral Stenosis).'
-                      : 'Normal S1 and S2 closure sounds. S1 is louder than S2 at the apex.')}
-                  {(stethSite === 'tricuspid' || stethSite === 'pulmonic') && 'A separate site-specific finding is not modeled for this position in the current scenario. Select a modeled site or an educational sound preset.'}
-                  {stethSite === 'aortic' &&
-                    (vitals.cvp > 10
-                      ? 'Distant, muffled heart sounds with reduced high-frequency valve closure components due to acoustic attenuation by surrounding pericardial fluid (Beck\'s Triad).'
-                      : pathology.heartSoundType === 'friction_rub'
-                      ? 'Triphasic superficial leathery rasping friction rub audible throughout systole and diastole (Acute Fibrinous Pericarditis).'
-                      : 'Normal aortic closure sound (A2). Loud crisp high-frequency snap.')}
-                  {(stethSite === 'lung_bases' || stethSite === 'lung_apices') &&
-                    (pathology.lungSoundType === 'crackles'
-                      ? 'Fine end-inspiratory crackles (crepitations) in bilateral dependent lung zones. Explosive opening of fluid-filled peripheral alveoli in pulmonary edema.'
-                      : pathology.lungSoundType === 'wheeze'
-                      ? 'High-pitched musical polyphonic expiratory wheezes throughout bilateral lung fields indicative of severe diffuse bronchospasm.'
-                      : pathology.lungSoundType === 'silent'
-                      ? 'SILENT CHEST: Complete absence of breath sounds despite severe respiratory distress. Impending respiratory arrest.'
-                      : 'Normal vesicular breath sounds with rustling 3:1 inspiratory-to-expiratory ratio.')}
-                  {stethSite === 'trachea' &&
-                    (pathology.cyanosis > 0.4
-                      ? 'Harsh monophonic inspiratory stridor over anterior neck indicating critical upper airway laryngeal obstruction in anaphylaxis.'
-                      : 'Normal bronchial tubular breath sounds with distinct expiratory pause.')}
-                  </>}
+                  {(() => {
+                    const sound = resolveAuscultation(pathology, vitals, stethSite, scenarioId, customHeartOverride);
+                    return sound.pulmonary ? LUNG_SOUND_DESCRIPTIONS[sound.lung] : HEART_SOUND_DESCRIPTIONS[sound.heart];
+                  })()}
+
                 </p>
               </div>
             </div>
