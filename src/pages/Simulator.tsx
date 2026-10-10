@@ -193,7 +193,7 @@ export const Simulator: React.FC = () => {
   };
 
   const handleSelectCatalogPart = useCallback((id: string) => {
-    setIsolatedPartId(id); setSelectedOrganId(id); setContextOrganId(null); setExplodeAmount(0);
+    setIsolatedPartId(id); setSelectedOrganId(id); setContextOrganId(null); setExplodeAmount(0); setToolMode('inspect');
   }, []);
 
   const handleChangeRegion = (region: 'anterior' | 'head' | 'thorax' | 'abdomen') => {
@@ -1172,7 +1172,7 @@ export const Simulator: React.FC = () => {
           if (!isDesktopLayout) setSelectedOrganId(null);
         }}
         onDissectOrgan={(organKey) => {
-          const fakePart: Part = {
+          const fakePart: Part = atlasCatalog?.parts.find(p => p.id === organKey) || {
             id: organKey,
             name: organKey.charAt(0).toUpperCase() + organKey.slice(1),
             system: 'viscera' as any,

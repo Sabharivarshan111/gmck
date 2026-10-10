@@ -161,7 +161,7 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
             ORGAN_ANATOMY_DATABASE[k].name.toLowerCase().includes(currentNavId.toLowerCase()) ||
             currentNavId.toLowerCase().includes(k)
         ) ||
-        nodeOwnerOrganKey) || 'heart';
+        nodeOwnerOrganKey) || '';
 
   const hasDossier = !!ORGAN_ANATOMY_DATABASE[organKey];
   const organ: DetailedOrganAnatomy = ORGAN_ANATOMY_DATABASE[organKey] || ORGAN_ANATOMY_DATABASE.heart;
@@ -221,8 +221,8 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
   const isStructureIsolated = !!isolatedPartId && (
     isolatedPartId.toLowerCase() === organKey.toLowerCase() ||
     isolatedPartId.toLowerCase() === currentNavId.toLowerCase() ||
-    organKey.toLowerCase().includes(isolatedPartId.toLowerCase()) ||
-    isolatedPartId.toLowerCase().includes(organKey.toLowerCase()) ||
+    (organKey && organKey.toLowerCase().includes(isolatedPartId.toLowerCase())) ||
+    (organKey && isolatedPartId.toLowerCase().includes(organKey.toLowerCase())) ||
     organ.name.toLowerCase().includes(isolatedPartId.toLowerCase())
   );
 
@@ -410,7 +410,7 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
             {onDissectOrgan && (
               <button
                 onClick={() => {
-                  onDissectOrgan(organKey);
+                  onDissectOrgan(sourcePart?.id || currentNavId || organKey);
                   onClose();
                 }}
                 title="Dissect / Remove structure from 3D model"
