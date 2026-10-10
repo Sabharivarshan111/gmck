@@ -70,12 +70,16 @@ def main():
     args.output.parent.mkdir(parents=True, exist_ok=True)
     seen = set()
     count = missing = no_explanation = 0
+    quarantined_ids = []
+    rows_seen = 0
     with args.output.open("w", encoding="utf-8") as fh:
         for batch in pf.iter_batches(batch_size=2048):
             for r in batch.to_pylist():
+                rows_seen += 1
                 item = to_record(r, args.split)
                 if item is None:
                     missing += 1
+                    quarantined_ids.append(str(r.get('id') or 'unknown'))
                     continue
                 if item["id"] in seen:
                     raise RuntimeError("Duplicate dataset ID " + item["id"])
@@ -86,10 +90,13 @@ def main():
                 count += 1
     print(json.dumps({"split": args.split, "question_count":count,
                      "missing_or_invalid":missing,
+                     "quarantined_ids":quarantined_ids, "raw_rows":rows_seen,
                      "no_sufficient_explanation":no_explanation,
                      "source":SOURCE_URL}, indent=2),flush=True)
-    if args.split == "validation" and count != 4183:
-        raise RuntimeError(f"Unexpected validation count {count}; review dataset revision")
+    if args.split == "validation" and rows_seen != 4183:
+        raise RuntimeError(f"Unexpected raw validation count {rows_seen}; review dataset revision")
+    if count + missing != rows_seen:
+        raise RuntimeError("Import accounting mismatch")
     if count == 0:
         raise RuntimeError("Dataset fetch yielded zero rows")
 
