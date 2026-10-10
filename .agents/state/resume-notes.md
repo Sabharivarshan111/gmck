@@ -2037,3 +2037,10 @@ Verified: build:vercel, mobile typecheck:web, simulator organ/asset/mobile/dossi
 - HALF-DONE: Corrected preview/production deployment and final screenshot verification pending at this checkpoint. Cloud browser lacks WebGL; real meshes inspected with an offline EGL renderer, never represented as a live GPU browser test. Physical acoustic/clinical certification remains unverified.
 - NEXT: Verify corrected preview 360/390/430 and dark theme, record screenshots and publish PR52 when checks pass.
 - DO NOT: Restore procedural anatomy; claim every anatomy structure or headphone sound clinically certified; touch Android releases, PG data, billing or security settings.
+
+
+### 2026-10-10 — Realistic auscultation preview audit completed
+- DONE: PR52 merged at a82b8a4a33d31ee4a76d50beaeedfa4c69b1c489; corrected preview fdf5b016 READY. Actual browser source-model reference inspected in light/dark. Front/back and X-ray/surface images switched correctly. 360/390/430 and landscape have no horizontal overflow; every trainer button measured at least 44 px, dark theme now propagates, 155 px player scroll clearance verified. Source image decoded at 720 px.
+- HALF-DONE: Final production deployment is building. Follow-up fixes Freeze losing the plotted history while retaining timing labels: history now persists across freeze/unfreeze and resets for stop or a different trace. TypeScript passed; final deployed follow-up trace screenshot check pending. GPU live render and physical headphone/clinical sound fidelity remain unverified.
+- NEXT: Verify final deployment and Freeze waveform; save mobile screenshots. Physical-device GPU/audio review is the remaining evidence gap.
+- DO NOT: Restore drawn anatomical substitutes, substitute unrelated missing nerves, claim all structures or acoustics clinically certified, alter Android releases/PG/billing/security.
