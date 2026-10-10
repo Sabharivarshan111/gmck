@@ -98,7 +98,7 @@ export function AuscultationTrainer({ theme, site, mode, volume, listening, over
       <label className="ausc-volume">Volume<input aria-label="Stethoscope volume" type="range" min="0" max="1.8" step="0.1" value={volume} onChange={e => onVolume(Number(e.target.value))} /><span>{Math.round(volume*100)}%</span></label>
       <span className="ausc-note">{Math.round(heartRate)} bpm · {Math.round(respiratoryRate)} breaths/min · {(pulmonary ? lungOverride : override) ? 'Teaching demonstration' : 'Patient case'}</span>
     </div>
-    <details><summary>Sources & model credits</summary><p>Heart: Human Reference Atlas / HuBMAP (CC BY 4.0). Lungs: Z-Anatomy (CC BY-SA 4.0). Organs are resized and placed in an illustrative chest. <a href="/models/ATTRIBUTION_BODYPARTS3D.md" target="_blank" rel="noopener noreferrer">Full attribution</a>. Sound timing follows clinical teaching descriptions; these are simplified synthesized demonstrations.</p></details>
-    <p className="ausc-note">Synthesized teaching sounds, not patient recordings. Chest surface and organ placement are illustrative. Lung points share the case’s modeled finding; side-specific disease and murmur radiation are not simulated.</p>
+    <details><summary>Sources & model credits</summary><p>Chest, skin, ribs, heart and vessels: BodyParts3D, Database Center for Life Science (CC BY 4.0). Lungs: registered Z-Anatomy supplement (CC BY-SA 4.0). Source coordinates are preserved. <a href="/models/ATTRIBUTION_BODYPARTS3D.md" target="_blank" rel="noopener noreferrer">Full attribution</a>. Sound timing follows clinical teaching descriptions; these are simplified synthesized demonstrations.</p></details>
+    <p className="ausc-note">Synthesized teaching sounds, not patient recordings. Adult male reference anatomy; listening points indicate approximate surface areas. Lung points share the case’s modeled finding; side-specific disease and murmur radiation are not simulated.</p>
   </section>;
 }

@@ -2484,3 +2484,10 @@ Corrected clinical sound routing (mitral stenosis/AF, explicit upper-airway stri
 
 ### 2026-10-10 — Mobile 3D auscultation trainer
 Added MedNotes-inspired surface listening points, attributed HRA/Z-Anatomy chest organ view with labeled WebGL fallback, moving stethoscope, output-sampled waveform with shared-clock S1–S4 labels, Explore/Train, nine cardiac and six lung demonstrations, mobile thumb player and light/dark surfaces. Clinical simplifications and source/license decisions are recorded in docs/simulator-auscultation-trainer-2026-10-10.md. This is the live web simulator explicitly requested by the owner; native Android and concurrent PG changes are outside scope. PR51 deployment e689045 is now READY, superseding its earlier queued/quota status. Browser/device verification boundaries must remain explicit.
+
+
+### 2026-10-10 — Auscultation realism correction (PR52 follow-up)
+- DONE: Removed schematic capsule/ribs and SVG chest; registered BodyParts3D 587-part chest plus Z-Anatomy lungs, explicit static source-model reference fallback, source attribution, valid triangle/source-coordinate checks. Fixed initial frozen/reduced-motion trace startup. Root TypeScript and model checks passed; browser actions exercised the heart/lung library and training controls on PR52 preview; dark mode opened.
+- HALF-DONE: Corrected preview/production deployment and final screenshot verification pending at this checkpoint. Cloud browser lacks WebGL; real meshes inspected with an offline EGL renderer, never represented as a live GPU browser test. Physical acoustic/clinical certification remains unverified.
+- NEXT: Verify corrected preview 360/390/430 and dark theme, record screenshots and publish PR52 when checks pass.
+- DO NOT: Restore procedural anatomy; claim every anatomy structure or headphone sound clinically certified; touch Android releases, PG data, billing or security settings.

@@ -13,6 +13,7 @@ export function Phonocardiogram({ engineRef, listening, pulmonary, traceKey }: {
     if (!canvas || !ctx) return;
     const history: { time: number; min: number; max: number }[] = [];
     let lastTime = -1;
+    let hasSnapshot = false;
     const draw = () => {
       if (document.hidden) return;
       const width = Math.max(1, canvas.clientWidth), height = 110;
@@ -51,11 +52,16 @@ export function Phonocardiogram({ engineRef, listening, pulmonary, traceKey }: {
         ctx.fillStyle = event.label === 'S3' || event.label === 'S4' ? '#fbbf24' : '#cbd5e1';
         ctx.fillText(event.label, x, 20);
       }
+      hasSnapshot = true;
       ctx.fillStyle = '#94a3b8'; ctx.fillText('2.5 seconds · output amplitude (clipped for display)', 12, 100);
     };
     draw();
     // 30 Hz canvas updates, no React rendering per animation frame.
-    const timer = listening && !frozen ? window.setInterval(draw, 33) : undefined;
+    let timer: number | undefined;
+    if (listening) timer = window.setInterval(() => {
+      draw();
+      if (frozen && hasSnapshot) window.clearInterval(timer);
+    }, 33);
     return () => { if (timer !== undefined) window.clearInterval(timer); };
   }, [engineRef, listening, pulmonary, traceKey, frozen]);
   return <figure className="ausc-trace"><figcaption>{pulmonary ? 'Breath sound trace' : 'Phonocardiogram'} <span>{listening ? frozen ? 'Frozen snapshot' : 'Live output' : 'Stopped'}</span><button aria-pressed={frozen} onClick={() => setFrozen(value => !value)}>{frozen ? 'Animate trace' : 'Freeze trace'}</button></figcaption><canvas ref={canvasRef} role="img" aria-label={pulmonary ? 'Live breath sound output amplitude' : 'Live heart sound output amplitude with S1 and S2 timing markers'} /></figure>;

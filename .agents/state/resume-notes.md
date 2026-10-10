@@ -2030,3 +2030,10 @@ Verified: build:vercel, mobile typecheck:web, simulator organ/asset/mobile/dossi
 **HALF-DONE:** Browser UI audit follows deployment of this branch. Physical-device sound and GPU realism are not certified; cloud WebGL may show fallback.
 **NEXT:** Publish branch preview, exercise phone-size UI, then merge and verify production revision.
 **DO NOT:** Import normal/abnormal datasets as named valve-disease clips; copy GPL hardware simulator code; infer clinically registered chest/valve locations from illustrative placement; alter Android releases or concurrent PG work. Prior PR51 production deployment is now READY (e689045); old quota-block status is superseded.
+
+
+### 2026-10-10 — Auscultation realism correction (PR52 follow-up)
+- DONE: Removed schematic capsule/ribs and SVG chest; registered BodyParts3D 587-part chest plus Z-Anatomy lungs, explicit static source-model reference fallback, source attribution, valid triangle/source-coordinate checks. Fixed initial frozen/reduced-motion trace startup. Root TypeScript and model checks passed; browser actions exercised the heart/lung library and training controls on PR52 preview; dark mode opened.
+- HALF-DONE: Corrected preview/production deployment and final screenshot verification pending at this checkpoint. Cloud browser lacks WebGL; real meshes inspected with an offline EGL renderer, never represented as a live GPU browser test. Physical acoustic/clinical certification remains unverified.
+- NEXT: Verify corrected preview 360/390/430 and dark theme, record screenshots and publish PR52 when checks pass.
+- DO NOT: Restore procedural anatomy; claim every anatomy structure or headphone sound clinically certified; touch Android releases, PG data, billing or security settings.
