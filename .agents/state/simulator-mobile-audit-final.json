@@ -1,0 +1,11 @@
+{
+  "production": "https://orbitmbbs.vercel.app/simulator",
+  "commit": "e5c1d00ed3f01c9ad8a9c9f9da427798310267bb",
+  "deployment": "dpl_BdfVgL2yaw7w1BYE1W573agM18yv",
+  "state": "READY",
+  "audit": "docs/SIMULATOR_MOBILE_AUDIT_2026-10-10.md",
+  "remaining": [
+    "Physical phone GPU, gesture, memory and audio verification",
+    "Dedicated individual muscle/nerve clinical dossiers; no clinical certification claim"
+  ]
+}

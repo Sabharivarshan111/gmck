@@ -41,3 +41,12 @@ Clicked all 42 case options; each produced its matching case heading. Clicked al
 The intervention audit found off-case specialized actions incorrectly reporting case-specific resolution. Added a model-coverage guard for 15 specialized effects, preserving existing lethal-trigger logic. Regression checks cover 630 case/action pairs; 607 unsupported combinations leave vitals and pathology unchanged after a physiology tick. Correct snakebite antivenom, VF shock and RV-infarction nitrate critical-error paths remain active. This checks simulation consistency; it does not certify therapeutic guidelines or all clinical prose.
 
 Final hosted verification: production deployment dpl_4efwa2WATZTu8nUoS8vT99uVTF2s reached READY at main 5e7dd281c3e70bda6f38f409fff7baf47dd2225d; live trigeminal source selection, source dissection/undo, PICCLED single modal and lung-to-aortic sound preset transitions verified. A subsequent list audit tightened torso boundaries and excluded canonical limb names (hanging arms and long thigh muscles shared torso heights). Added a regression preventing hand/forearm/thigh entries in torso lists.
+
+## Completed release checkpoint
+
+Production: https://orbitmbbs.vercel.app/simulator
+Main commit: e5c1d00ed3f01c9ad8a9c9f9da427798310267bb
+Deployment: dpl_BdfVgL2yaw7w1BYE1W573agM18yv — READY, canonical alias assigned.
+Hosted final torso list: 229 entries including source nerve groups; inspected list has no hand/forearm/sartorius/rectus-femoris leaks.
+Hosted UI audit totals: 26 overview routes × five tabs (130 tab actions), all 16 system filters, all 42 case options and all 27 interventions. All 147 supplementary nerve target IDs and 272 source mesh memberships pass the runtime loader regression. Assets, root/mobile web typechecks, combined build, 630 specialized intervention/case tests and repository integrity passed.
+Remaining: real phone WebGL/rendering/memory/audio/gesture verification; individual dedicated clinical dossiers (only two of 246 distinct muscles currently have dedicated dossiers); clinical prose is not independently certified by these technical checks. Phrenic/splanchnic remain explicitly schematic.
