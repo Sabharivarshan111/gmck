@@ -693,12 +693,14 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
                             <ArrowRight className="w-3 h-3" />
                           </button>
                         </div>
+                        <details className="supply-node-details"><summary className="min-h-11 flex items-center text-xs font-semibold cursor-pointer">Territory & clinical note</summary>
                         <p className="text-xs text-slate-600 sim-dark:text-slate-300 mt-2">
                           <span className="font-semibold">Territory:</span> {art.territory}
                         </p>
                         <div className="text-[11px] text-rose-700 sim-dark:text-rose-300 bg-rose-50 sim-dark:bg-rose-950/40 p-2 rounded-lg mt-2 border border-rose-100 sim-dark:border-rose-900/30">
                           <span className="font-bold">Clinical Pearl:</span> {art.clinicalNote}
                         </div>
+                        </details>
                       </div>
                     ))}
                   </div>
@@ -770,12 +772,14 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
                             <ArrowRight className="w-3 h-3" />
                           </button>
                         </div>
+                        <details className="supply-node-details"><summary className="min-h-11 flex items-center text-xs font-semibold cursor-pointer">Drainage & clinical note</summary>
                         <p className="text-xs text-slate-600 sim-dark:text-slate-300 mt-2">
                           <span className="font-semibold">Territory:</span> {vein.territory}
                         </p>
                         <div className="text-[11px] text-blue-700 sim-dark:text-blue-300 bg-blue-50 sim-dark:bg-blue-950/40 p-2 rounded-lg mt-2 border border-blue-100 sim-dark:border-blue-900/30">
                           <span className="font-bold">Clinical Pearl:</span> {vein.clinicalNote}
                         </div>
+                        </details>
                       </div>
                     ))}
                   </div>
@@ -845,6 +849,7 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
                             <ArrowRight className="w-3 h-3" />
                           </button>
                         </div>
+                        <details className="supply-node-details"><summary className="min-h-11 flex items-center text-xs font-semibold cursor-pointer">Innervation & clinical note</summary>
                         <div className="text-xs space-y-1 mt-2 text-slate-600 sim-dark:text-slate-300">
                           <div><span className="font-semibold">Motor:</span> {nerve.motorSupply}</div>
                           <div><span className="font-semibold">Sensory:</span> {nerve.sensorySupply}</div>
@@ -852,6 +857,7 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
                         <div className="text-[11px] text-amber-800 sim-dark:text-amber-200 bg-amber-50 sim-dark:bg-amber-950/40 p-2 rounded-lg mt-2 border border-amber-100 sim-dark:border-amber-900/30">
                           <span className="font-bold">Bedside Pearl:</span> {nerve.clinicalNote}
                         </div>
+                        </details>
                       </div>
                     ))}
                   </div>
@@ -1300,6 +1306,11 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
           )}
           </>}
         </div>
+        <footer className={`md:hidden grid grid-cols-3 gap-2 p-3 border-t shrink-0 ${isLight ? 'bg-white border-slate-200' : 'bg-slate-900 border-slate-700'}`}>
+          <button className="min-h-11 rounded-xl bg-sky-600 text-white font-semibold text-xs" onClick={() => {handleCameraJump(); if (onEnter3D) onEnter3D();}}>View model</button>
+          <button className="min-h-11 rounded-xl border text-xs font-semibold" onClick={() => setIsMobileExpanded(!isMobileExpanded)}>{isMobileExpanded ? 'Read less' : 'Read more'}</button>
+          <button className="min-h-11 rounded-xl border text-xs font-semibold" onClick={onClose}>Close</button>
+        </footer>
       </aside>
     </div>
   );

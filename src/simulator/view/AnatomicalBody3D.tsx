@@ -4,6 +4,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { anatomyPixelRatio } from '../data/renderQuality';
 import { partBelongsToRegion, restoreSourceNodeNames } from '../data/anatomyRegions';
 import { PatientVitals, PatientPathologyState } from '../types';
 import {
@@ -45,6 +46,8 @@ import {
 import { Scissors, Hand, Focus, Eye, Sparkles, Maximize2, Compass, AlertCircle, Info } from 'lucide-react';
 
 interface AnatomicalBody3DProps {
+  renderQuality?: 'smooth' | 'crisp';
+  cameraAction?: {kind: 'in' | 'out' | 'left' | 'right' | 'up' | 'down'; id: number};
   vitals: PatientVitals;
   pathology: PatientPathologyState;
   scenarioId: string;
@@ -1223,6 +1226,8 @@ function createHraChordaeOverlay(meshes: THREE.Mesh[]): {
 }
 
 export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
+  renderQuality = 'crisp',
+  cameraAction,
   vitals,
   pathology,
   scenarioId,
@@ -1247,6 +1252,8 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
   const sceneRef = useRef<THREE.Scene | null>(null);
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
+  const qualityRef = useRef(renderQuality);
+  qualityRef.current = renderQuality;
   const controlsRef = useRef<OrbitControls | null>(null);
 
   const [loadProgress, setLoadProgress] = useState<number>(0);
@@ -1364,6 +1371,35 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
     distance: number;
   } | null>(null);
 
+  useEffect(() => {
+    if (!cameraAction?.id) return;
+    const camera = cameraRef.current;
+    const controls = controlsRef.current;
+    if (!camera || !controls) return;
+    const offset = camera.position.clone().sub(controls.target);
+    if (cameraAction.kind === 'in' || cameraAction.kind === 'out') {
+      const distance = THREE.MathUtils.clamp(offset.length() * (cameraAction.kind === 'in' ? 0.8 : 1.25), controls.minDistance, controls.maxDistance);
+      camera.position.copy(controls.target).add(offset.setLength(distance));
+    } else {
+      camera.updateMatrixWorld();
+      const horizontal = cameraAction.kind === 'left' || cameraAction.kind === 'right';
+      const sign = cameraAction.kind === 'left' || cameraAction.kind === 'down' ? -1 : 1;
+      const shift = new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld, horizontal ? 0 : 1).multiplyScalar(offset.length() * 0.1 * sign);
+      camera.position.add(shift);
+      controls.target.add(shift);
+    }
+    controls.update();
+  }, [cameraAction]);
+
+  useEffect(() => {
+    const renderer = rendererRef.current;
+    const container = mountRef.current;
+    if (!renderer || !container || !container.clientWidth || !container.clientHeight) return;
+    const mobile = container.clientWidth < 768 || /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    renderer.setPixelRatio(anatomyPixelRatio(window.devicePixelRatio, mobile, renderQuality, container.clientWidth, container.clientHeight, (navigator as Navigator & {deviceMemory?: number}).deviceMemory));
+    renderer.setSize(container.clientWidth, container.clientHeight);
+  }, [renderQuality]);
+
   const isLight = theme === 'light';
 
   // Refs for current props to access inside native events without re-mounting
@@ -1426,7 +1462,7 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
     }
     renderer.setSize(width, height);
     // Strict mobile DPR clamping to 1.0 prevents WebKit Jetsam OOM crashes
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isMobileDevice ? 1.0 : 1.75));
+    renderer.setPixelRatio(anatomyPixelRatio(window.devicePixelRatio, isMobileDevice, qualityRef.current, width, height, (navigator as Navigator & {deviceMemory?: number}).deviceMemory));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = isLight ? 0.90 : 1.05;
     renderer.domElement.style.touchAction = 'none';
@@ -2313,7 +2349,7 @@ varying float partSelected;
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
       const isMob = w < 768 || /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isMob ? 1.0 : 1.75));
+      renderer.setPixelRatio(anatomyPixelRatio(window.devicePixelRatio, isMob, qualityRef.current, w, h, (navigator as Navigator & {deviceMemory?: number}).deviceMemory));
       renderer.setSize(w, h);
       const atlas = atlasRef.current;
       if (atlas) {

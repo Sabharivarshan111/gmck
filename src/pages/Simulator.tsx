@@ -76,6 +76,9 @@ export const Simulator: React.FC = () => {
 
   // Mobile navigation tab state
   const [mobileTab, setMobileTab] = useState<'3d' | 'telemetry' | 'interventions'>('3d');
+  const [mobilePanel, setMobilePanel] = useState<'browse' | 'tools' | null>(null);
+  const [renderQuality, setRenderQuality] = useState<'smooth' | 'crisp'>('crisp');
+  const [cameraAction, setCameraAction] = useState<{kind: 'in' | 'out' | 'left' | 'right' | 'up' | 'down'; id: number}>({kind: 'in', id: 0});
 
   // Selected Organ for Deep Anatomical Sheet
   const [selectedOrganId, setSelectedOrganId] = useState<string | null>(searchParams.get('organ') || null);
@@ -197,6 +200,7 @@ export const Simulator: React.FC = () => {
   };
 
   const handleSelectCatalogPart = useCallback((id: string) => {
+    setMobilePanel(null);
     setIsolatedPartId(id); setSelectedOrganId(id); setContextOrganId(null); setExplodeAmount(0); setToolMode('inspect');
   }, []);
 
@@ -437,7 +441,7 @@ export const Simulator: React.FC = () => {
       </header>
 
       {/* 2. Mobile Segmented Tab Bar (Apple HIG Recessed Segmented Control) */}
-      <div className={`lg:hidden px-3 pt-2 pb-2 ${isLight ? 'bg-white/85' : 'bg-slate-900/90'} backdrop-blur-xl`}>
+      <div data-testid="simulator-bottom-tabs" className={`lg:hidden fixed bottom-0 inset-x-0 z-40 px-3 pt-2 pb-[max(8px,env(safe-area-inset-bottom))] ${isLight ? 'bg-white' : 'bg-slate-900'}`}>
         <div
           className={`min-h-[52px] p-1 rounded-2xl border flex items-center justify-between gap-1 backdrop-blur-xl ${
             isLight
@@ -582,6 +586,8 @@ export const Simulator: React.FC = () => {
                   onChangeRegion={handleChangeRegion}
                   theme={theme}
                   selectedOrganId={selectedOrganId}
+                  renderQuality={renderQuality}
+                  cameraAction={cameraAction}
                   contextOrganId={contextOrganId}
                   onSelectOrganId={handleSelect3DOrgan}
                   toolMode={toolMode}
@@ -1018,7 +1024,10 @@ export const Simulator: React.FC = () => {
 
         </div>
 
-        {mobileTab === '3d' && <RegionStructureBrowser atlas={atlasCatalog} region={cameraPreset} theme={theme} onSelect={handleSelectCatalogPart} />}
+        {mobileTab === '3d' && <div className={`${mobilePanel === 'browse' ? 'mobile-anatomy-panel' : 'hidden lg:block'}`}>
+          <div className="lg:hidden flex items-center justify-between pb-2"><strong>Browse anatomy</strong><button aria-label="Close anatomy browser" onClick={() => setMobilePanel(null)}>Close</button></div>
+          <RegionStructureBrowser atlas={atlasCatalog} region={cameraPreset} theme={theme} onSelect={handleSelectCatalogPart} open={mobilePanel === 'browse'} />
+        </div>}
 
         {/* MOBILE VIEW: Tab-driven clean single stage (Kept permanently mounted to prevent WebGL context destruction) */}
         <div className="lg:hidden order-first flex flex-col space-y-3">
@@ -1027,7 +1036,13 @@ export const Simulator: React.FC = () => {
             className="flex flex-col space-y-2 w-full"
             style={{ display: mobileTab === '3d' ? 'flex' : 'none' }}
           >
-            {explodeAmount <= 0.02 && (
+            {(
+              <div className={mobilePanel === 'tools' ? 'mobile-anatomy-panel' : 'hidden'}>
+              <div className="flex items-center justify-between pb-2"><strong>Layers & view</strong><button aria-label="Close anatomy tools" onClick={() => setMobilePanel(null)}>Close</button></div>
+              <label className="flex items-center justify-between gap-2 pb-3">Image quality<select aria-label="Anatomy image quality" value={renderQuality} onChange={e => setRenderQuality(e.target.value as 'smooth' | 'crisp')} className="rounded-xl border p-2 bg-transparent"><option value="crisp">Crisp</option><option value="smooth">Smooth</option></select></label>
+              <div className="grid grid-cols-4 gap-2 pb-3" aria-label="Pan anatomy">
+                {(['left', 'up', 'down', 'right'] as const).map(kind => <button key={kind} aria-label={`Pan anatomy ${kind}`} className="rounded-xl border text-sm" onClick={() => setCameraAction(a => ({kind, id:a.id+1}))}>{kind === 'left' ? '←' : kind === 'right' ? '→' : kind === 'up' ? '↑' : '↓'}</button>)}
+              </div>
               <DissectionToolbar
                 toolMode={toolMode}
                 onSelectToolMode={handleSelectToolMode}
@@ -1041,6 +1056,7 @@ export const Simulator: React.FC = () => {
                 onRestoreAll={handleRestoreAll}
                 theme={theme}
               />
+              </div>
             )}
             {/* The stage was a flat `h-[420px]`: the same box on a 640pt phone,
                 where it overflows under the fold, and on an 844pt one, where a
@@ -1054,7 +1070,7 @@ export const Simulator: React.FC = () => {
                 height:
                   explodeAmount > 0.02
                     ? 'max(360px, calc(100dvh - 180px))'
-                    : 'max(360px, calc(100dvh - 292px))',
+                    : 'max(360px, calc(100dvh - 208px))',
               }}
             >
               {isolatedPartId && (
@@ -1098,6 +1114,8 @@ export const Simulator: React.FC = () => {
                   onChangeRegion={handleChangeRegion}
                   theme={theme}
                   selectedOrganId={selectedOrganId}
+                  renderQuality={renderQuality}
+                  cameraAction={cameraAction}
                   contextOrganId={contextOrganId}
                   onSelectOrganId={handleSelect3DOrgan}
                   toolMode={toolMode}
@@ -1162,6 +1180,13 @@ export const Simulator: React.FC = () => {
       </main>
 
       {/* 4. Apple-Style Deep Organ Anatomical Drawer (Slide-up on mobile, slide-in on desktop) */}
+      {mobileTab === '3d' && !selectedOrganId && <nav data-testid="anatomy-thumb-toolbar" aria-label="One-hand anatomy controls" className={`lg:hidden fixed inset-x-3 bottom-[calc(70px+env(safe-area-inset-bottom))] z-40 grid grid-cols-5 gap-1 rounded-2xl border p-1 ${isLight ? 'bg-white border-slate-200 text-slate-800' : 'bg-slate-900 border-slate-700 text-slate-100'}`}>
+        <button aria-expanded={mobilePanel === 'browse'} onClick={() => setMobilePanel(mobilePanel === 'browse' ? null : 'browse')}>Browse</button>
+        <button aria-expanded={mobilePanel === 'tools'} onClick={() => setMobilePanel(mobilePanel === 'tools' ? null : 'tools')}>Layers</button>
+        <button aria-label="Zoom anatomy in" onClick={() => setCameraAction(a => ({kind:'in',id:a.id+1}))}>Zoom +</button>
+        <button aria-label="Zoom anatomy out" onClick={() => setCameraAction(a => ({kind:'out',id:a.id+1}))}>Zoom −</button>
+        <button onClick={() => { handleRestoreAll(); handleChangeRegion('anterior'); setMobilePanel(null); }}>Reset</button>
+      </nav>}
       <OrganDetailDrawer
         organId={selectedOrganId}
         sourcePart={atlasCatalog?.parts.find(p => p.id === selectedOrganId)}

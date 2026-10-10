@@ -3,10 +3,11 @@ import type { Atlas, SystemId } from '../data/atlasTypes';
 import { SYSTEMS } from '../data/atlasTypes';
 import { partBelongsToRegion, REGION_LABELS, type AnatomyRegion } from '../data/anatomyRegions';
 
-export const RegionStructureBrowser = memo(function RegionStructureBrowser({ atlas, region, onSelect, theme }: {
-  atlas: Atlas | null; region: AnatomyRegion; onSelect: (id: string) => void; theme: 'light' | 'dark';
+export const RegionStructureBrowser = memo(function RegionStructureBrowser({ atlas, region, onSelect, theme, open }: {
+  atlas: Atlas | null; region: AnatomyRegion; onSelect: (id: string) => void; theme: 'light' | 'dark'; open?: boolean;
 }) {
   const [expanded, setExpanded] = useState(false);
+  useEffect(() => { if (open) setExpanded(true); }, [open]);
   const [system, setSystem] = useState<SystemId | null>(null);
   const [query, setQuery] = useState('');
   useEffect(() => { setSystem(null); setQuery(''); }, [region]);
