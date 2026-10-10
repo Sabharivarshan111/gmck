@@ -1,0 +1,33 @@
+name: PG year provenance and Supabase textbook answer review
+on:
+  push:
+    paths:
+      - 'mobile/src/lib/pgEntranceBank.ts'
+      - 'mobile/src/components/PgEntranceBankModal.tsx'
+      - 'mobile/src/components/PgRecentAnswerReview.tsx'
+      - 'mobile/scripts/keyboard-check.mjs'
+      - 'supabase/functions/pg-answer-review/**'
+      - 'scripts/check-pg-year-review.mjs'
+      - '.github/workflows/pg-year-review.yml'
+  pull_request:
+    paths:
+      - 'mobile/src/lib/pgEntranceBank.ts'
+      - 'mobile/src/components/PgEntranceBankModal.tsx'
+      - 'mobile/src/components/PgRecentAnswerReview.tsx'
+      - 'mobile/scripts/keyboard-check.mjs'
+      - 'supabase/functions/pg-answer-review/**'
+      - 'scripts/check-pg-year-review.mjs'
+      - '.github/workflows/pg-year-review.yml'
+jobs:
+  provenance:
+    runs-on: ubuntu-latest
+    permissions: { contents: read }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22' }
+      - run: node scripts/check-pg-year-review.mjs
+      - run: npm --prefix mobile ci --legacy-peer-deps
+      - run: npm --prefix mobile run typecheck
+      - run: npm --prefix mobile run check:keyboard
+      - run: node scripts/check-pg-content-integrity.mjs

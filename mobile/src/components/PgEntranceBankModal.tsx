@@ -6,13 +6,14 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ArrowLeft, BookOpenCheck, ExternalLink, Search, ShieldCheck, X } from 'lucide-react-native';
 import { Text } from '@/components/Text';
 import { KeyboardSafe } from '@/components/KeyboardSafe';
+import { PgRecentAnswerReview } from '@/components/PgRecentAnswerReview';
 import { Touchable } from '@/components/Touchable';
 import { useTheme, withAlpha } from '@/theme';
 import { searchOfflinePgQuestions } from '@/lib/pgLocalBank';
 import { PG_ORIGINAL_PRACTICE, PG_SOURCES, PG_SOURCE_REVIEW_DATE, type PgExam, type PgQuestion } from '@/lib/pgEntranceBank';
 
 type ExamFilter = 'ALL' | PgExam;
-type Panel = 'sources' | 'practice';
+type Panel = 'sources' | 'practice' | 'recent';
 const EXAMS: { id: ExamFilter; title: string }[] = [
   { id: 'ALL', title: 'All' }, { id: 'NEET_PG', title: 'NEET-PG' },
   { id: 'INI_CET', title: 'INI-CET' }, { id: 'FMGE', title: 'FMGE' },
@@ -116,8 +117,9 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
           <View style={[styles.notice, { backgroundColor: withAlpha(colors.primary, 0.08), borderColor: colors.border }]}>
             <ShieldCheck size={17} color={colors.primary} />
             <Text style={[styles.noticeText, { color: colors.text }]}>
-              Offline practice is included in this app. Historical source links cover selected years
-              through 2026 and need internet. Source links are not imported exam papers.
+              The 4,180 MedMCQA questions were published in a 2022 dataset, with no
+              verified per-question year. For 2023–2026, browse recall sources or use the optional
+              signed-in textbook answer checker. These are not imported official papers.
             </Text>
           </View>
 
@@ -132,18 +134,31 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
           </ScrollView>
 
           <View style={styles.switchRow}>
-            {(['sources', 'practice'] as const).map(p => (
-              <Touchable key={p} label={p === 'sources' ? 'Answer-bearing sources' : 'Practice questions'}
+            {(['practice', 'recent', 'sources'] as const).map(p => (
+              <Touchable key={p} label={p === 'sources' ? 'Answer-bearing sources' : p === 'recent' ? 'Check a 2023 to 2026 recall against textbooks' : 'Practice questions'}
                 state={{ selected: panel === p }}
                 onPress={() => { setPanel(p); setExpandedAnswer(null); }}
-                style={[styles.switchButton, { backgroundColor: panel === p ? colors.primary : colors.card, borderColor: panel === p ? colors.primary : colors.border }]}>
-                <Text style={[styles.switchText, { color: panel === p ? '#FFFFFF' : colors.text }]}>
-                  {p === 'sources' ? 'Source directory' : 'Practice MCQs'}
+                style={[styles.switchButton, { backgroundColor: panel === p ? withAlpha(colors.primary, 0.22) : colors.card, borderColor: panel === p ? colors.primary : colors.border }]}>
+                <Text style={[styles.switchText, { color: colors.text }]}>
+                  {p === 'sources' ? 'Year sources' : p === 'recent' ? 'Textbook AI' : 'Offline MCQs'}
                 </Text>
               </Touchable>
             ))}
           </View>
 
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chips}>
+            {[2023, 2024, 2025, 2026].map(y => (
+              <Touchable key={y} label={'Filter recalled questions and source links for '+y}
+                onPress={() => { setYearText(String(y)); setPage(0); setExpandedAnswer(null); }}
+                style={[styles.chip,{ borderColor: year === y ? colors.primary : colors.border,backgroundColor: year === y ? withAlpha(colors.primary,0.17) : colors.card }]}>
+                <Text style={[styles.chipText,{color:colors.text}]}>{y}</Text>
+              </Touchable>
+            ))}
+            <Touchable label="Clear question year" onPress={() => {setYearText('');setPage(0);setExpandedAnswer(null);}}
+              style={[styles.chip,{borderColor:colors.border,backgroundColor:colors.card}]}>
+              <Text style={[styles.chipText,{color:colors.text}]}>All years</Text>
+            </Touchable>
+          </ScrollView>
           <View style={styles.filters}>
             <View style={[styles.searchBox, { backgroundColor: colors.card, borderColor: colors.border }]}>
               <Search size={16} color={colors.textMuted} />
@@ -190,6 +205,8 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
               ))}
               {sources.length === 0 ? <Text style={[styles.empty, { color: colors.textMuted }]}>No indexed source matches this filter. Try another year or exam.</Text> : null}
             </>
+          ) : panel === 'recent' ? (
+            <PgRecentAnswerReview exam={exam} year={year} onYear={y => {setYearText(String(y));setPage(0);}} />
           ) : (
             <>
               <Text style={[styles.sectionHeading, { color: colors.text }]}>Offline medical question practice</Text>
@@ -213,6 +230,7 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
                 onPress={() => setExpandedAnswer(prev => prev === q.id ? null : q.id)}
                 colors={colors} />)}
               {original.length === 0 ? <Text style={[styles.small, { color: colors.textMuted }]}>Clear the year filter to show original practice questions.</Text> : null}
+              <Text style={[styles.small, {color:colors.textMuted}]}>For recalled 2023–2026 questions, open the Textbook AI tab above to check answers using Supabase.</Text>
             </>
           )}
           <View style={[styles.bottomNote, { borderColor: colors.border }]}>
@@ -281,7 +299,7 @@ const styles = StyleSheet.create({
   chipText: { fontWeight: '700', fontSize: 13 },
   switchRow: { flexDirection: 'row', gap: 8 },
   switchButton: { flex: 1, alignItems: 'center', borderRadius: 10, borderWidth: 1, paddingVertical: 12, paddingHorizontal: 4 },
-  switchText: { fontSize: 12, fontWeight: '700' },
+  switchText: { fontSize: 11, fontWeight: '700', textAlign: 'center' },
   filters: { flexDirection: 'row', gap: 8 },
   searchBox: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 7, paddingHorizontal: 10, borderWidth: 1, borderRadius: 10, minHeight: 44 },
   searchInput: { flex: 1, paddingVertical: 8, minWidth: 0, fontSize: 13 },
