@@ -12,6 +12,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   ArrowLeft,
   BookOpen,
+  BookOpenCheck,
   ChevronRight,
   ClipboardList,
   GraduationCap,
@@ -31,6 +32,7 @@ import { GradientFill } from '@/components/Gradient';
 import { NotesContentView } from '@/components/NotesContentView';
 import { ChapterNotes } from '@/components/ChapterNotes';
 import { ClinicalProformaModal } from '@/components/ClinicalProformaModal';
+import { PgEntranceBankModal } from '@/components/PgEntranceBankModal';
 import { ClinicalCaseLibraryModal } from '@/components/ClinicalCaseLibraryModal';
 import { PdfViewerModal } from '@/components/PdfViewerModal';
 import FlashcardsScreen from '@/screens/FlashcardsScreen';
@@ -92,6 +94,7 @@ export default function NotesScreen() {
    */
   const [flashcards, setFlashcards] = useState(() => getPendingLaunchDeck() != null);
   const [proformasOpen, setProformasOpen] = useState(false);
+  const [pgEntranceOpen, setPgEntranceOpen] = useState(false);
   const [datasetCasesOpen, setDatasetCasesOpen] = useState(false);
   const [caseLibraryOpen, setCaseLibraryOpen] = useState(false);
   const [activePdfFile, setActivePdfFile] = useState<NoteFile | null>(() => getPendingLaunchPdf());
@@ -201,6 +204,7 @@ export default function NotesScreen() {
           onOpenDatasetCases={() => setDatasetCasesOpen(true)}
           onOpenCaseLibrary={() => setCaseLibraryOpen(true)}
           onOpenProformas={() => setProformasOpen(true)}
+          onOpenPgEntrance={() => setPgEntranceOpen(true)}
         />
       ) : null}
 
@@ -262,6 +266,8 @@ export default function NotesScreen() {
         onClose={() => setProformasOpen(false)}
       />
 
+      <PgEntranceBankModal visible={pgEntranceOpen} onClose={() => setPgEntranceOpen(false)} />
+
       <ClinicalCaseLibraryModal
         visible={datasetCasesOpen}
         onClose={() => setDatasetCasesOpen(false)}
@@ -318,6 +324,7 @@ function YearsView({
   onOpenDatasetCases,
   onOpenCaseLibrary,
   onOpenProformas,
+  onOpenPgEntrance,
 }: {
   currentYear: Year;
   onPick: (year: Year) => void;
@@ -325,6 +332,7 @@ function YearsView({
   onOpenDatasetCases: () => void;
   onOpenCaseLibrary: () => void;
   onOpenProformas: () => void;
+  onOpenPgEntrance: () => void;
 }) {
   const { colors } = useTheme();
   return (
@@ -439,6 +447,24 @@ function YearsView({
           <Text style={[styles.extraTitle, { color: colors.text }]}>Case proformas</Text>
           <Text style={[styles.extraSub, { color: colors.textMuted }]}>
             Master clerking sheets & clinical signs for medicine, surgery, pediatrics & allied
+          </Text>
+        </View>
+        <ChevronRight size={18} color={colors.textMuted} />
+      </Touchable>
+
+      {/* Unified PG source browser directly below Case proformas. */}
+      <Touchable
+        onPress={onOpenPgEntrance}
+        label="PG Entrance PYQ Bank: NEET PG, INI CET, and FMGE with answer sources and reviewed practice"
+        scaleTo={0.97}
+        style={[styles.extraCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+        <View style={[styles.extraIcon, { backgroundColor: withAlpha(colors.accent, 0.15) }]}>
+          <BookOpenCheck size={18} color={colors.accent} />
+        </View>
+        <View style={styles.flex}>
+          <Text style={[styles.extraTitle, { color: colors.text }]}>PG Entrance PYQ Bank</Text>
+          <Text style={[styles.extraSub, { color: colors.textMuted }]}>
+            NEET-PG · INI-CET · FMGE | historic answers, 2026 recalls and reviewed MCQs
           </Text>
         </View>
         <ChevronRight size={18} color={colors.textMuted} />
