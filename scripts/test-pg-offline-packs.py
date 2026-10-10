@@ -45,7 +45,7 @@ class LocalPgPackTests(unittest.TestCase):
     def test_successful_offline_manifest(self):
         with tempfile.TemporaryDirectory() as td:
             root=Path(td);source=root/'reviewed.jsonl'
-            source.write_text(''.join(json.dumps(example(i))+'\\n' for i in range(5)))
+            source.write_text(''.join(json.dumps(example(i))+'\n' for i in range(5)))
             opts=type('Opts',(),dict(input=source,out=root/'packs',max_compressed_mb=0.01,rows_per_pack=2))
             report=builder.write_packs(opts)
             self.assertEqual(report['total_questions'],5)
@@ -57,7 +57,7 @@ class LocalPgPackTests(unittest.TestCase):
     def test_budget_failure_preserves_existing_pack(self):
         with tempfile.TemporaryDirectory() as td:
             root=Path(td);source=root/'reviewed.jsonl'
-            source.write_text(json.dumps(example())+'\\n')
+            source.write_text(json.dumps(example())+'\n')
             out=root/'packs';out.mkdir();(out/'generatedManifest.ts').write_text('old-manifest')
             opts=type('Opts',(),dict(input=source,out=out,max_compressed_mb=0.00001,rows_per_pack=1000))
             with self.assertRaises(SystemExit): builder.write_packs(opts)
