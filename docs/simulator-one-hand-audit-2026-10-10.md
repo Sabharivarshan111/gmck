@@ -27,3 +27,9 @@ The mobile renderer previously used DPR 1 with MSAA disabled. Crisp now caps DPR
 ## Limits
 
 Cloud browser WebGL context creation is unavailable: actual camera motion, rendered sharpness, mobile GPU allocation, FPS, pinch/pan gestures and audio were not visually or physically certified. A physical-phone session and clinical review remain necessary. Prior full audit remains in simulator-mobile-audit-2026-10-10.md: 147 named nerve title routes, 42 scenarios and 27 interventions were checked there. This follow-up does not claim a new individual clinical review of every muscle/nerve; 36 clinical dossiers and the quarantined vestibular registration gap remain unchanged.
+
+## Final source grouping / sheet refinements
+
+The hosted head/skeleton filter exposed four mislabeled source entries: FJ1252/FJ1253 (gingiva) and FJ1532/FJ1532M (levator scapulae). Runtime correction moves oral mucosa to the digestive/oral group and levator scapulae to muscles; source identities/geometry remain unchanged. Checked the actual atlas for named muscles under other systems: these were the two explicit muscle misfiles; deltoid arterial branches remain arteries. This is a targeted source classification repair, not certification of every ontology grouping. References: https://www.ncbi.nlm.nih.gov/books/NBK553120/ (levator scapulae muscles); https://www.ncbi.nlm.nih.gov/books/NBK572115/ (gingival oral mucosa).
+
+The redundant 44px sheet expand pill is hidden on phones; header and footer expand actions remain. Phone vessel/nerve card buttons show a compact 3D label while their accessible names retain the full selected structure. The resulting layout gives longer anatomy names and scroll content more space. SW cache advances to v16.

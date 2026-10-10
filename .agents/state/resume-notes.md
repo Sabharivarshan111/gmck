@@ -1982,3 +1982,14 @@ Verified: build:vercel, mobile typecheck:web, simulator organ/asset/mobile/dossi
 **NEXT:** Verify final production deployment and capture screenshot; core simulator UI audit and research report are in docs/simulator-one-hand-audit-2026-10-10.md.
 
 **DO NOT:** Claim headless camera arithmetic tests demonstrate rendered sharpness/FPS or complete clinical innervation validation.
+
+
+## 2026-10-10 — Final head grouping and compact sheet
+
+**DONE:** #47 production READY e558afe/dpl_9ar7t8ATEn8wLJHFtEMLqbUYhqis. Hosted region picker verified Head→Skeleton→Frontal bone; range measured 44px; LAD Inspect in 3D closed the sheet and selected LAD. Source head filter exposed four skeletal misfiles (bilateral levator scapulae and gingiva): fixed systems without changing mesh identities, with actual-atlas assertions. Redundant phone expand pill hidden; full accessible structure names accompany compact 3D buttons. SW v16.
+
+**HALF-DONE:** Final grouping/compact-sheet release and screenshot check pending at this checkpoint. Device GPU/FPS/overview clarity remains physically unverified; complete individual clinical dossiers still absent for many source parts.
+
+**NEXT:** Verify final production head systems/compact sheet and save its screenshot.
+
+**DO NOT:** Substitute structures, invent missing models/innervation, or equate browser UI/headless arithmetic checks with physical GPU or clinical certification.

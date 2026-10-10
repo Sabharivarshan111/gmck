@@ -7,6 +7,7 @@ button[title="Center and zoom 3D Viewport"] {
 /* Details own one scroll area; compact headers never consume the whole sheet. */
 @media (max-width: 1023px) {
   .anatomy-detail-sheet > button, .anatomy-detail-sheet > nav, .anatomy-detail-sheet > footer { flex-shrink: 0; }
+  .anatomy-detail-sheet > button:first-child { display: none; }
   .anatomy-detail-sheet h2 { font-size: 16px; line-height: 1.25; display: block; }
   .anatomy-detail-sheet h4 { overflow-wrap: anywhere; }
   .anatomy-detail-sheet button { min-height: 44px; }

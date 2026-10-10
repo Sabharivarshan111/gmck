@@ -170,6 +170,11 @@ function anyTerm(text: string, terms: readonly string[]): boolean {
  * one fixes the colour and the omission together.
  */
 export const MISFILED_SYSTEMS = new Map<string, string>([
+  // Source export misfiles oral mucosa and levator scapulae as skeletal.
+  ['FJ1252', 'digestive'], // Gingiva of upper jaw
+  ['FJ1253', 'digestive'], // Gingiva of lower jaw
+  ['FJ1532', 'muscular'], // Right levator scapulae
+  ['FJ1532M', 'muscular'], // Left levator scapulae
   // CSF spaces, filed as cardiac
   ['FJ1730', 'nervous'], // Third ventricle
   ['FJ1731', 'nervous'], // Fourth ventricle
