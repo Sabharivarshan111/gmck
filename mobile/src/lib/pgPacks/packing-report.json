@@ -1,0 +1,10 @@
+{
+  "total_questions": 4180,
+  "chunk_count": 6,
+  "budget_mb": 25.0,
+  "raw_mb": 2.199,
+  "deflate_mb": 0.871,
+  "brotli_mb": 0.702,
+  "fits_native_budget": true,
+  "note": "DEFLATE is a source-assets estimate, not a measured Play Store AAB/APK delta."
+}

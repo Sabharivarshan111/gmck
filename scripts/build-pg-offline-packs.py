@@ -34,8 +34,11 @@ MAX_ROWS_PER_PACK = 1000
 FILENAME = re.compile(r"[^a-z0-9_]+")
 
 def validate(row):
-    if row.get("status") not in ("published", "approved"):
-        raise ValueError("Unreviewed row; input must be an approved export")
+    dataset_label = row.get("status") == "dataset_label"
+    if not dataset_label and row.get("status") not in ("published", "approved"):
+        raise ValueError("Unapproved row; input must be approved or separately marked dataset-label practice")
+    if dataset_label and row.get("record_type") != "historical_dataset":
+        raise ValueError("Unreviewed dataset labels cannot be published as verified PYQs")
     if row.get("reuse_status") not in APPROVED or not str(row.get("rights_evidence", "")).strip():
         raise ValueError("Missing verified publication rights")
     if not str(row.get("answer_reference", "")).strip():
@@ -44,11 +47,17 @@ def validate(row):
         raise ValueError("Unknown exam or record type")
     if row.get("answer") not in ("A", "B", "C", "D"):
         raise ValueError("Invalid correct option")
-    if any(not isinstance(row.get(key), str) or not row[key].strip()
-           for key in ("question", "opa", "opb", "opc", "opd", "explanation", "source_url", "id")):
+    required = ("question", "opa", "opb", "opc", "opd", "source_url", "id")
+    if not dataset_label:
+        required += ("explanation",)
+    if any(not isinstance(row.get(key), str) or not row[key].strip() for key in required):
         raise ValueError("Incomplete question/options/explanation/source")
-    if len(row["explanation"].strip()) < 20:
+    if dataset_label and not isinstance(row.get("explanation"), str):
+        raise ValueError("Dataset explanation must be text (empty is allowed, never fabricated)")
+    if not dataset_label and len(row["explanation"].strip()) < 20:
         raise ValueError("Missing useful explanation")
+    if dataset_label and "not independently" not in row["answer_reference"].lower():
+        raise ValueError("Dataset answers must be labelled as not independently reviewed")
     if not row["source_url"].startswith("https://"):
         raise ValueError("Missing HTTPS source")
     y = row.get("exam_year")

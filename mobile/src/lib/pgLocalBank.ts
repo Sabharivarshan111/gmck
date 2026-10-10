@@ -15,6 +15,7 @@ export type PgOfflineSearch = {
   year: number | null;
   search: string;
   limit?: number;
+  offset?: number;
 };
 
 const HISTORIC_EXAMS: Record<string, readonly string[]> = {
@@ -35,7 +36,8 @@ function isValidQuestion(q: PgQuestion): boolean {
     Array.isArray(q.options) && q.options.length === 4 &&
     q.options.every(o => typeof o === 'string' && o.trim()) &&
     /^[ABCD]$/.test(q.answer) && typeof q.explanation === 'string' &&
-    q.explanation.trim().length >= 20 &&
+    (q.explanation.trim().length >= 20 ||
+      (q.record_type === 'historical_dataset' && q.answer_reference?.includes('not independently') === true)) &&
     typeof q.answer_reference === 'string' && q.answer_reference.trim().length > 0 &&
     typeof q.source_url === 'string' && q.source_url.trim().length > 0 &&
     ['historical_dataset', 'verified_pyq', 'recalled', 'original_exam_style'].includes(q.record_type || '');
@@ -57,7 +59,8 @@ export function getPgOfflinePacks(): readonly PgOfflinePack[] {
  */
 export async function searchOfflinePgQuestions(input: PgOfflineSearch):
   Promise<{ questions: PgQuestion[]; total: number; packsScanned: number }> {
-  const limit = Math.max(1, Math.min(250, input.limit ?? 60));
+  const limit = Math.max(1, Math.min(100, input.limit ?? 50));
+  const offset = Math.max(0, Math.min(1000000, input.offset ?? 0));
   const query = input.search.trim().toLocaleLowerCase();
   const result: PgQuestion[] = [];
   const seen = new Set<string>();
@@ -80,7 +83,7 @@ export async function searchOfflinePgQuestions(input: PgOfflineSearch):
       if (seen.has(q.id)) continue;
       seen.add(q.id);
       total += 1;
-      if (result.length < limit) result.push(q);
+      if (total > offset && result.length < limit) result.push(q);
     }
   }
   return { questions: result, total, packsScanned };

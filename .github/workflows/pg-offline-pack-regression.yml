@@ -34,3 +34,12 @@ jobs:
         run: |
           ! grep -E "(from.+supabase|pg_exam_questions)" mobile/src/components/PgEntranceBankModal.tsx
           ! grep -E "from.+supabase" mobile/src/lib/pgLocalBank.ts
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Android app dependencies
+        run: npm --prefix mobile ci --legacy-peer-deps
+      - name: Native Android TypeScript compilation
+        run: npm --prefix mobile run typecheck
+      - name: Assert offline content manifest
+        run: node scripts/check-pg-content-integrity.mjs

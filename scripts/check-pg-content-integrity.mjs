@@ -53,11 +53,56 @@ const packCount = (manifest.match(/load:\s*\(\)\s*=>\s*import\(/g) || []).length
 const hasEmptyManifest = /GENERATED_PG_PACKS:\s*PgOfflinePack\[\]\s*=\s*\[\s*\]/.test(manifest);
 check(packCount > 0 || hasEmptyManifest, 'PG pack manifest is malformed');
 
+let installedQuestions = 0;
+let datasetLabelledQuestions = 0;
+let recordsWithoutExplanation = 0;
+const seenImported = new Set();
+if (packCount > 0) {
+  const row = /\{ id: "([^"]+)", exam: "([^"]+)", year: (null|\d+), count: (\d+), load: \(\) => import\('\.\/([^']+)'\) \}/g;
+  const specs = Array.from(manifest.matchAll(row));
+  check(specs.length === packCount, 'Manifest pack metadata is incomplete');
+  for (const item of specs) {
+    const id = item[1];
+    const expectRows = Number(item[4]);
+    const basename = item[5];
+    check(id === basename, 'Manifest id mismatch: ' + id);
+    const filename = 'mobile/src/lib/pgPacks/' + basename + '.ts';
+    check(fs.existsSync(filename), 'Manifest pack is missing: ' + filename);
+    if (!fs.existsSync(filename)) continue;
+    const text = read(filename);
+    const rows = text.match(/const ROWS: \(string \| number\)\[\]\[\] = (\[[\s\S]*?\]);/);
+    const refs = text.match(/const REFERENCES = (\[[\s\S]*?\]);/);
+    check(Boolean(rows && refs), 'Invalid packed module: ' + id);
+    if (!rows || !refs) continue;
+    const values = JSON.parse(rows[1]);
+    const references = JSON.parse(refs[1]);
+    check(values.length === expectRows, 'Mismatched row count in ' + id);
+    for (const q of values) {
+      installedQuestions++;
+      if (seenImported.has(q[0])) errors.push('Duplicate bundled ID: ' + q[0]);
+      seenImported.add(q[0]);
+      check(typeof q[1] === 'string' && q[1].trim().length > 8, 'Bad question in ' + id);
+      check(q.length === 14 && q.slice(2,6).every(x => typeof x === 'string' && x.trim()), 'Incomplete A-D options in ' + id);
+      check(Number.isInteger(q[6]) && q[6] >= 0 && q[6] <= 3, 'Invalid dataset label in ' + id);
+      if (typeof q[7] !== 'string' || q[7].trim().length < 20) recordsWithoutExplanation++;
+      const evidence = references[q[11]];
+      if (typeof evidence === 'string' && evidence.includes('not independently verified')) datasetLabelledQuestions++;
+    }
+  }
+  const sizeReport = JSON.parse(read('mobile/src/lib/pgPacks/packing-report.json'));
+  check(installedQuestions === sizeReport.total_questions, 'Reported PG question count differs from real files');
+  check(sizeReport.chunk_count === packCount, 'Size report chunk count differs from manifest');
+  check(sizeReport.fits_native_budget === true, 'Bundled question-pack source fails compressed-content budget');
+}
+
 const report = {
   audit_date: '2026-10-10',
   free_source_links: sources.length,
   original_practice_questions: original.length,
-  installed_approved_pyq_packs: packCount,
+  installed_offline_pack_count: packCount,
+  installed_offline_questions: installedQuestions,
+  dataset_answer_labels_not_independently_verified: datasetLabelledQuestions,
+  questions_with_missing_or_short_explanation: recordsWithoutExplanation,
   complete_historical_pyq_coverage_verified: false,
   offline_25mb_all_questions_verified: false,
   source_links_are_questions: false,
