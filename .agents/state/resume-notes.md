@@ -1960,3 +1960,14 @@ Verified: build:vercel, mobile typecheck:web, simulator organ/asset/mobile/dossi
 **NEXT:** Verify merged production deployment and capture its final phone screenshot. Device/GPU and expert clinical review remain separate validation tasks.
 
 **DO NOT:** Substitute another nerve for a missing target, invent vestibular placement, or call all individual muscles/nerves medically verified from catalog/loader checks.
+
+
+## 2026-10-10 — Simulator one-hand follow-up
+
+**DONE:** Bottom thumb navigation/Browse/Layers/zoom/reset, pan command buttons, bottom region picker, persistent phone detail footer and expandable supply/innervation notes. Bounded Crisp/Smooth rendering modes with low-memory and 3M pixel budget tests. TypeScript, simulator mobile guards, actual model regression and combined build pass. Hosted first preview exercised at 360/390/430/landscape; no horizontal overflow. See `docs/simulator-one-hand-audit-2026-10-10.md`.
+
+**HALF-DONE:** Final refinements and production publication verification pending at this commit. Browser cannot create WebGL; actual overview sharpness/GPU/FPS/physical touch remain unverified. Anatomy source registration safeguards and 36-dossier clinical coverage limits remain.
+
+**NEXT:** Verify final deployed region picker, range height, supply action and capture mobile screenshot; publish production preserving concurrent main PG changes.
+
+**DO NOT:** Claim perfect anatomy, all clinical innervations reviewed, or actual phone GPU blur fixed solely from DPR code/UI tests.

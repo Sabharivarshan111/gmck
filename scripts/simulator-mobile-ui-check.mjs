@@ -86,7 +86,7 @@ requireText(
 );
 requireText(
   simulator,
-  "'max(360px, calc(100dvh - 292px))'",
+  "'max(360px, calc(100dvh - 208px))'",
   '3D anatomy stage lost its assembled-mode adaptive mobile height.'
 );
 requireText(
