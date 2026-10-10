@@ -1461,7 +1461,7 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
       return;
     }
     renderer.setSize(width, height);
-    // Strict mobile DPR clamping to 1.0 prevents WebKit Jetsam OOM crashes
+    // Bounded supersampling sharpens overview edges; low-memory caps and Smooth mode limit GPU allocation.
     renderer.setPixelRatio(anatomyPixelRatio(window.devicePixelRatio, isMobileDevice, qualityRef.current, width, height, (navigator as Navigator & {deviceMemory?: number}).deviceMemory));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = isLight ? 0.90 : 1.05;

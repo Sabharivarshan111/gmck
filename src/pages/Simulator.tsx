@@ -1026,6 +1026,7 @@ export const Simulator: React.FC = () => {
 
         {mobileTab === '3d' && <div className={`${mobilePanel === 'browse' ? 'mobile-anatomy-panel' : 'hidden lg:block'}`}>
           <div className="lg:hidden flex items-center justify-between pb-2"><strong>Browse anatomy</strong><button aria-label="Close anatomy browser" onClick={() => setMobilePanel(null)}>Close</button></div>
+          <label className="lg:hidden flex items-center justify-between gap-2 pb-3">Region<select aria-label="Browse body region" value={cameraPreset} onChange={e => handleChangeRegion(e.target.value as typeof cameraPreset)} className="rounded-xl border p-2 bg-transparent"><option value="anterior">Whole body</option><option value="head">Head & neck</option><option value="thorax">Thorax</option><option value="abdomen">Abdomen</option></select></label>
           <RegionStructureBrowser atlas={atlasCatalog} region={cameraPreset} theme={theme} onSelect={handleSelectCatalogPart} open={mobilePanel === 'browse'} />
         </div>}
 

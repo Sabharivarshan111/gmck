@@ -19,6 +19,7 @@ button[title="Center and zoom 3D Viewport"] {
 }
 
 @media (max-width: 1023px) {
+  [data-simulator-root] input[type="range"] { min-height: 44px; }
   [data-simulator-root] main { padding-bottom: calc(140px + env(safe-area-inset-bottom)); }
   .mobile-anatomy-panel { position: fixed; left: 12px; right: 12px; bottom: calc(130px + env(safe-area-inset-bottom)); z-index: 45; max-height: 64dvh; overflow-y: auto; overscroll-behavior: contain; padding: 12px; border: 1px solid #cbd5e1; border-radius: 20px; background: #fff; color: #0f172a; box-shadow: 0 -8px 24px #0f172a15; }
   [data-simulator-theme="dark"] .mobile-anatomy-panel { background: #0f172a; color: #e2e8f0; border-color: #334155; }
