@@ -548,6 +548,7 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
                       : pathology.heartSoundType === 'murmur_systolic'
                       ? 'Loud, snapping S1 followed by an Opening Snap (OS) and a rough, rumbling mid-diastolic murmur with presystolic accentuation (Mitral Stenosis).'
                       : 'Normal S1 and S2 closure sounds. S1 is louder than S2 at the apex.')}
+                  {(stethSite === 'tricuspid' || stethSite === 'pulmonic') && 'A separate site-specific finding is not modeled for this position in the current scenario. Select a modeled site or an educational sound preset.'}
                   {stethSite === 'aortic' &&
                     (vitals.cvp > 10
                       ? 'Distant, muffled heart sounds with reduced high-frequency valve closure components due to acoustic attenuation by surrounding pericardial fluid (Beck\'s Triad).'
