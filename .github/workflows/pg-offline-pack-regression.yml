@@ -41,5 +41,7 @@ jobs:
         run: npm --prefix mobile ci --legacy-peer-deps
       - name: Native Android TypeScript compilation
         run: npm --prefix mobile run typecheck
+      - name: Validate handwritten-notes UI textbook guard without censoring exam content
+        run: npm --prefix mobile run check:textbooks
       - name: Assert offline content manifest
         run: node scripts/check-pg-content-integrity.mjs
