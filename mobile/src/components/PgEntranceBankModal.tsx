@@ -7,16 +7,11 @@ import { ArrowLeft, BookOpenCheck, ExternalLink, Search, ShieldCheck, X } from '
 import { Text } from '@/components/Text';
 import { Touchable } from '@/components/Touchable';
 import { useTheme, withAlpha } from '@/theme';
-import { supabase } from '@/lib/supabase';
+import { searchOfflinePgQuestions } from '@/lib/pgLocalBank';
 import { PG_ORIGINAL_PRACTICE, PG_SOURCES, PG_SOURCE_REVIEW_DATE, type PgExam, type PgQuestion } from '@/lib/pgEntranceBank';
 
 type ExamFilter = 'ALL' | PgExam;
 type Panel = 'sources' | 'practice';
-type PublishedRow = {
-  id: string; question: string; opa: string; opb: string; opc: string; opd: string;
-  answer: string; explanation: string; exam: string; exam_year: number | null;
-  subject: string | null; source_url: string; record_type: string; answer_reference: string;
-};
 const EXAMS: { id: ExamFilter; title: string }[] = [
   { id: 'ALL', title: 'All' }, { id: 'NEET_PG', title: 'NEET-PG' },
   { id: 'INI_CET', title: 'INI-CET' }, { id: 'FMGE', title: 'FMGE' },
@@ -26,15 +21,6 @@ const AIPG: Record<PgExam, string[]> = {
   INI_CET: ['INI_CET', 'AIIMS_PG', 'PGIMER_PG', 'JIPMER_PG'],
   FMGE: ['FMGE'],
 };
-
-function normalize(row: PublishedRow): PgQuestion {
-  return {
-    id: row.id, exam: row.exam, year: row.exam_year, subject: row.subject || 'General',
-    question: row.question, options: [row.opa, row.opb, row.opc, row.opd],
-    answer: row.answer, explanation: row.explanation, source_url: row.source_url,
-    record_type: row.record_type, answer_reference: row.answer_reference,
-  };
-}
 
 async function openSource(url: string) {
   try {
@@ -59,36 +45,34 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
   const [searchText, setSearchText] = useState('');
   const [published, setPublished] = useState<PgQuestion[]>([]);
   const [loading, setLoading] = useState(false);
-  const [publishedUnavailable, setPublishedUnavailable] = useState(false);
+  const [loadedCount, setLoadedCount] = useState(0);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [expandedAnswer, setExpandedAnswer] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!visible) return;
-    let live = true;
-    setLoading(true);
-    // The optional table may not yet exist. Fail closed: do not surface
-    // unreviewed third-party questions as an apparently verified question bank.
-    void supabase.from('pg_exam_questions')
-      .select('id,question,opa,opb,opc,opd,answer,explanation,exam,exam_year,subject,source_url,record_type,answer_reference')
-      .order('exam_year', { ascending: false, nullsFirst: false })
-      .limit(80)
-      .then(({ data, error }) => {
-        if (!live) return;
-        setPublished(error ? [] : ((data || []) as PublishedRow[]).map(normalize));
-        setPublishedUnavailable(Boolean(error));
-        setLoading(false);
-      }, () => {
-        if (!live) return;
-        setPublished([]);
-        setPublishedUnavailable(true);
-        setLoading(false);
-      });
-    return () => { live = false; };
-  }, [visible]);
 
   const year = /^\d{4}$/.test(yearText) ? Number(yearText) : null;
   const yearInvalid = yearText.length > 0 && (year === null || year < 1991 || year > 2026);
   const search = searchText.toLocaleLowerCase().trim();
+
+  useEffect(() => {
+    if (!visible) return;
+    let cancelled = false;
+    setLoading(true);
+    setLoadError(null);
+    void searchOfflinePgQuestions({ exam, year, search, limit: 120 })
+      .then(result => {
+        if (cancelled) return;
+        setPublished(result.questions);
+        setLoadedCount(result.total);
+      })
+      .catch(err => {
+        if (cancelled) return;
+        setPublished([]);
+        setLoadedCount(0);
+        setLoadError(err instanceof Error ? err.message : 'Unable to open the offline pack.');
+      })
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
+  }, [visible, exam, year, search]);
 
   const sources = useMemo(() => PG_SOURCES.filter(item =>
     (exam === 'ALL' || item.exam === 'ALL' || item.exam === exam) &&
@@ -208,19 +192,15 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
             <>
               <Text style={[styles.sectionHeading, { color: colors.text }]}>Reviewed question practice</Text>
               {loading ? <ActivityIndicator color={colors.primary} /> : null}
-              {publishedUnavailable ? (
-                <Text style={[styles.small, { color: colors.textMuted }]}>
-                  The published PG question table is not available yet. Unverified third-party questions remain blocked; original practice is available below.
-                </Text>
-              ) : null}
+              {loadError ? <Text style={[styles.small, { color: '#D97706' }]}>Offline pack error: {loadError}</Text> : null}
               <Text style={[styles.small, { color: colors.textMuted }]}>
-                {reviewed.length} approved questions loaded (at most 80 from the server). No full-paper completeness is claimed.
+                {loadedCount} audited questions in bundled offline packs; showing up to 120. No internet or database needed.
               </Text>
               {reviewed.map(q => <QuestionCard key={q.id} q={q} active={expandedAnswer === q.id}
                 onPress={() => setExpandedAnswer(prev => prev === q.id ? null : q.id)}
                 colors={colors} />)}
               {reviewed.length === 0 && !loading ? <Text style={[styles.empty, { color: colors.textMuted }]}>
-                No approved exam-specific PYQs match this selection. You can still browse recalled questions at their original source links.
+                No audited exam-specific PYQs in this offline build for these filters. Browse answer-bearing source links above.
               </Text> : null}
               <Text style={[styles.sectionHeading, { color: colors.text }]}>ORBIT original practice — not PYQs</Text>
               {original.map(q => <QuestionCard key={q.id} q={q} active={expandedAnswer === q.id}

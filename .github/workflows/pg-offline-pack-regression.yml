@@ -1,0 +1,36 @@
+name: PG offline pack regression
+
+on:
+  push:
+    paths:
+      - 'scripts/build-pg-offline-packs.py'
+      - 'scripts/test-pg-offline-packs.py'
+      - 'mobile/src/lib/pgLocalBank.ts'
+      - 'mobile/src/lib/pgPacks/**'
+      - 'mobile/src/components/PgEntranceBankModal.tsx'
+      - '.github/workflows/pg-offline-pack-regression.yml'
+  pull_request:
+    paths:
+      - 'scripts/build-pg-offline-packs.py'
+      - 'scripts/test-pg-offline-packs.py'
+      - 'mobile/src/lib/pgLocalBank.ts'
+      - 'mobile/src/lib/pgPacks/**'
+      - 'mobile/src/components/PgEntranceBankModal.tsx'
+      - '.github/workflows/pg-offline-pack-regression.yml'
+
+jobs:
+  offline-packs:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Test pack compilation, audit gate, and size budget
+        run: python scripts/test-pg-offline-packs.py
+      - name: Assert the PG UI never fetches questions from Supabase
+        run: |
+          ! grep -E "(from.+supabase|pg_exam_questions)" mobile/src/components/PgEntranceBankModal.tsx
+          ! grep -E "from.+supabase" mobile/src/lib/pgLocalBank.ts
