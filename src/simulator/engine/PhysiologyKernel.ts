@@ -118,7 +118,7 @@ export const SCENARIOS: ExtendedScenarioDefinition[] = [
       pupilRight: 3.5,
       pupilReactLeft: true,
       pupilReactRight: true,
-      heartSoundType: 'murmur_systolic',
+      heartSoundType: 'mitral_stenosis',
       lungSoundType: 'crackles',
       ecgRhythm: 'sinus',
     },

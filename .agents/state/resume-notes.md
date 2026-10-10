@@ -2013,3 +2013,13 @@ Verified: build:vercel, mobile typecheck:web, simulator organ/asset/mobile/dossi
 **NEXT:** After quota reset deploy CURRENT main containing e2cc0289, preserving later PG changes. Verify corrected head counts/grouping, gingiva/levator exact metadata and compact phone supply controls, then capture final-release screenshot.
 
 **LIMITS:** Cloud WebGL unavailable; physical GPU blur/sharpness/FPS/gestures/audio remain unverified. 36 clinical dossiers do not individually certify every muscle/nerve innervation. Vestibular registration quarantine and other source gaps retained.
+
+## 2026-10-10 — Codex — simulator rotation/framing and auscultation follow-up
+
+**DONE:** Moved mobile isolated identity toward thumb controls, kept full source display names, compacted spread panel, added aspect/depth/viewport-aware isolated framing. Corrected ms_afib sound routing, absent atrial accentuation, cyanosis/stridor and shock/tamponade false inference, cardiac-arrest minimum-rate audio, expired async playback and scheduled-source stop/disposal. Dark-mode live mobile controls exercised (8 presets, 6 sites, 2 filters, volume/start/stop/close/reopen); actual screenshot saved. TypeScript, mobile UI/organ/camera checks, 42x7 source case/site routing, 30 actual offline DSP combinations and Three.js projection checks pass. Production build passes with NODE_OPTIONS=--max-old-space-size=6144; ordinary runtime default heap failed during the unrelated native-web build. Detailed limits and clinical references appended to docs/simulator-one-hand-audit-2026-10-10.md.
+
+**HALF-DONE:** New fixes not live; existing simulator-vercel-daily-quota-20261010 blocker remains. No captured/audible physical-device sound or GPU rotation/clarity claim. Offline compressor implementation is passthrough, not actual browser output validation.
+
+**NEXT:** After Vercel daily limit resets, deploy current main containing this follow-up and prior PR48/49, preserving PG changes. Capture real-phone model rotation/fit in both themes and check headphones/speaker sounds against clinician-reviewed recordings.
+
+**DO NOT:** Convert anatomical right to camera-relative left; infer stridor from cyanosis or tamponade from CVP alone; report queued fixes as published; change billing/security settings to bypass quota; claim every nerve/muscle's clinical innervation is certified.

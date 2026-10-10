@@ -34,7 +34,7 @@ export const AnatomySpreadControl: React.FC<AnatomySpreadControlProps> = ({
   return (
     <div
       data-testid="anatomy-spread-control"
-      className={`pointer-events-auto rounded-2xl border backdrop-blur-xl shadow-lg px-3 py-2.5 ${className} ${
+      className={`pointer-events-auto rounded-2xl border backdrop-blur-xl shadow-lg px-3 py-1 sm:py-2.5 ${className} ${
         isLight
           ? 'bg-white/95 border-slate-200/90 text-slate-800'
           : 'bg-slate-950/90 border-slate-700/90 text-slate-100'
@@ -53,7 +53,7 @@ export const AnatomySpreadControl: React.FC<AnatomySpreadControlProps> = ({
           <div className="flex items-center justify-between gap-2">
             <div className="min-w-0">
               <div className="text-[11px] sm:text-xs font-extrabold tracking-wide">Spread anatomy</div>
-              <div className="text-[9px] sm:text-[10px] text-slate-500 sim-dark:text-slate-400 truncate">
+              <div className="hidden sm:block text-[9px] sm:text-[10px] text-slate-500 sim-dark:text-slate-400 truncate">
                 {phase} · {interactionHint}
               </div>
             </div>
@@ -74,7 +74,7 @@ export const AnatomySpreadControl: React.FC<AnatomySpreadControlProps> = ({
             className="mt-1.5 h-2 w-full cursor-pointer accent-violet-600"
           />
 
-          <div className="mt-0.5 flex justify-between text-[8px] sm:text-[9px] font-semibold uppercase tracking-wide text-slate-400">
+          <div className="mt-0.5 hidden sm:flex justify-between text-[8px] sm:text-[9px] font-semibold uppercase tracking-wide text-slate-400">
             <span>Assembled</span>
             <span>Every piece</span>
           </div>

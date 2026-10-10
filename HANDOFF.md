@@ -2477,3 +2477,7 @@ Owner reported My Progress sign-in landing on mbbsqbank-questor.lovable.app. Pro
 
 ### 2026-10-05 — Browser media / background notification fixes
 YouTube wrapper sandbox bug repaired in mobile/web/adapters/webview.tsx with validated direct embeds; video adapter preserves audio controls and does not treat interrupted play on pause as error. Web notifications now use a private authenticated Supabase Web Push subscription API, Vault signing keys, and five-minute pg_cron delivery. All browser-role table privileges revoked; custom Edge auth validates user JWTs and scheduler secret. Implementation and verification boundaries in docs/WEB_MEDIA_PUSH_FIX.md. Native Android and simulator unchanged. Physical iPhone delivery still needs real installed-device verification. Changes target the isolated native-web branch; production must use this branch rather than old main.
+
+### 2026-10-10 simulator audio/rotation follow-up
+
+Corrected clinical sound routing (mitral stenosis/AF, explicit upper-airway stridor/tamponade cases, cardiac-arrest silence), audio cancellation/disposal, compact mobile selection/spread controls and aspect-aware isolated fitting. See the follow-up section in docs/simulator-one-hand-audit-2026-10-10.md and the dated resume entry for exact verification and limits. Existing Vercel daily deployment quota still prevents publication. Dark-mode production controls were exercised; physical-device audio and GPU rotation remain unverified. Preserve concurrent PG work when publishing current main after reset.

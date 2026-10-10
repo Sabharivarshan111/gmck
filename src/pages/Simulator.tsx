@@ -31,7 +31,7 @@ import { RegionStructureBrowser } from '../simulator/controls/RegionStructureBro
 import { correctPartSystem } from '../simulator/data/atlasResolver';
 import { DissectionToolMode, Part, Atlas } from '../simulator/data/atlasTypes';
 import { isPeripheralNerveTarget } from '../simulator/data/peripheralNerves';
-import { HRA_HEART_TARGETS, isHraHeartTarget } from '../simulator/data/hraHeart';
+import { getHraHeartTarget, HRA_HEART_TARGETS, isHraHeartTarget } from '../simulator/data/hraHeart';
 import {
   getHraOrganTarget,
   getHraReferenceSexForOrgan,
@@ -539,7 +539,7 @@ export const Simulator: React.FC = () => {
                 <div className="absolute top-3 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/95 sim-dark:bg-slate-900/95 backdrop-blur-md border border-amber-300 sim-dark:border-amber-700 shadow-md">
                   <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
                   <span className="text-xs font-bold text-slate-800 sim-dark:text-slate-200">
-                    {atlasCatalog?.parts.find(p => p.id === isolatedPartId)?.name || isolatedPartId.replace(/_/g, ' ')}
+                    {atlasCatalog?.parts.find(p => p.id === isolatedPartId)?.name || getHraHeartTarget(isolatedPartId)?.label || getHraOrganTarget(isolatedPartId)?.label || getZAnatomyReferenceTarget(isolatedPartId)?.label || isolatedPartId.replace(/_/g, ' ')}
                   </span>
                   {contextOrganId && contextOrganId !== isolatedPartId && (
                     <span className="text-[11px] font-semibold text-slate-500 sim-dark:text-slate-400 border-l border-slate-300 sim-dark:border-slate-700 pl-2">
@@ -561,7 +561,7 @@ export const Simulator: React.FC = () => {
                       setSelectedOrganId(zTarget?.organKey || isolatedPartId);
                     }}
                     className="ml-1 text-[11px] font-bold px-2 py-0.5 rounded-md bg-sky-100 hover:bg-sky-200 text-sky-900 sim-dark:bg-sky-950 sim-dark:hover:bg-sky-900 sim-dark:text-sky-200 transition-colors cursor-pointer"
-                    title="Open clinical anatomy dossier"
+                    title="Open anatomy details"
                   >
                     📖 Dossier
                   </button>
@@ -1075,10 +1075,10 @@ export const Simulator: React.FC = () => {
               }}
             >
               {isolatedPartId && (
-                <div data-testid="mobile-isolation-banner" className="absolute top-[132px] left-3 right-3 z-30 flex items-center justify-between gap-2 px-3 py-2 rounded-2xl bg-white/95 sim-dark:bg-slate-900/95 backdrop-blur-md border border-amber-300 sim-dark:border-amber-700 shadow-md pointer-events-auto touch-auto">
+                <div data-testid="mobile-isolation-banner" className="absolute bottom-[92px] left-3 right-3 z-30 flex items-center justify-between gap-2 px-3 py-2 rounded-2xl bg-white/95 sim-dark:bg-slate-900/95 backdrop-blur-md border border-amber-300 sim-dark:border-amber-700 shadow-md pointer-events-auto touch-auto">
                   <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
-                  <span className="min-w-0 flex-1 truncate text-[11px] font-bold text-slate-800 sim-dark:text-slate-200">
-                    {atlasCatalog?.parts.find(p => p.id === isolatedPartId)?.name || isolatedPartId.replace(/_/g, ' ')}
+                  <span className="min-w-0 flex-1 text-[11px] leading-snug font-bold text-slate-800 sim-dark:text-slate-200">
+                    {atlasCatalog?.parts.find(p => p.id === isolatedPartId)?.name || getHraHeartTarget(isolatedPartId)?.label || getHraOrganTarget(isolatedPartId)?.label || getZAnatomyReferenceTarget(isolatedPartId)?.label || isolatedPartId.replace(/_/g, ' ')}
                   </span>
                   <div className="flex items-center gap-1.5 shrink-0">
                     <button
@@ -1088,7 +1088,7 @@ export const Simulator: React.FC = () => {
                         )
                       }
                       className="min-h-[44px] text-xs font-bold px-2.5 rounded-xl bg-sky-100 text-sky-900 sim-dark:bg-sky-950 sim-dark:text-sky-200 cursor-pointer"
-                      title="Open clinical anatomy dossier"
+                      title="Open anatomy details"
                     >
                       Dossier
                     </button>
@@ -1130,8 +1130,8 @@ export const Simulator: React.FC = () => {
               )}
               <div
                 data-testid="mobile-gesture-hint"
-                aria-hidden={explodeAmount > 0.02}
-                style={{ display: explodeAmount > 0.02 ? 'none' : undefined }}
+                aria-hidden={explodeAmount > 0.02 || !!isolatedPartId}
+                style={{ display: explodeAmount > 0.02 || isolatedPartId ? 'none' : undefined }}
                 className="absolute bottom-[112px] left-1/2 -translate-x-1/2 z-20 md:hidden pointer-events-none max-w-[calc(100%-24px)] px-3 py-1.5 rounded-full bg-slate-950/75 text-white/95 backdrop-blur-md text-[9px] font-semibold tracking-wide whitespace-nowrap shadow-lg"
               >
                 1-finger drag: rotate · pinch: zoom · 2 fingers: pan
@@ -1232,6 +1232,7 @@ export const Simulator: React.FC = () => {
       {/* 5. Diagnostic Modal Tool (Pupil, Ultrasound POCUS, Stethoscope, 12-Lead ECG) */}
       <DiagnosticTools
         tool={activeTool}
+        scenarioId={currentScenarioId}
         pathology={pathology}
         vitals={vitals}
         onClose={() => setActiveTool('none')}
