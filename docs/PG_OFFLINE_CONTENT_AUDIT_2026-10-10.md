@@ -117,3 +117,37 @@ curated core pack with independently checked answers and explanations. If the
 entire available historical corpus is required, accept a measured larger bundle
 or offer an optional verified offline expansion. Neither solution requires
 Supabase as the live question-answer database.
+
+## 5. Verified external source spot checks (2026-10-10)
+
+The following pages were opened and individually checked; their *listed*
+counts are not an independently verified exam question count:
+
+| Source | Listed records | Reasons not complete/free for republishing |
+|---|---:|---|
+| Oncourse NEET-PG | 8,272 in 14 year groups | 2010 has **1**, 2025 has 179; full access upsell shown, 2026 not listed |
+| Oncourse INI-CET | 1,462 in 25 year groups | 1994 has **1** and pre-2020 items are not literally INI-CET |
+| Oncourse FMGE | 2,049 in 18 year groups | 2026 has **270**; the June 2026 official FMGE exam contains **300** questions; subscription promotion shown |
+| DigiNerve INI-CET May 2026 | Many recall questions | Image questions need original graphics; at least one embryology answer is inconsistent with reliable references |
+
+**Clinical key discrepancy found:** In DigiNerve's INI-CET May 2026 Anatomy
+Q8, maxillary-prominence to medial-nasal-prominence nonfusion is answered as
+*midline cleft lip*. Standard embryology describes median cleft lip as failure
+of the **two medial nasal prominences** to fuse. Failure of maxillary-medial
+prominence fusion causes typical (unilateral or bilateral) cleft lip instead.
+As listed, the options lack an unambiguous answer. Status: **QUARANTINE,
+UNSUITABLE FOR AUTOMATIC IMPORT**. Do not copy that key into ORBIT without
+anatomy review and revised wording/options.
+
+Evidence:
+- https://www.diginerve.com/blogs/inicet-may-2026-recall-questions-with-answers-pdf/
+- https://embryology.oit.duke.edu/embryoModules/craniofacial/craniofacial.html
+- https://pmc.ncbi.nlm.nih.gov/articles/5618146/
+- https://getoncourse.ai/previous-year-papers/neet-pg/
+- https://getoncourse.ai/previous-year-papers/ini-cet/
+- https://getoncourse.ai/previous-year-papers/fmge/
+- https://nbe.edu.in/IB/FMGE%20JUNE%202026%20information%20bulletin.pdf
+
+This is a **targeted source sample** and a structural check, not proof that
+all other answer keys are medically correct. A full 187,005-item clinical
+review has not been performed.
