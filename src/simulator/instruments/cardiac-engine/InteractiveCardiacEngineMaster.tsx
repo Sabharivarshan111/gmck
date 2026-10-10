@@ -79,7 +79,7 @@ export const InteractiveCardiacEngineMaster: React.FC<{ isLight?: boolean }> = (
   };
 
   return (
-    <div className={`p-5 rounded-2xl border transition-all ${isLight ? 'bg-white border-slate-200 shadow-sm' : 'bg-slate-900/90 border-slate-800 shadow-2xl'}`}>
+    <div className={`p-3 sm:p-5 rounded-2xl border transition-all ${isLight ? 'bg-white border-slate-200 shadow-sm' : 'bg-slate-900/90 border-slate-800 shadow-2xl'}`}>
       {/* Header & Subsystem Switcher */}
       <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-5">
         <div>
@@ -88,7 +88,7 @@ export const InteractiveCardiacEngineMaster: React.FC<{ isLight?: boolean }> = (
               🫀
             </div>
             <h3 className="text-base font-black tracking-tight text-slate-900 sim-dark:text-slate-100">
-              Interactive Medical-Grade Cardiac Simulation Engine
+              Interactive Cardiac Simulation
             </h3>
           </div>
           <p className="text-xs text-slate-500 sim-dark:text-slate-400 mt-0.5">
@@ -97,7 +97,7 @@ export const InteractiveCardiacEngineMaster: React.FC<{ isLight?: boolean }> = (
         </div>
 
         {/* System Tab Toggles */}
-        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-100 sim-dark:bg-slate-950 border border-slate-200 sim-dark:border-slate-800">
+        <div className="w-full min-w-0 grid grid-cols-3 sm:flex items-center gap-1.5 p-1 rounded-xl bg-slate-100 sim-dark:bg-slate-950 border border-slate-200 sim-dark:border-slate-800">
           <button
             onClick={() => setActiveTab('hemodynamics')}
             className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${

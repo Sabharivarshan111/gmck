@@ -1494,9 +1494,9 @@ export const EcgIcuTutorialModal: React.FC<EcgIcuTutorialModalProps> = ({
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="text-sm sm:text-lg font-bold tracking-tight truncate">
-                  12-Lead ECG & ICU Telemetry Masterclass
+                  <span className="sm:hidden">ECG & ICU Tutorial</span><span className="hidden sm:inline">12-Lead ECG & ICU Telemetry Masterclass</span>
                 </h2>
-                <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-600 sim-dark:text-rose-400 border border-rose-500/20">
+                <span className="hidden sm:inline text-[11px] font-bold px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-600 sim-dark:text-rose-400 border border-rose-500/20">
                   Visual Walkthrough
                 </span>
               </div>
