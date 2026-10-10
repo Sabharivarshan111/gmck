@@ -224,6 +224,62 @@ export const PG_SOURCES: PgSource[] = [
     "kind": "Unofficial",
     "note": "Topic-based compilation, not a complete chronological session archive"
   }
+,
+  {
+    "id": "neet-2023-2025-recalls",
+    "exam": "NEET_PG",
+    "name": "NEET-PG 2023–2025 year-specific memory recalls",
+    "from": 2023,
+    "to": 2025,
+    "url": "https://medicine.careers360.com/articles/neet-pg-question-paper",
+    "answerStatus": "Links to historical year recall questions; coverage and keys are unofficial",
+    "kind": "2023–2025 recall directory",
+    "note": "Questions/options and sessions are not all independently verified, and publisher reuse permission is not established"
+  },
+  {
+    "id": "ini-2023-2024-archive",
+    "exam": "INI_CET",
+    "name": "INI-CET 2023–2024 memory recall sources",
+    "from": 2023,
+    "to": 2024,
+    "url": "https://medicine.careers360.com/articles/ini-cet-previous-years-question-papers-pdf-with-answer-key-and-solutions",
+    "answerStatus": "Publisher lists past sessions with recalled keys and selected solutions",
+    "kind": "2023–2024 recall directory",
+    "note": "January/July exam sessions must be verified separately; external papers are not bundled"
+  },
+  {
+    "id": "ini-2025-c360",
+    "exam": "INI_CET",
+    "name": "INI-CET 2025 January/July recall answers",
+    "from": 2025,
+    "to": 2025,
+    "url": "https://medicine.careers360.com/articles/ini-cet-2025-question-paper-with-answer-key",
+    "answerStatus": "Selected memory-based questions and answer keys",
+    "kind": "2025 recall",
+    "note": "January session was held November 2024; label by exam session, not calendar date"
+  },
+  {
+    "id": "ini-2026-solutions",
+    "exam": "INI_CET",
+    "name": "INI-CET May 2026 answer explanations",
+    "from": 2026,
+    "to": 2026,
+    "url": "https://medicine.careers360.com/articles/ini-cet-2026-question-paper-with-answer-key-solutions",
+    "answerStatus": "2026 recalled questions with answers and explanations",
+    "kind": "2026 recall",
+    "note": "Not an official full paper. Check disputed answers against source textbooks"
+  },
+  {
+    "id": "fmge-2023-2026-session-index",
+    "exam": "FMGE",
+    "name": "FMGE 2023–2026 sitting-by-sitting recall directory",
+    "from": 2023,
+    "to": 2026,
+    "url": "https://medicine.careers360.com/articles/fmge-question-paper",
+    "answerStatus": "Year/session memory-based questions, PDF links and explanations",
+    "kind": "2023–2026 recall directory",
+    "note": "2026 January and June sessions are different; October 2026 is still in the future as of October 10"
+  }
 ];
 export const PG_ORIGINAL_PRACTICE: PgQuestion[] = [
   {
