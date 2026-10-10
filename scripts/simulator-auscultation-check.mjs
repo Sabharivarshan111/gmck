@@ -29,16 +29,16 @@ let scenarioArray;
 for (const statement of parsed.statements) if (ts.isVariableStatement(statement)) for (const d of statement.declarationList.declarations) if (d.name.getText(parsed) === 'SCENARIOS') scenarioArray = d.initializer.getText(parsed);
 const scenarios = new Function('return (' + scenarioArray + ')')();
 assert.equal(scenarios.length, 42);
-for (const scenario of scenarios) for (const site of ['mitral','aortic','tricuspid','pulmonic','lung_bases','lung_apices','trachea']) {
+for (const scenario of scenarios) for (const site of ['mitral','aortic','tricuspid','pulmonic','erb','lung_bases','lung_apices','trachea']) {
   const sound = resolveAuscultation(scenario.initialPathology, scenario.initialVitals, site, scenario.id);
-  assert.ok(['silent','normal','s3_gallop','s4_gallop','mitral_stenosis','aortic_stenosis','mitral_regurg','aortic_regurg','friction_rub','tamponade_muffled'].includes(sound.heart));
+  assert.ok(['silent','normal','s3_gallop','s4_gallop','mitral_stenosis','aortic_stenosis','mitral_regurg','tricuspid_regurg','aortic_regurg','friction_rub','tamponade_muffled'].includes(sound.heart));
   assert.ok(['silent','vesicular','bronchial','crackles','wheeze','stridor'].includes(sound.lung));
 }
 let currentContext;
 globalThis.window = { AudioContext: function() { return currentContext; }, setInterval: () => 1, clearInterval: () => {} };
 const results = [];
 for (const mode of ['bell', 'diaphragm']) {
-  for (const preset of ['normal','s3_gallop','s4_gallop','mitral_stenosis','aortic_stenosis','mitral_regurg','aortic_regurg','friction_rub','tamponade_muffled','vesicular','bronchial','crackles','wheeze','stridor','silent']) {
+  for (const preset of ['normal','s3_gallop','s4_gallop','mitral_stenosis','aortic_stenosis','mitral_regurg','tricuspid_regurg','aortic_regurg','friction_rub','tamponade_muffled','vesicular','bronchial','crackles','wheeze','stridor','silent']) {
     currentContext = new webAudio.OfflineAudioContext(1, 22050 * 5, 22050);
     currentContext.resume = async () => {}; // Offline rendering has no hardware/autoplay state.
     const engine = new StethoscopeAudioEngine();
@@ -69,4 +69,12 @@ assert.ok(phases[1].args[0]+phases[1].args[1] <= 2);
 let stopped=0; engine.activeSources.set({stop(){stopped++;},disconnect(){}},'pulmonary'); engine.stopAll();
 events=[]; engine.renderCardiacBeat(1,1,'silent'); assert.equal(events.length,0);
 assert.equal(stopped,1); assert.equal(engine.activeSources.size,0);
+events=[]; engine.soundEvents=[]; engine.atrialContraction=true;
+engine.renderCardiacBeat(1, 1, 's3_gallop');
+assert.deepEqual(engine.soundEvents.map(e=>e.label), ['S1','S2','S3']);
+const scheduledS3=events.find(e=>e.method==='synthesizeGallopThud');
+assert.equal(engine.soundEvents[2].time, scheduledS3.args[0]);
+events=[]; engine.soundEvents=[]; engine.renderCardiacBeat(1,1,'tricuspid_regurg');
+assert.ok(events.some(e=>e.method==='synthesizeMitralRegurgMurmur'));
+engine.stopAll(); assert.deepEqual(engine.soundEvents, []);
 console.log(JSON.stringify({routing:'passed',timing:'passed',stop:'passed',rendered:results},null,2));

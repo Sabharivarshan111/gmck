@@ -2023,3 +2023,10 @@ Verified: build:vercel, mobile typecheck:web, simulator organ/asset/mobile/dossi
 **NEXT:** After Vercel daily limit resets, deploy current main containing this follow-up and prior PR48/49, preserving PG changes. Capture real-phone model rotation/fit in both themes and check headphones/speaker sounds against clinician-reviewed recordings.
 
 **DO NOT:** Convert anatomical right to camera-relative left; infer stridor from cyanosis or tamponade from CVP alone; report queued fixes as published; change billing/security settings to bypass quota; claim every nerve/muscle's clinical innervation is certified.
+
+## 2026-10-10 — Codex — Mobile auscultation trainer
+
+**DONE:** Implemented mobile chest listening points, lazy attributed 3D organs with labeled fallback, moving stethoscope, real output waveform/scheduler labels, exploration/training, nine cardiac and six lung demos, fixed thumb player, both themes. TypeScript, 32 offline DSP renders, source-model bounds/targets and mobile guard passed; production build checked. See docs/simulator-auscultation-trainer-2026-10-10.md.
+**HALF-DONE:** Browser UI audit follows deployment of this branch. Physical-device sound and GPU realism are not certified; cloud WebGL may show fallback.
+**NEXT:** Publish branch preview, exercise phone-size UI, then merge and verify production revision.
+**DO NOT:** Import normal/abnormal datasets as named valve-disease clips; copy GPL hardware simulator code; infer clinically registered chest/valve locations from illustrative placement; alter Android releases or concurrent PG work. Prior PR51 production deployment is now READY (e689045); old quota-block status is superseded.

@@ -9,6 +9,7 @@ export type AuscultationSite =
   | 'aortic'
   | 'tricuspid'
   | 'pulmonic'
+  | 'erb'
   | 'lung_bases'
   | 'lung_apices'
   | 'trachea';
@@ -21,6 +22,7 @@ export type HeartSoundPreset =
   | 'mitral_stenosis'
   | 'aortic_stenosis'
   | 'mitral_regurg'
+  | 'tricuspid_regurg'
   | 'aortic_regurg'
   | 'friction_rub'
   | 'tamponade_muffled';
@@ -35,6 +37,9 @@ export type LungSoundPreset =
 
 export class StethoscopeAudioEngine {
   private ctx: AudioContext | null = null;
+  private analyser: AnalyserNode | null = null;
+  private traceSamples = new Float32Array(2048);
+  private soundEvents: { time: number; label: string }[] = [];
   private masterGain: GainNode | null = null;
   private compressor: DynamicsCompressorNode | null = null;
   private chestWallResonance: BiquadFilterNode | null = null;
@@ -152,10 +157,20 @@ export class StethoscopeAudioEngine {
     this.stethFilterStage1.connect(this.stethFilterStage2);
     this.stethFilterStage2.connect(this.compressor);
     this.compressor.connect(this.masterGain);
-    this.masterGain.connect(this.ctx.destination);
+    this.analyser = this.ctx.createAnalyser();
+    this.analyser.fftSize = 2048;
+    this.masterGain.connect(this.analyser);
+    this.analyser.connect(this.ctx.destination);
 
     this.noiseBuffer = this.generatePinkNoiseBuffer(this.ctx, 5.0);
     this.waveShaperCurve = this.generateDistortionCurve();
+  }
+
+  /** Samples the signal actually sent to the output, using the audio clock. */
+  public getTrace() {
+    if (!this.ctx || !this.analyser || this.ctx.state !== 'running') return null;
+    this.analyser.getFloatTimeDomainData(this.traceSamples);
+    return { time: this.ctx.currentTime, sampleRate: this.ctx.sampleRate, samples: this.traceSamples, events: this.soundEvents };
   }
 
   public setVolume(vol: number): void {
@@ -228,7 +243,7 @@ export class StethoscopeAudioEngine {
   // LOOKAHEAD TIMING SCHEDULER
   // --------------------------------------------------------------------------
   public startCardiacAuscultation(hr: number, preset: HeartSoundPreset, atrialContraction = true): void {
-    if (preset !== this.currentHeartPreset || atrialContraction !== this.atrialContraction) this.stopSources('cardiac');
+    if (preset !== this.currentHeartPreset || atrialContraction !== this.atrialContraction) { this.stopSources('cardiac'); this.soundEvents = []; }
     this.atrialContraction = atrialContraction;
     this.currentHr = Number.isFinite(hr) ? Math.max(30, Math.min(220, hr)) : 72;
     this.currentHeartPreset = preset;
@@ -264,6 +279,7 @@ export class StethoscopeAudioEngine {
   }
 
   public stopCardiacAuscultation(): void {
+    this.soundEvents = [];
     this.stopSources('cardiac');
     this.isCardiacActive = false;
     if (!this.isPulmonaryActive) {
@@ -314,6 +330,7 @@ export class StethoscopeAudioEngine {
   }
 
   public stopAll(): void {
+    this.soundEvents = [];
     this.stopSources();
     this.isCardiacActive = false;
     this.isPulmonaryActive = false;
@@ -373,6 +390,10 @@ export class StethoscopeAudioEngine {
     if (!this.ctx || !this.chestWallResonance || preset === 'silent') return;
 
     const systolicTime = 0.38 * Math.sqrt(cycleDuration);
+    this.soundEvents = this.soundEvents.filter(event => event.time >= this.ctx!.currentTime - 4);
+    this.soundEvents.push({time: t, label: 'S1'}, {time: t + systolicTime, label: 'S2'});
+    if (preset === 's3_gallop') this.soundEvents.push({time: t + systolicTime + 0.14, label: 'S3'});
+    if (preset === 's4_gallop' && this.atrialContraction) this.soundEvents.push({time: t + cycleDuration - 0.085, label: 'S4'});
     const isTamponade = preset === 'tamponade_muffled';
     const masterAttn = isTamponade ? 0.28 : 1.0;
 
@@ -431,6 +452,12 @@ export class StethoscopeAudioEngine {
         const asStart = t + 0.035;
         const asDur = systolicTime - 0.055;
         this.synthesizeAorticStenosisMurmur(asStart, asDur, 0.95);
+        break;
+      }
+
+      case 'tricuspid_regurg': {
+        // Teaching approximation: holosystolic envelope, not a recorded patient.
+        this.synthesizeMitralRegurgMurmur(t, systolicTime, 0.7);
         break;
       }
 
@@ -1013,6 +1040,8 @@ export class StethoscopeAudioEngine {
       this.ctx.close();
       this.ctx = null;
     }
+    this.analyser = null;
+    this.soundEvents = [];
     this.masterGain = null;
     this.compressor = null;
     this.chestWallResonance = null;
