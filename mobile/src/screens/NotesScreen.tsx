@@ -455,16 +455,16 @@ function YearsView({
       {/* Unified PG source browser directly below Case proformas. */}
       <Touchable
         onPress={onOpenPgEntrance}
-        label="PG Entrance PYQ Bank: NEET PG, INI CET, and FMGE with answer sources and reviewed practice"
+        label="PG Entrance Questions & Sources: NEET PG, INI CET, and FMGE with answer sources and reviewed practice"
         scaleTo={0.97}
         style={[styles.extraCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
         <View style={[styles.extraIcon, { backgroundColor: withAlpha(colors.accent, 0.15) }]}>
           <BookOpenCheck size={18} color={colors.accent} />
         </View>
         <View style={styles.flex}>
-          <Text style={[styles.extraTitle, { color: colors.text }]}>PG Entrance PYQ Bank</Text>
+          <Text style={[styles.extraTitle, { color: colors.text }]}>PG Entrance Questions & Sources</Text>
           <Text style={[styles.extraSub, { color: colors.textMuted }]}>
-            NEET-PG · INI-CET · FMGE | historic answers, 2026 recalls and reviewed MCQs
+            NEET-PG · INI-CET · FMGE | offline practice and historical source links
           </Text>
         </View>
         <ChevronRight size={18} color={colors.textMuted} />
