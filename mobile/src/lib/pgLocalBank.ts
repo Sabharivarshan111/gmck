@@ -35,7 +35,8 @@ function isValidQuestion(q: PgQuestion): boolean {
     Array.isArray(q.options) && q.options.length === 4 &&
     q.options.every(o => typeof o === 'string' && o.trim()) &&
     /^[ABCD]$/.test(q.answer) && typeof q.explanation === 'string' &&
-    q.explanation.trim().length >= 20 &&
+    (q.explanation.trim().length >= 20 ||
+      (q.record_type === 'historical_dataset' && q.answer_reference?.includes('not independently'))) &&
     typeof q.answer_reference === 'string' && q.answer_reference.trim().length > 0 &&
     typeof q.source_url === 'string' && q.source_url.trim().length > 0 &&
     ['historical_dataset', 'verified_pyq', 'recalled', 'original_exam_style'].includes(q.record_type || '');
