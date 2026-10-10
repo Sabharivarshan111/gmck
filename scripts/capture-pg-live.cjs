@@ -26,8 +26,27 @@ fs.mkdirSync(out, { recursive:true });
     await page.getByRole('button',{name:'Start studying'}).click();
     await page.waitForTimeout(2200);
   }
-  const skipTour=page.getByText('Skip',{exact:true}).first();
-  if(await skipTour.isVisible().catch(()=>false)) await skipTour.click().catch(()=>{});
+  // ORBIT launches a guided feature walkthrough after first-run setup.
+  // Close it so Playwright clicks the real Notes tab, not the dark overlay.
+  for(let i=0;i<5;i++) {
+    const gotIt=page.getByText('Got it',{exact:true}).first();
+    if(await gotIt.isVisible().catch(()=>false)) {
+      await gotIt.click({timeout:6000});
+      await page.waitForTimeout(500);
+      continue;
+    }
+    const close=page.getByText('Close',{exact:true}).first();
+    if(await close.isVisible().catch(()=>false)) {
+      await close.click({timeout:6000}).catch(()=>{});
+      await page.waitForTimeout(400);
+    }
+    break;
+  }
+  const notesTab=page.getByText('Notes',{exact:true}).last();
+  if(await notesTab.isVisible().catch(()=>false)) {
+    await notesTab.click({timeout:12000});
+    await page.waitForTimeout(2500);
+  }
   let entry=page.getByText('PG Entrance Questions & Sources',{exact:false}).first();
   if(!(await entry.count())){
     await page.goto(origin+'/',{waitUntil:'domcontentloaded',timeout:75000});
