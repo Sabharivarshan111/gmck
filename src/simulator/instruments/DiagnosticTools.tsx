@@ -175,56 +175,6 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
           {/* ================= 1. PUPILLOMETRY ================= */}
           {tool === 'pupil' && (
             <div className="space-y-4">
-              {/* Penlight Control Selector */}
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pb-2 border-b border-slate-800">
-                <span className="text-xs text-slate-400 font-semibold">Penlight Light Stimulus:</span>
-                <div className="grid grid-cols-2 sm:flex gap-2">
-                  <button
-                    aria-label="🔦 Left Eye (Direct L, Consensual R)"
-                    aria-pressed={flashlightOn === 'left'}
-                    onClick={() => setFlashlightOn(flashlightOn === 'left' ? 'none' : 'left')}
-                    className={`min-h-[44px] shrink-0 whitespace-nowrap px-3 py-1.5 rounded-xl text-[11px] sm:text-xs font-bold border transition-all cursor-pointer ${
-                      flashlightOn === 'left'
-                        ? 'bg-amber-400 text-slate-950 border-amber-300 shadow-md font-black'
-                        : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700'
-                    }`}
-                  >
-                    🔦 Left eye
-                  </button>
-                  <button
-                    aria-label="🔦 Right Eye (Direct R, Consensual L)"
-                    aria-pressed={flashlightOn === 'right'}
-                    onClick={() => setFlashlightOn(flashlightOn === 'right' ? 'none' : 'right')}
-                    className={`min-h-[44px] shrink-0 whitespace-nowrap px-3 py-1.5 rounded-xl text-[11px] sm:text-xs font-bold border transition-all cursor-pointer ${
-                      flashlightOn === 'right'
-                        ? 'bg-amber-400 text-slate-950 border-amber-300 shadow-md font-black'
-                        : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700'
-                    }`}
-                  >
-                    🔦 Right eye
-                  </button>
-                  <button
-                    aria-label="🔦 Both Eyes"
-                    aria-pressed={flashlightOn === 'both'}
-                    onClick={() => setFlashlightOn(flashlightOn === 'both' ? 'none' : 'both')}
-                    className={`min-h-[44px] shrink-0 whitespace-nowrap px-3 py-1.5 rounded-xl text-[11px] sm:text-xs font-bold border transition-all cursor-pointer ${
-                      flashlightOn === 'both'
-                        ? 'bg-amber-400 text-slate-950 border-amber-300 shadow-md font-black'
-                        : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700'
-                    }`}
-                  >
-                    🔦 Both Eyes
-                  </button>
-                  <button
-                    aria-pressed={flashlightOn === 'none'}
-                    onClick={() => setFlashlightOn('none')}
-                    className="min-h-[44px] min-w-[44px] shrink-0 whitespace-nowrap px-2.5 py-1.5 rounded-xl text-[11px] sm:text-xs font-semibold bg-slate-800/80 hover:bg-slate-700 text-slate-400 border border-slate-700 cursor-pointer"
-                  >
-                    Off
-                  </button>
-                </div>
-              </div>
-
               {/* Dual Eye Interactive Simulator */}
               <div className="grid grid-cols-2 gap-2 sm:gap-4 bg-slate-950 p-3 sm:p-5 rounded-2xl border border-slate-800 text-center">
                 {/* Left Eye */}
@@ -312,12 +262,62 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
                 </div>
               </div>
 
-              {/* Clinical Teaching Card */}
-              <div className="bg-slate-950 p-3 sm:p-4 rounded-2xl border border-slate-800 text-xs text-slate-300 space-y-2">
-                <div className="font-bold text-slate-100 flex items-center gap-1.5">
-                  <Info className="w-4 h-4 text-sky-400" />
-                  <span>Neuroanatomy of Pupillary Light Reflex (CN II & CN III):</span>
+              {/* Penlight Control Selector */}
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pb-2 border-b border-slate-800">
+                <span className="text-xs text-slate-400 font-semibold">Penlight Light Stimulus:</span>
+                <div className="grid grid-cols-2 sm:flex gap-2">
+                  <button
+                    aria-label="🔦 Left Eye (Direct L, Consensual R)"
+                    aria-pressed={flashlightOn === 'left'}
+                    onClick={() => setFlashlightOn(flashlightOn === 'left' ? 'none' : 'left')}
+                    className={`min-h-[44px] shrink-0 whitespace-nowrap px-3 py-1.5 rounded-xl text-[11px] sm:text-xs font-bold border transition-all cursor-pointer ${
+                      flashlightOn === 'left'
+                        ? 'bg-amber-400 text-slate-950 border-amber-300 shadow-md font-black'
+                        : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700'
+                    }`}
+                  >
+                    🔦 Left eye
+                  </button>
+                  <button
+                    aria-label="🔦 Right Eye (Direct R, Consensual L)"
+                    aria-pressed={flashlightOn === 'right'}
+                    onClick={() => setFlashlightOn(flashlightOn === 'right' ? 'none' : 'right')}
+                    className={`min-h-[44px] shrink-0 whitespace-nowrap px-3 py-1.5 rounded-xl text-[11px] sm:text-xs font-bold border transition-all cursor-pointer ${
+                      flashlightOn === 'right'
+                        ? 'bg-amber-400 text-slate-950 border-amber-300 shadow-md font-black'
+                        : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700'
+                    }`}
+                  >
+                    🔦 Right eye
+                  </button>
+                  <button
+                    aria-label="🔦 Both Eyes"
+                    aria-pressed={flashlightOn === 'both'}
+                    onClick={() => setFlashlightOn(flashlightOn === 'both' ? 'none' : 'both')}
+                    className={`min-h-[44px] shrink-0 whitespace-nowrap px-3 py-1.5 rounded-xl text-[11px] sm:text-xs font-bold border transition-all cursor-pointer ${
+                      flashlightOn === 'both'
+                        ? 'bg-amber-400 text-slate-950 border-amber-300 shadow-md font-black'
+                        : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700'
+                    }`}
+                  >
+                    🔦 Both Eyes
+                  </button>
+                  <button
+                    aria-pressed={flashlightOn === 'none'}
+                    onClick={() => setFlashlightOn('none')}
+                    className="min-h-[44px] min-w-[44px] shrink-0 whitespace-nowrap px-2.5 py-1.5 rounded-xl text-[11px] sm:text-xs font-semibold bg-slate-800/80 hover:bg-slate-700 text-slate-400 border border-slate-700 cursor-pointer"
+                  >
+                    Off
+                  </button>
                 </div>
+              </div>
+
+              {/* Clinical Teaching Card */}
+              <details className="bg-slate-950 p-3 sm:p-4 rounded-2xl border border-slate-800 text-xs text-slate-300 space-y-2">
+                <summary className="min-h-[44px] font-bold text-slate-100 flex items-center gap-1.5 cursor-pointer">
+                  <Info className="w-4 h-4 text-sky-400" />
+                  <span>How the pupil reflex works · CN II & III</span>
+                </summary>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-[11px] leading-relaxed">
                   <div>
                     • <strong>Direct Light Reflex:</strong> Light entering the pupil stimulates retinal ganglion cells → Optic Nerve (CN II) afferents travel to the pretectal nucleus in the midbrain → bilateral projection to Edinger-Westphal nuclei → Oculomotor Nerve (CN III) parasympathetic efferents constrict the ipsilateral pupillary sphincter.
@@ -326,7 +326,7 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
                     • <strong>Consensual Light Reflex:</strong> Axons decussate across the posterior commissure to the contralateral Edinger-Westphal nucleus, producing simultaneous equal constriction of the unilluminated eye.
                   </div>
                 </div>
-              </div>
+              </details>
             </div>
           )}
 

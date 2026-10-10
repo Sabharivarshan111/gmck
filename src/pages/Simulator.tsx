@@ -1075,34 +1075,27 @@ export const Simulator: React.FC = () => {
               }}
             >
               {isolatedPartId && (
-                <div data-testid="mobile-isolation-banner" className="absolute bottom-[92px] left-3 right-3 z-30 flex items-center justify-between gap-2 px-3 py-2 rounded-2xl bg-white/95 sim-dark:bg-slate-900/95 backdrop-blur-md border border-amber-300 sim-dark:border-amber-700 shadow-md pointer-events-auto touch-auto">
-                  <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
-                  <span className="min-w-0 flex-1 text-[11px] leading-snug font-bold text-slate-800 sim-dark:text-slate-200">
-                    {atlasCatalog?.parts.find(p => p.id === isolatedPartId)?.name || getHraHeartTarget(isolatedPartId)?.label || getHraOrganTarget(isolatedPartId)?.label || getZAnatomyReferenceTarget(isolatedPartId)?.label || isolatedPartId.replace(/_/g, ' ')}
-                  </span>
-                  <div className="flex items-center gap-1.5 shrink-0">
-                    <button
-                      onClick={() =>
-                        setSelectedOrganId(
-                          isolatedPartId
-                        )
-                      }
-                      className="min-h-[44px] text-xs font-bold px-2.5 rounded-xl bg-sky-100 text-sky-900 sim-dark:bg-sky-950 sim-dark:text-sky-200 cursor-pointer"
-                      title="Open anatomy details"
-                    >
-                      Dossier
-                    </button>
-                    <button
-                      onClick={() => {
-                        setIsolatedPartId(null);
-                        setContextOrganId(null);
-                        setSelectedOrganId(null);
-                      }}
-                      className="min-h-[44px] text-xs font-bold px-2.5 rounded-xl bg-amber-100 text-amber-900 sim-dark:bg-amber-950 sim-dark:text-amber-200 cursor-pointer"
-                    >
-                      Restore
-                    </button>
-                  </div>
+                <div data-testid="mobile-isolation-banner" className="mobile-selection-card pointer-events-auto">
+                  <button
+                    aria-label="Open selected structure anatomy details"
+                    onClick={() => setSelectedOrganId(isolatedPartId)}
+                    className="mobile-selection-details"
+                  >
+                    <span className="mobile-selection-name">
+                      {atlasCatalog?.parts.find(p => p.id === isolatedPartId)?.name || getHraHeartTarget(isolatedPartId)?.label || getHraOrganTarget(isolatedPartId)?.label || getZAnatomyReferenceTarget(isolatedPartId)?.label || isolatedPartId.replace(/_/g, ' ')}
+                    </span>
+                    <span className="mobile-selection-hint">Selection details</span>
+                    <Info aria-hidden="true" className="w-5 h-5 shrink-0" />
+                  </button>
+                  <button
+                    aria-label="Restore whole anatomy from selected structure"
+                    onClick={() => {
+                      setIsolatedPartId(null);
+                      setContextOrganId(null);
+                      setSelectedOrganId(null);
+                    }}
+                    className="mobile-selection-restore"
+                  >Restore</button>
                 </div>
               )}
               {!isDesktopLayout && (
