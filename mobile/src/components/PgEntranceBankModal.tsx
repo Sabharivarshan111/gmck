@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ArrowLeft, BookOpenCheck, ExternalLink, Search, ShieldCheck, X } from 'lucide-react-native';
 import { Text } from '@/components/Text';
 import { KeyboardSafe } from '@/components/KeyboardSafe';
+import { PgRecentAnswerReview } from '@/components/PgRecentAnswerReview';
 import { Touchable } from '@/components/Touchable';
 import { useTheme, withAlpha } from '@/theme';
 import { searchOfflinePgQuestions } from '@/lib/pgLocalBank';
@@ -116,8 +117,9 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
           <View style={[styles.notice, { backgroundColor: withAlpha(colors.primary, 0.08), borderColor: colors.border }]}>
             <ShieldCheck size={17} color={colors.primary} />
             <Text style={[styles.noticeText, { color: colors.text }]}>
-              Offline practice is included in this app. Historical source links cover selected years
-              through 2026 and need internet. Source links are not imported exam papers.
+              The 4,180 MedMCQA questions were published in a 2022 dataset, with no
+              verified per-question year. For 2023–2026, browse recall sources or use the optional
+              signed-in textbook answer checker. These are not imported official papers.
             </Text>
           </View>
 
@@ -136,14 +138,27 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
               <Touchable key={p} label={p === 'sources' ? 'Answer-bearing sources' : 'Practice questions'}
                 state={{ selected: panel === p }}
                 onPress={() => { setPanel(p); setExpandedAnswer(null); }}
-                style={[styles.switchButton, { backgroundColor: panel === p ? colors.primary : colors.card, borderColor: panel === p ? colors.primary : colors.border }]}>
-                <Text style={[styles.switchText, { color: panel === p ? '#FFFFFF' : colors.text }]}>
+                style={[styles.switchButton, { backgroundColor: panel === p ? withAlpha(colors.primary, 0.22) : colors.card, borderColor: panel === p ? colors.primary : colors.border }]}>
+                <Text style={[styles.switchText, { color: colors.text }]}>
                   {p === 'sources' ? 'Source directory' : 'Practice MCQs'}
                 </Text>
               </Touchable>
             ))}
           </View>
 
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chips}>
+            {[2023, 2024, 2025, 2026].map(y => (
+              <Touchable key={y} label={'Filter recalled questions and source links for '+y}
+                onPress={() => { setYearText(String(y)); setPage(0); setExpandedAnswer(null); }}
+                style={[styles.chip,{ borderColor: year === y ? colors.primary : colors.border,backgroundColor: year === y ? withAlpha(colors.primary,0.17) : colors.card }]}>
+                <Text style={[styles.chipText,{color:colors.text}]}>{y}</Text>
+              </Touchable>
+            ))}
+            <Touchable label="Clear question year" onPress={() => {setYearText('');setPage(0);setExpandedAnswer(null);}}
+              style={[styles.chip,{borderColor:colors.border,backgroundColor:colors.card}]}>
+              <Text style={[styles.chipText,{color:colors.text}]}>All years</Text>
+            </Touchable>
+          </ScrollView>
           <View style={styles.filters}>
             <View style={[styles.searchBox, { backgroundColor: colors.card, borderColor: colors.border }]}>
               <Search size={16} color={colors.textMuted} />
@@ -213,6 +228,7 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
                 onPress={() => setExpandedAnswer(prev => prev === q.id ? null : q.id)}
                 colors={colors} />)}
               {original.length === 0 ? <Text style={[styles.small, { color: colors.textMuted }]}>Clear the year filter to show original practice questions.</Text> : null}
+              <PgRecentAnswerReview exam={exam} year={year} onYear={y => {setYearText(String(y));setPage(0);}} />
             </>
           )}
           <View style={[styles.bottomNote, { borderColor: colors.border }]}>
