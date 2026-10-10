@@ -33,9 +33,9 @@ jobs:
           python - <<'PY'
           import json, pathlib
           r = json.loads(pathlib.Path("mobile/src/lib/pgPacks/packing-report.json").read_text())
-          assert r["total_questions"] == 4183, r
+          assert r["total_questions"] == 4180, r  # 3 source entries quarantined as malformed
           assert r["fits_native_budget"], r
-          print("Seed: 4,183 labelled source questions generated within 25 MB pack budget")
+          print("Seed: 4,180 usable labelled questions generated; 3 malformed source rows quarantined")
           PY
       - name: Commit real offline questions into this feature branch
         run: |
