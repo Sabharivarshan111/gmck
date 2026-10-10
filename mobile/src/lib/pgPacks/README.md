@@ -48,11 +48,15 @@ labels, or drop thousands of questions without telling you.
 MedMCQA's Hugging Face Parquet files total about **88.3 MB compressed**;
 their reported logical contents are **135.5 MB**. The code here uses
 dictionary-coded question source/subject/topic/reference strings and
-up to 1,000 questions per dynamically imported pack. **It has not yet been
-benchmarked on the 193,155-row full dataset.**
+up to 1,000 questions per dynamically imported pack. **Measured on GitHub runner on 2026-10-10:** 187,005 answer-keyed MedMCQA
+records (train + validation) produced **52.41 MB DEFLATE** and **45.60 MB
+Brotli** as compiled TS source packs. The other 6,150 test records had no answer
+labels. A further 30,450 records with answer labels had inadequate explanations
+and cannot pass the review gate without independent remediation. This benchmark
+did **not** include 2023–2026 recall papers, and was **not** a complete audit or
+Android Play Store APK/AAB size measurement.
 
-A maximum **25 MB extra Android download size for *every* answer-bearing
-question is a target, not a proven result**. The real size will depend on
+The full answer-keyed historical benchmark **fails 25 MB** with current lossless compression. **52.41 MB** is the measured Android ZIP-like approximation for the 2022-era set, not final Play Store delivery size. **45.60 MB Brotli** for web is under the requested 50 MB ceiling before 2023–2026 additions. The actual APK delta is still unmeasured. The real size will depend on
 deduplication, accepted question count and explanation lengths. Options:
 
 * Native bundled 25 MB: keep the complete approved corpus only if it fits,
