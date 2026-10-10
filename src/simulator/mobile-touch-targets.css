@@ -32,3 +32,15 @@ button[title="Center and zoom 3D Viewport"] {
   .anatomy-detail-sheet { height: 100dvh; border-radius: 0; }
   .anatomy-detail-sheet > button:first-child { display: none; }
 }
+
+/* Every phone control remains usable as labels and panels reflow. */
+@media (max-width: 767px) {
+  [data-simulator-root] button { min-height: 44px; min-width: 44px; }
+  [data-simulator-root] input:not([type="range"]), [data-simulator-root] select { min-height: 44px; font-size: 16px; }
+  [data-simulator-root] .no-scrollbar { scrollbar-width: none; }
+  [data-simulator-root] .no-scrollbar::-webkit-scrollbar { display: none; }
+  [data-simulator-root] [class*="text-[9px]"],
+  [data-simulator-root] [class*="text-[10px]"],
+  [data-simulator-root] [class*="text-[11px]"] { font-size: 12px; }
+  [data-testid^="diagnostic-"] p { font-size: 13px; line-height: 1.6; }
+}
