@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import assert from 'node:assert/strict';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { restoreSourceNodeNames, partBelongsToRegion } from '../src/simulator/data/anatomyRegions.ts';
-import { PERIPHERAL_NERVE_KEYS, meshMatchesPeripheralNerveTarget } from '../src/simulator/data/peripheralNerves.ts';
+import { PERIPHERAL_NERVE_KEYS, meshMatchesPeripheralNerveTarget, peripheralNerveRegistrationIssue } from '../src/simulator/data/peripheralNerves.ts';
 import { ZANATOMY_REFERENCE_MODELS, ZANATOMY_REFERENCE_TARGETS, zAnatomyMeshMatchesTarget } from '../src/simulator/data/zanatomyReferences.ts';
 import { HRA_ORGAN_MODELS, HRA_ORGAN_TARGETS, hraOrganMeshMatchesTarget } from '../src/simulator/data/hraOrgans.ts';
 import { HRA_HEART_TARGETS, hraHeartMeshMatchesTarget, HRA_HEART_MODEL_URL } from '../src/simulator/data/hraHeart.ts';
@@ -24,6 +24,11 @@ for (const key of PERIPHERAL_NERVE_KEYS.filter(k => !['phrenic_nerve', 'splanchn
 }
 const nerveCatalog = JSON.parse(fs.readFileSync('public/models/nerve_catalog.json', 'utf8'));
 assert.equal(nerveCatalog.length, 147);
+const vestibular = nerveCatalog.find(p => p.id === 'zanerve__vestibular_nerve');
+assert(vestibular.bounds[1][1] < 0.1, 'Re-evaluate vestibular quarantine if source registration changes');
+assert(peripheralNerveRegistrationIssue(vestibular.id));
+assert(nerves.filter(n => peripheralNerveRegistrationIssue(n)).every(n => meshMatchesPeripheralNerveTarget(n, vestibular.id)));
+assert.equal(peripheralNerveRegistrationIssue('Vagus nerve (X).L'), null);
 for (const part of nerveCatalog) assert(nerves.some(n => meshMatchesPeripheralNerveTarget(n, part.id)), `Catalog nerve missing: ${part.id}`);
 for (const name of nerves) assert(nerveCatalog.some(p => meshMatchesPeripheralNerveTarget(name, p.id)), `Uncatalogued nerve: ${name}`);
 assert.equal(nerves.filter(n => meshMatchesPeripheralNerveTarget(n, 'sympathetic')).length, 6);

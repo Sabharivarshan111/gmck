@@ -374,10 +374,10 @@ export const Simulator: React.FC = () => {
               <div className="min-w-0">
                 <div className="flex items-center gap-1.5 flex-wrap">
                   <h1 className="text-xs md:text-sm font-black tracking-tight truncate">
-                    <span className="sm:hidden">Patient Simulator</span><span className="hidden sm:inline">Orbit 3D Patient Simulator</span>
+                    <span className="sm:hidden">Simulator</span><span className="hidden sm:inline">Orbit 3D Patient Simulator</span>
                   </h1>
                   <span
-                    className={`text-[9px] uppercase font-mono px-1.5 py-0.2 rounded-full font-bold border ${
+                    className={`hidden sm:inline text-[9px] uppercase font-mono px-1.5 py-0.2 rounded-full font-bold border ${
                       isLight
                         ? 'bg-sky-100 text-sky-700 border-sky-200'
                         : 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30'

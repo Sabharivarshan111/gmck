@@ -26,7 +26,7 @@ import {
 } from '../data/organAnatomyData';
 import { resolvePartToOrganKey } from '../data/atlasResolver';
 import type { Part } from '../data/atlasTypes';
-import { isPeripheralNerveTarget } from '../data/peripheralNerves';
+import { isPeripheralNerveTarget, peripheralNerveRegistrationIssue } from '../data/peripheralNerves';
 import { getHraOrganTarget } from '../data/hraOrgans';
 import { getHraHeartTarget } from '../data/hraHeart';
 
@@ -470,7 +470,7 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
         <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain p-3 sm:p-4 md:p-6 space-y-3 sm:space-y-5 pb-[calc(16px+env(safe-area-inset-bottom))]">
           {!hasDossier && <p className="text-sm leading-relaxed rounded-xl border p-3">This named structure can be viewed, isolated and dissected. A dedicated blood supply, innervation and clinical dossier is not yet available for this structure.</p>}
           {hasDossier && <>
-          {sourcePart && <p className="text-xs rounded-xl border p-3">Selected mesh: <strong>{sourcePart.name}</strong>. The sections below describe the related {organ.name} region; they are not a separately verified dossier for this individual mesh.</p>}
+          {sourcePart && <p className="text-xs rounded-xl border p-3">Selected mesh: <strong>{sourcePart.name}</strong>. {peripheralNerveRegistrationIssue(sourcePart.id)} The sections below describe the related {organ.name} region; they are not a separately verified dossier for this individual mesh.</p>}
           {/* TAB 1: OVERVIEW & MUSCLE GRAPH */}
           {activeTab === 'overview' && (
             <div className="space-y-4 animate-in fade-in duration-200">

@@ -22,7 +22,7 @@ import {
   buildSystemAngles,
   type ExplosionLayout,
 } from './anatomyExplosion';
-import { isPeripheralNerveTarget, meshMatchesPeripheralNerveTarget, normalisePeripheralNerveTarget, peripheralNerveKeyForMeshName, genericPeripheralNerveKey, PERIPHERAL_NERVE_MODEL_URL } from '../data/peripheralNerves';
+import { isPeripheralNerveTarget, meshMatchesPeripheralNerveTarget, normalisePeripheralNerveTarget, peripheralNerveKeyForMeshName, genericPeripheralNerveKey, peripheralNerveRegistrationIssue, PERIPHERAL_NERVE_MODEL_URL } from '../data/peripheralNerves';
 import {
   getHraOrganModel,
   getHraOrganTarget,
@@ -3238,7 +3238,7 @@ varying float partSelected;
       (
         targetKey === 'peripheral_nerves' ||
         peripheralNerveMeshesRef.current.some((mesh) =>
-          meshMatchesPeripheralNerveTarget(mesh.name, targetKey)
+          !peripheralNerveRegistrationIssue(mesh.name) && meshMatchesPeripheralNerveTarget(mesh.name, targetKey)
         )
       );
     const useRealNerveLayer = !!hasRealNerveMesh;
@@ -3269,7 +3269,9 @@ varying float partSelected;
       hraGenericTarget.modelKeys.every((key) => hraOrganGroupsRef.current.has(key));
 
     setAbsentNotice(
-      isZReferenceTarget && zReferenceFailed
+      targetKey && peripheralNerveRegistrationIssue(targetKey)
+        ? peripheralNerveRegistrationIssue(targetKey)
+        : isZReferenceTarget && zReferenceFailed
         ? 'The Z-Anatomy reference model failed to load on this device. ORBIT has not substituted unrelated anatomy.'
         : isHraGenericOrganTarget && genericHraFailed
         ? 'The HRA reference organ failed to load on this device. ORBIT has not substituted unrelated anatomy.'
@@ -3308,6 +3310,7 @@ varying float partSelected;
         const nerveKey = peripheralNerveKeyForMeshName(mesh.name);
         const visible =
           useRealNerveLayer &&
+          !peripheralNerveRegistrationIssue(mesh.name) &&
           meshMatchesPeripheralNerveTarget(mesh.name, targetKey) &&
           (!nerveKey || !hiddenSet.has(nerveKey)) && !hiddenSet.has(genericPeripheralNerveKey(mesh.name));
         mesh.visible = visible;

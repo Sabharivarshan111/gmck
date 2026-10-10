@@ -114,6 +114,14 @@ export function meshMatchesPeripheralNerveTarget(meshName: string, targetId?: st
   return TARGETS[key]?.some((rx) => rx.test(name)) ?? false;
 }
 
+/** Source identity is preserved, but this standalone mesh is not body-registered. */
+export function peripheralNerveRegistrationIssue(targetOrMesh: string): string | null {
+  const key = targetOrMesh.startsWith('zanerve__') ? targetOrMesh : genericPeripheralNerveKey(targetOrMesh);
+  return key === 'zanerve__vestibular_nerve'
+    ? 'The source vestibular-nerve mesh has an unverified body position. Its 3D display is withheld until registration is corrected; no substitute nerve is shown.'
+    : null;
+}
+
 
 /**
  * Resolve a visible Z-Anatomy mesh name back to the stable simulator nerve key.
