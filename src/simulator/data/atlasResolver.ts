@@ -1119,6 +1119,10 @@ export function resolvePartToOrganKey(part?: Part | null, atlas?: Atlas | null):
   if (any('deltoid') && sys === 'muscular') return 'deltoid';
   if (any('pectoralis major')) return 'pectoralis_major';
 
+  // Muscles without their own dossier must not inherit a bone dossier from
+  // their attachment name (e.g. levator scapulae).
+  if (sys === 'muscular') return part.id;
+
   // 12. Skeletal framework.
   //
   // `rib` bounded at the start of a word, or the forty-three parts whose names
@@ -1127,6 +1131,8 @@ export function resolvePartToOrganKey(part?: Part | null, atlas?: Atlas | null):
     return 'skeletal';
   }
 
+  // Oral mucosa has no individual clinical dossier; keep its exact source identity.
+  if (hasTerm(name, 'gingiva')) return part.id;
   if (sys === 'digestive') return 'abdomen';
   return part.id;
 }
