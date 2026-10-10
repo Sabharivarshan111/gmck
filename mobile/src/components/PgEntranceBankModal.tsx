@@ -24,7 +24,7 @@ const AIPG: Record<PgExam, string[]> = {
 
 async function openSource(url: string) {
   try {
-    if (await Linking.canOpenURL(url)) await Linking.openURL(url);
+    await Linking.openURL(url);
   } catch {
     // Browsers may decline to open a link, but the question bank stays responsive.
   }
@@ -32,8 +32,7 @@ async function openSource(url: string) {
 
 /**
  * ONE entry point for all postgraduate exams. Research links are not copied
- * into the app as examination questions. Only independently reviewed, published
- * records from the rights-gated pg_exam_questions table may appear as PYQs.
+ * into the app as examination questions. Only reviewed and reuse-cleared bundled records may appear as exam-specific PYQs.
  * ORIGINAL samples never masquerade as previous-year exam questions.
  */
 export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; onClose: () => void }) {
@@ -99,7 +98,7 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
             <ArrowLeft size={21} color={colors.text} />
           </Touchable>
           <View style={styles.flex}>
-            <Text style={[styles.title, { color: colors.text }]}>PG Entrance PYQ Bank</Text>
+            <Text style={[styles.title, { color: colors.text }]}>PG Entrance Questions</Text>
             <Text style={[styles.sub, { color: colors.textMuted }]}>One place for NEET-PG · INI-CET · FMGE</Text>
           </View>
           <Touchable label="Dismiss" onPress={onClose} style={styles.iconButton}>
@@ -114,8 +113,8 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
           <View style={[styles.notice, { backgroundColor: withAlpha(colors.primary, 0.08), borderColor: colors.border }]}>
             <ShieldCheck size={17} color={colors.primary} />
             <Text style={[styles.noticeText, { color: colors.text }]}>
-              Historical sources from 1991 to 2026. Links may contain unofficial recall answers.
-              Only independently reviewed and reuse-cleared questions are shown as in-app PYQs.
+              Offline practice is included in this app. Historical source links cover selected years
+              through 2026 and need internet. Source links are not imported exam papers.
             </Text>
           </View>
 
@@ -136,7 +135,7 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
                 onPress={() => { setPanel(p); setExpandedAnswer(null); }}
                 style={[styles.switchButton, { backgroundColor: panel === p ? colors.primary : colors.card, borderColor: panel === p ? colors.primary : colors.border }]}>
                 <Text style={[styles.switchText, { color: panel === p ? '#FFFFFF' : colors.text }]}>
-                  {p === 'sources' ? 'Sources + answers' : 'Practice MCQs'}
+                  {p === 'sources' ? 'Source directory' : 'Practice MCQs'}
                 </Text>
               </Touchable>
             ))}
@@ -160,7 +159,7 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
           {panel === 'sources' ? (
             <>
               <Text style={[styles.sectionHeading, { color: colors.text }]}>
-                {sources.length} indexed source{sources.length === 1 ? '' : 's'} with answer information
+                {sources.length} external source link{sources.length === 1 ? '' : 's'}
               </Text>
               <Text style={[styles.small, { color: colors.textMuted }]}>
                 Indexed {PG_SOURCE_REVIEW_DATE}. Source year ranges are not proof of complete paper coverage.
@@ -194,13 +193,13 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
               {loading ? <ActivityIndicator color={colors.primary} /> : null}
               {loadError ? <Text style={[styles.small, { color: '#D97706' }]}>Offline pack error: {loadError}</Text> : null}
               <Text style={[styles.small, { color: colors.textMuted }]}>
-                {loadedCount} audited questions in bundled offline packs; showing up to 120. No internet or database needed.
+                {loadedCount} locally bundled reviewed question{loadedCount === 1 ? '' : 's'}; showing up to 120. No internet needed for installed questions.
               </Text>
               {reviewed.map(q => <QuestionCard key={q.id} q={q} active={expandedAnswer === q.id}
                 onPress={() => setExpandedAnswer(prev => prev === q.id ? null : q.id)}
                 colors={colors} />)}
               {reviewed.length === 0 && !loading ? <Text style={[styles.empty, { color: colors.textMuted }]}>
-                No audited exam-specific PYQs in this offline build for these filters. Browse answer-bearing source links above.
+                No exam-specific reviewed PYQs are packaged for these filters. The source directory links to third-party answer information (internet required).
               </Text> : null}
               <Text style={[styles.sectionHeading, { color: colors.text }]}>ORBIT original practice — not PYQs</Text>
               {original.map(q => <QuestionCard key={q.id} q={q} active={expandedAnswer === q.id}
