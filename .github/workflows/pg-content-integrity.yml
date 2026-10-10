@@ -1,0 +1,31 @@
+name: PG content integrity
+on:
+  push:
+    paths:
+      - 'mobile/src/lib/pgEntranceBank.ts'
+      - 'mobile/src/lib/pgPacks/**'
+      - 'mobile/src/lib/pgLocalBank.ts'
+      - 'mobile/src/components/PgEntranceBankModal.tsx'
+      - 'mobile/src/screens/NotesScreen.tsx'
+      - 'scripts/check-pg-content-integrity.mjs'
+      - '.github/workflows/pg-content-integrity.yml'
+  pull_request:
+    paths:
+      - 'mobile/src/lib/pgEntranceBank.ts'
+      - 'mobile/src/lib/pgPacks/**'
+      - 'mobile/src/lib/pgLocalBank.ts'
+      - 'mobile/src/components/PgEntranceBankModal.tsx'
+      - 'mobile/src/screens/NotesScreen.tsx'
+      - 'scripts/check-pg-content-integrity.mjs'
+      - '.github/workflows/pg-content-integrity.yml'
+jobs:
+  inventory:
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: node scripts/check-pg-content-integrity.mjs
