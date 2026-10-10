@@ -1421,7 +1421,7 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
     } catch {
       sceneRef.current = null;
       cameraRef.current = null;
-      setGraphicsError('3D graphics are unavailable in this browser. You can still use the ICU monitor and clinical cases.');
+      setGraphicsError('3D graphics are unavailable in this browser. You can still browse regional structures, read anatomy details, and use the ICU monitor and clinical cases.');
       return;
     }
     renderer.setSize(width, height);
@@ -3836,7 +3836,7 @@ varying float partSelected;
             />
           </div>
           <div className="text-[10px] text-slate-500 font-mono">
-            2,234 Anatomically Registered Parts • CC BY 4.0
+            2,234 Anatomically Registered Parts • BodyParts3D
           </div>
         </div>
       )}
@@ -3844,7 +3844,7 @@ varying float partSelected;
       {/* Top Floating Control Bar */}
       <div
         data-testid="anatomy-camera-controls"
-        className="absolute top-3 left-3 right-3 z-10 flex items-center justify-between pointer-events-none gap-2"
+        className="absolute top-3 left-3 right-3 z-50 flex items-center justify-between pointer-events-none gap-2"
       >
         {/* Camera Presets Segmented Pill */}
         <div

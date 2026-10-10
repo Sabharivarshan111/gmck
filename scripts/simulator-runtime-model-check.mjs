@@ -31,13 +31,12 @@ for (const model of ZANATOMY_REFERENCE_MODELS) {
     checked++;
   }
 }
-for (const model of HRA_ORGAN_MODELS) {
-  const names = await load(model.url);
-  for (const target of HRA_ORGAN_TARGETS.filter(t => t.modelKeys.includes(model.key))) {
-    // Multi-file targets may match another file in their same-source set.
-    if (target.modelKeys.length === 1) assert(names.some(n => hraOrganMeshMatchesTarget(n, target.id)), `Runtime HRA target missing: ${target.id}`);
-    checked++;
-  }
+const hraNames = new Map();
+for (const model of HRA_ORGAN_MODELS) hraNames.set(model.key, await load(model.url));
+for (const target of HRA_ORGAN_TARGETS) {
+  const names = target.modelKeys.flatMap(key => hraNames.get(key) || []);
+  assert(names.some(n => hraOrganMeshMatchesTarget(n, target.id)), `Runtime HRA target missing: ${target.id}`);
+  checked++;
 }
 const heart = await load(HRA_HEART_MODEL_URL);
 for (const t of HRA_HEART_TARGETS.filter(t => t.kind !== 'schematic')) {

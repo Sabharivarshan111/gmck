@@ -46,7 +46,11 @@ async function loadDeps() {
   const [fflate, fzstd, initSqlJs] = await Promise.all([
     import('fflate'),
     import('fzstd'),
-    import('sql.js').then(m => m.default ?? m),
+    import('sql.js').then(m => {
+      const initializer: unknown = m.default ?? m;
+      if (typeof initializer !== 'function') throw new Error('SQL.js initializer is unavailable');
+      return initializer as typeof import('sql.js').default;
+    }),
   ]);
   return { fflate, fzstd, initSqlJs };
 }
@@ -70,8 +74,7 @@ export function setSqlWasmUrl(url: string): void {
 }
 
 async function openSqlJs(deps: Awaited<ReturnType<typeof loadDeps>>) {
-  const init = typeof deps.initSqlJs === 'function' ? deps.initSqlJs : deps.initSqlJs.default;
-  return init(
+  return deps.initSqlJs(
     // Served from this app's own bundle, never a CDN: the app must keep
     // working offline and must not hand a third party a request every time
     // somebody imports a deck.
