@@ -30,6 +30,9 @@ assert.match(server,/auth\.auth\.getUser\(token\)/);
 assert.match(server,/consume_edge_quota/);
 assert.match(server,/buildTextbookContext/);
 assert.match(server,/source_year_verified:false/);
+assert.equal(read('supabase/functions/pg-answer-review/textbook.ts'),
+  read('supabase/functions/generate-handwritten-notes/textbook.ts'),
+  'PG textbook retrieval must stay byte-identical to the production notes retrieval');
 assert.match(server,/independently_medically_reviewed:false/);
 assert.match(server,/answer:"UNRESOLVED"/);
 assert.ok(!server.includes("verify_jwt: false"),"Do not allow anonymous unmetered textbook requests");
