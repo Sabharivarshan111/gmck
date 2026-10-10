@@ -10,8 +10,10 @@ the rest of ORBIT.
 * Original practice questions: 10 in `../pgEntranceBank.ts`.
 * Research directory: 20 free-access source entries with answer availability,
   historical exam predecessors and 2026 recall links.
-* The approved PYQ pack manifest is **empty** until content passes audit.
-  This prevents a misleading 190,000+ purported verified-PYQ claim.
+* The offline **MedMCQA validation practice pack** now contains **4,180** source-labelled MCQs in six chunks. Three malformed rows are quarantined; 1,986 usable rows have missing/short explanations.
+* Dataset-provided answer labels have not been independently medically checked. The historical exam year is not supplied and is never fabricated.
+* Measured source-pack size: **0.871 MB DEFLATE / 0.702 MB Brotli**. This is not the Play Store AAB download-size delta.
+* 2023–2026 recall papers remain external source links, not playable offline exam questions.
 
 ## Compile an approved question archive into the app
 
@@ -77,3 +79,10 @@ offline precache; avoid shipping all text as a single JavaScript bundle.
 or forum answer banks directly into app packages without appropriate rights.
 MedMCQA contains mock/prep and labelled AIIMS/NEET content, but it is not a
 verified per-year official PYQ archive. Never assign missing year data.
+
+
+## Attribution for distributed benchmark MCQs
+
+MedMCQA by Ankit Pal, Logesh Kumar Umapathi and Malaikannan Sankarasubbu, CHIL/PMLR 2022, https://arxiv.org/abs/2203.14371.
+Source: https://github.com/medmcqa/medmcqa . Upstream code/dataset license notice: Apache License 2.0, https://github.com/medmcqa/medmcqa/blob/main/LICENSE .
+Dataset location: https://huggingface.co/datasets/openlifescienceai/medmcqa . This does not establish individually cleared rights for all upstream third-party exam questions.
