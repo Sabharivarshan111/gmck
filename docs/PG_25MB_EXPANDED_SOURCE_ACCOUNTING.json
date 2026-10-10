@@ -1,0 +1,24 @@
+{
+  "source": "MedMCQA 2022 upstream; validation historical NEET PG (years individual UNKNOWN), train MOCK/TEST-SERIES only",
+  "not_a_complete_1991_2026_archive": true,
+  "all_2023_to_2026_actual_exams_imported": false,
+  "raw_validation": 4183,
+  "raw_train": 182822,
+  "validation_usable": 4180,
+  "train_usable": 182750,
+  "malformed_quarantined": 75,
+  "offline_usable_answer_labelled": 186930,
+  "validation_explanations_available": 2194,
+  "training_full_explanations_preserved": 49336,
+  "training_explanations_withheld_for_size": 104975,
+  "training_no_source_explanation": 28439,
+  "total_explanations_preserved": 51530,
+  "predicted_deflate_mb": 21.643,
+  "upper_limit_mb": 25.0,
+  "record_years_verified": 0,
+  "answer_labels_independently_medically_verified": 0,
+  "eligible_groups": {
+    "NEET_PG_validation": 4180,
+    "GENERAL_MEDICAL_training": 182750
+  }
+}

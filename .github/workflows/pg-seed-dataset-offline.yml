@@ -1,10 +1,8 @@
 name: Seed labelled MedMCQA questions for offline app
+# Historical 4,180-question fallback; NEVER automatically overwrite
+# the expanded 186,930-answer offline pack on code changes.
 on:
-  push:
-    paths:
-      - 'scripts/import-pg-medmcqa-offline.py'
-      - 'scripts/build-pg-offline-packs.py'
-      - '.github/workflows/pg-seed-dataset-offline.yml'
+  workflow_dispatch:
 jobs:
   seed-validation-questions:
     runs-on: ubuntu-latest

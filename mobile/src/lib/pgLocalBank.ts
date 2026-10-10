@@ -62,6 +62,34 @@ export async function searchOfflinePgQuestions(input: PgOfflineSearch):
   const limit = Math.max(1, Math.min(100, input.limit ?? 50));
   const offset = Math.max(0, Math.min(1000000, input.offset ?? 0));
   const query = input.search.trim().toLocaleLowerCase();
+  // No-query browsing uses audited manifest counts. Do NOT deserialize hundreds
+  // of thousands of questions on every page turn or first Notes open.
+  if (!query) {
+    const eligible = GENERATED_PG_PACKS.filter(pack =>
+      matchesExam(pack.exam, input.exam) &&
+      (input.year === null || pack.year === input.year));
+    const total = eligible.reduce((n, pack) => n + pack.count, 0);
+    const questions: PgQuestion[] = [];
+    let cursor = 0;
+    let scanned = 0;
+    for (const pack of eligible) {
+      const end = cursor + pack.count;
+      if (end <= offset) { cursor = end; continue; }
+      if (cursor >= offset + limit || questions.length >= limit) break;
+      // A single pack is loaded at most once per visible page; bundler
+      // code-splits the others for native Android and Safari/Vercel.
+      const module = await pack.load();
+      scanned++;
+      for (let i = Math.max(0, offset - cursor);
+        i < module.default.length && questions.length < limit; i++) {
+        const q = module.default[i];
+        if (!isValidQuestion(q)) continue;
+        questions.push(q);
+      }
+      cursor = end;
+    }
+    return { questions, total, packsScanned: scanned };
+  }
   const result: PgQuestion[] = [];
   const seen = new Set<string>();
   let total = 0;
@@ -69,7 +97,7 @@ export async function searchOfflinePgQuestions(input: PgOfflineSearch):
 
   for (const pack of GENERATED_PG_PACKS) {
     if (!matchesExam(pack.exam, input.exam)) continue;
-    if (input.year !== null && pack.year !== null && input.year !== pack.year) continue;
+    if (input.year !== null && pack.year !== input.year) continue;
 
     // Static import targets are enumerated in generatedManifest; app never
     // downloads arbitrary external JSON files or relies on a cloud database.

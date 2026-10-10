@@ -37,13 +37,25 @@ assert.match(server,/independently_medically_reviewed:false/);
 assert.match(server,/answer:"UNRESOLVED"/);
 assert.ok(!server.includes("verify_jwt: false"),"Do not allow anonymous unmetered textbook requests");
 const total=[...manifest.matchAll(/count: (\d+), load:/g)].reduce((sum,x)=>sum+Number(x[1]),0);
-assert.equal(total,4180,"Historic pack remains intact");
+const byExam = [...manifest.matchAll(/exam: "([^"]+)", year: null, count: (\d+), load:/g)]
+  .reduce((a,m)=>{a[m[1]]=(a[m[1]]??0)+Number(m[2]);return a;},{});
+const accounting=JSON.parse(read('docs/PG_25MB_EXPANDED_SOURCE_ACCOUNTING.json'));
+const size=JSON.parse(read('mobile/src/lib/pgPacks/packing-report.json'));
+assert.equal(byExam.NEET_PG,4180,"Historic source-question subset must not disappear");
+assert.equal(byExam.GENERAL_MEDICAL,accounting.train_usable,"Mock/test series must not be mislabelled PYQs");
+assert.equal(total,accounting.offline_usable_answer_labelled,"Bundled count must match independent source audit");
+assert.equal(size.total_questions,total);
+assert.ok(size.deflate_mb<25,"Expanded offline pack must remain under 25 MB");
+assert.ok(accounting.record_years_verified===0,"Do not assign fictitious source exam years");
 assert.match(read("scripts/import-pg-medmcqa-offline.py"),/\"exam_year\": None/);
 console.log(JSON.stringify({
   recent_source_coverage:exams.flatMap(exam=>
     [2023,2024,2025,2026].map(year=>({exam,year,
       count:sources.filter(s=>s.exam===exam&&s.from<=year&&s.to>=year).length}))),
   bundled_medmcqa_questions:total,
+  historic_neet_pg_source_labelled:byExam.NEET_PG,
+  undated_mock_test_series:byExam.GENERAL_MEDICAL,
+  compressed_deflate_mb:size.deflate_mb,
   individually_verified_dataset_years:0,
   added_2023_to_2026_official_exams:0,
   supabase_answer_review:"JWT required, review labelled provisional, server-side textbooks",
