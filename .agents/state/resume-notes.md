@@ -1939,3 +1939,13 @@ Owner asked to add the existing Vercel patient simulator to Notes. Browser-only 
 Owner explicitly requested fixing/optimising the simulator. Added a visible-frame loop that pauses in background tabs, deduplicates resume and discards hidden time. Physiology still ticks every visible frame; UI snapshots publish at 10 Hz. ICU waveform rendering no longer restarts with each vitals update; sweep speed uses elapsed time; sound enable resumes AudioContext during the user gesture and closes it on unmount. Anatomy now handles renderer creation/download failures locally instead of blanking the app, restarts after WebGL context recovery, responds to container resize, and caps phone GPU draws at 30 fps. Fixed the missing local organ resolver import, malformed synthetic Part metadata and outdated simulator sound types. Service worker cache version advanced.
 
 Verified: build:vercel, mobile typecheck:web, simulator organ/asset/mobile/dossier checks, deploy-size check and repo-intact; simulator-lifecycle-check covers pause/resume/cleanup. Root TypeScript has one pre-existing src/lib/apkgWeb.ts callable-union error; simulator files are clean. This cloud browser has WebGL disabled; anatomy rendering/context recovery and iPhone audio still require real-device verification. No medical scenario or treatment calibration changed.
+
+## 2026-10-10 — simulator mobile region/runtime audit
+
+**DONE:** Reproduced runtime missing sympathetic meshes with actual GLTFLoader (source JSON had names but runtime sanitizer broke matching); restored source node names for supplemental layers. Updated region controls/state, regional labels/visibility/spread inventory, searchable region/system/exact-source structure browser, safe exact-mesh dossier naming and compact mobile detail tabs/scrolling. Root TypeScript SQL-init union blocker repaired; SW version advanced. Model/organ/dossier/mobile/lifecycle/integrity checks and combined Vercel build pass. See docs/SIMULATOR_MOBILE_AUDIT_2026-10-10.md and scripts/simulator-runtime-model-check.mjs.
+
+**HALF-DONE:** Hosted click audit and publication pending at this checkpoint. Browser WebGL unavailable; actual phone GPU/gestures remain unverified. Small structures without clinical dossiers expose metadata rather than invented innervation. Phrenic/splanchnic are existing labelled schematics.
+
+**NEXT:** Deploy isolated simulator web branch, verify UI clicks and exact deployment; preserve source changes/research/audit evidence.
+
+**DO NOT:** Claim perfect anatomy/physical-device validation; replace source gaps with unrelated nerves; replay historical denied signed Android release; alter package/version/signing/ad/payment identities or stale backend sources.

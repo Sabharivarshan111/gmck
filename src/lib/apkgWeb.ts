@@ -70,7 +70,8 @@ export function setSqlWasmUrl(url: string): void {
 }
 
 async function openSqlJs(deps: Awaited<ReturnType<typeof loadDeps>>) {
-  return deps.initSqlJs(
+  const init = typeof deps.initSqlJs === 'function' ? deps.initSqlJs : deps.initSqlJs.default;
+  return init(
     // Served from this app's own bundle, never a CDN: the app must keep
     // working offline and must not hand a third party a request every time
     // somebody imports a deck.

@@ -93,6 +93,7 @@ export const DissectionToolbar: React.FC<DissectionToolbarProps> = ({
               <button
                 key={t.id}
                 data-testid={`dissection-mode-${t.id}`}
+                aria-pressed={active}
                 onClick={() => onSelectToolMode(t.id)}
                 title={t.hint}
                 className={`min-h-[44px] min-w-0 shrink-0 flex items-center justify-center gap-1 px-1.5 sm:px-3 rounded-lg text-[10px] sm:text-xs font-semibold transition-all cursor-pointer ${
@@ -135,6 +136,7 @@ export const DissectionToolbar: React.FC<DissectionToolbarProps> = ({
             </div>
             <input
               data-testid="dissection-depth"
+              aria-label="Peel anatomical layers"
               type="range"
               min="0"
               max="1"

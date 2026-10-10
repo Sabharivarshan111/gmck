@@ -24,12 +24,15 @@ import {
   VascularNodeReference,
   NerveNodeReference
 } from '../data/organAnatomyData';
+import { resolvePartToOrganKey } from '../data/atlasResolver';
+import type { Part } from '../data/atlasTypes';
 import { isPeripheralNerveTarget } from '../data/peripheralNerves';
 import { getHraOrganTarget } from '../data/hraOrgans';
 import { getHraHeartTarget } from '../data/hraHeart';
 
 interface OrganDetailDrawerProps {
   organId: string | null;
+  sourcePart?: Part;
   isolatedPartId?: string | null;
   onClose: () => void;
   onFocusCamera?: (preset: 'anterior' | 'head' | 'thorax' | 'abdomen') => void;
@@ -101,6 +104,7 @@ function hasSourceMatchedSympatheticTarget(text: string): boolean {
 
 export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
   organId,
+  sourcePart,
   isolatedPartId,
   onClose,
   onFocusCamera,
@@ -119,10 +123,14 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
   // Sync initial organId into history
   useEffect(() => {
     if (organId) {
-      setNavHistory([organId]);
+      setNavHistory(prev => prev[prev.length - 1] === organId ? prev : [organId]);
     } else {
       setNavHistory([]);
     }
+  }, [organId]);
+
+  useEffect(() => {
+    setActiveTab('overview'); setIsMobileExpanded(false);
   }, [organId]);
 
   if (!organId && navHistory.length === 0) return null;
@@ -142,7 +150,7 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
   });
 
   const organKey =
-    (isPeripheralNerveTarget(currentNavId)
+    (sourcePart ? resolvePartToOrganKey(sourcePart) : isPeripheralNerveTarget(currentNavId)
       ? 'peripheral_nerves'
       : hraHeartTarget
       ? 'heart'
@@ -155,6 +163,7 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
         ) ||
         nodeOwnerOrganKey) || 'heart';
 
+  const hasDossier = !!ORGAN_ANATOMY_DATABASE[organKey];
   const organ: DetailedOrganAnatomy = ORGAN_ANATOMY_DATABASE[organKey] || ORGAN_ANATOMY_DATABASE.heart;
   const isLight = theme === 'light';
 
@@ -168,6 +177,11 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
     if (!onFocusCamera) return;
     if (presetOverride) {
       onFocusCamera(presetOverride);
+      return;
+    }
+    if (sourcePart) {
+      const y = (sourcePart.bounds[0][1] + sourcePart.bounds[1][1]) / 2;
+      onFocusCamera(y >= 1.45 ? 'head' : y >= 1.05 ? 'thorax' : y >= 0.62 ? 'abdomen' : 'anterior');
       return;
     }
     if (organKey.includes('brain') || organKey.includes('vagus') || organKey.includes('eye')) onFocusCamera('head');
@@ -221,7 +235,7 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
   };
 
   // Build breadcrumbs trail
-  const breadcrumbItems: { id: string; label: string }[] = organ.breadcrumbs && organ.breadcrumbs.length > 0
+  const breadcrumbItems: { id: string; label: string }[] = sourcePart ? [{ id: sourcePart.id, label: sourcePart.name }] : organ.breadcrumbs && organ.breadcrumbs.length > 0
     ? organ.breadcrumbs
     : [
         { id: organ.quadrantOrCavity.toLowerCase(), label: organ.quadrantOrCavity.split('(')[0].trim() },
@@ -244,25 +258,26 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
       {/* Drawer Container */}
       <aside
         data-testid="organ-detail-drawer"
+        aria-label="Anatomy details"
         className={`pointer-events-auto w-full md:w-[500px] lg:w-[560px] ${
           isMobileExpanded ? 'h-[88dvh]' : 'h-[38dvh]'
         } md:h-full mt-auto md:mt-0 ${
           isLight
             ? 'bg-white/95 text-slate-900 border-l border-slate-200 shadow-2xl'
             : 'bg-slate-900/95 text-slate-100 border-l border-slate-800 shadow-2xl'
-        } backdrop-blur-2xl flex flex-col rounded-t-3xl md:rounded-none overflow-hidden transition-all duration-300 ease-out z-10`}
+        } backdrop-blur-2xl flex flex-col anatomy-detail-sheet rounded-t-3xl md:rounded-none overflow-hidden transition-all duration-300 ease-out z-10`}
       >
         {/* Mobile Drag Pill */}
-        <div 
+        <button type="button" aria-label={isMobileExpanded ? "Collapse anatomy details" : "Expand anatomy details"}
           onClick={() => setIsMobileExpanded(!isMobileExpanded)}
-          className="md:hidden pt-2.5 pb-1 flex justify-center cursor-pointer touch-manipulation"
+          className="md:hidden min-h-6 pt-2.5 pb-1 flex justify-center cursor-pointer touch-manipulation"
         >
           <div className={`w-12 h-1.5 rounded-full ${isLight ? 'bg-slate-300' : 'bg-slate-700'}`} />
-        </div>
+        </button>
 
         {/* Apple HIG Breadcrumbs Bar with Back Button */}
         <div
-          className={`px-2.5 sm:px-4 py-2 border-b flex items-center justify-between gap-2 text-xs font-medium overflow-x-auto no-scrollbar ${
+          className={`px-2.5 sm:px-4 py-2 border-b flex items-center justify-between gap-2 text-xs font-medium shrink-0 ${
             isLight ? 'bg-slate-50 border-slate-200/80 text-slate-600' : 'bg-slate-950/60 border-slate-800 text-slate-400'
           }`}
         >
@@ -280,13 +295,15 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
               </button>
             )}
 
-            <div className="flex items-center gap-1 overflow-x-auto no-scrollbar whitespace-nowrap text-[11px]">
+            <div className="flex items-center gap-1 overflow-hidden text-[11px] min-w-0">
               {breadcrumbItems.map((b, idx) => (
                 <React.Fragment key={b.id + idx}>
                   {idx > 0 && <ChevronRight className="w-3 h-3 text-slate-400 flex-shrink-0" />}
                   <button
-                    onClick={() => navigateToStructure(b.id)}
-                    className={`font-semibold px-2 py-0.5 rounded-md transition-colors ${
+                    onClick={() => { if (ORGAN_ANATOMY_DATABASE[b.id]) navigateToStructure(b.id); }}
+                    disabled={!ORGAN_ANATOMY_DATABASE[b.id]}
+                    title={b.label}
+                    className={`font-semibold px-2 py-0.5 rounded-md truncate min-w-0 transition-colors ${
                       idx === breadcrumbItems.length - 1
                         ? isLight
                           ? 'text-sky-700 bg-sky-50 font-bold'
@@ -323,7 +340,7 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
 
         {/* Drawer Header: Title, Category, Action Buttons */}
         <div
-          className={`p-3 md:p-5 border-b ${
+          className={`p-3 md:p-5 border-b shrink-0 ${
             isLight ? 'border-slate-100 bg-white' : 'border-slate-800/80 bg-slate-900/60'
           } flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3`}
         >
@@ -336,21 +353,21 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
                     : 'bg-cyan-500/10 text-cyan-300 border border-cyan-500/30'
                 }`}
               >
-                {organ.system}
+                {sourcePart?.system || organ.system}
               </span>
               <span
                 className={`text-[11px] font-medium italic truncate max-w-[200px] ${
                   isLight ? 'text-slate-500' : 'text-slate-400'
                 }`}
               >
-                {organ.latinName}
+                {sourcePart ? sourcePart.conceptId : organ.latinName}
               </span>
             </div>
             <h2 className="text-lg sm:text-xl md:text-2xl font-black tracking-tight flex items-center gap-2 text-slate-900 dark:text-white leading-tight">
-              {organ.name}
+              {sourcePart?.name || organ.name}
             </h2>
             <p className={`text-xs mt-0.5 ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>
-              {organ.quadrantOrCavity}
+              {sourcePart ? `${sourcePart.conceptId} · ${sourcePart.system} · BodyParts3D` : organ.quadrantOrCavity}
             </p>
           </div>
 
@@ -411,17 +428,17 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
         </div>
 
         {/* Tab Switcher Pills */}
-        <div
-          className={`px-2.5 sm:px-4 py-2 border-b flex items-center gap-1.5 overflow-x-auto no-scrollbar ${
+        {hasDossier && <div role="tablist" aria-label="Anatomy detail sections"
+          className={`px-2.5 sm:px-4 py-2 border-b grid grid-cols-5 gap-1 shrink-0 ${
             isLight ? 'border-slate-100 bg-slate-50/70' : 'border-slate-800 bg-slate-950/40'
           }`}
         >
           {[
-            { id: 'overview', label: 'Overview & Graph', icon: BookOpen },
-            { id: 'vascular', label: 'Vessels & Nerves', icon: Zap },
-            { id: 'relations', label: '6-Vector Relations', icon: Compass },
-            { id: 'clinical', label: 'Bedside & NMC Viva', icon: Stethoscope },
-            { id: 'lymphatics', label: 'Lymph & Surgery', icon: Shield },
+            { id: 'overview', label: 'Overview', icon: BookOpen },
+            { id: 'vascular', label: 'Supply', icon: Zap },
+            { id: 'relations', label: 'Relations', icon: Compass },
+            { id: 'clinical', label: 'Clinical', icon: Stethoscope },
+            { id: 'lymphatics', label: 'Lymph', icon: Shield },
           ].map((tab) => {
             const Icon = tab.icon;
             const isCurrent = activeTab === tab.id;
@@ -429,8 +446,10 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
               <button
                 key={tab.id}
                 data-testid={`organ-drawer-tab-${tab.id}`}
+                role="tab"
+                aria-selected={isCurrent}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`px-3 py-2 rounded-xl text-[11px] sm:text-xs font-bold flex items-center gap-1.5 whitespace-nowrap min-h-[44px] shrink-0 transition-all ${
+                className={`px-1 py-2 rounded-xl text-[10px] sm:text-xs font-bold flex flex-col sm:flex-row items-center justify-center gap-1 min-w-0 min-h-[44px] transition-all ${
                   isCurrent
                     ? isLight
                       ? 'bg-sky-600 text-white shadow-sm shadow-sky-500/20'
@@ -445,10 +464,13 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
               </button>
             );
           })}
-        </div>
+        </div>}
 
         {/* Scrollable Content Body */}
-        <div className="flex-1 overflow-y-auto overscroll-contain p-3 sm:p-4 md:p-6 space-y-3 sm:space-y-5 pb-[calc(16px+env(safe-area-inset-bottom))]">
+        <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain p-3 sm:p-4 md:p-6 space-y-3 sm:space-y-5 pb-[calc(16px+env(safe-area-inset-bottom))]">
+          {!hasDossier && <p className="text-sm leading-relaxed rounded-xl border p-3">This named structure can be viewed, isolated and dissected. A dedicated blood supply, innervation and clinical dossier is not yet available for this structure.</p>}
+          {hasDossier && <>
+          {sourcePart && <p className="text-xs rounded-xl border p-3">Selected mesh: <strong>{sourcePart.name}</strong>. The sections below describe the related {organ.name} region; they are not a separately verified dossier for this individual mesh.</p>}
           {/* TAB 1: OVERVIEW & MUSCLE GRAPH */}
           {activeTab === 'overview' && (
             <div className="space-y-4 animate-in fade-in duration-200">
@@ -493,7 +515,7 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
                         <button
                           key={idx}
                           onClick={() => navigateToStructure(o.bone.toLowerCase())}
-                          className="px-2.5 py-1 rounded-lg text-xs font-medium bg-amber-100 dark:bg-amber-900/40 text-amber-900 dark:text-amber-200 border border-amber-200 dark:border-amber-800 hover:bg-amber-200 transition-colors min-h-[36px] flex items-center gap-1"
+                          className="px-2.5 py-1 rounded-lg text-xs font-medium bg-amber-100 dark:bg-amber-900/40 text-amber-900 dark:text-amber-200 border border-amber-200 dark:border-amber-800 hover:bg-amber-200 transition-colors min-h-[44px] flex items-center gap-1"
                         >
                           <span className="font-bold">{o.bone}:</span> {o.landmark}
                         </button>
@@ -519,7 +541,7 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
                         <button
                           key={idx}
                           onClick={() => navigateToStructure(ins.bone.toLowerCase())}
-                          className="px-2.5 py-1 rounded-lg text-xs font-medium bg-amber-100 dark:bg-amber-900/40 text-amber-900 dark:text-amber-200 border border-amber-200 dark:border-amber-800 hover:bg-amber-200 transition-colors min-h-[36px] flex items-center gap-1"
+                          className="px-2.5 py-1 rounded-lg text-xs font-medium bg-amber-100 dark:bg-amber-900/40 text-amber-900 dark:text-amber-200 border border-amber-200 dark:border-amber-800 hover:bg-amber-200 transition-colors min-h-[44px] flex items-center gap-1"
                         >
                           <span className="font-bold">{ins.bone}:</span> {ins.landmark}
                         </button>
@@ -665,7 +687,7 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
                               navigateToStructure(art.id, art.cameraPreset);
                               if (onIsolateStructure) onIsolateStructure(art.id, organKey);
                             }}
-                            className="px-3 py-1.5 rounded-xl text-xs font-bold bg-rose-500 hover:bg-rose-600 text-white flex items-center gap-1 min-h-[36px] shadow-xs transition-all flex-shrink-0 cursor-pointer"
+                            className="px-3 py-1.5 rounded-xl text-xs font-bold bg-rose-500 hover:bg-rose-600 text-white flex items-center gap-1 min-h-[44px] shadow-xs transition-all flex-shrink-0 cursor-pointer"
                           >
                             <span>Inspect in 3D</span>
                             <ArrowRight className="w-3 h-3" />
@@ -742,7 +764,7 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
                               navigateToStructure(vein.id, vein.cameraPreset);
                               if (onIsolateStructure) onIsolateStructure(vein.id, organKey);
                             }}
-                            className="px-3 py-1.5 rounded-xl text-xs font-bold bg-blue-500 hover:bg-blue-600 text-white flex items-center gap-1 min-h-[36px] shadow-xs transition-all flex-shrink-0 cursor-pointer"
+                            className="px-3 py-1.5 rounded-xl text-xs font-bold bg-blue-500 hover:bg-blue-600 text-white flex items-center gap-1 min-h-[44px] shadow-xs transition-all flex-shrink-0 cursor-pointer"
                           >
                             <span>Inspect in 3D</span>
                             <ArrowRight className="w-3 h-3" />
@@ -817,7 +839,7 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
                               navigateToStructure(nerve.id, nerve.cameraPreset);
                               if (onIsolateStructure) onIsolateStructure(nerve.id, organKey);
                             }}
-                            className="px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-600 text-white flex items-center gap-1 min-h-[36px] shadow-xs transition-all flex-shrink-0 cursor-pointer"
+                            className="px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-600 text-white flex items-center gap-1 min-h-[44px] shadow-xs transition-all flex-shrink-0 cursor-pointer"
                           >
                             <span>Inspect in 3D</span>
                             <ArrowRight className="w-3 h-3" />
@@ -837,7 +859,7 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
 
                 {/* Autonomic Breakdown & Referred Pain (Fully Clickable & Isolatable) */}
                 <div className="grid grid-cols-1 gap-2 text-xs">
-                  <div className={`p-3 rounded-xl flex items-center justify-between gap-2 ${isLight ? 'bg-white border border-amber-100' : 'bg-slate-900/60'}`}>
+                  <div className={`p-3 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-2 ${isLight ? 'bg-white border border-amber-100' : 'bg-slate-900/60'}`}>
                     <div className="min-w-0 flex-1">
                       <span className="font-bold text-amber-600 dark:text-amber-400">Sympathetic: </span>
                       <span className={isLight ? 'text-slate-700' : 'text-slate-300'}>
@@ -857,11 +879,11 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
                         <span>Inspect 3D</span><ArrowRight className="w-3 h-3" />
                       </button>
                     ) : (
-                      <span className="text-[10px] font-semibold text-slate-400 shrink-0">No source-matched 3D target</span>
+                      <span className="text-[10px] font-semibold text-slate-500">3D view unavailable</span>
                     )}
                   </div>
 
-                  <div className={`p-3 rounded-xl flex items-center justify-between gap-2 ${isLight ? 'bg-white border border-amber-100' : 'bg-slate-900/60'}`}>
+                  <div className={`p-3 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-2 ${isLight ? 'bg-white border border-amber-100' : 'bg-slate-900/60'}`}>
                     <div className="min-w-0 flex-1">
                       <span className="font-bold text-amber-600 dark:text-amber-400">Parasympathetic: </span>
                       <span className={isLight ? 'text-slate-700' : 'text-slate-300'}>
@@ -881,11 +903,11 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
                         <span>Inspect 3D</span><ArrowRight className="w-3 h-3" />
                       </button>
                     ) : (
-                      <span className="text-[10px] font-semibold text-slate-400 shrink-0">No source-matched 3D target</span>
+                      <span className="text-[10px] font-semibold text-slate-500">3D view unavailable</span>
                     )}
                   </div>
 
-                  <div className={`p-3 rounded-xl flex items-center justify-between gap-2 ${isLight ? 'bg-white border border-amber-100' : 'bg-slate-900/60'}`}>
+                  <div className={`p-3 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-2 ${isLight ? 'bg-white border border-amber-100' : 'bg-slate-900/60'}`}>
                     <div className="min-w-0 flex-1">
                       <span className="font-bold text-amber-600 dark:text-amber-400">Sensory/Somatic: </span>
                       <span className={isLight ? 'text-slate-700' : 'text-slate-300'}>
@@ -905,7 +927,7 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
                         <span>Inspect 3D</span><ArrowRight className="w-3 h-3" />
                       </button>
                     ) : (
-                      <span className="text-[10px] font-semibold text-slate-400 shrink-0">No source-matched 3D target</span>
+                      <span className="text-[10px] font-semibold text-slate-500">3D view unavailable</span>
                     )}
                   </div>
 
@@ -1276,6 +1298,7 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
               </div>
             </div>
           )}
+          </>}
         </div>
       </aside>
     </div>
