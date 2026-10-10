@@ -9,14 +9,15 @@ import { KeyboardSafe } from '@/components/KeyboardSafe';
 import { PgRecentAnswerReview } from '@/components/PgRecentAnswerReview';
 import { Touchable } from '@/components/Touchable';
 import { useTheme, withAlpha } from '@/theme';
-import { searchOfflinePgQuestions } from '@/lib/pgLocalBank';
+import { searchOfflinePgQuestions, getPgOfflinePacks } from '@/lib/pgLocalBank';
 import { PG_ORIGINAL_PRACTICE, PG_SOURCES, PG_SOURCE_REVIEW_DATE, type PgExam, type PgQuestion } from '@/lib/pgEntranceBank';
 
-type ExamFilter = 'ALL' | PgExam;
+type ExamFilter = 'ALL' | PgExam | 'GENERAL_MEDICAL';
 type Panel = 'sources' | 'practice' | 'recent';
 const EXAMS: { id: ExamFilter; title: string }[] = [
   { id: 'ALL', title: 'All' }, { id: 'NEET_PG', title: 'NEET-PG' },
   { id: 'INI_CET', title: 'INI-CET' }, { id: 'FMGE', title: 'FMGE' },
+  { id: 'GENERAL_MEDICAL', title: 'Mock practice' },
 ];
 const AIPG: Record<PgExam, string[]> = {
   NEET_PG: ['NEET_PG', 'AIPGMEE'],
@@ -54,13 +55,16 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
   const year = /^\d{4}$/.test(yearText) ? Number(yearText) : null;
   const yearInvalid = yearText.length > 0 && (year === null || year < 1991 || year > 2026);
   const search = searchText.toLocaleLowerCase().trim();
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const totalBundled = useMemo(() => getPgOfflinePacks().reduce((s,p)=>s+p.count,0), []);
+  useEffect(() => {const timer=setTimeout(()=>setDebouncedSearch(search),270);return ()=>clearTimeout(timer);},[search]);
 
   useEffect(() => {
     if (!visible) return;
     let cancelled = false;
     setLoading(true);
     setLoadError(null);
-    void searchOfflinePgQuestions({ exam, year, search, limit: 40, offset: page * 40 })
+    void searchOfflinePgQuestions({ exam, year, search: debouncedSearch, limit: 40, offset: page * 40 })
       .then(result => {
         if (cancelled) return;
         setPublished(result.questions);
@@ -74,7 +78,7 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
       })
       .finally(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
-  }, [visible, exam, year, search, page]);
+  }, [visible, exam, year, debouncedSearch, page]);
 
   const sources = useMemo(() => PG_SOURCES.filter(item =>
     (exam === 'ALL' || item.exam === 'ALL' || item.exam === exam) &&
@@ -83,7 +87,7 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
   ), [exam, year, search]);
 
   const reviewed = useMemo(() => published.filter(item =>
-    (exam === 'ALL' || (AIPG[exam] || []).includes(item.exam)) &&
+    (exam === 'ALL' || (exam === 'GENERAL_MEDICAL' ? item.exam === 'GENERAL_MEDICAL' : AIPG[exam].includes(item.exam))) &&
     (year === null || item.year === year) &&
     (!search || [item.question, item.subject, item.explanation].join(' ').toLocaleLowerCase().includes(search))
   ), [published, exam, year, search]);
@@ -117,9 +121,9 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
           <View style={[styles.notice, { backgroundColor: withAlpha(colors.primary, 0.08), borderColor: colors.border }]}>
             <ShieldCheck size={17} color={colors.primary} />
             <Text style={[styles.noticeText, { color: colors.text }]}>
-              The 4,180 MedMCQA questions were published in a 2022 dataset, with no
-              verified per-question year. For 2023–2026, browse recall sources or use the optional
-              signed-in textbook answer checker. These are not imported official papers.
+              {totalBundled.toLocaleString()} source-labelled questions are bundled offline.
+              NEET-PG validation questions and separate mock/test-series MCQs are from the 2022
+              MedMCQA dataset; exact exam years are unknown. The 2023–2026 recalls are links only.
             </Text>
           </View>
 
@@ -206,7 +210,7 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
               {sources.length === 0 ? <Text style={[styles.empty, { color: colors.textMuted }]}>No indexed source matches this filter. Try another year or exam.</Text> : null}
             </>
           ) : panel === 'recent' ? (
-            <PgRecentAnswerReview exam={exam} year={year} onYear={y => {setYearText(String(y));setPage(0);}} />
+            <PgRecentAnswerReview exam={exam === 'GENERAL_MEDICAL' ? 'ALL' : exam} year={year} onYear={y => {setYearText(String(y));setPage(0);}} />
           ) : (
             <>
               <Text style={[styles.sectionHeading, { color: colors.text }]}>Offline medical question practice</Text>
@@ -255,7 +259,7 @@ function QuestionCard({ q, active, onPress, colors }: {
       <Text style={[styles.small, { color: colors.textMuted }]}>
         {q.exam === 'ORIGINAL' ? 'ORBIT original • not asked in a specific exam' :
           q.record_type === 'historical_dataset'
-             ? 'MedMCQA dataset practice · answer label not independently reviewed'
+             ? (q.exam === 'GENERAL_MEDICAL' ? 'MOCK / TEST SERIES · answer not independently verified' : 'NEET-PG validation · exam year unknown')
              : q.exam.replaceAll('_', '-') + (q.year ? ' • ' + q.year : '') + ' • verified source'}
         {' · '}{q.subject}
       </Text>
