@@ -6,16 +6,20 @@ export function Phonocardiogram({ engineRef, listening, pulmonary, traceKey }: {
   engineRef: React.RefObject<StethoscopeAudioEngine | null>; listening: boolean; pulmonary: boolean; traceKey: string;
 }) {
   const [frozen, setFrozen] = useState(() => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const historyRef = useRef<{ time: number; min: number; max: number }[]>([]);
+  const previousTrace = useRef('');
   const canvasRef = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext('2d');
     if (!canvas || !ctx) return;
-    const history: { time: number; min: number; max: number }[] = [];
-    let lastTime = -1;
-    let hasSnapshot = false;
+    if (!listening || previousTrace.current !== traceKey) historyRef.current = [];
+    previousTrace.current = traceKey;
+    const history = historyRef.current;
+    let lastTime = history.at(-1)?.time ?? -1;
+    let hasSnapshot = history.length > 0;
     const draw = () => {
-      if (document.hidden) return;
+      if (document.hidden || (frozen && hasSnapshot)) return;
       const width = Math.max(1, canvas.clientWidth), height = 110;
       const dpr = Math.min(2, window.devicePixelRatio || 1);
       if (canvas.width !== Math.round(width * dpr)) { canvas.width = Math.round(width * dpr); canvas.height = height * dpr; }
