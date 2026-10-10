@@ -5,6 +5,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ArrowLeft, BookOpenCheck, ExternalLink, Search, ShieldCheck, X } from 'lucide-react-native';
 import { Text } from '@/components/Text';
+import { KeyboardSafe } from '@/components/KeyboardSafe';
 import { Touchable } from '@/components/Touchable';
 import { useTheme, withAlpha } from '@/theme';
 import { searchOfflinePgQuestions } from '@/lib/pgLocalBank';
@@ -39,12 +40,13 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const [exam, setExam] = useState<ExamFilter>('ALL');
-  const [panel, setPanel] = useState<Panel>('sources');
+  const [panel, setPanel] = useState<Panel>('practice');
   const [yearText, setYearText] = useState('');
   const [searchText, setSearchText] = useState('');
   const [published, setPublished] = useState<PgQuestion[]>([]);
   const [loading, setLoading] = useState(false);
   const [loadedCount, setLoadedCount] = useState(0);
+  const [page, setPage] = useState(0);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [expandedAnswer, setExpandedAnswer] = useState<string | null>(null);
 
@@ -57,7 +59,7 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
     let cancelled = false;
     setLoading(true);
     setLoadError(null);
-    void searchOfflinePgQuestions({ exam, year, search, limit: 120 })
+    void searchOfflinePgQuestions({ exam, year, search, limit: 40, offset: page * 40 })
       .then(result => {
         if (cancelled) return;
         setPublished(result.questions);
@@ -71,7 +73,7 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
       })
       .finally(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
-  }, [visible, exam, year, search]);
+  }, [visible, exam, year, search, page]);
 
   const sources = useMemo(() => PG_SOURCES.filter(item =>
     (exam === 'ALL' || item.exam === 'ALL' || item.exam === exam) &&
@@ -106,6 +108,7 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
           </Touchable>
         </View>
 
+        <KeyboardSafe>
         <ScrollView
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
@@ -121,7 +124,7 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chips}>
             {EXAMS.map(e => (
               <Touchable key={e.id} label={e.title} state={{ selected: exam === e.id }}
-                onPress={() => { setExam(e.id); setExpandedAnswer(null); }}
+                onPress={() => { setExam(e.id); setPage(0); setExpandedAnswer(null); }}
                 style={[styles.chip, { borderColor: exam === e.id ? colors.primary : colors.border, backgroundColor: exam === e.id ? withAlpha(colors.primary, 0.13) : colors.card }]}>
                 <Text style={[styles.chipText, { color: colors.text }]}>{e.title}</Text>
               </Touchable>
@@ -144,11 +147,11 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
           <View style={styles.filters}>
             <View style={[styles.searchBox, { backgroundColor: colors.card, borderColor: colors.border }]}>
               <Search size={16} color={colors.textMuted} />
-              <TextInput value={searchText} onChangeText={setSearchText} placeholder="Search subjects or sources"
+              <TextInput value={searchText} onChangeText={v => { setSearchText(v); setPage(0); }} placeholder="Search subjects or sources"
                 placeholderTextColor={colors.textMuted} accessibilityLabel="Search PG exam content"
                 style={[styles.searchInput, { color: colors.text }]} />
             </View>
-            <TextInput value={yearText} onChangeText={setYearText} keyboardType="number-pad" maxLength={4}
+            <TextInput value={yearText} onChangeText={v => { setYearText(v); setPage(0); }} keyboardType="number-pad" maxLength={4}
               placeholder="All years" placeholderTextColor={colors.textMuted} accessibilityLabel="Filter by exam year from 1991 through 2026"
               style={[styles.yearInput, { backgroundColor: colors.card, borderColor: colors.border, color: colors.text }]} />
           </View>
@@ -189,17 +192,21 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
             </>
           ) : (
             <>
-              <Text style={[styles.sectionHeading, { color: colors.text }]}>Reviewed question practice</Text>
+              <Text style={[styles.sectionHeading, { color: colors.text }]}>Offline medical question practice</Text>
               {loading ? <ActivityIndicator color={colors.primary} /> : null}
               {loadError ? <Text style={[styles.small, { color: '#D97706' }]}>Offline pack error: {loadError}</Text> : null}
               <Text style={[styles.small, { color: colors.textMuted }]}>
-                {loadedCount} locally bundled reviewed question{loadedCount === 1 ? '' : 's'}; showing up to 120. No internet needed for installed questions.
+                {loadedCount} bundled question{loadedCount === 1 ? '' : 's'} · page {page + 1} of {Math.max(1, Math.ceil(loadedCount / 40))}. Dataset-provided answers are not independently reviewed.
               </Text>
               {reviewed.map(q => <QuestionCard key={q.id} q={q} active={expandedAnswer === q.id}
                 onPress={() => setExpandedAnswer(prev => prev === q.id ? null : q.id)}
                 colors={colors} />)}
+              {loadedCount > 40 ? <View style={styles.switchRow}>
+                <Touchable label="Previous page" disabled={page === 0} onPress={() => { setPage(p => Math.max(0, p - 1)); setExpandedAnswer(null); }} style={[styles.switchButton, { borderColor: colors.border, backgroundColor: colors.card }]}><Text style={{ color: colors.text }}>Previous</Text></Touchable>
+                <Touchable label="Next page" disabled={(page + 1) * 40 >= loadedCount} onPress={() => { setPage(p => p + 1); setExpandedAnswer(null); }} style={[styles.switchButton, { borderColor: colors.border, backgroundColor: colors.card }]}><Text style={{ color: colors.text }}>Next</Text></Touchable>
+              </View> : null}
               {reviewed.length === 0 && !loading ? <Text style={[styles.empty, { color: colors.textMuted }]}>
-                No exam-specific reviewed PYQs are packaged for these filters. The source directory links to third-party answer information (internet required).
+                No matching dataset questions in this offline build. The source directory links to external exam answer information.
               </Text> : null}
               <Text style={[styles.sectionHeading, { color: colors.text }]}>ORBIT original practice — not PYQs</Text>
               {original.map(q => <QuestionCard key={q.id} q={q} active={expandedAnswer === q.id}
@@ -215,6 +222,7 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
             </Text>
           </View>
         </ScrollView>
+        </KeyboardSafe>
       </View>
     </Modal>
   );
@@ -228,7 +236,9 @@ function QuestionCard({ q, active, onPress, colors }: {
     <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
       <Text style={[styles.small, { color: colors.textMuted }]}>
         {q.exam === 'ORIGINAL' ? 'ORBIT original • not asked in a specific exam' :
-          q.exam.replaceAll('_', '-') + (q.year ? ' • ' + q.year : '') + ' • ' + (q.record_type || 'reviewed')}
+          q.record_type === 'historical_dataset'
+             ? 'MedMCQA dataset practice · answer label not independently reviewed'
+             : q.exam.replaceAll('_', '-') + (q.year ? ' • ' + q.year : '') + ' • verified source'}
         {' · '}{q.subject}
       </Text>
       <Text style={[styles.question, { color: colors.text }]}>{q.question}</Text>
@@ -244,9 +254,9 @@ function QuestionCard({ q, active, onPress, colors }: {
       </Touchable>
       {active ? (
         <View style={[styles.answerBox, { borderColor: colors.border }]}>
-          <Text style={[styles.question, { color: colors.text }]}>Correct: {q.answer}</Text>
-          <Text style={[styles.description, { color: colors.text }]}>{q.explanation}</Text>
-          {q.answer_reference ? <Text style={[styles.small, { color: colors.textMuted }]}>Answer checked against: {q.answer_reference}</Text> : null}
+          <Text style={[styles.question, { color: colors.text }]}>{q.record_type === 'historical_dataset' ? 'Dataset answer: ' : 'Correct: '}{q.answer}</Text>
+          <Text style={[styles.description, { color: colors.text }]}>{q.explanation.trim().length >= 20 ? q.explanation : 'No explanation supplied by the dataset. This answer has not been clinically verified by ORBIT.'}</Text>
+          {q.answer_reference ? <Text style={[styles.small, { color: colors.textMuted }]}>Answer-label provenance: {q.answer_reference}</Text> : null}
           {q.source_url ? <Touchable onPress={() => { void openSource(q.source_url!); }} label="Open question source">
             <Text style={[styles.linkText, { color: colors.primary }]}>Open question source ↗</Text>
           </Touchable> : null}

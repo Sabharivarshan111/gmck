@@ -168,6 +168,10 @@ const uiFiles = [];
 const walk = async (dir) => {
   for (const entry of await fs.readdir(path.join(root, dir), { withFileTypes: true })) {
     const rel = path.join(dir, entry.name);
+    // Shipped MCQ corpora are third-party data, not app-authored note captions.
+    // Legitimate exam stems/explanations can mention book authors (e.g. Park).
+    // Keep the UI copy guard, but never censor or delete source questions.
+    if (rel === path.join('src', 'lib', 'pgPacks')) continue;
     if (entry.isDirectory()) {
       await walk(rel);
     } else if (/\.tsx?$/.test(entry.name)) {
