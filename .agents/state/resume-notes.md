@@ -2002,3 +2002,14 @@ Verified: build:vercel, mobile typecheck:web, simulator organ/asset/mobile/dossi
 **HALF-DONE:** Final source fallback release and browser screenshot pending at this checkpoint. Physical-phone GPU/blur/FPS remains unverified.
 
 **NEXT:** Verify corrected head filters and exact source dossiers on final production; capture compact mobile sheet. Preserve concurrent PG changes.
+
+
+## 2026-10-10 — One-hand simulator final checkpoint / quota block
+
+**DONE:** PRs #46/#47 production e558afe READY: bottom thumb controls/navigation, bottom region picker, quality modes, progressive notes/footer and explicit camera reset. Actual 360/390/430/landscape browser checks, head→Skeleton→Frontal bone, 44px spread control and LAD Inspect→isolated model state. Live screenshot ORBIT_One_Hand_Mobile_UI.jpg saved. PRs #48/#49 merged through e2cc0289: four source grouping repairs, compact cards with full accessible labels, exact metadata fallback and updated bounded-quality organ guard. Final TypeScript, actual-atlas 57-target resolution, actual GLTFLoader, real Three camera effect, quality tests and combined build pass.
+
+**BLOCKED:** Final refinements are NOT live. Vercel HTTP 402 api-deployments-free-per-day (>100), retryAfter 86400s, around 12:52 UTC. No installed CLI fallback. See new blocker in blocked.json. Live remains e558afe. Cancelled only our superseded builds/previews; unrelated PG builds untouched. Do not alter billing/security.
+
+**NEXT:** After quota reset deploy CURRENT main containing e2cc0289, preserving later PG changes. Verify corrected head counts/grouping, gingiva/levator exact metadata and compact phone supply controls, then capture final-release screenshot.
+
+**LIMITS:** Cloud WebGL unavailable; physical GPU blur/sharpness/FPS/gestures/audio remain unverified. 36 clinical dossiers do not individually certify every muscle/nerve innervation. Vestibular registration quarantine and other source gaps retained.

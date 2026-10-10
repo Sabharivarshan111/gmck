@@ -23,7 +23,7 @@
     "Add an entry the moment you are stopped by something, not at the end of the session.",
     "Set status to 'cleared' rather than deleting: a blocker that vanishes gets rediscovered."
   ],
-  "updated": "2026-09-30",
+  "updated": "2026-10-10",
   "blockers": [
     {
       "id": "supabase-route",
@@ -162,6 +162,19 @@
       "clearsWhen": {
         "kind": "manual"
       }
+    },
+    {
+      "id": "simulator-vercel-daily-quota-20261010",
+      "what": "Final simulator head grouping, compact-card and exact-source dossier refinements are merged but not live. Live deployment remains e558afe (one-hand controls, regional picker, quality modes, camera reset).",
+      "blockedOn": "Vercel returned HTTP 402 api-deployments-free-per-day: more than 100 deployments; retryAfter 86400 seconds. No installed Vercel CLI fallback is available.",
+      "owner": "Vercel daily quota reset; project billing owner only if an immediate quota increase is wanted.",
+      "remedy": "After the reported 24-hour quota interval, deploy the current main including e2cc0289b403959d86d1eed732665458476c5b06 to orbitmbbs production, preserving later concurrent PG work. Team team_vRtZ6J1kJKujJsNgK3AcXmTj / project prj_NJgXie5Ni1SjwT9xcWuRSliJNxq4. Verify head skeletal/muscular groups and exact gingiva/levator metadata; capture updated mobile sheet.",
+      "since": "2026-10-10",
+      "source": "docs/simulator-one-hand-audit-2026-10-10.md; Vercel 402 response at approximately 12:52 UTC",
+      "clearsWhen": {
+        "kind": "manual"
+      },
+      "status": "blocked"
     }
   ]
 }
