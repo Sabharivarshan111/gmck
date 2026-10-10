@@ -24,7 +24,7 @@ export const PG_SOURCES: PgSource[] = [
     "url": "https://getoncourse.ai/previous-year-papers/neet-pg/",
     "answerStatus": "Advertises solved MCQs + explanations",
     "kind": "Unofficial",
-    "note": "14 selected years, major gaps; year and answer accuracy not independently verified"
+    "note": "8,272 listed in 14 year groups in source snapshot; 2010 only 1 question. App upgrade promoted. Not a complete freely reusable archive."
   },
   {
     "id": "neet-pyq",
@@ -90,7 +90,7 @@ export const PG_SOURCES: PgSource[] = [
     "url": "https://getoncourse.ai/previous-year-papers/ini-cet/",
     "answerStatus": "Advertises solutions; selected years only",
     "kind": "Unofficial",
-    "note": "Pre-2020 material belongs to historical predecessor exams"
+    "note": "1,462 listed across 25 year groups, including predecessor exams before 2020. Some years contain only one question; paid upgrade promoted."
   },
   {
     "id": "ini-aiims",
@@ -145,7 +145,7 @@ export const PG_SOURCES: PgSource[] = [
     "url": "https://www.diginerve.com/blogs/inicet-may-2026-recall-questions-with-answers-pdf/",
     "answerStatus": "Answers displayed, selected questions",
     "kind": "2026 recall",
-    "note": "Some image-dependent questions are incomplete without images"
+    "note": "Clinical answer audit warning: anatomy Q8 marks midline cleft for maxillary/medial nasal non-fusion, conflicting with standard embryology. Choices appear ambiguous; do not import without review. Image-dependent questions also need images."
   },
   {
     "id": "ini-2026-c360",
@@ -167,7 +167,7 @@ export const PG_SOURCES: PgSource[] = [
     "url": "https://getoncourse.ai/previous-year-papers/fmge/",
     "answerStatus": "Advertises correct answers + explanations",
     "kind": "Unofficial",
-    "note": "2,053 listed across 18 selected years; not comprehensive"
+    "note": "2,049 listed across 18 year groups, including 270 for 2026 versus 300 questions in one FMGE sitting. Incomplete; app upgrade promoted."
   },
   {
     "id": "fmge-old",
