@@ -1232,6 +1232,7 @@ export const Simulator: React.FC = () => {
       {/* 5. Diagnostic Modal Tool (Pupil, Ultrasound POCUS, Stethoscope, 12-Lead ECG) */}
       <DiagnosticTools
         tool={activeTool}
+        theme={theme}
         scenarioId={currentScenarioId}
         pathology={pathology}
         vitals={vitals}

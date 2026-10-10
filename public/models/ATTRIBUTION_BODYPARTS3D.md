@@ -308,3 +308,7 @@ Female reproductive reference views are never presented as male anatomy, and
 male/female HRA models are not overlaid as if they came from one donor. The UI
 labels the active HRA reference sex and each source remains an independent,
 internally consistent reference model.
+
+## Auscultation chest subset
+
+`auscultation_thorax_bp3d.glb.gz` is a cropped, system-grouped export of 587 existing BodyParts3D parts. It retains source metre/Y-up coordinates and source IDs in mesh extras. No independent organ resizing is applied. The companion front/back, skin/X-ray WebP reference renders are derived from the same geometry with the already registered Z-Anatomy lung supplement; the combined reference renders are distributed under CC BY-SA 4.0, with the BodyParts3D and Z-Anatomy attribution above. The WebP views provide an explicitly labelled static reference when WebGL is unavailable. Crop and material colors are adaptations; listening areas are approximate educational overlays.

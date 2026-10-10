@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { DiagnosticToolType, PatientPathologyState, PatientVitals } from '../types';
 import { StethoscopeAudioEngine, HeartSoundPreset, LungSoundPreset, AuscultationSite } from './StethoscopeSynthesizer';
 import { resolveAuscultation, HEART_SOUND_DESCRIPTIONS, LUNG_SOUND_DESCRIPTIONS } from './auscultationRouting';
+import { AuscultationTrainer } from './AuscultationTrainer';
+import { SOUND_LIBRARY } from './auscultationSites';
 import { Ecg12LeadCanvas } from './Ecg12LeadCanvas';
 import { EcgIcuTutorialModal } from './EcgIcuTutorialModal';
 import { PocusCanvas } from './pocus/PocusCanvas';
@@ -66,6 +68,7 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
   const [audioError, setAudioError] = useState<string | null>(null);
   const [isListening, setIsListening] = useState<boolean>(false);
   const [customHeartOverride, setCustomHeartOverride] = useState<HeartSoundPreset | null>(null);
+  const [customLungOverride, setCustomLungOverride] = useState<LungSoundPreset | null>(null);
   const [isTutorialOpen, setIsTutorialOpen] = useState<boolean>(false);
   const audioEngineRef = useRef<StethoscopeAudioEngine | null>(null);
 
@@ -112,7 +115,7 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
         if (cancelled) return;
         engine.setStethoscopeMode(stethMode);
         engine.setVolume(stethVolume);
-        const sound = resolveAuscultation(pathology, vitals, stethSite, scenarioId, customHeartOverride);
+        const sound = resolveAuscultation(pathology, vitals, stethSite, scenarioId, customHeartOverride, customLungOverride);
         if (sound.pulmonary) {
           engine.stopCardiacAuscultation();
           engine.startPulmonaryAuscultation(vitals.respiratoryRate, sound.lung);
@@ -130,7 +133,7 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
     };
     void syncAudio();
     return () => { cancelled = true; };
-  }, [isListening, stethSite, stethMode, vitals.heartRate, vitals.respiratoryRate, vitals.cvp, pathology, customHeartOverride, scenarioId]);
+  }, [isListening, stethSite, stethMode, vitals.heartRate, vitals.respiratoryRate, vitals.cvp, pathology, customHeartOverride, customLungOverride, scenarioId]);
 
   if (tool === 'none' || tool === 'piccled') return null;
 
@@ -329,205 +332,17 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
 
           {/* ================= 2. STETHOSCOPE AUSCULTATION ================= */}
           {tool === 'stethoscope' && (
-            <div className="space-y-4">
-              {/* Auscultation Site Picker */}
-              <div className="space-y-2">
-                <div className="text-xs text-slate-400 font-semibold flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                  <span>Auscultation Site (Tap to Place Stethoscope):</span>
-                  <div className="-mx-1 px-1 flex items-center gap-1 overflow-x-auto no-scrollbar">
-                    <button
-                      onClick={() => {
-                        ensureAudioUnlocked();
-                        setStethMode('bell');
-                        audioEngineRef.current?.setStethoscopeMode('bell');
-                      }}
-                      onTouchStart={ensureAudioUnlocked}
-                      className={`min-h-[44px] shrink-0 px-2.5 rounded-xl text-[11px] sm:text-xs font-bold border transition-all cursor-pointer ${
-                        stethMode === 'bell'
-                          ? 'bg-amber-400 text-slate-950 border-amber-300 font-black'
-                          : 'bg-slate-800 text-slate-400 border-slate-700'
-                      }`}
-                    >
-                      🔔 Bell (Low Pitch)
-                    </button>
-                    <button
-                      onClick={() => {
-                        ensureAudioUnlocked();
-                        setStethMode('diaphragm');
-                        audioEngineRef.current?.setStethoscopeMode('diaphragm');
-                      }}
-                      onTouchStart={ensureAudioUnlocked}
-                      className={`min-h-[44px] shrink-0 px-2.5 rounded-xl text-[11px] sm:text-xs font-bold border transition-all cursor-pointer ${
-                        stethMode === 'diaphragm'
-                          ? 'bg-cyan-500 text-slate-950 border-cyan-400 font-black'
-                          : 'bg-slate-800 text-slate-400 border-slate-700'
-                      }`}
-                    >
-                      🔘 Diaphragm (High Pitch)
-                    </button>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 text-xs">
-                  {[
-                    { id: 'mitral', label: 'Mitral / Apex', sub: '5th LICS MCL' },
-                    { id: 'aortic', label: 'Aortic Area', sub: '2nd RICS' },
-                    { id: 'tricuspid', label: 'Tricuspid', sub: '4th LICS' },
-                    { id: 'pulmonic', label: 'Pulmonic', sub: '2nd LICS' },
-                    { id: 'lung_bases', label: 'Lung Bases', sub: 'Bilateral Posterior' },
-                    { id: 'trachea', label: 'Trachea / Stridor', sub: 'Anterior Neck' },
-                  ].map((site) => (
-                    <button
-                      key={site.id}
-                      aria-pressed={stethSite === site.id}
-                      onClick={() => {
-                        ensureAudioUnlocked();
-                        setStethSite(site.id as AuscultationSite);
-                      }}
-                      onTouchStart={ensureAudioUnlocked}
-                      className={`min-h-[52px] p-2.5 rounded-xl border text-left flex flex-col justify-between transition-all cursor-pointer ${
-                        stethSite === site.id
-                          ? 'bg-cyan-500/20 border-cyan-500 text-cyan-300 shadow-md'
-                          : 'bg-slate-950/80 hover:bg-slate-800/80 border-slate-800 text-slate-300'
-                      }`}
-                    >
-                      <span className="font-bold truncate">{site.label}</span>
-                      <span className="text-[10px] text-slate-500 truncate">{site.sub}</span>
-                    </button>
-                  ))}
-                </div>
-
-                {/* Synthesized educational demonstrations, not recorded patient audio. */}
-                <div className="pt-2 border-t border-slate-800 space-y-1.5">
-                  <div className="flex items-center justify-between text-xs text-slate-300">
-                    <span className="font-semibold flex items-center gap-1.5 text-slate-200">
-                      <Volume2 className="w-3.5 h-3.5 text-emerald-400" />
-                      <span>Educational Murmurs & Synthesized Sounds:</span>
-                    </span>
-                    {customHeartOverride && (
-                      <button
-                        onClick={() => {
-                          ensureAudioUnlocked();
-                          setCustomHeartOverride(null);
-                        }}
-                        onTouchStart={ensureAudioUnlocked}
-                        className="text-[10px] text-amber-400 hover:underline cursor-pointer font-mono"
-                      >
-                        Reset to Case Default
-                      </button>
-                    )}
-                  </div>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 text-xs">
-                    {[
-                      { id: 'normal', label: 'Normal S1/S2', sub: 'M1-T1 & A2-P2 Splits' },
-                      { id: 's3_gallop', label: 'S3 Gallop', sub: 'Ventricular Filling (CHF)' },
-                      { id: 's4_gallop', label: 'S4 Gallop', sub: 'Atrial Kick (LVH / Stiff)' },
-                      { id: 'aortic_stenosis', label: 'Aortic Stenosis', sub: 'Harsh Systolic Diamond' },
-                      { id: 'mitral_regurg', label: 'Mitral Regurg', sub: 'Holosystolic Plateau' },
-                      { id: 'aortic_regurg', label: 'Aortic Regurg', sub: 'Diastolic Decrescendo' },
-                      { id: 'mitral_stenosis', label: 'Mitral Stenosis', sub: 'Opening Snap + Rumble' },
-                      { id: 'friction_rub', label: 'Friction Rub', sub: 'Triphasic Leathery Scratch' },
-                    ].map((m) => (
-                      <button
-                        key={m.id}
-                        aria-pressed={customHeartOverride === m.id}
-                        onClick={() => {
-                          ensureAudioUnlocked();
-                          setCustomHeartOverride(m.id as HeartSoundPreset);
-                          setStethSite(m.id.startsWith('aortic_') ? 'aortic' : 'mitral');
-                          if (!isListening) setIsListening(true);
-                        }}
-                        onTouchStart={ensureAudioUnlocked}
-                        className={`min-h-[52px] p-2 rounded-xl border text-left flex flex-col justify-between transition-all cursor-pointer ${
-                          customHeartOverride === m.id
-                            ? 'bg-rose-500/20 border-rose-500 text-rose-300 shadow-sm'
-                            : 'bg-slate-950/80 hover:bg-slate-800/80 border-slate-800 text-slate-400'
-                        }`}
-                      >
-                        <span className="font-bold text-[11px] truncate">{m.label}</span>
-                        <span className="text-[9px] opacity-70 truncate">{m.sub}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Auscultation Player Display */}
-              <div className="bg-slate-950 p-5 rounded-2xl border border-slate-800 flex flex-col items-center justify-center space-y-3.5">
-                <div
-                  className={`w-24 h-24 rounded-full border-4 flex items-center justify-center text-3xl transition-all ${
-                    isListening
-                      ? 'border-emerald-500 bg-emerald-950/40 animate-pulse shadow-lg shadow-emerald-500/30'
-                      : 'border-slate-700 bg-slate-800/40 text-slate-500'
-                  }`}
-                >
-                  🩺
-                </div>
-
-                <div className="flex flex-col sm:flex-row items-center gap-3">
-                  <button
-                    onClick={() => {
-                      ensureAudioUnlocked();
-                      setIsListening(!isListening);
-                    }}
-                    onTouchStart={ensureAudioUnlocked}
-                    className={`min-h-[48px] px-5 sm:px-6 rounded-xl font-bold text-sm border shadow-lg transition-all cursor-pointer ${
-                      isListening
-                        ? 'bg-red-500 hover:bg-red-600 text-white border-red-400 shadow-red-500/30'
-                        : 'bg-emerald-500 hover:bg-emerald-600 text-slate-950 border-emerald-400 shadow-emerald-500/30'
-                    }`}
-                  >
-                    {isListening ? '⏹ Stop Stethoscope' : '▶ Place Stethoscope & Listen Live'}
-                  </button>
-
-                  {/* Volume Slider */}
-                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs">
-                    <Volume2 className="w-4 h-4 text-slate-400" />
-                    <input
-                      type="range"
-                      min="0.2"
-                      max="1.8"
-                      step="0.1"
-                      value={stethVolume}
-                      onChange={(e) => setStethVolume(parseFloat(e.target.value))}
-                      className="w-20 accent-emerald-500 cursor-pointer"
-                      title="Stethoscope Volume"
-                    />
-                    <span className="text-[10px] font-mono text-slate-400 min-w-[32px]">
-                      {Math.round(stethVolume * 100)}%
-                    </span>
-                  </div>
-                </div>
-
-                <div className="font-mono text-xs text-slate-300 text-center space-y-1">
-                  <div>
-                    Site: <strong className="text-cyan-400 uppercase">{stethSite.replace('_', ' ')}</strong> | Mode:{' '}
-                    <strong className="text-amber-400 uppercase">{stethMode}</strong>
-                  </div>
-                  <div>
-                    Heart Rate: <strong className="text-rose-400">{Math.round(vitals.heartRate)} bpm</strong> | Resp Rate:{' '}
-                    <strong className="text-teal-400">{Math.round(vitals.respiratoryRate)} /min</strong>
-                  </div>
-                </div>
-              </div>
-
-              {audioError && <p role="alert" className="text-sm text-amber-300">{audioError}</p>}
-              <p className="text-[11px] text-slate-400">Synthesized teaching sounds. Rhythm and acoustic detail are simplified; headphones help with low-pitched sounds.</p>
-              {/* Auscultation Diagnostic Summary */}
-              <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800 text-xs text-slate-300 space-y-2">
-                <div className="font-bold text-slate-100 flex items-center gap-1.5">
-                  <Activity className="w-4 h-4 text-emerald-400" />
-                  <span>{customHeartOverride ? 'Selected Sound Demonstration:' : 'Auscultation Clinical Finding:'}</span>
-                </div>
-                <p className="text-[11px] leading-relaxed text-slate-300">
-                  {(() => {
-                    const sound = resolveAuscultation(pathology, vitals, stethSite, scenarioId, customHeartOverride);
-                    return sound.pulmonary ? LUNG_SOUND_DESCRIPTIONS[sound.lung] : HEART_SOUND_DESCRIPTIONS[sound.heart];
-                  })()}
-
-                </p>
-              </div>
-            </div>
+            <AuscultationTrainer theme={theme} site={stethSite} mode={stethMode} volume={stethVolume}
+              listening={isListening} override={customHeartOverride} lungOverride={customLungOverride} audioError={audioError}
+              heartRate={vitals.heartRate} respiratoryRate={vitals.respiratoryRate} engineRef={audioEngineRef}
+              description={(() => { const sound = resolveAuscultation(pathology, vitals, stethSite, scenarioId, customHeartOverride, customLungOverride); return sound.pulmonary ? LUNG_SOUND_DESCRIPTIONS[sound.lung] : HEART_SOUND_DESCRIPTIONS[sound.heart]; })()}
+              onSite={site => { ensureAudioUnlocked(); setStethSite(site); }}
+              onMode={mode => { ensureAudioUnlocked(); setStethMode(mode); }}
+              onVolume={setStethVolume}
+              onListen={() => { ensureAudioUnlocked(); setIsListening(value => !value); }}
+              onLung={sound => { ensureAudioUnlocked(); setCustomLungOverride(sound); if (sound) setIsListening(true); }}
+              onSound={sound => { ensureAudioUnlocked(); setCustomHeartOverride(sound); const demo = SOUND_LIBRARY.find(s => s.id === sound); if (demo) { setStethSite(demo.site); setIsListening(true); } }}
+            />
           )}
 
           {/* ================= 3. POINT-OF-CARE ULTRASOUND (POCUS) ================= */}
