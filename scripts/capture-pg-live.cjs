@@ -16,7 +16,18 @@ fs.mkdirSync(out, { recursive:true });
   page.on('console',msg=>{ if(msg.type()==='error') errors.push(msg.text().slice(0,220)); });
   const origin='https://orbitmbbs.vercel.app';
   await page.goto(origin+'/notes',{waitUntil:'domcontentloaded',timeout:75000});
-  await page.waitForTimeout(7000);
+  await page.waitForTimeout(6000);
+  // New visitors see FirstRun before any app page. Complete its LOCAL-only
+  // setup (no Google sign-in, no external user identity).
+  if(await page.getByText('Set up your studies',{exact:true}).count()) {
+    await page.getByPlaceholder('e.g. Phantom').fill('Orbit Screenshot');
+    await page.getByText('3rd Year',{exact:true}).click();
+    await page.getByText('Tamil Nadu · TNMGR',{exact:true}).click();
+    await page.getByText('Start studying',{exact:true}).click();
+    await page.waitForTimeout(2200);
+  }
+  const skipTour=page.getByText('Skip',{exact:true}).first();
+  if(await skipTour.isVisible().catch(()=>false)) await skipTour.click().catch(()=>{});
   let entry=page.getByText('PG Entrance Questions & Sources',{exact:false}).first();
   if(!(await entry.count())){
     await page.goto(origin+'/',{waitUntil:'domcontentloaded',timeout:75000});
