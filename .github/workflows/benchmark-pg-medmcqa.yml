@@ -1,0 +1,23 @@
+name: Benchmark MedMCQA offline size (no data publication)
+on:
+  push:
+    paths:
+      - scripts/benchmark-pg-medmcqa.py
+      - .github/workflows/benchmark-pg-medmcqa.yml
+  workflow_dispatch:
+
+jobs:
+  size-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install benchmark dependencies
+        run: pip install pyarrow huggingface_hub brotli
+      - name: Measure all MedMCQA splits (questions never committed or uploaded)
+        run: python scripts/benchmark-pg-medmcqa.py
