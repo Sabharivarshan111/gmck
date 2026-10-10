@@ -4066,7 +4066,7 @@ varying float partSelected;
             ) : (
               <Hand className="w-3.5 h-3.5 text-sky-500 shrink-0" />
             )}
-            <span className="font-bold text-sky-700 dark:text-sky-400">{hoveredPart.name}</span>
+            <span className="font-bold text-sky-700 sim-dark:text-sky-400">{hoveredPart.name}</span>
             <span className="text-slate-400">({hoveredPart.system})</span>
             {toolMode === 'scalpel' && <span className="text-rose-600 font-bold">• Click to Dissect</span>}
           </div>

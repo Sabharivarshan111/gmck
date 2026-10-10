@@ -53,11 +53,11 @@ export const AnatomySpreadControl: React.FC<AnatomySpreadControlProps> = ({
           <div className="flex items-center justify-between gap-2">
             <div className="min-w-0">
               <div className="text-[11px] sm:text-xs font-extrabold tracking-wide">Spread anatomy</div>
-              <div className="text-[9px] sm:text-[10px] text-slate-500 dark:text-slate-400 truncate">
+              <div className="text-[9px] sm:text-[10px] text-slate-500 sim-dark:text-slate-400 truncate">
                 {phase} · {interactionHint}
               </div>
             </div>
-            <output className="font-mono text-[11px] font-black text-violet-600 dark:text-violet-300">
+            <output className="font-mono text-[11px] font-black text-violet-600 sim-dark:text-violet-300">
               {percent}%
             </output>
           </div>

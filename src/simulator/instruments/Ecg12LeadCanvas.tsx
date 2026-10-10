@@ -37,7 +37,7 @@ const SEGMENTS: SegmentMeta[] = [
     normalDurationMs: '80 – 110 ms (< 0.25 mV)',
     color: '#d97706',
     bandColor: 'rgba(245, 158, 11, 0.22)',
-    textColor: 'text-amber-700 dark:text-amber-300',
+    textColor: 'text-amber-700 sim-dark:text-amber-300',
     borderColor: 'border-amber-500',
     physioOrigin: 'Atrial Depolarization originating at Sinoatrial (SA) node in high Right Atrium, radiating across Bachmann bundle to Left Atrium.',
     vectorExplanation: 'Mean atrial vector directs down and left (+60°). Points directly toward Lead II (+60°) → upright rounded P wave; away from aVR (-150°) → inverted P wave.',
@@ -53,7 +53,7 @@ const SEGMENTS: SegmentMeta[] = [
     normalDurationMs: '120 – 200 ms (3–5 small squares)',
     color: '#059669',
     bandColor: 'rgba(16, 185, 129, 0.22)',
-    textColor: 'text-emerald-700 dark:text-emerald-300',
+    textColor: 'text-emerald-700 sim-dark:text-emerald-300',
     borderColor: 'border-emerald-500',
     physioOrigin: 'Physiological conduction delay within the Atrioventricular (AV) node, Bundle of His, and bundle branches, allowing ventricular filling before systole.',
     vectorExplanation: 'Small localized potentials cancel out; produces an isoelectric (flat) voltage baseline on all surface limb and precordial leads.',
@@ -69,7 +69,7 @@ const SEGMENTS: SegmentMeta[] = [
     normalDurationMs: '70 – 100 ms (< 120 ms)',
     color: '#0284c7',
     bandColor: 'rgba(6, 182, 212, 0.25)',
-    textColor: 'text-cyan-700 dark:text-cyan-300',
+    textColor: 'text-cyan-700 sim-dark:text-cyan-300',
     borderColor: 'border-cyan-500',
     physioOrigin: 'Ventricular Depolarization: Initial left-to-right septal depolarization (Q wave), dominant apex-to-base LV mass activation (R wave), late posterobasal depolarization (S wave).',
     vectorExplanation: 'Mean QRS axis normally -30° to +90°. Left ventricular mass (3x RV) dominates the vector, pointing inferiorly and to the left (+60°).',
@@ -85,7 +85,7 @@ const SEGMENTS: SegmentMeta[] = [
     normalDurationMs: '80 – 120 ms (Isoelectric at J-point)',
     color: '#dc2626',
     bandColor: 'rgba(239, 68, 68, 0.26)',
-    textColor: 'text-rose-700 dark:text-rose-300',
+    textColor: 'text-rose-700 sim-dark:text-rose-300',
     borderColor: 'border-rose-500',
     physioOrigin: 'Plateau phase (Phase 2) of ventricular cardiomyocyte action potential; all ventricular myocytes are uniformly depolarized with zero net trans-myocardial voltage gradient.',
     vectorExplanation: 'In normal myocardium, net dipole is zero → flat isoelectric segment continuous with TP baseline.',
@@ -101,7 +101,7 @@ const SEGMENTS: SegmentMeta[] = [
     normalDurationMs: '160 – 200 ms (Asymmetric, rounded)',
     color: '#7c3aed',
     bandColor: 'rgba(139, 92, 246, 0.24)',
-    textColor: 'text-purple-700 dark:text-purple-300',
+    textColor: 'text-purple-700 sim-dark:text-purple-300',
     borderColor: 'border-purple-500',
     physioOrigin: 'Rapid Ventricular Repolarization (Phase 3 of action potential) via voltage-gated potassium channels (IKr, IKs). Epicardium repolarizes before endocardium!',
     vectorExplanation: 'Because repolarization propagates in reverse direction (epicardium to endocardium), the repolarization dipole has the SAME positive polarity as depolarization! Hence T wave is concordant with QRS.',
@@ -117,7 +117,7 @@ const SEGMENTS: SegmentMeta[] = [
     normalDurationMs: '380 – 440 ms (Bazett QTc < 450ms ♂, < 460ms ♀)',
     color: '#db2777',
     bandColor: 'rgba(236, 72, 153, 0.20)',
-    textColor: 'text-pink-700 dark:text-pink-300',
+    textColor: 'text-pink-700 sim-dark:text-pink-300',
     borderColor: 'border-pink-500',
     physioOrigin: 'Total Ventricular Electrical Systole: encompasses entire duration of ventricular depolarization (QRS) through complete repolarization (T wave).',
     vectorExplanation: 'Spans the complete ventricular activation cycle from septal onset to epicardial recovery.',
@@ -488,11 +488,11 @@ export const Ecg12LeadCanvas: React.FC<Ecg12LeadProps> = ({
   return (
     <div className="w-full flex flex-col items-center gap-2.5 md:gap-3">
       {/* Interactive 12-Lead ECG Wave Segmentation Controller */}
-      <div className="order-2 md:order-1 w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-2.5 md:p-3 shadow-sm">
+      <div className="order-2 md:order-1 w-full bg-white sim-dark:bg-slate-900 border border-slate-200 sim-dark:border-slate-800 rounded-2xl p-2.5 md:p-3 shadow-sm">
         <div className="flex items-center justify-between gap-2 mb-2">
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-red-600 animate-pulse" />
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-slate-100 font-mono">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-900 sim-dark:text-slate-100 font-mono">
               Wave Guide
             </h3>
           </div>
@@ -502,7 +502,7 @@ export const Ecg12LeadCanvas: React.FC<Ecg12LeadProps> = ({
               className={`min-h-[44px] flex items-center gap-1.5 text-[11px] sm:text-xs font-bold px-3 rounded-xl border transition-all ${
                 isAutoWalking
                   ? 'bg-rose-500 text-white border-rose-600 shadow-sm'
-                  : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:bg-slate-200'
+                  : 'bg-slate-100 sim-dark:bg-slate-800 text-slate-700 sim-dark:text-slate-300 border-slate-300 sim-dark:border-slate-700 hover:bg-slate-200'
               }`}
             >
               {isAutoWalking ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
@@ -513,7 +513,7 @@ export const Ecg12LeadCanvas: React.FC<Ecg12LeadProps> = ({
                 setIsAutoWalking(false);
                 setActiveSegment('all');
               }}
-              className="min-h-[44px] min-w-[44px] flex items-center justify-center text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 rounded-xl border border-slate-200 dark:border-slate-800"
+              className="min-h-[44px] min-w-[44px] flex items-center justify-center text-slate-500 hover:text-slate-700 sim-dark:hover:text-slate-300 rounded-xl border border-slate-200 sim-dark:border-slate-800"
               title="Reset to Full Trace"
             >
               <RotateCcw className="w-3.5 h-3.5" />
@@ -530,8 +530,8 @@ export const Ecg12LeadCanvas: React.FC<Ecg12LeadProps> = ({
             }}
             className={`min-h-[44px] min-w-[44px] shrink-0 px-3 rounded-xl text-[11px] sm:text-xs font-mono font-bold transition-all ${
               activeSegment === 'all'
-                ? 'bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900 shadow-sm'
-                : 'bg-slate-100 text-slate-600 dark:bg-slate-800/70 dark:text-slate-400 hover:bg-slate-200'
+                ? 'bg-slate-900 text-white sim-dark:bg-slate-100 sim-dark:text-slate-900 shadow-sm'
+                : 'bg-slate-100 text-slate-600 sim-dark:bg-slate-800/70 sim-dark:text-slate-400 hover:bg-slate-200'
             }`}
           >
             All
@@ -550,7 +550,7 @@ export const Ecg12LeadCanvas: React.FC<Ecg12LeadProps> = ({
               className={`min-h-[44px] min-w-[44px] shrink-0 px-3 rounded-xl text-[11px] sm:text-xs font-mono font-bold border transition-all ${
                 activeSegment === seg.id
                   ? `${seg.textColor} border-2 font-bold shadow-sm scale-105`
-                  : 'bg-slate-50 dark:bg-slate-800/40 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:bg-slate-100'
+                  : 'bg-slate-50 sim-dark:bg-slate-800/40 text-slate-600 sim-dark:text-slate-400 border-slate-200 sim-dark:border-slate-800 hover:bg-slate-100'
               }`}
             >
               {seg.shortName}
@@ -560,8 +560,8 @@ export const Ecg12LeadCanvas: React.FC<Ecg12LeadProps> = ({
       </div>
 
       <div className="order-1 md:order-2 w-full flex items-center justify-between gap-2 px-1 md:hidden">
-        <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">ECG first · swipe to inspect all 12 leads</span>
-        <span className="text-[10px] font-mono text-red-700 dark:text-red-300">25 mm/s · 10 mm/mV</span>
+        <span className="text-[10px] text-slate-500 sim-dark:text-slate-400 font-medium">ECG first · swipe to inspect all 12 leads</span>
+        <span className="text-[10px] font-mono text-red-700 sim-dark:text-red-300">25 mm/s · 10 mm/mV</span>
       </div>
 
       {/* Calibrated Pink 12-Lead Millimeter Grid Canvas */}
@@ -579,21 +579,21 @@ export const Ecg12LeadCanvas: React.FC<Ecg12LeadProps> = ({
       {activeMeta && (
         <div
           style={{ borderColor: activeMeta.color }}
-          className="order-3 w-full bg-white dark:bg-slate-900 border rounded-2xl p-3 md:p-4 shadow-md transition-all animate-in fade-in slide-in-from-bottom-2 duration-300"
+          className="order-3 w-full bg-white sim-dark:bg-slate-900 border rounded-2xl p-3 md:p-4 shadow-md transition-all animate-in fade-in slide-in-from-bottom-2 duration-300"
         >
-          <div className="flex flex-wrap items-center justify-between gap-2 mb-3 pb-2 border-b border-slate-200 dark:border-slate-800">
+          <div className="flex flex-wrap items-center justify-between gap-2 mb-3 pb-2 border-b border-slate-200 sim-dark:border-slate-800">
             <div className="flex items-center gap-2">
               <span
                 style={{ backgroundColor: activeMeta.color }}
                 className="w-3 h-3 rounded-full"
               />
-              <h4 className="text-sm font-bold text-slate-900 dark:text-slate-100 font-mono">
+              <h4 className="text-sm font-bold text-slate-900 sim-dark:text-slate-100 font-mono">
                 {activeMeta.name} — Electrophysiological & Diagnostic Walkthrough
               </h4>
             </div>
             <span
               style={{ color: activeMeta.color }}
-              className="text-xs font-mono font-bold px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700"
+              className="text-xs font-mono font-bold px-2.5 py-0.5 rounded-full bg-slate-100 sim-dark:bg-slate-800 border border-slate-300 sim-dark:border-slate-700"
             >
               Normal Duration: {activeMeta.normalDurationMs}
             </span>
@@ -611,30 +611,30 @@ export const Ecg12LeadCanvas: React.FC<Ecg12LeadProps> = ({
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs leading-relaxed">
             {/* Column 1: Biophysical Origin */}
-            <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/60">
-              <span className="font-bold text-slate-800 dark:text-slate-200 block mb-1 font-mono uppercase tracking-wider text-[10px]">
+            <div className="p-2.5 rounded-xl bg-slate-50 sim-dark:bg-slate-800/50 border border-slate-200 sim-dark:border-slate-700/60">
+              <span className="font-bold text-slate-800 sim-dark:text-slate-200 block mb-1 font-mono uppercase tracking-wider text-[10px]">
                 ⚡ Biophysical & Conduction Origin
               </span>
-              <p className="text-slate-600 dark:text-slate-300">{activeMeta.physioOrigin}</p>
+              <p className="text-slate-600 sim-dark:text-slate-300">{activeMeta.physioOrigin}</p>
             </div>
 
             {/* Column 2: Dipole Vector Projection */}
-            <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/60">
-              <span className="font-bold text-slate-800 dark:text-slate-200 block mb-1 font-mono uppercase tracking-wider text-[10px]">
+            <div className="p-2.5 rounded-xl bg-slate-50 sim-dark:bg-slate-800/50 border border-slate-200 sim-dark:border-slate-700/60">
+              <span className="font-bold text-slate-800 sim-dark:text-slate-200 block mb-1 font-mono uppercase tracking-wider text-[10px]">
                 📐 3D Dipole Vector ({'V = D · L'})
               </span>
-              <p className="text-slate-600 dark:text-slate-300 mb-1">{activeMeta.vectorExplanation}</p>
-              <span className="text-[11px] font-mono text-cyan-700 dark:text-cyan-300 block">
+              <p className="text-slate-600 sim-dark:text-slate-300 mb-1">{activeMeta.vectorExplanation}</p>
+              <span className="text-[11px] font-mono text-cyan-700 sim-dark:text-cyan-300 block">
                 {activeMeta.leadsAnalysis}
               </span>
             </div>
 
             {/* Column 3: High-Yield Clinical Traps & Pathology */}
-            <div className="p-2.5 rounded-xl bg-rose-50 dark:bg-rose-950/20 border border-rose-200 dark:border-rose-900/40">
-              <span className="font-bold text-rose-800 dark:text-rose-300 block mb-1 font-mono uppercase tracking-wider text-[10px]">
+            <div className="p-2.5 rounded-xl bg-rose-50 sim-dark:bg-rose-950/20 border border-rose-200 sim-dark:border-rose-900/40">
+              <span className="font-bold text-rose-800 sim-dark:text-rose-300 block mb-1 font-mono uppercase tracking-wider text-[10px]">
                 🩺 Examiner Traps & Clinical Pearls
               </span>
-              <p className="text-rose-900 dark:text-rose-200/90">{activeMeta.clinicalPearls}</p>
+              <p className="text-rose-900 sim-dark:text-rose-200/90">{activeMeta.clinicalPearls}</p>
             </div>
           </div>
         </div>

@@ -125,7 +125,7 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
       }`}
     >
       {/* 1. Header & Department Filter Tabs */}
-      <div className="space-y-2.5 pb-2.5 md:pb-3 border-b border-slate-200 dark:border-slate-800">
+      <div className="space-y-2.5 pb-2.5 md:pb-3 border-b border-slate-200 sim-dark:border-slate-800">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
             <div
@@ -488,9 +488,9 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
               key={idx}
               className={`p-2 rounded-xl text-xs font-mono flex items-start gap-2 ${
                 log.includes('CRITICAL') || log.includes('ERROR')
-                  ? 'bg-red-500/10 border border-red-500/30 text-red-500 dark:text-red-400 font-semibold'
+                  ? 'bg-red-500/10 border border-red-500/30 text-red-500 sim-dark:text-red-400 font-semibold'
                   : log.includes('CAUTION') || log.includes('WARNING')
-                  ? 'bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-amber-400'
+                  ? 'bg-amber-500/10 border border-amber-500/30 text-amber-700 sim-dark:text-amber-400'
                   : isLight
                   ? 'bg-white border border-slate-200 text-slate-700'
                   : 'bg-slate-900 border border-slate-800 text-slate-300'
