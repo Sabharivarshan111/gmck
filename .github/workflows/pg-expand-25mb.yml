@@ -1,0 +1,59 @@
+name: Expand answer-labelled PG offline bank under 25 MB
+on:
+  push:
+    branches: ['feature/pg-25mb-answer-keyed-expanded-20261010']
+    paths:
+      - 'scripts/expand-pg-medmcqa-25mb.py'
+      - '.github/workflows/pg-expand-25mb.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  expand-offline-answer-keyed:
+    runs-on: ubuntu-latest
+    timeout-minutes: 38
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dataset and pack tooling
+        run: pip install --disable-pip-version-check pyarrow huggingface_hub brotli
+      - name: Preserve all usable question stems, options and dataset answers
+        run: |
+          python -u scripts/expand-pg-medmcqa-25mb.py \
+            --output /tmp/pg-all-answer-keyed.jsonl \
+            --report docs/PG_25MB_EXPANDED_SOURCE_ACCOUNTING.json \
+            --rows-per-pack 2500 --budget-mb 24.3
+      - name: Generate static answer-bearing native and iOS PWA chunks
+        run: |
+          python -u scripts/build-pg-offline-packs.py \
+            --input /tmp/pg-all-answer-keyed.jsonl \
+            --out mobile/src/lib/pgPacks \
+            --rows-per-pack 2500 --max-compressed-mb 25
+      - name: Verify counts, exam attribution and real compressed budget
+        run: |
+          node --max-old-space-size=5000 scripts/check-pg-content-integrity.mjs
+          python scripts/test-pg-offline-packs.py
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          a=json.loads(Path('docs/PG_25MB_EXPANDED_SOURCE_ACCOUNTING.json').read_text())
+          p=json.loads(Path('mobile/src/lib/pgPacks/packing-report.json').read_text())
+          assert p['total_questions']==a['offline_usable_answer_labelled'],(p,a)
+          assert p['deflate_mb']<=25,(p,a)
+          assert p['total_questions']>180000,(p,a)
+          assert a['eligible_groups']['NEET_PG_validation']==4180,(p,a)
+          assert a['record_years_verified']==0
+          print('PASS: all valid dataset-labelled answers, verified count, compressed <=25MB; mock clearly separated from NEET-PG')
+          PY
+      - name: Commit generated static chunks (no Supabase runtime)
+        run: |
+          git config user.name "ORBIT offline dataset build"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add mobile/src/lib/pgPacks docs/PG_25MB_EXPANDED_SOURCE_ACCOUNTING.json
+          git commit -m "data(pg): bundle complete usable MedMCQA answer-labelled corpus with size gate"
+          git push origin HEAD:${{ github.ref_name }}
