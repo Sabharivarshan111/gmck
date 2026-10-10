@@ -5,6 +5,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ArrowLeft, BookOpenCheck, ExternalLink, Search, ShieldCheck, X } from 'lucide-react-native';
 import { Text } from '@/components/Text';
+import { KeyboardSafe } from '@/components/KeyboardSafe';
 import { Touchable } from '@/components/Touchable';
 import { useTheme, withAlpha } from '@/theme';
 import { searchOfflinePgQuestions } from '@/lib/pgLocalBank';
@@ -107,6 +108,7 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
           </Touchable>
         </View>
 
+        <KeyboardSafe>
         <ScrollView
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
@@ -220,6 +222,7 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
             </Text>
           </View>
         </ScrollView>
+        </KeyboardSafe>
       </View>
     </Modal>
   );

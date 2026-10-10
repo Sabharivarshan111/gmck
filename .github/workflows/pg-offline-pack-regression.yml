@@ -43,5 +43,7 @@ jobs:
         run: npm --prefix mobile run typecheck
       - name: Validate handwritten-notes UI textbook guard without censoring exam content
         run: npm --prefix mobile run check:textbooks
+      - name: Validate Android keyboard lifts new PG search fields
+        run: npm --prefix mobile run check:keyboard
       - name: Assert offline content manifest
         run: node scripts/check-pg-content-integrity.mjs
