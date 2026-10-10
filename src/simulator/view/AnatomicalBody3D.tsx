@@ -3865,7 +3865,7 @@ varying float partSelected;
       />
 
       {(graphicsError || contextLost) && (
-        <div role="alert" className={`absolute inset-0 z-40 flex flex-col items-center justify-center gap-4 p-6 text-center ${isLight ? 'bg-slate-50 text-slate-800' : 'bg-slate-950 text-slate-200'}`}>
+        <div role="alert" className={`absolute inset-0 z-20 flex flex-col items-center justify-center gap-4 p-6 text-center ${isLight ? 'bg-slate-50 text-slate-800' : 'bg-slate-950 text-slate-200'}`}>
           <strong>{contextLost ? 'Restoring 3D graphics…' : '3D view unavailable'}</strong>
           <p className="max-w-sm text-sm">{graphicsError || 'The browser paused graphics to free memory. The view will resume when graphics are restored. ICU and clinical cases remain available.'}</p>
           <button type="button" onClick={() => window.location.reload()} className="min-h-11 rounded-xl bg-sky-600 px-5 py-3 font-semibold text-white">Reload simulator</button>
