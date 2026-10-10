@@ -13,7 +13,7 @@ import { searchOfflinePgQuestions } from '@/lib/pgLocalBank';
 import { PG_ORIGINAL_PRACTICE, PG_SOURCES, PG_SOURCE_REVIEW_DATE, type PgExam, type PgQuestion } from '@/lib/pgEntranceBank';
 
 type ExamFilter = 'ALL' | PgExam;
-type Panel = 'sources' | 'practice';
+type Panel = 'sources' | 'practice' | 'recent';
 const EXAMS: { id: ExamFilter; title: string }[] = [
   { id: 'ALL', title: 'All' }, { id: 'NEET_PG', title: 'NEET-PG' },
   { id: 'INI_CET', title: 'INI-CET' }, { id: 'FMGE', title: 'FMGE' },
@@ -134,13 +134,13 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
           </ScrollView>
 
           <View style={styles.switchRow}>
-            {(['sources', 'practice'] as const).map(p => (
-              <Touchable key={p} label={p === 'sources' ? 'Answer-bearing sources' : 'Practice questions'}
+            {(['practice', 'recent', 'sources'] as const).map(p => (
+              <Touchable key={p} label={p === 'sources' ? 'Answer-bearing sources' : p === 'recent' ? 'Check a 2023 to 2026 recall against textbooks' : 'Practice questions'}
                 state={{ selected: panel === p }}
                 onPress={() => { setPanel(p); setExpandedAnswer(null); }}
                 style={[styles.switchButton, { backgroundColor: panel === p ? withAlpha(colors.primary, 0.22) : colors.card, borderColor: panel === p ? colors.primary : colors.border }]}>
                 <Text style={[styles.switchText, { color: colors.text }]}>
-                  {p === 'sources' ? 'Source directory' : 'Practice MCQs'}
+                  {p === 'sources' ? 'Source directory' : p === 'recent' ? '2023–26 Textbook AI' : 'Practice MCQs'}
                 </Text>
               </Touchable>
             ))}
@@ -205,6 +205,8 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
               ))}
               {sources.length === 0 ? <Text style={[styles.empty, { color: colors.textMuted }]}>No indexed source matches this filter. Try another year or exam.</Text> : null}
             </>
+          ) : panel === 'recent' ? (
+            <PgRecentAnswerReview exam={exam} year={year} onYear={y => {setYearText(String(y));setPage(0);}} />
           ) : (
             <>
               <Text style={[styles.sectionHeading, { color: colors.text }]}>Offline medical question practice</Text>
@@ -228,7 +230,7 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
                 onPress={() => setExpandedAnswer(prev => prev === q.id ? null : q.id)}
                 colors={colors} />)}
               {original.length === 0 ? <Text style={[styles.small, { color: colors.textMuted }]}>Clear the year filter to show original practice questions.</Text> : null}
-              <PgRecentAnswerReview exam={exam} year={year} onYear={y => {setYearText(String(y));setPage(0);}} />
+              <Text style={[styles.small, {color:colors.textMuted}]}>For recalled 2023–2026 questions, open the Textbook AI tab above to check answers using Supabase.</Text>
             </>
           )}
           <View style={[styles.bottomNote, { borderColor: colors.border }]}>
