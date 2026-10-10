@@ -101,7 +101,7 @@ const HeartPumpVisualizer: React.FC<{ isLight: boolean }> = ({ isLight }) => {
             </div>
             <h4 className="font-bold text-sm tracking-tight">1. The Heart is a 2-Stroke Hydraulic Pump</h4>
           </div>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+          <p className="text-xs text-slate-500 sim-dark:text-slate-400 mt-0.5">
             Watch the cross-section squeeze and relax. Observe valve leaflets snapping shut and generating heart sounds.
           </p>
         </div>
@@ -116,7 +116,7 @@ const HeartPumpVisualizer: React.FC<{ isLight: boolean }> = ({ isLight }) => {
             className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex-1 sm:flex-none ${
               isDiastole
                 ? 'bg-sky-500 text-white shadow-sm ring-2 ring-sky-500/20'
-                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                : 'bg-slate-100 sim-dark:bg-slate-800 text-slate-600 sim-dark:text-slate-300 hover:bg-slate-200 sim-dark:hover:bg-slate-700'
             }`}
           >
             1. Diastole (Refill)
@@ -129,14 +129,14 @@ const HeartPumpVisualizer: React.FC<{ isLight: boolean }> = ({ isLight }) => {
             className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex-1 sm:flex-none ${
               !isDiastole
                 ? 'bg-rose-500 text-white shadow-sm ring-2 ring-rose-500/20'
-                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                : 'bg-slate-100 sim-dark:bg-slate-800 text-slate-600 sim-dark:text-slate-300 hover:bg-slate-200 sim-dark:hover:bg-slate-700'
             }`}
           >
             2. Systole (Eject)
           </button>
           <button
             onClick={() => setIsPlaying(!isPlaying)}
-            className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer transition-all"
+            className="p-2 rounded-xl bg-slate-100 sim-dark:bg-slate-800 text-slate-600 sim-dark:text-slate-300 hover:bg-slate-200 sim-dark:hover:bg-slate-700 cursor-pointer transition-all"
             title={isPlaying ? 'Pause Animation' : 'Auto-Play Animation'}
           >
             {isPlaying ? <Pause className="w-4 h-4 text-amber-500" /> : <Play className="w-4 h-4 text-emerald-500" />}
@@ -411,11 +411,11 @@ const HeartPumpVisualizer: React.FC<{ isLight: boolean }> = ({ isLight }) => {
                 <Heart className="w-3.5 h-3.5" />
                 {currentInfo.title}
               </span>
-              <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-rose-500/10 text-rose-600 dark:text-rose-400">
+              <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-rose-500/10 text-rose-600 sim-dark:text-rose-400">
                 {currentInfo.sound}
               </span>
             </div>
-            <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
+            <p className="text-xs text-slate-700 sim-dark:text-slate-300 leading-relaxed">
               {currentInfo.desc}
             </p>
             <div
@@ -516,7 +516,7 @@ const ConductionHighwayVisualizer: React.FC<{ isLight: boolean }> = ({ isLight }
             </div>
             <h4 className="font-bold text-sm tracking-tight">2. The Electrical Wiring Highway & Synchronized ECG</h4>
           </div>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+          <p className="text-xs text-slate-500 sim-dark:text-slate-400 mt-0.5">
             Follow the spark from SA Node down through Purkinje fibers. See how each electrical event directly paints the ECG wave!
           </p>
         </div>
@@ -533,7 +533,7 @@ const ConductionHighwayVisualizer: React.FC<{ isLight: boolean }> = ({ isLight }
               className={`px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
                 step === idx
                   ? 'bg-amber-500 text-white shadow-sm ring-2 ring-amber-500/20'
-                  : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                  : 'bg-slate-100 sim-dark:bg-slate-800 text-slate-600 sim-dark:text-slate-300 hover:bg-slate-200 sim-dark:hover:bg-slate-700'
               }`}
             >
               {idx + 1}. {idx === 0 ? 'SA Spark' : idx === 1 ? 'AV Delay' : idx === 2 ? 'QRS Blast' : 'Recharge'}
@@ -541,7 +541,7 @@ const ConductionHighwayVisualizer: React.FC<{ isLight: boolean }> = ({ isLight }
           ))}
           <button
             onClick={() => setIsAuto(!isAuto)}
-            className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer"
+            className="p-2 rounded-xl bg-slate-100 sim-dark:bg-slate-800 text-slate-600 sim-dark:text-slate-300 hover:bg-slate-200 sim-dark:hover:bg-slate-700 cursor-pointer"
             title={isAuto ? 'Pause Auto Stepper' : 'Auto Play Steps'}
           >
             {isAuto ? <Pause className="w-3.5 h-3.5 text-amber-500" /> : <Play className="w-3.5 h-3.5 text-emerald-500" />}
@@ -782,15 +782,15 @@ const ConductionHighwayVisualizer: React.FC<{ isLight: boolean }> = ({ isLight }
             }`}
           >
             <div className="flex items-center justify-between mb-1.5">
-              <h5 className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+              <h5 className="text-xs font-bold text-slate-900 sim-dark:text-white flex items-center gap-1.5">
                 <Zap className="w-3.5 h-3.5 text-amber-500" />
                 {currentStep.title} ({currentStep.subtitle})
               </h5>
-              <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400">
+              <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-amber-500/10 text-amber-600 sim-dark:text-amber-400">
                 {currentStep.badge}
               </span>
             </div>
-            <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
+            <p className="text-xs text-slate-700 sim-dark:text-slate-300 leading-relaxed">
               {currentStep.meaning}
             </p>
           </div>
@@ -957,7 +957,7 @@ const PaparazziCameraStudioVisualizer: React.FC<{ isLight: boolean }> = ({ isLig
             </div>
             <h4 className="font-bold text-sm tracking-tight">3. The 12-Camera Paparazzi Studio (Why Waves Go UP or DOWN)</h4>
           </div>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+          <p className="text-xs text-slate-500 sim-dark:text-slate-400 mt-0.5">
             Click any camera angle around the body. The Golden Camera Rule reveals exactly why the pen pushes UP or DOWN!
           </p>
         </div>
@@ -973,7 +973,7 @@ const PaparazziCameraStudioVisualizer: React.FC<{ isLight: boolean }> = ({ isLig
             className={`px-2.5 py-1 rounded-xl text-xs font-mono font-bold transition-all cursor-pointer ${
               selectedLead === lead
                 ? 'bg-sky-500 text-white shadow-md ring-2 ring-sky-500/20'
-                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                : 'bg-slate-100 sim-dark:bg-slate-800 text-slate-600 sim-dark:text-slate-300 hover:bg-slate-200 sim-dark:hover:bg-slate-700'
             }`}
           >
             {lead}
@@ -988,7 +988,7 @@ const PaparazziCameraStudioVisualizer: React.FC<{ isLight: boolean }> = ({ isLig
             className={`px-2.5 py-1 rounded-xl text-xs font-mono font-bold transition-all cursor-pointer ${
               selectedLead === lead
                 ? 'bg-emerald-500 text-white shadow-md ring-2 ring-emerald-500/20'
-                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                : 'bg-slate-100 sim-dark:bg-slate-800 text-slate-600 sim-dark:text-slate-300 hover:bg-slate-200 sim-dark:hover:bg-slate-700'
             }`}
           >
             {lead}
@@ -1160,11 +1160,11 @@ const PaparazziCameraStudioVisualizer: React.FC<{ isLight: boolean }> = ({ isLig
               isLight ? 'bg-slate-50 border-slate-200' : 'bg-slate-950/70 border-slate-800'
             }`}
           >
-            <div className="font-bold text-xs mb-1 text-slate-900 dark:text-white flex items-center gap-1.5">
+            <div className="font-bold text-xs mb-1 text-slate-900 sim-dark:text-white flex items-center gap-1.5">
               <Compass className="w-3.5 h-3.5 text-sky-500" />
               Viewing Perspective: {currentLead.position}
             </div>
-            <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mb-2">
+            <p className="text-xs text-slate-600 sim-dark:text-slate-300 leading-relaxed mb-2">
               {currentLead.viewTarget}
             </p>
             <div
@@ -1280,7 +1280,7 @@ const CalibratedGridWaveBreakdown: React.FC<{ isLight: boolean }> = ({ isLight }
             </div>
             <h4 className="font-bold text-sm tracking-tight">4. Calibrated Pink Millimeter Grid & Segment Inspector</h4>
           </div>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+          <p className="text-xs text-slate-500 sim-dark:text-slate-400 mt-0.5">
             Click any segment along the heartbeat. Inspect exact millisecond rules, box counts, and life-threatening pathologies.
           </p>
         </div>
@@ -1302,7 +1302,7 @@ const CalibratedGridWaveBreakdown: React.FC<{ isLight: boolean }> = ({ isLight }
             className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
               activeZone === tab.id
                 ? 'bg-rose-500 text-white shadow-md ring-2 ring-rose-500/20'
-                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                : 'bg-slate-100 sim-dark:bg-slate-800 text-slate-600 sim-dark:text-slate-300 hover:bg-slate-200 sim-dark:hover:bg-slate-700'
             }`}
           >
             {tab.label}
@@ -1312,7 +1312,7 @@ const CalibratedGridWaveBreakdown: React.FC<{ isLight: boolean }> = ({ isLight }
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-center">
         {/* Calibrated Pink Grid Canvas with Highlighted Segment */}
-        <div className="lg:col-span-7 flex flex-col items-center justify-center p-3 rounded-2xl bg-[#fff1f2] dark:bg-[#2b0c15] border-2 border-rose-300 dark:border-rose-900 relative shadow-inner overflow-hidden">
+        <div className="lg:col-span-7 flex flex-col items-center justify-center p-3 rounded-2xl bg-[#fff1f2] sim-dark:bg-[#2b0c15] border-2 border-rose-300 sim-dark:border-rose-900 relative shadow-inner overflow-hidden">
           <svg viewBox="0 0 380 140" className="w-full h-auto select-none">
             {/* Fine 1mm pink grid lines */}
             <defs>
@@ -1366,7 +1366,7 @@ const CalibratedGridWaveBreakdown: React.FC<{ isLight: boolean }> = ({ isLight }
               strokeWidth="2.5"
               strokeLinejoin="round"
               fill="none"
-              className="dark:stroke-white"
+              className="sim-dark:stroke-white"
             />
 
             {/* Zone Caliper Boundary Markers */}
@@ -1423,15 +1423,15 @@ const CalibratedGridWaveBreakdown: React.FC<{ isLight: boolean }> = ({ isLight }
             }`}
           >
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-black tracking-tight text-slate-900 dark:text-white">
+              <span className="text-xs font-black tracking-tight text-slate-900 sim-dark:text-white">
                 {current.name}: {current.fullName}
               </span>
-              <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-rose-500/10 text-rose-600 dark:text-rose-400">
+              <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-rose-500/10 text-rose-600 sim-dark:text-rose-400">
                 {current.duration}
               </span>
             </div>
 
-            <div className="space-y-1.5 text-xs text-slate-600 dark:text-slate-300">
+            <div className="space-y-1.5 text-xs text-slate-600 sim-dark:text-slate-300">
               <div>
                 <strong>📏 Grid Measurement:</strong> {current.boxes}
               </div>
@@ -1494,13 +1494,13 @@ export const EcgIcuTutorialModal: React.FC<EcgIcuTutorialModalProps> = ({
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="text-sm sm:text-lg font-bold tracking-tight truncate">
-                  12-Lead ECG & ICU Telemetry Masterclass
+                  <span className="sm:hidden">ECG & ICU Tutorial</span><span className="hidden sm:inline">12-Lead ECG & ICU Telemetry Masterclass</span>
                 </h2>
-                <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20">
+                <span className="hidden sm:inline text-[11px] font-bold px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-600 sim-dark:text-rose-400 border border-rose-500/20">
                   Visual Walkthrough
                 </span>
               </div>
-              <p className="hidden sm:block text-xs text-slate-500 dark:text-slate-400">
+              <p className="hidden sm:block text-xs text-slate-500 sim-dark:text-slate-400">
                 Intuitive interactive animations, biophysical vectors, and hospital telemetry from fundamentals to fellowship.
               </p>
             </div>
@@ -1560,8 +1560,8 @@ export const EcgIcuTutorialModal: React.FC<EcgIcuTutorialModalProps> = ({
               onClick={() => setActiveLevel(tier.id as TutorialLevel)}
               className={`min-h-[44px] shrink-0 flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl sm:rounded-2xl text-[11px] sm:text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
                 activeLevel === tier.id
-                  ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-md border border-slate-200 dark:border-slate-700 ring-2 ring-rose-500/20'
-                  : 'text-slate-600 dark:text-slate-400 hover:bg-white/50 dark:hover:bg-slate-800/50'
+                  ? 'bg-white sim-dark:bg-slate-800 text-slate-900 sim-dark:text-white shadow-md border border-slate-200 sim-dark:border-slate-700 ring-2 ring-rose-500/20'
+                  : 'text-slate-600 sim-dark:text-slate-400 hover:bg-white/50 sim-dark:hover:bg-slate-800/50'
               }`}
             >
               <span>{tier.icon}</span>
@@ -1605,21 +1605,21 @@ export const EcgIcuTutorialModal: React.FC<EcgIcuTutorialModalProps> = ({
                     <Compass className="w-4 h-4 text-sky-400" />
                     <span>Einthoven's Triangle & Kirchhoff's Law</span>
                   </h3>
-                  <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                  <p className="text-xs text-slate-600 sim-dark:text-slate-300 leading-relaxed">
                     Willem Einthoven (Nobel Prize 1924) arranged three electrodes on the extremities to form an equilateral triangle in the frontal plane:
                   </p>
-                  <ul className="text-xs space-y-1.5 font-mono text-slate-700 dark:text-slate-300">
-                    <li className="p-2 rounded-lg bg-slate-100 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800">
+                  <ul className="text-xs space-y-1.5 font-mono text-slate-700 sim-dark:text-slate-300">
+                    <li className="p-2 rounded-lg bg-slate-100 sim-dark:bg-slate-950/60 border border-slate-200 sim-dark:border-slate-800">
                       <strong>Lead I:</strong> Axis = 0° (Right Arm [-] to Left Arm [+])
                     </li>
-                    <li className="p-2 rounded-lg bg-slate-100 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800">
+                    <li className="p-2 rounded-lg bg-slate-100 sim-dark:bg-slate-950/60 border border-slate-200 sim-dark:border-slate-800">
                       <strong>Lead II:</strong> Axis = +60° (Right Arm [-] to Left Foot [+])
                     </li>
-                    <li className="p-2 rounded-lg bg-slate-100 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800">
+                    <li className="p-2 rounded-lg bg-slate-100 sim-dark:bg-slate-950/60 border border-slate-200 sim-dark:border-slate-800">
                       <strong>Lead III:</strong> Axis = +120° (Left Arm [-] to Left Foot [+])
                     </li>
                   </ul>
-                  <div className="p-3 rounded-xl bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-800 text-xs font-mono text-sky-900 dark:text-sky-300">
+                  <div className="p-3 rounded-xl bg-sky-50 sim-dark:bg-sky-950/40 border border-sky-200 sim-dark:border-sky-800 text-xs font-mono text-sky-900 sim-dark:text-sky-300">
                     <strong>Einthoven's Law:</strong> Lead I + Lead III = Lead II
                     <div className="text-[11px] opacity-80 mt-1">
                       (V_LA - V_RA) + (V_LL - V_LA) = V_LL - V_RA = Lead II
@@ -1637,24 +1637,24 @@ export const EcgIcuTutorialModal: React.FC<EcgIcuTutorialModalProps> = ({
                     <Activity className="w-4 h-4 text-emerald-400" />
                     <span>The 6 Precordial Chest Leads (Horizontal Plane)</span>
                   </h3>
-                  <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                  <p className="text-xs text-slate-600 sim-dark:text-slate-300 leading-relaxed">
                     While limb leads view the heart from the front, chest leads (V1–V6) slice the heart horizontally like an axial CT scan:
                   </p>
                   <div className="grid grid-cols-2 gap-2 text-xs">
-                    <div className="p-2 rounded-lg bg-slate-100 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800">
-                      <div className="font-bold text-teal-600 dark:text-teal-400">V1 & V2: Septal</div>
+                    <div className="p-2 rounded-lg bg-slate-100 sim-dark:bg-slate-950/60 border border-slate-200 sim-dark:border-slate-800">
+                      <div className="font-bold text-teal-600 sim-dark:text-teal-400">V1 & V2: Septal</div>
                       <div className="text-[10px] text-slate-500">4th R/L ICS parasternum. Look at interventricular septum.</div>
                     </div>
-                    <div className="p-2 rounded-lg bg-slate-100 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800">
-                      <div className="font-bold text-cyan-600 dark:text-cyan-400">V3 & V4: Anterior</div>
+                    <div className="p-2 rounded-lg bg-slate-100 sim-dark:bg-slate-950/60 border border-slate-200 sim-dark:border-slate-800">
+                      <div className="font-bold text-cyan-600 sim-dark:text-cyan-400">V3 & V4: Anterior</div>
                       <div className="text-[10px] text-slate-500">5th LICS mid-clavicular line. Look at anterior wall of LV.</div>
                     </div>
-                    <div className="p-2 rounded-lg bg-slate-100 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800">
-                      <div className="font-bold text-indigo-600 dark:text-indigo-400">V5 & V6: Lateral</div>
+                    <div className="p-2 rounded-lg bg-slate-100 sim-dark:bg-slate-950/60 border border-slate-200 sim-dark:border-slate-800">
+                      <div className="font-bold text-indigo-600 sim-dark:text-indigo-400">V5 & V6: Lateral</div>
                       <div className="text-[10px] text-slate-500">5th LICS axillary lines. Look at lateral wall of LV.</div>
                     </div>
-                    <div className="p-2 rounded-lg bg-slate-100 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800">
-                      <div className="font-bold text-amber-600 dark:text-amber-400">R-Wave Progression</div>
+                    <div className="p-2 rounded-lg bg-slate-100 sim-dark:bg-slate-950/60 border border-slate-200 sim-dark:border-slate-800">
+                      <div className="font-bold text-amber-600 sim-dark:text-amber-400">R-Wave Progression</div>
                       <div className="text-[10px] text-slate-500">Small rS in V1 growing into tall qR in V5–V6.</div>
                     </div>
                   </div>
@@ -1671,21 +1671,21 @@ export const EcgIcuTutorialModal: React.FC<EcgIcuTutorialModalProps> = ({
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
                   <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20">
                     <div className="font-bold text-rose-500">1 Small Box (1 mm)</div>
-                    <div className="text-slate-600 dark:text-slate-300 font-mono mt-1">
+                    <div className="text-slate-600 sim-dark:text-slate-300 font-mono mt-1">
                       Time = <strong>0.04 seconds (40 ms)</strong>
                       <br />Voltage = <strong>0.1 mV</strong>
                     </div>
                   </div>
                   <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20">
                     <div className="font-bold text-rose-500">1 Large Box (5 mm)</div>
-                    <div className="text-slate-600 dark:text-slate-300 font-mono mt-1">
+                    <div className="text-slate-600 sim-dark:text-slate-300 font-mono mt-1">
                       Time = <strong>0.20 seconds (200 ms)</strong>
                       <br />Voltage = <strong>0.5 mV</strong>
                     </div>
                   </div>
                   <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20">
                     <div className="font-bold text-rose-500">Paper Speed & Standard</div>
-                    <div className="text-slate-600 dark:text-slate-300 font-mono mt-1">
+                    <div className="text-slate-600 sim-dark:text-slate-300 font-mono mt-1">
                       Speed = <strong>25 mm/s</strong>
                       <br />Calibration = <strong>10 mm/mV (1 mV pulse)</strong>
                     </div>
@@ -1713,7 +1713,7 @@ export const EcgIcuTutorialModal: React.FC<EcgIcuTutorialModalProps> = ({
                 <div className="overflow-x-auto">
                   <table className="w-full text-xs text-left border-collapse">
                     <thead>
-                      <tr className="border-b border-slate-200 dark:border-slate-800 text-slate-500">
+                      <tr className="border-b border-slate-200 sim-dark:border-slate-800 text-slate-500">
                         <th className="py-2.5 px-3">Component</th>
                         <th className="py-2.5 px-3">Normal Duration</th>
                         <th className="py-2.5 px-3">Normal Amplitude</th>
@@ -1721,7 +1721,7 @@ export const EcgIcuTutorialModal: React.FC<EcgIcuTutorialModalProps> = ({
                         <th className="py-2.5 px-3">Key Pathology Alerts</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 font-mono">
+                    <tbody className="divide-y divide-slate-100 sim-dark:divide-slate-800/60 font-mono">
                       <tr>
                         <td className="py-2 px-3 font-bold text-rose-500">P Wave</td>
                         <td className="py-2 px-3">&lt; 120 ms (3 boxes)</td>
@@ -1780,7 +1780,7 @@ export const EcgIcuTutorialModal: React.FC<EcgIcuTutorialModalProps> = ({
                   </table>
                 </div>
 
-                <div className="p-3 rounded-xl bg-slate-100 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 text-xs font-mono">
+                <div className="p-3 rounded-xl bg-slate-100 sim-dark:bg-slate-950/60 border border-slate-200 sim-dark:border-slate-800 text-xs font-mono">
                   <strong>Bazett Formula:</strong> QTc = QT / √(RR interval in seconds)
                 </div>
               </div>
@@ -1804,32 +1804,32 @@ export const EcgIcuTutorialModal: React.FC<EcgIcuTutorialModalProps> = ({
                     <span>STEMI Anatomical Territory & Reciprocal Vectors</span>
                   </h3>
                   <div className="space-y-2 text-xs">
-                    <div className="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800">
-                      <div className="font-bold text-rose-700 dark:text-rose-300">
+                    <div className="p-3 rounded-xl bg-rose-50 sim-dark:bg-rose-950/40 border border-rose-200 sim-dark:border-rose-800">
+                      <div className="font-bold text-rose-700 sim-dark:text-rose-300">
                         Inferior STEMI (Leads II, III, aVF)
                       </div>
-                      <div className="text-[11px] text-slate-600 dark:text-slate-300 mt-1">
+                      <div className="text-[11px] text-slate-600 sim-dark:text-slate-300 mt-1">
                         <strong>Culprit Artery:</strong> Right Coronary Artery (RCA, 85%) or LCx.
                         <br /><strong>Reciprocal Changes:</strong> ST Depression in Lead I and aVL!
-                        <br /><span className="text-amber-600 dark:text-amber-400 font-semibold">Caution:</span> Check V4R for Right Ventricular Infarct before giving nitroglycerin!
+                        <br /><span className="text-amber-600 sim-dark:text-amber-400 font-semibold">Caution:</span> Check V4R for Right Ventricular Infarct before giving nitroglycerin!
                       </div>
                     </div>
 
-                    <div className="p-3 rounded-xl bg-orange-50 dark:bg-orange-950/40 border border-orange-200 dark:border-orange-800">
-                      <div className="font-bold text-orange-700 dark:text-orange-300">
+                    <div className="p-3 rounded-xl bg-orange-50 sim-dark:bg-orange-950/40 border border-orange-200 sim-dark:border-orange-800">
+                      <div className="font-bold text-orange-700 sim-dark:text-orange-300">
                         Anterior / Septal STEMI (Leads V1 - V4)
                       </div>
-                      <div className="text-[11px] text-slate-600 dark:text-slate-300 mt-1">
+                      <div className="text-[11px] text-slate-600 sim-dark:text-slate-300 mt-1">
                         <strong>Culprit Artery:</strong> Left Anterior Descending (LAD - "Widow Maker").
                         <br />High risk of cardiogenic shock, acute pulmonary edema, and complete heart block.
                       </div>
                     </div>
 
-                    <div className="p-3 rounded-xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800">
-                      <div className="font-bold text-blue-700 dark:text-blue-300">
+                    <div className="p-3 rounded-xl bg-blue-50 sim-dark:bg-blue-950/40 border border-blue-200 sim-dark:border-blue-800">
+                      <div className="font-bold text-blue-700 sim-dark:text-blue-300">
                         Lateral STEMI (Leads I, aVL, V5, V6)
                       </div>
-                      <div className="text-[11px] text-slate-600 dark:text-slate-300 mt-1">
+                      <div className="text-[11px] text-slate-600 sim-dark:text-slate-300 mt-1">
                         <strong>Culprit Artery:</strong> Left Circumflex Artery (LCx) or Diagonal branches.
                         <br /><strong>Reciprocal Changes:</strong> ST depression in III and aVF.
                       </div>
@@ -1921,25 +1921,25 @@ export const EcgIcuTutorialModal: React.FC<EcgIcuTutorialModalProps> = ({
                 </div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-center font-mono text-xs">
-                  <div className="p-2 rounded-lg bg-slate-100 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800">
+                  <div className="p-2 rounded-lg bg-slate-100 sim-dark:bg-slate-950/60 border border-slate-200 sim-dark:border-slate-800">
                     <div className="text-[10px] text-slate-500">Lead I (0°)</div>
                     <div className={`font-bold ${Math.cos((selectedAxisDeg * Math.PI) / 180) > 0 ? 'text-emerald-500' : 'text-rose-500'}`}>
                       {Math.cos((selectedAxisDeg * Math.PI) / 180) > 0 ? 'Positive (▲)' : 'Negative (▼)'}
                     </div>
                   </div>
-                  <div className="p-2 rounded-lg bg-slate-100 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800">
+                  <div className="p-2 rounded-lg bg-slate-100 sim-dark:bg-slate-950/60 border border-slate-200 sim-dark:border-slate-800">
                     <div className="text-[10px] text-slate-500">Lead II (+60°)</div>
                     <div className={`font-bold ${Math.cos(((selectedAxisDeg - 60) * Math.PI) / 180) > 0 ? 'text-emerald-500' : 'text-rose-500'}`}>
                       {Math.cos(((selectedAxisDeg - 60) * Math.PI) / 180) > 0 ? 'Positive (▲)' : 'Negative (▼)'}
                     </div>
                   </div>
-                  <div className="p-2 rounded-lg bg-slate-100 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800">
+                  <div className="p-2 rounded-lg bg-slate-100 sim-dark:bg-slate-950/60 border border-slate-200 sim-dark:border-slate-800">
                     <div className="text-[10px] text-slate-500">Lead aVF (+90°)</div>
                     <div className={`font-bold ${Math.cos(((selectedAxisDeg - 90) * Math.PI) / 180) > 0 ? 'text-emerald-500' : 'text-rose-500'}`}>
                       {Math.cos(((selectedAxisDeg - 90) * Math.PI) / 180) > 0 ? 'Positive (▲)' : 'Negative (▼)'}
                     </div>
                   </div>
-                  <div className="p-2 rounded-lg bg-slate-100 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800">
+                  <div className="p-2 rounded-lg bg-slate-100 sim-dark:bg-slate-950/60 border border-slate-200 sim-dark:border-slate-800">
                     <div className="text-[10px] text-slate-500">Lead aVR (-150°)</div>
                     <div className={`font-bold ${Math.cos(((selectedAxisDeg + 150) * Math.PI) / 180) > 0 ? 'text-emerald-500' : 'text-rose-500'}`}>
                       {Math.cos(((selectedAxisDeg + 150) * Math.PI) / 180) > 0 ? 'Positive (▲)' : 'Negative (▼)'}
@@ -1957,7 +1957,7 @@ export const EcgIcuTutorialModal: React.FC<EcgIcuTutorialModalProps> = ({
             isLight ? 'bg-slate-100/80 border-slate-200' : 'bg-slate-950 border-slate-800'
           }`}
         >
-          <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
+          <div className="flex items-center gap-2 text-slate-500 sim-dark:text-slate-400">
             <BookOpen className="w-4 h-4 text-rose-500" />
             <span>NMC CBME Competency PE-5.1: 12-Lead Electrocardiogram Interpretation & Clinical Correlation</span>
           </div>

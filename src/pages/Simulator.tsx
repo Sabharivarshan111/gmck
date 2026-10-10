@@ -328,6 +328,8 @@ export const Simulator: React.FC = () => {
   return (
     <div
       data-simulator-root
+      data-active-tab={mobileTab}
+      data-simulator-theme={theme}
       className={`min-h-screen flex flex-col font-sans transition-colors duration-300 ${
         isLight ? 'bg-[#f8fafc] text-slate-900' : 'bg-[#05070d] text-slate-100'
       }`}
@@ -352,6 +354,7 @@ export const Simulator: React.FC = () => {
           <div className="flex items-center gap-2 md:gap-3 min-w-0">
             <Link
               to="/"
+              aria-label="Back to Notes"
               className={`min-h-[44px] min-w-[44px] px-2 sm:px-2.5 rounded-xl border flex items-center justify-center gap-1 text-xs font-semibold transition-all ${
                 isLight
                   ? 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200 shadow-2xs'
@@ -371,10 +374,10 @@ export const Simulator: React.FC = () => {
               <div className="min-w-0">
                 <div className="flex items-center gap-1.5 flex-wrap">
                   <h1 className="text-xs md:text-sm font-black tracking-tight truncate">
-                    Orbit 3D Patient Simulator
+                    <span className="sm:hidden">Simulator</span><span className="hidden sm:inline">Orbit 3D Patient Simulator</span>
                   </h1>
                   <span
-                    className={`text-[9px] uppercase font-mono px-1.5 py-0.2 rounded-full font-bold border ${
+                    className={`hidden sm:inline text-[9px] uppercase font-mono px-1.5 py-0.2 rounded-full font-bold border ${
                       isLight
                         ? 'bg-sky-100 text-sky-700 border-sky-200'
                         : 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30'
@@ -408,11 +411,11 @@ export const Simulator: React.FC = () => {
                 <span>{Math.round(vitals.heartRate)}</span>
               </div>
               <span className={`text-[10px] ${isLight ? 'text-slate-400' : 'text-slate-600'}`}>|</span>
-              <div className="text-[11px] font-mono font-bold text-sky-600 dark:text-cyan-400">
+              <div className="text-[11px] font-mono font-bold text-sky-600 sim-dark:text-cyan-400">
                 <span>{Math.round(vitals.bpSystolic)}/{Math.round(vitals.bpDiastolic)}</span>
               </div>
               <span className={`text-[10px] hidden sm:inline ${isLight ? 'text-slate-400' : 'text-slate-600'}`}>|</span>
-              <div className="text-[11px] font-mono font-bold text-emerald-600 dark:text-emerald-400 hidden sm:flex items-center">
+              <div className="text-[11px] font-mono font-bold text-emerald-600 sim-dark:text-emerald-400 hidden sm:flex items-center">
                 <span>{Math.round(vitals.spo2)}%</span>
               </div>
             </button>
@@ -444,6 +447,7 @@ export const Simulator: React.FC = () => {
         >
           <button
             data-testid="simulator-tab-3d"
+            aria-pressed={mobileTab === '3d'}
             onClick={() => setMobileTab('3d')}
             className={`flex-1 min-h-[44px] rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all duration-200 ${
               mobileTab === '3d'
@@ -461,6 +465,7 @@ export const Simulator: React.FC = () => {
 
           <button
             data-testid="simulator-tab-monitor"
+            aria-pressed={mobileTab === 'telemetry'}
             onClick={() => setMobileTab('telemetry')}
             className={`flex-1 min-h-[44px] rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all duration-200 ${
               mobileTab === 'telemetry'
@@ -478,6 +483,7 @@ export const Simulator: React.FC = () => {
 
           <button
             data-testid="simulator-tab-case"
+            aria-pressed={mobileTab === 'interventions'}
             onClick={() => setMobileTab('interventions')}
             className={`flex-1 min-h-[44px] rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all duration-200 ${
               mobileTab === 'interventions'
@@ -526,13 +532,13 @@ export const Simulator: React.FC = () => {
             {/* Viewport Canvas */}
             <div className="h-[490px] w-full relative">
               {isolatedPartId && (
-                <div className="absolute top-3 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-amber-300 dark:border-amber-700 shadow-md">
+                <div className="absolute top-3 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/95 sim-dark:bg-slate-900/95 backdrop-blur-md border border-amber-300 sim-dark:border-amber-700 shadow-md">
                   <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
-                  <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
-                    Isolated: {isolatedPartId.replace(/_/g, ' ').toUpperCase()}
+                  <span className="text-xs font-bold text-slate-800 sim-dark:text-slate-200">
+                    {atlasCatalog?.parts.find(p => p.id === isolatedPartId)?.name || isolatedPartId.replace(/_/g, ' ')}
                   </span>
                   {contextOrganId && contextOrganId !== isolatedPartId && (
-                    <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 border-l border-slate-300 dark:border-slate-700 pl-2">
+                    <span className="text-[11px] font-semibold text-slate-500 sim-dark:text-slate-400 border-l border-slate-300 sim-dark:border-slate-700 pl-2">
                       Organ: {contextOrganId.replace(/_/g, ' ').toUpperCase()}
                     </span>
                   )}
@@ -550,7 +556,7 @@ export const Simulator: React.FC = () => {
                       const zTarget = getZAnatomyReferenceTarget(isolatedPartId);
                       setSelectedOrganId(zTarget?.organKey || isolatedPartId);
                     }}
-                    className="ml-1 text-[11px] font-bold px-2 py-0.5 rounded-md bg-sky-100 hover:bg-sky-200 text-sky-900 dark:bg-sky-950 dark:hover:bg-sky-900 dark:text-sky-200 transition-colors cursor-pointer"
+                    className="ml-1 text-[11px] font-bold px-2 py-0.5 rounded-md bg-sky-100 hover:bg-sky-200 text-sky-900 sim-dark:bg-sky-950 sim-dark:hover:bg-sky-900 sim-dark:text-sky-200 transition-colors cursor-pointer"
                     title="Open clinical anatomy dossier"
                   >
                     📖 Dossier
@@ -560,7 +566,7 @@ export const Simulator: React.FC = () => {
                       setIsolatedPartId(null);
                       setContextOrganId(null);
                     }}
-                    className="ml-1 text-[11px] font-bold px-2.5 py-0.5 rounded-md bg-amber-100 hover:bg-amber-200 text-amber-900 dark:bg-amber-950 dark:hover:bg-amber-900 dark:text-amber-200 transition-colors cursor-pointer"
+                    className="ml-1 text-[11px] font-bold px-2.5 py-0.5 rounded-md bg-amber-100 hover:bg-amber-200 text-amber-900 sim-dark:bg-amber-950 sim-dark:hover:bg-amber-900 sim-dark:text-amber-200 transition-colors cursor-pointer"
                   >
                     Show Full Body
                   </button>
@@ -608,6 +614,7 @@ export const Simulator: React.FC = () => {
           </div>
         </div>
 
+        <div data-testid="anatomy-reference-browser" className={`${mobileTab === '3d' ? 'block' : 'hidden lg:block'} order-2 lg:order-none space-y-3`}>
         {/* 1-Tap Organ Deep Inspector Strip (Desktop & Mobile 3D) */}
         <div
           data-testid="deep-inspector-strip"
@@ -617,7 +624,7 @@ export const Simulator: React.FC = () => {
             isLight ? 'bg-white/95 border-slate-200/80 shadow-xs' : 'bg-slate-900/90 border-slate-800 shadow-md'
           }`}
         >
-          <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-slate-400 pl-1 pr-2 border-r border-slate-200 dark:border-slate-800 flex-shrink-0">
+          <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-slate-400 pl-1 pr-2 border-r border-slate-200 sim-dark:border-slate-800 flex-shrink-0">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             <span>Deep Inspector:</span>
           </div>
@@ -749,7 +756,7 @@ export const Simulator: React.FC = () => {
               ? 'bg-rose-50/80 border-rose-200/80'
               : 'bg-rose-950/20 border-rose-900/50'}`}
           >
-            <span className="text-[10px] font-black uppercase tracking-wider text-rose-700 dark:text-rose-300 whitespace-nowrap px-1">
+            <span className="text-[10px] font-black uppercase tracking-wider text-rose-700 sim-dark:text-rose-300 whitespace-nowrap px-1">
               Internal heart:
             </span>
             {[
@@ -807,7 +814,7 @@ export const Simulator: React.FC = () => {
               ? 'bg-fuchsia-50/80 border-fuchsia-200/80'
               : 'bg-fuchsia-950/20 border-fuchsia-900/50'}`}
           >
-            <span className="text-[10px] font-black uppercase tracking-wider text-fuchsia-700 dark:text-fuchsia-300 whitespace-nowrap px-1">
+            <span className="text-[10px] font-black uppercase tracking-wider text-fuchsia-700 sim-dark:text-fuchsia-300 whitespace-nowrap px-1">
               HRA reference:
             </span>
             {HRA_HEART_TARGETS.map((target) => (
@@ -861,7 +868,7 @@ export const Simulator: React.FC = () => {
                 ? 'bg-violet-50/80 border-violet-200/80'
                 : 'bg-violet-950/20 border-violet-900/50'}`}
             >
-              <span className="text-[10px] font-black uppercase tracking-wider text-violet-700 dark:text-violet-300 whitespace-nowrap px-1">
+              <span className="text-[10px] font-black uppercase tracking-wider text-violet-700 sim-dark:text-violet-300 whitespace-nowrap px-1">
                 HRA reference:
               </span>
               {targets.map((target) => (
@@ -920,7 +927,7 @@ export const Simulator: React.FC = () => {
                 ? 'bg-teal-50/80 border-teal-200/80'
                 : 'bg-teal-950/20 border-teal-900/50'}`}
             >
-              <span className="text-[10px] font-black uppercase tracking-wider text-teal-700 dark:text-teal-300 whitespace-nowrap px-1">
+              <span className="text-[10px] font-black uppercase tracking-wider text-teal-700 sim-dark:text-teal-300 whitespace-nowrap px-1">
                 Z-Anatomy:
               </span>
               {targets.map((target) => (
@@ -970,7 +977,7 @@ export const Simulator: React.FC = () => {
               ? 'bg-amber-50/80 border-amber-200/80'
               : 'bg-amber-950/20 border-amber-900/50'}`}
           >
-            <span className="text-[10px] font-black uppercase tracking-wider text-amber-700 dark:text-amber-400 whitespace-nowrap px-1">
+            <span className="text-[10px] font-black uppercase tracking-wider text-amber-700 sim-dark:text-amber-400 whitespace-nowrap px-1">
               Major nerves:
             </span>
             {[
@@ -1009,10 +1016,12 @@ export const Simulator: React.FC = () => {
           </div>
         )}
 
+        </div>
+
         {mobileTab === '3d' && <RegionStructureBrowser atlas={atlasCatalog} region={cameraPreset} theme={theme} onSelect={handleSelectCatalogPart} />}
 
         {/* MOBILE VIEW: Tab-driven clean single stage (Kept permanently mounted to prevent WebGL context destruction) */}
-        <div className="lg:hidden flex flex-col space-y-3">
+        <div className="lg:hidden order-first flex flex-col space-y-3">
           <div
             data-testid="mobile-anatomy-stage"
             className="flex flex-col space-y-2 w-full"
@@ -1044,26 +1053,24 @@ export const Simulator: React.FC = () => {
               style={{
                 height:
                   explodeAmount > 0.02
-                    ? 'max(480px, min(76dvh, 690px))'
-                    : 'max(400px, min(70dvh, 620px))',
+                    ? 'max(360px, calc(100dvh - 180px))'
+                    : 'max(360px, calc(100dvh - 292px))',
               }}
             >
               {isolatedPartId && (
-                <div data-testid="mobile-isolation-banner" className="absolute top-3 left-3 right-3 z-30 flex items-center justify-between gap-2 px-3 py-2 rounded-2xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-amber-300 dark:border-amber-700 shadow-md pointer-events-auto touch-auto">
+                <div data-testid="mobile-isolation-banner" className="absolute top-[132px] left-3 right-3 z-30 flex items-center justify-between gap-2 px-3 py-2 rounded-2xl bg-white/95 sim-dark:bg-slate-900/95 backdrop-blur-md border border-amber-300 sim-dark:border-amber-700 shadow-md pointer-events-auto touch-auto">
                   <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
-                  <span className="min-w-0 flex-1 truncate text-[11px] font-bold text-slate-800 dark:text-slate-200">
-                    Isolated: {isolatedPartId.replace(/_/g, ' ').toUpperCase()}
+                  <span className="min-w-0 flex-1 truncate text-[11px] font-bold text-slate-800 sim-dark:text-slate-200">
+                    {atlasCatalog?.parts.find(p => p.id === isolatedPartId)?.name || isolatedPartId.replace(/_/g, ' ')}
                   </span>
                   <div className="flex items-center gap-1.5 shrink-0">
                     <button
                       onClick={() =>
                         setSelectedOrganId(
-                          contextOrganId ||
-                            getVerifiedReferenceOrganKey(isolatedPartId) ||
-                            isolatedPartId
+                          isolatedPartId
                         )
                       }
-                      className="min-h-[36px] text-[10px] font-bold px-2.5 rounded-xl bg-sky-100 text-sky-900 dark:bg-sky-950 dark:text-sky-200 cursor-pointer"
+                      className="min-h-[44px] text-xs font-bold px-2.5 rounded-xl bg-sky-100 text-sky-900 sim-dark:bg-sky-950 sim-dark:text-sky-200 cursor-pointer"
                       title="Open clinical anatomy dossier"
                     >
                       Dossier
@@ -1074,7 +1081,7 @@ export const Simulator: React.FC = () => {
                         setContextOrganId(null);
                         setSelectedOrganId(null);
                       }}
-                      className="min-h-[36px] text-[10px] font-bold px-2.5 rounded-xl bg-amber-100 text-amber-900 dark:bg-amber-950 dark:text-amber-200 cursor-pointer"
+                      className="min-h-[44px] text-xs font-bold px-2.5 rounded-xl bg-amber-100 text-amber-900 sim-dark:bg-amber-950 sim-dark:text-amber-200 cursor-pointer"
                     >
                       Restore
                     </button>
@@ -1106,7 +1113,7 @@ export const Simulator: React.FC = () => {
                 data-testid="mobile-gesture-hint"
                 aria-hidden={explodeAmount > 0.02}
                 style={{ display: explodeAmount > 0.02 ? 'none' : undefined }}
-                className="absolute bottom-[92px] left-1/2 -translate-x-1/2 z-20 md:hidden pointer-events-none max-w-[calc(100%-24px)] px-3 py-1.5 rounded-full bg-slate-950/75 text-white/95 backdrop-blur-md text-[9px] font-semibold tracking-wide whitespace-nowrap shadow-lg"
+                className="absolute bottom-[112px] left-1/2 -translate-x-1/2 z-20 md:hidden pointer-events-none max-w-[calc(100%-24px)] px-3 py-1.5 rounded-full bg-slate-950/75 text-white/95 backdrop-blur-md text-[9px] font-semibold tracking-wide whitespace-nowrap shadow-lg"
               >
                 1-finger drag: rotate · pinch: zoom · 2 fingers: pan
               </div>

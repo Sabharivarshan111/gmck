@@ -86,7 +86,7 @@ export const DissectionToolbar: React.FC<DissectionToolbarProps> = ({
         }`}
       >
         {/* Left: Mode Switcher Pills */}
-        <div className="col-span-2 w-full sm:w-auto grid grid-cols-4 sm:flex items-center gap-1 p-1 bg-slate-100/90 dark:bg-slate-800/90 rounded-xl border border-slate-200/60 dark:border-slate-700/60 overflow-hidden sm:overflow-x-auto no-scrollbar">
+        <div className="col-span-2 w-full sm:w-auto grid grid-cols-4 sm:flex items-center gap-1 p-1 bg-slate-100/90 sim-dark:bg-slate-800/90 rounded-xl border border-slate-200/60 sim-dark:border-slate-700/60 overflow-hidden sm:overflow-x-auto no-scrollbar">
           {toolLabels.map((t) => {
             const active = toolMode === t.id;
             return (
@@ -101,7 +101,7 @@ export const DissectionToolbar: React.FC<DissectionToolbarProps> = ({
                     ? isLight
                       ? 'bg-white text-slate-900 shadow-xs font-bold'
                       : 'bg-slate-700 text-white font-bold shadow-xs'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    : 'text-slate-600 sim-dark:text-slate-400 hover:text-slate-900 sim-dark:hover:text-white'
                 }`}
               >
                 {t.icon}
@@ -113,12 +113,13 @@ export const DissectionToolbar: React.FC<DissectionToolbarProps> = ({
           {/* X-Ray Ghost Mode Toggle */}
           <button
             data-testid="dissection-xray"
+            aria-pressed={isXray}
             onClick={onToggleXray}
             title="Toggle translucent X-Ray ghosting"
             className={`min-h-[44px] min-w-0 flex items-center justify-center gap-1 px-1.5 sm:px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-semibold transition-all cursor-pointer ${
               isXray
                 ? 'bg-cyan-500 text-slate-950 font-bold shadow-xs'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                : 'text-slate-600 sim-dark:text-slate-400 hover:text-slate-900 sim-dark:hover:text-white'
             }`}
           >
             <Eye className="w-3.5 h-3.5" />
@@ -131,8 +132,8 @@ export const DissectionToolbar: React.FC<DissectionToolbarProps> = ({
           <Layers className="w-4 h-4 text-sky-500 shrink-0" />
           <div className="flex-1 flex flex-col gap-0.5">
             <div className="flex items-center justify-between gap-2 text-[10px] sm:text-[11px] font-mono">
-              <span className="text-slate-500 dark:text-slate-400 font-medium">Depth Peel:</span>
-              <span className="text-sky-600 dark:text-sky-400 font-bold">{getPeelLabel(layerPeel)}</span>
+              <span className="text-slate-500 sim-dark:text-slate-400 font-medium">Depth Peel:</span>
+              <span className="text-sky-600 sim-dark:text-sky-400 font-bold">{getPeelLabel(layerPeel)}</span>
             </div>
             <input
               data-testid="dissection-depth"
@@ -143,7 +144,7 @@ export const DissectionToolbar: React.FC<DissectionToolbarProps> = ({
               step="0.01"
               value={layerPeel}
               onChange={(e) => onChangeLayerPeel(parseFloat(e.target.value))}
-              className="w-full accent-sky-500 h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg cursor-pointer"
+              className="w-full accent-sky-500 h-1.5 bg-slate-200 sim-dark:bg-slate-700 rounded-lg cursor-pointer"
             />
           </div>
         </div>
@@ -153,6 +154,7 @@ export const DissectionToolbar: React.FC<DissectionToolbarProps> = ({
           {/* Dissected Count / Open Tray Button */}
           <button
             data-testid="dissection-tray"
+            aria-expanded={trayOpen}
             onClick={() => setTrayOpen(!trayOpen)}
             className={`min-h-[44px] shrink-0 flex items-center gap-1 px-2 sm:px-3 rounded-xl border text-[10px] sm:text-xs font-semibold transition-all cursor-pointer ${
               dissectedParts.length > 0
@@ -214,7 +216,7 @@ export const DissectionToolbar: React.FC<DissectionToolbarProps> = ({
               : 'bg-slate-900/95 border-slate-800 text-slate-200 shadow-slate-950/60'
           }`}
         >
-          <div className="flex items-center justify-between pb-2 border-b border-slate-200/80 dark:border-slate-800">
+          <div className="flex items-center justify-between pb-2 border-b border-slate-200/80 sim-dark:border-slate-800">
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
               <h4 className="text-xs font-bold tracking-wide uppercase font-mono">
@@ -225,14 +227,15 @@ export const DissectionToolbar: React.FC<DissectionToolbarProps> = ({
               {dissectedParts.length > 0 && (
                 <button
                   onClick={onRestoreAll}
-                  className="text-xs text-sky-600 dark:text-sky-400 hover:underline font-semibold cursor-pointer"
+                  className="text-xs text-sky-600 sim-dark:text-sky-400 hover:underline font-semibold cursor-pointer"
                 >
                   Restore All Structures
                 </button>
               )}
               <button
+                aria-label="Close dissected structures tray"
                 onClick={() => setTrayOpen(false)}
-                className="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
+                className="p-1 rounded-lg text-slate-400 hover:text-slate-600 sim-dark:hover:text-slate-200 cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -240,7 +243,7 @@ export const DissectionToolbar: React.FC<DissectionToolbarProps> = ({
           </div>
 
           {dissectedParts.length === 0 ? (
-            <div className="py-6 text-center text-xs text-slate-500 dark:text-slate-400 font-mono">
+            <div className="py-6 text-center text-xs text-slate-500 sim-dark:text-slate-400 font-mono">
               💡 No structures dissected yet. Toggle the <span className="font-bold text-rose-500">Scalpel</span> tool
               above and tap any muscle, organ, or vessel in the 3D body to cut and remove it.
             </div>
@@ -262,13 +265,13 @@ export const DissectionToolbar: React.FC<DissectionToolbarProps> = ({
                         className="w-2 h-2 rounded-full shrink-0"
                         style={{ background: sys?.color || '#a85b50' }}
                       />
-                      <span className="font-semibold text-slate-800 dark:text-slate-200 truncate">{p.name}</span>
+                      <span className="font-semibold text-slate-800 sim-dark:text-slate-200 truncate">{p.name}</span>
                       <span className="text-[10px] text-slate-400 font-mono">({sys?.name || p.system})</span>
                     </div>
                     <button
                       onClick={() => onRestorePart(p.id)}
                       title="Unhide this structure"
-                      className="flex items-center gap-1 text-[11px] text-sky-600 dark:text-sky-400 hover:text-sky-700 font-bold px-2 py-0.5 rounded-lg bg-sky-50 dark:bg-sky-950/60 border border-sky-200 dark:border-sky-800 cursor-pointer"
+                      className="flex items-center gap-1 text-[11px] text-sky-600 sim-dark:text-sky-400 hover:text-sky-700 font-bold px-2 py-0.5 rounded-lg bg-sky-50 sim-dark:bg-sky-950/60 border border-sky-200 sim-dark:border-sky-800 cursor-pointer"
                     >
                       <Eye className="w-3 h-3" />
                       <span>Unhide</span>

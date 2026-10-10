@@ -80,7 +80,7 @@ export const WiggersPvLoopCanvas: React.FC<WiggersPvLoopCanvasProps> = ({
       }
       ctx.fillStyle = isLight ? '#64748b' : '#475569';
       ctx.font = '9px sans-serif';
-      ctx.fillText(phaseNames[i], xStart + 2, padT + plotH + 14);
+      ctx.fillText(width < 480 ? String(i + 1) : phaseNames[i], xStart + 2, padT + plotH + 14);
     }
 
     // Precalculate full-cycle curves (120 sample points)
@@ -321,14 +321,14 @@ export const WiggersPvLoopCanvas: React.FC<WiggersPvLoopCanvasProps> = ({
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 w-full">
       {/* Real-time Continuous Wiggers Canvas */}
       <div className="lg:col-span-8 flex flex-col rounded-2xl bg-slate-950 border border-slate-800 p-3 overflow-hidden shadow-xl">
-        <div className="flex items-center justify-between px-2 mb-1.5">
+        <div className="flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center justify-between gap-2 px-2 mb-2">
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping" />
             <h4 className="text-xs font-bold text-slate-100 uppercase tracking-wider font-mono">
-              Live Synchronized Wiggers Hemodynamic Canvas
+              Wiggers pressure & volume
             </h4>
           </div>
-          <div className="flex items-center gap-3 text-[10px] font-mono">
+          <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2 text-xs font-mono">
             <span className="text-rose-400 font-bold">■ LV Pressure</span>
             <span className="text-amber-400 font-bold">■ Aortic Pressure</span>
             <span className="text-cyan-400 font-bold">-- LA Pressure</span>
@@ -336,6 +336,9 @@ export const WiggersPvLoopCanvas: React.FC<WiggersPvLoopCanvasProps> = ({
           </div>
         </div>
         <canvas ref={wiggersCanvasRef} className="w-full h-56 rounded-xl block" />
+        <div aria-label="Cardiac cycle phase key" className="mt-2 grid grid-cols-2 gap-1 text-xs text-slate-300">
+          {['Atrial', 'Iso-C', 'Rapid-Ej', 'Red-Ej', 'Iso-R', 'Rapid-Fill', 'Diastasis'].map((phase, i) => <span key={phase}>{i + 1}. {phase}</span>)}
+        </div>
       </div>
 
       {/* Real-time Dynamic Pressure-Volume (PV) Loop Canvas */}

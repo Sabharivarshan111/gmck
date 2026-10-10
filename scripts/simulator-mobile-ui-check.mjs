@@ -86,12 +86,12 @@ requireText(
 );
 requireText(
   simulator,
-  "'max(400px, min(70dvh, 620px))'",
+  "'max(360px, calc(100dvh - 292px))'",
   '3D anatomy stage lost its assembled-mode adaptive mobile height.'
 );
 requireText(
   simulator,
-  "'max(480px, min(76dvh, 690px))'",
+  "'max(360px, calc(100dvh - 180px))'",
   'Spread anatomy no longer reclaims vertical space for the mobile 3D stage.'
 );
 requireText(
@@ -145,7 +145,7 @@ requireText(
 );
 requireText(
   drawer,
-  "isMobileExpanded ? 'h-[88dvh]' : 'h-[38dvh]'",
+  "isMobileExpanded ? 'h-[88dvh]' : 'h-[min(62dvh,540px)]'",
   'Organ detail drawer lost its dvh-based mobile bottom-sheet sizing.'
 );
 

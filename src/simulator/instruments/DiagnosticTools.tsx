@@ -163,11 +163,14 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
         <div className="sticky top-0 z-20 flex items-center justify-between px-3 sm:px-5 py-2.5 sm:py-3.5 bg-slate-950/95 backdrop-blur-xl border-b border-slate-800 flex-shrink-0">
           <div className="flex items-center gap-2 min-w-0">
             <span className="w-3 h-3 rounded-full bg-cyan-500 animate-pulse" />
-            <h3 className="min-w-0 truncate font-bold text-xs sm:text-sm text-cyan-400 tracking-wide uppercase">
+            <h3 className="min-w-0 font-bold text-sm text-cyan-400">
+              <span className="sm:hidden">{tool === 'pupil' ? 'Pupil examination' : tool === 'ultrasound' ? 'Ultrasound / POCUS' : tool === 'stethoscope' ? 'Auscultation' : '12-lead ECG'}</span>
+              <span className="hidden sm:inline">
               {tool === 'pupil' && '👁️ Bedside Pupillometer & Direct/Consensual Reflex Simulator'}
               {tool === 'ultrasound' && '📡 Virtual Point-of-Care Ultrasound (POCUS)'}
               {tool === 'stethoscope' && '🩺 Digital Auscultation Stethoscope & Sound Synthesizer'}
               {tool === 'ecg12' && '📈 Universal 12-Lead Electrocardiogram (ECG)'}
+              </span>
             </h3>
           </div>
           <button
@@ -194,8 +197,10 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
               {/* Penlight Control Selector */}
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pb-2 border-b border-slate-800">
                 <span className="text-xs text-slate-400 font-semibold">Penlight Light Stimulus:</span>
-                <div className="-mx-1 px-1 flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+                <div className="grid grid-cols-2 sm:flex gap-2">
                   <button
+                    aria-label="🔦 Left Eye (Direct L, Consensual R)"
+                    aria-pressed={flashlightOn === 'left'}
                     onClick={() => setFlashlightOn(flashlightOn === 'left' ? 'none' : 'left')}
                     className={`min-h-[44px] shrink-0 whitespace-nowrap px-3 py-1.5 rounded-xl text-[11px] sm:text-xs font-bold border transition-all cursor-pointer ${
                       flashlightOn === 'left'
@@ -203,9 +208,11 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
                         : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700'
                     }`}
                   >
-                    🔦 Left Eye (Direct L, Consensual R)
+                    🔦 Left eye
                   </button>
                   <button
+                    aria-label="🔦 Right Eye (Direct R, Consensual L)"
+                    aria-pressed={flashlightOn === 'right'}
                     onClick={() => setFlashlightOn(flashlightOn === 'right' ? 'none' : 'right')}
                     className={`min-h-[44px] shrink-0 whitespace-nowrap px-3 py-1.5 rounded-xl text-[11px] sm:text-xs font-bold border transition-all cursor-pointer ${
                       flashlightOn === 'right'
@@ -213,9 +220,11 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
                         : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700'
                     }`}
                   >
-                    🔦 Right Eye (Direct R, Consensual L)
+                    🔦 Right eye
                   </button>
                   <button
+                    aria-label="🔦 Both Eyes"
+                    aria-pressed={flashlightOn === 'both'}
                     onClick={() => setFlashlightOn(flashlightOn === 'both' ? 'none' : 'both')}
                     className={`min-h-[44px] shrink-0 whitespace-nowrap px-3 py-1.5 rounded-xl text-[11px] sm:text-xs font-bold border transition-all cursor-pointer ${
                       flashlightOn === 'both'
@@ -226,6 +235,7 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
                     🔦 Both Eyes
                   </button>
                   <button
+                    aria-pressed={flashlightOn === 'none'}
                     onClick={() => setFlashlightOn('none')}
                     className="min-h-[44px] min-w-[44px] shrink-0 whitespace-nowrap px-2.5 py-1.5 rounded-xl text-[11px] sm:text-xs font-semibold bg-slate-800/80 hover:bg-slate-700 text-slate-400 border border-slate-700 cursor-pointer"
                   >
@@ -538,6 +548,7 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
                       : pathology.heartSoundType === 'murmur_systolic'
                       ? 'Loud, snapping S1 followed by an Opening Snap (OS) and a rough, rumbling mid-diastolic murmur with presystolic accentuation (Mitral Stenosis).'
                       : 'Normal S1 and S2 closure sounds. S1 is louder than S2 at the apex.')}
+                  {(stethSite === 'tricuspid' || stethSite === 'pulmonic') && 'A separate site-specific finding is not modeled for this position in the current scenario. Select a modeled site or an educational sound preset.'}
                   {stethSite === 'aortic' &&
                     (vitals.cvp > 10
                       ? 'Distant, muffled heart sounds with reduced high-frequency valve closure components due to acoustic attenuation by surrounding pericardial fluid (Beck\'s Triad).'
