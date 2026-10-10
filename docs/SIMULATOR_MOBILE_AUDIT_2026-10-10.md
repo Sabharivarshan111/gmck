@@ -33,3 +33,9 @@ Hosted clicks verified region transitions, system counts, diagnostic pupil stimu
 - Added Front/Back/Side camera actions that preserve structure focus and zoom; phone region buttons have 44px targets.
 - Removed duplicate All department, prevented an empty diagnostic modal behind the ward examination, made manual murmur overrides explicit and assigned selected cardiac presets to a cardiac auscultation site. Synthesized audio is labelled educational.
 - Competitor images supplied by the user informed hierarchical browsing, compact structure labels, spread/reassemble and view direction. Additional interaction references: https://github.com/ashemag/human-atlas and https://www.biodigital.com/.
+
+## Hosted case/action audit
+
+Clicked all 42 case options; each produced its matching case heading. Clicked all 27 intervention buttons, with visible event feedback. Tested the five dossier tabs, exact optic-nerve dissection and undo, anatomy search/no-result state, region transitions and four ward examination sections.
+
+The intervention audit found off-case specialized actions incorrectly reporting case-specific resolution. Added a model-coverage guard for 15 specialized effects, preserving existing lethal-trigger logic. Regression checks cover 630 case/action pairs; 607 unsupported combinations leave vitals and pathology unchanged after a physiology tick. Correct snakebite antivenom, VF shock and RV-infarction nitrate critical-error paths remain active. This checks simulation consistency; it does not certify therapeutic guidelines or all clinical prose.
