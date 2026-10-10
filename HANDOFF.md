@@ -2498,3 +2498,14 @@ Added MedNotes-inspired surface listening points, attributed HRA/Z-Anatomy chest
 - HALF-DONE: Final production deployment is building. Follow-up fixes Freeze losing the plotted history while retaining timing labels: history now persists across freeze/unfreeze and resets for stop or a different trace. TypeScript passed; final deployed follow-up trace screenshot check pending. GPU live render and physical headphone/clinical sound fidelity remain unverified.
 - NEXT: Verify final deployment and Freeze waveform; save mobile screenshots. Physical-device GPU/audio review is the remaining evidence gap.
 - DO NOT: Restore drawn anatomical substitutes, substitute unrelated missing nerves, claim all structures or acoustics clinically certified, alter Android releases/PG/billing/security.
+
+
+## Final deployed browser verification — 2026-10-10 18:28 UTC
+
+DONE: PR #52 and #53 merged; production main 91c3c7194bf7a3ecb7185558d384460cfa0da435 READY (dpl_5DM3oiP4Zn6gcKLgzcxF75amZQv6). Refreshed orbitmbbs.vercel.app responsive harness, verified full 2.5-second S3 waveform survives Freeze, remains stable, Animate resumes and Stop resets. All 42 case selections matched rendered headings. Mitral/apex button and selector work; dark-mode mobile screenshot inspected. Two screenshots saved: orbit-mitral-dark-20261010.jpg and orbit-frozen-s3-trace-20261010.jpg.
+
+HALF-DONE: Cloud browser lacks WebGL; verified labelled source-geometry static references, not live device GPU. Synthesized teaching audio routing/timing tested, but clinical acoustic fidelity and physical headphone output are not certified.
+
+NEXT: Physical mobile WebGL rendering and clinical listening review; evaluate the new cranial-nerve trainer references separately before adding a new feature scope.
+
+DO NOT: Claim perfect clinical accuracy, live GPU verification from static screenshots, or exhaustive intervention correctness from case-selection tests. Do not replace registered anatomy with drawings or copy competitor assets.
