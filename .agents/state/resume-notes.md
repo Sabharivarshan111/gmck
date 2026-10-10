@@ -1949,3 +1949,14 @@ Verified: build:vercel, mobile typecheck:web, simulator organ/asset/mobile/dossi
 **NEXT:** Deploy isolated simulator web branch, verify UI clicks and exact deployment; preserve source changes/research/audit evidence.
 
 **DO NOT:** Claim perfect anatomy/physical-device validation; replace source gaps with unrelated nerves; replay historical denied signed Android release; alter package/version/signing/ad/payment identities or stale backend sources.
+
+
+## 2026-10-10 — Patient simulator responsive polish
+
+**DONE:** Phone viewport-first layout, compact system browser/header, larger readable sheets, independent simulator theme, 44px portrait/landscape controls, exact isolated-part Dossier navigation, diagnostic and tutorial layout fixes. All 147 named nerve UI selections matched exact titles; 42 scenarios and 27 intervention feedback routes exercised. TypeScript, mobile source checks, actual GLTFLoader target checks, all-anatomy coverage and combined production build passed. Audit: `docs/simulator-mobile-audit-2026-10-10.md`; PR #43. Preserve concurrent main PG offline changes; combined SW cache v14.
+
+**HALF-DONE:** Vestibular mesh remains unregistered (source y≈0.08m); renderer withholds it and explains the gap. Cloud browser WebGL unavailable; UI screenshots cannot establish physical GPU/touch/audio behavior. 36 clinical dossiers do not cover individual clinical innervation for every catalog part.
+
+**NEXT:** Verify merged production deployment and capture its final phone screenshot. Device/GPU and expert clinical review remain separate validation tasks.
+
+**DO NOT:** Substitute another nerve for a missing target, invent vestibular placement, or call all individual muscles/nerves medically verified from catalog/loader checks.
