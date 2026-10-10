@@ -61,7 +61,7 @@ button[title="Center and zoom 3D Viewport"] {
 
 /* A compact selection strip keeps the isolated structure in view. */
 @media (max-width: 1023px) {
-  .mobile-selection-card { position: absolute; bottom: 92px; left: 12px; right: 12px; z-index: 30; display: flex; gap: 4px; padding: 4px; border: 1px solid #cbd5e1; border-radius: 16px; background: #fff; color: #0f172a; }
+  .mobile-selection-card { position: absolute; bottom: 104px; left: 12px; right: 12px; z-index: 30; display: flex; gap: 4px; padding: 4px; border: 1px solid #cbd5e1; border-radius: 16px; background: #fff; color: #0f172a; }
   .mobile-selection-details { position: relative; flex: 1; min-width: 0; text-align: left; padding: 6px 38px 6px 10px; border-radius: 12px; }
   .mobile-selection-name { display: block; font-size: 13px; line-height: 1.35; font-weight: 650; overflow-wrap: anywhere; }
   .mobile-selection-hint { display: block; font-size: 11px; line-height: 1.4; color: #64748b; }
