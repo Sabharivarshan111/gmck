@@ -1971,3 +1971,14 @@ Verified: build:vercel, mobile typecheck:web, simulator organ/asset/mobile/dossi
 **NEXT:** Verify final deployed region picker, range height, supply action and capture mobile screenshot; publish production preserving concurrent main PG changes.
 
 **DO NOT:** Claim perfect anatomy, all clinical innervations reviewed, or actual phone GPU blur fixed solely from DPR code/UI tests.
+
+
+## 2026-10-10 — One-hand camera reset follow-up
+
+**DONE:** PR #46 merged as 3627df2 preserving concurrent PG changes; merged TypeScript/mobile/render quality checks and combined build passed. Explicit Reset command now resets the camera even when already in Full body and clears stale spread-camera bookkeeping. A regression executes the actual production effect with a real Three camera/vectors, checking zoom bounds, all pan directions and same-region/spread reset. Dark panel contrast checked.
+
+**HALF-DONE:** Production build of #46 running; this Reset follow-up publication and final production region/range/supply screenshot check pending. Physical GPU sharpness remains unverified because cloud WebGL cannot initialize.
+
+**NEXT:** Verify final production deployment and capture screenshot; core simulator UI audit and research report are in docs/simulator-one-hand-audit-2026-10-10.md.
+
+**DO NOT:** Claim headless camera arithmetic tests demonstrate rendered sharpness/FPS or complete clinical innervation validation.

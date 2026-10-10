@@ -78,7 +78,7 @@ export const Simulator: React.FC = () => {
   const [mobileTab, setMobileTab] = useState<'3d' | 'telemetry' | 'interventions'>('3d');
   const [mobilePanel, setMobilePanel] = useState<'browse' | 'tools' | null>(null);
   const [renderQuality, setRenderQuality] = useState<'smooth' | 'crisp'>('crisp');
-  const [cameraAction, setCameraAction] = useState<{kind: 'in' | 'out' | 'left' | 'right' | 'up' | 'down'; id: number}>({kind: 'in', id: 0});
+  const [cameraAction, setCameraAction] = useState<{kind: 'in' | 'out' | 'left' | 'right' | 'up' | 'down' | 'reset'; id: number}>({kind: 'in', id: 0});
 
   // Selected Organ for Deep Anatomical Sheet
   const [selectedOrganId, setSelectedOrganId] = useState<string | null>(searchParams.get('organ') || null);
@@ -1186,7 +1186,7 @@ export const Simulator: React.FC = () => {
         <button aria-expanded={mobilePanel === 'tools'} onClick={() => setMobilePanel(mobilePanel === 'tools' ? null : 'tools')}>Layers</button>
         <button aria-label="Zoom anatomy in" onClick={() => setCameraAction(a => ({kind:'in',id:a.id+1}))}>Zoom +</button>
         <button aria-label="Zoom anatomy out" onClick={() => setCameraAction(a => ({kind:'out',id:a.id+1}))}>Zoom −</button>
-        <button onClick={() => { handleRestoreAll(); handleChangeRegion('anterior'); setMobilePanel(null); }}>Reset</button>
+        <button onClick={() => { handleRestoreAll(); handleChangeRegion('anterior'); setMobilePanel(null); setCameraAction(a => ({kind:'reset',id:a.id+1})); }}>Reset</button>
       </nav>}
       <OrganDetailDrawer
         organId={selectedOrganId}
