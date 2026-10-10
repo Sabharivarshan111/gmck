@@ -21,9 +21,9 @@ fs.mkdirSync(out, { recursive:true });
   // setup (no Google sign-in, no external user identity).
   if(await page.getByText('Set up your studies',{exact:true}).count()) {
     await page.getByPlaceholder('e.g. Phantom').fill('Orbit Screenshot');
-    await page.getByText('3rd Year',{exact:true}).click();
-    await page.getByText('Tamil Nadu · TNMGR',{exact:true}).click();
-    await page.getByText('Start studying',{exact:true}).click();
+    await page.getByRole('radio',{name:'3rd Year'}).click();
+    await page.getByRole('radio',{name:/Tamil Nadu/}).click();
+    await page.getByRole('button',{name:'Start studying'}).click();
     await page.waitForTimeout(2200);
   }
   const skipTour=page.getByText('Skip',{exact:true}).first();
