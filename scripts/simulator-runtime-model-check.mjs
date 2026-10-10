@@ -51,6 +51,7 @@ const atlas = JSON.parse(fs.readFileSync('public/models/atlas.json', 'utf8'));
 for (const r of ['head', 'thorax', 'abdomen']) {
   const parts = atlas.parts.filter(p => partBelongsToRegion(p, r));
   assert(parts.length > 30, `Empty region: ${r}`);
+  if (r !== 'head') assert(!parts.some(p => /of (?:left|right) hand|carpi|sartorius|rectus femoris/i.test(p.name)), 'Limb anatomy leaked into torso region');
   if (r === 'head') assert(!parts.some(p => /hepatovenous|deltoid|cardiac ventricle/i.test(p.name)), 'Unrelated anatomy leaked into Head');
   console.log(`${r}: ${parts.length} source structures`);
 }
