@@ -1,0 +1,50 @@
+name: Seed labelled MedMCQA questions for offline app
+on:
+  push:
+    paths:
+      - 'scripts/import-pg-medmcqa-offline.py'
+      - 'scripts/build-pg-offline-packs.py'
+      - '.github/workflows/pg-seed-dataset-offline.yml'
+jobs:
+  seed-validation-questions:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    permissions:
+      contents: write
+    if: github.ref != 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dataset tooling
+        run: pip install pyarrow huggingface_hub brotli
+      - name: Export labelled (NOT medically verified) historical benchmark split
+        run: |
+          python scripts/import-pg-medmcqa-offline.py --split validation --output /tmp/medmcqa-validation.jsonl
+          python scripts/build-pg-offline-packs.py --input /tmp/medmcqa-validation.jsonl --out mobile/src/lib/pgPacks --max-compressed-mb 25 --rows-per-pack 800
+      - name: Confirm generated data integrity
+        run: |
+          node scripts/check-pg-content-integrity.mjs
+          python scripts/test-pg-offline-packs.py
+          python - <<'PY'
+          import json, pathlib
+          r = json.loads(pathlib.Path("mobile/src/lib/pgPacks/packing-report.json").read_text())
+          assert r["total_questions"] == 4183, r
+          assert r["fits_native_budget"], r
+          print("Seed: 4,183 labelled source questions generated within 25 MB pack budget")
+          PY
+      - name: Commit real offline questions into this feature branch
+        run: |
+          git config user.name "ORBIT offline dataset import"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add mobile/src/lib/pgPacks
+          if git diff --cached --quiet; then
+            echo "Offline question packs already committed"
+          else
+            git commit -m "data(pg): bundle MedMCQA validation MCQs offline with source-labelled answers"
+            git push origin HEAD:${{ github.ref_name }}
+          fi
