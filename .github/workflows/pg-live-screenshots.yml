@@ -1,0 +1,41 @@
+name: Real ORBIT PG mobile screenshots
+on:
+  push:
+    branches:
+      - 'screenshots/orbit-pg-live-20261010'
+    paths:
+      - 'scripts/capture-pg-live.cjs'
+      - '.github/workflows/pg-live-screenshots.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  screenshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install mobile browser test dependencies
+        run: |
+          mkdir -p /tmp/orbit-capture
+          npm install --prefix /tmp/orbit-capture --no-audit --no-fund playwright@1.56.1
+          /tmp/orbit-capture/node_modules/.bin/playwright install --with-deps chromium
+      - name: Capture mobile screenshots from the live ORBIT site
+        run: node scripts/capture-pg-live.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: orbit-pg-live-mobile-screenshots
+          path: artifacts/screenshots/pg-live-20261010/
+          if-no-files-found: warn
+      - name: Commit screenshots for review
+        if: success()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add artifacts/screenshots/pg-live-20261010/
+          git commit -m "test(pg): capture real live mobile screenshots"
+          git push origin HEAD:screenshots/orbit-pg-live-20261010
