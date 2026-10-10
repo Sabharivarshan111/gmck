@@ -38,6 +38,8 @@ import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+await import('./simulator-render-quality-check.mjs');
+
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const resolverPath = path.join(root, 'src/simulator/data/atlasResolver.ts');
 const { describeAtlasTarget, resolveAtlasElementIds, resolvePartToOrganKey, correctPartSystem, hasTerm } = await import(resolverPath);
@@ -52,6 +54,7 @@ const failures = [];
 const fail = (msg) => failures.push(msg);
 for (const [id, expected] of [['FJ1252','digestive'], ['FJ1253','digestive'], ['FJ1532','muscular'], ['FJ1532M','muscular']]) {
   if (byId.get(id)?.system !== expected) fail(`${id} must be classified as ${expected}, not skeletal`);
+  if (resolvePartToOrganKey(byId.get(id)) !== id) fail(`${id} must retain exact metadata rather than open an unrelated organ dossier`);
 }
 
 
@@ -474,7 +477,7 @@ if (intensities.length < 4) {
 for (const [pattern, why] of [
   [/antialias:\s*!isMobileDevice/, 'antialias must be OFF on mobile — a multisampled backbuffer undoes the DPR clamp that exists to avoid exactly that allocation'],
   [/powerPreference:\s*isMobileDevice \? 'default'/, "powerPreference must be 'default' on mobile — 'high-performance' is heat, then throttling, then a slower frame rate than the default profile"],
-  [/setPixelRatio\([^)]*isMobileDevice \? 1\.0/, 'mobile devicePixelRatio must be clamped to 1.0 (GPU tile exhaustion)'],
+  [/setPixelRatio\(anatomyPixelRatio\(/, 'renderer must apply the bounded quality/memory/pixel-budget policy'],
   [/const concurrencyLimit = isMobileDevice \? 2 :/, 'mobile chunk streaming must be capped at 2 concurrent fetches (WebKit Jetsam OOM)'],
   [/chunkBuffers\.length = 0/, 'the decoded chunk buffers (59.5 MB) must be released once the geometry is merged'],
 ]) {

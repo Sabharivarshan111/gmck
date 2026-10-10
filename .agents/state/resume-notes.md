@@ -1993,3 +1993,12 @@ Verified: build:vercel, mobile typecheck:web, simulator organ/asset/mobile/dossi
 **NEXT:** Verify final production head systems/compact sheet and save its screenshot.
 
 **DO NOT:** Substitute structures, invent missing models/innervation, or equate browser UI/headless arithmetic checks with physical GPU or clinical certification.
+
+
+## 2026-10-10 — Source-detail fallback and quality guard
+
+**DONE:** Legacy DPR=1 source assertion replaced with actual bounded render-quality tests. Actual source classification/dossier tests, camera regression, GLTFLoader targets, TypeScript and combined build passed. Gingiva retains exact source metadata; muscles without individual dossiers no longer open skeletal notes just because an attachment name contains a bone. Mobile compact cards retain full accessible names. SW v17.
+
+**HALF-DONE:** Final source fallback release and browser screenshot pending at this checkpoint. Physical-phone GPU/blur/FPS remains unverified.
+
+**NEXT:** Verify corrected head filters and exact source dossiers on final production; capture compact mobile sheet. Preserve concurrent PG changes.
