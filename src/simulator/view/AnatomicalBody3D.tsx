@@ -47,7 +47,7 @@ import { Scissors, Hand, Focus, Eye, Sparkles, Maximize2, Compass, AlertCircle, 
 
 interface AnatomicalBody3DProps {
   renderQuality?: 'smooth' | 'crisp';
-  cameraAction?: {kind: 'in' | 'out' | 'left' | 'right' | 'up' | 'down'; id: number};
+  cameraAction?: {kind: 'in' | 'out' | 'left' | 'right' | 'up' | 'down' | 'reset'; id: number};
   vitals: PatientVitals;
   pathology: PatientPathologyState;
   scenarioId: string;
@@ -1376,6 +1376,19 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
     const camera = cameraRef.current;
     const controls = controlsRef.current;
     if (!camera || !controls) return;
+    if (cameraAction.kind === 'reset') {
+      explodeCameraBaseRef.current = null;
+      lastExplodeAmountRef.current = 0;
+      const mobile = (mountRef.current?.clientWidth || window.innerWidth) < 768 || /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+      camera.position.set(0, 0.85, mobile ? 3.4 : 2.8);
+      controls.target.set(0, 0.85, 0);
+      controls.minDistance = 0.3;
+      controls.maxDistance = 10;
+      controls.enableRotate = true;
+      controls.touches.ONE = THREE.TOUCH.ROTATE;
+      controls.update();
+      return;
+    }
     const offset = camera.position.clone().sub(controls.target);
     if (cameraAction.kind === 'in' || cameraAction.kind === 'out') {
       const distance = THREE.MathUtils.clamp(offset.length() * (cameraAction.kind === 'in' ? 0.8 : 1.25), controls.minDistance, controls.maxDistance);

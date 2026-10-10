@@ -1,6 +1,6 @@
 # Patient simulator: one-hand mobile follow-up — 2026-10-10
 
-The mobile follow-up uses a fixed bottom navigation and a separate thumb toolbar (Browse, Layers, zoom in/out, Reset). Browse exposes source structures and system/search filters; its new region selector keeps regional discovery in the bottom panel. Layers contains quality, single-tap pan directions, inspection/dissection/X-ray and depth controls. Range controls have a 44px touch height. The scene stays mounted across mobile tabs.
+The mobile follow-up uses a fixed bottom navigation and a separate thumb toolbar (Browse, Layers, zoom in/out, Reset). Browse exposes source structures and system/search filters; its new region selector keeps regional discovery in the bottom panel. Layers contains quality, single-tap pan directions and an explicit full-body camera reset, inspection/dissection/X-ray and depth controls. Range controls have a 44px touch height. The scene stays mounted across mobile tabs.
 
 Artery, vein and named nerve cards retain their titles, parents/roots and 3D actions, with longer territory, drainage and innervation notes inside native expandable details. The phone sheet has a persistent View model / Read more / Close footer. Existing source registration and anatomical coverage safeguards remain in place. Clinical data and source models were not replaced during this follow-up.
 
@@ -18,7 +18,7 @@ The mobile renderer previously used DPR 1 with MSAA disabled. Crisp now caps DPR
 
 ## Verification
 
-- TypeScript, simulator mobile source guards, actual GLTFLoader regional/nerve/153 organ target regression, render-quality phone/memory/pixel-budget tests and combined Vercel build passed.
+- TypeScript, simulator mobile source guards, actual GLTFLoader regional/nerve/153 organ target regression, render-quality phone/memory/pixel-budget tests, headless execution of the actual camera effect (zoom clamps, pan round trips and same-region/spread Reset) and combined Vercel build passed.
 - Hosted preview fae2c2b0: actual responsive browser viewports 360x800, 390x844, 430x932 and 844x390; no document horizontal overflow. Classic browser scrollbar yields inner CSS widths 345/375/415/829.
 - At 390x844 the five thumb controls measured 65x44px, at y725. Tested Browse open/close, tools open/close, Smooth/Crisp, four pan command buttons, zoom +/- commands, Reset, Inspect/Scalpel/Isolate/X-ray selection, ICU/Case/3D bottom navigation.
 - Heart Supply notes opened/closed through native details; Read more/less changed sheet state; View model removed the drawer. Footer stayed at y775-844 with the body independently scrollable.
