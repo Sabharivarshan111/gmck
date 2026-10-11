@@ -24,6 +24,8 @@ for (const width of [310,340,380]) {
     const frozen = hash(canvas);
     engine.render(ctx,width,368,0.7,vitals,pathology,{...settings,isFrozen:true});
     assert.equal(hash(canvas), frozen, 'frozen frames must be pixel-identical');
+    engine.render(ctx,width,368,4.2,{...vitals,heartRate:150,respiratoryRate:32},{...pathology,ascites:0.8},{...settings,isFrozen:true});
+    assert.equal(hash(canvas), frozen, 'new case signals must not change the frozen scan');
     engine.render(ctx,width,368,0.7,vitals,pathology,{...settings,gain:1.6});
     assert.notEqual(hash(canvas), baseline, 'gain must change scan brightness');
     engine.render(ctx,width,368,0.7,vitals,pathology,{...settings,depthCm:8});

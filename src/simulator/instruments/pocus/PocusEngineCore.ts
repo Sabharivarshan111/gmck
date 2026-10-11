@@ -77,6 +77,8 @@ export class PocusSimulationEngine {
   private mMBuffer: number[][] = [];
   private lastMTime = -1;
   private lastView = '';
+  private scatter = new Float32Array(0);
+  private lastLiveInputs: { time: number; vitals: PatientVitals; pathology: PatientPathologyState } | null = null;
   private scan = document.createElement('canvas');
   private scanContext = this.scan.getContext('2d', { willReadFrequently: true })!;
 
@@ -85,23 +87,24 @@ export class PocusSimulationEngine {
   private textureScan(gain: number): void {
     const image = this.scanContext.getImageData(0, 0, this.scan.width, this.scan.height);
     const data = image.data;
-    for (let y = 0; y < image.height; y++) {
-      for (let x = 0; x < image.width; x++) {
-        const i = (y * image.width + x) * 4;
-        if (!data[i + 3]) continue;
-        const brightness = data[i] * 0.3 + data[i + 1] * 0.59 + data[i + 2] * 0.11;
-        // Correlated coarse texture plus fine scatter. Dark cavities remain dark.
-        const hash = (a: number, b: number) => {
-          let n = Math.imul(a + 19, 374761393) ^ Math.imul(b + 73, 668265263);
-          n = Math.imul(n ^ (n >>> 13), 1274126177);
-          return ((n ^ (n >>> 16)) >>> 0) / 4294967296;
-        };
+    if (this.scatter.length !== image.width * image.height) {
+      this.scatter = new Float32Array(image.width * image.height);
+      const hash = (a: number, b: number) => {
+        let n = Math.imul(a + 19, 374761393) ^ Math.imul(b + 73, 668265263);
+        n = Math.imul(n ^ (n >>> 13), 1274126177);
+        return ((n ^ (n >>> 16)) >>> 0) / 4294967296;
+      };
+      for (let y = 0; y < image.height; y++) for (let x = 0; x < image.width; x++) {
         const fine = Math.sqrt(-2 * Math.log(Math.max(1e-6, hash(x, y))));
         const coarse = hash(Math.floor(x / 3), Math.floor(y / 2));
-        const attenuation = 1 - 0.25 * y / image.height;
-        const value = Math.min(255, brightness * (0.3 + fine * 0.65 + coarse * 0.5) * attenuation * gain);
-        data[i] = data[i + 1] = data[i + 2] = value;
+        this.scatter[y * image.width + x] = (0.3 + fine * 0.65 + coarse * 0.5) * (1 - 0.25 * y / image.height);
       }
+    }
+    for (let i = 0; i < data.length; i += 4) {
+      if (!data[i + 3]) continue;
+      const brightness = data[i] * 0.3 + data[i + 1] * 0.59 + data[i + 2] * 0.11;
+      const value = Math.min(255, brightness * this.scatter[i / 4] * gain);
+      data[i] = data[i + 1] = data[i + 2] = value;
     }
     this.scanContext.putImageData(image, 0, 0);
   }
@@ -122,6 +125,13 @@ export class PocusSimulationEngine {
     pathology: PatientPathologyState,
     settings: PocusSettings
   ): void {
+    if (settings.isFrozen && this.lastLiveInputs) {
+      timeSec = this.lastLiveInputs.time;
+      vitals = this.lastLiveInputs.vitals;
+      pathology = this.lastLiveInputs.pathology;
+    } else if (!settings.isFrozen) {
+      this.lastLiveInputs = { time: timeSec, vitals: { ...vitals }, pathology: { ...pathology } };
+    }
     // 1. CRT Cathode Black Backdrop
     ctx.fillStyle = '#020408';
     ctx.fillRect(0, 0, width, height);

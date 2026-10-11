@@ -54,7 +54,7 @@ export const PocusCanvas: React.FC<PocusCanvasProps> = ({
 
   // Freeze holds the current cine phase, including after a setting changes.
   useEffect(() => {
-    if (referenceMode) return;
+    if (referenceMode) { lastFrameRef.current = null; return; }
     let animId = 0;
     let lastDraw = -Infinity;
     const loop = (now: number) => {
@@ -75,7 +75,6 @@ export const PocusCanvas: React.FC<PocusCanvasProps> = ({
       if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; }
       engineRef.current.render(ctx, w, h, timeRef.current, vitals, pathology, settings);
     };
-    lastFrameRef.current = null;
     animId = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(animId);
   }, [vitals, pathology, settings, referenceMode]);
