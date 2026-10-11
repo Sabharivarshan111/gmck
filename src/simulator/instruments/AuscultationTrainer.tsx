@@ -89,7 +89,8 @@ export function AuscultationTrainer({ theme, site, mode, volume, listening, over
       {revealed && <p role="status" className="ausc-point-label">{answer === override ? 'Correct.' : 'Listen again.'} {SOUND_LIBRARY.find(s => s.id === override)?.title}</p>}
       <button onClick={nextQuestion}>Next sound</button>
     </div>}
-    <Phonocardiogram engineRef={engineRef} listening={listening} pulmonary={pulmonary} traceKey={`${site}-${override}-${lungOverride}-${mode}`} />
+    <Phonocardiogram engineRef={engineRef} listening={listening} pulmonary={pulmonary} traceKey={`${site}-${override}-${lungOverride}-${mode}`} showTimingLabels={showFindings} />
+    {training && !revealed && <p className="ausc-note">Timing labels and findings appear after you check your answer.</p>}
     <div className="ausc-modes" aria-label="Stethoscope head"><button aria-pressed={mode === 'bell'} onClick={() => onMode('bell')}>Bell · low pitch</button><button aria-pressed={mode === 'diaphragm'} onClick={() => onMode('diaphragm')}>Diaphragm</button></div>
     {showFindings && <details><summary>What should I hear?</summary><p>{description}</p></details>}
     {audioError && <p role="alert" className="ausc-error">{audioError}</p>}

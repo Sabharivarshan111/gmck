@@ -49,3 +49,34 @@ HALF-DONE: Cloud browser lacks WebGL; verified labelled source-geometry static r
 NEXT: Physical mobile WebGL rendering and clinical listening review; evaluate the new cranial-nerve trainer references separately before adding a new feature scope.
 
 DO NOT: Claim perfect clinical accuracy, live GPU verification from static screenshots, or exhaustive intervention correctness from case-selection tests. Do not replace registered anatomy with drawings or copy competitor assets.
+
+
+## Supplied competitor screenshot review — 2026-10-11 IST
+
+The six atlas screenshots show a large viewport, restrained structure labels, isolated organs over a muted whole-body context, a compact selection strip, and a view-controls sheet. The four MedNotes examination screenshots show an animated patient, finger/light/cotton tools, eyelid and gaze commands, enlarged pupil measurements, and separate exploration/study/training modes. Screenshots establish the visible design, not behavior outside the captured state.
+
+Applied in PR #54: mobile isolation name opens anatomy details, information icon replaces the separate Dossier action, Restore remains an explicit 44px target; long names wrap in a compact strip. Pupil tool puts the result above its penlight controls and collapses the explanatory text. Existing input semantics and pupil calculation were preserved. TypeScript, mobile UI guard, and production web build passed.
+
+Remaining feature gap: ORBIT has a schematic pupil examination and an anatomical nerve browser, not an animated facial patient or a complete twelve-cranial-nerve examination trainer. The supplied face screenshots are a direction for a separately designed and clinically validated feature; they are not an implemented claim. No competitor images, face model, or source code were imported.
+
+
+## Competitor-inspired mobile UI — final checkpoint 2026-10-10 15:57 UTC
+
+DONE: PR #54, #55 and #56 merged. Production main 36fcad128c164d5d1335374601f0c772db3669f4 is READY (dpl_6hjfJ9fMHYEfHEZ52V3SNHeBEoiS). Compact mobile selection name/info opens anatomy details; Restore clears selection. Pupil results precede penlight controls and clinical explanation is collapsed. WebGL-unavailable notice no longer blocks selection/spread controls. At 360px, selection width and scroll width are both 299px, dark background is rgb(15,23,42), selection/spread gap is 8px and buttons meet 44px targets. Details/Restore and pupil left/right/both/off plus disclosure verified in browser. TypeScript, mobile guard and web build passed. Final screenshots: orbit-pupil-mobile-inspired-20261011.jpg and orbit-selection-gap-fixed-20261011.jpg.
+
+HALF-DONE: Cloud browser lacks WebGL, so live GPU anatomy rendering on a physical mobile device remains unverified. Clinical audio fidelity remains unverified. Current pupil tool is schematic; animated facial patient and complete cranial-nerve examination trainer are not implemented.
+
+NEXT: Physical-device GPU/audio verification. If requested, design and clinically validate the separate facial/cranial-nerve examination feature.
+
+DO NOT: Claim an animated facial trainer, perfect clinical fidelity or live GPU verification from these screenshots. Do not import competitor assets or replace registered anatomy with drawings. Do not alter Android releases, PG, billing or security.
+
+
+## Auscultation playback and training follow-up — 2026-10-11
+
+DONE: New sound presets cancel queued old sources and schedule the replacement at currentTime + 40ms; routine rate updates retain cycle timing. Absent lung sounds stop sources and idle scheduler. Preset setters use the same transition path. Added regression assertions for these transitions; all 32 bell/diaphragm offline sound renders remain finite, audible (except intended silence), with routing/timing/stop checks passed. Training hides timing labels until Check answer; frozen trace keeps its original time/events when revealing labels. TypeScript, targeted ESLint, mobile UI guard, source-model check and web build passed.
+
+HALF-DONE: Publishing and deployed browser verification of answer reveal/frozen trace remain pending. Physical phone GPU and clinical acoustic fidelity remain unverified.
+
+NEXT: Verify training and reveal on the deployed 360px phone harness, save screenshot, record deployment result.
+
+DO NOT: Claim physical headphone output or clinically certified recordings; do not substitute drawn anatomy or add the separate facial trainer in this patch.

@@ -243,14 +243,15 @@ export class StethoscopeAudioEngine {
   // LOOKAHEAD TIMING SCHEDULER
   // --------------------------------------------------------------------------
   public startCardiacAuscultation(hr: number, preset: HeartSoundPreset, atrialContraction = true): void {
-    if (preset !== this.currentHeartPreset || atrialContraction !== this.atrialContraction) { this.stopSources('cardiac'); this.soundEvents = []; }
+    const restart = !this.isCardiacActive || preset !== this.currentHeartPreset || atrialContraction !== this.atrialContraction;
+    if (restart) { this.stopSources('cardiac'); this.soundEvents = []; }
     this.atrialContraction = atrialContraction;
     this.currentHr = Number.isFinite(hr) ? Math.max(30, Math.min(220, hr)) : 72;
     this.currentHeartPreset = preset;
     this.isCardiacActive = preset !== 'silent';
     if (!this.isCardiacActive) { this.stopSources('cardiac'); if (!this.isPulmonaryActive) this.checkStopScheduler(); return; }
-    if (this.ctx && this.nextBeatTime < this.ctx.currentTime) {
-      this.nextBeatTime = this.ctx.currentTime + 0.02;
+    if (this.ctx && (restart || this.nextBeatTime < this.ctx.currentTime)) {
+      this.nextBeatTime = this.ctx.currentTime + 0.04;
     }
     if (!this.isRunning) {
       this.isRunning = true;
@@ -262,16 +263,7 @@ export class StethoscopeAudioEngine {
   }
 
   public setHeartPreset(preset: HeartSoundPreset): void {
-    this.currentHeartPreset = preset;
-    this.isCardiacActive = preset !== 'silent';
-    if (!this.isCardiacActive) { this.stopSources('cardiac'); if (!this.isPulmonaryActive) this.checkStopScheduler(); return; }
-    if (this.ctx && this.nextBeatTime < this.ctx.currentTime) {
-      this.nextBeatTime = this.ctx.currentTime + 0.02;
-    }
-    if (!this.isRunning) {
-      this.isRunning = true;
-      this.runScheduler();
-    }
+    this.startCardiacAuscultation(this.currentHr, preset, this.atrialContraction);
   }
 
   public setHeartRate(hr: number): void {
@@ -288,12 +280,14 @@ export class StethoscopeAudioEngine {
   }
 
   public startPulmonaryAuscultation(rr: number, preset: LungSoundPreset): void {
-    if (preset !== this.currentLungPreset) this.stopSources('pulmonary');
+    const restart = !this.isPulmonaryActive || preset !== this.currentLungPreset;
+    if (restart) this.stopSources('pulmonary');
     this.currentRr = Number.isFinite(rr) ? Math.max(6, Math.min(60, rr)) : 14;
     this.currentLungPreset = preset;
     this.isPulmonaryActive = preset !== 'silent';
-    if (this.ctx && this.nextBreathTime < this.ctx.currentTime) {
-      this.nextBreathTime = this.ctx.currentTime + 0.02;
+    if (!this.isPulmonaryActive) { this.stopSources('pulmonary'); if (!this.isCardiacActive) this.checkStopScheduler(); return; }
+    if (this.ctx && (restart || this.nextBreathTime < this.ctx.currentTime)) {
+      this.nextBreathTime = this.ctx.currentTime + 0.04;
     }
     if (!this.isRunning) {
       this.isRunning = true;
@@ -305,15 +299,7 @@ export class StethoscopeAudioEngine {
   }
 
   public setLungPreset(preset: LungSoundPreset): void {
-    this.currentLungPreset = preset;
-    this.isPulmonaryActive = preset !== 'silent';
-    if (this.ctx && this.nextBreathTime < this.ctx.currentTime) {
-      this.nextBreathTime = this.ctx.currentTime + 0.02;
-    }
-    if (!this.isRunning && preset !== 'silent') {
-      this.isRunning = true;
-      this.runScheduler();
-    }
+    this.startPulmonaryAuscultation(this.currentRr, preset);
   }
 
   public setRespiratoryRate(rr: number): void {
