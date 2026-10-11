@@ -6,11 +6,12 @@ import {createServer} from 'vite';
 import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
+import vm from 'node:vm';
 import {createRequire} from 'node:module';
 const here=path.dirname(fileURLToPath(import.meta.url));
 const root=path.resolve(here,'../..');
 const ts=createRequire(import.meta.url)('typescript');
-function load(file){const m={exports:{}};new Function('module','exports',ts.transpileModule(fs.readFileSync(file,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText)(m,m.exports);return m.exports;}
+function load(file){const m={exports:{}};vm.runInNewContext(ts.transpileModule(fs.readFileSync(file,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText,{module:m,exports:m.exports},{filename:file});return m.exports;}
 const q=load(path.join(root,'mobile/src/lib/pgQuarantine.ts'));
 const expected=q.PG_STRUCTURALLY_ELIGIBLE_TOTAL;
 const evidence=path.join(here,'pg-bank-evidence');
@@ -24,7 +25,7 @@ try {
  const executablePath=candidates.find(p=>fs.existsSync(p));
  browser=await chromium.launch({...(executablePath?{executablePath}:{}),args:['--no-sandbox','--disable-gpu']});
  const context=await browser.newContext({viewport:{width:390,height:844}});
- await context.addInitScript(()=>{localStorage.setItem('orbit-profile-v1',JSON.stringify({display_name:'PG smoke',year:'second'}));localStorage.setItem('orbit:tour-v1',JSON.stringify({seen:1}));});
+ await context.addInitScript(()=>{localStorage.setItem('orbit-profile-v1',JSON.stringify({display_name:'PG smoke',year:'second',university:'tnmgr'}));localStorage.setItem('orbit:tour-v1',JSON.stringify({seen:1}));});
  page=await context.newPage();const errors=[];let reviewCalls=0;
  page.on('pageerror',e=>errors.push(e.message));
  await page.route('**/functions/v1/pg-answer-review',route=>{reviewCalls++;return route.abort();});

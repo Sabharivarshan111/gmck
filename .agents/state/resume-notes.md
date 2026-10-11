@@ -2099,3 +2099,6 @@ HALF-DONE: These synthetic images remain schematic appearance models, not accura
 NEXT: Verify reference image loading, all four view selectors, caliper/mobile controls, pupil light controls and production deployment. Physical-device performance/GPU/audio and clinical fidelity remain unverified. No amniotic-fluid module found; owner’s attached fluid screenshot is abdominal Morison’s pouch.
 
 DO NOT: Describe texture as validated ultrasound physics, claim all requested features fixed, call the fibrosis lung reference normal, infer diagnoses solely from CVP/SpO2/lactate, copy competitor assets, alter Android releases/PG/billing/security.
+
+## 2026-10-11 PG corpus quarantine and evidence review
+PR #60 publishes all 186,930-row audit, 1,293 withheld records / 185,637 structurally eligible, 92 external references including FirstRanker. Supabase pg-answer-review v3 is ACTIVE with JWT enforcement; only index/review/retrieval in that function changed, not shared notes retrieval. No annual coverage/clinical verification promised. Before declaring live: inspect PR60 checks and exact Vercel commit; focused browser smoke produces mobile/preview/pg-bank-evidence. See docs/PG_BANK_IMPLEMENTATION_20261011.md and corpus/source reports. Do not relabel undated MedMCQA or links as verified PYQs.
