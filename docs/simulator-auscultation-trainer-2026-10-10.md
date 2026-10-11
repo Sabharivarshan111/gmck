@@ -80,3 +80,14 @@ HALF-DONE: Publishing and deployed browser verification of answer reveal/frozen 
 NEXT: Verify training and reveal on the deployed 360px phone harness, save screenshot, record deployment result.
 
 DO NOT: Claim physical headphone output or clinically certified recordings; do not substitute drawn anatomy or add the separate facial trainer in this patch.
+
+
+## Auscultation follow-up — deployed verification 2026-10-11
+
+DONE: PR #57 merged at main d4b38d0856d71fd4fc986394a1f485d94f50d46c. Production dpl_3dGVJcF7zuaL5E2BzAcJDBWakUHo READY. Real 360x800 browser: training initially hides timing labels and findings; selecting an answer and Check answer reveals S4 feedback and S1/S2/S4 timing labels on the visually preserved frozen trace. Next sound clears answer, disables Check answer and hides labels/findings again. Explore restores labels; Stop switches trace to Stopped. Trainer clientWidth equals scrollWidth (310px). BodyParts3D reference decoded at 720px and Mitral/apex is available. Screenshot orbit-training-reveal-20261011.jpg saved and inspected. Audio preset-transition regression checks, 32 offline audio renders, TypeScript, targeted ESLint, source model check, mobile guard and web build passed.
+
+HALF-DONE: No physical device WebGL or headphone/clinical acoustic fidelity verification. Schematic pupil tool remains; no animated facial trainer implemented.
+
+NEXT: Physical phone rendering/listening review. Check narrow chest point hit-target separation against actual rendered body width (288–303px), rather than the model check's assumed 336px.
+
+DO NOT: Infer a live 3D GPU from the labelled static reference, claim clinical certification, or claim exhaustive intervention correctness. Keep competitor assets out and native releases/PG/billing/security untouched.
