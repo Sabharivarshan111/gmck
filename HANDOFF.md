@@ -2565,3 +2565,13 @@ the app and NOT a validated Morison's-pouch pose. PR58 is a controls/reference
 baseline, not completion of the realism request. No amniotic-fluid module
 found; realistic face/pupil trainer also outstanding. Continue source/physics
 work and clinical-plane verification before replacing the live renderer.
+
+## Experimental source-reconstructed FAST pilot — 2026-10-11
+
+DONE: Replaced the Morison-pouch procedural drawing path with two offline reconstructed assets generated from real BodyParts3D liver/right-kidney mesh sections. `generate-pocus-fast-assets.py` uses a 128-element C5-2v curvilinear definition, SIMUS channel RF, IQ demodulation and DAS beamforming. Normal/fluid share seed/anatomy/display reference; measured mean gap-envelope reduction is 9.97 dB. Runtime lazy-loads about 108 KB, supports gain/depth and physical-axis calipers, and labels the result experimental. FAST M-mode/Freeze are hidden because this pilot has one static plane. Source check, TypeScript, targeted ESLint and production build pass.
+
+HALF-DONE: This is one unregistered parasagittal teaching plane with generic reflectivities, visible reconstruction artifacts and no cine. It is not a clinically validated RUQ scan. Cardiac and lung remain schematic. Pupil remains schematic. No amniotic-fluid module exists. Deployed mobile browser verification is still pending at this checkpoint.
+
+NEXT: Deploy the branch preview, inspect 360/390/430 widths, switch normal/fluid cases, exercise gain/depth/calipers, and capture an actual screenshot. Only merge if the deployed view is legible and honestly labeled. Then acquire/validate richer registered scan planes before expanding cardiac/lung/pupil.
+
+DO NOT: Call the entire POCUS suite realistic or finished; add fake cine/M-mode; infer blood from a dark stripe; copy competitor assets; alter native releases, PG, billing or security.

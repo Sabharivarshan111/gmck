@@ -1,6 +1,6 @@
 # Source anatomy and ultrasound physics investigation
 
-Status: **experimental offline proof; not integrated into the app**.
+Status: **one-plane experimental FAST pilot integrated; other views remain schematic**.
 
 Owner requirement: match the source-based standard of the 2,234-part anatomy
 atlas. A textured SVG/canvas drawing or reference photograph is insufficient.
@@ -63,12 +63,22 @@ Neither the Python packages nor the RF arrays enter the mobile bundle.
 
 ## Limits and gates before app integration
 
-The first section is an abdominal acoustic experiment, **not a validated
+The integrated C5-2v pilot is an abdominal acoustic experiment, **not a validated
 Morison's-pouch scanning pose**. Reflectivities and homogeneous sound speed
 are teaching assumptions; the model omits refraction, multiple scattering,
 nonlinear propagation and lung reverberation. No fluid pathology, cardiac
 motion, Doppler velocities or pupil/face behaviour was built by this proof.
-It would be misleading to ship it as a complete realistic POCUS simulator.
+It would be misleading to describe it as a complete realistic POCUS simulator.
+
+`scripts/generate-pocus-fast-assets.py` now creates a paired normal/fluid
+teaching state from one seeded source phantom using the 128-element C5-2v
+curvilinear definition. The gap tissue contribution is acquired separately in
+SIMUS and combined by RF linearity; removing it yields the fluid state. Both
+states use the same log-compression reference. The current run measured a
+9.97 dB reduction in mean hepatorenal-gap envelope. The web client loads only
+the two bounded 8-bit reconstructions (about 108 KB total), never RF arrays or
+the Python solver. This demonstrates a source-derived runtime path; it does not
+establish diagnostic fidelity.
 
 Next work:
 

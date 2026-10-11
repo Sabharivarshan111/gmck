@@ -1,0 +1,96 @@
+{
+  "status": "experimental source-anatomy RF teaching model; not clinically validated",
+  "method": "BodyParts3D mesh section \u2192 seeded scatterers \u2192 SIMUS channel RF \u2192 IQ \u2192 delay-and-sum \u2192 shared-reference log compression",
+  "anatomy": {
+    "source": "BodyParts3D 4.0",
+    "license": "CC BY 4.0",
+    "atlasSha256": "c359f4bcd2cba90b7411d66d5e9fc04dc81294d46cd5c1e8b212c824f2e5bbee",
+    "sourceParts": [
+      {
+        "id": "FJ1858",
+        "name": "Hepatovenous segment IX",
+        "planePixels": 9296
+      },
+      {
+        "id": "FJ2409",
+        "name": "Hepatovenous segment VII",
+        "planePixels": 6324
+      },
+      {
+        "id": "FJ2821",
+        "name": "Hepatovenous segment V",
+        "planePixels": 7039
+      },
+      {
+        "id": "FJ2822",
+        "name": "Hepatovenous segment VI",
+        "planePixels": 5132
+      },
+      {
+        "id": "FJ2823",
+        "name": "Hepatovenous segment VIII",
+        "planePixels": 9388
+      },
+      {
+        "id": "FJ2824",
+        "name": "Hepatovenous segment VIII",
+        "planePixels": 15468
+      },
+      {
+        "id": "FJ3147",
+        "name": "Right kidney",
+        "planePixels": 7475
+      }
+    ]
+  },
+  "software": {
+    "name": "PyMUST",
+    "version": "0.1.9",
+    "license": "LGPL-2.1"
+  },
+  "probe": {
+    "model": "C5-2v",
+    "geometry": "curvilinear",
+    "elements": 128,
+    "centerFrequencyMHz": 3.57
+  },
+  "field": {
+    "depthCm": 22,
+    "sectorAngleDegrees": 110,
+    "radiusMeters": 0.04957
+  },
+  "plane": {
+    "originMeters": [
+      -0.06,
+      1.16,
+      0.12
+    ],
+    "normal": [
+      1,
+      0,
+      0
+    ]
+  },
+  "seed": 2234,
+  "scatterers": 14570,
+  "frames": [
+    {
+      "state": "normal",
+      "plane": 0,
+      "image": "/models/pocus/fast/fast-0-normal.png"
+    },
+    {
+      "state": "fluid",
+      "plane": 0,
+      "image": "/models/pocus/fast/fast-0-fluid.png"
+    }
+  ],
+  "qualityCheck": {
+    "meanFluidGapEnvelopeReductionDb": 9.96867457998557,
+    "finiteRfAndIq": true
+  },
+  "limitations": [
+    "One experimental parasagittal source plane, not a clinically registered RUQ probe pose",
+    "Generic teaching reflectivities; homogeneous sound speed; no refraction, nonlinear propagation, cine, or clinical validation"
+  ]
+}

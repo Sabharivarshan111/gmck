@@ -2109,3 +2109,13 @@ HALF-DONE: PR58's textured procedural renderer and external references do NOT sa
 NEXT: Continue from docs/pocus-source-physics-research-2026-10-11.md. Validate scan planes/materials/transducers; build case-dependent scans from real anatomy and acoustic models, then mobile integration and actual screenshots. Do not ship the proof as finished POCUS.
 
 DO NOT: Return to SVG ellipses or cosmetic noise as realism; call archived media patient-state simulation; claim all screenshot issues fixed; alter native releases/PG/billing/security.
+
+## Experimental source-reconstructed FAST pilot — 2026-10-11
+
+DONE: Morison's-pouch case rendering now uses paired offline RF/DAS assets from actual BodyParts3D source mesh sections and PyMUST/SIMUS with C5-2v (128 elements, 3.57 MHz). Same seeded phantom/reference; fluid removes only modeled gap scatterers; mean envelope reduction 9.97 dB. Runtime viewer is bounded/lazy with gain, depth, calibrated calipers and retry; static pilot hides unavailable cine/M-mode and says experimental. Validation script, TypeScript, targeted ESLint and Vite build pass.
+
+HALF-DONE: One parasagittal source plane only; generic acoustic assumptions, not registered/clinically validated RUQ acquisition. Cardiac/lung/pupil remain schematic and no amniotic-fluid feature exists. Preview/mobile browser test and screenshot pending.
+
+NEXT: Publish branch preview, inspect actual mobile normal/fluid states and controls, then merge only if legible. Continue clinically registered multi-plane/cine work separately.
+
+DO NOT: Claim complete realistic POCUS, clinical diagnostic fidelity or a finished pupil trainer; do not copy competitor assets or touch native releases/PG/billing/security.
