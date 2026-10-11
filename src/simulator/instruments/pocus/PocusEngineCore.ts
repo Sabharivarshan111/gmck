@@ -1,14 +1,4 @@
-/**
- * PocusEngineCore.ts
- * Publication-Grade Dynamic Point-of-Care Ultrasound (POCUS) Simulation Core
- * Adheres to clinical sonography physics:
- * - Piezoelectric sector scan geometry (phased array, curvilinear, linear)
- * - Rayleigh-distributed coherent tissue speckle patterns
- * - Time Gain Compensation (TGC) and depth attenuation
- * - Real-time biomechanical myocardial kinetics (PLAX & Subxiphoid)
- * - Dynamic diaphragmatic respiratory excursion (eFAST Morison's pouch)
- * - Pleural sliding dynamics & M-mode sonogram (Seashore vs Barcode sign)
- */
+/** Teaching ultrasound renderer. Synthetic images; not acquired patient scans. */
 
 import { PatientPathologyState, PatientVitals } from '../../types';
 
@@ -85,6 +75,36 @@ export class SpeckleGenerator {
 export class PocusSimulationEngine {
   private speckle: SpeckleGenerator;
   private mMBuffer: number[][] = [];
+  private lastMTime = -1;
+  private lastView = '';
+  private scan = document.createElement('canvas');
+  private scanContext = this.scan.getContext('2d', { willReadFrequently: true })!;
+
+  // Fixed scatterers retain the same texture when Freeze is selected.
+  // This appearance model is not a wave-propagation or diagnostic model.
+  private textureScan(gain: number): void {
+    const image = this.scanContext.getImageData(0, 0, this.scan.width, this.scan.height);
+    const data = image.data;
+    for (let y = 0; y < image.height; y++) {
+      for (let x = 0; x < image.width; x++) {
+        const i = (y * image.width + x) * 4;
+        if (!data[i + 3]) continue;
+        const brightness = data[i] * 0.3 + data[i + 1] * 0.59 + data[i + 2] * 0.11;
+        // Correlated coarse texture plus fine scatter. Dark cavities remain dark.
+        const hash = (a: number, b: number) => {
+          let n = Math.imul(a + 19, 374761393) ^ Math.imul(b + 73, 668265263);
+          n = Math.imul(n ^ (n >>> 13), 1274126177);
+          return ((n ^ (n >>> 16)) >>> 0) / 4294967296;
+        };
+        const fine = Math.sqrt(-2 * Math.log(Math.max(1e-6, hash(x, y))));
+        const coarse = hash(Math.floor(x / 3), Math.floor(y / 2));
+        const attenuation = 1 - 0.25 * y / image.height;
+        const value = Math.min(255, brightness * (0.3 + fine * 0.65 + coarse * 0.5) * attenuation * gain);
+        data[i] = data[i + 1] = data[i + 2] = value;
+      }
+    }
+    this.scanContext.putImageData(image, 0, 0);
+  }
 
   constructor() {
     this.speckle = new SpeckleGenerator();
@@ -107,19 +127,26 @@ export class PocusSimulationEngine {
     ctx.fillRect(0, 0, width, height);
 
     const isLung = settings.viewMode === 'lung';
-    const sectorOriginX = width * (settings.showMMode ? 0.35 : 0.5);
+    const sectorOriginX = width * (settings.showMMode ? 0.32 : 0.47);
     const sectorOriginY = 22;
     const sectorRadius = height - 44;
-    const sectorAngle = isLung ? Math.PI * 0.28 : Math.PI * 0.44; // Narrower or wider sector
+    const sectorAngle = Math.PI * 0.44; // Narrower or wider sector
 
+    const output = ctx;
+    if (this.scan.width !== Math.round(width) || this.scan.height !== Math.round(height)) {
+      this.scan.width = Math.round(width);
+      this.scan.height = Math.round(height);
+    }
+    ctx = this.scanContext;
+    ctx.clearRect(0, 0, width, height);
     ctx.save();
 
     // 2. Transducer Acoustic Cone Clip
     ctx.beginPath();
     if (isLung) {
       // Linear Probe: Trapezoid / Rectangular Near Field with Sector Flare
-      const topW = width * 0.35;
-      const botW = width * 0.52;
+      const topW = width * (settings.showMMode ? 0.50 : 0.80);
+      const botW = topW;
       ctx.moveTo(sectorOriginX - topW / 2, sectorOriginY);
       ctx.lineTo(sectorOriginX + topW / 2, sectorOriginY);
       ctx.lineTo(sectorOriginX + botW / 2, sectorOriginY + sectorRadius);
@@ -155,23 +182,45 @@ export class PocusSimulationEngine {
     ctx.drawImage(this.speckle.canvas, speckleShiftX, speckleShiftY, width, height);
     ctx.restore();
 
+    // Scale a reference field in depth as the display depth changes.
+    const scale = (sectorRadius / 300) * (16 / settings.depthCm);
+    ctx.save();
+    ctx.translate(sectorOriginX, sectorOriginY);
+    ctx.scale(scale, scale);
+    ctx.translate(-sectorOriginX, -sectorOriginY);
     // 5. Render Specific Sonographic View
     switch (settings.viewMode) {
       case 'cardiac_plax':
-        this.renderPLAX(ctx, sectorOriginX, sectorOriginY, sectorRadius, timeSec, vitals, pathology, settings);
+        this.renderPLAX(ctx, sectorOriginX, sectorOriginY, 300, timeSec, vitals, pathology, settings);
         break;
       case 'subxiphoid':
-        this.renderSubxiphoid(ctx, sectorOriginX, sectorOriginY, sectorRadius, timeSec, vitals, pathology, settings);
+        this.renderSubxiphoid(ctx, sectorOriginX, sectorOriginY, 300, timeSec, vitals, pathology, settings);
         break;
       case 'fast_morison':
-        this.renderMorison(ctx, sectorOriginX, sectorOriginY, sectorRadius, timeSec, vitals, pathology, settings);
+        this.renderMorison(ctx, sectorOriginX, sectorOriginY, 300, timeSec, vitals, pathology, settings);
         break;
       case 'lung':
-        this.renderLung(ctx, sectorOriginX, sectorOriginY, sectorRadius, timeSec, vitals, pathology, settings);
+        this.renderLung(ctx, sectorOriginX, sectorOriginY, 300, timeSec, vitals, pathology, settings);
         break;
     }
 
     ctx.restore();
+    ctx.restore();
+    this.textureScan(settings.gain);
+    output.save();
+    output.filter = 'blur(0.45px)';
+    output.drawImage(this.scan, 0, 0, width, height);
+    output.restore();
+    ctx = output;
+    if (settings.showColorDoppler && settings.viewMode === 'cardiac_plax') {
+      ctx.save();
+      ctx.translate(sectorOriginX, sectorOriginY);
+      ctx.scale(scale, scale);
+      ctx.translate(-sectorOriginX, -sectorOriginY);
+      const phase = (timeSec * vitals.heartRate / 60) % 1;
+      this.renderColorDoppler(ctx, sectorOriginX - 10, sectorOriginY + 144, phase >= 0.1 && phase <= 0.42, pathology);
+      ctx.restore();
+    }
 
     // 6. Transducer Probe Orientation Marker ("Dot" at 9 o'clock)
     ctx.fillStyle = '#38bdf8';
@@ -181,7 +230,7 @@ export class PocusSimulationEngine {
     ctx.fill();
 
     // 7. Depth Scale & Focal Zone Carats (Lateral Border)
-    this.renderDepthScale(ctx, sectorOriginX, sectorOriginY, sectorRadius, settings.depthCm);
+    this.renderDepthScale(ctx, width, sectorOriginY, sectorRadius, settings.depthCm);
 
     // 8. M-Mode Sonogram Split Screen (if enabled)
     if (settings.showMMode) {
@@ -189,7 +238,7 @@ export class PocusSimulationEngine {
     }
 
     // 9. Caliper Measurement Brackets (if user placed calipers)
-    this.renderCalipers(ctx, settings);
+    this.renderCalipers(ctx, settings, sectorRadius);
 
     // 10. Sonography Telemetry & Machine HUD
     this.renderTelemetryHUD(ctx, width, height, vitals, settings);
@@ -243,7 +292,6 @@ export class PocusSimulationEngine {
       if (hasSevereTamponade && !isSystole) {
         ctx.fillStyle = '#ef4444';
         ctx.font = 'bold 10px monospace';
-        ctx.fillText('▲ RV DIASTOLIC COLLAPSE', ox - 90, oy + 65);
       }
     }
 
@@ -370,10 +418,7 @@ export class PocusSimulationEngine {
     ctx.lineWidth = 3;
     ctx.stroke();
 
-    // I. Optional Color Doppler Jet
-    if (settings.showColorDoppler) {
-      this.renderColorDoppler(ctx, centerX, centerY, isSystole, pathology);
-    }
+
   }
 
   /**
@@ -482,7 +527,7 @@ export class PocusSimulationEngine {
   ): void {
     const rr = vitals.respiratoryRate;
     const respGlide = Math.sin(t * (rr / 60) * Math.PI * 2) * 14;
-    const hasFreeFluid = pathology.ascites > 0.25 || vitals.lactate > 2.5;
+    const hasFreeFluid = pathology.ascites > 0.25;
 
     const liverCenterY = oy + 120 + respGlide;
     const kidneyCenterY = oy + 175 + respGlide * 0.8;
@@ -526,16 +571,14 @@ export class PocusSimulationEngine {
     if (hasFreeFluid) {
       ctx.fillStyle = '#000000';
       ctx.beginPath();
-      ctx.moveTo(ox - 15, liverCenterY - 10);
-      ctx.quadraticCurveTo(ox + 18, liverCenterY + 25, ox + 35, kidneyCenterY - 18);
-      ctx.lineTo(ox + 20, kidneyCenterY + 15);
-      ctx.quadraticCurveTo(ox, liverCenterY + 35, ox - 10, liverCenterY + 20);
+      ctx.moveTo(ox - 15, kidneyCenterY - 47);
+      ctx.bezierCurveTo(ox + 8, kidneyCenterY - 66, ox + 75, kidneyCenterY - 50, ox + 117, kidneyCenterY - 10);
+      ctx.bezierCurveTo(ox + 70, kidneyCenterY - 39, ox + 12, kidneyCenterY - 51, ox - 15, kidneyCenterY - 47);
       ctx.closePath();
       ctx.fill();
 
       ctx.fillStyle = '#f59e0b';
       ctx.font = 'bold 11px monospace';
-      ctx.fillText("▲ ANECHOIC FLUID STRIPE (MORISON'S POUCH)", ox - 125, oy + radius - 20);
     } else {
       ctx.strokeStyle = '#94a3b8';
       ctx.lineWidth = 2.5;
@@ -546,7 +589,6 @@ export class PocusSimulationEngine {
 
       ctx.fillStyle = '#10b981';
       ctx.font = 'bold 11px monospace';
-      ctx.fillText('✓ INTACT HEPATORENAL INTERFACE (NO FLUID)', ox - 120, oy + radius - 20);
     }
   }
 
@@ -630,21 +672,19 @@ export class PocusSimulationEngine {
     if (isTensionPneumo) {
       ctx.fillStyle = '#ef4444';
       ctx.font = 'bold 11px monospace';
-      ctx.fillText('▲ ABSENT LUNG SLIDING: PNEUMOTHORAX', ox - 110, oy + radius - 20);
     } else if (isEdema) {
       // B-LINES ("Lung Rockets")
       const bPositions = [-50, -18, 15, 48];
       for (const bp of bPositions) {
         const bGrad = ctx.createLinearGradient(0, pleuraY, 0, oy + radius);
-        bGrad.addColorStop(0, 'rgba(56, 189, 248, 0.85)');
-        bGrad.addColorStop(1, 'rgba(56, 189, 248, 0.25)');
+        bGrad.addColorStop(0, 'rgba(255, 255, 255, 0.85)');
+        bGrad.addColorStop(1, 'rgba(255, 255, 255, 0.25)');
         ctx.fillStyle = bGrad;
         ctx.fillRect(ox + bp + slidingJitter * 0.4 - 3, pleuraY, 6, radius - 80);
       }
 
       ctx.fillStyle = '#38bdf8';
       ctx.font = 'bold 11px monospace';
-      ctx.fillText('▲ MULTIPLE B-LINES: PULMONARY EDEMA / ARDS', ox - 130, oy + radius - 20);
     } else {
       // Normal A-LINES
       for (let a = 1; a <= 3; a++) {
@@ -661,7 +701,6 @@ export class PocusSimulationEngine {
 
       ctx.fillStyle = '#10b981';
       ctx.font = 'bold 11px monospace';
-      ctx.fillText('✓ NORMAL LUNG SLIDING & REVERBERATION A-LINES', ox - 135, oy + radius - 20);
     }
   }
 
@@ -763,7 +802,12 @@ export class PocusSimulationEngine {
       }
     }
 
-    this.mMBuffer.push(col);
+    const view = `${settings.viewMode}:${settings.depthCm}`;
+    if (view !== this.lastView) { this.mMBuffer = []; this.lastMTime = -1; this.lastView = view; }
+    if (!settings.isFrozen && t !== this.lastMTime) {
+      this.mMBuffer.push(col);
+      this.lastMTime = t;
+    }
     if (this.mMBuffer.length > stripW) {
       this.mMBuffer.shift();
     }
@@ -780,10 +824,10 @@ export class PocusSimulationEngine {
 
     ctx.fillStyle = '#eab308';
     ctx.font = 'bold 10px monospace';
-    ctx.fillText('M-MODE SWEEP', stripX + 8, stripY + 16);
+    ctx.fillText('M-MODE', stripX + 4, stripY + 16);
     if (isLung) {
       ctx.fillStyle = isTensionPneumo ? '#ef4444' : '#10b981';
-      ctx.fillText(isTensionPneumo ? 'BARCODE SIGN' : 'SEASHORE SIGN', stripX + 8, stripY + 30);
+      ctx.fillText(isTensionPneumo ? 'BARCODE' : 'SEASHORE', stripX + 4, stripY + 30);
     }
   }
 
@@ -792,7 +836,7 @@ export class PocusSimulationEngine {
    */
   private renderDepthScale(
     ctx: CanvasRenderingContext2D,
-    ox: number,
+    width: number,
     oy: number,
     radius: number,
     depthCm: number
@@ -804,15 +848,15 @@ export class PocusSimulationEngine {
       const frac = i / numTicks;
       const dy = oy + frac * radius;
       const cmVal = Math.round(frac * depthCm);
-      ctx.fillText(`${cmVal}cm`, ox + radius * 0.42 + 25, dy + 3);
-      ctx.fillRect(ox + radius * 0.42 + 18, dy, 5, 1);
+      ctx.fillText(`${cmVal}cm`, width - 30, dy + 3);
+      ctx.fillRect(width - 38, dy, 5, 1);
     }
   }
 
   /**
    * Caliper Measurements
    */
-  private renderCalipers(ctx: CanvasRenderingContext2D, settings: PocusSettings): void {
+  private renderCalipers(ctx: CanvasRenderingContext2D, settings: PocusSettings, radius: number): void {
     const { caliperPointA, caliperPointB } = settings;
     if (!caliperPointA) return;
 
@@ -839,10 +883,10 @@ export class PocusSimulationEngine {
       const dx = caliperPointB.x - caliperPointA.x;
       const dy = caliperPointB.y - caliperPointA.y;
       const pxDist = Math.sqrt(dx * dx + dy * dy);
-      const cmDist = (pxDist / 20).toFixed(1);
+      const cmDist = (pxDist * settings.depthCm / radius).toFixed(1);
 
       ctx.font = 'bold 11px monospace';
-      ctx.fillText(`+ ${cmDist} cm`, (caliperPointA.x + caliperPointB.x) / 2 + 8, (caliperPointA.y + caliperPointB.y) / 2 - 8);
+      ctx.fillText(`+ ${cmDist} cm`, Math.max(4, Math.min(this.scan.width - 75, (caliperPointA.x + caliperPointB.x) / 2)), Math.max(60, (caliperPointA.y + caliperPointB.y) / 2 - 8));
     }
   }
 
@@ -860,16 +904,16 @@ export class PocusSimulationEngine {
     ctx.font = '10px monospace';
     ctx.fillText(`GAIN: ${Math.round(settings.gain * 100)}%`, 14, 20);
     ctx.fillText(`DEPTH: ${settings.depthCm}cm`, 14, 34);
-    ctx.fillText(`FPS: 60`, 14, 48);
+    ctx.fillText('SIMULATED', 14, 48);
 
     if (settings.isFrozen) {
       ctx.fillStyle = '#ef4444';
       ctx.font = 'bold 12px monospace';
-      ctx.fillText('❄ FROZEN (CINE)', width - 110, 20);
+      ctx.fillText('FROZEN', width - 66, 20);
     } else {
       ctx.fillStyle = '#10b981';
       ctx.font = 'bold 11px monospace';
-      ctx.fillText('● LIVE 60 FPS', width - 95, 20);
+      ctx.fillText('LIVE', width - 45, 20);
     }
   }
 }

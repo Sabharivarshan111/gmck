@@ -50,8 +50,8 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
       : flashlightOn === 'left' || flashlightOn === 'both';
 
     if (directLight || consensualLight) {
-      // Physiological constriction (45% reduction from baseline, clamped to 1.8mm minimum)
-      return Math.max(1.5, base * 0.55);
+      // Teaching response: 45% reduction, never enlarging a small baseline pupil
+      return Math.min(base, Math.max(1.5, base * 0.55));
     }
     return base;
   };
@@ -176,11 +176,11 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
           {tool === 'pupil' && (
             <div className="space-y-4">
               {/* Dual Eye Interactive Simulator */}
-              <div className="grid grid-cols-2 gap-2 sm:gap-4 bg-slate-950 p-3 sm:p-5 rounded-2xl border border-slate-800 text-center">
+              <div className="grid grid-cols-2 gap-2 sm:gap-4 [&>div:first-child]:order-2 [&>div:last-child]:order-1 bg-slate-950 p-3 sm:p-5 rounded-2xl border border-slate-800 text-center">
                 {/* Left Eye */}
                 <div className="flex flex-col items-center space-y-2.5">
                   <div className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                    <span>Left Eye (Oculus Sinister - OS)</span>
+                    <span>Patient’s left · OS</span>
                     {!pathology.pupilReactLeft && (
                       <span className="text-[10px] bg-rose-500/20 text-rose-400 px-1.5 py-0.5 rounded font-bold">
                         FIXED
@@ -195,8 +195,8 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
                       <div
                         className="rounded-full bg-black transition-all duration-200 shadow-xl"
                         style={{
-                          width: `${Math.max(10, currentPupilLeft * 14)}px`,
-                          height: `${Math.max(10, currentPupilLeft * 14)}px`,
+                          width: `${Math.min(85, currentPupilLeft / 12 * 100)}%`,
+                          height: `${Math.min(85, currentPupilLeft / 12 * 100)}%`,
                         }}
                       />
                     </div>
@@ -222,7 +222,7 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
                 {/* Right Eye */}
                 <div className="flex flex-col items-center space-y-2.5">
                   <div className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                    <span>Right Eye (Oculus Dexter - OD)</span>
+                    <span>Patient’s right · OD</span>
                     {!pathology.pupilReactRight && (
                       <span className="text-[10px] bg-rose-500/20 text-rose-400 px-1.5 py-0.5 rounded font-bold">
                         FIXED
@@ -237,8 +237,8 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
                       <div
                         className="rounded-full bg-black transition-all duration-200 shadow-xl"
                         style={{
-                          width: `${Math.max(10, currentPupilRight * 14)}px`,
-                          height: `${Math.max(10, currentPupilRight * 14)}px`,
+                          width: `${Math.min(85, currentPupilRight / 12 * 100)}%`,
+                          height: `${Math.min(85, currentPupilRight / 12 * 100)}%`,
                         }}
                       />
                     </div>
@@ -261,6 +261,8 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
                   </div>
                 </div>
               </div>
+
+              <p className="text-[11px] text-slate-400">Facing the patient: their right eye is on your left. Schematic pupil view; diameters are simulated.</p>
 
               {/* Penlight Control Selector */}
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pb-2 border-b border-slate-800">
