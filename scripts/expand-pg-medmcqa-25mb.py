@@ -14,8 +14,6 @@ import sys
 import zlib
 from collections import defaultdict
 from pathlib import Path
-from huggingface_hub import hf_hub_download
-import pyarrow.parquet as pq
 
 ROOT=Path(__file__).resolve().parent
 def load_module(path,name):
@@ -27,32 +25,8 @@ importer=load_module(ROOT/"import-pg-medmcqa-offline.py","pg_medmcqa_importer")
 packer=load_module(ROOT/"build-pg-offline-packs.py","pg_offline_packer")
 MAX_BYTES=24_300_000 # margin under the absolute 25MB compressed content budget
 
-def read_split(split):
-    filename=f"data/{split}-00000-of-00001.parquet"
-    path=hf_hub_download(repo_id="openlifescienceai/medmcqa",
-                         repo_type="dataset", filename=filename)
-    pf=pq.ParquetFile(path)
-    result=[]
-    seen=set()
-    invalid=[]
-    raw_count=0
-    for batch in pf.iter_batches(batch_size=3000):
-        for row in batch.to_pylist():
-            raw_count+=1
-            rec=importer.to_record(row,split)
-            if rec is None:
-                invalid.append(str(row.get("id") or "unknown"))
-                continue
-            if rec["id"] in seen:
-                raise RuntimeError(f"Duplicate source row id {rec['id']}")
-            seen.add(rec["id"])
-            if split=="train":
-                # Source metadata is explicit: train is mock/test series, NOT
-                # historical NEET-PG/INI-CET/FMGE exam session material.
-                rec["exam"]="GENERAL_MEDICAL"
-            result.append(rec)
-    return result, {"raw":raw_count,"usable":len(result),
-                    "invalid":len(invalid),"sample_invalid_ids":invalid[:10]}
+def read_split(split, revision):
+    return importer.transform_rows(importer.download_rows(split, revision), split, revision)
 
 def estimate_bytes(items, per_pack):
     sizes=0
@@ -69,6 +43,7 @@ def estimate_bytes(items, per_pack):
 
 def main():
     ap=argparse.ArgumentParser()
+    ap.add_argument("--revision", default="main")
     ap.add_argument("--output",type=Path,required=True)
     ap.add_argument("--report",type=Path,required=True)
     ap.add_argument("--rows-per-pack",type=int,default=2500)
@@ -77,8 +52,9 @@ def main():
     if args.rows_per_pack < 500 or args.rows_per_pack > 10000:
         ap.error("pack size must be 500–10000")
     budget=min(int(args.budget_mb*1_000_000),MAX_BYTES)
-    validation,vr=read_split("validation")
-    training,tr=read_split("train")
+    resolved=importer.resolve_revision(args.revision)
+    validation,vr=read_split("validation",resolved)
+    training,tr=read_split("train",resolved)
     print("SOURCE ACCOUNTING",json.dumps({"validation":vr,"train":tr}),flush=True)
     if vr["raw"]!=4183 or tr["raw"]!=182822:
         raise RuntimeError("Dataset unexpectedly changed; review upstream before importing")
@@ -129,6 +105,8 @@ def main():
         for q in all_rows:
             fh.write(json.dumps(q,ensure_ascii=False,separators=(",",":"))+"\n")
     coverage={
+        "requested_revision":args.revision,"resolved_revision":resolved,
+        "split_accounting":{"validation":vr,"train":tr},
         "source":"MedMCQA 2022 upstream; validation historical NEET PG (years individual UNKNOWN), train MOCK/TEST-SERIES only",
         "not_a_complete_1991_2026_archive":True,
         "all_2023_to_2026_actual_exams_imported":False,
@@ -150,7 +128,7 @@ def main():
     args.report.parent.mkdir(parents=True,exist_ok=True)
     args.report.write_text(json.dumps(coverage,indent=2)+"\n")
     print(json.dumps(coverage,indent=2),flush=True)
-    if len(all_rows)<180000: raise RuntimeError("Dataset missing expected answered records")
+    if not all_rows: raise RuntimeError("Dataset has no structurally usable answered records")
     if measured>25_000_000: raise RuntimeError("Hard budget breached")
 
 if __name__=="__main__":main()

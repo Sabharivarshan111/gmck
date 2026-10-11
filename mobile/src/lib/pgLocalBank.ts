@@ -1,4 +1,5 @@
 import type { PgQuestion } from './pgEntranceBank';
+import { PG_QUARANTINED_IDS, PG_ELIGIBLE_PACK_COUNTS } from './pgQuarantine';
 import { GENERATED_PG_PACKS } from './pgPacks/generatedManifest';
 
 export type PgOfflinePack = {
@@ -31,7 +32,7 @@ function matchesExam(exam: string, selected: string): boolean {
 }
 
 function isValidQuestion(q: PgQuestion): boolean {
-  return typeof q.id === 'string' && !!q.id &&
+  return !PG_QUARANTINED_IDS.has(q.id) && typeof q.id === 'string' && !!q.id &&
     typeof q.question === 'string' && q.question.trim().length > 8 &&
     Array.isArray(q.options) && q.options.length === 4 &&
     q.options.every(o => typeof o === 'string' && o.trim()) &&
@@ -44,7 +45,7 @@ function isValidQuestion(q: PgQuestion): boolean {
 }
 
 export function getPgOfflinePacks(): readonly PgOfflinePack[] {
-  return GENERATED_PG_PACKS;
+  return GENERATED_PG_PACKS.map(pack => ({ ...pack, count: PG_ELIGIBLE_PACK_COUNTS[pack.id] ?? pack.count }));
 }
 
 /**
@@ -65,7 +66,7 @@ export async function searchOfflinePgQuestions(input: PgOfflineSearch):
   // No-query browsing uses audited manifest counts. Do NOT deserialize hundreds
   // of thousands of questions on every page turn or first Notes open.
   if (!query) {
-    const eligible = GENERATED_PG_PACKS.filter(pack =>
+    const eligible = getPgOfflinePacks().filter(pack =>
       matchesExam(pack.exam, input.exam) &&
       (input.year === null || pack.year === input.year));
     const total = eligible.reduce((n, pack) => n + pack.count, 0);
@@ -80,12 +81,9 @@ export async function searchOfflinePgQuestions(input: PgOfflineSearch):
       // code-splits the others for native Android and Safari/Vercel.
       const module = await pack.load();
       scanned++;
-      for (let i = Math.max(0, offset - cursor);
-        i < module.default.length && questions.length < limit; i++) {
-        const q = module.default[i];
-        if (!isValidQuestion(q)) continue;
-        questions.push(q);
-      }
+      const rows = module.default.filter(isValidQuestion);
+      const start = Math.max(0, offset - cursor);
+      questions.push(...rows.slice(start, start + limit - questions.length));
       cursor = end;
     }
     return { questions, total, packsScanned: scanned };

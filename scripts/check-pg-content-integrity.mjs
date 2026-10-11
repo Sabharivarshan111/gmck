@@ -5,6 +5,18 @@
  * It cannot prove answer correctness, copyright permission or APK size.
  */
 import fs from 'node:fs';
+import path from 'node:path';
+import { createRequire } from 'node:module';
+const ts = createRequire(import.meta.url)('../mobile/node_modules/typescript');
+const cache = new Map();
+function loadTs(filename) {
+  filename = path.resolve(filename);
+  if (cache.has(filename)) return cache.get(filename).exports;
+  const module = { exports: {} }; cache.set(filename, module);
+  const code = ts.transpileModule(fs.readFileSync(filename, 'utf8'), { compilerOptions: {module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022} }).outputText;
+  new Function('require', 'module', 'exports', code)(id => loadTs(path.resolve(path.dirname(filename), id + (id.endsWith('.ts') ? '' : '.ts'))), module, module.exports);
+  return module.exports;
+}
 
 const read = path => fs.readFileSync(path, 'utf8');
 const source = read('mobile/src/lib/pgEntranceBank.ts');
@@ -15,16 +27,8 @@ const notes = read('mobile/src/screens/NotesScreen.tsx');
 
 const errors = [];
 const check = (condition, message) => { if (!condition) errors.push(message); };
-const extract = (regex, field) => {
-  const match = source.match(regex);
-  if (!match) throw new Error('Missing ' + field + ' array');
-  const arr = JSON.parse(match[1]);
-  if (!Array.isArray(arr)) throw new Error('Expected an array for ' + field);
-  return arr;
-};
-
-const sources = extract(/PG_SOURCES: PgSource\[\] = (\[[\s\S]*?\]);\s*export const PG_ORIGINAL_PRACTICE/, 'sources');
-const original = extract(/PG_ORIGINAL_PRACTICE: PgQuestion\[\] = (\[[\s\S]*?\]);\s*export const PG_SOURCE_REVIEW_DATE/, 'original practice');
+const { PG_SOURCES: sources, PG_ORIGINAL_PRACTICE: original } = loadTs('mobile/src/lib/pgEntranceBank.ts');
+const quarantine = loadTs('mobile/src/lib/pgQuarantine.ts');
 const sourceIds = new Set();
 for (const s of sources) {
   check(!sourceIds.has(s.id), 'Duplicate research source id ' + s.id);
@@ -95,12 +99,19 @@ if (packCount > 0) {
   check(sizeReport.fits_native_budget === true, 'Bundled question-pack source fails compressed-content budget');
 }
 
+check(quarantine.PG_QUARANTINED_IDS.size === quarantine.PG_QUARANTINED_TOTAL, 'Quarantine size mismatch');
+check(installedQuestions - quarantine.PG_QUARANTINED_TOTAL === quarantine.PG_STRUCTURALLY_ELIGIBLE_TOTAL, 'Eligible total mismatch');
+check(Object.values(quarantine.PG_ELIGIBLE_PACK_COUNTS).reduce((a,b)=>a+b,0) === quarantine.PG_STRUCTURALLY_ELIGIBLE_TOTAL, 'Eligible per-pack total mismatch');
+check(reader.includes('PG_QUARANTINED_IDS.has(q.id)'), 'Quarantined rows can enter practice');
 const report = {
-  audit_date: '2026-10-10',
+  audit_date: quarantine.PG_QUARANTINE_DATE ?? '2026-10-11',
   free_source_links: sources.length,
   original_practice_questions: original.length,
   installed_offline_pack_count: packCount,
   installed_offline_questions: installedQuestions,
+  quarantined_questions: quarantine.PG_QUARANTINED_TOTAL,
+  structurally_eligible_questions: quarantine.PG_STRUCTURALLY_ELIGIBLE_TOTAL,
+  independently_medically_reviewed_answers: 0,
   dataset_answer_labels_not_independently_verified: datasetLabelledQuestions,
   questions_with_missing_or_short_explanation: recordsWithoutExplanation,
   complete_historical_pyq_coverage_verified: false,

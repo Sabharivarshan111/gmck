@@ -27,7 +27,7 @@ export function validate(x: unknown): Input | null {
 }
 export function requiresImage(input: Input) {
   // This endpoint deliberately does not accept images; require a separate multimodal review.
-  return input.image_required === true || /(?:shown|given|following|above|below|attached)\s+(?:image|figure|photograph|radiograph|scan|ecg)|(?:image|figure|photograph|radiograph|scan|ecg)\s+(?:shown|above|below)|(?:shown|seen)\s+in\s+(?:the\s+)?(?:image|figure|photograph|radiograph|scan|ecg)|image[- ]based/i.test(input.question);
+  return input.image_required === true || /(?:shown|given|following|above|below|attached)\s+(?:image|figure|diagram|picture|photograph|radiograph|x[- ]?ray|scan|ecg)|(?:image|figure|diagram|picture|photograph|radiograph|x[- ]?ray|scan|ecg)\s+(?:shown|above|below)|(?:shown|seen)\s+in\s+(?:the\s+)?(?:image|figure|diagram|picture|photograph|radiograph|x[- ]?ray|scan|ecg)|image[- ]based/i.test(input.question);
 }
 export function parseCandidate(raw: string, passages: Passage[]) {
   try {
@@ -50,3 +50,4 @@ export function answerComparison(input: Input, answer: Answer | 'UNRESOLVED') {
   return !input.supplied_answer ? 'not_supplied' : answer === 'UNRESOLVED' ? 'unresolved' :
     input.supplied_answer === answer ? 'agrees_provisionally' : 'disagrees_requires_review';
 }
+

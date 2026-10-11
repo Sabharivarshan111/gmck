@@ -94,3 +94,4 @@ export async function retrievePassages(paths: string[], query: string,
   }));
   return rankPassages(loaded.flat(), query);
 }
+

@@ -1,15 +1,25 @@
 #!/usr/bin/env node
 import assert from "node:assert/strict";
 import fs from "node:fs";
+import path from "node:path";
+import {createRequire} from "node:module";
 const read=p=>fs.readFileSync(p,"utf8");
 const bank=read("mobile/src/lib/pgEntranceBank.ts");
 const ui=read("mobile/src/components/PgEntranceBankModal.tsx");
 const form=read("mobile/src/components/PgRecentAnswerReview.tsx");
 const server=read("supabase/functions/pg-answer-review/index.ts");
 const manifest=read("mobile/src/lib/pgPacks/generatedManifest.ts");
-const m=bank.match(/PG_SOURCES: PgSource\[\] = (\[[\s\S]*?\]);\s*export const PG_ORIGINAL_PRACTICE/);
-assert.ok(m,"Source array remains JSON-parseable");
-const sources=JSON.parse(m[1]);
+const ts=createRequire(import.meta.url)('../mobile/node_modules/typescript');
+const cache=new Map();
+function loadTs(filename){
+ filename=path.resolve(filename);if(cache.has(filename))return cache.get(filename).exports;
+ const m={exports:{}};cache.set(filename,m);
+ const code=ts.transpileModule(read(filename),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
+ new Function('require','module','exports',code)(id=>loadTs(path.resolve(path.dirname(filename),id+(id.endsWith('.ts')?'':'.ts'))),m,m.exports);
+ return m.exports;
+}
+const {PG_SOURCES:sources}=loadTs('mobile/src/lib/pgEntranceBank.ts');
+const quarantine=loadTs('mobile/src/lib/pgQuarantine.ts');
 const exams=["NEET_PG","INI_CET","FMGE"];
 for(const exam of exams){
   for(let year=2023;year<=2026;year++){
@@ -22,17 +32,17 @@ for(const exam of exams){
   }
 }
 assert.match(ui,/PgRecentAnswerReview/);
-assert.match(ui,/setYearText\(String\(y\)\)/);
+assert.match(ui,/setYearText\([^;]*String\(y\)/);
 assert.match(form,/supabase\.functions\.invoke\('pg-answer-review'/);
 assert.match(form,/Sign in with Google first/);
-assert.match(form,/independently verified/);
+assert.match(form,/independently verified|independently reviewed/);
 assert.match(server,/auth\.auth\.getUser\(token\)/);
 assert.match(server,/consume_edge_quota/);
-assert.match(server,/buildTextbookContext/);
+assert.match(server,/retrievePassages/);
 assert.match(server,/source_year_verified:false/);
 assert.equal(read('supabase/functions/pg-answer-review/textbook.ts'),
   read('supabase/functions/generate-handwritten-notes/textbook.ts'),
-  'PG textbook retrieval must stay byte-identical to the production notes retrieval');
+  'Legacy shared textbook module must stay byte-identical; PG retrieval is dedicated');
 assert.match(server,/independently_medically_reviewed:false/);
 assert.match(server,/answer:"UNRESOLVED"/);
 assert.ok(!server.includes("verify_jwt: false"),"Do not allow anonymous unmetered textbook requests");
@@ -49,6 +59,9 @@ assert.ok(size.deflate_mb<25,"Expanded offline pack must remain under 25 MB");
 assert.ok(accounting.record_years_verified===0,"Do not assign fictitious source exam years");
 assert.match(read("scripts/import-pg-medmcqa-offline.py"),/\"exam_year\": None/);
 console.log(JSON.stringify({
+  structurally_eligible_questions:quarantine.PG_STRUCTURALLY_ELIGIBLE_TOTAL,
+  quarantined_questions:quarantine.PG_QUARANTINED_TOTAL,
+  clinically_verified_answers:0,
   recent_source_coverage:exams.flatMap(exam=>
     [2023,2024,2025,2026].map(year=>({exam,year,
       count:sources.filter(s=>s.exam===exam&&s.from<=year&&s.to>=year).length}))),

@@ -2,7 +2,9 @@ name: PG content integrity
 on:
   push:
     paths:
-      - 'mobile/src/lib/pgEntranceBank.ts'
+      - 'mobile/src/lib/pg*.ts'
+      - 'scripts/*pg*'
+      - 'docs/PG_CORPUS*.json'
       - 'mobile/src/lib/pgPacks/**'
       - 'mobile/src/lib/pgLocalBank.ts'
       - 'mobile/src/components/PgEntranceBankModal.tsx'
@@ -11,7 +13,9 @@ on:
       - '.github/workflows/pg-content-integrity.yml'
   pull_request:
     paths:
-      - 'mobile/src/lib/pgEntranceBank.ts'
+      - 'mobile/src/lib/pg*.ts'
+      - 'scripts/*pg*'
+      - 'docs/PG_CORPUS*.json'
       - 'mobile/src/lib/pgPacks/**'
       - 'mobile/src/lib/pgLocalBank.ts'
       - 'mobile/src/components/PgEntranceBankModal.tsx'
@@ -28,4 +32,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
+      - run: npm --prefix mobile ci --legacy-peer-deps
       - run: node scripts/check-pg-content-integrity.mjs
+      - run: python scripts/generate-pg-quarantine.py --check

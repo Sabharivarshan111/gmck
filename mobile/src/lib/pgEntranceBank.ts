@@ -1,8 +1,13 @@
+import { PG_NEET_RESEARCH_SOURCES } from './pgResearchSources';
+import { PG_INI_RESEARCH_SOURCES } from './pgIniResearchSources';
+import { PG_FMGE_RESEARCH_SOURCES } from './pgFmgeResearchSources';
+import { PG_FIRSTRANKER_SOURCES } from './pgFirstRankerSources';
+
 /** Research directory only: free-to-view is NOT permission to republish source questions. */
 export type PgExam = 'NEET_PG' | 'INI_CET' | 'FMGE';
-export type PgSource = {id:string;exam:PgExam|'ALL';name:string;from:number;to:number;url:string;answerStatus:string;kind:string;note:string;reuse?:string};
+export type PgSource = {id:string;exam:PgExam|'ALL';name:string;from:number;to:number;url:string;answerStatus:string;kind:string;note:string;reuse?:string;sessions?:string[];reuseStatus?:'reference_only'|'licensed_dataset';checkedAt?:string;coverageNote?:string};
 export type PgQuestion = {id:string;exam:string;year:number|null;subject:string;question:string;options:string[];answer:string;explanation:string;source_url?:string;record_type?:string;answer_reference?:string};
-export const PG_SOURCES: PgSource[] = [
+export const PG_BASE_SOURCES: PgSource[] = [
   {
     "id": "medmcqa",
     "exam": "ALL",
@@ -281,6 +286,7 @@ export const PG_SOURCES: PgSource[] = [
     "note": "2026 January and June sessions are different; October 2026 is still in the future as of October 10"
   }
 ];
+export const PG_SOURCES: PgSource[] = [...PG_BASE_SOURCES, ...PG_NEET_RESEARCH_SOURCES, ...PG_INI_RESEARCH_SOURCES, ...PG_FMGE_RESEARCH_SOURCES, ...PG_FIRSTRANKER_SOURCES];
 export const PG_ORIGINAL_PRACTICE: PgQuestion[] = [
   {
     "id": "orbit-original-1",
@@ -433,4 +439,4 @@ export const PG_ORIGINAL_PRACTICE: PgQuestion[] = [
   "explanation": "Relative risk is the incidence proportion in the exposed group divided by the incidence proportion in the unexposed group."
 }
 ];
-export const PG_SOURCE_REVIEW_DATE = '2026-10-10';
+export const PG_SOURCE_REVIEW_DATE = '2026-10-11';
