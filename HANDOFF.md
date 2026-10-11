@@ -2553,3 +2553,15 @@ HALF-DONE: These synthetic images remain schematic appearance models, not accura
 NEXT: Verify reference image loading, all four view selectors, caliper/mobile controls, pupil light controls and production deployment. Physical-device performance/GPU/audio and clinical fidelity remain unverified. No amniotic-fluid module found; owner’s attached fluid screenshot is abdominal Morison’s pouch.
 
 DO NOT: Describe texture as validated ultrasound physics, claim all requested features fixed, call the fibrosis lung reference normal, infer diagnoses solely from CVP/SpO2/lactate, copy competitor assets, alter Android releases/PG/billing/security.
+
+### 2026-10-11 — source ultrasound physics investigation
+Owner explicitly rejects SVG/canvas organ drawings with texture as realistic
+POCUS. The atlas's 2,234-source-part standard applies to scan generation.
+PyMUST 0.1.9 has been installed and exercised on actual atlas mesh sections
+with SIMUS channel RF and DAS beamforming. Reproducible offline experiment:
+`scripts/generate-pocus-source-proof.py`; decision and remaining work:
+`docs/pocus-source-physics-research-2026-10-11.md`. This is NOT integrated into
+the app and NOT a validated Morison's-pouch pose. PR58 is a controls/reference
+baseline, not completion of the realism request. No amniotic-fluid module
+found; realistic face/pupil trainer also outstanding. Continue source/physics
+work and clinical-plane verification before replacing the live renderer.

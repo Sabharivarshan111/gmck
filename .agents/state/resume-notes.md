@@ -2099,3 +2099,13 @@ HALF-DONE: These synthetic images remain schematic appearance models, not accura
 NEXT: Verify reference image loading, all four view selectors, caliper/mobile controls, pupil light controls and production deployment. Physical-device performance/GPU/audio and clinical fidelity remain unverified. No amniotic-fluid module found; owner’s attached fluid screenshot is abdominal Morison’s pouch.
 
 DO NOT: Describe texture as validated ultrasound physics, claim all requested features fixed, call the fibrosis lung reference normal, infer diagnoses solely from CVP/SpO2/lactate, copy competitor assets, alter Android releases/PG/billing/security.
+
+## Owner clarified source-based POCUS requirement — 2026-10-11
+
+DONE: Researched primary PyMUST/SIMUS and k-Wave sources. Installed PyMUST 0.1.9 and executed actual multichannel RF simulation and DAS reconstruction using seven registered BodyParts3D hepatic/kidney mesh sections. Added reproducible offline proof script, pinned requirements and research decision/limitations document. No app renderer changed in this step.
+
+HALF-DONE: PR58's textured procedural renderer and external references do NOT satisfy owner's realism requirement. Source acoustic experiment uses a phased-array parameter set and an unvalidated sagittal abdominal plane; source reflectivities are assumptions. No clinical RUQ plane, fluid states, cardiac cine, lung reverberation, runtime integration or realistic facial pupil trainer completed.
+
+NEXT: Continue from docs/pocus-source-physics-research-2026-10-11.md. Validate scan planes/materials/transducers; build case-dependent scans from real anatomy and acoustic models, then mobile integration and actual screenshots. Do not ship the proof as finished POCUS.
+
+DO NOT: Return to SVG ellipses or cosmetic noise as realism; call archived media patient-state simulation; claim all screenshot issues fixed; alter native releases/PG/billing/security.
