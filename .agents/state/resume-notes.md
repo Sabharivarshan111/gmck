@@ -2066,3 +2066,14 @@ HALF-DONE: Cloud browser lacks WebGL, so live GPU anatomy rendering on a physica
 NEXT: Physical-device GPU/audio verification. If requested, design and clinically validate the separate facial/cranial-nerve examination feature.
 
 DO NOT: Claim an animated facial trainer, perfect clinical fidelity or live GPU verification from these screenshots. Do not import competitor assets or replace registered anatomy with drawings. Do not alter Android releases, PG, billing or security.
+
+
+## Auscultation playback and training follow-up — 2026-10-11
+
+DONE: New sound presets cancel queued old sources and schedule the replacement at currentTime + 40ms; routine rate updates retain cycle timing. Absent lung sounds stop sources and idle scheduler. Preset setters use the same transition path. Added regression assertions for these transitions; all 32 bell/diaphragm offline sound renders remain finite, audible (except intended silence), with routing/timing/stop checks passed. Training hides timing labels until Check answer; frozen trace keeps its original time/events when revealing labels. TypeScript, targeted ESLint, mobile UI guard, source-model check and web build passed.
+
+HALF-DONE: Publishing and deployed browser verification of answer reveal/frozen trace remain pending. Physical phone GPU and clinical acoustic fidelity remain unverified.
+
+NEXT: Verify training and reveal on the deployed 360px phone harness, save screenshot, record deployment result.
+
+DO NOT: Claim physical headphone output or clinically certified recordings; do not substitute drawn anatomy or add the separate facial trainer in this patch.
