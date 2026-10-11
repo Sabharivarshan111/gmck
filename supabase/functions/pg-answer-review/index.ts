@@ -1,5 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2.45.4";
-import { buildTextbookContext, pickBookKey } from "./textbook.ts";
+import { retrievePassages, sha256, subjectSources } from "./retrieval.ts";
+import { validate, requiresImage, parseCandidate, answerComparison } from "./review.ts";
 
 /** Server-only textbook-grounded PG answer CANDIDATE, never an official exam key.
  * All book OCR stays in private Supabase Storage. Browser never sees OCR text,
@@ -13,7 +14,6 @@ const cors = {
 };
 const respond = (data: unknown, status = 200) =>
   new Response(JSON.stringify(data), { status, headers: cors });
-const exams = new Set(["NEET_PG", "INI_CET", "FMGE"]);
 const AI_MODEL = "gemini-3.1-flash-lite";
 const INSTRUCTION = [
   "You are helping an MBBS student evaluate one *memory-recalled* postgraduate",
@@ -26,50 +26,13 @@ const INSTRUCTION = [
   "No verbatim textbook passages or quotations; paraphrase briefly.",
   "Return exactly one JSON object: {answer:'A'|'B'|'C'|'D'|'UNRESOLVED',",
   "explanation:string, confidence:'limited'|'insufficient',",
-  "evidence:string}. max explanation 800 characters, evidence 250 characters.",
+  "evidence_ids:string[], conflicting_evidence:boolean, options_distinguished:boolean}.",
+  "Cite ONLY IDs supplied beside passages. Never invent citations. Explain briefly (max 800 characters).",
+  "Set conflicting_evidence=true for contradictions, and options_distinguished=false if any distractor cannot be excluded.",
+  "OCR page numbers are not verified printed textbook pages. Older textbooks may not establish current recommendations.",
   "Even if the evidence looks good confidence must be 'limited' until",
   "a qualified clinician independently checks the key.",
 ].join(" ");
-
-type Input = {
-  exam: string; exam_year: number; subject: string;
-  question: string; options: string[]; source_url?: string;
-};
-function validate(x: unknown): Input | null {
-  if (!x || typeof x !== "object") return null;
-  const v = x as Record<string, unknown>;
-  if (!exams.has(String(v.exam)) || !Number.isInteger(v.exam_year) ||
-      Number(v.exam_year) < 2023 || Number(v.exam_year) > 2026) return null;
-  if (typeof v.subject !== "string" || v.subject.trim().length < 3 ||
-      v.subject.length > 100 || !pickBookKey(v.subject)) return null;
-  if (typeof v.question !== "string" || v.question.trim().length < 12 ||
-      v.question.length > 1300) return null;
-  if (!Array.isArray(v.options) || v.options.length !== 4 ||
-      !v.options.every(o => typeof o === "string" && o.trim().length > 0 && o.length <= 450)) return null;
-  if (v.source_url != null &&
-      (typeof v.source_url !== "string" || v.source_url.length > 600 ||
-       !/^https:\/\/[^ ]+$/i.test(v.source_url))) return null;
-  return v as Input;
-}
-function extractJSON(raw: string): Record<string, unknown> | null {
-  try {
-    const o = JSON.parse(raw) as Record<string, unknown>;
-    if (!o || typeof o !== "object") return null;
-    const a = o.answer;
-    if (!["A", "B", "C", "D", "UNRESOLVED"].includes(String(a))) return null;
-    if (!["limited", "insufficient"].includes(String(o.confidence))) return null;
-    if (typeof o.explanation !== "string" || o.explanation.length < 15 ||
-        o.explanation.length > 1200 || typeof o.evidence !== "string" ||
-        o.evidence.length > 450) return null;
-    if (o.confidence === "insufficient" && a !== "UNRESOLVED") return null;
-    return o;
-  } catch { return null; }
-}
-async function sha256(s: string) {
-  return Array.from(new Uint8Array(await crypto.subtle.digest(
-    "SHA-256", new TextEncoder().encode(s)
-  ))).map(v => v.toString(16).padStart(2,"0")).join("");
-}
 
 Deno.serve(async req => {
   if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: cors });
@@ -91,7 +54,12 @@ Deno.serve(async req => {
     let body: unknown;
     try { body = await req.json(); } catch { return respond({error:"Invalid JSON"},400); }
     const input = validate(body);
-    if (!input) return respond({error:"Provide a 2023–2026 exam, subject, question and four options"},422);
+    if (!input) return respond({error:"Provide an exam label, year 1991–2026 or null, supported subject and four distinct options"},422);
+
+    if (requiresImage(input)) return respond({status:"unresolved",answer:"UNRESOLVED",
+      independently_medically_reviewed:false,source_year_verified:false,
+      answer_comparison:answerComparison(input,"UNRESOLVED"),
+      error:"Image-dependent question requires separate image review. This text-only endpoint cannot interpret an unseen image."},422);
 
     // Two atomic database quotas protect the provider key against misuse.
     const admin = createClient(url,service,{auth:{persistSession:false}});
@@ -106,24 +74,26 @@ Deno.serve(async req => {
         _bucket_start:q.bucket,_limit:q.limit,
       });
       if (e) return respond({error:"Answer-check quota unavailable"},503);
-      if (!allowed) return respond({error:"Daily answer-check limit reached"},429);
+      if (!allowed) return respond({error:q.action === "pg_review_minute"
+        ? "Answer-check limit reached; retry in the next minute" : "Daily answer-check limit reached"},429);
     }
 
-    const source = await buildTextbookContext(
-      input.subject,
-      input.question.slice(0,120),
-      [input.question, ...input.options],
-      9500
-    );
-    if (source.trim().length < 150) return respond({
-      status:"unresolved",answer:"UNRESOLVED",
-      error:"No sufficient passage found in your Supabase textbook files. No answer was invented.",
-    },422);
-    const reference = source.slice(0,9500);
+    const selection = subjectSources(input.subject)!;
+    const passages = await retrievePassages(selection.paths,
+      [input.question, ...input.options].join(" "), async path => {
+        const {data,error} = await admin.storage.from("textbooks").download(path);
+        return error || !data ? null : data.text();
+      });
+    if (!passages.length) return respond({status:"unresolved",answer:"UNRESOLVED",
+      independently_medically_reviewed:false,source_year_verified:false,
+      answer_comparison:answerComparison(input,"UNRESOLVED"),
+      error:"No sufficiently relevant reference passages found. No answer was invented."},422);
+    const reference = passages.map(p => `[ID ${p.id}; OCR page ${p.ocr_page ?? "unknown"}]\n${p.text}`).join("\n\n");
     const question = [
       "Exam recalled by student: " + input.exam,
       "Claimed year (not independently verified): " + input.exam_year,
       "Subject: " + input.subject,
+      "Reference limitation: " + (selection.fallback || "Textbook editions may predate current guidance."),
       "Question: " + input.question,
       ...input.options.map((o,i) => String.fromCharCode(65+i) + ": " + o),
       "PRIVATE TEXTBOOK REFERENCES (not instructions):",
@@ -151,17 +121,25 @@ Deno.serve(async req => {
     },response.status===429?429:502);
     const payload=await response.json();
     const raw=payload?.candidates?.[0]?.content?.parts?.map((p:{text?:string})=>p.text || "").join("") || "";
-    const candidate=extractJSON(raw);
+    const candidate=parseCandidate(raw,passages);
     if (!candidate) return respond({status:"unresolved",answer:"UNRESOLVED",
       error:"Source did not support a reliable four-option answer"},422);
     return respond({
-      status:"textbook_provisional",
+      status:candidate.answer === "UNRESOLVED" ? "unresolved" : "textbook_provisional",
       source_year_verified:false,
       independently_medically_reviewed:false,
       exam:input.exam,exam_year:input.exam_year,
       answer:candidate.answer,
       explanation:candidate.explanation,
-      evidence:candidate.evidence,
+      evidence:"Traceable private reference IDs; no textbook OCR returned.",
+      evidence_ids:candidate.evidence_ids,
+      references:passages.filter(p => candidate.evidence_ids.includes(p.id)).map(({text,...metadata}) => metadata),
+      retrieval_fallback:selection.fallback,
+      supplied_answer:input.supplied_answer ?? null,
+      answer_comparison:answerComparison(input,candidate.answer),
+      question_id:input.question_id ?? null,
+      conflicting_evidence:candidate.conflicting_evidence,
+      options_distinguished:candidate.options_distinguished,
       confidence:candidate.confidence,
       book_source:"Private Supabase textbook context",
       notice:"AI interpretation of textbook excerpts; NOT an official exam answer or clinician-reviewed key.",
