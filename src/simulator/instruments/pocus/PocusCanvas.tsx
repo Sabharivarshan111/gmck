@@ -5,6 +5,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { PocusReference } from './PocusReference';
+import { PocusSourceScan } from './PocusSourceScan';
 import { PatientPathologyState, PatientVitals } from '../../types';
 import {
   PocusSimulationEngine,
@@ -168,7 +169,7 @@ export const PocusCanvas: React.FC<PocusCanvasProps> = ({
         {/* Action Controls: Freeze, M-Mode, Caliper */}
         {!referenceMode && <div className="-mx-1 px-1 flex items-center gap-1.5 overflow-x-auto no-scrollbar">
           {/* Live / Freeze */}
-          <button
+          {settings.viewMode !== 'fast_morison' && <button
             onClick={() =>
               setSettings((prev) => ({ ...prev, isFrozen: !prev.isFrozen }))
             }
@@ -180,10 +181,10 @@ export const PocusCanvas: React.FC<PocusCanvasProps> = ({
           >
             {settings.isFrozen ? <Play className="w-3.5 h-3.5" /> : <Pause className="w-3.5 h-3.5" />}
             <span>{settings.isFrozen ? 'Unfreeze' : 'Freeze'}</span>
-          </button>
+          </button>}
 
           {/* M-Mode Toggle */}
-          <button
+          {settings.viewMode !== 'fast_morison' && <button
             onClick={() =>
               setSettings((prev) => ({ ...prev, showMMode: !prev.showMMode, caliperPointA: null, caliperPointB: null }))
             }
@@ -195,7 +196,7 @@ export const PocusCanvas: React.FC<PocusCanvasProps> = ({
           >
             <Activity className="w-3.5 h-3.5" />
             <span>M-Mode</span>
-          </button>
+          </button>}
 
           {/* Color Doppler (Cardiac only) */}
           {settings.viewMode === 'cardiac_plax' && (
@@ -237,7 +238,12 @@ export const PocusCanvas: React.FC<PocusCanvasProps> = ({
       {referenceMode ? <PocusReference key={settings.viewMode} view={settings.viewMode} /> : <>
       {/* 2. CRT Ultrasound Machine Bezel & Screen */}
       <div className="relative bg-[#020408] rounded-2xl overflow-hidden border border-slate-800 p-2 shadow-2xl flex items-center justify-center">
-        <canvas
+        {settings.viewMode === 'fast_morison' ? <PocusSourceScan
+          hasFluid={pathology.ascites > 0.25}
+          settings={settings}
+          setSettings={setSettings}
+          caliperActive={caliperActive}
+        /> : <canvas
           data-testid="pocus-canvas"
           aria-label="Synthetic ultrasound teaching scan"
           ref={canvasRef}
@@ -245,7 +251,7 @@ export const PocusCanvas: React.FC<PocusCanvasProps> = ({
           className={`w-full rounded-xl h-[46dvh] min-h-[300px] max-h-[420px] md:h-[380px] md:min-h-0 md:max-h-none select-none ${
             caliperActive ? 'cursor-crosshair' : 'cursor-default'
           }`}
-        />
+        />}
 
         {caliperActive && !settings.caliperPointB && (
           <div className="absolute bottom-4 left-4 bg-black/80 border border-sky-400 text-sky-300 text-[10px] font-mono px-2.5 py-1 rounded-lg backdrop-blur-xs pointer-events-none">
@@ -255,7 +261,7 @@ export const PocusCanvas: React.FC<PocusCanvasProps> = ({
       </div>
 
       <p className="px-1 text-[11px] text-slate-400 leading-relaxed">
-        Synthetic teaching scan · {settings.viewMode === 'fast_morison' ? (pathology.ascites > 0.25 ? 'Free fluid at the hepatorenal recess' : 'No free fluid simulated') : settings.viewMode === 'lung' ? 'Pleural interface and reverberation artifacts' : 'Cardiac chamber and valve motion'}
+        {settings.viewMode === 'fast_morison' ? 'Experimental source-anatomy RF reconstruction' : 'Schematic teaching scan'} · {settings.viewMode === 'fast_morison' ? (pathology.ascites > 0.25 ? 'Free fluid teaching state at the hepatorenal recess' : 'No free fluid teaching state') : settings.viewMode === 'lung' ? 'Pleural interface and reverberation artifacts' : 'Cardiac chamber and valve motion'}
       </p>
 
       {/* 3. Machine Gain & Depth Knobs */}
@@ -305,7 +311,7 @@ export const PocusCanvas: React.FC<PocusCanvasProps> = ({
             {settings.viewMode === 'lung'
               ? 'Linear 8.0 MHz (Superficial)'
               : settings.viewMode === 'fast_morison'
-              ? 'Curvilinear 3.5 MHz (Abdominal)'
+              ? 'Source acoustic model (experimental)'
               : 'Phased Array 2.5 MHz (Cardiac)'}
           </strong>
         </div>

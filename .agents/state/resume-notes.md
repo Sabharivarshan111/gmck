@@ -2099,3 +2099,23 @@ HALF-DONE: These synthetic images remain schematic appearance models, not accura
 NEXT: Verify reference image loading, all four view selectors, caliper/mobile controls, pupil light controls and production deployment. Physical-device performance/GPU/audio and clinical fidelity remain unverified. No amniotic-fluid module found; owner’s attached fluid screenshot is abdominal Morison’s pouch.
 
 DO NOT: Describe texture as validated ultrasound physics, claim all requested features fixed, call the fibrosis lung reference normal, infer diagnoses solely from CVP/SpO2/lactate, copy competitor assets, alter Android releases/PG/billing/security.
+
+## Owner clarified source-based POCUS requirement — 2026-10-11
+
+DONE: Researched primary PyMUST/SIMUS and k-Wave sources. Installed PyMUST 0.1.9 and executed actual multichannel RF simulation and DAS reconstruction using seven registered BodyParts3D hepatic/kidney mesh sections. Added reproducible offline proof script, pinned requirements and research decision/limitations document. No app renderer changed in this step.
+
+HALF-DONE: PR58's textured procedural renderer and external references do NOT satisfy owner's realism requirement. Source acoustic experiment uses a phased-array parameter set and an unvalidated sagittal abdominal plane; source reflectivities are assumptions. No clinical RUQ plane, fluid states, cardiac cine, lung reverberation, runtime integration or realistic facial pupil trainer completed.
+
+NEXT: Continue from docs/pocus-source-physics-research-2026-10-11.md. Validate scan planes/materials/transducers; build case-dependent scans from real anatomy and acoustic models, then mobile integration and actual screenshots. Do not ship the proof as finished POCUS.
+
+DO NOT: Return to SVG ellipses or cosmetic noise as realism; call archived media patient-state simulation; claim all screenshot issues fixed; alter native releases/PG/billing/security.
+
+## Experimental source-reconstructed FAST pilot — 2026-10-11
+
+DONE: Morison's-pouch case rendering now uses paired offline RF/DAS assets from actual BodyParts3D source mesh sections and PyMUST/SIMUS with C5-2v (128 elements, 3.57 MHz). Same seeded phantom/reference; fluid removes only modeled gap scatterers; mean envelope reduction 9.97 dB. Runtime viewer is bounded/lazy with gain, depth, calibrated calipers and retry; static pilot hides unavailable cine/M-mode and says experimental. Validation script, TypeScript, targeted ESLint and Vite build pass.
+
+HALF-DONE: One parasagittal source plane only; generic acoustic assumptions, not registered/clinically validated RUQ acquisition. Cardiac/lung/pupil remain schematic and no amniotic-fluid feature exists. Preview/mobile browser test and screenshot pending.
+
+NEXT: Publish branch preview, inspect actual mobile normal/fluid states and controls, then merge only if legible. Continue clinically registered multi-plane/cine work separately.
+
+DO NOT: Claim complete realistic POCUS, clinical diagnostic fidelity or a finished pupil trainer; do not copy competitor assets or touch native releases/PG/billing/security.
