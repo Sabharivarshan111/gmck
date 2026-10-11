@@ -1,13 +1,15 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type RefObject } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { gunzipSync } from 'fflate';
+import { startVisibleFrameLoop } from '../engine/visibleFrameLoop';
+import type { StethoscopeAudioEngine } from './StethoscopeSynthesizer';
 
 /** Reference meshes retain their registered metre/Y-up coordinates. No drawn anatomy. */
-export default function AuscultationThorax({ back, xray }: { back: boolean; xray: boolean }) {
+export default function AuscultationThorax({ back, xray, listening, motion, pulmonary, engineRef }: { back: boolean; xray: boolean; listening: boolean; motion: boolean; pulmonary: boolean; engineRef: RefObject<StethoscopeAudioEngine | null> }) {
   const hostRef = useRef<HTMLDivElement>(null);
   const controls = useRef<{ update: () => void } | null>(null);
-  const latest = useRef({ back, xray }); latest.current = { back, xray };
+  const latest = useRef({ back, xray, listening, motion, pulmonary }); latest.current = { back, xray, listening, motion, pulmonary };
   const [snapshotError, setSnapshotError] = useState(false);
   const [status, setStatus] = useState<'loading' | 'ready' | 'unavailable'>('loading');
   useEffect(() => {
@@ -26,6 +28,19 @@ export default function AuscultationThorax({ back, xray }: { back: boolean; xray
     const fill = new THREE.DirectionalLight(0x9edcff, 1.4); fill.position.set(1, 1, -2); scene.add(fill);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    const moving: { pivot: THREE.Group; pulmonary: boolean }[] = [];
+    const addPivots = (root: THREE.Object3D, lungs: boolean) => {
+      const meshes: THREE.Mesh[] = [];
+      root.traverse(node => { if (node instanceof THREE.Mesh && (lungs || node.name === 'cardiac')) meshes.push(node); });
+      for (const mesh of meshes) {
+        if (!mesh.parent) continue;
+        mesh.geometry.computeBoundingBox();
+        const center = mesh.geometry.boundingBox!.getCenter(new THREE.Vector3()).add(mesh.position);
+        const pivot = new THREE.Group(); pivot.position.copy(center);
+        const parent = mesh.parent; parent.add(pivot); pivot.add(mesh); mesh.position.sub(center);
+        moving.push({ pivot, pulmonary: lungs });
+      }
+    };
     const render = () => {
       if (disposed || document.hidden) return;
       const { width, height } = host.getBoundingClientRect();
@@ -67,6 +82,7 @@ export default function AuscultationThorax({ back, xray }: { back: boolean; xray
       const decoded = bytes[0] === 0x1f && bytes[1] === 0x8b ? gunzipSync(bytes) : bytes;
       const gltf = await new GLTFLoader().parseAsync(decoded.buffer.slice(decoded.byteOffset, decoded.byteOffset + decoded.byteLength) as ArrayBuffer, '');
       if (disposed) { disposeObject(gltf.scene); return; }
+      addPivots(gltf.scene, false);
       anatomy.add(gltf.scene);
     };
     const loadLungs = async () => {
@@ -78,6 +94,7 @@ export default function AuscultationThorax({ back, xray }: { back: boolean; xray
         for (const material of Array.isArray(child.material) ? child.material : [child.material]) material.dispose();
         child.material = new THREE.MeshStandardMaterial({ color: '#bf777d', roughness: .7, transparent: true, opacity: .32, depthWrite: false, side: THREE.DoubleSide });
       });
+      addPivots(gltf.scene, true);
       anatomy.add(gltf.scene);
     };
     host.appendChild(renderer.domElement);
@@ -88,11 +105,42 @@ export default function AuscultationThorax({ back, xray }: { back: boolean; xray
     void Promise.all([loadThorax(), loadLungs()]).then(() => {
       if (!disposed) { render(); setStatus('ready'); }
     }).catch(() => { if (!disposed) setStatus('unavailable'); });
+    let lastFrame = 0;
+    let wasMoving = false;
+    const stopMotion = startVisibleFrameLoop(time => {
+      if (time - lastFrame < 33) return;
+      lastFrame = time;
+      const enabled = latest.current.listening && latest.current.motion && latest.current.xray;
+      if (!enabled && !wasMoving) return;
+      wasMoving = enabled;
+      const trace = enabled ? engineRef.current?.getTrace() : null;
+      for (const item of moving) {
+        let scale = 1;
+        if (trace && item.pulmonary === latest.current.pulmonary) {
+          const label = item.pulmonary ? 'Inspiration' : 'S1';
+          const event = [...trace.events].reverse().find(e => e.label === label && e.time <= trace.time);
+          if (event) {
+            const elapsed = trace.time - event.time;
+            if (item.pulmonary) {
+              const expiration = trace.events.find(e => e.label === 'Expiration' && e.time > event.time);
+              const inspirationLength = expiration ? expiration.time - event.time : 2;
+              const expansion = elapsed <= inspirationLength ? Math.sin(Math.PI * .5 * elapsed / inspirationLength) : Math.max(0, 1 - (elapsed - inspirationLength) / Math.max(.2, inspirationLength * .55));
+              scale = 1 + .035 * expansion;
+            } else {
+              scale = 1 - .055 * Math.max(0, Math.sin(Math.PI * Math.min(1, elapsed / .4)));
+            }
+          }
+        }
+        item.pivot.scale.setScalar(scale);
+      }
+      render();
+    });
     return () => {
+      stopMotion();
       disposed = true; abort.abort(); controls.current = null; observer.disconnect(); document.removeEventListener('visibilitychange', render);
       renderer.domElement.removeEventListener('webglcontextlost', lost); disposeObject(anatomy); renderer.dispose(); renderer.domElement.remove();
     };
-  }, []);
+  }, [engineRef]);
   useEffect(() => { controls.current?.update(); }, [back, xray]);
   return <>
     <div ref={hostRef} className="ausc-webgl" style={{visibility:status === 'ready' ? 'visible' : 'hidden'}} />

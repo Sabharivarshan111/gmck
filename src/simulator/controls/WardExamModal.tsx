@@ -129,7 +129,7 @@ export const WardExamModal: React.FC<WardExamModalProps> = ({
   // ============================================================================
   const pallorLevel = pathology.pallor; // 0.0 to 1.0
   const cyanosisLevel = pathology.cyanosis; // 0.0 to 1.0
-  const isPalmarCreasePale = pallorLevel > 0.65; // Hb < 7 g/dL
+  const isPalmarCreasePale = pallorLevel > 0.65; // Teaching pallor intensity; not an estimate of hemoglobin.
   const isCentralCyanosis = vitals.spo2 < 85;
 
   // ============================================================================
@@ -171,7 +171,7 @@ export const WardExamModal: React.FC<WardExamModalProps> = ({
             {[
               { id: 'edema', label: '💧 Pitting Edema Test', badge: edemaResult.grade },
               { id: 'icterus', label: '👁️ Scleral Icterus', badge: `${estimatedBilirubinMgDl} mg%` },
-              { id: 'pallor', label: '🩸 Pallor & Cyanosis', badge: isPalmarCreasePale ? 'Hb<7' : 'Pink' },
+              { id: 'pallor', label: '🩸 Pallor & Cyanosis', badge: isPalmarCreasePale ? 'Pale' : 'Pink' },
               { id: 'ascites', label: '🌊 Ascites & Thrill', badge: hasAscites ? 'Positive' : 'Clear' },
             ].map((tab) => (
               <button
@@ -392,7 +392,7 @@ export const WardExamModal: React.FC<WardExamModalProps> = ({
                   </div>
 
                   <p className="text-[11px] text-slate-400 leading-relaxed">
-                    <strong>Kundu Bedside Pearl:</strong> Palmar creases are normally darker than surrounding skin when Hb &gt; 7 g/dL. When Hb drops below 7 g/dL, palmar creases lose all pink tint and become as pale as the surrounding palm.
+                    <strong>Examination point:</strong> Inspect the conjunctivae, palms and palmar creases in good light. Pallor can suggest anemia, but its appearance cannot determine an exact hemoglobin concentration; confirm with a blood count.
                   </p>
                 </div>
 
@@ -419,7 +419,7 @@ export const WardExamModal: React.FC<WardExamModalProps> = ({
                     <div className="flex items-center justify-between">
                       <span className="text-slate-400">Peripheral (Nailbeds):</span>
                       <span className="font-bold text-slate-200">
-                        {cyanosisLevel > 0.3 ? 'Acrocyanosis Present' : 'Normal Capillary Refill (<2s)'}
+                        {cyanosisLevel > 0.3 ? 'Acrocyanosis Present' : 'No peripheral cyanosis simulated'}
                       </span>
                     </div>
                   </div>

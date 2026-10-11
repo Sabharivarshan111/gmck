@@ -880,6 +880,9 @@ export class StethoscopeAudioEngine {
     const inspDuration = audibleDuration * inspRatio;
     const expDuration = audibleDuration * (1 - inspRatio) * 0.85;
 
+    this.soundEvents = this.soundEvents.filter(event => event.time >= this.ctx!.currentTime - 4);
+    this.soundEvents.push({ time: t, label: 'Inspiration' }, { time: t + inspDuration + pauseDuration, label: 'Expiration' });
+
     // Inspiratory airflow
     this.playAirflowPhase(t, inspDuration, true, preset);
 

@@ -28,7 +28,12 @@ const parsed = ts.createSourceFile('kernel.ts', kernel, ts.ScriptTarget.Latest, 
 let scenarioArray;
 for (const statement of parsed.statements) if (ts.isVariableStatement(statement)) for (const d of statement.declarationList.declarations) if (d.name.getText(parsed) === 'SCENARIOS') scenarioArray = d.initializer.getText(parsed);
 const scenarios = new Function('return (' + scenarioArray + ')')();
-assert.equal(scenarios.length, 42);
+assert.equal(scenarios.filter(s => s.id !== 'normal').length, 42);
+const normal = scenarios.find(s => s.id === 'normal');
+assert.ok(normal, 'independent skills require a normal baseline');
+assert.equal(resolveAuscultation(normal.initialPathology, normal.initialVitals, 'mitral', 'normal').heart, 'normal');
+assert.equal(resolveAuscultation(normal.initialPathology, normal.initialVitals, 'lung_apices', 'normal').lung, 'vesicular');
+assert.equal(resolveAuscultation(normal.initialPathology, normal.initialVitals, 'trachea', 'normal').lung, 'bronchial');
 for (const scenario of scenarios) for (const site of ['mitral','aortic','tricuspid','pulmonic','erb','lung_bases','lung_apices','trachea']) {
   const sound = resolveAuscultation(scenario.initialPathology, scenario.initialVitals, site, scenario.id);
   assert.ok(['silent','normal','s3_gallop','s4_gallop','mitral_stenosis','aortic_stenosis','mitral_regurg','tricuspid_regurg','aortic_regurg','friction_rub','tamponade_muffled'].includes(sound.heart));
