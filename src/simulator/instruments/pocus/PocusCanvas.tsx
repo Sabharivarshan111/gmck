@@ -3,7 +3,8 @@
  * Publication-Grade 60fps Dynamic Point-of-Care Ultrasound (POCUS) Component
  */
 
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { PocusReference } from './PocusReference';
 import { PatientPathologyState, PatientVitals } from '../../types';
 import {
   PocusSimulationEngine,
@@ -40,6 +41,7 @@ export const PocusCanvas: React.FC<PocusCanvasProps> = ({
   const engineRef = useRef<PocusSimulationEngine | null>(null);
 
   const [settings, setSettings] = useState<PocusSettings>(DEFAULT_POCUS_SETTINGS);
+  const [referenceMode, setReferenceMode] = useState(false);
   const [caliperActive, setCaliperActive] = useState<boolean>(false);
 
   // Initialize engine singleton
@@ -47,55 +49,35 @@ export const PocusCanvas: React.FC<PocusCanvasProps> = ({
     engineRef.current = new PocusSimulationEngine();
   }
 
-  // 60fps Animation Loop
+  const timeRef = useRef(0);
+  const lastFrameRef = useRef<number | null>(null);
+
+  // Freeze holds the current cine phase, including after a setting changes.
   useEffect(() => {
-    let animId: number;
-    let startTime = performance.now();
-
-    const loop = (currentTime: number) => {
-      animId = requestAnimationFrame(loop);
-
+    if (referenceMode) { lastFrameRef.current = null; return; }
+    let animId = 0;
+    let lastDraw = -Infinity;
+    const loop = (now: number) => {
+      if (!settings.isFrozen) animId = requestAnimationFrame(loop);
+      if (now - lastDraw < 1000 / 30) return;
+      lastDraw = now;
+      if (!settings.isFrozen && lastFrameRef.current !== null) {
+        timeRef.current += Math.min(0.1, (now - lastFrameRef.current) / 1000);
+      }
+      lastFrameRef.current = settings.isFrozen ? null : now;
       const canvas = canvasRef.current;
       if (!canvas || !engineRef.current) return;
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
-
-      const dpr = window.devicePixelRatio || 1;
-      const w = canvas.clientWidth;
-      const h = canvas.clientHeight;
-
-      if (canvas.width !== w * dpr || canvas.height !== h * dpr) {
-        canvas.width = w * dpr;
-        canvas.height = h * dpr;
-      }
-
-      ctx.save();
-      ctx.scale(dpr, dpr);
-
-      // Only advance time if not frozen
-      const elapsedSec = settings.isFrozen
-        ? 0
-        : (currentTime - startTime) / 1000;
-
-      engineRef.current.render(
-        ctx,
-        w,
-        h,
-        elapsedSec,
-        vitals,
-        pathology,
-        settings
-      );
-
-      ctx.restore();
+      // Scan texture is intentionally rendered at CSS resolution on mobile.
+      const w = Math.round(canvas.clientWidth);
+      const h = Math.round(canvas.clientHeight);
+      if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; }
+      engineRef.current.render(ctx, w, h, timeRef.current, vitals, pathology, settings);
     };
-
     animId = requestAnimationFrame(loop);
-
-    return () => {
-      cancelAnimationFrame(animId);
-    };
-  }, [vitals, pathology, settings]);
+    return () => cancelAnimationFrame(animId);
+  }, [vitals, pathology, settings, referenceMode]);
 
   // Handle Canvas Click for Caliper Measurement
   const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
@@ -106,6 +88,15 @@ export const PocusCanvas: React.FC<PocusCanvasProps> = ({
     const rect = canvas.getBoundingClientRect();
     const clickX = e.clientX - rect.left;
     const clickY = e.clientY - rect.top;
+    // The sector depth is calibrated in CSS pixels; reject points outside it.
+    const ox = rect.width * (settings.showMMode ? 0.32 : 0.47);
+    const dy = clickY - 22;
+    const dx = clickX - ox;
+    const radius = rect.height - 44;
+    const inField = settings.viewMode === 'lung'
+      ? Math.abs(dx) < rect.width * (settings.showMMode ? 0.25 : 0.40) && dy >= 0 && dy <= radius
+      : dy >= 0 && Math.hypot(dx, dy) <= radius && Math.abs(Math.atan2(dx, dy)) <= Math.PI * 0.22;
+    if (!inField) return;
 
     if (!settings.caliperPointA || (settings.caliperPointA && settings.caliperPointB)) {
       // Set Point A
@@ -134,6 +125,13 @@ export const PocusCanvas: React.FC<PocusCanvasProps> = ({
 
   return (
     <div className="space-y-2.5 md:space-y-3.5">
+      <div className="grid grid-cols-2 gap-2">
+        {[false, true].map(reference => <button key={String(reference)} aria-pressed={referenceMode === reference}
+          onClick={() => setReferenceMode(reference)}
+          className={`min-h-[44px] rounded-xl px-3 text-xs font-bold border ${referenceMode === reference ? 'border-cyan-500 bg-cyan-500/20 text-cyan-300' : 'border-slate-700 bg-slate-800 text-slate-300'}`}>
+          {reference ? 'Reference scans' : 'Case simulation'}
+        </button>)}
+      </div>
       {/* 1. Transducer Probe & View Preset Selector */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
         <div className="-mx-1 px-1 flex items-stretch gap-1.5 overflow-x-auto no-scrollbar">
@@ -149,6 +147,8 @@ export const PocusCanvas: React.FC<PocusCanvasProps> = ({
                 setSettings((prev) => ({
                   ...prev,
                   viewMode: v.id as PocusViewMode,
+                  showMMode: false,
+                  showColorDoppler: false,
                   caliperPointA: null,
                   caliperPointB: null,
                 }))
@@ -166,7 +166,7 @@ export const PocusCanvas: React.FC<PocusCanvasProps> = ({
         </div>
 
         {/* Action Controls: Freeze, M-Mode, Caliper */}
-        <div className="-mx-1 px-1 flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+        {!referenceMode && <div className="-mx-1 px-1 flex items-center gap-1.5 overflow-x-auto no-scrollbar">
           {/* Live / Freeze */}
           <button
             onClick={() =>
@@ -185,7 +185,7 @@ export const PocusCanvas: React.FC<PocusCanvasProps> = ({
           {/* M-Mode Toggle */}
           <button
             onClick={() =>
-              setSettings((prev) => ({ ...prev, showMMode: !prev.showMMode }))
+              setSettings((prev) => ({ ...prev, showMMode: !prev.showMMode, caliperPointA: null, caliperPointB: null }))
             }
             className={`min-h-[44px] shrink-0 px-2.5 rounded-xl text-[11px] sm:text-xs font-bold border transition-all cursor-pointer flex items-center gap-1.5 ${
               settings.showMMode
@@ -198,7 +198,7 @@ export const PocusCanvas: React.FC<PocusCanvasProps> = ({
           </button>
 
           {/* Color Doppler (Cardiac only) */}
-          {(settings.viewMode === 'cardiac_plax' || settings.viewMode === 'subxiphoid') && (
+          {settings.viewMode === 'cardiac_plax' && (
             <button
               onClick={() =>
                 setSettings((prev) => ({ ...prev, showColorDoppler: !prev.showColorDoppler }))
@@ -231,32 +231,37 @@ export const PocusCanvas: React.FC<PocusCanvasProps> = ({
             <Ruler className="w-3.5 h-3.5" />
             <span>{caliperActive ? 'Reset Caliper' : 'Caliper'}</span>
           </button>
-        </div>
+        </div>}
       </div>
 
+      {referenceMode ? <PocusReference key={settings.viewMode} view={settings.viewMode} /> : <>
       {/* 2. CRT Ultrasound Machine Bezel & Screen */}
       <div className="relative bg-[#020408] rounded-2xl overflow-hidden border border-slate-800 p-2 shadow-2xl flex items-center justify-center">
         <canvas
           data-testid="pocus-canvas"
+          aria-label="Synthetic ultrasound teaching scan"
           ref={canvasRef}
           onClick={handleCanvasClick}
           className={`w-full rounded-xl h-[46dvh] min-h-[300px] max-h-[420px] md:h-[380px] md:min-h-0 md:max-h-none select-none ${
             caliperActive ? 'cursor-crosshair' : 'cursor-default'
           }`}
-          style={{ imageRendering: 'pixelated' }}
         />
 
         {caliperActive && !settings.caliperPointB && (
           <div className="absolute bottom-4 left-4 bg-black/80 border border-sky-400 text-sky-300 text-[10px] font-mono px-2.5 py-1 rounded-lg backdrop-blur-xs pointer-events-none">
-            {settings.caliperPointA ? 'Click Point 2 to calculate distance' : 'Click Point 1 to place caliper'}
+            {settings.caliperPointA ? 'Tap a second point in the scan' : 'Tap a first point in the scan'}
           </div>
         )}
       </div>
 
+      <p className="px-1 text-[11px] text-slate-400 leading-relaxed">
+        Synthetic teaching scan · {settings.viewMode === 'fast_morison' ? (pathology.ascites > 0.25 ? 'Free fluid at the hepatorenal recess' : 'No free fluid simulated') : settings.viewMode === 'lung' ? 'Pleural interface and reverberation artifacts' : 'Cardiac chamber and valve motion'}
+      </p>
+
       {/* 3. Machine Gain & Depth Knobs */}
       <div className="grid grid-cols-1 sm:flex sm:items-center sm:justify-between bg-slate-950 px-3 md:px-4 py-2.5 rounded-xl border border-slate-800 text-xs text-slate-300 gap-2 sm:gap-3">
-        <div className="grid grid-cols-2 sm:flex sm:items-center gap-2 sm:gap-3">
-          <div className="flex items-center gap-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
+          <div className="grid grid-cols-[48px_minmax(0,1fr)_48px] items-center gap-2">
             <span className="text-[11px] font-semibold text-slate-400">GAIN:</span>
             <input
               type="range"
@@ -267,14 +272,15 @@ export const PocusCanvas: React.FC<PocusCanvasProps> = ({
               onChange={(e) =>
                 setSettings((prev) => ({ ...prev, gain: parseFloat(e.target.value) }))
               }
-              className="w-24 accent-cyan-400 cursor-pointer"
+              aria-label="Ultrasound gain"
+              className="w-full min-w-0 h-11 accent-cyan-400 cursor-pointer"
             />
             <span className="font-mono text-cyan-400 min-w-[32px]">
               {Math.round(settings.gain * 100)}%
             </span>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="grid grid-cols-[48px_minmax(0,1fr)_48px] items-center gap-2">
             <span className="text-[11px] font-semibold text-slate-400">DEPTH:</span>
             <input
               type="range"
@@ -283,9 +289,10 @@ export const PocusCanvas: React.FC<PocusCanvasProps> = ({
               step="2"
               value={settings.depthCm}
               onChange={(e) =>
-                setSettings((prev) => ({ ...prev, depthCm: parseInt(e.target.value, 10) }))
+                setSettings((prev) => ({ ...prev, depthCm: parseInt(e.target.value, 10), caliperPointA: null, caliperPointB: null }))
               }
-              className="w-24 accent-cyan-400 cursor-pointer"
+              aria-label="Ultrasound depth"
+              className="w-full min-w-0 h-11 accent-cyan-400 cursor-pointer"
             />
             <span className="font-mono text-cyan-400 min-w-[32px]">
               {settings.depthCm} cm
@@ -304,36 +311,23 @@ export const PocusCanvas: React.FC<PocusCanvasProps> = ({
         </div>
       </div>
 
+      </>}
+
       {/* 4. Sonographic Interpretation Dossier */}
-      <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800 text-xs text-slate-300 space-y-2">
-        <div className="font-bold text-cyan-400 flex items-center gap-1.5">
+      <details className="bg-slate-950 p-3 rounded-2xl border border-slate-800 text-xs text-slate-300 space-y-2">
+        <summary className="min-h-[44px] cursor-pointer font-bold text-cyan-400 flex items-center gap-1.5">
           <Radio className="w-4 h-4" />
-          <span>Sonographic Interpretation & Biophysical Findings:</span>
-        </div>
+          <span>Scan guide & limitations</span>
+        </summary>
         <p className="text-[11px] leading-relaxed text-slate-200">
-          {settings.viewMode === 'cardiac_plax' &&
-            (vitals.cvp > 10
-              ? 'Parasternal Long Axis (PLAX): Significant circumferential anechoic fluid stripe separating parietal pericardium from epicardium. Diastolic right ventricular anterior wall indentation/collapse confirms cardiac tamponade physiology.'
-              : 'Parasternal Long Axis (PLAX): Normal Left Ventricular chamber geometry and systolic radial thickening (+35%). Anterior mitral leaflet (AML) exhibits normal rapid diastolic excursion approaching the interventricular septum (EPSS < 7mm). Aortic valve leaflets demonstrate boxcar systolic excursion.')}
-
-          {settings.viewMode === 'subxiphoid' &&
-            (vitals.cvp > 10
-              ? 'Subxiphoid 4-Chamber: Severe pericardial effusion with anechoic jet-black fluid space enveloping right and left ventricles. Right ventricular free wall displays classic early diastolic collapse when intrapericardial pressure exceeds intracavitary pressure.'
-              : 'Subxiphoid 4-Chamber: Liver acoustic window provides clear visualization of 4 cardiac chambers. Coordinated biventricular contractility intact; no pericardial fluid collection.')}
-
-          {settings.viewMode === 'fast_morison' &&
-            (pathology.ascites > 0.25 || vitals.lactate > 2.5
-              ? 'eFAST Morison\'s Pouch: Pathognomonic anechoic (black) fluid stripe detected in the dependent hepatorenal recess between the liver tip and right kidney. Confirms acute hemoperitoneum or decompensated free abdominal fluid.'
-              : 'eFAST Morison\'s Pouch: Intact reflective hyperechoic hepatorenal interface with smooth corticomedullary architecture. Normal physiological diaphragmatic respiratory excursion with zero dependent fluid.')}
-
-          {settings.viewMode === 'lung' &&
-            (vitals.spo2 < 82 && vitals.cvp > 12
-              ? 'Lung Ultrasound (LUS): Complete abolition of pleural sliding motion. M-mode trace demonstrates the pathognomonic "Stratosphere / Barcode Sign" (parallel static horizontal lines throughout the depth), establishing acute tension pneumothorax.'
-              : pathology.lungSoundType === 'crackles'
-              ? 'Lung Ultrasound (LUS): Multiple vertical laser-like hyperechoic reverberation artifacts ("B-lines" / "Lung Rockets") projecting from the pleural line to the sector base, indicative of alveolar pulmonary edema or interstitial syndrome.'
-              : 'Lung Ultrasound (LUS): Intact hyperechoic pleural sliding with horizontal reverberation "A-lines". M-mode trace confirms normal physiological "Seashore Sign" (granular sandy texture below the pleural line).')}
+          {settings.viewMode === 'fast_morison'
+            ? "Look between the liver and right kidney for a dark fluid stripe. Free fluid can have several causes; its appearance alone does not identify blood. This demo uses the case’s ascites setting, not lactate, to show fluid."
+            : settings.viewMode === 'lung'
+            ? "Compare pleural sliding, horizontal A-lines and vertical B-lines. Absent sliding and a barcode pattern alone do not prove pneumothorax; B-lines are not specific to one disease. This demo selects patterns using simplified case signals."
+            : "Identify the ventricular chambers, valve motion and any dark pericardial space. This demo uses simplified case signals to select an effusion pattern; raised CVP alone does not establish effusion or tamponade. Measurements are illustrative, not clinical findings."}
+          <a href="https://www.acep.org/sonoguide/basic/fast" target="_blank" rel="noopener noreferrer" className="block min-h-[44px] pt-3 text-cyan-400 underline">Reference: ACEP Sonoguide</a>
         </p>
-      </div>
+      </details>
     </div>
   );
 };

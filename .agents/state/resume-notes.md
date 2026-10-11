@@ -2077,3 +2077,25 @@ HALF-DONE: Publishing and deployed browser verification of answer reveal/frozen 
 NEXT: Verify training and reveal on the deployed 360px phone harness, save screenshot, record deployment result.
 
 DO NOT: Claim physical headphone output or clinically certified recordings; do not substitute drawn anatomy or add the separate facial trainer in this patch.
+
+
+## Auscultation follow-up — deployed verification 2026-10-11
+
+DONE: PR #57 merged at main d4b38d0856d71fd4fc986394a1f485d94f50d46c. Production dpl_3dGVJcF7zuaL5E2BzAcJDBWakUHo READY. Real 360x800 browser: training initially hides timing labels and findings; selecting an answer and Check answer reveals S4 feedback and S1/S2/S4 timing labels on the visually preserved frozen trace. Next sound clears answer, disables Check answer and hides labels/findings again. Explore restores labels; Stop switches trace to Stopped. Trainer clientWidth equals scrollWidth (310px). BodyParts3D reference decoded at 720px and Mitral/apex is available. Screenshot orbit-training-reveal-20261011.jpg saved and inspected. Audio preset-transition regression checks, 32 offline audio renders, TypeScript, targeted ESLint, source model check, mobile guard and web build passed.
+
+HALF-DONE: No physical device WebGL or headphone/clinical acoustic fidelity verification. Schematic pupil tool remains; no animated facial trainer implemented.
+
+NEXT: Physical phone rendering/listening review. Check narrow chest point hit-target separation against actual rendered body width (288–303px), rather than the model check's assumed 336px.
+
+DO NOT: Infer a live 3D GPU from the labelled static reference, claim clinical certification, or claim exhaustive intervention correctness. Keep competitor assets out and native releases/PG/billing/security untouched.
+
+
+## POCUS / pupil screenshot follow-up — 2026-10-11
+
+DONE: POCUS Freeze retains last live inputs and cine phase, including when vitals subsequently change; M-mode history stops advancing. Scan gain changes brightness, depth zooms the field, calipers use display-depth calibration and reject taps outside the field. Gain/depth rows fit narrow phones, scan captions sit outside the acoustic clip and depth labels stay in bounds. Synthetic tissue now renders grayscale with cached correlated texture; removed unsupported 60 FPS and diagnostic certainty claims. Lactate alone no longer produces free abdominal fluid. Added separate attributed archived reference scans (external Wikimedia images/loops), expressly independent of patient case. Pupil orientation is examiner-facing, pupil diameter proportional to iris, and small pupils never enlarge under the teaching light response.
+
+HALF-DONE: These synthetic images remain schematic appearance models, not accurate acquired sonograms or a Blender acoustic model. Blender is not installed. Full animated facial/cranial-nerve trainer remains absent. Reference images and mobile controls still need deployed browser verification at this checkpoint; command-line image downloads were denied by the network.
+
+NEXT: Verify reference image loading, all four view selectors, caliper/mobile controls, pupil light controls and production deployment. Physical-device performance/GPU/audio and clinical fidelity remain unverified. No amniotic-fluid module found; owner’s attached fluid screenshot is abdominal Morison’s pouch.
+
+DO NOT: Describe texture as validated ultrasound physics, claim all requested features fixed, call the fibrosis lung reference normal, infer diagnoses solely from CVP/SpO2/lactate, copy competitor assets, alter Android releases/PG/billing/security.
