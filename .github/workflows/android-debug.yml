@@ -163,7 +163,8 @@ jobs:
           npm run check:security
           npm run check:attendance
           npm run check:admin
-          npm run check:no-simulator
+          npm run check:simulator
+          npm run check:calendar-columns
           npm run check:note-links
 
       # Test ads are chosen in source now, not by the bundler's dev flag —
