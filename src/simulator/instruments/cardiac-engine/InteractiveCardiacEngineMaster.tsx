@@ -4,7 +4,7 @@
  * Anatomical Cross-Section, and Conduction/Dipole Engines.
  */
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Play, Pause, RotateCcw, Sliders, Activity, Heart, Zap } from 'lucide-react';
 import { CardiacCycleEngine, CardiacParams } from './CardiacCyclePhysics';
 import { WiggersPvLoopCanvas } from './WiggersPvLoopCanvas';
@@ -25,26 +25,21 @@ export const InteractiveCardiacEngineMaster: React.FC<{ isLight?: boolean }> = (
   const [currentPhi, setCurrentPhi] = useState<number>(0);
   const [activeTab, setActiveTab] = useState<'hemodynamics' | 'anatomy' | 'electrophysiology'>('hemodynamics');
 
-  const engineRef = useRef<CardiacCycleEngine>(new CardiacCycleEngine(params));
+  const engine = useMemo(() => new CardiacCycleEngine(params), [params]);
   const animationFrameRef = useRef<number | null>(null);
   const lastTimeRef = useRef<number>(performance.now());
 
-  // Update engine params
-  useEffect(() => {
-    engineRef.current = new CardiacCycleEngine(params);
-  }, [params]);
-
-  // 60fps RequestAnimationFrame continuous loop
+  // Cap teaching playback at 30fps; paused lessons do not schedule frames.
   useEffect(() => {
     if (!isPlaying) return;
     lastTimeRef.current = performance.now();
     const loop = (now: number) => {
-      if (isPlaying) {
-        const deltaMs = now - lastTimeRef.current;
-        const cycleDurationMs = engineRef.current.getCycleDurationMs();
+      if (isPlaying && now - lastTimeRef.current >= 1000 / 30) {
+        const deltaMs = Math.min(now - lastTimeRef.current, 100);
+        const cycleDurationMs = engine.getCycleDurationMs();
         setCurrentPhi((prev) => (prev + deltaMs / cycleDurationMs) % 1.0);
+        lastTimeRef.current = now;
       }
-      lastTimeRef.current = now;
       animationFrameRef.current = requestAnimationFrame(loop);
     };
 
@@ -52,9 +47,9 @@ export const InteractiveCardiacEngineMaster: React.FC<{ isLight?: boolean }> = (
     return () => {
       if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
     };
-  }, [isPlaying]);
+  }, [isPlaying, engine]);
 
-  const currentData = engineRef.current.evaluate(currentPhi);
+  const currentData = engine.evaluate(currentPhi);
 
   // Pathology Preset Loader
   const loadPreset = (presetName: string) => {
@@ -133,13 +128,13 @@ export const InteractiveCardiacEngineMaster: React.FC<{ isLight?: boolean }> = (
       {/* Primary Simulation Canvas Display */}
       <div className="mb-5">
         {activeTab === 'hemodynamics' && (
-          <WiggersPvLoopCanvas engine={engineRef.current} currentPhi={currentPhi} isLight={isLight} />
+          <WiggersPvLoopCanvas engine={engine} currentPhi={currentPhi} isLight={isLight} />
         )}
         {activeTab === 'anatomy' && (
-          <CardiacAnatomyCanvas engine={engineRef.current} currentPhi={currentPhi} isLight={isLight} />
+          <CardiacAnatomyCanvas engine={engine} currentPhi={currentPhi} isLight={isLight} />
         )}
         {activeTab === 'electrophysiology' && (
-          <CardiacConductionCanvas engine={engineRef.current} currentPhi={currentPhi} isLight={isLight} />
+          <CardiacConductionCanvas engine={engine} currentPhi={currentPhi} isLight={isLight} />
         )}
       </div>
 
@@ -149,7 +144,8 @@ export const InteractiveCardiacEngineMaster: React.FC<{ isLight?: boolean }> = (
         <div className="flex items-center gap-3">
           <button
             onClick={() => setIsPlaying(!isPlaying)}
-            className="p-2.5 rounded-xl bg-slate-800 text-slate-100 hover:bg-slate-700 transition-all cursor-pointer"
+            className="min-h-[44px] min-w-[44px] p-2.5 rounded-xl bg-slate-800 text-slate-100 hover:bg-slate-700 transition-all cursor-pointer"
+            aria-label={isPlaying ? 'Pause cardiac cycle' : 'Play cardiac cycle'}
             title={isPlaying ? 'Pause Simulation' : 'Play Simulation'}
           >
             {isPlaying ? <Pause className="w-4 h-4 text-amber-400" /> : <Play className="w-4 h-4 text-emerald-400" />}
@@ -159,7 +155,8 @@ export const InteractiveCardiacEngineMaster: React.FC<{ isLight?: boolean }> = (
               setCurrentPhi(0);
               lastTimeRef.current = performance.now();
             }}
-            className="p-2.5 rounded-xl bg-slate-800 text-slate-100 hover:bg-slate-700 transition-all cursor-pointer"
+            className="min-h-[44px] min-w-[44px] p-2.5 rounded-xl bg-slate-800 text-slate-100 hover:bg-slate-700 transition-all cursor-pointer"
+            aria-label="Reset cardiac cycle"
             title="Reset to Atrial Systole (t=0)"
           >
             <RotateCcw className="w-4 h-4 text-slate-300" />
@@ -167,15 +164,16 @@ export const InteractiveCardiacEngineMaster: React.FC<{ isLight?: boolean }> = (
 
           <div className="flex-1 flex flex-col gap-1">
             <div className="flex justify-between text-[11px] font-mono text-slate-400">
-              <span>0 ms (Atrial Kick)</span>
+              <span>0 ms</span>
               <span>{Math.round(currentData.tMs)} ms</span>
-              <span>{Math.round(engineRef.current.getCycleDurationMs())} ms (Cycle End)</span>
+              <span>{Math.round(engine.getCycleDurationMs())} ms / cycle</span>
             </div>
             <input
               type="range"
               min="0"
               max="1"
               step="0.005"
+              aria-label="Cardiac cycle position"
               value={currentPhi}
               onChange={(e) => {
                 setIsPlaying(false);
@@ -197,6 +195,7 @@ export const InteractiveCardiacEngineMaster: React.FC<{ isLight?: boolean }> = (
               type="range"
               min="40"
               max="160"
+              aria-label="Teaching heart rate"
               value={params.heartRate}
               onChange={(e) => setParams({ ...params, heartRate: parseInt(e.target.value) })}
               className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-500"
@@ -213,6 +212,7 @@ export const InteractiveCardiacEngineMaster: React.FC<{ isLight?: boolean }> = (
               min="0.5"
               max="2.0"
               step="0.1"
+              aria-label="Teaching contractility"
               value={params.contractility}
               onChange={(e) => setParams({ ...params, contractility: parseFloat(e.target.value) })}
               className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-purple-500"
@@ -229,6 +229,7 @@ export const InteractiveCardiacEngineMaster: React.FC<{ isLight?: boolean }> = (
               min="0.6"
               max="2.0"
               step="0.1"
+              aria-label="Teaching afterload"
               value={params.afterload}
               onChange={(e) => setParams({ ...params, afterload: parseFloat(e.target.value) })}
               className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-amber-500"
@@ -245,6 +246,7 @@ export const InteractiveCardiacEngineMaster: React.FC<{ isLight?: boolean }> = (
               min="0.7"
               max="1.5"
               step="0.1"
+              aria-label="Teaching preload"
               value={params.preload}
               onChange={(e) => setParams({ ...params, preload: parseFloat(e.target.value) })}
               className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-cyan-500"

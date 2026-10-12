@@ -13,15 +13,15 @@ try {
   const sheet=page.getByTestId('ecg-12lead-canvas');await sheet.waitFor();
   for(const name of ['I · II · III','aVR · aVL · aVF','V1 · V2 · V3','V4 · V5 · V6','All 12']){await page.getByRole('button',{name,exact:true}).click();assert.equal(await sheet.getAttribute('width'), name==='All 12'?'840':'420');}
   await page.getByRole('button',{name:'I · II · III',exact:true}).click();
-  await page.screenshot({path:`${out}/ecg-${width}.png`});
+  const snapshot=await sheet.screenshot();await page.waitForTimeout(1500);assert.ok(snapshot.equals(await sheet.screenshot()),'captured diagnostic sheet moved');await page.getByRole('button',{name:'Capture current ECG',exact:true}).click();await page.screenshot({path:`${out}/ecg-${width}.png`});
   await page.getByRole('button',{name:'Tutorial',exact:true}).click();
   const modal=page.getByRole('dialog',{name:'ECG learning studio'});await modal.waitFor();
   await page.screenshot({path:`${out}/lesson-${width}-paper.png`});
   await modal.getByRole('button',{name:'Next',exact:true}).click();
   await modal.getByRole('button',{name:'PR',exact:true}).click();
   const svg=modal.getByRole('img',{name:'Illustrative ECG beat highlighting PR'});
-  const frozen=await svg.screenshot();await page.waitForTimeout(150);assert.ok(frozen.equals(await svg.screenshot()),'paused teaching beat moved');
-  await modal.getByRole('button',{name:'Play beat'}).click();await page.waitForTimeout(180);assert.ok(!frozen.equals(await svg.screenshot()),'beat playback did not move');
+  const cursor=svg.locator('line');const frozenX=await cursor.getAttribute('x1');await page.waitForTimeout(150);assert.equal(await cursor.getAttribute('x1'),frozenX,'paused teaching cursor moved');
+  await modal.getByRole('button',{name:'Play beat'}).click();await page.waitForTimeout(180);assert.notEqual(await cursor.getAttribute('x1'),frozenX,'beat playback did not move');
   await modal.getByRole('button',{name:'Pause beat'}).click();
   await page.screenshot({path:`${out}/lesson-${width}-beat.png`});
   await modal.getByRole('button',{name:'Lesson 3: Find the rate'}).click();assert.ok((await modal.textContent()).includes('75 bpm'));

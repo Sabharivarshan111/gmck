@@ -1,0 +1,14 @@
+# Clinical and ECG mobile redesign checkpoint
+
+Repository: Sabharivarshan111/gmck. Branch: codex/clinical-exams-20261012. PR: #73.
+User authorizes edits and publication from earlier turns; preserve all unrelated UI/theme/functionality and PG bank work. No subagents.
+
+Implemented: uniform 220px five-card native Vault (textScale-aware), Heart View 3D isolation, collapsible direction controls; schematic real 3D edema leg and scleral eye examination; licensed local chest X-ray plus real brain T1 MRI with planes, measurements, pan and contrast; local licensed reference scans for all four POCUS views. MRI compressed asset uses .pack so browser HTTP gzip handling does not decompress it twice.
+
+ECG: captured static diagnostic teaching sheet, readable lead groups/full overview/enlarge/current capture; six-step SVG learning path with paused/playable/scrubbable beat, calibration, rate calculator, lead viewpoints, interpretation checklist, checked exercise; original advanced curriculum retained with collapsed cardiac cycle, scaled heart, readable chamber/phase keys, mobile stacked interval cards and compact footer. Advanced model starts paused, stops RAF when paused/unmounted, 30fps cap, memoized parameter updates. Sources in UI: University of Utah ECG Learning Center, SCST recording guide, OpenStax cardiac electrophysiology. Models/scans are teaching references, not patient diagnosis or validated clinical decision support.
+
+Verification before last small changes: all three phone widths passed ECG E2E, eye E2E, clinical E2E (all four ultrasound controls/reference decoding, MRI planes/measurement, edema and sclera, isolated heart). Actual local screenshot confirms isolated heart is visible. Vault CI passed at all three widths. App TypeScript checked with repository-lock TypeScript 5.6.3; changed component ESLint passes. npm temporary Playwright install changed local TypeScript to5.9; its unrelated pre-existing WaveShaper Float32Array error is absent with locked5.6.3. No package/lock edits are intended.
+
+Final checks must be rerun for latest captured ECG and advanced-model changes, review screenshots, update PR validation, merge only after focused checks, verify exact merge production deployment, monitor native Android build and quote actual new package sizes. As of release-680: APK114157419bytes, AAB92421924bytes, these predate this PR's native Vault update. No physical Android or Play Store upload claim.
+
+CI workflow simulator-mobile-ux-smoke.yml includes native Vault job plus eye, ECG, studio, clinical and anatomy checks. ECG paused-beat assertion reads cursor position to avoid raster differences during entrance/font transitions. Eye RAPD test waits for model target convergence (right pupil target3.73mm, threshold3.6 rather than impossible3.8). Mobile UI static guard updated to expect bedside two-column tab layout.

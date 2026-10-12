@@ -48,7 +48,7 @@ const SEGMENTS: SegmentMeta[] = [
     id: 'pr',
     name: 'PR interval',
     shortName: 'PR',
-    phaseStart: 0.24,
+    phaseStart: 0.12,
     phaseEnd: 0.35,
     normalDurationMs: '120 – 200 ms (3–5 small squares)',
     color: '#059669',
@@ -127,10 +127,15 @@ const SEGMENTS: SegmentMeta[] = [
 ];
 
 export const Ecg12LeadCanvas: React.FC<Ecg12LeadProps> = ({
-  rhythm,
-  heartRate,
+  rhythm: liveRhythm,
+  heartRate: liveHeartRate,
   theme = 'light',
 }) => {
+  const [capture, setCapture] = useState({rhythm: liveRhythm, heartRate: liveHeartRate});
+  const latestCapture = useRef({rhythm: liveRhythm, heartRate: liveHeartRate});
+  latestCapture.current = {rhythm: liveRhythm, heartRate: liveHeartRate};
+  useEffect(() => { setCapture(latestCapture.current); }, [liveRhythm]);
+  const {rhythm, heartRate} = capture;
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [leadGroup, setLeadGroup] = useState(0);
   const [zoomed, setZoomed] = useState(false);
@@ -500,7 +505,7 @@ export const Ecg12LeadCanvas: React.FC<Ecg12LeadProps> = ({
           </div>
           <div className="flex items-center gap-2">
             <button
-              onClick={() => setIsAutoWalking(!isAutoWalking)}
+              onClick={() => { if (!isAutoWalking) setActiveSegment('p'); setIsAutoWalking(!isAutoWalking); }}
               className={`min-h-[44px] flex items-center gap-1.5 text-[11px] sm:text-xs font-bold px-3 rounded-xl border transition-all ${
                 isAutoWalking
                   ? 'bg-rose-500 text-white border-rose-600 shadow-sm'
@@ -569,6 +574,7 @@ export const Ecg12LeadCanvas: React.FC<Ecg12LeadProps> = ({
       <div className="order-1 md:order-2 w-full grid grid-cols-3 gap-1.5" aria-label="ECG lead groups">
         {['I · II · III', 'aVR · aVL · aVF', 'V1 · V2 · V3', 'V4 · V5 · V6', 'All 12', zoomed ? 'Fit to screen' : 'Enlarge'].map((label, i) => <button key={i} aria-pressed={i < 5 ? leadGroup === i : zoomed} onClick={() => i < 5 ? setLeadGroup(i) : setZoomed(z => !z)} className={`min-h-[44px] rounded-xl text-xs border px-1 ${i < 5 && leadGroup === i ? 'bg-fuchsia-400 text-black border-fuchsia-400' : 'bg-slate-100 sim-dark:bg-slate-900 border-slate-300 sim-dark:border-slate-700'}`}>{label}</button>)}
       </div>
+      <div className="order-1 md:order-2 w-full flex items-center justify-between gap-2 text-xs text-slate-500 sim-dark:text-slate-400"><span>Captured · {rhythm.toUpperCase()} · {Math.round(heartRate)} bpm{rhythm !== liveRhythm ? ' · case changed' : ''}</span><button onClick={() => setCapture({rhythm: liveRhythm, heartRate: liveHeartRate})} className="min-h-[44px] px-3 border border-slate-300 sim-dark:border-slate-700 rounded-xl">Capture current ECG</button></div>
       {/* Calibrated Pink 12-Lead Millimeter Grid Canvas */}
       <div className="order-1 md:order-2 w-full overflow-x-auto overscroll-x-contain rounded-xl border border-red-300/80 shadow-md bg-[#fff5f5]">
         <canvas

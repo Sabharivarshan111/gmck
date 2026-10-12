@@ -130,8 +130,8 @@ requireText(
 );
 requireText(
   ward,
-  'overflow-x-auto no-scrollbar',
-  'Bedside examination tabs must remain horizontally scrollable on phones.'
+  'grid grid-cols-2 sm:grid-cols-4',
+  'Bedside examination tabs must show a two-column phone layout.'
 );
 requireText(
   tutorial,
