@@ -40,7 +40,7 @@ export const CardiacAnatomyCanvas: React.FC<CardiacAnatomyCanvasProps> = ({
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const particlesRef = useRef<BloodParticle[]>([]);
-  const [showLabels, setShowLabels] = useState(true);
+  const [showLabels, setShowLabels] = useState(false);
   const [showParticles, setShowParticles] = useState(true);
 
   // Initialize dual-chamber blood particles (oxygenated systemic & deoxygenated pulmonary)
@@ -684,6 +684,7 @@ export const CardiacAnatomyCanvas: React.FC<CardiacAnatomyCanvasProps> = ({
         className="w-full aspect-[5/4] h-auto rounded-xl block cursor-crosshair bg-slate-950"
       />
 
+      <div className="grid grid-cols-2 gap-2 mt-3 text-xs text-slate-300" aria-label="Heart chamber key"><span><strong className="text-blue-400">RA → RV</strong><br/>Right heart → lungs</span><span><strong className="text-rose-400">LA → LV</strong><br/>Left heart → body</span><span>Mitral: LA → LV</span><span>Aortic: LV → aorta</span></div>
       {/* Real-Time Clinical Biophysics Telemetry Strip */}
       <div className="mt-2.5 grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-slate-900 text-[11px] font-mono">
         <div className="p-2 rounded-lg bg-slate-900/60 border border-slate-800/60">

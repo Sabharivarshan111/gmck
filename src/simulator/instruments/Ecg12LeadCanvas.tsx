@@ -245,7 +245,7 @@ export const Ecg12LeadCanvas: React.FC<Ecg12LeadProps> = ({
       // Draw Lead Label
       ctx.fillStyle = '#991b1b';
       ctx.font = 'bold 10px monospace';
-      ctx.fillText(name, xStart + 8, yCenter - (isRhythmStrip ? 22 : rowHeight / 2) + 12);
+      ctx.fillText(name, xStart + 8, yCenter - (isRhythmStrip ? 62 : rowHeight / 2) + 12);
 
       // Draw Standard 1 mV Calibration Pulse at the start of each lead
       // 10 mm height on standard 4 px/mm grid = 40 pixels!
@@ -563,7 +563,7 @@ export const Ecg12LeadCanvas: React.FC<Ecg12LeadProps> = ({
 
       <div className="order-1 md:order-2 w-full flex items-center justify-between gap-2 px-1 md:hidden">
         <span className="text-[10px] text-slate-500 sim-dark:text-slate-400 font-medium">Static teaching ECG · choose a lead group</span>
-        <span className="text-[10px] font-mono text-red-700 sim-dark:text-red-300">25 mm/s · 10 mm/mV</span>
+        <span className="text-[10px] whitespace-nowrap font-mono text-red-700 sim-dark:text-red-300">25 mm/s · 10 mm/mV</span>
       </div>
 
       <div className="order-1 md:order-2 w-full grid grid-cols-3 gap-1.5" aria-label="ECG lead groups">
@@ -575,7 +575,7 @@ export const Ecg12LeadCanvas: React.FC<Ecg12LeadProps> = ({
           data-testid="ecg-12lead-canvas"
           ref={canvasRef}
           width={leadGroup === 4 ? 840 : 420}
-          height={560}
+          height={480}
           aria-label="Static synthetic ECG with calibrated grid"
           className={`${zoomed ? 'w-[840px] min-w-[840px]' : 'w-full'} h-auto block cursor-crosshair`}
         />

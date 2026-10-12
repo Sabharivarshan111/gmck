@@ -27,7 +27,7 @@ try {
   await modal.getByRole('button',{name:'Lesson 3: Find the rate'}).click();assert.ok((await modal.textContent()).includes('75 bpm'));
   await modal.getByRole('button',{name:'Lesson 6: Check yourself'}).click();await modal.getByRole('button',{name:'75 bpm',exact:true}).click();assert.ok((await modal.getByRole('status').textContent()).includes('Correct'));
   for(const tab of ['Leads & axis','Intervals','Patterns']){await modal.getByRole('button',{name:tab,exact:true}).click();assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));await page.screenshot({path:`${out}/lesson-${width}-${tab.split(' ')[0]}.png`});}
-  await modal.getByRole('button',{name:'Start here',exact:true}).click();await modal.getByText('Explore the cardiac cycle',{exact:true}).click();await modal.getByRole('button',{name:/Heart & valves/}).click();await page.screenshot({path:`${out}/lesson-${width}-heart.png`});
+  await modal.getByRole('button',{name:'Start here',exact:true}).click();await modal.getByText('Explore the cardiac cycle',{exact:true}).click();await modal.getByRole('button',{name:/Heart & valves/}).click();await modal.locator('canvas').first().scrollIntoViewIfNeeded();await page.screenshot({path:`${out}/lesson-${width}-heart.png`});
   await modal.getByRole('button',{name:'Done',exact:true}).click();await modal.waitFor({state:'detached'});
   assert.deepEqual(errors,[]);report.push({width,passed:true});await page.close();
  }

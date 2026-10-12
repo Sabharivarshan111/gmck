@@ -1465,6 +1465,7 @@ export const EcgIcuTutorialModal: React.FC<EcgIcuTutorialModalProps> = ({
   onClose,
   theme = 'light',
 }) => {
+  const [cycleOpen, setCycleOpen] = useState(false);
   const [activeLevel, setActiveLevel] = useState<TutorialLevel>('lkg');
   const [selectedLead, setSelectedLead] = useState<string>('II');
   const [selectedAxisDeg, setSelectedAxisDeg] = useState<number>(60); // Normal axis +60°
@@ -1584,7 +1585,7 @@ export const EcgIcuTutorialModal: React.FC<EcgIcuTutorialModalProps> = ({
             <div className="space-y-6 animate-fadeIn">
               {/* 1. Publication-Grade Real-Time Continuous Cardiac Physics Engine (Wiggers, PV Loop, 2.5D Flow Anatomy, Cellular Action Potential, Dipole Projection) */}
               <EcgLearningPath />
-              <details className="rounded-2xl border border-slate-700 p-3"><summary className="min-h-[44px] cursor-pointer font-bold">Explore the cardiac cycle</summary><p className="text-xs my-3">A simplified physiology model. Pause and scrub to connect pressure, valve motion and electrical activation. Values illustrate relationships, not patient measurements.</p><InteractiveCardiacEngineMaster isLight={isLight} /></details>
+              <details onToggle={e => setCycleOpen(e.currentTarget.open)} className="rounded-2xl border border-slate-700 p-3"><summary className="min-h-[44px] cursor-pointer font-bold">Explore the cardiac cycle</summary><p className="text-xs my-3">A simplified physiology model. Pause and scrub to connect pressure, valve motion and electrical activation. Values illustrate relationships, not patient measurements.</p>{cycleOpen && <InteractiveCardiacEngineMaster isLight={isLight} />}</details>
 
               {/* 2. The 12-Camera Paparazzi Studio */}
               <PaparazziCameraStudioVisualizer isLight={isLight} />
