@@ -220,7 +220,7 @@ function RotationCalendar({
       <View style={styles.calendarGrid}>
         {weeks.map((week, row) => <View key={row} style={styles.calendarWeek}>
         {week.map((d, column) => {
-          if (!d) return <View key={`blank-${column}`} style={styles.calendarSlot} />;
+          if (!d) return <View key={`blank-${column}`} style={[styles.calendarSlot, styles.calendarCell, { opacity: 0 }]} pointerEvents="none" />;
           const selected = d.isCustomHoliday;
           const official = d.activeGazetted;
           const overridden = d.isGazetted && d.isGazettedOverride;
