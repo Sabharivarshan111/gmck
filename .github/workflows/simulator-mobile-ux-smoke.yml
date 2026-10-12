@@ -10,6 +10,8 @@ on:
       - 'scripts/simulator-eye-e2e.mjs'
       - 'scripts/simulator-eye-check.mjs'
       - 'public/models/eye-exam/**'
+      - 'public/clinical-reference/**'
+      - 'scripts/simulator-clinical-e2e.mjs'
       - '.github/workflows/simulator-mobile-ux-smoke.yml'
   workflow_dispatch:
 
@@ -19,7 +21,7 @@ permissions:
 jobs:
   production-mobile-ux:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
 
@@ -71,6 +73,11 @@ jobs:
           ORBIT_STUDIO_BASE_URL: http://127.0.0.1:4180
         run: node scripts/simulator-studio-e2e.mjs
 
+      - name: Verify clinical 3D, radiology and all ultrasound controls
+        env:
+          ORBIT_STUDIO_BASE_URL: http://127.0.0.1:4180
+        run: node scripts/simulator-clinical-e2e.mjs
+
       - name: Exercise the live mobile anatomy UX
         env:
           SIMULATOR_E2E_BASE_URL: http://127.0.0.1:4180
@@ -84,5 +91,6 @@ jobs:
           path: |
             artifacts/simulator-mobile-ux
             artifacts/simulator-eye-exam
+            artifacts/simulator-clinical
           if-no-files-found: error
           retention-days: 14

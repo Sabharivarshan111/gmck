@@ -7,6 +7,7 @@ import { SOUND_LIBRARY } from './auscultationSites';
 import { Ecg12LeadCanvas } from './Ecg12LeadCanvas';
 import { EcgIcuTutorialModal } from './EcgIcuTutorialModal';
 import { EyeExamination } from './eye/EyeExamination';
+import { RadiologyViewer } from './radiology/RadiologyViewer';
 import { PocusCanvas } from './pocus/PocusCanvas';
 import { Volume2, VolumeX, Stethoscope, Radio, Activity, Sparkles, CheckCircle2, AlertTriangle, Info, GraduationCap } from 'lucide-react';
 
@@ -125,9 +126,10 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
           <div className="flex items-center gap-2 min-w-0">
             <span className="w-3 h-3 rounded-full bg-cyan-500 animate-pulse" />
             <h3 className="min-w-0 font-bold text-sm text-cyan-400">
-              <span className="sm:hidden">{tool === 'pupil' ? 'Eyes & cranial nerves' : tool === 'ultrasound' ? 'Ultrasound / POCUS' : tool === 'stethoscope' ? 'Auscultation' : '12-lead ECG'}</span>
+              <span className="sm:hidden">{tool === 'radiology' ? 'X-ray & MRI' : tool === 'pupil' ? 'Eyes & cranial nerves' : tool === 'ultrasound' ? 'Ultrasound / POCUS' : tool === 'stethoscope' ? 'Auscultation' : '12-lead ECG'}</span>
               <span className="hidden sm:inline">
               {tool === 'pupil' && '👁️ Interactive Eye & Cranial Nerve Examination'}
+              {tool === 'radiology' && '🩻 Radiology reference viewer'}
               {tool === 'ultrasound' && '📡 Virtual Point-of-Care Ultrasound (POCUS)'}
               {tool === 'stethoscope' && '🩺 Digital Auscultation Stethoscope & Sound Synthesizer'}
               {tool === 'ecg12' && '📈 Universal 12-Lead Electrocardiogram (ECG)'}
@@ -171,6 +173,7 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
           )}
 
           {/* ================= 3. POINT-OF-CARE ULTRASOUND (POCUS) ================= */}
+          {tool === 'radiology' && <RadiologyViewer/>}
           {tool === 'ultrasound' && (
             <PocusCanvas vitals={vitals} pathology={pathology} theme={theme} />
           )}

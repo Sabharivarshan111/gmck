@@ -1,0 +1,28 @@
+{
+  "dimensions": [
+    112,
+    128,
+    112
+  ],
+  "spacing": [
+    2.2857142857142856,
+    1.5836143679916859,
+    2.2857142857142856
+  ],
+  "orientation": "RAS",
+  "dtype": "uint8",
+  "source": "https://s3.amazonaws.com/openneuro.org/ds000114/sub-01/ses-test/anat/sub-01_ses-test_T1w.nii.gz",
+  "license": "CC0",
+  "doi": "https://doi.org/10.18112/openneuro.ds000114.v1.0.2",
+  "authors": [
+    "Gorgolewski KJ",
+    "Storkey A",
+    "Bastin ME",
+    "Whittle IR",
+    "Wardlaw JM",
+    "Pernet CR"
+  ],
+  "sourceSha256": "2bbe4430223d9b9ce47d4dab3ff398a69fefbb481cbf3bd136e07f363a73919c",
+  "volumeSha256": "1b037ea3ae904a7b24fec6999aa773b9c2185e229238801dcee736a5522a6c6e",
+  "changes": "Canonical RAS; trilinear resampling; percentile grayscale scaling to uint8; gzip; x-fastest storage. Research reference independent of simulated patient."
+}

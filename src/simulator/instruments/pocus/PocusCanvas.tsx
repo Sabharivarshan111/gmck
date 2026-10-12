@@ -254,6 +254,7 @@ export const PocusCanvas: React.FC<PocusCanvasProps> = ({
         )}
       </div>
 
+      {!referenceMode && settings.caliperPointA && settings.caliperPointB && <output data-testid="pocus-caliper-measurement" className="text-xs text-amber-300">Simulated distance: {(Math.hypot(settings.caliperPointB.x-settings.caliperPointA.x,settings.caliperPointB.y-settings.caliperPointA.y)*settings.depthCm/Math.max(1,(canvasRef.current?.clientHeight || 400)-44)).toFixed(1)} cm</output>}
       <p className="px-1 text-[11px] text-slate-400 leading-relaxed">
         Synthetic teaching scan · {settings.viewMode === 'fast_morison' ? (pathology.ascites > 0.25 ? 'Free fluid at the hepatorenal recess' : 'No free fluid simulated') : settings.viewMode === 'lung' ? 'Pleural interface and reverberation artifacts' : 'Cardiac chamber and valve motion'}
       </p>

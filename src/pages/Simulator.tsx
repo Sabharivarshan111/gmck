@@ -56,7 +56,7 @@ export const Simulator: React.FC = () => {
   const requestedScenario = searchParams.get('scenario');
   const initialScenario = SCENARIOS.some(scenario => scenario.id === requestedScenario) ? requestedScenario! : 'normal';
   const requestedTool = searchParams.get('tool');
-  const initialTool: DiagnosticToolType = ['pupil', 'ultrasound', 'stethoscope', 'ecg12', 'piccled'].includes(requestedTool || '') ? requestedTool as DiagnosticToolType : 'none';
+  const initialTool: DiagnosticToolType = ['pupil', 'ultrasound', 'stethoscope', 'ecg12', 'piccled', 'radiology'].includes(requestedTool || '') ? requestedTool as DiagnosticToolType : 'none';
   const initialLayer = (searchParams.get('layer') as AnatomicalLayer) || 'glass';
 
   // Physiology Engine Instance
