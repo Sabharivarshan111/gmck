@@ -75,7 +75,10 @@ export const Simulator: React.FC = () => {
   const [logs, setLogs] = useState<string[]>([...kernel.logs]);
 
   // Clean White Medical Studio vs ICU Dark Mode (Default: light matching ashemag/human-atlas)
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    try { return localStorage.getItem('orbit-simulator-theme') === 'light' ? 'light' : 'dark'; } catch { return 'dark'; }
+  });
+  useEffect(() => { try { localStorage.setItem('orbit-simulator-theme', theme); } catch { /* Storage may be unavailable. */ } }, [theme]);
 
   // Mobile navigation tab state
   const [mobileTab, setMobileTab] = useState<'studio' | '3d' | 'telemetry' | 'interventions'>(searchParams.get('mode') === 'anatomy' || searchParams.get('organ') || searchParams.get('layer') || searchParams.get('isolate') ? '3d' : 'studio');
@@ -358,8 +361,8 @@ export const Simulator: React.FC = () => {
 
   const isLight = theme === 'light';
 
-  if (mobileTab === 'studio') return <>
-    <SimulatorStudio scenarioId={currentScenarioId} onScenario={handleSelectScenario}
+  if (mobileTab === 'studio') return <div data-simulator-root data-active-tab="studio" data-simulator-theme={theme}>
+    <SimulatorStudio theme={theme} onToggleTheme={() => setTheme(t => t === 'dark' ? 'light' : 'dark')} scenarioId={currentScenarioId} onScenario={handleSelectScenario}
       onAnatomy={() => { handleSelectScenario('normal'); setMobileTab('3d'); }}
       onCase={id => { handleSelectScenario(id); setMobileTab('interventions'); }}
       onTool={id => id === 'clubbing' ? setClubbingOpen(true) : setActiveTool(id)}
@@ -367,7 +370,7 @@ export const Simulator: React.FC = () => {
     <DiagnosticTools tool={activeTool} theme={theme} scenarioId={currentScenarioId} pathology={pathology} vitals={vitals} onClose={() => setActiveTool('none')} />
     <WardExamModal isOpen={activeTool === 'piccled'} onClose={() => setActiveTool('none')} vitals={vitals} pathology={pathology} theme={theme} />
     {clubbingOpen && <ClubbingTrainer onClose={() => setClubbingOpen(false)} />}
-  </>;
+  </div>;
 
   return (
     <div
@@ -549,7 +552,7 @@ export const Simulator: React.FC = () => {
       </div>
 
       <button onClick={() => { setMobileTab('studio'); setSelectedOrganId(null); setMobilePanel(null); }} className="hidden lg:block px-6 py-3 text-left text-sm font-semibold">← Skills & anatomy studio</button>
-      <div className="px-4 py-2 text-xs font-semibold bg-emerald-50 text-emerald-800 border-b border-emerald-100">{currentScenarioId === 'normal' ? 'Normal teaching baseline · healthy adult at rest' : `Case findings · ${SCENARIOS.find(s => s.id === currentScenarioId)?.title}`}</div>
+      <div className="sim-baseline-banner px-4 py-2 text-xs font-semibold bg-emerald-50 text-emerald-800 border-b border-emerald-100">{currentScenarioId === 'normal' ? 'Normal teaching baseline · healthy adult at rest' : `Case findings · ${SCENARIOS.find(s => s.id === currentScenarioId)?.title}`}</div>
       {/* 3. Main Stage Content */}
       <main className="flex-1 p-2.5 sm:p-3 md:p-5 max-w-7xl mx-auto w-full flex flex-col space-y-3 md:space-y-4 pb-[calc(150px+env(safe-area-inset-bottom))]">
         {/* DESKTOP VIEW: Split View (Side-by-side) */}
