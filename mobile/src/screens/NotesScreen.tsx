@@ -314,7 +314,7 @@ function VaultView({ onNotes, onPgPractice, onSimulator, onProformas, onFlashcar
     <Text style={[styles.title, { color: colors.text }]}>Vault</Text>
     <Text style={[styles.subtitle, { color: colors.textMuted }]}>Your study space. Choose what you want to do.</Text>
     <View style={styles.yearGrid}>
-      {entries.map(({ title, hint, emoji, open, ...entry }) => <Touchable key={title} testID={`vault-card-${title}`} label={entry.label || title} onPress={open} scaleTo={0.97} style={[styles.vaultCard, { height: 260 * Math.max(1, textScale), backgroundColor: colors.card, borderColor: colors.border }]}>
+      {entries.map(({ title, hint, emoji, open, ...entry }) => <Touchable key={title} testID={`vault-card-${title}`} label={entry.label || title} onPress={open} scaleTo={0.97} style={[styles.vaultCard, { height: 220 * Math.max(1, textScale), backgroundColor: colors.card, borderColor: colors.border }]}>
         <View style={{ height: 58 * textScale }}><Text accessible={false} style={styles.yearEmoji}>{emoji}</Text></View>
         <View style={{ height: 50 * textScale }}><Text numberOfLines={2} style={[styles.yearName, { lineHeight: 22, color: colors.text }]}>{title}</Text></View>
         <View style={{ flex: 1 }}><Text numberOfLines={3} style={[styles.yearHint, { lineHeight: 18, color: colors.textMuted }]}>{hint}</Text></View>
