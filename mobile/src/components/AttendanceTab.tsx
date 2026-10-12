@@ -20,6 +20,7 @@ import { useTheme, withAlpha } from '@/theme';
 import { onColor } from '@/theme/color';
 import { typeScale } from '@/theme/typography';
 import { tick } from '@/lib/haptics';
+import { calendarWeeks } from '@/lib/calendarWeeks';
 import {
   addAttendance,
   attendanceVersion,
@@ -154,6 +155,8 @@ function RotationCalendar({
     gazettedWorkingDays,
   ]);
 
+  const weeks = useMemo(() => calendarWeeks(days), [days]);
+
   if (days.length === 0) return null;
 
   const sundaysCount = days.filter(d => d.isSun).length;
@@ -215,7 +218,9 @@ function RotationCalendar({
       </View>
 
       <View style={styles.calendarGrid}>
-        {days.map(d => {
+        {weeks.map((week, row) => <View key={row} style={styles.calendarWeek}>
+        {week.map((d, column) => {
+          if (!d) return <View key={`blank-${column}`} style={[styles.calendarSlot, styles.calendarCell, { opacity: 0 }]} pointerEvents="none" />;
           const selected = d.isCustomHoliday;
           const official = d.activeGazetted;
           const overridden = d.isGazetted && d.isGazettedOverride;
@@ -225,7 +230,7 @@ function RotationCalendar({
               key={d.iso}
               onPress={() => handlePress(d)}
               disabled={!editable}
-              label={`${d.monthShort} ${d.dayNum}${d.holidayTitle ? ` - ${d.holidayTitle}` : ''}${d.isOff ? ' - Holiday' : ' - Working day'}`}
+              label={`${WEEKDAY_NAMES[(d.dayOfWeek + 6) % 7]}, ${d.monthShort} ${d.dayNum}${d.holidayTitle ? ` - ${d.holidayTitle}` : ''}${d.isOff ? ' - Holiday' : ' - Working day'}`}
               hint={
                 d.isGazetted && prepaidHolidays
                   ? 'Double tap to switch this official holiday between holiday and working day for this posting'
@@ -240,6 +245,7 @@ function RotationCalendar({
                 if (name === 'toggleOfficialHoliday') toggleOfficial(d.iso);
               }}
               style={[
+                styles.calendarSlot,
                 styles.calendarCell,
                 {
                   borderColor: selected
@@ -313,6 +319,7 @@ function RotationCalendar({
             </Touchable>
           );
         })}
+        </View>)}
       </View>
 
       <View style={styles.calendarLegend}>
@@ -1511,14 +1518,15 @@ const styles = StyleSheet.create({
   calendarHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    flexWrap: 'wrap',
+    gap: 4,
   },
-  calendarTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  calendarTitle: { fontSize: 13, fontWeight: '700' },
-  calendarSummary: { fontSize: 12 },
+  calendarTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 6, flexShrink: 1 },
+  calendarTitle: { fontSize: 13, fontWeight: '700', flexShrink: 1 },
+  calendarSummary: { fontSize: 12, flexShrink: 1 },
   calendarWeekRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    gap: 4,
     paddingVertical: 4,
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: 'rgba(150,150,150,0.2)',
@@ -1529,13 +1537,10 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '700',
   },
-  calendarGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 4,
-  },
+  calendarGrid: { gap: 4 },
+  calendarWeek: { flexDirection: 'row', gap: 4 },
+  calendarSlot: { flex: 1, minWidth: 0 },
   calendarCell: {
-    width: '13.5%',
     minHeight: 46,
     borderRadius: 6,
     borderWidth: 1,

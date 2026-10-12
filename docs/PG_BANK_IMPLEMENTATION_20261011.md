@@ -39,3 +39,14 @@ Source ranges, publisher counts, recall keys and medical correctness are separat
 Native and web TypeScript and targeted lint passed. The full Vercel build passed using an explicit local Node heap allowance. Deterministic review, import, full-corpus audit/generator and 120 actual offline reader count/pagination/search/year cases passed. Focused browser testing runs in CI; the local Chromium download was blocked. Native bundling and release pipelines are checked separately. No Android-device behavior or Play Store publication is inferred from a bundle or GitHub release.
 
 Existing question source assets retain a 21.63 MB DEFLATE estimate before the small quarantine/catalog additions. This is not a measured APK/AAB delta or iOS cache footprint.
+
+
+## 12 October 2026 — original-only distribution hold (supersedes archive release claims)
+
+The owner requires conservative risk reduction without assuming legal clearance. The released PG feature now includes only ten ORBIT original, undated practice samples and three official exam-information links. MedMCQA packs, unofficial recalls, source catalogs and historical question-year overlays are excluded from the active web/native import graph. Existing corpus counts describe research inventory, not released content. No answer has independent clinical approval; textbook AI remains provisional.
+
+Web and Android build gates reject withheld PG corpus imports; web output is checked for dataset payloads. Manual dataset-seeding and expansion workflows fail before downloading or publishing data. The PWA cache version is advanced. Subscriptions are unchanged. No GPL trainer code was incorporated in this PG implementation.
+
+Future third-party material requires documented permission covering the underlying questions, images and explanations, not just a public URL or dataset licence. Original questions must be independently authored; rewriting confidential recalls is not a permission workaround. Private textbook access does not establish excerpt redistribution rights.
+
+Outstanding exposure: the GitHub API confirms gmck is PUBLIC. Import exclusions do not remove raw files from repository/history, public forks, previously published APKs or old deployment URLs. The current connector cannot change repository visibility or revoke prior copies. The owner should make the repository private via GitHub Settings; existing public forks remain public. No legal immunity or completed whole-app legal audit is claimed.

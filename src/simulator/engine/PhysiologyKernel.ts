@@ -5,6 +5,12 @@ export interface ExtendedScenarioDefinition extends ScenarioDefinition {
 }
 
 export const SCENARIOS: ExtendedScenarioDefinition[] = [
+  {
+    id: 'normal', title: 'Healthy adult · normal baseline', subtitle: 'Learn normal findings before exploring disease', category: 'Normal physiology', departmentId: 'normal',
+    chiefComplaint: 'No symptoms — teaching baseline', history: 'Healthy adult at rest. Compare normal anatomy and bedside findings with the clinical cases.', targetInterventions: [], lethalTriggers: [],
+    initialVitals: { heartRate: 72, bpSystolic: 120, bpDiastolic: 80, meanArterialPressure: 93, spo2: 98, respiratoryRate: 16, temperature: 36.8, cvp: 3, etco2: 38, lactate: 1, gcs: 15 },
+    initialPathology: { cyanosis: 0, pallor: 0, jaundice: 0, diaphoresis: 0, ascites: 0, myocardialIschemia: 0, pupilLeft: 3.5, pupilRight: 3.5, pupilReactLeft: true, pupilReactRight: true, heartSoundType: 'normal', lungSoundType: 'vesicular', ecgRhythm: 'sinus' },
+  },
   // 1. CARDIOLOGY
   {
     id: 'stemi',

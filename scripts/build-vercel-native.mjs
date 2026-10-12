@@ -2,12 +2,22 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 
+execFileSync('node', ['scripts/check-pg-release-content.mjs'], { stdio: 'inherit' });
+
 // Build the unchanged simulator/document app, then give the homepage to the
 // native browser build. Separate bundles keep React 18 and 19 isolated.
 execFileSync('npm', ['run', 'build'], { stdio: 'inherit' });
 fs.copyFileSync('dist/index.html', 'dist/legacy.html');
 execFileSync('npm', ['--prefix', 'mobile', 'run', 'web:build'], { stdio: 'inherit' });
 fs.cpSync('dist-native', 'dist', { recursive: true });
+for (const directory of ['dist/assets','dist-native/assets']) {
+  for (const name of fs.readdirSync(directory)) {
+    if (/neet_pg_undated|general_medical_undated/.test(name)) throw new Error('Unapproved PG pack emitted: '+name);
+    if (name.endsWith('.js') && /medmcqa-(?:train|validation)-/.test(fs.readFileSync(path.join(directory,name),'utf8'))) {
+      throw new Error('Unapproved PG record payload emitted: '+name);
+    }
+  }
+}
 const assets = fs.readdirSync('dist-native/assets')
   .sort((a, b) => {
     // Cache study content and the actual app JS before bulky anatomical images.

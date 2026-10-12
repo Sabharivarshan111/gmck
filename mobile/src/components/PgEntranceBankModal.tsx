@@ -9,8 +9,7 @@ import { KeyboardSafe } from '@/components/KeyboardSafe';
 import { PgRecentAnswerReview } from '@/components/PgRecentAnswerReview';
 import { Touchable } from '@/components/Touchable';
 import { useTheme, withAlpha } from '@/theme';
-import { PG_QUARANTINED_TOTAL } from '@/lib/pgQuarantine';
-import { searchOfflinePgQuestions, getPgOfflinePacks } from '@/lib/pgLocalBank';
+import { searchOfflinePgQuestions } from '@/lib/pgLocalBank';
 import { PG_ORIGINAL_PRACTICE, PG_SOURCES, PG_SOURCE_REVIEW_DATE, type PgExam, type PgQuestion } from '@/lib/pgEntranceBank';
 
 type ExamFilter = 'ALL' | PgExam | 'GENERAL_MEDICAL';
@@ -58,7 +57,6 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
   const yearInvalid = yearText.length > 0 && (year === null || year < 1991 || year > 2026);
   const search = searchText.toLocaleLowerCase().trim();
   const [debouncedSearch, setDebouncedSearch] = useState('');
-  const totalBundled = useMemo(() => getPgOfflinePacks().reduce((s,p)=>s+p.count,0), []);
   useEffect(() => {const timer=setTimeout(()=>setDebouncedSearch(search),270);return ()=>clearTimeout(timer);},[search]);
 
   useEffect(() => {
@@ -108,7 +106,7 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
             <ArrowLeft size={21} color={colors.text} />
           </Touchable>
           <View style={styles.flex}>
-            <Text style={[styles.title, { color: colors.text }]}>PG Entrance Questions</Text>
+            <Text style={[styles.title, { color: colors.text }]}>PG Practice & References</Text>
             <Text style={[styles.sub, { color: colors.textMuted }]}>One place for NEET-PG · INI-CET · FMGE</Text>
           </View>
           <Touchable label="Dismiss" onPress={onClose} style={styles.iconButton}>
@@ -124,9 +122,8 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
           <View style={[styles.notice, { backgroundColor: withAlpha(colors.primary, 0.08), borderColor: colors.border }]}>
             <ShieldCheck size={17} color={colors.primary} />
             <Text style={[styles.noticeText, { color: colors.text }]}>
-              {totalBundled.toLocaleString()} source-labelled questions are available offline; {PG_QUARANTINED_TOTAL.toLocaleString()} defective or image-dependent records are withheld.
-              NEET-PG validation questions and separate mock/test-series MCQs are from the 2022
-              MedMCQA dataset; exact exam years are unknown. The 2023–2026 recalls are links only.
+              This release includes ORBIT original practice only. Third-party datasets and historical exam recalls are withheld pending documented permissions. A complete previous-year archive is not available.
+
             </Text>
           </View>
 
@@ -142,25 +139,18 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
 
           <View style={styles.switchRow}>
             {(['practice', 'recent', 'sources'] as const).map(p => (
-              <Touchable key={p} label={p === 'sources' ? 'Answer-bearing sources' : p === 'recent' ? 'Check an answer against textbooks' : 'Practice questions'}
+              <Touchable key={p} label={p === 'sources' ? 'Official exam information' : p === 'recent' ? 'Check an answer against textbooks' : 'Practice questions'}
                 state={{ selected: panel === p }}
                 onPress={() => { setPanel(p); setCheckQuestion(null); setExpandedAnswer(null); }}
                 style={[styles.switchButton, { backgroundColor: panel === p ? withAlpha(colors.primary, 0.22) : colors.card, borderColor: panel === p ? colors.primary : colors.border }]}>
                 <Text style={[styles.switchText, { color: colors.text }]}>
-                  {p === 'sources' ? 'Year sources' : p === 'recent' ? 'Textbook AI' : 'Offline MCQs'}
+                  {p === 'sources' ? 'Exam information' : p === 'recent' ? 'Textbook AI' : 'Offline MCQs'}
                 </Text>
               </Touchable>
             ))}
           </View>
 
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chips}>
-            {[2023, 2024, 2025, 2026].map(y => (
-              <Touchable key={y} label={'Filter recalled questions and source links for '+y}
-                onPress={() => { setYearText(String(y)); setPage(0); setExpandedAnswer(null); }}
-                style={[styles.chip,{ borderColor: year === y ? colors.primary : colors.border,backgroundColor: year === y ? withAlpha(colors.primary,0.17) : colors.card }]}>
-                <Text style={[styles.chipText,{color:colors.text}]}>{y}</Text>
-              </Touchable>
-            ))}
             <Touchable label="Clear question year" onPress={() => {setYearText('');setPage(0);setExpandedAnswer(null);}}
               style={[styles.chip,{borderColor:colors.border,backgroundColor:colors.card}]}>
               <Text style={[styles.chipText,{color:colors.text}]}>All years</Text>
@@ -187,8 +177,7 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
                 {sources.length} external source link{sources.length === 1 ? '' : 's'}
               </Text>
               <Text style={[styles.small, { color: colors.textMuted }]}>
-                Indexed {PG_SOURCE_REVIEW_DATE}. Verified complete year/session papers in this build: 0. Source year ranges are not proof of complete paper coverage.
-                Free access does not grant redistribution rights.
+                Checked {PG_SOURCE_REVIEW_DATE}. These official information links contain no bundled questions or answer keys.
               </Text>
               {sources.map(item => (
                 <View key={item.id} style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
@@ -196,7 +185,7 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
                     <View style={styles.flex}>
                       <Text style={[styles.cardTitle, { color: colors.text }]}>{item.name}</Text>
                       <Text style={[styles.small, { color: colors.textMuted }]}>
-                        {item.from === item.to ? item.from : item.from + '–' + item.to} · {item.kind}
+                        Current official notices · no question bank
                       </Text>
                     </View>
                     <ExternalLink size={17} color={colors.primary} />
@@ -206,9 +195,9 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
                   {item.sessions ? <Text style={[styles.small,{color:colors.textMuted}]}>Located sessions: {item.sessions.join(' · ')}</Text> : null}
                   {item.coverageNote ? <Text style={[styles.small,{color:colors.textMuted}]}>{item.coverageNote}</Text> : null}
                   <Touchable onPress={() => { void openSource(item.url); }}
-                    label={'Open source with answer information: ' + item.name}
+                    label={'Open official exam information: ' + item.name}
                     style={[styles.sourceLink, { borderColor: colors.border }]}>
-                    <Text style={[styles.linkText, { color: colors.primary }]}>Open source / answers ↗</Text>
+                    <Text style={[styles.linkText, { color: colors.primary }]}>Open official information ↗</Text>
                   </Touchable>
                 </View>
               ))}
@@ -218,11 +207,11 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
             yearInvalid ? <Text style={[styles.small,{color:colors.warning}]}>Correct or clear the year before checking an answer.</Text> : <PgRecentAnswerReview exam={exam} initialQuestion={checkQuestion} year={year} onYear={y => {setYearText(y === null ? '' : String(y));setPage(0);}} />
           ) : (
             <>
-              <Text style={[styles.sectionHeading, { color: colors.text }]}>Offline medical question practice</Text>
+              <Text style={[styles.sectionHeading, { color: colors.text }]}>PG practice</Text>
               {loading ? <ActivityIndicator color={colors.primary} /> : null}
               {loadError ? <Text style={[styles.small, { color: colors.warning }]}>Offline pack error: {loadError}</Text> : null}
               <Text style={[styles.small, { color: colors.textMuted }]}>
-                {loadedCount} bundled question{loadedCount === 1 ? '' : 's'} · page {page + 1} of {Math.max(1, Math.ceil(loadedCount / 40))}. Dataset-provided answers are not independently reviewed.
+                Third-party question imports are currently withheld. Original practice appears below; its answers are not independently clinically reviewed.
               </Text>
               {reviewed.map(q => <QuestionCard key={q.id} q={q} active={expandedAnswer === q.id}
                 onPress={() => setExpandedAnswer(prev => prev === q.id ? null : q.id)}
@@ -232,20 +221,20 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
                 <Touchable label="Next page" disabled={(page + 1) * 40 >= loadedCount} onPress={() => { setPage(p => p + 1); setExpandedAnswer(null); }} style={[styles.switchButton, { borderColor: colors.border, backgroundColor: colors.card }]}><Text style={{ color: colors.text }}>Next</Text></Touchable>
               </View> : null}
               {reviewed.length === 0 && !loading ? <Text style={[styles.empty, { color: colors.textMuted }]}>
-                No matching dataset questions in this offline build. The source directory links to external exam answer information.
+                Historical exam questions are withheld pending documented permission to distribute them.
               </Text> : null}
               <Text style={[styles.sectionHeading, { color: colors.text }]}>ORBIT original practice — not PYQs</Text>
               {original.map(q => <QuestionCard key={q.id} q={q} active={expandedAnswer === q.id}
                 onPress={() => setExpandedAnswer(prev => prev === q.id ? null : q.id)}
                 onCheck={() => {setCheckQuestion(q);setPanel('recent');setYearText(q.year === null ? '' : String(q.year));}} colors={colors} />)}
               {original.length === 0 ? <Text style={[styles.small, { color: colors.textMuted }]}>Clear the year filter to show original practice questions.</Text> : null}
-              <Text style={[styles.small, {color:colors.textMuted}]}>For historical, undated or 2026 questions, open the Textbook AI tab above to check answers using Supabase.</Text>
+              <Text style={[styles.small, {color:colors.textMuted}]}>Textbook AI can provide a provisional explanation for medical practice questions you own or have permission to use.</Text>
             </>
           )}
           <View style={[styles.bottomNote, { borderColor: colors.border }]}>
             <BookOpenCheck size={17} color={colors.textMuted} />
             <Text style={[styles.small, styles.flex, { color: colors.textMuted }]}>
-              MedMCQA is a 2022-era dataset, not a complete annual PYQ archive. Its AIIMS-PG test split has no public answer labels.
+              Original practice has no claimed exam year. Online availability does not establish permission to redistribute third-party questions.
             </Text>
           </View>
         </ScrollView>

@@ -24,3 +24,14 @@ The official NEET-PG 2025 bulletin, English printed pages 93–94, sections 9.7�
 The inspected provisions do not state a separate blanket prohibition on displaying an examination year. This is not permission to republish the underlying question. Removing a year, using a different label, charging nothing, or finding a public recall does not establish republication permission. The latest full 2026 bulletin was not retrieved; September 2026 reporting describes a renewed NBEMS warning against circulating memory-based questions, including a warning to coaching providers and other stakeholders: https://indianexpress.com/article/education/neet-pg-2026-nbems-warns-against-sharing-recall-based-questions-10860518/ . Distinguish verified official text from that current secondary report.
 
 Question-year evidence, medical correctness, copyright/reuse permission, candidate confidentiality obligations and the software licence are separate checks. The research and matching metadata do not constitute legal clearance of an examination archive.
+
+
+## 12 October 2026 — original-only distribution hold (supersedes archive release claims)
+
+The owner requires conservative risk reduction without assuming legal clearance. The released PG feature now includes only ten ORBIT original, undated practice samples and three official exam-information links. MedMCQA packs, unofficial recalls, source catalogs and historical question-year overlays are excluded from the active web/native import graph. Existing corpus counts describe research inventory, not released content. No answer has independent clinical approval; textbook AI remains provisional.
+
+Web and Android build gates reject withheld PG corpus imports; web output is checked for dataset payloads. Manual dataset-seeding and expansion workflows fail before downloading or publishing data. The PWA cache version is advanced. Subscriptions are unchanged. No GPL trainer code was incorporated in this PG implementation.
+
+Future third-party material requires documented permission covering the underlying questions, images and explanations, not just a public URL or dataset licence. Original questions must be independently authored; rewriting confidential recalls is not a permission workaround. Private textbook access does not establish excerpt redistribution rights.
+
+Outstanding exposure: the GitHub API confirms gmck is PUBLIC. Import exclusions do not remove raw files from repository/history, public forks, previously published APKs or old deployment URLs. The current connector cannot change repository visibility or revoke prior copies. The owner should make the repository private via GitHub Settings; existing public forks remain public. No legal immunity or completed whole-app legal audit is claimed.

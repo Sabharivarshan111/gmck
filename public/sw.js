@@ -8,7 +8,7 @@
 // the new HTML anyway — but one that ever fell back to the cached shell keeps
 // being served the asset hashes that shell names, and those ARE cached. Bumping
 // this is the one lever that empties the old cache for everybody.
-const SW_VERSION = 'v19-pg-quarantine-evidence-2026-10-11';
+const SW_VERSION = 'v20-pg-original-only-2026-10-12';
 const CACHE_NAME = `mbbs-qb-${SW_VERSION}`;
 
 const PRECACHE_URLS = [

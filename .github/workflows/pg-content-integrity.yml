@@ -34,4 +34,5 @@ jobs:
           node-version: '24'
       - run: npm --prefix mobile ci --legacy-peer-deps
       - run: node scripts/check-pg-content-integrity.mjs
+      - run: node scripts/check-pg-release-content.mjs
       - run: python scripts/generate-pg-quarantine.py --check

@@ -13,6 +13,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 38
     steps:
+      - name: Third-party question imports are withheld
+        run: |
+          echo '::error::PG corpus expansion is paused pending documented permission to redistribute the underlying questions. No data will be downloaded or published.'
+          exit 1
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.ref_name }}

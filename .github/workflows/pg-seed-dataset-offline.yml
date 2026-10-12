@@ -11,6 +11,10 @@ jobs:
       contents: write
     if: github.ref != 'refs/heads/main'
     steps:
+      - name: Third-party question imports are withheld
+        run: |
+          echo '::error::PG dataset imports are paused pending documented permission to redistribute the underlying questions. No data will be downloaded or published.'
+          exit 1
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.ref_name }}

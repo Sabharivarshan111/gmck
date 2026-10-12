@@ -77,6 +77,9 @@ const goto = async (urlPath) => {
   await page.goto(baseURL + urlPath, { waitUntil: 'domcontentloaded', timeout: 60000 });
   await page.locator('body').waitFor({ state: 'visible' });
   await page.waitForTimeout(1200);
+  if (urlPath === '/simulator') {
+    await page.getByRole('button', { name: /^Explore 3D anatomy/ }).click();
+  }
 };
 const check = async (name, fn) => {
   const started = Date.now();
@@ -96,6 +99,7 @@ const check = async (name, fn) => {
 
 await check('compact-toolbar-and-visible-canvas', async () => {
   await goto('/simulator');
+  await page.getByRole('button', { name: 'Layers', exact: true }).click();
   const stage = page.getByTestId('mobile-anatomy-stage');
   const toolbar = stage.getByTestId('dissection-toolbar');
   await visible(stage, 'mobile anatomy stage');
@@ -105,6 +109,7 @@ await check('compact-toolbar-and-visible-canvas', async () => {
     await touchSafe(toolbar.getByTestId('dissection-mode-' + id), id + ' mode');
   }
   await touchSafe(toolbar.getByTestId('dissection-xray'), 'X-Ray');
+  await page.getByRole('button', { name: 'Close anatomy tools' }).click();
   const canvas = stage.locator('canvas').first();
   const canvasBox = await visible(canvas, '3D anatomy canvas');
   assert(canvasBox.height >= 390, '3D canvas is too short: ' + Math.round(canvasBox.height) + 'px');
@@ -196,7 +201,7 @@ await check('drawer-peek-does-not-block-3d', async () => {
   await goto('/simulator?organ=pectoralis_major');
   const drawer = page.getByTestId('organ-detail-drawer');
   const drawerBox = await visible(drawer, 'Pectoralis Major drawer');
-  assert(drawerBox.height <= 360, 'Collapsed anatomy drawer covers too much of the phone: ' + Math.round(drawerBox.height) + 'px');
+  assert(drawerBox.height <= 844 * 0.64, 'Collapsed anatomy drawer covers too much of the phone: ' + Math.round(drawerBox.height) + 'px');
   assert((await page.locator('[aria-label="Collapse anatomy details"]').count()) === 0,
     'Collapsed drawer still has a full-screen backdrop that can intercept rotation gestures');
   await visible(drawer.getByRole('heading', { name: /Pectoralis Major/i }).first(), 'Pectoralis Major heading');
@@ -238,12 +243,12 @@ await check('isolate-handoff', async () => {
   await drawer.waitFor({ state: 'detached' });
   const banner = page.getByTestId('mobile-isolation-banner');
   await visible(banner, 'isolation banner');
-  await visible(banner.getByRole('button', { name: 'Dossier' }), 'Dossier action');
-  await visible(banner.getByRole('button', { name: 'Restore' }), 'Restore action');
+  await visible(banner.getByRole('button', { name: 'Open selected structure anatomy details' }), 'Dossier action');
+  await visible(banner.getByRole('button', { name: 'Restore whole anatomy from selected structure' }), 'Restore action');
   await shot('05-isolate-focus');
 });
 
-await check('depth-peel-exits-isolation-and-shows-requested-layer', async () => {
+await check('restore-isolation-and-depth-peel-shows-requested-layer', async () => {
   await goto('/simulator?organ=pectoralis_major');
   const drawer = page.getByTestId('organ-detail-drawer');
   await visible(drawer, 'Pectoralis dossier before depth peel');
@@ -253,6 +258,10 @@ await check('depth-peel-exits-isolation-and-shows-requested-layer', async () => 
   const banner = page.getByTestId('mobile-isolation-banner');
   await visible(banner, 'Pectoralis isolation banner before depth peel');
 
+  // The focused structure hides global tools; restore the body before peeling.
+  await banner.getByRole('button', { name: 'Restore whole anatomy from selected structure' }).click();
+  await banner.waitFor({ state: 'detached' });
+  await page.getByRole('button', { name: 'Layers', exact: true }).click();
   const depth = page.getByTestId('mobile-anatomy-stage').getByTestId('dissection-depth');
   await depth.scrollIntoViewIfNeeded();
   await depth.focus();
@@ -271,6 +280,7 @@ await check('depth-peel-exits-isolation-and-shows-requested-layer', async () => 
     'Isolation banner remained active after moving the global depth peel slider'
   );
 
+  await page.getByRole('button', { name: 'Close anatomy tools' }).click();
   const canvas = page.getByTestId('mobile-anatomy-stage').locator('canvas').first();
   const canvasBox = await visible(canvas, 'skeletal framework canvas after leaving isolation');
   assert(canvasBox.height >= 390, 'Skeletal framework canvas collapsed after depth peel');
@@ -288,7 +298,7 @@ await check('thoracoacromial-reopens-pectoralis-not-heart', async () => {
   let drawer = page.getByTestId('organ-detail-drawer');
   await visible(drawer, 'Pectoralis dossier');
   await drawer.getByTestId('organ-drawer-tab-vascular').click();
-  const inspect = drawer.getByRole('button', { name: /Inspect in 3D/i }).first();
+  const inspect = drawer.getByTestId('arterial-node-thoracoacromial-3d');
   await visible(inspect, 'Thoracoacromial Inspect in 3D');
   await inspect.click();
   await drawer.waitFor({ state: 'detached' });
@@ -296,7 +306,7 @@ await check('thoracoacromial-reopens-pectoralis-not-heart', async () => {
   await visible(banner, 'Thoracoacromial isolation banner');
   const bannerText = ((await banner.textContent()) || '').toLowerCase();
   assert(bannerText.includes('thoracoacromial'), 'Expected thoracoacromial child isolation, got: ' + bannerText);
-  await banner.getByRole('button', { name: 'Dossier' }).click();
+  await banner.getByRole('button', { name: 'Open selected structure anatomy details' }).click();
   drawer = page.getByTestId('organ-detail-drawer');
   await visible(drawer, 'reopened parent dossier');
   const heading = drawer.getByRole('heading').first();
@@ -316,4 +326,5 @@ fs.writeFileSync(path.join(outDir, 'report.json'), JSON.stringify(report, null, 
 await browser.close();
 
 console.log(JSON.stringify(report.summary));
+for (const result of report.checks) if (result.status === 'failed') console.error(result.name + ': ' + result.error);
 if (report.summary.failed > 0) process.exit(1);

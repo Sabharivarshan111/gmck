@@ -1,125 +1,33 @@
 #!/usr/bin/env node
-/**
- * Static integrity check of ORBIT's real shipped PG question inventory.
- * It never counts external research hyperlinks as imported solved questions.
- * It cannot prove answer correctness, copyright permission or APK size.
- */
+/** Counts the released feature, never the withheld research corpus. */
+import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import path from 'node:path';
-import { createRequire } from 'node:module';
-const ts = createRequire(import.meta.url)('../mobile/node_modules/typescript');
-const cache = new Map();
-function loadTs(filename) {
-  filename = path.resolve(filename);
-  if (cache.has(filename)) return cache.get(filename).exports;
-  const module = { exports: {} }; cache.set(filename, module);
-  const code = ts.transpileModule(fs.readFileSync(filename, 'utf8'), { compilerOptions: {module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022} }).outputText;
-  new Function('require', 'module', 'exports', code)(id => loadTs(path.resolve(path.dirname(filename), id + (id.endsWith('.ts') ? '' : '.ts'))), module, module.exports);
-  return module.exports;
+import vm from 'node:vm';
+import {createRequire} from 'node:module';
+const ts=createRequire(import.meta.url)('../mobile/node_modules/typescript');
+function load(file){
+ const m={exports:{}};
+ const code=ts.transpileModule(fs.readFileSync(file,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
+ vm.runInNewContext(code,{module:m,exports:m.exports},{filename:file});return m.exports;
 }
-
-const read = path => fs.readFileSync(path, 'utf8');
-const source = read('mobile/src/lib/pgEntranceBank.ts');
-const manifest = read('mobile/src/lib/pgPacks/generatedManifest.ts');
-const reader = read('mobile/src/lib/pgLocalBank.ts');
-const screen = read('mobile/src/components/PgEntranceBankModal.tsx');
-const notes = read('mobile/src/screens/NotesScreen.tsx');
-
-const errors = [];
-const check = (condition, message) => { if (!condition) errors.push(message); };
-const { PG_SOURCES: sources, PG_ORIGINAL_PRACTICE: original } = loadTs('mobile/src/lib/pgEntranceBank.ts');
-const quarantine = loadTs('mobile/src/lib/pgQuarantine.ts');
-const sourceIds = new Set();
-for (const s of sources) {
-  check(!sourceIds.has(s.id), 'Duplicate research source id ' + s.id);
-  sourceIds.add(s.id);
-  check(/^https:\/\//.test(s.url), 'Source has invalid link: ' + s.id);
-  check(s.from >= 1991 && s.to <= 2026 && s.from <= s.to, 'Bad source year range: ' + s.id);
+const {PG_SOURCES,PG_ORIGINAL_PRACTICE}=load('mobile/src/lib/pgEntranceBank.ts');
+const reader=load('mobile/src/lib/pgLocalBank.ts');
+assert.equal(reader.getPgOfflinePacks().length,0);
+assert.equal((await reader.searchOfflinePgQuestions({exam:'ALL',year:null,search:''})).total,0);
+assert.equal(PG_ORIGINAL_PRACTICE.length,10);
+assert.equal(new Set(PG_ORIGINAL_PRACTICE.map(q=>q.id)).size,10);
+for(const q of PG_ORIGINAL_PRACTICE){
+ assert.equal(q.exam,'ORIGINAL');assert.equal(q.year,null);assert.equal(q.record_type,'original_exam_style');
+ assert.equal(q.options.length,4);assert.equal(new Set(q.options).size,4);
+ assert.match(q.answer,/^[ABCD]$/);assert.ok(q.explanation.length>=20);
 }
-const originalIds = new Set();
-for (const q of original) {
-  check(!originalIds.has(q.id), 'Duplicate practice MCQ id ' + q.id);
-  originalIds.add(q.id);
-  check(q.exam === 'ORIGINAL' && q.year === null, 'Original mislabelled as PYQ: ' + q.id);
-  check(Array.isArray(q.options) && q.options.length === 4, 'Options missing: ' + q.id);
-  check(['A', 'B', 'C', 'D'].includes(q.answer), 'Answer not A-D: ' + q.id);
-  check(typeof q.explanation === 'string' && q.explanation.trim().length >= 20, 'Explanation too short: ' + q.id);
+assert.equal(PG_SOURCES.length,3);
+for(const s of PG_SOURCES){
+ assert.equal(s.kind,'Official information');
+ assert.ok(['natboard.edu.in','www.aiimsexams.ac.in'].includes(new URL(s.url).hostname));
 }
-check(!/from ['"]@\/lib\/supabase['"]/.test(screen), 'PG UI still imports Supabase');
-check(!/\.from\(['"]pg_exam_questions['"]\)/.test(screen), 'PG UI still queries Supabase');
-check(reader.includes('GENERATED_PG_PACKS') && reader.includes('pack.load()'), 'Local offline pack reader missing');
-check(!/PG Entrance PYQ Bank/.test(screen+notes), 'Do not claim installed PYQs while packs are empty');
-const placement = notes.indexOf('Case proformas');
-const pgPlacement = notes.indexOf('PG Entrance Questions & Sources');
-check(placement >= 0 && pgPlacement > placement, 'PG entry not below Case Proformas in Notes');
-
-const packCount = (manifest.match(/load:\s*\(\)\s*=>\s*import\(/g) || []).length;
-const hasEmptyManifest = /GENERATED_PG_PACKS:\s*PgOfflinePack\[\]\s*=\s*\[\s*\]/.test(manifest);
-check(packCount > 0 || hasEmptyManifest, 'PG pack manifest is malformed');
-
-let installedQuestions = 0;
-let datasetLabelledQuestions = 0;
-let recordsWithoutExplanation = 0;
-const seenImported = new Set();
-if (packCount > 0) {
-  const row = /\{ id: "([^"]+)", exam: "([^"]+)", year: (null|\d+), count: (\d+), load: \(\) => import\('\.\/([^']+)'\) \}/g;
-  const specs = Array.from(manifest.matchAll(row));
-  check(specs.length === packCount, 'Manifest pack metadata is incomplete');
-  for (const item of specs) {
-    const id = item[1];
-    const expectRows = Number(item[4]);
-    const basename = item[5];
-    check(id === basename, 'Manifest id mismatch: ' + id);
-    const filename = 'mobile/src/lib/pgPacks/' + basename + '.ts';
-    check(fs.existsSync(filename), 'Manifest pack is missing: ' + filename);
-    if (!fs.existsSync(filename)) continue;
-    const text = read(filename);
-    const rows = text.match(/const ROWS: \(string \| number\)\[\]\[\] = (\[[\s\S]*?\]);/);
-    const refs = text.match(/const REFERENCES = (\[[\s\S]*?\]);/);
-    check(Boolean(rows && refs), 'Invalid packed module: ' + id);
-    if (!rows || !refs) continue;
-    const values = JSON.parse(rows[1]);
-    const references = JSON.parse(refs[1]);
-    check(values.length === expectRows, 'Mismatched row count in ' + id);
-    for (const q of values) {
-      installedQuestions++;
-      if (seenImported.has(q[0])) errors.push('Duplicate bundled ID: ' + q[0]);
-      seenImported.add(q[0]);
-      check(typeof q[1] === 'string' && q[1].trim().length > 8, 'Bad question in ' + id);
-      check(q.length === 14 && q.slice(2,6).every(x => typeof x === 'string' && x.trim()), 'Incomplete A-D options in ' + id);
-      check(Number.isInteger(q[6]) && q[6] >= 0 && q[6] <= 3, 'Invalid dataset label in ' + id);
-      if (typeof q[7] !== 'string' || q[7].trim().length < 20) recordsWithoutExplanation++;
-      const evidence = references[q[11]];
-      if (typeof evidence === 'string' && evidence.includes('not independently verified')) datasetLabelledQuestions++;
-    }
-  }
-  const sizeReport = JSON.parse(read('mobile/src/lib/pgPacks/packing-report.json'));
-  check(installedQuestions === sizeReport.total_questions, 'Reported PG question count differs from real files');
-  check(sizeReport.chunk_count === packCount, 'Size report chunk count differs from manifest');
-  check(sizeReport.fits_native_budget === true, 'Bundled question-pack source fails compressed-content budget');
-}
-
-check(quarantine.PG_QUARANTINED_IDS.size === quarantine.PG_QUARANTINED_TOTAL, 'Quarantine size mismatch');
-check(installedQuestions - quarantine.PG_QUARANTINED_TOTAL === quarantine.PG_STRUCTURALLY_ELIGIBLE_TOTAL, 'Eligible total mismatch');
-check(Object.values(quarantine.PG_ELIGIBLE_PACK_COUNTS).reduce((a,b)=>a+b,0) === quarantine.PG_STRUCTURALLY_ELIGIBLE_TOTAL, 'Eligible per-pack total mismatch');
-check(reader.includes('PG_QUARANTINED_IDS.has(q.id)'), 'Quarantined rows can enter practice');
-const report = {
-  audit_date: quarantine.PG_QUARANTINE_DATE ?? '2026-10-11',
-  free_source_links: sources.length,
-  original_practice_questions: original.length,
-  installed_offline_pack_count: packCount,
-  installed_offline_questions: installedQuestions,
-  quarantined_questions: quarantine.PG_QUARANTINED_TOTAL,
-  structurally_eligible_questions: quarantine.PG_STRUCTURALLY_ELIGIBLE_TOTAL,
-  independently_medically_reviewed_answers: 0,
-  dataset_answer_labels_not_independently_verified: datasetLabelledQuestions,
-  questions_with_missing_or_short_explanation: recordsWithoutExplanation,
-  complete_historical_pyq_coverage_verified: false,
-  offline_25mb_all_questions_verified: false,
-  source_links_are_questions: false,
-  full_dataset_source_audit: 'https://github.com/Sabharivarshan111/gmck/actions/runs/38033518459',
-  note: 'Per-year/per-session PYQ inventory and independent clinical answer review are missing. A link is NOT an offline question.',
-  errors
-};
-process.stdout.write(JSON.stringify(report, null, 2) + '\n');
-if (errors.length) process.exitCode = 1;
+const screen=fs.readFileSync('mobile/src/components/PgEntranceBankModal.tsx','utf8');
+assert.ok(screen.includes('withheld pending documented permissions'));
+assert.ok(!/source-labelled questions are available offline/.test(screen));
+assert.ok(fs.readFileSync('mobile/src/screens/NotesScreen.tsx','utf8').includes('PG medical practice and official exam information'));
+console.log(JSON.stringify({release_policy:'original_practice_only',third_party_questions_released:0,original_practice_questions:10,official_information_links:3,verified_exam_years:0,independently_medically_reviewed_answers:0,legal_immunity_guaranteed:false}));

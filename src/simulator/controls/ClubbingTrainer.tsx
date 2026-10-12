@@ -1,0 +1,19 @@
+import { useState } from 'react';
+export function ClubbingTrainer({ onClose }: { onClose: () => void }) {
+  const [mode, setMode] = useState<'normal' | 'clubbing'>('normal');
+  const [answer, setAnswer] = useState(false);
+  return <div className="fixed inset-0 z-50 bg-slate-950/80 flex items-center justify-center" role="dialog" aria-modal="true" aria-label="Clubbing skill">
+    <section className="clubbing-card bg-white text-slate-900 w-full max-w-2xl h-[100dvh] sm:h-auto sm:max-h-[92dvh] flex flex-col sm:rounded-2xl overflow-hidden">
+      <header className="flex items-center justify-between px-4 py-3 border-b"><h2 className="font-bold">Clubbing examination</h2><button className="min-h-11 min-w-11" aria-label="Close clubbing skill" onClick={onClose}>✕</button></header>
+      <div className="overflow-y-auto p-4 space-y-4">
+        <p className="text-sm text-slate-600">Independent teaching skill. These examples do not assign clubbing to the selected patient case.</p>
+        <div className="grid grid-cols-2 gap-2">{(['normal','clubbing'] as const).map(v => <button key={v} className={`min-h-12 rounded-xl border font-semibold ${mode === v ? 'bg-teal-700 text-white' : 'bg-slate-50'}`} aria-pressed={mode === v} onClick={() => { setMode(v); setAnswer(false); }}>{v === 'normal' ? 'Normal findings' : 'Clubbing findings'}</button>)}</div>
+        {mode === 'clubbing' && <figure><img className="w-full rounded-xl max-h-72 object-contain bg-slate-100" src="/clinical-reference/clubbing.jpg" alt="Clinical reference photograph of enlarged distal fingers with convex nails" /><figcaption className="text-xs text-slate-500 mt-2">Inspect the terminal phalanges and nail curvature; a photograph alone cannot assess nail-bed fluctuation.</figcaption></figure>}
+        <div className="rounded-xl bg-teal-50 p-4 text-sm leading-relaxed"><h3 className="font-bold mb-2">{mode === 'normal' ? 'What should I find normally?' : 'What changes in clubbing?'}</h3><ul className="list-disc pl-5 space-y-2">{(mode === 'normal' ? ['No bulbous enlargement of the fingertips.', 'The nail folds form an angle below 180°; the nail bed feels firm.', 'A diamond-shaped window remains when corresponding fingernails are opposed.'] : ['Increased nail curvature and bulbous terminal phalanges.', 'Loss of the normal nail-fold angle, progressing beyond 180°.', 'Nail-bed sponginess may be an early finding.', 'Schamroth window may be lost. Interpret with the full examination.']).map(t => <li key={t}>{t}</li>)}</ul></div>
+        <details className="rounded-xl border p-3"><summary className="min-h-11 flex items-center font-bold">How to examine & why</summary><ol className="list-decimal pl-5 text-sm leading-relaxed space-y-2"><li>Inspect fingers from the side for the nail-fold angle and distal enlargement.</li><li>Gently palpate the nail bed for fluctuation or sponginess.</li><li>Ask the patient to oppose corresponding nails; look for the diamond window (Schamroth test).</li><li>Compare both hands and examine the toes. Ask about duration and family history.</li><li>Investigate the clinical context, including pulmonary, cardiac and gastrointestinal disease. Clubbing itself does not diagnose a cause.</li></ol></details>
+        <div className="rounded-xl border p-4 text-sm"><h3 className="font-bold">Viva: does asthma usually cause clubbing?</h3><button className="min-h-12 text-teal-700 font-bold" aria-expanded={answer} onClick={() => setAnswer(!answer)}>{answer ? 'Hide answer' : 'Reveal answer'}</button>{answer && <p>No. Look for another cause, such as bronchiectasis, if a patient labelled as having asthma has clubbing.</p>}</div>
+        <p className="text-xs text-slate-500">Clinical reference: <a className="underline" href="https://www.ncbi.nlm.nih.gov/books/NBK539713/" target="_blank" rel="noreferrer">Nail clubbing examination</a></p>
+      </div>
+    </section>
+  </div>;
+}

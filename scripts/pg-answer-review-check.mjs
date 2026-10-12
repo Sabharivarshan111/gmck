@@ -71,15 +71,9 @@ const server=fs.readFileSync(base+'index.ts','utf8');
 for(const regex of [/auth\.auth\.getUser\(token\)/,/consume_edge_quota/,/source_year_verified:false/,/independently_medically_reviewed:false/,/map\(\(\{text,\.\.\.metadata\}\) => metadata\)/,/retrievePassages/]) assert.match(server,regex);
 assert.ok(!server.includes('verify_jwt: false'));
 const local=load('mobile/src/lib/pgLocalBank.ts');
-const quarantine=load('mobile/src/lib/pgQuarantine.ts');
-const packs=local.getPgOfflinePacks();
-assert.equal(packs.reduce((sum,p)=>sum+p.count,0),quarantine.PG_STRUCTURALLY_ELIGIBLE_TOTAL);
-const expectedNeet=packs.filter(p=>p.exam==='NEET_PG').reduce((sum,p)=>sum+p.count,0);
-const first=await local.searchOfflinePgQuestions({exam:'NEET_PG',year:null,search:'',limit:40,offset:0});
-assert.equal(first.total,expectedNeet);assert.equal(first.questions.length,40);
-assert.ok(first.questions.every(q=>!quarantine.PG_QUARANTINED_IDS.has(q.id)));
-const last=await local.searchOfflinePgQuestions({exam:'NEET_PG',year:null,search:'',limit:40,offset:Math.floor((expectedNeet-1)/40)*40});
-assert.equal(last.questions.length,expectedNeet%40||40);
-for(const exam of ['FMGE','INI_CET'])assert.equal((await local.searchOfflinePgQuestions({exam,year:null,search:''})).total,0);
-assert.equal((await local.searchOfflinePgQuestions({exam:'NEET_PG',year:2026,search:''})).total,0);
+assert.deepEqual(local.getPgOfflinePacks(),[]);
+for(const exam of ['ALL','NEET_PG','FMGE','INI_CET','GENERAL_MEDICAL']) for(const year of [null,2002,2026]) {
+ const result=await local.searchOfflinePgQuestions({exam,year,search:'',limit:40,offset:0});
+ assert.deepEqual(result,{questions:[],total:0,packsScanned:0});
+}
 console.log('PG answer review: validation, image rejection, stable citations, dosage/negation ranking and provisional comparisons passed. No live AI used.');

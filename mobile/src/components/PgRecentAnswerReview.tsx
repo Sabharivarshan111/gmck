@@ -119,15 +119,15 @@ export function PgRecentAnswerReview({exam, year, onYear, initialQuestion}: {
         <Text style={{color:colors.text,fontSize:11}}>{s}</Text>
       </Touchable>)}</View>
     <Text style={[styles.label,{color:colors.textMuted}]}>QUESTION</Text>
-    <TextInput multiline value={question} maxLength={1300} accessibilityLabel="Paste recalled PG examination question"
-      onChangeText={v => {setQuestion(v);clear();}} placeholder="Paste the question stem"
+    <TextInput multiline value={question} maxLength={1300} accessibilityLabel="Paste a medical practice question you own or have permission to use"
+      onChangeText={v => {setQuestion(v);clear();}} placeholder="Paste your own or permitted question stem"
       placeholderTextColor={colors.textMuted} style={[...inputStyle,styles.multiline]} />
     {options.map((v,i) => <TextInput key={i} value={v} maxLength={450}
       accessibilityLabel={'MCQ option '+'ABCD'[i]} placeholder={'Option '+'ABCD'[i]}
       onChangeText={text => {setOptions(old => old.map((o,j)=>i===j?text:o));clear();}}
       placeholderTextColor={colors.textMuted} style={inputStyle} />)}
     <TextInput value={sourceUrl} maxLength={600} autoCapitalize="none" keyboardType="url"
-      accessibilityLabel="Optional recalled question source URL" placeholder="Source URL (optional, HTTPS)"
+      accessibilityLabel="Optional permitted question source URL" placeholder="Source URL (optional, HTTPS)"
       onChangeText={v => {setSourceUrl(v);clear();}} placeholderTextColor={colors.textMuted} style={inputStyle} />
     <Touchable label="Check options against textbooks" disabled={!valid} state={{busy:checking}}
       onPress={() => {void checkAnswer();}} style={[styles.action,{borderColor:colors.border,

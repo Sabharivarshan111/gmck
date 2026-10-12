@@ -2332,13 +2332,13 @@ varying float partSelected;
         if (onDissectPartRef.current) {
           onDissectPartRef.current(clickedPart);
         } else if (onSelectOrganIdRef.current) {
-          const organKey = resolvePartToOrganKey(clickedPart, atlas);
+          const organKey = correctPartSystem(clickedPart).system === 'skeletal' ? clickedPart.id : resolvePartToOrganKey(clickedPart, atlas);
           onSelectOrganIdRef.current(organKey);
         }
       } else {
         // Inspect: resolve to organ and view clinical dossier without hiding the body
         if (onSelectOrganIdRef.current) {
-          const organKey = resolvePartToOrganKey(clickedPart, atlas);
+          const organKey = correctPartSystem(clickedPart).system === 'skeletal' ? clickedPart.id : resolvePartToOrganKey(clickedPart, atlas);
           onSelectOrganIdRef.current(organKey);
         }
       }
@@ -3898,7 +3898,7 @@ varying float partSelected;
       {/* Top Floating Control Bar */}
       <div
         data-testid="anatomy-camera-controls"
-        className="absolute top-3 left-3 right-3 z-50 flex items-center justify-between pointer-events-none gap-2"
+        className={`absolute top-3 left-3 right-3 z-50 ${explodeAmount > 0.02 ? 'hidden lg:flex' : 'flex'} items-center justify-between pointer-events-none gap-2`}
       >
         {/* Camera Presets Segmented Pill */}
         <div
