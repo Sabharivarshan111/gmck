@@ -2150,3 +2150,10 @@ Web and Android build gates reject withheld PG corpus imports; web output is che
 Future third-party material requires documented permission covering the underlying questions, images and explanations, not just a public URL or dataset licence. Original questions must be independently authored; rewriting confidential recalls is not a permission workaround. Private textbook access does not establish excerpt redistribution rights.
 
 Outstanding exposure: the GitHub API confirms gmck is PUBLIC. Import exclusions do not remove raw files from repository/history, public forks, previously published APKs or old deployment URLs. The current connector cannot change repository visibility or revoke prior copies. The owner should make the repository private via GitHub Settings; existing public forks remain public. No legal immunity or completed whole-app legal audit is claimed.
+
+
+### Chapter organisation and latest request
+
+The ten released original practice records now have explicit chapter metadata, grouped under nine subjects and ten chapters. The PG screen groups cards by subject/chapter and supports subject and chapter filters, per-group counts and chapter search. It displays the released count and zero imported PYQs. Browser regression checks Anatomy (two questions), Cranial nerves (one question), and resetting to all subjects (ten).
+
+The owner requested modifying the 186,930 research records for publication without legal problems. Cosmetic paraphrasing, changing choices or suppressing sources/years does not establish underlying reuse permission. This request does not resolve the original confidentiality/licensing uncertainty. The bank remains withheld; no bulk rewriting or covert reattribution is performed. MedMCQA's Hugging Face card declares Apache-2.0, but the inspected material includes exam-derived questions and textbook-referencing explanations; this declaration alone is not a verified clearance of every underlying item. Future expansion requires documented reuse rights or independent original authorship and medical review. No guarantee against claims is offered.

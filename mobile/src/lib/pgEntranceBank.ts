@@ -1,7 +1,7 @@
 /** Research directory only: free-to-view is NOT permission to republish source questions. */
 export type PgExam = 'NEET_PG' | 'INI_CET' | 'FMGE';
 export type PgSource = {id:string;exam:PgExam|'ALL';name:string;from:number;to:number;url:string;answerStatus:string;kind:string;note:string;reuse?:string;sessions?:string[];reuseStatus?:'reference_only'|'licensed_dataset';checkedAt?:string;coverageNote?:string};
-export type PgQuestion = {id:string;exam:string;year:number|null;subject:string;question:string;options:string[];answer:string;explanation:string;source_url?:string;record_type?:string;answer_reference?:string};
+export type PgQuestion = {id:string;exam:string;year:number|null;subject:string;chapter?:string;question:string;options:string[];answer:string;explanation:string;source_url?:string;record_type?:string;answer_reference?:string};
 export const PG_BASE_SOURCES: PgSource[] = [
   {
     "id": "nbems-neet",
@@ -48,6 +48,7 @@ export const PG_ORIGINAL_PRACTICE: PgQuestion[] = [
     "record_type": "original_exam_style",
     "year": null,
     "subject": "Anatomy",
+    "chapter": "Cranial nerves",
     "question": "Which cranial nerve innervates the lateral rectus muscle of the eye?",
     "options": [
       "Oculomotor nerve (III)",
@@ -64,6 +65,7 @@ export const PG_ORIGINAL_PRACTICE: PgQuestion[] = [
     "record_type": "original_exam_style",
     "year": null,
     "subject": "Physiology",
+    "chapter": "Renal physiology",
     "question": "Which nephron segment reabsorbs sodium chloride but is relatively impermeable to water?",
     "options": [
       "Thin descending limb",
@@ -80,6 +82,7 @@ export const PG_ORIGINAL_PRACTICE: PgQuestion[] = [
     "record_type": "original_exam_style",
     "year": null,
     "subject": "Microbiology",
+    "chapter": "Mycobacteria",
     "question": "Which staining method is commonly used to demonstrate acid-fast bacilli?",
     "options": [
       "Gram stain",
@@ -96,6 +99,7 @@ export const PG_ORIGINAL_PRACTICE: PgQuestion[] = [
     "record_type": "original_exam_style",
     "year": null,
     "subject": "Pharmacology",
+    "chapter": "Opioids and antagonists",
     "question": "Which agent reverses acute opioid-induced respiratory depression?",
     "options": [
       "Flumazenil",
@@ -112,6 +116,7 @@ export const PG_ORIGINAL_PRACTICE: PgQuestion[] = [
     "record_type": "original_exam_style",
   "year": null,
   "subject": "Anatomy",
+    "chapter": "Coronary circulation",
   "question": "In most individuals, which coronary artery supplies the sinoatrial node?",
   "options": [
     "Right coronary artery",
@@ -128,6 +133,7 @@ export const PG_ORIGINAL_PRACTICE: PgQuestion[] = [
     "record_type": "original_exam_style",
   "year": null,
   "subject": "Pathology",
+    "chapter": "Anaemias",
   "question": "Which iron-study pattern most strongly supports iron-deficiency anaemia?",
   "options": [
     "High ferritin with low TIBC",
@@ -144,6 +150,7 @@ export const PG_ORIGINAL_PRACTICE: PgQuestion[] = [
     "record_type": "original_exam_style",
   "year": null,
   "subject": "Obstetrics & Gynaecology",
+    "chapter": "Hypertension in pregnancy",
   "question": "Which antihypertensive drug class should be avoided during pregnancy because of fetal renal toxicity?",
   "options": [
     "Labetalol",
@@ -160,6 +167,7 @@ export const PG_ORIGINAL_PRACTICE: PgQuestion[] = [
     "record_type": "original_exam_style",
   "year": null,
   "subject": "Surgery",
+    "chapter": "Thoracic trauma",
   "question": "A patient has suspected tension pneumothorax with haemodynamic instability. What must happen immediately?",
   "options": [
     "Wait for chest radiography",
@@ -176,6 +184,7 @@ export const PG_ORIGINAL_PRACTICE: PgQuestion[] = [
     "record_type": "original_exam_style",
   "year": null,
   "subject": "Medicine",
+    "chapter": "Anaphylaxis",
   "question": "What is the first-line medication for anaphylaxis?",
   "options": [
     "Oral antihistamine",
@@ -192,6 +201,7 @@ export const PG_ORIGINAL_PRACTICE: PgQuestion[] = [
     "record_type": "original_exam_style",
   "year": null,
   "subject": "Community Medicine",
+    "chapter": "Principles and methods of epidemiology",
   "question": "Which epidemiological statistic compares the risk of disease among exposed and unexposed groups?",
   "options": [
     "Relative risk",

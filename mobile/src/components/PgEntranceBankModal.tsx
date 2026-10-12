@@ -51,6 +51,8 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
   const [page, setPage] = useState(0);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [checkQuestion,setCheckQuestion] = useState<PgQuestion|null>(null);
+  const [subjectFilter, setSubjectFilter] = useState<string | null>(null);
+  const [chapterFilter, setChapterFilter] = useState<string | null>(null);
   const [expandedAnswer, setExpandedAnswer] = useState<string | null>(null);
 
   const year = /^\d{4}$/.test(yearText) ? Number(yearText) : null;
@@ -93,10 +95,19 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
     (!debouncedSearch || [item.question, item.subject, item.explanation].join(' ').toLocaleLowerCase().includes(debouncedSearch))
   ), [published, exam, year, yearInvalid, debouncedSearch]);
 
+  const subjects = useMemo(() => [...new Set(PG_ORIGINAL_PRACTICE.map(q => q.subject))].sort(), []);
+  const chapters = useMemo(() => [...new Set(PG_ORIGINAL_PRACTICE.filter(q => subjectFilter === null || q.subject === subjectFilter).map(q => q.chapter!))].sort(), [subjectFilter]);
+
   // Original questions are offered separately and never given exam/year labels.
   const original = useMemo(() => PG_ORIGINAL_PRACTICE.filter(item =>
-    !yearInvalid && year === null && (!search || [item.question, item.subject].join(' ').toLocaleLowerCase().includes(search))
-  ), [year, yearInvalid, search]);
+    !yearInvalid && year === null && (subjectFilter === null || item.subject === subjectFilter) &&
+    (chapterFilter === null || item.chapter === chapterFilter) &&
+    (!search || [item.question, item.subject, item.chapter].join(' ').toLocaleLowerCase().includes(search))
+  ), [year, yearInvalid, search, subjectFilter, chapterFilter]);
+  const chapterGroups = useMemo(() => subjects.flatMap(subject =>
+    chapters.map(chapter => ({ subject, chapter, questions: original.filter(q => q.subject === subject && q.chapter === chapter) }))
+      .filter(group => group.questions.length > 0)
+  ), [subjects, chapters, original]);
 
   return (
     <Modal visible={visible} animationType="slide" presentationStyle="fullScreen" onRequestClose={onClose}>
@@ -106,7 +117,7 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
             <ArrowLeft size={21} color={colors.text} />
           </Touchable>
           <View style={styles.flex}>
-            <Text style={[styles.title, { color: colors.text }]}>PG Practice & References</Text>
+            <Text style={[styles.title, { color: colors.text }]}>{exam === 'NEET_PG' ? 'NEET-PG practice questions' : exam === 'INI_CET' ? 'INI-CET practice questions' : exam === 'FMGE' ? 'FMGE practice questions' : 'PG practice questions'}</Text>
             <Text style={[styles.sub, { color: colors.textMuted }]}>One place for NEET-PG · INI-CET · FMGE</Text>
           </View>
           <Touchable label="Dismiss" onPress={onClose} style={styles.iconButton}>
@@ -159,7 +170,7 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
           <View style={styles.filters}>
             <View style={[styles.searchBox, { backgroundColor: colors.card, borderColor: colors.border }]}>
               <Search size={16} color={colors.textMuted} />
-              <TextInput value={searchText} onChangeText={v => { setSearchText(v); setPage(0); }} placeholder="Search subjects or sources"
+              <TextInput value={searchText} onChangeText={v => { setSearchText(v); setPage(0); }} placeholder="Search chapters, questions or sources"
                 placeholderTextColor={colors.textMuted} accessibilityLabel="Search PG exam content"
                 style={[styles.searchInput, { color: colors.text }]} />
             </View>
@@ -224,10 +235,39 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
                 Historical exam questions are withheld pending documented permission to distribute them.
               </Text> : null}
               <Text style={[styles.sectionHeading, { color: colors.text }]}>ORBIT original practice — not PYQs</Text>
-              {original.map(q => <QuestionCard key={q.id} q={q} active={expandedAnswer === q.id}
-                onPress={() => setExpandedAnswer(prev => prev === q.id ? null : q.id)}
-                onCheck={() => {setCheckQuestion(q);setPanel('recent');setYearText(q.year === null ? '' : String(q.year));}} colors={colors} />)}
-              {original.length === 0 ? <Text style={[styles.small, { color: colors.textMuted }]}>Clear the year filter to show original practice questions.</Text> : null}
+              <Text style={[styles.small, { color: colors.textMuted }]}>
+                {original.length} of {PG_ORIGINAL_PRACTICE.length} original practice questions · {chapterGroups.length} chapters · 0 imported PYQs
+              </Text>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chips}>
+                {[null, ...subjects].map(subject => (
+                  <Touchable key={subject ?? 'all-subjects'} label={subject ? 'Filter PG subject: ' + subject : 'All PG subjects'}
+                    state={{ selected: subjectFilter === subject }}
+                    onPress={() => {setSubjectFilter(subject);setChapterFilter(null);setExpandedAnswer(null);}}
+                    style={[styles.chip, {borderColor: subjectFilter === subject ? colors.primary : colors.border, backgroundColor: colors.card}]}>
+                    <Text style={[styles.chipText, {color: colors.text}]}>{subject ?? 'All subjects'}</Text>
+                  </Touchable>
+                ))}
+              </ScrollView>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chips}>
+                {[null, ...chapters].map(chapter => (
+                  <Touchable key={chapter ?? 'all-chapters'} label={chapter ? 'Filter PG chapter: ' + chapter : 'All PG chapters'}
+                    state={{ selected: chapterFilter === chapter }}
+                    onPress={() => {setChapterFilter(chapter);setExpandedAnswer(null);}}
+                    style={[styles.chip, {borderColor: chapterFilter === chapter ? colors.primary : colors.border, backgroundColor: colors.card}]}>
+                    <Text style={[styles.chipText, {color: colors.text}]}>{chapter ?? 'All chapters'}</Text>
+                  </Touchable>
+                ))}
+              </ScrollView>
+              {chapterGroups.map(group => (
+                <View key={group.subject + ':' + group.chapter} style={styles.chapterGroup}>
+                  <Text style={[styles.sectionHeading, {color: colors.text}]}>{group.subject} · {group.chapter}</Text>
+                  <Text style={[styles.small, {color: colors.textMuted}]}>{group.questions.length} original practice question{group.questions.length === 1 ? '' : 's'}</Text>
+                  {group.questions.map(q => <QuestionCard key={q.id} q={q} active={expandedAnswer === q.id}
+                    onPress={() => setExpandedAnswer(prev => prev === q.id ? null : q.id)}
+                    onCheck={() => {setCheckQuestion(q);setPanel('recent');setYearText(q.year === null ? '' : String(q.year));}} colors={colors} />)}
+                </View>
+              ))}
+              {original.length === 0 ? <Text style={[styles.small, { color: colors.textMuted }]}>No original practice questions match. Clear the year, subject, chapter or search filters.</Text> : null}
               <Text style={[styles.small, {color:colors.textMuted}]}>Textbook AI can provide a provisional explanation for medical practice questions you own or have permission to use.</Text>
             </>
           )}
@@ -255,7 +295,7 @@ function QuestionCard({ q, active, onPress, onCheck, colors }: {
           q.record_type === 'historical_dataset'
              ? (q.exam === 'GENERAL_MEDICAL' ? 'MOCK / TEST SERIES · answer not independently verified' : 'NEET-PG validation · exam year unknown')
              : q.exam.replaceAll('_', '-') + (q.year ? ' • ' + q.year : '') + ' • source-labelled, review pending'}
-        {' · '}{q.subject}
+        {' · '}{q.subject}{q.chapter ? ' · ' + q.chapter : ''}
       </Text>
       <Text style={[styles.question, { color: colors.text }]}>{q.question}</Text>
       {q.options.map((option, i) => {
@@ -305,6 +345,7 @@ const styles = StyleSheet.create({
   yearInput: { width: 90, borderWidth: 1, borderRadius: 10, paddingHorizontal: 9, fontSize: 12 },
   sectionHeading: { fontSize: 15, fontWeight: '800', marginTop: 4 },
   small: { fontSize: 11, lineHeight: 16 },
+  chapterGroup: { gap: 8 },
   card: { borderWidth: 1, borderRadius: 13, padding: 13, gap: 8 },
   cardHead: { flexDirection: 'row', alignItems: 'flex-start', gap: 8 },
   cardTitle: { fontSize: 14, fontWeight: '700', lineHeight: 19 },

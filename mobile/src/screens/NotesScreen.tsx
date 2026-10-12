@@ -436,7 +436,7 @@ function YearsView({
           <BookOpenCheck size={18} color={colors.accent} />
         </View>
         <View style={styles.flex}>
-          <Text style={[styles.extraTitle, { color: colors.text }]}>PG medical practice</Text>
+          <Text style={[styles.extraTitle, { color: colors.text }]}>NEET-PG practice questions</Text>
           <Text style={[styles.extraSub, { color: colors.textMuted }]}>
             Original practice questions and official exam information
           </Text>

@@ -16,8 +16,11 @@ assert.equal(reader.getPgOfflinePacks().length,0);
 assert.equal((await reader.searchOfflinePgQuestions({exam:'ALL',year:null,search:''})).total,0);
 assert.equal(PG_ORIGINAL_PRACTICE.length,10);
 assert.equal(new Set(PG_ORIGINAL_PRACTICE.map(q=>q.id)).size,10);
+assert.equal(new Set(PG_ORIGINAL_PRACTICE.map(q=>q.subject)).size,9);
+assert.equal(new Set(PG_ORIGINAL_PRACTICE.map(q=>q.subject+' / '+q.chapter)).size,10);
 for(const q of PG_ORIGINAL_PRACTICE){
  assert.equal(q.exam,'ORIGINAL');assert.equal(q.year,null);assert.equal(q.record_type,'original_exam_style');
+ assert.ok(q.chapter?.trim(), 'Every released question must have a chapter');
  assert.equal(q.options.length,4);assert.equal(new Set(q.options).size,4);
  assert.match(q.answer,/^[ABCD]$/);assert.ok(q.explanation.length>=20);
 }
@@ -30,4 +33,4 @@ const screen=fs.readFileSync('mobile/src/components/PgEntranceBankModal.tsx','ut
 assert.ok(screen.includes('withheld pending documented permissions'));
 assert.ok(!/source-labelled questions are available offline/.test(screen));
 assert.ok(fs.readFileSync('mobile/src/screens/NotesScreen.tsx','utf8').includes('PG medical practice and official exam information'));
-console.log(JSON.stringify({release_policy:'original_practice_only',third_party_questions_released:0,original_practice_questions:10,official_information_links:3,verified_exam_years:0,independently_medically_reviewed_answers:0,legal_immunity_guaranteed:false}));
+console.log(JSON.stringify({release_policy:'original_practice_only',third_party_questions_released:0,original_practice_questions:10,subjects:9,chapters:10,official_information_links:3,verified_exam_years:0,independently_medically_reviewed_answers:0,legal_immunity_guaranteed:false}));
