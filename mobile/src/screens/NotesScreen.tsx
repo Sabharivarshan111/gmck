@@ -202,7 +202,7 @@ export default function NotesScreen() {
       style={[styles.screen, { backgroundColor: colors.background }]}
       contentContainerStyle={[styles.content, { paddingTop: insets.top + 12 }]}
       showsVerticalScrollIndicator={false}>
-      {view.kind === 'vault' ? <VaultView onNotes={() => setView({ kind: 'years' })} onFlashcards={() => setFlashcards(true)} onProformas={() => setProformasOpen(true)} onSimulator={() => { if (Platform.OS !== 'web') { setSimulatorOpen(true); return; } void Linking.openURL('https://orbitmbbs.vercel.app/simulator').catch(() => Alert.alert('Simulator could not open', 'Please check your connection and try again.')); }} /> : null}
+      {view.kind === 'vault' ? <VaultView onNotes={() => setView({ kind: 'years' })} onPgPractice={() => setPgEntranceOpen(true)} onFlashcards={() => setFlashcards(true)} onProformas={() => setProformasOpen(true)} onSimulator={() => { if (Platform.OS !== 'web') { setSimulatorOpen(true); return; } void Linking.openURL('https://orbitmbbs.vercel.app/simulator').catch(() => Alert.alert('Simulator could not open', 'Please check your connection and try again.')); }} /> : null}
       {view.kind === 'years' ? (
         <YearsView
           currentYear={profileYear}
@@ -299,10 +299,11 @@ export default function NotesScreen() {
   );
 }
 
-function VaultView({ onNotes, onSimulator, onProformas, onFlashcards }: { onNotes: () => void; onSimulator: () => void; onProformas: () => void; onFlashcards: () => void }) {
+function VaultView({ onNotes, onPgPractice, onSimulator, onProformas, onFlashcards }: { onNotes: () => void; onPgPractice: () => void; onSimulator: () => void; onProformas: () => void; onFlashcards: () => void }) {
   const { colors } = useTheme();
   const entries = [
     { title: 'Notes', hint: 'Years, subjects & handwritten answers', emoji: '📚', open: onNotes },
+    { title: 'NEET-PG practice questions', hint: 'Subject & chapter practice with answer keys', emoji: '📝', open: onPgPractice },
     { title: 'Simulator & Anatomy', hint: 'Explore the body or learn a bedside skill', emoji: '🫀', open: onSimulator },
     { title: 'Case proformas', hint: 'Clinical history & examination guides', emoji: '📋', open: onProformas },
     { title: 'Anki flashcards', hint: 'Import decks & revise with spaced repetition', emoji: '📇', open: onFlashcards },

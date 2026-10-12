@@ -1,4 +1,5 @@
 import { StudyBuddyPanel } from '@/components/StudyBuddy';
+import { AboutLicences } from '@/components/AboutLicences';
 import React, { useEffect, useState } from 'react';
 import { Platform, StyleSheet, Text as RNText, View } from 'react-native';
 import { Text } from '@/components/Text';
@@ -562,6 +563,8 @@ export function SettingsSheet({
           </Touchable>
         ))}
       </View>
+
+      <AboutLicences />
 
       <StudyBuddyPanel />
 
