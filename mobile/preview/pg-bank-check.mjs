@@ -29,7 +29,16 @@ try{
  await waitText('Third-party datasets and historical exam recalls are withheld pending documented permissions');
  await label('Show answer and explanation').waitFor({state:'visible'});
  assert.equal(await page.getByLabel('Show answer and explanation',{exact:true}).count(),10);
+ await label('NEET-PG').click();await waitText('NEET-PG practice questions');
  await shot('01-original-only-practice');
+ await label('Filter PG subject: Anatomy').click();
+ assert.equal(await page.getByLabel('Show answer and explanation',{exact:true}).count(),2);
+ await label('Filter PG chapter: Cranial nerves').click();
+ assert.equal(await page.getByLabel('Show answer and explanation',{exact:true}).count(),1);
+ await waitText('Which cranial nerve innervates the lateral rectus');
+ await shot('04-chapter-filter');
+ await label('All PG subjects').click();
+ assert.equal(await page.getByLabel('Show answer and explanation',{exact:true}).count(),10);
  await label('Show answer and explanation').click();
  await page.getByLabel(/^Check supplied answer against textbooks:/).first().click();
  const question=label('Paste a medical practice question you own or have permission to use');
