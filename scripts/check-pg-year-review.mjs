@@ -1,63 +1,31 @@
 #!/usr/bin/env node
-import assert from "node:assert/strict";
-import fs from "node:fs";
-const read=p=>fs.readFileSync(p,"utf8");
-const bank=read("mobile/src/lib/pgEntranceBank.ts");
-const ui=read("mobile/src/components/PgEntranceBankModal.tsx");
-const form=read("mobile/src/components/PgRecentAnswerReview.tsx");
-const server=read("supabase/functions/pg-answer-review/index.ts");
-const manifest=read("mobile/src/lib/pgPacks/generatedManifest.ts");
-const m=bank.match(/PG_SOURCES: PgSource\[\] = (\[[\s\S]*?\]);\s*export const PG_ORIGINAL_PRACTICE/);
-assert.ok(m,"Source array remains JSON-parseable");
-const sources=JSON.parse(m[1]);
-const exams=["NEET_PG","INI_CET","FMGE"];
-for(const exam of exams){
-  for(let year=2023;year<=2026;year++){
-    const matches=sources.filter(s=>s.exam===exam && s.from<=year && s.to>=year);
-    assert.ok(matches.length, "Missing external source for "+exam+" "+year);
-    for(const s of matches) {
-      assert.match(s.url,/^https:\/\//,"Source URL must be HTTPS");
-      assert.ok(s.kind!=="Official key","Never declare all recall sources official");
-    }
-  }
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import vm from 'node:vm';
+import {createRequire} from 'node:module';
+const ts=createRequire(import.meta.url)('../mobile/node_modules/typescript');
+const read=p=>fs.readFileSync(p,'utf8');
+const module={exports:{}};
+const bank='mobile/src/lib/pgEntranceBank.ts';
+const compiled=ts.transpileModule(read(bank),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
+vm.runInThisContext(`(function(require,module,exports){${compiled}\n})`,{filename:bank})(id=>{throw Error('No research catalog imports: '+id);},module,module.exports);
+const {PG_SOURCES:sources,PG_ORIGINAL_PRACTICE:original}=module.exports;
+assert.equal(sources.length,3);
+assert.deepEqual(sources.map(s=>s.exam).sort(),['FMGE','INI_CET','NEET_PG']);
+for(const source of sources) {
+ assert.ok(['natboard.edu.in','www.aiimsexams.ac.in'].includes(new URL(source.url).hostname));
+ assert.equal(source.kind,'Official information');
+ assert.equal(source.reuseStatus,'reference_only');
 }
-assert.match(ui,/PgRecentAnswerReview/);
-assert.match(ui,/setYearText\(String\(y\)\)/);
+assert.equal(original.length,10);
+for(const q of original) {assert.equal(q.year,null);assert.equal(q.exam,'ORIGINAL');assert.equal(q.record_type,'original_exam_style');assert.equal(q.options.length,4);}
+const ui=read('mobile/src/components/PgEntranceBankModal.tsx');
+assert.match(ui,/original practice only/);assert.match(ui,/withheld pending documented permissions/);
+assert.ok(!ui.includes('PG_QUARANTINED_TOTAL'));
+const form=read('mobile/src/components/PgRecentAnswerReview.tsx');
+assert.match(form,/question you own or have permission to use/);
+assert.ok(!form.includes('Paste recalled'));
+const server=read('supabase/functions/pg-answer-review/index.ts');
+for(const pattern of [/auth\.auth\.getUser\(token\)/,/consume_edge_quota/,/retrievePassages/,/source_year_verified:false/,/independently_medically_reviewed:false/,/answer:"UNRESOLVED"/])assert.match(server,pattern);
 assert.match(form,/supabase\.functions\.invoke\('pg-answer-review'/);
-assert.match(form,/Sign in with Google first/);
-assert.match(form,/independently verified/);
-assert.match(server,/auth\.auth\.getUser\(token\)/);
-assert.match(server,/consume_edge_quota/);
-assert.match(server,/buildTextbookContext/);
-assert.match(server,/source_year_verified:false/);
-assert.equal(read('supabase/functions/pg-answer-review/textbook.ts'),
-  read('supabase/functions/generate-handwritten-notes/textbook.ts'),
-  'PG textbook retrieval must stay byte-identical to the production notes retrieval');
-assert.match(server,/independently_medically_reviewed:false/);
-assert.match(server,/answer:"UNRESOLVED"/);
-assert.ok(!server.includes("verify_jwt: false"),"Do not allow anonymous unmetered textbook requests");
-const total=[...manifest.matchAll(/count: (\d+), load:/g)].reduce((sum,x)=>sum+Number(x[1]),0);
-const byExam = [...manifest.matchAll(/exam: "([^"]+)", year: null, count: (\d+), load:/g)]
-  .reduce((a,m)=>{a[m[1]]=(a[m[1]]??0)+Number(m[2]);return a;},{});
-const accounting=JSON.parse(read('docs/PG_25MB_EXPANDED_SOURCE_ACCOUNTING.json'));
-const size=JSON.parse(read('mobile/src/lib/pgPacks/packing-report.json'));
-assert.equal(byExam.NEET_PG,4180,"Historic source-question subset must not disappear");
-assert.equal(byExam.GENERAL_MEDICAL,accounting.train_usable,"Mock/test series must not be mislabelled PYQs");
-assert.equal(total,accounting.offline_usable_answer_labelled,"Bundled count must match independent source audit");
-assert.equal(size.total_questions,total);
-assert.ok(size.deflate_mb<25,"Expanded offline pack must remain under 25 MB");
-assert.ok(accounting.record_years_verified===0,"Do not assign fictitious source exam years");
-assert.match(read("scripts/import-pg-medmcqa-offline.py"),/\"exam_year\": None/);
-console.log(JSON.stringify({
-  recent_source_coverage:exams.flatMap(exam=>
-    [2023,2024,2025,2026].map(year=>({exam,year,
-      count:sources.filter(s=>s.exam===exam&&s.from<=year&&s.to>=year).length}))),
-  bundled_medmcqa_questions:total,
-  historic_neet_pg_source_labelled:byExam.NEET_PG,
-  undated_mock_test_series:byExam.GENERAL_MEDICAL,
-  compressed_deflate_mb:size.deflate_mb,
-  individually_verified_dataset_years:0,
-  added_2023_to_2026_official_exams:0,
-  supabase_answer_review:"JWT required, review labelled provisional, server-side textbooks",
-  source_papers_redistributed:false
-},null,2));
+console.log('PG release: zero third-party question distribution; 10 undated original samples and three official information links. AI answers remain provisional.');

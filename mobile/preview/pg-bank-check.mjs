@@ -1,0 +1,54 @@
+#!/usr/bin/env node
+/** Verify original-only public practice and unsigned private-review behavior. */
+import assert from 'node:assert/strict';
+import {chromium} from 'playwright-core';
+import {createServer} from 'vite';
+import fs from 'node:fs';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+const here=path.dirname(fileURLToPath(import.meta.url));
+const evidence=path.join(here,'pg-bank-evidence');fs.mkdirSync(evidence,{recursive:true});
+const server=await createServer({configFile:path.join(here,'vite.config.ts'),server:{host:'127.0.0.1',port:5207,strictPort:true},logLevel:'error'});
+let browser;let page;
+try{
+ await server.listen();
+ const candidates=[process.env.CHROME_PATH,'/usr/bin/chromium','/usr/bin/google-chrome',...['/opt/pw-browsers',path.join(process.env.HOME||'/tmp','.cache/ms-playwright')].flatMap(dir=>fs.existsSync(dir)?fs.readdirSync(dir).filter(x=>x.startsWith('chromium-')).flatMap(x=>[path.join(dir,x,'chrome-linux/chrome'),path.join(dir,x,'chrome-linux64/chrome')]):[])].filter(Boolean);
+ browser=await chromium.launch({...(candidates.find(p=>fs.existsSync(p))?{executablePath:candidates.find(p=>fs.existsSync(p))}:{}),args:['--no-sandbox','--disable-gpu']});
+ const context=await browser.newContext({viewport:{width:390,height:844}});
+ await context.addInitScript(()=>{localStorage.setItem('orbit-profile-v1',JSON.stringify({display_name:'PG smoke',year:'second',university:'tnmgr'}));localStorage.setItem('orbit:tour-v1',JSON.stringify({seen:1}));});
+ page=await context.newPage();const errors=[];let calls=0;
+ page.on('pageerror',e=>errors.push(e.message));
+ await page.route('**/functions/v1/pg-answer-review',route=>{calls++;return route.abort();});
+ await page.route('**/auth/v1/**',route=>route.abort());
+ const label=text=>page.getByLabel(text,{exact:true}).first();
+ const waitText=text=>page.waitForFunction(t=>document.body.innerText.includes(t),text,{timeout:30000});
+ const shot=name=>page.screenshot({path:path.join(evidence,name+'.png')});
+ await page.goto('http://127.0.0.1:5207',{waitUntil:'domcontentloaded'});
+ await label('Vault').click();await label('Notes').click();
+ await label('PG medical practice and official exam information').click();
+ await waitText('Third-party datasets and historical exam recalls are withheld pending documented permissions');
+ await label('Show answer and explanation').waitFor({state:'visible'});
+ assert.equal(await page.getByLabel('Show answer and explanation',{exact:true}).count(),10);
+ await shot('01-original-only-practice');
+ await label('Show answer and explanation').click();
+ await page.getByLabel(/^Check supplied answer against textbooks:/).first().click();
+ const question=label('Paste a medical practice question you own or have permission to use');
+ await question.waitFor({state:'visible'});
+ assert.ok((await question.inputValue()).length>=12);
+ for(const letter of 'ABCD')assert.ok((await label('MCQ option '+letter).inputValue()).trim());
+ await label('Check options against textbooks').click();await waitText('Sign in with Google first');
+ assert.equal(calls,0);await shot('02-private-review-permission-prompt');
+ await label('Official exam information').click();await label('All').click();
+ await waitText('These official information links contain no bundled questions or answer keys');
+ assert.equal(await page.getByLabel(/^Open official exam information:/).count(),3);
+ assert.equal(await page.getByLabel(/^Open source with answer information:/).count(),0);
+ await shot('03-official-information-only');
+ await page.locator('input[aria-label*="year"]').first().fill('2027');
+ await label('Check an answer against textbooks').click();await question.waitFor({state:'detached'});
+ assert.deepEqual(errors,[]);
+ const result={passed:true,third_party_questions_released:0,original_practice_questions:10,official_information_links:3,unsigned_edge_calls:calls,device_tested:false,legal_immunity_guaranteed:false,page_errors:errors};
+ fs.writeFileSync(path.join(evidence,'results.json'),JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify(result));
+}catch(error){
+ fs.writeFileSync(path.join(evidence,'results.json'),JSON.stringify({passed:false,error:String(error)},null,2)+'\n');
+ if(page)await page.screenshot({path:path.join(evidence,'failure.png')}).catch(()=>{});throw error;
+}finally{await browser?.close();await server.close();}

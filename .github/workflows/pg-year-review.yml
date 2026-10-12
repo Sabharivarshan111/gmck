@@ -2,7 +2,10 @@ name: PG year provenance and Supabase textbook answer review
 on:
   push:
     paths:
-      - 'mobile/src/lib/pgEntranceBank.ts'
+      - 'mobile/src/lib/pg*.ts'
+      - 'scripts/*pg*'
+      - 'docs/PG_CORPUS*.json'
+      - 'mobile/preview/pg-bank-check.mjs'
       - 'mobile/src/components/PgEntranceBankModal.tsx'
       - 'mobile/src/components/PgRecentAnswerReview.tsx'
       - 'mobile/scripts/keyboard-check.mjs'
@@ -11,7 +14,10 @@ on:
       - '.github/workflows/pg-year-review.yml'
   pull_request:
     paths:
-      - 'mobile/src/lib/pgEntranceBank.ts'
+      - 'mobile/src/lib/pg*.ts'
+      - 'scripts/*pg*'
+      - 'docs/PG_CORPUS*.json'
+      - 'mobile/preview/pg-bank-check.mjs'
       - 'mobile/src/components/PgEntranceBankModal.tsx'
       - 'mobile/src/components/PgRecentAnswerReview.tsx'
       - 'mobile/scripts/keyboard-check.mjs'
@@ -25,9 +31,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with: { node-version: '22' }
-      - run: node scripts/check-pg-year-review.mjs
+        with: { node-version: '24' }
       - run: npm --prefix mobile ci --legacy-peer-deps
+      - run: node scripts/check-pg-year-review.mjs
+      - run: node scripts/check-pg-release-content.mjs
+      - run: node scripts/pg-answer-review-check.mjs
+      - run: python scripts/generate-pg-quarantine.py --check
+      - run: node scripts/test-pg-runtime.mjs
+      - run: node mobile/node_modules/playwright-core/cli.js install --with-deps chromium
+      - run: node mobile/preview/pg-bank-check.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: {name: pg-bank-browser-evidence, path: mobile/preview/pg-bank-evidence/}
       - run: npm --prefix mobile run typecheck
       - run: npm --prefix mobile run check:keyboard
       - run: node scripts/check-pg-content-integrity.mjs

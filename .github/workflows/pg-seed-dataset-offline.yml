@@ -11,6 +11,10 @@ jobs:
       contents: write
     if: github.ref != 'refs/heads/main'
     steps:
+      - name: Third-party question imports are withheld
+        run: |
+          echo '::error::PG dataset imports are paused pending documented permission to redistribute the underlying questions. No data will be downloaded or published.'
+          exit 1
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.ref_name }}
@@ -24,6 +28,13 @@ jobs:
         run: |
           python scripts/import-pg-medmcqa-offline.py --split validation --output /tmp/medmcqa-validation.jsonl
           python scripts/build-pg-offline-packs.py --input /tmp/medmcqa-validation.jsonl --out mobile/src/lib/pgPacks --max-compressed-mb 25 --rows-per-pack 800
+      - uses: actions/setup-node@v4
+        with: {node-version: '24'}
+      - run: npm --prefix mobile ci --legacy-peer-deps
+      - name: Refresh structural audit and runtime quarantine
+        run: |
+          python scripts/audit-pg-corpus.py
+          python scripts/generate-pg-quarantine.py
       - name: Confirm generated data integrity
         run: |
           node scripts/check-pg-content-integrity.mjs
@@ -31,15 +42,15 @@ jobs:
           python - <<'PY'
           import json, pathlib
           r = json.loads(pathlib.Path("mobile/src/lib/pgPacks/packing-report.json").read_text())
-          assert r["total_questions"] == 4180, r  # 3 source entries quarantined as malformed
+          assert 4000 <= r["total_questions"] <= 4180, r  # Quality gates may exclude additional records
           assert r["fits_native_budget"], r
-          print("Seed: 4,180 usable labelled questions generated; 3 malformed source rows quarantined")
+          print("Seed: source-labelled questions generated with quality exclusions recorded")
           PY
       - name: Commit real offline questions into this feature branch
         run: |
           git config user.name "ORBIT offline dataset import"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add mobile/src/lib/pgPacks
+          git add mobile/src/lib/pgPacks mobile/src/lib/pgQuarantine.ts docs/PG_CORPUS_AUDIT_20261011.json docs/PG_CORPUS_QUARANTINE_20261011.json
           if git diff --cached --quiet; then
             echo "Offline question packs already committed"
           else

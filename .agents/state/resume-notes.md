@@ -2100,6 +2100,8 @@ NEXT: Verify reference image loading, all four view selectors, caliper/mobile co
 
 DO NOT: Describe texture as validated ultrasound physics, claim all requested features fixed, call the fibrosis lung reference normal, infer diagnoses solely from CVP/SpO2/lactate, copy competitor assets, alter Android releases/PG/billing/security.
 
+## 2026-10-11 PG corpus quarantine and evidence review
+PR #60 publishes all 186,930-row audit, 1,293 withheld records / 185,637 structurally eligible, 92 external references including FirstRanker. Supabase pg-answer-review v3 is ACTIVE with JWT enforcement; only index/review/retrieval in that function changed, not shared notes retrieval. No annual coverage/clinical verification promised. Before declaring live: inspect PR60 checks and exact Vercel commit; focused browser smoke produces mobile/preview/pg-bank-evidence. See docs/PG_BANK_IMPLEMENTATION_20261011.md and corpus/source reports. Do not relabel undated MedMCQA or links as verified PYQs.
 ## 2026-10-11 — Vault and independent simulator skills
 - User explicitly authorized patient simulator UI redesign and the Notes→Vault four-card layout.
 - Implemented native/shared Vault entry with Notes, Simulator & Anatomy, Case proformas, Anki flashcards. Existing Notes routes and PG/case library tools retained.
@@ -2137,3 +2139,14 @@ Caught own earlier clubbing image deployment defect in Web CI: public/diagrams i
 **HALF-DONE** — PR66 ready to merge; watch its production deployment after merge.
 **NEXT** — Verify production deployment for PR66 and report the live link. No new native build needed for this hosted simulator-only visual fix.
 **DO NOT** — Do not mistake a browser check for physical-device testing. Do not run old anatomy tests against the Skills landing screen, or count the mascot canvas as an anatomy renderer. Preserve the separate PG import work on `claude/native-app-sync`.
+
+
+## 12 October 2026 — original-only distribution hold (supersedes archive release claims)
+
+The owner requires conservative risk reduction without assuming legal clearance. The released PG feature now includes only ten ORBIT original, undated practice samples and three official exam-information links. MedMCQA packs, unofficial recalls, source catalogs and historical question-year overlays are excluded from the active web/native import graph. Existing corpus counts describe research inventory, not released content. No answer has independent clinical approval; textbook AI remains provisional.
+
+Web and Android build gates reject withheld PG corpus imports; web output is checked for dataset payloads. Manual dataset-seeding and expansion workflows fail before downloading or publishing data. The PWA cache version is advanced. Subscriptions are unchanged. No GPL trainer code was incorporated in this PG implementation.
+
+Future third-party material requires documented permission covering the underlying questions, images and explanations, not just a public URL or dataset licence. Original questions must be independently authored; rewriting confidential recalls is not a permission workaround. Private textbook access does not establish excerpt redistribution rights.
+
+Outstanding exposure: the GitHub API confirms gmck is PUBLIC. Import exclusions do not remove raw files from repository/history, public forks, previously published APKs or old deployment URLs. The current connector cannot change repository visibility or revoke prior copies. The owner should make the repository private via GitHub Settings; existing public forks remain public. No legal immunity or completed whole-app legal audit is claimed.

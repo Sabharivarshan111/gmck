@@ -1,0 +1,819 @@
+{
+  "asset_fingerprint": "f8e9c4b650c7f7ab88a7c3bcec17cca9164e7c7953b13ef680f5ed20617e8809",
+  "audit_date": "2026-10-11",
+  "by_exam": {
+    "GENERAL_MEDICAL": 182750,
+    "NEET_PG": 4180
+  },
+  "clinical_verification_performed": false,
+  "conflicting_same_stem_option_groups": [
+    {
+      "fingerprint": "452e391304ef8920dfaefbe66379fdc278cae63ab8556e4fce31606cecef5599",
+      "ids": [
+        "medmcqa-train-28c08b9b-04d4-4665-94a0-7ac7d3a321a1",
+        "medmcqa-train-b2da8c31-74e4-4964-9188-50d172637b65"
+      ]
+    },
+    {
+      "fingerprint": "0dd804886801cc63360ab4fbe8e39429534472ede8906c62596af24a4e31ac86",
+      "ids": [
+        "medmcqa-train-aecf535d-b35f-47ec-954b-d4527929da6b",
+        "medmcqa-train-d0ae02a9-b2b2-433b-b335-b40649939cae"
+      ]
+    }
+  ],
+  "exact_stem_option_duplicates": {
+    "excess_rows": 0,
+    "groups": 0,
+    "rows": 0
+  },
+  "image_dependency_rule": "\\b(?:shown|depicted|illustrated)\\s+(?:below|above|here|in\\s+(?:the\\s+)?(?:image|figure|diagram|picture|photograph|slide|radiograph|x[- ]?ray|ecg|ct|illustration))\\b|\\b(?:following|given|this|the)\\s+(?:image|figure|picture|photograph|illustration)\\b|\\bgiven\\s+(?:diagram|slide|radiograph|x[- ]?ray|ecg)\\b|\\bfollowing\\s+(?:diagram|slide|radiograph|x[- ]?ray|ecg)\\b(?!\\s+(?:should|findings?|features?|changes?|signs?|tests?|types?|parameters?|leads?|abnormalit(?:y|ies)))|\\b(?:see|refer\\s+to)\\s+(?:the\\s+)?(?:image|figure|diagram|picture)\\b|\\b(?:image|figure|diagram|picture|photograph|slide|radiograph)\\s+(?:below|above|shown)\\b",
+  "independently_medically_verified_rows": 0,
+  "nonempty_explanation_counts": {
+    "GENERAL_MEDICAL:empty": 133414,
+    "GENERAL_MEDICAL:nonempty": 49336,
+    "NEET_PG:empty": 1974,
+    "NEET_PG:nonempty": 2206
+  },
+  "normalization": "Unicode NFC, casefold and collapsed whitespace; never NFKC",
+  "normalized_ordered_stem_option_duplicates": {
+    "excess_rows": 33,
+    "groups": 33,
+    "rows": 66
+  },
+  "normalized_reordered_stem_option_duplicates": {
+    "excess_rows": 46,
+    "groups": 46,
+    "rows": 92
+  },
+  "packs": [
+    {
+      "asset_sha256": "9b0cf016959092a3a1aacd9e54a1c62d808fe12ae0c0a3b452da22eb48cfef7b",
+      "eligible_rows": 2486,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0000",
+      "quarantined_rows": 14,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "ad85eb5e464036fd4bc502ff4d6684346314aa6f7649f1fc6fe4880021cd8473",
+      "eligible_rows": 2478,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0001",
+      "quarantined_rows": 22,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "0ff0d74c4e16ed38902971bb01d07294475fb8430561a891efaa553678e484d1",
+      "eligible_rows": 2478,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0002",
+      "quarantined_rows": 22,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "ef6e908cfd0561b24e1e82c9aea16afc49f1a704a095e2c3c16131372de15fce",
+      "eligible_rows": 2484,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0003",
+      "quarantined_rows": 16,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "e744c97609dee4c3cb2f9539155941deb7e305653299aaff20647f20b6d78570",
+      "eligible_rows": 2481,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0004",
+      "quarantined_rows": 19,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "3eeadc181c2ffe265b3558825d69f51d5259e9b9493dbee07444e6a9409f504f",
+      "eligible_rows": 2482,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0005",
+      "quarantined_rows": 18,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "94cfb19d1ea4f549c1853a4ef815b3b644e5ccdc4effa3131f42585418ad2fd9",
+      "eligible_rows": 2477,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0006",
+      "quarantined_rows": 23,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "ebb01b431b19fe0149a7901f097bde8ca11b3ab9ad80360aa2f62e2383c058c4",
+      "eligible_rows": 2473,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0007",
+      "quarantined_rows": 27,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "419e0603cc811ed32deb4d08426a2ac05c19b439a697c01bf3f9c957b9be8832",
+      "eligible_rows": 2480,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0008",
+      "quarantined_rows": 20,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "10afed9e81f33750ba91ada63685937720c2630e8504cb215d27db500f60a3c8",
+      "eligible_rows": 2489,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0009",
+      "quarantined_rows": 11,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "31d43bbe2dfacf3815852249cab58cfc07e10bd1e72a733fb88f778c71f8032c",
+      "eligible_rows": 2487,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0010",
+      "quarantined_rows": 13,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "7f381866499d60c5c5c72bc50ea1c76da62654dccac746df04820f6cb4e6338a",
+      "eligible_rows": 2485,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0011",
+      "quarantined_rows": 15,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "22c28868e13e13b60389a3ecceba11946bafc699a33a6a9cead30eaea4124089",
+      "eligible_rows": 2486,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0012",
+      "quarantined_rows": 14,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "6e0dac360fb80f51d10371164e6f942bd2d865549e6e3cbeb9e2c0e67e11f683",
+      "eligible_rows": 2477,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0013",
+      "quarantined_rows": 23,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "4c18bdc15975d8ae682c2af484282be3678111340b68e09e7a94e93941b74aa8",
+      "eligible_rows": 2482,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0014",
+      "quarantined_rows": 18,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "0c4642d4ed9b75003feb2edbb161645ea55ab15f7a6035c1497e1bdaf87fc2da",
+      "eligible_rows": 2479,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0015",
+      "quarantined_rows": 21,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "e0cb0ae9afb3667be8cbc5c078c3b92a87a71d07bb36781f214c33c181be0c91",
+      "eligible_rows": 2483,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0016",
+      "quarantined_rows": 17,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "93482fef36fbe220069b21691a611cff47261285ce7cc451d7691e7155b26599",
+      "eligible_rows": 2484,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0017",
+      "quarantined_rows": 16,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "9280de166a0594b6f7b245b3cf9ea115b0f97748fbd0c93287d64895eaa29e39",
+      "eligible_rows": 2480,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0018",
+      "quarantined_rows": 20,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "aaa909d9712675c555f94ba5f78cc590f3a45e00167b8de4482b9d7b83016bb2",
+      "eligible_rows": 2472,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0019",
+      "quarantined_rows": 28,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "be1413e4b3aa48749afc1e36e575f2c2fa540c862d34866435e81c90514b02da",
+      "eligible_rows": 2483,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0020",
+      "quarantined_rows": 17,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "21643ca20d2e66489e19fd7f61b7eae9e4e36e85af298ab101f155efbb450773",
+      "eligible_rows": 2479,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0021",
+      "quarantined_rows": 21,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "6e1d05ebc13f3607d5ae2adfb118258f90b26a868fbc32df911add9fc60c6877",
+      "eligible_rows": 2487,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0022",
+      "quarantined_rows": 13,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "aa3bb37972d188f0fedb66c723f4df7dc45713384e4777852903a4777470aec5",
+      "eligible_rows": 2484,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0023",
+      "quarantined_rows": 16,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "01431584a6eb8d764664edb1514bbaed75b5e1ec17c8c23a4a1fad0e012e86ba",
+      "eligible_rows": 2481,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0024",
+      "quarantined_rows": 19,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "4fa0677446842ea4ee6a87d48a598656dde8dcca1276820b9ccc9029592c4c49",
+      "eligible_rows": 2481,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0025",
+      "quarantined_rows": 19,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "36bd5e8947f2ce9083871ea264eaf0fdf3b44d14baf84e18e683ff8419fd9050",
+      "eligible_rows": 2484,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0026",
+      "quarantined_rows": 16,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "207be9a8f303e8d7b34f6c14096f708244fc8fee5a8c75c3e0ef48dd636864c4",
+      "eligible_rows": 2483,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0027",
+      "quarantined_rows": 17,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "835b31b0ac2c89121d520a90afc1619997c325a33d526f5334ade993e62968e8",
+      "eligible_rows": 2479,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0028",
+      "quarantined_rows": 21,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "26c0d99f300ebeac6c4a716eb6f120a6bbd93cb8721871c0eae7218197b6a710",
+      "eligible_rows": 2483,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0029",
+      "quarantined_rows": 17,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "19be52b5133200f180e76174cf5335be23e3d75cfeac62c11c9917a475559950",
+      "eligible_rows": 2491,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0030",
+      "quarantined_rows": 9,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "5c2bcf6a8c39391ae044b8e99194ed1ff3a0ce0890b4418598adc470d2e96f88",
+      "eligible_rows": 2479,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0031",
+      "quarantined_rows": 21,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "faa55a185383902828cc70903bdfbc4356a105c1b11809a25d7c5e27188ba8af",
+      "eligible_rows": 2491,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0032",
+      "quarantined_rows": 9,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "cbba0677dfc124e09606565649900187ef9ced0bc6a20c1d0967004fad262e1d",
+      "eligible_rows": 2495,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0033",
+      "quarantined_rows": 5,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "d7810e2a5dc7465e9a11efaa63151aadbf34d3490acbc4fb24d6888fc58ba1e3",
+      "eligible_rows": 2479,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0034",
+      "quarantined_rows": 21,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "b467e7eccf901ec0fb45dec8648951b80dbddf59e643fd6eca1297b2f38807b1",
+      "eligible_rows": 2487,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0035",
+      "quarantined_rows": 13,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "8e3860794fa0be74c5e7b8e0a745baac6a8d406881e82e8093263c5d05246f1e",
+      "eligible_rows": 2476,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0036",
+      "quarantined_rows": 24,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "f83d61bfe97b76325ee062177babf632de9fecfda17f5fc742905a98640fcdd7",
+      "eligible_rows": 2486,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0037",
+      "quarantined_rows": 14,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "a5751fcf79057ffae54d6bbd3a4fc0bc1c45d0a5c69493209ed27c26334f1cce",
+      "eligible_rows": 2487,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0038",
+      "quarantined_rows": 13,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "b3e45e4a921a91c78acd2565789589a53baea680794f6f832ad217430a8ad875",
+      "eligible_rows": 2485,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0039",
+      "quarantined_rows": 15,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "089b34cf9a84ee81411a6f280f60d47bc251da9b0c7b510c3764d53272109573",
+      "eligible_rows": 2477,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0040",
+      "quarantined_rows": 23,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "b4ef2fabe985dabad119b2e15a353fa47123df3af252d1887ebec42fec33cdbb",
+      "eligible_rows": 2485,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0041",
+      "quarantined_rows": 15,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "40c96ee177766a0b6c842d9d19f783915b88d4151c89dfda6197107cb18be93e",
+      "eligible_rows": 2483,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0042",
+      "quarantined_rows": 17,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "4fc930a4530399fc7cad1582b36aeb5c76fdb459589cfa47943dd69c9be47ee7",
+      "eligible_rows": 2476,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0043",
+      "quarantined_rows": 24,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "9fb3a1168280c8ccb9ef80ab6e8a115584f850a1d62117ec2446ae65e5fa621a",
+      "eligible_rows": 2487,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0044",
+      "quarantined_rows": 13,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "e1ba844c00ee91112fa97b4058507a2970d4e35505e3cf858c7b975951ebd2c9",
+      "eligible_rows": 2486,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0045",
+      "quarantined_rows": 14,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "8ca904e33a14f5cd4b2f7dc1097e7618cf63b33a23e4292780bf62714626fc2a",
+      "eligible_rows": 2488,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0046",
+      "quarantined_rows": 12,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "db91ab69ac218c371c781c0933138cf0b922928617a96dd5ea9d6d3d70d714fc",
+      "eligible_rows": 2486,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0047",
+      "quarantined_rows": 14,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "6c1d0d817e99517ce11efaf22ece42b69fa6704c3a9865d242bc09a019eb89e4",
+      "eligible_rows": 2489,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0048",
+      "quarantined_rows": 11,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "3306d1f119a759f76226a8ab1d5d55e086fd13d4292041c3d0b22bf34604ed29",
+      "eligible_rows": 2483,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0049",
+      "quarantined_rows": 17,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "bb82248e813f040082032c4a69bad72555fd289cb3bc2c1efe074d30ff24c250",
+      "eligible_rows": 2476,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0050",
+      "quarantined_rows": 24,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "8fa2c16c6959aa015deb3cd76145d441d37c37e522389ed9c0d37a2b5399cb71",
+      "eligible_rows": 2481,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0051",
+      "quarantined_rows": 19,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "d17d39d291f5b2e3c4d3f6640a076ec7f3729748141d957c1bb45fdd66e7ab06",
+      "eligible_rows": 2484,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0052",
+      "quarantined_rows": 16,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "5f8ee1ed0b9853f8a0bbfb0691638d451bd0f87d644f086f9128ac4254645a83",
+      "eligible_rows": 2478,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0053",
+      "quarantined_rows": 22,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "936967469e548b637a38eaf3e7b5793596c4474fe7c0911e701e78a6b9782bb9",
+      "eligible_rows": 2476,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0054",
+      "quarantined_rows": 24,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "491b3b922c8f073de58a40e9044ff7a689ce81e1dcfc1422f7c2e9bd60ad0ce0",
+      "eligible_rows": 2483,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0055",
+      "quarantined_rows": 17,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "ef0f07f04e0c5d87aea326d27960e6af7b99f347a0fda92dba1b9f57be186ea2",
+      "eligible_rows": 2478,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0056",
+      "quarantined_rows": 22,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "03c686b1fdeb6cdf2d6e480851bb944c464970f17013bebe85c97c1cfe02d2a9",
+      "eligible_rows": 2486,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0057",
+      "quarantined_rows": 14,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "e5cc7685d806813faf0b560826f507e6ea9222ee37b655f49092e44873c8fd89",
+      "eligible_rows": 2489,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0058",
+      "quarantined_rows": 11,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "ef0c216b31400f13e50a84a3e5dcf09c54447c347f9fc5b5db34e4905b5c26aa",
+      "eligible_rows": 2483,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0059",
+      "quarantined_rows": 17,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "9dcb4dcd499bf3b86f30744b54f7168fa49f234f6768e10acf7d6623bc58065f",
+      "eligible_rows": 2483,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0060",
+      "quarantined_rows": 17,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "47d544df00417027d17e681126d39c5a07ad225a33ea1f990d2dec5c467c9699",
+      "eligible_rows": 2484,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0061",
+      "quarantined_rows": 16,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "270d30aa21b47a7b063267c3dee60fb4c087e47027c4238dbabfbfd4d243810b",
+      "eligible_rows": 2483,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0062",
+      "quarantined_rows": 17,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "97db7d515e6738bd65c9d123bd89aca393abeea4f14dde0595525fb77b0b4904",
+      "eligible_rows": 2486,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0063",
+      "quarantined_rows": 14,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "e32f76976bcd2e26162cef755a54bfcaf27aa3eed3525ce95547a1f56937851b",
+      "eligible_rows": 2487,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0064",
+      "quarantined_rows": 13,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "969c99029da5b058978d1a0e6742948141d5c599c027686acba3fcdfea776da6",
+      "eligible_rows": 2482,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0065",
+      "quarantined_rows": 18,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "f9ec668a48a732ddedcd86c1e97d331df46543f2e2856a64aa246c6ae6979932",
+      "eligible_rows": 2484,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0066",
+      "quarantined_rows": 16,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "8cc6086e9026a09da3cf9cf9109ea519673d270febdc342efeeb3128774b5d8f",
+      "eligible_rows": 2489,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0067",
+      "quarantined_rows": 11,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "f6a85115b3198973ecc22f92bed8f163ee2f31698d83751e3e3a20f9f261ac56",
+      "eligible_rows": 2484,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0068",
+      "quarantined_rows": 16,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "302cc60395762e354c3e2bb3401b40d5a1f4f614d570b44240255a48b353352a",
+      "eligible_rows": 2479,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0069",
+      "quarantined_rows": 21,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "afae934e4a6e81358e38715e88c8f99969314671b026a4ac672ebe5af366eec3",
+      "eligible_rows": 2482,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0070",
+      "quarantined_rows": 18,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "f37503b86d6d9d0aaa9b93ae9e4335224b7c52d40101db5c03e0cb099606079b",
+      "eligible_rows": 2484,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0071",
+      "quarantined_rows": 16,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "0bf12976f440c028a611fe56bd926d4df5f4c9ee0f603ed3f0a8187ff59d6ad3",
+      "eligible_rows": 2484,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0072",
+      "quarantined_rows": 16,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "1d1c0ee4e4d08557468d4c25464046b2e0b123bb772336fc31e24bc5d5cca1a7",
+      "eligible_rows": 247,
+      "exam": "GENERAL_MEDICAL",
+      "id": "general_medical_undated_0073",
+      "quarantined_rows": 3,
+      "rows": 250,
+      "year": null
+    },
+    {
+      "asset_sha256": "c91e59237570f9ad9ccd217b4365e1596654b850f6a37ce0e5e0a84e7fa4c89f",
+      "eligible_rows": 2475,
+      "exam": "NEET_PG",
+      "id": "neet_pg_undated_0000",
+      "quarantined_rows": 25,
+      "rows": 2500,
+      "year": null
+    },
+    {
+      "asset_sha256": "12334d237cb9a3db327c8367bcb491eee38f9f2c0d1c4bea04810db31d983bec",
+      "eligible_rows": 1667,
+      "exam": "NEET_PG",
+      "id": "neet_pg_undated_0001",
+      "quarantined_rows": 13,
+      "rows": 1680,
+      "year": null
+    }
+  ],
+  "packs_count": 76,
+  "placeholder_option_rule": "^(?:option\\s*[abcd]|[?]+|\\.{2,}|[-–—]+|not\\s+available|not\\s+given|missing)\\s*[.)]?$",
+  "policy": "Quarantine structural faults, explicit missing-image references and conflicting labels for identical normalized stem/option sets. Retain nonconflicting repeats and stem-only variants. Missing explanations alone do not quarantine.",
+  "proven_year_rows": 0,
+  "quarantine_by_exam": {
+    "GENERAL_MEDICAL": 1255,
+    "NEET_PG": 38
+  },
+  "quarantine_unique_rows": 1293,
+  "reason_counts": {
+    "conflicting_answer_for_same_stem_and_options": 4,
+    "duplicate_option_text": 726,
+    "explicit_image_dependency_without_asset": 558,
+    "placeholder_option": 10
+  },
+  "schema_version": 1,
+  "scope": "All currently bundled static PG assets; structural checks do not establish medical correctness or exam-year provenance.",
+  "stem_only_answer_variants_retained": [
+    {
+      "fingerprint": "a13839a60077f547339b10178692c8387385b9dcac04ed5f20aaf3eecef83738",
+      "ids": [
+        "medmcqa-train-0ad4d197-f312-4baa-884f-93838fff904a",
+        "medmcqa-train-136c3c97-1bbc-4ea0-a81f-f7d742bcaae9"
+      ]
+    },
+    {
+      "fingerprint": "305050682049aeafc9f129d40c1ee29249c31d99b094edd3e65d2443c91e5844",
+      "ids": [
+        "medmcqa-train-0a1c07c6-65d9-48c3-a9b8-0be43c2e67cc",
+        "medmcqa-train-bb47194a-75e6-4c91-b6cd-abd27ab84bf4"
+      ]
+    },
+    {
+      "fingerprint": "a2aab2aa268dd59cfe4b13be05abb0290ba7a03a599b76e7a8349d2080d06090",
+      "ids": [
+        "medmcqa-train-8bf8eced-0b4e-4543-9a64-8360e1773260",
+        "medmcqa-train-b9f3255b-0827-43f2-a78f-6baff841391b"
+      ]
+    },
+    {
+      "fingerprint": "52b92cfbdf802993ee9a9de2c293f813dee48dce5a5b34918e5eb324accb239d",
+      "ids": [
+        "medmcqa-train-20fae0e6-21bb-4e60-8418-e850e7a23f1e",
+        "medmcqa-train-2f881e06-b7e3-42f3-837d-982b1f81c00e"
+      ]
+    },
+    {
+      "fingerprint": "f4d496e03e190fc956b369803e3a49560bf2ddcd9b16dbc2617dd365f2f0ac13",
+      "ids": [
+        "medmcqa-train-cd6b3981-5397-44e4-bf3b-c2ab096611f1",
+        "medmcqa-train-f617b364-efc8-415f-b806-0039ca7cc205"
+      ]
+    },
+    {
+      "fingerprint": "f0137d68688909433ea84855e8e25680b9d08493caa715d893b275b6b9e66595",
+      "ids": [
+        "medmcqa-train-22b51ad7-279a-40b5-8f24-b4b6f0162f94",
+        "medmcqa-train-bd56df2f-4de3-48dd-8313-eb2c3e393358"
+      ]
+    },
+    {
+      "fingerprint": "db35c296ee3780b3ed21a7a748502b33f53a4c58a82f1ebab992c86752e02d8e",
+      "ids": [
+        "medmcqa-train-2b411ea0-4293-46d7-a00f-c7f3257f9bde",
+        "medmcqa-train-336be637-c733-436a-9fdd-dbdea722b9b6"
+      ]
+    },
+    {
+      "fingerprint": "ddb3b501541bcad3546c734f6923a601c7e3506038cda07d9d10b6413160bc13",
+      "ids": [
+        "medmcqa-train-8d0f5583-22de-44d7-846f-12b7e0ae2dec",
+        "medmcqa-train-e059be64-adbd-4677-98d9-aba9bb8d3e06"
+      ]
+    },
+    {
+      "fingerprint": "bb86be096fccb2f87d858b0ac6dd1cf370457c6b380f53eed653b0f87040bd60",
+      "ids": [
+        "medmcqa-train-14b2fbf0-59f5-410b-ab53-34cd6e4a2a9b",
+        "medmcqa-train-bf351f4d-8b66-46f2-a8ee-e933dedae7b5"
+      ]
+    }
+  ],
+  "structurally_eligible_rows": 185637,
+  "total_rows": 186930
+}

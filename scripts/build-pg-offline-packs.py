@@ -18,6 +18,7 @@ import tempfile
 import zlib
 from collections import defaultdict
 from pathlib import Path
+from pg_source_quality import structural_reasons, conflict_ids
 
 try:
     import brotli
@@ -34,6 +35,9 @@ MAX_ROWS_PER_PACK = 1000
 FILENAME = re.compile(r"[^a-z0-9_]+")
 
 def validate(row):
+    reasons = structural_reasons(row)
+    if reasons:
+        raise ValueError("Source quality exclusion: " + ", ".join(reasons))
     dataset_label = row.get("status") == "dataset_label"
     if not dataset_label and row.get("status") not in ("published", "approved"):
         raise ValueError("Unapproved row; input must be approved or separately marked dataset-label practice")
@@ -142,6 +146,10 @@ def write_packs(args):
             hashes.add(ident)
             grouped[(item["exam"], item.get("exam_year"))].append(item)
             row_count += 1
+
+    conflicts = conflict_ids([q for rows in grouped.values() for q in rows])
+    if conflicts:
+        raise SystemExit("Conflicting answer text; hold all affected rows: " + ", ".join(sorted(conflicts)))
 
     output = args.out
     output.parent.mkdir(parents=True, exist_ok=True)
