@@ -35,6 +35,7 @@ import { PgEntranceBankModal } from '@/components/PgEntranceBankModal';
 import { ClinicalCaseLibraryModal } from '@/components/ClinicalCaseLibraryModal';
 import { PdfViewerModal } from '@/components/PdfViewerModal';
 import FlashcardsScreen from '@/screens/FlashcardsScreen';
+import SimulatorScreen from '@/screens/SimulatorScreen';
 import { useProfile } from '@/hooks/useProfile';
 import {
   getPendingLaunchDeck,
@@ -93,6 +94,7 @@ export default function NotesScreen() {
    * one Back button serving two unrelated ladders.
    */
   const [flashcards, setFlashcards] = useState(() => getPendingLaunchDeck() != null);
+  const [simulatorOpen, setSimulatorOpen] = useState(false);
   const [proformasOpen, setProformasOpen] = useState(false);
   const [pgEntranceOpen, setPgEntranceOpen] = useState(false);
   const [datasetCasesOpen, setDatasetCasesOpen] = useState(false);
@@ -180,6 +182,8 @@ export default function NotesScreen() {
     });
   }, [topicsViewFor]);
 
+  if (simulatorOpen) return <SimulatorScreen onExit={() => setSimulatorOpen(false)} />;
+
   if (flashcards) {
     return (
       <View style={[styles.screen, { backgroundColor: colors.background }]}>
@@ -198,7 +202,7 @@ export default function NotesScreen() {
       style={[styles.screen, { backgroundColor: colors.background }]}
       contentContainerStyle={[styles.content, { paddingTop: insets.top + 12 }]}
       showsVerticalScrollIndicator={false}>
-      {view.kind === 'vault' ? <VaultView onNotes={() => setView({ kind: 'years' })} onFlashcards={() => setFlashcards(true)} onProformas={() => setProformasOpen(true)} onSimulator={() => { void Linking.openURL('https://orbitmbbs.vercel.app/simulator').catch(() => Alert.alert('Simulator could not open', 'Please check your connection and try again.')); }} /> : null}
+      {view.kind === 'vault' ? <VaultView onNotes={() => setView({ kind: 'years' })} onFlashcards={() => setFlashcards(true)} onProformas={() => setProformasOpen(true)} onSimulator={() => { if (Platform.OS !== 'web') { setSimulatorOpen(true); return; } void Linking.openURL('https://orbitmbbs.vercel.app/simulator').catch(() => Alert.alert('Simulator could not open', 'Please check your connection and try again.')); }} /> : null}
       {view.kind === 'years' ? (
         <YearsView
           currentYear={profileYear}
