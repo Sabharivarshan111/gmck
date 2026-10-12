@@ -58,7 +58,7 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
     return scenarios.filter((sc) => {
       const matchesDept =
         selectedDeptId === 'all' ||
-        (sc as any).departmentId === selectedDeptId ||
+        ('departmentId' in sc ? sc.departmentId : undefined) === selectedDeptId ||
         sc.category.toLowerCase().includes(selectedDeptId.toLowerCase());
 
       const matchesSearch =
@@ -162,10 +162,10 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
         </div>
 
         {/* Clinical Department Strip (Horizontally Scrollable) */}
-        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-1">
+        <div data-testid="case-departments" className="flex items-center gap-1.5 overflow-x-auto pt-1 pb-2">
           <button
             onClick={() => setSelectedDeptId('all')}
-            className={`px-2.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1 cursor-pointer ${
+            className={`shrink-0 px-2.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1 cursor-pointer ${
               selectedDeptId === 'all'
                 ? isLight
                   ? 'bg-slate-900 text-white shadow-xs'
@@ -181,7 +181,7 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
 
           {CLINICAL_DEPARTMENTS.filter((dept) => dept.id !== 'all').map((dept) => {
             const count = scenarios.filter(
-              (sc) => (sc as any).departmentId === dept.id || sc.category === dept.name
+              (sc) => ('departmentId' in sc ? sc.departmentId : undefined) === dept.id || sc.category === dept.name
             ).length;
             const active = selectedDeptId === dept.id;
 
@@ -189,7 +189,7 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
               <button
                 key={dept.id}
                 onClick={() => setSelectedDeptId(dept.id)}
-                className={`px-2.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all flex items-center gap-1 cursor-pointer ${
+                className={`shrink-0 px-2.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all flex items-center gap-1 cursor-pointer ${
                   active
                     ? isLight
                       ? 'bg-sky-600 text-white shadow-xs font-bold'
@@ -235,7 +235,7 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
       </div>
 
       {/* Case Details Badge Strip */}
-      <div className="-mx-1 px-1 flex flex-nowrap items-center gap-2 text-xs overflow-x-auto no-scrollbar">
+      <div data-testid="case-details" className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-start gap-2 text-xs break-words">
         <span
           className={`shrink-0 px-2.5 py-1.5 rounded-xl font-semibold border ${
             isLight
@@ -246,13 +246,13 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
           Department: <strong>{currentScenario.category}</strong>
         </span>
         <span
-          className={`shrink-0 max-w-[78vw] sm:max-w-none px-2.5 py-1.5 rounded-xl font-semibold border flex items-center gap-1 ${
+          className={`min-w-0 max-w-full px-2.5 py-1.5 rounded-xl font-semibold border flex items-center gap-1 ${
             isLight
               ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
               : 'bg-emerald-950/40 border-emerald-800/60 text-emerald-300'
           }`}
         >
-          <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+          <CheckCircle2 className="w-3 h-3 shrink-0 text-emerald-600" />
           <span>Target Rx: {currentScenario.targetInterventions.join(', ')}</span>
         </span>
         <span
@@ -262,7 +262,7 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
               : 'bg-rose-950/40 border-rose-800/60 text-rose-300'
           }`}
         >
-          <AlertTriangle className="w-3 h-3 text-rose-500" />
+          <AlertTriangle className="w-3 h-3 shrink-0 text-rose-500" />
           <span>Lethal Errors: {currentScenario.lethalTriggers.join(', ')}</span>
         </span>
       </div>
@@ -422,8 +422,8 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
             ].map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => setActiveInterventionTab(tab.id as any)}
-                className={`px-2.5 py-1 rounded-lg text-[11px] font-bold whitespace-nowrap transition-all cursor-pointer ${
+                onClick={() => setActiveInterventionTab(tab.id as typeof activeInterventionTab)}
+                className={`shrink-0 px-2.5 py-1 rounded-lg text-[11px] font-bold whitespace-nowrap transition-all cursor-pointer ${
                   activeInterventionTab === tab.id
                     ? isLight
                       ? 'bg-sky-600 text-white shadow-2xs'

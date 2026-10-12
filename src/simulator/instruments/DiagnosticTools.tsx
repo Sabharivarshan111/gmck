@@ -6,8 +6,9 @@ import { AuscultationTrainer } from './AuscultationTrainer';
 import { SOUND_LIBRARY } from './auscultationSites';
 import { Ecg12LeadCanvas } from './Ecg12LeadCanvas';
 import { EcgIcuTutorialModal } from './EcgIcuTutorialModal';
+import { EyeExamination } from './eye/EyeExamination';
 import { PocusCanvas } from './pocus/PocusCanvas';
-import { Volume2, VolumeX, Eye, Stethoscope, Radio, Activity, Sparkles, CheckCircle2, AlertTriangle, Info, GraduationCap } from 'lucide-react';
+import { Volume2, VolumeX, Stethoscope, Radio, Activity, Sparkles, CheckCircle2, AlertTriangle, Info, GraduationCap } from 'lucide-react';
 
 interface DiagnosticToolsProps {
   tool: DiagnosticToolType;
@@ -27,37 +28,6 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
   theme = 'light',
 }) => {
   const isLight = theme === 'light';
-
-  // ============================================================================
-  // 1. PUPILLOMETRY STATE & DIRECT/CONSENSUAL LIGHT REFLEX
-  // ============================================================================
-  const [flashlightOn, setFlashlightOn] = useState<'none' | 'left' | 'right' | 'both'>('none');
-
-  // Compute dynamic pupil diameters based on direct & consensual reflex
-  const computePupil = (side: 'left' | 'right') => {
-    const isLeft = side === 'left';
-    const base = isLeft ? pathology.pupilLeft : pathology.pupilRight;
-    const canReact = isLeft ? pathology.pupilReactLeft : pathology.pupilReactRight;
-
-    if (!canReact) return base;
-
-    // Direct stimulation or Consensual stimulation from contralateral eye
-    const directLight = isLeft
-      ? flashlightOn === 'left' || flashlightOn === 'both'
-      : flashlightOn === 'right' || flashlightOn === 'both';
-    const consensualLight = isLeft
-      ? flashlightOn === 'right' || flashlightOn === 'both'
-      : flashlightOn === 'left' || flashlightOn === 'both';
-
-    if (directLight || consensualLight) {
-      // Teaching response: 45% reduction, never enlarging a small baseline pupil
-      return Math.min(base, Math.max(1.5, base * 0.55));
-    }
-    return base;
-  };
-
-  const currentPupilLeft = computePupil('left');
-  const currentPupilRight = computePupil('right');
 
   // ============================================================================
   // 2. STETHOSCOPE WEB AUDIO STATE
@@ -99,7 +69,6 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
     }
     setCustomHeartOverride(null);
     setCustomLungOverride(null);
-    setFlashlightOn('none');
   }, [tool, scenarioId]);
 
   useEffect(() => {
@@ -156,9 +125,9 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
           <div className="flex items-center gap-2 min-w-0">
             <span className="w-3 h-3 rounded-full bg-cyan-500 animate-pulse" />
             <h3 className="min-w-0 font-bold text-sm text-cyan-400">
-              <span className="sm:hidden">{tool === 'pupil' ? 'Pupil examination' : tool === 'ultrasound' ? 'Ultrasound / POCUS' : tool === 'stethoscope' ? 'Auscultation' : '12-lead ECG'}</span>
+              <span className="sm:hidden">{tool === 'pupil' ? 'Eyes & cranial nerves' : tool === 'ultrasound' ? 'Ultrasound / POCUS' : tool === 'stethoscope' ? 'Auscultation' : '12-lead ECG'}</span>
               <span className="hidden sm:inline">
-              {tool === 'pupil' && '👁️ Bedside Pupillometer & Direct/Consensual Reflex Simulator'}
+              {tool === 'pupil' && '👁️ Interactive Eye & Cranial Nerve Examination'}
               {tool === 'ultrasound' && '📡 Virtual Point-of-Care Ultrasound (POCUS)'}
               {tool === 'stethoscope' && '🩺 Digital Auscultation Stethoscope & Sound Synthesizer'}
               {tool === 'ecg12' && '📈 Universal 12-Lead Electrocardiogram (ECG)'}
@@ -184,164 +153,7 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
         {/* Modal Body */}
         <div className="p-2.5 sm:p-4 md:p-6 flex-1 overflow-y-auto overscroll-contain space-y-3 sm:space-y-4 pb-[calc(16px+env(safe-area-inset-bottom))]">
           {/* ================= 1. PUPILLOMETRY ================= */}
-          {tool === 'pupil' && (
-            <div className="space-y-4">
-              {/* Dual Eye Interactive Simulator */}
-              <div className="grid grid-cols-2 gap-2 sm:gap-4 [&>div:first-child]:order-2 [&>div:last-child]:order-1 bg-slate-950 p-3 sm:p-5 rounded-2xl border border-slate-800 text-center">
-                {/* Left Eye */}
-                <div className="flex flex-col items-center space-y-2.5">
-                  <div className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                    <span>Patient’s left · OS</span>
-                    {!pathology.pupilReactLeft && (
-                      <span className="text-[10px] bg-rose-500/20 text-rose-400 px-1.5 py-0.5 rounded font-bold">
-                        FIXED
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="relative w-28 h-28 sm:w-40 sm:h-40 rounded-full bg-slate-800 border-4 border-slate-700 flex items-center justify-center shadow-inner overflow-hidden">
-                    {/* Sclera & Iris */}
-                    <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-amber-900 border border-amber-700 flex items-center justify-center relative">
-                      {/* Pupil */}
-                      <div
-                        className="rounded-full bg-black transition-all duration-200 shadow-xl"
-                        style={{
-                          width: `${Math.min(85, currentPupilLeft / 12 * 100)}%`,
-                          height: `${Math.min(85, currentPupilLeft / 12 * 100)}%`,
-                        }}
-                      />
-                    </div>
-                    {/* Corneal reflection highlight */}
-                    <div className="absolute top-8 left-8 w-4 h-4 rounded-full bg-white/70 blur-[0.5px]" />
-                    {(flashlightOn === 'left' || flashlightOn === 'both') && (
-                      <div className="absolute inset-0 bg-yellow-300/35 backdrop-blur-[0.5px] animate-pulse" />
-                    )}
-                  </div>
-
-                  <div className="font-mono text-cyan-400 text-base font-black">
-                    {currentPupilLeft.toFixed(1)} mm
-                    <span className="text-xs font-normal text-slate-400 ml-1.5">
-                      {currentPupilLeft < 2.0
-                        ? '(Pinpoint Miosis)'
-                        : currentPupilLeft > 6.0
-                        ? '(Mydriasis / Blown)'
-                        : '(Normal)'}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Right Eye */}
-                <div className="flex flex-col items-center space-y-2.5">
-                  <div className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                    <span>Patient’s right · OD</span>
-                    {!pathology.pupilReactRight && (
-                      <span className="text-[10px] bg-rose-500/20 text-rose-400 px-1.5 py-0.5 rounded font-bold">
-                        FIXED
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="relative w-28 h-28 sm:w-40 sm:h-40 rounded-full bg-slate-800 border-4 border-slate-700 flex items-center justify-center shadow-inner overflow-hidden">
-                    {/* Sclera & Iris */}
-                    <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-amber-900 border border-amber-700 flex items-center justify-center relative">
-                      {/* Pupil */}
-                      <div
-                        className="rounded-full bg-black transition-all duration-200 shadow-xl"
-                        style={{
-                          width: `${Math.min(85, currentPupilRight / 12 * 100)}%`,
-                          height: `${Math.min(85, currentPupilRight / 12 * 100)}%`,
-                        }}
-                      />
-                    </div>
-                    {/* Corneal reflection highlight */}
-                    <div className="absolute top-8 left-8 w-4 h-4 rounded-full bg-white/70 blur-[0.5px]" />
-                    {(flashlightOn === 'right' || flashlightOn === 'both') && (
-                      <div className="absolute inset-0 bg-yellow-300/35 backdrop-blur-[0.5px] animate-pulse" />
-                    )}
-                  </div>
-
-                  <div className="font-mono text-cyan-400 text-base font-black">
-                    {currentPupilRight.toFixed(1)} mm
-                    <span className="text-xs font-normal text-slate-400 ml-1.5">
-                      {currentPupilRight < 2.0
-                        ? '(Pinpoint Miosis)'
-                        : currentPupilRight > 6.0
-                        ? '(Mydriasis / Blown)'
-                        : '(Normal)'}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <p className="text-[11px] text-slate-400">Facing the patient: their right eye is on your left. Schematic pupil view; diameters are simulated.</p>
-
-              {/* Penlight Control Selector */}
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pb-2 border-b border-slate-800">
-                <span className="text-xs text-slate-400 font-semibold">Penlight Light Stimulus:</span>
-                <div className="grid grid-cols-2 sm:flex gap-2">
-                  <button
-                    aria-label="🔦 Left Eye (Direct L, Consensual R)"
-                    aria-pressed={flashlightOn === 'left'}
-                    onClick={() => setFlashlightOn(flashlightOn === 'left' ? 'none' : 'left')}
-                    className={`min-h-[44px] shrink-0 whitespace-nowrap px-3 py-1.5 rounded-xl text-[11px] sm:text-xs font-bold border transition-all cursor-pointer ${
-                      flashlightOn === 'left'
-                        ? 'bg-amber-400 text-slate-950 border-amber-300 shadow-md font-black'
-                        : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700'
-                    }`}
-                  >
-                    🔦 Left eye
-                  </button>
-                  <button
-                    aria-label="🔦 Right Eye (Direct R, Consensual L)"
-                    aria-pressed={flashlightOn === 'right'}
-                    onClick={() => setFlashlightOn(flashlightOn === 'right' ? 'none' : 'right')}
-                    className={`min-h-[44px] shrink-0 whitespace-nowrap px-3 py-1.5 rounded-xl text-[11px] sm:text-xs font-bold border transition-all cursor-pointer ${
-                      flashlightOn === 'right'
-                        ? 'bg-amber-400 text-slate-950 border-amber-300 shadow-md font-black'
-                        : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700'
-                    }`}
-                  >
-                    🔦 Right eye
-                  </button>
-                  <button
-                    aria-label="🔦 Both Eyes"
-                    aria-pressed={flashlightOn === 'both'}
-                    onClick={() => setFlashlightOn(flashlightOn === 'both' ? 'none' : 'both')}
-                    className={`min-h-[44px] shrink-0 whitespace-nowrap px-3 py-1.5 rounded-xl text-[11px] sm:text-xs font-bold border transition-all cursor-pointer ${
-                      flashlightOn === 'both'
-                        ? 'bg-amber-400 text-slate-950 border-amber-300 shadow-md font-black'
-                        : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700'
-                    }`}
-                  >
-                    🔦 Both Eyes
-                  </button>
-                  <button
-                    aria-pressed={flashlightOn === 'none'}
-                    onClick={() => setFlashlightOn('none')}
-                    className="min-h-[44px] min-w-[44px] shrink-0 whitespace-nowrap px-2.5 py-1.5 rounded-xl text-[11px] sm:text-xs font-semibold bg-slate-800/80 hover:bg-slate-700 text-slate-400 border border-slate-700 cursor-pointer"
-                  >
-                    Off
-                  </button>
-                </div>
-              </div>
-
-              {/* Clinical Teaching Card */}
-              <details className="bg-slate-950 p-3 sm:p-4 rounded-2xl border border-slate-800 text-xs text-slate-300 space-y-2">
-                <summary className="min-h-[44px] font-bold text-slate-100 flex items-center gap-1.5 cursor-pointer">
-                  <Info className="w-4 h-4 text-sky-400" />
-                  <span>How the pupil reflex works · CN II & III</span>
-                </summary>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-[11px] leading-relaxed">
-                  <div>
-                    • <strong>Direct Light Reflex:</strong> Light entering the pupil stimulates retinal ganglion cells → Optic Nerve (CN II) afferents travel to the pretectal nucleus in the midbrain → bilateral projection to Edinger-Westphal nuclei → Oculomotor Nerve (CN III) parasympathetic efferents constrict the ipsilateral pupillary sphincter.
-                  </div>
-                  <div>
-                    • <strong>Consensual Light Reflex:</strong> Axons decussate across the posterior commissure to the contralateral Edinger-Westphal nucleus, producing simultaneous equal constriction of the unilluminated eye.
-                  </div>
-                </div>
-              </details>
-            </div>
-          )}
+          {tool === 'pupil' && <EyeExamination pathology={pathology} />}
 
           {/* ================= 2. STETHOSCOPE AUSCULTATION ================= */}
           {tool === 'stethoscope' && (

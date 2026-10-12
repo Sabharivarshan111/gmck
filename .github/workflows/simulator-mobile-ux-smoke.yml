@@ -7,6 +7,9 @@ on:
       - 'src/simulator/**'
       - 'scripts/simulator-mobile-ux-smoke.mjs'
       - 'scripts/simulator-studio-e2e.mjs'
+      - 'scripts/simulator-eye-e2e.mjs'
+      - 'scripts/simulator-eye-check.mjs'
+      - 'public/models/eye-exam/**'
       - '.github/workflows/simulator-mobile-ux-smoke.yml'
   workflow_dispatch:
 
@@ -55,6 +58,14 @@ jobs:
           done
           curl -fsS http://127.0.0.1:4180/simulator > /dev/null
 
+      - name: Verify clinical eye response and reference asset integrity
+        run: node --experimental-strip-types scripts/simulator-eye-check.mjs
+
+      - name: Exercise real-time 3D eye examination
+        env:
+          ORBIT_STUDIO_BASE_URL: http://127.0.0.1:4180
+        run: node scripts/simulator-eye-e2e.mjs
+
       - name: Exercise normal skills and mobile studio widths
         env:
           ORBIT_STUDIO_BASE_URL: http://127.0.0.1:4180
@@ -70,6 +81,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: simulator-mobile-ux-${{ github.sha }}
-          path: artifacts/simulator-mobile-ux
+          path: |
+            artifacts/simulator-mobile-ux
+            artifacts/simulator-eye-exam
           if-no-files-found: error
           retention-days: 14
