@@ -4,7 +4,7 @@ import type { PocusViewMode } from './PocusEngineCore';
 
 const references = {
   cardiac_plax: {
-    image: 'https://upload.wikimedia.org/wikipedia/commons/1/16/LeftParasternalLongAxis.gif',
+    image: '/clinical-reference/pocus/plax.gif',
     title: 'Parasternal long-axis reference',
     note: 'Archived reference loop. It does not change with the current case.',
     author: 'Patrick J. Lynch & C. Carl Jaffe',
@@ -13,7 +13,7 @@ const references = {
     animated: true,
   },
   subxiphoid: {
-    image: 'https://upload.wikimedia.org/wikipedia/commons/9/91/Subcostal_view_of_heart.gif',
+    image: '/clinical-reference/pocus/subcostal.gif',
     title: 'Subcostal cardiac reference',
     note: 'Archived reference loop. It does not change with the current case.',
     author: 'Patrick J. Lynch & C. Carl Jaffe',
@@ -22,7 +22,7 @@ const references = {
     animated: true,
   },
   fast_morison: {
-    image: 'https://upload.wikimedia.org/wikipedia/commons/9/97/Morison003.jpg',
+    image: '/clinical-reference/pocus/morison.jpg',
     title: 'Morison’s pouch with free fluid',
     note: 'Acquired ultrasound reference still, independent of the current case.',
     author: 'Drahreg01', page: 'https://commons.wikimedia.org/wiki/File:Morison003.jpg',
@@ -30,7 +30,7 @@ const references = {
     animated: false,
   },
   lung: {
-    image: 'https://upload.wikimedia.org/wikipedia/commons/e/eb/Sea_shore_sign_on_a_lung_ultrasound.jpg',
+    image: '/clinical-reference/pocus/lung.jpg',
     title: 'Lung B-mode and M-mode reference',
     note: 'Seashore pattern and B-lines in a patient with fibrosis. Reference still, independent of the current case.',
     author: 'Tinss', page: 'https://commons.wikimedia.org/wiki/File:Sea_shore_sign_on_a_lung_ultrasound.jpg',

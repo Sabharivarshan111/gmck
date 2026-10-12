@@ -377,6 +377,7 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
             <button
               onClick={() => {
                 handleCameraJump();
+                if (onIsolateStructure) onIsolateStructure(currentNavId || organKey, organKey);
                 setIsMobileExpanded(false);
                 if (onEnter3D) onEnter3D();
               }}
@@ -1312,7 +1313,7 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
           </>}
         </div>
         <footer className={`md:hidden grid grid-cols-3 gap-2 p-3 border-t shrink-0 ${isLight ? 'bg-white border-slate-200' : 'bg-slate-900 border-slate-700'}`}>
-          <button className="min-h-11 rounded-xl bg-sky-600 text-white font-semibold text-xs" onClick={() => {handleCameraJump(); if (onEnter3D) onEnter3D();}}>View model</button>
+          <button className="min-h-11 rounded-xl bg-sky-600 text-white font-semibold text-xs" onClick={() => {handleCameraJump(); if (onIsolateStructure) onIsolateStructure(currentNavId || organKey, organKey); if (onEnter3D) onEnter3D();}}>View model</button>
           <button className="min-h-11 rounded-xl border text-xs font-semibold" onClick={() => setIsMobileExpanded(!isMobileExpanded)}>{isMobileExpanded ? 'Read less' : 'Read more'}</button>
           <button className="min-h-11 rounded-xl border text-xs font-semibold" onClick={onClose}>Close</button>
         </footer>

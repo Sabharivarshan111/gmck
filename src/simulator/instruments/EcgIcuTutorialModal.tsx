@@ -22,6 +22,7 @@ import {
   ArrowRight,
   Sparkles,
 } from 'lucide-react';
+import { EcgLearningPath } from './EcgLearningPath';
 import { InteractiveCardiacEngineMaster } from './cardiac-engine/InteractiveCardiacEngineMaster';
 
 interface EcgIcuTutorialModalProps {
@@ -835,7 +836,7 @@ const PaparazziCameraStudioVisualizer: React.FC<{ isLight: boolean }> = ({ isLig
       viewTarget: 'Inferior Wall & Apex (Directly along heart axis!)',
       direction: 'towards',
       deflection: 'Strongly Positive (▲▲▲)',
-      clinicalMnemonic: 'The Golden Rhythm Lead! Electrical wave aims directly at Lead II (+60°). Tallest R wave on the entire ECG!',
+      clinicalMnemonic: 'A mean vector at +60° points toward the positive pole of lead II, producing a positive deflection in this example. Actual R-wave amplitudes vary between people and leads.',
       rWaveHeight: 28,
       sWaveDepth: 2,
     },
@@ -955,10 +956,10 @@ const PaparazziCameraStudioVisualizer: React.FC<{ isLight: boolean }> = ({ isLig
             <div className="w-8 h-8 rounded-xl bg-sky-500/10 text-sky-500 flex items-center justify-center font-black">
               📸
             </div>
-            <h4 className="font-bold text-sm tracking-tight">3. The 12-Camera Paparazzi Studio (Why Waves Go UP or DOWN)</h4>
+            <h4 className="font-bold text-sm tracking-tight">Lead viewpoints · positive and negative deflections</h4>
           </div>
           <p className="text-xs text-slate-500 sim-dark:text-slate-400 mt-0.5">
-            Click any camera angle around the body. The Golden Camera Rule reveals exactly why the pen pushes UP or DOWN!
+            Choose a lead to explore how electrical direction changes the recorded deflection. This is a simplified vector example.
           </p>
         </div>
       </div>
@@ -1209,18 +1210,18 @@ const CalibratedGridWaveBreakdown: React.FC<{ isLight: boolean }> = ({ isLight }
       amplitude: '< 2.5 mm (0.25 mV)',
       boxes: '< 3 small boxes wide, < 2.5 boxes tall',
       color: 'rose',
-      mechanicalEvent: 'Right atrium contracts first, then left atrium. Pushes final 20% of blood into ventricles ("Atrial Kick").',
+      mechanicalEvent: 'Electrical activation of the atria precedes their contraction and contribution to ventricular filling.',
       pathologyAlert: 'P pulmonale (> 2.5 mm) in Right Atrial Enlargement (COPD/Cor Pulmonale); P mitrale (notched M-shape > 120 ms) in Left Atrial Enlargement (Mitral Stenosis).',
     },
     pr: {
       name: 'PR Interval',
-      fullName: 'AV Nodal Transit Time',
+      fullName: 'Atrial onset to ventricular onset',
       duration: '120 - 200 ms',
-      amplitude: 'Isoelectric flatline',
-      boxes: '3 to 5 small boxes (Exactly 1 large box!)',
+      amplitude: 'PR segment is usually isoelectric; the interval includes P',
+      boxes: '3 to 5 small boxes at 25 mm/s',
       color: 'amber',
       mechanicalEvent: 'Conduction from SA node through atria, through AV node delay, down bundle of His until ventricular myocytes fire.',
-      pathologyAlert: 'PR > 200 ms (> 5 boxes) = 1st Degree AV Block. PR < 120 ms (< 3 boxes) = Wolff-Parkinson-White (WPW) pre-excitation pathway with Delta wave!',
+      pathologyAlert: 'A prolonged PR with every P conducted supports first-degree AV block. A short PR has several causes; pre-excitation needs supporting features such as a delta wave.',
     },
     qrs: {
       name: 'QRS Complex',
@@ -1229,18 +1230,18 @@ const CalibratedGridWaveBreakdown: React.FC<{ isLight: boolean }> = ({ isLight }
       amplitude: '5 to 30 mm (Variable)',
       boxes: '< 3 small boxes wide (< 0.12s)',
       color: 'emerald',
-      mechanicalEvent: 'Septum depolarizes left-to-right (Q wave), then massive left and right ventricular muscular walls contract violently (R spike).',
-      pathologyAlert: 'QRS > 120 ms (> 3 boxes) = Bundle Branch Block (LBBB / RBBB) or Ventricular Tachycardia. Pathological Q wave (> 1 box wide or > 25% R wave) = Old Transmural Myocardial Infarction!',
+      mechanicalEvent: 'Ventricular electrical activation produces QRS and precedes mechanical contraction. Individual Q, R and S deflections depend on the lead viewpoint.',
+      pathologyAlert: 'A QRS of 120 ms or more is wide. Consider conduction delay, pacing or a ventricular rhythm in context. Q-wave interpretation depends on width, depth and lead distribution; it does not date an infarction by itself.',
     },
     st: {
       name: 'ST Segment',
       fullName: 'Early Ventricular Plateau (Phase 2)',
       duration: '80 - 120 ms',
-      amplitude: 'Strictly isoelectric (0 mm deviation)',
+      amplitude: 'Compare the J point with the TP baseline',
       boxes: 'Should sit flat on the TP baseline',
       color: 'cyan',
       mechanicalEvent: 'Both ventricles are fully depolarized and squeezing under maximum pressure. Calcium influx maintains muscular contraction.',
-      pathologyAlert: 'CRITICAL ALERT: ST Elevation > 1 mm in limb leads (> 2 mm in V2-V3) = ACUTE TRANSMURAL STEMI (Immediate Cath Lab / Thrombolysis!). ST depression = Subendocardial ischemia or NSTEMI.',
+      pathologyAlert: 'Assess changes in contiguous leads using appropriate age/sex thresholds, symptoms and reciprocal findings. ST elevation or depression can have ischemic and nonischemic causes; a single measurement does not determine treatment.',
     },
     t: {
       name: 'T Wave',
@@ -1249,18 +1250,18 @@ const CalibratedGridWaveBreakdown: React.FC<{ isLight: boolean }> = ({ isLight }
       amplitude: '< 5 mm in limb, < 10 mm in chest',
       boxes: 'Asymmetrical smooth hill (slow up, fast down)',
       color: 'purple',
-      mechanicalEvent: 'Ventricular myocytes recharge their ionic gradients via Na+/K+ ATPase pumps, preparing for the next mechanical systole.',
-      pathologyAlert: 'Tall peaked symmetrical "tented" T waves = Fatal Hyperkalemia (K+ > 6.5 mEq/L). Inverted T waves = Myocardial ischemia or ventricular strain.',
+      mechanicalEvent: 'Repolarization reflects changes in membrane currents, with outward potassium currents important in ventricular recovery. It is distinct from the mechanical act of relaxation.',
+      pathologyAlert: 'Peaked T waves may occur in hyperkalemia; ECG shape cannot measure potassium concentration. T-wave inversion has several causes and must be assessed by lead, prior ECG and clinical context.',
     },
     qt: {
       name: 'QTc Interval',
       fullName: 'Total Ventricular Electrical Systole',
       duration: '♂ < 440 ms, ♀ < 460 ms',
-      boxes: 'Must be rate-corrected using Bazett formula (QT / √RR)',
-      amplitude: 'Spans from start of Q wave to end of T wave',
+      boxes: 'Correct the measured QT for heart rate and state the formula used.',
+      amplitude: 'Measure QT from QRS onset to T-wave end, then calculate QTc',
       color: 'rose',
       mechanicalEvent: 'Encompasses both ventricular contraction (depolarization) and recovery (repolarization).',
-      pathologyAlert: 'QTc > 500 ms = EXTREME DANGER of Torsades de Pointes polymorphic ventricular tachycardia and sudden cardiac death! Common causes: Ondansetron, Macrolides, Hypokalemia, Hypomagnesemia.',
+      pathologyAlert: 'QTc of 500 ms or more is associated with increased torsades risk. Review medicines, electrolytes, correction method and the clinical situation.',
     },
   };
 
@@ -1278,10 +1279,10 @@ const CalibratedGridWaveBreakdown: React.FC<{ isLight: boolean }> = ({ isLight }
             <div className="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center font-black">
               📐
             </div>
-            <h4 className="font-bold text-sm tracking-tight">4. Calibrated Pink Millimeter Grid & Segment Inspector</h4>
+            <h4 className="font-bold text-sm tracking-tight">Wave and interval reference</h4>
           </div>
           <p className="text-xs text-slate-500 sim-dark:text-slate-400 mt-0.5">
-            Click any segment along the heartbeat. Inspect exact millisecond rules, box counts, and life-threatening pathologies.
+            Select a component to review its meaning, measurement and clinical considerations. Adult reference limits need clinical context.
           </p>
         </div>
       </div>
@@ -1294,7 +1295,7 @@ const CalibratedGridWaveBreakdown: React.FC<{ isLight: boolean }> = ({ isLight }
           { id: 'qrs', label: 'QRS Spike (Ventricles)' },
           { id: 'st', label: 'ST Segment (STEMI Alert)' },
           { id: 't', label: 'T Wave (Recharge)' },
-          { id: 'qt', label: 'QTc Interval (Sudden Death Risk)' },
+          { id: 'qt', label: 'QT / QTc interval' },
         ].map((tab) => (
           <button
             key={tab.id}
@@ -1436,7 +1437,7 @@ const CalibratedGridWaveBreakdown: React.FC<{ isLight: boolean }> = ({ isLight }
                 <strong>📏 Grid Measurement:</strong> {current.boxes}
               </div>
               <div>
-                <strong>⚡ Mechanical Event:</strong> {current.mechanicalEvent}
+                <strong>⚡ Physiology connection:</strong> {current.mechanicalEvent}
               </div>
             </div>
 
@@ -1445,7 +1446,7 @@ const CalibratedGridWaveBreakdown: React.FC<{ isLight: boolean }> = ({ isLight }
                 isLight ? 'bg-red-50 border-red-200 text-red-900' : 'bg-red-950/40 border-red-800 text-red-300'
               }`}
             >
-              <strong>🚨 Clinical Pathology Alert:</strong>
+              <strong>🚨 Clinical considerations:</strong>
               <br />
               {current.pathologyAlert}
             </div>
@@ -1464,6 +1465,7 @@ export const EcgIcuTutorialModal: React.FC<EcgIcuTutorialModalProps> = ({
   onClose,
   theme = 'light',
 }) => {
+  const [cycleOpen, setCycleOpen] = useState(false);
   const [activeLevel, setActiveLevel] = useState<TutorialLevel>('lkg');
   const [selectedLead, setSelectedLead] = useState<string>('II');
   const [selectedAxisDeg, setSelectedAxisDeg] = useState<number>(60); // Normal axis +60°
@@ -1475,7 +1477,9 @@ export const EcgIcuTutorialModal: React.FC<EcgIcuTutorialModalProps> = ({
   return (
     <div className="fixed inset-0 z-[70] flex items-stretch sm:items-center justify-center p-0 sm:p-6 bg-black/75 backdrop-blur-md animate-fadeIn overflow-hidden">
       <div
-        className={`relative w-full max-w-5xl h-[100dvh] sm:h-auto max-h-[100dvh] sm:max-h-[92vh] flex flex-col rounded-none sm:rounded-3xl border-0 sm:border shadow-2xl overflow-hidden transition-all ${
+        data-light={isLight}
+        role="dialog" aria-modal="true" aria-label="ECG learning studio"
+        className={`ecg-tutorial relative w-full max-w-5xl h-[100dvh] sm:h-auto max-h-[100dvh] sm:max-h-[92vh] flex flex-col rounded-none sm:rounded-3xl border-0 sm:border shadow-2xl overflow-hidden transition-all ${
           isLight
             ? 'bg-slate-50 border-slate-200 text-slate-900 shadow-slate-900/20'
             : 'bg-[#090e1a] border-slate-800 text-slate-100 shadow-cyan-950/30'
@@ -1494,7 +1498,7 @@ export const EcgIcuTutorialModal: React.FC<EcgIcuTutorialModalProps> = ({
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="text-sm sm:text-lg font-bold tracking-tight truncate">
-                  <span className="sm:hidden">ECG & ICU Tutorial</span><span className="hidden sm:inline">12-Lead ECG & ICU Telemetry Masterclass</span>
+                  <span className="sm:hidden">ECG learning studio</span><span className="hidden sm:inline">ECG learning studio</span>
                 </h2>
                 <span className="hidden sm:inline text-[11px] font-bold px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-600 sim-dark:text-rose-400 border border-rose-500/20">
                   Visual Walkthrough
@@ -1521,35 +1525,35 @@ export const EcgIcuTutorialModal: React.FC<EcgIcuTutorialModalProps> = ({
 
         {/* 4-Tier Curriculum Selector */}
         <div
-          className={`flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-6 py-2 sm:py-3 border-b overflow-x-auto no-scrollbar ${
+          className={`ecg-curriculum border-b ${
             isLight ? 'bg-slate-100/80 border-slate-200' : 'bg-slate-950/70 border-slate-800/80'
           }`}
         >
           {[
             {
               id: 'lkg',
-              label: 'Tier 1: Visual Fundamentals',
+              label: 'Start here',
               badge: 'Interactive Animations',
               icon: '🎨',
               color: 'from-amber-500 to-orange-500',
             },
             {
               id: 'med_student',
-              label: 'Tier 2: Medical Student',
+              label: 'Leads & axis',
               badge: 'Einthoven & Vectors',
               icon: '📚',
               color: 'from-sky-500 to-blue-500',
             },
             {
               id: 'resident',
-              label: 'Tier 3: Resident Physician',
+              label: 'Intervals',
               badge: 'Waves & Segments',
               icon: '🩺',
               color: 'from-emerald-500 to-teal-500',
             },
             {
               id: 'specialist',
-              label: 'Tier 4: Cardiology Specialist',
+              label: 'Patterns',
               badge: 'STEMI & Arrhythmias',
               icon: '⚡',
               color: 'from-rose-500 to-red-600',
@@ -1557,6 +1561,7 @@ export const EcgIcuTutorialModal: React.FC<EcgIcuTutorialModalProps> = ({
           ].map((tier) => (
             <button
               key={tier.id}
+              aria-pressed={activeLevel === tier.id}
               onClick={() => setActiveLevel(tier.id as TutorialLevel)}
               className={`min-h-[44px] shrink-0 flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl sm:rounded-2xl text-[11px] sm:text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
                 activeLevel === tier.id
@@ -1564,28 +1569,29 @@ export const EcgIcuTutorialModal: React.FC<EcgIcuTutorialModalProps> = ({
                   : 'text-slate-600 sim-dark:text-slate-400 hover:bg-white/50 sim-dark:hover:bg-slate-800/50'
               }`}
             >
-              <span>{tier.icon}</span>
+              
               <span>{tier.label}</span>
-              <span className="text-[10px] opacity-70 hidden sm:inline">({tier.badge})</span>
+              
             </button>
           ))}
         </div>
 
         {/* Scrollable Content Body */}
-        <div className="flex-1 overflow-y-auto overscroll-contain p-2.5 sm:p-4 md:p-6 space-y-3 sm:space-y-6 pb-[calc(16px+env(safe-area-inset-bottom))]">
+        <div className="ecg-content flex-1 overflow-y-auto overscroll-contain p-2.5 sm:p-4 md:p-6 space-y-3 sm:space-y-6 pb-[calc(16px+env(safe-area-inset-bottom))]">
           {/* ================================================================= */}
           {/* TIER 1: INTERACTIVE VISUAL WALKTHROUGH                            */}
           {/* ================================================================= */}
           {activeLevel === 'lkg' && (
             <div className="space-y-6 animate-fadeIn">
               {/* 1. Publication-Grade Real-Time Continuous Cardiac Physics Engine (Wiggers, PV Loop, 2.5D Flow Anatomy, Cellular Action Potential, Dipole Projection) */}
-              <InteractiveCardiacEngineMaster isLight={isLight} />
+              <EcgLearningPath />
+              <details onToggle={e => setCycleOpen(e.currentTarget.open)} className="rounded-2xl border border-slate-700 p-3"><summary className="min-h-[44px] cursor-pointer font-bold">Explore the cardiac cycle</summary><p className="text-xs my-3">A simplified physiology model. Pause and scrub to connect pressure, valve motion and electrical activation. Values illustrate relationships, not patient measurements.</p>{cycleOpen && <InteractiveCardiacEngineMaster isLight={isLight} />}</details>
 
               {/* 2. The 12-Camera Paparazzi Studio */}
-              <PaparazziCameraStudioVisualizer isLight={isLight} />
+              <details className="rounded-2xl border border-slate-700 p-3"><summary className="min-h-[44px] cursor-pointer font-bold">Explore lead viewpoints</summary><PaparazziCameraStudioVisualizer isLight={isLight} /></details>
 
               {/* 3. Calibrated Pink Millimeter Grid Breakdown */}
-              <CalibratedGridWaveBreakdown isLight={isLight} />
+              <details className="rounded-2xl border border-slate-700 p-3"><summary className="min-h-[44px] cursor-pointer font-bold">Wave and interval reference</summary><CalibratedGridWaveBreakdown isLight={isLight} /></details>
             </div>
           )}
 
@@ -1638,7 +1644,7 @@ export const EcgIcuTutorialModal: React.FC<EcgIcuTutorialModalProps> = ({
                     <span>The 6 Precordial Chest Leads (Horizontal Plane)</span>
                   </h3>
                   <p className="text-xs text-slate-600 sim-dark:text-slate-300 leading-relaxed">
-                    While limb leads view the heart from the front, chest leads (V1–V6) slice the heart horizontally like an axial CT scan:
+                    While limb leads view the heart from the front, chest leads (V1–V6) record electrical activity in the horizontal plane; they do not make anatomical slices:
                   </p>
                   <div className="grid grid-cols-2 gap-2 text-xs">
                     <div className="p-2 rounded-lg bg-slate-100 sim-dark:bg-slate-950/60 border border-slate-200 sim-dark:border-slate-800">
@@ -1735,9 +1741,9 @@ export const EcgIcuTutorialModal: React.FC<EcgIcuTutorialModalProps> = ({
                         <td className="py-2 px-3 font-bold text-amber-500">PR Interval</td>
                         <td className="py-2 px-3">120 - 200 ms (3-5 boxes)</td>
                         <td className="py-2 px-3">Isoelectric</td>
-                        <td className="py-2 px-3 font-sans">AV nodal conduction delay</td>
+                        <td className="py-2 px-3 font-sans">Atrial onset to ventricular onset</td>
                         <td className="py-2 px-3 font-sans text-[11px] text-rose-500">
-                          &gt;200ms = 1° AV Block; &lt;120ms = Pre-excitation (WPW syndrome)
+                          &gt;200ms = 1° AV Block; &lt;120ms: assess for pre-excitation or junctional rhythm
                         </td>
                       </tr>
                       <tr>
@@ -1755,7 +1761,7 @@ export const EcgIcuTutorialModal: React.FC<EcgIcuTutorialModalProps> = ({
                         <td className="py-2 px-3">Isoelectric (TP line)</td>
                         <td className="py-2 px-3 font-sans">Ventricular plateau Phase 2</td>
                         <td className="py-2 px-3 font-sans text-[11px] text-red-500 font-bold">
-                          Elevation &gt;1mm = Transmural STEMI; Depression = Subendocardial ischemia
+                          Assess J-point changes in contiguous leads with age/sex-specific thresholds and clinical context. ST changes have ischemic and nonischemic causes.
                         </td>
                       </tr>
                       <tr>
@@ -1809,9 +1815,9 @@ export const EcgIcuTutorialModal: React.FC<EcgIcuTutorialModalProps> = ({
                         Inferior STEMI (Leads II, III, aVF)
                       </div>
                       <div className="text-[11px] text-slate-600 sim-dark:text-slate-300 mt-1">
-                        <strong>Culprit Artery:</strong> Right Coronary Artery (RCA, 85%) or LCx.
+                        <strong>Culprit Artery:</strong> Right coronary artery or circumflex, depending on coronary anatomy.
                         <br /><strong>Reciprocal Changes:</strong> ST Depression in Lead I and aVL!
-                        <br /><span className="text-amber-600 sim-dark:text-amber-400 font-semibold">Caution:</span> Check V4R for Right Ventricular Infarct before giving nitroglycerin!
+                        <br /><span className="text-amber-600 sim-dark:text-amber-400 font-semibold">Caution:</span> Assess right-sided leads such as V4R for possible right ventricular involvement and correlate with haemodynamics.
                       </div>
                     </div>
 
@@ -1863,9 +1869,9 @@ export const EcgIcuTutorialModal: React.FC<EcgIcuTutorialModalProps> = ({
                         Hyperkalemia Sine Wave Progression
                       </div>
                       <div className={`text-[11px] mt-1 ${isLight ? 'text-slate-700' : 'text-slate-300'}`}>
-                        K+ 6.0: Peaked symmetrical tented T waves.
-                        <br />K+ 7.0: PR prolongation and P wave flattening.
-                        <br />K+ 8.0: Massive QRS widening merging with T wave into a <strong>Sine Wave</strong> → imminent arrest.
+                        Hyperkalemia may cause tall, peaked T waves.
+                        <br />PR prolongation and reduced P waves may occur.
+                        <br />Severe changes can include QRS widening merging with T into a <strong>Sine Wave</strong> → imminent arrest.
                       </div>
                     </div>
 
@@ -1875,7 +1881,7 @@ export const EcgIcuTutorialModal: React.FC<EcgIcuTutorialModalProps> = ({
                       </div>
                       <div className={`text-[11px] mt-1 ${isLight ? 'text-slate-700' : 'text-slate-300'}`}>
                         • <strong>AFib:</strong> Absent P waves, fibrillatory baseline (400-600 bpm), irregularly irregular R-R intervals.
-                        <br />• <strong>VFib:</strong> Completely chaotic polymorphic deflections, zero cardiac output, immediate defibrillation required!
+                        <br />• <strong>VFib:</strong> Chaotic ventricular electrical activity; a cardiac-arrest rhythm requiring an emergency response.
                       </div>
                     </div>
                   </div>
@@ -1953,20 +1959,20 @@ export const EcgIcuTutorialModal: React.FC<EcgIcuTutorialModalProps> = ({
 
         {/* Modal Footer */}
         <div
-          className={`flex items-center justify-between px-6 py-3 border-t text-xs ${
+          className={`ecg-footer flex items-center justify-between border-t text-xs ${
             isLight ? 'bg-slate-100/80 border-slate-200' : 'bg-slate-950 border-slate-800'
           }`}
         >
           <div className="flex items-center gap-2 text-slate-500 sim-dark:text-slate-400">
             <BookOpen className="w-4 h-4 text-rose-500" />
-            <span>NMC CBME Competency PE-5.1: 12-Lead Electrocardiogram Interpretation & Clinical Correlation</span>
+            <span>ECG interpretation · guided learning</span>
           </div>
 
           <button
             onClick={onClose}
             className="px-5 py-2 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-bold transition-all shadow-md cursor-pointer"
           >
-            Got It, Return to Simulator
+            Done
           </button>
         </div>
       </div>

@@ -86,13 +86,15 @@ export const CardiacConductionCanvas: React.FC<CardiacConductionCanvasProps> = (
     // Phase Labels
     ctx.font = 'bold 8.5px sans-serif';
     ctx.fillStyle = '#f59e0b';
-    ctx.fillText('Phase 0 (INa)', padL + 0.13 * plotW, toY(10));
+    ctx.fillText('0', padL + 0.13 * plotW, toY(10));
+    ctx.fillStyle = '#fda4af';
+    ctx.fillText('1', padL + 0.20 * plotW, toY(34));
     ctx.fillStyle = '#34d399';
-    ctx.fillText('Phase 2 (ICa,L)', padL + 0.23 * plotW, toY(20));
+    ctx.fillText('2', padL + 0.23 * plotW, toY(20));
     ctx.fillStyle = '#a855f7';
-    ctx.fillText('Phase 3 (IK)', padL + 0.38 * plotW, toY(-25));
+    ctx.fillText('3', padL + 0.38 * plotW, toY(-25));
     ctx.fillStyle = '#64748b';
-    ctx.fillText('Phase 4 (IK1)', padL + 0.65 * plotW, toY(-75));
+    ctx.fillText('4', padL + 0.65 * plotW, toY(-75));
 
     // Live Cursor
     const curX = padL + currentPhi * plotW;
@@ -261,26 +263,26 @@ export const CardiacConductionCanvas: React.FC<CardiacConductionCanvasProps> = (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 w-full">
       {/* Wavefront Propagation & Hexaxial Vector Compass */}
       <div className="lg:col-span-8 flex flex-col rounded-2xl bg-slate-950 border border-slate-800 p-3 overflow-hidden shadow-xl">
-        <div className="flex items-center justify-between px-2 mb-1.5">
+        <div className="flex flex-wrap items-center justify-between gap-2 px-2 mb-1.5">
           <h4 className="text-xs font-bold text-slate-100 uppercase tracking-wider font-mono">
-            Conduction Wavefront & Einthoven Hexaxial Dipole Engine
+            Electrical activation & lead direction
           </h4>
           <span className="text-[10px] font-mono text-amber-400">
             V_lead = D(t) • L_lead
           </span>
         </div>
-        <canvas ref={canvasRef} className="w-full h-56 rounded-xl block" />
+        <canvas ref={canvasRef} aria-label="Schematic conduction pathways and net electrical vector" className="w-full h-56 rounded-xl block" /><p className="text-xs text-slate-400 mt-3 leading-relaxed">A lead records the projection of the net electrical vector along its axis. A zero reading during a quiet interval is expected in this simplified model. Scrub to an activation phase to inspect the direction.</p>
       </div>
 
       {/* Cellular Action Potential (0-4) */}
       <div className="lg:col-span-4 flex flex-col rounded-2xl bg-slate-950 border border-slate-800 p-3 overflow-hidden shadow-xl">
-        <div className="flex items-center justify-between px-2 mb-1.5">
+        <div className="flex flex-wrap items-center justify-between gap-2 px-2 mb-1.5">
           <h4 className="text-xs font-bold text-slate-100 uppercase tracking-wider font-mono">
             Cellular Action Potential
           </h4>
           <span className="text-[10px] font-mono text-cyan-400">Phase 0 - 4</span>
         </div>
-        <canvas ref={actionPotentialCanvasRef} className="w-full h-56 rounded-xl block" />
+        <canvas ref={actionPotentialCanvasRef} aria-label="Schematic ventricular muscle action potential with phases zero to four" className="w-full h-56 rounded-xl block" /><div className="text-xs text-slate-300 mt-3 space-y-2"><p><strong>0 · Upstroke:</strong> fast sodium entry.</p><p><strong>1 · Early recovery:</strong> transient outward potassium current.</p><p><strong>2 · Plateau:</strong> calcium entry balances outward potassium current.</p><p><strong>3 · Repolarization:</strong> outward potassium current dominates.</p><p><strong>4 · Rest:</strong> stable resting potential in ventricular muscle.</p><p className="text-slate-400">This is a ventricular muscle cell, not an SA-node pacemaker cell. Surface ECG voltage and cellular membrane voltage are different measurements.</p><a className="text-fuchsia-400 underline" href="https://openstax.org/books/anatomy-and-physiology-2e/pages/19-2-cardiac-muscle-and-electrical-activity" target="_blank" rel="noreferrer">Cardiac electrical physiology reference</a></div>
       </div>
     </div>
   );

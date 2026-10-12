@@ -175,15 +175,6 @@ export const WiggersPvLoopCanvas: React.FC<WiggersPvLoopCanvasProps> = ({
     ctx.lineWidth = 1.5;
     ctx.stroke();
 
-    // Real-time readout banner on top
-    ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 11px monospace';
-    ctx.fillText(
-      `LVP: ${Math.round(currentData.lvPressure)} mmHg | AoP: ${Math.round(currentData.aorticPressure)} mmHg | LAP: ${Math.round(currentData.laPressure)} mmHg | LV Vol: ${Math.round(currentData.lvVolume)} mL`,
-      padL + 10,
-      padT + 16
-    );
-
     ctx.restore();
   }, [engine, currentPhi, isLight]);
 
@@ -335,6 +326,7 @@ export const WiggersPvLoopCanvas: React.FC<WiggersPvLoopCanvasProps> = ({
             <span className="text-emerald-400 font-bold">■ LV Volume</span>
           </div>
         </div>
+        <div className="grid grid-cols-2 gap-2 mb-2 text-xs text-slate-300" aria-label="Cardiac pressure readings"><span>LV: {Math.round(engine.evaluate(currentPhi).lvPressure)} mmHg</span><span>Aorta: {Math.round(engine.evaluate(currentPhi).aorticPressure)} mmHg</span><span>LA: {Math.round(engine.evaluate(currentPhi).laPressure)} mmHg</span><span>LV volume: {Math.round(engine.evaluate(currentPhi).lvVolume)} mL</span></div>
         <canvas ref={wiggersCanvasRef} className="w-full h-56 rounded-xl block" />
         <div aria-label="Cardiac cycle phase key" className="mt-2 grid grid-cols-2 gap-1 text-xs text-slate-300">
           {['Atrial', 'Iso-C', 'Rapid-Ej', 'Red-Ej', 'Iso-R', 'Rapid-Fill', 'Diastasis'].map((phase, i) => <span key={phase}>{i + 1}. {phase}</span>)}

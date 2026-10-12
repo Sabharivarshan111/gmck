@@ -46,9 +46,9 @@ const SEGMENTS: SegmentMeta[] = [
   },
   {
     id: 'pr',
-    name: 'PR Segment / Interval',
+    name: 'PR interval',
     shortName: 'PR',
-    phaseStart: 0.24,
+    phaseStart: 0.12,
     phaseEnd: 0.35,
     normalDurationMs: '120 – 200 ms (3–5 small squares)',
     color: '#059669',
@@ -82,14 +82,14 @@ const SEGMENTS: SegmentMeta[] = [
     shortName: 'ST',
     phaseStart: 0.48,
     phaseEnd: 0.60,
-    normalDurationMs: '80 – 120 ms (Isoelectric at J-point)',
+    normalDurationMs: 'Assess J-point and TP baseline',
     color: '#dc2626',
     bandColor: 'rgba(239, 68, 68, 0.26)',
     textColor: 'text-rose-700 sim-dark:text-rose-300',
     borderColor: 'border-rose-500',
     physioOrigin: 'Plateau phase (Phase 2) of ventricular cardiomyocyte action potential; all ventricular myocytes are uniformly depolarized with zero net trans-myocardial voltage gradient.',
     vectorExplanation: 'In normal myocardium, net dipole is zero → flat isoelectric segment continuous with TP baseline.',
-    leadsAnalysis: 'Should be flat at baseline across all leads (tolerates up to 1mm elevation in limb leads, 2mm in V2-V3 in young men).',
+    leadsAnalysis: 'Assess J-point elevation or depression in contiguous leads, using appropriate age and sex thresholds. Normal variants and nonischemic conditions can cause ST changes.',
     clinicalPearls: 'ST Elevation (STEMI): Acute transmural myocardial injury current pointing toward infarcted zone (Inferior: II, III, aVF; Anterior: V1-V4; Lateral: I, aVL, V5-V6). Reciprocal ST Depression in opposite leads. Diffuse concave elevation: Acute Pericarditis.'
   },
   {
@@ -127,14 +127,21 @@ const SEGMENTS: SegmentMeta[] = [
 ];
 
 export const Ecg12LeadCanvas: React.FC<Ecg12LeadProps> = ({
-  rhythm,
-  heartRate,
+  rhythm: liveRhythm,
+  heartRate: liveHeartRate,
   theme = 'light',
 }) => {
+  const [capture, setCapture] = useState({rhythm: liveRhythm, heartRate: liveHeartRate});
+  const latestCapture = useRef({rhythm: liveRhythm, heartRate: liveHeartRate});
+  latestCapture.current = {rhythm: liveRhythm, heartRate: liveHeartRate};
+  useEffect(() => { setCapture(latestCapture.current); }, [liveRhythm]);
+  const {rhythm, heartRate} = capture;
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [leadGroup, setLeadGroup] = useState(0);
+  const [zoomed, setZoomed] = useState(false);
   const [activeSegment, setActiveSegment] = useState<EcgSegmentType>('all');
   const [isAutoWalking, setIsAutoWalking] = useState(false);
-  const autoWalkTimerRef = useRef<any>(null);
+  const autoWalkTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Auto-walkthrough systematic stepper
   useEffect(() => {
@@ -144,7 +151,7 @@ export const Ecg12LeadCanvas: React.FC<Ecg12LeadProps> = ({
     }
 
     const order: EcgSegmentType[] = ['p', 'pr', 'qrs', 'st', 't', 'qt'];
-    let idx = order.indexOf(activeSegment as any);
+    let idx = order.indexOf(activeSegment);
     if (idx < 0) idx = 0;
 
     autoWalkTimerRef.current = setInterval(() => {
@@ -205,7 +212,7 @@ export const Ecg12LeadCanvas: React.FC<Ecg12LeadProps> = ({
 
     // 2. 12-Lead Standard Clinical 4x3 Matrix Layout
     const colWidth = w / 4;
-    const rowHeight = (h - 75) / 3;
+    const rowHeight = (h - 130) / 3;
 
     const leads: { name: string; col: number; row: number; leadKey: string }[] = [
       // Col 0: Standard Limb Leads (Bipolar)
@@ -243,7 +250,7 @@ export const Ecg12LeadCanvas: React.FC<Ecg12LeadProps> = ({
       // Draw Lead Label
       ctx.fillStyle = '#991b1b';
       ctx.font = 'bold 10px monospace';
-      ctx.fillText(name, xStart + 8, yCenter - (isRhythmStrip ? 22 : rowHeight / 2) + 12);
+      ctx.fillText(name, xStart + 8, yCenter - (isRhythmStrip ? 62 : rowHeight / 2) + 12);
 
       // Draw Standard 1 mV Calibration Pulse at the start of each lead
       // 10 mm height on standard 4 px/mm grid = 40 pixels!
@@ -367,8 +374,8 @@ export const Ecg12LeadCanvas: React.FC<Ecg12LeadProps> = ({
       ctx.strokeStyle = '#991b1b';
       ctx.lineWidth = 1.4;
 
-      let prevX = traceStartX;
-      let prevY = yCenter;
+      const prevX = traceStartX;
+      const prevY = yCenter;
       ctx.moveTo(prevX, prevY);
 
       for (let px = 0; px < traceWidth; px++) {
@@ -450,38 +457,38 @@ export const Ecg12LeadCanvas: React.FC<Ecg12LeadProps> = ({
     };
 
     // Draw the 12 Leads in standard 4x3 matrix
-    leads.forEach((lead) => {
-      const xStart = lead.col * colWidth;
+    leads.filter(lead => leadGroup === 4 || lead.col === leadGroup).forEach((lead) => {
+      const xStart = leadGroup === 4 ? lead.col * colWidth : 0;
       const yCenter = lead.row * rowHeight + rowHeight / 2 + 10;
-      drawLead(lead.name, xStart, yCenter, colWidth, lead.leadKey);
+      drawLead(lead.name, xStart, yCenter, leadGroup === 4 ? colWidth : w, lead.leadKey);
 
       // Divider vertical line between lead columns
-      if (lead.col > 0 && lead.row === 0) {
+      if (leadGroup === 4 && lead.col > 0 && lead.row === 0) {
         ctx.strokeStyle = 'rgba(185, 28, 28, 0.35)';
         ctx.lineWidth = 1;
         ctx.beginPath();
         ctx.moveTo(xStart, 0);
-        ctx.lineTo(xStart, h - 68);
+        ctx.lineTo(xStart, h - 120);
         ctx.stroke();
       }
     });
 
     // Row 4: Continuous Lead II Rhythm Strip across bottom
-    const rhythmY = h - 35;
+    const rhythmY = h - 48;
     ctx.strokeStyle = 'rgba(185, 28, 28, 0.5)';
     ctx.lineWidth = 1.2;
     ctx.beginPath();
-    ctx.moveTo(0, h - 70);
-    ctx.lineTo(w, h - 70);
+    ctx.moveTo(0, h - 120);
+    ctx.lineTo(w, h - 120);
     ctx.stroke();
 
-    drawLead('Lead II (Continuous Long Rhythm Strip for Arrhythmia & Rate Analysis)', 0, rhythmY, w, 'II', true);
+    drawLead('II · rhythm strip', 0, rhythmY, w, 'II', true);
 
     // ECG Footer metadata
     ctx.fillStyle = '#7f1d1d';
     ctx.font = '9.5px monospace';
-    ctx.fillText('Paper Speed: 25 mm/s | Voltage: 10 mm/mV (1mV = 10mm) | High-pass 0.05 Hz | Low-pass 150 Hz | NMC & AHA Standard Format', 12, h - 6);
-  }, [rhythm, heartRate, theme, activeSegment]);
+    ctx.fillText('SYNTHETIC · 25 mm/s · 10 mm/mV', 12, h - 6);
+  }, [rhythm, heartRate, theme, activeSegment, leadGroup]);
 
   const activeMeta = SEGMENTS.find((s) => s.id === activeSegment);
 
@@ -498,7 +505,7 @@ export const Ecg12LeadCanvas: React.FC<Ecg12LeadProps> = ({
           </div>
           <div className="flex items-center gap-2">
             <button
-              onClick={() => setIsAutoWalking(!isAutoWalking)}
+              onClick={() => { if (!isAutoWalking) setActiveSegment('p'); setIsAutoWalking(!isAutoWalking); }}
               className={`min-h-[44px] flex items-center gap-1.5 text-[11px] sm:text-xs font-bold px-3 rounded-xl border transition-all ${
                 isAutoWalking
                   ? 'bg-rose-500 text-white border-rose-600 shadow-sm'
@@ -560,18 +567,23 @@ export const Ecg12LeadCanvas: React.FC<Ecg12LeadProps> = ({
       </div>
 
       <div className="order-1 md:order-2 w-full flex items-center justify-between gap-2 px-1 md:hidden">
-        <span className="text-[10px] text-slate-500 sim-dark:text-slate-400 font-medium">ECG first · swipe to inspect all 12 leads</span>
-        <span className="text-[10px] font-mono text-red-700 sim-dark:text-red-300">25 mm/s · 10 mm/mV</span>
+        <span className="text-[10px] text-slate-500 sim-dark:text-slate-400 font-medium">Static teaching ECG · choose a lead group</span>
+        <span className="text-[10px] whitespace-nowrap font-mono text-red-700 sim-dark:text-red-300">25 mm/s · 10 mm/mV</span>
       </div>
 
+      <div className="order-1 md:order-2 w-full grid grid-cols-3 gap-1.5" aria-label="ECG lead groups">
+        {['I · II · III', 'aVR · aVL · aVF', 'V1 · V2 · V3', 'V4 · V5 · V6', 'All 12', zoomed ? 'Fit to screen' : 'Enlarge'].map((label, i) => <button key={i} aria-pressed={i < 5 ? leadGroup === i : zoomed} onClick={() => i < 5 ? setLeadGroup(i) : setZoomed(z => !z)} className={`min-h-[44px] rounded-xl text-xs border px-1 ${i < 5 && leadGroup === i ? 'bg-fuchsia-400 text-black border-fuchsia-400' : 'bg-slate-100 sim-dark:bg-slate-900 border-slate-300 sim-dark:border-slate-700'}`}>{label}</button>)}
+      </div>
+      <div className="order-1 md:order-2 w-full flex items-center justify-between gap-2 text-xs text-slate-500 sim-dark:text-slate-400"><span>Captured · {rhythm.toUpperCase()} · {Math.round(heartRate)} bpm{rhythm !== liveRhythm ? ' · case changed' : ''}</span><button onClick={() => setCapture({rhythm: liveRhythm, heartRate: liveHeartRate})} className="min-h-[44px] px-3 border border-slate-300 sim-dark:border-slate-700 rounded-xl">Capture current ECG</button></div>
       {/* Calibrated Pink 12-Lead Millimeter Grid Canvas */}
       <div className="order-1 md:order-2 w-full overflow-x-auto overscroll-x-contain rounded-xl border border-red-300/80 shadow-md bg-[#fff5f5]">
         <canvas
           data-testid="ecg-12lead-canvas"
           ref={canvasRef}
-          width={840}
-          height={490}
-          className="w-[720px] min-w-[720px] md:w-full md:min-w-0 h-auto block cursor-crosshair"
+          width={leadGroup === 4 ? 840 : 420}
+          height={480}
+          aria-label="Static synthetic ECG with calibrated grid"
+          className={`${zoomed ? 'w-[840px] min-w-[840px]' : 'w-full'} h-auto block cursor-crosshair`}
         />
       </div>
 

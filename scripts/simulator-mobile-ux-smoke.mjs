@@ -225,7 +225,8 @@ await check('view-3d-handoff-and-rotation', async () => {
   await drawer.getByTitle('Open the 3D viewport and center this structure').click();
   await drawer.waitFor({ state: 'detached' });
   const stage = page.getByTestId('mobile-anatomy-stage');
-  await visible(page.getByTestId('mobile-gesture-hint'), 'gesture hint after View 3D');
+  await visible(page.getByTestId('mobile-isolation-banner'), 'selected structure after View 3D');
+  await page.waitForFunction(() => !!document.querySelector('[data-testid="anatomy-renderer"]')?.getAttribute('data-isolated'));
   const canvas = stage.locator('canvas').first();
   const box = await visible(canvas, 'exposed 3D canvas');
   const before = await canvas.screenshot();

@@ -40,7 +40,7 @@ export const CardiacAnatomyCanvas: React.FC<CardiacAnatomyCanvasProps> = ({
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const particlesRef = useRef<BloodParticle[]>([]);
-  const [showLabels, setShowLabels] = useState(true);
+  const [showLabels, setShowLabels] = useState(false);
   const [showParticles, setShowParticles] = useState(true);
 
   // Initialize dual-chamber blood particles (oxygenated systemic & deoxygenated pulmonary)
@@ -80,15 +80,17 @@ export const CardiacAnatomyCanvas: React.FC<CardiacAnatomyCanvasProps> = ({
     if (!ctx) return;
 
     const dpr = window.devicePixelRatio || 1;
-    const width = canvas.clientWidth;
-    const height = canvas.clientHeight;
-    if (canvas.width !== width * dpr || canvas.height !== height * dpr) {
-      canvas.width = width * dpr;
-      canvas.height = height * dpr;
+    const displayWidth = canvas.clientWidth;
+    const width = showLabels ? 600 : 400;
+    const displayHeight = canvas.clientHeight;
+    const height = 480;
+    if (canvas.width !== displayWidth * dpr || canvas.height !== displayHeight * dpr) {
+      canvas.width = displayWidth * dpr;
+      canvas.height = displayHeight * dpr;
     }
 
     ctx.save();
-    ctx.scale(dpr, dpr);
+    ctx.scale(dpr * displayWidth / width, dpr * displayHeight / height);
 
     // Deep medical slate backdrop with subtle precision grid
     ctx.fillStyle = isLight ? '#f8fafc' : '#040814';
@@ -631,10 +633,10 @@ export const CardiacAnatomyCanvas: React.FC<CardiacAnatomyCanvasProps> = ({
         <div className="flex items-center gap-2">
           <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse" />
           <h4 className="text-xs font-bold text-slate-100 uppercase tracking-wider font-mono">
-            Publication-Grade 2.5D Coronal Cardiac Cross-Section
+            Heart chambers & valves · schematic
           </h4>
         </div>
-        <div className="flex items-center gap-1.5">
+        <div className="flex flex-wrap items-center gap-1.5">
           <button
             onClick={() => setShowLabels(!showLabels)}
             className={`text-[10px] font-mono px-2 py-0.5 rounded border transition-colors ${
@@ -653,7 +655,7 @@ export const CardiacAnatomyCanvas: React.FC<CardiacAnatomyCanvasProps> = ({
                 : 'bg-slate-900 text-slate-500 border-slate-800'
             }`}
           >
-            {showParticles ? '4D-Flow ON' : 'Flow OFF'}
+            {showParticles ? 'Flow ON' : 'Flow OFF'}
           </button>
           <span
             className={`text-[10px] font-mono px-2 py-0.5 rounded border ${
@@ -679,9 +681,10 @@ export const CardiacAnatomyCanvas: React.FC<CardiacAnatomyCanvasProps> = ({
       {/* Main Canvas */}
       <canvas
         ref={canvasRef}
-        className="w-full h-84 md:h-96 rounded-xl block cursor-crosshair bg-slate-950"
+        className="w-full aspect-[5/6] h-auto rounded-xl block cursor-crosshair bg-slate-950"
       />
 
+      <div className="grid grid-cols-2 gap-2 mt-3 text-xs text-slate-300" aria-label="Heart chamber key"><span><strong className="text-blue-400">RA → RV</strong><br/>Right heart → lungs</span><span><strong className="text-rose-400">LA → LV</strong><br/>Left heart → body</span><span>Mitral: LA → LV</span><span>Aortic: LV → aorta</span></div>
       {/* Real-Time Clinical Biophysics Telemetry Strip */}
       <div className="mt-2.5 grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-slate-900 text-[11px] font-mono">
         <div className="p-2 rounded-lg bg-slate-900/60 border border-slate-800/60">

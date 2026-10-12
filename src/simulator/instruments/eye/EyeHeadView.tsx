@@ -4,16 +4,16 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import type { EyeExamResponse, EyeSide } from './eyeExamModel';
 export interface EyeAnchors { right:{x:number;y:number}; left:{x:number;y:number} }
 const fallbackAnchors:EyeAnchors = {right:{x:.35,y:.45},left:{x:.65,y:.45}};
-interface Props { response:EyeExamResponse; light:'none'|EyeSide|'both'; onAnchors:(anchors:EyeAnchors)=>void; onSample:(response:EyeExamResponse)=>void }
-export function EyeHeadView({response,light,onAnchors,onSample}:Props) {
+interface Props { response:EyeExamResponse; light:'none'|EyeSide|'both'; onAnchors:(anchors:EyeAnchors)=>void; onSample:(response:EyeExamResponse)=>void; scleralTint?:number; inspection?:boolean }
+export function EyeHeadView({response,light,onAnchors,onSample,scleralTint=0,inspection=false}:Props) {
   const mount = useRef<HTMLDivElement>(null);
-  const latest = useRef({response,light,onAnchors,onSample}); latest.current={response,light,onAnchors,onSample};
+  const latest = useRef({response,light,onAnchors,onSample,scleralTint}); latest.current={response,light,onAnchors,onSample,scleralTint};
   const [status,setStatus] = useState<'loading'|'ready'|'error'>('loading');
   useEffect(()=>{
     const container=mount.current;if(!container)return;
     let disposed=false,frame=0,lastRender=0,lastSample=0;
     const scene=new THREE.Scene();
-    const camera=new THREE.PerspectiveCamera(34,1,.01,4);camera.position.set(0,1.625,.47);camera.lookAt(0,1.625,.025);
+    const camera=new THREE.PerspectiveCamera(34,1,.01,4);camera.position.set(0,inspection?1.644:1.625,inspection?.24:.47);camera.lookAt(0,inspection?1.644:1.625,.025);
     let renderer:THREE.WebGLRenderer;
     try { renderer=new THREE.WebGLRenderer({antialias:true,alpha:true,powerPreference:'low-power'}); }
     catch { setStatus('error'); latest.current.onAnchors(fallbackAnchors);return; }
@@ -88,6 +88,7 @@ export function EyeHeadView({response,light,onAnchors,onSample}:Props) {
         if(dict.Mouth_Large_Opened!==undefined)values[dict.Mouth_Large_Opened]=displayed.mouth;
       }
       for(const side of ['right','left'] as const){const lamp=lamps[side];lamp.intensity=latest.current.light===side||latest.current.light==='both'?.14:0;const eye=eyes[side];if(eye){const p=eye.getWorldPosition(new THREE.Vector3());lamp.position.set(p.x+(.05*(side==='left'?1:-1)),p.y,.25);lamp.target.position.copy(p);}}
+      sclera.color.set(0xfffaf3).lerp(new THREE.Color(0xffd53c),THREE.MathUtils.clamp(latest.current.scleralTint,0,1));
       renderer.render(scene,camera);
       if(now-lastSample>100){lastSample=now;latest.current.onSample({right:{...displayed.right},left:{...displayed.left},mouth:displayed.mouth,lightDrive:latest.current.response.lightDrive});}
     };frame=requestAnimationFrame(animate);

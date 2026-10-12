@@ -1249,6 +1249,7 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
 }) => {
   const mountRef = useRef<HTMLDivElement>(null);
   const labelLayerRef = useRef<HTMLDivElement>(null);
+  const [cameraViewsOpen, setCameraViewsOpen] = useState(false);
   const prepareLabelsRef = useRef<((atlas: Atlas) => void) | null>(null);
   const sceneRef = useRef<THREE.Scene | null>(null);
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
@@ -3902,6 +3903,7 @@ varying float partSelected;
 
   return (
     <div
+      data-testid="anatomy-renderer" data-isolated={isolatedPartId || ''}
       className={`relative w-full h-full min-h-[380px] md:min-h-[460px] rounded-2xl md:rounded-3xl overflow-hidden border ${
         isLight ? 'bg-slate-50 border-slate-200/80 shadow-md' : 'bg-[#070b14] border-slate-800 shadow-2xl'
       }`}
@@ -4052,9 +4054,10 @@ varying float partSelected;
       </div>
 
       {!graphicsError && !contextLost && (
-        <div className="absolute top-[76px] sm:top-14 left-3 z-20 flex gap-1 rounded-xl bg-slate-900/90 p-1 text-white backdrop-blur-xl" aria-label="View direction">
-          {(['front', 'back', 'side'] as const).map(direction => (
-            <button key={direction} onClick={() => setCameraDirection(direction)}
+        <div className="absolute top-[76px] sm:top-14 right-3 z-20 flex gap-1 rounded-xl bg-slate-900/90 p-1 text-white" aria-label="View direction">
+          <button aria-label={cameraViewsOpen ? 'Hide camera views' : 'Show camera views'} aria-expanded={cameraViewsOpen} onClick={() => setCameraViewsOpen(v => !v)} className="min-h-11 min-w-11 px-2 text-xs rounded-lg">{cameraViewsOpen ? '×' : 'Views'}</button>
+          {cameraViewsOpen && (['front', 'back', 'side'] as const).map(direction => (
+            <button key={direction} onClick={() => {setCameraDirection(direction); setCameraViewsOpen(false);}}
               className="min-h-11 min-w-11 px-2 text-xs capitalize rounded-lg hover:bg-slate-700 focus-visible:ring-2 focus-visible:ring-sky-400">
               {direction}
             </button>
