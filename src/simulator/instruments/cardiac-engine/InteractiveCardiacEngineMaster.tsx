@@ -21,7 +21,7 @@ export const InteractiveCardiacEngineMaster: React.FC<{ isLight?: boolean }> = (
     mitralRegurgitation: false,
   });
 
-  const [isPlaying, setIsPlaying] = useState<boolean>(true);
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [currentPhi, setCurrentPhi] = useState<number>(0);
   const [activeTab, setActiveTab] = useState<'hemodynamics' | 'anatomy' | 'electrophysiology'>('hemodynamics');
 
@@ -36,6 +36,8 @@ export const InteractiveCardiacEngineMaster: React.FC<{ isLight?: boolean }> = (
 
   // 60fps RequestAnimationFrame continuous loop
   useEffect(() => {
+    if (!isPlaying) return;
+    lastTimeRef.current = performance.now();
     const loop = (now: number) => {
       if (isPlaying) {
         const deltaMs = now - lastTimeRef.current;
@@ -105,7 +107,7 @@ export const InteractiveCardiacEngineMaster: React.FC<{ isLight?: boolean }> = (
             }`}
           >
             <Activity className="w-3.5 h-3.5" />
-            Wiggers & PV Loop
+            Pressure & volume
           </button>
           <button
             onClick={() => setActiveTab('anatomy')}
@@ -114,7 +116,7 @@ export const InteractiveCardiacEngineMaster: React.FC<{ isLight?: boolean }> = (
             }`}
           >
             <Heart className="w-3.5 h-3.5" />
-            2.5D Anatomy & Valves
+            Heart & valves
           </button>
           <button
             onClick={() => setActiveTab('electrophysiology')}
@@ -123,7 +125,7 @@ export const InteractiveCardiacEngineMaster: React.FC<{ isLight?: boolean }> = (
             }`}
           >
             <Zap className="w-3.5 h-3.5" />
-            Conduction & Dipole
+            Electrical activity
           </button>
         </div>
       </div>

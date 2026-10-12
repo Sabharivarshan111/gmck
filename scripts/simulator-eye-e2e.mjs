@@ -25,9 +25,9 @@ try {
   await page.getByTestId('diagnostic-pupil').getByRole('button',{name:'🔦 Penlight',exact:true}).click();
   await page.getByRole('button',{name:'Right eye penlight',exact:true}).click();await page.waitForTimeout(600);
   assert.equal(Number(await state.getAttribute('data-right-pupil')),2.2);assert.equal(Number(await state.getAttribute('data-left-pupil')),2.2);
-  await preset.selectOption('rapd');await page.getByRole('button',{name:'Left eye penlight',exact:true}).click();await page.waitForTimeout(500);
+  await preset.selectOption('rapd');await page.getByRole('button',{name:'Left eye penlight',exact:true}).click();await page.waitForFunction(()=>Number(document.querySelector('[data-testid="eye-right-diameter"]')?.textContent.split(' ')[0])<2.6);
   const strong=Number((await page.getByTestId('eye-right-diameter').textContent()).split(' ')[0]);
-  await page.getByRole('button',{name:'Right eye penlight',exact:true}).click();await page.waitForTimeout(600);
+  await page.getByRole('button',{name:'Right eye penlight',exact:true}).click();await page.waitForFunction(()=>Number(document.querySelector('[data-testid="eye-right-diameter"]')?.textContent.split(' ')[0])>3.8);
   const weak=Number((await page.getByTestId('eye-right-diameter').textContent()).split(' ')[0]);assert.ok(weak>strong+.8,'swinging light did not cause bilateral relative dilation');
   await preset.selectOption('iii');await page.getByRole('button',{name:'Left eye penlight',exact:true}).click();await page.waitForTimeout(500);
   assert.equal(Number(await state.getAttribute('data-right-pupil')),6.5);assert.equal(Number(await state.getAttribute('data-left-pupil')),2.2);

@@ -22,6 +22,7 @@ import {
   ArrowRight,
   Sparkles,
 } from 'lucide-react';
+import { EcgLearningPath } from './EcgLearningPath';
 import { InteractiveCardiacEngineMaster } from './cardiac-engine/InteractiveCardiacEngineMaster';
 
 interface EcgIcuTutorialModalProps {
@@ -1475,7 +1476,9 @@ export const EcgIcuTutorialModal: React.FC<EcgIcuTutorialModalProps> = ({
   return (
     <div className="fixed inset-0 z-[70] flex items-stretch sm:items-center justify-center p-0 sm:p-6 bg-black/75 backdrop-blur-md animate-fadeIn overflow-hidden">
       <div
-        className={`relative w-full max-w-5xl h-[100dvh] sm:h-auto max-h-[100dvh] sm:max-h-[92vh] flex flex-col rounded-none sm:rounded-3xl border-0 sm:border shadow-2xl overflow-hidden transition-all ${
+        data-light={isLight}
+        role="dialog" aria-modal="true" aria-label="ECG learning studio"
+        className={`ecg-tutorial relative w-full max-w-5xl h-[100dvh] sm:h-auto max-h-[100dvh] sm:max-h-[92vh] flex flex-col rounded-none sm:rounded-3xl border-0 sm:border shadow-2xl overflow-hidden transition-all ${
           isLight
             ? 'bg-slate-50 border-slate-200 text-slate-900 shadow-slate-900/20'
             : 'bg-[#090e1a] border-slate-800 text-slate-100 shadow-cyan-950/30'
@@ -1494,7 +1497,7 @@ export const EcgIcuTutorialModal: React.FC<EcgIcuTutorialModalProps> = ({
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="text-sm sm:text-lg font-bold tracking-tight truncate">
-                  <span className="sm:hidden">ECG & ICU Tutorial</span><span className="hidden sm:inline">12-Lead ECG & ICU Telemetry Masterclass</span>
+                  <span className="sm:hidden">ECG learning studio</span><span className="hidden sm:inline">ECG learning studio</span>
                 </h2>
                 <span className="hidden sm:inline text-[11px] font-bold px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-600 sim-dark:text-rose-400 border border-rose-500/20">
                   Visual Walkthrough
@@ -1521,35 +1524,35 @@ export const EcgIcuTutorialModal: React.FC<EcgIcuTutorialModalProps> = ({
 
         {/* 4-Tier Curriculum Selector */}
         <div
-          className={`flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-6 py-2 sm:py-3 border-b overflow-x-auto no-scrollbar ${
+          className={`ecg-curriculum border-b ${
             isLight ? 'bg-slate-100/80 border-slate-200' : 'bg-slate-950/70 border-slate-800/80'
           }`}
         >
           {[
             {
               id: 'lkg',
-              label: 'Tier 1: Visual Fundamentals',
+              label: 'Start here',
               badge: 'Interactive Animations',
               icon: '🎨',
               color: 'from-amber-500 to-orange-500',
             },
             {
               id: 'med_student',
-              label: 'Tier 2: Medical Student',
+              label: 'Leads & axis',
               badge: 'Einthoven & Vectors',
               icon: '📚',
               color: 'from-sky-500 to-blue-500',
             },
             {
               id: 'resident',
-              label: 'Tier 3: Resident Physician',
+              label: 'Intervals',
               badge: 'Waves & Segments',
               icon: '🩺',
               color: 'from-emerald-500 to-teal-500',
             },
             {
               id: 'specialist',
-              label: 'Tier 4: Cardiology Specialist',
+              label: 'Patterns',
               badge: 'STEMI & Arrhythmias',
               icon: '⚡',
               color: 'from-rose-500 to-red-600',
@@ -1557,6 +1560,7 @@ export const EcgIcuTutorialModal: React.FC<EcgIcuTutorialModalProps> = ({
           ].map((tier) => (
             <button
               key={tier.id}
+              aria-pressed={activeLevel === tier.id}
               onClick={() => setActiveLevel(tier.id as TutorialLevel)}
               className={`min-h-[44px] shrink-0 flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl sm:rounded-2xl text-[11px] sm:text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
                 activeLevel === tier.id
@@ -1564,22 +1568,23 @@ export const EcgIcuTutorialModal: React.FC<EcgIcuTutorialModalProps> = ({
                   : 'text-slate-600 sim-dark:text-slate-400 hover:bg-white/50 sim-dark:hover:bg-slate-800/50'
               }`}
             >
-              <span>{tier.icon}</span>
+              
               <span>{tier.label}</span>
-              <span className="text-[10px] opacity-70 hidden sm:inline">({tier.badge})</span>
+              
             </button>
           ))}
         </div>
 
         {/* Scrollable Content Body */}
-        <div className="flex-1 overflow-y-auto overscroll-contain p-2.5 sm:p-4 md:p-6 space-y-3 sm:space-y-6 pb-[calc(16px+env(safe-area-inset-bottom))]">
+        <div className="ecg-content flex-1 overflow-y-auto overscroll-contain p-2.5 sm:p-4 md:p-6 space-y-3 sm:space-y-6 pb-[calc(16px+env(safe-area-inset-bottom))]">
           {/* ================================================================= */}
           {/* TIER 1: INTERACTIVE VISUAL WALKTHROUGH                            */}
           {/* ================================================================= */}
           {activeLevel === 'lkg' && (
             <div className="space-y-6 animate-fadeIn">
               {/* 1. Publication-Grade Real-Time Continuous Cardiac Physics Engine (Wiggers, PV Loop, 2.5D Flow Anatomy, Cellular Action Potential, Dipole Projection) */}
-              <InteractiveCardiacEngineMaster isLight={isLight} />
+              <EcgLearningPath />
+              <details className="rounded-2xl border border-slate-700 p-3"><summary className="min-h-[44px] cursor-pointer font-bold">Explore the cardiac cycle</summary><p className="text-xs my-3">A simplified physiology model. Pause and scrub to connect pressure, valve motion and electrical activation. Values illustrate relationships, not patient measurements.</p><InteractiveCardiacEngineMaster isLight={isLight} /></details>
 
               {/* 2. The 12-Camera Paparazzi Studio */}
               <PaparazziCameraStudioVisualizer isLight={isLight} />
@@ -1638,7 +1643,7 @@ export const EcgIcuTutorialModal: React.FC<EcgIcuTutorialModalProps> = ({
                     <span>The 6 Precordial Chest Leads (Horizontal Plane)</span>
                   </h3>
                   <p className="text-xs text-slate-600 sim-dark:text-slate-300 leading-relaxed">
-                    While limb leads view the heart from the front, chest leads (V1–V6) slice the heart horizontally like an axial CT scan:
+                    While limb leads view the heart from the front, chest leads (V1–V6) record electrical activity in the horizontal plane; they do not make anatomical slices:
                   </p>
                   <div className="grid grid-cols-2 gap-2 text-xs">
                     <div className="p-2 rounded-lg bg-slate-100 sim-dark:bg-slate-950/60 border border-slate-200 sim-dark:border-slate-800">
@@ -1737,7 +1742,7 @@ export const EcgIcuTutorialModal: React.FC<EcgIcuTutorialModalProps> = ({
                         <td className="py-2 px-3">Isoelectric</td>
                         <td className="py-2 px-3 font-sans">AV nodal conduction delay</td>
                         <td className="py-2 px-3 font-sans text-[11px] text-rose-500">
-                          &gt;200ms = 1° AV Block; &lt;120ms = Pre-excitation (WPW syndrome)
+                          &gt;200ms = 1° AV Block; &lt;120ms: assess for pre-excitation or junctional rhythm
                         </td>
                       </tr>
                       <tr>
@@ -1755,7 +1760,7 @@ export const EcgIcuTutorialModal: React.FC<EcgIcuTutorialModalProps> = ({
                         <td className="py-2 px-3">Isoelectric (TP line)</td>
                         <td className="py-2 px-3 font-sans">Ventricular plateau Phase 2</td>
                         <td className="py-2 px-3 font-sans text-[11px] text-red-500 font-bold">
-                          Elevation &gt;1mm = Transmural STEMI; Depression = Subendocardial ischemia
+                          Assess J-point changes in contiguous leads with age/sex-specific thresholds and clinical context. ST changes have ischemic and nonischemic causes.
                         </td>
                       </tr>
                       <tr>
@@ -1863,9 +1868,9 @@ export const EcgIcuTutorialModal: React.FC<EcgIcuTutorialModalProps> = ({
                         Hyperkalemia Sine Wave Progression
                       </div>
                       <div className={`text-[11px] mt-1 ${isLight ? 'text-slate-700' : 'text-slate-300'}`}>
-                        K+ 6.0: Peaked symmetrical tented T waves.
-                        <br />K+ 7.0: PR prolongation and P wave flattening.
-                        <br />K+ 8.0: Massive QRS widening merging with T wave into a <strong>Sine Wave</strong> → imminent arrest.
+                        Hyperkalemia may cause tall, peaked T waves.
+                        <br />PR prolongation and reduced P waves may occur.
+                        <br />Severe changes can include QRS widening merging with T into a <strong>Sine Wave</strong> → imminent arrest.
                       </div>
                     </div>
 
@@ -1953,20 +1958,20 @@ export const EcgIcuTutorialModal: React.FC<EcgIcuTutorialModalProps> = ({
 
         {/* Modal Footer */}
         <div
-          className={`flex items-center justify-between px-6 py-3 border-t text-xs ${
+          className={`ecg-footer flex items-center justify-between border-t text-xs ${
             isLight ? 'bg-slate-100/80 border-slate-200' : 'bg-slate-950 border-slate-800'
           }`}
         >
           <div className="flex items-center gap-2 text-slate-500 sim-dark:text-slate-400">
             <BookOpen className="w-4 h-4 text-rose-500" />
-            <span>NMC CBME Competency PE-5.1: 12-Lead Electrocardiogram Interpretation & Clinical Correlation</span>
+            <span>ECG interpretation · guided learning</span>
           </div>
 
           <button
             onClick={onClose}
             className="px-5 py-2 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-bold transition-all shadow-md cursor-pointer"
           >
-            Got It, Return to Simulator
+            Done
           </button>
         </div>
       </div>

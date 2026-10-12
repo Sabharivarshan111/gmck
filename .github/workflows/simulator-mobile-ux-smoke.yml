@@ -70,6 +70,8 @@ jobs:
           ORBIT_STUDIO_BASE_URL: http://127.0.0.1:4180
         run: node scripts/simulator-eye-e2e.mjs
 
+      - name: Verify ECG lessons and mobile lead reading
+        run: node scripts/simulator-ecg-e2e.mjs
       - name: Exercise normal skills and mobile studio widths
         env:
           ORBIT_STUDIO_BASE_URL: http://127.0.0.1:4180
@@ -94,6 +96,7 @@ jobs:
             artifacts/simulator-mobile-ux
             artifacts/simulator-eye-exam
             artifacts/simulator-clinical
+            artifacts/simulator-ecg
           if-no-files-found: error
           retention-days: 14
 
