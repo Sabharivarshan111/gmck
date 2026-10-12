@@ -30,7 +30,7 @@ export function EyeHeadView({response,light,onAnchors,onSample}:Props) {
     const faceTexture=texture('face'),mouthTexture=texture('mouth'),irisTexture=texture('iris'),scleraTexture=texture('sclera');
     const skin=new THREE.MeshStandardMaterial({map:faceTexture,roughness:.6});materials.push(skin);
     const mouthMat=new THREE.MeshStandardMaterial({map:mouthTexture,roughness:.65});materials.push(mouthMat);
-    const sclera=new THREE.MeshStandardMaterial({map:scleraTexture,color:0xfffaf3,roughness:.36});materials.push(sclera);
+    const sclera=new THREE.MeshStandardMaterial({map:scleraTexture,color:0xfffaf3,roughness:.36,alphaTest:.5});materials.push(sclera);
     const cornea=new THREE.MeshPhysicalMaterial({color:0xffffff,roughness:.06,transparent:true,opacity:.14,depthWrite:false,clearcoat:1});materials.push(cornea);
     const tear=new THREE.MeshStandardMaterial({color:0xba7d75,roughness:.25});materials.push(tear);
     const eyes:Partial<Record<EyeSide,THREE.Object3D>>={};
