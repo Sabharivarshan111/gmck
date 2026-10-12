@@ -6,6 +6,7 @@ on:
       - 'src/pages/Simulator.tsx'
       - 'src/simulator/**'
       - 'scripts/simulator-mobile-ux-smoke.mjs'
+      - 'scripts/simulator-studio-e2e.mjs'
       - '.github/workflows/simulator-mobile-ux-smoke.yml'
   workflow_dispatch:
 
@@ -41,6 +42,11 @@ jobs:
             sleep $((attempt * 5))
           done
           npx playwright install --with-deps chromium
+
+      - name: Exercise normal skills and mobile studio widths
+        env:
+          ORBIT_STUDIO_BASE_URL: https://orbitmbbs.vercel.app
+        run: node scripts/simulator-studio-e2e.mjs
 
       - name: Exercise the live mobile anatomy UX
         env:
