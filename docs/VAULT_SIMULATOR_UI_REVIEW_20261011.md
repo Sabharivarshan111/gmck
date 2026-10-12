@@ -1,6 +1,6 @@
 # Vault and clinical studio review
 
-Status: implemented and committed locally; not pushed or deployed. GitHub publishing was rejected by automatic approval review, which requires explicit approval to publish changed source to the user's public repository Sabharivarshan111/gmck.
+Status: published to PR #61 after explicit owner approval. Initial preview browser checks passed; two follow-up accessibility/navigation fixes are awaiting rebuilt preview verification and production merge.
 
 ## Changes available for review
 
@@ -21,7 +21,7 @@ Status: implemented and committed locally; not pushed or deployed. GitHub publis
 
 Passed: Android production JavaScript bundle (using a temporary Metro configuration for reused dependency paths), root TypeScript, mobile TypeScript, changed component ESLint, combined native-browser/simulator production build, actual source chest mesh integrity, simulator UI regression, Notes schema check, 645 case/action regression and rendered Web Audio routing/timing/preset/stop tests.
 
-Prepared but not executed: mobile-width studio browser regression. Local Chromium could not be installed; preview deployment is blocked by publishing approval. Cloud browser opened the unchanged production simulator and reported WebGL unavailable, so live 3D movement cannot be claimed visually verified.
+Cloud browser preview checks: all six independent skills open with normal baseline; normal breath playback, S1/S2 selection and sinus ECG pass; widths 360/390/430 have no horizontal overflow; case search, comparison/reset and all four Vault destinations pass. General Examination dialog semantics and full-document Back to Vault navigation were corrected after browser inspection. Local Playwright script remains unexecuted; cloud browser WebGL is unavailable, so live 3D movement is not visually verified.
 
 ## Limits
 
@@ -30,6 +30,6 @@ Prepared but not executed: mobile-width studio browser regression. Local Chromiu
 - The separate source-reconstructed POCUS pilot branch is not included in this change. Existing POCUS remains a teaching simulation.
 - Previous competitor screenshots were not all recovered for direct visual comparison in this turn.
 
-## Next action after approval
+## Remaining release verification
 
-Push the local feature branch to the confirmed existing repository; create its PR and preview deployment; run the mobile-width studio checks and inspect Vault/tool screenshots; fix any observed problems before merging and verifying the production deployment.
+Verify the rebuilt preview for dialog focus and full-document Vault return, merge PR #61, and verify the exact production deployment.
