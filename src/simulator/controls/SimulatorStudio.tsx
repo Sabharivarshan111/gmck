@@ -6,7 +6,7 @@ import type { DiagnosticToolType } from '../types';
 import './SimulatorStudio.css';
 
 const SKILLS: { id: DiagnosticToolType | 'clubbing'; title: string; hint: string; Icon: typeof Activity }[] = [
-  { id: 'stethoscope', title: 'Auscultation', hint: 'Normal heart & breath sounds, then compare', Icon: Stethoscope },
+  { id: 'stethoscope', title: 'Auscultation', hint: 'Normal heart & lung breath sounds, then compare', Icon: Stethoscope },
   { id: 'ecg12', title: '12-lead ECG', hint: 'Normal sinus rhythm & case traces', Icon: Activity },
   { id: 'ultrasound', title: 'Ultrasound / POCUS', hint: 'Explore probe views & scan findings', Icon: ScanLine },
   { id: 'pupil', title: 'Pupil examination', hint: 'Direct & consensual light responses', Icon: Eye },
@@ -25,7 +25,7 @@ export function SimulatorStudio({ scenarioId, onScenario, onAnatomy, onCase, onT
   const skills = SKILLS.filter(s => `${s.title} ${s.hint}`.toLowerCase().includes(query.toLowerCase()));
   const cases = SCENARIOS.filter(s => s.id !== 'normal' && `${s.title} ${s.category}`.toLowerCase().includes(query.toLowerCase()));
   return <div className="studio" data-testid="simulator-studio">
-    <header className="studio-header"><Link to="/notes" aria-label="Back to Vault"><ArrowLeft size={20} /></Link><span>ORBIT <b>CLINICAL STUDIO</b></span></header>
+    <header className="studio-header"><Link reloadDocument to="/notes" aria-label="Back to Vault"><ArrowLeft size={20} /></Link><span>ORBIT <b>CLINICAL STUDIO</b></span></header>
     <main className="studio-main">
       <span className="studio-eyebrow">EXPLORE. LISTEN. PRACTISE.</span>
       <h1>What would you<br />like to learn?</h1>

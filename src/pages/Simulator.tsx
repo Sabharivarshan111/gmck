@@ -398,6 +398,7 @@ export const Simulator: React.FC = () => {
           <div className="flex items-center gap-2 md:gap-3 min-w-0">
             <Link
               to="/notes"
+              reloadDocument
               aria-label="Back to Vault"
               className={`min-h-[44px] min-w-[44px] px-2 sm:px-2.5 rounded-xl border flex items-center justify-center gap-1 text-xs font-semibold transition-all ${
                 isLight
