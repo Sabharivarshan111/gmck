@@ -16,12 +16,9 @@ import {
   BookOpen,
   BookOpenCheck,
   ChevronRight,
-  ClipboardList,
   GraduationCap,
-  Layers,
   RotateCw,
   Sparkles,
-  Stethoscope,
   Wand2,
 } from 'lucide-react-native';
 import { Text } from '@/components/Text';
@@ -301,17 +298,17 @@ export default function NotesScreen() {
 function VaultView({ onNotes, onSimulator, onProformas, onFlashcards }: { onNotes: () => void; onSimulator: () => void; onProformas: () => void; onFlashcards: () => void }) {
   const { colors } = useTheme();
   const entries = [
-    { title: 'Notes', hint: 'Years, subjects & handwritten answers', Icon: BookOpen, open: onNotes },
-    { title: 'Simulator & Anatomy', hint: 'Explore the body or learn a bedside skill', Icon: Stethoscope, open: onSimulator },
-    { title: 'Case proformas', hint: 'Clinical history & examination guides', Icon: ClipboardList, open: onProformas },
-    { title: 'Anki flashcards', hint: 'Import decks & revise with spaced repetition', Icon: Layers, open: onFlashcards },
+    { title: 'Notes', hint: 'Years, subjects & handwritten answers', emoji: '📚', open: onNotes },
+    { title: 'Simulator & Anatomy', hint: 'Explore the body or learn a bedside skill', emoji: '🫀', open: onSimulator },
+    { title: 'Case proformas', hint: 'Clinical history & examination guides', emoji: '📋', open: onProformas },
+    { title: 'Anki flashcards', hint: 'Import decks & revise with spaced repetition', emoji: '🃏', open: onFlashcards },
   ];
   return <>
     <Text style={[styles.title, { color: colors.text }]}>Vault</Text>
     <Text style={[styles.subtitle, { color: colors.textMuted }]}>Your study space. Choose what you want to do.</Text>
     <View style={styles.yearGrid}>
-      {entries.map(({ title, hint, Icon, open }) => <Touchable key={title} label={title} onPress={open} scaleTo={0.97} style={[styles.yearCard, { minHeight: 170, backgroundColor: colors.card, borderColor: colors.border }]}>
-        <View style={[styles.extraIcon, { backgroundColor: withAlpha(colors.accent, 0.15) }]}><Icon size={22} color={colors.accent} /></View>
+      {entries.map(({ title, hint, emoji, open }) => <Touchable key={title} label={title} onPress={open} scaleTo={0.97} style={[styles.yearCard, { minHeight: 170, backgroundColor: colors.card, borderColor: colors.border }]}>
+        <Text accessible={false} style={styles.yearEmoji}>{emoji}</Text>
         <Text style={[styles.yearName, { color: colors.text }]}>{title}</Text>
         <Text style={[styles.yearHint, { color: colors.textMuted }]}>{hint}</Text>
         <ChevronRight size={18} color={colors.accent} />
