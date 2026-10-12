@@ -33,7 +33,8 @@ for(const s of PG_SOURCES){
  assert.ok(['natboard.edu.in','www.aiimsexams.ac.in'].includes(new URL(s.url).hostname));
 }
 const screen=fs.readFileSync('mobile/src/components/PgEntranceBankModal.tsx','utf8');
-assert.ok(screen.includes('publisher-declared MIT licence'));assert.ok(screen.includes('not independently medically reviewed'));
+assert.ok(screen.includes('Credits and third-party licences are available in Settings → About'));assert.ok(screen.includes('not independently medically reviewed'));
+assert.ok(fs.readFileSync('mobile/src/components/AboutLicences.tsx','utf8').includes('THIRD_PARTY_LICENCES'));
 assert.ok(!/source-labelled questions are available offline/.test(screen));
 assert.ok(fs.readFileSync('mobile/src/screens/NotesScreen.tsx','utf8').includes('PG medical practice and official exam information'));
 console.log(JSON.stringify({release_policy:'publisher_declared_mit_practice',third_party_questions_released:PG_COMPACT.total,question_data_bytes:PG_COMPACT_BYTES,original_practice_questions:10,subjects:9,chapters:10,official_information_links:3,verified_exam_years:0,independently_medically_reviewed_answers:0,legal_immunity_guaranteed:false}));
