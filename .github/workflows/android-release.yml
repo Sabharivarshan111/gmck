@@ -93,6 +93,7 @@ jobs:
       # shipping a known-broken feature actually reaches people.
       - name: Checks
         run: |
+          node ../scripts/build-pg-compact.mjs
           node ../scripts/check-pg-release-content.mjs
           npm run check:fanout
           npm run check:mcq

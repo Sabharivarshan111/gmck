@@ -1533,12 +1533,17 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
       partIndex: number;
       button: HTMLButtonElement;
       widthHint: number;
+      leader: SVGGElement;
+      line: SVGLineElement;
+      outline: SVGLineElement;
+      arrow: SVGPolygonElement;
     };
     let floatingLabelTargets: FloatingLabelTarget[] = [];
 
     const hideFloatingLabels = () => {
       floatingLabelTargets.forEach((target) => {
         target.button.style.display = 'none';
+        target.leader.style.display = 'none';
       });
     };
 
@@ -1547,6 +1552,14 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
       if (!root) return;
       root.replaceChildren();
       floatingLabelTargets = [];
+      const svgNS = 'http://www.w3.org/2000/svg';
+      const leaders = document.createElementNS(svgNS, 'svg');
+      leaders.setAttribute('aria-hidden', 'true');
+      leaders.setAttribute('data-testid', 'anatomy-label-arrows');
+      leaders.setAttribute('width', '100%');
+      leaders.setAttribute('height', '100%');
+      leaders.style.cssText = 'position:absolute;inset:0;overflow:visible;pointer-events:none';
+      root.appendChild(leaders);
 
       const regionalParts = regionRef.current === 'anterior' ? [] : atlas.parts
         .filter(part => partBelongsToRegion(part, regionRef.current))
@@ -1587,6 +1600,22 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
         const systemColor =
           SYSTEMS.find((system) => system.id === sourcePart.system)?.color || '#38bdf8';
         button.style.borderColor = `${systemColor}aa`;
+        const leader = document.createElementNS(svgNS, 'g');
+        leader.setAttribute('data-anatomy-arrow', spec.key);
+        const outline = document.createElementNS(svgNS, 'line');
+        outline.setAttribute('stroke', '#000');
+        outline.setAttribute('stroke-width', '4');
+        outline.setAttribute('stroke-opacity', '.7');
+        const line = document.createElementNS(svgNS, 'line');
+        line.setAttribute('stroke', systemColor);
+        line.setAttribute('stroke-width', '1.8');
+        const arrow = document.createElementNS(svgNS, 'polygon');
+        arrow.setAttribute('fill', systemColor);
+        arrow.setAttribute('stroke', '#000');
+        arrow.setAttribute('stroke-width', '.6');
+        leader.append(outline, line, arrow);
+        leader.style.display = 'none';
+        leaders.appendChild(leader);
 
         const dot = document.createElement('span');
         dot.setAttribute('aria-hidden', 'true');
@@ -1616,6 +1645,7 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
           priority: spec.priority,
           partIndex: bestIndex,
           button,
+          leader, line, outline, arrow,
           // Tailwind caps labels at 150px. A deterministic hint lets us clamp
           // before layout without forcing a DOM measurement every animation
           // tick; the font is 10–11px plus 20px horizontal padding.
@@ -1685,31 +1715,50 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
 
         const halfWidth = candidate.target.widthHint * 0.5;
         const safeX = THREE.MathUtils.clamp(
-          candidate.x,
+          candidate.x + (candidate.x < w / 2 ? 1 : -1) * (halfWidth + 28),
           halfWidth + 14,
           Math.max(halfWidth + 14, w - halfWidth - 14)
         );
-        const collides = placed.some(
+        const safeY = [candidate.y - 28, candidate.y + 28, candidate.y - 76, candidate.y + 76]
+          .find(y => y >= 88 && y <= h - 128 && !placed.some(
           (point) =>
             Math.abs(point.x - safeX) <
               Math.max(
                 isMobileDevice ? 76 : 82,
                 (point.width + candidate.target.widthHint) * 0.5 + 12
               ) &&
-            Math.abs(point.y - candidate.y) < 40
-        );
-        if (collides) continue;
+            Math.abs(point.y - y) < 48
+        ));
+        if (safeY === undefined) continue;
+
+        // Start at the callout edge and point to the projected mesh anchor.
+        // Recomputed each animation frame, including spread, zoom and rotation.
+        const dx = candidate.x - safeX;
+        const dy = candidate.y - safeY;
+        const edge = Math.min(halfWidth / Math.max(.001, Math.abs(dx)), 22 / Math.max(.001, Math.abs(dy)));
+        const startX = safeX + dx * Math.min(1, edge);
+        const startY = safeY + dy * Math.min(1, edge);
+        const angle = Math.atan2(candidate.y - startY, candidate.x - startX);
+        const target = candidate.target;
+        for (const line of [target.line, target.outline]) {
+          line.setAttribute('x1', startX.toFixed(2)); line.setAttribute('y1', startY.toFixed(2));
+          line.setAttribute('x2', candidate.x.toFixed(2)); line.setAttribute('y2', candidate.y.toFixed(2));
+        }
+        const backX = candidate.x - Math.cos(angle) * 8;
+        const backY = candidate.y - Math.sin(angle) * 8;
+        target.arrow.setAttribute('points', `${candidate.x},${candidate.y} ${backX - Math.sin(angle) * 4},${backY + Math.cos(angle) * 4} ${backX + Math.sin(angle) * 4},${backY - Math.cos(angle) * 4}`);
+        target.leader.style.display = Math.hypot(candidate.x - startX, candidate.y - startY) > 8 ? 'block' : 'none';
 
         candidate.target.button.style.display = 'block';
         candidate.target.button.style.transform =
-          `translate3d(${safeX}px, ${candidate.y}px, 0) translate(-50%, -50%)`;
+          `translate3d(${safeX}px, ${safeY}px, 0) translate(-50%, -50%)`;
         candidate.target.button.style.opacity = spread > 0.65 ? '0.96' : '0.88';
         shown.add(candidate.target.button);
-        placed.push({ x: safeX, y: candidate.y, width: candidate.target.widthHint });
+        placed.push({ x: safeX, y: safeY, width: candidate.target.widthHint });
       }
 
       floatingLabelTargets.forEach((target) => {
-        if (!shown.has(target.button)) target.button.style.display = 'none';
+        if (!shown.has(target.button)) { target.button.style.display = 'none'; target.leader.style.display = 'none'; }
       });
     };
 

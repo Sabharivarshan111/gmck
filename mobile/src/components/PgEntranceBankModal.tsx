@@ -9,7 +9,7 @@ import { KeyboardSafe } from '@/components/KeyboardSafe';
 import { PgRecentAnswerReview } from '@/components/PgRecentAnswerReview';
 import { Touchable } from '@/components/Touchable';
 import { useTheme, withAlpha } from '@/theme';
-import { searchOfflinePgQuestions } from '@/lib/pgLocalBank';
+import { searchOfflinePgQuestions, getPgSubjects, getPgChapters, PG_COMPACT, PG_COMPACT_BYTES } from '@/lib/pgLocalBank';
 import { PG_ORIGINAL_PRACTICE, PG_SOURCES, PG_SOURCE_REVIEW_DATE, type PgExam, type PgQuestion } from '@/lib/pgEntranceBank';
 
 type ExamFilter = 'ALL' | PgExam | 'GENERAL_MEDICAL';
@@ -19,11 +19,6 @@ const EXAMS: { id: ExamFilter; title: string }[] = [
   { id: 'INI_CET', title: 'INI-CET' }, { id: 'FMGE', title: 'FMGE' },
   { id: 'GENERAL_MEDICAL', title: 'Mock practice' },
 ];
-const AIPG: Record<PgExam, string[]> = {
-  NEET_PG: ['NEET_PG', 'AIPGMEE'],
-  INI_CET: ['INI_CET', 'AIIMS_PG', 'PGIMER_PG', 'JIPMER_PG'],
-  FMGE: ['FMGE'],
-};
 
 async function openSource(url: string) {
   try {
@@ -53,6 +48,7 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
   const [checkQuestion,setCheckQuestion] = useState<PgQuestion|null>(null);
   const [subjectFilter, setSubjectFilter] = useState<string | null>(null);
   const [chapterFilter, setChapterFilter] = useState<string | null>(null);
+  const [chapterSearch, setChapterSearch] = useState('');
   const [expandedAnswer, setExpandedAnswer] = useState<string | null>(null);
 
   const year = /^\d{4}$/.test(yearText) ? Number(yearText) : null;
@@ -67,7 +63,7 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
     let cancelled = false;
     setLoading(true);
     setLoadError(null);
-    void searchOfflinePgQuestions({ exam, year, search: debouncedSearch, limit: 40, offset: page * 40 })
+    void searchOfflinePgQuestions({ exam, year, search: debouncedSearch, subject: subjectFilter, chapter: chapterFilter, limit: 40, offset: page * 40 })
       .then(result => {
         if (cancelled) return;
         setPublished(result.questions);
@@ -81,7 +77,7 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
       })
       .finally(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
-  }, [visible, panel, exam, year, yearInvalid, debouncedSearch, page]);
+  }, [visible, panel, exam, year, yearInvalid, debouncedSearch, page, subjectFilter, chapterFilter]);
 
   const sources = useMemo(() => yearInvalid ? [] : PG_SOURCES.filter(item =>
     (exam === 'ALL' || item.exam === 'ALL' || item.exam === exam) &&
@@ -89,14 +85,10 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
     (!search || [item.name, item.note, item.kind, item.answerStatus].join(' ').toLocaleLowerCase().includes(search))
   ), [exam, year, yearInvalid, search]);
 
-  const reviewed = useMemo(() => yearInvalid ? [] : published.filter(item =>
-    (exam === 'ALL' || (exam === 'GENERAL_MEDICAL' ? item.exam === 'GENERAL_MEDICAL' : AIPG[exam].includes(item.exam))) &&
-    (year === null || item.year === year) &&
-    (!debouncedSearch || [item.question, item.subject, item.explanation].join(' ').toLocaleLowerCase().includes(debouncedSearch))
-  ), [published, exam, year, yearInvalid, debouncedSearch]);
+  const reviewed = published;
 
-  const subjects = useMemo(() => [...new Set(PG_ORIGINAL_PRACTICE.map(q => q.subject))].sort(), []);
-  const chapters = useMemo(() => [...new Set(PG_ORIGINAL_PRACTICE.filter(q => subjectFilter === null || q.subject === subjectFilter).map(q => q.chapter!))].sort(), [subjectFilter]);
+  const subjects = useMemo(() => getPgSubjects(), []);
+  const chapters = useMemo(() => getPgChapters(subjectFilter).filter(c => !chapterSearch || c.name.toLocaleLowerCase().includes(chapterSearch.toLocaleLowerCase())).slice(0,40).map(c => c.name), [subjectFilter, chapterSearch]);
 
   // Original questions are offered separately and never given exam/year labels.
   const original = useMemo(() => PG_ORIGINAL_PRACTICE.filter(item =>
@@ -104,10 +96,10 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
     (chapterFilter === null || item.chapter === chapterFilter) &&
     (!search || [item.question, item.subject, item.chapter].join(' ').toLocaleLowerCase().includes(search))
   ), [year, yearInvalid, search, subjectFilter, chapterFilter]);
-  const chapterGroups = useMemo(() => subjects.flatMap(subject =>
-    chapters.map(chapter => ({ subject, chapter, questions: original.filter(q => q.subject === subject && q.chapter === chapter) }))
+  const chapterGroups = useMemo(() => [...new Set(original.map(q => q.subject))].flatMap(subject =>
+    [...new Set(original.map(q => q.chapter!))].map(chapter => ({ subject, chapter, questions: original.filter(q => q.subject === subject && q.chapter === chapter) }))
       .filter(group => group.questions.length > 0)
-  ), [subjects, chapters, original]);
+  ), [original]);
 
   return (
     <Modal visible={visible} animationType="slide" presentationStyle="fullScreen" onRequestClose={onClose}>
@@ -133,7 +125,7 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
           <View style={[styles.notice, { backgroundColor: withAlpha(colors.primary, 0.08), borderColor: colors.border }]}>
             <ShieldCheck size={17} color={colors.primary} />
             <Text style={[styles.noticeText, { color: colors.text }]}>
-              This release includes ORBIT original practice only. Third-party datasets and historical exam recalls are withheld pending documented permissions. A complete previous-year archive is not available.
+              MedMCQA practice questions with supplied answer keys. Answers and chapter labels are not independently medically reviewed; textbook checks are provisional. No verified exam-year archive is claimed.
 
             </Text>
           </View>
@@ -222,8 +214,32 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
               {loading ? <ActivityIndicator color={colors.primary} /> : null}
               {loadError ? <Text style={[styles.small, { color: colors.warning }]}>Offline pack error: {loadError}</Text> : null}
               <Text style={[styles.small, { color: colors.textMuted }]}>
-                Third-party question imports are currently withheld. Original practice appears below; its answers are not independently clinically reviewed.
+                {loadedCount.toLocaleString()} matching dataset practice questions · {PG_COMPACT.total.toLocaleString()} available · {(PG_COMPACT_BYTES / 1000000).toFixed(2)} MB offline data
               </Text>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chips}>
+                {[null, ...subjects].map(subject => (
+                  <Touchable key={subject ?? 'all-subjects'} label={subject ? 'Filter PG subject: ' + subject : 'All PG subjects'}
+                    state={{ selected: subjectFilter === subject }}
+                    onPress={() => {setSubjectFilter(subject);setChapterFilter(null);setChapterSearch('');setPage(0);setExpandedAnswer(null);}}
+                    style={[styles.chip, {borderColor: subjectFilter === subject ? colors.primary : colors.border, backgroundColor: colors.card}]}>
+                    <Text style={[styles.chipText, {color: colors.text}]}>{subject ?? 'All subjects'}</Text>
+                  </Touchable>
+                ))}
+              </ScrollView>
+              {subjectFilter ? <TextInput value={chapterSearch} onChangeText={v => {setChapterSearch(v);setChapterFilter(null);setPage(0);}}
+                accessibilityLabel="Search PG chapters within subject" placeholder="Search chapters within this subject" placeholderTextColor={colors.textMuted}
+                style={[styles.chapterSearch,{color:colors.text,borderColor:colors.border,backgroundColor:colors.card}]} /> :
+                <Text style={[styles.small,{color:colors.textMuted}]}>Choose a subject to browse its chapters.</Text>}
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chips}>
+                {[null, ...chapters].map(chapter => (
+                  <Touchable key={chapter ?? 'all-chapters'} label={chapter ? 'Filter PG chapter: ' + chapter : 'All PG chapters'}
+                    state={{ selected: chapterFilter === chapter }}
+                    onPress={() => {setChapterFilter(chapter);setPage(0);setExpandedAnswer(null);}}
+                    style={[styles.chip, {borderColor: chapterFilter === chapter ? colors.primary : colors.border, backgroundColor: colors.card}]}>
+                    <Text style={[styles.chipText, {color: colors.text}]}>{chapter ?? 'All chapters'}</Text>
+                  </Touchable>
+                ))}
+              </ScrollView>
               {reviewed.map(q => <QuestionCard key={q.id} q={q} active={expandedAnswer === q.id}
                 onPress={() => setExpandedAnswer(prev => prev === q.id ? null : q.id)}
                 onCheck={() => {setCheckQuestion(q);setPanel('recent');setYearText(q.year === null ? '' : String(q.year));}} colors={colors} />)}
@@ -232,32 +248,12 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
                 <Touchable label="Next page" disabled={(page + 1) * 40 >= loadedCount} onPress={() => { setPage(p => p + 1); setExpandedAnswer(null); }} style={[styles.switchButton, { borderColor: colors.border, backgroundColor: colors.card }]}><Text style={{ color: colors.text }}>Next</Text></Touchable>
               </View> : null}
               {reviewed.length === 0 && !loading ? <Text style={[styles.empty, { color: colors.textMuted }]}>
-                Historical exam questions are withheld pending documented permission to distribute them.
+                No undated practice questions match these filters. Clear the year or try another subject, chapter or search.
               </Text> : null}
               <Text style={[styles.sectionHeading, { color: colors.text }]}>ORBIT original practice — not PYQs</Text>
               <Text style={[styles.small, { color: colors.textMuted }]}>
                 {original.length} of {PG_ORIGINAL_PRACTICE.length} original practice questions · {chapterGroups.length} chapters · 0 imported PYQs
               </Text>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chips}>
-                {[null, ...subjects].map(subject => (
-                  <Touchable key={subject ?? 'all-subjects'} label={subject ? 'Filter PG subject: ' + subject : 'All PG subjects'}
-                    state={{ selected: subjectFilter === subject }}
-                    onPress={() => {setSubjectFilter(subject);setChapterFilter(null);setExpandedAnswer(null);}}
-                    style={[styles.chip, {borderColor: subjectFilter === subject ? colors.primary : colors.border, backgroundColor: colors.card}]}>
-                    <Text style={[styles.chipText, {color: colors.text}]}>{subject ?? 'All subjects'}</Text>
-                  </Touchable>
-                ))}
-              </ScrollView>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chips}>
-                {[null, ...chapters].map(chapter => (
-                  <Touchable key={chapter ?? 'all-chapters'} label={chapter ? 'Filter PG chapter: ' + chapter : 'All PG chapters'}
-                    state={{ selected: chapterFilter === chapter }}
-                    onPress={() => {setChapterFilter(chapter);setExpandedAnswer(null);}}
-                    style={[styles.chip, {borderColor: chapterFilter === chapter ? colors.primary : colors.border, backgroundColor: colors.card}]}>
-                    <Text style={[styles.chipText, {color: colors.text}]}>{chapter ?? 'All chapters'}</Text>
-                  </Touchable>
-                ))}
-              </ScrollView>
               {chapterGroups.map(group => (
                 <View key={group.subject + ':' + group.chapter} style={styles.chapterGroup}>
                   <Text style={[styles.sectionHeading, {color: colors.text}]}>{group.subject} · {group.chapter}</Text>
@@ -271,10 +267,13 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
               <Text style={[styles.small, {color:colors.textMuted}]}>Textbook AI can provide a provisional explanation for medical practice questions you own or have permission to use.</Text>
             </>
           )}
+          <Touchable label="Read MedMCQA data licence" onPress={() => {void openSource('https://github.com/medmcqa/medmcqa/blob/main/LICENSE.md');}}>
+            <Text style={[styles.linkText,{color:colors.primary}]}>MedMCQA source and MIT licence ↗</Text>
+          </Touchable>
           <View style={[styles.bottomNote, { borderColor: colors.border }]}>
             <BookOpenCheck size={17} color={colors.textMuted} />
             <Text style={[styles.small, styles.flex, { color: colors.textMuted }]}>
-              Original practice has no claimed exam year. Online availability does not establish permission to redistribute third-party questions.
+              MedMCQA · publisher-declared MIT licence · compressed and structurally filtered by ORBIT. Source answers remain provisional.
             </Text>
           </View>
         </ScrollView>
@@ -292,6 +291,7 @@ function QuestionCard({ q, active, onPress, onCheck, colors }: {
     <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
       <Text style={[styles.small, { color: colors.textMuted }]}>
         {q.exam === 'ORIGINAL' ? 'ORBIT original • not asked in a specific exam' :
+          q.record_type === 'licensed_practice_dataset' ? 'MedMCQA practice · supplied answer, review pending' :
           q.record_type === 'historical_dataset'
              ? (q.exam === 'GENERAL_MEDICAL' ? 'MOCK / TEST SERIES · answer not independently verified' : 'NEET-PG validation · exam year unknown')
              : q.exam.replaceAll('_', '-') + (q.year ? ' • ' + q.year : '') + ' • source-labelled, review pending'}
@@ -310,8 +310,8 @@ function QuestionCard({ q, active, onPress, onCheck, colors }: {
       </Touchable>
       {active ? (
         <View style={[styles.answerBox, { borderColor: colors.border }]}>
-          <Text style={[styles.question, { color: colors.text }]}>{q.record_type === 'historical_dataset' ? 'Dataset answer: ' : 'Supplied answer: '}{q.answer}</Text>
-          <Text style={[styles.description, { color: colors.text }]}>{q.explanation.trim().length >= 20 ? q.explanation : 'No explanation supplied by the dataset. This answer has not been clinically verified by ORBIT.'}</Text>
+          <Text style={[styles.question, { color: colors.text }]}>{q.record_type === 'historical_dataset' || q.record_type === 'licensed_practice_dataset' ? 'Dataset answer: ' : 'Supplied answer: '}{q.answer}</Text>
+          <Text style={[styles.description, { color: colors.text }]}>{q.explanation.trim().length >= 20 ? q.explanation : 'No explanation supplied. Use the textbook check for a provisional explanation; this dataset answer has not been independently medically reviewed.'}</Text>
           <Touchable label={'Check supplied answer against textbooks: ' + q.id} onPress={onCheck} style={styles.answerButton}><Text style={[styles.linkText,{color:colors.primary}]}>Check this answer against textbooks</Text></Touchable>
           {q.answer_reference ? <Text style={[styles.small, { color: colors.textMuted }]}>Answer-label provenance: {q.answer_reference}</Text> : null}
           {q.source_url ? <Touchable onPress={() => { void openSource(q.source_url!); }} label="Open question source">
@@ -346,6 +346,7 @@ const styles = StyleSheet.create({
   sectionHeading: { fontSize: 15, fontWeight: '800', marginTop: 4 },
   small: { fontSize: 11, lineHeight: 16 },
   chapterGroup: { gap: 8 },
+  chapterSearch: { minHeight: 44, borderWidth: 1, borderRadius: 10, paddingHorizontal: 10, fontSize: 13 },
   card: { borderWidth: 1, borderRadius: 13, padding: 13, gap: 8 },
   cardHead: { flexDirection: 'row', alignItems: 'flex-start', gap: 8 },
   cardTitle: { fontSize: 14, fontWeight: '700', lineHeight: 19 },

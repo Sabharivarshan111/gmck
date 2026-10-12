@@ -8,7 +8,7 @@
 // the new HTML anyway — but one that ever fell back to the cached shell keeps
 // being served the asset hashes that shell names, and those ARE cached. Bumping
 // this is the one lever that empties the old cache for everybody.
-const SW_VERSION = 'v21-pg-chapters-2026-10-12';
+const SW_VERSION = 'v22-pg-compact-2026-10-12';
 const CACHE_NAME = `mbbs-qb-${SW_VERSION}`;
 
 const PRECACHE_URLS = [
@@ -63,6 +63,7 @@ function isNavigationRequest(request) {
 function isHashedAsset(url) {
   return (
     url.pathname.startsWith('/assets/') ||
+    url.pathname.startsWith('/pg/') ||
     /\.(?:js|css|woff2?|ttf|otf|png|jpg|jpeg|gif|svg|webp|ico)$/i.test(url.pathname)
   );
 }

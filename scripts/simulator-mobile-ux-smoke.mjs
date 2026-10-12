@@ -169,7 +169,7 @@ await check('spread-anatomy-inventory-and-clickable-labels', async () => {
   assert(inventory.length > 8000, 'Every-piece anatomy inventory rendered suspiciously blank');
   fs.writeFileSync(path.join(outDir, '02b-spread-every-piece.png'), inventory);
 
-  const labels = stage.locator('[data-testid^="anatomy-label-"]:visible');
+  const labels = stage.locator('button[data-testid^="anatomy-label-"]:visible');
   const labelCount = await labels.count();
   assert(labelCount >= 3, 'Expected at least three collision-safe anatomy labels at full spread; got ' + labelCount);
   assert(labelCount <= 4, 'Mobile floating labels exceeded the focused spread-mode clutter budget: ' + labelCount);
@@ -182,6 +182,13 @@ await check('spread-anatomy-inventory-and-clickable-labels', async () => {
       'Anatomy label clipped past the right mobile safe area'
     );
   }
+  const arrows = stage.locator('[data-anatomy-arrow]:visible');
+  assert(await arrows.count() === labelCount, 'Each visible callout needs an arrow to its source mesh');
+  const endpoints = await arrows.evaluateAll(nodes => nodes.map(node => {
+    const line = node.querySelector('line');
+    return [Number(line.getAttribute('x2')), Number(line.getAttribute('y2'))];
+  }));
+  assert(endpoints.every(([x,y]) => Number.isFinite(x) && Number.isFinite(y)), 'Arrow anchors must be valid projected mesh positions');
   await shot('02b-spread-every-piece-inventory');
 
   const heartLabel = stage.getByTestId('anatomy-label-heart');

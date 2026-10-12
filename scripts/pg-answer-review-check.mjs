@@ -70,10 +70,4 @@ assert.equal(answerComparison({...input,supplied_answer:undefined},'A'),'not_sup
 const server=fs.readFileSync(base+'index.ts','utf8');
 for(const regex of [/auth\.auth\.getUser\(token\)/,/consume_edge_quota/,/source_year_verified:false/,/independently_medically_reviewed:false/,/map\(\(\{text,\.\.\.metadata\}\) => metadata\)/,/retrievePassages/]) assert.match(server,regex);
 assert.ok(!server.includes('verify_jwt: false'));
-const local=load('mobile/src/lib/pgLocalBank.ts');
-assert.deepEqual(local.getPgOfflinePacks(),[]);
-for(const exam of ['ALL','NEET_PG','FMGE','INI_CET','GENERAL_MEDICAL']) for(const year of [null,2002,2026]) {
- const result=await local.searchOfflinePgQuestions({exam,year,search:'',limit:40,offset:0});
- assert.deepEqual(result,{questions:[],total:0,packsScanned:0});
-}
 console.log('PG answer review: validation, image rejection, stable citations, dosage/negation ranking and provisional comparisons passed. No live AI used.');

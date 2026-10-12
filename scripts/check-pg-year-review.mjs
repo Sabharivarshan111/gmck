@@ -20,7 +20,7 @@ for(const source of sources) {
 assert.equal(original.length,10);
 for(const q of original) {assert.equal(q.year,null);assert.equal(q.exam,'ORIGINAL');assert.equal(q.record_type,'original_exam_style');assert.equal(q.options.length,4);}
 const ui=read('mobile/src/components/PgEntranceBankModal.tsx');
-assert.match(ui,/original practice only/);assert.match(ui,/withheld pending documented permissions/);
+assert.match(ui,/MedMCQA practice questions with supplied answer keys/);assert.match(ui,/No verified exam-year archive/);
 assert.ok(!ui.includes('PG_QUARANTINED_TOTAL'));
 const form=read('mobile/src/components/PgRecentAnswerReview.tsx');
 assert.match(form,/question you own or have permission to use/);
@@ -28,4 +28,4 @@ assert.ok(!form.includes('Paste recalled'));
 const server=read('supabase/functions/pg-answer-review/index.ts');
 for(const pattern of [/auth\.auth\.getUser\(token\)/,/consume_edge_quota/,/retrievePassages/,/source_year_verified:false/,/independently_medically_reviewed:false/,/answer:"UNRESOLVED"/])assert.match(server,pattern);
 assert.match(form,/supabase\.functions\.invoke\('pg-answer-review'/);
-console.log('PG release: zero third-party question distribution; 10 undated original samples and three official information links. AI answers remain provisional.');
+console.log('PG practice release: publisher-declared MIT dataset with provisional answers; original samples and official links retained. AI answers remain provisional.');

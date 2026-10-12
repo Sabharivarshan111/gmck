@@ -1,0 +1,29 @@
+{
+  "source": "https://github.com/ibrews/VitruvianGodot",
+  "commit": "bdecdcd537b4031fdd0fb299b7e4f93f084fffa0",
+  "license": "CC0-1.0",
+  "credits": "Vitruvian by Sean Buckley and Olaf Delgado-Friedrichs; CharMorph by Upliner; asset export by Agile Lens",
+  "changes": "Removed unused attribute streams and expression targets; split symmetric lid closure into patient-left/right morphs; resized CC0 textures for mobile delivery",
+  "files": {
+    "mouth.webp": {
+      "bytes": 24132,
+      "sha256": "80258467efbaf4eb5ec4b51ab550df82376caf3d25ea69014f7a217baa20bff4"
+    },
+    "reference-head.glb": {
+      "bytes": 2892792,
+      "sha256": "2cd4a197e227535cdaa39d0ad1160669cb542f07136d3a96e00368f8b347bbaf"
+    },
+    "face.webp": {
+      "bytes": 209602,
+      "sha256": "84ddd348da6317a4adfb7ce59feb3a35bea1eeb2828e33ca0ae723281a48c527"
+    },
+    "iris.webp": {
+      "bytes": 13154,
+      "sha256": "e825598764ec51c3eb8e0598730f03091241149539711e76e1fb5239ec64c378"
+    },
+    "sclera.webp": {
+      "bytes": 10890,
+      "sha256": "80ee6b98d50b58c79c6d193af27dc7bb8c767bb2cbcdb1184ee480b637e1c138"
+    }
+  }
+}
