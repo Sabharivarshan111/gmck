@@ -35,6 +35,12 @@ try {
     await page.getByRole('button', { name: 'Return to normal baseline' }).click();
     assert.equal(await page.getByLabel('Findings to show').inputValue(), 'normal');
     assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), `horizontal overflow at ${width}`);
+    await page.getByRole('button', { name: 'Practise a case', exact: true }).click();
+    await page.locator('.studio-cases button').first().click();
+    const panel = page.getByTestId('intervention-panel'); await panel.waitFor();
+    assert.ok(await panel.getByTestId('case-departments').locator('button').evaluateAll(buttons => buttons.every(b => b.scrollWidth <= b.clientWidth + 1)), 'specialty labels clipped');
+    assert.ok(await panel.getByTestId('case-details').evaluate(el => el.scrollWidth <= el.clientWidth + 1), 'case detail badges clipped');
+    assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), `case overflow at ${width}`);
     assert.deepEqual(errors, []);
     await page.close();
   }
