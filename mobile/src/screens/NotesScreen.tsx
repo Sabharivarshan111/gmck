@@ -301,7 +301,7 @@ function VaultView({ onNotes, onSimulator, onProformas, onFlashcards }: { onNote
     { title: 'Notes', hint: 'Years, subjects & handwritten answers', emoji: '📚', open: onNotes },
     { title: 'Simulator & Anatomy', hint: 'Explore the body or learn a bedside skill', emoji: '🫀', open: onSimulator },
     { title: 'Case proformas', hint: 'Clinical history & examination guides', emoji: '📋', open: onProformas },
-    { title: 'Anki flashcards', hint: 'Import decks & revise with spaced repetition', emoji: '🃏', open: onFlashcards },
+    { title: 'Anki flashcards', hint: 'Import decks & revise with spaced repetition', emoji: '📇', open: onFlashcards },
   ];
   return <>
     <Text style={[styles.title, { color: colors.text }]}>Vault</Text>
