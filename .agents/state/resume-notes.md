@@ -2137,3 +2137,12 @@ Caught own earlier clubbing image deployment defect in Web CI: public/diagrams i
 **HALF-DONE** — PR66 ready to merge; watch its production deployment after merge.
 **NEXT** — Verify production deployment for PR66 and report the live link. No new native build needed for this hosted simulator-only visual fix.
 **DO NOT** — Do not mistake a browser check for physical-device testing. Do not run old anatomy tests against the Skills landing screen, or count the mascot canvas as an anatomy renderer. Preserve the separate PG import work on `claude/native-app-sync`.
+
+## 2026-10-12 — Codex — focused anatomy verification and full-body icon live
+
+**DONE** — PR66 merged as `1afabe8b93036871c76360bb7699cd97726a8009`; production `dpl_EQnJU58sgTPH7uosn2EGKy3Pp8kG` READY. Seven focused anatomy checks passed with zero warnings in run `38229914664`; normal skills, photo, reset and 360/390/430px checks passed. The four earlier focused failures are resolved.
+- User then rejected the bone-only anatomy icon. PR67 replaces it with a decorative lightweight full-body SVG showing coloured internal organs; TypeScript, component lint, React review and Web build passed. Merged main `f18306601b5b95b7d1adfd413ae53fa4195b4439`, production `dpl_3qLki5mUz1VLMijhqe93BmUG42bb` READY. Verified live SVG at 48x64px and saved an actual phone screenshot.
+- Android `debug-466` / internal builds passed for `6aa7d07`; native Vault and corrected calendar are included. The dedicated in-app simulator WebView serves the same current production theme, anatomy fix and icon automatically. Simulator requires internet. No Play Store upload or physical Android-device verification was performed.
+**HALF-DONE** — Separate legacy exhaustive browser suite still uses old flow assertions; focused checks are green. Do not claim exhaustive physical-device certification.
+**NEXT** — No pending action for the requested icon or four focused failures. Keep the separate legacy-suite refresh apart from the user-facing fixes.
+**DO NOT** — Do not count the global mascot canvas as an anatomy canvas; open Layers before using its tools. Preserve PG work on `claude/native-app-sync`.
