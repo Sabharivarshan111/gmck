@@ -11,7 +11,7 @@ try {
     await page.getByTestId('simulator-studio').waitFor();
     assert.equal(await page.getByLabel('Findings to show').inputValue(), 'normal');
     assert.equal(await page.getByTestId('mobile-anatomy-stage').locator('canvas').count(), 0, 'opening Skills must not instantiate the anatomy renderer');
-    for (const [title, testId] of [['Auscultation','diagnostic-stethoscope'], ['12-lead ECG','diagnostic-ecg12'], ['Ultrasound / POCUS','diagnostic-ultrasound'], ['Pupil examination','diagnostic-pupil']]) {
+    for (const [title, testId] of [['Auscultation','diagnostic-stethoscope'], ['12-lead ECG','diagnostic-ecg12'], ['Ultrasound / POCUS','diagnostic-ultrasound'], ['Eyes & cranial nerves','diagnostic-pupil']]) {
       await page.getByRole('button', { name: new RegExp(`^${title.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}`) }).click();
       await page.getByTestId(testId).waitFor();
       if (title === 'Auscultation') {

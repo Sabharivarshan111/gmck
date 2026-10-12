@@ -1,0 +1,22 @@
+.eye-exam {color:var(--sim-ink,#f5f5f7);--eye-edge:var(--sim-edge,#34343a);--eye-card:var(--sim-card,#0e0e11);--eye-accent:var(--sim-accent,#e784fb);font-family:Roboto,system-ui,sans-serif;}
+.eye-exam button,.eye-exam select {font:inherit;font-size:12px;min-height:44px;border:1px solid var(--eye-edge);border-radius:12px;background:var(--eye-card);color:inherit;padding:9px 12px;cursor:pointer;}
+.eye-exam button[aria-pressed=true] {background:var(--eye-accent);color:var(--sim-on-accent,#171019);border-color:var(--eye-accent);}
+.eye-exam :is(button,select,.eye-stage):focus-visible {outline:3px solid var(--eye-accent);outline-offset:2px;}
+.eye-preset {display:grid;gap:10px;}.eye-preset label {font-size:12px;color:var(--sim-muted,#aaa);}.eye-preset select {display:block;width:100%;margin-top:5px;}
+.eye-side,.eye-controls,.eye-gaze-controls {display:flex;flex-wrap:wrap;gap:8px;margin:12px 0;}.eye-side button {flex:1;}
+.eye-instruments {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:14px;}.eye-instruments button {padding:9px 5px;}
+.eye-instruction,.eye-caption {font-size:12px;line-height:1.55;color:var(--sim-muted,#aaa);margin:10px 0;}
+.eye-stage {position:relative;isolation:isolate;height:380px;border:1px solid var(--eye-edge);border-radius:20px;overflow:hidden;touch-action:none;cursor:crosshair;background:radial-gradient(ellipse at center,#3d3541,#15121b);}
+.eye-head-canvas {position:absolute;inset:0;pointer-events:none;}.eye-head-canvas canvas {display:block;width:100%;height:100%;}
+.eye-head-status {position:absolute;inset:0;display:grid;align-content:center;justify-items:center;padding:30px;text-align:center;font-size:13px;color:#c8bed0;pointer-events:none;}
+.eye-stage-side {position:absolute;top:12px;color:#d7cddd;font-size:10px;letter-spacing:1px;pointer-events:none;}.eye-stage-right {left:12px;}.eye-stage-left {right:12px;}
+.eye-tool-marker {position:absolute;font-size:27px;transform:translate(-50%,10%);pointer-events:none;filter:drop-shadow(0 2px 5px #0008);}
+.eye-light-beam {position:absolute;width:76px;height:76px;border-radius:50%;transform:translate(-50%,-50%);background:radial-gradient(circle,#fffce448,#ffe78b18 45%,transparent 72%);pointer-events:none;}
+.eye-reference-badge {position:absolute;bottom:10px;left:12px;padding:5px 8px;border-radius:8px;font-size:10px;background:#09070cc7;color:#dfd1e9;pointer-events:none;}
+.eye-pupil-readouts {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px;}.eye-pupil-readouts>div {display:flex;flex-direction:column;align-items:center;gap:7px;background:var(--eye-card);border:1px solid var(--eye-edge);border-radius:16px;padding:12px;}
+.eye-pupil-readouts span {font-size:11px;color:var(--sim-muted,#aaa);}.eye-pupil-readouts output {font-size:17px;font-weight:750;font-variant-numeric:tabular-nums;color:var(--eye-accent);}
+.eye-iris {display:flex;align-items:center;justify-content:center;width:72px;height:72px;overflow:hidden;border-radius:50%;background:radial-gradient(circle,#825535 0 25%,transparent 26%),url('/models/eye-exam/iris.webp') center/cover;border:2px solid #a7835c;box-shadow:0 0 0 5px #e8e2d8;}.eye-pupil {border-radius:50%;background:#080605;box-shadow:inset 1px 1px 2px #151117;}
+.eye-teaching {background:var(--eye-card);border:1px solid var(--eye-edge);border-radius:16px;padding:12px;margin-top:12px;font-size:12px;line-height:1.6;}.eye-teaching summary {min-height:44px;cursor:pointer;display:flex;align-items:center;font-weight:700;}.eye-teaching strong {color:var(--eye-accent);}.eye-teaching p {margin:8px 0;color:var(--sim-muted,#aaa);}.eye-teaching a {color:var(--eye-accent);text-decoration:underline;}
+.eye-model-state {display:none;}
+@media(min-width:640px) {.eye-stage {height:460px;}.eye-preset {grid-template-columns:1fr auto;align-items:end;}}
+@media(prefers-reduced-motion:reduce) {.eye-exam * {transition:none!important;}}

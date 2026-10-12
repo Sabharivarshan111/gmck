@@ -23,7 +23,7 @@ const SKILLS: { id: DiagnosticToolType | 'clubbing'; title: string; hint: string
   { id: 'stethoscope', title: 'Auscultation', hint: 'Normal heart & lung breath sounds, then compare', emoji: '🩺' },
   { id: 'ecg12', title: '12-lead ECG', hint: 'Normal sinus rhythm & case traces', emoji: '🫀' },
   { id: 'ultrasound', title: 'Ultrasound / POCUS', hint: 'Explore probe views & scan findings', emoji: '🖥️' },
-  { id: 'pupil', title: 'Pupil examination', hint: 'Direct & consensual light responses', emoji: '👁️' },
+  { id: 'pupil', title: 'Eyes & cranial nerves', hint: 'Follow a target, use a penlight & test reflexes', emoji: '👁️' },
   { id: 'piccled', title: 'General examination', hint: 'Pallor, icterus, edema & fluid status', emoji: '🔎' },
   { id: 'clubbing', title: 'Clubbing', hint: 'Normal nails, Schamroth test & findings', emoji: '🖐️' },
 ];
