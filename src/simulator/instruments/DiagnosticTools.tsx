@@ -92,6 +92,17 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
   }, []);
 
   useEffect(() => {
+    if (tool !== 'stethoscope') {
+      audioEngineRef.current?.dispose();
+      audioEngineRef.current = null;
+      setIsListening(false);
+    }
+    setCustomHeartOverride(null);
+    setCustomLungOverride(null);
+    setFlashlightOn('none');
+  }, [tool, scenarioId]);
+
+  useEffect(() => {
     if (audioEngineRef.current) {
       audioEngineRef.current.setVolume(stethVolume);
     }
@@ -138,7 +149,7 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
   if (tool === 'none' || tool === 'piccled') return null;
 
   return (
-    <div data-testid={`diagnostic-${tool}`} className="fixed inset-0 z-50 flex items-stretch sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-md animate-in fade-in overflow-hidden sm:overflow-y-auto">
+    <div data-testid={`diagnostic-${tool}`} role="dialog" aria-modal="true" aria-label="Diagnostic skill" className="fixed inset-0 z-50 flex items-stretch sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-md animate-in fade-in overflow-hidden sm:overflow-y-auto">
       <div className="relative w-full max-w-4xl h-[100dvh] sm:h-auto bg-slate-900 border-0 sm:border sm:border-slate-700 rounded-none sm:rounded-3xl overflow-hidden shadow-2xl text-slate-100 flex flex-col sm:my-auto max-h-[100dvh] sm:max-h-[92vh]">
         {/* Header Bar */}
         <div className="sticky top-0 z-20 flex items-center justify-between px-3 sm:px-5 py-2.5 sm:py-3.5 bg-slate-950/95 backdrop-blur-xl border-b border-slate-800 flex-shrink-0">

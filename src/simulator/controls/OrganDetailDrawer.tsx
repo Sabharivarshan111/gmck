@@ -1,3 +1,4 @@
+import { BoneAttachments } from './BoneAttachments';
 import React, { useState, useEffect } from 'react';
 import {
   X,
@@ -468,6 +469,7 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
 
         {/* Scrollable Content Body */}
         <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain p-3 sm:p-4 md:p-6 space-y-3 sm:space-y-5 pb-[calc(16px+env(safe-area-inset-bottom))]">
+          {sourcePart?.system === 'skeletal' && <BoneAttachments name={sourcePart.name} onMuscle={navigateToStructure} />}
           {!hasDossier && <p className="text-sm leading-relaxed rounded-xl border p-3">This named structure can be viewed, isolated and dissected. A dedicated blood supply, innervation and clinical dossier is not yet available for this structure.</p>}
           {hasDossier && <>
           {sourcePart && <p className="text-xs rounded-xl border p-3">Selected mesh: <strong>{sourcePart.name}</strong>. {peripheralNerveRegistrationIssue(sourcePart.id)} The sections below describe the related {organ.name} region; they are not a separately verified dossier for this individual mesh.</p>}

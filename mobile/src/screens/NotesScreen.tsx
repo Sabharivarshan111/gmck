@@ -1,8 +1,10 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
+  Alert,
   BackHandler,
   Platform,
+  Linking,
   ScrollView,
   StyleSheet,
   TextInput,
@@ -74,6 +76,7 @@ const YEAR_EMOJI: Record<Year, string> = {
 };
 
 type View_ =
+  | { kind: 'vault' }
   | { kind: 'years' }
   | { kind: 'subjects'; year: Year }
   | { kind: 'topics'; year: Year; subjectKey: string; subjectName: string; node: BankNode }
@@ -85,7 +88,7 @@ export default function NotesScreen() {
   const insets = useSafeAreaInsets();
   const { year: profileYear, university } = useProfile();
   const bankUniversity = availableBankUniversity(university);
-  const [view, setView] = useState<View_>({ kind: 'years' });
+  const [view, setView] = useState<View_>({ kind: 'vault' });
   /*
    * Flashcards take over the whole tab rather than becoming another `view`
    * kind. They have their own year → subject → chapter walk and their own
@@ -137,10 +140,11 @@ export default function NotesScreen() {
       return;
     }
     const sub = BackHandler.addEventListener('hardwareBackPress', () => {
-      if (view.kind === 'years') {
+      if (view.kind === 'vault') {
         return false;
       }
       setView(current => {
+        if (current.kind === 'years') return { kind: 'vault' };
         if (current.kind === 'subjects') {
           return { kind: 'years' };
         }
@@ -165,6 +169,7 @@ export default function NotesScreen() {
    */
   const goBack = useCallback(() => {
     setView(current => {
+      if (current.kind === 'years') return { kind: 'vault' };
       if (current.kind === 'notes') {
         return topicsViewFor(current);
       }
@@ -196,6 +201,7 @@ export default function NotesScreen() {
       style={[styles.screen, { backgroundColor: colors.background }]}
       contentContainerStyle={[styles.content, { paddingTop: insets.top + 12 }]}
       showsVerticalScrollIndicator={false}>
+      {view.kind === 'vault' ? <VaultView onNotes={() => setView({ kind: 'years' })} onFlashcards={() => setFlashcards(true)} onProformas={() => setProformasOpen(true)} onSimulator={() => { void Linking.openURL('https://orbitmbbs.vercel.app/simulator').catch(() => Alert.alert('Simulator could not open', 'Please check your connection and try again.')); }} /> : null}
       {view.kind === 'years' ? (
         <YearsView
           currentYear={profileYear}
@@ -247,7 +253,7 @@ export default function NotesScreen() {
       It draws exactly where the header's own button sat, so nothing appears to
       move; BackHeader now leaves a gap that size instead of shifting left.
     */}
-    {view.kind !== 'years' ? (
+    {view.kind !== 'vault' ? (
       <Touchable
         onPress={goBack}
         label="Back"
@@ -292,6 +298,28 @@ export default function NotesScreen() {
   );
 }
 
+function VaultView({ onNotes, onSimulator, onProformas, onFlashcards }: { onNotes: () => void; onSimulator: () => void; onProformas: () => void; onFlashcards: () => void }) {
+  const { colors } = useTheme();
+  const entries = [
+    { title: 'Notes', hint: 'Years, subjects & handwritten answers', Icon: BookOpen, open: onNotes },
+    { title: 'Simulator & Anatomy', hint: 'Explore the body or learn a bedside skill', Icon: Stethoscope, open: onSimulator },
+    { title: 'Case proformas', hint: 'Clinical history & examination guides', Icon: ClipboardList, open: onProformas },
+    { title: 'Anki flashcards', hint: 'Import decks & revise with spaced repetition', Icon: Layers, open: onFlashcards },
+  ];
+  return <>
+    <Text style={[styles.title, { color: colors.text }]}>Vault</Text>
+    <Text style={[styles.subtitle, { color: colors.textMuted }]}>Your study space. Choose what you want to do.</Text>
+    <View style={styles.yearGrid}>
+      {entries.map(({ title, hint, Icon, open }) => <Touchable key={title} label={title} onPress={open} scaleTo={0.97} style={[styles.yearCard, { minHeight: 170, backgroundColor: colors.card, borderColor: colors.border }]}>
+        <View style={[styles.extraIcon, { backgroundColor: withAlpha(colors.accent, 0.15) }]}><Icon size={22} color={colors.accent} /></View>
+        <Text style={[styles.yearName, { color: colors.text }]}>{title}</Text>
+        <Text style={[styles.yearHint, { color: colors.textMuted }]}>{hint}</Text>
+        <ChevronRight size={18} color={colors.accent} />
+      </Touchable>)}
+    </View>
+  </>;
+}
+
 /**
  * The title block at the top of a level.
  *
@@ -320,10 +348,7 @@ function BackHeader({ title, subtitle }: { title: string; subtitle?: string }) {
 function YearsView({
   currentYear,
   onPick,
-  onFlashcards,
-  onOpenDatasetCases,
   onOpenCaseLibrary,
-  onOpenProformas,
   onOpenPgEntrance,
 }: {
   currentYear: Year;
@@ -337,7 +362,7 @@ function YearsView({
   const { colors } = useTheme();
   return (
     <>
-      <Text style={[styles.title, { color: colors.text }]}>Notes</Text>
+      <BackHeader title="Notes" />
       <Text style={[styles.subtitle, { color: colors.textMuted }]}>
         AI-generated handwritten notes for every topic
       </Text>
@@ -382,41 +407,7 @@ function YearsView({
         ))}
       </View>
 
-      <Text style={[styles.sectionLabel, { color: colors.textMuted }]}>ALSO HERE</Text>
-
-      <Touchable
-        onPress={onFlashcards}
-        label="Anki-style flashcards, browse decks by year"
-        scaleTo={0.97}
-        style={[styles.extraCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
-        <View style={[styles.extraIcon, { backgroundColor: withAlpha(colors.accent, 0.15) }]}>
-          <Layers size={18} color={colors.accent} />
-        </View>
-        <View style={styles.flex}>
-          <Text style={[styles.extraTitle, { color: colors.text }]}>Anki-style flashcards</Text>
-          <Text style={[styles.extraSub, { color: colors.textMuted }]}>
-            Theory and diagram cards for any chapter, scheduled the way Anki does it
-          </Text>
-        </View>
-        <ChevronRight size={18} color={colors.textMuted} />
-      </Touchable>
-
-      <Touchable
-        onPress={onOpenDatasetCases}
-        label="Patient simulator cases, reviewed synthetic clinical encounters"
-        scaleTo={0.97}
-        style={[styles.extraCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
-        <View style={[styles.extraIcon, { backgroundColor: withAlpha(colors.primary, 0.15) }]}>
-          <Stethoscope size={18} color={colors.primary} />
-        </View>
-        <View style={styles.flex}>
-          <Text style={[styles.extraTitle, { color: colors.text }]}>Patient simulator cases</Text>
-          <Text style={[styles.extraSub, { color: colors.textMuted }]}>
-            Reviewed synthetic cases for history, diagnosis, differentials and viva debrief
-          </Text>
-        </View>
-        <ChevronRight size={18} color={colors.textMuted} />
-      </Touchable>
+      <Text style={[styles.sectionLabel, { color: colors.textMuted }]}>MORE STUDY RESOURCES</Text>
 
       <Touchable
         onPress={onOpenCaseLibrary}
@@ -435,24 +426,6 @@ function YearsView({
         <ChevronRight size={18} color={colors.textMuted} />
       </Touchable>
 
-      <Touchable
-        onPress={onOpenProformas}
-        label="Clinical case proformas, ward clerking sheets"
-        scaleTo={0.97}
-        style={[styles.extraCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
-        <View style={[styles.extraIcon, { backgroundColor: withAlpha(colors.primary, 0.15) }]}>
-          <ClipboardList size={18} color={colors.primary} />
-        </View>
-        <View style={styles.flex}>
-          <Text style={[styles.extraTitle, { color: colors.text }]}>Case proformas</Text>
-          <Text style={[styles.extraSub, { color: colors.textMuted }]}>
-            Master clerking sheets & clinical signs for medicine, surgery, pediatrics & allied
-          </Text>
-        </View>
-        <ChevronRight size={18} color={colors.textMuted} />
-      </Touchable>
-
-      {/* Unified PG source browser directly below Case proformas. */}
       <Touchable
         onPress={onOpenPgEntrance}
         label="PG Entrance Questions & Sources: NEET PG, INI CET, and FMGE with answer sources and reviewed practice"

@@ -1679,6 +1679,7 @@ await step('every year offers a handwritten note, because every subject has a bo
 // ---- The other tabs --------------------------------------------------------
 await step('notes screen renders its year picker', async () => {
   await open('screen=notes');
+  await byLabel('Notes').first().click();
   await seesText('SELECT YEAR');
 });
 
@@ -1749,6 +1750,7 @@ await step('a flashcard session shows a card, then Anki\'s four buttons', async 
 
 await step('notes offers flashcards and a locked case proforma, and no WhatsApp', async () => {
   await open('screen=notes');
+  await byLabel('Notes').first().click();
   await page.waitForTimeout(900);
 
   const body = await page.locator('body').innerText();
@@ -1894,6 +1896,7 @@ await step('a note filed under a chapter shows up on that chapter', async () => 
   await open('screen=progress');
   await page.waitForTimeout(900);
 
+  await byLabel('Vault').first().click();
   await byLabel('Notes').first().click();
   await page.waitForTimeout(800);
   await byLabel('Create a new study note').click();
@@ -1958,6 +1961,7 @@ await step('a note filed under a chapter shows up on that chapter', async () => 
 await step('a saved note can be opened and read without editing it', async () => {
   await open('screen=progress');
   await page.waitForTimeout(900);
+  await byLabel('Vault').first().click();
   await byLabel('Notes').first().click();
   await page.waitForTimeout(800);
   await byLabel('Create a new study note').click();
@@ -2003,6 +2007,7 @@ await step('a saved note can be opened and read without editing it', async () =>
 await step('the note toolbar writes headings and points, and they render', async () => {
   await open('screen=progress');
   await page.waitForTimeout(900);
+  await byLabel('Vault').first().click();
   await byLabel('Notes').first().click();
   await page.waitForTimeout(800);
   await byLabel('Create a new study note').click();
@@ -2072,6 +2077,7 @@ await step('the note toolbar writes headings and points, and they render', async
 await step('notes highlight, and a picture opens a drawing canvas', async () => {
   await open('screen=progress');
   await page.waitForTimeout(900);
+  await byLabel('Vault').first().click();
   await byLabel('Notes').first().click();
   await page.waitForTimeout(800);
   await byLabel('Create a new study note').click();
@@ -2195,6 +2201,7 @@ await step('notes highlight, and a picture opens a drawing canvas', async () => 
 await step('a YouTube link is added to a note, and plays in it', async () => {
   await open('screen=progress');
   await declineAdPromptIfShown();
+  await byLabel('Vault').first().click({ force: true });
   await byLabel('Notes').first().click({ force: true });
   await page.waitForTimeout(700);
   await byLabel('Create a new study note').click({ force: true });
@@ -2329,6 +2336,7 @@ await step('attendance counts classes, and says what is still spare', async () =
 await step('a picture in a note opens full screen', async () => {
   await open('screen=progress');
   await page.waitForTimeout(900);
+  await byLabel('Vault').first().click();
   await byLabel('Notes').first().click();
   await page.waitForTimeout(800);
   await byLabel('Create a new study note').click();
@@ -2367,6 +2375,7 @@ await step('a picture in a note opens full screen', async () => {
 await step('a note can be written by hand on a blank page', async () => {
   await open('screen=progress');
   await page.waitForTimeout(900);
+  await byLabel('Vault').first().click();
   await byLabel('Notes').first().click();
   await page.waitForTimeout(800);
   await byLabel('Create a new study note').click();
@@ -2539,6 +2548,7 @@ await step('a note can be written by hand on a blank page', async () => {
 await step('a note takes a recording, and the recording gets a player', async () => {
   await open('screen=progress');
   await page.waitForTimeout(900);
+  await byLabel('Vault').first().click();
   await byLabel('Notes').first().click();
   await page.waitForTimeout(800);
   await byLabel('Create a new study note').click();
@@ -2636,6 +2646,7 @@ await step('a note takes a recording, and the recording gets a player', async ()
 await step('fullscreen keeps the play, scrub, time and volume controls', async () => {
   await open('screen=progress');
   await page.waitForTimeout(900);
+  await byLabel('Vault').first().click();
   await byLabel('Notes').first().click();
   await page.waitForTimeout(800);
   await byLabel('Create a new study note').click();
@@ -2693,6 +2704,7 @@ await step('fullscreen keeps the play, scrub, time and volume controls', async (
 await step('a linked file can break, says so, and can be copied in instead', async () => {
   await open('screen=progress');
   await page.waitForTimeout(900);
+  await byLabel('Vault').first().click();
   await byLabel('Notes').first().click();
   await page.waitForTimeout(800);
   await byLabel('Create a new study note').click();
@@ -2840,6 +2852,7 @@ await step('a chapter offers to add your own deck, and a deck can be filed', asy
 
 await step('a flashcard chapter opens, and a deck that cannot build offers a retry', async () => {
   await open('screen=notes');
+  await byLabel('Notes').first().click();
   await page.waitForTimeout(700);
   await byLabel('Anki-style flashcards, browse decks by year').click();
   await page.waitForTimeout(800);
@@ -3160,6 +3173,7 @@ await step('the notes AI edit box mounts and fails into a message', async () => 
  */
 await step('the notes back button stays put while the page scrolls', async () => {
   await open('screen=notes');
+  await byLabel('Notes').first().click();
   await tap('3rd Year, browse subjects');
   await declineAdPromptIfShown();
   await tap('Forensic Medicine, see topics');

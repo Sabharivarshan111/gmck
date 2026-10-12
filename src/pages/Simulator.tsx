@@ -15,6 +15,8 @@ import {
   ChevronDown,
   Info,
 } from 'lucide-react';
+import { SimulatorStudio } from '../simulator/controls/SimulatorStudio';
+import { ClubbingTrainer } from '../simulator/controls/ClubbingTrainer';
 import { startVisibleFrameLoop } from '../simulator/engine/visibleFrameLoop';
 import { PhysiologyKernel, SCENARIOS } from '../simulator/engine/PhysiologyKernel';
 import { AnatomicalLayer, DiagnosticToolType, PatientPathologyState, PatientVitals } from '../simulator/types';
@@ -52,8 +54,9 @@ import {
 export const Simulator: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const requestedScenario = searchParams.get('scenario');
-  const initialScenario = SCENARIOS.some(scenario => scenario.id === requestedScenario) ? requestedScenario! : 'snakebite';
-  const initialTool = (searchParams.get('tool') as DiagnosticToolType) || 'none';
+  const initialScenario = SCENARIOS.some(scenario => scenario.id === requestedScenario) ? requestedScenario! : 'normal';
+  const requestedTool = searchParams.get('tool');
+  const initialTool: DiagnosticToolType = ['pupil', 'ultrasound', 'stethoscope', 'ecg12', 'piccled'].includes(requestedTool || '') ? requestedTool as DiagnosticToolType : 'none';
   const initialLayer = (searchParams.get('layer') as AnatomicalLayer) || 'glass';
 
   // Physiology Engine Instance
@@ -75,7 +78,8 @@ export const Simulator: React.FC = () => {
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
   // Mobile navigation tab state
-  const [mobileTab, setMobileTab] = useState<'3d' | 'telemetry' | 'interventions'>('3d');
+  const [mobileTab, setMobileTab] = useState<'studio' | '3d' | 'telemetry' | 'interventions'>(searchParams.get('mode') === 'anatomy' || searchParams.get('organ') || searchParams.get('layer') || searchParams.get('isolate') ? '3d' : 'studio');
+  const [clubbingOpen, setClubbingOpen] = useState(false);
   const [mobilePanel, setMobilePanel] = useState<'browse' | 'tools' | null>(null);
   const [renderQuality, setRenderQuality] = useState<'smooth' | 'crisp'>('crisp');
   const [cameraAction, setCameraAction] = useState<{kind: 'in' | 'out' | 'left' | 'right' | 'up' | 'down' | 'reset'; id: number}>({kind: 'in', id: 0});
@@ -86,6 +90,7 @@ export const Simulator: React.FC = () => {
   // Active Camera Preset
   const [atlasCatalog, setAtlasCatalog] = useState<Atlas | null>(null);
   useEffect(() => {
+    if (mobileTab !== '3d' || atlasCatalog) return;
     const controller = new AbortController();
     fetch('/models/atlas.json', { signal: controller.signal }).then(r => { if (!r.ok) throw new Error('Atlas catalog unavailable'); return r.json(); }).then((atlas: Atlas) => {
       const base = { ...atlas, parts: atlas.parts.map(correctPartSystem) };
@@ -93,7 +98,7 @@ export const Simulator: React.FC = () => {
       return fetch('/models/nerve_catalog.json', { signal: controller.signal }).then(r => { if (!r.ok) throw new Error('Nerve catalog unavailable'); return r.json(); }).then((parts: Part[]) => setAtlasCatalog({ ...base, parts: [...base.parts, ...parts] }));
     }).catch(() => {});
     return () => controller.abort();
-  }, []);
+  }, [mobileTab]);
   const [cameraPreset, setCameraPreset] = useState<'anterior' | 'head' | 'thorax' | 'abdomen'>('anterior');
 
   // Interactive Dissection Engine State
@@ -109,6 +114,26 @@ export const Simulator: React.FC = () => {
     getPreferredAnatomyIsolationTarget(searchParams.get('isolate'))
   );
   const [contextOrganId, setContextOrganId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (activeTool === 'none' && !clubbingOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    const previousFocus = document.activeElement as HTMLElement | null;
+    document.body.style.overflow = 'hidden';
+    const selector = 'button:not([disabled]), select, input, a[href], summary, [tabindex="0"]';
+    const frame = requestAnimationFrame(() => document.querySelector<HTMLElement>('[role="dialog"]')?.querySelector<HTMLElement>(selector)?.focus());
+    const trap = (event: KeyboardEvent) => {
+      if (event.key !== 'Tab') return;
+      const dialog = document.querySelector<HTMLElement>('[role="dialog"]');
+      const controls = [...(dialog?.querySelectorAll<HTMLElement>(selector) || [])].filter(node => node.getClientRects().length > 0);
+      if (!controls.length) return;
+      const first = controls[0], last = controls[controls.length - 1];
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+    };
+    document.addEventListener('keydown', trap);
+    return () => { cancelAnimationFrame(frame); document.body.style.overflow = previousOverflow; document.removeEventListener('keydown', trap); previousFocus?.focus(); };
+  }, [activeTool, clubbingOpen]);
 
   // Dissection Handlers
   const handleDissectPart = (part: Part) => {
@@ -252,6 +277,9 @@ export const Simulator: React.FC = () => {
       } else if (e.key === 'Escape') {
         setIsolatedPartId(null);
         setSelectedOrganId(null);
+        setActiveTool('none');
+        setClubbingOpen(false);
+        setMobilePanel(null);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
@@ -289,6 +317,7 @@ export const Simulator: React.FC = () => {
   // Keep physiology advancing each visible frame; publish UI snapshots at 10 Hz.
   // Canvas instruments animate independently, so this avoids full-tree 60 Hz renders.
   useEffect(() => {
+    if (mobileTab === 'studio' && activeTool === 'none') return;
     let lastPublish = -Infinity;
     return startVisibleFrameLoop((currentTime, dt) => {
       if (!kernelRef.current) return;
@@ -298,7 +327,7 @@ export const Simulator: React.FC = () => {
       setVitals({ ...kernelRef.current.getLiveVitals() });
       setPathology({ ...kernelRef.current.pathology });
     });
-  }, []);
+  }, [mobileTab, activeTool]);
 
   // Scenario switch handler
   const handleSelectScenario = (scenarioId: string) => {
@@ -329,6 +358,17 @@ export const Simulator: React.FC = () => {
 
   const isLight = theme === 'light';
 
+  if (mobileTab === 'studio') return <>
+    <SimulatorStudio scenarioId={currentScenarioId} onScenario={handleSelectScenario}
+      onAnatomy={() => { handleSelectScenario('normal'); setMobileTab('3d'); }}
+      onCase={id => { handleSelectScenario(id); setMobileTab('interventions'); }}
+      onTool={id => id === 'clubbing' ? setClubbingOpen(true) : setActiveTool(id)}
+      onMonitor={() => setMobileTab('telemetry')} />
+    <DiagnosticTools tool={activeTool} theme={theme} scenarioId={currentScenarioId} pathology={pathology} vitals={vitals} onClose={() => setActiveTool('none')} />
+    <WardExamModal isOpen={activeTool === 'piccled'} onClose={() => setActiveTool('none')} vitals={vitals} pathology={pathology} theme={theme} />
+    {clubbingOpen && <ClubbingTrainer onClose={() => setClubbingOpen(false)} />}
+  </>;
+
   return (
     <div
       data-simulator-root
@@ -357,8 +397,9 @@ export const Simulator: React.FC = () => {
           {/* Left: Brand & Back Navigation */}
           <div className="flex items-center gap-2 md:gap-3 min-w-0">
             <Link
-              to="/"
-              aria-label="Back to Notes"
+              to="/notes"
+              reloadDocument
+              aria-label="Back to Vault"
               className={`min-h-[44px] min-w-[44px] px-2 sm:px-2.5 rounded-xl border flex items-center justify-center gap-1 text-xs font-semibold transition-all ${
                 isLight
                   ? 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200 shadow-2xs'
@@ -366,7 +407,7 @@ export const Simulator: React.FC = () => {
               }`}
             >
               <ArrowLeft className="w-4 h-4" />
-              <span className="hidden sm:inline">Notes</span>
+              <span className="hidden sm:inline">Vault</span>
             </Link>
 
             <div className={`h-4 w-[1px] hidden sm:block ${isLight ? 'bg-slate-300' : 'bg-slate-700'}`} />
@@ -449,6 +490,7 @@ export const Simulator: React.FC = () => {
               : 'bg-slate-900/90 border-slate-800'
           }`}
         >
+          <button aria-label="Open skills studio" onClick={() => { setMobilePanel(null); setSelectedOrganId(null); setMobileTab('studio'); }} className="flex-1 min-h-[44px] rounded-xl text-xs font-bold flex items-center justify-center gap-1.5"><Stethoscope className="w-3.5 h-3.5" />Skills</button>
           <button
             data-testid="simulator-tab-3d"
             aria-pressed={mobileTab === '3d'}
@@ -506,8 +548,10 @@ export const Simulator: React.FC = () => {
       </div>
       </div>
 
+      <button onClick={() => { setMobileTab('studio'); setSelectedOrganId(null); setMobilePanel(null); }} className="hidden lg:block px-6 py-3 text-left text-sm font-semibold">← Skills & anatomy studio</button>
+      <div className="px-4 py-2 text-xs font-semibold bg-emerald-50 text-emerald-800 border-b border-emerald-100">{currentScenarioId === 'normal' ? 'Normal teaching baseline · healthy adult at rest' : `Case findings · ${SCENARIOS.find(s => s.id === currentScenarioId)?.title}`}</div>
       {/* 3. Main Stage Content */}
-      <main className="flex-1 p-2.5 sm:p-3 md:p-5 max-w-7xl mx-auto w-full flex flex-col space-y-3 md:space-y-4 pb-[calc(12px+env(safe-area-inset-bottom))]">
+      <main className="flex-1 p-2.5 sm:p-3 md:p-5 max-w-7xl mx-auto w-full flex flex-col space-y-3 md:space-y-4 pb-[calc(150px+env(safe-area-inset-bottom))]">
         {/* DESKTOP VIEW: Split View (Side-by-side) */}
         <div className="hidden lg:grid lg:grid-cols-12 gap-4">
           {/* 3D Anatomical Viewport with Interactive Dissection Engine (7 cols) */}

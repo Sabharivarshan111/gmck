@@ -15,7 +15,7 @@ type TabKey = keyof RootTabParamList;
 
 const ITEMS: { key: TabKey; label: string; Icon: typeof Home }[] = [
   { key: 'Home', label: 'Home', Icon: Home },
-  { key: 'Notes', label: 'Notes', Icon: FileText },
+  { key: 'Notes', label: 'Vault', Icon: FileText },
   { key: 'Timer', label: 'Timer', Icon: Timer },
   { key: 'AskAI', label: 'Ask AI', Icon: Sparkles },
   { key: 'Progress', label: 'My Progress', Icon: User },

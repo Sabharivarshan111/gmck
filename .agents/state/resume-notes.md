@@ -2099,3 +2099,19 @@ HALF-DONE: These synthetic images remain schematic appearance models, not accura
 NEXT: Verify reference image loading, all four view selectors, caliper/mobile controls, pupil light controls and production deployment. Physical-device performance/GPU/audio and clinical fidelity remain unverified. No amniotic-fluid module found; owner’s attached fluid screenshot is abdominal Morison’s pouch.
 
 DO NOT: Describe texture as validated ultrasound physics, claim all requested features fixed, call the fibrosis lung reference normal, infer diagnoses solely from CVP/SpO2/lactate, copy competitor assets, alter Android releases/PG/billing/security.
+
+## 2026-10-11 — Vault and independent simulator skills
+- User explicitly authorized patient simulator UI redesign and the Notes→Vault four-card layout.
+- Implemented native/shared Vault entry with Notes, Simulator & Anatomy, Case proformas, Anki flashcards. Existing Notes routes and PG/case library tools retained.
+- Browser opens simulator on a studio with a healthy adult baseline, independent diagnostics, case comparison and a separate anatomy entry. Android Vault opens hosted simulator through Linking; this is not a native 3D port or new APK release.
+- Source anatomy heartbeat/breathing animations use scheduled audio events, pause when hidden, and support reduced motion. Exact bone mesh selection retained; attachment teaching derives from the existing muscle graph and explicitly describes incomplete coverage.
+- Added independent clubbing teaching and removed visual pallor→exact Hb and cyanosis→capillary-refill conflation.
+- Checks: root/mobile TypeScript, changed-component ESLint, combined Vercel build, source chest mesh integrity, simulator UI regression, 645 case/action regression, Notes schema. Browser visual verification pending preview deployment; local Chromium download failed in the current environment.
+- The source-reconstructed POCUS pilot is on separate branch codex/pocus-source-physics-20261011 and is not silently overwritten or claimed integrated by this work.
+- Final combined production build and rendered Web Audio tests passed. Public GitHub push was rejected twice by automatic review, even after the connector confirmed the exact repo is public and user-administered; explicit publishing approval is required. Do not retry through another API.
+- Review: docs/VAULT_SIMULATOR_UI_REVIEW_20261011.md. Browser-width regression prepared in scripts/simulator-studio-e2e.mjs, not run. Older mobile smoke navigation updated for Vault→Notes.
+- Android production JavaScript bundle also passed with temporary Metro config for symlinked dependency watch folders; no APK/device verification claimed.
+
+
+## 2026-10-12 — approved Vault release
+User explicitly approved public publishing/deployment (“Yes live it”), then asked to continue. PR #61 published through connected GitHub because shell git has no credentials. Initial preview READY at dpl_Dy9vMzV333FNFsGaW1EQdidNgv48. Cloud browser verified six independent skills, normal breath playback and heart shortcut, ECG sinus, case search and normal reset, 360/390/430 layouts, and four Vault destinations. Corrected missing WardExam dialog semantics and changed Back to Vault links to reloadDocument (legacy simulator router cannot render native Notes). Git retrieval failed on automatic follow-up deployment; exact commit d440e8c0e118d64465f2292886544ca48bb6d93c retried at dpl_7UH65HY8zphvLDkYscScaboTErQq. Await rebuilt preview then merge and production verification. No APK or GPU movement verification claimed.

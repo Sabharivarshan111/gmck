@@ -2332,13 +2332,13 @@ varying float partSelected;
         if (onDissectPartRef.current) {
           onDissectPartRef.current(clickedPart);
         } else if (onSelectOrganIdRef.current) {
-          const organKey = resolvePartToOrganKey(clickedPart, atlas);
+          const organKey = correctPartSystem(clickedPart).system === 'skeletal' ? clickedPart.id : resolvePartToOrganKey(clickedPart, atlas);
           onSelectOrganIdRef.current(organKey);
         }
       } else {
         // Inspect: resolve to organ and view clinical dossier without hiding the body
         if (onSelectOrganIdRef.current) {
-          const organKey = resolvePartToOrganKey(clickedPart, atlas);
+          const organKey = correctPartSystem(clickedPart).system === 'skeletal' ? clickedPart.id : resolvePartToOrganKey(clickedPart, atlas);
           onSelectOrganIdRef.current(organKey);
         }
       }
