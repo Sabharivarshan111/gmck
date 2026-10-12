@@ -28,7 +28,7 @@ try {
     await page.getByRole('button', { name: 'Clubbing findings', exact: true }).click();
     const reference = page.locator('img[alt^="Clinical reference"]');
     await reference.waitFor({ state: 'visible' });
-    assert.ok(await reference.evaluate(img => img.complete && img.naturalWidth > 0), 'clinical photograph must load');
+    assert.ok(await reference.evaluate(async img => { await img.decode(); return img.naturalWidth > 0; }), 'clinical photograph must load');
     await page.getByLabel('Close clubbing skill').click();
     await page.getByLabel('Change comparison findings').click();
     await page.getByLabel('Findings to show').selectOption('chf_dcm');

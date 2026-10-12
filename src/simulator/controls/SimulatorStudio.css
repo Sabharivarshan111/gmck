@@ -86,3 +86,6 @@
 .studio-baseline>summary { cursor:pointer; list-style:none; min-height:44px; }
 .studio-baseline>summary::-webkit-details-marker { display:none; }
 .studio-baseline>summary small { margin-left:auto; font-size:11px; }
+[data-simulator-theme=dark] [class*="bg-slate-950/"] { background-color:var(--sim-bg)!important; }
+[data-simulator-theme=dark] [class*="bg-slate-900/"] { background-color:var(--sim-card)!important; }
+[data-simulator-theme=dark] [class*="bg-slate-800/"] { background-color:var(--sim-raised)!important; }

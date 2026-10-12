@@ -416,7 +416,7 @@ export const Simulator: React.FC = () => {
             <div className={`h-4 w-[1px] hidden sm:block ${isLight ? 'bg-slate-300' : 'bg-slate-700'}`} />
 
             <div className="flex items-center gap-2 min-w-0">
-              <div className="w-7 h-7 md:w-8 md:h-8 rounded-xl bg-gradient-to-tr from-sky-500 to-emerald-500 flex items-center justify-center text-white shadow-sm flex-shrink-0">
+              <div className="w-7 h-7 md:w-8 md:h-8 rounded-xl bg-fuchsia-400 flex items-center justify-center text-slate-950 shadow-sm flex-shrink-0">
                 <Activity className="w-4 h-4 md:w-5 md:h-5" />
               </div>
               <div className="min-w-0">
