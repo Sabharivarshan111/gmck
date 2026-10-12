@@ -20,7 +20,14 @@ for(const source of sources) {
 assert.equal(original.length,10);
 for(const q of original) {assert.equal(q.year,null);assert.equal(q.exam,'ORIGINAL');assert.equal(q.record_type,'original_exam_style');assert.equal(q.options.length,4);}
 const ui=read('mobile/src/components/PgEntranceBankModal.tsx');
-assert.match(ui,/MedMCQA practice questions with supplied answer keys/);assert.match(ui,/No verified exam-year archive/);
+assert.match(ui,/Practice questions with supplied answer keys/);assert.match(ui,/No verified exam-year archive/);
+assert.ok(!ui.includes('MedMCQA'));
+const licenceModule={exports:{}};
+const licenceCode=ts.transpileModule(read('mobile/src/lib/thirdPartyLicences.ts'),{compilerOptions:{module:ts.ModuleKind.CommonJS}}).outputText;
+vm.runInThisContext(`(function(module,exports){${licenceCode}\n})`)(licenceModule,licenceModule.exports);
+assert.equal(licenceModule.exports.THIRD_PARTY_LICENCES[0].licence,read('docs/licenses/MedMCQA-MIT.txt'));
+assert.equal(licenceModule.exports.THIRD_PARTY_LICENCES[1].licence,read('docs/licenses/fzstd-MIT.txt'));
+assert.match(read('mobile/src/components/SettingsSheet.tsx'),/<AboutLicences \/>/);
 assert.ok(!ui.includes('PG_QUARANTINED_TOTAL'));
 const form=read('mobile/src/components/PgRecentAnswerReview.tsx');
 assert.match(form,/question you own or have permission to use/);

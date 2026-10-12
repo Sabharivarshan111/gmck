@@ -24,9 +24,10 @@ try{
  const waitText=text=>page.waitForFunction(t=>document.body.innerText.includes(t),text,{timeout:30000});
  const shot=name=>page.screenshot({path:path.join(evidence,name+'.png')});
  await page.goto('http://127.0.0.1:5207',{waitUntil:'domcontentloaded'});
- await label('Vault').click();await label('Notes').click();
- await label('PG medical practice and official exam information').click();
+ await label('Vault').click();
+ await label('NEET-PG practice questions').click();
  await waitText('185,637 matching dataset practice questions');
+ assert.ok(!(await page.locator('body').innerText()).includes('MedMCQA'));
  assert.ok(await page.getByLabel('Show answer and explanation',{exact:true}).count()>=40);
  await label('NEET-PG').click();await waitText('NEET-PG practice questions');
  await shot('01-dataset-practice');
@@ -53,6 +54,9 @@ try{
  await shot('03-official-information-only');
  await page.locator('input[aria-label*="year"]').first().fill('2027');
  await label('Check an answer against textbooks').click();await question.waitFor({state:'detached'});
+ await label('Close PG entrance bank').click();await label('Home').click();await label('Settings').click();
+ await label('Third-party licences').click();await waitText('Copyright (c) 2022 MedMCQA');
+ await waitText('Copyright (c) 2020 Arjun Barrett');await shot('05-about-licences');
  assert.deepEqual(errors,[]);
  const result={passed:true,third_party_questions_released:185637,original_practice_questions:10,official_information_links:3,unsigned_edge_calls:calls,device_tested:false,legal_immunity_guaranteed:false,data_limit_bytes:10000000,page_errors:errors};
  fs.writeFileSync(path.join(evidence,'results.json'),JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify(result));

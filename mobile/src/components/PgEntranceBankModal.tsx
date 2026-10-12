@@ -36,7 +36,7 @@ async function openSource(url: string) {
 export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; onClose: () => void }) {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
-  const [exam, setExam] = useState<ExamFilter>('ALL');
+  const [exam, setExam] = useState<ExamFilter>('NEET_PG');
   const [panel, setPanel] = useState<Panel>('practice');
   const [yearText, setYearText] = useState('');
   const [searchText, setSearchText] = useState('');
@@ -125,7 +125,7 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
           <View style={[styles.notice, { backgroundColor: withAlpha(colors.primary, 0.08), borderColor: colors.border }]}>
             <ShieldCheck size={17} color={colors.primary} />
             <Text style={[styles.noticeText, { color: colors.text }]}>
-              MedMCQA practice questions with supplied answer keys. Answers and chapter labels are not independently medically reviewed; textbook checks are provisional. No verified exam-year archive is claimed.
+              Practice questions with supplied answer keys. Answers and chapter labels are not independently medically reviewed; textbook checks are provisional. No verified exam-year archive is claimed.
 
             </Text>
           </View>
@@ -267,13 +267,10 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
               <Text style={[styles.small, {color:colors.textMuted}]}>Textbook AI can provide a provisional explanation for medical practice questions you own or have permission to use.</Text>
             </>
           )}
-          <Touchable label="Read MedMCQA data licence" onPress={() => {void openSource('https://github.com/medmcqa/medmcqa/blob/main/LICENSE.md');}}>
-            <Text style={[styles.linkText,{color:colors.primary}]}>MedMCQA source and MIT licence ↗</Text>
-          </Touchable>
           <View style={[styles.bottomNote, { borderColor: colors.border }]}>
             <BookOpenCheck size={17} color={colors.textMuted} />
             <Text style={[styles.small, styles.flex, { color: colors.textMuted }]}>
-              MedMCQA · publisher-declared MIT licence · compressed and structurally filtered by ORBIT. Source answers remain provisional.
+              Source answers remain provisional. Credits and third-party licences are available in Settings → About.
             </Text>
           </View>
         </ScrollView>
@@ -291,7 +288,7 @@ function QuestionCard({ q, active, onPress, onCheck, colors }: {
     <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
       <Text style={[styles.small, { color: colors.textMuted }]}>
         {q.exam === 'ORIGINAL' ? 'ORBIT original • not asked in a specific exam' :
-          q.record_type === 'licensed_practice_dataset' ? 'MedMCQA practice · supplied answer, review pending' :
+          q.record_type === 'licensed_practice_dataset' ? 'Practice question · supplied answer, review pending' :
           q.record_type === 'historical_dataset'
              ? (q.exam === 'GENERAL_MEDICAL' ? 'MOCK / TEST SERIES · answer not independently verified' : 'NEET-PG validation · exam year unknown')
              : q.exam.replaceAll('_', '-') + (q.year ? ' • ' + q.year : '') + ' • source-labelled, review pending'}

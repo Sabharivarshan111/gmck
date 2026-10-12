@@ -26,6 +26,7 @@ import { KeyboardSafe } from '@/components/KeyboardSafe';
 import { Touchable } from '@/components/Touchable';
 import { ProgressBar } from '@/components/ui';
 import { typeScale } from '@/theme/typography';
+import { useTextScale } from '@/theme/textScale';
 import { useTheme, withAlpha } from '@/theme';
 import { GradientFill } from '@/components/Gradient';
 import { NotesContentView } from '@/components/NotesContentView';
@@ -202,7 +203,7 @@ export default function NotesScreen() {
       style={[styles.screen, { backgroundColor: colors.background }]}
       contentContainerStyle={[styles.content, { paddingTop: insets.top + 12 }]}
       showsVerticalScrollIndicator={false}>
-      {view.kind === 'vault' ? <VaultView onNotes={() => setView({ kind: 'years' })} onFlashcards={() => setFlashcards(true)} onProformas={() => setProformasOpen(true)} onSimulator={() => { if (Platform.OS !== 'web') { setSimulatorOpen(true); return; } void Linking.openURL('https://orbitmbbs.vercel.app/simulator').catch(() => Alert.alert('Simulator could not open', 'Please check your connection and try again.')); }} /> : null}
+      {view.kind === 'vault' ? <VaultView onNotes={() => setView({ kind: 'years' })} onPgPractice={() => setPgEntranceOpen(true)} onFlashcards={() => setFlashcards(true)} onProformas={() => setProformasOpen(true)} onSimulator={() => { if (Platform.OS !== 'web') { setSimulatorOpen(true); return; } void Linking.openURL('https://orbitmbbs.vercel.app/simulator').catch(() => Alert.alert('Simulator could not open', 'Please check your connection and try again.')); }} /> : null}
       {view.kind === 'years' ? (
         <YearsView
           currentYear={profileYear}
@@ -299,22 +300,24 @@ export default function NotesScreen() {
   );
 }
 
-function VaultView({ onNotes, onSimulator, onProformas, onFlashcards }: { onNotes: () => void; onSimulator: () => void; onProformas: () => void; onFlashcards: () => void }) {
+function VaultView({ onNotes, onPgPractice, onSimulator, onProformas, onFlashcards }: { onNotes: () => void; onPgPractice: () => void; onSimulator: () => void; onProformas: () => void; onFlashcards: () => void }) {
   const { colors } = useTheme();
+  const textScale = useTextScale();
   const entries = [
-    { title: 'Notes', hint: 'Years, subjects & handwritten answers', emoji: '📚', open: onNotes },
-    { title: 'Simulator & Anatomy', hint: 'Explore the body or learn a bedside skill', emoji: '🫀', open: onSimulator },
-    { title: 'Case proformas', hint: 'Clinical history & examination guides', emoji: '📋', open: onProformas },
-    { title: 'Anki flashcards', hint: 'Import decks & revise with spaced repetition', emoji: '📇', open: onFlashcards },
+    { title: 'Notes', hint: 'Years, subjects & handwritten notes', emoji: '📚', open: onNotes },
+    { title: 'NEET-PG', label: 'NEET-PG practice questions', hint: 'Practice by subject & chapter', emoji: '📝', open: onPgPractice },
+    { title: 'Simulator & Anatomy', hint: 'Explore anatomy & bedside skills', emoji: '🫀', open: onSimulator },
+    { title: 'Case proformas', hint: 'History & examination guides', emoji: '📋', open: onProformas },
+    { title: 'Anki flashcards', hint: 'Decks & spaced repetition', emoji: '📇', open: onFlashcards },
   ];
   return <>
     <Text style={[styles.title, { color: colors.text }]}>Vault</Text>
     <Text style={[styles.subtitle, { color: colors.textMuted }]}>Your study space. Choose what you want to do.</Text>
     <View style={styles.yearGrid}>
-      {entries.map(({ title, hint, emoji, open }) => <Touchable key={title} label={title} onPress={open} scaleTo={0.97} style={[styles.yearCard, { minHeight: 170, backgroundColor: colors.card, borderColor: colors.border }]}>
-        <Text accessible={false} style={styles.yearEmoji}>{emoji}</Text>
-        <Text style={[styles.yearName, { color: colors.text }]}>{title}</Text>
-        <Text style={[styles.yearHint, { color: colors.textMuted }]}>{hint}</Text>
+      {entries.map(({ title, hint, emoji, open, ...entry }) => <Touchable key={title} testID={`vault-card-${title}`} label={entry.label || title} onPress={open} scaleTo={0.97} style={[styles.vaultCard, { height: 260 * Math.max(1, textScale), backgroundColor: colors.card, borderColor: colors.border }]}>
+        <View style={{ height: 58 * textScale }}><Text accessible={false} style={styles.yearEmoji}>{emoji}</Text></View>
+        <View style={{ height: 50 * textScale }}><Text numberOfLines={2} style={[styles.yearName, { lineHeight: 22, color: colors.text }]}>{title}</Text></View>
+        <View style={{ flex: 1 }}><Text numberOfLines={3} style={[styles.yearHint, { lineHeight: 18, color: colors.textMuted }]}>{hint}</Text></View>
         <ChevronRight size={18} color={colors.accent} />
       </Touchable>)}
     </View>
@@ -918,6 +921,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     rowGap: 12,
     marginBottom: 22,
+  },
+  vaultCard: {
+    width: '48.5%',
+    borderRadius: 16,
+    borderWidth: StyleSheet.hairlineWidth,
+    padding: 16,
+    justifyContent: 'flex-start',
   },
   yearCard: {
     width: '48.5%',

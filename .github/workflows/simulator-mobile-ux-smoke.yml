@@ -12,6 +12,8 @@ on:
       - 'public/models/eye-exam/**'
       - 'public/clinical-reference/**'
       - 'scripts/simulator-clinical-e2e.mjs'
+      - 'scripts/vault-layout-e2e.mjs'
+      - 'mobile/src/screens/NotesScreen.tsx'
       - '.github/workflows/simulator-mobile-ux-smoke.yml'
   workflow_dispatch:
 
@@ -94,3 +96,35 @@ jobs:
             artifacts/simulator-clinical
           if-no-files-found: error
           retention-days: 14
+
+  vault-layout:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --legacy-peer-deps --ignore-scripts --no-audit --no-fund
+      - run: npm --prefix mobile ci --legacy-peer-deps --ignore-scripts --no-audit --no-fund
+      - run: ./mobile/node_modules/.bin/tsc -p mobile/tsconfig.json --noEmit
+      - run: npm install --no-save --package-lock=false --legacy-peer-deps playwright@1.55.0
+      - run: npx playwright install --with-deps chromium
+      - name: Build native browser interface with the simulator
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: |
+          npm run build:vercel
+          npm run preview -- --host 127.0.0.1 --port 5225 > /tmp/vault-preview.log 2>&1 &
+          for attempt in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:5225/notes > /dev/null; then break; fi
+            sleep 1
+          done
+          ORBIT_VAULT_BASE_URL=http://127.0.0.1:5225 node scripts/vault-layout-e2e.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: vault-layout-${{ github.sha }}
+          path: artifacts/vault-layout
+          if-no-files-found: warn
