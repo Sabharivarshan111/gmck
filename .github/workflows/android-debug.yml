@@ -128,6 +128,7 @@ jobs:
       - name: Checks
         working-directory: mobile
         run: |
+          node ../scripts/build-pg-compact.mjs
           node ../scripts/check-pg-release-content.mjs
           npm run check:fanout
           npm run check:mcq

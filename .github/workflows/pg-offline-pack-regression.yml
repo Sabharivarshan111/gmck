@@ -39,6 +39,7 @@ jobs:
           node-version: '22'
       - name: Install Android app dependencies
         run: npm --prefix mobile ci --legacy-peer-deps
+      - run: node scripts/build-pg-compact.mjs
       - name: Native Android TypeScript compilation
         run: npm --prefix mobile run typecheck
       - name: Validate handwritten-notes UI textbook guard without censoring exam content

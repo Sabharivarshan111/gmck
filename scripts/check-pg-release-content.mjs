@@ -17,7 +17,7 @@ function resolveImport(spec,file) {
 }
 function visit(file) {
  if(seen.has(file))return;seen.add(file);
- assert.ok(!forbidden.test(file),'Prohibited third-party PG module reachable: '+path.relative(root,file));
+ assert.ok(!forbidden.test(file),'Legacy/unapproved PG module reachable: '+path.relative(root,file));
  if(!/\.[tj]sx?$/.test(file))return;
  const source=ts.createSourceFile(file,fs.readFileSync(file,'utf8'),ts.ScriptTarget.Latest,true);
  const follow=specifier=>{const target=resolveImport(specifier,file);if(target)visit(target);};
@@ -32,4 +32,4 @@ function visit(file) {
 }
 for(const entry of ['mobile/index.js','mobile/App.tsx','mobile/preview/main.tsx','mobile/src/lib/pgLocalBank.ts','mobile/src/lib/pgEntranceBank.ts'])visit(path.join(root,entry));
 assert.ok(seen.has(path.join(root,'mobile/src/lib/pgLocalBank.ts')));
-console.log(`PG release import graph: ${seen.size} reachable modules checked; no PG corpus, recall catalog or historical attribution module.`);
+console.log(`PG release import graph: ${seen.size} reachable modules checked; no legacy raw packs, recall catalog or historical attribution module; compact publisher-declared MIT practice is allowed.`);

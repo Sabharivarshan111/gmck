@@ -8,6 +8,7 @@ const root = path.resolve(__dirname, '..');
 // this config exists solely to render the same screens in a browser.
 export default defineConfig({
   root: __dirname,
+  publicDir: path.resolve(__dirname, '../../public'),
   server: {
     host: '0.0.0.0',
     port: 5173,
@@ -80,6 +81,7 @@ export default defineConfig({
         find: '@/native/NativeOrbitSecureStorage',
         replacement: path.resolve(__dirname, 'shims', 'secure-storage.ts'),
       },
+      { find: '@/native/NativeOrbitPgBank', replacement: path.resolve(__dirname, 'shims/pg-bank.ts') },
       { find: '@', replacement: path.resolve(root, 'src') },
       // lucide-react-native needs react-native-svg; the DOM build is equivalent
       // and exports the same icon names.

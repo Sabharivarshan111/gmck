@@ -26,19 +26,18 @@ try{
  await page.goto('http://127.0.0.1:5207',{waitUntil:'domcontentloaded'});
  await label('Vault').click();await label('Notes').click();
  await label('PG medical practice and official exam information').click();
- await waitText('Third-party datasets and historical exam recalls are withheld pending documented permissions');
- await label('Show answer and explanation').waitFor({state:'visible'});
- assert.equal(await page.getByLabel('Show answer and explanation',{exact:true}).count(),10);
+ await waitText('185,637 matching dataset practice questions');
+ assert.ok(await page.getByLabel('Show answer and explanation',{exact:true}).count()>=40);
  await label('NEET-PG').click();await waitText('NEET-PG practice questions');
- await shot('01-original-only-practice');
+ await shot('01-dataset-practice');
  await label('Filter PG subject: Anatomy').click();
- assert.equal(await page.getByLabel('Show answer and explanation',{exact:true}).count(),2);
- await label('Filter PG chapter: Cranial nerves').click();
- assert.equal(await page.getByLabel('Show answer and explanation',{exact:true}).count(),1);
- await waitText('Which cranial nerve innervates the lateral rectus');
+ await label('Search PG chapters within subject').fill('General anatomy');
+ await label('Filter PG chapter: General anatomy').click();
+ await waitText('1,691 matching dataset practice questions');
+ assert.equal(await page.getByLabel('Show answer and explanation',{exact:true}).count(),40);
  await shot('04-chapter-filter');
  await label('All PG subjects').click();
- assert.equal(await page.getByLabel('Show answer and explanation',{exact:true}).count(),10);
+ await waitText('185,637 matching dataset practice questions');
  await label('Show answer and explanation').click();
  await page.getByLabel(/^Check supplied answer against textbooks:/).first().click();
  const question=label('Paste a medical practice question you own or have permission to use');
@@ -55,7 +54,7 @@ try{
  await page.locator('input[aria-label*="year"]').first().fill('2027');
  await label('Check an answer against textbooks').click();await question.waitFor({state:'detached'});
  assert.deepEqual(errors,[]);
- const result={passed:true,third_party_questions_released:0,original_practice_questions:10,official_information_links:3,unsigned_edge_calls:calls,device_tested:false,legal_immunity_guaranteed:false,page_errors:errors};
+ const result={passed:true,third_party_questions_released:185637,original_practice_questions:10,official_information_links:3,unsigned_edge_calls:calls,device_tested:false,legal_immunity_guaranteed:false,data_limit_bytes:10000000,page_errors:errors};
  fs.writeFileSync(path.join(evidence,'results.json'),JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify(result));
 }catch(error){
  fs.writeFileSync(path.join(evidence,'results.json'),JSON.stringify({passed:false,error:String(error)},null,2)+'\n');

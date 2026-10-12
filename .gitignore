@@ -36,3 +36,7 @@ remotion-ad/out/
 *.keystore
 
 /dist-native/
+
+# PG data is reproducibly generated into web and Android assets at build time.
+/public/pg/
+/mobile/android/app/src/main/assets/pg/
