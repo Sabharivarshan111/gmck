@@ -26,8 +26,11 @@ try {
     await page.getByRole('button', { name: /^Clubbing Normal/ }).click();
     await page.getByRole('dialog', { name: 'Clubbing skill' }).waitFor();
     await page.getByRole('button', { name: 'Clubbing findings', exact: true }).click();
-    assert.ok(await page.locator('img[alt^="Clinical reference"]').isVisible());
+    const reference = page.locator('img[alt^="Clinical reference"]');
+    await reference.waitFor({ state: 'visible' });
+    assert.ok(await reference.evaluate(async img => { await img.decode(); return img.naturalWidth > 0; }), 'clinical photograph must load');
     await page.getByLabel('Close clubbing skill').click();
+    await page.getByLabel('Change comparison findings').click();
     await page.getByLabel('Findings to show').selectOption('chf_dcm');
     await page.getByRole('button', { name: 'Return to normal baseline' }).click();
     assert.equal(await page.getByLabel('Findings to show').inputValue(), 'normal');
