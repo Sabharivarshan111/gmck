@@ -836,7 +836,7 @@ const PaparazziCameraStudioVisualizer: React.FC<{ isLight: boolean }> = ({ isLig
       viewTarget: 'Inferior Wall & Apex (Directly along heart axis!)',
       direction: 'towards',
       deflection: 'Strongly Positive (▲▲▲)',
-      clinicalMnemonic: 'The Golden Rhythm Lead! Electrical wave aims directly at Lead II (+60°). Tallest R wave on the entire ECG!',
+      clinicalMnemonic: 'A mean vector at +60° points toward the positive pole of lead II, producing a positive deflection in this example. Actual R-wave amplitudes vary between people and leads.',
       rWaveHeight: 28,
       sWaveDepth: 2,
     },
@@ -956,10 +956,10 @@ const PaparazziCameraStudioVisualizer: React.FC<{ isLight: boolean }> = ({ isLig
             <div className="w-8 h-8 rounded-xl bg-sky-500/10 text-sky-500 flex items-center justify-center font-black">
               📸
             </div>
-            <h4 className="font-bold text-sm tracking-tight">3. The 12-Camera Paparazzi Studio (Why Waves Go UP or DOWN)</h4>
+            <h4 className="font-bold text-sm tracking-tight">Lead viewpoints · positive and negative deflections</h4>
           </div>
           <p className="text-xs text-slate-500 sim-dark:text-slate-400 mt-0.5">
-            Click any camera angle around the body. The Golden Camera Rule reveals exactly why the pen pushes UP or DOWN!
+            Choose a lead to explore how electrical direction changes the recorded deflection. This is a simplified vector example.
           </p>
         </div>
       </div>
@@ -1210,18 +1210,18 @@ const CalibratedGridWaveBreakdown: React.FC<{ isLight: boolean }> = ({ isLight }
       amplitude: '< 2.5 mm (0.25 mV)',
       boxes: '< 3 small boxes wide, < 2.5 boxes tall',
       color: 'rose',
-      mechanicalEvent: 'Right atrium contracts first, then left atrium. Pushes final 20% of blood into ventricles ("Atrial Kick").',
+      mechanicalEvent: 'Electrical activation of the atria precedes their contraction and contribution to ventricular filling.',
       pathologyAlert: 'P pulmonale (> 2.5 mm) in Right Atrial Enlargement (COPD/Cor Pulmonale); P mitrale (notched M-shape > 120 ms) in Left Atrial Enlargement (Mitral Stenosis).',
     },
     pr: {
       name: 'PR Interval',
-      fullName: 'AV Nodal Transit Time',
+      fullName: 'Atrial onset to ventricular onset',
       duration: '120 - 200 ms',
-      amplitude: 'Isoelectric flatline',
-      boxes: '3 to 5 small boxes (Exactly 1 large box!)',
+      amplitude: 'PR segment is usually isoelectric; the interval includes P',
+      boxes: '3 to 5 small boxes at 25 mm/s',
       color: 'amber',
       mechanicalEvent: 'Conduction from SA node through atria, through AV node delay, down bundle of His until ventricular myocytes fire.',
-      pathologyAlert: 'PR > 200 ms (> 5 boxes) = 1st Degree AV Block. PR < 120 ms (< 3 boxes) = Wolff-Parkinson-White (WPW) pre-excitation pathway with Delta wave!',
+      pathologyAlert: 'A prolonged PR with every P conducted supports first-degree AV block. A short PR has several causes; pre-excitation needs supporting features such as a delta wave.',
     },
     qrs: {
       name: 'QRS Complex',
@@ -1230,18 +1230,18 @@ const CalibratedGridWaveBreakdown: React.FC<{ isLight: boolean }> = ({ isLight }
       amplitude: '5 to 30 mm (Variable)',
       boxes: '< 3 small boxes wide (< 0.12s)',
       color: 'emerald',
-      mechanicalEvent: 'Septum depolarizes left-to-right (Q wave), then massive left and right ventricular muscular walls contract violently (R spike).',
-      pathologyAlert: 'QRS > 120 ms (> 3 boxes) = Bundle Branch Block (LBBB / RBBB) or Ventricular Tachycardia. Pathological Q wave (> 1 box wide or > 25% R wave) = Old Transmural Myocardial Infarction!',
+      mechanicalEvent: 'Ventricular electrical activation produces QRS and precedes mechanical contraction. Individual Q, R and S deflections depend on the lead viewpoint.',
+      pathologyAlert: 'A QRS of 120 ms or more is wide. Consider conduction delay, pacing or a ventricular rhythm in context. Q-wave interpretation depends on width, depth and lead distribution; it does not date an infarction by itself.',
     },
     st: {
       name: 'ST Segment',
       fullName: 'Early Ventricular Plateau (Phase 2)',
       duration: '80 - 120 ms',
-      amplitude: 'Strictly isoelectric (0 mm deviation)',
+      amplitude: 'Compare the J point with the TP baseline',
       boxes: 'Should sit flat on the TP baseline',
       color: 'cyan',
       mechanicalEvent: 'Both ventricles are fully depolarized and squeezing under maximum pressure. Calcium influx maintains muscular contraction.',
-      pathologyAlert: 'CRITICAL ALERT: ST Elevation > 1 mm in limb leads (> 2 mm in V2-V3) = ACUTE TRANSMURAL STEMI (Immediate Cath Lab / Thrombolysis!). ST depression = Subendocardial ischemia or NSTEMI.',
+      pathologyAlert: 'Assess changes in contiguous leads using appropriate age/sex thresholds, symptoms and reciprocal findings. ST elevation or depression can have ischemic and nonischemic causes; a single measurement does not determine treatment.',
     },
     t: {
       name: 'T Wave',
@@ -1250,18 +1250,18 @@ const CalibratedGridWaveBreakdown: React.FC<{ isLight: boolean }> = ({ isLight }
       amplitude: '< 5 mm in limb, < 10 mm in chest',
       boxes: 'Asymmetrical smooth hill (slow up, fast down)',
       color: 'purple',
-      mechanicalEvent: 'Ventricular myocytes recharge their ionic gradients via Na+/K+ ATPase pumps, preparing for the next mechanical systole.',
-      pathologyAlert: 'Tall peaked symmetrical "tented" T waves = Fatal Hyperkalemia (K+ > 6.5 mEq/L). Inverted T waves = Myocardial ischemia or ventricular strain.',
+      mechanicalEvent: 'Repolarization reflects changes in membrane currents, with outward potassium currents important in ventricular recovery. It is distinct from the mechanical act of relaxation.',
+      pathologyAlert: 'Peaked T waves may occur in hyperkalemia; ECG shape cannot measure potassium concentration. T-wave inversion has several causes and must be assessed by lead, prior ECG and clinical context.',
     },
     qt: {
       name: 'QTc Interval',
       fullName: 'Total Ventricular Electrical Systole',
       duration: '♂ < 440 ms, ♀ < 460 ms',
-      boxes: 'Must be rate-corrected using Bazett formula (QT / √RR)',
-      amplitude: 'Spans from start of Q wave to end of T wave',
+      boxes: 'Correct the measured QT for heart rate and state the formula used.',
+      amplitude: 'Measure QT from QRS onset to T-wave end, then calculate QTc',
       color: 'rose',
       mechanicalEvent: 'Encompasses both ventricular contraction (depolarization) and recovery (repolarization).',
-      pathologyAlert: 'QTc > 500 ms = EXTREME DANGER of Torsades de Pointes polymorphic ventricular tachycardia and sudden cardiac death! Common causes: Ondansetron, Macrolides, Hypokalemia, Hypomagnesemia.',
+      pathologyAlert: 'QTc of 500 ms or more is associated with increased torsades risk. Review medicines, electrolytes, correction method and the clinical situation.',
     },
   };
 
@@ -1279,10 +1279,10 @@ const CalibratedGridWaveBreakdown: React.FC<{ isLight: boolean }> = ({ isLight }
             <div className="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center font-black">
               📐
             </div>
-            <h4 className="font-bold text-sm tracking-tight">4. Calibrated Pink Millimeter Grid & Segment Inspector</h4>
+            <h4 className="font-bold text-sm tracking-tight">Wave and interval reference</h4>
           </div>
           <p className="text-xs text-slate-500 sim-dark:text-slate-400 mt-0.5">
-            Click any segment along the heartbeat. Inspect exact millisecond rules, box counts, and life-threatening pathologies.
+            Select a component to review its meaning, measurement and clinical considerations. Adult reference limits need clinical context.
           </p>
         </div>
       </div>
@@ -1295,7 +1295,7 @@ const CalibratedGridWaveBreakdown: React.FC<{ isLight: boolean }> = ({ isLight }
           { id: 'qrs', label: 'QRS Spike (Ventricles)' },
           { id: 'st', label: 'ST Segment (STEMI Alert)' },
           { id: 't', label: 'T Wave (Recharge)' },
-          { id: 'qt', label: 'QTc Interval (Sudden Death Risk)' },
+          { id: 'qt', label: 'QT / QTc interval' },
         ].map((tab) => (
           <button
             key={tab.id}
@@ -1437,7 +1437,7 @@ const CalibratedGridWaveBreakdown: React.FC<{ isLight: boolean }> = ({ isLight }
                 <strong>📏 Grid Measurement:</strong> {current.boxes}
               </div>
               <div>
-                <strong>⚡ Mechanical Event:</strong> {current.mechanicalEvent}
+                <strong>⚡ Physiology connection:</strong> {current.mechanicalEvent}
               </div>
             </div>
 
@@ -1446,7 +1446,7 @@ const CalibratedGridWaveBreakdown: React.FC<{ isLight: boolean }> = ({ isLight }
                 isLight ? 'bg-red-50 border-red-200 text-red-900' : 'bg-red-950/40 border-red-800 text-red-300'
               }`}
             >
-              <strong>🚨 Clinical Pathology Alert:</strong>
+              <strong>🚨 Clinical considerations:</strong>
               <br />
               {current.pathologyAlert}
             </div>
@@ -1588,10 +1588,10 @@ export const EcgIcuTutorialModal: React.FC<EcgIcuTutorialModalProps> = ({
               <details onToggle={e => setCycleOpen(e.currentTarget.open)} className="rounded-2xl border border-slate-700 p-3"><summary className="min-h-[44px] cursor-pointer font-bold">Explore the cardiac cycle</summary><p className="text-xs my-3">A simplified physiology model. Pause and scrub to connect pressure, valve motion and electrical activation. Values illustrate relationships, not patient measurements.</p>{cycleOpen && <InteractiveCardiacEngineMaster isLight={isLight} />}</details>
 
               {/* 2. The 12-Camera Paparazzi Studio */}
-              <PaparazziCameraStudioVisualizer isLight={isLight} />
+              <details className="rounded-2xl border border-slate-700 p-3"><summary className="min-h-[44px] cursor-pointer font-bold">Explore lead viewpoints</summary><PaparazziCameraStudioVisualizer isLight={isLight} /></details>
 
               {/* 3. Calibrated Pink Millimeter Grid Breakdown */}
-              <CalibratedGridWaveBreakdown isLight={isLight} />
+              <details className="rounded-2xl border border-slate-700 p-3"><summary className="min-h-[44px] cursor-pointer font-bold">Wave and interval reference</summary><CalibratedGridWaveBreakdown isLight={isLight} /></details>
             </div>
           )}
 
@@ -1741,7 +1741,7 @@ export const EcgIcuTutorialModal: React.FC<EcgIcuTutorialModalProps> = ({
                         <td className="py-2 px-3 font-bold text-amber-500">PR Interval</td>
                         <td className="py-2 px-3">120 - 200 ms (3-5 boxes)</td>
                         <td className="py-2 px-3">Isoelectric</td>
-                        <td className="py-2 px-3 font-sans">AV nodal conduction delay</td>
+                        <td className="py-2 px-3 font-sans">Atrial onset to ventricular onset</td>
                         <td className="py-2 px-3 font-sans text-[11px] text-rose-500">
                           &gt;200ms = 1° AV Block; &lt;120ms: assess for pre-excitation or junctional rhythm
                         </td>
@@ -1815,9 +1815,9 @@ export const EcgIcuTutorialModal: React.FC<EcgIcuTutorialModalProps> = ({
                         Inferior STEMI (Leads II, III, aVF)
                       </div>
                       <div className="text-[11px] text-slate-600 sim-dark:text-slate-300 mt-1">
-                        <strong>Culprit Artery:</strong> Right Coronary Artery (RCA, 85%) or LCx.
+                        <strong>Culprit Artery:</strong> Right coronary artery or circumflex, depending on coronary anatomy.
                         <br /><strong>Reciprocal Changes:</strong> ST Depression in Lead I and aVL!
-                        <br /><span className="text-amber-600 sim-dark:text-amber-400 font-semibold">Caution:</span> Check V4R for Right Ventricular Infarct before giving nitroglycerin!
+                        <br /><span className="text-amber-600 sim-dark:text-amber-400 font-semibold">Caution:</span> Assess right-sided leads such as V4R for possible right ventricular involvement and correlate with haemodynamics.
                       </div>
                     </div>
 
@@ -1881,7 +1881,7 @@ export const EcgIcuTutorialModal: React.FC<EcgIcuTutorialModalProps> = ({
                       </div>
                       <div className={`text-[11px] mt-1 ${isLight ? 'text-slate-700' : 'text-slate-300'}`}>
                         • <strong>AFib:</strong> Absent P waves, fibrillatory baseline (400-600 bpm), irregularly irregular R-R intervals.
-                        <br />• <strong>VFib:</strong> Completely chaotic polymorphic deflections, zero cardiac output, immediate defibrillation required!
+                        <br />• <strong>VFib:</strong> Chaotic ventricular electrical activity; a cardiac-arrest rhythm requiring an emergency response.
                       </div>
                     </div>
                   </div>
