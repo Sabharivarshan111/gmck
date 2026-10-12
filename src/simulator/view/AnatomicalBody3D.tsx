@@ -3898,7 +3898,7 @@ varying float partSelected;
       {/* Top Floating Control Bar */}
       <div
         data-testid="anatomy-camera-controls"
-        className="absolute top-3 left-3 right-3 z-50 flex items-center justify-between pointer-events-none gap-2"
+        className={`absolute top-3 left-3 right-3 z-50 ${explodeAmount > 0.02 ? 'hidden lg:flex' : 'flex'} items-center justify-between pointer-events-none gap-2`}
       >
         {/* Camera Presets Segmented Pill */}
         <div

@@ -16,7 +16,7 @@ permissions:
 jobs:
   production-mobile-ux:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
 
@@ -43,14 +43,26 @@ jobs:
           done
           npx playwright install --with-deps chromium
 
+      - name: Build and serve this commit's simulator
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: |
+          npm run build
+          npm run preview -- --host 127.0.0.1 --port 4180 > /tmp/simulator-preview.log 2>&1 &
+          for attempt in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:4180/simulator > /dev/null; then break; fi
+            sleep 1
+          done
+          curl -fsS http://127.0.0.1:4180/simulator > /dev/null
+
       - name: Exercise normal skills and mobile studio widths
         env:
-          ORBIT_STUDIO_BASE_URL: https://orbitmbbs.vercel.app
+          ORBIT_STUDIO_BASE_URL: http://127.0.0.1:4180
         run: node scripts/simulator-studio-e2e.mjs
 
       - name: Exercise the live mobile anatomy UX
         env:
-          SIMULATOR_E2E_BASE_URL: https://orbitmbbs.vercel.app
+          SIMULATOR_E2E_BASE_URL: http://127.0.0.1:4180
         run: node scripts/simulator-mobile-ux-smoke.mjs
 
       - name: Upload focused mobile UX screenshots

@@ -99,6 +99,7 @@ const check = async (name, fn) => {
 
 await check('compact-toolbar-and-visible-canvas', async () => {
   await goto('/simulator');
+  await page.getByRole('button', { name: 'Layers', exact: true }).click();
   const stage = page.getByTestId('mobile-anatomy-stage');
   const toolbar = stage.getByTestId('dissection-toolbar');
   await visible(stage, 'mobile anatomy stage');
@@ -108,6 +109,7 @@ await check('compact-toolbar-and-visible-canvas', async () => {
     await touchSafe(toolbar.getByTestId('dissection-mode-' + id), id + ' mode');
   }
   await touchSafe(toolbar.getByTestId('dissection-xray'), 'X-Ray');
+  await page.getByRole('button', { name: 'Close anatomy tools' }).click();
   const canvas = stage.locator('canvas').first();
   const canvasBox = await visible(canvas, '3D anatomy canvas');
   assert(canvasBox.height >= 390, '3D canvas is too short: ' + Math.round(canvasBox.height) + 'px');
@@ -259,6 +261,7 @@ await check('restore-isolation-and-depth-peel-shows-requested-layer', async () =
   // The focused structure hides global tools; restore the body before peeling.
   await banner.getByRole('button', { name: 'Restore whole anatomy from selected structure' }).click();
   await banner.waitFor({ state: 'detached' });
+  await page.getByRole('button', { name: 'Layers', exact: true }).click();
   const depth = page.getByTestId('mobile-anatomy-stage').getByTestId('dissection-depth');
   await depth.scrollIntoViewIfNeeded();
   await depth.focus();
@@ -277,6 +280,7 @@ await check('restore-isolation-and-depth-peel-shows-requested-layer', async () =
     'Isolation banner remained active after moving the global depth peel slider'
   );
 
+  await page.getByRole('button', { name: 'Close anatomy tools' }).click();
   const canvas = page.getByTestId('mobile-anatomy-stage').locator('canvas').first();
   const canvasBox = await visible(canvas, 'skeletal framework canvas after leaving isolation');
   assert(canvasBox.height >= 390, 'Skeletal framework canvas collapsed after depth peel');
@@ -294,7 +298,7 @@ await check('thoracoacromial-reopens-pectoralis-not-heart', async () => {
   let drawer = page.getByTestId('organ-detail-drawer');
   await visible(drawer, 'Pectoralis dossier');
   await drawer.getByTestId('organ-drawer-tab-vascular').click();
-  const inspect = drawer.getByRole('button', { name: /^3D$/ }).first();
+  const inspect = drawer.getByTestId('arterial-node-thoracoacromial-3d');
   await visible(inspect, 'Thoracoacromial Inspect in 3D');
   await inspect.click();
   await drawer.waitFor({ state: 'detached' });
@@ -322,4 +326,5 @@ fs.writeFileSync(path.join(outDir, 'report.json'), JSON.stringify(report, null, 
 await browser.close();
 
 console.log(JSON.stringify(report.summary));
+for (const result of report.checks) if (result.status === 'failed') console.error(result.name + ': ' + result.error);
 if (report.summary.failed > 0) process.exit(1);
