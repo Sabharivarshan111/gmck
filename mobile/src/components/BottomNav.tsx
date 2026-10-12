@@ -5,7 +5,7 @@ import { Text } from '@/components/Text';
 import { Touchable } from '@/components/Touchable';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { BottomTabBarProps } from '@react-navigation/bottom-tabs';
-import { FileText, Home, Sparkles, Timer, User } from 'lucide-react-native';
+import { Archive, Home, Sparkles, Timer, User } from 'lucide-react-native';
 import { useTheme, withAlpha } from '@/theme';
 import { lit } from '@/theme/color';
 import { DURATION, EASE, SPRING, springConfig, springTo, useReducedMotion } from '@/theme/motion';
@@ -15,7 +15,7 @@ type TabKey = keyof RootTabParamList;
 
 const ITEMS: { key: TabKey; label: string; Icon: typeof Home }[] = [
   { key: 'Home', label: 'Home', Icon: Home },
-  { key: 'Notes', label: 'Vault', Icon: FileText },
+  { key: 'Notes', label: 'Vault', Icon: Archive },
   { key: 'Timer', label: 'Timer', Icon: Timer },
   { key: 'AskAI', label: 'Ask AI', Icon: Sparkles },
   { key: 'Progress', label: 'My Progress', Icon: User },
