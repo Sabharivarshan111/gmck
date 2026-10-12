@@ -78,18 +78,18 @@ export const WardExamModal: React.FC<WardExamModalProps> = ({
 
         {/* Apple HIG Segmented Navigation Tabs */}
         <div className="px-2.5 sm:px-3 py-2 sm:py-3 bg-slate-950/60 border-b border-slate-800/80">
-          <div className="flex sm:grid sm:grid-cols-4 gap-1.5 overflow-x-auto no-scrollbar">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
             {[
-              { id: 'edema', label: '💧 Pitting Edema Test', badge: '3D' },
-              { id: 'icterus', label: '👁️ Scleral Icterus', badge: '3D' },
-              { id: 'pallor', label: '🩸 Pallor & Cyanosis', badge: isPalmarCreasePale ? 'Pale' : 'Pink' },
-              { id: 'ascites', label: '🌊 Ascites & Thrill', badge: hasAscites ? 'Positive' : 'Clear' },
+              { id: 'edema', label: 'Pitting edema', badge: '3D' },
+              { id: 'icterus', label: 'Scleral icterus', badge: '3D' },
+              { id: 'pallor', label: 'Pallor & cyanosis', badge: isPalmarCreasePale ? 'Pale' : 'Pink' },
+              { id: 'ascites', label: 'Ascites & thrill', badge: hasAscites ? 'Positive' : 'Clear' },
             ].map((tab) => (
               <button
                 key={tab.id}
                 data-testid={`ward-tab-${tab.id}`}
                 onClick={() => setActiveExamTab(tab.id as typeof activeExamTab)}
-                className={`min-h-[44px] shrink-0 sm:shrink py-2 px-3 rounded-xl text-[11px] sm:text-xs font-bold transition-all flex items-center justify-between gap-1 cursor-pointer ${
+                className={`min-h-[44px] min-w-0 py-2 px-3 rounded-xl text-[11px] sm:text-xs font-bold transition-all flex items-center justify-between gap-1 cursor-pointer ${
                   activeExamTab === tab.id
                     ? 'bg-emerald-500 text-slate-950 shadow-md font-black'
                     : 'bg-slate-900/90 hover:bg-slate-800 text-slate-300 border border-slate-800'

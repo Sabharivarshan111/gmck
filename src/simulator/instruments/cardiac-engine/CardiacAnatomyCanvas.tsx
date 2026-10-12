@@ -81,7 +81,7 @@ export const CardiacAnatomyCanvas: React.FC<CardiacAnatomyCanvasProps> = ({
 
     const dpr = window.devicePixelRatio || 1;
     const displayWidth = canvas.clientWidth;
-    const width = 600;
+    const width = showLabels ? 600 : 400;
     const displayHeight = canvas.clientHeight;
     const height = 480;
     if (canvas.width !== displayWidth * dpr || canvas.height !== displayHeight * dpr) {
@@ -681,7 +681,7 @@ export const CardiacAnatomyCanvas: React.FC<CardiacAnatomyCanvasProps> = ({
       {/* Main Canvas */}
       <canvas
         ref={canvasRef}
-        className="w-full aspect-[5/4] h-auto rounded-xl block cursor-crosshair bg-slate-950"
+        className="w-full aspect-[5/6] h-auto rounded-xl block cursor-crosshair bg-slate-950"
       />
 
       <div className="grid grid-cols-2 gap-2 mt-3 text-xs text-slate-300" aria-label="Heart chamber key"><span><strong className="text-blue-400">RA → RV</strong><br/>Right heart → lungs</span><span><strong className="text-rose-400">LA → LV</strong><br/>Left heart → body</span><span>Mitral: LA → LV</span><span>Aortic: LV → aorta</span></div>
