@@ -1,0 +1,95 @@
+{
+  "medmcqa-practice-s00-4": {
+    "question": "Which of the following statements about Total Infra\u2013Venous Anaesthesia (TIVA) is true \u2013",
+    "options": [
+      "Causes More Renal Toxicity",
+      "Reduces Cerebral Metabolic Rate",
+      "Risk of Malignant Hyperthermia is high",
+      "Inhibits Hypoxic Pulmonary Vasconstriction"
+    ],
+    "answer": "B",
+    "explanation": "B is the expected answer for conventional propofol-based total intravenous anaesthesia (TIVA). Propofol reduces cerebral metabolism and usually cerebral blood flow.\n\nA: Increased renal toxicity is not a routine defining effect of standard TIVA; risk depends on the drugs and complications involved.\nC: Propofol is not a malignant-hyperthermia trigger. Volatile anaesthetics and succinylcholine are triggers; adding a triggering drug changes the risk.\nD: Propofol generally preserves hypoxic pulmonary vasoconstriction rather than abolishing it.\n\nScope: TIVA describes a technique, not a single drug. This answer assumes the usual propofol-based regimen; other intravenous regimens can behave differently.",
+    "status": "source_checked_provisional",
+    "clinically_reviewed": false,
+    "source_urls": [
+      "https://pubmed.ncbi.nlm.nih.gov/22091956/",
+      "https://pubmed.ncbi.nlm.nih.gov/2627402/",
+      "https://www.mhaus.org/healthcare-professionals/be-prepared/safe-and-unsafe-anesthetics/"
+    ]
+  },
+  "medmcqa-practice-s00-2": {
+    "question": "Drug causing malignant hyperthermia:(Asked twice in the exam)",
+    "options": [
+      "Cisatracurium",
+      "Suxamethonium",
+      "Propofol",
+      "Thiopentone"
+    ],
+    "answer": "B",
+    "explanation": "B: Suxamethonium is another name for succinylcholine, a depolarising neuromuscular blocker and a recognised malignant-hyperthermia trigger in susceptible people. The reaction involves abnormal skeletal-muscle calcium regulation and rapidly increased metabolism. Volatile anaesthetic agents are also triggers. Cisatracurium is a nondepolarising blocker; propofol and thiopentone are intravenous anaesthetics. These three alternatives are not recognised malignant-hyperthermia triggers. The key distinction is the specific triggering drug, rather than whether a drug is used during general anaesthesia.",
+    "status": "source_checked_provisional",
+    "clinically_reviewed": false,
+    "private_evidence_batch": "6d923b147f8da31e9ee5660a648d43e44b375b34",
+    "private_evidence_ids": [
+      "22fa580ff5409967b7464b8f"
+    ],
+    "source_urls": [
+      "https://www.mhaus.org/healthcare-professionals/be-prepared/safe-and-unsafe-anesthetics/"
+    ]
+  },
+  "medmcqa-practice-s00-5": {
+    "question": "Post operative muscle ache is caused by",
+    "options": [
+      "d-TC",
+      "Suxamethonium",
+      "Gallamine",
+      "Pancuronium"
+    ],
+    "answer": "B",
+    "explanation": "B: Suxamethonium (succinylcholine) initially depolarises the neuromuscular junction, causing brief, uncoordinated muscle contractions called fasciculations before paralysis. These contractions are associated with postoperative muscle pain. d-Tubocurarine, gallamine and pancuronium are nondepolarising neuromuscular blockers: they competitively inhibit acetylcholine at the receptor and do not produce the same initial depolarising fasciculations. This question concerns a characteristic adverse effect; postoperative pain in a real patient still requires assessment for other causes.",
+    "status": "source_checked_provisional",
+    "clinically_reviewed": false,
+    "private_evidence_batch": "6d923b147f8da31e9ee5660a648d43e44b375b34",
+    "private_evidence_ids": [
+      "43992bd2b186eb68239aa5d1"
+    ],
+    "source_urls": []
+  },
+  "medmcqa-practice-s00-8": {
+    "question": "Five days after an uneventful cholecystectomy, an asymptomatic middle-aged woman is found to have a serum sodium level of 125 mEq/L. Which of the following is the most appropriate management strategy for this patient?",
+    "options": [
+      "Administration of hypeonic saline solution",
+      "Restriction of free water",
+      "Plasma ultrafiltration",
+      "Hemodialysis"
+    ],
+    "answer": "B",
+    "explanation": "B is the expected choice for postoperative dilutional hyponatraemia in an otherwise stable, asymptomatic patient. Surgery can increase antidiuretic-hormone release, promoting retention of free water; restricting excess free water addresses that mechanism. Hypertonic saline is generally reserved for significant neurological symptoms or other urgent indications, and dialysis or ultrafiltration is not the routine response to this vignette. Clinically, first confirm hypotonic hyponatraemia and assess volume status, medicines and the sodium trend. Hypovolaemia or another cause would change management; avoid overly rapid correction.",
+    "status": "source_checked_provisional",
+    "clinically_reviewed": false,
+    "private_evidence_batch": "6d923b147f8da31e9ee5660a648d43e44b375b34",
+    "private_evidence_ids": [
+      "6666e98cf7f41d6945ba9efa"
+    ],
+    "source_urls": []
+  },
+  "medmcqa-practice-s00-9": {
+    "question": "Which of the following nerves are affected after spinal anaesthetic block \u2013",
+    "options": [
+      "Motor and sensory only",
+      "Sensory and autonomic nerve only",
+      "Sensory nerves only",
+      "Sensory, autonomic and motor nerves"
+    ],
+    "answer": "D",
+    "explanation": "D: A spinal local anaesthetic can interrupt sensory, motor and autonomic nerve conduction. Sensory blockade provides loss of pain sensation, motor blockade weakens muscles, and sympathetic blockade can cause vasodilatation and hypotension. These are differential blocks: the level and degree of sympathetic, sensory and motor blockade need not be identical and depend on the agent, dose and spread. Therefore the options that omit either motor or autonomic effects are incomplete.",
+    "status": "source_checked_provisional",
+    "clinically_reviewed": false,
+    "private_evidence_batch": "6d923b147f8da31e9ee5660a648d43e44b375b34",
+    "private_evidence_ids": [
+      "8251b16850917a831ada8db0",
+      "e937186fcfe068254f42d47e"
+    ],
+    "source_urls": []
+  }
+}

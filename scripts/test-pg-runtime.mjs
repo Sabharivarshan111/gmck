@@ -28,6 +28,8 @@ for(const p of manifest.packs){
  const chapter=p.chapters.find(c=>c.count>0);const filtered=await reader.searchOfflinePgQuestions({exam:'FMGE',year:null,search:'',subject:p.subject,chapter:chapter.name});assert.equal(filtered.total,chapter.count);assert.ok(filtered.questions.every(q=>q.chapter===chapter.name));
 }
 assert.equal(count,185637);
+const tiva=await reader.searchOfflinePgQuestions({exam:'NEET_PG',year:null,subject:'Anaesthesia',search:'Total Infra'});
+assert.ok(tiva.questions.some(q=>q.id==='medmcqa-practice-s00-4'&&q.answer==='B'&&q.explanation.includes('conventional propofol-based')));
 const first=await reader.searchOfflinePgQuestions({exam:'ALL',year:null,search:'',offset:0});
 const second=await reader.searchOfflinePgQuestions({exam:'ALL',year:null,search:'',offset:40});assert.ok(second.questions.every(q=>!first.questions.some(p=>p.id===q.id)));assert.equal(first.total,185637);
 assert.deepEqual(await reader.searchOfflinePgQuestions({exam:'NEET_PG',year:2026,search:''}),{questions:[],total:0,packsScanned:0});

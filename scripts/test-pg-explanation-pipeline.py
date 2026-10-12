@@ -21,6 +21,15 @@ class PipelineTests(unittest.TestCase):
     def test_missing_images_do_not_become_text_answers(self):
         self.assertTrue(p.image_required({'question':'Interpret the waveform shown below','options':['one','two','three','four']}))
         self.assertTrue(p.image_required({'question':'Which ligament is injured?','options':list('ABCD')}))
+    def test_tiva_does_not_accept_generic_toxicity_passages(self):
+        with tempfile.TemporaryDirectory() as directory:
+            db=p.database(Path(directory)/'test.sqlite')
+            p.index_text(db,'irrelevant.txt','Cerebral renal toxicity metabolic rate and hypoxia in neonatal disorders. '*30)
+            p.index_text(db,'relevant.txt','Propofol reduces cerebral metabolic rate during intravenous anaesthesia. '*30)
+            found=p.retrieve(db,'TIVA reduces cerebral metabolic rate renal toxicity')
+            self.assertTrue(found)
+            self.assertTrue(all(x['source']=='relevant.txt' for x in found))
+            db.close()
     def test_index_is_idempotent_and_replaces_changed_sources(self):
         with tempfile.TemporaryDirectory() as directory:
             db=p.database(Path(directory)/'test.sqlite')

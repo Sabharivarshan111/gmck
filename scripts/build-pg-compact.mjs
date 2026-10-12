@@ -10,6 +10,7 @@ const input=path.join(root,'mobile/src/lib/pgPacks');
 const quarantine=JSON.parse(fs.readFileSync(path.join(root,'docs/PG_CORPUS_QUARANTINE_20261011.json'),'utf8'));
 const excluded=new Set(quarantine.rows.map(q=>q.id));
 const groups=new Map();let inventory=0;let explanations=0;let omitted=0;
+const prepared=JSON.parse(fs.readFileSync(path.join(root,'docs/PG_PREPARED_EXPLANATIONS.json'),'utf8'));
 const files=fs.readdirSync(input).filter(n=>/^(general_medical|neet_pg)_undated_\d+\.ts$/.test(n)).sort();
 for(const name of files){
  const text=fs.readFileSync(path.join(input,name),'utf8');
@@ -42,7 +43,12 @@ const packs=[];let binaryBytes=0;
 for(const [subject,items] of [...groups].sort(([a],[b])=>a.localeCompare(b))){
  const id='s'+String(packs.length).padStart(2,'0');
  const chapters=[...new Set(items.map(x=>x.chapter))].sort();const chapterIndex=new Map(chapters.map((c,i)=>[c,i]));
- const rows=items.map(({row:r,chapter})=>[r[1],r[2],r[3],r[4],r[5],r[6],r[7],chapterIndex.get(chapter)]);
+ const rows=items.map(({row:r,chapter},index)=>{
+  const authored=prepared['medmcqa-practice-'+id+'-'+index];
+  if(authored && (authored.question!==r[1]||JSON.stringify(authored.options)!==JSON.stringify(r.slice(2,6))||authored.answer!=='ABCD'[r[6]]||authored.status!=='source_checked_provisional'||authored.clinically_reviewed!==false||!(authored.source_urls?.length||authored.private_evidence_ids?.length)))throw Error('Prepared explanation identity/review mismatch');
+  if(authored && !r[7].trim())explanations++;
+  return [r[1],r[2],r[3],r[4],r[5],r[6],authored?.explanation??r[7],chapterIndex.get(chapter)];
+ });
  const bytes=Buffer.from(JSON.stringify({subject,chapters,rows}));
  const packed=zlib.zstdCompressSync(bytes,{params:{[zlib.constants.ZSTD_c_compressionLevel]:19}});
  if(!zlib.zstdDecompressSync(packed).equals(bytes))throw Error('Lossless round trip failed');

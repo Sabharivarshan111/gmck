@@ -56,10 +56,16 @@ def index_text(db, name, text):
 
 def retrieve(db, query):
     terms = sorted(set(t for t in re.findall(r'[a-zA-Z]{3,}', query.lower()) if t not in STOP))[:40]
+    anchor = None
+    if re.search(r'\btiva\b|total.{0,15}venous',query,re.I):
+        terms += ['propofol','tiva']
+        anchor = re.compile(r'propofol|\btiva\b|total.{0,15}intravenous',re.I)
+    elif re.search(r'malignant\s+hyperthermia',query,re.I):
+        anchor = re.compile(r'malignant\s+hyperthermia',re.I)
     if not terms:
         return []
-    rows = db.execute('select id,source,text from passages where passages match ? order by bm25(passages) limit 6', (' OR '.join('"'+t+'"' for t in terms),)).fetchall()
-    return [{'id': r[0], 'source': r[1], 'text': r[2]} for r in rows if sum(t in r[2].lower() for t in terms) >= min(4, len(terms))]
+    rows = db.execute('select id,source,text from passages where passages match ? order by bm25(passages) limit 60', (' OR '.join('"'+t+'"' for t in terms),)).fetchall()
+    return [{'id': r[0], 'source': r[1], 'text': r[2]} for r in rows if (anchor is None or anchor.search(r[2])) and sum(t in r[2].lower() for t in terms) >= min(4, len(terms))][:6]
 
 def storage_files(url, key):
     pending = ['']
