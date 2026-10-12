@@ -24,6 +24,7 @@
 .studio-anatomy { display:flex; align-items:center; gap:14px; width:100%; padding:22px 18px; border:1px solid var(--sim-edge); border-radius:20px; background:var(--sim-card); color:var(--sim-ink); }
 .studio-anatomy>span:not(.studio-emoji) { flex:1; min-width:0; }
 .studio-anatomy>svg { color:var(--sim-accent); }
+.studio-anatomy-icon { flex:none; overflow:visible; }
 .studio strong { display:block; font-weight:750; }
 .studio small { display:block; font-size:13px; line-height:1.5; font-weight:400; }
 .studio-anatomy small { color:var(--sim-muted); margin-top:5px; }
