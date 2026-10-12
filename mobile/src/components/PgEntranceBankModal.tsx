@@ -310,8 +310,8 @@ function QuestionCard({ q, active, onPress, onCheck, colors }: {
           <Text style={[styles.question, { color: colors.text }]}>{q.record_type === 'historical_dataset' || q.record_type === 'licensed_practice_dataset' ? 'Dataset answer: ' : 'Supplied answer: '}{q.answer}</Text>
           <Text style={[styles.description, { color: colors.text }]}>{q.explanation.trim().length >= 20 ? q.explanation : 'No explanation supplied. Use the textbook check for a provisional explanation; this dataset answer has not been independently medically reviewed.'}</Text>
           <Touchable label={'Check supplied answer against textbooks: ' + q.id} onPress={onCheck} style={styles.answerButton}><Text style={[styles.linkText,{color:colors.primary}]}>Check this answer against textbooks</Text></Touchable>
-          {q.answer_reference ? <Text style={[styles.small, { color: colors.textMuted }]}>Answer-label provenance: {q.answer_reference}</Text> : null}
-          {q.source_url ? <Touchable onPress={() => { void openSource(q.source_url!); }} label="Open question source">
+          {q.answer_reference && q.record_type !== 'licensed_practice_dataset' ? <Text style={[styles.small, { color: colors.textMuted }]}>Answer-label provenance: {q.answer_reference}</Text> : null}
+          {q.source_url && q.record_type !== 'licensed_practice_dataset' ? <Touchable onPress={() => { void openSource(q.source_url!); }} label="Open question source">
             <Text style={[styles.linkText, { color: colors.primary }]}>Open question source ↗</Text>
           </Touchable> : null}
         </View>

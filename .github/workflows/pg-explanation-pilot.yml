@@ -1,0 +1,32 @@
+name: Private PG explanation pilot
+on:
+  push:
+    branches: [claude/native-app-sync]
+    paths:
+      - scripts/prepare-pg-explanations.py
+      - scripts/run-pg-explanation-pilot.py
+      - scripts/test-pg-explanation-pipeline.py
+      - .github/workflows/pg-explanation-pilot.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: private-pg-explanation-pilot
+  cancel-in-progress: false
+jobs:
+  pilot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Test failures and publication boundaries
+        run: python3 scripts/test-pg-explanation-pipeline.py
+      - name: Download private TXT and retrieve ten evidence sets
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_TOKEN: ${{ secrets.SUPABASE_TOKEN }}
+          SUPABASE_PAT: ${{ secrets.SUPABASE_PAT }}
+        run: python3 scripts/run-pg-explanation-pilot.py
+      # No artifact upload: runner disk contains private textbook OCR and provenance.

@@ -2174,3 +2174,7 @@ Local validation: all 185,637 records decode identically through Node/native-com
 
 ## 2026-10-12 — direct Vault PG card and About credits
 Owner requested a separate NEET-PG practice card in Vault and publisher attribution only in About. NotesScreen now opens the existing practice modal directly from Vault; NEET-PG is the initial filter. Practice-screen publisher labels and source link moved to Settings → About → Third-party licences. Both complete MIT copyright/permission notices are embedded offline and checked byte-for-byte against docs/licenses. Bank files, answer keys, counts and provisional-review labels unchanged. Native/web TypeScript and targeted lint pass; CI browser harness now tests the Vault shortcut and About notices. Device rendering and Play upload are not claimed.
+
+
+## 2026-10-13 — no-provider PG explanation preparation
+User rejected Gemini generation. No new model endpoint was deployed, and the temporary model endpoint source was removed before commit. Added stdlib Python private TXT download/SQLite retrieval and a ten-question runner. Private evidence staging migration private_pg_evidence_preparation applied; RLS enabled, all client roles denied. 42 TXT files total 41,441,912 bytes. Authoring is done by assistant from retrieved evidence, not by script/model APIs. Four failure/index/identity tests passed; no full-bank medical verification or completed explanation coverage is claimed. Source name/source link in expanded licensed practice cards hidden; attribution stays About. See docs/PG_EXPLANATION_PREPARATION_20261013.md.
