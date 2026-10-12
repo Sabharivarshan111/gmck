@@ -1,0 +1,123 @@
+{
+  "checked_at": "2026-10-12",
+  "purpose": "source-file identity metadata only; no question text or redistributed PDF",
+  "files": [
+    {
+      "id": "educationobserver-aipg-2001",
+      "url": "https://www.educationobserver.com/forum/attachment.php?aid=5254",
+      "exam_claimed": "All India Medical PG",
+      "year_claimed": 2001,
+      "session": null,
+      "attribution": "publisher_claimed",
+      "reuse_status": "unestablished",
+      "bytes": 153053,
+      "sha256": "8f8c7a78bc13d07d58521e08be3a328a82047642811b9bd84ea325cba9fc2d3e",
+      "page_count": 52,
+      "status": "downloaded_extracted"
+    },
+    {
+      "id": "educationobserver-aipg-2002",
+      "url": "https://www.educationobserver.com/forum/attachment.php?aid=5255",
+      "exam_claimed": "All India Medical PG",
+      "year_claimed": 2002,
+      "session": null,
+      "attribution": "publisher_claimed",
+      "reuse_status": "unestablished",
+      "bytes": 203167,
+      "sha256": "7518eaa9f6401ac8cd3fa431968e10de956aefcebd1368254af4815770efa655",
+      "page_count": 53,
+      "status": "downloaded_extracted"
+    },
+    {
+      "id": "educationobserver-aipg-2003",
+      "url": "https://www.educationobserver.com/forum/attachment.php?aid=5256",
+      "exam_claimed": "All India Medical PG",
+      "year_claimed": 2003,
+      "session": null,
+      "attribution": "publisher_claimed",
+      "reuse_status": "unestablished",
+      "bytes": 492511,
+      "sha256": "c6127b72a6b91d292f80993ab01cd91863b873444e51934e5047801aa43b360f",
+      "page_count": 59,
+      "status": "downloaded_extracted"
+    },
+    {
+      "id": "educationobserver-aipg-2005",
+      "url": "https://www.educationobserver.com/forum/attachment.php?aid=5257",
+      "exam_claimed": "All India Medical PG",
+      "year_claimed": 2005,
+      "session": null,
+      "attribution": "publisher_claimed",
+      "reuse_status": "unestablished",
+      "bytes": 586011,
+      "sha256": "02af1c3d56f392291776eea3a7fc54de8591d339532b188b3a4e692c0d530e7f",
+      "page_count": 99,
+      "status": "downloaded_extracted"
+    },
+    {
+      "id": "collegedunia-aipg-2010",
+      "url": "https://image-static.collegedunia.com/public/image/1782322618_neet-pg-2010_questions.pdf",
+      "exam_claimed": "AIPGMEE (publisher brands NEET PG)",
+      "year_claimed": 2010,
+      "session": null,
+      "attribution": "publisher_claimed",
+      "reuse_status": "unestablished",
+      "bytes": 611669,
+      "sha256": "90e175596acc7e8cf31b55c94650bf14b9d83e2724a59d5dafe16c7df27651c6",
+      "page_count": 79,
+      "status": "downloaded_extracted"
+    },
+    {
+      "id": "collegedunia-aipg-2011",
+      "url": "https://image-static.collegedunia.com/public/image/1782306651_neet-pg-2011_questions.pdf",
+      "exam_claimed": "AIPGMEE (publisher brands NEET PG)",
+      "year_claimed": 2011,
+      "session": null,
+      "attribution": "publisher_claimed",
+      "reuse_status": "unestablished",
+      "bytes": 582912,
+      "sha256": "a2a8a26357a85c48c4d98c994318829f57e037011458495c4f83c2163a9bd299",
+      "page_count": 77,
+      "status": "downloaded_extracted"
+    },
+    {
+      "id": "collegedunia-neetpg-2013",
+      "url": "https://image-static.collegedunia.com/public/image/1782285163_neet-pg-2013_questions.pdf",
+      "exam_claimed": "NEET PG",
+      "year_claimed": 2013,
+      "session": null,
+      "attribution": "publisher_claimed",
+      "reuse_status": "unestablished",
+      "bytes": 431930,
+      "sha256": "ed751c224d75e328bd32e4beced3c3664eccb5b65efb9c6774dda1411e0f564b",
+      "page_count": 51,
+      "status": "downloaded_extracted"
+    },
+    {
+      "id": "collegedunia-neetpg-2026-questions",
+      "url": "https://image-static.collegedunia.com/public/image/NEET_PG_2026_Question_Paper_876673bc708f9f857c9a56910ad83290.pdf",
+      "exam_claimed": "NEET PG",
+      "year_claimed": 2026,
+      "session": null,
+      "attribution": "publisher_claimed",
+      "reuse_status": "unestablished",
+      "bytes": 258337,
+      "sha256": "57bf5f72396322c2cc60a0c8dc0c2833665a70782977286c9a058e4cd953d862",
+      "page_count": 12,
+      "status": "downloaded_extracted"
+    },
+    {
+      "id": "collegedunia-neetpg-2026-solutions",
+      "url": "https://image-static.collegedunia.com/public/image/NEET_PG_2026_Question_Paper_with_Solutions_d009f649d7199499993785a5f2a04d0e.pdf",
+      "exam_claimed": "NEET PG",
+      "year_claimed": 2026,
+      "session": null,
+      "attribution": "publisher_claimed",
+      "reuse_status": "unestablished",
+      "bytes": 406460,
+      "sha256": "da7a7512f56c75a11cb1d14342c38ad27edd9c694005e4647f676bf4eb0b3ff1",
+      "page_count": 58,
+      "status": "downloaded_extracted"
+    }
+  ]
+}
