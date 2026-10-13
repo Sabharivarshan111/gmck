@@ -1,5 +1,5 @@
 import React,{useCallback,useMemo,useState} from 'react';
-import {FlatList,ScrollView,StyleSheet,TextInput,View,useWindowDimensions} from 'react-native';
+import {FlatList,ScrollView,StyleSheet,TextInput,View} from 'react-native';
 import Svg,{Path,Rect,Text as SvgText} from 'react-native-svg';
 import {Text} from '@/components/Text';import {Touchable} from '@/components/Touchable';import {Sheet} from '@/components/Sheet';import {Slider} from '@/components/Slider';import {useTheme} from '@/theme';import {OrbitAnatomy} from '@/native/OrbitAnatomy';
 import {ORGAN_ANATOMY_DATABASE} from '@simulator/data/organAnatomyData';
@@ -16,7 +16,7 @@ for(const owner of [...Object.keys(ORGAN_ANATOMY_DATABASE).filter(k=>!mainOrgans
 const partMap=new Map(ANATOMY_PARTS.map(p=>[p.id,p]));
 const emptyPoints:Array<{id:string;x:number;y:number}>=[];
 export function NativeAnatomyPanel(){
- const {colors}=useTheme();const {height}=useWindowDimensions();
+ const {colors}=useTheme();
  const [pick,setPick]=useState<Pick|null>(null),[region,setRegion]=useState('full'),[layer,setLayer]=useState('surface'),[details,setDetails]=useState<string|null>(null),[section,setSection]=useState('Overview');
  const [context,setContext]=useState(false),[hidden,setHidden]=useState<string[]>([]),[cut,setCut]=useState(false),[spread,setSpread]=useState(0),[camera,setCamera]=useState(0),[points,setPoints]=useState(emptyPoints),[status,setStatus]=useState('loading'),[message,setMessage]=useState('');
  const [browse,setBrowse]=useState(false),[query,setQuery]=useState(''),[diagram,setDiagram]=useState<OrganConnection|null>(null);
@@ -34,7 +34,7 @@ export function NativeAnatomyPanel(){
  const browseItems=useMemo(()=>ANATOMY_PARTS.filter(p=>(p.model==='atlas'||p.model==='peripheral_nerves')&&p.name.toLowerCase().includes(query.toLowerCase())),[query]);
  const labelPositions=points.filter(p=>p.x>=0&&p.y>=80);
  return <View style={{flex:1}}>
-  <View style={[styles.stage,{height:Math.max(420,height-232)}]}>
+  <View style={[styles.stage,{flex:1}]}>
    <OrbitAnatomy testID="native-anatomy-renderer" style={StyleSheet.absoluteFill} model={pick?.model||'atlas'} visibleIds={pick?.ids.join(',')||''} contextIds={contextIds.join(',')} annotationIds={annotations.join(',')} hiddenIds={hidden.join(',')} region={region} layer={layer} spread={spread} cameraAction={camera}
     onModelStatus={e=>{setStatus(e.nativeEvent.status);setMessage(e.nativeEvent.message||'');}}
     onModelLabels={e=>setPoints(e.nativeEvent.points)}
@@ -49,7 +49,7 @@ export function NativeAnatomyPanel(){
    {!pick&&labelPositions.length===0&&<View style={styles.shortcuts}>{mainOrgans.slice(0,4).map(owner=><Touchable key={owner} label={'Open '+ORGAN_ANATOMY_DATABASE[owner].name+' model'} onPress={()=>select(owner)} style={styles.organ}><Text style={{color:'#e5edf6',fontWeight:'700'}}>{owner==='kidney'?'Kidneys':owner[0].toUpperCase()+owner.slice(1)}</Text></Touchable>)}</View>}
    {pick&&<View style={[styles.selection,{backgroundColor:colors.card,borderColor:colors.border}]}><View style={{flex:1}}><Text style={{color:colors.text,fontWeight:'700'}}>{pick.label}</Text><Text style={[typeScale.caption,{color:colors.textMuted}]}>{pick.model==='atlas'?'BodyParts3D · registered anatomy':'Separate source reference · '+pick.model}</Text></View><Action label="Details" onPress={()=>{setSection('Overview');setDetails(pick.owner);}}/><Action label="Restore" onPress={reset}/></View>}
   </View>
-  <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={[ui.row,{padding:12}]}>
+  <ScrollView horizontal style={{flexGrow:0,maxHeight:76}} showsHorizontalScrollIndicator={false} contentContainerStyle={[ui.row,{padding:12}]}>
    <Action label="Browse" onPress={()=>setBrowse(true)}/><Action label={cut?'Scalpel on':'Scalpel'} selected={cut} onPress={()=>setCut(!cut)}/>
    <Action label="Zoom +" onPress={()=>setCamera(v=>(Math.floor(v/10)+1)*10+1)}/><Action label="Zoom −" onPress={()=>setCamera(v=>(Math.floor(v/10)+1)*10+2)}/>
    <Action label="Rotate" onPress={()=>setCamera(v=>(Math.floor(v/10)+1)*10+4)}/><Action label="Reset" onPress={reset}/>
@@ -66,7 +66,7 @@ export function NativeAnatomyPanel(){
    {selectedOrgan&&section==='Overview'&&<><Card title="Surface anatomy"><Copy>{selectedOrgan.surfaceLandmarks}</Copy><Copy>{selectedOrgan.dimensionsAndWeight}</Copy></Card><Card title="Physiology & histology"><Copy>{selectedOrgan.histologyAndPhysiology}</Copy></Card>
     <Card title="Source reference views">{ANATOMY_REFERENCES.filter(r=>r.organ===details).map(r=><Action key={r.id+r.model} label={r.label+' · '+r.model.replace(/_/g,' ')} onPress={()=>{setPick({model:r.model,ids:r.ids,label:r.label,owner:details!});setDetails(null);setContext(false);}}/>)}</Card></>}
    {(section==='Supply'||section==='Relations')&&links.map(c=><Card key={c.id}><Text style={{color:c.kind==='arterial'?'#e77081':c.kind==='venous'?'#69a8e9':colors.text,fontWeight:'700'}}>{c.label}</Text><Copy muted>{c.direction} · {c.targetId?'Registered 3D anatomy':'Teaching schematic'}</Copy><Action label={'Inspect '+c.label} onPress={()=>inspect(c)}/><Copy>{c.note}</Copy></Card>)}
-   {selectedOrgan&&section==='Supply'&&<Card title="Innervation">{Object.entries(selectedOrgan.innervation).map(([key,value])=><Copy key={key}>{key}: {value}</Copy>)}{selectedOrgan.nerveNodes?.map(n=><Card key={n.id} title={n.name}><Copy>{n.roots} · {n.origin}</Copy><Copy>{n.motorSupply} {n.sensorySupply}</Copy><Copy>{n.clinicalNote}</Copy>{ANATOMY_TARGETS[n.id]?.ids.length?<Action label={'View '+n.name} onPress={()=>select(details!,n.id)}/>:<Copy muted>No captured source mesh; course described above.</Copy>}</Card>)}</Card>}
+   {selectedOrgan&&section==='Supply'&&<Card title="Innervation">{Object.entries(selectedOrgan.innervation).map(([key,value])=><Copy key={key}>{key}: {value}</Copy>)}{selectedOrgan.nerveNodes?.map(n=><Card key={n.id} title={n.name}><Copy>{n.roots} · {n.origin}</Copy><Copy>{n.motorSupply} {n.sensorySupply}</Copy><Copy>{n.clinicalNote}</Copy>{(ANATOMY_TARGETS[n.id]||ANATOMY_TARGETS[normalisePeripheralNerveTarget(n.id)||''])?.ids.length?<Action label={'View '+n.name} onPress={()=>select(details!,n.id)}/>:<Copy muted>No captured source mesh; course described above.</Copy>}</Card>)}</Card>}
    {selectedOrgan&&section==='Clinical'&&<><Card title="Bedside signs">{selectedOrgan.clinicalBedsideSigns.map(s=><Copy key={s}>• {s}</Copy>)}</Card><Card title="Viva & clinical correlation">{selectedOrgan.nmcMbbssVivaPearls.map(s=><Copy key={s}>• {s}</Copy>)}<Copy>{selectedOrgan.radiologicalCorrelation}</Copy><Copy>{selectedOrgan.surgicalApproaches}</Copy></Card></>}
    {selectedOrgan&&section==='Lymph'&&<Card title="Lymphatic drainage">{selectedOrgan.lymphaticDrainage.map(s=><Copy key={s}>• {s}</Copy>)}</Card>}
    {!selectedOrgan&&<Copy>{pick?.label} is a named source part. Its registered model can be rotated and inspected offline.</Copy>}
