@@ -34,7 +34,7 @@ for(const connections of Object.values(ORGAN_CONNECTIONS))for(const c of connect
 }
 const mri=JSON.parse(fs.readFileSync(root+'/radiology/brain-t1.json'));
 assert.equal(zlib.gunzipSync(fs.readFileSync(root+'/radiology/brain-t1.pack')).length,mri.dimensions.reduce((a,b)=>a*b,1));
-const anatomy=fs.readFileSync('mobile/src/screens/SimulatorScreen.tsx','utf8');
+const anatomy=fs.readFileSync('mobile/src/screens/SimulatorScreen.android.tsx','utf8');
 assert.ok(!/react-native-webview|https:\/\/orbitmbbs/.test(anatomy),'Native screen cannot navigate to hosted simulator');
 assert.ok(fs.existsSync('mobile/android/app/src/main/assets/pg/manifest.json'),'Offline PG manifest');
 console.log('Offline source assets: '+partCount+' named meshes, '+registered+' registered connections, full MRI volume and native screen verified.');

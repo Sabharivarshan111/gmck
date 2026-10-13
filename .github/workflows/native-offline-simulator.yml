@@ -84,7 +84,7 @@ jobs:
         run: npx react-native bundle --platform android --dev false --entry-file index.js --bundle-output /tmp/native-simulator.js --assets-dest /tmp/native-simulator-assets
       - name: Lint native code
         working-directory: mobile
-        run: npx eslint src/screens/SimulatorScreen.tsx src/simulator src/native/OrbitAnatomy.tsx src/native/OrbitMRI.tsx src/native/OrbitPOCUS.tsx --quiet
+        run: npx eslint src/screens/SimulatorScreen.tsx src/screens/SimulatorScreen.android.tsx src/simulator src/native/OrbitAnatomy.tsx src/native/OrbitMRI.tsx src/native/OrbitPOCUS.tsx --quiet
       - name: Save asset size audit
         if: always()
         uses: actions/upload-artifact@v4
