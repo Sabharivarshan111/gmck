@@ -2553,3 +2553,31 @@ HALF-DONE: These synthetic images remain schematic appearance models, not accura
 NEXT: Verify reference image loading, all four view selectors, caliper/mobile controls, pupil light controls and production deployment. Physical-device performance/GPU/audio and clinical fidelity remain unverified. No amniotic-fluid module found; owner’s attached fluid screenshot is abdominal Morison’s pouch.
 
 DO NOT: Describe texture as validated ultrasound physics, claim all requested features fixed, call the fibrosis lung reference normal, infer diagnoses solely from CVP/SpO2/lactate, copy competitor assets, alter Android releases/PG/billing/security.
+
+## PG source-based explanation continuation — 2026-10-13
+
+DONE: PR75 merged at 756a66682ad8d039a71ef4f0e1f5f7f44bfe9480.
+Production deployment dpl_CxHZsCfZ3umTaeQDop36Gq4yBJSV is READY and aliases
+orbitmbbs.vercel.app. Nine additional provisional authored explanations bring
+that overlay to fourteen; six missing explanations filled and three replaced.
+The ketamine-route question is held because its absolute SC exclusion conflicts
+with primary trials. Optional original ordinals preserve remaining question IDs.
+Current practice records 185,636; explanations 51,141; missing 134,495; generated
+bank assets 8,744,604 bytes. MIT attribution remains About; no PG model API UI.
+
+VERIFIED: Python pipeline/selection tests; full native/browser codec parity,
+search, subject/chapter filters, pagination and stable IDs; TypeScript, ESLint,
+Android JavaScript bundle and required native guards. Head-commit web build,
+content integrity, offline pack and browser provenance workflows succeeded.
+Browser showed zero PG answer-review calls. The private evidence pilot succeeded:
+42 TXT downloaded, ten evidence sets for original ordinals 10–19, zero model
+calls; batch 69613f344f305a9ab16c4bbf85679d3ce9e25cd0-38339003334-1 in private
+Supabase schema. Raw textbook text was not published.
+
+HALF-DONE/NEXT: 134,495 explanations remain missing; supplied answers and
+chapter labels are not all medically reviewed. Read the new private batch and
+continue supported authoring; inspect the older post-MI angiography vignette and
+malformed adrenaline-concentration distractors before endorsing them. Android
+APK/device/Play publication must be checked separately; a JS bundle is not a
+physical-device test. Do not call Gemini/model APIs for this work or claim
+perfect answers, legal immunity or complete historic PYQ coverage.
