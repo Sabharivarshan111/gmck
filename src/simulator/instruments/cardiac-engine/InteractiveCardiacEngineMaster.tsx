@@ -23,7 +23,15 @@ export const InteractiveCardiacEngineMaster: React.FC<{ isLight?: boolean }> = (
 
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [currentPhi, setCurrentPhi] = useState<number>(0);
-  const [activeTab, setActiveTab] = useState<'hemodynamics' | 'anatomy' | 'electrophysiology'>('hemodynamics');
+  const [activeTab, setActiveTab] = useState<'hemodynamics' | 'anatomy' | 'electrophysiology'>('anatomy');
+
+  const [reducedMotion, setReducedMotion] = useState(false);
+  useEffect(() => {
+    const media = matchMedia('(prefers-reduced-motion: reduce)');
+    const update = () => { setReducedMotion(media.matches); if (media.matches) setIsPlaying(false); };
+    update(); media.addEventListener('change', update);
+    return () => media.removeEventListener('change', update);
+  }, []);
 
   const engine = useMemo(() => new CardiacCycleEngine(params), [params]);
   const animationFrameRef = useRef<number | null>(null);
@@ -85,7 +93,7 @@ export const InteractiveCardiacEngineMaster: React.FC<{ isLight?: boolean }> = (
               🫀
             </div>
             <h3 className="text-base font-black tracking-tight text-slate-900 sim-dark:text-slate-100">
-              Interactive Cardiac Simulation
+              Cardiac cycle explorer
             </h3>
           </div>
           <p className="text-xs text-slate-500 sim-dark:text-slate-400 mt-0.5">
@@ -94,7 +102,7 @@ export const InteractiveCardiacEngineMaster: React.FC<{ isLight?: boolean }> = (
         </div>
 
         {/* System Tab Toggles */}
-        <div className="w-full min-w-0 grid grid-cols-3 sm:flex items-center gap-1.5 p-1 rounded-xl bg-slate-100 sim-dark:bg-slate-950 border border-slate-200 sim-dark:border-slate-800">
+        <div className="w-full min-w-0 grid grid-cols-1 sm:flex items-center gap-1.5 p-1 rounded-xl bg-slate-100 sim-dark:bg-slate-950 border border-slate-200 sim-dark:border-slate-800">
           <button
             onClick={() => setActiveTab('hemodynamics')}
             className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
@@ -145,6 +153,7 @@ export const InteractiveCardiacEngineMaster: React.FC<{ isLight?: boolean }> = (
           <button
             onClick={() => setIsPlaying(!isPlaying)}
             className="min-h-[44px] min-w-[44px] p-2.5 rounded-xl bg-slate-800 text-slate-100 hover:bg-slate-700 transition-all cursor-pointer"
+            disabled={reducedMotion}
             aria-label={isPlaying ? 'Pause cardiac cycle' : 'Play cardiac cycle'}
             title={isPlaying ? 'Pause Simulation' : 'Play Simulation'}
           >
@@ -187,7 +196,7 @@ export const InteractiveCardiacEngineMaster: React.FC<{ isLight?: boolean }> = (
         {/* Sliders: HR, Inotropy, Afterload, Preload */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2 border-t border-slate-800/80">
           <div>
-            <div className="flex justify-between text-[11px] font-mono text-slate-400 mb-1">
+            <div className="flex flex-wrap gap-1 justify-between text-[11px] font-mono text-slate-400 mb-1">
               <span>Heart Rate:</span>
               <strong className="text-emerald-400">{params.heartRate} bpm</strong>
             </div>
@@ -203,7 +212,7 @@ export const InteractiveCardiacEngineMaster: React.FC<{ isLight?: boolean }> = (
           </div>
 
           <div>
-            <div className="flex justify-between text-[11px] font-mono text-slate-400 mb-1">
+            <div className="flex flex-wrap gap-1 justify-between text-[11px] font-mono text-slate-400 mb-1">
               <span>Contractility (Ees):</span>
               <strong className="text-purple-400">{params.contractility.toFixed(1)}x</strong>
             </div>
@@ -220,7 +229,7 @@ export const InteractiveCardiacEngineMaster: React.FC<{ isLight?: boolean }> = (
           </div>
 
           <div>
-            <div className="flex justify-between text-[11px] font-mono text-slate-400 mb-1">
+            <div className="flex flex-wrap gap-1 justify-between text-[11px] font-mono text-slate-400 mb-1">
               <span>Afterload (SVR):</span>
               <strong className="text-amber-400">{params.afterload.toFixed(1)}x</strong>
             </div>
@@ -237,7 +246,7 @@ export const InteractiveCardiacEngineMaster: React.FC<{ isLight?: boolean }> = (
           </div>
 
           <div>
-            <div className="flex justify-between text-[11px] font-mono text-slate-400 mb-1">
+            <div className="flex flex-wrap gap-1 justify-between text-[11px] font-mono text-slate-400 mb-1">
               <span>Preload (EDV):</span>
               <strong className="text-cyan-400">{params.preload.toFixed(1)}x</strong>
             </div>
@@ -263,7 +272,7 @@ export const InteractiveCardiacEngineMaster: React.FC<{ isLight?: boolean }> = (
             { id: 'normal', label: '1. Normal Sinus' },
             { id: 'as', label: '2. Aortic Stenosis (Gradient)' },
             { id: 'mr', label: '3. Mitral Regurgitation (V-Wave)' },
-            { id: 'hfref', label: '4. Systolic Heart Failure (EF 28%)' },
+            { id: 'hfref', label: '4. Reduced contractility' },
             { id: 'htn', label: '5. Severe Hypertension' },
             { id: 'tachy', label: '6. Tachycardia (140 bpm)' },
           ].map((preset) => (

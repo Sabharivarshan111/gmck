@@ -2581,3 +2581,8 @@ malformed adrenaline-concentration distractors before endorsing them. Android
 APK/device/Play publication must be checked separately; a JS bundle is not a
 physical-device test. Do not call Gemini/model APIs for this work or claim
 perfect answers, legal immunity or complete historic PYQ coverage.
+
+
+## ECG heart SVG studio redesign — 2026-10-13
+
+Complete ECG tutorial replacement with original shaded SVG heart/conduction cutaway, synchronized teaching beat, mobile lead/axis diagrams, interval cards and QTc calculator, nodal/ventricular action potentials, selectable pattern traces and territory highlights. Optional existing Wiggers/PV physics retained; advanced heart/conduction art replaced. Root TypeScript, changed ESLint, build, mobile guard and360/390/430px focused ECG browser checks passed. Shared Android WebView loads the same simulator URL; no native release edits or physical-device claim. See `.agents/state/ecg-svg-redesign-20261013.md` for scope and publication checkpoint. Preserve concurrent PG work.
